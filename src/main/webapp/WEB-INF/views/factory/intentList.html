@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component">
+	<head>
+		<vu:head-meta/>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>Intent List</title>
+	</head>
+	
+	<body class="mat desktop no-touch platform-mat">
+		<vu:page>
+			<div id="page" v-cloak>
+				<vu:table list="intents" componentId="intentsList" tr_@click.native="|goTo('@{/intent/}'+props.row.intId)|" tr_style="cursor : pointer;">
+						<vu:column field="intId" />
+						<vu:column field="title" />
+				</vu:table>
+				<vu:button-link url="@{/intent/new}" icon="add" round size="lg" color="primary" />
+			</div>
+		</vu:page>
+	</body>
+</html>

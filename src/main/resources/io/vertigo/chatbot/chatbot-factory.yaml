@@ -1,0 +1,38 @@
+---
+boot:
+  params:
+    locales: fr_FR
+  plugins:
+    - io.vertigo.core.plugins.resource.classpath.ClassPathResourceResolverPlugin: {}
+modules:
+  io.vertigo.commons.CommonsFeatures: # utilisation du module vertigo-commons
+    features:
+      - script:
+      - cache:
+    featuresConfig:
+      - script.janino:
+      - cache.memory:
+  io.vertigo.database.DatabaseFeatures: # utilisation du module vertigo-database pour pouvoir utiliser une base de données
+    features:
+      - sql: # nous activons le support des bases de données SQL
+    featuresConfig:
+      - sql.datasource:
+          classname: io.vertigo.database.impl.sql.vendor.postgresql.PostgreSqlDataBase
+          source: java:/comp/env/jdbc/DataSource
+  io.vertigo.dynamo.DynamoFeatures: # utilisation du module vertigo-dynamo
+    features:
+      - store: # activation du support du stockage des entités de notre modèle
+      - kvStore: # activation du support du stockage clé/valeur (utilisé pour la conservation des état de écrans)
+    featuresConfig:
+      - store.data.sql: # nous utilisons un store de type SQL (avec notre base H2)
+      - kvStore.berkeley:  # nous utilisons un stockage clé valeur avec la base de donnée BerkeleyDB
+          collections: VViewContext;TTL=43200
+          dbFilePath: ${java.io.tmpdir}/vertigo-ui/VViewContext
+  io.vertigo.vega.VegaFeatures:
+    features:
+      - webservices:
+    featuresConfig:
+      - webservices.apiPrefix:
+          apiPrefix: /api
+  
+  io.vertigo.chatbot.factory.ChatbotFactoryFeatures: # utilisation de notre module métier
