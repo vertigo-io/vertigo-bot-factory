@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.factory.domain;
 
 import io.vertigo.dynamo.domain.model.Entity;
+import io.vertigo.dynamo.domain.model.ListVAccessor;
 import io.vertigo.dynamo.domain.model.UID;
 import io.vertigo.dynamo.domain.stereotype.Field;
 import io.vertigo.dynamo.domain.util.DtObjectUtil;
@@ -16,6 +17,21 @@ public final class Intent implements Entity {
 
 	private Long intId;
 	private String title;
+
+	@io.vertigo.dynamo.domain.stereotype.Association(
+			name = "AIntentIntentText",
+			fkFieldName = "intId",
+			primaryDtDefinitionName = "DtIntent",
+			primaryIsNavigable = false,
+			primaryRole = "Intent",
+			primaryLabel = "Intent",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtIntentText",
+			foreignIsNavigable = true,
+			foreignRole = "IntentText",
+			foreignLabel = "IntentText",
+			foreignMultiplicity = "0..*")
+	private final ListVAccessor<io.vertigo.chatbot.factory.domain.IntentText> intentTextAccessor = new ListVAccessor<>(this, "AIntentIntentText", "IntentText");
 
 	/** {@inheritDoc} */
 	@Override
@@ -59,6 +75,14 @@ public final class Intent implements Entity {
 	 */
 	public void setTitle(final String title) {
 		this.title = title;
+	}
+
+	/**
+	 * Association : IntentText.
+	 * @return l'accesseur vers la propriété 'IntentText'
+	 */
+	public ListVAccessor<io.vertigo.chatbot.factory.domain.IntentText> intentText() {
+		return intentTextAccessor;
 	}
 	
 	/** {@inheritDoc} */

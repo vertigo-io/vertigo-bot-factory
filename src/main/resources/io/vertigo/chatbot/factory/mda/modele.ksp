@@ -19,6 +19,25 @@ create Domain DoLabel {
 }
 
 create DtDefinition DtIntent {
-	id intId {domain: DoId label: "ID"}
-	field title {domain: DoLabel label: "Titre" required: "true"}
+	id intId 		{domain: DoId 		label: "ID"}
+	field title 	{domain: DoLabel 	label: "Titre" required: "true"}
+}
+
+create DtDefinition DtIntentText {
+	id ittId 		{domain: DoId 		label: "ID"}
+	field text 		{domain: DoLabel 	label: "Text" required: "true"}
+}
+
+create Association AIntentIntentText {
+	fkFieldName : "intId"
+    
+ 	dtDefinitionA : DtIntentText
+	dtDefinitionB : DtIntent
+	
+	multiplicityA : "0..*"
+	multiplicityB : "1..1"
+	navigabilityA : "true"
+	navigabilityB : "false" /* pas pris en compte ! */
+	
+	labelB : "Intent"
 }
