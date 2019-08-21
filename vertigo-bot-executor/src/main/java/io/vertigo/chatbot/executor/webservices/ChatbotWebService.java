@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.factory.webservices;
+package io.vertigo.chatbot.executor.webservices;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,8 +11,6 @@ import java.nio.charset.StandardCharsets;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.bind.annotation.RequestBody;
-
 import io.vertigo.lang.VSystemException;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.AnonymousAccessAllowed;
@@ -22,7 +20,7 @@ public class ChatbotWebService implements WebServices {
 
 	@AnonymousAccessAllowed
 	@POST("/chatbot")
-	public void chatbot(@RequestBody String requestParam, HttpServletResponse httpResponse) throws IOException {
+	public void chatbot(String requestParam, HttpServletResponse httpResponse) throws IOException {
 		String response = callRasa(requestParam);
 
 		doSendRawResponse(httpResponse, response);

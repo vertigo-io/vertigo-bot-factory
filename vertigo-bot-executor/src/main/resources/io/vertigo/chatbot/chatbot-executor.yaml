@@ -1,0 +1,22 @@
+---
+boot:
+  params:
+    locales: fr_FR
+  plugins:
+    - io.vertigo.core.plugins.resource.classpath.ClassPathResourceResolverPlugin: {}
+modules:
+  io.vertigo.commons.CommonsFeatures: # utilisation du module vertigo-commons
+    features:
+      - script:
+      - cache:
+    featuresConfig:
+      - script.janino:
+      - cache.memory:
+  io.vertigo.vega.VegaFeatures:
+    features:
+      - webservices:
+    featuresConfig:
+      - webservices.apiPrefix:
+          apiPrefix: /api
+  
+  io.vertigo.chatbot.executor.ChatbotExecutorFeatures: # utilisation de notre module métier
