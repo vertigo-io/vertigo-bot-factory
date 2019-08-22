@@ -8,19 +8,43 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import io.vertigo.chatbot.executor.services.ChatbotServices;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.AnonymousAccessAllowed;
+import io.vertigo.vega.webservice.stereotype.GET;
 import io.vertigo.vega.webservice.stereotype.POST;
+import io.vertigo.vega.webservice.stereotype.PathPrefix;
+import io.vertigo.vega.webservice.stereotype.SessionLess;
 
+@PathPrefix("/chatbot")
 public class ChatbotWebService implements WebServices {
 
+	@Inject
+	private ChatbotServices chatbotServices;
+	
 	@AnonymousAccessAllowed
-	@POST("/chatbot")
-	public void chatbot(String requestParam, HttpServletResponse httpResponse) throws IOException {
+	@GET("/train")
+	@SessionLess
+	public void train() {
+		chatbotServices.trainModel();
+	}
+	
+	@AnonymousAccessAllowed
+	@GET("/trainLog")
+	@SessionLess
+	public String trainLog() {
+		return chatbotServices.getTrainingLog();
+	}
+	
+	@AnonymousAccessAllowed
+	@POST("/talk")
+	@SessionLess
+	public void talk(String requestParam, HttpServletResponse httpResponse) throws IOException {
 		String response = callRasa(requestParam);
 
 		doSendRawResponse(httpResponse, response);

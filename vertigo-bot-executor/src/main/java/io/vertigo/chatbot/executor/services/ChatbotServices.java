@@ -1,9 +1,21 @@
 package io.vertigo.chatbot.executor.services;
 
-import io.vertigo.commons.transaction.Transactional;
+import javax.inject.Inject;
+
+import io.vertigo.chatbot.executor.rasa.RasaHandler;
 import io.vertigo.core.component.Component;
 
-@Transactional
 public class ChatbotServices implements Component {
 
+	@Inject
+	private RasaHandler rasaHandler;
+	
+	public void trainModel() {
+		rasaHandler.trainModel();
+	}
+
+	public String getTrainingLog() {
+		return rasaHandler.getTrainingLog();
+	}
+	
 }
