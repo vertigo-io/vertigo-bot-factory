@@ -10,7 +10,7 @@
 
 	<context-param>
 		<param-name>boot.applicationConfiguration</param-name>
-		<param-value>/io/vertigo/chatbot/chatbot-factory.yaml</param-value>
+		<param-value>/io/vertigo/chatbot/chatbot-designer.yaml</param-value>
 	</context-param>
 
 	<filter>

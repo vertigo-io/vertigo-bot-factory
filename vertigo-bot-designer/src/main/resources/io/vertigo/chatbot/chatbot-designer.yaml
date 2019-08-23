@@ -35,4 +35,4 @@ modules:
       - webservices.apiPrefix:
           apiPrefix: /api
   
-  io.vertigo.chatbot.factory.ChatbotFactoryFeatures: # utilisation de notre module métier
+  io.vertigo.chatbot.designer.ChatbotDesignerFeatures: # utilisation de notre module métier

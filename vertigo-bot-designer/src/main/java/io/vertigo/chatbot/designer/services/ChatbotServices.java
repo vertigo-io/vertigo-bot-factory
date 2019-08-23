@@ -1,11 +1,11 @@
-package io.vertigo.chatbot.factory.services;
+package io.vertigo.chatbot.designer.services;
 
 import javax.inject.Inject;
 
-import io.vertigo.chatbot.factory.dao.IntentDAO;
-import io.vertigo.chatbot.factory.dao.IntentTextDAO;
-import io.vertigo.chatbot.factory.domain.Intent;
-import io.vertigo.chatbot.factory.domain.IntentText;
+import io.vertigo.chatbot.designer.dao.IntentDAO;
+import io.vertigo.chatbot.designer.dao.IntentTextDAO;
+import io.vertigo.chatbot.designer.domain.Intent;
+import io.vertigo.chatbot.designer.domain.IntentText;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.criteria.Criterions;

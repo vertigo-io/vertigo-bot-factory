@@ -1,13 +1,13 @@
-package io.vertigo.chatbot.factory;
+package io.vertigo.chatbot.designer;
 
 import io.vertigo.app.config.DefinitionProviderConfig;
 import io.vertigo.app.config.discovery.ModuleDiscoveryFeatures;
 import io.vertigo.dynamo.plugins.environment.DynamoDefinitionProvider;
 
-public class ChatbotFactoryFeatures extends ModuleDiscoveryFeatures<ChatbotFactoryFeatures> { // nous étendons ModuleDiscoveryFeatures pour activer la découverte automatique
+public class ChatbotDesignerFeatures extends ModuleDiscoveryFeatures<ChatbotDesignerFeatures> { // nous étendons ModuleDiscoveryFeatures pour activer la découverte automatique
 
-    public ChatbotFactoryFeatures() {
-        super("ChatbotFactory"); // Nous donnons un nom signigiant à notre module métier
+    public ChatbotDesignerFeatures() {
+        super("ChatbotDesigner"); // Nous donnons un nom signigiant à notre module métier
     }
 
     @Override
@@ -15,7 +15,7 @@ public class ChatbotFactoryFeatures extends ModuleDiscoveryFeatures<ChatbotFacto
         super.buildFeatures(); // découverte automatique de tous les composants
         getModuleConfigBuilder()
                 .addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
-                        .addDefinitionResource("kpr", "io/vertigo/chatbot/factory/run.kpr") // chargement de notre modèle de donnée
+                        .addDefinitionResource("kpr", "io/vertigo/chatbot/designer/run.kpr") // chargement de notre modèle de donnée
                         .build());
 
     }

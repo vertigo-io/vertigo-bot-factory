@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.factory.domain;
+package io.vertigo.chatbot.designer.domain;
 
 import io.vertigo.dynamo.domain.model.Entity;
 import io.vertigo.dynamo.domain.model.ListVAccessor;
@@ -31,7 +31,7 @@ public final class Intent implements Entity {
 			foreignRole = "IntentText",
 			foreignLabel = "IntentText",
 			foreignMultiplicity = "0..*")
-	private final ListVAccessor<io.vertigo.chatbot.factory.domain.IntentText> intentTextAccessor = new ListVAccessor<>(this, "AIntentIntentText", "IntentText");
+	private final ListVAccessor<io.vertigo.chatbot.designer.domain.IntentText> intentTextAccessor = new ListVAccessor<>(this, "AIntentIntentText", "IntentText");
 
 	/** {@inheritDoc} */
 	@Override
@@ -81,7 +81,7 @@ public final class Intent implements Entity {
 	 * Association : IntentText.
 	 * @return l'accesseur vers la propriété 'IntentText'
 	 */
-	public ListVAccessor<io.vertigo.chatbot.factory.domain.IntentText> intentText() {
+	public ListVAccessor<io.vertigo.chatbot.designer.domain.IntentText> intentText() {
 		return intentTextAccessor;
 	}
 	

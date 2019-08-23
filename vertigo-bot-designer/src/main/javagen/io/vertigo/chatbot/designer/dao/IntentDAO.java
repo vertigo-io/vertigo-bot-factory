@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.factory.dao;
+package io.vertigo.chatbot.designer.dao;
 
 import javax.inject.Inject;
 
@@ -6,7 +6,7 @@ import io.vertigo.dynamo.impl.store.util.DAO;
 import io.vertigo.dynamo.store.StoreManager;
 import io.vertigo.dynamo.store.StoreServices;
 import io.vertigo.dynamo.task.TaskManager;
-import io.vertigo.chatbot.factory.domain.Intent;
+import io.vertigo.chatbot.designer.domain.Intent;
 import io.vertigo.lang.Generated;
 
 /**

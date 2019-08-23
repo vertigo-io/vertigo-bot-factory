@@ -18,9 +18,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 */
 	public enum Definitions {
 		/** Objet de données Intent. */
-		Intent(io.vertigo.chatbot.factory.domain.Intent.class),
+		Intent(io.vertigo.chatbot.designer.domain.Intent.class),
 		/** Objet de données IntentText. */
-		IntentText(io.vertigo.chatbot.factory.domain.IntentText.class)		;
+		IntentText(io.vertigo.chatbot.designer.domain.IntentText.class)		;
 
 		private final Class<?> clazz;
 
@@ -40,7 +40,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de Intent.
 	 */
-	public enum IntentFields implements DtFieldName<io.vertigo.chatbot.factory.domain.Intent> {
+	public enum IntentFields implements DtFieldName<io.vertigo.chatbot.designer.domain.Intent> {
 		/** Propriété 'ID'. */
 		intId,
 		/** Propriété 'Titre'. */
@@ -49,7 +49,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de IntentText.
 	 */
-	public enum IntentTextFields implements DtFieldName<io.vertigo.chatbot.factory.domain.IntentText> {
+	public enum IntentTextFields implements DtFieldName<io.vertigo.chatbot.designer.domain.IntentText> {
 		/** Propriété 'ID'. */
 		ittId,
 		/** Propriété 'Text'. */

@@ -1,22 +1,4 @@
-package io.vertigo.chatbot.factory.domain 
-
-/* Formatteur de données par défaut */
-create Formatter FmtDefault {
-	className: "io.vertigo.dynamox.domain.formatter.FormatterDefault"
-}
-
-/* Domaines représentant les types de données utilisables dans les entités */
-create Domain DoId {
-	dataType: Long
-	formatter: FmtDefault
-	storeType: "NUMERIC"
-}
-
-create Domain DoLabel {
-	dataType:String
-	formatter: FmtDefault
-	storeType: "TEXT"
-}
+package io.vertigo.chatbot.designer.domain 
 
 create DtDefinition DtIntent {
 	id intId 		{domain: DoId 		label: "ID"}

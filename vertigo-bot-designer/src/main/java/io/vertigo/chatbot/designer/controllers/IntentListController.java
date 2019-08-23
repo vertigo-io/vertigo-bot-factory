@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.factory.controllers;
+package io.vertigo.chatbot.designer.controllers;
 
 import javax.inject.Inject;
 
@@ -6,8 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import io.vertigo.chatbot.factory.domain.Intent;
-import io.vertigo.chatbot.factory.services.ChatbotServices;
+import io.vertigo.chatbot.designer.domain.Intent;
+import io.vertigo.chatbot.designer.services.ChatbotServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;

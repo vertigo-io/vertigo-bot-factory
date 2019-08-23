@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.factory.webservices;
+package io.vertigo.chatbot.designer.webservices;
 
 import io.vertigo.vega.webservice.WebServices;
 
