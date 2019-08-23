@@ -13,12 +13,10 @@ import io.vertigo.chatbot.designer.domain.Intent;
 import io.vertigo.chatbot.designer.domain.IntentText;
 import io.vertigo.chatbot.designer.services.ChatbotServices;
 import io.vertigo.dynamo.domain.model.DtList;
-import io.vertigo.ui.core.BasicUiListModifiable;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
-import io.vertigo.vega.webservice.model.UiObject;
 
 @Controller
 @RequestMapping("/intent")
@@ -38,8 +36,8 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 
 		viewContext.publishDto(intentKey, intent);
 		viewContext.publishRef(newIntentTextKey, "");
-		viewContext.publishDtListModifiable(intentTextsKey, chatbotServices.getIntentTextList(intent));
-		viewContext.publishDtListModifiable(intentTextsToDeleteKey, new DtList<IntentText>(IntentText.class));
+		viewContext.publishDtList(intentTextsKey, chatbotServices.getIntentTextList(intent));
+		viewContext.publishDtList(intentTextsToDeleteKey, new DtList<IntentText>(IntentText.class));
 
 		toModeReadOnly();
 	}
@@ -47,6 +45,10 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext) {
 		viewContext.publishDto(intentKey, new Intent());
+		viewContext.publishRef(newIntentTextKey, "");
+		viewContext.publishDtList(intentTextsKey, new DtList<IntentText>(IntentText.class));
+		viewContext.publishDtList(intentTextsToDeleteKey, new DtList<IntentText>(IntentText.class));
+		
 		toModeCreate();
 	}
 
@@ -68,19 +70,19 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 	@PostMapping("/_removeText")
 	public ViewContext doRemoveText(final ViewContext viewContext,
 			@RequestParam("index") final int index,
-			@ViewAttribute("intentTextsToDelete") final DtList<IntentText> intentTextsToDelete) {
+			@ViewAttribute("intentTextsToDelete") final DtList<IntentText> intentTextsToDelete,
+			@ViewAttribute("intentTexts") final DtList<IntentText> intentTexts
+			) {
 		
 		// remove from UI list
-		final BasicUiListModifiable<IntentText> textes = viewContext.getUiListModifiable(intentTextsKey);
-		UiObject<IntentText> removedUi = textes.remove(index);
-		viewContext.markModifiedKeys(intentTextsKey);
+		IntentText removed = intentTexts.remove(index);
+		viewContext.publishDtList(intentTextsKey, intentTexts);
 
 		// keep track of deleted persisted intentText
-		IntentText removed = removedUi.getServerSideObject();
 		if (removed.getIttId() != null) {
 			intentTextsToDelete.add(removed);
 		}
-		viewContext.publishDtListModifiable(intentTextsToDeleteKey, intentTextsToDelete);
+		viewContext.publishDtList(intentTextsToDeleteKey, intentTextsToDelete);
 
 		return viewContext;
 	}
@@ -89,14 +91,14 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 	public ViewContext doAddText(final ViewContext viewContext,
 			@ViewAttribute("newIntentText") final String newIntentText,
 			@ViewAttribute("intent") final Intent intent,
-			@ViewAttribute("intentTexts") final DtList<IntentText> intentTexts) {
+			@ViewAttribute("intentTexts") final DtList<IntentText> intentTexts
+			) {
 
 		IntentText newText = new IntentText();
-		newText.setIntId(intent.getIntId());
 		newText.setText(newIntentText);
 
 		intentTexts.add(newText);
-		viewContext.publishDtListModifiable(intentTextsKey, intentTexts);
+		viewContext.publishDtList(intentTextsKey, intentTexts);
 
 		viewContext.publishRef(newIntentTextKey, "");
 

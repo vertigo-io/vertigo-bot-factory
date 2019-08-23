@@ -49,7 +49,7 @@ public class ChatbotServices implements Component {
 		// save intent textes
 		intentTexts.stream()
 			.filter(itt -> itt.getIttId() == null) // no edit, only new elements
-//			.peek(itt -> itt.setIntId(savedIntent.getIntId()))
+			.peek(itt -> itt.setIntId(savedIntent.getIntId()))
 			.forEach(itt -> intentTextDAO.save(itt));
 		
 		intentTextsToDelete.stream()
