@@ -13,6 +13,7 @@ import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.domain.model.DtListState;
 import io.vertigo.dynamo.domain.model.ListVAccessor;
 import io.vertigo.lang.Assertion;
+import io.vertigo.lang.VUserException;
 
 @Transactional
 public class ChatbotServices implements Component {
@@ -38,12 +39,19 @@ public class ChatbotServices implements Component {
 		Assertion.checkNotNull(intentTexts);
 		Assertion.checkNotNull(intentTextsToDelete);
 		// ---
+		
+		if (intentTexts.isEmpty()) {
+			throw new VUserException("Il est nécessaire d'avoir au moins 1 texte d'exemple");
+		}
+		
 		final Intent savedIntent = intentDAO.save(intent);
 		
 		// save intent textes
 		intentTexts.stream()
 			.filter(itt -> itt.getIttId() == null) // no edit, only new elements
+//			.peek(itt -> itt.setIntId(savedIntent.getIntId()))
 			.forEach(itt -> intentTextDAO.save(itt));
+		
 		intentTextsToDelete.stream()
 			.forEach(itt -> intentTextDAO.delete(itt.getIttId()));
 		

@@ -1,54 +1,53 @@
 <!DOCTYPE html>
 <html
 	xmlns:th="http://www.thymeleaf.org" 
-	xmlns:vu="http://www.morphbit.com/thymeleaf/component">
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/parentLayout}"
+	>
+	
 	<head>
-		<vu:head-meta/>
-		<meta charset="utf-8"/>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>Intent detail</title>
 	</head>
 	
-	<body class="mat desktop no-touch platform-mat">
-		<vu:include-data object="intentTexts" field="text" />
-		<vu:include-data-primitive key="newIntentText" />
-		<vu:page>
-			<div id="page" v-cloak>
-				<vu:form>
-					<div>
-						<vu:button-link th:if="${model.modeEdit}"  url="@{/intent/} + ${model.intent.intId}" :round size="lg" color="primary" icon="fas fa-ban" :flat ariaLabel="Cancel"   />
-						<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" :round size="lg" color="primary" icon="edit" ariaLabel="Edit" />
-					</div>
-					<div>
-						<vu:block title="Détail de l\'intent">
-							<vu:text-field-read object="intent" field="intId" />
-							<vu:text-field object="intent" field="title" />
-						</vu:block>
-						
-						<vu:block title="Phrases d\'entrainement">
-							<div th:if="${!model.modeReadOnly}">
-								<q-input v-model="vueData.newIntentText" th:@keydown.enter.prevent="|httpPostAjax('@{_addText}', {'vContext[newIntentText]':vueData.newIntentText})|"
-									placeholder="Ajouter une expression"
-									:before="[{icon: 'format_quote'}]">
-								</q-input>
-							</div>
-							<div>
-								<div v-for="(intentText, index) in vueData.intentTexts.slice().reverse()">
-									{{intentText.text}}
-									<q-btn th:if="${model.modeEdit}" th:@click="|httpPostAjax('@{_removeText}', {'index':vueData.intentTexts.length - 1 - index})|"
-											color="primary" dense size="md" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
-								</div>
-							</div>							
-						</vu:block>
-						
-						<div>
-							<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" />
-							<vu:button-link th:if="${model.modeReadOnly}" url="@{/intents/}" label="Go to intents" size="lg" color="secondary" />
+	<body>
+		<section layout:fragment="page-container">
+			<vu:form>
+				<vu:messages/>
+				
+				<vu:include-data object="intentTexts" field="text" />
+				<vu:include-data-primitive key="newIntentText" />
+				<div>
+					<vu:button-link th:if="${model.modeEdit}"  url="@{/intent/} + ${model.intent.intId}" :round size="lg" color="primary" icon="fas fa-ban" :flat ariaLabel="Cancel"   />
+					<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" :round size="lg" color="primary" icon="edit" ariaLabel="Edit" />
+				</div>
+				<div>
+					<vu:block title="Détail de l\'intent">
+						<vu:text-field object="intent" field="title" />
+					</vu:block>
+					
+					<vu:block title="Phrases d\'entrainement">
+						<div th:if="${!model.modeReadOnly}">
+							<q-input v-model="vueData.newIntentText" th:@keydown.enter.prevent="|httpPostAjax('@{_addText}', {'vContext[newIntentText]':vueData.newIntentText})|"
+								placeholder="Ajouter une expression"
+								:before="[{icon: 'format_quote'}]">
+							</q-input>
 						</div>
+						<div>
+							<div v-for="(intentText, index) in vueData.intentTexts.slice().reverse()">
+								{{intentText.text}}
+								<q-btn th:if="${!model.modeReadOnly}" th:@click="|httpPostAjax('@{_removeText}', {'index':vueData.intentTexts.length - 1 - index})|"
+										color="primary" dense size="md" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
+							</div>
+						</div>							
+					</vu:block>
+					
+					<div>
+						<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" />
+						<vu:button-link th:if="${model.modeReadOnly}" url="@{/intents/}" label="Go to intents" size="lg" color="secondary" />
 					</div>
-				</vu:form>
-			</div>
-		</vu:page>
+				</div>
+			</vu:form>
+		</section>
 	</body>
 </html>
