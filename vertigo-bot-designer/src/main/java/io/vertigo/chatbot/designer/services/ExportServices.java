@@ -1,11 +1,16 @@
 package io.vertigo.chatbot.designer.services;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.designer.dao.IntentDAO;
 import io.vertigo.chatbot.designer.dao.IntentTrainingSentenceDAO;
 import io.vertigo.chatbot.designer.dao.UtterTextDAO;
 import io.vertigo.chatbot.designer.domain.Intent;
+import io.vertigo.chatbot.designer.domain.IntentExport;
 import io.vertigo.chatbot.designer.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.designer.domain.UtterText;
 import io.vertigo.commons.transaction.Transactional;
@@ -14,11 +19,12 @@ import io.vertigo.dynamo.criteria.Criterions;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.domain.model.DtListState;
 import io.vertigo.dynamo.domain.model.ListVAccessor;
+import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VUserException;
 
 @Transactional
-public class ChatbotServices implements Component {
+public class ExportServices implements Component {
 
 	@Inject
 	private IntentDAO intentDAO;
@@ -29,10 +35,34 @@ public class ChatbotServices implements Component {
 	@Inject
 	private UtterTextDAO utterTextDAO;
 
-	public Intent getIntentById(final Long movId) {
-		Assertion.checkNotNull(movId);
-		// ---
-		return intentDAO.get(movId);
+	public DtList<IntentExport> exportSmallTalk() {
+		DtList<Intent> intents = intentDAO.exportSmallTalk();
+		
+		final List<Long> intentIds = intents.stream()
+				.map(Intent::getIntId)
+				.collect(Collectors.toList());
+		
+		final Map<Long, DtList<IntentTrainingSentence>> trainingSentencesMap = intentTrainingSentenceDAO.exportSmallTalkRelativeTrainingSentence(intentIds)
+				.stream()
+				.collect(Collectors.groupingBy(IntentTrainingSentence::getIntId,
+											   VCollectors.toDtList(IntentTrainingSentence.class)));
+		
+		final Map<Long, DtList<UtterText>> utterTextsMap = utterTextDAO.exportSmallTalkRelativeUtter(intentIds)
+				.stream()
+				.collect(Collectors.groupingBy(UtterText::getIntId,
+						   					   VCollectors.toDtList(UtterText.class)));
+		
+		final DtList<IntentExport> retour = new DtList<>(IntentExport.class);
+		for (final Intent intent : intents) {
+			final IntentExport newExport = new IntentExport();
+			newExport.setIntent(intent);
+			newExport.setIntentTrainingSentences(trainingSentencesMap.get(intent.getIntId()));
+			newExport.setUtterTexts(utterTextsMap.get(intent.getIntId()));
+			
+			retour.add(newExport);
+		}
+		
+		return retour;
 	}
 
 	public DtList<Intent> getAllIntents() {

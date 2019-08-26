@@ -7,13 +7,25 @@ create Formatter FmtDefault {
 
 /* Domaines représentant les types de données utilisables dans les entités */
 create Domain DoId {
-	dataType: Long
+	dataType : Long
 	formatter: FmtDefault
 	storeType: "NUMERIC"
 }
 
+create Domain DoLongs {  
+    dataType : Long
+    multiple : "true"
+    formatter : FmtDefault
+}
+
 create Domain DoLabel {
-	dataType:String
+	dataType : String
 	formatter: FmtDefault
 	storeType: "TEXT"
+}
+
+create Domain DoYesNo {
+	dataType : Boolean
+	formatter: FmtDefault
+	storeType: "bool"
 }

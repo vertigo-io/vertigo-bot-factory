@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/parentLayout}"
+	>
+	
+	<head>
+		<title>Model List</title>
+	</head>
+	
+	<body>
+		<section layout:fragment="page-container">
+			<vu:form>
+				<q-btn color="primary" icon="save" size="lg" label="Train"
+						th:@click="|httpPostAjax('@{_train}', {})|" />
+			</vu:form>
+		</section>
+	</body>
+</html>

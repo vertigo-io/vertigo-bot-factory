@@ -28,7 +28,7 @@ public class Studio {
 				.addModule(ModuleConfig.builder("ressources") // Ajout des ressources pour la génération des classes
 																// Java
 						.addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
-								.addDefinitionResource("kpr", "io/vertigo/chatbot/designer/run.kpr").build())
+								.addDefinitionResource("kpr", "io/vertigo/chatbot/designer/gen.kpr").build())
 						.build())
 				// ---StudioFeature
 				.addModule(new StudioFeatures() // Configuration du moteur vertigo-Studio

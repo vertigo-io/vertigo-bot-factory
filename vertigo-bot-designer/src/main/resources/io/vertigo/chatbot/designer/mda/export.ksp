@@ -1,0 +1,7 @@
+package io.vertigo.chatbot.designer.domain 
+
+create DtDefinition DtIntentExport {
+	field intent 					{domain: DoDtIntentDto 					label: "intent" 					required: "true"}
+	field intentTrainingSentences 	{domain: DoDtIntentTrainingSentenceDtc 	label: "intentTrainingSentences" 	required: "true"}
+	field utterTexts		 		{domain: DoDtUtterTextDtc 				label: "utterTexts" 				required: "true"}
+}

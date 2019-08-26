@@ -45,11 +45,18 @@
 		      
 		      <q-list link :class="{'dense-list-header':!componentStates.navDrawer.mini}" style="height:100%">
 		      <nav class="text-no-wrap">
+		      
 		      	<q-list-header>Home</q-list-header>
+		      	
 		        <q-item tag="a" th:href="@{/intents/}">
 		          <q-item-main label="Intents"></q-item-main>
 		        </q-item>
+		        <q-item tag="a" th:href="@{/models/}">
+		          <q-item-main label="Models"></q-item-main>
+		        </q-item>
 		        <q-item-separator></q-item-separator>
+		        
+		        
 		        <q-item v-if="componentStates.navDrawer.mini"
 						@click.native="componentStates.navDrawer.mini = false; $cookies.set('miniMenu', false)" title="Expand menu">
 					<q-item-side icon="arrow_right"></q-item-side>

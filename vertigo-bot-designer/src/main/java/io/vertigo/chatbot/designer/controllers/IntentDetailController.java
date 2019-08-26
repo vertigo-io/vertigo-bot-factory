@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.designer.domain.Intent;
-import io.vertigo.chatbot.designer.domain.IntentText;
+import io.vertigo.chatbot.designer.domain.IntentTrainingSentence;
+import io.vertigo.chatbot.designer.domain.UtterText;
 import io.vertigo.chatbot.designer.services.ChatbotServices;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.ui.core.ViewContext;
@@ -23,9 +24,14 @@ import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 public class IntentDetailController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<Intent> intentKey = ViewContextKey.of("intent");
-	private static final ViewContextKey<String> newIntentTextKey = ViewContextKey.of("newIntentText");
-	private static final ViewContextKey<IntentText> intentTextsKey = ViewContextKey.of("intentTexts");
-	private static final ViewContextKey<IntentText> intentTextsToDeleteKey = ViewContextKey.of("intentTextsToDelete");
+	
+	private static final ViewContextKey<String> newIntentTrainingSentenceKey = ViewContextKey.of("newIntentTrainingSentence");
+	private static final ViewContextKey<IntentTrainingSentence> intentTrainingSentencesKey = ViewContextKey.of("intentTrainingSentences");
+	private static final ViewContextKey<IntentTrainingSentence> intentTrainingSentencesToDeleteKey = ViewContextKey.of("intentTrainingSentencesToDelete");
+	
+	private static final ViewContextKey<String> newUtterTextKey = ViewContextKey.of("newUtterText");
+	private static final ViewContextKey<UtterText> utterTextsKey = ViewContextKey.of("utterTexts");
+	private static final ViewContextKey<UtterText> utterTextsToDeleteKey = ViewContextKey.of("utterTextsToDelete");
 
 	@Inject
 	private ChatbotServices chatbotServices;
@@ -35,19 +41,29 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 		final Intent intent = chatbotServices.getIntentById(intId);
 
 		viewContext.publishDto(intentKey, intent);
-		viewContext.publishRef(newIntentTextKey, "");
-		viewContext.publishDtList(intentTextsKey, chatbotServices.getIntentTextList(intent));
-		viewContext.publishDtList(intentTextsToDeleteKey, new DtList<IntentText>(IntentText.class));
+		
+		viewContext.publishRef(newIntentTrainingSentenceKey, "");
+		viewContext.publishDtList(intentTrainingSentencesKey, chatbotServices.getIntentTrainingSentenceList(intent));
+		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
+		
+		viewContext.publishRef(newUtterTextKey, "");
+		viewContext.publishDtList(utterTextsKey, chatbotServices.getIntentUtterTextList(intent));
+		viewContext.publishDtList(utterTextsToDeleteKey, new DtList<UtterText>(UtterText.class));
 
 		toModeReadOnly();
 	}
 
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext) {
-		viewContext.publishDto(intentKey, new Intent());
-		viewContext.publishRef(newIntentTextKey, "");
-		viewContext.publishDtList(intentTextsKey, new DtList<IntentText>(IntentText.class));
-		viewContext.publishDtList(intentTextsToDeleteKey, new DtList<IntentText>(IntentText.class));
+		viewContext.publishDto(intentKey, chatbotServices.getNewIntent());
+		
+		viewContext.publishRef(newIntentTrainingSentenceKey, "");
+		viewContext.publishDtList(intentTrainingSentencesKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
+		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
+		
+		viewContext.publishRef(newUtterTextKey, "");
+		viewContext.publishDtList(utterTextsKey, new DtList<UtterText>(UtterText.class));
+		viewContext.publishDtList(utterTextsToDeleteKey, new DtList<UtterText>(UtterText.class));
 		
 		toModeCreate();
 	}
@@ -59,49 +75,89 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_save")
 	public String doSave(@ViewAttribute("intent") final Intent intent,
-			@ViewAttribute("intentTexts") final DtList<IntentText> intentTexts,
-			@ViewAttribute("intentTextsToDelete") final DtList<IntentText> intentTextsToDelete
+			@ViewAttribute("intentTrainingSentences") final DtList<IntentTrainingSentence> intentTrainingSentences,
+			@ViewAttribute("intentTrainingSentencesToDelete") final DtList<IntentTrainingSentence> intentTrainingSentencesToDelete,
+			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts,
+			@ViewAttribute("utterTextsToDelete") final DtList<UtterText> utterTextsToDelete
 			) {
 
-		chatbotServices.save(intent, intentTexts, intentTextsToDelete);
+		chatbotServices.save(intent, intentTrainingSentences, intentTrainingSentencesToDelete, utterTexts, utterTextsToDelete);
 		return "redirect:/intent/" + intent.getIntId();
 	}
 
-	@PostMapping("/_removeText")
-	public ViewContext doRemoveText(final ViewContext viewContext,
-			@RequestParam("index") final int index,
-			@ViewAttribute("intentTextsToDelete") final DtList<IntentText> intentTextsToDelete,
-			@ViewAttribute("intentTexts") final DtList<IntentText> intentTexts
+	@PostMapping("/_addTrainingSentence")
+	public ViewContext doAddTrainingSentence(final ViewContext viewContext,
+			@ViewAttribute("newIntentTrainingSentence") final String newIntentTrainingSentence,
+			@ViewAttribute("intent") final Intent intent,
+			@ViewAttribute("intentTrainingSentences") final DtList<IntentTrainingSentence> intentTrainingSentences
 			) {
-		
-		// remove from UI list
-		IntentText removed = intentTexts.remove(index);
-		viewContext.publishDtList(intentTextsKey, intentTexts);
 
-		// keep track of deleted persisted intentText
-		if (removed.getIttId() != null) {
-			intentTextsToDelete.add(removed);
-		}
-		viewContext.publishDtList(intentTextsToDeleteKey, intentTextsToDelete);
+		IntentTrainingSentence newText = new IntentTrainingSentence();
+		newText.setText(newIntentTrainingSentence);
+
+		intentTrainingSentences.add(newText);
+		viewContext.publishDtList(intentTrainingSentencesKey, intentTrainingSentences);
+
+		viewContext.publishRef(newIntentTrainingSentenceKey, "");
 
 		return viewContext;
 	}
 
-	@PostMapping("/_addText")
-	public ViewContext doAddText(final ViewContext viewContext,
-			@ViewAttribute("newIntentText") final String newIntentText,
+	@PostMapping("/_removeTrainingSentence")
+	public ViewContext doRemoveTrainingSentence(final ViewContext viewContext,
+			@RequestParam("index") final int index,
+			@ViewAttribute("intentTrainingSentencesToDelete") final DtList<IntentTrainingSentence> intentTrainingSentencesToDelete,
+			@ViewAttribute("intentTrainingSentences") final DtList<IntentTrainingSentence> intentTrainingSentences
+			) {
+		
+		// remove from list
+		IntentTrainingSentence removed = intentTrainingSentences.remove(index);
+		viewContext.publishDtList(intentTrainingSentencesKey, intentTrainingSentences);
+	
+		// keep track of deleted persisted IntentTrainingSentence
+		if (removed.getItsId() != null) {
+			intentTrainingSentencesToDelete.add(removed);
+		}
+		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, intentTrainingSentencesToDelete);
+	
+		return viewContext;
+	}
+	
+	@PostMapping("/_addUtterText")
+	public ViewContext doAddUtterText(final ViewContext viewContext,
+			@ViewAttribute("newUtterText") final String newUtterText,
 			@ViewAttribute("intent") final Intent intent,
-			@ViewAttribute("intentTexts") final DtList<IntentText> intentTexts
+			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts
 			) {
 
-		IntentText newText = new IntentText();
-		newText.setText(newIntentText);
+		UtterText newText = new UtterText();
+		newText.setText(newUtterText);
 
-		intentTexts.add(newText);
-		viewContext.publishDtList(intentTextsKey, intentTexts);
+		utterTexts.add(newText);
+		viewContext.publishDtList(utterTextsKey, utterTexts);
 
-		viewContext.publishRef(newIntentTextKey, "");
+		viewContext.publishRef(newUtterTextKey, "");
 
+		return viewContext;
+	}
+
+	@PostMapping("/_removeUtterText")
+	public ViewContext doRemoveUtterText(final ViewContext viewContext,
+			@RequestParam("index") final int index,
+			@ViewAttribute("utterTextsToDelete") final DtList<UtterText> utterTextsToDelete,
+			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts
+			) {
+		
+		// remove from list
+		UtterText removed = utterTexts.remove(index);
+		viewContext.publishDtList(utterTextsKey, utterTexts);
+	
+		// keep track of deleted persisted UtterText
+		if (removed.getUtxId() != null) {
+			utterTextsToDelete.add(removed);
+		}
+		viewContext.publishDtList(utterTextsToDeleteKey, utterTextsToDelete);
+	
 		return viewContext;
 	}
 }

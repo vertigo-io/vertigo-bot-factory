@@ -17,21 +17,37 @@ public final class Intent implements Entity {
 
 	private Long intId;
 	private String title;
+	private Boolean isSmallTalk;
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
-			name = "AIntentIntentText",
+			name = "AIntentIntentTrainingSentence",
 			fkFieldName = "intId",
 			primaryDtDefinitionName = "DtIntent",
 			primaryIsNavigable = false,
 			primaryRole = "Intent",
 			primaryLabel = "Intent",
 			primaryMultiplicity = "1..1",
-			foreignDtDefinitionName = "DtIntentText",
+			foreignDtDefinitionName = "DtIntentTrainingSentence",
 			foreignIsNavigable = true,
-			foreignRole = "IntentText",
-			foreignLabel = "IntentText",
+			foreignRole = "IntentTrainingSentence",
+			foreignLabel = "IntentTrainingSentence",
 			foreignMultiplicity = "0..*")
-	private final ListVAccessor<io.vertigo.chatbot.designer.domain.IntentText> intentTextAccessor = new ListVAccessor<>(this, "AIntentIntentText", "IntentText");
+	private final ListVAccessor<io.vertigo.chatbot.designer.domain.IntentTrainingSentence> intentTrainingSentenceAccessor = new ListVAccessor<>(this, "AIntentIntentTrainingSentence", "IntentTrainingSentence");
+
+	@io.vertigo.dynamo.domain.stereotype.Association(
+			name = "AIntentUtterText",
+			fkFieldName = "intId",
+			primaryDtDefinitionName = "DtIntent",
+			primaryIsNavigable = false,
+			primaryRole = "Intent",
+			primaryLabel = "Intent",
+			primaryMultiplicity = "0..1",
+			foreignDtDefinitionName = "DtUtterText",
+			foreignIsNavigable = true,
+			foreignRole = "UtterText",
+			foreignLabel = "UtterText",
+			foreignMultiplicity = "0..*")
+	private final ListVAccessor<io.vertigo.chatbot.designer.domain.UtterText> utterTextAccessor = new ListVAccessor<>(this, "AIntentUtterText", "UtterText");
 
 	/** {@inheritDoc} */
 	@Override
@@ -76,13 +92,40 @@ public final class Intent implements Entity {
 	public void setTitle(final String title) {
 		this.title = title;
 	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'SmallTalk'.
+	 * @return Boolean isSmallTalk <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoYesNo", required = true, label = "SmallTalk")
+	public Boolean getIsSmallTalk() {
+		return isSmallTalk;
+	}
 
 	/**
-	 * Association : IntentText.
-	 * @return l'accesseur vers la propriété 'IntentText'
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'SmallTalk'.
+	 * @param isSmallTalk Boolean <b>Obligatoire</b>
 	 */
-	public ListVAccessor<io.vertigo.chatbot.designer.domain.IntentText> intentText() {
-		return intentTextAccessor;
+	public void setIsSmallTalk(final Boolean isSmallTalk) {
+		this.isSmallTalk = isSmallTalk;
+	}
+
+	/**
+	 * Association : IntentTrainingSentence.
+	 * @return l'accesseur vers la propriété 'IntentTrainingSentence'
+	 */
+	public ListVAccessor<io.vertigo.chatbot.designer.domain.IntentTrainingSentence> intentTrainingSentence() {
+		return intentTrainingSentenceAccessor;
+	}
+
+	/**
+	 * Association : UtterText.
+	 * @return l'accesseur vers la propriété 'UtterText'
+	 */
+	public ListVAccessor<io.vertigo.chatbot.designer.domain.UtterText> utterText() {
+		return utterTextAccessor;
 	}
 	
 	/** {@inheritDoc} */

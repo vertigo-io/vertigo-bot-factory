@@ -16,6 +16,7 @@ public class ChatbotDesignerFeatures extends ModuleDiscoveryFeatures<ChatbotDesi
         getModuleConfigBuilder()
                 .addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
                         .addDefinitionResource("kpr", "io/vertigo/chatbot/designer/run.kpr") // chargement de notre modèle de donnée
+                        .addDefinitionResource("classes", "io.vertigo.chatbot.domain.DtDefinitions")
                         .build());
 
     }

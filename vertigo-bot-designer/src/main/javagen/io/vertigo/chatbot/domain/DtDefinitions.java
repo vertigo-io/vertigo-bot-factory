@@ -17,10 +17,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des DtDefinitions.
 	 */
 	public enum Definitions {
+		/** Objet de données Action. */
+		Action(io.vertigo.chatbot.designer.domain.Action.class),
 		/** Objet de données Intent. */
 		Intent(io.vertigo.chatbot.designer.domain.Intent.class),
-		/** Objet de données IntentText. */
-		IntentText(io.vertigo.chatbot.designer.domain.IntentText.class)		;
+		/** Objet de données IntentExport. */
+		IntentExport(io.vertigo.chatbot.designer.domain.IntentExport.class),
+		/** Objet de données IntentTrainingSentence. */
+		IntentTrainingSentence(io.vertigo.chatbot.designer.domain.IntentTrainingSentence.class),
+		/** Objet de données UtterText. */
+		UtterText(io.vertigo.chatbot.designer.domain.UtterText.class)		;
 
 		private final Class<?> clazz;
 
@@ -38,24 +44,59 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	}
 
 	/**
+	 * Enumération des champs de Action.
+	 */
+	public enum ActionFields implements DtFieldName<io.vertigo.chatbot.designer.domain.Action> {
+		/** Propriété 'ID'. */
+		actId,
+		/** Propriété 'Text'. */
+		title	}
+
+	/**
 	 * Enumération des champs de Intent.
 	 */
 	public enum IntentFields implements DtFieldName<io.vertigo.chatbot.designer.domain.Intent> {
 		/** Propriété 'ID'. */
 		intId,
 		/** Propriété 'Titre'. */
-		title	}
+		title,
+		/** Propriété 'SmallTalk'. */
+		isSmallTalk	}
 
 	/**
-	 * Enumération des champs de IntentText.
+	 * Enumération des champs de IntentExport.
 	 */
-	public enum IntentTextFields implements DtFieldName<io.vertigo.chatbot.designer.domain.IntentText> {
+	public enum IntentExportFields implements DtFieldName<io.vertigo.chatbot.designer.domain.IntentExport> {
+		/** Propriété 'intent'. */
+		intent,
+		/** Propriété 'intentTrainingSentences'. */
+		intentTrainingSentences,
+		/** Propriété 'utterTexts'. */
+		utterTexts	}
+
+	/**
+	 * Enumération des champs de IntentTrainingSentence.
+	 */
+	public enum IntentTrainingSentenceFields implements DtFieldName<io.vertigo.chatbot.designer.domain.IntentTrainingSentence> {
 		/** Propriété 'ID'. */
-		ittId,
+		itsId,
 		/** Propriété 'Text'. */
 		text,
 		/** Propriété 'Intent'. */
 		intId	}
+
+	/**
+	 * Enumération des champs de UtterText.
+	 */
+	public enum UtterTextFields implements DtFieldName<io.vertigo.chatbot.designer.domain.UtterText> {
+		/** Propriété 'ID'. */
+		utxId,
+		/** Propriété 'Text'. */
+		text,
+		/** Propriété 'Intent'. */
+		intId,
+		/** Propriété 'Action'. */
+		actId	}
 
 	/** {@inheritDoc} */
 	@Override

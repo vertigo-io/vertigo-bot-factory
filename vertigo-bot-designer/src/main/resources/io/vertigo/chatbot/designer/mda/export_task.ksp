@@ -1,0 +1,38 @@
+package io.vertigo.chatbot.designer.domain 
+
+create Task TkExportSmallTalk {  
+    className : "io.vertigo.dynamox.task.TaskEngineSelect"
+    request : "
+            select 
+            	*
+			from intent int
+			where int.is_small_talk = true
+			order by int.int_id asc
+			limit 500
+             "
+	attribute intents     {domain : DoDtIntentDtc    required:"true"  inOut :"out"}
+}
+
+create Task TkExportSmallTalkRelativeTrainingSentence {  
+    className : "io.vertigo.dynamox.task.TaskEngineSelect"
+    request : "
+            select 
+            	*
+			from intent_training_sentence its
+			where its.int_id in (#intentIds.rownum#)
+             "
+	attribute intentIds				{domain : DoLongs,							required:"true", inOut :"in",} 
+	attribute trainingSentences 	{domain : DoDtIntentTrainingSentenceDtc 	required:"true"  inOut :"out"}
+}
+
+create Task TkExportSmallTalkRelativeUtter {  
+    className : "io.vertigo.dynamox.task.TaskEngineSelect"
+    request : "
+            select 
+            	*
+			from utter_text utx
+			where utx.int_id in (#intentIds.rownum#)
+             "
+	attribute intentIds		{domain : DoLongs,			required:"true", inOut :"in",} 
+	attribute utterTexts 	{domain : DoDtUtterTextDtc 	required:"true"  inOut :"out"}
+}
