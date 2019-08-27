@@ -1,0 +1,64 @@
+package io.vertigo.chatbot.commons.domain 
+
+create DtDefinition DtIntent {
+	id    intId 		{domain: DoId 		label: "ID"}
+	field title 		{domain: DoLabel 	label: "Titre" 			required: "true"}
+	field isSmallTalk 	{domain: DoYesNo 	label: "SmallTalk" 		required: "true"}
+}
+
+create DtDefinition DtIntentTrainingSentence {
+	id    itsId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoLabel 	label: "Text" required: "true"}
+}
+
+create DtDefinition DtAction {
+	id    actId 	{domain: DoId 		label: "ID"}
+	field title 	{domain: DoLabel 	label: "Text" required: "true"}
+}
+
+create DtDefinition DtUtterText {
+	id    utxId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoLabel 	label: "Text" required: "true"}
+}
+
+create Association AIntentIntentTrainingSentence {
+	fkFieldName : "intId"
+    
+ 	dtDefinitionA : DtIntentTrainingSentence
+	dtDefinitionB : DtIntent
+	
+	multiplicityA : "0..*"
+	multiplicityB : "1..1"
+	navigabilityA : "true"
+	navigabilityB : "false" /* pas pris en compte ! */
+	
+	labelB : "Intent"
+}
+
+create Association AIntentUtterText {
+	fkFieldName : "intId"
+    
+ 	dtDefinitionA : DtUtterText
+	dtDefinitionB : DtIntent
+	
+	multiplicityA : "0..*"
+	multiplicityB : "0..1"
+	navigabilityA : "true"
+	navigabilityB : "false" /* pas pris en compte ! */
+	
+	labelB : "Intent"
+}
+
+create Association AActionUtterText {
+	fkFieldName : "actId"
+    
+ 	dtDefinitionA : DtUtterText
+	dtDefinitionB : DtAction
+	
+	multiplicityA : "0..*"
+	multiplicityB : "0..1"
+	navigabilityA : "true"
+	navigabilityB : "false" /* pas pris en compte ! */
+	
+	labelB : "Action"
+}

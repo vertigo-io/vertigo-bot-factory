@@ -19,4 +19,5 @@ modules:
       - webservices.apiPrefix:
           apiPrefix: /api
   
+  io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
   io.vertigo.chatbot.executor.ChatbotExecutorFeatures: # utilisation de notre module métier

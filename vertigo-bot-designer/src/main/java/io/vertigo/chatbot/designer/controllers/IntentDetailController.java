@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import io.vertigo.chatbot.designer.domain.Intent;
-import io.vertigo.chatbot.designer.domain.IntentTrainingSentence;
-import io.vertigo.chatbot.designer.domain.UtterText;
+import io.vertigo.chatbot.commons.domain.Intent;
+import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
+import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.services.ChatbotServices;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.ui.core.ViewContext;

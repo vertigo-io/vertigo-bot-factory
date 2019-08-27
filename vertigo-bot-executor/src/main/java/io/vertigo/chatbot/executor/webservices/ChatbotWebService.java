@@ -12,7 +12,9 @@ import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import io.vertigo.chatbot.commons.domain.IntentExport;
 import io.vertigo.chatbot.executor.services.ChatbotServices;
+import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.AnonymousAccessAllowed;
@@ -28,10 +30,13 @@ public class ChatbotWebService implements WebServices {
 	private ChatbotServices chatbotServices;
 	
 	@AnonymousAccessAllowed
-	@GET("/train")
+	@POST("/train")
 	@SessionLess
-	public void train() {
-		chatbotServices.trainModel();
+	public boolean train(DtList<IntentExport> data) {
+		System.out.println(data);
+//		chatbotServices.trainModel();
+		
+		return true;
 	}
 	
 	@AnonymousAccessAllowed
