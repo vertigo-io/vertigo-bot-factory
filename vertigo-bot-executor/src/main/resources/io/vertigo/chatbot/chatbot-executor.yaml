@@ -20,4 +20,4 @@ modules:
           apiPrefix: /api
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
-  io.vertigo.chatbot.executor.ChatbotExecutorFeatures: # utilisation de notre module métier
+  io.vertigo.chatbot.executor.rasa.RasaExecutorFeatures: # utilisation de notre module métier

@@ -25,17 +25,18 @@ public class Studio {
 				.endBoot() // Le démarrage de vertigo-studio est terminé
 				.addModule(new CommonsFeatures().build()) // Configuration des fonctions communes de Vertigo
 				.addModule(new DynamoFeatures().build()) // Configuration des fonctions d'accès aux données
-				.addModule(new ChatbotCommonsFeatures().build())
+//				.addModule(new ChatbotCommonsFeatures().build())
 				// ----Definitions
 				.addModule(ModuleConfig.builder("ressources") // Ajout des ressources pour la génération des classes
 																// Java
 						.addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
+								.addDefinitionResource("kpr", "io/vertigo/chatbot/commons/gen.kpr") // chargement des ksp communs
 								.addDefinitionResource("kpr", "io/vertigo/chatbot/designer/gen.kpr").build())
 						.build())
 				// ---StudioFeature
 				.addModule(new StudioFeatures() // Configuration du moteur vertigo-Studio
 						.withMasterData().withMda(Param.of("projectPackageName", "io.vertigo.chatbot"))
-						.withTaskGenerator()
+						.withJavaDomainGenerator(Param.of("generateDtResources", "false")).withTaskGenerator()
 						.withSqlDomainGenerator(Param.of("targetSubDir", "javagen/sqlgen"), Param.of("baseCible", "H2"),
 								Param.of("generateDrop", "true"), Param.of("generateMasterData", "true"))
 						.build())

@@ -17,7 +17,18 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des DtDefinitions.
 	 */
 	public enum Definitions {
-		;
+		/** Objet de données Action. */
+		Action(io.vertigo.chatbot.commons.domain.Action.class),
+		/** Objet de données Intent. */
+		Intent(io.vertigo.chatbot.commons.domain.Intent.class),
+		/** Objet de données IntentTrainingSentence. */
+		IntentTrainingSentence(io.vertigo.chatbot.commons.domain.IntentTrainingSentence.class),
+		/** Objet de données RasaConfig. */
+		RasaConfig(io.vertigo.chatbot.executor.domain.RasaConfig.class),
+		/** Objet de données SmallTalkExport. */
+		SmallTalkExport(io.vertigo.chatbot.commons.domain.SmallTalkExport.class),
+		/** Objet de données UtterText. */
+		UtterText(io.vertigo.chatbot.commons.domain.UtterText.class)		;
 
 		private final Class<?> clazz;
 
@@ -33,6 +44,72 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 			return clazz;
 		}
 	}
+
+	/**
+	 * Enumération des champs de Action.
+	 */
+	public enum ActionFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Action> {
+		/** Propriété 'ID'. */
+		actId,
+		/** Propriété 'Text'. */
+		title	}
+
+	/**
+	 * Enumération des champs de Intent.
+	 */
+	public enum IntentFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Intent> {
+		/** Propriété 'ID'. */
+		intId,
+		/** Propriété 'Titre'. */
+		title,
+		/** Propriété 'SmallTalk'. */
+		isSmallTalk	}
+
+	/**
+	 * Enumération des champs de IntentTrainingSentence.
+	 */
+	public enum IntentTrainingSentenceFields implements DtFieldName<io.vertigo.chatbot.commons.domain.IntentTrainingSentence> {
+		/** Propriété 'ID'. */
+		itsId,
+		/** Propriété 'Text'. */
+		text,
+		/** Propriété 'Intent'. */
+		intId	}
+
+	/**
+	 * Enumération des champs de RasaConfig.
+	 */
+	public enum RasaConfigFields implements DtFieldName<io.vertigo.chatbot.executor.domain.RasaConfig> {
+		/** Propriété 'domain'. */
+		domain,
+		/** Propriété 'stories'. */
+		stories,
+		/** Propriété 'nlu'. */
+		nlu	}
+
+	/**
+	 * Enumération des champs de SmallTalkExport.
+	 */
+	public enum SmallTalkExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.SmallTalkExport> {
+		/** Propriété 'intent'. */
+		intent,
+		/** Propriété 'intentTrainingSentences'. */
+		intentTrainingSentences,
+		/** Propriété 'utterTexts'. */
+		utterTexts	}
+
+	/**
+	 * Enumération des champs de UtterText.
+	 */
+	public enum UtterTextFields implements DtFieldName<io.vertigo.chatbot.commons.domain.UtterText> {
+		/** Propriété 'ID'. */
+		utxId,
+		/** Propriété 'Text'. */
+		text,
+		/** Propriété 'Intent'. */
+		intId,
+		/** Propriété 'Action'. */
+		actId	}
 
 	/** {@inheritDoc} */
 	@Override

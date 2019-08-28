@@ -15,8 +15,8 @@ import io.vertigo.chatbot.commons.dao.IntentDAO;
 import io.vertigo.chatbot.commons.dao.IntentTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Intent;
-import io.vertigo.chatbot.commons.domain.IntentExport;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
+import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
@@ -40,7 +40,7 @@ public class ExportServices implements Component {
     private JsonEngine jsonEngine;
 
 	public void trainAgent() {
-		DtList<IntentExport> export = exportSmallTalk();
+		DtList<SmallTalkExport> export = exportSmallTalk();
 		String json = jsonEngine.toJson(export);
 		
 		Client client = ClientBuilder.newClient();
@@ -52,7 +52,7 @@ public class ExportServices implements Component {
 		System.out.println(response);
 	}
 
-	private DtList<IntentExport> exportSmallTalk() {
+	private DtList<SmallTalkExport> exportSmallTalk() {
 		DtList<Intent> intents = intentDAO.exportSmallTalk();
 		
 		final List<Long> intentIds = intents.stream()
@@ -69,9 +69,9 @@ public class ExportServices implements Component {
 				.collect(Collectors.groupingBy(UtterText::getIntId,
 						   					   VCollectors.toDtList(UtterText.class)));
 		
-		final DtList<IntentExport> retour = new DtList<>(IntentExport.class);
+		final DtList<SmallTalkExport> retour = new DtList<>(SmallTalkExport.class);
 		for (final Intent intent : intents) {
-			final IntentExport newExport = new IntentExport();
+			final SmallTalkExport newExport = new SmallTalkExport();
 			newExport.setIntent(intent);
 			newExport.setIntentTrainingSentences(trainingSentencesMap.get(intent.getIntId()));
 			newExport.setUtterTexts(utterTextsMap.get(intent.getIntId()));

@@ -16,7 +16,7 @@ public class ChatbotCommonsFeatures extends ModuleDiscoveryFeatures<ChatbotCommo
         getModuleConfigBuilder()
                 .addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
                 		.addDefinitionResource("kpr", "io/vertigo/chatbot/commons/run.kpr") // chargement de notre modèle de donnée
-                		.addDefinitionResource("classes", "io.vertigo.chatbot.domain.DtDefinitionsCommon")
+//                		.addDefinitionResource("classes", "io.vertigo.chatbot.domain.DtDefinitionsCommon")
                         .build());
 
     }

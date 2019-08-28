@@ -1,10 +1,13 @@
-package io.vertigo.chatbot.executor.rasa;
+package io.vertigo.chatbot.executor.rasa.bridge;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +17,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.vertigo.chatbot.executor.domain.RasaConfig;
 import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
 import io.vertigo.lang.VSystemException;
@@ -52,13 +56,16 @@ public class RasaHandler implements Component, Activeable {
 	}
 	
 
-	public void trainModel() {
+	public void trainModel(RasaConfig config) {
 		if (isTraining()) {
 			throw new VUserException("Entrainement déjà en cours");
 		}
 		
-		trainingLog = new StringBuilder();
+		writeToRasaFile(config.getDomain(), "domain.yml");
+		writeToRasaFile(config.getStories(), "data/stories.md");
+		writeToRasaFile(config.getNlu(), "data/nlu.md");
 		
+		trainingLog = new StringBuilder();
 		rasaTrainingProcess = execRasa("train", trainingLog::append, () -> LOGGER.info("Entrainement terminé !"));
 	}
 	
@@ -138,5 +145,13 @@ public class RasaHandler implements Component, Activeable {
 		});
 	
 		logWatcher.start();
+	}
+	
+	private void writeToRasaFile(String content, String relativePath) {
+		try (FileOutputStream outputStream = new FileOutputStream(botPath + "/" + relativePath)) {
+			outputStream.write(content.getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			throw new VSystemException(e, "Impossible d'écrire le fichier de configuration de Rasa");
+		}
 	}
 }

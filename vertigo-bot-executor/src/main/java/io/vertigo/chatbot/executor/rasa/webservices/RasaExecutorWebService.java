@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.executor.webservices;
+package io.vertigo.chatbot.executor.rasa.webservices;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,8 +12,8 @@ import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import io.vertigo.chatbot.commons.domain.IntentExport;
-import io.vertigo.chatbot.executor.services.ChatbotServices;
+import io.vertigo.chatbot.commons.domain.SmallTalkExport;
+import io.vertigo.chatbot.executor.rasa.services.RasaExecutorServices;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.vega.webservice.WebServices;
@@ -24,17 +24,16 @@ import io.vertigo.vega.webservice.stereotype.PathPrefix;
 import io.vertigo.vega.webservice.stereotype.SessionLess;
 
 @PathPrefix("/chatbot")
-public class ChatbotWebService implements WebServices {
+public class RasaExecutorWebService implements WebServices {
 
 	@Inject
-	private ChatbotServices chatbotServices;
+	private RasaExecutorServices rasaExecutorServices;
 	
 	@AnonymousAccessAllowed
 	@POST("/train")
 	@SessionLess
-	public boolean train(DtList<IntentExport> data) {
-		System.out.println(data);
-//		chatbotServices.trainModel();
+	public boolean train(DtList<SmallTalkExport> data) {
+		rasaExecutorServices.trainModel(data);
 		
 		return true;
 	}
@@ -43,7 +42,7 @@ public class ChatbotWebService implements WebServices {
 	@GET("/trainLog")
 	@SessionLess
 	public String trainLog() {
-		return chatbotServices.getTrainingLog();
+		return rasaExecutorServices.getTrainingLog();
 	}
 	
 	@AnonymousAccessAllowed

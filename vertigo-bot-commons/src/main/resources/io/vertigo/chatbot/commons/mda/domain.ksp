@@ -18,6 +18,12 @@ create Domain DoLongs {
     formatter : FmtDefault
 }
 
+create Domain DoText {
+	dataType : String
+	formatter: FmtDefault
+	storeType: "TEXT"
+}
+
 create Domain DoLabel {
 	dataType : String
 	formatter: FmtDefault

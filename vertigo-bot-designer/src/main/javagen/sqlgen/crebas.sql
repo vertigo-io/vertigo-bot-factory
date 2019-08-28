@@ -55,19 +55,19 @@ comment on column ACTION.TITLE is
 create table INTENT
 (
     INT_ID      	 NUMERIC     	not null,
-    IS_SMALL_TALK	 bool        	not null,
     TITLE       	 TEXT        	not null,
+    IS_SMALL_TALK	 bool        	not null,
     constraint PK_INTENT primary key (INT_ID)
 );
 
 comment on column INTENT.INT_ID is
 'ID';
 
-comment on column INTENT.IS_SMALL_TALK is
-'SmallTalk';
-
 comment on column INTENT.TITLE is
 'Titre';
+
+comment on column INTENT.IS_SMALL_TALK is
+'SmallTalk';
 
 -- ============================================================
 --   Table : INTENT_TRAINING_SENTENCE                                        
@@ -96,8 +96,8 @@ create table UTTER_TEXT
 (
     UTX_ID      	 NUMERIC     	not null,
     TEXT        	 TEXT        	not null,
-    ACT_ID      	 NUMERIC     	,
     INT_ID      	 NUMERIC     	,
+    ACT_ID      	 NUMERIC     	,
     constraint PK_UTTER_TEXT primary key (UTX_ID)
 );
 
@@ -107,11 +107,11 @@ comment on column UTTER_TEXT.UTX_ID is
 comment on column UTTER_TEXT.TEXT is
 'Text';
 
-comment on column UTTER_TEXT.ACT_ID is
-'Action';
-
 comment on column UTTER_TEXT.INT_ID is
 'Intent';
+
+comment on column UTTER_TEXT.ACT_ID is
+'Action';
 
 
 alter table UTTER_TEXT
