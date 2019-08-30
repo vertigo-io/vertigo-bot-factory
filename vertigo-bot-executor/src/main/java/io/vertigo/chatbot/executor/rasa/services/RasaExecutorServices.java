@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.domain.ExecutorState;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.UtterText;
@@ -41,8 +42,8 @@ public class RasaExecutorServices implements Component {
 		return rasaConfigBuilder.build();
 	}
 	
-	public String getTrainingLog() {
-		return rasaHandler.getTrainingLog();
+	public ExecutorState getState() {
+		return rasaHandler.getState();
 	}
 	
 }

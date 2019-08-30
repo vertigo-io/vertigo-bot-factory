@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import io.vertigo.chatbot.commons.domain.ExecutorState;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.executor.rasa.services.RasaExecutorServices;
 import io.vertigo.dynamo.domain.model.DtList;
@@ -39,15 +40,14 @@ public class RasaExecutorWebService implements WebServices {
 	}
 	
 	@AnonymousAccessAllowed
-	@GET("/trainLog")
+	@GET("/state")
 	@SessionLess
-	public String trainLog() {
-		return rasaExecutorServices.getTrainingLog();
+	public ExecutorState getState() {
+		return rasaExecutorServices.getState();
 	}
 	
 	@AnonymousAccessAllowed
 	@POST("/talk")
-	@SessionLess
 	public void talk(String requestParam, HttpServletResponse httpResponse) throws IOException {
 		String response = callRasa(requestParam);
 

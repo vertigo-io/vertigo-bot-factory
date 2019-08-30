@@ -5,3 +5,10 @@ create DtDefinition DtSmallTalkExport {
 	field intentTrainingSentences 	{domain: DoDtIntentTrainingSentenceDtc 	label: "intentTrainingSentences" 	required: "true"}
 	field utterTexts		 		{domain: DoDtUtterTextDtc 				label: "utterTexts" 				required: "true"}
 }
+
+create DtDefinition DtExecutorState {
+	field name 					{domain: DoLabel					label: "Nom" 					required: "true"}
+	field state 				{domain: DoLabel 					label: "Etat" 					required: "true"}
+	field loadedModelVersion	{domain: DoNumber 					label: "Version du modèle" 		required: "true"}
+	field latestTrainingLog		{domain: DoText 					label: "Log d'entrainement" 	required: "true"}
+}

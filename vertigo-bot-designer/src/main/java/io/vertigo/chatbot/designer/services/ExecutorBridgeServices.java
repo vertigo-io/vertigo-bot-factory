@@ -25,7 +25,7 @@ import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 @Transactional
-public class ExportServices implements Component {
+public class ExecutorBridgeServices implements Component {
 
 	@Inject
 	private IntentDAO intentDAO;

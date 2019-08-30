@@ -2,6 +2,7 @@ package io.vertigo.chatbot.executor.rasa.config;
 
 import java.util.List;
 
+import io.vertigo.chatbot.executor.rasa.util.StringUtils;
 import io.vertigo.lang.Assertion;
 
 public class RasaIntent {
@@ -9,6 +10,7 @@ public class RasaIntent {
 	private static final String NEW_LINE = "\r\n";
 
 	private final String name;
+	private final String code;
 	private final List<String> nlus;
 	private final RasaAction trigger;
 	
@@ -24,12 +26,17 @@ public class RasaIntent {
 	
 	private RasaIntent(String name, List<String> nlus, RasaAction trigger) {
 		this.name = name;
+		this.code = StringUtils.labelToCode(name);
 		this.nlus = nlus;
 		this.trigger = trigger;
 	}
 
 	public String getName() {
 		return name;
+	}
+	
+	public String getCode() {
+		return code;
 	}
 
 	public List<String> getNlus() {
@@ -43,7 +50,7 @@ public class RasaIntent {
 	public String getNluDeclaration() {
 		StringBuilder nluDef = new StringBuilder(); 
 		
-		nluDef.append("## intent:").append(name).append(NEW_LINE);
+		nluDef.append("## intent:").append(code).append(NEW_LINE);
 		
 		for (String question : nlus) {
 			nluDef.append("- ").append(question).append(NEW_LINE);
@@ -55,10 +62,10 @@ public class RasaIntent {
 	}
 	
 	public String getDomainDeclaration() {
-		String retour = "- " + name;
+		String retour = "- " + code;
 		
 		if (trigger != null) {
-			retour += " {triggers:" + trigger.getName() + "}";
+			retour += " {triggers:" + trigger.getCode() + "}";
 		}
 		
 		return retour;

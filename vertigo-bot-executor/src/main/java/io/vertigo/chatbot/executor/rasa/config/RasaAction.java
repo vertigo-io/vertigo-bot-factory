@@ -2,6 +2,7 @@ package io.vertigo.chatbot.executor.rasa.config;
 
 import java.util.List;
 
+import io.vertigo.chatbot.executor.rasa.util.StringUtils;
 import io.vertigo.lang.Assertion;
 
 public class RasaAction {
@@ -9,6 +10,7 @@ public class RasaAction {
 	private static final String NEW_LINE = "\r\n";
 
 	private final String name;
+	private final String code;
 	private final boolean isUtterance;
 	private final boolean isSmallTalk;
 	private final List<String> texts;
@@ -27,6 +29,7 @@ public class RasaAction {
 	
 	private RasaAction(String name, boolean isUtterance, boolean isSmallTalk, List<String> texts) {
 		this.name = name;
+		this.code = StringUtils.labelToCode(name);
 		this.isUtterance = isUtterance;
 		this.isSmallTalk = isSmallTalk;
 		this.texts = texts;
@@ -34,6 +37,10 @@ public class RasaAction {
 
 	public String getName() {
 		return name;
+	}
+	
+	public String getCode() {
+		return code;
 	}
 
 	public boolean isUtterance() {
@@ -54,7 +61,7 @@ public class RasaAction {
 		
 		StringBuilder template = new StringBuilder(); 
 		
-		template.append("  ").append(name).append(':').append(NEW_LINE);
+		template.append("  ").append(code).append(':').append(NEW_LINE);
 		
 		for (String answer : texts) {
 			template.append("    - text: \"");

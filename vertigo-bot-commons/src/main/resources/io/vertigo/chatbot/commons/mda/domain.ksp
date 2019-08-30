@@ -12,6 +12,12 @@ create Domain DoId {
 	storeType: "NUMERIC"
 }
 
+create Domain DoNumber {
+	dataType : Long
+	formatter: FmtDefault
+	storeType: "NUMERIC"
+}
+
 create Domain DoLongs {  
     dataType : Long
     multiple : "true"

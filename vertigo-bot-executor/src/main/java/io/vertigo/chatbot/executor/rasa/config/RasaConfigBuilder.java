@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.vertigo.chatbot.executor.domain.RasaConfig;
+import io.vertigo.chatbot.executor.rasa.util.StringUtils;
 
 public class RasaConfigBuilder {
 	
@@ -45,7 +46,7 @@ public class RasaConfigBuilder {
 		
 		for (RasaIntent intent : intents) {
 			retour.append("  - ");
-			retour.append(intent.getName());
+			retour.append(intent.getCode());
 			retour.append(NEW_LINE);
 		}
 		retour.append(NEW_LINE);
@@ -56,7 +57,7 @@ public class RasaConfigBuilder {
 		
 		for (RasaAction action : actions) {
 			retour.append("  - ");
-			retour.append(action.getName());
+			retour.append(action.getCode());
 			retour.append(NEW_LINE);
 		}
 		retour.append(NEW_LINE);

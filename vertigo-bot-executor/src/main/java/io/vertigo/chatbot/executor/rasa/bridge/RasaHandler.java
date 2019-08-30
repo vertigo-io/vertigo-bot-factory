@@ -2,7 +2,6 @@ package io.vertigo.chatbot.executor.rasa.bridge;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +16,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.vertigo.chatbot.commons.domain.ExecutorState;
 import io.vertigo.chatbot.executor.domain.RasaConfig;
 import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
@@ -66,14 +66,26 @@ public class RasaHandler implements Component, Activeable {
 		writeToRasaFile(config.getNlu(), "data/nlu.md");
 		
 		trainingLog = new StringBuilder();
-		rasaTrainingProcess = execRasa("train", trainingLog::append, () -> LOGGER.info("Entrainement terminé !"));
+		rasaTrainingProcess = execRasa("train", trainingLog::append, () -> LOGGER.info("Entrainement terminé !"),
+										"--out", "trainingModel");
 	}
 	
-	public boolean isTraining() {
+	public ExecutorState getState() {
+		ExecutorState retour = new ExecutorState();
+		
+		retour.setName("Rasa node");
+		retour.setState(isTraining() ? "Entraînement en cours" : "Prêt");
+		retour.setLoadedModelVersion(-1L);
+		retour.setLatestTrainingLog(getTrainingLog());
+		
+		return retour;
+	}
+
+	private boolean isTraining() {
 		return rasaTrainingProcess != null && rasaTrainingProcess.isAlive();
 	}
 	
-	public String getTrainingLog() {
+	private String getTrainingLog() {
 		if (trainingLog == null) {
 			return "Lancez un entrainement...";
 		}
