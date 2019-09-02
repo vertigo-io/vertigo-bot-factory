@@ -13,6 +13,8 @@
 	<body>
 		<section layout:fragment="page-container">
 			<vu:form>
+				<vu:messages/>
+				
 				<q-btn color="primary" icon="save" size="lg" label="Train"
 						th:@click="|httpPostAjax('@{_train}', {})|" />
 			</vu:form>

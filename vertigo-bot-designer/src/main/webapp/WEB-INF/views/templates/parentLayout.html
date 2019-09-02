@@ -10,6 +10,8 @@
     <meta name="description" content="Vertigo chatbot designer"/>
     <meta name="author" content="Klee Group"/>
     
+    <link rel="stylesheet" th:href="@{/static/css/designer.css}"/>
+    
 	<link rel="icon" th:href="@{/static/img/favicon.ico}"/>
 	<script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script>
 	
@@ -71,7 +73,9 @@
 		    </q-layout-drawer>
 		    
 			<q-page-container class="row justify-center q-pb-lg" >
-				<section class="col container-bottom-padding" layout:fragment="page-container"></section>
+				<q-page class="row col-12 mgutter-md layout-padding">
+					<section class="col container-bottom-padding" layout:fragment="page-container"></section>
+				</q-page>
 			</q-page-container>
 			
 			<div class="fixed-bottom-right version-watermark">

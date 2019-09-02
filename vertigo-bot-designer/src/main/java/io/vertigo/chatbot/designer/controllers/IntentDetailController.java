@@ -14,6 +14,7 @@ import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.services.ChatbotServices;
 import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.lang.VUserException;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -87,12 +88,21 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_addTrainingSentence")
 	public ViewContext doAddTrainingSentence(final ViewContext viewContext,
-			@ViewAttribute("newIntentTrainingSentence") final String newIntentTrainingSentence,
+			@ViewAttribute("newIntentTrainingSentence") final String newIntentTrainingSentenceIn,
 			@ViewAttribute("intent") final Intent intent,
 			@ViewAttribute("intentTrainingSentences") final DtList<IntentTrainingSentence> intentTrainingSentences
 			) {
+		
+		final String newIntentTrainingSentence = newIntentTrainingSentenceIn.trim();
+		
+		final boolean exists = intentTrainingSentences.stream()
+									.anyMatch(its -> its.getText().equalsIgnoreCase(newIntentTrainingSentence));
+		
+		if (exists) {
+			throw new VUserException("Cette phrase existe déjà");
+		}
 
-		IntentTrainingSentence newText = new IntentTrainingSentence();
+		final IntentTrainingSentence newText = new IntentTrainingSentence();
 		newText.setText(newIntentTrainingSentence);
 
 		intentTrainingSentences.add(newText);
@@ -111,7 +121,7 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 			) {
 		
 		// remove from list
-		IntentTrainingSentence removed = intentTrainingSentences.remove(index);
+		final IntentTrainingSentence removed = intentTrainingSentences.remove(index);
 		viewContext.publishDtList(intentTrainingSentencesKey, intentTrainingSentences);
 	
 		// keep track of deleted persisted IntentTrainingSentence
@@ -125,12 +135,21 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 	
 	@PostMapping("/_addUtterText")
 	public ViewContext doAddUtterText(final ViewContext viewContext,
-			@ViewAttribute("newUtterText") final String newUtterText,
+			@ViewAttribute("newUtterText") final String newUtterTextIn,
 			@ViewAttribute("intent") final Intent intent,
 			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts
 			) {
+		
+		final String newUtterText = newUtterTextIn.trim();
+		
+		final boolean exists = utterTexts.stream()
+				.anyMatch(ut -> ut.getText().equalsIgnoreCase(newUtterText));
 
-		UtterText newText = new UtterText();
+		if (exists) {
+			throw new VUserException("Cette phrase existe déjà");
+		}
+
+		final UtterText newText = new UtterText();
 		newText.setText(newUtterText);
 
 		utterTexts.add(newText);
@@ -149,7 +168,7 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 			) {
 		
 		// remove from list
-		UtterText removed = utterTexts.remove(index);
+		final UtterText removed = utterTexts.remove(index);
 		viewContext.publishDtList(utterTextsKey, utterTexts);
 	
 		// keep track of deleted persisted UtterText

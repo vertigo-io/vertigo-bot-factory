@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/parentLayout}"
+	layout:decorate="~{templates/detailNavLayout}"
 	>
 	
 	<head>
@@ -11,70 +11,76 @@
 	</head>
 	
 	<body>
-		<section layout:fragment="page-container">
-			<vu:form>
-				<vu:messages/>
+		<section layout:fragment="content-nav">
+			<q-item tag="a" href="#detail">Détail de l'intent</q-item>
+			<q-item tag="a" href="#training">Phrases d'entrainement</q-item>
+			<q-item tag="a" href="#response">Réponse automatique</q-item>
+		</section>
+		<section layout:fragment="content">
+			<div>
+				<vu:button-link th:if="${model.modeEdit}"  url="@{/intent/} + ${model.intent.intId}" :round size="lg" color="primary" icon="fas fa-ban" :flat ariaLabel="Cancel"   />
+				<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" :round size="lg" color="primary" icon="edit" ariaLabel="Edit" />
+			</div>
+			
+			<vu:block id="detail" title="Détail de l\'intent">
+				<vu:text-field object="intent" field="title" />
+			</vu:block>
+			
+			<vu:block id="training" title="Phrases d\'entrainement">
+				<vu:include-data-primitive key="newIntentTrainingSentence" />
+				<vu:include-data object="intentTrainingSentences" field="text" />
 				
-				<div>
-					<vu:button-link th:if="${model.modeEdit}"  url="@{/intent/} + ${model.intent.intId}" :round size="lg" color="primary" icon="fas fa-ban" :flat ariaLabel="Cancel"   />
-					<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" :round size="lg" color="primary" icon="edit" ariaLabel="Edit" />
+				<div th:if="${!model.modeReadOnly}">
+					<q-input v-model="vueData.newIntentTrainingSentence" th:@keydown.enter.prevent="|httpPostAjax('@{_addTrainingSentence}', {'vContext[newIntentTrainingSentence]':vueData.newIntentTrainingSentence})|"
+						placeholder="Ajouter une expression"
+						:before="[{icon: 'format_quote'}]"
+						q-if>
+					</q-input>
 				</div>
+				<q-list highlight>
+					<q-item v-for="(intentTrainingSentence, index) in vueData.intentTrainingSentences.slice().reverse()">
+						<q-item-side left th:if="${!model.modeReadOnly}">
+							<q-btn th:@click="|httpPostAjax('@{_removeTrainingSentence}', {'index':vueData.intentTrainingSentences.length - 1 - index})|"
+								color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
+						</q-item-side>
+						<q-item-main>{{intentTrainingSentence.text}}</q-item-main>
+					</q-item>
+				</q-list>
+			</vu:block>
+			
+			<vu:block id="response" title="Réponse automatique">
 				<div>
-					<vu:block title="Détail de l\'intent">
-						<vu:text-field object="intent" field="title" />
-					</vu:block>
-					
-					<vu:block title="Phrases d\'entrainement">
-						<vu:include-data-primitive key="newIntentTrainingSentence" />
-						<vu:include-data object="intentTrainingSentences" field="text" />
-						
-						<div th:if="${!model.modeReadOnly}">
-							<q-input v-model="vueData.newIntentTrainingSentence" th:@keydown.enter.prevent="|httpPostAjax('@{_addTrainingSentence}', {'vContext[newIntentTrainingSentence]':vueData.newIntentTrainingSentence})|"
-								placeholder="Ajouter une expression"
-								:before="[{icon: 'format_quote'}]">
-							</q-input>
-						</div>
-						<div>
-							<div v-for="(intentTrainingSentence, index) in vueData.intentTrainingSentences.slice().reverse()">
-								{{intentTrainingSentence.text}}
-								<q-btn th:if="${!model.modeReadOnly}" th:@click="|httpPostAjax('@{_removeTrainingSentence}', {'index':vueData.intentTrainingSentences.length - 1 - index})|"
-										color="primary" dense size="md" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
-							</div>
-						</div>
-					</vu:block>
-					
-					<vu:block title="Small Talk">
-						<div>
-							<vu:include-data object="intent" field="isSmallTalk" />
-							<q-toggle v-model="vueData.intent.isSmallTalk" disable />
-						</div>
-						
-						<div v-if="vueData.intent.isSmallTalk">
-							<vu:include-data-primitive key="newUtterText" />
-							<vu:include-data object="utterTexts" field="text" />
-						
-							<div th:if="${!model.modeReadOnly}">
-								<q-input v-model="vueData.newUtterText" th:@keydown.enter.prevent="|httpPostAjax('@{_addUtterText}', {'vContext[newUtterText]':vueData.newUtterText})|"
-									placeholder="Ajouter une expression"
-									:before="[{icon: 'format_quote'}]">
-								</q-input>
-							</div>
-							<div>
-								<div v-for="(utterTexts, index) in vueData.utterTexts.slice().reverse()">
-									{{utterTexts.text}}
-									<q-btn th:if="${!model.modeReadOnly}" th:@click="|httpPostAjax('@{_removeUtterText}', {'index':vueData.utterTexts.length - 1 - index})|"
-											color="primary" dense size="md" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
-								</div>
-							</div>
-						</div>
-					</vu:block>
-					
-					<div>
-						<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" />
-						<vu:button-link th:if="${model.modeReadOnly}" url="@{/intents/}" label="Go to intents" size="lg" color="secondary" />
+					<vu:include-data object="intent" field="isSmallTalk" />
+					<q-toggle v-model="vueData.intent.isSmallTalk" disable />
+				</div>
+				
+				<div v-if="vueData.intent.isSmallTalk">
+					<vu:include-data-primitive key="newUtterText" />
+					<vu:include-data object="utterTexts" field="text" />
+				
+					<div th:if="${!model.modeReadOnly}">
+						<q-input v-model="vueData.newUtterText" th:@keydown.enter.prevent="|httpPostAjax('@{_addUtterText}', {'vContext[newUtterText]':vueData.newUtterText})|"
+							placeholder="Ajouter une réponse"
+							:before="[{icon: 'format_quote'}]">
+						</q-input>
 					</div>
+					<q-list highlight>
+						<q-item v-for="(utterTexts, index) in vueData.utterTexts.slice().reverse()">
+							<q-item-side left th:if="${!model.modeReadOnly}">
+								<q-btn th:@click="|httpPostAjax('@{_removeUtterText}', {'index':vueData.utterTexts.length - 1 - index})|"
+										color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
+							</q-item-side>
+							<q-item-main>{{utterTexts.text}}</q-item-main>
+						</q-item>
+					</q-list>
 				</div>
-			</vu:form>
+			</vu:block>
+			
+			
+			<q-page-sticky position="bottom-right">
+				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
+			</q-page-sticky>
+			
 		</section>
 	</body>
 </html>
