@@ -14,7 +14,7 @@ public final class ExecutorState implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private String name;
-	private String state;
+	private Boolean trainingInProgress;
 	private Long loadedModelVersion;
 	private String latestTrainingLog;
 	
@@ -39,21 +39,21 @@ public final class ExecutorState implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Etat'.
-	 * @return String state <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Entrainement en cours'.
+	 * @return Boolean trainingInProgress <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Etat")
-	public String getState() {
-		return state;
+	@Field(domain = "DoYesNo", required = true, label = "Entrainement en cours")
+	public Boolean getTrainingInProgress() {
+		return trainingInProgress;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Etat'.
-	 * @param state String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Entrainement en cours'.
+	 * @param trainingInProgress Boolean <b>Obligatoire</b>
 	 */
-	public void setState(final String state) {
-		this.state = state;
+	public void setTrainingInProgress(final Boolean trainingInProgress) {
+		this.trainingInProgress = trainingInProgress;
 	}
 	
 	/**

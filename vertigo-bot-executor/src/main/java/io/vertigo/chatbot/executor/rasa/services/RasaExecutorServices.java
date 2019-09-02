@@ -14,6 +14,7 @@ import io.vertigo.chatbot.executor.rasa.bridge.RasaHandler;
 import io.vertigo.chatbot.executor.rasa.config.RasaConfigBuilder;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.lang.VUserException;
 
 public class RasaExecutorServices implements Component {
 	
@@ -21,6 +22,10 @@ public class RasaExecutorServices implements Component {
 	private RasaHandler rasaHandler;
 	
 	public void trainModel(DtList<SmallTalkExport> data) {
+		if (getState().getTrainingInProgress()) {
+			throw new VUserException("Un entrainement est déjà en cours sur ce noeud");
+		}
+			
 		rasaHandler.trainModel(generateRasaConfig(data));
 	}
 	

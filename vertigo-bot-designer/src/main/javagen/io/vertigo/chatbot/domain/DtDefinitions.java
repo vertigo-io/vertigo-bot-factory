@@ -19,6 +19,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum Definitions {
 		/** Objet de données Action. */
 		Action(io.vertigo.chatbot.commons.domain.Action.class),
+		/** Objet de données ExecutorState. */
+		ExecutorState(io.vertigo.chatbot.commons.domain.ExecutorState.class),
 		/** Objet de données Intent. */
 		Intent(io.vertigo.chatbot.commons.domain.Intent.class),
 		/** Objet de données IntentTrainingSentence. */
@@ -51,6 +53,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		actId,
 		/** Propriété 'Text'. */
 		title	}
+
+	/**
+	 * Enumération des champs de ExecutorState.
+	 */
+	public enum ExecutorStateFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ExecutorState> {
+		/** Propriété 'Nom'. */
+		name,
+		/** Propriété 'Entrainement en cours'. */
+		trainingInProgress,
+		/** Propriété 'Version du modèle'. */
+		loadedModelVersion,
+		/** Propriété 'Log d'entrainement'. */
+		latestTrainingLog	}
 
 	/**
 	 * Enumération des champs de Intent.

@@ -74,7 +74,7 @@ public class RasaHandler implements Component, Activeable {
 		ExecutorState retour = new ExecutorState();
 		
 		retour.setName("Rasa node");
-		retour.setState(isTraining() ? "Entraînement en cours" : "Prêt");
+		retour.setTrainingInProgress(isTraining());
 		retour.setLoadedModelVersion(-1L);
 		retour.setLatestTrainingLog(getTrainingLog());
 		

@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/parentLayout}"
+	layout:decorate="~{templates/detailNavLayout}"
 	>
 	
 	<head>
@@ -11,13 +11,25 @@
 	</head>
 	
 	<body>
-		<section layout:fragment="page-container">
-			<vu:form>
-				<vu:messages/>
+		<section layout:fragment="content">
+			<vu:block id="state" title="Etat">
+				<vu:include-data object="state" field="trainingInProgress" />
 				
+				<vu:text-field object="state" field="name" />
+				<vu:text-field object="state" field="loadedModelVersion" />
+				<vu:label object="state" field="trainingInProgress" label="Etat">
+					<span>{{(vueData.state.trainingInProgress ? 'Entraînement en cours' : 'Prêt')}}</span>
+				</vu:label>
+				<vu:text-area object="state" field="latestTrainingLog" />
+			</vu:block>
+			
+			<q-page-sticky position="bottom-right">
+				<q-btn color="primary" size="lg" label="Refresh"
+						th:@click="|httpPostAjax('@{_refresh}', {})|"></q-btn>
+						
 				<q-btn color="primary" icon="save" size="lg" label="Train"
-						th:@click="|httpPostAjax('@{_train}', {})|" />
-			</vu:form>
+						th:@click="|httpPostAjax('@{_train}', {})|"></q-btn>
+			</q-page-sticky>
 		</section>
 	</body>
 </html>

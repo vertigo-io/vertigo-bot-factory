@@ -33,10 +33,8 @@ public class RasaExecutorWebService implements WebServices {
 	@AnonymousAccessAllowed
 	@POST("/train")
 	@SessionLess
-	public boolean train(DtList<SmallTalkExport> data) {
+	public void train(DtList<SmallTalkExport> data) {
 		rasaExecutorServices.trainModel(data);
-		
-		return true;
 	}
 	
 	@AnonymousAccessAllowed

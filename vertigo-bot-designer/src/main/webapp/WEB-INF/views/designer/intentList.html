@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/parentLayout}"
+	layout:decorate="~{templates/listLayout}"
 	>
 	
 	<head>
@@ -11,7 +11,7 @@
 	</head>
 	
 	<body>
-		<section layout:fragment="page-container">
+		<section layout:fragment="content">
 			<vu:table list="intents" componentId="intentsList" tr_@click.native="|goTo('@{/intent/}'+props.row.intId)|" tr_style="cursor : pointer;">
 					<vu:column field="intId" />
 					<vu:column field="title" />

@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import io.vertigo.chatbot.commons.dao.IntentDAO;
 import io.vertigo.chatbot.commons.dao.IntentTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
+import io.vertigo.chatbot.commons.domain.ExecutorState;
 import io.vertigo.chatbot.commons.domain.Intent;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
@@ -22,6 +23,7 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.domain.util.VCollectors;
+import io.vertigo.lang.VUserException;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 @Transactional
@@ -45,11 +47,19 @@ public class ExecutorBridgeServices implements Component {
 		
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target("http://localhost:8080/vertigo-bot-executor");
-		Boolean response = target.path("/api/chatbot/train")
+		target.path("/api/chatbot/train")
 			.request(MediaType.APPLICATION_JSON)
-			.post(Entity.json(json), Boolean.class);
+			.post(Entity.json(json));
 		
-		System.out.println(response);
+	}
+	
+	public ExecutorState getState() {
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target("http://localhost:8080/vertigo-bot-executor");
+		
+		return target.path("/api/chatbot/state")
+			.request(MediaType.APPLICATION_JSON)
+			.get(ExecutorState.class);
 	}
 
 	private DtList<SmallTalkExport> exportSmallTalk() {
