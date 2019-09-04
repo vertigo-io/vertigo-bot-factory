@@ -8,28 +8,76 @@
 	
 	<head>
 		<title>Model List</title>
+		
+		<script th:inline="javascript">
+			var interval;
+			
+			function postTrain() {
+				interval = setInterval(function() {
+					refresh();
+				}, 1000);
+			}
+			
+			function refresh() {
+				VUiPage.httpPostAjax([[@{_refresh}]], {}, postRefresh);
+			}
+			
+			function postRefresh() {
+				if (vueData.autoscroll) {
+					scrollLogToBottom();
+				}
+				if (!vueData.state.trainingInProgress && interval != null) {
+					clearInterval(interval);
+					interval = null;
+				}
+			}
+			
+			function scrollLogToBottom() {
+				// wait for vue to update dom before scrolling
+				Vue.nextTick(function() {
+					var obj = document.getElementById("log");
+					obj.scrollTop = obj.scrollHeight;
+				});
+			}
+		</script>
 	</head>
 	
 	<body>
 		<section layout:fragment="content">
 			<vu:block id="state" title="Etat">
 				<vu:include-data object="state" field="trainingInProgress" />
+				<vu:include-data object="state" field="latestTrainingLog" />
 				
 				<vu:text-field object="state" field="name" />
 				<vu:text-field object="state" field="loadedModelVersion" />
 				<vu:label object="state" field="trainingInProgress" label="Etat">
 					<span>{{(vueData.state.trainingInProgress ? 'Entraînement en cours' : 'Prêt')}}</span>
 				</vu:label>
-				<vu:text-area object="state" field="latestTrainingLog" />
+				
+				<vu:label object="state" field="latestTrainingLog">
+					<vu:include-data-primitive key="autoscroll" />
+					<q-toggle label="Scroll automatique" v-model="vueData.autoscroll" ></q-toggle>
+					
+					<pre id="log" style="max-height:300px; overflow:auto">{{vueData.state.latestTrainingLog}}</pre>
+				</vu:label>
 			</vu:block>
 			
 			<q-page-sticky position="bottom-right">
-				<q-btn color="primary" size="lg" label="Refresh"
-						th:@click="|httpPostAjax('@{_refresh}', {})|"></q-btn>
+				<q-btn id="refreshBtn" color="primary" size="lg" label="Refresh"
+						th:@click="refresh"></q-btn>
 						
-				<q-btn color="primary" icon="save" size="lg" label="Train"
-						th:@click="|httpPostAjax('@{_train}', {})|"></q-btn>
+				<q-btn color="primary" icon="save" size="lg" label="Train" :disable="vueData.state.trainingInProgress"
+						th:@click="|httpPostAjax('@{_train}', {}, postTrain)|"></q-btn>
 			</q-page-sticky>
+		</section>
+		
+		<section layout:fragment="javascript-footer">
+			<script>
+				if (vueData.state.trainingInProgress) {
+					postTrain();
+				}
+				setTimeout(scrollLogToBottom, 0);
+			</script>
 		</section>
 	</body>
 </html>

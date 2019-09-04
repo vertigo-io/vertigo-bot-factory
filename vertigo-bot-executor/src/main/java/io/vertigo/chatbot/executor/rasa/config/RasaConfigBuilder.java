@@ -54,6 +54,7 @@ public class RasaConfigBuilder {
 		retour.append("actions:");
 		retour.append(NEW_LINE);
 		retour.append("  - utter_default");
+		retour.append(NEW_LINE);
 		
 		for (RasaAction action : actions) {
 			retour.append("  - ");

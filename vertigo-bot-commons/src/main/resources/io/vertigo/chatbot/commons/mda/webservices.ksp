@@ -12,3 +12,10 @@ create DtDefinition DtExecutorState {
 	field loadedModelVersion	{domain: DoNumber 					label: "Version du modèle" 		required: "true"}
 	field latestTrainingLog		{domain: DoText 					label: "Log d'entrainement" 	required: "true"}
 }
+
+create DtDefinition DtExecutorTrainingCallback {
+	field name 					{domain: DoLabel					label: "Nom" 					required: "true"}
+	field success				{domain: DoYesNo 					label: "Succes" 				required: "true"}
+	field trainedModelVersion	{domain: DoNumber 					label: "Version du modèle" 		required: "true"}
+	field trainingLog			{domain: DoText 					label: "Log d'entrainement" 	required: "true"}
+}

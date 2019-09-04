@@ -16,10 +16,13 @@ import io.vertigo.chatbot.commons.domain.ExecutorState;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.executor.rasa.services.RasaExecutorServices;
 import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.AnonymousAccessAllowed;
+import io.vertigo.vega.webservice.stereotype.DELETE;
 import io.vertigo.vega.webservice.stereotype.GET;
+import io.vertigo.vega.webservice.stereotype.InnerBodyParam;
 import io.vertigo.vega.webservice.stereotype.POST;
 import io.vertigo.vega.webservice.stereotype.PathPrefix;
 import io.vertigo.vega.webservice.stereotype.SessionLess;
@@ -33,8 +36,9 @@ public class RasaExecutorWebService implements WebServices {
 	@AnonymousAccessAllowed
 	@POST("/train")
 	@SessionLess
-	public void train(DtList<SmallTalkExport> data) {
-		rasaExecutorServices.trainModel(data);
+	public void train(@InnerBodyParam("export") final DtList<SmallTalkExport> data,
+					  @InnerBodyParam("id") final Long id) {
+		rasaExecutorServices.trainModel(data, id);
 	}
 	
 	@AnonymousAccessAllowed
@@ -45,14 +49,28 @@ public class RasaExecutorWebService implements WebServices {
 	}
 	
 	@AnonymousAccessAllowed
+	@GET("/model/{}")
+	@SessionLess
+	public VFile getModel(final Long id) {
+		return rasaExecutorServices.getModel(id);
+	}
+	
+	@AnonymousAccessAllowed
+	@DELETE("/model/{}")
+	@SessionLess
+	public boolean delModel(final Long id) {
+		return rasaExecutorServices.delModel(id);
+	}
+	
+	@AnonymousAccessAllowed
 	@POST("/talk")
-	public void talk(String requestParam, HttpServletResponse httpResponse) throws IOException {
+	public void talk(final String requestParam, final HttpServletResponse httpResponse) throws IOException {
 		String response = callRasa(requestParam);
 
 		doSendRawResponse(httpResponse, response);
 	}
 
-	private String callRasa(String param) throws IOException {
+	private String callRasa(final String param) throws IOException {
 		String rasaURL = "http://localhost:5005/webhooks/rest/webhook";
 		HttpURLConnection con = (HttpURLConnection) new URL(rasaURL).openConnection();
 
@@ -80,7 +98,7 @@ public class RasaExecutorWebService implements WebServices {
 		throw new VSystemException("POST request not worked (code {0})", responseCode);
 	}
 
-	private void doSendRawResponse(HttpServletResponse httpResponse, String response) throws IOException {
+	private void doSendRawResponse(final HttpServletResponse httpResponse, final String response) throws IOException {
 		httpResponse.setContentType("application/json;charset=UTF-8");
 		httpResponse.setContentLength(response.length());
 		httpResponse.setHeader("Access-Control-Allow-Origin", "*"); // TODO : remove from here

@@ -18,7 +18,7 @@ import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VUserException;
 
 @Transactional
-public class ChatbotServices implements Component {
+public class DesignerServices implements Component {
 
 	@Inject
 	private IntentDAO intentDAO;

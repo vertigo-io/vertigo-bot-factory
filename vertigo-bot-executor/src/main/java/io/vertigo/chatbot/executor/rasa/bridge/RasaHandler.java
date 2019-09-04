@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,18 +22,21 @@ import io.vertigo.chatbot.commons.domain.ExecutorState;
 import io.vertigo.chatbot.executor.domain.RasaConfig;
 import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
+import io.vertigo.dynamo.file.model.VFile;
+import io.vertigo.dynamo.impl.file.model.FSFile;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.lang.VUserException;
 
 public class RasaHandler implements Component, Activeable {
 
+	private static final String PYTHON_PATH = "D:\\DT\\chatbot\\factory\\python";
+	private static final String BOT_PATH = "D:\\DT\\chatbot\\factory\\bot";
+	private static final String TRAINING_MODEL_DIR = "trainingModel";
+
 	private static final Logger LOGGER = LogManager.getLogger("rasa");
 
 	private Process rasaProcess;
 	private Process rasaTrainingProcess;
-	
-	private String pythonPath = "D:\\DT\\chatbot\\factory\\python";
-	private String botPath = "D:\\DT\\chatbot\\factory\\bot";
 
 	private StringBuilder trainingLog;
 
@@ -56,7 +61,7 @@ public class RasaHandler implements Component, Activeable {
 	}
 	
 
-	public void trainModel(RasaConfig config) {
+	public void trainModel(final RasaConfig config, final Long id) {
 		if (isTraining()) {
 			throw new VUserException("Entrainement déjà en cours");
 		}
@@ -67,7 +72,9 @@ public class RasaHandler implements Component, Activeable {
 		
 		trainingLog = new StringBuilder();
 		rasaTrainingProcess = execRasa("train", trainingLog::append, () -> LOGGER.info("Entrainement terminé !"),
-										"--out", "trainingModel");
+										"--out", TRAINING_MODEL_DIR,
+										"--fixed-model-name", id.toString()
+										);
 	}
 	
 	public ExecutorState getState() {
@@ -93,14 +100,14 @@ public class RasaHandler implements Component, Activeable {
 	}
 
 
-	private Process execRasa(String command, String... additionalArgs) {
+	private Process execRasa(final String command, final String... additionalArgs) {
 		return execRasa(command, null, null, additionalArgs);
 	}
 	
-	private Process execRasa(String command, Consumer<String> logConsumer, Runnable endCallback, String... additionalArgs) {
+	private Process execRasa(final String command, final Consumer<String> logConsumer, final Runnable endCallback, final String... additionalArgs) {
 			List<String> rasaCommand = new ArrayList<>();
 			
-			rasaCommand.add(pythonPath + "/Scripts/rasa");
+			rasaCommand.add(PYTHON_PATH + "/Scripts/rasa");
 			rasaCommand.add(command);
 			Collections.addAll(rasaCommand, additionalArgs);
 			
@@ -117,7 +124,7 @@ public class RasaHandler implements Component, Activeable {
 			
 			
 			ProcessBuilder builder = new ProcessBuilder(rasaCommand)
-					.directory(new File(botPath))
+					.directory(new File(BOT_PATH))
 					.redirectErrorStream(true); // WTF, tout arrive dans la sortie d'erreur... Autant tout merger du coup
 	
 			Process process;
@@ -134,7 +141,7 @@ public class RasaHandler implements Component, Activeable {
 		}
 
 
-	private static void logInputStream(Level level, InputStream is, Consumer<String> logConsumer, Runnable endCallback) {
+	private static void logInputStream(final Level level, final InputStream is, final Consumer<String> logConsumer, final Runnable endCallback) {
 		Thread logWatcher = new Thread(() -> {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 	
@@ -159,11 +166,27 @@ public class RasaHandler implements Component, Activeable {
 		logWatcher.start();
 	}
 	
-	private void writeToRasaFile(String content, String relativePath) {
-		try (FileOutputStream outputStream = new FileOutputStream(botPath + "/" + relativePath)) {
+	private void writeToRasaFile(final String content, final String relativePath) {
+		try (FileOutputStream outputStream = new FileOutputStream(BOT_PATH + "/" + relativePath)) {
 			outputStream.write(content.getBytes(StandardCharsets.UTF_8));
 		} catch (IOException e) {
 			throw new VSystemException(e, "Impossible d'écrire le fichier de configuration de Rasa");
 		}
+	}
+
+	public VFile getModel(final Long id) {
+		try {
+			return new FSFile(id + ".zip", "application/zip", getModelPath(id));
+		} catch (IOException e) {
+			throw new VSystemException(e, "Impossible de lire le fichier du modèle");
+		}
+	}
+
+	public boolean delModel(final Long id) {
+		return getModelPath(id).toFile().delete();
+	}
+	
+	private Path getModelPath(final Long id) {
+		return Paths.get(BOT_PATH, TRAINING_MODEL_DIR, + id + ".tar.gz");
 	}
 }

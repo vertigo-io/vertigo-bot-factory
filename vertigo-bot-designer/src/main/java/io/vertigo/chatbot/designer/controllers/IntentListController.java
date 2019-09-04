@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.chatbot.commons.domain.Intent;
-import io.vertigo.chatbot.designer.services.ChatbotServices;
+import io.vertigo.chatbot.designer.services.DesignerServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
@@ -19,7 +19,7 @@ public class IntentListController extends AbstractVSpringMvcController {
     private static final ViewContextKey<Intent> intentsKey = ViewContextKey.of("intents");
 
     @Inject
-    private ChatbotServices chatbotServices;
+    private DesignerServices chatbotServices;
 
     @GetMapping("/")
     public void initContext(final ViewContext viewContext) {

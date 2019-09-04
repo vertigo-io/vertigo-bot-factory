@@ -19,12 +19,16 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<ExecutorState> stateKey = ViewContextKey.of("state");
 	
+	private static final ViewContextKey<Boolean> autoscrollKey = ViewContextKey.of("autoscroll");
+	
     @Inject
     private ExecutorBridgeServices executorBridgeServices;
     
     
     @GetMapping("/")
     public void initContext(final ViewContext viewContext) {
+    	viewContext.publishRef(autoscrollKey, Boolean.TRUE);
+    	
     	refreshState(viewContext);
     	
         toModeReadOnly();

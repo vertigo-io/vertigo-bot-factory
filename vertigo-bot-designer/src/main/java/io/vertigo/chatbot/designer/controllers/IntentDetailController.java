@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import io.vertigo.chatbot.commons.domain.Intent;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.UtterText;
-import io.vertigo.chatbot.designer.services.ChatbotServices;
+import io.vertigo.chatbot.designer.services.DesignerServices;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.lang.VUserException;
 import io.vertigo.ui.core.ViewContext;
@@ -35,7 +35,7 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 	private static final ViewContextKey<UtterText> utterTextsToDeleteKey = ViewContextKey.of("utterTextsToDelete");
 
 	@Inject
-	private ChatbotServices chatbotServices;
+	private DesignerServices chatbotServices;
 
 	@GetMapping("/{intId}")
 	public void initContext(final ViewContext viewContext, @PathVariable("intId") final Long intId) {

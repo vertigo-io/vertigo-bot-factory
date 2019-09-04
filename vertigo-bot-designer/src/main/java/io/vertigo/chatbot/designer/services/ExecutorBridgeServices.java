@@ -1,20 +1,24 @@
 package io.vertigo.chatbot.designer.services;
 
+import java.io.InputStream;
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import io.vertigo.chatbot.commons.dao.IntentDAO;
 import io.vertigo.chatbot.commons.dao.IntentTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.ExecutorState;
+import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.commons.domain.Intent;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
@@ -23,7 +27,8 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.domain.util.VCollectors;
-import io.vertigo.lang.VUserException;
+import io.vertigo.dynamo.file.model.VFile;
+import io.vertigo.dynamo.impl.file.model.StreamFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 @Transactional
@@ -40,24 +45,25 @@ public class ExecutorBridgeServices implements Component {
 	
     @Inject
     private JsonEngine jsonEngine;
+    
+    private static final WebTarget rasaExecutorTarget = ClientBuilder.newClient().target("http://localhost:8080/vertigo-bot-executor");
 
 	public void trainAgent() {
-		DtList<SmallTalkExport> export = exportSmallTalk();
-		String json = jsonEngine.toJson(export);
+		final DtList<SmallTalkExport> export = exportSmallTalk();
 		
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8080/vertigo-bot-executor");
-		target.path("/api/chatbot/train")
+		final Map<String, Object> requestData = new HashMap<>();
+		requestData.put("export", export);
+		requestData.put("id", 2L);
+		String json = jsonEngine.toJson(requestData);
+		
+		rasaExecutorTarget.path("/api/chatbot/train")
 			.request(MediaType.APPLICATION_JSON)
 			.post(Entity.json(json));
 		
 	}
 	
 	public ExecutorState getState() {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8080/vertigo-bot-executor");
-		
-		return target.path("/api/chatbot/state")
+		return rasaExecutorTarget.path("/api/chatbot/state")
 			.request(MediaType.APPLICATION_JSON)
 			.get(ExecutorState.class);
 	}
@@ -90,5 +96,17 @@ public class ExecutorBridgeServices implements Component {
 		}
 		
 		return retour;
+	}
+	
+	public void fetchModel(ExecutorTrainingCallback callback) {
+		final Response response = rasaExecutorTarget.path("/api/chatbot/model/"+callback.getTrainedModelVersion())
+			.request(MediaType.APPLICATION_OCTET_STREAM)
+			.get();
+		
+		System.out.println(response.bufferEntity());
+		
+		final VFile file = new StreamFile(callback.getTrainedModelVersion()+".zip", "", Instant.now(), -1, () -> response.readEntity(InputStream.class));
+		
+		System.out.println(file);
 	}
 }
