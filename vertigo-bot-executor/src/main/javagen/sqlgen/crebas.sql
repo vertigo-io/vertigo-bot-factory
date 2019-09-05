@@ -39,7 +39,7 @@ create sequence SEQ_UTTER_TEXT
 create table ACTION
 (
     ACT_ID      	 NUMERIC     	not null,
-    TITLE       	 TEXT        	not null,
+    TITLE       	 VARCHAR(100)	not null,
     constraint PK_ACTION primary key (ACT_ID)
 );
 
@@ -55,7 +55,7 @@ comment on column ACTION.TITLE is
 create table INTENT
 (
     INT_ID      	 NUMERIC     	not null,
-    TITLE       	 TEXT        	not null,
+    TITLE       	 VARCHAR(100)	not null,
     IS_SMALL_TALK	 bool        	not null,
     constraint PK_INTENT primary key (INT_ID)
 );
@@ -75,7 +75,7 @@ comment on column INTENT.IS_SMALL_TALK is
 create table INTENT_TRAINING_SENTENCE
 (
     ITS_ID      	 NUMERIC     	not null,
-    TEXT        	 TEXT        	not null,
+    TEXT        	 VARCHAR(100)	not null,
     INT_ID      	 NUMERIC     	not null,
     constraint PK_INTENT_TRAINING_SENTENCE primary key (ITS_ID)
 );
@@ -95,7 +95,7 @@ comment on column INTENT_TRAINING_SENTENCE.INT_ID is
 create table UTTER_TEXT
 (
     UTX_ID      	 NUMERIC     	not null,
-    TEXT        	 TEXT        	not null,
+    TEXT        	 VARCHAR(100)	not null,
     INT_ID      	 NUMERIC     	,
     ACT_ID      	 NUMERIC     	,
     constraint PK_UTTER_TEXT primary key (UTX_ID)

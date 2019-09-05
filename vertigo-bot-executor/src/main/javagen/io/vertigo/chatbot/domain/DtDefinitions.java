@@ -19,8 +19,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum Definitions {
 		/** Objet de données Action. */
 		Action(io.vertigo.chatbot.commons.domain.Action.class),
-		/** Objet de données ExecutorState. */
-		ExecutorState(io.vertigo.chatbot.commons.domain.ExecutorState.class),
 		/** Objet de données ExecutorTrainingCallback. */
 		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
 		/** Objet de données Intent. */
@@ -29,8 +27,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		IntentTrainingSentence(io.vertigo.chatbot.commons.domain.IntentTrainingSentence.class),
 		/** Objet de données RasaConfig. */
 		RasaConfig(io.vertigo.chatbot.executor.domain.RasaConfig.class),
+		/** Objet de données RunnerInfo. */
+		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
 		/** Objet de données SmallTalkExport. */
 		SmallTalkExport(io.vertigo.chatbot.commons.domain.SmallTalkExport.class),
+		/** Objet de données TrainerInfo. */
+		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données UtterText. */
 		UtterText(io.vertigo.chatbot.commons.domain.UtterText.class)		;
 
@@ -57,19 +59,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		actId,
 		/** Propriété 'Text'. */
 		title	}
-
-	/**
-	 * Enumération des champs de ExecutorState.
-	 */
-	public enum ExecutorStateFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ExecutorState> {
-		/** Propriété 'Nom'. */
-		name,
-		/** Propriété 'Entrainement en cours'. */
-		trainingInProgress,
-		/** Propriété 'Version du modèle'. */
-		loadedModelVersion,
-		/** Propriété 'Log d'entrainement'. */
-		latestTrainingLog	}
 
 	/**
 	 * Enumération des champs de ExecutorTrainingCallback.
@@ -118,6 +107,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		nlu	}
 
 	/**
+	 * Enumération des champs de RunnerInfo.
+	 */
+	public enum RunnerInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.RunnerInfo> {
+		/** Propriété 'Nom'. */
+		name,
+		/** Propriété 'Etat du noeud'. */
+		state,
+		/** Propriété 'Version du runner'. */
+		agentVersion,
+		/** Propriété 'Version du modèle'. */
+		loadedModelVersion	}
+
+	/**
 	 * Enumération des champs de SmallTalkExport.
 	 */
 	public enum SmallTalkExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.SmallTalkExport> {
@@ -127,6 +129,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		intentTrainingSentences,
 		/** Propriété 'utterTexts'. */
 		utterTexts	}
+
+	/**
+	 * Enumération des champs de TrainerInfo.
+	 */
+	public enum TrainerInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TrainerInfo> {
+		/** Propriété 'Nom'. */
+		name,
+		/** Propriété 'Entrainement en cours'. */
+		trainingInProgress,
+		/** Propriété 'Log d'entrainement'. */
+		latestTrainingLog	}
 
 	/**
 	 * Enumération des champs de UtterText.

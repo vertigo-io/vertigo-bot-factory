@@ -12,8 +12,8 @@ import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import io.vertigo.chatbot.commons.domain.ExecutorState;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
+import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.executor.rasa.services.RasaExecutorServices;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.file.model.VFile;
@@ -32,60 +32,60 @@ public class RasaExecutorWebService implements WebServices {
 
 	@Inject
 	private RasaExecutorServices rasaExecutorServices;
-	
+
 	@AnonymousAccessAllowed
 	@POST("/train")
 	@SessionLess
 	public void train(@InnerBodyParam("export") final DtList<SmallTalkExport> data,
-					  @InnerBodyParam("id") final Long id) {
+			@InnerBodyParam("id") final Long id) {
 		rasaExecutorServices.trainModel(data, id);
 	}
-	
+
 	@AnonymousAccessAllowed
 	@GET("/state")
 	@SessionLess
-	public ExecutorState getState() {
+	public TrainerInfo getState() {
 		return rasaExecutorServices.getState();
 	}
-	
+
 	@AnonymousAccessAllowed
 	@GET("/model/{}")
 	@SessionLess
 	public VFile getModel(final Long id) {
 		return rasaExecutorServices.getModel(id);
 	}
-	
+
 	@AnonymousAccessAllowed
 	@DELETE("/model/{}")
 	@SessionLess
 	public boolean delModel(final Long id) {
 		return rasaExecutorServices.delModel(id);
 	}
-	
+
 	@AnonymousAccessAllowed
 	@POST("/talk")
 	public void talk(final String requestParam, final HttpServletResponse httpResponse) throws IOException {
-		String response = callRasa(requestParam);
+		final String response = callRasa(requestParam);
 
 		doSendRawResponse(httpResponse, response);
 	}
 
 	private String callRasa(final String param) throws IOException {
-		String rasaURL = "http://localhost:5005/webhooks/rest/webhook";
-		HttpURLConnection con = (HttpURLConnection) new URL(rasaURL).openConnection();
+		final String rasaURL = "http://localhost:5005/webhooks/rest/webhook";
+		final HttpURLConnection con = (HttpURLConnection) new URL(rasaURL).openConnection();
 
 		con.setRequestMethod("POST");
 		con.setDoOutput(true);
-		OutputStream os = con.getOutputStream();
+		final OutputStream os = con.getOutputStream();
 		os.write(param.getBytes(StandardCharsets.UTF_8));
 		os.flush();
 		os.close();
 
-		int responseCode = con.getResponseCode();
+		final int responseCode = con.getResponseCode();
 		if (responseCode == HttpURLConnection.HTTP_OK) { // success
-			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			final BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			String inputLine;
-			StringBuilder response = new StringBuilder();
+			final StringBuilder response = new StringBuilder();
 
 			while ((inputLine = in.readLine()) != null) {
 				response.append(inputLine);
@@ -94,7 +94,7 @@ public class RasaExecutorWebService implements WebServices {
 
 			return response.toString();
 		}
-		
+
 		throw new VSystemException("POST request not worked (code {0})", responseCode);
 	}
 
@@ -103,7 +103,7 @@ public class RasaExecutorWebService implements WebServices {
 		httpResponse.setContentLength(response.length());
 		httpResponse.setHeader("Access-Control-Allow-Origin", "*"); // TODO : remove from here
 
-		ServletOutputStream os = httpResponse.getOutputStream();
+		final ServletOutputStream os = httpResponse.getOutputStream();
 		os.write(response.getBytes(StandardCharsets.UTF_8));
 		os.flush();
 	}

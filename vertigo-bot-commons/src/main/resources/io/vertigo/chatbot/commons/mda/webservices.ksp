@@ -6,10 +6,16 @@ create DtDefinition DtSmallTalkExport {
 	field utterTexts		 		{domain: DoDtUtterTextDtc 				label: "utterTexts" 				required: "true"}
 }
 
-create DtDefinition DtExecutorState {
+create DtDefinition DtRunnerInfo {
+	field name 					{domain: DoLabel					label: "Nom" 					required: "true"}
+	field state					{domain: DoLabel 					label: "Etat du noeud" 			required: "true"}
+	field agentVersion			{domain: DoLabel 					label: "Version du runner" 		required: "true"}
+	field loadedModelVersion	{domain: DoNumber 					label: "Version du modèle" 		required: "true"}
+}
+
+create DtDefinition DtTrainerInfo {
 	field name 					{domain: DoLabel					label: "Nom" 					required: "true"}
 	field trainingInProgress 	{domain: DoYesNo 					label: "Entrainement en cours" 	required: "true"}
-	field loadedModelVersion	{domain: DoNumber 					label: "Version du modèle" 		required: "true"}
 	field latestTrainingLog		{domain: DoText 					label: "Log d'entrainement" 	required: "true"}
 }
 

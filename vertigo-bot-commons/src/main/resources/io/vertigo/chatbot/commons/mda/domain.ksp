@@ -33,11 +33,26 @@ create Domain DoText {
 create Domain DoLabel {
 	dataType : String
 	formatter: FmtDefault
-	storeType: "TEXT"
+	constraint : [CkMaxLength100]
+	storeType : "VARCHAR(100)"
+}
+
+create Domain DoCode {
+	dataType : String
+	formatter : FmtDefault
+	constraint : [CkMaxLength100]
+	storeType : "VARCHAR(100)"
 }
 
 create Domain DoYesNo {
 	dataType : Boolean
 	formatter: FmtDefault
 	storeType: "bool"
+}
+
+
+
+create Constraint CkMaxLength100 {
+	className: "io.vertigo.dynamox.domain.constraint.ConstraintStringLength"
+	args :"100"
 }
