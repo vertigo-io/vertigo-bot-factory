@@ -10,7 +10,6 @@ import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.executor.domain.RasaConfig;
-import io.vertigo.chatbot.executor.rasa.bridge.RunnerRasaHandler;
 import io.vertigo.chatbot.executor.rasa.bridge.TrainerRasaHandler;
 import io.vertigo.chatbot.executor.rasa.config.RasaConfigBuilder;
 import io.vertigo.core.component.Component;
@@ -18,16 +17,14 @@ import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.VUserException;
 
-public class RasaExecutorServices implements Component {
+public class RasaTrainerServices implements Component {
 
 	@Inject
 	private TrainerRasaHandler trainerRasaHandler;
 
-	@Inject
-	private RunnerRasaHandler runnerRasaHandler;
 
 	public void trainModel(final DtList<SmallTalkExport> data, final Long id) {
-		if (getState().getTrainingInProgress()) {
+		if (getTrainerState().getTrainingInProgress()) {
 			throw new VUserException("Un entrainement est déjà en cours sur ce noeud");
 		}
 
@@ -52,7 +49,7 @@ public class RasaExecutorServices implements Component {
 		return rasaConfigBuilder.build();
 	}
 
-	public TrainerInfo getState() {
+	public TrainerInfo getTrainerState() {
 		return trainerRasaHandler.getState();
 	}
 
@@ -60,7 +57,9 @@ public class RasaExecutorServices implements Component {
 		return trainerRasaHandler.getModel(id);
 	}
 
+	@Deprecated
 	public boolean delModel(final Long id) {
+		// TODO faire un clean automatique des anciens modèles du répertoire (sauf le dernier pour conserver l'optim de rasa)
 		return trainerRasaHandler.delModel(id);
 	}
 

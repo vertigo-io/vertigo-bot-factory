@@ -12,9 +12,11 @@ import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
-import io.vertigo.chatbot.executor.rasa.services.RasaExecutorServices;
+import io.vertigo.chatbot.executor.rasa.services.RasaRunnerServices;
+import io.vertigo.chatbot.executor.rasa.services.RasaTrainerServices;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.VSystemException;
@@ -24,42 +26,62 @@ import io.vertigo.vega.webservice.stereotype.DELETE;
 import io.vertigo.vega.webservice.stereotype.GET;
 import io.vertigo.vega.webservice.stereotype.InnerBodyParam;
 import io.vertigo.vega.webservice.stereotype.POST;
+import io.vertigo.vega.webservice.stereotype.PUT;
+import io.vertigo.vega.webservice.stereotype.PathParam;
 import io.vertigo.vega.webservice.stereotype.PathPrefix;
+import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.stereotype.SessionLess;
 
 @PathPrefix("/chatbot")
 public class RasaExecutorWebService implements WebServices {
 
 	@Inject
-	private RasaExecutorServices rasaExecutorServices;
+	private RasaRunnerServices rasaRunnerServices;
+
+	@Inject
+	private RasaTrainerServices rasaTrainerServices;
 
 	@AnonymousAccessAllowed
 	@POST("/train")
 	@SessionLess
 	public void train(@InnerBodyParam("export") final DtList<SmallTalkExport> data,
 			@InnerBodyParam("id") final Long id) {
-		rasaExecutorServices.trainModel(data, id);
+		rasaTrainerServices.trainModel(data, id);
 	}
 
 	@AnonymousAccessAllowed
-	@GET("/state")
+	@GET("/trainStatus")
 	@SessionLess
-	public TrainerInfo getState() {
-		return rasaExecutorServices.getState();
+	public TrainerInfo getTrainStatus() {
+		return rasaTrainerServices.getTrainerState();
 	}
 
 	@AnonymousAccessAllowed
-	@GET("/model/{}")
+	@GET("/runnerStatus")
 	@SessionLess
-	public VFile getModel(final Long id) {
-		return rasaExecutorServices.getModel(id);
+	public RunnerInfo getRunnerStatus() {
+		return rasaRunnerServices.getRunnerState();
 	}
 
 	@AnonymousAccessAllowed
-	@DELETE("/model/{}")
+	@PUT("/model")
 	@SessionLess
-	public boolean delModel(final Long id) {
-		return rasaExecutorServices.delModel(id);
+	public void putModel(@QueryParam("model") final VFile model) {
+		rasaRunnerServices.loadModel(model);
+	}
+
+	@AnonymousAccessAllowed
+	@GET("/model/{id}")
+	@SessionLess
+	public VFile getModel(@PathParam("id") final Long id) {
+		return rasaTrainerServices.getModel(id);
+	}
+
+	@AnonymousAccessAllowed
+	@DELETE("/model/{id}")
+	@SessionLess
+	public boolean delModel(@PathParam("id") final Long id) {
+		return rasaTrainerServices.delModel(id);
 	}
 
 	@AnonymousAccessAllowed

@@ -19,7 +19,7 @@ import io.vertigo.lang.VSystemException;
 public abstract class AbstractRasaHandler {
 
 	protected static final String PYTHON_PATH = "D:\\DT\\chatbot\\factory\\python";
-	protected static final String BOT_PATH = "D:\\DT\\chatbot\\factory\\bot";
+	protected static final String BOT_PATH = "D:\\DT\\chatbot\\factory\\bot\\";
 
 	protected static final Logger LOGGER = LogManager.getLogger("rasa");
 

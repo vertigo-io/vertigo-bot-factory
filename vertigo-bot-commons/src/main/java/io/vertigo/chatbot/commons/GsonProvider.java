@@ -25,8 +25,6 @@ import io.vertigo.core.component.Component;
 @Consumes(MediaType.APPLICATION_JSON)
 public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<T>, Component {
 
-
-
 	public GsonProvider() {
 		// rien
 	}
@@ -42,7 +40,7 @@ public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<
 			final MediaType mediaType, final MultivaluedMap<String, String> httpHeaders,
 			final InputStream entityStream) throws IOException {
 
-		return JaxrsProvider.getJsonEngine().fromJson(IOUtils.toString(entityStream, StandardCharsets.UTF_8), type);
+		return AbstractJaxrsProvider.getJsonEngine().fromJson(IOUtils.toString(entityStream, StandardCharsets.UTF_8), type);
 	}
 
 	@Override
@@ -64,7 +62,7 @@ public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<
 
 		final PrintWriter printWriter = new PrintWriter(entityStream);
 		try {
-			final String json = JaxrsProvider.getJsonEngine().toJson(t);
+			final String json = AbstractJaxrsProvider.getJsonEngine().toJson(t);
 			printWriter.write(json);
 			printWriter.flush();
 		} finally {

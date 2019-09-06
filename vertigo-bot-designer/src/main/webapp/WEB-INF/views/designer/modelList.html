@@ -19,14 +19,14 @@
 			}
 			
 			function refresh() {
-				VUiPage.httpPostAjax([[@{_refresh}]], {}, postRefresh);
+				VUiPage.httpPostAjax([[@{_refreshTrainer}]], {}, postRefresh);
 			}
 			
 			function postRefresh() {
 				if (vueData.autoscroll) {
 					scrollLogToBottom();
 				}
-				if (!vueData.state.trainingInProgress && interval != null) {
+				if (!vueData.trainerState.trainingInProgress && interval != null) {
 					clearInterval(interval);
 					interval = null;
 				}
@@ -43,36 +43,56 @@
 	</head>
 	
 	<body>
+		<section layout:fragment="content-nav">
+			<q-item tag="a" href="#train">Entrainement</q-item>
+			<q-item tag="a" href="#run">Etat du modèle</q-item>
+			<q-item tag="a" href="#load">Charger un modèle</q-item>
+		</section>
+		
 		<section layout:fragment="content">
-			<vu:block id="state" title="Etat">
-				<vu:include-data object="state" field="trainingInProgress" />
-				<vu:include-data object="state" field="latestTrainingLog" />
+			<vu:block id="train" title="Entrainement">
+				<vu:include-data object="trainerState" field="trainingInProgress" />
+				<vu:include-data object="trainerState" field="latestTrainingLog" />
 				
-				<vu:text-field object="state" field="name" />
-				<vu:label object="state" field="trainingInProgress" label="Etat">
-					<span>{{(vueData.state.trainingInProgress ? 'Entraînement en cours' : 'Prêt')}}</span>
+				<vu:text-field object="trainerState" field="name" />
+				<vu:label object="trainerState" field="trainingInProgress" label="Etat">
+					<span>{{(vueData.trainerState.trainingInProgress ? 'Entraînement en cours' : 'Prêt')}}</span>
 				</vu:label>
 				
-				<vu:label object="state" field="latestTrainingLog">
+				<vu:label object="trainerState" field="latestTrainingLog">
 					<vu:include-data-primitive key="autoscroll" />
 					<q-toggle label="Scroll automatique" v-model="vueData.autoscroll" ></q-toggle>
 					
-					<pre id="log" style="max-height:300px; overflow:auto">{{vueData.state.latestTrainingLog}}</pre>
+					<pre id="log" style="max-height:300px; overflow:auto">{{vueData.trainerState.latestTrainingLog}}</pre>
 				</vu:label>
-			</vu:block>
-			
-			<q-page-sticky position="bottom-right">
+				
 				<q-btn id="refreshBtn" color="primary" size="lg" label="Refresh"
 						th:@click="refresh"></q-btn>
 						
-				<q-btn color="primary" icon="save" size="lg" label="Train" :disable="vueData.state.trainingInProgress"
+				<q-btn color="primary" icon="save" size="lg" label="Train" :disable="vueData.trainerState.trainingInProgress"
 						th:@click="|httpPostAjax('@{_train}', {}, postTrain)|"></q-btn>
-			</q-page-sticky>
+			</vu:block>
+			
+			<vu:block id="run" title="Etat du modèle">
+				<vu:text-field object="runnerState" field="name" />
+				<vu:text-field object="runnerState" field="state" />
+				<vu:text-field object="runnerState" field="agentVersion" />
+				<vu:text-field object="runnerState" field="loadedModelVersion" />
+				
+				<q-btn color="primary" size="lg" label="Refresh"
+						th:@click="|httpPostAjax('@{_refreshRunner}', {})|"></q-btn>
+			</vu:block>
+			
+			<vu:block id="load" title="Charger un modèle">
+				<q-btn color="primary" size="lg" label="Charger"
+						th:@click="|httpPostAjax('@{_loadModel}', {'id':2})|"></q-btn>
+			</vu:block>
+			
 		</section>
 		
 		<section layout:fragment="javascript-footer">
 			<script>
-				if (vueData.state.trainingInProgress) {
+				if (vueData.trainerState.trainingInProgress) {
 					postTrain();
 				}
 				setTimeout(scrollLogToBottom, 0);

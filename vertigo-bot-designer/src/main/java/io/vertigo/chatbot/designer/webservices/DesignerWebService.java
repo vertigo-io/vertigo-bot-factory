@@ -13,13 +13,13 @@ public class DesignerWebService implements WebServices {
 
 	@Inject
 	private ExecutorBridgeServices executorBridgeServices;
-	
+
 	@AnonymousAccessAllowed
 	@POST("/trainingCallback")
 	@SessionLess
 	public void trainingCallback(final ExecutorTrainingCallback callback) {
 		if (callback.getSuccess()) {
-			executorBridgeServices.fetchModel(callback);
+			//			executorBridgeServices.fetchModel(callback);
 		} else {
 			// TODO
 		}

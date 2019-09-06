@@ -6,27 +6,27 @@ import io.vertigo.chatbot.executor.rasa.util.StringUtils;
 import io.vertigo.lang.Assertion;
 
 public class RasaIntent {
-	
+
 	private static final String NEW_LINE = "\r\n";
 
 	private final String name;
 	private final String code;
 	private final List<String> nlus;
 	private final RasaAction trigger;
-	
-	public static RasaIntent newSmallTalk(String name, List<String> nlus, RasaAction trigger) {
+
+	public static RasaIntent newSmallTalk(final String name, final List<String> nlus, final RasaAction trigger) {
 		Assertion.checkArgument(trigger.isSmallTalk(), "Le trigger doit être une action de small talk");
 		// ----
 		return new RasaIntent("st_" + name, nlus, trigger);
 	}
-	
-	public static RasaIntent newGenericIntent(String name, List<String> nlus) {
+
+	public static RasaIntent newGenericIntent(final String name, final List<String> nlus) {
 		return new RasaIntent(name, nlus, null);
 	}
-	
-	private RasaIntent(String name, List<String> nlus, RasaAction trigger) {
+
+	private RasaIntent(final String name, final List<String> nlus, final RasaAction trigger) {
 		this.name = name;
-		this.code = StringUtils.labelToCode(name);
+		code = StringUtils.labelToCode(name);
 		this.nlus = nlus;
 		this.trigger = trigger;
 	}
@@ -34,7 +34,7 @@ public class RasaIntent {
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}
@@ -42,32 +42,32 @@ public class RasaIntent {
 	public List<String> getNlus() {
 		return nlus;
 	}
-	
+
 	public RasaAction getTrigger() {
 		return trigger;
 	}
 
 	public String getNluDeclaration() {
-		StringBuilder nluDef = new StringBuilder(); 
-		
+		final StringBuilder nluDef = new StringBuilder();
+
 		nluDef.append("## intent:").append(code).append(NEW_LINE);
-		
-		for (String question : nlus) {
+
+		for (final String question : nlus) {
 			nluDef.append("- ").append(question).append(NEW_LINE);
 		}
-		
+
 		nluDef.append(NEW_LINE);
-		
+
 		return nluDef.toString();
 	}
-	
+
 	public String getDomainDeclaration() {
-		String retour = "- " + code;
-		
+		String retour = "  - " + code;
+
 		if (trigger != null) {
-			retour += " {triggers:" + trigger.getCode() + "}";
+			retour += ":" + NEW_LINE + "     triggers: " + trigger.getCode();
 		}
-		
+
 		return retour;
 	}
 }

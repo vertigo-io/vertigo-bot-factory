@@ -18,6 +18,7 @@ modules:
     featuresConfig:
       - webservices.apiPrefix:
           apiPrefix: /api
+  io.vertigo.dynamo.DynamoFeatures:
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
   io.vertigo.chatbot.executor.rasa.RasaExecutorFeatures: # utilisation de notre module métier

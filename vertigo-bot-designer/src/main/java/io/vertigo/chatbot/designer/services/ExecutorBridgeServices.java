@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.designer.services;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.HashMap;
@@ -12,22 +13,28 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import io.vertigo.chatbot.commons.JaxrsProvider;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+
 import io.vertigo.chatbot.commons.dao.IntentDAO;
 import io.vertigo.chatbot.commons.dao.IntentTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
-import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.commons.domain.Intent;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
+import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.UtterText;
+import io.vertigo.chatbot.designer.JaxrsProvider;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.dynamo.impl.file.model.StreamFile;
+import io.vertigo.lang.VSystemException;
+import io.vertigo.lang.VUserException;
 
 @Transactional
 public class ExecutorBridgeServices implements Component {
@@ -50,7 +57,6 @@ public class ExecutorBridgeServices implements Component {
 		final Map<String, Object> requestData = new HashMap<>();
 		requestData.put("export", export);
 		requestData.put("id", 2L);
-		//		final String json = jsonEngine.toJson(requestData);
 
 		jaxrsProvider.getWebTarget().path("/api/chatbot/train")
 		.request(MediaType.APPLICATION_JSON)
@@ -58,10 +64,32 @@ public class ExecutorBridgeServices implements Component {
 
 	}
 
-	public TrainerInfo getState() {
-		return jaxrsProvider.getWebTarget().path("/api/chatbot/state")
+	public TrainerInfo getTrainingState() {
+		final Response response = jaxrsProvider.getWebTarget().path("/api/chatbot/trainStatus")
 				.request(MediaType.APPLICATION_JSON)
-				.get(TrainerInfo.class);
+				.get();
+
+		if (response.getStatus() != 200) {
+			final TrainerInfo trainerInfo = new TrainerInfo();
+			trainerInfo.setName("Impossible d'accéder au service");
+			return trainerInfo;
+		}
+
+		return response.readEntity(TrainerInfo.class);
+	}
+
+	public RunnerInfo getRunnerState() {
+		final Response response =  jaxrsProvider.getWebTarget().path("/api/chatbot/runnerStatus")
+				.request(MediaType.APPLICATION_JSON)
+				.get();
+
+		if (response.getStatus() != 200) {
+			final RunnerInfo runnerInfo = new RunnerInfo();
+			runnerInfo.setName("Impossible d'accéder au service");
+			return runnerInfo;
+		}
+
+		return response.readEntity(RunnerInfo.class);
 	}
 
 	private DtList<SmallTalkExport> exportSmallTalk() {
@@ -94,15 +122,37 @@ public class ExecutorBridgeServices implements Component {
 		return retour;
 	}
 
-	public void fetchModel(final ExecutorTrainingCallback callback) {
-		final Response response = jaxrsProvider.getWebTarget().path("/api/chatbot/model/"+callback.getTrainedModelVersion())
+	public VFile fetchModel(final Long id) {
+		final Response response = jaxrsProvider.getWebTarget().path("/api/chatbot/model/"+id)
 				.request(MediaType.APPLICATION_OCTET_STREAM)
 				.get();
 
-		System.out.println(response.bufferEntity());
+		response.bufferEntity();
 
-		final VFile file = new StreamFile(callback.getTrainedModelVersion()+".zip", "", Instant.now(), -1, () -> response.readEntity(InputStream.class));
+		return new StreamFile(id + ".tar.gz", "", Instant.now(), -1, () -> response.readEntity(InputStream.class));
+	}
 
-		System.out.println(file);
+	public void loadModel(final VFile model) {
+		final StreamDataBodyPart bodyPart;
+		try {
+			bodyPart = new StreamDataBodyPart("model", model.createInputStream(), model.getFileName());
+		} catch (final IOException e) {
+			throw new VSystemException(e, "Impossible de lire le modèle");
+		}
+
+		final Response response;
+		try (final FormDataMultiPart fdmp = new FormDataMultiPart();
+				final MultiPart multiPart = fdmp.bodyPart(bodyPart);) {
+			response = jaxrsProvider.getWebTarget().path("/api/chatbot/model")
+					.request(MediaType.APPLICATION_JSON)
+					.put(Entity.entity(multiPart, multiPart.getMediaType()));
+
+		} catch (final IOException e) {
+			throw new VSystemException(e, "Impossible de lire le modèle");
+		}
+
+		if (response.getStatus() != 204) {
+			throw new VUserException("Impossible de charger le modèle");
+		}
 	}
 }

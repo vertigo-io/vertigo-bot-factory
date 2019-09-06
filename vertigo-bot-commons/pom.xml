@@ -44,6 +44,12 @@
 		</dependency>
 		
 		<dependency>
+		    <groupId>org.glassfish.jersey.media</groupId>
+		    <artifactId>jersey-media-multipart</artifactId>
+		    <version>${jersey.version}</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-vega-impl</artifactId>
 			<version>${vertigo.version}</version>
