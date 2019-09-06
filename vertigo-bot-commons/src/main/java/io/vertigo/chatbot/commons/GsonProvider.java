@@ -18,15 +18,18 @@ import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.io.IOUtils;
 
-import io.vertigo.core.component.Component;
+import io.vertigo.app.Home;
+import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<T>, Component {
+public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<T> {
+
+	private final JsonEngine jsonEngine;
 
 	public GsonProvider() {
-		// rien
+		jsonEngine = Home.getApp().getComponentSpace().resolve(JsonEngine.class);
 	}
 
 	@Override
@@ -40,7 +43,7 @@ public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<
 			final MediaType mediaType, final MultivaluedMap<String, String> httpHeaders,
 			final InputStream entityStream) throws IOException {
 
-		return AbstractJaxrsProvider.getJsonEngine().fromJson(IOUtils.toString(entityStream, StandardCharsets.UTF_8), type);
+		return jsonEngine.fromJson(IOUtils.toString(entityStream, StandardCharsets.UTF_8), type);
 	}
 
 	@Override
@@ -62,7 +65,7 @@ public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<
 
 		final PrintWriter printWriter = new PrintWriter(entityStream);
 		try {
-			final String json = AbstractJaxrsProvider.getJsonEngine().toJson(t);
+			final String json = jsonEngine.toJson(t);
 			printWriter.write(json);
 			printWriter.flush();
 		} finally {
