@@ -72,7 +72,14 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 	}
 
 	private Long getRasaLoadedModel() {
-		return -1L;
+		final File[] modelFiles = new File(BOT_PATH + MODEL_DIR).listFiles();
+
+		if (modelFiles.length != 1) {
+			return -1L;
+		}
+
+		final String name = modelFiles[0].getName();
+		return Long.parseLong(name.substring(0, name.length()-7));
 	}
 
 	private String getRasaVersion() {

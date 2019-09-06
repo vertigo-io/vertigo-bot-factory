@@ -9,7 +9,7 @@ create DtDefinition DtSmallTalkExport {
 create DtDefinition DtRunnerInfo {
 	field name 					{domain: DoLabel					label: "Nom" 					required: "true"}
 	field state					{domain: DoLabel 					label: "Etat du noeud" 			required: "true"}
-	field agentVersion			{domain: DoLabel 					label: "Version du runner" 		required: "true"}
+	field agentVersion			{domain: DoLabel 					label: "Version du composant" 	required: "true"}
 	field loadedModelVersion	{domain: DoNumber 					label: "Version du modèle" 		required: "true"}
 }
 

@@ -58,17 +58,17 @@ public final class RunnerInfo implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Version du runner'.
+	 * Récupère la valeur de la propriété 'Version du composant'.
 	 * @return String agentVersion <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Version du runner")
+	@Field(domain = "DoLabel", required = true, label = "Version du composant")
 	public String getAgentVersion() {
 		return agentVersion;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Version du runner'.
+	 * Définit la valeur de la propriété 'Version du composant'.
 	 * @param agentVersion String <b>Obligatoire</b>
 	 */
 	public void setAgentVersion(final String agentVersion) {

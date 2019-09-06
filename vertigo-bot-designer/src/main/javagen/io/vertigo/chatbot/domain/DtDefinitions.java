@@ -101,7 +101,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		name,
 		/** Propriété 'Etat du noeud'. */
 		state,
-		/** Propriété 'Version du runner'. */
+		/** Propriété 'Version du composant'. */
 		agentVersion,
 		/** Propriété 'Version du modèle'. */
 		loadedModelVersion	}
