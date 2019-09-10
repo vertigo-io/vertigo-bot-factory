@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,7 +18,7 @@ import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 
 @Controller
-@RequestMapping("/models")
+@RequestMapping("/bot/{botId}/models")
 public class ModelListController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<RunnerInfo> runnerStateKey = ViewContextKey.of("runnerState");
@@ -30,7 +31,7 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 
 	@GetMapping("/")
-	public void initContext(final ViewContext viewContext) {
+	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		viewContext.publishRef(autoscrollKey, Boolean.TRUE);
 
 		refreshRunnerState(viewContext);

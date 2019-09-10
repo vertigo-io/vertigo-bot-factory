@@ -1,23 +1,31 @@
 package io.vertigo.chatbot.commons.domain 
 
+create DtDefinition DtChatbot{
+	id    botId 		{domain: DoId 		label: "ID"}
+	field name 			{domain: DoLabel 	label: "Name" 			required: "true"}
+}
+
 create DtDefinition DtIntent {
 	id    intId 		{domain: DoId 		label: "ID"}
 	field title 		{domain: DoLabel 	label: "Titre" 			required: "true"}
+	field description	{domain: DoLabel 	label: "Description" 	required: "false"}
 	field isSmallTalk 	{domain: DoYesNo 	label: "SmallTalk" 		required: "true"}
+	field isEnabled 	{domain: DoYesNo 	label: "Enabled" 		required: "true"}
+}
+
+create Association AIntentChatbot {
+	fkFieldName : "botId" /* NPE sans explication si ya pas */
+    
+ 	dtDefinitionA : DtIntent
+	dtDefinitionB : DtChatbot
+	
+	type : "*>1"
+	
+	labelB : "Chatbot"
 }
 
 create DtDefinition DtIntentTrainingSentence {
 	id    itsId 	{domain: DoId 		label: "ID"}
-	field text 		{domain: DoLabel 	label: "Text" required: "true"}
-}
-
-create DtDefinition DtAction {
-	id    actId 	{domain: DoId 		label: "ID"}
-	field title 	{domain: DoLabel 	label: "Text" required: "true"}
-}
-
-create DtDefinition DtUtterText {
-	id    utxId 	{domain: DoId 		label: "ID"}
 	field text 		{domain: DoLabel 	label: "Text" required: "true"}
 }
 
@@ -33,6 +41,27 @@ create Association AIntentIntentTrainingSentence {
 	navigabilityB : "false" /* pas pris en compte ! */
 	
 	labelB : "Intent"
+}
+
+create DtDefinition DtAction {
+	id    actId 	{domain: DoId 		label: "ID"}
+	field title 	{domain: DoLabel 	label: "Text" required: "true"}
+}
+
+create DtDefinition DtUtterText {
+	id    utxId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoLabel 	label: "Text" required: "true"}
+}
+
+create Association AActionChatbot {
+	fkFieldName : "botId"
+    
+ 	dtDefinitionA : DtAction
+	dtDefinitionB : DtChatbot
+	
+	type : "*>1"
+	
+	labelB : "Chatbot"
 }
 
 create Association AIntentUtterText {
@@ -61,4 +90,24 @@ create Association AActionUtterText {
 	navigabilityB : "false" /* pas pris en compte ! */
 	
 	labelB : "Action"
+}
+
+create DtDefinition DtTraining {
+	id    traId 		{domain: DoId 		label: "ID"}
+	field startTime		{domain: DoInstant 	label: "Start time"			required: "true"}
+	field endTime		{domain: DoInstant 	label: "End time" 			required: "false"}
+	field versionNumber	{domain: DoNumber 	label: "Version" 			required: "true"}
+	field tag			{domain: DoLabel 	label: "Tag" 				required: "false"}
+	field valid 		{domain: DoYesNo 	label: "Valide" 			required: "true"}
+}
+
+create Association ATrainingChatbot {
+	fkFieldName : "botId"
+    
+ 	dtDefinitionA : DtTraining
+	dtDefinitionB : DtChatbot
+	
+	type : "*>1"
+	
+	labelB : "Chatbot"
 }

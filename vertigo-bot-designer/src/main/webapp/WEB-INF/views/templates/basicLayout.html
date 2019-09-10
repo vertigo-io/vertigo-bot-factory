@@ -5,8 +5,9 @@
   layout:decorate="~{templates/parentLayout}">
   
   	<section layout:fragment="page-container">
-	 	<q-page class="row col-12 layout-padding">			
-	 		<section class="col content-body"  layout:fragment="content"></section>
+	    <section layout:fragment="page-header"></section>
+	 	<q-page>			
+	 		<section layout:fragment="page-content" class="row col-12 layout-padding mgutter-md"></section>
 		</q-page>
 	</section>
 </html>

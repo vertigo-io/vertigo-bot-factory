@@ -3,6 +3,7 @@ package io.vertigo.chatbot.commons.domain;
 import io.vertigo.dynamo.domain.model.Entity;
 import io.vertigo.dynamo.domain.model.ListVAccessor;
 import io.vertigo.dynamo.domain.model.UID;
+import io.vertigo.dynamo.domain.model.VAccessor;
 import io.vertigo.dynamo.domain.stereotype.Field;
 import io.vertigo.dynamo.domain.util.DtObjectUtil;
 import io.vertigo.lang.Generated;
@@ -17,6 +18,21 @@ public final class Action implements Entity {
 
 	private Long actId;
 	private String title;
+
+	@io.vertigo.dynamo.domain.stereotype.Association(
+			name = "AActionChatbot",
+			fkFieldName = "botId",
+			primaryDtDefinitionName = "DtChatbot",
+			primaryIsNavigable = true,
+			primaryRole = "Chatbot",
+			primaryLabel = "Chatbot",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtAction",
+			foreignIsNavigable = false,
+			foreignRole = "Action",
+			foreignLabel = "Action",
+			foreignMultiplicity = "0..*")
+	private final VAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
 			name = "AActionUtterText",
@@ -75,6 +91,33 @@ public final class Action implements Entity {
 	 */
 	public void setTitle(final String title) {
 		this.title = title;
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Chatbot'.
+	 * @return Long botId <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoId", type = "FOREIGN_KEY", required = true, label = "Chatbot")
+	public Long getBotId() {
+		return (Long) botIdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Chatbot'.
+	 * @param botId Long <b>Obligatoire</b>
+	 */
+	public void setBotId(final Long botId) {
+		botIdAccessor.setId(botId);
+	}
+
+ 	/**
+	 * Association : Chatbot.
+	 * @return l'accesseur vers la propriété 'Chatbot'
+	 */
+	public VAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbot() {
+		return botIdAccessor;
 	}
 
 	/**

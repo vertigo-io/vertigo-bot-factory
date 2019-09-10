@@ -14,6 +14,7 @@ import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.services.DesignerServices;
 import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VUserException;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -21,15 +22,15 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 
 @Controller
-@RequestMapping("/intent")
+@RequestMapping("/bot/{botId}/intent")
 public class IntentDetailController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<Intent> intentKey = ViewContextKey.of("intent");
-	
+
 	private static final ViewContextKey<String> newIntentTrainingSentenceKey = ViewContextKey.of("newIntentTrainingSentence");
 	private static final ViewContextKey<IntentTrainingSentence> intentTrainingSentencesKey = ViewContextKey.of("intentTrainingSentences");
 	private static final ViewContextKey<IntentTrainingSentence> intentTrainingSentencesToDeleteKey = ViewContextKey.of("intentTrainingSentencesToDelete");
-	
+
 	private static final ViewContextKey<String> newUtterTextKey = ViewContextKey.of("newUtterText");
 	private static final ViewContextKey<UtterText> utterTextsKey = ViewContextKey.of("utterTexts");
 	private static final ViewContextKey<UtterText> utterTextsToDeleteKey = ViewContextKey.of("utterTextsToDelete");
@@ -38,15 +39,17 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 	private DesignerServices chatbotServices;
 
 	@GetMapping("/{intId}")
-	public void initContext(final ViewContext viewContext, @PathVariable("intId") final Long intId) {
+	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId, @PathVariable("intId") final Long intId) {
 		final Intent intent = chatbotServices.getIntentById(intId);
 
+		Assertion.checkState(intent.getBotId().equals(botId), "Paramètres incohérents");
+
 		viewContext.publishDto(intentKey, intent);
-		
+
 		viewContext.publishRef(newIntentTrainingSentenceKey, "");
 		viewContext.publishDtList(intentTrainingSentencesKey, chatbotServices.getIntentTrainingSentenceList(intent));
 		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
-		
+
 		viewContext.publishRef(newUtterTextKey, "");
 		viewContext.publishDtList(utterTextsKey, chatbotServices.getIntentUtterTextList(intent));
 		viewContext.publishDtList(utterTextsToDeleteKey, new DtList<UtterText>(UtterText.class));
@@ -55,17 +58,17 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 	}
 
 	@GetMapping("/new")
-	public void initContext(final ViewContext viewContext) {
-		viewContext.publishDto(intentKey, chatbotServices.getNewIntent());
-		
+	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
+		viewContext.publishDto(intentKey, chatbotServices.getNewIntent(botId));
+
 		viewContext.publishRef(newIntentTrainingSentenceKey, "");
 		viewContext.publishDtList(intentTrainingSentencesKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
 		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
-		
+
 		viewContext.publishRef(newUtterTextKey, "");
 		viewContext.publishDtList(utterTextsKey, new DtList<UtterText>(UtterText.class));
 		viewContext.publishDtList(utterTextsToDeleteKey, new DtList<UtterText>(UtterText.class));
-		
+
 		toModeCreate();
 	}
 
@@ -92,12 +95,12 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 			@ViewAttribute("intent") final Intent intent,
 			@ViewAttribute("intentTrainingSentences") final DtList<IntentTrainingSentence> intentTrainingSentences
 			) {
-		
+
 		final String newIntentTrainingSentence = newIntentTrainingSentenceIn.trim();
-		
+
 		final boolean exists = intentTrainingSentences.stream()
-									.anyMatch(its -> its.getText().equalsIgnoreCase(newIntentTrainingSentence));
-		
+				.anyMatch(its -> its.getText().equalsIgnoreCase(newIntentTrainingSentence));
+
 		if (exists) {
 			throw new VUserException("Cette phrase existe déjà");
 		}
@@ -119,29 +122,29 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 			@ViewAttribute("intentTrainingSentencesToDelete") final DtList<IntentTrainingSentence> intentTrainingSentencesToDelete,
 			@ViewAttribute("intentTrainingSentences") final DtList<IntentTrainingSentence> intentTrainingSentences
 			) {
-		
+
 		// remove from list
 		final IntentTrainingSentence removed = intentTrainingSentences.remove(index);
 		viewContext.publishDtList(intentTrainingSentencesKey, intentTrainingSentences);
-	
+
 		// keep track of deleted persisted IntentTrainingSentence
 		if (removed.getItsId() != null) {
 			intentTrainingSentencesToDelete.add(removed);
 		}
 		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, intentTrainingSentencesToDelete);
-	
+
 		return viewContext;
 	}
-	
+
 	@PostMapping("/_addUtterText")
 	public ViewContext doAddUtterText(final ViewContext viewContext,
 			@ViewAttribute("newUtterText") final String newUtterTextIn,
 			@ViewAttribute("intent") final Intent intent,
 			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts
 			) {
-		
+
 		final String newUtterText = newUtterTextIn.trim();
-		
+
 		final boolean exists = utterTexts.stream()
 				.anyMatch(ut -> ut.getText().equalsIgnoreCase(newUtterText));
 
@@ -166,17 +169,17 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 			@ViewAttribute("utterTextsToDelete") final DtList<UtterText> utterTextsToDelete,
 			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts
 			) {
-		
+
 		// remove from list
 		final UtterText removed = utterTexts.remove(index);
 		viewContext.publishDtList(utterTextsKey, utterTexts);
-	
+
 		// keep track of deleted persisted UtterText
 		if (removed.getUtxId() != null) {
 			utterTextsToDelete.add(removed);
 		}
 		viewContext.publishDtList(utterTextsToDeleteKey, utterTextsToDelete);
-	
+
 		return viewContext;
 	}
 }

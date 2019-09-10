@@ -1,13 +1,14 @@
 package io.vertigo.chatbot.commons.domain 
 
-/* Formatteur de données par défaut */
-create Formatter FmtDefault {
-	className: "io.vertigo.dynamox.domain.formatter.FormatterDefault"
-}
+
+/**************************************************************************************************/
+/********************************* Domains ********************************************************/
+/**************************************************************************************************/
 
 /* Domaines représentant les types de données utilisables dans les entités */
 create Domain DoId {
 	dataType : Long
+	/*formatter: FmtId*/
 	formatter: FmtDefault
 	storeType: "NUMERIC"
 }
@@ -51,6 +52,48 @@ create Domain DoYesNo {
 }
 
 
+
+create Domain DoInstant {
+	dataType : Instant
+	formatter : FmtDateHeure
+	storeType : "TIMESTAMP"
+}
+
+create Domain DoLocaldate {
+	dataType : LocalDate
+	formatter : FmtDate
+	storeType : "DATE"
+}
+
+
+/**************************************************************************************************/
+/********************************* Formatters *****************************************************/
+/**************************************************************************************************/
+
+/* Formatteur de données par défaut */
+create Formatter FmtDefault {
+	className: "io.vertigo.dynamox.domain.formatter.FormatterDefault"
+}
+
+/*
+create Formatter FmtId{
+	className : "io.vertigo.ui.formatter.FormatterId"
+}
+*/
+
+create Formatter FmtDate {
+     className :"io.vertigo.dynamox.domain.formatter.FormatterDate"
+     args : "dd/MM/yyyy"
+}
+
+create Formatter FmtDateHeure {
+     className :"io.vertigo.dynamox.domain.formatter.FormatterDate"
+     args : "dd/MM/yyyy ' ' HH'h'mm"
+}
+
+/**************************************************************************************************/
+/********************************* Constraints ****************************************************/
+/**************************************************************************************************/
 
 create Constraint CkMaxLength100 {
 	className: "io.vertigo.dynamox.domain.constraint.ConstraintStringLength"

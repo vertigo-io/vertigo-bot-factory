@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/listLayout}"
+	layout:decorate="~{templates/botDetailLayout}"
 	>
 	
 	<head>
@@ -11,12 +11,12 @@
 	</head>
 	
 	<body>
-		<section layout:fragment="content">
+		<section layout:fragment="page-content">
 			<vu:table list="intents" componentId="intentsList" tr_@click.native="|goTo('@{/intent/}'+props.row.intId)|" tr_style="cursor : pointer;">
 					<vu:column field="intId" />
 					<vu:column field="title" />
 			</vu:table>
-			<vu:button-link url="@{/intent/new}" icon="add" round size="lg" color="primary" />
+			<vu:button-link url="@{/bot/{id}/intent/new(id=${botId})}" icon="add" round size="lg" color="primary" />
 		</section>
 	</body>
 </html>

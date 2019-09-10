@@ -2,14 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org" 
   xmlns:vu="http://www.morphbit.com/thymeleaf/component"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{templates/parentLayout}">
+  layout:decorate="~{templates/basicLayout}">
   
   	<head>
 		<script th:src="@{/vertigo-ui/static/js/v-components/v-minify.js}"></script>
+
+		<script th:src="@{/vertigo-ui/static/js/v-components/v-scroll-spy.js}" th:if="${nav}"></script>
 	</head>
 	
-  	<section layout:fragment="page-container">
-  		<section th:ref="detailHeader" class="col-12" v-minify="{topOffsetEl:'header', leftOffsetEl:'.q-layout-drawer-left'}">
+	
+	
+	<section layout:fragment="page-header">
+		<section th:ref="detailHeader" class="col-12" v-minify="{topOffsetEl:'header', leftOffsetEl:'.q-layout-drawer-left'}">
 			<div th:ref="maxiHeader" class="row justify-between items-center bg-secondary header-content " >
 				<div layout:fragment="content-header-left"></div>
 				<!-- Brand and toggle get grouped for better mobile display -->
@@ -29,13 +33,21 @@
 			</div>
 			<div class="bg-secondary mini" th:insert="~{:: maxiHeader}"/>
 		</section>
-  		<q-page class="row col-12 mgutter-md layout-padding">
-			<div class="col content-body">
+	</section>
+	
+  	<section layout:fragment="page-content">
+  		<div class="col-2 gt-md" th:if="${nav}">
+			<nav v-scroll-spy="{offset:50+100}">
+			    <q-list link style="height:100%">
+			    	<section layout:fragment="content-nav"></section>
+			    </q-list>
+	        </nav>
+		</div>
+		<div class="col content-body ">
 			<vu:form>
 	 			<vu:messages/>
-				<section layout:fragment="content"></section>
+				<section layout:fragment="content" class="mgutter-md"></section>
 	 		</vu:form>
-	 		</div>
-		</q-page>
+ 		</div>
 	</section>
 </html>
