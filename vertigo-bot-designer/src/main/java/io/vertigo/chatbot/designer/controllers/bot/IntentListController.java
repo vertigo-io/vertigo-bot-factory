@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.controllers;
+package io.vertigo.chatbot.designer.controllers.bot;
 
 import javax.inject.Inject;
 
@@ -23,8 +23,13 @@ public class IntentListController extends AbstractVSpringMvcController {
 	@Inject
 	private DesignerServices chatbotServices;
 
+	@Inject
+	private CommonBotDetailController commonBotDetailController;
+
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
+		commonBotDetailController.initCommonContext(viewContext, botId);
+
 		viewContext.publishDtList(intentsKey, chatbotServices.getAllIntents(botId));
 		//		viewContext.publishRef(botIdKey, botId);
 		toModeReadOnly();

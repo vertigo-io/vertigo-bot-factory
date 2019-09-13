@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.controllers;
+package io.vertigo.chatbot.designer.controllers.bot;
 
 import javax.inject.Inject;
 
@@ -38,8 +38,13 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 	@Inject
 	private DesignerServices chatbotServices;
 
+	@Inject
+	private CommonBotDetailController commonBotDetailController;
+
 	@GetMapping("/{intId}")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId, @PathVariable("intId") final Long intId) {
+		commonBotDetailController.initCommonContext(viewContext, botId);
+
 		final Intent intent = chatbotServices.getIntentById(intId);
 
 		Assertion.checkState(intent.getBotId().equals(botId), "Paramètres incohérents");
@@ -59,6 +64,8 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
+		commonBotDetailController.initCommonContext(viewContext, botId);
+
 		viewContext.publishDto(intentKey, chatbotServices.getNewIntent(botId));
 
 		viewContext.publishRef(newIntentTrainingSentenceKey, "");

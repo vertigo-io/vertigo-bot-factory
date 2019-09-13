@@ -27,10 +27,9 @@
 			<q-btn flat>Archive</q-btn></q-item> </q-list> </q-popover> </q-btn>
 		</th:block>
 	</div>
-	<div layout:fragment="content-header-tabs">
-		<vu:button-link class="active" flat label="Base Information" url="@{/basemanagement/base/information/} + ${model.base.baseId}" />
-		<vu:button-link flat label="Equipment" url="@{/basemanagement/base/equipment/} + ${model.base.baseId}" />
-		<vu:button-link flat label="VR View" url="@{/basemanagement/base/vr/} + ${model.base.baseId}" />
-	</div>
 	 -->
+	<div layout:fragment="content-header-tabs">
+		<vu:button-link class="${tab == 'smallTalks'} ? 'active' : ''" flat label="Small talks" url="@{/bot/{id}/intents/(id=${model.bot.botId})}" />
+		<vu:button-link class="${tab == 'models'} ? 'active' : ''" flat label="Models" url="@{/bot/{id}/models/(id=${model.bot.botId})}" />
+	</div>
 </html>

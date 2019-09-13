@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.controllers;
+package io.vertigo.chatbot.designer.controllers.bot;
 
 import javax.inject.Inject;
 
@@ -29,9 +29,13 @@ public class ModelListController extends AbstractVSpringMvcController {
 	@Inject
 	private ExecutorBridgeServices executorBridgeServices;
 
+	@Inject
+	private CommonBotDetailController commonBotDetailController;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
+		commonBotDetailController.initCommonContext(viewContext, botId);
+
 		viewContext.publishRef(autoscrollKey, Boolean.TRUE);
 
 		refreshRunnerState(viewContext);

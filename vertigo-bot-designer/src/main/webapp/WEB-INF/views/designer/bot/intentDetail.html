@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true"
+	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=smallTalks"
 	>
 	
 	<head>
@@ -18,7 +18,7 @@
 		</section>
 		<section layout:fragment="content">
 			<div>
-				<vu:button-link th:if="${model.modeEdit}"  url="@{/intent/} + ${model.intent.intId}" :round size="lg" color="primary" icon="fas fa-ban" :flat ariaLabel="Cancel"   />
+				<vu:button-link th:if="${model.modeEdit}"  url="@{/bot/{id}/intent/(id=${model.bot.botId})} + ${model.intent.intId}" :round size="lg" color="primary" icon="fas fa-ban" :flat ariaLabel="Cancel"   />
 				<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" :round size="lg" color="primary" icon="edit" ariaLabel="Edit" />
 			</div>
 			

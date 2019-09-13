@@ -39,6 +39,12 @@ public class DesignerServices implements Component {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
 	}
 
+	public Chatbot getChatbotById(final Long botId) {
+		Assertion.checkNotNull(botId);
+		// ---
+		return chatbotDAO.get(botId);
+	}
+
 	public Intent getIntentById(final Long movId) {
 		Assertion.checkNotNull(movId);
 		// ---
