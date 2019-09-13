@@ -11,15 +11,22 @@
 	</head>
 	
 	<body>
+		<section layout:fragment="content-header-actions">
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/intent/(id=${model.bot.botId})} + ${model.intent.intId}" ariaLabel="Cancel" icon="fas fa-ban"
+							class="on-left text-tertiary-inverted" :round size="lg" color="primary" :flat />
+			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+							class="on-left" :round size="lg" color="primary" />
+		</section>
+		
 		<section layout:fragment="content-nav">
 			<q-item tag="a" href="#detail">Détail de l'intent</q-item>
 			<q-item tag="a" href="#training">Phrases d'entrainement</q-item>
 			<q-item tag="a" href="#response">Réponse automatique</q-item>
 		</section>
+		
 		<section layout:fragment="content">
 			<div>
-				<vu:button-link th:if="${model.modeEdit}"  url="@{/bot/{id}/intent/(id=${model.bot.botId})} + ${model.intent.intId}" :round size="lg" color="primary" icon="fas fa-ban" :flat ariaLabel="Cancel"   />
-				<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" :round size="lg" color="primary" icon="edit" ariaLabel="Edit" />
+				
 			</div>
 			
 			<vu:block id="detail" title="Détail de l\'intent">

@@ -64,6 +64,13 @@ public class ExecutorBridgeServices implements Component {
 
 	}
 
+	public void stopAgent() {
+		jaxrsProvider.getWebTarget().path("/api/chatbot/train")
+		.request(MediaType.APPLICATION_JSON)
+		.delete();
+
+	}
+
 	public TrainerInfo getTrainingState() {
 		final Response response = jaxrsProvider.getWebTarget().path("/api/chatbot/trainStatus")
 				.request(MediaType.APPLICATION_JSON)

@@ -50,6 +50,13 @@ public class RasaExecutorWebService implements WebServices {
 	}
 
 	@AnonymousAccessAllowed
+	@DELETE("/train")
+	@SessionLess
+	public void stopTrain() {
+		rasaTrainerServices.stopTrain();
+	}
+
+	@AnonymousAccessAllowed
 	@GET("/trainStatus")
 	@SessionLess
 	public TrainerInfo getTrainStatus() {

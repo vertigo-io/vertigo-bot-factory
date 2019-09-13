@@ -94,17 +94,17 @@ public final class Intent implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Titre'.
+	 * Récupère la valeur de la propriété 'Title'.
 	 * @return String title <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Titre")
+	@Field(domain = "DoLabel", required = true, label = "Title")
 	public String getTitle() {
 		return title;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Titre'.
+	 * Définit la valeur de la propriété 'Title'.
 	 * @param title String <b>Obligatoire</b>
 	 */
 	public void setTitle(final String title) {

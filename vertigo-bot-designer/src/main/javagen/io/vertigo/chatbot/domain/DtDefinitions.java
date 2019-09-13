@@ -81,13 +81,13 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de ExecutorTrainingCallback.
 	 */
 	public enum ExecutorTrainingCallbackFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback> {
-		/** Propriété 'Nom'. */
+		/** Propriété 'Name'. */
 		name,
 		/** Propriété 'Succes'. */
 		success,
-		/** Propriété 'Version du modèle'. */
+		/** Propriété 'Model version'. */
 		trainedModelVersion,
-		/** Propriété 'Log d'entrainement'. */
+		/** Propriété 'Training logs'. */
 		trainingLog	}
 
 	/**
@@ -96,7 +96,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum IntentFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Intent> {
 		/** Propriété 'ID'. */
 		intId,
-		/** Propriété 'Titre'. */
+		/** Propriété 'Title'. */
 		title,
 		/** Propriété 'Description'. */
 		description,
@@ -122,13 +122,13 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de RunnerInfo.
 	 */
 	public enum RunnerInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.RunnerInfo> {
-		/** Propriété 'Nom'. */
+		/** Propriété 'Name'. */
 		name,
-		/** Propriété 'Etat du noeud'. */
+		/** Propriété 'Node state'. */
 		state,
-		/** Propriété 'Version du composant'. */
+		/** Propriété 'Component version'. */
 		agentVersion,
-		/** Propriété 'Version du modèle'. */
+		/** Propriété 'Model version'. */
 		loadedModelVersion	}
 
 	/**
@@ -146,12 +146,18 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de TrainerInfo.
 	 */
 	public enum TrainerInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TrainerInfo> {
-		/** Propriété 'Nom'. */
+		/** Propriété 'Name'. */
 		name,
-		/** Propriété 'Entrainement en cours'. */
+		/** Propriété 'Training in progress'. */
 		trainingInProgress,
-		/** Propriété 'Log d'entrainement'. */
-		latestTrainingLog	}
+		/** Propriété 'Training log'. */
+		latestTrainingLog,
+		/** Propriété 'Start time'. */
+		startTime,
+		/** Propriété 'End time'. */
+		endTime,
+		/** Propriété 'Duration'. */
+		duration	}
 
 	/**
 	 * Enumération des champs de Training.
@@ -167,8 +173,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		versionNumber,
 		/** Propriété 'Tag'. */
 		tag,
-		/** Propriété 'Valide'. */
+		/** Propriété 'Valid'. */
 		valid,
+		/** Propriété 'Duration'. */
+		duration,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

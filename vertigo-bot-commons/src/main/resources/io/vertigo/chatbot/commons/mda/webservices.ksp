@@ -7,21 +7,25 @@ create DtDefinition DtSmallTalkExport {
 }
 
 create DtDefinition DtRunnerInfo {
-	field name 					{domain: DoLabel					label: "Nom" 					required: "true"}
-	field state					{domain: DoLabel 					label: "Etat du noeud" 			required: "true"}
-	field agentVersion			{domain: DoLabel 					label: "Version du composant" 	required: "true"}
-	field loadedModelVersion	{domain: DoNumber 					label: "Version du modèle" 		required: "true"}
+	field name 					{domain: DoLabel					label: "Name" 					required: "true"}
+	field state					{domain: DoLabel 					label: "Node state" 			required: "true"}
+	field agentVersion			{domain: DoLabel 					label: "Component version" 		required: "true"}
+	field loadedModelVersion	{domain: DoNumber 					label: "Model version" 			required: "true"}
 }
 
 create DtDefinition DtTrainerInfo {
-	field name 					{domain: DoLabel					label: "Nom" 					required: "true"}
-	field trainingInProgress 	{domain: DoYesNo 					label: "Entrainement en cours" 	required: "true"}
-	field latestTrainingLog		{domain: DoText 					label: "Log d'entrainement" 	required: "true"}
+	field name 					{domain: DoLabel					label: "Name" 					required: "true"}
+	field trainingInProgress 	{domain: DoYesNo 					label: "Training in progress" 	required: "true"}
+	field latestTrainingLog		{domain: DoText 					label: "Training log" 			required: "true"}
+	field startTime				{domain: DoInstant 					label: "Start time"				required: "false"}
+	field endTime				{domain: DoInstant 					label: "End time" 				required: "false"}
+	computed duration 			{domain: DoLabel 					label: "Duration"
+								 expression:"return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());" }
 }
 
 create DtDefinition DtExecutorTrainingCallback {
-	field name 					{domain: DoLabel					label: "Nom" 					required: "true"}
+	field name 					{domain: DoLabel					label: "Name" 					required: "true"}
 	field success				{domain: DoYesNo 					label: "Succes" 				required: "true"}
-	field trainedModelVersion	{domain: DoNumber 					label: "Version du modèle" 		required: "true"}
-	field trainingLog			{domain: DoText 					label: "Log d'entrainement" 	required: "true"}
+	field trainedModelVersion	{domain: DoNumber 					label: "Model version" 			required: "true"}
+	field trainingLog			{domain: DoText 					label: "Training logs" 			required: "true"}
 }

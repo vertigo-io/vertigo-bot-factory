@@ -3,11 +3,11 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/botDetailLayout}" th:with="tab=models"
+	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=models"
 	>
 	
 	<head>
-		<title>Model List</title>
+		<title>Models</title>
 		
 		<script th:inline="javascript">
 			var interval;
@@ -44,36 +44,62 @@
 	
 	<body>
 		<section layout:fragment="content-nav">
-			<q-item tag="a" href="#train">Entrainement</q-item>
-			<q-item tag="a" href="#run">Etat du modèle</q-item>
-			<q-item tag="a" href="#load">Charger un modèle</q-item>
+			<q-item tag="a" href="#train">Training</q-item>
+			<q-item tag="a" href="#run">State</q-item>
+			<q-item tag="a" href="#load">Load model</q-item>
 		</section>
 		
 		<section layout:fragment="content">
-			<vu:block id="train" title="Entrainement">
+			<vu:block id="train" title="Training">
 				<vu:include-data object="trainerState" field="trainingInProgress" />
 				<vu:include-data object="trainerState" field="latestTrainingLog" />
+				<vu:include-data object="trainerState" field="startTime" />
+				<vu:include-data object="trainerState" field="duration" />
 				
 				<vu:text-field object="trainerState" field="name" />
-				<vu:label object="trainerState" field="trainingInProgress" label="Etat">
-					<span>{{(vueData.trainerState.trainingInProgress ? 'Entraînement en cours' : 'Prêt')}}</span>
+				
+				<vu:label object="trainerState" field="trainingInProgress" label="State">
+					<span>{{(vueData.trainerState.trainingInProgress ? 'Training in progress' : 'Ready')}}</span>
 				</vu:label>
 				
-				<vu:label object="trainerState" field="latestTrainingLog">
-					<vu:include-data-primitive key="autoscroll" />
-					<q-toggle label="Scroll automatique" v-model="vueData.autoscroll" ></q-toggle>
+				<q-card-actions>
+					<q-btn color="primary" size="lg" label="Refresh"
+							th:@click="refresh"></q-btn>
+							
+					<q-btn color="primary" icon="build" size="lg" label="Train" :loading="vueData.trainerState.trainingInProgress"
+							th:@click="|httpPostAjax('@{_train}', {}, postTrain)|">
+						<span slot="loading">
+							<q-spinner-circles class="on-left"></q-spinner-circles>
+							Training...
+						</span>
+					</q-btn>
 					
-					<pre id="log" style="max-height:300px; overflow:auto">{{vueData.trainerState.latestTrainingLog}}</pre>
-				</vu:label>
+					<q-btn color="red" icon="warning" size="lg" label="Stop training" v-if="vueData.trainerState.trainingInProgress"
+							th:@click="|httpPostAjax('@{_stop}', {})|"></q-btn>
+				</q-card-actions>
 				
-				<q-btn id="refreshBtn" color="primary" size="lg" label="Refresh"
-						th:@click="refresh"></q-btn>
+				<q-card-separator></q-card-separator>
+				
+				<q-collapsible label="Details">
+				
+					<vu:label object="trainerState" field="startTime">
+						<span>{{vueData.trainerState.startTime}}</span>
+					</vu:label>
+					
+					<vu:label object="trainerState" field="duration">
+						<span>{{vueData.trainerState.duration}}</span>
+					</vu:label>
+				
+					<vu:label object="trainerState" field="latestTrainingLog">
+						<vu:include-data-primitive key="autoscroll" />
+						<q-toggle label="Auto scroll logs" v-model="vueData.autoscroll" ></q-toggle>
 						
-				<q-btn color="primary" icon="save" size="lg" label="Train" :disable="vueData.trainerState.trainingInProgress"
-						th:@click="|httpPostAjax('@{_train}', {}, postTrain)|"></q-btn>
+						<pre id="log" style="max-height:300px; overflow:auto">{{vueData.trainerState.latestTrainingLog}}</pre>
+					</vu:label>
+				</q-collapsible>
 			</vu:block>
 			
-			<vu:block id="run" title="Etat du modèle">
+			<vu:block id="run" title="State">
 				<vu:text-field object="runnerState" field="name" />
 				<vu:text-field object="runnerState" field="state" />
 				<vu:text-field object="runnerState" field="agentVersion" />
@@ -83,8 +109,8 @@
 						th:@click="|httpPostAjax('@{_refreshRunner}', {})|"></q-btn>
 			</vu:block>
 			
-			<vu:block id="load" title="Charger un modèle">
-				<q-btn color="primary" size="lg" label="Charger"
+			<vu:block id="load" title="Load model">
+				<q-btn color="primary" size="lg" label="Load"
 						th:@click="|httpPostAjax('@{_loadModel}', {'id':2})|"></q-btn>
 			</vu:block>
 			

@@ -69,6 +69,14 @@ public class ModelListController extends AbstractVSpringMvcController {
 		return viewContext;
 	}
 
+
+	@PostMapping("/_stop")
+	public ViewContext doStop(final ViewContext viewContext) {
+		executorBridgeServices.stopAgent();
+
+		return viewContext;
+	}
+
 	@PostMapping("/_loadModel")
 	public ViewContext doLoadModel(final ViewContext viewContext,
 			@RequestParam("id") final Long id) {

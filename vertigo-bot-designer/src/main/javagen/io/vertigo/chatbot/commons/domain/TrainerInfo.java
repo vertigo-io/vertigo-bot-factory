@@ -16,20 +16,22 @@ public final class TrainerInfo implements DtObject {
 	private String name;
 	private Boolean trainingInProgress;
 	private String latestTrainingLog;
+	private java.time.Instant startTime;
+	private java.time.Instant endTime;
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Nom'.
+	 * Récupère la valeur de la propriété 'Name'.
 	 * @return String name <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Nom")
+	@Field(domain = "DoLabel", required = true, label = "Name")
 	public String getName() {
 		return name;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Nom'.
+	 * Définit la valeur de la propriété 'Name'.
 	 * @param name String <b>Obligatoire</b>
 	 */
 	public void setName(final String name) {
@@ -38,17 +40,17 @@ public final class TrainerInfo implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Entrainement en cours'.
+	 * Récupère la valeur de la propriété 'Training in progress'.
 	 * @return Boolean trainingInProgress <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoYesNo", required = true, label = "Entrainement en cours")
+	@Field(domain = "DoYesNo", required = true, label = "Training in progress")
 	public Boolean getTrainingInProgress() {
 		return trainingInProgress;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Entrainement en cours'.
+	 * Définit la valeur de la propriété 'Training in progress'.
 	 * @param trainingInProgress Boolean <b>Obligatoire</b>
 	 */
 	public void setTrainingInProgress(final Boolean trainingInProgress) {
@@ -57,21 +59,69 @@ public final class TrainerInfo implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Log d'entrainement'.
+	 * Récupère la valeur de la propriété 'Training log'.
 	 * @return String latestTrainingLog <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoText", required = true, label = "Log d'entrainement")
+	@Field(domain = "DoText", required = true, label = "Training log")
 	public String getLatestTrainingLog() {
 		return latestTrainingLog;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Log d'entrainement'.
+	 * Définit la valeur de la propriété 'Training log'.
 	 * @param latestTrainingLog String <b>Obligatoire</b>
 	 */
 	public void setLatestTrainingLog(final String latestTrainingLog) {
 		this.latestTrainingLog = latestTrainingLog;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Start time'.
+	 * @return Instant startTime
+	 */
+	@Field(domain = "DoInstant", label = "Start time")
+	public java.time.Instant getStartTime() {
+		return startTime;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Start time'.
+	 * @param startTime Instant
+	 */
+	public void setStartTime(final java.time.Instant startTime) {
+		this.startTime = startTime;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'End time'.
+	 * @return Instant endTime
+	 */
+	@Field(domain = "DoInstant", label = "End time")
+	public java.time.Instant getEndTime() {
+		return endTime;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'End time'.
+	 * @param endTime Instant
+	 */
+	public void setEndTime(final java.time.Instant endTime) {
+		this.endTime = endTime;
+	}
+	
+	/**
+	 * Champ : COMPUTED.
+	 * Récupère la valeur de la propriété calculée 'Duration'.
+	 * @return String duration
+	 */
+	@Field(domain = "DoLabel", type = "COMPUTED", persistent = false, label = "Duration")
+	public String getDuration() {
+		return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());
 	}
 	
 	/** {@inheritDoc} */

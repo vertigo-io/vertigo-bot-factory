@@ -20,17 +20,17 @@ public final class ExecutorTrainingCallback implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Nom'.
+	 * Récupère la valeur de la propriété 'Name'.
 	 * @return String name <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Nom")
+	@Field(domain = "DoLabel", required = true, label = "Name")
 	public String getName() {
 		return name;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Nom'.
+	 * Définit la valeur de la propriété 'Name'.
 	 * @param name String <b>Obligatoire</b>
 	 */
 	public void setName(final String name) {
@@ -58,17 +58,17 @@ public final class ExecutorTrainingCallback implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Version du modèle'.
+	 * Récupère la valeur de la propriété 'Model version'.
 	 * @return Long trainedModelVersion <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoNumber", required = true, label = "Version du modèle")
+	@Field(domain = "DoNumber", required = true, label = "Model version")
 	public Long getTrainedModelVersion() {
 		return trainedModelVersion;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Version du modèle'.
+	 * Définit la valeur de la propriété 'Model version'.
 	 * @param trainedModelVersion Long <b>Obligatoire</b>
 	 */
 	public void setTrainedModelVersion(final Long trainedModelVersion) {
@@ -77,17 +77,17 @@ public final class ExecutorTrainingCallback implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Log d'entrainement'.
+	 * Récupère la valeur de la propriété 'Training logs'.
 	 * @return String trainingLog <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoText", required = true, label = "Log d'entrainement")
+	@Field(domain = "DoText", required = true, label = "Training logs")
 	public String getTrainingLog() {
 		return trainingLog;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Log d'entrainement'.
+	 * Définit la valeur de la propriété 'Training logs'.
 	 * @param trainingLog String <b>Obligatoire</b>
 	 */
 	public void setTrainingLog(final String trainingLog) {

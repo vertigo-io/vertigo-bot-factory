@@ -63,4 +63,8 @@ public class RasaTrainerServices implements Component {
 		return trainerRasaHandler.delModel(id);
 	}
 
+	public void stopTrain() {
+		trainerRasaHandler.stopTrain();
+	}
+
 }

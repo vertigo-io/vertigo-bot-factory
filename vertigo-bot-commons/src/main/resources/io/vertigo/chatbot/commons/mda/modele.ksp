@@ -9,7 +9,7 @@ create DtDefinition DtChatbot{
 
 create DtDefinition DtIntent {
 	id    intId 		{domain: DoId 		label: "ID"}
-	field title 		{domain: DoLabel 	label: "Titre" 			required: "true"}
+	field title 		{domain: DoLabel 	label: "Title" 			required: "true"}
 	field description	{domain: DoLabel 	label: "Description" 	required: "false"}
 	field isSmallTalk 	{domain: DoYesNo 	label: "SmallTalk" 		required: "true"}
 	field isEnabled 	{domain: DoYesNo 	label: "Enabled" 		required: "true"}
@@ -100,7 +100,9 @@ create DtDefinition DtTraining {
 	field endTime		{domain: DoInstant 	label: "End time" 			required: "false"}
 	field versionNumber	{domain: DoNumber 	label: "Version" 			required: "true"}
 	field tag			{domain: DoLabel 	label: "Tag" 				required: "false"}
-	field valid 		{domain: DoYesNo 	label: "Valide" 			required: "true"}
+	field valid 		{domain: DoYesNo 	label: "Valid" 				required: "true"}
+	computed duration 	{domain: DoLabel 	label: "Duration"
+						 expression:"return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());" }
 }
 
 create Association ATrainingChatbot {

@@ -105,7 +105,7 @@ comment on column INTENT.INT_ID is
 'ID';
 
 comment on column INTENT.TITLE is
-'Titre';
+'Title';
 
 comment on column INTENT.DESCRIPTION is
 'Description';
@@ -170,7 +170,7 @@ comment on column TRAINING.TAG is
 'Tag';
 
 comment on column TRAINING.VALID is
-'Valide';
+'Valid';
 
 comment on column TRAINING.BOT_ID is
 'Chatbot';

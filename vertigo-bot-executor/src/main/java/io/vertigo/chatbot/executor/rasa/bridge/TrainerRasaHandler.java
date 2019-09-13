@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.executor.domain.RasaConfig;
@@ -21,9 +22,12 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 
 	private Process rasaTrainingProcess;
 	private StringBuilder trainingLog;
+	private Instant startTime;
+	private Instant endTime;
 
 	@Override
 	public void start() {
+		// nothing
 	}
 
 	@Override
@@ -37,8 +41,10 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 
 	public void trainModel(final RasaConfig config, final Long id) {
 		if (isTraining()) {
-			throw new VUserException("Entrainement déjà en cours");
+			throw new VUserException("Training already in progress");
 		}
+		startTime = Instant.now();
+		endTime = null;
 
 		writeToRasaFile(config.getDomain(), "domain.yml");
 		writeToRasaFile(config.getStories(), "data/stories.md");
@@ -52,8 +58,11 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	}
 
 	private void postTrainModel(final Long id) {
-		LOGGER.info("Entrainement terminé !");
+		LOGGER.info("Training complete !");
 
+		endTime = Instant.now();
+
+		// TODO callback to designer
 		getModelPath(id).toFile().exists();
 	}
 
@@ -63,6 +72,8 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 		retour.setName("Rasa node");
 		retour.setTrainingInProgress(isTraining());
 		retour.setLatestTrainingLog(getTrainingLog());
+		retour.setStartTime(startTime);
+		retour.setEndTime(endTime);
 
 		return retour;
 	}
@@ -73,7 +84,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 
 	private String getTrainingLog() {
 		if (trainingLog == null) {
-			return "Lancez un entrainement...";
+			return "";
 		}
 		return trainingLog.toString();
 	}
@@ -101,5 +112,10 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 
 	private Path getModelPath(final Long id) {
 		return Paths.get(BOT_PATH, TRAINING_MODEL_DIR, + id + ".tar.gz");
+	}
+
+	public void stopTrain() {
+		LOGGER.info("Training aborted !");
+		stop();
 	}
 }

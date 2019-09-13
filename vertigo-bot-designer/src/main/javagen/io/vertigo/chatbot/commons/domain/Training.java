@@ -140,17 +140,17 @@ public final class Training implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Valide'.
+	 * Récupère la valeur de la propriété 'Valid'.
 	 * @return Boolean valid <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoYesNo", required = true, label = "Valide")
+	@Field(domain = "DoYesNo", required = true, label = "Valid")
 	public Boolean getValid() {
 		return valid;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Valide'.
+	 * Définit la valeur de la propriété 'Valid'.
 	 * @param valid Boolean <b>Obligatoire</b>
 	 */
 	public void setValid(final Boolean valid) {
@@ -174,6 +174,16 @@ public final class Training implements Entity {
 	 */
 	public void setBotId(final Long botId) {
 		botIdAccessor.setId(botId);
+	}
+	
+	/**
+	 * Champ : COMPUTED.
+	 * Récupère la valeur de la propriété calculée 'Duration'.
+	 * @return String duration
+	 */
+	@Field(domain = "DoLabel", type = "COMPUTED", persistent = false, label = "Duration")
+	public String getDuration() {
+		return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());
 	}
 
  	/**
