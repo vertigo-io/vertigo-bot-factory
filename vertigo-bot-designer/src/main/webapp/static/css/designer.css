@@ -153,6 +153,8 @@ body {
 
 .nav {
 	cursor: pointer;
+	text-decoration: none;
+	color: inherit;
 }
 
 nav .q-list, .nav .q-list {
@@ -206,8 +208,8 @@ nav a.q-item, .nav a.q_item {
 }
 
 .botCard .q-card img {
-    height: 250px;
-    object-fit: cover;    
+    height: 150px;
+    object-fit: contain;    
 }
 
 
@@ -233,7 +235,7 @@ nav a.q-item, .nav a.q_item {
 
 @media (min-width: 1500px) {
 .row  .botCard {
-	width: 25%;
+	width: 20%;
 }}
 
 .fullHeight {

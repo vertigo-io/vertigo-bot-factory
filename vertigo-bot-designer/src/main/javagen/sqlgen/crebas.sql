@@ -70,6 +70,8 @@ create table CHATBOT
 (
     BOT_ID      	 NUMERIC     	not null,
     NAME        	 VARCHAR(100)	not null,
+    CREATION_DATE	 DATE        	not null,
+    STATUS      	 VARCHAR(100)	not null,
     constraint PK_CHATBOT primary key (BOT_ID)
 );
 
@@ -78,6 +80,12 @@ comment on column CHATBOT.BOT_ID is
 
 comment on column CHATBOT.NAME is
 'Name';
+
+comment on column CHATBOT.CREATION_DATE is
+'Creation date';
+
+comment on column CHATBOT.STATUS is
+'Status';
 
 -- ============================================================
 --   Table : INTENT                                        

@@ -79,6 +79,7 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_save")
 	public String doSave(@ViewAttribute("intent") final Intent intent,
+			@PathVariable("botId") final Long botId,
 			@ViewAttribute("intentTrainingSentences") final DtList<IntentTrainingSentence> intentTrainingSentences,
 			@ViewAttribute("intentTrainingSentencesToDelete") final DtList<IntentTrainingSentence> intentTrainingSentencesToDelete,
 			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts,
@@ -86,7 +87,7 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 			) {
 
 		chatbotServices.save(intent, intentTrainingSentences, intentTrainingSentencesToDelete, utterTexts, utterTextsToDelete);
-		return "redirect:/intent/" + intent.getIntId();
+		return "redirect:/bot/" + botId + "/intent/" + intent.getIntId();
 	}
 
 	@PostMapping("/_addTrainingSentence")

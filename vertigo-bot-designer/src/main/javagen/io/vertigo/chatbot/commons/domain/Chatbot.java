@@ -16,6 +16,8 @@ public final class Chatbot implements Entity {
 
 	private Long botId;
 	private String name;
+	private java.time.LocalDate creationDate;
+	private String status;
 
 	/** {@inheritDoc} */
 	@Override
@@ -59,6 +61,44 @@ public final class Chatbot implements Entity {
 	 */
 	public void setName(final String name) {
 		this.name = name;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Creation date'.
+	 * @return LocalDate creationDate <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoLocaldate", required = true, label = "Creation date")
+	public java.time.LocalDate getCreationDate() {
+		return creationDate;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Creation date'.
+	 * @param creationDate LocalDate <b>Obligatoire</b>
+	 */
+	public void setCreationDate(final java.time.LocalDate creationDate) {
+		this.creationDate = creationDate;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Status'.
+	 * @return String status <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoCode", required = true, label = "Status")
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Status'.
+	 * @param status String <b>Obligatoire</b>
+	 */
+	public void setStatus(final String status) {
+		this.status = status;
 	}
 	
 	/** {@inheritDoc} */
