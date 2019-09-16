@@ -34,8 +34,11 @@ public class Studio {
 						.build())
 				// ---StudioFeature
 				.addModule(new StudioFeatures() // Configuration du moteur vertigo-Studio
-						.withMasterData().withMda(Param.of("projectPackageName", "io.vertigo.chatbot"))
-						.withJavaDomainGenerator(Param.of("generateDtResources", "false")).withTaskGenerator()
+						.withMasterData()
+						.withMda(Param.of("projectPackageName", "io.vertigo.chatbot"))
+						.withJavaDomainGenerator(Param.of("generateDtResources", "false"))
+						.withTaskGenerator()
+						.withFileGenerator()
 						.withSqlDomainGenerator(Param.of("targetSubDir", "javagen/sqlgen"), Param.of("baseCible", "H2"),
 								Param.of("generateDrop", "true"), Param.of("generateMasterData", "true"))
 						.build())

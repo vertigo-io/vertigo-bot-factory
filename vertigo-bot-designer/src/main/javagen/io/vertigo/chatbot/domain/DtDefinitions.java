@@ -27,6 +27,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Intent(io.vertigo.chatbot.commons.domain.Intent.class),
 		/** Objet de données IntentTrainingSentence. */
 		IntentTrainingSentence(io.vertigo.chatbot.commons.domain.IntentTrainingSentence.class),
+		/** Objet de données MediaFileInfo. */
+		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
 		/** Objet de données SmallTalkExport. */
@@ -117,6 +119,25 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		text,
 		/** Propriété 'Intent'. */
 		intId	}
+
+	/**
+	 * Enumération des champs de MediaFileInfo.
+	 */
+	public enum MediaFileInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.MediaFileInfo> {
+		/** Propriété 'Id'. */
+		filId,
+		/** Propriété 'Name'. */
+		fileName,
+		/** Propriété 'MimeType'. */
+		mimeType,
+		/** Propriété 'Size'. */
+		length,
+		/** Propriété 'Modification Date'. */
+		lastModified,
+		/** Propriété 'path'. */
+		filePath,
+		/** Propriété 'data'. */
+		fileData	}
 
 	/**
 	 * Enumération des champs de RunnerInfo.

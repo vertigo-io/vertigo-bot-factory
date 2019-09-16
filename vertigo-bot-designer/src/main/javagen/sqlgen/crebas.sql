@@ -13,6 +13,8 @@ drop table IF EXISTS INTENT cascade;
 drop sequence IF EXISTS SEQ_INTENT;
 drop table IF EXISTS INTENT_TRAINING_SENTENCE cascade;
 drop sequence IF EXISTS SEQ_INTENT_TRAINING_SENTENCE;
+drop table IF EXISTS MEDIA_FILE_INFO cascade;
+drop sequence IF EXISTS SEQ_MEDIA_FILE_INFO;
 drop table IF EXISTS TRAINING cascade;
 drop sequence IF EXISTS SEQ_TRAINING;
 drop table IF EXISTS UTTER_TEXT cascade;
@@ -34,6 +36,9 @@ create sequence SEQ_INTENT
 	start with 1000 cache 20; 
 
 create sequence SEQ_INTENT_TRAINING_SENTENCE
+	start with 1000 cache 20; 
+
+create sequence SEQ_MEDIA_FILE_INFO
 	start with 1000 cache 20; 
 
 create sequence SEQ_TRAINING
@@ -138,6 +143,42 @@ comment on column INTENT_TRAINING_SENTENCE.TEXT is
 
 comment on column INTENT_TRAINING_SENTENCE.INT_ID is
 'Intent';
+
+-- ============================================================
+--   Table : MEDIA_FILE_INFO                                        
+-- ============================================================
+create table MEDIA_FILE_INFO
+(
+    FIL_ID      	 NUMERIC     	not null,
+    FILE_NAME   	 VARCHAR(100)	not null,
+    MIME_TYPE   	 VARCHAR(100)	not null,
+    LENGTH      	 NUMERIC     	not null,
+    LAST_MODIFIED	 TIMESTAMP   	not null,
+    FILE_PATH   	 VARCHAR(500)	,
+    FILE_DATA   	 bytea       	,
+    constraint PK_MEDIA_FILE_INFO primary key (FIL_ID)
+);
+
+comment on column MEDIA_FILE_INFO.FIL_ID is
+'Id';
+
+comment on column MEDIA_FILE_INFO.FILE_NAME is
+'Name';
+
+comment on column MEDIA_FILE_INFO.MIME_TYPE is
+'MimeType';
+
+comment on column MEDIA_FILE_INFO.LENGTH is
+'Size';
+
+comment on column MEDIA_FILE_INFO.LAST_MODIFIED is
+'Modification Date';
+
+comment on column MEDIA_FILE_INFO.FILE_PATH is
+'path';
+
+comment on column MEDIA_FILE_INFO.FILE_DATA is
+'data';
 
 -- ============================================================
 --   Table : TRAINING                                        

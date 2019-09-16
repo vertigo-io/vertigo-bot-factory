@@ -1,6 +1,10 @@
 package io.vertigo.chatbot.commons.domain 
 
 
+create FileInfo FiFileInfo {
+	storeName : "main"
+}
+
 /**************************************************************************************************/
 /********************************* Domains ********************************************************/
 /**************************************************************************************************/
@@ -63,6 +67,24 @@ create Domain DoLocaldate {
 	dataType : LocalDate
 	formatter : FmtDate
 	storeType : "DATE"
+}
+
+create Domain DoSize {
+	dataType : Long
+	formatter : FmtDefault
+	storeType : "NUMERIC"
+}
+
+create Domain DoFilePath {
+	dataType : String
+	formatter : FmtDefault
+	storeType : "VARCHAR(500)"
+}
+
+create Domain DoFileData {
+	dataType : DataStream
+	formatter : FmtDefault
+	storeType : "bytea"
 }
 
 

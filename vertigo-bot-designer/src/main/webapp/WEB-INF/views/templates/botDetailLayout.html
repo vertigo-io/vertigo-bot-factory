@@ -30,6 +30,7 @@
 	</div>
 	 -->
 	<div layout:fragment="content-header-tabs">
+		<vu:button-link class="${tab == 'informations'} ? 'active' : ''" flat label="Informations" url="@{/bot/{id}/(id=${model.bot.botId})}" />
 		<vu:button-link class="${tab == 'smallTalks'} ? 'active' : ''" flat label="Small talks" url="@{/bot/{id}/intents/(id=${model.bot.botId})}" />
 		<vu:button-link class="${tab == 'models'} ? 'active' : ''" flat label="Models" url="@{/bot/{id}/models/(id=${model.bot.botId})}" />
 	</div>

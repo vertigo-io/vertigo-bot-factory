@@ -18,7 +18,11 @@
 		
 		<section layout:fragment="page-content">
 			<vu:table list="intents" componentId="intentsList" tr_@click.native="|goTo('@{/bot/{id}/intent/(id=${model.bot.botId})}'+props.row.intId)|" tr_style="cursor : pointer;">
-					<vu:column field="intId" />
+					<vu:include-data object="intents" field="intId" />
+					<vu:column field="isEnabled" style="width:100px;">
+						<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
+						<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>
+					</vu:column>
 					<vu:column field="title" />
 			</vu:table>
 		</section>

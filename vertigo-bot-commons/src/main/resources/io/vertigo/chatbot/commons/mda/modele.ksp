@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.commons.domain 
+package io.vertigo.chatbot.commons.domain
 
 create DtDefinition DtChatbot{
 	id    botId 		{domain: DoId 			label: "ID"}

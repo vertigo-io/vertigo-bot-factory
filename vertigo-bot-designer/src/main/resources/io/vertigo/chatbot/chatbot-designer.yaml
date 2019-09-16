@@ -25,6 +25,8 @@ modules:
       - kvStore: # activation du support du stockage clé/valeur (utilisé pour la conservation des état de écrans)
     featuresConfig:
       - store.data.sql: # nous utilisons un store de type SQL (avec notre base H2)
+      - store.file.db:
+          storeDtName: DtMediaFileInfo
       - kvStore.berkeley:  # nous utilisons un stockage clé valeur avec la base de donnée BerkeleyDB
           collections: VViewContext;TTL=43200
           dbFilePath: ${java.io.tmpdir}/vertigo-ui/VViewContext
