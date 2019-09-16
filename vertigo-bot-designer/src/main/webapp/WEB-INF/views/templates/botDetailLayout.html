@@ -9,7 +9,8 @@
 		<img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Face_de_chat.jpg" class="detailImg gt-md" />
 	</div>
 	<div layout:fragment="content-header-title" id="baseTitle">
-		<span class="text-bigger" th:text="${model.bot.name}"></span> <br />
+		<vu:include-data object="bot" field="name" />
+		<span class="text-bigger">{{vueData.bot.name}}</span> <br />
 <!-- 		<span class="text-smaller ne-mini" th:text="${model.base.code}"></span> <br class="ne-mini" /> -->
 <!-- 		<span class="text-smaller" th:text="${model.baseTypes.getById('baseTypeId', model.base.baseTypeId).label}"></span> -->
 	</div>
@@ -30,8 +31,8 @@
 	</div>
 	 -->
 	<div layout:fragment="content-header-tabs">
-		<vu:button-link class="${tab == 'informations'} ? 'active' : ''" flat label="Informations" url="@{/bot/{id}/(id=${model.bot.botId})}" />
-		<vu:button-link class="${tab == 'smallTalks'} ? 'active' : ''" flat label="Small talks" url="@{/bot/{id}/intents/(id=${model.bot.botId})}" />
-		<vu:button-link class="${tab == 'models'} ? 'active' : ''" flat label="Models" url="@{/bot/{id}/models/(id=${model.bot.botId})}" />
+		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'informations'} ? 'active' : ''" flat label="Informations" url="@{/bot/{id}(id=${model.bot.botId})}" />
+		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'smallTalks'} ? 'active' : ''" flat label="Small talks" url="@{/bot/{id}/intents/(id=${model.bot.botId})}" />
+		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'models'} ? 'active' : ''" flat label="Models" url="@{/bot/{id}/models/(id=${model.bot.botId})}" />
 	</div>
 </html>

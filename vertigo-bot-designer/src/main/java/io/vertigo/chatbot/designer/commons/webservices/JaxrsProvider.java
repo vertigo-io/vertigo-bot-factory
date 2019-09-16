@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer;
+package io.vertigo.chatbot.designer.commons.webservices;
 
 import io.vertigo.chatbot.commons.AbstractJaxrsProvider;
 

@@ -1,9 +1,9 @@
-package io.vertigo.chatbot.designer.webservices;
+package io.vertigo.chatbot.designer.builder.webservices;
 
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
-import io.vertigo.chatbot.designer.services.ExecutorBridgeServices;
+import io.vertigo.chatbot.designer.builder.services.ExecutorBridgeServices;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.AnonymousAccessAllowed;
 import io.vertigo.vega.webservice.stereotype.POST;

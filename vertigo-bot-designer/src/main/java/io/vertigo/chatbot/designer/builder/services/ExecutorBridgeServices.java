@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.services;
+package io.vertigo.chatbot.designer.builder.services;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +26,7 @@ import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.UtterText;
-import io.vertigo.chatbot.designer.JaxrsProvider;
+import io.vertigo.chatbot.designer.commons.webservices.JaxrsProvider;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.domain.model.DtList;

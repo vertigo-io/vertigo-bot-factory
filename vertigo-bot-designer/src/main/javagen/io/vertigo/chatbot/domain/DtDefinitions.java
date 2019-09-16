@@ -77,7 +77,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Creation date'. */
 		creationDate,
 		/** Propriété 'Status'. */
-		status	}
+		status,
+		/** Propriété 'Avatar'. */
+		filIdAvatar	}
 
 	/**
 	 * Enumération des champs de ExecutorTrainingCallback.

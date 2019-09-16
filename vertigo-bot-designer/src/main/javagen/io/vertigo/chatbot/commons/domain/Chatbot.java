@@ -2,6 +2,7 @@ package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.dynamo.domain.model.Entity;
 import io.vertigo.dynamo.domain.model.UID;
+import io.vertigo.dynamo.domain.model.VAccessor;
 import io.vertigo.dynamo.domain.stereotype.Field;
 import io.vertigo.dynamo.domain.util.DtObjectUtil;
 import io.vertigo.lang.Generated;
@@ -18,6 +19,21 @@ public final class Chatbot implements Entity {
 	private String name;
 	private java.time.LocalDate creationDate;
 	private String status;
+
+	@io.vertigo.dynamo.domain.stereotype.Association(
+			name = "AChatbotMediaFileInfo",
+			fkFieldName = "filIdAvatar",
+			primaryDtDefinitionName = "DtMediaFileInfo",
+			primaryIsNavigable = true,
+			primaryRole = "MediaFileInfo",
+			primaryLabel = "Avatar",
+			primaryMultiplicity = "0..1",
+			foreignDtDefinitionName = "DtChatbot",
+			foreignIsNavigable = false,
+			foreignRole = "Chatbot",
+			foreignLabel = "Chatbot",
+			foreignMultiplicity = "0..*")
+	private final VAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> filIdAvatarAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.MediaFileInfo.class, "MediaFileInfo");
 
 	/** {@inheritDoc} */
 	@Override
@@ -99,6 +115,33 @@ public final class Chatbot implements Entity {
 	 */
 	public void setStatus(final String status) {
 		this.status = status;
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Avatar'.
+	 * @return Long filIdAvatar
+	 */
+	@Field(domain = "DoId", type = "FOREIGN_KEY", label = "Avatar")
+	public Long getFilIdAvatar() {
+		return (Long) filIdAvatarAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Avatar'.
+	 * @param filIdAvatar Long
+	 */
+	public void setFilIdAvatar(final Long filIdAvatar) {
+		filIdAvatarAccessor.setId(filIdAvatar);
+	}
+
+ 	/**
+	 * Association : Avatar.
+	 * @return l'accesseur vers la propriété 'Avatar'
+	 */
+	public VAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> mediaFileInfo() {
+		return filIdAvatarAccessor;
 	}
 	
 	/** {@inheritDoc} */

@@ -77,6 +77,7 @@ create table CHATBOT
     NAME        	 VARCHAR(100)	not null,
     CREATION_DATE	 DATE        	not null,
     STATUS      	 VARCHAR(100)	not null,
+    FIL_ID_AVATAR	 NUMERIC     	,
     constraint PK_CHATBOT primary key (BOT_ID)
 );
 
@@ -91,6 +92,9 @@ comment on column CHATBOT.CREATION_DATE is
 
 comment on column CHATBOT.STATUS is
 'Status';
+
+comment on column CHATBOT.FIL_ID_AVATAR is
+'Avatar';
 
 -- ============================================================
 --   Table : INTENT                                        
@@ -252,6 +256,12 @@ alter table UTTER_TEXT
 	references ACTION (ACT_ID);
 
 create index ACTION_UTTER_TEXT_ACTION_FK on UTTER_TEXT (ACT_ID asc);
+
+alter table CHATBOT
+	add constraint FK_CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO foreign key (FIL_ID_AVATAR)
+	references MEDIA_FILE_INFO (FIL_ID);
+
+create index CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on CHATBOT (FIL_ID_AVATAR asc);
 
 alter table INTENT
 	add constraint FK_INTENT_CHATBOT_CHATBOT foreign key (BOT_ID)

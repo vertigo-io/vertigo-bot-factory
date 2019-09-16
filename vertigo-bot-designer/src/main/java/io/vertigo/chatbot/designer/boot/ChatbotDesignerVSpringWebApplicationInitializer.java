@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.boot;
+package io.vertigo.chatbot.designer.boot;
 
 import io.vertigo.ui.impl.springmvc.config.AbstractVSpringMvcWebApplicationInitializer;
 

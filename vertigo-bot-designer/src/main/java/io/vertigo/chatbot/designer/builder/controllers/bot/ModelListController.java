@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.controllers.bot;
+package io.vertigo.chatbot.designer.builder.controllers.bot;
 
 import javax.inject.Inject;
 
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
-import io.vertigo.chatbot.designer.services.ExecutorBridgeServices;
+import io.vertigo.chatbot.designer.builder.services.ExecutorBridgeServices;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;

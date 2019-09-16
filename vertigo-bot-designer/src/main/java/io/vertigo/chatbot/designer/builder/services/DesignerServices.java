@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.services;
+package io.vertigo.chatbot.designer.builder.services;
 
 import javax.inject.Inject;
 
@@ -45,6 +45,12 @@ public class DesignerServices implements Component {
 		return chatbotDAO.get(botId);
 	}
 
+	public Chatbot saveChatbot(final Chatbot chatbot) {
+		Assertion.checkNotNull(chatbot);
+		// ---
+		return chatbotDAO.save(chatbot);
+	}
+
 	public Intent getIntentById(final Long movId) {
 		Assertion.checkNotNull(movId);
 		// ---
@@ -63,7 +69,7 @@ public class DesignerServices implements Component {
 		return intent;
 	}
 
-	public Intent save(final Intent intent, final DtList<IntentTrainingSentence> intentTexts, final DtList<IntentTrainingSentence> intentTextsToDelete, final DtList<UtterText> utterTexts, final DtList<UtterText> utterTextsToDelete) {
+	public Intent saveIntent(final Intent intent, final DtList<IntentTrainingSentence> intentTexts, final DtList<IntentTrainingSentence> intentTextsToDelete, final DtList<UtterText> utterTexts, final DtList<UtterText> utterTextsToDelete) {
 		Assertion.checkNotNull(intent);
 		Assertion.checkNotNull(intentTexts);
 		Assertion.checkNotNull(intentTextsToDelete);

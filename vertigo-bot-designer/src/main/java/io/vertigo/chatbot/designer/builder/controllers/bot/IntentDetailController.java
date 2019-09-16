@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.controllers.bot;
+package io.vertigo.chatbot.designer.builder.controllers.bot;
 
 import javax.inject.Inject;
 
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import io.vertigo.chatbot.commons.domain.Intent;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.UtterText;
-import io.vertigo.chatbot.designer.services.DesignerServices;
+import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VUserException;
@@ -93,7 +93,7 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 			@ViewAttribute("utterTextsToDelete") final DtList<UtterText> utterTextsToDelete
 			) {
 
-		chatbotServices.save(intent, intentTrainingSentences, intentTrainingSentencesToDelete, utterTexts, utterTextsToDelete);
+		chatbotServices.saveIntent(intent, intentTrainingSentences, intentTrainingSentencesToDelete, utterTexts, utterTextsToDelete);
 		return "redirect:/bot/" + botId + "/intent/" + intent.getIntId();
 	}
 

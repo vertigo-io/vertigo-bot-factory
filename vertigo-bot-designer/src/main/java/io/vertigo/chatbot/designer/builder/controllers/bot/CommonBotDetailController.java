@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.controllers.bot;
+package io.vertigo.chatbot.designer.builder.controllers.bot;
 
 import javax.inject.Inject;
 
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.designer.services.DesignerServices;
+import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
@@ -24,5 +24,8 @@ public class CommonBotDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDto(botKey, designerServices.getChatbotById(botId));
 	}
 
+	public void initEmptyCommonContext(final ViewContext viewContext) {
+		viewContext.publishDto(botKey, new Chatbot());
+	}
 
 }

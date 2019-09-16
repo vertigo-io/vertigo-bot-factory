@@ -27,6 +27,13 @@ modules:
       - store.data.sql: # nous utilisons un store de type SQL (avec notre base H2)
       - store.file.db:
           storeDtName: DtMediaFileInfo
+      - store.file.fullFilesystem:
+          name: temp
+          path: ${java.io.tmpdir}/chatbotUploadedFiles/
+          purgeDelayMinutes: 30
+      - kvStore.delayedMemory:
+          collections: protected-value
+          timeToLiveSeconds: 3600
       - kvStore.berkeley:  # nous utilisons un stockage clé valeur avec la base de donnée BerkeleyDB
           collections: VViewContext;TTL=43200
           dbFilePath: ${java.io.tmpdir}/vertigo-ui/VViewContext
@@ -38,4 +45,6 @@ modules:
           apiPrefix: /api
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
-  io.vertigo.chatbot.designer.ChatbotDesignerFeatures: # utilisation de notre module métier
+  
+  io.vertigo.chatbot.designer.commons.DesignerCommonsFeatures:
+  io.vertigo.chatbot.designer.builder.BuilderFeatures: # utilisation de notre module métier

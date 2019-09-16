@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/botDetailLayout}" th:with="tab=informations, noNavigation=${model.modeCreate}"
+	>
+	
+	<head>
+		<title>Intent detail</title>
+	</head>
+	
+	<body>
+		<section layout:fragment="content-header-actions">
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}(id=${model.bot.botId})}" ariaLabel="Cancel" icon="fas fa-ban"
+							class="on-left text-tertiary-inverted" :round size="lg" color="primary" :flat />
+			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+							class="on-left" :round size="lg" color="primary" />
+		</section>
+		
+		<section layout:fragment="content">
+			
+			<vu:block id="detail" title="Bot details">
+				<vu:text-field object="bot" field="name" />
+				
+				<vu:label-edit object="bot" field="filIdAvatar" th:if="${viewMode=='edit'}"  >
+					<vu:fileupload th:url="'@{/commons/upload}'" key="botTmpPictureUri" extensions="'.jpg,.jpeg,.png'" multiple="false" />
+				</vu:label-edit>
+			</vu:block>
+			
+			
+			<q-page-sticky position="bottom-right">
+				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
+			</q-page-sticky>
+			
+		</section>
+	</body>
+</html>

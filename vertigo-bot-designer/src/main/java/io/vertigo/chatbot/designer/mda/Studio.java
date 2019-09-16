@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.mda;
+package io.vertigo.chatbot.designer.mda;
 
 import io.vertigo.app.AutoCloseableApp;
 import io.vertigo.app.config.DefinitionProviderConfig;

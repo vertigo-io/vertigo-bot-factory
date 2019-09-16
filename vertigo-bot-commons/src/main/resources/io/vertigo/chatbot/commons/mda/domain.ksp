@@ -1,8 +1,12 @@
 package io.vertigo.chatbot.commons.domain 
 
 
-create FileInfo FiFileInfo {
+create FileInfo FiFileInfoStd {
 	storeName : "main"
+}
+
+create FileInfo FiFileInfoTmp {
+	storeName : "temp"
 }
 
 /**************************************************************************************************/

@@ -17,7 +17,7 @@
 			<vu:include-data object="bots" field="creationDate" />
 			
 			<vu:cards list="bots" componentId="botCards" cardClass="botCard col-xl-3 col-md-4 col-xs-6"  sortUrl="@{/basemanagement/bases/_sort}" rowsPerPage="8" showMore="true" showMoreLabel="Show more" >
-				<a th::href="|'@{/bot/}'+item.botId+'/intents/'|" class="nav">
+				<a th::href="|'@{/bot/}'+item.botId|" class="nav">
 					<q-card-media>
 <!-- 						<img th::src="|'@{/basemanagement/base/}'+item.baseId+'/mainPicture'|"/> -->
 						<img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Face_de_chat.jpg"/>

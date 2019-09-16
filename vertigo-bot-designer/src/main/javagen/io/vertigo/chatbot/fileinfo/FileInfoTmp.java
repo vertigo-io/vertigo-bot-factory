@@ -6,9 +6,9 @@ import io.vertigo.dynamo.impl.file.model.AbstractFileInfo;
 
 /**
  * Attention cette classe est générée automatiquement !
- * Objet représentant un fichier persistant FileInfo
+ * Objet représentant un fichier persistant FileInfoTmp
  */
-public final class FileInfo extends AbstractFileInfo {
+public final class FileInfoTmp extends AbstractFileInfo {
 	/** SerialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
@@ -16,8 +16,8 @@ public final class FileInfo extends AbstractFileInfo {
 	 * Constructeur par défaut.
 	 * @param vFile Données du fichier
 	 */
-	public FileInfo(final VFile vFile) {
-		super(FileInfoDefinition.findFileInfoDefinition(FileInfo.class), vFile);
+	public FileInfoTmp(final VFile vFile) {
+		super(FileInfoDefinition.findFileInfoDefinition(FileInfoTmp.class), vFile);
 	}
 }
 
