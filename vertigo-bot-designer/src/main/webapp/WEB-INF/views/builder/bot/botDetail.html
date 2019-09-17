@@ -25,7 +25,7 @@
 		
 		<section layout:fragment="content">
 			
-			<vu:block id="detail" title="Bot details" th:if="${viewMode=='edit'}">
+			<vu:block id="identity" title="Bot identity" th:if="${viewMode=='edit'}">
 				<vu:text-field object="bot" field="name" />
 				
 				<vu:label-edit object="bot" field="filIdAvatar" >
@@ -33,8 +33,13 @@
 				</vu:label-edit>
 			</vu:block>
 			
+			<vu:block id="custom" title="Bot customization">
+				<vu:text-field object="welcome" field="text" label="Welcome message"/>
+				<vu:text-field object="default" field="text" label="Fallback message"/>
+			</vu:block>
+			
 			<vu:block id="nodes" title="Nodes">
-				TODO
+				Coming soon !
 			</vu:block>
 			
 			

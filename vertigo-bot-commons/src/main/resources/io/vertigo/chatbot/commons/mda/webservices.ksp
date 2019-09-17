@@ -1,5 +1,12 @@
 package io.vertigo.chatbot.commons.domain 
 
+
+create DtDefinition DtBotExport {
+	field bot 						{domain: DoDtChatbotDto 				label: "chatbot" 					required: "true"}
+	field defaultText				{domain: DoDtUtterTextDto 				label: "welcome" 					required: "true"}
+	field welcomeText				{domain: DoDtUtterTextDto 				label: "welcome" 					required: "true"}
+}
+
 create DtDefinition DtSmallTalkExport {
 	field intent 					{domain: DoDtIntentDto 					label: "intent" 					required: "true"}
 	field intentTrainingSentences 	{domain: DoDtIntentTrainingSentenceDtc 	label: "intentTrainingSentences" 	required: "true"}

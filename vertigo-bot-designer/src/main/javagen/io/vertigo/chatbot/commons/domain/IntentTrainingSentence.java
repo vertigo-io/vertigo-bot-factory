@@ -24,7 +24,7 @@ public final class IntentTrainingSentence implements Entity {
 			primaryDtDefinitionName = "DtIntent",
 			primaryIsNavigable = false,
 			primaryRole = "Intent",
-			primaryLabel = "Intent",
+			primaryLabel = "SmallTalkIntent",
 			primaryMultiplicity = "1..1",
 			foreignDtDefinitionName = "DtIntentTrainingSentence",
 			foreignIsNavigable = true,
@@ -79,17 +79,17 @@ public final class IntentTrainingSentence implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Intent'.
+	 * Récupère la valeur de la propriété 'SmallTalkIntent'.
 	 * @return Long intId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", type = "FOREIGN_KEY", required = true, label = "Intent")
+	@Field(domain = "DoId", type = "FOREIGN_KEY", required = true, label = "SmallTalkIntent")
 	public Long getIntId() {
 		return (Long) intIdAccessor.getId();
 	}
 
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Intent'.
+	 * Définit la valeur de la propriété 'SmallTalkIntent'.
 	 * @param intId Long <b>Obligatoire</b>
 	 */
 	public void setIntId(final Long intId) {
@@ -97,8 +97,8 @@ public final class IntentTrainingSentence implements Entity {
 	}
 
  	/**
-	 * Association : Intent.
-	 * @return l'accesseur vers la propriété 'Intent'
+	 * Association : SmallTalkIntent.
+	 * @return l'accesseur vers la propriété 'SmallTalkIntent'
 	 */
 	public VAccessor<io.vertigo.chatbot.commons.domain.Intent> intent() {
 		return intIdAccessor;

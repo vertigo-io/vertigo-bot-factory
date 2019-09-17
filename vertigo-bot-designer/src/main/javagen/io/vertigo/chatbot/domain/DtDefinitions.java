@@ -17,8 +17,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des DtDefinitions.
 	 */
 	public enum Definitions {
-		/** Objet de données Action. */
-		Action(io.vertigo.chatbot.commons.domain.Action.class),
+		/** Objet de données BotExport. */
+		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
 		/** Objet de données Chatbot. */
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
 		/** Objet de données ExecutorTrainingCallback. */
@@ -56,15 +56,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	}
 
 	/**
-	 * Enumération des champs de Action.
+	 * Enumération des champs de BotExport.
 	 */
-	public enum ActionFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Action> {
-		/** Propriété 'ID'. */
-		actId,
-		/** Propriété 'Text'. */
-		title,
-		/** Propriété 'Chatbot'. */
-		botId	}
+	public enum BotExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.BotExport> {
+		/** Propriété 'chatbot'. */
+		bot,
+		/** Propriété 'welcome'. */
+		defaultText,
+		/** Propriété 'welcome'. */
+		welcomeText	}
 
 	/**
 	 * Enumération des champs de Chatbot.
@@ -79,7 +79,11 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Status'. */
 		status,
 		/** Propriété 'Avatar'. */
-		filIdAvatar	}
+		filIdAvatar,
+		/** Propriété 'Welcome text'. */
+		utxIdWelcome,
+		/** Propriété 'Default text'. */
+		utxIdDefault	}
 
 	/**
 	 * Enumération des champs de ExecutorTrainingCallback.
@@ -119,7 +123,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		itsId,
 		/** Propriété 'Text'. */
 		text,
-		/** Propriété 'Intent'. */
+		/** Propriété 'SmallTalkIntent'. */
 		intId	}
 
 	/**
@@ -212,9 +216,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Text'. */
 		text,
 		/** Propriété 'Intent'. */
-		intId,
-		/** Propriété 'Action'. */
-		actId	}
+		intId	}
 
 	/** {@inheritDoc} */
 	@Override

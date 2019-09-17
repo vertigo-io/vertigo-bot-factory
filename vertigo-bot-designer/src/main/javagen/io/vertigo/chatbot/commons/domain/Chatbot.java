@@ -35,12 +35,42 @@ public final class Chatbot implements Entity {
 			foreignMultiplicity = "0..*")
 	private final VAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> filIdAvatarAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.MediaFileInfo.class, "MediaFileInfo");
 
+	@io.vertigo.dynamo.domain.stereotype.Association(
+			name = "AChatbotUtterTextWelcome",
+			fkFieldName = "utxIdWelcome",
+			primaryDtDefinitionName = "DtUtterText",
+			primaryIsNavigable = true,
+			primaryRole = "UtterText",
+			primaryLabel = "Welcome text",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtChatbot",
+			foreignIsNavigable = false,
+			foreignRole = "Chatbot",
+			foreignLabel = "Chatbot",
+			foreignMultiplicity = "0..*")
+	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utxIdWelcomeAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "UtterText");
+
+	@io.vertigo.dynamo.domain.stereotype.Association(
+			name = "AChatbotUtterTextDefault",
+			fkFieldName = "utxIdDefault",
+			primaryDtDefinitionName = "DtUtterText",
+			primaryIsNavigable = true,
+			primaryRole = "UtterText",
+			primaryLabel = "Default text",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtChatbot",
+			foreignIsNavigable = false,
+			foreignRole = "Chatbot",
+			foreignLabel = "Chatbot",
+			foreignMultiplicity = "0..*")
+	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utxIdDefaultAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "UtterText");
+
 	/** {@inheritDoc} */
 	@Override
 	public UID<Chatbot> getUID() {
 		return UID.of(this);
 	}
-	
+
 	/**
 	 * Champ : ID.
 	 * Récupère la valeur de la propriété 'ID'.
@@ -59,7 +89,7 @@ public final class Chatbot implements Entity {
 	public void setBotId(final Long botId) {
 		this.botId = botId;
 	}
-	
+
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Name'.
@@ -78,7 +108,7 @@ public final class Chatbot implements Entity {
 	public void setName(final String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Creation date'.
@@ -97,7 +127,7 @@ public final class Chatbot implements Entity {
 	public void setCreationDate(final java.time.LocalDate creationDate) {
 		this.creationDate = creationDate;
 	}
-	
+
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Status'.
@@ -116,7 +146,7 @@ public final class Chatbot implements Entity {
 	public void setStatus(final String status) {
 		this.status = status;
 	}
-	
+
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Avatar'.
@@ -136,14 +166,68 @@ public final class Chatbot implements Entity {
 		filIdAvatarAccessor.setId(filIdAvatar);
 	}
 
- 	/**
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Welcome text'.
+	 * @return Long utxIdWelcome <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoId", type = "FOREIGN_KEY", required = true, label = "Welcome text")
+	public Long getUtxIdWelcome() {
+		return (Long) utxIdWelcomeAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Welcome text'.
+	 * @param utxIdWelcome Long <b>Obligatoire</b>
+	 */
+	public void setUtxIdWelcome(final Long utxIdWelcome) {
+		utxIdWelcomeAccessor.setId(utxIdWelcome);
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Default text'.
+	 * @return Long utxIdDefault <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoId", type = "FOREIGN_KEY", required = true, label = "Default text")
+	public Long getUtxIdDefault() {
+		return (Long) utxIdDefaultAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Default text'.
+	 * @param utxIdDefault Long <b>Obligatoire</b>
+	 */
+	public void setUtxIdDefault(final Long utxIdDefault) {
+		utxIdDefaultAccessor.setId(utxIdDefault);
+	}
+
+	/**
 	 * Association : Avatar.
 	 * @return l'accesseur vers la propriété 'Avatar'
 	 */
 	public VAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> mediaFileInfo() {
 		return filIdAvatarAccessor;
 	}
-	
+
+	/**
+	 * Association : Default text.
+	 * @return l'accesseur vers la propriété 'Default text'
+	 */
+	public VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextDefault() {
+		return utxIdDefaultAccessor;
+	}
+
+	/**
+	 * Association : Welcome text.
+	 * @return l'accesseur vers la propriété 'Welcome text'
+	 */
+	public VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextWelcome() {
+		return utxIdWelcomeAccessor;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {

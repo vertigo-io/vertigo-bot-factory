@@ -7,10 +7,12 @@ create Task TkExportSmallTalk {
             	*
 			from intent int
 			where int.is_small_talk = true
+			and int.bot_id = #botId#
 			order by int.int_id asc
 			limit 500
              "
-	attribute intents     {domain : DoDtIntentDtc    required:"true"  inOut :"out"}
+	attribute botId  		{domain : DoId         		required:"true"  inOut :"in"}
+	attribute intents 		{domain : DoDtIntentDtc 	required:"true"  inOut :"out"}
 }
 
 create Task TkExportSmallTalkRelativeTrainingSentence {  

@@ -72,6 +72,18 @@ public class DesignerServices implements Component {
 		return fileServices.getFile(fileServices.toStdFileInfoUri(bot.getFilIdAvatar()));
 	}
 
+	public UtterText getDefaultByBot(final Chatbot bot) {
+		Assertion.checkNotNull(bot);
+		// ---
+		return utterTextDAO.get(bot.getUtxIdDefault());
+	}
+
+	public UtterText getWelcomeByBot(final Chatbot bot) {
+		Assertion.checkNotNull(bot);
+		// ---
+		return utterTextDAO.get(bot.getUtxIdWelcome());
+	}
+
 	public VFile getNoAvatar() {
 		return fileManager.createFile(
 				"noAvatar.png",
@@ -79,12 +91,26 @@ public class DesignerServices implements Component {
 				DesignerServices.class.getResource("/noAvatar.png"));
 	}
 
-	public Chatbot saveChatbot(final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile) {
+	public Chatbot saveChatbot(final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile, final UtterText defaultText, final UtterText welcome) {
 		Assertion.checkNotNull(chatbot);
+		Assertion.checkNotNull(welcome);
 		// ---
+
+		// Avatar
 		if (personPictureFile.isPresent()) {
 			saveChatbotPicture(chatbot, personPictureFile.get());
 		}
+
+		// default text
+		utterTextDAO.save(defaultText);
+		chatbot.setUtxIdDefault(defaultText.getUtxId());
+
+		// welcome
+		utterTextDAO.save(welcome);
+		chatbot.setUtxIdWelcome(welcome.getUtxId());
+
+		// chatbot save
+		chatbot.setStatus("OK");
 		return chatbotDAO.save(chatbot);
 	}
 

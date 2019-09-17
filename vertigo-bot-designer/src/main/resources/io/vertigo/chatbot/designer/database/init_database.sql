@@ -1,1 +1,1 @@
-create unique index CHATBOT_NAME_IDX on CHATBOT (NAME);
+create unique index CHATBOT_NAME_IDX on CHATBOT (lower(NAME));

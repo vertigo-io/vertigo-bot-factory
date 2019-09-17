@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
@@ -44,9 +45,10 @@ public class RasaExecutorWebService implements WebServices {
 	@AnonymousAccessAllowed
 	@POST("/train")
 	@SessionLess
-	public void train(@InnerBodyParam("export") final DtList<SmallTalkExport> data,
-			@InnerBodyParam("id") final Long id) {
-		rasaTrainerServices.trainModel(data, id);
+	public void train(@InnerBodyParam("botExport") final BotExport bot,
+			@InnerBodyParam("smallTalkExport") final DtList<SmallTalkExport> smallTalkList,
+			@InnerBodyParam("modelId") final Long id) {
+		rasaTrainerServices.trainModel(bot, smallTalkList, id);
 	}
 
 	@AnonymousAccessAllowed

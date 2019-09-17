@@ -5,8 +5,6 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
-drop table IF EXISTS ACTION cascade;
-drop sequence IF EXISTS SEQ_ACTION;
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS INTENT cascade;
@@ -26,9 +24,6 @@ drop sequence IF EXISTS SEQ_UTTER_TEXT;
 -- ============================================================
 --   Sequences                                      
 -- ============================================================
-create sequence SEQ_ACTION
-	start with 1000 cache 20; 
-
 create sequence SEQ_CHATBOT
 	start with 1000 cache 20; 
 
@@ -49,26 +44,6 @@ create sequence SEQ_UTTER_TEXT
 
 
 -- ============================================================
---   Table : ACTION                                        
--- ============================================================
-create table ACTION
-(
-    ACT_ID      	 NUMERIC     	not null,
-    TITLE       	 VARCHAR(100)	not null,
-    BOT_ID      	 NUMERIC     	not null,
-    constraint PK_ACTION primary key (ACT_ID)
-);
-
-comment on column ACTION.ACT_ID is
-'ID';
-
-comment on column ACTION.TITLE is
-'Text';
-
-comment on column ACTION.BOT_ID is
-'Chatbot';
-
--- ============================================================
 --   Table : CHATBOT                                        
 -- ============================================================
 create table CHATBOT
@@ -78,6 +53,8 @@ create table CHATBOT
     CREATION_DATE	 DATE        	not null,
     STATUS      	 VARCHAR(100)	not null,
     FIL_ID_AVATAR	 NUMERIC     	,
+    UTX_ID_WELCOME	 NUMERIC     	not null,
+    UTX_ID_DEFAULT	 NUMERIC     	not null,
     constraint PK_CHATBOT primary key (BOT_ID)
 );
 
@@ -95,6 +72,12 @@ comment on column CHATBOT.STATUS is
 
 comment on column CHATBOT.FIL_ID_AVATAR is
 'Avatar';
+
+comment on column CHATBOT.UTX_ID_WELCOME is
+'Welcome text';
+
+comment on column CHATBOT.UTX_ID_DEFAULT is
+'Default text';
 
 -- ============================================================
 --   Table : INTENT                                        
@@ -146,7 +129,7 @@ comment on column INTENT_TRAINING_SENTENCE.TEXT is
 'Text';
 
 comment on column INTENT_TRAINING_SENTENCE.INT_ID is
-'Intent';
+'SmallTalkIntent';
 
 -- ============================================================
 --   Table : MEDIA_FILE_INFO                                        
@@ -228,7 +211,6 @@ create table UTTER_TEXT
     UTX_ID      	 NUMERIC     	not null,
     TEXT        	 VARCHAR(100)	not null,
     INT_ID      	 NUMERIC     	,
-    ACT_ID      	 NUMERIC     	,
     constraint PK_UTTER_TEXT primary key (UTX_ID)
 );
 
@@ -241,27 +223,24 @@ comment on column UTTER_TEXT.TEXT is
 comment on column UTTER_TEXT.INT_ID is
 'Intent';
 
-comment on column UTTER_TEXT.ACT_ID is
-'Action';
-
-
-alter table ACTION
-	add constraint FK_ACTION_CHATBOT_CHATBOT foreign key (BOT_ID)
-	references CHATBOT (BOT_ID);
-
-create index ACTION_CHATBOT_CHATBOT_FK on ACTION (BOT_ID asc);
-
-alter table UTTER_TEXT
-	add constraint FK_ACTION_UTTER_TEXT_ACTION foreign key (ACT_ID)
-	references ACTION (ACT_ID);
-
-create index ACTION_UTTER_TEXT_ACTION_FK on UTTER_TEXT (ACT_ID asc);
 
 alter table CHATBOT
 	add constraint FK_CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO foreign key (FIL_ID_AVATAR)
 	references MEDIA_FILE_INFO (FIL_ID);
 
 create index CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on CHATBOT (FIL_ID_AVATAR asc);
+
+alter table CHATBOT
+	add constraint FK_CHATBOT_UTTER_TEXT_DEFAULT_UTTER_TEXT foreign key (UTX_ID_DEFAULT)
+	references UTTER_TEXT (UTX_ID);
+
+create index CHATBOT_UTTER_TEXT_DEFAULT_UTTER_TEXT_FK on CHATBOT (UTX_ID_DEFAULT asc);
+
+alter table CHATBOT
+	add constraint FK_CHATBOT_UTTER_TEXT_WELCOME_UTTER_TEXT foreign key (UTX_ID_WELCOME)
+	references UTTER_TEXT (UTX_ID);
+
+create index CHATBOT_UTTER_TEXT_WELCOME_UTTER_TEXT_FK on CHATBOT (UTX_ID_WELCOME asc);
 
 alter table INTENT
 	add constraint FK_INTENT_CHATBOT_CHATBOT foreign key (BOT_ID)

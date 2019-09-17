@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.dynamo.domain.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
+import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
@@ -23,14 +25,20 @@ import io.vertigo.vega.webservice.stereotype.QueryParam;
 public class BotDetailController extends AbstractVSpringMvcController {
 
 	@Inject
-	private DesignerServices chatbotServices;
+	private DesignerServices designerServices;
 
 	@Inject
 	private CommonBotDetailController commonBotDetailController;
 
+	private static final ViewContextKey<UtterText> defaultKey = ViewContextKey.of("default");
+	private static final ViewContextKey<UtterText> welcomeKey = ViewContextKey.of("welcome");
+
 	@GetMapping("/{botId}")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		commonBotDetailController.initCommonContext(viewContext, botId);
+		final Chatbot bot = commonBotDetailController.initCommonContext(viewContext, botId);
+
+		viewContext.publishDto(defaultKey, designerServices.getDefaultByBot(bot));
+		viewContext.publishDto(welcomeKey, designerServices.getWelcomeByBot(bot));
 
 		toModeReadOnly();
 	}
@@ -38,6 +46,14 @@ public class BotDetailController extends AbstractVSpringMvcController {
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext) {
 		commonBotDetailController.initEmptyCommonContext(viewContext);
+
+		final UtterText newDefault = new UtterText();
+		newDefault.setText("Sorry, I don't understand.");
+		viewContext.publishDto(defaultKey, newDefault);
+
+		final UtterText newWelcome = new UtterText();
+		newWelcome.setText("Hello !");
+		viewContext.publishDto(welcomeKey, newWelcome);
 
 		toModeCreate();
 	}
@@ -48,8 +64,12 @@ public class BotDetailController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_save")
-	public String doSave(@ViewAttribute("bot") final Chatbot bot, @QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile) {
-		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile);
+	public String doSave(@ViewAttribute("bot") final Chatbot bot,
+			@QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile,
+			@ViewAttribute("default") final UtterText defaultText,
+			@ViewAttribute("welcome") final UtterText welcome) {
+
+		final Chatbot savedChatbot = designerServices.saveChatbot(bot, personPictureFile, defaultText, welcome);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();
 	}

@@ -17,14 +17,16 @@ import io.vertigo.ui.core.ViewContextKey;
 @RequestMapping("/bot/")
 public class CommonBotDetailController {
 
-
 	@Inject
 	private DesignerServices designerServices;
 
 	private static final ViewContextKey<Chatbot> botKey = ViewContextKey.of("bot");
 
-	public void initCommonContext(final ViewContext viewContext, final Long botId) {
-		viewContext.publishDto(botKey, designerServices.getChatbotById(botId));
+	public Chatbot initCommonContext(final ViewContext viewContext, final Long botId) {
+		final Chatbot chatbot = designerServices.getChatbotById(botId);
+		viewContext.publishDto(botKey, chatbot);
+
+		return chatbot;
 	}
 
 	public void initEmptyCommonContext(final ViewContext viewContext) {

@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.designer.builder.services.ExecutorBridgeServices;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
+import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 
 @Controller
@@ -63,8 +65,8 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 
 	@PostMapping("/_train")
-	public ViewContext doSave(final ViewContext viewContext) {
-		executorBridgeServices.trainAgent();
+	public ViewContext doTrain(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
+		executorBridgeServices.trainAgent(bot.getBotId());
 
 		return viewContext;
 	}

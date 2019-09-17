@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
@@ -23,18 +24,22 @@ public class RasaTrainerServices implements Component {
 	private TrainerRasaHandler trainerRasaHandler;
 
 
-	public void trainModel(final DtList<SmallTalkExport> data, final Long id) {
+	public void trainModel(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final Long id) {
 		if (getTrainerState().getTrainingInProgress()) {
 			throw new VUserException("Un entrainement est déjà en cours sur ce noeud");
 		}
 
-		trainerRasaHandler.trainModel(generateRasaConfig(data), id);
+		trainerRasaHandler.trainModel(generateRasaConfig(bot, smallTalkList), id);
 	}
 
-	private RasaConfig generateRasaConfig(final DtList<SmallTalkExport> data) {
-		final RasaConfigBuilder rasaConfigBuilder = new RasaConfigBuilder();
+	private RasaConfig generateRasaConfig(final BotExport bot, final DtList<SmallTalkExport> smallTalkList) {
+		final String defaultText = bot.getDefaultText().getText();
+		final String welcomeText = bot.getWelcomeText().getText();
 
-		for (final SmallTalkExport st : data) {
+		final RasaConfigBuilder rasaConfigBuilder = new RasaConfigBuilder(defaultText, welcomeText);
+
+
+		for (final SmallTalkExport st : smallTalkList) {
 			final List<String> utterTexts = st.getUtterTexts().stream()
 					.map(UtterText::getText)
 					.collect(Collectors.toList());

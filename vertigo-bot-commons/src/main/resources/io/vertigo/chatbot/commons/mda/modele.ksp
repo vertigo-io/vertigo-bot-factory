@@ -18,6 +18,28 @@ create Association AChatbotMediaFileInfo {
 	labelB : "Avatar"
 }
 
+create Association AChatbotUtterTextWelcome {
+	fkFieldName : "utxIdWelcome"
+    
+ 	dtDefinitionA : DtChatbot
+	dtDefinitionB : DtUtterText
+	
+	type : "*>1"
+	
+	labelB : "Welcome text"
+}
+
+create Association AChatbotUtterTextDefault {
+	fkFieldName : "utxIdDefault"
+    
+ 	dtDefinitionA : DtChatbot
+	dtDefinitionB : DtUtterText
+	
+	type : "*>1"
+	
+	labelB : "Default text"
+}
+
 
 create DtDefinition DtIntent {
 	id    intId 		{domain: DoId 		label: "ID"}
@@ -43,6 +65,7 @@ create DtDefinition DtIntentTrainingSentence {
 	field text 		{domain: DoLabel 	label: "Text" required: "true"}
 }
 
+/* For Small talks */
 create Association AIntentIntentTrainingSentence {
 	fkFieldName : "intId"
     
@@ -54,28 +77,12 @@ create Association AIntentIntentTrainingSentence {
 	navigabilityA : "true"
 	navigabilityB : "false" /* pas pris en compte ! */
 	
-	labelB : "Intent"
-}
-
-create DtDefinition DtAction {
-	id    actId 	{domain: DoId 		label: "ID"}
-	field title 	{domain: DoLabel 	label: "Text" required: "true"}
+	labelB : "SmallTalkIntent"
 }
 
 create DtDefinition DtUtterText {
 	id    utxId 	{domain: DoId 		label: "ID"}
 	field text 		{domain: DoLabel 	label: "Text" required: "true"}
-}
-
-create Association AActionChatbot {
-	fkFieldName : "botId"
-    
- 	dtDefinitionA : DtAction
-	dtDefinitionB : DtChatbot
-	
-	type : "*>1"
-	
-	labelB : "Chatbot"
 }
 
 create Association AIntentUtterText {
@@ -92,6 +99,24 @@ create Association AIntentUtterText {
 	labelB : "Intent"
 }
 
+/*
+create DtDefinition DtAction {
+	id    actId 	{domain: DoId 		label: "ID"}
+	field title 	{domain: DoLabel 	label: "Text" required: "true"}
+}
+
+create Association AActionChatbot {
+	fkFieldName : "botId"
+    
+ 	dtDefinitionA : DtAction
+	dtDefinitionB : DtChatbot
+	
+	type : "*>1"
+	
+	labelB : "Chatbot"
+}
+
+
 create Association AActionUtterText {
 	fkFieldName : "actId"
     
@@ -101,10 +126,11 @@ create Association AActionUtterText {
 	multiplicityA : "0..*"
 	multiplicityB : "0..1"
 	navigabilityA : "true"
-	navigabilityB : "false" /* pas pris en compte ! */
+	navigabilityB : "false"
 	
 	labelB : "Action"
 }
+*/
 
 create DtDefinition DtTraining {
 	id    traId 		{domain: DoId 		label: "ID"}

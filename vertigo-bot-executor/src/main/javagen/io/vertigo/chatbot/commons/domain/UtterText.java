@@ -33,21 +33,6 @@ public final class UtterText implements Entity {
 			foreignMultiplicity = "0..*")
 	private final VAccessor<io.vertigo.chatbot.commons.domain.Intent> intIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.Intent.class, "Intent");
 
-	@io.vertigo.dynamo.domain.stereotype.Association(
-			name = "AActionUtterText",
-			fkFieldName = "actId",
-			primaryDtDefinitionName = "DtAction",
-			primaryIsNavigable = false,
-			primaryRole = "Action",
-			primaryLabel = "Action",
-			primaryMultiplicity = "0..1",
-			foreignDtDefinitionName = "DtUtterText",
-			foreignIsNavigable = true,
-			foreignRole = "UtterText",
-			foreignLabel = "UtterText",
-			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.Action> actIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.Action.class, "Action");
-
 	/** {@inheritDoc} */
 	@Override
 	public UID<UtterText> getUID() {
@@ -109,33 +94,6 @@ public final class UtterText implements Entity {
 	 */
 	public void setIntId(final Long intId) {
 		intIdAccessor.setId(intId);
-	}
-	
-	/**
-	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Action'.
-	 * @return Long actId
-	 */
-	@Field(domain = "DoId", type = "FOREIGN_KEY", label = "Action")
-	public Long getActId() {
-		return (Long) actIdAccessor.getId();
-	}
-
-	/**
-	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Action'.
-	 * @param actId Long
-	 */
-	public void setActId(final Long actId) {
-		actIdAccessor.setId(actId);
-	}
-
- 	/**
-	 * Association : Action.
-	 * @return l'accesseur vers la propriété 'Action'
-	 */
-	public VAccessor<io.vertigo.chatbot.commons.domain.Action> action() {
-		return actIdAccessor;
 	}
 
  	/**

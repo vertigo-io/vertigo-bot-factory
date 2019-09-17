@@ -43,7 +43,7 @@ public final class Intent implements Entity {
 			primaryDtDefinitionName = "DtIntent",
 			primaryIsNavigable = false,
 			primaryRole = "Intent",
-			primaryLabel = "Intent",
+			primaryLabel = "SmallTalkIntent",
 			primaryMultiplicity = "1..1",
 			foreignDtDefinitionName = "DtIntentTrainingSentence",
 			foreignIsNavigable = true,

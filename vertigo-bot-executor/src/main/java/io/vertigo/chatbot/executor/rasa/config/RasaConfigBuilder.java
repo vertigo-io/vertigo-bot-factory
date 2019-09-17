@@ -9,8 +9,16 @@ public class RasaConfigBuilder {
 
 	private static final String NEW_LINE = "\r\n";
 
+	private final String defaultText;
+	private final String welcomeText;
+
 	private final List<RasaAction> actions = new ArrayList<>();
 	private final List<RasaIntent> intents = new ArrayList<>();
+
+	public RasaConfigBuilder(final String defaultText, final String welcomeText) {
+		this.defaultText = defaultText;
+		this.welcomeText = welcomeText;
+	}
 
 	public RasaConfigBuilder addSmallTalk(final String name, final List<String> nlus, final List<String> messages) {
 		//		Assertion.checkState(!utterances.containsKey(name), "Le code de message {1} existe déjà", name);
@@ -54,6 +62,8 @@ public class RasaConfigBuilder {
 		retour.append(NEW_LINE);
 		retour.append("  - utter_default");
 		retour.append(NEW_LINE);
+		retour.append("  - utter_start");
+		retour.append(NEW_LINE);
 
 		for (final RasaAction action : actions) {
 			retour.append("  - ");
@@ -68,7 +78,17 @@ public class RasaConfigBuilder {
 
 		retour.append("  utter_default:");
 		retour.append(NEW_LINE);
-		retour.append("    - text: \"Je n'ai pas compris, merci de reformuler.\"");
+		retour.append("    - text: \"");
+		retour.append(defaultText);
+		retour.append("\"");
+		retour.append(NEW_LINE);
+		retour.append(NEW_LINE);
+
+		retour.append("  utter_start:");
+		retour.append(NEW_LINE);
+		retour.append("    - text: \"");
+		retour.append(welcomeText);
+		retour.append("\"");
 		retour.append(NEW_LINE);
 		retour.append(NEW_LINE);
 
@@ -93,6 +113,6 @@ public class RasaConfigBuilder {
 	private String doBuildStories() {
 		return "## start" + NEW_LINE +
 				"* start" + NEW_LINE +
-				"    - utter_st_bonjour";
+				"    - utter_start";
 	}
 }

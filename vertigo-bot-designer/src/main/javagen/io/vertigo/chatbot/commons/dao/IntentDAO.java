@@ -43,10 +43,12 @@ public final class IntentDAO extends DAO<Intent, java.lang.Long> implements Stor
 
 	/**
 	 * Execute la tache TkExportSmallTalk.
+	 * @param botId Long 
 	 * @return io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.Intent> intents
 	*/
-	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.Intent> exportSmallTalk() {
+	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.Intent> exportSmallTalk(final Long botId) {
 		final Task task = createTaskBuilder("TkExportSmallTalk")
+				.addValue("botId", botId)
 				.build();
 		return getTaskManager()
 				.execute(task)

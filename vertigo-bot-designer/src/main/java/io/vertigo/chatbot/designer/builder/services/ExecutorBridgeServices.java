@@ -20,6 +20,8 @@ import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import io.vertigo.chatbot.commons.dao.IntentDAO;
 import io.vertigo.chatbot.commons.dao.IntentTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
+import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.Intent;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
@@ -40,6 +42,9 @@ import io.vertigo.lang.VUserException;
 public class ExecutorBridgeServices implements Component {
 
 	@Inject
+	private DesignerServices designerServices;
+
+	@Inject
 	private IntentDAO intentDAO;
 
 	@Inject
@@ -51,12 +56,11 @@ public class ExecutorBridgeServices implements Component {
 	@Inject
 	private JaxrsProvider jaxrsProvider;
 
-	public void trainAgent() {
-		final DtList<SmallTalkExport> export = exportSmallTalk();
-
+	public void trainAgent(final Long botId) {
 		final Map<String, Object> requestData = new HashMap<>();
-		requestData.put("export", export);
-		requestData.put("id", 2L);
+		requestData.put("botExport", exportBot(botId));
+		requestData.put("smallTalkExport", exportSmallTalk(botId));
+		requestData.put("modelId", 2L); // TODO ! (créer ligne d'entrainement en amont)
 
 		jaxrsProvider.getWebTarget().path("/api/chatbot/train")
 		.request(MediaType.APPLICATION_JSON)
@@ -99,8 +103,20 @@ public class ExecutorBridgeServices implements Component {
 		return response.readEntity(RunnerInfo.class);
 	}
 
-	private DtList<SmallTalkExport> exportSmallTalk() {
-		final DtList<Intent> intents = intentDAO.exportSmallTalk();
+	private BotExport exportBot(final Long botId) {
+		final Chatbot bot = designerServices.getChatbotById(botId);
+		final UtterText welcomeText = designerServices.getWelcomeByBot(bot);
+		final UtterText defaultText = designerServices.getDefaultByBot(bot);
+
+		final BotExport retour = new BotExport();
+		retour.setBot(bot);
+		retour.setWelcomeText(welcomeText);
+		retour.setDefaultText(defaultText);
+		return retour;
+	}
+
+	private DtList<SmallTalkExport> exportSmallTalk(final Long botId) {
+		final DtList<Intent> intents = intentDAO.exportSmallTalk(botId);
 
 		final List<Long> intentIds = intents.stream()
 				.map(Intent::getIntId)
