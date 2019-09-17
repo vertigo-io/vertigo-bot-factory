@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
@@ -10,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
+import io.vertigo.dynamo.domain.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
+import io.vertigo.vega.webservice.stereotype.QueryParam;
 
 @Controller
 @RequestMapping("/bot")
@@ -44,9 +48,10 @@ public class BotDetailController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_save")
-	public String doSave(@ViewAttribute("bot") final Chatbot bot) {
-		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot);
+	public String doSave(@ViewAttribute("bot") final Chatbot bot, @QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile) {
+		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();
 	}
+
 }

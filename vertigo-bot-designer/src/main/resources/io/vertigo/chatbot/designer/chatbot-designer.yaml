@@ -12,6 +12,10 @@ modules:
     featuresConfig:
       - script.janino:
       - cache.memory:
+  io.vertigo.account.AccountFeatures:
+    features:
+      - security:
+          userSessionClassName: io.vertigo.chatbot.designer.commons.DesignerUserSession
   io.vertigo.database.DatabaseFeatures: # utilisation du module vertigo-database pour pouvoir utiliser une base de données
     features:
       - sql: # nous activons le support des bases de données SQL

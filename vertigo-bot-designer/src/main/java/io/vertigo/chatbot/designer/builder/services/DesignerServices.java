@@ -1,5 +1,8 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
@@ -10,18 +13,28 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.Intent;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.UtterText;
+import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.IntentFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.criteria.Criterions;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.domain.model.DtListState;
+import io.vertigo.dynamo.domain.model.FileInfoURI;
 import io.vertigo.dynamo.domain.model.ListVAccessor;
+import io.vertigo.dynamo.file.FileManager;
+import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VUserException;
 
 @Transactional
 public class DesignerServices implements Component {
+
+	@Inject
+	private FileServices fileServices;
+
+	@Inject
+	private FileManager fileManager;
 
 	@Inject
 	private ChatbotDAO chatbotDAO;
@@ -39,16 +52,51 @@ public class DesignerServices implements Component {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
 	}
 
+	public Chatbot getNewChatbot() {
+		final Chatbot newChatbot = new Chatbot();
+		newChatbot.setCreationDate(LocalDate.now());
+
+		return newChatbot;
+	}
+
 	public Chatbot getChatbotById(final Long botId) {
 		Assertion.checkNotNull(botId);
 		// ---
 		return chatbotDAO.get(botId);
 	}
 
-	public Chatbot saveChatbot(final Chatbot chatbot) {
+	public VFile getAvatar(final Chatbot bot) {
+		if (bot.getFilIdAvatar() == null) {
+			return getNoAvatar();
+		}
+		return fileServices.getFile(fileServices.toStdFileInfoUri(bot.getFilIdAvatar()));
+	}
+
+	public VFile getNoAvatar() {
+		return fileManager.createFile(
+				"noAvatar.png",
+				"image/png",
+				DesignerServices.class.getResource("/noAvatar.png"));
+	}
+
+	public Chatbot saveChatbot(final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile) {
 		Assertion.checkNotNull(chatbot);
 		// ---
+		if (personPictureFile.isPresent()) {
+			saveChatbotPicture(chatbot, personPictureFile.get());
+		}
 		return chatbotDAO.save(chatbot);
+	}
+
+	private void saveChatbotPicture(final Chatbot chatbot, final FileInfoURI avatarTmp) {
+		final Long oldAvatar = chatbot.getFilIdAvatar();
+		final VFile fileTmp = fileServices.getFileTmp(avatarTmp);
+		final FileInfoURI fileInfoUri = fileServices.saveFile(fileTmp);
+		chatbot.setFilIdAvatar((Long) fileInfoUri.getKey());
+
+		if (oldAvatar != null) {
+			fileServices.deleteFile(oldAvatar);
+		}
 	}
 
 	public Intent getIntentById(final Long movId) {

@@ -37,6 +37,10 @@ public class FileServices implements Component {
 		storeManager.getFileStore().delete(fileTmpUri);
 	}
 
+	public FileInfoURI toStdFileInfoUri(final Long fileId) {
+		return new FileInfoURI(FileInfoDefinition.findFileInfoDefinition(FileInfoStd.class), fileId);
+	}
+
 	public FileInfoURI saveFile(final VFile file) {
 		//apply security check
 		final FileInfo fileInfo = storeManager.getFileStore().create(new FileInfoStd(file));
@@ -53,6 +57,10 @@ public class FileServices implements Component {
 		final FileInfoDefinition fileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoStd.class);
 		Assertion.checkArgument(fileInfoDefinition.equals(fileUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
 		storeManager.getFileStore().delete(fileUri);
+	}
+
+	public void deleteFile(final Long fileId) {
+		deleteFile(toStdFileInfoUri(fileId));
 	}
 
 }

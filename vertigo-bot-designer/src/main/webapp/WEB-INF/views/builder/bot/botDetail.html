@@ -11,6 +11,11 @@
 	</head>
 	
 	<body>
+		<div layout:fragment="content-header-left" id="baseImg">
+	 		<img v-if="componentStates.uploaderbotTmpPictureUri && componentStates.uploaderbotTmpPictureUri.fileUris.length > 0" th::src="|'@{/commons/upload}?file=' + componentStates.uploaderbotTmpPictureUri.fileUris[0]|" class="detailImg gt-md" />
+	 		<img v-if="!componentStates.uploaderbotTmpPictureUri || componentStates.uploaderbotTmpPictureUri.fileUris.length == 0" th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" class="detailImg gt-md" />
+		</div>
+	
 		<section layout:fragment="content-header-actions">
 			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}(id=${model.bot.botId})}" ariaLabel="Cancel" icon="fas fa-ban"
 							class="on-left text-tertiary-inverted" :round size="lg" color="primary" :flat />
@@ -20,12 +25,16 @@
 		
 		<section layout:fragment="content">
 			
-			<vu:block id="detail" title="Bot details">
+			<vu:block id="detail" title="Bot details" th:if="${viewMode=='edit'}">
 				<vu:text-field object="bot" field="name" />
 				
-				<vu:label-edit object="bot" field="filIdAvatar" th:if="${viewMode=='edit'}"  >
-					<vu:fileupload th:url="'@{/commons/upload}'" key="botTmpPictureUri" extensions="'.jpg,.jpeg,.png'" multiple="false" />
+				<vu:label-edit object="bot" field="filIdAvatar" >
+					<vu:fileupload th:url="'@{/commons/upload}'" key="botTmpPictureUri" extensions="'.jpg,.jpeg,.png'" hide-upload-button/>
 				</vu:label-edit>
+			</vu:block>
+			
+			<vu:block id="nodes" title="Nodes">
+				TODO
 			</vu:block>
 			
 			

@@ -5,8 +5,7 @@
   layout:decorate="~{templates/detailLayout}">
   
 	<div layout:fragment="content-header-left" id="baseImg">
-<!-- 		<img th:src="@{|/basemanagement/base/${model.base.baseId}/mainPicture|}" class="detailImg gt-md" /> -->
-		<img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Face_de_chat.jpg" class="detailImg gt-md" />
+ 		<img th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" class="detailImg gt-md" />
 	</div>
 	<div layout:fragment="content-header-title" id="baseTitle">
 		<vu:include-data object="bot" field="name" />
