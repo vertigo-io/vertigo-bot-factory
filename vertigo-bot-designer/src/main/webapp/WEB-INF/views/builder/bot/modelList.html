@@ -71,8 +71,12 @@
 			<vu:table id="load" list="trainingList" componentId="trainingList" rowsPerPage="10" autoColClass >
 					<vu:slot name="top_left_slot">Manage models</vu:slot>
 					<vu:slot name="actions_slot">
-						<q-btn round color="primary" icon="cloud_upload" label="Load model" th:@click="|console.log('click load')|"></q-btn>
-						<q-btn round color="red" icon="delete" label="Delete model" th:@click="|console.log('click del')|"></q-btn>
+						<q-btn round color="primary" icon="cloud_upload" label="Load model"
+								 v-if="props.row.status == 'OK'"
+								 th:@click="|console.log('click load')|"></q-btn>
+						<q-btn round color="red" icon="delete" label="Delete model"
+								 v-if="props.row.status != 'TRAINING'"
+								 th:@click="|console.log('click del')|"></q-btn>
 					</vu:slot>
 					
 					<vu:include-data object="trainingList" field="traId" />
