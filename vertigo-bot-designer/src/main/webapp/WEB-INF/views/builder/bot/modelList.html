@@ -71,20 +71,20 @@
 			<vu:table id="load" list="trainingList" componentId="trainingList" rowsPerPage="10" autoColClass >
 					<vu:slot name="top_left_slot">Manage models</vu:slot>
 					<vu:slot name="actions_slot">
-						<q-btn round color="primary" icon="cloud_upload" label="Load model"
+						<q-btn class="on-right" round color="primary" icon="cloud_upload" aria-label="Load model"
 								 v-if="props.row.status == 'OK'"
 								 th:@click="|console.log('click load')|"></q-btn>
-						<q-btn round color="red" icon="delete" label="Delete model"
+						<q-btn class="on-right" round color="red" icon="delete" aria-label="Delete model"
 								 v-if="props.row.status != 'TRAINING'"
 								 th:@click="|console.log('click del')|"></q-btn>
 					</vu:slot>
 					
 					<vu:include-data object="trainingList" field="traId" />
 					
-					<vu:column field="status">
+					<vu:column field="status" class="col_Status">
 						<q-icon name="check" color="green" size="2rem" v-if="props.row.status == 'OK'"></q-icon>
 						<q-icon name="block" color="red" size="2rem" v-if="props.row.status == 'KO'"></q-icon>
-						<q-spinner-circles color="orange" size="1.6rem" v-if="props.row.status == 'TRAINING'"></q-spinner-circles>
+						<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="props.row.status == 'TRAINING'"></q-spinner-gears>
 					</vu:column>
 					<vu:column field="versionNumber" />
 					<vu:column field="startTime" />
@@ -109,9 +109,9 @@
 							th:@click="refresh"></q-btn>
 							
 					<q-btn color="primary" icon="build" size="lg" label="Train" :loading="vueData.trainerState.trainingInProgress"
-							th:@click="|httpPostAjax('@{_train}', {}, postTrain)|">
+							th:@click="|httpPostAjax('@{_train}', {}, postTrain)|" style="width: 175px">
 						<span slot="loading">
-							<q-spinner-circles class="on-left"></q-spinner-circles>
+							<q-spinner-gears class="on-left"></q-spinner-gears>
 							Training...
 						</span>
 					</q-btn>
@@ -122,23 +122,30 @@
 				
 				<q-card-separator></q-card-separator>
 				
-				<q-collapsible label="Details">
-				
-					<vu:label object="trainerState" field="startTime">
-						<span>{{vueData.trainerState.startTime}}</span>
-					</vu:label>
-					
-					<vu:label object="trainerState" field="duration">
-						<span>{{vueData.trainerState.duration}}</span>
-					</vu:label>
-				
-					<vu:label object="trainerState" field="latestTrainingLog">
-						<vu:include-data-primitive key="autoscroll" />
-						<q-toggle label="Auto scroll logs" v-model="vueData.autoscroll" ></q-toggle>
-						
-						<pre id="log" style="max-height:300px; overflow:auto">{{vueData.trainerState.latestTrainingLog}}</pre>
-					</vu:label>
-				</q-collapsible>
+				<q-list bordered class="rounded-borders">
+					<q-expansion-item label="Details" icon="details">
+						<q-card>
+	          				<q-card-section>
+								<vu:label object="trainerState" field="startTime">
+									<span>{{vueData.trainerState.startTime}}</span>
+								</vu:label>
+								
+								<vu:label object="trainerState" field="duration">
+									<span>{{vueData.trainerState.duration}}</span>
+								</vu:label>
+							
+								<vu:label object="trainerState" field="latestTrainingLog">
+									<vu:include-data-primitive key="autoscroll" />
+									<div class="col">
+										<q-toggle label="Auto scroll logs" v-model="vueData.autoscroll" ></q-toggle>
+										
+										<pre id="log" style="max-height:300px; overflow:auto">{{vueData.trainerState.latestTrainingLog}}</pre>
+									</div>
+								</vu:label>
+							</q-card-section>
+						</q-card>
+					</q-expansion-item>
+				</q-list>
 			</vu:block>
 			
 		</section>

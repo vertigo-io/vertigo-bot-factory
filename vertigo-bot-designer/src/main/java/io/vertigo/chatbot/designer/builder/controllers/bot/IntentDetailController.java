@@ -52,7 +52,7 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDto(intentKey, intent);
 
 		viewContext.publishRef(newIntentTrainingSentenceKey, "");
-		viewContext.publishDtList(intentTrainingSentencesKey, chatbotServices.getIntentTrainingSentenceList(intent));
+		viewContext.publishDtListModifiable(intentTrainingSentencesKey, chatbotServices.getIntentTrainingSentenceList(intent));
 		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
 
 		viewContext.publishRef(newUtterTextKey, "");
@@ -69,7 +69,7 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDto(intentKey, chatbotServices.getNewIntent(botId));
 
 		viewContext.publishRef(newIntentTrainingSentenceKey, "");
-		viewContext.publishDtList(intentTrainingSentencesKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
+		viewContext.publishDtListModifiable(intentTrainingSentencesKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
 		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
 
 		viewContext.publishRef(newUtterTextKey, "");
@@ -108,7 +108,6 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 
 		final boolean exists = intentTrainingSentences.stream()
 				.anyMatch(its -> its.getText().equalsIgnoreCase(newIntentTrainingSentence));
-
 		if (exists) {
 			throw new VUserException("Cette phrase existe déjà");
 		}
@@ -117,7 +116,7 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 		newText.setText(newIntentTrainingSentence);
 
 		intentTrainingSentences.add(newText);
-		viewContext.publishDtList(intentTrainingSentencesKey, intentTrainingSentences);
+		viewContext.publishDtListModifiable(intentTrainingSentencesKey, intentTrainingSentences);
 
 		viewContext.publishRef(newIntentTrainingSentenceKey, "");
 
@@ -133,7 +132,7 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 
 		// remove from list
 		final IntentTrainingSentence removed = intentTrainingSentences.remove(index);
-		viewContext.publishDtList(intentTrainingSentencesKey, intentTrainingSentences);
+		viewContext.publishDtListModifiable(intentTrainingSentencesKey, intentTrainingSentences);
 
 		// keep track of deleted persisted IntentTrainingSentence
 		if (removed.getItsId() != null) {

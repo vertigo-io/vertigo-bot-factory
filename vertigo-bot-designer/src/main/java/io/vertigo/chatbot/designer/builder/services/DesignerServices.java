@@ -97,38 +97,40 @@ public class DesignerServices implements Component {
 		return utterTextDAO.get(bot.getUtxIdWelcome());
 	}
 
-	public Chatbot saveChatbot(final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile, final UtterText defaultText, final UtterText welcome) {
+	public Chatbot saveChatbot(final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile, final UtterText defaultText, final UtterText welcomeText) {
 		Assertion.checkNotNull(chatbot);
-		Assertion.checkNotNull(welcome);
+		Assertion.checkNotNull(defaultText);
+		Assertion.checkNotNull(welcomeText);
 		// ---
-
-		// Avatar
-		if (personPictureFile.isPresent()) {
-			saveChatbotPicture(chatbot, personPictureFile.get());
-		}
 
 		// default text
 		utterTextDAO.save(defaultText);
 		chatbot.setUtxIdDefault(defaultText.getUtxId());
 
 		// welcome
-		utterTextDAO.save(welcome);
-		chatbot.setUtxIdWelcome(welcome.getUtxId());
+		utterTextDAO.save(welcomeText);
+		chatbot.setUtxIdWelcome(welcomeText.getUtxId());
+
+
+		// Avatar
+		Long oldAvatar = null;
+		if (personPictureFile.isPresent()) {
+			oldAvatar = chatbot.getFilIdAvatar();
+			final VFile fileTmp = fileServices.getFileTmp(personPictureFile.get());
+			final FileInfoURI fileInfoUri = fileServices.saveFile(fileTmp);
+			chatbot.setFilIdAvatar((Long) fileInfoUri.getKey());
+		}
 
 		// chatbot save
 		chatbot.setStatus("OK");
-		return chatbotDAO.save(chatbot);
-	}
+		final Chatbot savedChatbot =  chatbotDAO.save(chatbot);
 
-	private void saveChatbotPicture(final Chatbot chatbot, final FileInfoURI avatarTmp) {
-		final Long oldAvatar = chatbot.getFilIdAvatar();
-		final VFile fileTmp = fileServices.getFileTmp(avatarTmp);
-		final FileInfoURI fileInfoUri = fileServices.saveFile(fileTmp);
-		chatbot.setFilIdAvatar((Long) fileInfoUri.getKey());
-
+		// clean old avatar
 		if (oldAvatar != null) {
 			fileServices.deleteFile(oldAvatar);
 		}
+
+		return savedChatbot;
 	}
 
 	public Intent getIntentById(final Long movId) {

@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-studio</artifactId>
-			<version>2.0.0</version>
+			<version>${vertigo.version}</version>
 		</dependency>
 		
 		<!-- Jersey HTTP client -->

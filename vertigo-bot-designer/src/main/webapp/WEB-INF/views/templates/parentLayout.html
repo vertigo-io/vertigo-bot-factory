@@ -23,56 +23,68 @@
 	
       <q-layout view="hHh LpR fff" id="page" v-cloak>
 			<!-- BEGIN HEADER-->
-			<q-layout-header class="items-center">
-				<q-toolbar class="justify-between">
-					<div class="row">
+			<q-header>
+				<q-toolbar class="shadow-2">
+					<div class="row items-center">
 						<q-btn flat round dense class="lt-lg"
-						th:with="showLeft=${model.vContext['componentStates'].addComponentState('navDrawer').addPrimitive('showLeft', true)}, mini=${model.vContext['componentStates']['navDrawer'].addPrimitive('mini', false)}"
-						@click="componentStates.navDrawer.showLeft = !componentStates.navDrawer.showLeft" icon="menu" aria-label="Toggle menu on left side"></q-btn>
+						th:with="mini=${model.vContext['componentStates'].addComponentState('navDrawer').addPrimitive('mini', false)}"
+						@click="$refs.menuDrawer.toggle()" icon="menu" aria-label="Toggle menu on left side"></q-btn>
 						<q-toolbar-title class="gt-md">
-							Chatbot designer
-							<span slot="subtitle">Build the bot you always wanted</span>
+							<div>Chatbot designer</div>
+							<div class="text-subtitle2">Build the bot you always wanted</div>
 						</q-toolbar-title>
 					</div>
 				</q-toolbar>
-			</q-layout-header>
+			</q-header>
         	<!-- END HEADER-->
         			
   			
-  			<q-layout-drawer
+  			<q-drawer
   			  content-class="bg-white text-primary"
 		      side="left"
+		      ref="menuDrawer"
+		      show-if-above
 		      :mini="function() {var miniMenu = this.$cookies.get('miniMenu', true) === 'true';componentStates.navDrawer.mini = miniMenu;return miniMenu;}()"
-		      v-model="componentStates.navDrawer.showLeft">
+		    >
 		      
-		      <q-list link :class="{'dense-list-header':!componentStates.navDrawer.mini}" style="height:100%">
 		      <nav class="text-no-wrap">
+		       <q-list :class="{'dense-list-header':!componentStates.navDrawer.mini}" style="height:100%">
 		      
-		      	<q-list-header>Home</q-list-header>
+		      	<q-item-label header>Home</q-item-label>
 		      	
 		        <q-item tag="a" th:href="@{/bots/}">
-		          <q-item-side icon="fas fa-robot" ></q-item-side>
-		          <q-item-main label="Bots"></q-item-main>
+		          <q-item-section avatar>
+			        <q-icon name="fas fa-robot"></q-icon>
+			      </q-item-section>
+		          <q-item-section>Bots</q-item-section>
 		        </q-item>
-		        <q-item tag="a">
-		          <q-item-side icon="fas fa-chart-bar" ></q-item-side>
-		          <q-item-main label="Statistics"></q-item-main>
-		        </q-item>
-		        <q-item-separator></q-item-separator>
 		        
+		        <q-item tag="a">
+		          <q-item-section avatar>
+			        <q-icon name="fas fa-chart-bar"></q-icon>
+			      </q-item-section>
+		          <q-item-section>Statistics</q-item-section>
+		        </q-item>
+		        
+		        <q-separator></q-separator>
 		        
 		        <q-item v-if="componentStates.navDrawer.mini"
 						@click.native="componentStates.navDrawer.mini = false; $cookies.set('miniMenu', false)" title="Expand menu">
-					<q-item-side icon="arrow_right"></q-item-side>
+						<q-item-section avatar>
+		          			<q-icon name="arrow_right"></q-icon>
+		          		</q-item-section>
 				</q-item>
 				 <q-item v-if="!componentStates.navDrawer.mini"
 						@click.native="componentStates.navDrawer.mini = true; $cookies.set('miniMenu', true)" title="Minify menu">
-					<q-item-main></q-item-main><q-item-side icon="arrow_left" right></q-item-side>
+					<q-item-section side>
+		          		<q-icon name="arrow_left"></q-icon>
+		          	</q-item-section>
 				</q-item>
-		        </nav>
-		        </q-list>
+					
+		       </q-list>
+		      </nav>
 		        
-		    </q-layout-drawer>
+		    </q-drawer>
 		    
 			<q-page-container class="row justify-center" >
 				<section class="col container-bottom-padding" layout:fragment="page-container"></section>

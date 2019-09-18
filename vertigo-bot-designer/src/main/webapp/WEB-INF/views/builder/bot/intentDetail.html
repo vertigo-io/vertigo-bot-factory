@@ -13,7 +13,7 @@
 	<body>
 		<section layout:fragment="content-header-actions">
 			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/intent/(id=${model.bot.botId})} + ${model.intent.intId}" ariaLabel="Cancel" icon="fas fa-ban"
-							class="on-left text-tertiary-inverted" :round size="lg" color="primary" :flat />
+							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" ariaLabel="Edit" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
 		</section>
@@ -42,7 +42,7 @@
 				<vu:include-data object="intentTrainingSentences" field="text" />
 				
 				<div th:if="${!model.modeReadOnly}">
-					<q-input v-model="vueData.newIntentTrainingSentence" th:@keydown.enter.prevent="|httpPostAjax('@{_addTrainingSentence}', {'vContext[newIntentTrainingSentence]':vueData.newIntentTrainingSentence})|"
+					<q-input v-model="vueData.newIntentTrainingSentence" th:@keydown.enter.prevent="|if (vueData.newIntentTrainingSentence.trim().length > 0) httpPostAjax('@{_addTrainingSentence}', {'vContext[newIntentTrainingSentence]':vueData.newIntentTrainingSentence})|"
 						placeholder="Ajouter une expression"
 						:before="[{icon: 'format_quote'}]"
 						q-if>
@@ -50,11 +50,11 @@
 				</div>
 				<q-list highlight>
 					<q-item v-for="(intentTrainingSentence, index) in vueData.intentTrainingSentences.slice().reverse()">
-						<q-item-side left th:if="${!model.modeReadOnly}">
+						<q-item-section side left th:if="${!model.modeReadOnly}">
 							<q-btn th:@click="|httpPostAjax('@{_removeTrainingSentence}', {'index':vueData.intentTrainingSentences.length - 1 - index})|"
 								color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
-						</q-item-side>
-						<q-item-main>{{intentTrainingSentence.text}}</q-item-main>
+						</q-item-section>
+						<q-item-section>{{intentTrainingSentence.text}}</q-item-section>
 					</q-item>
 				</q-list>
 			</vu:block>
@@ -64,18 +64,18 @@
 				<vu:include-data object="utterTexts" field="text" />
 			
 				<div th:if="${!model.modeReadOnly}">
-					<q-input v-model="vueData.newUtterText" th:@keydown.enter.prevent="|httpPostAjax('@{_addUtterText}', {'vContext[newUtterText]':vueData.newUtterText})|"
+					<q-input v-model="vueData.newUtterText" th:@keydown.enter.prevent="|if (vueData.newUtterText.trim().length > 0) httpPostAjax('@{_addUtterText}', {'vContext[newUtterText]':vueData.newUtterText})|"
 						placeholder="Ajouter une réponse"
 						:before="[{icon: 'format_quote'}]">
 					</q-input>
 				</div>
 				<q-list highlight>
 					<q-item v-for="(utterTexts, index) in vueData.utterTexts.slice().reverse()">
-						<q-item-side left th:if="${!model.modeReadOnly}">
+						<q-item-section side left th:if="${!model.modeReadOnly}">
 							<q-btn th:@click="|httpPostAjax('@{_removeUtterText}', {'index':vueData.utterTexts.length - 1 - index})|"
 									color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
-						</q-item-side>
-						<q-item-main>{{utterTexts.text}}</q-item-main>
+						</q-item-section>
+						<q-item-section>{{utterTexts.text}}</q-item-section>
 					</q-item>
 				</q-list>
 			</vu:block>
