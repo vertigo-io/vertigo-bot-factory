@@ -37,8 +37,8 @@ public class BotDetailController extends AbstractVSpringMvcController {
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = commonBotDetailController.initCommonContext(viewContext, botId);
 
-		viewContext.publishDto(defaultKey, designerServices.getDefaultByBot(bot));
-		viewContext.publishDto(welcomeKey, designerServices.getWelcomeByBot(bot));
+		viewContext.publishDto(defaultKey, designerServices.getDefaultTextByBot(bot));
+		viewContext.publishDto(welcomeKey, designerServices.getWelcomeTextByBot(bot));
 
 		toModeReadOnly();
 	}

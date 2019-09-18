@@ -8,13 +8,16 @@ import javax.inject.Inject;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.dao.IntentDAO;
 import io.vertigo.chatbot.commons.dao.IntentTrainingSentenceDAO;
+import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.Intent;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
+import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.IntentFields;
+import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.criteria.Criterions;
@@ -41,6 +44,9 @@ public class DesignerServices implements Component {
 
 	@Inject
 	private IntentDAO intentDAO;
+
+	@Inject
+	private TrainingDAO trainingDAO;
 
 	@Inject
 	private IntentTrainingSentenceDAO intentTrainingSentenceDAO;
@@ -72,23 +78,23 @@ public class DesignerServices implements Component {
 		return fileServices.getFile(fileServices.toStdFileInfoUri(bot.getFilIdAvatar()));
 	}
 
-	public UtterText getDefaultByBot(final Chatbot bot) {
-		Assertion.checkNotNull(bot);
-		// ---
-		return utterTextDAO.get(bot.getUtxIdDefault());
-	}
-
-	public UtterText getWelcomeByBot(final Chatbot bot) {
-		Assertion.checkNotNull(bot);
-		// ---
-		return utterTextDAO.get(bot.getUtxIdWelcome());
-	}
-
 	public VFile getNoAvatar() {
 		return fileManager.createFile(
 				"noAvatar.png",
 				"image/png",
 				DesignerServices.class.getResource("/noAvatar.png"));
+	}
+
+	public UtterText getDefaultTextByBot(final Chatbot bot) {
+		Assertion.checkNotNull(bot);
+		// ---
+		return utterTextDAO.get(bot.getUtxIdDefault());
+	}
+
+	public UtterText getWelcomeTextByBot(final Chatbot bot) {
+		Assertion.checkNotNull(bot);
+		// ---
+		return utterTextDAO.get(bot.getUtxIdWelcome());
 	}
 
 	public Chatbot saveChatbot(final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile, final UtterText defaultText, final UtterText welcome) {
@@ -207,4 +213,13 @@ public class DesignerServices implements Component {
 
 		return accessor.get();
 	}
+
+
+	public DtList<Training> getAllTrainings(final Long botId) {
+		return trainingDAO.findAll(
+				Criterions.isEqualTo(TrainingFields.botId, botId),
+				DtListState.of(1000, 0, TrainingFields.versionNumber.name(), true)
+				);
+	}
+
 }

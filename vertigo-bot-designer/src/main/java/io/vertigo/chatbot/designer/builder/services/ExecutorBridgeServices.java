@@ -19,6 +19,7 @@ import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
 import io.vertigo.chatbot.commons.dao.IntentDAO;
 import io.vertigo.chatbot.commons.dao.IntentTrainingSentenceDAO;
+import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -27,7 +28,9 @@ import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
+import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
+import io.vertigo.chatbot.designer.builder.BuilderPAO;
 import io.vertigo.chatbot.designer.commons.webservices.JaxrsProvider;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
@@ -48,6 +51,12 @@ public class ExecutorBridgeServices implements Component {
 	private IntentDAO intentDAO;
 
 	@Inject
+	private TrainingDAO trainingDAO;
+
+	@Inject
+	private BuilderPAO builderPAO;
+
+	@Inject
 	private IntentTrainingSentenceDAO intentTrainingSentenceDAO;
 
 	@Inject
@@ -57,10 +66,21 @@ public class ExecutorBridgeServices implements Component {
 	private JaxrsProvider jaxrsProvider;
 
 	public void trainAgent(final Long botId) {
+		final Long versionNumber = builderPAO.getNextModelNumber(botId);
+
+		final Training training = new Training();
+		training.setBotId(botId);
+		training.setStartTime(Instant.now());
+		training.setStatus("TRAINING");
+		training.setVersionNumber(versionNumber);
+
+		trainingDAO.save(training);
+
+
 		final Map<String, Object> requestData = new HashMap<>();
 		requestData.put("botExport", exportBot(botId));
 		requestData.put("smallTalkExport", exportSmallTalk(botId));
-		requestData.put("modelId", 2L); // TODO ! (créer ligne d'entrainement en amont)
+		requestData.put("modelId", versionNumber);
 
 		jaxrsProvider.getWebTarget().path("/api/chatbot/train")
 		.request(MediaType.APPLICATION_JSON)
@@ -105,8 +125,8 @@ public class ExecutorBridgeServices implements Component {
 
 	private BotExport exportBot(final Long botId) {
 		final Chatbot bot = designerServices.getChatbotById(botId);
-		final UtterText welcomeText = designerServices.getWelcomeByBot(bot);
-		final UtterText defaultText = designerServices.getDefaultByBot(bot);
+		final UtterText welcomeText = designerServices.getWelcomeTextByBot(bot);
+		final UtterText defaultText = designerServices.getDefaultTextByBot(bot);
 
 		final BotExport retour = new BotExport();
 		retour.setBot(bot);

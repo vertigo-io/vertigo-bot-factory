@@ -1,5 +1,5 @@
 -- ============================================================
---   SGBD      		  :  H2                     
+--   SGBD      		  :  Postgres                     
 -- ============================================================
 
 -- ============================================================
@@ -177,8 +177,9 @@ create table TRAINING
     END_TIME    	 TIMESTAMP   	,
     VERSION_NUMBER	 NUMERIC     	not null,
     TAG         	 VARCHAR(100)	,
-    VALID       	 bool        	not null,
+    STATUS      	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
+    FIL_ID_MODEL	 NUMERIC     	,
     constraint PK_TRAINING primary key (TRA_ID)
 );
 
@@ -197,11 +198,14 @@ comment on column TRAINING.VERSION_NUMBER is
 comment on column TRAINING.TAG is
 'Tag';
 
-comment on column TRAINING.VALID is
-'Valid';
+comment on column TRAINING.STATUS is
+'Status';
 
 comment on column TRAINING.BOT_ID is
 'Chatbot';
+
+comment on column TRAINING.FIL_ID_MODEL is
+'Model';
 
 -- ============================================================
 --   Table : UTTER_TEXT                                        
@@ -265,5 +269,11 @@ alter table TRAINING
 	references CHATBOT (BOT_ID);
 
 create index TRAINING_CHATBOT_CHATBOT_FK on TRAINING (BOT_ID asc);
+
+alter table TRAINING
+	add constraint FK_TRAINING_MEDIA_FILE_INFO_MEDIA_FILE_INFO foreign key (FIL_ID_MODEL)
+	references MEDIA_FILE_INFO (FIL_ID);
+
+create index TRAINING_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on TRAINING (FIL_ID_MODEL asc);
 
 

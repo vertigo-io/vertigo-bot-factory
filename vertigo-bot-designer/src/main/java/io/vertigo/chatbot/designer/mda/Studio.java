@@ -39,7 +39,7 @@ public class Studio {
 						.withJavaDomainGenerator(Param.of("generateDtResources", "false"))
 						.withTaskGenerator()
 						.withFileGenerator()
-						.withSqlDomainGenerator(Param.of("targetSubDir", "javagen/sqlgen"), Param.of("baseCible", "H2"),
+						.withSqlDomainGenerator(Param.of("targetSubDir", "javagen/sqlgen"), Param.of("baseCible", "Postgres"),
 								Param.of("generateDrop", "true"), Param.of("generateMasterData", "true"))
 						.build())
 				.build();

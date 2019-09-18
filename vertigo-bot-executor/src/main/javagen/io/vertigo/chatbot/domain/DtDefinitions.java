@@ -213,12 +213,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		versionNumber,
 		/** Propriété 'Tag'. */
 		tag,
-		/** Propriété 'Valid'. */
-		valid,
+		/** Propriété 'Status'. */
+		status,
 		/** Propriété 'Duration'. */
 		duration,
 		/** Propriété 'Chatbot'. */
-		botId	}
+		botId,
+		/** Propriété 'Model'. */
+		filIdModel	}
 
 	/**
 	 * Enumération des champs de UtterText.

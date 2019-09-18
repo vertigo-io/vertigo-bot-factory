@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.domain 
+package io.vertigo.chatbot.designer.builder 
 
 create Task TkExportSmallTalk {  
     className : "io.vertigo.dynamox.task.TaskEngineSelect"

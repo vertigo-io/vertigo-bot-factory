@@ -20,7 +20,7 @@ public final class Training implements Entity {
 	private java.time.Instant endTime;
 	private Long versionNumber;
 	private String tag;
-	private Boolean valid;
+	private String status;
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
 			name = "ATrainingChatbot",
@@ -36,6 +36,21 @@ public final class Training implements Entity {
 			foreignLabel = "Training",
 			foreignMultiplicity = "0..*")
 	private final VAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
+
+	@io.vertigo.dynamo.domain.stereotype.Association(
+			name = "ATrainingMediaFileInfo",
+			fkFieldName = "filIdModel",
+			primaryDtDefinitionName = "DtMediaFileInfo",
+			primaryIsNavigable = true,
+			primaryRole = "MediaFileInfo",
+			primaryLabel = "Model",
+			primaryMultiplicity = "0..1",
+			foreignDtDefinitionName = "DtTraining",
+			foreignIsNavigable = false,
+			foreignRole = "Training",
+			foreignLabel = "Training",
+			foreignMultiplicity = "0..*")
+	private final VAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> filIdModelAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.MediaFileInfo.class, "MediaFileInfo");
 
 	/** {@inheritDoc} */
 	@Override
@@ -140,21 +155,21 @@ public final class Training implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Valid'.
-	 * @return Boolean valid <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Status'.
+	 * @return String status <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoYesNo", required = true, label = "Valid")
-	public Boolean getValid() {
-		return valid;
+	@Field(domain = "DoCode", required = true, label = "Status")
+	public String getStatus() {
+		return status;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Valid'.
-	 * @param valid Boolean <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Status'.
+	 * @param status String <b>Obligatoire</b>
 	 */
-	public void setValid(final Boolean valid) {
-		this.valid = valid;
+	public void setStatus(final String status) {
+		this.status = status;
 	}
 	
 	/**
@@ -177,6 +192,25 @@ public final class Training implements Entity {
 	}
 	
 	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Model'.
+	 * @return Long filIdModel
+	 */
+	@Field(domain = "DoId", type = "FOREIGN_KEY", label = "Model")
+	public Long getFilIdModel() {
+		return (Long) filIdModelAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Model'.
+	 * @param filIdModel Long
+	 */
+	public void setFilIdModel(final Long filIdModel) {
+		filIdModelAccessor.setId(filIdModel);
+	}
+	
+	/**
 	 * Champ : COMPUTED.
 	 * Récupère la valeur de la propriété calculée 'Duration'.
 	 * @return String duration
@@ -192,6 +226,14 @@ public final class Training implements Entity {
 	 */
 	public VAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbot() {
 		return botIdAccessor;
+	}
+
+ 	/**
+	 * Association : Model.
+	 * @return l'accesseur vers la propriété 'Model'
+	 */
+	public VAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> mediaFileInfo() {
+		return filIdModelAccessor;
 	}
 	
 	/** {@inheritDoc} */

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
+import io.vertigo.chatbot.commons.domain.Training;
+import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.chatbot.designer.builder.services.ExecutorBridgeServices;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.ui.core.ViewContext;
@@ -28,6 +30,12 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<Boolean> autoscrollKey = ViewContextKey.of("autoscroll");
 
+	private static final ViewContextKey<Training> trainingListKey = ViewContextKey.of("trainingList");
+
+
+	@Inject
+	private DesignerServices designerServices;
+
 	@Inject
 	private ExecutorBridgeServices executorBridgeServices;
 
@@ -42,6 +50,9 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 		refreshRunnerState(viewContext);
 		refreshTrainerState(viewContext);
+
+		viewContext.publishDtList(trainingListKey, designerServices.getAllTrainings(botId));
+
 
 		toModeReadOnly();
 	}

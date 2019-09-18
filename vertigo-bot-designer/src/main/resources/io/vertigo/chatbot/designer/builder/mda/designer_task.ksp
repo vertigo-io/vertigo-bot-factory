@@ -1,0 +1,13 @@
+package io.vertigo.chatbot.designer.builder 
+
+create Task TkGetNextModelNumber {  
+    className : "io.vertigo.dynamox.task.TaskEngineSelect"
+    request : "
+            select coalesce(max(version_number) + 1, 1)
+			from training tra
+			where bot_id = #botId#
+             "
+	attribute botId  			{domain : DoId         		required:"true"  inOut :"in"}
+	attribute nextModelNumber 	{domain : DoNumber 			required:"true"  inOut :"out"}
+}
+
