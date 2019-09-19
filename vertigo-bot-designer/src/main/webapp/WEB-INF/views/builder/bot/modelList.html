@@ -68,8 +68,7 @@
 						th:@click="|httpPostAjax('@{_loadModel}', {'id':2})|"></q-btn>
 			</vu:block>
 			
-			<vu:table id="load" list="trainingList" componentId="trainingList" rowsPerPage="10" autoColClass >
-					<vu:slot name="top_left_slot">Manage models</vu:slot>
+			<vu:table id="load" list="trainingList" title="Manage models" componentId="trainingList" rowsPerPage="10" autoColClass >
 					<vu:slot name="actions_slot">
 						<q-btn class="on-right" round color="primary" icon="cloud_upload" aria-label="Load model"
 								 v-if="props.row.status == 'OK'"
@@ -86,7 +85,7 @@
 						<q-icon name="block" color="red" size="2rem" v-if="props.row.status == 'KO'"></q-icon>
 						<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="props.row.status == 'TRAINING'"></q-spinner-gears>
 					</vu:column>
-					<vu:column field="versionNumber" />
+					<vu:column field="versionNumber" class="col_Version"/>
 					<vu:column field="startTime" />
 					<vu:column field="endTime" />
 					<vu:column field="tag" />

@@ -48,8 +48,11 @@
 						q-if>
 					</q-input>
 				</div>
-				<q-list highlight>
+				<q-list highlight dense>
 					<q-item v-for="(intentTrainingSentence, index) in vueData.intentTrainingSentences.slice().reverse()">
+						<q-item-section avatar th:if="${model.modeReadOnly}">
+				        	<q-icon color="black" name="format_quote" />
+				        </q-item-section>
 						<q-item-section side left th:if="${!model.modeReadOnly}">
 							<q-btn th:@click="|httpPostAjax('@{_removeTrainingSentence}', {'index':vueData.intentTrainingSentences.length - 1 - index})|"
 								color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
@@ -71,6 +74,9 @@
 				</div>
 				<q-list highlight>
 					<q-item v-for="(utterTexts, index) in vueData.utterTexts.slice().reverse()">
+						<q-item-section avatar th:if="${model.modeReadOnly}">
+				        	<q-icon color="black" name="format_quote" />
+				        </q-item-section>
 						<q-item-section side left th:if="${!model.modeReadOnly}">
 							<q-btn th:@click="|httpPostAjax('@{_removeUtterText}', {'index':vueData.utterTexts.length - 1 - index})|"
 									color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
