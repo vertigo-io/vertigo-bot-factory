@@ -7,6 +7,6 @@ public class StringUtils {
 	}
 
 	public static String labelToCode(final String label) {
-		return label.replaceAll("[\\s\\:]", "_").toLowerCase();
+		return label.replaceAll("[^\\p{L}0-9]", "_").toLowerCase();
 	}
 }
