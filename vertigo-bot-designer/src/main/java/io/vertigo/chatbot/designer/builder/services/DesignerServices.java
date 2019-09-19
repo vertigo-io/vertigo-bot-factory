@@ -224,4 +224,12 @@ public class DesignerServices implements Component {
 				);
 	}
 
+	public Training getTraining(final Long traId) {
+		return trainingDAO.get(traId);
+	}
+
+	public Training saveTraining(final Training training) {
+		return trainingDAO.save(training);
+	}
+
 }

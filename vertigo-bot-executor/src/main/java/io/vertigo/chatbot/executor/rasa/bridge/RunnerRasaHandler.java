@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.io.FileUtils;
 
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
-import io.vertigo.chatbot.executor.rasa.JaxrsProvider;
+import io.vertigo.chatbot.executor.rasa.RasaJaxrsProvider;
 import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.file.model.VFile;
@@ -25,7 +25,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 	private static final String MODEL_DIR = "models/";
 
 	@Inject
-	private JaxrsProvider jaxrsProvider;
+	private RasaJaxrsProvider rasaJaxrsProvider;
 
 	private Process rasaProcess;
 
@@ -62,7 +62,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 			return "Service down";
 		}
 
-		final Response modelResponse = jaxrsProvider.getWebTarget().path("/status")
+		final Response modelResponse = rasaJaxrsProvider.getWebTarget().path("/status")
 				.request(MediaType.APPLICATION_JSON)
 				.get();
 
@@ -88,7 +88,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 		}
 
 		@SuppressWarnings("unchecked")
-		final Map<String, String> wsVersion = jaxrsProvider.getWebTarget().path("/version")
+		final Map<String, String> wsVersion = rasaJaxrsProvider.getWebTarget().path("/version")
 		.request(MediaType.APPLICATION_JSON)
 		.get(Map.class);
 
@@ -120,7 +120,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 		final Map<String, String> param = new HashMap<>();
 		param.put("model_file", relativeModelFilePath);
 
-		final Response response = jaxrsProvider.getWebTarget().path("/model")
+		final Response response = rasaJaxrsProvider.getWebTarget().path("/model")
 				.request(MediaType.APPLICATION_JSON)
 				.put(Entity.json(param));
 

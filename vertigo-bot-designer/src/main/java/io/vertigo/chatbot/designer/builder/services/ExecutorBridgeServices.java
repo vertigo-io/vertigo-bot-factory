@@ -31,7 +31,7 @@ import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
-import io.vertigo.chatbot.designer.commons.webservices.JaxrsProvider;
+import io.vertigo.chatbot.designer.commons.webservices.ExecutorJaxrsProvider;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.domain.model.DtList;
@@ -63,7 +63,7 @@ public class ExecutorBridgeServices implements Component {
 	private UtterTextDAO utterTextDAO;
 
 	@Inject
-	private JaxrsProvider jaxrsProvider;
+	private ExecutorJaxrsProvider executorJaxrsProvider;
 
 	public void trainAgent(final Long botId) {
 		final Long versionNumber = builderPAO.getNextModelNumber(botId);
@@ -80,23 +80,24 @@ public class ExecutorBridgeServices implements Component {
 		final Map<String, Object> requestData = new HashMap<>();
 		requestData.put("botExport", exportBot(botId));
 		requestData.put("smallTalkExport", exportSmallTalk(botId));
+		requestData.put("trainingId", training.getTraId());
 		requestData.put("modelId", versionNumber);
 
-		jaxrsProvider.getWebTarget().path("/api/chatbot/train")
+		executorJaxrsProvider.getWebTarget().path("/api/chatbot/train")
 		.request(MediaType.APPLICATION_JSON)
 		.post(Entity.json(requestData));
 
 	}
 
 	public void stopAgent() {
-		jaxrsProvider.getWebTarget().path("/api/chatbot/train")
+		executorJaxrsProvider.getWebTarget().path("/api/chatbot/train")
 		.request(MediaType.APPLICATION_JSON)
 		.delete();
 
 	}
 
 	public TrainerInfo getTrainingState() {
-		final Response response = jaxrsProvider.getWebTarget().path("/api/chatbot/trainStatus")
+		final Response response = executorJaxrsProvider.getWebTarget().path("/api/chatbot/trainStatus")
 				.request(MediaType.APPLICATION_JSON)
 				.get();
 
@@ -110,7 +111,7 @@ public class ExecutorBridgeServices implements Component {
 	}
 
 	public RunnerInfo getRunnerState() {
-		final Response response =  jaxrsProvider.getWebTarget().path("/api/chatbot/runnerStatus")
+		final Response response =  executorJaxrsProvider.getWebTarget().path("/api/chatbot/runnerStatus")
 				.request(MediaType.APPLICATION_JSON)
 				.get();
 
@@ -166,7 +167,7 @@ public class ExecutorBridgeServices implements Component {
 	}
 
 	public VFile fetchModel(final Long id) {
-		final Response response = jaxrsProvider.getWebTarget().path("/api/chatbot/model/"+id)
+		final Response response = executorJaxrsProvider.getWebTarget().path("/api/chatbot/model/"+id)
 				.request(MediaType.APPLICATION_OCTET_STREAM)
 				.get();
 
@@ -186,7 +187,7 @@ public class ExecutorBridgeServices implements Component {
 		final Response response;
 		try (final FormDataMultiPart fdmp = new FormDataMultiPart();
 				final MultiPart multiPart = fdmp.bodyPart(bodyPart);) {
-			response = jaxrsProvider.getWebTarget().path("/api/chatbot/model")
+			response = executorJaxrsProvider.getWebTarget().path("/api/chatbot/model")
 					.request(MediaType.APPLICATION_JSON)
 					.put(Entity.entity(multiPart, multiPart.getMediaType()));
 

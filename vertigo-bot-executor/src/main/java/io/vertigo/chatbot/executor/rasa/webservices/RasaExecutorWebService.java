@@ -47,8 +47,9 @@ public class RasaExecutorWebService implements WebServices {
 	@SessionLess
 	public void train(@InnerBodyParam("botExport") final BotExport bot,
 			@InnerBodyParam("smallTalkExport") final DtList<SmallTalkExport> smallTalkList,
-			@InnerBodyParam("modelId") final Long id) {
-		rasaTrainerServices.trainModel(bot, smallTalkList, id);
+			@InnerBodyParam("trainingId") final Long trainingId,
+			@InnerBodyParam("modelId") final Long modelId) {
+		rasaTrainerServices.trainModel(bot, smallTalkList, trainingId, modelId);
 	}
 
 	@AnonymousAccessAllowed

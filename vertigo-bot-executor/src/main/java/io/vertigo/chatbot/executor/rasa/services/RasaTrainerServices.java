@@ -1,16 +1,22 @@
 package io.vertigo.chatbot.executor.rasa.services;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 
 import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.executor.domain.RasaConfig;
+import io.vertigo.chatbot.executor.rasa.DesignerJaxrsProvider;
 import io.vertigo.chatbot.executor.rasa.bridge.TrainerRasaHandler;
 import io.vertigo.chatbot.executor.rasa.config.RasaConfigBuilder;
 import io.vertigo.core.component.Component;
@@ -23,13 +29,28 @@ public class RasaTrainerServices implements Component {
 	@Inject
 	private TrainerRasaHandler trainerRasaHandler;
 
+	@Inject
+	private DesignerJaxrsProvider designerJaxrsProvider;
 
-	public void trainModel(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final Long id) {
-		if (getTrainerState().getTrainingInProgress()) {
-			throw new VUserException("Un entrainement est déjà en cours sur ce noeud");
+
+	public void trainModel(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final Long trainingId, final Long modelId) {
+		if (trainerRasaHandler.isTraining()) {
+			throw new VUserException("Node already training a model.");
 		}
 
-		trainerRasaHandler.trainModel(generateRasaConfig(bot, smallTalkList), id);
+		trainerRasaHandler.trainModel(generateRasaConfig(bot, smallTalkList), modelId, isSuccess -> {
+			final ExecutorTrainingCallback executorTrainingCallback = new ExecutorTrainingCallback();
+			executorTrainingCallback.setTrainingId(trainingId);
+			executorTrainingCallback.setSuccess(isSuccess);
+			executorTrainingCallback.setTrainingLog(trainerRasaHandler.getState().getLatestTrainingLog());
+
+			final Map<String, Object> requestData = new HashMap<>();
+			requestData.put("executorTrainingCallback", executorTrainingCallback);
+
+			designerJaxrsProvider.getWebTarget().path("/trainingCallback")
+			.request(MediaType.APPLICATION_JSON)
+			.post(Entity.json(requestData));
+		});
 	}
 
 	private RasaConfig generateRasaConfig(final BotExport bot, final DtList<SmallTalkExport> smallTalkList) {

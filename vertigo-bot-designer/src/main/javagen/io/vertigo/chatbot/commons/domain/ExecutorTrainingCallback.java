@@ -13,28 +13,27 @@ import io.vertigo.lang.Generated;
 public final class ExecutorTrainingCallback implements DtObject {
 	private static final long serialVersionUID = 1L;
 
-	private String name;
+	private Long trainingId;
 	private Boolean success;
-	private Long trainedModelVersion;
 	private String trainingLog;
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Name'.
-	 * @return String name <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Training ID'.
+	 * @return Long trainingId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Name")
-	public String getName() {
-		return name;
+	@Field(domain = "DoId", required = true, label = "Training ID")
+	public Long getTrainingId() {
+		return trainingId;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Name'.
-	 * @param name String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Training ID'.
+	 * @param trainingId Long <b>Obligatoire</b>
 	 */
-	public void setName(final String name) {
-		this.name = name;
+	public void setTrainingId(final Long trainingId) {
+		this.trainingId = trainingId;
 	}
 	
 	/**
@@ -54,25 +53,6 @@ public final class ExecutorTrainingCallback implements DtObject {
 	 */
 	public void setSuccess(final Boolean success) {
 		this.success = success;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model version'.
-	 * @return Long trainedModelVersion <b>Obligatoire</b>
-	 */
-	@Field(domain = "DoNumber", required = true, label = "Model version")
-	public Long getTrainedModelVersion() {
-		return trainedModelVersion;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model version'.
-	 * @param trainedModelVersion Long <b>Obligatoire</b>
-	 */
-	public void setTrainedModelVersion(final Long trainedModelVersion) {
-		this.trainedModelVersion = trainedModelVersion;
 	}
 	
 	/**

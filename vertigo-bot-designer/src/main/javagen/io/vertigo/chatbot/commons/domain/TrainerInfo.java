@@ -15,6 +15,7 @@ public final class TrainerInfo implements DtObject {
 
 	private String name;
 	private Boolean trainingInProgress;
+	private String trainingState;
 	private String latestTrainingLog;
 	private java.time.Instant startTime;
 	private java.time.Instant endTime;
@@ -55,6 +56,25 @@ public final class TrainerInfo implements DtObject {
 	 */
 	public void setTrainingInProgress(final Boolean trainingInProgress) {
 		this.trainingInProgress = trainingInProgress;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Training state'.
+	 * @return String trainingState <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoLabel", required = true, label = "Training state")
+	public String getTrainingState() {
+		return trainingState;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Training state'.
+	 * @param trainingState String <b>Obligatoire</b>
+	 */
+	public void setTrainingState(final String trainingState) {
+		this.trainingState = trainingState;
 	}
 	
 	/**

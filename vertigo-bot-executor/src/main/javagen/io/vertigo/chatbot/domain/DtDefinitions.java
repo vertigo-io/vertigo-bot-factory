@@ -91,12 +91,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de ExecutorTrainingCallback.
 	 */
 	public enum ExecutorTrainingCallbackFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback> {
-		/** Propriété 'Name'. */
-		name,
+		/** Propriété 'Training ID'. */
+		trainingId,
 		/** Propriété 'Succes'. */
 		success,
-		/** Propriété 'Model version'. */
-		trainedModelVersion,
 		/** Propriété 'Training logs'. */
 		trainingLog	}
 
@@ -190,6 +188,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		name,
 		/** Propriété 'Training in progress'. */
 		trainingInProgress,
+		/** Propriété 'Training state'. */
+		trainingState,
 		/** Propriété 'Training log'. */
 		latestTrainingLog,
 		/** Propriété 'Start time'. */

@@ -2,7 +2,7 @@ package io.vertigo.chatbot.designer.commons.webservices;
 
 import io.vertigo.chatbot.commons.AbstractJaxrsProvider;
 
-public class JaxrsProvider extends AbstractJaxrsProvider {
+public class ExecutorJaxrsProvider extends AbstractJaxrsProvider {
 
 	@Override
 	protected String getTargetUrl() {

@@ -1,11 +1,13 @@
 package io.vertigo.chatbot.executor.rasa.bridge;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.function.Consumer;
 
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.executor.domain.RasaConfig;
@@ -24,10 +26,11 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	private StringBuilder trainingLog;
 	private Instant startTime;
 	private Instant endTime;
+	private String state;
 
 	@Override
 	public void start() {
-		// nothing
+		state = "Ready";
 	}
 
 	@Override
@@ -39,37 +42,49 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	}
 
 
-	public void trainModel(final RasaConfig config, final Long id) {
+	public void trainModel(final RasaConfig config, final Long id, final Consumer<Boolean> trainingCallback) {
 		if (isTraining()) {
 			throw new VUserException("Training already in progress");
 		}
 		startTime = Instant.now();
 		endTime = null;
+		state = "Training";
 
 		writeToRasaFile(config.getDomain(), "domain.yml");
 		writeToRasaFile(config.getStories(), "data/stories.md");
 		writeToRasaFile(config.getNlu(), "data/nlu.md");
 
 		trainingLog = new StringBuilder();
-		rasaTrainingProcess = execRasa("train", trainingLog::append, () -> postTrainModel(id),
+		rasaTrainingProcess = execRasa("train", this::processTrainingLog, () -> postTrainModel(id, trainingCallback),
 				"--out", TRAINING_MODEL_DIR,
 				"--fixed-model-name", id.toString()
 				);
 	}
 
-	private void postTrainModel(final Long id) {
+	private void processTrainingLog(final String in) {
+		trainingLog.append(in);
+	}
+
+	private void postTrainModel(final Long id, final Consumer<Boolean> trainingCallback) {
 		LOGGER.info("Training complete !");
 
 		endTime = Instant.now();
 
-		// TODO callback to designer
-		getModelPath(id).toFile().exists();
+		final File modelFile = getModelPath(id).toFile();
+		if (modelFile.exists()) {
+			state = "Success";
+			trainingCallback.accept(true);
+		} else {
+			state = "Error";
+			trainingCallback.accept(false);
+		}
 	}
 
 	public TrainerInfo getState() {
 		final TrainerInfo retour = new TrainerInfo();
 
 		retour.setName("Rasa node");
+		retour.setTrainingState(state);
 		retour.setTrainingInProgress(isTraining());
 		retour.setLatestTrainingLog(getTrainingLog());
 		retour.setStartTime(startTime);
@@ -78,7 +93,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 		return retour;
 	}
 
-	private boolean isTraining() {
+	public boolean isTraining() {
 		return rasaTrainingProcess != null && rasaTrainingProcess.isAlive();
 	}
 
@@ -118,4 +133,5 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 		LOGGER.info("Training aborted !");
 		stop();
 	}
+
 }

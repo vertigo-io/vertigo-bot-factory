@@ -23,6 +23,7 @@ create DtDefinition DtRunnerInfo {
 create DtDefinition DtTrainerInfo {
 	field name 					{domain: DoLabel					label: "Name" 					required: "true"}
 	field trainingInProgress 	{domain: DoYesNo 					label: "Training in progress" 	required: "true"}
+	field trainingState			{domain: DoLabel 					label: "Training state" 		required: "true"}
 	field latestTrainingLog		{domain: DoText 					label: "Training log" 			required: "true"}
 	field startTime				{domain: DoInstant 					label: "Start time"				required: "false"}
 	field endTime				{domain: DoInstant 					label: "End time" 				required: "false"}
@@ -31,8 +32,7 @@ create DtDefinition DtTrainerInfo {
 }
 
 create DtDefinition DtExecutorTrainingCallback {
-	field name 					{domain: DoLabel					label: "Name" 					required: "true"}
+	field trainingId 			{domain: DoId 						label: "Training ID" 			required: "true"}
 	field success				{domain: DoYesNo 					label: "Succes" 				required: "true"}
-	field trainedModelVersion	{domain: DoNumber 					label: "Model version" 			required: "true"}
 	field trainingLog			{domain: DoText 					label: "Training logs" 			required: "true"}
 }

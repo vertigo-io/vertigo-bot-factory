@@ -36,7 +36,7 @@
 					if (!vueData.trainerState.trainingInProgress && interval != null) {
 						clearInterval(interval);
 						interval = null;
-						refreshModels();
+						setTimeout(refreshModels, 500); // timeout to ensure callback is processed
 					}
 				});
 			}
@@ -121,18 +121,17 @@
 					       @click="refreshTraining" :loading="dataX.loadingTraining"></q-btn>
 				</vu:slot>
 				
-				<vu:include-data object="trainerState" field="trainingInProgress" />
 				<vu:include-data object="trainerState" field="latestTrainingLog" />
 				<vu:include-data object="trainerState" field="startTime" />
 				<vu:include-data object="trainerState" field="duration" />
 				
-				<vu:text-field object="trainerState" field="name" />
+				<vu:text-field-read-reactive object="trainerState" field="name" />
 				
-				<vu:label object="trainerState" field="trainingInProgress" label="State">
-					<span>{{(vueData.trainerState.trainingInProgress ? 'Training in progress' : 'Ready')}}</span>
-				</vu:label>
+				<vu:text-field-read-reactive object="trainerState" field="trainingState" />
 				
 				<q-card-actions>
+					<vu:include-data object="trainerState" field="trainingInProgress" />
+					
 					<q-btn color="primary" icon="build" size="lg" label="Train" :loading="vueData.trainerState.trainingInProgress"
 							th:@click="|httpPostAjax('@{_train}', {}, postTrain)|" style="width: 175px">
 						<span slot="loading">
