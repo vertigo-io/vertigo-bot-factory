@@ -44,15 +44,13 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		commonBotDetailController.initCommonContext(viewContext, botId);
+		final Chatbot bot = commonBotDetailController.initCommonContext(viewContext, botId);
 
 		viewContext.publishRef(autoscrollKey, Boolean.TRUE);
 
 		refreshRunnerState(viewContext);
 		refreshTrainerState(viewContext);
-
-		viewContext.publishDtList(trainingListKey, designerServices.getAllTrainings(botId));
-
+		refreshModels(viewContext, bot);
 
 		toModeReadOnly();
 	}
@@ -70,6 +68,13 @@ public class ModelListController extends AbstractVSpringMvcController {
 	public ViewContext refreshTrainerState(final ViewContext viewContext) {
 		final TrainerInfo state = executorBridgeServices.getTrainingState();
 		viewContext.publishDto(trainerStateKey, state);
+
+		return viewContext;
+	}
+
+	@PostMapping("/_refreshModels")
+	public ViewContext refreshModels(final ViewContext viewContext,  @ViewAttribute("bot") final Chatbot bot) {
+		viewContext.publishDtList(trainingListKey, designerServices.getAllTrainings(bot.getBotId()));
 
 		return viewContext;
 	}

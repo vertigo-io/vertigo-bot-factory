@@ -11,25 +11,50 @@
 		
 		<script th:inline="javascript">
 			var interval;
+			VUiExtensions.dataX.loadingRunner = false;
+			VUiExtensions.dataX.loadingModels = false;
+			VUiExtensions.dataX.loadingTraining = false;
+			
 			
 			function postTrain() {
 				interval = setInterval(function() {
-					refresh();
+					refreshTraining();
 				}, 1000);
+				
+				refreshModels();
 			}
 			
-			function refresh() {
-				VUiPage.httpPostAjax([[@{_refreshTrainer}]], {}, postRefresh);
+			function refreshTraining() {
+				VUiExtensions.dataX.loadingTraining = true;
+				
+				VUiPage.httpPostAjax([[@{_refreshTrainer}]], {}, function() {
+					VUiExtensions.dataX.loadingTraining = false;
+					
+					if (vueData.autoscroll) {
+						scrollLogToBottom();
+					}
+					if (!vueData.trainerState.trainingInProgress && interval != null) {
+						clearInterval(interval);
+						interval = null;
+						refreshModels();
+					}
+				});
 			}
 			
-			function postRefresh() {
-				if (vueData.autoscroll) {
-					scrollLogToBottom();
-				}
-				if (!vueData.trainerState.trainingInProgress && interval != null) {
-					clearInterval(interval);
-					interval = null;
-				}
+			function refreshModels() {
+				VUiExtensions.dataX.loadingModels = true;
+				
+				VUiPage.httpPostAjax([[@{_refreshModels}]], {}, function() {
+					VUiExtensions.dataX.loadingModels = false;
+				});
+			}
+			
+			function refreshRunner() {
+				VUiExtensions.dataX.loadingRunner = true;
+				
+				VUiPage.httpPostAjax([[@{_refreshRunner}]], {}, function() {
+					VUiExtensions.dataX.loadingRunner = false;
+				});
 			}
 			
 			function scrollLogToBottom() {
@@ -52,46 +77,50 @@
 		<section layout:fragment="content">
 			
 			<vu:block id="run" title="Node state">
-				<vu:text-field object="runnerState" field="name" />
-				<vu:text-field object="runnerState" field="state" />
-				<vu:text-field object="runnerState" field="agentVersion" />
-				<vu:text-field object="runnerState" field="loadedModelVersion" />
+				<vu:slot name="actions_slot">
+					<q-btn class="fab-block" round color="primary" icon="refresh" aria-label="Refresh" title="Refresh" 
+					       @click="refreshRunner" :loading="dataX.loadingRunner"></q-btn>
+				</vu:slot>
 				
-				<q-btn color="primary" size="lg" label="Refresh"
-						th:@click="|httpPostAjax('@{_refreshRunner}', {})|"></q-btn>
-			</vu:block>
-			
-			<vu:block id="load" title="" th:if="false">
-				
-				
-				<q-btn color="primary" size="lg" label="Load"
-						th:@click="|httpPostAjax('@{_loadModel}', {'id':2})|"></q-btn>
+				<vu:text-field-read-reactive object="runnerState" field="name" />
+				<vu:text-field-read-reactive object="runnerState" field="state" />
+				<vu:text-field-read-reactive object="runnerState" field="agentVersion" />
+				<vu:text-field-read-reactive object="runnerState" field="loadedModelVersion" />
 			</vu:block>
 			
 			<vu:table id="load" list="trainingList" title="Manage models" componentId="trainingList" rowsPerPage="10" autoColClass >
-					<vu:slot name="actions_slot">
-						<q-btn class="on-right" round color="primary" icon="cloud_upload" aria-label="Load model"
-								 v-if="props.row.status == 'OK'"
-								 th:@click="|console.log('click load')|"></q-btn>
-						<q-btn class="on-right" round color="red" icon="delete" aria-label="Delete model"
-								 v-if="props.row.status != 'TRAINING'"
-								 th:@click="|console.log('click del')|"></q-btn>
-					</vu:slot>
-					
-					<vu:include-data object="trainingList" field="traId" />
-					
-					<vu:column field="status" class="col_Status">
-						<q-icon name="check" color="green" size="2rem" v-if="props.row.status == 'OK'"></q-icon>
-						<q-icon name="block" color="red" size="2rem" v-if="props.row.status == 'KO'"></q-icon>
-						<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="props.row.status == 'TRAINING'"></q-spinner-gears>
-					</vu:column>
-					<vu:column field="versionNumber" class="col_Version"/>
-					<vu:column field="startTime" />
-					<vu:column field="endTime" />
-					<vu:column field="tag" />
+				<vu:slot name="top_right_slot">
+					<q-btn class="fab-block" round color="primary" icon="refresh" aria-label="Refresh" title="Refresh" 
+					       @click="refreshModels" :loading="dataX.loadingModels"></q-btn>
+				</vu:slot>
+				<vu:slot name="actions_slot">
+					<q-btn class="on-right" round color="primary" icon="cloud_upload" aria-label="Load model"
+							 v-if="props.row.status == 'OK'"
+							 th:@click="|console.log('click load')|"></q-btn>
+					<q-btn class="on-right" round color="red" icon="delete" aria-label="Delete model"
+							 v-if="props.row.status != 'TRAINING'"
+							 th:@click="|console.log('click del')|"></q-btn>
+				</vu:slot>
+				
+				<vu:include-data object="trainingList" field="traId" />
+				
+				<vu:column field="status" class="col_Status">
+					<q-icon name="check" color="green" size="2rem" v-if="props.row.status == 'OK'"></q-icon>
+					<q-icon name="block" color="red" size="2rem" v-if="props.row.status == 'KO'"></q-icon>
+					<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="props.row.status == 'TRAINING'"></q-spinner-gears>
+				</vu:column>
+				<vu:column field="versionNumber" class="col_Version"/>
+				<vu:column field="startTime" />
+				<vu:column field="endTime" />
+				<vu:column field="tag" />
 			</vu:table>
 			
 			<vu:block id="train" title="Training">
+				<vu:slot name="actions_slot">
+					<q-btn class="fab-block" round color="primary" icon="refresh" aria-label="Refresh" title="Refresh" 
+					       @click="refreshTraining" :loading="dataX.loadingTraining"></q-btn>
+				</vu:slot>
+				
 				<vu:include-data object="trainerState" field="trainingInProgress" />
 				<vu:include-data object="trainerState" field="latestTrainingLog" />
 				<vu:include-data object="trainerState" field="startTime" />
@@ -104,9 +133,6 @@
 				</vu:label>
 				
 				<q-card-actions>
-					<q-btn color="primary" size="lg" label="Refresh"
-							th:@click="refresh"></q-btn>
-							
 					<q-btn color="primary" icon="build" size="lg" label="Train" :loading="vueData.trainerState.trainingInProgress"
 							th:@click="|httpPostAjax('@{_train}', {}, postTrain)|" style="width: 175px">
 						<span slot="loading">
@@ -116,7 +142,7 @@
 					</q-btn>
 					
 					<q-btn color="red" icon="warning" size="lg" label="Stop training" v-if="vueData.trainerState.trainingInProgress"
-							th:@click="|httpPostAjax('@{_stop}', {})|"></q-btn>
+							th:@click="|httpPostAjax('@{_stop}', {}, refreshModels)|"></q-btn>
 				</q-card-actions>
 				
 				<q-card-separator></q-card-separator>
