@@ -1,6 +1,6 @@
 package io.vertigo.chatbot.commons.domain
 
-create DtDefinition DtChatbot{
+create DtDefinition DtChatbot {
 	id    botId 		{domain: DoId 			label: "ID"}
 	field name 			{domain: DoLabel 		label: "Name" 			required: "true"}
 	field creationDate	{domain: DoLocaldate 	label: "Creation date" 	required: "true"}
@@ -26,6 +26,7 @@ create Association AChatbotUtterTextWelcome {
 	
 	type : "*>1"
 	
+	roleB : "utterTextWelcome"
 	labelB : "Welcome text"
 }
 
@@ -37,6 +38,7 @@ create Association AChatbotUtterTextDefault {
 	
 	type : "*>1"
 	
+	roleB : "utterTextDefault"
 	labelB : "Default text"
 }
 
@@ -53,9 +55,9 @@ create Association AIntentChatbot {
 	fkFieldName : "botId" /* NPE sans explication si ya pas */
     
  	dtDefinitionA : DtIntent
+	type : "*>1"
 	dtDefinitionB : DtChatbot
 	
-	type : "*>1"
 	
 	labelB : "Chatbot"
 }
@@ -69,13 +71,9 @@ create DtDefinition DtIntentTrainingSentence {
 create Association AIntentIntentTrainingSentence {
 	fkFieldName : "intId"
     
- 	dtDefinitionA : DtIntentTrainingSentence
-	dtDefinitionB : DtIntent
-	
-	multiplicityA : "0..*"
-	multiplicityB : "1..1"
-	navigabilityA : "true"
-	navigabilityB : "false" /* pas pris en compte ! */
+	dtDefinitionA : DtIntentTrainingSentence
+	type : "*>1"
+ 	dtDefinitionB : DtIntent
 	
 	labelB : "SmallTalkIntent"
 }
@@ -89,12 +87,8 @@ create Association AIntentUtterText {
 	fkFieldName : "intId"
     
  	dtDefinitionA : DtUtterText
+	type : "*>?"
 	dtDefinitionB : DtIntent
-	
-	multiplicityA : "0..*"
-	multiplicityB : "0..1"
-	navigabilityA : "true"
-	navigabilityB : "false" /* pas pris en compte ! */
 	
 	labelB : "Intent"
 }

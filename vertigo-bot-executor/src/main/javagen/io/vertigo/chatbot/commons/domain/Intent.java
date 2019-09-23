@@ -1,7 +1,6 @@
 package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.dynamo.domain.model.Entity;
-import io.vertigo.dynamo.domain.model.ListVAccessor;
 import io.vertigo.dynamo.domain.model.UID;
 import io.vertigo.dynamo.domain.model.VAccessor;
 import io.vertigo.dynamo.domain.stereotype.Field;
@@ -36,36 +35,6 @@ public final class Intent implements Entity {
 			foreignLabel = "Intent",
 			foreignMultiplicity = "0..*")
 	private final VAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
-
-	@io.vertigo.dynamo.domain.stereotype.Association(
-			name = "AIntentIntentTrainingSentence",
-			fkFieldName = "intId",
-			primaryDtDefinitionName = "DtIntent",
-			primaryIsNavigable = false,
-			primaryRole = "Intent",
-			primaryLabel = "SmallTalkIntent",
-			primaryMultiplicity = "1..1",
-			foreignDtDefinitionName = "DtIntentTrainingSentence",
-			foreignIsNavigable = true,
-			foreignRole = "IntentTrainingSentence",
-			foreignLabel = "IntentTrainingSentence",
-			foreignMultiplicity = "0..*")
-	private final ListVAccessor<io.vertigo.chatbot.commons.domain.IntentTrainingSentence> intentTrainingSentenceAccessor = new ListVAccessor<>(this, "AIntentIntentTrainingSentence", "IntentTrainingSentence");
-
-	@io.vertigo.dynamo.domain.stereotype.Association(
-			name = "AIntentUtterText",
-			fkFieldName = "intId",
-			primaryDtDefinitionName = "DtIntent",
-			primaryIsNavigable = false,
-			primaryRole = "Intent",
-			primaryLabel = "Intent",
-			primaryMultiplicity = "0..1",
-			foreignDtDefinitionName = "DtUtterText",
-			foreignIsNavigable = true,
-			foreignRole = "UtterText",
-			foreignLabel = "UtterText",
-			foreignMultiplicity = "0..*")
-	private final ListVAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextAccessor = new ListVAccessor<>(this, "AIntentUtterText", "UtterText");
 
 	/** {@inheritDoc} */
 	@Override
@@ -193,22 +162,6 @@ public final class Intent implements Entity {
 	 */
 	public VAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbot() {
 		return botIdAccessor;
-	}
-
-	/**
-	 * Association : IntentTrainingSentence.
-	 * @return l'accesseur vers la propriété 'IntentTrainingSentence'
-	 */
-	public ListVAccessor<io.vertigo.chatbot.commons.domain.IntentTrainingSentence> intentTrainingSentence() {
-		return intentTrainingSentenceAccessor;
-	}
-
-	/**
-	 * Association : UtterText.
-	 * @return l'accesseur vers la propriété 'UtterText'
-	 */
-	public ListVAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterText() {
-		return utterTextAccessor;
 	}
 	
 	/** {@inheritDoc} */

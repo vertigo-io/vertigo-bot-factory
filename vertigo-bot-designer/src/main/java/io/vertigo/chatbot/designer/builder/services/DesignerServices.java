@@ -17,14 +17,15 @@ import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.IntentFields;
+import io.vertigo.chatbot.domain.DtDefinitions.IntentTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
+import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.criteria.Criterions;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.domain.model.DtListState;
 import io.vertigo.dynamo.domain.model.FileInfoURI;
-import io.vertigo.dynamo.domain.model.ListVAccessor;
 import io.vertigo.dynamo.file.FileManager;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.Assertion;
@@ -194,26 +195,21 @@ public class DesignerServices implements Component {
 
 	public DtList<IntentTrainingSentence> getIntentTrainingSentenceList(final Intent intent) {
 		Assertion.checkNotNull(intent);
+		Assertion.checkNotNull(intent.getIntId());
 		// ---
-		// url
-		final ListVAccessor<IntentTrainingSentence> accessor = intent.intentTrainingSentence();
-		if (!accessor.isLoaded()) {
-			accessor.load();
-		}
 
-		return accessor.get();
+		return intentTrainingSentenceDAO.findAll(
+				Criterions.isEqualTo(IntentTrainingSentenceFields.intId, intent.getIntId()),
+				DtListState.of(1000));
 	}
 
 	public DtList<UtterText> getIntentUtterTextList(final Intent intent) {
 		Assertion.checkNotNull(intent);
+		Assertion.checkNotNull(intent.getIntId());
 		// ---
-		// url
-		final ListVAccessor<UtterText> accessor = intent.utterText();
-		if (!accessor.isLoaded()) {
-			accessor.load();
-		}
-
-		return accessor.get();
+		return utterTextDAO.findAll(
+				Criterions.isEqualTo(UtterTextFields.intId, intent.getIntId()),
+				DtListState.of(1000));
 	}
 
 

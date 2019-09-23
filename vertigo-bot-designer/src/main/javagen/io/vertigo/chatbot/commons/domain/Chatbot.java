@@ -40,7 +40,7 @@ public final class Chatbot implements Entity {
 			fkFieldName = "utxIdWelcome",
 			primaryDtDefinitionName = "DtUtterText",
 			primaryIsNavigable = true,
-			primaryRole = "UtterText",
+			primaryRole = "utterTextWelcome",
 			primaryLabel = "Welcome text",
 			primaryMultiplicity = "1..1",
 			foreignDtDefinitionName = "DtChatbot",
@@ -48,14 +48,14 @@ public final class Chatbot implements Entity {
 			foreignRole = "Chatbot",
 			foreignLabel = "Chatbot",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utxIdWelcomeAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "UtterText");
+	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utxIdWelcomeAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextWelcome");
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
 			name = "AChatbotUtterTextDefault",
 			fkFieldName = "utxIdDefault",
 			primaryDtDefinitionName = "DtUtterText",
 			primaryIsNavigable = true,
-			primaryRole = "UtterText",
+			primaryRole = "utterTextDefault",
 			primaryLabel = "Default text",
 			primaryMultiplicity = "1..1",
 			foreignDtDefinitionName = "DtChatbot",
@@ -63,14 +63,14 @@ public final class Chatbot implements Entity {
 			foreignRole = "Chatbot",
 			foreignLabel = "Chatbot",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utxIdDefaultAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "UtterText");
+	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utxIdDefaultAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextDefault");
 
 	/** {@inheritDoc} */
 	@Override
 	public UID<Chatbot> getUID() {
 		return UID.of(this);
 	}
-
+	
 	/**
 	 * Champ : ID.
 	 * Récupère la valeur de la propriété 'ID'.
@@ -89,7 +89,7 @@ public final class Chatbot implements Entity {
 	public void setBotId(final Long botId) {
 		this.botId = botId;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Name'.
@@ -108,7 +108,7 @@ public final class Chatbot implements Entity {
 	public void setName(final String name) {
 		this.name = name;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Creation date'.
@@ -127,7 +127,7 @@ public final class Chatbot implements Entity {
 	public void setCreationDate(final java.time.LocalDate creationDate) {
 		this.creationDate = creationDate;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Status'.
@@ -146,7 +146,7 @@ public final class Chatbot implements Entity {
 	public void setStatus(final String status) {
 		this.status = status;
 	}
-
+	
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Avatar'.
@@ -165,7 +165,7 @@ public final class Chatbot implements Entity {
 	public void setFilIdAvatar(final Long filIdAvatar) {
 		filIdAvatarAccessor.setId(filIdAvatar);
 	}
-
+	
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Welcome text'.
@@ -184,7 +184,7 @@ public final class Chatbot implements Entity {
 	public void setUtxIdWelcome(final Long utxIdWelcome) {
 		utxIdWelcomeAccessor.setId(utxIdWelcome);
 	}
-
+	
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Default text'.
@@ -204,7 +204,7 @@ public final class Chatbot implements Entity {
 		utxIdDefaultAccessor.setId(utxIdDefault);
 	}
 
-	/**
+ 	/**
 	 * Association : Avatar.
 	 * @return l'accesseur vers la propriété 'Avatar'
 	 */
@@ -212,7 +212,7 @@ public final class Chatbot implements Entity {
 		return filIdAvatarAccessor;
 	}
 
-	/**
+ 	/**
 	 * Association : Default text.
 	 * @return l'accesseur vers la propriété 'Default text'
 	 */
@@ -220,14 +220,14 @@ public final class Chatbot implements Entity {
 		return utxIdDefaultAccessor;
 	}
 
-	/**
+ 	/**
 	 * Association : Welcome text.
 	 * @return l'accesseur vers la propriété 'Welcome text'
 	 */
 	public VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextWelcome() {
 		return utxIdWelcomeAccessor;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
