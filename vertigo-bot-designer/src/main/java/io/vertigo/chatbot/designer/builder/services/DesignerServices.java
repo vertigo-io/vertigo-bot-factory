@@ -8,17 +8,14 @@ import javax.inject.Inject;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.dao.IntentDAO;
 import io.vertigo.chatbot.commons.dao.IntentTrainingSentenceDAO;
-import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.Intent;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
-import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.IntentFields;
 import io.vertigo.chatbot.domain.DtDefinitions.IntentTrainingSentenceFields;
-import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
@@ -45,9 +42,6 @@ public class DesignerServices implements Component {
 
 	@Inject
 	private IntentDAO intentDAO;
-
-	@Inject
-	private TrainingDAO trainingDAO;
 
 	@Inject
 	private IntentTrainingSentenceDAO intentTrainingSentenceDAO;
@@ -210,26 +204,6 @@ public class DesignerServices implements Component {
 		return utterTextDAO.findAll(
 				Criterions.isEqualTo(UtterTextFields.intId, intent.getIntId()),
 				DtListState.of(1000, 0, UtterTextFields.utxId.name(), true));
-	}
-
-
-	public DtList<Training> getAllTrainings(final Long botId) {
-		return trainingDAO.findAll(
-				Criterions.isEqualTo(TrainingFields.botId, botId),
-				DtListState.of(1000, 0, TrainingFields.versionNumber.name(), true)
-				);
-	}
-
-	public Training getTraining(final Long traId) {
-		return trainingDAO.get(traId);
-	}
-
-	public Training saveTraining(final Training training) {
-		return trainingDAO.save(training);
-	}
-
-	public void removeTraining(final Long traId) {
-		trainingDAO.delete(traId);
 	}
 
 }

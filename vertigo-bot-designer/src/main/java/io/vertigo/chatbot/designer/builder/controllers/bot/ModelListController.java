@@ -13,8 +13,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
-import io.vertigo.chatbot.designer.builder.services.DesignerServices;
-import io.vertigo.chatbot.designer.builder.services.ExecutorBridgeServices;
+import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -34,10 +33,7 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 
 	@Inject
-	private DesignerServices designerServices;
-
-	@Inject
-	private ExecutorBridgeServices executorBridgeServices;
+	private TrainingServices trainingServices;
 
 	@Inject
 	private CommonBotDetailController commonBotDetailController;
@@ -58,7 +54,7 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_refreshRunner")
 	public ViewContext refreshRunnerState(final ViewContext viewContext) {
-		final RunnerInfo state = executorBridgeServices.getRunnerState();
+		final RunnerInfo state = trainingServices.getRunnerState();
 		viewContext.publishDto(runnerStateKey, state);
 
 		return viewContext;
@@ -66,7 +62,7 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_refreshTrainer")
 	public ViewContext refreshTrainerState(final ViewContext viewContext) {
-		final TrainerInfo state = executorBridgeServices.getTrainingState();
+		final TrainerInfo state = trainingServices.getTrainingState();
 		viewContext.publishDto(trainerStateKey, state);
 
 		return viewContext;
@@ -74,7 +70,7 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_refreshTrainings")
 	public ViewContext refreshTrainings(final ViewContext viewContext,  @ViewAttribute("bot") final Chatbot bot) {
-		viewContext.publishDtList(trainingListKey, designerServices.getAllTrainings(bot.getBotId()));
+		viewContext.publishDtList(trainingListKey, trainingServices.getAllTrainings(bot.getBotId()));
 
 		return viewContext;
 	}
@@ -86,7 +82,7 @@ public class ModelListController extends AbstractVSpringMvcController {
 			@ViewAttribute("bot") final Chatbot bot
 			) {
 
-		designerServices.removeTraining(traId);
+		trainingServices.removeTraining(traId);
 
 		return refreshTrainings(viewContext, bot);
 	}
@@ -94,7 +90,7 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_train")
 	public ViewContext doTrain(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		executorBridgeServices.trainAgent(bot.getBotId());
+		trainingServices.trainAgent(bot.getBotId());
 
 		return viewContext;
 	}
@@ -102,7 +98,7 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_stop")
 	public ViewContext doStop(final ViewContext viewContext) {
-		executorBridgeServices.stopAgent();
+		trainingServices.stopAgent();
 
 		return viewContext;
 	}
@@ -111,8 +107,8 @@ public class ModelListController extends AbstractVSpringMvcController {
 	public ViewContext doLoadModel(final ViewContext viewContext,
 			@RequestParam("id") final Long id) {
 
-		final VFile file = executorBridgeServices.fetchModel(id);
-		executorBridgeServices.loadModel(file);
+		final VFile file = trainingServices.fetchModel(id);
+		trainingServices.loadModel(file);
 
 		return viewContext;
 	}

@@ -23,6 +23,7 @@ import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.commons.domain.Intent;
 import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
@@ -31,10 +32,15 @@ import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
+import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.commons.webservices.ExecutorJaxrsProvider;
+import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
+import io.vertigo.dynamo.criteria.Criterions;
 import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.dynamo.domain.model.DtListState;
+import io.vertigo.dynamo.domain.model.FileInfoURI;
 import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.dynamo.impl.file.model.StreamFile;
@@ -42,10 +48,13 @@ import io.vertigo.lang.VSystemException;
 import io.vertigo.lang.VUserException;
 
 @Transactional
-public class ExecutorBridgeServices implements Component {
+public class TrainingServices implements Component {
 
 	@Inject
 	private DesignerServices designerServices;
+
+	@Inject
+	private FileServices fileServices;
 
 	@Inject
 	private IntentDAO intentDAO;
@@ -74,7 +83,7 @@ public class ExecutorBridgeServices implements Component {
 		training.setStatus("TRAINING");
 		training.setVersionNumber(versionNumber);
 
-		trainingDAO.save(training);
+		saveTraining(training);
 
 
 		final Map<String, Object> requestData = new HashMap<>();
@@ -83,10 +92,13 @@ public class ExecutorBridgeServices implements Component {
 		requestData.put("trainingId", training.getTraId());
 		requestData.put("modelId", versionNumber);
 
-		executorJaxrsProvider.getWebTarget().path("/api/chatbot/train")
-		.request(MediaType.APPLICATION_JSON)
-		.post(Entity.json(requestData));
+		final Response response = executorJaxrsProvider.getWebTarget().path("/api/chatbot/train")
+				.request(MediaType.APPLICATION_JSON)
+				.post(Entity.json(requestData));
 
+		if (response.getStatus() != 204) {
+			throw new VUserException(((List<String>)response.readEntity(Map.class).get("globalErrors")).get(0));
+		}
 	}
 
 	public void stopAgent() {
@@ -199,4 +211,41 @@ public class ExecutorBridgeServices implements Component {
 			throw new VUserException("Impossible de charger le modèle");
 		}
 	}
+
+	public DtList<Training> getAllTrainings(final Long botId) {
+		return trainingDAO.findAll(
+				Criterions.isEqualTo(TrainingFields.botId, botId),
+				DtListState.of(1000, 0, TrainingFields.versionNumber.name(), true)
+				);
+	}
+
+	public Training getTraining(final Long traId) {
+		return trainingDAO.get(traId);
+	}
+
+	public Training saveTraining(final Training training) {
+		return trainingDAO.save(training);
+	}
+
+	public void removeTraining(final Long traId) {
+		trainingDAO.delete(traId);
+	}
+
+	public void trainingCallback(final ExecutorTrainingCallback callback) {
+		final Training training = getTraining(callback.getTrainingId());
+
+		if (Boolean.TRUE.equals(callback.getSuccess())) {
+			final VFile model = fetchModel(training.getVersionNumber());
+			final FileInfoURI fileInfoUri = fileServices.saveFile(model);
+			training.setFilIdModel((Long) fileInfoUri.getKey());
+
+			training.setStatus("OK");
+		} else {
+			training.setStatus("KO");
+		}
+
+		training.setEndTime(Instant.now());
+		saveTraining(training);
+	}
+
 }
