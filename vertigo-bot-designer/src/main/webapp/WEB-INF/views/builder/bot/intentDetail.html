@@ -42,7 +42,7 @@
 				<vu:include-data object="intentTrainingSentences" field="text" />
 				
 				<div th:if="${!model.modeReadOnly}">
-					<q-input v-model="vueData.newIntentTrainingSentence" th:@keydown.enter.prevent="|if (vueData.newIntentTrainingSentence.trim().length > 0) httpPostAjax('@{_addTrainingSentence}', {'vContext[newIntentTrainingSentence]':vueData.newIntentTrainingSentence})|"
+					<q-input v-model="vueData.newIntentTrainingSentence" @keydown.enter.prevent="if (vueData.newIntentTrainingSentence.trim().length > 0) httpPostAjax('_addTrainingSentence', {'vContext[newIntentTrainingSentence]':vueData.newIntentTrainingSentence})"
 						placeholder="Ajouter une expression"
 						:before="[{icon: 'format_quote'}]"
 						q-if>
@@ -54,7 +54,7 @@
 				        	<q-icon color="black" name="format_quote" />
 				        </q-item-section>
 						<q-item-section side left th:if="${!model.modeReadOnly}">
-							<q-btn th:@click="|httpPostAjax('@{_removeTrainingSentence}', {'index':vueData.intentTrainingSentences.length - 1 - index})|"
+							<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.intentTrainingSentences.length - 1 - index})"
 								color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
 						</q-item-section>
 						<q-item-section>{{intentTrainingSentence.text}}</q-item-section>
@@ -67,7 +67,7 @@
 				<vu:include-data object="utterTexts" field="text" />
 			
 				<div th:if="${!model.modeReadOnly}">
-					<q-input v-model="vueData.newUtterText" th:@keydown.enter.prevent="|if (vueData.newUtterText.trim().length > 0) httpPostAjax('@{_addUtterText}', {'vContext[newUtterText]':vueData.newUtterText})|"
+					<q-input v-model="vueData.newUtterText" @keydown.enter.prevent="if (vueData.newUtterText.trim().length > 0) httpPostAjax('_addUtterText', {'vContext[newUtterText]':vueData.newUtterText})"
 						placeholder="Ajouter une réponse"
 						:before="[{icon: 'format_quote'}]">
 					</q-input>
@@ -78,7 +78,7 @@
 				        	<q-icon color="black" name="format_quote" />
 				        </q-item-section>
 						<q-item-section side left th:if="${!model.modeReadOnly}">
-							<q-btn th:@click="|httpPostAjax('@{_removeUtterText}', {'index':vueData.utterTexts.length - 1 - index})|"
+							<q-btn @click="httpPostAjax('_removeUtterText', {'index':vueData.utterTexts.length - 1 - index})"
 									color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
 						</q-item-section>
 						<q-item-section>{{utterTexts.text}}</q-item-section>

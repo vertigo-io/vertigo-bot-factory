@@ -50,7 +50,7 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 		refreshRunnerState(viewContext);
 		refreshTrainerState(viewContext);
-		refreshModels(viewContext, bot);
+		refreshTrainings(viewContext, bot);
 
 		toModeReadOnly();
 	}
@@ -72,11 +72,23 @@ public class ModelListController extends AbstractVSpringMvcController {
 		return viewContext;
 	}
 
-	@PostMapping("/_refreshModels")
-	public ViewContext refreshModels(final ViewContext viewContext,  @ViewAttribute("bot") final Chatbot bot) {
+	@PostMapping("/_refreshTrainings")
+	public ViewContext refreshTrainings(final ViewContext viewContext,  @ViewAttribute("bot") final Chatbot bot) {
 		viewContext.publishDtList(trainingListKey, designerServices.getAllTrainings(bot.getBotId()));
 
 		return viewContext;
+	}
+
+
+	@PostMapping("/_removeTraining")
+	public ViewContext doRemoveTraining(final ViewContext viewContext,
+			@RequestParam("traId") final Long traId,
+			@ViewAttribute("bot") final Chatbot bot
+			) {
+
+		designerServices.removeTraining(traId);
+
+		return refreshTrainings(viewContext, bot);
 	}
 
 
@@ -104,5 +116,6 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 		return viewContext;
 	}
+
 
 }

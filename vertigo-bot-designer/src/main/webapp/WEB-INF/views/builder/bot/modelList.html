@@ -27,7 +27,7 @@
 			function refreshTraining() {
 				VUiExtensions.dataX.loadingTraining = true;
 				
-				VUiPage.httpPostAjax([[@{_refreshTrainer}]], {}, function() {
+				VUiPage.httpPostAjax("_refreshTrainer", {}, function() {
 					VUiExtensions.dataX.loadingTraining = false;
 					
 					if (vueData.autoscroll) {
@@ -44,7 +44,7 @@
 			function refreshModels() {
 				VUiExtensions.dataX.loadingModels = true;
 				
-				VUiPage.httpPostAjax([[@{_refreshModels}]], {}, function() {
+				VUiPage.httpPostAjax("_refreshTrainings", {}, function() {
 					VUiExtensions.dataX.loadingModels = false;
 				});
 			}
@@ -52,7 +52,7 @@
 			function refreshRunner() {
 				VUiExtensions.dataX.loadingRunner = true;
 				
-				VUiPage.httpPostAjax([[@{_refreshRunner}]], {}, function() {
+				VUiPage.httpPostAjax("_refreshRunner", {}, function() {
 					VUiExtensions.dataX.loadingRunner = false;
 				});
 			}
@@ -63,6 +63,22 @@
 					var obj = document.getElementById("log");
 					obj.scrollTop = obj.scrollHeight;
 				});
+			}
+			
+			function deleteTraining(training) {
+				VUiPage.$q.dialog({
+			        title: 'Confirm',
+			        message: 'Do you want to delete training version ' + training.versionNumber,
+					ok: {
+						label: "Delete",
+						color: "red"
+					},
+					cancel: {
+						label: "Cancel"
+					}
+			    }).onOk(() => {
+					VUiPage.httpPostAjax("_removeTraining", {'traId':training.traId});
+			    })
 			}
 		</script>
 	</head>
@@ -99,7 +115,7 @@
 							 th:@click="|console.log('click load')|"></q-btn>
 					<q-btn class="on-right" round color="red" icon="delete" aria-label="Delete model"
 							 v-if="props.row.status != 'TRAINING'"
-							 th:@click="|console.log('click del')|"></q-btn>
+							 @click="deleteTraining(props.row)"></q-btn>
 				</vu:slot>
 				
 				<vu:include-data object="trainingList" field="traId" />
@@ -133,7 +149,7 @@
 					<vu:include-data object="trainerState" field="trainingInProgress" />
 					
 					<q-btn color="primary" icon="build" size="lg" label="Train" :loading="vueData.trainerState.trainingInProgress"
-							th:@click="|httpPostAjax('@{_train}', {}, postTrain)|" style="width: 175px">
+							@click="httpPostAjax('_train', {}, postTrain)" style="width: 175px">
 						<span slot="loading">
 							<q-spinner-gears class="on-left"></q-spinner-gears>
 							Training...
@@ -141,7 +157,7 @@
 					</q-btn>
 					
 					<q-btn color="red" icon="warning" size="lg" label="Stop training" v-if="vueData.trainerState.trainingInProgress"
-							th:@click="|httpPostAjax('@{_stop}', {}, refreshModels)|"></q-btn>
+							@click="httpPostAjax('_stop', {}, refreshModels)"></q-btn>
 				</q-card-actions>
 				
 				<q-card-separator></q-card-separator>

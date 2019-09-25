@@ -200,7 +200,7 @@ public class DesignerServices implements Component {
 
 		return intentTrainingSentenceDAO.findAll(
 				Criterions.isEqualTo(IntentTrainingSentenceFields.intId, intent.getIntId()),
-				DtListState.of(1000));
+				DtListState.of(1000, 0, IntentTrainingSentenceFields.itsId.name(), true));
 	}
 
 	public DtList<UtterText> getIntentUtterTextList(final Intent intent) {
@@ -209,7 +209,7 @@ public class DesignerServices implements Component {
 		// ---
 		return utterTextDAO.findAll(
 				Criterions.isEqualTo(UtterTextFields.intId, intent.getIntId()),
-				DtListState.of(1000));
+				DtListState.of(1000, 0, UtterTextFields.utxId.name(), true));
 	}
 
 
@@ -226,6 +226,10 @@ public class DesignerServices implements Component {
 
 	public Training saveTraining(final Training training) {
 		return trainingDAO.save(training);
+	}
+
+	public void removeTraining(final Long traId) {
+		trainingDAO.delete(traId);
 	}
 
 }

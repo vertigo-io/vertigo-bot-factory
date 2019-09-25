@@ -5,7 +5,7 @@
   layout:decorate="~{templates/detailLayout}">
   
 	<div layout:fragment="content-header-left" id="baseImg">
- 		<img th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" class="detailImg gt-md" />
+ 		<img th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" class="detailImg gt-sm" />
 	</div>
 	<div layout:fragment="content-header-title" id="baseTitle">
 		<vu:include-data object="bot" field="name" />

@@ -12,8 +12,8 @@
 	
 	<body>
 		<div layout:fragment="content-header-left" id="baseImg">
-	 		<img v-if="componentStates.uploaderbotTmpPictureUri && componentStates.uploaderbotTmpPictureUri.fileUris.length > 0" th::src="|'@{/commons/upload}?file=' + componentStates.uploaderbotTmpPictureUri.fileUris[0]|" class="detailImg gt-md" />
-	 		<img v-if="!componentStates.uploaderbotTmpPictureUri || componentStates.uploaderbotTmpPictureUri.fileUris.length == 0" th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" class="detailImg gt-md" />
+	 		<img v-if="componentStates.uploaderbotTmpPictureUri && componentStates.uploaderbotTmpPictureUri.fileUris.length > 0" th::src="|'@{/commons/upload}?file=' + componentStates.uploaderbotTmpPictureUri.fileUris[0]|" class="detailImg gt-sm" />
+	 		<img v-if="!componentStates.uploaderbotTmpPictureUri || componentStates.uploaderbotTmpPictureUri.fileUris.length == 0" th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" class="detailImg gt-sm" />
 		</div>
 	
 		<section layout:fragment="content-header-actions">
