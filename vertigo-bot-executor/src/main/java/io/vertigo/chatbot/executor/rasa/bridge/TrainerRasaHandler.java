@@ -115,7 +115,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 
 	public VFile getModel(final Long id) {
 		try {
-			return new FSFile(id + ".zip", "application/zip", getModelPath(id));
+			return new FSFile(id + ".tar.gz", "application/zip", getModelPath(id));
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Impossible de lire le fichier du modèle");
 		}

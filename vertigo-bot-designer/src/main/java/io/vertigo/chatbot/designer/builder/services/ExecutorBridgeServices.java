@@ -173,7 +173,7 @@ public class ExecutorBridgeServices implements Component {
 
 		response.bufferEntity();
 
-		return new StreamFile(id + ".tar.gz", "", Instant.now(), -1, () -> response.readEntity(InputStream.class));
+		return new StreamFile(id + ".tar.gz", response.getHeaderString("Content-Type"), Instant.now(), response.getLength(), () -> response.readEntity(InputStream.class));
 	}
 
 	public void loadModel(final VFile model) {

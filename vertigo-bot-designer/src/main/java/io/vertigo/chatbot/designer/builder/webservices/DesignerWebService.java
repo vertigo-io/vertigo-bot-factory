@@ -34,13 +34,12 @@ public class DesignerWebService implements WebServices {
 	public void trainingCallback(@InnerBodyParam("executorTrainingCallback") final ExecutorTrainingCallback callback) {
 		final Training training = designerServices.getTraining(callback.getTrainingId());
 
-		if (callback.getSuccess()) {
+		if (Boolean.TRUE.equals(callback.getSuccess())) {
 			final VFile model = executorBridgeServices.fetchModel(training.getVersionNumber());
 			final FileInfoURI fileInfoUri = fileServices.saveFile(model);
 			training.setFilIdModel((Long) fileInfoUri.getKey());
 
 			training.setStatus("OK");
-
 		} else {
 			training.setStatus("KO");
 		}
