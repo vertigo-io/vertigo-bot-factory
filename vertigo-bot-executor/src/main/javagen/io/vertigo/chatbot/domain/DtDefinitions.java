@@ -95,8 +95,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		trainingId,
 		/** Propriété 'Succes'. */
 		success,
-		/** Propriété 'Training logs'. */
-		trainingLog	}
+		/** Propriété 'Logs'. */
+		log	}
 
 	/**
 	 * Enumération des champs de Intent.
@@ -211,10 +211,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		endTime,
 		/** Propriété 'Version'. */
 		versionNumber,
-		/** Propriété 'Tag'. */
-		tag,
 		/** Propriété 'Status'. */
 		status,
+		/** Propriété 'Log'. */
+		log,
 		/** Propriété 'Duration'. */
 		duration,
 		/** Propriété 'Chatbot'. */

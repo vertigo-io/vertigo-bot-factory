@@ -19,8 +19,8 @@ public final class Training implements Entity {
 	private java.time.Instant startTime;
 	private java.time.Instant endTime;
 	private Long versionNumber;
-	private String tag;
 	private String status;
+	private String log;
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
 			name = "ATrainingChatbot",
@@ -136,25 +136,6 @@ public final class Training implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Tag'.
-	 * @return String tag
-	 */
-	@Field(domain = "DoLabel", label = "Tag")
-	public String getTag() {
-		return tag;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Tag'.
-	 * @param tag String
-	 */
-	public void setTag(final String tag) {
-		this.tag = tag;
-	}
-	
-	/**
-	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Status'.
 	 * @return String status <b>Obligatoire</b>
 	 */
@@ -170,6 +151,25 @@ public final class Training implements Entity {
 	 */
 	public void setStatus(final String status) {
 		this.status = status;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Log'.
+	 * @return String log
+	 */
+	@Field(domain = "DoText", label = "Log")
+	public String getLog() {
+		return log;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Log'.
+	 * @param log String
+	 */
+	public void setLog(final String log) {
+		this.log = log;
 	}
 	
 	/**

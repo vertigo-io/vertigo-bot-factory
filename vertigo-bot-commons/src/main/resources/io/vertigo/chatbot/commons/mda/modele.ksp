@@ -131,8 +131,8 @@ create DtDefinition DtTraining {
 	field startTime		{domain: DoInstant 	label: "Start time"			required: "true"}
 	field endTime		{domain: DoInstant 	label: "End time" 			required: "false"}
 	field versionNumber	{domain: DoNumber 	label: "Version" 			required: "true"}
-	field tag			{domain: DoLabel 	label: "Tag" 				required: "false"}
 	field status		{domain: DoCode		label: "Status" 			required: "true"}
+	field log			{domain: DoText		label: "Log"	 			required: "false"}
 	computed duration 	{domain: DoLabel 	label: "Duration"
 						 expression:"return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());" }
 }
@@ -141,9 +141,8 @@ create Association ATrainingChatbot {
 	fkFieldName : "botId"
     
  	dtDefinitionA : DtTraining
-	dtDefinitionB : DtChatbot
-	
 	type : "*>1"
+	dtDefinitionB : DtChatbot
 	
 	labelB : "Chatbot"
 }
@@ -152,9 +151,9 @@ create Association ATrainingMediaFileInfo {
 	fkFieldName : "filIdModel"
     
  	dtDefinitionA : DtTraining
+	type : "*>?"
 	dtDefinitionB : DtMediaFileInfo
 	
-	type : "*>?"
 	
 	labelB : "Model"
 }

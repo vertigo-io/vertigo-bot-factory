@@ -41,6 +41,17 @@ public final class BuilderPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkCleanOldTrainings.
+	 * @param botId Long 
+	*/
+	public void cleanOldTrainings(final Long botId) {
+		final Task task = createTaskBuilder("TkCleanOldTrainings")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
 	 * Execute la tache TkGetNextModelNumber.
 	 * @param botId Long 
 	 * @return Long nextModelNumber

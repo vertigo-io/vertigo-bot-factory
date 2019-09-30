@@ -14,6 +14,7 @@
 			VUiExtensions.dataX.loadingRunner = false;
 			VUiExtensions.dataX.loadingModels = false;
 			VUiExtensions.dataX.loadingTraining = false;
+			VUiExtensions.dataX.modalLog = {"show": false, "row": {}};
 			
 			
 			function postTrain() {
@@ -128,8 +129,21 @@
 				<vu:column field="versionNumber" class="col_Version"/>
 				<vu:column field="startTime" />
 				<vu:column field="endTime" />
-				<vu:column field="tag" />
+				<vu:column field="log">
+					<q-btn v-if="props.row.log" round icon="notes" @click="dataX.modalLog.show = true; dataX.modalLog.row = props.row"></q-btn>
+				</vu:column>
 			</vu:table>
+			
+			<q-dialog v-model="dataX.modalLog.show">
+				<q-card>
+					<q-card-section>
+						<div class="text-h6">Logs de l'entrainnement N° {{dataX.modalLog.row.versionNumber}}</div>
+					</q-card-section>
+   					<q-card-section>
+    					<pre>{{dataX.modalLog.row.log}}</pre>
+    				</q-card-section>
+      			</q-card>	
+			</q-dialog>
 			
 			<vu:block id="train" title="Training">
 				<vu:slot name="actions_slot">

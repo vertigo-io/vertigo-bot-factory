@@ -75,6 +75,8 @@ public class TrainingServices implements Component {
 	private ExecutorJaxrsProvider executorJaxrsProvider;
 
 	public void trainAgent(final Long botId) {
+		builderPAO.cleanOldTrainings(botId);
+
 		final Long versionNumber = builderPAO.getNextModelNumber(botId);
 
 		final Training training = new Training();
@@ -100,6 +102,7 @@ public class TrainingServices implements Component {
 			throw new VUserException(((List<String>)response.readEntity(Map.class).get("globalErrors")).get(0));
 		}
 	}
+
 
 	public void stopAgent() {
 		executorJaxrsProvider.getWebTarget().path("/api/chatbot/train")
@@ -234,6 +237,8 @@ public class TrainingServices implements Component {
 	public void trainingCallback(final ExecutorTrainingCallback callback) {
 		final Training training = getTraining(callback.getTrainingId());
 
+		// TODO : Limiter au dernier en cours en mode "trop tard, je refuse ton callback" ?
+
 		if (Boolean.TRUE.equals(callback.getSuccess())) {
 			final VFile model = fetchModel(training.getVersionNumber());
 			final FileInfoURI fileInfoUri = fileServices.saveFile(model);
@@ -244,7 +249,9 @@ public class TrainingServices implements Component {
 			training.setStatus("KO");
 		}
 
+		training.setLog(callback.getLog());
 		training.setEndTime(Instant.now());
+
 		saveTraining(training);
 	}
 

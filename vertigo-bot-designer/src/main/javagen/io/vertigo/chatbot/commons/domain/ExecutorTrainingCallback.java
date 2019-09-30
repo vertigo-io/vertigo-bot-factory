@@ -15,7 +15,7 @@ public final class ExecutorTrainingCallback implements DtObject {
 
 	private Long trainingId;
 	private Boolean success;
-	private String trainingLog;
+	private String log;
 	
 	/**
 	 * Champ : DATA.
@@ -57,21 +57,21 @@ public final class ExecutorTrainingCallback implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Training logs'.
-	 * @return String trainingLog <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Logs'.
+	 * @return String log <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoText", required = true, label = "Training logs")
-	public String getTrainingLog() {
-		return trainingLog;
+	@Field(domain = "DoText", required = true, label = "Logs")
+	public String getLog() {
+		return log;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Training logs'.
-	 * @param trainingLog String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Logs'.
+	 * @param log String <b>Obligatoire</b>
 	 */
-	public void setTrainingLog(final String trainingLog) {
-		this.trainingLog = trainingLog;
+	public void setLog(final String log) {
+		this.log = log;
 	}
 	
 	/** {@inheritDoc} */

@@ -34,5 +34,5 @@ create DtDefinition DtTrainerInfo {
 create DtDefinition DtExecutorTrainingCallback {
 	field trainingId 			{domain: DoId 						label: "Training ID" 			required: "true"}
 	field success				{domain: DoYesNo 					label: "Succes" 				required: "true"}
-	field trainingLog			{domain: DoText 					label: "Training logs" 			required: "true"}
+	field log					{domain: DoText 					label: "Logs" 					required: "true"}
 }

@@ -176,8 +176,8 @@ create table TRAINING
     START_TIME  	 TIMESTAMP   	not null,
     END_TIME    	 TIMESTAMP   	,
     VERSION_NUMBER	 NUMERIC     	not null,
-    TAG         	 VARCHAR(100)	,
     STATUS      	 VARCHAR(100)	not null,
+    LOG         	 TEXT        	,
     BOT_ID      	 NUMERIC     	not null,
     FIL_ID_MODEL	 NUMERIC     	,
     constraint PK_TRAINING primary key (TRA_ID)
@@ -195,11 +195,11 @@ comment on column TRAINING.END_TIME is
 comment on column TRAINING.VERSION_NUMBER is
 'Version';
 
-comment on column TRAINING.TAG is
-'Tag';
-
 comment on column TRAINING.STATUS is
 'Status';
+
+comment on column TRAINING.LOG is
+'Log';
 
 comment on column TRAINING.BOT_ID is
 'Chatbot';

@@ -42,7 +42,7 @@ public class RasaTrainerServices implements Component {
 			final ExecutorTrainingCallback executorTrainingCallback = new ExecutorTrainingCallback();
 			executorTrainingCallback.setTrainingId(trainingId);
 			executorTrainingCallback.setSuccess(isSuccess);
-			executorTrainingCallback.setTrainingLog(trainerRasaHandler.getState().getLatestTrainingLog());
+			executorTrainingCallback.setLog(trainerRasaHandler.getState().getLatestTrainingLog());
 
 			final Map<String, Object> requestData = new HashMap<>();
 			requestData.put("executorTrainingCallback", executorTrainingCallback);
