@@ -31,7 +31,7 @@
 	 -->
 	<div layout:fragment="content-header-tabs">
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'informations'} ? 'active' : ''" flat label="Informations" url="@{/bot/{id}(id=${model.bot.botId})}" />
-		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'smallTalks'} ? 'active' : ''" flat label="Small talks" url="@{/bot/{id}/intents/(id=${model.bot.botId})}" />
+		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'smallTalks'} ? 'active' : ''" flat label="Small talks" url="@{/bot/{id}/smallTalks/(id=${model.bot.botId})}" />
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'models'} ? 'active' : ''" flat label="Models" url="@{/bot/{id}/models/(id=${model.bot.botId})}" />
 	</div>
 </html>

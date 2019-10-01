@@ -12,12 +12,12 @@
 	
 	<body>
 		<section layout:fragment="content-header-actions">
-			<vu:button-link url="@{/bot/{id}/intent/new(id=${model.bot.botId})}" ariaLabel="Add intent" icon="add"
+			<vu:button-link url="@{/bot/{id}/smallTalk/new(id=${model.bot.botId})}" ariaLabel="Add intent" icon="add"
 							class="on-left" round size="lg" color="primary" />
 		</section>
 		
 		<section layout:fragment="page-content">
-			<vu:table list="intents" componentId="intentsList" tr_@click.native="|goTo('@{/bot/{id}/intent/(id=${model.bot.botId})}'+props.row.intId)|" tr_style="cursor : pointer;">
+			<vu:table list="intents" componentId="intentsList" tr_@click.native="|goTo('@{/bot/{id}/smallTalk/(id=${model.bot.botId})}'+props.row.intId)|" tr_style="cursor : pointer;">
 					<vu:include-data object="intents" field="intId" />
 					<vu:column field="isEnabled" style="width:100px;">
 						<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>

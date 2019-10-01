@@ -22,8 +22,8 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 
 @Controller
-@RequestMapping("/bot/{botId}/intent")
-public class IntentDetailController extends AbstractVSpringMvcController {
+@RequestMapping("/bot/{botId}/smallTalk")
+public class SmallTalkDetailController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<Intent> intentKey = ViewContextKey.of("intent");
 
@@ -94,7 +94,7 @@ public class IntentDetailController extends AbstractVSpringMvcController {
 			) {
 
 		chatbotServices.saveIntent(intent, intentTrainingSentences, intentTrainingSentencesToDelete, utterTexts, utterTextsToDelete);
-		return "redirect:/bot/" + botId + "/intent/" + intent.getIntId();
+		return "redirect:/bot/" + botId + "/smallTalk/" + intent.getIntId();
 	}
 
 	@PostMapping("/_addTrainingSentence")
