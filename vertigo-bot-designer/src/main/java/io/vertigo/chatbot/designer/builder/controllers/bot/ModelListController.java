@@ -14,7 +14,6 @@ import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
-import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -84,7 +83,9 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 		trainingServices.removeTraining(traId);
 
-		return refreshTrainings(viewContext, bot);
+		refreshTrainings(viewContext, bot);
+
+		return viewContext;
 	}
 
 
@@ -103,12 +104,13 @@ public class ModelListController extends AbstractVSpringMvcController {
 		return viewContext;
 	}
 
-	@PostMapping("/_loadModel")
-	public ViewContext doLoadModel(final ViewContext viewContext,
-			@RequestParam("id") final Long id) {
+	@PostMapping("/_loadTraining")
+	public ViewContext doLoadTraining(final ViewContext viewContext,
+			@RequestParam("traId") final Long traId) {
 
-		final VFile file = trainingServices.fetchModel(id);
-		trainingServices.loadModel(file);
+		trainingServices.loadModel(traId);
+
+		refreshRunnerState(viewContext);
 
 		return viewContext;
 	}

@@ -353,10 +353,7 @@ nav a.q-item, .nav a.q_item {
 
 /** Tables **/
 
-table th.col_Status,
-table td.col_Status,
-table th.col_Version,
-table td.col_Version {
+table .col_Small {
 	width: 110px;
 	text-align: center;
 }

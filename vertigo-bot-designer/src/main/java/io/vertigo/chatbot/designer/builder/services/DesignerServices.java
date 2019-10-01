@@ -70,7 +70,7 @@ public class DesignerServices implements Component {
 		if (bot.getFilIdAvatar() == null) {
 			return getNoAvatar();
 		}
-		return fileServices.getFile(fileServices.toStdFileInfoUri(bot.getFilIdAvatar()));
+		return fileServices.getFile(bot.getFilIdAvatar());
 	}
 
 	public VFile getNoAvatar() {

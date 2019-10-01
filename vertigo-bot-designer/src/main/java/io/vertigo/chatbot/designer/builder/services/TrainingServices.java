@@ -181,17 +181,15 @@ public class TrainingServices implements Component {
 		return retour;
 	}
 
-	public VFile fetchModel(final Long id) {
-		final Response response = executorJaxrsProvider.getWebTarget().path("/api/chatbot/model/"+id)
-				.request(MediaType.APPLICATION_OCTET_STREAM)
-				.get();
+	public void loadModel(final Long traId) {
+		final Training training = getTraining(traId);
 
-		response.bufferEntity();
+		final VFile model = fileServices.getFile(training.getFilIdModel());
 
-		return new StreamFile(id + ".tar.gz", response.getHeaderString("Content-Type"), Instant.now(), response.getLength(), () -> response.readEntity(InputStream.class));
+		doLoadModel(model);
 	}
 
-	public void loadModel(final VFile model) {
+	private void doLoadModel(final VFile model) {
 		final StreamDataBodyPart bodyPart;
 		try {
 			bodyPart = new StreamDataBodyPart("model", model.createInputStream(), model.getFileName());
@@ -253,6 +251,17 @@ public class TrainingServices implements Component {
 		training.setEndTime(Instant.now());
 
 		saveTraining(training);
+	}
+
+
+	private VFile fetchModel(final Long id) {
+		final Response response = executorJaxrsProvider.getWebTarget().path("/api/chatbot/model/"+id)
+				.request(MediaType.APPLICATION_OCTET_STREAM)
+				.get();
+
+		response.bufferEntity();
+
+		return new StreamFile(id + ".tar.gz", response.getHeaderString("Content-Type"), Instant.now(), response.getLength(), () -> response.readEntity(InputStream.class));
 	}
 
 }

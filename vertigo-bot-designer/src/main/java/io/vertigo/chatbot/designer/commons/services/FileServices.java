@@ -47,6 +47,10 @@ public class FileServices implements Component {
 		return fileInfo.getURI();
 	}
 
+	public VFile getFile(final Long filId) {
+		return getFile(toStdFileInfoUri(filId));
+	}
+
 	public VFile getFile(final FileInfoURI fileUri) {
 		final FileInfoDefinition fileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoStd.class);
 		Assertion.checkArgument(fileInfoDefinition.equals(fileUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
