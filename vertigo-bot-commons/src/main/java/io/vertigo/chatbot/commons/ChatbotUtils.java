@@ -7,25 +7,25 @@ public class ChatbotUtils {
 	/**
 	 * Seconds per minute.
 	 */
-	static final int SECONDS_PER_MINUTE = 60;
+	private static final int SECONDS_PER_MINUTE = 60;
 
 	/**
 	 * Minutes per hour.
 	 */
-	static final int MINUTES_PER_HOUR = 60;
+	private static final int MINUTES_PER_HOUR = 60;
 	/**
 	 * Seconds per hour.
 	 */
-	static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
+	private static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
 
 	/**
 	 * Hours per day.
 	 */
-	static final int HOURS_PER_DAY = 24;
+	private static final int HOURS_PER_DAY = 24;
 	/**
 	 * Seconds per day.
 	 */
-	static final int SECONDS_PER_DAY = SECONDS_PER_HOUR * HOURS_PER_DAY;
+	private static final int SECONDS_PER_DAY = SECONDS_PER_HOUR * HOURS_PER_DAY;
 
 	private ChatbotUtils() {
 		// classe utilitaire
