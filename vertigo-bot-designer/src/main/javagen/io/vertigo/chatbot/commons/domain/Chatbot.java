@@ -37,7 +37,7 @@ public final class Chatbot implements Entity {
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
 			name = "AChatbotUtterTextWelcome",
-			fkFieldName = "utxIdWelcome",
+			fkFieldName = "uttIdWelcome",
 			primaryDtDefinitionName = "DtUtterText",
 			primaryIsNavigable = true,
 			primaryRole = "utterTextWelcome",
@@ -48,11 +48,11 @@ public final class Chatbot implements Entity {
 			foreignRole = "Chatbot",
 			foreignLabel = "Chatbot",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utxIdWelcomeAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextWelcome");
+	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> uttIdWelcomeAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextWelcome");
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
 			name = "AChatbotUtterTextDefault",
-			fkFieldName = "utxIdDefault",
+			fkFieldName = "uttIdDefault",
 			primaryDtDefinitionName = "DtUtterText",
 			primaryIsNavigable = true,
 			primaryRole = "utterTextDefault",
@@ -63,7 +63,7 @@ public final class Chatbot implements Entity {
 			foreignRole = "Chatbot",
 			foreignLabel = "Chatbot",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utxIdDefaultAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextDefault");
+	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> uttIdDefaultAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextDefault");
 
 	/** {@inheritDoc} */
 	@Override
@@ -169,39 +169,39 @@ public final class Chatbot implements Entity {
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Welcome text'.
-	 * @return Long utxIdWelcome <b>Obligatoire</b>
+	 * @return Long uttIdWelcome <b>Obligatoire</b>
 	 */
 	@Field(domain = "DoId", type = "FOREIGN_KEY", required = true, label = "Welcome text")
-	public Long getUtxIdWelcome() {
-		return (Long) utxIdWelcomeAccessor.getId();
+	public Long getUttIdWelcome() {
+		return (Long) uttIdWelcomeAccessor.getId();
 	}
 
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Définit la valeur de la propriété 'Welcome text'.
-	 * @param utxIdWelcome Long <b>Obligatoire</b>
+	 * @param uttIdWelcome Long <b>Obligatoire</b>
 	 */
-	public void setUtxIdWelcome(final Long utxIdWelcome) {
-		utxIdWelcomeAccessor.setId(utxIdWelcome);
+	public void setUttIdWelcome(final Long uttIdWelcome) {
+		uttIdWelcomeAccessor.setId(uttIdWelcome);
 	}
 	
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Default text'.
-	 * @return Long utxIdDefault <b>Obligatoire</b>
+	 * @return Long uttIdDefault <b>Obligatoire</b>
 	 */
 	@Field(domain = "DoId", type = "FOREIGN_KEY", required = true, label = "Default text")
-	public Long getUtxIdDefault() {
-		return (Long) utxIdDefaultAccessor.getId();
+	public Long getUttIdDefault() {
+		return (Long) uttIdDefaultAccessor.getId();
 	}
 
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Définit la valeur de la propriété 'Default text'.
-	 * @param utxIdDefault Long <b>Obligatoire</b>
+	 * @param uttIdDefault Long <b>Obligatoire</b>
 	 */
-	public void setUtxIdDefault(final Long utxIdDefault) {
-		utxIdDefaultAccessor.setId(utxIdDefault);
+	public void setUttIdDefault(final Long uttIdDefault) {
+		uttIdDefaultAccessor.setId(uttIdDefault);
 	}
 
  	/**
@@ -217,7 +217,7 @@ public final class Chatbot implements Entity {
 	 * @return l'accesseur vers la propriété 'Default text'
 	 */
 	public VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextDefault() {
-		return utxIdDefaultAccessor;
+		return uttIdDefaultAccessor;
 	}
 
  	/**
@@ -225,7 +225,7 @@ public final class Chatbot implements Entity {
 	 * @return l'accesseur vers la propriété 'Welcome text'
 	 */
 	public VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextWelcome() {
-		return utxIdWelcomeAccessor;
+		return uttIdWelcomeAccessor;
 	}
 	
 	/** {@inheritDoc} */

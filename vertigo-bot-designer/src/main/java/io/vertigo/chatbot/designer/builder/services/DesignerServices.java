@@ -6,16 +6,16 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
-import io.vertigo.chatbot.commons.dao.IntentDAO;
-import io.vertigo.chatbot.commons.dao.IntentTrainingSentenceDAO;
+import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
+import io.vertigo.chatbot.commons.dao.SmallTalkDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.Intent;
-import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
+import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
-import io.vertigo.chatbot.domain.DtDefinitions.IntentFields;
-import io.vertigo.chatbot.domain.DtDefinitions.IntentTrainingSentenceFields;
+import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
+import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
@@ -41,10 +41,10 @@ public class DesignerServices implements Component {
 	private ChatbotDAO chatbotDAO;
 
 	@Inject
-	private IntentDAO intentDAO;
+	private SmallTalkDAO smallTalkDAO;
 
 	@Inject
-	private IntentTrainingSentenceDAO intentTrainingSentenceDAO;
+	private NluTrainingSentenceDAO nluTrainingSentenceDAO;
 
 	@Inject
 	private UtterTextDAO utterTextDAO;
@@ -83,13 +83,13 @@ public class DesignerServices implements Component {
 	public UtterText getDefaultTextByBot(final Chatbot bot) {
 		Assertion.checkNotNull(bot);
 		// ---
-		return utterTextDAO.get(bot.getUtxIdDefault());
+		return utterTextDAO.get(bot.getUttIdDefault());
 	}
 
 	public UtterText getWelcomeTextByBot(final Chatbot bot) {
 		Assertion.checkNotNull(bot);
 		// ---
-		return utterTextDAO.get(bot.getUtxIdWelcome());
+		return utterTextDAO.get(bot.getUttIdWelcome());
 	}
 
 	public Chatbot saveChatbot(final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile, final UtterText defaultText, final UtterText welcomeText) {
@@ -100,11 +100,11 @@ public class DesignerServices implements Component {
 
 		// default text
 		utterTextDAO.save(defaultText);
-		chatbot.setUtxIdDefault(defaultText.getUtxId());
+		chatbot.setUttIdDefault(defaultText.getUttId());
 
 		// welcome
 		utterTextDAO.save(welcomeText);
-		chatbot.setUtxIdWelcome(welcomeText.getUtxId());
+		chatbot.setUttIdWelcome(welcomeText.getUttId());
 
 
 		// Avatar
@@ -128,33 +128,32 @@ public class DesignerServices implements Component {
 		return savedChatbot;
 	}
 
-	public Intent getSmallTalkById(final Long movId) {
+	public SmallTalk getSmallTalkById(final Long movId) {
 		Assertion.checkNotNull(movId);
 		// ---
-		return intentDAO.get(movId);
+		return smallTalkDAO.get(movId);
 	}
 
-	public DtList<Intent> getAllSmallTalks(final Long botId) {
-		return intentDAO.findAll(Criterions.isEqualTo(IntentFields.botId, botId), DtListState.of(1000));
+	public DtList<SmallTalk> getAllSmallTalks(final Long botId) {
+		return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.botId, botId), DtListState.of(1000));
 	}
 
-	public Intent getNewSmallTalk(final Long botId) {
-		final Intent intent = new Intent();
-		intent.setBotId(botId);
-		intent.setIsEnabled(true);
-		intent.setIsSmallTalk(true);
-		return intent;
+	public SmallTalk getNewSmallTalk(final Long botId) {
+		final SmallTalk smallTalk = new SmallTalk();
+		smallTalk.setBotId(botId);
+		smallTalk.setIsEnabled(true);
+		return smallTalk;
 	}
 
-	public Intent saveSmallTalk(final Intent intent, final DtList<IntentTrainingSentence> intentTexts, final DtList<IntentTrainingSentence> intentTextsToDelete, final DtList<UtterText> utterTexts, final DtList<UtterText> utterTextsToDelete) {
-		Assertion.checkNotNull(intent);
-		Assertion.checkNotNull(intentTexts);
-		Assertion.checkNotNull(intentTextsToDelete);
+	public SmallTalk saveSmallTalk(final SmallTalk smallTalk, final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete, final DtList<UtterText> utterTexts, final DtList<UtterText> utterTextsToDelete) {
+		Assertion.checkNotNull(smallTalk);
+		Assertion.checkNotNull(nluTrainingSentences);
+		Assertion.checkNotNull(nluTrainingSentencesToDelete);
 		Assertion.checkNotNull(utterTexts);
 		Assertion.checkNotNull(utterTextsToDelete);
 		// ---
 
-		if (intentTexts.isEmpty()) {
+		if (nluTrainingSentences.isEmpty()) {
 			throw new VUserException("Il est nécessaire d'avoir au moins 1 texte d'exemple");
 		}
 
@@ -162,62 +161,62 @@ public class DesignerServices implements Component {
 			throw new VUserException("Il est nécessaire d'avoir au moins 1 texte de réponse");
 		}
 
-		final Intent savedIntent = intentDAO.save(intent);
+		final SmallTalk savedST = smallTalkDAO.save(smallTalk);
 
-		// save intent textes
-		intentTexts.stream()
-		.filter(itt -> itt.getItsId() == null) // no edit, only new elements
-		.peek(itt -> itt.setIntId(savedIntent.getIntId()))
-		.forEach(itt -> intentTrainingSentenceDAO.save(itt));
+		// save nlu textes
+		nluTrainingSentences.stream()
+		.filter(nts -> nts.getNtsId() == null) // no edit, only new elements
+		.peek(nts -> nts.setSmtId(savedST.getSmtId()))
+		.forEach(nts -> nluTrainingSentenceDAO.save(nts));
 
-		intentTextsToDelete.stream()
-		.filter(itt -> itt.getItsId() != null)
-		.forEach(itt -> intentTrainingSentenceDAO.delete(itt.getItsId()));
+		nluTrainingSentencesToDelete.stream()
+		.filter(itt -> itt.getNtsId() != null)
+		.forEach(itt -> nluTrainingSentenceDAO.delete(itt.getNtsId()));
 
 		// save utter textes
 		utterTexts.stream()
-		.filter(utx -> utx.getUtxId() == null) // no edit, only new elements
-		.peek(utx -> utx.setIntId(savedIntent.getIntId()))
-		.forEach(utx -> utterTextDAO.save(utx));
+		.filter(utt -> utt.getUttId() == null) // no edit, only new elements
+		.peek(utt -> utt.setSmtId(savedST.getSmtId()))
+		.forEach(utt -> utterTextDAO.save(utt));
 
 		utterTextsToDelete.stream()
-		.filter(utx -> utx.getUtxId() != null)
-		.forEach(utx -> utterTextDAO.delete(utx.getUtxId()));
+		.filter(utt -> utt.getUttId() != null)
+		.forEach(utt -> utterTextDAO.delete(utt.getUttId()));
 
-		return savedIntent;
+		return savedST;
 	}
 
-	public void deleteSmallTalk(final Intent intent) {
+	public void deleteSmallTalk(final SmallTalk smallTalk) {
 		// delete sub elements
-		for (final IntentTrainingSentence its:getIntentTrainingSentenceList(intent)) {
-			intentTrainingSentenceDAO.delete(its.getUID());
+		for (final NluTrainingSentence its:getNluTrainingSentenceList(smallTalk)) {
+			nluTrainingSentenceDAO.delete(its.getUID());
 		}
 
-		for (final UtterText ut:getIntentUtterTextList(intent)) {
+		for (final UtterText ut:getUtterTextList(smallTalk)) {
 			utterTextDAO.delete(ut.getUID());
 		}
 
 		// delete smallTalk
-		intentDAO.delete(intent.getUID());
+		smallTalkDAO.delete(smallTalk.getUID());
 	}
 
-	public DtList<IntentTrainingSentence> getIntentTrainingSentenceList(final Intent intent) {
-		Assertion.checkNotNull(intent);
-		Assertion.checkNotNull(intent.getIntId());
+	public DtList<NluTrainingSentence> getNluTrainingSentenceList(final SmallTalk smallTalk) {
+		Assertion.checkNotNull(smallTalk);
+		Assertion.checkNotNull(smallTalk.getSmtId());
 		// ---
 
-		return intentTrainingSentenceDAO.findAll(
-				Criterions.isEqualTo(IntentTrainingSentenceFields.intId, intent.getIntId()),
-				DtListState.of(1000, 0, IntentTrainingSentenceFields.itsId.name(), true));
+		return nluTrainingSentenceDAO.findAll(
+				Criterions.isEqualTo(NluTrainingSentenceFields.smtId, smallTalk.getSmtId()),
+				DtListState.of(1000, 0, NluTrainingSentenceFields.ntsId.name(), true));
 	}
 
-	public DtList<UtterText> getIntentUtterTextList(final Intent intent) {
-		Assertion.checkNotNull(intent);
-		Assertion.checkNotNull(intent.getIntId());
+	public DtList<UtterText> getUtterTextList(final SmallTalk smallTalk) {
+		Assertion.checkNotNull(smallTalk);
+		Assertion.checkNotNull(smallTalk.getSmtId());
 		// ---
 		return utterTextDAO.findAll(
-				Criterions.isEqualTo(UtterTextFields.intId, intent.getIntId()),
-				DtListState.of(1000, 0, UtterTextFields.utxId.name(), true));
+				Criterions.isEqualTo(UtterTextFields.smtId, smallTalk.getSmtId()),
+				DtListState.of(1000, 0, UtterTextFields.uttId.name(), true));
 	}
 
 }

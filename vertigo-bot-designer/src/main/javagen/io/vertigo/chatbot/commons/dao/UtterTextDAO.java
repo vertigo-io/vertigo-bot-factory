@@ -43,12 +43,12 @@ public final class UtterTextDAO extends DAO<UtterText, java.lang.Long> implement
 
 	/**
 	 * Execute la tache TkExportSmallTalkRelativeUtter.
-	 * @param intentIds java.util.List<Long> 
+	 * @param stIds java.util.List<Long> 
 	 * @return io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts
 	*/
-	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> exportSmallTalkRelativeUtter(final java.util.List<Long> intentIds) {
+	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> exportSmallTalkRelativeUtter(final java.util.List<Long> stIds) {
 		final Task task = createTaskBuilder("TkExportSmallTalkRelativeUtter")
-				.addValue("intentIds", intentIds)
+				.addValue("stIds", stIds)
 				.build();
 		return getTaskManager()
 				.execute(task)

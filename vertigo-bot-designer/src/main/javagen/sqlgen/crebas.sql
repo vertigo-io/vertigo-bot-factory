@@ -7,12 +7,12 @@
 -- ============================================================
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
-drop table IF EXISTS INTENT cascade;
-drop sequence IF EXISTS SEQ_INTENT;
-drop table IF EXISTS INTENT_TRAINING_SENTENCE cascade;
-drop sequence IF EXISTS SEQ_INTENT_TRAINING_SENTENCE;
 drop table IF EXISTS MEDIA_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_MEDIA_FILE_INFO;
+drop table IF EXISTS NLU_TRAINING_SENTENCE cascade;
+drop sequence IF EXISTS SEQ_NLU_TRAINING_SENTENCE;
+drop table IF EXISTS SMALL_TALK cascade;
+drop sequence IF EXISTS SEQ_SMALL_TALK;
 drop table IF EXISTS TRAINING cascade;
 drop sequence IF EXISTS SEQ_TRAINING;
 drop table IF EXISTS UTTER_TEXT cascade;
@@ -27,13 +27,13 @@ drop sequence IF EXISTS SEQ_UTTER_TEXT;
 create sequence SEQ_CHATBOT
 	start with 1000 cache 20; 
 
-create sequence SEQ_INTENT
-	start with 1000 cache 20; 
-
-create sequence SEQ_INTENT_TRAINING_SENTENCE
-	start with 1000 cache 20; 
-
 create sequence SEQ_MEDIA_FILE_INFO
+	start with 1000 cache 20; 
+
+create sequence SEQ_NLU_TRAINING_SENTENCE
+	start with 1000 cache 20; 
+
+create sequence SEQ_SMALL_TALK
 	start with 1000 cache 20; 
 
 create sequence SEQ_TRAINING
@@ -53,8 +53,8 @@ create table CHATBOT
     CREATION_DATE	 DATE        	not null,
     STATUS      	 VARCHAR(100)	not null,
     FIL_ID_AVATAR	 NUMERIC     	,
-    UTX_ID_WELCOME	 NUMERIC     	not null,
-    UTX_ID_DEFAULT	 NUMERIC     	not null,
+    UTT_ID_WELCOME	 NUMERIC     	not null,
+    UTT_ID_DEFAULT	 NUMERIC     	not null,
     constraint PK_CHATBOT primary key (BOT_ID)
 );
 
@@ -73,63 +73,11 @@ comment on column CHATBOT.STATUS is
 comment on column CHATBOT.FIL_ID_AVATAR is
 'Avatar';
 
-comment on column CHATBOT.UTX_ID_WELCOME is
+comment on column CHATBOT.UTT_ID_WELCOME is
 'Welcome text';
 
-comment on column CHATBOT.UTX_ID_DEFAULT is
+comment on column CHATBOT.UTT_ID_DEFAULT is
 'Default text';
-
--- ============================================================
---   Table : INTENT                                        
--- ============================================================
-create table INTENT
-(
-    INT_ID      	 NUMERIC     	not null,
-    TITLE       	 VARCHAR(100)	not null,
-    DESCRIPTION 	 VARCHAR(100)	,
-    IS_SMALL_TALK	 bool        	not null,
-    IS_ENABLED  	 bool        	not null,
-    BOT_ID      	 NUMERIC     	not null,
-    constraint PK_INTENT primary key (INT_ID)
-);
-
-comment on column INTENT.INT_ID is
-'ID';
-
-comment on column INTENT.TITLE is
-'Title';
-
-comment on column INTENT.DESCRIPTION is
-'Description';
-
-comment on column INTENT.IS_SMALL_TALK is
-'SmallTalk';
-
-comment on column INTENT.IS_ENABLED is
-'Enabled';
-
-comment on column INTENT.BOT_ID is
-'Chatbot';
-
--- ============================================================
---   Table : INTENT_TRAINING_SENTENCE                                        
--- ============================================================
-create table INTENT_TRAINING_SENTENCE
-(
-    ITS_ID      	 NUMERIC     	not null,
-    TEXT        	 VARCHAR(100)	not null,
-    INT_ID      	 NUMERIC     	not null,
-    constraint PK_INTENT_TRAINING_SENTENCE primary key (ITS_ID)
-);
-
-comment on column INTENT_TRAINING_SENTENCE.ITS_ID is
-'ID';
-
-comment on column INTENT_TRAINING_SENTENCE.TEXT is
-'Text';
-
-comment on column INTENT_TRAINING_SENTENCE.INT_ID is
-'SmallTalkIntent';
 
 -- ============================================================
 --   Table : MEDIA_FILE_INFO                                        
@@ -166,6 +114,54 @@ comment on column MEDIA_FILE_INFO.FILE_PATH is
 
 comment on column MEDIA_FILE_INFO.FILE_DATA is
 'data';
+
+-- ============================================================
+--   Table : NLU_TRAINING_SENTENCE                                        
+-- ============================================================
+create table NLU_TRAINING_SENTENCE
+(
+    NTS_ID      	 NUMERIC     	not null,
+    TEXT        	 VARCHAR(100)	not null,
+    SMT_ID      	 NUMERIC     	not null,
+    constraint PK_NLU_TRAINING_SENTENCE primary key (NTS_ID)
+);
+
+comment on column NLU_TRAINING_SENTENCE.NTS_ID is
+'ID';
+
+comment on column NLU_TRAINING_SENTENCE.TEXT is
+'Text';
+
+comment on column NLU_TRAINING_SENTENCE.SMT_ID is
+'SmallTalk';
+
+-- ============================================================
+--   Table : SMALL_TALK                                        
+-- ============================================================
+create table SMALL_TALK
+(
+    SMT_ID      	 NUMERIC     	not null,
+    TITLE       	 VARCHAR(100)	not null,
+    DESCRIPTION 	 VARCHAR(100)	,
+    IS_ENABLED  	 bool        	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_SMALL_TALK primary key (SMT_ID)
+);
+
+comment on column SMALL_TALK.SMT_ID is
+'ID';
+
+comment on column SMALL_TALK.TITLE is
+'Title';
+
+comment on column SMALL_TALK.DESCRIPTION is
+'Description';
+
+comment on column SMALL_TALK.IS_ENABLED is
+'Enabled';
+
+comment on column SMALL_TALK.BOT_ID is
+'Chatbot';
 
 -- ============================================================
 --   Table : TRAINING                                        
@@ -212,20 +208,20 @@ comment on column TRAINING.FIL_ID_MODEL is
 -- ============================================================
 create table UTTER_TEXT
 (
-    UTX_ID      	 NUMERIC     	not null,
+    UTT_ID      	 NUMERIC     	not null,
     TEXT        	 VARCHAR(100)	not null,
-    INT_ID      	 NUMERIC     	,
-    constraint PK_UTTER_TEXT primary key (UTX_ID)
+    SMT_ID      	 NUMERIC     	,
+    constraint PK_UTTER_TEXT primary key (UTT_ID)
 );
 
-comment on column UTTER_TEXT.UTX_ID is
+comment on column UTTER_TEXT.UTT_ID is
 'ID';
 
 comment on column UTTER_TEXT.TEXT is
 'Text';
 
-comment on column UTTER_TEXT.INT_ID is
-'Intent';
+comment on column UTTER_TEXT.SMT_ID is
+'SmallTalk';
 
 
 alter table CHATBOT
@@ -235,34 +231,34 @@ alter table CHATBOT
 create index CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on CHATBOT (FIL_ID_AVATAR asc);
 
 alter table CHATBOT
-	add constraint FK_CHATBOT_UTTER_TEXT_DEFAULT_UTTER_TEXT foreign key (UTX_ID_DEFAULT)
-	references UTTER_TEXT (UTX_ID);
+	add constraint FK_CHATBOT_UTTER_TEXT_DEFAULT_UTTER_TEXT foreign key (UTT_ID_DEFAULT)
+	references UTTER_TEXT (UTT_ID);
 
-create index CHATBOT_UTTER_TEXT_DEFAULT_UTTER_TEXT_FK on CHATBOT (UTX_ID_DEFAULT asc);
+create index CHATBOT_UTTER_TEXT_DEFAULT_UTTER_TEXT_FK on CHATBOT (UTT_ID_DEFAULT asc);
 
 alter table CHATBOT
-	add constraint FK_CHATBOT_UTTER_TEXT_WELCOME_UTTER_TEXT foreign key (UTX_ID_WELCOME)
-	references UTTER_TEXT (UTX_ID);
+	add constraint FK_CHATBOT_UTTER_TEXT_WELCOME_UTTER_TEXT foreign key (UTT_ID_WELCOME)
+	references UTTER_TEXT (UTT_ID);
 
-create index CHATBOT_UTTER_TEXT_WELCOME_UTTER_TEXT_FK on CHATBOT (UTX_ID_WELCOME asc);
+create index CHATBOT_UTTER_TEXT_WELCOME_UTTER_TEXT_FK on CHATBOT (UTT_ID_WELCOME asc);
 
-alter table INTENT
-	add constraint FK_INTENT_CHATBOT_CHATBOT foreign key (BOT_ID)
+alter table SMALL_TALK
+	add constraint FK_SMALL_TALK_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
 
-create index INTENT_CHATBOT_CHATBOT_FK on INTENT (BOT_ID asc);
+create index SMALL_TALK_CHATBOT_CHATBOT_FK on SMALL_TALK (BOT_ID asc);
 
-alter table INTENT_TRAINING_SENTENCE
-	add constraint FK_INTENT_INTENT_TRAINING_SENTENCE_INTENT foreign key (INT_ID)
-	references INTENT (INT_ID);
+alter table NLU_TRAINING_SENTENCE
+	add constraint FK_SMALL_TALK_NLU_TRAINING_SENTENCE_SMALL_TALK foreign key (SMT_ID)
+	references SMALL_TALK (SMT_ID);
 
-create index INTENT_INTENT_TRAINING_SENTENCE_INTENT_FK on INTENT_TRAINING_SENTENCE (INT_ID asc);
+create index SMALL_TALK_NLU_TRAINING_SENTENCE_SMALL_TALK_FK on NLU_TRAINING_SENTENCE (SMT_ID asc);
 
 alter table UTTER_TEXT
-	add constraint FK_INTENT_UTTER_TEXT_INTENT foreign key (INT_ID)
-	references INTENT (INT_ID);
+	add constraint FK_SMALL_TALK_UTTER_TEXT_SMALL_TALK foreign key (SMT_ID)
+	references SMALL_TALK (SMT_ID);
 
-create index INTENT_UTTER_TEXT_INTENT_FK on UTTER_TEXT (INT_ID asc);
+create index SMALL_TALK_UTTER_TEXT_SMALL_TALK_FK on UTTER_TEXT (SMT_ID asc);
 
 alter table TRAINING
 	add constraint FK_TRAINING_CHATBOT_CHATBOT foreign key (BOT_ID)

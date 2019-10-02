@@ -13,46 +13,46 @@ import io.vertigo.lang.Generated;
 public final class SmallTalkExport implements DtObject {
 	private static final long serialVersionUID = 1L;
 
-	private io.vertigo.chatbot.commons.domain.Intent intent;
-	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.IntentTrainingSentence> intentTrainingSentences;
+	private io.vertigo.chatbot.commons.domain.SmallTalk smallTalk;
+	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences;
 	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts;
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'intent'.
-	 * @return Intent intent <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'SmallTalk'.
+	 * @return SmallTalk smallTalk <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoDtIntentDto", required = true, label = "intent")
-	public io.vertigo.chatbot.commons.domain.Intent getIntent() {
-		return intent;
+	@Field(domain = "DoDtSmallTalkDto", required = true, label = "SmallTalk")
+	public io.vertigo.chatbot.commons.domain.SmallTalk getSmallTalk() {
+		return smallTalk;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'intent'.
-	 * @param intent Intent <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'SmallTalk'.
+	 * @param smallTalk SmallTalk <b>Obligatoire</b>
 	 */
-	public void setIntent(final io.vertigo.chatbot.commons.domain.Intent intent) {
-		this.intent = intent;
+	public void setSmallTalk(final io.vertigo.chatbot.commons.domain.SmallTalk smallTalk) {
+		this.smallTalk = smallTalk;
 	}
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'intentTrainingSentences'.
-	 * @return DtList de IntentTrainingSentence intentTrainingSentences <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'nluTrainingSentences'.
+	 * @return DtList de NluTrainingSentence nluTrainingSentences <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoDtIntentTrainingSentenceDtc", required = true, label = "intentTrainingSentences")
-	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.IntentTrainingSentence> getIntentTrainingSentences() {
-		return intentTrainingSentences;
+	@Field(domain = "DoDtNluTrainingSentenceDtc", required = true, label = "nluTrainingSentences")
+	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> getNluTrainingSentences() {
+		return nluTrainingSentences;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'intentTrainingSentences'.
-	 * @param intentTrainingSentences DtList de IntentTrainingSentence <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'nluTrainingSentences'.
+	 * @param nluTrainingSentences DtList de NluTrainingSentence <b>Obligatoire</b>
 	 */
-	public void setIntentTrainingSentences(final io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.IntentTrainingSentence> intentTrainingSentences) {
-		this.intentTrainingSentences = intentTrainingSentences;
+	public void setNluTrainingSentences(final io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences) {
+		this.nluTrainingSentences = nluTrainingSentences;
 	}
 	
 	/**

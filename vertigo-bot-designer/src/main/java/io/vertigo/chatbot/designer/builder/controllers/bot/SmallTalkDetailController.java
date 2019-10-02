@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import io.vertigo.chatbot.commons.domain.Intent;
-import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
+import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.dynamo.domain.model.DtList;
@@ -25,11 +25,11 @@ import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 @RequestMapping("/bot/{botId}/smallTalk")
 public class SmallTalkDetailController extends AbstractVSpringMvcController {
 
-	private static final ViewContextKey<Intent> intentKey = ViewContextKey.of("intent");
+	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalk");
 
-	private static final ViewContextKey<String> newIntentTrainingSentenceKey = ViewContextKey.of("newIntentTrainingSentence");
-	private static final ViewContextKey<IntentTrainingSentence> intentTrainingSentencesKey = ViewContextKey.of("intentTrainingSentences");
-	private static final ViewContextKey<IntentTrainingSentence> intentTrainingSentencesToDeleteKey = ViewContextKey.of("intentTrainingSentencesToDelete");
+	private static final ViewContextKey<String> newNluTrainingSentenceKey = ViewContextKey.of("newNluTrainingSentence");
+	private static final ViewContextKey<NluTrainingSentence> nluTrainingSentencesKey = ViewContextKey.of("nluTrainingSentences");
+	private static final ViewContextKey<NluTrainingSentence> nluTrainingSentencesToDeleteKey = ViewContextKey.of("nluTrainingSentencesToDelete");
 
 	private static final ViewContextKey<String> newUtterTextKey = ViewContextKey.of("newUtterText");
 	private static final ViewContextKey<UtterText> utterTextsKey = ViewContextKey.of("utterTexts");
@@ -45,18 +45,18 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId, @PathVariable("intId") final Long intId) {
 		commonBotDetailController.initCommonContext(viewContext, botId);
 
-		final Intent intent = designerServices.getSmallTalkById(intId);
+		final SmallTalk smallTalk = designerServices.getSmallTalkById(intId);
 
-		Assertion.checkState(intent.getBotId().equals(botId), "Paramètres incohérents");
+		Assertion.checkState(smallTalk.getBotId().equals(botId), "Paramètres incohérents");
 
-		viewContext.publishDto(intentKey, intent);
+		viewContext.publishDto(smallTalkKey, smallTalk);
 
-		viewContext.publishRef(newIntentTrainingSentenceKey, "");
-		viewContext.publishDtListModifiable(intentTrainingSentencesKey, designerServices.getIntentTrainingSentenceList(intent));
-		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
+		viewContext.publishRef(newNluTrainingSentenceKey, "");
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey, designerServices.getNluTrainingSentenceList(smallTalk));
+		viewContext.publishDtList(nluTrainingSentencesToDeleteKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
 		viewContext.publishRef(newUtterTextKey, "");
-		viewContext.publishDtList(utterTextsKey, designerServices.getIntentUtterTextList(intent));
+		viewContext.publishDtList(utterTextsKey, designerServices.getUtterTextList(smallTalk));
 		viewContext.publishDtList(utterTextsToDeleteKey, new DtList<UtterText>(UtterText.class));
 
 		toModeReadOnly();
@@ -66,11 +66,11 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		commonBotDetailController.initCommonContext(viewContext, botId);
 
-		viewContext.publishDto(intentKey, designerServices.getNewSmallTalk(botId));
+		viewContext.publishDto(smallTalkKey, designerServices.getNewSmallTalk(botId));
 
-		viewContext.publishRef(newIntentTrainingSentenceKey, "");
-		viewContext.publishDtListModifiable(intentTrainingSentencesKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
-		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
+		viewContext.publishRef(newNluTrainingSentenceKey, "");
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
+		viewContext.publishDtList(nluTrainingSentencesToDeleteKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
 		viewContext.publishRef(newUtterTextKey, "");
 		viewContext.publishDtList(utterTextsKey, new DtList<UtterText>(UtterText.class));
@@ -85,46 +85,46 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_save")
-	public String doSave(@ViewAttribute("intent") final Intent intent,
+	public String doSave(@ViewAttribute("smallTalk") final SmallTalk smallTalk,
 			@PathVariable("botId") final Long botId,
-			@ViewAttribute("intentTrainingSentences") final DtList<IntentTrainingSentence> intentTrainingSentences,
-			@ViewAttribute("intentTrainingSentencesToDelete") final DtList<IntentTrainingSentence> intentTrainingSentencesToDelete,
+			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
+			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts,
 			@ViewAttribute("utterTextsToDelete") final DtList<UtterText> utterTextsToDelete
 			) {
 
-		designerServices.saveSmallTalk(intent, intentTrainingSentences, intentTrainingSentencesToDelete, utterTexts, utterTextsToDelete);
-		return "redirect:/bot/" + botId + "/smallTalk/" + intent.getIntId();
+		designerServices.saveSmallTalk(smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts, utterTextsToDelete);
+		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
 	}
 
 	@PostMapping("/_delete")
-	public String doDelete(@ViewAttribute("intent") final Intent intent) {
-		designerServices.deleteSmallTalk(intent);
-		return "redirect:/bot/" + intent.getBotId() + "/smallTalks/";
+	public String doDelete(@ViewAttribute("smallTalk") final SmallTalk smallTalk) {
+		designerServices.deleteSmallTalk(smallTalk);
+		return "redirect:/bot/" + smallTalk.getBotId() + "/smallTalks/";
 	}
 
 	@PostMapping("/_addTrainingSentence")
 	public ViewContext doAddTrainingSentence(final ViewContext viewContext,
-			@ViewAttribute("newIntentTrainingSentence") final String newIntentTrainingSentenceIn,
-			@ViewAttribute("intent") final Intent intent,
-			@ViewAttribute("intentTrainingSentences") final DtList<IntentTrainingSentence> intentTrainingSentences
+			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentenceIn,
+			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
+			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences
 			) {
 
-		final String newIntentTrainingSentence = newIntentTrainingSentenceIn.trim();
+		final String newNluTrainingSentence = newNluTrainingSentenceIn.trim();
 
-		final boolean exists = intentTrainingSentences.stream()
-				.anyMatch(its -> its.getText().equalsIgnoreCase(newIntentTrainingSentence));
+		final boolean exists = nluTrainingSentences.stream()
+				.anyMatch(its -> its.getText().equalsIgnoreCase(newNluTrainingSentence));
 		if (exists) {
-			throw new VUserException("Cette phrase existe déjà");
+			throw new VUserException("This sentense already exists");
 		}
 
-		final IntentTrainingSentence newText = new IntentTrainingSentence();
-		newText.setText(newIntentTrainingSentence);
+		final NluTrainingSentence newText = new NluTrainingSentence();
+		newText.setText(newNluTrainingSentence);
 
-		intentTrainingSentences.add(newText);
-		viewContext.publishDtListModifiable(intentTrainingSentencesKey, intentTrainingSentences);
+		nluTrainingSentences.add(newText);
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluTrainingSentences);
 
-		viewContext.publishRef(newIntentTrainingSentenceKey, "");
+		viewContext.publishRef(newNluTrainingSentenceKey, "");
 
 		return viewContext;
 	}
@@ -132,19 +132,19 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	@PostMapping("/_removeTrainingSentence")
 	public ViewContext doRemoveTrainingSentence(final ViewContext viewContext,
 			@RequestParam("index") final int index,
-			@ViewAttribute("intentTrainingSentencesToDelete") final DtList<IntentTrainingSentence> intentTrainingSentencesToDelete,
-			@ViewAttribute("intentTrainingSentences") final DtList<IntentTrainingSentence> intentTrainingSentences
+			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences
 			) {
 
 		// remove from list
-		final IntentTrainingSentence removed = intentTrainingSentences.remove(index);
-		viewContext.publishDtListModifiable(intentTrainingSentencesKey, intentTrainingSentences);
+		final NluTrainingSentence removed = nluTrainingSentences.remove(index);
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluTrainingSentences);
 
-		// keep track of deleted persisted IntentTrainingSentence
-		if (removed.getItsId() != null) {
-			intentTrainingSentencesToDelete.add(removed);
+		// keep track of deleted persisted NluTrainingSentence
+		if (removed.getNtsId() != null) {
+			nluTrainingSentencesToDelete.add(removed);
 		}
-		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, intentTrainingSentencesToDelete);
+		viewContext.publishDtList(nluTrainingSentencesToDeleteKey, nluTrainingSentencesToDelete);
 
 		return viewContext;
 	}
@@ -152,7 +152,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	@PostMapping("/_addUtterText")
 	public ViewContext doAddUtterText(final ViewContext viewContext,
 			@ViewAttribute("newUtterText") final String newUtterTextIn,
-			@ViewAttribute("intent") final Intent intent,
+			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
 			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts
 			) {
 
@@ -188,7 +188,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDtList(utterTextsKey, utterTexts);
 
 		// keep track of deleted persisted UtterText
-		if (removed.getUtxId() != null) {
+		if (removed.getUttId() != null) {
 			utterTextsToDelete.add(removed);
 		}
 		viewContext.publishDtList(utterTextsToDeleteKey, utterTextsToDelete);

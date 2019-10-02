@@ -15,23 +15,23 @@ import io.vertigo.lang.Generated;
 public final class UtterText implements Entity {
 	private static final long serialVersionUID = 1L;
 
-	private Long utxId;
+	private Long uttId;
 	private String text;
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
-			name = "AIntentUtterText",
-			fkFieldName = "intId",
-			primaryDtDefinitionName = "DtIntent",
+			name = "ASmallTalkUtterText",
+			fkFieldName = "smtId",
+			primaryDtDefinitionName = "DtSmallTalk",
 			primaryIsNavigable = true,
-			primaryRole = "Intent",
-			primaryLabel = "Intent",
+			primaryRole = "SmallTalk",
+			primaryLabel = "SmallTalk",
 			primaryMultiplicity = "0..1",
 			foreignDtDefinitionName = "DtUtterText",
 			foreignIsNavigable = false,
 			foreignRole = "UtterText",
 			foreignLabel = "UtterText",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.Intent> intIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.Intent.class, "Intent");
+	private final VAccessor<io.vertigo.chatbot.commons.domain.SmallTalk> smtIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.SmallTalk.class, "SmallTalk");
 
 	/** {@inheritDoc} */
 	@Override
@@ -42,20 +42,20 @@ public final class UtterText implements Entity {
 	/**
 	 * Champ : ID.
 	 * Récupère la valeur de la propriété 'ID'.
-	 * @return Long utxId <b>Obligatoire</b>
+	 * @return Long uttId <b>Obligatoire</b>
 	 */
 	@Field(domain = "DoId", type = "ID", required = true, label = "ID")
-	public Long getUtxId() {
-		return utxId;
+	public Long getUttId() {
+		return uttId;
 	}
 
 	/**
 	 * Champ : ID.
 	 * Définit la valeur de la propriété 'ID'.
-	 * @param utxId Long <b>Obligatoire</b>
+	 * @param uttId Long <b>Obligatoire</b>
 	 */
-	public void setUtxId(final Long utxId) {
-		this.utxId = utxId;
+	public void setUttId(final Long uttId) {
+		this.uttId = uttId;
 	}
 	
 	/**
@@ -79,29 +79,29 @@ public final class UtterText implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Intent'.
-	 * @return Long intId
+	 * Récupère la valeur de la propriété 'SmallTalk'.
+	 * @return Long smtId
 	 */
-	@Field(domain = "DoId", type = "FOREIGN_KEY", label = "Intent")
-	public Long getIntId() {
-		return (Long) intIdAccessor.getId();
+	@Field(domain = "DoId", type = "FOREIGN_KEY", label = "SmallTalk")
+	public Long getSmtId() {
+		return (Long) smtIdAccessor.getId();
 	}
 
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Intent'.
-	 * @param intId Long
+	 * Définit la valeur de la propriété 'SmallTalk'.
+	 * @param smtId Long
 	 */
-	public void setIntId(final Long intId) {
-		intIdAccessor.setId(intId);
+	public void setSmtId(final Long smtId) {
+		smtIdAccessor.setId(smtId);
 	}
 
  	/**
-	 * Association : Intent.
-	 * @return l'accesseur vers la propriété 'Intent'
+	 * Association : SmallTalk.
+	 * @return l'accesseur vers la propriété 'SmallTalk'
 	 */
-	public VAccessor<io.vertigo.chatbot.commons.domain.Intent> intent() {
-		return intIdAccessor;
+	public VAccessor<io.vertigo.chatbot.commons.domain.SmallTalk> smallTalk() {
+		return smtIdAccessor;
 	}
 	
 	/** {@inheritDoc} */

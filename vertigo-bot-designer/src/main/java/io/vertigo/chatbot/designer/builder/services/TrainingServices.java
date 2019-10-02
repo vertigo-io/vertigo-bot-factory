@@ -17,16 +17,16 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
-import io.vertigo.chatbot.commons.dao.IntentDAO;
-import io.vertigo.chatbot.commons.dao.IntentTrainingSentenceDAO;
+import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
+import io.vertigo.chatbot.commons.dao.SmallTalkDAO;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
-import io.vertigo.chatbot.commons.domain.Intent;
-import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
+import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
+import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
@@ -57,7 +57,7 @@ public class TrainingServices implements Component {
 	private FileServices fileServices;
 
 	@Inject
-	private IntentDAO intentDAO;
+	private SmallTalkDAO smallTalkDAO;
 
 	@Inject
 	private TrainingDAO trainingDAO;
@@ -66,7 +66,7 @@ public class TrainingServices implements Component {
 	private BuilderPAO builderPAO;
 
 	@Inject
-	private IntentTrainingSentenceDAO intentTrainingSentenceDAO;
+	private NluTrainingSentenceDAO nluTrainingSentenceDAO;
 
 	@Inject
 	private UtterTextDAO utterTextDAO;
@@ -152,28 +152,28 @@ public class TrainingServices implements Component {
 	}
 
 	private DtList<SmallTalkExport> exportSmallTalk(final Long botId) {
-		final DtList<Intent> intents = intentDAO.exportSmallTalk(botId);
+		final DtList<SmallTalk> smallTalks = designerServices.getAllSmallTalks(botId);
 
-		final List<Long> intentIds = intents.stream()
-				.map(Intent::getIntId)
+		final List<Long> smallTalkIds = smallTalks.stream()
+				.map(SmallTalk::getSmtId)
 				.collect(Collectors.toList());
 
-		final Map<Long, DtList<IntentTrainingSentence>> trainingSentencesMap = intentTrainingSentenceDAO.exportSmallTalkRelativeTrainingSentence(intentIds)
+		final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap = nluTrainingSentenceDAO.exportSmallTalkRelativeTrainingSentence(smallTalkIds)
 				.stream()
-				.collect(Collectors.groupingBy(IntentTrainingSentence::getIntId,
-						VCollectors.toDtList(IntentTrainingSentence.class)));
+				.collect(Collectors.groupingBy(NluTrainingSentence::getSmtId,
+						VCollectors.toDtList(NluTrainingSentence.class)));
 
-		final Map<Long, DtList<UtterText>> utterTextsMap = utterTextDAO.exportSmallTalkRelativeUtter(intentIds)
+		final Map<Long, DtList<UtterText>> utterTextsMap = utterTextDAO.exportSmallTalkRelativeUtter(smallTalkIds)
 				.stream()
-				.collect(Collectors.groupingBy(UtterText::getIntId,
+				.collect(Collectors.groupingBy(UtterText::getSmtId,
 						VCollectors.toDtList(UtterText.class)));
 
 		final DtList<SmallTalkExport> retour = new DtList<>(SmallTalkExport.class);
-		for (final Intent intent : intents) {
+		for (final SmallTalk smallTalk : smallTalks) {
 			final SmallTalkExport newExport = new SmallTalkExport();
-			newExport.setIntent(intent);
-			newExport.setIntentTrainingSentences(trainingSentencesMap.get(intent.getIntId()));
-			newExport.setUtterTexts(utterTextsMap.get(intent.getIntId()));
+			newExport.setSmallTalk(smallTalk);
+			newExport.setNluTrainingSentences(trainingSentencesMap.get(smallTalk.getSmtId()));
+			newExport.setUtterTexts(utterTextsMap.get(smallTalk.getSmtId()));
 
 			retour.add(newExport);
 		}

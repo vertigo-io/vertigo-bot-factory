@@ -19,7 +19,7 @@ create Association AChatbotMediaFileInfo {
 }
 
 create Association AChatbotUtterTextWelcome {
-	fkFieldName : "utxIdWelcome"
+	fkFieldName : "uttIdWelcome"
     
  	dtDefinitionA : DtChatbot
 	dtDefinitionB : DtUtterText
@@ -31,7 +31,7 @@ create Association AChatbotUtterTextWelcome {
 }
 
 create Association AChatbotUtterTextDefault {
-	fkFieldName : "utxIdDefault"
+	fkFieldName : "uttIdDefault"
     
  	dtDefinitionA : DtChatbot
 	dtDefinitionB : DtUtterText
@@ -43,18 +43,17 @@ create Association AChatbotUtterTextDefault {
 }
 
 
-create DtDefinition DtIntent {
-	id    intId 		{domain: DoId 		label: "ID"}
+create DtDefinition DtSmallTalk {
+	id    smtId 		{domain: DoId 		label: "ID"}
 	field title 		{domain: DoLabel 	label: "Title" 			required: "true"}
 	field description	{domain: DoLabel 	label: "Description" 	required: "false"}
-	field isSmallTalk 	{domain: DoYesNo 	label: "SmallTalk" 		required: "true"}
 	field isEnabled 	{domain: DoYesNo 	label: "Enabled" 		required: "true"}
 }
 
-create Association AIntentChatbot {
+create Association ASmallTalkChatbot {
 	fkFieldName : "botId" /* NPE sans explication si ya pas */
     
- 	dtDefinitionA : DtIntent
+ 	dtDefinitionA : DtSmallTalk
 	type : "*>1"
 	dtDefinitionB : DtChatbot
 	
@@ -62,35 +61,35 @@ create Association AIntentChatbot {
 	labelB : "Chatbot"
 }
 
-create DtDefinition DtIntentTrainingSentence {
-	id    itsId 	{domain: DoId 		label: "ID"}
+create DtDefinition DtNluTrainingSentence {
+	id    ntsId 	{domain: DoId 		label: "ID"}
 	field text 		{domain: DoLabel 	label: "Text" required: "true"}
 }
 
 /* For Small talks */
-create Association AIntentIntentTrainingSentence {
-	fkFieldName : "intId"
+create Association ASmallTalkNluTrainingSentence {
+	fkFieldName : "smtId"
     
-	dtDefinitionA : DtIntentTrainingSentence
+	dtDefinitionA : DtNluTrainingSentence
 	type : "*>1"
- 	dtDefinitionB : DtIntent
+ 	dtDefinitionB : DtSmallTalk
 	
-	labelB : "SmallTalkIntent"
+	labelB : "SmallTalk"
 }
 
 create DtDefinition DtUtterText {
-	id    utxId 	{domain: DoId 		label: "ID"}
+	id    uttId 	{domain: DoId 		label: "ID"}
 	field text 		{domain: DoLabel 	label: "Text" required: "true"}
 }
 
-create Association AIntentUtterText {
-	fkFieldName : "intId"
+create Association ASmallTalkUtterText {
+	fkFieldName : "smtId"
     
  	dtDefinitionA : DtUtterText
 	type : "*>?"
-	dtDefinitionB : DtIntent
+	dtDefinitionB : DtSmallTalk
 	
-	labelB : "Intent"
+	labelB : "SmallTalk"
 }
 
 /*

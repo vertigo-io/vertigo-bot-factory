@@ -7,12 +7,12 @@
 	>
 	
 	<head>
-		<title>Intent detail</title>
+		<title>Small talk detail</title>
 	</head>
 	
 	<body>
 		<section layout:fragment="content-header-actions">
-			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/smallTalk/(id=${model.bot.botId})} + ${model.intent.intId}" ariaLabel="Cancel" icon="fas fa-ban"
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/smallTalk/(id=${model.bot.botId})} + ${model.smallTalk.smtId}" ariaLabel="Cancel" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" ariaLabel="Edit" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
@@ -29,37 +29,37 @@
 		<section layout:fragment="content">
 			
 			<vu:block id="detail" title="Informations">
-				<vu:text-field object="intent" field="title" />
+				<vu:text-field object="smallTalk" field="title" />
 				
-				<vu:label object="intent" field="isEnabled">
-					<vu:include-data object="intent" field="isEnabled" />
-					<q-input v-model="vueData.intent.isEnabled" name="vContext[intent][isEnabled]" class="hidden" ></q-input>
+				<vu:label object="smallTalk" field="isEnabled">
+					<vu:include-data object="smallTalk" field="isEnabled" />
+					<q-input v-model="vueData.smallTalk.isEnabled" name="vContext[smallTalk][isEnabled]" class="hidden" ></q-input>
 					
-					<q-toggle v-model="vueData.intent.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
+					<q-toggle v-model="vueData.smallTalk.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
 				</vu:label>
 			</vu:block>
 			
 			<vu:block id="training" title="Training sentences">
-				<vu:include-data-primitive key="newIntentTrainingSentence" />
-				<vu:include-data object="intentTrainingSentences" field="text" />
+				<vu:include-data-primitive key="newNluTrainingSentence" />
+				<vu:include-data object="nluTrainingSentences" field="text" />
 				
 				<div th:if="${!model.modeReadOnly}">
-					<q-input v-model="vueData.newIntentTrainingSentence" @keydown.enter.prevent="if (vueData.newIntentTrainingSentence.trim().length > 0) httpPostAjax('_addTrainingSentence', {'vContext[newIntentTrainingSentence]':vueData.newIntentTrainingSentence})"
+					<q-input v-model="vueData.newNluTrainingSentence" @keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence})"
 						placeholder="Ajouter une expression"
 						:before="[{icon: 'format_quote'}]"
 						q-if>
 					</q-input>
 				</div>
 				<q-list highlight dense>
-					<q-item v-for="(intentTrainingSentence, index) in vueData.intentTrainingSentences.slice().reverse()">
+					<q-item v-for="(nluTrainingSentence, index) in vueData.nluTrainingSentences.slice().reverse()">
 						<q-item-section avatar th:if="${model.modeReadOnly}">
 				        	<q-icon color="black" name="format_quote" />
 				        </q-item-section>
 						<q-item-section side left th:if="${!model.modeReadOnly}">
-							<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.intentTrainingSentences.length - 1 - index})"
+							<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.nluTrainingSentences.length - 1 - index})"
 								color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
 						</q-item-section>
-						<q-item-section>{{intentTrainingSentence.text}}</q-item-section>
+						<q-item-section>{{nluTrainingSentence.text}}</q-item-section>
 					</q-item>
 				</q-list>
 			</vu:block>

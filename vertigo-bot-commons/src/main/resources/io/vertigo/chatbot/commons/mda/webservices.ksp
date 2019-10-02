@@ -8,8 +8,8 @@ create DtDefinition DtBotExport {
 }
 
 create DtDefinition DtSmallTalkExport {
-	field intent 					{domain: DoDtIntentDto 					label: "intent" 					required: "true"}
-	field intentTrainingSentences 	{domain: DoDtIntentTrainingSentenceDtc 	label: "intentTrainingSentences" 	required: "true"}
+	field smallTalk					{domain: DoDtSmallTalkDto 				label: "SmallTalk" 					required: "true"}
+	field nluTrainingSentences 		{domain: DoDtNluTrainingSentenceDtc 	label: "nluTrainingSentences" 		required: "true"}
 	field utterTexts		 		{domain: DoDtUtterTextDtc 				label: "utterTexts" 				required: "true"}
 }
 

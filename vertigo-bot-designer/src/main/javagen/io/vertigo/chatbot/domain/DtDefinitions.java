@@ -23,14 +23,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
 		/** Objet de données ExecutorTrainingCallback. */
 		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
-		/** Objet de données Intent. */
-		Intent(io.vertigo.chatbot.commons.domain.Intent.class),
-		/** Objet de données IntentTrainingSentence. */
-		IntentTrainingSentence(io.vertigo.chatbot.commons.domain.IntentTrainingSentence.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
+		/** Objet de données NluTrainingSentence. */
+		NluTrainingSentence(io.vertigo.chatbot.commons.domain.NluTrainingSentence.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
+		/** Objet de données SmallTalk. */
+		SmallTalk(io.vertigo.chatbot.commons.domain.SmallTalk.class),
 		/** Objet de données SmallTalkExport. */
 		SmallTalkExport(io.vertigo.chatbot.commons.domain.SmallTalkExport.class),
 		/** Objet de données TrainerInfo. */
@@ -81,9 +81,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Avatar'. */
 		filIdAvatar,
 		/** Propriété 'Welcome text'. */
-		utxIdWelcome,
+		uttIdWelcome,
 		/** Propriété 'Default text'. */
-		utxIdDefault	}
+		uttIdDefault	}
 
 	/**
 	 * Enumération des champs de ExecutorTrainingCallback.
@@ -95,34 +95,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		success,
 		/** Propriété 'Logs'. */
 		log	}
-
-	/**
-	 * Enumération des champs de Intent.
-	 */
-	public enum IntentFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Intent> {
-		/** Propriété 'ID'. */
-		intId,
-		/** Propriété 'Title'. */
-		title,
-		/** Propriété 'Description'. */
-		description,
-		/** Propriété 'SmallTalk'. */
-		isSmallTalk,
-		/** Propriété 'Enabled'. */
-		isEnabled,
-		/** Propriété 'Chatbot'. */
-		botId	}
-
-	/**
-	 * Enumération des champs de IntentTrainingSentence.
-	 */
-	public enum IntentTrainingSentenceFields implements DtFieldName<io.vertigo.chatbot.commons.domain.IntentTrainingSentence> {
-		/** Propriété 'ID'. */
-		itsId,
-		/** Propriété 'Text'. */
-		text,
-		/** Propriété 'SmallTalkIntent'. */
-		intId	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.
@@ -144,6 +116,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fileData	}
 
 	/**
+	 * Enumération des champs de NluTrainingSentence.
+	 */
+	public enum NluTrainingSentenceFields implements DtFieldName<io.vertigo.chatbot.commons.domain.NluTrainingSentence> {
+		/** Propriété 'ID'. */
+		ntsId,
+		/** Propriété 'Text'. */
+		text,
+		/** Propriété 'SmallTalk'. */
+		smtId	}
+
+	/**
 	 * Enumération des champs de RunnerInfo.
 	 */
 	public enum RunnerInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.RunnerInfo> {
@@ -157,13 +140,28 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		loadedModelVersion	}
 
 	/**
+	 * Enumération des champs de SmallTalk.
+	 */
+	public enum SmallTalkFields implements DtFieldName<io.vertigo.chatbot.commons.domain.SmallTalk> {
+		/** Propriété 'ID'. */
+		smtId,
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Description'. */
+		description,
+		/** Propriété 'Enabled'. */
+		isEnabled,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
 	 * Enumération des champs de SmallTalkExport.
 	 */
 	public enum SmallTalkExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.SmallTalkExport> {
-		/** Propriété 'intent'. */
-		intent,
-		/** Propriété 'intentTrainingSentences'. */
-		intentTrainingSentences,
+		/** Propriété 'SmallTalk'. */
+		smallTalk,
+		/** Propriété 'nluTrainingSentences'. */
+		nluTrainingSentences,
 		/** Propriété 'utterTexts'. */
 		utterTexts	}
 
@@ -214,11 +212,11 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 */
 	public enum UtterTextFields implements DtFieldName<io.vertigo.chatbot.commons.domain.UtterText> {
 		/** Propriété 'ID'. */
-		utxId,
+		uttId,
 		/** Propriété 'Text'. */
 		text,
-		/** Propriété 'Intent'. */
-		intId	}
+		/** Propriété 'SmallTalk'. */
+		smtId	}
 
 	/** {@inheritDoc} */
 	@Override

@@ -1,30 +1,15 @@
 package io.vertigo.chatbot.designer.builder 
 
-create Task TkExportSmallTalk {  
-    className : "io.vertigo.dynamox.task.TaskEngineSelect"
-    request : "
-            select 
-            	*
-			from intent int
-			where int.is_small_talk = true
-			and int.bot_id = #botId#
-			order by int.int_id asc
-			limit 500
-             "
-	attribute botId  		{domain : DoId         		required:"true"  inOut :"in"}
-	attribute intents 		{domain : DoDtIntentDtc 	required:"true"  inOut :"out"}
-}
-
 create Task TkExportSmallTalkRelativeTrainingSentence {  
     className : "io.vertigo.dynamox.task.TaskEngineSelect"
     request : "
             select 
             	*
-			from intent_training_sentence its
-			where its.int_id in (#intentIds.rownum#)
+			from nlu_training_sentence nts
+			where nts.smt_id in (#stIds.rownum#)
              "
-	attribute intentIds				{domain : DoLongs,							required:"true", inOut :"in",} 
-	attribute trainingSentences 	{domain : DoDtIntentTrainingSentenceDtc 	required:"true"  inOut :"out"}
+	attribute stIds					{domain : DoLongs,						required:"true", inOut :"in",} 
+	attribute trainingSentences 	{domain : DoDtNluTrainingSentenceDtc 	required:"true"  inOut :"out"}
 }
 
 create Task TkExportSmallTalkRelativeUtter {  
@@ -32,10 +17,10 @@ create Task TkExportSmallTalkRelativeUtter {
     request : "
             select 
             	*
-			from utter_text utx
-			where utx.int_id in (#intentIds.rownum#)
+			from utter_text utt
+			where utt.smt_id in (#stIds.rownum#)
              "
-	attribute intentIds		{domain : DoLongs,			required:"true", inOut :"in",} 
+	attribute stIds			{domain : DoLongs,			required:"true", inOut :"in",} 
 	attribute utterTexts 	{domain : DoDtUtterTextDtc 	required:"true"  inOut :"out"}
 }
 

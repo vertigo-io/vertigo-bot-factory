@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
-import io.vertigo.chatbot.commons.domain.IntentTrainingSentence;
+import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.UtterText;
@@ -65,11 +65,11 @@ public class RasaTrainerServices implements Component {
 					.map(UtterText::getText)
 					.collect(Collectors.toList());
 
-			final List<String> trainingSentences = st.getIntentTrainingSentences().stream()
-					.map(IntentTrainingSentence::getText)
+			final List<String> trainingSentences = st.getNluTrainingSentences().stream()
+					.map(NluTrainingSentence::getText)
 					.collect(Collectors.toList());
 
-			rasaConfigBuilder.addSmallTalk(st.getIntent().getTitle(), trainingSentences, utterTexts);
+			rasaConfigBuilder.addSmallTalk(st.getSmallTalk().getTitle(), trainingSentences, utterTexts);
 		}
 
 		return rasaConfigBuilder.build();
