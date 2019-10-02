@@ -132,6 +132,8 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	public void stopTrain() {
 		LOGGER.info("Training aborted !");
 		stop();
+
+		trainingLog.append("\n*** User stopped training ***");
 	}
 
 }

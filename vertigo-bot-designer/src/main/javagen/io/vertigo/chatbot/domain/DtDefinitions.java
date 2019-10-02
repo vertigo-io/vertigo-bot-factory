@@ -21,6 +21,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
 		/** Objet de données Chatbot. */
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
+		/** Objet de données ChatbotNode. */
+		ChatbotNode(io.vertigo.chatbot.commons.domain.ChatbotNode.class),
 		/** Objet de données ExecutorTrainingCallback. */
 		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
 		/** Objet de données MediaFileInfo. */
@@ -84,6 +86,25 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		uttIdWelcome,
 		/** Propriété 'Default text'. */
 		uttIdDefault	}
+
+	/**
+	 * Enumération des champs de ChatbotNode.
+	 */
+	public enum ChatbotNodeFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotNode> {
+		/** Propriété 'ID'. */
+		nodId,
+		/** Propriété 'Name'. */
+		name,
+		/** Propriété 'URL'. */
+		url,
+		/** Propriété 'Dev node'. */
+		isDev,
+		/** Propriété 'Color'. */
+		color,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Loaded model'. */
+		traId	}
 
 	/**
 	 * Enumération des champs de ExecutorTrainingCallback.

@@ -30,7 +30,7 @@ public class SmallTalkListController extends AbstractVSpringMvcController {
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		commonBotDetailController.initCommonContext(viewContext, botId);
 
-		viewContext.publishDtList(smallTalkKey, chatbotServices.getAllSmallTalks(botId));
+		viewContext.publishDtList(smallTalkKey, chatbotServices.getAllSmallTalksByBotId(botId));
 		//		viewContext.publishRef(botIdKey, botId);
 		toModeReadOnly();
 	}

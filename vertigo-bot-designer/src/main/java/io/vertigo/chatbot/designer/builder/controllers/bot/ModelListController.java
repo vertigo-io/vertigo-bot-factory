@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
+import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -30,6 +32,11 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<Training> trainingListKey = ViewContextKey.of("trainingList");
 
+	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
+
+
+	@Inject
+	private DesignerServices designerServices;
 
 	@Inject
 	private TrainingServices trainingServices;
@@ -68,8 +75,10 @@ public class ModelListController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_refreshTrainings")
-	public ViewContext refreshTrainings(final ViewContext viewContext,  @ViewAttribute("bot") final Chatbot bot) {
+	public ViewContext refreshTrainings(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		viewContext.publishDtList(trainingListKey, trainingServices.getAllTrainings(bot.getBotId()));
+
+		viewContext.publishDtList(nodeListKey, designerServices.getAllNodesByBotId(bot.getBotId()));
 
 		return viewContext;
 	}
@@ -106,11 +115,13 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_loadTraining")
 	public ViewContext doLoadTraining(final ViewContext viewContext,
-			@RequestParam("traId") final Long traId) {
+			@RequestParam("traId") final Long traId,
+			@ViewAttribute("bot") final Chatbot bot) {
 
 		trainingServices.loadModel(traId);
 
 		refreshRunnerState(viewContext);
+		refreshTrainings(viewContext, bot);
 
 		return viewContext;
 	}

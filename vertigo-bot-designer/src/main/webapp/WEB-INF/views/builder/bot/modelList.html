@@ -158,6 +158,15 @@
 				<vu:column field="log" class="col_Small">
 					<q-btn v-if="props.row.log" round icon="notes" @click="dataX.modalLog.show = true; dataX.modalLog.row = props.row"></q-btn>
 				</vu:column>
+				<vu:column name="node" label="Deployed on">
+					<vu:include-data object="nodeList" field="traId" />
+					<vu:include-data object="nodeList" field="name" />
+					<vu:include-data object="nodeList" field="color" />
+					
+					<q-chip v-for="node in vueData.nodeList" v-if="node.traId === props.row.traId" :color="node.color" text-color="white" icon="cloud_done">
+						{{node.name}}
+					</q-chip>
+				</vu:column>
 			</vu:table>
 			
 			<q-dialog v-model="dataX.modalLog.show">

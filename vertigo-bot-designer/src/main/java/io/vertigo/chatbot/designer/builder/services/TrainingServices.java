@@ -17,12 +17,13 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
+import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
-import io.vertigo.chatbot.commons.dao.SmallTalkDAO;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
@@ -57,9 +58,6 @@ public class TrainingServices implements Component {
 	private FileServices fileServices;
 
 	@Inject
-	private SmallTalkDAO smallTalkDAO;
-
-	@Inject
 	private TrainingDAO trainingDAO;
 
 	@Inject
@@ -72,9 +70,12 @@ public class TrainingServices implements Component {
 	private UtterTextDAO utterTextDAO;
 
 	@Inject
+	private ChatbotNodeDAO chatbotNodeDAO;
+
+	@Inject
 	private ExecutorJaxrsProvider executorJaxrsProvider;
 
-	public void trainAgent(final Long botId) {
+	public Training trainAgent(final Long botId) {
 		builderPAO.cleanOldTrainings(botId);
 
 		final Long versionNumber = builderPAO.getNextModelNumber(botId);
@@ -99,8 +100,16 @@ public class TrainingServices implements Component {
 				.post(Entity.json(requestData));
 
 		if (response.getStatus() != 204) {
-			throw new VUserException(((List<String>)response.readEntity(Map.class).get("globalErrors")).get(0));
+			throw new VUserException(getMessageFromVUserResponse(response));
 		}
+
+		return training;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	private String getMessageFromVUserResponse(final Response response) {
+		return ((List<String>)response.readEntity(Map.class).get("globalErrors")).get(0);
 	}
 
 
@@ -152,7 +161,7 @@ public class TrainingServices implements Component {
 	}
 
 	private DtList<SmallTalkExport> exportSmallTalk(final Long botId) {
-		final DtList<SmallTalk> smallTalks = designerServices.getAllSmallTalks(botId);
+		final DtList<SmallTalk> smallTalks = designerServices.getAllSmallTalksByBotId(botId);
 
 		final List<Long> smallTalkIds = smallTalks.stream()
 				.map(SmallTalk::getSmtId)
@@ -187,6 +196,11 @@ public class TrainingServices implements Component {
 		final VFile model = fileServices.getFile(training.getFilIdModel());
 
 		doLoadModel(model);
+
+		// update node-training link
+		final ChatbotNode node = designerServices.getDevNodeByBotId(training.getBotId());
+		node.setTraId(traId);
+		chatbotNodeDAO.save(node);
 	}
 
 	private void doLoadModel(final VFile model) {

@@ -6,14 +6,17 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
+import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.SmallTalkDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
@@ -48,6 +51,9 @@ public class DesignerServices implements Component {
 
 	@Inject
 	private UtterTextDAO utterTextDAO;
+
+	@Inject
+	private ChatbotNodeDAO chatbotNodeDAO;
 
 	public DtList<Chatbot> getAllChatbots() {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
@@ -134,7 +140,7 @@ public class DesignerServices implements Component {
 		return smallTalkDAO.get(movId);
 	}
 
-	public DtList<SmallTalk> getAllSmallTalks(final Long botId) {
+	public DtList<SmallTalk> getAllSmallTalksByBotId(final Long botId) {
 		return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.botId, botId), DtListState.of(1000));
 	}
 
@@ -219,4 +225,13 @@ public class DesignerServices implements Component {
 				DtListState.of(1000, 0, UtterTextFields.uttId.name(), true));
 	}
 
+	public DtList<ChatbotNode> getAllNodesByBotId(final Long botId) {
+		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, botId), DtListState.of(100));
+	}
+
+	public ChatbotNode getDevNodeByBotId(final Long botId) {
+		return chatbotNodeDAO.find(
+				Criterions.isEqualTo(ChatbotNodeFields.botId, botId)
+				.and(Criterions.isEqualTo(ChatbotNodeFields.isDev, true)));
+	}
 }

@@ -46,6 +46,13 @@ create Domain DoLabel {
 	storeType : "VARCHAR(100)"
 }
 
+create Domain DoColor {
+	dataType : String
+	formatter: FmtDefault
+	constraint : [CkMaxLength20]
+	storeType : "VARCHAR(20)"
+}
+
 create Domain DoCode {
 	dataType : String
 	formatter : FmtDefault
@@ -59,7 +66,11 @@ create Domain DoYesNo {
 	storeType: "bool"
 }
 
-
+create Domain DoUrl {
+	dataType : String
+	formatter : FmtDefault
+	storeType : "TEXT"
+}
 
 create Domain DoInstant {
 	dataType : Instant
@@ -120,6 +131,11 @@ create Formatter FmtDateHeure {
 /**************************************************************************************************/
 /********************************* Constraints ****************************************************/
 /**************************************************************************************************/
+
+create Constraint CkMaxLength20 {
+	className: "io.vertigo.dynamox.domain.constraint.ConstraintStringLength"
+	args :"20"
+}
 
 create Constraint CkMaxLength100 {
 	className: "io.vertigo.dynamox.domain.constraint.ConstraintStringLength"

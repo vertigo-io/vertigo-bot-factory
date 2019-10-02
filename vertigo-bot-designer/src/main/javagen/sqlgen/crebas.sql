@@ -7,6 +7,8 @@
 -- ============================================================
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
+drop table IF EXISTS CHATBOT_NODE cascade;
+drop sequence IF EXISTS SEQ_CHATBOT_NODE;
 drop table IF EXISTS MEDIA_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_MEDIA_FILE_INFO;
 drop table IF EXISTS NLU_TRAINING_SENTENCE cascade;
@@ -25,6 +27,9 @@ drop sequence IF EXISTS SEQ_UTTER_TEXT;
 --   Sequences                                      
 -- ============================================================
 create sequence SEQ_CHATBOT
+	start with 1000 cache 20; 
+
+create sequence SEQ_CHATBOT_NODE
 	start with 1000 cache 20; 
 
 create sequence SEQ_MEDIA_FILE_INFO
@@ -78,6 +83,42 @@ comment on column CHATBOT.UTT_ID_WELCOME is
 
 comment on column CHATBOT.UTT_ID_DEFAULT is
 'Default text';
+
+-- ============================================================
+--   Table : CHATBOT_NODE                                        
+-- ============================================================
+create table CHATBOT_NODE
+(
+    NOD_ID      	 NUMERIC     	not null,
+    NAME        	 VARCHAR(100)	not null,
+    URL         	 TEXT        	not null,
+    IS_DEV      	 bool        	not null,
+    COLOR       	 VARCHAR(20) 	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    TRA_ID      	 NUMERIC     	,
+    constraint PK_CHATBOT_NODE primary key (NOD_ID)
+);
+
+comment on column CHATBOT_NODE.NOD_ID is
+'ID';
+
+comment on column CHATBOT_NODE.NAME is
+'Name';
+
+comment on column CHATBOT_NODE.URL is
+'URL';
+
+comment on column CHATBOT_NODE.IS_DEV is
+'Dev node';
+
+comment on column CHATBOT_NODE.COLOR is
+'Color';
+
+comment on column CHATBOT_NODE.BOT_ID is
+'Chatbot';
+
+comment on column CHATBOT_NODE.TRA_ID is
+'Loaded model';
 
 -- ============================================================
 --   Table : MEDIA_FILE_INFO                                        
@@ -241,6 +282,18 @@ alter table CHATBOT
 	references UTTER_TEXT (UTT_ID);
 
 create index CHATBOT_UTTER_TEXT_WELCOME_UTTER_TEXT_FK on CHATBOT (UTT_ID_WELCOME asc);
+
+alter table CHATBOT_NODE
+	add constraint FK_NODE_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index NODE_CHATBOT_CHATBOT_FK on CHATBOT_NODE (BOT_ID asc);
+
+alter table CHATBOT_NODE
+	add constraint FK_NODE_TRAINING_TRAINING foreign key (TRA_ID)
+	references TRAINING (TRA_ID);
+
+create index NODE_TRAINING_TRAINING_FK on CHATBOT_NODE (TRA_ID asc);
 
 alter table SMALL_TALK
 	add constraint FK_SMALL_TALK_CHATBOT_CHATBOT foreign key (BOT_ID)

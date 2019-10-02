@@ -1,5 +1,8 @@
 package io.vertigo.chatbot.commons.domain
 
+/*********************/
+/* **** Chatbot **** */
+/*********************/
 create DtDefinition DtChatbot {
 	id    botId 		{domain: DoId 			label: "ID"}
 	field name 			{domain: DoLabel 		label: "Name" 			required: "true"}
@@ -42,7 +45,9 @@ create Association AChatbotUtterTextDefault {
 	labelB : "Default text"
 }
 
-
+/************************/
+/* **** Small talk **** */
+/************************/
 create DtDefinition DtSmallTalk {
 	id    smtId 		{domain: DoId 		label: "ID"}
 	field title 		{domain: DoLabel 	label: "Title" 			required: "true"}
@@ -66,7 +71,6 @@ create DtDefinition DtNluTrainingSentence {
 	field text 		{domain: DoLabel 	label: "Text" required: "true"}
 }
 
-/* For Small talks */
 create Association ASmallTalkNluTrainingSentence {
 	fkFieldName : "smtId"
     
@@ -92,39 +96,9 @@ create Association ASmallTalkUtterText {
 	labelB : "SmallTalk"
 }
 
-/*
-create DtDefinition DtAction {
-	id    actId 	{domain: DoId 		label: "ID"}
-	field title 	{domain: DoLabel 	label: "Text" required: "true"}
-}
-
-create Association AActionChatbot {
-	fkFieldName : "botId"
-    
- 	dtDefinitionA : DtAction
-	dtDefinitionB : DtChatbot
-	
-	type : "*>1"
-	
-	labelB : "Chatbot"
-}
-
-
-create Association AActionUtterText {
-	fkFieldName : "actId"
-    
- 	dtDefinitionA : DtUtterText
-	dtDefinitionB : DtAction
-	
-	multiplicityA : "0..*"
-	multiplicityB : "0..1"
-	navigabilityA : "true"
-	navigabilityB : "false"
-	
-	labelB : "Action"
-}
-*/
-
+/**********************/
+/* **** Training **** */
+/**********************/
 create DtDefinition DtTraining {
 	id    traId 		{domain: DoId 		label: "ID"}
 	field startTime		{domain: DoInstant 	label: "Start time"			required: "true"}
@@ -155,4 +129,35 @@ create Association ATrainingMediaFileInfo {
 	
 	
 	labelB : "Model"
+}
+
+/*******************/
+/* **** Nodes **** */
+/*******************/
+create DtDefinition DtChatbotNode {
+	id    nodId 		{domain: DoId 		label: "ID"}
+	field name			{domain: DoLabel 	label: "Name" 				required: "true"}
+	field url			{domain: DoUrl 		label: "URL" 				required: "true"}
+	field isDev			{domain: DoYesNo 	label: "Dev node" 			required: "true"}
+	field color			{domain: DoColor 	label: "Color" 				required: "true"}
+}
+
+create Association ANodeChatbot {
+	fkFieldName : "botId"
+    
+ 	dtDefinitionA : DtChatbotNode
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+}
+
+create Association ANodeTraining{
+	fkFieldName : "traId"
+    
+ 	dtDefinitionA : DtChatbotNode
+	type : "*>?"
+	dtDefinitionB : DtTraining
+	
+	labelB : "Loaded model"
 }
