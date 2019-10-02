@@ -128,17 +128,17 @@ public class DesignerServices implements Component {
 		return savedChatbot;
 	}
 
-	public Intent getIntentById(final Long movId) {
+	public Intent getSmallTalkById(final Long movId) {
 		Assertion.checkNotNull(movId);
 		// ---
 		return intentDAO.get(movId);
 	}
 
-	public DtList<Intent> getAllIntents(final Long botId) {
+	public DtList<Intent> getAllSmallTalks(final Long botId) {
 		return intentDAO.findAll(Criterions.isEqualTo(IntentFields.botId, botId), DtListState.of(1000));
 	}
 
-	public Intent getNewIntent(final Long botId) {
+	public Intent getNewSmallTalk(final Long botId) {
 		final Intent intent = new Intent();
 		intent.setBotId(botId);
 		intent.setIsEnabled(true);
@@ -146,7 +146,7 @@ public class DesignerServices implements Component {
 		return intent;
 	}
 
-	public Intent saveIntent(final Intent intent, final DtList<IntentTrainingSentence> intentTexts, final DtList<IntentTrainingSentence> intentTextsToDelete, final DtList<UtterText> utterTexts, final DtList<UtterText> utterTextsToDelete) {
+	public Intent saveSmallTalk(final Intent intent, final DtList<IntentTrainingSentence> intentTexts, final DtList<IntentTrainingSentence> intentTextsToDelete, final DtList<UtterText> utterTexts, final DtList<UtterText> utterTextsToDelete) {
 		Assertion.checkNotNull(intent);
 		Assertion.checkNotNull(intentTexts);
 		Assertion.checkNotNull(intentTextsToDelete);
@@ -185,6 +185,20 @@ public class DesignerServices implements Component {
 		.forEach(utx -> utterTextDAO.delete(utx.getUtxId()));
 
 		return savedIntent;
+	}
+
+	public void deleteSmallTalk(final Intent intent) {
+		// delete sub elements
+		for (final IntentTrainingSentence its:getIntentTrainingSentenceList(intent)) {
+			intentTrainingSentenceDAO.delete(its.getUID());
+		}
+
+		for (final UtterText ut:getIntentUtterTextList(intent)) {
+			utterTextDAO.delete(ut.getUID());
+		}
+
+		// delete smallTalk
+		intentDAO.delete(intent.getUID());
 	}
 
 	public DtList<IntentTrainingSentence> getIntentTrainingSentenceList(final Intent intent) {

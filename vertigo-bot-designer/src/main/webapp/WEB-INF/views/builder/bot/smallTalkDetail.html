@@ -16,6 +16,8 @@
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" ariaLabel="Edit" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
+			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_delete}" ariaLabel="Delete" icon="delete"
+							class="on-left" :round size="lg" color="red" />
 		</section>
 		
 		<section layout:fragment="content-nav">

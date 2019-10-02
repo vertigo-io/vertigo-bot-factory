@@ -36,7 +36,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	private static final ViewContextKey<UtterText> utterTextsToDeleteKey = ViewContextKey.of("utterTextsToDelete");
 
 	@Inject
-	private DesignerServices chatbotServices;
+	private DesignerServices designerServices;
 
 	@Inject
 	private CommonBotDetailController commonBotDetailController;
@@ -45,18 +45,18 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId, @PathVariable("intId") final Long intId) {
 		commonBotDetailController.initCommonContext(viewContext, botId);
 
-		final Intent intent = chatbotServices.getIntentById(intId);
+		final Intent intent = designerServices.getSmallTalkById(intId);
 
 		Assertion.checkState(intent.getBotId().equals(botId), "Paramètres incohérents");
 
 		viewContext.publishDto(intentKey, intent);
 
 		viewContext.publishRef(newIntentTrainingSentenceKey, "");
-		viewContext.publishDtListModifiable(intentTrainingSentencesKey, chatbotServices.getIntentTrainingSentenceList(intent));
+		viewContext.publishDtListModifiable(intentTrainingSentencesKey, designerServices.getIntentTrainingSentenceList(intent));
 		viewContext.publishDtList(intentTrainingSentencesToDeleteKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
 
 		viewContext.publishRef(newUtterTextKey, "");
-		viewContext.publishDtList(utterTextsKey, chatbotServices.getIntentUtterTextList(intent));
+		viewContext.publishDtList(utterTextsKey, designerServices.getIntentUtterTextList(intent));
 		viewContext.publishDtList(utterTextsToDeleteKey, new DtList<UtterText>(UtterText.class));
 
 		toModeReadOnly();
@@ -66,7 +66,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		commonBotDetailController.initCommonContext(viewContext, botId);
 
-		viewContext.publishDto(intentKey, chatbotServices.getNewIntent(botId));
+		viewContext.publishDto(intentKey, designerServices.getNewSmallTalk(botId));
 
 		viewContext.publishRef(newIntentTrainingSentenceKey, "");
 		viewContext.publishDtListModifiable(intentTrainingSentencesKey, new DtList<IntentTrainingSentence>(IntentTrainingSentence.class));
@@ -93,8 +93,14 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 			@ViewAttribute("utterTextsToDelete") final DtList<UtterText> utterTextsToDelete
 			) {
 
-		chatbotServices.saveIntent(intent, intentTrainingSentences, intentTrainingSentencesToDelete, utterTexts, utterTextsToDelete);
+		designerServices.saveSmallTalk(intent, intentTrainingSentences, intentTrainingSentencesToDelete, utterTexts, utterTextsToDelete);
 		return "redirect:/bot/" + botId + "/smallTalk/" + intent.getIntId();
+	}
+
+	@PostMapping("/_delete")
+	public String doDelete(@ViewAttribute("intent") final Intent intent) {
+		designerServices.deleteSmallTalk(intent);
+		return "redirect:/bot/" + intent.getBotId() + "/smallTalks/";
 	}
 
 	@PostMapping("/_addTrainingSentence")
