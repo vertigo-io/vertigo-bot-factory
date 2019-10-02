@@ -38,9 +38,9 @@ public abstract class AbstractRasaHandler {
 		//		rasaCommand.add("*");
 
 		if (LOGGER.isDebugEnabled()) {
-			rasaCommand.add("-vv"); // DEBUG
+			//rasaCommand.add("-vv"); // DEBUG
 		} else if (LOGGER.isInfoEnabled()) {
-			rasaCommand.add("-v"); // INFO
+			//rasaCommand.add("-v"); // INFO
 		} else {
 			//			rasaCommand.add("--quiet"); // WARNING
 		}

@@ -21,6 +21,8 @@ public final class Training implements Entity {
 	private Long versionNumber;
 	private String status;
 	private String log;
+	private String infos;
+	private String warnings;
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
 			name = "ATrainingChatbot",
@@ -170,6 +172,44 @@ public final class Training implements Entity {
 	 */
 	public void setLog(final String log) {
 		this.log = log;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Informations'.
+	 * @return String infos
+	 */
+	@Field(domain = "DoText", label = "Informations")
+	public String getInfos() {
+		return infos;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Informations'.
+	 * @param infos String
+	 */
+	public void setInfos(final String infos) {
+		this.infos = infos;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Warnings'.
+	 * @return String warnings
+	 */
+	@Field(domain = "DoText", label = "Warnings")
+	public String getWarnings() {
+		return warnings;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Warnings'.
+	 * @param warnings String
+	 */
+	public void setWarnings(final String warnings) {
+		this.warnings = warnings;
 	}
 	
 	/**

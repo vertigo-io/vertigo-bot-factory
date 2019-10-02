@@ -262,6 +262,8 @@ public class TrainingServices implements Component {
 		}
 
 		training.setLog(callback.getLog());
+		training.setInfos(callback.getInfos());
+		training.setWarnings(callback.getWarnings());
 		training.setEndTime(Instant.now());
 
 		saveTraining(training);

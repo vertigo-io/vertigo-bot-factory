@@ -19,6 +19,7 @@ public final class TrainerInfo implements DtObject {
 	private String latestTrainingLog;
 	private java.time.Instant startTime;
 	private java.time.Instant endTime;
+	private Long trainingPercent;
 	
 	/**
 	 * Champ : DATA.
@@ -132,6 +133,25 @@ public final class TrainerInfo implements DtObject {
 	 */
 	public void setEndTime(final java.time.Instant endTime) {
 		this.endTime = endTime;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Training percentage'.
+	 * @return Long trainingPercent
+	 */
+	@Field(domain = "DoNumber", label = "Training percentage")
+	public Long getTrainingPercent() {
+		return trainingPercent;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Training percentage'.
+	 * @param trainingPercent Long
+	 */
+	public void setTrainingPercent(final Long trainingPercent) {
+		this.trainingPercent = trainingPercent;
 	}
 	
 	/**

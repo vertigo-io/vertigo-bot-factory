@@ -1,9 +1,7 @@
 package io.vertigo.chatbot.executor.rasa.services;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
@@ -11,14 +9,10 @@ import javax.ws.rs.core.MediaType;
 
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
-import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
-import io.vertigo.chatbot.commons.domain.UtterText;
-import io.vertigo.chatbot.executor.domain.RasaConfig;
 import io.vertigo.chatbot.executor.rasa.DesignerJaxrsProvider;
 import io.vertigo.chatbot.executor.rasa.bridge.TrainerRasaHandler;
-import io.vertigo.chatbot.executor.rasa.config.RasaConfigBuilder;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.file.model.VFile;
@@ -38,11 +32,13 @@ public class RasaTrainerServices implements Component {
 			throw new VUserException("Node already training a model.");
 		}
 
-		trainerRasaHandler.trainModel(generateRasaConfig(bot, smallTalkList), modelId, isSuccess -> {
+		trainerRasaHandler.trainModel(bot, smallTalkList, modelId, isSuccess -> {
 			final ExecutorTrainingCallback executorTrainingCallback = new ExecutorTrainingCallback();
 			executorTrainingCallback.setTrainingId(trainingId);
 			executorTrainingCallback.setSuccess(isSuccess);
-			executorTrainingCallback.setLog(trainerRasaHandler.getState().getLatestTrainingLog());
+			executorTrainingCallback.setLog(trainerRasaHandler.getTrainingLog());
+			executorTrainingCallback.setInfos(getTrainInfos());
+			executorTrainingCallback.setWarnings(getTrainWarns());
 
 			final Map<String, Object> requestData = new HashMap<>();
 			requestData.put("executorTrainingCallback", executorTrainingCallback);
@@ -53,27 +49,42 @@ public class RasaTrainerServices implements Component {
 		});
 	}
 
-	private RasaConfig generateRasaConfig(final BotExport bot, final DtList<SmallTalkExport> smallTalkList) {
-		final String defaultText = bot.getDefaultText().getText();
-		final String welcomeText = bot.getWelcomeText().getText();
+	private String getTrainInfos() {
+		final long coreAccuacy = trainerRasaHandler.getCoreAccuacy();
+		final long nluAccuacy = trainerRasaHandler.getNluAccuacy();
 
-		final RasaConfigBuilder rasaConfigBuilder = new RasaConfigBuilder(defaultText, welcomeText);
-
-
-		for (final SmallTalkExport st : smallTalkList) {
-			final List<String> utterTexts = st.getUtterTexts().stream()
-					.map(UtterText::getText)
-					.collect(Collectors.toList());
-
-			final List<String> trainingSentences = st.getNluTrainingSentences().stream()
-					.map(NluTrainingSentence::getText)
-					.collect(Collectors.toList());
-
-			rasaConfigBuilder.addSmallTalk(st.getSmallTalk().getTitle(), trainingSentences, utterTexts);
+		final StringBuilder retour = new StringBuilder();
+		if (coreAccuacy != -1) {
+			retour.append("Core accuacy : ");
+			retour.append(coreAccuacy);
+			retour.append("\n");
 		}
-
-		return rasaConfigBuilder.build();
+		if (nluAccuacy != -1) {
+			retour.append("Nlu accuacy : ");
+			retour.append(nluAccuacy);
+			retour.append("\n");
+		}
+		return retour.toString();
 	}
+
+	private String getTrainWarns() {
+		final long coreAccuacy = trainerRasaHandler.getCoreAccuacy();
+		final long nluAccuacy = trainerRasaHandler.getNluAccuacy();
+
+		final StringBuilder retour = new StringBuilder();
+		if (coreAccuacy != -1 && coreAccuacy < 90) {
+			retour.append("Warning, Core accuacy is low (");
+			retour.append(coreAccuacy);
+			retour.append("), consider modify training parameters.\n");
+		}
+		if (nluAccuacy != -1 && nluAccuacy < 90) {
+			retour.append("Warning, NLU accuacy is low (");
+			retour.append(nluAccuacy);
+			retour.append("), consider modify training parameters.\n");
+		}
+		return retour.toString();
+	}
+
 
 	public TrainerInfo getTrainerState() {
 		return trainerRasaHandler.getState();

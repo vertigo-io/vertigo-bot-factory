@@ -358,6 +358,10 @@ table .col_Small {
 	text-align: center;
 }
 
+table .col_Log {
+	width: 185px;
+}
+
 table .col_DoInstant {
 	width: 150px; 
 }

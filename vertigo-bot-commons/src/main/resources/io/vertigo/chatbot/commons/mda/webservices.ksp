@@ -27,6 +27,7 @@ create DtDefinition DtTrainerInfo {
 	field latestTrainingLog		{domain: DoText 					label: "Training log" 			required: "true"}
 	field startTime				{domain: DoInstant 					label: "Start time"				required: "false"}
 	field endTime				{domain: DoInstant 					label: "End time" 				required: "false"}
+	field trainingPercent		{domain: DoNumber 					label: "Training percentage" 	required: "false"}
 	computed duration 			{domain: DoLabel 					label: "Duration"
 								 expression:"return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());" }
 }
@@ -35,4 +36,6 @@ create DtDefinition DtExecutorTrainingCallback {
 	field trainingId 			{domain: DoId 						label: "Training ID" 			required: "true"}
 	field success				{domain: DoYesNo 					label: "Succes" 				required: "true"}
 	field log					{domain: DoText 					label: "Logs" 					required: "true"}
+	field infos					{domain: DoText						label: "Informations"	 		required: "false"}
+	field warnings				{domain: DoText						label: "Warnings"	 			required: "false"}
 }

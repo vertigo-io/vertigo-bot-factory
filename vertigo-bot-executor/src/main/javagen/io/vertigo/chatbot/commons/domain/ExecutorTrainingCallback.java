@@ -16,6 +16,8 @@ public final class ExecutorTrainingCallback implements DtObject {
 	private Long trainingId;
 	private Boolean success;
 	private String log;
+	private String infos;
+	private String warnings;
 	
 	/**
 	 * Champ : DATA.
@@ -72,6 +74,44 @@ public final class ExecutorTrainingCallback implements DtObject {
 	 */
 	public void setLog(final String log) {
 		this.log = log;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Informations'.
+	 * @return String infos
+	 */
+	@Field(domain = "DoText", label = "Informations")
+	public String getInfos() {
+		return infos;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Informations'.
+	 * @param infos String
+	 */
+	public void setInfos(final String infos) {
+		this.infos = infos;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Warnings'.
+	 * @return String warnings
+	 */
+	@Field(domain = "DoText", label = "Warnings")
+	public String getWarnings() {
+		return warnings;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Warnings'.
+	 * @param warnings String
+	 */
+	public void setWarnings(final String warnings) {
+		this.warnings = warnings;
 	}
 	
 	/** {@inheritDoc} */

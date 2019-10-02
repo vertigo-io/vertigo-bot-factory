@@ -117,7 +117,11 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Succes'. */
 		success,
 		/** Propriété 'Logs'. */
-		log	}
+		log,
+		/** Propriété 'Informations'. */
+		infos,
+		/** Propriété 'Warnings'. */
+		warnings	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.
@@ -215,6 +219,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		startTime,
 		/** Propriété 'End time'. */
 		endTime,
+		/** Propriété 'Training percentage'. */
+		trainingPercent,
 		/** Propriété 'Duration'. */
 		duration	}
 
@@ -234,6 +240,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		status,
 		/** Propriété 'Log'. */
 		log,
+		/** Propriété 'Informations'. */
+		infos,
+		/** Propriété 'Warnings'. */
+		warnings,
 		/** Propriété 'Duration'. */
 		duration,
 		/** Propriété 'Chatbot'. */

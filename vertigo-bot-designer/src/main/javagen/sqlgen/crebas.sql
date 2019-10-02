@@ -215,6 +215,8 @@ create table TRAINING
     VERSION_NUMBER	 NUMERIC     	not null,
     STATUS      	 VARCHAR(100)	not null,
     LOG         	 TEXT        	,
+    INFOS       	 TEXT        	,
+    WARNINGS    	 TEXT        	,
     BOT_ID      	 NUMERIC     	not null,
     FIL_ID_MODEL	 NUMERIC     	,
     constraint PK_TRAINING primary key (TRA_ID)
@@ -237,6 +239,12 @@ comment on column TRAINING.STATUS is
 
 comment on column TRAINING.LOG is
 'Log';
+
+comment on column TRAINING.INFOS is
+'Informations';
+
+comment on column TRAINING.WARNINGS is
+'Warnings';
 
 comment on column TRAINING.BOT_ID is
 'Chatbot';

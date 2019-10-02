@@ -14,7 +14,7 @@
 			VUiExtensions.dataX.loadingRunner = false;
 			VUiExtensions.dataX.loadingModels = false;
 			VUiExtensions.dataX.loadingTraining = false;
-			VUiExtensions.dataX.modalLog = {"show": false, "row": {}};
+			VUiExtensions.dataX.modalLog = {"show": false, "col": "", "row": {}};
 			
 			
 			function postTrain() {
@@ -155,8 +155,21 @@
 						</q-tooltip>
 					</vu:content>
 				</vu:column>
-				<vu:column field="log" class="col_Small">
-					<q-btn v-if="props.row.log" round icon="notes" @click="dataX.modalLog.show = true; dataX.modalLog.row = props.row"></q-btn>
+				<vu:column field="log" class="col_Log">
+					<vu:include-data object="trainingList" field="infos" />
+					<vu:include-data object="trainingList" field="warnings" />
+					
+					<q-btn v-if="props.row.log"
+							round icon="notes"
+							@click="dataX.modalLog.col = 'log'; dataX.modalLog.row = props.row; dataX.modalLog.show = true"></q-btn>
+							
+					<q-btn v-if="props.row.infos"
+							round icon="short_text" class="on-right"
+							@click="dataX.modalLog.col = 'infos'; dataX.modalLog.row = props.row; dataX.modalLog.show = true"></q-btn>
+							
+					<q-btn v-if="props.row.warnings"
+							round icon="warning" color="orange" class="on-right"
+							@click="dataX.modalLog.col = 'warnings'; dataX.modalLog.row = props.row; dataX.modalLog.show = true"></q-btn>
 				</vu:column>
 				<vu:column name="node" label="Deployed on">
 					<vu:include-data object="nodeList" field="traId" />
@@ -180,7 +193,7 @@
 					<q-separator></q-separator>
 					
    					<q-card-section style="max-height: calc(90vh - 90px)" class="scroll">
-    					<pre>{{dataX.modalLog.row.log}}</pre>
+    					<pre>{{dataX.modalLog.row[dataX.modalLog.col]}}</pre>
     				</q-card-section>
       			</q-card>	
 			</q-dialog>
@@ -194,10 +207,15 @@
 				<vu:include-data object="trainerState" field="latestTrainingLog" />
 				<vu:include-data object="trainerState" field="startTime" />
 				<vu:include-data object="trainerState" field="duration" />
+				<vu:include-data object="trainerState" field="trainingPercent" />
 				
 				<vu:text-field-read-reactive object="trainerState" field="name" />
 				
 				<vu:text-field-read-reactive object="trainerState" field="trainingState" />
+				
+				<q-linear-progress :class="vueData.trainerState.trainingInProgress ? '':'invisible'"
+						stripe rounded style="height: 10px"
+						:value="vueData.trainerState.trainingPercent / 100"></q-linear-progress>
 				
 				<q-card-actions>
 					<vu:include-data object="trainerState" field="trainingInProgress" />
