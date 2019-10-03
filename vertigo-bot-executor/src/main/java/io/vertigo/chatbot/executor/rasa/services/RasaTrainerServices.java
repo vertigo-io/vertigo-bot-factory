@@ -57,12 +57,12 @@ public class RasaTrainerServices implements Component {
 		if (coreAccuacy != -1) {
 			retour.append("Core accuacy : ");
 			retour.append(coreAccuacy);
-			retour.append("\n");
+			retour.append("%\n");
 		}
 		if (nluAccuacy != -1) {
 			retour.append("Nlu accuacy : ");
 			retour.append(nluAccuacy);
-			retour.append("\n");
+			retour.append("%\n");
 		}
 		return retour.toString();
 	}
@@ -75,12 +75,12 @@ public class RasaTrainerServices implements Component {
 		if (coreAccuacy != -1 && coreAccuacy < 90) {
 			retour.append("Warning, Core accuacy is low (");
 			retour.append(coreAccuacy);
-			retour.append("), consider modify training parameters.\n");
+			retour.append("%), consider modify training parameters.\n");
 		}
 		if (nluAccuacy != -1 && nluAccuacy < 90) {
 			retour.append("Warning, NLU accuacy is low (");
 			retour.append(nluAccuacy);
-			retour.append("), consider modify training parameters.\n");
+			retour.append("%), consider modify training parameters.\n");
 		}
 		return retour.toString();
 	}
