@@ -6,6 +6,7 @@ package io.vertigo.chatbot.commons.domain
 create DtDefinition DtChatbot {
 	id    botId 		{domain: DoId 			label: "ID"}
 	field name 			{domain: DoLabel 		label: "Name" 			required: "true"}
+	field description 	{domain: DoText 		label: "Description"	required: "true"}
 	field creationDate	{domain: DoLocaldate 	label: "Creation date" 	required: "true"}
 	field status		{domain: DoCode		 	label: "Status" 		required: "true"}
 }
@@ -83,7 +84,7 @@ create Association ASmallTalkNluTrainingSentence {
 
 create DtDefinition DtUtterText {
 	id    uttId 	{domain: DoId 		label: "ID"}
-	field text 		{domain: DoLabel 	label: "Text" required: "true"}
+	field text 		{domain: DoText 	label: "Text" required: "true"}
 }
 
 create Association ASmallTalkUtterText {

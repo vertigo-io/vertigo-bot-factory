@@ -63,7 +63,7 @@ public final class UtterText implements Entity {
 	 * Récupère la valeur de la propriété 'Text'.
 	 * @return String text <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Text")
+	@Field(domain = "DoText", required = true, label = "Text")
 	public String getText() {
 		return text;
 	}

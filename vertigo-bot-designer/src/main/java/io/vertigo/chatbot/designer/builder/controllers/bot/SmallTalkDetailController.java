@@ -106,7 +106,6 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	@PostMapping("/_addTrainingSentence")
 	public ViewContext doAddTrainingSentence(final ViewContext viewContext,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentenceIn,
-			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences
 			) {
 
@@ -125,6 +124,28 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluTrainingSentences);
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
+
+		return viewContext;
+	}
+
+	@PostMapping("/_editTrainingSentence")
+	public ViewContext doEditTrainingSentence(final ViewContext viewContext,
+			@RequestParam("index") final int index,
+			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
+			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences
+			) {
+
+		int curIdx = 0;
+		for (final NluTrainingSentence nts:nluTrainingSentences) {
+			if (curIdx == index) {
+				nts.setText(newNluTrainingSentence);
+			} else if(newNluTrainingSentence.equalsIgnoreCase(nts.getText())) {
+				throw new VUserException("This sentense already exists");
+			}
+			curIdx++;
+		}
+
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluTrainingSentences);
 
 		return viewContext;
 	}
@@ -152,7 +173,6 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	@PostMapping("/_addUtterText")
 	public ViewContext doAddUtterText(final ViewContext viewContext,
 			@ViewAttribute("newUtterText") final String newUtterTextIn,
-			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
 			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts
 			) {
 
@@ -172,6 +192,28 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDtList(utterTextsKey, utterTexts);
 
 		viewContext.publishRef(newUtterTextKey, "");
+
+		return viewContext;
+	}
+
+	@PostMapping("/_editUtterText")
+	public ViewContext doEditUtterText(final ViewContext viewContext,
+			@RequestParam("index") final int index,
+			@ViewAttribute("newUtterText") final String newUtterText,
+			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts
+			) {
+
+		int curIdx = 0;
+		for (final UtterText utt:utterTexts) {
+			if (curIdx == index) {
+				utt.setText(newUtterText);
+			} else if(newUtterText.equalsIgnoreCase(utt.getText())) {
+				throw new VUserException("This sentense already exists");
+			}
+			curIdx++;
+		}
+
+		viewContext.publishDtListModifiable(utterTextsKey, utterTexts);
 
 		return viewContext;
 	}

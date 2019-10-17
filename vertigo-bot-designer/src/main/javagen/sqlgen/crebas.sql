@@ -55,6 +55,7 @@ create table CHATBOT
 (
     BOT_ID      	 NUMERIC     	not null,
     NAME        	 VARCHAR(100)	not null,
+    DESCRIPTION 	 TEXT        	not null,
     CREATION_DATE	 DATE        	not null,
     STATUS      	 VARCHAR(100)	not null,
     FIL_ID_AVATAR	 NUMERIC     	,
@@ -68,6 +69,9 @@ comment on column CHATBOT.BOT_ID is
 
 comment on column CHATBOT.NAME is
 'Name';
+
+comment on column CHATBOT.DESCRIPTION is
+'Description';
 
 comment on column CHATBOT.CREATION_DATE is
 'Creation date';
@@ -258,7 +262,7 @@ comment on column TRAINING.FIL_ID_MODEL is
 create table UTTER_TEXT
 (
     UTT_ID      	 NUMERIC     	not null,
-    TEXT        	 VARCHAR(100)	not null,
+    TEXT        	 TEXT        	not null,
     SMT_ID      	 NUMERIC     	,
     constraint PK_UTTER_TEXT primary key (UTT_ID)
 );

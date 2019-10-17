@@ -138,7 +138,7 @@
 				<vu:include-data object="trainingList" field="traId" />
 				<vu:include-data object="trainingList" field="duration" />
 				
-				<vu:column field="status" class="col_Small">
+				<vu:column field="status" label="Result" class="col_Small">
 					<q-icon name="check" color="green" size="2rem" v-if="props.row.status == 'OK'"></q-icon>
 					<q-icon name="block" color="red" size="2rem" v-if="props.row.status == 'KO'"></q-icon>
 					<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="props.row.status == 'TRAINING'"></q-spinner-gears>

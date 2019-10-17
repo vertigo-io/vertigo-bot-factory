@@ -171,9 +171,10 @@ public class DesignerServices implements Component {
 
 		// save nlu textes
 		nluTrainingSentences.stream()
-		.filter(nts -> nts.getNtsId() == null) // no edit, only new elements
-		.peek(nts -> nts.setSmtId(savedST.getSmtId()))
-		.forEach(nts -> nluTrainingSentenceDAO.save(nts));
+		.forEach(nts -> {
+			nts.setSmtId(savedST.getSmtId());
+			nluTrainingSentenceDAO.save(nts);
+		});
 
 		nluTrainingSentencesToDelete.stream()
 		.filter(itt -> itt.getNtsId() != null)
@@ -181,9 +182,10 @@ public class DesignerServices implements Component {
 
 		// save utter textes
 		utterTexts.stream()
-		.filter(utt -> utt.getUttId() == null) // no edit, only new elements
-		.peek(utt -> utt.setSmtId(savedST.getSmtId()))
-		.forEach(utt -> utterTextDAO.save(utt));
+		.forEach(utt ->{
+			utt.setSmtId(savedST.getSmtId());
+			utterTextDAO.save(utt);
+		});
 
 		utterTextsToDelete.stream()
 		.filter(utt -> utt.getUttId() != null)
@@ -213,7 +215,7 @@ public class DesignerServices implements Component {
 
 		return nluTrainingSentenceDAO.findAll(
 				Criterions.isEqualTo(NluTrainingSentenceFields.smtId, smallTalk.getSmtId()),
-				DtListState.of(1000, 0, NluTrainingSentenceFields.ntsId.name(), true));
+				DtListState.of(1000, 0, NluTrainingSentenceFields.ntsId.name(), false));
 	}
 
 	public DtList<UtterText> getUtterTextList(final SmallTalk smallTalk) {
@@ -222,7 +224,7 @@ public class DesignerServices implements Component {
 		// ---
 		return utterTextDAO.findAll(
 				Criterions.isEqualTo(UtterTextFields.smtId, smallTalk.getSmtId()),
-				DtListState.of(1000, 0, UtterTextFields.uttId.name(), true));
+				DtListState.of(1000, 0, UtterTextFields.uttId.name(), false));
 	}
 
 	public DtList<ChatbotNode> getAllNodesByBotId(final Long botId) {

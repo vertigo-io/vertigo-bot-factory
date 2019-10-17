@@ -76,6 +76,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botId,
 		/** Propriété 'Name'. */
 		name,
+		/** Propriété 'Description'. */
+		description,
 		/** Propriété 'Creation date'. */
 		creationDate,
 		/** Propriété 'Status'. */

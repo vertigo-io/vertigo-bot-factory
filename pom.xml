@@ -27,7 +27,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<vertigo.version>2.1.0-RC2</vertigo.version>
+		<vertigo.version>2.1.0-SNAPSHOT</vertigo.version>
 	</properties>
 
 	<modules>

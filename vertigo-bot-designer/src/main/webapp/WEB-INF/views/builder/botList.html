@@ -14,15 +14,17 @@
 		<section layout:fragment="content">
 			<vu:include-data object="bots" field="botId" />
 			<vu:include-data object="bots" field="name" />
+			<vu:include-data object="bots" field="description" />
 			<vu:include-data object="bots" field="creationDate" />
 			
 			<vu:cards list="bots" componentId="botCards" cardClass="botCard col-xl-3 col-md-4 col-xs-6"  sortUrl="@{/basemanagement/bases/_sort}" rowsPerPage="8" showMore="true" showMoreLabel="Show more" >
 				<a th::href="|'@{/bot/}'+item.botId|" class="nav">
-					<q-img th::src="|'@{/bot/}'+item.botId+'/avatar'|"></q-img>
+					<q-img th::src="|'@{/bot/}'+item.botId+'/avatar'|" class="q-mt-sm"></q-img>
 					<q-card-section class="row" >
-						<div class="col ellipsis text-center" >
+						<div class="col ellipsis text-center text-grey" >
 							<span class="text-primary small-caps text-bigger">{{item.name}}</span><br/>
-							Born : {{item.creationDate}}<br/>
+							<span>Born : {{item.creationDate}}</span><br/>
+							<span>{{item.description}}</span>
 						</div>		
 					</q-card-section>
 				</a>

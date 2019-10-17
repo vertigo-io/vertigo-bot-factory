@@ -45,7 +45,7 @@
 				
 				<div th:if="${!model.modeReadOnly}">
 					<q-input v-model="vueData.newNluTrainingSentence" @keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence})"
-						placeholder="Ajouter une expression"
+						placeholder="Add training sentence"
 						:before="[{icon: 'format_quote'}]"
 						q-if>
 					</q-input>
@@ -59,7 +59,22 @@
 							<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.nluTrainingSentences.length - 1 - index})"
 								color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
 						</q-item-section>
-						<q-item-section>{{nluTrainingSentence.text}}</q-item-section>
+						<q-item-section class="cursor-pointer">
+							{{nluTrainingSentence.text}}
+							<q-popup-edit th:if="${!model.modeReadOnly}"
+										  v-model="nluTrainingSentence.text"
+										  @save="function(value, initialValue) {
+													httpPostAjax('_editTrainingSentence',
+														 {'vContext[newNluTrainingSentence]':value, 'index':vueData.nluTrainingSentences.length - 1 - index}
+													).then(function() {
+													 	if (uiMessageStack.globalErrors.length > 0) {
+													 		nluTrainingSentence.text = initialValue;
+													 	}
+													 });
+												}">
+								<q-input v-model="nluTrainingSentence.text" dense autofocus />
+							</q-popup-edit>
+						</q-item-section>
 					</q-item>
 				</q-list>
 			</vu:block>
@@ -70,12 +85,12 @@
 			
 				<div th:if="${!model.modeReadOnly}">
 					<q-input v-model="vueData.newUtterText" @keydown.enter.prevent="if (vueData.newUtterText.trim().length > 0) httpPostAjax('_addUtterText', {'vContext[newUtterText]':vueData.newUtterText})"
-						placeholder="Ajouter une réponse"
+						placeholder="Add possible answer"
 						:before="[{icon: 'format_quote'}]">
 					</q-input>
 				</div>
 				<q-list highlight>
-					<q-item v-for="(utterTexts, index) in vueData.utterTexts.slice().reverse()">
+					<q-item v-for="(utterText, index) in vueData.utterTexts.slice().reverse()">
 						<q-item-section avatar th:if="${model.modeReadOnly}">
 				        	<q-icon color="black" name="format_quote" />
 				        </q-item-section>
@@ -83,7 +98,22 @@
 							<q-btn @click="httpPostAjax('_removeUtterText', {'index':vueData.utterTexts.length - 1 - index})"
 									color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
 						</q-item-section>
-						<q-item-section>{{utterTexts.text}}</q-item-section>
+						<q-item-section class="cursor-pointer">
+							{{utterText.text}}
+							<q-popup-edit th:if="${!model.modeReadOnly}"
+										  v-model="utterText.text"
+										  @save="function(value, initialValue) {
+													httpPostAjax('_editUtterText',
+														 {'vContext[newUtterText]':value, 'index':vueData.utterTexts.length - 1 - index}
+													).then(function() {
+													 	if (uiMessageStack.globalErrors.length > 0) {
+													 		utterText.text = initialValue;
+													 	}
+													 });
+												}">
+								<q-input v-model="utterText.text" dense autofocus />
+							</q-popup-edit>
+						</q-item-section>
 					</q-item>
 				</q-list>
 			</vu:block>

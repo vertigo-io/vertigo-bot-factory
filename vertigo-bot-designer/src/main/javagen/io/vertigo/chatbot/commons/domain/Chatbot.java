@@ -17,6 +17,7 @@ public final class Chatbot implements Entity {
 
 	private Long botId;
 	private String name;
+	private String description;
 	private java.time.LocalDate creationDate;
 	private String status;
 
@@ -107,6 +108,25 @@ public final class Chatbot implements Entity {
 	 */
 	public void setName(final String name) {
 		this.name = name;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Description'.
+	 * @return String description <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoText", required = true, label = "Description")
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Description'.
+	 * @param description String <b>Obligatoire</b>
+	 */
+	public void setDescription(final String description) {
+		this.description = description;
 	}
 	
 	/**
