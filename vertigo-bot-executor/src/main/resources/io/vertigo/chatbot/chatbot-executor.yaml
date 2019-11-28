@@ -12,6 +12,8 @@ modules:
     featuresConfig:
       - script.janino:
       - cache.memory:
+      - analytics.socketLoggerConnector:
+          appName: chatbot-test
   io.vertigo.vega.VegaFeatures:
     features:
       - webservices:
@@ -21,4 +23,5 @@ modules:
   io.vertigo.dynamo.DynamoFeatures:
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
-  io.vertigo.chatbot.executor.rasa.RasaExecutorFeatures: # utilisation de notre module métier
+  io.vertigo.chatbot.executor.RasaExecutorFeatures:
+  io.vertigo.chatbot.analytics.RasaAnalyticsFeatures:

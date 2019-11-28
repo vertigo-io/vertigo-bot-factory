@@ -28,16 +28,18 @@
 			function refreshTraining() {
 				VUiExtensions.dataX.loadingTraining = true;
 				
-				VUiPage.httpPostAjax("_refreshTrainer", {}, function() {
-					VUiExtensions.dataX.loadingTraining = false;
-					
-					if (vueData.autoscroll) {
-						scrollLogToBottom();
-					}
-					if (!vueData.trainerState.trainingInProgress && interval != null) {
-						clearInterval(interval);
-						interval = null;
-						setTimeout(refreshModels, 500); // timeout to ensure callback is processed
+				VUiPage.httpPostAjax("_refreshTrainer", {}, {
+					onSuccess: function() {
+						VUiExtensions.dataX.loadingTraining = false;
+						
+						if (vueData.autoscroll) {
+							scrollLogToBottom();
+						}
+						if (!vueData.trainerState.trainingInProgress && interval != null) {
+							clearInterval(interval);
+							interval = null;
+							setTimeout(refreshModels, 500); // timeout to ensure callback is processed
+						}
 					}
 				});
 			}
@@ -45,16 +47,20 @@
 			function refreshModels() {
 				VUiExtensions.dataX.loadingModels = true;
 				
-				VUiPage.httpPostAjax("_refreshTrainings", {}, function() {
-					VUiExtensions.dataX.loadingModels = false;
+				VUiPage.httpPostAjax("_refreshTrainings", {}, {
+					onSuccess: function() {
+						VUiExtensions.dataX.loadingModels = false;
+					}
 				});
 			}
 			
 			function refreshRunner() {
 				VUiExtensions.dataX.loadingRunner = true;
 				
-				VUiPage.httpPostAjax("_refreshRunner", {}, function() {
-					VUiExtensions.dataX.loadingRunner = false;
+				VUiPage.httpPostAjax("_refreshRunner", {}, {
+					onSuccess: function() {
+						VUiExtensions.dataX.loadingRunner = false;
+					}
 				});
 			}
 			
@@ -221,7 +227,7 @@
 					<vu:include-data object="trainerState" field="trainingInProgress" />
 					
 					<q-btn color="primary" icon="build" size="lg" label="Train" :loading="vueData.trainerState.trainingInProgress"
-							@click="httpPostAjax('_train', {}, postTrain)" style="width: 175px">
+							@click="httpPostAjax('_train', {}, {onSuccess: postTrain})" style="width: 175px">
 						<span slot="loading">
 							<q-spinner-gears class="on-left"></q-spinner-gears>
 							Training...
@@ -229,7 +235,7 @@
 					</q-btn>
 					
 					<q-btn color="red" icon="warning" size="lg" label="Stop training" v-if="vueData.trainerState.trainingInProgress"
-							@click="httpPostAjax('_stop', {}, refreshModels)"></q-btn>
+							@click="httpPostAjax('_stop', {}, {onSuccess: refreshModels})"></q-btn>
 				</q-card-actions>
 				
 				<q-card-separator></q-card-separator>
