@@ -19,6 +19,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum Definitions {
 		/** Objet de données BotExport. */
 		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
+		/** Objet de données ChartSerie. */
+		ChartSerie(io.vertigo.chatbot.commons.domain.ChartSerie.class),
 		/** Objet de données Chatbot. */
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
 		/** Objet de données ChatbotNode. */
@@ -67,6 +69,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		defaultText,
 		/** Propriété 'welcome'. */
 		welcomeText	}
+
+	/**
+	 * Enumération des champs de ChartSerie.
+	 */
+	public enum ChartSerieFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChartSerie> {
+		/** Propriété 'Labels'. */
+		labels,
+		/** Propriété 'Values'. */
+		values	}
 
 	/**
 	 * Enumération des champs de Chatbot.

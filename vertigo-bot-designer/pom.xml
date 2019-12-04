@@ -43,6 +43,13 @@
 			<artifactId>vertigo-studio</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
+		
+		<!-- Optional from Vertigo-database -->
+		<dependency>
+			<groupId>org.influxdb</groupId>
+			<artifactId>influxdb-java</artifactId>
+			<version>2.15</version>
+		</dependency>
 
 	</dependencies>
 

@@ -43,8 +43,8 @@ public final class NluTrainingSentenceDAO extends DAO<NluTrainingSentence, java.
 
 	/**
 	 * Execute la tache TkExportSmallTalkRelativeTrainingSentence.
-	 * @param stIds java.util.List<Long> 
-	 * @return io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> trainingSentences
+	 * @param stIds List de Long 
+	 * @return DtList de NluTrainingSentence trainingSentences
 	*/
 	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> exportSmallTalkRelativeTrainingSentence(final java.util.List<Long> stIds) {
 		final Task task = createTaskBuilder("TkExportSmallTalkRelativeTrainingSentence")

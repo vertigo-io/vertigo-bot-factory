@@ -71,7 +71,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	@Override
 	public void stop() {
 		// stop child process
-		if (rasaTrainingProcess.isAlive()) {
+		if (rasaTrainingProcess != null && rasaTrainingProcess.isAlive()) {
 			rasaTrainingProcess.destroyForcibly();
 		}
 	}

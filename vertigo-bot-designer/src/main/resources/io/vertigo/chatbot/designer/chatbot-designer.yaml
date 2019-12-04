@@ -19,10 +19,16 @@ modules:
   io.vertigo.database.DatabaseFeatures: # utilisation du module vertigo-database pour pouvoir utiliser une base de données
     features:
       - sql: # nous activons le support des bases de données SQL
+      - timeseries:
     featuresConfig:
       - sql.datasource:
           classname: io.vertigo.database.impl.sql.vendor.postgresql.PostgreSqlDataBase
           source: java:/comp/env/jdbc/DataSource
+      - timeseries.influxdb:
+          host: http://analytica.part.klee.lan.net:8086
+          user: anonymous
+          password: anonymous
+          dbNames: chatbot-test
   io.vertigo.dynamo.DynamoFeatures: # utilisation du module vertigo-dynamo
     features:
       - store: # activation du support du stockage des entités de notre modèle
@@ -52,3 +58,4 @@ modules:
   
   io.vertigo.chatbot.designer.commons.DesignerCommonsFeatures:
   io.vertigo.chatbot.designer.builder.BuilderFeatures: # utilisation de notre module métier
+  io.vertigo.chatbot.designer.analytics.AnalyticsFeatures:

@@ -25,6 +25,7 @@ import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerBotEvent;
 import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerRewindEvent;
 import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerUserEvent;
 import io.vertigo.chatbot.analytics.rasa.model.nested.RasaTrackerIntent;
+import io.vertigo.chatbot.analytics.rasa.util.GsonOptionalTypeAdapter;
 import io.vertigo.commons.analytics.AnalyticsManager;
 import io.vertigo.commons.analytics.process.AProcess;
 import io.vertigo.commons.analytics.process.AProcessBuilder;
@@ -60,6 +61,7 @@ public class RasaRabbitmqConsumer implements Component, Activeable {
 
 		gson = new GsonBuilder()
 				.registerTypeAdapterFactory(rttaf)
+				.registerTypeAdapterFactory(GsonOptionalTypeAdapter.FACTORY)
 				.create();
 	}
 
@@ -111,7 +113,7 @@ public class RasaRabbitmqConsumer implements Component, Activeable {
 
 			final AProcessBuilder processBuilder = AProcess.builder("user", "message")
 					.addTag("text", userAction.getText())
-					.addTag("intent", intent.getName())
+					.addTag("intent", intent.getName().orElse(""))
 					.addTag("userId", userAction.getSenderId())
 					.setMeasure("confidence", intent.getConfidence().doubleValue())
 					.setMeasure("isButton", isButton ? 1d : 0d);
@@ -124,12 +126,16 @@ public class RasaRabbitmqConsumer implements Component, Activeable {
 	public void stop() {
 		Exception exception = null;
 		try {
-			channel.close();
+			if (channel != null) {
+				channel.close();
+			}
 		} catch (IOException | TimeoutException e) {
 			exception = e;
 		}
 		try {
-			conn.close();
+			if (conn != null) {
+				conn.close();
+			}
 		} catch (final IOException e) {
 			if (exception != null) {
 				e.addSuppressed(exception);
@@ -137,7 +143,7 @@ public class RasaRabbitmqConsumer implements Component, Activeable {
 			exception = e;
 		}
 		if (exception != null) {
-			//throw new VSystemException(exception, "Error while dis-connecting from RabbitMQ");
+			LOGGER.info("Erreur while closing RabbitMQ connexion", exception);
 		}
 	}
 

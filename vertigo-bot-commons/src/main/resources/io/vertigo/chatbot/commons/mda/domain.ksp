@@ -46,6 +46,13 @@ create Domain DoLabel {
 	storeType : "VARCHAR(100)"
 }
 
+create Domain DoLabels{  
+    dataType : String
+    multiple : "true"
+    formatter : FmtDefault
+    constraint : [CkMaxLength100]
+}
+
 create Domain DoColor {
 	dataType : String
 	formatter: FmtDefault

@@ -1,24 +1,25 @@
 package io.vertigo.chatbot.analytics.rasa.model.nested;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public class RasaTrackerIntent {
 
-	private String name;
+	private Optional<String> name = Optional.empty();
 
 	private BigDecimal confidence;
 
 	/**
 	 * @return the name
 	 */
-	public String getName() {
+	public Optional<String> getName() {
 		return name;
 	}
 
 	/**
 	 * @param name the name to set
 	 */
-	public void setName(final String name) {
+	public void setName(final Optional<String> name) {
 		this.name = name;
 	}
 
