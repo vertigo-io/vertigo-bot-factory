@@ -1,8 +1,0 @@
-package io.vertigo.chatbot.commons.domain 
-
-
-create DtDefinition DtChartSerie {
-	field labels 				{domain: DoLabels 				label: "Labels" 					required: "true"}
-	field values				{domain: DoLongs 				label: "Values" 					required: "true"}
-}
-

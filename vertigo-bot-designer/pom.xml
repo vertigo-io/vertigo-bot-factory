@@ -25,7 +25,7 @@
 			<artifactId>vertigo-bot-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -43,7 +43,7 @@
 			<artifactId>vertigo-studio</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
-		
+
 		<!-- Optional from Vertigo-database -->
 		<dependency>
 			<groupId>org.influxdb</groupId>

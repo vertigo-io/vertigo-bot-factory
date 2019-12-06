@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.analytics.rasa.rabbitmq;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
@@ -108,18 +109,46 @@ public class RasaRabbitmqConsumer implements Component, Activeable {
 		if (action instanceof RasaTrackerUserEvent) {
 			final RasaTrackerUserEvent userAction = (RasaTrackerUserEvent) action;
 
-			final boolean isButton = userAction.getText().startsWith("/");
+			final String userText = userAction.getText();
 			final RasaTrackerIntent intent = userAction.getParseData().getIntent();
 
-			final AProcessBuilder processBuilder = AProcess.builder("user", "message")
+			RasaTypeAction rta;
+			if (userText.startsWith("/start")) {
+				rta = RasaTypeAction.OPEN;
+			} else if (userText.startsWith("/reponse")) {
+				rta = RasaTypeAction.RESPONSE_INFO;
+			} else if (userText.startsWith("/eval")) {
+				rta = RasaTypeAction.RATING;
+			} else if (userText.startsWith("/")) {
+				rta = RasaTypeAction.BUTTON;
+			} else {
+				rta = RasaTypeAction.MESSAGE;
+			}
+
+
+			final AProcessBuilder processBuilder = AProcess.builder("chatbot", intent.getName().orElse("unknown"), userAction.getTimestamp(), userAction.getTimestamp()) // timestamp of emitted event
 					.addTag("text", userAction.getText())
-					.addTag("intent", intent.getName().orElse(""))
-					.addTag("userId", userAction.getSenderId())
+					.addTag("type", rta.name())
+					.addTag("sessionId", userAction.getSenderId())
+					.addTag("messageId", userAction.getMessageId())
 					.setMeasure("confidence", intent.getConfidence().doubleValue())
-					.setMeasure("isButton", isButton ? 1d : 0d);
+					.setMeasure("isFallback", intent.getConfidence().compareTo(BigDecimal.valueOf(0.5)) < 0 ? 1d : 0d)
+					.setMeasure("isTypeOpen", rta == RasaTypeAction.OPEN ? 1d : 0d)
+					.setMeasure("isTypeMessage", rta == RasaTypeAction.MESSAGE ? 1d : 0d)
+					.setMeasure("isTypeResponseInfo", rta == RasaTypeAction.RESPONSE_INFO ? 1d : 0d)
+					.setMeasure("isTypeButton", rta == RasaTypeAction.BUTTON ? 1d : 0d)
+					.setMeasure("isTypeRating", rta == RasaTypeAction.RATING ? 1d : 0d);
 
 			analyticsManager.addProcess(processBuilder.build());
 		}
+	}
+
+	private enum RasaTypeAction {
+		OPEN,
+		MESSAGE,
+		RESPONSE_INFO,
+		BUTTON,
+		RATING,
 	}
 
 	@Override

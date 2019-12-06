@@ -1,12 +1,19 @@
 package io.vertigo.chatbot.analytics.rasa.model;
 
+import java.time.Instant;
+
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
+
+import io.vertigo.chatbot.analytics.rasa.util.GsonRasaTimestampDeserializer;
 
 public abstract class AbstractRasaTrackerEvent {
 
 	@SerializedName("sender_id")
 	private String senderId;
-	private String timestamp;
+
+	@JsonAdapter(GsonRasaTimestampDeserializer.class)
+	private Instant timestamp;
 
 	/**
 	 * @return the senderId
@@ -23,13 +30,13 @@ public abstract class AbstractRasaTrackerEvent {
 	/**
 	 * @return the timestamp
 	 */
-	public String getTimestamp() {
+	public Instant getTimestamp() {
 		return timestamp;
 	}
 	/**
 	 * @param timestamp the timestamp to set
 	 */
-	public void setTimestamp(final String timestamp) {
+	public void setTimestamp(final Instant timestamp) {
 		this.timestamp = timestamp;
 	}
 

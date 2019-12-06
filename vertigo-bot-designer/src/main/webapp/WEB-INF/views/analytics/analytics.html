@@ -15,84 +15,165 @@
 <script th:inline="javascript">
 	Vue.use(VueApexCharts);
 	Vue.component('apexchart', VueApexCharts);
+	
+	VUiExtensions.dataX.timeOption = 'DAY';
+	
+	let timeFormatter = function(value) {
+		if (VUiExtensions.dataX.timeOption === 'DAY')
+			return new Date(value).toLocaleDateString(navigator.language, {
+				month: 'short',
+				day: '2-digit',
+				hour: '2-digit',
+			    minute:'2-digit'
+			  });
+		else
+			return new Date(value).toLocaleDateString(navigator.language, {
+				month: 'short',
+				day: '2-digit'
+			  });
+	}
 
 	VUiExtensions.dataX.apexCharts = {};
-	VUiExtensions.dataX.apexCharts.testChart = {
+	VUiExtensions.dataX.apexCharts.chartSession = {
 		options : {
 			chart : {
-				id : 'vuechart-example'
-			},
-			xaxis : {
-				categories : [ 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998 ]
-			}
-		},
-		series : [ {
-			name : 'series-1',
-			data : [ 30, 40, 35, 50, 49, 60, 70, 91 ]
-		} ]
-	};
-
-	VUiExtensions.dataX.apexCharts.testChart2 = {
-		series : [ 68, 42, 100 ],
-		options : {
-			chart : {
-				offsetY : -10,
-			},
-			plotOptions : {
-				radialBar : {
-					startAngle : -135,
-					endAngle : 135,
-					dataLabels : {
-						name : {
-							fontSize : '16px',
-							color : undefined,
-							offsetY : 120
-						},
-						value : {
-							offsetY : 76,
-							fontSize : '22px',
-							color : undefined,
-							formatter : function(val) {
-								return val + "%";
-							}
-						},
-						total : {
-							show: true,
-			                label: 'Total',
-			                color: 'black'
-						}
-					}
+				id : 'vuechart-example',
+				zoom: {
+					enabled: false
 				}
 			},
-			fill : {
-				type : 'gradient',
-				gradient : {
-					shade : 'dark',
-					shadeIntensity : 0.15,
-					inverseColors : false,
-					opacityFrom : 1,
-					opacityTo : 1,
-					stops : [ 0, 50, 65, 91 ]
-				},
+			dataLabels: {
+                enabled: false
+            },
+			xaxis : {
+				type: 'datetime'
 			},
-			//stroke : {
-			//	dashArray : 3
-			//},
-			labels : [ 'Median Ratio', 'Other Ratio', 'Max Ratio' ]
-		}
+			tooltip: {
+				x : {
+					formatter: timeFormatter
+				}
+			}
+		},
+		series : function() {
+			return [ {
+						name : 'User sessions',
+						data : serieToApex("isTypeOpen:sum", vueData.sessionStats, {fill: 0})
+					}
+				];
+		} 
+	};
+	
+	VUiExtensions.dataX.apexCharts.chartMessages = {
+		options : {
+			chart : {
+				id : 'vuechart-example-2',
+				zoom: {
+					enabled: false
+				}
+			},
+			dataLabels: {
+                enabled: false
+            },
+			xaxis : {
+				type: 'datetime'
+			},
+			tooltip: {
+				x : {
+					formatter: timeFormatter
+				}
+			},
+			colors : ['#2E93fA', '#FF2200'],
+			stroke: {
+				curve: 'smooth'
+			},
+		},
+		series : function() {
+			return [ {
+						name : 'User actions',
+						data : serieToApex("name:count", vueData.requestsStats, {fill: 0})
+					},
+					{
+						name : 'Messages not understood',
+						data : serieToApex("isFallback:sum", vueData.requestsStats, {fill: 0})
+					} 
+				];
+		} 
+	};
+	
+	function serieToApex(serieName, dataIn, options) {
+		let ret = [];
+		dataIn.timedDataSeries.forEach(e => {
+			let value = e.values[serieName];
+			let valueResolved;
+			if (options !== undefined && options.fill !== undefined && (value === null || value === undefined)) {
+				valueResolved = options.fill;
+			} else if (options !== undefined && options.transform !== undefined) {
+				valueResolved = options.transform(value);
+			} else {
+				valueResolved = value;
+			}
+			ret.push([(e.time.epochSecond || e.time.seconds)* 1000 , valueResolved]);
+		});
+		return ret;
 	}
+	// "statsRequests" : {"seriesNames":["name:count","isFallback:mean"],"timedDataSeries":[{"time":{"epochSecond":1574726400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574812800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574899200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574985600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575072000,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575158400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575244800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575331200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575417600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575504000,"nano":0},"values":{"isFallback:mean":0.16666666666666666,"name:count":7.0}},{"time":{"epochSecond":1575590400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}}]}
+
+	
 </script>
 </head>
 
 <body>
+	
 	<section layout:fragment="content">
-		<apexchart width="500" type="bar"
-			:options="dataX.apexCharts.testChart.options"
-			:series="dataX.apexCharts.testChart.series"></apexchart>
+	
+		<vu:include-data-primitive key="sessionStats" />
+		<vu:include-data-primitive key="requestsStats" />
+		
+		<q-toolbar class="bg-secondary text-white q-my-md shadow-2">
+<!-- 			<vu:select label="Chatbot selection" > -->
+			Soon, Chatbot selection
 			
-		<apexchart width="500" type="radialBar"
-			:options="dataX.apexCharts.testChart2.options"
-			:series="dataX.apexCharts.testChart2.series"></apexchart>
+			<q-space></q-space>
+					
+			<q-btn-toggle v-model="dataX.timeOption"
+							toggle-color="primary"
+							:options="[
+									{label: 'Day', value: 'DAY'},
+									{label: 'Week', value: 'WEEK'},
+									{label: 'Month', value: 'MONTH'},
+									{label: 'Year', value: 'YEAR'}
+								]"
+							@input='VUiPage.httpPostAjax("_updateStats", {timeOption:dataX.timeOption})'
+			></q-btn-toggle>
+			
+			
+		</q-toolbar>
+		
+		<div class="row wrap justify-start q-col-gutter-md">
+		
+			<div class="col-xl-4 col-md-6 col-xs-12"> 
+				<q-card>
+					<q-card-section class="text-h6 bg-secondary text-white">Chatbot sessions</q-card-section>
+					<q-card-section class="row justify-center items-center">
+						<apexchart width="100%" height="250" type="area"
+							:options="dataX.apexCharts.chartSession.options"
+							:series="dataX.apexCharts.chartSession.series()"></apexchart>
+					</q-card-section>
+				</q-card>
+			</div>
+			
+			<div class="col-xl-4 col-md-6 col-xs-12"> 
+				<q-card>
+					<q-card-section class="text-h6 bg-secondary text-white">Chatbot messages</q-card-section>
+					<q-card-section class="row justify-center items-center">
+						<apexchart width="100%" height="250" type="line"
+							:options="dataX.apexCharts.chartMessages.options"
+							:series="dataX.apexCharts.chartMessages.series()"></apexchart>
+					</q-card-section>
+				</q-card>
+			</div>
+		</div>
+			
 	</section>
 
 </body>
