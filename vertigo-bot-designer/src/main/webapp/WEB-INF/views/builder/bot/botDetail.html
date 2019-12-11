@@ -8,6 +8,24 @@
 	
 	<head>
 		<title>Bot detail</title>
+		
+		<script th:inline="javascript">
+			function deleteNode() {
+				VUiPage.$q.dialog({
+			        title: 'Confirm',
+			        message: 'Do you want to delete node ' + vueData.nodeEdit.name,
+					ok: {
+						label: "Delete",
+						color: "red"
+					},
+					cancel: {
+						label: "Cancel"
+					}
+			    }).onOk(() => {
+			    	VUiPage.httpPostAjax('_deleteNode', {'nodId': vueData.nodeEdit.nodId}, {onSuccess: VUiPage.$refs.nodeEdit.hide})
+			    })
+			}
+		</script>
 	</head>
 	
 	<body>
@@ -40,15 +58,67 @@
 				<vu:text-field object="default" field="text" label="Fallback message"/>
 			</vu:block>
 			
-			<vu:block id="nodes" title="Nodes">
-				<div>Coming soon !</div>
-			</vu:block>
+			<!--/* "delete vueData.nodeEdit.__index" ne sera plus nécessaire avec Vertigo 3.0 */-->
 			
+			<vu:include-data object="nodeNew" field="name" />
+			<vu:include-data object="nodeNew" field="url" />
+			<vu:include-data object="nodeNew" field="color" />
 			
-			<q-page-sticky position="bottom-right">
-				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
-			</q-page-sticky>
+			<vu:table id="nodes" list="nodeList" title="Nodes" componentId="nodeList" rowsPerPage="10" autoColClass
+					  tr_@click.native="|vueData.nodeEdit = {...props.row}; delete vueData.nodeEdit.__index; $refs.nodeEdit.show()|" tr_class="nav">
+				<vu:slot name="top_right_slot">
+					<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" 
+					       @click="vueData.nodeEdit = {...vueData.nodeNew}; delete vueData.nodeEdit.__index; $refs.nodeEdit.show()"></q-btn>
+				</vu:slot>
+				
+				<vu:include-data object="nodeList" field="nodId" />
+				<vu:include-data object="nodeList" field="color" />
+				
+				<vu:column field="name" label="Node">
+					<q-chip :style="'background: '+ props.row.color" text-color="white">
+						{{props.row.name}}
+					</q-chip>
+				</vu:column>
+				<vu:column field="url" />
+			</vu:table>
+			
+			<q-dialog ref="nodeEdit" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.nodeEdit">
+				<q-card>
+					<q-card-section>
+						<div class="text-h6">Node edition</div>
+					</q-card-section>
+					
+					<q-card-section style="height: 300px; width: 400px;">
+						<vu:text-field object="nodeEdit" field="name"/>
+						
+						<vu:text-field object="nodeEdit" field="url"/>
+						
+						<q-btn push :style="'background: '+ vueData.nodeEdit.color" text-color="white" label="Color">
+							<q-popup-proxy ref="colorPopup" width="1000">
+								<q-color
+									v-model="vueData.nodeEdit.color"
+									no-header
+									no-footer
+									default-view="palette"
+									@change="$refs.colorPopup.hide()"
+									:palette="[
+											'#7e57c2', '#ab47bc', '#b2028a', '#6a1b9a', '#283593',
+											'#1565c0', '#00838f', '#00695c', '#2e7d32', '#9e9d24',
+											'#9ccc65', '#f9a825', '#ef6c00', '#d84315', '#ef5350',
+											'#c62828', '#795548', '#5d4037', '#546e7a', '#424242'
+										]"></q-color>
+							</q-popup-proxy>
+						</q-btn>
+					</q-card-section>
+				
+					<q-card-actions align="right">
+						<q-btn label="Save" color="primary" @click="httpPostAjax('_saveNode', vueDataParams(['nodeEdit']), {onSuccess: $refs.nodeEdit.hide})" ></q-btn>
+						<q-btn v-if="vueData.nodeEdit.nodId" label="Delete" color="red" @click="deleteNode" ></q-btn>
+					</q-card-actions>
+				</q-card>
+			</q-dialog>
 			
 		</section>
+		
 	</body>
 </html>

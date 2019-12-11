@@ -236,4 +236,22 @@ public class DesignerServices implements Component {
 				Criterions.isEqualTo(ChatbotNodeFields.botId, botId)
 				.and(Criterions.isEqualTo(ChatbotNodeFields.isDev, true)));
 	}
+
+	public void saveNode(final ChatbotNode node) {
+		if (node.getNodId() != null) {
+			// enforce previous values
+			final ChatbotNode previousValues = chatbotNodeDAO.get(node.getNodId());
+
+			node.setBotId(previousValues.getBotId());
+			node.setTraId(previousValues.getTraId());
+		}
+
+		node.setIsDev(true); // TODO: attribut sûrement à supprimer
+
+		chatbotNodeDAO.save(node);
+	}
+
+	public void deleteNode(final Long nodId) {
+		chatbotNodeDAO.delete(nodId);
+	}
 }

@@ -182,7 +182,7 @@
 					<vu:include-data object="nodeList" field="name" />
 					<vu:include-data object="nodeList" field="color" />
 					
-					<q-chip v-for="node in vueData.nodeList" v-if="node.traId === props.row.traId" :color="node.color" text-color="white" icon="cloud_done">
+					<q-chip v-for="node in vueData.nodeList" v-if="node.traId === props.row.traId" :style="'background: '+ node.color" text-color="white" icon="cloud_done">
 						{{node.name}}
 					</q-chip>
 				</vu:column>
