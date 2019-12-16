@@ -96,7 +96,7 @@
 						
 						<vu:text-field object="nodeEdit" field="url"/>
 						
-						<q-btn push :style="'background: '+ vueData.nodeEdit.color" text-color="white" label="Color">
+						<q-btn push :style="'background: '+ vueData.nodeEdit.color" class="q-my-sm" text-color="white" label="Color">
 							<q-popup-proxy ref="colorPopup" width="1000">
 								<q-color
 									v-model="vueData.nodeEdit.color"

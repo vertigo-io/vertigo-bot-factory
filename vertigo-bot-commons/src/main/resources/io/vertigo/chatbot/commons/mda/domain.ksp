@@ -76,6 +76,7 @@ create Domain DoYesNo {
 create Domain DoUrl {
 	dataType : String
 	formatter : FmtDefault
+	constraint : [CkUrl]
 	storeType : "TEXT"
 }
 
@@ -140,11 +141,17 @@ create Formatter FmtDateHeure {
 /**************************************************************************************************/
 
 create Constraint CkMaxLength20 {
-	className: "io.vertigo.dynamox.domain.constraint.ConstraintStringLength"
+	className : "io.vertigo.dynamox.domain.constraint.ConstraintStringLength"
 	args :"20"
 }
 
 create Constraint CkMaxLength100 {
-	className: "io.vertigo.dynamox.domain.constraint.ConstraintStringLength"
+	className : "io.vertigo.dynamox.domain.constraint.ConstraintStringLength"
 	args :"100"
+}
+
+create Constraint CkUrl {
+	className : "io.vertigo.dynamox.domain.constraint.ConstraintRegex"
+	args : "http(s)?://.*"
+	msg : "Malformed URL"
 }
