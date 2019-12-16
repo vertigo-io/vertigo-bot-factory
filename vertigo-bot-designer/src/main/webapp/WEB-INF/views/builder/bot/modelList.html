@@ -281,7 +281,7 @@
 
 						<q-chip v-for="node in vueData.nodeList" clickable :selected="isSelected(node)" @update:selected="state => selectNode(node, state)"
 							    icon="panorama_fish_eye" :style="'background: '+ node.color" text-color="white">
-							<q-badge color="primary" floating style="top: -8px" v-if="node.traId !== null">V {{getVersionNumberByTrainingId(node.traId)}}</q-badge>
+							<q-badge color="primary" floating style="top: -8px" v-if="node.traId !== undefined && node.traId !== null">V {{getVersionNumberByTrainingId(node.traId)}}</q-badge>
 							{{node.name}}
 						</q-chip>
 					</q-card-section>

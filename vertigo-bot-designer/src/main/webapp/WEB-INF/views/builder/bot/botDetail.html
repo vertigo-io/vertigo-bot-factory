@@ -74,13 +74,13 @@
 				<vu:include-data object="nodeList" field="nodId" />
 				<vu:include-data object="nodeList" field="color" />
 				
+				<vu:column field="isDev" label="Train" class="col_Small">
+					<q-icon name="build" size="2rem" v-if="props.row.isDev"></q-icon>
+				</vu:column>
 				<vu:column field="name" label="Node">
 					<q-chip :style="'background: '+ props.row.color" text-color="white">
 						{{props.row.name}}
 					</q-chip>
-				</vu:column>
-				<vu:column field="isDev" label="Train">
-					<q-icon name="build" size="2rem" v-if="props.row.isDev"></q-icon>
 				</vu:column>
 				<vu:column field="url"/>
 			</vu:table>
