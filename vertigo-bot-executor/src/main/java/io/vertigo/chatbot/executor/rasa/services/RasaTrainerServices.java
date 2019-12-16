@@ -5,13 +5,14 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
-import io.vertigo.chatbot.executor.rasa.DesignerJaxrsProvider;
 import io.vertigo.chatbot.executor.rasa.bridge.TrainerRasaHandler;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.domain.model.DtList;
@@ -24,7 +25,7 @@ public class RasaTrainerServices implements Component {
 	private TrainerRasaHandler trainerRasaHandler;
 
 	@Inject
-	private DesignerJaxrsProvider designerJaxrsProvider;
+	private JaxrsProvider jaxrsProvider;
 
 
 	public void trainModel(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final Long trainingId, final Long modelId) {
@@ -43,7 +44,9 @@ public class RasaTrainerServices implements Component {
 			final Map<String, Object> requestData = new HashMap<>();
 			requestData.put("executorTrainingCallback", executorTrainingCallback);
 
-			designerJaxrsProvider.getWebTarget().path("/trainingCallback")
+			final WebTarget designerTarget = jaxrsProvider.getWebTarget("http://localhost:8080/vertigo-bot-designer/api/"); // TODO rendre dynamique
+
+			designerTarget.path("/trainingCallback")
 			.request(MediaType.APPLICATION_JSON)
 			.post(Entity.json(requestData));
 		});

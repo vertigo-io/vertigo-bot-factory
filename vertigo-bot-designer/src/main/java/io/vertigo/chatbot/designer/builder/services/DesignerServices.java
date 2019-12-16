@@ -15,6 +15,7 @@ import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
+import io.vertigo.chatbot.designer.builder.BuilderPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
@@ -54,6 +55,9 @@ public class DesignerServices implements Component {
 
 	@Inject
 	private ChatbotNodeDAO chatbotNodeDAO;
+
+	@Inject
+	private BuilderPAO builderPAO;
 
 	public DtList<Chatbot> getAllChatbots() {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
@@ -246,7 +250,10 @@ public class DesignerServices implements Component {
 			node.setTraId(previousValues.getTraId());
 		}
 
-		node.setIsDev(true); // TODO: attribut sûrement à supprimer
+		if (Boolean.TRUE.equals(node.getIsDev())) {
+			// enforce only one dev node
+			builderPAO.resetDevNode(node.getBotId());
+		}
 
 		chatbotNodeDAO.save(node);
 	}

@@ -10,6 +10,8 @@
 		<title>Models</title>
 		
 		<script th:inline="javascript">
+			// ## training ##
+			
 			var interval;
 			VUiExtensions.dataX.loadingRunner = false;
 			VUiExtensions.dataX.loadingModels = false;
@@ -88,21 +90,84 @@
 			    })
 			}
 			
+			// ## model management ##
+			
+			VUiExtensions.dataX.loadModel = {
+				currentTraining: null,
+				selectedNode: null
+			};
+			
 			function loadTraining(training) {
-				VUiPage.$q.dialog({
-			        title: 'Confirm',
-			        message: 'Do you want to load training version ' + training.versionNumber,
-					ok: {
-						label: "Load",
-						color: "green"
-					},
-					cancel: {
-						label: "Cancel"
-					}
-			    }).onOk(() => {
-					VUiPage.httpPostAjax("_loadTraining", {'traId':training.traId});
-			    })
+				if (false) {
+					// only one node
+					VUiPage.$q.dialog({
+				        title: 'Confirm',
+				        message: 'Do you want to load training version ' + training.versionNumber,
+						ok: {
+							label: "Load",
+							color: "green"
+						},
+						cancel: {
+							label: "Cancel"
+						}
+				    }).onOk(() => {
+						VUiPage.httpPostAjax("_loadTraining", {'traId':training.traId});
+				    })
+				} else {
+					// node selection
+					VUiExtensions.dataX.loadModel = {
+						currentTraining: training,
+						selectedNode: null
+					};
+					VUiPage.$refs.loadModelDialog.show();
+				}
 			}
+			
+			function getTrainingById(id) {
+				if (id == null) return null;
+				
+				let result = vueData.trainingList.filter(t => t.traId == id);
+				return result.size === 0 ? null : result[0];
+			}
+			
+			function getVersionNumberByTrainingId(id) {
+				let training = getTrainingById(id);
+				return training === null ? null : training.versionNumber;
+			}
+			
+			function isSelected(node) {
+				return VUiExtensions.dataX.loadModel.selectedNode && VUiExtensions.dataX.loadModel.selectedNode.nodId === node.nodId;
+			}
+			
+			function selectNode(node, state) {
+				if (state) {
+					VUiExtensions.dataX.loadModel.selectedNode = node;
+				} else {
+					VUiExtensions.dataX.loadModel.selectedNode = null;
+				}
+			}
+			
+			function getCurrentTrainingVersionNumber() {
+				return VUiExtensions.dataX.loadModel.currentTraining && VUiExtensions.dataX.loadModel.currentTraining.versionNumber;
+			}
+			function getCurrentSelectedNodeVersionNumber() {
+				return VUiExtensions.dataX.loadModel.selectedNode && getVersionNumberByTrainingId(VUiExtensions.dataX.loadModel.selectedNode.traId)
+			}
+			function getMigrationAdjective() {
+				let currentTrainingVersionNumber = getCurrentTrainingVersionNumber();
+				let currentSelectedNodeVersionNumber = getCurrentSelectedNodeVersionNumber();
+				
+				if (currentSelectedNodeVersionNumber === null) {
+					return "";
+				} else if (currentTrainingVersionNumber > currentSelectedNodeVersionNumber) {
+					return "<span class='text-green'>newer</span>";
+				} else if (currentTrainingVersionNumber < currentSelectedNodeVersionNumber) {
+					return "<span class='text-red'>older</span>";
+				} else if (currentTrainingVersionNumber === currentSelectedNodeVersionNumber){
+					return "<span class='text-orange'>same</span>";
+				}
+			}
+			
 		</script>
 	</head>
 	
@@ -142,7 +207,7 @@
 				</vu:slot>
 				
 				<vu:include-data object="trainingList" field="traId" />
-				<vu:include-data object="trainingList" field="duration" />
+				<vu:include-data object="trainingList" field="endTime" />
 				
 				<vu:column field="status" label="Result" class="col_Small">
 					<q-icon name="check" color="green" size="2rem" v-if="props.row.status == 'OK'"></q-icon>
@@ -150,14 +215,14 @@
 					<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="props.row.status == 'TRAINING'"></q-spinner-gears>
 				</vu:column>
 				<vu:column field="versionNumber" class="col_Small"/>
-				<vu:column field="startTime" />
-				<vu:column field="endTime">
+				<vu:column field="startTime" label="Date" />
+				<vu:column field="duration">
 					<vu:content v-if="props.row.endTime">
-						{{ props.row.endTime }}
+						{{ props.row.duration }}
 						<q-tooltip content-style="font-size: 13px"
 								   anchor="center right" self="center left"
 								   transition-show="jump-right" transition-hide="jump-left">
-							Duration : {{ props.row.duration }}
+							End time : {{ props.row.endTime }}
 						</q-tooltip>
 					</vu:content>
 				</vu:column>
@@ -178,6 +243,7 @@
 							@click="dataX.modalLog.col = 'warnings'; dataX.modalLog.row = props.row; dataX.modalLog.show = true"></q-btn>
 				</vu:column>
 				<vu:column name="node" label="Deployed on">
+					<vu:include-data object="nodeList" field="nodId" />
 					<vu:include-data object="nodeList" field="traId" />
 					<vu:include-data object="nodeList" field="name" />
 					<vu:include-data object="nodeList" field="color" />
@@ -203,6 +269,36 @@
     				</q-card-section>
       			</q-card>	
 			</q-dialog>
+			
+			<q-dialog ref="loadModelDialog">
+				<q-card style="max-width: 50vw;">
+					<q-card-section>
+						<div class="text-h6">Deploying version {{getCurrentTrainingVersionNumber()}}</div>
+					</q-card-section>
+					
+					<q-card-section>
+						<p>Select deployment node :</p>
+
+						<q-chip v-for="node in vueData.nodeList" clickable :selected="isSelected(node)" @update:selected="state => selectNode(node, state)"
+							    icon="panorama_fish_eye" :style="'background: '+ node.color" text-color="white">
+							<q-badge color="primary" floating style="top: -8px" v-if="node.traId !== null">V {{getVersionNumberByTrainingId(node.traId)}}</q-badge>
+							{{node.name}}
+						</q-chip>
+					</q-card-section>
+					
+					<q-card-section>
+						<div v-if="!dataX.loadModel.selectedNode" class="text-italic">Please select a deployment node</div>
+						<div v-if="dataX.loadModel.selectedNode">Deploy <span v-html="getMigrationAdjective()"></span> model on node <span class="text-italic" :style="'color: '+ dataX.loadModel.selectedNode.color">"{{dataX.loadModel.selectedNode.name}}"</span></div>
+					</q-card-section>
+					
+					<q-card-actions align="around">
+						<q-btn label="Cancel" color="red" v-close-popup></q-btn>
+						<q-btn label="Load" color="green" :disable="!dataX.loadModel.selectedNode" @click="httpPostAjax('_loadTraining', {'traId': dataX.loadModel.currentTraining.traId, nodId: dataX.loadModel.selectedNode.nodId}, {onSuccess: $refs.loadModelDialog.hide})" ></q-btn>
+					</q-card-actions>
+				</q-card>
+			</q-dialog>
+			
+			
 			
 			<vu:block id="train" title="Training">
 				<vu:slot name="actions_slot">

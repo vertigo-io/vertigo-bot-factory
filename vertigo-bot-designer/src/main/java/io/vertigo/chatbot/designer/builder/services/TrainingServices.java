@@ -17,6 +17,7 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
+import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
@@ -34,7 +35,6 @@ import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
-import io.vertigo.chatbot.designer.commons.webservices.ExecutorJaxrsProvider;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
@@ -45,6 +45,7 @@ import io.vertigo.dynamo.domain.model.FileInfoURI;
 import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.dynamo.impl.file.model.StreamFile;
+import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.lang.VUserException;
 
@@ -73,12 +74,13 @@ public class TrainingServices implements Component {
 	private ChatbotNodeDAO chatbotNodeDAO;
 
 	@Inject
-	private ExecutorJaxrsProvider executorJaxrsProvider;
+	private JaxrsProvider jaxrsProvider;
 
 	public Training trainAgent(final Long botId) {
 		builderPAO.cleanOldTrainings(botId);
 
 		final Long versionNumber = builderPAO.getNextModelNumber(botId);
+		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId);
 
 		final Training training = new Training();
 		training.setBotId(botId);
@@ -95,7 +97,7 @@ public class TrainingServices implements Component {
 		requestData.put("trainingId", training.getTraId());
 		requestData.put("modelId", versionNumber);
 
-		final Response response = executorJaxrsProvider.getWebTarget().path("/api/chatbot/train")
+		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/train")
 				.request(MediaType.APPLICATION_JSON)
 				.post(Entity.json(requestData));
 
@@ -113,15 +115,19 @@ public class TrainingServices implements Component {
 	}
 
 
-	public void stopAgent() {
-		executorJaxrsProvider.getWebTarget().path("/api/chatbot/train")
+	public void stopAgent(final Long botId) {
+		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId);
+
+		jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/train")
 		.request(MediaType.APPLICATION_JSON)
 		.delete();
 
 	}
 
-	public TrainerInfo getTrainingState() {
-		final Response response = executorJaxrsProvider.getWebTarget().path("/api/chatbot/trainStatus")
+	public TrainerInfo getTrainingState(final Long botId) {
+		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId);
+
+		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/trainStatus")
 				.request(MediaType.APPLICATION_JSON)
 				.get();
 
@@ -134,8 +140,10 @@ public class TrainingServices implements Component {
 		return response.readEntity(TrainerInfo.class);
 	}
 
-	public RunnerInfo getRunnerState() {
-		final Response response =  executorJaxrsProvider.getWebTarget().path("/api/chatbot/runnerStatus")
+	public RunnerInfo getRunnerState(final Long botId) {
+		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId);
+
+		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/runnerStatus")
 				.request(MediaType.APPLICATION_JSON)
 				.get();
 
@@ -190,20 +198,25 @@ public class TrainingServices implements Component {
 		return retour;
 	}
 
-	public void loadModel(final Long traId) {
+	public void loadModel(final Long traId, final Long nodId) {
+		Assertion.checkNotNull(traId);
+		Assertion.checkNotNull(nodId);
+
 		final Training training = getTraining(traId);
+		final ChatbotNode node = chatbotNodeDAO.get(nodId);
+
+		Assertion.checkState(training.getBotId().equals(node.getBotId()), "Incohérence des paramètres");
 
 		final VFile model = fileServices.getFile(training.getFilIdModel());
 
-		doLoadModel(model);
+		doLoadModel(model, node.getUrl());
 
 		// update node-training link
-		final ChatbotNode node = designerServices.getDevNodeByBotId(training.getBotId());
 		node.setTraId(traId);
 		chatbotNodeDAO.save(node);
 	}
 
-	private void doLoadModel(final VFile model) {
+	private void doLoadModel(final VFile model, final String url) {
 		final StreamDataBodyPart bodyPart;
 		try {
 			bodyPart = new StreamDataBodyPart("model", model.createInputStream(), model.getFileName());
@@ -214,7 +227,7 @@ public class TrainingServices implements Component {
 		final Response response;
 		try (final FormDataMultiPart fdmp = new FormDataMultiPart();
 				final MultiPart multiPart = fdmp.bodyPart(bodyPart);) {
-			response = executorJaxrsProvider.getWebTarget().path("/api/chatbot/model")
+			response = jaxrsProvider.getWebTarget(url).path("/api/chatbot/model")
 					.request(MediaType.APPLICATION_JSON)
 					.put(Entity.entity(multiPart, multiPart.getMediaType()));
 
@@ -249,10 +262,12 @@ public class TrainingServices implements Component {
 	public void trainingCallback(final ExecutorTrainingCallback callback) {
 		final Training training = getTraining(callback.getTrainingId());
 
+		final ChatbotNode node = designerServices.getDevNodeByBotId(training.getBotId());
+
 		// TODO : Limiter au dernier en cours en mode "trop tard, je refuse ton callback" ?
 
 		if (Boolean.TRUE.equals(callback.getSuccess())) {
-			final VFile model = fetchModel(training.getVersionNumber());
+			final VFile model = fetchModel(node, training.getVersionNumber());
 			final FileInfoURI fileInfoUri = fileServices.saveFile(model);
 			training.setFilIdModel((Long) fileInfoUri.getKey());
 
@@ -270,14 +285,14 @@ public class TrainingServices implements Component {
 	}
 
 
-	private VFile fetchModel(final Long id) {
-		final Response response = executorJaxrsProvider.getWebTarget().path("/api/chatbot/model/"+id)
+	private VFile fetchModel(final ChatbotNode node, final Long modelVersion) {
+		final Response response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/model/"+modelVersion)
 				.request(MediaType.APPLICATION_OCTET_STREAM)
 				.get();
 
 		response.bufferEntity();
 
-		return new StreamFile(id + ".tar.gz", response.getHeaderString("Content-Type"), Instant.now(), response.getLength(), () -> response.readEntity(InputStream.class));
+		return new StreamFile(modelVersion + ".tar.gz", response.getHeaderString("Content-Type"), Instant.now(), response.getLength(), () -> response.readEntity(InputStream.class));
 	}
 
 }

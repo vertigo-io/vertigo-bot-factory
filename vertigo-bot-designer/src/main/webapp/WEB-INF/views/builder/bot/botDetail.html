@@ -79,7 +79,10 @@
 						{{props.row.name}}
 					</q-chip>
 				</vu:column>
-				<vu:column field="url" />
+				<vu:column field="isDev" label="Train">
+					<q-icon name="build" size="2rem" v-if="props.row.isDev"></q-icon>
+				</vu:column>
+				<vu:column field="url"/>
 			</vu:table>
 			
 			<q-dialog ref="nodeEdit" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.nodeEdit">
@@ -109,11 +112,15 @@
 										]"></q-color>
 							</q-popup-proxy>
 						</q-btn>
+						
+						<p>
+							<q-toggle label="Use this node for training" v-model="vueData.nodeEdit.isDev" ></q-toggle>
+						</p>
 					</q-card-section>
 				
-					<q-card-actions align="right">
-						<q-btn label="Save" color="primary" @click="httpPostAjax('_saveNode', vueDataParams(['nodeEdit']), {onSuccess: $refs.nodeEdit.hide})" ></q-btn>
+					<q-card-actions align="around">
 						<q-btn v-if="vueData.nodeEdit.nodId" label="Delete" color="red" @click="deleteNode" ></q-btn>
+						<q-btn label="Save" color="primary" @click="httpPostAjax('_saveNode', vueDataParams(['nodeEdit']), {onSuccess: $refs.nodeEdit.hide})" ></q-btn>
 					</q-card-actions>
 				</q-card>
 			</q-dialog>

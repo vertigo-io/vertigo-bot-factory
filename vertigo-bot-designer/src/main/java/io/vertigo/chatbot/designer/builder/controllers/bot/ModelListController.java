@@ -50,8 +50,8 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 		viewContext.publishRef(autoscrollKey, Boolean.TRUE);
 
-		refreshRunnerState(viewContext);
-		refreshTrainerState(viewContext);
+		refreshRunnerState(viewContext, bot);
+		refreshTrainerState(viewContext, bot);
 		refreshTrainings(viewContext, bot);
 
 		toModeReadOnly();
@@ -59,16 +59,16 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 
 	@PostMapping("/_refreshRunner")
-	public ViewContext refreshRunnerState(final ViewContext viewContext) {
-		final RunnerInfo state = trainingServices.getRunnerState();
+	public ViewContext refreshRunnerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
+		final RunnerInfo state = trainingServices.getRunnerState(bot.getBotId());
 		viewContext.publishDto(runnerStateKey, state);
 
 		return viewContext;
 	}
 
 	@PostMapping("/_refreshTrainer")
-	public ViewContext refreshTrainerState(final ViewContext viewContext) {
-		final TrainerInfo state = trainingServices.getTrainingState();
+	public ViewContext refreshTrainerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
+		final TrainerInfo state = trainingServices.getTrainingState(bot.getBotId());
 		viewContext.publishDto(trainerStateKey, state);
 
 		return viewContext;
@@ -107,8 +107,8 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 
 	@PostMapping("/_stop")
-	public ViewContext doStop(final ViewContext viewContext) {
-		trainingServices.stopAgent();
+	public ViewContext doStop(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
+		trainingServices.stopAgent(bot.getBotId());
 
 		return viewContext;
 	}
@@ -116,11 +116,12 @@ public class ModelListController extends AbstractVSpringMvcController {
 	@PostMapping("/_loadTraining")
 	public ViewContext doLoadTraining(final ViewContext viewContext,
 			@RequestParam("traId") final Long traId,
+			@RequestParam("nodId") final Long nodId,
 			@ViewAttribute("bot") final Chatbot bot) {
 
-		trainingServices.loadModel(traId);
+		trainingServices.loadModel(traId, nodId);
 
-		refreshRunnerState(viewContext);
+		refreshRunnerState(viewContext, bot);
 		refreshTrainings(viewContext, bot);
 
 		return viewContext;

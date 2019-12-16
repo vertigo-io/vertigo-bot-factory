@@ -65,6 +65,17 @@ public final class BuilderPAO implements StoreServices {
 				.getResult();
 	}
 
+	/**
+	 * Execute la tache TkResetDevNode.
+	 * @param botId Long 
+	*/
+	public void resetDevNode(final Long botId) {
+		final Task task = createTaskBuilder("TkResetDevNode")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
 	private TaskManager getTaskManager() {
 		return taskManager;
 	}

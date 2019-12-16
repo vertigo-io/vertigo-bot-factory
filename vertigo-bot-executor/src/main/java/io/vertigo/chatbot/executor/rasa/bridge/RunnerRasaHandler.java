@@ -7,13 +7,14 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 
+import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
-import io.vertigo.chatbot.executor.rasa.RasaJaxrsProvider;
 import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.file.model.VFile;
@@ -25,14 +26,17 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 	private static final String MODEL_DIR = "models/";
 
 	@Inject
-	private RasaJaxrsProvider rasaJaxrsProvider;
+	private JaxrsProvider jaxrsProvider;
+
+	private WebTarget rasaTarget;;
 
 	private Process rasaProcess;
 
 	@Override
 	public void start() {
-		LOGGER.info("Lancement de Rasa");
+		rasaTarget = jaxrsProvider.getWebTarget("http://localhost:5005/");
 
+		LOGGER.info("Lancement de Rasa");
 		rasaProcess = execRasa("run", "--enable-api");
 	}
 
@@ -62,7 +66,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 			return "Service down";
 		}
 
-		final Response modelResponse = rasaJaxrsProvider.getWebTarget().path("/status")
+		final Response modelResponse = rasaTarget.path("/status")
 				.request(MediaType.APPLICATION_JSON)
 				.get();
 
@@ -88,7 +92,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 		}
 
 		@SuppressWarnings("unchecked")
-		final Map<String, String> wsVersion = rasaJaxrsProvider.getWebTarget().path("/version")
+		final Map<String, String> wsVersion = rasaTarget.path("/version")
 		.request(MediaType.APPLICATION_JSON)
 		.get(Map.class);
 
@@ -120,7 +124,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 		final Map<String, String> param = new HashMap<>();
 		param.put("model_file", relativeModelFilePath);
 
-		final Response response = rasaJaxrsProvider.getWebTarget().path("/model")
+		final Response response = rasaTarget.path("/model")
 				.request(MediaType.APPLICATION_JSON)
 				.put(Entity.json(param));
 
