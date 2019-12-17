@@ -37,7 +37,7 @@ public class RasaRunnerServices implements Component, Activeable {
 
 	@Override
 	public void start() {
-		rasaURL = paramManager.getParam("rasaUrl") + "/webhooks/rest/webhook";
+		rasaURL = paramManager.getParam("rasaUrl").getValueAsString() + "/webhooks/rest/webhook";
 	}
 
 	@Override

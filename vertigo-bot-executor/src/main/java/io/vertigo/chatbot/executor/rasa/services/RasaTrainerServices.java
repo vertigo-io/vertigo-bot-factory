@@ -37,7 +37,7 @@ public class RasaTrainerServices implements Component, Activeable {
 
 	@Override
 	public void start() {
-		designerTarget = jaxrsProvider.getWebTarget(paramManager.getParam("designerUrl") + "/api/");
+		designerTarget = jaxrsProvider.getWebTarget(paramManager.getParam("designerUrl").getValueAsString() + "/api/");
 	}
 
 	@Override
