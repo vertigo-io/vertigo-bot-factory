@@ -13,9 +13,27 @@
 		<param-value>/io/vertigo/chatbot/chatbot-executor.yaml</param-value>
 	</context-param>
 	
+	
+	<context-param>
+		<param-name>pythonPath</param-name>
+		<param-value>D:\DT\chatbot\factory\python</param-value>
+	</context-param>
+	<context-param>
+		<param-name>botPath</param-name>
+		<param-value>D:\DT\chatbot\factory\bot\</param-value>
+	</context-param>
 	<context-param>
 		<param-name>rasaUrl</param-name>
 		<param-value>http://localhost:5005</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>rabbitMq.queueName</param-name>
+		<param-value>rasa</param-value>
+	</context-param>
+	<context-param>
+		<param-name>rabbitMq.consumerTag</param-name>
+		<param-value>consumerTag</param-value>
 	</context-param>
 
 	<filter>

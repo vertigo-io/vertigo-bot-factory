@@ -76,7 +76,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 	}
 
 	private Long getRasaLoadedModel() {
-		final File[] modelFiles = new File(BOT_PATH + MODEL_DIR).listFiles();
+		final File[] modelFiles = new File(getBotPath() + MODEL_DIR).listFiles();
 
 		if (modelFiles.length != 1) {
 			return -1L;
@@ -104,7 +104,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 
 		// clean old model
 		try {
-			FileUtils.cleanDirectory(new File(BOT_PATH + MODEL_DIR));
+			FileUtils.cleanDirectory(new File(getBotPath() + MODEL_DIR));
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Impossible de charger le modèle");
 		}
@@ -112,7 +112,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 		// persist to disk
 		final String relativeModelFilePath = MODEL_DIR + model.getFileName();
 
-		final File targetFile = new File(BOT_PATH + relativeModelFilePath);
+		final File targetFile = new File(getBotPath() + relativeModelFilePath);
 
 		try {
 			FileUtils.copyInputStreamToFile(model.createInputStream(), targetFile);

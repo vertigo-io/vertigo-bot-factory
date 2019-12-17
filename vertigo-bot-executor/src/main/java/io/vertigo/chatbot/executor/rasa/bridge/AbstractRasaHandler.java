@@ -10,18 +10,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javax.inject.Inject;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.vertigo.core.component.Activeable;
+import io.vertigo.core.param.ParamManager;
 import io.vertigo.lang.VSystemException;
 
-public abstract class AbstractRasaHandler {
-
-	protected static final String PYTHON_PATH = "D:\\DT\\chatbot\\factory\\python";
-	protected static final String BOT_PATH = "D:\\DT\\chatbot\\factory\\bot\\";
+public abstract class AbstractRasaHandler implements Activeable {
 
 	protected static final Logger LOGGER = LogManager.getLogger("rasa");
+
+	@Inject
+	private ParamManager paramManager;
+
+	private String pythonPath;
+	private String botPath;
+
+	@Override
+	public void start() {
+		pythonPath = paramManager.getParam("pythonPath").getValueAsString();
+		botPath = paramManager.getParam("botPath").getValueAsString();
+	}
 
 	protected Process execRasa(final String command, final String... additionalArgs) {
 		return execRasa(command, null, null, additionalArgs);
@@ -30,7 +43,7 @@ public abstract class AbstractRasaHandler {
 	protected Process execRasa(final String command, final Consumer<String> logConsumer, final Runnable endCallback, final String... additionalArgs) {
 		final List<String> rasaCommand = new ArrayList<>();
 
-		rasaCommand.add(PYTHON_PATH + "/Scripts/rasa");
+		rasaCommand.add(pythonPath + "/Scripts/rasa");
 		rasaCommand.add(command);
 		Collections.addAll(rasaCommand, additionalArgs);
 
@@ -46,7 +59,7 @@ public abstract class AbstractRasaHandler {
 		}
 
 		final ProcessBuilder builder = new ProcessBuilder(rasaCommand)
-				.directory(new File(BOT_PATH))
+				.directory(new File(botPath))
 				.redirectErrorStream(true); // WTF, tout arrive dans la sortie d'erreur... Autant tout merger du coup
 
 		Process process;
@@ -86,6 +99,20 @@ public abstract class AbstractRasaHandler {
 		});
 
 		logWatcher.start();
+	}
+
+	/**
+	 * @return the pythonPath
+	 */
+	public String getPythonPath() {
+		return pythonPath;
+	}
+
+	/**
+	 * @return the botPath
+	 */
+	public String getBotPath() {
+		return botPath;
 	}
 
 }

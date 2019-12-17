@@ -32,13 +32,13 @@ import io.vertigo.commons.analytics.process.AProcess;
 import io.vertigo.commons.analytics.process.AProcessBuilder;
 import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
+import io.vertigo.core.param.ParamManager;
 import io.vertigo.lang.VSystemException;
 
-public class RasaRabbitmqConsumer implements Component, Activeable {
+public class RasaRabbitMqConsumer implements Component, Activeable {
 
 	protected static final Logger LOGGER = LogManager.getLogger("rasa");
 
-	private static final String QUEUE_NAME = "rasa";
 	private Connection conn;
 	private Channel channel;
 	private Gson gson;
@@ -46,8 +46,17 @@ public class RasaRabbitmqConsumer implements Component, Activeable {
 	@Inject
 	private AnalyticsManager analyticsManager;
 
+	@Inject
+	private ParamManager paramManager;
+
+	private String queueName;
+	private String consumerTag;
+
 	@Override
 	public void start() {
+		queueName = paramManager.getParam("rabbitMq.queueName").getValueAsString();
+		consumerTag = paramManager.getParam("rabbitMq.consumerTag").getValueAsString();
+
 		startGsonEngine();
 
 		startRabbitMqConsumer();
@@ -79,9 +88,9 @@ public class RasaRabbitmqConsumer implements Component, Activeable {
 			conn = factory.newConnection();
 			channel = conn.createChannel();
 
-			channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+			channel.queueDeclare(queueName, true, false, false, null);
 
-			channel.basicConsume(QUEUE_NAME, false, "consumerTag", new DefaultConsumer(channel) {
+			channel.basicConsume(queueName, false, consumerTag, new DefaultConsumer(channel) {
 				@Override
 				public void handleDelivery(final String consumerTag, final Envelope envelope,
 						final AMQP.BasicProperties properties, final byte[] body) throws IOException {

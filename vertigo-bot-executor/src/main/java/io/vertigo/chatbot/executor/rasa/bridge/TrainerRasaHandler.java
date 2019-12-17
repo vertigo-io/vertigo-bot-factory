@@ -210,7 +210,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	}
 
 	private void writeToRasaFile(final String content, final String relativePath) {
-		try (FileOutputStream outputStream = new FileOutputStream(BOT_PATH + "/" + relativePath)) {
+		try (FileOutputStream outputStream = new FileOutputStream(getBotPath() + "/" + relativePath)) {
 			outputStream.write(content.getBytes(StandardCharsets.UTF_8));
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Impossible d'écrire le fichier de configuration de Rasa");
@@ -230,7 +230,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	}
 
 	private Path getModelPath(final Long id) {
-		return Paths.get(BOT_PATH, TRAINING_MODEL_DIR, + id + ".tar.gz");
+		return Paths.get(getBotPath(), TRAINING_MODEL_DIR, + id + ".tar.gz");
 	}
 
 	public void stopTrain() {
