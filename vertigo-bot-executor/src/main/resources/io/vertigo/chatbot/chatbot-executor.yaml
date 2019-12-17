@@ -4,6 +4,7 @@ boot:
     locales: fr_FR
   plugins:
     - io.vertigo.core.plugins.resource.classpath.ClassPathResourceResolverPlugin: {}
+    - io.vertigo.vega.plugins.webservice.servlet.WebAppContextParamPlugin: {}
 modules:
   io.vertigo.commons.CommonsFeatures: # utilisation du module vertigo-commons
     features:

@@ -14,12 +14,14 @@ import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.executor.rasa.bridge.TrainerRasaHandler;
+import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
+import io.vertigo.core.param.ParamManager;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.VUserException;
 
-public class RasaTrainerServices implements Component {
+public class RasaTrainerServices implements Component, Activeable {
 
 	@Inject
 	private TrainerRasaHandler trainerRasaHandler;
@@ -27,6 +29,21 @@ public class RasaTrainerServices implements Component {
 	@Inject
 	private JaxrsProvider jaxrsProvider;
 
+	@Inject
+	private ParamManager paramManager;
+
+	private WebTarget designerTarget;
+
+
+	@Override
+	public void start() {
+		designerTarget = jaxrsProvider.getWebTarget(paramManager.getParam("designerUrl") + "/api/");
+	}
+
+	@Override
+	public void stop() {
+		// Nothing
+	}
 
 	public void trainModel(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final Long trainingId, final Long modelId) {
 		if (trainerRasaHandler.isTraining()) {
@@ -43,8 +60,6 @@ public class RasaTrainerServices implements Component {
 
 			final Map<String, Object> requestData = new HashMap<>();
 			requestData.put("executorTrainingCallback", executorTrainingCallback);
-
-			final WebTarget designerTarget = jaxrsProvider.getWebTarget("http://localhost:8080/vertigo-bot-designer/api/"); // TODO rendre dynamique
 
 			designerTarget.path("/trainingCallback")
 			.request(MediaType.APPLICATION_JSON)

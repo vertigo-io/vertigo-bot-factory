@@ -15,18 +15,35 @@ import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.executor.model.IncomeMessage;
 import io.vertigo.chatbot.executor.rasa.bridge.RunnerRasaHandler;
 import io.vertigo.chatbot.executor.rasa.model.RasaInputMessage;
+import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
+import io.vertigo.core.param.ParamManager;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
-public class RasaRunnerServices implements Component {
+public class RasaRunnerServices implements Component, Activeable {
 
 	@Inject
 	private RunnerRasaHandler runnerRasaHandler;
 
 	@Inject
 	private JsonEngine jsonEngine;
+
+	@Inject
+	private ParamManager paramManager;
+
+	private String rasaURL;
+
+	@Override
+	public void start() {
+		rasaURL = paramManager.getParam("rasaUrl") + "/webhooks/rest/webhook";
+	}
+
+	@Override
+	public void stop() {
+		// Nothing
+	}
 
 	public RunnerInfo getRunnerState() {
 		return runnerRasaHandler.getState();
@@ -47,7 +64,6 @@ public class RasaRunnerServices implements Component {
 	}
 
 	private String doCallRasa(final RasaInputMessage rasaInputMessage) {
-		final String rasaURL = "http://localhost:5005/webhooks/rest/webhook";
 		HttpURLConnection con;
 		try {
 			con = (HttpURLConnection) new URL(rasaURL).openConnection();
