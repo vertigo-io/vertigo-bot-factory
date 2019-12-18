@@ -65,6 +65,8 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 
 	@Override
 	public void start() {
+		super.start();
+
 		state = "Ready";
 	}
 

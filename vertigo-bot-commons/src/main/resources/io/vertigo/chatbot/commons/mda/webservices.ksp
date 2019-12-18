@@ -39,3 +39,8 @@ create DtDefinition DtExecutorTrainingCallback {
 	field infos					{domain: DoText						label: "Informations"	 		required: "false"}
 	field warnings				{domain: DoText						label: "Warnings"	 			required: "false"}
 }
+
+create DtDefinition DtExecutorConfiguration {
+	field botId 				{domain: DoId						label: "Bot ID" 				required: "true"}
+	field nodId					{domain: DoId 						label: "Node ID" 				required: "true"}
+}

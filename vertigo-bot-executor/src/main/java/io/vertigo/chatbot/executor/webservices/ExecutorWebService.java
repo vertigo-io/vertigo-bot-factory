@@ -8,6 +8,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
@@ -72,7 +73,8 @@ public class ExecutorWebService implements WebServices {
 	@AnonymousAccessAllowed
 	@PUT("/model")
 	@SessionLess
-	public void putModel(@QueryParam("model") final VFile model) {
+	public void putModel(@QueryParam("model") final VFile model, @QueryParam("config") final ExecutorConfiguration config) {
+		// TODO load config
 		runnerServices.loadModel(model);
 	}
 

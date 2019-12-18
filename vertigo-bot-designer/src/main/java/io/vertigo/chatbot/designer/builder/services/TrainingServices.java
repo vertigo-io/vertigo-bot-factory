@@ -13,8 +13,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
 import io.vertigo.chatbot.commons.JaxrsProvider;
@@ -25,6 +26,7 @@ import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
+import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
@@ -39,9 +41,14 @@ import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.criteria.Criterions;
+import io.vertigo.dynamo.domain.metamodel.Domain;
+import io.vertigo.dynamo.domain.metamodel.DtDefinition;
+import io.vertigo.dynamo.domain.metamodel.DtField;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.domain.model.DtListState;
+import io.vertigo.dynamo.domain.model.DtObject;
 import io.vertigo.dynamo.domain.model.FileInfoURI;
+import io.vertigo.dynamo.domain.util.DtObjectUtil;
 import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.dynamo.impl.file.model.StreamFile;
@@ -75,6 +82,8 @@ public class TrainingServices implements Component {
 
 	@Inject
 	private JaxrsProvider jaxrsProvider;
+
+	protected static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
 	public Training trainAgent(final Long botId) {
 		builderPAO.cleanOldTrainings(botId);
@@ -209,36 +218,53 @@ public class TrainingServices implements Component {
 
 		final VFile model = fileServices.getFile(training.getFilIdModel());
 
-		doLoadModel(model, node.getUrl());
+		doLoadModel(model, node);
 
 		// update node-training link
 		node.setTraId(traId);
 		chatbotNodeDAO.save(node);
 	}
 
-	private void doLoadModel(final VFile model, final String url) {
-		final StreamDataBodyPart bodyPart;
-		try {
-			bodyPart = new StreamDataBodyPart("model", model.createInputStream(), model.getFileName());
-		} catch (final IOException e) {
-			throw new VSystemException(e, "Impossible de lire le modèle");
-		}
+	private void doLoadModel(final VFile model, final ChatbotNode node) {
+		final ExecutorConfiguration options = new ExecutorConfiguration();
+		options.setBotId(node.getBotId());
+		options.setNodId(node.getNodId());
 
 		final Response response;
-		try (final FormDataMultiPart fdmp = new FormDataMultiPart();
-				final MultiPart multiPart = fdmp.bodyPart(bodyPart);) {
-			response = jaxrsProvider.getWebTarget(url).path("/api/chatbot/model")
+		try (final FormDataMultiPart fdmp = new FormDataMultiPart()) {
+			final StreamDataBodyPart modelBodyPart = new StreamDataBodyPart("model", model.createInputStream(), model.getFileName());
+			fdmp.bodyPart(modelBodyPart);
+
+			addObjectToMultipart(fdmp, "config", options);
+
+			response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/model")
 					.request(MediaType.APPLICATION_JSON)
-					.put(Entity.entity(multiPart, multiPart.getMediaType()));
+					.put(Entity.entity(fdmp, fdmp.getMediaType()));
 
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Impossible de lire le modèle");
 		}
 
 		if (response.getStatus() != 204) {
+			LOGGER.info("Impossible de charger le modèle. {}", response.getStatusInfo());
 			throw new VUserException("Impossible de charger le modèle");
 		}
 	}
+
+	private void addObjectToMultipart(final FormDataMultiPart fdmp, final String name ,final DtObject dto) {
+		final DtDefinition def = DtObjectUtil.findDtDefinition(dto);
+
+		for (final DtField field : def.getFields()) {
+			final Object value = field.getDataAccessor().getValue(dto);
+
+			if (value != null) {
+				final Domain domain = field.getDomain();
+				final String valueString = domain.valueToString(value);
+				fdmp.field(name + '.' + field.getName(), valueString);
+			}
+		}
+	}
+
 
 	public DtList<Training> getAllTrainings(final Long botId) {
 		return trainingDAO.findAll(

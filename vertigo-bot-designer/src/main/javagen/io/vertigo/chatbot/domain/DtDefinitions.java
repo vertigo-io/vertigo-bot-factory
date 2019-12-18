@@ -23,6 +23,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
 		/** Objet de données ChatbotNode. */
 		ChatbotNode(io.vertigo.chatbot.commons.domain.ChatbotNode.class),
+		/** Objet de données ExecutorConfiguration. */
+		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données ExecutorTrainingCallback. */
 		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
 		/** Objet de données MediaFileInfo. */
@@ -107,6 +109,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botId,
 		/** Propriété 'Loaded model'. */
 		traId	}
+
+	/**
+	 * Enumération des champs de ExecutorConfiguration.
+	 */
+	public enum ExecutorConfigurationFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ExecutorConfiguration> {
+		/** Propriété 'Bot ID'. */
+		botId,
+		/** Propriété 'Node ID'. */
+		nodId	}
 
 	/**
 	 * Enumération des champs de ExecutorTrainingCallback.

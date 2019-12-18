@@ -34,6 +34,8 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 
 	@Override
 	public void start() {
+		super.start();
+
 		rasaTarget = jaxrsProvider.getWebTarget("http://localhost:5005/");
 
 		LOGGER.info("Lancement de Rasa");
