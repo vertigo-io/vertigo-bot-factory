@@ -235,8 +235,8 @@ public class DesignerServices implements Component {
 		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, botId), DtListState.of(100));
 	}
 
-	public ChatbotNode getDevNodeByBotId(final Long botId) {
-		return chatbotNodeDAO.find(
+	public Optional<ChatbotNode> getDevNodeByBotId(final Long botId) {
+		return chatbotNodeDAO.findOptional(
 				Criterions.isEqualTo(ChatbotNodeFields.botId, botId)
 				.and(Criterions.isEqualTo(ChatbotNodeFields.isDev, true)));
 	}

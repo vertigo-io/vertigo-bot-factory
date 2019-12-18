@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -89,7 +90,11 @@ public class TrainingServices implements Component {
 		builderPAO.cleanOldTrainings(botId);
 
 		final Long versionNumber = builderPAO.getNextModelNumber(botId);
-		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId);
+		final Optional<ChatbotNode> devNode = designerServices.getDevNodeByBotId(botId);
+
+		if (!devNode.isPresent()) {
+			throw new VUserException("No training node configured");
+		}
 
 		final Training training = new Training();
 		training.setBotId(botId);
@@ -106,7 +111,7 @@ public class TrainingServices implements Component {
 		requestData.put("trainingId", training.getTraId());
 		requestData.put("modelId", versionNumber);
 
-		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/train")
+		final Response response = jaxrsProvider.getWebTarget(devNode.get().getUrl()).path("/api/chatbot/train")
 				.request(MediaType.APPLICATION_JSON)
 				.post(Entity.json(requestData));
 
@@ -125,7 +130,7 @@ public class TrainingServices implements Component {
 
 
 	public void stopAgent(final Long botId) {
-		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId);
+		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId).get();
 
 		jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/train")
 		.request(MediaType.APPLICATION_JSON)
@@ -134,15 +139,21 @@ public class TrainingServices implements Component {
 	}
 
 	public TrainerInfo getTrainingState(final Long botId) {
-		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId);
+		final Optional<ChatbotNode> devNode = designerServices.getDevNodeByBotId(botId);
 
-		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/trainStatus")
+		if (!devNode.isPresent()) {
+			final TrainerInfo trainerInfo = new TrainerInfo();
+			trainerInfo.setName("No training node configured");
+			return trainerInfo;
+		}
+
+		final Response response = jaxrsProvider.getWebTarget(devNode.get().getUrl()).path("/api/chatbot/trainStatus")
 				.request(MediaType.APPLICATION_JSON)
 				.get();
 
 		if (response.getStatus() != 200) {
 			final TrainerInfo trainerInfo = new TrainerInfo();
-			trainerInfo.setName("Impossible d'accéder au service");
+			trainerInfo.setName("Node unavailable");
 			return trainerInfo;
 		}
 
@@ -150,15 +161,22 @@ public class TrainingServices implements Component {
 	}
 
 	public RunnerInfo getRunnerState(final Long botId) {
-		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId);
+		final Optional<ChatbotNode> devNode = designerServices.getDevNodeByBotId(botId);
 
-		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/runnerStatus")
+		if (!devNode.isPresent()) {
+			final RunnerInfo runnerInfo = new RunnerInfo();
+			runnerInfo.setName("No training node configured");
+			return runnerInfo;
+		}
+
+
+		final Response response = jaxrsProvider.getWebTarget(devNode.get().getUrl()).path("/api/chatbot/runnerStatus")
 				.request(MediaType.APPLICATION_JSON)
 				.get();
 
 		if (response.getStatus() != 200) {
 			final RunnerInfo runnerInfo = new RunnerInfo();
-			runnerInfo.setName("Impossible d'accéder au service");
+			runnerInfo.setName("Node unavailable");
 			return runnerInfo;
 		}
 
@@ -288,7 +306,7 @@ public class TrainingServices implements Component {
 	public void trainingCallback(final ExecutorTrainingCallback callback) {
 		final Training training = getTraining(callback.getTrainingId());
 
-		final ChatbotNode node = designerServices.getDevNodeByBotId(training.getBotId());
+		final ChatbotNode node = designerServices.getDevNodeByBotId(training.getBotId()).get();
 
 		// TODO : Limiter au dernier en cours en mode "trop tard, je refuse ton callback" ?
 
