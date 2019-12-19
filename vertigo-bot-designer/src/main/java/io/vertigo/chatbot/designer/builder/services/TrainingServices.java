@@ -42,7 +42,6 @@ import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.criteria.Criterions;
-import io.vertigo.dynamo.domain.metamodel.Domain;
 import io.vertigo.dynamo.domain.metamodel.DtDefinition;
 import io.vertigo.dynamo.domain.metamodel.DtField;
 import io.vertigo.dynamo.domain.model.DtList;
@@ -56,6 +55,7 @@ import io.vertigo.dynamo.impl.file.model.StreamFile;
 import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.lang.VUserException;
+import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 @Transactional
 public class TrainingServices implements Component {
@@ -84,7 +84,10 @@ public class TrainingServices implements Component {
 	@Inject
 	private JaxrsProvider jaxrsProvider;
 
-	protected static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
+	@Inject
+	private JsonEngine jsonEngine;
+
+	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
 	public Training trainAgent(final Long botId) {
 		builderPAO.cleanOldTrainings(botId);
@@ -276,8 +279,7 @@ public class TrainingServices implements Component {
 			final Object value = field.getDataAccessor().getValue(dto);
 
 			if (value != null) {
-				final Domain domain = field.getDomain();
-				final String valueString = domain.valueToString(value);
+				final String valueString = jsonEngine.toJson(value);
 				fdmp.field(name + '.' + field.getName(), valueString);
 			}
 		}
