@@ -22,6 +22,12 @@ modules:
       - webservices.apiPrefix:
           apiPrefix: /api
   io.vertigo.dynamo.DynamoFeatures:
+    features:
+      - kvStore: # activation du support du stockage clé/valeur
+    featuresConfig:
+      - kvStore.berkeley:  # nous utilisons un stockage clé valeur avec la base de donnée BerkeleyDB
+          collections: ExecutorConfig
+          dbFilePath: ${berkeleyDataPath}
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
   io.vertigo.chatbot.executor.RasaExecutorFeatures:

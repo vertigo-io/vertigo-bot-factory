@@ -13,6 +13,14 @@
 		<param-value>/io/vertigo/chatbot/chatbot-executor.yaml</param-value>
 	</context-param>
 	
+	<context-param>
+		<param-name>dataPath</param-name>
+		<param-value>${user.home}/botExecutor/data</param-value>
+	</context-param>
+	<context-param>
+		<param-name>berkeleyDataPath</param-name>
+		<param-value>${user.home}/botExecutor/berkeley</param-value>
+	</context-param>
 	
 	<context-param>
 		<param-name>pythonPath</param-name>

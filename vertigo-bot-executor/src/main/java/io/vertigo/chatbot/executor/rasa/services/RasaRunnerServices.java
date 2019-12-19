@@ -11,10 +11,13 @@ import java.nio.charset.StandardCharsets;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
+import io.vertigo.chatbot.executor.manager.ExecutorConfigManager;
 import io.vertigo.chatbot.executor.model.IncomeMessage;
 import io.vertigo.chatbot.executor.rasa.bridge.RunnerRasaHandler;
 import io.vertigo.chatbot.executor.rasa.model.RasaInputMessage;
+import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
 import io.vertigo.core.param.ParamManager;
@@ -22,6 +25,7 @@ import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
+@Transactional
 public class RasaRunnerServices implements Component, Activeable {
 
 	@Inject
@@ -32,6 +36,9 @@ public class RasaRunnerServices implements Component, Activeable {
 
 	@Inject
 	private ParamManager paramManager;
+
+	@Inject
+	private ExecutorConfigManager executorConfigManager;
 
 	private String rasaURL;
 
@@ -49,7 +56,8 @@ public class RasaRunnerServices implements Component, Activeable {
 		return runnerRasaHandler.getState();
 	}
 
-	public void loadModel(final VFile model) {
+	public void loadModel(final VFile model, final ExecutorConfiguration config) {
+		executorConfigManager.loadConfig(config);
 		runnerRasaHandler.loadModel(model);
 	}
 

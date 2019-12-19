@@ -14,6 +14,7 @@ import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.executor.rasa.bridge.TrainerRasaHandler;
+import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
 import io.vertigo.core.param.ParamManager;
@@ -21,6 +22,7 @@ import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.VUserException;
 
+@Transactional
 public class RasaTrainerServices implements Component, Activeable {
 
 	@Inject

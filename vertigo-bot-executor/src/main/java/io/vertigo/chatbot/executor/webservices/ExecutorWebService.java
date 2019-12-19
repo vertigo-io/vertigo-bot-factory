@@ -74,8 +74,7 @@ public class ExecutorWebService implements WebServices {
 	@PUT("/model")
 	@SessionLess
 	public void putModel(@QueryParam("model") final VFile model, @QueryParam("config") final ExecutorConfiguration config) {
-		// TODO load config
-		runnerServices.loadModel(model);
+		runnerServices.loadModel(model, config);
 	}
 
 	@AnonymousAccessAllowed
