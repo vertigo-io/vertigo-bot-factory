@@ -64,7 +64,7 @@
 			<vu:include-data object="nodeNew" field="url" />
 			<vu:include-data object="nodeNew" field="color" />
 			
-			<vu:table id="nodes" list="nodeList" title="Nodes" componentId="nodeList" rowsPerPage="10" autoColClass
+			<vu:table th:if="${model.modeReadOnly}" id="nodes" list="nodeList" title="Nodes" componentId="nodeList" rowsPerPage="10" autoColClass
 					  tr_@click.native="|vueData.nodeEdit = {...props.row}; delete vueData.nodeEdit.__index; $refs.nodeEdit.show()|" tr_class="nav">
 				<vu:slot name="top_right_slot">
 					<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" 
@@ -125,6 +125,9 @@
 				</q-card>
 			</q-dialog>
 			
+			<q-page-sticky position="bottom-right">
+				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
+			</q-page-sticky>
 		</section>
 		
 	</body>
