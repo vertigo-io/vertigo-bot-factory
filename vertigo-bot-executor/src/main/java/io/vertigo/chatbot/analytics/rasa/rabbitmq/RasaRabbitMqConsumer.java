@@ -27,6 +27,8 @@ import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerRewindEvent;
 import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerUserEvent;
 import io.vertigo.chatbot.analytics.rasa.model.nested.RasaTrackerIntent;
 import io.vertigo.chatbot.analytics.rasa.util.GsonOptionalTypeAdapter;
+import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
+import io.vertigo.chatbot.executor.manager.ExecutorConfigManager;
 import io.vertigo.commons.analytics.AnalyticsManager;
 import io.vertigo.commons.analytics.process.AProcess;
 import io.vertigo.commons.analytics.process.AProcessBuilder;
@@ -48,6 +50,9 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 
 	@Inject
 	private ParamManager paramManager;
+
+	@Inject
+	private ExecutorConfigManager executorConfigManager;
 
 	private String queueName;
 	private String consumerTag;
@@ -134,12 +139,15 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 				rta = RasaTypeAction.MESSAGE;
 			}
 
+			final ExecutorConfiguration executorConfiguration = executorConfigManager.getExecutorConfiguration();
 
 			final AProcessBuilder processBuilder = AProcess.builder("chatbot", intent.getName().orElse("unknown"), userAction.getTimestamp(), userAction.getTimestamp()) // timestamp of emitted event
 					.addTag("text", userAction.getText())
 					.addTag("type", rta.name())
 					.addTag("sessionId", userAction.getSenderId())
 					.addTag("messageId", userAction.getMessageId())
+					.addTag("botId", executorConfiguration.getBotId().toString())
+					.addTag("nodId", executorConfiguration.getNodId().toString())
 					.setMeasure("confidence", intent.getConfidence().doubleValue())
 					.setMeasure("isFallback", intent.getConfidence().compareTo(BigDecimal.valueOf(0.5)) < 0 ? 1d : 0d)
 					.setMeasure("isTypeOpen", rta == RasaTypeAction.OPEN ? 1d : 0d)
