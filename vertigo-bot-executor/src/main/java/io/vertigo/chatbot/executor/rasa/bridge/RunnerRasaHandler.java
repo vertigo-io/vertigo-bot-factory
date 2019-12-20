@@ -28,7 +28,8 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 	@Inject
 	private JaxrsProvider jaxrsProvider;
 
-	private WebTarget rasaTarget;;
+	private String rasaURL;
+	private WebTarget rasaTarget;
 
 	private Process rasaProcess;
 
@@ -36,7 +37,8 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 	public void start() {
 		super.start();
 
-		rasaTarget = jaxrsProvider.getWebTarget("http://localhost:5005/");
+		rasaURL = "http://localhost:5005"; // not a constant if we want to customize or reference an external runner in the future
+		rasaTarget = jaxrsProvider.getWebTarget(rasaURL);
 
 		LOGGER.info("Lancement de Rasa");
 		rasaProcess = execRasa("run", "--enable-api");
@@ -136,5 +138,12 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 		if (response.getStatus() != 204) {
 			throw new VSystemException("Impossible de charger le modèle. {}", wsResponse.get("message"));
 		}
+	}
+
+	/**
+	 * @return the rasaURL
+	 */
+	public String getRasaURL() {
+		return rasaURL;
 	}
 }

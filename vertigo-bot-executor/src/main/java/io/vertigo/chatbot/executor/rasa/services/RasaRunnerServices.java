@@ -18,15 +18,13 @@ import io.vertigo.chatbot.executor.model.IncomeMessage;
 import io.vertigo.chatbot.executor.rasa.bridge.RunnerRasaHandler;
 import io.vertigo.chatbot.executor.rasa.model.RasaInputMessage;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
-import io.vertigo.core.param.ParamManager;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 @Transactional
-public class RasaRunnerServices implements Component, Activeable {
+public class RasaRunnerServices implements Component {
 
 	@Inject
 	private RunnerRasaHandler runnerRasaHandler;
@@ -35,22 +33,7 @@ public class RasaRunnerServices implements Component, Activeable {
 	private JsonEngine jsonEngine;
 
 	@Inject
-	private ParamManager paramManager;
-
-	@Inject
 	private ExecutorConfigManager executorConfigManager;
-
-	private String rasaURL;
-
-	@Override
-	public void start() {
-		rasaURL = paramManager.getParam("rasaUrl").getValueAsString() + "/webhooks/rest/webhook";
-	}
-
-	@Override
-	public void stop() {
-		// Nothing
-	}
 
 	public RunnerInfo getRunnerState() {
 		return runnerRasaHandler.getState();
@@ -74,7 +57,7 @@ public class RasaRunnerServices implements Component, Activeable {
 	private String doCallRasa(final RasaInputMessage rasaInputMessage) {
 		HttpURLConnection con;
 		try {
-			con = (HttpURLConnection) new URL(rasaURL).openConnection();
+			con = (HttpURLConnection) new URL(runnerRasaHandler.getRasaURL() + "/webhooks/rest/webhook").openConnection();
 
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);

@@ -2,6 +2,5 @@
 <Context debug="0" reloadable="false" allowCasualMultipartParsing="true">
 
 	<Parameter name="designerUrl" value="http://localhost:8080/vertigo-bot-designer" override="false"/>
-	<!--  <Parameter name="rasaUrl" value="http://localhost:5005" override="false"/> -->
 	
 </Context>
