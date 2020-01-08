@@ -150,11 +150,21 @@ public class TrainingServices implements Component {
 			return trainerInfo;
 		}
 
-		final Response response = jaxrsProvider.getWebTarget(devNode.get().getUrl()).path("/api/chatbot/trainStatus")
-				.request(MediaType.APPLICATION_JSON)
-				.get();
+		boolean error = false;
+		Response response = null;
 
-		if (response.getStatus() != 200) {
+		try {
+			response = jaxrsProvider.getWebTarget(devNode.get().getUrl()).path("/api/chatbot/trainStatus")
+					.request(MediaType.APPLICATION_JSON)
+					.get();
+
+			error = response.getStatus() != 200;
+		} catch (final Exception e) {
+			error = true;
+			LOGGER.info("Impossible d'accéder au noeud.", e);
+		}
+
+		if (error) {
 			final TrainerInfo trainerInfo = new TrainerInfo();
 			trainerInfo.setName("Node unavailable");
 			return trainerInfo;
@@ -172,12 +182,21 @@ public class TrainingServices implements Component {
 			return runnerInfo;
 		}
 
+		boolean error = false;
+		Response response = null;
 
-		final Response response = jaxrsProvider.getWebTarget(devNode.get().getUrl()).path("/api/chatbot/runnerStatus")
-				.request(MediaType.APPLICATION_JSON)
-				.get();
+		try {
+			response = jaxrsProvider.getWebTarget(devNode.get().getUrl()).path("/api/chatbot/runnerStatus")
+					.request(MediaType.APPLICATION_JSON)
+					.get();
 
-		if (response.getStatus() != 200) {
+			error = response.getStatus() != 200;
+		} catch (final Exception e) {
+			error = true;
+			LOGGER.info("Impossible d'accéder au noeud.", e);
+		}
+
+		if (error) {
 			final RunnerInfo runnerInfo = new RunnerInfo();
 			runnerInfo.setName("Node unavailable");
 			return runnerInfo;

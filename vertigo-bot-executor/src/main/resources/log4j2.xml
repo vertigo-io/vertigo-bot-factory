@@ -12,6 +12,9 @@
 		<Logger name="io.vertigo.chatbot" level="info" additivity="false">
 	      <AppenderRef ref="Console"/>
 	    </Logger>
+	    <Logger name="io.vertigo" level="error" additivity="false">
+	      <AppenderRef ref="Console"/>
+	    </Logger>
 	    <Logger name="webservices" level="info" additivity="false">
 	      <AppenderRef ref="Console"/>
 	    </Logger>

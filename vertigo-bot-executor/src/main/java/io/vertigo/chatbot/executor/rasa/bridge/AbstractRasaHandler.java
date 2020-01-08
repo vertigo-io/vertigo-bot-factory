@@ -27,12 +27,12 @@ public abstract class AbstractRasaHandler implements Activeable {
 	@Inject
 	private ParamManager paramManager;
 
-	private String pythonPath;
+	private String rasaPath;
 	private String botPath;
 
 	@Override
 	public void start() {
-		pythonPath = paramManager.getParam("pythonPath").getValueAsString();
+		rasaPath = paramManager.getParam("rasaPath").getValueAsString();
 		botPath = paramManager.getParam("botPath").getValueAsString();
 	}
 
@@ -43,7 +43,7 @@ public abstract class AbstractRasaHandler implements Activeable {
 	protected Process execRasa(final String command, final Consumer<String> logConsumer, final Runnable endCallback, final String... additionalArgs) {
 		final List<String> rasaCommand = new ArrayList<>();
 
-		rasaCommand.add(pythonPath + "/Scripts/rasa");
+		rasaCommand.add(rasaPath);
 		rasaCommand.add(command);
 		Collections.addAll(rasaCommand, additionalArgs);
 
@@ -101,12 +101,6 @@ public abstract class AbstractRasaHandler implements Activeable {
 		logWatcher.start();
 	}
 
-	/**
-	 * @return the pythonPath
-	 */
-	public String getPythonPath() {
-		return pythonPath;
-	}
 
 	/**
 	 * @return the botPath

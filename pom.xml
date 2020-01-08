@@ -31,7 +31,6 @@
 	</properties>
 
 	<modules>
-		<module>vertigo-bot-analytics</module>
 		<module>vertigo-bot-designer</module>
 		<module>vertigo-bot-executor</module>
 		<module>vertigo-bot-commons</module>

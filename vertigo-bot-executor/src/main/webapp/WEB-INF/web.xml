@@ -23,8 +23,8 @@
 	</context-param>
 	
 	<context-param>
-		<param-name>pythonPath</param-name>
-		<param-value>D:\DT\chatbot\factory\python</param-value>
+		<param-name>rasaPath</param-name>
+		<param-value>D:\DT\chatbot\factory\python\Scripts\rasa</param-value>
 	</context-param>
 	<context-param>
 		<param-name>botPath</param-name>
