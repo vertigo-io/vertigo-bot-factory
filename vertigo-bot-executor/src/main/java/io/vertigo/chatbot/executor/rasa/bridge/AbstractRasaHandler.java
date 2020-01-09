@@ -34,6 +34,9 @@ public abstract class AbstractRasaHandler implements Activeable {
 	public void start() {
 		rasaPath = paramManager.getParam("rasaPath").getValueAsString();
 		botPath = paramManager.getParam("botPath").getValueAsString();
+
+		LOGGER.info("Using rasaPath {}", rasaPath);
+		LOGGER.info("Using botPath {}", botPath);
 	}
 
 	protected Process execRasa(final String command, final String... additionalArgs) {

@@ -8,6 +8,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
@@ -25,6 +28,9 @@ import io.vertigo.lang.VUserException;
 @Transactional
 public class RasaTrainerServices implements Component, Activeable {
 
+	protected static final Logger LOGGER = LogManager.getLogger("rasa");
+
+
 	@Inject
 	private TrainerRasaHandler trainerRasaHandler;
 
@@ -37,9 +43,14 @@ public class RasaTrainerServices implements Component, Activeable {
 	private WebTarget designerTarget;
 
 
+
 	@Override
 	public void start() {
-		designerTarget = jaxrsProvider.getWebTarget(paramManager.getParam("designerUrl").getValueAsString() + "/api/");
+		final String designerUrl = paramManager.getParam("designerUrl").getValueAsString();
+
+		LOGGER.info("Using designerUrl {}", designerUrl);
+
+		designerTarget = jaxrsProvider.getWebTarget(designerUrl + "/api/");
 	}
 
 	@Override

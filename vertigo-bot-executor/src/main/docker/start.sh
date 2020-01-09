@@ -3,7 +3,7 @@
 _term() { 
   echo "Caught SIGTERM signal!" 
   service rabbitmq-server stop
-  su -c "/opt/tomcat/bin/shutdown.sh" - tomcat
+  su -c "/opt/tomcat/bin/shutdown.sh" tomcat
   
   #tomcatPID=`ps -ef | grep java | grep tomcat | awk ' { print $2 } '`
   #wait "$tomcatPID" # cant wait as non child PID
@@ -17,7 +17,8 @@ _term() {
 trap _term SIGTERM
 
 service rabbitmq-server start
-su -c "/opt/tomcat/bin/startup.sh" - tomcat
+su -c "/opt/tomcat/bin/startup.sh" tomcat
 
-tail -f /opt/tomcat/bin/startup.sh & # just to keep the process alive for docker
+touch /opt/tomcat/logs/catalina.out
+tail -f /opt/tomcat/logs/catalina.out & # just to keep the process alive for docker, also, tomcat logs are visible on container logs
 wait "$!" # wait command permit SIGTERM handling

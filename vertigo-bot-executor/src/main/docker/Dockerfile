@@ -20,18 +20,24 @@ RUN apt-get install -y rabbitmq-server \
 # Add Tomcat #
 ##############
 # JRE
-RUN mkdir -p /usr/share/man/man1 \
- && apt-get install -y default-jre-headless
+	RUN mkdir -p /usr/share/man/man1 \
+	 && apt-get install -y default-jre-headless
  
 # Tomcat
-ADD apache-tomcat-8.5.50 /opt/tomcat/
+	ADD apache-tomcat-8.5.50.tar.gz /opt/tomcat/
+	ADD vertigo-bot-executor-*.war /opt/tomcat/webapps/ROOT.war
 
 	# user home is used for berkeley database
-RUN useradd -m tomcat \ 
- && chown -R tomcat. /opt/tomcat
+	RUN useradd -m tomcat \ 
+	 && chown -R tomcat. /opt/tomcat
 
-EXPOSE 8080
+	# War configuration through env variables
+	ENV designerUrl http://host.docker.internal:8080/vertigo-bot-designer
+	ENV rasaPath /usr/local/bin/rasa
+	ENV botPath /opt/bot/
 
+	# Expose tomcat port
+	EXPOSE 8080
 
 ##########################################################
 # Add rasa working directory with rabbitmq configuration #
