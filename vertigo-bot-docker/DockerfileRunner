@@ -25,7 +25,7 @@ RUN apt-get install -y rabbitmq-server \
  
 # Tomcat
 	ADD apache-tomcat-8.5.50.tar.gz /opt/tomcat/
-	ADD vertigo-bot-executor-*.war /opt/tomcat/webapps/ROOT.war
+	ADD Runner/vertigo-bot-executor-*.war /opt/tomcat/webapps/ROOT.war
 
 	# user home is used for berkeley database
 	RUN useradd -m tomcat \ 
@@ -42,14 +42,14 @@ RUN apt-get install -y rabbitmq-server \
 ##########################################################
 # Add rasa working directory with rabbitmq configuration #
 ##########################################################
-ADD bot /opt/bot/
+ADD Runner/bot /opt/bot/
 
 RUN chown -R tomcat. /opt/bot
  
 #######################
 # start configuration #
 #######################
-ADD start.sh /
+ADD Runner/start.sh /
 RUN chmod +x /start.sh
 
 ENTRYPOINT [] # clear entrypoint from base image

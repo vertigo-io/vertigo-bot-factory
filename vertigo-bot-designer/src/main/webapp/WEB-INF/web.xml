@@ -14,7 +14,7 @@
 		<param-name>boot.applicationConfiguration</param-name>
 		<param-value>/io/vertigo/chatbot/designer/chatbot-designer.yaml</param-value>
 	</context-param>
-
+	
 	<filter>
 		<filter-name>Character Encoding Filter</filter-name>
 		<filter-class>io.vertigo.vega.impl.servlet.filter.SetCharsetEncodingFilter</filter-class>

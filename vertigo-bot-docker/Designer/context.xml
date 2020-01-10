@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context debug="0" reloadable="false" allowCasualMultipartParsing="true">
+	<Resource name="jdbc/DataSource"
+		auth="SERVLET"
+		type="javax.sql.DataSource"
+		driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql:${DB_URL}"
+		username="${DB_USER}"
+		password="${DB_PWD}" />
+		
+</Context>

@@ -1,0 +1,45 @@
+###################################################
+# Same base as rasa/rasa:1.2.3 -> python:3.6-slim #
+###################################################
+FROM debian:buster-slim
+
+###########
+# Prepare #
+###########
+RUN apt-get update
+ 
+ 
+##############
+# Add Tomcat #
+##############
+# JRE
+	RUN mkdir -p /usr/share/man/man1 \
+	 && apt-get install -y default-jre-headless
+ 
+# Tomcat
+	ADD apache-tomcat-8.5.50.tar.gz /opt/tomcat/
+	ADD Designer/vertigo-bot-designer-*.war /opt/tomcat/webapps/ROOT.war
+	ADD Designer/context.xml /opt/tomcat/conf/Catalina/localhost/ROOT.xml
+	ADD Designer/setenv.sh /opt/tomcat/bin/
+
+	# user home is used for berkeley database
+	RUN useradd -m tomcat \ 
+	 && chown -R tomcat. /opt/tomcat
+
+	# War configuration through env variables
+	ENV DB_URL //host.docker.internal:5432/chatbot
+	ENV DB_USER chatbot
+	ENV DB_PWD chatbot
+
+	# Expose tomcat port
+	EXPOSE 8080
+
+ 
+#######################
+# start configuration #
+#######################
+ADD Designer/start.sh /
+RUN chmod +x /start.sh
+
+ENTRYPOINT [] # clear entrypoint from base image
+CMD ["/start.sh"] # override CMD from base image
