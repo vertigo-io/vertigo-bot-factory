@@ -27,10 +27,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données ExecutorTrainingCallback. */
 		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
+		/** Objet de données Groups. */
+		Groups(io.vertigo.chatbot.commons.domain.Groups.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données NluTrainingSentence. */
 		NluTrainingSentence(io.vertigo.chatbot.commons.domain.NluTrainingSentence.class),
+		/** Objet de données Person. */
+		Person(io.vertigo.chatbot.commons.domain.Person.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
 		/** Objet de données SmallTalk. */
@@ -135,6 +139,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		warnings	}
 
 	/**
+	 * Enumération des champs de Groups.
+	 */
+	public enum GroupsFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Groups> {
+		/** Propriété 'Id'. */
+		grpId,
+		/** Propriété 'Name'. */
+		name	}
+
+	/**
 	 * Enumération des champs de MediaFileInfo.
 	 */
 	public enum MediaFileInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.MediaFileInfo> {
@@ -163,6 +176,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		text,
 		/** Propriété 'SmallTalk'. */
 		smtId	}
+
+	/**
+	 * Enumération des champs de Person.
+	 */
+	public enum PersonFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Person> {
+		/** Propriété 'Id'. */
+		perId,
+		/** Propriété 'Login'. */
+		login,
+		/** Propriété 'Name'. */
+		name,
+		/** Propriété 'Password'. */
+		password,
+		/** Propriété 'Group'. */
+		grpId	}
 
 	/**
 	 * Enumération des champs de RunnerInfo.

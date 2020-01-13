@@ -46,6 +46,13 @@ create Domain DoLabel {
 	storeType : "VARCHAR(100)"
 }
 
+create Domain DoPassword {
+	dataType : String
+	formatter: FmtDefault
+	constraint : [CkMaxLength100]
+	storeType : "VARCHAR(100)"
+}
+
 create Domain DoLabels{  
     dataType : String
     multiple : "true"

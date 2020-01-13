@@ -13,10 +13,6 @@ modules:
     featuresConfig:
       - script.janino:
       - cache.memory:
-  io.vertigo.account.AccountFeatures:
-    features:
-      - security:
-          userSessionClassName: io.vertigo.chatbot.designer.commons.DesignerUserSession
   io.vertigo.database.DatabaseFeatures: # utilisation du module vertigo-database pour pouvoir utiliser une base de données
     features:
       - sql: # nous activons le support des bases de données SQL
@@ -48,6 +44,25 @@ modules:
       - kvStore.berkeley:  # nous utilisons un stockage clé valeur avec la base de donnée BerkeleyDB
           collections: VViewContext;TTL=43200
           dbFilePath: ${java.io.tmpdir}/vertigo-ui/VViewContext
+  io.vertigo.account.AccountFeatures:
+    features:
+      - security:
+          userSessionClassName: io.vertigo.chatbot.designer.commons.DesignerUserSession
+      - account:
+      - authentication:
+    featuresConfig:
+       - account.store.store:
+          userIdentityEntity: DtPerson
+          groupIdentityEntity: DtGroups
+          userAuthField: login
+          #photoFileInfo:
+          userToAccountMapping: 'id:perId, displayName:name, authToken:login'
+          groupToGroupAccountMapping: 'id:grpId, displayName:name'
+       - authentication.store:
+          userCredentialEntity: DtPerson
+          userLoginField: login
+          userPasswordField: password
+          userTokenIdField: login
   io.vertigo.vega.VegaFeatures:
     features:
       - webservices:
@@ -56,7 +71,9 @@ modules:
           apiPrefix: /api
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
-  
+
+# utilisation de nos modules métier  
   io.vertigo.chatbot.designer.commons.DesignerCommonsFeatures:
-  io.vertigo.chatbot.designer.builder.BuilderFeatures: # utilisation de notre module métier
+  io.vertigo.chatbot.designer.admin.AdminFeatures:
+  io.vertigo.chatbot.designer.builder.BuilderFeatures: 
   io.vertigo.chatbot.designer.analytics.AnalyticsFeatures:

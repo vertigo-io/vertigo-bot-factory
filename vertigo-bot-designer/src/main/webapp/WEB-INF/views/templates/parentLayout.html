@@ -1,27 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" 
   xmlns:vu="http://www.morphbit.com/thymeleaf/component"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
-    <vu:head-meta/>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="Vertigo chatbot designer"/>
-    <meta name="author" content="Klee Group"/>
-    
-    <link rel="stylesheet" th:href="@{/static/css/designer.css}"/>
-    
-	<link rel="icon" th:href="@{/static/img/favicon.ico}"/>
-	<script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script>
-	
-</head>
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{templates/rootLayout}">
 
-<body class="mat desktop no-touch platform-mat">
-
-	<vu:page>
+	<section layout:fragment="page">
 	
-      <q-layout view="hHh LpR fff" id="page" v-cloak>
+	     <q-layout view="hHh LpR fff" id="page" v-cloak>
 			<!-- BEGIN HEADER-->
 			<q-header elevated>
 				<q-toolbar>
@@ -36,11 +21,11 @@
 					</div>
 				</q-toolbar>
 			</q-header>
-        	<!-- END HEADER-->
-        			
-  			
-  			<q-drawer
-  			  content-class="bg-white text-primary"
+	       	<!-- END HEADER-->
+	       			
+	 			
+	 			<q-drawer
+	 			  content-class="bg-white text-primary"
 		      side="left"
 		      ref="menuDrawer"
 		      show-if-above
@@ -92,16 +77,12 @@
 			</q-page-container>
 			
 			<div class="fixed-bottom-right version-watermark non-selectable">
-    			<div class="row items-center">
+	   			<div class="row items-center">
 					v0.1.0
 				</div>
-  			</div>
-  			
+	 			</div>
+	 			
 		</q-layout>
 		
-	</vu:page>
-	<div layout:fragment="javascript-footer">
-	</div>
-			
-</body>
+	</section>
 </html>

@@ -5,7 +5,7 @@ import io.vertigo.app.config.discovery.ModuleDiscoveryFeatures;
 public class AnalyticsFeatures extends ModuleDiscoveryFeatures<AnalyticsFeatures> { // nous étendons ModuleDiscoveryFeatures pour activer la découverte automatique
 
 	public AnalyticsFeatures() {
-		super("ChatbotAnalytics"); // Nous donnons un nom signigiant à notre module métier
+		super("ChatbotAnalytics"); // Nous donnons un nom signifiant à notre module métier
 	}
 
 	@Override

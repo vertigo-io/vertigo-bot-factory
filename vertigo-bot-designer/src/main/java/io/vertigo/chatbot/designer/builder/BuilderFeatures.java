@@ -7,7 +7,7 @@ import io.vertigo.dynamo.plugins.environment.DynamoDefinitionProvider;
 public class BuilderFeatures extends ModuleDiscoveryFeatures<BuilderFeatures> { // nous étendons ModuleDiscoveryFeatures pour activer la découverte automatique
 
 	public BuilderFeatures() {
-		super("ChatbotDesigner"); // Nous donnons un nom signigiant à notre module métier
+		super("ChatbotDesigner"); // Nous donnons un nom signifiant à notre module métier
 	}
 
 	@Override
@@ -15,7 +15,7 @@ public class BuilderFeatures extends ModuleDiscoveryFeatures<BuilderFeatures> { 
 		super.buildFeatures(); // découverte automatique de tous les composants
 		getModuleConfigBuilder()
 		.addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
-				.addDefinitionResource("kpr", "io/vertigo/chatbot/designer/builder/run.kpr") // chargement de notre modèle de donnée
+				.addDefinitionResource("kpr", "io/vertigo/chatbot/designer/run.kpr") // chargement de notre modèle de donnée
 				.addDefinitionResource("classes", "io.vertigo.chatbot.domain.DtDefinitions")
 				.build());
 

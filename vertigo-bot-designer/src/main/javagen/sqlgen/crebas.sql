@@ -9,10 +9,14 @@ drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_NODE cascade;
 drop sequence IF EXISTS SEQ_CHATBOT_NODE;
+drop table IF EXISTS GROUPS cascade;
+drop sequence IF EXISTS SEQ_GROUPS;
 drop table IF EXISTS MEDIA_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_MEDIA_FILE_INFO;
 drop table IF EXISTS NLU_TRAINING_SENTENCE cascade;
 drop sequence IF EXISTS SEQ_NLU_TRAINING_SENTENCE;
+drop table IF EXISTS PERSON cascade;
+drop sequence IF EXISTS SEQ_PERSON;
 drop table IF EXISTS SMALL_TALK cascade;
 drop sequence IF EXISTS SEQ_SMALL_TALK;
 drop table IF EXISTS TRAINING cascade;
@@ -32,10 +36,16 @@ create sequence SEQ_CHATBOT
 create sequence SEQ_CHATBOT_NODE
 	start with 1000 cache 20; 
 
+create sequence SEQ_GROUPS
+	start with 1000 cache 20; 
+
 create sequence SEQ_MEDIA_FILE_INFO
 	start with 1000 cache 20; 
 
 create sequence SEQ_NLU_TRAINING_SENTENCE
+	start with 1000 cache 20; 
+
+create sequence SEQ_PERSON
 	start with 1000 cache 20; 
 
 create sequence SEQ_SMALL_TALK
@@ -125,6 +135,22 @@ comment on column CHATBOT_NODE.TRA_ID is
 'Loaded model';
 
 -- ============================================================
+--   Table : GROUPS                                        
+-- ============================================================
+create table GROUPS
+(
+    GRP_ID      	 NUMERIC     	not null,
+    NAME        	 VARCHAR(100)	,
+    constraint PK_GROUPS primary key (GRP_ID)
+);
+
+comment on column GROUPS.GRP_ID is
+'Id';
+
+comment on column GROUPS.NAME is
+'Name';
+
+-- ============================================================
 --   Table : MEDIA_FILE_INFO                                        
 -- ============================================================
 create table MEDIA_FILE_INFO
@@ -179,6 +205,34 @@ comment on column NLU_TRAINING_SENTENCE.TEXT is
 
 comment on column NLU_TRAINING_SENTENCE.SMT_ID is
 'SmallTalk';
+
+-- ============================================================
+--   Table : PERSON                                        
+-- ============================================================
+create table PERSON
+(
+    PER_ID      	 NUMERIC     	not null,
+    LOGIN       	 VARCHAR(100)	,
+    NAME        	 VARCHAR(100)	,
+    PASSWORD    	 VARCHAR(100)	,
+    GRP_ID      	 NUMERIC     	,
+    constraint PK_PERSON primary key (PER_ID)
+);
+
+comment on column PERSON.PER_ID is
+'Id';
+
+comment on column PERSON.LOGIN is
+'Login';
+
+comment on column PERSON.NAME is
+'Name';
+
+comment on column PERSON.PASSWORD is
+'Password';
+
+comment on column PERSON.GRP_ID is
+'Group';
 
 -- ============================================================
 --   Table : SMALL_TALK                                        
@@ -306,6 +360,12 @@ alter table CHATBOT_NODE
 	references TRAINING (TRA_ID);
 
 create index NODE_TRAINING_TRAINING_FK on CHATBOT_NODE (TRA_ID asc);
+
+alter table PERSON
+	add constraint FK_PERSON_GROUPS_GROUPS foreign key (GRP_ID)
+	references GROUPS (GRP_ID);
+
+create index PERSON_GROUPS_GROUPS_FK on PERSON (GRP_ID asc);
 
 alter table SMALL_TALK
 	add constraint FK_SMALL_TALK_CHATBOT_CHATBOT foreign key (BOT_ID)

@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.builder 
+package io.vertigo.chatbot.designer.builder
 
 create Task TkGetNextModelNumber {
     className : "io.vertigo.dynamox.task.TaskEngineSelect"

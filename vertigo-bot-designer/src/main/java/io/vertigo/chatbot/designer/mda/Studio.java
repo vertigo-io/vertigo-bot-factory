@@ -30,7 +30,7 @@ public class Studio {
 						// Java
 						.addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
 								.addDefinitionResource("kpr", "io/vertigo/chatbot/commons/gen.kpr") // chargement des ksp communs
-								.addDefinitionResource("kpr", "io/vertigo/chatbot/designer/builder/gen.kpr").build())
+								.addDefinitionResource("kpr", "io/vertigo/chatbot/designer/gen.kpr").build())
 						.build())
 				// ---StudioFeature
 				.addModule(new StudioFeatures() // Configuration du moteur vertigo-Studio
