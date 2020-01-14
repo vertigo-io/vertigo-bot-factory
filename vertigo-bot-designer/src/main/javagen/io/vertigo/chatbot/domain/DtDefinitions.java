@@ -109,6 +109,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isDev,
 		/** Propriété 'Color'. */
 		color,
+		/** Propriété 'ApiKey'. */
+		apiKey,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Loaded model'. */
@@ -136,7 +138,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Informations'. */
 		infos,
 		/** Propriété 'Warnings'. */
-		warnings	}
+		warnings,
+		/** Propriété 'Client Api Key'. */
+		apiKey	}
 
 	/**
 	 * Enumération des champs de Groups.

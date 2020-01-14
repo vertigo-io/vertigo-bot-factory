@@ -3,4 +3,5 @@
 
 	<Parameter name="designerUrl" value="http://localhost:8080/vertigo-bot-designer" override="false"/>
 	
+	<Parameter name="apiKey" value="MyNodeApiKey!" override="false"/>
 </Context>

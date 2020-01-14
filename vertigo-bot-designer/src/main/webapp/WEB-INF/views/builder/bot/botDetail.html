@@ -73,6 +73,7 @@
 				
 				<vu:include-data object="nodeList" field="nodId" />
 				<vu:include-data object="nodeList" field="color" />
+				<vu:include-data object="nodeList" field="apiKey" />
 				
 				<vu:column field="isDev" label="Train" class="col_Small">
 					<q-icon name="build" size="2rem" v-if="props.row.isDev"></q-icon>
@@ -91,10 +92,12 @@
 						<div class="text-h6">Node edition</div>
 					</q-card-section>
 					
-					<q-card-section style="height: 300px; width: 400px;">
+					<q-card-section style="height: 350px; width: 400px;">
 						<vu:text-field object="nodeEdit" field="name"/>
 						
 						<vu:text-field object="nodeEdit" field="url"/>
+						
+						<vu:text-field object="nodeEdit" field="apiKey"/>
 						
 						<q-btn push :style="'background: '+ vueData.nodeEdit.color" class="q-my-sm" text-color="white" label="Color">
 							<q-popup-proxy ref="colorPopup" width="1000">

@@ -27,10 +27,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données ExecutorTrainingCallback. */
 		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
+		/** Objet de données Groups. */
+		Groups(io.vertigo.chatbot.commons.domain.Groups.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données NluTrainingSentence. */
 		NluTrainingSentence(io.vertigo.chatbot.commons.domain.NluTrainingSentence.class),
+		/** Objet de données Person. */
+		Person(io.vertigo.chatbot.commons.domain.Person.class),
 		/** Objet de données RasaConfig. */
 		RasaConfig(io.vertigo.chatbot.executor.domain.RasaConfig.class),
 		/** Objet de données RunnerInfo. */
@@ -107,6 +111,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isDev,
 		/** Propriété 'Color'. */
 		color,
+		/** Propriété 'ApiKey'. */
+		apiKey,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Loaded model'. */
@@ -134,7 +140,18 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Informations'. */
 		infos,
 		/** Propriété 'Warnings'. */
-		warnings	}
+		warnings,
+		/** Propriété 'Client Api Key'. */
+		apiKey	}
+
+	/**
+	 * Enumération des champs de Groups.
+	 */
+	public enum GroupsFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Groups> {
+		/** Propriété 'Id'. */
+		grpId,
+		/** Propriété 'Name'. */
+		name	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.
@@ -165,6 +182,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		text,
 		/** Propriété 'SmallTalk'. */
 		smtId	}
+
+	/**
+	 * Enumération des champs de Person.
+	 */
+	public enum PersonFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Person> {
+		/** Propriété 'Id'. */
+		perId,
+		/** Propriété 'Login'. */
+		login,
+		/** Propriété 'Name'. */
+		name,
+		/** Propriété 'Password'. */
+		password,
+		/** Propriété 'Group'. */
+		grpId	}
 
 	/**
 	 * Enumération des champs de RasaConfig.

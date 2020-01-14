@@ -38,6 +38,7 @@ create DtDefinition DtExecutorTrainingCallback {
 	field log					{domain: DoText 					label: "Logs" 					required: "true"}
 	field infos					{domain: DoText						label: "Informations"	 		required: "false"}
 	field warnings				{domain: DoText						label: "Warnings"	 			required: "false"}
+	field apiKey				{domain: DoLabel					label: "Client Api Key"	 		required: "false"}
 }
 
 create DtDefinition DtExecutorConfiguration {

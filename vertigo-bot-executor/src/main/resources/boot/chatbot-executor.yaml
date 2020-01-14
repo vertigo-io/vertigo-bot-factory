@@ -16,12 +16,15 @@ modules:
       - cache.memory:
       - analytics.socketLoggerConnector:
           appName: chatbot-test
-  io.vertigo.vega.VegaFeatures:
+  io.vertigo.chatbot.vega.ChatbotVegaFeatures:
     features:
       - webservices:
     featuresConfig:
       - webservices.apiPrefix:
           apiPrefix: /api
+      - webservices.apiToken:
+          apiKey: ${apiKey}
+      #- webservices.rateLimiting:
   io.vertigo.dynamo.DynamoFeatures:
     features:
       - kvStore: # activation du support du stockage clé/valeur

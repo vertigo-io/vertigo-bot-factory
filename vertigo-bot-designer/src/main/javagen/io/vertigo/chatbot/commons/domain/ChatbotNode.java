@@ -20,6 +20,7 @@ public final class ChatbotNode implements Entity {
 	private String url;
 	private Boolean isDev;
 	private String color;
+	private String apiKey;
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
 			name = "ANodeChatbot",
@@ -150,6 +151,25 @@ public final class ChatbotNode implements Entity {
 	 */
 	public void setColor(final String color) {
 		this.color = color;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'ApiKey'.
+	 * @return String apiKey <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoLabel", required = true, label = "ApiKey")
+	public String getApiKey() {
+		return apiKey;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'ApiKey'.
+	 * @param apiKey String <b>Obligatoire</b>
+	 */
+	public void setApiKey(final String apiKey) {
+		this.apiKey = apiKey;
 	}
 	
 	/**

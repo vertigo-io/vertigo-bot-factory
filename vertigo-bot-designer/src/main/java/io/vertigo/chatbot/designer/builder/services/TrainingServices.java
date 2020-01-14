@@ -93,11 +93,12 @@ public class TrainingServices implements Component {
 		builderPAO.cleanOldTrainings(botId);
 
 		final Long versionNumber = builderPAO.getNextModelNumber(botId);
-		final Optional<ChatbotNode> devNode = designerServices.getDevNodeByBotId(botId);
+		final Optional<ChatbotNode> optDevNode = designerServices.getDevNodeByBotId(botId);
 
-		if (!devNode.isPresent()) {
+		if (!optDevNode.isPresent()) {
 			throw new VUserException("No training node configured");
 		}
+		final ChatbotNode devNode = optDevNode.get();
 
 		final Training training = new Training();
 		training.setBotId(botId);
@@ -114,8 +115,9 @@ public class TrainingServices implements Component {
 		requestData.put("trainingId", training.getTraId());
 		requestData.put("modelId", versionNumber);
 
-		final Response response = jaxrsProvider.getWebTarget(devNode.get().getUrl()).path("/api/chatbot/train")
+		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
 				.request(MediaType.APPLICATION_JSON)
+				.header("apiKey", devNode.getApiKey())
 				.post(Entity.json(requestData));
 
 		if (response.getStatus() != 204) {
@@ -135,27 +137,30 @@ public class TrainingServices implements Component {
 	public void stopAgent(final Long botId) {
 		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId).get();
 
-		jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/train")
+		jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
 		.request(MediaType.APPLICATION_JSON)
+		.header("apiKey", devNode.getApiKey())
 		.delete();
 
 	}
 
 	public TrainerInfo getTrainingState(final Long botId) {
-		final Optional<ChatbotNode> devNode = designerServices.getDevNodeByBotId(botId);
+		final Optional<ChatbotNode> optDevNode = designerServices.getDevNodeByBotId(botId);
 
-		if (!devNode.isPresent()) {
+		if (!optDevNode.isPresent()) {
 			final TrainerInfo trainerInfo = new TrainerInfo();
 			trainerInfo.setName("No training node configured");
 			return trainerInfo;
 		}
+		final ChatbotNode devNode = optDevNode.get();
 
 		boolean error = false;
 		Response response = null;
 
 		try {
-			response = jaxrsProvider.getWebTarget(devNode.get().getUrl()).path("/api/chatbot/trainStatus")
+			response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/trainStatus")
 					.request(MediaType.APPLICATION_JSON)
+					.header("apiKey", devNode.getApiKey())
 					.get();
 
 			error = response.getStatus() != 200;
@@ -174,20 +179,22 @@ public class TrainingServices implements Component {
 	}
 
 	public RunnerInfo getRunnerState(final Long botId) {
-		final Optional<ChatbotNode> devNode = designerServices.getDevNodeByBotId(botId);
+		final Optional<ChatbotNode> optDevNode = designerServices.getDevNodeByBotId(botId);
 
-		if (!devNode.isPresent()) {
+		if (!optDevNode.isPresent()) {
 			final RunnerInfo runnerInfo = new RunnerInfo();
 			runnerInfo.setName("No training node configured");
 			return runnerInfo;
 		}
+		final ChatbotNode devNode = optDevNode.get();
 
 		boolean error = false;
 		Response response = null;
 
 		try {
-			response = jaxrsProvider.getWebTarget(devNode.get().getUrl()).path("/api/chatbot/runnerStatus")
+			response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/runnerStatus")
 					.request(MediaType.APPLICATION_JSON)
+					.header("apiKey", devNode.getApiKey())
 					.get();
 
 			error = response.getStatus() != 200;
@@ -277,8 +284,9 @@ public class TrainingServices implements Component {
 
 			addObjectToMultipart(fdmp, "config", options);
 
-			response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/model")
+			response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/admin/model")
 					.request(MediaType.APPLICATION_JSON)
+					.header("apiKey", node.getApiKey())
 					.put(Entity.entity(fdmp, fdmp.getMediaType()));
 
 		} catch (final IOException e) {
@@ -329,6 +337,8 @@ public class TrainingServices implements Component {
 
 		final ChatbotNode node = designerServices.getDevNodeByBotId(training.getBotId()).get();
 
+		Assertion.checkState(node.getApiKey().equals(callback.getApiKey()), "Access denied");
+
 		// TODO : Limiter au dernier en cours en mode "trop tard, je refuse ton callback" ?
 
 		if (Boolean.TRUE.equals(callback.getSuccess())) {
@@ -351,8 +361,9 @@ public class TrainingServices implements Component {
 
 
 	private VFile fetchModel(final ChatbotNode node, final Long modelVersion) {
-		final Response response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/model/"+modelVersion)
+		final Response response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/admin/model/"+modelVersion)
 				.request(MediaType.APPLICATION_OCTET_STREAM)
+				.header("apiKey", node.getApiKey())
 				.get();
 
 		response.bufferEntity();

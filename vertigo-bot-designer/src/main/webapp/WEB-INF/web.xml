@@ -96,7 +96,7 @@
 		</init-param>
 		<init-param>
 			<param-name>url-exclude-pattern</param-name>
-			<param-value>/;/vertigo-ui/static/*;/static/*</param-value>
+			<param-value>/;/vertigo-ui/static/*;/static/*;/api/*</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>

@@ -171,6 +171,7 @@ create DtDefinition DtChatbotNode {
 	field url			{domain: DoUrl 		label: "URL" 				required: "true"}
 	field isDev			{domain: DoYesNo 	label: "Dev node" 			required: "true"}
 	field color			{domain: DoColor 	label: "Color" 				required: "true"}
+	field apiKey		{domain: DoLabel 	label: "ApiKey" 			required: "true"}
 }
 
 create Association ANodeChatbot {

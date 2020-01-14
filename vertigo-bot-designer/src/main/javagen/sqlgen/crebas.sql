@@ -108,6 +108,7 @@ create table CHATBOT_NODE
     URL         	 TEXT        	not null,
     IS_DEV      	 bool        	not null,
     COLOR       	 VARCHAR(20) 	not null,
+    API_KEY     	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     TRA_ID      	 NUMERIC     	,
     constraint PK_CHATBOT_NODE primary key (NOD_ID)
@@ -127,6 +128,9 @@ comment on column CHATBOT_NODE.IS_DEV is
 
 comment on column CHATBOT_NODE.COLOR is
 'Color';
+
+comment on column CHATBOT_NODE.API_KEY is
+'ApiKey';
 
 comment on column CHATBOT_NODE.BOT_ID is
 'Chatbot';

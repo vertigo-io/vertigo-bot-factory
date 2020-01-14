@@ -70,6 +70,7 @@ public class RasaTrainerServices implements Component, Activeable {
 			executorTrainingCallback.setLog(trainerRasaHandler.getTrainingLog());
 			executorTrainingCallback.setInfos(getTrainInfos());
 			executorTrainingCallback.setWarnings(getTrainWarns());
+			executorTrainingCallback.setApiKey(paramManager.getParam("apiKey").getValue());
 
 			final Map<String, Object> requestData = new HashMap<>();
 			requestData.put("executorTrainingCallback", executorTrainingCallback);

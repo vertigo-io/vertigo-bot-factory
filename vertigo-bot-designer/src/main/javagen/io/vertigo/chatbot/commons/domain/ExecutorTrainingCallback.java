@@ -18,6 +18,7 @@ public final class ExecutorTrainingCallback implements DtObject {
 	private String log;
 	private String infos;
 	private String warnings;
+	private String apiKey;
 	
 	/**
 	 * Champ : DATA.
@@ -112,6 +113,25 @@ public final class ExecutorTrainingCallback implements DtObject {
 	 */
 	public void setWarnings(final String warnings) {
 		this.warnings = warnings;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Client Api Key'.
+	 * @return String apiKey
+	 */
+	@Field(domain = "DoLabel", label = "Client Api Key")
+	public String getApiKey() {
+		return apiKey;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Client Api Key'.
+	 * @param apiKey String
+	 */
+	public void setApiKey(final String apiKey) {
+		this.apiKey = apiKey;
 	}
 	
 	/** {@inheritDoc} */
