@@ -1,0 +1,1 @@
+docker build -t cf_runner -f .\DockerfileRunner .
