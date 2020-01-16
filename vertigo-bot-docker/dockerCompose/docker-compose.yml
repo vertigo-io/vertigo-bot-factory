@@ -30,7 +30,6 @@ services:
       
   runner1:
     image: 'cf_runner:latest'
-#    hostname: 'rabbit-rasa'
     container_name: cf_runner_1
     environment:
       - designerUrl=http://designer:8080/
