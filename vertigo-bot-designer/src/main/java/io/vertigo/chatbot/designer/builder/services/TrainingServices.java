@@ -195,7 +195,7 @@ public class TrainingServices implements Component {
 
 		boolean error = false;
 		Response response = null;
-		final RunnerInfo retour = null;
+		RunnerInfo retour = null;
 
 		try {
 			response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/runnerStatus")
@@ -206,7 +206,7 @@ public class TrainingServices implements Component {
 			error = response.getStatus() != 200;
 
 			if (!error) {
-				//retour = response.readEntity(RunnerInfo.class);
+				retour = response.readEntity(RunnerInfo.class);
 			}
 		} catch (final Exception e) {
 			error = true;
@@ -219,7 +219,7 @@ public class TrainingServices implements Component {
 			return runnerInfo;
 		}
 
-		return response.readEntity(RunnerInfo.class);
+		return retour;
 	}
 
 	private BotExport exportBot(final Long botId) {

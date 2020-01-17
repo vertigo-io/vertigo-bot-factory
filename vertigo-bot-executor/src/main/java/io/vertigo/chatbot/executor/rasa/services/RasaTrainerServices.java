@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,7 +51,7 @@ public class RasaTrainerServices implements Component, Activeable {
 
 		LOGGER.info("Using designerUrl {}", designerUrl);
 
-		designerTarget = jaxrsProvider.getWebTarget(designerUrl + "/api/");
+		designerTarget = jaxrsProvider.getWebTarget(designerUrl);
 	}
 
 	@Override
@@ -75,9 +76,17 @@ public class RasaTrainerServices implements Component, Activeable {
 			final Map<String, Object> requestData = new HashMap<>();
 			requestData.put("executorTrainingCallback", executorTrainingCallback);
 
-			designerTarget.path("/trainingCallback")
-			.request(MediaType.APPLICATION_JSON)
-			.post(Entity.json(requestData));
+			try {
+				final Response response = designerTarget.path("/api/trainingCallback")
+						.request(MediaType.APPLICATION_JSON)
+						.post(Entity.json(requestData));
+
+				if (response.getStatus() != 204) {
+					LOGGER.error("Can't send trained model ! {}", response.getStatusInfo());
+				}
+			} catch (final Exception e) {
+				LOGGER.error("Can't send trained model !", e);
+			}
 		});
 	}
 

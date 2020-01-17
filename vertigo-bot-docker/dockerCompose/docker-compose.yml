@@ -6,6 +6,7 @@ services:
     container_name: cf_postgres
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_PASSWORD: 75rV7b5akp22dDs0sNdr9A2
     volumes:
       - cf_postgres_data:/var/lib/postgresql/data/pgdata
       - ./initSql/:/docker-entrypoint-initdb.d/
