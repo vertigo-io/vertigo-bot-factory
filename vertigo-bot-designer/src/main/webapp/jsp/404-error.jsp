@@ -14,11 +14,11 @@
 	<title>404</title>
 </head>
 
-<body class="permission_denied">
-  <div class="denied__wrapper">
-    <h1>404</h1>
-    <a href="."><button class="denied__link">Go Home</button></a>
+<body class="errorPage">
+  <div class="content">
+   <h1>404</h1>
+   <h2>This page does not exists.</h2>
+   <a href="."><button class="denied__link">Go Home</button></a>
   </div>
-      
 </body>
 </html>
