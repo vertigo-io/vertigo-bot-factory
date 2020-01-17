@@ -89,10 +89,9 @@ private String printException(Throwable t) throws Exception {
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<meta http-equiv="Content-Script-Type" content="text/javascript"/>
 	
-	<base href="<%=baseUrl%>"></base>	
-    <script th:src="@{/vertigo-ui/static/3rdParty/cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js}"></script>	
+	<base href="<%=baseUrl%>"/>	
 	<link href="static/css/error.css" type="text/css" rel="stylesheet"/>
-	<title>Vertigo - <%=errorCode%></title>
+	<title><%=errorCode%></title>
 </head>
 
 <body class="errorPage">
@@ -111,7 +110,6 @@ private String printException(Throwable t) throws Exception {
 			  }
 			}
 	</script>
-  <div id="particles-js"></div>
   <div>
   	<div class="content">
     <h1><%=errorCode%></h1>
@@ -150,148 +148,25 @@ vous pouvez revenir &agrave; <%=sbPrevious.toString()%> puis essayer &agrave; no
 <p>Il peut aussi s'agir d'une anomalie de l'application, dans ce cas, veuillez contacter le support technique et leur<br/>
 communiquer l'heure &agrave; laquelle s'est produite l'erreur ainsi que les informations ci dessous.</p>
 		
-		<a href="#" onclick="handleClick();return false;" id="showerrorlink"><button class="denied__link">Voir le message d'erreur</button></a>	
-		</div>
-		<div id="errordetail" style="display:none;">
-		<h2><%="HTTP (" + errorCode + ") : " + errorMessage %></h2>
-		<% for (int i = 0; i < list.size(); i++) { %>
-			<% t = (Throwable)list.get(i); %>
-			<h4><%= i > 0 ? "Cons&eacute;quence (" + i + ")" : "Cause racine" %></h4>
-			<div class="code">
-				<%= printException(t)%>
+		<% if ("true".equalsIgnoreCase(pageContext.getServletContext().getInitParameter("devMode"))) { %>
+			<a href="#" onclick="handleClick();return false;" id="showerrorlink"><button class="denied__link">Voir le message d'erreur</button></a>	
+			</div>
+			<div id="errordetail" style="display:none;">
+			<h2><%="HTTP (" + errorCode + ") : " + errorMessage %></h2>
+			<% for (int i = 0; i < list.size(); i++) { %>
+				<% t = (Throwable)list.get(i); %>
+				<h4><%= i > 0 ? "Cons&eacute;quence (" + i + ")" : "Cause racine" %></h4>
+				<div class="code">
+					<%= printException(t)%>
+				</div>
+			<% } %>
+			</div>
+		<% } else {%>
 			</div>
 		<% } %>
-		</div>
 	<% } %>
        
-    <svg>
-    <g>
-      <path class="stars" fill="#FFF" d="M112.456 363.093c-.056 7.866-6.478 14.197-14.344 14.142 7.866.056 14.198 6.48 14.142 14.345.056-7.866 6.48-14.198 14.345-14.142-7.868-.057-14.2-6.48-14.144-14.345zM432.436 274.908c-.056 7.866-6.478 14.198-14.344 14.142 7.866.057 14.197 6.48 14.142 14.345.056-7.866 6.48-14.197 14.345-14.142-7.868-.056-14.2-6.48-14.144-14.345zM159.75 58.352c-.12 16.537-13.62 29.848-30.157 29.73 16.537.118 29.848 13.62 29.73 30.156.118-16.537 13.62-29.848 30.156-29.73-16.54-.117-29.85-13.62-29.73-30.156z"/>
-    </g>
-  </svg>
-  
-  <img src="static/img/error/astronaut.svg" class="astronaut" />
-  <div class="mars">
-  	<img src="static/img/error/spaceship.svg" class="spaceship" />
-  </div>
   </div>
       
-<script>
-var particles = {
-	      "particles": {
-	        "number": {
-	          "value": 160,
-	          "density": {
-	            "enable": true,
-	            "value_area": 800
-	          }
-	        },
-	        "color": {
-	          "value": "#ffffff"
-	        },
-	        "shape": {
-	          "type": "circle",
-	          "stroke": {
-	            "width": 0,
-	            "color": "#000000"
-	          },
-	          "polygon": {
-	            "nb_sides": 5
-	          },
-	          "image": {
-	            "src": "img/github.svg",
-	            "width": 100,
-	            "height": 100
-	          }
-	        },
-	        "opacity": {
-	          "value": 1,
-	          "random": true,
-	          "anim": {
-	            "enable": true,
-	            "speed": 1,
-	            "opacity_min": 0,
-	            "sync": false
-	          }
-	        },
-	        "size": {
-	          "value": 3,
-	          "random": true,
-	          "anim": {
-	            "enable": false,
-	            "speed": 4,
-	            "size_min": 0.3,
-	            "sync": false
-	          }
-	        },
-	        "line_linked": {
-	          "enable": false,
-	          "distance": 150,
-	          "color": "#ffffff",
-	          "opacity": 0.4,
-	          "width": 1
-	        },
-	        "move": {
-	          "enable": true,
-	          "speed": 0.17,
-	          "direction": "none",
-	          "random": true,
-	          "straight": false,
-	          "out_mode": "out",
-	          "bounce": false,
-	          "attract": {
-	            "enable": false,
-	            "rotateX": 600,
-	            "rotateY": 600
-	          }
-	        }
-	      },
-	      "interactivity": {
-	        "detect_on": "canvas",
-	        "events": {
-	          "onhover": {
-	            "enable": false,
-	            "mode": "bubble"
-	          },
-	          "onclick": {
-	            "enable": false,
-	            "mode": "repulse"
-	          },
-	          "resize": false
-	        },
-	        "modes": {
-	          "grab": {
-	            "distance": 400,
-	            "line_linked": {
-	              "opacity": 1
-	            }
-	          },
-	          "bubble": {
-	            "distance": 250,
-	            "size": 0,
-	            "duration": 2,
-	            "opacity": 0,
-	            "speed": 3
-	          },
-	          "repulse": {
-	            "distance": 400,
-	            "duration": 0.4
-	          },
-	          "push": {
-	            "particles_nb": 4
-	          },
-	          "remove": {
-	            "particles_nb": 2
-	          }
-	        }
-	      },
-	      "retina_detect": true
-	   };
-	   particlesJS('particles-js', particles, function() {
-	     console.log('callback - particles.js config loaded');
-	   });
-
-	</script>
-</script>
   </body>
   </html>

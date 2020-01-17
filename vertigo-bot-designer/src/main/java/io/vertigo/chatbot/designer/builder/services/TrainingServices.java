@@ -156,6 +156,7 @@ public class TrainingServices implements Component {
 
 		boolean error = false;
 		Response response = null;
+		TrainerInfo retour = null;
 
 		try {
 			response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/trainStatus")
@@ -164,6 +165,10 @@ public class TrainingServices implements Component {
 					.get();
 
 			error = response.getStatus() != 200;
+
+			if (!error) {
+				retour=response.readEntity(TrainerInfo.class);
+			}
 		} catch (final Exception e) {
 			error = true;
 			LOGGER.info("Impossible d'accéder au noeud.", e);
@@ -175,7 +180,7 @@ public class TrainingServices implements Component {
 			return trainerInfo;
 		}
 
-		return response.readEntity(TrainerInfo.class);
+		return retour;
 	}
 
 	public RunnerInfo getRunnerState(final Long botId) {
@@ -190,6 +195,7 @@ public class TrainingServices implements Component {
 
 		boolean error = false;
 		Response response = null;
+		final RunnerInfo retour = null;
 
 		try {
 			response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/runnerStatus")
@@ -198,6 +204,10 @@ public class TrainingServices implements Component {
 					.get();
 
 			error = response.getStatus() != 200;
+
+			if (!error) {
+				//retour = response.readEntity(RunnerInfo.class);
+			}
 		} catch (final Exception e) {
 			error = true;
 			LOGGER.info("Impossible d'accéder au noeud.", e);
