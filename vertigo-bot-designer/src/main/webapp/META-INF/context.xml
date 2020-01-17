@@ -8,4 +8,5 @@
 		username="chatbot"
 		password="chatbot" />
 		
+	<Parameter name="devMode" value="true" override="false"/>
 </Context>
