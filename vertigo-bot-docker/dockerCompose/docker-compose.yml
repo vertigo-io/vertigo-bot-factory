@@ -2,11 +2,10 @@ version: '3.5'
 
 services:
   postgres:
-    image: postgres
-    container_name: cf_postgres
+    image: postgres:12.1
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_PASSWORD: 75rV7b5akp22dDs0sNdr9A2
+      POSTGRES_PASSWORD: xsvbWkBdKeJFBYnVQrtR0VYXhOyq80pC
     volumes:
       - cf_postgres_data:/var/lib/postgresql/data/pgdata
       - ./initSql/:/docker-entrypoint-initdb.d/
@@ -15,14 +14,40 @@ services:
     networks:
       - cb_factory
     restart: unless-stopped
-    
+  
+  influxdb:
+    image: influxdb:1.7.8
+#    ports: 
+#        - "8086:8086"
+    networks:
+      - cb_factory
+    restart: unless-stopped
+
+  analytica:
+    image: analytica:latest
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+    depends_on:
+      - influxdb
+#    ports:
+#      - "4562:4562"
+    networks:
+      - cb_factory
+    restart: unless-stopped
+  
   designer:
     image: 'cf_designer:latest'
-    container_name: cf_designer
     environment:
       - DB_URL=//postgres:5432/chatbot
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - INFLUXDB_URL=http://influxdb:8086
+      - ANALYTICA_DBNAME=chatbot
+      - devMode=true
     depends_on:
       - postgres
+      - influxdb
+      - analytica
     ports:
       - '8080:8080'
     networks:
@@ -31,9 +56,15 @@ services:
       
   runner1:
     image: 'cf_runner:latest'
-    container_name: cf_runner_1
     environment:
-      - designerUrl=http://designer:8080/
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=3wqnHagLkbFsjTaW
+    depends_on:
+      - influxdb
+      - analytica
     ports:
       - '8081:8080'
     volumes:
@@ -42,9 +73,69 @@ services:
       - cb_factory
     restart: unless-stopped
 
+  runner2:
+    image: 'cf_runner:latest'
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=@BDqoMD2dX2IQbkH
+    depends_on:
+      - influxdb
+      - analytica
+    ports:
+      - '8082:8080'
+    volumes:
+      - cf_runner_2_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+
+  runner3:
+    image: 'cf_runner:latest'
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=LL3Slj5ZAUb2sUFz
+    depends_on:
+      - influxdb
+      - analytica
+    ports:
+      - '8083:8080'
+    volumes:
+      - cf_runner_3_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+
+  runner4:
+    image: 'cf_runner:latest'
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=cBKYShDhBxnB$yCo
+    depends_on:
+      - influxdb
+      - analytica
+    ports:
+      - '8084:8080'
+    volumes:
+      - cf_runner_4_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+
 volumes:
   cf_postgres_data:
   cf_runner_1_data:
+  cf_runner_2_data:
+  cf_runner_3_data:
+  cf_runner_4_data:
     
 networks:
   cb_factory:

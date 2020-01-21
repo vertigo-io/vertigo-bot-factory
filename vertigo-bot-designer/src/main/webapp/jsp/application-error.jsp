@@ -148,7 +148,10 @@ vous pouvez revenir &agrave; <%=sbPrevious.toString()%> puis essayer &agrave; no
 <p>Il peut aussi s'agir d'une anomalie de l'application, dans ce cas, veuillez contacter le support technique et leur<br/>
 communiquer l'heure &agrave; laquelle s'est produite l'erreur ainsi que les informations ci dessous.</p>
 		
-		<% if ("true".equalsIgnoreCase(pageContext.getServletContext().getInitParameter("devMode"))) { %>
+		<% 
+			final io.vertigo.core.param.ParamManager paramManager = io.vertigo.app.Home.getApp().getComponentSpace().resolve(io.vertigo.core.param.ParamManager.class);
+			final Optional<io.vertigo.core.param.Param> devModeOpt = paramManager.getOptionalParam("devMode");
+			if (devModeOpt.isPresent() && devModeOpt.get().getValueAsBoolean()) { %>
 			<a href="#" onclick="handleClick();return false;" id="showerrorlink"><button class="denied__link">Voir le message d'erreur</button></a>	
 			</div>
 			<div id="errordetail" style="display:none;">

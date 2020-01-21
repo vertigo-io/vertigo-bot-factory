@@ -9,7 +9,9 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
+import io.vertigo.core.param.ParamManager;
 import io.vertigo.database.timeseries.DataFilter;
 import io.vertigo.database.timeseries.TimeFilter;
 import io.vertigo.database.timeseries.TimeSeriesDataBaseManager;
@@ -18,15 +20,30 @@ import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.lang.Assertion;
 
 @Transactional
-public class AnalyticsServices implements Component {
+public class AnalyticsServices implements Component, Activeable {
 
 	@Inject
 	private TimeSeriesDataBaseManager timeSeriesDataBaseManager;
 
+	@Inject
+	private ParamManager paramManager;
+
+	private String influxDbName;
+
+	@Override
+	public void start() {
+		influxDbName = paramManager.getParam("ANALYTICA_DBNAME").getValueAsString();
+	}
+
+	@Override
+	public void stop() {
+		// Nothing
+	}
+
 	public TimedDatas getSessionsStats(final TimeOption timeOption) {
 		final String now = '\'' + Instant.now().toString() + '\'';
 
-		return timeSeriesDataBaseManager.getTimeSeries("chatbot-test", Arrays.asList("isTypeOpen:sum"),
+		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("isTypeOpen:sum"),
 				DataFilter.builder("chatbot").build(),
 				TimeFilter.builder(now + " - " + timeOption.getRange(), now).withTimeDim(timeOption.getGrain()).build());
 
@@ -37,7 +54,7 @@ public class AnalyticsServices implements Component {
 	public TimedDatas getRequestStats(final TimeOption timeOption) {
 		final String now = '\'' + Instant.now().toString() + '\'';
 
-		return timeSeriesDataBaseManager.getTimeSeries("chatbot-test", Arrays.asList("name:count", "isFallback:sum"),
+		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum"),
 				DataFilter.builder("chatbot").withAdditionalWhereClause("\"isTypeOpen\" = 0").build(),
 				TimeFilter.builder(now + " - " + timeOption.getRange(), now).withTimeDim(timeOption.getGrain()).build());
 

@@ -4,6 +4,7 @@ boot:
     locales: fr_FR
   plugins:
     - io.vertigo.core.plugins.resource.classpath.ClassPathResourceResolverPlugin: {}
+    - io.vertigo.core.plugins.param.env.EnvParamPlugin: {}
     - io.vertigo.vega.plugins.webservice.servlet.WebAppContextParamPlugin: {}
 modules:
   io.vertigo.commons.CommonsFeatures: # utilisation du module vertigo-commons
@@ -13,6 +14,10 @@ modules:
     featuresConfig:
       - script.janino:
       - cache.memory:
+      - analytics.socketLoggerConnector:
+          appName: ${ANALYTICA_DBNAME}
+          hostName: ${ANALYTICA_HOST}
+          port: ${ANALYTICA_PORT}
   io.vertigo.database.DatabaseFeatures: # utilisation du module vertigo-database pour pouvoir utiliser une base de données
     features:
       - sql: # nous activons le support des bases de données SQL
@@ -22,10 +27,10 @@ modules:
           classname: io.vertigo.database.impl.sql.vendor.postgresql.PostgreSqlDataBase
           source: java:/comp/env/jdbc/DataSource
       - timeseries.influxdb:
-          host: http://analytica.part.klee.lan.net:8086
+          host: ${INFLUXDB_URL}
           user: anonymous
           password: anonymous
-          dbNames: chatbot-test
+          dbNames: ${ANALYTICA_DBNAME}
   io.vertigo.dynamo.DynamoFeatures: # utilisation du module vertigo-dynamo
     features:
       - store: # activation du support du stockage des entités de notre modèle

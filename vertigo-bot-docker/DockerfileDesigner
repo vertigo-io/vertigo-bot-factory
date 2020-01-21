@@ -18,8 +18,8 @@ RUN apt-get update
  
 # Tomcat
 	ADD apache-tomcat-8.5.50.tar.gz /opt/tomcat/
-	ADD Designer/vertigo-bot-designer-*.war /opt/tomcat/webapps/ROOT.war
-	ADD Designer/context.xml /opt/tomcat/conf/Catalina/localhost/ROOT.xml
+	ADD Designer/vertigo-bot-designer-*.war /opt/tomcat/webapps/designer.war
+	ADD Designer/context.xml /opt/tomcat/conf/Catalina/localhost/designer.xml
 	ADD Designer/setenv.sh /opt/tomcat/bin/
 
 	# user home is used for berkeley database
@@ -30,6 +30,10 @@ RUN apt-get update
 	ENV DB_URL //host.docker.internal:5432/chatbot
 	ENV DB_USER chatbot
 	ENV DB_PWD chatbot
+	ENV ANALYTICA_HOST analytica
+	ENV ANALYTICA_PORT 4562
+	ENV INFLUXDB_URL http://analytica.part.klee.lan.net:8086
+	ENV ANALYTICA_DBNAME chatbot-test
 
 	# Expose tomcat port
 	EXPOSE 8080

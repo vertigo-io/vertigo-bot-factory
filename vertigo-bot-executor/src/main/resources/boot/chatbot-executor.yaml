@@ -15,7 +15,9 @@ modules:
       - script.janino:
       - cache.memory:
       - analytics.socketLoggerConnector:
-          appName: chatbot-test
+          appName: ${ANALYTICA_DBNAME}
+          hostName: ${ANALYTICA_HOST}
+          port: ${ANALYTICA_PORT}
   io.vertigo.chatbot.vega.ChatbotVegaFeatures:
     features:
       - webservices:
@@ -23,7 +25,7 @@ modules:
       - webservices.apiPrefix:
           apiPrefix: /api
       - webservices.apiToken:
-          apiKey: ${apiKey}
+          apiKey: ${API_KEY}
       #- webservices.rateLimiting:
   io.vertigo.dynamo.DynamoFeatures:
     features:
@@ -31,7 +33,7 @@ modules:
     featuresConfig:
       - kvStore.berkeley:  # nous utilisons un stockage clé valeur avec la base de donnée BerkeleyDB
           collections: ExecutorConfig
-          dbFilePath: ${berkeleyDataPath}
+          dbFilePath: ${BERKELEY_DATA_PATH}
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
   io.vertigo.chatbot.executor.RasaExecutorFeatures:

@@ -14,20 +14,30 @@
 	</context-param>
 	
 	<context-param>
-		<param-name>dataPath</param-name>
-		<param-value>${user.home}/botExecutor/data</param-value>
-	</context-param>
-	<context-param>
-		<param-name>berkeleyDataPath</param-name>
+		<param-name>BERKELEY_DATA_PATH</param-name>
 		<param-value>${user.home}/botExecutor/berkeley</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>rasaPath</param-name>
+		<param-name>ANALYTICA_HOST</param-name>
+		<param-value>analytica.part.klee.lan.net</param-value>
+	</context-param>
+	<context-param>
+		<param-name>ANALYTICA_PORT</param-name>
+		<param-value>4562</param-value>
+	</context-param>
+	<context-param>
+		<param-name>ANALYTICA_DBNAME</param-name>
+		<param-value>chatbot-test</param-value>
+	</context-param>
+
+	
+	<context-param>
+		<param-name>RASA_EXE_PATH</param-name>
 		<param-value>D:\DT\chatbot\factory\python\Scripts\rasa</param-value>
 	</context-param>
 	<context-param>
-		<param-name>botPath</param-name>
+		<param-name>RASA_BOT_PATH</param-name>
 		<param-value>D:\DT\chatbot\factory\bot\</param-value>
 	</context-param>
 	

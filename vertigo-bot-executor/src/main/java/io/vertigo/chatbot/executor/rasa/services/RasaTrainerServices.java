@@ -47,7 +47,7 @@ public class RasaTrainerServices implements Component, Activeable {
 
 	@Override
 	public void start() {
-		final String designerUrl = paramManager.getParam("designerUrl").getValueAsString();
+		final String designerUrl = paramManager.getParam("DESIGNER_URL").getValueAsString();
 
 		LOGGER.info("Using designerUrl {}", designerUrl);
 
@@ -71,7 +71,7 @@ public class RasaTrainerServices implements Component, Activeable {
 			executorTrainingCallback.setLog(trainerRasaHandler.getTrainingLog());
 			executorTrainingCallback.setInfos(getTrainInfos());
 			executorTrainingCallback.setWarnings(getTrainWarns());
-			executorTrainingCallback.setApiKey(paramManager.getParam("apiKey").getValue());
+			executorTrainingCallback.setApiKey(paramManager.getParam("API_KEY").getValue());
 
 			final Map<String, Object> requestData = new HashMap<>();
 			requestData.put("executorTrainingCallback", executorTrainingCallback);
