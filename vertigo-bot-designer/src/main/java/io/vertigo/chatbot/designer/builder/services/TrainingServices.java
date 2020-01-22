@@ -154,7 +154,7 @@ public class TrainingServices implements Component {
 		}
 		final ChatbotNode devNode = optDevNode.get();
 
-		boolean error = false;
+		String error = null;
 		Response response = null;
 		TrainerInfo retour = null;
 
@@ -164,19 +164,20 @@ public class TrainingServices implements Component {
 					.header("apiKey", devNode.getApiKey())
 					.get();
 
-			error = response.getStatus() != 200;
+			error = response.getStatus() != 200 ? "Code HTTP : " + response.getStatus() : null;
 
-			if (!error) {
+			if (error == null) {
 				retour=response.readEntity(TrainerInfo.class);
 			}
 		} catch (final Exception e) {
-			error = true;
+			error = e.getLocalizedMessage();
 			LOGGER.info("Impossible d'accéder au noeud.", e);
 		}
 
-		if (error) {
+		if (error != null) {
 			final TrainerInfo trainerInfo = new TrainerInfo();
 			trainerInfo.setName("Node unavailable");
+			trainerInfo.setTrainingState(error);
 			return trainerInfo;
 		}
 
@@ -193,7 +194,7 @@ public class TrainingServices implements Component {
 		}
 		final ChatbotNode devNode = optDevNode.get();
 
-		boolean error = false;
+		String error = null;
 		Response response = null;
 		RunnerInfo retour = null;
 
@@ -203,19 +204,20 @@ public class TrainingServices implements Component {
 					.header("apiKey", devNode.getApiKey())
 					.get();
 
-			error = response.getStatus() != 200;
+			error = response.getStatus() != 200 ? "Code HTTP : " + response.getStatus() : null;
 
-			if (!error) {
+			if (error == null) {
 				retour = response.readEntity(RunnerInfo.class);
 			}
 		} catch (final Exception e) {
-			error = true;
+			error = e.getLocalizedMessage();
 			LOGGER.info("Impossible d'accéder au noeud.", e);
 		}
 
-		if (error) {
+		if (error != null) {
 			final RunnerInfo runnerInfo = new RunnerInfo();
 			runnerInfo.setName("Node unavailable");
+			runnerInfo.setState(error);
 			return runnerInfo;
 		}
 
