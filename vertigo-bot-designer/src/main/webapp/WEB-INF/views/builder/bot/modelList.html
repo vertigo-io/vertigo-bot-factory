@@ -9,6 +9,9 @@
 	<head>
 		<title>Models</title>
 		
+		<link  th:href="@{/static/chatbot/chatbot.css}" rel="stylesheet"/>
+		<script th:src="@{/static/chatbot/v-chatbot.js}"></script>
+		
 		<script th:inline="javascript">
 			// ## training ##
 			
@@ -167,6 +170,10 @@
 					return "<span class='text-orange'>same</span>";
 				}
 			}
+			function getDevNode() {
+				let result = vueData.nodeList.filter(n => n.isDev === true);
+				return result.size === 0 ? null : result[0];
+			}
 			
 		</script>
 	</head>
@@ -187,12 +194,12 @@
 				</vu:slot>
 				
 				<vu:text-field-read-reactive object="runnerState" field="name" />
-				<vu:text-field-read-reactive object="runnerState" field="state" />
+				<vu:text-field-read-reactive object="runnerState" field="state" label="State" />
 				<vu:text-field-read-reactive object="runnerState" field="agentVersion" />
 				<vu:text-field-read-reactive object="runnerState" field="loadedModelVersion" />
 			</vu:block>
 			
-			<vu:table id="load" list="trainingList" title="Manage models" componentId="trainingList" rowsPerPage="10" autoColClass >
+			<vu:table id="load" list="trainingList" title="Manage models" :dense="|$q.screen.lt.lg|" componentId="trainingList" rowsPerPage="10" autoColClass >
 				<vu:slot name="top_right_slot">
 					<q-btn class="fab-block" round color="primary" icon="refresh" aria-label="Refresh" title="Refresh" 
 					       @click="refreshModels" :loading="dataX.loadingModels"></q-btn>
@@ -216,7 +223,7 @@
 				</vu:column>
 				<vu:column field="versionNumber" class="col_Small"/>
 				<vu:column field="startTime" label="Date" />
-				<vu:column field="duration">
+				<vu:column field="duration" class="col_Small">
 					<vu:content v-if="props.row.endTime">
 						{{ props.row.duration }}
 						<q-tooltip content-style="font-size: 13px"
@@ -238,7 +245,7 @@
 							round icon="short_text" class="on-right"
 							@click="dataX.modalLog.col = 'infos'; dataX.modalLog.row = props.row; dataX.modalLog.show = true"></q-btn>
 							
-					<q-btn v-if="props.row.warnings"
+					<q-btn 
 							round icon="warning" color="orange" class="on-right"
 							@click="dataX.modalLog.col = 'warnings'; dataX.modalLog.row = props.row; dataX.modalLog.show = true"></q-btn>
 				</vu:column>
@@ -247,6 +254,8 @@
 					<vu:include-data object="nodeList" field="traId" />
 					<vu:include-data object="nodeList" field="name" />
 					<vu:include-data object="nodeList" field="color" />
+					<vu:include-data object="nodeList" field="isDev" />
+					<vu:include-data object="nodeList" field="url" />
 					
 					<q-chip v-for="node in vueData.nodeList" v-if="node.traId === props.row.traId" :style="'background: '+ node.color" text-color="white" icon="cloud_done">
 						{{node.name}}
@@ -313,7 +322,7 @@
 				
 				<vu:text-field-read-reactive object="trainerState" field="name" />
 				
-				<vu:text-field-read-reactive object="trainerState" field="trainingState" />
+				<vu:text-field-read-reactive object="trainerState" field="trainingState" label="State" />
 				
 				<q-linear-progress :class="vueData.trainerState.trainingInProgress ? '':'invisible'"
 						stripe rounded style="height: 10px"
@@ -361,6 +370,12 @@
 					</q-expansion-item>
 				</q-list>
 			</vu:block>
+			
+  			<q-drawer :value="true" elevated ref="botDrawer" side="right" behavior="desktop">
+				<v-chatbot class="column chatbot-container"
+						   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot" :bot-url="getDevNode().url"
+						   :dev-mode="!true"></v-chatbot>
+  			</q-drawer>
 			
 		</section>
 		

@@ -354,14 +354,14 @@ nav a.q-item, .nav a.q_item {
 /** Tables **/
 
 table .col_Small {
-	width: 110px;
+	width: 50px;
 	text-align: center;
 }
 
 table .col_Log {
-	width: 185px;
+	width: 166px;
 }
 
 table .col_DoInstant {
-	width: 150px; 
+	width: 100px; 
 }
