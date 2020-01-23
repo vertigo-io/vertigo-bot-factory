@@ -28,7 +28,7 @@ private String printException(Throwable t) throws Exception {
 %>
 
 <%
-		final String baseUrl = request.getRequestURL().substring(0, request.getRequestURL().indexOf(request.getServletPath()))+"/";
+		final String baseUrl = request.getContextPath()+"/";
 
 		Throwable e = (Throwable) request.getAttribute("javax.servlet.error.exception"), t;
 		String errorMessage = (String) request.getAttribute("javax.servlet.error.message");
