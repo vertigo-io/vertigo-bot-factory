@@ -373,7 +373,7 @@
 			
   			<q-drawer :value="true" elevated ref="botDrawer" side="right" behavior="desktop">
 				<v-chatbot class="column chatbot-container"
-						   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot" :bot-url="getDevNode().url"
+						   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot" :bot-url="getDevNode().url + '/api/chatbot/talk'"
 						   :dev-mode="!true"></v-chatbot>
   			</q-drawer>
 			
