@@ -118,7 +118,7 @@
 						},
 						{
 							onSuccess: function() {
-								VUiPage.$refs.chatbot.systemMessage("Modèle V" + VUiExtensions.dataX.loadModel.currentTraining.versionNumber + " chargé.");
+								VUiPage.$refs.chatbot.systemMessage("Model V" + VUiExtensions.dataX.loadModel.currentTraining.versionNumber + " loaded.");
 								VUiPage.$refs.chatbot.restart(true);
 								VUiPage.$refs.loadModelDialog.hide();
 							}
@@ -382,7 +382,7 @@
 							   ref="chatbot"
 							   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot" :bot-url="getDevNode().url + '/api/chatbot/talk'"
 							   :dev-mode="!true"
-							   :placeholder="'Parler à ' + vueData.bot.name"></v-chatbot>
+							   :placeholder="'Speak to ' + vueData.bot.name"></v-chatbot>
 	  			</q-drawer>
 			</th:block>
 		</section>
