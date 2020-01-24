@@ -11,10 +11,9 @@
 			<q-header elevated>
 				<q-toolbar>
 					<div class="row items-center">
-						<q-btn flat round dense class="lt-lg"
-						th:with="mini=${model.vContext['componentStates'].addComponentState('navDrawer').addPrimitive('mini', false)}"
+						<q-btn flat round dense class="lt-md"
 						@click="$refs.menuDrawer.toggle()" icon="menu" aria-label="Toggle menu on left side"></q-btn>
-						<q-toolbar-title class="gt-md">
+						<q-toolbar-title>
 							<div>Chatbot designer</div>
 							<div class="text-subtitle2">Build the bot you always wanted</div>
 						</q-toolbar-title>
@@ -24,20 +23,25 @@
 	       	<!-- END HEADER-->
 	       			
 	 			
-	 			<q-drawer
+	 		<q-drawer
+	 			  th:with="mini=${model.vContext['componentStates'].addComponentState('navDrawer').addPrimitive('mini', true)}"
 	 			  content-class="bg-white text-primary"
-		      side="left"
-		      ref="menuDrawer"
-		      show-if-above
-		      elevated
-		      :mini="function() {var miniMenu = this.$cookies.get('miniMenu', true) === 'true';componentStates.navDrawer.mini = miniMenu;return miniMenu;}()"
-		    >
+			      side="left"
+			      ref="menuDrawer"
+			      show-if-above
+			      elevated
+			      width="200"
+			      breakpoint="1006"
+			      
+			      :mini="$q.screen.lt.lg && componentStates.navDrawer.mini"
+		          @mouseover="componentStates.navDrawer.mini = false"
+		          @mouseout="componentStates.navDrawer.mini = true"
+		          :mini-to-overlay="$q.screen.lt.lg"
+			    >
 		      
 		      <nav class="text-no-wrap">
 		       <q-list :class="{'dense-list-header':!componentStates.navDrawer.mini}" style="height:100%">
 		      
-		      	<q-item-label header>Home</q-item-label>
-		      	
 		        <q-item tag="a" th:href="@{/bots/}">
 		          <q-item-section avatar>
 			        <q-icon name="fas fa-robot"></q-icon>
@@ -51,21 +55,6 @@
 			      </q-item-section>
 		          <q-item-section>Statistics</q-item-section>
 		        </q-item>
-		        
-		        <q-separator></q-separator>
-		        
-		        <q-item v-if="componentStates.navDrawer.mini"
-						@click.native="componentStates.navDrawer.mini = false; $cookies.set('miniMenu', false)" title="Expand menu">
-						<q-item-section avatar>
-		          			<q-icon name="arrow_right"></q-icon>
-		          		</q-item-section>
-				</q-item>
-				 <q-item v-if="!componentStates.navDrawer.mini"
-						@click.native="componentStates.navDrawer.mini = true; $cookies.set('miniMenu', true)" title="Minify menu">
-					<q-item-section side>
-		          		<q-icon name="arrow_left"></q-icon>
-		          	</q-item-section>
-				</q-item>
 					
 		       </q-list>
 		      </nav>

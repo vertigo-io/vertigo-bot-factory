@@ -332,7 +332,6 @@ nav a.q-item, .nav a.q_item {
 }
 .version-watermark img {
 	opacity: 0.3;
-  	filter: alpha(opacity=30); /* For IE8 and earlier */
 }
 .poweredBy {
 	font-style: italic;
@@ -356,6 +355,7 @@ nav a.q-item, .nav a.q_item {
 table .col_Small {
 	width: 50px;
 	text-align: center;
+	padding: 4px 8px;
 }
 
 table .col_Log {
@@ -364,4 +364,9 @@ table .col_Log {
 
 table .col_DoInstant {
 	width: 100px; 
+}
+
+.chatbotSickyBtn {
+	border-radius: 30px;
+	overflow: hidden;
 }

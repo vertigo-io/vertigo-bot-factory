@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=models"
+	layout:decorate="~{templates/botDetailLayout}" th:with="nav=false, tab=models"
 	>
 	
 	<head>
@@ -100,30 +100,30 @@
 				selectedNode: null
 			};
 			
-			function loadTraining(training) {
-				if (false) {
-					// only one node
-					VUiPage.$q.dialog({
-				        title: 'Confirm',
-				        message: 'Do you want to load training version ' + training.versionNumber,
-						ok: {
-							label: "Load",
-							color: "green"
+			function showTrainingPopin(training) {
+				VUiExtensions.dataX.loadModel = {
+					currentTraining: training,
+					selectedNode: null,
+					processing: false
+				};
+				VUiPage.$refs.loadModelDialog.show();
+			}
+			
+			function loadTraining() {
+				VUiExtensions.dataX.loadModel.processing = true;
+				VUiPage.httpPostAjax('_loadTraining',
+						{
+							'traId': VUiExtensions.dataX.loadModel.currentTraining.traId,
+							'nodId': VUiExtensions.dataX.loadModel.selectedNode.nodId
 						},
-						cancel: {
-							label: "Cancel"
+						{
+							onSuccess: function() {
+								VUiPage.$refs.chatbot.systemMessage("Modèle V" + VUiExtensions.dataX.loadModel.currentTraining.versionNumber + " chargé.");
+								VUiPage.$refs.chatbot.restart(true);
+								VUiPage.$refs.loadModelDialog.hide();
+							}
 						}
-				    }).onOk(() => {
-						VUiPage.httpPostAjax("_loadTraining", {'traId':training.traId});
-				    })
-				} else {
-					// node selection
-					VUiExtensions.dataX.loadModel = {
-						currentTraining: training,
-						selectedNode: null
-					};
-					VUiPage.$refs.loadModelDialog.show();
-				}
+					);
 			}
 			
 			function getTrainingById(id) {
@@ -207,7 +207,7 @@
 				<vu:slot name="actions_slot">
 					<q-btn class="on-right" round color="primary" icon="cloud_upload" aria-label="Load model"
 							 v-if="props.row.status == 'OK'"
-							 @click="loadTraining(props.row)"></q-btn>
+							 @click="showTrainingPopin(props.row)"></q-btn>
 					<q-btn class="on-right" round color="red" icon="delete" aria-label="Delete model"
 							 v-if="props.row.status != 'TRAINING'"
 							 @click="deleteTraining(props.row)"></q-btn>
@@ -216,14 +216,14 @@
 				<vu:include-data object="trainingList" field="traId" />
 				<vu:include-data object="trainingList" field="endTime" />
 				
-				<vu:column field="status" label="Result" class="col_Small">
+				<vu:column field="status" label="" sortable="false" class="col_Small">
 					<q-icon name="check" color="green" size="2rem" v-if="props.row.status == 'OK'"></q-icon>
 					<q-icon name="block" color="red" size="2rem" v-if="props.row.status == 'KO'"></q-icon>
 					<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="props.row.status == 'TRAINING'"></q-spinner-gears>
 				</vu:column>
 				<vu:column field="versionNumber" class="col_Small"/>
-				<vu:column field="startTime" label="Date" />
-				<vu:column field="duration" class="col_Small">
+				<vu:column field="startTime" label="Start" />
+				<vu:column field="duration" class="col_Small" label="Time" >
 					<vu:content v-if="props.row.endTime">
 						{{ props.row.duration }}
 						<q-tooltip content-style="font-size: 13px"
@@ -245,7 +245,7 @@
 							round icon="short_text" class="on-right"
 							@click="dataX.modalLog.col = 'infos'; dataX.modalLog.row = props.row; dataX.modalLog.show = true"></q-btn>
 							
-					<q-btn 
+					<q-btn v-if="props.row.warnings"
 							round icon="warning" color="orange" class="on-right"
 							@click="dataX.modalLog.col = 'warnings'; dataX.modalLog.row = props.row; dataX.modalLog.show = true"></q-btn>
 				</vu:column>
@@ -302,7 +302,7 @@
 					
 					<q-card-actions align="around">
 						<q-btn label="Cancel" color="red" v-close-popup></q-btn>
-						<q-btn label="Load" color="green" :disable="!dataX.loadModel.selectedNode" @click="httpPostAjax('_loadTraining', {'traId': dataX.loadModel.currentTraining.traId, nodId: dataX.loadModel.selectedNode.nodId}, {onSuccess: $refs.loadModelDialog.hide})" ></q-btn>
+						<q-btn label="Load" color="green" :disable="!dataX.loadModel.selectedNode" :loading="dataX.loadModel.processing" @click="loadTraining()" ></q-btn>
 					</q-card-actions>
 				</q-card>
 			</q-dialog>
@@ -316,8 +316,8 @@
 				</vu:slot>
 				
 				<vu:include-data object="trainerState" field="latestTrainingLog" />
-				<vu:include-data object="trainerState" field="startTime" />
-				<vu:include-data object="trainerState" field="duration" />
+				<vu:include-data object="trainerState" field="startTime"/>
+				<vu:include-data object="trainerState" field="duration"/>
 				<vu:include-data object="trainerState" field="trainingPercent" />
 				
 				<vu:text-field-read-reactive object="trainerState" field="name" />
@@ -371,12 +371,20 @@
 				</q-list>
 			</vu:block>
 			
-  			<q-drawer :value="true" elevated ref="botDrawer" side="right" behavior="desktop">
-				<v-chatbot class="column chatbot-container"
-						   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot" :bot-url="getDevNode().url + '/api/chatbot/talk'"
-						   :dev-mode="!true"></v-chatbot>
-  			</q-drawer>
-			
+			<th:block th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}" >
+  				<q-page-sticky v-if="$q.screen.lt.lg" position="bottom-right" :offset="[-16 + (componentStates.botDrawer.open ? 300:0),36]">
+				    <q-btn round size="lg" @click="componentStates.botDrawer.open = !componentStates.botDrawer.open" class="chatbotSickyBtn">
+				    	<img th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" style="width: 60px; height: 60px"/>
+				    </q-btn>
+				</q-page-sticky>
+	  			<q-drawer :value="!$q.screen.lt.lg || componentStates.botDrawer.open" elevated ref="botDrawer" side="right" behavior="desktop" :overlay="$q.screen.lt.lg">
+					<v-chatbot class="column chatbot-container"
+							   ref="chatbot"
+							   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot" :bot-url="getDevNode().url + '/api/chatbot/talk'"
+							   :dev-mode="!true"
+							   :placeholder="'Parler à ' + vueData.bot.name"></v-chatbot>
+	  			</q-drawer>
+			</th:block>
 		</section>
 		
 		<section layout:fragment="javascript-footer">

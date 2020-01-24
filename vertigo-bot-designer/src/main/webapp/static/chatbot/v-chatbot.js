@@ -40,14 +40,14 @@ Vue.component('v-chatbot', {
 				</div>
 			</div>
 		</q-scroll-area>
-		<div class="message-response row docs-btn q-pl-sm non-selectable">
+		<div class="message-response row docs-btn q-pl-sm q-pb-xs non-selectable">
 			<q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
 					 ref="input"
 					 @keyup.enter="inputConfig.modeTextarea ? false : (inputConfig.responseText.trim() === '' && inputConfig.rating === 0) ? false : postAnswerText()"
 					 :max-height="100"
 					 class="col-grow"
 					 v-model="inputConfig.responseText"
-					 :placeholder="$q.lang.vui.chatbot.inputPlaceholder"
+					 :placeholder="placeholder ? placeholder : $q.lang.vui.chatbot.inputPlaceHolder"
 					 :disable="processing || error"
 					 :loading="processing"></q-input>
 		
@@ -65,7 +65,8 @@ Vue.component('v-chatbot', {
 			devMode: { type: Boolean, 'default': false },
 			minTimeBetweenMessages: { type: Number, 'default': 1000 },
 			botAvatar: { type: String, required:true },
-			botName: { type: String, required:true }
+			botName: { type: String, required:true },
+			placeholder: { type: String },
 		},
 		data: function () {
 			return {
@@ -210,13 +211,10 @@ Vue.component('v-chatbot', {
 				
 				this._scrollToBottom();
 			},
-			restart: function () {
-				this.messages.push({
-					text: [this.$q.lang.vui.chatbot.restartMessage],
-					bgColor: "orange",
-					sys: true
-				});
-				this._scrollToBottom();
+			restart: function (silent) {
+				if (!silent) {
+					this.systemMessage(this.$q.lang.vui.chatbot.restartMessage);
+				}
 				
 				this.$http.post(this.botUrl, '{"sender":"' + this.convId + '","message":"/restart"}')
 				.then(function(httpResponse) {
@@ -232,8 +230,16 @@ Vue.component('v-chatbot', {
 				this.inputConfig.buttons = [];
 				this.error = false;
 			},
-			sleep : function(milliseconds) {
+			sleep: function(milliseconds) {
 			  return new Promise(function(resolve) {setTimeout(resolve, milliseconds)});
+			},
+			systemMessage: function(msg) {
+				this.messages.push({
+					text: [msg],
+					bgColor: "orange",
+					sys: true
+				});
+				this._scrollToBottom();
 			}
 		}
 });
