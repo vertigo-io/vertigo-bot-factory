@@ -331,7 +331,7 @@
 				<q-card-actions>
 					<vu:include-data object="trainerState" field="trainingInProgress" />
 					
-					<q-btn color="primary" icon="build" size="lg" label="Train" :loading="vueData.trainerState.trainingInProgress"
+					<q-btn color="primary" icon="build" size="lg" label="Train" :loading="vueData.trainerState.trainingInProgress" :disable="getDevNode() == null"
 							@click="httpPostAjax('_train', {}, {onSuccess: postTrain})" style="width: 175px">
 						<span slot="loading">
 							<q-spinner-gears class="on-left"></q-spinner-gears>
@@ -371,20 +371,22 @@
 				</q-list>
 			</vu:block>
 			
-			<th:block th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}" >
-  				<q-page-sticky v-if="$q.screen.lt.lg" position="bottom-right" :offset="[-16 + (componentStates.botDrawer.open ? 300:0),36]">
-				    <q-btn round size="lg" @click="componentStates.botDrawer.open = !componentStates.botDrawer.open" class="chatbotSickyBtn">
-				    	<img th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" style="width: 60px; height: 60px"/>
-				    </q-btn>
-				</q-page-sticky>
-	  			<q-drawer :value="!$q.screen.lt.lg || componentStates.botDrawer.open" elevated ref="botDrawer" side="right" behavior="desktop" :overlay="$q.screen.lt.lg">
-					<v-chatbot class="column chatbot-container"
-							   ref="chatbot"
-							   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot" :bot-url="getDevNode().url + '/api/chatbot/talk'"
-							   :dev-mode="!true"
-							   :placeholder="'Speak to ' + vueData.bot.name"></v-chatbot>
-	  			</q-drawer>
-			</th:block>
+			<template v-if="getDevNode() != null">
+				<th:block th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}" >
+	  				<q-page-sticky v-if="$q.screen.lt.lg" position="bottom-right" :offset="[-16 + (componentStates.botDrawer.open ? 300:0),36]">
+					    <q-btn round size="lg" @click="componentStates.botDrawer.open = !componentStates.botDrawer.open" class="chatbotSickyBtn">
+					    	<img th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" style="width: 60px; height: 60px"/>
+					    </q-btn>
+					</q-page-sticky>
+		  			<q-drawer :value="!$q.screen.lt.lg || componentStates.botDrawer.open" elevated ref="botDrawer" side="right" behavior="desktop" :overlay="$q.screen.lt.lg">
+						<v-chatbot class="column chatbot-container"
+								   ref="chatbot"
+								   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot" :bot-url="getDevNode().url + '/api/chatbot/talk'"
+								   :dev-mode="!true"
+								   :placeholder="'Speak to ' + vueData.bot.name"></v-chatbot>
+		  			</q-drawer>
+				</th:block>
+			</template>
 		</section>
 		
 		<section layout:fragment="javascript-footer">
