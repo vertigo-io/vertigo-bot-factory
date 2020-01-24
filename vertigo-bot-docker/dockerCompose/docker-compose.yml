@@ -17,6 +17,8 @@ services:
   
   influxdb:
     image: influxdb:1.7.8
+    volumes:
+      - cf_influxdb_data:/var/lib/influxdb
 #    ports: 
 #        - "8086:8086"
     networks:
@@ -43,7 +45,7 @@ services:
       - ANALYTICA_PORT=4562
       - INFLUXDB_URL=http://influxdb:8086
       - ANALYTICA_DBNAME=chatbot
-#      - devMode=true
+      - devMode=true
     depends_on:
       - postgres
       - influxdb
@@ -54,7 +56,7 @@ services:
       - cb_factory
     restart: unless-stopped
       
-  runner1:
+  runner_mars_dev:
     image: 'cf_runner:latest'
     environment:
       - DESIGNER_URL=http://designer:8080/designer/
@@ -66,14 +68,14 @@ services:
       - influxdb
       - analytica
     ports:
-      - '127.0.0.1:8081:8080'
+      - '127.0.0.1:8181:8080'
     volumes:
-      - cf_runner_1_data:/opt/data
+      - cf_runner_mars_dev_data:/opt/data
     networks:
       - cb_factory
     restart: unless-stopped
 
-  runner2:
+  runner_mars_prod:
     image: 'cf_runner:latest'
     environment:
       - DESIGNER_URL=http://designer:8080/designer/
@@ -85,14 +87,14 @@ services:
       - influxdb
       - analytica
     ports:
-      - '127.0.0.1:8082:8080'
+      - '127.0.0.1:8182:8080'
     volumes:
-      - cf_runner_2_data:/opt/data
+      - cf_runner_mars_prod_data:/opt/data
     networks:
       - cb_factory
     restart: unless-stopped
 
-  runner3:
+  runner_oalia_dev:
     image: 'cf_runner:latest'
     environment:
       - DESIGNER_URL=http://designer:8080/designer/
@@ -104,14 +106,14 @@ services:
       - influxdb
       - analytica
     ports:
-      - '127.0.0.1:8083:8080'
+      - '127.0.0.1:8281:8080'
     volumes:
-      - cf_runner_3_data:/opt/data
+      - cf_runner_oalia_dev_data:/opt/data
     networks:
       - cb_factory
     restart: unless-stopped
 
-  runner4:
+  runner_oalia_prod:
     image: 'cf_runner:latest'
     environment:
       - DESIGNER_URL=http://designer:8080/designer/
@@ -123,19 +125,60 @@ services:
       - influxdb
       - analytica
     ports:
-      - '127.0.0.1:8084:8080'
+      - '127.0.0.1:8282:8080'
     volumes:
-      - cf_runner_4_data:/opt/data
+      - cf_runner_oalia_prod_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+
+  runner_rh_dev:
+    image: 'cf_runner:latest'
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=8HyemJ4SRlEABgQg
+    depends_on:
+      - influxdb
+      - analytica
+    ports:
+      - '127.0.0.1:8381:8080'
+    volumes:
+      - cf_runner_rh_dev_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+
+  runner_rh_prod:
+    image: 'cf_runner:latest'
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=RqQ2Mb4@e$UR6X6V
+    depends_on:
+      - influxdb
+      - analytica
+    ports:
+      - '127.0.0.1:8382:8080'
+    volumes:
+      - cf_runner_rh_prod_data:/opt/data
     networks:
       - cb_factory
     restart: unless-stopped
 
 volumes:
   cf_postgres_data:
-  cf_runner_1_data:
-  cf_runner_2_data:
-  cf_runner_3_data:
-  cf_runner_4_data:
+  cf_influxdb_data:
+  cf_runner_mars_dev_data:
+  cf_runner_mars_prod_data:
+  cf_runner_oalia_dev_data:
+  cf_runner_oalia_prod_data:
+  cf_runner_rh_dev_data:
+  cf_runner_rh_prod_data:
     
 networks:
   cb_factory:
