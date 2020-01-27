@@ -187,6 +187,7 @@
 		
 		<section layout:fragment="content">
 			
+			<!-- 
 			<vu:block id="run" title="Node state">
 				<vu:slot name="actions_slot">
 					<q-btn class="fab-block" round color="primary" icon="refresh" aria-label="Refresh" title="Refresh" 
@@ -198,7 +199,8 @@
 				<vu:text-field-read-reactive object="runnerState" field="agentVersion" />
 				<vu:text-field-read-reactive object="runnerState" field="loadedModelVersion" />
 			</vu:block>
-			
+			 -->
+			 
 			<vu:table id="load" list="trainingList" title="Manage models" :dense="|$q.screen.lt.lg|" componentId="trainingList" rowsPerPage="10" autoColClass >
 				<vu:slot name="top_right_slot">
 					<q-btn class="fab-block" round color="primary" icon="refresh" aria-label="Refresh" title="Refresh" 
@@ -319,8 +321,6 @@
 				<vu:include-data object="trainerState" field="startTime"/>
 				<vu:include-data object="trainerState" field="duration"/>
 				<vu:include-data object="trainerState" field="trainingPercent" />
-				
-				<vu:text-field-read-reactive object="trainerState" field="name" />
 				
 				<vu:text-field-read-reactive object="trainerState" field="trainingState" label="State" />
 				
