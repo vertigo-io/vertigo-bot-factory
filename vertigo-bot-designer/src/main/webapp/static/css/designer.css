@@ -59,23 +59,7 @@ img {
 	padding-bottom: 64px;
 }
 
-/* body.login { */
-/* 	background: url(../img/bcf60b99d4_121619_mars-bfrs.jpg) !important; */
-/* } */
 
-.login #page {
-	height:100vh;
-}
-
-.login .title {
-	position: absolute;
-    top: 0;
-}
-
-.login .title img {
-	width:90vw;
-	max-width:700px;
-}
 .login form {
 	background: rgba(255, 255, 255, 0.8);
 	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 1px 1px rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12);
@@ -85,7 +69,6 @@ img {
 	margin: auto;
 	min-width: 400px;
 }
-
 
 
 .mini br {

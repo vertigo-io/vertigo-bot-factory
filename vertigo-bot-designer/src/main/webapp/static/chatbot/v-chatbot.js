@@ -40,9 +40,9 @@ Vue.component('v-chatbot', {
 				</div>
 			</div>
 		</q-scroll-area>
-		<div class="message-response row docs-btn q-pl-sm q-pb-xs non-selectable">
+		<div class="message-response row docs-btn q-pl-sm non-selectable">
 			<q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
-					 ref="input"
+					 ref="input" dense
 					 @keyup.enter="inputConfig.modeTextarea ? false : (inputConfig.responseText.trim() === '' && inputConfig.rating === 0) ? false : postAnswerText()"
 					 :max-height="100"
 					 class="col-grow"
