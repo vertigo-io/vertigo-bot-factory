@@ -3,6 +3,9 @@
 ################
 FROM rasa/rasa:1.2.3
 
+# Surcharge persistence RabbitMq. Cf PR : https://github.com/RasaHQ/rasa/pull/5139
+ADD Runner/broker.py /usr/local/lib/python3.6/site-packages/rasa/core/broker.py
+
 ###########
 # apt-get #
 ###########

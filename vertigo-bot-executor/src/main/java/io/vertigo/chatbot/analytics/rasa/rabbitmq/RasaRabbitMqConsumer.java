@@ -75,7 +75,8 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 				.registerSubtype(RasaTrackerActionEvent.class, "action")
 				.registerSubtype(RasaTrackerBotEvent.class, "bot")
 				.registerSubtype(RasaTrackerRewindEvent.class, "rewind")
-				.registerSubtype(RasaTrackerRestartEvent.class, "restart");
+				.registerSubtype(RasaTrackerRestartEvent.class, "restart")
+				;
 
 		gson = new GsonBuilder()
 				.registerTypeAdapterFactory(rttaf)
@@ -196,7 +197,7 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 			exception = e;
 		}
 		if (exception != null) {
-			LOGGER.info("Erreur while closing RabbitMQ connexion", exception);
+			LOGGER.error("Erreur while closing RabbitMQ connexion", exception);
 		}
 	}
 
