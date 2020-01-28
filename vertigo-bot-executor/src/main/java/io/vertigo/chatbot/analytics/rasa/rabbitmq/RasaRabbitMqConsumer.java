@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.ParameterizedMessage;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,6 +24,7 @@ import com.rabbitmq.client.Envelope;
 import io.vertigo.chatbot.analytics.rasa.model.AbstractRasaTrackerEvent;
 import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerActionEvent;
 import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerBotEvent;
+import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerRestartEvent;
 import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerRewindEvent;
 import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerUserEvent;
 import io.vertigo.chatbot.analytics.rasa.model.nested.RasaTrackerIntent;
@@ -72,7 +74,8 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 				.registerSubtype(RasaTrackerUserEvent.class, "user")
 				.registerSubtype(RasaTrackerActionEvent.class, "action")
 				.registerSubtype(RasaTrackerBotEvent.class, "bot")
-				.registerSubtype(RasaTrackerRewindEvent.class, "rewind");
+				.registerSubtype(RasaTrackerRewindEvent.class, "rewind")
+				.registerSubtype(RasaTrackerRestartEvent.class, "restart");
 
 		gson = new GsonBuilder()
 				.registerTypeAdapterFactory(rttaf)
@@ -104,9 +107,13 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 					//					final String contentType = properties.getContentType(); // null
 					final long deliveryTag = envelope.getDeliveryTag();
 
-					processMessage(new String(body, StandardCharsets.UTF_8));
+					try {
+						processMessage(new String(body, StandardCharsets.UTF_8));
 
-					channel.basicAck(deliveryTag, false);
+						channel.basicAck(deliveryTag, false);
+					} catch (final Exception e) {
+						LOGGER.error(new ParameterizedMessage("Impossible de traiter le message rabbitMq : {}", new String(body, StandardCharsets.UTF_8)), e);
+					}
 				}
 			});
 
@@ -175,14 +182,14 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 			if (channel != null) {
 				channel.close();
 			}
-		} catch (IOException | TimeoutException e) {
+		} catch (final Exception e) {
 			exception = e;
 		}
 		try {
 			if (conn != null) {
 				conn.close();
 			}
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			if (exception != null) {
 				e.addSuppressed(exception);
 			}
