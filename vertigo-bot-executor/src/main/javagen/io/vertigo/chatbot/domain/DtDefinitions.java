@@ -207,7 +207,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'stories'. */
 		stories,
 		/** Propriété 'nlu'. */
-		nlu	}
+		nlu,
+		/** Propriété 'config'. */
+		config	}
 
 	/**
 	 * Enumération des champs de RunnerInfo.

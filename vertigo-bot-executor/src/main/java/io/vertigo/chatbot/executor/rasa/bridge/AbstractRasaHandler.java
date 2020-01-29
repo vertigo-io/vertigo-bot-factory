@@ -73,7 +73,7 @@ public abstract class AbstractRasaHandler implements Activeable {
 		}
 
 		logInputStream(Level.INFO, process.getInputStream(), logConsumer, endCallback);
-		// logInputStream(Level.WARN, rasaProcess.getErrorStream());
+		//		logInputStream(Level.INFO, process.getErrorStream(), logConsumer, null);
 
 		return process;
 	}

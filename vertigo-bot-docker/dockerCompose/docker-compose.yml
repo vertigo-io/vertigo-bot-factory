@@ -170,6 +170,44 @@ services:
       - cb_factory
     restart: unless-stopped
 
+  runner_doe_change_dev:
+    image: 'cf_runner:latest'
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=PAWfBXzjZM7j3H7D
+    depends_on:
+      - influxdb
+      - analytica
+    ports:
+      - '127.0.0.1:8481:8080'
+    volumes:
+      - cf_runner_doe_change_dev_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+
+  runner_doe_change_prod:
+    image: 'cf_runner:latest'
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=Bfy7FWkeT_enFu_b
+    depends_on:
+      - influxdb
+      - analytica
+    ports:
+      - '127.0.0.1:8482:8080'
+    volumes:
+      - cf_runner_doe_change_prod_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+
 volumes:
   cf_postgres_data:
   cf_influxdb_data:
@@ -179,6 +217,8 @@ volumes:
   cf_runner_oalia_prod_data:
   cf_runner_rh_dev_data:
   cf_runner_rh_prod_data:
+  cf_runner_doe_change_dev_data:
+  cf_runner_doe_change_prod_data:
     
 networks:
   cb_factory:

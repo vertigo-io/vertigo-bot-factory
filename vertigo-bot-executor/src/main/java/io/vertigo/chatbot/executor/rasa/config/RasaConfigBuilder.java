@@ -38,6 +38,7 @@ public class RasaConfigBuilder {
 		rasaConfig.setDomain(doBuildDomain());
 		rasaConfig.setNlu(doBuildNlu());
 		rasaConfig.setStories(doBuildStories());
+		rasaConfig.setConfig(doBuildConfig());
 
 		return rasaConfig;
 	}
@@ -48,7 +49,9 @@ public class RasaConfigBuilder {
 		retour.append("intents:");
 		retour.append(NEW_LINE);
 
-		retour.append("  - start");
+		retour.append("  - start:");
+		retour.append(NEW_LINE);
+		retour.append("     triggers: utter_start");
 		retour.append(NEW_LINE);
 
 		for (final RasaIntent intent : intents) {
@@ -111,8 +114,28 @@ public class RasaConfigBuilder {
 	}
 
 	private String doBuildStories() {
+		// nothing usefull in this file, all il based on triggers for this version
+		// but if empty only NLU is trained and mappingPolicy is not used
+
+		//		return "";
 		return "## start" + NEW_LINE +
 				"* start" + NEW_LINE +
 				"    - utter_start";
+	}
+
+	private String doBuildConfig() {
+		// nothing usefull in this file, all il based on triggers for this version
+		// but if empty only NLU is trained and mappingPolicy is not used
+
+		//		return "";
+		return "language: fr_core_news_md" + NEW_LINE +
+				"pipeline: supervised_embeddings" + NEW_LINE +
+				NEW_LINE +
+				"policies:" + NEW_LINE +
+				"  - name: MappingPolicy" + NEW_LINE +
+				"  - name: FallbackPolicy" + NEW_LINE +
+				"    nlu_threshold: 0.6" + NEW_LINE +
+				"    core_threshold: 0.3" + NEW_LINE +
+				"    fallback_action_name: 'action_default_fallback'" + NEW_LINE;
 	}
 }

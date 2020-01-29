@@ -5,4 +5,5 @@ create DtDefinition DtRasaConfig {
 	field domain 	{domain: DoText 	label: "domain" 		required: "false"}
 	field stories 	{domain: DoText 	label: "stories" 		required: "false"}
 	field nlu		{domain: DoText 	label: "nlu" 			required: "false"}
+	field config	{domain: DoText 	label: "config" 		required: "false"}
 }

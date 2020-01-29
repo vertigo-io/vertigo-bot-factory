@@ -96,6 +96,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 		writeToRasaFile(config.getDomain(), "domain.yml");
 		writeToRasaFile(config.getStories(), "data/stories.md");
 		writeToRasaFile(config.getNlu(), "data/nlu.md");
+		writeToRasaFile(config.getConfig(), "config.yml");
 
 		trainingLog = new StringBuilder();
 
@@ -114,16 +115,16 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	}
 
 	private void updateTrainingPhase(final String logLine) {
-		if (logLine.startsWith("Training Core model...")) {
+		if (logLine.contains("Training Core model...")) {
 			trainingPhase = TrainingPhases.STORY;
 			phasePercent = 0;
 		} else if (logLine.contains("rasa.core.policies.keras_policy  - Fitting model with")) {
 			trainingPhase = TrainingPhases.CORE;
 			phasePercent = 0;
-		} else if (logLine.startsWith("Training NLU model...")) {
+		} else if (logLine.contains("Training NLU model...")) {
 			trainingPhase = TrainingPhases.NLU;
 			phasePercent = 0;
-		} else if (logLine.startsWith("NLU model training completed.")) {
+		} else if (logLine.contains("NLU model training completed.")) {
 			trainingPhase = TrainingPhases.FINALIZE;
 			phasePercent = 0;
 		}

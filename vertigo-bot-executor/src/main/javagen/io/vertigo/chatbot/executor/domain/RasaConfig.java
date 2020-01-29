@@ -16,6 +16,7 @@ public final class RasaConfig implements DtObject {
 	private String domain;
 	private String stories;
 	private String nlu;
+	private String config;
 	
 	/**
 	 * Champ : DATA.
@@ -72,6 +73,25 @@ public final class RasaConfig implements DtObject {
 	 */
 	public void setNlu(final String nlu) {
 		this.nlu = nlu;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'config'.
+	 * @return String config
+	 */
+	@Field(domain = "DoText", label = "config")
+	public String getConfig() {
+		return config;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'config'.
+	 * @param config String
+	 */
+	public void setConfig(final String config) {
+		this.config = config;
 	}
 	
 	/** {@inheritDoc} */
