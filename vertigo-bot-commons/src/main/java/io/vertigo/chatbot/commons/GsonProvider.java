@@ -3,7 +3,6 @@ package io.vertigo.chatbot.commons;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -53,23 +52,11 @@ public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<
 	}
 
 	@Override
-	public long getSize(final T t, final Class<?> type, final Type genericType,
-			final Annotation[] annotations, final MediaType mediaType) {
-		return -1;
-	}
-
-	@Override
 	public void writeTo(final T t, final Class<?> type, final Type genericType, final Annotation[] annotations,
 			final MediaType mediaType, final MultivaluedMap<String, Object> httpHeaders,
 			final OutputStream entityStream) throws IOException {
 
-		final PrintWriter printWriter = new PrintWriter(entityStream);
-		try {
-			final String json = jsonEngine.toJson(t);
-			printWriter.write(json);
-			printWriter.flush();
-		} finally {
-			printWriter.close();
-		}
+		final String json = jsonEngine.toJson(t);
+		entityStream.write(json.getBytes(StandardCharsets.UTF_8));
 	}
 }

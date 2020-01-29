@@ -17,7 +17,8 @@
 		</section>
 		
 		<section layout:fragment="page-content">
-			<vu:table list="smallTalks" componentId="smallTalksList" tr_@click.native="|goTo('@{/bot/{id}/smallTalk/(id=${model.bot.botId})}'+props.row.smtId)|" tr_style="cursor : pointer;">
+			<vu:table list="smallTalks" componentId="smallTalksList" tr_@click.native="|goTo('@{/bot/{id}/smallTalk/(id=${model.bot.botId})}'+props.row.smtId)|" tr_style="cursor : pointer;"
+					  sortBy="title">
 					<vu:include-data object="smallTalks" field="smtId" />
 					<vu:column field="isEnabled" style="width:100px;">
 						<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>

@@ -63,6 +63,7 @@
 			<vu:include-data object="nodeNew" field="name" />
 			<vu:include-data object="nodeNew" field="url" />
 			<vu:include-data object="nodeNew" field="color" />
+			<vu:include-data object="nodeNew" field="isDev" />
 			
 			<vu:table th:if="${model.modeReadOnly}" id="nodes" list="nodeList" title="Nodes" componentId="nodeList" rowsPerPage="10" autoColClass
 					  tr_@click.native="|vueData.nodeEdit = {...props.row}; delete vueData.nodeEdit.__index; $refs.nodeEdit.show()|" tr_class="nav">

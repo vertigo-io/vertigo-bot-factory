@@ -22,8 +22,8 @@
 		
 		<section layout:fragment="content-nav">
 			<q-item tag="a" href="#detail">Informations</q-item>
-			<q-item tag="a" href="#training">Training sentences</q-item>
-			<q-item tag="a" href="#answers">Answers</q-item>
+			<q-item tag="a" href="#training">Training phrases</q-item>
+			<q-item tag="a" href="#responses">Responses</q-item>
 		</section>
 		
 		<section layout:fragment="content">
@@ -39,15 +39,16 @@
 				</vu:label>
 			</vu:block>
 			
-			<vu:block id="training" title="Training sentences">
+			<vu:block id="training" title="Training phrases">
 				<vu:include-data-primitive key="newNluTrainingSentence" />
 				<vu:include-data object="nluTrainingSentences" field="text" />
 				
 				<div th:if="${!model.modeReadOnly}">
-					<q-input v-model="vueData.newNluTrainingSentence" @keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence})"
+					<q-input v-model="vueData.newNluTrainingSentence" dense class="q-pb-sm"
+					    @keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence})"
 						placeholder="Add training sentence"
 						:before="[{icon: 'format_quote'}]"
-						q-if>
+						>
 					</q-input>
 				</div>
 				<q-list highlight dense>
@@ -79,14 +80,16 @@
 				</q-list>
 			</vu:block>
 			
-			<vu:block id="answers" title="Answers">
+			<vu:block id="responses" title="Responses">
 				<vu:include-data-primitive key="newUtterText" />
 				<vu:include-data object="utterTexts" field="text" />
 			
 				<div th:if="${!model.modeReadOnly}">
-					<q-input v-model="vueData.newUtterText" @keydown.enter.prevent="if (vueData.newUtterText.trim().length > 0) httpPostAjax('_addUtterText', {'vContext[newUtterText]':vueData.newUtterText})"
+					<q-input v-model="vueData.newUtterText" dense class="q-pb-sm"
+					    @keydown.enter.prevent="if (vueData.newUtterText.trim().length > 0) httpPostAjax('_addUtterText', {'vContext[newUtterText]':vueData.newUtterText})"
 						placeholder="Add possible answer"
-						:before="[{icon: 'format_quote'}]">
+						:before="[{icon: 'format_quote'}]"
+						>
 					</q-input>
 				</div>
 				<q-list highlight>

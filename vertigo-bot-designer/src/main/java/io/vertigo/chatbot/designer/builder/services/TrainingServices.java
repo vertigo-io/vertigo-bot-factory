@@ -116,7 +116,7 @@ public class TrainingServices implements Component {
 		requestData.put("modelId", versionNumber);
 
 		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
-				.request(MediaType.APPLICATION_JSON)
+				.request(MediaType.APPLICATION_JSON_TYPE)
 				.header("apiKey", devNode.getApiKey())
 				.post(Entity.json(requestData));
 

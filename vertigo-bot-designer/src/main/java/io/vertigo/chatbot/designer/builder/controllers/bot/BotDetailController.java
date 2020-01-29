@@ -59,6 +59,7 @@ public class BotDetailController extends AbstractVSpringMvcController {
 
 		final ChatbotNode tempalteCreation = new ChatbotNode();
 		tempalteCreation.setColor("#00838f");
+		tempalteCreation.setIsDev(false);
 		viewContext.publishDto(nodeNewKey, tempalteCreation);
 	}
 
