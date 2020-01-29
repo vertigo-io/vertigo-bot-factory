@@ -39,7 +39,7 @@ RUN useradd -m tomcat \
 # War configuration through env variables
 ENV RASA_EXE_PATH /opt/rasa.sh
 ENV RASA_BOT_PATH /opt/data/bot/
-ENV BERKELEY_DATA_PATH /opt/data/berkeley/
+ENV CONFIG_DATA_FILE /opt/data/config.json
 
 ENV DESIGNER_URL http://host.docker.internal:8080/vertigo-bot-designer
 ENV API_KEY MyNodeApiKey!

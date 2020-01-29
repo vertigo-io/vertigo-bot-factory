@@ -14,8 +14,8 @@
 	</context-param>
 	
 	<context-param>
-		<param-name>BERKELEY_DATA_PATH</param-name>
-		<param-value>${user.home}/botExecutor/berkeley</param-value>
+		<param-name>CONFIG_DATA_FILE</param-name>
+		<param-value>${user.home}/botExecutor/config.json</param-value>
 	</context-param>
 	
 	<context-param>

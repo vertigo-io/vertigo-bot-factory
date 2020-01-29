@@ -28,12 +28,6 @@ modules:
           apiKey: ${API_KEY}
       #- webservices.rateLimiting:
   io.vertigo.dynamo.DynamoFeatures:
-    features:
-      - kvStore: # activation du support du stockage clé/valeur
-    featuresConfig:
-      - kvStore.berkeley:  # nous utilisons un stockage clé valeur avec la base de donnée BerkeleyDB
-          collections: ExecutorConfig
-          dbFilePath: ${BERKELEY_DATA_PATH}
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
   io.vertigo.chatbot.executor.RasaExecutorFeatures:
