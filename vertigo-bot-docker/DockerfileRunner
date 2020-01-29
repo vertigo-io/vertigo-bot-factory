@@ -30,16 +30,15 @@ RUN mkdir -p /opt/data/rabbitmq/ \
 ADD apache-tomcat-8.5.50.tar.gz /opt/tomcat/
 ADD Runner/vertigo-bot-executor-*.war /opt/tomcat/webapps/ROOT.war
 
-# user home is used for berkeley database
 RUN useradd -m tomcat \ 
  && chown -R tomcat. /opt/tomcat \
- && mkdir /opt/data/berkeley \
- && chown tomcat. /opt/data/berkeley
+ && mkdir /opt/data/config \
+ && chown tomcat. /opt/data/config
 
 # War configuration through env variables
 ENV RASA_EXE_PATH /opt/rasa.sh
 ENV RASA_BOT_PATH /opt/data/bot/
-ENV CONFIG_DATA_FILE /opt/data/config.json
+ENV CONFIG_DATA_FILE /opt/data/config/config.json
 
 ENV DESIGNER_URL http://host.docker.internal:8080/vertigo-bot-designer
 ENV API_KEY MyNodeApiKey!
