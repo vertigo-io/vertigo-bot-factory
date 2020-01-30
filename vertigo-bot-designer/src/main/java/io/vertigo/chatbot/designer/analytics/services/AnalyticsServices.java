@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.RasaTypeAction;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
@@ -44,10 +45,10 @@ public class AnalyticsServices implements Component, Activeable {
 		final String now = '\'' + Instant.now().toString() + '\'';
 
 		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("isTypeOpen:sum"),
-				DataFilter.builder("chatbot").build(),
+				DataFilter.builder("chatbotmessages").build(),
 				TimeFilter.builder(now + " - " + timeOption.getRange(), now).withTimeDim(timeOption.getGrain()).build());
 
-		// select count(distinct("sessionId")) from (select "name", "sessionId" from "chatbot-test"."autogen"."chatbot" where time > '2019-12-09T17:08:56.130Z' - 30m and time <'2019-12-09T17:08:56.130Z' and "isTypeOpen" = 0) group by time(1m)
+		// select count(distinct("sessionId")) from (select "name", "sessionId" from "chatbot-test"."autogen"."chatbot_messages" where time > '2019-12-09T17:08:56.130Z' - 30m and time <'2019-12-09T17:08:56.130Z' and "isTypeOpen" = 0) group by time(1m)
 
 	}
 
@@ -55,7 +56,7 @@ public class AnalyticsServices implements Component, Activeable {
 		final String now = '\'' + Instant.now().toString() + '\'';
 
 		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum"),
-				DataFilter.builder("chatbot").withAdditionalWhereClause("\"isTypeOpen\" = 0").build(),
+				DataFilter.builder("chatbotmessages").withAdditionalWhereClause("\"type\" <> '"+RasaTypeAction.OPEN+"'").build(),
 				TimeFilter.builder(now + " - " + timeOption.getRange(), now).withTimeDim(timeOption.getGrain()).build());
 
 	}

@@ -15,6 +15,8 @@ public final class ExecutorConfiguration implements DtObject {
 
 	private Long botId;
 	private Long nodId;
+	private Long traId;
+	private String modelName;
 	
 	/**
 	 * Champ : DATA.
@@ -52,6 +54,44 @@ public final class ExecutorConfiguration implements DtObject {
 	 */
 	public void setNodId(final Long nodId) {
 		this.nodId = nodId;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Model ID'.
+	 * @return Long traId <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoId", required = true, label = "Model ID")
+	public Long getTraId() {
+		return traId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Model ID'.
+	 * @param traId Long <b>Obligatoire</b>
+	 */
+	public void setTraId(final Long traId) {
+		this.traId = traId;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Model name'.
+	 * @return String modelName <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoLabel", required = true, label = "Model name")
+	public String getModelName() {
+		return modelName;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Model name'.
+	 * @param modelName String <b>Obligatoire</b>
+	 */
+	public void setModelName(final String modelName) {
+		this.modelName = modelName;
 	}
 	
 	/** {@inheritDoc} */

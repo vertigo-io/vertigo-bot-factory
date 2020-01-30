@@ -55,7 +55,6 @@ import io.vertigo.dynamo.impl.file.model.StreamFile;
 import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.lang.VUserException;
-import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 @Transactional
 public class TrainingServices implements Component {
@@ -83,9 +82,6 @@ public class TrainingServices implements Component {
 
 	@Inject
 	private JaxrsProvider jaxrsProvider;
-
-	@Inject
-	private JsonEngine jsonEngine;
 
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
@@ -277,17 +273,19 @@ public class TrainingServices implements Component {
 
 		final VFile model = fileServices.getFile(training.getFilIdModel());
 
-		doLoadModel(model, node);
+		doLoadModel(training, model, node);
 
 		// update node-training link
 		node.setTraId(traId);
 		chatbotNodeDAO.save(node);
 	}
 
-	private void doLoadModel(final VFile model, final ChatbotNode node) {
+	private void doLoadModel(final Training training, final VFile model, final ChatbotNode node) {
 		final ExecutorConfiguration options = new ExecutorConfiguration();
 		options.setBotId(node.getBotId());
 		options.setNodId(node.getNodId());
+		options.setTraId(training.getTraId());
+		options.setModelName(training.getVersionNumber().toString());
 
 		final Response response;
 		try (final FormDataMultiPart fdmp = new FormDataMultiPart()) {
@@ -318,8 +316,8 @@ public class TrainingServices implements Component {
 			final Object value = field.getDataAccessor().getValue(dto);
 
 			if (value != null) {
-				final String valueString = jsonEngine.toJson(value);
-				fdmp.field(name + '.' + field.getName(), valueString);
+				// TODO: date handling ?
+				fdmp.field(name + '.' + field.getName(), value.toString());
 			}
 		}
 	}

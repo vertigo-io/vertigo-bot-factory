@@ -44,4 +44,6 @@ create DtDefinition DtExecutorTrainingCallback {
 create DtDefinition DtExecutorConfiguration {
 	field botId 				{domain: DoId						label: "Bot ID" 				required: "true"}
 	field nodId					{domain: DoId 						label: "Node ID" 				required: "true"}
+	field traId					{domain: DoId 						label: "Model ID" 				required: "true"}
+	field modelName				{domain: DoLabel 					label: "Model name" 			required: "true"}
 }

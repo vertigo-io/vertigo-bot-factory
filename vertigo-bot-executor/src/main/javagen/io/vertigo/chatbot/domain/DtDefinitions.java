@@ -125,7 +125,11 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Bot ID'. */
 		botId,
 		/** Propriété 'Node ID'. */
-		nodId	}
+		nodId,
+		/** Propriété 'Model ID'. */
+		traId,
+		/** Propriété 'Model name'. */
+		modelName	}
 
 	/**
 	 * Enumération des champs de ExecutorTrainingCallback.

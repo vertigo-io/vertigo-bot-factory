@@ -29,6 +29,7 @@ import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerRewindEvent;
 import io.vertigo.chatbot.analytics.rasa.model.RasaTrackerUserEvent;
 import io.vertigo.chatbot.analytics.rasa.model.nested.RasaTrackerIntent;
 import io.vertigo.chatbot.analytics.rasa.util.GsonOptionalTypeAdapter;
+import io.vertigo.chatbot.commons.RasaTypeAction;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.executor.manager.ExecutorConfigManager;
 import io.vertigo.commons.analytics.AnalyticsManager;
@@ -149,13 +150,15 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 
 			final ExecutorConfiguration executorConfiguration = executorConfigManager.getExecutorConfiguration();
 
-			final AProcessBuilder processBuilder = AProcess.builder("chatbot", intent.getName().orElse("unknown"), userAction.getTimestamp(), userAction.getTimestamp()) // timestamp of emitted event
+			final AProcessBuilder processBuilder = AProcess.builder("chatbotmessages", intent.getName().orElse("unknown"), userAction.getTimestamp(), userAction.getTimestamp()) // timestamp of emitted event
 					.addTag("text", userAction.getText())
 					.addTag("type", rta.name())
 					.addTag("sessionId", userAction.getSenderId())
 					.addTag("messageId", userAction.getMessageId())
-					.addTag("botId", executorConfiguration.getBotId().toString())
-					.addTag("nodId", executorConfiguration.getNodId().toString())
+					.addTag("botId", String.valueOf(executorConfiguration.getBotId()))
+					.addTag("nodId", String.valueOf(executorConfiguration.getNodId()))
+					.addTag("traId", String.valueOf(executorConfiguration.getTraId()))
+					.addTag("modelName", String.valueOf(executorConfiguration.getModelName()))
 					.setMeasure("confidence", intent.getConfidence().doubleValue())
 					.setMeasure("isFallback", intent.getConfidence().compareTo(BigDecimal.valueOf(0.5)) < 0 ? 1d : 0d)
 					.setMeasure("isTypeOpen", rta == RasaTypeAction.OPEN ? 1d : 0d)
@@ -166,14 +169,6 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 
 			analyticsManager.addProcess(processBuilder.build());
 		}
-	}
-
-	private enum RasaTypeAction {
-		OPEN,
-		MESSAGE,
-		RESPONSE_INFO,
-		BUTTON,
-		RATING,
 	}
 
 	@Override

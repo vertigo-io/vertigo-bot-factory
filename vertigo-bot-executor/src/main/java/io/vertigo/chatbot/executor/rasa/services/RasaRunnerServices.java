@@ -17,6 +17,7 @@ import io.vertigo.chatbot.executor.manager.ExecutorConfigManager;
 import io.vertigo.chatbot.executor.model.IncomeMessage;
 import io.vertigo.chatbot.executor.rasa.bridge.RunnerRasaHandler;
 import io.vertigo.chatbot.executor.rasa.model.RasaInputMessage;
+import io.vertigo.commons.analytics.AnalyticsManager;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.file.model.VFile;
@@ -35,13 +36,28 @@ public class RasaRunnerServices implements Component {
 	@Inject
 	private ExecutorConfigManager executorConfigManager;
 
+	@Inject
+	private AnalyticsManager analyticsManager;
+
 	public RunnerInfo getRunnerState() {
 		return runnerRasaHandler.getState();
 	}
 
 	public void loadModel(final VFile model, final ExecutorConfiguration config) {
-		executorConfigManager.loadConfig(config);
-		runnerRasaHandler.loadModel(model);
+		analyticsManager.trace(
+				"chatbotevents",
+				"loadModel",
+				tracer -> {
+					tracer
+					.addTag("type", "loadModel")
+					.addTag("botId", String.valueOf(config.getBotId()))
+					.addTag("nodId", String.valueOf(config.getNodId()))
+					.addTag("traId", String.valueOf(config.getTraId()))
+					.addTag("modelName", config.getModelName());
+
+					executorConfigManager.loadConfig(config);
+					runnerRasaHandler.loadModel(model);
+				});
 	}
 
 	public String callChatbot(final IncomeMessage incomeMessage) {
