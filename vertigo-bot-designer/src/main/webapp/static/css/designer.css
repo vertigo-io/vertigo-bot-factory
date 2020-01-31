@@ -346,7 +346,11 @@ table .col_Log {
 }
 
 table .col_DoInstant {
-	width: 100px; 
+	width: 140px; 
+}
+
+.q-table--dense table .col_DoInstant {
+	width: 121px; 
 }
 
 .chatbotSickyBtn {
