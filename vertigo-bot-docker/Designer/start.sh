@@ -2,14 +2,9 @@
 
 _term() { 
   echo "Caught SIGTERM signal!" 
+  
   su -c "/opt/tomcat/bin/shutdown.sh" tomcat
   
-  #tomcatPID=`ps -ef | grep java | grep tomcat | awk ' { print $2 } '`
-  #wait "$tomcatPID" # cant wait as non child PID
-  
-  sleep 3 # workaround, a best approch is a loop to wait for pid exit
-  
-  killall tail
   exit 0
 }
 

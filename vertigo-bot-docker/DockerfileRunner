@@ -10,10 +10,15 @@ ADD Runner/broker.py /usr/local/lib/python3.6/site-packages/rasa/core/broker.py
 # apt-get #
 ###########
 RUN apt-get update
-RUN apt-get install -y expect
-RUN apt-get install -y rabbitmq-server
+
 RUN mkdir -p /usr/share/man/man1 \
  && apt-get install -y default-jre-headless
+ 
+RUN apt-get install -y rabbitmq-server
+
+RUN apt-get install -y expect # used for unbuffer command in rasa.sh (log fix sync between stout and stderr)
+RUN apt-get install -y netcat # used for nc command in start.sh (wating services before launch Tomcat)
+
 RUN apt-get autoremove \
  && apt-get clean
 
@@ -39,6 +44,7 @@ RUN useradd -m tomcat \
  && chown tomcat. /opt/data/config
 
 ENV JAVA_OPTS -Xmx256m
+ENV CATALINA_PID /opt/tomcat/tomcat.pid
 
 # War configuration through env variables
 ENV RASA_EXE_PATH /opt/rasa.sh

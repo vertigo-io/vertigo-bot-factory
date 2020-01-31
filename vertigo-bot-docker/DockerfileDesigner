@@ -28,7 +28,8 @@ RUN apt-get update
 	RUN useradd -m tomcat \ 
 	 && chown -R tomcat. /opt/tomcat
 
-	ENV JAVA_OPTS -Xmx512m -Xmx512m
+	ENV JAVA_OPTS -Xmx512m -Xms512m
+	ENV CATALINA_PID /opt/tomcat/tomcat.pid
 	
 	# War configuration through env variables
 	ENV DB_URL //host.docker.internal:5432/chatbot

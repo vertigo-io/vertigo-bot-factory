@@ -2,21 +2,24 @@
 
 _term() { 
   echo "Caught SIGTERM signal!" 
-  service rabbitmq-server stop
+  
   su -c "/opt/tomcat/bin/shutdown.sh" tomcat
+  service rabbitmq-server stop
   
-  #tomcatPID=`ps -ef | grep java | grep tomcat | awk ' { print $2 } '`
-  #wait "$tomcatPID" # cant wait as non child PID
-  
-  sleep 3 # workaround, a best approch is a loop to wait for pid exit
-  
-  killall tail
   exit 0
 }
 
 trap _term SIGTERM
 
 service rabbitmq-server start
+
+while ! nc -z 127.0.0.1 5672;
+do
+  echo waiting rabbitmq to start;
+  sleep 1;
+done;
+echo rabbitmq ok;
+
 su -c "/opt/tomcat/bin/startup.sh" tomcat
 
 touch /opt/tomcat/logs/catalina.out
