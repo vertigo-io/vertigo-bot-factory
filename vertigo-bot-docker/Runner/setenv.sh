@@ -1,0 +1,1 @@
+CATALINA_OPTS='-Dfile.encoding=UTF8'

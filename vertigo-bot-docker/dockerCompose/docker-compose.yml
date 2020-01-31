@@ -19,8 +19,8 @@ services:
     image: influxdb:1.7.8
     volumes:
       - cf_influxdb_data:/var/lib/influxdb
-#    ports: 
-#        - "8086:8086"
+    ports: 
+      - "8086:8086"
     networks:
       - cb_factory
     restart: unless-stopped
@@ -40,6 +40,7 @@ services:
   designer:
     image: 'cf_designer:latest'
     environment:
+      - JAVA_OPTS=-Xmx512m -Xms512m
       - DB_URL=//postgres:5432/chatbot
       - ANALYTICA_HOST=analytica
       - ANALYTICA_PORT=4562
