@@ -129,7 +129,7 @@ Vue.component('v-chatbot', {
 			},
 			_scrollToBottom: function () {
 				if (this.$refs.scroller) {
-					this.$refs.scroller.setScrollPosition(this.$refs.scroller.scrollHeight, 400);
+					this.$refs.scroller.setScrollPosition(this.$refs.scroller.scrollSize, 400);
 				}
 			},
 			askBot: function (value) {
