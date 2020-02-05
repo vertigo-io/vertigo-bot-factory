@@ -121,7 +121,7 @@ services:
       - ANALYTICA_HOST=analytica
       - ANALYTICA_PORT=4562
       - ANALYTICA_DBNAME=chatbot
-      - API_KEY=cBKYShDhBxnB$yCo
+      - API_KEY=cBKYShDhBxnB@yCo
     depends_on:
       - influxdb
       - analytica
@@ -159,7 +159,7 @@ services:
       - ANALYTICA_HOST=analytica
       - ANALYTICA_PORT=4562
       - ANALYTICA_DBNAME=chatbot
-      - API_KEY=RqQ2Mb4@e$UR6X6V
+      - API_KEY=RqQ2Mb4@e@UR6X6V
     depends_on:
       - influxdb
       - analytica

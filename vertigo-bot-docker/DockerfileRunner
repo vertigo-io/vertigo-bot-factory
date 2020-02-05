@@ -28,7 +28,9 @@ RUN apt-get autoremove \
 ################
 RUN mkdir -p /opt/data/rabbitmq/ \
  && chown rabbitmq. /opt/data/rabbitmq \
- && printf '\n\nNODENAME=rabbit-rasa@localhost\nMNESIA_BASE=/opt/data/rabbitmq\n' >> /etc/rabbitmq/rabbitmq-env.conf
+ && printf '\n\nNODENAME=rabbit-rasa@localhost\nMNESIA_BASE=/opt/data/rabbitmq\n' >> /etc/rabbitmq/rabbitmq-env.conf \
+ && mkdir /var/run/rabbitmq \
+ && chown rabbitmq. /var/run/rabbitmq
 
  
 ##############
