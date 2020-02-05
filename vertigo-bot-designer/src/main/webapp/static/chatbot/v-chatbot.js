@@ -144,6 +144,13 @@ Vue.component('v-chatbot', {
 					.then(function(httpResponse) {
 						// success
 						httpResponse.body.forEach(function(value, key) {
+							var textes = value.text.split('[pause]');
+							
+							for (var i = 0; i < textes.length - 1; i++) {
+								this.watingMessagesStack.push({text: textes[i]});
+							}
+							
+							value.text = textes[textes.length - 1];
 							this.watingMessagesStack.push(value);
 						}, this);
 						
