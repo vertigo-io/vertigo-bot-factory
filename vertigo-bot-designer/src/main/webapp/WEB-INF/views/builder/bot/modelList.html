@@ -118,8 +118,10 @@
 						},
 						{
 							onSuccess: function() {
-								VUiPage.$refs.chatbot.systemMessage("Model V" + VUiExtensions.dataX.loadModel.currentTraining.versionNumber + " loaded.");
-								VUiPage.$refs.chatbot.restart(true);
+								if (VUiExtensions.dataX.loadModel.selectedNode.isDev) {
+									VUiPage.$refs.chatbot.systemMessage("Model V" + VUiExtensions.dataX.loadModel.currentTraining.versionNumber + " loaded.");
+									VUiPage.$refs.chatbot.restart(true);
+								}
 								VUiPage.$refs.loadModelDialog.hide();
 							}
 						}
