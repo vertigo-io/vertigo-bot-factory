@@ -142,7 +142,12 @@
 	
 		<vu:include-data object="bots" field="botId" />
 		<vu:include-data object="bots" field="name" />
+		
+		<vu:include-data object="nodes" field="nodId" />
+		<vu:include-data object="nodes" field="name" />
+		
 		<vu:include-data object="criteria" field="'*'" />
+		
 		<vu:include-data-primitive key="sessionStats" />
 		<vu:include-data-primitive key="requestsStats" />
 		
@@ -158,10 +163,24 @@
 				 v-model="vueData.criteria.botId"
 		         :options='transformListForSelection("bots", "botId", "name")'
 		         label="Chatbot selection"
+		         @input="vueData.criteria.nodId = null; httpPostAjax('_updateStats', vueDataParams(['criteria']));"
+	         ></q-select>
+	         
+	         <q-space></q-space>
+	          
+	         <q-select
+	         	 v-if="vueData.criteria.botId && vueData.nodes.length > 0"
+				 style="width: 250px; background-color: white"
+				 dense
+				 clearable
+		         map-options
+		         emit-value
+				 v-model="vueData.criteria.nodId"
+		         :options='transformListForSelection("nodes", "nodId", "name")'
+		         label="Node selection"
 		         @input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
 	         ></q-select>
-	          
-	          
+	         
 			<q-space></q-space>
 					
 			<q-btn-toggle

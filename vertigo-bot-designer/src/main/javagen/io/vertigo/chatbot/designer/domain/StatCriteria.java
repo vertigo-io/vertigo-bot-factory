@@ -15,6 +15,7 @@ public final class StatCriteria implements DtObject {
 
 	private Long botId;
 	private String timeOption;
+	private Long nodId;
 	
 	/**
 	 * Champ : DATA.
@@ -52,6 +53,25 @@ public final class StatCriteria implements DtObject {
 	 */
 	public void setTimeOption(final String timeOption) {
 		this.timeOption = timeOption;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Node selection'.
+	 * @return Long nodId
+	 */
+	@Field(domain = "DoId", label = "Node selection")
+	public Long getNodId() {
+		return nodId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Node selection'.
+	 * @param nodId Long
+	 */
+	public void setNodId(final Long nodId) {
+		this.nodId = nodId;
 	}
 	
 	/** {@inheritDoc} */

@@ -2,6 +2,7 @@ package io.vertigo.chatbot.designer.domain
 
 
 create DtDefinition DtStatCriteria {
-	field botId 		{domain: DoId 		label: "Chatbot selection" 		required: "false"}
-	field timeOptionStr	{domain: DoCode 	label: "Time option" 			required: "false"}
+	field botId 		{domain: DoId 					label: "Chatbot selection" 		required: "false"}
+	field timeOption	{domain: DoCode 				label: "Time option" 			required: "false"}
+	field nodId			{domain: DoId 					label: "Node selection" 		required: "false"}
 }

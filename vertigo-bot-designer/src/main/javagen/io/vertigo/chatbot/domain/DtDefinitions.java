@@ -248,7 +248,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Chatbot selection'. */
 		botId,
 		/** Propriété 'Time option'. */
-		timeOption	}
+		timeOption,
+		/** Propriété 'Node selection'. */
+		nodId	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.

@@ -61,8 +61,11 @@ public class AnalyticsServices implements Component, Activeable {
 
 	private DataFilterBuilder getDataFilter(final StatCriteria criteria) {
 		final DataFilterBuilder dataFilterBuilder = DataFilter.builder("chatbotmessages");
-		if (criteria.getBotId()!=null) {
+		if (criteria.getBotId() != null) {
 			dataFilterBuilder.addFilter("botId", criteria.getBotId().toString());
+			if (criteria.getNodId() != null) {
+				dataFilterBuilder.addFilter("nodId", criteria.getNodId().toString());
+			}
 		}
 		return dataFilterBuilder;
 	}

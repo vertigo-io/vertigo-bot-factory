@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
 import io.vertigo.database.timeseries.TimedDatas;
+import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -26,6 +28,7 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 	private static final ViewContextKey<TimedDatas> requestsStatsKey = ViewContextKey.of("requestsStats");
 
 	private static final ViewContextKey<Chatbot> botsKey = ViewContextKey.of("bots");
+	private static final ViewContextKey<ChatbotNode> nodesKey = ViewContextKey.of("nodes");
 
 	private static final ViewContextKey<StatCriteria> criteriaKey = ViewContextKey.of("criteria");
 
@@ -38,6 +41,7 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext) {
 		viewContext.publishDtList(botsKey, chatbotServices.getAllChatbots());
+		viewContext.publishDtList(nodesKey, new DtList<ChatbotNode>(ChatbotNode.class));
 
 		final StatCriteria statCriteria = new StatCriteria();
 		statCriteria.setTimeOption(TimeOption.DAY.name());
@@ -60,6 +64,10 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 
 
 	private void updateGraph(final ViewContext viewContext, final StatCriteria criteria) {
+		if (criteria.getBotId() != null) {
+			viewContext.publishDtList(nodesKey, chatbotServices.getAllNodesByBotId(criteria.getBotId()));
+		}
+
 		viewContext.publishRef(sessionStatsKey, analyticsServices.getSessionsStats(criteria));
 		viewContext.publishRef(requestsStatsKey, analyticsServices.getRequestStats(criteria));
 	}
