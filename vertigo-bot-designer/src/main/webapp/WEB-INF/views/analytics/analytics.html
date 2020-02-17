@@ -16,21 +16,35 @@
 	Vue.use(VueApexCharts);
 	Vue.component('apexchart', VueApexCharts);
 	
-	VUiExtensions.dataX.timeOption = 'DAY';
-	
 	let timeFormatter = function(value) {
-		if (VUiExtensions.dataX.timeOption === 'DAY')
-			return new Date(value).toLocaleDateString(navigator.language, {
+		if (vueData.timeOption === 'DAY') {
+			return new Date(value).toLocaleDateString('en-EN', {
 				month: 'short',
 				day: '2-digit',
 				hour: '2-digit',
-			    minute:'2-digit'
+			    minute:'2-digit',
+			    hour12: false
 			  });
-		else
-			return new Date(value).toLocaleDateString(navigator.language, {
+		} else if (vueData.timeOption === 'WEEK') {
+			let myDate = new Date(value);
+			let dateStr = myDate.toLocaleDateString('en-EN', {
 				month: 'short',
 				day: '2-digit'
 			  });
+			
+			if (myDate.getHours() < 11) {
+				dateStr += " AM";
+			} else {
+				dateStr += " PM";
+			}
+			
+			return dateStr;
+		} else {
+			return new Date(value).toLocaleDateString('en-EN', {
+				month: 'short',
+				day: '2-digit'
+			  });
+		}
 	}
 
 	VUiExtensions.dataX.apexCharts = {};
@@ -126,24 +140,40 @@
 	
 	<section layout:fragment="content">
 	
+		<vu:include-data object="bots" field="botId" />
+		<vu:include-data object="bots" field="name" />
+		<vu:include-data object="criteria" field="'*'" />
 		<vu:include-data-primitive key="sessionStats" />
 		<vu:include-data-primitive key="requestsStats" />
 		
+		
+		
 		<q-toolbar class="bg-secondary text-white q-my-md shadow-2">
-<!-- 			<vu:select label="Chatbot selection" > -->
-			Soon, Chatbot selection
-			
+			<q-select
+				 style="width: 250px; background-color: white"
+				 dense
+				 clearable
+		         map-options
+		         emit-value
+				 v-model="vueData.criteria.botId"
+		         :options='transformListForSelection("bots", "botId", "name")'
+		         label="Chatbot selection"
+		         @input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
+	         ></q-select>
+	          
+	          
 			<q-space></q-space>
 					
-			<q-btn-toggle v-model="dataX.timeOption"
-							toggle-color="primary"
-							:options="[
-									{label: 'Day', value: 'DAY'},
-									{label: 'Week', value: 'WEEK'},
-									{label: 'Month', value: 'MONTH'},
-									{label: 'Year', value: 'YEAR'}
-								]"
-							@input='VUiPage.httpPostAjax("_updateStats", {timeOption:dataX.timeOption})'
+			<q-btn-toggle
+				v-model="vueData.criteria.timeOption"
+				toggle-color="primary"
+				:options="[
+						{label: 'Day', value: 'DAY'},
+						{label: 'Week', value: 'WEEK'},
+						{label: 'Month', value: 'MONTH'},
+						{label: 'Year', value: 'YEAR'},
+					]"
+				@input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
 			></q-btn-toggle>
 			
 			

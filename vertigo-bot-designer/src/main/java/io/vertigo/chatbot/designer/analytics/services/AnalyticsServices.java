@@ -9,11 +9,13 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.RasaTypeAction;
+import io.vertigo.chatbot.designer.domain.StatCriteria;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.database.timeseries.DataFilter;
+import io.vertigo.database.timeseries.DataFilterBuilder;
 import io.vertigo.database.timeseries.TimeFilter;
 import io.vertigo.database.timeseries.TimeSeriesDataBaseManager;
 import io.vertigo.database.timeseries.TimedDataSerie;
@@ -41,24 +43,35 @@ public class AnalyticsServices implements Component, Activeable {
 		// Nothing
 	}
 
-	public TimedDatas getSessionsStats(final TimeOption timeOption) {
-		final String now = '\'' + Instant.now().toString() + '\'';
-
+	public TimedDatas getSessionsStats(final StatCriteria criteria) {
 		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("isTypeOpen:sum"),
-				DataFilter.builder("chatbotmessages").build(),
-				TimeFilter.builder(now + " - " + timeOption.getRange(), now).withTimeDim(timeOption.getGrain()).build());
+				getDataFilter(criteria).build(),
+				getTimeFilter(criteria));
 
 		// select count(distinct("sessionId")) from (select "name", "sessionId" from "chatbot-test"."autogen"."chatbot_messages" where time > '2019-12-09T17:08:56.130Z' - 30m and time <'2019-12-09T17:08:56.130Z' and "isTypeOpen" = 0) group by time(1m)
 
 	}
 
-	public TimedDatas getRequestStats(final TimeOption timeOption) {
+	public TimedDatas getRequestStats(final StatCriteria criteria) {
+		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum"),
+				getDataFilter(criteria).withAdditionalWhereClause("\"type\" <> '"+RasaTypeAction.OPEN+"'").build(),
+				getTimeFilter(criteria));
+
+	}
+
+	private DataFilterBuilder getDataFilter(final StatCriteria criteria) {
+		final DataFilterBuilder dataFilterBuilder = DataFilter.builder("chatbotmessages");
+		if (criteria.getBotId()!=null) {
+			dataFilterBuilder.addFilter("botId", criteria.getBotId().toString());
+		}
+		return dataFilterBuilder;
+	}
+
+	private TimeFilter getTimeFilter(final StatCriteria criteria) {
+		final TimeOption timeOption = TimeOption.valueOf(criteria.getTimeOption());
 		final String now = '\'' + Instant.now().toString() + '\'';
 
-		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum"),
-				DataFilter.builder("chatbotmessages").withAdditionalWhereClause("\"type\" <> '"+RasaTypeAction.OPEN+"'").build(),
-				TimeFilter.builder(now + " - " + timeOption.getRange(), now).withTimeDim(timeOption.getGrain()).build());
-
+		return TimeFilter.builder(now + " - " + timeOption.getRange(), now).withTimeDim(timeOption.getGrain()).build();
 	}
 
 	private TimedDatas mergeTimedDatas(final TimedDatas data, final TimedDatas data2, final TimedDatas... otherDatas) {

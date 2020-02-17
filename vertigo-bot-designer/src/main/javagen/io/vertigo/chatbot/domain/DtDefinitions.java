@@ -41,6 +41,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		SmallTalk(io.vertigo.chatbot.commons.domain.SmallTalk.class),
 		/** Objet de données SmallTalkExport. */
 		SmallTalkExport(io.vertigo.chatbot.commons.domain.SmallTalkExport.class),
+		/** Objet de données StatCriteria. */
+		StatCriteria(io.vertigo.chatbot.designer.domain.StatCriteria.class),
 		/** Objet de données TrainerInfo. */
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
@@ -238,6 +240,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		nluTrainingSentences,
 		/** Propriété 'utterTexts'. */
 		utterTexts	}
+
+	/**
+	 * Enumération des champs de StatCriteria.
+	 */
+	public enum StatCriteriaFields implements DtFieldName<io.vertigo.chatbot.designer.domain.StatCriteria> {
+		/** Propriété 'Chatbot selection'. */
+		botId,
+		/** Propriété 'Time option'. */
+		timeOption	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.
