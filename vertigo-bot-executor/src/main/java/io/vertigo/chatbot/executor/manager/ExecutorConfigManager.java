@@ -2,6 +2,7 @@ package io.vertigo.chatbot.executor.manager;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 
 import javax.inject.Inject;
@@ -38,6 +39,11 @@ public class ExecutorConfigManager implements Manager, Activeable {
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", configDataFilePath);
 			}
+
+			// Migration purpose as 18/02/2020
+			if (executorConfiguration.getNluThreshold() == null) {
+				executorConfiguration.setNluThreshold(BigDecimal.valueOf(0.6));
+			}
 		} else {
 			executorConfiguration = new ExecutorConfiguration();
 		}
@@ -49,7 +55,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	}
 
 
-	public void loadConfig(final ExecutorConfiguration executorConfiguration) {
+	public void saveConfig(final ExecutorConfiguration executorConfiguration) {
 		this.executorConfiguration = executorConfiguration;
 
 		final String json = jsonEngine.toJson(executorConfiguration);
@@ -64,7 +70,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	/**
 	 * @return the executorConfiguration
 	 */
-	public ExecutorConfiguration getExecutorConfiguration() {
+	public ExecutorConfiguration getConfig() {
 		return executorConfiguration;
 	}
 

@@ -46,4 +46,5 @@ create DtDefinition DtExecutorConfiguration {
 	field nodId					{domain: DoId 						label: "Node ID" 				required: "true"}
 	field traId					{domain: DoId 						label: "Model ID" 				required: "true"}
 	field modelName				{domain: DoLabel 					label: "Model name" 			required: "true"}
+	field nluThreshold			{domain: DoPercentage 				label: "NLU Threshold" 			required: "true"}
 }

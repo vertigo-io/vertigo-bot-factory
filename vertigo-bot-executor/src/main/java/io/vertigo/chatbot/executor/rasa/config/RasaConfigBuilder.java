@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.executor.rasa.config;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,13 +12,15 @@ public class RasaConfigBuilder {
 
 	private final String defaultText;
 	private final String welcomeText;
+	private final BigDecimal nluThreshold;
 
 	private final List<RasaAction> actions = new ArrayList<>();
 	private final List<RasaIntent> intents = new ArrayList<>();
 
-	public RasaConfigBuilder(final String defaultText, final String welcomeText) {
+	public RasaConfigBuilder(final String defaultText, final String welcomeText, final BigDecimal nluThreshold) {
 		this.defaultText = defaultText;
 		this.welcomeText = welcomeText;
+		this.nluThreshold = nluThreshold;
 	}
 
 	public RasaConfigBuilder addSmallTalk(final String name, final List<String> nlus, final List<String> messages) {
@@ -124,17 +127,13 @@ public class RasaConfigBuilder {
 	}
 
 	private String doBuildConfig() {
-		// nothing usefull in this file, all il based on triggers for this version
-		// but if empty only NLU is trained and mappingPolicy is not used
-
-		//		return "";
 		return "language: fr_core_news_md" + NEW_LINE +
 				"pipeline: supervised_embeddings" + NEW_LINE +
 				NEW_LINE +
 				"policies:" + NEW_LINE +
 				"  - name: MappingPolicy" + NEW_LINE +
 				"  - name: FallbackPolicy" + NEW_LINE +
-				"    nlu_threshold: 0.6" + NEW_LINE +
+				"    nlu_threshold: " + nluThreshold + NEW_LINE +
 				"    core_threshold: 0.3" + NEW_LINE +
 				"    fallback_action_name: 'action_default_fallback'" + NEW_LINE;
 	}

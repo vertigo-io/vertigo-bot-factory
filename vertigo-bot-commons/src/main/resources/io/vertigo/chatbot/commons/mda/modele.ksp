@@ -129,15 +129,16 @@ create Association ASmallTalkUtterText {
 /* **** Training **** */
 /**********************/
 create DtDefinition DtTraining {
-	id    traId 		{domain: DoId 		label: "ID"}
-	field startTime		{domain: DoInstant 	label: "Start time"			required: "true"}
-	field endTime		{domain: DoInstant 	label: "End time" 			required: "false"}
-	field versionNumber	{domain: DoNumber 	label: "Version" 			required: "true"}
-	field status		{domain: DoCode		label: "Status" 			required: "true"}
-	field log			{domain: DoText		label: "Log"	 			required: "false"}
-	field infos			{domain: DoText		label: "Informations"	 	required: "false"}
-	field warnings		{domain: DoText		label: "Warnings"	 		required: "false"}
-	computed duration 	{domain: DoLabel 	label: "Duration"
+	id    traId 		{domain: DoId 			label: "ID"}
+	field startTime		{domain: DoInstant 		label: "Start time"			required: "true"}
+	field endTime		{domain: DoInstant 		label: "End time" 			required: "false"}
+	field versionNumber	{domain: DoNumber 		label: "Version" 			required: "true"}
+	field status		{domain: DoCode			label: "Status" 			required: "true"}
+	field log			{domain: DoText			label: "Log"	 			required: "false"}
+	field infos			{domain: DoText			label: "Informations"	 	required: "false"}
+	field warnings		{domain: DoText			label: "Warnings"	 		required: "false"}
+	field nluThreshold	{domain: DoPercentage 	label: "NLU Threshold" 		required: "true"}
+	computed duration 	{domain: DoLabel 		label: "Duration"
 						 expression:"return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());" }
 }
 

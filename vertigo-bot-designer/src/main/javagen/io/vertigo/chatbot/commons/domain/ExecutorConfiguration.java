@@ -17,6 +17,7 @@ public final class ExecutorConfiguration implements DtObject {
 	private Long nodId;
 	private Long traId;
 	private String modelName;
+	private java.math.BigDecimal nluThreshold;
 	
 	/**
 	 * Champ : DATA.
@@ -92,6 +93,25 @@ public final class ExecutorConfiguration implements DtObject {
 	 */
 	public void setModelName(final String modelName) {
 		this.modelName = modelName;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'NLU Threshold'.
+	 * @return BigDecimal nluThreshold <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoPercentage", required = true, label = "NLU Threshold")
+	public java.math.BigDecimal getNluThreshold() {
+		return nluThreshold;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'NLU Threshold'.
+	 * @param nluThreshold BigDecimal <b>Obligatoire</b>
+	 */
+	public void setNluThreshold(final java.math.BigDecimal nluThreshold) {
+		this.nluThreshold = nluThreshold;
 	}
 	
 	/** {@inheritDoc} */

@@ -53,9 +53,10 @@ public class RasaRunnerServices implements Component {
 					.addTag("botId", String.valueOf(config.getBotId()))
 					.addTag("nodId", String.valueOf(config.getNodId()))
 					.addTag("traId", String.valueOf(config.getTraId()))
-					.addTag("modelName", config.getModelName());
+					.addTag("modelName", config.getModelName())
+					.setMeasure("nluThreshold", config.getNluThreshold().doubleValue());
 
-					executorConfigManager.loadConfig(config);
+					executorConfigManager.saveConfig(config);
 					runnerRasaHandler.loadModel(model);
 				});
 	}

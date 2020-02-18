@@ -23,6 +23,7 @@ public final class Training implements Entity {
 	private String log;
 	private String infos;
 	private String warnings;
+	private java.math.BigDecimal nluThreshold;
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
 			name = "ATrainingChatbot",
@@ -210,6 +211,25 @@ public final class Training implements Entity {
 	 */
 	public void setWarnings(final String warnings) {
 		this.warnings = warnings;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'NLU Threshold'.
+	 * @return BigDecimal nluThreshold <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoPercentage", required = true, label = "NLU Threshold")
+	public java.math.BigDecimal getNluThreshold() {
+		return nluThreshold;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'NLU Threshold'.
+	 * @param nluThreshold BigDecimal <b>Obligatoire</b>
+	 */
+	public void setNluThreshold(final java.math.BigDecimal nluThreshold) {
+		this.nluThreshold = nluThreshold;
 	}
 	
 	/**

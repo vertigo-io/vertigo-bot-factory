@@ -117,6 +117,11 @@ create Domain DoFileData {
 	storeType : "bytea"
 }
 
+create Domain DoPercentage {
+	dataType : BigDecimal
+	formatter : FmtDefault
+	storeType: "NUMERIC(3,2)"
+}
 
 /**************************************************************************************************/
 /********************************* Formatters *****************************************************/

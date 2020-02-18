@@ -1,7 +1,6 @@
 package io.vertigo.chatbot.analytics.rasa.rabbitmq;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
@@ -148,7 +147,7 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 				rta = RasaTypeAction.MESSAGE;
 			}
 
-			final ExecutorConfiguration executorConfiguration = executorConfigManager.getExecutorConfiguration();
+			final ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig();
 
 			final AProcessBuilder processBuilder = AProcess.builder("chatbotmessages", intent.getName().orElse("unknown"), userAction.getTimestamp(), userAction.getTimestamp()) // timestamp of emitted event
 					.addTag("text", userAction.getText())
@@ -160,7 +159,7 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 					.addTag("traId", String.valueOf(executorConfiguration.getTraId()))
 					.addTag("modelName", String.valueOf(executorConfiguration.getModelName()))
 					.setMeasure("confidence", intent.getConfidence().doubleValue())
-					.setMeasure("isFallback", intent.getConfidence().compareTo(BigDecimal.valueOf(0.5)) < 0 ? 1d : 0d)
+					.setMeasure("isFallback", intent.getConfidence().compareTo(executorConfiguration.getNluThreshold()) < 0 ? 1d : 0d)
 					.setMeasure("isTypeOpen", rta == RasaTypeAction.OPEN ? 1d : 0d)
 					.setMeasure("isTypeMessage", rta == RasaTypeAction.MESSAGE ? 1d : 0d)
 					.setMeasure("isTypeResponseInfo", rta == RasaTypeAction.RESPONSE_INFO ? 1d : 0d)

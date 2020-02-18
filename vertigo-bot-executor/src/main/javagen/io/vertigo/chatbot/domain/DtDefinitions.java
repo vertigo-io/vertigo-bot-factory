@@ -129,7 +129,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Model ID'. */
 		traId,
 		/** Propriété 'Model name'. */
-		modelName	}
+		modelName,
+		/** Propriété 'NLU Threshold'. */
+		nluThreshold	}
 
 	/**
 	 * Enumération des champs de ExecutorTrainingCallback.
@@ -295,6 +297,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		infos,
 		/** Propriété 'Warnings'. */
 		warnings,
+		/** Propriété 'NLU Threshold'. */
+		nluThreshold,
 		/** Propriété 'Duration'. */
 		duration,
 		/** Propriété 'Chatbot'. */

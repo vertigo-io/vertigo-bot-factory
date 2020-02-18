@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.executor.webservices;
 
+import java.math.BigDecimal;
+
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.BotExport;
@@ -41,8 +43,9 @@ public class AdminWebService implements WebServices {
 	public void train(@InnerBodyParam("botExport") final BotExport bot,
 			@InnerBodyParam("smallTalkExport") final DtList<SmallTalkExport> smallTalkList,
 			@InnerBodyParam("trainingId") final Long trainingId,
-			@InnerBodyParam("modelId") final Long modelId) {
-		trainerServices.trainModel(bot, smallTalkList, trainingId, modelId);
+			@InnerBodyParam("modelId") final Long modelId,
+			@InnerBodyParam("nluThreshold") final BigDecimal nluThreshold) {
+		trainerServices.trainModel(bot, smallTalkList, trainingId, modelId, nluThreshold);
 	}
 
 	@DELETE("/train")

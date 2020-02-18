@@ -2,6 +2,7 @@ package io.vertigo.chatbot.designer.builder.services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -101,6 +102,7 @@ public class TrainingServices implements Component {
 		training.setStartTime(Instant.now());
 		training.setStatus("TRAINING");
 		training.setVersionNumber(versionNumber);
+		training.setNluThreshold(BigDecimal.valueOf(0.6));
 
 		saveTraining(training);
 
@@ -110,6 +112,7 @@ public class TrainingServices implements Component {
 		requestData.put("smallTalkExport", exportSmallTalk(botId));
 		requestData.put("trainingId", training.getTraId());
 		requestData.put("modelId", versionNumber);
+		requestData.put("nluThreshold", training.getNluThreshold());
 
 		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
 				.request(MediaType.APPLICATION_JSON_TYPE)
@@ -281,18 +284,19 @@ public class TrainingServices implements Component {
 	}
 
 	private void doLoadModel(final Training training, final VFile model, final ChatbotNode node) {
-		final ExecutorConfiguration options = new ExecutorConfiguration();
-		options.setBotId(node.getBotId());
-		options.setNodId(node.getNodId());
-		options.setTraId(training.getTraId());
-		options.setModelName(training.getVersionNumber().toString());
+		final ExecutorConfiguration config = new ExecutorConfiguration();
+		config.setBotId(node.getBotId());
+		config.setNodId(node.getNodId());
+		config.setTraId(training.getTraId());
+		config.setModelName(training.getVersionNumber().toString());
+		config.setNluThreshold(training.getNluThreshold());
 
 		final Response response;
 		try (final FormDataMultiPart fdmp = new FormDataMultiPart()) {
 			final StreamDataBodyPart modelBodyPart = new StreamDataBodyPart("model", model.createInputStream(), model.getFileName());
 			fdmp.bodyPart(modelBodyPart);
 
-			addObjectToMultipart(fdmp, "config", options);
+			addObjectToMultipart(fdmp, "config", config);
 
 			response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/admin/model")
 					.request(MediaType.APPLICATION_JSON)

@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.executor.rasa.services;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,12 +60,12 @@ public class RasaTrainerServices implements Component, Activeable {
 		// Nothing
 	}
 
-	public void trainModel(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final Long trainingId, final Long modelId) {
+	public void trainModel(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final Long trainingId, final Long modelId, final BigDecimal nluThreshold) {
 		if (trainerRasaHandler.isTraining()) {
 			throw new VUserException("Node already training a model.");
 		}
 
-		trainerRasaHandler.trainModel(bot, smallTalkList, modelId, isSuccess -> {
+		trainerRasaHandler.trainModel(bot, smallTalkList, modelId, nluThreshold, isSuccess -> {
 			final ExecutorTrainingCallback executorTrainingCallback = new ExecutorTrainingCallback();
 			executorTrainingCallback.setTrainingId(trainingId);
 			executorTrainingCallback.setSuccess(isSuccess);

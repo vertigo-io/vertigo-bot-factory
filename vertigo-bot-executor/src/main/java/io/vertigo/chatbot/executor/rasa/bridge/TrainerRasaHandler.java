@@ -3,6 +3,7 @@ package io.vertigo.chatbot.executor.rasa.bridge;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -79,7 +80,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	}
 
 
-	public void trainModel(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final Long modelId, final Consumer<Boolean> trainingCallback) {
+	public void trainModel(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final Long modelId, final BigDecimal nluThreshold, final Consumer<Boolean> trainingCallback) {
 		if (isTraining()) {
 			throw new VUserException("Training already in progress");
 		}
@@ -91,7 +92,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 		coreAccuacy = -1;
 		nluAccuacy = -1;
 
-		final RasaConfig config = generateRasaConfig(bot, smallTalkList);
+		final RasaConfig config = generateRasaConfig(bot, smallTalkList, nluThreshold);
 
 		writeToRasaFile(config.getDomain(), "domain.yml");
 		writeToRasaFile(config.getStories(), "data/stories.md");
@@ -243,11 +244,11 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 		trainingLog.append("\n*** User stopped training ***");
 	}
 
-	private static RasaConfig generateRasaConfig(final BotExport bot, final DtList<SmallTalkExport> smallTalkList) {
+	private static RasaConfig generateRasaConfig(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final BigDecimal nluThreshold) {
 		final String defaultText = bot.getDefaultText().getText();
 		final String welcomeText = bot.getWelcomeText().getText();
 
-		final RasaConfigBuilder rasaConfigBuilder = new RasaConfigBuilder(defaultText, welcomeText);
+		final RasaConfigBuilder rasaConfigBuilder = new RasaConfigBuilder(defaultText, welcomeText, nluThreshold);
 
 
 		for (final SmallTalkExport st : smallTalkList) {
