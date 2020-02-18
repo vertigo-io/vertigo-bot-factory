@@ -1,11 +1,14 @@
 package io.vertigo.chatbot.designer.analytics.controllers;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
@@ -39,12 +42,19 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 	private DesignerServices chatbotServices;
 
 	@GetMapping("/")
-	public void initContext(final ViewContext viewContext) {
+	public void initContext(final ViewContext viewContext,
+			@RequestParam("botId") final Optional<Long> botId,
+			@RequestParam("nodId") final Optional<Long> nodId,
+			@RequestParam("time") final Optional<TimeOption> timeOption) {
+
 		viewContext.publishDtList(botsKey, chatbotServices.getAllChatbots());
 		viewContext.publishDtList(nodesKey, new DtList<ChatbotNode>(ChatbotNode.class));
 
 		final StatCriteria statCriteria = new StatCriteria();
-		statCriteria.setTimeOption(TimeOption.DAY.name());
+		statCriteria.setTimeOption(timeOption.orElse(TimeOption.DAY).name());
+		botId.ifPresent(statCriteria::setBotId);
+		nodId.ifPresent(statCriteria::setNodId);
+
 		viewContext.publishDto(criteriaKey, statCriteria);
 
 		updateGraph(viewContext, statCriteria);

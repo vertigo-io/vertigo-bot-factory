@@ -76,7 +76,7 @@
 				<vu:include-data object="nodeList" field="color" />
 				<vu:include-data object="nodeList" field="apiKey" />
 				
-				<vu:column field="isDev" label="Train" class="col_Small">
+				<vu:column field="isDev" label="" class="col_Small">
 					<q-icon name="build" size="2rem" v-if="props.row.isDev"></q-icon>
 				</vu:column>
 				<vu:column field="name" label="Node">
@@ -85,6 +85,11 @@
 					</q-chip>
 				</vu:column>
 				<vu:column field="url"/>
+				<vu:column name="stat" label="Statistics" class="col_Small">
+					<vu:button-link url="@{/analytics/(botId=${model.bot.botId})} + '&nodId=\'+props.row.nodId+\'' " label="" icon="insert_chart_outlined"
+							class="text-accent-inverted" @click.stop="null"/>
+
+				</vu:column>
 			</vu:table>
 			
 			<q-dialog ref="nodeEdit" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.nodeEdit">
