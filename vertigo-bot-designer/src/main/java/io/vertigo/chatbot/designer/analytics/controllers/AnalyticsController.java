@@ -16,6 +16,8 @@ import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
+import io.vertigo.chatbot.designer.domain.UnknownSentense;
+import io.vertigo.chatbot.domain.DtDefinitions.UnknownSentenseFields;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.ui.core.ViewContext;
@@ -29,6 +31,7 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<TimedDatas> sessionStatsKey = ViewContextKey.of("sessionStats");
 	private static final ViewContextKey<TimedDatas> requestsStatsKey = ViewContextKey.of("requestsStats");
+	private static final ViewContextKey<UnknownSentense> unknownSentensesKey = ViewContextKey.of("unknownSentenses");
 
 	private static final ViewContextKey<Chatbot> botsKey = ViewContextKey.of("bots");
 	private static final ViewContextKey<ChatbotNode> nodesKey = ViewContextKey.of("nodes");
@@ -80,6 +83,8 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 
 		viewContext.publishRef(sessionStatsKey, analyticsServices.getSessionsStats(criteria));
 		viewContext.publishRef(requestsStatsKey, analyticsServices.getRequestStats(criteria));
+
+		viewContext.publishDtList(unknownSentensesKey, UnknownSentenseFields.text, analyticsServices.getUnknownSentenses(criteria));
 	}
 
 

@@ -6,3 +6,10 @@ create DtDefinition DtStatCriteria {
 	field timeOption	{domain: DoCode 				label: "Time option" 			required: "false"}
 	field nodId			{domain: DoId 					label: "Node selection" 		required: "false"}
 }
+
+create DtDefinition DtUnknownSentense {
+	field date 			{domain: DoInstant 				label: "Time" 					required: "false"}
+	field text			{domain: DoLabel 				label: "User text" 				required: "false"}
+	field intent		{domain: DoLabel 				label: "Detected intent" 		required: "false"}
+	field confidence	{domain: DoPercentage 			label: "Confidence" 			required: "false"}
+}

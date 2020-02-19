@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.designer.analytics.services;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.RasaTypeAction;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
+import io.vertigo.chatbot.designer.domain.UnknownSentense;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Activeable;
 import io.vertigo.core.component.Component;
@@ -20,6 +22,7 @@ import io.vertigo.database.timeseries.TimeFilter;
 import io.vertigo.database.timeseries.TimeSeriesDataBaseManager;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
+import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.lang.Assertion;
 
 @Transactional
@@ -56,6 +59,28 @@ public class AnalyticsServices implements Component, Activeable {
 		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum"),
 				getDataFilter(criteria).withAdditionalWhereClause("\"type\" <> '"+RasaTypeAction.OPEN+"'").build(),
 				getTimeFilter(criteria));
+
+	}
+
+	public DtList<UnknownSentense> getUnknownSentenses(final StatCriteria criteria) {
+		final TimedDatas tabularTimedData = timeSeriesDataBaseManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence"),
+				getDataFilter(criteria).withAdditionalWhereClause("isFallback = 1").build(),
+				getTimeFilter(criteria));
+
+		final DtList<UnknownSentense> retour = new DtList<>(UnknownSentense.class);
+		for(final TimedDataSerie timedData: tabularTimedData.getTimedDataSeries()) {
+			final UnknownSentense newUnknownSentense = new UnknownSentense();
+
+			newUnknownSentense.setDate(timedData.getTime());
+			final Map<String, Object> values = timedData.getValues();
+			newUnknownSentense.setText((String) values.get("text"));
+			newUnknownSentense.setIntent((String) values.get("name"));
+			newUnknownSentense.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
+
+			retour.add(newUnknownSentense);
+		}
+
+		return retour;
 
 	}
 

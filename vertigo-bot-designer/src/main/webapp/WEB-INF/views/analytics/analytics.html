@@ -221,8 +221,17 @@
 					</q-card-section>
 				</q-card>
 			</div>
+
+			<div class="col-12"> 
+				<vu:table componentId="messageList" list="unknownSentenses" title="Messages not understood" rowsPerPage="10" autoColClass >
+					<vu:column field="date"/>
+					<vu:column field="text"/>
+					<vu:column field="intent"/>
+					<vu:column field="confidence" class="col_Small"/>
+				</vu:table>
+			</div>
 		</div>
-			
+		
 	</section>
 
 </body>

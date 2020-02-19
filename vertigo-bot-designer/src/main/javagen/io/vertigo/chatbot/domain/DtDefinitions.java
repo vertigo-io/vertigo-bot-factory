@@ -47,6 +47,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
 		Training(io.vertigo.chatbot.commons.domain.Training.class),
+		/** Objet de données UnknownSentense. */
+		UnknownSentense(io.vertigo.chatbot.designer.domain.UnknownSentense.class),
 		/** Objet de données UtterText. */
 		UtterText(io.vertigo.chatbot.commons.domain.UtterText.class)		;
 
@@ -303,6 +305,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botId,
 		/** Propriété 'Model'. */
 		filIdModel	}
+
+	/**
+	 * Enumération des champs de UnknownSentense.
+	 */
+	public enum UnknownSentenseFields implements DtFieldName<io.vertigo.chatbot.designer.domain.UnknownSentense> {
+		/** Propriété 'Time'. */
+		date,
+		/** Propriété 'User text'. */
+		text,
+		/** Propriété 'Detected intent'. */
+		intent,
+		/** Propriété 'Confidence'. */
+		confidence	}
 
 	/**
 	 * Enumération des champs de UtterText.
