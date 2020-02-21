@@ -9,7 +9,6 @@ public class RasaIntent {
 
 	private static final String NEW_LINE = "\r\n";
 
-	private final String name;
 	private final String code;
 	private final List<String> nlus;
 	private final RasaAction trigger;
@@ -17,22 +16,17 @@ public class RasaIntent {
 	public static RasaIntent newSmallTalk(final String name, final List<String> nlus, final RasaAction trigger) {
 		Assertion.checkArgument(trigger.isSmallTalk(), "Le trigger doit être une action de small talk");
 		// ----
-		return new RasaIntent("st_" + name, nlus, trigger);
+		return new RasaIntent("st_" + StringUtils.labelToCode(name), nlus, trigger);
 	}
 
 	public static RasaIntent newGenericIntent(final String name, final List<String> nlus) {
-		return new RasaIntent(name, nlus, null);
+		return new RasaIntent("int_" + name, nlus, null);
 	}
 
-	private RasaIntent(final String name, final List<String> nlus, final RasaAction trigger) {
-		this.name = name;
-		code = StringUtils.labelToCode(name);
+	private RasaIntent(final String code, final List<String> nlus, final RasaAction trigger) {
+		this.code = code;
 		this.nlus = nlus;
 		this.trigger = trigger;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public String getCode() {

@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
+import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
+import io.vertigo.chatbot.designer.domain.TopIntent;
 import io.vertigo.chatbot.designer.domain.UnknownSentense;
+import io.vertigo.chatbot.domain.DtDefinitions.TopIntentFields;
 import io.vertigo.chatbot.domain.DtDefinitions.UnknownSentenseFields;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.dynamo.domain.model.DtList;
@@ -32,6 +35,9 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 	private static final ViewContextKey<TimedDatas> sessionStatsKey = ViewContextKey.of("sessionStats");
 	private static final ViewContextKey<TimedDatas> requestsStatsKey = ViewContextKey.of("requestsStats");
 	private static final ViewContextKey<UnknownSentense> unknownSentensesKey = ViewContextKey.of("unknownSentenses");
+	private static final ViewContextKey<TopIntent> topIntentsKey = ViewContextKey.of("topIntents");
+
+	private static final ViewContextKey<SmallTalk> smallTalksKey = ViewContextKey.of("smallTalks");
 
 	private static final ViewContextKey<Chatbot> botsKey = ViewContextKey.of("bots");
 	private static final ViewContextKey<ChatbotNode> nodesKey = ViewContextKey.of("nodes");
@@ -42,7 +48,7 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 	private AnalyticsServices analyticsServices;
 
 	@Inject
-	private DesignerServices chatbotServices;
+	private DesignerServices designerServices;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext,
@@ -50,7 +56,7 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 			@RequestParam("nodId") final Optional<Long> nodId,
 			@RequestParam("time") final Optional<TimeOption> timeOption) {
 
-		viewContext.publishDtList(botsKey, chatbotServices.getAllChatbots());
+		viewContext.publishDtList(botsKey, designerServices.getAllChatbots());
 		viewContext.publishDtList(nodesKey, new DtList<ChatbotNode>(ChatbotNode.class));
 
 		final StatCriteria statCriteria = new StatCriteria();
@@ -62,30 +68,36 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 
 		updateGraph(viewContext, statCriteria);
 
-		toModeReadOnly();
+		toModeEdit();
 	}
 
 	@PostMapping("/_updateStats")
 	public ViewContext doUpdateStats(final ViewContext viewContext,
-			@ViewAttribute("criteria") final StatCriteria criteria
-			) {
+			@ViewAttribute("criteria") final StatCriteria criteria) {
 
 		updateGraph(viewContext, criteria);
 
 		return viewContext;
 	}
 
-
 	private void updateGraph(final ViewContext viewContext, final StatCriteria criteria) {
 		if (criteria.getBotId() != null) {
-			viewContext.publishDtList(nodesKey, chatbotServices.getAllNodesByBotId(criteria.getBotId()));
+			viewContext.publishDtList(nodesKey, designerServices.getAllNodesByBotId(criteria.getBotId()));
 		}
 
 		viewContext.publishRef(sessionStatsKey, analyticsServices.getSessionsStats(criteria));
 		viewContext.publishRef(requestsStatsKey, analyticsServices.getRequestStats(criteria));
 
-		viewContext.publishDtList(unknownSentensesKey, UnknownSentenseFields.text, analyticsServices.getUnknownSentenses(criteria));
-	}
+		if (criteria.getBotId() != null) {
+			viewContext.publishDtList(unknownSentensesKey, UnknownSentenseFields.smtId, analyticsServices.getUnknownSentenses(criteria));
+			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, analyticsServices.getTopIntents(criteria));
 
+			viewContext.publishDtList(smallTalksKey, designerServices.getAllSmallTalksByBotId(criteria.getBotId()));
+		} else {
+			viewContext.publishDtList(unknownSentensesKey, UnknownSentenseFields.smtId, new DtList<UnknownSentense>(UnknownSentense.class));
+			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, new DtList<TopIntent>(TopIntent.class));
+			viewContext.publishDtList(smallTalksKey, new DtList<SmallTalk>(SmallTalk.class));
+		}
+	}
 
 }

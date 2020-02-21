@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.executor.domain.RasaConfig;
 
 public class RasaConfigBuilder {
@@ -23,9 +24,11 @@ public class RasaConfigBuilder {
 		this.nluThreshold = nluThreshold;
 	}
 
-	public RasaConfigBuilder addSmallTalk(final String name, final List<String> nlus, final List<String> messages) {
+	public RasaConfigBuilder addSmallTalk(final SmallTalk smallTalk, final List<String> nlus, final List<String> messages) {
 		//		Assertion.checkState(!utterances.containsKey(name), "Le code de message {1} existe déjà", name);
 		// ----
+		final String name = smallTalk.getSmtId().toString() + '_' + smallTalk.getTitle();
+
 		final RasaAction action = RasaAction.newStUtterance(name, messages);
 		final RasaIntent intent = RasaIntent.newSmallTalk(name, nlus, action);
 
@@ -99,7 +102,9 @@ public class RasaConfigBuilder {
 		retour.append(NEW_LINE);
 
 		for (final RasaAction action : actions) {
-			retour.append(action.getUtterTemplate());
+			if (action.isUtterance()) {
+				retour.append(action.getUtterTemplate());
+			}
 		}
 
 		return retour.toString();
@@ -110,7 +115,7 @@ public class RasaConfigBuilder {
 
 		for (final RasaIntent intent : intents) {
 			retour.append(intent.getNluDeclaration())
-			.append(NEW_LINE);
+					.append(NEW_LINE);
 		}
 
 		return retour.toString();

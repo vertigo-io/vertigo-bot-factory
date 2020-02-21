@@ -260,7 +260,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 					.map(NluTrainingSentence::getText)
 					.collect(Collectors.toList());
 
-			rasaConfigBuilder.addSmallTalk(st.getSmallTalk().getTitle(), trainingSentences, utterTexts);
+			rasaConfigBuilder.addSmallTalk(st.getSmallTalk(), trainingSentences, utterTexts);
 		}
 
 		return rasaConfigBuilder.build();

@@ -131,8 +131,8 @@
 			function getTrainingById(id) {
 				if (id == null) return null;
 				
-				let result = vueData.trainingList.filter(t => t.traId == id);
-				return result.size === 0 ? null : result[0];
+				let result = vueData.trainingList.filter(t => t.traId === id);
+				return result.length === 0 ? null : result[0];
 			}
 			
 			function getVersionNumberByTrainingId(id) {
@@ -174,7 +174,7 @@
 			}
 			function getDevNode() {
 				let result = vueData.nodeList.filter(n => n.isDev === true);
-				return result.size === 0 ? null : result[0];
+				return result.length === 0 ? null : result[0];
 			}
 			
 		</script>

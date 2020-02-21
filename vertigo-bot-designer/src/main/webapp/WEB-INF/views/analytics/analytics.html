@@ -126,20 +126,29 @@
 			} else {
 				valueResolved = value;
 			}
-			ret.push([(e.time.epochSecond || e.time.seconds)* 1000 , valueResolved]);
+			
+			// null value = hole
+			// undefined value = stroke between existing values
+			if (valueResolved !== undefined) {
+				ret.push([(e.time.epochSecond || e.time.seconds)* 1000 , valueResolved]);
+			}
 		});
 		return ret;
-	}
+	};
 	// "statsRequests" : {"seriesNames":["name:count","isFallback:mean"],"timedDataSeries":[{"time":{"epochSecond":1574726400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574812800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574899200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574985600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575072000,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575158400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575244800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575331200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575417600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575504000,"nano":0},"values":{"isFallback:mean":0.16666666666666666,"name:count":7.0}},{"time":{"epochSecond":1575590400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}}]}
 
-	
+	function getSmallTalkTitleBySmtId(smtId) {
+		if (smtId == null) return null;
+		
+		let result = vueData.smallTalks.filter(s => s.smtId === smtId);
+		return result.length === 0 ? null : result[0].title;
+	}
 </script>
 </head>
 
 <body>
 	
 	<section layout:fragment="content">
-	
 		<vu:include-data object="bots" field="botId" />
 		<vu:include-data object="bots" field="name" />
 		
@@ -151,54 +160,54 @@
 		<vu:include-data-primitive key="sessionStats" />
 		<vu:include-data-primitive key="requestsStats" />
 		
+		<q-page-sticky expand position="top" style="z-index:100000">
+			<q-toolbar class="bg-secondary text-white shadow-2">
+				<q-select
+					 style="width: 250px; background-color: white"
+					 dense
+					 clearable
+			         map-options
+			         emit-value
+					 v-model="vueData.criteria.botId"
+			         :options='transformListForSelection("bots", "botId", "name")'
+			         label="Chatbot selection"
+			         @input="vueData.criteria.nodId = null; httpPostAjax('_updateStats', vueDataParams(['criteria']));"
+		         ></q-select>
+		         
+		         <q-space></q-space>
+		          
+		         <q-select
+		         	 v-if="vueData.criteria.botId && vueData.nodes.length > 0"
+					 style="width: 250px; background-color: white"
+					 dense
+					 clearable
+			         map-options
+			         emit-value
+					 v-model="vueData.criteria.nodId"
+			         :options='transformListForSelection("nodes", "nodId", "name")'
+			         label="Node selection"
+			         @input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
+		         ></q-select>
+		         
+				<q-space></q-space>
+						
+				<q-btn-toggle
+					v-model="vueData.criteria.timeOption"
+					toggle-color="primary"
+					:options="[
+							{label: 'Day', value: 'DAY'},
+							{label: 'Week', value: 'WEEK'},
+							{label: 'Month', value: 'MONTH'},
+							{label: 'Year', value: 'YEAR'},
+						]"
+					@input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
+				></q-btn-toggle>
+				
+				
+			</q-toolbar>
+		</q-page-sticky>
 		
-		
-		<q-toolbar class="bg-secondary text-white q-my-md shadow-2">
-			<q-select
-				 style="width: 250px; background-color: white"
-				 dense
-				 clearable
-		         map-options
-		         emit-value
-				 v-model="vueData.criteria.botId"
-		         :options='transformListForSelection("bots", "botId", "name")'
-		         label="Chatbot selection"
-		         @input="vueData.criteria.nodId = null; httpPostAjax('_updateStats', vueDataParams(['criteria']));"
-	         ></q-select>
-	         
-	         <q-space></q-space>
-	          
-	         <q-select
-	         	 v-if="vueData.criteria.botId && vueData.nodes.length > 0"
-				 style="width: 250px; background-color: white"
-				 dense
-				 clearable
-		         map-options
-		         emit-value
-				 v-model="vueData.criteria.nodId"
-		         :options='transformListForSelection("nodes", "nodId", "name")'
-		         label="Node selection"
-		         @input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
-	         ></q-select>
-	         
-			<q-space></q-space>
-					
-			<q-btn-toggle
-				v-model="vueData.criteria.timeOption"
-				toggle-color="primary"
-				:options="[
-						{label: 'Day', value: 'DAY'},
-						{label: 'Week', value: 'WEEK'},
-						{label: 'Month', value: 'MONTH'},
-						{label: 'Year', value: 'YEAR'},
-					]"
-				@input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
-			></q-btn-toggle>
-			
-			
-		</q-toolbar>
-		
-		<div class="row wrap justify-start q-col-gutter-md">
+		<div class="row wrap justify-start q-col-gutter-md q-mt-lg">
 		
 			<div class="col-xl-4 col-md-6 col-xs-12"> 
 				<q-card>
@@ -222,14 +231,32 @@
 				</q-card>
 			</div>
 
-			<div class="col-12"> 
-				<vu:table componentId="messageList" list="unknownSentenses" title="Messages not understood" rowsPerPage="10" autoColClass >
-					<vu:column field="date"/>
-					<vu:column field="text"/>
-					<vu:column field="intent"/>
-					<vu:column field="confidence" class="col_Small"/>
-				</vu:table>
-			</div>
+			<template v-if="vueData.criteria.botId">
+				<div class="col-12"> 
+					<vu:table componentId="messageList" list="unknownSentenses" title="Messages not understood" rowsPerPage="10" autoColClass >
+						<vu:column field="date"/>
+						<vu:column field="text"/>
+						<!-- 
+						<vu:column field="intentRasa" label="Possible intent"/>
+						<vu:column field="confidence"/>
+						 -->
+					</vu:table>
+				</div>
+				
+				<vu:include-data object="smallTalks" field="smtId" />
+				<vu:include-data object="smallTalks" field="title" />
+				
+				<div class="col-12"> 
+					<vu:table componentId="intentList"
+							  list="topIntents" title="Intent usage" rowsPerPage="10" autoColClass
+							  sortBy="count" descending >
+						<vu:column field="count" />
+						<vu:column field="smtId" label="Intent">
+							{{getSmallTalkTitleBySmtId(props.row.smtId)}}
+						</vu:column>
+					</vu:table>
+				</div>
+			</template>
 		</div>
 		
 	</section>

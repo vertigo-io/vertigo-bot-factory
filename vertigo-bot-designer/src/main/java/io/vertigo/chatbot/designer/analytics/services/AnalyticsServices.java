@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.RasaTypeAction;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
+import io.vertigo.chatbot.designer.domain.TopIntent;
 import io.vertigo.chatbot.designer.domain.UnknownSentense;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Activeable;
@@ -18,6 +20,8 @@ import io.vertigo.core.component.Component;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.database.timeseries.DataFilter;
 import io.vertigo.database.timeseries.DataFilterBuilder;
+import io.vertigo.database.timeseries.TabularDataSerie;
+import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimeFilter;
 import io.vertigo.database.timeseries.TimeSeriesDataBaseManager;
 import io.vertigo.database.timeseries.TimedDataSerie;
@@ -50,38 +54,85 @@ public class AnalyticsServices implements Component, Activeable {
 		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("isTypeOpen:sum"),
 				getDataFilter(criteria).build(),
 				getTimeFilter(criteria));
-
-		// select count(distinct("sessionId")) from (select "name", "sessionId" from "chatbot-test"."autogen"."chatbot_messages" where time > '2019-12-09T17:08:56.130Z' - 30m and time <'2019-12-09T17:08:56.130Z' and "isTypeOpen" = 0) group by time(1m)
-
 	}
 
 	public TimedDatas getRequestStats(final StatCriteria criteria) {
 		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum"),
-				getDataFilter(criteria).withAdditionalWhereClause("\"type\" <> '"+RasaTypeAction.OPEN+"'").build(),
+				getDataFilter(criteria).withAdditionalWhereClause("\"type\" <> '" + RasaTypeAction.OPEN + "'").build(),
 				getTimeFilter(criteria));
 
 	}
 
 	public DtList<UnknownSentense> getUnknownSentenses(final StatCriteria criteria) {
-		final TimedDatas tabularTimedData = timeSeriesDataBaseManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence"),
+		// get data from influxdb
+		final TimedDatas tabularTimedData = timeSeriesDataBaseManager.getFlatTabularTimedData(influxDbName, Arrays.asList("messageId", "text", "name", "confidence"),
 				getDataFilter(criteria).withAdditionalWhereClause("isFallback = 1").build(),
-				getTimeFilter(criteria));
+				getTimeFilter(criteria),
+				Optional.empty());
 
+		// build DtList from InfluxDb data
 		final DtList<UnknownSentense> retour = new DtList<>(UnknownSentense.class);
-		for(final TimedDataSerie timedData: tabularTimedData.getTimedDataSeries()) {
-			final UnknownSentense newUnknownSentense = new UnknownSentense();
-
-			newUnknownSentense.setDate(timedData.getTime());
+		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
+			final String intentName = (String) values.get("name");
+			final Long smtId = extractSmtIdFromIntentName(intentName);
+
+			final UnknownSentense newUnknownSentense = new UnknownSentense();
+			newUnknownSentense.setDate(timedData.getTime());
+			newUnknownSentense.setMessageId((String) values.get("messageId"));
 			newUnknownSentense.setText((String) values.get("text"));
-			newUnknownSentense.setIntent((String) values.get("name"));
+			newUnknownSentense.setIntentRasa(intentName);
 			newUnknownSentense.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
+			newUnknownSentense.setSmtId(smtId);
 
 			retour.add(newUnknownSentense);
 		}
 
 		return retour;
+	}
 
+	public DtList<TopIntent> getTopIntents(final StatCriteria criteria) {
+		// get data from influxdb
+		final TabularDatas tabularDatas = timeSeriesDataBaseManager.getTabularData(influxDbName, Arrays.asList("name:count"),
+				getDataFilter(criteria)
+						.addFilter("type", RasaTypeAction.MESSAGE.name())
+						.withAdditionalWhereClause("isFallback = 0")
+						.build(),
+				getTimeFilter(criteria),
+				"name");
+
+		// build DtList from InfluxDb data
+		final DtList<TopIntent> retour = new DtList<>(TopIntent.class);
+		for (final TabularDataSerie tabularData : tabularDatas.getTabularDataSeries()) {
+			final Map<String, Object> values = tabularData.getValues();
+			final String intentName = (String) values.get("name");
+			final Long smtId = extractSmtIdFromIntentName(intentName);
+
+			if (smtId != null) {
+				final TopIntent topIntent = new TopIntent();
+				topIntent.setCount(((Double) values.get("name:count")).longValue());
+				topIntent.setIntentRasa(intentName);
+				topIntent.setSmtId(smtId);
+
+				retour.add(topIntent);
+			}
+		}
+
+		return retour;
+	}
+
+	private Long extractSmtIdFromIntentName(final String intentName) {
+		final String[] intentSplit = intentName.split("_");
+		if (intentSplit.length < 2) {
+			return null;
+		}
+		try {
+			// try to extract the ID from the name
+			return Long.valueOf(intentSplit[1]);
+		} catch (final NumberFormatException e) {
+			// fail silently, unknown intent
+		}
+		return null;
 	}
 
 	private DataFilterBuilder getDataFilter(final StatCriteria criteria) {

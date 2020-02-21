@@ -129,11 +129,11 @@ public class TimeSeriesDataBaseManagerImpl implements TimeSeriesDataBaseManager 
 	}
 
 	@Override
-	public TimedDatas getFlatTabularTimedData(final String dbName, final List<String> measures, final DataFilter dataFilter, final TimeFilter timeFilter) {
+	public TimedDatas getFlatTabularTimedData(final String dbName, final List<String> measures, final DataFilter dataFilter, final TimeFilter timeFilter, final Optional<Long> limit) {
 		return analyticsManager.traceWithReturn(
 				TIMESERIES_CATEGORY,
 				"/flatTabularTimed/" + dbName + "/" + dataFilter.getMeasurement(),
-				tracer -> getPluginByDb(dbName).getFlatTabularTimedData(dbName, measures, dataFilter, timeFilter));
+				tracer -> getPluginByDb(dbName).getFlatTabularTimedData(dbName, measures, dataFilter, timeFilter, limit));
 	}
 
 	@Override

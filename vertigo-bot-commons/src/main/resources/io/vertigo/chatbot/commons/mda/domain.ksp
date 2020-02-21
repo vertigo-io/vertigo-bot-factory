@@ -21,6 +21,13 @@ create Domain DoId {
 	storeType: "NUMERIC"
 }
 
+create Domain DoIdStr {
+	dataType : String
+	formatter: FmtDefault
+	constraint : [CkMaxLength100]
+	storeType : "VARCHAR(100)"
+}
+
 create Domain DoNumber {
 	dataType : Long
 	formatter: FmtDefault

@@ -13,24 +13,45 @@ import io.vertigo.lang.Generated;
 public final class UnknownSentense implements DtObject {
 	private static final long serialVersionUID = 1L;
 
+	private String messageId;
 	private java.time.Instant date;
 	private String text;
-	private String intent;
+	private String intentRasa;
 	private java.math.BigDecimal confidence;
+	private Long smtId;
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Time'.
+	 * Récupère la valeur de la propriété 'Rasa message ID'.
+	 * @return String messageId
+	 */
+	@Field(domain = "DoIdStr", label = "Rasa message ID")
+	public String getMessageId() {
+		return messageId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Rasa message ID'.
+	 * @param messageId String
+	 */
+	public void setMessageId(final String messageId) {
+		this.messageId = messageId;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Date'.
 	 * @return Instant date
 	 */
-	@Field(domain = "DoInstant", label = "Time")
+	@Field(domain = "DoInstant", label = "Date")
 	public java.time.Instant getDate() {
 		return date;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Time'.
+	 * Définit la valeur de la propriété 'Date'.
 	 * @param date Instant
 	 */
 	public void setDate(final java.time.Instant date) {
@@ -58,21 +79,21 @@ public final class UnknownSentense implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Detected intent'.
-	 * @return String intent
+	 * Récupère la valeur de la propriété 'Rasa intent'.
+	 * @return String intentRasa
 	 */
-	@Field(domain = "DoLabel", label = "Detected intent")
-	public String getIntent() {
-		return intent;
+	@Field(domain = "DoLabel", label = "Rasa intent")
+	public String getIntentRasa() {
+		return intentRasa;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Detected intent'.
-	 * @param intent String
+	 * Définit la valeur de la propriété 'Rasa intent'.
+	 * @param intentRasa String
 	 */
-	public void setIntent(final String intent) {
-		this.intent = intent;
+	public void setIntentRasa(final String intentRasa) {
+		this.intentRasa = intentRasa;
 	}
 	
 	/**
@@ -92,6 +113,25 @@ public final class UnknownSentense implements DtObject {
 	 */
 	public void setConfidence(final java.math.BigDecimal confidence) {
 		this.confidence = confidence;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Small Talk selection'.
+	 * @return Long smtId
+	 */
+	@Field(domain = "DoId", label = "Small Talk selection")
+	public Long getSmtId() {
+		return smtId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Small Talk selection'.
+	 * @param smtId Long
+	 */
+	public void setSmtId(final Long smtId) {
+		this.smtId = smtId;
 	}
 	
 	/** {@inheritDoc} */

@@ -43,6 +43,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		SmallTalkExport(io.vertigo.chatbot.commons.domain.SmallTalkExport.class),
 		/** Objet de données StatCriteria. */
 		StatCriteria(io.vertigo.chatbot.designer.domain.StatCriteria.class),
+		/** Objet de données TopIntent. */
+		TopIntent(io.vertigo.chatbot.designer.domain.TopIntent.class),
 		/** Objet de données TrainerInfo. */
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
@@ -257,6 +259,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		nodId	}
 
 	/**
+	 * Enumération des champs de TopIntent.
+	 */
+	public enum TopIntentFields implements DtFieldName<io.vertigo.chatbot.designer.domain.TopIntent> {
+		/** Propriété 'Small Talk ID'. */
+		smtId,
+		/** Propriété 'Rasa intent'. */
+		intentRasa,
+		/** Propriété 'Count'. */
+		count	}
+
+	/**
 	 * Enumération des champs de TrainerInfo.
 	 */
 	public enum TrainerInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TrainerInfo> {
@@ -310,14 +323,18 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de UnknownSentense.
 	 */
 	public enum UnknownSentenseFields implements DtFieldName<io.vertigo.chatbot.designer.domain.UnknownSentense> {
-		/** Propriété 'Time'. */
+		/** Propriété 'Rasa message ID'. */
+		messageId,
+		/** Propriété 'Date'. */
 		date,
 		/** Propriété 'User text'. */
 		text,
-		/** Propriété 'Detected intent'. */
-		intent,
+		/** Propriété 'Rasa intent'. */
+		intentRasa,
 		/** Propriété 'Confidence'. */
-		confidence	}
+		confidence,
+		/** Propriété 'Small Talk selection'. */
+		smtId	}
 
 	/**
 	 * Enumération des champs de UtterText.

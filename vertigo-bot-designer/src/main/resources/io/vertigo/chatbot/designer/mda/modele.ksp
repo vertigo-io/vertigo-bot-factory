@@ -8,8 +8,16 @@ create DtDefinition DtStatCriteria {
 }
 
 create DtDefinition DtUnknownSentense {
-	field date 			{domain: DoInstant 				label: "Time" 					required: "false"}
+	field messageId 	{domain: DoIdStr 				label: "Rasa message ID" 		required: "false"}
+	field date 			{domain: DoInstant 				label: "Date" 					required: "false"}
 	field text			{domain: DoLabel 				label: "User text" 				required: "false"}
-	field intent		{domain: DoLabel 				label: "Detected intent" 		required: "false"}
+	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			required: "false"}
 	field confidence	{domain: DoPercentage 			label: "Confidence" 			required: "false"}
+	field smtId			{domain: DoId 					label: "Small Talk selection" 	required: "false"}
+}
+
+create DtDefinition DtTopIntent {
+	field smtId			{domain: DoId 					label: "Small Talk ID" 			required: "false"}
+	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			required: "false"}
+	field count			{domain: DoNumber 				label: "Count" 					required: "false"}
 }
