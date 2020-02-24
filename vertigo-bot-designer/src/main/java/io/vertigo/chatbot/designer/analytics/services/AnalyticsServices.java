@@ -58,7 +58,7 @@ public class AnalyticsServices implements Component, Activeable {
 
 	public TimedDatas getRequestStats(final StatCriteria criteria) {
 		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum"),
-				getDataFilter(criteria).withAdditionalWhereClause("\"type\" <> '" + RasaTypeAction.OPEN + "'").build(),
+				getDataFilter(criteria).withAdditionalWhereClause("isUserMessage = 1").build(),
 				getTimeFilter(criteria));
 
 	}

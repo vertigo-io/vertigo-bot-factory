@@ -75,8 +75,7 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 				.registerSubtype(RasaTrackerActionEvent.class, "action")
 				.registerSubtype(RasaTrackerBotEvent.class, "bot")
 				.registerSubtype(RasaTrackerRewindEvent.class, "rewind")
-				.registerSubtype(RasaTrackerRestartEvent.class, "restart")
-				;
+				.registerSubtype(RasaTrackerRestartEvent.class, "restart");
 
 		gson = new GsonBuilder()
 				.registerTypeAdapterFactory(rttaf)
@@ -137,6 +136,8 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 			RasaTypeAction rta;
 			if (userText.startsWith("/start")) {
 				rta = RasaTypeAction.OPEN;
+			} else if (userText.startsWith("/restart")) {
+				rta = RasaTypeAction.RESTART;
 			} else if (userText.startsWith("/reponse")) {
 				rta = RasaTypeAction.RESPONSE_INFO;
 			} else if (userText.startsWith("/eval")) {
@@ -164,7 +165,8 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 					.setMeasure("isTypeMessage", rta == RasaTypeAction.MESSAGE ? 1d : 0d)
 					.setMeasure("isTypeResponseInfo", rta == RasaTypeAction.RESPONSE_INFO ? 1d : 0d)
 					.setMeasure("isTypeButton", rta == RasaTypeAction.BUTTON ? 1d : 0d)
-					.setMeasure("isTypeRating", rta == RasaTypeAction.RATING ? 1d : 0d);
+					.setMeasure("isTypeRating", rta == RasaTypeAction.RATING ? 1d : 0d)
+					.setMeasure("isUserMessage", rta.isUserMessage() ? 1d : 0d);
 
 			analyticsManager.addProcess(processBuilder.build());
 		}
