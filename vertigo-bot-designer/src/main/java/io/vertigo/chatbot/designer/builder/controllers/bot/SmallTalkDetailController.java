@@ -90,8 +90,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts,
-			@ViewAttribute("utterTextsToDelete") final DtList<UtterText> utterTextsToDelete
-			) {
+			@ViewAttribute("utterTextsToDelete") final DtList<UtterText> utterTextsToDelete) {
 
 		designerServices.saveSmallTalk(smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts, utterTextsToDelete);
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
@@ -106,8 +105,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	@PostMapping("/_addTrainingSentence")
 	public ViewContext doAddTrainingSentence(final ViewContext viewContext,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentenceIn,
-			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences
-			) {
+			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
 
 		final String newNluTrainingSentence = newNluTrainingSentenceIn.trim();
 
@@ -132,14 +130,13 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	public ViewContext doEditTrainingSentence(final ViewContext viewContext,
 			@RequestParam("index") final int index,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
-			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences
-			) {
+			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
 
 		int curIdx = 0;
-		for (final NluTrainingSentence nts:nluTrainingSentences) {
+		for (final NluTrainingSentence nts : nluTrainingSentences) {
 			if (curIdx == index) {
 				nts.setText(newNluTrainingSentence);
-			} else if(newNluTrainingSentence.equalsIgnoreCase(nts.getText())) {
+			} else if (newNluTrainingSentence.equalsIgnoreCase(nts.getText())) {
 				throw new VUserException("This sentense already exists");
 			}
 			curIdx++;
@@ -154,8 +151,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	public ViewContext doRemoveTrainingSentence(final ViewContext viewContext,
 			@RequestParam("index") final int index,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences
-			) {
+			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
 
 		// remove from list
 		final NluTrainingSentence removed = nluTrainingSentences.remove(index);
@@ -173,8 +169,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	@PostMapping("/_addUtterText")
 	public ViewContext doAddUtterText(final ViewContext viewContext,
 			@ViewAttribute("newUtterText") final String newUtterTextIn,
-			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts
-			) {
+			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts) {
 
 		final String newUtterText = newUtterTextIn.trim();
 
@@ -182,7 +177,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 				.anyMatch(ut -> ut.getText().equalsIgnoreCase(newUtterText));
 
 		if (exists) {
-			throw new VUserException("Cette phrase existe déjà");
+			throw new VUserException("This sentense already exists");
 		}
 
 		final UtterText newText = new UtterText();
@@ -200,14 +195,13 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	public ViewContext doEditUtterText(final ViewContext viewContext,
 			@RequestParam("index") final int index,
 			@ViewAttribute("newUtterText") final String newUtterText,
-			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts
-			) {
+			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts) {
 
 		int curIdx = 0;
-		for (final UtterText utt:utterTexts) {
+		for (final UtterText utt : utterTexts) {
 			if (curIdx == index) {
 				utt.setText(newUtterText);
-			} else if(newUtterText.equalsIgnoreCase(utt.getText())) {
+			} else if (newUtterText.equalsIgnoreCase(utt.getText())) {
 				throw new VUserException("This sentense already exists");
 			}
 			curIdx++;
@@ -222,8 +216,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	public ViewContext doRemoveUtterText(final ViewContext viewContext,
 			@RequestParam("index") final int index,
 			@ViewAttribute("utterTextsToDelete") final DtList<UtterText> utterTextsToDelete,
-			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts
-			) {
+			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts) {
 
 		// remove from list
 		final UtterText removed = utterTexts.remove(index);
