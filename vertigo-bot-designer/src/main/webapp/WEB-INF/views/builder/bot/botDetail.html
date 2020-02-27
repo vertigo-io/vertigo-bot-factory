@@ -66,10 +66,10 @@
 			<vu:include-data object="nodeNew" field="isDev" />
 			
 			<vu:table th:if="${model.modeReadOnly}" id="nodes" list="nodeList" title="Nodes" componentId="nodeList" rowsPerPage="10" autoColClass
-					  tr_@click.native="|vueData.nodeEdit = {...props.row}; delete vueData.nodeEdit.__index; $refs.nodeEdit.show()|" tr_class="nav">
+					  tr_@click.native="|vueData.nodeEdit = Vue.util.extend({},props.row); delete vueData.nodeEdit.__index; $refs.nodeEdit.show()|" tr_class="nav">
 				<vu:slot name="top_right_slot">
 					<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" 
-					       @click="vueData.nodeEdit = {...vueData.nodeNew}; delete vueData.nodeEdit.__index; $refs.nodeEdit.show()"></q-btn>
+					       @click="vueData.nodeEdit = Vue.util.extend({}, vueData.nodeNew); delete vueData.nodeEdit.__index; $refs.nodeEdit.show()"></q-btn>
 				</vu:slot>
 				
 				<vu:include-data object="nodeList" field="nodId" />
