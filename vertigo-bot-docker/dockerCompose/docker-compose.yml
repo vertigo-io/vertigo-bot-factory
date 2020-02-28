@@ -9,8 +9,9 @@ services:
     volumes:
       - cf_postgres_data:/var/lib/postgresql/data/pgdata
       - ./initSql/:/docker-entrypoint-initdb.d/
-#    ports:
-#      - "5433:5432" 
+      - ./backup/postgres:/opt/backup
+    ports:
+      - "5432:5432" 
     networks:
       - cb_factory
     restart: unless-stopped

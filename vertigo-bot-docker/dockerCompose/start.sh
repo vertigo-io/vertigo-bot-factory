@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose -p chatbotFactory up -d
+docker-compose -p chatbotfactory up -d

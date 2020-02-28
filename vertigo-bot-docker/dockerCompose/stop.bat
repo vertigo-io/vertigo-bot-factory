@@ -1,1 +1,1 @@
-docker-compose -p chatbotFactory stop
+docker-compose -p chatbotfactory stop
