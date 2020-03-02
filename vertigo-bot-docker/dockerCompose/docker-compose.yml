@@ -20,6 +20,7 @@ services:
     image: influxdb:1.7.8
     volumes:
       - cf_influxdb_data:/var/lib/influxdb
+      - ./backup/influxdb:/opt/backup
     ports: 
       - "8086:8086"
     networks:
