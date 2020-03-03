@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.designer.commons;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -35,15 +36,20 @@ public class DesignerUserSession extends UserSession {
 		this.loggedPerson = loggedPerson;
 	}
 
+	public List<FileInfoURI> getTmpFiles() {
+		return tmpFiles;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public Locale getLocale() {
 		return Locale.FRANCE;
 	}
 
-	public List<FileInfoURI> getTmpFiles() {
-		return tmpFiles;
+	/** {@inheritDoc} */
+	@Override
+	public ZoneId getZoneId() {
+		return ZoneId.of("Europe/Paris");
 	}
-
 
 }
