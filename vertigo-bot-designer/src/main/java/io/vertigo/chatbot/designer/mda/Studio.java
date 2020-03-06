@@ -39,8 +39,13 @@ public class Studio {
 						.withJavaDomainGenerator(Param.of("generateDtResources", "false"))
 						.withTaskGenerator()
 						.withFileGenerator()
-						.withSqlDomainGenerator(Param.of("targetSubDir", "javagen/sqlgen"), Param.of("baseCible", "Postgres"),
-								Param.of("generateDrop", "true"), Param.of("generateMasterData", "true"))
+						.withSqlDomainGenerator(
+								Param.of("targetSubDir", "javagen/sqlgen"),
+								Param.of("baseCible", "Postgres"),
+								Param.of("generateDrop", "true"),
+								Param.of("generateMasterData", "true"))
+						.withJsonMasterDataValuesProvider(
+								Param.of("fileName", "io/vertigo/chatbot/commons/masterDataValues.json"))
 						.build())
 				.build();
 

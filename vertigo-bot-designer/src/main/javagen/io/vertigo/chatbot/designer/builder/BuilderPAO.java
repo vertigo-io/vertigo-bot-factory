@@ -66,6 +66,17 @@ public final class BuilderPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkRemoveAllUtterTextBySmtId.
+	 * @param smtId Long 
+	*/
+	public void removeAllUtterTextBySmtId(final Long smtId) {
+		final Task task = createTaskBuilder("TkRemoveAllUtterTextBySmtId")
+				.addValue("smtId", smtId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
 	 * Execute la tache TkResetDevNode.
 	 * @param botId Long 
 	*/

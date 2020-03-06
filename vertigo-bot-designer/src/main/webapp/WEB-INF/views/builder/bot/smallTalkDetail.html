@@ -8,6 +8,62 @@
 	
 	<head>
 		<title>Small talk detail</title>
+		
+		<script th:inline="javascript">
+			function getUtterTextResolvedList() {
+				utterTextlist = vueData.utterTexts;
+				
+				// if only 1 element display it
+				if (vueData.utterTexts.length < 2) {
+					return vueData.utterTexts;
+				}
+				
+				let lastIndex = vueData.utterTexts.length - 1;
+				for (; lastIndex > 0; lastIndex--) {
+					if (vueData.utterTexts[lastIndex - 1].text || vueData.utterTexts[lastIndex].text) {
+						break; // stop if not emty or next is not empty
+					}
+				}
+				
+				return vueData.utterTexts.slice(0, lastIndex + 1);
+			}
+			
+			function addMoreUtterTextIfNeeded() {
+				if (vueData.utterTexts[vueData.utterTexts.length - 1].text) {
+					vueData.utterTexts.push({});
+				}
+			}
+			
+		
+			/**
+			 * Capture the <CTL-V> paste event, only allow plain-text, no images.
+			 *
+			 * see: https://stackoverflow.com/a/28213320
+			 *
+			 * @param {object} evt - array of files
+			 * @author Daniel Thompson-Yvetot
+			 * @license MIT
+			 */
+			function pasteCapture (evt, ref) {
+				let text, onPasteStripFormattingIEPaste
+				evt.preventDefault()
+				if (evt.originalEvent && evt.originalEvent.clipboardData.getData) {
+					text = evt.originalEvent.clipboardData.getData('text/plain')
+					VUiPage.$refs[ref].runCmd('insertText', text)
+				}
+				else if (evt.clipboardData && evt.clipboardData.getData) {
+					text = evt.clipboardData.getData('text/plain')
+					VUiPage.$refs[ref].runCmd('insertText', text)
+				}
+				else if (window.clipboardData && window.clipboardData.getData) {
+					if (!onPasteStripFormattingIEPaste) {
+						onPasteStripFormattingIEPaste = true
+						VUiPage.$refs[ref].runCmd('ms-pasteTextOnly', text)
+					}
+					onPasteStripFormattingIEPaste = false
+				}
+			}
+		</script>
 	</head>
 	
 	<body>
@@ -23,7 +79,7 @@
 		<section layout:fragment="content-nav">
 			<q-item tag="a" href="#detail">Informations</q-item>
 			<q-item tag="a" href="#training">Training phrases</q-item>
-			<q-item tag="a" href="#responses">Responses</q-item>
+			<q-item tag="a" href="#response">Response</q-item>
 		</section>
 		
 		<section layout:fragment="content">
@@ -80,45 +136,104 @@
 				</q-list>
 			</vu:block>
 			
-			<vu:block id="responses" title="Responses">
-				<vu:include-data-primitive key="newUtterText" />
+			<vu:block id="response" title="Response">
 				<vu:include-data object="utterTexts" field="text" />
-			
-				<div th:if="${!model.modeReadOnly}">
-					<q-input v-model="vueData.newUtterText" dense class="q-pb-sm"
-					    @keydown.enter.prevent="if (vueData.newUtterText.trim().length > 0) httpPostAjax('_addUtterText', {'vContext[newUtterText]':vueData.newUtterText})"
-						placeholder="Add possible answer"
-						:before="[{icon: 'format_quote'}]"
-						>
-					</q-input>
+				<vu:include-data object="responseTypes" field="'*'" />
+				
+				<div class="hidden">
+					<vu:text-field-edit object="smallTalk" field="rtyId" />
 				</div>
-				<q-list highlight>
-					<q-item v-for="(utterText, index) in vueData.utterTexts.slice().reverse()">
-						<q-item-section avatar th:if="${model.modeReadOnly}">
-				        	<q-icon color="black" name="format_quote" />
-				        </q-item-section>
-						<q-item-section side left th:if="${!model.modeReadOnly}">
-							<q-btn @click="httpPostAjax('_removeUtterText', {'index':vueData.utterTexts.length - 1 - index})"
-									color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
-						</q-item-section>
-						<q-item-section class="cursor-pointer">
-							{{utterText.text}}
-							<q-popup-edit th:if="${!model.modeReadOnly}"
-										  v-model="utterText.text"
-										  @save="function(value, initialValue) {
-													httpPostAjax('_editUtterText',
-														 {'vContext[newUtterText]':value, 'index':vueData.utterTexts.length - 1 - index}
-													).then(function() {
-													 	if (uiMessageStack.globalErrors.length > 0) {
-													 		utterText.text = initialValue;
-													 	}
-													 });
-												}">
-								<q-input v-model="utterText.text" dense autofocus />
-							</q-popup-edit>
-						</q-item-section>
-					</q-item>
-				</q-list>
+				
+				<div th:if="${!model.modeReadOnly}">
+					<q-btn-toggle
+						class="q-mb-md"
+						v-model="vueData.smallTalk.rtyId"
+						toggle-color="primary"
+						:options='transformListForSelection("responseTypes", "rtyId", "label")'
+					></q-btn-toggle>
+					<q-icon 
+						v-if="vueData.smallTalk.rtyId === 'RICH_TEXT' && getUtterTextResolvedList().length > 2"
+						name="warning" class="vertical-top q-ma-xs text-orange" style="font-size: 2rem;">
+						<q-tooltip content-style="font-size: 14px">
+				          Text variants are present in the "Random text" tab and cannot be saved in "Rich text" mode.<br>
+				          Only the rich text will be saved and variants will be permanently lost.
+				        </q-tooltip>
+					</q-icon>
+				</div>
+				
+				<div v-if="vueData.smallTalk.rtyId === 'RICH_TEXT'" class="row wrap">
+					<input th:if="${!model.modeReadOnly}" class="hidden" type="text" name="vContext['utterTexts'][0]['text']" :value="vueData.utterTexts[0].text" />
+					
+					<q-editor th:if="${!model.modeReadOnly}" v-model="vueData.utterTexts[0].text" class="q-pb-sm col-grow"
+					    ref="editor_ref"
+					    @paste.native="evt => pasteCapture(evt, 'editor_ref')"
+					    :toolbar="
+					    [
+					      [{
+				            label: $q.lang.editor.fontSize,
+	                        fixedLabel: false,
+				            fixedIcon: true,
+				            list: 'no-icons',
+				            options: [
+				              'size-2',
+				              'size-3',
+				              'size-4',
+				              'size-5'
+				            ]
+				          }],
+        				  ['bold', 'italic'],
+					      ['unordered', 'ordered'],
+					      ['link', 'removeFormat'],
+					      ['hr'],
+					      ['undo', 'redo'],
+					      ['viewsource']
+					    ]"
+					    :definitions="{hr: {tip: 'Pause'}}"
+						>
+					</q-editor>
+					<div style="width:300px" class="q-px-md q-py-sm">
+						<q-chat-message :sent="false"  :text="vueData.utterTexts[0].text.split('<hr>')" text-color="black" bg-color="grey-4" ></q-chat-message>
+					</div>
+				</div>
+				
+				<div v-if="vueData.smallTalk.rtyId === 'RANDOM_TEXT'">
+					<q-list th:if="${!model.modeReadOnly}" @hook:mounted="addMoreUtterTextIfNeeded">
+						<q-item v-for="(utterText, index) in getUtterTextResolvedList()">
+							<q-item-section side left th:if="${!model.modeReadOnly}" style="width:40px">
+								<q-btn @click="vueData.utterTexts.splice(index, 1); vueData.utterTexts.push({});"
+									v-if="index < getUtterTextResolvedList().length - 1 || utterText.text"
+									tabindex="-1"
+									color="primary" dense size="sm" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
+							</q-item-section>
+							<q-item-section class="cursor-pointer">
+								<q-input
+									v-model="utterText.text" 
+									:ref="'utter_input_'+index"
+									:name="'vContext[\'utterTexts\']['+index+'][\'text\']'"
+									placeholder="Enter text variant" dense
+									@input="addMoreUtterTextIfNeeded"
+									@keydown.enter.prevent="if (index < getUtterTextResolvedList().length - 1) $refs['utter_input_'+(index+1)][0].focus()"
+									>
+									</q-input>
+							</q-item-section>
+						</q-item>
+					</q-list>
+
+					<div th:if="${model.modeReadOnly}">
+						<q-list>
+							<q-item v-for="(utterText, index) in vueData.utterTexts">
+								<q-item-section avatar>
+						        	<q-icon color="black" name="fas fa-dice" />
+						        </q-item-section>
+						        <q-item-section>
+							        {{utterText.text}}
+						        </q-item-section>
+							</q-item>
+						</q-list>
+					</div>
+				</div>
+				
+				
 			</vu:block>
 			
 			

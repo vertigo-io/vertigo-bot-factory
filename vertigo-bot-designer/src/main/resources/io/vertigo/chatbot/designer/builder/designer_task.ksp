@@ -20,3 +20,13 @@ create Task TkResetDevNode {
              "
 	attribute botId  			{domain : DoId         		required:"true"  inOut :"in"}
 }
+
+
+create Task TkRemoveAllUtterTextBySmtId {
+    className : "io.vertigo.dynamox.task.TaskEngineProc"
+    request : "
+            delete from utter_text
+			where smt_id = #smtId#
+             "
+	attribute smtId  			{domain : DoId         		required:"true"  inOut :"in"}
+}

@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.dynamo.domain.model.Entity;
+import io.vertigo.dynamo.domain.model.EnumVAccessor;
 import io.vertigo.dynamo.domain.model.UID;
 import io.vertigo.dynamo.domain.model.VAccessor;
 import io.vertigo.dynamo.domain.stereotype.Field;
@@ -34,6 +35,21 @@ public final class SmallTalk implements Entity {
 			foreignLabel = "SmallTalk",
 			foreignMultiplicity = "0..*")
 	private final VAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
+
+	@io.vertigo.dynamo.domain.stereotype.Association(
+			name = "ASmallTalkResponseType",
+			fkFieldName = "rtyId",
+			primaryDtDefinitionName = "DtResponseType",
+			primaryIsNavigable = true,
+			primaryRole = "ResponseType",
+			primaryLabel = "Response type",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtSmallTalk",
+			foreignIsNavigable = false,
+			foreignRole = "SmallTalk",
+			foreignLabel = "SmallTalk",
+			foreignMultiplicity = "0..*")
+	private final EnumVAccessor<io.vertigo.chatbot.commons.domain.ResponseType, io.vertigo.chatbot.commons.domain.ResponseTypeEnum> rtyIdAccessor = new EnumVAccessor<>(io.vertigo.chatbot.commons.domain.ResponseType.class, "ResponseType", io.vertigo.chatbot.commons.domain.ResponseTypeEnum.class);
 
 	/** {@inheritDoc} */
 	@Override
@@ -135,6 +151,25 @@ public final class SmallTalk implements Entity {
 	public void setBotId(final Long botId) {
 		botIdAccessor.setId(botId);
 	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Response type'.
+	 * @return String rtyId <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoCode", type = "FOREIGN_KEY", required = true, label = "Response type")
+	public String getRtyId() {
+		return (String) rtyIdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Response type'.
+	 * @param rtyId String <b>Obligatoire</b>
+	 */
+	public void setRtyId(final String rtyId) {
+		rtyIdAccessor.setId(rtyId);
+	}
 
  	/**
 	 * Association : Chatbot.
@@ -142,6 +177,14 @@ public final class SmallTalk implements Entity {
 	 */
 	public VAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbot() {
 		return botIdAccessor;
+	}
+
+ 	/**
+	 * Association : Response type.
+	 * @return l'accesseur vers la propriété 'Response type'
+	 */
+	public EnumVAccessor<io.vertigo.chatbot.commons.domain.ResponseType, io.vertigo.chatbot.commons.domain.ResponseTypeEnum> responseType() {
+		return rtyIdAccessor;
 	}
 	
 	/** {@inheritDoc} */

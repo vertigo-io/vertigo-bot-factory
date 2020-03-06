@@ -1,0 +1,6 @@
+package io.vertigo.chatbot.designer.domain 
+
+alter DtDefinition DtResponseType {
+	sortField : "sortOrder"
+ 	displayField : "label"
+}

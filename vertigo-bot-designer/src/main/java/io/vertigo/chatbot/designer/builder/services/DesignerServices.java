@@ -2,6 +2,7 @@ package io.vertigo.chatbot.designer.builder.services;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -13,6 +14,7 @@ import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
@@ -31,6 +33,7 @@ import io.vertigo.dynamo.file.FileManager;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VUserException;
+import io.vertigo.util.StringUtil;
 
 @Transactional
 public class DesignerServices implements Component {
@@ -116,7 +119,6 @@ public class DesignerServices implements Component {
 		utterTextDAO.save(welcomeText);
 		chatbot.setUttIdWelcome(welcomeText.getUttId());
 
-
 		// Avatar
 		Long oldAvatar = null;
 		if (personPictureFile.isPresent()) {
@@ -128,7 +130,7 @@ public class DesignerServices implements Component {
 
 		// chatbot save
 		chatbot.setStatus("OK");
-		final Chatbot savedChatbot =  chatbotDAO.save(chatbot);
+		final Chatbot savedChatbot = chatbotDAO.save(chatbot);
 
 		// clean old avatar
 		if (oldAvatar != null) {
@@ -155,12 +157,12 @@ public class DesignerServices implements Component {
 		return smallTalk;
 	}
 
-	public SmallTalk saveSmallTalk(final SmallTalk smallTalk, final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete, final DtList<UtterText> utterTexts, final DtList<UtterText> utterTextsToDelete) {
+	public SmallTalk saveSmallTalk(final SmallTalk smallTalk, final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+			final DtList<UtterText> utterTexts) {
 		Assertion.checkNotNull(smallTalk);
 		Assertion.checkNotNull(nluTrainingSentences);
 		Assertion.checkNotNull(nluTrainingSentencesToDelete);
 		Assertion.checkNotNull(utterTexts);
-		Assertion.checkNotNull(utterTextsToDelete);
 		// ---
 
 		if (nluTrainingSentences.isEmpty()) {
@@ -175,36 +177,43 @@ public class DesignerServices implements Component {
 
 		// save nlu textes
 		nluTrainingSentences.stream()
-		.forEach(nts -> {
-			nts.setSmtId(savedST.getSmtId());
-			nluTrainingSentenceDAO.save(nts);
-		});
+				.forEach(nts -> {
+					nts.setSmtId(savedST.getSmtId());
+					nluTrainingSentenceDAO.save(nts);
+				});
 
 		nluTrainingSentencesToDelete.stream()
-		.filter(itt -> itt.getNtsId() != null)
-		.forEach(itt -> nluTrainingSentenceDAO.delete(itt.getNtsId()));
+				.filter(itt -> itt.getNtsId() != null)
+				.forEach(itt -> nluTrainingSentenceDAO.delete(itt.getNtsId()));
 
-		// save utter textes
-		utterTexts.stream()
-		.forEach(utt ->{
+		// save utter textes, remove all + create all
+		builderPAO.removeAllUtterTextBySmtId(savedST.getSmtId());
+
+		final Stream<UtterText> utterStream;
+		if (ResponseTypeEnum.RANDOM_TEXT.equals(smallTalk.responseType().getEnumValue())) {
+			utterStream = utterTexts.stream()
+					.filter(utt -> !StringUtil.isEmpty(utt.getText()));
+		} else {
+			utterStream = utterTexts.stream()
+					.limit(1);
+		}
+
+		utterStream.forEach(utt -> {
+			utt.setUttId(null); // force creation
 			utt.setSmtId(savedST.getSmtId());
 			utterTextDAO.save(utt);
 		});
-
-		utterTextsToDelete.stream()
-		.filter(utt -> utt.getUttId() != null)
-		.forEach(utt -> utterTextDAO.delete(utt.getUttId()));
 
 		return savedST;
 	}
 
 	public void deleteSmallTalk(final SmallTalk smallTalk) {
 		// delete sub elements
-		for (final NluTrainingSentence its:getNluTrainingSentenceList(smallTalk)) {
+		for (final NluTrainingSentence its : getNluTrainingSentenceList(smallTalk)) {
 			nluTrainingSentenceDAO.delete(its.getUID());
 		}
 
-		for (final UtterText ut:getUtterTextList(smallTalk)) {
+		for (final UtterText ut : getUtterTextList(smallTalk)) {
 			utterTextDAO.delete(ut.getUID());
 		}
 
@@ -238,7 +247,7 @@ public class DesignerServices implements Component {
 	public Optional<ChatbotNode> getDevNodeByBotId(final Long botId) {
 		return chatbotNodeDAO.findOptional(
 				Criterions.isEqualTo(ChatbotNodeFields.botId, botId)
-				.and(Criterions.isEqualTo(ChatbotNodeFields.isDev, true)));
+						.and(Criterions.isEqualTo(ChatbotNodeFields.isDev, true)));
 	}
 
 	public void saveNode(final ChatbotNode node) {

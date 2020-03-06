@@ -17,6 +17,7 @@ drop table IF EXISTS NLU_TRAINING_SENTENCE cascade;
 drop sequence IF EXISTS SEQ_NLU_TRAINING_SENTENCE;
 drop table IF EXISTS PERSON cascade;
 drop sequence IF EXISTS SEQ_PERSON;
+drop table IF EXISTS RESPONSE_TYPE cascade;
 drop table IF EXISTS SMALL_TALK cascade;
 drop sequence IF EXISTS SEQ_SMALL_TALK;
 drop table IF EXISTS TRAINING cascade;
@@ -47,6 +48,7 @@ create sequence SEQ_NLU_TRAINING_SENTENCE
 
 create sequence SEQ_PERSON
 	start with 1000 cache 20; 
+
 
 create sequence SEQ_SMALL_TALK
 	start with 1000 cache 20; 
@@ -239,6 +241,26 @@ comment on column PERSON.GRP_ID is
 'Group';
 
 -- ============================================================
+--   Table : RESPONSE_TYPE                                        
+-- ============================================================
+create table RESPONSE_TYPE
+(
+    RTY_ID      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    SORT_ORDER  	 NUMERIC     	not null,
+    constraint PK_RESPONSE_TYPE primary key (RTY_ID)
+);
+
+comment on column RESPONSE_TYPE.RTY_ID is
+'ID';
+
+comment on column RESPONSE_TYPE.LABEL is
+'Title';
+
+comment on column RESPONSE_TYPE.SORT_ORDER is
+'Order';
+
+-- ============================================================
 --   Table : SMALL_TALK                                        
 -- ============================================================
 create table SMALL_TALK
@@ -248,6 +270,7 @@ create table SMALL_TALK
     DESCRIPTION 	 VARCHAR(100)	,
     IS_ENABLED  	 bool        	not null,
     BOT_ID      	 NUMERIC     	not null,
+    RTY_ID      	 VARCHAR(100)	not null,
     constraint PK_SMALL_TALK primary key (SMT_ID)
 );
 
@@ -265,6 +288,9 @@ comment on column SMALL_TALK.IS_ENABLED is
 
 comment on column SMALL_TALK.BOT_ID is
 'Chatbot';
+
+comment on column SMALL_TALK.RTY_ID is
+'Response type';
 
 -- ============================================================
 --   Table : TRAINING                                        
@@ -386,6 +412,12 @@ alter table NLU_TRAINING_SENTENCE
 	references SMALL_TALK (SMT_ID);
 
 create index SMALL_TALK_NLU_TRAINING_SENTENCE_SMALL_TALK_FK on NLU_TRAINING_SENTENCE (SMT_ID asc);
+
+alter table SMALL_TALK
+	add constraint FK_SMALL_TALK_RESPONSE_TYPE_RESPONSE_TYPE foreign key (RTY_ID)
+	references RESPONSE_TYPE (RTY_ID);
+
+create index SMALL_TALK_RESPONSE_TYPE_RESPONSE_TYPE_FK on SMALL_TALK (RTY_ID asc);
 
 alter table UTTER_TEXT
 	add constraint FK_SMALL_TALK_UTTER_TEXT_SMALL_TALK foreign key (SMT_ID)

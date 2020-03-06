@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import java.util.Collections;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
@@ -10,30 +12,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.ResponseType;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VUserException;
+import io.vertigo.ui.core.BasicUiListModifiable;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
+import io.vertigo.vega.webservice.model.UiObject;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot/{botId}/smallTalk")
 public class SmallTalkDetailController extends AbstractVSpringMvcController {
 
+	private static final int MAX_UTTER_TEXT = 10;
+
 	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalk");
+
+	private static final ViewContextKey<ResponseType> responseTypeKey = ViewContextKey.of("responseTypes");
 
 	private static final ViewContextKey<String> newNluTrainingSentenceKey = ViewContextKey.of("newNluTrainingSentence");
 	private static final ViewContextKey<NluTrainingSentence> nluTrainingSentencesKey = ViewContextKey.of("nluTrainingSentences");
 	private static final ViewContextKey<NluTrainingSentence> nluTrainingSentencesToDeleteKey = ViewContextKey.of("nluTrainingSentencesToDelete");
 
-	private static final ViewContextKey<String> newUtterTextKey = ViewContextKey.of("newUtterText");
 	private static final ViewContextKey<UtterText> utterTextsKey = ViewContextKey.of("utterTexts");
-	private static final ViewContextKey<UtterText> utterTextsToDeleteKey = ViewContextKey.of("utterTextsToDelete");
 
 	@Inject
 	private DesignerServices designerServices;
@@ -43,7 +52,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 
 	@GetMapping("/{intId}")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId, @PathVariable("intId") final Long intId) {
-		commonBotDetailController.initCommonContext(viewContext, botId);
+		initCommonContext(viewContext, botId);
 
 		final SmallTalk smallTalk = designerServices.getSmallTalkById(intId);
 
@@ -55,16 +64,14 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey, designerServices.getNluTrainingSentenceList(smallTalk));
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
-		viewContext.publishRef(newUtterTextKey, "");
-		viewContext.publishDtList(utterTextsKey, designerServices.getUtterTextList(smallTalk));
-		viewContext.publishDtList(utterTextsToDeleteKey, new DtList<UtterText>(UtterText.class));
+		viewContext.publishDtListModifiable(utterTextsKey, designerServices.getUtterTextList(smallTalk));
 
 		toModeReadOnly();
 	}
 
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		commonBotDetailController.initCommonContext(viewContext, botId);
+		initCommonContext(viewContext, botId);
 
 		viewContext.publishDto(smallTalkKey, designerServices.getNewSmallTalk(botId));
 
@@ -72,11 +79,15 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
-		viewContext.publishRef(newUtterTextKey, "");
-		viewContext.publishDtList(utterTextsKey, new DtList<UtterText>(UtterText.class));
-		viewContext.publishDtList(utterTextsToDeleteKey, new DtList<UtterText>(UtterText.class));
+		viewContext.publishDtListModifiable(utterTextsKey, new DtList<>(UtterText.class));
 
 		toModeCreate();
+	}
+
+	private void initCommonContext(final ViewContext viewContext, final Long botId) {
+		commonBotDetailController.initCommonContext(viewContext, botId);
+
+		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); //all
 	}
 
 	@PostMapping("/_edit")
@@ -85,14 +96,23 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_save")
-	public String doSave(@ViewAttribute("smallTalk") final SmallTalk smallTalk,
+
+	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
+			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
 			@PathVariable("botId") final Long botId,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
-			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts,
-			@ViewAttribute("utterTextsToDelete") final DtList<UtterText> utterTextsToDelete) {
+			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
-		designerServices.saveSmallTalk(smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts, utterTextsToDelete);
+		final BasicUiListModifiable<UtterText> uiList = viewContext.getUiListModifiable(utterTextsKey);
+
+		final DtList<UtterText> utterTexts = uiList.stream()
+				.filter(UiObject::isModified)
+				.map(uiObject -> uiObject.mergeAndCheckInput(Collections.singletonList((a, b, c) -> {
+					// rien
+				}), uiMessageStack))
+				.collect(VCollectors.toDtList(UtterText.class));
+
+		designerServices.saveSmallTalk(smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts);
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
 	}
 
@@ -166,68 +186,14 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		return viewContext;
 	}
 
-	@PostMapping("/_addUtterText")
-	public ViewContext doAddUtterText(final ViewContext viewContext,
-			@ViewAttribute("newUtterText") final String newUtterTextIn,
-			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts) {
+	//	@PostMapping("/_updateMaxTextSlot")
+	//	public ViewContext doUpdateMaxTextSlot(final ViewContext viewContext, @RequestParam("count") final int count) {
+	//		final BasicUiListModifiable<UtterText> uiList = viewContext.getUiListModifiable(utterTextsKey);
+	//		for (int i = uiList.size(); i < count; i++) {
+	//			uiList.add(new UtterText());
+	//		}
+	//
+	//		return viewContext;
+	//	}
 
-		final String newUtterText = newUtterTextIn.trim();
-
-		final boolean exists = utterTexts.stream()
-				.anyMatch(ut -> ut.getText().equalsIgnoreCase(newUtterText));
-
-		if (exists) {
-			throw new VUserException("This sentense already exists");
-		}
-
-		final UtterText newText = new UtterText();
-		newText.setText(newUtterText);
-
-		utterTexts.add(newText);
-		viewContext.publishDtList(utterTextsKey, utterTexts);
-
-		viewContext.publishRef(newUtterTextKey, "");
-
-		return viewContext;
-	}
-
-	@PostMapping("/_editUtterText")
-	public ViewContext doEditUtterText(final ViewContext viewContext,
-			@RequestParam("index") final int index,
-			@ViewAttribute("newUtterText") final String newUtterText,
-			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts) {
-
-		int curIdx = 0;
-		for (final UtterText utt : utterTexts) {
-			if (curIdx == index) {
-				utt.setText(newUtterText);
-			} else if (newUtterText.equalsIgnoreCase(utt.getText())) {
-				throw new VUserException("This sentense already exists");
-			}
-			curIdx++;
-		}
-
-		viewContext.publishDtListModifiable(utterTextsKey, utterTexts);
-
-		return viewContext;
-	}
-
-	@PostMapping("/_removeUtterText")
-	public ViewContext doRemoveUtterText(final ViewContext viewContext,
-			@RequestParam("index") final int index,
-			@ViewAttribute("utterTextsToDelete") final DtList<UtterText> utterTextsToDelete,
-			@ViewAttribute("utterTexts") final DtList<UtterText> utterTexts) {
-
-		// remove from list
-		final UtterText removed = utterTexts.remove(index);
-		viewContext.publishDtList(utterTextsKey, utterTexts);
-
-		// keep track of deleted persisted UtterText
-		if (removed.getUttId() != null) {
-			utterTextsToDelete.add(removed);
-		}
-		viewContext.publishDtList(utterTextsToDeleteKey, utterTextsToDelete);
-
-		return viewContext;
-	}
 }
