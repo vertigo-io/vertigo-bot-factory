@@ -86,8 +86,8 @@
 				</vu:column>
 				<vu:column field="url"/>
 				<vu:column name="stat" label="Statistics" class="col_Small">
-					<vu:button-link url="@{/analytics/(botId=${model.bot.botId})} + '&nodId=\'+props.row.nodId+\'' " label="" icon="insert_chart_outlined"
-							class="text-accent-inverted" @click.stop="null"/>
+					<vu:button-link dense url="@{/analytics/(botId=${model.bot.botId})} + '&nodId=\'+props.row.nodId+\'' " label="" icon="insert_chart_outlined"
+							class="bg-secondary" @click.stop="null"/>
 
 				</vu:column>
 			</vu:table>
