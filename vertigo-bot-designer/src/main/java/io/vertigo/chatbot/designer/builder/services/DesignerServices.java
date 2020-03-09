@@ -6,6 +6,10 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.PolicyFactory;
+import org.owasp.html.Sanitizers;
+
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
@@ -201,10 +205,36 @@ public class DesignerServices implements Component {
 		utterStream.forEach(utt -> {
 			utt.setUttId(null); // force creation
 			utt.setSmtId(savedST.getSmtId());
+			utt.setText(sanatizeHtml(utt.getText()));
 			utterTextDAO.save(utt);
 		});
 
 		return savedST;
+	}
+
+	private String sanatizeHtml(final String in) {
+		final PolicyFactory sanitizer = Sanitizers.FORMATTING
+				.and(Sanitizers.BLOCKS)
+				.and(Sanitizers.LINKS)
+				.and(Sanitizers.STYLES)
+				.and(new HtmlPolicyBuilder()
+						.allowElements("font", "hr")
+						.allowAttributes("size").onElements("font")
+						.allowElements( // force target _blank https://github.com/OWASP/java-html-sanitizer/issues/147
+								(elementName, attrs) -> {
+									final int targetIndex = attrs.indexOf("target");
+									if (targetIndex < 0) {
+										attrs.add("target");
+										attrs.add("_blank");
+									} else {
+										attrs.set(targetIndex + 1, "_blank");
+									}
+									return elementName;
+								},
+								"a")
+						.toFactory());
+
+		return sanitizer.sanitize(in);
 	}
 
 	public void deleteSmallTalk(final SmallTalk smallTalk) {

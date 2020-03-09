@@ -17,6 +17,7 @@ import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.dynamo.domain.model.DtObject;
 import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VUserException;
@@ -25,6 +26,8 @@ import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
+import io.vertigo.util.StringUtil;
+import io.vertigo.vega.engines.webservice.json.AbstractUiListModifiable;
 import io.vertigo.vega.webservice.model.UiObject;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
@@ -100,20 +103,34 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
 			@PathVariable("botId") final Long botId,
+			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
 		final BasicUiListModifiable<UtterText> uiList = viewContext.getUiListModifiable(utterTextsKey);
+		final DtList<UtterText> utterTexts = getRawDtList(uiList, uiMessageStack);
 
-		final DtList<UtterText> utterTexts = uiList.stream()
+		// add training sentence who is not "validated" by enter and still in the input
+		addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+
+		designerServices.saveSmallTalk(smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts);
+		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
+	}
+
+	private <D extends DtObject> DtList<D> getRawDtList(final AbstractUiListModifiable<D> uiList, final UiMessageStack uiMessageStack) {
+		return uiList.stream()
 				.filter(UiObject::isModified)
 				.map(uiObject -> uiObject.mergeAndCheckInput(Collections.singletonList((a, b, c) -> {
 					// rien
 				}), uiMessageStack))
-				.collect(VCollectors.toDtList(UtterText.class));
+				.collect(VCollectors.toDtList(uiList.getDtDefinition()));
 
-		designerServices.saveSmallTalk(smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts);
-		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
+		// mauvaise synchronisation ...
+		//		return uiList.mergeAndCheckInput(
+		//				Collections.singletonList((a, b, c) -> {
+		//										// rien
+		//				}),
+		//				uiMessageStack);
 	}
 
 	@PostMapping("/_delete")
@@ -127,6 +144,19 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentenceIn,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
 
+		addTrainingSentense(newNluTrainingSentenceIn, nluTrainingSentences);
+
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluTrainingSentences);
+		viewContext.publishRef(newNluTrainingSentenceKey, "");
+
+		return viewContext;
+	}
+
+	private void addTrainingSentense(final String newNluTrainingSentenceIn, final DtList<NluTrainingSentence> nluTrainingSentences) {
+		if (StringUtil.isEmpty(newNluTrainingSentenceIn)) {
+			return;
+		}
+
 		final String newNluTrainingSentence = newNluTrainingSentenceIn.trim();
 
 		final boolean exists = nluTrainingSentences.stream()
@@ -139,11 +169,6 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		newText.setText(newNluTrainingSentence);
 
 		nluTrainingSentences.add(newText);
-		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluTrainingSentences);
-
-		viewContext.publishRef(newNluTrainingSentenceKey, "");
-
-		return viewContext;
 	}
 
 	@PostMapping("/_editTrainingSentence")
@@ -151,6 +176,12 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 			@RequestParam("index") final int index,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
+
+		if (StringUtil.isEmpty(newNluTrainingSentence)) {
+			// empty edit, rollback modification
+			viewContext.markModifiedKeys(nluTrainingSentencesKey);
+			return viewContext;
+		}
 
 		int curIdx = 0;
 		for (final NluTrainingSentence nts : nluTrainingSentences) {

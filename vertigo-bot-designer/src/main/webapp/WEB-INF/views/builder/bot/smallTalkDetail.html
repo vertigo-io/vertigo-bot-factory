@@ -10,6 +10,26 @@
 		<title>Small talk detail</title>
 		
 		<script th:inline="javascript">
+			function normalizeString(str) {
+				if (str)
+					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+				else
+					return '';
+			}
+			
+			function getDisplayedTrainingSentenses() {
+				let searchNormailized = normalizeString(componentStates.nluTrainingSentences.pagination.search);
+				
+				return vueData.nluTrainingSentences
+						// copy and reverse
+						.slice().reverse()
+						// search
+						.filter(nts => normalizeString(nts.text).includes(searchNormailized))
+						// pagination
+						.slice((componentStates.nluTrainingSentences.pagination.page - 1) * componentStates.nluTrainingSentences.pagination.rowsPerPage,
+								componentStates.nluTrainingSentences.pagination.page * componentStates.nluTrainingSentences.pagination.rowsPerPage);
+			}
+			
 			function getUtterTextResolvedList() {
 				utterTextlist = vueData.utterTexts;
 				
@@ -26,6 +46,10 @@
 				}
 				
 				return vueData.utterTexts.slice(0, lastIndex + 1);
+			}
+			
+			function getChatPreview() {
+				return vueData.utterTexts[0].text.replace("<a ", "<a target='_blank' rel='nofollow noopener noreferrer' ").split(/<hr>|<hr \/>/)
 			}
 			
 			function addMoreUtterTextIfNeeded() {
@@ -96,25 +120,37 @@
 			</vu:block>
 			
 			<vu:block id="training" title="Training phrases">
+				<vu:slot name="actions_slot">
+					<q-input v-model="componentStates.nluTrainingSentences.pagination.search" dense clearable 
+	      				type="search" placeholder="Filter"
+	      				style="width:300px">
+						<template v-slot:prepend>
+				        	<q-icon name="search" />
+				        </template>
+        			</q-input>
+				</vu:slot>
+				
 				<vu:include-data-primitive key="newNluTrainingSentence" />
 				<vu:include-data object="nluTrainingSentences" field="text" />
 				
 				<div th:if="${!model.modeReadOnly}">
 					<q-input v-model="vueData.newNluTrainingSentence" dense class="q-pb-sm"
-					    @keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence})"
+					    @keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) {httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence}); componentStates.nluTrainingSentences.pagination.page = 1; componentStates.nluTrainingSentences.pagination.search = '';}"
 						placeholder="Add training sentence"
+						name="vContext['newNluTrainingSentence']"
 						:before="[{icon: 'format_quote'}]"
 						>
 					</q-input>
 				</div>
+				<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('nluTrainingSentences').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
 				<q-list highlight dense>
-					<q-item v-for="(nluTrainingSentence, index) in vueData.nluTrainingSentences.slice().reverse()">
+					<q-item v-for="(nluTrainingSentence, index) in getDisplayedTrainingSentenses()">
 						<q-item-section avatar th:if="${model.modeReadOnly}">
 				        	<q-icon color="black" name="format_quote" />
 				        </q-item-section>
 						<q-item-section side left th:if="${!model.modeReadOnly}">
 							<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.nluTrainingSentences.length - 1 - index})"
-								color="primary" dense size="md" icon="delete" class="bg-red" aria-label="Remove" title="Remove"></q-btn>
+								color="primary" dense size="sm" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
 						</q-item-section>
 						<q-item-section class="cursor-pointer">
 							{{nluTrainingSentence.text}}
@@ -134,6 +170,15 @@
 						</q-item-section>
 					</q-item>
 				</q-list>
+				<div class="q-pa-lg flex flex-center">
+					<q-pagination
+					      v-model="componentStates.nluTrainingSentences.pagination.page"
+					      v-if="Math.ceil(vueData.nluTrainingSentences.length / componentStates.nluTrainingSentences.pagination.rowsPerPage) > 1"
+					      :max="Math.ceil(vueData.nluTrainingSentences.length / componentStates.nluTrainingSentences.pagination.rowsPerPage)"
+					      :max-pages="6"
+	      				  :boundary-numbers="true"
+	      				  :direction-links="true" ></q-pagination>
+    			</div>
 			</vu:block>
 			
 			<vu:block id="response" title="Response">
@@ -192,13 +237,13 @@
 						>
 					</q-editor>
 					<div style="width:300px" class="q-px-md q-py-sm">
-						<q-chat-message :sent="false"  :text="vueData.utterTexts[0].text.split('<hr>')" text-color="black" bg-color="grey-4" ></q-chat-message>
+						<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" bg-color="grey-4" ></q-chat-message>
 					</div>
 				</div>
 				
 				<div v-if="vueData.smallTalk.rtyId === 'RANDOM_TEXT'">
 					<q-list th:if="${!model.modeReadOnly}" @hook:mounted="addMoreUtterTextIfNeeded">
-						<q-item v-for="(utterText, index) in getUtterTextResolvedList()">
+						<q-item v-for="(utterText, index) in getUtterTextResolvedList()" dense>
 							<q-item-section side left th:if="${!model.modeReadOnly}" style="width:40px">
 								<q-btn @click="vueData.utterTexts.splice(index, 1); vueData.utterTexts.push({});"
 									v-if="index < getUtterTextResolvedList().length - 1 || utterText.text"
