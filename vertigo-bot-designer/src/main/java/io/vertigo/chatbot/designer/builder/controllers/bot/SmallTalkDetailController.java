@@ -35,8 +35,6 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 @RequestMapping("/bot/{botId}/smallTalk")
 public class SmallTalkDetailController extends AbstractVSpringMvcController {
 
-	private static final int MAX_UTTER_TEXT = 10;
-
 	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalk");
 
 	private static final ViewContextKey<ResponseType> responseTypeKey = ViewContextKey.of("responseTypes");
@@ -67,7 +65,9 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey, designerServices.getNluTrainingSentenceList(smallTalk));
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
-		viewContext.publishDtListModifiable(utterTextsKey, designerServices.getUtterTextList(smallTalk));
+		final DtList<UtterText> utterTextList = designerServices.getUtterTextList(smallTalk);
+		utterTextList.add(new UtterText()); // add the next for random, or the 1st for rich text if 0 lines
+		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
 
 		toModeReadOnly();
 	}
@@ -82,7 +82,9 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
-		viewContext.publishDtListModifiable(utterTextsKey, new DtList<>(UtterText.class));
+		final DtList<UtterText> utterTextList = new DtList<>(UtterText.class);
+		utterTextList.add(new UtterText()); // add the first one for initialization, list can't be empty
+		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
 
 		toModeCreate();
 	}
@@ -99,7 +101,6 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_save")
-
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
 			@PathVariable("botId") final Long botId,

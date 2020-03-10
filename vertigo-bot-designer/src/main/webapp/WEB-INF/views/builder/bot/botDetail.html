@@ -9,6 +9,8 @@
 	<head>
 		<title>Bot detail</title>
 		
+		<script th:src="@{/static/js/c-richtext.js}"></script>
+		
 		<script th:inline="javascript">
 			function deleteNode() {
 				VUiPage.$q.dialog({
@@ -42,20 +44,38 @@
 		</section>
 		
 		<section layout:fragment="content">
+		
+
 			
-			<vu:block id="identity" title="Bot identity" th:if="${viewMode=='edit'}">
-				<vu:text-field object="bot" field="name" />
+			<vu:block id="identity" title="Bot identity">
+				<vu:text-field object="bot" field="name" th:if="${viewMode=='edit'}"/>
 				
-				<vu:label-edit object="bot" field="filIdAvatar" >
+				<vu:label-edit object="bot" field="filIdAvatar" th:if="${viewMode=='edit'}">
 					<vu:fileupload th:url="'@{/commons/upload}'" key="botTmpPictureUri" multiple="false"/>
 				</vu:label-edit>
+				
+				<vu:text-area object="bot" field="description"/>
 			</vu:block>
 			
 			<vu:block id="custom" title="Bot customization">
-				<vu:text-area object="bot" field="description"/>
+				<vu:include-data object="welcome" field="text" />
+				<vu:include-data object="default" field="text" />
 				
-				<vu:text-field object="welcome" field="text" label="Welcome message"/>
-				<vu:text-field object="default" field="text" label="Fallback message"/>
+				<div class="text-subtitle1">Welcome message</div>
+				<c-richtext
+						class="q-pb-sm"
+						v-model="vueData.welcome.text"
+						name="vContext[welcome][text]"
+						th::mode-edit="${!model.modeReadOnly}">
+				</c-richtext>
+				
+				<div class="text-subtitle1">Fallback message</div>
+				<c-richtext
+						class="q-pb-sm"
+						v-model="vueData.default.text"
+						name="vContext[default][text]"
+						th::mode-edit="${!model.modeReadOnly}">
+				</c-richtext>
 			</vu:block>
 			
 			<!--/* "delete vueData.nodeEdit.__index" ne sera plus nécessaire avec Vertigo 3.0 */-->

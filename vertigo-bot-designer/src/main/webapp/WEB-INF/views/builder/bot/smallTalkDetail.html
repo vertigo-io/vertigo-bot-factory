@@ -9,6 +9,8 @@
 	<head>
 		<title>Small talk detail</title>
 		
+		<script th:src="@{/static/js/c-richtext.js}"></script>
+		
 		<script th:inline="javascript">
 			function normalizeString(str) {
 				if (str)
@@ -48,45 +50,12 @@
 				return vueData.utterTexts.slice(0, lastIndex + 1);
 			}
 			
-			function getChatPreview() {
-				return vueData.utterTexts[0].text.replace("<a ", "<a target='_blank' rel='nofollow noopener noreferrer' ").split(/<hr>|<hr \/>/)
-			}
-			
 			function addMoreUtterTextIfNeeded() {
 				if (vueData.utterTexts[vueData.utterTexts.length - 1].text) {
 					vueData.utterTexts.push({});
 				}
 			}
 			
-		
-			/**
-			 * Capture the <CTL-V> paste event, only allow plain-text, no images.
-			 *
-			 * see: https://stackoverflow.com/a/28213320
-			 *
-			 * @param {object} evt - array of files
-			 * @author Daniel Thompson-Yvetot
-			 * @license MIT
-			 */
-			function pasteCapture (evt, ref) {
-				let text, onPasteStripFormattingIEPaste
-				evt.preventDefault()
-				if (evt.originalEvent && evt.originalEvent.clipboardData.getData) {
-					text = evt.originalEvent.clipboardData.getData('text/plain')
-					VUiPage.$refs[ref].runCmd('insertText', text)
-				}
-				else if (evt.clipboardData && evt.clipboardData.getData) {
-					text = evt.clipboardData.getData('text/plain')
-					VUiPage.$refs[ref].runCmd('insertText', text)
-				}
-				else if (window.clipboardData && window.clipboardData.getData) {
-					if (!onPasteStripFormattingIEPaste) {
-						onPasteStripFormattingIEPaste = true
-						VUiPage.$refs[ref].runCmd('ms-pasteTextOnly', text)
-					}
-					onPasteStripFormattingIEPaste = false
-				}
-			}
 		</script>
 	</head>
 	
@@ -143,8 +112,8 @@
 					</q-input>
 				</div>
 				<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('nluTrainingSentences').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
-				<q-list highlight dense>
-					<q-item v-for="(nluTrainingSentence, index) in getDisplayedTrainingSentenses()">
+				<q-list dense>
+					<q-item th::clickable="${!model.modeReadOnly}" v-for="(nluTrainingSentence, index) in getDisplayedTrainingSentenses()">
 						<q-item-section avatar th:if="${model.modeReadOnly}">
 				        	<q-icon color="black" name="format_quote" />
 				        </q-item-section>
@@ -152,7 +121,7 @@
 							<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.nluTrainingSentences.length - 1 - index})"
 								color="primary" dense size="sm" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
 						</q-item-section>
-						<q-item-section class="cursor-pointer">
+						<q-item-section>
 							{{nluTrainingSentence.text}}
 							<q-popup-edit th:if="${!model.modeReadOnly}"
 										  v-model="nluTrainingSentence.text"
@@ -206,43 +175,17 @@
 					</q-icon>
 				</div>
 				
-				<div v-if="vueData.smallTalk.rtyId === 'RICH_TEXT'" class="row wrap">
-					<input th:if="${!model.modeReadOnly}" class="hidden" type="text" name="vContext['utterTexts'][0]['text']" :value="vueData.utterTexts[0].text" />
-					
-					<q-editor th:if="${!model.modeReadOnly}" v-model="vueData.utterTexts[0].text" class="q-pb-sm col-grow"
-					    ref="editor_ref"
-					    @paste.native="evt => pasteCapture(evt, 'editor_ref')"
-					    :toolbar="
-					    [
-					      [{
-				            label: $q.lang.editor.fontSize,
-	                        fixedLabel: false,
-				            fixedIcon: true,
-				            list: 'no-icons',
-				            options: [
-				              'size-2',
-				              'size-3',
-				              'size-4',
-				              'size-5'
-				            ]
-				          }],
-        				  ['bold', 'italic'],
-					      ['unordered', 'ordered'],
-					      ['link', 'removeFormat'],
-					      ['hr'],
-					      ['undo', 'redo'],
-					      ['viewsource']
-					    ]"
-					    :definitions="{hr: {tip: 'Pause'}}"
-						>
-					</q-editor>
-					<div style="width:300px" class="q-px-md q-py-sm">
-						<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" bg-color="grey-4" ></q-chat-message>
-					</div>
+				<div v-if="vueData.smallTalk.rtyId === 'RICH_TEXT'" >
+					<c-richtext
+						v-model="vueData.utterTexts[0].text"
+						name="vContext[utterTexts][0][text]"
+						th::mode-edit="${!model.modeReadOnly}"
+						class="q-pb-sm col-grow">
+					</c-richtext>
 				</div>
 				
 				<div v-if="vueData.smallTalk.rtyId === 'RANDOM_TEXT'">
-					<q-list th:if="${!model.modeReadOnly}" @hook:mounted="addMoreUtterTextIfNeeded">
+					<q-list th:if="${!model.modeReadOnly}">
 						<q-item v-for="(utterText, index) in getUtterTextResolvedList()" dense>
 							<q-item-section side left th:if="${!model.modeReadOnly}" style="width:40px">
 								<q-btn @click="vueData.utterTexts.splice(index, 1); vueData.utterTexts.push({});"
@@ -266,7 +209,7 @@
 
 					<div th:if="${model.modeReadOnly}">
 						<q-list>
-							<q-item v-for="(utterText, index) in vueData.utterTexts">
+							<q-item v-for="(utterText, index) in vueData.utterTexts.slice(0, -1)">
 								<q-item-section avatar>
 						        	<q-icon color="black" name="fas fa-dice" />
 						        </q-item-section>

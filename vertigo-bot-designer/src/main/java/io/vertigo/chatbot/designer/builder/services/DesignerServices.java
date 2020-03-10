@@ -33,10 +33,10 @@ import io.vertigo.dynamo.criteria.Criterions;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.domain.model.DtListState;
 import io.vertigo.dynamo.domain.model.FileInfoURI;
+import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.dynamo.file.FileManager;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.Assertion;
-import io.vertigo.lang.VUserException;
 import io.vertigo.util.StringUtil;
 
 @Transactional
@@ -158,33 +158,31 @@ public class DesignerServices implements Component {
 		final SmallTalk smallTalk = new SmallTalk();
 		smallTalk.setBotId(botId);
 		smallTalk.setIsEnabled(true);
+		smallTalk.responseType().setEnumValue(ResponseTypeEnum.RICH_TEXT);
 		return smallTalk;
 	}
 
-	public SmallTalk saveSmallTalk(final SmallTalk smallTalk, final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+	public SmallTalk saveSmallTalk(final SmallTalk smallTalk,
+			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			final DtList<UtterText> utterTexts) {
+
 		Assertion.checkNotNull(smallTalk);
 		Assertion.checkNotNull(nluTrainingSentences);
 		Assertion.checkNotNull(nluTrainingSentencesToDelete);
 		Assertion.checkNotNull(utterTexts);
 		// ---
 
-		if (nluTrainingSentences.isEmpty()) {
-			throw new VUserException("Il est nécessaire d'avoir au moins 1 texte d'exemple");
-		}
-
-		if (utterTexts.isEmpty()) {
-			throw new VUserException("Il est nécessaire d'avoir au moins 1 texte de réponse");
-		}
-
-		final SmallTalk savedST = smallTalkDAO.save(smallTalk);
+		SmallTalk savedST = smallTalkDAO.save(smallTalk);
 
 		// save nlu textes
-		nluTrainingSentences.stream()
-				.forEach(nts -> {
-					nts.setSmtId(savedST.getSmtId());
-					nluTrainingSentenceDAO.save(nts);
-				});
+		final DtList<NluTrainingSentence> ntsToSave = nluTrainingSentences.stream()
+				.filter(nts -> !StringUtil.isEmpty(nts.getText()))
+				.collect(VCollectors.toDtList(NluTrainingSentence.class));
+
+		for (final NluTrainingSentence nts : ntsToSave) {
+			nts.setSmtId(savedST.getSmtId());
+			nluTrainingSentenceDAO.save(nts);
+		}
 
 		nluTrainingSentencesToDelete.stream()
 				.filter(itt -> itt.getNtsId() != null)
@@ -193,21 +191,27 @@ public class DesignerServices implements Component {
 		// save utter textes, remove all + create all
 		builderPAO.removeAllUtterTextBySmtId(savedST.getSmtId());
 
-		final Stream<UtterText> utterStream;
-		if (ResponseTypeEnum.RANDOM_TEXT.equals(smallTalk.responseType().getEnumValue())) {
-			utterStream = utterTexts.stream()
-					.filter(utt -> !StringUtil.isEmpty(utt.getText()));
-		} else {
-			utterStream = utterTexts.stream()
-					.limit(1);
+		Stream<UtterText> utterStream = utterTexts.stream();
+		if (ResponseTypeEnum.RICH_TEXT.equals(smallTalk.responseType().getEnumValue())) {
+			utterStream = utterStream.limit(1);
 		}
 
-		utterStream.forEach(utt -> {
+		final DtList<UtterText> uttToSave = utterStream
+				.filter(utt -> !StringUtil.isEmpty(utt.getText()))
+				.collect(VCollectors.toDtList(UtterText.class));
+
+		for (final UtterText utt : uttToSave) {
 			utt.setUttId(null); // force creation
 			utt.setSmtId(savedST.getSmtId());
 			utt.setText(sanatizeHtml(utt.getText()));
 			utterTextDAO.save(utt);
-		});
+		}
+
+		if (ntsToSave.isEmpty() || uttToSave.isEmpty()) {
+			// no training or response, disable this small talk
+			savedST.setIsEnabled(false);
+			savedST = smallTalkDAO.save(savedST);
+		}
 
 		return savedST;
 	}

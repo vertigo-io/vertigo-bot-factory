@@ -53,4 +53,4 @@ WHERE SMT_ID in
 
 -- update to new format for pause
 UPDATE UTTER_TEXT
-SET text = replace(text, '[pause]', '<hr>')
+SET text = replace(text, '[pause]', '<hr />')
