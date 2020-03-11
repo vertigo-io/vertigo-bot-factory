@@ -49,8 +49,8 @@ WHERE SMT_ID in
    FROM UTTER_TEXT
    GROUP BY SMT_ID
    HAVING count(SMT_ID) > 1
-  )
+  );
 
 -- update to new format for pause
 UPDATE UTTER_TEXT
-SET text = replace(text, '[pause]', '<hr />')
+SET text = replace(text, '[pause]', '<hr />');

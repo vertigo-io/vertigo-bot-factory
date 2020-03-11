@@ -92,9 +92,10 @@
 				<vu:slot name="actions_slot">
 					<q-input v-model="componentStates.nluTrainingSentences.pagination.search" dense clearable 
 	      				type="search" placeholder="Filter"
+	      				@keydown.esc="componentStates.nluTrainingSentences.pagination.search = '';"
 	      				style="width:300px">
 						<template v-slot:prepend>
-				        	<q-icon name="search" />
+				        	<q-icon name="search" ></q-icon>
 				        </template>
         			</q-input>
 				</vu:slot>
@@ -115,7 +116,7 @@
 				<q-list dense>
 					<q-item th::clickable="${!model.modeReadOnly}" v-for="(nluTrainingSentence, index) in getDisplayedTrainingSentenses()">
 						<q-item-section avatar th:if="${model.modeReadOnly}">
-				        	<q-icon color="black" name="format_quote" />
+				        	<q-icon color="black" name="format_quote"></q-icon>
 				        </q-item-section>
 						<q-item-section side left th:if="${!model.modeReadOnly}">
 							<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.nluTrainingSentences.length - 1 - index})"
@@ -227,7 +228,7 @@
 						<q-list>
 							<q-item v-for="(utterText, index) in vueData.utterTexts.slice(0, -1)" dense>
 								<q-item-section avatar>
-						        	<q-icon color="black" name="fas fa-dice" />
+						        	<q-icon color="black" name="fas fa-dice"></q-icon>
 						        </q-item-section>
 						        <q-item-section>
 						        	<c-richtext
