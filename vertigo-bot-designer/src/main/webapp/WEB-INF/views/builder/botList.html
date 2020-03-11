@@ -17,7 +17,8 @@
 			<vu:include-data object="bots" field="description" />
 			<vu:include-data object="bots" field="creationDate" />
 			
-			<vu:cards list="bots" componentId="botCards" cardClass="botCard col-xl-3 col-md-4 col-xs-6"  sortUrl="@{/basemanagement/bases/_sort}" rowsPerPage="8" showMore="true" showMoreLabel="Show more" >
+			<vu:cards list="bots" componentId="botCards" cardClass="botCard col-xl-3 col-md-4 col-xs-6" sortUrl="@{/basemanagement/bases/_sort}"
+					  rowsPerPage="10" showMore="true" showMoreLabel="Show more" >
 				<a th::href="|'@{/bot/}'+item.botId|" class="nav">
 					<q-img th::src="|'@{/bot/}'+item.botId+'/avatar'|" class="q-mt-sm"></q-img>
 					<q-card-section class="row" >
