@@ -37,6 +37,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Person(io.vertigo.chatbot.commons.domain.Person.class),
 		/** Objet de données RasaConfig. */
 		RasaConfig(io.vertigo.chatbot.executor.domain.RasaConfig.class),
+		/** Objet de données ResponseType. */
+		ResponseType(io.vertigo.chatbot.commons.domain.ResponseType.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
 		/** Objet de données SmallTalk. */
@@ -218,6 +220,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		config	}
 
 	/**
+	 * Enumération des champs de ResponseType.
+	 */
+	public enum ResponseTypeFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ResponseType> {
+		/** Propriété 'ID'. */
+		rtyId,
+		/** Propriété 'Title'. */
+		label,
+		/** Propriété 'Order'. */
+		sortOrder	}
+
+	/**
 	 * Enumération des champs de RunnerInfo.
 	 */
 	public enum RunnerInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.RunnerInfo> {
@@ -243,7 +256,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Enabled'. */
 		isEnabled,
 		/** Propriété 'Chatbot'. */
-		botId	}
+		botId,
+		/** Propriété 'Response type'. */
+		rtyId	}
 
 	/**
 	 * Enumération des champs de SmallTalkExport.
