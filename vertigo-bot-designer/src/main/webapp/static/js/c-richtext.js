@@ -2,7 +2,7 @@ Vue.component('c-richtext', {
 	props : {
 		value:    { type: String,  required: true },
 		name:     { type: String,  required: true },
-		modeEdit: { type: Boolean, 'default': false },
+		modeEdit: { type: Boolean, 'default': true },
 	},
 	template : `
 		<div class="row wrap">
@@ -10,6 +10,7 @@ Vue.component('c-richtext', {
 			
 			<q-editor v-bind:value="value" @input="val => $emit('input', val)"
 				v-if="modeEdit"
+				@keyup.enter.stop
 				class="col-grow"
 				ref="editor_ref"
 			    @paste.native="evt => pasteCapture(evt, 'editor_ref')"
@@ -38,7 +39,7 @@ Vue.component('c-richtext', {
 				>
 			</q-editor>
 			
-			<div style="width:300px" class="q-px-md q-py-sm">
+			<div style="width:300px" class="q-px-md">
 				<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" bg-color="grey-4" ></q-chat-message>
 			</div>
 		</div>

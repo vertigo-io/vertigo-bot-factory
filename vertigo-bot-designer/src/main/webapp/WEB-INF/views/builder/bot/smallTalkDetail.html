@@ -124,6 +124,7 @@
 						<q-item-section>
 							{{nluTrainingSentence.text}}
 							<q-popup-edit th:if="${!model.modeReadOnly}"
+										  buttons label-set="Save" label-cancel="Cancel"
 										  v-model="nluTrainingSentence.text"
 										  @save="function(value, initialValue) {
 													httpPostAjax('_editTrainingSentence',
@@ -180,7 +181,7 @@
 						v-model="vueData.utterTexts[0].text"
 						name="vContext[utterTexts][0][text]"
 						th::mode-edit="${!model.modeReadOnly}"
-						class="q-pb-sm col-grow">
+						class="q-pb-sm">
 					</c-richtext>
 				</div>
 				
@@ -192,6 +193,21 @@
 									v-if="index < getUtterTextResolvedList().length - 1 || utterText.text"
 									tabindex="-1"
 									color="primary" dense size="sm" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
+							</q-item-section>
+							<q-item-section side left th:if="${!model.modeReadOnly}" style="width:40px">
+								<q-btn tabindex="-1"
+									color="primary" dense size="sm" icon="edit" class="bg-grey" aria-label="Edit" title="Edit">
+									
+									<q-popup-edit v-model="utterText.text"
+												  buttons label-set="Save" label-cancel="Cancel"
+												  @save="addMoreUtterTextIfNeeded"
+												  anchor="top left">
+										<c-richtext
+											v-model="utterText.text"
+											class="q-pb-sm">
+										</c-richtext>
+									</q-popup-edit>
+								</q-btn>
 							</q-item-section>
 							<q-item-section class="cursor-pointer">
 								<q-input
@@ -209,12 +225,15 @@
 
 					<div th:if="${model.modeReadOnly}">
 						<q-list>
-							<q-item v-for="(utterText, index) in vueData.utterTexts.slice(0, -1)">
+							<q-item v-for="(utterText, index) in vueData.utterTexts.slice(0, -1)" dense>
 								<q-item-section avatar>
 						        	<q-icon color="black" name="fas fa-dice" />
 						        </q-item-section>
 						        <q-item-section>
-							        {{utterText.text}}
+						        	<c-richtext
+										v-model="utterText.text"
+										:mode-edit="false">
+									</c-richtext>
 						        </q-item-section>
 							</q-item>
 						</q-list>
