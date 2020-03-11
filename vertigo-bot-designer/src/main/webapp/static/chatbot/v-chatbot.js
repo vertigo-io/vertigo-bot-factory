@@ -7,7 +7,7 @@ Vue.component('v-chatbot', {
 					<q-chat-message v-if="msg.rating" class= "animate-fade" :key="'msgRating-'+index" :sent="msg.sent" :bg-color= "msg.bgColor" :avatar = "msg.avatar" >
 						<q-rating v-model="msg.rating" :max="5" style="font-size: 2rem;" readonly ></q-rating>
 					</q-chat-message>
-					<q-chat-message v-if="msg.text" class="animate-fade" :key="'msg-'+index" :label="msg.label" :sent="msg.sent" :text-color="msg.textColor"
+					<q-chat-message v-if="msg.text" class="animate-fade" :key="'msg-'+index" :label="msg.label" :text-sanitize="msg.sent" :sent="msg.sent" :text-color="msg.textColor"
 						:bg-color="msg.bgColor" :name="msg.name" :avatar="msg.avatar" :text="msg.text" :stamp="msg.stamp" ></q-chat-message>
 				</div>
 				<div class="sys-chat">
