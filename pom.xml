@@ -10,17 +10,20 @@
 	the specific language governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-<!-- 	<parent> -->
-<!-- 		<groupId>io.vertigo</groupId> -->
-<!-- 		<artifactId>vertigo-parent</artifactId> -->
-<!-- 		<version>2.1.0-SNAPSHOT</version> -->
-<!-- 	</parent> -->
 
 	<groupId>io.vertigo</groupId>
 	<artifactId>vertigo-bot-factory</artifactId>
 	<version>0.3.0-SNAPSHOT</version>
 	<name>vertigo-bot-factory</name>
 	<packaging>pom</packaging>
+	
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -35,4 +38,20 @@
 		<module>vertigo-bot-executor</module>
 		<module>vertigo-bot-commons</module>
 	</modules>
+	
+	<build>
+		<plugins>
+			<plugin><!-- license:format -->
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<header>license.txt</header>
+					<includes>
+						<include>**/*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
