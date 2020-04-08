@@ -62,6 +62,17 @@ create Association AChatbotUtterTextWelcome {
 	labelB : "Welcome text"
 }
 
+create Association AChatbotWelcomeButtons {
+	fkFieldName : "botIdWelcome"
+    
+ 	dtDefinitionA : DtResponseButton
+	type : "*>?"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "welcome buttons"
+	roleB : "chatbotWelcome"
+}
+
 create Association AChatbotUtterTextDefault {
 	fkFieldName : "uttIdDefault"
     
@@ -72,6 +83,17 @@ create Association AChatbotUtterTextDefault {
 	
 	roleB : "utterTextDefault"
 	labelB : "Default text"
+}
+
+create Association AChatbotDefaultButtons {
+	fkFieldName : "botIdDefault"
+    
+ 	dtDefinitionA : DtResponseButton
+	type : "*>?"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Default buttons"
+	roleB : "chatbotDefault"
 }
 
 /************************/
@@ -139,6 +161,32 @@ create Association ASmallTalkUtterText {
 	dtDefinitionB : DtSmallTalk
 	
 	labelB : "SmallTalk"
+}
+
+create DtDefinition DtResponseButton {
+	id    btnId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoText 	label: "Text" required: "true"}
+}
+
+create Association ASmallTalkResponseButtons {
+	fkFieldName : "smtId"
+    
+ 	dtDefinitionA : DtResponseButton
+	type : "*>?"
+	dtDefinitionB : DtSmallTalk
+	
+	labelB : "SmallTalk"
+}
+
+create Association AResponseButtonSmallTalkResponse {
+	fkFieldName : "smtIdResponse"
+    
+ 	dtDefinitionA : DtResponseButton
+	type : "*>1"
+	dtDefinitionB : DtSmallTalk
+	
+	labelB : "SmallTalkResponse"
+	roleB : "SmallTalkResponse"
 }
 
 /**********************/

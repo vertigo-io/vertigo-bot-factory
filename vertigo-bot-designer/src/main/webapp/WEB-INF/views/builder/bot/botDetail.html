@@ -10,6 +10,12 @@
 		<title>Bot detail</title>
 		
 		<script th:src="@{/static/js/c-richtext.js}"></script>
+		<script th:src="@{/static/js/c-buttonList.js}"></script>
+		
+		<!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+		<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+		<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+		<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
 		
 		<script th:inline="javascript">
 			function deleteNode() {
@@ -44,8 +50,6 @@
 		</section>
 		
 		<section layout:fragment="content">
-		
-
 			
 			<vu:block id="identity" title="Bot identity">
 				<vu:text-field object="bot" field="name" th:if="${viewMode=='edit'}"/>
@@ -60,6 +64,12 @@
 			<vu:block id="custom" title="Bot customization">
 				<vu:include-data object="welcome" field="text" />
 				<vu:include-data object="default" field="text" />
+				<vu:include-data object="welcomeButtons" field="text" />
+				<vu:include-data object="welcomeButtons" field="smtIdResponse" />
+				<vu:include-data object="defaultButtons" field="text" />
+				<vu:include-data object="defaultButtons" field="smtIdResponse" />
+				<vu:include-data object="smallTalks" field="smtId" />
+				<vu:include-data object="smallTalks" field="title" />
 				
 				<div class="text-subtitle1">Welcome message</div>
 				<c-richtext
@@ -68,6 +78,12 @@
 						name="vContext[welcome][text]"
 						th::mode-edit="${!model.modeReadOnly}">
 				</c-richtext>
+				<c-buttonlist
+					class="q-pb-sm"
+					button-list="welcomeButtons"
+					choice-list="smallTalks"
+					th::mode-edit="${!model.modeReadOnly}">
+				</c-buttonlist>
 				
 				<div class="text-subtitle1">Fallback message</div>
 				<c-richtext
@@ -76,6 +92,12 @@
 						name="vContext[default][text]"
 						th::mode-edit="${!model.modeReadOnly}">
 				</c-richtext>
+				<c-buttonlist
+					class="q-pb-sm"
+					button-list="defaultButtons"
+					choice-list="smallTalks"
+					th::mode-edit="${!model.modeReadOnly}">
+				</c-buttonlist>
 			</vu:block>
 			
 			<!--/* "delete vueData.nodeEdit.__index" ne sera plus nécessaire avec Vertigo 3.0 */-->

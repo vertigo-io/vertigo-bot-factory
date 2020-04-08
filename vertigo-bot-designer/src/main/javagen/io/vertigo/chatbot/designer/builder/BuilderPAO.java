@@ -83,6 +83,28 @@ public final class BuilderPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkRemoveAllButtonsByBotId.
+	 * @param botId Long 
+	*/
+	public void removeAllButtonsByBotId(final Long botId) {
+		final Task task = createTaskBuilder("TkRemoveAllButtonsByBotId")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkRemoveAllButtonsBySmtId.
+	 * @param smtId Long 
+	*/
+	public void removeAllButtonsBySmtId(final Long smtId) {
+		final Task task = createTaskBuilder("TkRemoveAllButtonsBySmtId")
+				.addValue("smtId", smtId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
 	 * Execute la tache TkRemoveAllUtterTextBySmtId.
 	 * @param smtId Long 
 	*/

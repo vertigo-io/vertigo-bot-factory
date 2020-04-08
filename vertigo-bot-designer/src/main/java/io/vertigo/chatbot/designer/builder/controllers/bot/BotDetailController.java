@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -28,17 +29,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
+import io.vertigo.chatbot.commons.domain.ResponseButton;
+import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.dynamo.domain.model.DtObject;
 import io.vertigo.dynamo.domain.model.FileInfoURI;
+import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
+import io.vertigo.vega.engines.webservice.json.AbstractUiListModifiable;
+import io.vertigo.vega.webservice.model.UiObject;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot")
@@ -51,12 +60,15 @@ public class BotDetailController extends AbstractVSpringMvcController {
 	private CommonBotDetailController commonBotDetailController;
 
 	private static final ViewContextKey<UtterText> defaultKey = ViewContextKey.of("default");
+	private static final ViewContextKey<ResponseButton> defaultButtonsKey = ViewContextKey.of("defaultButtons");
 	private static final ViewContextKey<UtterText> welcomeKey = ViewContextKey.of("welcome");
+	private static final ViewContextKey<ResponseButton> welcomeButtonsKey = ViewContextKey.of("welcomeButtons");
+
+	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalks");
 
 	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
 	private static final ViewContextKey<ChatbotNode> nodeEditKey = ViewContextKey.of("nodeEdit");
 	private static final ViewContextKey<ChatbotNode> nodeNewKey = ViewContextKey.of("nodeNew"); // template for creation
-
 
 	@GetMapping("/{botId}")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
@@ -65,7 +77,11 @@ public class BotDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDto(defaultKey, designerServices.getDefaultTextByBot(bot));
 		viewContext.publishDto(welcomeKey, designerServices.getWelcomeTextByBot(bot));
 
-		viewContext.publishDtList(nodeListKey, designerServices.getAllNodesByBotId(bot.getBotId()));
+		viewContext.publishDtListModifiable(defaultButtonsKey, designerServices.getDefaultButtonsByBot(bot));
+		viewContext.publishDtListModifiable(welcomeButtonsKey, designerServices.getWelcomeButtonsByBot(bot));
+		viewContext.publishDtList(smallTalkKey, designerServices.getAllSmallTalksByBotId(botId));
+
+		viewContext.publishDtList(nodeListKey, designerServices.getAllNodesByBotId(botId));
 		initNodeEdit(viewContext);
 
 		toModeReadOnly();
@@ -87,10 +103,12 @@ public class BotDetailController extends AbstractVSpringMvcController {
 		final UtterText newDefault = new UtterText();
 		newDefault.setText("Sorry, I don't understand.");
 		viewContext.publishDto(defaultKey, newDefault);
+		viewContext.publishDtListModifiable(defaultButtonsKey, new DtList<>(ResponseButton.class));
 
 		final UtterText newWelcome = new UtterText();
 		newWelcome.setText("Hello !");
 		viewContext.publishDto(welcomeKey, newWelcome);
+		viewContext.publishDtListModifiable(welcomeButtonsKey, new DtList<>(ResponseButton.class));
 
 		viewContext.publishDtList(nodeListKey, new DtList<>(ChatbotNode.class));
 		initNodeEdit(viewContext);
@@ -104,12 +122,16 @@ public class BotDetailController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_save")
-	public String doSave(@ViewAttribute("bot") final Chatbot bot,
+	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
+			@ViewAttribute("bot") final Chatbot bot,
 			@QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile,
 			@ViewAttribute("default") final UtterText defaultText,
 			@ViewAttribute("welcome") final UtterText welcome) {
 
-		final Chatbot savedChatbot = designerServices.saveChatbot(bot, personPictureFile, defaultText, welcome);
+		final DtList<ResponseButton> defaultButtons = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(defaultButtonsKey), uiMessageStack);
+		final DtList<ResponseButton> welcomeButtons = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(welcomeButtonsKey), uiMessageStack);
+
+		final Chatbot savedChatbot = designerServices.saveChatbot(bot, personPictureFile, defaultText, defaultButtons, welcome, welcomeButtons);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();
 	}

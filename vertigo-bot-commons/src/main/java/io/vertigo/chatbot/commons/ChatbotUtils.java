@@ -19,6 +19,14 @@ package io.vertigo.chatbot.commons;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
+
+import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.dynamo.domain.model.DtObject;
+import io.vertigo.dynamo.domain.util.VCollectors;
+import io.vertigo.vega.engines.webservice.json.AbstractUiListModifiable;
+import io.vertigo.vega.webservice.model.UiObject;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 public class ChatbotUtils {
 	/**
@@ -53,7 +61,7 @@ public class ChatbotUtils {
 	 * If start is null, return "-".
 	 *
 	 * @param start Start of interval
-	 * @param end End of interval
+	 * @param end   End of interval
 	 * @return Human readable string
 	 */
 	public static String durationBetween(final Instant start, final Instant end) {
@@ -88,5 +96,21 @@ public class ChatbotUtils {
 			builder.append(count);
 			builder.append(unit);
 		}
+	}
+
+	public static <D extends DtObject> DtList<D> getRawDtList(final AbstractUiListModifiable<D> uiList, final UiMessageStack uiMessageStack) {
+		return uiList.stream()
+				.filter(UiObject::isModified)
+				.map(uiObject -> uiObject.mergeAndCheckInput(Collections.singletonList((a, b, c) -> {
+					// rien
+				}), uiMessageStack))
+				.collect(VCollectors.toDtList(uiList.getDtDefinition()));
+
+		// mauvaise synchronisation ...
+		//		return uiList.mergeAndCheckInput(
+		//				Collections.singletonList((a, b, c) -> {
+		//										// rien
+		//				}),
+		//				uiMessageStack);
 	}
 }

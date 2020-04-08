@@ -30,3 +30,23 @@ create Task TkRemoveAllUtterTextBySmtId {
              "
 	attribute smtId  			{domain : DoId         		required:"true"  inOut :"in"}
 }
+
+
+create Task TkRemoveAllButtonsByBotId {
+    className : "io.vertigo.dynamox.task.TaskEngineProc"
+    request : "
+            delete from response_button
+			where bot_id_welcome = #botId#
+			or bot_id_default = #botId#
+             "
+	attribute botId  			{domain : DoId         		required:"true"  inOut :"in"}
+}
+
+create Task TkRemoveAllButtonsBySmtId {
+    className : "io.vertigo.dynamox.task.TaskEngineProc"
+    request : "
+            delete from response_button
+			where smt_id = #smtId#
+             "
+	attribute smtId  			{domain : DoId         		required:"true"  inOut :"in"}
+}

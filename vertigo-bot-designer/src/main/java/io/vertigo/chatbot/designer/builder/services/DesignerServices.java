@@ -30,11 +30,13 @@ import org.owasp.html.Sanitizers;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
+import io.vertigo.chatbot.commons.dao.ResponseButtonDAO;
 import io.vertigo.chatbot.commons.dao.SmallTalkDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
@@ -42,6 +44,7 @@ import io.vertigo.chatbot.designer.builder.BuilderPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
+import io.vertigo.chatbot.domain.DtDefinitions.ResponseButtonFields;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -73,6 +76,9 @@ public class DesignerServices implements Component {
 
 	@Inject
 	private NluTrainingSentenceDAO nluTrainingSentenceDAO;
+
+	@Inject
+	private ResponseButtonDAO responseButtonDAO;
 
 	@Inject
 	private UtterTextDAO utterTextDAO;
@@ -126,10 +132,15 @@ public class DesignerServices implements Component {
 		return utterTextDAO.get(bot.getUttIdWelcome());
 	}
 
-	public Chatbot saveChatbot(final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile, final UtterText defaultText, final UtterText welcomeText) {
+	public Chatbot saveChatbot(final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
+			final UtterText defaultText, final DtList<ResponseButton> defaultButtons,
+			final UtterText welcomeText, final DtList<ResponseButton> welcomeButtons) {
+
 		Assertion.checkNotNull(chatbot);
 		Assertion.checkNotNull(defaultText);
+		Assertion.checkNotNull(defaultButtons);
 		Assertion.checkNotNull(welcomeText);
+		Assertion.checkNotNull(welcomeButtons);
 		// ---
 
 		// default text
@@ -158,6 +169,22 @@ public class DesignerServices implements Component {
 			fileServices.deleteFile(oldAvatar);
 		}
 
+		// clear old buttons
+		builderPAO.removeAllButtonsByBotId(chatbot.getBotId());
+
+		// save new buttons
+		for (final ResponseButton btn : defaultButtons) {
+			btn.setBtnId(null); // force creation
+			btn.setBotIdDefault(chatbot.getBotId());
+			responseButtonDAO.save(btn);
+		}
+
+		for (final ResponseButton btn : welcomeButtons) {
+			btn.setBtnId(null); // force creation
+			btn.setBotIdWelcome(chatbot.getBotId());
+			responseButtonDAO.save(btn);
+		}
+
 		return savedChatbot;
 	}
 
@@ -181,12 +208,13 @@ public class DesignerServices implements Component {
 
 	public SmallTalk saveSmallTalk(final SmallTalk smallTalk,
 			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-			final DtList<UtterText> utterTexts) {
+			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList) {
 
 		Assertion.checkNotNull(smallTalk);
 		Assertion.checkNotNull(nluTrainingSentences);
 		Assertion.checkNotNull(nluTrainingSentencesToDelete);
 		Assertion.checkNotNull(utterTexts);
+		Assertion.checkNotNull(buttonList);
 		// ---
 
 		SmallTalk savedST = smallTalkDAO.save(smallTalk);
@@ -228,6 +256,16 @@ public class DesignerServices implements Component {
 			// no training or response, disable this small talk
 			savedST.setIsEnabled(false);
 			savedST = smallTalkDAO.save(savedST);
+		}
+
+		// clear old buttons
+		builderPAO.removeAllButtonsBySmtId(savedST.getSmtId());
+
+		// save new buttons
+		for (final ResponseButton btn : buttonList) {
+			btn.setBtnId(null); // force creation
+			btn.setSmtId(savedST.getSmtId());
+			responseButtonDAO.save(btn);
 		}
 
 		return savedST;
@@ -289,6 +327,36 @@ public class DesignerServices implements Component {
 		return utterTextDAO.findAll(
 				Criterions.isEqualTo(UtterTextFields.smtId, smallTalk.getSmtId()),
 				DtListState.of(1000, 0, UtterTextFields.uttId.name(), false));
+	}
+
+	public DtList<ResponseButton> getWelcomeButtonsByBot(final Chatbot bot) {
+		Assertion.checkNotNull(bot);
+		Assertion.checkNotNull(bot.getBotId());
+		// ---
+
+		return responseButtonDAO.findAll(
+				Criterions.isEqualTo(ResponseButtonFields.botIdWelcome, bot.getBotId()),
+				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
+	}
+
+	public DtList<ResponseButton> getDefaultButtonsByBot(final Chatbot bot) {
+		Assertion.checkNotNull(bot);
+		Assertion.checkNotNull(bot.getBotId());
+		// ---
+
+		return responseButtonDAO.findAll(
+				Criterions.isEqualTo(ResponseButtonFields.botIdDefault, bot.getBotId()),
+				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
+	}
+
+	public DtList<ResponseButton> getButtonsBySmalltalk(final SmallTalk smallTalk) {
+		Assertion.checkNotNull(smallTalk);
+		Assertion.checkNotNull(smallTalk.getSmtId());
+		// ---
+
+		return responseButtonDAO.findAll(
+				Criterions.isEqualTo(ResponseButtonFields.smtId, smallTalk.getSmtId()),
+				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
 	public DtList<ChatbotNode> getAllNodesByBotId(final Long botId) {

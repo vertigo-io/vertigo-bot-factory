@@ -52,6 +52,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		NluTrainingSentence(io.vertigo.chatbot.commons.domain.NluTrainingSentence.class),
 		/** Objet de données Person. */
 		Person(io.vertigo.chatbot.commons.domain.Person.class),
+		/** Objet de données ResponseButton. */
+		ResponseButton(io.vertigo.chatbot.commons.domain.ResponseButton.class),
 		/** Objet de données ResponseType. */
 		ResponseType(io.vertigo.chatbot.commons.domain.ResponseType.class),
 		/** Objet de données RunnerInfo. */
@@ -226,6 +228,23 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		password,
 		/** Propriété 'Group'. */
 		grpId	}
+
+	/**
+	 * Enumération des champs de ResponseButton.
+	 */
+	public enum ResponseButtonFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ResponseButton> {
+		/** Propriété 'ID'. */
+		btnId,
+		/** Propriété 'Text'. */
+		text,
+		/** Propriété 'SmallTalk'. */
+		smtId,
+		/** Propriété 'SmallTalkResponse'. */
+		smtIdResponse,
+		/** Propriété 'welcome buttons'. */
+		botIdWelcome,
+		/** Propriété 'Default buttons'. */
+		botIdDefault	}
 
 	/**
 	 * Enumération des champs de ResponseType.

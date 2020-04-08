@@ -10,6 +10,12 @@
 		<title>Small talk detail</title>
 		
 		<script th:src="@{/static/js/c-richtext.js}"></script>
+		<script th:src="@{/static/js/c-buttonList.js}"></script>
+		
+		<!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+		<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+		<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+		<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
 		
 		<script th:inline="javascript">
 			function normalizeString(str) {
@@ -73,6 +79,7 @@
 			<q-item tag="a" href="#detail">Informations</q-item>
 			<q-item tag="a" href="#training">Training phrases</q-item>
 			<q-item tag="a" href="#response">Response</q-item>
+			<q-item tag="a" href="#buttons">Buttons</q-item>
 		</section>
 		
 		<section layout:fragment="content">
@@ -242,6 +249,22 @@
 				</div>
 				
 				
+			</vu:block>
+			
+			<vu:block id="buttons" title="Buttons">
+				<vu:include-data object="buttons" field="text" />
+				<vu:include-data object="buttons" field="smtIdResponse" />
+				<vu:include-data object="smallTalkList" field="smtId" />
+				<vu:include-data object="smallTalkList" field="title" />
+			
+				<c-buttonlist
+					class="q-pb-sm"
+					button-list="buttons"
+					choice-list="smallTalkList"
+					th::mode-edit="${!model.modeReadOnly}">
+				</c-buttonlist>
+				
+				<div th:if="${model.modeReadOnly && model.vContext.buttons.isEmpty()}">No button</div>
 			</vu:block>
 			
 			

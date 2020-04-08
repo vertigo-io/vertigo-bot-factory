@@ -17,8 +17,6 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import java.util.Collections;
-
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
@@ -28,24 +26,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.ResponseType;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.dynamo.domain.model.DtList;
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VUserException;
-import io.vertigo.ui.core.BasicUiListModifiable;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.util.StringUtil;
-import io.vertigo.vega.engines.webservice.json.AbstractUiListModifiable;
-import io.vertigo.vega.webservice.model.UiObject;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
@@ -61,6 +56,9 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	private static final ViewContextKey<NluTrainingSentence> nluTrainingSentencesToDeleteKey = ViewContextKey.of("nluTrainingSentencesToDelete");
 
 	private static final ViewContextKey<UtterText> utterTextsKey = ViewContextKey.of("utterTexts");
+
+	private static final ViewContextKey<ResponseButton> buttonsKey = ViewContextKey.of("buttons");
+	private static final ViewContextKey<SmallTalk> smallTalkListKey = ViewContextKey.of("smallTalkList");
 
 	@Inject
 	private DesignerServices designerServices;
@@ -86,6 +84,9 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		utterTextList.add(new UtterText()); // add the next for random, or the 1st for rich text if 0 lines
 		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
 
+		viewContext.publishDtListModifiable(buttonsKey, designerServices.getButtonsBySmalltalk(smallTalk));
+		viewContext.publishDtList(smallTalkListKey, designerServices.getAllSmallTalksByBotId(botId));
+
 		toModeReadOnly();
 	}
 
@@ -102,6 +103,9 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		final DtList<UtterText> utterTextList = new DtList<>(UtterText.class);
 		utterTextList.add(new UtterText()); // add the first one for initialization, list can't be empty
 		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
+
+		viewContext.publishDtListModifiable(buttonsKey, new DtList<>(ResponseButton.class));
+		viewContext.publishDtList(smallTalkListKey, designerServices.getAllSmallTalksByBotId(botId));
 
 		toModeCreate();
 	}
@@ -125,30 +129,15 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
-		final BasicUiListModifiable<UtterText> uiList = viewContext.getUiListModifiable(utterTextsKey);
-		final DtList<UtterText> utterTexts = getRawDtList(uiList, uiMessageStack);
+		final DtList<UtterText> utterTexts = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey), uiMessageStack);
+
+		final DtList<ResponseButton> buttonList = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsKey), uiMessageStack);
 
 		// add training sentence who is not "validated" by enter and still in the input
 		addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 
-		designerServices.saveSmallTalk(smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts);
+		designerServices.saveSmallTalk(smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts, buttonList);
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
-	}
-
-	private <D extends DtObject> DtList<D> getRawDtList(final AbstractUiListModifiable<D> uiList, final UiMessageStack uiMessageStack) {
-		return uiList.stream()
-				.filter(UiObject::isModified)
-				.map(uiObject -> uiObject.mergeAndCheckInput(Collections.singletonList((a, b, c) -> {
-					// rien
-				}), uiMessageStack))
-				.collect(VCollectors.toDtList(uiList.getDtDefinition()));
-
-		// mauvaise synchronisation ...
-		//		return uiList.mergeAndCheckInput(
-		//				Collections.singletonList((a, b, c) -> {
-		//										// rien
-		//				}),
-		//				uiMessageStack);
 	}
 
 	@PostMapping("/_delete")
