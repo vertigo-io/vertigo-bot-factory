@@ -96,10 +96,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum BotExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.BotExport> {
 		/** Propriété 'chatbot'. */
 		bot,
+		/** Propriété 'fallback'. */
+		fallbackText,
+		/** Propriété 'fallback buttons'. */
+		fallbackButtons,
 		/** Propriété 'welcome'. */
-		defaultText,
-		/** Propriété 'welcome'. */
-		welcomeText	}
+		welcomeText,
+		/** Propriété 'welcome buttons'. */
+		welcomeButtons	}
 
 	/**
 	 * Enumération des champs de Chatbot.
@@ -295,8 +299,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		smallTalk,
 		/** Propriété 'nluTrainingSentences'. */
 		nluTrainingSentences,
-		/** Propriété 'utterTexts'. */
-		utterTexts	}
+		/** Propriété 'response texts'. */
+		utterTexts,
+		/** Propriété 'buttons'. */
+		buttons	}
 
 	/**
 	 * Enumération des champs de StatCriteria.

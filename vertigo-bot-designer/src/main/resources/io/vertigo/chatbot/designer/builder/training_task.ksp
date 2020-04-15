@@ -24,6 +24,18 @@ create Task TkExportSmallTalkRelativeUtter {
 	attribute utterTexts 	{domain : DoDtUtterTextDtc 	required:"true"  inOut :"out"}
 }
 
+create Task TkExportSmallTalkRelativeButtons {  
+    className : "io.vertigo.dynamox.task.TaskEngineSelect"
+    request : "
+            select 
+            	*
+			from response_button btn
+			where btn.smt_id in (#stIds.rownum#)
+             "
+	attribute stIds			{domain : DoLongs,				required:"true", inOut :"in",} 
+	attribute utterTexts 	{domain : DoDtResponseButtonDtc	required:"true"  inOut :"out"}
+}
+
 create Task TkCleanOldTrainings {  
     className : "io.vertigo.dynamox.task.TaskEngineProc"
     request : "

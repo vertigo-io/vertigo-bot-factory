@@ -31,8 +31,10 @@ public final class BotExport implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private io.vertigo.chatbot.commons.domain.Chatbot bot;
-	private io.vertigo.chatbot.commons.domain.UtterText defaultText;
+	private io.vertigo.chatbot.commons.domain.UtterText fallbackText;
+	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> fallbackButtons;
 	private io.vertigo.chatbot.commons.domain.UtterText welcomeText;
+	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> welcomeButtons;
 	
 	/**
 	 * Champ : DATA.
@@ -55,21 +57,40 @@ public final class BotExport implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'welcome'.
-	 * @return UtterText defaultText <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'fallback'.
+	 * @return UtterText fallbackText <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoDtUtterTextDto", required = true, label = "welcome")
-	public io.vertigo.chatbot.commons.domain.UtterText getDefaultText() {
-		return defaultText;
+	@Field(domain = "DoDtUtterTextDto", required = true, label = "fallback")
+	public io.vertigo.chatbot.commons.domain.UtterText getFallbackText() {
+		return fallbackText;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'welcome'.
-	 * @param defaultText UtterText <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'fallback'.
+	 * @param fallbackText UtterText <b>Obligatoire</b>
 	 */
-	public void setDefaultText(final io.vertigo.chatbot.commons.domain.UtterText defaultText) {
-		this.defaultText = defaultText;
+	public void setFallbackText(final io.vertigo.chatbot.commons.domain.UtterText fallbackText) {
+		this.fallbackText = fallbackText;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'fallback buttons'.
+	 * @return DtList de ResponseButton fallbackButtons <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoDtResponseButtonDtc", required = true, label = "fallback buttons")
+	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getFallbackButtons() {
+		return fallbackButtons;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'fallback buttons'.
+	 * @param fallbackButtons DtList de ResponseButton <b>Obligatoire</b>
+	 */
+	public void setFallbackButtons(final io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> fallbackButtons) {
+		this.fallbackButtons = fallbackButtons;
 	}
 	
 	/**
@@ -89,6 +110,25 @@ public final class BotExport implements DtObject {
 	 */
 	public void setWelcomeText(final io.vertigo.chatbot.commons.domain.UtterText welcomeText) {
 		this.welcomeText = welcomeText;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'welcome buttons'.
+	 * @return DtList de ResponseButton welcomeButtons <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoDtResponseButtonDtc", required = true, label = "welcome buttons")
+	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getWelcomeButtons() {
+		return welcomeButtons;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'welcome buttons'.
+	 * @param welcomeButtons DtList de ResponseButton <b>Obligatoire</b>
+	 */
+	public void setWelcomeButtons(final io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> welcomeButtons) {
+		this.welcomeButtons = welcomeButtons;
 	}
 	
 	/** {@inheritDoc} */

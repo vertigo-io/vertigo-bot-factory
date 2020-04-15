@@ -21,33 +21,42 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.executor.domain.RasaConfig;
+import io.vertigo.dynamo.domain.model.DtList;
 
 public class RasaConfigBuilder {
 
 	private static final String NEW_LINE = "\r\n";
 
-	private final String defaultText;
-	private final String welcomeText;
 	private final BigDecimal nluThreshold;
 
 	private final List<RasaAction> actions = new ArrayList<>();
 	private final List<RasaIntent> intents = new ArrayList<>();
 
-	public RasaConfigBuilder(final String defaultText, final String welcomeText, final BigDecimal nluThreshold) {
-		this.defaultText = defaultText;
-		this.welcomeText = welcomeText;
+	public RasaConfigBuilder(final String fallbackText, final DtList<ResponseButton> fallbackButtons,
+			final String welcomeText, final DtList<ResponseButton> welcomeButtons,
+			final BigDecimal nluThreshold) {
+
 		this.nluThreshold = nluThreshold;
+
+		// add welcome
+		final RasaAction actionWelcome = RasaAction.newStartUtter(welcomeText, RasaUtterButton.fromResponseButtonList(welcomeButtons));
+		actions.add(actionWelcome);
+		intents.add(RasaIntent.newStartIntent(actionWelcome));
+
+		// add fallback
+		actions.add(RasaAction.newFallbackUtter(fallbackText, RasaUtterButton.fromResponseButtonList(fallbackButtons)));
 	}
 
-	public RasaConfigBuilder addSmallTalk(final SmallTalk smallTalk, final List<String> nlus, final List<String> messages) {
+	public RasaConfigBuilder addSmallTalk(final SmallTalk smallTalk, final List<String> nlus, final List<String> messages, final DtList<ResponseButton> buttons) {
 		//		Assertion.checkState(!utterances.containsKey(name), "Le code de message {1} existe déjà", name);
 		// ----
 		final String name = smallTalk.getSmtId().toString() + '_' + smallTalk.getTitle();
 
-		final RasaAction action = RasaAction.newStUtterance(name, messages);
-		final RasaIntent intent = RasaIntent.newSmallTalk(name, nlus, action);
+		final RasaAction action = RasaAction.newStUtterance(name, messages, RasaUtterButton.fromResponseButtonList(buttons));
+		final RasaIntent intent = RasaIntent.newSmallTalk(smallTalk.getSmtId(), name, nlus, action);
 
 		actions.add(action);
 		intents.add(intent);
@@ -56,6 +65,8 @@ public class RasaConfigBuilder {
 	}
 
 	public RasaConfig build() {
+		actions.forEach(a -> a.resolve(intents));
+
 		final RasaConfig rasaConfig = new RasaConfig();
 
 		rasaConfig.setDomain(doBuildDomain());
@@ -72,11 +83,6 @@ public class RasaConfigBuilder {
 		retour.append("intents:");
 		retour.append(NEW_LINE);
 
-		retour.append("  - start:");
-		retour.append(NEW_LINE);
-		retour.append("     triggers: utter_start");
-		retour.append(NEW_LINE);
-
 		for (final RasaIntent intent : intents) {
 			retour.append(intent.getDomainDeclaration());
 			retour.append(NEW_LINE);
@@ -85,10 +91,6 @@ public class RasaConfigBuilder {
 
 		// ajout des actions
 		retour.append("actions:");
-		retour.append(NEW_LINE);
-		retour.append("  - utter_default");
-		retour.append(NEW_LINE);
-		retour.append("  - utter_start");
 		retour.append(NEW_LINE);
 
 		for (final RasaAction action : actions) {
@@ -100,22 +102,6 @@ public class RasaConfigBuilder {
 
 		// ajout des templates
 		retour.append("templates:");
-		retour.append(NEW_LINE);
-
-		retour.append("  utter_default:");
-		retour.append(NEW_LINE);
-		retour.append("    - text: \"");
-		retour.append(defaultText);
-		retour.append("\"");
-		retour.append(NEW_LINE);
-		retour.append(NEW_LINE);
-
-		retour.append("  utter_start:");
-		retour.append(NEW_LINE);
-		retour.append("    - text: \"");
-		retour.append(welcomeText);
-		retour.append("\"");
-		retour.append(NEW_LINE);
 		retour.append(NEW_LINE);
 
 		for (final RasaAction action : actions) {
@@ -139,8 +125,8 @@ public class RasaConfigBuilder {
 	}
 
 	private String doBuildStories() {
-		// nothing usefull in this file, all il based on triggers for this version
-		// but if empty only NLU is trained and mappingPolicy is not used
+		// nothing usefull in this file, all is based on triggers for this version
+		// but if we leave it empty, only NLU is trained by rasa, and mappingPolicy is not used :(
 
 		//		return "";
 		return "## start" + NEW_LINE +

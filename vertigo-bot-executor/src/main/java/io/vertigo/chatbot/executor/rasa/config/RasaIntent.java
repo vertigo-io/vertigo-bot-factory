@@ -26,24 +26,37 @@ public class RasaIntent {
 
 	private static final String NEW_LINE = "\r\n";
 
+	private final Long id;
 	private final String code;
 	private final List<String> nlus;
 	private final RasaAction trigger;
 
-	public static RasaIntent newSmallTalk(final String name, final List<String> nlus, final RasaAction trigger) {
-		Assertion.checkArgument(trigger.isSmallTalk(), "Le trigger doit être une action de small talk");
+	public static RasaIntent newSmallTalk(final Long id, final String name, final List<String> nlus, final RasaAction trigger) {
+		Assertion.checkNotNull(trigger);
+		Assertion.checkArgument(trigger.isSmallTalk(), "Trigger must be a small talk action");
 		// ----
-		return new RasaIntent("st_" + StringUtils.labelToCode(name), nlus, trigger);
+		return new RasaIntent(id, "st_" + StringUtils.labelToCode(name), nlus, trigger);
 	}
 
-	public static RasaIntent newGenericIntent(final String name, final List<String> nlus) {
-		return new RasaIntent("int_" + name, nlus, null);
+	public static RasaIntent newGenericIntent(final Long id, final String name, final List<String> nlus) {
+		return new RasaIntent(id, "int_" + name, nlus, null);
 	}
 
-	private RasaIntent(final String code, final List<String> nlus, final RasaAction trigger) {
+	public static RasaIntent newStartIntent(final RasaAction trigger) {
+		Assertion.checkNotNull(trigger);
+		//--
+		return new RasaIntent(null, "start", null, trigger);
+	}
+
+	private RasaIntent(final Long id, final String code, final List<String> nlus, final RasaAction trigger) {
+		this.id = id;
 		this.code = code;
 		this.nlus = nlus;
 		this.trigger = trigger;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String getCode() {
@@ -59,6 +72,11 @@ public class RasaIntent {
 	}
 
 	public String getNluDeclaration() {
+		if (nlus == null || nlus.isEmpty()) {
+			// no NLU
+			return null;
+		}
+
 		final StringBuilder nluDef = new StringBuilder();
 
 		nluDef.append("## intent:").append(code).append(NEW_LINE);

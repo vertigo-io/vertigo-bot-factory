@@ -17,6 +17,8 @@
  */
 package io.vertigo.chatbot.executor.rasa.config;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.vertigo.chatbot.executor.rasa.util.StringUtils;
@@ -30,24 +32,37 @@ public class RasaAction {
 	private final boolean isUtterance;
 	private final boolean isSmallTalk;
 	private final List<String> texts;
+	private final List<RasaUtterButton> buttons;
 
-	public static RasaAction newStUtterance(final String name, final List<String> texts) {
-		return new RasaAction("utter_st_" + StringUtils.labelToCode(name), true, true, texts);
+	public static RasaAction newStUtterance(final String name, final List<String> texts, final List<RasaUtterButton> buttons) {
+		return new RasaAction("utter_st_" + StringUtils.labelToCode(name), true, true, texts, buttons);
 	}
 
-	public static RasaAction newUtterance(final String name, final List<String> texts) {
-		return new RasaAction("utter_cu_" + StringUtils.labelToCode(name), true, false, texts);
+	public static RasaAction newUtterance(final String name, final List<String> texts, final List<RasaUtterButton> buttons) {
+		return new RasaAction("utter_cu_" + StringUtils.labelToCode(name), true, false, texts, buttons);
 	}
 
 	public static RasaAction newCustomAction(final String name) {
-		return new RasaAction("action_cu_" + name, false, false, null);
+		return new RasaAction("action_cu_" + name, false, false, new ArrayList<>(), new ArrayList<>());
 	}
 
-	private RasaAction(final String code, final boolean isUtterance, final boolean isSmallTalk, final List<String> texts) {
+	public static RasaAction newStartUtter(final String text, final List<RasaUtterButton> buttons) {
+		return new RasaAction("utter_start", true, true, Arrays.asList(text), buttons);
+	}
+
+	public static RasaAction newFallbackUtter(final String text, final List<RasaUtterButton> buttons) {
+		return new RasaAction("utter_default", true, true, Arrays.asList(text), buttons);
+	}
+
+	private RasaAction(final String code, final boolean isUtterance, final boolean isSmallTalk, final List<String> texts, final List<RasaUtterButton> buttons) {
+		Assertion.checkArgument(!(isUtterance && texts.isEmpty()), "Utterance must have at least 1 text.");
+		//--
+
 		this.code = code;
 		this.isUtterance = isUtterance;
 		this.isSmallTalk = isSmallTalk;
 		this.texts = texts;
+		this.buttons = buttons;
 	}
 
 	public String getCode() {
@@ -66,6 +81,10 @@ public class RasaAction {
 		return texts;
 	}
 
+	public void resolve(final List<RasaIntent> intents) {
+		buttons.forEach(b -> b.resolve(intents));
+	}
+
 	public String getUtterTemplate() {
 		Assertion.checkState(isUtterance, "Cette action n'est pas un utter");
 		// ----
@@ -78,6 +97,13 @@ public class RasaAction {
 			template.append("    - text: \"");
 			template.append(answer.replaceAll("[\\r\\n]+", "<br>").replaceAll("[\\\"]", "\\\\\\\""));
 			template.append('"').append(NEW_LINE);
+
+			if (!buttons.isEmpty()) {
+				template.append("      buttons:").append(NEW_LINE);
+				for (final RasaUtterButton button : buttons) {
+					template.append(button.getUtterTemplate());
+				}
+			}
 		}
 
 		template.append(NEW_LINE);

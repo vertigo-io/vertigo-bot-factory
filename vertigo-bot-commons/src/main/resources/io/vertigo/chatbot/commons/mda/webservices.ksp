@@ -3,14 +3,17 @@ package io.vertigo.chatbot.commons.domain
 
 create DtDefinition DtBotExport {
 	field bot 						{domain: DoDtChatbotDto 				label: "chatbot" 					required: "true"}
-	field defaultText				{domain: DoDtUtterTextDto 				label: "welcome" 					required: "true"}
+	field fallbackText				{domain: DoDtUtterTextDto 				label: "fallback" 					required: "true"}
+	field fallbackButtons			{domain: DoDtResponseButtonDtc 			label: "fallback buttons" 			required: "true"}
 	field welcomeText				{domain: DoDtUtterTextDto 				label: "welcome" 					required: "true"}
+	field welcomeButtons			{domain: DoDtResponseButtonDtc 			label: "welcome buttons" 			required: "true"}
 }
 
 create DtDefinition DtSmallTalkExport {
 	field smallTalk					{domain: DoDtSmallTalkDto 				label: "SmallTalk" 					required: "true"}
 	field nluTrainingSentences 		{domain: DoDtNluTrainingSentenceDtc 	label: "nluTrainingSentences" 		required: "true"}
-	field utterTexts		 		{domain: DoDtUtterTextDtc 				label: "utterTexts" 				required: "true"}
+	field utterTexts		 		{domain: DoDtUtterTextDtc 				label: "response texts" 			required: "true"}
+	field buttons					{domain: DoDtResponseButtonDtc 			label: "buttons" 					required: "true"}
 }
 
 create DtDefinition DtRunnerInfo {

@@ -54,6 +54,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Person(io.vertigo.chatbot.commons.domain.Person.class),
 		/** Objet de données RasaConfig. */
 		RasaConfig(io.vertigo.chatbot.executor.domain.RasaConfig.class),
+		/** Objet de données ResponseButton. */
+		ResponseButton(io.vertigo.chatbot.commons.domain.ResponseButton.class),
 		/** Objet de données ResponseType. */
 		ResponseType(io.vertigo.chatbot.commons.domain.ResponseType.class),
 		/** Objet de données RunnerInfo. */
@@ -90,10 +92,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum BotExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.BotExport> {
 		/** Propriété 'chatbot'. */
 		bot,
+		/** Propriété 'fallback'. */
+		fallbackText,
+		/** Propriété 'fallback buttons'. */
+		fallbackButtons,
 		/** Propriété 'welcome'. */
-		defaultText,
-		/** Propriété 'welcome'. */
-		welcomeText	}
+		welcomeText,
+		/** Propriété 'welcome buttons'. */
+		welcomeButtons	}
 
 	/**
 	 * Enumération des champs de Chatbot.
@@ -237,6 +243,23 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		config	}
 
 	/**
+	 * Enumération des champs de ResponseButton.
+	 */
+	public enum ResponseButtonFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ResponseButton> {
+		/** Propriété 'ID'. */
+		btnId,
+		/** Propriété 'Text'. */
+		text,
+		/** Propriété 'SmallTalk'. */
+		smtId,
+		/** Propriété 'SmallTalkResponse'. */
+		smtIdResponse,
+		/** Propriété 'welcome buttons'. */
+		botIdWelcome,
+		/** Propriété 'Default buttons'. */
+		botIdDefault	}
+
+	/**
 	 * Enumération des champs de ResponseType.
 	 */
 	public enum ResponseTypeFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ResponseType> {
@@ -285,8 +308,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		smallTalk,
 		/** Propriété 'nluTrainingSentences'. */
 		nluTrainingSentences,
-		/** Propriété 'utterTexts'. */
-		utterTexts	}
+		/** Propriété 'response texts'. */
+		utterTexts,
+		/** Propriété 'buttons'. */
+		buttons	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.

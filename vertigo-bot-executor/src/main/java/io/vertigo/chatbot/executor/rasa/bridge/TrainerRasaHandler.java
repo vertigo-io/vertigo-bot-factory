@@ -64,8 +64,8 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	private long coreAccuacy;
 	private long nluAccuacy;
 
-	private enum TrainingPhases{
-		INIT(0,2), STORY(2,8), CORE(10,70), NLU(80,15), FINALIZE(95,5);
+	private enum TrainingPhases {
+		INIT(0, 2), STORY(2, 8), CORE(10, 70), NLU(80, 15), FINALIZE(95, 5);
 
 		public final long base;
 		public final long size;
@@ -79,7 +79,6 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	private final Pattern coreAccuacyExtractor = Pattern.compile(".*- acc:\\s*([\\d\\.]+)");
 	private final Pattern coreEpochExtractor = Pattern.compile("Epoch \\s*(\\d+)/(\\d+)");
 	private final Pattern nluInfoExtractor = Pattern.compile("Epochs:\\s*(\\d+).*acc=([\\d\\.]+)");
-
 
 	@Override
 	public void start() {
@@ -95,7 +94,6 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 			rasaTrainingProcess.destroyForcibly();
 		}
 	}
-
 
 	public void trainModel(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final Long modelId, final BigDecimal nluThreshold, final Consumer<Boolean> trainingCallback) {
 		if (isTraining()) {
@@ -120,8 +118,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 
 		rasaTrainingProcess = execRasa("train", this::processTrainingLog, () -> postTrainModel(modelId, trainingCallback),
 				"--out", TRAINING_MODEL_DIR,
-				"--fixed-model-name", modelId.toString()
-				);
+				"--fixed-model-name", modelId.toString());
 	}
 
 	private void processTrainingLog(final String in) {
@@ -150,29 +147,29 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 
 	private void updatePhasePercent(final String logLine) {
 		switch (trainingPhase) {
-		case CORE:
-			final Matcher matcherEpoch = coreEpochExtractor.matcher(logLine);
-			if (matcherEpoch.find()) {
-				phasePercent = (100 * Long.valueOf(matcherEpoch.group(1))) / Long.valueOf(matcherEpoch.group(2));
-			} else {
-				final Matcher matcherAccuacy = coreAccuacyExtractor.matcher(logLine);
-				if (matcherAccuacy.find()) {
-					coreAccuacy =  Math.round(Float.valueOf(matcherAccuacy.group(1)) * 100);
+			case CORE:
+				final Matcher matcherEpoch = coreEpochExtractor.matcher(logLine);
+				if (matcherEpoch.find()) {
+					phasePercent = (100 * Long.valueOf(matcherEpoch.group(1))) / Long.valueOf(matcherEpoch.group(2));
+				} else {
+					final Matcher matcherAccuacy = coreAccuacyExtractor.matcher(logLine);
+					if (matcherAccuacy.find()) {
+						coreAccuacy = Math.round(Float.valueOf(matcherAccuacy.group(1)) * 100);
+					}
 				}
-			}
 
-			break;
-		case NLU:
-			final Matcher matcherNlu = nluInfoExtractor.matcher(logLine);
-			if (matcherNlu.find()) {
-				phasePercent = Long.valueOf(matcherNlu.group(1));
-				nluAccuacy =  Math.round(Float.valueOf(matcherNlu.group(2)) * 100);
-			}
+				break;
+			case NLU:
+				final Matcher matcherNlu = nluInfoExtractor.matcher(logLine);
+				if (matcherNlu.find()) {
+					phasePercent = Long.valueOf(matcherNlu.group(1));
+					nluAccuacy = Math.round(Float.valueOf(matcherNlu.group(2)) * 100);
+				}
 
-			break;
-		default:
-			phasePercent = 0;
-			break;
+				break;
+			default:
+				phasePercent = 0;
+				break;
 		}
 
 	}
@@ -221,7 +218,6 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 		return trainingLog.toString();
 	}
 
-
 	public long getCoreAccuacy() {
 		return coreAccuacy;
 	}
@@ -251,7 +247,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	}
 
 	private Path getModelPath(final Long id) {
-		return Paths.get(getBotPath(), TRAINING_MODEL_DIR, + id + ".tar.gz");
+		return Paths.get(getBotPath(), TRAINING_MODEL_DIR, +id + ".tar.gz");
 	}
 
 	public void stopTrain() {
@@ -262,11 +258,10 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	}
 
 	private static RasaConfig generateRasaConfig(final BotExport bot, final DtList<SmallTalkExport> smallTalkList, final BigDecimal nluThreshold) {
-		final String defaultText = bot.getDefaultText().getText();
+		final String fallbackText = bot.getFallbackText().getText();
 		final String welcomeText = bot.getWelcomeText().getText();
 
-		final RasaConfigBuilder rasaConfigBuilder = new RasaConfigBuilder(defaultText, welcomeText, nluThreshold);
-
+		final RasaConfigBuilder rasaConfigBuilder = new RasaConfigBuilder(fallbackText, bot.getFallbackButtons(), welcomeText, bot.getWelcomeButtons(), nluThreshold);
 
 		for (final SmallTalkExport st : smallTalkList) {
 			final List<String> utterTexts = st.getUtterTexts().stream()
@@ -277,11 +272,10 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 					.map(NluTrainingSentence::getText)
 					.collect(Collectors.toList());
 
-			rasaConfigBuilder.addSmallTalk(st.getSmallTalk(), trainingSentences, utterTexts);
+			rasaConfigBuilder.addSmallTalk(st.getSmallTalk(), trainingSentences, utterTexts, st.getButtons());
 		}
 
 		return rasaConfigBuilder.build();
 	}
-
 
 }

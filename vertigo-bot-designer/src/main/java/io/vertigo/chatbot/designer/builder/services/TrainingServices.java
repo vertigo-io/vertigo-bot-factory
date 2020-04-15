@@ -40,6 +40,7 @@ import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
+import io.vertigo.chatbot.commons.dao.ResponseButtonDAO;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.BotExport;
@@ -48,6 +49,7 @@ import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
@@ -96,6 +98,9 @@ public class TrainingServices implements Component {
 	private UtterTextDAO utterTextDAO;
 
 	@Inject
+	private ResponseButtonDAO responseButtonDAO;
+
+	@Inject
 	private ChatbotNodeDAO chatbotNodeDAO;
 
 	@Inject
@@ -123,7 +128,6 @@ public class TrainingServices implements Component {
 
 		saveTraining(training);
 
-
 		final Map<String, Object> requestData = new HashMap<>();
 		requestData.put("botExport", exportBot(botId));
 		requestData.put("smallTalkExport", exportSmallTalk(botId));
@@ -143,20 +147,18 @@ public class TrainingServices implements Component {
 		return training;
 	}
 
-
 	@SuppressWarnings("unchecked")
 	private String getMessageFromVUserResponse(final Response response) {
-		return ((List<String>)response.readEntity(Map.class).get("globalErrors")).get(0);
+		return ((List<String>) response.readEntity(Map.class).get("globalErrors")).get(0);
 	}
-
 
 	public void stopAgent(final Long botId) {
 		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId).get();
 
 		jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
-		.request(MediaType.APPLICATION_JSON)
-		.header("apiKey", devNode.getApiKey())
-		.delete();
+				.request(MediaType.APPLICATION_JSON)
+				.header("apiKey", devNode.getApiKey())
+				.delete();
 
 	}
 
@@ -183,7 +185,7 @@ public class TrainingServices implements Component {
 			error = response.getStatus() != 200 ? "Code HTTP : " + response.getStatus() : null;
 
 			if (error == null) {
-				retour=response.readEntity(TrainerInfo.class);
+				retour = response.readEntity(TrainerInfo.class);
 			}
 		} catch (final Exception e) {
 			error = e.getLocalizedMessage();
@@ -244,11 +246,15 @@ public class TrainingServices implements Component {
 		final Chatbot bot = designerServices.getChatbotById(botId);
 		final UtterText welcomeText = designerServices.getWelcomeTextByBot(bot);
 		final UtterText defaultText = designerServices.getDefaultTextByBot(bot);
+		final DtList<ResponseButton> welcomeButtons = designerServices.getWelcomeButtonsByBot(bot);
+		final DtList<ResponseButton> defaultButtons = designerServices.getDefaultButtonsByBot(bot);
 
 		final BotExport retour = new BotExport();
 		retour.setBot(bot);
 		retour.setWelcomeText(welcomeText);
-		retour.setDefaultText(defaultText);
+		retour.setWelcomeButtons(welcomeButtons);
+		retour.setFallbackText(defaultText);
+		retour.setFallbackButtons(defaultButtons);
 		return retour;
 	}
 
@@ -269,12 +275,18 @@ public class TrainingServices implements Component {
 				.collect(Collectors.groupingBy(UtterText::getSmtId,
 						VCollectors.toDtList(UtterText.class)));
 
+		final Map<Long, DtList<ResponseButton>> buttonsMap = responseButtonDAO.exportSmallTalkRelativeButtons(smallTalkIds)
+				.stream()
+				.collect(Collectors.groupingBy(ResponseButton::getSmtId,
+						VCollectors.toDtList(ResponseButton.class)));
+
 		final DtList<SmallTalkExport> retour = new DtList<>(SmallTalkExport.class);
 		for (final SmallTalk smallTalk : smallTalks) {
 			final SmallTalkExport newExport = new SmallTalkExport();
 			newExport.setSmallTalk(smallTalk);
 			newExport.setNluTrainingSentences(trainingSentencesMap.get(smallTalk.getSmtId()));
 			newExport.setUtterTexts(utterTextsMap.get(smallTalk.getSmtId()));
+			newExport.setButtons(buttonsMap.get(smallTalk.getSmtId()));
 
 			retour.add(newExport);
 		}
@@ -330,7 +342,7 @@ public class TrainingServices implements Component {
 		}
 	}
 
-	private void addObjectToMultipart(final FormDataMultiPart fdmp, final String name ,final DtObject dto) {
+	private void addObjectToMultipart(final FormDataMultiPart fdmp, final String name, final DtObject dto) {
 		final DtDefinition def = DtObjectUtil.findDtDefinition(dto);
 
 		for (final DtField field : def.getFields()) {
@@ -343,12 +355,10 @@ public class TrainingServices implements Component {
 		}
 	}
 
-
 	public DtList<Training> getAllTrainings(final Long botId) {
 		return trainingDAO.findAll(
 				Criterions.isEqualTo(TrainingFields.botId, botId),
-				DtListState.of(1000, 0, TrainingFields.versionNumber.name(), true)
-				);
+				DtListState.of(1000, 0, TrainingFields.versionNumber.name(), true));
 	}
 
 	public Training getTraining(final Long traId) {
@@ -390,9 +400,8 @@ public class TrainingServices implements Component {
 		saveTraining(training);
 	}
 
-
 	private VFile fetchModel(final ChatbotNode node, final Long modelVersion) {
-		final Response response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/admin/model/"+modelVersion)
+		final Response response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/admin/model/" + modelVersion)
 				.request(MediaType.APPLICATION_OCTET_STREAM)
 				.header("apiKey", node.getApiKey())
 				.get();

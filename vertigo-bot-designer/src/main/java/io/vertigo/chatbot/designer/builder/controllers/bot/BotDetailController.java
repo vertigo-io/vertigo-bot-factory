@@ -17,7 +17,6 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -37,15 +36,11 @@ import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.dynamo.domain.model.DtList;
-import io.vertigo.dynamo.domain.model.DtObject;
 import io.vertigo.dynamo.domain.model.FileInfoURI;
-import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
-import io.vertigo.vega.engines.webservice.json.AbstractUiListModifiable;
-import io.vertigo.vega.webservice.model.UiObject;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 

@@ -33,6 +33,7 @@ public final class SmallTalkExport implements DtObject {
 	private io.vertigo.chatbot.commons.domain.SmallTalk smallTalk;
 	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences;
 	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts;
+	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> buttons;
 	
 	/**
 	 * Champ : DATA.
@@ -74,21 +75,40 @@ public final class SmallTalkExport implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'utterTexts'.
+	 * Récupère la valeur de la propriété 'response texts'.
 	 * @return DtList de UtterText utterTexts <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoDtUtterTextDtc", required = true, label = "utterTexts")
+	@Field(domain = "DoDtUtterTextDtc", required = true, label = "response texts")
 	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> getUtterTexts() {
 		return utterTexts;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'utterTexts'.
+	 * Définit la valeur de la propriété 'response texts'.
 	 * @param utterTexts DtList de UtterText <b>Obligatoire</b>
 	 */
 	public void setUtterTexts(final io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts) {
 		this.utterTexts = utterTexts;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'buttons'.
+	 * @return DtList de ResponseButton buttons <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoDtResponseButtonDtc", required = true, label = "buttons")
+	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getButtons() {
+		return buttons;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'buttons'.
+	 * @param buttons DtList de ResponseButton <b>Obligatoire</b>
+	 */
+	public void setButtons(final io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> buttons) {
+		this.buttons = buttons;
 	}
 	
 	/** {@inheritDoc} */
