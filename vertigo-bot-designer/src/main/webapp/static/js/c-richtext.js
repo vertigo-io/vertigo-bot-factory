@@ -56,6 +56,10 @@ Vue.component('c-richtext', {
 			 * @license MIT
 			 */
 			pasteCapture: function (evt, ref) {
+				if (this._isInToolbar(evt.target)) {
+					return;
+				}
+				
 				let text, onPasteStripFormattingIEPaste
 				evt.preventDefault()
 				if (evt.originalEvent && evt.originalEvent.clipboardData.getData) {
@@ -73,6 +77,16 @@ Vue.component('c-richtext', {
 					}
 					onPasteStripFormattingIEPaste = false
 				}
+			},
+			
+			_isInToolbar: function(domElem) {
+				if (domElem.className && domElem.className.match(/\bq-editor__toolbar\b/)) {
+					return true;
+				}
+				if (!domElem.parentNode) {
+					return false;
+				}
+				return this._isInToolbar(domElem.parentNode);
 			},
 			
 			getChatPreview: function() {
