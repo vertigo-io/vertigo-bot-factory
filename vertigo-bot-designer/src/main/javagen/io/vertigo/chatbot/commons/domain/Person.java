@@ -1,23 +1,7 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.dynamo.domain.model.Entity;
+import io.vertigo.dynamo.domain.model.ListVAccessor;
 import io.vertigo.dynamo.domain.model.UID;
 import io.vertigo.dynamo.domain.model.VAccessor;
 import io.vertigo.dynamo.domain.stereotype.Field;
@@ -36,6 +20,8 @@ public final class Person implements Entity {
 	private String login;
 	private String name;
 	private String password;
+	private String passwordNew;
+	private String role;
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
 			name = "APersonGroups",
@@ -51,6 +37,19 @@ public final class Person implements Entity {
 			foreignLabel = "Person",
 			foreignMultiplicity = "0..*")
 	private final VAccessor<io.vertigo.chatbot.commons.domain.Groups> grpIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.Groups.class, "Groups");
+
+	@io.vertigo.dynamo.domain.stereotype.AssociationNN(
+			name = "AnnChatbotPerson",
+			tableName = "CHA_PER_RIGHTS",
+			dtDefinitionA = "DtPerson",
+			dtDefinitionB = "DtChatbot",
+			navigabilityA = true,
+			navigabilityB = true,
+			roleA = "Persons",
+			roleB = "Chatbots",
+			labelA = "Persons",
+			labelB = "Chatbots")
+	private final ListVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbotsAccessor = new ListVAccessor<>(this, "AnnChatbotPerson", "Chatbots");
 
 	/** {@inheritDoc} */
 	@Override
@@ -80,9 +79,9 @@ public final class Person implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Login'.
-	 * @return String login
+	 * @return String login <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", label = "Login")
+	@Field(domain = "DoLabel", required = true, label = "Login")
 	public String getLogin() {
 		return login;
 	}
@@ -90,7 +89,7 @@ public final class Person implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Login'.
-	 * @param login String
+	 * @param login String <b>Obligatoire</b>
 	 */
 	public void setLogin(final String login) {
 		this.login = login;
@@ -99,9 +98,9 @@ public final class Person implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Name'.
-	 * @return String name
+	 * @return String name <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", label = "Name")
+	@Field(domain = "DoLabel", required = true, label = "Name")
 	public String getName() {
 		return name;
 	}
@@ -109,7 +108,7 @@ public final class Person implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Name'.
-	 * @param name String
+	 * @param name String <b>Obligatoire</b>
 	 */
 	public void setName(final String name) {
 		this.name = name;
@@ -118,9 +117,9 @@ public final class Person implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Password'.
-	 * @return String password
+	 * @return String password <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoPassword", label = "Password")
+	@Field(domain = "DoPassword", required = true, label = "Password")
 	public String getPassword() {
 		return password;
 	}
@@ -128,10 +127,48 @@ public final class Person implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Password'.
-	 * @param password String
+	 * @param password String <b>Obligatoire</b>
 	 */
 	public void setPassword(final String password) {
 		this.password = password;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'New password'.
+	 * @return String passwordNew
+	 */
+	@Field(domain = "DoPassword", persistent = false, label = "New password")
+	public String getPasswordNew() {
+		return passwordNew;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'New password'.
+	 * @param passwordNew String
+	 */
+	public void setPasswordNew(final String passwordNew) {
+		this.passwordNew = passwordNew;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Role'.
+	 * @return String role <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoCode", required = true, label = "Role")
+	public String getRole() {
+		return role;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Role'.
+	 * @param role String <b>Obligatoire</b>
+	 */
+	public void setRole(final String role) {
+		this.role = role;
 	}
 	
 	/**
@@ -159,6 +196,14 @@ public final class Person implements Entity {
 	 */
 	public VAccessor<io.vertigo.chatbot.commons.domain.Groups> groups() {
 		return grpIdAccessor;
+	}
+
+	/**
+	 * Association : Chatbots.
+	 * @return l'accesseur vers la propriété 'Chatbots'
+	 */
+	public ListVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbots() {
+		return chatbotsAccessor;
 	}
 	
 	/** {@inheritDoc} */

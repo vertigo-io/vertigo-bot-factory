@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.designer.mda;
 
+import io.vertigo.account.plugins.authorization.loaders.JsonSecurityDefinitionProvider;
 import io.vertigo.app.AutoCloseableApp;
 import io.vertigo.app.config.DefinitionProviderConfig;
 import io.vertigo.app.config.ModuleConfig;
@@ -48,6 +49,9 @@ public class Studio {
 						.addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
 								.addDefinitionResource("kpr", "io/vertigo/chatbot/commons/gen.kpr") // chargement des ksp communs
 								.addDefinitionResource("kpr", "io/vertigo/chatbot/designer/gen.kpr").build())
+						.addDefinitionProvider(DefinitionProviderConfig.builder(JsonSecurityDefinitionProvider.class)
+								.addDefinitionResource("security", "io/vertigo/chatbot/designer/authorizations/auth-config.json")
+								.build())
 						.build())
 				// ---StudioFeature
 				.addModule(new StudioFeatures() // Configuration du moteur vertigo-Studio
@@ -56,6 +60,7 @@ public class Studio {
 						.withJavaDomainGenerator(Param.of("generateDtResources", "false"))
 						.withTaskGenerator()
 						.withFileGenerator()
+						.withAuthorizationGenerator()
 						.withSqlDomainGenerator(
 								Param.of("targetSubDir", "javagen/sqlgen"),
 								Param.of("baseCible", "Postgres"),
@@ -63,6 +68,8 @@ public class Studio {
 								Param.of("generateMasterData", "true"))
 						.withJsonMasterDataValuesProvider(
 								Param.of("fileName", "io/vertigo/chatbot/commons/masterDataValues.json"))
+						.withJsonMasterDataValuesProvider(
+								Param.of("fileName", "io/vertigo/chatbot/designer/masterDataValues.json"))
 						.build())
 				.build();
 

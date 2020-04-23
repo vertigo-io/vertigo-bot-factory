@@ -17,21 +17,33 @@
  */
 package io.vertigo.chatbot.designer.admin.services;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.account.authentication.AuthenticationManager;
+import io.vertigo.account.authorization.AuthorizationManager;
+import io.vertigo.account.authorization.UserAuthorizations;
 import io.vertigo.account.authorization.VSecurityException;
+import io.vertigo.account.authorization.metamodel.Authorization;
+import io.vertigo.account.authorization.metamodel.AuthorizationName;
 import io.vertigo.account.impl.authentication.UsernamePasswordAuthenticationToken;
 import io.vertigo.account.security.VSecurityManager;
+import io.vertigo.app.Home;
+import io.vertigo.chatbot.authorization.GlobalAuthorizations;
+import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotAuthorizations;
 import io.vertigo.chatbot.commons.dao.PersonDAO;
 import io.vertigo.chatbot.commons.domain.Person;
+import io.vertigo.chatbot.commons.domain.PersonRoleEnum;
 import io.vertigo.chatbot.designer.commons.DesignerUserSession;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
+import io.vertigo.core.definition.DefinitionSpace;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.lang.VUserException;
 
@@ -40,6 +52,8 @@ public class LoginServices implements Component {
 
 	@Inject
 	private AuthenticationManager authenticationManager;
+	@Inject
+	private AuthorizationManager authorizationManager;
 	@Inject
 	private VSecurityManager securityManager;
 
@@ -55,6 +69,30 @@ public class LoginServices implements Component {
 		final Person person = personDao.get(Long.valueOf(account.getId()));
 		getUserSession().setLoggedPerson(person);
 
+		final UserAuthorizations userAuthorizations = authorizationManager.obtainUserAuthorizations();
+		obtainAuthorizationPerRole(person.getRole()).stream()
+				.forEach(auth -> userAuthorizations.addAuthorization(auth));
+
+		person.chatbots().load();
+		person.chatbots().get().stream()
+				.forEach(chatbot -> userAuthorizations.withSecurityKeys("botId", chatbot.getBotId()));
+	}
+
+	private List<Authorization> obtainAuthorizationPerRole(final String role) {
+		if (PersonRoleEnum.RAdmin.name().equals(role)) {
+			return resolveAuthorizations(GlobalAuthorizations.AtzAdmPer, GlobalAuthorizations.AtzSuperAdmBot, GlobalAuthorizations.AtzAdmBot, ChatbotAuthorizations.AtzChatbot$admin);
+		} else if (PersonRoleEnum.RUser.name().equals(role)) {
+			return resolveAuthorizations(GlobalAuthorizations.AtzAdmBot, ChatbotAuthorizations.AtzChatbot$read, ChatbotAuthorizations.AtzChatbot$write);
+		}
+		throw new IllegalArgumentException("Unsupported role " + role);
+	}
+
+	private static List<Authorization> resolveAuthorizations(final AuthorizationName... authNames) {
+		final DefinitionSpace definitionSpace = Home.getApp().getDefinitionSpace();
+		final List<Authorization> authorizations = Arrays.stream(authNames)
+				.map(name -> definitionSpace.resolve(name.name(), Authorization.class))
+				.collect(Collectors.toList());
+		return authorizations;
 	}
 
 	public boolean isAuthenticated() {

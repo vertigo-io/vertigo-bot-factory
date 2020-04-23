@@ -19,9 +19,7 @@ package io.vertigo.chatbot.designer.analytics.services;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,7 +42,6 @@ import io.vertigo.database.timeseries.TimeSeriesDataBaseManager;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.dynamo.domain.model.DtList;
-import io.vertigo.lang.Assertion;
 
 @Transactional
 public class AnalyticsServices implements Component, Activeable {
@@ -170,7 +167,7 @@ public class AnalyticsServices implements Component, Activeable {
 		return TimeFilter.builder(now + " - " + timeOption.getRange(), now).withTimeDim(timeOption.getGrain()).build();
 	}
 
-	private TimedDatas mergeTimedDatas(final TimedDatas data, final TimedDatas data2, final TimedDatas... otherDatas) {
+	/*private TimedDatas mergeTimedDatas(final TimedDatas data, final TimedDatas data2, final TimedDatas... otherDatas) {
 		Assertion.checkNotNull(data);
 		Assertion.checkNotNull(data2);
 
@@ -195,27 +192,27 @@ public class AnalyticsServices implements Component, Activeable {
 
 		return newTimedDatas;
 	}
-
+	
 	private void addToTimedDatas(final TimedDatas data, final TimedDatas otherData) {
 		if (otherData.getSeriesNames().isEmpty()) {
 			return; // no data, no merge
 		}
-
+	
 		Assertion.checkArgument(data.getTimedDataSeries().size() == otherData.getTimedDataSeries().size(), "Series haven't the same size");
 		Assertion.checkArgument(otherData.getSeriesNames().stream().noneMatch(name -> data.getSeriesNames().contains(name)), "Duplicated series");
-
+	
 		data.getSeriesNames().addAll(otherData.getSeriesNames());
-
+	
 		int i = 0;
 		for (final TimedDataSerie timedDataSerie : otherData.getTimedDataSeries()) {
 			final TimedDataSerie curTimedDataSerie = data.getTimedDataSeries().get(i);
-
+	
 			Assertion.checkState(timedDataSerie.getTime().equals(curTimedDataSerie.getTime()), "Series are not time synchronous");
-
+	
 			curTimedDataSerie.getValues().putAll(timedDataSerie.getValues());
-
+	
 			i++;
 		}
-
-	}
+	
+	}*/
 }

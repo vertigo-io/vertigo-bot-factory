@@ -27,6 +27,13 @@ import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 
+import io.vertigo.account.authorization.AuthorizationManager;
+import io.vertigo.account.authorization.VSecurityException;
+import io.vertigo.account.authorization.annotations.Secured;
+import io.vertigo.account.authorization.annotations.SecuredOperation;
+import io.vertigo.account.security.VSecurityManager;
+import io.vertigo.chatbot.authorization.GlobalAuthorizations;
+import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
@@ -41,6 +48,7 @@ import io.vertigo.chatbot.commons.domain.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
+import io.vertigo.chatbot.designer.commons.DesignerUserSession;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
@@ -49,16 +57,19 @@ import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.dynamo.criteria.Criterions;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.domain.model.DtListState;
 import io.vertigo.dynamo.domain.model.FileInfoURI;
+import io.vertigo.dynamo.domain.model.ListVAccessor;
 import io.vertigo.dynamo.domain.util.VCollectors;
 import io.vertigo.dynamo.file.FileManager;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.Assertion;
 import io.vertigo.util.StringUtil;
 
+@Secured("AdmBot")
 @Transactional
 public class DesignerServices implements Component {
 
@@ -89,10 +100,28 @@ public class DesignerServices implements Component {
 	@Inject
 	private BuilderPAO builderPAO;
 
-	public DtList<Chatbot> getAllChatbots() {
+	@Inject
+	private AuthorizationManager authorizationManager;
+
+	@Inject
+	private VSecurityManager securityManager;
+
+	public DtList<Chatbot> getMySupervisedChatbots() {
+		if (authorizationManager.hasAuthorization(GlobalAuthorizations.AtzSuperAdmBot)) {
+			return getAllChatbots();
+		} else {
+			final ListVAccessor<Chatbot> chatbotLoader = getUserSession().getLoggedPerson().chatbots();
+			chatbotLoader.load();
+			return chatbotLoader.get();
+		}
+	}
+
+	@Secured("SuperAdmBot")
+	public DtList getAllChatbots() {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
 	}
 
+	@Secured("SuperAdmBot")
 	public Chatbot getNewChatbot() {
 		final Chatbot newChatbot = new Chatbot();
 		newChatbot.setCreationDate(LocalDate.now());
@@ -103,7 +132,9 @@ public class DesignerServices implements Component {
 	public Chatbot getChatbotById(final Long botId) {
 		Assertion.checkNotNull(botId);
 		// ---
-		return chatbotDAO.get(botId);
+		final Chatbot chatbot = chatbotDAO.get(botId);
+		checkRights(chatbot, ChatbotOperations.read);
+		return chatbot;
 	}
 
 	public VFile getAvatar(final Chatbot bot) {
@@ -132,7 +163,7 @@ public class DesignerServices implements Component {
 		return utterTextDAO.get(bot.getUttIdWelcome());
 	}
 
-	public Chatbot saveChatbot(final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
+	public Chatbot saveChatbot(@SecuredOperation("write") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 			final UtterText defaultText, final DtList<ResponseButton> defaultButtons,
 			final UtterText welcomeText, final DtList<ResponseButton> welcomeButtons) {
 
@@ -388,5 +419,15 @@ public class DesignerServices implements Component {
 
 	public void deleteNode(final Long nodId) {
 		chatbotNodeDAO.delete(nodId);
+	}
+
+	private DesignerUserSession getUserSession() {
+		return securityManager.<DesignerUserSession> getCurrentUserSession().get();
+	}
+
+	private void checkRights(final Chatbot chatbot, final ChatbotOperations chatbotOperation) {
+		if (!authorizationManager.isAuthorized(chatbot, chatbotOperation)) {
+			throw new VSecurityException(MessageText.of("Not enought authorizations"));//no too sharp info here : may use log
+		}
 	}
 }

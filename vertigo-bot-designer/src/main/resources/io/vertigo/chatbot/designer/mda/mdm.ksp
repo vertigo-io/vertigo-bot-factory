@@ -4,3 +4,8 @@ alter DtDefinition DtResponseType {
 	sortField : "sortOrder"
  	displayField : "label"
 }
+
+alter DtDefinition DtPersonRole {
+	sortField : "sortOrder"
+ 	displayField : "label"
+}

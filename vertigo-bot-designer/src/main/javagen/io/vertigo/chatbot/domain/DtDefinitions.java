@@ -1,20 +1,3 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.domain;
 
 import java.util.Arrays;
@@ -52,6 +35,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		NluTrainingSentence(io.vertigo.chatbot.commons.domain.NluTrainingSentence.class),
 		/** Objet de données Person. */
 		Person(io.vertigo.chatbot.commons.domain.Person.class),
+		/** Objet de données PersonRole. */
+		PersonRole(io.vertigo.chatbot.commons.domain.PersonRole.class),
 		/** Objet de données ResponseButton. */
 		ResponseButton(io.vertigo.chatbot.commons.domain.ResponseButton.class),
 		/** Objet de données ResponseType. */
@@ -230,8 +215,23 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		name,
 		/** Propriété 'Password'. */
 		password,
+		/** Propriété 'New password'. */
+		passwordNew,
+		/** Propriété 'Role'. */
+		role,
 		/** Propriété 'Group'. */
 		grpId	}
+
+	/**
+	 * Enumération des champs de PersonRole.
+	 */
+	public enum PersonRoleFields implements DtFieldName<io.vertigo.chatbot.commons.domain.PersonRole> {
+		/** Propriété 'ID'. */
+		rolCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Order'. */
+		sortOrder	}
 
 	/**
 	 * Enumération des champs de ResponseButton.

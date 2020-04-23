@@ -40,9 +40,8 @@ public class BotListController extends AbstractVSpringMvcController {
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext) {
-		viewContext.publishDtList(botsKey, chatbotServices.getAllChatbots());
+		viewContext.publishDtList(botsKey, chatbotServices.getMySupervisedChatbots());
 		toModeReadOnly();
 	}
-
 
 }

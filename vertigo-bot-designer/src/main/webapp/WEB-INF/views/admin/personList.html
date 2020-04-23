@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/basicLayout}"
+	>
+	
+	<head>
+		<title>Person list</title>
+	</head>
+	
+	<body>
+		<section layout:fragment="content">
+			<vu:table list="persons" color="primary" componentId="personsTable" 
+				tr_@click.native="|goTo('@{/person/}'+props.row.perId)|" tr_class="nav">
+				<vu:include-data object="persons" field="perId" />
+				<vu:column field="login" sortable="true" />
+				<vu:column field="name" sortable="true" />
+				<vu:column field="role" sortable="true" />
+			</vu:table>
+			
+			<q-page-sticky position="bottom-right">
+				<vu:button-link icon="add" label="Create" url="@{/person/new}" size="lg" color="primary" /> 
+			</q-page-sticky>
+		</section>
+		
+	</body>
+</html>

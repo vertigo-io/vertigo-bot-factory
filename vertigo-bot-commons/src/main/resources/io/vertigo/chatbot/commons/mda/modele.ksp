@@ -2,36 +2,10 @@ package io.vertigo.chatbot.commons.domain
 
 
 /*********************/
-/* **** Comptes **** */
-/*********************/
-create DtDefinition DtPerson {
-	id perId 		{domain: DoId 		label:"Id"}
-	field login 	{domain: DoLabel 	label: "Login" 		required:"false"}
-	field name 		{domain: DoLabel 	label: "Name" 		required:"false"}
-	field password 	{domain: DoPassword label: "Password" 	required:"false"}
-}
-
-
-create DtDefinition DtGroups {
-	id grpId 		{domain: DoId 		label:"Id"}
-	field name 		{domain: DoLabel 	label: "Name" required:"false"}
-}
-
-
-create Association APersonGroups {
-	fkFieldName : "grpId"
-    
- 	dtDefinitionA : DtPerson
- 	type : "*>?"
-	dtDefinitionB : DtGroups
-	
-	labelB : "Group"
-}
-
-/*********************/
 /* **** Chatbot **** */
 /*********************/
 create DtDefinition DtChatbot {
+	stereotype : "KeyConcept"
 	id    botId 		{domain: DoId 			label: "ID"}
 	field name 			{domain: DoLabel 		label: "Name" 			required: "true"}
 	field description 	{domain: DoText 		label: "Description"	required: "true"}

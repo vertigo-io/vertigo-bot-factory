@@ -100,6 +100,8 @@ public class BotDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDto(defaultKey, newDefault);
 		viewContext.publishDtListModifiable(defaultButtonsKey, new DtList<>(ResponseButton.class));
 
+		viewContext.publishDtList(smallTalkKey, new DtList<>(SmallTalk.class));
+
 		final UtterText newWelcome = new UtterText();
 		newWelcome.setText("Hello !");
 		viewContext.publishDto(welcomeKey, newWelcome);

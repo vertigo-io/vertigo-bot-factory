@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/detailLayout}" th:with="tab=informations, noNavigation=${model.modeCreate}"
+	>
+	
+	<head>
+		<title>Person detail</title>
+		
+		<!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+		<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+		<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+		<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>				
+	</head>
+	
+	<body>
+
+		<div layout:fragment="content-header-title" id="baseTitle">
+			<vu:include-data object="person" field="name" />
+			<span class="text-bigger">{{vueData.person.name}}</span> <br />
+		</div>
+
+		<section layout:fragment="content-header-actions">
+			<vu:button-link th:if="${model.modeEdit}" url="@{/person/{id}(id=${model.person.perId})}" ariaLabel="Cancel" icon="fas fa-ban"
+							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
+			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+							class="on-left" :round size="lg" color="primary" />
+			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_changePassword}" ariaLabel="Change Password" icon="vpn_key"
+							class="on-left" :round size="lg" color="primary" />
+		</section>
+		<div layout:fragment="content-header-tabs">
+		</div>	
+		<section layout:fragment="content">
+			<vu:block id="identity" title="Person identity" th:if="${!model.modeChangePassword || model.modeCreate}">
+				<vu:text-field object="person" field="login"/>
+				<vu:text-field object="person" field="name"/>
+				<vu:select object="person" field="role" list="roles" valueField="rolCd" labelField="label"/>
+			
+				<vu:include-data-primitive key="chatbotsSelected"/>
+				<vu:include-data-primitive key="chatbotsSelected"/>
+				<vu:include-data object="chatbots" field="botId"/>
+				<vu:include-data object="chatbots" field="name"/>
+				<q-select
+				  th::disable="${model.modeReadOnly || model.modeChangePassword}"
+		          fill-input
+			      map-options
+			      emit-value
+		          multiple
+		          v-model="vueData.chatbotsSelected"
+		          :options="transformListForSelection('chatbots', 'botId', 'name')"
+		          use-chips
+		          stack-label
+		          label="Supervised bots"
+		        />
+		        <vu:include-data-primitive key="chatbotsSelectedStr"/>
+				<input type="hidden" name="vContext[chatbotsSelectedStr]" :value="vueData.chatbotsSelected" />
+							
+			</vu:block>
+			
+			<vu:block id="password" title="Person password"  th:if="${model.modeChangePassword}">
+				<vu:text-field-edit object="person" field="passwordNew"/>
+			</vu:block>
+			
+			
+			<q-page-sticky position="bottom-right">
+				<vu:button-submit th:if="${!model.modeReadOnly || model.modeChangePassword}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
+			</q-page-sticky>
+		</section>
+		
+	</body>
+</html>

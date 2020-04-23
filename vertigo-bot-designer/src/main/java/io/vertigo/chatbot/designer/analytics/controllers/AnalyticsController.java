@@ -72,8 +72,7 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 			@RequestParam("botId") final Optional<Long> botId,
 			@RequestParam("nodId") final Optional<Long> nodId,
 			@RequestParam("time") final Optional<TimeOption> timeOption) {
-
-		viewContext.publishDtList(botsKey, designerServices.getAllChatbots());
+		viewContext.publishDtList(botsKey, designerServices.getMySupervisedChatbots());
 		viewContext.publishDtList(nodesKey, new DtList<ChatbotNode>(ChatbotNode.class));
 
 		final StatCriteria statCriteria = new StatCriteria();

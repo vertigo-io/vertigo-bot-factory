@@ -1,0 +1,40 @@
+{
+	"globalAuthorizations": [{
+		"name": "AdmPer",
+		"label": "Person administrator"
+	},
+	{
+		"name": "AdmBot",
+		"label": "Bot administrator"
+	},
+	{
+		"__comment": "Create or view all bots.",
+		"name": "SuperAdmBot",
+		"label": "Bots super administrator"
+	}],
+	"securedEntities": [
+	{
+		"entity": "Chatbot",
+		"securityFields" : ["botId"],
+		"securityDimensions": [],
+		"operations": [  {
+			"__comment": "Visibilité si affecté à l'utilisateur'.",
+			"name": "read", "label" : "Lecture",
+			"rules": [
+				"botId=${botId}"
+			]
+		},{
+			"__comment": "Modification si affecté à l'utilisateur.",
+			"name": "write", "label" : "Modification",
+			"rules": [
+				"botId=${botId}"
+			]
+		},
+		{
+			"__comment": "Visibilité globale pour le super admin. Sans régles = toujours ok.",
+			"name": "admin", "label" : "Accès super admin",
+			"overrides": ["read", "write"],
+			"rules": ["true"]
+		}]
+	}]
+}

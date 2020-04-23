@@ -18,7 +18,15 @@
 							<div class="text-subtitle2">Build the bot you always wanted</div>
 						</q-toolbar-title>
 					</div>
+					<div class="col q-mx-xl">
+					</div>
+					<div>
+						<q-btn type="a" color="grey" icon="mdi-lan-disconnect" round aria-label="Disconnect" th:href="@{/login/_logout}" >
+							<q-tooltip >Disconnect</q-tooltip>
+						</q-btn>
+					</div>
 				</q-toolbar>
+				
 			</q-header>
 	       	<!-- END HEADER-->
 	       			
@@ -41,8 +49,14 @@
 		      
 		      <nav class="text-no-wrap">
 		       <q-list :class="{'dense-list-header':!componentStates.navDrawer.mini}" style="height:100%">
-		      
-		        <q-item tag="a" th:href="@{/bots/}">
+		      	<q-item tag="a" th:href="@{/persons/}" th:if="${model.userAuthorizations[AtzAdmPer]}">
+		          <q-item-section avatar>
+			        <q-icon name="fas fa-users"></q-icon>
+			      </q-item-section>
+		          <q-item-section>Users</q-item-section>
+		        </q-item>
+		        
+		        <q-item tag="a" th:href="@{/bots/}" th:if="${model.userAuthorizations[AtzAdmBot]}">
 		          <q-item-section avatar>
 			        <q-icon name="fas fa-robot"></q-icon>
 			      </q-item-section>

@@ -21,3 +21,4 @@ create DtDefinition DtTopIntent {
 	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			required: "false"}
 	field count			{domain: DoNumber 				label: "Count" 					required: "false"}
 }
+

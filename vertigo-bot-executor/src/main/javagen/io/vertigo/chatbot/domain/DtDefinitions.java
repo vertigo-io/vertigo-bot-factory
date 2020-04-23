@@ -1,20 +1,3 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.domain;
 
 import java.util.Arrays;
@@ -44,14 +27,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données ExecutorTrainingCallback. */
 		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
-		/** Objet de données Groups. */
-		Groups(io.vertigo.chatbot.commons.domain.Groups.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données NluTrainingSentence. */
 		NluTrainingSentence(io.vertigo.chatbot.commons.domain.NluTrainingSentence.class),
-		/** Objet de données Person. */
-		Person(io.vertigo.chatbot.commons.domain.Person.class),
 		/** Objet de données RasaConfig. */
 		RasaConfig(io.vertigo.chatbot.executor.domain.RasaConfig.class),
 		/** Objet de données ResponseButton. */
@@ -176,15 +155,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		apiKey	}
 
 	/**
-	 * Enumération des champs de Groups.
-	 */
-	public enum GroupsFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Groups> {
-		/** Propriété 'Id'. */
-		grpId,
-		/** Propriété 'Name'. */
-		name	}
-
-	/**
 	 * Enumération des champs de MediaFileInfo.
 	 */
 	public enum MediaFileInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.MediaFileInfo> {
@@ -213,21 +183,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		text,
 		/** Propriété 'SmallTalk'. */
 		smtId	}
-
-	/**
-	 * Enumération des champs de Person.
-	 */
-	public enum PersonFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Person> {
-		/** Propriété 'Id'. */
-		perId,
-		/** Propriété 'Login'. */
-		login,
-		/** Propriété 'Name'. */
-		name,
-		/** Propriété 'Password'. */
-		password,
-		/** Propriété 'Group'. */
-		grpId	}
 
 	/**
 	 * Enumération des champs de RasaConfig.

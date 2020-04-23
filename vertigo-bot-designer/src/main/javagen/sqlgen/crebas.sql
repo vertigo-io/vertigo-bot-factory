@@ -5,6 +5,7 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
+drop table IF EXISTS CHA_PER_RIGHTS cascade;
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_NODE cascade;
@@ -17,6 +18,7 @@ drop table IF EXISTS NLU_TRAINING_SENTENCE cascade;
 drop sequence IF EXISTS SEQ_NLU_TRAINING_SENTENCE;
 drop table IF EXISTS PERSON cascade;
 drop sequence IF EXISTS SEQ_PERSON;
+drop table IF EXISTS PERSON_ROLE cascade;
 drop table IF EXISTS RESPONSE_BUTTON cascade;
 drop sequence IF EXISTS SEQ_RESPONSE_BUTTON;
 drop table IF EXISTS RESPONSE_TYPE cascade;
@@ -50,6 +52,7 @@ create sequence SEQ_NLU_TRAINING_SENTENCE
 
 create sequence SEQ_PERSON
 	start with 1000 cache 20; 
+
 
 create sequence SEQ_RESPONSE_BUTTON
 	start with 1000 cache 20; 
@@ -223,9 +226,10 @@ comment on column NLU_TRAINING_SENTENCE.SMT_ID is
 create table PERSON
 (
     PER_ID      	 NUMERIC     	not null,
-    LOGIN       	 VARCHAR(100)	,
-    NAME        	 VARCHAR(100)	,
-    PASSWORD    	 VARCHAR(100)	,
+    LOGIN       	 VARCHAR(100)	not null,
+    NAME        	 VARCHAR(100)	not null,
+    PASSWORD    	 VARCHAR(100)	not null,
+    ROLE        	 VARCHAR(100)	not null,
     GRP_ID      	 NUMERIC     	,
     constraint PK_PERSON primary key (PER_ID)
 );
@@ -242,8 +246,31 @@ comment on column PERSON.NAME is
 comment on column PERSON.PASSWORD is
 'Password';
 
+comment on column PERSON.ROLE is
+'Role';
+
 comment on column PERSON.GRP_ID is
 'Group';
+
+-- ============================================================
+--   Table : PERSON_ROLE                                        
+-- ============================================================
+create table PERSON_ROLE
+(
+    ROL_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    SORT_ORDER  	 NUMERIC     	not null,
+    constraint PK_PERSON_ROLE primary key (ROL_CD)
+);
+
+comment on column PERSON_ROLE.ROL_CD is
+'ID';
+
+comment on column PERSON_ROLE.LABEL is
+'Label';
+
+comment on column PERSON_ROLE.SORT_ORDER is
+'Order';
 
 -- ============================================================
 --   Table : RESPONSE_BUTTON                                        
@@ -498,4 +525,21 @@ alter table TRAINING
 
 create index TRAINING_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on TRAINING (FIL_ID_MODEL asc);
 
+
+create table CHA_PER_RIGHTS
+(
+	PER_ID      	 NUMERIC     	 not null,
+	BOT_ID      	 NUMERIC     	 not null,
+	constraint PK_CHA_PER_RIGHTS primary key (PER_ID, BOT_ID),
+	constraint FK_hatbotPerson_PERSON 
+		foreign key(PER_ID)
+		references PERSON (PER_ID),
+	constraint FK_hatbotPerson_CHATBOT 
+		foreign key(BOT_ID)
+		references CHATBOT (BOT_ID)
+);
+
+create index hatbotPerson_PERSON_FK on CHA_PER_RIGHTS (PER_ID asc);
+
+create index hatbotPerson_CHATBOT_FK on CHA_PER_RIGHTS (BOT_ID asc);
 

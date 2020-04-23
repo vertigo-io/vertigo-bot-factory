@@ -1,0 +1,51 @@
+package io.vertigo.chatbot.commons.domain 
+
+
+/*********************/
+/* **** Comptes **** */
+/*********************/
+
+create DtDefinition DtPersonRole {
+	stereotype : "StaticMasterData"
+	id    rolCd 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Label" 		required:"true"}
+	field sortOrder 	{domain: DoNumber 	label: "Order" 		required:"true"}
+}
+
+
+create DtDefinition DtPerson {
+	id perId 			{domain: DoId 		label:"Id"}
+	field login 		{domain: DoLabel 	label: "Login" 		required:"true"}
+	field name 			{domain: DoLabel 	label: "Name" 		required:"true"}
+	field password 		{domain: DoPassword label: "Password" 	required:"true"}
+	field passwordNew 	{domain: DoPassword label: "New password" 	required:"false"  persistent:"false"}
+	field role 			{domain: DoCode 	label: "Role" 		required:"true"}
+}
+
+create DtDefinition DtGroups {
+	id grpId 		{domain: DoId 		label:"Id"}
+	field name 		{domain: DoLabel 	label: "Name" required:"false"}
+}
+
+create Association APersonGroups {
+	fkFieldName : "grpId"
+    
+ 	dtDefinitionA : DtPerson
+ 	type : "*>?"
+	dtDefinitionB : DtGroups
+	
+	labelB : "Group"
+}
+
+create AssociationNN AnnChatbotPerson {
+	tableName : "CHA_PER_RIGHTS"
+
+	dtDefinitionA : DtPerson
+	dtDefinitionB : DtChatbot
+	navigabilityA : "true"
+	navigabilityB : "true"
+	roleA : "Persons"
+	labelA : "Persons"
+	roleB : "Chatbots"
+	labelB : "Chatbots"
+}

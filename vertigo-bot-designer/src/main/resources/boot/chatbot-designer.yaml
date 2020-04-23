@@ -24,8 +24,13 @@ modules:
       - timeseries:
     featuresConfig:
       - sql.datasource:
+          __flags__: ["!home"]
           classname: io.vertigo.database.impl.sql.vendor.postgresql.PostgreSqlDataBase
           source: java:/comp/env/jdbc/DataSource
+      - sql.datasource:
+          __flags__: ["home"]
+          classname: io.vertigo.database.impl.sql.vendor.h2.H2DataBase
+          source: java:/comp/env/jdbc/DataSourceHome
       - timeseries.influxdb:
           host: ${INFLUXDB_URL}
           user: anonymous
@@ -55,6 +60,7 @@ modules:
           userSessionClassName: io.vertigo.chatbot.designer.commons.DesignerUserSession
       - account:
       - authentication:
+      - authorization:
     featuresConfig:
        - account.store.store:
           userIdentityEntity: DtPerson
@@ -82,3 +88,7 @@ modules:
   io.vertigo.chatbot.designer.admin.AdminFeatures:
   io.vertigo.chatbot.designer.builder.BuilderFeatures: 
   io.vertigo.chatbot.designer.analytics.AnalyticsFeatures:
+
+initializers:
+  - io.vertigo.chatbot.designer.boot.DataBaseInitializer:
+      __flags__: ["crebase"]
