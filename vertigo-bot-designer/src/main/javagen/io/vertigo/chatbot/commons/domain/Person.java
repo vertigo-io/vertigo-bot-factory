@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.dynamo.domain.model.Entity;
+import io.vertigo.dynamo.domain.model.EnumVAccessor;
 import io.vertigo.dynamo.domain.model.ListVAccessor;
 import io.vertigo.dynamo.domain.model.UID;
 import io.vertigo.dynamo.domain.model.VAccessor;
@@ -21,7 +22,6 @@ public final class Person implements Entity {
 	private String name;
 	private String password;
 	private String passwordNew;
-	private String role;
 
 	@io.vertigo.dynamo.domain.stereotype.Association(
 			name = "APersonGroups",
@@ -37,6 +37,21 @@ public final class Person implements Entity {
 			foreignLabel = "Person",
 			foreignMultiplicity = "0..*")
 	private final VAccessor<io.vertigo.chatbot.commons.domain.Groups> grpIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.Groups.class, "Groups");
+
+	@io.vertigo.dynamo.domain.stereotype.Association(
+			name = "APersonRole",
+			fkFieldName = "rolCd",
+			primaryDtDefinitionName = "DtPersonRole",
+			primaryIsNavigable = true,
+			primaryRole = "PersonRole",
+			primaryLabel = "Role",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtPerson",
+			foreignIsNavigable = false,
+			foreignRole = "Person",
+			foreignLabel = "Person",
+			foreignMultiplicity = "0..*")
+	private final EnumVAccessor<io.vertigo.chatbot.commons.domain.PersonRole, io.vertigo.chatbot.commons.domain.PersonRoleEnum> rolCdAccessor = new EnumVAccessor<>(io.vertigo.chatbot.commons.domain.PersonRole.class, "PersonRole", io.vertigo.chatbot.commons.domain.PersonRoleEnum.class);
 
 	@io.vertigo.dynamo.domain.stereotype.AssociationNN(
 			name = "AnnChatbotPerson",
@@ -153,25 +168,6 @@ public final class Person implements Entity {
 	}
 	
 	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Role'.
-	 * @return String role <b>Obligatoire</b>
-	 */
-	@Field(domain = "DoCode", required = true, label = "Role")
-	public String getRole() {
-		return role;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Role'.
-	 * @param role String <b>Obligatoire</b>
-	 */
-	public void setRole(final String role) {
-		this.role = role;
-	}
-	
-	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Group'.
 	 * @return Long grpId
@@ -189,6 +185,25 @@ public final class Person implements Entity {
 	public void setGrpId(final Long grpId) {
 		grpIdAccessor.setId(grpId);
 	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Role'.
+	 * @return String rolCd <b>Obligatoire</b>
+	 */
+	@Field(domain = "DoCode", type = "FOREIGN_KEY", required = true, label = "Role")
+	public String getRolCd() {
+		return (String) rolCdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Role'.
+	 * @param rolCd String <b>Obligatoire</b>
+	 */
+	public void setRolCd(final String rolCd) {
+		rolCdAccessor.setId(rolCd);
+	}
 
  	/**
 	 * Association : Group.
@@ -196,6 +211,14 @@ public final class Person implements Entity {
 	 */
 	public VAccessor<io.vertigo.chatbot.commons.domain.Groups> groups() {
 		return grpIdAccessor;
+	}
+
+ 	/**
+	 * Association : Role.
+	 * @return l'accesseur vers la propriété 'Role'
+	 */
+	public EnumVAccessor<io.vertigo.chatbot.commons.domain.PersonRole, io.vertigo.chatbot.commons.domain.PersonRoleEnum> personRole() {
+		return rolCdAccessor;
 	}
 
 	/**

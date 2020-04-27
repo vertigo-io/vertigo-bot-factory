@@ -217,16 +217,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		password,
 		/** Propriété 'New password'. */
 		passwordNew,
-		/** Propriété 'Role'. */
-		role,
 		/** Propriété 'Group'. */
-		grpId	}
+		grpId,
+		/** Propriété 'Role'. */
+		rolCd	}
 
 	/**
 	 * Enumération des champs de PersonRole.
 	 */
 	public enum PersonRoleFields implements DtFieldName<io.vertigo.chatbot.commons.domain.PersonRole> {
-		/** Propriété 'ID'. */
+		/** Propriété 'Code'. */
 		rolCd,
 		/** Propriété 'Label'. */
 		label,

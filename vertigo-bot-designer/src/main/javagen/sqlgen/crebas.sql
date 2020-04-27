@@ -229,8 +229,8 @@ create table PERSON
     LOGIN       	 VARCHAR(100)	not null,
     NAME        	 VARCHAR(100)	not null,
     PASSWORD    	 VARCHAR(100)	not null,
-    ROLE        	 VARCHAR(100)	not null,
     GRP_ID      	 NUMERIC     	,
+    ROL_CD      	 VARCHAR(100)	not null,
     constraint PK_PERSON primary key (PER_ID)
 );
 
@@ -246,11 +246,11 @@ comment on column PERSON.NAME is
 comment on column PERSON.PASSWORD is
 'Password';
 
-comment on column PERSON.ROLE is
-'Role';
-
 comment on column PERSON.GRP_ID is
 'Group';
+
+comment on column PERSON.ROL_CD is
+'Role';
 
 -- ============================================================
 --   Table : PERSON_ROLE                                        
@@ -264,7 +264,7 @@ create table PERSON_ROLE
 );
 
 comment on column PERSON_ROLE.ROL_CD is
-'ID';
+'Code';
 
 comment on column PERSON_ROLE.LABEL is
 'Label';
@@ -476,6 +476,12 @@ alter table PERSON
 	references GROUPS (GRP_ID);
 
 create index PERSON_GROUPS_GROUPS_FK on PERSON (GRP_ID asc);
+
+alter table PERSON
+	add constraint FK_PERSON_ROLE_PERSON_ROLE foreign key (ROL_CD)
+	references PERSON_ROLE (ROL_CD);
+
+create index PERSON_ROLE_PERSON_ROLE_FK on PERSON (ROL_CD asc);
 
 alter table RESPONSE_BUTTON
 	add constraint FK_RESPONSE_BUTTON_SMALL_TALK_RESPONSE_SMALL_TALK foreign key (SMT_ID_RESPONSE)

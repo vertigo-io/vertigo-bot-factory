@@ -26,17 +26,17 @@ public final class PersonRole implements DtStaticMasterData {
 	
 	/**
 	 * Champ : ID.
-	 * Récupère la valeur de la propriété 'ID'.
+	 * Récupère la valeur de la propriété 'Code'.
 	 * @return String rolCd <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoCode", type = "ID", required = true, label = "ID")
+	@Field(domain = "DoCode", type = "ID", required = true, label = "Code")
 	public String getRolCd() {
 		return rolCd;
 	}
 
 	/**
 	 * Champ : ID.
-	 * Définit la valeur de la propriété 'ID'.
+	 * Définit la valeur de la propriété 'Code'.
 	 * @param rolCd String <b>Obligatoire</b>
 	 */
 	public void setRolCd(final String rolCd) {
