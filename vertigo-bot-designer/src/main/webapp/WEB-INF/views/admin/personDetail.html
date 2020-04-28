@@ -36,7 +36,7 @@
 			<vu:block id="identity" title="Person identity" th:if="${!model.modeChangePassword || model.modeCreate}">
 				<vu:text-field object="person" field="login"/>
 				<vu:text-field object="person" field="name"/>
-				<vu:select object="person" field="role" list="roles" valueField="rolCd" labelField="label"/>
+				<vu:select object="person" field="rolCd" list="roles" valueField="rolCd" labelField="label"/>
 			
 				<vu:include-data-primitive key="chatbotsSelected"/>
 				<vu:include-data-primitive key="chatbotsSelected"/>

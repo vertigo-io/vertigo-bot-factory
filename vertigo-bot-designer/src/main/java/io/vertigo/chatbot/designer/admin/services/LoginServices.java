@@ -70,7 +70,7 @@ public class LoginServices implements Component {
 		getUserSession().setLoggedPerson(person);
 
 		final UserAuthorizations userAuthorizations = authorizationManager.obtainUserAuthorizations();
-		obtainAuthorizationPerRole(person.getRole()).stream()
+		obtainAuthorizationPerRole(person.getRolCd()).stream()
 				.forEach(auth -> userAuthorizations.addAuthorization(auth));
 
 		person.chatbots().load();
