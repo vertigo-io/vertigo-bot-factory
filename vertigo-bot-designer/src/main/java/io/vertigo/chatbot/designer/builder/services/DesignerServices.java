@@ -117,7 +117,7 @@ public class DesignerServices implements Component {
 	}
 
 	@Secured("SuperAdmBot")
-	public DtList getAllChatbots() {
+	public DtList<Chatbot> getAllChatbots() {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
 	}
 
@@ -422,7 +422,7 @@ public class DesignerServices implements Component {
 	}
 
 	private DesignerUserSession getUserSession() {
-		return securityManager.<DesignerUserSession> getCurrentUserSession().get();
+		return securityManager.<DesignerUserSession>getCurrentUserSession().get();
 	}
 
 	private void checkRights(final Chatbot chatbot, final ChatbotOperations chatbotOperation) {

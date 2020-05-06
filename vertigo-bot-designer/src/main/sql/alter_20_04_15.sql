@@ -1,12 +1,3 @@
-
--- ============================================================
---   Table : PERSON                                        
--- ============================================================
-alter table PERSON ADD ROL_CD  VARCHAR(100);	--not null default 'RUser';
-
-comment on column PERSON.ROL_CD is
-'Role';
-
 -- ============================================================
 --   Table : PERSON_ROLE                                        
 -- ============================================================
@@ -26,6 +17,23 @@ comment on column PERSON_ROLE.LABEL is
 
 comment on column PERSON_ROLE.SORT_ORDER is
 'Order';
+
+
+insert into PERSON_ROLE(ROL_CD, LABEL, SORT_ORDER) values ('RAdmin', 'Admin', '1');
+insert into PERSON_ROLE(ROL_CD, LABEL, SORT_ORDER) values ('RUser', 'User', '2');
+
+
+-- ============================================================
+--   Table : PERSON                                        
+-- ============================================================
+alter table PERSON ADD ROL_CD  VARCHAR(100) not null default 'RAdmin';
+
+alter table PERSON alter column ROL_CD drop default;
+
+
+comment on column PERSON.ROL_CD is
+'Role';
+
 
 
 alter table PERSON
@@ -51,6 +59,6 @@ create table CHA_PER_RIGHTS
 		references CHATBOT (BOT_ID)
 );
 
-create index hatbotPerson_PERSON_FK on CHA_PER_RIGHTS (PER_ID asc);
+create index CHA_PER_RIGHTS_PERSON_FK on CHA_PER_RIGHTS (PER_ID asc);
 
-create index hatbotPerson_CHATBOT_FK on CHA_PER_RIGHTS (BOT_ID asc);
+create index CHA_PER_RIGHTS_CHATBOT_FK on CHA_PER_RIGHTS (BOT_ID asc);
