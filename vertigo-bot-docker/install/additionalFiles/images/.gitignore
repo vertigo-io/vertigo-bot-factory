@@ -1,0 +1,6 @@
+# This directory contains docker images to deploy
+
+# Ignore everything in this directory
+*
+# Except this file
+!.gitignore
