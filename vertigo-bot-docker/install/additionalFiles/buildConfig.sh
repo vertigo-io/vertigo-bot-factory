@@ -48,8 +48,8 @@ services:
   postgres:
     image: postgres:12.1
     environment:
-      PGDATA:/var/lib/postgresql/data/pgdata
-      POSTGRES_PASSWORD:$POSTGRES_PASSWORD
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
     volumes:
       - cf_postgres_data:/var/lib/postgresql/data/pgdata
       - ./initSql/:/docker-entrypoint-initdb.d/
@@ -102,7 +102,7 @@ services:
     networks:
       - cb_factory
     restart: unless-stopped
-	
+  
 EOT
 
 for i in $(seq 1 $runnerCount)
@@ -129,7 +129,7 @@ do
     networks:
       - cb_factory
     restart: unless-stopped
-
+  
 EOT
 done
 

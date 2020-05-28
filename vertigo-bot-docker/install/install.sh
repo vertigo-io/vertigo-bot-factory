@@ -12,7 +12,7 @@ check_program() {
 }
 
 d=`date +%Y_%m_%d_%H_%M_%S`
-logFile=installLog_"$d".log
+logFile=logInstall_"$d".log
 printf "" > $logFile # init logFile
 
 say() {
@@ -21,19 +21,29 @@ say() {
 }
 
 log() {
-	printf "$1" | sed 's/\x1b\[[0-9;]*[A-Za-z]//g' >> $logFile # log without text formating (CSI sequence)
+	printf "${1//%/%%}" | sed 's/\x1b\[[0-9;]*[A-Za-z]//g' >> $logFile 2>&1 # log without text formating (CSI sequence)
 }
 
 exec_logged() {
-	`$@ >> $logFile 2>&1`
-	if [ $? -ne 0 ]
+	cmd=$@
+	log "> $cmd\n"
+	out=`$cmd 2>&1`
+	ret=$?
+	if [[ -z $out ]]
 	then
-		say 'Unknown \e[31;1merror\e[0m. See log file for more info.'
+		log "\n"
+	else
+		log "$out\n\n" # new line at the end are stripped
+	fi
+	
+	if [ $ret -ne 0 ]
+	then
+		say 'An \e[31;1merror\e[0m occured :( See log file for more info.'
 		exit 1
 	fi
 }
 
-numberOfStep=7
+numberOfStep=8
 stepNumber=1
 
 display_step() {
@@ -93,7 +103,7 @@ done
 
 say "Will install the factory with $runnerCount runner(s), ok ? (Y/N)"
 read -n 1 -r
-say "" # move to a new line
+say "\n" # move to a new line
 
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
@@ -108,26 +118,12 @@ installDir=/opt/chatbot_factory
 # ###
 
 say "Install in progress..."
-display_step
-
-if ! check_program docker-compose
-then
-  log "Installing docker-compose...\n"
-  curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose >> $logFile 2>&1
-  chmod +x /usr/local/bin/docker-compose >> $logFile 2>&1
-  
-  if ! check_program docker-compose
-  then
-    log "Fail to install docker compose :("
-    exit 1
-  fi
-  
-  log "Installing docker-compose : done\n"
-fi
 
 display_step
-exec_logged mkdir -p $installDir
-exec_logged cp ./additionalFiles/data/* $installDir/
+exec_logged /bin/bash ./additionalFiles/installCompose.sh
+
+display_step
+exec_logged /bin/bash ./additionalFiles/copyData.sh $installDir
 exec_logged /bin/bash ./additionalFiles/buildConfig.sh $installDir $runnerCount
 
 display_step
@@ -140,7 +136,10 @@ display_step
 exec_logged docker load -i ./additionalFiles/images/cf_runner.tar.gz
 
 display_step
-exec_logged docker-compose -f $installDir/docker-compose.yml pull # get from internet public images
+exec_logged docker-compose -f $installDir/docker-compose.yml pull postgres influxdb # get from internet public images
+
+display_step
+exec_logged /bin/bash ./additionalFiles/installCron.sh $installDir
 
 display_step
 exec_logged /bin/bash $installDir/start.sh
@@ -153,4 +152,4 @@ say "Services are starting and will be soon available.\n"
 printf "Here is the configuration I generated for you :\n"
 cat $installDir/config.properties
 
-printf "\nIt can be found later in $installDirconfig.properties\n"
+printf "\nIt can be found later in ${installDir}/config.properties\n"
