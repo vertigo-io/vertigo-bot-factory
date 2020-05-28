@@ -1,0 +1,1 @@
+docker save cf_runner | gzip -c > cf_runner.tar.gz

@@ -1,0 +1,1 @@
+docker save cf_designer | gzip -c > cf_designer.tar.gz
