@@ -227,7 +227,9 @@ public class TrainerRasaHandler extends AbstractRasaHandler implements Component
 	}
 
 	private void writeToRasaFile(final String content, final String relativePath) {
-		try (FileOutputStream outputStream = new FileOutputStream(getBotPath() + "/" + relativePath)) {
+		final File rasaFile = new File(getBotPath() + "/" + relativePath);
+		rasaFile.getParentFile().mkdirs();
+		try (FileOutputStream outputStream = new FileOutputStream(rasaFile)) {
 			outputStream.write(content.getBytes(StandardCharsets.UTF_8));
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Impossible d'écrire le fichier de configuration de Rasa");
