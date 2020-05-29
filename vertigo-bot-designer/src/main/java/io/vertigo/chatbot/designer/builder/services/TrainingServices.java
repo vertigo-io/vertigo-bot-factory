@@ -58,6 +58,7 @@ import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.component.Component;
@@ -376,7 +377,11 @@ public class TrainingServices implements Component {
 	public void trainingCallback(final ExecutorTrainingCallback callback) {
 		final Training training = getTraining(callback.getTrainingId());
 
-		final ChatbotNode node = designerServices.getDevNodeByBotId(training.getBotId()).get();
+		// final ChatbotNode node = designerServices.getDevNodeByBotId(training.getBotId()).get(); // FIXME : can't be used because of security
+		final ChatbotNode node = chatbotNodeDAO.findOptional(
+				Criterions.isEqualTo(ChatbotNodeFields.botId, training.getBotId())
+						.and(Criterions.isEqualTo(ChatbotNodeFields.isDev, true)))
+				.get();
 
 		Assertion.checkState(node.getApiKey().equals(callback.getApiKey()), "Access denied");
 
