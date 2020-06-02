@@ -2,5 +2,5 @@
 
 installDir=$1
 
-printf "0 3 * * * $installDir/backup.sh\n" > /etc/cron.d/chatbot_factory.cron
+printf "0 3 * * * root $installDir/backup.sh\n" > /etc/cron.d/chatbot_factory.cron
 
