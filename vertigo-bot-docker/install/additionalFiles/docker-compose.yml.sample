@@ -53,7 +53,7 @@ services:
       - ANALYTICA_PORT=4562
       - INFLUXDB_URL=http://influxdb:8086
       - ANALYTICA_DBNAME=chatbot
-      - devMode=true
+#      - DEPLOY_PATH=my/path
     depends_on:
       - postgres
       - influxdb

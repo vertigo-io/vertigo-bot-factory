@@ -10,6 +10,11 @@ _term() {
 
 trap _term SIGTERM
 
+# Customize tomcat deploy path from env var DEPLOY_PATH
+rm -f /opt/tomcat/conf/Catalina/localhost/*.xml
+cp /opt/tomcat/conf/Catalina/localhost/designer.xml.ref /opt/tomcat/conf/Catalina/localhost/${DEPLOY_PATH//\//#}.xml
+
+# Start Tomcat
 su -c "/opt/tomcat/bin/startup.sh" tomcat
 
 touch /opt/tomcat/logs/catalina.out

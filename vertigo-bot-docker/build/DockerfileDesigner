@@ -19,15 +19,6 @@ RUN apt-get update
 	 && apt-get clean
 	
 # Tomcat
-	ADD apache-tomcat-8.5.50.tar.gz /opt/tomcat/
-	ADD Designer/vertigo-bot-designer-*.war /opt/tomcat/webapps/designer.war
-	ADD Designer/context.xml /opt/tomcat/conf/Catalina/localhost/designer.xml
-	ADD Designer/setenv.sh /opt/tomcat/bin/
-
-	# user home is used for berkeley database
-	RUN useradd -m tomcat \ 
-	 && chown -R tomcat. /opt/tomcat
-
 	ENV JAVA_OPTS -Xmx512m -Xms512m
 	ENV CATALINA_PID /opt/tomcat/tomcat.pid
 	
@@ -39,10 +30,20 @@ RUN apt-get update
 	ENV ANALYTICA_PORT 4562
 	ENV INFLUXDB_URL http://analytica.part.klee.lan.net:8086
 	ENV ANALYTICA_DBNAME chatbot-test
+	ENV DEPLOY_PATH ROOT
 
 	# Expose tomcat port
 	EXPOSE 8080
 
+	# Add binaries
+	ADD apache-tomcat-8.5.50.tar.gz /opt/tomcat/
+	ADD Designer/vertigo-bot-designer-*.war /opt/tomcat/war/designer.war
+	ADD Designer/context.xml /opt/tomcat/conf/Catalina/localhost/designer.xml.ref
+	ADD Designer/setenv.sh /opt/tomcat/bin/
+
+	# user home is used for berkeley database
+	RUN useradd -m tomcat \ 
+	 && chown -R tomcat. /opt/tomcat
  
 #######################
 # start configuration #
