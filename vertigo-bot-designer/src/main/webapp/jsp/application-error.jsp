@@ -64,7 +64,7 @@ private String printException(Throwable t) throws Exception {
         Collections.reverse(list);
        
        StringBuilder sbHome = new StringBuilder("");
- 	   sbHome.append("<a class=\"lien\" href=\"home/\">");
+ 	   sbHome.append("<a class=\"lien\" href=\"./\">");
  	   sbHome.append("<button class=\"fix_link\">l'&eacute;cran d'accueil</button>");
  	   sbHome.append("</a>");
  	   
@@ -127,12 +127,11 @@ private String printException(Throwable t) throws Exception {
 		Ce cas de figure peut se produire si vous avez cliqu&eacute; un trop grand nombre de fois de suite sur la fl&eacute;che "retour arri&eacute;re" de votre navigateur, ou si vous avez attendu trop longtemps avant de cliquer sur une action.
 		</p>
 	<% } else if (securityException) { %>
-		<h2>Vous n'&eacute;tes pas habilit&eacute; &eacute; effectuer cette action</h2>
+		<h2>Vous n'&ecirc;tes pas habilit&eacute; &agrave; effectuer cette action</h2>
 		<p>
 		L'action que vous avez demand&eacute;e ne peut se poursuivre car vous n'avez pas les habilitations suffisantes.<br/>
-		Vous pouvez continuer votre travail &eacute; partir de <%=sbPrevious.toString()%> ou <%=sbHome.toString()%>.<br/>
+		Vous pouvez continuer votre travail &agrave; partir de <%=sbPrevious.toString()%> ou <%=sbHome.toString()%>.<br/>
 		Vous pouvez &eacute;galement vous <%=sbReconnect.toString()%>.
-		</p>
 	<% } else if (noObjectFoundException) { %>
 		<h2>L'&eacute;l&eacute;ment demand&eacute; n'existe pas </h2>
 		<p>
