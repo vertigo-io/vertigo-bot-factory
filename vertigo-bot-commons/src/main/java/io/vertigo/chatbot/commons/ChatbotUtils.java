@@ -17,13 +17,22 @@
  */
 package io.vertigo.chatbot.commons;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 
+import org.apache.commons.io.IOUtils;
+
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.domain.model.DtObject;
 import io.vertigo.dynamo.domain.util.VCollectors;
+import io.vertigo.lang.VSystemException;
 import io.vertigo.vega.engines.webservice.json.AbstractUiListModifiable;
 import io.vertigo.vega.webservice.model.UiObject;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
@@ -112,5 +121,30 @@ public class ChatbotUtils {
 		//										// rien
 		//				}),
 		//				uiMessageStack);
+	}
+
+	public static String postToUrl(final String url, final byte[] data) {
+		HttpURLConnection con;
+		try {
+			con = (HttpURLConnection) new URL(url).openConnection();
+
+			con.setRequestMethod("POST");
+			con.setDoOutput(true);
+			final OutputStream os = con.getOutputStream();
+			os.write(data);
+			os.flush();
+			os.close();
+
+			final int responseCode = con.getResponseCode();
+			if (responseCode == HttpURLConnection.HTTP_OK) { // success
+				try (final InputStream is = con.getInputStream();) {
+					return IOUtils.toString(is, StandardCharsets.UTF_8);
+				}
+			}
+
+			throw new VSystemException("POST request error (code {0})", responseCode);
+		} catch (final IOException e) {
+			throw new VSystemException(e, "POST request error");
+		}
 	}
 }

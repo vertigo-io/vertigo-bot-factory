@@ -384,7 +384,8 @@
 		  			<q-drawer :value="!$q.screen.lt.lg || componentStates.botDrawer.open" elevated ref="botDrawer" side="right" behavior="desktop" :overlay="$q.screen.lt.lg">
 						<v-chatbot class="column chatbot-container"
 								   ref="chatbot"
-								   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot" :bot-url="getDevNode().url + '/api/chatbot/talk'"
+								   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot"
+								   :bot-url="'_talk?CTX=' + vueData.CTX"
 								   :dev-mode="!true"
 								   :placeholder="'Speak to ' + vueData.bot.name"></v-chatbot>
 		  			</q-drawer>

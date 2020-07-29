@@ -23,9 +23,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
@@ -33,6 +36,8 @@ import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
+import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.lang.VUserException;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -50,7 +55,6 @@ public class ModelListController extends AbstractVSpringMvcController {
 	private static final ViewContextKey<Training> trainingListKey = ViewContextKey.of("trainingList");
 
 	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
-
 
 	@Inject
 	private DesignerServices designerServices;
@@ -73,7 +77,6 @@ public class ModelListController extends AbstractVSpringMvcController {
 
 		toModeReadOnly();
 	}
-
 
 	@PostMapping("/_refreshRunner")
 	public ViewContext refreshRunnerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
@@ -100,12 +103,10 @@ public class ModelListController extends AbstractVSpringMvcController {
 		return viewContext;
 	}
 
-
 	@PostMapping("/_removeTraining")
 	public ViewContext doRemoveTraining(final ViewContext viewContext,
 			@RequestParam("traId") final Long traId,
-			@ViewAttribute("bot") final Chatbot bot
-			) {
+			@ViewAttribute("bot") final Chatbot bot) {
 
 		trainingServices.removeTraining(traId);
 
@@ -114,14 +115,12 @@ public class ModelListController extends AbstractVSpringMvcController {
 		return viewContext;
 	}
 
-
 	@PostMapping("/_train")
 	public ViewContext doTrain(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		trainingServices.trainAgent(bot.getBotId());
 
 		return viewContext;
 	}
-
 
 	@PostMapping("/_stop")
 	public ViewContext doStop(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
@@ -144,5 +143,18 @@ public class ModelListController extends AbstractVSpringMvcController {
 		return viewContext;
 	}
 
+	@PostMapping("/_talk")
+	@ResponseBody
+	public String talk(
+			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList,
+			@RequestBody final byte[] input) {
+
+		final ChatbotNode devNode = nodeList.stream()
+				.filter(ChatbotNode::getIsDev)
+				.findFirst()
+				.orElseThrow(() -> new VUserException("No training node configured"));
+
+		return ChatbotUtils.postToUrl(devNode.getUrl() + "/api/chatbot/talk", input);
+	}
 
 }
