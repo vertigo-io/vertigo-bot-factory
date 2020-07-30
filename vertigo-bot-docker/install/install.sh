@@ -43,7 +43,7 @@ exec_logged() {
 	fi
 }
 
-numberOfStep=8
+numberOfStep=5
 stepNumber=1
 
 display_step() {
@@ -127,16 +127,7 @@ exec_logged /bin/bash ./additionalFiles/copyData.sh $installDir
 exec_logged /bin/bash ./additionalFiles/buildConfig.sh $installDir $runnerCount
 
 display_step
-exec_logged docker load -i ./additionalFiles/images/analytica.tar.gz
-
-display_step
-exec_logged docker load -i ./additionalFiles/images/cf_designer.tar.gz
-
-display_step
-exec_logged docker load -i ./additionalFiles/images/cf_runner.tar.gz
-
-display_step
-exec_logged docker-compose -f $installDir/docker-compose.yml pull postgres influxdb # get from internet public images
+exec_logged docker-compose -f $installDir/docker-compose.yml pull
 
 display_step
 exec_logged /bin/bash ./additionalFiles/installCron.sh $installDir

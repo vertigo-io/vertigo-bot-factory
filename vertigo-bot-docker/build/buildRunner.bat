@@ -1,1 +1,1 @@
-docker build -t cf_runner -f .\DockerfileRunner .
+docker build -t vertigoio/bot-factory-runner -t vertigoio/bot-factory-runner:0.4.0 -f .\DockerfileRunner .

@@ -72,7 +72,7 @@ services:
     restart: unless-stopped
 
   analytica:
-    image: analytica:latest
+    image: vertigoio/analytics-server:0.6
     environment:
       - INFLUXDB_URL=http://influxdb:8086
     depends_on:
@@ -84,7 +84,7 @@ services:
     restart: unless-stopped
   
   designer:
-    image: 'cf_designer:latest'
+    image: vertigoio/bot-factory-designer:0.4.0
     environment:
       - JAVA_OPTS=-Xmx512m -Xms512m
       - DB_URL=//postgres:5432/chatbot
@@ -92,7 +92,7 @@ services:
       - ANALYTICA_PORT=4562
       - INFLUXDB_URL=http://influxdb:8086
       - ANALYTICA_DBNAME=chatbot
-#      - devMode=true
+      - DEPLOY_PATH=designer
     depends_on:
       - postgres
       - influxdb
@@ -112,7 +112,7 @@ do
   
   cat <<EOT >> $installDir/docker-compose.yml
   runner${i}:
-    image: 'cf_runner:latest'
+    image: vertigoio/bot-factory-runner:0.4.0
     environment:
       - DESIGNER_URL=http://designer:8080/designer/
       - ANALYTICA_HOST=analytica
