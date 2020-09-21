@@ -150,9 +150,9 @@ public class TrainerRasaHandler extends AbstractRasaHandler {
 				if (matcherEpoch.find()) {
 					phasePercent = (100 * Long.valueOf(matcherEpoch.group(1))) / Long.valueOf(matcherEpoch.group(2));
 				} else {
-					final Matcher matcherAccuacy = coreAccuracyExtractor.matcher(logLine);
-					if (matcherAccuacy.find()) {
-						coreAccuracy = Math.round(Float.valueOf(matcherAccuacy.group(1)) * 100);
+					final Matcher matcherAccuracy = coreAccuracyExtractor.matcher(logLine);
+					if (matcherAccuracy.find()) {
+						coreAccuracy = Math.round(Float.valueOf(matcherAccuracy.group(1)) * 100);
 					}
 				}
 
