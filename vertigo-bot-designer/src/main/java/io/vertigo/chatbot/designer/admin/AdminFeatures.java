@@ -25,7 +25,6 @@ public class AdminFeatures extends ModuleDiscoveryFeatures<AdminFeatures> { // n
 		super("ChatbotAdmin"); // Nous donnons un nom signifiant à notre module métier
 	}
 
-
 	@Override
 	protected String getPackageRoot() {
 		return this.getClass().getPackage().getName(); // nous utilisons la localisation de la classe de manisfeste comme racine du module

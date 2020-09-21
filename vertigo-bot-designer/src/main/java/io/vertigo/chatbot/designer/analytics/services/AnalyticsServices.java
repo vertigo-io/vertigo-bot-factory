@@ -170,26 +170,26 @@ public class AnalyticsServices implements Component, Activeable {
 	/*private TimedDatas mergeTimedDatas(final TimedDatas data, final TimedDatas data2, final TimedDatas... otherDatas) {
 		Assertion.checkNotNull(data);
 		Assertion.checkNotNull(data2);
-
+	
 		final TimedDatas newTimedDatas = new TimedDatas(new ArrayList<>(), new ArrayList<>());
-
+	
 		// Juste recopy first TimedDatas
 		newTimedDatas.getSeriesNames().addAll(data.getSeriesNames());
 		for (final TimedDataSerie timedDataSerie : data.getTimedDataSeries()) {
 			final Map<String, Object> newMapValues = new HashMap<>();
 			newMapValues.putAll(timedDataSerie.getValues());
-
+	
 			final TimedDataSerie newTimedDataSerie = new TimedDataSerie(timedDataSerie.getTime(), newMapValues);
-
+	
 			newTimedDatas.getTimedDataSeries().add(newTimedDataSerie);
 		}
-
+	
 		// add every other timedDatas with consistency check
 		addToTimedDatas(newTimedDatas, data2);
 		for (final TimedDatas otherData : otherDatas) {
 			addToTimedDatas(newTimedDatas, otherData);
 		}
-
+	
 		return newTimedDatas;
 	}
 	

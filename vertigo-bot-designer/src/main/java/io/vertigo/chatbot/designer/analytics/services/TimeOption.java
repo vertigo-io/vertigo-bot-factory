@@ -22,6 +22,7 @@ public enum TimeOption {
 	WEEK("7d", "12h"),
 	MONTH("30d", "1d"),
 	YEAR("52w", "1w");
+
 	private final String range;
 	private final String grain;
 
@@ -36,6 +37,7 @@ public enum TimeOption {
 	public String getRange() {
 		return range;
 	}
+
 	/**
 	 * @return the grain
 	 */
