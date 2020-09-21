@@ -106,31 +106,31 @@ public class RasaTrainerServices implements Component, Activeable {
 	}
 
 	private String getTrainInfos() {
-		final long coreAccuacy = trainerRasaHandler.getCoreAccuacy();
-		final long nluAccuacy = trainerRasaHandler.getNluAccuacy();
+		final long coreAccuracy = trainerRasaHandler.getCoreAccuracy();
+		final long nluAccuracy = trainerRasaHandler.getNluAccuracy();
 
-		final StringBuilder retour = new StringBuilder();
-		if (coreAccuacy != -1) {
-			retour.append("Core accuacy : ").append(coreAccuacy).append("%\n");
+		final StringBuilder trainInfos = new StringBuilder();
+		if (coreAccuracy != -1) {
+			trainInfos.append("Core accuracy : ").append(coreAccuracy).append("%\n");
 		}
-		if (nluAccuacy != -1) {
-			retour.append("Nlu accuacy : ").append(nluAccuacy).append("%\n");
+		if (nluAccuracy != -1) {
+			trainInfos.append("Nlu accuracy : ").append(nluAccuracy).append("%\n");
 		}
-		return retour.toString();
+		return trainInfos.toString();
 	}
 
 	private String getTrainWarns() {
-		final long coreAccuacy = trainerRasaHandler.getCoreAccuacy();
-		final long nluAccuacy = trainerRasaHandler.getNluAccuacy();
+		final long coreAccuracy = trainerRasaHandler.getCoreAccuracy();
+		final long nluAccuracy = trainerRasaHandler.getNluAccuracy();
 
-		final StringBuilder retour = new StringBuilder();
-		if (coreAccuacy != -1 && coreAccuacy < 90) {
-			retour.append("Warning, Core accuacy is low (").append(coreAccuacy).append("%), consider modify training parameters.\n");
+		final StringBuilder trainWarns = new StringBuilder();
+		if (coreAccuracy != -1 && coreAccuracy < 90) {
+			trainWarns.append("Warning, Core accuracy is low (").append(coreAccuracy).append("%), consider modify training parameters.\n");
 		}
-		if (nluAccuacy != -1 && nluAccuacy < 90) {
-			retour.append("Warning, NLU accuacy is low (").append(nluAccuacy).append("%), consider modify training parameters.\n");
+		if (nluAccuracy != -1 && nluAccuracy < 90) {
+			trainWarns.append("Warning, NLU accuracy is low (").append(nluAccuracy).append("%), consider modify training parameters.\n");
 		}
-		return retour.toString();
+		return trainWarns.toString();
 	}
 
 	public TrainerInfo getTrainerState() {

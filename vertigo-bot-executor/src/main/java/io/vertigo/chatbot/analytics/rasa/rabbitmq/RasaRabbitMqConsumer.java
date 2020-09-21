@@ -60,7 +60,7 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 
 	protected static final Logger LOGGER = LogManager.getLogger("rasa");
 
-	private Connection conn;
+	private Connection connection;
 	private Channel channel;
 	private Gson gson;
 
@@ -110,8 +110,8 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 		// factory.setPort(portNumber);
 
 		try {
-			conn = factory.newConnection();
-			channel = conn.createChannel();
+			connection = factory.newConnection();
+			channel = connection.createChannel();
 
 			channel.queueDeclare(queueName, true, false, false, null);
 
@@ -200,8 +200,8 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 			exception = e;
 		}
 		try {
-			if (conn != null) {
-				conn.close();
+			if (connection != null) {
+				connection.close();
 			}
 		} catch (final Exception e) {
 			if (exception != null) {

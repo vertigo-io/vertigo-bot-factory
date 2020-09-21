@@ -59,8 +59,8 @@ public class TrainerRasaHandler extends AbstractRasaHandler {
 	private long trainingPercent;
 	private TrainingPhases trainingPhase;
 	private long phasePercent;
-	private long coreAccuacy;
-	private long nluAccuacy;
+	private long coreAccuracy;
+	private long nluAccuracy;
 
 	private enum TrainingPhases {
 		INIT(0, 2), STORY(2, 8), CORE(10, 70), NLU(80, 15), FINALIZE(95, 5);
@@ -74,7 +74,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler {
 		}
 	}
 
-	private final Pattern coreAccuacyExtractor = Pattern.compile(".*- acc:\\s*([\\d\\.]+)");
+	private final Pattern coreAccuracyExtractor = Pattern.compile(".*- acc:\\s*([\\d\\.]+)");
 	private final Pattern coreEpochExtractor = Pattern.compile("Epoch \\s*(\\d+)/(\\d+)");
 	private final Pattern nluInfoExtractor = Pattern.compile("Epochs:\\s*(\\d+).*acc=([\\d\\.]+)");
 
@@ -102,8 +102,8 @@ public class TrainerRasaHandler extends AbstractRasaHandler {
 		state = "Training";
 		trainingPhase = TrainingPhases.INIT;
 		trainingPercent = 0;
-		coreAccuacy = -1;
-		nluAccuacy = -1;
+		coreAccuracy = -1;
+		nluAccuracy = -1;
 
 		final RasaConfig config = generateRasaConfig(bot, smallTalkList, nluThreshold);
 
@@ -150,9 +150,9 @@ public class TrainerRasaHandler extends AbstractRasaHandler {
 				if (matcherEpoch.find()) {
 					phasePercent = (100 * Long.valueOf(matcherEpoch.group(1))) / Long.valueOf(matcherEpoch.group(2));
 				} else {
-					final Matcher matcherAccuacy = coreAccuacyExtractor.matcher(logLine);
+					final Matcher matcherAccuacy = coreAccuracyExtractor.matcher(logLine);
 					if (matcherAccuacy.find()) {
-						coreAccuacy = Math.round(Float.valueOf(matcherAccuacy.group(1)) * 100);
+						coreAccuracy = Math.round(Float.valueOf(matcherAccuacy.group(1)) * 100);
 					}
 				}
 
@@ -161,7 +161,7 @@ public class TrainerRasaHandler extends AbstractRasaHandler {
 				final Matcher matcherNlu = nluInfoExtractor.matcher(logLine);
 				if (matcherNlu.find()) {
 					phasePercent = Long.valueOf(matcherNlu.group(1));
-					nluAccuacy = Math.round(Float.valueOf(matcherNlu.group(2)) * 100);
+					nluAccuracy = Math.round(Float.valueOf(matcherNlu.group(2)) * 100);
 				}
 
 				break;
@@ -216,12 +216,12 @@ public class TrainerRasaHandler extends AbstractRasaHandler {
 		return trainingLog.toString();
 	}
 
-	public long getCoreAccuacy() {
-		return coreAccuacy;
+	public long getCoreAccuracy() {
+		return coreAccuracy;
 	}
 
-	public long getNluAccuacy() {
-		return nluAccuacy;
+	public long getNluAccuracy() {
+		return nluAccuracy;
 	}
 
 	private void writeToRasaFile(final String content, final String relativePath) {
