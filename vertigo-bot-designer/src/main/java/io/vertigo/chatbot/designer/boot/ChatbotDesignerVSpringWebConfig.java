@@ -17,8 +17,6 @@
  */
 package io.vertigo.chatbot.designer.boot;
 
-import java.util.Optional;
-
 import org.springframework.context.annotation.ComponentScan;
 
 import io.vertigo.app.Home;
@@ -38,10 +36,9 @@ public class ChatbotDesignerVSpringWebConfig extends VSpringWebConfig {
 	@Override
 	protected boolean isDevMode() {
 		final ParamManager paramManager = Home.getApp().getComponentSpace().resolve(ParamManager.class);
-		final Optional<Param> devModeOpt = paramManager.getOptionalParam("devMode");
-		if (devModeOpt.isPresent()) {
-			return devModeOpt.get().getValueAsBoolean();
-		}
-		return false;
+
+		return paramManager.getOptionalParam("devMode")
+				.map(Param::getValueAsBoolean)
+				.orElse(false);
 	}
 }

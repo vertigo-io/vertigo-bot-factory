@@ -27,7 +27,7 @@ import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VUserException;
 import io.vertigo.util.StringUtil;
 
-public class RasaUtterButton {
+public final class RasaUtterButton {
 
 	private final String text;
 	private String payload;

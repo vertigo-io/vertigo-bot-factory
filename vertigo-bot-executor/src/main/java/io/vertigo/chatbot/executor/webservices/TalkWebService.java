@@ -48,9 +48,7 @@ public class TalkWebService implements WebServices {
 		httpResponse.setContentLength(response.length());
 		httpResponse.setHeader("Access-Control-Allow-Origin", "*"); // TODO : remove from here
 
-		ServletOutputStream os;
-		try {
-			os = httpResponse.getOutputStream();
+		try (ServletOutputStream os = httpResponse.getOutputStream()) {
 			os.write(response.getBytes(StandardCharsets.UTF_8));
 			os.flush();
 		} catch (final IOException e) {

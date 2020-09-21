@@ -17,7 +17,7 @@
  */
 package io.vertigo.chatbot.executor.rasa.model;
 
-public class RasaInputMessage {
+public final class RasaInputMessage {
 
 	private String message;
 	private String sender;

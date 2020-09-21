@@ -113,12 +113,9 @@ public class TrainingServices implements Component {
 		builderPAO.cleanOldTrainings(botId);
 
 		final Long versionNumber = builderPAO.getNextModelNumber(botId);
-		final Optional<ChatbotNode> optDevNode = designerServices.getDevNodeByBotId(botId);
 
-		if (!optDevNode.isPresent()) {
-			throw new VUserException("No training node configured");
-		}
-		final ChatbotNode devNode = optDevNode.get();
+		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId)
+				.orElseThrow(() -> new VUserException("No training node configured"));
 
 		final Training training = new Training();
 		training.setBotId(botId);

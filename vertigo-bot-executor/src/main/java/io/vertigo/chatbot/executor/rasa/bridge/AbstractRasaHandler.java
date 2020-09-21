@@ -40,6 +40,10 @@ import io.vertigo.lang.VSystemException;
 
 public abstract class AbstractRasaHandler implements Component, Activeable {
 
+	private static final String RASA_BOT_PATH = "RASA_BOT_PATH";
+
+	private static final String RASA_EXE_PATH = "RASA_EXE_PATH";
+
 	protected static final Logger LOGGER = LogManager.getLogger("rasa");
 
 	@Inject
@@ -50,8 +54,8 @@ public abstract class AbstractRasaHandler implements Component, Activeable {
 
 	@Override
 	public void start() {
-		rasaPath = paramManager.getParam("RASA_EXE_PATH").getValueAsString();
-		botPath = paramManager.getParam("RASA_BOT_PATH").getValueAsString();
+		rasaPath = paramManager.getParam(RASA_EXE_PATH).getValueAsString();
+		botPath = paramManager.getParam(RASA_BOT_PATH).getValueAsString();
 
 		LOGGER.info("Using rasaPath {}", rasaPath);
 		LOGGER.info("Using botPath {}", botPath);
@@ -98,10 +102,8 @@ public abstract class AbstractRasaHandler implements Component, Activeable {
 
 	private static void logInputStream(final Level level, final InputStream is, final Consumer<String> logConsumer, final Runnable endCallback) {
 		final Thread logWatcher = new Thread(() -> {
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-			String line;
-			try {
+			try (final BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+				String line;
 				while ((line = reader.readLine()) != null) {
 					LOGGER.log(level, line);
 					if (logConsumer != null) {
