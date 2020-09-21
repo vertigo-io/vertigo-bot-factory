@@ -109,11 +109,10 @@ public class DesignerServices implements Component {
 	public DtList<Chatbot> getMySupervisedChatbots() {
 		if (authorizationManager.hasAuthorization(GlobalAuthorizations.AtzSuperAdmBot)) {
 			return getAllChatbots();
-		} else {
-			final ListVAccessor<Chatbot> chatbotLoader = getUserSession().getLoggedPerson().chatbots();
-			chatbotLoader.load();
-			return chatbotLoader.get();
 		}
+		final ListVAccessor<Chatbot> chatbotLoader = getUserSession().getLoggedPerson().chatbots();
+		chatbotLoader.load();
+		return chatbotLoader.get();
 	}
 
 	@Secured("SuperAdmBot")
@@ -422,7 +421,7 @@ public class DesignerServices implements Component {
 	}
 
 	private DesignerUserSession getUserSession() {
-		return securityManager.<DesignerUserSession>getCurrentUserSession().get();
+		return securityManager.<DesignerUserSession> getCurrentUserSession().get();
 	}
 
 	private void checkRights(final Chatbot chatbot, final ChatbotOperations chatbotOperation) {

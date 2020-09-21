@@ -34,10 +34,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import io.vertigo.core.component.Activeable;
+import io.vertigo.core.component.Component;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.lang.VSystemException;
 
-public abstract class AbstractRasaHandler implements Activeable {
+public abstract class AbstractRasaHandler implements Component, Activeable {
 
 	protected static final Logger LOGGER = LogManager.getLogger("rasa");
 
@@ -95,7 +96,6 @@ public abstract class AbstractRasaHandler implements Activeable {
 		return process;
 	}
 
-
 	private static void logInputStream(final Level level, final InputStream is, final Consumer<String> logConsumer, final Runnable endCallback) {
 		final Thread logWatcher = new Thread(() -> {
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -120,7 +120,6 @@ public abstract class AbstractRasaHandler implements Activeable {
 
 		logWatcher.start();
 	}
-
 
 	/**
 	 * @return the botPath

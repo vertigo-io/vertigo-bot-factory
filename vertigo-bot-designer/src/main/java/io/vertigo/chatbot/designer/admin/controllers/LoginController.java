@@ -60,9 +60,8 @@ public class LoginController extends AbstractVSpringMvcController {
 			viewContext.publishRef(loginKey, "");
 			viewContext.publishRef(passwordKey, "");
 			return null;
-		} else {
-			return REDIRECT_HOME;
 		}
+		return REDIRECT_HOME;
 	}
 
 	@PostMapping("/_login")

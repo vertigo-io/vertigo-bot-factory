@@ -72,10 +72,10 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	}
 
 
-	public void saveConfig(final ExecutorConfiguration executorConfiguration) {
-		this.executorConfiguration = executorConfiguration;
+	public void saveConfig(final ExecutorConfiguration myExecutorConfiguration) {
+		this.executorConfiguration = myExecutorConfiguration;
 
-		final String json = jsonEngine.toJson(executorConfiguration);
+		final String json = jsonEngine.toJson(myExecutorConfiguration);
 
 		try {
 			FileUtils.writeStringToFile(configDataFile, json, StandardCharsets.UTF_8);

@@ -32,13 +32,11 @@ import org.apache.commons.io.FileUtils;
 
 import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
-import io.vertigo.core.component.Activeable;
-import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.lang.Assertion;
 import io.vertigo.lang.VSystemException;
 
-public class RunnerRasaHandler extends AbstractRasaHandler implements Component, Activeable {
+public class RunnerRasaHandler extends AbstractRasaHandler {
 
 	private static final String MODEL_DIR = "models/";
 
@@ -69,7 +67,6 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 			rasaProcess.destroyForcibly();
 		}
 	}
-
 
 	public RunnerInfo getState() {
 		final RunnerInfo retour = new RunnerInfo();
@@ -104,7 +101,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 		}
 
 		final String name = modelFiles[0].getName();
-		return Long.parseLong(name.substring(0, name.length()-7));
+		return Long.parseLong(name.substring(0, name.length() - 7));
 	}
 
 	private String getRasaVersion() {
@@ -114,8 +111,8 @@ public class RunnerRasaHandler extends AbstractRasaHandler implements Component,
 
 		@SuppressWarnings("unchecked")
 		final Map<String, String> wsVersion = rasaTarget.path("/version")
-		.request(MediaType.APPLICATION_JSON)
-		.get(Map.class);
+				.request(MediaType.APPLICATION_JSON)
+				.get(Map.class);
 
 		return wsVersion.get("version");
 	}

@@ -117,7 +117,7 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 
 			channel.basicConsume(queueName, false, consumerTag, new DefaultConsumer(channel) {
 				@Override
-				public void handleDelivery(final String consumerTag, final Envelope envelope,
+				public void handleDelivery(final String myConsumerTag, final Envelope envelope,
 						final AMQP.BasicProperties properties, final byte[] body) throws IOException {
 
 					//					final String routingKey = envelope.getRoutingKey(); // rasa
@@ -150,7 +150,7 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 			final String userText = userAction.getText();
 			final RasaTrackerIntent intent = userAction.getParseData().getIntent();
 
-			RasaTypeAction rta;
+			final RasaTypeAction rta;
 			if (userText.startsWith("/start")) {
 				rta = RasaTypeAction.OPEN;
 			} else if (userText.startsWith("/restart")) {

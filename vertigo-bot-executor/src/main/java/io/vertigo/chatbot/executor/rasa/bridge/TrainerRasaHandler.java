@@ -38,15 +38,13 @@ import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.executor.domain.RasaConfig;
 import io.vertigo.chatbot.executor.rasa.config.RasaConfigBuilder;
-import io.vertigo.core.component.Activeable;
-import io.vertigo.core.component.Component;
 import io.vertigo.dynamo.domain.model.DtList;
 import io.vertigo.dynamo.file.model.VFile;
 import io.vertigo.dynamo.impl.file.model.FSFile;
 import io.vertigo.lang.VSystemException;
 import io.vertigo.lang.VUserException;
 
-public class TrainerRasaHandler extends AbstractRasaHandler implements Component, Activeable {
+public class TrainerRasaHandler extends AbstractRasaHandler {
 
 	private static final String TRAINING_MODEL_DIR = "trainingModel";
 
