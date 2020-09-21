@@ -24,7 +24,7 @@ import java.util.List;
 import io.vertigo.chatbot.executor.rasa.util.StringUtils;
 import io.vertigo.lang.Assertion;
 
-public class RasaAction {
+public final class RasaAction {
 
 	private static final String NEW_LINE = "\r\n";
 
@@ -88,15 +88,13 @@ public class RasaAction {
 	public String getUtterTemplate() {
 		Assertion.checkState(isUtterance, "Cette action n'est pas un utter");
 		// ----
-
-		final StringBuilder template = new StringBuilder();
-
-		template.append("  ").append(code).append(':').append(NEW_LINE);
+		final StringBuilder template = new StringBuilder("  ").append(code).append(':').append(NEW_LINE);
 
 		for (final String answer : texts) {
-			template.append("    - text: \"");
-			template.append(answer.replaceAll("[\\r\\n]+", "<br>").replaceAll("[\\\"]", "\\\\\\\""));
-			template.append('"').append(NEW_LINE);
+			template
+					.append("    - text: \"")
+					.append(answer.replaceAll("[\\r\\n]+", "<br>").replaceAll("[\\\"]", "\\\\\\\""))
+					.append('"').append(NEW_LINE);
 
 			if (!buttons.isEmpty()) {
 				template.append("      buttons:").append(NEW_LINE);

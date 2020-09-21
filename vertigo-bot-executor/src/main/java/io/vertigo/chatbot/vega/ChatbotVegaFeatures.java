@@ -101,24 +101,24 @@ public final class ChatbotVegaFeatures extends Features<VegaFeatures> {
 			}
 
 			getModuleConfigBuilder()
-			.addComponent(WebServiceManager.class, WebServiceManagerImpl.class)
-			.addPlugin(AnnotationsWebServiceScannerPlugin.class)
-			.addComponent(SwaggerWebServices.class)
-			.addComponent(CatalogWebServices.class)
+					.addComponent(WebServiceManager.class, WebServiceManagerImpl.class)
+					.addPlugin(AnnotationsWebServiceScannerPlugin.class)
+					.addComponent(SwaggerWebServices.class)
+					.addComponent(CatalogWebServices.class)
 
-			//-- Handlers plugins
-			.addPlugin(ExceptionWebServiceHandlerPlugin.class)
-			.addPlugin(corsAllowerPluginConfigBuilder.build())
-			.addPlugin(AnalyticsWebServiceHandlerPlugin.class)
-			.addPlugin(JsonConverterWebServiceHandlerPlugin.class);
+					//-- Handlers plugins
+					.addPlugin(ExceptionWebServiceHandlerPlugin.class)
+					.addPlugin(corsAllowerPluginConfigBuilder.build())
+					.addPlugin(AnalyticsWebServiceHandlerPlugin.class)
+					.addPlugin(JsonConverterWebServiceHandlerPlugin.class);
 
 			getModuleConfigBuilder()
-			.addComponent(JsonEngine.class, GoogleJsonEngine.class, jsonParams);
+					.addComponent(JsonEngine.class, GoogleJsonEngine.class, jsonParams);
 
 			// Add API token management
 			if (myApiKey != null) {
 				getModuleConfigBuilder()
-				.addPlugin(ApiTokenWebServiceHandlerPlugin.class,Param.of("apiKey", myApiKey));
+						.addPlugin(ApiTokenWebServiceHandlerPlugin.class, Param.of("apiKey", myApiKey));
 			}
 
 			final ListBuilder<Param> params = new ListBuilder<>();
@@ -128,7 +128,7 @@ public final class ChatbotVegaFeatures extends Features<VegaFeatures> {
 			getModuleConfigBuilder().addPlugin(new PluginConfig(SparkJavaServletFilterWebServerPlugin.class, params.build()));
 
 			getModuleConfigBuilder().addPlugin(ValidatorWebServiceHandlerPlugin.class)
-			.addPlugin(RestfulServiceWebServiceHandlerPlugin.class);
+					.addPlugin(RestfulServiceWebServiceHandlerPlugin.class);
 		}
 	}
 }

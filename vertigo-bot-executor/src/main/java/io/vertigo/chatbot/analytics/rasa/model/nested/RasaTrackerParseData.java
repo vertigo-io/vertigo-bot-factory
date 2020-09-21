@@ -86,5 +86,4 @@ public class RasaTrackerParseData {
 		this.text = text;
 	}
 
-
 }

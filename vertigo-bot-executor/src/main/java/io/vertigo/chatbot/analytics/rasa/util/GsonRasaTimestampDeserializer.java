@@ -41,5 +41,4 @@ public class GsonRasaTimestampDeserializer implements JsonDeserializer<Instant> 
 		return Instant.ofEpochMilli(rasaTimeMili);
 	}
 
-
 }

@@ -38,18 +38,21 @@ public abstract class AbstractRasaTrackerEvent {
 	public String getSenderId() {
 		return senderId;
 	}
+
 	/**
 	 * @param senderId the senderId to set
 	 */
 	public void setSenderId(final String senderId) {
 		this.senderId = senderId;
 	}
+
 	/**
 	 * @return the timestamp
 	 */
 	public Instant getTimestamp() {
 		return timestamp;
 	}
+
 	/**
 	 * @param timestamp the timestamp to set
 	 */

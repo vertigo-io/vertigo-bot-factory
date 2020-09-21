@@ -71,7 +71,6 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		// Nothing
 	}
 
-
 	public void saveConfig(final ExecutorConfiguration myExecutorConfiguration) {
 		this.executorConfiguration = myExecutorConfiguration;
 
@@ -90,7 +89,5 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	public ExecutorConfiguration getConfig() {
 		return executorConfiguration;
 	}
-
-
 
 }

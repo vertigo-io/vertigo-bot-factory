@@ -124,20 +124,20 @@ public class ChatbotUtils {
 	}
 
 	public static String postToUrl(final String url, final byte[] data) {
-		HttpURLConnection con;
+		final HttpURLConnection urlConnection;
 		try {
-			con = (HttpURLConnection) new URL(url).openConnection();
+			urlConnection = (HttpURLConnection) new URL(url).openConnection();
 
-			con.setRequestMethod("POST");
-			con.setDoOutput(true);
-			final OutputStream os = con.getOutputStream();
-			os.write(data);
-			os.flush();
-			os.close();
+			urlConnection.setRequestMethod("POST");
+			urlConnection.setDoOutput(true);
+			try (final OutputStream os = urlConnection.getOutputStream()) {
+				os.write(data);
+				os.flush();
+			}
 
-			final int responseCode = con.getResponseCode();
+			final int responseCode = urlConnection.getResponseCode();
 			if (responseCode == HttpURLConnection.HTTP_OK) { // success
-				try (final InputStream is = con.getInputStream();) {
+				try (final InputStream is = urlConnection.getInputStream();) {
 					return IOUtils.toString(is, StandardCharsets.UTF_8);
 				}
 			}

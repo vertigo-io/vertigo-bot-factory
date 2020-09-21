@@ -31,10 +31,10 @@ public class RasaExecutorFeatures extends ModuleDiscoveryFeatures<RasaExecutorFe
 	protected void buildFeatures() {
 		super.buildFeatures(); // découverte automatique de tous les composants
 		getModuleConfigBuilder()
-		.addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
-				.addDefinitionResource("kpr", "io/vertigo/chatbot/executor/run.kpr") // chargement de notre modèle de donnée
-				.addDefinitionResource("classes", "io.vertigo.chatbot.domain.DtDefinitions")
-				.build());
+				.addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
+						.addDefinitionResource("kpr", "io/vertigo/chatbot/executor/run.kpr") // chargement de notre modèle de donnée
+						.addDefinitionResource("classes", "io.vertigo.chatbot.domain.DtDefinitions")
+						.build());
 
 	}
 

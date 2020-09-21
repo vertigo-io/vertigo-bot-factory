@@ -36,7 +36,6 @@ public class RasaTrackerUserEvent extends AbstractRasaTrackerEvent {
 	@SerializedName("parse_data")
 	private RasaTrackerParseData parseData;
 
-
 	/**
 	 * @return the text
 	 */

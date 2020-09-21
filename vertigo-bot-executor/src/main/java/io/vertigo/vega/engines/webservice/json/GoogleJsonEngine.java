@@ -259,27 +259,27 @@ public final class GoogleJsonEngine implements JsonEngine {
 			final JsonObject jsonObject = new JsonObject();
 
 			dtDefinition.getFields()
-			.stream()
-			.filter(dtField -> dtField.getType() != FieldType.COMPUTED)// we don't serialize computed fields
-			.forEach(field -> {
-				jsonObject.add(field.getName(), context.serialize(field.getDataAccessor().getValue(src)));
-			});
+					.stream()
+					.filter(dtField -> dtField.getType() != FieldType.COMPUTED)// we don't serialize computed fields
+					.forEach(field -> {
+						jsonObject.add(field.getName(), context.serialize(field.getDataAccessor().getValue(src)));
+					});
 
 			Stream.of(src.getClass().getDeclaredFields())
-			.filter(field -> VAccessor.class.isAssignableFrom(field.getType()))
-			.map(field -> getAccessor(field, src))
-			.filter(VAccessor::isLoaded)
-			.forEach(accessor -> {
-				jsonObject.add(accessor.getRole(), context.serialize(accessor.get()));
-			});
+					.filter(field -> VAccessor.class.isAssignableFrom(field.getType()))
+					.map(field -> getAccessor(field, src))
+					.filter(VAccessor::isLoaded)
+					.forEach(accessor -> {
+						jsonObject.add(accessor.getRole(), context.serialize(accessor.get()));
+					});
 
 			Stream.of(src.getClass().getDeclaredFields())
-			.filter(field -> ListVAccessor.class.isAssignableFrom(field.getType()))
-			.map(field -> getListAccessor(field, src))
-			.filter(ListVAccessor::isLoaded)
-			.forEach(accessor -> {
-				jsonObject.add(StringUtil.first2LowerCase(accessor.getRole()), context.serialize(accessor.get()));
-			});
+					.filter(field -> ListVAccessor.class.isAssignableFrom(field.getType()))
+					.map(field -> getListAccessor(field, src))
+					.filter(ListVAccessor::isLoaded)
+					.forEach(accessor -> {
+						jsonObject.add(StringUtil.first2LowerCase(accessor.getRole()), context.serialize(accessor.get()));
+					});
 			return jsonObject;
 
 		}
@@ -296,19 +296,19 @@ public final class GoogleJsonEngine implements JsonEngine {
 
 			// case of the lazy objet passed
 			Stream.of(((Class<D>) typeOfT).getDeclaredFields())
-			.filter(field -> VAccessor.class.isAssignableFrom(field.getType()))
-			.map(field -> Tuple.of(field, getAccessor(field, dtObject)))
-			.filter(tuple -> jsonObject.has(tuple.getVal2().getRole()))
-			.forEach(tuple -> tuple.getVal2().set(context.deserialize(jsonObject.get(tuple.getVal2().getRole()), ClassUtil.getGeneric(tuple.getVal1()))));
+					.filter(field -> VAccessor.class.isAssignableFrom(field.getType()))
+					.map(field -> Tuple.of(field, getAccessor(field, dtObject)))
+					.filter(tuple -> jsonObject.has(tuple.getVal2().getRole()))
+					.forEach(tuple -> tuple.getVal2().set(context.deserialize(jsonObject.get(tuple.getVal2().getRole()), ClassUtil.getGeneric(tuple.getVal1()))));
 
 			// case of the fk we need to handle after because it's the primary information
 			dtDefinition.getFields()
-			.stream()
-			.filter(field -> field.getType() == FieldType.FOREIGN_KEY)
-			.forEach(field -> field.getDataAccessor()
-					.setValue(
-							dtObject,
-							context.deserialize(jsonObject.get(field.getName()), field.getDomain().getJavaClass())));
+					.stream()
+					.filter(field -> field.getType() == FieldType.FOREIGN_KEY)
+					.forEach(field -> field.getDataAccessor()
+							.setValue(
+									dtObject,
+									context.deserialize(jsonObject.get(field.getName()), field.getDomain().getJavaClass())));
 
 			return dtObject;
 

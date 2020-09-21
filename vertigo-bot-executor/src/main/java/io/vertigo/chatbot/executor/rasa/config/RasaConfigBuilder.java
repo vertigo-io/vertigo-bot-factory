@@ -44,7 +44,7 @@ public class RasaConfigBuilder {
 		// add welcome
 		final RasaAction actionWelcome = RasaAction.newStartUtter(welcomeText, RasaUtterButton.fromResponseButtonList(welcomeButtons));
 		actions.add(actionWelcome);
-		intents.add(RasaIntent.newStartIntent(actionWelcome));
+		intents.add(RasaIntent.ofStartIntent(actionWelcome));
 
 		// add fallback
 		actions.add(RasaAction.newFallbackUtter(fallbackText, RasaUtterButton.fromResponseButtonList(fallbackButtons)));
@@ -56,7 +56,7 @@ public class RasaConfigBuilder {
 		final String name = smallTalk.getSmtId().toString() + '_' + smallTalk.getTitle();
 
 		final RasaAction action = RasaAction.newStUtterance(name, messages, RasaUtterButton.fromResponseButtonList(buttons));
-		final RasaIntent intent = RasaIntent.newSmallTalk(smallTalk.getSmtId(), name, nlus, action);
+		final RasaIntent intent = RasaIntent.ofSmallTalk(smallTalk.getSmtId(), name, nlus, action);
 
 		actions.add(action);
 		intents.add(intent);

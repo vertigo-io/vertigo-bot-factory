@@ -54,7 +54,7 @@ public class GsonOptionalTypeAdapter<E> extends TypeAdapter<Optional<E>> {
 
 	@Override
 	public void write(final JsonWriter out, final Optional<E> value) throws IOException {
-		if(value.isPresent()){
+		if (value.isPresent()) {
 			adapter.write(out, value.get());
 		} else {
 			out.nullValue();
@@ -64,7 +64,7 @@ public class GsonOptionalTypeAdapter<E> extends TypeAdapter<Optional<E>> {
 	@Override
 	public Optional<E> read(final JsonReader in) throws IOException {
 		final JsonToken peek = in.peek();
-		if(peek != JsonToken.NULL){
+		if (peek != JsonToken.NULL) {
 			return Optional.ofNullable(adapter.read(in));
 		}
 		in.nextNull();

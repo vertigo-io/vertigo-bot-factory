@@ -34,30 +34,35 @@ public class RasaTrackerBotEvent extends AbstractRasaTrackerEvent {
 	public String getText() {
 		return text;
 	}
+
 	/**
 	 * @param text the text to set
 	 */
 	public void setText(final String text) {
 		this.text = text;
 	}
+
 	/**
 	 * @return the data
 	 */
 	public Map<String, Object> getData() {
 		return data;
 	}
+
 	/**
 	 * @param data the data to set
 	 */
 	public void setData(final Map<String, Object> data) {
 		this.data = data;
 	}
+
 	/**
 	 * @return the metadata
 	 */
 	public Map<String, Object> getMetadata() {
 		return metadata;
 	}
+
 	/**
 	 * @param metadata the metadata to set
 	 */

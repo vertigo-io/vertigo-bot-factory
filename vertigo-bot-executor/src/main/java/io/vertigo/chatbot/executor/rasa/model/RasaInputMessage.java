@@ -28,18 +28,21 @@ public class RasaInputMessage {
 	public String getMessage() {
 		return message;
 	}
+
 	/**
 	 * @param message the message to set
 	 */
 	public void setMessage(final String message) {
 		this.message = message;
 	}
+
 	/**
 	 * @return the sender
 	 */
 	public String getSender() {
 		return sender;
 	}
+
 	/**
 	 * @param sender the sender to set
 	 */

@@ -40,7 +40,8 @@ public class ChatbotCommonsFeatures extends ModuleDiscoveryFeatures<ChatbotCommo
 
 	@Override
 	protected String getPackageRoot() {
-		return this.getClass().getPackage().getName(); // nous utilisons la localisation de la classe de manisfeste comme racine du module
+		// nous utilisons la localisation de la classe de manisfeste comme racine du module
+		return this.getClass().getPackage().getName();
 	}
 
 }

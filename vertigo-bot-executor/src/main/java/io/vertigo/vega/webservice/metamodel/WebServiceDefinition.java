@@ -110,11 +110,11 @@ public final class WebServiceDefinition implements Definition {
 		Assertion.checkNotNull(doc); //doc can be empty
 		final String userFriendlyMethodName = method.getDeclaringClass().getSimpleName() + "." + method.getName();
 		Assertion.when(accessTokenConsume)
-		.check(() -> accessTokenMandatory, "AccessToken mandatory for accessTokenConsume ({0})", userFriendlyMethodName);
+				.check(() -> accessTokenMandatory, "AccessToken mandatory for accessTokenConsume ({0})", userFriendlyMethodName);
 		Assertion.when(serverSideSave)
-		.check(() -> needSession, "Session mandatory for serverSideState ({0})", userFriendlyMethodName);
+				.check(() -> needSession, "Session mandatory for serverSideState ({0})", userFriendlyMethodName);
 		Assertion.when(serverSideSave)
-		.check(() -> !Void.TYPE.equals(method.getReturnType()), "Return object mandatory for serverSideState ({0})", userFriendlyMethodName);
+				.check(() -> !Void.TYPE.equals(method.getReturnType()), "Return object mandatory for serverSideState ({0})", userFriendlyMethodName);
 		checkPathParams(path, webServiceParams, userFriendlyMethodName);
 		//-----
 		this.name = name;

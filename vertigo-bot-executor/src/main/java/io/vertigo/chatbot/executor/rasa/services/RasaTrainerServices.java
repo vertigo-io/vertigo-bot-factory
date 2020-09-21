@@ -49,7 +49,6 @@ public class RasaTrainerServices implements Component, Activeable {
 
 	protected static final Logger LOGGER = LogManager.getLogger("rasa");
 
-
 	@Inject
 	private TrainerRasaHandler trainerRasaHandler;
 
@@ -60,8 +59,6 @@ public class RasaTrainerServices implements Component, Activeable {
 	private ParamManager paramManager;
 
 	private WebTarget designerTarget;
-
-
 
 	@Override
 	public void start() {
@@ -114,14 +111,10 @@ public class RasaTrainerServices implements Component, Activeable {
 
 		final StringBuilder retour = new StringBuilder();
 		if (coreAccuacy != -1) {
-			retour.append("Core accuacy : ");
-			retour.append(coreAccuacy);
-			retour.append("%\n");
+			retour.append("Core accuacy : ").append(coreAccuacy).append("%\n");
 		}
 		if (nluAccuacy != -1) {
-			retour.append("Nlu accuacy : ");
-			retour.append(nluAccuacy);
-			retour.append("%\n");
+			retour.append("Nlu accuacy : ").append(nluAccuacy).append("%\n");
 		}
 		return retour.toString();
 	}
@@ -132,18 +125,13 @@ public class RasaTrainerServices implements Component, Activeable {
 
 		final StringBuilder retour = new StringBuilder();
 		if (coreAccuacy != -1 && coreAccuacy < 90) {
-			retour.append("Warning, Core accuacy is low (");
-			retour.append(coreAccuacy);
-			retour.append("%), consider modify training parameters.\n");
+			retour.append("Warning, Core accuacy is low (").append(coreAccuacy).append("%), consider modify training parameters.\n");
 		}
 		if (nluAccuacy != -1 && nluAccuacy < 90) {
-			retour.append("Warning, NLU accuacy is low (");
-			retour.append(nluAccuacy);
-			retour.append("%), consider modify training parameters.\n");
+			retour.append("Warning, NLU accuacy is low (").append(nluAccuacy).append("%), consider modify training parameters.\n");
 		}
 		return retour.toString();
 	}
-
 
 	public TrainerInfo getTrainerState() {
 		return trainerRasaHandler.getState();

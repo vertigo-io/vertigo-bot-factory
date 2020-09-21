@@ -188,7 +188,7 @@ final class AnnotationsWebServiceScannerUtil {
 				builder.needServerSideToken();
 			} else if (annotation instanceof ServerSideConsume) {
 				builder.needServerSideToken()
-				.consumeServerSideToken();
+						.consumeServerSideToken();
 			}
 		}
 		return builder.build();

@@ -192,17 +192,17 @@ public class TrainerRasaHandler extends AbstractRasaHandler {
 	}
 
 	public TrainerInfo getState() {
-		final TrainerInfo retour = new TrainerInfo();
+		final TrainerInfo trainerInfo = new TrainerInfo();
 
-		retour.setName("Rasa node");
-		retour.setTrainingState(state);
-		retour.setTrainingInProgress(isTraining());
-		retour.setLatestTrainingLog(getTrainingLog());
-		retour.setStartTime(startTime);
-		retour.setEndTime(endTime);
-		retour.setTrainingPercent(trainingPercent);
+		trainerInfo.setName("Rasa node");
+		trainerInfo.setTrainingState(state);
+		trainerInfo.setTrainingInProgress(isTraining());
+		trainerInfo.setLatestTrainingLog(getTrainingLog());
+		trainerInfo.setStartTime(startTime);
+		trainerInfo.setEndTime(endTime);
+		trainerInfo.setTrainingPercent(trainingPercent);
 
-		return retour;
+		return trainerInfo;
 	}
 
 	public boolean isTraining() {

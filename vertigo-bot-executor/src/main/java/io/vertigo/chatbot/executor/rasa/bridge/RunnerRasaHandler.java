@@ -69,14 +69,14 @@ public class RunnerRasaHandler extends AbstractRasaHandler {
 	}
 
 	public RunnerInfo getState() {
-		final RunnerInfo retour = new RunnerInfo();
+		final RunnerInfo runnerInfo = new RunnerInfo();
 
-		retour.setName("Rasa node");
-		retour.setState(doGetRasaStatus());
-		retour.setLoadedModelVersion(getRasaLoadedModel());
-		retour.setAgentVersion(getRasaVersion());
+		runnerInfo.setName("Rasa node");
+		runnerInfo.setState(doGetRasaStatus());
+		runnerInfo.setLoadedModelVersion(getRasaLoadedModel());
+		runnerInfo.setAgentVersion(getRasaVersion());
 
-		return retour;
+		return runnerInfo;
 	}
 
 	private String doGetRasaStatus() {

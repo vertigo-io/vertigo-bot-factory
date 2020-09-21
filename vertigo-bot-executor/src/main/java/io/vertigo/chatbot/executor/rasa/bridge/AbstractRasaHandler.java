@@ -83,7 +83,7 @@ public abstract class AbstractRasaHandler implements Component, Activeable {
 				.directory(new File(botPath))
 				.redirectErrorStream(true); // WTF, tout arrive dans la sortie d'erreur... Autant tout merger du coup
 
-		Process process;
+		final Process process;
 		try {
 			process = builder.start();
 		} catch (final IOException e) {

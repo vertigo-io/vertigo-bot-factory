@@ -54,5 +54,4 @@ public class RasaTrackerIntent {
 		this.confidence = confidence;
 	}
 
-
 }
