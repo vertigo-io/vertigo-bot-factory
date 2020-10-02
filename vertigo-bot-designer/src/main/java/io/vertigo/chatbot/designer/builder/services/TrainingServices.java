@@ -294,8 +294,8 @@ public class TrainingServices implements Component {
 
 	public void loadModel(final Long traId, final Long nodId) {
 		Assertion.check()
-		.isNotNull(traId)
-		.isNotNull(nodId);
+				.isNotNull(traId)
+				.isNotNull(nodId);
 
 		final Training training = getTraining(traId);
 		final ChatbotNode node = chatbotNodeDAO.get(nodId);

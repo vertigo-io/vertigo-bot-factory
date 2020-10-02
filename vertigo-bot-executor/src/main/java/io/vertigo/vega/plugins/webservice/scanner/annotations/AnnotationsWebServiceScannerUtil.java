@@ -101,7 +101,7 @@ final class AnnotationsWebServiceScannerUtil {
 		if (requireApiKey != null) {
 			builder.withNeedApiKey(true);
 		}
-		
+
 		for (final Annotation annotation : method.getAnnotations()) {
 			if (annotation instanceof GET) {
 				builder.with(Verb.Get, ((GET) annotation).value());

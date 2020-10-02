@@ -77,7 +77,6 @@ public class DesignerServices implements Component {
 	@Inject
 	private FileServices fileServices;
 
-
 	@Inject
 	private ChatbotDAO chatbotDAO;
 
@@ -101,10 +100,10 @@ public class DesignerServices implements Component {
 
 	@Inject
 	private AuthorizationManager authorizationManager;
-	
+
 	@Inject
 	private VSecurityManager securityManager;
-	
+
 	public DtList<Chatbot> getMySupervisedChatbots() {
 		if (authorizationManager.hasAuthorization(GlobalAuthorizations.AtzSuperAdmBot)) {
 			return getAllChatbots();
@@ -341,8 +340,8 @@ public class DesignerServices implements Component {
 
 	public DtList<NluTrainingSentence> getNluTrainingSentenceList(final SmallTalk smallTalk) {
 		Assertion.check()
-		.isNotNull(smallTalk)
-		.isNotNull(smallTalk.getSmtId());
+				.isNotNull(smallTalk)
+				.isNotNull(smallTalk.getSmtId());
 		// ---
 
 		return nluTrainingSentenceDAO.findAll(
@@ -352,8 +351,8 @@ public class DesignerServices implements Component {
 
 	public DtList<UtterText> getUtterTextList(final SmallTalk smallTalk) {
 		Assertion.check()
-		.isNotNull(smallTalk)
-		.isNotNull(smallTalk.getSmtId());
+				.isNotNull(smallTalk)
+				.isNotNull(smallTalk.getSmtId());
 		// ---
 		return utterTextDAO.findAll(
 				Criterions.isEqualTo(UtterTextFields.smtId, smallTalk.getSmtId()),
@@ -362,8 +361,8 @@ public class DesignerServices implements Component {
 
 	public DtList<ResponseButton> getWelcomeButtonsByBot(final Chatbot bot) {
 		Assertion.check()
-		.isNotNull(bot)
-		.isNotNull(bot.getBotId());
+				.isNotNull(bot)
+				.isNotNull(bot.getBotId());
 		// ---
 
 		return responseButtonDAO.findAll(
@@ -373,8 +372,8 @@ public class DesignerServices implements Component {
 
 	public DtList<ResponseButton> getDefaultButtonsByBot(final Chatbot bot) {
 		Assertion.check()
-		.isNotNull(bot)
-		.isNotNull(bot.getBotId());
+				.isNotNull(bot)
+				.isNotNull(bot.getBotId());
 		// ---
 
 		return responseButtonDAO.findAll(
@@ -384,8 +383,8 @@ public class DesignerServices implements Component {
 
 	public DtList<ResponseButton> getButtonsBySmalltalk(final SmallTalk smallTalk) {
 		Assertion.check()
-		.isNotNull(smallTalk)
-		.isNotNull(smallTalk.getSmtId());
+				.isNotNull(smallTalk)
+				.isNotNull(smallTalk.getSmtId());
 		// ---
 
 		return responseButtonDAO.findAll(

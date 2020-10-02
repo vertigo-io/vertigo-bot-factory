@@ -35,4 +35,3 @@ public class JaxrsProvider implements Component {
 				.register(MultiPartWriter.class);
 	}
 }
-	

@@ -33,8 +33,8 @@ public final class RasaIntent {
 
 	public static RasaIntent ofSmallTalk(final Long id, final String name, final List<String> nlus, final RasaAction trigger) {
 		Assertion.check()
-		.isNotNull(trigger)
-		.isTrue(trigger.isSmallTalk(), "Trigger must be a small talk action");
+				.isNotNull(trigger)
+				.isTrue(trigger.isSmallTalk(), "Trigger must be a small talk action");
 		// ----
 		return new RasaIntent(id, "st_" + StringUtils.labelToCode(name), nlus, trigger);
 	}

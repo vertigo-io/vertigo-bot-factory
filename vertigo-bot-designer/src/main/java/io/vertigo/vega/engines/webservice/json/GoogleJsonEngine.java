@@ -384,7 +384,7 @@ public final class GoogleJsonEngine implements JsonEngine, Activeable {
 			return context.serialize(src.get().getName());
 		}
 	}
-	
+
 	private static final class MapJsonSerializer implements JsonSerializer<Map> {
 		/** {@inheritDoc} */
 		@Override
@@ -407,7 +407,6 @@ public final class GoogleJsonEngine implements JsonEngine, Activeable {
 			return context.serialize(src);
 		}
 	}
-
 
 	private final class URIJsonAdapter implements JsonSerializer<UID>, JsonDeserializer<UID> {
 
@@ -550,7 +549,7 @@ public final class GoogleJsonEngine implements JsonEngine, Activeable {
 			jsonBasicTypeAdapters.entrySet()
 					.forEach(entry -> gsonBuilder.registerTypeAdapter(entry.getKey(), new SmartTypeAdapter(entry.getKey(), entry.getValue())));
 
-			 gsonBuilder
+			gsonBuilder
 					.setPrettyPrinting()
 					//.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 					.registerTypeHierarchyAdapter(Entity.class, new EntityJsonAdapter())
@@ -565,14 +564,14 @@ public final class GoogleJsonEngine implements JsonEngine, Activeable {
 					.registerTypeAdapter(DtListState.class, new DtListStateDeserializer())
 					.registerTypeAdapter(FacetedQueryResult.class, searchApiVersion.getJsonSerializerClass().newInstance())
 					.registerTypeAdapter(SelectedFacetValues.class, new SelectedFacetValuesDeserializer());
-			
+
 			if (!serializeNulls) {
 				gsonBuilder
-				.registerTypeAdapter(String.class, new EmptyStringAsNull())// add "" <=> null
-				.registerTypeAdapter(List.class, new ListJsonSerializer())
-				.registerTypeAdapter(Map.class, new MapJsonSerializer());
+						.registerTypeAdapter(String.class, new EmptyStringAsNull())// add "" <=> null
+						.registerTypeAdapter(List.class, new ListJsonSerializer())
+						.registerTypeAdapter(Map.class, new MapJsonSerializer());
 			}
-				
+
 			gsonBuilder
 					.registerTypeAdapter(DefinitionReference.class, new DefinitionReferenceJsonSerializer())
 					.registerTypeAdapter(Optional.class, new OptionJsonSerializer())

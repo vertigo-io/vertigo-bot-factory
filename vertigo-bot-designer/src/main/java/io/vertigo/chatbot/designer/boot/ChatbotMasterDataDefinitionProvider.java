@@ -34,7 +34,7 @@ public class ChatbotMasterDataDefinitionProvider extends AbstractMasterDataDefin
 	@Override
 	public void declareMasterDataLists() {
 		registerDtMasterDatas(ResponseType.class);
-		registerDtMasterDatas(PersonRole.class);	
+		registerDtMasterDatas(PersonRole.class);
 	}
 
 }

@@ -15,13 +15,11 @@ import io.vertigo.datamodel.smarttype.annotations.SmartTypeDefinition;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeProperty;
 
 public enum ChatbotSmartTypes {
-	
-	
+
 	@SmartTypeDefinition(Long.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@SmartTypeProperty(property = "storeType", value = "NUMERIC")
 	Id,
-	
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
@@ -34,7 +32,6 @@ public enum ChatbotSmartTypes {
 	@SmartTypeProperty(property = "storeType", value = "NUMERIC")
 	Number,
 
-	
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@SmartTypeProperty(property = "storeType", value = "TEXT")
@@ -52,7 +49,6 @@ public enum ChatbotSmartTypes {
 	@SmartTypeProperty(property = "storeType", value = "VARCHAR(100)")
 	Password,
 
-	
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@Constraint(clazz = ConstraintStringLength.class, arg = "20", msg = "")

@@ -49,8 +49,8 @@ public final class RasaUtterButton {
 
 	private RasaUtterButton(final String text, final Long intentId) {
 		Assertion.check()
-		.isNotNull(text)
-		.isNotNull(intentId);
+				.isNotNull(text)
+				.isNotNull(intentId);
 		//--
 		this.text = text;
 		this.intentId = intentId;

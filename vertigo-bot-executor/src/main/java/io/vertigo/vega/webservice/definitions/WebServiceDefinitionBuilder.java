@@ -175,7 +175,7 @@ public final class WebServiceDefinitionBuilder implements Builder<WebServiceDefi
 		myNeedAuthentication = needAuthentication;
 		return this;
 	}
-	
+
 	/**
 	 * @param needAuthentication needApiKey
 	 * @return this builder

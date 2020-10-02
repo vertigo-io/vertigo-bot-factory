@@ -52,5 +52,4 @@ public class SmallTalkListController extends AbstractVSpringMvcController {
 		toModeReadOnly();
 	}
 
-
 }

@@ -44,11 +44,7 @@ public final class WebServiceDefinition extends AbstractDefinition {
 	 * HTTP Verb supported.
 	 */
 	public enum Verb {
-		Get,
-		Post,
-		Put,
-		Patch,
-		Delete,
+		Get, Post, Put, Patch, Delete,
 	}
 
 	private final String path;
@@ -303,7 +299,7 @@ public final class WebServiceDefinition extends AbstractDefinition {
 	public boolean isFileAttachment() {
 		return fileAttachment;
 	}
-	
+
 	//SKE
 	/**
 	 * @return the needApiKey

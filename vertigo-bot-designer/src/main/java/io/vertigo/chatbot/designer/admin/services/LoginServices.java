@@ -52,7 +52,7 @@ public class LoginServices implements Component {
 
 	@Inject
 	private AuthenticationManager authenticationManager;
-	@Inject	
+	@Inject
 	private AuthorizationManager authorizationManager;
 	@Inject
 	private VSecurityManager securityManager;
@@ -75,7 +75,7 @@ public class LoginServices implements Component {
 
 		person.chatbots().load();
 		person.chatbots().get().stream()
-				.forEach(chatbot -> userAuthorizations.withSecurityKeys("botId", chatbot.getBotId(	)));
+				.forEach(chatbot -> userAuthorizations.withSecurityKeys("botId", chatbot.getBotId()));
 	}
 
 	private List<Authorization> obtainAuthorizationPerRole(final String role) {
@@ -90,7 +90,7 @@ public class LoginServices implements Component {
 	private static List<Authorization> resolveAuthorizations(final AuthorizationName... authNames) {
 		final DefinitionSpace definitionSpace = Node.getNode().getDefinitionSpace();
 		final List<Authorization> authorizations = Arrays.stream(authNames)
-				.map(name -> definitionSpace.resolve(name.name(), Authorization.class))	
+				.map(name -> definitionSpace.resolve(name.name(), Authorization.class))
 				.collect(Collectors.toList());
 		return authorizations;
 	}

@@ -36,4 +36,3 @@ public class AnalyticsFeatures extends ModuleDiscoveryFeatures<AnalyticsFeatures
 	}
 
 }
-	

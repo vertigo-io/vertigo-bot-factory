@@ -62,7 +62,6 @@ public class RunnerRasaHandler extends AbstractRasaHandler {
 	@Override
 	public void stop() {
 		// stop child process
-
 		if (rasaProcess.isAlive()) {
 			rasaProcess.destroyForcibly();
 		}

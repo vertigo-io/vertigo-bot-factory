@@ -39,7 +39,7 @@ import io.vertigo.database.sql.statement.SqlStatement;
  * Init sample data for the app.
  * @author dszniten
  */
-public class DataBaseInitializer implements ComponentInitializer {		
+public class DataBaseInitializer implements ComponentInitializer {
 
 	@Inject
 	private ResourceManager resourceManager;
@@ -83,7 +83,7 @@ public class DataBaseInitializer implements ComponentInitializer {
 
 	private static void execCallableStatement(final SqlConnection connection, final SqlManager sqlManager, final String sql) {
 		try {
-			sqlManager.executeUpdate(SqlStatement.builder(sql).build(), Collections.emptyMap(),connection);
+			sqlManager.executeUpdate(SqlStatement.builder(sql).build(), Collections.emptyMap(), connection);
 		} catch (final SQLException e) {
 			throw WrappedException.wrap(e, "Can't exec command {0}", sql);
 		}

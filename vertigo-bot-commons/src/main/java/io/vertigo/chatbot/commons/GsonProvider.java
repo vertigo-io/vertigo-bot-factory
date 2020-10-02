@@ -47,7 +47,7 @@ public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<
 	public GsonProvider() {
 		jsonEngine = Node.getNode().getComponentSpace().resolve(JsonEngine.class);
 	}
-	
+
 	@Override
 	public boolean isReadable(final Class<?> type, final Type genericType,
 			final Annotation[] annotations, final MediaType mediaType) {

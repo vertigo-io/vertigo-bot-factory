@@ -18,10 +18,7 @@
 package io.vertigo.chatbot.designer.analytics.services;
 
 public enum TimeOption {
-	DAY("1d", "1h"),
-	WEEK("7d", "12h"),
-	MONTH("30d", "1d"),
-	YEAR("52w", "1w");
+	DAY("1d", "1h"), WEEK("7d", "12h"), MONTH("30d", "1d"), YEAR("52w", "1w");
 
 	private final String range;
 	private final String grain;

@@ -36,10 +36,10 @@ import io.vertigo.vega.webservice.exception.SessionException;
  * @author skerdudou
  */
 public final class ApiTokenWebServiceHandlerPlugin implements WebServiceHandlerPlugin {
-	
+
 	/** Stack index of the handler for sorting at startup**/
 	public static final int STACK_INDEX = 45;
-	
+
 	private final String apiKey;
 
 	/**
@@ -57,8 +57,6 @@ public final class ApiTokenWebServiceHandlerPlugin implements WebServiceHandlerP
 		return webServiceDefinition.isNeedApiKey();
 	}
 
-
-
 	@Override
 	public Object handle(HttpServletRequest request, HttpServletResponse response,
 			WebServiceCallContext webServiceCallContext, HandlerChain chain) throws SessionException {
@@ -74,6 +72,5 @@ public final class ApiTokenWebServiceHandlerPlugin implements WebServiceHandlerP
 	public int getStackIndex() {
 		return STACK_INDEX;
 	}
-
 
 }
