@@ -13,8 +13,8 @@ Vue.component('c-buttonlist', {
 	template : `
 		<div class="row wrap items-center">
 			<draggable class="row wrap" :disabled="!modeEdit"
-        			v-model="vueData[buttonList]">
-				<div v-for="(button, index) in vueData[buttonList]">
+        			v-model="VertigoUi.vueData[buttonList]">
+				<div v-for="(button, index) in VertigoUi.vueData[buttonList]">
 					<template v-if="modeEdit">
 						<input class="hidden" type="text" :name="'vContext['+buttonList+']['+index+'][text]'" :value="button.text" />
 						<input class="hidden" type="text" :name="'vContext['+buttonList+']['+index+'][smtIdResponse]'" :value="button.smtIdResponse" />
@@ -24,7 +24,7 @@ Vue.component('c-buttonlist', {
 						<q-chip
 							:label="button.text" color="primary" text-color="white"
 							:clickable="modeEdit" @click="editIndex = index; popupContent = Vue.util.extend({}, button); $refs.popupEdit.show();"
-							:removable="modeEdit" @remove="vueData[buttonList].splice(index, 1);"
+							:removable="modeEdit" @remove="VertigoUi.vueData[buttonList].splice(index, 1);"
 							>
 						</q-chip>
 						<q-tooltip>{{getChoiceTitleById(button.smtIdResponse)}}</q-tooltip>
@@ -55,8 +55,8 @@ Vue.component('c-buttonlist', {
 					</q-card-section>
 					
 					<q-card-actions align="around">
-						<q-btn v-if="editIndex === -1" :disable="!popupContent.text || !popupContent.smtIdResponse" label="Add" color="primary" v-close-popup @click="vueData[buttonList].push(popupContent)" ></q-btn>
-						<q-btn v-if="editIndex !== -1" :disable="!popupContent.text || !popupContent.smtIdResponse" label="Save" color="primary" v-close-popup @click="Vue.set(vueData[buttonList], editIndex, popupContent)" ></q-btn>
+						<q-btn v-if="editIndex === -1" :disable="!popupContent.text || !popupContent.smtIdResponse" label="Add" color="primary" v-close-popup @click="VertigoUi.vueData[buttonList].push(popupContent)" ></q-btn>
+						<q-btn v-if="editIndex !== -1" :disable="!popupContent.text || !popupContent.smtIdResponse" label="Save" color="primary" v-close-popup @click="Vue.set(VertigoUi.vueData[buttonList], editIndex, popupContent)" ></q-btn>
 					</q-card-actions>
 			</q-dialog>
 				
@@ -67,11 +67,11 @@ Vue.component('c-buttonlist', {
 			getChoiceTitleById: function(id) {
 				if (id == null) return null;
 				
-				let result = vueData[this.choiceList].filter(s => s.smtId === id);
+				let result = VertigoUi.vueData[this.choiceList].filter(s => s.smtId === id);
 				return result.length === 0 ? null : result[0].title;
 			},
 			transformListForSelection: function (list, valueField, labelField) {
-				return vueData[list].map(function (object) {
+				return VertigoUi.vueData[list].map(function (object) {
 					return { value: object[valueField], label: object[labelField].toString()} // a label is always a string
 				});
 			},

@@ -23,7 +23,7 @@ import javax.ws.rs.client.WebTarget;
 import org.glassfish.jersey.media.multipart.internal.MultiPartReaderServerSide;
 import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 
-import io.vertigo.core.component.Component;
+import io.vertigo.core.node.component.Component;
 
 public class JaxrsProvider implements Component {
 
@@ -35,3 +35,4 @@ public class JaxrsProvider implements Component {
 				.register(MultiPartWriter.class);
 	}
 }
+	

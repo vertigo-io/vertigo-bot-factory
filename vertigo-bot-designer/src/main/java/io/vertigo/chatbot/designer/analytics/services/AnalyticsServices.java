@@ -30,24 +30,24 @@ import io.vertigo.chatbot.designer.domain.StatCriteria;
 import io.vertigo.chatbot.designer.domain.TopIntent;
 import io.vertigo.chatbot.designer.domain.UnknownSentense;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.component.Activeable;
-import io.vertigo.core.component.Component;
+import io.vertigo.core.node.component.Activeable;
+import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.database.timeseries.DataFilter;
 import io.vertigo.database.timeseries.DataFilterBuilder;
 import io.vertigo.database.timeseries.TabularDataSerie;
 import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimeFilter;
-import io.vertigo.database.timeseries.TimeSeriesDataBaseManager;
+import io.vertigo.database.timeseries.TimeSeriesManager;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
-import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.datamodel.structure.model.DtList;
 
 @Transactional
 public class AnalyticsServices implements Component, Activeable {
 
 	@Inject
-	private TimeSeriesDataBaseManager timeSeriesDataBaseManager;
+	private TimeSeriesManager timeSeriesManager;
 
 	@Inject
 	private ParamManager paramManager;
@@ -65,13 +65,13 @@ public class AnalyticsServices implements Component, Activeable {
 	}
 
 	public TimedDatas getSessionsStats(final StatCriteria criteria) {
-		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("isTypeOpen:sum"),
+		return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("isTypeOpen:sum"),
 				getDataFilter(criteria).build(),
 				getTimeFilter(criteria));
 	}
 
 	public TimedDatas getRequestStats(final StatCriteria criteria) {
-		return timeSeriesDataBaseManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum"),
+		return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum"),
 				getDataFilter(criteria).withAdditionalWhereClause("isUserMessage = 1").build(),
 				getTimeFilter(criteria));
 
@@ -79,7 +79,7 @@ public class AnalyticsServices implements Component, Activeable {
 
 	public DtList<UnknownSentense> getUnknownSentenses(final StatCriteria criteria) {
 		// get data from influxdb
-		final TimedDatas tabularTimedData = timeSeriesDataBaseManager.getFlatTabularTimedData(influxDbName, Arrays.asList("messageId", "text", "name", "confidence"),
+		final TimedDatas tabularTimedData = timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("messageId", "text", "name", "confidence"),
 				getDataFilter(criteria).withAdditionalWhereClause("isFallback = 1").build(),
 				getTimeFilter(criteria),
 				Optional.empty());
@@ -107,7 +107,7 @@ public class AnalyticsServices implements Component, Activeable {
 
 	public DtList<TopIntent> getTopIntents(final StatCriteria criteria) {
 		// get data from influxdb
-		final TabularDatas tabularDatas = timeSeriesDataBaseManager.getTabularData(influxDbName, Arrays.asList("name:count"),
+		final TabularDatas tabularDatas = timeSeriesManager.getTabularData(influxDbName, Arrays.asList("name:count"),
 				getDataFilter(criteria)
 						.addFilter("type", RasaTypeAction.MESSAGE.name())
 						.withAdditionalWhereClause("isFallback = 0")

@@ -18,6 +18,8 @@
 package io.vertigo.chatbot.vega.plugins.webservice.handler;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import io.vertigo.account.authorization.VSecurityException;
 import io.vertigo.core.locale.MessageText;
@@ -25,10 +27,8 @@ import io.vertigo.core.param.ParamValue;
 import io.vertigo.vega.impl.webservice.WebServiceHandlerPlugin;
 import io.vertigo.vega.plugins.webservice.handler.HandlerChain;
 import io.vertigo.vega.plugins.webservice.handler.WebServiceCallContext;
+import io.vertigo.vega.webservice.definitions.WebServiceDefinition;
 import io.vertigo.vega.webservice.exception.SessionException;
-import io.vertigo.vega.webservice.metamodel.WebServiceDefinition;
-import spark.Request;
-import spark.Response;
 
 /**
  * Security handler.
@@ -36,6 +36,10 @@ import spark.Response;
  * @author skerdudou
  */
 public final class ApiTokenWebServiceHandlerPlugin implements WebServiceHandlerPlugin {
+	
+	/** Stack index of the handler for sorting at startup**/
+	public static final int STACK_INDEX = 45;
+	
 	private final String apiKey;
 
 	/**
@@ -53,14 +57,23 @@ public final class ApiTokenWebServiceHandlerPlugin implements WebServiceHandlerP
 		return webServiceDefinition.isNeedApiKey();
 	}
 
-	/** {@inheritDoc} */
+
+
 	@Override
-	public Object handle(final Request request, final Response response, final WebServiceCallContext routeContext, final HandlerChain chain) throws SessionException {
-		final String providedApiKey = request.headers("apiKey");
+	public Object handle(HttpServletRequest request, HttpServletResponse response,
+			WebServiceCallContext webServiceCallContext, HandlerChain chain) throws SessionException {
+		final String providedApiKey = request.getHeader("apiKey");
 
 		if (!apiKey.equals(providedApiKey)) {
 			throw new VSecurityException(MessageText.of("Wrong apiKey"));
 		}
-		return chain.handle(request, response, routeContext);
+		return chain.handle(request, response, webServiceCallContext);
 	}
+
+	@Override
+	public int getStackIndex() {
+		return STACK_INDEX;
+	}
+
+
 }

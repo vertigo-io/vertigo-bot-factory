@@ -1,26 +1,9 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.designer.domain;
 
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -39,7 +22,7 @@ public final class StatCriteria implements DtObject {
 	 * Récupère la valeur de la propriété 'Chatbot selection'.
 	 * @return Long botId
 	 */
-	@Field(domain = "DoId", label = "Chatbot selection")
+	@Field(smartType = "STyId", label = "Chatbot selection")
 	public Long getBotId() {
 		return botId;
 	}
@@ -58,7 +41,7 @@ public final class StatCriteria implements DtObject {
 	 * Récupère la valeur de la propriété 'Time option'.
 	 * @return String timeOption
 	 */
-	@Field(domain = "DoCode", label = "Time option")
+	@Field(smartType = "STyCode", label = "Time option")
 	public String getTimeOption() {
 		return timeOption;
 	}
@@ -77,7 +60,7 @@ public final class StatCriteria implements DtObject {
 	 * Récupère la valeur de la propriété 'Node selection'.
 	 * @return Long nodId
 	 */
-	@Field(domain = "DoId", label = "Node selection")
+	@Field(smartType = "STyId", label = "Node selection")
 	public Long getNodId() {
 		return nodId;
 	}

@@ -1,4 +1,5 @@
-run.kpr
-
 mda/modele.ksp
 mda/person.ksp
+
+builder/designer_task.ksp
+builder/training_task.ksp

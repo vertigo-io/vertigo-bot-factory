@@ -33,10 +33,10 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.vertigo.core.component.Activeable;
-import io.vertigo.core.component.Component;
+import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.node.component.Activeable;
+import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.ParamManager;
-import io.vertigo.lang.VSystemException;
 
 public abstract class AbstractRasaHandler implements Component, Activeable {
 

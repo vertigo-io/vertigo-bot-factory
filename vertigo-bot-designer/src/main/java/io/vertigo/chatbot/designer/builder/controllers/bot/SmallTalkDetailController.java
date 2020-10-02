@@ -33,14 +33,14 @@ import io.vertigo.chatbot.commons.domain.ResponseType;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
-import io.vertigo.dynamo.domain.model.DtList;
-import io.vertigo.lang.Assertion;
-import io.vertigo.lang.VUserException;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
-import io.vertigo.util.StringUtil;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
@@ -72,7 +72,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 
 		final SmallTalk smallTalk = designerServices.getSmallTalkById(intId);
 
-		Assertion.checkState(smallTalk.getBotId().equals(botId), "Paramètres incohérents");
+		Assertion.check().isTrue(smallTalk.getBotId().equals(botId), "Paramètres incohérents");
 
 		viewContext.publishDto(smallTalkKey, smallTalk);
 
@@ -160,7 +160,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	}
 
 	private void addTrainingSentense(final String newNluTrainingSentenceIn, final DtList<NluTrainingSentence> nluTrainingSentences) {
-		if (StringUtil.isEmpty(newNluTrainingSentenceIn)) {
+		if (StringUtil.isBlank(newNluTrainingSentenceIn)) {
 			return;
 		}
 
@@ -184,7 +184,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
 
-		if (StringUtil.isEmpty(newNluTrainingSentence)) {
+		if (StringUtil.isBlank(newNluTrainingSentence)) {
 			// empty edit, rollback modification
 			viewContext.markModifiedKeys(nluTrainingSentencesKey);
 			return viewContext;

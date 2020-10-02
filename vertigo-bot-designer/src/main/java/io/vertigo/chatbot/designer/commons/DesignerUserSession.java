@@ -24,7 +24,7 @@ import java.util.Locale;
 
 import io.vertigo.account.security.UserSession;
 import io.vertigo.chatbot.commons.domain.Person;
-import io.vertigo.dynamo.domain.model.FileInfoURI;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
 
 /**
  * UserSession.

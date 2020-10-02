@@ -26,39 +26,39 @@
 			}
 			
 			function getDisplayedTrainingSentenses() {
-				let searchNormailized = normalizeString(componentStates.nluTrainingSentences.pagination.search);
+				let searchNormailized = normalizeString(VertigoUi.componentStates.nluTrainingSentences.pagination.search);
 				
-				return vueData.nluTrainingSentences
+				return VertigoUi.vueData.nluTrainingSentences
 						// copy and reverse
 						.slice().reverse()
 						// search
 						.filter(nts => normalizeString(nts.text).includes(searchNormailized))
 						// pagination
-						.slice((componentStates.nluTrainingSentences.pagination.page - 1) * componentStates.nluTrainingSentences.pagination.rowsPerPage,
-								componentStates.nluTrainingSentences.pagination.page * componentStates.nluTrainingSentences.pagination.rowsPerPage);
+						.slice((VertigoUi.componentStates.nluTrainingSentences.pagination.page - 1) * VertigoUi.componentStates.nluTrainingSentences.pagination.rowsPerPage,
+								VertigoUi.componentStates.nluTrainingSentences.pagination.page * VertigoUi.componentStates.nluTrainingSentences.pagination.rowsPerPage);
 			}
 			
 			function getUtterTextResolvedList() {
-				utterTextlist = vueData.utterTexts;
+				utterTextlist = VertigoUi.vueData.utterTexts;
 				
 				// if only 1 element display it
-				if (vueData.utterTexts.length < 2) {
-					return vueData.utterTexts;
+				if (VertigoUi.vueData.utterTexts.length < 2) {
+					return VertigoUi.vueData.utterTexts;
 				}
 				
-				let lastIndex = vueData.utterTexts.length - 1;
+				let lastIndex = VertigoUi.vueData.utterTexts.length - 1;
 				for (; lastIndex > 0; lastIndex--) {
-					if (vueData.utterTexts[lastIndex - 1].text || vueData.utterTexts[lastIndex].text) {
+					if (VertigoUi.vueData.utterTexts[lastIndex - 1].text || VertigoUi.vueData.utterTexts[lastIndex].text) {
 						break; // stop if not emty or next is not empty
 					}
 				}
 				
-				return vueData.utterTexts.slice(0, lastIndex + 1);
+				return VertigoUi.vueData.utterTexts.slice(0, lastIndex + 1);
 			}
 			
 			function addMoreUtterTextIfNeeded() {
-				if (vueData.utterTexts[vueData.utterTexts.length - 1].text) {
-					vueData.utterTexts.push({});
+				if (VertigoUi.vueData.utterTexts[VertigoUi.vueData.utterTexts.length - 1].text) {
+					VertigoUi.vueData.utterTexts.push({});
 				}
 			}
 			

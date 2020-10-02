@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.vertigo.chatbot.executor.model.IncomeMessage;
 import io.vertigo.chatbot.executor.rasa.services.RasaRunnerServices;
-import io.vertigo.lang.WrappedException;
+import io.vertigo.core.lang.WrappedException;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.POST;
 import io.vertigo.vega.webservice.stereotype.PathPrefix;

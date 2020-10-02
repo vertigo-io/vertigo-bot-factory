@@ -1,26 +1,9 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -32,16 +15,16 @@ public final class BotExport implements DtObject {
 
 	private io.vertigo.chatbot.commons.domain.Chatbot bot;
 	private io.vertigo.chatbot.commons.domain.UtterText fallbackText;
-	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> fallbackButtons;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> fallbackButtons;
 	private io.vertigo.chatbot.commons.domain.UtterText welcomeText;
-	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> welcomeButtons;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> welcomeButtons;
 	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'chatbot'.
 	 * @return Chatbot bot <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoDtChatbotDto", required = true, label = "chatbot")
+	@Field(smartType = "STyDtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "chatbot")
 	public io.vertigo.chatbot.commons.domain.Chatbot getBot() {
 		return bot;
 	}
@@ -60,7 +43,7 @@ public final class BotExport implements DtObject {
 	 * Récupère la valeur de la propriété 'fallback'.
 	 * @return UtterText fallbackText <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoDtUtterTextDto", required = true, label = "fallback")
+	@Field(smartType = "STyDtUtterText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "fallback")
 	public io.vertigo.chatbot.commons.domain.UtterText getFallbackText() {
 		return fallbackText;
 	}
@@ -77,19 +60,19 @@ public final class BotExport implements DtObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'fallback buttons'.
-	 * @return DtList de ResponseButton fallbackButtons <b>Obligatoire</b>
+	 * @return DtList de ResponseButton fallbackButtons
 	 */
-	@Field(domain = "DoDtResponseButtonDtc", required = true, label = "fallback buttons")
-	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getFallbackButtons() {
+	@Field(smartType = "STyDtResponseButton", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "fallback buttons")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getFallbackButtons() {
 		return fallbackButtons;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'fallback buttons'.
-	 * @param fallbackButtons DtList de ResponseButton <b>Obligatoire</b>
+	 * @param fallbackButtons DtList de ResponseButton
 	 */
-	public void setFallbackButtons(final io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> fallbackButtons) {
+	public void setFallbackButtons(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> fallbackButtons) {
 		this.fallbackButtons = fallbackButtons;
 	}
 	
@@ -98,7 +81,7 @@ public final class BotExport implements DtObject {
 	 * Récupère la valeur de la propriété 'welcome'.
 	 * @return UtterText welcomeText <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoDtUtterTextDto", required = true, label = "welcome")
+	@Field(smartType = "STyDtUtterText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "welcome")
 	public io.vertigo.chatbot.commons.domain.UtterText getWelcomeText() {
 		return welcomeText;
 	}
@@ -115,19 +98,19 @@ public final class BotExport implements DtObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'welcome buttons'.
-	 * @return DtList de ResponseButton welcomeButtons <b>Obligatoire</b>
+	 * @return DtList de ResponseButton welcomeButtons
 	 */
-	@Field(domain = "DoDtResponseButtonDtc", required = true, label = "welcome buttons")
-	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getWelcomeButtons() {
+	@Field(smartType = "STyDtResponseButton", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "welcome buttons")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getWelcomeButtons() {
 		return welcomeButtons;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'welcome buttons'.
-	 * @param welcomeButtons DtList de ResponseButton <b>Obligatoire</b>
+	 * @param welcomeButtons DtList de ResponseButton
 	 */
-	public void setWelcomeButtons(final io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> welcomeButtons) {
+	public void setWelcomeButtons(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> welcomeButtons) {
 		this.welcomeButtons = welcomeButtons;
 	}
 	

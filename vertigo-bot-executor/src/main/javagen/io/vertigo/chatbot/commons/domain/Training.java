@@ -1,28 +1,11 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.dynamo.domain.model.Entity;
-import io.vertigo.dynamo.domain.model.UID;
-import io.vertigo.dynamo.domain.model.VAccessor;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -42,7 +25,7 @@ public final class Training implements Entity {
 	private String warnings;
 	private java.math.BigDecimal nluThreshold;
 
-	@io.vertigo.dynamo.domain.stereotype.Association(
+	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ATrainingChatbot",
 			fkFieldName = "botId",
 			primaryDtDefinitionName = "DtChatbot",
@@ -55,9 +38,9 @@ public final class Training implements Entity {
 			foreignRole = "Training",
 			foreignLabel = "Training",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
 
-	@io.vertigo.dynamo.domain.stereotype.Association(
+	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ATrainingMediaFileInfo",
 			fkFieldName = "filIdModel",
 			primaryDtDefinitionName = "DtMediaFileInfo",
@@ -70,7 +53,7 @@ public final class Training implements Entity {
 			foreignRole = "Training",
 			foreignLabel = "Training",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> filIdModelAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.MediaFileInfo.class, "MediaFileInfo");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> filIdModelAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.MediaFileInfo.class, "MediaFileInfo");
 
 	/** {@inheritDoc} */
 	@Override
@@ -83,7 +66,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété 'ID'.
 	 * @return Long traId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", type = "ID", required = true, label = "ID")
+	@Field(smartType = "STyId", type = "ID", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "ID")
 	public Long getTraId() {
 		return traId;
 	}
@@ -102,7 +85,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété 'Start time'.
 	 * @return Instant startTime <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoInstant", required = true, label = "Start time")
+	@Field(smartType = "STyInstant", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Start time")
 	public java.time.Instant getStartTime() {
 		return startTime;
 	}
@@ -121,7 +104,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété 'End time'.
 	 * @return Instant endTime
 	 */
-	@Field(domain = "DoInstant", label = "End time")
+	@Field(smartType = "STyInstant", label = "End time")
 	public java.time.Instant getEndTime() {
 		return endTime;
 	}
@@ -140,7 +123,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété 'Version'.
 	 * @return Long versionNumber <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoNumber", required = true, label = "Version")
+	@Field(smartType = "STyNumber", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Version")
 	public Long getVersionNumber() {
 		return versionNumber;
 	}
@@ -159,7 +142,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété 'Status'.
 	 * @return String status <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoCode", required = true, label = "Status")
+	@Field(smartType = "STyCode", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Status")
 	public String getStatus() {
 		return status;
 	}
@@ -178,7 +161,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété 'Log'.
 	 * @return String log
 	 */
-	@Field(domain = "DoText", label = "Log")
+	@Field(smartType = "STyText", label = "Log")
 	public String getLog() {
 		return log;
 	}
@@ -197,7 +180,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété 'Informations'.
 	 * @return String infos
 	 */
-	@Field(domain = "DoText", label = "Informations")
+	@Field(smartType = "STyText", label = "Informations")
 	public String getInfos() {
 		return infos;
 	}
@@ -216,7 +199,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété 'Warnings'.
 	 * @return String warnings
 	 */
-	@Field(domain = "DoText", label = "Warnings")
+	@Field(smartType = "STyText", label = "Warnings")
 	public String getWarnings() {
 		return warnings;
 	}
@@ -235,7 +218,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété 'NLU Threshold'.
 	 * @return BigDecimal nluThreshold <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoPercentage", required = true, label = "NLU Threshold")
+	@Field(smartType = "STyPercentage", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "NLU Threshold")
 	public java.math.BigDecimal getNluThreshold() {
 		return nluThreshold;
 	}
@@ -254,7 +237,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", type = "FOREIGN_KEY", required = true, label = "Chatbot")
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot" )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -273,7 +256,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété 'Model'.
 	 * @return Long filIdModel
 	 */
-	@Field(domain = "DoId", type = "FOREIGN_KEY", label = "Model")
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Model", fkDefinition = "DtMediaFileInfo" )
 	public Long getFilIdModel() {
 		return (Long) filIdModelAccessor.getId();
 	}
@@ -292,7 +275,7 @@ public final class Training implements Entity {
 	 * Récupère la valeur de la propriété calculée 'Duration'.
 	 * @return String duration
 	 */
-	@Field(domain = "DoLabel", type = "COMPUTED", persistent = false, label = "Duration")
+	@Field(smartType = "STyLabel", type = "COMPUTED", persistent = false, label = "Duration")
 	public String getDuration() {
 		return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());
 	}
@@ -301,7 +284,7 @@ public final class Training implements Entity {
 	 * Association : Chatbot.
 	 * @return l'accesseur vers la propriété 'Chatbot'
 	 */
-	public VAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbot() {
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbot() {
 		return botIdAccessor;
 	}
 
@@ -309,7 +292,7 @@ public final class Training implements Entity {
 	 * Association : Model.
 	 * @return l'accesseur vers la propriété 'Model'
 	 */
-	public VAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> mediaFileInfo() {
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> mediaFileInfo() {
 		return filIdModelAccessor;
 	}
 	

@@ -1,48 +1,48 @@
 package io.vertigo.chatbot.designer.builder 
 
 create Task TkExportSmallTalkRelativeTrainingSentence {  
-    className : "io.vertigo.dynamox.task.TaskEngineSelect"
+    className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
             select 
             	*
 			from nlu_training_sentence nts
 			where nts.smt_id in (#stIds.rownum#)
              "
-	attribute stIds					{domain : DoLongs,						required:"true", inOut :"in",} 
-	attribute trainingSentences 	{domain : DoDtNluTrainingSentenceDtc 	required:"true"  inOut :"out"}
+	in stIds				{domain : DoNumber,						cardinality:"*"} 
+	out trainingSentences 	{domain : DoDtNluTrainingSentence	 	cardinality:"*"}
 }
 
 create Task TkExportSmallTalkRelativeUtter {  
-    className : "io.vertigo.dynamox.task.TaskEngineSelect"
+    className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
             select 
             	*
 			from utter_text utt
 			where utt.smt_id in (#stIds.rownum#)
              "
-	attribute stIds			{domain : DoLongs,			required:"true", inOut :"in",} 
-	attribute utterTexts 	{domain : DoDtUtterTextDtc 	required:"true"  inOut :"out"}
+	in stIds				{domain : DoNumber						cardinality:"*"} 
+	out utterTexts 			{domain : DoDtUtterText 				cardinality:"*"}
 }
 
 create Task TkExportSmallTalkRelativeButtons {  
-    className : "io.vertigo.dynamox.task.TaskEngineSelect"
+    className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
             select 
             	*
 			from response_button btn
 			where btn.smt_id in (#stIds.rownum#)
              "
-	attribute stIds			{domain : DoLongs,				required:"true", inOut :"in",} 
-	attribute utterTexts 	{domain : DoDtResponseButtonDtc	required:"true"  inOut :"out"}
+	in stIds				{domain : DoNumber						cardinality:"*"} 
+	out utterTexts		 	{domain : DoDtResponseButton			cardinality:"*"}
 }
 
 create Task TkCleanOldTrainings {  
-    className : "io.vertigo.dynamox.task.TaskEngineProc"
+    className : "io.vertigo.basics.task.TaskEngineProc"
     request : "
             update training
 			set status = 'KO'
 			where status = 'TRAINING'
 			and bot_id = #botId#
              "
-	attribute botId  		{domain : DoId         		required:"true"  inOut :"in"}
+	in botId  				{domain : DoId         					cardinality:"1"}
 }

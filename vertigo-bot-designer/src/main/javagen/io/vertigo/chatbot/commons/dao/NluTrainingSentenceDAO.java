@@ -1,34 +1,18 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.dao;
 
 import javax.inject.Inject;
 
-import io.vertigo.app.Home;
-import io.vertigo.dynamo.task.metamodel.TaskDefinition;
-import io.vertigo.dynamo.task.model.Task;
-import io.vertigo.dynamo.task.model.TaskBuilder;
-import io.vertigo.dynamo.impl.store.util.DAO;
-import io.vertigo.dynamo.store.StoreManager;
-import io.vertigo.dynamo.store.StoreServices;
-import io.vertigo.dynamo.task.TaskManager;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.core.node.Node;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
+import io.vertigo.datastore.entitystore.EntityStoreManager;
+import io.vertigo.datastore.impl.dao.DAO;
+import io.vertigo.datastore.impl.dao.StoreServices;
+import io.vertigo.datamodel.smarttype.SmartTypeManager;
+import io.vertigo.datamodel.task.TaskManager;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
-import io.vertigo.lang.Generated;
 
 /**
  * This class is automatically generated.
@@ -39,12 +23,13 @@ public final class NluTrainingSentenceDAO extends DAO<NluTrainingSentence, java.
 
 	/**
 	 * Contructeur.
-	 * @param storeManager Manager de persistance
+	 * @param entityStoreManager Manager de persistance
 	 * @param taskManager Manager de Task
+	 * @param smartTypeManager SmartTypeManager
 	 */
 	@Inject
-	public NluTrainingSentenceDAO(final StoreManager storeManager, final TaskManager taskManager) {
-		super(NluTrainingSentence.class, storeManager, taskManager);
+	public NluTrainingSentenceDAO(final EntityStoreManager entityStoreManager, final TaskManager taskManager, final SmartTypeManager smartTypeManager) {
+		super(NluTrainingSentence.class, entityStoreManager, taskManager, smartTypeManager);
 	}
 
 
@@ -54,16 +39,24 @@ public final class NluTrainingSentenceDAO extends DAO<NluTrainingSentence, java.
 	 * @return the builder 
 	 */
 	private static TaskBuilder createTaskBuilder(final String name) {
-		final TaskDefinition taskDefinition = Home.getApp().getDefinitionSpace().resolve(name, TaskDefinition.class);
+		final TaskDefinition taskDefinition = Node.getNode().getDefinitionSpace().resolve(name, TaskDefinition.class);
 		return Task.builder(taskDefinition);
 	}
 
 	/**
 	 * Execute la tache TkExportSmallTalkRelativeTrainingSentence.
-	 * @param stIds List de Long 
+	 * @param stIds List de Long
 	 * @return DtList de NluTrainingSentence trainingSentences
 	*/
-	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> exportSmallTalkRelativeTrainingSentence(final java.util.List<Long> stIds) {
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkExportSmallTalkRelativeTrainingSentence",
+			request = "select " + 
+ "            	*" + 
+ "			from nlu_training_sentence nts" + 
+ "			where nts.smt_id in (#stIds.rownum#)",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtNluTrainingSentence")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> exportSmallTalkRelativeTrainingSentence(@io.vertigo.datamodel.task.proxy.TaskInput(name = "stIds", smartType = "STyNumber") final java.util.List<Long> stIds) {
 		final Task task = createTaskBuilder("TkExportSmallTalkRelativeTrainingSentence")
 				.addValue("stIds", stIds)
 				.build();

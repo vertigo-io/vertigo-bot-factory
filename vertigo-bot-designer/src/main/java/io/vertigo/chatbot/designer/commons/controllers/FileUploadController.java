@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.chatbot.designer.commons.DesignerUserSession;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
-import io.vertigo.dynamo.domain.model.FileInfoURI;
-import io.vertigo.dynamo.file.model.VFile;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
 
 @Controller

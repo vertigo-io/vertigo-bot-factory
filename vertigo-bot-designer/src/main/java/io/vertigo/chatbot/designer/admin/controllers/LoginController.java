@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.designer.admin.services.LoginServices;
-import io.vertigo.lang.VUserException;
+import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.util.StringUtil;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
-import io.vertigo.util.StringUtil;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
@@ -66,7 +66,7 @@ public class LoginController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_login")
 	public String doLogin(@RequestParam("login") final String login, @RequestParam("password") final String password) {
-		if (StringUtil.isEmpty(login) || StringUtil.isEmpty(password)) {
+		if (StringUtil.isBlank(login) || StringUtil.isBlank(password)) {
 			throw new VUserException("Login and Password are mandatory");
 		}
 		loginServices.login(login, password);

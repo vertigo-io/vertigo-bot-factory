@@ -17,7 +17,7 @@
 	Vue.component('apexchart', VueApexCharts);
 	
 	let timeFormatter = function(value) {
-		if (vueData.criteria.timeOption === 'DAY') {
+		if (VertigoUi.vueData.criteria.timeOption === 'DAY') {
 			return new Date(value).toLocaleDateString('en-EN', {
 				month: 'short',
 				day: '2-digit',
@@ -25,7 +25,7 @@
 			    minute:'2-digit',
 			    hour12: false
 			  });
-		} else if (vueData.criteria.timeOption === 'WEEK') {
+		} else if (VertigoUi.vueData.criteria.timeOption === 'WEEK') {
 			let myDate = new Date(value);
 			let dateStr = myDate.toLocaleDateString('en-EN', {
 				month: 'short',
@@ -71,7 +71,7 @@
 		series : function() {
 			return [ {
 						name : 'User sessions',
-						data : serieToApex("isTypeOpen:sum", vueData.sessionStats, {fill: 0})
+						data : serieToApex("isTypeOpen:sum", VertigoUi.vueData.sessionStats, {fill: 0})
 					}
 				];
 		} 
@@ -104,11 +104,11 @@
 		series : function() {
 			return [ {
 						name : 'User actions',
-						data : serieToApex("name:count", vueData.requestsStats, {fill: 0})
+						data : serieToApex("name:count", VertigoUi.vueData.requestsStats, {fill: 0})
 					},
 					{
 						name : 'Messages not understood',
-						data : serieToApex("isFallback:sum", vueData.requestsStats, {fill: 0})
+						data : serieToApex("isFallback:sum", VertigoUi.vueData.requestsStats, {fill: 0})
 					} 
 				];
 		} 
@@ -130,7 +130,7 @@
 			// null value = hole
 			// undefined value = stroke between existing values
 			if (valueResolved !== undefined) {
-				ret.push([(e.time.epochSecond || e.time.seconds)* 1000 , valueResolved]);
+				ret.push([new Date(e.time).getTime()* 1000 , valueResolved]);
 			}
 		});
 		return ret;
@@ -140,7 +140,7 @@
 	function getSmallTalkTitleBySmtId(smtId) {
 		if (smtId == null) return null;
 		
-		let result = vueData.smallTalks.filter(s => s.smtId === smtId);
+		let result = VertigoUi.vueData.smallTalks.filter(s => s.smtId === smtId);
 		return result.length === 0 ? null : result[0].title;
 	}
 </script>

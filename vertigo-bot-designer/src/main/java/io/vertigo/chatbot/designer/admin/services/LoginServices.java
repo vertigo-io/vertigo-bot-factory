@@ -30,11 +30,10 @@ import io.vertigo.account.authentication.AuthenticationManager;
 import io.vertigo.account.authorization.AuthorizationManager;
 import io.vertigo.account.authorization.UserAuthorizations;
 import io.vertigo.account.authorization.VSecurityException;
-import io.vertigo.account.authorization.metamodel.Authorization;
-import io.vertigo.account.authorization.metamodel.AuthorizationName;
+import io.vertigo.account.authorization.definitions.Authorization;
+import io.vertigo.account.authorization.definitions.AuthorizationName;
 import io.vertigo.account.impl.authentication.UsernamePasswordAuthenticationToken;
 import io.vertigo.account.security.VSecurityManager;
-import io.vertigo.app.Home;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotAuthorizations;
 import io.vertigo.chatbot.commons.dao.PersonDAO;
@@ -42,17 +41,18 @@ import io.vertigo.chatbot.commons.domain.Person;
 import io.vertigo.chatbot.commons.domain.PersonRoleEnum;
 import io.vertigo.chatbot.designer.commons.DesignerUserSession;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.component.Component;
-import io.vertigo.core.definition.DefinitionSpace;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.MessageText;
-import io.vertigo.lang.VUserException;
+import io.vertigo.core.node.Node;
+import io.vertigo.core.node.component.Component;
+import io.vertigo.core.node.definition.DefinitionSpace;
 
 @Transactional
 public class LoginServices implements Component {
 
 	@Inject
 	private AuthenticationManager authenticationManager;
-	@Inject
+	@Inject	
 	private AuthorizationManager authorizationManager;
 	@Inject
 	private VSecurityManager securityManager;
@@ -75,7 +75,7 @@ public class LoginServices implements Component {
 
 		person.chatbots().load();
 		person.chatbots().get().stream()
-				.forEach(chatbot -> userAuthorizations.withSecurityKeys("botId", chatbot.getBotId()));
+				.forEach(chatbot -> userAuthorizations.withSecurityKeys("botId", chatbot.getBotId(	)));
 	}
 
 	private List<Authorization> obtainAuthorizationPerRole(final String role) {
@@ -88,9 +88,9 @@ public class LoginServices implements Component {
 	}
 
 	private static List<Authorization> resolveAuthorizations(final AuthorizationName... authNames) {
-		final DefinitionSpace definitionSpace = Home.getApp().getDefinitionSpace();
+		final DefinitionSpace definitionSpace = Node.getNode().getDefinitionSpace();
 		final List<Authorization> authorizations = Arrays.stream(authNames)
-				.map(name -> definitionSpace.resolve(name.name(), Authorization.class))
+				.map(name -> definitionSpace.resolve(name.name(), Authorization.class))	
 				.collect(Collectors.toList());
 		return authorizations;
 	}

@@ -1,7 +1,7 @@
 /**
- * vertigo - simple java starter
+ * vertigo - application development platform
  *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2020, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import io.vertigo.core.definition.DefinitionReference;
-import io.vertigo.dynamo.domain.metamodel.DtDefinition;
-import io.vertigo.dynamo.domain.model.DtList;
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Assertion;
-import io.vertigo.util.ClassUtil;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.node.definition.DefinitionReference;
+import io.vertigo.core.util.ClassUtil;
+import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.vega.webservice.model.DtListDelta;
 import io.vertigo.vega.webservice.model.UiList;
 import io.vertigo.vega.webservice.model.UiObject;
@@ -42,7 +42,6 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 /**
  * Version modifiable des UiList.
- *
  * @author npiedeloup
  * @param <D> Type d'objet
  */
@@ -68,11 +67,10 @@ public abstract class AbstractUiListModifiable<D extends DtObject> extends Abstr
 
 	/**
 	 * Constructor.
-	 *
 	 * @param dtList Inner DtList
 	 */
 	protected AbstractUiListModifiable(final DtList<D> dtList, final String inputKey) {
-		Assertion.checkNotNull(dtList);
+		Assertion.check().isNotNull(dtList);
 		//-----
 		this.dtList = dtList;
 		this.inputKey = inputKey;
@@ -103,8 +101,7 @@ public abstract class AbstractUiListModifiable<D extends DtObject> extends Abstr
 		// ---
 		dtoByUiObject.clear();
 		bufferUiObjects.clear();
-		for (int row = 0; row < dtList.size(); row++) {
-			final D dto = dtList.get(row);
+		for (final D dto : dtList) {
 			final UiObject<D> uiObjects = createUiObject(dto);
 			bufferUiObjects.add(uiObjects);
 			dtoByUiObject.put(uiObjects, dto);
@@ -120,10 +117,11 @@ public abstract class AbstractUiListModifiable<D extends DtObject> extends Abstr
 	}
 
 	private String findContextKey(final UiObject<D> uiObject) {
-		Assertion.checkNotNull(uiObject);
-		Assertion.checkState(bufferUiObjects.contains(uiObject), "UiObjet {0} not found in UiList with key {1}", uiObject, inputKey);
+		Assertion.check().isNotNull(uiObject);
+		final int index = indexOfUiObject(uiObject);
+		Assertion.check().isTrue(index >= 0, "UiObjet {0} not found in UiList with key {1}", uiObject, inputKey);
 		// ---
-		return inputKey + ".get(" + indexOf(uiObject) + ")";
+		return inputKey + ".get(" + index + ")";
 	}
 
 	/**
@@ -150,7 +148,7 @@ public abstract class AbstractUiListModifiable<D extends DtObject> extends Abstr
 	public UiObject<D> remove(final int index) {
 		final UiObject<D> dto = get(index);
 		final boolean result = remove(dto);
-		Assertion.checkState(result, "Erreur de suppression i={0}", index);
+		Assertion.check().isTrue(result, "Erreur de suppression i={0}", index);
 		return dto;
 	}
 
@@ -186,7 +184,7 @@ public abstract class AbstractUiListModifiable<D extends DtObject> extends Abstr
 	 * @return DtListDelta
 	 */
 	public DtListDelta<D> getDtListDelta() {
-		Assertion.checkNotNull(dtListDelta);
+		Assertion.check().isNotNull(dtListDelta);
 		//
 		return dtListDelta;
 	}
@@ -195,16 +193,18 @@ public abstract class AbstractUiListModifiable<D extends DtObject> extends Abstr
 	@Override
 	public UiObject<D> get(final int row) {
 		//id>=0 : par index dans la UiList (pour boucle, uniquement dans la même request)
-		Assertion.checkState(row >= 0, "Le getteur utilisé n'est pas le bon: utiliser getByRowId");
-		Assertion.checkState(row < 200, "UiListModifiable is limited to 200 elements");
-
+		Assertion.check()
+		.isTrue(row >= 0, "Le getteur utilisé n'est pas le bon: utiliser getByRowId")
+		.isTrue(row < 200, "UiListModifiable is limited to 200 elements");
+		
+		//SKE MLA : lazy initialisation of buffer uiObjects for size changing uiListModifiable
 		final DtDefinition dtDefinition = dtDefinitionRef.get();
 		for (int i = bufferUiObjects.size(); i < row + 1; i++) {
 			add((D) DtObjectUtil.createDtObject(dtDefinition));
 		}
-
+		
 		final UiObject<D> uiObject = bufferUiObjects.get(row);
-		Assertion.checkNotNull(uiObject);
+		Assertion.check().isNotNull(uiObject);
 		return uiObject;
 	}
 
@@ -224,7 +224,7 @@ public abstract class AbstractUiListModifiable<D extends DtObject> extends Abstr
 	 * @return index de l'objet dans la liste
 	 */
 	private int indexOfDtObject(final DtObject dtObject) {
-		Assertion.checkNotNull(dtObject);
+		Assertion.check().isNotNull(dtObject);
 		//-----
 		for (int i = 0; i < bufferUiObjects.size(); i++) {
 			if (dtObject.equals(bufferUiObjects.get(i).getServerSideObject())) {
@@ -239,7 +239,7 @@ public abstract class AbstractUiListModifiable<D extends DtObject> extends Abstr
 	 * @return index de l'objet dans la liste
 	 */
 	private int indexOfUiObject(final UiObject<D> uiObject) {
-		Assertion.checkNotNull(uiObject);
+		Assertion.check().isNotNull(uiObject);
 		//-----
 		return bufferUiObjects.indexOf(uiObject);
 	}
@@ -302,7 +302,7 @@ public abstract class AbstractUiListModifiable<D extends DtObject> extends Abstr
 			dtList.removeAll(dtListDelta.getDeleted());
 		}
 		//-----
-		Assertion.checkState(bufferUiObjects.size() == dtList.size(), "bufferList.size() <> dtList.size() : mauvaise synchronisation dtList / bufferList");
+		Assertion.check().isTrue(bufferUiObjects.size() == dtList.size(), "bufferList.size() <> dtList.size() : mauvaise synchronisation dtList / bufferList");
 
 		//3. On reconstruit buffer et indexes
 		rebuildBuffer();

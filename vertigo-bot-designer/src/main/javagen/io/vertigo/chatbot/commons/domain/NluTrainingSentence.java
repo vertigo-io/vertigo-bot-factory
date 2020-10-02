@@ -1,28 +1,11 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.dynamo.domain.model.Entity;
-import io.vertigo.dynamo.domain.model.UID;
-import io.vertigo.dynamo.domain.model.VAccessor;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -35,7 +18,7 @@ public final class NluTrainingSentence implements Entity {
 	private Long ntsId;
 	private String text;
 
-	@io.vertigo.dynamo.domain.stereotype.Association(
+	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ASmallTalkNluTrainingSentence",
 			fkFieldName = "smtId",
 			primaryDtDefinitionName = "DtSmallTalk",
@@ -48,7 +31,7 @@ public final class NluTrainingSentence implements Entity {
 			foreignRole = "NluTrainingSentence",
 			foreignLabel = "NluTrainingSentence",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.SmallTalk> smtIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.SmallTalk.class, "SmallTalk");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.SmallTalk> smtIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.SmallTalk.class, "SmallTalk");
 
 	/** {@inheritDoc} */
 	@Override
@@ -61,7 +44,7 @@ public final class NluTrainingSentence implements Entity {
 	 * Récupère la valeur de la propriété 'ID'.
 	 * @return Long ntsId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", type = "ID", required = true, label = "ID")
+	@Field(smartType = "STyId", type = "ID", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "ID")
 	public Long getNtsId() {
 		return ntsId;
 	}
@@ -80,7 +63,7 @@ public final class NluTrainingSentence implements Entity {
 	 * Récupère la valeur de la propriété 'Text'.
 	 * @return String text <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Text")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Text")
 	public String getText() {
 		return text;
 	}
@@ -99,7 +82,7 @@ public final class NluTrainingSentence implements Entity {
 	 * Récupère la valeur de la propriété 'SmallTalk'.
 	 * @return Long smtId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", type = "FOREIGN_KEY", required = true, label = "SmallTalk")
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "SmallTalk", fkDefinition = "DtSmallTalk" )
 	public Long getSmtId() {
 		return (Long) smtIdAccessor.getId();
 	}
@@ -117,7 +100,7 @@ public final class NluTrainingSentence implements Entity {
 	 * Association : SmallTalk.
 	 * @return l'accesseur vers la propriété 'SmallTalk'
 	 */
-	public VAccessor<io.vertigo.chatbot.commons.domain.SmallTalk> smallTalk() {
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.SmallTalk> smallTalk() {
 		return smtIdAccessor;
 	}
 	

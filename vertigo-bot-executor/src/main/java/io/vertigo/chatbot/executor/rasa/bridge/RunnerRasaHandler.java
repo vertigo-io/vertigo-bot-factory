@@ -32,9 +32,9 @@ import org.apache.commons.io.FileUtils;
 
 import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
-import io.vertigo.dynamo.file.model.VFile;
-import io.vertigo.lang.Assertion;
-import io.vertigo.lang.VSystemException;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
+import io.vertigo.datastore.filestore.model.VFile;
 
 public class RunnerRasaHandler extends AbstractRasaHandler {
 
@@ -118,7 +118,7 @@ public class RunnerRasaHandler extends AbstractRasaHandler {
 	}
 
 	public void loadModel(final VFile model) {
-		Assertion.checkNotNull(model);
+		Assertion.check().isNotNull(model);
 
 		// clean old model
 		try {

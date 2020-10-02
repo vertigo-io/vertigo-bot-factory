@@ -34,7 +34,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.io.IOUtils;
 
-import io.vertigo.app.Home;
+import io.vertigo.core.node.Node;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 @Provider
@@ -45,9 +45,9 @@ public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<
 	private final JsonEngine jsonEngine;
 
 	public GsonProvider() {
-		jsonEngine = Home.getApp().getComponentSpace().resolve(JsonEngine.class);
+		jsonEngine = Node.getNode().getComponentSpace().resolve(JsonEngine.class);
 	}
-
+	
 	@Override
 	public boolean isReadable(final Class<?> type, final Type genericType,
 			final Annotation[] annotations, final MediaType mediaType) {

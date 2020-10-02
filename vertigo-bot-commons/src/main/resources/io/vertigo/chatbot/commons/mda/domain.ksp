@@ -1,13 +1,6 @@
 package io.vertigo.chatbot.commons.domain 
 
 
-create FileInfo FiFileInfoStd {
-	storeName : "main"
-}
-
-create FileInfo FiFileInfoTmp {
-	storeName : "temp"
-}
 
 /**************************************************************************************************/
 /********************************* Domains ********************************************************/
@@ -16,161 +9,80 @@ create FileInfo FiFileInfoTmp {
 /* Domaines représentant les types de données utilisables dans les entités */
 create Domain DoId {
 	dataType : Long
-	/*formatter: FmtId*/
-	formatter: FmtDefault
 	storeType: "NUMERIC"
 }
 
 create Domain DoIdStr {
 	dataType : String
-	formatter: FmtDefault
-	constraint : [CkMaxLength100]
 	storeType : "VARCHAR(100)"
 }
 
 create Domain DoNumber {
 	dataType : Long
-	formatter: FmtDefault
 	storeType: "NUMERIC"
-}
-
-create Domain DoLongs {  
-    dataType : Long
-    multiple : "true"
-    formatter : FmtDefault
 }
 
 create Domain DoText {
 	dataType : String
-	formatter: FmtDefault
 	storeType: "TEXT"
 }
 
 create Domain DoLabel {
 	dataType : String
-	formatter: FmtDefault
-	constraint : [CkMaxLength100]
 	storeType : "VARCHAR(100)"
 }
 
 create Domain DoPassword {
 	dataType : String
-	formatter: FmtDefault
-	constraint : [CkMaxLength100]
 	storeType : "VARCHAR(100)"
-}
-
-create Domain DoLabels{  
-    dataType : String
-    multiple : "true"
-    formatter : FmtDefault
-    constraint : [CkMaxLength100]
 }
 
 create Domain DoColor {
 	dataType : String
-	formatter: FmtDefault
-	constraint : [CkMaxLength20]
 	storeType : "VARCHAR(20)"
 }
 
 create Domain DoCode {
 	dataType : String
-	formatter : FmtDefault
-	constraint : [CkMaxLength100]
 	storeType : "VARCHAR(100)"
 }
 
 create Domain DoYesNo {
 	dataType : Boolean
-	formatter: FmtDefault
 	storeType: "bool"
 }
 
 create Domain DoUrl {
 	dataType : String
-	formatter : FmtDefault
-	constraint : [CkUrl]
 	storeType : "TEXT"
 }
 
 create Domain DoInstant {
 	dataType : Instant
-	formatter : FmtDateHeure
 	storeType : "TIMESTAMP"
 }
 
 create Domain DoLocaldate {
 	dataType : LocalDate
-	formatter : FmtDate
 	storeType : "DATE"
 }
 
 create Domain DoSize {
 	dataType : Long
-	formatter : FmtDefault
 	storeType : "NUMERIC"
 }
 
 create Domain DoFilePath {
 	dataType : String
-	formatter : FmtDefault
 	storeType : "VARCHAR(500)"
 }
 
 create Domain DoFileData {
 	dataType : DataStream
-	formatter : FmtDefault
 	storeType : "bytea"
 }
 
 create Domain DoPercentage {
 	dataType : BigDecimal
-	formatter : FmtDefault
 	storeType: "NUMERIC(3,2)"
-}
-
-/**************************************************************************************************/
-/********************************* Formatters *****************************************************/
-/**************************************************************************************************/
-
-/* Formatteur de données par défaut */
-create Formatter FmtDefault {
-	className: "io.vertigo.dynamox.domain.formatter.FormatterDefault"
-}
-
-/*
-create Formatter FmtId{
-	className : "io.vertigo.ui.formatter.FormatterId"
-}
-*/
-
-create Formatter FmtDate {
-     className :"io.vertigo.dynamox.domain.formatter.FormatterDate"
-     args : "dd/MM/yyyy"
-}
-
-create Formatter FmtDateHeure {
-     className :"io.vertigo.dynamox.domain.formatter.FormatterDate"
-     args : "dd/MM/yyyy ' ' HH'h'mm"
-}
-
-/**************************************************************************************************/
-/********************************* Constraints ****************************************************/
-/**************************************************************************************************/
-
-create Constraint CkMaxLength20 {
-	className : "io.vertigo.dynamox.domain.constraint.ConstraintStringLength"
-	args :"20"
-}
-
-create Constraint CkMaxLength100 {
-	className : "io.vertigo.dynamox.domain.constraint.ConstraintStringLength"
-	args :"100"
-}
-
-create Constraint CkUrl {
-	className : "io.vertigo.dynamox.domain.constraint.ConstraintRegex"
-	args : "http(s)?://.*"
-	msg : "Malformed URL"
 }

@@ -24,26 +24,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.util.Collections;
 
 import javax.inject.Inject;
 
-import io.vertigo.core.component.ComponentInitializer;
+import io.vertigo.core.lang.WrappedException;
+import io.vertigo.core.node.component.ComponentInitializer;
 import io.vertigo.core.resource.ResourceManager;
-import io.vertigo.database.sql.SqlDataBaseManager;
+import io.vertigo.database.sql.SqlManager;
 import io.vertigo.database.sql.connection.SqlConnection;
 import io.vertigo.database.sql.statement.SqlStatement;
-import io.vertigo.lang.WrappedException;
 
 /**
  * Init sample data for the app.
  * @author dszniten
  */
-public class DataBaseInitializer implements ComponentInitializer {
+public class DataBaseInitializer implements ComponentInitializer {		
 
 	@Inject
 	private ResourceManager resourceManager;
 	@Inject
-	private SqlDataBaseManager sqlDataBaseManager;
+	private SqlManager sqlManager;
 
 	/** {@inheritDoc} */
 	@Override
@@ -52,7 +53,7 @@ public class DataBaseInitializer implements ComponentInitializer {
 	}
 
 	private void createDataBase() {
-		final SqlConnection connection = sqlDataBaseManager.getConnectionProvider(SqlDataBaseManager.MAIN_CONNECTION_PROVIDER_NAME).obtainConnection();
+		final SqlConnection connection = sqlManager.getConnectionProvider(SqlManager.MAIN_CONNECTION_PROVIDER_NAME).obtainConnection();
 		//execCallableStatement(connection, sqlDataBaseManager, "drop all objects;");
 		execSqlScript(connection, "sqlgen/crebas.sql");
 		execSqlScript(connection, "sqlgen/init_masterdata_response_type.sql");
@@ -71,7 +72,7 @@ public class DataBaseInitializer implements ComponentInitializer {
 					crebaseSql.append(adaptedInputLine).append('\n');
 				}
 				if (inputLine.trim().endsWith(";")) {
-					execCallableStatement(connection, sqlDataBaseManager, crebaseSql.toString());
+					execCallableStatement(connection, sqlManager, crebaseSql.toString());
 					crebaseSql.setLength(0);
 				}
 			}
@@ -80,9 +81,9 @@ public class DataBaseInitializer implements ComponentInitializer {
 		}
 	}
 
-	private static void execCallableStatement(final SqlConnection connection, final SqlDataBaseManager sqlDataBaseManager, final String sql) {
+	private static void execCallableStatement(final SqlConnection connection, final SqlManager sqlManager, final String sql) {
 		try {
-			sqlDataBaseManager.executeUpdate(SqlStatement.builder(sql).build(), connection);
+			sqlManager.executeUpdate(SqlStatement.builder(sql).build(), Collections.emptyMap(),connection);
 		} catch (final SQLException e) {
 			throw WrappedException.wrap(e, "Can't exec command {0}", sql);
 		}

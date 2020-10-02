@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import io.vertigo.chatbot.commons.domain.ResponseButton;
-import io.vertigo.dynamo.domain.model.DtList;
-import io.vertigo.lang.Assertion;
-import io.vertigo.lang.VUserException;
-import io.vertigo.util.StringUtil;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.structure.model.DtList;
 
 public final class RasaUtterButton {
 
@@ -34,7 +34,7 @@ public final class RasaUtterButton {
 	private final Long intentId;
 
 	static RasaUtterButton fromResponseButton(final ResponseButton button) {
-		Assertion.checkNotNull(button);
+		Assertion.check().isNotNull(button);
 		return new RasaUtterButton(button.getText(), button.getSmtIdResponse());
 	}
 
@@ -48,8 +48,9 @@ public final class RasaUtterButton {
 	}
 
 	private RasaUtterButton(final String text, final Long intentId) {
-		Assertion.checkNotNull(text);
-		Assertion.checkNotNull(intentId);
+		Assertion.check()
+		.isNotNull(text)
+		.isNotNull(intentId);
 		//--
 		this.text = text;
 		this.intentId = intentId;
@@ -75,7 +76,7 @@ public final class RasaUtterButton {
 	}
 
 	public String getUtterTemplate() {
-		Assertion.checkState(!StringUtil.isEmpty(payload), "Button '" + text + "' not resolved");
+		Assertion.check().isFalse(StringUtil.isBlank(payload), "Button '" + text + "' not resolved");
 		// ----
 
 		return "        - title: \"" + text.replaceAll("[\\\"]", "\\\\\\\"") + "\"\r\n" +

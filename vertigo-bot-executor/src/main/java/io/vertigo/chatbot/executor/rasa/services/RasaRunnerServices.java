@@ -28,10 +28,10 @@ import io.vertigo.chatbot.executor.manager.ExecutorConfigManager;
 import io.vertigo.chatbot.executor.model.IncomeMessage;
 import io.vertigo.chatbot.executor.rasa.bridge.RunnerRasaHandler;
 import io.vertigo.chatbot.executor.rasa.model.RasaInputMessage;
-import io.vertigo.commons.analytics.AnalyticsManager;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.component.Component;
-import io.vertigo.dynamo.file.model.VFile;
+import io.vertigo.core.analytics.AnalyticsManager;
+import io.vertigo.core.node.component.Component;
+import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 @Transactional

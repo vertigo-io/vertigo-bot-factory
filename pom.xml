@@ -13,7 +13,7 @@
 
 	<groupId>io.vertigo</groupId>
 	<artifactId>vertigo-bot-factory</artifactId>
-	<version>0.4.0</version>
+	<version>0.5.0-SNAPSHOT</version>
 	<name>vertigo-bot-factory</name>
 	<packaging>pom</packaging>
 	
@@ -26,11 +26,11 @@
 	</licenses>
 
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<vertigo.version>2.1.0</vertigo.version>
+		<vertigo.version>3.0.0-RC</vertigo.version>
 	</properties>
 
 	<modules>

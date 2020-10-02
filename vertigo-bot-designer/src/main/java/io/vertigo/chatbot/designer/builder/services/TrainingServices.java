@@ -61,21 +61,21 @@ import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.component.Component;
-import io.vertigo.dynamo.criteria.Criterions;
-import io.vertigo.dynamo.domain.metamodel.DtDefinition;
-import io.vertigo.dynamo.domain.metamodel.DtField;
-import io.vertigo.dynamo.domain.model.DtList;
-import io.vertigo.dynamo.domain.model.DtListState;
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.model.FileInfoURI;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.dynamo.domain.util.VCollectors;
-import io.vertigo.dynamo.file.model.VFile;
-import io.vertigo.dynamo.impl.file.model.StreamFile;
-import io.vertigo.lang.Assertion;
-import io.vertigo.lang.VSystemException;
-import io.vertigo.lang.VUserException;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.criteria.Criterions;
+import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DtField;
+import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.datastore.impl.filestore.model.StreamFile;
 
 @Transactional
 public class TrainingServices implements Component {
@@ -293,13 +293,14 @@ public class TrainingServices implements Component {
 	}
 
 	public void loadModel(final Long traId, final Long nodId) {
-		Assertion.checkNotNull(traId);
-		Assertion.checkNotNull(nodId);
+		Assertion.check()
+		.isNotNull(traId)
+		.isNotNull(nodId);
 
 		final Training training = getTraining(traId);
 		final ChatbotNode node = chatbotNodeDAO.get(nodId);
 
-		Assertion.checkState(training.getBotId().equals(node.getBotId()), "Incohérence des paramètres");
+		Assertion.check().isTrue(training.getBotId().equals(node.getBotId()), "Incohérence des paramètres");
 
 		final VFile model = fileServices.getFile(training.getFilIdModel());
 
@@ -380,7 +381,7 @@ public class TrainingServices implements Component {
 						.and(Criterions.isEqualTo(ChatbotNodeFields.isDev, true)))
 				.get();
 
-		Assertion.checkState(node.getApiKey().equals(callback.getApiKey()), "Access denied");
+		Assertion.check().isTrue(node.getApiKey().equals(callback.getApiKey()), "Access denied");
 
 		// TODO : Limiter au dernier en cours en mode "trop tard, je refuse ton callback" ?
 

@@ -58,7 +58,7 @@ private String printException(Throwable t) throws Exception {
             t = e.getCause();
             if (t == null && (e instanceof ServletException)) t = ((ServletException) e).getRootCause();
             if (t == null && (e instanceof java.sql.SQLException)) t = ((java.sql.SQLException) e).getNextException();
-            if (t == null && (e instanceof io.vertigo.lang.WrappedException)) t = ((io.vertigo.lang.WrappedException) e).getCause();
+            if (t == null && (e instanceof io.vertigo.core.lang.WrappedException)) t = ((io.vertigo.core.lang.WrappedException) e).getCause();
             e = t;
         }
         Collections.reverse(list);
@@ -148,7 +148,7 @@ vous pouvez revenir &agrave; <%=sbPrevious.toString()%> puis essayer &agrave; no
 communiquer l'heure &agrave; laquelle s'est produite l'erreur ainsi que les informations ci dessous.</p>
 		
 		<% 
-			final io.vertigo.core.param.ParamManager paramManager = io.vertigo.app.Home.getApp().getComponentSpace().resolve(io.vertigo.core.param.ParamManager.class);
+			final io.vertigo.core.param.ParamManager paramManager = io.vertigo.core.node.Node.getNode().getComponentSpace().resolve(io.vertigo.core.param.ParamManager.class);
 			final Optional<io.vertigo.core.param.Param> devModeOpt = paramManager.getOptionalParam("devMode");
 			if (devModeOpt.isPresent() && devModeOpt.get().getValueAsBoolean()) { %>
 			<a href="#" onclick="handleClick();return false;" id="showerrorlink"><button class="denied__link">Voir le message d'erreur</button></a>	

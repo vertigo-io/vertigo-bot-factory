@@ -1,27 +1,10 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.dynamo.domain.model.Entity;
-import io.vertigo.dynamo.domain.model.UID;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -37,7 +20,7 @@ public final class MediaFileInfo implements Entity {
 	private Long length;
 	private java.time.Instant lastModified;
 	private String filePath;
-	private io.vertigo.lang.DataStream fileData;
+	private io.vertigo.core.lang.DataStream fileData;
 
 	/** {@inheritDoc} */
 	@Override
@@ -50,7 +33,7 @@ public final class MediaFileInfo implements Entity {
 	 * Récupère la valeur de la propriété 'Id'.
 	 * @return Long filId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", type = "ID", required = true, label = "Id")
+	@Field(smartType = "STyId", type = "ID", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Id")
 	public Long getFilId() {
 		return filId;
 	}
@@ -69,7 +52,7 @@ public final class MediaFileInfo implements Entity {
 	 * Récupère la valeur de la propriété 'Name'.
 	 * @return String fileName <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Name")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Name")
 	public String getFileName() {
 		return fileName;
 	}
@@ -88,7 +71,7 @@ public final class MediaFileInfo implements Entity {
 	 * Récupère la valeur de la propriété 'MimeType'.
 	 * @return String mimeType <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "MimeType")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "MimeType")
 	public String getMimeType() {
 		return mimeType;
 	}
@@ -107,7 +90,7 @@ public final class MediaFileInfo implements Entity {
 	 * Récupère la valeur de la propriété 'Size'.
 	 * @return Long length <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoSize", required = true, label = "Size")
+	@Field(smartType = "STySize", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Size")
 	public Long getLength() {
 		return length;
 	}
@@ -126,7 +109,7 @@ public final class MediaFileInfo implements Entity {
 	 * Récupère la valeur de la propriété 'Modification Date'.
 	 * @return Instant lastModified <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoInstant", required = true, label = "Modification Date")
+	@Field(smartType = "STyInstant", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Modification Date")
 	public java.time.Instant getLastModified() {
 		return lastModified;
 	}
@@ -145,7 +128,7 @@ public final class MediaFileInfo implements Entity {
 	 * Récupère la valeur de la propriété 'path'.
 	 * @return String filePath
 	 */
-	@Field(domain = "DoFilePath", label = "path")
+	@Field(smartType = "STyFilePath", label = "path")
 	public String getFilePath() {
 		return filePath;
 	}
@@ -164,8 +147,8 @@ public final class MediaFileInfo implements Entity {
 	 * Récupère la valeur de la propriété 'data'.
 	 * @return DataStream fileData
 	 */
-	@Field(domain = "DoFileData", label = "data")
-	public io.vertigo.lang.DataStream getFileData() {
+	@Field(smartType = "STyFileData", label = "data")
+	public io.vertigo.core.lang.DataStream getFileData() {
 		return fileData;
 	}
 
@@ -174,7 +157,7 @@ public final class MediaFileInfo implements Entity {
 	 * Définit la valeur de la propriété 'data'.
 	 * @param fileData DataStream
 	 */
-	public void setFileData(final io.vertigo.lang.DataStream fileData) {
+	public void setFileData(final io.vertigo.core.lang.DataStream fileData) {
 		this.fileData = fileData;
 	}
 	

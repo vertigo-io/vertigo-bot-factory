@@ -18,10 +18,10 @@
 package io.vertigo.chatbot.designer.commons;
 
 import io.vertigo.account.plugins.authorization.loaders.JsonSecurityDefinitionProvider;
-import io.vertigo.app.config.DefinitionProviderConfig;
-import io.vertigo.app.config.discovery.ModuleDiscoveryFeatures;
 import io.vertigo.chatbot.designer.boot.ChatbotMasterDataDefinitionProvider;
-import io.vertigo.dynamo.plugins.environment.DynamoDefinitionProvider;
+import io.vertigo.core.node.config.DefinitionProviderConfig;
+import io.vertigo.core.node.config.discovery.ModuleDiscoveryFeatures;
+import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 
 public class DesignerCommonsFeatures extends ModuleDiscoveryFeatures<DesignerCommonsFeatures> { // nous étendons ModuleDiscoveryFeatures pour activer la découverte automatique
 
@@ -33,9 +33,8 @@ public class DesignerCommonsFeatures extends ModuleDiscoveryFeatures<DesignerCom
 	protected void buildFeatures() {
 		super.buildFeatures();
 		getModuleConfigBuilder()
-				.addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
-						.addDefinitionResource("kpr", "io/vertigo/chatbot/designer/run.kpr") // chargement de notre modèle de donnée
-						.addDefinitionResource("classes", "io.vertigo.chatbot.domain.DtDefinitions")
+				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
+						.addDefinitionResource("dtobjects", "io.vertigo.chatbot.domain.DtDefinitions")
 						.build())
 				.addDefinitionProvider(DefinitionProviderConfig.builder(JsonSecurityDefinitionProvider.class)
 						.addDefinitionResource("security", "io/vertigo/chatbot/designer/authorizations/auth-config.json")

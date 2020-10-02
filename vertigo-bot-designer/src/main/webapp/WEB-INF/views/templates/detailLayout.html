@@ -4,14 +4,6 @@
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   layout:decorate="~{templates/basicLayout}">
   
-  	<head>
-		<script th:src="@{/vertigo-ui/static/js/v-components/v-minify.js}"></script>
-
-		<script th:src="@{/vertigo-ui/static/js/v-components/v-scroll-spy.js}" th:if="${nav}"></script>
-	</head>
-	
-	
-	
 	<section layout:fragment="page-header">
   		<section th:ref="detailHeader" class="col-12" v-minify="{topOffsetEl:'.q-header', leftOffsetEl:'.q-drawer--left'}">
 			<div th:ref="maxiHeader" class="row justify-between items-center bg-secondary header-content" >

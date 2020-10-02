@@ -1,26 +1,9 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.executor.domain;
 
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -40,7 +23,7 @@ public final class RasaConfig implements DtObject {
 	 * Récupère la valeur de la propriété 'domain'.
 	 * @return String domain
 	 */
-	@Field(domain = "DoText", label = "domain")
+	@Field(smartType = "STyText", label = "domain")
 	public String getDomain() {
 		return domain;
 	}
@@ -59,7 +42,7 @@ public final class RasaConfig implements DtObject {
 	 * Récupère la valeur de la propriété 'stories'.
 	 * @return String stories
 	 */
-	@Field(domain = "DoText", label = "stories")
+	@Field(smartType = "STyText", label = "stories")
 	public String getStories() {
 		return stories;
 	}
@@ -78,7 +61,7 @@ public final class RasaConfig implements DtObject {
 	 * Récupère la valeur de la propriété 'nlu'.
 	 * @return String nlu
 	 */
-	@Field(domain = "DoText", label = "nlu")
+	@Field(smartType = "STyText", label = "nlu")
 	public String getNlu() {
 		return nlu;
 	}
@@ -97,7 +80,7 @@ public final class RasaConfig implements DtObject {
 	 * Récupère la valeur de la propriété 'config'.
 	 * @return String config
 	 */
-	@Field(domain = "DoText", label = "config")
+	@Field(smartType = "STyText", label = "config")
 	public String getConfig() {
 		return config;
 	}

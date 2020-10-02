@@ -27,10 +27,10 @@ import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
-import io.vertigo.core.component.Activeable;
-import io.vertigo.core.component.Manager;
+import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.node.component.Activeable;
+import io.vertigo.core.node.component.Manager;
 import io.vertigo.core.param.ParamManager;
-import io.vertigo.lang.VSystemException;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 public class ExecutorConfigManager implements Manager, Activeable {

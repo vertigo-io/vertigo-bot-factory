@@ -1,5 +1,4 @@
-run.kpr
-
+mda/domain.ksp
 mda/modele.ksp
 mda/webservices.ksp
 mda/file.ksp

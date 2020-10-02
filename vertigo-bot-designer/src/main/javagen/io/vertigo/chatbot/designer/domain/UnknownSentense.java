@@ -1,26 +1,9 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.designer.domain;
 
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -42,7 +25,7 @@ public final class UnknownSentense implements DtObject {
 	 * Récupère la valeur de la propriété 'Rasa message ID'.
 	 * @return String messageId
 	 */
-	@Field(domain = "DoIdStr", label = "Rasa message ID")
+	@Field(smartType = "STyIdStr", label = "Rasa message ID")
 	public String getMessageId() {
 		return messageId;
 	}
@@ -61,7 +44,7 @@ public final class UnknownSentense implements DtObject {
 	 * Récupère la valeur de la propriété 'Date'.
 	 * @return Instant date
 	 */
-	@Field(domain = "DoInstant", label = "Date")
+	@Field(smartType = "STyInstant", label = "Date")
 	public java.time.Instant getDate() {
 		return date;
 	}
@@ -80,7 +63,7 @@ public final class UnknownSentense implements DtObject {
 	 * Récupère la valeur de la propriété 'User text'.
 	 * @return String text
 	 */
-	@Field(domain = "DoLabel", label = "User text")
+	@Field(smartType = "STyLabel", label = "User text")
 	public String getText() {
 		return text;
 	}
@@ -99,7 +82,7 @@ public final class UnknownSentense implements DtObject {
 	 * Récupère la valeur de la propriété 'Rasa intent'.
 	 * @return String intentRasa
 	 */
-	@Field(domain = "DoLabel", label = "Rasa intent")
+	@Field(smartType = "STyLabel", label = "Rasa intent")
 	public String getIntentRasa() {
 		return intentRasa;
 	}
@@ -118,7 +101,7 @@ public final class UnknownSentense implements DtObject {
 	 * Récupère la valeur de la propriété 'Confidence'.
 	 * @return BigDecimal confidence
 	 */
-	@Field(domain = "DoPercentage", label = "Confidence")
+	@Field(smartType = "STyPercentage", label = "Confidence")
 	public java.math.BigDecimal getConfidence() {
 		return confidence;
 	}
@@ -137,7 +120,7 @@ public final class UnknownSentense implements DtObject {
 	 * Récupère la valeur de la propriété 'Small Talk selection'.
 	 * @return Long smtId
 	 */
-	@Field(domain = "DoId", label = "Small Talk selection")
+	@Field(smartType = "STyId", label = "Small Talk selection")
 	public Long getSmtId() {
 		return smtId;
 	}

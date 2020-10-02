@@ -19,39 +19,37 @@ package io.vertigo.chatbot.designer.commons.services;
 
 import javax.inject.Inject;
 
-import io.vertigo.chatbot.fileinfo.FileInfoStd;
-import io.vertigo.chatbot.fileinfo.FileInfoTmp;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.component.Component;
-import io.vertigo.dynamo.domain.model.FileInfoURI;
-import io.vertigo.dynamo.file.metamodel.FileInfoDefinition;
-import io.vertigo.dynamo.file.model.FileInfo;
-import io.vertigo.dynamo.file.model.VFile;
-import io.vertigo.dynamo.store.StoreManager;
-import io.vertigo.lang.Assertion;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.node.component.Component;
+import io.vertigo.datastore.filestore.FileStoreManager;
+import io.vertigo.datastore.filestore.definitions.FileInfoDefinition;
+import io.vertigo.datastore.filestore.model.FileInfo;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.datastore.filestore.model.VFile;
 
 @Transactional
 public class FileServices implements Component {
 
 	@Inject
-	private StoreManager storeManager;
+	private FileStoreManager fileStoreManager;
 
 	public FileInfoURI saveFileTmp(final VFile file) {
 		//apply security check
-		final FileInfo fileInfo = storeManager.getFileStore().create(new FileInfoTmp(file));
+		final FileInfo fileInfo = fileStoreManager.create(new FileInfoTmp(file));
 		return fileInfo.getURI();
 	}
 
 	public VFile getFileTmp(final FileInfoURI fileTmpUri) {
 		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoTmp.class);
-		Assertion.checkArgument(tmpFileInfoDefinition.equals(fileTmpUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
-		return storeManager.getFileStore().read(fileTmpUri).getVFile();
+		Assertion.check().isTrue(tmpFileInfoDefinition.equals(fileTmpUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
+		return fileStoreManager.read(fileTmpUri).getVFile();
 	}
 
 	public void deleteFileTmp(final FileInfoURI fileTmpUri) {
 		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoTmp.class);
-		Assertion.checkArgument(tmpFileInfoDefinition.equals(fileTmpUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
-		storeManager.getFileStore().delete(fileTmpUri);
+		Assertion.check().isTrue(tmpFileInfoDefinition.equals(fileTmpUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
+		fileStoreManager.delete(fileTmpUri);
 	}
 
 	public FileInfoURI toStdFileInfoUri(final Long fileId) {
@@ -60,7 +58,7 @@ public class FileServices implements Component {
 
 	public FileInfoURI saveFile(final VFile file) {
 		//apply security check
-		final FileInfo fileInfo = storeManager.getFileStore().create(new FileInfoStd(file));
+		final FileInfo fileInfo = fileStoreManager.create(new FileInfoStd(file));
 		return fileInfo.getURI();
 	}
 
@@ -70,14 +68,14 @@ public class FileServices implements Component {
 
 	public VFile getFile(final FileInfoURI fileUri) {
 		final FileInfoDefinition fileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoStd.class);
-		Assertion.checkArgument(fileInfoDefinition.equals(fileUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
-		return storeManager.getFileStore().read(fileUri).getVFile();
+		Assertion.check().isTrue(fileInfoDefinition.equals(fileUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
+		return fileStoreManager.read(fileUri).getVFile();
 	}
 
 	public void deleteFile(final FileInfoURI fileUri) {
 		final FileInfoDefinition fileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoStd.class);
-		Assertion.checkArgument(fileInfoDefinition.equals(fileUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
-		storeManager.getFileStore().delete(fileUri);
+		Assertion.check().isTrue(fileInfoDefinition.equals(fileUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
+		fileStoreManager.delete(fileUri);
 	}
 
 	public void deleteFile(final Long fileId) {

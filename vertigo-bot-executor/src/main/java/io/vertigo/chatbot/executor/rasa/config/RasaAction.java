@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.vertigo.chatbot.executor.rasa.util.StringUtils;
-import io.vertigo.lang.Assertion;
+import io.vertigo.core.lang.Assertion;
 
 public final class RasaAction {
 
@@ -55,7 +55,7 @@ public final class RasaAction {
 	}
 
 	private RasaAction(final String code, final boolean isUtterance, final boolean isSmallTalk, final List<String> texts, final List<RasaUtterButton> buttons) {
-		Assertion.checkArgument(!(isUtterance && texts.isEmpty()), "Utterance must have at least 1 text.");
+		Assertion.check().isFalse(isUtterance && texts.isEmpty(), "Utterance must have at least 1 text.");
 		//--
 
 		this.code = code;
@@ -86,7 +86,7 @@ public final class RasaAction {
 	}
 
 	public String getUtterTemplate() {
-		Assertion.checkState(isUtterance, "Cette action n'est pas un utter");
+		Assertion.check().isTrue(isUtterance, "Cette action n'est pas un utter");
 		// ----
 		final StringBuilder template = new StringBuilder("  ").append(code).append(':').append(NEW_LINE);
 

@@ -6,29 +6,29 @@ boot:
     - io.vertigo.core.plugins.resource.classpath.ClassPathResourceResolverPlugin: {}
     - io.vertigo.core.plugins.param.env.EnvParamPlugin: {}
     - io.vertigo.vega.plugins.webservice.servlet.WebAppContextParamPlugin: {}
+    - io.vertigo.core.plugins.analytics.log.SocketLoggerAnalyticsConnectorPlugin:
+        appName: ${boot.env.ANALYTICA_DBNAME}
+        hostName: ${boot.env.ANALYTICA_HOST}
+        port: ${boot.env.ANALYTICA_PORT}
 modules:
+  io.vertigo.connectors.javalin.JavalinFeatures:
+    features: 
+      - standalone:
   io.vertigo.commons.CommonsFeatures: # utilisation du module vertigo-commons
     features:
       - script:
-      - cache:
     featuresConfig:
       - script.janino:
-      - cache.memory:
-      - analytics.socketLoggerConnector:
-          appName: ${ANALYTICA_DBNAME}
-          hostName: ${ANALYTICA_HOST}
-          port: ${ANALYTICA_PORT}
-  io.vertigo.chatbot.vega.ChatbotVegaFeatures:
+  io.vertigo.datamodel.DataModelFeatures:
+  io.vertigo.vega.VegaFeatures:
     features:
       - webservices:
     featuresConfig:
-      - webservices.apiPrefix:
+      - webservices.javalin:
           apiPrefix: /api
-      - webservices.apiToken:
+    plugins:
+      - io.vertigo.chatbot.vega.plugins.webservice.handler.ApiTokenWebServiceHandlerPlugin:
           apiKey: ${API_KEY}
-      #- webservices.rateLimiting:
-  io.vertigo.dynamo.DynamoFeatures:
-  
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
   io.vertigo.chatbot.executor.RasaExecutorFeatures:
   io.vertigo.chatbot.analytics.RasaAnalyticsFeatures:

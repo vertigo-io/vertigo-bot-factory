@@ -1,0 +1,9 @@
+resources: 
+  - { type: kpr, path: ../vertigo-bot-commons/src/main/resources/io/vertigo/chatbot/commons/gen.kpr}
+  - { type: kpr, path: src/main/resources/io/vertigo/chatbot/executor/gen.kpr}
+mdaConfig:
+  projectPackageName: io.vertigo.chatbot
+  targetGenDir : src/main/
+  properties: 
+    vertigo.domain.java: true
+    vertigo.domain.java.generateDtResources: false

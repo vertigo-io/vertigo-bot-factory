@@ -17,7 +17,7 @@
  */
 package io.vertigo.chatbot.designer.analytics;
 
-import io.vertigo.app.config.discovery.ModuleDiscoveryFeatures;
+import io.vertigo.core.node.config.discovery.ModuleDiscoveryFeatures;
 
 public class AnalyticsFeatures extends ModuleDiscoveryFeatures<AnalyticsFeatures> { // nous étendons ModuleDiscoveryFeatures pour activer la découverte automatique
 
@@ -36,3 +36,4 @@ public class AnalyticsFeatures extends ModuleDiscoveryFeatures<AnalyticsFeatures
 	}
 
 }
+	

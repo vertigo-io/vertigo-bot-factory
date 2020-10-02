@@ -1,0 +1,17 @@
+resources: 
+  - { type: kpr, path: ../vertigo-bot-commons/src/main/resources/io/vertigo/chatbot/commons/gen.kpr}
+  - { type: kpr, path: src/main/resources/io/vertigo/chatbot/designer/gen.kpr}
+  - { type: security , path: src/main/resources/io/vertigo/chatbot/designer/authorizations/auth-config.json}
+mdaConfig:
+  projectPackageName: io.vertigo.chatbot
+  targetGenDir : src/main/
+  properties: 
+    vertigo.domain.java: true
+    vertigo.domain.java.generateDtResources: false
+    vertigo.domain.sql: true
+    vertigo.domain.sql.targetSubDir: javagen/sqlgen
+    vertigo.domain.sql.baseCible: Postgres
+    vertigo.domain.sql.generateDrop: true
+    vertigo.domain.sql.generateMasterData: true
+    vertigo.task: true
+    vertigo.authorization: true

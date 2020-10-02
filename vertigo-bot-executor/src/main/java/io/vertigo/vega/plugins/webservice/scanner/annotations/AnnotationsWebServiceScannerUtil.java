@@ -1,7 +1,7 @@
 /**
- * vertigo - simple java starter
+ * vertigo - application development platform
  *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
+ * Copyright (C) 2013-2020, Vertigo.io, team@vertigo.io
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,23 +26,22 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import io.vertigo.chatbot.vega.webservice.stereotype.RequireApiKey;
-import io.vertigo.dynamo.domain.model.DtListState;
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.lang.Assertion;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.vega.webservice.WebServiceTypeUtil;
 import io.vertigo.vega.webservice.WebServices;
-import io.vertigo.vega.webservice.metamodel.WebServiceDefinition;
-import io.vertigo.vega.webservice.metamodel.WebServiceDefinition.Verb;
-import io.vertigo.vega.webservice.metamodel.WebServiceDefinitionBuilder;
-import io.vertigo.vega.webservice.metamodel.WebServiceParam;
-import io.vertigo.vega.webservice.metamodel.WebServiceParam.ImplicitParam;
-import io.vertigo.vega.webservice.metamodel.WebServiceParam.WebServiceParamType;
-import io.vertigo.vega.webservice.metamodel.WebServiceParamBuilder;
+import io.vertigo.vega.webservice.definitions.WebServiceDefinition;
+import io.vertigo.vega.webservice.definitions.WebServiceDefinition.Verb;
+import io.vertigo.vega.webservice.definitions.WebServiceDefinitionBuilder;
+import io.vertigo.vega.webservice.definitions.WebServiceParam;
+import io.vertigo.vega.webservice.definitions.WebServiceParam.ImplicitParam;
+import io.vertigo.vega.webservice.definitions.WebServiceParam.WebServiceParamType;
+import io.vertigo.vega.webservice.definitions.WebServiceParamBuilder;
 import io.vertigo.vega.webservice.stereotype.AccessTokenConsume;
 import io.vertigo.vega.webservice.stereotype.AccessTokenMandatory;
 import io.vertigo.vega.webservice.stereotype.AccessTokenPublish;
 import io.vertigo.vega.webservice.stereotype.AnonymousAccessAllowed;
-import io.vertigo.vega.webservice.stereotype.AutoSortAndPagination;
 import io.vertigo.vega.webservice.stereotype.DELETE;
 import io.vertigo.vega.webservice.stereotype.Doc;
 import io.vertigo.vega.webservice.stereotype.ExcludedFields;
@@ -83,12 +82,12 @@ final class AnnotationsWebServiceScannerUtil {
 	 * @return List of WebServiceDefinition found
 	 */
 	static List<WebServiceDefinition> scanWebService(final Class<? extends WebServices> webServicesClass) {
-		Assertion.checkNotNull(webServicesClass);
+		Assertion.check().isNotNull(webServicesClass);
 		//-----
 		return Arrays.stream(webServicesClass.getMethods())
 				.map(AnnotationsWebServiceScannerUtil::buildWebServiceDefinition)
-				.filter(webServiceDefinitionOptional -> webServiceDefinitionOptional.isPresent())
-				.map(webServiceDefinitionOptional -> webServiceDefinitionOptional.get())
+				.filter(Optional::isPresent)
+				.map(Optional::get)
 				.collect(Collectors.toList());
 	}
 
@@ -102,7 +101,7 @@ final class AnnotationsWebServiceScannerUtil {
 		if (requireApiKey != null) {
 			builder.withNeedApiKey(true);
 		}
-
+		
 		for (final Annotation annotation : method.getAnnotations()) {
 			if (annotation instanceof GET) {
 				builder.with(Verb.Get, ((GET) annotation).value());
@@ -117,6 +116,7 @@ final class AnnotationsWebServiceScannerUtil {
 			} else if (annotation instanceof AnonymousAccessAllowed) {
 				builder.withNeedAuthentication(false);
 			} else if (annotation instanceof RequireApiKey) {
+				//SKE
 				builder.withNeedApiKey(true);
 			} else if (annotation instanceof SessionLess) {
 				builder.withNeedSession(false);
@@ -135,8 +135,6 @@ final class AnnotationsWebServiceScannerUtil {
 				builder.withAccessTokenConsume(true);
 			} else if (annotation instanceof ServerSideSave) {
 				builder.withServerSideSave(true);
-			} else if (annotation instanceof AutoSortAndPagination) {
-				builder.withAutoSortAndPagination(true);
 			} else if (annotation instanceof Doc) {
 				builder.withDoc(((Doc) annotation).value());
 			} else if (annotation instanceof FileAttachment) {

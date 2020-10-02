@@ -17,7 +17,7 @@
  */
 package io.vertigo.chatbot.analytics;
 
-import io.vertigo.app.config.discovery.ModuleDiscoveryFeatures;
+import io.vertigo.core.node.config.discovery.ModuleDiscoveryFeatures;
 
 public class RasaAnalyticsFeatures extends ModuleDiscoveryFeatures<RasaAnalyticsFeatures> { // nous étendons ModuleDiscoveryFeatures pour activer la découverte automatique
 

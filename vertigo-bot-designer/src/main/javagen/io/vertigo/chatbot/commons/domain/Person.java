@@ -1,30 +1,13 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.dynamo.domain.model.Entity;
-import io.vertigo.dynamo.domain.model.EnumVAccessor;
-import io.vertigo.dynamo.domain.model.ListVAccessor;
-import io.vertigo.dynamo.domain.model.UID;
-import io.vertigo.dynamo.domain.model.VAccessor;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
+import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
+import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -40,7 +23,7 @@ public final class Person implements Entity {
 	private String password;
 	private String passwordNew;
 
-	@io.vertigo.dynamo.domain.stereotype.Association(
+	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "APersonGroups",
 			fkFieldName = "grpId",
 			primaryDtDefinitionName = "DtGroups",
@@ -53,9 +36,9 @@ public final class Person implements Entity {
 			foreignRole = "Person",
 			foreignLabel = "Person",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.Groups> grpIdAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.Groups.class, "Groups");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Groups> grpIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Groups.class, "Groups");
 
-	@io.vertigo.dynamo.domain.stereotype.Association(
+	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "APersonRole",
 			fkFieldName = "rolCd",
 			primaryDtDefinitionName = "DtPersonRole",
@@ -68,9 +51,9 @@ public final class Person implements Entity {
 			foreignRole = "Person",
 			foreignLabel = "Person",
 			foreignMultiplicity = "0..*")
-	private final EnumVAccessor<io.vertigo.chatbot.commons.domain.PersonRole, io.vertigo.chatbot.commons.domain.PersonRoleEnum> rolCdAccessor = new EnumVAccessor<>(io.vertigo.chatbot.commons.domain.PersonRole.class, "PersonRole", io.vertigo.chatbot.commons.domain.PersonRoleEnum.class);
+	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.PersonRole, io.vertigo.chatbot.commons.domain.PersonRoleEnum> rolCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.PersonRole.class, "PersonRole", io.vertigo.chatbot.commons.domain.PersonRoleEnum.class);
 
-	@io.vertigo.dynamo.domain.stereotype.AssociationNN(
+	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
 			name = "AnnChatbotPerson",
 			tableName = "CHA_PER_RIGHTS",
 			dtDefinitionA = "DtPerson",
@@ -81,7 +64,7 @@ public final class Person implements Entity {
 			roleB = "Chatbots",
 			labelA = "Persons",
 			labelB = "Chatbots")
-	private final ListVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbotsAccessor = new ListVAccessor<>(this, "AnnChatbotPerson", "Chatbots");
+	private final StoreListVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbotsAccessor = new StoreListVAccessor<>(this, "AnnChatbotPerson", "Chatbots");
 
 	/** {@inheritDoc} */
 	@Override
@@ -94,7 +77,7 @@ public final class Person implements Entity {
 	 * Récupère la valeur de la propriété 'Id'.
 	 * @return Long perId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", type = "ID", required = true, label = "Id")
+	@Field(smartType = "STyId", type = "ID", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Id")
 	public Long getPerId() {
 		return perId;
 	}
@@ -113,7 +96,7 @@ public final class Person implements Entity {
 	 * Récupère la valeur de la propriété 'Login'.
 	 * @return String login <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Login")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Login")
 	public String getLogin() {
 		return login;
 	}
@@ -132,7 +115,7 @@ public final class Person implements Entity {
 	 * Récupère la valeur de la propriété 'Name'.
 	 * @return String name <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Name")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Name")
 	public String getName() {
 		return name;
 	}
@@ -151,7 +134,7 @@ public final class Person implements Entity {
 	 * Récupère la valeur de la propriété 'Password'.
 	 * @return String password <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoPassword", required = true, label = "Password")
+	@Field(smartType = "STyPassword", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Password")
 	public String getPassword() {
 		return password;
 	}
@@ -170,7 +153,7 @@ public final class Person implements Entity {
 	 * Récupère la valeur de la propriété 'New password'.
 	 * @return String passwordNew
 	 */
-	@Field(domain = "DoPassword", persistent = false, label = "New password")
+	@Field(smartType = "STyPassword", persistent = false, label = "New password")
 	public String getPasswordNew() {
 		return passwordNew;
 	}
@@ -189,7 +172,7 @@ public final class Person implements Entity {
 	 * Récupère la valeur de la propriété 'Group'.
 	 * @return Long grpId
 	 */
-	@Field(domain = "DoId", type = "FOREIGN_KEY", label = "Group")
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Group", fkDefinition = "DtGroups" )
 	public Long getGrpId() {
 		return (Long) grpIdAccessor.getId();
 	}
@@ -208,7 +191,7 @@ public final class Person implements Entity {
 	 * Récupère la valeur de la propriété 'Role'.
 	 * @return String rolCd <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoCode", type = "FOREIGN_KEY", required = true, label = "Role")
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Role", fkDefinition = "DtPersonRole" )
 	public String getRolCd() {
 		return (String) rolCdAccessor.getId();
 	}
@@ -226,7 +209,7 @@ public final class Person implements Entity {
 	 * Association : Group.
 	 * @return l'accesseur vers la propriété 'Group'
 	 */
-	public VAccessor<io.vertigo.chatbot.commons.domain.Groups> groups() {
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Groups> groups() {
 		return grpIdAccessor;
 	}
 
@@ -234,7 +217,7 @@ public final class Person implements Entity {
 	 * Association : Role.
 	 * @return l'accesseur vers la propriété 'Role'
 	 */
-	public EnumVAccessor<io.vertigo.chatbot.commons.domain.PersonRole, io.vertigo.chatbot.commons.domain.PersonRoleEnum> personRole() {
+	public EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.PersonRole, io.vertigo.chatbot.commons.domain.PersonRoleEnum> personRole() {
 		return rolCdAccessor;
 	}
 
@@ -242,7 +225,7 @@ public final class Person implements Entity {
 	 * Association : Chatbots.
 	 * @return l'accesseur vers la propriété 'Chatbots'
 	 */
-	public ListVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbots() {
+	public StoreListVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbots() {
 		return chatbotsAccessor;
 	}
 	

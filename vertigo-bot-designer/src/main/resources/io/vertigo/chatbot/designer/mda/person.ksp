@@ -8,22 +8,36 @@ package io.vertigo.chatbot.commons.domain
 
 create DtDefinition DtPerson {
 	id perId 			{domain: DoId 		label:"Id"}
-	field login 		{domain: DoLabel 	label: "Login" 		required:"true"}
-	field name 			{domain: DoLabel 	label: "Name" 		required:"true"}
-	field password 		{domain: DoPassword label: "Password" 	required:"true"}
-	field passwordNew 	{domain: DoPassword label: "New password" 	required:"false"  persistent:"false"}
+	field login 		{domain: DoLabel 	label: "Login" 			cardinality : "1"}
+	field name 			{domain: DoLabel 	label: "Name" 			cardinality : "1"}
+	field password 		{domain: DoPassword label: "Password" 		cardinality : "1"}
+	field passwordNew 	{domain: DoPassword label: "New password"   persistent:"false"}
 }
 
 create DtDefinition DtGroups {
-	id grpId 		{domain: DoId 		label:"Id"}
-	field name 		{domain: DoLabel 	label: "Name" required:"false"}
+	id grpId 			{domain: DoId 		label:"Id"}
+	field name 			{domain: DoLabel 	label: "Name"}
 }
 
 create DtDefinition DtPersonRole {
 	stereotype : "StaticMasterData"
 	id    rolCd 		{domain: DoCode 	label: "Code"}
-	field label 		{domain: DoLabel 	label: "Label" 		required:"true"}
-	field sortOrder 	{domain: DoNumber 	label: "Order" 		required:"true"}
+	field label 		{domain: DoLabel 	label: "Label" 		cardinality : "1"}
+	field sortOrder 	{domain: DoNumber 	label: "Order" 		cardinality : "1"}
+	values : `{
+        "RAdmin" : {
+            "rolCd" : "RAdmin",
+            "label" : "Administrateur",
+            "sortOrder" : 1
+        },
+        "RUser" : {
+            "rolCd" : "RUser",
+            "label" : "User",
+            "sortOrder" : 2
+        }
+    }`
+	sortField : "sortOrder"
+ 	displayField : "label"
 }
 
 create Association APersonGroups {

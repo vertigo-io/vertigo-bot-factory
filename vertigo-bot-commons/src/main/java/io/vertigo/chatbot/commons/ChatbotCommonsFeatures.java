@@ -17,9 +17,9 @@
  */
 package io.vertigo.chatbot.commons;
 
-import io.vertigo.app.config.DefinitionProviderConfig;
-import io.vertigo.app.config.discovery.ModuleDiscoveryFeatures;
-import io.vertigo.dynamo.plugins.environment.DynamoDefinitionProvider;
+import io.vertigo.core.node.config.DefinitionProviderConfig;
+import io.vertigo.core.node.config.discovery.ModuleDiscoveryFeatures;
+import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 
 public class ChatbotCommonsFeatures extends ModuleDiscoveryFeatures<ChatbotCommonsFeatures> { // nous étendons ModuleDiscoveryFeatures pour activer la découverte automatique
 
@@ -31,9 +31,8 @@ public class ChatbotCommonsFeatures extends ModuleDiscoveryFeatures<ChatbotCommo
 	protected void buildFeatures() {
 		super.buildFeatures(); // découverte automatique de tous les composants
 		getModuleConfigBuilder()
-				.addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
-						.addDefinitionResource("kpr", "io/vertigo/chatbot/commons/run.kpr") // chargement de notre modèle de donnée
-						//                		.addDefinitionResource("classes", "io.vertigo.chatbot.domain.DtDefinitionsCommon")
+				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
+						.addDefinitionResource("smarttypes", ChatbotSmartTypes.class.getName()) // chargement de notre modèle de donnée
 						.build());
 
 	}

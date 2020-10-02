@@ -48,13 +48,13 @@ import io.vertigo.chatbot.analytics.rasa.util.GsonOptionalTypeAdapter;
 import io.vertigo.chatbot.commons.RasaTypeAction;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.executor.manager.ExecutorConfigManager;
-import io.vertigo.commons.analytics.AnalyticsManager;
-import io.vertigo.commons.analytics.process.AProcess;
-import io.vertigo.commons.analytics.process.AProcessBuilder;
-import io.vertigo.core.component.Activeable;
-import io.vertigo.core.component.Component;
+import io.vertigo.core.analytics.AnalyticsManager;
+import io.vertigo.core.analytics.process.AProcess;
+import io.vertigo.core.analytics.process.AProcessBuilder;
+import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.node.component.Activeable;
+import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.ParamManager;
-import io.vertigo.lang.VSystemException;
 
 public class RasaRabbitMqConsumer implements Component, Activeable {
 

@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.account.authorization.AuthorizationManager;
-import io.vertigo.account.authorization.metamodel.AuthorizationName;
+import io.vertigo.account.authorization.definitions.AuthorizationName;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotAuthorizations;
 import io.vertigo.ui.core.ViewContext;

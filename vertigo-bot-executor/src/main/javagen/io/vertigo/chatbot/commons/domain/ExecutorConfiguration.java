@@ -1,26 +1,9 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -41,7 +24,7 @@ public final class ExecutorConfiguration implements DtObject {
 	 * Récupère la valeur de la propriété 'Bot ID'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", required = true, label = "Bot ID")
+	@Field(smartType = "STyId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Bot ID")
 	public Long getBotId() {
 		return botId;
 	}
@@ -60,7 +43,7 @@ public final class ExecutorConfiguration implements DtObject {
 	 * Récupère la valeur de la propriété 'Node ID'.
 	 * @return Long nodId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", required = true, label = "Node ID")
+	@Field(smartType = "STyId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Node ID")
 	public Long getNodId() {
 		return nodId;
 	}
@@ -79,7 +62,7 @@ public final class ExecutorConfiguration implements DtObject {
 	 * Récupère la valeur de la propriété 'Model ID'.
 	 * @return Long traId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", required = true, label = "Model ID")
+	@Field(smartType = "STyId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model ID")
 	public Long getTraId() {
 		return traId;
 	}
@@ -98,7 +81,7 @@ public final class ExecutorConfiguration implements DtObject {
 	 * Récupère la valeur de la propriété 'Model name'.
 	 * @return String modelName <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Model name")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model name")
 	public String getModelName() {
 		return modelName;
 	}
@@ -117,7 +100,7 @@ public final class ExecutorConfiguration implements DtObject {
 	 * Récupère la valeur de la propriété 'NLU Threshold'.
 	 * @return BigDecimal nluThreshold <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoPercentage", required = true, label = "NLU Threshold")
+	@Field(smartType = "STyPercentage", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "NLU Threshold")
 	public java.math.BigDecimal getNluThreshold() {
 		return nluThreshold;
 	}

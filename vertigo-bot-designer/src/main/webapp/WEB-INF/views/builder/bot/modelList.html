@@ -37,10 +37,10 @@
 					onSuccess: function() {
 						VUiExtensions.dataX.loadingTraining = false;
 						
-						if (vueData.autoscroll) {
+						if (VertigoUi.vueData.autoscroll) {
 							scrollLogToBottom();
 						}
-						if (!vueData.trainerState.trainingInProgress && interval != null) {
+						if (!VertigoUi.vueData.trainerState.trainingInProgress && interval != null) {
 							clearInterval(interval);
 							interval = null;
 							setTimeout(refreshModels, 500); // timeout to ensure callback is processed
@@ -131,7 +131,7 @@
 			function getTrainingById(id) {
 				if (id == null) return null;
 				
-				let result = vueData.trainingList.filter(t => t.traId === id);
+				let result = VertigoUi.vueData.trainingList.filter(t => t.traId === id);
 				return result.length === 0 ? null : result[0];
 			}
 			
@@ -173,7 +173,7 @@
 				}
 			}
 			function getDevNode() {
-				let result = vueData.nodeList.filter(n => n.isDev === true);
+				let result = VertigoUi.vueData.nodeList.filter(n => n.isDev === true);
 				return result.length === 0 ? null : result[0];
 			}
 			
@@ -395,7 +395,7 @@
 		
 		<section layout:fragment="javascript-footer">
 			<script>
-				if (vueData.trainerState.trainingInProgress) {
+				if (VertigoUi.vueData.trainerState.trainingInProgress) {
 					postTrain();
 				}
 				setTimeout(scrollLogToBottom, 0);

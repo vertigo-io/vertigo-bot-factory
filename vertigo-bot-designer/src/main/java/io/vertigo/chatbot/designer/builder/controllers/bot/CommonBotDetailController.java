@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import io.vertigo.account.authorization.AuthorizationManager;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
-import io.vertigo.dynamo.file.model.VFile;
+import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 

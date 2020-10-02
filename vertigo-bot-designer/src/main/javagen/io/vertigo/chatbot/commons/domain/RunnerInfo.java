@@ -1,26 +1,9 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -40,7 +23,7 @@ public final class RunnerInfo implements DtObject {
 	 * Récupère la valeur de la propriété 'Name'.
 	 * @return String name <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Name")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Name")
 	public String getName() {
 		return name;
 	}
@@ -59,7 +42,7 @@ public final class RunnerInfo implements DtObject {
 	 * Récupère la valeur de la propriété 'Node state'.
 	 * @return String state <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Node state")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Node state")
 	public String getState() {
 		return state;
 	}
@@ -78,7 +61,7 @@ public final class RunnerInfo implements DtObject {
 	 * Récupère la valeur de la propriété 'Component version'.
 	 * @return String agentVersion <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Component version")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Component version")
 	public String getAgentVersion() {
 		return agentVersion;
 	}
@@ -97,7 +80,7 @@ public final class RunnerInfo implements DtObject {
 	 * Récupère la valeur de la propriété 'Model version'.
 	 * @return Long loadedModelVersion <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoNumber", required = true, label = "Model version")
+	@Field(smartType = "STyNumber", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Model version")
 	public Long getLoadedModelVersion() {
 		return loadedModelVersion;
 	}

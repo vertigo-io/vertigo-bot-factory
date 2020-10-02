@@ -17,7 +17,7 @@
  */
 package io.vertigo.chatbot.designer.admin;
 
-import io.vertigo.app.config.discovery.ModuleDiscoveryFeatures;
+import io.vertigo.core.node.config.discovery.ModuleDiscoveryFeatures;
 
 public class AdminFeatures extends ModuleDiscoveryFeatures<AdminFeatures> { // nous étendons ModuleDiscoveryFeatures pour activer la découverte automatique
 

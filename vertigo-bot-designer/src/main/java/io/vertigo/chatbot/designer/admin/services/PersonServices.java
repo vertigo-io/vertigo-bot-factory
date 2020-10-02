@@ -26,14 +26,14 @@ import io.vertigo.account.impl.authentication.PasswordHelper;
 import io.vertigo.chatbot.commons.dao.PersonDAO;
 import io.vertigo.chatbot.commons.domain.Person;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.component.Component;
-import io.vertigo.dynamo.criteria.Criterions;
-import io.vertigo.dynamo.domain.metamodel.association.DtListURIForNNAssociation;
-import io.vertigo.dynamo.domain.model.DtList;
-import io.vertigo.dynamo.domain.model.DtListState;
-import io.vertigo.dynamo.domain.model.UID;
-import io.vertigo.dynamo.store.StoreManager;
-import io.vertigo.lang.Assertion;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.criteria.Criterions;
+import io.vertigo.datamodel.structure.definitions.association.DtListURIForNNAssociation;
+import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datastore.entitystore.EntityStoreManager;
 
 @Transactional
 @Secured("AdmPer")
@@ -43,14 +43,14 @@ public class PersonServices implements Component {
 	private PersonDAO personDAO;
 
 	@Inject
-	private StoreManager storeManager;
+	private EntityStoreManager entityStoreManager;
 
 	public DtList<Person> getAllPersons() {
 		return personDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
 	}
 
 	public Person getPersonById(final Long perId) {
-		Assertion.checkNotNull(perId);
+		Assertion.check().isNotNull(perId);
 		// ---
 		final Person person = personDAO.get(perId);
 		person.chatbots().load();
@@ -58,7 +58,7 @@ public class PersonServices implements Component {
 	}
 
 	public Person savePerson(final Person person, final List<UID> chatbotIds) {
-		Assertion.checkNotNull(person);
+		Assertion.check().isNotNull(person);
 		// ---
 		if (person.getPasswordNew() != null && !person.getPasswordNew().isEmpty()) {
 			final PasswordHelper passwordHelper = new PasswordHelper();
@@ -66,7 +66,7 @@ public class PersonServices implements Component {
 			person.setPassword(encodedPassword);
 		}
 		final Person savedPerson = personDAO.save(person);
-		storeManager.getDataStore().getBrokerNN()
+		entityStoreManager.getBrokerNN()
 				.updateNN(DtListURIForNNAssociation.class.cast(person.chatbots().getDtListURI()), chatbotIds);
 		return savedPerson;
 	}

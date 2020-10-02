@@ -1,29 +1,12 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.dynamo.domain.model.KeyConcept;
-import io.vertigo.dynamo.domain.model.ListVAccessor;
-import io.vertigo.dynamo.domain.model.UID;
-import io.vertigo.dynamo.domain.model.VAccessor;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.KeyConcept;
+import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
+import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -39,7 +22,7 @@ public final class Chatbot implements KeyConcept {
 	private java.time.LocalDate creationDate;
 	private String status;
 
-	@io.vertigo.dynamo.domain.stereotype.Association(
+	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotMediaFileInfo",
 			fkFieldName = "filIdAvatar",
 			primaryDtDefinitionName = "DtMediaFileInfo",
@@ -52,9 +35,9 @@ public final class Chatbot implements KeyConcept {
 			foreignRole = "Chatbot",
 			foreignLabel = "Chatbot",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> filIdAvatarAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.MediaFileInfo.class, "MediaFileInfo");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> filIdAvatarAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.MediaFileInfo.class, "MediaFileInfo");
 
-	@io.vertigo.dynamo.domain.stereotype.Association(
+	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotUtterTextWelcome",
 			fkFieldName = "uttIdWelcome",
 			primaryDtDefinitionName = "DtUtterText",
@@ -67,9 +50,9 @@ public final class Chatbot implements KeyConcept {
 			foreignRole = "Chatbot",
 			foreignLabel = "Chatbot",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> uttIdWelcomeAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextWelcome");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.UtterText> uttIdWelcomeAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextWelcome");
 
-	@io.vertigo.dynamo.domain.stereotype.Association(
+	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotUtterTextDefault",
 			fkFieldName = "uttIdDefault",
 			primaryDtDefinitionName = "DtUtterText",
@@ -82,9 +65,9 @@ public final class Chatbot implements KeyConcept {
 			foreignRole = "Chatbot",
 			foreignLabel = "Chatbot",
 			foreignMultiplicity = "0..*")
-	private final VAccessor<io.vertigo.chatbot.commons.domain.UtterText> uttIdDefaultAccessor = new VAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextDefault");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.UtterText> uttIdDefaultAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextDefault");
 
-	@io.vertigo.dynamo.domain.stereotype.AssociationNN(
+	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
 			name = "AnnChatbotPerson",
 			tableName = "CHA_PER_RIGHTS",
 			dtDefinitionA = "DtPerson",
@@ -95,7 +78,7 @@ public final class Chatbot implements KeyConcept {
 			roleB = "Chatbots",
 			labelA = "Persons",
 			labelB = "Chatbots")
-	private final ListVAccessor<io.vertigo.chatbot.commons.domain.Person> personsAccessor = new ListVAccessor<>(this, "AnnChatbotPerson", "Persons");
+	private final StoreListVAccessor<io.vertigo.chatbot.commons.domain.Person> personsAccessor = new StoreListVAccessor<>(this, "AnnChatbotPerson", "Persons");
 
 	/** {@inheritDoc} */
 	@Override
@@ -108,7 +91,7 @@ public final class Chatbot implements KeyConcept {
 	 * Récupère la valeur de la propriété 'ID'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", type = "ID", required = true, label = "ID")
+	@Field(smartType = "STyId", type = "ID", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "ID")
 	public Long getBotId() {
 		return botId;
 	}
@@ -127,7 +110,7 @@ public final class Chatbot implements KeyConcept {
 	 * Récupère la valeur de la propriété 'Name'.
 	 * @return String name <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Name")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Name")
 	public String getName() {
 		return name;
 	}
@@ -146,7 +129,7 @@ public final class Chatbot implements KeyConcept {
 	 * Récupère la valeur de la propriété 'Description'.
 	 * @return String description <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoText", required = true, label = "Description")
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Description")
 	public String getDescription() {
 		return description;
 	}
@@ -165,7 +148,7 @@ public final class Chatbot implements KeyConcept {
 	 * Récupère la valeur de la propriété 'Creation date'.
 	 * @return LocalDate creationDate <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLocaldate", required = true, label = "Creation date")
+	@Field(smartType = "STyLocaldate", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Creation date")
 	public java.time.LocalDate getCreationDate() {
 		return creationDate;
 	}
@@ -184,7 +167,7 @@ public final class Chatbot implements KeyConcept {
 	 * Récupère la valeur de la propriété 'Status'.
 	 * @return String status <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoCode", required = true, label = "Status")
+	@Field(smartType = "STyCode", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Status")
 	public String getStatus() {
 		return status;
 	}
@@ -203,7 +186,7 @@ public final class Chatbot implements KeyConcept {
 	 * Récupère la valeur de la propriété 'Avatar'.
 	 * @return Long filIdAvatar
 	 */
-	@Field(domain = "DoId", type = "FOREIGN_KEY", label = "Avatar")
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Avatar", fkDefinition = "DtMediaFileInfo" )
 	public Long getFilIdAvatar() {
 		return (Long) filIdAvatarAccessor.getId();
 	}
@@ -222,7 +205,7 @@ public final class Chatbot implements KeyConcept {
 	 * Récupère la valeur de la propriété 'Welcome text'.
 	 * @return Long uttIdWelcome <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", type = "FOREIGN_KEY", required = true, label = "Welcome text")
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Welcome text", fkDefinition = "DtUtterText" )
 	public Long getUttIdWelcome() {
 		return (Long) uttIdWelcomeAccessor.getId();
 	}
@@ -241,7 +224,7 @@ public final class Chatbot implements KeyConcept {
 	 * Récupère la valeur de la propriété 'Default text'.
 	 * @return Long uttIdDefault <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", type = "FOREIGN_KEY", required = true, label = "Default text")
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Default text", fkDefinition = "DtUtterText" )
 	public Long getUttIdDefault() {
 		return (Long) uttIdDefaultAccessor.getId();
 	}
@@ -259,7 +242,7 @@ public final class Chatbot implements KeyConcept {
 	 * Association : Avatar.
 	 * @return l'accesseur vers la propriété 'Avatar'
 	 */
-	public VAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> mediaFileInfo() {
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> mediaFileInfo() {
 		return filIdAvatarAccessor;
 	}
 
@@ -267,7 +250,7 @@ public final class Chatbot implements KeyConcept {
 	 * Association : Default text.
 	 * @return l'accesseur vers la propriété 'Default text'
 	 */
-	public VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextDefault() {
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextDefault() {
 		return uttIdDefaultAccessor;
 	}
 
@@ -275,7 +258,7 @@ public final class Chatbot implements KeyConcept {
 	 * Association : Welcome text.
 	 * @return l'accesseur vers la propriété 'Welcome text'
 	 */
-	public VAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextWelcome() {
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextWelcome() {
 		return uttIdWelcomeAccessor;
 	}
 
@@ -283,7 +266,7 @@ public final class Chatbot implements KeyConcept {
 	 * Association : Persons.
 	 * @return l'accesseur vers la propriété 'Persons'
 	 */
-	public ListVAccessor<io.vertigo.chatbot.commons.domain.Person> persons() {
+	public StoreListVAccessor<io.vertigo.chatbot.commons.domain.Person> persons() {
 		return personsAccessor;
 	}
 	

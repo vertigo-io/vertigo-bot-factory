@@ -1,52 +1,52 @@
 package io.vertigo.chatbot.designer.builder
 
 create Task TkGetNextModelNumber {
-    className : "io.vertigo.dynamox.task.TaskEngineSelect"
+    className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
             select coalesce(max(version_number) + 1, 1)
 			from training tra
 			where bot_id = #botId#
              "
-	attribute botId  			{domain : DoId         		required:"true"  inOut :"in"}
-	attribute nextModelNumber 	{domain : DoNumber 			required:"true"  inOut :"out"}
+	in botId  				{domain : DoId         		cardinality : "1"  }
+	out nextModelNumber 	{domain : DoNumber 			cardinality : "1"  }
 }
 
 create Task TkResetDevNode {
-    className : "io.vertigo.dynamox.task.TaskEngineProc"
+    className : "io.vertigo.basics.task.TaskEngineProc"
     request : "
             update chatbot_node
 			set is_dev = false
 			where bot_id = #botId#
              "
-	attribute botId  			{domain : DoId         		required:"true"  inOut :"in"}
+	in botId  				{domain : DoId         		cardinality : "1"  }
 }
 
 
 create Task TkRemoveAllUtterTextBySmtId {
-    className : "io.vertigo.dynamox.task.TaskEngineProc"
+    className : "io.vertigo.basics.task.TaskEngineProc"
     request : "
             delete from utter_text
 			where smt_id = #smtId#
              "
-	attribute smtId  			{domain : DoId         		required:"true"  inOut :"in"}
+	in smtId  				{domain : DoId         		cardinality : "1"  }
 }
 
 
 create Task TkRemoveAllButtonsByBotId {
-    className : "io.vertigo.dynamox.task.TaskEngineProc"
+    className : "io.vertigo.basics.task.TaskEngineProc"
     request : "
             delete from response_button
 			where bot_id_welcome = #botId#
 			or bot_id_default = #botId#
              "
-	attribute botId  			{domain : DoId         		required:"true"  inOut :"in"}
+	in botId  				{domain : DoId         		cardinality : "1"  }
 }
 
 create Task TkRemoveAllButtonsBySmtId {
-    className : "io.vertigo.dynamox.task.TaskEngineProc"
+    className : "io.vertigo.basics.task.TaskEngineProc"
     request : "
             delete from response_button
 			where smt_id = #smtId#
              "
-	attribute smtId  			{domain : DoId         		required:"true"  inOut :"in"}
+	in smtId  				{domain : DoId         		cardinality : "1"  }
 }

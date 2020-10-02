@@ -1,26 +1,9 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -31,16 +14,16 @@ public final class SmallTalkExport implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private io.vertigo.chatbot.commons.domain.SmallTalk smallTalk;
-	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences;
-	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts;
-	private io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> buttons;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> buttons;
 	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'SmallTalk'.
 	 * @return SmallTalk smallTalk <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoDtSmallTalkDto", required = true, label = "SmallTalk")
+	@Field(smartType = "STyDtSmallTalk", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "SmallTalk")
 	public io.vertigo.chatbot.commons.domain.SmallTalk getSmallTalk() {
 		return smallTalk;
 	}
@@ -57,57 +40,57 @@ public final class SmallTalkExport implements DtObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'nluTrainingSentences'.
-	 * @return DtList de NluTrainingSentence nluTrainingSentences <b>Obligatoire</b>
+	 * @return DtList de NluTrainingSentence nluTrainingSentences
 	 */
-	@Field(domain = "DoDtNluTrainingSentenceDtc", required = true, label = "nluTrainingSentences")
-	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> getNluTrainingSentences() {
+	@Field(smartType = "STyDtNluTrainingSentence", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "nluTrainingSentences")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> getNluTrainingSentences() {
 		return nluTrainingSentences;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'nluTrainingSentences'.
-	 * @param nluTrainingSentences DtList de NluTrainingSentence <b>Obligatoire</b>
+	 * @param nluTrainingSentences DtList de NluTrainingSentence
 	 */
-	public void setNluTrainingSentences(final io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences) {
+	public void setNluTrainingSentences(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences) {
 		this.nluTrainingSentences = nluTrainingSentences;
 	}
 	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'response texts'.
-	 * @return DtList de UtterText utterTexts <b>Obligatoire</b>
+	 * @return DtList de UtterText utterTexts
 	 */
-	@Field(domain = "DoDtUtterTextDtc", required = true, label = "response texts")
-	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> getUtterTexts() {
+	@Field(smartType = "STyDtUtterText", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "response texts")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> getUtterTexts() {
 		return utterTexts;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'response texts'.
-	 * @param utterTexts DtList de UtterText <b>Obligatoire</b>
+	 * @param utterTexts DtList de UtterText
 	 */
-	public void setUtterTexts(final io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts) {
+	public void setUtterTexts(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts) {
 		this.utterTexts = utterTexts;
 	}
 	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'buttons'.
-	 * @return DtList de ResponseButton buttons <b>Obligatoire</b>
+	 * @return DtList de ResponseButton buttons
 	 */
-	@Field(domain = "DoDtResponseButtonDtc", required = true, label = "buttons")
-	public io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getButtons() {
+	@Field(smartType = "STyDtResponseButton", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "buttons")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getButtons() {
 		return buttons;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'buttons'.
-	 * @param buttons DtList de ResponseButton <b>Obligatoire</b>
+	 * @param buttons DtList de ResponseButton
 	 */
-	public void setButtons(final io.vertigo.dynamo.domain.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> buttons) {
+	public void setButtons(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> buttons) {
 		this.buttons = buttons;
 	}
 	

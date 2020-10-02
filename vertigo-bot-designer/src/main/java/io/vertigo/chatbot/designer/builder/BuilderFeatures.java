@@ -17,7 +17,7 @@
  */
 package io.vertigo.chatbot.designer.builder;
 
-import io.vertigo.app.config.discovery.ModuleDiscoveryFeatures;
+import io.vertigo.core.node.config.discovery.ModuleDiscoveryFeatures;
 
 public class BuilderFeatures extends ModuleDiscoveryFeatures<BuilderFeatures> { // nous étendons ModuleDiscoveryFeatures pour activer la découverte automatique
 

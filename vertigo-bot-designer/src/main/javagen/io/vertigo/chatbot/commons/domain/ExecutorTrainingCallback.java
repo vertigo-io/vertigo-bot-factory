@@ -1,26 +1,9 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -42,7 +25,7 @@ public final class ExecutorTrainingCallback implements DtObject {
 	 * Récupère la valeur de la propriété 'Training ID'.
 	 * @return Long trainingId <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoId", required = true, label = "Training ID")
+	@Field(smartType = "STyId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Training ID")
 	public Long getTrainingId() {
 		return trainingId;
 	}
@@ -61,7 +44,7 @@ public final class ExecutorTrainingCallback implements DtObject {
 	 * Récupère la valeur de la propriété 'Succes'.
 	 * @return Boolean success <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoYesNo", required = true, label = "Succes")
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Succes")
 	public Boolean getSuccess() {
 		return success;
 	}
@@ -80,7 +63,7 @@ public final class ExecutorTrainingCallback implements DtObject {
 	 * Récupère la valeur de la propriété 'Logs'.
 	 * @return String log <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoText", required = true, label = "Logs")
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Logs")
 	public String getLog() {
 		return log;
 	}
@@ -99,7 +82,7 @@ public final class ExecutorTrainingCallback implements DtObject {
 	 * Récupère la valeur de la propriété 'Informations'.
 	 * @return String infos
 	 */
-	@Field(domain = "DoText", label = "Informations")
+	@Field(smartType = "STyText", label = "Informations")
 	public String getInfos() {
 		return infos;
 	}
@@ -118,7 +101,7 @@ public final class ExecutorTrainingCallback implements DtObject {
 	 * Récupère la valeur de la propriété 'Warnings'.
 	 * @return String warnings
 	 */
-	@Field(domain = "DoText", label = "Warnings")
+	@Field(smartType = "STyText", label = "Warnings")
 	public String getWarnings() {
 		return warnings;
 	}
@@ -137,7 +120,7 @@ public final class ExecutorTrainingCallback implements DtObject {
 	 * Récupère la valeur de la propriété 'Client Api Key'.
 	 * @return String apiKey
 	 */
-	@Field(domain = "DoLabel", label = "Client Api Key")
+	@Field(smartType = "STyLabel", label = "Client Api Key")
 	public String getApiKey() {
 		return apiKey;
 	}

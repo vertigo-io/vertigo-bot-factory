@@ -1,26 +1,9 @@
-/**
- * vertigo - simple java starter
- *
- * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.dynamo.domain.model.DtObject;
-import io.vertigo.dynamo.domain.stereotype.Field;
-import io.vertigo.dynamo.domain.util.DtObjectUtil;
-import io.vertigo.lang.Generated;
+import io.vertigo.core.lang.Generated;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.stereotype.Field;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
 /**
  * This class is automatically generated.
@@ -43,7 +26,7 @@ public final class TrainerInfo implements DtObject {
 	 * Récupère la valeur de la propriété 'Name'.
 	 * @return String name <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Name")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Name")
 	public String getName() {
 		return name;
 	}
@@ -62,7 +45,7 @@ public final class TrainerInfo implements DtObject {
 	 * Récupère la valeur de la propriété 'Training in progress'.
 	 * @return Boolean trainingInProgress <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoYesNo", required = true, label = "Training in progress")
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Training in progress")
 	public Boolean getTrainingInProgress() {
 		return trainingInProgress;
 	}
@@ -81,7 +64,7 @@ public final class TrainerInfo implements DtObject {
 	 * Récupère la valeur de la propriété 'Training state'.
 	 * @return String trainingState <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoLabel", required = true, label = "Training state")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Training state")
 	public String getTrainingState() {
 		return trainingState;
 	}
@@ -100,7 +83,7 @@ public final class TrainerInfo implements DtObject {
 	 * Récupère la valeur de la propriété 'Training log'.
 	 * @return String latestTrainingLog <b>Obligatoire</b>
 	 */
-	@Field(domain = "DoText", required = true, label = "Training log")
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Training log")
 	public String getLatestTrainingLog() {
 		return latestTrainingLog;
 	}
@@ -119,7 +102,7 @@ public final class TrainerInfo implements DtObject {
 	 * Récupère la valeur de la propriété 'Start time'.
 	 * @return Instant startTime
 	 */
-	@Field(domain = "DoInstant", label = "Start time")
+	@Field(smartType = "STyInstant", label = "Start time")
 	public java.time.Instant getStartTime() {
 		return startTime;
 	}
@@ -138,7 +121,7 @@ public final class TrainerInfo implements DtObject {
 	 * Récupère la valeur de la propriété 'End time'.
 	 * @return Instant endTime
 	 */
-	@Field(domain = "DoInstant", label = "End time")
+	@Field(smartType = "STyInstant", label = "End time")
 	public java.time.Instant getEndTime() {
 		return endTime;
 	}
@@ -157,7 +140,7 @@ public final class TrainerInfo implements DtObject {
 	 * Récupère la valeur de la propriété 'Training percentage'.
 	 * @return Long trainingPercent
 	 */
-	@Field(domain = "DoNumber", label = "Training percentage")
+	@Field(smartType = "STyNumber", label = "Training percentage")
 	public Long getTrainingPercent() {
 		return trainingPercent;
 	}
@@ -176,7 +159,7 @@ public final class TrainerInfo implements DtObject {
 	 * Récupère la valeur de la propriété calculée 'Duration'.
 	 * @return String duration
 	 */
-	@Field(domain = "DoLabel", type = "COMPUTED", persistent = false, label = "Duration")
+	@Field(smartType = "STyLabel", type = "COMPUTED", persistent = false, label = "Duration")
 	public String getDuration() {
 		return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());
 	}

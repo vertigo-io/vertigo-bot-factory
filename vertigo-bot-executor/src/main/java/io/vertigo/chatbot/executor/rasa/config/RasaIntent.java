@@ -20,7 +20,7 @@ package io.vertigo.chatbot.executor.rasa.config;
 import java.util.List;
 
 import io.vertigo.chatbot.executor.rasa.util.StringUtils;
-import io.vertigo.lang.Assertion;
+import io.vertigo.core.lang.Assertion;
 
 public final class RasaIntent {
 
@@ -32,8 +32,9 @@ public final class RasaIntent {
 	private final RasaAction trigger;
 
 	public static RasaIntent ofSmallTalk(final Long id, final String name, final List<String> nlus, final RasaAction trigger) {
-		Assertion.checkNotNull(trigger);
-		Assertion.checkArgument(trigger.isSmallTalk(), "Trigger must be a small talk action");
+		Assertion.check()
+		.isNotNull(trigger)
+		.isTrue(trigger.isSmallTalk(), "Trigger must be a small talk action");
 		// ----
 		return new RasaIntent(id, "st_" + StringUtils.labelToCode(name), nlus, trigger);
 	}
@@ -43,7 +44,7 @@ public final class RasaIntent {
 	}
 
 	public static RasaIntent ofStartIntent(final RasaAction trigger) {
-		Assertion.checkNotNull(trigger);
+		Assertion.check().isNotNull(trigger);
 		//--
 		return new RasaIntent(null, "start", null, trigger);
 	}

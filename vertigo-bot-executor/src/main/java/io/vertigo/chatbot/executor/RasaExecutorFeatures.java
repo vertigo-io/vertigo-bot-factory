@@ -17,9 +17,10 @@
  */
 package io.vertigo.chatbot.executor;
 
-import io.vertigo.app.config.DefinitionProviderConfig;
-import io.vertigo.app.config.discovery.ModuleDiscoveryFeatures;
-import io.vertigo.dynamo.plugins.environment.DynamoDefinitionProvider;
+import io.vertigo.chatbot.domain.DtDefinitions;
+import io.vertigo.core.node.config.DefinitionProviderConfig;
+import io.vertigo.core.node.config.discovery.ModuleDiscoveryFeatures;
+import io.vertigo.datamodel.impl.smarttype.ModelDefinitionProvider;
 
 public class RasaExecutorFeatures extends ModuleDiscoveryFeatures<RasaExecutorFeatures> { // nous étendons ModuleDiscoveryFeatures pour activer la découverte automatique
 
@@ -31,9 +32,8 @@ public class RasaExecutorFeatures extends ModuleDiscoveryFeatures<RasaExecutorFe
 	protected void buildFeatures() {
 		super.buildFeatures(); // découverte automatique de tous les composants
 		getModuleConfigBuilder()
-				.addDefinitionProvider(DefinitionProviderConfig.builder(DynamoDefinitionProvider.class)
-						.addDefinitionResource("kpr", "io/vertigo/chatbot/executor/run.kpr") // chargement de notre modèle de donnée
-						.addDefinitionResource("classes", "io.vertigo.chatbot.domain.DtDefinitions")
+				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
+						.addDefinitionResource("dtobjects", DtDefinitions.class.getName())
 						.build());
 
 	}

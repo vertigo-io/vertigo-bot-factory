@@ -39,7 +39,7 @@ import io.vertigo.chatbot.designer.domain.UnknownSentense;
 import io.vertigo.chatbot.domain.DtDefinitions.TopIntentFields;
 import io.vertigo.chatbot.domain.DtDefinitions.UnknownSentenseFields;
 import io.vertigo.database.timeseries.TimedDatas;
-import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -70,7 +70,7 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext,
 			@RequestParam("botId") final Optional<Long> botId,
-			@RequestParam("nodId") final Optional<Long> nodId,
+			@RequestParam("nodId") final Optional<Long> nodId,	
 			@RequestParam("time") final Optional<TimeOption> timeOption) {
 		viewContext.publishDtList(botsKey, designerServices.getMySupervisedChatbots());
 		viewContext.publishDtList(nodesKey, new DtList<ChatbotNode>(ChatbotNode.class));

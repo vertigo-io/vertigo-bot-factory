@@ -2,52 +2,52 @@ package io.vertigo.chatbot.commons.domain
 
 
 create DtDefinition DtBotExport {
-	field bot 						{domain: DoDtChatbotDto 				label: "chatbot" 					required: "true"}
-	field fallbackText				{domain: DoDtUtterTextDto 				label: "fallback" 					required: "true"}
-	field fallbackButtons			{domain: DoDtResponseButtonDtc 			label: "fallback buttons" 			required: "true"}
-	field welcomeText				{domain: DoDtUtterTextDto 				label: "welcome" 					required: "true"}
-	field welcomeButtons			{domain: DoDtResponseButtonDtc 			label: "welcome buttons" 			required: "true"}
+	field bot 						{domain: DoDtChatbot	 				label: "chatbot" 					cardinality : "1"}
+	field fallbackText				{domain: DoDtUtterText 					label: "fallback" 					cardinality : "1"}
+	field fallbackButtons			{domain: DoDtResponseButton 			label: "fallback buttons" 			cardinality : "*"}
+	field welcomeText				{domain: DoDtUtterText 					label: "welcome" 					cardinality : "1"}
+	field welcomeButtons			{domain: DoDtResponseButton 			label: "welcome buttons" 			cardinality : "*"}
 }
 
 create DtDefinition DtSmallTalkExport {
-	field smallTalk					{domain: DoDtSmallTalkDto 				label: "SmallTalk" 					required: "true"}
-	field nluTrainingSentences 		{domain: DoDtNluTrainingSentenceDtc 	label: "nluTrainingSentences" 		required: "true"}
-	field utterTexts		 		{domain: DoDtUtterTextDtc 				label: "response texts" 			required: "true"}
-	field buttons					{domain: DoDtResponseButtonDtc 			label: "buttons" 					required: "true"}
+	field smallTalk					{domain: DoDtSmallTalk	 				label: "SmallTalk" 					cardinality : "1"}
+	field nluTrainingSentences 		{domain: DoDtNluTrainingSentence 		label: "nluTrainingSentences" 		cardinality : "*"}
+	field utterTexts		 		{domain: DoDtUtterText	 				label: "response texts" 			cardinality : "*"}
+	field buttons					{domain: DoDtResponseButton 			label: "buttons" 					cardinality : "*"}
 }
 
 create DtDefinition DtRunnerInfo {
-	field name 					{domain: DoLabel					label: "Name" 					required: "true"}
-	field state					{domain: DoLabel 					label: "Node state" 			required: "true"}
-	field agentVersion			{domain: DoLabel 					label: "Component version" 		required: "true"}
-	field loadedModelVersion	{domain: DoNumber 					label: "Model version" 			required: "true"}
+	field name 					{domain: DoLabel					label: "Name" 					cardinality : "1"}
+	field state					{domain: DoLabel 					label: "Node state" 			cardinality : "1"}
+	field agentVersion			{domain: DoLabel 					label: "Component version" 		cardinality : "1"}
+	field loadedModelVersion	{domain: DoNumber 					label: "Model version" 			cardinality : "1"}
 }
 
 create DtDefinition DtTrainerInfo {
-	field name 					{domain: DoLabel					label: "Name" 					required: "true"}
-	field trainingInProgress 	{domain: DoYesNo 					label: "Training in progress" 	required: "true"}
-	field trainingState			{domain: DoLabel 					label: "Training state" 		required: "true"}
-	field latestTrainingLog		{domain: DoText 					label: "Training log" 			required: "true"}
-	field startTime				{domain: DoInstant 					label: "Start time"				required: "false"}
-	field endTime				{domain: DoInstant 					label: "End time" 				required: "false"}
-	field trainingPercent		{domain: DoNumber 					label: "Training percentage" 	required: "false"}
+	field name 					{domain: DoLabel					label: "Name" 					cardinality : "1"}
+	field trainingInProgress 	{domain: DoYesNo 					label: "Training in progress" 	cardinality : "1"}
+	field trainingState			{domain: DoLabel 					label: "Training state" 		cardinality : "1"}
+	field latestTrainingLog		{domain: DoText 					label: "Training log" 			cardinality : "1"}
+	field startTime				{domain: DoInstant 					label: "Start time"				}
+	field endTime				{domain: DoInstant 					label: "End time" 				}
+	field trainingPercent		{domain: DoNumber 					label: "Training percentage" 	}
 	computed duration 			{domain: DoLabel 					label: "Duration"
 								 expression:"return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());" }
 }
 
 create DtDefinition DtExecutorTrainingCallback {
-	field trainingId 			{domain: DoId 						label: "Training ID" 			required: "true"}
-	field success				{domain: DoYesNo 					label: "Succes" 				required: "true"}
-	field log					{domain: DoText 					label: "Logs" 					required: "true"}
-	field infos					{domain: DoText						label: "Informations"	 		required: "false"}
-	field warnings				{domain: DoText						label: "Warnings"	 			required: "false"}
-	field apiKey				{domain: DoLabel					label: "Client Api Key"	 		required: "false"}
+	field trainingId 			{domain: DoId 						label: "Training ID" 			cardinality : "1"}
+	field success				{domain: DoYesNo 					label: "Succes" 				cardinality : "1"}
+	field log					{domain: DoText 					label: "Logs" 					cardinality : "1"}
+	field infos					{domain: DoText						label: "Informations"	 		}
+	field warnings				{domain: DoText						label: "Warnings"	 			}
+	field apiKey				{domain: DoLabel					label: "Client Api Key"	 		}
 }
 
 create DtDefinition DtExecutorConfiguration {
-	field botId 				{domain: DoId						label: "Bot ID" 				required: "true"}
-	field nodId					{domain: DoId 						label: "Node ID" 				required: "true"}
-	field traId					{domain: DoId 						label: "Model ID" 				required: "true"}
-	field modelName				{domain: DoLabel 					label: "Model name" 			required: "true"}
-	field nluThreshold			{domain: DoPercentage 				label: "NLU Threshold" 			required: "true"}
+	field botId 				{domain: DoId						label: "Bot ID" 				cardinality : "1"}
+	field nodId					{domain: DoId 						label: "Node ID" 				cardinality : "1"}
+	field traId					{domain: DoId 						label: "Model ID" 				cardinality : "1"}
+	field modelName				{domain: DoLabel 					label: "Model name" 			cardinality : "1"}
+	field nluThreshold			{domain: DoPercentage 				label: "NLU Threshold" 			cardinality : "1"}
 }

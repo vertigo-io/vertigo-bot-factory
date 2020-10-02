@@ -7,10 +7,10 @@ package io.vertigo.chatbot.commons.domain
 create DtDefinition DtChatbot {
 	stereotype : "KeyConcept"
 	id    botId 		{domain: DoId 			label: "ID"}
-	field name 			{domain: DoLabel 		label: "Name" 			required: "true"}
-	field description 	{domain: DoText 		label: "Description"	required: "true"}
-	field creationDate	{domain: DoLocaldate 	label: "Creation date" 	required: "true"}
-	field status		{domain: DoCode		 	label: "Status" 		required: "true"}
+	field name 			{domain: DoLabel 		label: "Name" 			cardinality : "1"}
+	field description 	{domain: DoText 		label: "Description"	cardinality : "1"}
+	field creationDate	{domain: DoLocaldate 	label: "Creation date" 	cardinality : "1"}
+	field status		{domain: DoCode		 	label: "Status" 		cardinality : "1"}
 }
 
 create Association AChatbotMediaFileInfo {
@@ -75,9 +75,9 @@ create Association AChatbotDefaultButtons {
 /************************/
 create DtDefinition DtSmallTalk {
 	id    smtId 		{domain: DoId 		label: "ID"}
-	field title 		{domain: DoLabel 	label: "Title" 			required: "true"}
-	field description	{domain: DoLabel 	label: "Description" 	required: "false"}
-	field isEnabled 	{domain: DoYesNo 	label: "Enabled" 		required: "true"}
+	field title 		{domain: DoLabel 	label: "Title" 			cardinality : "1"}
+	field description	{domain: DoLabel 	label: "Description" 	}
+	field isEnabled 	{domain: DoYesNo 	label: "Enabled" 		cardinality : "1"}
 }
 
 create Association ASmallTalkChatbot {
@@ -93,8 +93,23 @@ create Association ASmallTalkChatbot {
 create DtDefinition DtResponseType {
 	stereotype : "StaticMasterData"
 	id    rtyId 		{domain: DoCode 	label: "ID"}
-	field label 		{domain: DoLabel 	label: "Title" 		required:"true"}
-	field sortOrder 	{domain: DoNumber 	label: "Order" 		required:"true"}
+	field label 		{domain: DoLabel 	label: "Title" 		cardinality : "1"}
+	field sortOrder 	{domain: DoNumber 	label: "Order" 		cardinality : "1"}
+	values : `{
+        "RICH_TEXT" : {
+            "rtyId" : "RICH_TEXT",
+            "label" : "Rich text",
+            "sortOrder" : 1
+        },
+        "RANDOM_TEXT" : {
+            "rtyId" : "RANDOM_TEXT",
+            "label" : "Random text",
+            "sortOrder" : 2
+        }
+
+    }`
+    sortField : "sortOrder"
+ 	displayField : "label"
 }
 
 create Association ASmallTalkResponseType {
@@ -109,7 +124,7 @@ create Association ASmallTalkResponseType {
 
 create DtDefinition DtNluTrainingSentence {
 	id    ntsId 	{domain: DoId 		label: "ID"}
-	field text 		{domain: DoLabel 	label: "Text" required: "true"}
+	field text 		{domain: DoLabel 	label: "Text" cardinality : "1"}
 }
 
 create Association ASmallTalkNluTrainingSentence {
@@ -124,7 +139,7 @@ create Association ASmallTalkNluTrainingSentence {
 
 create DtDefinition DtUtterText {
 	id    uttId 	{domain: DoId 		label: "ID"}
-	field text 		{domain: DoText 	label: "Text" required: "true"}
+	field text 		{domain: DoText 	label: "Text" cardinality : "1"}
 }
 
 create Association ASmallTalkUtterText {
@@ -139,7 +154,7 @@ create Association ASmallTalkUtterText {
 
 create DtDefinition DtResponseButton {
 	id    btnId 	{domain: DoId 		label: "ID"}
-	field text 		{domain: DoText 	label: "Text" required: "true"}
+	field text 		{domain: DoText 	label: "Text" cardinality : "1"}
 }
 
 create Association ASmallTalkResponseButtons {
@@ -168,14 +183,14 @@ create Association AResponseButtonSmallTalkResponse {
 /**********************/
 create DtDefinition DtTraining {
 	id    traId 		{domain: DoId 			label: "ID"}
-	field startTime		{domain: DoInstant 		label: "Start time"			required: "true"}
-	field endTime		{domain: DoInstant 		label: "End time" 			required: "false"}
-	field versionNumber	{domain: DoNumber 		label: "Version" 			required: "true"}
-	field status		{domain: DoCode			label: "Status" 			required: "true"}
-	field log			{domain: DoText			label: "Log"	 			required: "false"}
-	field infos			{domain: DoText			label: "Informations"	 	required: "false"}
-	field warnings		{domain: DoText			label: "Warnings"	 		required: "false"}
-	field nluThreshold	{domain: DoPercentage 	label: "NLU Threshold" 		required: "true"}
+	field startTime		{domain: DoInstant 		label: "Start time"			cardinality : "1"}
+	field endTime		{domain: DoInstant 		label: "End time" 			}
+	field versionNumber	{domain: DoNumber 		label: "Version" 			cardinality : "1"}
+	field status		{domain: DoCode			label: "Status" 			cardinality : "1"}
+	field log			{domain: DoText			label: "Log"	 			}
+	field infos			{domain: DoText			label: "Informations"	 	}
+	field warnings		{domain: DoText			label: "Warnings"	 		}
+	field nluThreshold	{domain: DoPercentage 	label: "NLU Threshold" 		cardinality : "1"}
 	computed duration 	{domain: DoLabel 		label: "Duration"
 						 expression:"return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());" }
 }
@@ -206,11 +221,11 @@ create Association ATrainingMediaFileInfo {
 /*******************/
 create DtDefinition DtChatbotNode {
 	id    nodId 		{domain: DoId 		label: "ID"}
-	field name			{domain: DoLabel 	label: "Name" 				required: "true"}
-	field url			{domain: DoUrl 		label: "URL" 				required: "true"}
-	field isDev			{domain: DoYesNo 	label: "Dev node" 			required: "true"}
-	field color			{domain: DoColor 	label: "Color" 				required: "true"}
-	field apiKey		{domain: DoLabel 	label: "ApiKey" 			required: "true"}
+	field name			{domain: DoLabel 	label: "Name" 				cardinality : "1"}
+	field url			{domain: DoUrl 		label: "URL" 				cardinality : "1"}
+	field isDev			{domain: DoYesNo 	label: "Dev node" 			cardinality : "1"}
+	field color			{domain: DoColor 	label: "Color" 				cardinality : "1"}
+	field apiKey		{domain: DoLabel 	label: "ApiKey" 			cardinality : "1"}
 }
 
 create Association ANodeChatbot {

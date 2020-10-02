@@ -24,7 +24,7 @@ import java.util.List;
 import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.executor.domain.RasaConfig;
-import io.vertigo.dynamo.domain.model.DtList;
+import io.vertigo.datamodel.structure.model.DtList;
 
 public class RasaConfigBuilder {
 

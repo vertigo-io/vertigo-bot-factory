@@ -18,19 +18,6 @@
 		<param-value>${user.home}/botExecutor/config.json</param-value>
 	</context-param>
 	
-	<context-param>
-		<param-name>ANALYTICA_HOST</param-name>
-		<param-value>analytica.part.klee.lan.net</param-value>
-	</context-param>
-	<context-param>
-		<param-name>ANALYTICA_PORT</param-name>
-		<param-value>4562</param-value>
-	</context-param>
-	<context-param>
-		<param-name>ANALYTICA_DBNAME</param-name>
-		<param-value>chatbot-test</param-value>
-	</context-param>
-
 	
 	<context-param>
 		<param-name>RASA_EXE_PATH</param-name>
@@ -94,11 +81,11 @@
 	</filter-mapping>
 
 	<filter>
-		<filter-name>VegaSparkFilter</filter-name>
-		<filter-class>io.vertigo.vega.plugins.webservice.webserver.sparkjava.VegaSparkFilter</filter-class>
+		<filter-name>VegaJavalinFilter</filter-name>
+		<filter-class>io.vertigo.vega.plugins.webservice.webserver.javalin.VegaJavalinFilter</filter-class>
 	</filter>
 	<filter-mapping>
-		<filter-name>VegaSparkFilter</filter-name>
+		<filter-name>VegaJavalinFilter</filter-name>
 		<url-pattern>/api/*</url-pattern>
 	</filter-mapping>
 	

@@ -56,18 +56,19 @@ import io.vertigo.chatbot.domain.DtDefinitions.ResponseButtonFields;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.component.Component;
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.MessageText;
-import io.vertigo.dynamo.criteria.Criterions;
-import io.vertigo.dynamo.domain.model.DtList;
-import io.vertigo.dynamo.domain.model.DtListState;
-import io.vertigo.dynamo.domain.model.FileInfoURI;
-import io.vertigo.dynamo.domain.model.ListVAccessor;
-import io.vertigo.dynamo.domain.util.VCollectors;
-import io.vertigo.dynamo.file.FileManager;
-import io.vertigo.dynamo.file.model.VFile;
-import io.vertigo.lang.Assertion;
-import io.vertigo.util.StringUtil;
+import io.vertigo.core.node.component.Component;
+import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.criteria.Criterions;
+import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.structure.model.ListVAccessor;
+import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
+import io.vertigo.datastore.impl.filestore.model.StreamFile;
 
 @Secured("AdmBot")
 @Transactional
@@ -76,8 +77,6 @@ public class DesignerServices implements Component {
 	@Inject
 	private FileServices fileServices;
 
-	@Inject
-	private FileManager fileManager;
 
 	@Inject
 	private ChatbotDAO chatbotDAO;
@@ -102,15 +101,15 @@ public class DesignerServices implements Component {
 
 	@Inject
 	private AuthorizationManager authorizationManager;
-
+	
 	@Inject
 	private VSecurityManager securityManager;
-
+	
 	public DtList<Chatbot> getMySupervisedChatbots() {
 		if (authorizationManager.hasAuthorization(GlobalAuthorizations.AtzSuperAdmBot)) {
 			return getAllChatbots();
 		}
-		final ListVAccessor<Chatbot> chatbotLoader = getUserSession().getLoggedPerson().chatbots();
+		final StoreListVAccessor<Chatbot> chatbotLoader = getUserSession().getLoggedPerson().chatbots();
 		chatbotLoader.load();
 		return chatbotLoader.get();
 	}
@@ -129,7 +128,7 @@ public class DesignerServices implements Component {
 	}
 
 	public Chatbot getChatbotById(final Long botId) {
-		Assertion.checkNotNull(botId);
+		Assertion.check().isNotNull(botId);
 		// ---
 		final Chatbot chatbot = chatbotDAO.get(botId);
 		checkRights(chatbot, ChatbotOperations.read);
@@ -144,20 +143,20 @@ public class DesignerServices implements Component {
 	}
 
 	public VFile getNoAvatar() {
-		return fileManager.createFile(
+		return StreamFile.of(
 				"noAvatar.png",
 				"image/png",
 				DesignerServices.class.getResource("/noAvatar.png"));
 	}
 
 	public UtterText getDefaultTextByBot(final Chatbot bot) {
-		Assertion.checkNotNull(bot);
+		Assertion.check().isNotNull(bot);
 		// ---
 		return utterTextDAO.get(bot.getUttIdDefault());
 	}
 
 	public UtterText getWelcomeTextByBot(final Chatbot bot) {
-		Assertion.checkNotNull(bot);
+		Assertion.check().isNotNull(bot);
 		// ---
 		return utterTextDAO.get(bot.getUttIdWelcome());
 	}
@@ -166,11 +165,11 @@ public class DesignerServices implements Component {
 			final UtterText defaultText, final DtList<ResponseButton> defaultButtons,
 			final UtterText welcomeText, final DtList<ResponseButton> welcomeButtons) {
 
-		Assertion.checkNotNull(chatbot);
-		Assertion.checkNotNull(defaultText);
-		Assertion.checkNotNull(defaultButtons);
-		Assertion.checkNotNull(welcomeText);
-		Assertion.checkNotNull(welcomeButtons);
+		Assertion.check().isNotNull(chatbot);
+		Assertion.check().isNotNull(defaultText);
+		Assertion.check().isNotNull(defaultButtons);
+		Assertion.check().isNotNull(welcomeText);
+		Assertion.check().isNotNull(welcomeButtons);
 		// ---
 
 		// default text
@@ -219,7 +218,7 @@ public class DesignerServices implements Component {
 	}
 
 	public SmallTalk getSmallTalkById(final Long movId) {
-		Assertion.checkNotNull(movId);
+		Assertion.check().isNotNull(movId);
 		// ---
 		return smallTalkDAO.get(movId);
 	}
@@ -240,18 +239,18 @@ public class DesignerServices implements Component {
 			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList) {
 
-		Assertion.checkNotNull(smallTalk);
-		Assertion.checkNotNull(nluTrainingSentences);
-		Assertion.checkNotNull(nluTrainingSentencesToDelete);
-		Assertion.checkNotNull(utterTexts);
-		Assertion.checkNotNull(buttonList);
+		Assertion.check().isNotNull(smallTalk);
+		Assertion.check().isNotNull(nluTrainingSentences);
+		Assertion.check().isNotNull(nluTrainingSentencesToDelete);
+		Assertion.check().isNotNull(utterTexts);
+		Assertion.check().isNotNull(buttonList);
 		// ---
 
 		SmallTalk savedST = smallTalkDAO.save(smallTalk);
 
 		// save nlu textes
 		final DtList<NluTrainingSentence> ntsToSave = nluTrainingSentences.stream()
-				.filter(nts -> !StringUtil.isEmpty(nts.getText()))
+				.filter(nts -> !StringUtil.isBlank(nts.getText()))
 				.collect(VCollectors.toDtList(NluTrainingSentence.class));
 
 		for (final NluTrainingSentence nts : ntsToSave) {
@@ -272,7 +271,7 @@ public class DesignerServices implements Component {
 		}
 
 		final DtList<UtterText> uttToSave = utterStream
-				.filter(utt -> !StringUtil.isEmpty(utt.getText()))
+				.filter(utt -> !StringUtil.isBlank(utt.getText()))
 				.collect(VCollectors.toDtList(UtterText.class));
 
 		for (final UtterText utt : uttToSave) {
@@ -341,8 +340,9 @@ public class DesignerServices implements Component {
 	}
 
 	public DtList<NluTrainingSentence> getNluTrainingSentenceList(final SmallTalk smallTalk) {
-		Assertion.checkNotNull(smallTalk);
-		Assertion.checkNotNull(smallTalk.getSmtId());
+		Assertion.check()
+		.isNotNull(smallTalk)
+		.isNotNull(smallTalk.getSmtId());
 		// ---
 
 		return nluTrainingSentenceDAO.findAll(
@@ -351,8 +351,9 @@ public class DesignerServices implements Component {
 	}
 
 	public DtList<UtterText> getUtterTextList(final SmallTalk smallTalk) {
-		Assertion.checkNotNull(smallTalk);
-		Assertion.checkNotNull(smallTalk.getSmtId());
+		Assertion.check()
+		.isNotNull(smallTalk)
+		.isNotNull(smallTalk.getSmtId());
 		// ---
 		return utterTextDAO.findAll(
 				Criterions.isEqualTo(UtterTextFields.smtId, smallTalk.getSmtId()),
@@ -360,8 +361,9 @@ public class DesignerServices implements Component {
 	}
 
 	public DtList<ResponseButton> getWelcomeButtonsByBot(final Chatbot bot) {
-		Assertion.checkNotNull(bot);
-		Assertion.checkNotNull(bot.getBotId());
+		Assertion.check()
+		.isNotNull(bot)
+		.isNotNull(bot.getBotId());
 		// ---
 
 		return responseButtonDAO.findAll(
@@ -370,8 +372,9 @@ public class DesignerServices implements Component {
 	}
 
 	public DtList<ResponseButton> getDefaultButtonsByBot(final Chatbot bot) {
-		Assertion.checkNotNull(bot);
-		Assertion.checkNotNull(bot.getBotId());
+		Assertion.check()
+		.isNotNull(bot)
+		.isNotNull(bot.getBotId());
 		// ---
 
 		return responseButtonDAO.findAll(
@@ -380,8 +383,9 @@ public class DesignerServices implements Component {
 	}
 
 	public DtList<ResponseButton> getButtonsBySmalltalk(final SmallTalk smallTalk) {
-		Assertion.checkNotNull(smallTalk);
-		Assertion.checkNotNull(smallTalk.getSmtId());
+		Assertion.check()
+		.isNotNull(smallTalk)
+		.isNotNull(smallTalk.getSmtId());
 		// ---
 
 		return responseButtonDAO.findAll(

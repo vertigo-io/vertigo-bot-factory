@@ -38,11 +38,11 @@ import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.executor.domain.RasaConfig;
 import io.vertigo.chatbot.executor.rasa.config.RasaConfigBuilder;
-import io.vertigo.dynamo.domain.model.DtList;
-import io.vertigo.dynamo.file.model.VFile;
-import io.vertigo.dynamo.impl.file.model.FSFile;
-import io.vertigo.lang.VSystemException;
-import io.vertigo.lang.VUserException;
+import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.lang.VUserException;
+import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.datastore.impl.filestore.model.FSFile;
 
 public class TrainerRasaHandler extends AbstractRasaHandler {
 
