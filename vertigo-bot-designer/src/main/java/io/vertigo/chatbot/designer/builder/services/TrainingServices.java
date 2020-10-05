@@ -282,9 +282,9 @@ public class TrainingServices implements Component {
 		for (final SmallTalk smallTalk : smallTalks) {
 			final SmallTalkExport newExport = new SmallTalkExport();
 			newExport.setSmallTalk(smallTalk);
-			newExport.setNluTrainingSentences(trainingSentencesMap.get(smallTalk.getSmtId()));
-			newExport.setUtterTexts(utterTextsMap.get(smallTalk.getSmtId()));
-			newExport.setButtons(buttonsMap.get(smallTalk.getSmtId()));
+			newExport.setNluTrainingSentences(trainingSentencesMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(NluTrainingSentence.class)));
+			newExport.setUtterTexts(utterTextsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(UtterText.class)));
+			newExport.setButtons(buttonsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(ResponseButton.class)));
 
 			retour.add(newExport);
 		}
