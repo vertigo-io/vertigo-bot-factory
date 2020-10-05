@@ -56,7 +56,7 @@ public class AnalyticsServices implements Component, Activeable {
 
 	@Override
 	public void start() {
-		influxDbName = paramManager.getParam("ANALYTICA_DBNAME").getValueAsString();
+		influxDbName = paramManager.getParam("boot.ANALYTICA_DBNAME").getValueAsString();
 	}
 
 	@Override
@@ -170,49 +170,49 @@ public class AnalyticsServices implements Component, Activeable {
 	/*private TimedDatas mergeTimedDatas(final TimedDatas data, final TimedDatas data2, final TimedDatas... otherDatas) {
 		Assertion.checkNotNull(data);
 		Assertion.checkNotNull(data2);
-	
+
 		final TimedDatas newTimedDatas = new TimedDatas(new ArrayList<>(), new ArrayList<>());
-	
+
 		// Juste recopy first TimedDatas
 		newTimedDatas.getSeriesNames().addAll(data.getSeriesNames());
 		for (final TimedDataSerie timedDataSerie : data.getTimedDataSeries()) {
 			final Map<String, Object> newMapValues = new HashMap<>();
 			newMapValues.putAll(timedDataSerie.getValues());
-	
+
 			final TimedDataSerie newTimedDataSerie = new TimedDataSerie(timedDataSerie.getTime(), newMapValues);
-	
+
 			newTimedDatas.getTimedDataSeries().add(newTimedDataSerie);
 		}
-	
+
 		// add every other timedDatas with consistency check
 		addToTimedDatas(newTimedDatas, data2);
 		for (final TimedDatas otherData : otherDatas) {
 			addToTimedDatas(newTimedDatas, otherData);
 		}
-	
+
 		return newTimedDatas;
 	}
-	
+
 	private void addToTimedDatas(final TimedDatas data, final TimedDatas otherData) {
 		if (otherData.getSeriesNames().isEmpty()) {
 			return; // no data, no merge
 		}
-	
+
 		Assertion.checkArgument(data.getTimedDataSeries().size() == otherData.getTimedDataSeries().size(), "Series haven't the same size");
 		Assertion.checkArgument(otherData.getSeriesNames().stream().noneMatch(name -> data.getSeriesNames().contains(name)), "Duplicated series");
-	
+
 		data.getSeriesNames().addAll(otherData.getSeriesNames());
-	
+
 		int i = 0;
 		for (final TimedDataSerie timedDataSerie : otherData.getTimedDataSeries()) {
 			final TimedDataSerie curTimedDataSerie = data.getTimedDataSeries().get(i);
-	
+
 			Assertion.checkState(timedDataSerie.getTime().equals(curTimedDataSerie.getTime()), "Series are not time synchronous");
-	
+
 			curTimedDataSerie.getValues().putAll(timedDataSerie.getValues());
-	
+
 			i++;
 		}
-	
+
 	}*/
 }

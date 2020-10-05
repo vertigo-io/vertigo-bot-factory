@@ -9,4 +9,10 @@
 		password="chatbot" />
 		
 	<Parameter name="devMode" value="true" override="false"/>
+	<Parameter name="boot.ANALYTICA_HOST" value="analytica.part.klee.lan.net" override="false"/>
+	<Parameter name="boot.ANALYTICA_PORT" value="4562" override="false"/>
+	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot-test" override="false"/>
+	
+	<!-- Env variable in production -->
+	<Parameter name="INFLUXDB_URL" value="http://analytica.part.klee.lan.net:8086" override="false"/>
 </Context>

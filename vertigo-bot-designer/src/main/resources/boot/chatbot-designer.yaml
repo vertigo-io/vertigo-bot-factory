@@ -7,9 +7,9 @@ boot:
     - io.vertigo.core.plugins.param.env.EnvParamPlugin: {}
     - io.vertigo.vega.plugins.webservice.servlet.WebAppContextParamPlugin: {}
     - io.vertigo.core.plugins.analytics.log.SocketLoggerAnalyticsConnectorPlugin:
-        appName: ${boot.env.ANALYTICA_DBNAME}
-        hostName: ${boot.env.ANALYTICA_HOST}
-        port: ${boot.env.ANALYTICA_PORT}
+        appName: ${boot.ANALYTICA_DBNAME}
+        hostName: ${boot.ANALYTICA_HOST}
+        port: ${boot.ANALYTICA_PORT}
 modules:
   io.vertigo.connectors.javalin.JavalinFeatures:
     features: 
@@ -34,7 +34,7 @@ modules:
           classname: io.vertigo.database.impl.sql.vendor.postgresql.PostgreSqlDataBase
           source: java:/comp/env/jdbc/DataSource
       - timeseries.influxdb:
-          dbNames: ${ANALYTICA_DBNAME}
+          dbNames: ${boot.ANALYTICA_DBNAME}
   io.vertigo.datamodel.DataModelFeatures: # utilisation du module vertigo-datamodel
   io.vertigo.datastore.DataStoreFeatures:
     features:

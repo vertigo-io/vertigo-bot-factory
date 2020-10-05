@@ -12,22 +12,6 @@
 		<param-name>boot.applicationConfiguration</param-name>
 		<param-value>/boot/chatbot-executor.yaml</param-value>
 	</context-param>
-	
-	<context-param>
-		<param-name>CONFIG_DATA_FILE</param-name>
-		<param-value>${user.home}/botExecutor/config.json</param-value>
-	</context-param>
-	
-	
-	<context-param>
-		<param-name>RASA_EXE_PATH</param-name>
-		<param-value>D:\DT\chatbot\factory\python\Scripts\rasa</param-value>
-	</context-param>
-	<context-param>
-		<param-name>RASA_BOT_PATH</param-name>
-		<param-value>D:\DT\chatbot\factory\bot\</param-value>
-	</context-param>
-	
 	<context-param>
 		<param-name>rabbitMq.queueName</param-name>
 		<param-value>rasa</param-value>
@@ -35,7 +19,7 @@
 	<context-param>
 		<param-name>rabbitMq.consumerTag</param-name>
 		<param-value>consumerTag</param-value>
-	</context-param>
+	</context-param>	
 
 	<filter>
 		<filter-name>Character Encoding Filter</filter-name>

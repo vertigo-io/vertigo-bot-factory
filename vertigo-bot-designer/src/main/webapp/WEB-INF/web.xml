@@ -15,11 +15,6 @@
 		<param-value>/boot/chatbot-designer.yaml</param-value>
 	</context-param>
 	
-	<context-param>
-		<param-name>INFLUXDB_URL</param-name>
-		<param-value>http://analytica.part.klee.lan.net:8086</param-value>
-	</context-param>
-	
 	<filter>
 		<filter-name>Character Encoding Filter</filter-name>
 		<filter-class>io.vertigo.vega.impl.servlet.filter.SetCharsetEncodingFilter</filter-class>

@@ -7,5 +7,7 @@
 		url="jdbc:postgresql:${DB_URL}"
 		username="${DB_USER}"
 		password="${DB_PWD}" />
-		
+	<Parameter name="boot.ANALYTICA_HOST" value="${ANALYTICA_HOST}" override="false"/>
+	<Parameter name="boot.ANALYTICA_PORT" value="${ANALYTICA_PORT}" override="false"/>
+	<Parameter name="boot.ANALYTICA_DBNAME" value="${ANALYTICA_DBNAME}" override="false"/>
 </Context>
