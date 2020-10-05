@@ -10,7 +10,7 @@
 		<title>Models</title>
 		
 		<link  th:href="@{/static/chatbot/chatbot.css}" rel="stylesheet"/>
-		<script th:src="@{/static/chatbot/v-chatbot.js}"></script>
+		<script th:src="@{/static/chatbot/v-chatbot-dev.js}"></script>
 		
 		<script th:inline="javascript">
 			// ## training ##
@@ -382,7 +382,7 @@
 					    </q-btn>
 					</q-page-sticky>
 		  			<q-drawer :value="!$q.screen.lt.lg || componentStates.botDrawer.open" elevated ref="botDrawer" side="right" behavior="desktop" :overlay="$q.screen.lt.lg">
-						<v-chatbot class="column chatbot-container"
+						<v-chatbot-dev class="column chatbot-container"
 								   ref="chatbot"
 								   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot"
 								   :bot-url="'_talk?CTX=' + vueData.CTX"

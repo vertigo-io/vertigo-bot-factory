@@ -1,4 +1,4 @@
-Vue.component('v-chatbot', {
+Vue.component('v-chatbot-dev', {
 		template : `
 	<div class="bot">
 		<q-scroll-area class="bg-grey-2 col-grow row q-pa-sm" ref="scroller">
@@ -43,7 +43,7 @@ Vue.component('v-chatbot', {
 		<div class="message-response row docs-btn q-pl-sm non-selectable">
 			<q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
 					 ref="input" dense
-					 @keyup.enter="inputConfig.modeTextarea ? false : (inputConfig.responseText.trim() === '' && inputConfig.rating === 0) ? false : postAnswerText()"
+					 @keydown.enter.prevent="inputConfig.modeTextarea ? false : (inputConfig.responseText.trim() === '' && inputConfig.rating === 0) ? false : postAnswerText()"
 					 :max-height="100"
 					 class="col-grow"
 					 v-model="inputConfig.responseText"
@@ -155,8 +155,8 @@ Vue.component('v-chatbot', {
 						}, this);
 						
 						this._displayMessages();
-					},
-					function(httpResponse) {
+					}).catch(
+					function(error) {
 						// error
 						this.error = true;
 						
