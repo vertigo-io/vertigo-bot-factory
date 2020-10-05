@@ -59,8 +59,8 @@ EXPOSE 8080
 
 # Add binaries
 ADD apache-tomcat-8.5.50.tar.gz /opt/tomcat/
-ADD Runner/vertigo-bot-executor-*.war /opt/tomcat/webapps/runner.war
-ADD Runner/root.xml /opt/tomcat/conf/Catalina/localhost/root.xml
+ADD Runner/vertigo-bot-executor-*.war /opt/tomcat/war/runner.war
+ADD Runner/ROOT.xml /opt/tomcat/conf/Catalina/localhost/ROOT.xml
 ADD Runner/setenv.sh /opt/tomcat/bin/
 
 # Add tomcat user

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<Context debug="0" reloadable="false" allowCasualMultipartParsing="true" docBase="/opt/tomcat/webapps/runner.war">
+<Context debug="0" reloadable="false" allowCasualMultipartParsing="true" docBase="/opt/tomcat/war/runner.war">
 	<Parameter name="boot.ANALYTICA_HOST" value="${ANALYTICA_HOST}" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="${ANALYTICA_PORT}" override="false"/>
 	<Parameter name="boot.ANALYTICA_DBNAME" value="${ANALYTICA_DBNAME}" override="false"/>
