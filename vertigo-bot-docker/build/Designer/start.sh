@@ -10,7 +10,7 @@ _term() {
 
 trap _term SIGTERM
 
-# Customize tomcat deploy path from env var DEPLOY_PATH
+# Customize tomcat deploy path from env var DEPLOY_PATH (note '//\//#' replace all '/' with '#' for tomcat context name convention)
 rm -f /opt/tomcat/conf/Catalina/localhost/*.xml
 cp /opt/tomcat/conf/Catalina/localhost/designer.xml.ref /opt/tomcat/conf/Catalina/localhost/${DEPLOY_PATH//\//#}.xml
 
