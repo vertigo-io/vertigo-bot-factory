@@ -200,7 +200,7 @@ nav a.q-item, .nav a.q_item {
 }
 
 
-.q-table td, .q-table th {
+.q-table td {
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;

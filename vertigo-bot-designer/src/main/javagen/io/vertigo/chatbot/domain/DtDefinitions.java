@@ -43,6 +43,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ResponseType(io.vertigo.chatbot.commons.domain.ResponseType.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
+		/** Objet de données SentenseDetail. */
+		SentenseDetail(io.vertigo.chatbot.designer.domain.SentenseDetail.class),
 		/** Objet de données SmallTalk. */
 		SmallTalk(io.vertigo.chatbot.commons.domain.SmallTalk.class),
 		/** Objet de données SmallTalkExport. */
@@ -55,8 +57,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
 		Training(io.vertigo.chatbot.commons.domain.Training.class),
-		/** Objet de données UnknownSentense. */
-		UnknownSentense(io.vertigo.chatbot.designer.domain.UnknownSentense.class),
 		/** Objet de données UtterText. */
 		UtterText(io.vertigo.chatbot.commons.domain.UtterText.class)		;
 
@@ -275,6 +275,23 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		loadedModelVersion	}
 
 	/**
+	 * Enumération des champs de SentenseDetail.
+	 */
+	public enum SentenseDetailFields implements DtFieldName<io.vertigo.chatbot.designer.domain.SentenseDetail> {
+		/** Propriété 'Rasa message ID'. */
+		messageId,
+		/** Propriété 'Date'. */
+		date,
+		/** Propriété 'User text'. */
+		text,
+		/** Propriété 'Rasa intent'. */
+		intentRasa,
+		/** Propriété 'Confidence'. */
+		confidence,
+		/** Propriété 'Small Talk selection'. */
+		smtId	}
+
+	/**
 	 * Enumération des champs de SmallTalk.
 	 */
 	public enum SmallTalkFields implements DtFieldName<io.vertigo.chatbot.commons.domain.SmallTalk> {
@@ -375,23 +392,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botId,
 		/** Propriété 'Model'. */
 		filIdModel	}
-
-	/**
-	 * Enumération des champs de UnknownSentense.
-	 */
-	public enum UnknownSentenseFields implements DtFieldName<io.vertigo.chatbot.designer.domain.UnknownSentense> {
-		/** Propriété 'Rasa message ID'. */
-		messageId,
-		/** Propriété 'Date'. */
-		date,
-		/** Propriété 'User text'. */
-		text,
-		/** Propriété 'Rasa intent'. */
-		intentRasa,
-		/** Propriété 'Confidence'. */
-		confidence,
-		/** Propriété 'Small Talk selection'. */
-		smtId	}
 
 	/**
 	 * Enumération des champs de UtterText.

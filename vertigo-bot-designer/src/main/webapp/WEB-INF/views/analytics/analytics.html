@@ -54,6 +54,9 @@
 				id : 'vuechart-example',
 				zoom: {
 					enabled: false
+				},
+				toolbar: {
+					show: false
 				}
 			},
 			dataLabels: {
@@ -83,6 +86,9 @@
 				id : 'vuechart-example-2',
 				zoom: {
 					enabled: false
+				},
+				toolbar: {
+					show: false
 				}
 			},
 			dataLabels: {
@@ -143,6 +149,25 @@
 		let result = VertigoUi.vueData.smallTalks.filter(s => s.smtId === smtId);
 		return result.length === 0 ? null : result[0].title;
 	}
+	
+	VUiExtensions.dataX.popinDetailLabel = '';
+	function displayIntentDetail(intent) {
+		VUiExtensions.dataX.popinDetailLabel = getSmallTalkTitleBySmtId(intent.smtId);
+		
+		VertigoUi.vueData.intentDetails = [];
+		VUiPage.componentStates.intentDetailList.loading = true;
+		
+		let params = VUiPage.vueDataParams(['criteria']);
+		params['intentRasa'] = intent.intentRasa;
+		VUiPage.httpPostAjax('_intentDetails', params, {
+				onSuccess: function() {
+					VUiPage.componentStates.intentDetailList.loading = false;
+				}
+			}
+		);
+		
+		VUiPage.$refs.intentDetailsDialog.show();
+	}
 </script>
 </head>
 
@@ -160,7 +185,79 @@
 		<vu:include-data-primitive key="sessionStats" />
 		<vu:include-data-primitive key="requestsStats" />
 		
-		<q-page-sticky expand position="top" style="z-index:100000">
+		
+		<div class="row wrap justify-start q-col-gutter-md q-mt-lg">
+		
+			<div class="col-xl-4 col-md-6 col-xs-12"> 
+				<q-card>
+					<q-card-section class="text-h6 bg-secondary text-white">Chatbot sessions</q-card-section>
+					<q-card-section class="row justify-center items-center">
+						<apexchart width="100%" height="250" type="area"
+							:options="dataX.apexCharts.chartSession.options"
+							:series="dataX.apexCharts.chartSession.series()"></apexchart>
+					</q-card-section>
+				</q-card>
+			</div>
+			
+			<div class="col-xl-4 col-md-6 col-xs-12"> 
+				<q-card>
+					<q-card-section class="text-h6 bg-secondary text-white">Chatbot messages</q-card-section>
+					<q-card-section class="row justify-center items-center">
+						<apexchart width="100%" height="250" type="line"
+							:options="dataX.apexCharts.chartMessages.options"
+							:series="dataX.apexCharts.chartMessages.series()"></apexchart>
+					</q-card-section>
+				</q-card>
+			</div>
+
+			<template v-if="vueData.criteria.botId">
+				<div class="col-12"> 
+					<vu:table componentId="messageList" list="unknownSentenses" title="Messages not understood" rowsPerPage="10" autoColClass >
+						<vu:column field="date"/>
+						<vu:column field="text"/>
+						<!-- 
+						<vu:column field="intentRasa" label="Possible intent"/>
+						<vu:column field="confidence"/>
+						 -->
+					</vu:table>
+				</div>
+				
+				<vu:include-data object="smallTalks" field="smtId" />
+				<vu:include-data object="smallTalks" field="title" />
+				
+				<vu:include-data object="intentDetails" field="'*'" />
+				
+				<div class="col-12"> 
+					<vu:table componentId="intentList"
+							  list="topIntents" title="Intent usage" rowsPerPage="10" autoColClass
+							  sortBy="count" descending>
+							  
+						<vu:column field="smtId" label="Intent">
+							{{getSmallTalkTitleBySmtId(props.row.smtId)}}
+						</vu:column>
+						<vu:column field="count" class="col_Small"/>
+						<vu:column field="intentRasa" label="detail" class="col_Small">
+							<q-btn class="fab-block" round color="primary" icon="search" aria-label="Messages" title="Messages" 
+							 	@click="displayIntentDetail(props.row)"></q-btn>
+						</vu:column>
+					</vu:table>
+					
+					<q-dialog ref="intentDetailsDialog">
+						<q-card style="width: 600px; height: 500px;">
+							<q-card-section>
+								<vu:table componentId="intentDetailList"
+										  list="intentDetails" title="|Received messages for '{{dataX.popinDetailLabel}}'|" rowsPerPage="10" autoColClass>
+									<vu:column field="date"/>
+									<vu:column field="text"/>
+								</vu:table>
+							</q-card-section>
+						</q-card>
+					</q-dialog>
+				</div>
+			</template>
+		</div>
+		
+		<q-page-sticky expand position="top" >
 			<q-toolbar class="bg-secondary text-white shadow-2">
 				<q-select
 					 style="width: 250px; background-color: white"
@@ -206,59 +303,6 @@
 				
 			</q-toolbar>
 		</q-page-sticky>
-		
-		<div class="row wrap justify-start q-col-gutter-md q-mt-lg">
-		
-			<div class="col-xl-4 col-md-6 col-xs-12"> 
-				<q-card>
-					<q-card-section class="text-h6 bg-secondary text-white">Chatbot sessions</q-card-section>
-					<q-card-section class="row justify-center items-center">
-						<apexchart width="100%" height="250" type="area"
-							:options="dataX.apexCharts.chartSession.options"
-							:series="dataX.apexCharts.chartSession.series()"></apexchart>
-					</q-card-section>
-				</q-card>
-			</div>
-			
-			<div class="col-xl-4 col-md-6 col-xs-12"> 
-				<q-card>
-					<q-card-section class="text-h6 bg-secondary text-white">Chatbot messages</q-card-section>
-					<q-card-section class="row justify-center items-center">
-						<apexchart width="100%" height="250" type="line"
-							:options="dataX.apexCharts.chartMessages.options"
-							:series="dataX.apexCharts.chartMessages.series()"></apexchart>
-					</q-card-section>
-				</q-card>
-			</div>
-
-			<template v-if="vueData.criteria.botId">
-				<div class="col-12"> 
-					<vu:table componentId="messageList" list="unknownSentenses" title="Messages not understood" rowsPerPage="10" autoColClass >
-						<vu:column field="date"/>
-						<vu:column field="text"/>
-						<!-- 
-						<vu:column field="intentRasa" label="Possible intent"/>
-						<vu:column field="confidence"/>
-						 -->
-					</vu:table>
-				</div>
-				
-				<vu:include-data object="smallTalks" field="smtId" />
-				<vu:include-data object="smallTalks" field="title" />
-				
-				<div class="col-12"> 
-					<vu:table componentId="intentList"
-							  list="topIntents" title="Intent usage" rowsPerPage="10" autoColClass
-							  sortBy="count" descending >
-						<vu:column field="count" />
-						<vu:column field="smtId" label="Intent">
-							{{getSmallTalkTitleBySmtId(props.row.smtId)}}
-						</vu:column>
-					</vu:table>
-				</div>
-			</template>
-		</div>
-		
 	</section>
 
 </body>

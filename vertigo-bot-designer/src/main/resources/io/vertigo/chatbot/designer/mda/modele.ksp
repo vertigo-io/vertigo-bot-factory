@@ -7,7 +7,7 @@ create DtDefinition DtStatCriteria {
 	field nodId			{domain: DoId 					label: "Node selection" 		}
 }
 
-create DtDefinition DtUnknownSentense {
+create DtDefinition DtSentenseDetail {
 	field messageId 	{domain: DoIdStr 				label: "Rasa message ID" 		}
 	field date 			{domain: DoInstant 				label: "Date" 					}
 	field text			{domain: DoLabel 				label: "User text" 				}

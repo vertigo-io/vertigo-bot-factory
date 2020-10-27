@@ -33,11 +33,11 @@ import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
+import io.vertigo.chatbot.designer.domain.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
 import io.vertigo.chatbot.designer.domain.TopIntent;
-import io.vertigo.chatbot.designer.domain.UnknownSentense;
+import io.vertigo.chatbot.domain.DtDefinitions.SentenseDetailFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopIntentFields;
-import io.vertigo.chatbot.domain.DtDefinitions.UnknownSentenseFields;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
@@ -51,8 +51,9 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<TimedDatas> sessionStatsKey = ViewContextKey.of("sessionStats");
 	private static final ViewContextKey<TimedDatas> requestsStatsKey = ViewContextKey.of("requestsStats");
-	private static final ViewContextKey<UnknownSentense> unknownSentensesKey = ViewContextKey.of("unknownSentenses");
+	private static final ViewContextKey<SentenseDetail> unknownSentensesKey = ViewContextKey.of("unknownSentenses");
 	private static final ViewContextKey<TopIntent> topIntentsKey = ViewContextKey.of("topIntents");
+	private static final ViewContextKey<SentenseDetail> intentDetailsKey = ViewContextKey.of("intentDetails");
 
 	private static final ViewContextKey<SmallTalk> smallTalksKey = ViewContextKey.of("smallTalks");
 
@@ -105,15 +106,26 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 		viewContext.publishRef(requestsStatsKey, analyticsServices.getRequestStats(criteria));
 
 		if (criteria.getBotId() != null) {
-			viewContext.publishDtList(unknownSentensesKey, UnknownSentenseFields.smtId, analyticsServices.getUnknownSentenses(criteria));
+			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.smtId, analyticsServices.getSentenseDetails(criteria));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, analyticsServices.getTopIntents(criteria));
 
 			viewContext.publishDtList(smallTalksKey, designerServices.getAllSmallTalksByBotId(criteria.getBotId()));
 		} else {
-			viewContext.publishDtList(unknownSentensesKey, UnknownSentenseFields.smtId, new DtList<UnknownSentense>(UnknownSentense.class));
+			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.smtId, new DtList<SentenseDetail>(SentenseDetail.class));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, new DtList<TopIntent>(TopIntent.class));
 			viewContext.publishDtList(smallTalksKey, new DtList<SmallTalk>(SmallTalk.class));
 		}
+
+		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.smtId, new DtList<SentenseDetail>(SentenseDetail.class));
 	}
 
+	@PostMapping("/_intentDetails")
+	public ViewContext doGetIntentDetails(final ViewContext viewContext,
+			@ViewAttribute("criteria") final StatCriteria criteria,
+			@RequestParam("intentRasa") final String intentRasa) {
+
+		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.messageId, analyticsServices.getKnownSentensesDetail(criteria, intentRasa)); // "st_1102_blague"
+
+		return viewContext;
+	}
 }

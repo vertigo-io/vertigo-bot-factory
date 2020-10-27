@@ -26,9 +26,9 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.RasaTypeAction;
+import io.vertigo.chatbot.designer.domain.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
 import io.vertigo.chatbot.designer.domain.TopIntent;
-import io.vertigo.chatbot.designer.domain.UnknownSentense;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
@@ -77,7 +77,7 @@ public class AnalyticsServices implements Component, Activeable {
 
 	}
 
-	public DtList<UnknownSentense> getUnknownSentenses(final StatCriteria criteria) {
+	public DtList<SentenseDetail> getSentenseDetails(final StatCriteria criteria) {
 		// get data from influxdb
 		final TimedDatas tabularTimedData = timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("messageId", "text", "name", "confidence"),
 				getDataFilter(criteria).withAdditionalWhereClause("isFallback = 1").build(),
@@ -85,21 +85,21 @@ public class AnalyticsServices implements Component, Activeable {
 				Optional.empty());
 
 		// build DtList from InfluxDb data
-		final DtList<UnknownSentense> retour = new DtList<>(UnknownSentense.class);
+		final DtList<SentenseDetail> retour = new DtList<>(SentenseDetail.class);
 		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 			final String intentName = (String) values.get("name");
 			final Long smtId = extractSmtIdFromIntentName(intentName);
 
-			final UnknownSentense newUnknownSentense = new UnknownSentense();
-			newUnknownSentense.setDate(timedData.getTime());
-			newUnknownSentense.setMessageId((String) values.get("messageId"));
-			newUnknownSentense.setText((String) values.get("text"));
-			newUnknownSentense.setIntentRasa(intentName);
-			newUnknownSentense.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
-			newUnknownSentense.setSmtId(smtId);
+			final SentenseDetail newSentenseDetail = new SentenseDetail();
+			newSentenseDetail.setDate(timedData.getTime());
+			newSentenseDetail.setMessageId((String) values.get("messageId"));
+			newSentenseDetail.setText((String) values.get("text"));
+			newSentenseDetail.setIntentRasa(intentName);
+			newSentenseDetail.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
+			newSentenseDetail.setSmtId(smtId);
 
-			retour.add(newUnknownSentense);
+			retour.add(newSentenseDetail);
 		}
 
 		return retour;
@@ -130,6 +130,36 @@ public class AnalyticsServices implements Component, Activeable {
 
 				retour.add(topIntent);
 			}
+		}
+
+		return retour;
+	}
+
+	public DtList<SentenseDetail> getKnownSentensesDetail(final StatCriteria criteria, final String intentRasa) {
+		// get data from influxdb
+		final TimedDatas tabularTimedData = timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("messageId", "text", "name", "confidence"),
+				getDataFilter(criteria)
+						.addFilter("type", RasaTypeAction.MESSAGE.name())
+						.addFilter("name", intentRasa)
+						.build(),
+				getTimeFilter(criteria),
+				Optional.of(5000L));
+
+		// build DtList from InfluxDb data
+		final DtList<SentenseDetail> retour = new DtList<>(SentenseDetail.class);
+		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
+			final Map<String, Object> values = timedData.getValues();
+			final Long smtId = extractSmtIdFromIntentName(intentRasa);
+
+			final SentenseDetail newSentenseDetail = new SentenseDetail();
+			newSentenseDetail.setDate(timedData.getTime());
+			newSentenseDetail.setMessageId((String) values.get("messageId"));
+			newSentenseDetail.setText((String) values.get("text"));
+			newSentenseDetail.setIntentRasa(intentRasa);
+			newSentenseDetail.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
+			newSentenseDetail.setSmtId(smtId);
+
+			retour.add(newSentenseDetail);
 		}
 
 		return retour;
