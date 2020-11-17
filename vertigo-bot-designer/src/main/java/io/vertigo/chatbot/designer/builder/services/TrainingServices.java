@@ -257,7 +257,7 @@ public class TrainingServices implements Component {
 	}
 
 	private DtList<SmallTalkExport> exportSmallTalk(final Long botId) {
-		final DtList<SmallTalk> smallTalks = designerServices.getAllSmallTalksByBotId(botId);
+		final DtList<SmallTalk> smallTalks = designerServices.getAllActiveSmallTalksByBotId(botId);
 
 		final List<Long> smallTalkIds = smallTalks.stream()
 				.map(SmallTalk::getSmtId)

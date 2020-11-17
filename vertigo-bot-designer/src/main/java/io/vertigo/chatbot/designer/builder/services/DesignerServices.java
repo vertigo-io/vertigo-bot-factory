@@ -63,7 +63,6 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.model.ListVAccessor;
 import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
@@ -226,6 +225,10 @@ public class DesignerServices implements Component {
 		return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.botId, botId), DtListState.of(1000));
 	}
 
+	public DtList<SmallTalk> getAllActiveSmallTalksByBotId(final Long botId) {
+		return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.botId, botId).and(Criterions.isEqualTo(SmallTalkFields.isEnabled, true)), DtListState.of(1000));
+	}
+
 	public SmallTalk getNewSmallTalk(final Long botId) {
 		final SmallTalk smallTalk = new SmallTalk();
 		smallTalk.setBotId(botId);
@@ -304,6 +307,7 @@ public class DesignerServices implements Component {
 				.and(Sanitizers.BLOCKS)
 				.and(Sanitizers.LINKS)
 				.and(Sanitizers.STYLES)
+				.and(Sanitizers.IMAGES)
 				.and(new HtmlPolicyBuilder()
 						.allowElements("font", "hr")
 						.allowAttributes("size").onElements("font")
@@ -424,7 +428,7 @@ public class DesignerServices implements Component {
 	}
 
 	private DesignerUserSession getUserSession() {
-		return securityManager.<DesignerUserSession> getCurrentUserSession().get();
+		return securityManager.<DesignerUserSession>getCurrentUserSession().get();
 	}
 
 	private void checkRights(final Chatbot chatbot, final ChatbotOperations chatbotOperation) {
