@@ -47,7 +47,7 @@ RUN useradd -m tomcat \
  && chown tomcat. /opt/data/config
  
 # Add binaries
-COPY --chown=tomcat apache-tomcat-9.0.39 /opt/tomcat/
+COPY --chown=tomcat apache-tomcat-* /opt/tomcat/
 COPY --chown=tomcat Runner/vertigo-bot-executor-*.war /opt/tomcat/war/runner.war
 COPY --chown=tomcat Runner/ROOT.xml /opt/tomcat/conf/Catalina/localhost/ROOT.xml
 COPY --chown=tomcat Runner/setenv.sh /opt/tomcat/bin/

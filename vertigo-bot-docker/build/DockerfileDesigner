@@ -9,7 +9,7 @@ RUN useradd -m tomcat \
  && chown -R tomcat. /opt/tomcat
 
 # Add binaries
-COPY --chown=tomcat apache-tomcat-9.0.39 /opt/tomcat/
+COPY --chown=tomcat apache-tomcat-* /opt/tomcat/
 COPY --chown=tomcat Designer/setenv.sh /opt/tomcat/bin/
 COPY --chown=tomcat Designer/context.xml /opt/tomcat/conf/Catalina/localhost/designer.xml.ref
 COPY --chown=tomcat Designer/vertigo-bot-designer-*.war /opt/tomcat/war/designer.war
