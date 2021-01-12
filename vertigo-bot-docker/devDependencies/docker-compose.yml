@@ -1,0 +1,55 @@
+version: '3.5'
+
+# docker-compose example file
+#
+# Passwords / API key can be, for example, generated locally with :
+#   < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;
+
+services:
+  postgres:
+    image: postgres:12.1
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - cf_postgres_data:/var/lib/postgresql/data/pgdata
+      - ./initSql/:/docker-entrypoint-initdb.d/
+    ports:
+      - "127.0.0.1:5433:5432" 
+    networks:
+      - cb_factory
+    restart: unless-stopped
+  
+  influxdb:
+    image: influxdb:1.7.8
+    volumes:
+      - cf_influxdb_data:/var/lib/influxdb
+    ports: 
+      - "127.0.0.1:8086:8086"
+    networks:
+      - cb_factory
+    restart: unless-stopped
+
+# TODO : pourquoi pas ajouter Chronograph
+
+  analytica:
+    image: vertigoio/analytics-server:0.6
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+    depends_on:
+      - influxdb
+    ports:
+      - "127.0.0.1:4562:4562"
+    networks:
+      - cb_factory
+    restart: unless-stopped
+  
+# TODO : pour le runner, on aura besoin de rabbitmq
+
+volumes:
+  cf_postgres_data:
+  cf_influxdb_data:
+    
+networks:
+  cb_factory:
+  
