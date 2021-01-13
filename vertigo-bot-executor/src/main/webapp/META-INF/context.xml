@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Context debug="0" reloadable="false" allowCasualMultipartParsing="true">
-	<Parameter name="boot.ANALYTICA_HOST" value="analytica.part.klee.lan.net" override="false"/>
+	<Parameter name="boot.ANALYTICA_HOST" value="localhost" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="4562" override="false"/>
 	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot-test" override="false"/>
 	
