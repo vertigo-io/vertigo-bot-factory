@@ -24,9 +24,26 @@
      	<section class="col container-bottom-padding" layout:fragment="page">
      	</section>
 	</vu:page>
+
+	<script>
+		let oldHttpPostAjax = VUiPage.httpPostAjax;
+		VUiPage.httpPostAjax = function (url, params, options) {
+			let paramsResolved;
+			if (params instanceof FormData) {
+				paramsResolved = params;
+			} else {
+				paramsResolved = new FormData();
+				for (const [key, value] of Object.entries(params)) {
+					paramsResolved.append(key, value);
+				}
+			}
+			oldHttpPostAjax(url, paramsResolved, options);
+		}
+	</script>
 	
 	<div layout:fragment="javascript-footer">
 	</div>
+	
 			
 </body>
 </html>
