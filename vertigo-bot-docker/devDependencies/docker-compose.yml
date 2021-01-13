@@ -30,7 +30,14 @@ services:
       - cb_factory
     restart: unless-stopped
 
-# TODO : pourquoi pas ajouter Chronograph
+  chronograph: # IHM de consultation influxDB
+    image: chronograf:1.6.2-alpine
+    volumes:
+      - cf_chronograph_data:/var/lib/chronograf
+    ports: 
+      - "127.0.0.1:8888:8888"
+    networks:
+      - cb_factory
 
   analytica:
     image: vertigoio/analytics-server:0.6
@@ -44,11 +51,23 @@ services:
       - cb_factory
     restart: unless-stopped
   
-# TODO : pour le runner, on aura besoin de rabbitmq
+  rabbitmq:
+    image: 'rabbitmq:3'
+    hostname: 'rabbit-rasa'
+    ports:
+      - '127.0.0.1:5672:5672'
+    labels:
+      NAME: 'rabbit-rasa'
+    volumes:
+      - "cf_rabbitmq_data:/var/lib/rabbitmq/mnesia/"
+    networks:
+      - cb_factory
 
 volumes:
   cf_postgres_data:
   cf_influxdb_data:
+  cf_rabbitmq_data:
+  cf_chronograph_data:
     
 networks:
   cb_factory:
