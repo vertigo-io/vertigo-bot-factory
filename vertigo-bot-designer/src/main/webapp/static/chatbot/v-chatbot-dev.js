@@ -141,9 +141,9 @@ Vue.component('v-chatbot-dev', {
 				this.lastUserInteraction = Date.now();
 				
 				this.$http.post(this.botUrl, {sender: this.convId, message: value})
-					.then(function(httpResponse) {
+					.then(httpResponse => {
 						// success
-						httpResponse.body.forEach(function(value, key) {
+						httpResponse.data.forEach(function(value, key) {
 							var textes = value.text.split(/<hr>|<hr \/>/);
 							
 							for (var i = 0; i < textes.length - 1; i++) {
@@ -155,8 +155,7 @@ Vue.component('v-chatbot-dev', {
 						}, this);
 						
 						this._displayMessages();
-					}).catch(
-					function(error) {
+					}).catch(error => {
 						// error
 						this.error = true;
 						
@@ -170,11 +169,11 @@ Vue.component('v-chatbot-dev', {
 					var currentMessage = this.watingMessagesStack.shift();
 					var watingTime = this.lastUserInteraction - Date.now() + this.minTimeBetweenMessages;
 					
-					this.sleep(watingTime).then(function() {
+					this.sleep(watingTime).then(() => {
 						this._processResponse(currentMessage);
 						this.lastUserInteraction = Date.now();
 						this._displayMessages();
-					}.bind(this));
+					});
 				} else {
 					this.processing = false;
 					if (this.keepAction) {
@@ -183,9 +182,9 @@ Vue.component('v-chatbot-dev', {
 						this.keepAction = false;
 					}
 					
-					this.sleep(1).then(function() { // en différé le temps que la vue soit mise à jour
+					this.sleep(1).then(() => { // en différé le temps que la vue soit mise à jour
 						this.$refs.input.focus();
-					}.bind(this));
+					});
 				}
 			},
 			_processResponse: function (response) {
@@ -224,7 +223,7 @@ Vue.component('v-chatbot-dev', {
 				}
 				
 				this.$http.post(this.botUrl, '{"sender":"' + this.convId + '","message":"/restart"}')
-				.then(function(httpResponse) {
+				.then(httpResponse => {
 					this.askBot("/start"); // lancement de la phrase d'accueil
 				});
 			},
