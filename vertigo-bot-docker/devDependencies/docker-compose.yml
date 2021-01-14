@@ -18,7 +18,6 @@ services:
       - "127.0.0.1:5433:5432" 
     networks:
       - cb_factory
-    restart: unless-stopped
   
   influxdb:
     image: influxdb:1.7.8
@@ -28,7 +27,6 @@ services:
       - "127.0.0.1:8086:8086"
     networks:
       - cb_factory
-    restart: unless-stopped
 
   chronograph: # IHM de consultation influxDB
     image: chronograf:1.6.2-alpine
@@ -46,10 +44,9 @@ services:
     depends_on:
       - influxdb
     ports:
-      - "127.0.0.1:4562:4562"
+      - "4562:4562"
     networks:
       - cb_factory
-    restart: unless-stopped
   
   rabbitmq:
     image: 'rabbitmq:3'
