@@ -32,10 +32,7 @@
 			if (params instanceof FormData) {
 				paramsResolved = params;
 			} else {
-				paramsResolved = new FormData();
-				for (const [key, value] of Object.entries(params)) {
-					paramsResolved.append(key, value);
-				}
+				paramsResolved = VUiPage.objectToFormData(params);
 			}
 			oldHttpPostAjax(url, paramsResolved, options);
 		}
