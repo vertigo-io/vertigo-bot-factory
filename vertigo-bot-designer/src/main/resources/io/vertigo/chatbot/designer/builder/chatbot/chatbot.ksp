@@ -1,0 +1,10 @@
+package io.vertigo.chatbot.designer.builder.chatbot 
+
+create Task TkRemoveAllChaPerRightByBotId {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from cha_per_rights
+			where bot_id  = #botId#
+             "
+	in botId				{domain : DoId,							cardinality:"1"} 
+}
