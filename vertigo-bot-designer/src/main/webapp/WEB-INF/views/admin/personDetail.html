@@ -60,7 +60,16 @@
 			</vu:block>
 			
 			<vu:block id="password" title="Person password"  th:if="${model.modeChangePassword}">
-				<vu:text-field-edit object="person" field="passwordNew"/>
+				<vu:include-data object="person" field="passwordNew"/>
+				<vu:include-data-primitive key="isPwd" />
+				<q-input v-model="vueData.person.passwordNew" :type="vueData.isPwd ? 'password' : 'text'">
+				  <template v-slot:append>
+				    <q-icon
+				      :name="vueData.isPwd ? 'visibility_off' : 'visibility'"
+				      @click="vueData.isPwd = !vueData.isPwd"
+				    />
+				  </template>
+				</q-input>
 			</vu:block>
 			
 			

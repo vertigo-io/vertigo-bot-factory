@@ -53,14 +53,18 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<Person> personKey = ViewContextKey.of("person");
 	/** ClÃ© de context du mode changePassword. */
-	public static final ViewContextKey<Boolean> MODE_CHANGE_PASSWORD_CONTEXT_KEY = ViewContextKey.of("modeChangePassword");
+	public static final ViewContextKey<Boolean> MODE_CHANGE_PASSWORD_CONTEXT_KEY = ViewContextKey
+			.of("modeChangePassword");
 	public static final ViewContextKey<PersonRole> ROLES_CONTEXT_KEY = ViewContextKey.of("roles");
 	public static final ViewContextKey<Chatbot> CHATBOTS_CONTEXT_KEY = ViewContextKey.of("chatbots");
 	public static final ViewContextKey<Long[]> CHATBOT_SELECTED_CONTEXT_KEY = ViewContextKey.of("chatbotsSelected");
-	public static final ViewContextKey<String> CHATBOT_SELECTED_STR_CONTEXT_KEY = ViewContextKey.of("chatbotsSelectedStr");
+	public static final ViewContextKey<String> CHATBOT_SELECTED_STR_CONTEXT_KEY = ViewContextKey
+			.of("chatbotsSelectedStr");
+
+	public static final ViewContextKey<Boolean> IS_PWD_KEY = ViewContextKey.of("isPwd");
 
 	private void initCommonContext(final ViewContext viewContext) {
-		viewContext.publishMdl(ROLES_CONTEXT_KEY, PersonRole.class, null); //all
+		viewContext.publishMdl(ROLES_CONTEXT_KEY, PersonRole.class, null); // all
 		viewContext.publishDtList(CHATBOTS_CONTEXT_KEY, designerServices.getAllChatbots());
 		viewContext.publishRef(CHATBOT_SELECTED_STR_CONTEXT_KEY, "");
 	}
@@ -72,8 +76,7 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDto(personKey, person);
 		viewContext.publishRef(MODE_CHANGE_PASSWORD_CONTEXT_KEY, false);
 
-		final List<Long> selectedBotIds = person.chatbots().get().stream()
-				.map(Chatbot::getBotId)
+		final List<Long> selectedBotIds = person.chatbots().get().stream().map(Chatbot::getBotId)
 				.collect(Collectors.toList());
 		viewContext.publishRef(CHATBOT_SELECTED_CONTEXT_KEY, selectedBotIds.toArray(new Long[selectedBotIds.size()]));
 
@@ -83,8 +86,8 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext) {
 		initCommonContext(viewContext);
+		initModePassword(viewContext);
 		viewContext.publishDto(personKey, new Person());
-		viewContext.publishRef(MODE_CHANGE_PASSWORD_CONTEXT_KEY, true);
 		viewContext.publishRef(CHATBOT_SELECTED_CONTEXT_KEY, new Long[0]);
 		toModeCreate();
 	}
@@ -96,27 +99,32 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_changePassword")
 	public void doChangePassword(final ViewContext viewContext) {
-		viewContext.publishRef(MODE_CHANGE_PASSWORD_CONTEXT_KEY, true);
+		initModePassword(viewContext);
 		toModeEdit();
+	}
+
+	private void initModePassword(ViewContext viewContext) {
+		viewContext.publishRef(MODE_CHANGE_PASSWORD_CONTEXT_KEY, true);
+		viewContext.publishRef(IS_PWD_KEY, true);
 	}
 
 	@PostMapping("/_save")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("person") final Person person, @ViewAttribute("chatbotsSelectedStr") final String chatbotsSelectedStr) {
+			@ViewAttribute("person") final Person person,
+			@ViewAttribute("chatbotsSelectedStr") final String chatbotsSelectedStr) {
 		if (!viewContext.getBoolean(MODE_CHANGE_PASSWORD_CONTEXT_KEY)) {
-			person.setPasswordNew(null); //can't accept password if not the changePassword mode
+			person.setPasswordNew(null); // can't accept password if not the changePassword mode
 		}
-		//convert the select result (chatbot's ids comma separated) to list<Uid<Chatbot>>
+		// convert the select result (chatbot's ids comma separated) to
+		// list<Uid<Chatbot>>
 		final List<UID> chatbotIdsSelected;
 		if (chatbotsSelectedStr.isEmpty()) {
 			chatbotIdsSelected = Collections.emptyList();
 		} else {
-			chatbotIdsSelected = Arrays.stream(chatbotsSelectedStr.split(","))
-					.map(Long::parseLong)
-					.map(id -> UID.of(Chatbot.class, id))
-					.collect(Collectors.toList());
+			chatbotIdsSelected = Arrays.stream(chatbotsSelectedStr.split(",")).map(Long::parseLong)
+					.map(id -> UID.of(Chatbot.class, id)).collect(Collectors.toList());
 		}
-		//save person, with its supervised chatbot
+		// save person, with its supervised chatbot
 		final Person savedPerson = personServices.savePerson(person, chatbotIdsSelected);
 		return "redirect:/person/" + savedPerson.getPerId();
 	}
