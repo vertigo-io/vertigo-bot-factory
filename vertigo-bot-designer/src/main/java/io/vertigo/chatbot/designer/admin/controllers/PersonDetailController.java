@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.Person;
 import io.vertigo.chatbot.commons.domain.PersonRole;
+import io.vertigo.chatbot.designer.admin.services.LoginServices;
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.datamodel.structure.model.UID;
@@ -50,17 +51,22 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 	private PersonServices personServices;
 	@Inject
 	private DesignerServices designerServices;
+	@Inject
+	private LoginServices loginServices;
 
 	private static final ViewContextKey<Person> personKey = ViewContextKey.of("person");
 	/** ClÃ© de context du mode changePassword. */
-	public static final ViewContextKey<Boolean> MODE_CHANGE_PASSWORD_CONTEXT_KEY = ViewContextKey.of("modeChangePassword");
+	public static final ViewContextKey<Boolean> MODE_CHANGE_PASSWORD_CONTEXT_KEY = ViewContextKey
+			.of("modeChangePassword");
 	public static final ViewContextKey<PersonRole> ROLES_CONTEXT_KEY = ViewContextKey.of("roles");
 	public static final ViewContextKey<Chatbot> CHATBOTS_CONTEXT_KEY = ViewContextKey.of("chatbots");
 	public static final ViewContextKey<Long[]> CHATBOT_SELECTED_CONTEXT_KEY = ViewContextKey.of("chatbotsSelected");
-	public static final ViewContextKey<String> CHATBOT_SELECTED_STR_CONTEXT_KEY = ViewContextKey.of("chatbotsSelectedStr");
+	public static final ViewContextKey<String> CHATBOT_SELECTED_STR_CONTEXT_KEY = ViewContextKey
+			.of("chatbotsSelectedStr");
+	public static final ViewContextKey<Boolean> IS_SAME_USER_KEY = ViewContextKey.of("isSameUser");
 
 	private void initCommonContext(final ViewContext viewContext) {
-		viewContext.publishMdl(ROLES_CONTEXT_KEY, PersonRole.class, null); //all
+		viewContext.publishMdl(ROLES_CONTEXT_KEY, PersonRole.class, null); // all
 		viewContext.publishDtList(CHATBOTS_CONTEXT_KEY, designerServices.getAllChatbots());
 		viewContext.publishRef(CHATBOT_SELECTED_STR_CONTEXT_KEY, "");
 	}
@@ -71,9 +77,9 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 		final Person person = personServices.getPersonById(perId);
 		viewContext.publishDto(personKey, person);
 		viewContext.publishRef(MODE_CHANGE_PASSWORD_CONTEXT_KEY, false);
+		viewContext.publishRef(IS_SAME_USER_KEY, isPersonConnected(person));
 
-		final List<Long> selectedBotIds = person.chatbots().get().stream()
-				.map(Chatbot::getBotId)
+		final List<Long> selectedBotIds = person.chatbots().get().stream().map(Chatbot::getBotId)
 				.collect(Collectors.toList());
 		viewContext.publishRef(CHATBOT_SELECTED_CONTEXT_KEY, selectedBotIds.toArray(new Long[selectedBotIds.size()]));
 
@@ -102,22 +108,33 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_save")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("person") final Person person, @ViewAttribute("chatbotsSelectedStr") final String chatbotsSelectedStr) {
+			@ViewAttribute("person") final Person person,
+			@ViewAttribute("chatbotsSelectedStr") final String chatbotsSelectedStr) {
 		if (!viewContext.getBoolean(MODE_CHANGE_PASSWORD_CONTEXT_KEY)) {
-			person.setPasswordNew(null); //can't accept password if not the changePassword mode
+			person.setPasswordNew(null); // can't accept password if not the changePassword mode
 		}
-		//convert the select result (chatbot's ids comma separated) to list<Uid<Chatbot>>
+		// convert the select result (chatbot's ids comma separated) to
+		// list<Uid<Chatbot>>
 		final List<UID> chatbotIdsSelected;
 		if (chatbotsSelectedStr.isEmpty()) {
 			chatbotIdsSelected = Collections.emptyList();
 		} else {
-			chatbotIdsSelected = Arrays.stream(chatbotsSelectedStr.split(","))
-					.map(Long::parseLong)
-					.map(id -> UID.of(Chatbot.class, id))
-					.collect(Collectors.toList());
+			chatbotIdsSelected = Arrays.stream(chatbotsSelectedStr.split(",")).map(Long::parseLong)
+					.map(id -> UID.of(Chatbot.class, id)).collect(Collectors.toList());
 		}
-		//save person, with its supervised chatbot
+		// save person, with its supervised chatbot
 		final Person savedPerson = personServices.savePerson(person, chatbotIdsSelected);
 		return "redirect:/person/" + savedPerson.getPerId();
+	}
+
+	private Boolean isPersonConnected(Person person) {
+		final Person personConnected = loginServices.getLoggedPerson();
+		return person.getPerId() == personConnected.getPerId();
+	}
+
+	@PostMapping("/_delete")
+	private String deletePerson(@ViewAttribute("person") Person person) {
+		this.personServices.deletePerson(person);
+		return "redirect:/persons/";
 	}
 }

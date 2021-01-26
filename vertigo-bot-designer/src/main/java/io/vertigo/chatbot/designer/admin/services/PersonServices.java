@@ -25,6 +25,7 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.impl.authentication.PasswordHelper;
 import io.vertigo.chatbot.commons.dao.PersonDAO;
 import io.vertigo.chatbot.commons.domain.Person;
+import io.vertigo.chatbot.designer.admin.person.PersonPAO;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
@@ -38,6 +39,9 @@ import io.vertigo.datastore.entitystore.EntityStoreManager;
 @Transactional
 @Secured("AdmPer")
 public class PersonServices implements Component {
+
+	@Inject
+	private PersonPAO personPAO;
 
 	@Inject
 	private PersonDAO personDAO;
@@ -69,5 +73,11 @@ public class PersonServices implements Component {
 		entityStoreManager.getBrokerNN()
 				.updateNN(DtListURIForNNAssociation.class.cast(person.chatbots().getDtListURI()), chatbotIds);
 		return savedPerson;
+	}
+
+	public void deletePerson(final Person person) {
+		Long perId = person.getPerId();
+		this.personPAO.removeAllChaPerRightByPerId(perId);
+		this.personDAO.delete(perId);
 	}
 }
