@@ -33,17 +33,19 @@ import io.vertigo.vega.webservice.exception.SessionException;
 /**
  * Security handler.
  * Check Api Key, throw VSecurityException if not equals to configured Key.
+ * 
  * @author skerdudou
  */
 public final class ApiTokenWebServiceHandlerPlugin implements WebServiceHandlerPlugin {
 
-	/** Stack index of the handler for sorting at startup**/
+	/** Stack index of the handler for sorting at startup **/
 	public static final int STACK_INDEX = 45;
 
 	private final String apiKey;
 
 	/**
 	 * Constructor.
+	 * 
 	 * @param securityManager Security Manager
 	 */
 	@Inject
