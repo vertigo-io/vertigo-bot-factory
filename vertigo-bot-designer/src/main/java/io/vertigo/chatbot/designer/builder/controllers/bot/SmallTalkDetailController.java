@@ -52,13 +52,16 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	private static final ViewContextKey<ResponseType> responseTypeKey = ViewContextKey.of("responseTypes");
 
 	private static final ViewContextKey<String> newNluTrainingSentenceKey = ViewContextKey.of("newNluTrainingSentence");
-	private static final ViewContextKey<NluTrainingSentence> nluTrainingSentencesKey = ViewContextKey.of("nluTrainingSentences");
-	private static final ViewContextKey<NluTrainingSentence> nluTrainingSentencesToDeleteKey = ViewContextKey.of("nluTrainingSentencesToDelete");
+	private static final ViewContextKey<NluTrainingSentence> nluTrainingSentencesKey = ViewContextKey
+			.of("nluTrainingSentences");
+	private static final ViewContextKey<NluTrainingSentence> nluTrainingSentencesToDeleteKey = ViewContextKey
+			.of("nluTrainingSentencesToDelete");
 
 	private static final ViewContextKey<UtterText> utterTextsKey = ViewContextKey.of("utterTexts");
 
 	private static final ViewContextKey<ResponseButton> buttonsKey = ViewContextKey.of("buttons");
 	private static final ViewContextKey<SmallTalk> smallTalkListKey = ViewContextKey.of("smallTalkList");
+	private static final ViewContextKey<Boolean> showPopupKey = ViewContextKey.of("showPopup");
 
 	@Inject
 	private DesignerServices designerServices;
@@ -67,7 +70,8 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	private CommonBotDetailController commonBotDetailController;
 
 	@GetMapping("/{intId}")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId, @PathVariable("intId") final Long intId) {
+	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId,
+			@PathVariable("intId") final Long intId) {
 		initCommonContext(viewContext, botId);
 
 		final SmallTalk smallTalk = designerServices.getSmallTalkById(intId);
@@ -77,8 +81,10 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDto(smallTalkKey, smallTalk);
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
-		viewContext.publishDtListModifiable(nluTrainingSentencesKey, designerServices.getNluTrainingSentenceList(smallTalk));
-		viewContext.publishDtList(nluTrainingSentencesToDeleteKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey,
+				designerServices.getNluTrainingSentenceList(smallTalk));
+		viewContext.publishDtList(nluTrainingSentencesToDeleteKey,
+				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
 		final DtList<UtterText> utterTextList = designerServices.getUtterTextList(smallTalk);
 		utterTextList.add(new UtterText()); // add the next for random, or the 1st for rich text if 0 lines
@@ -97,8 +103,10 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDto(smallTalkKey, designerServices.getNewSmallTalk(botId));
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
-		viewContext.publishDtListModifiable(nluTrainingSentencesKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
-		viewContext.publishDtList(nluTrainingSentencesToDeleteKey, new DtList<NluTrainingSentence>(NluTrainingSentence.class));
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey,
+				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
+		viewContext.publishDtList(nluTrainingSentencesToDeleteKey,
+				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
 		final DtList<UtterText> utterTextList = new DtList<>(UtterText.class);
 		utterTextList.add(new UtterText()); // add the first one for initialization, list can't be empty
@@ -112,8 +120,8 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 
 	private void initCommonContext(final ViewContext viewContext, final Long botId) {
 		commonBotDetailController.initCommonContext(viewContext, botId);
-
-		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); //all
+		viewContext.publishRef(showPopupKey, false);
+		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); // all
 	}
 
 	@PostMapping("/_edit")
@@ -123,25 +131,27 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_save")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
-			@PathVariable("botId") final Long botId,
+			@ViewAttribute("smallTalk") final SmallTalk smallTalk, @PathVariable("botId") final Long botId,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
-		final DtList<UtterText> utterTexts = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey), uiMessageStack);
+		final DtList<UtterText> utterTexts = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey),
+				uiMessageStack);
 
-		final DtList<ResponseButton> buttonList = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsKey), uiMessageStack);
+		final DtList<ResponseButton> buttonList = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsKey),
+				uiMessageStack);
 
 		// add training sentence who is not "validated" by enter and still in the input
 		addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 
-		designerServices.saveSmallTalk(smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts, buttonList);
+		designerServices.saveSmallTalk(smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts,
+				buttonList);
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
 	}
 
 	@PostMapping("/_delete")
-	public String doDelete(@ViewAttribute("smallTalk") final SmallTalk smallTalk) {
+	public String doDelete(final ViewContext viewContext, @ViewAttribute("smallTalk") final SmallTalk smallTalk) {
 		designerServices.deleteSmallTalk(smallTalk);
 		return "redirect:/bot/" + smallTalk.getBotId() + "/smallTalks/";
 	}
@@ -159,7 +169,8 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		return viewContext;
 	}
 
-	private void addTrainingSentense(final String newNluTrainingSentenceIn, final DtList<NluTrainingSentence> nluTrainingSentences) {
+	private void addTrainingSentense(final String newNluTrainingSentenceIn,
+			final DtList<NluTrainingSentence> nluTrainingSentences) {
 		if (StringUtil.isBlank(newNluTrainingSentenceIn)) {
 			return;
 		}
@@ -179,8 +190,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_editTrainingSentence")
-	public ViewContext doEditTrainingSentence(final ViewContext viewContext,
-			@RequestParam("index") final int index,
+	public ViewContext doEditTrainingSentence(final ViewContext viewContext, @RequestParam("index") final int index,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
 
@@ -206,8 +216,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_removeTrainingSentence")
-	public ViewContext doRemoveTrainingSentence(final ViewContext viewContext,
-			@RequestParam("index") final int index,
+	public ViewContext doRemoveTrainingSentence(final ViewContext viewContext, @RequestParam("index") final int index,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
 
@@ -224,14 +233,16 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		return viewContext;
 	}
 
-	//	@PostMapping("/_updateMaxTextSlot")
-	//	public ViewContext doUpdateMaxTextSlot(final ViewContext viewContext, @RequestParam("count") final int count) {
-	//		final BasicUiListModifiable<UtterText> uiList = viewContext.getUiListModifiable(utterTextsKey);
-	//		for (int i = uiList.size(); i < count; i++) {
-	//			uiList.add(new UtterText());
-	//		}
+	// @PostMapping("/_updateMaxTextSlot")
+	// public ViewContext doUpdateMaxTextSlot(final ViewContext viewContext,
+	// @RequestParam("count") final int count) {
+	// final BasicUiListModifiable<UtterText> uiList =
+	// viewContext.getUiListModifiable(utterTextsKey);
+	// for (int i = uiList.size(); i < count; i++) {
+	// uiList.add(new UtterText());
+	// }
 	//
-	//		return viewContext;
-	//	}
+	// return viewContext;
+	// }
 
 }
