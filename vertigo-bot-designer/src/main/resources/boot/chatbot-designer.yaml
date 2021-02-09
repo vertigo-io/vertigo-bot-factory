@@ -29,12 +29,16 @@ modules:
     features:
       - sql: # nous activons le support des bases de données SQL
       - timeseries:
+      - migration:
+          mode: update
     featuresConfig:
       - sql.datasource:
           classname: io.vertigo.database.impl.sql.vendor.postgresql.PostgreSqlDataBase
           source: java:/comp/env/jdbc/DataSource
       - timeseries.influxdb:
           dbNames: ${boot.ANALYTICA_DBNAME}
+      - migration.liquibase:
+          masterfile: ../liquibase/master.xml
   io.vertigo.datamodel.DataModelFeatures: # utilisation du module vertigo-datamodel
   io.vertigo.datastore.DataStoreFeatures:
     features:
