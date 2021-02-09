@@ -73,7 +73,7 @@
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" ariaLabel="Edit" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="${model.modeReadOnly}" @click="vueData.showPopup= true" aria-label="Delete" title="Delete" icon="delete"
+			<q-btn th:if="${model.modeReadOnly}" @click="vueData.showPopup = true" aria-label="Delete" title="Delete" icon="delete"
 							class="on-left" round size="lg" color="red" ></q-btn>
 		</section>
 				
@@ -87,21 +87,7 @@
 		<section layout:fragment="content">
 			
 			<c-popup object="smallTalk" action="_delete" model="showPopup"></c-popup>
-			<!--  <q-dialog v-model="vueData.confirmPopup" persistent>
-					<q-card>
-						<q-card-section class="row items-center">
-							<span class="q-ml-sm">Do you want to delete this smallTalk</span>
-						</q-card-section>
-						<q-card-actions align="right">
-						<q-form method="post" action="_delete">
-							<input type="hidden" name="CTX" v-bind:value="vueData.CTX">
-							<q-btn flat label="Cancel" color="primary" v-close-popup ></q-btn>
-							<q-btn type="submit" title="test" label="test"></q-btn> 
-						</q-form>
-						</q-card-actions>
-					</q-card>
-			</q-dialog>
-			-->
+
 			<vu:block id="detail" title="Informations">
 				<vu:text-field object="smallTalk" field="title" />
 				
