@@ -4,11 +4,7 @@ Vue.component('c-popup', {
 		model:    	   	{ type: String,  required: true },
 		object:			{ type: String,  required: true },
 		confirm:		{ type: String,  required: true, 'default' : 'delete' },
-		functionToCall: { type: String,  required: true },
-	},
-	data: function () {
-		return {
-		}
+		action: 		{ type: String,  required: true },
 	},
 	template : `
 			<q-dialog v-model="VertigoUi.vueData[model]" persistent>
@@ -17,10 +13,10 @@ Vue.component('c-popup', {
 							<span class="q-ml-sm">Do you want to delete this {{ object }}</span>
 						</q-card-section>
 						<q-card-actions align="right">
-						<q-form method="post" :action="functionToCall">
-							<input type="hidden" name="CTX" v-bind:value="VertigoUi.vueData['CTX']">
+						<q-form method="post" :action="action">
+							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
 							<q-btn flat label="Cancel" color="primary" v-close-popup ></q-btn>
-							<q-btn type="submit" title="confirm" label="confirm" aria-label="confirm" :color="color"></q-btn> 
+							<q-btn type="submit" :title="confirm" :label="confirm" :aria-label="confirm" :color="color"></q-btn> 
 						</q-form>
 						</q-card-actions>
 				</q-card>
