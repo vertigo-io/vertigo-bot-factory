@@ -66,6 +66,9 @@ create sequence SEQ_TRAINING
 
 create sequence SEQ_UTTER_TEXT
 	start with 1000 cache 20; 
+	
+create sequence SEQ_CHA_PER_RIGHTS
+	start with 1000 cache 20;
 
 
 -- ============================================================
