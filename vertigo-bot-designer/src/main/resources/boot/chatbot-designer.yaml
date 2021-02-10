@@ -38,7 +38,7 @@ modules:
       - timeseries.influxdb:
           dbNames: ${boot.ANALYTICA_DBNAME}
       - migration.liquibase:
-          masterfile: ../liquibase/master.xml
+          masterFile: /liquibase/master.xml
   io.vertigo.datamodel.DataModelFeatures: # utilisation du module vertigo-datamodel
   io.vertigo.datastore.DataStoreFeatures:
     features:
