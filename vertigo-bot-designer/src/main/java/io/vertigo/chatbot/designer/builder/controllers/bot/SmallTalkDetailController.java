@@ -61,7 +61,6 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 
 	private static final ViewContextKey<ResponseButton> buttonsKey = ViewContextKey.of("buttons");
 	private static final ViewContextKey<SmallTalk> smallTalkListKey = ViewContextKey.of("smallTalkList");
-	private static final ViewContextKey<Boolean> showPopupKey = ViewContextKey.of("showPopup");
 
 	@Inject
 	private DesignerServices designerServices;
@@ -120,7 +119,6 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 
 	private void initCommonContext(final ViewContext viewContext, final Long botId) {
 		commonBotDetailController.initCommonContext(viewContext, botId);
-		viewContext.publishRef(showPopupKey, false);
 		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); // all
 	}
 

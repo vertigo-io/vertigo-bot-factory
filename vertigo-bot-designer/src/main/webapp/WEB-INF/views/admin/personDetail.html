@@ -48,13 +48,15 @@
 							class="on-left" :round size="lg" color="primary" />
 			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_changePassword}" ariaLabel="Change Password" icon="vpn_key"
 							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="${model.modeReadOnly and !model.isSameUser }" @click="deleteConfirm()" aria-label="Delete" title="Delete" icon="delete"
+			<q-btn th:if="${model.modeReadOnly and !model.isSameUser }" @click="componentStates.showPopup = true" aria-label="Delete" title="Delete" icon="delete"
 							class="on-left" round size="lg" color="red" ></q-btn>
-			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_delete}" label="Delete" class="hidden" ref="deleteBtn"/>
 		</section>
 		<div layout:fragment="content-header-tabs">
 		</div>	
 		<section layout:fragment="content">
+	
+			<vu:popup object="person" action="_delete" vModel="showPopup"></vu:popup>
+	
 			<vu:block id="identity" title="Person identity" th:if="${!model.modeChangePassword || model.modeCreate}">
 				<vu:text-field object="person" field="login"/>
 				<vu:text-field object="person" field="name"/>
