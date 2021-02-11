@@ -338,6 +338,10 @@ public class DesignerServices implements Component {
 			utterTextDAO.delete(ut.getUID());
 		}
 
+		for (final ResponseButton button : getResponsesButtonList(smallTalk)) {
+			responseButtonDAO.delete(button.getUID());
+		}
+
 		// delete smallTalk
 		smallTalkDAO.delete(smallTalk.getUID());
 	}
@@ -361,6 +365,15 @@ public class DesignerServices implements Component {
 		return utterTextDAO.findAll(
 				Criterions.isEqualTo(UtterTextFields.smtId, smallTalk.getSmtId()),
 				DtListState.of(1000, 0, UtterTextFields.uttId.name(), false));
+	}
+
+	public DtList<ResponseButton> getResponsesButtonList(final SmallTalk smallTalk) {
+		Assertion.check()
+				.isNotNull(smallTalk)
+				.isNotNull(smallTalk.getSmtId());
+		return responseButtonDAO.findAll(
+				Criterions.isEqualTo(ResponseButtonFields.smtId, smallTalk.getSmtId()),
+				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
 	public DtList<ResponseButton> getWelcomeButtonsByBot(final Chatbot bot) {

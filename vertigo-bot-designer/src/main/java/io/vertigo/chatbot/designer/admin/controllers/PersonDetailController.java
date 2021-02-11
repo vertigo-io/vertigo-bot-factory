@@ -129,7 +129,7 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 
 	private Boolean isPersonConnected(Person person) {
 		final Person personConnected = loginServices.getLoggedPerson();
-		return person.getPerId() == personConnected.getPerId();
+		return person.getPerId().equals(personConnected.getPerId());
 	}
 
 	@PostMapping("/_delete")

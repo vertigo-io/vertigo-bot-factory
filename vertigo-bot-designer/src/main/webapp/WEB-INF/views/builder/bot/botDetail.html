@@ -34,25 +34,6 @@
 			    })
 			}
 			
-			function showPopin(ref){
-				VUiPage.$refs[ref].show()
-			}
-			
-			function deleteConfirm() {
-				VUiPage.$q.dialog({
-			        title: 'Confirm',
-			        message: 'Do you want to delete this chatbot ?',
-					ok: {
-						label: "Delete",
-						color: "red"
-					},
-					cancel: {
-						label: "Cancel"
-					}
-			    }).onOk(() => {
-			    	VUiPage.$refs.deleteBtn.$el.click();
-			    })
-			}
 		</script>
 	</head>
 	
@@ -67,14 +48,15 @@
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly && #arrays.contains(model.chatBotAuthorizedOperations, 'write') }" action="@{_edit}" ariaLabel="Edit" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="${model.modeReadOnly && #arrays.contains(model.chatBotAuthorizedOperations, 'write') }" @click="deleteConfirm()" ariaLabel="Delete" icon="delete"
+			<q-btn th:if="${model.modeReadOnly && #arrays.contains(model.chatBotAuthorizedOperations, 'write') }" @click="componentStates.showPopup = true" ariaLabel="Delete" icon="delete"
 							class="on-left" round size="lg" color="red" > </q-btn>
-			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_delete}" label="Delete" class="hidden" ref="deleteBtn"/>
 		</section>
 		
 		
 		
 		<section layout:fragment="content">
+			
+			<vu:popup object="chatbot" action="_delete" vModel="showPopup"></vu:popup>
 			
 			<vu:block id="identity" title="Bot identity">
 				<vu:text-field object="bot" field="name" th:if="${viewMode=='edit'}"/>
