@@ -230,17 +230,4 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 
 		return viewContext;
 	}
-
-	// @PostMapping("/_updateMaxTextSlot")
-	// public ViewContext doUpdateMaxTextSlot(final ViewContext viewContext,
-	// @RequestParam("count") final int count) {
-	// final BasicUiListModifiable<UtterText> uiList =
-	// viewContext.getUiListModifiable(utterTextsKey);
-	// for (int i = uiList.size(); i < count; i++) {
-	// uiList.add(new UtterText());
-	// }
-	//
-	// return viewContext;
-	// }
-
 }
