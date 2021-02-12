@@ -20,8 +20,6 @@ public final class Person implements Entity {
 	private Long perId;
 	private String login;
 	private String name;
-	private String password;
-	private String passwordNew;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "APersonGroups",
@@ -127,44 +125,6 @@ public final class Person implements Entity {
 	 */
 	public void setName(final String name) {
 		this.name = name;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Password'.
-	 * @return String password <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyPassword", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Password")
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Password'.
-	 * @param password String <b>Obligatoire</b>
-	 */
-	public void setPassword(final String password) {
-		this.password = password;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'New password'.
-	 * @return String passwordNew
-	 */
-	@Field(smartType = "STyPassword", persistent = false, label = "New password")
-	public String getPasswordNew() {
-		return passwordNew;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'New password'.
-	 * @param passwordNew String
-	 */
-	public void setPasswordNew(final String passwordNew) {
-		this.passwordNew = passwordNew;
 	}
 	
 	/**

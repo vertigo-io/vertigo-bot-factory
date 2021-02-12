@@ -17,8 +17,6 @@
  */
 package io.vertigo.chatbot.designer.admin.controllers;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +34,6 @@ import io.vertigo.chatbot.commons.domain.PersonRole;
 import io.vertigo.chatbot.designer.admin.services.LoginServices;
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
-import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -108,22 +105,9 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 
 	@PostMapping("/_save")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("person") final Person person,
-			@ViewAttribute("chatbotsSelectedStr") final String chatbotsSelectedStr) {
-		if (!viewContext.getBoolean(MODE_CHANGE_PASSWORD_CONTEXT_KEY)) {
-			person.setPasswordNew(null); // can't accept password if not the changePassword mode
-		}
-		// convert the select result (chatbot's ids comma separated) to
-		// list<Uid<Chatbot>>
-		final List<UID> chatbotIdsSelected;
-		if (chatbotsSelectedStr.isEmpty()) {
-			chatbotIdsSelected = Collections.emptyList();
-		} else {
-			chatbotIdsSelected = Arrays.stream(chatbotsSelectedStr.split(",")).map(Long::parseLong)
-					.map(id -> UID.of(Chatbot.class, id)).collect(Collectors.toList());
-		}
-		// save person, with its supervised chatbot
-		final Person savedPerson = personServices.savePerson(person, chatbotIdsSelected);
+			@ViewAttribute("person") final Person person, @ViewAttribute("chatbotsSelectedStr") final String chatbotsSelectedStr) {
+		//save person, with its supervised chatbot
+		final Person savedPerson = personServices.savePerson(person, chatbotsSelectedStr);
 		return "redirect:/person/" + savedPerson.getPerId();
 	}
 

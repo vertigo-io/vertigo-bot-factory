@@ -5,6 +5,8 @@ version: '3.5'
 # Passwords / API key can be, for example, generated locally with :
 #   < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;
 
+
+
 services:
   postgres:
     image: postgres:12.1
@@ -17,6 +19,38 @@ services:
     ports:
       - "127.0.0.1:5433:5432" 
     networks:
+      - cb_factory
+
+  postgresKC:
+    image: postgres:12.1
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_PASSWORD: keycloak
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+    volumes:
+      - cf_postgresKC_data:/var/lib/postgresql/data/pgdata
+    ports:
+      - "127.0.0.1:5434:5432" 
+    networks:
+      - cb_factory
+
+  keycloak:
+    image: jboss/keycloak:12.0.2
+    environment:
+      DB_VENDOR: postgres
+      DB_ADDR: postgresKC
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: keycloak
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: changeme
+    ports:
+      - 8200:8080
+    depends_on:
+      - postgresKC
+    networks: 
       - cb_factory
   
   influxdb:
@@ -62,6 +96,7 @@ services:
 
 volumes:
   cf_postgres_data:
+  cf_postgresKC_data:
   cf_influxdb_data:
   cf_rabbitmq_data:
   cf_chronograph_data:

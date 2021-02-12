@@ -25,6 +25,12 @@
 			<artifactId>javax.activation-api</artifactId>
 			<version>1.2.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-vega</artifactId>
+			<version>${vertigo.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>io.vertigo</groupId>
@@ -48,6 +54,13 @@
 			<artifactId>vertigo-influxdb-connector</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-keycloak-connector</artifactId>
+			<version>${vertigo.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-ui</artifactId>

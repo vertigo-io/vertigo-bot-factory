@@ -17,13 +17,15 @@
  */
 package io.vertigo.chatbot.designer.admin.services;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import io.vertigo.account.authorization.annotations.Secured;
-import io.vertigo.account.impl.authentication.PasswordHelper;
 import io.vertigo.chatbot.commons.dao.PersonDAO;
+import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.Person;
 import io.vertigo.chatbot.designer.admin.person.PersonPAO;
 import io.vertigo.commons.transaction.Transactional;
@@ -37,7 +39,6 @@ import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 
 @Transactional
-@Secured("AdmPer")
 public class PersonServices implements Component {
 
 	@Inject
@@ -61,18 +62,83 @@ public class PersonServices implements Component {
 		return person;
 	}
 
-	public Person savePerson(final Person person, final List<UID> chatbotIds) {
+	/**
+	 * Save the person with its chatbots
+	 * 
+	 * @param person person to save
+	 * @param chatbotsSelectedStr the chatbots list in string
+	 * @return the person updated
+	 */
+	public Person savePerson(final Person person, final String chatbotsSelectedStr) {
 		Assertion.check().isNotNull(person);
-		// ---
-		if (person.getPasswordNew() != null && !person.getPasswordNew().isEmpty()) {
-			final PasswordHelper passwordHelper = new PasswordHelper();
-			final String encodedPassword = passwordHelper.createPassword(person.getPasswordNew());
-			person.setPassword(encodedPassword);
-		}
+
 		final Person savedPerson = personDAO.save(person);
+
+		updateChatBotListUID(savedPerson, createListChatbot(chatbotsSelectedStr));
+		return savedPerson;
+	}
+
+	/**
+	 * Create the chatbot list UID from the chatbots string
+	 * 
+	 * @param chatbotsSelectedStr the chatbotsString
+	 * @return the UID list
+	 */
+	private List<UID> createListChatbot(final String chatbotsSelectedStr) {
+		if (chatbotsSelectedStr.isEmpty()) {
+			return Collections.emptyList();
+		} else {
+			return Arrays.stream(chatbotsSelectedStr.split(","))
+					.map(Long::parseLong)
+					.map(id -> UID.of(Chatbot.class, id))
+					.collect(Collectors.toList());
+		}
+	}
+
+	/**
+	 * Init person and save it
+	 * Empty collections is the default value for chatbot
+	 * 
+	 * @param login of the user
+	 * @param rol
+	 * @param name
+	 * @return the person created
+	 */
+	public Person initPerson(String login, String name, String rol) {
+		Person newPerson = new Person();
+		newPerson.setLogin(login.toLowerCase());
+		newPerson.setName(name);
+		newPerson.setRolCd(rol);
+		newPerson = createPerson(newPerson);
+		updateChatBotList(newPerson, Collections.emptyList());
+		return newPerson;
+	}
+
+	/**
+	 * Create a person
+	 * 
+	 * @param newPerson to create
+	 * @return the person after the creation
+	 */
+	public Person createPerson(Person newPerson) {
+		return personDAO.create(newPerson);
+
+	}
+
+	/**
+	 * Update the chatbots list of a person
+	 * 
+	 * @param person to update
+	 * @param chatbotIds the new list
+	 */
+	private void updateChatBotList(Person person, List<Chatbot> chatbots) {
+		List<UID> chatbotIds = chatbots.stream().map(id -> UID.of(Chatbot.class, id)).collect(Collectors.toList());
+		this.updateChatBotListUID(person, chatbotIds);
+	}
+
+	private void updateChatBotListUID(Person person, List<UID> chatbotIds) {
 		entityStoreManager.getBrokerNN()
 				.updateNN(DtListURIForNNAssociation.class.cast(person.chatbots().getDtListURI()), chatbotIds);
-		return savedPerson;
 	}
 
 	public void deletePerson(final Person person) {

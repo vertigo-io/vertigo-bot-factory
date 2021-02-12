@@ -213,10 +213,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		login,
 		/** Propriété 'Name'. */
 		name,
-		/** Propriété 'Password'. */
-		password,
-		/** Propriété 'New password'. */
-		passwordNew,
 		/** Propriété 'Group'. */
 		grpId,
 		/** Propriété 'Role'. */

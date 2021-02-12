@@ -42,14 +42,14 @@ private String printException(Throwable t) throws Exception {
         boolean noObjectFoundException = false;
        	
         if (errorCode!=null && errorCode.equals(401)) {
-        	response.sendRedirect(baseUrl+"login/?code=401");
+        	response.sendRedirect(baseUrl+"login/?errorCode=401");
         }
         
         for (; e != null;) {
             list.add(e);
             if (e instanceof io.vertigo.vega.webservice.exception.SessionException) {
             	sessionException = true;
-            	response.sendRedirect(baseUrl+"login/?code=400");
+            	response.sendRedirect(baseUrl+"login/?errorCode=400");
             	%>
             	<%-- jsp:forward page="noSession-error.jsp" / --%>
             <%}
