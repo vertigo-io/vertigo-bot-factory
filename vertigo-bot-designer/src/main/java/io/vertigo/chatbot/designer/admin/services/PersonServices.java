@@ -100,13 +100,15 @@ public class PersonServices implements Component {
 	 * Empty collections is the default value for chatbot
 	 * 
 	 * @param login of the user
+	 * @param rol
+	 * @param name
 	 * @return the person created
 	 */
-	public Person initPerson(String login) {
+	public Person initPerson(String login, String name, String rol) {
 		Person newPerson = new Person();
 		newPerson.setLogin(login.toLowerCase());
-		newPerson.setName(login);
-		newPerson.setRolCd("RUser");
+		newPerson.setName(name);
+		newPerson.setRolCd(rol);
 		newPerson = createPerson(newPerson);
 		updateChatBotList(newPerson, Collections.emptyList());
 		return newPerson;

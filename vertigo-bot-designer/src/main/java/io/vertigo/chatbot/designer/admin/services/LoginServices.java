@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.keycloak.KeycloakPrincipal;
+import org.keycloak.representations.IDToken;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.account.authentication.AuthenticationManager;
@@ -129,8 +130,8 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 		if (!isAuthenticated()) {
 			// we should have a Principal
 			final KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) request.getUserPrincipal();
-			final String login = keycloakPrincipal.getKeycloakSecurityContext().getIdToken().getPreferredUsername();
-			loginWithPrincipal(login);
+
+			loginWithPrincipal(keycloakPrincipal);
 			try {
 				response.sendRedirect(request.getContextPath() + "/bots/");
 			} catch (final IOException e) {
@@ -143,11 +144,15 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 		return false;
 	}
 
-	private void loginWithPrincipal(final String login) {
+	private void loginWithPrincipal(final KeycloakPrincipal principal) {
+		final IDToken token = principal.getKeycloakSecurityContext().getIdToken();
+		final String login = token.getPreferredUsername();
 		final Account loggedAccount = authenticationManager.login(new UsernameAuthenticationToken(login)).orElseGet(
 				() -> {
 					// auto provisionning an account when using keycloak
-					final Person newPerson = personServices.initPerson(login);
+					final String name = getNameFromToken(token);
+					final String rol = getRoleFromToken(token);
+					final Person newPerson = personServices.initPerson(login, name, rol);
 					return authenticationManager.login(new UsernameAuthenticationToken(login)).get();
 				});
 		final Person person = personServices.getPersonById(Long.valueOf(loggedAccount.getId()));
@@ -159,6 +164,16 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 		person.chatbots().load();
 		person.chatbots().get().stream()
 				.forEach(chatbot -> userAuthorizations.withSecurityKeys("botId", chatbot.getBotId()));
+	}
+
+	private String getRoleFromToken(IDToken token) {
+		List<?> groups = (List<?>) token.getOtherClaims().get("groups");
+		return (String) groups.get(0);
+	}
+
+	private String getNameFromToken(IDToken token) {
+		final String name = token.getName() != null ? token.getName() : "";
+		return name;
 	}
 
 	@Override
