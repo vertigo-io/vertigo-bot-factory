@@ -62,22 +62,6 @@
 				}
 			}
 			
-			function deleteConfirm() {
-				VUiPage.$q.dialog({
-			        title: 'Confirm',
-			        message: 'Do you want to delete this Small Talk ?',
-					ok: {
-						label: "Delete",
-						color: "red"
-					},
-					cancel: {
-						label: "Cancel"
-					}
-			    }).onOk(() => {
-			    	VUiPage.$refs.deleteBtn.$el.click();
-			    })
-			}
-			
 		</script>
 	</head>
 	
@@ -87,11 +71,10 @@
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" ariaLabel="Edit" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="${model.modeReadOnly}" @click="deleteConfirm()" aria-label="Delete" title="Delete" icon="delete"
+			<q-btn th:if="${model.modeReadOnly}" @click="componentStates.showPopup = true" aria-label="Delete" title="Delete" icon="delete"
 							class="on-left" round size="lg" color="red" ></q-btn>
-			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_delete}" label="Delete" class="hidden" ref="deleteBtn"/>
 		</section>
-		
+				
 		<section layout:fragment="content-nav">
 			<q-item tag="a" href="#detail">Informations</q-item>
 			<q-item tag="a" href="#training">Training phrases</q-item>
@@ -101,6 +84,8 @@
 		
 		<section layout:fragment="content">
 			
+			<vu:popup object="smallTalk" action="_delete" vModel="showPopup"></vu:popup>
+
 			<vu:block id="detail" title="Informations">
 				<vu:text-field object="smallTalk" field="title" />
 				

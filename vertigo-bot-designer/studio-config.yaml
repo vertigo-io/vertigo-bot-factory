@@ -1,6 +1,7 @@
 resources: 
   - { type: kpr, path: ../vertigo-bot-commons/src/main/resources/io/vertigo/chatbot/commons/gen.kpr}
   - { type: kpr, path: src/main/resources/io/vertigo/chatbot/designer/gen.kpr}
+  - { type: kpr, path: src/main/resources/io/vertigo/chatbot/designer/builder/builder.kpr}
   - { type: security , path: src/main/resources/io/vertigo/chatbot/designer/authorizations/auth-config.json}
 mdaConfig:
   projectPackageName: io.vertigo.chatbot

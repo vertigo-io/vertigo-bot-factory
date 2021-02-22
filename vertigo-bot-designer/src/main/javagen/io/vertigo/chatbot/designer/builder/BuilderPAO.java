@@ -59,6 +59,50 @@ public final class BuilderPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkGetAllReponseTypeIdsByBotId.
+	 * @param botId Long
+	 * @return List de Long filIds
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetAllReponseTypeIdsByBotId",
+			request = "select rty.rty_id" + 
+ "			from response_type rty" + 
+ "			join small_talk smt on (smt.rty_id = rty.rty_id)" + 
+ "			where smt.bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyId")
+	public java.util.List<Long> getAllReponseTypeIdsByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkGetAllReponseTypeIdsByBotId")
+				.addValue("botId", botId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
+	 * Execute la tache TkGetAllTrainingFilIdsByBotId.
+	 * @param botId Long
+	 * @return List de Long filIds
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetAllTrainingFilIdsByBotId",
+			request = "select mdi.fil_id" + 
+ "            from media_file_info mdi" + 
+ "            join training tr on (mdi.fil_id = tr.fil_id_model)" + 
+ "            where tr.bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyId")
+	public java.util.List<Long> getAllTrainingFilIdsByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkGetAllTrainingFilIdsByBotId")
+				.addValue("botId", botId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkGetNextModelNumber.
 	 * @param botId Long
 	 * @return Long nextModelNumber
@@ -113,6 +157,72 @@ public final class BuilderPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkRemoveAllNluTrainingSentenceByBotId.
+	 * @param botId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveAllNluTrainingSentenceByBotId",
+			request = "delete from nlu_training_sentence nts" + 
+ "			using small_talk smt" + 
+ "			where nts.smt_id = smt.smt_id and smt.bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeAllNluTrainingSentenceByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkRemoveAllNluTrainingSentenceByBotId")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkRemoveAllReponseTypeByRtyIds.
+	 * @param rtyIds List de Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveAllReponseTypeByRtyIds",
+			request = "delete from response_type rty" + 
+ "			where rty.rty_id in (#rtyIds.rownum#)",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeAllReponseTypeByRtyIds(@io.vertigo.datamodel.task.proxy.TaskInput(name = "rtyIds", smartType = "STyId") final java.util.List<Long> rtyIds) {
+		final Task task = createTaskBuilder("TkRemoveAllReponseTypeByRtyIds")
+				.addValue("rtyIds", rtyIds)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkRemoveAllSmallTalkByBotId.
+	 * @param botId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveAllSmallTalkByBotId",
+			request = "delete from small_talk smt" + 
+ "			where smt.bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeAllSmallTalkByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkRemoveAllSmallTalkByBotId")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkRemoveAllUtterTextByBotId.
+	 * @param botId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveAllUtterTextByBotId",
+			request = "delete from utter_text utx" + 
+ "			using small_talk smt" + 
+ "			where smt.smt_id = utx.smt_id and smt.bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeAllUtterTextByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkRemoveAllUtterTextByBotId")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
 	 * Execute la tache TkRemoveAllUtterTextBySmtId.
 	 * @param smtId Long
 	*/
@@ -124,6 +234,54 @@ public final class BuilderPAO implements StoreServices {
 	public void removeAllUtterTextBySmtId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "smtId", smartType = "STyId") final Long smtId) {
 		final Task task = createTaskBuilder("TkRemoveAllUtterTextBySmtId")
 				.addValue("smtId", smtId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkRemoveChatbotNodeByBotId.
+	 * @param botId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveChatbotNodeByBotId",
+			request = "delete from chatbot_node" + 
+ "			where bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeChatbotNodeByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyNumber") final Long botId) {
+		final Task task = createTaskBuilder("TkRemoveChatbotNodeByBotId")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkRemoveTrainingByBotId.
+	 * @param botId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveTrainingByBotId",
+			request = "delete from training" + 
+ "			where bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeTrainingByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyNumber") final Long botId) {
+		final Task task = createTaskBuilder("TkRemoveTrainingByBotId")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkRemoveTrainingFileByFilIds.
+	 * @param filIds List de Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveTrainingFileByFilIds",
+			request = "delete from media_file_info mfi" + 
+ "			where mfi.fil_id in (#filIds.rownum#)",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeTrainingFileByFilIds(@io.vertigo.datamodel.task.proxy.TaskInput(name = "filIds", smartType = "STyId") final java.util.List<Long> filIds) {
+		final Task task = createTaskBuilder("TkRemoveTrainingFileByFilIds")
+				.addValue("filIds", filIds)
 				.build();
 		getTaskManager().execute(task);
 	}

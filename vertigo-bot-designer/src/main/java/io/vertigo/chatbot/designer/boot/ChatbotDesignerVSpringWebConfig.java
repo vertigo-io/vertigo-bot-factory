@@ -17,6 +17,10 @@
  */
 package io.vertigo.chatbot.designer.boot;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.context.annotation.ComponentScan;
 
 import io.vertigo.core.node.Node;
@@ -32,6 +36,15 @@ import io.vertigo.ui.impl.springmvc.config.VSpringWebConfig;
 })
 public class ChatbotDesignerVSpringWebConfig extends VSpringWebConfig {
 	// nothing basic config is enough
+
+	private static final String[] CUSTOM_UI_COMPONENTS_NAME = {
+			"chatbotDesigner/popup",
+	};
+
+	@Override
+	protected Set<String> getCustomComponentNames() {
+		return new HashSet<String>(Arrays.asList(CUSTOM_UI_COMPONENTS_NAME));
+	}
 
 	@Override
 	protected boolean isDevMode() {

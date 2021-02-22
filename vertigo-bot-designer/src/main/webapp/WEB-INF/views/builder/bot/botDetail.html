@@ -33,6 +33,7 @@
 			    	VUiPage.httpPostAjax('_deleteNode', {'nodId': vueData.nodeEdit.nodId}, {onSuccess: VUiPage.$refs.nodeEdit.hide})
 			    })
 			}
+			
 		</script>
 	</head>
 	
@@ -47,9 +48,15 @@
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly && #arrays.contains(model.chatBotAuthorizedOperations, 'write') }" action="@{_edit}" ariaLabel="Edit" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
+			<q-btn th:if="${model.modeReadOnly && #arrays.contains(model.chatBotAuthorizedOperations, 'write') }" @click="componentStates.showPopup = true" ariaLabel="Delete" icon="delete"
+							class="on-left" round size="lg" color="red" > </q-btn>
 		</section>
 		
+		
+		
 		<section layout:fragment="content">
+			
+			<vu:popup object="chatbot" action="_delete" vModel="showPopup"></vu:popup>
 			
 			<vu:block id="identity" title="Bot identity">
 				<vu:text-field object="bot" field="name" th:if="${viewMode=='edit'}"/>
@@ -100,7 +107,6 @@
 				</c-buttonlist>
 			</vu:block>
 			
-			<!--/* "delete vueData.nodeEdit.__index" ne sera plus nécessaire avec Vertigo 3.0 */-->
 			
 			<vu:include-data object="nodeNew" field="name" />
 			<vu:include-data object="nodeNew" field="url" />
@@ -108,10 +114,10 @@
 			<vu:include-data object="nodeNew" field="isDev" />
 			
 			<vu:table th:if="${model.modeReadOnly}" id="nodes" list="nodeList" title="Nodes" componentId="nodeList" rowsPerPage="10" autoColClass
-					  tr_@click.native="|vueData.nodeEdit = Vue.util.extend({},props.row); delete vueData.nodeEdit.__index; $refs.nodeEdit.show()|" tr_class="nav">
+					  tr_@click.native="|vueData.nodeEdit = Vue.util.extend({},props.row); $refs.nodeEdit.show()|" tr_class="nav">
 				<vu:slot name="top_right_slot">
 					<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" 
-					       @click="vueData.nodeEdit = Vue.util.extend({}, vueData.nodeNew); delete vueData.nodeEdit.__index; $refs.nodeEdit.show()"></q-btn>
+					       @click="vueData.nodeEdit = Vue.util.extend({}, vueData.nodeNew); $refs.nodeEdit.show()"></q-btn>
 				</vu:slot>
 				
 				<vu:include-data object="nodeList" field="nodId" />
