@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+	<!-- Création de la BDD -->
+	<changeSet author="vbaillet" id="init">
+		<sqlFile encoding="utf8" path="/sql/initBase/crebas.sql" />
+		<sqlFile encoding="utf8" path="/sql/initBase/init_masterdata_person_role.sql" />
+		<sqlFile encoding="utf8" path="/sql/initBase/init_masterdata_response_type.sql" />
+		<sqlFile encoding="utf8" path="/sql/initBase/init_database.sql" />
+		<sqlFile encoding="utf8" path="/sql/initBase/init_person.sql" />
+	</changeSet>
+</databaseChangeLog>	
