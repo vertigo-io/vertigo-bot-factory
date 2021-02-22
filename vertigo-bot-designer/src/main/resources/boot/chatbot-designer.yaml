@@ -64,6 +64,9 @@ modules:
           collections: VViewContext;TTL=43200
           dbFilePath: ${java.io.tmpdir}/vertigo-ui/VViewContext
   io.vertigo.datafactory.DataFactoryFeatures:
+  io.vertigo.connectors.keycloak.KeycloakFeatures:
+    features:
+      - deployment:
   io.vertigo.account.AccountFeatures:
     features:
       - security:
@@ -82,7 +85,7 @@ modules:
        - authentication.store:
           userCredentialEntity: DtPerson
           userLoginField: login
-          userPasswordField: password
+          userPasswordField: notused
           userTokenIdField: login
   io.vertigo.vega.VegaFeatures:
     features:

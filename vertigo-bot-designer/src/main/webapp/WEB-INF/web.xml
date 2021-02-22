@@ -94,6 +94,12 @@
 			<param-name>url-no-authentification</param-name>
 			<param-value>/login;/login/*</param-value>
 		</init-param>
+		
+		<init-param>
+			<param-name>delegate-authentication-handler-component</param-name>
+			<param-value>loginServices</param-value>
+		</init-param>
+		
 		<init-param>
 			<param-name>url-exclude-pattern</param-name>
 			<param-value>/;/vertigo-ui/static/*;/static/*;/api/*</param-value>

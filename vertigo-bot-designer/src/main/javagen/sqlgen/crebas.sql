@@ -231,7 +231,6 @@ create table PERSON
     PER_ID      	 NUMERIC     	not null,
     LOGIN       	 VARCHAR(100)	not null,
     NAME        	 VARCHAR(100)	not null,
-    PASSWORD    	 VARCHAR(100)	not null,
     GRP_ID      	 NUMERIC     	,
     ROL_CD      	 VARCHAR(100)	not null,
     constraint PK_PERSON primary key (PER_ID)
@@ -245,9 +244,6 @@ comment on column PERSON.LOGIN is
 
 comment on column PERSON.NAME is
 'Name';
-
-comment on column PERSON.PASSWORD is
-'Password';
 
 comment on column PERSON.GRP_ID is
 'Group';
