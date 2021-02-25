@@ -41,19 +41,15 @@ import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
-import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot")
-public class BotDetailController extends AbstractVSpringMvcController {
+public class BotDetailController extends AbstractCommonBotController {
 
 	@Inject
 	private DesignerServices designerServices;
-
-	@Inject
-	private CommonBotDetailController commonBotDetailController;
 
 	@Inject
 	private ChatbotServicesImpl chatbotServices;
@@ -72,7 +68,7 @@ public class BotDetailController extends AbstractVSpringMvcController {
 
 	@GetMapping("/{botId}")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = commonBotDetailController.initCommonContext(viewContext, botId);
+		final Chatbot bot = initCommonContext(viewContext, botId);
 
 		viewContext.publishDto(defaultKey, designerServices.getDefaultTextByBot(bot));
 		viewContext.publishDto(welcomeKey, designerServices.getWelcomeTextByBot(bot));
@@ -100,7 +96,7 @@ public class BotDetailController extends AbstractVSpringMvcController {
 
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext) {
-		commonBotDetailController.initEmptyCommonContext(viewContext);
+		initEmptyCommonContext(viewContext);
 
 		final UtterText newDefault = new UtterText();
 		newDefault.setText("Sorry, I don't understand.");

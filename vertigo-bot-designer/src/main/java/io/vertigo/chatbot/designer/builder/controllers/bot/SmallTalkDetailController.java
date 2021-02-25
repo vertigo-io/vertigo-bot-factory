@@ -40,12 +40,11 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
-import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot/{botId}/smallTalk")
-public class SmallTalkDetailController extends AbstractVSpringMvcController {
+public class SmallTalkDetailController extends AbstractCommonBotController {
 
 	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalk");
 
@@ -65,13 +64,11 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	@Inject
 	private DesignerServices designerServices;
 
-	@Inject
-	private CommonBotDetailController commonBotDetailController;
-
 	@GetMapping("/{intId}")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId,
 			@PathVariable("intId") final Long intId) {
 		initCommonContext(viewContext, botId);
+		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); // all
 
 		final SmallTalk smallTalk = designerServices.getSmallTalkById(intId);
 
@@ -98,6 +95,7 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		initCommonContext(viewContext, botId);
+		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); // all
 
 		viewContext.publishDto(smallTalkKey, designerServices.getNewSmallTalk(botId));
 
@@ -115,11 +113,6 @@ public class SmallTalkDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDtList(smallTalkListKey, designerServices.getAllSmallTalksByBotId(botId));
 
 		toModeCreate();
-	}
-
-	private void initCommonContext(final ViewContext viewContext, final Long botId) {
-		commonBotDetailController.initCommonContext(viewContext, botId);
-		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); // all
 	}
 
 	@PostMapping("/_edit")

@@ -41,11 +41,10 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
-import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 
 @Controller
 @RequestMapping("/bot/{botId}/models")
-public class ModelListController extends AbstractVSpringMvcController {
+public class ModelListController extends AbstractCommonBotController {
 
 	private static final ViewContextKey<RunnerInfo> runnerStateKey = ViewContextKey.of("runnerState");
 	private static final ViewContextKey<TrainerInfo> trainerStateKey = ViewContextKey.of("trainerState");
@@ -62,12 +61,9 @@ public class ModelListController extends AbstractVSpringMvcController {
 	@Inject
 	private TrainingServices trainingServices;
 
-	@Inject
-	private CommonBotDetailController commonBotDetailController;
-
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = commonBotDetailController.initCommonContext(viewContext, botId);
+		final Chatbot bot = initCommonContext(viewContext, botId);
 
 		viewContext.publishRef(autoscrollKey, Boolean.TRUE);
 

@@ -23,26 +23,34 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
 		/** Objet de données ChatbotNode. */
 		ChatbotNode(io.vertigo.chatbot.commons.domain.ChatbotNode.class),
+		/** Objet de données ChatbotProfiles. */
+		ChatbotProfiles(io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données ExecutorTrainingCallback. */
 		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
 		/** Objet de données Groups. */
-		Groups(io.vertigo.chatbot.commons.domain.Groups.class),
+		Groups(io.vertigo.chatbot.designer.domain.commons.Groups.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données NluTrainingSentence. */
 		NluTrainingSentence(io.vertigo.chatbot.commons.domain.NluTrainingSentence.class),
 		/** Objet de données Person. */
-		Person(io.vertigo.chatbot.commons.domain.Person.class),
+		Person(io.vertigo.chatbot.designer.domain.commons.Person.class),
+		/** Objet de données PersonChatbotProfil. */
+		PersonChatbotProfil(io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil.class),
 		/** Objet de données PersonRole. */
-		PersonRole(io.vertigo.chatbot.commons.domain.PersonRole.class),
+		PersonRole(io.vertigo.chatbot.designer.domain.commons.PersonRole.class),
+		/** Objet de données ProfilPerChatbot. */
+		ProfilPerChatbot(io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot.class),
 		/** Objet de données ResponseButton. */
 		ResponseButton(io.vertigo.chatbot.commons.domain.ResponseButton.class),
 		/** Objet de données ResponseType. */
 		ResponseType(io.vertigo.chatbot.commons.domain.ResponseType.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
+		/** Objet de données SelectProfilChatbotPerson. */
+		SelectProfilChatbotPerson(io.vertigo.chatbot.designer.domain.admin.SelectProfilChatbotPerson.class),
 		/** Objet de données SentenseDetail. */
 		SentenseDetail(io.vertigo.chatbot.designer.domain.SentenseDetail.class),
 		/** Objet de données SmallTalk. */
@@ -133,6 +141,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		traId	}
 
 	/**
+	 * Enumération des champs de ChatbotProfiles.
+	 */
+	public enum ChatbotProfilesFields implements DtFieldName<io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles> {
+		/** Propriété 'ID'. */
+		chpCd,
+		/** Propriété 'Title'. */
+		label,
+		/** Propriété 'Order'. */
+		sortOrder	}
+
+	/**
 	 * Enumération des champs de ExecutorConfiguration.
 	 */
 	public enum ExecutorConfigurationFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ExecutorConfiguration> {
@@ -167,7 +186,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de Groups.
 	 */
-	public enum GroupsFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Groups> {
+	public enum GroupsFields implements DtFieldName<io.vertigo.chatbot.designer.domain.commons.Groups> {
 		/** Propriété 'Id'. */
 		grpId,
 		/** Propriété 'Name'. */
@@ -206,7 +225,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de Person.
 	 */
-	public enum PersonFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Person> {
+	public enum PersonFields implements DtFieldName<io.vertigo.chatbot.designer.domain.commons.Person> {
 		/** Propriété 'Id'. */
 		perId,
 		/** Propriété 'Login'. */
@@ -219,15 +238,41 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		rolCd	}
 
 	/**
+	 * Enumération des champs de PersonChatbotProfil.
+	 */
+	public enum PersonChatbotProfilFields implements DtFieldName<io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil> {
+		/** Propriété 'Chatbot selection'. */
+		botId,
+		/** Propriété 'ProfilPerPerson id'. */
+		chpId,
+		/** Propriété 'Person name'. */
+		name,
+		/** Propriété 'Profil label'. */
+		profilLabel	}
+
+	/**
 	 * Enumération des champs de PersonRole.
 	 */
-	public enum PersonRoleFields implements DtFieldName<io.vertigo.chatbot.commons.domain.PersonRole> {
+	public enum PersonRoleFields implements DtFieldName<io.vertigo.chatbot.designer.domain.commons.PersonRole> {
 		/** Propriété 'Code'. */
 		rolCd,
 		/** Propriété 'Label'. */
 		label,
 		/** Propriété 'Order'. */
 		sortOrder	}
+
+	/**
+	 * Enumération des champs de ProfilPerChatbot.
+	 */
+	public enum ProfilPerChatbotFields implements DtFieldName<io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot> {
+		/** Propriété 'ID'. */
+		chpId,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Person'. */
+		perId,
+		/** Propriété 'Profil pour un chatbot'. */
+		chpCd	}
 
 	/**
 	 * Enumération des champs de ResponseButton.
@@ -269,6 +314,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		agentVersion,
 		/** Propriété 'Model version'. */
 		loadedModelVersion	}
+
+	/**
+	 * Enumération des champs de SelectProfilChatbotPerson.
+	 */
+	public enum SelectProfilChatbotPersonFields implements DtFieldName<io.vertigo.chatbot.designer.domain.admin.SelectProfilChatbotPerson> {
+		/** Propriété 'Person id'. */
+		perId,
+		/** Propriété 'Profil cd'. */
+		prfId	}
 
 	/**
 	 * Enumération des champs de SentenseDetail.

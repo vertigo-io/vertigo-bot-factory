@@ -78,7 +78,7 @@ public final class Chatbot implements KeyConcept {
 			roleB = "Chatbots",
 			labelA = "Persons",
 			labelB = "Chatbots")
-	private final StoreListVAccessor<io.vertigo.chatbot.commons.domain.Person> personsAccessor = new StoreListVAccessor<>(this, "AnnChatbotPerson", "Persons");
+	private final StoreListVAccessor<io.vertigo.chatbot.designer.domain.commons.Person> personsAccessor = new StoreListVAccessor<>(this, "AnnChatbotPerson", "Persons");
 
 	/** {@inheritDoc} */
 	@Override
@@ -266,7 +266,7 @@ public final class Chatbot implements KeyConcept {
 	 * Association : Persons.
 	 * @return l'accesseur vers la propriété 'Persons'
 	 */
-	public StoreListVAccessor<io.vertigo.chatbot.commons.domain.Person> persons() {
+	public StoreListVAccessor<io.vertigo.chatbot.designer.domain.commons.Person> persons() {
 		return personsAccessor;
 	}
 	

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/botDetailLayout}" th:with="tab=users, nav=false"
+	>
+<head>
+<title>Users profil for chatbot</title>
+</head>
+<body>
+	<section layout:fragment="content">
+		
+		<vu:include-data object="personProfilList" field="chpId"/>
+		<vu:table list="personProfilList" rowKey="chpId" componentId="personsProfilList" tr_style="cursor : pointer;"
+				  sortBy="name" :binary-state-sort="true" >
+  				<vu:slot name="actions_slot">
+					<q-btn class="on-right" round color="red" icon="delete" aria-label="Delete this profil" title="Delete this profil"
+							 @click="httpPostAjax('_delete',{rowId:props.row.chpId})"></q-btn>
+				</vu:slot>
+				<vu:column field="name" label="name">
+					<span style="height:100%" class="row items-center">{{props.row.name}}</span>
+				</vu:column>
+				<vu:column field="profilLabel" label="profil">
+					<span style="height:100%" class="row items-center">{{props.row.profilLabel}}</span>
+				</vu:column>
+		</vu:table>
+
+		<vu:include-data object="personList" field="perId"/>
+		<vu:include-data object="personList" field="name"/>
+		<vu:include-data object="chatbotProfilesList" field="chpCd"/>
+		<vu:include-data object="chatbotProfilesList" field="label"/>
+		<vu:include-data object="selectionList" field="prfId"/>
+		<vu:include-data object="selectionList" field="perId"/>
+		
+		<q-select 
+			filled
+			v-model="vueData.selectionList.perId"
+			multiple
+			map-options
+			emit-value
+			:options="transformListForSelection('personList', 'perId', 'name')"
+			use-chips
+			label="Users list">
+		</q-select>
+		
+
+		<q-select
+			filled
+			map-options
+			emit-value
+			v-model="vueData.selectionList.prfId"
+			:options="transformListForSelection('chatbotProfilesList', 'chpCd', 'label')"
+			use-chips
+			label="Profil list">
+		</q-select>
+		
+		<input type="hidden" name="vContext[selectionList][prfId]" :value="vueData.selectionList.prfId" />
+		<input v-for="id in vueData.selectionList.perId" type="hidden" name="vContext[selectionList][perId]" :value="id" />
+		
+		<q-page-sticky position="bottom-right">
+			<vu:button-submit title="Add" label="Add" aria-label="Add" action="@{_addUsers}" />
+		</q-page-sticky>
+	</section>
+</body>
+</html>

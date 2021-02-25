@@ -1,5 +1,6 @@
 mda/modele.ksp
 mda/person.ksp
+mda/chatbot/chatbotModel.ksp
 
 builder/designer_task.ksp
 builder/training_task.ksp

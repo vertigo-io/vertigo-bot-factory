@@ -24,10 +24,12 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import io.vertigo.chatbot.commons.dao.PersonDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.Person;
 import io.vertigo.chatbot.designer.admin.person.PersonPAO;
+import io.vertigo.chatbot.designer.dao.commons.PersonDAO;
+import io.vertigo.chatbot.designer.domain.commons.Person;
+import io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum;
+import io.vertigo.chatbot.domain.DtDefinitions.PersonFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
@@ -52,6 +54,15 @@ public class PersonServices implements Component {
 
 	public DtList<Person> getAllPersons() {
 		return personDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
+	}
+
+	/**
+	 * Get all persons with the user profil
+	 * 
+	 * @return the list of users
+	 */
+	public DtList<Person> getAllUsers() {
+		return personDAO.findAll(Criterions.isEqualTo(PersonFields.rolCd, PersonRoleEnum.RUser.name()), DtListState.of(100));
 	}
 
 	public Person getPersonById(final Long perId) {

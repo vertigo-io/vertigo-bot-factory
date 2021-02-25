@@ -1,5 +1,4 @@
-package io.vertigo.chatbot.commons.domain 
-
+package io.vertigo.chatbot.designer.domain.commons
 
 /*********************/
 /* **** Comptes **** */

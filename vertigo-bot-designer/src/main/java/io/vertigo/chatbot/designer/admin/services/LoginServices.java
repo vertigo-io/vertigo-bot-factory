@@ -43,9 +43,9 @@ import io.vertigo.account.impl.authentication.UsernamePasswordAuthenticationToke
 import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotAuthorizations;
-import io.vertigo.chatbot.commons.domain.Person;
-import io.vertigo.chatbot.commons.domain.PersonRoleEnum;
 import io.vertigo.chatbot.designer.commons.DesignerUserSession;
+import io.vertigo.chatbot.designer.domain.commons.Person;
+import io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.connectors.keycloak.KeycloakDeploymentConnector;
 import io.vertigo.core.lang.Assertion;
