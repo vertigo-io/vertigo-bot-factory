@@ -43,7 +43,10 @@ import io.vertigo.account.impl.authentication.UsernamePasswordAuthenticationToke
 import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotAuthorizations;
+import io.vertigo.chatbot.designer.admin.services.bot.ChatbotProfilServices;
 import io.vertigo.chatbot.designer.commons.DesignerUserSession;
+import io.vertigo.chatbot.designer.domain.admin.ChatbotProfilesEnum;
+import io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum;
 import io.vertigo.commons.transaction.Transactional;
@@ -71,7 +74,10 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 	private List<KeycloakDeploymentConnector> keycloakDeploymentConnectors;
 	@Inject
 	private PersonServices personServices;
+	@Inject
+	private ChatbotProfilServices chatbotProfilServices;
 
+	//don't use anymore
 	public void login(final String login, final String password) {
 		final Optional<Account> loggedAccount = authenticationManager.login(new UsernamePasswordAuthenticationToken(login, password));
 		if (!loggedAccount.isPresent()) {
@@ -85,16 +91,15 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 		obtainAuthorizationPerRole(person.getRolCd()).stream()
 				.forEach(auth -> userAuthorizations.addAuthorization(auth));
 
-		person.chatbots().load();
-		person.chatbots().get().stream()
-				.forEach(chatbot -> userAuthorizations.withSecurityKeys("botId", chatbot.getBotId()));
+		this.chatbotProfilServices.getProfilByPerId(person.getPerId()).stream().forEach(chatbot -> userAuthorizations.withSecurityKeys("botId", chatbot.getBotId()));
 	}
 
 	private List<Authorization> obtainAuthorizationPerRole(final String role) {
 		if (PersonRoleEnum.RAdmin.name().equals(role)) {
 			return resolveAuthorizations(GlobalAuthorizations.AtzAdmPer, GlobalAuthorizations.AtzSuperAdmBot, GlobalAuthorizations.AtzAdmBot, ChatbotAuthorizations.AtzChatbot$admin);
 		} else if (PersonRoleEnum.RUser.name().equals(role)) {
-			return resolveAuthorizations(GlobalAuthorizations.AtzAdmBot, ChatbotAuthorizations.AtzChatbot$read, ChatbotAuthorizations.AtzChatbot$write);
+			return resolveAuthorizations(GlobalAuthorizations.AtzAdmBot, ChatbotAuthorizations.AtzChatbot$read, ChatbotAuthorizations.AtzChatbot$write, ChatbotAuthorizations.AtzChatbot$visiteur,
+					ChatbotAuthorizations.AtzChatbot$contributeur, ChatbotAuthorizations.AtzChatbot$admFct);
 		}
 		throw new IllegalArgumentException("Unsupported role " + role);
 	}
@@ -161,9 +166,20 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 		obtainAuthorizationPerRole(person.getRolCd()).stream()
 				.forEach(auth -> userAuthorizations.addAuthorization(auth));
 
-		person.chatbots().load();
-		person.chatbots().get().stream()
-				.forEach(chatbot -> userAuthorizations.withSecurityKeys("botId", chatbot.getBotId()));
+		this.chatbotProfilServices.getProfilByPerId(person.getPerId()).stream().forEach(profil -> addAuthorizationByChatbotProfil(userAuthorizations, profil));
+	}
+
+	private void addAuthorizationByChatbotProfil(UserAuthorizations userAuthorizations, ProfilPerChatbot profil) {
+		userAuthorizations.withSecurityKeys("botId", profil.getBotId());
+		if (profil.getChpCd().equals(ChatbotProfilesEnum.VISITEUR.name())) {
+			userAuthorizations.withSecurityKeys("botVisiteur", profil.getBotId());
+		}
+		if (profil.getChpCd().equals(ChatbotProfilesEnum.CONTRIBUTEUR.name())) {
+			userAuthorizations.withSecurityKeys("botContributeur", profil.getBotId());
+		}
+		if (profil.getChpCd().equals(ChatbotProfilesEnum.ADMINISTRATEUR.name())) {
+			userAuthorizations.withSecurityKeys("botAdmFct", profil.getBotId());
+		}
 	}
 
 	private String getRoleFromToken(IDToken token) {

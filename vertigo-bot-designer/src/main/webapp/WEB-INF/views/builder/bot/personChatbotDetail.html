@@ -11,10 +11,49 @@
 <body>
 	<section layout:fragment="content">
 		
+		<!-- Add users -->
+		<th:block th:if="${#arrays.contains(model.chatBotAuthorizedOperations, 'admFct') }">
+		<vu:include-data object="personList" field="perId"/>
+		<vu:include-data object="personList" field="name"/>
+		<vu:include-data object="chatbotProfilesList" field="chpCd"/>
+		<vu:include-data object="chatbotProfilesList" field="label"/>
+		<vu:include-data object="selectionList" field="prfId"/>
+		<vu:include-data object="selectionList" field="perId"/>
+		<vu:block id="add users" title="Add profil" >
+		<q-select 
+			filled
+			v-model="vueData.selectionList.perId"
+			multiple
+			map-options
+			emit-value
+			:options="transformListForSelection('personList', 'perId', 'name')"
+			use-chips
+			label="Users list"
+			stack-label>
+		</q-select>
+		</br>
+		<q-select
+			filled
+			map-options
+			emit-value
+			v-model="vueData.selectionList.prfId"
+			:options="transformListForSelection('chatbotProfilesList', 'chpCd', 'label')"
+			use-chips
+			label="Profil list"
+			stack-label>
+		</q-select>
+		<input type="hidden" name="vContext[selectionList][prfId]" :value="vueData.selectionList.prfId" />
+		<input v-for="id in vueData.selectionList.perId" type="hidden" name="vContext[selectionList][perId]" :value="id" />
+		<q-card-actions align="right">
+		<vu:button-submit title="Add" label="Add" aria-label="Add" action="@{_addUsers}" class="on-left" color="primary"/>
+		</q-card-actions>
+		</vu:block>
+		</th:block>
+		<!--  users list -->
 		<vu:include-data object="personProfilList" field="chpId"/>
 		<vu:table list="personProfilList" rowKey="chpId" componentId="personsProfilList" tr_style="cursor : pointer;"
 				  sortBy="name" :binary-state-sort="true" >
-  				<vu:slot name="actions_slot">
+  				<vu:slot name="actions_slot" th:if="${#arrays.contains(model.chatBotAuthorizedOperations, 'admFct') }">
 					<q-btn class="on-right" round color="red" icon="delete" aria-label="Delete this profil" title="Delete this profil"
 							 @click="httpPostAjax('_delete',{rowId:props.row.chpId})"></q-btn>
 				</vu:slot>
@@ -26,41 +65,7 @@
 				</vu:column>
 		</vu:table>
 
-		<vu:include-data object="personList" field="perId"/>
-		<vu:include-data object="personList" field="name"/>
-		<vu:include-data object="chatbotProfilesList" field="chpCd"/>
-		<vu:include-data object="chatbotProfilesList" field="label"/>
-		<vu:include-data object="selectionList" field="prfId"/>
-		<vu:include-data object="selectionList" field="perId"/>
-		
-		<q-select 
-			filled
-			v-model="vueData.selectionList.perId"
-			multiple
-			map-options
-			emit-value
-			:options="transformListForSelection('personList', 'perId', 'name')"
-			use-chips
-			label="Users list">
-		</q-select>
-		
 
-		<q-select
-			filled
-			map-options
-			emit-value
-			v-model="vueData.selectionList.prfId"
-			:options="transformListForSelection('chatbotProfilesList', 'chpCd', 'label')"
-			use-chips
-			label="Profil list">
-		</q-select>
-		
-		<input type="hidden" name="vContext[selectionList][prfId]" :value="vueData.selectionList.prfId" />
-		<input v-for="id in vueData.selectionList.perId" type="hidden" name="vContext[selectionList][perId]" :value="id" />
-		
-		<q-page-sticky position="bottom-right">
-			<vu:button-submit title="Add" label="Add" aria-label="Add" action="@{_addUsers}" />
-		</q-page-sticky>
 	</section>
 </body>
 </html>

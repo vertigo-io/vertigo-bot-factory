@@ -46,9 +46,9 @@
 		<section layout:fragment="content-header-actions">
 			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}(id=${model.bot.botId})}" ariaLabel="Cancel" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
-			<vu:button-submit th:if="${model.modeReadOnly && #arrays.contains(model.chatBotAuthorizedOperations, 'write') }" action="@{_edit}" ariaLabel="Edit" icon="edit"
+			<vu:button-submit th:if="${model.modeReadOnly && #arrays.contains(model.chatBotAuthorizedOperations, 'admFct') }" action="@{_edit}" ariaLabel="Edit" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="${model.modeReadOnly && #arrays.contains(model.chatBotAuthorizedOperations, 'write') }" @click="componentStates.showPopup = true" ariaLabel="Delete" icon="delete"
+			<q-btn th:if="${model.modeReadOnly && #arrays.contains(model.chatBotAuthorizedOperations, 'admFct') }" @click="componentStates.showPopup = true" ariaLabel="Delete" icon="delete"
 							class="on-left" round size="lg" color="red" > </q-btn>
 		</section>
 		
@@ -113,7 +113,7 @@
 			<vu:include-data object="nodeNew" field="color" />
 			<vu:include-data object="nodeNew" field="isDev" />
 			
-			<vu:table th:if="${model.modeReadOnly}" id="nodes" list="nodeList" title="Nodes" componentId="nodeList" rowsPerPage="10" autoColClass
+			<vu:table th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdmBot]}" id="nodes" list="nodeList" title="Nodes" componentId="nodeList" rowsPerPage="10" autoColClass
 					  tr_@click.native="|vueData.nodeEdit = Vue.util.extend({},props.row); $refs.nodeEdit.show()|" tr_class="nav">
 				<vu:slot name="top_right_slot">
 					<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" 

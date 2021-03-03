@@ -28,13 +28,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
-import io.vertigo.chatbot.designer.builder.services.DesignerServices;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -56,10 +57,10 @@ public class ModelListController extends AbstractCommonBotController {
 	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
 
 	@Inject
-	private DesignerServices designerServices;
+	private TrainingServices trainingServices;
 
 	@Inject
-	private TrainingServices trainingServices;
+	private NodeServices nodeServices;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
@@ -75,6 +76,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_refreshRunner")
+	@Secured("contributeur")
 	public ViewContext refreshRunnerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		final RunnerInfo state = trainingServices.getRunnerState(bot.getBotId());
 		viewContext.publishDto(runnerStateKey, state);
@@ -83,6 +85,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_refreshTrainer")
+	@Secured("contributeur")
 	public ViewContext refreshTrainerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		final TrainerInfo state = trainingServices.getTrainingState(bot.getBotId());
 		viewContext.publishDto(trainerStateKey, state);
@@ -91,15 +94,17 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_refreshTrainings")
+	@Secured("contributeur")
 	public ViewContext refreshTrainings(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		viewContext.publishDtList(trainingListKey, trainingServices.getAllTrainings(bot.getBotId()));
 
-		viewContext.publishDtList(nodeListKey, designerServices.getAllNodesByBotId(bot.getBotId()));
+		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
 
 		return viewContext;
 	}
 
 	@PostMapping("/_removeTraining")
+	@Secured("contributeur")
 	public ViewContext doRemoveTraining(final ViewContext viewContext,
 			@RequestParam("traId") final Long traId,
 			@ViewAttribute("bot") final Chatbot bot) {
@@ -112,6 +117,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_train")
+	@Secured("contributeur")
 	public ViewContext doTrain(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		trainingServices.trainAgent(bot.getBotId());
 
@@ -119,6 +125,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_stop")
+	@Secured("contributeur")
 	public ViewContext doStop(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		trainingServices.stopAgent(bot.getBotId());
 
@@ -126,6 +133,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_loadTraining")
+	@Secured("contributeur")
 	public ViewContext doLoadTraining(final ViewContext viewContext,
 			@RequestParam("traId") final Long traId,
 			@RequestParam("nodId") final Long nodId,
@@ -140,6 +148,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_talk")
+	@Secured("contributeur")
 	@ResponseBody
 	public String talk(
 			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList,

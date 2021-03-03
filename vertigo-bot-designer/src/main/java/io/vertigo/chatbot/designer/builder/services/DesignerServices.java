@@ -31,26 +31,20 @@ import io.vertigo.account.authorization.AuthorizationManager;
 import io.vertigo.account.authorization.VSecurityException;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
-import io.vertigo.account.security.VSecurityManager;
-import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
-import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.ResponseButtonDAO;
 import io.vertigo.chatbot.commons.dao.SmallTalkDAO;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
-import io.vertigo.chatbot.designer.commons.DesignerUserSession;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
-import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.ResponseButtonFields;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
@@ -66,7 +60,6 @@ import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
-import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
 
 @Secured("AdmBot")
@@ -92,30 +85,10 @@ public class DesignerServices implements Component {
 	private UtterTextDAO utterTextDAO;
 
 	@Inject
-	private ChatbotNodeDAO chatbotNodeDAO;
-
-	@Inject
 	private BuilderPAO builderPAO;
 
 	@Inject
 	private AuthorizationManager authorizationManager;
-
-	@Inject
-	private VSecurityManager securityManager;
-
-	public DtList<Chatbot> getMySupervisedChatbots() {
-		if (authorizationManager.hasAuthorization(GlobalAuthorizations.AtzSuperAdmBot)) {
-			return getAllChatbots();
-		}
-		final StoreListVAccessor<Chatbot> chatbotLoader = getUserSession().getLoggedPerson().chatbots();
-		chatbotLoader.load();
-		return chatbotLoader.get();
-	}
-
-	@Secured("SuperAdmBot")
-	public DtList<Chatbot> getAllChatbots() {
-		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
-	}
 
 	@Secured("SuperAdmBot")
 	public Chatbot getNewChatbot() {
@@ -159,7 +132,7 @@ public class DesignerServices implements Component {
 		return utterTextDAO.get(bot.getUttIdWelcome());
 	}
 
-	public Chatbot saveChatbot(@SecuredOperation("write") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
+	public Chatbot saveChatbot(@SecuredOperation("admFct") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 			final UtterText defaultText, final DtList<ResponseButton> defaultButtons,
 			final UtterText welcomeText, final DtList<ResponseButton> welcomeButtons) {
 
@@ -409,44 +382,10 @@ public class DesignerServices implements Component {
 				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
-	public DtList<ChatbotNode> getAllNodesByBotId(final Long botId) {
-		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, botId), DtListState.of(100));
-	}
-
-	public Optional<ChatbotNode> getDevNodeByBotId(final Long botId) {
-		return chatbotNodeDAO.findOptional(
-				Criterions.isEqualTo(ChatbotNodeFields.botId, botId)
-						.and(Criterions.isEqualTo(ChatbotNodeFields.isDev, true)));
-	}
-
-	public void saveNode(final ChatbotNode node) {
-		if (node.getNodId() != null) {
-			// enforce previous values
-			final ChatbotNode previousValues = chatbotNodeDAO.get(node.getNodId());
-
-			node.setBotId(previousValues.getBotId());
-			node.setTraId(previousValues.getTraId());
-		}
-
-		if (Boolean.TRUE.equals(node.getIsDev())) {
-			// enforce only one dev node
-			builderPAO.resetDevNode(node.getBotId());
-		}
-
-		chatbotNodeDAO.save(node);
-	}
-
-	public void deleteNode(final Long nodId) {
-		chatbotNodeDAO.delete(nodId);
-	}
-
-	private DesignerUserSession getUserSession() {
-		return securityManager.<DesignerUserSession>getCurrentUserSession().get();
-	}
-
 	private void checkRights(final Chatbot chatbot, final ChatbotOperations chatbotOperation) {
 		if (!authorizationManager.isAuthorized(chatbot, chatbotOperation)) {
 			throw new VSecurityException(MessageText.of("Not enought authorizations"));//no too sharp info here : may use log
 		}
 	}
+
 }

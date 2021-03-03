@@ -62,4 +62,8 @@ public class ChatbotProfilServices implements Component {
 	public void deleteProfilForChatbot(PersonChatbotProfil persToDelete) {
 		this.profilPerChatbotDAO.delete(persToDelete.getChpId());
 	}
+
+	public DtList<ProfilPerChatbot> getProfilByPerId(Long perId) {
+		return this.profilPerChatbotDAO.findAll(Criterions.isEqualTo(ProfilPerChatbotFields.perId, perId), DtListState.of(100));
+	}
 }

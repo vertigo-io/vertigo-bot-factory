@@ -28,14 +28,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
-import io.vertigo.chatbot.designer.builder.chatbot.services.ChatbotServicesImpl;
+import io.vertigo.chatbot.designer.builder.chatbot.services.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
@@ -52,7 +54,10 @@ public class BotDetailController extends AbstractCommonBotController {
 	private DesignerServices designerServices;
 
 	@Inject
-	private ChatbotServicesImpl chatbotServices;
+	private NodeServices nodeServices;
+
+	@Inject
+	private ChatbotServices chatbotServices;
 
 	private static final ViewContextKey<UtterText> defaultKey = ViewContextKey.of("default");
 	private static final ViewContextKey<ResponseButton> defaultButtonsKey = ViewContextKey.of("defaultButtons");
@@ -77,7 +82,7 @@ public class BotDetailController extends AbstractCommonBotController {
 		viewContext.publishDtListModifiable(welcomeButtonsKey, designerServices.getWelcomeButtonsByBot(bot));
 		viewContext.publishDtList(smallTalkKey, designerServices.getAllSmallTalksByBotId(botId));
 
-		viewContext.publishDtList(nodeListKey, designerServices.getAllNodesByBotId(botId));
+		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBotId(botId));
 
 		viewContext.publishRef(deletePopinKey, false);
 		initNodeEdit(viewContext);
@@ -122,12 +127,14 @@ public class BotDetailController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_delete")
+	@Secured("admFct")
 	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		chatbotServices.deleteChatbot(bot);
 		return "redirect:/bots/";
 	}
 
 	@PostMapping("/_save")
+	@Secured("admFct")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
 			@QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile,
@@ -145,14 +152,15 @@ public class BotDetailController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_saveNode")
+	@Secured("admin")
 	public ViewContext doSaveNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("nodeEdit") final ChatbotNode nodeEdit) {
 
 		nodeEdit.setBotId(bot.getBotId());
 
-		designerServices.saveNode(nodeEdit);
+		nodeServices.saveNode(nodeEdit);
 
-		viewContext.publishDtList(nodeListKey, designerServices.getAllNodesByBotId(bot.getBotId()));
+		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
 		viewContext.publishDto(nodeEditKey, new ChatbotNode()); // reset nodeEdit so previous values are not used for
 																// subsequent requests
 
@@ -160,12 +168,13 @@ public class BotDetailController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_deleteNode")
+	@Secured("admin")
 	public ViewContext doDeleteNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@RequestParam("nodId") final Long nodId) {
 
-		designerServices.deleteNode(nodId);
+		nodeServices.deleteNode(nodId);
 
-		viewContext.publishDtList(nodeListKey, designerServices.getAllNodesByBotId(bot.getBotId()));
+		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
 
 		return viewContext;
 	}

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.ResponseButton;
@@ -93,6 +94,7 @@ public class SmallTalkDetailController extends AbstractCommonBotController {
 	}
 
 	@GetMapping("/new")
+	@Secured("admFct")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		initCommonContext(viewContext, botId);
 		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); // all
@@ -116,11 +118,13 @@ public class SmallTalkDetailController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_edit")
+	@Secured("contributeur")
 	public void doEdit() {
 		toModeEdit();
 	}
 
 	@PostMapping("/_save")
+	@Secured("contributeur")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("smallTalk") final SmallTalk smallTalk, @PathVariable("botId") final Long botId,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
@@ -142,12 +146,14 @@ public class SmallTalkDetailController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_delete")
+	@Secured("contributeur")
 	public String doDelete(final ViewContext viewContext, @ViewAttribute("smallTalk") final SmallTalk smallTalk) {
 		designerServices.deleteSmallTalk(smallTalk);
 		return "redirect:/bot/" + smallTalk.getBotId() + "/smallTalks/";
 	}
 
 	@PostMapping("/_addTrainingSentence")
+	@Secured("contributeur")
 	public ViewContext doAddTrainingSentence(final ViewContext viewContext,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentenceIn,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
@@ -181,6 +187,7 @@ public class SmallTalkDetailController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_editTrainingSentence")
+	@Secured("contributeur")
 	public ViewContext doEditTrainingSentence(final ViewContext viewContext, @RequestParam("index") final int index,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
@@ -207,6 +214,7 @@ public class SmallTalkDetailController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_removeTrainingSentence")
+	@Secured("contributeur")
 	public ViewContext doRemoveTrainingSentence(final ViewContext viewContext, @RequestParam("index") final int index,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {

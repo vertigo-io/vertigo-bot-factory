@@ -189,20 +189,6 @@
 		
 		<section layout:fragment="content">
 			
-			<!-- 
-			<vu:block id="run" title="Node state">
-				<vu:slot name="actions_slot">
-					<q-btn class="fab-block" round color="primary" icon="refresh" aria-label="Refresh" title="Refresh" 
-					       @click="refreshRunner" :loading="dataX.loadingRunner"></q-btn>
-				</vu:slot>
-				
-				<vu:text-field-read-reactive object="runnerState" field="name" />
-				<vu:text-field-read-reactive object="runnerState" field="state" label="State" />
-				<vu:text-field-read-reactive object="runnerState" field="agentVersion" />
-				<vu:text-field-read-reactive object="runnerState" field="loadedModelVersion" />
-			</vu:block>
-			 -->
-			 
 			 
 			<vu:block id="train" title="Build new model">
 				<vu:slot name="actions_slot">
@@ -221,7 +207,7 @@
 						stripe rounded style="height: 10px"
 						:value="vueData.trainerState.trainingPercent / 100"></q-linear-progress>
 				
-				<q-card-actions>
+				<q-card-actions th:if="${(#arrays.contains(model.chatBotAuthorizedOperations, 'contributeur') || #arrays.contains(model.chatBotAuthorizedOperations, 'admFct')) }">
 					<vu:include-data object="trainerState" field="trainingInProgress" />
 					
 					<q-btn color="primary" icon="build" size="lg" label="Start build" :loading="vueData.trainerState.trainingInProgress" :disable="getDevNode() == null || vueData.trainerState.trainingInProgress"

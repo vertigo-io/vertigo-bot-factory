@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.admin.services.LoginServices;
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
+import io.vertigo.chatbot.designer.builder.chatbot.services.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.chatbot.designer.domain.commons.PersonRole;
@@ -50,6 +51,8 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 	private DesignerServices designerServices;
 	@Inject
 	private LoginServices loginServices;
+	@Inject
+	private ChatbotServices chatbotServices;
 
 	private static final ViewContextKey<Person> personKey = ViewContextKey.of("person");
 	/** ClÃ© de context du mode changePassword. */
@@ -64,7 +67,7 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 
 	private void initCommonContext(final ViewContext viewContext) {
 		viewContext.publishMdl(ROLES_CONTEXT_KEY, PersonRole.class, null); // all
-		viewContext.publishDtList(CHATBOTS_CONTEXT_KEY, designerServices.getAllChatbots());
+		viewContext.publishDtList(CHATBOTS_CONTEXT_KEY, this.chatbotServices.getAllChatbots());
 		viewContext.publishRef(CHATBOT_SELECTED_STR_CONTEXT_KEY, "");
 	}
 

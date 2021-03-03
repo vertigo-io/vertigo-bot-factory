@@ -7,9 +7,9 @@ import io.vertigo.datamodel.structure.model.UID;
 
 public enum ChatbotProfilesEnum implements MasterDataEnum<io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles> {
 
-	CADMIN("ADMIN"), //
-	CMODIFIEUR("MODIFIEUR"), //
-	CCONSUL("CONSUL")
+	ADMINISTRATEUR("ADMINISTRATEUR"), //
+	CONTRIBUTEUR("CONTRIBUTEUR"), //
+	VISITEUR("VISITEUR")
 	;
 
 	private final Serializable entityId;

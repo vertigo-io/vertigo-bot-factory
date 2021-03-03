@@ -6,19 +6,19 @@ create DtDefinition DtChatbotProfiles {
 	field label 		{domain: DoLabel 	label: "Title" 		cardinality : "1"}
 	field sortOrder 	{domain: DoNumber 	label: "Order" 		cardinality : "1"}
 	values : `{
-        "CADMIN" : {
-            "chpCd" : "ADMIN",
-            "label" : "Admin chatbot",
+        "ADMINISTRATEUR" : {
+            "chpCd" : "ADMINISTRATEUR",
+            "label" : "Administrateur Fonctionnel",
             "sortOrder" : 1
         },
-        "CMODIFIEUR" : {
-            "chpCd" : "MODIFIEUR",
-            "label" : "Modifieur chatbot",
+        "CONTRIBUTEUR" : {
+            "chpCd" : "CONTRIBUTEUR",
+            "label" : "Contributeur",
             "sortOrder" : 2
         },
-        "CCONSUL" : {
-            "chpCd" : "CONSUL",
-            "label" : "Consultation chatbot",
+        "VISITEUR" : {
+            "chpCd" : "VISITEUR",
+            "label" : "Visiteur",
             "sortOrder" : 3
         }
 

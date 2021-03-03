@@ -27,13 +27,37 @@
 			"__comment": "Modification si affecté à l'utilisateur.",
 			"name": "write", "label" : "Modification",
 			"rules": [
-				"botId=${botId}"
+				"botId=${botModif}"
+			]
+		},
+		{
+			"__comment": "auth visiteur",
+			"name": "visiteur", "label" : "Accès visiteur",
+			"grants": ["read"],
+			"rules": [
+				"botId=${botVisiteur}"
+			]
+		},
+		{
+			"__comment": "auth contributeur",
+			"name": "contributeur", "label" : "Accès contributeur",
+			"grants": ["visiteur"],
+			"rules": [
+				"botId=${botContributeur}"
+			]
+		},
+		{
+			"__comment": "auth admFct",
+			"name": "admFct", "label" : "Accès admFct",
+			"grants": ["contributeur"],
+			"rules": [
+				"botId=${botAdmFct}"
 			]
 		},
 		{
 			"__comment": "Visibilité globale pour le super admin. Sans régles = toujours ok.",
 			"name": "admin", "label" : "Accès super admin",
-			"overrides": ["read", "write"],
+			"overrides": ["read", "write", "visiteur", "contributeur", "admFct"],
 			"rules": ["true"]
 		}]
 	}]
