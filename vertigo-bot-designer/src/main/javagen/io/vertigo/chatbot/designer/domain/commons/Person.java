@@ -3,7 +3,6 @@ package io.vertigo.chatbot.designer.domain.commons;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
-import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 import io.vertigo.datamodel.structure.stereotype.Field;
@@ -50,19 +49,6 @@ public final class Person implements Entity {
 			foreignLabel = "Person",
 			foreignMultiplicity = "0..*")
 	private final EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.commons.PersonRole, io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum> rolCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.designer.domain.commons.PersonRole.class, "PersonRole", io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum.class);
-
-	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
-			name = "AnnChatbotPerson",
-			tableName = "CHA_PER_RIGHTS",
-			dtDefinitionA = "DtPerson",
-			dtDefinitionB = "DtChatbot",
-			navigabilityA = true,
-			navigabilityB = true,
-			roleA = "Persons",
-			roleB = "Chatbots",
-			labelA = "Persons",
-			labelB = "Chatbots")
-	private final StoreListVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbotsAccessor = new StoreListVAccessor<>(this, "AnnChatbotPerson", "Chatbots");
 
 	/** {@inheritDoc} */
 	@Override
@@ -179,14 +165,6 @@ public final class Person implements Entity {
 	 */
 	public EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.commons.PersonRole, io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum> personRole() {
 		return rolCdAccessor;
-	}
-
-	/**
-	 * Association : Chatbots.
-	 * @return l'accesseur vers la propriété 'Chatbots'
-	 */
-	public StoreListVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbots() {
-		return chatbotsAccessor;
 	}
 	
 	/** {@inheritDoc} */

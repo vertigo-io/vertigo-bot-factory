@@ -13,7 +13,6 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
 import io.vertigo.chatbot.designer.admin.services.bot.ChatbotProfilServices;
-import io.vertigo.chatbot.designer.builder.controllers.bot.AbstractCommonBotController;
 import io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles;
 import io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil;
 import io.vertigo.chatbot.designer.domain.admin.SelectProfilChatbotPerson;

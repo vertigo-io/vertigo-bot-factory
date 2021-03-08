@@ -2,7 +2,6 @@ package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.KeyConcept;
-import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 import io.vertigo.datamodel.structure.stereotype.Field;
@@ -66,19 +65,6 @@ public final class Chatbot implements KeyConcept {
 			foreignLabel = "Chatbot",
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.UtterText> uttIdDefaultAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextDefault");
-
-	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
-			name = "AnnChatbotPerson",
-			tableName = "CHA_PER_RIGHTS",
-			dtDefinitionA = "DtPerson",
-			dtDefinitionB = "DtChatbot",
-			navigabilityA = true,
-			navigabilityB = true,
-			roleA = "Persons",
-			roleB = "Chatbots",
-			labelA = "Persons",
-			labelB = "Chatbots")
-	private final StoreListVAccessor<io.vertigo.chatbot.designer.domain.commons.Person> personsAccessor = new StoreListVAccessor<>(this, "AnnChatbotPerson", "Persons");
 
 	/** {@inheritDoc} */
 	@Override
@@ -260,14 +246,6 @@ public final class Chatbot implements KeyConcept {
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextWelcome() {
 		return uttIdWelcomeAccessor;
-	}
-
-	/**
-	 * Association : Persons.
-	 * @return l'accesseur vers la propriété 'Persons'
-	 */
-	public StoreListVAccessor<io.vertigo.chatbot.designer.domain.commons.Person> persons() {
-		return personsAccessor;
 	}
 	
 	/** {@inheritDoc} */

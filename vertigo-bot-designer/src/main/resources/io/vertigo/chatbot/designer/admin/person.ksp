@@ -8,3 +8,14 @@ create Task TkRemoveAllChaPerRightByPerId {
              "
 	in perId				{domain : DoId,							cardinality:"1"} 
 }
+
+
+create Task TkCountAllAdminPer {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select count(per.per_id)
+			from person per 
+			where per.rol_cd = 'RAdmin' 
+             "
+	out perNumber				{domain : DoNumber,							cardinality:"1"} 
+}

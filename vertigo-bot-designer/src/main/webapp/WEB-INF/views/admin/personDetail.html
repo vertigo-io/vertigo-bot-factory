@@ -39,8 +39,8 @@
 			<vu:popup object="person" action="_delete" vModel="showPopup"></vu:popup>
 	
 			<vu:block id="identity" title="Person identity">
-				<vu:text-field object="person" field="name" readonly="${model.modeCreate || model.modeReadOnly}"/>
-				<vu:select object="person" field="rolCd" list="roles" valueField="rolCd" labelField="label"/>
+				<vu:text-field object="person" field="name" readonly="${model.modeReadOnly}"/>
+				<vu:select object="person" field="rolCd" list="roles" valueField="rolCd" labelField="label" readonly="${model.modeReadOnly || model.isLastAdmin}"/>
 
 			</vu:block>
 			
