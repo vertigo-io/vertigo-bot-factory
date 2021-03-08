@@ -55,9 +55,6 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 	private ChatbotServices chatbotServices;
 
 	private static final ViewContextKey<Person> personKey = ViewContextKey.of("person");
-	/** ClÃ© de context du mode changePassword. */
-	public static final ViewContextKey<Boolean> MODE_CHANGE_PASSWORD_CONTEXT_KEY = ViewContextKey
-			.of("modeChangePassword");
 	public static final ViewContextKey<PersonRole> ROLES_CONTEXT_KEY = ViewContextKey.of("roles");
 	public static final ViewContextKey<Chatbot> CHATBOTS_CONTEXT_KEY = ViewContextKey.of("chatbots");
 	public static final ViewContextKey<Long[]> CHATBOT_SELECTED_CONTEXT_KEY = ViewContextKey.of("chatbotsSelected");
@@ -76,7 +73,6 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 		initCommonContext(viewContext);
 		final Person person = personServices.getPersonById(perId);
 		viewContext.publishDto(personKey, person);
-		viewContext.publishRef(MODE_CHANGE_PASSWORD_CONTEXT_KEY, false);
 		viewContext.publishRef(IS_SAME_USER_KEY, isPersonConnected(person));
 
 		final List<Long> selectedBotIds = person.chatbots().get().stream().map(Chatbot::getBotId)
@@ -90,19 +86,12 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 	public void initContext(final ViewContext viewContext) {
 		initCommonContext(viewContext);
 		viewContext.publishDto(personKey, new Person());
-		viewContext.publishRef(MODE_CHANGE_PASSWORD_CONTEXT_KEY, true);
 		viewContext.publishRef(CHATBOT_SELECTED_CONTEXT_KEY, new Long[0]);
 		toModeCreate();
 	}
 
 	@PostMapping("/_edit")
 	public void doEdit() {
-		toModeEdit();
-	}
-
-	@PostMapping("/_changePassword")
-	public void doChangePassword(final ViewContext viewContext) {
-		viewContext.publishRef(MODE_CHANGE_PASSWORD_CONTEXT_KEY, true);
 		toModeEdit();
 	}
 
