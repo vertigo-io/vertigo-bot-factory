@@ -14,9 +14,9 @@ public final class SmallTalkExport implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private io.vertigo.chatbot.commons.domain.SmallTalk smallTalk;
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences;
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts;
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> buttons;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.NluTrainingSentence.class);
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.UtterText.class);
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> buttons =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.ResponseButton.class);
 	
 	/**
 	 * Champ : DATA.
@@ -53,6 +53,8 @@ public final class SmallTalkExport implements DtObject {
 	 * @param nluTrainingSentences DtList de NluTrainingSentence
 	 */
 	public void setNluTrainingSentences(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(nluTrainingSentences);
+		//---
 		this.nluTrainingSentences = nluTrainingSentences;
 	}
 	
@@ -72,6 +74,8 @@ public final class SmallTalkExport implements DtObject {
 	 * @param utterTexts DtList de UtterText
 	 */
 	public void setUtterTexts(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(utterTexts);
+		//---
 		this.utterTexts = utterTexts;
 	}
 	
@@ -91,6 +95,8 @@ public final class SmallTalkExport implements DtObject {
 	 * @param buttons DtList de ResponseButton
 	 */
 	public void setButtons(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> buttons) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(buttons);
+		//---
 		this.buttons = buttons;
 	}
 	

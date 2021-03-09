@@ -56,16 +56,3 @@ create Association APersonRole {
 	
 	labelB : "Role"
 }
-
-create AssociationNN AnnChatbotPerson {
-	tableName : "CHA_PER_RIGHTS"
-
-	dtDefinitionA : DtPerson
-	dtDefinitionB : DtChatbot
-	navigabilityA : "true"
-	navigabilityB : "true"
-	roleA : "Persons"
-	labelA : "Persons"
-	roleB : "Chatbots"
-	labelB : "Chatbots"
-}

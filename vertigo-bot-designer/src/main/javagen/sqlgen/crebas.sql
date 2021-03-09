@@ -5,7 +5,6 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
-drop table IF EXISTS CHA_PER_RIGHTS cascade;
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_NODE cascade;
@@ -596,21 +595,4 @@ alter table TRAINING
 
 create index A_TRAINING_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on TRAINING (FIL_ID_MODEL asc);
 
-
-create table CHA_PER_RIGHTS
-(
-	PER_ID      	 NUMERIC     	 not null,
-	BOT_ID      	 NUMERIC     	 not null,
-	constraint PK_CHA_PER_RIGHTS primary key (PER_ID, BOT_ID),
-	constraint FK_ANN_CHATBOT_PERSON_PERSON 
-		foreign key(PER_ID)
-		references PERSON (PER_ID),
-	constraint FK_ANN_CHATBOT_PERSON_CHATBOT 
-		foreign key(BOT_ID)
-		references CHATBOT (BOT_ID)
-);
-
-create index ANN_CHATBOT_PERSON_PERSON_FK on CHA_PER_RIGHTS (PER_ID asc);
-
-create index ANN_CHATBOT_PERSON_CHATBOT_FK on CHA_PER_RIGHTS (BOT_ID asc);
 

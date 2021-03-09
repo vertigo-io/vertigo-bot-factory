@@ -15,9 +15,9 @@ public final class BotExport implements DtObject {
 
 	private io.vertigo.chatbot.commons.domain.Chatbot bot;
 	private io.vertigo.chatbot.commons.domain.UtterText fallbackText;
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> fallbackButtons;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> fallbackButtons =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.ResponseButton.class);
 	private io.vertigo.chatbot.commons.domain.UtterText welcomeText;
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> welcomeButtons;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> welcomeButtons =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.ResponseButton.class);
 	
 	/**
 	 * Champ : DATA.
@@ -73,6 +73,8 @@ public final class BotExport implements DtObject {
 	 * @param fallbackButtons DtList de ResponseButton
 	 */
 	public void setFallbackButtons(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> fallbackButtons) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(fallbackButtons);
+		//---
 		this.fallbackButtons = fallbackButtons;
 	}
 	
@@ -111,6 +113,8 @@ public final class BotExport implements DtObject {
 	 * @param welcomeButtons DtList de ResponseButton
 	 */
 	public void setWelcomeButtons(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> welcomeButtons) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(welcomeButtons);
+		//---
 		this.welcomeButtons = welcomeButtons;
 	}
 	
