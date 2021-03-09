@@ -21,9 +21,20 @@
 					<div class="col q-mx-xl">
 					</div>
 					<div>
-						<q-btn type="a" color="grey" icon="mdi-lan-disconnect" round aria-label="Disconnect" th:href="@{/login/_logout}" >
-							<q-tooltip >Disconnect</q-tooltip>
-						</q-btn>
+						<q-btn-dropdown color="primary" icon="mdi-account">
+							<q-list>
+								<q-item clickable v-close-popup >
+									<q-btn  type="a" color="grey" icon="mdi-reload" round aria-label="Reload" th:href="@{/login/_reloadAuthorizations}" >
+										<q-tooltip >Reload authorizations</q-tooltip>
+									</q-btn>
+								</q-item>
+								<q-item clickable v-close-popup>
+									<q-btn type="a" color="grey" icon="mdi-lan-disconnect" round aria-label="Disconnect" th:href="@{/login/_reloadAuthorizations}" >
+										<q-tooltip >Logout</q-tooltip>
+									</q-btn>
+								</q-item>
+							</q-list>
+						</q-btn-dropdown>
 					</div>
 				</q-toolbar>
 				

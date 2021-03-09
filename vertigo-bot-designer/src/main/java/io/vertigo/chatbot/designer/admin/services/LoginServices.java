@@ -31,14 +31,10 @@ import org.keycloak.representations.IDToken;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.account.authentication.AuthenticationManager;
-import io.vertigo.account.authorization.AuthorizationManager;
-import io.vertigo.account.authorization.UserAuthorizations;
 import io.vertigo.account.authorization.VSecurityException;
 import io.vertigo.account.impl.authentication.UsernameAuthenticationToken;
 import io.vertigo.account.impl.authentication.UsernamePasswordAuthenticationToken;
 import io.vertigo.account.security.VSecurityManager;
-import io.vertigo.chatbot.designer.admin.services.bot.ChatbotProfilServices;
-import io.vertigo.chatbot.designer.admin.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.commons.DesignerUserSession;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.commons.transaction.Transactional;
@@ -57,15 +53,13 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 	@Inject
 	private AuthenticationManager authenticationManager;
 	@Inject
-	private AuthorizationManager authorizationManager;
+	private AuthorizationServices authorizationServices;
 	@Inject
 	private VSecurityManager securityManager;
 	@Inject
 	private List<KeycloakDeploymentConnector> keycloakDeploymentConnectors;
 	@Inject
 	private KeycloakPersonServices keycloakPersonServices;
-	@Inject
-	private ChatbotProfilServices chatbotProfilServices;
 
 	//don't use anymore
 	public void login(final String login, final String password) {
@@ -77,11 +71,7 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(account.getId()));
 		getUserSession().setLoggedPerson(person);
 
-		final UserAuthorizations userAuthorizations = authorizationManager.obtainUserAuthorizations();
-		AuthorizationUtils.obtainAuthorizationPerRole(person.getRolCd()).stream()
-				.forEach(auth -> userAuthorizations.addAuthorization(auth));
-
-		this.chatbotProfilServices.getProfilByPerId(person.getPerId()).stream().forEach(profil -> AuthorizationUtils.addAuthorizationByChatbotProfil(userAuthorizations, profil));
+		this.authorizationServices.addUserAuthorization(person);
 	}
 
 	public boolean isAuthenticated() {
@@ -134,11 +124,11 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 				});
 		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(loggedAccount.getId()));
 		getUserSession().setLoggedPerson(person);
-		final UserAuthorizations userAuthorizations = authorizationManager.obtainUserAuthorizations();
-		AuthorizationUtils.obtainAuthorizationPerRole(person.getRolCd()).stream()
-				.forEach(auth -> userAuthorizations.addAuthorization(auth));
+		this.authorizationServices.addUserAuthorization(person);
+	}
 
-		this.chatbotProfilServices.getProfilByPerId(person.getPerId()).stream().forEach(profil -> AuthorizationUtils.addAuthorizationByChatbotProfil(userAuthorizations, profil));
+	public void reloadAuthorizations() {
+		this.authorizationServices.reloadUserAuthorization(getLoggedPerson());
 	}
 
 	@Override
