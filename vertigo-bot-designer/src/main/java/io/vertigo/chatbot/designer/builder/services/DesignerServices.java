@@ -102,7 +102,7 @@ public class DesignerServices implements Component {
 		Assertion.check().isNotNull(botId);
 		// ---
 		final Chatbot chatbot = chatbotDAO.get(botId);
-		checkRights(chatbot, ChatbotOperations.read);
+		checkRights(chatbot, ChatbotOperations.visiteur, ChatbotOperations.contributeur, ChatbotOperations.admFct);
 		return chatbot;
 	}
 
@@ -382,10 +382,18 @@ public class DesignerServices implements Component {
 				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
-	private void checkRights(final Chatbot chatbot, final ChatbotOperations chatbotOperation) {
-		if (!authorizationManager.isAuthorized(chatbot, chatbotOperation)) {
-			throw new VSecurityException(MessageText.of("Not enought authorizations"));//no too sharp info here : may use log
+	private boolean checkRights(final Chatbot chatbot, final ChatbotOperations chatbotOperation) {
+		return authorizationManager.isAuthorized(chatbot, chatbotOperation);
+	}
+
+	private void checkRights(final Chatbot chatbot, final ChatbotOperations... chatbotOperations) {
+		for (final ChatbotOperations operation : chatbotOperations) {
+			if (checkRights(chatbot, operation)) {
+				return;
+			}
 		}
+
+		throw new VSecurityException(MessageText.of("Not enought authorizations"));//no too sharp info here : may use log
 	}
 
 }

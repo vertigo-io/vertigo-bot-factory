@@ -99,8 +99,8 @@ modules:
 # utilisation de nos modules métier  
   io.vertigo.chatbot.designer.commons.DesignerCommonsFeatures:
   io.vertigo.chatbot.designer.dao.DAOFeatures:
-  io.vertigo.chatbot.designer.admin.AdminFeatures:
-  io.vertigo.chatbot.designer.builder.BuilderFeatures: 
+  io.vertigo.chatbot.designer.builder.BuilderFeatures:
+  io.vertigo.chatbot.designer.admin.AdminFeatures: 
   io.vertigo.chatbot.designer.analytics.AnalyticsFeatures:
 
 initializers:

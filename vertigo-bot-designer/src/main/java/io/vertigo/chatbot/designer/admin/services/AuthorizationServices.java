@@ -12,7 +12,7 @@ import io.vertigo.account.authorization.definitions.Authorization;
 import io.vertigo.account.authorization.definitions.AuthorizationName;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotAuthorizations;
-import io.vertigo.chatbot.designer.admin.services.bot.ChatbotProfilServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotProfilServices;
 import io.vertigo.chatbot.designer.domain.admin.ChatbotProfilesEnum;
 import io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot;
 import io.vertigo.chatbot.designer.domain.commons.Person;
@@ -48,8 +48,7 @@ public class AuthorizationServices implements Component {
 		return authorizations;
 	}
 
-	private void addAuthorizationByChatbotProfil(UserAuthorizations userAuthorizations, ProfilPerChatbot profil) {
-		userAuthorizations.withSecurityKeys("botId", profil.getBotId());
+	private void addAuthorizationByChatbotProfil(final UserAuthorizations userAuthorizations, final ProfilPerChatbot profil) {
 		if (profil.getChpCd().equals(ChatbotProfilesEnum.VISITEUR.name())) {
 			userAuthorizations.withSecurityKeys("botVisiteur", profil.getBotId());
 		}
@@ -61,18 +60,18 @@ public class AuthorizationServices implements Component {
 		}
 	}
 
-	public void addUserAuthorization(Person person) {
+	public void addUserAuthorization(final Person person) {
 		final UserAuthorizations userAuthorizations = authorizationManager.obtainUserAuthorizations();
-		this.obtainAuthorizationPerRole(person.getRolCd()).stream()
+		obtainAuthorizationPerRole(person.getRolCd()).stream()
 				.forEach(auth -> userAuthorizations.addAuthorization(auth));
 
-		this.chatbotProfilServices.getProfilByPerId(person.getPerId()).stream().forEach(profil -> this.addAuthorizationByChatbotProfil(userAuthorizations, profil));
+		chatbotProfilServices.getProfilByPerId(person.getPerId()).stream().forEach(profil -> addAuthorizationByChatbotProfil(userAuthorizations, profil));
 	}
 
-	public void reloadUserAuthorization(Person person) {
+	public void reloadUserAuthorization(final Person person) {
 		final UserAuthorizations userAuthorizations = authorizationManager.obtainUserAuthorizations();
 		userAuthorizations.clearRoles();
-		this.addUserAuthorization(person);
+		addUserAuthorization(person);
 	}
 
 }

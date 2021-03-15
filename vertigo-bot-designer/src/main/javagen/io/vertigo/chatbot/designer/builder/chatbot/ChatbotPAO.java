@@ -41,6 +41,32 @@ public final class ChatbotPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkGetPersonProfilIHM.
+	 * @param botId Long
+	 * @return DtList de PersonChatbotProfil perIHM
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetPersonProfilIHM",
+			request = "select ppc.bot_id," + 
+ "					ppc.chp_id," + 
+ "					per.name," + 
+ "					cp.chp_cd as profil_Label" + 
+ "			from profil_per_chatbot ppc " + 
+ "			join person per on (per.per_id = ppc.per_id)" + 
+ "			join chatbot_profiles cp on (cp.chp_cd = ppc.chp_cd)" + 
+ "			where ppc.bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtPersonChatbotProfil")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil> getPersonProfilIHM(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkGetPersonProfilIHM")
+				.addValue("botId", botId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkRemoveAllChaPerRightByBotId.
 	 * @param botId Long
 	*/

@@ -8,3 +8,19 @@ create Task TkRemoveAllChaPerRightByBotId {
              "
 	in botId				{domain : DoId,							cardinality:"1"} 
 }
+
+create Task TkGetPersonProfilIHM {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select ppc.bot_id,
+					ppc.chp_id,
+					per.name,
+					cp.chp_cd as profil_Label
+			from profil_per_chatbot ppc 
+			join person per on (per.per_id = ppc.per_id)
+			join chatbot_profiles cp on (cp.chp_cd = ppc.chp_cd)
+			where ppc.bot_id = #botId#
+             "
+	in botId				{domain : DoId,							cardinality:"1"} 
+	out perIHM				{domain : DoDtPersonChatbotProfil,		cardinality:"*"} 
+}

@@ -31,18 +31,15 @@ import org.keycloak.representations.IDToken;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.account.authentication.AuthenticationManager;
-import io.vertigo.account.authorization.VSecurityException;
 import io.vertigo.account.impl.authentication.UsernameAuthenticationToken;
 import io.vertigo.account.impl.authentication.UsernamePasswordAuthenticationToken;
-import io.vertigo.account.security.VSecurityManager;
-import io.vertigo.chatbot.designer.commons.DesignerUserSession;
+import io.vertigo.chatbot.designer.commons.utils.UserSessionUtils;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.connectors.keycloak.KeycloakDeploymentConnector;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.lang.WrappedException;
-import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.vega.impl.servlet.filter.AbstactKeycloakDelegateAuthenticationHandler;
@@ -55,11 +52,11 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 	@Inject
 	private AuthorizationServices authorizationServices;
 	@Inject
-	private VSecurityManager securityManager;
-	@Inject
 	private List<KeycloakDeploymentConnector> keycloakDeploymentConnectors;
 	@Inject
 	private KeycloakPersonServices keycloakPersonServices;
+	@Inject
+	private UserSessionUtils userSessionUtils;
 
 	//don't use anymore
 	public void login(final String login, final String password) {
@@ -69,18 +66,9 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 		}
 		final Account account = loggedAccount.get();
 		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(account.getId()));
-		getUserSession().setLoggedPerson(person);
+		userSessionUtils.getUserSession().setLoggedPerson(person);
 
-		this.authorizationServices.addUserAuthorization(person);
-	}
-
-	public boolean isAuthenticated() {
-		final Optional<DesignerUserSession> userSession = securityManager.<DesignerUserSession>getCurrentUserSession();
-		return !userSession.isPresent() ? false : userSession.get().isAuthenticated();
-	}
-
-	public Person getLoggedPerson() {
-		return getUserSession().getLoggedPerson();
+		authorizationServices.addUserAuthorization(person);
 	}
 
 	public void logout(final HttpSession httpSession) {
@@ -88,13 +76,9 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 		httpSession.invalidate();
 	}
 
-	private DesignerUserSession getUserSession() {
-		return securityManager.<DesignerUserSession>getCurrentUserSession().orElseThrow(() -> new VSecurityException(MessageText.of("No active session found")));
-	}
-
 	@Override
-	public boolean doLogin(HttpServletRequest request, HttpServletResponse response) {
-		if (!isAuthenticated()) {
+	public boolean doLogin(final HttpServletRequest request, final HttpServletResponse response) {
+		if (!userSessionUtils.isAuthenticated()) {
 			// we should have a Principal
 			final KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) request.getUserPrincipal();
 
@@ -123,12 +107,12 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 					return authenticationManager.login(new UsernameAuthenticationToken(login)).get();
 				});
 		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(loggedAccount.getId()));
-		getUserSession().setLoggedPerson(person);
-		this.authorizationServices.addUserAuthorization(person);
+		userSessionUtils.getUserSession().setLoggedPerson(person);
+		authorizationServices.addUserAuthorization(person);
 	}
 
 	public void reloadAuthorizations() {
-		this.authorizationServices.reloadUserAuthorization(getLoggedPerson());
+		authorizationServices.reloadUserAuthorization(userSessionUtils.getLoggedPerson());
 	}
 
 	@Override

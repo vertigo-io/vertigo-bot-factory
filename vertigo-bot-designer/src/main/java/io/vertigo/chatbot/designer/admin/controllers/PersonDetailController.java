@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import io.vertigo.chatbot.designer.admin.services.LoginServices;
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
+import io.vertigo.chatbot.designer.commons.utils.UserSessionUtils;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.chatbot.designer.domain.commons.PersonRole;
 import io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum;
@@ -44,7 +44,7 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 	private PersonServices personServices;
 
 	@Inject
-	private LoginServices loginServices;
+	private UserSessionUtils userSessionUtils;
 
 	private static final ViewContextKey<Person> personKey = ViewContextKey.of("person");
 	public static final ViewContextKey<PersonRole> ROLES_CONTEXT_KEY = ViewContextKey.of("roles");
@@ -74,18 +74,18 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 		return "redirect:/person/" + savedPerson.getPerId();
 	}
 
-	private Boolean isPersonConnected(Person person) {
-		final Person personConnected = loginServices.getLoggedPerson();
+	private Boolean isPersonConnected(final Person person) {
+		final Person personConnected = userSessionUtils.getLoggedPerson();
 		return person.getPerId().equals(personConnected.getPerId());
 	}
 
-	private Boolean isLastAdmin(Person person) {
-		return this.personServices.getAdminPerNumber().equals(1L) && person.getRolCd().equals(PersonRoleEnum.RAdmin.name());
+	private Boolean isLastAdmin(final Person person) {
+		return personServices.getAdminPerNumber().equals(1L) && person.getRolCd().equals(PersonRoleEnum.RAdmin.name());
 	}
 
 	@PostMapping("/_delete")
-	private String deletePerson(@ViewAttribute("person") Person person) {
-		this.personServices.deletePerson(person);
+	private String deletePerson(@ViewAttribute("person") final Person person) {
+		personServices.deletePerson(person);
 		return "redirect:/persons/";
 	}
 

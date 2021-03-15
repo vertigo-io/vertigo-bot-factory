@@ -10,10 +10,10 @@ import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.dao.MediaFileInfoDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.designer.admin.services.LoginServices;
-import io.vertigo.chatbot.designer.admin.services.bot.ChatbotProfilServices;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
 import io.vertigo.chatbot.designer.builder.chatbot.ChatbotPAO;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotProfilServices;
+import io.vertigo.chatbot.designer.commons.utils.UserSessionUtils;
 import io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -45,9 +45,9 @@ public class ChatbotServices implements Component {
 	private ChatbotProfilServices chatbotProfilesServices;
 
 	@Inject
-	private LoginServices loginServices;
+	private UserSessionUtils userSessionUtils;
 
-	public Boolean deleteChatbot(Chatbot bot) {
+	public Boolean deleteChatbot(final Chatbot bot) {
 
 		// Delete link with person
 		chatbotPAO.removeAllChaPerRightByBotId(bot.getBotId());
@@ -65,34 +65,34 @@ public class ChatbotServices implements Component {
 		return true;
 	}
 
-	private void deleteSmallTalkCascade(Chatbot bot) {
-		Long botId = bot.getBotId();
+	private void deleteSmallTalkCascade(final Chatbot bot) {
+		final Long botId = bot.getBotId();
 		builderPAO.removeAllNluTrainingSentenceByBotId(botId);
 		builderPAO.removeAllSmallTalkByBotId(botId);
 
 	}
 
-	private void deleteResponseButton(Chatbot bot) {
+	private void deleteResponseButton(final Chatbot bot) {
 		builderPAO.removeAllButtonsByBotId(bot.getBotId());
 
 	}
 
-	private void deleteUtterText(Chatbot bot) {
+	private void deleteUtterText(final Chatbot bot) {
 		builderPAO.removeAllUtterTextByBotId(bot.getBotId());
 	}
 
-	private void deleteTraining(Chatbot bot) {
-		Long botId = bot.getBotId();
-		List<Long> filesId = builderPAO.getAllTrainingFilIdsByBotId(botId);
+	private void deleteTraining(final Chatbot bot) {
+		final Long botId = bot.getBotId();
+		final List<Long> filesId = builderPAO.getAllTrainingFilIdsByBotId(botId);
 		builderPAO.removeTrainingByBotId(botId);
 		builderPAO.removeTrainingFileByFilIds(filesId);
 	}
 
-	private void deleteChatbotNode(Chatbot bot) {
+	private void deleteChatbotNode(final Chatbot bot) {
 		builderPAO.removeChatbotNodeByBotId(bot.getBotId());
 	}
 
-	private void deleteFil(Chatbot bot) {
+	private void deleteFil(final Chatbot bot) {
 		if (bot.getFilIdAvatar() != null) {
 			mediaFileInfoDAO.delete(bot.getFilIdAvatar());
 		}
@@ -103,7 +103,7 @@ public class ChatbotServices implements Component {
 			return getAllChatbots();
 		}
 
-		final DtList<ProfilPerChatbot> profils = this.chatbotProfilesServices.getProfilByPerId(loginServices.getLoggedPerson().getPerId());
+		final DtList<ProfilPerChatbot> profils = chatbotProfilesServices.getProfilByPerId(userSessionUtils.getLoggedPerson().getPerId());
 		final DtList<Chatbot> chatbots = profils.stream().map(x -> {
 			x.chatbot().load();
 			return x.chatbot().get();
@@ -116,7 +116,7 @@ public class ChatbotServices implements Component {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
 	}
 
-	public Chatbot getChatbotByBotId(Long botId) {
-		return this.chatbotDAO.find(Criterions.isEqualTo(ChatbotFields.botId, botId));
+	public Chatbot getChatbotByBotId(final Long botId) {
+		return chatbotDAO.find(Criterions.isEqualTo(ChatbotFields.botId, botId));
 	}
 }
