@@ -32,7 +32,8 @@ public class AuthorizationServices implements Component {
 
 	private List<Authorization> obtainAuthorizationPerRole(final String role) {
 		if (PersonRoleEnum.RAdmin.name().equals(role)) {
-			return resolveAuthorizations(GlobalAuthorizations.AtzAdmPer, GlobalAuthorizations.AtzSuperAdmBot, GlobalAuthorizations.AtzAdmBot, ChatbotAuthorizations.AtzChatbot$admin);
+			return resolveAuthorizations(GlobalAuthorizations.AtzAdmPer, GlobalAuthorizations.AtzSuperAdmBot, GlobalAuthorizations.AtzAdmBot,
+					ChatbotAuthorizations.AtzChatbot$admin);
 		} else if (PersonRoleEnum.RUser.name().equals(role)) {
 			return resolveAuthorizations(GlobalAuthorizations.AtzAdmBot, ChatbotAuthorizations.AtzChatbot$read, ChatbotAuthorizations.AtzChatbot$write, ChatbotAuthorizations.AtzChatbot$visiteur,
 					ChatbotAuthorizations.AtzChatbot$contributeur, ChatbotAuthorizations.AtzChatbot$admFct);
@@ -49,14 +50,17 @@ public class AuthorizationServices implements Component {
 	}
 
 	private void addAuthorizationByChatbotProfil(final UserAuthorizations userAuthorizations, final ProfilPerChatbot profil) {
-		if (profil.getChpCd().equals(ChatbotProfilesEnum.VISITEUR.name())) {
-			userAuthorizations.withSecurityKeys("botVisiteur", profil.getBotId());
-		}
-		if (profil.getChpCd().equals(ChatbotProfilesEnum.CONTRIBUTEUR.name())) {
-			userAuthorizations.withSecurityKeys("botContributeur", profil.getBotId());
-		}
-		if (profil.getChpCd().equals(ChatbotProfilesEnum.ADMINISTRATEUR.name())) {
-			userAuthorizations.withSecurityKeys("botAdmFct", profil.getBotId());
+		final String chatbotProfile = profil.getChpCd();
+		final ChatbotProfilesEnum chatbotEnum = ChatbotProfilesEnum.valueOf(chatbotProfile);
+		switch (chatbotEnum) {
+			case ADMINISTRATEUR:
+				userAuthorizations.withSecurityKeys("botAdmFct", profil.getBotId());
+			case CONTRIBUTEUR:
+				userAuthorizations.withSecurityKeys("botContributeur", profil.getBotId());
+			case VISITEUR:
+				userAuthorizations.withSecurityKeys("botVisiteur", profil.getBotId());
+			default:
+				break;
 		}
 	}
 
@@ -73,5 +77,4 @@ public class AuthorizationServices implements Component {
 		userAuthorizations.clearRoles();
 		addUserAuthorization(person);
 	}
-
 }

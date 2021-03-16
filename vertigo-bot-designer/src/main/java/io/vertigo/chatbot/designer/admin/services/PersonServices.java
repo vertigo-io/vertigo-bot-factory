@@ -23,8 +23,6 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.designer.admin.person.PersonPAO;
 import io.vertigo.chatbot.designer.dao.commons.PersonDAO;
 import io.vertigo.chatbot.designer.domain.commons.Person;
-import io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum;
-import io.vertigo.chatbot.domain.DtDefinitions.PersonFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
@@ -47,16 +45,7 @@ public class PersonServices implements Component {
 	}
 
 	public Long getAdminPerNumber() {
-		return this.personPAO.countAllAdminPer();
-	}
-
-	/**
-	 * Get all persons with the user profil
-	 * 
-	 * @return the list of users
-	 */
-	public DtList<Person> getAllUsers() {
-		return personDAO.findAll(Criterions.isEqualTo(PersonFields.rolCd, PersonRoleEnum.RUser.name()), DtListState.of(100));
+		return personPAO.countAllAdminPer();
 	}
 
 	public Person getPersonById(final Long perId) {
@@ -68,7 +57,7 @@ public class PersonServices implements Component {
 
 	/**
 	 * Save the person
-	 * 
+	 *
 	 * @param person person to save
 	 * @return the person updated
 	 */
@@ -79,8 +68,8 @@ public class PersonServices implements Component {
 	}
 
 	public void deletePerson(final Person person) {
-		Long perId = person.getPerId();
-		this.personPAO.removeAllChaPerRightByPerId(perId);
-		this.personDAO.delete(perId);
+		final Long perId = person.getPerId();
+		personPAO.removeAllChaPerRightByPerId(perId);
+		personDAO.delete(perId);
 	}
 }

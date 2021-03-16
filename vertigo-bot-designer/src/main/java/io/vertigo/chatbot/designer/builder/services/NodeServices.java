@@ -33,7 +33,7 @@ public class NodeServices implements Component {
 	@Inject
 	private AuthorizationManager authorizationManager;
 
-	public ChatbotNode getNodeByNodeId(Long nodId) {
+	public ChatbotNode getNodeByNodeId(final Long nodId) {
 		return chatbotNodeDAO.get(nodId);
 	}
 
@@ -68,16 +68,16 @@ public class NodeServices implements Component {
 		chatbotNodeDAO.delete(nodId);
 	}
 
-	public DtList<ChatbotNode> getNodesByBotId(Long botId) {
-		return this.getNodesByBot(this.chatbotServices.getChatbotByBotId(botId));
+	public DtList<ChatbotNode> getNodesByBotId(final Long botId) {
+		return getNodesByBot(chatbotServices.getChatbotById(botId));
 	}
 
 	public DtList<ChatbotNode> getNodesByBot(final Chatbot chatbot) {
 		if (authorizationManager.isAuthorized(chatbot, ChatbotOperations.admFct)) {
-			return this.getAllNodesByBotId(chatbot.getBotId());
+			return getAllNodesByBotId(chatbot.getBotId());
 		}
-		DtList<ChatbotNode> nodes = new DtList<ChatbotNode>(ChatbotNode.class);
-		Optional<ChatbotNode> devNode = this.getDevNodeByBotId(chatbot.getBotId());
+		final DtList<ChatbotNode> nodes = new DtList<ChatbotNode>(ChatbotNode.class);
+		final Optional<ChatbotNode> devNode = getDevNodeByBotId(chatbot.getBotId());
 		if (devNode.isPresent()) {
 			nodes.add(devNode.get());
 		}

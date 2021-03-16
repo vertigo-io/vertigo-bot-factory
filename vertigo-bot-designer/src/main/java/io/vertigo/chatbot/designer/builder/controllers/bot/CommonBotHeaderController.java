@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import io.vertigo.chatbot.designer.builder.services.DesignerServices;
+import io.vertigo.chatbot.designer.builder.chatbot.services.ChatbotServices;
 import io.vertigo.datastore.filestore.model.VFile;
 
 @Controller
@@ -32,16 +32,16 @@ import io.vertigo.datastore.filestore.model.VFile;
 public class CommonBotHeaderController {
 
 	@Inject
-	private DesignerServices designerServices;
+	private ChatbotServices chatbotServices;
 
 	@GetMapping("/{botId}/avatar")
 	public VFile getAvatar(@PathVariable("botId") final Long botId) {
-		return designerServices.getAvatar(designerServices.getChatbotById(botId));
+		return chatbotServices.getAvatar(chatbotServices.getChatbotById(botId));
 	}
 
 	@GetMapping("/avatar")
 	public VFile getAvatar() {
-		return designerServices.getNoAvatar();
+		return chatbotServices.getNoAvatar();
 	}
 
 }

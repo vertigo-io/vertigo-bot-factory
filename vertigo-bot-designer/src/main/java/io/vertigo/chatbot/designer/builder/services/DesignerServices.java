@@ -17,7 +17,6 @@
  */
 package io.vertigo.chatbot.designer.builder.services;
 
-import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -27,11 +26,8 @@ import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 
-import io.vertigo.account.authorization.AuthorizationManager;
-import io.vertigo.account.authorization.VSecurityException;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
-import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.ResponseButtonDAO;
@@ -51,7 +47,6 @@ import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
@@ -60,7 +55,6 @@ import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
-import io.vertigo.datastore.impl.filestore.model.StreamFile;
 
 @Secured("AdmBot")
 @Transactional
@@ -86,39 +80,6 @@ public class DesignerServices implements Component {
 
 	@Inject
 	private BuilderPAO builderPAO;
-
-	@Inject
-	private AuthorizationManager authorizationManager;
-
-	@Secured("SuperAdmBot")
-	public Chatbot getNewChatbot() {
-		final Chatbot newChatbot = new Chatbot();
-		newChatbot.setCreationDate(LocalDate.now());
-
-		return newChatbot;
-	}
-
-	public Chatbot getChatbotById(final Long botId) {
-		Assertion.check().isNotNull(botId);
-		// ---
-		final Chatbot chatbot = chatbotDAO.get(botId);
-		checkRights(chatbot, ChatbotOperations.visiteur, ChatbotOperations.contributeur, ChatbotOperations.admFct);
-		return chatbot;
-	}
-
-	public VFile getAvatar(final Chatbot bot) {
-		if (bot.getFilIdAvatar() == null) {
-			return getNoAvatar();
-		}
-		return fileServices.getFile(bot.getFilIdAvatar());
-	}
-
-	public VFile getNoAvatar() {
-		return StreamFile.of(
-				"noAvatar.png",
-				"image/png",
-				DesignerServices.class.getResource("/noAvatar.png"));
-	}
 
 	public UtterText getDefaultTextByBot(final Chatbot bot) {
 		Assertion.check().isNotNull(bot);
@@ -380,20 +341,6 @@ public class DesignerServices implements Component {
 		return responseButtonDAO.findAll(
 				Criterions.isEqualTo(ResponseButtonFields.smtId, smallTalk.getSmtId()),
 				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
-	}
-
-	private boolean checkRights(final Chatbot chatbot, final ChatbotOperations chatbotOperation) {
-		return authorizationManager.isAuthorized(chatbot, chatbotOperation);
-	}
-
-	private void checkRights(final Chatbot chatbot, final ChatbotOperations... chatbotOperations) {
-		for (final ChatbotOperations operation : chatbotOperations) {
-			if (checkRights(chatbot, operation)) {
-				return;
-			}
-		}
-
-		throw new VSecurityException(MessageText.of("Not enought authorizations"));//no too sharp info here : may use log
 	}
 
 }

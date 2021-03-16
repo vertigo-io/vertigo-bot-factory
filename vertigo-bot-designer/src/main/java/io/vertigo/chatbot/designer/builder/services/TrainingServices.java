@@ -57,6 +57,7 @@ import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
+import io.vertigo.chatbot.designer.builder.chatbot.services.ChatbotServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
@@ -79,6 +80,9 @@ import io.vertigo.datastore.impl.filestore.model.StreamFile;
 
 @Transactional
 public class TrainingServices implements Component {
+
+	@Inject
+	private ChatbotServices chatbotServices;
 
 	@Inject
 	private DesignerServices designerServices;
@@ -244,7 +248,7 @@ public class TrainingServices implements Component {
 	}
 
 	private BotExport exportBot(final Long botId) {
-		final Chatbot bot = designerServices.getChatbotById(botId);
+		final Chatbot bot = chatbotServices.getChatbotById(botId);
 		final UtterText welcomeText = designerServices.getWelcomeTextByBot(bot);
 		final UtterText defaultText = designerServices.getDefaultTextByBot(bot);
 		final DtList<ResponseButton> welcomeButtons = designerServices.getWelcomeButtonsByBot(bot);
@@ -301,7 +305,7 @@ public class TrainingServices implements Component {
 				.isNotNull(nodId);
 
 		final Training training = getTraining(traId);
-		final ChatbotNode node = this.nodeServices.getNodeByNodeId(nodId);
+		final ChatbotNode node = nodeServices.getNodeByNodeId(nodId);
 
 		Assertion.check().isTrue(training.getBotId().equals(node.getBotId()), "Incohérence des paramètres");
 
@@ -311,7 +315,7 @@ public class TrainingServices implements Component {
 
 		// update node-training link
 		node.setTraId(traId);
-		this.nodeServices.saveNode(node);
+		nodeServices.saveNode(node);
 	}
 
 	private void doLoadModel(final Training training, final VFile model, final ChatbotNode node) {

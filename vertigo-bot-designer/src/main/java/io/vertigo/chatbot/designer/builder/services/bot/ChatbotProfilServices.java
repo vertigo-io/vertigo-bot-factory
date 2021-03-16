@@ -5,10 +5,17 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import io.vertigo.account.authorization.annotations.Secured;
+import io.vertigo.account.authorization.annotations.SecuredOperation;
+import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.builder.chatbot.ChatbotPAO;
 import io.vertigo.chatbot.designer.dao.admin.ProfilPerChatbotDAO;
+import io.vertigo.chatbot.designer.dao.commons.PersonDAO;
 import io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil;
 import io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot;
+import io.vertigo.chatbot.designer.domain.commons.Person;
+import io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum;
+import io.vertigo.chatbot.domain.DtDefinitions.PersonFields;
 import io.vertigo.chatbot.domain.DtDefinitions.ProfilPerChatbotFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
@@ -18,6 +25,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 
 @Transactional
+@Secured("AdmBot")
 public class ChatbotProfilServices implements Component {
 
 	@Inject
@@ -26,11 +34,15 @@ public class ChatbotProfilServices implements Component {
 	@Inject
 	private ProfilPerChatbotDAO profilPerChatbotDAO;
 
-	public DtList<PersonChatbotProfil> getPersonProfilIHMbyChatbotId(final Long botId) {
-		return chatbotPAO.getPersonProfilIHM(botId);
+	@Inject
+	private PersonDAO personDAO;
+
+	public DtList<PersonChatbotProfil> getPersonProfilIHMbyChatbotId(@SecuredOperation("admFct") final Chatbot chatbot) {
+		return chatbotPAO.getPersonProfilIHM(chatbot.getBotId());
 	}
 
-	public DtList<PersonChatbotProfil> updateChatbotProfils(final String profil, final List<Long> persId, final Long botId) {
+	public DtList<PersonChatbotProfil> updateChatbotProfils(final String profil, final List<Long> persId, @SecuredOperation("admFct") final Chatbot bot) {
+		final Long botId = bot.getBotId();
 		for (final Long perId : persId) {
 			Criteria<ProfilPerChatbot> criteria = Criterions.isEqualTo(ProfilPerChatbotFields.botId, botId);
 			criteria = criteria.and(Criterions.isEqualTo(ProfilPerChatbotFields.perId, perId));
@@ -49,10 +61,19 @@ public class ChatbotProfilServices implements Component {
 				profilPerChatbotDAO.create(newProfil);
 			}
 		}
-		return getPersonProfilIHMbyChatbotId(botId);
+		return getPersonProfilIHMbyChatbotId(bot);
 	}
 
-	public void deleteProfilForChatbot(final PersonChatbotProfil persToDelete) {
+	/**
+	 * Get all persons with the user profil
+	 *
+	 * @return the list of users
+	 */
+	public DtList<Person> getAllUsers(@SecuredOperation("admFct") final Chatbot chatbot) {
+		return personDAO.findAll(Criterions.isEqualTo(PersonFields.rolCd, PersonRoleEnum.RUser.name()), DtListState.of(100));
+	}
+
+	public void deleteProfilForChatbot(@SecuredOperation("admFct") final Chatbot chatbot, final PersonChatbotProfil persToDelete) {
 		profilPerChatbotDAO.delete(persToDelete.getChpId());
 	}
 

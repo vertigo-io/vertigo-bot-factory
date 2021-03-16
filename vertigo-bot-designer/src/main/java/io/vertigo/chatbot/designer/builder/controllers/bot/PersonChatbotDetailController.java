@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.designer.admin.services.PersonServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotProfilServices;
 import io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles;
 import io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil;
@@ -25,6 +24,7 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 
 @Controller
 @RequestMapping("/bot/{botId}/personChatbot")
+@Secured("AdmBot")
 public class PersonChatbotDetailController extends AbstractCommonBotController {
 
 	// for all users
@@ -37,38 +37,32 @@ public class PersonChatbotDetailController extends AbstractCommonBotController {
 	private static final ViewContextKey<SelectProfilChatbotPerson> selectionList = ViewContextKey.of("selectionList");
 
 	@Inject
-	private PersonServices personServices;
-
-	@Inject
 	private ChatbotProfilServices chatbotProfilServices;
 
 	@GetMapping("/")
-	@Secured("visiteur")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		initCommonContext(viewContext, botId);
-		viewContext.publishDtListModifiable(personsProfilListKey, chatbotProfilServices.getPersonProfilIHMbyChatbotId(botId));
+		final Chatbot chatbot = initCommonContext(viewContext, botId);
+		viewContext.publishDtListModifiable(personsProfilListKey, chatbotProfilServices.getPersonProfilIHMbyChatbotId(chatbot));
 		viewContext.publishMdl(chatbotProfilList, ChatbotProfiles.class, null);
-		viewContext.publishDtListModifiable(personsListKey, personServices.getAllUsers());
+		viewContext.publishDtListModifiable(personsListKey, chatbotProfilServices.getAllUsers(chatbot));
 		viewContext.publishDto(selectionList, new SelectProfilChatbotPerson());
 		toModeReadOnly();
 	}
 
 	@PostMapping("/_addUsers")
-	@Secured("admFct")
 	public void addUsersToProfil(final ViewContext viewContext, @ViewAttribute("selectionList") final SelectProfilChatbotPerson selection, @ViewAttribute("bot") final Chatbot chatbot) {
-		final DtList<PersonChatbotProfil> newList = chatbotProfilServices.updateChatbotProfils(selection.getPrfId(), selection.getPerId(), chatbot.getBotId());
+		final DtList<PersonChatbotProfil> newList = chatbotProfilServices.updateChatbotProfils(selection.getPrfId(), selection.getPerId(), chatbot);
 		viewContext.publishDtListModifiable(personsProfilListKey, newList);
 		viewContext.publishDto(selectionList, new SelectProfilChatbotPerson());
 	}
 
 	@PostMapping("/_delete")
-	@Secured("admFct")
 	public ViewContext deleteUser(final ViewContext viewContext, @ViewAttribute("personProfilList") final DtList<PersonChatbotProfil> persons,
-			@RequestParam("rowId") final Long chpId) {
+			@RequestParam("rowId") final Long chpId, @ViewAttribute("bot") final Chatbot bot) {
 		final PersonChatbotProfil persToDelete = persons.stream()
 				.filter(pers -> pers.getChpId().equals(chpId))
 				.findFirst().orElseThrow(() -> new VSystemException("the person and profil was not found"));
-		chatbotProfilServices.deleteProfilForChatbot(persToDelete);
+		chatbotProfilServices.deleteProfilForChatbot(bot, persToDelete);
 		persons.remove(persToDelete);
 		viewContext.publishDtListModifiable(personsProfilListKey, persons);
 		return viewContext;
