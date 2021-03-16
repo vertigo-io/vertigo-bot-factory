@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import io.vertigo.account.authorization.AuthorizationManager;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.designer.builder.chatbot.services.ChatbotServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -34,6 +34,7 @@ public class AbstractCommonBotController extends AbstractVSpringMvcController {
 	}
 
 	public void initEmptyCommonContext(final ViewContext viewContext) {
+		viewContext.publishRef(chatBotAuthorizedOperationsKey, new String[0]);
 		viewContext.publishDto(botKey, chatbotServices.getNewChatbot());
 	}
 

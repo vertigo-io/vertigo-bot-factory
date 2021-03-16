@@ -7,6 +7,23 @@
 	>
 <head>
 	<title>Users profil for chatbot</title>
+	<script type="text/javascript">
+	function confirmDelete(person) {
+		VUiPage.$q.dialog({
+	        title: 'Confirm',
+	        message: 'Do you want to remove this person : ' + person.name + ' from this chatbot',
+			ok: {
+				label: "Remove",
+				color: "red"
+			},
+			cancel: {
+				label: "Cancel"
+			}
+	    }).onOk(() => {
+			VUiPage.httpPostAjax("_delete", {'rowId':person.chpId});
+	    })
+	}
+	</script>
 </head>
 	<body>
 		<section layout:fragment="content">
@@ -54,7 +71,7 @@
 					  sortBy="name" :binary-state-sort="true" >
 	  				<vu:slot name="actions_slot">
 						<q-btn class="on-right" round color="red" icon="delete" aria-label="Delete this profil" title="Delete this profil"
-								 @click="httpPostAjax('_delete',{rowId:props.row.chpId})"></q-btn>
+								 @click="confirmDelete(props.row)"></q-btn>
 					</vu:slot>
 					<vu:column field="name" label="name">
 						<span style="height:100%" class="row items-center">{{props.row.name}}</span>

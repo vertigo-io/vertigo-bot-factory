@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.builder.chatbot.services;
+package io.vertigo.chatbot.designer.builder.services.bot;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +20,6 @@ import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
-import io.vertigo.chatbot.designer.builder.services.bot.ChatbotProfilServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.commons.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.commons.utils.UserSessionUtils;

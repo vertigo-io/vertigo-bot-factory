@@ -76,7 +76,7 @@ public final class ChatbotDAO extends DAO<Chatbot, java.lang.Long> implements St
  "				bot.*" + 
  "			from chatbot bot" + 
  "			join profil_per_chatbot ppc on (bot.bot_id = ppc.bot_id)" + 
- "			where ppc.per_id = 1020",
+ "			where ppc.per_id = #perId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtChatbot")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.Chatbot> getChatbotByPerId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "perId", smartType = "STyId") final Long perId) {

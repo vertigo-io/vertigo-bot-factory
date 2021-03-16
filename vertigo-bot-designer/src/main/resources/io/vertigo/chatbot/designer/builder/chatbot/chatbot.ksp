@@ -32,7 +32,7 @@ create Task TkGetChatbotByPerId {
 				bot.*
 			from chatbot bot
 			join profil_per_chatbot ppc on (bot.bot_id = ppc.bot_id)
-			where ppc.per_id = 1020
+			where ppc.per_id = #perId#
              "
 	in perId				{domain : DoId,			cardinality:"1"} 
 	out perIHM				{domain : DoDtChatbot,	cardinality:"*"} 
