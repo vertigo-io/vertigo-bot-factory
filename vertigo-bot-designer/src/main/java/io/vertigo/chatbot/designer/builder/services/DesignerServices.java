@@ -17,7 +17,6 @@
  */
 package io.vertigo.chatbot.designer.builder.services;
 
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -27,8 +26,6 @@ import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 
 import io.vertigo.account.authorization.annotations.Secured;
-import io.vertigo.account.authorization.annotations.SecuredOperation;
-import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.ResponseButtonDAO;
 import io.vertigo.chatbot.commons.dao.SmallTalkDAO;
@@ -40,7 +37,6 @@ import io.vertigo.chatbot.commons.domain.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.ResponseButtonFields;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
@@ -53,18 +49,10 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
-import io.vertigo.datastore.filestore.model.FileInfoURI;
-import io.vertigo.datastore.filestore.model.VFile;
 
 @Secured("AdmBot")
 @Transactional
 public class DesignerServices implements Component {
-
-	@Inject
-	private FileServices fileServices;
-
-	@Inject
-	private ChatbotDAO chatbotDAO;
 
 	@Inject
 	private SmallTalkDAO smallTalkDAO;
@@ -91,62 +79,6 @@ public class DesignerServices implements Component {
 		Assertion.check().isNotNull(bot);
 		// ---
 		return utterTextDAO.get(bot.getUttIdWelcome());
-	}
-
-	public Chatbot saveChatbot(@SecuredOperation("admFct") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
-			final UtterText defaultText, final DtList<ResponseButton> defaultButtons,
-			final UtterText welcomeText, final DtList<ResponseButton> welcomeButtons) {
-
-		Assertion.check().isNotNull(chatbot);
-		Assertion.check().isNotNull(defaultText);
-		Assertion.check().isNotNull(defaultButtons);
-		Assertion.check().isNotNull(welcomeText);
-		Assertion.check().isNotNull(welcomeButtons);
-		// ---
-
-		// default text
-		utterTextDAO.save(defaultText);
-		chatbot.setUttIdDefault(defaultText.getUttId());
-
-		// welcome
-		utterTextDAO.save(welcomeText);
-		chatbot.setUttIdWelcome(welcomeText.getUttId());
-
-		// Avatar
-		Long oldAvatar = null;
-		if (personPictureFile.isPresent()) {
-			oldAvatar = chatbot.getFilIdAvatar();
-			final VFile fileTmp = fileServices.getFileTmp(personPictureFile.get());
-			final FileInfoURI fileInfoUri = fileServices.saveFile(fileTmp);
-			chatbot.setFilIdAvatar((Long) fileInfoUri.getKey());
-		}
-
-		// chatbot save
-		chatbot.setStatus("OK");
-		final Chatbot savedChatbot = chatbotDAO.save(chatbot);
-
-		// clean old avatar
-		if (oldAvatar != null) {
-			fileServices.deleteFile(oldAvatar);
-		}
-
-		// clear old buttons
-		builderPAO.removeAllButtonsByBotId(chatbot.getBotId());
-
-		// save new buttons
-		for (final ResponseButton btn : defaultButtons) {
-			btn.setBtnId(null); // force creation
-			btn.setBotIdDefault(chatbot.getBotId());
-			responseButtonDAO.save(btn);
-		}
-
-		for (final ResponseButton btn : welcomeButtons) {
-			btn.setBtnId(null); // force creation
-			btn.setBotIdWelcome(chatbot.getBotId());
-			responseButtonDAO.save(btn);
-		}
-
-		return savedChatbot;
 	}
 
 	public SmallTalk getSmallTalkById(final Long movId) {

@@ -145,7 +145,7 @@ public class BotDetailController extends AbstractCommonBotController {
 		final DtList<ResponseButton> welcomeButtons = ChatbotUtils
 				.getRawDtList(viewContext.getUiListModifiable(welcomeButtonsKey), uiMessageStack);
 
-		final Chatbot savedChatbot = designerServices.saveChatbot(bot, personPictureFile, defaultText, defaultButtons,
+		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, defaultText, defaultButtons,
 				welcome, welcomeButtons);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();

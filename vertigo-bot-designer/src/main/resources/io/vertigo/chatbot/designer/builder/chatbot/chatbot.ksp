@@ -37,3 +37,13 @@ create Task TkGetChatbotByPerId {
 	in perId				{domain : DoId,			cardinality:"1"} 
 	out perIHM				{domain : DoDtChatbot,	cardinality:"*"} 
 }
+
+
+create Task TkRemoveAllProfilByBotId {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+				delete from profil_per_chatbot 
+				where bot_id = #botId#
+             "
+	in botId				{domain : DoId,							cardinality:"1"} 
+}

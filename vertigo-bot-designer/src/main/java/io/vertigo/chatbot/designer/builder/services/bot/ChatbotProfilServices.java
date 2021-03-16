@@ -80,4 +80,8 @@ public class ChatbotProfilServices implements Component {
 	public DtList<ProfilPerChatbot> getProfilByPerId(final Long perId) {
 		return profilPerChatbotDAO.findAll(Criterions.isEqualTo(ProfilPerChatbotFields.perId, perId), DtListState.of(100));
 	}
+
+	public void deleteAllProfilByBot(@SecuredOperation("admFct") final Chatbot bot) {
+		chatbotPAO.removeAllProfilByBotId(bot.getBotId());
+	}
 }
