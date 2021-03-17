@@ -93,7 +93,20 @@ services:
       - "cf_rabbitmq_data:/var/lib/rabbitmq/mnesia/"
     networks:
       - cb_factory
-
+      
+  rasa:
+    image: rasa/rasa:2.4.0-full
+    ports:
+      - 5005:5005
+    volumes:
+      - ./:/app
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+      
+  
 volumes:
   cf_postgres_data:
   cf_postgresKC_data:
