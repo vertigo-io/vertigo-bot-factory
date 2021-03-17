@@ -33,8 +33,8 @@ import io.vertigo.account.account.Account;
 import io.vertigo.account.authentication.AuthenticationManager;
 import io.vertigo.account.impl.authentication.UsernameAuthenticationToken;
 import io.vertigo.account.impl.authentication.UsernamePasswordAuthenticationToken;
-import io.vertigo.chatbot.designer.commons.utils.UserSessionUtils;
 import io.vertigo.chatbot.designer.domain.commons.Person;
+import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.connectors.keycloak.KeycloakDeploymentConnector;
 import io.vertigo.core.lang.Assertion;
@@ -55,8 +55,6 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 	private List<KeycloakDeploymentConnector> keycloakDeploymentConnectors;
 	@Inject
 	private KeycloakPersonServices keycloakPersonServices;
-	@Inject
-	private UserSessionUtils userSessionUtils;
 
 	//don't use anymore
 	public void login(final String login, final String password) {
@@ -66,7 +64,7 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 		}
 		final Account account = loggedAccount.get();
 		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(account.getId()));
-		userSessionUtils.getUserSession().setLoggedPerson(person);
+		UserSessionUtils.getUserSession().setLoggedPerson(person);
 
 		authorizationServices.addUserAuthorization(person);
 	}
@@ -78,7 +76,7 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 
 	@Override
 	public boolean doLogin(final HttpServletRequest request, final HttpServletResponse response) {
-		if (!userSessionUtils.isAuthenticated()) {
+		if (!UserSessionUtils.isAuthenticated()) {
 			// we should have a Principal
 			final KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) request.getUserPrincipal();
 
@@ -107,12 +105,12 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 					return authenticationManager.login(new UsernameAuthenticationToken(login)).get();
 				});
 		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(loggedAccount.getId()));
-		userSessionUtils.getUserSession().setLoggedPerson(person);
+		UserSessionUtils.getUserSession().setLoggedPerson(person);
 		authorizationServices.addUserAuthorization(person);
 	}
 
 	public void reloadAuthorizations() {
-		authorizationServices.reloadUserAuthorization(userSessionUtils.getLoggedPerson());
+		authorizationServices.reloadUserAuthorization(UserSessionUtils.getLoggedPerson());
 	}
 
 	@Override

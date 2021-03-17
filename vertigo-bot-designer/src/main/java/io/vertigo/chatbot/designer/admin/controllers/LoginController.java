@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.designer.admin.services.LoginServices;
-import io.vertigo.chatbot.designer.commons.utils.UserSessionUtils;
+import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.lang.WrappedException;
 import io.vertigo.core.util.StringUtil;
@@ -51,12 +51,9 @@ public class LoginController extends AbstractVSpringMvcController {
 	@Inject
 	private LoginServices loginServices;
 
-	@Inject
-	private UserSessionUtils userSessionsUtils;
-
 	@GetMapping("/")
 	public String initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @RequestParam(name = "code", required = false) final Integer code) {
-		if (!userSessionsUtils.isAuthenticated()) {
+		if (!UserSessionUtils.isAuthenticated()) {
 			if (code != null && code.equals(401)) {
 				uiMessageStack.warning("You have been disconnected");
 				return REDIRECT_LOGIN;

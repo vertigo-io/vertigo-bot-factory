@@ -1,18 +1,19 @@
-package io.vertigo.chatbot.designer.commons.utils;
-
-import javax.inject.Inject;
+package io.vertigo.chatbot.designer.utils;
 
 import io.vertigo.account.authorization.AuthorizationManager;
 import io.vertigo.account.authorization.VSecurityException;
 import io.vertigo.account.authorization.definitions.OperationName;
 import io.vertigo.core.locale.MessageText;
-import io.vertigo.core.node.component.Component;
+import io.vertigo.core.node.Node;
 import io.vertigo.datamodel.structure.model.KeyConcept;
 
-public class AuthorizationUtils implements Component {
+public class AuthorizationUtils {
 
-	@Inject
-	private static AuthorizationManager authorizationManager;
+	private AuthorizationUtils() {
+		//Classe utilitaire
+	}
+
+	private static final AuthorizationManager authorizationManager = Node.getNode().getComponentSpace().resolve(AuthorizationManager.class);
 
 	public static <K extends KeyConcept> void checkRights(final K keyConcept, final OperationName<K> operation, final String message) {
 		if (!authorizationManager.isAuthorized(keyConcept, operation)) {

@@ -21,8 +21,8 @@ import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
-import io.vertigo.chatbot.designer.commons.utils.AuthorizationUtils;
-import io.vertigo.chatbot.designer.commons.utils.UserSessionUtils;
+import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
+import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
@@ -54,9 +54,6 @@ public class ChatbotServices implements Component {
 
 	@Inject
 	private AuthorizationManager authorizationManager;
-
-	@Inject
-	private UserSessionUtils userSessionUtils;
 
 	@Inject
 	private FileServices fileServices;
@@ -175,7 +172,7 @@ public class ChatbotServices implements Component {
 		if (authorizationManager.hasAuthorization(GlobalAuthorizations.AtzSuperAdmBot)) {
 			return getAllChatbots();
 		}
-		return chatbotDAO.getChatbotByPerId(userSessionUtils.getLoggedPerson().getPerId());
+		return chatbotDAO.getChatbotByPerId(UserSessionUtils.getLoggedPerson().getPerId());
 	}
 
 	@Secured("SuperAdmBot")

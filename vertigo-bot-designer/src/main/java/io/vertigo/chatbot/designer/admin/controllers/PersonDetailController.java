@@ -26,10 +26,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
-import io.vertigo.chatbot.designer.commons.utils.UserSessionUtils;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.chatbot.designer.domain.commons.PersonRole;
 import io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum;
+import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -42,9 +42,6 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 
 	@Inject
 	private PersonServices personServices;
-
-	@Inject
-	private UserSessionUtils userSessionUtils;
 
 	private static final ViewContextKey<Person> personKey = ViewContextKey.of("person");
 	public static final ViewContextKey<PersonRole> ROLES_CONTEXT_KEY = ViewContextKey.of("roles");
@@ -75,7 +72,7 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 	}
 
 	private Boolean isPersonConnected(final Person person) {
-		final Person personConnected = userSessionUtils.getLoggedPerson();
+		final Person personConnected = UserSessionUtils.getLoggedPerson();
 		return person.getPerId().equals(personConnected.getPerId());
 	}
 
