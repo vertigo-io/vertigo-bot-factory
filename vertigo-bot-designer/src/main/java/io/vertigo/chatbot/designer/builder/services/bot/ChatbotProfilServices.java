@@ -15,6 +15,7 @@ import io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil;
 import io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum;
+import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.PersonFields;
 import io.vertigo.chatbot.domain.DtDefinitions.ProfilPerChatbotFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -77,7 +78,8 @@ public class ChatbotProfilServices implements Component {
 		profilPerChatbotDAO.delete(persToDelete.getChpId());
 	}
 
-	public DtList<ProfilPerChatbot> getProfilByPerId(final Long perId) {
+	public DtList<ProfilPerChatbot> getProfilByPerId() {
+		final Long perId = UserSessionUtils.getLoggedPerson().getPerId();
 		return profilPerChatbotDAO.findAll(Criterions.isEqualTo(ProfilPerChatbotFields.perId, perId), DtListState.of(100));
 	}
 

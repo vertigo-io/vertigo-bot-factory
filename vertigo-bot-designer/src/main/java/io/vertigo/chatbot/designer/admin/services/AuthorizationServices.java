@@ -52,6 +52,8 @@ public class AuthorizationServices implements Component {
 	private void addAuthorizationByChatbotProfil(final UserAuthorizations userAuthorizations, final ProfilPerChatbot profil) {
 		final String chatbotProfile = profil.getChpCd();
 		final ChatbotProfilesEnum chatbotEnum = ChatbotProfilesEnum.valueOf(chatbotProfile);
+
+		//Not break to add the lower security
 		switch (chatbotEnum) {
 			case ADMINISTRATEUR:
 				userAuthorizations.withSecurityKeys("botAdmFct", profil.getBotId());
@@ -69,7 +71,7 @@ public class AuthorizationServices implements Component {
 		obtainAuthorizationPerRole(person.getRolCd()).stream()
 				.forEach(auth -> userAuthorizations.addAuthorization(auth));
 
-		chatbotProfilServices.getProfilByPerId(person.getPerId()).stream().forEach(profil -> addAuthorizationByChatbotProfil(userAuthorizations, profil));
+		chatbotProfilServices.getProfilByPerId().stream().forEach(profil -> addAuthorizationByChatbotProfil(userAuthorizations, profil));
 	}
 
 	public void reloadUserAuthorization(final Person person) {
