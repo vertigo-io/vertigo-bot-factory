@@ -39,10 +39,7 @@ import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
 import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
-import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
-import io.vertigo.chatbot.commons.dao.ResponseButtonDAO;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
-import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
@@ -57,7 +54,6 @@ import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
-import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
@@ -73,7 +69,6 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
-import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
@@ -82,10 +77,13 @@ import io.vertigo.datastore.impl.filestore.model.StreamFile;
 public class TrainingServices implements Component {
 
 	@Inject
-	private ChatbotServices chatbotServices;
+	private SmallTalkServices smallTalkServices;
 
 	@Inject
-	private DesignerServices designerServices;
+	private ResponsesButtonServices responsesButtonServices;
+
+	@Inject
+	private UtterTextServices utterTextServices;
 
 	@Inject
 	private FileServices fileServices;
@@ -95,15 +93,6 @@ public class TrainingServices implements Component {
 
 	@Inject
 	private BuilderPAO builderPAO;
-
-	@Inject
-	private NluTrainingSentenceDAO nluTrainingSentenceDAO;
-
-	@Inject
-	private UtterTextDAO utterTextDAO;
-
-	@Inject
-	private ResponseButtonDAO responseButtonDAO;
 
 	@Inject
 	private ChatbotNodeDAO chatbotNodeDAO;
@@ -116,7 +105,8 @@ public class TrainingServices implements Component {
 
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
-	public Training trainAgent(final Long botId) {
+	public Training trainAgent(final Chatbot bot) {
+		final Long botId = bot.getBotId();
 		builderPAO.cleanOldTrainings(botId);
 
 		final Long versionNumber = builderPAO.getNextModelNumber(botId);
@@ -134,7 +124,7 @@ public class TrainingServices implements Component {
 		saveTraining(training);
 
 		final Map<String, Object> requestData = new HashMap<>();
-		requestData.put("botExport", exportBot(botId));
+		requestData.put("botExport", exportBot(bot));
 		requestData.put("smallTalkExport", exportSmallTalk(botId));
 		requestData.put("trainingId", training.getTraId());
 		requestData.put("modelId", versionNumber);
@@ -247,12 +237,11 @@ public class TrainingServices implements Component {
 		return retour;
 	}
 
-	private BotExport exportBot(final Long botId) {
-		final Chatbot bot = chatbotServices.getChatbotById(botId);
-		final UtterText welcomeText = designerServices.getWelcomeTextByBot(bot);
-		final UtterText defaultText = designerServices.getDefaultTextByBot(bot);
-		final DtList<ResponseButton> welcomeButtons = designerServices.getWelcomeButtonsByBot(bot);
-		final DtList<ResponseButton> defaultButtons = designerServices.getDefaultButtonsByBot(bot);
+	private BotExport exportBot(final Chatbot bot) {
+		final UtterText welcomeText = utterTextServices.getWelcomeTextByBot(bot);
+		final UtterText defaultText = utterTextServices.getDefaultTextByBot(bot);
+		final DtList<ResponseButton> welcomeButtons = responsesButtonServices.getWelcomeButtonsByBot(bot);
+		final DtList<ResponseButton> defaultButtons = responsesButtonServices.getDefaultButtonsByBot(bot);
 
 		final BotExport retour = new BotExport();
 		retour.setBot(bot);
@@ -264,39 +253,19 @@ public class TrainingServices implements Component {
 	}
 
 	private DtList<SmallTalkExport> exportSmallTalk(final Long botId) {
-		final DtList<SmallTalk> smallTalks = designerServices.getAllActiveSmallTalksByBotId(botId);
+		final DtList<SmallTalk> smallTalks = smallTalkServices.getAllActiveSmallTalksByBotId(botId);
 
 		final List<Long> smallTalkIds = smallTalks.stream()
 				.map(SmallTalk::getSmtId)
 				.collect(Collectors.toList());
 
-		final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap = nluTrainingSentenceDAO.exportSmallTalkRelativeTrainingSentence(smallTalkIds)
-				.stream()
-				.collect(Collectors.groupingBy(NluTrainingSentence::getSmtId,
-						VCollectors.toDtList(NluTrainingSentence.class)));
+		//Create map for export
+		final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap = smallTalkServices.exportSmallTalkRelativeTrainingSentence(smallTalkIds);
+		final Map<Long, DtList<UtterText>> utterTextsMap = utterTextServices.exportSmallTalkRelativeUtter(smallTalkIds);
+		final Map<Long, DtList<ResponseButton>> buttonsMap = responsesButtonServices.exportSmallTalkRelativeButtons(smallTalkIds);
 
-		final Map<Long, DtList<UtterText>> utterTextsMap = utterTextDAO.exportSmallTalkRelativeUtter(smallTalkIds)
-				.stream()
-				.collect(Collectors.groupingBy(UtterText::getSmtId,
-						VCollectors.toDtList(UtterText.class)));
-
-		final Map<Long, DtList<ResponseButton>> buttonsMap = responseButtonDAO.exportSmallTalkRelativeButtons(smallTalkIds)
-				.stream()
-				.collect(Collectors.groupingBy(ResponseButton::getSmtId,
-						VCollectors.toDtList(ResponseButton.class)));
-
-		final DtList<SmallTalkExport> retour = new DtList<>(SmallTalkExport.class);
-		for (final SmallTalk smallTalk : smallTalks) {
-			final SmallTalkExport newExport = new SmallTalkExport();
-			newExport.setSmallTalk(smallTalk);
-			newExport.setNluTrainingSentences(trainingSentencesMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(NluTrainingSentence.class)));
-			newExport.setUtterTexts(utterTextsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(UtterText.class)));
-			newExport.setButtons(buttonsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(ResponseButton.class)));
-
-			retour.add(newExport);
-		}
-
-		return retour;
+		//create the smallTalkExport
+		return smallTalkServices.exportSmallTalks(smallTalks, trainingSentencesMap, utterTextsMap, buttonsMap);
 	}
 
 	public void loadModel(final Long traId, final Long nodId) {
@@ -419,6 +388,13 @@ public class TrainingServices implements Component {
 		response.bufferEntity();
 
 		return new StreamFile(modelVersion + ".tar.gz", response.getHeaderString("Content-Type"), Instant.now(), response.getLength(), () -> response.readEntity(InputStream.class));
+	}
+
+	public void removeAllTraining(final Chatbot bot) {
+		final Long botId = bot.getBotId();
+		final List<Long> filesId = builderPAO.getAllTrainingFilIdsByBotId(botId);
+		builderPAO.removeTrainingByBotId(botId);
+		builderPAO.removeTrainingFileByFilIds(filesId);
 	}
 
 }

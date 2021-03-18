@@ -19,6 +19,7 @@ package io.vertigo.chatbot.designer.commons.services;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.dao.MediaFileInfoDAO;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
@@ -33,6 +34,9 @@ public class FileServices implements Component {
 
 	@Inject
 	private FileStoreManager fileStoreManager;
+
+	@Inject
+	private MediaFileInfoDAO mediaFileInfoDAO;
 
 	public FileInfoURI saveFileTmp(final VFile file) {
 		//apply security check
@@ -80,6 +84,10 @@ public class FileServices implements Component {
 
 	public void deleteFile(final Long fileId) {
 		deleteFile(toStdFileInfoUri(fileId));
+	}
+
+	public void delete(final Long filIdAvatar) {
+		mediaFileInfoDAO.delete(filIdAvatar);
 	}
 
 }

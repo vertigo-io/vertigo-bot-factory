@@ -5,12 +5,12 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.AuthorizationManager;
+import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
-import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
@@ -19,6 +19,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 
 @Transactional
+@Secured("BotUser")
 public class NodeServices implements Component {
 
 	@Inject
@@ -26,9 +27,6 @@ public class NodeServices implements Component {
 
 	@Inject
 	private ChatbotNodeDAO chatbotNodeDAO;
-
-	@Inject
-	private ChatbotServices chatbotServices;
 
 	@Inject
 	private AuthorizationManager authorizationManager;
@@ -68,8 +66,8 @@ public class NodeServices implements Component {
 		chatbotNodeDAO.delete(nodId);
 	}
 
-	public DtList<ChatbotNode> getNodesByBotId(final Long botId) {
-		return getNodesByBot(chatbotServices.getChatbotById(botId));
+	public DtList<ChatbotNode> getNodesByBotId(final Chatbot bot) {
+		return getNodesByBot(bot);
 	}
 
 	public DtList<ChatbotNode> getNodesByBot(final Chatbot chatbot) {
@@ -82,5 +80,9 @@ public class NodeServices implements Component {
 			nodes.add(devNode.get());
 		}
 		return nodes;
+	}
+
+	public void deleteChatbotNodeByBot(final Chatbot bot) {
+		builderPAO.removeChatbotNodeByBotId(bot.getBotId());
 	}
 }

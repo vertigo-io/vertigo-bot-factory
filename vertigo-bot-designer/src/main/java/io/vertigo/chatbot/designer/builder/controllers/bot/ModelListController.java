@@ -115,7 +115,7 @@ public class ModelListController extends AbstractBotController {
 
 	@PostMapping("/_train")
 	public ViewContext doTrain(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		trainingServices.trainAgent(bot.getBotId());
+		trainingServices.trainAgent(bot);
 
 		return viewContext;
 	}

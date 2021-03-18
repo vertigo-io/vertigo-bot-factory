@@ -1,7 +1,6 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -12,14 +11,15 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
-import io.vertigo.chatbot.commons.dao.MediaFileInfoDAO;
-import io.vertigo.chatbot.commons.dao.ResponseButtonDAO;
-import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
-import io.vertigo.chatbot.designer.builder.services.DesignerServices;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
+import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
+import io.vertigo.chatbot.designer.builder.services.TrainingServices;
+import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
@@ -44,13 +44,13 @@ public class ChatbotServices implements Component {
 	private ChatbotDAO chatbotDAO;
 
 	@Inject
-	private ResponseButtonDAO responseButtonDAO;
+	private ResponsesButtonServices responsesButtonServices;
 
 	@Inject
-	private UtterTextDAO utterTextDAO;
+	private UtterTextServices utterTextServices;
 
 	@Inject
-	private MediaFileInfoDAO mediaFileInfoDAO;
+	private SmallTalkServices smallTalkServices;
 
 	@Inject
 	private AuthorizationManager authorizationManager;
@@ -60,6 +60,12 @@ public class ChatbotServices implements Component {
 
 	@Inject
 	private ChatbotProfilServices chatbotProfilServices;
+
+	@Inject
+	private TrainingServices trainingServices;
+
+	@Inject
+	private NodeServices nodeServices;
 
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 			final UtterText defaultText, final DtList<ResponseButton> defaultButtons,
@@ -73,11 +79,10 @@ public class ChatbotServices implements Component {
 		// ---
 
 		// default text
-		utterTextDAO.save(defaultText);
+		utterTextServices.save(defaultText);
 		chatbot.setUttIdDefault(defaultText.getUttId());
-
 		// welcome
-		utterTextDAO.save(welcomeText);
+		utterTextServices.save(welcomeText);
 		chatbot.setUttIdWelcome(welcomeText.getUttId());
 
 		// Avatar
@@ -99,20 +104,10 @@ public class ChatbotServices implements Component {
 		}
 
 		// clear old buttons
-		builderPAO.removeAllButtonsByBotId(chatbot.getBotId());
-
+		responsesButtonServices.removeAllButtonsByBot(chatbot);
 		// save new buttons
-		for (final ResponseButton btn : defaultButtons) {
-			btn.setBtnId(null); // force creation
-			btn.setBotIdDefault(chatbot.getBotId());
-			responseButtonDAO.save(btn);
-		}
-
-		for (final ResponseButton btn : welcomeButtons) {
-			btn.setBtnId(null); // force creation
-			btn.setBotIdWelcome(chatbot.getBotId());
-			responseButtonDAO.save(btn);
-		}
+		responsesButtonServices.saveAllDefaultButtonsByBot(savedChatbot, defaultButtons);
+		responsesButtonServices.saveAllWelcomeButtonsByBot(savedChatbot, welcomeButtons);
 
 		return savedChatbot;
 	}
@@ -120,52 +115,22 @@ public class ChatbotServices implements Component {
 	public Boolean deleteChatbot(@SecuredOperation("botAdm") final Chatbot bot) {
 
 		// Delete avatar file
-		deleteFil(bot);
+		if (bot.getFilIdAvatar() != null) {
+			fileServices.delete(bot.getFilIdAvatar());
+		}
 		// Delete node
-		deleteChatbotNode(bot);
+		nodeServices.deleteChatbotNodeByBot(bot);
 		// Delete training and all media file
-		deleteTraining(bot);
-		deleteUtterText(bot);
-		deleteResponseButton(bot);
+		trainingServices.removeAllTraining(bot);
+		utterTextServices.removeAllUtterTextByBotId(bot);
+		responsesButtonServices.removeAllButtonsByBot(bot);
 		// Delete training, reponsetype and smallTalk
-		deleteSmallTalkCascade(bot);
+		smallTalkServices.removeAllNTSFromBot(bot);
+		smallTalkServices.removeAllSmallTalkFromBot(bot);
 
 		chatbotProfilServices.deleteAllProfilByBot(bot);
 		chatbotDAO.delete(bot.getBotId());
 		return true;
-	}
-
-	private void deleteSmallTalkCascade(final Chatbot bot) {
-		final Long botId = bot.getBotId();
-		builderPAO.removeAllNluTrainingSentenceByBotId(botId);
-		builderPAO.removeAllSmallTalkByBotId(botId);
-
-	}
-
-	private void deleteResponseButton(final Chatbot bot) {
-		builderPAO.removeAllButtonsByBotId(bot.getBotId());
-
-	}
-
-	private void deleteUtterText(final Chatbot bot) {
-		builderPAO.removeAllUtterTextByBotId(bot.getBotId());
-	}
-
-	private void deleteTraining(final Chatbot bot) {
-		final Long botId = bot.getBotId();
-		final List<Long> filesId = builderPAO.getAllTrainingFilIdsByBotId(botId);
-		builderPAO.removeTrainingByBotId(botId);
-		builderPAO.removeTrainingFileByFilIds(filesId);
-	}
-
-	private void deleteChatbotNode(final Chatbot bot) {
-		builderPAO.removeChatbotNodeByBotId(bot.getBotId());
-	}
-
-	private void deleteFil(final Chatbot bot) {
-		if (bot.getFilIdAvatar() != null) {
-			mediaFileInfoDAO.delete(bot.getFilIdAvatar());
-		}
 	}
 
 	public DtList<Chatbot> getMySupervisedChatbots() {
@@ -207,7 +172,7 @@ public class ChatbotServices implements Component {
 		return StreamFile.of(
 				"noAvatar.png",
 				"image/png",
-				DesignerServices.class.getResource("/noAvatar.png"));
+				ChatbotServices.class.getResource("/noAvatar.png"));
 	}
 
 }
