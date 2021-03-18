@@ -76,7 +76,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_refreshRunner")
-	@Secured("contributeur")
+	@Secured("BotUser")
 	public ViewContext refreshRunnerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		final RunnerInfo state = trainingServices.getRunnerState(bot.getBotId());
 		viewContext.publishDto(runnerStateKey, state);
@@ -85,7 +85,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_refreshTrainer")
-	@Secured("contributeur")
+	@Secured("BotUser")
 	public ViewContext refreshTrainerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		final TrainerInfo state = trainingServices.getTrainingState(bot.getBotId());
 		viewContext.publishDto(trainerStateKey, state);
@@ -94,7 +94,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_refreshTrainings")
-	@Secured("contributeur")
+	@Secured("BotUser")
 	public ViewContext refreshTrainings(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		viewContext.publishDtList(trainingListKey, trainingServices.getAllTrainings(bot.getBotId()));
 
@@ -104,7 +104,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_removeTraining")
-	@Secured("contributeur")
+	@Secured("BotUser")
 	public ViewContext doRemoveTraining(final ViewContext viewContext,
 			@RequestParam("traId") final Long traId,
 			@ViewAttribute("bot") final Chatbot bot) {
@@ -117,7 +117,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_train")
-	@Secured("contributeur")
+	@Secured("BotUser")
 	public ViewContext doTrain(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		trainingServices.trainAgent(bot.getBotId());
 
@@ -125,7 +125,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_stop")
-	@Secured("contributeur")
+	@Secured("BotUser")
 	public ViewContext doStop(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		trainingServices.stopAgent(bot.getBotId());
 
@@ -133,7 +133,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_loadTraining")
-	@Secured("contributeur")
+	@Secured("BotUser")
 	public ViewContext doLoadTraining(final ViewContext viewContext,
 			@RequestParam("traId") final Long traId,
 			@RequestParam("nodId") final Long nodId,
@@ -148,7 +148,7 @@ public class ModelListController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_talk")
-	@Secured("contributeur")
+	@Secured("BotUser")
 	@ResponseBody
 	public String talk(
 			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList,

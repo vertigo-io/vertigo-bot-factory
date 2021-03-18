@@ -73,7 +73,7 @@ public class NodeServices implements Component {
 	}
 
 	public DtList<ChatbotNode> getNodesByBot(final Chatbot chatbot) {
-		if (authorizationManager.isAuthorized(chatbot, ChatbotOperations.admFct)) {
+		if (authorizationManager.isAuthorized(chatbot, ChatbotOperations.botAdm)) {
 			return getAllNodesByBotId(chatbot.getBotId());
 		}
 		final DtList<ChatbotNode> nodes = new DtList<ChatbotNode>(ChatbotNode.class);

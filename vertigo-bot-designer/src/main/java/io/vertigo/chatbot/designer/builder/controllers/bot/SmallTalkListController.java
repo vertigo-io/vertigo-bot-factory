@@ -40,7 +40,7 @@ public class SmallTalkListController extends AbstractCommonBotController {
 	private DesignerServices designerServices;
 
 	@GetMapping("/")
-	@Secured("visiteur")
+	@Secured("botVisitor")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		initCommonContext(viewContext, botId);
 

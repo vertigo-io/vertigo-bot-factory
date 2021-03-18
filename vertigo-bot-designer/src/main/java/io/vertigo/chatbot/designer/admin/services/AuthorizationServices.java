@@ -32,11 +32,10 @@ public class AuthorizationServices implements Component {
 
 	private List<Authorization> obtainAuthorizationPerRole(final String role) {
 		if (PersonRoleEnum.RAdmin.name().equals(role)) {
-			return resolveAuthorizations(GlobalAuthorizations.AtzAdmPer, GlobalAuthorizations.AtzSuperAdmBot, GlobalAuthorizations.AtzAdmBot,
-					ChatbotAuthorizations.AtzChatbot$admin);
+			return resolveAuthorizations(GlobalAuthorizations.AtzSuperAdm, GlobalAuthorizations.AtzBotUser, ChatbotAuthorizations.AtzChatbot$botSuperAdmin);
 		} else if (PersonRoleEnum.RUser.name().equals(role)) {
-			return resolveAuthorizations(GlobalAuthorizations.AtzAdmBot, ChatbotAuthorizations.AtzChatbot$read, ChatbotAuthorizations.AtzChatbot$write, ChatbotAuthorizations.AtzChatbot$visiteur,
-					ChatbotAuthorizations.AtzChatbot$contributeur, ChatbotAuthorizations.AtzChatbot$admFct);
+			return resolveAuthorizations(GlobalAuthorizations.AtzBotUser, ChatbotAuthorizations.AtzChatbot$botVisitor,
+					ChatbotAuthorizations.AtzChatbot$botContributor, ChatbotAuthorizations.AtzChatbot$botAdm);
 		}
 		throw new IllegalArgumentException("Unsupported role " + role);
 	}
@@ -56,11 +55,11 @@ public class AuthorizationServices implements Component {
 		//Not break to add the lower security
 		switch (chatbotEnum) {
 			case ADMINISTRATEUR:
-				userAuthorizations.withSecurityKeys("botAdmFct", profil.getBotId());
+				userAuthorizations.withSecurityKeys("botAdm", profil.getBotId());
 			case CONTRIBUTEUR:
-				userAuthorizations.withSecurityKeys("botContributeur", profil.getBotId());
+				userAuthorizations.withSecurityKeys("botContributor", profil.getBotId());
 			case VISITEUR:
-				userAuthorizations.withSecurityKeys("botVisiteur", profil.getBotId());
+				userAuthorizations.withSecurityKeys("botVisitor", profil.getBotId());
 			default:
 				break;
 		}

@@ -207,7 +207,7 @@
 						stripe rounded style="height: 10px"
 						:value="vueData.trainerState.trainingPercent / 100"></q-linear-progress>
 				
-				<q-card-actions th:if="${(#arrays.contains(model.chatBotAuthorizedOperations, 'contributeur') || #arrays.contains(model.chatBotAuthorizedOperations, 'admFct')) }">
+				<q-card-actions th:if="${#arrays.contains(model.chatBotAuthorizedOperations, 'botContributor') }">
 					<vu:include-data object="trainerState" field="trainingInProgress" />
 					
 					<q-btn color="primary" icon="build" size="lg" label="Start build" :loading="vueData.trainerState.trainingInProgress" :disable="getDevNode() == null || vueData.trainerState.trainingInProgress"

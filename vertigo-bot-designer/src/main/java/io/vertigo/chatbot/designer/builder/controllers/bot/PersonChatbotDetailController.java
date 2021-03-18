@@ -24,7 +24,7 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 
 @Controller
 @RequestMapping("/bot/{botId}/personChatbot")
-@Secured("AdmBot")
+@Secured("BotUser")
 public class PersonChatbotDetailController extends AbstractCommonBotController {
 
 	// for all users

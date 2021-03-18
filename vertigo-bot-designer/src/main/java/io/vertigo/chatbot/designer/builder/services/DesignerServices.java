@@ -50,7 +50,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
 
-@Secured("AdmBot")
+@Secured("BotUser")
 @Transactional
 public class DesignerServices implements Component {
 

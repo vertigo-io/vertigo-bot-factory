@@ -127,14 +127,14 @@ public class BotDetailController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_delete")
-	@Secured("admFct")
+	@Secured("BotUser")
 	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		chatbotServices.deleteChatbot(bot);
 		return "redirect:/bots/";
 	}
 
 	@PostMapping("/_save")
-	@Secured("admFct")
+	@Secured("BotUser")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
 			@QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile,
@@ -152,7 +152,7 @@ public class BotDetailController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_saveNode")
-	@Secured("admin")
+	@Secured("SuperAdmin")
 	public ViewContext doSaveNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("nodeEdit") final ChatbotNode nodeEdit) {
 
@@ -168,7 +168,7 @@ public class BotDetailController extends AbstractCommonBotController {
 	}
 
 	@PostMapping("/_deleteNode")
-	@Secured("admin")
+	@Secured("SuperAdmin")
 	public ViewContext doDeleteNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@RequestParam("nodId") final Long nodId) {
 

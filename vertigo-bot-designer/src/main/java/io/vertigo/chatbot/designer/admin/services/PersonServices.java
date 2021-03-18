@@ -31,7 +31,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 
 @Transactional
-@Secured("AdmPer")
+@Secured("SuperAdm")
 public class PersonServices implements Component {
 
 	@Inject

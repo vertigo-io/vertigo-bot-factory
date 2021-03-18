@@ -34,7 +34,7 @@ import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
 
 @Transactional
-@Secured("AdmBot")
+@Secured("BotUser")
 public class ChatbotServices implements Component {
 
 	@Inject
@@ -61,7 +61,7 @@ public class ChatbotServices implements Component {
 	@Inject
 	private ChatbotProfilServices chatbotProfilServices;
 
-	public Chatbot saveChatbot(@SecuredOperation("admFct") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
+	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 			final UtterText defaultText, final DtList<ResponseButton> defaultButtons,
 			final UtterText welcomeText, final DtList<ResponseButton> welcomeButtons) {
 
@@ -117,7 +117,7 @@ public class ChatbotServices implements Component {
 		return savedChatbot;
 	}
 
-	public Boolean deleteChatbot(@SecuredOperation("admFct") final Chatbot bot) {
+	public Boolean deleteChatbot(@SecuredOperation("botAdm") final Chatbot bot) {
 
 		// Delete avatar file
 		deleteFil(bot);
@@ -169,18 +169,18 @@ public class ChatbotServices implements Component {
 	}
 
 	public DtList<Chatbot> getMySupervisedChatbots() {
-		if (authorizationManager.hasAuthorization(GlobalAuthorizations.AtzSuperAdmBot)) {
+		if (authorizationManager.hasAuthorization(GlobalAuthorizations.AtzSuperAdm)) {
 			return getAllChatbots();
 		}
 		return chatbotDAO.getChatbotByPerId(UserSessionUtils.getLoggedPerson().getPerId());
 	}
 
-	@Secured("SuperAdmBot")
+	@Secured("SuperAdm")
 	public DtList<Chatbot> getAllChatbots() {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
 	}
 
-	@Secured("SuperAdmBot")
+	@Secured("SuperAdm")
 	public Chatbot getNewChatbot() {
 		final Chatbot newChatbot = new Chatbot();
 		newChatbot.setCreationDate(LocalDate.now());
@@ -192,11 +192,11 @@ public class ChatbotServices implements Component {
 		Assertion.check().isNotNull(botId);
 		// ---
 		final Chatbot chatbot = chatbotDAO.get(botId);
-		AuthorizationUtils.checkRights(chatbot, ChatbotOperations.visiteur, "can't get the chatbot : not enough right");
+		AuthorizationUtils.checkRights(chatbot, ChatbotOperations.botVisitor, "can't get the chatbot : not enough right");
 		return chatbot;
 	}
 
-	public VFile getAvatar(final Chatbot bot) {
+	public VFile getAvatar(@SecuredOperation("botVisitor") final Chatbot bot) {
 		if (bot.getFilIdAvatar() == null) {
 			return getNoAvatar();
 		}

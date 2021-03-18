@@ -60,14 +60,14 @@
 		      
 		      <nav class="text-no-wrap">
 		       <q-list :class="{'dense-list-header':!componentStates.navDrawer.mini}" style="height:100%">
-		      	<q-item tag="a" th:href="@{/persons/}" th:if="${model.userAuthorizations[AtzAdmPer]}">
+		      	<q-item tag="a" th:href="@{/persons/}" th:if="${model.userAuthorizations[AtzSuperAdm]}">
 		          <q-item-section avatar>
 			        <q-icon name="fas fa-users"></q-icon>
 			      </q-item-section>
 		          <q-item-section>Users</q-item-section>
 		        </q-item>
 		        
-		        <q-item tag="a" th:href="@{/bots/}" th:if="${model.userAuthorizations[AtzAdmBot]}">
+		        <q-item tag="a" th:href="@{/bots/}" th:if="${model.userAuthorizations[AtzBotUser]}">
 		          <q-item-section avatar>
 			        <q-icon name="fas fa-robot"></q-icon>
 			      </q-item-section>

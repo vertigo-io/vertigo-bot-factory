@@ -26,7 +26,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 
 @Transactional
-@Secured("AdmBot")
+@Secured("BotUser")
 public class ChatbotProfilServices implements Component {
 
 	@Inject
@@ -38,11 +38,11 @@ public class ChatbotProfilServices implements Component {
 	@Inject
 	private PersonDAO personDAO;
 
-	public DtList<PersonChatbotProfil> getPersonProfilIHMbyChatbotId(@SecuredOperation("admFct") final Chatbot chatbot) {
+	public DtList<PersonChatbotProfil> getPersonProfilIHMbyChatbotId(@SecuredOperation("botAdm") final Chatbot chatbot) {
 		return chatbotPAO.getPersonProfilIHM(chatbot.getBotId());
 	}
 
-	public DtList<PersonChatbotProfil> updateChatbotProfils(final String profil, final List<Long> persId, @SecuredOperation("admFct") final Chatbot bot) {
+	public DtList<PersonChatbotProfil> updateChatbotProfils(final String profil, final List<Long> persId, @SecuredOperation("botAdm") final Chatbot bot) {
 		final Long botId = bot.getBotId();
 		for (final Long perId : persId) {
 			Criteria<ProfilPerChatbot> criteria = Criterions.isEqualTo(ProfilPerChatbotFields.botId, botId);
@@ -70,11 +70,11 @@ public class ChatbotProfilServices implements Component {
 	 *
 	 * @return the list of users
 	 */
-	public DtList<Person> getAllUsers(@SecuredOperation("admFct") final Chatbot chatbot) {
+	public DtList<Person> getAllUsers(@SecuredOperation("botAdm") final Chatbot chatbot) {
 		return personDAO.findAll(Criterions.isEqualTo(PersonFields.rolCd, PersonRoleEnum.RUser.name()), DtListState.of(100));
 	}
 
-	public void deleteProfilForChatbot(@SecuredOperation("admFct") final Chatbot chatbot, final PersonChatbotProfil persToDelete) {
+	public void deleteProfilForChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final PersonChatbotProfil persToDelete) {
 		profilPerChatbotDAO.delete(persToDelete.getChpId());
 	}
 
@@ -83,7 +83,7 @@ public class ChatbotProfilServices implements Component {
 		return profilPerChatbotDAO.findAll(Criterions.isEqualTo(ProfilPerChatbotFields.perId, perId), DtListState.of(100));
 	}
 
-	public void deleteAllProfilByBot(@SecuredOperation("admFct") final Chatbot bot) {
+	public void deleteAllProfilByBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		chatbotPAO.removeAllProfilByBotId(bot.getBotId());
 	}
 }

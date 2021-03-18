@@ -12,17 +12,13 @@ import io.vertigo.core.node.Node;
 public enum GlobalAuthorizations implements AuthorizationName {
 
 	/**
-	 * AdmBot.
+	 * BotUser.
 	 */
-	AtzAdmBot,
+	AtzBotUser,
 	/**
-	 * AdmPer.
+	 * Super Adm of the application.
 	 */
-	AtzAdmPer,
-	/**
-	 * Create or view all bots..
-	 */
-	AtzSuperAdmBot;
+	AtzSuperAdm;
 
 	/**
 	 * Get the associated authorization.
