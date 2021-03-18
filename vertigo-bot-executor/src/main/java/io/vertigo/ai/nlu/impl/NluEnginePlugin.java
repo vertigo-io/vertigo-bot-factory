@@ -1,21 +1,20 @@
 package io.vertigo.ai.nlu.impl;
 
 import io.vertigo.ai.nlu.VIntent;
-import io.vertigo.ai.nlu.VIntentResult;
+import io.vertigo.ai.nlu.VRecognitionResult;
+import io.vertigo.core.node.component.Plugin;
 
 /**
  * @author skerdudou
  */
-public interface NluEnginePlugin {
+public interface NluEnginePlugin extends Plugin {
 
 	/**
-	 * Register a new intent in the NLU model.
+	 * Register a new intent.
 	 *
-	 * @param code identifies the intent
-	 * @param description optional, can describe the purpose of the intent
-	 * @return the created intent
+	 * @param intent the intent to register
 	 */
-	VIntent registerIntent(String code, String description);
+	void registerIntent(VIntent intent);
 
 	/**
 	 * Add a new sentence to the training corpus associated with the intent. It is used by the NLU engine to train the neural network to classify sentences.
@@ -28,7 +27,7 @@ public interface NluEnginePlugin {
 	/**
 	 * Start the process to train the neural network against registered intents.
 	 */
-	void trainAll();
+	void train();
 
 	/**
 	 * Use the previously trained model to classify a new and unknown sentence.
@@ -36,5 +35,19 @@ public interface NluEnginePlugin {
 	 * @param sentence the sentence we wants to classify.
 	 * @return the result of the analysis
 	 */
-	VIntentResult recognize(String sentence);
+	VRecognitionResult recognize(String sentence);
+
+	/**
+	 * Check if ready to recognize sentences.
+	 *
+	 * @return true if the engine is ready
+	 */
+	boolean isReady();
+
+	/**
+	 * Plugin name. Default to "main".
+	 *
+	 * @return the name of the plugin
+	 */
+	String getName();
 }

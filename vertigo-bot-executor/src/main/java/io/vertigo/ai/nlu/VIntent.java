@@ -7,17 +7,21 @@ import io.vertigo.core.lang.Assertion;
  *
  * @author skerdudou
  */
-public class VIntent {
+public final class VIntent {
 
 	private final String code;
 
 	private final String description;
 
-	public VIntent(final String code, final String description) {
+	private VIntent(final String code, final String description) {
 		Assertion.check().isNotBlank(code);
 		//--
 		this.code = code;
 		this.description = description;
+	}
+
+	public static VIntent of(final String code, final String description) {
+		return new VIntent(code, description);
 	}
 
 	/**

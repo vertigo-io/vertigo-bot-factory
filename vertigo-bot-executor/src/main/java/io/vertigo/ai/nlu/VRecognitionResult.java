@@ -5,17 +5,17 @@ import java.util.List;
 import io.vertigo.core.lang.Assertion;
 
 /**
- * Result of an analysis of a sentence by the NLU engine.
+ * Result of the analysis of a sentence by the NLU engine.
  *
  * @author skerdudou
  */
-public class VIntentResult {
+public class VRecognitionResult {
 
 	private final String rawSentence;
 
 	private final List<VIntentClassification> intentClassificationList;
 
-	public VIntentResult(final String rawSentence, final List<VIntentClassification> intentClassificationList) {
+	public VRecognitionResult(final String rawSentence, final List<VIntentClassification> intentClassificationList) {
 		Assertion.check().isNotBlank(rawSentence);
 		Assertion.check().isNotNull(intentClassificationList);
 		//--
