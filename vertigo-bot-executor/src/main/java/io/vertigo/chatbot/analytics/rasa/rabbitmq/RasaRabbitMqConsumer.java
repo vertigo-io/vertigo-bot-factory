@@ -56,6 +56,7 @@ import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.ParamManager;
 
+@Deprecated
 public class RasaRabbitMqConsumer implements Component, Activeable {
 
 	protected static final Logger LOGGER = LogManager.getLogger("rasa");
@@ -83,7 +84,7 @@ public class RasaRabbitMqConsumer implements Component, Activeable {
 
 		startGsonEngine();
 
-		startRabbitMqConsumer();
+		// startRabbitMqConsumer();
 	}
 
 	private void startGsonEngine() {

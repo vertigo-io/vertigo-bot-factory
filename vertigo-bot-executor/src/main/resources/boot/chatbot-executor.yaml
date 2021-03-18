@@ -29,6 +29,13 @@ modules:
     plugins:
       - io.vertigo.chatbot.vega.plugins.webservice.handler.ApiTokenWebServiceHandlerPlugin:
           apiKey: ${API_KEY}
+  io.vertigo.ai.AiFeatures:
+    features:
+      - nlu:
+    featuresConfig:
+      - nlu.rasa:
+          rasaUrl: http://localhost:5005
+  
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
   io.vertigo.chatbot.executor.RasaExecutorFeatures:
   io.vertigo.chatbot.analytics.RasaAnalyticsFeatures:

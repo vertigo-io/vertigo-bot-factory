@@ -38,6 +38,7 @@ import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.ParamManager;
 
+@Deprecated
 public abstract class AbstractRasaHandler implements Component, Activeable {
 
 	private static final String RASA_BOT_PATH = "RASA_BOT_PATH";
@@ -62,7 +63,7 @@ public abstract class AbstractRasaHandler implements Component, Activeable {
 	}
 
 	protected Process execRasa(final String command, final String... additionalArgs) {
-		return execRasa(command, null, null, additionalArgs);
+		return null;//execRasa(command, null, null, additionalArgs);
 	}
 
 	protected Process execRasa(final String command, final Consumer<String> logConsumer, final Runnable endCallback, final String... additionalArgs) {

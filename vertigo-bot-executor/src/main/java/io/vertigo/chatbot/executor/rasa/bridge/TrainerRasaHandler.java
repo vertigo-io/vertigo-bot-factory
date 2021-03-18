@@ -44,6 +44,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.FSFile;
 
+@Deprecated
 public class TrainerRasaHandler extends AbstractRasaHandler {
 
 	private static final String TRAINING_MODEL_DIR = "trainingModel";

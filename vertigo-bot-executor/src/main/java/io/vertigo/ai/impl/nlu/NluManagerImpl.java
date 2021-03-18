@@ -1,4 +1,4 @@
-package io.vertigo.ai.nlu.impl;
+package io.vertigo.ai.impl.nlu;
 
 import java.util.HashMap;
 import java.util.List;

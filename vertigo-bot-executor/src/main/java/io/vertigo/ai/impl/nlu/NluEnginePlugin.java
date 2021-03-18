@@ -1,4 +1,4 @@
-package io.vertigo.ai.nlu.impl;
+package io.vertigo.ai.impl.nlu;
 
 import io.vertigo.ai.nlu.VIntent;
 import io.vertigo.ai.nlu.VRecognitionResult;

@@ -1,4 +1,4 @@
-package io.vertigo.ai.nlu.plugins;
+package io.vertigo.ai.plugins.nlu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,10 +9,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
+import io.vertigo.ai.impl.nlu.NluEnginePlugin;
+import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.VIntent;
 import io.vertigo.ai.nlu.VRecognitionResult;
-import io.vertigo.ai.nlu.impl.NluEnginePlugin;
-import io.vertigo.ai.nlu.impl.NluManagerImpl;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.param.ParamValue;
 

@@ -36,6 +36,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.datastore.filestore.model.VFile;
 
+@Deprecated
 public class RunnerRasaHandler extends AbstractRasaHandler {
 
 	private static final String MODEL_DIR = "models/";
