@@ -30,6 +30,8 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 			@ParamValue("rasaUrl") final String rasaUrl,
 			@ParamValue("pluginName") final Optional<String> optPluginName) {
 
+		Assertion.check().isNotBlank(rasaUrl);
+
 		this.rasaUrl = rasaUrl;
 		name = optPluginName.orElse(NluManagerImpl.DEFAULT_PLUGIN_NAME);
 
@@ -38,6 +40,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		trainingPhrases = new HashMap<>();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void registerIntent(final VIntent intent) {
 		Assertion.check().isNotNull(intent);
@@ -45,6 +48,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		intentList.add(intent);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void addTrainingPhrase(final VIntent intent, final String trainingPhrase) {
 		Assertion.check()
@@ -57,6 +61,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 				.add(trainingPhrase);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void train() {
 		ready.set(false);
@@ -66,6 +71,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		ready.set(true);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public VRecognitionResult recognize(final String sentence) {
 		if (!ready.get()) {
@@ -77,11 +83,13 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getName() {
 		return name;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isReady() {
 		return ready.get();
