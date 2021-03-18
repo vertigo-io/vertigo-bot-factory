@@ -32,6 +32,7 @@ import io.vertigo.ui.core.ViewContextKey;
 
 @Controller
 @RequestMapping("/bot/{botId}/smallTalks")
+@Secured("BotUser")
 public class SmallTalkListController extends AbstractCommonBotController {
 
 	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalks");
@@ -40,7 +41,6 @@ public class SmallTalkListController extends AbstractCommonBotController {
 	private DesignerServices designerServices;
 
 	@GetMapping("/")
-	@Secured("botVisitor")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		initCommonContext(viewContext, botId);
 
