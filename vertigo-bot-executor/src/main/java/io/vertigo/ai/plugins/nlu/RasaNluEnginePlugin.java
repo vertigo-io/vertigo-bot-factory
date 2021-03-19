@@ -80,7 +80,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 
 		// do recognize
 
-		return null;
+		return new VRecognitionResult(sentence, new ArrayList<>());
 	}
 
 	/** {@inheritDoc} */

@@ -22,10 +22,12 @@ package io.vertigo.ai;
 import javax.inject.Inject;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.nlu.NluManager;
+import io.vertigo.ai.nlu.VIntent;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.BootConfig;
@@ -46,9 +48,50 @@ public final class NluAiTest {
 	@Inject
 	private NluManager nluManager;
 
+	private void defaultIntentCorpus() {
+		final var intentMeteo = VIntent.of("meteo", "afficher la météo");
+		nluManager.registerIntent(intentMeteo);
+		nluManager.addTrainingPhrase(intentMeteo, "quel temps fait-il demain ?");
+		nluManager.addTrainingPhrase(intentMeteo, "donne moi la météo");
+		nluManager.addTrainingPhrase(intentMeteo, "C'est quoi la météo pour demain ?");
+		nluManager.addTrainingPhrase(intentMeteo, "il fait beau demain ?");
+		nluManager.addTrainingPhrase(intentMeteo, "va t il pleuvoir dans les prochains jours ?");
+
+		final var intentTrain = VIntent.of("train", "prendre le train");
+		nluManager.registerIntent(intentTrain);
+		nluManager.addTrainingPhrase(intentTrain, "je voudrais prendre le train");
+		nluManager.addTrainingPhrase(intentTrain, "réserver billet de train");
+		nluManager.addTrainingPhrase(intentTrain, "réserve-moi un ticket de train");
+		nluManager.addTrainingPhrase(intentTrain, "je veux un billet de train");
+
+		final var intentBlague = VIntent.of("blague", "Ah ah ah !");
+		nluManager.registerIntent(intentBlague);
+		nluManager.addTrainingPhrase(intentBlague, "raconte moi une blague");
+		nluManager.addTrainingPhrase(intentBlague, "donne moi une blague");
+		nluManager.addTrainingPhrase(intentBlague, "fais moi rire");
+		nluManager.addTrainingPhrase(intentBlague, "t'a pas une blague pour moi ?");
+		nluManager.addTrainingPhrase(intentBlague, "je veux une blague");
+		nluManager.addTrainingPhrase(intentBlague, "je voudrais une blague");
+
+		nluManager.trainAll();
+	}
+
 	@Test
 	public void testNlu() {
-		// TODO
+		defaultIntentCorpus();
+
+		var result = nluManager.recognize("je veux rire");
+		Assertions.assertFalse(result.getIntentClassificationList().isEmpty());
+		Assertions.assertEquals("blague", result.getIntentClassificationList().get(0).getIntent().getCode());
+
+		result = nluManager.recognize("j'ai un train a prendre");
+		Assertions.assertFalse(result.getIntentClassificationList().isEmpty());
+		Assertions.assertEquals("train", result.getIntentClassificationList().get(0).getIntent().getCode());
+
+		result = nluManager.recognize("j'aime la choucroute");
+		if (!result.getIntentClassificationList().isEmpty()) {
+			Assertions.assertEquals("blague", result.getIntentClassificationList().get(0).getAccuracy() < 0.4D);
+		}
 	}
 
 	@BeforeEach
