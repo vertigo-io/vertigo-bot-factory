@@ -28,35 +28,36 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
-import io.vertigo.chatbot.designer.builder.chatbot.services.ChatbotServicesImpl;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
-import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot")
-public class BotDetailController extends AbstractVSpringMvcController {
+public class BotDetailController extends AbstractCommonBotController {
 
 	@Inject
 	private DesignerServices designerServices;
 
 	@Inject
-	private CommonBotDetailController commonBotDetailController;
+	private NodeServices nodeServices;
 
 	@Inject
-	private ChatbotServicesImpl chatbotServices;
+	private ChatbotServices chatbotServices;
 
 	private static final ViewContextKey<UtterText> defaultKey = ViewContextKey.of("default");
 	private static final ViewContextKey<ResponseButton> defaultButtonsKey = ViewContextKey.of("defaultButtons");
@@ -72,7 +73,7 @@ public class BotDetailController extends AbstractVSpringMvcController {
 
 	@GetMapping("/{botId}")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = commonBotDetailController.initCommonContext(viewContext, botId);
+		final Chatbot bot = initCommonContext(viewContext, botId);
 
 		viewContext.publishDto(defaultKey, designerServices.getDefaultTextByBot(bot));
 		viewContext.publishDto(welcomeKey, designerServices.getWelcomeTextByBot(bot));
@@ -81,7 +82,7 @@ public class BotDetailController extends AbstractVSpringMvcController {
 		viewContext.publishDtListModifiable(welcomeButtonsKey, designerServices.getWelcomeButtonsByBot(bot));
 		viewContext.publishDtList(smallTalkKey, designerServices.getAllSmallTalksByBotId(botId));
 
-		viewContext.publishDtList(nodeListKey, designerServices.getAllNodesByBotId(botId));
+		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBotId(botId));
 
 		viewContext.publishRef(deletePopinKey, false);
 		initNodeEdit(viewContext);
@@ -100,7 +101,7 @@ public class BotDetailController extends AbstractVSpringMvcController {
 
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext) {
-		commonBotDetailController.initEmptyCommonContext(viewContext);
+		initEmptyCommonContext(viewContext);
 
 		final UtterText newDefault = new UtterText();
 		newDefault.setText("Sorry, I don't understand.");
@@ -126,12 +127,14 @@ public class BotDetailController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_delete")
+	@Secured("BotUser")
 	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		chatbotServices.deleteChatbot(bot);
 		return "redirect:/bots/";
 	}
 
 	@PostMapping("/_save")
+	@Secured("BotUser")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
 			@QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile,
@@ -142,21 +145,22 @@ public class BotDetailController extends AbstractVSpringMvcController {
 		final DtList<ResponseButton> welcomeButtons = ChatbotUtils
 				.getRawDtList(viewContext.getUiListModifiable(welcomeButtonsKey), uiMessageStack);
 
-		final Chatbot savedChatbot = designerServices.saveChatbot(bot, personPictureFile, defaultText, defaultButtons,
+		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, defaultText, defaultButtons,
 				welcome, welcomeButtons);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();
 	}
 
 	@PostMapping("/_saveNode")
+	@Secured("SuperAdmin")
 	public ViewContext doSaveNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("nodeEdit") final ChatbotNode nodeEdit) {
 
 		nodeEdit.setBotId(bot.getBotId());
 
-		designerServices.saveNode(nodeEdit);
+		nodeServices.saveNode(nodeEdit);
 
-		viewContext.publishDtList(nodeListKey, designerServices.getAllNodesByBotId(bot.getBotId()));
+		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
 		viewContext.publishDto(nodeEditKey, new ChatbotNode()); // reset nodeEdit so previous values are not used for
 																// subsequent requests
 
@@ -164,12 +168,13 @@ public class BotDetailController extends AbstractVSpringMvcController {
 	}
 
 	@PostMapping("/_deleteNode")
+	@Secured("SuperAdmin")
 	public ViewContext doDeleteNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@RequestParam("nodId") final Long nodId) {
 
-		designerServices.deleteNode(nodId);
+		nodeServices.deleteNode(nodId);
 
-		viewContext.publishDtList(nodeListKey, designerServices.getAllNodesByBotId(bot.getBotId()));
+		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
 
 		return viewContext;
 	}

@@ -57,6 +57,7 @@ import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
 import io.vertigo.chatbot.designer.builder.BuilderPAO;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
@@ -79,6 +80,9 @@ import io.vertigo.datastore.impl.filestore.model.StreamFile;
 
 @Transactional
 public class TrainingServices implements Component {
+
+	@Inject
+	private ChatbotServices chatbotServices;
 
 	@Inject
 	private DesignerServices designerServices;
@@ -107,6 +111,9 @@ public class TrainingServices implements Component {
 	@Inject
 	private JaxrsProvider jaxrsProvider;
 
+	@Inject
+	private NodeServices nodeServices;
+
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
 	public Training trainAgent(final Long botId) {
@@ -114,7 +121,7 @@ public class TrainingServices implements Component {
 
 		final Long versionNumber = builderPAO.getNextModelNumber(botId);
 
-		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId)
+		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(botId)
 				.orElseThrow(() -> new VUserException("No training node configured"));
 
 		final Training training = new Training();
@@ -151,7 +158,7 @@ public class TrainingServices implements Component {
 	}
 
 	public void stopAgent(final Long botId) {
-		final ChatbotNode devNode = designerServices.getDevNodeByBotId(botId).get();
+		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(botId).get();
 
 		jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
 				.request(MediaType.APPLICATION_JSON)
@@ -161,7 +168,7 @@ public class TrainingServices implements Component {
 	}
 
 	public TrainerInfo getTrainingState(final Long botId) {
-		final Optional<ChatbotNode> optDevNode = designerServices.getDevNodeByBotId(botId);
+		final Optional<ChatbotNode> optDevNode = nodeServices.getDevNodeByBotId(botId);
 
 		if (!optDevNode.isPresent()) {
 			final TrainerInfo trainerInfo = new TrainerInfo();
@@ -201,7 +208,7 @@ public class TrainingServices implements Component {
 	}
 
 	public RunnerInfo getRunnerState(final Long botId) {
-		final Optional<ChatbotNode> optDevNode = designerServices.getDevNodeByBotId(botId);
+		final Optional<ChatbotNode> optDevNode = nodeServices.getDevNodeByBotId(botId);
 
 		if (!optDevNode.isPresent()) {
 			final RunnerInfo runnerInfo = new RunnerInfo();
@@ -241,7 +248,7 @@ public class TrainingServices implements Component {
 	}
 
 	private BotExport exportBot(final Long botId) {
-		final Chatbot bot = designerServices.getChatbotById(botId);
+		final Chatbot bot = chatbotServices.getChatbotById(botId);
 		final UtterText welcomeText = designerServices.getWelcomeTextByBot(bot);
 		final UtterText defaultText = designerServices.getDefaultTextByBot(bot);
 		final DtList<ResponseButton> welcomeButtons = designerServices.getWelcomeButtonsByBot(bot);
@@ -298,7 +305,7 @@ public class TrainingServices implements Component {
 				.isNotNull(nodId);
 
 		final Training training = getTraining(traId);
-		final ChatbotNode node = chatbotNodeDAO.get(nodId);
+		final ChatbotNode node = nodeServices.getNodeByNodeId(nodId);
 
 		Assertion.check().isTrue(training.getBotId().equals(node.getBotId()), "Incohérence des paramètres");
 
@@ -308,7 +315,7 @@ public class TrainingServices implements Component {
 
 		// update node-training link
 		node.setTraId(traId);
-		chatbotNodeDAO.save(node);
+		nodeServices.saveNode(node);
 	}
 
 	private void doLoadModel(final Training training, final VFile model, final ChatbotNode node) {

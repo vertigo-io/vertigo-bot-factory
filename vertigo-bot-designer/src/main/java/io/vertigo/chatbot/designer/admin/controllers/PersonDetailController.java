@@ -17,9 +17,6 @@
  */
 package io.vertigo.chatbot.designer.admin.controllers;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
@@ -28,12 +25,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.Person;
-import io.vertigo.chatbot.commons.domain.PersonRole;
-import io.vertigo.chatbot.designer.admin.services.LoginServices;
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
-import io.vertigo.chatbot.designer.builder.services.DesignerServices;
+import io.vertigo.chatbot.designer.domain.commons.Person;
+import io.vertigo.chatbot.designer.domain.commons.PersonRole;
+import io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum;
+import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -46,50 +42,20 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 
 	@Inject
 	private PersonServices personServices;
-	@Inject
-	private DesignerServices designerServices;
-	@Inject
-	private LoginServices loginServices;
 
 	private static final ViewContextKey<Person> personKey = ViewContextKey.of("person");
-	/** ClÃ© de context du mode changePassword. */
-	public static final ViewContextKey<Boolean> MODE_CHANGE_PASSWORD_CONTEXT_KEY = ViewContextKey
-			.of("modeChangePassword");
 	public static final ViewContextKey<PersonRole> ROLES_CONTEXT_KEY = ViewContextKey.of("roles");
-	public static final ViewContextKey<Chatbot> CHATBOTS_CONTEXT_KEY = ViewContextKey.of("chatbots");
-	public static final ViewContextKey<Long[]> CHATBOT_SELECTED_CONTEXT_KEY = ViewContextKey.of("chatbotsSelected");
-	public static final ViewContextKey<String> CHATBOT_SELECTED_STR_CONTEXT_KEY = ViewContextKey
-			.of("chatbotsSelectedStr");
 	public static final ViewContextKey<Boolean> IS_SAME_USER_KEY = ViewContextKey.of("isSameUser");
-
-	private void initCommonContext(final ViewContext viewContext) {
-		viewContext.publishMdl(ROLES_CONTEXT_KEY, PersonRole.class, null); // all
-		viewContext.publishDtList(CHATBOTS_CONTEXT_KEY, designerServices.getAllChatbots());
-		viewContext.publishRef(CHATBOT_SELECTED_STR_CONTEXT_KEY, "");
-	}
+	public static final ViewContextKey<Boolean> IS_LAST_ADMIN = ViewContextKey.of("isLastAdmin");
 
 	@GetMapping("/{perId}")
 	public void initContext(final ViewContext viewContext, @PathVariable("perId") final Long perId) {
-		initCommonContext(viewContext);
 		final Person person = personServices.getPersonById(perId);
 		viewContext.publishDto(personKey, person);
-		viewContext.publishRef(MODE_CHANGE_PASSWORD_CONTEXT_KEY, false);
 		viewContext.publishRef(IS_SAME_USER_KEY, isPersonConnected(person));
-
-		final List<Long> selectedBotIds = person.chatbots().get().stream().map(Chatbot::getBotId)
-				.collect(Collectors.toList());
-		viewContext.publishRef(CHATBOT_SELECTED_CONTEXT_KEY, selectedBotIds.toArray(new Long[selectedBotIds.size()]));
-
+		viewContext.publishMdl(ROLES_CONTEXT_KEY, PersonRole.class, null); // all
+		viewContext.publishRef(IS_LAST_ADMIN, isLastAdmin(person));
 		toModeReadOnly();
-	}
-
-	@GetMapping("/new")
-	public void initContext(final ViewContext viewContext) {
-		initCommonContext(viewContext);
-		viewContext.publishDto(personKey, new Person());
-		viewContext.publishRef(MODE_CHANGE_PASSWORD_CONTEXT_KEY, true);
-		viewContext.publishRef(CHATBOT_SELECTED_CONTEXT_KEY, new Long[0]);
-		toModeCreate();
 	}
 
 	@PostMapping("/_edit")
@@ -97,28 +63,27 @@ public class PersonDetailController extends AbstractVSpringMvcController {
 		toModeEdit();
 	}
 
-	@PostMapping("/_changePassword")
-	public void doChangePassword(final ViewContext viewContext) {
-		viewContext.publishRef(MODE_CHANGE_PASSWORD_CONTEXT_KEY, true);
-		toModeEdit();
-	}
-
 	@PostMapping("/_save")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("person") final Person person, @ViewAttribute("chatbotsSelectedStr") final String chatbotsSelectedStr) {
+			@ViewAttribute("person") final Person person) {
 		//save person, with its supervised chatbot
-		final Person savedPerson = personServices.savePerson(person, chatbotsSelectedStr);
+		final Person savedPerson = personServices.savePerson(person);
 		return "redirect:/person/" + savedPerson.getPerId();
 	}
 
-	private Boolean isPersonConnected(Person person) {
-		final Person personConnected = loginServices.getLoggedPerson();
+	private Boolean isPersonConnected(final Person person) {
+		final Person personConnected = UserSessionUtils.getLoggedPerson();
 		return person.getPerId().equals(personConnected.getPerId());
 	}
 
+	private Boolean isLastAdmin(final Person person) {
+		return personServices.getAdminPerNumber().equals(1L) && person.getRolCd().equals(PersonRoleEnum.RAdmin.name());
+	}
+
 	@PostMapping("/_delete")
-	private String deletePerson(@ViewAttribute("person") Person person) {
-		this.personServices.deletePerson(person);
+	private String deletePerson(@ViewAttribute("person") final Person person) {
+		personServices.deletePerson(person);
 		return "redirect:/persons/";
 	}
+
 }

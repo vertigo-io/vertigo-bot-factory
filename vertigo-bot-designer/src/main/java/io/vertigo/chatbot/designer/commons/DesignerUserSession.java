@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import io.vertigo.account.security.UserSession;
-import io.vertigo.chatbot.commons.domain.Person;
+import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 
 /**

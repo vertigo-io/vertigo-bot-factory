@@ -18,6 +18,8 @@
 package io.vertigo.chatbot.designer.admin.controllers;
 
 import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -27,7 +29,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.designer.admin.services.LoginServices;
+import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.lang.WrappedException;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -49,7 +53,7 @@ public class LoginController extends AbstractVSpringMvcController {
 
 	@GetMapping("/")
 	public String initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @RequestParam(name = "code", required = false) final Integer code) {
-		if (!loginServices.isAuthenticated()) {
+		if (!UserSessionUtils.isAuthenticated()) {
 			if (code != null && code.equals(401)) {
 				uiMessageStack.warning("You have been disconnected");
 				return REDIRECT_LOGIN;
@@ -74,9 +78,20 @@ public class LoginController extends AbstractVSpringMvcController {
 	}
 
 	@GetMapping("/_logout")
-	public String logout(final HttpSession httpSession) {
+	public String logout(final HttpServletRequest request, final HttpSession httpSession) {
+		try {
+			request.logout();
+		} catch (final ServletException e) {
+			throw WrappedException.wrap(e);
+		}
 		loginServices.logout(httpSession);
 		return REDIRECT_LOGIN;
+	}
+
+	@GetMapping("/_reloadAuthorizations")
+	public String reloadAuthorizations() {
+		loginServices.reloadAuthorizations();
+		return REDIRECT_HOME;
 	}
 
 }

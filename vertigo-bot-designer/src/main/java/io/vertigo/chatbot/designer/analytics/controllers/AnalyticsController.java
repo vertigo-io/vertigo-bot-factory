@@ -33,6 +33,8 @@ import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.domain.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
 import io.vertigo.chatbot.designer.domain.TopIntent;
@@ -68,12 +70,18 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 	@Inject
 	private DesignerServices designerServices;
 
+	@Inject
+	private ChatbotServices chatbotServices;
+
+	@Inject
+	private NodeServices nodeServices;
+
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext,
 			@RequestParam("botId") final Optional<Long> botId,
 			@RequestParam("nodId") final Optional<Long> nodId,
 			@RequestParam("time") final Optional<TimeOption> timeOption) {
-		viewContext.publishDtList(botsKey, designerServices.getMySupervisedChatbots());
+		viewContext.publishDtList(botsKey, chatbotServices.getMySupervisedChatbots());
 		viewContext.publishDtList(nodesKey, new DtList<ChatbotNode>(ChatbotNode.class));
 
 		final StatCriteria statCriteria = new StatCriteria();
@@ -99,7 +107,7 @@ public class AnalyticsController extends AbstractVSpringMvcController {
 
 	private void updateGraph(final ViewContext viewContext, final StatCriteria criteria) {
 		if (criteria.getBotId() != null) {
-			viewContext.publishDtList(nodesKey, designerServices.getAllNodesByBotId(criteria.getBotId()));
+			viewContext.publishDtList(nodesKey, nodeServices.getAllNodesByBotId(criteria.getBotId()));
 		}
 
 		viewContext.publishRef(sessionStatsKey, analyticsServices.getSessionsStats(criteria));

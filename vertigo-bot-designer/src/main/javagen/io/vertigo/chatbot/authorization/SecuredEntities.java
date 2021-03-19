@@ -21,12 +21,14 @@ public final class SecuredEntities {
 	 * Authorizations of Chatbot.
 	 */
 	public enum ChatbotAuthorizations implements AuthorizationName {
+		/** adm operation for bot. */
+		AtzChatbot$botAdm,
+		/** contributor operation for bot. */
+		AtzChatbot$botContributor,
 		/** Visibilité globale pour le super admin. Sans régles = toujours ok.. */
-		AtzChatbot$admin,
-		/** Visibilité si affecté à l'utilisateur'.. */
-		AtzChatbot$read,
-		/** Modification si affecté à l'utilisateur.. */
-		AtzChatbot$write;
+		AtzChatbot$botSuperAdmin,
+		/** visitor operation for bot. */
+		AtzChatbot$botVisitor;
 
 		/**
 		 * Get the associated authorization.
@@ -52,11 +54,13 @@ public final class SecuredEntities {
 	 * Operations of Chatbot.
 	 */
 	public enum ChatbotOperations implements OperationName<Chatbot> {
+		/** adm operation for bot. */
+		botAdm,
+		/** contributor operation for bot. */
+		botContributor,
 		/** Visibilité globale pour le super admin. Sans régles = toujours ok.. */
-		admin,
-		/** Visibilité si affecté à l'utilisateur'.. */
-		read,
-		/** Modification si affecté à l'utilisateur.. */
-		write;
+		botSuperAdmin,
+		/** visitor operation for bot. */
+		botVisitor;
 	}
 }

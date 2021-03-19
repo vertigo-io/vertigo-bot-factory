@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.designer.builder.services.DesignerServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
@@ -36,7 +36,7 @@ public class BotListController extends AbstractVSpringMvcController {
 	private static final ViewContextKey<Chatbot> botsKey = ViewContextKey.of("bots");
 
 	@Inject
-	private DesignerServices chatbotServices;
+	private ChatbotServices chatbotServices;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext) {

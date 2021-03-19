@@ -23,8 +23,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import io.vertigo.chatbot.commons.domain.Person;
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
+import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;

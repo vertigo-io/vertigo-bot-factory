@@ -20,8 +20,9 @@
  */
 package io.vertigo.chatbot.designer.boot;
 
-import io.vertigo.chatbot.commons.domain.PersonRole;
 import io.vertigo.chatbot.commons.domain.ResponseType;
+import io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles;
+import io.vertigo.chatbot.designer.domain.commons.PersonRole;
 import io.vertigo.datastore.impl.entitystore.AbstractMasterDataDefinitionProvider;
 
 /**
@@ -35,6 +36,7 @@ public class ChatbotMasterDataDefinitionProvider extends AbstractMasterDataDefin
 	public void declareMasterDataLists() {
 		registerDtMasterDatas(ResponseType.class);
 		registerDtMasterDatas(PersonRole.class);
+		registerDtMasterDatas(ChatbotProfiles.class);
 	}
 
 }

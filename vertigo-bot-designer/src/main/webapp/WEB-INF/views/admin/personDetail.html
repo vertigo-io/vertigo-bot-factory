@@ -29,8 +29,6 @@
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" ariaLabel="Edit" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
-			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_changePassword}" ariaLabel="Change Password" icon="vpn_key"
-							class="on-left" :round size="lg" color="primary" />
 			<q-btn th:if="${model.modeReadOnly and !model.isSameUser }" @click="componentStates.showPopup = true" aria-label="Delete" title="Delete" icon="delete"
 							class="on-left" round size="lg" color="red" ></q-btn>
 		</section>
@@ -40,39 +38,14 @@
 	
 			<vu:popup object="person" action="_delete" vModel="showPopup"></vu:popup>
 	
-			<vu:block id="identity" title="Person identity" th:if="${!model.modeChangePassword || model.modeCreate}">
-				<vu:text-field object="person" field="login"/>
-				<vu:text-field object="person" field="name"/>
-				<vu:select object="person" field="rolCd" list="roles" valueField="rolCd" labelField="label"/>
-			
-				<vu:include-data-primitive key="chatbotsSelected"/>
-				<vu:include-data-primitive key="chatbotsSelected"/>
-				<vu:include-data object="chatbots" field="botId"/>
-				<vu:include-data object="chatbots" field="name"/>
-				<q-select
-				  th::disable="${model.modeReadOnly || model.modeChangePassword}"
-		          fill-input
-			      map-options
-			      emit-value
-		          multiple
-		          v-model="vueData.chatbotsSelected"
-		          :options="transformListForSelection('chatbots', 'botId', 'name')"
-		          use-chips
-		          stack-label
-		          label="Supervised bots"
-		        />
-		        <vu:include-data-primitive key="chatbotsSelectedStr"/>
-				<input type="hidden" name="vContext[chatbotsSelectedStr]" :value="vueData.chatbotsSelected" />
-							
+			<vu:block id="identity" title="Person identity">
+				<vu:text-field object="person" field="name" readonly="${model.modeReadOnly}"/>
+				<vu:select object="person" field="rolCd" list="roles" valueField="rolCd" labelField="label" readonly="${model.modeReadOnly || model.isLastAdmin}"/>
+
 			</vu:block>
-			
-			<vu:block id="password" title="Person password"  th:if="${model.modeChangePassword}">
-				<vu:text-field-edit object="person" field="passwordNew"/>
-			</vu:block>
-			
 			
 			<q-page-sticky position="bottom-right">
-				<vu:button-submit th:if="${!model.modeReadOnly || model.modeChangePassword}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
+				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
 			</q-page-sticky>
 		</section>
 		

@@ -5,7 +5,7 @@
   layout:decorate="~{templates/detailLayout}">
   
 	<div layout:fragment="content-header-left" id="baseImg">
- 		<img th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" class="detailImg" />
+ 		<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" class="detailImg" />
 	</div>
 	<div layout:fragment="content-header-title" id="baseTitle">
 		<vu:include-data object="bot" field="name" />
@@ -16,5 +16,6 @@
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'informations'} ? 'active' : ''" flat label="Informations" url="@{/bot/{id}(id=${model.bot.botId})}" />
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'smallTalks'} ? 'active' : ''" flat label="Small talks" url="@{/bot/{id}/smallTalks/(id=${model.bot.botId})}" />
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'models'} ? 'active' : ''" flat label="Models" url="@{/bot/{id}/models/(id=${model.bot.botId})}" />
+		<vu:button-link th:if="${#arrays.contains(model.chatBotAuthorizedOperations, 'botAdm') }" disabled="${noNavigation == true}" class="${tab == 'users'} ? 'active' : ''" flat label="Users" url="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}" />
 	</div>
 </html>

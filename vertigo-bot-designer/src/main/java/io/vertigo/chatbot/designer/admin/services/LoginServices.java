@@ -18,10 +18,8 @@
 package io.vertigo.chatbot.designer.admin.services;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -33,29 +31,17 @@ import org.keycloak.representations.IDToken;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.account.authentication.AuthenticationManager;
-import io.vertigo.account.authorization.AuthorizationManager;
-import io.vertigo.account.authorization.UserAuthorizations;
-import io.vertigo.account.authorization.VSecurityException;
-import io.vertigo.account.authorization.definitions.Authorization;
-import io.vertigo.account.authorization.definitions.AuthorizationName;
 import io.vertigo.account.impl.authentication.UsernameAuthenticationToken;
 import io.vertigo.account.impl.authentication.UsernamePasswordAuthenticationToken;
-import io.vertigo.account.security.VSecurityManager;
-import io.vertigo.chatbot.authorization.GlobalAuthorizations;
-import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotAuthorizations;
-import io.vertigo.chatbot.commons.domain.Person;
-import io.vertigo.chatbot.commons.domain.PersonRoleEnum;
-import io.vertigo.chatbot.designer.commons.DesignerUserSession;
+import io.vertigo.chatbot.designer.domain.commons.Person;
+import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.connectors.keycloak.KeycloakDeploymentConnector;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.lang.WrappedException;
-import io.vertigo.core.locale.MessageText;
-import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.vega.impl.servlet.filter.AbstactKeycloakDelegateAuthenticationHandler;
 
 @Transactional
@@ -64,56 +50,23 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 	@Inject
 	private AuthenticationManager authenticationManager;
 	@Inject
-	private AuthorizationManager authorizationManager;
-	@Inject
-	private VSecurityManager securityManager;
+	private AuthorizationServices authorizationServices;
 	@Inject
 	private List<KeycloakDeploymentConnector> keycloakDeploymentConnectors;
 	@Inject
-	private PersonServices personServices;
+	private KeycloakPersonServices keycloakPersonServices;
 
+	//don't use anymore
 	public void login(final String login, final String password) {
 		final Optional<Account> loggedAccount = authenticationManager.login(new UsernamePasswordAuthenticationToken(login, password));
 		if (!loggedAccount.isPresent()) {
 			throw new VUserException("Login or Password invalid");
 		}
 		final Account account = loggedAccount.get();
-		final Person person = personServices.getPersonById(Long.valueOf(account.getId()));
-		getUserSession().setLoggedPerson(person);
+		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(account.getId()));
+		UserSessionUtils.getUserSession().setLoggedPerson(person);
 
-		final UserAuthorizations userAuthorizations = authorizationManager.obtainUserAuthorizations();
-		obtainAuthorizationPerRole(person.getRolCd()).stream()
-				.forEach(auth -> userAuthorizations.addAuthorization(auth));
-
-		person.chatbots().load();
-		person.chatbots().get().stream()
-				.forEach(chatbot -> userAuthorizations.withSecurityKeys("botId", chatbot.getBotId()));
-	}
-
-	private List<Authorization> obtainAuthorizationPerRole(final String role) {
-		if (PersonRoleEnum.RAdmin.name().equals(role)) {
-			return resolveAuthorizations(GlobalAuthorizations.AtzAdmPer, GlobalAuthorizations.AtzSuperAdmBot, GlobalAuthorizations.AtzAdmBot, ChatbotAuthorizations.AtzChatbot$admin);
-		} else if (PersonRoleEnum.RUser.name().equals(role)) {
-			return resolveAuthorizations(GlobalAuthorizations.AtzAdmBot, ChatbotAuthorizations.AtzChatbot$read, ChatbotAuthorizations.AtzChatbot$write);
-		}
-		throw new IllegalArgumentException("Unsupported role " + role);
-	}
-
-	private static List<Authorization> resolveAuthorizations(final AuthorizationName... authNames) {
-		final DefinitionSpace definitionSpace = Node.getNode().getDefinitionSpace();
-		final List<Authorization> authorizations = Arrays.stream(authNames)
-				.map(name -> definitionSpace.resolve(name.name(), Authorization.class))
-				.collect(Collectors.toList());
-		return authorizations;
-	}
-
-	public boolean isAuthenticated() {
-		final Optional<DesignerUserSession> userSession = securityManager.<DesignerUserSession>getCurrentUserSession();
-		return !userSession.isPresent() ? false : userSession.get().isAuthenticated();
-	}
-
-	public Person getLoggedPerson() {
-		return getUserSession().getLoggedPerson();
+		authorizationServices.addUserAuthorization(person);
 	}
 
 	public void logout(final HttpSession httpSession) {
@@ -121,13 +74,9 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 		httpSession.invalidate();
 	}
 
-	private DesignerUserSession getUserSession() {
-		return securityManager.<DesignerUserSession>getCurrentUserSession().orElseThrow(() -> new VSecurityException(MessageText.of("No active session found")));
-	}
-
 	@Override
-	public boolean doLogin(HttpServletRequest request, HttpServletResponse response) {
-		if (!isAuthenticated()) {
+	public boolean doLogin(final HttpServletRequest request, final HttpServletResponse response) {
+		if (!UserSessionUtils.isAuthenticated()) {
 			// we should have a Principal
 			final KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) request.getUserPrincipal();
 
@@ -150,30 +99,18 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 		final Account loggedAccount = authenticationManager.login(new UsernameAuthenticationToken(login)).orElseGet(
 				() -> {
 					// auto provisionning an account when using keycloak
-					final String name = getNameFromToken(token);
-					final String rol = getRoleFromToken(token);
-					final Person newPerson = personServices.initPerson(login, name, rol);
+					final String name = keycloakPersonServices.getNameFromToken(token);
+					final String rol = keycloakPersonServices.getRoleFromToken(token);
+					keycloakPersonServices.initPerson(login, name, rol);
 					return authenticationManager.login(new UsernameAuthenticationToken(login)).get();
 				});
-		final Person person = personServices.getPersonById(Long.valueOf(loggedAccount.getId()));
-		getUserSession().setLoggedPerson(person);
-		final UserAuthorizations userAuthorizations = authorizationManager.obtainUserAuthorizations();
-		obtainAuthorizationPerRole(person.getRolCd()).stream()
-				.forEach(auth -> userAuthorizations.addAuthorization(auth));
-
-		person.chatbots().load();
-		person.chatbots().get().stream()
-				.forEach(chatbot -> userAuthorizations.withSecurityKeys("botId", chatbot.getBotId()));
+		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(loggedAccount.getId()));
+		UserSessionUtils.getUserSession().setLoggedPerson(person);
+		authorizationServices.addUserAuthorization(person);
 	}
 
-	private String getRoleFromToken(IDToken token) {
-		List<?> groups = (List<?>) token.getOtherClaims().get("groups");
-		return (String) groups.get(0);
-	}
-
-	private String getNameFromToken(IDToken token) {
-		final String name = token.getName() != null ? token.getName() : "";
-		return name;
+	public void reloadAuthorizations() {
+		authorizationServices.reloadUserAuthorization(UserSessionUtils.getLoggedPerson());
 	}
 
 	@Override

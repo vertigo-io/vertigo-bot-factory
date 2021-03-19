@@ -3,6 +3,10 @@ package io.vertigo.chatbot.commons.dao;
 import javax.inject.Inject;
 
 import io.vertigo.core.lang.Generated;
+import io.vertigo.core.node.Node;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
@@ -50,4 +54,38 @@ public final class ChatbotDAO extends DAO<Chatbot, java.lang.Long> implements St
 	public Chatbot readOneForUpdate(final java.lang.Long id) {
 		return readOneForUpdate(createDtObjectUID(id));
 	}
+
+	/**
+	 * Creates a taskBuilder.
+	 * @param name  the name of the task
+	 * @return the builder 
+	 */
+	private static TaskBuilder createTaskBuilder(final String name) {
+		final TaskDefinition taskDefinition = Node.getNode().getDefinitionSpace().resolve(name, TaskDefinition.class);
+		return Task.builder(taskDefinition);
+	}
+
+	/**
+	 * Execute la tache TkGetChatbotByPerId.
+	 * @param perId Long
+	 * @return DtList de Chatbot perIHM
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetChatbotByPerId",
+			request = "select " + 
+ "				bot.*" + 
+ "			from chatbot bot" + 
+ "			join profil_per_chatbot ppc on (bot.bot_id = ppc.bot_id)" + 
+ "			where ppc.per_id = #perId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtChatbot")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.Chatbot> getChatbotByPerId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "perId", smartType = "STyId") final Long perId) {
+		final Task task = createTaskBuilder("TkGetChatbotByPerId")
+				.addValue("perId", perId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
 }

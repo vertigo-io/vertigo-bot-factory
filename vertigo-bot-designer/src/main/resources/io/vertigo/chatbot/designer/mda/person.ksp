@@ -1,5 +1,4 @@
-package io.vertigo.chatbot.commons.domain 
-
+package io.vertigo.chatbot.designer.domain.commons
 
 /*********************/
 /* **** Comptes **** */
@@ -56,17 +55,4 @@ create Association APersonRole {
 	dtDefinitionB : DtPersonRole
 	
 	labelB : "Role"
-}
-
-create AssociationNN AnnChatbotPerson {
-	tableName : "CHA_PER_RIGHTS"
-
-	dtDefinitionA : DtPerson
-	dtDefinitionB : DtChatbot
-	navigabilityA : "true"
-	navigabilityB : "true"
-	roleA : "Persons"
-	labelA : "Persons"
-	roleB : "Chatbots"
-	labelB : "Chatbots"
 }
