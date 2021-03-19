@@ -1,5 +1,6 @@
 package io.vertigo.ai.plugins.nlu;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,11 +16,14 @@ import io.vertigo.ai.nlu.VIntent;
 import io.vertigo.ai.nlu.VRecognitionResult;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.param.ParamValue;
+import io.vertigo.core.resource.ResourceManager;
 
 public class RasaNluEnginePlugin implements NluEnginePlugin {
 
 	private final String name;
 	private final String rasaUrl;
+
+	private final URL configFileUrl;
 
 	private final AtomicBoolean ready;
 	private final List<VIntent> intentList;
@@ -28,12 +32,19 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 	@Inject
 	public RasaNluEnginePlugin(
 			@ParamValue("rasaUrl") final String rasaUrl,
-			@ParamValue("pluginName") final Optional<String> optPluginName) {
+			@ParamValue("configFile") final Optional<String> configFileOpt,
+			@ParamValue("pluginName") final Optional<String> pluginNameOpt,
+			final ResourceManager resourceManager) {
 
 		Assertion.check().isNotBlank(rasaUrl);
 
 		this.rasaUrl = rasaUrl;
-		name = optPluginName.orElse(NluManagerImpl.DEFAULT_PLUGIN_NAME);
+		name = pluginNameOpt.orElse(NluManagerImpl.DEFAULT_PLUGIN_NAME);
+
+		final var configFileName = configFileOpt.orElse("rasa-config.yaml"); // in classpath by default
+		Assertion.check().isNotBlank(configFileName);
+
+		configFileUrl = resourceManager.resolve(configFileName);
 
 		ready = new AtomicBoolean(false);
 		intentList = new ArrayList<>();
