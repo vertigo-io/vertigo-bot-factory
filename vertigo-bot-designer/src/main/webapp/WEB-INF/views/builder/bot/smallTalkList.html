@@ -12,7 +12,7 @@
 	
 	<body>
 		<section layout:fragment="content-header-actions">
-			<vu:button-link th:if="${#arrays.contains(model.chatBotAuthorizedOperations, 'botAdm') }" url="@{/bot/{id}/smallTalk/new(id=${model.bot.botId})}" ariaLabel="Add small talk" icon="add"
+			<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/smallTalk/new(id=${model.bot.botId})}" ariaLabel="Add small talk" icon="add"
 							class="on-left" round size="lg" color="primary" />
 		</section>
 		

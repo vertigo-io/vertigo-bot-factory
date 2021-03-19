@@ -24,14 +24,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
+import io.vertigo.chatbot.designer.commons.controllers.CommonDesignerController;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
-import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 
 @Controller
 @RequestMapping("/persons")
-public class PersonListController extends AbstractVSpringMvcController {
+public class PersonListController extends CommonDesignerController {
 
 	private static final ViewContextKey<Person> personsKey = ViewContextKey.of("persons");
 
