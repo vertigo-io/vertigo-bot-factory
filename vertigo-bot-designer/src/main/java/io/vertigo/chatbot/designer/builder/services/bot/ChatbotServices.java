@@ -14,7 +14,6 @@ import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.UtterText;
-import io.vertigo.chatbot.designer.builder.BuilderPAO;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
@@ -36,9 +35,6 @@ import io.vertigo.datastore.impl.filestore.model.StreamFile;
 @Transactional
 @Secured("BotUser")
 public class ChatbotServices implements Component {
-
-	@Inject
-	private BuilderPAO builderPAO;
 
 	@Inject
 	private ChatbotDAO chatbotDAO;

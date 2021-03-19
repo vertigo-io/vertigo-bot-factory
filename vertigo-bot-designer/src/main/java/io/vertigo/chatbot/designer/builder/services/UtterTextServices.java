@@ -13,7 +13,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
-import io.vertigo.chatbot.designer.builder.BuilderPAO;
+import io.vertigo.chatbot.designer.builder.utterText.UtterTextPAO;
 import io.vertigo.chatbot.designer.utils.HtmlInputUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -34,7 +34,7 @@ public class UtterTextServices implements Component {
 	private UtterTextDAO utterTextDAO;
 
 	@Inject
-	private BuilderPAO builderPAO;
+	private UtterTextPAO utterTextPAO;
 
 	public UtterText save(final UtterText ut) {
 		return utterTextDAO.save(ut);
@@ -68,7 +68,7 @@ public class UtterTextServices implements Component {
 
 	public void removeAllUtterTextBySmtId(final Long smtId) {
 		// save utter textes, remove all + create all
-		builderPAO.removeAllUtterTextBySmtId(smtId);
+		utterTextPAO.removeAllUtterTextBySmtId(smtId);
 	}
 
 	/**
@@ -113,6 +113,6 @@ public class UtterTextServices implements Component {
 	}
 
 	public void removeAllUtterTextByBotId(final Chatbot bot) {
-		builderPAO.removeAllUtterTextByBotId(bot.getBotId());
+		utterTextPAO.removeAllUtterTextByBotId(bot.getBotId());
 	}
 }

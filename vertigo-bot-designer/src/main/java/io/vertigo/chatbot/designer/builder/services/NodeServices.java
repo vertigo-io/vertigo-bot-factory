@@ -10,7 +10,7 @@ import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
-import io.vertigo.chatbot.designer.builder.BuilderPAO;
+import io.vertigo.chatbot.designer.builder.chatbotNode.ChatbotNodePAO;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
@@ -23,7 +23,7 @@ import io.vertigo.datamodel.structure.model.DtListState;
 public class NodeServices implements Component {
 
 	@Inject
-	private BuilderPAO builderPAO;
+	private ChatbotNodePAO chatbotNodePAO;
 
 	@Inject
 	private ChatbotNodeDAO chatbotNodeDAO;
@@ -56,9 +56,13 @@ public class NodeServices implements Component {
 
 		if (Boolean.TRUE.equals(node.getIsDev())) {
 			// enforce only one dev node
-			builderPAO.resetDevNode(node.getBotId());
+			chatbotNodePAO.resetDevNode(node.getBotId());
 		}
 
+		chatbotNodeDAO.save(node);
+	}
+
+	public void save(final ChatbotNode node) {
 		chatbotNodeDAO.save(node);
 	}
 
@@ -83,6 +87,6 @@ public class NodeServices implements Component {
 	}
 
 	public void deleteChatbotNodeByBot(final Chatbot bot) {
-		builderPAO.removeChatbotNodeByBotId(bot.getBotId());
+		chatbotNodePAO.removeChatbotNodeByBotId(bot.getBotId());
 	}
 }

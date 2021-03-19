@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.builder 
+package io.vertigo.chatbot.designer.builder.training 
 
 create Task TkExportSmallTalkRelativeTrainingSentence {  
     className : "io.vertigo.basics.task.TaskEngineSelect"
@@ -45,4 +45,49 @@ create Task TkCleanOldTrainings {
 			and bot_id = #botId#
              "
 	in botId  				{domain : DoId         					cardinality:"1"}
+}
+
+
+
+create Task TkGetNextModelNumber {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select coalesce(max(version_number) + 1, 1)
+			from training tra
+			where bot_id = #botId#
+             "
+	in botId  				{domain : DoId         		cardinality : "1"  }
+	out nextModelNumber 	{domain : DoNumber 			cardinality : "1"  }
+}
+
+
+
+create Task TkGetAllTrainingFilIdsByBotId {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select mdi.fil_id
+            from media_file_info mdi
+            join training tr on (mdi.fil_id = tr.fil_id_model)
+            where tr.bot_id = #botId#
+             "
+	in botId				{domain : DoId,				cardinality:"1"} 
+	out filIds 				{domain : DoId			 	cardinality:"*"}
+} 
+
+create Task TkRemoveTrainingFileByFilIds{
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from media_file_info mfi
+			where mfi.fil_id in (#filIds.rownum#)
+             "
+	in filIds				{domain : DoId,						cardinality:"*"}
+}
+
+create Task TkRemoveTrainingByBotId{
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from training
+			where bot_id = #botId#
+             "
+	in botId				{domain : DoNumber,						cardinality:"1"}
 }

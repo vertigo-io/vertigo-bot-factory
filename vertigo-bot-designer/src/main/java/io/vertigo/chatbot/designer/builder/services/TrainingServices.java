@@ -53,7 +53,7 @@ import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.UtterText;
-import io.vertigo.chatbot.designer.builder.BuilderPAO;
+import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
@@ -92,7 +92,7 @@ public class TrainingServices implements Component {
 	private TrainingDAO trainingDAO;
 
 	@Inject
-	private BuilderPAO builderPAO;
+	private TrainingPAO trainingPAO;
 
 	@Inject
 	private ChatbotNodeDAO chatbotNodeDAO;
@@ -107,9 +107,9 @@ public class TrainingServices implements Component {
 
 	public Training trainAgent(final Chatbot bot) {
 		final Long botId = bot.getBotId();
-		builderPAO.cleanOldTrainings(botId);
+		trainingPAO.cleanOldTrainings(botId);
 
-		final Long versionNumber = builderPAO.getNextModelNumber(botId);
+		final Long versionNumber = trainingPAO.getNextModelNumber(botId);
 
 		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(botId)
 				.orElseThrow(() -> new VUserException("No training node configured"));
@@ -284,7 +284,7 @@ public class TrainingServices implements Component {
 
 		// update node-training link
 		node.setTraId(traId);
-		nodeServices.saveNode(node);
+		nodeServices.save(node);
 	}
 
 	private void doLoadModel(final Training training, final VFile model, final ChatbotNode node) {
@@ -392,9 +392,9 @@ public class TrainingServices implements Component {
 
 	public void removeAllTraining(final Chatbot bot) {
 		final Long botId = bot.getBotId();
-		final List<Long> filesId = builderPAO.getAllTrainingFilIdsByBotId(botId);
-		builderPAO.removeTrainingByBotId(botId);
-		builderPAO.removeTrainingFileByFilIds(filesId);
+		final List<Long> filesId = trainingPAO.getAllTrainingFilIdsByBotId(botId);
+		trainingPAO.removeTrainingByBotId(botId);
+		trainingPAO.removeTrainingFileByFilIds(filesId);
 	}
 
 }

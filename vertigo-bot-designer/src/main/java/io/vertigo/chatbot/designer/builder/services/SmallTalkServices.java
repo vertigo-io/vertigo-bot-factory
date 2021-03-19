@@ -16,7 +16,7 @@ import io.vertigo.chatbot.commons.domain.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.UtterText;
-import io.vertigo.chatbot.designer.builder.BuilderPAO;
+import io.vertigo.chatbot.designer.builder.smallTalk.SmallTalkPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -45,7 +45,7 @@ public class SmallTalkServices implements Component {
 	private NluTrainingSentenceDAO nluTrainingSentenceDAO;
 
 	@Inject
-	private BuilderPAO builderPAO;
+	private SmallTalkPAO smallTalkPAO;
 
 	public SmallTalk getSmallTalkById(final Long movId) {
 		Assertion.check().isNotNull(movId);
@@ -174,11 +174,11 @@ public class SmallTalkServices implements Component {
 	}
 
 	public void removeAllSmallTalkFromBot(final Chatbot bot) {
-		builderPAO.removeAllSmallTalkByBotId(bot.getBotId());
+		smallTalkPAO.removeAllSmallTalkByBotId(bot.getBotId());
 	}
 
 	public void removeAllNTSFromBot(final Chatbot bot) {
-		builderPAO.removeAllNluTrainingSentenceByBotId(bot.getBotId());
+		smallTalkPAO.removeAllNluTrainingSentenceByBotId(bot.getBotId());
 	}
 
 }

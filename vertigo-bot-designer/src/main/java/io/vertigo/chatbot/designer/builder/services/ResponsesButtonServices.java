@@ -11,7 +11,7 @@ import io.vertigo.chatbot.commons.dao.ResponseButtonDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
-import io.vertigo.chatbot.designer.builder.BuilderPAO;
+import io.vertigo.chatbot.designer.builder.responsesButton.ResponsesButtonPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.ResponseButtonFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
@@ -29,7 +29,7 @@ public class ResponsesButtonServices implements Component {
 	private ResponseButtonDAO responseButtonDAO;
 
 	@Inject
-	private BuilderPAO builderPAO;
+	private ResponsesButtonPAO responsesButtonPAO;
 
 	public DtList<ResponseButton> getResponsesButtonList(final SmallTalk smallTalk) {
 		Assertion.check()
@@ -75,13 +75,13 @@ public class ResponsesButtonServices implements Component {
 
 	public void removeAllButtonsBySmtId(final SmallTalk smt) {
 		// clear old buttons
-		builderPAO.removeAllButtonsBySmtId(smt.getSmtId());
+		responsesButtonPAO.removeAllButtonsBySmtId(smt.getSmtId());
 
 	}
 
 	public void removeAllButtonsByBot(final Chatbot bot) {
 		// clear old buttons
-		builderPAO.removeAllButtonsByBotId(bot.getBotId());
+		responsesButtonPAO.removeAllButtonsByBotId(bot.getBotId());
 
 	}
 
