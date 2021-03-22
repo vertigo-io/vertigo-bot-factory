@@ -74,11 +74,12 @@ public class SmallTalkServices implements Component {
 			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList) {
 
-		Assertion.check().isNotNull(smallTalk);
-		Assertion.check().isNotNull(nluTrainingSentences);
-		Assertion.check().isNotNull(nluTrainingSentencesToDelete);
-		Assertion.check().isNotNull(utterTexts);
-		Assertion.check().isNotNull(buttonList);
+		Assertion.check()
+				.isNotNull(smallTalk)
+				.isNotNull(nluTrainingSentences)
+				.isNotNull(nluTrainingSentencesToDelete)
+				.isNotNull(utterTexts)
+				.isNotNull(buttonList);
 		// ---
 
 		SmallTalk savedST = smallTalkDAO.save(smallTalk);
