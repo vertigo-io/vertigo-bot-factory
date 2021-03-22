@@ -46,7 +46,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 @Controller
 @RequestMapping("/bot/{botId}/smallTalk")
 @Secured("BotUser")
-public class SmallTalkDetailController extends AbstractCommonBotController {
+public class SmallTalkDetailController extends AbstractBotController {
 
 	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalk");
 

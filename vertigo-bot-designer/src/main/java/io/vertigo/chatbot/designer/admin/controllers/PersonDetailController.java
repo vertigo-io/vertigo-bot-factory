@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
+import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.chatbot.designer.domain.commons.PersonRole;
 import io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum;
@@ -33,12 +34,11 @@ import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
-import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/person")
-public class PersonDetailController extends AbstractVSpringMvcController {
+public class PersonDetailController extends AbstractDesignerController {
 
 	@Inject
 	private PersonServices personServices;
