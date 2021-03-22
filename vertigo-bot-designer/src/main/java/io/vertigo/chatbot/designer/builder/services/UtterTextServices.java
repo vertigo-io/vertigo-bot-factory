@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
+import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ResponseTypeEnum;
@@ -44,13 +45,13 @@ public class UtterTextServices implements Component {
 		utterTextDAO.delete(uid);
 	}
 
-	public UtterText getDefaultTextByBot(final Chatbot bot) {
+	public UtterText getDefaultTextByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		Assertion.check().isNotNull(bot);
 		// ---
 		return utterTextDAO.get(bot.getUttIdDefault());
 	}
 
-	public UtterText getWelcomeTextByBot(final Chatbot bot) {
+	public UtterText getWelcomeTextByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		Assertion.check().isNotNull(bot);
 		// ---
 		return utterTextDAO.get(bot.getUttIdWelcome());
@@ -112,7 +113,7 @@ public class UtterTextServices implements Component {
 						VCollectors.toDtList(UtterText.class)));
 	}
 
-	public void removeAllUtterTextByBotId(final Chatbot bot) {
+	public void removeAllUtterTextByBotId(@SecuredOperation("botAdm") final Chatbot bot) {
 		utterTextPAO.removeAllUtterTextByBotId(bot.getBotId());
 	}
 }

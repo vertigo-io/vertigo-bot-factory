@@ -120,6 +120,7 @@ public class ChatbotServices implements Component {
 		trainingServices.removeAllTraining(bot);
 		utterTextServices.removeAllUtterTextByBotId(bot);
 		responsesButtonServices.removeAllButtonsByBot(bot);
+		responsesButtonServices.removeAllSMTButtonsByBot(bot);
 		// Delete training, reponsetype and smallTalk
 		smallTalkServices.removeAllNTSFromBot(bot);
 		smallTalkServices.removeAllSmallTalkFromBot(bot);

@@ -73,23 +73,6 @@ public final class ChatbotNodePAO implements StoreServices {
 		getTaskManager().execute(task);
 	}
 
-	/**
-	 * Execute la tache TkSetTrainingToNull.
-	 * @param botId Long
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkSetTrainingToNull",
-			request = "update chatbot_node " + 
- "			set tra_id = null " + 
- "			where bot_id = #botId#;",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void setTrainingToNull(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
-		final Task task = createTaskBuilder("TkSetTrainingToNull")
-				.addValue("botId", botId)
-				.build();
-		getTaskManager().execute(task);
-	}
-
 	private TaskManager getTaskManager() {
 		return taskManager;
 	}

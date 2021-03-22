@@ -88,7 +88,7 @@ public class BotDetailController extends AbstractBotController {
 
 		viewContext.publishDtListModifiable(defaultButtonsKey, responsesButtonServices.getDefaultButtonsByBot(bot));
 		viewContext.publishDtListModifiable(welcomeButtonsKey, responsesButtonServices.getWelcomeButtonsByBot(bot));
-		viewContext.publishDtList(smallTalkKey, smallTalkServices.getAllSmallTalksByBotId(botId));
+		viewContext.publishDtList(smallTalkKey, smallTalkServices.getAllSmallTalksByBot(bot));
 
 		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBotId(bot));
 

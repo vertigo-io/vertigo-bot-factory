@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
+import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.ResponseButtonDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ResponseButton;
@@ -40,7 +41,7 @@ public class ResponsesButtonServices implements Component {
 				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
-	public DtList<ResponseButton> getWelcomeButtonsByBot(final Chatbot bot) {
+	public DtList<ResponseButton> getWelcomeButtonsByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		Assertion.check()
 				.isNotNull(bot)
 				.isNotNull(bot.getBotId());
@@ -51,7 +52,7 @@ public class ResponsesButtonServices implements Component {
 				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
-	public DtList<ResponseButton> getDefaultButtonsByBot(final Chatbot bot) {
+	public DtList<ResponseButton> getDefaultButtonsByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		Assertion.check()
 				.isNotNull(bot)
 				.isNotNull(bot.getBotId());
@@ -79,10 +80,18 @@ public class ResponsesButtonServices implements Component {
 
 	}
 
-	public void removeAllButtonsByBot(final Chatbot bot) {
+	public void removeAllButtonsByBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		// clear old buttons
 		responsesButtonPAO.removeAllButtonsByBotId(bot.getBotId());
+	}
 
+	/**
+	 * Remove all buttons on all smts of bot
+	 *
+	 * @param bot
+	 */
+	public void removeAllSMTButtonsByBot(@SecuredOperation("botAdm") final Chatbot bot) {
+		responsesButtonPAO.removeAllSMTButtonsByBotId(bot.getBotId());
 	}
 
 	public void saveAllButtonsBySmtId(final SmallTalk savedST, final DtList<ResponseButton> buttonList) {
@@ -109,7 +118,7 @@ public class ResponsesButtonServices implements Component {
 						VCollectors.toDtList(ResponseButton.class)));
 	}
 
-	public void saveAllDefaultButtonsByBot(final Chatbot bot, final DtList<ResponseButton> buttonList) {
+	public void saveAllDefaultButtonsByBot(@SecuredOperation("botAdm") final Chatbot bot, final DtList<ResponseButton> buttonList) {
 		// save new buttons
 		final Long botId = bot.getBotId();
 		for (final ResponseButton btn : buttonList) {
@@ -120,7 +129,7 @@ public class ResponsesButtonServices implements Component {
 
 	}
 
-	public void saveAllWelcomeButtonsByBot(final Chatbot bot, final DtList<ResponseButton> buttonList) {
+	public void saveAllWelcomeButtonsByBot(@SecuredOperation("botAdm") final Chatbot bot, final DtList<ResponseButton> buttonList) {
 		// save new buttons
 		final Long botId = bot.getBotId();
 		for (final ResponseButton btn : buttonList) {

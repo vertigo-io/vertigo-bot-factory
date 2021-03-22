@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
+import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.SmallTalkDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -47,29 +48,29 @@ public class SmallTalkServices implements Component {
 	@Inject
 	private SmallTalkPAO smallTalkPAO;
 
-	public SmallTalk getSmallTalkById(final Long movId) {
+	public SmallTalk getSmallTalkById(@SecuredOperation("botVisitor") final Chatbot bot, final Long movId) {
 		Assertion.check().isNotNull(movId);
 		// ---
 		return smallTalkDAO.get(movId);
 	}
 
-	public DtList<SmallTalk> getAllSmallTalksByBotId(final Long botId) {
-		return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.botId, botId), DtListState.of(1000));
+	public DtList<SmallTalk> getAllSmallTalksByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+		return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.botId, bot.getBotId()), DtListState.of(1000));
 	}
 
-	public DtList<SmallTalk> getAllActiveSmallTalksByBotId(final Long botId) {
-		return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.botId, botId).and(Criterions.isEqualTo(SmallTalkFields.isEnabled, true)), DtListState.of(1000));
+	public DtList<SmallTalk> getAllActiveSmallTalksByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+		return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.botId, bot.getBotId()).and(Criterions.isEqualTo(SmallTalkFields.isEnabled, true)), DtListState.of(1000));
 	}
 
-	public SmallTalk getNewSmallTalk(final Long botId) {
+	public SmallTalk getNewSmallTalk(@SecuredOperation("botAdm") final Chatbot bot) {
 		final SmallTalk smallTalk = new SmallTalk();
-		smallTalk.setBotId(botId);
+		smallTalk.setBotId(bot.getBotId());
 		smallTalk.setIsEnabled(true);
 		smallTalk.responseType().setEnumValue(ResponseTypeEnum.RICH_TEXT);
 		return smallTalk;
 	}
 
-	public SmallTalk saveSmallTalk(final SmallTalk smallTalk,
+	public SmallTalk saveSmallTalk(@SecuredOperation("botContributor") final Chatbot chatbot, final SmallTalk smallTalk,
 			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList) {
 
@@ -102,9 +103,9 @@ public class SmallTalkServices implements Component {
 		return savedST;
 	}
 
-	public void deleteSmallTalk(final SmallTalk smallTalk) {
+	public void deleteSmallTalk(@SecuredOperation("botContributor") final Chatbot chatbot, final SmallTalk smallTalk) {
 		// delete sub elements
-		for (final NluTrainingSentence its : getNluTrainingSentenceList(smallTalk)) {
+		for (final NluTrainingSentence its : getNluTrainingSentenceList(chatbot, smallTalk)) {
 			nluTrainingSentenceDAO.delete(its.getUID());
 		}
 
@@ -116,9 +117,30 @@ public class SmallTalkServices implements Component {
 		smallTalkDAO.delete(smallTalk.getUID());
 	}
 
+	public DtList<SmallTalkExport> exportSmallTalks(@SecuredOperation("botContributor") final Chatbot bot, final DtList<SmallTalk> smallTalks,
+			final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap,
+			final Map<Long, DtList<UtterText>> utterTextsMap,
+			final Map<Long, DtList<ResponseButton>> buttonsMap) {
+		final DtList<SmallTalkExport> retour = new DtList<>(SmallTalkExport.class);
+		for (final SmallTalk smallTalk : smallTalks) {
+			final SmallTalkExport newExport = new SmallTalkExport();
+			newExport.setSmallTalk(smallTalk);
+			newExport.setNluTrainingSentences(trainingSentencesMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(NluTrainingSentence.class)));
+			newExport.setUtterTexts(utterTextsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(UtterText.class)));
+			newExport.setButtons(buttonsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(ResponseButton.class)));
+
+			retour.add(newExport);
+		}
+		return retour;
+	}
+
+	public void removeAllSmallTalkFromBot(@SecuredOperation("botAdm") final Chatbot bot) {
+		smallTalkPAO.removeAllSmallTalkByBotId(bot.getBotId());
+	}
+
 	//********* NTS part ********/
 
-	public DtList<NluTrainingSentence> getNluTrainingSentenceList(final SmallTalk smallTalk) {
+	public DtList<NluTrainingSentence> getNluTrainingSentenceList(@SecuredOperation("botVisitor") final Chatbot bot, final SmallTalk smallTalk) {
 		Assertion.check()
 				.isNotNull(smallTalk)
 				.isNotNull(smallTalk.getSmtId());
@@ -129,7 +151,7 @@ public class SmallTalkServices implements Component {
 				DtListState.of(1000, 0, NluTrainingSentenceFields.ntsId.name(), false));
 	}
 
-	public Map<Long, DtList<NluTrainingSentence>> exportSmallTalkRelativeTrainingSentence(final List<Long> smallTalkIds) {
+	public Map<Long, DtList<NluTrainingSentence>> exportSmallTalkRelativeTrainingSentence(@SecuredOperation("botContributor") final Chatbot bot, final List<Long> smallTalkIds) {
 		return nluTrainingSentenceDAO.exportSmallTalkRelativeTrainingSentence(smallTalkIds)
 				.stream()
 				.collect(Collectors.groupingBy(NluTrainingSentence::getSmtId,
@@ -155,26 +177,6 @@ public class SmallTalkServices implements Component {
 		}
 
 		return ntsToSave;
-	}
-
-	public DtList<SmallTalkExport> exportSmallTalks(final DtList<SmallTalk> smallTalks, final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap,
-			final Map<Long, DtList<UtterText>> utterTextsMap,
-			final Map<Long, DtList<ResponseButton>> buttonsMap) {
-		final DtList<SmallTalkExport> retour = new DtList<>(SmallTalkExport.class);
-		for (final SmallTalk smallTalk : smallTalks) {
-			final SmallTalkExport newExport = new SmallTalkExport();
-			newExport.setSmallTalk(smallTalk);
-			newExport.setNluTrainingSentences(trainingSentencesMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(NluTrainingSentence.class)));
-			newExport.setUtterTexts(utterTextsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(UtterText.class)));
-			newExport.setButtons(buttonsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(ResponseButton.class)));
-
-			retour.add(newExport);
-		}
-		return retour;
-	}
-
-	public void removeAllSmallTalkFromBot(final Chatbot bot) {
-		smallTalkPAO.removeAllSmallTalkByBotId(bot.getBotId());
 	}
 
 	public void removeAllNTSFromBot(final Chatbot bot) {

@@ -12,6 +12,17 @@ create Task TkRemoveAllButtonsByBotId {
 	in botId  				{domain : DoId         		cardinality : "1"  }
 }
 
+create Task TkRemoveAllSMTButtonsByBotId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from response_button 
+			using small_talk smt
+			where smt.smt_id = response_button.smt_id
+			and smt.bot_id = #botId#
+             "
+	in botId  				{domain : DoId         		cardinality : "1"  }
+}
+
 create Task TkRemoveAllButtonsBySmtId {
     className : "io.vertigo.basics.task.TaskEngineProc"
     request : "

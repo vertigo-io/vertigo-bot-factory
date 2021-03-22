@@ -114,10 +114,11 @@ public class AnalyticsController extends AbstractDesignerController {
 		viewContext.publishRef(requestsStatsKey, analyticsServices.getRequestStats(criteria));
 
 		if (criteria.getBotId() != null) {
+			final Chatbot bot = chatbotServices.getChatbotById(criteria.getBotId());
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.smtId, analyticsServices.getSentenseDetails(criteria));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, analyticsServices.getTopIntents(criteria));
 
-			viewContext.publishDtList(smallTalksKey, smallTalkServices.getAllSmallTalksByBotId(criteria.getBotId()));
+			viewContext.publishDtList(smallTalksKey, smallTalkServices.getAllSmallTalksByBot(bot));
 		} else {
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.smtId, new DtList<SentenseDetail>(SentenseDetail.class));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, new DtList<TopIntent>(TopIntent.class));

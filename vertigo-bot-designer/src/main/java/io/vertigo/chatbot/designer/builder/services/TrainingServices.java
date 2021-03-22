@@ -125,7 +125,7 @@ public class TrainingServices implements Component {
 
 		final Map<String, Object> requestData = new HashMap<>();
 		requestData.put("botExport", exportBot(bot));
-		requestData.put("smallTalkExport", exportSmallTalk(botId));
+		requestData.put("smallTalkExport", exportSmallTalk(bot));
 		requestData.put("trainingId", training.getTraId());
 		requestData.put("modelId", versionNumber);
 		requestData.put("nluThreshold", training.getNluThreshold());
@@ -252,20 +252,20 @@ public class TrainingServices implements Component {
 		return retour;
 	}
 
-	private DtList<SmallTalkExport> exportSmallTalk(final Long botId) {
-		final DtList<SmallTalk> smallTalks = smallTalkServices.getAllActiveSmallTalksByBotId(botId);
+	private DtList<SmallTalkExport> exportSmallTalk(final Chatbot bot) {
+		final DtList<SmallTalk> smallTalks = smallTalkServices.getAllActiveSmallTalksByBot(bot);
 
 		final List<Long> smallTalkIds = smallTalks.stream()
 				.map(SmallTalk::getSmtId)
 				.collect(Collectors.toList());
 
 		//Create map for export
-		final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap = smallTalkServices.exportSmallTalkRelativeTrainingSentence(smallTalkIds);
+		final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap = smallTalkServices.exportSmallTalkRelativeTrainingSentence(bot, smallTalkIds);
 		final Map<Long, DtList<UtterText>> utterTextsMap = utterTextServices.exportSmallTalkRelativeUtter(smallTalkIds);
 		final Map<Long, DtList<ResponseButton>> buttonsMap = responsesButtonServices.exportSmallTalkRelativeButtons(smallTalkIds);
 
 		//create the smallTalkExport
-		return smallTalkServices.exportSmallTalks(smallTalks, trainingSentencesMap, utterTextsMap, buttonsMap);
+		return smallTalkServices.exportSmallTalks(bot, smallTalks, trainingSentencesMap, utterTextsMap, buttonsMap);
 	}
 
 	public void loadModel(final Long traId, final Long nodId) {

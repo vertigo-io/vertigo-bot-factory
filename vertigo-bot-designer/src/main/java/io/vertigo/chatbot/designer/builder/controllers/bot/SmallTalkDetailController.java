@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.ChatbotUtils;
+import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.ResponseType;
@@ -77,10 +78,10 @@ public class SmallTalkDetailController extends AbstractBotController {
 	@GetMapping("/{intId}")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId,
 			@PathVariable("intId") final Long intId) {
-		initCommonContext(viewContext, botId);
+		final Chatbot bot = initCommonContext(viewContext, botId);
 		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); // all
 
-		final SmallTalk smallTalk = smallTalkServices.getSmallTalkById(intId);
+		final SmallTalk smallTalk = smallTalkServices.getSmallTalkById(bot, intId);
 
 		Assertion.check().isTrue(smallTalk.getBotId().equals(botId), "Paramètres incohérents");
 
@@ -88,7 +89,7 @@ public class SmallTalkDetailController extends AbstractBotController {
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey,
-				smallTalkServices.getNluTrainingSentenceList(smallTalk));
+				smallTalkServices.getNluTrainingSentenceList(bot, smallTalk));
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey,
 				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
@@ -97,17 +98,17 @@ public class SmallTalkDetailController extends AbstractBotController {
 		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
 
 		viewContext.publishDtListModifiable(buttonsKey, responsesButtonServices.getButtonsBySmalltalk(smallTalk));
-		viewContext.publishDtList(smallTalkListKey, smallTalkServices.getAllSmallTalksByBotId(botId));
+		viewContext.publishDtList(smallTalkListKey, smallTalkServices.getAllSmallTalksByBot(bot));
 
 		toModeReadOnly();
 	}
 
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		initCommonContext(viewContext, botId);
+		final Chatbot bot = initCommonContext(viewContext, botId);
 		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); // all
 
-		viewContext.publishDto(smallTalkKey, smallTalkServices.getNewSmallTalk(botId));
+		viewContext.publishDto(smallTalkKey, smallTalkServices.getNewSmallTalk(bot));
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey,
@@ -120,7 +121,7 @@ public class SmallTalkDetailController extends AbstractBotController {
 		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
 
 		viewContext.publishDtListModifiable(buttonsKey, new DtList<>(ResponseButton.class));
-		viewContext.publishDtList(smallTalkListKey, smallTalkServices.getAllSmallTalksByBotId(botId));
+		viewContext.publishDtList(smallTalkListKey, smallTalkServices.getAllSmallTalksByBot(bot));
 
 		toModeCreate();
 	}
@@ -132,11 +133,13 @@ public class SmallTalkDetailController extends AbstractBotController {
 
 	@PostMapping("/_save")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("smallTalk") final SmallTalk smallTalk, @PathVariable("botId") final Long botId,
+			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
+			@ViewAttribute("bot") final Chatbot chatbot,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
+		final Long botId = chatbot.getBotId();
 		final DtList<UtterText> utterTexts = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey),
 				uiMessageStack);
 
@@ -146,14 +149,14 @@ public class SmallTalkDetailController extends AbstractBotController {
 		// add training sentence who is not "validated" by enter and still in the input
 		addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 
-		smallTalkServices.saveSmallTalk(smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts,
+		smallTalkServices.saveSmallTalk(chatbot, smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts,
 				buttonList);
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
 	}
 
 	@PostMapping("/_delete")
-	public String doDelete(final ViewContext viewContext, @ViewAttribute("smallTalk") final SmallTalk smallTalk) {
-		smallTalkServices.deleteSmallTalk(smallTalk);
+	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("smallTalk") final SmallTalk smallTalk) {
+		smallTalkServices.deleteSmallTalk(chatbot, smallTalk);
 		return "redirect:/bot/" + smallTalk.getBotId() + "/smallTalks/";
 	}
 
