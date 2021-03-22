@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotAuthorizations;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
-import io.vertigo.chatbot.designer.commons.controllers.CommonDesignerController;
+import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 
-public abstract class AbstractCommonBotController extends CommonDesignerController {
+public abstract class AbstractBotController extends AbstractDesignerController {
 
 	@Inject
 	private ChatbotServices chatbotServices;

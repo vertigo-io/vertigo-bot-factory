@@ -48,7 +48,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot")
-public class BotDetailController extends AbstractCommonBotController {
+public class BotDetailController extends AbstractBotController {
 
 	@Inject
 	private DesignerServices designerServices;

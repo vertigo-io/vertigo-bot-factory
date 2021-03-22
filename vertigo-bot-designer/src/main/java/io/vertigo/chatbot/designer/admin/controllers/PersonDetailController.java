@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
-import io.vertigo.chatbot.designer.commons.controllers.CommonDesignerController;
+import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.chatbot.designer.domain.commons.PersonRole;
 import io.vertigo.chatbot.designer.domain.commons.PersonRoleEnum;
@@ -38,7 +38,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/person")
-public class PersonDetailController extends CommonDesignerController {
+public class PersonDetailController extends AbstractDesignerController {
 
 	@Inject
 	private PersonServices personServices;

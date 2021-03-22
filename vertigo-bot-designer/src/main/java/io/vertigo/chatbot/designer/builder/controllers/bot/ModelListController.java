@@ -46,7 +46,7 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 @Controller
 @RequestMapping("/bot/{botId}/models")
 @Secured("BotUser")
-public class ModelListController extends AbstractCommonBotController {
+public class ModelListController extends AbstractBotController {
 
 	private static final ViewContextKey<RunnerInfo> runnerStateKey = ViewContextKey.of("runnerState");
 	private static final ViewContextKey<TrainerInfo> trainerStateKey = ViewContextKey.of("trainerState");

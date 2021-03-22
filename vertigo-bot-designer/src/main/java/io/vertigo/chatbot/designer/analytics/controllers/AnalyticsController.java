@@ -35,7 +35,7 @@ import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
-import io.vertigo.chatbot.designer.commons.controllers.CommonDesignerController;
+import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
 import io.vertigo.chatbot.designer.domain.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
 import io.vertigo.chatbot.designer.domain.TopIntent;
@@ -49,7 +49,7 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 
 @Controller
 @RequestMapping("/analytics")
-public class AnalyticsController extends CommonDesignerController {
+public class AnalyticsController extends AbstractDesignerController {
 
 	private static final ViewContextKey<TimedDatas> sessionStatsKey = ViewContextKey.of("sessionStats");
 	private static final ViewContextKey<TimedDatas> requestsStatsKey = ViewContextKey.of("requestsStats");
