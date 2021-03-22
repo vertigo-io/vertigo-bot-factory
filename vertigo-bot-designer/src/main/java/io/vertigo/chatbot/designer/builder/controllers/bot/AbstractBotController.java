@@ -20,7 +20,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 
 	private static final ViewContextKey<Chatbot> botKey = ViewContextKey.of("bot");
 
-	public Chatbot initCommonContext(final ViewContext viewContext, final Long botId) {
+	protected Chatbot initCommonContext(final ViewContext viewContext, final Long botId) {
 		final Chatbot chatbot = chatbotServices.getChatbotById(botId);
 		viewContext.publishDto(botKey, chatbot);
 
@@ -29,7 +29,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 		return chatbot;
 	}
 
-	public void initEmptyCommonContext(final ViewContext viewContext) {
+	protected void initEmptyCommonContext(final ViewContext viewContext) {
 		viewContext.publishDto(botKey, chatbotServices.getNewChatbot());
 	}
 
