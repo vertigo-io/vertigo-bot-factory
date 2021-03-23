@@ -22,7 +22,7 @@ import java.util.List;
 import io.vertigo.chatbot.executor.rasa.util.StringUtils;
 import io.vertigo.core.lang.Assertion;
 
-public final class RasaIntentNlu {
+public final class RasaIntent {
 
 	private static final String NEW_LINE = "\r\n";
 
@@ -31,25 +31,25 @@ public final class RasaIntentNlu {
 	private final List<String> nlus;
 	private final RasaAction trigger;
 
-	public static RasaIntentNlu ofSmallTalk(final Long id, final String name, final List<String> nlus, final RasaAction trigger) {
+	public static RasaIntent ofSmallTalk(final Long id, final String name, final List<String> nlus, final RasaAction trigger) {
 		Assertion.check()
 				.isNotNull(trigger)
 				.isTrue(trigger.isSmallTalk(), "Trigger must be a small talk action");
 		// ----
-		return new RasaIntentNlu(id, "st_" + StringUtils.labelToCode(name), nlus, trigger);
+		return new RasaIntent(id, "st_" + StringUtils.labelToCode(name), nlus, trigger);
 	}
 
-	public static RasaIntentNlu ofGenericIntent(final Long id, final String name, final List<String> nlus) {
-		return new RasaIntentNlu(id, "int_" + name, nlus, null);
+	public static RasaIntent ofGenericIntent(final Long id, final String name, final List<String> nlus) {
+		return new RasaIntent(id, "int_" + name, nlus, null);
 	}
 
-	public static RasaIntentNlu ofStartIntent(final RasaAction trigger) {
+	public static RasaIntent ofStartIntent(final RasaAction trigger) {
 		Assertion.check().isNotNull(trigger);
 		//--
-		return new RasaIntentNlu(null, "start", null, trigger);
+		return new RasaIntent(null, "start", null, trigger);
 	}
 
-	private RasaIntentNlu(final Long id, final String code, final List<String> nlus, final RasaAction trigger) {
+	private RasaIntent(final Long id, final String code, final List<String> nlus, final RasaAction trigger) {
 		this.id = id;
 		this.code = code;
 		this.nlus = nlus;
