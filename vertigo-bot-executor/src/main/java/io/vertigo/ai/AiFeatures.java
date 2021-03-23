@@ -2,7 +2,7 @@ package io.vertigo.ai;
 
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.NluManager;
-import io.vertigo.ai.plugins.nlu.RasaNluEnginePlugin;
+import io.vertigo.ai.plugins.nlu.rasa.RasaNluEnginePlugin;
 import io.vertigo.core.node.config.Feature;
 import io.vertigo.core.node.config.Features;
 import io.vertigo.core.param.Param;
