@@ -1,9 +1,5 @@
 package io.vertigo.ai.plugins.nlu.rasa;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,26 +9,27 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.nodes.Tag;
 
 import io.vertigo.ai.impl.nlu.NluEnginePlugin;
 import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.VIntent;
+import io.vertigo.ai.nlu.VIntentClassification;
 import io.vertigo.ai.nlu.VRecognitionResult;
-import io.vertigo.chatbot.executor.rasa.config.Pipeline;
+import io.vertigo.ai.plugins.nlu.rasa.helper.FileIOHelper;
+import io.vertigo.ai.plugins.nlu.rasa.helper.RasaHttpSenderHelper;
+import io.vertigo.ai.plugins.nlu.rasa.mda.ConfigFile;
+import io.vertigo.ai.plugins.nlu.rasa.mda.MessageToRecognize;
+import io.vertigo.ai.plugins.nlu.rasa.mda.RasaIntentNlu;
+import io.vertigo.ai.plugins.nlu.rasa.mda.RasaIntentWithConfidence;
+import io.vertigo.ai.plugins.nlu.rasa.mda.RasaParsingResponse;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.param.ParamValue;
 import io.vertigo.core.resource.ResourceManager;
 
 public class RasaNluEnginePlugin implements NluEnginePlugin {
-
-	private static final String NEW_LINE = "\r\n";
 
 	private final String name;
 	private final String rasaUrl;
@@ -92,35 +89,20 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		ready.set(false);
 
 		//Yaml file
-		final ConfigFile config = getConfigFile();
+		final ConfigFile config = FileIOHelper.getConfigFile(configFileUrl);
 		final List<RasaIntentNlu> intents = createRasaIntents();
 
-		try {
+		//Create map and launch the dump
+		final Map<String, Object> map = new LinkedHashMap<>();
+		map.put("language", config.getLanguage());
+		map.put("pipeline", config.getPipeline());
+		map.put("nlu", intents);
 
-			//TODO change this with outputstream
-			final FileWriter writer = new FileWriter(new File("C:\\Users\\vbaillet\\Documents\\Python_Scripts\\python_env\\python\\rasa\\test\\essai.yaml"));
+		//train
+		final String filename = RasaHttpSenderHelper.launchTraining(rasaUrl, map);
 
-			//make the list in block
-			final DumperOptions options = new DumperOptions();
-			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-
-			//Sort the tag and remove warning in yaml file
-			final CustomRepresenter representer = new CustomRepresenter();
-			representer.addClassTag(RasaIntentNlu.class, Tag.MAP);
-			representer.addClassTag(Pipeline.class, Tag.MAP);
-
-			//Create map and launch the dump
-			final Yaml yaml = new Yaml(representer, options);
-			final Map<Object, Object> map = new LinkedHashMap<>();
-			map.put("language", config.getLanguage());
-			map.put("pipeline", config.getPipeline());
-			map.put("nlu", intents);
-
-			yaml.dump(map, writer);
-		} catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//put model
+		RasaHttpSenderHelper.putModel(rasaUrl, filename);
 		ready.set(true);
 	}
 
@@ -141,19 +123,6 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		return String.join("\n- ", value);
 	}
 
-	private ConfigFile getConfigFile() {
-		try (final FileReader reader = new FileReader(new File(configFileUrl.getPath()))) {
-
-			final Constructor constructor = new Constructor(ConfigFile.class);
-			final Yaml yaml = new Yaml(constructor);
-			return yaml.load(reader);
-		} catch (final Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new ConfigFile();
-	}
-
 	/** {@inheritDoc} */
 	@Override
 	public VRecognitionResult recognize(final String sentence) {
@@ -161,9 +130,24 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 			throw new IllegalStateException("NLU engine '" + getName() + "' is not ready to recognize sentenses.");
 		}
 
-		// do recognize
+		final MessageToRecognize message = new MessageToRecognize(sentence);
 
-		return new VRecognitionResult(sentence, new ArrayList<>());
+		final RasaParsingResponse response = RasaHttpSenderHelper.getIntentFromRasa(rasaUrl, message);
+
+		return getVRecognitionResult(response);
+
+	}
+
+	private VRecognitionResult getVRecognitionResult(final RasaParsingResponse response) {
+		final String rawSentence = response.getIntent().getName();
+		final List<VIntentClassification> intentClassificationList = response.getIntent_ranking().stream().map(intent -> createVIntentClassificationFromRasaIntent(intent))
+				.collect(Collectors.toList());
+		return new VRecognitionResult(rawSentence, intentClassificationList);
+	}
+
+	private VIntentClassification createVIntentClassificationFromRasaIntent(final RasaIntentWithConfidence rasaIntent) {
+		final VIntent intent = VIntent.of(rasaIntent.getName(), "");
+		return new VIntentClassification(intent, rasaIntent.getConfidence());
 	}
 
 	/** {@inheritDoc} */
@@ -177,5 +161,4 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 	public boolean isReady() {
 		return ready.get();
 	}
-
 }

@@ -1,4 +1,4 @@
-package io.vertigo.ai.plugins.nlu.rasa;
+package io.vertigo.ai.plugins.nlu.rasa.mda;
 
 import java.util.ArrayList;
 import java.util.List;

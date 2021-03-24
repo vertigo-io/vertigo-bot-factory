@@ -88,10 +88,9 @@ public final class NluAiTest {
 		Assertions.assertFalse(result.getIntentClassificationList().isEmpty());
 		Assertions.assertEquals("train", result.getIntentClassificationList().get(0).getIntent().getCode());
 
-		result = nluManager.recognize("j'aime la choucroute");
-		if (!result.getIntentClassificationList().isEmpty()) {
-			Assertions.assertEquals("blague", result.getIntentClassificationList().get(0).getAccuracy() < 0.4D);
-		}
+		result = nluManager.recognize("quel est la météo demain");
+		Assertions.assertEquals("meteo", result.getIntentClassificationList().get(0).getIntent().getCode());
+		Assertions.assertEquals(true, result.getIntentClassificationList().get(0).getAccuracy() > 0.4D);
 	}
 
 	@BeforeEach

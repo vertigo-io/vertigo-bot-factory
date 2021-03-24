@@ -1,4 +1,4 @@
-package io.vertigo.ai.plugins.nlu.rasa;
+package io.vertigo.ai.plugins.nlu.rasa.mda;
 
 public class RasaIntentNlu {
 	public String getExamples() {
