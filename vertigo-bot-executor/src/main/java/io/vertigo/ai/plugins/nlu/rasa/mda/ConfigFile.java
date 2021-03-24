@@ -3,27 +3,37 @@ package io.vertigo.ai.plugins.nlu.rasa.mda;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.vertigo.chatbot.executor.rasa.config.Pipeline;
+public final class ConfigFile {
 
-public class ConfigFile {
+	private String language;
+	private List<Pipeline> pipeline = new ArrayList<>();
 
+	/**
+	 * @return the language
+	 */
 	public String getLanguage() {
 		return language;
 	}
 
+	/**
+	 * @param language the language to set
+	 */
 	public void setLanguage(final String language) {
 		this.language = language;
 	}
 
+	/**
+	 * @return the pipeline
+	 */
 	public List<Pipeline> getPipeline() {
 		return pipeline;
 	}
 
-	public void setPipeline(final List<Pipeline> pipelines) {
-		pipeline = pipelines;
+	/**
+	 * @param pipeline the pipeline to set
+	 */
+	public void setPipeline(final List<Pipeline> pipeline) {
+		this.pipeline = pipeline;
 	}
 
-	private String language;
-
-	private List<Pipeline> pipeline = new ArrayList<Pipeline>();
 }

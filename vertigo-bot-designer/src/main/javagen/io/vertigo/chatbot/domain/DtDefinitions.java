@@ -55,12 +55,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		SentenseDetail(io.vertigo.chatbot.designer.domain.SentenseDetail.class),
 		/** Objet de données SmallTalk. */
 		SmallTalk(io.vertigo.chatbot.commons.domain.SmallTalk.class),
-		/** Objet de données SmallTalkExport. */
-		SmallTalkExport(io.vertigo.chatbot.commons.domain.SmallTalkExport.class),
 		/** Objet de données StatCriteria. */
 		StatCriteria(io.vertigo.chatbot.designer.domain.StatCriteria.class),
 		/** Objet de données TopIntent. */
 		TopIntent(io.vertigo.chatbot.designer.domain.TopIntent.class),
+		/** Objet de données TopicExport. */
+		TopicExport(io.vertigo.chatbot.commons.domain.TopicExport.class),
 		/** Objet de données TrainerInfo. */
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
@@ -89,14 +89,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum BotExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.BotExport> {
 		/** Propriété 'chatbot'. */
 		bot,
-		/** Propriété 'fallback'. */
-		fallbackText,
-		/** Propriété 'fallback buttons'. */
-		fallbackButtons,
-		/** Propriété 'welcome'. */
-		welcomeText,
-		/** Propriété 'welcome buttons'. */
-		welcomeButtons	}
+		/** Propriété 'welcome BT'. */
+		welcomeBT,
+		/** Propriété 'fallback BT'. */
+		fallbackBT,
+		/** Propriété 'fallback BT'. */
+		topics	}
 
 	/**
 	 * Enumération des champs de Chatbot.
@@ -164,7 +162,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Model name'. */
 		modelName,
 		/** Propriété 'NLU Threshold'. */
-		nluThreshold	}
+		nluThreshold,
+		/** Propriété 'Additional config for executor'. */
+		customConfig	}
 
 	/**
 	 * Enumération des champs de ExecutorTrainingCallback.
@@ -359,19 +359,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		rtyId	}
 
 	/**
-	 * Enumération des champs de SmallTalkExport.
-	 */
-	public enum SmallTalkExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.SmallTalkExport> {
-		/** Propriété 'SmallTalk'. */
-		smallTalk,
-		/** Propriété 'nluTrainingSentences'. */
-		nluTrainingSentences,
-		/** Propriété 'response texts'. */
-		utterTexts,
-		/** Propriété 'buttons'. */
-		buttons	}
-
-	/**
 	 * Enumération des champs de StatCriteria.
 	 */
 	public enum StatCriteriaFields implements DtFieldName<io.vertigo.chatbot.designer.domain.StatCriteria> {
@@ -392,6 +379,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		intentRasa,
 		/** Propriété 'Count'. */
 		count	}
+
+	/**
+	 * Enumération des champs de TopicExport.
+	 */
+	public enum TopicExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TopicExport> {
+		/** Propriété 'Topic name'. */
+		name,
+		/** Propriété 'nluTrainingSentences'. */
+		nluTrainingSentences,
+		/** Propriété 'Topic BT'. */
+		topicBT	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.

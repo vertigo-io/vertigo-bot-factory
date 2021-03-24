@@ -11,17 +11,14 @@ public final class VIntent {
 
 	private final String code;
 
-	private final String description;
-
-	private VIntent(final String code, final String description) {
+	private VIntent(final String code) {
 		Assertion.check().isNotBlank(code);
 		//--
 		this.code = code;
-		this.description = description;
 	}
 
-	public static VIntent of(final String code, final String description) {
-		return new VIntent(code, description);
+	public static VIntent of(final String code) {
+		return new VIntent(code);
 	}
 
 	/**
@@ -29,13 +26,6 @@ public final class VIntent {
 	 */
 	public String getCode() {
 		return code;
-	}
-
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
 	}
 
 }

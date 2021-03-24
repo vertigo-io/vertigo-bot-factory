@@ -1,15 +1,13 @@
 package io.vertigo.ai.plugins.nlu.rasa.mda;
 
-public class MessageToRecognize {
-
-	public MessageToRecognize(final String text) {
-		super();
-		this.text = text;
-	}
+public final class MessageToRecognize {
 
 	private String text;
-
 	private String message_id;
+
+	public MessageToRecognize(final String text) {
+		this.text = text;
+	}
 
 	public String getText() {
 		return text;

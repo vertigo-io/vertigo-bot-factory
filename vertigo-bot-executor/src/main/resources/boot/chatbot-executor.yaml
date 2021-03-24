@@ -37,5 +37,6 @@ modules:
           rasaUrl: http://localhost:5005
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
-  io.vertigo.chatbot.executor.RasaExecutorFeatures:
-  io.vertigo.chatbot.analytics.RasaAnalyticsFeatures:
+  io.vertigo.chatbot.engine.EngineFeatures:
+  io.vertigo.chatbot.executor.ExecutorFeatures:
+  io.vertigo.chatbot.analytics.AnalyticsFeatures:

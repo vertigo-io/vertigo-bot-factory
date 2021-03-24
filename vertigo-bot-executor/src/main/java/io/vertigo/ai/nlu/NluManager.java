@@ -1,5 +1,8 @@
 package io.vertigo.ai.nlu;
 
+import java.util.List;
+import java.util.Map;
+
 import io.vertigo.core.node.component.Manager;
 
 /**
@@ -10,45 +13,22 @@ import io.vertigo.core.node.component.Manager;
 public interface NluManager extends Manager {
 
 	/**
-	 * Register a new intent in the default engine.
+	 * Starts the process to train the default engine with provided data.
 	 *
-	 * @param intent the intent to register
+	 * @param trainingData all intents with their training phrases
 	 */
-	void registerIntent(VIntent intent);
+	void train(Map<VIntent, List<String>> trainingData);
 
 	/**
-	 * Register a new intent in the NLU model.
+	 * Starts the process to train the specified engine with provided data.
 	 *
-	 * @param intent the intent to register
+	 * @param trainingData all intents with their training phrases
 	 * @param engineName name of the engine to register with
 	 */
-	void registerIntent(VIntent intent, String engineName);
+	void train(Map<VIntent, List<String>> trainingData, String engineName);
 
 	/**
-	 * Add a new sentence to the training corpus associated with the intent on the default engine. It is used by the NLU engine to train the neural network to classify
-	 * sentences.
-	 *
-	 * @param intent the resolving intent
-	 * @param trainingPhrase example phrase that we associate with the resolving intent
-	 */
-	void addTrainingPhrase(VIntent intent, String trainingPhrase);
-
-	/**
-	 * Add a new sentence to the training corpus associated with the intent. It is used by the NLU engine to train the neural network to classify sentences.
-	 *
-	 * @param intent the resolving intent
-	 * @param trainingPhrase example phrase that we associate with the resolving intent
-	 * @param engineName name of the engine to register with
-	 */
-	void addTrainingPhrase(VIntent intent, String trainingPhrase, String engineName);
-
-	/**
-	 * Start the process to train all back engines against registered intents.
-	 */
-	void trainAll();
-
-	/**
-	 * Use the previously trained model to classify a new and unknown sentence on the default engine. trainAll() must have been called at least once before.
+	 * Use the previously trained model on the default engine to classify a new and unknown sentence.
 	 *
 	 * @param sentence the sentence we wants to classify.
 	 * @return the result of the analysis
@@ -56,7 +36,7 @@ public interface NluManager extends Manager {
 	VRecognitionResult recognize(String sentence);
 
 	/**
-	 * Use the previously trained model to classify a new and unknown sentence. trainAll() must have been called at least once before.
+	 * Use the previously trained model on the specified engine to classify a new and unknown sentence.
 	 *
 	 * @param sentence the sentence we wants to classify.
 	 * @param engineName name of the engine to register with
@@ -72,7 +52,7 @@ public interface NluManager extends Manager {
 	boolean isReady();
 
 	/**
-	 * Check if the engine is ready to recognize sentences.
+	 * Check if the specified engine is ready to recognize sentences.
 	 *
 	 * @param engineName name of the engine to check
 	 * @return true if the engine is ready

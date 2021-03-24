@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.commons;
 
+@Deprecated
 public enum RasaTypeAction {
 	OPEN(false), RESTART(false), MESSAGE(true), RESPONSE_INFO(true), BUTTON(true), RATING(false);
 

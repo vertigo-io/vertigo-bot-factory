@@ -3,17 +3,15 @@ package io.vertigo.chatbot.commons.domain
 
 create DtDefinition DtBotExport {
 	field bot 						{domain: DoDtChatbot	 				label: "chatbot" 					cardinality : "1"}
-	field fallbackText				{domain: DoDtUtterText 					label: "fallback" 					cardinality : "1"}
-	field fallbackButtons			{domain: DoDtResponseButton 			label: "fallback buttons" 			cardinality : "*"}
-	field welcomeText				{domain: DoDtUtterText 					label: "welcome" 					cardinality : "1"}
-	field welcomeButtons			{domain: DoDtResponseButton 			label: "welcome buttons" 			cardinality : "*"}
+	field welcomeBT					{domain: DoText 						label: "welcome BT" 				cardinality : "1"}
+	field fallbackBT				{domain: DoText 						label: "fallback BT" 				cardinality : "1"}
+	field topics					{domain: DoDtTopicExport 				label: "fallback BT" 				cardinality : "*"}
 }
 
-create DtDefinition DtSmallTalkExport {
-	field smallTalk					{domain: DoDtSmallTalk	 				label: "SmallTalk" 					cardinality : "1"}
-	field nluTrainingSentences 		{domain: DoDtNluTrainingSentence 		label: "nluTrainingSentences" 		cardinality : "*"}
-	field utterTexts		 		{domain: DoDtUtterText	 				label: "response texts" 			cardinality : "*"}
-	field buttons					{domain: DoDtResponseButton 			label: "buttons" 					cardinality : "*"}
+create DtDefinition DtTopicExport {
+	field name 						{domain: DoLabel 						label: "Topic name" 				cardinality : "1"}
+	field nluTrainingSentences 		{domain: DoLabel 						label: "nluTrainingSentences" 		cardinality : "*"}
+	field topicBT			 		{domain: DoText	 						label: "Topic BT" 					cardinality : "1"}
 }
 
 create DtDefinition DtRunnerInfo {
@@ -45,9 +43,10 @@ create DtDefinition DtExecutorTrainingCallback {
 }
 
 create DtDefinition DtExecutorConfiguration {
-	field botId 				{domain: DoId						label: "Bot ID" 				cardinality : "1"}
-	field nodId					{domain: DoId 						label: "Node ID" 				cardinality : "1"}
-	field traId					{domain: DoId 						label: "Model ID" 				cardinality : "1"}
-	field modelName				{domain: DoLabel 					label: "Model name" 			cardinality : "1"}
-	field nluThreshold			{domain: DoPercentage 				label: "NLU Threshold" 			cardinality : "1"}
+	field botId 				{domain: DoId						label: "Bot ID" 						cardinality : "1"}
+	field nodId					{domain: DoId 						label: "Node ID" 						cardinality : "1"}
+	field traId					{domain: DoId 						label: "Model ID" 						cardinality : "1"}
+	field modelName				{domain: DoLabel 					label: "Model name" 					cardinality : "1"}
+	field nluThreshold			{domain: DoPercentage 				label: "NLU Threshold" 					cardinality : "1"}
+	field customConfig			{domain: DoText 					label: "Additional config for executor" cardinality : "1"}
 }

@@ -19,34 +19,58 @@ package io.vertigo.chatbot.executor.webservices;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import io.vertigo.chatbot.executor.model.IncomeMessage;
-import io.vertigo.chatbot.executor.rasa.services.RasaRunnerServices;
+import io.vertigo.chatbot.engine.model.BotInput;
+import io.vertigo.chatbot.engine.model.BotResponse;
+import io.vertigo.chatbot.executor.manager.ExecutorManager;
+import io.vertigo.chatbot.executor.model.IncomeRating;
 import io.vertigo.core.lang.WrappedException;
+import io.vertigo.core.param.Param;
+import io.vertigo.core.param.ParamManager;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.POST;
+import io.vertigo.vega.webservice.stereotype.PathParam;
 import io.vertigo.vega.webservice.stereotype.PathPrefix;
 
 @PathPrefix("/chatbot")
 public class TalkWebService implements WebServices {
 
 	@Inject
-	private RasaRunnerServices runnerServices;
+	private ParamManager paramManager;
 
-	@POST("/talk")
-	public void talk(final HttpServletResponse httpResponse, final IncomeMessage income) {
-		final String response = runnerServices.callChatbot(income);
-		doSendRawResponse(httpResponse, response);
+	@Inject
+	private ExecutorManager executorManager;
+
+	@POST("/start")
+	public BotResponse start(final BotInput input) {
+		return executorManager.startNewConversation(input);
+	}
+
+	@POST("/talk/{sessionId}")
+	public BotResponse talk(@PathParam("sessionId") final UUID sessionId, final BotInput input) {
+		return executorManager.handleUserMessage(sessionId, input);
+	}
+
+	@POST("/rating")
+	public void rate(final IncomeRating rating) {
+		// todo
 	}
 
 	private void doSendRawResponse(final HttpServletResponse httpResponse, final String response) {
+
 		httpResponse.setContentType("application/json;charset=UTF-8");
 		httpResponse.setContentLength(response.length());
-		httpResponse.setHeader("Access-Control-Allow-Origin", "*"); // TODO : remove from here
+
+		final Optional<String> corsValue = paramManager.getOptionalParam("HTTP_CORS").map(Param::getValue); // TODO, passer en filtre
+		if (corsValue.isPresent()) {
+			httpResponse.setHeader("Access-Control-Allow-Origin", corsValue.get());
+		}
 
 		try (ServletOutputStream os = httpResponse.getOutputStream()) {
 			os.write(response.getBytes(StandardCharsets.UTF_8));

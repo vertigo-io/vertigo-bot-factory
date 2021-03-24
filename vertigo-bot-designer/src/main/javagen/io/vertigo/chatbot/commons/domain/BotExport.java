@@ -14,10 +14,9 @@ public final class BotExport implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private io.vertigo.chatbot.commons.domain.Chatbot bot;
-	private io.vertigo.chatbot.commons.domain.UtterText fallbackText;
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> fallbackButtons =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.ResponseButton.class);
-	private io.vertigo.chatbot.commons.domain.UtterText welcomeText;
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> welcomeButtons =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.ResponseButton.class);
+	private String welcomeBT;
+	private String fallbackBT;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.TopicExport.class);
 	
 	/**
 	 * Champ : DATA.
@@ -40,82 +39,61 @@ public final class BotExport implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'fallback'.
-	 * @return UtterText fallbackText <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'welcome BT'.
+	 * @return String welcomeBT <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyDtUtterText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "fallback")
-	public io.vertigo.chatbot.commons.domain.UtterText getFallbackText() {
-		return fallbackText;
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "welcome BT")
+	public String getWelcomeBT() {
+		return welcomeBT;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'fallback'.
-	 * @param fallbackText UtterText <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'welcome BT'.
+	 * @param welcomeBT String <b>Obligatoire</b>
 	 */
-	public void setFallbackText(final io.vertigo.chatbot.commons.domain.UtterText fallbackText) {
-		this.fallbackText = fallbackText;
+	public void setWelcomeBT(final String welcomeBT) {
+		this.welcomeBT = welcomeBT;
 	}
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'fallback buttons'.
-	 * @return DtList de ResponseButton fallbackButtons
+	 * Récupère la valeur de la propriété 'fallback BT'.
+	 * @return String fallbackBT <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyDtResponseButton", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "fallback buttons")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getFallbackButtons() {
-		return fallbackButtons;
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "fallback BT")
+	public String getFallbackBT() {
+		return fallbackBT;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'fallback buttons'.
-	 * @param fallbackButtons DtList de ResponseButton
+	 * Définit la valeur de la propriété 'fallback BT'.
+	 * @param fallbackBT String <b>Obligatoire</b>
 	 */
-	public void setFallbackButtons(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> fallbackButtons) {
-		io.vertigo.core.lang.Assertion.check().isNotNull(fallbackButtons);
+	public void setFallbackBT(final String fallbackBT) {
+		this.fallbackBT = fallbackBT;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'fallback BT'.
+	 * @return DtList de TopicExport topics
+	 */
+	@Field(smartType = "STyDtTopicExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "fallback BT")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> getTopics() {
+		return topics;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'fallback BT'.
+	 * @param topics DtList de TopicExport
+	 */
+	public void setTopics(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(topics);
 		//---
-		this.fallbackButtons = fallbackButtons;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'welcome'.
-	 * @return UtterText welcomeText <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyDtUtterText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "welcome")
-	public io.vertigo.chatbot.commons.domain.UtterText getWelcomeText() {
-		return welcomeText;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'welcome'.
-	 * @param welcomeText UtterText <b>Obligatoire</b>
-	 */
-	public void setWelcomeText(final io.vertigo.chatbot.commons.domain.UtterText welcomeText) {
-		this.welcomeText = welcomeText;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'welcome buttons'.
-	 * @return DtList de ResponseButton welcomeButtons
-	 */
-	@Field(smartType = "STyDtResponseButton", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "welcome buttons")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getWelcomeButtons() {
-		return welcomeButtons;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'welcome buttons'.
-	 * @param welcomeButtons DtList de ResponseButton
-	 */
-	public void setWelcomeButtons(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> welcomeButtons) {
-		io.vertigo.core.lang.Assertion.check().isNotNull(welcomeButtons);
-		//---
-		this.welcomeButtons = welcomeButtons;
+		this.topics = topics;
 	}
 	
 	/** {@inheritDoc} */

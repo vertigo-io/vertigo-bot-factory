@@ -16,7 +16,7 @@ import io.vertigo.core.lang.Assertion;
  */
 public class NluManagerImpl implements NluManager {
 
-	public static final String DEFAULT_PLUGIN_NAME = "main";
+	public static final String DEFAULT_ENGINE_NAME = "main";
 
 	private final Map<String, NluEnginePlugin> nluEnginePluginMap;
 
@@ -47,40 +47,26 @@ public class NluManagerImpl implements NluManager {
 		return nluEnginePlugin;
 	}
 
-	/** {@inheritDoc} */
 	@Override
-	public void registerIntent(final VIntent intent) {
-		registerIntent(intent, DEFAULT_PLUGIN_NAME);
+	public void train(final Map<VIntent, List<String>> trainingData) {
+		// TODO Auto-generated method stub
+
 	}
 
-	/** {@inheritDoc} */
 	@Override
-	public void registerIntent(final VIntent intent, final String engineName) {
-		getEngineByName(engineName).registerIntent(intent);
+	public void train(final Map<VIntent, List<String>> trainingData, final String engineName) {
+		// TODO Auto-generated method stub
+
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public void addTrainingPhrase(final VIntent intent, final String trainingPhrase) {
-		addTrainingPhrase(intent, trainingPhrase, DEFAULT_PLUGIN_NAME);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void addTrainingPhrase(final VIntent intent, final String trainingPhrase, final String engineName) {
-		getEngineByName(engineName).addTrainingPhrase(intent, trainingPhrase);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void trainAll() {
-		nluEnginePluginMap.values().forEach(NluEnginePlugin::train);
-	}
-
-	/** {@inheritDoc} */
+	/**
+	 * {@inherit
+	 * }
+	 * /** {@inheritDoc}
+	 */
 	@Override
 	public VRecognitionResult recognize(final String sentence) {
-		return recognize(sentence, DEFAULT_PLUGIN_NAME);
+		return recognize(sentence, DEFAULT_ENGINE_NAME);
 	}
 
 	/** {@inheritDoc} */
@@ -92,7 +78,7 @@ public class NluManagerImpl implements NluManager {
 	/** {@inheritDoc} */
 	@Override
 	public boolean isReady() {
-		return isReady(DEFAULT_PLUGIN_NAME);
+		return isReady(DEFAULT_ENGINE_NAME);
 	}
 
 	/** {@inheritDoc} */

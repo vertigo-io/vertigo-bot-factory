@@ -11,15 +11,11 @@ import org.yaml.snakeyaml.representer.Representer;
 
 public class CustomRepresenter extends Representer {
 
-	public CustomRepresenter() {
-		super();
-	}
-
 	@Override
 	protected Set<Property> getProperties(final Class<? extends Object> type) {
 		Set<Property> propertySet;
 		if (typeDefinitions.containsKey(type)) {
-			propertySet = typeDefinitions.get(type).getProperties();
+			propertySet = typeDefinitions.get(type).getProperties(); // FIXME : ??
 		}
 
 		propertySet = getPropertyUtils().getProperties(type);

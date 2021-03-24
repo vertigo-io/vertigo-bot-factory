@@ -41,8 +41,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
 		/** Objet de données SmallTalk. */
 		SmallTalk(io.vertigo.chatbot.commons.domain.SmallTalk.class),
-		/** Objet de données SmallTalkExport. */
-		SmallTalkExport(io.vertigo.chatbot.commons.domain.SmallTalkExport.class),
+		/** Objet de données TopicExport. */
+		TopicExport(io.vertigo.chatbot.commons.domain.TopicExport.class),
 		/** Objet de données TrainerInfo. */
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
@@ -71,14 +71,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum BotExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.BotExport> {
 		/** Propriété 'chatbot'. */
 		bot,
-		/** Propriété 'fallback'. */
-		fallbackText,
-		/** Propriété 'fallback buttons'. */
-		fallbackButtons,
-		/** Propriété 'welcome'. */
-		welcomeText,
-		/** Propriété 'welcome buttons'. */
-		welcomeButtons	}
+		/** Propriété 'welcome BT'. */
+		welcomeBT,
+		/** Propriété 'fallback BT'. */
+		fallbackBT,
+		/** Propriété 'fallback BT'. */
+		topics	}
 
 	/**
 	 * Enumération des champs de Chatbot.
@@ -135,7 +133,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Model name'. */
 		modelName,
 		/** Propriété 'NLU Threshold'. */
-		nluThreshold	}
+		nluThreshold,
+		/** Propriété 'Additional config for executor'. */
+		customConfig	}
 
 	/**
 	 * Enumération des champs de ExecutorTrainingCallback.
@@ -256,17 +256,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		rtyId	}
 
 	/**
-	 * Enumération des champs de SmallTalkExport.
+	 * Enumération des champs de TopicExport.
 	 */
-	public enum SmallTalkExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.SmallTalkExport> {
-		/** Propriété 'SmallTalk'. */
-		smallTalk,
+	public enum TopicExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TopicExport> {
+		/** Propriété 'Topic name'. */
+		name,
 		/** Propriété 'nluTrainingSentences'. */
 		nluTrainingSentences,
-		/** Propriété 'response texts'. */
-		utterTexts,
-		/** Propriété 'buttons'. */
-		buttons	}
+		/** Propriété 'Topic BT'. */
+		topicBT	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.

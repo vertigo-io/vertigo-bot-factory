@@ -18,6 +18,7 @@ public final class ExecutorConfiguration implements DtObject {
 	private Long traId;
 	private String modelName;
 	private java.math.BigDecimal nluThreshold;
+	private String customConfig;
 	
 	/**
 	 * Champ : DATA.
@@ -112,6 +113,25 @@ public final class ExecutorConfiguration implements DtObject {
 	 */
 	public void setNluThreshold(final java.math.BigDecimal nluThreshold) {
 		this.nluThreshold = nluThreshold;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Additional config for executor'.
+	 * @return String customConfig <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Additional config for executor")
+	public String getCustomConfig() {
+		return customConfig;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Additional config for executor'.
+	 * @param customConfig String <b>Obligatoire</b>
+	 */
+	public void setCustomConfig(final String customConfig) {
+		this.customConfig = customConfig;
 	}
 	
 	/** {@inheritDoc} */

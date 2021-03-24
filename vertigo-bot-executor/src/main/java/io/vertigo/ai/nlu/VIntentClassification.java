@@ -11,10 +11,12 @@ public class VIntentClassification {
 
 	private final VIntent intent;
 
-	private final double accuracy;
+	private final Double accuracy;
 
-	public VIntentClassification(final VIntent intent, final double accuracy) {
-		Assertion.check().isNotNull(intent);
+	public VIntentClassification(final VIntent intent, final Double accuracy) {
+		Assertion.check()
+				.isNotNull(intent)
+				.isNotNull(accuracy);
 		//--
 		this.intent = intent;
 		this.accuracy = accuracy;
@@ -30,7 +32,7 @@ public class VIntentClassification {
 	/**
 	 * @return the accuracy
 	 */
-	public double getAccuracy() {
+	public Double getAccuracy() {
 		return accuracy;
 	}
 

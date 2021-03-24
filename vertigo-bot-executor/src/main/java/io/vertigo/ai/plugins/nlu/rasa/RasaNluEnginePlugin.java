@@ -2,13 +2,11 @@ package io.vertigo.ai.plugins.nlu.rasa;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -18,13 +16,13 @@ import io.vertigo.ai.impl.nlu.NluManagerImpl;
 import io.vertigo.ai.nlu.VIntent;
 import io.vertigo.ai.nlu.VIntentClassification;
 import io.vertigo.ai.nlu.VRecognitionResult;
-import io.vertigo.ai.plugins.nlu.rasa.helper.FileIOHelper;
-import io.vertigo.ai.plugins.nlu.rasa.helper.RasaHttpSenderHelper;
 import io.vertigo.ai.plugins.nlu.rasa.mda.ConfigFile;
 import io.vertigo.ai.plugins.nlu.rasa.mda.MessageToRecognize;
 import io.vertigo.ai.plugins.nlu.rasa.mda.RasaIntentNlu;
 import io.vertigo.ai.plugins.nlu.rasa.mda.RasaIntentWithConfidence;
 import io.vertigo.ai.plugins.nlu.rasa.mda.RasaParsingResponse;
+import io.vertigo.ai.plugins.nlu.rasa.util.FileIOUtil;
+import io.vertigo.ai.plugins.nlu.rasa.util.RasaHttpSenderUtil;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.param.ParamValue;
 import io.vertigo.core.resource.ResourceManager;
@@ -36,9 +34,7 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 
 	private final URL configFileUrl;
 
-	private final AtomicBoolean ready;
-	private final List<VIntent> intentList;
-	private final Map<VIntent, List<String>> trainingPhrases;
+	private Boolean ready;
 
 	@Inject
 	public RasaNluEnginePlugin(
@@ -50,47 +46,22 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		Assertion.check().isNotBlank(rasaUrl);
 
 		this.rasaUrl = rasaUrl;
-		name = pluginNameOpt.orElse(NluManagerImpl.DEFAULT_PLUGIN_NAME);
+		name = pluginNameOpt.orElse(NluManagerImpl.DEFAULT_ENGINE_NAME);
 
 		final var configFileName = configFileOpt.orElse("rasa-config.yaml"); // in classpath by default
 		Assertion.check().isNotBlank(configFileName);
 
 		configFileUrl = resourceManager.resolve(configFileName);
 
-		ready = new AtomicBoolean(false);
-		intentList = new ArrayList<>();
-		trainingPhrases = new HashMap<>();
+		ready = false;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void registerIntent(final VIntent intent) {
-		Assertion.check().isNotNull(intent);
-		//--
-		intentList.add(intent);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void addTrainingPhrase(final VIntent intent, final String trainingPhrase) {
-		Assertion.check()
-				.isNotNull(intent)
-				.isNotBlank(trainingPhrase);
-		//--
-		Assertion.check().isTrue(intentList.contains(intent), "Unknown intent '{0}' on NLU engine {1}.", intent.getCode(), getName());
-
-		trainingPhrases.computeIfAbsent(intent, k -> new ArrayList<>())
-				.add(trainingPhrase);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void train() {
-		ready.set(false);
-
+	public synchronized void train(final Map<VIntent, List<String>> trainingData) {
 		//Yaml file
-		final ConfigFile config = FileIOHelper.getConfigFile(configFileUrl);
-		final List<RasaIntentNlu> intents = createRasaIntents();
+		final ConfigFile config = FileIOUtil.getConfigFile(configFileUrl);
+		final List<RasaIntentNlu> intents = createRasaIntents(trainingData);
 
 		//Create map and launch the dump
 		final Map<String, Object> map = new LinkedHashMap<>();
@@ -99,26 +70,30 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 		map.put("nlu", intents);
 
 		//train
-		final String filename = RasaHttpSenderHelper.launchTraining(rasaUrl, map);
+		final String filename = RasaHttpSenderUtil.launchTraining(rasaUrl, map);
+
+		ready = false;
 
 		//put model
-		RasaHttpSenderHelper.putModel(rasaUrl, filename);
-		ready.set(true);
+		RasaHttpSenderUtil.putModel(rasaUrl, filename);
+
+		ready = true;
 	}
 
-	private List<RasaIntentNlu> createRasaIntents() {
+	private static List<RasaIntentNlu> createRasaIntents(final Map<VIntent, List<String>> trainingData) {
 		final List<RasaIntentNlu> result = new ArrayList<>();
-		for (final Entry<VIntent, List<String>> entry : trainingPhrases.entrySet()) {
+		for (final Entry<VIntent, List<String>> entry : trainingData.entrySet()) {
 			final RasaIntentNlu intent = new RasaIntentNlu(entry.getKey().getCode(), createTrainingSetence(entry.getValue()));
 			result.add(intent);
 		}
 		return result;
 	}
 
-	private String createTrainingSetence(final List<String> value) {
+	private static String createTrainingSetence(final List<String> value) {
 		if (value.isEmpty()) {
 			return "";
 		}
+		// output yaml format for Rasa
 		value.set(0, "- " + value.get(0));
 		return String.join("\n- ", value);
 	}
@@ -126,28 +101,36 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 	/** {@inheritDoc} */
 	@Override
 	public VRecognitionResult recognize(final String sentence) {
-		if (!ready.get()) {
+		int retry = 0;
+		while (!ready && retry < 5) {
+			try {
+				Thread.sleep(500);
+			} catch (final InterruptedException e) {
+				Thread.currentThread().interrupt(); //si interrupt on relance
+			}
+			retry++;
+		}
+
+		if (!ready) {
 			throw new IllegalStateException("NLU engine '" + getName() + "' is not ready to recognize sentenses.");
 		}
 
 		final MessageToRecognize message = new MessageToRecognize(sentence);
-
-		final RasaParsingResponse response = RasaHttpSenderHelper.getIntentFromRasa(rasaUrl, message);
+		final RasaParsingResponse response = RasaHttpSenderUtil.getIntentFromRasa(rasaUrl, message);
 
 		return getVRecognitionResult(response);
-
 	}
 
 	private VRecognitionResult getVRecognitionResult(final RasaParsingResponse response) {
 		final String rawSentence = response.getIntent().getName();
-		final List<VIntentClassification> intentClassificationList = response.getIntent_ranking().stream().map(intent -> createVIntentClassificationFromRasaIntent(intent))
+		final List<VIntentClassification> intentClassificationList = response.getIntent_ranking().stream()
+				.map(this::getVIntentFromFromRasaIntent)
 				.collect(Collectors.toList());
 		return new VRecognitionResult(rawSentence, intentClassificationList);
 	}
 
-	private VIntentClassification createVIntentClassificationFromRasaIntent(final RasaIntentWithConfidence rasaIntent) {
-		final VIntent intent = VIntent.of(rasaIntent.getName(), "");
-		return new VIntentClassification(intent, rasaIntent.getConfidence());
+	private VIntentClassification getVIntentFromFromRasaIntent(final RasaIntentWithConfidence rasaIntent) {
+		return new VIntentClassification(VIntent.of(rasaIntent.getName()), rasaIntent.getConfidence());
 	}
 
 	/** {@inheritDoc} */
@@ -159,6 +142,6 @@ public class RasaNluEnginePlugin implements NluEnginePlugin {
 	/** {@inheritDoc} */
 	@Override
 	public boolean isReady() {
-		return ready.get();
+		return ready;
 	}
 }

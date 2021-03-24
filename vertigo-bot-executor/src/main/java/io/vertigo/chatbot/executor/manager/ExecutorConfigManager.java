@@ -26,7 +26,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 
-import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
+import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
@@ -35,14 +36,24 @@ import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 public class ExecutorConfigManager implements Manager, Activeable {
 
-	@Inject
-	private ParamManager paramManager;
-
-	@Inject
-	private JsonEngine jsonEngine;
+	private final ParamManager paramManager;
+	private final JsonEngine jsonEngine;
 
 	private File configDataFile;
-	private ExecutorConfiguration executorConfiguration;
+	private ExecutorGlobalConfig executorGlobalConfig;
+
+	@Inject
+	public ExecutorConfigManager(
+			final ParamManager paramManager,
+			final JsonEngine jsonEngine) {
+
+		Assertion.check()
+				.isNotNull(paramManager)
+				.isNotNull(jsonEngine);
+		//--
+		this.paramManager = paramManager;
+		this.jsonEngine = jsonEngine;
+	}
 
 	@Override
 	public void start() {
@@ -52,17 +63,17 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		if (configDataFile.exists() && configDataFile.canRead()) {
 			try {
 				final String json = FileUtils.readFileToString(configDataFile, StandardCharsets.UTF_8);
-				executorConfiguration = jsonEngine.fromJson(json, ExecutorConfiguration.class);
+				executorGlobalConfig = jsonEngine.fromJson(json, ExecutorGlobalConfig.class);
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", configDataFilePath);
 			}
 
 			// Migration purpose as 18/02/2020
-			if (executorConfiguration.getNluThreshold() == null) {
-				executorConfiguration.setNluThreshold(BigDecimal.valueOf(0.6));
+			if (executorGlobalConfig.getExecutorConfiguration() != null && executorGlobalConfig.getExecutorConfiguration().getNluThreshold() == null) {
+				executorGlobalConfig.getExecutorConfiguration().setNluThreshold(BigDecimal.valueOf(0.6));
 			}
 		} else {
-			executorConfiguration = new ExecutorConfiguration();
+			executorGlobalConfig = new ExecutorGlobalConfig();
 		}
 	}
 
@@ -71,10 +82,10 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		// Nothing
 	}
 
-	public void saveConfig(final ExecutorConfiguration myExecutorConfiguration) {
-		this.executorConfiguration = myExecutorConfiguration;
+	public void saveConfig(final ExecutorGlobalConfig executorGlobalConfig) {
+		this.executorGlobalConfig = executorGlobalConfig;
 
-		final String json = jsonEngine.toJson(myExecutorConfiguration);
+		final String json = jsonEngine.toJson(executorGlobalConfig);
 
 		try {
 			FileUtils.writeStringToFile(configDataFile, json, StandardCharsets.UTF_8);
@@ -86,8 +97,8 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	/**
 	 * @return the executorConfiguration
 	 */
-	public ExecutorConfiguration getConfig() {
-		return executorConfiguration;
+	public ExecutorGlobalConfig getConfig() {
+		return executorGlobalConfig;
 	}
 
 }
