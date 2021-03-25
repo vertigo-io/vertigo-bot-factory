@@ -37,11 +37,11 @@ public class UtterTextServices implements Component {
 	@Inject
 	private UtterTextPAO utterTextPAO;
 
-	public UtterText save(final UtterText ut) {
+	public UtterText save(@SecuredOperation("botAdm") final Chatbot bot, final UtterText ut) {
 		return utterTextDAO.save(ut);
 	}
 
-	public void delete(final UID<UtterText> uid) {
+	public void delete(@SecuredOperation("botAdm") final Chatbot bot, final UID<UtterText> uid) {
 		utterTextDAO.delete(uid);
 	}
 
@@ -57,7 +57,7 @@ public class UtterTextServices implements Component {
 		return utterTextDAO.get(bot.getUttIdWelcome());
 	}
 
-	public DtList<UtterText> getUtterTextList(final SmallTalk smallTalk) {
+	public DtList<UtterText> getUtterTextList(@SecuredOperation("botVisitor") final Chatbot bot, final SmallTalk smallTalk) {
 		Assertion.check()
 				.isNotNull(smallTalk)
 				.isNotNull(smallTalk.getSmtId());
@@ -67,7 +67,7 @@ public class UtterTextServices implements Component {
 				DtListState.of(1000, 0, UtterTextFields.uttId.name(), false));
 	}
 
-	public void removeAllUtterTextBySmtId(final Long smtId) {
+	public void removeAllUtterTextBySmtId(@SecuredOperation("botContributor") final Chatbot bot, final Long smtId) {
 		// save utter textes, remove all + create all
 		utterTextPAO.removeAllUtterTextBySmtId(smtId);
 	}
@@ -79,7 +79,7 @@ public class UtterTextServices implements Component {
 	 * @param utterTexts the utterText to save
 	 * @return the utterTexts saved
 	 */
-	public DtList<UtterText> createNoBlankUtterTextBySmallTalk(final SmallTalk smt, final DtList<UtterText> utterTexts) {
+	public DtList<UtterText> createNoBlankUtterTextBySmallTalk(@SecuredOperation("botContributor") final Chatbot bot, final SmallTalk smt, final DtList<UtterText> utterTexts) {
 
 		Stream<UtterText> utterStream = utterTexts.stream();
 		if (ResponseTypeEnum.RICH_TEXT.equals(smt.responseType().getEnumValue())) {
@@ -100,13 +100,13 @@ public class UtterTextServices implements Component {
 		return uttToSave;
 	}
 
-	public void deleteUtterTextsBySmallTalk(final SmallTalk smallTalk) {
-		for (final UtterText ut : getUtterTextList(smallTalk)) {
-			delete(ut.getUID());
+	public void deleteUtterTextsBySmallTalk(@SecuredOperation("botContributor") final Chatbot bot, final SmallTalk smallTalk) {
+		for (final UtterText ut : getUtterTextList(bot, smallTalk)) {
+			delete(bot, ut.getUID());
 		}
 	}
 
-	public Map<Long, DtList<UtterText>> exportSmallTalkRelativeUtter(final List<Long> smallTalkIds) {
+	public Map<Long, DtList<UtterText>> exportSmallTalkRelativeUtter(@SecuredOperation("botContributor") final Chatbot bot, final List<Long> smallTalkIds) {
 		return utterTextDAO.exportSmallTalkRelativeUtter(smallTalkIds)
 				.stream()
 				.collect(Collectors.groupingBy(UtterText::getSmtId,

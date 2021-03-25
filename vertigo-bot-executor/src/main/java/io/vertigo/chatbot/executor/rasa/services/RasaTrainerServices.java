@@ -90,6 +90,7 @@ public class RasaTrainerServices implements Component, Activeable {
 
 			final Map<String, Object> requestData = new HashMap<>();
 			requestData.put("executorTrainingCallback", executorTrainingCallback);
+			requestData.put("bot", bot.getBot());
 
 			try {
 				final Response response = designerTarget.path("/api/trainingCallback")

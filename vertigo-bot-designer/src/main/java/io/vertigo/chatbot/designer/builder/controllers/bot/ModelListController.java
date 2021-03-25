@@ -78,7 +78,7 @@ public class ModelListController extends AbstractBotController {
 
 	@PostMapping("/_refreshRunner")
 	public ViewContext refreshRunnerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		final RunnerInfo state = trainingServices.getRunnerState(bot.getBotId());
+		final RunnerInfo state = trainingServices.getRunnerState(bot);
 		viewContext.publishDto(runnerStateKey, state);
 
 		return viewContext;
@@ -86,7 +86,7 @@ public class ModelListController extends AbstractBotController {
 
 	@PostMapping("/_refreshTrainer")
 	public ViewContext refreshTrainerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		final TrainerInfo state = trainingServices.getTrainingState(bot.getBotId());
+		final TrainerInfo state = trainingServices.getTrainingState(bot);
 		viewContext.publishDto(trainerStateKey, state);
 
 		return viewContext;
@@ -94,10 +94,9 @@ public class ModelListController extends AbstractBotController {
 
 	@PostMapping("/_refreshTrainings")
 	public ViewContext refreshTrainings(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		viewContext.publishDtList(trainingListKey, trainingServices.getAllTrainings(bot.getBotId()));
+		viewContext.publishDtList(trainingListKey, trainingServices.getAllTrainings(bot));
 
 		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
-
 		return viewContext;
 	}
 
@@ -106,7 +105,7 @@ public class ModelListController extends AbstractBotController {
 			@RequestParam("traId") final Long traId,
 			@ViewAttribute("bot") final Chatbot bot) {
 
-		trainingServices.removeTraining(traId);
+		trainingServices.removeTraining(bot, traId);
 
 		refreshTrainings(viewContext, bot);
 
@@ -122,7 +121,7 @@ public class ModelListController extends AbstractBotController {
 
 	@PostMapping("/_stop")
 	public ViewContext doStop(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		trainingServices.stopAgent(bot.getBotId());
+		trainingServices.stopAgent(bot);
 
 		return viewContext;
 	}
@@ -133,7 +132,7 @@ public class ModelListController extends AbstractBotController {
 			@RequestParam("nodId") final Long nodId,
 			@ViewAttribute("bot") final Chatbot bot) {
 
-		trainingServices.loadModel(traId, nodId);
+		trainingServices.loadModel(bot, traId, nodId);
 
 		refreshRunnerState(viewContext, bot);
 		refreshTrainings(viewContext, bot);

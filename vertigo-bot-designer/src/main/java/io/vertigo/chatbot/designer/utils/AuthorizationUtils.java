@@ -20,4 +20,8 @@ public class AuthorizationUtils {
 			throw new VSecurityException(MessageText.of(message));//no too sharp info here : may use log
 		}
 	}
+
+	public static <K extends KeyConcept> boolean checkRights(final K keyConcept, final OperationName<K> operation) {
+		return authorizationManager.isAuthorized(keyConcept, operation);
+	}
 }

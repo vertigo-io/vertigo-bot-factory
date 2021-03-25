@@ -75,10 +75,10 @@ public class ChatbotServices implements Component {
 		// ---
 
 		// default text
-		utterTextServices.save(defaultText);
+		utterTextServices.save(chatbot, defaultText);
 		chatbot.setUttIdDefault(defaultText.getUttId());
 		// welcome
-		utterTextServices.save(welcomeText);
+		utterTextServices.save(chatbot, welcomeText);
 		chatbot.setUttIdWelcome(welcomeText.getUttId());
 
 		// Avatar
@@ -110,10 +110,6 @@ public class ChatbotServices implements Component {
 
 	public Boolean deleteChatbot(@SecuredOperation("botAdm") final Chatbot bot) {
 
-		// Delete avatar file
-		if (bot.getFilIdAvatar() != null) {
-			fileServices.delete(bot.getFilIdAvatar());
-		}
 		// Delete node
 		nodeServices.deleteChatbotNodeByBot(bot);
 		// Delete training and all media file
@@ -127,6 +123,11 @@ public class ChatbotServices implements Component {
 
 		chatbotProfilServices.deleteAllProfilByBot(bot);
 		chatbotDAO.delete(bot.getBotId());
+
+		// Delete avatar file reference in bot
+		if (bot.getFilIdAvatar() != null) {
+			fileServices.deleteChatbotFile(bot, bot.getFilIdAvatar());
+		}
 		return true;
 	}
 

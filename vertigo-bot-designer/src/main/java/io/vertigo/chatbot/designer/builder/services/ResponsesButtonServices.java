@@ -32,7 +32,7 @@ public class ResponsesButtonServices implements Component {
 	@Inject
 	private ResponsesButtonPAO responsesButtonPAO;
 
-	public DtList<ResponseButton> getResponsesButtonList(final SmallTalk smallTalk) {
+	public DtList<ResponseButton> getResponsesButtonList(@SecuredOperation("botContributor") final Chatbot bot, final SmallTalk smallTalk) {
 		Assertion.check()
 				.isNotNull(smallTalk)
 				.isNotNull(smallTalk.getSmtId());
@@ -63,7 +63,7 @@ public class ResponsesButtonServices implements Component {
 				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
-	public DtList<ResponseButton> getButtonsBySmalltalk(final SmallTalk smallTalk) {
+	public DtList<ResponseButton> getButtonsBySmalltalk(@SecuredOperation("botVisitor") final Chatbot bot, final SmallTalk smallTalk) {
 		Assertion.check()
 				.isNotNull(smallTalk)
 				.isNotNull(smallTalk.getSmtId());
@@ -74,7 +74,7 @@ public class ResponsesButtonServices implements Component {
 				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
-	public void removeAllButtonsBySmtId(final SmallTalk smt) {
+	public void removeAllButtonsBySmtId(@SecuredOperation("botContributor") final Chatbot bot, final SmallTalk smt) {
 		// clear old buttons
 		responsesButtonPAO.removeAllButtonsBySmtId(smt.getSmtId());
 
@@ -94,7 +94,7 @@ public class ResponsesButtonServices implements Component {
 		responsesButtonPAO.removeAllSMTButtonsByBotId(bot.getBotId());
 	}
 
-	public void saveAllButtonsBySmtId(final SmallTalk savedST, final DtList<ResponseButton> buttonList) {
+	public void saveAllButtonsBySmtId(@SecuredOperation("botContributor") final Chatbot bot, final SmallTalk savedST, final DtList<ResponseButton> buttonList) {
 		// save new buttons
 		for (final ResponseButton btn : buttonList) {
 			btn.setBtnId(null); // force creation
@@ -104,14 +104,14 @@ public class ResponsesButtonServices implements Component {
 
 	}
 
-	public void deleteResponsesButtonsBySmallTalk(final SmallTalk smallTalk) {
+	public void deleteResponsesButtonsBySmallTalk(@SecuredOperation("botContributor") final Chatbot bot, final SmallTalk smallTalk) {
 
-		for (final ResponseButton button : getResponsesButtonList(smallTalk)) {
+		for (final ResponseButton button : getResponsesButtonList(bot, smallTalk)) {
 			responseButtonDAO.delete(button.getUID());
 		}
 	}
 
-	public Map<Long, DtList<ResponseButton>> exportSmallTalkRelativeButtons(final List<Long> smallTalkIds) {
+	public Map<Long, DtList<ResponseButton>> exportSmallTalkRelativeButtons(@SecuredOperation("botContributor") final Chatbot bot, final List<Long> smallTalkIds) {
 		return responseButtonDAO.exportSmallTalkRelativeButtons(smallTalkIds)
 				.stream()
 				.collect(Collectors.groupingBy(ResponseButton::getSmtId,

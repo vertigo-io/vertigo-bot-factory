@@ -37,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
+import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
@@ -95,7 +96,7 @@ public class TrainingServices implements Component {
 	private TrainingPAO trainingPAO;
 
 	@Inject
-	private ChatbotNodeDAO chatbotNodeDAO;
+	private ChatbotNodeDAO ChatbotNodeDAO;
 
 	@Inject
 	private JaxrsProvider jaxrsProvider;
@@ -105,7 +106,7 @@ public class TrainingServices implements Component {
 
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
-	public Training trainAgent(final Chatbot bot) {
+	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot) {
 		final Long botId = bot.getBotId();
 		trainingPAO.cleanOldTrainings(botId);
 
@@ -121,7 +122,7 @@ public class TrainingServices implements Component {
 		training.setVersionNumber(versionNumber);
 		training.setNluThreshold(BigDecimal.valueOf(0.6));
 
-		saveTraining(training);
+		saveTraining(bot, training);
 
 		final Map<String, Object> requestData = new HashMap<>();
 		requestData.put("botExport", exportBot(bot));
@@ -147,8 +148,8 @@ public class TrainingServices implements Component {
 		return ((List<String>) response.readEntity(Map.class).get("globalErrors")).get(0);
 	}
 
-	public void stopAgent(final Long botId) {
-		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(botId).get();
+	public void stopAgent(@SecuredOperation("botContributor") final Chatbot bot) {
+		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(bot.getBotId()).get();
 
 		jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
 				.request(MediaType.APPLICATION_JSON)
@@ -157,8 +158,8 @@ public class TrainingServices implements Component {
 
 	}
 
-	public TrainerInfo getTrainingState(final Long botId) {
-		final Optional<ChatbotNode> optDevNode = nodeServices.getDevNodeByBotId(botId);
+	public TrainerInfo getTrainingState(@SecuredOperation("botContributor") final Chatbot bot) {
+		final Optional<ChatbotNode> optDevNode = nodeServices.getDevNodeByBotId(bot.getBotId());
 
 		if (!optDevNode.isPresent()) {
 			final TrainerInfo trainerInfo = new TrainerInfo();
@@ -197,8 +198,8 @@ public class TrainingServices implements Component {
 		return retour;
 	}
 
-	public RunnerInfo getRunnerState(final Long botId) {
-		final Optional<ChatbotNode> optDevNode = nodeServices.getDevNodeByBotId(botId);
+	public RunnerInfo getRunnerState(@SecuredOperation("botContributor") final Chatbot bot) {
+		final Optional<ChatbotNode> optDevNode = nodeServices.getDevNodeByBotId(bot.getBotId());
 
 		if (!optDevNode.isPresent()) {
 			final RunnerInfo runnerInfo = new RunnerInfo();
@@ -237,7 +238,7 @@ public class TrainingServices implements Component {
 		return retour;
 	}
 
-	private BotExport exportBot(final Chatbot bot) {
+	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
 		final UtterText welcomeText = utterTextServices.getWelcomeTextByBot(bot);
 		final UtterText defaultText = utterTextServices.getDefaultTextByBot(bot);
 		final DtList<ResponseButton> welcomeButtons = responsesButtonServices.getWelcomeButtonsByBot(bot);
@@ -261,20 +262,20 @@ public class TrainingServices implements Component {
 
 		//Create map for export
 		final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap = smallTalkServices.exportSmallTalkRelativeTrainingSentence(bot, smallTalkIds);
-		final Map<Long, DtList<UtterText>> utterTextsMap = utterTextServices.exportSmallTalkRelativeUtter(smallTalkIds);
-		final Map<Long, DtList<ResponseButton>> buttonsMap = responsesButtonServices.exportSmallTalkRelativeButtons(smallTalkIds);
+		final Map<Long, DtList<UtterText>> utterTextsMap = utterTextServices.exportSmallTalkRelativeUtter(bot, smallTalkIds);
+		final Map<Long, DtList<ResponseButton>> buttonsMap = responsesButtonServices.exportSmallTalkRelativeButtons(bot, smallTalkIds);
 
 		//create the smallTalkExport
 		return smallTalkServices.exportSmallTalks(bot, smallTalks, trainingSentencesMap, utterTextsMap, buttonsMap);
 	}
 
-	public void loadModel(final Long traId, final Long nodId) {
+	public void loadModel(@SecuredOperation("botContributor") final Chatbot bot, final Long traId, final Long nodId) {
 		Assertion.check()
 				.isNotNull(traId)
 				.isNotNull(nodId);
 
-		final Training training = getTraining(traId);
-		final ChatbotNode node = nodeServices.getNodeByNodeId(nodId);
+		final Training training = getTraining(bot, traId);
+		final ChatbotNode node = nodeServices.getNodeByNodeId(bot, nodId);
 
 		Assertion.check().isTrue(training.getBotId().equals(node.getBotId()), "Incohérence des paramètres");
 
@@ -284,7 +285,7 @@ public class TrainingServices implements Component {
 
 		// update node-training link
 		node.setTraId(traId);
-		nodeServices.save(node);
+		nodeServices.save(bot, node);
 	}
 
 	private void doLoadModel(final Training training, final VFile model, final ChatbotNode node) {
@@ -330,29 +331,27 @@ public class TrainingServices implements Component {
 		}
 	}
 
-	public DtList<Training> getAllTrainings(final Long botId) {
+	public DtList<Training> getAllTrainings(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return trainingDAO.findAll(
-				Criterions.isEqualTo(TrainingFields.botId, botId),
+				Criterions.isEqualTo(TrainingFields.botId, bot.getBotId()),
 				DtListState.of(1000, 0, TrainingFields.versionNumber.name(), true));
 	}
 
-	public Training getTraining(final Long traId) {
+	public Training getTraining(@SecuredOperation("botVisitor") final Chatbot bot, final Long traId) {
 		return trainingDAO.get(traId);
 	}
 
-	public Training saveTraining(final Training training) {
+	public Training saveTraining(@SecuredOperation("botContributor") final Chatbot bot, final Training training) {
 		return trainingDAO.save(training);
 	}
 
-	public void removeTraining(final Long traId) {
+	public void removeTraining(@SecuredOperation("botContributor") final Chatbot bot, final Long traId) {
 		trainingDAO.delete(traId);
 	}
 
-	public void trainingCallback(final ExecutorTrainingCallback callback) {
-		final Training training = getTraining(callback.getTrainingId());
-
-		// final ChatbotNode node = designerServices.getDevNodeByBotId(training.getBotId()).get(); // FIXME : can't be used because of security
-		final ChatbotNode node = chatbotNodeDAO.findOptional(
+	public void trainingCallback(@SecuredOperation("botContributor") final Chatbot bot, final ExecutorTrainingCallback callback) {
+		final Training training = getTraining(bot, callback.getTrainingId());
+		final ChatbotNode node = ChatbotNodeDAO.findOptional(
 				Criterions.isEqualTo(ChatbotNodeFields.botId, training.getBotId())
 						.and(Criterions.isEqualTo(ChatbotNodeFields.isDev, true)))
 				.get();
@@ -376,7 +375,7 @@ public class TrainingServices implements Component {
 		training.setWarnings(callback.getWarnings());
 		training.setEndTime(Instant.now());
 
-		saveTraining(training);
+		saveTraining(bot, training);
 	}
 
 	private VFile fetchModel(final ChatbotNode node, final Long modelVersion) {
@@ -390,7 +389,7 @@ public class TrainingServices implements Component {
 		return new StreamFile(modelVersion + ".tar.gz", response.getHeaderString("Content-Type"), Instant.now(), response.getLength(), () -> response.readEntity(InputStream.class));
 	}
 
-	public void removeAllTraining(final Chatbot bot) {
+	public void removeAllTraining(@SecuredOperation("botAdm") final Chatbot bot) {
 		final Long botId = bot.getBotId();
 		final List<Long> filesId = trainingPAO.getAllTrainingFilIdsByBotId(botId);
 		trainingPAO.removeTrainingByBotId(botId);

@@ -89,8 +89,8 @@ public class SmallTalkServices implements Component {
 		removeNTS(nluTrainingSentencesToDelete);
 
 		// save utter textes, remove all + create all
-		utterTextServices.removeAllUtterTextBySmtId(savedST.getSmtId());
-		final DtList<UtterText> uttToSave = utterTextServices.createNoBlankUtterTextBySmallTalk(savedST, utterTexts);
+		utterTextServices.removeAllUtterTextBySmtId(chatbot, savedST.getSmtId());
+		final DtList<UtterText> uttToSave = utterTextServices.createNoBlankUtterTextBySmallTalk(chatbot, savedST, utterTexts);
 
 		if (ntsToSave.isEmpty() || uttToSave.isEmpty()) {
 			// no training or response, disable this small talk
@@ -99,8 +99,8 @@ public class SmallTalkServices implements Component {
 		}
 
 		// remove and create buttons
-		responsesButtonServices.removeAllButtonsBySmtId(savedST);
-		responsesButtonServices.saveAllButtonsBySmtId(savedST, buttonList);
+		responsesButtonServices.removeAllButtonsBySmtId(chatbot, savedST);
+		responsesButtonServices.saveAllButtonsBySmtId(chatbot, savedST, buttonList);
 		return savedST;
 	}
 
@@ -110,9 +110,9 @@ public class SmallTalkServices implements Component {
 			nluTrainingSentenceDAO.delete(its.getUID());
 		}
 
-		utterTextServices.deleteUtterTextsBySmallTalk(smallTalk);
+		utterTextServices.deleteUtterTextsBySmallTalk(chatbot, smallTalk);
 
-		responsesButtonServices.deleteResponsesButtonsBySmallTalk(smallTalk);
+		responsesButtonServices.deleteResponsesButtonsBySmallTalk(chatbot, smallTalk);
 
 		// delete smallTalk
 		smallTalkDAO.delete(smallTalk.getUID());

@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.account.authorization.annotations.Secured;
+import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
@@ -40,6 +41,7 @@ import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
@@ -90,7 +92,9 @@ public class BotDetailController extends AbstractBotController {
 		viewContext.publishDtListModifiable(welcomeButtonsKey, responsesButtonServices.getWelcomeButtonsByBot(bot));
 		viewContext.publishDtList(smallTalkKey, smallTalkServices.getAllSmallTalksByBot(bot));
 
-		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBotId(bot));
+		if (AuthorizationUtils.checkRights(bot, ChatbotOperations.botAdm)) {
+			viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
+		}
 
 		viewContext.publishRef(deletePopinKey, false);
 		initNodeEdit(viewContext);
@@ -160,7 +164,7 @@ public class BotDetailController extends AbstractBotController {
 	}
 
 	@PostMapping("/_saveNode")
-	@Secured("SuperAdmin")
+	@Secured("SuperAdm")
 	public ViewContext doSaveNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("nodeEdit") final ChatbotNode nodeEdit) {
 

@@ -93,11 +93,11 @@ public class SmallTalkDetailController extends AbstractBotController {
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey,
 				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
-		final DtList<UtterText> utterTextList = utterTextServices.getUtterTextList(smallTalk);
+		final DtList<UtterText> utterTextList = utterTextServices.getUtterTextList(bot, smallTalk);
 		utterTextList.add(new UtterText()); // add the next for random, or the 1st for rich text if 0 lines
 		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
 
-		viewContext.publishDtListModifiable(buttonsKey, responsesButtonServices.getButtonsBySmalltalk(smallTalk));
+		viewContext.publishDtListModifiable(buttonsKey, responsesButtonServices.getButtonsBySmalltalk(bot, smallTalk));
 		viewContext.publishDtList(smallTalkListKey, smallTalkServices.getAllSmallTalksByBot(bot));
 
 		toModeReadOnly();

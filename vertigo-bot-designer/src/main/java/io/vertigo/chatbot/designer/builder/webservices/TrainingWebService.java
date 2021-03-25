@@ -19,6 +19,7 @@ package io.vertigo.chatbot.designer.builder.webservices;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.vega.webservice.WebServices;
@@ -31,7 +32,7 @@ public class TrainingWebService implements WebServices {
 	private TrainingServices trainingServices;
 
 	@POST("/trainingCallback")
-	public void trainingCallback(@InnerBodyParam("executorTrainingCallback") final ExecutorTrainingCallback callback) {
-		trainingServices.trainingCallback(callback);
+	public void trainingCallback(@InnerBodyParam("bot") final Chatbot bot, @InnerBodyParam("executorTrainingCallback") final ExecutorTrainingCallback callback) {
+		trainingServices.trainingCallback(bot, callback);
 	}
 }

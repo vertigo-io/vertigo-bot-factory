@@ -19,7 +19,9 @@ package io.vertigo.chatbot.designer.commons.services;
 
 import javax.inject.Inject;
 
+import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.MediaFileInfoDAO;
+import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
@@ -86,8 +88,8 @@ public class FileServices implements Component {
 		deleteFile(toStdFileInfoUri(fileId));
 	}
 
-	public void delete(final Long filIdAvatar) {
-		mediaFileInfoDAO.delete(filIdAvatar);
+	public void deleteChatbotFile(@SecuredOperation("botAdm") final Chatbot bot, final Long filId) {
+		mediaFileInfoDAO.delete(filId);
 	}
 
 }
