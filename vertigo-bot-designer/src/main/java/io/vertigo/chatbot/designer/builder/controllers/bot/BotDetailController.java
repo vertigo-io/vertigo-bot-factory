@@ -92,7 +92,7 @@ public class BotDetailController extends AbstractBotController {
 		viewContext.publishDtListModifiable(welcomeButtonsKey, responsesButtonServices.getWelcomeButtonsByBot(bot));
 		viewContext.publishDtList(smallTalkKey, smallTalkServices.getAllSmallTalksByBot(bot));
 
-		if (AuthorizationUtils.checkRights(bot, ChatbotOperations.botAdm)) {
+		if (AuthorizationUtils.isAuthorized(bot, ChatbotOperations.botAdm)) {
 			viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
 		}
 

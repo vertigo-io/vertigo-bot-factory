@@ -21,7 +21,7 @@ public class AuthorizationUtils {
 		}
 	}
 
-	public static <K extends KeyConcept> boolean checkRights(final K keyConcept, final OperationName<K> operation) {
+	public static <K extends KeyConcept> boolean isAuthorized(final K keyConcept, final OperationName<K> operation) {
 		return authorizationManager.isAuthorized(keyConcept, operation);
 	}
 }

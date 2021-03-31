@@ -258,10 +258,10 @@
 				</vu:slot>
 				<vu:slot name="actions_slot">
 					<q-btn class="on-right" round color="primary" icon="cloud_upload" aria-label="Deploy this model on..." title="Deploy this model on..."
-							th:if="${#arrays.contains(model.chatBotAuthorizedOperations, 'botContributor') } and |props.row.status == 'OK'|"
+							th:if="${model.userAuthorizations[AtzChatbot$botContributor]} and |props.row.status == 'OK'|"
 							@click="showTrainingPopin(props.row)"></q-btn>
 					<q-btn class="on-right" round color="red" icon="delete" aria-label="Delete this model" title="Delete this model"
-					 		th:if="${#arrays.contains(model.chatBotAuthorizedOperations, 'botContributor') } and |props.row.status != 'TRAINING'|"
+					 		th:if="${model.userAuthorizations[AtzChatbot$botContributor]} and |props.row.status != 'TRAINING'|"
 							@click="deleteTraining(props.row)"></q-btn>
 				</vu:slot>
 				
