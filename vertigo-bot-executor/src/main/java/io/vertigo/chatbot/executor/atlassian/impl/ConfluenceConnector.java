@@ -1,6 +1,5 @@
 package io.vertigo.chatbot.executor.atlassian.impl;
 
-import java.util.List;
 import java.util.Map;
 
 import io.vertigo.chatbot.executor.atlassian.model.confluence.result.ConfluenceSearchResponse;
@@ -10,7 +9,7 @@ import io.vertigo.chatbot.executor.atlassian.model.confluence.search.ConfluenceS
 
 public interface ConfluenceConnector {
 
-	abstract ConfluenceSearchResponse searchOnConfluence(final Map<String, String> params, final Map<String, String> headers, final List<ConfluenceSearchObject> filter);
+	abstract ConfluenceSearchResponse searchOnConfluence(final Map<String, String> params, final Map<String, String> headers, ConfluenceSearchObject filter);
 
 	abstract ConfluenceSpaceResponse searchAllSpaceOnConfluence(final Map<String, String> headers);
 

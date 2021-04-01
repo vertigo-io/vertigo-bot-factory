@@ -3,10 +3,13 @@ package io.vertigo.chatbot.executor.atlassian.model.confluence.search;
 public class SingleConfluenceSearch extends ConfluenceSearchObject {
 
 	public SingleConfluenceSearch(final String key, final ConfluenceSearchOperator operator, final String value) {
-		super(key);
+		super();
+		this.key = key;
 		this.operator = operator;
 		this.value = value;
 	}
+
+	private String key;
 
 	private ConfluenceSearchOperator operator;
 
@@ -31,5 +34,13 @@ public class SingleConfluenceSearch extends ConfluenceSearchObject {
 
 	public void setOperator(final ConfluenceSearchOperator operator) {
 		this.operator = operator;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(final String key) {
+		this.key = key;
 	}
 }

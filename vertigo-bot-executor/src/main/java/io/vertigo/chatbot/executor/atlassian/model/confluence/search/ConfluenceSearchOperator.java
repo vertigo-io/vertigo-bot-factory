@@ -4,7 +4,11 @@ public enum ConfluenceSearchOperator {
 
 	EQUALS("="),
 
-	LIKE("~");
+	CONTAINS("~"),
+
+	AND("AND"),
+
+	OR("OR");
 
 	ConfluenceSearchOperator(final String value) {
 		this.value = value;

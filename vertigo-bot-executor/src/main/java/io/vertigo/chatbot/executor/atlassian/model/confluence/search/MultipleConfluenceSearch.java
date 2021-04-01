@@ -1,23 +1,42 @@
 package io.vertigo.chatbot.executor.atlassian.model.confluence.search;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MultipleConfluenceSearch extends ConfluenceSearchObject {
 
-	private Map<String, ConfluenceSearchOperator> value = new HashMap<>();
+	private ConfluenceSearchObject firstObject;
 
-	public MultipleConfluenceSearch(final String key, final Map<String, ConfluenceSearchOperator> value) {
-		super(key);
-		this.value = value;
+	private ConfluenceSearchObject secondObject;
+
+	private ConfluenceSearchOperator operator;
+
+	public MultipleConfluenceSearch(final ConfluenceSearchObject firstObject, final ConfluenceSearchObject secondObject, final ConfluenceSearchOperator operator) {
+		super();
+		this.firstObject = firstObject;
+		this.secondObject = secondObject;
+		this.operator = operator;
 	}
 
-	public Map<String, ConfluenceSearchOperator> getValue() {
-		return value;
+	public ConfluenceSearchObject getFirstObject() {
+		return firstObject;
 	}
 
-	public void setValue(final Map<String, ConfluenceSearchOperator> value) {
-		this.value = value;
+	public void setFirstObject(final ConfluenceSearchObject firstObject) {
+		this.firstObject = firstObject;
+	}
+
+	public ConfluenceSearchObject getSecondObject() {
+		return secondObject;
+	}
+
+	public void setSecondObject(final ConfluenceSearchObject secondObject) {
+		this.secondObject = secondObject;
+	}
+
+	public ConfluenceSearchOperator getOperator() {
+		return operator;
+	}
+
+	public void setOperator(final ConfluenceSearchOperator operator) {
+		this.operator = operator;
 	}
 
 	@Override
