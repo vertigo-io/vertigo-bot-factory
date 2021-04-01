@@ -1,0 +1,24 @@
+package io.vertigo.chatbot.designer.builder.chatbotNode
+
+
+create Task TkResetDevNode {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            update chatbot_node
+			set is_dev = false
+			where bot_id = #botId#
+             "
+	in botId  				{domain : DoId         		cardinality : "1"  }
+}
+
+
+
+create Task TkRemoveChatbotNodeByBotId{
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from chatbot_node
+			where bot_id = #botId#
+             "
+	in botId				{domain : DoNumber,						cardinality:"1"}
+}
+

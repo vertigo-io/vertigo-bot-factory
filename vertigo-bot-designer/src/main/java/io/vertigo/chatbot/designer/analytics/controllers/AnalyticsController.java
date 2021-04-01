@@ -32,8 +32,8 @@ import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
-import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
 import io.vertigo.chatbot.designer.domain.SentenseDetail;
@@ -68,7 +68,7 @@ public class AnalyticsController extends AbstractDesignerController {
 	private AnalyticsServices analyticsServices;
 
 	@Inject
-	private DesignerServices designerServices;
+	private SmallTalkServices smallTalkServices;
 
 	@Inject
 	private ChatbotServices chatbotServices;
@@ -114,10 +114,11 @@ public class AnalyticsController extends AbstractDesignerController {
 		viewContext.publishRef(requestsStatsKey, analyticsServices.getRequestStats(criteria));
 
 		if (criteria.getBotId() != null) {
+			final Chatbot bot = chatbotServices.getChatbotById(criteria.getBotId());
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.smtId, analyticsServices.getSentenseDetails(criteria));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, analyticsServices.getTopIntents(criteria));
 
-			viewContext.publishDtList(smallTalksKey, designerServices.getAllSmallTalksByBotId(criteria.getBotId()));
+			viewContext.publishDtList(smallTalksKey, smallTalkServices.getAllSmallTalksByBot(bot));
 		} else {
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.smtId, new DtList<SentenseDetail>(SentenseDetail.class));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, new DtList<TopIntent>(TopIntent.class));

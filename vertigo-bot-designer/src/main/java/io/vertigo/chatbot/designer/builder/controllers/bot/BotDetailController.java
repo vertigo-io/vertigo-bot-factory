@@ -29,15 +29,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.account.authorization.annotations.Secured;
+import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.UtterText;
-import io.vertigo.chatbot.designer.builder.services.DesignerServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
+import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
+import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
@@ -51,7 +55,13 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 public class BotDetailController extends AbstractBotController {
 
 	@Inject
-	private DesignerServices designerServices;
+	private UtterTextServices utterTextServices;
+
+	@Inject
+	private ResponsesButtonServices responsesButtonServices;
+
+	@Inject
+	private SmallTalkServices smallTalkServices;
 
 	@Inject
 	private NodeServices nodeServices;
@@ -75,14 +85,16 @@ public class BotDetailController extends AbstractBotController {
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
 
-		viewContext.publishDto(defaultKey, designerServices.getDefaultTextByBot(bot));
-		viewContext.publishDto(welcomeKey, designerServices.getWelcomeTextByBot(bot));
+		viewContext.publishDto(defaultKey, utterTextServices.getDefaultTextByBot(bot));
+		viewContext.publishDto(welcomeKey, utterTextServices.getWelcomeTextByBot(bot));
 
-		viewContext.publishDtListModifiable(defaultButtonsKey, designerServices.getDefaultButtonsByBot(bot));
-		viewContext.publishDtListModifiable(welcomeButtonsKey, designerServices.getWelcomeButtonsByBot(bot));
-		viewContext.publishDtList(smallTalkKey, designerServices.getAllSmallTalksByBotId(botId));
+		viewContext.publishDtListModifiable(defaultButtonsKey, responsesButtonServices.getDefaultButtonsByBot(bot));
+		viewContext.publishDtListModifiable(welcomeButtonsKey, responsesButtonServices.getWelcomeButtonsByBot(bot));
+		viewContext.publishDtList(smallTalkKey, smallTalkServices.getAllSmallTalksByBot(bot));
 
-		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBotId(botId));
+		if (AuthorizationUtils.isAuthorized(bot, ChatbotOperations.botAdm)) {
+			viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
+		}
 
 		viewContext.publishRef(deletePopinKey, false);
 		initNodeEdit(viewContext);
@@ -152,7 +164,7 @@ public class BotDetailController extends AbstractBotController {
 	}
 
 	@PostMapping("/_saveNode")
-	@Secured("SuperAdmin")
+	@Secured("SuperAdm")
 	public ViewContext doSaveNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("nodeEdit") final ChatbotNode nodeEdit) {
 
