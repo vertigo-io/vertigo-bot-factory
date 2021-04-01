@@ -1,37 +1,25 @@
 package io.vertigo.chatbot.executor.atlassian.model.confluence.result;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ConfluenceSearchResult {
 
-	private double id;
-
-	private String type;
-
-	private String status;
+	@JsonProperty(value = "content")
+	private ConfluenceSearchResultDetail detail;
 
 	private String title;
 
-	public double getId() {
-		return id;
+	private String url;
+
+	public ConfluenceSearchResult() {
 	}
 
-	public void setId(final double id) {
-		this.id = id;
+	public ConfluenceSearchResultDetail getDetail() {
+		return detail;
 	}
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(final String type) {
-		this.type = type;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(final String status) {
-		this.status = status;
+	public void setDetail(final ConfluenceSearchResultDetail detail) {
+		this.detail = detail;
 	}
 
 	public String getTitle() {
@@ -42,4 +30,11 @@ public class ConfluenceSearchResult {
 		this.title = title;
 	}
 
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(final String url) {
+		this.url = url;
+	}
 }

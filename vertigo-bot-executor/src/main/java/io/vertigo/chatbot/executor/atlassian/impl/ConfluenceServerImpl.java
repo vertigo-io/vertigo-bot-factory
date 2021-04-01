@@ -36,7 +36,7 @@ public class ConfluenceServerImpl implements ConfluenceConnector, Component {
 			builder.append(object.accept(visitor));
 			builder.append(" AND ");
 		}
-		builder.setLength(builder.length() - 4);
+		builder.setLength(builder.length() - 5);
 		return ConfluenceHttpRequestHelper.encodeUrl(builder.toString());
 	}
 

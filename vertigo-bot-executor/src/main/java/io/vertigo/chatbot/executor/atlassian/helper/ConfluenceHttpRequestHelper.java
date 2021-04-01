@@ -19,7 +19,7 @@ import io.vertigo.core.lang.VSystemException;
 
 public class ConfluenceHttpRequestHelper {
 
-	public static final String BASE_URL = "";
+	public static final String BASE_URL = "https://preprod-jira-temp.kleegroup.com/confluence/rest/api";
 
 	private static HttpClient getBasicHttpClient() {
 		return HttpClient.newBuilder().version(Version.HTTP_1_1).build();

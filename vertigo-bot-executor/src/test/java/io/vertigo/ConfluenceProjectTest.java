@@ -33,7 +33,7 @@ import io.vertigo.core.param.ParamManager;
 import io.vertigo.core.plugins.resource.classpath.ClassPathResourceResolverPlugin;
 import io.vertigo.core.plugins.resource.url.URLResourceResolverPlugin;
 
-public class ConfluenceTest {
+public class ConfluenceProjectTest {
 
 	private AutoCloseableNode node;
 
@@ -54,7 +54,7 @@ public class ConfluenceTest {
 	}
 
 	@Test
-	public void testSearch() {
+	public void testSearchInTitle() {
 		final Map<String, String> headers = getHeadersWithAuthorization();
 
 		//create cql search
@@ -65,6 +65,71 @@ public class ConfluenceTest {
 		multipleObject.put("Etiquette", ConfluenceSearchOperator.LIKE);
 		confluenceSearch.add(new MultipleConfluenceSearch("title", multipleObject));
 
+		//create other params
+		final Map<String, String> params = new HashMap<>();
+		params.put("limit", "10");
+
+		final ConfluenceSearchResponse response = confluenceServerImpl.searchOnConfluence(params, headers, confluenceSearch);
+		assertNotEquals(response.getSize(), 0);
+	}
+
+	@Test
+	public void testSearchContentBody() {
+		final Map<String, String> headers = getHeadersWithAuthorization();
+
+		//create cql search
+		final List<ConfluenceSearchObject> confluenceSearch = new ArrayList<>();
+		confluenceSearch.add(new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page"));
+		confluenceSearch.add(new SingleConfluenceSearch("text", ConfluenceSearchOperator.LIKE, "évolutions apportées"));
+		//create other params
+		final Map<String, String> params = new HashMap<>();
+		params.put("limit", "10");
+
+		final ConfluenceSearchResponse response = confluenceServerImpl.searchOnConfluence(params, headers, confluenceSearch);
+		assertNotEquals(response.getSize(), 0);
+	}
+
+	@Test
+	public void testSearchLabelContent() {
+		final Map<String, String> headers = getHeadersWithAuthorization();
+
+		//create cql search
+		final List<ConfluenceSearchObject> confluenceSearch = new ArrayList<>();
+		confluenceSearch.add(new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page"));
+		confluenceSearch.add(new SingleConfluenceSearch("label", ConfluenceSearchOperator.EQUALS, "csf"));
+		//create other params
+		final Map<String, String> params = new HashMap<>();
+		params.put("limit", "10");
+
+		final ConfluenceSearchResponse response = confluenceServerImpl.searchOnConfluence(params, headers, confluenceSearch);
+		assertNotEquals(response.getSize(), 0);
+	}
+
+	@Test
+	public void testSearchTitleAndBodyContent() {
+		final Map<String, String> headers = getHeadersWithAuthorization();
+
+		//create cql search
+		final List<ConfluenceSearchObject> confluenceSearch = new ArrayList<>();
+		confluenceSearch.add(new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page"));
+		confluenceSearch.add(new SingleConfluenceSearch("title", ConfluenceSearchOperator.LIKE, "csf"));
+		confluenceSearch.add(new SingleConfluenceSearch("text", ConfluenceSearchOperator.LIKE, "évolutions apportées"));
+		//create other params
+		final Map<String, String> params = new HashMap<>();
+		params.put("limit", "10");
+
+		final ConfluenceSearchResponse response = confluenceServerImpl.searchOnConfluence(params, headers, confluenceSearch);
+		assertNotEquals(response.getSize(), 0);
+	}
+
+	@Test
+	public void testSearchSentenceInTitle() {
+		final Map<String, String> headers = getHeadersWithAuthorization();
+
+		//create cql search
+		final List<ConfluenceSearchObject> confluenceSearch = new ArrayList<>();
+		confluenceSearch.add(new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page"));
+		confluenceSearch.add(new SingleConfluenceSearch("title", ConfluenceSearchOperator.LIKE, "controle de service fait"));
 		//create other params
 		final Map<String, String> params = new HashMap<>();
 		params.put("limit", "10");

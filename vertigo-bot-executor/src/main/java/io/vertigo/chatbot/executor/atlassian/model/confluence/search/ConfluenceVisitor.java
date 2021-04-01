@@ -32,8 +32,18 @@ public class ConfluenceVisitor {
 		addSeparator(builder);
 		builder.append(operator.getValue());
 		addSeparator(builder);
-		builder.append(value);
+		builder.append(getAllStringForValue(value));
 		return builder.toString();
+	}
+
+	/**
+	 * Return "value" for rest request if value is a phrase
+	 *
+	 * @param value the value to test
+	 * @return "value" if a phrase else value
+	 */
+	private String getAllStringForValue(final String value) {
+		return value.split(" ").length == 1 ? value : "\"" + value + "\"";
 	}
 
 	private void addSeparator(final StringBuilder builder) {
