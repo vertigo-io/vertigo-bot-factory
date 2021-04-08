@@ -75,8 +75,8 @@
 				<vu:include-data object="welcomeButtons" field="smtIdResponse" />
 				<vu:include-data object="defaultButtons" field="text" />
 				<vu:include-data object="defaultButtons" field="smtIdResponse" />
-				<vu:include-data object="smallTalks" field="smtId" />
-				<vu:include-data object="smallTalks" field="title" />
+				<vu:include-data object="topics" field="topId" />
+				<vu:include-data object="topics" field="title" />
 				
 				<div class="text-subtitle1">Welcome message</div>
 				<c-richtext
@@ -88,7 +88,7 @@
 				<c-buttonlist
 					class="q-pb-sm"
 					button-list="welcomeButtons"
-					choice-list="smallTalks"
+					choice-list="topics"
 					th::mode-edit="${!model.modeReadOnly}">
 				</c-buttonlist>
 				
@@ -102,7 +102,7 @@
 				<c-buttonlist
 					class="q-pb-sm"
 					button-list="defaultButtons"
-					choice-list="smallTalks"
+					choice-list="topics"
 					th::mode-edit="${!model.modeReadOnly}">
 				</c-buttonlist>
 			</vu:block>

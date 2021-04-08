@@ -5,18 +5,18 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import io.vertigo.account.authorization.AuthorizationManager;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ResponseButton;
-import io.vertigo.chatbot.commons.domain.UtterText;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
+import io.vertigo.chatbot.designer.builder.services.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
@@ -49,7 +49,7 @@ public class ChatbotServices implements Component {
 	private SmallTalkServices smallTalkServices;
 
 	@Inject
-	private AuthorizationManager authorizationManager;
+	private TopicServices topicServices;
 
 	@Inject
 	private FileServices fileServices;
@@ -118,8 +118,9 @@ public class ChatbotServices implements Component {
 		responsesButtonServices.removeAllButtonsByBot(bot);
 		responsesButtonServices.removeAllSMTButtonsByBot(bot);
 		// Delete training, reponsetype and smallTalk
-		smallTalkServices.removeAllNTSFromBot(bot);
+		topicServices.removeAllNTSFromBot(bot);
 		smallTalkServices.removeAllSmallTalkFromBot(bot);
+		topicServices.removeAllTopicsFromBot(bot);
 
 		chatbotProfilServices.deleteAllProfilByBot(bot);
 		chatbotDAO.delete(bot.getBotId());
@@ -132,7 +133,7 @@ public class ChatbotServices implements Component {
 	}
 
 	public DtList<Chatbot> getMySupervisedChatbots() {
-		if (authorizationManager.hasAuthorization(GlobalAuthorizations.AtzSuperAdm)) {
+		if (AuthorizationUtils.hasAuthorization(GlobalAuthorizations.AtzSuperAdm)) {
 			return getAllChatbots();
 		}
 		return chatbotDAO.getChatbotByPerId(UserSessionUtils.getLoggedPerson().getPerId());

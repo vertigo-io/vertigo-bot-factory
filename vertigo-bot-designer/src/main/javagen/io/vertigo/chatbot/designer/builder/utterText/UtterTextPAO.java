@@ -48,7 +48,8 @@ public final class UtterTextPAO implements StoreServices {
 			name = "TkRemoveAllUtterTextByBotId",
 			request = "delete from utter_text utx" + 
  "			using small_talk smt" + 
- "			where smt.smt_id = utx.smt_id and smt.bot_id = #botId#",
+ "			join topic top on (top.top_id = smt.top_id)" + 
+ "			where smt.smt_id = utx.smt_id and top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllUtterTextByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllUtterTextByBotId")

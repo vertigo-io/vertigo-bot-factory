@@ -33,8 +33,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Groups(io.vertigo.chatbot.designer.domain.commons.Groups.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
+		/** Objet de données NluTrainingExport. */
+		NluTrainingExport(io.vertigo.chatbot.commons.domain.topic.NluTrainingExport.class),
 		/** Objet de données NluTrainingSentence. */
-		NluTrainingSentence(io.vertigo.chatbot.commons.domain.NluTrainingSentence.class),
+		NluTrainingSentence(io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence.class),
 		/** Objet de données Person. */
 		Person(io.vertigo.chatbot.designer.domain.commons.Person.class),
 		/** Objet de données PersonChatbotProfil. */
@@ -44,29 +46,35 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Objet de données ProfilPerChatbot. */
 		ProfilPerChatbot(io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot.class),
 		/** Objet de données ResponseButton. */
-		ResponseButton(io.vertigo.chatbot.commons.domain.ResponseButton.class),
+		ResponseButton(io.vertigo.chatbot.commons.domain.topic.ResponseButton.class),
 		/** Objet de données ResponseType. */
-		ResponseType(io.vertigo.chatbot.commons.domain.ResponseType.class),
+		ResponseType(io.vertigo.chatbot.commons.domain.topic.ResponseType.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
+		/** Objet de données ScriptIntention. */
+		ScriptIntention(io.vertigo.chatbot.commons.domain.topic.ScriptIntention.class),
 		/** Objet de données SelectProfilChatbotPerson. */
 		SelectProfilChatbotPerson(io.vertigo.chatbot.designer.domain.admin.SelectProfilChatbotPerson.class),
 		/** Objet de données SentenseDetail. */
 		SentenseDetail(io.vertigo.chatbot.designer.domain.SentenseDetail.class),
 		/** Objet de données SmallTalk. */
-		SmallTalk(io.vertigo.chatbot.commons.domain.SmallTalk.class),
+		SmallTalk(io.vertigo.chatbot.commons.domain.topic.SmallTalk.class),
 		/** Objet de données SmallTalkExport. */
 		SmallTalkExport(io.vertigo.chatbot.commons.domain.SmallTalkExport.class),
+		/** Objet de données SmallTalkIhm. */
+		SmallTalkIhm(io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm.class),
 		/** Objet de données StatCriteria. */
 		StatCriteria(io.vertigo.chatbot.designer.domain.StatCriteria.class),
 		/** Objet de données TopIntent. */
 		TopIntent(io.vertigo.chatbot.designer.domain.TopIntent.class),
+		/** Objet de données Topic. */
+		Topic(io.vertigo.chatbot.commons.domain.topic.Topic.class),
 		/** Objet de données TrainerInfo. */
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
 		Training(io.vertigo.chatbot.commons.domain.Training.class),
 		/** Objet de données UtterText. */
-		UtterText(io.vertigo.chatbot.commons.domain.UtterText.class)		;
+		UtterText(io.vertigo.chatbot.commons.domain.topic.UtterText.class)		;
 
 		private final Class<?> clazz;
 
@@ -212,15 +220,26 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fileData	}
 
 	/**
+	 * Enumération des champs de NluTrainingExport.
+	 */
+	public enum NluTrainingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.NluTrainingExport> {
+		/** Propriété 'smt ID'. */
+		smtId,
+		/** Propriété 'nlu ID'. */
+		ntsId,
+		/** Propriété 'Text'. */
+		text	}
+
+	/**
 	 * Enumération des champs de NluTrainingSentence.
 	 */
-	public enum NluTrainingSentenceFields implements DtFieldName<io.vertigo.chatbot.commons.domain.NluTrainingSentence> {
+	public enum NluTrainingSentenceFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence> {
 		/** Propriété 'ID'. */
 		ntsId,
 		/** Propriété 'Text'. */
 		text,
 		/** Propriété 'SmallTalk'. */
-		smtId	}
+		topId	}
 
 	/**
 	 * Enumération des champs de Person.
@@ -277,7 +296,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de ResponseButton.
 	 */
-	public enum ResponseButtonFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ResponseButton> {
+	public enum ResponseButtonFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.ResponseButton> {
 		/** Propriété 'ID'. */
 		btnId,
 		/** Propriété 'Text'. */
@@ -294,7 +313,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de ResponseType.
 	 */
-	public enum ResponseTypeFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ResponseType> {
+	public enum ResponseTypeFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.ResponseType> {
 		/** Propriété 'ID'. */
 		rtyId,
 		/** Propriété 'Title'. */
@@ -314,6 +333,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		agentVersion,
 		/** Propriété 'Model version'. */
 		loadedModelVersion	}
+
+	/**
+	 * Enumération des champs de ScriptIntention.
+	 */
+	public enum ScriptIntentionFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.ScriptIntention> {
+		/** Propriété 'ID'. */
+		sinId,
+		/** Propriété 'Script'. */
+		script,
+		/** Propriété 'Topic'. */
+		topId	}
 
 	/**
 	 * Enumération des champs de SelectProfilChatbotPerson.
@@ -344,17 +374,11 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de SmallTalk.
 	 */
-	public enum SmallTalkFields implements DtFieldName<io.vertigo.chatbot.commons.domain.SmallTalk> {
+	public enum SmallTalkFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.SmallTalk> {
 		/** Propriété 'ID'. */
 		smtId,
-		/** Propriété 'Title'. */
-		title,
-		/** Propriété 'Description'. */
-		description,
-		/** Propriété 'Enabled'. */
-		isEnabled,
-		/** Propriété 'Chatbot'. */
-		botId,
+		/** Propriété 'Topic'. */
+		topId,
 		/** Propriété 'Response type'. */
 		rtyId	}
 
@@ -370,6 +394,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		utterTexts,
 		/** Propriété 'buttons'. */
 		buttons	}
+
+	/**
+	 * Enumération des champs de SmallTalkIhm.
+	 */
+	public enum SmallTalkIhmFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm> {
+		/** Propriété 'Topic id'. */
+		topId,
+		/** Propriété 'SmallTalk label'. */
+		title,
+		/** Propriété 'SmallTalk id'. */
+		smtId,
+		/** Propriété 'Enabled'. */
+		isEnabled	}
 
 	/**
 	 * Enumération des champs de StatCriteria.
@@ -392,6 +429,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		intentRasa,
 		/** Propriété 'Count'. */
 		count	}
+
+	/**
+	 * Enumération des champs de Topic.
+	 */
+	public enum TopicFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.Topic> {
+		/** Propriété 'ID'. */
+		topId,
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Description'. */
+		description,
+		/** Propriété 'Enabled'. */
+		isEnabled,
+		/** Propriété 'Chatbot'. */
+		botId	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.
@@ -446,7 +498,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	/**
 	 * Enumération des champs de UtterText.
 	 */
-	public enum UtterTextFields implements DtFieldName<io.vertigo.chatbot.commons.domain.UtterText> {
+	public enum UtterTextFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.UtterText> {
 		/** Propriété 'ID'. */
 		uttId,
 		/** Propriété 'Text'. */

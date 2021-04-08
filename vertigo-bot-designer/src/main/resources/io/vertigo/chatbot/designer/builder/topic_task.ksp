@@ -1,0 +1,22 @@
+package io.vertigo.chatbot.designer.builder.topic
+
+
+create Task TkRemoveAllNluTrainingSentenceByBotId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+			delete from nlu_training_sentence nts
+			using topic top
+			where nts.top_id = top.top_id and top.bot_id = #botId#
+             "
+	in botId  				{domain : DoId         		cardinality : "1"  }
+}
+
+create Task TkRemoveAllTopicsFromBot {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+			delete from topic top 
+			where top.bot_id = #botId#
+             "
+	in botId  				{domain : DoId         		cardinality : "1"  }
+}
+

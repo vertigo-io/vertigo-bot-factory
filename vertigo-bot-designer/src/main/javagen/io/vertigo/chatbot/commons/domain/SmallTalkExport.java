@@ -13,10 +13,10 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 public final class SmallTalkExport implements DtObject {
 	private static final long serialVersionUID = 1L;
 
-	private io.vertigo.chatbot.commons.domain.SmallTalk smallTalk;
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.NluTrainingSentence.class);
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.UtterText.class);
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> buttons =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.ResponseButton.class);
+	private io.vertigo.chatbot.commons.domain.topic.SmallTalk smallTalk;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence> nluTrainingSentences =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence.class);
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.UtterText> utterTexts =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.topic.UtterText.class);
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.ResponseButton> buttons =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.topic.ResponseButton.class);
 	
 	/**
 	 * Champ : DATA.
@@ -24,7 +24,7 @@ public final class SmallTalkExport implements DtObject {
 	 * @return SmallTalk smallTalk <b>Obligatoire</b>
 	 */
 	@Field(smartType = "STyDtSmallTalk", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "SmallTalk")
-	public io.vertigo.chatbot.commons.domain.SmallTalk getSmallTalk() {
+	public io.vertigo.chatbot.commons.domain.topic.SmallTalk getSmallTalk() {
 		return smallTalk;
 	}
 
@@ -33,7 +33,7 @@ public final class SmallTalkExport implements DtObject {
 	 * Définit la valeur de la propriété 'SmallTalk'.
 	 * @param smallTalk SmallTalk <b>Obligatoire</b>
 	 */
-	public void setSmallTalk(final io.vertigo.chatbot.commons.domain.SmallTalk smallTalk) {
+	public void setSmallTalk(final io.vertigo.chatbot.commons.domain.topic.SmallTalk smallTalk) {
 		this.smallTalk = smallTalk;
 	}
 	
@@ -43,7 +43,7 @@ public final class SmallTalkExport implements DtObject {
 	 * @return DtList de NluTrainingSentence nluTrainingSentences
 	 */
 	@Field(smartType = "STyDtNluTrainingSentence", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "nluTrainingSentences")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> getNluTrainingSentences() {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence> getNluTrainingSentences() {
 		return nluTrainingSentences;
 	}
 
@@ -52,7 +52,7 @@ public final class SmallTalkExport implements DtObject {
 	 * Définit la valeur de la propriété 'nluTrainingSentences'.
 	 * @param nluTrainingSentences DtList de NluTrainingSentence
 	 */
-	public void setNluTrainingSentences(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.NluTrainingSentence> nluTrainingSentences) {
+	public void setNluTrainingSentences(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence> nluTrainingSentences) {
 		io.vertigo.core.lang.Assertion.check().isNotNull(nluTrainingSentences);
 		//---
 		this.nluTrainingSentences = nluTrainingSentences;
@@ -64,7 +64,7 @@ public final class SmallTalkExport implements DtObject {
 	 * @return DtList de UtterText utterTexts
 	 */
 	@Field(smartType = "STyDtUtterText", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "response texts")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> getUtterTexts() {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.UtterText> getUtterTexts() {
 		return utterTexts;
 	}
 
@@ -73,7 +73,7 @@ public final class SmallTalkExport implements DtObject {
 	 * Définit la valeur de la propriété 'response texts'.
 	 * @param utterTexts DtList de UtterText
 	 */
-	public void setUtterTexts(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.UtterText> utterTexts) {
+	public void setUtterTexts(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.UtterText> utterTexts) {
 		io.vertigo.core.lang.Assertion.check().isNotNull(utterTexts);
 		//---
 		this.utterTexts = utterTexts;
@@ -85,7 +85,7 @@ public final class SmallTalkExport implements DtObject {
 	 * @return DtList de ResponseButton buttons
 	 */
 	@Field(smartType = "STyDtResponseButton", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "buttons")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> getButtons() {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.ResponseButton> getButtons() {
 		return buttons;
 	}
 
@@ -94,7 +94,7 @@ public final class SmallTalkExport implements DtObject {
 	 * Définit la valeur de la propriété 'buttons'.
 	 * @param buttons DtList de ResponseButton
 	 */
-	public void setButtons(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.ResponseButton> buttons) {
+	public void setButtons(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.ResponseButton> buttons) {
 		io.vertigo.core.lang.Assertion.check().isNotNull(buttons);
 		//---
 		this.buttons = buttons;

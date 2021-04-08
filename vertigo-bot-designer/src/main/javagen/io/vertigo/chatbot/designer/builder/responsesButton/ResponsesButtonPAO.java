@@ -81,8 +81,9 @@ public final class ResponsesButtonPAO implements StoreServices {
 			name = "TkRemoveAllSMTButtonsByBotId",
 			request = "delete from response_button " + 
  "			using small_talk smt" + 
+ "			join topic top on (top.top_id = smt.top_id)" + 
  "			where smt.smt_id = response_button.smt_id" + 
- "			and smt.bot_id = #botId#",
+ "			and top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllSMTButtonsByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllSMTButtonsByBotId")

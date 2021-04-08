@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -46,14 +47,15 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
-import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
-import io.vertigo.chatbot.commons.domain.ResponseButton;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
-import io.vertigo.chatbot.commons.domain.SmallTalk;
 import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
-import io.vertigo.chatbot.commons.domain.UtterText;
+import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
+import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
@@ -261,12 +263,38 @@ public class TrainingServices implements Component {
 				.collect(Collectors.toList());
 
 		//Create map for export
-		final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap = smallTalkServices.exportSmallTalkRelativeTrainingSentence(bot, smallTalkIds);
+		final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap = exportSmallTalkRelativeTrainingSentence(bot);
 		final Map<Long, DtList<UtterText>> utterTextsMap = utterTextServices.exportSmallTalkRelativeUtter(bot, smallTalkIds);
 		final Map<Long, DtList<ResponseButton>> buttonsMap = responsesButtonServices.exportSmallTalkRelativeButtons(bot, smallTalkIds);
 
 		//create the smallTalkExport
 		return smallTalkServices.exportSmallTalks(bot, smallTalks, trainingSentencesMap, utterTextsMap, buttonsMap);
+	}
+
+	//TODO
+	public Map<Long, DtList<NluTrainingSentence>> exportSmallTalkRelativeTrainingSentence(@SecuredOperation("botContributor") final Chatbot bot) {
+		final DtList<NluTrainingExport> export = trainingPAO.exportSmallTalkRelativeTrainingSentence(bot.getBotId());
+		return export.stream().collect(Collector.of(
+				() -> new HashMap<Long, DtList<NluTrainingSentence>>(),
+				(result, nlu) -> addNluToMap(result, nlu),
+				(map1, map2) -> {
+					map1.putAll(map2);
+					return map1;
+				}));
+	}
+
+	private void addNluToMap(final Map<Long, DtList<NluTrainingSentence>> map, final NluTrainingExport nluExport) {
+		final Long smtId = nluExport.getSmtId();
+		final NluTrainingSentence trainingSentence = new NluTrainingSentence();
+		trainingSentence.setNtsId(nluExport.getNtsId());
+		trainingSentence.setText(nluExport.getText());
+		if (map.containsKey(smtId)) {
+			map.get(smtId).add(trainingSentence);
+		} else {
+			final DtList<NluTrainingSentence> list = new DtList<>(NluTrainingSentence.class);
+			list.add(trainingSentence);
+			map.put(smtId, list);
+		}
 	}
 
 	public void loadModel(@SecuredOperation("botContributor") final Chatbot bot, final Long traId, final Long nodId) {

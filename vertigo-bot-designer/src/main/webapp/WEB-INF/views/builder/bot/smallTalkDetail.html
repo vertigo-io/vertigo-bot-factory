@@ -87,13 +87,13 @@
 			<vu:popup object="smallTalk" action="_delete" vModel="showPopup"></vu:popup>
 
 			<vu:block id="detail" title="Informations">
-				<vu:text-field object="smallTalk" field="title" />
+				<vu:text-field object="topic" field="title" />
 				
-				<vu:label object="smallTalk" field="isEnabled">
-					<vu:include-data object="smallTalk" field="isEnabled" />
-					<q-input v-model="vueData.smallTalk.isEnabled" name="vContext[smallTalk][isEnabled]" class="hidden" ></q-input>
+				<vu:label object="topic" field="isEnabled">
+					<vu:include-data object="topic" field="isEnabled" />
+					<q-input v-model="vueData.topic.isEnabled" name="vContext[topic][isEnabled]" class="hidden" ></q-input>
 					
-					<q-toggle v-model="vueData.smallTalk.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
+					<q-toggle v-model="vueData.topic.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
 				</vu:label>
 			</vu:block>
 			
@@ -256,13 +256,13 @@
 			<vu:block id="buttons" title="Buttons">
 				<vu:include-data object="buttons" field="text" />
 				<vu:include-data object="buttons" field="smtIdResponse" />
-				<vu:include-data object="smallTalkList" field="smtId" />
-				<vu:include-data object="smallTalkList" field="title" />
+				<vu:include-data object="topicList" field="topId" />
+				<vu:include-data object="topicList" field="title" />
 			
 				<c-buttonlist
 					class="q-pb-sm"
 					button-list="buttons"
-					choice-list="smallTalkList"
+					choice-list="topicList"
 					th::mode-edit="${!model.modeReadOnly}">
 				</c-buttonlist>
 				
