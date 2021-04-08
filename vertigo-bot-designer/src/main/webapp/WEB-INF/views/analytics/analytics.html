@@ -143,16 +143,16 @@
 	};
 	// "statsRequests" : {"seriesNames":["name:count","isFallback:mean"],"timedDataSeries":[{"time":{"epochSecond":1574726400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574812800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574899200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574985600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575072000,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575158400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575244800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575331200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575417600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575504000,"nano":0},"values":{"isFallback:mean":0.16666666666666666,"name:count":7.0}},{"time":{"epochSecond":1575590400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}}]}
 
-	function getSmallTalkTitleBySmtId(smtId) {
-		if (smtId == null) return null;
+	function getTopicTitleByTopId(topId) {
+		if (topId == null) return null;
 		
-		let result = VertigoUi.vueData.smallTalks.filter(s => s.smtId === smtId);
+		let result = VertigoUi.vueData.topics.filter(t => t.topId === topId);
 		return result.length === 0 ? null : result[0].title;
 	}
 	
 	VUiExtensions.dataX.popinDetailLabel = '';
 	function displayIntentDetail(intent) {
-		VUiExtensions.dataX.popinDetailLabel = getSmallTalkTitleBySmtId(intent.smtId);
+		VUiExtensions.dataX.popinDetailLabel = getTopicTitleByTopId(intent.topId);
 		
 		VertigoUi.vueData.intentDetails = [];
 		VUiPage.componentStates.intentDetailList.loading = true;
@@ -222,8 +222,8 @@
 					</vu:table>
 				</div>
 				
-				<vu:include-data object="smallTalks" field="smtId" />
-				<vu:include-data object="smallTalks" field="title" />
+				<vu:include-data object="topics" field="topId" />
+				<vu:include-data object="topics" field="title" />
 				
 				<vu:include-data object="intentDetails" field="'*'" />
 				
@@ -233,7 +233,7 @@
 							  sortBy="count" descending>
 							  
 						<vu:column field="smtId" label="Intent">
-							{{getSmallTalkTitleBySmtId(props.row.smtId)}}
+							{{getTopicTitleByTopicId(props.row.topId)}}
 						</vu:column>
 						<vu:column field="count" class="col_Small"/>
 						<vu:column field="intentRasa" label="detail" class="col_Small">

@@ -8,10 +8,10 @@ import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
-import io.vertigo.chatbot.commons.dao.ResponseButtonDAO;
+import io.vertigo.chatbot.commons.dao.topic.ResponseButtonDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ResponseButton;
-import io.vertigo.chatbot.commons.domain.SmallTalk;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.designer.builder.responsesButton.ResponsesButtonPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.ResponseButtonFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -37,7 +37,7 @@ public class ResponsesButtonServices implements Component {
 				.isNotNull(smallTalk)
 				.isNotNull(smallTalk.getSmtId());
 		return responseButtonDAO.findAll(
-				Criterions.isEqualTo(ResponseButtonFields.smtId, smallTalk.getSmtId()),
+				Criterions.isEqualTo(ResponseButtonFields.smtId, smallTalk.getSmtId()).or(Criterions.isEqualTo(ResponseButtonFields.smtIdResponse, smallTalk.getSmtId())),
 				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 

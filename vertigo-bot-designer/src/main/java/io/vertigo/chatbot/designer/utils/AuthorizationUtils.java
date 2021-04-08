@@ -2,6 +2,7 @@ package io.vertigo.chatbot.designer.utils;
 
 import io.vertigo.account.authorization.AuthorizationManager;
 import io.vertigo.account.authorization.VSecurityException;
+import io.vertigo.account.authorization.definitions.AuthorizationName;
 import io.vertigo.account.authorization.definitions.OperationName;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.Node;
@@ -23,5 +24,9 @@ public class AuthorizationUtils {
 
 	public static <K extends KeyConcept> boolean isAuthorized(final K keyConcept, final OperationName<K> operation) {
 		return authorizationManager.isAuthorized(keyConcept, operation);
+	}
+
+	public static boolean hasAuthorization(final AuthorizationName... authorizations) {
+		return authorizationManager.hasAuthorization(authorizations);
 	}
 }

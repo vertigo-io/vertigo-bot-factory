@@ -49,7 +49,7 @@ public final class Chatbot implements KeyConcept {
 			foreignRole = "Chatbot",
 			foreignLabel = "Chatbot",
 			foreignMultiplicity = "0..*")
-	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.UtterText> uttIdWelcomeAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextWelcome");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.UtterText> uttIdWelcomeAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.UtterText.class, "utterTextWelcome");
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotUtterTextDefault",
@@ -64,7 +64,7 @@ public final class Chatbot implements KeyConcept {
 			foreignRole = "Chatbot",
 			foreignLabel = "Chatbot",
 			foreignMultiplicity = "0..*")
-	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.UtterText> uttIdDefaultAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.UtterText.class, "utterTextDefault");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.UtterText> uttIdDefaultAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.UtterText.class, "utterTextDefault");
 
 	/** {@inheritDoc} */
 	@Override
@@ -236,7 +236,7 @@ public final class Chatbot implements KeyConcept {
 	 * Association : Default text.
 	 * @return l'accesseur vers la propriété 'Default text'
 	 */
-	public StoreVAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextDefault() {
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.UtterText> utterTextDefault() {
 		return uttIdDefaultAccessor;
 	}
 
@@ -244,7 +244,7 @@ public final class Chatbot implements KeyConcept {
 	 * Association : Welcome text.
 	 * @return l'accesseur vers la propriété 'Welcome text'
 	 */
-	public StoreVAccessor<io.vertigo.chatbot.commons.domain.UtterText> utterTextWelcome() {
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.UtterText> utterTextWelcome() {
 		return uttIdWelcomeAccessor;
 	}
 	

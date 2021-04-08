@@ -29,13 +29,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.NluTrainingSentence;
-import io.vertigo.chatbot.commons.domain.ResponseButton;
-import io.vertigo.chatbot.commons.domain.ResponseType;
-import io.vertigo.chatbot.commons.domain.SmallTalk;
-import io.vertigo.chatbot.commons.domain.UtterText;
+import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.ResponseType;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
+import io.vertigo.chatbot.designer.builder.services.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
@@ -52,7 +54,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 public class SmallTalkDetailController extends AbstractBotController {
 
 	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalk");
-
+	private static final ViewContextKey<Topic> topicKey = ViewContextKey.of("topic");
 	private static final ViewContextKey<ResponseType> responseTypeKey = ViewContextKey.of("responseTypes");
 
 	private static final ViewContextKey<String> newNluTrainingSentenceKey = ViewContextKey.of("newNluTrainingSentence");
@@ -64,13 +66,16 @@ public class SmallTalkDetailController extends AbstractBotController {
 	private static final ViewContextKey<UtterText> utterTextsKey = ViewContextKey.of("utterTexts");
 
 	private static final ViewContextKey<ResponseButton> buttonsKey = ViewContextKey.of("buttons");
-	private static final ViewContextKey<SmallTalk> smallTalkListKey = ViewContextKey.of("smallTalkList");
+	private static final ViewContextKey<Topic> topicListKey = ViewContextKey.of("topicList");
 
 	@Inject
 	private SmallTalkServices smallTalkServices;
 
 	@Inject
 	private UtterTextServices utterTextServices;
+
+	@Inject
+	private TopicServices topicServices;
 
 	@Inject
 	private ResponsesButtonServices responsesButtonServices;
@@ -82,14 +87,15 @@ public class SmallTalkDetailController extends AbstractBotController {
 		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); // all
 
 		final SmallTalk smallTalk = smallTalkServices.getSmallTalkById(bot, intId);
-
-		Assertion.check().isTrue(smallTalk.getBotId().equals(botId), "Paramètres incohérents");
+		final Topic topic = topicServices.findTopicById(smallTalk.getTopId());
+		Assertion.check().isTrue(topic.getBotId().equals(botId), "Paramètres incohérents");
 
 		viewContext.publishDto(smallTalkKey, smallTalk);
+		viewContext.publishDto(topicKey, topic);
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey,
-				smallTalkServices.getNluTrainingSentenceList(bot, smallTalk));
+				topicServices.getNluTrainingSentenceByTopic(bot, topic));
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey,
 				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
@@ -98,7 +104,7 @@ public class SmallTalkDetailController extends AbstractBotController {
 		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
 
 		viewContext.publishDtListModifiable(buttonsKey, responsesButtonServices.getButtonsBySmalltalk(bot, smallTalk));
-		viewContext.publishDtList(smallTalkListKey, smallTalkServices.getAllSmallTalksByBot(bot));
+		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 
 		toModeReadOnly();
 	}
@@ -109,6 +115,7 @@ public class SmallTalkDetailController extends AbstractBotController {
 		viewContext.publishMdl(responseTypeKey, ResponseType.class, null); // all
 
 		viewContext.publishDto(smallTalkKey, smallTalkServices.getNewSmallTalk(bot));
+		viewContext.publishDto(topicKey, topicServices.getNewTopic(bot));
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey,
@@ -121,7 +128,7 @@ public class SmallTalkDetailController extends AbstractBotController {
 		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
 
 		viewContext.publishDtListModifiable(buttonsKey, new DtList<>(ResponseButton.class));
-		viewContext.publishDtList(smallTalkListKey, smallTalkServices.getAllSmallTalksByBot(bot));
+		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 
 		toModeCreate();
 	}
@@ -134,6 +141,7 @@ public class SmallTalkDetailController extends AbstractBotController {
 	@PostMapping("/_save")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
+			@ViewAttribute("topic") final Topic topic,
 			@ViewAttribute("bot") final Chatbot chatbot,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
@@ -150,14 +158,15 @@ public class SmallTalkDetailController extends AbstractBotController {
 		addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 
 		smallTalkServices.saveSmallTalk(chatbot, smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts,
-				buttonList);
+				buttonList, topic);
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
 	}
 
 	@PostMapping("/_delete")
-	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("smallTalk") final SmallTalk smallTalk) {
-		smallTalkServices.deleteSmallTalk(chatbot, smallTalk);
-		return "redirect:/bot/" + smallTalk.getBotId() + "/smallTalks/";
+	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("smallTalk") final SmallTalk smallTalk,
+			@ViewAttribute("topic") final Topic topic) {
+		smallTalkServices.deleteSmallTalk(chatbot, smallTalk, topic);
+		return "redirect:/bot/" + topic.getBotId() + "/smallTalks/";
 	}
 
 	@PostMapping("/_addTrainingSentence")

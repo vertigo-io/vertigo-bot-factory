@@ -41,20 +41,28 @@ public final class SmallTalkPAO implements StoreServices {
 	}
 
 	/**
-	 * Execute la tache TkRemoveAllNluTrainingSentenceByBotId.
+	 * Execute la tache TkGetSmallTalkIHMByBot.
 	 * @param botId Long
+	 * @return DtList de SmallTalkIhm smts
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkRemoveAllNluTrainingSentenceByBotId",
-			request = "delete from nlu_training_sentence nts" + 
- "			using small_talk smt" + 
- "			where nts.smt_id = smt.smt_id and smt.bot_id = #botId#",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void removeAllNluTrainingSentenceByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
-		final Task task = createTaskBuilder("TkRemoveAllNluTrainingSentenceByBotId")
+			name = "TkGetSmallTalkIHMByBot",
+			request = "select smt.smt_id," + 
+ "				   top.is_enabled," + 
+ "				   top.top_id," + 
+ "				   top.title" + 
+ "			from topic top" + 
+ "			join small_talk smt on (smt.top_id = top.top_id)" + 
+ "			where top.bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtSmallTalkIhm")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm> getSmallTalkIHMByBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkGetSmallTalkIHMByBot")
 				.addValue("botId", botId)
 				.build();
-		getTaskManager().execute(task);
+		return getTaskManager()
+				.execute(task)
+				.getResult();
 	}
 
 	/**
@@ -64,7 +72,8 @@ public final class SmallTalkPAO implements StoreServices {
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllSmallTalkByBotId",
 			request = "delete from small_talk smt" + 
- "			where smt.bot_id = #botId#",
+ "			using topic top" + 
+ "			where top.top_id = smt.top_id and top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllSmallTalkByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllSmallTalkByBotId")

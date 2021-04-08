@@ -49,7 +49,7 @@ Vue.component('c-buttonlist', {
 					         map-options
 					         emit-value
 							 v-model="popupContent.smtIdResponse"
-					         :options='transformListForSelection(choiceList, "smtId", "title")'
+					         :options='transformListForSelection(choiceList, "topId", "title")'
 					         label="Small talk"
 				         ></q-select>
 					</q-card-section>
@@ -67,7 +67,7 @@ Vue.component('c-buttonlist', {
 			getChoiceTitleById: function(id) {
 				if (id == null) return null;
 				
-				let result = VertigoUi.vueData[this.choiceList].filter(s => s.smtId === id);
+				let result = VertigoUi.vueData[this.choiceList].filter(t => t.topId === id);
 				return result.length === 0 ? null : result[0].title;
 			},
 			transformListForSelection: function (list, valueField, labelField) {

@@ -26,8 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.SmallTalk;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm;
 import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
+import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkIhmFields;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 
@@ -36,7 +37,7 @@ import io.vertigo.ui.core.ViewContextKey;
 @Secured("BotUser")
 public class SmallTalkListController extends AbstractBotController {
 
-	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalks");
+	private static final ViewContextKey<SmallTalkIhm> smallTalkKey = ViewContextKey.of("smallTalks");
 
 	@Inject
 	private SmallTalkServices smalltalkServices;
@@ -45,7 +46,7 @@ public class SmallTalkListController extends AbstractBotController {
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
 
-		viewContext.publishDtList(smallTalkKey, smalltalkServices.getAllSmallTalksByBot(bot));
+		viewContext.publishDtList(smallTalkKey, SmallTalkIhmFields.topId, smalltalkServices.getSmallTalksIhmByBot(bot));
 		//		viewContext.publishRef(botIdKey, botId);
 		toModeReadOnly();
 	}
