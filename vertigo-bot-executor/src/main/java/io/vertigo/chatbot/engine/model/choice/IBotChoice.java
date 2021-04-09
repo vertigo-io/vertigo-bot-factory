@@ -14,18 +14,7 @@ public interface IBotChoice {
 	String getLabel();
 
 	/**
-	 * @param label the label to set
-	 */
-	void setLabel(String label);
-
-	/**
 	 * @return the payload
 	 */
 	String getPayload();
-
-	/**
-	 * @param payload the payload to set
-	 */
-	void setPayload(String payload);
-
 }

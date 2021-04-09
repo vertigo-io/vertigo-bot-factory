@@ -19,7 +19,7 @@ package io.vertigo.chatbot.engine.model.choice;
 
 /**
  * Basic implementation of IBotChoice for simple buttons.
- * 
+ *
  * @author skerdudou
  */
 public class BotButton implements IBotChoice {
@@ -37,7 +37,6 @@ public class BotButton implements IBotChoice {
 	/**
 	 * @param label the label to set
 	 */
-	@Override
 	public void setLabel(final String label) {
 		this.label = label;
 	}
@@ -53,7 +52,6 @@ public class BotButton implements IBotChoice {
 	/**
 	 * @param payload the payload to set
 	 */
-	@Override
 	public void setPayload(final String payload) {
 		this.payload = payload;
 	}

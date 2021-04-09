@@ -23,6 +23,12 @@ public final class BotInput {
 	private String message;
 	private Map<String, Object> metadatas;
 
+	public static BotInput of(final String message) {
+		final var input = new BotInput();
+		input.setMessage(message);
+		return input;
+	}
+
 	/**
 	 * @return the message
 	 */

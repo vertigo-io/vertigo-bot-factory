@@ -17,34 +17,34 @@
  */
 package io.vertigo.chatbot.engine.model;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 
 public final class BotResponse {
-	private String htmlText;
-	private List<IBotChoice> choices;
-	private Map<String, Object> metadatas;
+	public enum BotStatus {
+		Talking, Ended;
+	}
 
-	public BotResponse(final String htmlText, final List<IBotChoice> choices, final Map<String, Object> metadatas) {
-		this.htmlText = htmlText;
-		this.choices = choices;
+	private final List<String> htmlTexts;
+	private final List<IBotChoice> choices;
+	private final Map<String, Object> metadatas;
+	private final BotStatus status;
+
+	BotResponse(final List<String> htmlTexts, final List<IBotChoice> choices, final Map<String, Object> metadatas, final BotStatus status) {
+		this.htmlTexts = Collections.unmodifiableList(htmlTexts);
+		this.choices = Collections.unmodifiableList(choices);
 		this.metadatas = metadatas;
+		this.status = status;
 	}
 
 	/**
 	 * @return the htmlText
 	 */
-	public String getHtmlText() {
-		return htmlText;
-	}
-
-	/**
-	 * @param htmlText the htmlText to set
-	 */
-	public void setHtmlText(final String htmlText) {
-		this.htmlText = htmlText;
+	public List<String> getHtmlTexts() {
+		return htmlTexts;
 	}
 
 	/**
@@ -55,13 +55,6 @@ public final class BotResponse {
 	}
 
 	/**
-	 * @param choices the choices to set
-	 */
-	public void setChoices(final List<IBotChoice> choices) {
-		this.choices = choices;
-	}
-
-	/**
 	 * @return the metadatas
 	 */
 	public Map<String, Object> getMetadatas() {
@@ -69,10 +62,10 @@ public final class BotResponse {
 	}
 
 	/**
-	 * @param metadatas the metadatas to set
+	 * @return the status
 	 */
-	public void setMetadatas(final Map<String, Object> metadatas) {
-		this.metadatas = metadatas;
+	public BotStatus getStatus() {
+		return status;
 	}
 
 }

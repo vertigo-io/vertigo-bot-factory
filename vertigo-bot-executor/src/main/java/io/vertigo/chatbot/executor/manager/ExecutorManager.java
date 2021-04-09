@@ -18,10 +18,7 @@
 package io.vertigo.chatbot.executor.manager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -29,16 +26,14 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.vertigo.ai.bt.BTNode;
-import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
-import io.vertigo.chatbot.engine.core.BotEngine;
+import io.vertigo.chatbot.engine.BotManager;
+import io.vertigo.chatbot.engine.BotTextParser;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
-import io.vertigo.chatbot.executor.model.ConvState;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Activeable;
@@ -49,23 +44,20 @@ public class ExecutorManager implements Manager, Activeable {
 	private static final Logger LOGGER = LogManager.getLogger(ExecutorManager.class);
 
 	private final ExecutorConfigManager executorConfigManager;
-	private final BotEngine botEngine;
-
-	private final Map<UUID, ConvState> conversationMap;
+	private final BotManager botManager;
 
 	@Inject
 	public ExecutorManager(
 			final ExecutorConfigManager executorConfigManager,
-			final BotEngine botEngine) {
+			final BotManager botManager) {
 
 		Assertion.check()
 				.isNotNull(executorConfigManager)
-				.isNotNull(botEngine);
+				.isNotNull(botManager);
 		//--
 		this.executorConfigManager = executorConfigManager;
-		this.botEngine = botEngine;
+		this.botManager = botManager;
 
-		conversationMap = new HashMap<>();
 	}
 
 	@Override
@@ -99,14 +91,10 @@ public class ExecutorManager implements Manager, Activeable {
 
 		// TODO : start / fallback
 		for (final TopicExport topic : botExport.getTopics()) {
-			topics.add(new TopicDefinition(topic.getName(), stringToBTRoot(topic.getTopicBT()), topic.getNluTrainingSentences(), 0.6));
+			topics.add(TopicDefinition.of(topic.getName(), bb -> BotTextParser.stringToBTRoot(bb, topic.getTopicBT()), topic.getNluTrainingSentences(), 0.6));
 		}
 
-		botEngine.updateConfig(topics);
-	}
-
-	private static BTNode stringToBTRoot(final String in) {
-		return () -> BTStatus.Running; // TODO : mocked here but not his responsability
+		botManager.updateConfig(topics);
 	}
 
 	public BotResponse startNewConversation(final BotInput input) {
@@ -114,27 +102,21 @@ public class ExecutorManager implements Manager, Activeable {
 				.isNull(input.getMessage(), "No message expected");
 		//--
 		final var newUUID = UUID.randomUUID();
-		final var newConvState = new ConvState();
-		conversationMap.put(newUUID, newConvState);
 
-		final Map<String, Object> metadatas = new HashMap<>();
-		metadatas.put("sessionId", newUUID);
+		final var botEngine = botManager.createBotEngine(newUUID);
+		final var botResponse = botEngine.runTick(input);
 
-		return new BotResponse("Bonjour", null, metadatas);
+		botResponse.getMetadatas().put("sessionId", newUUID);
+		return botResponse;
 	}
 
 	public BotResponse handleUserMessage(final UUID sessionId, final BotInput input) {
 		Assertion.check()
 				.isNotNull(sessionId, "Please provide sessionId")
-				.isNotNull(input.getMessage(), "Please provide message")
-				.isTrue(conversationMap.containsKey(sessionId), "Session '{0}' not found", sessionId);
+				.isNotNull(input.getMessage(), "Please provide message");
 		//--
-		final var botState = conversationMap.get(sessionId);
+		final var botEngine = botManager.createBotEngine(sessionId);
 
-		final String[] respMockList = { "Euuu...", "Joker 😅", "C'est pas faux", "Hum 🤔", "Ca c'est bien vrai !" };
-		final int rnd = new Random().nextInt(respMockList.length);
-		final String respMock = respMockList[rnd];
-
-		return new BotResponse(respMock, null, null);
+		return botEngine.runTick(input);
 	}
 }
