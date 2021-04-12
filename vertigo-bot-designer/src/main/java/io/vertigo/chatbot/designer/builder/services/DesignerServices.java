@@ -163,11 +163,12 @@ public class DesignerServices implements Component {
 			final UtterText defaultText, final DtList<ResponseButton> defaultButtons,
 			final UtterText welcomeText, final DtList<ResponseButton> welcomeButtons) {
 
-		Assertion.check().isNotNull(chatbot);
-		Assertion.check().isNotNull(defaultText);
-		Assertion.check().isNotNull(defaultButtons);
-		Assertion.check().isNotNull(welcomeText);
-		Assertion.check().isNotNull(welcomeButtons);
+		Assertion.check()
+				.isNotNull(chatbot)
+				.isNotNull(defaultText)
+				.isNotNull(defaultButtons)
+				.isNotNull(welcomeText)
+				.isNotNull(welcomeButtons);
 		// ---
 
 		// default text
@@ -240,12 +241,12 @@ public class DesignerServices implements Component {
 	public SmallTalk saveSmallTalk(final SmallTalk smallTalk,
 			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList) {
-
-		Assertion.check().isNotNull(smallTalk);
-		Assertion.check().isNotNull(nluTrainingSentences);
-		Assertion.check().isNotNull(nluTrainingSentencesToDelete);
-		Assertion.check().isNotNull(utterTexts);
-		Assertion.check().isNotNull(buttonList);
+		Assertion.check()
+				.isNotNull(smallTalk)
+				.isNotNull(nluTrainingSentences)
+				.isNotNull(nluTrainingSentencesToDelete)
+				.isNotNull(utterTexts)
+				.isNotNull(buttonList);
 		// ---
 
 		SmallTalk savedST = smallTalkDAO.save(smallTalk);
@@ -441,7 +442,7 @@ public class DesignerServices implements Component {
 	}
 
 	private DesignerUserSession getUserSession() {
-		return securityManager.<DesignerUserSession>getCurrentUserSession().get();
+		return securityManager.<DesignerUserSession> getCurrentUserSession().get();
 	}
 
 	private void checkRights(final Chatbot chatbot, final ChatbotOperations chatbotOperation) {
