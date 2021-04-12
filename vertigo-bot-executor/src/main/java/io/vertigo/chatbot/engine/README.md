@@ -9,18 +9,18 @@ BTC = BehaviorTreeCondition //returns succeeded or failed
 say msg 
 
 examples : 
-say "hello"
-say "hello {{u/name}}"
+- say "hello"
+- say "hello {{u/name}}"
 
 # ask
-ask kt question
+- ask kt question
 the kt contains the result as a string param
 
-ask:integer kt question
+- ask:integer kt question
 
 examples : 
-ask {{u/name}} "what's your name ?"
-ask {{u/name/age}} "How old are you ?"
+- ask {{u/name}} "what's your name ?"
+- ask {{u/name/age}} "How old are you ?"
 
 #[Conditions] on Integers
 
@@ -34,14 +34,14 @@ with xx in
 - notEquals
 
 example 
-greaterThan {{u/age}} 75
+- greaterThan {{u/age}} 75
 
 # Basic operations on Integers
 
-decr kt
-incr kt
-add kt increment   //increment as int or kt
-mult kt factor     //factor as int or kt
+- decr kt
+- incr kt
+- add kt value   //value as int or kt
+- mult kt value     //value as int or kt
 
 # [Conditions] on Strings
 
@@ -59,14 +59,14 @@ with xx in
 append kt something
 
 # Vars
-copy kt1 kt2
-isFilled kt
-isEmpty kt
-delete kp 
-set kt value or something  // Integer or String
+- copy kt1 kt2
+- isFilled kt
+- isEmpty kt
+- delete kp 
+- set kt value or something  // Integer or String
 
 examples : 
-isFilled {{u/name}}
+- isFilled {{u/name}}
 
 # Status
 succeed [returns a condition]
@@ -75,6 +75,7 @@ fail [returns a condition]
 
 # Composites 
 
+```
 begin sequence 
 	BTN+
 end sequence
@@ -91,10 +92,17 @@ begin loop  loops
 	BTN+
 end loop
 
+begin shuffle
+	BTN+
+end shuffle
+```
 
 example :
 context : {{color}} contains "A" "B" or "C"
 
+## example with selector 
+
+``` ex selector
 begin selector 
 	begin sequence 
 		equals {{color}} "A"
@@ -110,7 +118,17 @@ begin selector
 	end sequence
 	say "I don't know the chosen color ;-("
 end selector
+```
+## example with shuffle
 
+``` ex shuffle
+begin shuffle
+	say "Hi"
+	say "Hello"
+	say  Hey!"
+end shuffle
+```
+```
 begin switch {{color}}
 	case "A"
 		say ...	
@@ -123,35 +141,43 @@ begin switch {{color}}
 	say...	
 	say...	
 end switch
-
+```
+```choose
 begin choose:button {{color}} "what is your ....color ?" 
 	button "A" "bleu" 
 	button "B" "blanc"
 	button "C" "rouge"
 end choose
+```
 
 ???? How load a list of buttons (countries for example) 
 
 # comments
+``` comments 
 -- this is a comment 
 -- this is another line of comment
+```
 
 begin sequence -- a comment after a command
  
 ???? # while / until
+``` while ???
 begin while [ {{u/age}}>=75 or {{u/illness}}==1 ]
 	((BTC and BTC) or BTC)  
 	BTN+
 end while 
-	
+```	
 
 # trees
 How to declare the main trees and these used inside ?
 
+```
 declare tree "administrator"
 	say "hello, you're an admin"
 end tree
+```
 
+```
 declare tree "main"
 	begin switch {{role}}
 		case "C"
@@ -162,6 +188,7 @@ declare tree "main"
 			tree "user" {{/user}} 	
 	end switch 
 end tree
+```
 
 namespaces
 /
@@ -169,10 +196,4 @@ namespaces
 /contributor 
 /user
 
-# shuffle ?
 
-begin shuffle
-	say "Hi"
-	say "Hello"
-	say  Hey!"
-end shuffle
