@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -77,6 +76,8 @@ import io.vertigo.datastore.impl.filestore.model.StreamFile;
 @Transactional
 public class TrainingServices implements Component {
 
+	private static final String API_KEY = "apiKey";
+
 	@Inject
 	private SmallTalkServices smallTalkServices;
 
@@ -96,7 +97,7 @@ public class TrainingServices implements Component {
 	private TrainingPAO trainingPAO;
 
 	@Inject
-	private ChatbotNodeDAO ChatbotNodeDAO;
+	private ChatbotNodeDAO chatbotNodeDAO;
 
 	@Inject
 	private JaxrsProvider jaxrsProvider;
@@ -124,16 +125,16 @@ public class TrainingServices implements Component {
 
 		saveTraining(bot, training);
 
-		final Map<String, Object> requestData = new HashMap<>();
-		requestData.put("botExport", exportBot(bot));
-		requestData.put("smallTalkExport", exportSmallTalk(bot));
-		requestData.put("trainingId", training.getTraId());
-		requestData.put("modelId", versionNumber);
-		requestData.put("nluThreshold", training.getNluThreshold());
+		final Map<String, Object> requestData = Map.of(
+				"botExport", exportBot(bot),
+				"smallTalkExport", exportSmallTalk(bot),
+				"trainingId", training.getTraId(),
+				"modelId", versionNumber,
+				"nluThreshold", training.getNluThreshold());
 
 		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
 				.request(MediaType.APPLICATION_JSON_TYPE)
-				.header("apiKey", devNode.getApiKey())
+				.header(API_KEY, devNode.getApiKey())
 				.post(Entity.json(requestData));
 
 		if (response.getStatus() != 204) {
@@ -153,7 +154,7 @@ public class TrainingServices implements Component {
 
 		jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
 				.request(MediaType.APPLICATION_JSON)
-				.header("apiKey", devNode.getApiKey())
+				.header(API_KEY, devNode.getApiKey())
 				.delete();
 
 	}
@@ -169,13 +170,11 @@ public class TrainingServices implements Component {
 		final ChatbotNode devNode = optDevNode.get();
 
 		String error = null;
-		Response response = null;
 		TrainerInfo retour = null;
-
 		try {
-			response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/trainStatus")
+			final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/trainStatus")
 					.request(MediaType.APPLICATION_JSON)
-					.header("apiKey", devNode.getApiKey())
+					.header(API_KEY, devNode.getApiKey())
 					.get();
 
 			error = response.getStatus() != 200 ? "Code HTTP : " + response.getStatus() : null;
@@ -209,13 +208,11 @@ public class TrainingServices implements Component {
 		final ChatbotNode devNode = optDevNode.get();
 
 		String error = null;
-		Response response = null;
 		RunnerInfo retour = null;
-
 		try {
-			response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/runnerStatus")
+			final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/runnerStatus")
 					.request(MediaType.APPLICATION_JSON)
-					.header("apiKey", devNode.getApiKey())
+					.header(API_KEY, devNode.getApiKey())
 					.get();
 
 			error = response.getStatus() != 200 ? "Code HTTP : " + response.getStatus() : null;
@@ -305,7 +302,7 @@ public class TrainingServices implements Component {
 
 			response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/admin/model")
 					.request(MediaType.APPLICATION_JSON)
-					.header("apiKey", node.getApiKey())
+					.header(API_KEY, node.getApiKey())
 					.put(Entity.entity(fdmp, fdmp.getMediaType()));
 
 		} catch (final IOException e) {
@@ -351,7 +348,7 @@ public class TrainingServices implements Component {
 
 	public void trainingCallback(@SecuredOperation("botContributor") final Chatbot bot, final ExecutorTrainingCallback callback) {
 		final Training training = getTraining(bot, callback.getTrainingId());
-		final ChatbotNode node = ChatbotNodeDAO.findOptional(
+		final ChatbotNode node = chatbotNodeDAO.findOptional(
 				Criterions.isEqualTo(ChatbotNodeFields.botId, training.getBotId())
 						.and(Criterions.isEqualTo(ChatbotNodeFields.isDev, true)))
 				.get();
@@ -381,7 +378,7 @@ public class TrainingServices implements Component {
 	private VFile fetchModel(final ChatbotNode node, final Long modelVersion) {
 		final Response response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/admin/model/" + modelVersion)
 				.request(MediaType.APPLICATION_OCTET_STREAM)
-				.header("apiKey", node.getApiKey())
+				.header(API_KEY, node.getApiKey())
 				.get();
 
 		response.bufferEntity();
