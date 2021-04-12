@@ -17,8 +17,6 @@
  */
 package io.vertigo.chatbot.designer.boot;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.context.annotation.ComponentScan;
@@ -43,7 +41,7 @@ public class ChatbotDesignerVSpringWebConfig extends VSpringWebConfig {
 
 	@Override
 	protected Set<String> getCustomComponentNames() {
-		return new HashSet<String>(Arrays.asList(CUSTOM_UI_COMPONENTS_NAME));
+		return Set.of(CUSTOM_UI_COMPONENTS_NAME);
 	}
 
 	@Override

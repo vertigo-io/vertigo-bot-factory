@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -126,12 +125,12 @@ public class TrainingServices implements Component {
 
 		saveTraining(training);
 
-		final Map<String, Object> requestData = new HashMap<>();
-		requestData.put("botExport", exportBot(botId));
-		requestData.put("smallTalkExport", exportSmallTalk(botId));
-		requestData.put("trainingId", training.getTraId());
-		requestData.put("modelId", versionNumber);
-		requestData.put("nluThreshold", training.getNluThreshold());
+		final Map<String, Object> requestData = Map.of(
+				"botExport", exportBot(botId),
+				"smallTalkExport", exportSmallTalk(botId),
+				"trainingId", training.getTraId(),
+				"modelId", versionNumber,
+				"nluThreshold", training.getNluThreshold());
 
 		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
 				.request(MediaType.APPLICATION_JSON_TYPE)
@@ -171,11 +170,9 @@ public class TrainingServices implements Component {
 		final ChatbotNode devNode = optDevNode.get();
 
 		String error = null;
-		Response response = null;
 		TrainerInfo retour = null;
-
 		try {
-			response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/trainStatus")
+			final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/trainStatus")
 					.request(MediaType.APPLICATION_JSON)
 					.header("apiKey", devNode.getApiKey())
 					.get();
@@ -211,11 +208,10 @@ public class TrainingServices implements Component {
 		final ChatbotNode devNode = optDevNode.get();
 
 		String error = null;
-		Response response = null;
 		RunnerInfo retour = null;
 
 		try {
-			response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/runnerStatus")
+			final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/runnerStatus")
 					.request(MediaType.APPLICATION_JSON)
 					.header("apiKey", devNode.getApiKey())
 					.get();
