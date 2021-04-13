@@ -15,6 +15,7 @@ import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.smallTalk.SmallTalkPAO;
 import io.vertigo.commons.transaction.Transactional;
@@ -64,6 +65,7 @@ public class SmallTalkServices implements Component {
 				.isNotNull(utterTexts)
 				.isNotNull(buttonList);
 		// ---
+		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
 		final Topic savedTopic = topicServices.save(topic);
 		smallTalk.setTopId(savedTopic.getTopId());
 		final SmallTalk savedST = smallTalkDAO.save(smallTalk);

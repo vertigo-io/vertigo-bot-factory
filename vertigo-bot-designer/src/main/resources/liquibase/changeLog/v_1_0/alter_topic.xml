@@ -7,4 +7,10 @@
 	<changeSet author="vbaillet" id="add topic and script intent">
 		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_02.sql" />	
 	</changeSet>
+	
+	<changeSet author="vprima" id="add and populate type topic">
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_13.sql" />
+		<sqlFile encoding="utf8" path="/sql/v_1_0/init_masterdata_type_topic.sql" />	
+	</changeSet>
+	
 </databaseChangeLog>

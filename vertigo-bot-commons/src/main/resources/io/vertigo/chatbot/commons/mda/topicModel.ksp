@@ -2,8 +2,26 @@ package io.vertigo.chatbot.commons.domain.topic
 
 
 /************************/
-/* **** Small talk **** */
+/* ****    Topic   **** */
 /************************/
+
+create DtDefinition DtTypeTopic {
+	stereotype : "StaticMasterData"
+	id    ttoCd 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Title" 		cardinality : "1"	}
+	values : `{
+        "SMALLTALK" : {
+            "ttoCd" : "SMALLTALK",
+            "label" : "Small talk"           
+        },
+        "SCRIPTINTENTION" : {
+            "ttoCd" : "SCRIPTINTENTION",
+            "label" : "Script intention"
+        }
+     }`
+    sortField : "ttoCd"
+ 	displayField : "label"
+}
 
 create DtDefinition DtTopic{
 	id		topId			{domain: DoId 		label: "ID"}
@@ -15,6 +33,8 @@ create DtDefinition DtTopic{
 create DtDefinition DtSmallTalk {
 	id    smtId 		{domain: DoId 		label: "ID"}
 }
+
+
 
 create Association ASmallTalkTopic{
 
@@ -43,6 +63,16 @@ create Association AScriptIntentionTopic{
 	
 	labelB : "Topic"
 
+}
+
+create Association ATopicTypeTopic {
+	fkFieldName : "ttoCd" 
+    
+ 	dtDefinitionA : DtTopic
+	type : "*>1"
+	dtDefinitionB : DtTypeTopic
+	
+	labelB : "Type du topic"
 }
 
 
@@ -158,4 +188,20 @@ create DtDefinition DtNluTrainingExport {
 	field smtId		{domain: DoId 		label: "smt ID"}
 	field ntsId 	{domain: DoId 		label: "nlu ID"}
 	field text 		{domain: DoLabel 	label: "Text" cardinality : "1"}
+}
+
+create DtDefinition DtTopicIhm {
+	field topId		{domain: DoId		label: "Topic id"				cardinality:"1"}
+	field type		{domain: DoLabel	label: "Type"					cardinality:"?"}
+	field title		{domain: DoLabel	label: "Topic label"			}
+	field smtId		{domain: DoId		label: "SmallTalk id"			cardinality:"?"}
+	field sinId		{domain: DoId		label: "Script intention id"	cardinality:"?"}
+	field isEnabled	{domain: DoYesNo	label: "Enabled"				}
+}
+
+create DtDefinition DtScriptIntentionIhm {
+	field topId		{domain: DoId		label: "Topic id"				}
+	field title		{domain: DoLabel	label: "Script Intention label"	}
+	field sinId		{domain: DoId		label: "Script Intention id"	}
+	field isEnabled	{domain: DoYesNo	label: "Enabled"				}
 }

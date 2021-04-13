@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=scriptIntentions"
+	>
+	
+	<head>
+		<title>Script intention detail</title>
+		
+		<script th:src="@{/static/js/c-richtext.js}"></script>
+		<script th:src="@{/static/js/c-buttonList.js}"></script>
+		
+		<!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+		<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+		<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+		<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
+		
+		<script th:inline="javascript">
+			function normalizeString(str) {
+				if (str)
+					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+				else
+					return '';
+			}
+			
+			function getDisplayedTrainingSentenses() {
+				let searchNormailized = normalizeString(VertigoUi.componentStates.nluTrainingSentences.pagination.search);
+				
+				return VertigoUi.vueData.nluTrainingSentences
+						// copy and reverse
+						.slice().reverse()
+						// search
+						.filter(nts => normalizeString(nts.text).includes(searchNormailized))
+						// pagination
+						.slice((VertigoUi.componentStates.nluTrainingSentences.pagination.page - 1) * VertigoUi.componentStates.nluTrainingSentences.pagination.rowsPerPage,
+								VertigoUi.componentStates.nluTrainingSentences.pagination.page * VertigoUi.componentStates.nluTrainingSentences.pagination.rowsPerPage);
+			}
+			
+			function getUtterTextResolvedList() {
+				utterTextlist = VertigoUi.vueData.utterTexts;
+				
+				// if only 1 element display it
+				if (VertigoUi.vueData.utterTexts.length < 2) {
+					return VertigoUi.vueData.utterTexts;
+				}
+				
+				let lastIndex = VertigoUi.vueData.utterTexts.length - 1;
+				for (; lastIndex > 0; lastIndex--) {
+					if (VertigoUi.vueData.utterTexts[lastIndex - 1].text || VertigoUi.vueData.utterTexts[lastIndex].text) {
+						break; // stop if not emty or next is not empty
+					}
+				}
+				
+				return VertigoUi.vueData.utterTexts.slice(0, lastIndex + 1);
+			}
+			
+			function addMoreUtterTextIfNeeded() {
+				if (VertigoUi.vueData.utterTexts[VertigoUi.vueData.utterTexts.length - 1].text) {
+					VertigoUi.vueData.utterTexts.push({});
+				}
+			}
+			
+		</script>
+	</head>
+	
+	<body>
+		<section layout:fragment="content-header-actions">
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/scriptIntention/(id=${model.bot.botId})} + ${model.scriptIntention.sinId}" ariaLabel="Cancel" icon="fas fa-ban"
+							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
+			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+							class="on-left" :round size="lg" color="primary" />
+			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" aria-label="Delete" title="Delete" icon="delete"
+							class="on-left" round size="lg" color="red" ></q-btn>
+		</section>
+				
+		<section layout:fragment="content-nav">
+			<q-item tag="a" href="#detail">Informations</q-item>
+			<q-item tag="a" href="#training">Training phrases</q-item>
+			<q-item tag="a" href="#response">Response</q-item>
+			<q-item tag="a" href="#buttons">Buttons</q-item>
+		</section>
+		
+		<section layout:fragment="content">
+			
+			<vu:popup object="scriptIntention" action="_delete" vModel="showPopup"></vu:popup>
+
+			<vu:block id="detail" title="Informations">
+				<vu:text-field object="topic" field="title" />
+				
+				<vu:label object="topic" field="isEnabled">
+					<vu:include-data object="topic" field="isEnabled" />
+					<q-input v-model="vueData.topic.isEnabled" name="vContext[topic][isEnabled]" class="hidden" ></q-input>
+					
+					<q-toggle v-model="vueData.topic.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
+				</vu:label>
+			</vu:block>
+			
+			<vu:block id="training" title="Training phrases">
+				<vu:slot name="actions_slot">
+					<q-input v-model="componentStates.nluTrainingSentences.pagination.search" dense clearable 
+	      				type="search" placeholder="Filter"
+	      				@keydown.esc="componentStates.nluTrainingSentences.pagination.search = '';"
+	      				style="width:300px">
+						<template v-slot:prepend>
+				        	<q-icon name="search" ></q-icon>
+				        </template>
+        			</q-input>
+				</vu:slot>
+				
+				<vu:include-data-primitive key="newNluTrainingSentence" />
+				<vu:include-data object="nluTrainingSentences" field="text" />
+				
+				<div th:if="${!model.modeReadOnly}">
+					<q-input v-model="vueData.newNluTrainingSentence" dense class="q-pb-sm"
+					    @keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) {httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence}); componentStates.nluTrainingSentences.pagination.page = 1; componentStates.nluTrainingSentences.pagination.search = '';}"
+						placeholder="Add training sentence"
+						name="vContext['newNluTrainingSentence']"
+						:before="[{icon: 'format_quote'}]"
+						>
+					</q-input>
+				</div>
+				<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('nluTrainingSentences').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
+				<q-list dense>
+					<q-item th::clickable="${!model.modeReadOnly}" v-for="(nluTrainingSentence, index) in getDisplayedTrainingSentenses()">
+						<q-item-section avatar th:if="${model.modeReadOnly}">
+				        	<q-icon color="black" name="format_quote"></q-icon>
+				        </q-item-section>
+						<q-item-section side left th:if="${!model.modeReadOnly}">
+							<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.nluTrainingSentences.length - 1 - index})"
+								color="primary" dense size="sm" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
+						</q-item-section>
+						<q-item-section>
+							{{nluTrainingSentence.text}}
+							<q-popup-edit th:if="${!model.modeReadOnly}"
+										  buttons label-set="Save" label-cancel="Cancel"
+										  v-model="nluTrainingSentence.text"
+										  @save="function(value, initialValue) {
+													httpPostAjax('_editTrainingSentence',
+														 {'vContext[newNluTrainingSentence]':value, 'index':vueData.nluTrainingSentences.length - 1 - index}
+													).then(function() {
+													 	if (uiMessageStack.globalErrors.length > 0) {
+													 		nluTrainingSentence.text = initialValue;
+													 	}
+													 });
+												}">
+								<q-input v-model="nluTrainingSentence.text" dense autofocus />
+							</q-popup-edit>
+						</q-item-section>
+					</q-item>
+				</q-list>
+				<div class="q-pa-lg flex flex-center">
+					<q-pagination
+					      v-model="componentStates.nluTrainingSentences.pagination.page"
+					      v-if="Math.ceil(vueData.nluTrainingSentences.length / componentStates.nluTrainingSentences.pagination.rowsPerPage) > 1"
+					      :max="Math.ceil(vueData.nluTrainingSentences.length / componentStates.nluTrainingSentences.pagination.rowsPerPage)"
+					      :max-pages="6"
+	      				  :boundary-numbers="true"
+	      				  :direction-links="true" ></q-pagination>
+    			</div>
+			</vu:block>
+			
+			
+			
+			<vu:block id="buttons" title="Buttons">
+				<vu:include-data object="buttons" field="text" />
+				<vu:include-data object="buttons" field="smtIdResponse" />
+				<vu:include-data object="topicList" field="topId" />
+				<vu:include-data object="topicList" field="title" />
+			
+				<c-buttonlist
+					class="q-pb-sm"
+					button-list="buttons"
+					choice-list="topicList"
+					th::mode-edit="${!model.modeReadOnly}">
+				</c-buttonlist>
+				
+				<div th:if="${model.modeReadOnly && model.vContext.buttons.isEmpty()}">No button</div>
+			</vu:block>
+			
+			
+			<q-page-sticky position="bottom-right">
+				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
+			</q-page-sticky>
+			
+		</section>
+	</body>
+</html>
