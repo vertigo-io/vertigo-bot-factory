@@ -32,6 +32,7 @@ drop table IF EXISTS TOPIC cascade;
 drop sequence IF EXISTS SEQ_TOPIC;
 drop table IF EXISTS TRAINING cascade;
 drop sequence IF EXISTS SEQ_TRAINING;
+drop table IF EXISTS TYPE_TOPIC cascade;
 drop table IF EXISTS UTTER_TEXT cascade;
 drop sequence IF EXISTS SEQ_UTTER_TEXT;
 
@@ -79,6 +80,7 @@ create sequence SEQ_TOPIC
 
 create sequence SEQ_TRAINING
 	start with 1000 cache 20; 
+
 
 create sequence SEQ_UTTER_TEXT
 	start with 1000 cache 20; 
@@ -429,6 +431,7 @@ create table TOPIC
     TITLE       	 VARCHAR(100)	not null,
     DESCRIPTION 	 VARCHAR(100)	,
     IS_ENABLED  	 bool        	not null,
+    TTO_CD      	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_TOPIC primary key (TOP_ID)
 );
@@ -444,6 +447,9 @@ comment on column TOPIC.DESCRIPTION is
 
 comment on column TOPIC.IS_ENABLED is
 'Enabled';
+
+comment on column TOPIC.TTO_CD is
+'Type du topic';
 
 comment on column TOPIC.BOT_ID is
 'Chatbot';
@@ -499,6 +505,22 @@ comment on column TRAINING.BOT_ID is
 
 comment on column TRAINING.FIL_ID_MODEL is
 'Model';
+
+-- ============================================================
+--   Table : TYPE_TOPIC                                        
+-- ============================================================
+create table TYPE_TOPIC
+(
+    TTO_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    constraint PK_TYPE_TOPIC primary key (TTO_CD)
+);
+
+comment on column TYPE_TOPIC.TTO_CD is
+'ID';
+
+comment on column TYPE_TOPIC.LABEL is
+'Title';
 
 -- ============================================================
 --   Table : UTTER_TEXT                                        
@@ -640,6 +662,12 @@ alter table NLU_TRAINING_SENTENCE
 	references TOPIC (TOP_ID);
 
 create index A_TOPIC_NLU_TRAINING_SENTENCE_TOPIC_FK on NLU_TRAINING_SENTENCE (TOP_ID asc);
+
+alter table TOPIC
+	add constraint FK_A_TOPIC_TYPE_TOPIC_TYPE_TOPIC foreign key (TTO_CD)
+	references TYPE_TOPIC (TTO_CD);
+
+create index A_TOPIC_TYPE_TOPIC_TYPE_TOPIC_FK on TOPIC (TTO_CD asc);
 
 alter table TRAINING
 	add constraint FK_A_TRAINING_CHATBOT_CHATBOT foreign key (BOT_ID)

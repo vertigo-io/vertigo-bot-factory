@@ -2,6 +2,7 @@ package io.vertigo.chatbot.commons.domain.topic;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 import io.vertigo.datamodel.structure.stereotype.Field;
@@ -19,6 +20,21 @@ public final class Topic implements Entity {
 	private String title;
 	private String description;
 	private Boolean isEnabled;
+
+	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "ATopicTypeTopic",
+			fkFieldName = "ttoCd",
+			primaryDtDefinitionName = "DtTypeTopic",
+			primaryIsNavigable = true,
+			primaryRole = "TypeTopic",
+			primaryLabel = "Type du topic",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtTopic",
+			foreignIsNavigable = false,
+			foreignRole = "Topic",
+			foreignLabel = "Topic",
+			foreignMultiplicity = "0..*")
+	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.topic.TypeTopic, io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum> ttoCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.TypeTopic.class, "TypeTopic", io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum.class);
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ATopicChatbot",
@@ -119,6 +135,25 @@ public final class Topic implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Type du topic'.
+	 * @return String ttoCd <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Type du topic", fkDefinition = "DtTypeTopic" )
+	public String getTtoCd() {
+		return (String) ttoCdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Type du topic'.
+	 * @param ttoCd String <b>Obligatoire</b>
+	 */
+	public void setTtoCd(final String ttoCd) {
+		ttoCdAccessor.setId(ttoCd);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
@@ -142,6 +177,14 @@ public final class Topic implements Entity {
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbot() {
 		return botIdAccessor;
+	}
+
+ 	/**
+	 * Association : Type du topic.
+	 * @return l'accesseur vers la propriété 'Type du topic'
+	 */
+	public EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.topic.TypeTopic, io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum> typeTopic() {
+		return ttoCdAccessor;
 	}
 	
 	/** {@inheritDoc} */

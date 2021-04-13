@@ -41,6 +41,35 @@ public final class TopicPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkGetAllTopicsIhmFromBot.
+	 * @param botId Long
+	 * @return DtList de TopicIhm topicIHM
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetAllTopicsIhmFromBot",
+			request = "SELECT 	top.top_id," + 
+ "					top.title," + 
+ "					smt.smt_id," + 
+ "					sin.sin_id," + 
+ "					top.is_enabled," + 
+ "					tto.label as type" + 
+ "			from topic top " + 
+ "			left join small_talk smt on smt.top_id = top.top_id" + 
+ "			left join script_intention sin on sin.top_id = top.top_id" + 
+ "			join type_topic tto on top.tto_cd = tto.tto_cd" + 
+ "			where top.bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicIhm> getAllTopicsIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkGetAllTopicsIhmFromBot")
+				.addValue("botId", botId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkRemoveAllNluTrainingSentenceByBotId.
 	 * @param botId Long
 	*/

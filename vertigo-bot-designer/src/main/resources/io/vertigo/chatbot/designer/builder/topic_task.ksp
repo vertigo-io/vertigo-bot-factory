@@ -20,3 +20,22 @@ create Task TkRemoveAllTopicsFromBot {
 	in botId  				{domain : DoId         		cardinality : "1"  }
 }
 
+create Task TkGetAllTopicsIhmFromBot {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	top.top_id,
+					top.title,
+					smt.smt_id,
+					sin.sin_id,
+					top.is_enabled,
+					tto.label as type
+			from topic top 
+			left join small_talk smt on smt.top_id = top.top_id
+			left join script_intention sin on sin.top_id = top.top_id
+			join type_topic tto on top.tto_cd = tto.tto_cd
+			where top.bot_id = #botId#
+             "
+	in botId  				{domain : DoId         		cardinality : "1"  }
+	out topicIHM			{domain : DoDtTopicIhm,		cardinality : "*"  } 
+}
+
