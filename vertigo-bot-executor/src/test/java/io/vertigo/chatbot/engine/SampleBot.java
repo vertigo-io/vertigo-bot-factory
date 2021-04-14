@@ -10,15 +10,9 @@ import java.util.Scanner;
 
 import javax.inject.Inject;
 
-import io.vertigo.ai.bb.BlackBoardManager;
+import io.vertigo.ai.AiFeatures;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTNodes;
-import io.vertigo.ai.bt.BehaviorTreeManager;
-import io.vertigo.ai.impl.bb.BlackBoardManagerImpl;
-import io.vertigo.ai.impl.bt.BehaviorTreeManagerImpl;
-import io.vertigo.ai.impl.nlu.NluManagerImpl;
-import io.vertigo.ai.nlu.NluManager;
-import io.vertigo.ai.plugins.bb.memory.MemoryBlackBoardStorePlugin;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
@@ -55,7 +49,7 @@ public class SampleBot {
 		final List<TopicDefinition> topics = new ArrayList<>();
 		topics.add(TopicDefinition.ofWithBotNodeProvider("START", botNodeProvider -> {
 			return sequence(
-					botNodeProvider.say("It works"),
+					//botNodeProvider.say("It works"),
 					botNodeProvider.inputString("u/name", "Hello I'm Alan what is your name ?"),
 					//intents
 					main(botNodeProvider),
@@ -84,14 +78,15 @@ public class SampleBot {
 		return NodeConfig.builder()
 				.addModule(new CommonsFeatures().build())// for transactions
 				.addModule(
-						ModuleConfig.builder("myModule")
-								.addComponent(BlackBoardManager.class, BlackBoardManagerImpl.class)
-								.addPlugin(MemoryBlackBoardStorePlugin.class)
-								.addComponent(BehaviorTreeManager.class, BehaviorTreeManagerImpl.class)
-								.addComponent(BotManager.class, BotManagerImpl.class)
-								.addComponent(NluManager.class, NluManagerImpl.class)
+						new AiFeatures()
+								.withBlackboard()
+								.withMemoryBlackboard()
+								.withNLU()
 								.addPlugin(MockNluEnginePlugin.class)
 								.build())
+				.addModule(ModuleConfig.builder("bot-module")
+						.addComponent(BotManager.class, BotManagerImpl.class)
+						.build())
 				.build();
 	}
 

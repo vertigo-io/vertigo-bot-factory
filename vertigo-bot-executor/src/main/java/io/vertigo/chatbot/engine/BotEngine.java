@@ -3,7 +3,10 @@ package io.vertigo.chatbot.engine;
 import java.util.Map;
 import java.util.Optional;
 
+import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;
+import io.vertigo.ai.bb.KeyPattern;
+import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.nlu.VRecognitionResult;
@@ -61,13 +64,22 @@ public class BotEngine {
 	}
 
 	public BotResponse runTick(final BotInput input) {
+		// set IN
+		final var key = bb.getString(BBKey.of(BOT_IN_PATH + "/key"));
+		if (key != null) { // TODO find a better switch
+			final var type = bb.getString(BBKey.of(BOT_IN_PATH + "/type"));
+			if ("integer".equals(type)) {
+				bb.putInteger(BBKey.of(key), Integer.valueOf(input.getMessage()));
+			} else {
+				bb.putString(BBKey.of(key), input.getMessage());
+			}
+		}
 		// prepare exec
-		bb.delete(BOT_IN_PATH + "/*");
-		bb.delete(BOT_OUT_PATH + "/*");
-		// TODO set IN
+		bb.delete(KeyPattern.of(BOT_IN_PATH + "/*"));
+		bb.delete(KeyPattern.of(BOT_OUT_PATH + "/*"));
 
 		// resolve topic
-		final var topic = Optional.ofNullable(bb.getString(BOT_TOPIC_PATH)).map(topicDefinitionMap::get)
+		final var topic = Optional.ofNullable(bb.getString(BBKey.of(BOT_TOPIC_PATH))).map(topicDefinitionMap::get)
 				.orElseGet(this::resolveNewTopic); // if no current topic
 
 		// exec
@@ -76,16 +88,20 @@ public class BotEngine {
 		// clean
 		if (status.isSucceeded()) {
 			// topic ended, clear curent topic in bb
-			bb.delete(BOT_TOPIC_PATH);
+			bb.delete(KeyPattern.of(BOT_TOPIC_PATH));
 		}
 
-		// build response
-		final var botResponseBuilder = new BotResponseBuilder(BotStatus.Talking);
-		for (int i = 0; i < bb.listSize(BOT_RESPONSE_PATH); i++) {
-			botResponseBuilder.addMessage(bb.listGet(BOT_RESPONSE_PATH, i));
-		}
+		if (status == BTStatus.Running) {
+			// build response
+			final var botResponseBuilder = new BotResponseBuilder(BotStatus.Talking);
+			for (int i = 0; i < bb.listSize(BBKey.of(BOT_RESPONSE_PATH)); i++) {
+				botResponseBuilder.addMessage(bb.listGet(BBKey.of(BOT_RESPONSE_PATH), i));
+			}
 
-		return botResponseBuilder.build();
+			return botResponseBuilder.build();
+		}
+		return new BotResponseBuilder(BotStatus.Ended).build();
+
 		/*
 				userResponseOpt.ifPresent(response -> {
 					final var key = blackBoard.getString("bot/response");
@@ -116,7 +132,7 @@ public class BotEngine {
 		// intents are sorted by decreasing accuracy
 		for (final var intent : nluResponse.getIntentClassificationList()) {
 			final var topic = getTopicByCode(intent.getIntent().getCode());
-			if (intent.getAccuracy().compareTo(topic.getNluThreshold()) > 0) { // dont take if not accurate enough
+			if (intent.getAccuracy() > topic.getNluThreshold()) { // dont take if not accurate enough
 				return Optional.of(topic);
 			}
 		}
