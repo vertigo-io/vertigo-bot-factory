@@ -31,12 +31,12 @@ import io.vertigo.core.lang.Assertion;
  * @author skerdudou, mlaroche
  */
 public class BotEngine {
-	public static final String BOT_IN_PATH = "bot/in";
-	public static final String BOT_OUT_PATH = "bot/out";
-	public static final String BOT_STATUS_PATH = "bot/status";
+	public static final BBKey BOT_IN_PATH = BBKey.of("bot/in");
+	public static final BBKey BOT_OUT_PATH = BBKey.of("bot/out");
+	public static final BBKey BOT_STATUS_PATH = BBKey.of("bot/status");
 
-	public static final String BOT_RESPONSE_PATH = BOT_OUT_PATH + "/response";
-	public static final String BOT_TOPIC_PATH = BOT_STATUS_PATH + "/topic";
+	public static final BBKey BOT_RESPONSE_PATH = BOT_OUT_PATH.subKey("/response");
+	public static final BBKey BOT_TOPIC_PATH = BOT_STATUS_PATH.subKey("/topic");
 
 	private final BlackBoard bb;
 	private final BehaviorTreeManager behaviorTreeManager;
@@ -65,21 +65,21 @@ public class BotEngine {
 
 	public BotResponse runTick(final BotInput input) {
 		// set IN
-		final var key = bb.getString(BBKey.of(BOT_IN_PATH + "/key"));
-		if (key != null) { // TODO find a better switch
-			final var type = bb.getString(BBKey.of(BOT_IN_PATH + "/type"));
+		if (input.getMessage() != null) { // TODO find a better switch
+			final var key = BBKey.of(bb.getString(BOT_IN_PATH.subKey("/key")));
+			final var type = bb.getString(BOT_IN_PATH.subKey("/type"));
 			if ("integer".equals(type)) {
-				bb.putInteger(BBKey.of(key), Integer.valueOf(input.getMessage()));
+				bb.putInteger(key, Integer.valueOf(input.getMessage()));
 			} else {
-				bb.putString(BBKey.of(key), input.getMessage());
+				bb.putString(key, input.getMessage());
 			}
 		}
 		// prepare exec
-		bb.delete(KeyPattern.of(BOT_IN_PATH + "/*"));
-		bb.delete(KeyPattern.of(BOT_OUT_PATH + "/*"));
+		bb.delete(KeyPattern.ofRoot(BOT_IN_PATH));
+		bb.delete(KeyPattern.ofRoot(BOT_OUT_PATH));
 
 		// resolve topic
-		final var topic = Optional.ofNullable(bb.getString(BBKey.of(BOT_TOPIC_PATH))).map(topicDefinitionMap::get)
+		final var topic = Optional.ofNullable(bb.getString(BOT_TOPIC_PATH)).map(topicDefinitionMap::get)
 				.orElseGet(this::resolveNewTopic); // if no current topic
 
 		// exec
@@ -88,14 +88,14 @@ public class BotEngine {
 		// clean
 		if (status.isSucceeded()) {
 			// topic ended, clear curent topic in bb
-			bb.delete(KeyPattern.of(BOT_TOPIC_PATH));
+			bb.delete(KeyPattern.of(BOT_TOPIC_PATH.getKey()));
 		}
 
 		if (status == BTStatus.Running) {
 			// build response
 			final var botResponseBuilder = new BotResponseBuilder(BotStatus.Talking);
-			for (int i = 0; i < bb.listSize(BBKey.of(BOT_RESPONSE_PATH)); i++) {
-				botResponseBuilder.addMessage(bb.listGet(BBKey.of(BOT_RESPONSE_PATH), i));
+			for (int i = 0; i < bb.listSize(BOT_RESPONSE_PATH); i++) {
+				botResponseBuilder.addMessage(bb.listGet(BOT_RESPONSE_PATH, i));
 			}
 
 			return botResponseBuilder.build();

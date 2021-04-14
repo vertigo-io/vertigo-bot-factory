@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import io.vertigo.ai.AiFeatures;
 import io.vertigo.ai.bt.BTNode;
-import io.vertigo.ai.bt.BTNodes;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
@@ -153,14 +152,12 @@ public class SampleBot {
 								selector(
 										sequence(
 												botNodeProvider.gtByValue("g/target", "g/choice"),
-												botNodeProvider.say("select up !"),
 												botNodeProvider.remove("g/choice"),
-												BTNodes.running()),
+												botNodeProvider.inputInteger("g/choice", "select up !")),
 										sequence(
 												botNodeProvider.ltByValue("g/target", "g/choice"),
-												botNodeProvider.say("select down !"),
 												botNodeProvider.remove("g/choice"),
-												BTNodes.running()),
+												botNodeProvider.inputInteger("g/choice", "select down !")),
 										succeed()))),
 				//The right number has been found
 				botNodeProvider.say("Bravo {{u/name}} you have found the right number {{g/target}} in {{g/rounds}} rounds"),
