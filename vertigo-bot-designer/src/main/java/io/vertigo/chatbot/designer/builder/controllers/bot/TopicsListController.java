@@ -27,22 +27,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ChatbotNode;
-import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
-import io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
-import io.vertigo.chatbot.designer.builder.services.TopicServices;
-import io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil;
-import io.vertigo.chatbot.designer.domain.admin.SelectProfilChatbotPerson;
-import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkIhmFields;
-import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicIhmFields;
-import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -72,23 +62,19 @@ public class TopicsListController extends AbstractBotController {
 		//		viewContext.publishRef(botIdKey, botId);
 		toModeReadOnly();
 	}
-	
-	
-	
+
 	@PostMapping("/createTopic")
-	public String doCreateTopic(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, 	@ViewAttribute("selectionList") final String ttoCd) {
+	public String doCreateTopic(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, @ViewAttribute("selectionList") final String ttoCd) {
 		if (ttoCd.isEmpty()) {
 			throw new VUserException("Choose a type of topic");
 		}
 		final Long botId = bot.getBotId();
 		if (TypeTopicEnum.SMALLTALK.name().equals(ttoCd)) {
 			return "redirect:/bot/" + botId + "/smallTalk/new";
-		}
-		else if (TypeTopicEnum.SCRIPTINTENTION.name().equals(ttoCd)){
+		} else if (TypeTopicEnum.SCRIPTINTENTION.name().equals(ttoCd)) {
 			return "redirect:/bot/" + botId + "/scriptIntention/new";
 		}
 		return "redirect:/bot/" + botId + "/topics/";
 	}
-	
 
 }
