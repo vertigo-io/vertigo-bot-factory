@@ -1,23 +1,16 @@
 package io.vertigo.chatbot.designer.builder.services;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.ScriptIntentionDAO;
-import io.vertigo.chatbot.commons.dao.topic.ScriptIntentionDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
-import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
-import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
-import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.scriptIntention.ScriptIntentionPAO;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
@@ -54,7 +47,7 @@ public class ScriptIntentionServices implements Component {
 	}
 
 	public ScriptIntention saveScriptIntention(@SecuredOperation("botContributor") final Chatbot chatbot, final ScriptIntention scriptIntention,
-			 final Topic topic) {
+			final Topic topic) {
 
 		Assertion.check().isNotNull(scriptIntention);
 		// ---
@@ -62,21 +55,16 @@ public class ScriptIntentionServices implements Component {
 		scriptIntention.setTopId(savedTopic.getTopId());
 		final ScriptIntention savedSI = scriptIntentionDAO.save(scriptIntention);
 
-		
 		return savedSI;
 	}
 
 	public void deleteScriptIntention(@SecuredOperation("botContributor") final Chatbot chatbot, final ScriptIntention scriptIntention, final Topic topic) {
-
-	
 
 		// delete scriptIntention
 		scriptIntentionDAO.delete(scriptIntention.getUID());
 
 		topicServices.deleteTopic(chatbot, topic);
 	}
-
-	
 
 	public void removeAllScriptIntentionFromBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		scriptIntentionPAO.removeAllScriptIntentionByBotId(bot.getBotId());
