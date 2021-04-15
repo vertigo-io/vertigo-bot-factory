@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.vertigo.ai.bb.BBKey;
+import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.bb.BlackBoard;
-import io.vertigo.ai.bb.KeyPattern;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.nlu.NluManager;
@@ -35,8 +35,8 @@ public class BotEngine {
 	public static final BBKey BOT_OUT_PATH = BBKey.of("bot/out");
 	public static final BBKey BOT_STATUS_PATH = BBKey.of("bot/status");
 
-	public static final BBKey BOT_RESPONSE_PATH = BOT_OUT_PATH.subKey("/response");
-	public static final BBKey BOT_TOPIC_PATH = BOT_STATUS_PATH.subKey("/topic");
+	public static final BBKey BOT_RESPONSE_PATH = BBKey.of(BOT_OUT_PATH, "/response");
+	public static final BBKey BOT_TOPIC_PATH = BBKey.of(BOT_STATUS_PATH, "/topic");
 
 	private final BlackBoard bb;
 	private final BehaviorTreeManager behaviorTreeManager;
@@ -66,8 +66,8 @@ public class BotEngine {
 	public BotResponse runTick(final BotInput input) {
 		// set IN
 		if (input.getMessage() != null) { // TODO find a better switch
-			final var key = BBKey.of(bb.getString(BOT_IN_PATH.subKey("/key")));
-			final var type = bb.getString(BOT_IN_PATH.subKey("/type"));
+			final var key = BBKey.of(bb.getString(BBKey.of(BOT_IN_PATH, "/key")));
+			final var type = bb.getString(BBKey.of(BOT_IN_PATH, "/type"));
 			if ("integer".equals(type)) {
 				bb.putInteger(key, Integer.valueOf(input.getMessage()));
 			} else {
@@ -75,8 +75,8 @@ public class BotEngine {
 			}
 		}
 		// prepare exec
-		bb.delete(KeyPattern.ofRoot(BOT_IN_PATH));
-		bb.delete(KeyPattern.ofRoot(BOT_OUT_PATH));
+		bb.delete(BBKeyPattern.ofRoot(BOT_IN_PATH));
+		bb.delete(BBKeyPattern.ofRoot(BOT_OUT_PATH));
 
 		// resolve topic
 		final var topic = Optional.ofNullable(bb.getString(BOT_TOPIC_PATH)).map(topicDefinitionMap::get)
@@ -88,7 +88,7 @@ public class BotEngine {
 		// clean
 		if (status.isSucceeded()) {
 			// topic ended, clear curent topic in bb
-			bb.delete(KeyPattern.of(BOT_TOPIC_PATH.getKey()));
+			bb.delete(BBKeyPattern.of(BOT_TOPIC_PATH.key()));
 		}
 
 		if (status == BTStatus.Running) {

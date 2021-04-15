@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import io.vertigo.ai.bb.BBKey;
+import io.vertigo.ai.bb.BBKeyPattern;
+import io.vertigo.ai.bb.BBKeyTemplate;
 import io.vertigo.ai.bb.BlackBoard;
-import io.vertigo.ai.bb.KeyPattern;
-import io.vertigo.ai.bb.KeyTemplate;
 import io.vertigo.ai.bt.BTCondition;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
@@ -28,63 +29,63 @@ public class BotNodeProvider {
 
 	public BTNode set(final String keyTemplate, final int value) {
 		return () -> {
-			bb.putInteger(bb.eval(KeyTemplate.of(keyTemplate)), value);
+			bb.putInteger(bb.eval(BBKeyTemplate.of(keyTemplate)), value);
 			return BTStatus.Succeeded;
 		};
 	}
 
 	public BTNode copy(final String sourceKeyTemplate, final String targetKeyTemplate) {
 		return () -> {
-			bb.putString(bb.eval(KeyTemplate.of(targetKeyTemplate)), bb.getString(bb.eval(KeyTemplate.of(sourceKeyTemplate))));
+			bb.putString(bb.eval(BBKeyTemplate.of(targetKeyTemplate)), bb.getString(bb.eval(BBKeyTemplate.of(sourceKeyTemplate))));
 			return BTStatus.Succeeded;
 		};
 	}
 
 	public BTNode set(final String keyTemplate, final String value) {
 		return () -> {
-			bb.putString(bb.eval(KeyTemplate.of(keyTemplate)), value);
+			bb.putString(bb.eval(BBKeyTemplate.of(keyTemplate)), value);
 			return BTStatus.Succeeded;
 		};
 	}
 
 	public BTNode incr(final String keyTemplate) {
 		return () -> {
-			bb.incr(bb.eval(KeyTemplate.of(keyTemplate)));
+			bb.incr(bb.eval(BBKeyTemplate.of(keyTemplate)));
 			return BTStatus.Succeeded;
 		};
 	}
 
 	public BTNode incrBy(final String keyTemplate, final int value) {
 		return () -> {
-			bb.incrBy(bb.eval(KeyTemplate.of(keyTemplate)), value);
+			bb.incrBy(bb.eval(BBKeyTemplate.of(keyTemplate)), value);
 			return BTStatus.Succeeded;
 		};
 	}
 
 	public BTNode decr(final String keyTemplate) {
 		return () -> {
-			bb.decr(bb.eval(KeyTemplate.of(keyTemplate)));
+			bb.decr(bb.eval(BBKeyTemplate.of(keyTemplate)));
 			return BTStatus.Succeeded;
 		};
 	}
 
 	public BTNode append(final String keyTemplate, final String something) {
 		return () -> {
-			bb.append(bb.eval(KeyTemplate.of(keyTemplate)), something);
+			bb.append(bb.eval(BBKeyTemplate.of(keyTemplate)), something);
 			return BTStatus.Succeeded;
 		};
 	}
 
 	public BTNode remove(final String keyPattern) {
 		return () -> {
-			bb.delete(KeyPattern.of(keyPattern));
+			bb.delete(BBKeyPattern.of(keyPattern));
 			return BTStatus.Succeeded;
 		};
 	}
 
 	public BTNode removeAll() {
 		return () -> {
-			bb.delete(KeyPattern.of("*"));
+			bb.delete(BBKeyPattern.of("*"));
 			return BTStatus.Succeeded;
 		};
 	}
@@ -104,8 +105,8 @@ public class BotNodeProvider {
 	private BTNode queryString(final String keyTemplate, final String question, final Predicate<String> validator) {
 		return () -> {
 			bb.listPush(BotEngine.BOT_RESPONSE_PATH, bb.format(question));
-			bb.putString(BotEngine.BOT_IN_PATH.subKey("/key"), keyTemplate);
-			bb.putString(BotEngine.BOT_IN_PATH.subKey("/type"), "string");
+			bb.putString(BBKey.of(BotEngine.BOT_IN_PATH, "/key"), keyTemplate);
+			bb.putString(BBKey.of(BotEngine.BOT_IN_PATH, "/type"), "string");
 			return BTStatus.Running;
 		};
 	}
@@ -113,18 +114,18 @@ public class BotNodeProvider {
 	private BTNode queryInteger(final String keyTemplate, final String question, final Predicate<String> validator) {
 		return () -> {
 			bb.listPush(BotEngine.BOT_RESPONSE_PATH, bb.format(question));
-			bb.putString(BotEngine.BOT_IN_PATH.subKey("/key"), keyTemplate);
-			bb.putString(BotEngine.BOT_IN_PATH.subKey("/type"), "integer");
+			bb.putString(BBKey.of(BotEngine.BOT_IN_PATH, "/key"), keyTemplate);
+			bb.putString(BBKey.of(BotEngine.BOT_IN_PATH, "/type"), "integer");
 			return BTStatus.Running;
 		};
 	}
 
 	public BTCondition fulfilled(final String keyTemplate) {
-		return condition(() -> bb.getString(bb.eval(KeyTemplate.of(keyTemplate))) != null);
+		return condition(() -> bb.getString(bb.eval(BBKeyTemplate.of(keyTemplate))) != null);
 	}
 
 	public BTCondition fulfilledInteger(final String keyTemplate) {
-		return condition(() -> bb.getInteger(bb.eval(KeyTemplate.of(keyTemplate))) != null);
+		return condition(() -> bb.getInteger(bb.eval(BBKeyTemplate.of(keyTemplate))) != null);
 	}
 
 	//2 args
@@ -170,45 +171,45 @@ public class BotNodeProvider {
 
 	// Integer
 	public BTCondition eq(final String keyTemplate, final Integer compare) {
-		return condition(() -> bb.eq(bb.eval(KeyTemplate.of(keyTemplate)), compare));
+		return condition(() -> bb.eq(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
 	}
 
 	public BTCondition eqIntegerByValue(final String keyTemplate, final String otherKeyTemplate) {
-		return condition(() -> bb.eq(bb.eval(KeyTemplate.of(keyTemplate)), bb.getInteger(bb.eval(KeyTemplate.of(otherKeyTemplate)))));
+		return condition(() -> bb.eq(bb.eval(BBKeyTemplate.of(keyTemplate)), bb.getInteger(bb.eval(BBKeyTemplate.of(otherKeyTemplate)))));
 	}
 
 	public BTCondition gt(final String keyTemplate, final Integer compare) {
-		return condition(() -> bb.gt(bb.eval(KeyTemplate.of(keyTemplate)), compare));
+		return condition(() -> bb.gt(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
 	}
 
 	public BTCondition lt(final String keyTemplate, final Integer compare) {
-		return condition(() -> bb.lt(bb.eval(KeyTemplate.of(keyTemplate)), compare));
+		return condition(() -> bb.lt(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
 	}
 
 	public BTCondition gtByValue(final String keyTemplate, final String compare) {
-		return condition(() -> bb.gt(bb.eval(KeyTemplate.of(keyTemplate)), bb.getInteger(bb.eval(KeyTemplate.of(compare)))));
+		return condition(() -> bb.gt(bb.eval(BBKeyTemplate.of(keyTemplate)), bb.getInteger(bb.eval(BBKeyTemplate.of(compare)))));
 	}
 
 	public BTCondition ltByValue(final String keyTemplate, final String compare) {
-		return condition(() -> bb.lt(bb.eval(KeyTemplate.of(keyTemplate)), bb.getInteger(bb.eval(KeyTemplate.of(compare)))));
+		return condition(() -> bb.lt(bb.eval(BBKeyTemplate.of(keyTemplate)), bb.getInteger(bb.eval(BBKeyTemplate.of(compare)))));
 	}
 
 	//String
 
 	public BTCondition eqByValue(final String keyTemplate, final String otherKeyTemplate) {
-		return condition(() -> bb.eq(bb.eval(KeyTemplate.of(keyTemplate)), bb.getString(bb.eval(KeyTemplate.of(otherKeyTemplate)))));
+		return condition(() -> bb.eq(bb.eval(BBKeyTemplate.of(keyTemplate)), bb.getString(bb.eval(BBKeyTemplate.of(otherKeyTemplate)))));
 	}
 
 	public BTCondition eq(final String keyTemplate, final String compare) {
-		return condition(() -> bb.eq(bb.eval(KeyTemplate.of(keyTemplate)), compare));
+		return condition(() -> bb.eq(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
 	}
 
 	public BTCondition eqCaseInsensitive(final String keyTemplate, final String compare) {
-		return condition(() -> bb.eqCaseInsensitive(bb.eval(KeyTemplate.of(keyTemplate)), compare));
+		return condition(() -> bb.eqCaseInsensitive(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
 	}
 
 	public BTCondition startsWith(final String keyTemplate, final String compare) {
-		return condition(() -> bb.startsWith(bb.eval(KeyTemplate.of(keyTemplate)), compare));
+		return condition(() -> bb.startsWith(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
 	}
 
 	public BotSwitch doSwitch(final String keyTemplate) {
