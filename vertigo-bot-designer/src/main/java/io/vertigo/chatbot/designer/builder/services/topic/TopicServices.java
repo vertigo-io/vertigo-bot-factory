@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.builder.services;
+package io.vertigo.chatbot.designer.builder.services.topic;
 
 import javax.inject.Inject;
 
@@ -9,6 +9,7 @@ import io.vertigo.chatbot.commons.dao.topic.TypeTopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
@@ -104,6 +105,10 @@ public class TopicServices implements Component {
 	
 	public DtList<TypeTopic> getAllTypeTopic() {
 		return typeTopicDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
+	}
+
+	public DtList<Topic> getTopicFromTopicCategory(final TopicCategory category) {
+		return topicDAO.getAllTopicFromCategory(category.getTopCatId());
 	}
 
 	//********* NTS part ********/

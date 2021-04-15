@@ -174,6 +174,53 @@ create Association AResponseButtonSmallTalkResponse {
 	roleB : "SmallTalkResponse"
 }
 
+/** Category **/
+
+create DtDefinition DtTopicCategory{
+	id topCatId 	{domain: DoId		label: "Topic category id"}
+	field label		{domain: DoLabel	label: "Topic category label" cardinality:"1"}
+	field level 	{domain: DoNumber	label: "Category level"}
+	field isEnabled	{domain: DoYesNo	label: "Enabled" cardinality:"1"}
+}
+
+create Association ATopicCategoryChatbot{
+	fkFieldName : "botId"
+    
+ 	dtDefinitionA : DtTopicCategory
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+	roleB : "Chatbot"
+	
+}
+
+create Association ATopicCategoryTopic{
+	fkFieldName : "topCatId"
+    
+ 	dtDefinitionA : DtTopic
+	type : "*>1"
+	dtDefinitionB : DtTopicCategory
+	
+	labelB : "Topic"
+	roleB : "Topic"
+	
+}
+
+
+create AssociationNN AnnTopicCategory{
+	tableName : "TOPIC_TOPIC_CATEGORY"
+
+	dtDefinitionA : DtTopic
+	dtDefinitionB : DtTopicCategory
+	navigabilityA : "true"
+	navigabilityB : "true"
+	roleA : "Topic"
+	labelA : "Topic"
+	roleB : "Category"
+	labelB : "Category"
+}
+
 
 /********** IHM **********/
 
@@ -182,6 +229,7 @@ create DtDefinition DtSmallTalkIhm {
 	field title		{domain: DoLabel	label: "SmallTalk label"}
 	field smtId		{domain: DoId		label: "SmallTalk id"	}
 	field isEnabled	{domain: DoYesNo	label: "Enabled"		}
+	field catLabel	{domain: DoLabel	label: "Category"		}
 }
 
 create DtDefinition DtNluTrainingExport {

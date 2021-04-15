@@ -34,11 +34,13 @@ import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.ResponseType;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
-import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
-import io.vertigo.chatbot.designer.builder.services.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
+import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.util.StringUtil;
@@ -68,6 +70,9 @@ public class SmallTalkDetailController extends AbstractBotController {
 	private static final ViewContextKey<ResponseButton> buttonsKey = ViewContextKey.of("buttons");
 	private static final ViewContextKey<Topic> topicListKey = ViewContextKey.of("topicList");
 
+	private static final ViewContextKey<TopicCategory> topicCategoryKey = ViewContextKey.of("topicCategory");
+	private static final ViewContextKey<TopicCategory> topicCategoryListKey = ViewContextKey.of("topicCategoryList");
+
 	@Inject
 	private SmallTalkServices smallTalkServices;
 
@@ -76,6 +81,9 @@ public class SmallTalkDetailController extends AbstractBotController {
 
 	@Inject
 	private TopicServices topicServices;
+
+	@Inject
+	private TopicCategoryServices topicCategoryServices;
 
 	@Inject
 	private ResponsesButtonServices responsesButtonServices;
@@ -106,6 +114,9 @@ public class SmallTalkDetailController extends AbstractBotController {
 		viewContext.publishDtListModifiable(buttonsKey, responsesButtonServices.getButtonsBySmalltalk(bot, smallTalk));
 		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 
+		viewContext.publishDto(topicCategoryKey, topicCategoryServices.getTopicCategoryById(topic.getTopCatId()));
+		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
+
 		toModeReadOnly();
 	}
 
@@ -130,9 +141,13 @@ public class SmallTalkDetailController extends AbstractBotController {
 		viewContext.publishDtListModifiable(buttonsKey, new DtList<>(ResponseButton.class));
 		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 
+		viewContext.publishDto(topicCategoryKey, new TopicCategory());
+		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
+
 		toModeCreate();
 	}
 
+	@Override
 	@PostMapping("/_edit")
 	public void doEdit() {
 		toModeEdit();

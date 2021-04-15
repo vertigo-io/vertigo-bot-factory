@@ -5,6 +5,7 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
+drop table IF EXISTS TOPIC_TOPIC_CATEGORY cascade;
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_NODE cascade;
@@ -30,6 +31,8 @@ drop table IF EXISTS SMALL_TALK cascade;
 drop sequence IF EXISTS SEQ_SMALL_TALK;
 drop table IF EXISTS TOPIC cascade;
 drop sequence IF EXISTS SEQ_TOPIC;
+drop table IF EXISTS TOPIC_CATEGORY cascade;
+drop sequence IF EXISTS SEQ_TOPIC_CATEGORY;
 drop table IF EXISTS TRAINING cascade;
 drop sequence IF EXISTS SEQ_TRAINING;
 drop table IF EXISTS TYPE_TOPIC cascade;
@@ -76,6 +79,9 @@ create sequence SEQ_SMALL_TALK
 	start with 1000 cache 20; 
 
 create sequence SEQ_TOPIC
+	start with 1000 cache 20; 
+
+create sequence SEQ_TOPIC_CATEGORY
 	start with 1000 cache 20; 
 
 create sequence SEQ_TRAINING
@@ -433,6 +439,7 @@ create table TOPIC
     IS_ENABLED  	 bool        	not null,
     TTO_CD      	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
+    TOP_CAT_ID  	 NUMERIC     	not null,
     constraint PK_TOPIC primary key (TOP_ID)
 );
 
@@ -452,6 +459,37 @@ comment on column TOPIC.TTO_CD is
 'Type du topic';
 
 comment on column TOPIC.BOT_ID is
+'Chatbot';
+
+comment on column TOPIC.TOP_CAT_ID is
+'Topic';
+
+-- ============================================================
+--   Table : TOPIC_CATEGORY                                        
+-- ============================================================
+create table TOPIC_CATEGORY
+(
+    TOP_CAT_ID  	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LEVEL       	 NUMERIC     	,
+    IS_ENABLED  	 bool        	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_TOPIC_CATEGORY primary key (TOP_CAT_ID)
+);
+
+comment on column TOPIC_CATEGORY.TOP_CAT_ID is
+'Topic category id';
+
+comment on column TOPIC_CATEGORY.LABEL is
+'Topic category label';
+
+comment on column TOPIC_CATEGORY.LEVEL is
+'Category level';
+
+comment on column TOPIC_CATEGORY.IS_ENABLED is
+'Enabled';
+
+comment on column TOPIC_CATEGORY.BOT_ID is
 'Chatbot';
 
 -- ============================================================
@@ -651,6 +689,18 @@ alter table UTTER_TEXT
 
 create index A_SMALL_TALK_UTTER_TEXT_SMALL_TALK_FK on UTTER_TEXT (SMT_ID asc);
 
+alter table TOPIC_CATEGORY
+	add constraint FK_A_TOPIC_CATEGORY_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_TOPIC_CATEGORY_CHATBOT_CHATBOT_FK on TOPIC_CATEGORY (BOT_ID asc);
+
+alter table TOPIC
+	add constraint FK_A_TOPIC_CATEGORY_TOPIC_TOPIC_CATEGORY foreign key (TOP_CAT_ID)
+	references TOPIC_CATEGORY (TOP_CAT_ID);
+
+create index A_TOPIC_CATEGORY_TOPIC_TOPIC_CATEGORY_FK on TOPIC (TOP_CAT_ID asc);
+
 alter table TOPIC
 	add constraint FK_A_TOPIC_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
@@ -681,4 +731,21 @@ alter table TRAINING
 
 create index A_TRAINING_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on TRAINING (FIL_ID_MODEL asc);
 
+
+create table TOPIC_TOPIC_CATEGORY
+(
+	TOP_ID      	 NUMERIC     	 not null,
+	TOP_CAT_ID  	 NUMERIC     	 not null,
+	constraint PK_TOPIC_TOPIC_CATEGORY primary key (TOP_ID, TOP_CAT_ID),
+	constraint FK_ANN_TOPIC_CATEGORY_TOPIC 
+		foreign key(TOP_ID)
+		references TOPIC (TOP_ID),
+	constraint FK_ANN_TOPIC_CATEGORY_TOPIC_CATEGORY 
+		foreign key(TOP_CAT_ID)
+		references TOPIC_CATEGORY (TOP_CAT_ID)
+);
+
+create index ANN_TOPIC_CATEGORY_TOPIC_FK on TOPIC_TOPIC_CATEGORY (TOP_ID asc);
+
+create index ANN_TOPIC_CATEGORY_TOPIC_CATEGORY_FK on TOPIC_TOPIC_CATEGORY (TOP_CAT_ID asc);
 

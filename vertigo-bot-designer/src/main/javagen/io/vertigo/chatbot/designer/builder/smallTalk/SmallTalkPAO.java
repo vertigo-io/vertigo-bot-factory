@@ -50,9 +50,11 @@ public final class SmallTalkPAO implements StoreServices {
 			request = "select smt.smt_id," + 
  "				   top.is_enabled," + 
  "				   top.top_id," + 
- "				   top.title" + 
+ "				   top.title," + 
+ "				   tpc.label as cat_Label" + 
  "			from topic top" + 
  "			join small_talk smt on (smt.top_id = top.top_id)" + 
+ "			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)" + 
  "			where top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtSmallTalkIhm")
