@@ -3,6 +3,7 @@ package io.vertigo.chatbot.commons.domain.topic;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
+import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 import io.vertigo.datamodel.structure.stereotype.Field;
@@ -50,6 +51,34 @@ public final class Topic implements Entity {
 			foreignLabel = "Topic",
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
+
+	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "ATopicCategoryTopic",
+			fkFieldName = "topCatId",
+			primaryDtDefinitionName = "DtTopicCategory",
+			primaryIsNavigable = true,
+			primaryRole = "Topic",
+			primaryLabel = "Topic",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtTopic",
+			foreignIsNavigable = false,
+			foreignRole = "Topic",
+			foreignLabel = "Topic",
+			foreignMultiplicity = "0..*")
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.TopicCategory> topCatIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.TopicCategory.class, "Topic");
+
+	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
+			name = "AnnTopicCategory",
+			tableName = "TOPIC_TOPIC_CATEGORY",
+			dtDefinitionA = "DtTopic",
+			dtDefinitionB = "DtTopicCategory",
+			navigabilityA = true,
+			navigabilityB = true,
+			roleA = "Topic",
+			roleB = "Category",
+			labelA = "Topic",
+			labelB = "Category")
+	private final StoreListVAccessor<io.vertigo.chatbot.commons.domain.topic.TopicCategory> categoryAccessor = new StoreListVAccessor<>(this, "AnnTopicCategory", "Category");
 
 	/** {@inheritDoc} */
 	@Override
@@ -170,6 +199,33 @@ public final class Topic implements Entity {
 	public void setBotId(final Long botId) {
 		botIdAccessor.setId(botId);
 	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Topic'.
+	 * @return Long topCatId <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Topic", fkDefinition = "DtTopicCategory" )
+	public Long getTopCatId() {
+		return (Long) topCatIdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Topic'.
+	 * @param topCatId Long <b>Obligatoire</b>
+	 */
+	public void setTopCatId(final Long topCatId) {
+		topCatIdAccessor.setId(topCatId);
+	}
+
+ 	/**
+	 * Association : Topic.
+	 * @return l'accesseur vers la propriété 'Topic'
+	 */
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.TopicCategory> topic() {
+		return topCatIdAccessor;
+	}
 
  	/**
 	 * Association : Chatbot.
@@ -185,6 +241,14 @@ public final class Topic implements Entity {
 	 */
 	public EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.topic.TypeTopic, io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum> typeTopic() {
 		return ttoCdAccessor;
+	}
+
+	/**
+	 * Association : Category.
+	 * @return l'accesseur vers la propriété 'Category'
+	 */
+	public StoreListVAccessor<io.vertigo.chatbot.commons.domain.topic.TopicCategory> category() {
+		return categoryAccessor;
 	}
 	
 	/** {@inheritDoc} */

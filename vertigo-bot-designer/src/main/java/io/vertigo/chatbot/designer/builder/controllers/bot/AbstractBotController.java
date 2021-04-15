@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotAuthorizations;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -43,4 +44,8 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 		return chatbotServices.getNoAvatar();
 	}
 
+	@PostMapping("/_edit")
+	public void doEdit() {
+		toModeEdit();
+	}
 }

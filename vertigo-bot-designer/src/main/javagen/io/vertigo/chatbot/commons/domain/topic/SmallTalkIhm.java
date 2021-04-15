@@ -17,6 +17,7 @@ public final class SmallTalkIhm implements DtObject {
 	private String title;
 	private Long smtId;
 	private Boolean isEnabled;
+	private String catLabel;
 	
 	/**
 	 * Champ : DATA.
@@ -92,6 +93,25 @@ public final class SmallTalkIhm implements DtObject {
 	 */
 	public void setIsEnabled(final Boolean isEnabled) {
 		this.isEnabled = isEnabled;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Category'.
+	 * @return String catLabel
+	 */
+	@Field(smartType = "STyLabel", label = "Category")
+	public String getCatLabel() {
+		return catLabel;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Category'.
+	 * @param catLabel String
+	 */
+	public void setCatLabel(final String catLabel) {
+		this.catLabel = catLabel;
 	}
 	
 	/** {@inheritDoc} */

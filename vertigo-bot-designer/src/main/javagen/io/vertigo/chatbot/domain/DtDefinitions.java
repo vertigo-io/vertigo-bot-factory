@@ -73,6 +73,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Topic(io.vertigo.chatbot.commons.domain.topic.Topic.class),
 		/** Objet de données TopicIhm. */
 		TopicIhm(io.vertigo.chatbot.commons.domain.topic.TopicIhm.class),
+		/** Objet de données TopicCategory. */
+		TopicCategory(io.vertigo.chatbot.commons.domain.topic.TopicCategory.class),
 		/** Objet de données TrainerInfo. */
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
@@ -425,7 +427,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'SmallTalk id'. */
 		smtId,
 		/** Propriété 'Enabled'. */
-		isEnabled	}
+		isEnabled,
+		/** Propriété 'Category'. */
+		catLabel	}
 
 	/**
 	 * Enumération des champs de StatCriteria.
@@ -463,6 +467,23 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isEnabled,
 		/** Propriété 'Type du topic'. */
 		ttoCd,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Topic'. */
+		topCatId	}
+
+	/**
+	 * Enumération des champs de TopicCategory.
+	 */
+	public enum TopicCategoryFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.TopicCategory> {
+		/** Propriété 'Topic category id'. */
+		topCatId,
+		/** Propriété 'Topic category label'. */
+		label,
+		/** Propriété 'Category level'. */
+		level,
+		/** Propriété 'Enabled'. */
+		isEnabled,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

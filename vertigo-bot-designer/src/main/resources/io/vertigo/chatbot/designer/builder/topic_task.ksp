@@ -11,6 +11,19 @@ create Task TkRemoveAllNluTrainingSentenceByBotId {
 	in botId  				{domain : DoId         		cardinality : "1"  }
 }
 
+create Task TkGetAllTopicFromCategory {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select top.*
+			from topic top
+			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)
+			where tpc.top_cat_id = #topCatId#
+             "
+	in topCatId				{domain : DoId,						cardinality:"1"} 
+	out tpcs 				{domain : DoDtTopic		 			cardinality:"*"}
+} 
+
+
 create Task TkRemoveAllTopicsFromBot {
     className : "io.vertigo.basics.task.TaskEngineProc"
     request : "
