@@ -14,10 +14,11 @@ import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTCondition;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
+import io.vertigo.ai.bt.BtNodeProvider;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.util.StringUtil;
 
-public class BotNodeProvider {
+public class BotNodeProvider implements BtNodeProvider {
 	private final BlackBoard bb;
 
 	public BotNodeProvider(final BlackBoard blackBoard) {
@@ -155,6 +156,7 @@ public class BotNodeProvider {
 		return inputInteger(keyTemplate, question, buildChoices(choice, otherChoices));
 	}
 
+	@Deprecated
 	public BTNode display(final String msg) {
 		return () -> {
 			System.out.println(bb.format(msg));
