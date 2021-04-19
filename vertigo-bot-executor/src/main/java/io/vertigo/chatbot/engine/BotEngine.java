@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.engine;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -59,10 +60,6 @@ public class BotEngine {
 		this.nluManager = nluManager;
 	}
 
-	public BotNodeProvider getBotNodeProvider() {
-		return new BotNodeProvider(bb);
-	}
-
 	public BotResponse runTick(final BotInput input) {
 		// set IN
 		if (input.getMessage() != null) { // TODO find a better switch
@@ -83,7 +80,7 @@ public class BotEngine {
 				.orElseGet(this::resolveNewTopic); // if no current topic
 
 		// exec
-		final var status = behaviorTreeManager.run(topic.getBtRoot(bb));
+		final var status = behaviorTreeManager.run(topic.getBtRoot(List.of(bb)));
 
 		// clean
 		if (status.isSucceeded()) {
@@ -91,17 +88,14 @@ public class BotEngine {
 			bb.delete(BBKeyPattern.of(BOT_TOPIC_PATH.key()));
 		}
 
-		if (status == BTStatus.Running) {
-			// build response
-			final var botResponseBuilder = new BotResponseBuilder(BotStatus.Talking);
-			for (int i = 0; i < bb.listSize(BOT_RESPONSE_PATH); i++) {
-				botResponseBuilder.addMessage(bb.listGet(BOT_RESPONSE_PATH, i));
-			}
-
-			return botResponseBuilder.build();
+		// build response
+		final var botStatus = status == BTStatus.Running ? BotStatus.Talking : BotStatus.Ended;
+		final var botResponseBuilder = new BotResponseBuilder(botStatus);
+		for (int i = 0; i < bb.listSize(BOT_RESPONSE_PATH); i++) {
+			botResponseBuilder.addMessage(bb.listGet(BOT_RESPONSE_PATH, i));
 		}
-		return new BotResponseBuilder(BotStatus.Ended).build();
 
+		return botResponseBuilder.build();
 		/*
 				userResponseOpt.ifPresent(response -> {
 					final var key = blackBoard.getString("bot/response");

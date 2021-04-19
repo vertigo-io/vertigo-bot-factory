@@ -26,11 +26,11 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.vertigo.ai.bt.parser.BtCommandManager;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.engine.BotManager;
-import io.vertigo.chatbot.engine.BotTextParser;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
@@ -45,19 +45,22 @@ public class ExecutorManager implements Manager, Activeable {
 
 	private final ExecutorConfigManager executorConfigManager;
 	private final BotManager botManager;
+	private final BtCommandManager btCommandManager;
 
 	@Inject
 	public ExecutorManager(
 			final ExecutorConfigManager executorConfigManager,
-			final BotManager botManager) {
+			final BotManager botManager,
+			final BtCommandManager btCommandManager) {
 
 		Assertion.check()
 				.isNotNull(executorConfigManager)
-				.isNotNull(botManager);
+				.isNotNull(botManager)
+				.isNotNull(btCommandManager);
 		//--
 		this.executorConfigManager = executorConfigManager;
 		this.botManager = botManager;
-
+		this.btCommandManager = btCommandManager;
 	}
 
 	@Override
@@ -91,7 +94,7 @@ public class ExecutorManager implements Manager, Activeable {
 
 		// TODO : start / fallback
 		for (final TopicExport topic : botExport.getTopics()) {
-			topics.add(TopicDefinition.of(topic.getName(), bb -> BotTextParser.stringToBTRoot(bb, topic.getTopicBT()), topic.getNluTrainingSentences(), 0.6));
+			topics.add(TopicDefinition.of(topic.getName(), btCommandManager.parse(topic.getTopicBT()), topic.getNluTrainingSentences(), 0.6));
 		}
 
 		botManager.updateConfig(topics);

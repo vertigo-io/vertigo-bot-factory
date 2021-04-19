@@ -11,12 +11,14 @@ import java.util.Scanner;
 import javax.inject.Inject;
 
 import io.vertigo.ai.AiFeatures;
+import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.commons.CommonsFeatures;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.config.ModuleConfig;
 import io.vertigo.core.node.config.NodeConfig;
@@ -46,7 +48,8 @@ public class SampleBot {
 	void runInConsole() {
 		// create or parse or retrieve the brain
 		final List<TopicDefinition> topics = new ArrayList<>();
-		topics.add(TopicDefinition.ofWithBotNodeProvider("START", botNodeProvider -> {
+		topics.add(TopicDefinition.of("START", params -> {
+			final BotNodeProvider botNodeProvider = getNodeProvider(params);
 			return sequence(
 					//botNodeProvider.say("It works"),
 					botNodeProvider.inputString("u/name", "Hello I'm Alan what is your name ?"),
@@ -71,6 +74,16 @@ public class SampleBot {
 		}
 		sc.close();
 		System.out.println(">> end ***********************");
+	}
+
+	private static BotNodeProvider getNodeProvider(final List<Object> params) {
+		final var blackBoard = params.stream()
+				.filter(o -> o instanceof BlackBoard)
+				.map(o -> (BlackBoard) o)
+				.findFirst()
+				.orElseThrow(() -> new VSystemException("A BackBoard is needed in parameters."));
+
+		return new BotNodeProvider(blackBoard);
 	}
 
 	private static NodeConfig buildNodeConfig() {

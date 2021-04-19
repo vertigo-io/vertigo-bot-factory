@@ -7,7 +7,6 @@ import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.impl.bt.parser.BtCommand;
 import io.vertigo.ai.impl.bt.parser.SimpleBtCommandParserPlugin;
-import io.vertigo.chatbot.engine.BotCase;
 import io.vertigo.chatbot.engine.BotNodeProvider;
 import io.vertigo.chatbot.engine.BotSwitch;
 import io.vertigo.core.lang.VSystemException;
@@ -41,7 +40,8 @@ public class BotBtCommandParserPlugin extends SimpleBtCommandParserPlugin<BotNod
 		registerBasicCommand("append", (c, p) -> p.append(c.getStringParam(0), c.getStringParam(1)));
 		registerBasicCommand("remove", (c, p) -> p.remove(c.getStringParam(0)));
 		registerBasicCommand("say", (c, p) -> p.say(c.getStringParam(0)));
-		registerBasicCommand("eq", (c, p) -> p.eq(c.getStringParam(0), c.getIntParam(1)));
+		registerBasicCommand("eqInt", (c, p) -> p.eq(c.getStringParam(0), c.getIntParam(1)));
+		registerBasicCommand("eq", (c, p) -> p.eq(c.getStringParam(0), c.getStringParam(1)));
 		registerBasicCommand("gt", (c, p) -> p.gt(c.getStringParam(0), c.getIntParam(1)));
 		registerBasicCommand("lt", (c, p) -> p.lt(c.getStringParam(0), c.getIntParam(1)));
 		registerBasicCommand("inputString", (c, p) -> {
@@ -54,6 +54,7 @@ public class BotBtCommandParserPlugin extends SimpleBtCommandParserPlugin<BotNod
 		registerBasicCommand("fulfilled", (c, p) -> p.fulfilled(c.getStringParam(0)));
 
 		registerCompositeCommand("switch", BotBtCommandParserPlugin::buildSwitchNode);
+		registerCompositeCommand("case", (c, p, l) -> new BotCase(c.getStringParam(0), l));
 	}
 
 	private static BTNode buildSwitchNode(final BtCommand command, final BotNodeProvider nodeProvider, final List<BTNode> childs) {
