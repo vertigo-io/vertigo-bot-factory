@@ -244,6 +244,7 @@ create DtDefinition DtTopicIhm {
 	field title		{domain: DoLabel	label: "Topic label"			}
 	field smtId		{domain: DoId		label: "SmallTalk id"			cardinality:"?"}
 	field sinId		{domain: DoId		label: "Script intention id"	cardinality:"?"}
+	field catLabel	{domain: DoLabel	label: "Category"				cardinality:"1"}
 	field isEnabled	{domain: DoYesNo	label: "Enabled"				}
 }
 

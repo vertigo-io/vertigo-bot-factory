@@ -74,7 +74,8 @@ public final class TopicCategoryDAO extends DAO<TopicCategory, java.lang.Long> i
 			name = "TkGetAllCategoriesByBotId",
 			request = "select tpc.*" + 
  "			from topic_category tpc" + 
- "			where tpc.bot_id = #botId#",
+ "			where tpc.bot_id = #botId#" + 
+ "			order by tpc.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicCategory")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicCategory> getAllCategoriesByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
