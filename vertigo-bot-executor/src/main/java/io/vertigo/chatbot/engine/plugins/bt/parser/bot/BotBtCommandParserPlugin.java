@@ -6,7 +6,7 @@ import java.util.List;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.impl.bt.parser.BtCommand;
-import io.vertigo.ai.impl.bt.parser.SimpleBtTextParserPlugin;
+import io.vertigo.ai.impl.bt.parser.SimpleBtCommandParserPlugin;
 import io.vertigo.chatbot.engine.BotCase;
 import io.vertigo.chatbot.engine.BotNodeProvider;
 import io.vertigo.chatbot.engine.BotSwitch;
@@ -17,7 +17,7 @@ import io.vertigo.core.lang.VSystemException;
  *
  * @author skerdudou
  */
-public class BotBtTextParserPlugin extends SimpleBtTextParserPlugin<BotNodeProvider> {
+public class BotBtCommandParserPlugin extends SimpleBtCommandParserPlugin<BotNodeProvider> {
 
 	@Override
 	public BotNodeProvider getNodeProvider(final List<Object> params) {
@@ -53,7 +53,7 @@ public class BotBtTextParserPlugin extends SimpleBtTextParserPlugin<BotNodeProvi
 		});
 		registerBasicCommand("fulfilled", (c, p) -> p.fulfilled(c.getStringParam(0)));
 
-		registerCompositeCommand("switch", BotBtTextParserPlugin::buildSwitchNode);
+		registerCompositeCommand("switch", BotBtCommandParserPlugin::buildSwitchNode);
 	}
 
 	private static BTNode buildSwitchNode(final BtCommand command, final BotNodeProvider nodeProvider, final List<BTNode> childs) {
