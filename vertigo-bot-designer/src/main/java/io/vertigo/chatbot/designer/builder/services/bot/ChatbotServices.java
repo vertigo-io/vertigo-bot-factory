@@ -18,6 +18,7 @@ import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
@@ -62,6 +63,9 @@ public class ChatbotServices implements Component {
 
 	@Inject
 	private NodeServices nodeServices;
+
+	@Inject
+	private TopicCategoryServices topicCategoryServices;
 
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 			final UtterText defaultText, final DtList<ResponseButton> defaultButtons,
@@ -121,6 +125,7 @@ public class ChatbotServices implements Component {
 		topicServices.removeAllNTSFromBot(bot);
 		smallTalkServices.removeAllSmallTalkFromBot(bot);
 		topicServices.removeAllTopicsFromBot(bot);
+		topicCategoryServices.removeAllCategoryByBot(bot);
 
 		chatbotProfilServices.deleteAllProfilByBot(bot);
 		chatbotDAO.delete(bot.getBotId());

@@ -114,7 +114,7 @@ public class SmallTalkDetailController extends AbstractBotController {
 		viewContext.publishDtListModifiable(buttonsKey, responsesButtonServices.getButtonsBySmalltalk(bot, smallTalk));
 		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 
-		viewContext.publishDto(topicCategoryKey, topicCategoryServices.getTopicCategoryById(topic.getTopCatId()));
+		viewContext.publishDto(topicCategoryKey, topicCategoryServices.getTopicCategoryById(bot, topic.getTopCatId()));
 		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
 
 		toModeReadOnly();
@@ -181,7 +181,7 @@ public class SmallTalkDetailController extends AbstractBotController {
 	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("smallTalk") final SmallTalk smallTalk,
 			@ViewAttribute("topic") final Topic topic) {
 		smallTalkServices.deleteSmallTalk(chatbot, smallTalk, topic);
-		return "redirect:/bot/" + topic.getBotId() + "/smallTalks/";
+		return "redirect:/bot/" + topic.getBotId() + "/topics/";
 	}
 
 	@PostMapping("/_addTrainingSentence")

@@ -71,10 +71,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TopIntent(io.vertigo.chatbot.designer.domain.TopIntent.class),
 		/** Objet de données Topic. */
 		Topic(io.vertigo.chatbot.commons.domain.topic.Topic.class),
-		/** Objet de données TopicIhm. */
-		TopicIhm(io.vertigo.chatbot.commons.domain.topic.TopicIhm.class),
 		/** Objet de données TopicCategory. */
 		TopicCategory(io.vertigo.chatbot.commons.domain.topic.TopicCategory.class),
+		/** Objet de données TopicIhm. */
+		TopicIhm(io.vertigo.chatbot.commons.domain.topic.TopicIhm.class),
 		/** Objet de données TrainerInfo. */
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
@@ -501,6 +501,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		smtId,
 		/** Propriété 'Script intention id'. */
 		sinId,
+		/** Propriété 'Category'. */
+		catLabel,
 		/** Propriété 'Enabled'. */
 		isEnabled	}
 

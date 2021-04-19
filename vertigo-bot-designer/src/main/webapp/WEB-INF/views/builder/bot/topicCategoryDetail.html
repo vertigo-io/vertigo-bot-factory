@@ -34,23 +34,6 @@
 					<q-toggle v-model="vueData.topicCategory.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
 				</vu:label>
 			</vu:block>
-			<vu:block id="add" title="add topic" th:if="${model.modeEdit || model.modeCreate}">
-				<vu-include-data object="addTopics" field="'*'" />
-				<vu-include-data object="notAssociatedTopics" field="'*'" />
-				<q-select 
-					filled
-					v-model="vueData.addTopics"
-					map-options
-					emit-value
-					multiple
-					:options="transformListForSelection('notAssociatedTopics', 'topId', 'title')"
-					use-chips
-					label="Topic list"
-					stack-label>
-				</q-select>
-
-				<input v-for="id in vueData.addTopics" type="hidden" name="vContext[addTopics]" :value="id" />
-			</vu:block>
 			
 			<vu:table list="topics" componentId="topicsList" sortBy="title" :binary-state-sort="true">
 					<vu:include-data object="topics" field="topId" />

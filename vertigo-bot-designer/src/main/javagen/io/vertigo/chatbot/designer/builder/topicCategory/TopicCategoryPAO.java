@@ -59,6 +59,22 @@ public final class TopicCategoryPAO implements StoreServices {
 		getTaskManager().execute(task);
 	}
 
+	/**
+	 * Execute la tache TkRemoveAllCategoryByBotId.
+	 * @param botId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveAllCategoryByBotId",
+			request = "delete from topic_category" + 
+ "			where bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeAllCategoryByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkRemoveAllCategoryByBotId")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
 	private TaskManager getTaskManager() {
 		return taskManager;
 	}
