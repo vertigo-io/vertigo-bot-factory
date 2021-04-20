@@ -42,6 +42,7 @@ create Task TkGetAllTopicsIhmFromBot {
 					sin.sin_id,
 					top.is_enabled,
 					tto.label as type,
+					top.tto_cd,
 					tpc.label as cat_label
 			from topic top 
 			left join small_talk smt on smt.top_id = top.top_id
@@ -52,5 +53,26 @@ create Task TkGetAllTopicsIhmFromBot {
              "
 	in botId  				{domain : DoId         		cardinality : "1"  }
 	out topicIHM			{domain : DoDtTopicIhm,		cardinality : "*"  } 
+}
+
+create Task TkGetTopicIhmById {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	top.top_id,
+					top.title,
+					smt.smt_id,
+					sin.sin_id,
+					top.is_enabled,
+					tto.label as type,
+					top.tto_cd
+			from topic top 
+			left join small_talk smt on smt.top_id = top.top_id
+			left join script_intention sin on sin.top_id = top.top_id
+			join type_topic tto on top.tto_cd = tto.tto_cd
+			where top.top_id = #topId#
+			LIMIT 1
+             "
+	in topId  				{domain : DoId         		cardinality : "1"  }
+	out topicIHM			{domain : DoDtTopicIhm,		cardinality : "1"  } 
 }
 

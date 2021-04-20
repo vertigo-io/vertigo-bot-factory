@@ -27,10 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.designer.builder.services.TypeTopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicIhmFields;
 import io.vertigo.core.lang.VUserException;
@@ -43,27 +43,32 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 @Secured("BotUser")
 public class TopicsListController extends AbstractBotController {
 
-	private static final ViewContextKey<TopicIhm> topicKey = ViewContextKey.of("topics");
-	private static final ViewContextKey<Topic> newTopicKey = ViewContextKey.of("newTopic");
+	private static final ViewContextKey<TopicIhm> topicIhmListKey = ViewContextKey.of("topicsIhm");
 	// All the topic types
 	private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
 	// return of the select
 	private static final ViewContextKey<String> selectionList = ViewContextKey.of("selectionList");
+	private static final ViewContextKey<String> topIdDetail = ViewContextKey.of("topIdDetail");
 	@Inject
 	private TopicServices topicServices;
+	@Inject
+	private TypeTopicServices typeTopicServices;
 
 	@GetMapping("/")
+	@Secured("BotUser")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
-		viewContext.publishDtList(topicKey, TopicIhmFields.topId, topicServices.getAllTopicIhmByBot(bot));
-		viewContext.publishDtListModifiable(typeTopicListKey, topicServices.getAllTypeTopic());
+		viewContext.publishDtList(topicIhmListKey, TopicIhmFields.topId, topicServices.getAllTopicIhmByBot(bot));
+		viewContext.publishDtListModifiable(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 
 		viewContext.publishRef(selectionList, "");
+		viewContext.publishRef(topIdDetail, "");
 		//		viewContext.publishRef(botIdKey, botId);
 		toModeReadOnly();
 	}
 
 	@PostMapping("/createTopic")
+	@Secured("BotAdm")
 	public String doCreateTopic(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, @ViewAttribute("selectionList") final String ttoCd) {
 		if (ttoCd.isEmpty()) {
 			throw new VUserException("Choose a type of topic");

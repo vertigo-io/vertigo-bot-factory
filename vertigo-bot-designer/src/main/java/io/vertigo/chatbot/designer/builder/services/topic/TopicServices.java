@@ -5,13 +5,11 @@ import javax.inject.Inject;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
-import io.vertigo.chatbot.commons.dao.topic.TypeTopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
-import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
@@ -32,23 +30,24 @@ public class TopicServices implements Component {
 
 	@Inject
 	private TopicPAO topicPAO;
-	
-	@Inject
-	private TypeTopicDAO typeTopicDAO;
-	
 
 	@Inject
 	private NluTrainingSentenceDAO nluTrainingSentenceDAO;
 
-	public Topic findTopicById(final Long id) {
+	public Topic findTopicById(@SecuredOperation("botVisitor") final Long id) {
 		return topicDAO.get(id);
+	}
+
+	public TopicIhm findTopicIhmById(@SecuredOperation("botVisitor") final Long id) {
+		return topicPAO.getTopicIhmById(id);
 	}
 
 	public Topic save(final Topic topic) {
 		return topicDAO.save(topic);
 	}
 
-	public Topic save(final Topic topic, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
+	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences,
+			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
 		// save and remove NTS
 		final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences);
@@ -58,11 +57,11 @@ public class TopicServices implements Component {
 		return topicDAO.save(topic);
 	}
 
-	public Topic createTopic(final Topic topic) {
+	public Topic createTopic(@SecuredOperation("botContributor") final Topic topic) {
 		return topicDAO.create(topic);
 	}
 
-	public Topic createTopic(final String title, final String ttoCd, final String description, final Boolean isEnabled) {
+	public Topic createTopic(@SecuredOperation("botContributor") final String title, final String ttoCd, final String description, final Boolean isEnabled) {
 		final Topic toCreate = new Topic();
 		toCreate.setTitle(title);
 		toCreate.setTtoCd(ttoCd);
@@ -71,14 +70,14 @@ public class TopicServices implements Component {
 		return topicDAO.create(toCreate);
 	}
 
-	public Topic getNewTopic(final Chatbot bot) {
+	public Topic getNewTopic(@SecuredOperation("botContributor") final Chatbot bot) {
 		final Topic topic = new Topic();
 		topic.setBotId(bot.getBotId());
 		topic.setIsEnabled(true);
 		return topic;
 	}
 
-	public void deleteTopic(final Chatbot bot, final Topic topic) {
+	public void deleteTopic(@SecuredOperation("botContributor") final Chatbot bot, final Topic topic) {
 		// delete sub elements
 		for (final NluTrainingSentence its : getNluTrainingSentenceByTopic(bot, topic)) {
 			nluTrainingSentenceDAO.delete(its.getUID());
@@ -87,24 +86,20 @@ public class TopicServices implements Component {
 		topicDAO.delete(topic.getTopId());
 	}
 
-	public DtList<Topic> getAllTopicByBot(final Chatbot bot) {
+	public DtList<Topic> getAllTopicByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, bot.getBotId()), DtListState.of(1000));
 	}
 
-	public DtList<TopicIhm> getAllTopicIhmByBot(final Chatbot bot) {
+	public DtList<TopicIhm> getAllTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId());
 	}
-	
-	public DtList<Topic> getAllTopicEnableByBot(final Chatbot bot) {
+
+	public DtList<Topic> getAllTopicEnableByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, bot.getBotId()).and(Criterions.isEqualTo(TopicFields.isEnabled, true)), DtListState.of(1000));
 	}
 
-	public void removeAllTopicsFromBot(final Chatbot bot) {
+	public void removeAllTopicsFromBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		topicPAO.removeAllTopicsFromBot(bot.getBotId());
-	}
-	
-	public DtList<TypeTopic> getAllTypeTopic() {
-		return typeTopicDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
 	}
 
 	public DtList<Topic> getTopicFromTopicCategory(final TopicCategory category) {

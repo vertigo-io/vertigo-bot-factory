@@ -44,10 +44,10 @@ public class SmallTalkServices implements Component {
 	@Inject
 	private SmallTalkPAO smallTalkPAO;
 
-	public SmallTalk getSmallTalkById(@SecuredOperation("botVisitor") final Chatbot bot, final Long movId) {
-		Assertion.check().isNotNull(movId);
+	public SmallTalk getSmallTalkById(@SecuredOperation("botVisitor") final Chatbot bot, final Long smtId) {
+		Assertion.check().isNotNull(smtId);
 		// ---
-		return smallTalkDAO.get(movId);
+		return smallTalkDAO.get(smtId);
 	}
 
 	public SmallTalk getNewSmallTalk(@SecuredOperation("botAdm") final Chatbot bot) {

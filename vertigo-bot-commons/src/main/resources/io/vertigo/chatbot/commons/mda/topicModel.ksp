@@ -240,6 +240,7 @@ create DtDefinition DtNluTrainingExport {
 
 create DtDefinition DtTopicIhm {
 	field topId		{domain: DoId		label: "Topic id"				cardinality:"1"}
+	field ttoCd		{domain: DoCode		label: "Code Type"				cardinality:"?"}
 	field type		{domain: DoLabel	label: "Type"					cardinality:"?"}
 	field title		{domain: DoLabel	label: "Topic label"			}
 	field smtId		{domain: DoId		label: "SmallTalk id"			cardinality:"?"}

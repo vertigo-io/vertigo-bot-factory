@@ -14,6 +14,7 @@ public final class TopicIhm implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private Long topId;
+	private String ttoCd;
 	private String type;
 	private String title;
 	private Long smtId;
@@ -38,6 +39,25 @@ public final class TopicIhm implements DtObject {
 	 */
 	public void setTopId(final Long topId) {
 		this.topId = topId;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Code Type'.
+	 * @return String ttoCd
+	 */
+	@Field(smartType = "STyCode", label = "Code Type")
+	public String getTtoCd() {
+		return ttoCd;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Code Type'.
+	 * @param ttoCd String
+	 */
+	public void setTtoCd(final String ttoCd) {
+		this.ttoCd = ttoCd;
 	}
 	
 	/**

@@ -29,9 +29,9 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.builder.services.ScriptIntentionServices;
-import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.ui.core.ViewContext;
@@ -47,19 +47,20 @@ public class ScriptIntentionDetailController extends AbstractBotController {
 	private static final ViewContextKey<ScriptIntention> scriptIntentionKey = ViewContextKey.of("scriptIntention");
 	private static final ViewContextKey<Topic> topicKey = ViewContextKey.of("topic");
 
-	@Inject
-	private ScriptIntentionServices scriptIntentionServices;
+	private static final ViewContextKey<TopicCategory> topicCategoryKey = ViewContextKey.of("topicCategory");
+	private static final ViewContextKey<TopicCategory> topicCategoryListKey = ViewContextKey.of("topicCategoryList");
 
 	@Inject
-	private UtterTextServices utterTextServices;
+	private ScriptIntentionServices scriptIntentionServices;
 
 	@Inject
 	private TopicServices topicServices;
 
 	@Inject
-	private ResponsesButtonServices responsesButtonServices;
+	private TopicCategoryServices topicCategoryServices;
 
 	@GetMapping("/{intId}")
+	@Secured("BotAdm")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId,
 			@PathVariable("intId") final Long intId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
@@ -71,26 +72,34 @@ public class ScriptIntentionDetailController extends AbstractBotController {
 		viewContext.publishDto(scriptIntentionKey, scriptIntention);
 		viewContext.publishDto(topicKey, topic);
 
+		viewContext.publishDto(topicCategoryKey, topicCategoryServices.getTopicCategoryById(bot, topic.getTopCatId()));
+		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
+
 		toModeReadOnly();
 	}
 
 	@GetMapping("/new")
+	@Secured("BotAdm")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
 
 		viewContext.publishDto(scriptIntentionKey, scriptIntentionServices.getNewScriptIntention(bot));
 		viewContext.publishDto(topicKey, topicServices.getNewTopic(bot));
 
+		viewContext.publishDto(topicCategoryKey, new TopicCategory());
+		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
+
 		toModeCreate();
 	}
 
-	@Override
 	@PostMapping("/_edit")
+	@Secured("BotAdm")
 	public void doEdit() {
 		toModeEdit();
 	}
 
 	@PostMapping("/_save")
+	@Secured("BotAdm")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("scriptIntention") final ScriptIntention scriptIntention,
 			@ViewAttribute("topic") final Topic topic,
@@ -101,10 +110,11 @@ public class ScriptIntentionDetailController extends AbstractBotController {
 	}
 
 	@PostMapping("/_delete")
+	@Secured("BotAdm")
 	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("scriptIntention") final ScriptIntention scriptIntention,
 			@ViewAttribute("topic") final Topic topic) {
 		scriptIntentionServices.deleteScriptIntention(chatbot, scriptIntention, topic);
-		return "redirect:/bot/" + topic.getBotId() + "/scriptIntentions/";
+		return "redirect:/bot/" + topic.getBotId() + "/topics/";
 	}
 
 }

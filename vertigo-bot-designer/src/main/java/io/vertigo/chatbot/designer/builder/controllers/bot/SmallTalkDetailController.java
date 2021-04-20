@@ -147,7 +147,6 @@ public class SmallTalkDetailController extends AbstractBotController {
 		toModeCreate();
 	}
 
-	@Override
 	@PostMapping("/_edit")
 	public void doEdit() {
 		toModeEdit();

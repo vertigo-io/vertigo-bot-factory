@@ -9,6 +9,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.designer.builder.scriptIntention.ScriptIntentionPAO;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.commons.transaction.Transactional;
@@ -35,7 +36,7 @@ public class ScriptIntentionServices implements Component {
 	@Inject
 	private ScriptIntentionPAO scriptIntentionPAO;
 
-	public ScriptIntention getScriptIntentionById(@SecuredOperation("botVisitor") final Chatbot bot, final Long sinId) {
+	public ScriptIntention getScriptIntentionById(@SecuredOperation("botAdm") final Chatbot bot, final Long sinId) {
 		Assertion.check().isNotNull(sinId);
 		// ---
 		return scriptIntentionDAO.get(sinId);
@@ -46,11 +47,12 @@ public class ScriptIntentionServices implements Component {
 		return scriptIntention;
 	}
 
-	public ScriptIntention saveScriptIntention(@SecuredOperation("botContributor") final Chatbot chatbot, final ScriptIntention scriptIntention,
+	public ScriptIntention saveScriptIntention(@SecuredOperation("botAdm") final Chatbot chatbot, final ScriptIntention scriptIntention,
 			final Topic topic) {
 
 		Assertion.check().isNotNull(scriptIntention);
 		// ---
+		topic.setTtoCd(TypeTopicEnum.SCRIPTINTENTION.name());
 		final Topic savedTopic = topicServices.save(topic);
 		scriptIntention.setTopId(savedTopic.getTopId());
 		final ScriptIntention savedSI = scriptIntentionDAO.save(scriptIntention);
@@ -58,7 +60,7 @@ public class ScriptIntentionServices implements Component {
 		return savedSI;
 	}
 
-	public void deleteScriptIntention(@SecuredOperation("botContributor") final Chatbot chatbot, final ScriptIntention scriptIntention, final Topic topic) {
+	public void deleteScriptIntention(@SecuredOperation("botAdm") final Chatbot chatbot, final ScriptIntention scriptIntention, final Topic topic) {
 
 		// delete scriptIntention
 		scriptIntentionDAO.delete(scriptIntention.getUID());
@@ -70,11 +72,11 @@ public class ScriptIntentionServices implements Component {
 		scriptIntentionPAO.removeAllScriptIntentionByBotId(bot.getBotId());
 	}
 
-	public DtList<ScriptIntention> getAllActiveScriptIntentionsByBot(final Chatbot bot) {
+	public DtList<ScriptIntention> getAllActiveScriptIntentionsByBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		return scriptIntentionDAO.getAllActiveScriptIntentionByBot(bot.getBotId());
 	}
 
-	public DtList<ScriptIntentionIhm> getScriptIntentionsIhmByBot(final Chatbot bot) {
+	public DtList<ScriptIntentionIhm> getScriptIntentionsIhmByBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		return scriptIntentionPAO.getScriptIntentionIHMByBot(bot.getBotId());
 	}
 

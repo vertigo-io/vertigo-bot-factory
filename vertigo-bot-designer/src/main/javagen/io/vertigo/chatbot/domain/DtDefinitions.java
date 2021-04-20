@@ -493,6 +493,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum TopicIhmFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.TopicIhm> {
 		/** Propriété 'Topic id'. */
 		topId,
+		/** Propriété 'Code Type'. */
+		ttoCd,
 		/** Propriété 'Type'. */
 		type,
 		/** Propriété 'Topic label'. */
