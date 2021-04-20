@@ -16,8 +16,8 @@ import io.vertigo.ai.bt.BTNode;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
-import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
+import io.vertigo.chatbot.engine.plugins.bt.command.bot.BtBotDriver;
 import io.vertigo.commons.CommonsFeatures;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.AutoCloseableNode;
@@ -50,13 +50,13 @@ public class SampleBot {
 		// create or parse or retrieve the brain
 		final List<TopicDefinition> topics = new ArrayList<>();
 		topics.add(TopicDefinition.of("START", params -> {
-			final BotNodeProvider botNodeProvider = getNodeProvider(params);
+			final BtBotDriver botDriver = getNodeProvider(params);
 			return sequence(
 					//botNodeProvider.say("It works"),
-					botNodeProvider.inputString("u/name", "Hello I'm Alan what is your name ?"),
+					botDriver.inputString("u/name", "Hello I'm Alan what is your name ?"),
 					//intents
-					main(botNodeProvider),
-					botNodeProvider.say("bye bye {{u/name}}"));
+					main(botDriver),
+					botDriver.say("bye bye {{u/name}}"));
 		}));
 		botManager.updateConfig(topics);
 
@@ -77,14 +77,14 @@ public class SampleBot {
 		System.out.println(">> end ***********************");
 	}
 
-	private static BotNodeProvider getNodeProvider(final List<Object> params) {
+	private static BtBotDriver getNodeProvider(final List<Object> params) {
 		final var blackBoard = params.stream()
 				.filter(o -> o instanceof BlackBoard)
 				.map(o -> (BlackBoard) o)
 				.findFirst()
 				.orElseThrow(() -> new VSystemException("A BackBoard is needed in parameters."));
 
-		return new BotNodeProvider(blackBoard);
+		return new BtBotDriver(blackBoard);
 	}
 
 	private static NodeConfig buildNodeConfig() {
@@ -103,32 +103,32 @@ public class SampleBot {
 				.build();
 	}
 
-	private static BTNode main(final BotNodeProvider botNodeProvider) {
+	private static BTNode main(final BtBotDriver botDriver) {
 		return selector(
-				botNodeProvider.eq("i/name", "X"),
+				botDriver.eq("i/name", "X"),
 				sequence(
 						//botEngine.clear("i/*"),
 						//botEngine.clear("rate/*"),
 						//						botEngine.fulfill("i/name", "Hi {{u/name}} please select [W]eather, [T]icket, [G]ame or e[X]it ?", "W", "G", "T", "X"),
-						botNodeProvider.inputString("i/name", "Hi {{u/name}} please select [W]eather, [X]icket, [G]ame or e[X]it ?", "W", "G", "X"),
+						botDriver.inputString("i/name", "Hi {{u/name}} please select [W]eather, [X]icket, [G]ame or e[X]it ?", "W", "G", "X"),
 						selector(
-								botNodeProvider.fulfilled("i/done"),
-								botNodeProvider.doSwitch("i/name")
-										.when("W", weather(botNodeProvider))
-										.when("G", game(botNodeProvider))
+								botDriver.fulfilled("i/done"),
+								botDriver.doSwitch("i/name")
+										.when("W", weather(botDriver))
+										.when("G", game(botDriver))
 										//								.when("T", ticket())
 										.build()),
-						rate(botNodeProvider),
-						botNodeProvider.remove("i/*"),
-						botNodeProvider.remove("rate/*")));
+						rate(botDriver),
+						botDriver.remove("i/*"),
+						botDriver.remove("rate/*")));
 	}
 
-	private static BTNode weather(final BotNodeProvider botNodeProvider) {
+	private static BTNode weather(final BtBotDriver botDriver) {
 		return sequence(
-				botNodeProvider.inputString("w/city", "Please choose a city"),
-				botNodeProvider.say("It's sunny in {{w/city}} !"),
-				botNodeProvider.set("i/done", "ok"),
-				botNodeProvider.remove("w/*"));
+				botDriver.inputString("w/city", "Please choose a city"),
+				botDriver.say("It's sunny in {{w/city}} !"),
+				botDriver.set("i/done", "ok"),
+				botDriver.remove("w/*"));
 	}
 
 	//	private BTNode ticket() {
@@ -147,42 +147,42 @@ public class SampleBot {
 	//				botEngine.clear("t/*"));
 	//	}
 
-	private static BTNode game(final BotNodeProvider botNodeProvider) {
+	private static BTNode game(final BtBotDriver botDriver) {
 		return sequence(
 				//first select a random number between 0 and 100
 				selector(
-						botNodeProvider.fulfilledInteger("g/target"),
+						botDriver.fulfilledInteger("g/target"),
 						sequence(
-								botNodeProvider.say("You have chosen to play !"),
-								botNodeProvider.say("{{u/name}}, you must find the number I have chosen between 0 and 100"),
-								botNodeProvider.set("g/target",
+								botDriver.say("You have chosen to play !"),
+								botDriver.say("{{u/name}}, you must find the number I have chosen between 0 and 100"),
+								botDriver.set("g/target",
 										Double.valueOf(Math.floor(Math.random() * 101)).intValue()))),
 				//make your choice until having found the right number
 				selector(
-						botNodeProvider.eqIntegerByValue("g/target", "g/choice"),
+						botDriver.eqIntegerByValue("g/target", "g/choice"),
 						sequence(
-								botNodeProvider.inputInteger("g/choice", "What is your choice ?"),
-								botNodeProvider.incr("g/rounds"),
+								botDriver.inputInteger("g/choice", "What is your choice ?"),
+								botDriver.incr("g/rounds"),
 								selector(
 										sequence(
-												botNodeProvider.gtByValue("g/target", "g/choice"),
-												botNodeProvider.remove("g/choice"),
-												botNodeProvider.inputInteger("g/choice", "select up !")),
+												botDriver.gtByValue("g/target", "g/choice"),
+												botDriver.remove("g/choice"),
+												botDriver.inputInteger("g/choice", "select up !")),
 										sequence(
-												botNodeProvider.ltByValue("g/target", "g/choice"),
-												botNodeProvider.remove("g/choice"),
-												botNodeProvider.inputInteger("g/choice", "select down !")),
+												botDriver.ltByValue("g/target", "g/choice"),
+												botDriver.remove("g/choice"),
+												botDriver.inputInteger("g/choice", "select down !")),
 										succeed()))),
 				//The right number has been found
-				botNodeProvider.say("Bravo {{u/name}} you have found the right number {{g/target}} in {{g/rounds}} rounds"),
-				botNodeProvider.set("i/done", "ok"),
-				botNodeProvider.remove("g/*"));
+				botDriver.say("Bravo {{u/name}} you have found the right number {{g/target}} in {{g/rounds}} rounds"),
+				botDriver.set("i/done", "ok"),
+				botDriver.remove("g/*"));
 	}
 
-	private static BTNode rate(final BotNodeProvider botNodeProvider) {
+	private static BTNode rate(final BtBotDriver botDriver) {
 		return sequence(
-				botNodeProvider.inputString("rate/rating", "Please rate the response [0, 1, 2, 3, 4, 5]", "0", "1", "2", "3", "4", "5"),
-				botNodeProvider.say("You have rated {{rate/rating}}"),
-				botNodeProvider.remove("rate/*"));
+				botDriver.inputString("rate/rating", "Please rate the response [0, 1, 2, 3, 4, 5]", "0", "1", "2", "3", "4", "5"),
+				botDriver.say("You have rated {{rate/rating}}"),
+				botDriver.remove("rate/*"));
 	}
 }
