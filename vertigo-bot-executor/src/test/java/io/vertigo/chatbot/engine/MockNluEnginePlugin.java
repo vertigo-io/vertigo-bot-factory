@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import io.vertigo.ai.impl.nlu.NluEnginePlugin;
-import io.vertigo.ai.nlu.VIntent;
-import io.vertigo.ai.nlu.VRecognitionResult;
+import io.vertigo.ai.nlu.Intent;
+import io.vertigo.ai.nlu.RecognitionResult;
 
 public class MockNluEnginePlugin implements NluEnginePlugin {
 
@@ -16,14 +16,14 @@ public class MockNluEnginePlugin implements NluEnginePlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public synchronized void train(final Map<VIntent, List<String>> trainingData) {
+	public synchronized void train(final Map<Intent, List<String>> trainingData) {
 		// Mock
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public VRecognitionResult recognize(final String sentence) {
-		return new VRecognitionResult(sentence, Collections.emptyList());
+	public RecognitionResult recognize(final String sentence) {
+		return new RecognitionResult(sentence, Collections.emptyList());
 	}
 
 	/** {@inheritDoc} */

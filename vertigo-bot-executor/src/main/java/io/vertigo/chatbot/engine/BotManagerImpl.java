@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.nlu.NluManager;
-import io.vertigo.ai.nlu.VIntent;
+import io.vertigo.ai.nlu.Intent;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.core.lang.Assertion;
 
@@ -64,10 +64,10 @@ public final class BotManagerImpl implements BotManager {
 
 	@Override
 	public synchronized void updateConfig(final Iterable<TopicDefinition> newTopics) {
-		final var nluTtrainingData = new HashMap<VIntent, List<String>>();
+		final var nluTtrainingData = new HashMap<Intent, List<String>>();
 		topicDefinitionTempMap = new HashMap<>();
 		for (final TopicDefinition t : newTopics) {
-			nluTtrainingData.put(VIntent.of(t.getCode()), t.getTrainingPhrases()); // build NLU training data
+			nluTtrainingData.put(Intent.of(t.getCode()), t.getTrainingPhrases()); // build NLU training data
 			topicDefinitionTempMap.put(t.getCode(), t);
 		}
 
