@@ -10,8 +10,8 @@ import javax.inject.Inject;
 
 import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bt.BehaviorTreeManager;
-import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.nlu.Intent;
+import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.core.lang.Assertion;
 
@@ -71,7 +71,7 @@ public final class BotManagerImpl implements BotManager {
 			topicDefinitionTempMap.put(t.getCode(), t);
 		}
 
-		nluManager.train(nluTtrainingData); // the new NLU model is effectively running after this line
+		nluManager.train(nluTtrainingData, NluManager.DEFAULT_ENGINE_NAME); // the new NLU model is effectively running after this line
 
 		// clean state
 		topicDefinitionMap = Collections.unmodifiableMap(topicDefinitionTempMap);

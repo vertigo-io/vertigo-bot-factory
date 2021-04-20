@@ -122,7 +122,7 @@ public class BotEngine {
 	}
 
 	private Optional<TopicDefinition> getTopicFromNlu(final String sentence) {
-		final RecognitionResult nluResponse = nluManager.recognize(sentence);
+		final RecognitionResult nluResponse = nluManager.recognize(sentence, NluManager.DEFAULT_ENGINE_NAME);
 		// intents are sorted by decreasing accuracy
 		for (final var intent : nluResponse.getScoredIntents()) {
 			final var topic = getTopicByCode(intent.getIntent().getCode());
