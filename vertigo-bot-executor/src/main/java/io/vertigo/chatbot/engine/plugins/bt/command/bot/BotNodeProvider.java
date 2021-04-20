@@ -14,12 +14,11 @@ import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTCondition;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
-import io.vertigo.ai.bt.BtNodeProvider;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.util.StringUtil;
 
-public class BotNodeProvider implements BtNodeProvider {
+public class BotNodeProvider {
 	private final BlackBoard bb;
 
 	public BotNodeProvider(final BlackBoard blackBoard) {

@@ -6,7 +6,8 @@ import java.util.List;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.impl.bt.command.BtCommand;
-import io.vertigo.ai.impl.bt.command.SimpleBtCommandParserPlugin;
+import io.vertigo.ai.impl.bt.command.BtCommandParser;
+import io.vertigo.ai.impl.bt.command.BtCommandParserProviderPlugin;
 import io.vertigo.core.lang.VSystemException;
 
 /**
@@ -14,50 +15,40 @@ import io.vertigo.core.lang.VSystemException;
  *
  * @author skerdudou
  */
-public class BotBtCommandParserPlugin extends SimpleBtCommandParserPlugin<BotNodeProvider> {
+public class BotBtCommandParserPlugin implements BtCommandParserProviderPlugin {
 
 	@Override
-	public BotNodeProvider getNodeProvider(final List<Object> params) {
-		final var blackBoard = params.stream()
-				.filter(o -> o instanceof BlackBoard)
-				.map(o -> (BlackBoard) o)
-				.findFirst()
-				.orElseThrow(() -> new VSystemException("Bot parser plugin needs a BackBoard in parameters."));
+	public List<BtCommandParser> get() {
+		return List.of(
+				BtCommandParser.basicCommand("set", (c, p) -> getNodeProvider(p).set(c.getStringParam(0), c.getStringParam(1))),
+				BtCommandParser.basicCommand("setInt", (c, p) -> getNodeProvider(p).set(c.getStringParam(0), c.getIntParam(1))),
+				BtCommandParser.basicCommand("copy", (c, p) -> getNodeProvider(p).copy(c.getStringParam(0), c.getStringParam(1))),
+				BtCommandParser.basicCommand("incr", (c, p) -> getNodeProvider(p).incr(c.getStringParam(0))),
+				BtCommandParser.basicCommand("incrBy", (c, p) -> getNodeProvider(p).incrBy(c.getStringParam(0), c.getIntParam(1))),
+				BtCommandParser.basicCommand("decr", (c, p) -> getNodeProvider(p).decr(c.getStringParam(0))),
+				BtCommandParser.basicCommand("append", (c, p) -> getNodeProvider(p).append(c.getStringParam(0), c.getStringParam(1))),
+				BtCommandParser.basicCommand("remove", (c, p) -> getNodeProvider(p).remove(c.getStringParam(0))),
+				BtCommandParser.basicCommand("say", (c, p) -> getNodeProvider(p).say(c.getStringParam(0))),
+				BtCommandParser.basicCommand("eqInt", (c, p) -> getNodeProvider(p).eq(c.getStringParam(0), c.getIntParam(1))),
+				BtCommandParser.basicCommand("eq", (c, p) -> getNodeProvider(p).eq(c.getStringParam(0), c.getStringParam(1))),
+				BtCommandParser.basicCommand("gt", (c, p) -> getNodeProvider(p).gt(c.getStringParam(0), c.getIntParam(1))),
+				BtCommandParser.basicCommand("lt", (c, p) -> getNodeProvider(p).lt(c.getStringParam(0), c.getIntParam(1))),
+				BtCommandParser.basicCommand("inputString", (c, p) -> {
+					final var optFirstChoice = c.getOptStringParam(2);
+					if (optFirstChoice.isEmpty()) {
+						return getNodeProvider(p).inputString(c.getStringParam(0), c.getStringParam(1));
+					}
+					return getNodeProvider(p).inputString(c.getStringParam(0), c.getStringParam(1), optFirstChoice.get(), c.getRemainingStringParam(3));
+				}),
+				BtCommandParser.basicCommand("fulfilled", (c, p) -> getNodeProvider(p).fulfilled(c.getStringParam(0))),
 
-		return new BotNodeProvider(blackBoard);
+				BtCommandParser.compositeCommand("switch", BotBtCommandParserPlugin::buildSwitchNode),
+				BtCommandParser.compositeCommand("case", (c, p, l) -> new BotCase(c.getStringParam(0), l)));
 	}
 
-	@Override
-	protected void init() {
-		registerBasicCommand("set", (c, p) -> p.set(c.getStringParam(0), c.getStringParam(1)));
-		registerBasicCommand("setInt", (c, p) -> p.set(c.getStringParam(0), c.getIntParam(1)));
-		registerBasicCommand("copy", (c, p) -> p.copy(c.getStringParam(0), c.getStringParam(1)));
-		registerBasicCommand("incr", (c, p) -> p.incr(c.getStringParam(0)));
-		registerBasicCommand("incrBy", (c, p) -> p.incrBy(c.getStringParam(0), c.getIntParam(1)));
-		registerBasicCommand("decr", (c, p) -> p.decr(c.getStringParam(0)));
-		registerBasicCommand("append", (c, p) -> p.append(c.getStringParam(0), c.getStringParam(1)));
-		registerBasicCommand("remove", (c, p) -> p.remove(c.getStringParam(0)));
-		registerBasicCommand("say", (c, p) -> p.say(c.getStringParam(0)));
-		registerBasicCommand("eqInt", (c, p) -> p.eq(c.getStringParam(0), c.getIntParam(1)));
-		registerBasicCommand("eq", (c, p) -> p.eq(c.getStringParam(0), c.getStringParam(1)));
-		registerBasicCommand("gt", (c, p) -> p.gt(c.getStringParam(0), c.getIntParam(1)));
-		registerBasicCommand("lt", (c, p) -> p.lt(c.getStringParam(0), c.getIntParam(1)));
-		registerBasicCommand("inputString", (c, p) -> {
-			final var optFirstChoice = c.getOptStringParam(2);
-			if (optFirstChoice.isEmpty()) {
-				return p.inputString(c.getStringParam(0), c.getStringParam(1));
-			}
-			return p.inputString(c.getStringParam(0), c.getStringParam(1), optFirstChoice.get(), c.getRemainingStringParam(3));
-		});
-		registerBasicCommand("fulfilled", (c, p) -> p.fulfilled(c.getStringParam(0)));
-
-		registerCompositeCommand("switch", BotBtCommandParserPlugin::buildSwitchNode);
-		registerCompositeCommand("case", (c, p, l) -> new BotCase(c.getStringParam(0), l));
-	}
-
-	private static BTNode buildSwitchNode(final BtCommand command, final BotNodeProvider nodeProvider, final List<BTNode> childs) {
+	private static BTNode buildSwitchNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
 		var isOthers = false;
-		final BotSwitch switchBuilder = nodeProvider.doSwitch(command.getStringParam(0));
+		final BotSwitch switchBuilder = getNodeProvider(params).doSwitch(command.getStringParam(0));
 		final var otherNodes = new ArrayList<BTNode>();
 
 		for (final BTNode node : childs) {
@@ -77,5 +68,15 @@ public class BotBtCommandParserPlugin extends SimpleBtCommandParserPlugin<BotNod
 		}
 
 		return switchBuilder.build();
+	}
+
+	private static BotNodeProvider getNodeProvider(final List<Object> params) {
+		final var blackBoard = params.stream()
+				.filter(o -> o instanceof BlackBoard)
+				.map(o -> (BlackBoard) o)
+				.findFirst()
+				.orElseThrow(() -> new VSystemException("Bot parser plugin needs a BackBoard in parameters."));
+
+		return new BotNodeProvider(blackBoard);
 	}
 }
