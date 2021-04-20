@@ -36,6 +36,6 @@ public final class BotCase implements BTNode {
 
 	@Override
 	public BTStatus eval() {
-		throw new VSystemException("'case' must be inside 'switch'.");
+		throw new VSystemException("'case' must be inside 'switch'");
 	}
 }
