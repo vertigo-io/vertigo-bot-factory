@@ -65,7 +65,7 @@ public class TopicCategoryServices implements Component {
 
 	public TopicCategory saveCategory(@SecuredOperation("botContributor") final Chatbot bot, final TopicCategory category, final String[] addTopics) {
 		final TopicCategory savedCategory = saveCategory(bot, category);
-		final List<Long> topicsIds = Arrays.asList(addTopics).stream().map(id -> Long.parseLong(id)).collect(Collectors.toList());
+		final List<Long> topicsIds = Arrays.asList(addTopics).stream().map(Long::parseLong).collect(Collectors.toList());
 		topicCategoryPAO.addTopicWithCategory(savedCategory.getTopCatId(), topicsIds);
 		return savedCategory;
 	}

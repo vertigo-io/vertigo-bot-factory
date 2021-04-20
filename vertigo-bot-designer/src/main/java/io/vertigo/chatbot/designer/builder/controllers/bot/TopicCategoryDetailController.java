@@ -59,4 +59,9 @@ public class TopicCategoryDetailController extends AbstractBotController {
 		topicCategoryServices.deleteCategory(bot, category.getTopCatId());
 		return "redirect:/bot/" + bot.getBotId() + "/categories/";
 	}
+
+	@PostMapping("/_edit")
+	public void doEdit() {
+		toModeEdit();
+	}
 }
