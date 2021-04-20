@@ -7,12 +7,12 @@ import java.util.Scanner;
 import javax.inject.Inject;
 
 import io.vertigo.ai.AiFeatures;
-import io.vertigo.ai.bt.parser.BtCommandManager;
+import io.vertigo.ai.bt.command.BtCommandManager;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
+import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotBtCommandParserPlugin;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
-import io.vertigo.chatbot.engine.plugins.bt.parser.bot.BotBtCommandParserPlugin;
 import io.vertigo.commons.CommonsFeatures;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.config.ModuleConfig;

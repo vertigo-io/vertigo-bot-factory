@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.engine;
+package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
 import static io.vertigo.ai.bt.BTNodes.condition;
 import static io.vertigo.ai.bt.BTNodes.selector;
@@ -15,6 +15,7 @@ import io.vertigo.ai.bt.BTCondition;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.ai.bt.BtNodeProvider;
+import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.util.StringUtil;
 
@@ -154,14 +155,6 @@ public class BotNodeProvider implements BtNodeProvider {
 
 	public BTNode inputInteger(final String keyTemplate, final String question, final String choice, final String... otherChoices) {
 		return inputInteger(keyTemplate, question, buildChoices(choice, otherChoices));
-	}
-
-	@Deprecated
-	public BTNode display(final String msg) {
-		return () -> {
-			System.out.println(bb.format(msg));
-			return BTStatus.Succeeded;
-		};
 	}
 
 	public BTNode say(final String msg) {

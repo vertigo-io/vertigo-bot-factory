@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.engine.plugins.bt.parser.bot;
+package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
 import java.util.List;
 

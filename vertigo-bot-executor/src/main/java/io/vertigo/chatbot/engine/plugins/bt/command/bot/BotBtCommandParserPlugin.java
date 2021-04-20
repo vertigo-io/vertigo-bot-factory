@@ -1,18 +1,16 @@
-package io.vertigo.chatbot.engine.plugins.bt.parser.bot;
+package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
-import io.vertigo.ai.impl.bt.parser.BtCommand;
-import io.vertigo.ai.impl.bt.parser.SimpleBtCommandParserPlugin;
-import io.vertigo.chatbot.engine.BotNodeProvider;
-import io.vertigo.chatbot.engine.BotSwitch;
+import io.vertigo.ai.impl.bt.command.BtCommand;
+import io.vertigo.ai.impl.bt.command.SimpleBtCommandParserPlugin;
 import io.vertigo.core.lang.VSystemException;
 
 /**
- * Default BT commands.
+ * Bot commands.
  *
  * @author skerdudou
  */

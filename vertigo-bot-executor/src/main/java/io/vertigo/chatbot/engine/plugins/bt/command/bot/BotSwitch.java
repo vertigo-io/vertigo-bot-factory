@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.engine;
+package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
 import static io.vertigo.ai.bt.BTNodes.selector;
 import static io.vertigo.ai.bt.BTNodes.sequence;

@@ -16,6 +16,7 @@ import io.vertigo.ai.bt.BTNode;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
+import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.commons.CommonsFeatures;
 import io.vertigo.core.lang.VSystemException;
