@@ -143,4 +143,26 @@ public class BTBotParserTest {
 		assertEquals("'case' must be inside 'switch'", exception.getMessage());
 	}
 
+	@Test
+	public void testEqWithMultipleSpace() {
+		final String bt = "begin sequence\n\n" +
+				"	set   val/2 2   \n" +
+				"	begin selector\n" +
+				"		eq val/1    1\n" +
+				"		set val/2 99\n" +
+				"	end selector\n" +
+				"end sequence";
+
+		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
+
+		final BlackBoard blackBoard = blackBoardManager.connect();
+		blackBoard.putString(BBKey.of("val/1"), "1");
+
+		final BTNode rootNode = nodeProducer.apply(List.of(blackBoard));
+		final BTStatus status = rootNode.eval();
+		//---
+		Assertions.assertEquals(BTStatus.Succeeded, status);
+		Assertions.assertEquals("2", blackBoard.getString(BBKey.of("val/2")));
+	}
+
 }
