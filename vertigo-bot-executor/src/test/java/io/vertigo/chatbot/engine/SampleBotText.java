@@ -12,7 +12,7 @@ import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
-import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotBtCommandParserPlugin;
+import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotBtCommandParserDefinitionProvider;
 import io.vertigo.commons.CommonsFeatures;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.config.ModuleConfig;
@@ -104,10 +104,10 @@ public class SampleBotText {
 								.withNLU()
 								.addPlugin(MockNluEnginePlugin.class)
 								.withParser()
-								.addPlugin(BotBtCommandParserPlugin.class)
 								.build())
 				.addModule(ModuleConfig.builder("bot-module")
 						.addComponent(BotManager.class, BotManagerImpl.class)
+						.addDefinitionProvider(BotBtCommandParserDefinitionProvider.class)
 						.build())
 				.build();
 	}

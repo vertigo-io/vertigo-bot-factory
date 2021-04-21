@@ -20,10 +20,11 @@ import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.ai.bt.command.BtCommandManager;
-import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotBtCommandParserPlugin;
+import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotBtCommandParserDefinitionProvider;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
+import io.vertigo.core.node.config.ModuleConfig;
 import io.vertigo.core.node.config.NodeConfig;
 
 public class BTBotParserTest {
@@ -47,10 +48,12 @@ public class BTBotParserTest {
 				.addModule(
 						new AiFeatures()
 								.withParser()
-								.addPlugin(BotBtCommandParserPlugin.class)
 								.withBlackboard()
 								.withMemoryBlackboard()
 								.build())
+				.addModule(ModuleConfig.builder("myApp")
+						.addDefinitionProvider(BotBtCommandParserDefinitionProvider.class)
+						.build())
 				.build();
 	}
 
