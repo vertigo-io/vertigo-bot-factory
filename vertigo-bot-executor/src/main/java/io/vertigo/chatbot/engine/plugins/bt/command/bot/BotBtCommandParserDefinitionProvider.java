@@ -5,8 +5,8 @@ import java.util.List;
 
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
-import io.vertigo.ai.impl.bt.command.BtCommand;
-import io.vertigo.ai.impl.bt.command.BtCommandParserDefinition;
+import io.vertigo.ai.impl.command.BtCommand;
+import io.vertigo.ai.impl.command.BtCommandParserDefinition;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleDefinitionProvider;

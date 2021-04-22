@@ -10,7 +10,7 @@ import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.nlu.NluManager;
-import io.vertigo.ai.nlu.RecognitionResult;
+import io.vertigo.ai.nlu.NluResult;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
@@ -122,7 +122,7 @@ public class BotEngine {
 	}
 
 	private Optional<TopicDefinition> getTopicFromNlu(final String sentence) {
-		final RecognitionResult nluResponse = nluManager.recognize(sentence, NluManager.DEFAULT_ENGINE_NAME);
+		final NluResult nluResponse = nluManager.recognize(sentence, NluManager.DEFAULT_ENGINE_NAME);
 		// intents are sorted by decreasing accuracy
 		for (final var intent : nluResponse.getScoredIntents()) {
 			final var topic = getTopicByCode(intent.getIntent().getCode());

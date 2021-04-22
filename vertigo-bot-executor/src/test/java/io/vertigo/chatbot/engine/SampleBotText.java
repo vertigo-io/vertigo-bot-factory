@@ -7,7 +7,7 @@ import java.util.Scanner;
 import javax.inject.Inject;
 
 import io.vertigo.ai.AiFeatures;
-import io.vertigo.ai.bt.command.BtCommandManager;
+import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;

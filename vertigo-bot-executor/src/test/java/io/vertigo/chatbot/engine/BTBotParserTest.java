@@ -19,7 +19,7 @@ import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
-import io.vertigo.ai.bt.command.BtCommandManager;
+import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotBtCommandParserDefinitionProvider;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.AutoCloseableNode;
