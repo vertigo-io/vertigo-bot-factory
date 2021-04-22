@@ -14,9 +14,11 @@ import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotBtCommandParserDefinitionProvider;
 import io.vertigo.commons.CommonsFeatures;
+import io.vertigo.connectors.redis.RedisFeatures;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.config.ModuleConfig;
 import io.vertigo.core.node.config.NodeConfig;
+import io.vertigo.core.param.Param;
 import io.vertigo.core.util.InjectorUtil;
 
 public class SampleBotText {
@@ -96,11 +98,17 @@ public class SampleBotText {
 
 	private static NodeConfig buildNodeConfig() {
 		return NodeConfig.builder()
+				.addModule(new RedisFeatures()
+						.withJedis(
+								Param.of("host", "docker-vertigo.part.klee.lan.net"),
+								Param.of("port", 6379),
+								Param.of("database", 0))
+						.build())
 				.addModule(new CommonsFeatures().build())// for transactions
 				.addModule(
 						new AiFeatures()
 								.withBlackboard()
-								.withMemoryBlackboard()
+								.withRedisBlackboard()
 								.withNLU()
 								.addPlugin(MockNluEnginePlugin.class)
 								.withParser()

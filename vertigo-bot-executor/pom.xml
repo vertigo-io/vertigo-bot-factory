@@ -46,6 +46,12 @@
 		
 		<dependency>
 			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-redis-connector</artifactId>
+			<version>${vertigo.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-ai</artifactId>
 			<version>3.2.0-SNAPSHOT</version>
 		</dependency>
