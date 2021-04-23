@@ -83,7 +83,7 @@ public class BTBotParserTest {
 
 	@Test
 	public void testSwitch() {
-		final String bt = "begin switch val\n" +
+		final String bt = "begin switch /val\n" +
 				"	begin case 1\n" +
 				"		say case1\n" +
 				"	end case\n" +
@@ -97,7 +97,7 @@ public class BTBotParserTest {
 
 		final BlackBoard blackBoard = blackBoardManager.connect();
 
-		blackBoard.putString(BBKey.of("val"), "2");
+		blackBoard.putString(BBKey.of("/val"), "2");
 		BTNode rootNode = nodeProducer.apply(List.of(blackBoard));
 		BTStatus status = rootNode.eval();
 		Assertions.assertEquals(BTStatus.Succeeded, status);
@@ -106,7 +106,7 @@ public class BTBotParserTest {
 
 		blackBoard.delete(BBKeyPattern.of("*"));
 
-		blackBoard.putString(BBKey.of("val"), "42");
+		blackBoard.putString(BBKey.of("/val"), "42");
 		rootNode = nodeProducer.apply(List.of(blackBoard));
 		status = rootNode.eval();
 		Assertions.assertEquals(BTStatus.Succeeded, status);
@@ -149,23 +149,23 @@ public class BTBotParserTest {
 	@Test
 	public void testEqWithMultipleSpace() {
 		final String bt = "begin sequence\n\n" +
-				"	set   val/2 2   \n" +
+				"	set   /val/2 2   \n" +
 				"	begin selector\n" +
-				"		eq val/1    1\n" +
-				"		set val/2 99\n" +
+				"		eq /val/1    1\n" +
+				"		set /val/2 99\n" +
 				"	end selector\n" +
 				"end sequence";
 
 		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
 
 		final BlackBoard blackBoard = blackBoardManager.connect();
-		blackBoard.putString(BBKey.of("val/1"), "1");
+		blackBoard.putString(BBKey.of("/val/1"), "1");
 
 		final BTNode rootNode = nodeProducer.apply(List.of(blackBoard));
 		final BTStatus status = rootNode.eval();
 		//---
 		Assertions.assertEquals(BTStatus.Succeeded, status);
-		Assertions.assertEquals("2", blackBoard.getString(BBKey.of("val/2")));
+		Assertions.assertEquals("2", blackBoard.getString(BBKey.of("/val/2")));
 	}
 
 }

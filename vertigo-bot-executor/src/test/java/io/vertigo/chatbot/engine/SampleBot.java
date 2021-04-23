@@ -53,10 +53,10 @@ public class SampleBot {
 			final BtBotDriver botDriver = getNodeProvider(params);
 			return sequence(
 					//botNodeProvider.say("It works"),
-					botDriver.inputString("u/name", "Hello I'm Alan what is your name ?"),
+					botDriver.inputString("/u/name", "Hello I'm Alan what is your name ?"),
 					//intents
 					main(botDriver),
-					botDriver.say("bye bye {{u/name}}"));
+					botDriver.say("bye bye {{/u/name}}"));
 		}));
 		botManager.updateConfig(topics);
 
@@ -105,30 +105,30 @@ public class SampleBot {
 
 	private static BTNode main(final BtBotDriver botDriver) {
 		return selector(
-				botDriver.eq("i/name", "X"),
+				botDriver.eq("/i/name", "X"),
 				sequence(
 						//botEngine.clear("i/*"),
 						//botEngine.clear("rate/*"),
 						//						botEngine.fulfill("i/name", "Hi {{u/name}} please select [W]eather, [T]icket, [G]ame or e[X]it ?", "W", "G", "T", "X"),
-						botDriver.inputString("i/name", "Hi {{u/name}} please select [W]eather, [X]icket, [G]ame or e[X]it ?", "W", "G", "X"),
+						botDriver.inputString("/i/name", "Hi {{/u/name}} please select [W]eather, [X]icket, [G]ame or e[X]it ?", "W", "G", "X"),
 						selector(
-								botDriver.fulfilled("i/done"),
-								botDriver.doSwitch("i/name")
+								botDriver.fulfilled("/i/done"),
+								botDriver.doSwitch("/i/name")
 										.when("W", weather(botDriver))
 										.when("G", game(botDriver))
 										//								.when("T", ticket())
 										.build()),
 						rate(botDriver),
-						botDriver.remove("i/*"),
-						botDriver.remove("rate/*")));
+						botDriver.remove("/i/*"),
+						botDriver.remove("/rate/*")));
 	}
 
 	private static BTNode weather(final BtBotDriver botDriver) {
 		return sequence(
-				botDriver.inputString("w/city", "Please choose a city"),
-				botDriver.say("It's sunny in {{w/city}} !"),
-				botDriver.set("i/done", "ok"),
-				botDriver.remove("w/*"));
+				botDriver.inputString("/w/city", "Please choose a city"),
+				botDriver.say("It's sunny in {{/w/city}} !"),
+				botDriver.set("/i/done", "ok"),
+				botDriver.remove("/w/*"));
 	}
 
 	//	private BTNode ticket() {
@@ -151,38 +151,38 @@ public class SampleBot {
 		return sequence(
 				//first select a random number between 0 and 100
 				selector(
-						botDriver.fulfilledInteger("g/target"),
+						botDriver.fulfilledInteger("/g/target"),
 						sequence(
 								botDriver.say("You have chosen to play !"),
-								botDriver.say("{{u/name}}, you must find the number I have chosen between 0 and 100"),
-								botDriver.set("g/target",
+								botDriver.say("{{/u/name}}, you must find the number I have chosen between 0 and 100"),
+								botDriver.set("/g/target",
 										Double.valueOf(Math.floor(Math.random() * 101)).intValue()))),
 				//make your choice until having found the right number
 				selector(
-						botDriver.eqIntegerByValue("g/target", "g/choice"),
+						botDriver.eqIntegerByValue("/g/target", "/g/choice"),
 						sequence(
-								botDriver.inputInteger("g/choice", "What is your choice ?"),
-								botDriver.incr("g/rounds"),
+								botDriver.inputInteger("/g/choice", "What is your choice ?"),
+								botDriver.incr("/g/rounds"),
 								selector(
 										sequence(
-												botDriver.gtByValue("g/target", "g/choice"),
-												botDriver.remove("g/choice"),
-												botDriver.inputInteger("g/choice", "select up !")),
+												botDriver.gtByValue("/g/target", "/g/choice"),
+												botDriver.remove("/g/choice"),
+												botDriver.inputInteger("/g/choice", "select up !")),
 										sequence(
-												botDriver.ltByValue("g/target", "g/choice"),
-												botDriver.remove("g/choice"),
-												botDriver.inputInteger("g/choice", "select down !")),
+												botDriver.ltByValue("/g/target", "/g/choice"),
+												botDriver.remove("/g/choice"),
+												botDriver.inputInteger("/g/choice", "select down !")),
 										succeed()))),
 				//The right number has been found
-				botDriver.say("Bravo {{u/name}} you have found the right number {{g/target}} in {{g/rounds}} rounds"),
-				botDriver.set("i/done", "ok"),
-				botDriver.remove("g/*"));
+				botDriver.say("Bravo {{/u/name}} you have found the right number {{/g/target}} in {{/g/rounds}} rounds"),
+				botDriver.set("/i/done", "ok"),
+				botDriver.remove("/g/*"));
 	}
 
 	private static BTNode rate(final BtBotDriver botDriver) {
 		return sequence(
-				botDriver.inputString("rate/rating", "Please rate the response [0, 1, 2, 3, 4, 5]", "0", "1", "2", "3", "4", "5"),
-				botDriver.say("You have rated {{rate/rating}}"),
-				botDriver.remove("rate/*"));
+				botDriver.inputString("/rate/rating", "Please rate the response [0, 1, 2, 3, 4, 5]", "0", "1", "2", "3", "4", "5"),
+				botDriver.say("You have rated {{/rate/rating}}"),
+				botDriver.remove("/rate/*"));
 	}
 }

@@ -32,9 +32,9 @@ import io.vertigo.core.lang.Assertion;
  * @author skerdudou, mlaroche
  */
 public class BotEngine {
-	public static final BBKey BOT_IN_PATH = BBKey.of("bot/in");
-	public static final BBKey BOT_OUT_PATH = BBKey.of("bot/out");
-	public static final BBKey BOT_STATUS_PATH = BBKey.of("bot/status");
+	public static final BBKey BOT_IN_PATH = BBKey.of("/bot/in");
+	public static final BBKey BOT_OUT_PATH = BBKey.of("/bot/out");
+	public static final BBKey BOT_STATUS_PATH = BBKey.of("/bot/status");
 
 	public static final BBKey BOT_RESPONSE_PATH = BBKey.of(BOT_OUT_PATH, "/response");
 	public static final BBKey BOT_TOPIC_PATH = BBKey.of(BOT_STATUS_PATH, "/topic");
