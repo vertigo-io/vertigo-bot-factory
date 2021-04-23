@@ -100,7 +100,7 @@ public class SampleBotText {
 		return NodeConfig.builder()
 				.addModule(new RedisFeatures()
 						.withJedis(
-								Param.of("host", "localhost"),
+								Param.of("host", "docker-vertigo.part.klee.lan.net"),
 								Param.of("port", 6379),
 								Param.of("database", 0))
 						.build())
