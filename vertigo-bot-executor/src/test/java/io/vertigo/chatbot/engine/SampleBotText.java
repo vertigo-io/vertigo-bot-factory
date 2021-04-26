@@ -76,7 +76,7 @@ public class SampleBotText {
 	void runInConsole() {
 		// create or parse or retrieve the brain
 		final List<TopicDefinition> topics = new ArrayList<>();
-		topics.add(TopicDefinition.of("START", btCommandManager.parse(botText)));
+		topics.add(TopicDefinition.of(BotEngine.START_TOPIC_NAME, btCommandManager.parse(botText)));
 		botManager.updateConfig(topics);
 
 		// create a botEngine that is bound to a specific context
@@ -90,7 +90,7 @@ public class SampleBotText {
 		while (botResponse.getStatus() != BotStatus.Ended) {
 			System.out.println(">>running *************************");
 			final var userResponse = sc.nextLine();
-			botResponse = runTick(botEngine, BotInput.of(userResponse));
+			botResponse = runTick(botEngine, new BotInput(userResponse));
 		}
 		sc.close();
 		System.out.println(">> end ***********************");

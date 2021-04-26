@@ -61,8 +61,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 
 	public BotResponseBuilder addChoice(final IBotChoice choice) {
 		Assertion.check()
-				.isNotNull(choice)
-				.isFalse(choices.contains(choice), "This choice already exists");
+				.isNotNull(choice);
 		//-----
 		choices.add(choice);
 		return this;

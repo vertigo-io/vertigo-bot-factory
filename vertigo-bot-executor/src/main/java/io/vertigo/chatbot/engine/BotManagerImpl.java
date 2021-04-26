@@ -21,7 +21,6 @@ public final class BotManagerImpl implements BotManager {
 	private final NluManager nluManager;
 
 	private Map<String, TopicDefinition> topicDefinitionMap; // immutable map of topics
-	private Map<String, TopicDefinition> topicDefinitionTempMap;
 
 	@Inject
 	public BotManagerImpl(
@@ -65,7 +64,7 @@ public final class BotManagerImpl implements BotManager {
 	@Override
 	public synchronized void updateConfig(final Iterable<TopicDefinition> newTopics) {
 		final var nluTtrainingData = new HashMap<NluIntent, List<String>>();
-		topicDefinitionTempMap = new HashMap<>();
+		final Map<String, TopicDefinition> topicDefinitionTempMap = new HashMap<>();
 		for (final TopicDefinition t : newTopics) {
 			nluTtrainingData.put(NluIntent.of(t.getCode()), t.getTrainingPhrases()); // build NLU training data
 			topicDefinitionTempMap.put(t.getCode(), t);
@@ -73,9 +72,8 @@ public final class BotManagerImpl implements BotManager {
 
 		nluManager.train(nluTtrainingData, NluManager.DEFAULT_ENGINE_NAME); // the new NLU model is effectively running after this line
 
-		// clean state
+		// training ok, update state
 		topicDefinitionMap = Collections.unmodifiableMap(topicDefinitionTempMap);
-		topicDefinitionTempMap = null;
 	}
 
 }

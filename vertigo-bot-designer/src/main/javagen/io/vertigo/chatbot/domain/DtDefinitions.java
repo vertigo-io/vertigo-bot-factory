@@ -91,6 +91,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		bot,
 		/** Propriété 'welcome BT'. */
 		welcomeBT,
+		/** Propriété 'end BT'. */
+		endBT,
 		/** Propriété 'fallback BT'. */
 		fallbackBT,
 		/** Propriété 'fallback BT'. */

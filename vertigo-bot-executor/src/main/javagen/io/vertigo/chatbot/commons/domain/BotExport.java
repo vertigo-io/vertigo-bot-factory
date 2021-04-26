@@ -15,6 +15,7 @@ public final class BotExport implements DtObject {
 
 	private io.vertigo.chatbot.commons.domain.Chatbot bot;
 	private String welcomeBT;
+	private String endBT;
 	private String fallbackBT;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.TopicExport.class);
 	
@@ -54,6 +55,25 @@ public final class BotExport implements DtObject {
 	 */
 	public void setWelcomeBT(final String welcomeBT) {
 		this.welcomeBT = welcomeBT;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'end BT'.
+	 * @return String endBT <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "end BT")
+	public String getEndBT() {
+		return endBT;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'end BT'.
+	 * @param endBT String <b>Obligatoire</b>
+	 */
+	public void setEndBT(final String endBT) {
+		this.endBT = endBT;
 	}
 	
 	/**

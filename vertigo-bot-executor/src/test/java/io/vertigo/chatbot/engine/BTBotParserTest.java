@@ -77,8 +77,8 @@ public class BTBotParserTest {
 		final BTStatus status = rootNode.eval();
 		//---
 		Assertions.assertEquals(BTStatus.Succeeded, status);
-		Assertions.assertEquals(1, blackBoard.listSize(BotEngine.BOT_RESPONSE_PATH), "Expected only one say");
-		Assertions.assertEquals("bonjour !", blackBoard.listGet(BotEngine.BOT_RESPONSE_PATH, 0));
+		Assertions.assertEquals(1, blackBoard.listSize(BotEngine.BOT_RESPONSE_KEY), "Expected only one say");
+		Assertions.assertEquals("bonjour !", blackBoard.listGet(BotEngine.BOT_RESPONSE_KEY, 0));
 	}
 
 	@Test
@@ -101,8 +101,8 @@ public class BTBotParserTest {
 		BTNode rootNode = nodeProducer.apply(List.of(blackBoard));
 		BTStatus status = rootNode.eval();
 		Assertions.assertEquals(BTStatus.Succeeded, status);
-		Assertions.assertEquals(1, blackBoard.listSize(BotEngine.BOT_RESPONSE_PATH), "Expected only one say");
-		Assertions.assertEquals("case2", blackBoard.listGet(BotEngine.BOT_RESPONSE_PATH, 0));
+		Assertions.assertEquals(1, blackBoard.listSize(BotEngine.BOT_RESPONSE_KEY), "Expected only one say");
+		Assertions.assertEquals("case2", blackBoard.listGet(BotEngine.BOT_RESPONSE_KEY, 0));
 
 		blackBoard.delete(BBKeyPattern.of("*"));
 
@@ -110,8 +110,8 @@ public class BTBotParserTest {
 		rootNode = nodeProducer.apply(List.of(blackBoard));
 		status = rootNode.eval();
 		Assertions.assertEquals(BTStatus.Succeeded, status);
-		Assertions.assertEquals(1, blackBoard.listSize(BotEngine.BOT_RESPONSE_PATH), "Expected only one say");
-		Assertions.assertEquals("case3", blackBoard.listGet(BotEngine.BOT_RESPONSE_PATH, 0));
+		Assertions.assertEquals(1, blackBoard.listSize(BotEngine.BOT_RESPONSE_KEY), "Expected only one say");
+		Assertions.assertEquals("case3", blackBoard.listGet(BotEngine.BOT_RESPONSE_KEY, 0));
 	}
 
 	@Test

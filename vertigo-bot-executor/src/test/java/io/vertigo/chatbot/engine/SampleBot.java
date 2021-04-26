@@ -49,7 +49,7 @@ public class SampleBot {
 	void runInConsole() {
 		// create or parse or retrieve the brain
 		final List<TopicDefinition> topics = new ArrayList<>();
-		topics.add(TopicDefinition.of("START", params -> {
+		topics.add(TopicDefinition.of(BotEngine.START_TOPIC_NAME, params -> {
 			final BtBotDriver botDriver = getNodeProvider(params);
 			return sequence(
 					//botNodeProvider.say("It works"),
@@ -71,7 +71,7 @@ public class SampleBot {
 		while (botResponse.getStatus() != BotStatus.Ended) {
 			System.out.println(">>running *************************");
 			final var userResponse = sc.nextLine();
-			botResponse = runTick(botEngine, BotInput.of(userResponse));
+			botResponse = runTick(botEngine, new BotInput(userResponse));
 		}
 		sc.close();
 		System.out.println(">> end ***********************");

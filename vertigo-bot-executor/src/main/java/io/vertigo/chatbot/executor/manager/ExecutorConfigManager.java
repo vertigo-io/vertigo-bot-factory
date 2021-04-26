@@ -31,6 +31,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
+import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
@@ -57,7 +58,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 	@Override
 	public void start() {
-		final String configDataFilePath = paramManager.getParam("CONFIG_DATA_FILE").getValueAsString();
+		final String configDataFilePath = paramManager.getOptionalParam("CONFIG_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/runnerConfig");
 		configDataFile = new File(configDataFilePath);
 
 		if (configDataFile.exists() && configDataFile.canRead()) {

@@ -17,14 +17,27 @@
  */
 package io.vertigo.chatbot.engine.model.choice;
 
+import io.vertigo.core.lang.Assertion;
+
 /**
  * Basic implementation of IBotChoice for simple buttons.
  *
  * @author skerdudou
  */
-public class BotButton implements IBotChoice {
-	private String label;
-	private String payload;
+public final class BotButton implements IBotChoice {
+	private final String label;
+	private final String payload;
+
+	private BotButton(final String label, final String payload) {
+		this.label = label;
+		this.payload = payload;
+	}
+
+	public static IBotChoice of(final String[] params) {
+		Assertion.check().isTrue(params.length == 2, "BotButton need exactly 2 params");
+		//--
+		return new BotButton(params[0], params[1]);
+	}
 
 	/**
 	 * @return the label
@@ -35,25 +48,11 @@ public class BotButton implements IBotChoice {
 	}
 
 	/**
-	 * @param label the label to set
-	 */
-	public void setLabel(final String label) {
-		this.label = label;
-	}
-
-	/**
 	 * @return the payload
 	 */
 	@Override
 	public String getPayload() {
 		return payload;
-	}
-
-	/**
-	 * @param payload the payload to set
-	 */
-	public void setPayload(final String payload) {
-		this.payload = payload;
 	}
 
 }

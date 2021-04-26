@@ -17,16 +17,29 @@
  */
 package io.vertigo.chatbot.engine.model;
 
+import java.util.Collections;
 import java.util.Map;
 
 public final class BotInput {
 	private String message;
 	private Map<String, Object> metadatas;
 
-	public static BotInput of(final String message) {
-		final var input = new BotInput();
-		input.setMessage(message);
-		return input;
+	public BotInput() {
+		metadatas = Collections.emptyMap();
+	}
+
+	public BotInput(final String message) {
+		this.message = message;
+		metadatas = Collections.emptyMap();
+	}
+
+	public BotInput(final Map<String, Object> metadatas) {
+		this.metadatas = metadatas;
+	}
+
+	public BotInput(final String message, final Map<String, Object> metadatas) {
+		this.message = message;
+		this.metadatas = metadatas;
 	}
 
 	/**

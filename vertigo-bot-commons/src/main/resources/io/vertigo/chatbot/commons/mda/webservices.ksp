@@ -4,6 +4,7 @@ package io.vertigo.chatbot.commons.domain
 create DtDefinition DtBotExport {
 	field bot 						{domain: DoDtChatbot	 				label: "chatbot" 					cardinality : "1"}
 	field welcomeBT					{domain: DoText 						label: "welcome BT" 				cardinality : "1"}
+	field endBT						{domain: DoText 						label: "end BT" 					cardinality : "1"}
 	field fallbackBT				{domain: DoText 						label: "fallback BT" 				cardinality : "1"}
 	field topics					{domain: DoDtTopicExport 				label: "fallback BT" 				cardinality : "*"}
 }

@@ -17,7 +17,11 @@ import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.core.util.StringUtil;
 
-public class BotNodeProvider {
+public final class BotNodeProvider {
+
+	private BotNodeProvider() {
+		// only static
+	}
 
 	public static BTNode set(final BlackBoard bb, final String keyTemplate, final int value) {
 		return () -> {
@@ -96,18 +100,18 @@ public class BotNodeProvider {
 
 	private static BTNode queryString(final BlackBoard bb, final String keyTemplate, final String question, final Predicate<String> validator) {
 		return () -> {
-			bb.listPush(BotEngine.BOT_RESPONSE_PATH, bb.format(question));
-			bb.putString(BBKey.of(BotEngine.BOT_IN_PATH, "/key"), keyTemplate);
-			bb.putString(BBKey.of(BotEngine.BOT_IN_PATH, "/type"), "string");
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, bb.format(question));
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/key"), keyTemplate);
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/type"), "string");
 			return BTStatus.Running;
 		};
 	}
 
 	private static BTNode queryInteger(final BlackBoard bb, final String keyTemplate, final String question, final Predicate<String> validator) {
 		return () -> {
-			bb.listPush(BotEngine.BOT_RESPONSE_PATH, bb.format(question));
-			bb.putString(BBKey.of(BotEngine.BOT_IN_PATH, "/key"), keyTemplate);
-			bb.putString(BBKey.of(BotEngine.BOT_IN_PATH, "/type"), "integer");
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, bb.format(question));
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/key"), keyTemplate);
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/type"), "integer");
 			return BTStatus.Running;
 		};
 	}
@@ -149,7 +153,7 @@ public class BotNodeProvider {
 
 	public static BTNode say(final BlackBoard bb, final String msg) {
 		return () -> {
-			bb.listPush(BotEngine.BOT_RESPONSE_PATH, bb.format(msg));
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, bb.format(msg));
 			return BTStatus.Succeeded;
 		};
 	}

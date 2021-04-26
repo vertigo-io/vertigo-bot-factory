@@ -30,6 +30,7 @@ import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
+import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.BotManager;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
@@ -38,6 +39,7 @@ import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
+import io.vertigo.core.util.StringUtil;
 
 public class ExecutorManager implements Manager, Activeable {
 
@@ -65,7 +67,13 @@ public class ExecutorManager implements Manager, Activeable {
 
 	@Override
 	public void start() {
-		doLoadModel(executorConfigManager.getConfig().getBot());
+		final var botExport = executorConfigManager.getConfig().getBot();
+		if (botExport == null) {
+			// nothing to load
+			LOGGER.info("New runner, load a bot to start using it.");
+		} else {
+			doLoadModel(botExport);
+		}
 	}
 
 	@Override
@@ -84,17 +92,20 @@ public class ExecutorManager implements Manager, Activeable {
 	}
 
 	private void doLoadModel(final BotExport botExport) {
-		if (botExport == null) {
-			// nothing to load
-			LOGGER.info("New runner, load a bot to start using it.");
-			return;
-		}
+		final var nluThreshold = executorConfigManager.getConfig().getExecutorConfiguration().getNluThreshold().doubleValue();
 
 		final List<TopicDefinition> topics = new ArrayList<>();
 
-		// TODO : start / fallback
+		topics.add(TopicDefinition.of(BotEngine.START_TOPIC_NAME, btCommandManager.parse(botExport.getWelcomeBT())));
+		if (!StringUtil.isBlank(botExport.getEndBT())) {
+			topics.add(TopicDefinition.of(BotEngine.END_TOPIC_NAME, btCommandManager.parse(botExport.getEndBT())));
+		}
+		if (!StringUtil.isBlank(botExport.getFallbackBT())) {
+			topics.add(TopicDefinition.of(BotEngine.FALLBACK_TOPIC_NAME, btCommandManager.parse(botExport.getFallbackBT())));
+		}
+
 		for (final TopicExport topic : botExport.getTopics()) {
-			topics.add(TopicDefinition.of(topic.getName(), btCommandManager.parse(topic.getTopicBT()), topic.getNluTrainingSentences(), 0.6));
+			topics.add(TopicDefinition.of(topic.getName(), btCommandManager.parse(topic.getTopicBT()), topic.getNluTrainingSentences(), nluThreshold));
 		}
 
 		botManager.updateConfig(topics);
@@ -115,8 +126,7 @@ public class ExecutorManager implements Manager, Activeable {
 
 	public BotResponse handleUserMessage(final UUID sessionId, final BotInput input) {
 		Assertion.check()
-				.isNotNull(sessionId, "Please provide sessionId")
-				.isNotNull(input.getMessage(), "Please provide message");
+				.isNotNull(sessionId, "Please provide sessionId");
 		//--
 		final var botEngine = botManager.createBotEngine(sessionId);
 
