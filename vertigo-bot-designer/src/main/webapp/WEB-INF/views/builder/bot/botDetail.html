@@ -7,7 +7,7 @@
 	>
 	
 	<head>
-		<title>Bot detail</title>
+		<title th:text="#{bot.detail.title}">Bot detail</title>
 		
 		<script th:src="@{/static/js/c-richtext.js}"></script>
 		<script th:src="@{/static/js/c-buttonList.js}"></script>
@@ -44,11 +44,11 @@
 		</div>
 	
 		<section layout:fragment="content-header-actions">
-			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}(id=${model.bot.botId})}" ariaLabel="Cancel" icon="fas fa-ban"
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}(id=${model.bot.botId})}" th:ariaLabel="#{bot.cancel}" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
-			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" th:ariaLabel="#{bot.edit}" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" @click="componentStates.showPopup = true" ariaLabel="Delete" icon="delete"
+			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" @click="componentStates.showPopup = true" th:ariaLabel="#{bot.delete}" icon="delete"
 							class="on-left" round size="lg" color="red" > </q-btn>
 		</section>
 		
@@ -58,7 +58,7 @@
 			
 			<vu:popup object="chatbot" action="_delete" vModel="showPopup"></vu:popup>
 			
-			<vu:block id="identity" title="Bot identity">
+			<vu:block id="identity" th:title="#{bot.identity}">
 				<vu:text-field object="bot" field="name" th:if="${viewMode=='edit'}"/>
 				
 				<vu:label-edit object="bot" field="filIdAvatar" th:if="${viewMode=='edit'}">
@@ -68,7 +68,7 @@
 				<vu:text-area object="bot" field="description"/>
 			</vu:block>
 			
-			<vu:block id="custom" title="Bot customization">
+			<vu:block id="custom" title="#{bot.customization}">
 				<vu:include-data object="welcome" field="text" />
 				<vu:include-data object="default" field="text" />
 				<vu:include-data object="welcomeButtons" field="text" />
@@ -78,7 +78,7 @@
 				<vu:include-data object="topics" field="topId" />
 				<vu:include-data object="topics" field="title" />
 				
-				<div class="text-subtitle1">Welcome message</div>
+				<div class="text-subtitle1" th:text=#{welcome.message}></div>
 				<c-richtext
 						class="q-pb-sm"
 						v-model="vueData.welcome.text"
@@ -92,7 +92,7 @@
 					th::mode-edit="${!model.modeReadOnly}">
 				</c-buttonlist>
 				
-				<div class="text-subtitle1">Fallback message</div>
+				<div class="text-subtitle1" th:text=#{bot.fallback}></div>
 				<c-richtext
 						class="q-pb-sm"
 						v-model="vueData.default.text"
@@ -113,7 +113,7 @@
 			<vu:include-data object="nodeNew" field="color" />
 			<vu:include-data object="nodeNew" field="isDev" />
 			
-			<vu:table th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" id="nodes" list="nodeList" title="Nodes" componentId="nodeList" rowsPerPage="10" autoColClass
+			<vu:table th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" id="nodes" list="nodeList" th:title="Nodes" componentId="nodeList" rowsPerPage="10" autoColClass
 					  tr_@click.native="|vueData.nodeEdit = Vue.util.extend({},props.row); $refs.nodeEdit.show()|" tr_class="nav">
 				<vu:slot name="top_right_slot">
 					<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" 
@@ -143,7 +143,7 @@
 			<q-dialog ref="nodeEdit" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.nodeEdit">
 				<q-card>
 					<q-card-section>
-						<div class="text-h6">Node edition</div>
+						<div class="text-h6" th:text="#{bot.node.edition}"></div>
 					</q-card-section>
 					
 					<q-card-section style="height: 350px; width: 400px;">
@@ -153,7 +153,7 @@
 						
 						<vu:text-field object="nodeEdit" field="apiKey"/>
 						
-						<q-btn push :style="'background: '+ vueData.nodeEdit.color" class="q-my-sm" text-color="white" label="Color">
+						<q-btn push :style="'background: '+ vueData.nodeEdit.color" class="q-my-sm" text-color="white" th:label="#{bot.node.color}">
 							<q-popup-proxy ref="colorPopup" width="1000">
 								<q-color
 									v-model="vueData.nodeEdit.color"
@@ -171,19 +171,19 @@
 						</q-btn>
 						
 						<p>
-							<q-toggle label="Use this node for training" v-model="vueData.nodeEdit.isDev" ></q-toggle>
+							<q-toggle th:label="#{bot.node.training}" v-model="vueData.nodeEdit.isDev" ></q-toggle>
 						</p>
 					</q-card-section>
 				
 					<q-card-actions align="around">
-						<q-btn v-if="vueData.nodeEdit.nodId" label="Delete" color="red" @click="deleteNode" ></q-btn>
-						<q-btn label="Save" color="primary" @click="httpPostAjax('_saveNode', vueDataParams(['nodeEdit']), {onSuccess: $refs.nodeEdit.hide})" ></q-btn>
+						<q-btn v-if="vueData.nodeEdit.nodId" th:label="#{bot.delete}" color="red" @click="deleteNode" ></q-btn>
+						<q-btn th:label="#{action.save}" color="primary" @click="httpPostAjax('_saveNode', vueDataParams(['nodeEdit']), {onSuccess: $refs.nodeEdit.hide})" ></q-btn>
 					</q-card-actions>
 				</q-card>
 			</q-dialog>
 			
 			<q-page-sticky position="bottom-right">
-				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
+				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" /> 
 			</q-page-sticky>
 		</section>
 		

@@ -7,7 +7,7 @@
 	>
 	
 	<head>
-		<title>Person detail</title>
+		<title th:title="#{person.title}"></title>
 		
 		<!-- CDNJS :: Sortable (https://cdnjs.com/) -->
 		<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
@@ -25,11 +25,11 @@
 		</div>
 
 		<section layout:fragment="content-header-actions">
-			<vu:button-link th:if="${model.modeEdit}" url="@{/person/{id}(id=${model.person.perId})}" ariaLabel="Cancel" icon="fas fa-ban"
+			<vu:button-link th:if="${model.modeEdit}" url="@{/person/{id}(id=${model.person.perId})}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
-			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="${model.modeReadOnly and !model.isSameUser }" @click="componentStates.showPopup = true" aria-label="Delete" title="Delete" icon="delete"
+			<q-btn th:if="${model.modeReadOnly and !model.isSameUser }" @click="componentStates.showPopup = true" th:aria-label="#{action.delete}" th:title="#{action.delete}" icon="delete"
 							class="on-left" round size="lg" color="red" ></q-btn>
 		</section>
 		<div layout:fragment="content-header-tabs">
@@ -38,7 +38,7 @@
 	
 			<vu:popup object="person" action="_delete" vModel="showPopup"></vu:popup>
 	
-			<vu:block id="identity" title="Person identity">
+			<vu:block id="identity" th:title="#{person.identity.title}">
 				<vu:text-field object="person" field="name" readonly="${model.modeReadOnly}"/>
 				<vu:select object="person" field="rolCd" list="roles" valueField="rolCd" labelField="label" readonly="${model.modeReadOnly || model.isLastAdmin}"/>
 

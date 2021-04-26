@@ -15,7 +15,7 @@
 						@click="$refs.menuDrawer.toggle()" icon="menu" aria-label="Toggle menu on left side"></q-btn>
 						<q-toolbar-title>
 							<div>Chatbot designer</div>
-							<div class="text-subtitle2">Build the bot you always wanted</div>
+							<div class="text-subtitle2" th:text="#{parent.intro}"></div>
 						</q-toolbar-title>
 					</div>
 					<div class="col q-mx-xl">
@@ -24,13 +24,13 @@
 						<q-btn-dropdown color="primary" icon="mdi-account">
 							<q-list>
 								<q-item clickable v-close-popup >
-									<q-btn  type="a" color="grey" icon="mdi-reload" round aria-label="Reload" th:href="@{/login/_reloadAuthorizations}" >
-										<q-tooltip >Reload authorizations</q-tooltip>
+									<q-btn  type="a" color="grey" icon="mdi-reload" round th:aria-label="#{action.reload}" th:href="@{/login/_reloadAuthorizations}" >
+										<q-tooltip th:text="#{parent.auth}"></q-tooltip>
 									</q-btn>
 								</q-item>
 								<q-item clickable v-close-popup>
-									<q-btn type="a" color="grey" icon="mdi-lan-disconnect" round aria-label="Disconnect" th:href="@{/login/_reloadAuthorizations}" >
-										<q-tooltip >Logout</q-tooltip>
+									<q-btn type="a" color="grey" icon="mdi-lan-disconnect" round th:aria-label="#{action.disconnect}" th:href="@{/login/_reloadAuthorizations}" >
+										<q-tooltip th:text="#{action.logout}"></q-tooltip>
 									</q-btn>
 								</q-item>
 							</q-list>
@@ -64,21 +64,21 @@
 		          <q-item-section avatar>
 			        <q-icon name="fas fa-users"></q-icon>
 			      </q-item-section>
-		          <q-item-section>Users</q-item-section>
+		          <q-item-section th:text="#{parent.users}"></q-item-section>
 		        </q-item>
 		        
 		        <q-item tag="a" th:href="@{/bots/}" th:if="${model.userAuthorizations[AtzBotUser]}">
 		          <q-item-section avatar>
 			        <q-icon name="fas fa-robot"></q-icon>
 			      </q-item-section>
-		          <q-item-section>Bots</q-item-section>
+		          <q-item-section th:text="#{parent.bot}"></q-item-section>
 		        </q-item>
 		        
 		        <q-item tag="a"  th:href="@{/analytics/}">
 		          <q-item-section avatar>
 			        <q-icon name="fas fa-chart-bar"></q-icon>
 			      </q-item-section>
-		          <q-item-section>Statistics</q-item-section>
+		          <q-item-section th:text="#{parent.statistics}"></q-item-section>
 		        </q-item>
 					
 		       </q-list>

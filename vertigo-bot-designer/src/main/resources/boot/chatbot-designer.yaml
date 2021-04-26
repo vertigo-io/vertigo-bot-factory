@@ -106,3 +106,4 @@ modules:
 initializers:
   - io.vertigo.chatbot.designer.boot.DataBaseInitializer:
       __flags__: ["crebase"]
+  - io.vertigo.chatbot.designer.boot.ChatbotLocaleInitializer:
