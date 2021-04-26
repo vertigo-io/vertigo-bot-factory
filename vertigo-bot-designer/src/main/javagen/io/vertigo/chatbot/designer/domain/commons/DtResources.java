@@ -59,4 +59,16 @@ public enum DtResources implements MessageKey {
 	 * Order.
 	 */
 	fldPersonRole$sortOrder,
+
+	/***********************************************************
+	/** SelectionOption.
+	/***********************************************************
+	/**
+	 * Label.
+	 */
+	fldSelectionOption$label,
+	/**
+	 * Value.
+	 */
+	fldSelectionOption$value,
 }

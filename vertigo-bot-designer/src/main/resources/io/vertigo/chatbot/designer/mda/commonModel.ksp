@@ -1,0 +1,6 @@
+package io.vertigo.chatbot.designer.domain.commons
+
+create DtDefinition DtSelectionOption {
+	field label 		{domain: DoLabel					label: "Label"		 		cardinality:"1"}
+	field value			{domain: DoLabel 					label: "Value"	 			cardinality:"1"}
+}

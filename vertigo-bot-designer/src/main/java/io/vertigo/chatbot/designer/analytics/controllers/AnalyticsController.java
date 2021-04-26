@@ -36,9 +36,13 @@ import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
+import io.vertigo.chatbot.designer.commons.ihmEnum.TimeEnum;
+import io.vertigo.chatbot.designer.commons.services.EnumIHMManager;
 import io.vertigo.chatbot.designer.domain.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
 import io.vertigo.chatbot.designer.domain.TopIntent;
+import io.vertigo.chatbot.designer.domain.commons.SelectionOption;
+import io.vertigo.chatbot.domain.DtDefinitions.SelectionOptionFields;
 import io.vertigo.chatbot.domain.DtDefinitions.SentenseDetailFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopIntentFields;
 import io.vertigo.database.timeseries.TimedDatas;
@@ -56,6 +60,7 @@ public class AnalyticsController extends AbstractDesignerController {
 	private static final ViewContextKey<SentenseDetail> unknownSentensesKey = ViewContextKey.of("unknownSentenses");
 	private static final ViewContextKey<TopIntent> topIntentsKey = ViewContextKey.of("topIntents");
 	private static final ViewContextKey<SentenseDetail> intentDetailsKey = ViewContextKey.of("intentDetails");
+	private static final ViewContextKey<SelectionOption> timeOptionsList = ViewContextKey.of("timeOptions");
 
 	private static final ViewContextKey<Topic> topicsKey = ViewContextKey.of("topics");
 
@@ -76,6 +81,9 @@ public class AnalyticsController extends AbstractDesignerController {
 	@Inject
 	private TopicServices topicServices;
 
+	@Inject
+	private EnumIHMManager enumIHMManager;
+
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext,
 			@RequestParam("botId") final Optional<Long> botId,
@@ -89,6 +97,7 @@ public class AnalyticsController extends AbstractDesignerController {
 		botId.ifPresent(statCriteria::setBotId);
 		nodId.ifPresent(statCriteria::setNodId);
 
+		viewContext.publishDtList(timeOptionsList, SelectionOptionFields.label, enumIHMManager.getSelectionOptions(TimeEnum.values()));
 		viewContext.publishDto(criteriaKey, statCriteria);
 
 		updateGraph(viewContext, statCriteria);
