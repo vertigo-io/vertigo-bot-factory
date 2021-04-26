@@ -36,7 +36,7 @@ public class TopicCategoryDetailController extends AbstractBotController {
 		final TopicCategory topicCategory = topicCategoryServices.getTopicCategoryById(bot, topCatId);
 		final DtList<Topic> topics = topicCategoryServices.getAllTopicFromCategory(bot, topicCategory);
 		viewContext.publishDto(topicCategoryKey, topicCategory);
-		viewContext.publishDtListModifiable(topicsKey, topics);
+		viewContext.publishDtList(topicsKey, topics);
 		toModeReadOnly();
 	}
 
@@ -44,7 +44,7 @@ public class TopicCategoryDetailController extends AbstractBotController {
 	public void getNewCategory(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
 		viewContext.publishDto(topicCategoryKey, topicCategoryServices.getNewTopicCategory(bot));
-		viewContext.publishDtListModifiable(topicsKey, new DtList<Topic>(Topic.class));
+		viewContext.publishDtList(topicsKey, new DtList<Topic>(Topic.class));
 		toModeCreate();
 	}
 

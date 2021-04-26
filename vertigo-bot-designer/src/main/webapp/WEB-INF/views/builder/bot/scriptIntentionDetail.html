@@ -3,21 +3,11 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=scriptIntentions"
+	layout:decorate="~{templates/topicDetailLayout}" th:with="nav=true, tab=scriptIntentions"
 	>
 	
 	<head>
 		<title>Script intention detail</title>
-		
-		<script th:src="@{/static/js/c-richtext.js}"></script>
-		<script th:src="@{/static/js/c-buttonList.js}"></script>
-		
-		<!-- CDNJS :: Sortable (https://cdnjs.com/) -->
-		<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
-		<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
-		<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
-		
-		
 	</head>
 	
 	<body>
@@ -32,40 +22,20 @@
 				
 		<section layout:fragment="content-nav">
 			<q-item tag="a" href="#detail">Informations</q-item>
+			<q-item tag="a" href="#training">Training phrases</q-item>
 			<q-item tag="a" href="#script">Script</q-item>
 			
 		</section>
 		
-		<section layout:fragment="content">
-			
+		<section layout:fragment="content-specific">
 			<vu:popup object="scriptIntention" action="_delete" vModel="showPopup"></vu:popup>
-			
-			<vu:block id="detail" title="Informations">
-				<vu:text-field object="topic" field="title" />
-				<vu:label object="topic" field="isEnabled">
-					<vu:include-data object="topic" field="isEnabled" />
-					<q-input v-model="vueData.topic.isEnabled" name="vContext[topic][isEnabled]" class="hidden" ></q-input>
-					
-					<q-toggle v-model="vueData.topic.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
-				</vu:label>
-				<vu:select object="topic" field="topCatId" list="topicCategoryList" valueField="topCatId" labelField="label" readonly="${model.modeReadOnly}"/>
-				<vu:include-data object="topic" field="description" />
-				<vu:text-area object="topic" field="description" readonly="${model.modeReadOnly}"/>
-			</vu:block>
 			
 			<vu:block id="script" title="Script">
 				<vu:include-data object="scriptIntention" field="script" />	
+				<vu:text-area label=' ' object="scriptIntention" field="script" readonly="${model.modeReadOnly}" />
+			</vu:block>		
 				
-						<vu:text-area label=' ' object="scriptIntention" field="script" readonly="${model.modeReadOnly}" />
-				
-			</vu:block>
-			
-			
-			
-			<q-page-sticky position="bottom-right">
-				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
-			</q-page-sticky>
-			
 		</section>
+		
 	</body>
 </html>

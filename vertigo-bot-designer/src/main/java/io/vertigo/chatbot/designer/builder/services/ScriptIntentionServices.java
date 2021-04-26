@@ -6,6 +6,7 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.ScriptIntentionDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
@@ -22,13 +23,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 public class ScriptIntentionServices implements Component {
 
 	@Inject
-	private UtterTextServices utterTextServices;
-
-	@Inject
 	private TopicServices topicServices;
-
-	@Inject
-	private ResponsesButtonServices responsesButtonServices;
 
 	@Inject
 	private ScriptIntentionDAO scriptIntentionDAO;
@@ -48,15 +43,19 @@ public class ScriptIntentionServices implements Component {
 	}
 
 	public ScriptIntention saveScriptIntention(@SecuredOperation("botAdm") final Chatbot chatbot, final ScriptIntention scriptIntention,
+			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			final Topic topic) {
 
-		Assertion.check().isNotNull(scriptIntention);
+		Assertion.check().isNotNull(scriptIntention)
+				.isNotNull(nluTrainingSentences)
+				.isNotNull(nluTrainingSentencesToDelete);
+
 		// ---
 		topic.setTtoCd(TypeTopicEnum.SCRIPTINTENTION.name());
 		final Topic savedTopic = topicServices.save(topic);
 		scriptIntention.setTopId(savedTopic.getTopId());
 		final ScriptIntention savedSI = scriptIntentionDAO.save(scriptIntention);
-
+		topicServices.save(savedTopic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 		return savedSI;
 	}
 

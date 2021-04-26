@@ -19,4 +19,6 @@
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'models'} ? 'active' : ''" flat label="Models" url="@{/bot/{id}/models/(id=${model.bot.botId})}" />
 		<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" disabled="${noNavigation == true}" class="${tab == 'users'} ? 'active' : ''" flat label="Users" url="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}" />
 	</div>
+	
+		<section layout:fragment="informations"></section>
 </html>

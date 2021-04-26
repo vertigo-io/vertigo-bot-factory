@@ -35,6 +35,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
@@ -114,6 +115,11 @@ public class BotDetailController extends AbstractBotController {
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext) {
 		initEmptyCommonContext(viewContext);
+
+		final TopicCategory category = new TopicCategory();
+		category.setIsEnabled(true);
+		category.setLabel("Default");
+		category.setLevel(1L);
 
 		final UtterText newDefault = new UtterText();
 		newDefault.setText("Sorry, I don't understand.");

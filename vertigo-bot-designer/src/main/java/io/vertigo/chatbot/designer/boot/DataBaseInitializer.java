@@ -59,7 +59,6 @@ public class DataBaseInitializer implements ComponentInitializer {
 		execSqlScript(connection, "sqlgen/init_masterdata_response_type.sql");
 		execSqlScript(connection, "sqlgen/init_masterdata_person_role.sql");
 		execSqlScript(connection, "io/vertigo/chatbot/designer/database/init_person.sql");
-		execSqlScript(connection, "sqlgen/init_masterdata_type_topic.sql");
 	}
 
 	private void execSqlScript(final SqlConnection connection, final String scriptPath) {

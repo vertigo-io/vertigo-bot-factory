@@ -36,6 +36,7 @@ create DtDefinition DtSmallTalk {
 
 
 
+
 create Association ASmallTalkTopic{
 
 	fkFieldName : "topId" /* NPE sans explication si ya pas */
@@ -239,14 +240,14 @@ create DtDefinition DtNluTrainingExport {
 }
 
 create DtDefinition DtTopicIhm {
-	field topId		{domain: DoId		label: "Topic id"				cardinality:"1"}
-	field ttoCd		{domain: DoCode		label: "Code Type"				cardinality:"?"}
-	field type		{domain: DoLabel	label: "Type"					cardinality:"?"}
-	field title		{domain: DoLabel	label: "Topic label"			}
-	field smtId		{domain: DoId		label: "SmallTalk id"			cardinality:"?"}
-	field sinId		{domain: DoId		label: "Script intention id"	cardinality:"?"}
-	field catLabel	{domain: DoLabel	label: "Category"				cardinality:"1"}
-	field isEnabled	{domain: DoYesNo	label: "Enabled"				}
+	field topId		{domain: DoId		label: "Topic id"				cardinality:"1"	}
+	field ttoCd		{domain: DoCode		label: "Code Type"				cardinality:"?"	}
+	field type		{domain: DoLabel	label: "Type"					cardinality:"?"	}
+	field title		{domain: DoLabel	label: "Topic label"							}
+	field smtId		{domain: DoId		label: "SmallTalk id"			cardinality:"?"	}
+	field sinId		{domain: DoId		label: "Script intention id"	cardinality:"?"	}
+	field catLabel	{domain: DoLabel	label: "Category"				cardinality:"1"	}
+	field isEnabled	{domain: DoYesNo	label: "Enabled"								}
 }
 
 create DtDefinition DtScriptIntentionIhm {

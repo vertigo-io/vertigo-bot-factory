@@ -37,7 +37,7 @@ public class ResponsesButtonServices implements Component {
 				.isNotNull(smallTalk)
 				.isNotNull(smallTalk.getSmtId());
 		return responseButtonDAO.findAll(
-				Criterions.isEqualTo(ResponseButtonFields.smtId, smallTalk.getSmtId()).or(Criterions.isEqualTo(ResponseButtonFields.smtIdResponse, smallTalk.getSmtId())),
+				Criterions.isEqualTo(ResponseButtonFields.smtId, smallTalk.getSmtId()),
 				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 

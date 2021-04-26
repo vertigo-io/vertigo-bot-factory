@@ -27,13 +27,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.builder.services.ScriptIntentionServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
-import io.vertigo.core.lang.Assertion;
+import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -42,79 +40,73 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 @Controller
 @RequestMapping("/bot/{botId}/scriptIntention")
 @Secured("BotUser")
-public class ScriptIntentionDetailController extends AbstractBotController {
+public class ScriptIntentionDetailController extends AbstractTopicController<ScriptIntention> {
 
 	private static final ViewContextKey<ScriptIntention> scriptIntentionKey = ViewContextKey.of("scriptIntention");
-	private static final ViewContextKey<Topic> topicKey = ViewContextKey.of("topic");
-
-	private static final ViewContextKey<TopicCategory> topicCategoryKey = ViewContextKey.of("topicCategory");
-	private static final ViewContextKey<TopicCategory> topicCategoryListKey = ViewContextKey.of("topicCategoryList");
 
 	@Inject
 	private ScriptIntentionServices scriptIntentionServices;
 
-	@Inject
-	private TopicServices topicServices;
-
-	@Inject
-	private TopicCategoryServices topicCategoryServices;
-
-	@GetMapping("/{intId}")
-	@Secured("BotAdm")
+	@GetMapping("/{sinId}")
+	@Secured("BotVisitor")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId,
-			@PathVariable("intId") final Long intId) {
-		final Chatbot bot = initCommonContext(viewContext, botId);
+			@PathVariable("sinId") final Long sinId) {
 
-		final ScriptIntention scriptIntention = scriptIntentionServices.getScriptIntentionById(bot, intId);
-		final Topic topic = topicServices.findTopicById(scriptIntention.getTopId());
-		Assertion.check().isTrue(topic.getBotId().equals(botId), "Paramètres incohérents");
+		final Chatbot bot = initCommonContext(viewContext, botId);
+		final ScriptIntention scriptIntention = scriptIntentionServices.getScriptIntentionById(bot, sinId);
+		final Topic topic = getTopic(scriptIntention);
+
+		initContext(viewContext, bot, topic);
 
 		viewContext.publishDto(scriptIntentionKey, scriptIntention);
-		viewContext.publishDto(topicKey, topic);
 
-		viewContext.publishDto(topicCategoryKey, topicCategoryServices.getTopicCategoryById(bot, topic.getTopCatId()));
-		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
-
-		toModeReadOnly();
 	}
 
 	@GetMapping("/new")
 	@Secured("BotAdm")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
+
 		final Chatbot bot = initCommonContext(viewContext, botId);
 
-		viewContext.publishDto(scriptIntentionKey, scriptIntentionServices.getNewScriptIntention(bot));
-		viewContext.publishDto(topicKey, topicServices.getNewTopic(bot));
+		initContextNew(viewContext, bot);
 
-		viewContext.publishDto(topicCategoryKey, new TopicCategory());
-		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
+		viewContext.publishDto(scriptIntentionKey, scriptIntentionServices.getNewScriptIntention(bot));
 
 		toModeCreate();
 	}
 
-	@PostMapping("/_edit")
-	@Secured("BotAdm")
-	public void doEdit() {
-		toModeEdit();
-	}
-
+	@Override
 	@PostMapping("/_save")
 	@Secured("BotAdm")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("scriptIntention") final ScriptIntention scriptIntention,
 			@ViewAttribute("topic") final Topic topic,
-			@ViewAttribute("bot") final Chatbot chatbot) {
+			@ViewAttribute("bot") final Chatbot chatbot,
+			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
+			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
+			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
+
 		final Long botId = chatbot.getBotId();
-		scriptIntentionServices.saveScriptIntention(chatbot, scriptIntention, topic);
+
+		// add training sentence who is not "validated" by enter and still in the input
+		TopicHelper.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+
+		scriptIntentionServices.saveScriptIntention(chatbot, scriptIntention, nluTrainingSentences, nluTrainingSentencesToDelete, topic);
 		return "redirect:/bot/" + botId + "/scriptIntention/" + scriptIntention.getSinId();
 	}
 
+	@Override
 	@PostMapping("/_delete")
 	@Secured("BotAdm")
 	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("scriptIntention") final ScriptIntention scriptIntention,
 			@ViewAttribute("topic") final Topic topic) {
 		scriptIntentionServices.deleteScriptIntention(chatbot, scriptIntention, topic);
 		return "redirect:/bot/" + topic.getBotId() + "/topics/";
+	}
+
+	@Override
+	Topic getTopic(final ScriptIntention object) {
+		return topicServices.findTopicById(object.getTopId());
 	}
 
 }

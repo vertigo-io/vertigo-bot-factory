@@ -24,7 +24,7 @@ public class TypeTopicServices implements Component {
 		return typeTopicDAO.save(typeTopic);
 	}
 
-	public void deleteTopic(final TypeTopic typeTopic) {
+	public void deleteTypeTopic(final TypeTopic typeTopic) {
 		typeTopicDAO.delete(typeTopic.getTtoCd());
 	}
 }

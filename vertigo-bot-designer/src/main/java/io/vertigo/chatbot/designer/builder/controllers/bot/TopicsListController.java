@@ -63,7 +63,6 @@ public class TopicsListController extends AbstractBotController {
 
 		viewContext.publishRef(selectionList, "");
 		viewContext.publishRef(topIdDetail, "");
-		//		viewContext.publishRef(botIdKey, botId);
 		toModeReadOnly();
 	}
 
