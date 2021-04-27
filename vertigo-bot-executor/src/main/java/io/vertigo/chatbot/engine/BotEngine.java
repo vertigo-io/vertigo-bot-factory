@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BBKeyPattern;
@@ -25,7 +24,6 @@ import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
-import io.vertigo.core.util.StringUtil;
 
 /**
  * Bot engine that handle user interactions through a Vertigo BlackBoard.
@@ -42,8 +40,6 @@ import io.vertigo.core.util.StringUtil;
  * @author skerdudou, mlaroche
  */
 public class BotEngine {
-	public static final String NEXT_TOPIC_KEY = "nexttopic";
-
 	public static final String START_TOPIC_NAME = "!START";
 	public static final String END_TOPIC_NAME = "!END";
 	public static final String FALLBACK_TOPIC_NAME = "!FALLBACK";
@@ -52,13 +48,16 @@ public class BotEngine {
 	public static final BBKey BOT_OUT_PATH = BBKey.of("/bot/out");
 	public static final BBKey BOT_STATUS_PATH = BBKey.of("/bot/status");
 	public static final BBKey USER_GLOBAL_PATH = BBKey.of("/user/global");
-	public static final BBKey USER_LOCAL_PATH = BBKey.of("/user/local/");
+	public static final BBKey USER_LOCAL_PATH = BBKey.of("/user/local");
+
+	public static final BBKey BOT_IN_MESSAGE_KEY = BBKey.of(BOT_IN_PATH, "/message");
+	public static final BBKey BOT_IN_BUTTON_KEY = BBKey.of(BOT_IN_PATH, "/button");
+	public static final BBKey BOT_NEXT_TOPIC_KEY = BBKey.of(BOT_IN_PATH, "/nexttopic");
 
 	public static final BBKey BOT_RESPONSE_KEY = BBKey.of(BOT_OUT_PATH, "/responses");
 	public static final BBKey BOT_CHOICES_KEY = BBKey.of(BOT_OUT_PATH, "/choices");
 
 	public static final BBKey BOT_TOPIC_KEY = BBKey.of(BOT_STATUS_PATH, "/topic");
-	public static final BBKey BOT_NEXT_TOPIC_KEY = BBKey.of(BOT_STATUS_PATH, "/" + NEXT_TOPIC_KEY);
 	public static final BBKey BOT_EXPECT_INPUT_PATH = BBKey.of(BOT_STATUS_PATH, "/expect");
 
 	private final BlackBoard bb;
@@ -89,29 +88,19 @@ public class BotEngine {
 	}
 
 	public BotResponse runTick(final BotInput input) {
-		// Handle text answers questions inside a BT (put into bb target key)
-		if (input.getMessage() != null && bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/key"))) {
-			final var key = BBKey.of(bb.getString(BBKey.of(BOT_EXPECT_INPUT_PATH, "/key")));
-			final var type = bb.getString(BBKey.of(BOT_EXPECT_INPUT_PATH, "/type"));
-			if ("integer".equals(type)) {
-				bb.putInteger(key, Integer.valueOf(input.getMessage()));
-			} else {
-				bb.putString(key, input.getMessage());
-			}
-		}
-
-		// Continue on previous topic or resolve a new one
-		var topic = Optional.ofNullable(bb.getString(BOT_TOPIC_KEY)).map(topicDefinitionMap::get)
-				.orElseGet(() -> {// if no current topic
-					final var newTopic = resolveNewTopic(input);
-					switchToTopic(newTopic);
-					return newTopic;
-				});
-
-		// prepare exec
+		// clear old input/outputs context
 		bb.delete(BBKeyPattern.ofRoot(BOT_IN_PATH));
 		bb.delete(BBKeyPattern.ofRoot(BOT_OUT_PATH));
-		bb.delete(BBKeyPattern.of(BOT_NEXT_TOPIC_KEY.key()));
+
+		// save raw inputs into BB (BOT_IN_MESSAGE_KEY)
+		inputToBB(input);
+
+		// Handle text/button answers questions inside a BT (put into provided bb target key)
+		handleExpected(input);
+
+		// Continue on previous topic or start from scratch
+		TopicDefinition topic = topicDefinitionMap.get(getTopic());
+
 		BTStatus status;
 		TopicDefinition nextTopic = null;
 		do {
@@ -119,6 +108,7 @@ public class BotEngine {
 				topic = nextTopic;
 				nextTopic = null;
 			}
+
 			// exec
 			status = behaviorTreeManager.run(topic.getBtRoot(List.of(bb)));
 
@@ -152,6 +142,56 @@ public class BotEngine {
 		return botResponseBuilder.build();
 	}
 
+	private void handleExpected(final BotInput input) {
+		final String textMessage = input.getMessage();
+		final String buttonPayload = (String) input.getMetadatas().get("payload");
+
+		doHandleExpected("text", textMessage);
+		doHandleExpected("nlu", textMessage);
+		doHandleExpected("button", buttonPayload);
+
+		bb.delete(BBKeyPattern.ofRoot(BOT_EXPECT_INPUT_PATH));
+	}
+
+	private void doHandleExpected(final String prefix, final String value) {
+		if (value != null && bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/key"))) { // if value and expected
+			final var key = bb.getString(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/key"));
+			final var type = bb.getString(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/type"));
+			switch (type) {
+				case "integer":
+					bb.putInteger(BBKey.of(key), Integer.valueOf(value));
+					break;
+				case "string":
+					bb.putString(BBKey.of(key), value);
+					break;
+				case "nlu":
+					bb.putString(BBKey.of(key), getTopicFromNlu(value));
+					break;
+				default:
+					throw new VSystemException("Unknown expected type '{0}'", type);
+			}
+		}
+	}
+
+	private void inputToBB(final BotInput input) {
+		if (input.getMessage() != null) {
+			bb.putString(BotEngine.BOT_IN_MESSAGE_KEY, input.getMessage());
+		}
+
+		if (input.getMetadatas() != null && !input.getMetadatas().isEmpty()) {
+			for (final var metadata : input.getMetadatas().entrySet()) {
+				bb.putString(BBKey.of(BotEngine.BOT_IN_MESSAGE_KEY, "/" + metadata.getKey()), metadata.getValue().toString());
+			}
+		}
+	}
+
+	private String getTopic() {
+		if (bb.exists(BOT_TOPIC_KEY)) {
+			return bb.getString(BOT_TOPIC_KEY);
+		}
+		return START_TOPIC_NAME;
+	}
+
 	private BotStatus resolveResponseStatus(final TopicDefinition topic, final BTStatus status) {
 		if (hasBusinessTopic) {
 			if (hasEndTopic) {
@@ -174,24 +214,7 @@ public class BotEngine {
 		bb.delete(BBKeyPattern.of(USER_LOCAL_PATH.key())); // clean context relative to a BT
 	}
 
-	private TopicDefinition resolveNewTopic(final BotInput input) {
-		// select topic from one of this scenario :
-		// - Special metadata to choose topic
-		// - NLU on incoming text message
-		// - welcome routine
-		if (input.getMetadatas().containsKey(NEXT_TOPIC_KEY)) {
-			return topicDefinitionMap.getOrDefault(input.getMetadatas().get(NEXT_TOPIC_KEY), topicDefinitionMap.get(FALLBACK_TOPIC_NAME));
-		}
-
-		final var message = input.getMessage();
-		if (!StringUtil.isBlank(message)) {
-			return getTopicFromNlu(message).orElse(topicDefinitionMap.get(FALLBACK_TOPIC_NAME));
-		}
-
-		return topicDefinitionMap.get(START_TOPIC_NAME);
-	}
-
-	private Optional<TopicDefinition> getTopicFromNlu(final String sentence) {
+	private String getTopicFromNlu(final String sentence) {
 		final NluResult nluResponse = nluManager.recognize(sentence, NluManager.DEFAULT_ENGINE_NAME);
 		final var scoredIntents = nluResponse.getScoredIntents();
 		scoredIntents.sort(Comparator.comparing(ScoredIntent::getAccuracy, Comparator.reverseOrder()));
@@ -201,14 +224,14 @@ public class BotEngine {
 			final var topic = topicDefinitionMap.get(intent.getIntent().getCode());
 			Assertion.check().isNotNull(topic, "Topic '{0}' not found, is NLU backend up to date ?", intent.getIntent().getCode());
 			if (intent.getAccuracy() >= topic.getNluThreshold().doubleValue()) { // dont take if not accurate enough
-				return Optional.of(topic);
+				return topic.getCode();
 			}
 		}
-		return Optional.empty();
+		return FALLBACK_TOPIC_NAME;
 	}
 
 	private List<IBotChoice> buildChoices() {
-		if (!bb.exists(BOT_CHOICES_KEY)) {
+		if (!bb.exists(BBKey.of(BOT_CHOICES_KEY, "/class"))) {
 			return Collections.emptyList();
 		}
 
@@ -216,16 +239,17 @@ public class BotEngine {
 
 		final List<IBotChoice> choices = new ArrayList<>();
 		int choiceNumber = 0;
-		while (bb.exists(BBKey.of(BOT_CHOICES_KEY, "/" + choiceNumber))) {
+		while (bb.listSize(BBKey.of(BOT_CHOICES_KEY, "/" + choiceNumber)) > 0) {
 			final var choiceKey = BBKey.of(BOT_CHOICES_KEY, "/" + choiceNumber);
 			final int paramCount = bb.listSize(choiceKey);
-			final Object[] params = new String[paramCount];
+			final String[] params = new String[paramCount];
 			for (int i = 0; i < paramCount; i++) {
 				params[i] = bb.listGet(choiceKey, i);
 			}
 
 			try {
-				choices.add((IBotChoice) method.invoke(null, params));
+				final Object[] invokeParams = { params };
+				choices.add((IBotChoice) method.invoke(null, invokeParams));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				throw new VSystemException(e, "Error while calling choice construct method");
 			}

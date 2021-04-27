@@ -17,6 +17,8 @@
  */
 package io.vertigo.chatbot.engine.model.choice;
 
+import java.util.List;
+
 import io.vertigo.core.lang.Assertion;
 
 /**
@@ -28,7 +30,7 @@ public final class BotButton implements IBotChoice {
 	private final String label;
 	private final String payload;
 
-	private BotButton(final String label, final String payload) {
+	public BotButton(final String label, final String payload) {
 		this.label = label;
 		this.payload = payload;
 	}
@@ -53,6 +55,11 @@ public final class BotButton implements IBotChoice {
 	@Override
 	public String getPayload() {
 		return payload;
+	}
+
+	@Override
+	public String[] exportParams() {
+		return List.of(label, payload).toArray(String[]::new);
 	}
 
 }

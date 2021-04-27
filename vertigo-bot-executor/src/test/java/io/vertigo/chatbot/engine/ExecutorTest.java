@@ -38,29 +38,22 @@ public class ExecutorTest {
 	private final String botWelcome = "" +
 			"\n	begin sequence" +
 			"\n		say \"Welcome to this test bot.\"" +
+			"\n		begin choose:button " + BotEngine.USER_LOCAL_PATH.key() + "/topic \"Please choose topic.\"" +
+			"\n			button \"Le topic 1\" topic1" +
+			"\n			button \"Le topic 2\" topic2" +
+			"\n		end choose:button" +
+			"\n		topic {{" + BotEngine.USER_LOCAL_PATH.key() + "/topic}}" +
 			"\n	end sequence";
 
 	private final String botTopic1 = "" +
 			"\n	begin sequence" +
-			"\n		begin selector" +
-			"\n			fulfilled /user/local/msg1" +
-			"\n			begin sequence" +
-			"\n				say \"This is topic 1\"" +
-			"\n				set /user/local/msg1 1" +
-			"\n			end sequence" +
-			"\n		end selector" +
+			"\n		say \"This is topic 1\"" +
 			"\n		inputString /user/global/name \"What is your name ?\"" +
 			"\n	end sequence";
 
 	private final String botTopic2 = "" +
 			"\n	begin sequence" +
-			"\n		begin selector" +
-			"\n			fulfilled /user/local/msg1" +
-			"\n			begin sequence" +
-			"\n				say \"This is topic 2\"" +
-			"\n				set /user/local/msg1 1" +
-			"\n			end sequence" +
-			"\n		end selector" +
+			"\n		say \"This is topic 2\"" +
 			"\n		inputString /user/global/city \"What is your city ?\"" +
 			"\n	end sequence";
 
@@ -85,10 +78,12 @@ public class ExecutorTest {
 		final UUID uuid = (UUID) response.getMetadatas().get("sessionId");
 
 		Assertions.assertEquals(BotStatus.Talking, response.getStatus());
-		Assertions.assertEquals(1, textResponses.size());
+		Assertions.assertEquals(2, textResponses.size());
 		Assertions.assertEquals("Welcome to this test bot.", textResponses.get(0));
+		Assertions.assertEquals("Please choose topic.", textResponses.get(1));
+		Assertions.assertEquals(2, response.getChoices().size());
 		//--
-		response = executorManager.handleUserMessage(uuid, new BotInput(Map.of(BotEngine.NEXT_TOPIC_KEY, "topic1")));
+		response = executorManager.handleUserMessage(uuid, new BotInput(Map.of("payload", "topic1")));
 		textResponses = response.getHtmlTexts();
 
 		Assertions.assertEquals(BotStatus.Talking, response.getStatus());
