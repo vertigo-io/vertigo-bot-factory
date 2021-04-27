@@ -6,16 +6,18 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.vertigo.ai.AiFeatures;
-import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.chatbot.commons.ChatbotCommonsFeatures;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.engine.model.BotInput;
+import io.vertigo.chatbot.engine.model.BotResponse;
+import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
 import io.vertigo.chatbot.executor.ExecutorFeatures;
 import io.vertigo.chatbot.executor.manager.ExecutorManager;
 import io.vertigo.commons.CommonsFeatures;
@@ -30,13 +32,8 @@ public class ExecutorTest {
 
 	@Inject
 	private ExecutorManager executorManager;
-	@Inject
-	private BotManager botManager;
-	@Inject
-	private BtCommandManager btCommandManager;
 
 	private AutoCloseableNode node;
-	private BotEngine botEngine;
 
 	private final String botWelcome = "" +
 			"\n	begin sequence" +
@@ -45,13 +42,25 @@ public class ExecutorTest {
 
 	private final String botTopic1 = "" +
 			"\n	begin sequence" +
-			"\n		say \"This is topic 1\"" +
+			"\n		begin selector" +
+			"\n			fulfilled /user/local/msg1" +
+			"\n			begin sequence" +
+			"\n				say \"This is topic 1\"" +
+			"\n				set /user/local/msg1 1" +
+			"\n			end sequence" +
+			"\n		end selector" +
 			"\n		inputString /user/global/name \"What is your name ?\"" +
 			"\n	end sequence";
 
 	private final String botTopic2 = "" +
 			"\n	begin sequence" +
-			"\n		say \"This is topic 2\"" +
+			"\n		begin selector" +
+			"\n			fulfilled /user/local/msg1" +
+			"\n			begin sequence" +
+			"\n				say \"This is topic 2\"" +
+			"\n				set /user/local/msg1 1" +
+			"\n			end sequence" +
+			"\n		end selector" +
 			"\n		inputString /user/global/city \"What is your city ?\"" +
 			"\n	end sequence";
 
@@ -71,12 +80,28 @@ public class ExecutorTest {
 	public void testTopic1() {
 		buildBot();
 
-		var response = executorManager.startNewConversation(new BotInput());
+		BotResponse response = executorManager.startNewConversation(new BotInput());
+		var textResponses = response.getHtmlTexts();
 		final UUID uuid = (UUID) response.getMetadatas().get("sessionId");
 
+		Assertions.assertEquals(BotStatus.Talking, response.getStatus());
+		Assertions.assertEquals(1, textResponses.size());
+		Assertions.assertEquals("Welcome to this test bot.", textResponses.get(0));
+		//--
 		response = executorManager.handleUserMessage(uuid, new BotInput(Map.of(BotEngine.NEXT_TOPIC_KEY, "topic1")));
+		textResponses = response.getHtmlTexts();
 
+		Assertions.assertEquals(BotStatus.Talking, response.getStatus());
+		Assertions.assertEquals(2, textResponses.size());
+		Assertions.assertEquals("This is topic 1", textResponses.get(0));
+		Assertions.assertEquals("What is your name ?", textResponses.get(1));
+		//--
 		response = executorManager.handleUserMessage(uuid, new BotInput("John"));
+		textResponses = response.getHtmlTexts();
+
+		Assertions.assertEquals(BotStatus.Ended, response.getStatus());
+		Assertions.assertEquals(1, textResponses.size());
+		Assertions.assertEquals("Nice to meet you John", textResponses.get(0));
 	}
 
 	private void buildBot() {
