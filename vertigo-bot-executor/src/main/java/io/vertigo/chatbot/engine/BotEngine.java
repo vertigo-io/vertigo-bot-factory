@@ -114,13 +114,13 @@ public class BotEngine {
 
 			if (status.isSucceeded() && !topic.getCode().startsWith("!")) { // end of business topic (special topics starts with !)
 				nextTopic = topicDefinitionMap.get(END_TOPIC_NAME); // may be null if no end topic
-				switchToTopic(nextTopic);
+				switchToTopic(END_TOPIC_NAME);
 			} else if (bb.exists(BOT_NEXT_TOPIC_KEY)) {
 				final var nextTopicName = bb.getString(BOT_NEXT_TOPIC_KEY);
 				nextTopic = topicDefinitionMap.get(nextTopicName); // handle forward to another topic
 				Assertion.check().isNotNull(nextTopic, "Topic '{0}' not found, cant forward to it", nextTopicName);
 				bb.delete(BBKeyPattern.of(BOT_NEXT_TOPIC_KEY.key()));
-				switchToTopic(nextTopic);
+				switchToTopic(nextTopicName);
 			}
 		} while (nextTopic != null);
 
@@ -138,6 +138,11 @@ public class BotEngine {
 			botResponseBuilder.addMessage(bb.listGet(BOT_RESPONSE_KEY, i));
 		}
 		botResponseBuilder.addAllChoices(buildChoices());
+
+		final var keyAcceptText = BBKey.of(BOT_OUT_PATH, "/accepttext");
+		if (bb.exists(keyAcceptText)) {
+			botResponseBuilder.addMetadata("acceptText", bb.getInteger(keyAcceptText));
+		}
 
 		return botResponseBuilder.build();
 	}
@@ -186,6 +191,12 @@ public class BotEngine {
 	}
 
 	private String getTopic() {
+		if (bb.exists(BOT_NEXT_TOPIC_KEY)) {
+			final var nextTopic = bb.getString(BOT_NEXT_TOPIC_KEY);
+			bb.delete(BBKeyPattern.of(BOT_NEXT_TOPIC_KEY.key())); // consume it
+			switchToTopic(nextTopic);
+			return nextTopic;
+		}
 		if (bb.exists(BOT_TOPIC_KEY)) {
 			return bb.getString(BOT_TOPIC_KEY);
 		}
@@ -205,13 +216,13 @@ public class BotEngine {
 		return status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking;
 	}
 
-	private void switchToTopic(final TopicDefinition newTopic) {
+	private void switchToTopic(final String newTopic) {
 		if (newTopic == null) {
 			bb.delete(BBKeyPattern.of(BOT_TOPIC_KEY.key()));
 		} else {
-			bb.putString(BOT_TOPIC_KEY, newTopic.getCode());
+			bb.putString(BOT_TOPIC_KEY, newTopic);
 		}
-		bb.delete(BBKeyPattern.of(USER_LOCAL_PATH.key())); // clean context relative to a BT
+		bb.delete(BBKeyPattern.ofRoot(USER_LOCAL_PATH)); // clean context relative to a BT
 	}
 
 	private String getTopicFromNlu(final String sentence) {

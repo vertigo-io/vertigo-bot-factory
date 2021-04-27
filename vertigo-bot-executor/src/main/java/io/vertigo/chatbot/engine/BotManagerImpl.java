@@ -66,7 +66,9 @@ public final class BotManagerImpl implements BotManager {
 		final var nluTtrainingData = new HashMap<NluIntent, List<String>>();
 		final Map<String, TopicDefinition> topicDefinitionTempMap = new HashMap<>();
 		for (final TopicDefinition t : newTopics) {
-			nluTtrainingData.put(NluIntent.of(t.getCode()), t.getTrainingPhrases()); // build NLU training data
+			if (!t.getTrainingPhrases().isEmpty()) {
+				nluTtrainingData.put(NluIntent.of(t.getCode()), t.getTrainingPhrases()); // build NLU training data
+			}
 			topicDefinitionTempMap.put(t.getCode(), t);
 		}
 

@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
 import static io.vertigo.ai.bt.BTNodes.condition;
+import static io.vertigo.ai.bt.BTNodes.running;
 import static io.vertigo.ai.bt.BTNodes.selector;
 import static io.vertigo.ai.bt.BTNodes.sequence;
 
@@ -112,6 +113,7 @@ public final class BotNodeProvider {
 				() -> {
 					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/key"), keyTemplate);
 					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/type"), "string");
+					bb.putInteger(BBKey.of(BotEngine.BOT_OUT_PATH, "/accepttext"), 1);
 					return BTStatus.Running;
 				});
 	}
@@ -122,6 +124,7 @@ public final class BotNodeProvider {
 				() -> {
 					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/key"), keyTemplate);
 					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/type"), "integer");
+					bb.putInteger(BBKey.of(BotEngine.BOT_OUT_PATH, "/accepttext"), 1);
 					return BTStatus.Running;
 				});
 	}
@@ -169,6 +172,14 @@ public final class BotNodeProvider {
 	}
 
 	public static BTNode sayOnce(final BlackBoard bb, final String msg) {
+		return doSayOnce(bb, msg, BotEngine.BOT_STATUS_PATH);
+	}
+
+	public static BTNode sayOnceTree(final BlackBoard bb, final String msg) {
+		return doSayOnce(bb, msg, BotEngine.USER_LOCAL_PATH);
+	}
+
+	private static BTNode doSayOnce(final BlackBoard bb, final String msg, final BBKey storeTree) {
 		MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("MD5");
@@ -179,10 +190,10 @@ public final class BotNodeProvider {
 		final var digest = new BigInteger(1, md.digest()).toString(16);
 
 		return selector(
-				fulfilled(bb, BotEngine.BOT_STATUS_PATH.key() + "/displayedmessages/" + digest),
+				fulfilled(bb, storeTree.key() + "/displayedmessages/" + digest),
 				sequence(
 						say(bb, msg),
-						set(bb, BotEngine.BOT_STATUS_PATH.key() + "/displayedmessages/" + digest, "1")));
+						set(bb, storeTree.key() + "/displayedmessages/" + digest, "1")));
 	}
 
 	// Integer
@@ -232,14 +243,6 @@ public final class BotNodeProvider {
 		return new BotSwitch(value -> eq(bb, keyTemplate, value));
 	}
 
-	public static BTNode expectNlu(final BlackBoard bb) {
-		return () -> {
-			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/nlu/key"), BotEngine.BOT_NEXT_TOPIC_KEY.key());
-			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/nlu/type"), "nlu");
-			return BTStatus.Running;
-		};
-	}
-
 	public static BTNode switchTopic(final BlackBoard bb, final String topicCode) {
 		return () -> {
 			bb.putString(BotEngine.BOT_NEXT_TOPIC_KEY, bb.format(topicCode));
@@ -251,18 +254,45 @@ public final class BotNodeProvider {
 		return selector(
 				fulfilled(bb, keyTemplate),
 				sequence(
+						say(bb, question),
 						storeButtons(bb, buttons, BotButton.class),
-						queryButton(bb, keyTemplate, question)));
+						queryButton(bb, keyTemplate),
+						running()));
 	}
 
-	private static BTNode queryButton(final BlackBoard bb, final String keyTemplate, final String question) {
+	public static BTNode chooseNlu(final BlackBoard bb, final String question) {
 		return sequence(
 				say(bb, question),
-				() -> {
-					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/button/key"), keyTemplate);
-					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/button/type"), "string");
-					return BTStatus.Running;
-				});
+				queryNlu(bb, BotEngine.BOT_NEXT_TOPIC_KEY.key()),
+				running());
+	}
+
+	public static BTNode chooseButtonOrNlu(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<BotButton> buttons) {
+		return selector(
+				fulfilled(bb, keyTemplate),
+				sequence(
+						say(bb, question),
+						storeButtons(bb, buttons, BotButton.class),
+						queryButton(bb, keyTemplate),
+						queryNlu(bb, BotEngine.BOT_NEXT_TOPIC_KEY.key()),
+						running()));
+	}
+
+	private static BTNode queryButton(final BlackBoard bb, final String keyTemplate) {
+		return () -> {
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/button/key"), keyTemplate);
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/button/type"), "string");
+			return BTStatus.Succeeded;
+		};
+	}
+
+	private static BTNode queryNlu(final BlackBoard bb, final String keyTemplate) {
+		return () -> {
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/nlu/key"), keyTemplate);
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/nlu/type"), "nlu");
+			bb.putInteger(BBKey.of(BotEngine.BOT_OUT_PATH, "/accepttext"), 1);
+			return BTStatus.Succeeded;
+		};
 	}
 
 	// store all buttons in the BB, engine will reconstruct button back when constructing response object

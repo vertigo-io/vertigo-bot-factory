@@ -51,7 +51,9 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.compositeCommand("switch", BotBtCommandParserDefinitionProvider::buildSwitchNode),
 				BtCommandParserDefinition.compositeCommand("case", (c, p, l) -> new BotCase(c.getStringParam(0), l)),
 
+				BtCommandParserDefinition.basicCommand("choose:nlu", (c, p) -> BotNodeProvider.chooseNlu(getBB(p), c.getStringParam(0))),
 				BtCommandParserDefinition.compositeCommand("choose:button", BotBtCommandParserDefinitionProvider::buildChooseButtonNode),
+				BtCommandParserDefinition.compositeCommand("choose:button:nlu", BotBtCommandParserDefinitionProvider::buildChooseButtonNluNode),
 				BtCommandParserDefinition.basicCommand("button", (c, p) -> new BotButton(c.getStringParam(0), c.getStringParam(1))));
 	}
 
@@ -88,6 +90,17 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				.collect(Collectors.toList());
 
 		return BotNodeProvider.chooseButton(getBB(params), command.getStringParam(0), command.getStringParam(1), botButtons);
+	}
+
+	private static BTNode buildChooseButtonNluNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
+		Assertion.check()
+				.isTrue(childs.stream().allMatch(b -> b instanceof BotButton), "Only 'button' is allowen inside 'choose:button:nlu'");
+
+		final var botButtons = childs.stream()
+				.map(b -> (BotButton) b)
+				.collect(Collectors.toList());
+
+		return BotNodeProvider.chooseButtonOrNlu(getBB(params), command.getStringParam(0), command.getStringParam(1), botButtons);
 	}
 
 	private static BlackBoard getBB(final List<Object> params) {
