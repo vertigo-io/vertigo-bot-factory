@@ -3,6 +3,8 @@ package io.vertigo.chatbot.designer.builder.services.topic;
 import java.util.Locale;
 import java.util.Optional;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
@@ -148,7 +150,7 @@ public class TopicServices implements Component {
 		return topicDAO.getBasicTopicByBotIdKtoCd(botId, ktoCd);
 	}
 
-	public DtList<TopicIhm> getAllNonTechnicalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+	public DtList<TopicIhm> getAllNormalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), Optional.of(KindTopicEnum.NORMAL.name()));
 	}
 

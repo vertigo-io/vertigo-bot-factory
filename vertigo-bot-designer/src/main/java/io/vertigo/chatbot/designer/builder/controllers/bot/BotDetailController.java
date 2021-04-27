@@ -33,12 +33,15 @@ import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
@@ -68,6 +71,9 @@ public class BotDetailController extends AbstractBotController {
 
 	@Inject
 	private TopicCategoryServices topicCategoryServices;
+
+	@Inject
+	private SmallTalkServices smallTalkServices;
 
 	private static final ViewContextKey<UtterText> utterTextFailureKey = ViewContextKey.of("utterTextFailure");
 	private static final ViewContextKey<UtterText> utterTextStartKey = ViewContextKey.of("utterTextStart");
@@ -137,10 +143,24 @@ public class BotDetailController extends AbstractBotController {
 	private void initBasicTopic(final Chatbot bot, final ViewContext viewContext, final String ktoCd, final ViewContextKey<Topic> topickey,
 			final ViewContextKey<UtterText> uttertextkey) {
 		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
-
-		final UtterText utterText = utterTextServices.getUtterTextByTopId(topic.getTopId());
+		final SmallTalk smt = smallTalkServices.getSmallTalkByTopId(topic.getTopId());
+		final UtterText utterText = utterTextServices.getUtterTextBySmtId(bot, smt.getSmtId());
 		viewContext.publishDto(uttertextkey, utterText);
 		viewContext.publishDto(topickey, topic);
+	}
+
+	private void initNewBasicTopic(final ViewContext viewContext, final String ktoCd, final String title, final String description, final String text, final ViewContextKey<Topic> topickey,
+			final ViewContextKey<UtterText> uttertextkey) {
+		final Topic topic = new Topic();
+		topic.setIsEnabled(true);
+		topic.setTitle(title);
+		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
+		topic.setKtoCd(ktoCd);
+		topic.setDescription(description);
+		viewContext.publishDto(topickey, topic);
+		final UtterText utterText = new UtterText();
+		utterText.setText(text);
+		viewContext.publishDto(uttertextkey, utterText);
 	}
 
 	@PostMapping("/_edit")
