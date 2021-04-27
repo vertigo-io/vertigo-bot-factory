@@ -20,7 +20,7 @@
  */
 package io.vertigo.chatbot.designer.boot;
 
-import io.vertigo.chatbot.commons.domain.ResponseType;
+import io.vertigo.chatbot.commons.domain.topic.ResponseType;
 import io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles;
 import io.vertigo.chatbot.designer.domain.commons.PersonRole;
 import io.vertigo.datastore.impl.entitystore.AbstractMasterDataDefinitionProvider;

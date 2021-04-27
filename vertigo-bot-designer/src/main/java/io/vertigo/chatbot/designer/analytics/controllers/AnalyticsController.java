@@ -29,12 +29,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
-import io.vertigo.chatbot.commons.domain.SmallTalk;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
-import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
 import io.vertigo.chatbot.designer.domain.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
@@ -57,7 +57,7 @@ public class AnalyticsController extends AbstractDesignerController {
 	private static final ViewContextKey<TopIntent> topIntentsKey = ViewContextKey.of("topIntents");
 	private static final ViewContextKey<SentenseDetail> intentDetailsKey = ViewContextKey.of("intentDetails");
 
-	private static final ViewContextKey<SmallTalk> smallTalksKey = ViewContextKey.of("smallTalks");
+	private static final ViewContextKey<Topic> topicsKey = ViewContextKey.of("topics");
 
 	private static final ViewContextKey<Chatbot> botsKey = ViewContextKey.of("bots");
 	private static final ViewContextKey<ChatbotNode> nodesKey = ViewContextKey.of("nodes");
@@ -68,13 +68,13 @@ public class AnalyticsController extends AbstractDesignerController {
 	private AnalyticsServices analyticsServices;
 
 	@Inject
-	private SmallTalkServices smallTalkServices;
-
-	@Inject
 	private ChatbotServices chatbotServices;
 
 	@Inject
 	private NodeServices nodeServices;
+
+	@Inject
+	private TopicServices topicServices;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext,
@@ -118,11 +118,11 @@ public class AnalyticsController extends AbstractDesignerController {
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.smtId, analyticsServices.getSentenseDetails(criteria));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, analyticsServices.getTopIntents(criteria));
 
-			viewContext.publishDtList(smallTalksKey, smallTalkServices.getAllSmallTalksByBot(bot));
+			viewContext.publishDtList(topicsKey, topicServices.getAllTopicByBot(bot));
 		} else {
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.smtId, new DtList<SentenseDetail>(SentenseDetail.class));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, new DtList<TopIntent>(TopIntent.class));
-			viewContext.publishDtList(smallTalksKey, new DtList<SmallTalk>(SmallTalk.class));
+			viewContext.publishDtList(topicsKey, new DtList<Topic>(Topic.class));
 		}
 
 		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.smtId, new DtList<SentenseDetail>(SentenseDetail.class));

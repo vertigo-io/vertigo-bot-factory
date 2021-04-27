@@ -33,14 +33,14 @@ import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
-import io.vertigo.chatbot.commons.domain.ResponseButton;
-import io.vertigo.chatbot.commons.domain.SmallTalk;
-import io.vertigo.chatbot.commons.domain.UtterText;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
-import io.vertigo.chatbot.designer.builder.services.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
@@ -61,7 +61,7 @@ public class BotDetailController extends AbstractBotController {
 	private ResponsesButtonServices responsesButtonServices;
 
 	@Inject
-	private SmallTalkServices smallTalkServices;
+	private TopicServices topicServices;
 
 	@Inject
 	private NodeServices nodeServices;
@@ -74,7 +74,7 @@ public class BotDetailController extends AbstractBotController {
 	private static final ViewContextKey<UtterText> welcomeKey = ViewContextKey.of("welcome");
 	private static final ViewContextKey<ResponseButton> welcomeButtonsKey = ViewContextKey.of("welcomeButtons");
 
-	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalks");
+	private static final ViewContextKey<Topic> topicKey = ViewContextKey.of("topics");
 
 	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
 	private static final ViewContextKey<ChatbotNode> nodeEditKey = ViewContextKey.of("nodeEdit");
@@ -90,7 +90,7 @@ public class BotDetailController extends AbstractBotController {
 
 		viewContext.publishDtListModifiable(defaultButtonsKey, responsesButtonServices.getDefaultButtonsByBot(bot));
 		viewContext.publishDtListModifiable(welcomeButtonsKey, responsesButtonServices.getWelcomeButtonsByBot(bot));
-		viewContext.publishDtList(smallTalkKey, smallTalkServices.getAllSmallTalksByBot(bot));
+		viewContext.publishDtList(topicKey, topicServices.getAllTopicByBot(bot));
 
 		if (AuthorizationUtils.isAuthorized(bot, ChatbotOperations.botAdm)) {
 			viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
@@ -120,7 +120,7 @@ public class BotDetailController extends AbstractBotController {
 		viewContext.publishDto(defaultKey, newDefault);
 		viewContext.publishDtListModifiable(defaultButtonsKey, new DtList<>(ResponseButton.class));
 
-		viewContext.publishDtList(smallTalkKey, new DtList<>(SmallTalk.class));
+		viewContext.publishDtList(topicKey, new DtList<>(Topic.class));
 
 		final UtterText newWelcome = new UtterText();
 		newWelcome.setText("Hello !");

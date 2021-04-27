@@ -1,0 +1,258 @@
+package io.vertigo.chatbot.commons.domain.topic
+
+
+/************************/
+/* ****    Topic   **** */
+/************************/
+
+create DtDefinition DtTypeTopic {
+	stereotype : "StaticMasterData"
+	id    ttoCd 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Title" 		cardinality : "1"	}
+	values : `{
+        "SMALLTALK" : {
+            "ttoCd" : "SMALLTALK",
+            "label" : "Small talk"           
+        },
+        "SCRIPTINTENTION" : {
+            "ttoCd" : "SCRIPTINTENTION",
+            "label" : "Script intention"
+        }
+     }`
+    sortField : "ttoCd"
+ 	displayField : "label"
+}
+
+create DtDefinition DtTopic{
+	id		topId			{domain: DoId 		label: "ID"}
+	field 	title 			{domain: DoLabel 	label: "Title" 			cardinality : "1"}
+	field 	description		{domain: DoLabel 	label: "Description" 	}
+	field 	isEnabled 		{domain: DoYesNo 	label: "Enabled" 		cardinality : "1"}
+}
+
+create DtDefinition DtSmallTalk {
+	id    smtId 		{domain: DoId 		label: "ID"}
+}
+
+
+
+
+create Association ASmallTalkTopic{
+
+	fkFieldName : "topId" /* NPE sans explication si ya pas */
+    
+ 	dtDefinitionA : DtSmallTalk
+	type : "*>1"
+	dtDefinitionB : DtTopic
+	
+	labelB : "Topic"
+
+}
+
+create DtDefinition DtScriptIntention {
+	id    sinId 		{domain: DoId 		label: "ID"}
+	field script 		{domain: DoText		label: "Script"}
+}
+
+create Association AScriptIntentionTopic{
+
+	fkFieldName : "topId" /* NPE sans explication si ya pas */
+    
+ 	dtDefinitionA : DtScriptIntention
+	type : "*>1"
+	dtDefinitionB : DtTopic
+	
+	labelB : "Topic"
+
+}
+
+create Association ATopicTypeTopic {
+	fkFieldName : "ttoCd" 
+    
+ 	dtDefinitionA : DtTopic
+	type : "*>1"
+	dtDefinitionB : DtTypeTopic
+	
+	labelB : "Type du topic"
+}
+
+
+create Association ATopicChatbot {
+	fkFieldName : "botId" /* NPE sans explication si ya pas */
+    
+ 	dtDefinitionA : DtTopic
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+}
+
+create DtDefinition DtResponseType {
+	stereotype : "StaticMasterData"
+	id    rtyId 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Title" 		cardinality : "1"}
+	field sortOrder 	{domain: DoNumber 	label: "Order" 		cardinality : "1"}
+	values : `{
+        "RICH_TEXT" : {
+            "rtyId" : "RICH_TEXT",
+            "label" : "Rich text",
+            "sortOrder" : 1
+        },
+        "RANDOM_TEXT" : {
+            "rtyId" : "RANDOM_TEXT",
+            "label" : "Random text",
+            "sortOrder" : 2
+        }
+
+    }`
+    sortField : "sortOrder"
+ 	displayField : "label"
+}
+
+create Association ASmallTalkResponseType {
+	fkFieldName : "rtyId"
+    
+ 	dtDefinitionA : DtSmallTalk
+	type : "*>1"
+	dtDefinitionB : DtResponseType
+	
+	labelB : "Response type"
+}
+
+create DtDefinition DtNluTrainingSentence {
+	id    ntsId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoLabel 	label: "Text" cardinality : "1"}
+}
+
+create Association ATopicNluTrainingSentence {
+	fkFieldName : "topId"
+    
+	dtDefinitionA : DtNluTrainingSentence
+	type : "*>1"
+ 	dtDefinitionB : DtTopic
+	
+	labelB : "SmallTalk"
+}
+
+create DtDefinition DtUtterText {
+	id    uttId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoText 	label: "Text" cardinality : "1"}
+}
+
+create Association ASmallTalkUtterText {
+	fkFieldName : "smtId"
+    
+ 	dtDefinitionA : DtUtterText
+	type : "*>?"
+	dtDefinitionB : DtSmallTalk
+	
+	labelB : "SmallTalk"
+}
+
+create DtDefinition DtResponseButton {
+	id    btnId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoText 	label: "Text" cardinality : "1"}
+}
+
+create Association ASmallTalkResponseButtons {
+	fkFieldName : "smtId"
+    
+ 	dtDefinitionA : DtResponseButton
+	type : "*>?"
+	dtDefinitionB : DtSmallTalk
+	
+	labelB : "SmallTalk"
+}
+
+create Association AResponseButtonSmallTalkResponse {
+	fkFieldName : "smtIdResponse"
+    
+ 	dtDefinitionA : DtResponseButton
+	type : "*>1"
+	dtDefinitionB : DtSmallTalk
+	
+	labelB : "SmallTalkResponse"
+	roleB : "SmallTalkResponse"
+}
+
+/** Category **/
+
+create DtDefinition DtTopicCategory{
+	id topCatId 	{domain: DoId		label: "Topic category id"}
+	field label		{domain: DoLabel	label: "Topic category label" cardinality:"1"}
+	field level 	{domain: DoNumber	label: "Category level"}
+	field isEnabled	{domain: DoYesNo	label: "Enabled" cardinality:"1"}
+}
+
+create Association ATopicCategoryChatbot{
+	fkFieldName : "botId"
+    
+ 	dtDefinitionA : DtTopicCategory
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+	roleB : "Chatbot"
+	
+}
+
+create Association ATopicCategoryTopic{
+	fkFieldName : "topCatId"
+    
+ 	dtDefinitionA : DtTopic
+	type : "*>1"
+	dtDefinitionB : DtTopicCategory
+	
+	labelB : "Topic"
+	roleB : "Topic"
+	
+}
+
+
+create AssociationNN AnnTopicCategory{
+	tableName : "TOPIC_TOPIC_CATEGORY"
+
+	dtDefinitionA : DtTopic
+	dtDefinitionB : DtTopicCategory
+	navigabilityA : "true"
+	navigabilityB : "true"
+	roleA : "Topic"
+	labelA : "Topic"
+	roleB : "Category"
+	labelB : "Category"
+}
+
+
+/********** IHM **********/
+
+create DtDefinition DtSmallTalkIhm {
+	field topId		{domain: DoId		label: "Topic id"		}
+	field title		{domain: DoLabel	label: "SmallTalk label"}
+	field smtId		{domain: DoId		label: "SmallTalk id"	}
+	field isEnabled	{domain: DoYesNo	label: "Enabled"		}
+	field catLabel	{domain: DoLabel	label: "Category"		}
+}
+
+create DtDefinition DtNluTrainingExport {
+	field smtId		{domain: DoId 		label: "smt ID"}
+	field ntsId 	{domain: DoId 		label: "nlu ID"}
+	field text 		{domain: DoLabel 	label: "Text" cardinality : "1"}
+}
+
+create DtDefinition DtTopicIhm {
+	field topId		{domain: DoId		label: "Topic id"				cardinality:"1"	}
+	field ttoCd		{domain: DoCode		label: "Code Type"				cardinality:"?"	}
+	field type		{domain: DoLabel	label: "Type"					cardinality:"?"	}
+	field title		{domain: DoLabel	label: "Topic label"							}
+	field smtId		{domain: DoId		label: "SmallTalk id"			cardinality:"?"	}
+	field sinId		{domain: DoId		label: "Script intention id"	cardinality:"?"	}
+	field catLabel	{domain: DoLabel	label: "Category"				cardinality:"1"	}
+	field isEnabled	{domain: DoYesNo	label: "Enabled"								}
+}
+
+create DtDefinition DtScriptIntentionIhm {
+	field topId		{domain: DoId		label: "Topic id"				}
+	field title		{domain: DoLabel	label: "Script Intention label"	}
+	field sinId		{domain: DoId		label: "Script Intention id"	}
+	field isEnabled	{domain: DoYesNo	label: "Enabled"				}
+}

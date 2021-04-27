@@ -2,6 +2,9 @@ chatbot_task.ksp
 chatbotNode_task.ksp
 responsesButton_task.ksp
 smallTalk_task.ksp
+scriptIntention_task.ksp
 utterText_task.ksp
 designer_task.ksp
 training_task.ksp
+topic_task.ksp
+topicCategory_task.ksp

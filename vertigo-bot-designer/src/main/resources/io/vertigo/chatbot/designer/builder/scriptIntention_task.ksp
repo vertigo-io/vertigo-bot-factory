@@ -1,0 +1,41 @@
+package io.vertigo.chatbot.designer.builder.scriptIntention
+
+
+create Task TkRemoveAllScriptIntentionByBotId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+				delete from script_intention sin
+				using topic top
+				where top.top_id = sin.top_id and top.bot_id = #botId#	
+             "
+	in botId  				{domain : DoId         		cardinality : "1"  }
+}
+
+create Task TkGetAllActiveScriptIntentionByBot {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				select sin.*
+				from topic top
+				join script_intention sin on (sin.top_id = top.top_id)
+				where top.bot_id = #botId#
+				AND top.is_enabled = true
+             "
+	in botId				{domain : DoId,								cardinality:"1"} 
+	out sins 				{domain : DoDtScriptIntention			 	cardinality:"*"}
+} 
+
+create Task TkGetScriptIntentionIHMByBot {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				select sin.sin_id,
+				   top.is_enabled,
+				   top.top_id,
+				   top.title
+				from topic top
+				join script_intention sin on (sin.top_id = top.top_id)
+				where top.bot_id = #botId#
+             "
+	in botId				{domain : DoId,								cardinality:"1"} 
+	out sins 				{domain : DoDtScriptIntentionIhm		 	cardinality:"*"}
+} 
+

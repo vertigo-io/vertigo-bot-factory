@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/topicDetailLayout}" th:with="nav=true, tab=scriptIntentions"
+	>
+	
+	<head>
+		<title>Script intention detail</title>
+	</head>
+	
+	<body>
+		<section layout:fragment="content-header-actions">
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/scriptIntention/(id=${model.bot.botId})} + ${model.scriptIntention.sinId}" ariaLabel="Cancel" icon="fas fa-ban"
+							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
+			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+							class="on-left" :round size="lg" color="primary" />
+			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" aria-label="Delete" title="Delete" icon="delete"
+							class="on-left" round size="lg" color="red" ></q-btn>
+		</section>
+				
+		<section layout:fragment="content-nav">
+			<q-item tag="a" href="#detail">Informations</q-item>
+			<q-item tag="a" href="#training">Training phrases</q-item>
+			<q-item tag="a" href="#script">Script</q-item>
+			
+		</section>
+		
+		<section layout:fragment="content-specific">
+			<vu:popup object="scriptIntention" action="_delete" vModel="showPopup"></vu:popup>
+			
+			<vu:block id="script" title="Script">
+				<vu:include-data object="scriptIntention" field="script" />	
+				<vu:text-area label=' ' object="scriptIntention" field="script" readonly="${model.modeReadOnly}" />
+			</vu:block>		
+				
+		</section>
+		
+	</body>
+</html>

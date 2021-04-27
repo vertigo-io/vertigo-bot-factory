@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=categories"
+	>
+	
+	<head>
+		<title>Category detail</title>
+	</head>
+	
+	<body>
+		<section layout:fragment="content-header-actions">
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/category/(id=${model.bot.botId})} + ${model.topicCategory.topCatId}" ariaLabel="Cancel" icon="fas fa-ban"
+							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
+			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+							class="on-left" :round size="lg" color="primary" />
+			<q-btn th:if="|${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor] && #lists.size(model.topics) == 0}|" @click="componentStates.showPopup = true" aria-label="Delete" title="Delete" icon="delete"
+							class="on-left" round size="lg" color="red" ></q-btn>
+		</section>
+				
+		<section layout:fragment="content">
+			
+			<vu:popup object="topicCategory" action="_delete" vModel="showPopup"></vu:popup>
+
+			<vu:block id="detail" title="Informations">
+				<vu:text-field object="topicCategory" field="label" />
+				
+				<vu:label object="topicCategory" field="isEnabled">
+					<vu:include-data object="topicCategory" field="isEnabled" />
+					<q-input v-model="vueData.topicCategory.isEnabled" name="vContext[topicCategory][isEnabled]" class="hidden" ></q-input>
+					
+					<q-toggle v-model="vueData.topicCategory.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
+				</vu:label>
+			</vu:block>
+			
+			<vu:table list="topics" componentId="topicsList" sortBy="title" :binary-state-sort="true">
+					<vu:include-data object="topics" field="topId" />
+					<vu:column field="title">
+					   <span style="height:100%" class="row items-center">{{props.row.title}}</span>
+					</vu:column>
+			</vu:table>
+			
+			<q-page-sticky position="bottom-right">
+				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
+			</q-page-sticky>
+	</body>
+</html>

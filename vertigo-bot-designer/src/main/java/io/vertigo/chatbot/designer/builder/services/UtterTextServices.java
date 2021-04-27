@@ -9,11 +9,11 @@ import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
-import io.vertigo.chatbot.commons.dao.UtterTextDAO;
+import io.vertigo.chatbot.commons.dao.topic.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ResponseTypeEnum;
-import io.vertigo.chatbot.commons.domain.SmallTalk;
-import io.vertigo.chatbot.commons.domain.UtterText;
+import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.utterText.UtterTextPAO;
 import io.vertigo.chatbot.designer.utils.HtmlInputUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;

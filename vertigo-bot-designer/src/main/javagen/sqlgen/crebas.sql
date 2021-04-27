@@ -5,6 +5,7 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
+drop table IF EXISTS TOPIC_TOPIC_CATEGORY cascade;
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_NODE cascade;
@@ -24,10 +25,17 @@ drop sequence IF EXISTS SEQ_PROFIL_PER_CHATBOT;
 drop table IF EXISTS RESPONSE_BUTTON cascade;
 drop sequence IF EXISTS SEQ_RESPONSE_BUTTON;
 drop table IF EXISTS RESPONSE_TYPE cascade;
+drop table IF EXISTS SCRIPT_INTENTION cascade;
+drop sequence IF EXISTS SEQ_SCRIPT_INTENTION;
 drop table IF EXISTS SMALL_TALK cascade;
 drop sequence IF EXISTS SEQ_SMALL_TALK;
+drop table IF EXISTS TOPIC cascade;
+drop sequence IF EXISTS SEQ_TOPIC;
+drop table IF EXISTS TOPIC_CATEGORY cascade;
+drop sequence IF EXISTS SEQ_TOPIC_CATEGORY;
 drop table IF EXISTS TRAINING cascade;
 drop sequence IF EXISTS SEQ_TRAINING;
+drop table IF EXISTS TYPE_TOPIC cascade;
 drop table IF EXISTS UTTER_TEXT cascade;
 drop sequence IF EXISTS SEQ_UTTER_TEXT;
 
@@ -64,11 +72,21 @@ create sequence SEQ_RESPONSE_BUTTON
 	start with 1000 cache 20; 
 
 
+create sequence SEQ_SCRIPT_INTENTION
+	start with 1000 cache 20; 
+
 create sequence SEQ_SMALL_TALK
+	start with 1000 cache 20; 
+
+create sequence SEQ_TOPIC
+	start with 1000 cache 20; 
+
+create sequence SEQ_TOPIC_CATEGORY
 	start with 1000 cache 20; 
 
 create sequence SEQ_TRAINING
 	start with 1000 cache 20; 
+
 
 create sequence SEQ_UTTER_TEXT
 	start with 1000 cache 20; 
@@ -233,7 +251,7 @@ create table NLU_TRAINING_SENTENCE
 (
     NTS_ID      	 NUMERIC     	not null,
     TEXT        	 VARCHAR(100)	not null,
-    SMT_ID      	 NUMERIC     	not null,
+    TOP_ID      	 NUMERIC     	not null,
     constraint PK_NLU_TRAINING_SENTENCE primary key (NTS_ID)
 );
 
@@ -243,7 +261,7 @@ comment on column NLU_TRAINING_SENTENCE.NTS_ID is
 comment on column NLU_TRAINING_SENTENCE.TEXT is
 'Text';
 
-comment on column NLU_TRAINING_SENTENCE.SMT_ID is
+comment on column NLU_TRAINING_SENTENCE.TOP_ID is
 'SmallTalk';
 
 -- ============================================================
@@ -371,15 +389,32 @@ comment on column RESPONSE_TYPE.SORT_ORDER is
 'Order';
 
 -- ============================================================
+--   Table : SCRIPT_INTENTION                                        
+-- ============================================================
+create table SCRIPT_INTENTION
+(
+    SIN_ID      	 NUMERIC     	not null,
+    SCRIPT      	 TEXT        	,
+    TOP_ID      	 NUMERIC     	not null,
+    constraint PK_SCRIPT_INTENTION primary key (SIN_ID)
+);
+
+comment on column SCRIPT_INTENTION.SIN_ID is
+'ID';
+
+comment on column SCRIPT_INTENTION.SCRIPT is
+'Script';
+
+comment on column SCRIPT_INTENTION.TOP_ID is
+'Topic';
+
+-- ============================================================
 --   Table : SMALL_TALK                                        
 -- ============================================================
 create table SMALL_TALK
 (
     SMT_ID      	 NUMERIC     	not null,
-    TITLE       	 VARCHAR(100)	not null,
-    DESCRIPTION 	 VARCHAR(100)	,
-    IS_ENABLED  	 bool        	not null,
-    BOT_ID      	 NUMERIC     	not null,
+    TOP_ID      	 NUMERIC     	not null,
     RTY_ID      	 VARCHAR(100)	not null,
     constraint PK_SMALL_TALK primary key (SMT_ID)
 );
@@ -387,20 +422,75 @@ create table SMALL_TALK
 comment on column SMALL_TALK.SMT_ID is
 'ID';
 
-comment on column SMALL_TALK.TITLE is
-'Title';
-
-comment on column SMALL_TALK.DESCRIPTION is
-'Description';
-
-comment on column SMALL_TALK.IS_ENABLED is
-'Enabled';
-
-comment on column SMALL_TALK.BOT_ID is
-'Chatbot';
+comment on column SMALL_TALK.TOP_ID is
+'Topic';
 
 comment on column SMALL_TALK.RTY_ID is
 'Response type';
+
+-- ============================================================
+--   Table : TOPIC                                        
+-- ============================================================
+create table TOPIC
+(
+    TOP_ID      	 NUMERIC     	not null,
+    TITLE       	 VARCHAR(100)	not null,
+    DESCRIPTION 	 VARCHAR(100)	,
+    IS_ENABLED  	 bool        	not null,
+    TTO_CD      	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    TOP_CAT_ID  	 NUMERIC     	not null,
+    constraint PK_TOPIC primary key (TOP_ID)
+);
+
+comment on column TOPIC.TOP_ID is
+'ID';
+
+comment on column TOPIC.TITLE is
+'Title';
+
+comment on column TOPIC.DESCRIPTION is
+'Description';
+
+comment on column TOPIC.IS_ENABLED is
+'Enabled';
+
+comment on column TOPIC.TTO_CD is
+'Type du topic';
+
+comment on column TOPIC.BOT_ID is
+'Chatbot';
+
+comment on column TOPIC.TOP_CAT_ID is
+'Topic';
+
+-- ============================================================
+--   Table : TOPIC_CATEGORY                                        
+-- ============================================================
+create table TOPIC_CATEGORY
+(
+    TOP_CAT_ID  	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LEVEL       	 NUMERIC     	,
+    IS_ENABLED  	 bool        	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_TOPIC_CATEGORY primary key (TOP_CAT_ID)
+);
+
+comment on column TOPIC_CATEGORY.TOP_CAT_ID is
+'Topic category id';
+
+comment on column TOPIC_CATEGORY.LABEL is
+'Topic category label';
+
+comment on column TOPIC_CATEGORY.LEVEL is
+'Category level';
+
+comment on column TOPIC_CATEGORY.IS_ENABLED is
+'Enabled';
+
+comment on column TOPIC_CATEGORY.BOT_ID is
+'Chatbot';
 
 -- ============================================================
 --   Table : TRAINING                                        
@@ -453,6 +543,22 @@ comment on column TRAINING.BOT_ID is
 
 comment on column TRAINING.FIL_ID_MODEL is
 'Model';
+
+-- ============================================================
+--   Table : TYPE_TOPIC                                        
+-- ============================================================
+create table TYPE_TOPIC
+(
+    TTO_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    constraint PK_TYPE_TOPIC primary key (TTO_CD)
+);
+
+comment on column TYPE_TOPIC.TTO_CD is
+'ID';
+
+comment on column TYPE_TOPIC.LABEL is
+'Title';
 
 -- ============================================================
 --   Table : UTTER_TEXT                                        
@@ -553,17 +659,11 @@ alter table RESPONSE_BUTTON
 
 create index A_RESPONSE_BUTTON_SMALL_TALK_RESPONSE_SMALL_TALK_FK on RESPONSE_BUTTON (SMT_ID_RESPONSE asc);
 
-alter table SMALL_TALK
-	add constraint FK_A_SMALL_TALK_CHATBOT_CHATBOT foreign key (BOT_ID)
-	references CHATBOT (BOT_ID);
+alter table SCRIPT_INTENTION
+	add constraint FK_A_SCRIPT_INTENTION_TOPIC_TOPIC foreign key (TOP_ID)
+	references TOPIC (TOP_ID);
 
-create index A_SMALL_TALK_CHATBOT_CHATBOT_FK on SMALL_TALK (BOT_ID asc);
-
-alter table NLU_TRAINING_SENTENCE
-	add constraint FK_A_SMALL_TALK_NLU_TRAINING_SENTENCE_SMALL_TALK foreign key (SMT_ID)
-	references SMALL_TALK (SMT_ID);
-
-create index A_SMALL_TALK_NLU_TRAINING_SENTENCE_SMALL_TALK_FK on NLU_TRAINING_SENTENCE (SMT_ID asc);
+create index A_SCRIPT_INTENTION_TOPIC_TOPIC_FK on SCRIPT_INTENTION (TOP_ID asc);
 
 alter table RESPONSE_BUTTON
 	add constraint FK_A_SMALL_TALK_RESPONSE_BUTTONS_SMALL_TALK foreign key (SMT_ID)
@@ -577,11 +677,47 @@ alter table SMALL_TALK
 
 create index A_SMALL_TALK_RESPONSE_TYPE_RESPONSE_TYPE_FK on SMALL_TALK (RTY_ID asc);
 
+alter table SMALL_TALK
+	add constraint FK_A_SMALL_TALK_TOPIC_TOPIC foreign key (TOP_ID)
+	references TOPIC (TOP_ID);
+
+create index A_SMALL_TALK_TOPIC_TOPIC_FK on SMALL_TALK (TOP_ID asc);
+
 alter table UTTER_TEXT
 	add constraint FK_A_SMALL_TALK_UTTER_TEXT_SMALL_TALK foreign key (SMT_ID)
 	references SMALL_TALK (SMT_ID);
 
 create index A_SMALL_TALK_UTTER_TEXT_SMALL_TALK_FK on UTTER_TEXT (SMT_ID asc);
+
+alter table TOPIC_CATEGORY
+	add constraint FK_A_TOPIC_CATEGORY_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_TOPIC_CATEGORY_CHATBOT_CHATBOT_FK on TOPIC_CATEGORY (BOT_ID asc);
+
+alter table TOPIC
+	add constraint FK_A_TOPIC_CATEGORY_TOPIC_TOPIC_CATEGORY foreign key (TOP_CAT_ID)
+	references TOPIC_CATEGORY (TOP_CAT_ID);
+
+create index A_TOPIC_CATEGORY_TOPIC_TOPIC_CATEGORY_FK on TOPIC (TOP_CAT_ID asc);
+
+alter table TOPIC
+	add constraint FK_A_TOPIC_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_TOPIC_CHATBOT_CHATBOT_FK on TOPIC (BOT_ID asc);
+
+alter table NLU_TRAINING_SENTENCE
+	add constraint FK_A_TOPIC_NLU_TRAINING_SENTENCE_TOPIC foreign key (TOP_ID)
+	references TOPIC (TOP_ID);
+
+create index A_TOPIC_NLU_TRAINING_SENTENCE_TOPIC_FK on NLU_TRAINING_SENTENCE (TOP_ID asc);
+
+alter table TOPIC
+	add constraint FK_A_TOPIC_TYPE_TOPIC_TYPE_TOPIC foreign key (TTO_CD)
+	references TYPE_TOPIC (TTO_CD);
+
+create index A_TOPIC_TYPE_TOPIC_TYPE_TOPIC_FK on TOPIC (TTO_CD asc);
 
 alter table TRAINING
 	add constraint FK_A_TRAINING_CHATBOT_CHATBOT foreign key (BOT_ID)
@@ -595,4 +731,21 @@ alter table TRAINING
 
 create index A_TRAINING_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on TRAINING (FIL_ID_MODEL asc);
 
+
+create table TOPIC_TOPIC_CATEGORY
+(
+	TOP_ID      	 NUMERIC     	 not null,
+	TOP_CAT_ID  	 NUMERIC     	 not null,
+	constraint PK_TOPIC_TOPIC_CATEGORY primary key (TOP_ID, TOP_CAT_ID),
+	constraint FK_ANN_TOPIC_CATEGORY_TOPIC 
+		foreign key(TOP_ID)
+		references TOPIC (TOP_ID),
+	constraint FK_ANN_TOPIC_CATEGORY_TOPIC_CATEGORY 
+		foreign key(TOP_CAT_ID)
+		references TOPIC_CATEGORY (TOP_CAT_ID)
+);
+
+create index ANN_TOPIC_CATEGORY_TOPIC_FK on TOPIC_TOPIC_CATEGORY (TOP_ID asc);
+
+create index ANN_TOPIC_CATEGORY_TOPIC_CATEGORY_FK on TOPIC_TOPIC_CATEGORY (TOP_CAT_ID asc);
 

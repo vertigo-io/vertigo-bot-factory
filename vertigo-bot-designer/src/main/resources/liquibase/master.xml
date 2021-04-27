@@ -9,4 +9,5 @@
 	<include file="changeLog/init/alter_1_0.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/keycloak/alter_keycloak.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_0/alter_profil_chatbot.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_1_0/alter_topic.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

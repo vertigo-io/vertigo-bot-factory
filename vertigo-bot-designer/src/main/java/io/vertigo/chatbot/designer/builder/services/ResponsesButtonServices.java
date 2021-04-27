@@ -8,10 +8,10 @@ import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
-import io.vertigo.chatbot.commons.dao.ResponseButtonDAO;
+import io.vertigo.chatbot.commons.dao.topic.ResponseButtonDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ResponseButton;
-import io.vertigo.chatbot.commons.domain.SmallTalk;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.designer.builder.responsesButton.ResponsesButtonPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.ResponseButtonFields;
 import io.vertigo.commons.transaction.Transactional;

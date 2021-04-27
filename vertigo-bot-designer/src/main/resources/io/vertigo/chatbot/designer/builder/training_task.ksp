@@ -4,12 +4,17 @@ create Task TkExportSmallTalkRelativeTrainingSentence {
     className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
             select 
-            	*
+            	nts.nts_id,
+            	nts.text,
+            	smt.smt_id
 			from nlu_training_sentence nts
-			where nts.smt_id in (#stIds.rownum#)
+			join topic top on (top.top_id = nts.top_id)
+			join small_talk smt on (smt.top_id = top.top_id)
+			where top.bot_id = #botId#
+			and top.is_enabled = true
              "
-	in stIds				{domain : DoNumber,						cardinality:"*"} 
-	out trainingSentences 	{domain : DoDtNluTrainingSentence	 	cardinality:"*"}
+	in botId				{domain : DoId,							cardinality:"1"} 
+	out trainingSentences 	{domain : DoDtNluTrainingExport		 	cardinality:"*"}
 }
 
 create Task TkExportSmallTalkRelativeUtter {  

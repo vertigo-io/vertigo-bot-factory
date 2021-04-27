@@ -42,5 +42,4 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	public VFile getAvatar() {
 		return chatbotServices.getNoAvatar();
 	}
-
 }

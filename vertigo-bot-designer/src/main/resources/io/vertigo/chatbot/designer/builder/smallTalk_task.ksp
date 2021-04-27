@@ -5,17 +5,39 @@ create Task TkRemoveAllSmallTalkByBotId {
     className : "io.vertigo.basics.task.TaskEngineProc"
     request : "
 			delete from small_talk smt
-			where smt.bot_id = #botId#	
+			using topic top
+			where top.top_id = smt.top_id and top.bot_id = #botId#	
              "
 	in botId  				{domain : DoId         		cardinality : "1"  }
 }
 
-create Task TkRemoveAllNluTrainingSentenceByBotId {
-    className : "io.vertigo.basics.task.TaskEngineProc"
+create Task TkGetAllActiveSmallTalkByBot {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
-			delete from nlu_training_sentence nts
-			using small_talk smt
-			where nts.smt_id = smt.smt_id and smt.bot_id = #botId#
+			select smt.*
+			from topic top
+			join small_talk smt on (smt.top_id = top.top_id)
+			where top.bot_id = #botId#
+			AND top.is_enabled = true
              "
-	in botId  				{domain : DoId         		cardinality : "1"  }
-}
+	in botId				{domain : DoId,						cardinality:"1"} 
+	out smts 				{domain : DoDtSmallTalk			 	cardinality:"*"}
+} 
+
+create Task TkGetSmallTalkIHMByBot {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select smt.smt_id,
+				   top.is_enabled,
+				   top.top_id,
+				   top.title,
+				   tpc.label as cat_Label
+			from topic top
+			join small_talk smt on (smt.top_id = top.top_id)
+			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)
+			where top.bot_id = #botId#
+             "
+	in botId				{domain : DoId,						cardinality:"1"} 
+	out smts 				{domain : DoDtSmallTalkIhm		 	cardinality:"*"}
+} 
+
