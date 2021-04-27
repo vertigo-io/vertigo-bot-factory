@@ -254,7 +254,7 @@ public class TrainingServices implements Component {
 	 * }
 	 **/
 
-	/*private DtList<SmallTalkExport> exportSmallTalk(final Chatbot bot) {
+	private DtList<SmallTalkExport> exportSmallTalk(final Chatbot bot) {
 		final DtList<SmallTalk> smallTalks = smallTalkServices.getAllActiveSmallTalksByBot(bot);
 
 		final List<Long> smallTalkIds = smallTalks.stream()
@@ -268,7 +268,7 @@ public class TrainingServices implements Component {
 
 		//create the smallTalkExport
 		return smallTalkServices.exportSmallTalks(bot, smallTalks, trainingSentencesMap, utterTextsMap, buttonsMap);
-	}*/
+	}
 
 	//TODO
 	public Map<Long, DtList<NluTrainingSentence>> exportSmallTalkRelativeTrainingSentence(@SecuredOperation("botContributor") final Chatbot bot) {
