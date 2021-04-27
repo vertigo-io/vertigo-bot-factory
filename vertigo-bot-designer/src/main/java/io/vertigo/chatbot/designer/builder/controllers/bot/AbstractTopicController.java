@@ -81,7 +81,12 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentenceIn,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
 
-		return TopicHelper.doAddTrainingSentence(viewContext, newNluTrainingSentenceIn, nluTrainingSentences);
+		addTrainingSentense(newNluTrainingSentenceIn, nluTrainingSentences);
+
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluTrainingSentences);
+		viewContext.publishRef(newNluTrainingSentenceKey, "");
+
+		return viewContext;
 	}
 
 	@PostMapping("/_editTrainingSentence")
@@ -126,6 +131,26 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey, nluTrainingSentencesToDelete);
 
 		return viewContext;
+	}
+
+	public void addTrainingSentense(final String newNluTrainingSentenceIn,
+			final DtList<NluTrainingSentence> nluTrainingSentences) {
+		if (StringUtil.isBlank(newNluTrainingSentenceIn)) {
+			return;
+		}
+
+		final String newNluTrainingSentence = newNluTrainingSentenceIn.trim();
+
+		final boolean exists = nluTrainingSentences.stream()
+				.anyMatch(its -> its.getText().equalsIgnoreCase(newNluTrainingSentence));
+		if (exists) {
+			throw new VUserException("This sentense already exists");
+		}
+
+		final NluTrainingSentence newText = new NluTrainingSentence();
+		newText.setText(newNluTrainingSentence);
+
+		nluTrainingSentences.add(newText);
 	}
 
 	abstract Topic getTopic(final D object);

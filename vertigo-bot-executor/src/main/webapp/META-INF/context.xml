@@ -10,6 +10,4 @@
 	<Parameter name="CONFIG_DATA_FILE" value="${user.home}/botExecutor/config.json" override="false"/>
 	
 	<!-- <Parameter name="HTTP_CORS" value="*" override="false"/> -->
-	<Parameter name="RASA_EXE_PATH" value="C:\\Users\\vprima\\Documents\\Rasa\\Rasa\\Scripts\\rasa" override="false"/>
-	<Parameter name="RASA_BOT_PATH" value="C:\\Users\\vprima\\Documents\\Rasa\\Rasa\\bot\\" override="false"/>
 </Context>

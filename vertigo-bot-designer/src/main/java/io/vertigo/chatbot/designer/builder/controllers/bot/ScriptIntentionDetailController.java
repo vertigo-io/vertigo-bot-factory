@@ -90,7 +90,7 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 		final Long botId = chatbot.getBotId();
 
 		// add training sentence who is not "validated" by enter and still in the input
-		TopicHelper.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+		addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 
 		scriptIntentionServices.saveScriptIntention(chatbot, scriptIntention, nluTrainingSentences, nluTrainingSentencesToDelete, topic);
 		return "redirect:/bot/" + botId + "/scriptIntention/" + scriptIntention.getSinId();
