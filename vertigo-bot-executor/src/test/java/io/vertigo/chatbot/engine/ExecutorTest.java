@@ -44,7 +44,7 @@ public class ExecutorTest {
 
 	private final String botWelcome = "" +
 			"\n	begin sequence" +
-			"\n		say \"Welcome to this test bot.\"" +
+			"\n		say:once \"Welcome to this test bot.\"" +
 			"\n		begin choose:button " + BotEngine.USER_LOCAL_PATH.key() + "/topic \"Please choose topic.\"" +
 			"\n			button \"Le topic 1\" topic1" +
 			"\n			button \"Le topic 2\" topic2" +
@@ -84,14 +84,13 @@ public class ExecutorTest {
 
 	private final String botWelcomeNlu = "" +
 			"\n	begin sequence" +
-			"\n		say \"Welcome to this test bot.\"" +
+			"\n		say:once \"Welcome to this test bot.\"" +
 			"\n		choose:nlu \"Please ask topic.\"" +
 			"\n	end sequence";
 
 	private final String botFallback = "" +
 			"\n	begin sequence" +
 			"\n		say \"Sorry, try again.\"" +
-			"\n		topic !START" +
 			"\n	end sequence";
 
 	private final List<String> topic1Nlu = List.of(

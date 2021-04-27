@@ -175,7 +175,7 @@ public final class BotNodeProvider {
 		return doSayOnce(bb, msg, BotEngine.BOT_STATUS_PATH);
 	}
 
-	public static BTNode sayOnceTree(final BlackBoard bb, final String msg) {
+	public static BTNode sayOncePerTree(final BlackBoard bb, final String msg) {
 		return doSayOnce(bb, msg, BotEngine.USER_LOCAL_PATH);
 	}
 

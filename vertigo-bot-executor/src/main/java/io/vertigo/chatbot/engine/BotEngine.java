@@ -115,6 +115,9 @@ public class BotEngine {
 			if (status.isSucceeded() && !topic.getCode().startsWith("!")) { // end of business topic (special topics starts with !)
 				nextTopic = topicDefinitionMap.get(END_TOPIC_NAME); // may be null if no end topic
 				switchToTopic(END_TOPIC_NAME);
+			} else if (status.isSucceeded() && FALLBACK_TOPIC_NAME.equals(topic.getCode())) {
+				nextTopic = topicDefinitionMap.get(START_TOPIC_NAME);
+				switchToTopic(START_TOPIC_NAME);
 			} else if (bb.exists(BOT_NEXT_TOPIC_KEY)) {
 				final var nextTopicName = bb.getString(BOT_NEXT_TOPIC_KEY);
 				nextTopic = topicDefinitionMap.get(nextTopicName); // handle forward to another topic
