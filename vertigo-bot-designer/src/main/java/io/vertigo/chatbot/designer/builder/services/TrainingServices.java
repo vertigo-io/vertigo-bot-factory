@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,7 +42,6 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
-import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
@@ -129,7 +129,7 @@ public class TrainingServices implements Component {
 		saveTraining(bot, training);
 
 		final Map<String, Object> requestData = Map.of(
-				"botExport", exportBot(bot),
+				//"botExport", exportBot(bot),
 				"smallTalkExport", exportSmallTalk(bot),
 				"trainingId", training.getTraId(),
 				"modelId", versionNumber,
@@ -238,20 +238,21 @@ public class TrainingServices implements Component {
 		return retour;
 	}
 
-	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
-		final UtterText welcomeText = utterTextServices.getWelcomeTextByBot(bot);
-		final UtterText defaultText = utterTextServices.getDefaultTextByBot(bot);
-		final DtList<ResponseButton> welcomeButtons = responsesButtonServices.getWelcomeButtonsByBot(bot);
-		final DtList<ResponseButton> defaultButtons = responsesButtonServices.getDefaultButtonsByBot(bot);
-
-		final BotExport retour = new BotExport();
-		retour.setBot(bot);
-		retour.setWelcomeText(welcomeText);
-		retour.setWelcomeButtons(welcomeButtons);
-		retour.setFallbackText(defaultText);
-		retour.setFallbackButtons(defaultButtons);
-		return retour;
-	}
+	/**
+	 * private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
+	 * final UtterText welcomeText = utterTextServices.getWelcomeTextByBot(bot);
+	 * final UtterText defaultText = utterTextServices.getDefaultTextByBot(bot);
+	 * final DtList<ResponseButton> welcomeButtons = responsesButtonServices.getWelcomeButtonsByBot(bot);
+	 * final DtList<ResponseButton> defaultButtons = responsesButtonServices.getDefaultButtonsByBot(bot);
+	 * final BotExport retour = new BotExport();
+	 * retour.setBot(bot);
+	 * retour.setWelcomeText(welcomeText);
+	 * retour.setWelcomeButtons(welcomeButtons);
+	 * retour.setFallbackText(defaultText);
+	 * retour.setFallbackButtons(defaultButtons);
+	 * return retour;
+	 * }
+	 **/
 
 	private DtList<SmallTalkExport> exportSmallTalk(final Chatbot bot) {
 		final DtList<SmallTalk> smallTalks = smallTalkServices.getAllActiveSmallTalksByBot(bot);

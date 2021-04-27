@@ -82,6 +82,7 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 		utterTextList.add(new UtterText()); // add the next for random, or the 1st for rich text if 0 lines
 		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
 
+		toModeReadOnly();
 	}
 
 	@GetMapping("/new")

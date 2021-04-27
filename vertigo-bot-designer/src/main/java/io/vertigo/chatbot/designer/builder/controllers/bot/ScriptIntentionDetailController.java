@@ -60,6 +60,7 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 
 		viewContext.publishDto(scriptIntentionKey, scriptIntention);
 
+		toModeReadOnly();
 	}
 
 	@GetMapping("/new")

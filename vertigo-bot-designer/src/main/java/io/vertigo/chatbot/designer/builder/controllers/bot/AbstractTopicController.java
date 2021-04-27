@@ -40,8 +40,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	@Inject
 	protected TopicCategoryServices topicCategoryServices;
 
-	abstract Topic getTopic(final D object);
-
 	public void initContext(final ViewContext viewContext, final Chatbot bot, final Topic topic) {
 		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Paramètres incohérents");
 
@@ -56,8 +54,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 
 		viewContext.publishDto(topicCategoryKey, topicCategoryServices.getTopicCategoryById(bot, topic.getTopCatId()));
 		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
-
-		toModeReadOnly();
 	}
 
 	public void initContextNew(final ViewContext viewContext, final Chatbot bot) {
@@ -114,19 +110,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		return viewContext;
 	}
 
-	@PostMapping("/_save")
-	abstract String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("object") final D object,
-			@ViewAttribute("topic") final Topic topic,
-			@ViewAttribute("bot") final Chatbot chatbot,
-			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
-			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
-			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete);
-
-	@PostMapping("/_delete")
-	abstract String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("object") final D object,
-			@ViewAttribute("topic") final Topic topic);
-
 	@PostMapping("/_removeTrainingSentence")
 	public ViewContext doRemoveTrainingSentence(final ViewContext viewContext, @RequestParam("index") final int index,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
@@ -144,4 +127,20 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 
 		return viewContext;
 	}
+
+	abstract Topic getTopic(final D object);
+
+	@PostMapping("/_save")
+	abstract String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
+			@ViewAttribute("object") final D object,
+			@ViewAttribute("topic") final Topic topic,
+			@ViewAttribute("bot") final Chatbot chatbot,
+			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
+			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
+			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete);
+
+	@PostMapping("/_delete")
+	abstract String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("object") final D object,
+			@ViewAttribute("topic") final Topic topic);
+
 }
