@@ -166,6 +166,14 @@ public class ExecutorTest {
 		Assertions.assertEquals("Sorry, try again.", textResponses.get(0));
 		Assertions.assertEquals("Please ask topic.", textResponses.get(1));
 		//--
+		response = executorManager.handleUserMessage(uuid, new BotInput("i still dunno"));
+		textResponses = response.getHtmlTexts();
+
+		Assertions.assertEquals(BotStatus.Talking, response.getStatus());
+		Assertions.assertEquals(2, textResponses.size());
+		Assertions.assertEquals("Sorry, try again.", textResponses.get(0));
+		Assertions.assertEquals("Please ask topic.", textResponses.get(1));
+		//--
 		response = executorManager.handleUserMessage(uuid, new BotInput("go to my topic please"));
 		textResponses = response.getHtmlTexts();
 
