@@ -30,16 +30,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
-import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
-import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
-import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -58,9 +61,6 @@ public class BotDetailController extends AbstractBotController {
 	private UtterTextServices utterTextServices;
 
 	@Inject
-	private ResponsesButtonServices responsesButtonServices;
-
-	@Inject
 	private TopicServices topicServices;
 
 	@Inject
@@ -69,10 +69,15 @@ public class BotDetailController extends AbstractBotController {
 	@Inject
 	private ChatbotServices chatbotServices;
 
-	private static final ViewContextKey<UtterText> defaultKey = ViewContextKey.of("default");
-	private static final ViewContextKey<ResponseButton> defaultButtonsKey = ViewContextKey.of("defaultButtons");
-	private static final ViewContextKey<UtterText> welcomeKey = ViewContextKey.of("welcome");
-	private static final ViewContextKey<ResponseButton> welcomeButtonsKey = ViewContextKey.of("welcomeButtons");
+	@Inject
+	private TopicCategoryServices topicCategoryServices;
+
+	@Inject
+	private SmallTalkServices smallTalkServices;
+
+	private static final ViewContextKey<UtterText> utterTextFailureKey = ViewContextKey.of("utterTextFailure");
+	private static final ViewContextKey<UtterText> utterTextStartKey = ViewContextKey.of("utterTextStart");
+	private static final ViewContextKey<UtterText> utterTextEndKey = ViewContextKey.of("utterTextEnd");
 
 	private static final ViewContextKey<Topic> topicKey = ViewContextKey.of("topics");
 
@@ -81,15 +86,15 @@ public class BotDetailController extends AbstractBotController {
 	private static final ViewContextKey<ChatbotNode> nodeNewKey = ViewContextKey.of("nodeNew"); // template for creation
 	private static final ViewContextKey<Boolean> deletePopinKey = ViewContextKey.of("deletePopin");
 
+	private static final ViewContextKey<TopicCategory> topicCategoryKey = ViewContextKey.of("topicCategory");
+	private static final ViewContextKey<Topic> topicFailureKey = ViewContextKey.of("topicFailure");
+	private static final ViewContextKey<Topic> topicStartKey = ViewContextKey.of("topicStart");
+	private static final ViewContextKey<Topic> topicEndKey = ViewContextKey.of("topicEnd");
+
 	@GetMapping("/{botId}")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
 
-		viewContext.publishDto(defaultKey, utterTextServices.getDefaultTextByBot(bot));
-		viewContext.publishDto(welcomeKey, utterTextServices.getWelcomeTextByBot(bot));
-
-		viewContext.publishDtListModifiable(defaultButtonsKey, responsesButtonServices.getDefaultButtonsByBot(bot));
-		viewContext.publishDtListModifiable(welcomeButtonsKey, responsesButtonServices.getWelcomeButtonsByBot(bot));
 		viewContext.publishDtList(topicKey, topicServices.getAllTopicByBot(bot));
 
 		if (AuthorizationUtils.isAuthorized(bot, ChatbotOperations.botAdm)) {
@@ -99,38 +104,59 @@ public class BotDetailController extends AbstractBotController {
 		viewContext.publishRef(deletePopinKey, false);
 		initNodeEdit(viewContext);
 
+		initBasicTopic(bot, viewContext, KindTopicEnum.FAILURE.name(), topicFailureKey, utterTextFailureKey);
+		initBasicTopic(bot, viewContext, KindTopicEnum.START.name(), topicStartKey, utterTextStartKey);
+		initBasicTopic(bot, viewContext, KindTopicEnum.END.name(), topicEndKey, utterTextEndKey);
+
 		toModeReadOnly();
 	}
 
 	private void initNodeEdit(final ViewContext viewContext) {
 		viewContext.publishDto(nodeEditKey, new ChatbotNode());
 
-		final ChatbotNode tempalteCreation = new ChatbotNode();
-		tempalteCreation.setColor("#00838f");
-		tempalteCreation.setIsDev(false);
-		viewContext.publishDto(nodeNewKey, tempalteCreation);
+		final ChatbotNode templateCreation = new ChatbotNode();
+		templateCreation.setColor("#00838f");
+		templateCreation.setIsDev(false);
+		viewContext.publishDto(nodeNewKey, templateCreation);
 	}
 
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext) {
 		initEmptyCommonContext(viewContext);
 
-		final UtterText newDefault = new UtterText();
-		newDefault.setText("Sorry, I don't understand.");
-		viewContext.publishDto(defaultKey, newDefault);
-		viewContext.publishDtListModifiable(defaultButtonsKey, new DtList<>(ResponseButton.class));
+		//Init topic failure
+		initNewBasicTopic(viewContext, KindTopicEnum.FAILURE.name(), "Failure", "Default failure response", "Sorry, I don't understand.", topicFailureKey, utterTextFailureKey);
+		initNewBasicTopic(viewContext, KindTopicEnum.START.name(), "Start", "Default start response", "Hello !", topicStartKey, utterTextStartKey);
+		initNewBasicTopic(viewContext, KindTopicEnum.END.name(), "End", "Default end response", "Bye !", topicEndKey, utterTextEndKey);
 
 		viewContext.publishDtList(topicKey, new DtList<>(Topic.class));
-
-		final UtterText newWelcome = new UtterText();
-		newWelcome.setText("Hello !");
-		viewContext.publishDto(welcomeKey, newWelcome);
-		viewContext.publishDtListModifiable(welcomeButtonsKey, new DtList<>(ResponseButton.class));
-
 		viewContext.publishDtList(nodeListKey, new DtList<>(ChatbotNode.class));
 		initNodeEdit(viewContext);
 
 		toModeCreate();
+	}
+
+	private void initBasicTopic(final Chatbot bot, final ViewContext viewContext, final String ktoCd, final ViewContextKey<Topic> topickey,
+			final ViewContextKey<UtterText> uttertextkey) {
+		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
+		final SmallTalk smt = smallTalkServices.getSmallTalkByTopId(topic.getTopId());
+		final UtterText utterText = utterTextServices.getUtterTextBySmtId(bot, smt.getSmtId());
+		viewContext.publishDto(uttertextkey, utterText);
+		viewContext.publishDto(topickey, topic);
+	}
+
+	private void initNewBasicTopic(final ViewContext viewContext, final String ktoCd, final String title, final String description, final String text, final ViewContextKey<Topic> topickey,
+			final ViewContextKey<UtterText> uttertextkey) {
+		final Topic topic = new Topic();
+		topic.setIsEnabled(true);
+		topic.setTitle(title);
+		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
+		topic.setKtoCd(ktoCd);
+		topic.setDescription(description);
+		viewContext.publishDto(topickey, topic);
+		final UtterText utterText = new UtterText();
+		utterText.setText(text);
+		viewContext.publishDto(uttertextkey, utterText);
 	}
 
 	@PostMapping("/_edit")
@@ -150,15 +176,27 @@ public class BotDetailController extends AbstractBotController {
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
 			@QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile,
-			@ViewAttribute("default") final UtterText defaultText, @ViewAttribute("welcome") final UtterText welcome) {
+			@ViewAttribute("utterTextFailure") final UtterText utterTextFailure,
+			@ViewAttribute("utterTextStart") final UtterText utterTextStart,
+			@ViewAttribute("utterTextEnd") final UtterText utterTextEnd,
+			@ViewAttribute("topicFailure") final Topic topicFailure,
+			@ViewAttribute("topicStart") final Topic topicStart,
+			@ViewAttribute("topicEnd") final Topic topicEnd) {
 
-		final DtList<ResponseButton> defaultButtons = ChatbotUtils
-				.getRawDtList(viewContext.getUiListModifiable(defaultButtonsKey), uiMessageStack);
-		final DtList<ResponseButton> welcomeButtons = ChatbotUtils
-				.getRawDtList(viewContext.getUiListModifiable(welcomeButtonsKey), uiMessageStack);
+		TopicCategory topicCategory;
+		if (topicFailure.getTopCatId() == null) {
+			topicCategory = new TopicCategory();
+			topicCategory.setIsEnabled(true);
+			topicCategory.setLabel("Basics");
+			topicCategory.setIsTechnical(true);
+			topicCategory.setLevel(1L);
+			viewContext.publishDto(topicCategoryKey, topicCategory);
+		} else {
+			topicCategory = topicCategoryServices.getTopicCategoryById(bot, topicFailure.getTopCatId());
+		}
 
-		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, defaultText, defaultButtons,
-				welcome, welcomeButtons);
+		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, utterTextFailure,
+				utterTextStart, utterTextEnd, topicFailure, topicStart, topicEnd, topicCategory);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();
 	}

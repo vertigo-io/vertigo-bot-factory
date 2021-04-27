@@ -2,6 +2,7 @@ package io.vertigo.chatbot.commons.dao.topic;
 
 import javax.inject.Inject;
 
+import java.util.Optional;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
 import io.vertigo.datamodel.task.definitions.TaskDefinition;
@@ -44,30 +45,10 @@ public final class TopicCategoryDAO extends DAO<TopicCategory, java.lang.Long> i
 	}
 
 	/**
-	 * Execute la tache TkGetAllActiveCategoriesByBotId.
-	 * @param botId Long
-	 * @return DtList de TopicCategory tpcs
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkGetAllActiveCategoriesByBotId",
-			request = "select tpc.*" + 
- "			from topic_category tpc" + 
- "			where tpc.bot_id = #botId#" + 
- "			And tpc.is_enabled = true",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicCategory")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicCategory> getAllActiveCategoriesByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
-		final Task task = createTaskBuilder("TkGetAllActiveCategoriesByBotId")
-				.addValue("botId", botId)
-				.build();
-		return getTaskManager()
-				.execute(task)
-				.getResult();
-	}
-
-	/**
 	 * Execute la tache TkGetAllCategoriesByBotId.
 	 * @param botId Long
+	 * @param isEnabled Boolean
+	 * @param isTechnical Boolean
 	 * @return DtList de TopicCategory tpcs
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
@@ -75,12 +56,20 @@ public final class TopicCategoryDAO extends DAO<TopicCategory, java.lang.Long> i
 			request = "select tpc.*" + 
  "			from topic_category tpc" + 
  "			where tpc.bot_id = #botId#" + 
+ "			<% if (isEnabled != null){ %>" + 
+ "				and tpc.is_enabled = #isEnabled#" + 
+ "			<% } %>" + 
+ "			<% if (isTechnical != null){ %>" + 
+ "				and tpc.is_technical = #isTechnical#" + 
+ "			<% } %>" + 
  "			order by tpc.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicCategory")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicCategory> getAllCategoriesByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicCategory> getAllCategoriesByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "isEnabled", smartType = "STyYesNo") final Optional<Boolean> isEnabled, @io.vertigo.datamodel.task.proxy.TaskInput(name = "isTechnical", smartType = "STyYesNo") final Optional<Boolean> isTechnical) {
 		final Task task = createTaskBuilder("TkGetAllCategoriesByBotId")
 				.addValue("botId", botId)
+				.addValue("isEnabled", isEnabled.orElse(null))
+				.addValue("isTechnical", isTechnical.orElse(null))
 				.build();
 		return getTaskManager()
 				.execute(task)

@@ -66,6 +66,77 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
 	}
 
 	/**
+	 * Execute la tache TkGetBasicTopicByBotIdKtoCd.
+	 * @param botId Long
+	 * @param ktoCd String
+	 * @return Topic topic
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetBasicTopicByBotIdKtoCd",
+			request = "SELECT 	top.*" + 
+ "			from topic top " + 
+ "			where top.bot_id = #botId#" + 
+ "			and top.kto_cd = #ktoCd#" + 
+ "			LIMIT 1",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	public io.vertigo.chatbot.commons.domain.topic.Topic getBasicTopicByBotIdKtoCd(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCd", smartType = "STyCode") final String ktoCd) {
+		final Task task = createTaskBuilder("TkGetBasicTopicByBotIdKtoCd")
+				.addValue("botId", botId)
+				.addValue("ktoCd", ktoCd)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
+	 * Execute la tache TkGetTopicReferencingTopId.
+	 * @param topId Long
+	 * @return DtList de Topic topic
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetTopicReferencingTopId",
+			request = "select top.*" + 
+ "			from topic top" + 
+ "			join small_talk smt on smt.top_id = top.top_id" + 
+ "			inner join response_button rbu on smt.smt_id = rbu.smt_id" + 
+ "			where rbu.top_id_response = #topId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getTopicReferencingTopId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
+		final Task task = createTaskBuilder("TkGetTopicReferencingTopId")
+				.addValue("topId", topId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
+	 * Execute la tache TkGetUtterTextsByTopId.
+	 * @param topId Long
+	 * @return DtList de Topic utterTexts
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetUtterTextsByTopId",
+			request = "SELECT 	utt.*" + 
+ "			from utter_text utt " + 
+ "			join small_talk smt on smt.smt_id = utt.smt_id" + 
+ "			where utt.top_id = #topId#" + 
+ "			LIMIT 1",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getUtterTextsByTopId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
+		final Task task = createTaskBuilder("TkGetUtterTextsByTopId")
+				.addValue("topId", topId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkGetAllTopicRelativeScriptIntentByBotId.
 	 * @param botId Long
 	 * @return DtList de Topic tpcs

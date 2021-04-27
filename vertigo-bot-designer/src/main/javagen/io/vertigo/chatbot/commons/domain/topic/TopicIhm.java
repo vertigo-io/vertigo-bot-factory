@@ -21,6 +21,7 @@ public final class TopicIhm implements DtObject {
 	private Long sinId;
 	private String catLabel;
 	private Boolean isEnabled;
+	private String ktoCd;
 	
 	/**
 	 * Champ : DATA.
@@ -172,6 +173,25 @@ public final class TopicIhm implements DtObject {
 	 */
 	public void setIsEnabled(final Boolean isEnabled) {
 		this.isEnabled = isEnabled;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Code Kind'.
+	 * @return String ktoCd
+	 */
+	@Field(smartType = "STyCode", label = "Code Kind")
+	public String getKtoCd() {
+		return ktoCd;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Code Kind'.
+	 * @param ktoCd String
+	 */
+	public void setKtoCd(final String ktoCd) {
+		this.ktoCd = ktoCd;
 	}
 	
 	/** {@inheritDoc} */

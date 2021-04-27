@@ -6,6 +6,7 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.SmallTalkDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
@@ -17,10 +18,13 @@ import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.smallTalk.SmallTalkPAO;
+import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtListState;
 
 @Transactional
 @Secured("BotUser")
@@ -58,12 +62,15 @@ public class SmallTalkServices implements Component {
 			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList, final Topic topic) {
 
 		Assertion.check()
-				.isNotNull(smallTalk)
-				.isNotNull(nluTrainingSentences)
-				.isNotNull(nluTrainingSentencesToDelete)
+				.isNotNull(smallTalk).isNotNull(topic)
 				.isNotNull(utterTexts)
 				.isNotNull(buttonList);
 		// ---
+		if (KindTopicEnum.NORMAL.name().equals(topic.getKtoCd())) {
+			Assertion.check().isNotNull(nluTrainingSentences)
+					.isNotNull(nluTrainingSentencesToDelete);
+		}
+
 		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
 		final Topic savedTopic = topicServices.save(topic);
 		smallTalk.setTopId(savedTopic.getTopId());
@@ -103,6 +110,14 @@ public class SmallTalkServices implements Component {
 
 	public DtList<SmallTalkIhm> getSmallTalksIhmByBot(final Chatbot bot) {
 		return smallTalkPAO.getSmallTalkIHMByBot(bot.getBotId());
+	}
+
+	@Secured("SuperAdm")
+	public SmallTalk getSmallTalkByTopId(final Long topId) {
+		if (topId != null) {
+			return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.topId, topId), DtListState.of(1)).get(0);
+		}
+		return null;
 	}
 
 }

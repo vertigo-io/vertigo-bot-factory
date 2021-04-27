@@ -58,7 +58,7 @@ public class TopicsListController extends AbstractBotController {
 	@Secured("BotUser")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
-		viewContext.publishDtList(topicIhmListKey, TopicIhmFields.topId, topicServices.getAllTopicIhmByBot(bot));
+		viewContext.publishDtList(topicIhmListKey, TopicIhmFields.topId, topicServices.getAllNormalTopicIhmByBot(bot));
 		viewContext.publishDtListModifiable(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 
 		viewContext.publishRef(selectionList, "");

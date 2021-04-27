@@ -1,27 +1,49 @@
-alter table response_type
-add column label_fr varchar(100);
+-- ============================================================
+--   Table : KIND_TOPIC                                        
+-- ============================================================
+create table KIND_TOPIC
+(
+    KTO_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    constraint PK_KIND_TOPIC primary key (KTO_CD)
+);
 
-update response_type
-set label_fr = 'Texte'
-where rty_id = 'RICH_TEXT';
+comment on column KIND_TOPIC.KTO_CD is
+'ID';
 
-update response_type
-set label_fr = 'Texte aléatoire'
-where rty_id = 'RANDOM_TEXT';
+comment on column KIND_TOPIC.LABEL is
+'Title';
 
-alter table response_type
-alter column label_fr set not null;
+-- ============================================================
+--   Insert MasterData values : KIND_TOPIC                                        
+-- ============================================================
+insert into KIND_TOPIC(KTO_CD, LABEL) values ('START', 'Start');
+insert into KIND_TOPIC(KTO_CD, LABEL) values ('END', 'End');
+insert into KIND_TOPIC(KTO_CD, LABEL) values ('FAILURE', 'Failure');
+insert into KIND_TOPIC(KTO_CD, LABEL) values ('NORMAL', 'Normal');
 
-alter table type_topic
-add column label_fr varchar(100);
+ALTER TABLE TOPIC
+ADD COLUMN KTO_CD VARCHAR(100) ;
 
-update type_topic
-set label_fr = 'Small talk'
-where tto_cd = 'SMALLTALK';
+-- Add constraint 
+alter table TOPIC
+	add constraint FK_A_TOPIC_KIND_TOPIC foreign key (KTO_CD)
+	references KIND_TOPIC (KTO_CD);
+	
+create index A_TOPIC_TO_KIND_TOPIC_FK on TOPIC (TTO_CD asc);
 
-update type_topic
-set label_fr = 'Intention scriptée'
-where tto_cd = 'SCRIPTINTENTION';
+UPDATE TOPIC SET KTO_CD = 'NORMAL';
 
-alter table type_topic
-alter column label_fr set not null;
+ALTER TABLE TOPIC
+ALTER COLUMN KTO_CD SET NOT NULL;
+
+ALTER TABLE CHATBOT
+DROP COLUMN UTT_ID_WELCOME,
+DROP COLUMN UTT_ID_DEFAULT;
+
+ALTER TABLE RESPONSE_BUTTON
+DROP COLUMN BOT_ID_WELCOME,
+DROP COLUMN BOT_ID_DEFAULT;
+
+ALTER TABLE TOPIC_CATEGORY
+ADD COLUMN IS_TECHNICAL BOOLEAN;

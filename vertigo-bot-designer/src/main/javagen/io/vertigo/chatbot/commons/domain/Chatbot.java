@@ -36,36 +36,6 @@ public final class Chatbot implements KeyConcept {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> filIdAvatarAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.MediaFileInfo.class, "MediaFileInfo");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
-			name = "AChatbotUtterTextWelcome",
-			fkFieldName = "uttIdWelcome",
-			primaryDtDefinitionName = "DtUtterText",
-			primaryIsNavigable = true,
-			primaryRole = "utterTextWelcome",
-			primaryLabel = "Welcome text",
-			primaryMultiplicity = "1..1",
-			foreignDtDefinitionName = "DtChatbot",
-			foreignIsNavigable = false,
-			foreignRole = "Chatbot",
-			foreignLabel = "Chatbot",
-			foreignMultiplicity = "0..*")
-	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.UtterText> uttIdWelcomeAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.UtterText.class, "utterTextWelcome");
-
-	@io.vertigo.datamodel.structure.stereotype.Association(
-			name = "AChatbotUtterTextDefault",
-			fkFieldName = "uttIdDefault",
-			primaryDtDefinitionName = "DtUtterText",
-			primaryIsNavigable = true,
-			primaryRole = "utterTextDefault",
-			primaryLabel = "Default text",
-			primaryMultiplicity = "1..1",
-			foreignDtDefinitionName = "DtChatbot",
-			foreignIsNavigable = false,
-			foreignRole = "Chatbot",
-			foreignLabel = "Chatbot",
-			foreignMultiplicity = "0..*")
-	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.UtterText> uttIdDefaultAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.UtterText.class, "utterTextDefault");
-
 	/** {@inheritDoc} */
 	@Override
 	public UID<Chatbot> getUID() {
@@ -185,44 +155,6 @@ public final class Chatbot implements KeyConcept {
 	public void setFilIdAvatar(final Long filIdAvatar) {
 		filIdAvatarAccessor.setId(filIdAvatar);
 	}
-	
-	/**
-	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Welcome text'.
-	 * @return Long uttIdWelcome <b>Obligatoire</b>
-	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Welcome text", fkDefinition = "DtUtterText" )
-	public Long getUttIdWelcome() {
-		return (Long) uttIdWelcomeAccessor.getId();
-	}
-
-	/**
-	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Welcome text'.
-	 * @param uttIdWelcome Long <b>Obligatoire</b>
-	 */
-	public void setUttIdWelcome(final Long uttIdWelcome) {
-		uttIdWelcomeAccessor.setId(uttIdWelcome);
-	}
-	
-	/**
-	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Default text'.
-	 * @return Long uttIdDefault <b>Obligatoire</b>
-	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Default text", fkDefinition = "DtUtterText" )
-	public Long getUttIdDefault() {
-		return (Long) uttIdDefaultAccessor.getId();
-	}
-
-	/**
-	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Default text'.
-	 * @param uttIdDefault Long <b>Obligatoire</b>
-	 */
-	public void setUttIdDefault(final Long uttIdDefault) {
-		uttIdDefaultAccessor.setId(uttIdDefault);
-	}
 
  	/**
 	 * Association : Avatar.
@@ -230,22 +162,6 @@ public final class Chatbot implements KeyConcept {
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> mediaFileInfo() {
 		return filIdAvatarAccessor;
-	}
-
- 	/**
-	 * Association : Default text.
-	 * @return l'accesseur vers la propriété 'Default text'
-	 */
-	public StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.UtterText> utterTextDefault() {
-		return uttIdDefaultAccessor;
-	}
-
- 	/**
-	 * Association : Welcome text.
-	 * @return l'accesseur vers la propriété 'Welcome text'
-	 */
-	public StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.UtterText> utterTextWelcome() {
-		return uttIdWelcomeAccessor;
 	}
 	
 	/** {@inheritDoc} */

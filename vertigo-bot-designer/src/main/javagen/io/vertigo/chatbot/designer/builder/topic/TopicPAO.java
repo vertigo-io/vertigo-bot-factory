@@ -2,6 +2,7 @@ package io.vertigo.chatbot.designer.builder.topic;
 
 import javax.inject.Inject;
 
+import java.util.Optional;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Generated;
@@ -43,6 +44,7 @@ public final class TopicPAO implements StoreServices {
 	/**
 	 * Execute la tache TkGetAllTopicsIhmFromBot.
 	 * @param botId Long
+	 * @param ktoCd String
 	 * @return DtList de TopicIhm topicIHM
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
@@ -60,12 +62,16 @@ public final class TopicPAO implements StoreServices {
  "			left join script_intention sin on sin.top_id = top.top_id" + 
  "			join type_topic tto on top.tto_cd = tto.tto_cd" + 
  "			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)" + 
- "			where top.bot_id = #botId#",
+ "			where top.bot_id = #botId#" + 
+ "			<% if (ktoCd != null){ %>" + 
+ "				and top.kto_cd = #ktoCd#" + 
+ "			<% } %>",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicIhm> getAllTopicsIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicIhm> getAllTopicsIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCd", smartType = "STyCode") final Optional<String> ktoCd) {
 		final Task task = createTaskBuilder("TkGetAllTopicsIhmFromBot")
 				.addValue("botId", botId)
+				.addValue("ktoCd", ktoCd.orElse(null))
 				.build();
 		return getTaskManager()
 				.execute(task)

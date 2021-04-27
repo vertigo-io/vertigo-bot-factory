@@ -26,6 +26,44 @@ create DtDefinition DtTypeTopic {
  	displayField : "label"
 }
 
+create DtDefinition DtKindTopic {
+	stereotype : "StaticMasterData"
+	id    ktoCd 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Title" 		cardinality : "1"	}
+	values : `{
+        "START" : {
+            "ktoCd" : "START",
+            "label" : "Start"           
+        },
+        "END" : {
+            "ktoCd" : "END",
+            "label" : "End"
+        },
+        "FAILURE" : {
+            "ktoCd" : "FAILURE",
+            "label" : "Failure"
+        },
+         "NORMAL" : {
+            "ktoCd" : "NORMAL",
+            "label" : "Normal"
+        }
+     }`
+    sortField : "ktoCd"
+ 	displayField : "label"
+}
+
+create Association ATopicKindTopic{
+
+	fkFieldName : "ktoCd"
+    
+ 	dtDefinitionA : DtTopic
+	type : "*>1"
+	dtDefinitionB : DtKindTopic
+	
+	labelB : "Kind of topic"
+
+}
+
 create DtDefinition DtTopic{
 	id		topId			{domain: DoId 		label: "ID"}
 	field 	title 			{domain: DoLabel 	label: "Title" 			cardinality : "1"}
@@ -185,10 +223,11 @@ create Association AResponseButtonTopicResponse {
 /** Category **/
 
 create DtDefinition DtTopicCategory{
-	id topCatId 	{domain: DoId		label: "Topic category id"}
-	field label		{domain: DoLabel	label: "Topic category label" cardinality:"1"}
-	field level 	{domain: DoNumber	label: "Category level"}
-	field isEnabled	{domain: DoYesNo	label: "Enabled" cardinality:"1"}
+	id topCatId 		{domain: DoId		label: "Topic category id"}
+	field label			{domain: DoLabel	label: "Topic category label" 	cardinality:"1"}
+	field level 		{domain: DoNumber	label: "Category level"}
+	field isEnabled		{domain: DoYesNo	label: "Enabled" 				cardinality:"1"}
+	field isTechnical	{domain: DoYesNo	label: "Technical" 				cardinality:"1"}
 }
 
 create Association ATopicCategoryChatbot{
@@ -255,6 +294,7 @@ create DtDefinition DtTopicIhm {
 	field sinId		{domain: DoId		label: "Script intention id"	cardinality:"?"	}
 	field catLabel	{domain: DoLabel	label: "Category"				cardinality:"1"	}
 	field isEnabled	{domain: DoYesNo	label: "Enabled"								}
+	field ktoCd		{domain: DoCode		label: "Code Kind"				cardinality:"?"	}
 }
 
 create DtDefinition DtScriptIntentionIhm {

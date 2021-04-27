@@ -45,18 +45,7 @@ public class UtterTextServices implements Component {
 		utterTextDAO.delete(uid);
 	}
 
-	public UtterText getDefaultTextByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-		Assertion.check().isNotNull(bot);
-		// ---
-		return utterTextDAO.get(bot.getUttIdDefault());
-	}
-
-	public UtterText getWelcomeTextByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-		Assertion.check().isNotNull(bot);
-		// ---
-		return utterTextDAO.get(bot.getUttIdWelcome());
-	}
-
+	
 	public DtList<UtterText> getUtterTextList(@SecuredOperation("botVisitor") final Chatbot bot, final SmallTalk smallTalk) {
 		Assertion.check()
 				.isNotNull(smallTalk)
@@ -115,5 +104,14 @@ public class UtterTextServices implements Component {
 
 	public void removeAllUtterTextByBotId(@SecuredOperation("botAdm") final Chatbot bot) {
 		utterTextPAO.removeAllUtterTextByBotId(bot.getBotId());
+	}
+
+	public UtterText getUtterTextBySmtId(@SecuredOperation("botVisitor") final Chatbot bot, final Long smtId) {
+		Assertion.check()
+				.isNotNull(smtId);
+		// ---
+		return utterTextDAO.findAll(
+				Criterions.isEqualTo(UtterTextFields.smtId, smtId),
+				DtListState.of(1000, 0, UtterTextFields.uttId.name(), false)).get(0);
 	}
 }

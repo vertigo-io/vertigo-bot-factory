@@ -9,6 +9,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.core.lang.Assertion;
@@ -43,7 +44,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	public void initContext(final ViewContext viewContext, final Chatbot bot, final Topic topic) {
 		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Paramètres incohérents");
 
-		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
+		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name()));
 		viewContext.publishDto(topicKey, topic);
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
@@ -57,6 +58,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	}
 
 	public void initContextNew(final ViewContext viewContext, final Chatbot bot) {
+		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name()));
 		viewContext.publishDto(topicKey, topicServices.getNewTopic(bot));
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
@@ -64,8 +66,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey,
 				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
-
-		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 
 		viewContext.publishDto(topicCategoryKey, new TopicCategory());
 		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));

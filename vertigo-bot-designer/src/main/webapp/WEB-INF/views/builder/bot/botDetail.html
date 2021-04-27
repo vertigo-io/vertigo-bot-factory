@@ -52,42 +52,35 @@
 			</vu:block>
 			
 			<vu:block id="custom" th:title="#{bot.customization}">
-				<vu:include-data object="welcome" field="text" />
-				<vu:include-data object="default" field="text" />
-				<vu:include-data object="welcomeButtons" field="text" />
-				<vu:include-data object="welcomeButtons" field="topIdResponse" />
-				<vu:include-data object="defaultButtons" field="text" />
-				<vu:include-data object="defaultButtons" field="topIdResponse" />
+				<vu:include-data object="utterTextFailure" field="text" />
+				<vu:include-data object="utterTextStart" field="text" />
+				<vu:include-data object="utterTextEnd" field="text" />
 				<vu:include-data object="topics" field="topId" />
 				<vu:include-data object="topics" field="title" />
 				
 				<div class="text-subtitle1" th:text=#{welcome.message}>test</div>
 				<c-richtext
 						class="q-pb-sm"
-						v-model="vueData.welcome.text"
-						name="vContext[welcome][text]"
+						v-model="vueData.utterTextStart.text"
+						name="vContext[utterTextStart][text]"
 						th::mode-edit="${!model.modeReadOnly}">
 				</c-richtext>
-				<c-buttonlist
-					class="q-pb-sm"
-					button-list="welcomeButtons"
-					choice-list="topics"
-					th::mode-edit="${!model.modeReadOnly}">
-				</c-buttonlist>
 				
 				<div class="text-subtitle1" th:text=#{bot.fallback}></div>
 				<c-richtext
 						class="q-pb-sm"
-						v-model="vueData.default.text"
-						name="vContext[default][text]"
+						v-model="vueData.utterTextFailure.text"
+						name="vContext[utterTextFailure][text]"
 						th::mode-edit="${!model.modeReadOnly}">
 				</c-richtext>
-				<c-buttonlist
+				
+				<div class="text-subtitle1">End message</div>
+				<c-richtext
 					class="q-pb-sm"
-					button-list="defaultButtons"
-					choice-list="topics"
+						v-model="vueData.utterTextEnd.text"
+						name="vContext[utterTextEnd][text]"
 					th::mode-edit="${!model.modeReadOnly}">
-				</c-buttonlist>
+				</c-richtext>
 			</vu:block>
 			
 			

@@ -13,6 +13,7 @@ drop sequence IF EXISTS SEQ_CHATBOT_NODE;
 drop table IF EXISTS CHATBOT_PROFILES cascade;
 drop table IF EXISTS GROUPS cascade;
 drop sequence IF EXISTS SEQ_GROUPS;
+drop table IF EXISTS KIND_TOPIC cascade;
 drop table IF EXISTS MEDIA_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_MEDIA_FILE_INFO;
 drop table IF EXISTS NLU_TRAINING_SENTENCE cascade;
@@ -54,6 +55,7 @@ create sequence SEQ_CHATBOT_NODE
 
 create sequence SEQ_GROUPS
 	start with 1000 cache 20; 
+
 
 create sequence SEQ_MEDIA_FILE_INFO
 	start with 1000 cache 20; 
@@ -103,8 +105,6 @@ create table CHATBOT
     CREATION_DATE	 DATE        	not null,
     STATUS      	 VARCHAR(100)	not null,
     FIL_ID_AVATAR	 NUMERIC     	,
-    UTT_ID_WELCOME	 NUMERIC     	not null,
-    UTT_ID_DEFAULT	 NUMERIC     	not null,
     constraint PK_CHATBOT primary key (BOT_ID)
 );
 
@@ -125,12 +125,6 @@ comment on column CHATBOT.STATUS is
 
 comment on column CHATBOT.FIL_ID_AVATAR is
 'Avatar';
-
-comment on column CHATBOT.UTT_ID_WELCOME is
-'Welcome text';
-
-comment on column CHATBOT.UTT_ID_DEFAULT is
-'Default text';
 
 -- ============================================================
 --   Table : CHATBOT_NODE                                        
@@ -207,6 +201,22 @@ comment on column GROUPS.GRP_ID is
 
 comment on column GROUPS.NAME is
 'Name';
+
+-- ============================================================
+--   Table : KIND_TOPIC                                        
+-- ============================================================
+create table KIND_TOPIC
+(
+    KTO_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    constraint PK_KIND_TOPIC primary key (KTO_CD)
+);
+
+comment on column KIND_TOPIC.KTO_CD is
+'ID';
+
+comment on column KIND_TOPIC.LABEL is
+'Title';
 
 -- ============================================================
 --   Table : MEDIA_FILE_INFO                                        
@@ -345,8 +355,6 @@ create table RESPONSE_BUTTON
     TEXT        	 TEXT        	not null,
     SMT_ID      	 NUMERIC     	,
     TOP_ID_RESPONSE	 NUMERIC     	not null,
-    BOT_ID_WELCOME	 NUMERIC     	,
-    BOT_ID_DEFAULT	 NUMERIC     	,
     constraint PK_RESPONSE_BUTTON primary key (BTN_ID)
 );
 
@@ -361,12 +369,6 @@ comment on column RESPONSE_BUTTON.SMT_ID is
 
 comment on column RESPONSE_BUTTON.TOP_ID_RESPONSE is
 'TopicResponse';
-
-comment on column RESPONSE_BUTTON.BOT_ID_WELCOME is
-'welcome buttons';
-
-comment on column RESPONSE_BUTTON.BOT_ID_DEFAULT is
-'Default buttons';
 
 -- ============================================================
 --   Table : RESPONSE_TYPE                                        
@@ -445,6 +447,7 @@ create table TOPIC
     TTO_CD      	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     TOP_CAT_ID  	 NUMERIC     	not null,
+    KTO_CD      	 VARCHAR(100)	not null,
     constraint PK_TOPIC primary key (TOP_ID)
 );
 
@@ -472,6 +475,9 @@ comment on column TOPIC.BOT_ID is
 comment on column TOPIC.TOP_CAT_ID is
 'Topic';
 
+comment on column TOPIC.KTO_CD is
+'Kind of topic';
+
 -- ============================================================
 --   Table : TOPIC_CATEGORY                                        
 -- ============================================================
@@ -481,6 +487,7 @@ create table TOPIC_CATEGORY
     LABEL       	 VARCHAR(100)	not null,
     LEVEL       	 NUMERIC     	,
     IS_ENABLED  	 bool        	not null,
+    IS_TECHNICAL	 bool        	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_TOPIC_CATEGORY primary key (TOP_CAT_ID)
 );
@@ -496,6 +503,9 @@ comment on column TOPIC_CATEGORY.LEVEL is
 
 comment on column TOPIC_CATEGORY.IS_ENABLED is
 'Enabled';
+
+comment on column TOPIC_CATEGORY.IS_TECHNICAL is
+'Technical';
 
 comment on column TOPIC_CATEGORY.BOT_ID is
 'Chatbot';
@@ -593,35 +603,11 @@ comment on column UTTER_TEXT.SMT_ID is
 'SmallTalk';
 
 
-alter table RESPONSE_BUTTON
-	add constraint FK_A_CHATBOT_DEFAULT_BUTTONS_CHATBOT foreign key (BOT_ID_DEFAULT)
-	references CHATBOT (BOT_ID);
-
-create index A_CHATBOT_DEFAULT_BUTTONS_CHATBOT_FK on RESPONSE_BUTTON (BOT_ID_DEFAULT asc);
-
 alter table CHATBOT
 	add constraint FK_A_CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO foreign key (FIL_ID_AVATAR)
 	references MEDIA_FILE_INFO (FIL_ID);
 
 create index A_CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on CHATBOT (FIL_ID_AVATAR asc);
-
-alter table CHATBOT
-	add constraint FK_A_CHATBOT_UTTER_TEXT_DEFAULT_UTTER_TEXT foreign key (UTT_ID_DEFAULT)
-	references UTTER_TEXT (UTT_ID);
-
-create index A_CHATBOT_UTTER_TEXT_DEFAULT_UTTER_TEXT_FK on CHATBOT (UTT_ID_DEFAULT asc);
-
-alter table CHATBOT
-	add constraint FK_A_CHATBOT_UTTER_TEXT_WELCOME_UTTER_TEXT foreign key (UTT_ID_WELCOME)
-	references UTTER_TEXT (UTT_ID);
-
-create index A_CHATBOT_UTTER_TEXT_WELCOME_UTTER_TEXT_FK on CHATBOT (UTT_ID_WELCOME asc);
-
-alter table RESPONSE_BUTTON
-	add constraint FK_A_CHATBOT_WELCOME_BUTTONS_CHATBOT foreign key (BOT_ID_WELCOME)
-	references CHATBOT (BOT_ID);
-
-create index A_CHATBOT_WELCOME_BUTTONS_CHATBOT_FK on RESPONSE_BUTTON (BOT_ID_WELCOME asc);
 
 alter table CHATBOT_NODE
 	add constraint FK_A_NODE_CHATBOT_CHATBOT foreign key (BOT_ID)
@@ -718,6 +704,12 @@ alter table TOPIC
 	references CHATBOT (BOT_ID);
 
 create index A_TOPIC_CHATBOT_CHATBOT_FK on TOPIC (BOT_ID asc);
+
+alter table TOPIC
+	add constraint FK_A_TOPIC_KIND_TOPIC_KIND_TOPIC foreign key (KTO_CD)
+	references KIND_TOPIC (KTO_CD);
+
+create index A_TOPIC_KIND_TOPIC_KIND_TOPIC_FK on TOPIC (KTO_CD asc);
 
 alter table NLU_TRAINING_SENTENCE
 	add constraint FK_A_TOPIC_NLU_TRAINING_SENTENCE_TOPIC foreign key (TOP_ID)
