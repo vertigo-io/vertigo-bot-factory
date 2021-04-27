@@ -244,6 +244,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldResponseType$label,
 	/**
+	 * TitleFr.
+	 */
+	fldResponseType$labelFr,
+	/**
 	 * Order.
 	 */
 	fldResponseType$sortOrder,

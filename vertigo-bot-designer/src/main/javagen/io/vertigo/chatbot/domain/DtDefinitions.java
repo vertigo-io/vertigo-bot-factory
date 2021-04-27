@@ -330,6 +330,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		rtyId,
 		/** Propriété 'Title'. */
 		label,
+		/** Propriété 'TitleFr'. */
+		labelFr,
 		/** Propriété 'Order'. */
 		sortOrder	}
 

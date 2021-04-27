@@ -38,12 +38,14 @@
 					<vu:text-field-edit object="smallTalk" field="rtyId" />
 				</div>
 				
+				<vu:include-data-primitive key="locale"/>
+				
 				<div th:if="${!model.modeReadOnly}">
 					<q-btn-toggle
 						class="q-mb-md"
 						v-model="vueData.smallTalk.rtyId"
 						toggle-color="primary"
-						:options='transformListForSelection("responseTypes", "rtyId", "label")'
+						:options= 'vueData.locale == "fr_FR" ? transformListForSelection("responseTypes", "rtyId", "label") : transformListForSelection("responseTypes", "rtyId", "labelFr")' 
 					></q-btn-toggle>
 					<q-icon 
 						v-if="vueData.smallTalk.rtyId === 'RICH_TEXT' && getUtterTextResolvedList().length > 2"
