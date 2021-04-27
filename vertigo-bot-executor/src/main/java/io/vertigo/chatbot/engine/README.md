@@ -1,9 +1,9 @@
 # conventions
-k = key 			ex {{u/name}}
-kt = keyTemplate  	ex {{u/name}} or {{u/name/{{idx}}}}
-kp = keyPattern
-BTN = BehaviorTreeNode  //returns succeeded or failed or running
-BTC = BehaviorTreeCondition //returns succeeded or failed
+- k = key 			ex {{u/name}}
+- kt = keyTemplate  	ex {{u/name}} or {{u/name/{{idx}}}}
+- kp = keyPattern
+- BTN = BehaviorTreeNode  //returns succeeded or failed or running
+- BTC = BehaviorTreeCondition //returns succeeded or failed
 
 # say
 say msg 
