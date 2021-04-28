@@ -40,6 +40,7 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.basicCommand("gt", (c, p) -> BotNodeProvider.gt(getBB(p), c.getStringParam(0), c.getIntParam(1))),
 				BtCommandParserDefinition.basicCommand("lt", (c, p) -> BotNodeProvider.lt(getBB(p), c.getStringParam(0), c.getIntParam(1))),
 				BtCommandParserDefinition.basicCommand("topic", (c, p) -> BotNodeProvider.switchTopic(getBB(p), c.getStringParam(0))),
+				BtCommandParserDefinition.compositeCommand("random", (c, p, l) -> BotNodeProvider.random(l)),
 				BtCommandParserDefinition.basicCommand("inputString", (c, p) -> {
 					final var optFirstChoice = c.getOptStringParam(2);
 					if (optFirstChoice.isEmpty()) {

@@ -2,6 +2,7 @@ package io.vertigo.chatbot.engine;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -197,6 +198,34 @@ public class ExecutorTest {
 		Assertions.assertEquals(1, textResponses.size());
 		Assertions.assertEquals("Nice to meet you John", textResponses.get(0));
 		Assertions.assertFalse(response.getMetadatas().containsKey("accepttext"));
+	}
+
+	@Test
+	public void testRandom() {
+		buildBot("" +
+				"\n	begin random" +
+				"\n		say:always \"Welcome.\"" + // FIXME: remove :always when bb switch to conv id is good
+				"\n		say:always \"Hi.\"" +
+				"\n	end random");
+
+		final BotResponse response = executorManager.startNewConversation(new BotInput());
+		Assertions.assertEquals(1, response.getHtmlTexts().size());
+
+		final var referenceSay = response.getHtmlTexts().get(0);
+
+		String newSay;
+		int nbTry = 0;
+		final int maxTry = 300; // 300 try at 50% => proba < 1/particles in universe
+		do {
+			newSay = executorManager.startNewConversation(new BotInput()).getHtmlTexts().get(0);
+			nbTry++;
+		} while (referenceSay.equals(newSay) && nbTry < maxTry);
+
+		Assertions.assertTrue(nbTry < maxTry, "Always the same answer :'(");
+	}
+
+	private void buildBot(final String bt) {
+		buildBot(bt, null, null, Collections.emptyList());
 	}
 
 	private void buildBot(final String welcome, final String end, final String... topics) {

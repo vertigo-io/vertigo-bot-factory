@@ -11,6 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 
 import io.vertigo.ai.bb.BBKey;
@@ -27,6 +28,8 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.util.StringUtil;
 
 public final class BotNodeProvider {
+
+	private static final Random RND = new Random();
 
 	private BotNodeProvider() {
 		// only static
@@ -162,6 +165,10 @@ public final class BotNodeProvider {
 
 	public static BTNode inputInteger(final BlackBoard bb, final String keyTemplate, final String question, final String choice, final String... otherChoices) {
 		return inputInteger(bb, keyTemplate, question, buildChoices(choice, otherChoices));
+	}
+
+	public static BTNode random(final List<BTNode> childs) {
+		return () -> childs.get(RND.nextInt(childs.size())).eval();
 	}
 
 	public static BTNode say(final BlackBoard bb, final String msg) {
