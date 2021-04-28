@@ -125,6 +125,8 @@ public class ExecutorTest {
 		Assertions.assertEquals("Welcome to this test bot.", textResponses.get(0));
 		Assertions.assertEquals("Please choose topic.", textResponses.get(1));
 		Assertions.assertEquals(2, response.getChoices().size());
+		Assertions.assertFalse(response.getMetadatas().containsKey("accepttext"));
+		Assertions.assertEquals("BotButton", response.getMetadatas().get("buttontype"));
 		//--
 		response = executorManager.handleUserMessage(uuid, new BotInput(Map.of("payload", "topic1")));
 		textResponses = response.getHtmlTexts();
@@ -133,6 +135,7 @@ public class ExecutorTest {
 		Assertions.assertEquals(2, textResponses.size());
 		Assertions.assertEquals("This is topic 1", textResponses.get(0));
 		Assertions.assertEquals("What is your name ?", textResponses.get(1));
+		Assertions.assertTrue(response.getMetadatas().containsKey("accepttext"));
 		//--
 		response = executorManager.handleUserMessage(uuid, new BotInput("John"));
 		textResponses = response.getHtmlTexts();
@@ -140,6 +143,7 @@ public class ExecutorTest {
 		Assertions.assertEquals(BotStatus.Ended, response.getStatus());
 		Assertions.assertEquals(1, textResponses.size());
 		Assertions.assertEquals("Nice to meet you John", textResponses.get(0));
+		Assertions.assertFalse(response.getMetadatas().containsKey("accepttext"));
 	}
 
 	@Test
@@ -157,6 +161,7 @@ public class ExecutorTest {
 		Assertions.assertEquals(2, textResponses.size());
 		Assertions.assertEquals("Welcome to this test bot.", textResponses.get(0));
 		Assertions.assertEquals("Please ask topic.", textResponses.get(1));
+		Assertions.assertTrue(response.getMetadatas().containsKey("accepttext"));
 		//--
 		response = executorManager.handleUserMessage(uuid, new BotInput("i dunno"));
 		textResponses = response.getHtmlTexts();
@@ -165,6 +170,7 @@ public class ExecutorTest {
 		Assertions.assertEquals(2, textResponses.size());
 		Assertions.assertEquals("Sorry, try again.", textResponses.get(0));
 		Assertions.assertEquals("Please ask topic.", textResponses.get(1));
+		Assertions.assertTrue(response.getMetadatas().containsKey("accepttext"));
 		//--
 		response = executorManager.handleUserMessage(uuid, new BotInput("i still dunno"));
 		textResponses = response.getHtmlTexts();
@@ -173,6 +179,7 @@ public class ExecutorTest {
 		Assertions.assertEquals(2, textResponses.size());
 		Assertions.assertEquals("Sorry, try again.", textResponses.get(0));
 		Assertions.assertEquals("Please ask topic.", textResponses.get(1));
+		Assertions.assertTrue(response.getMetadatas().containsKey("accepttext"));
 		//--
 		response = executorManager.handleUserMessage(uuid, new BotInput("go to my topic please"));
 		textResponses = response.getHtmlTexts();
@@ -181,6 +188,7 @@ public class ExecutorTest {
 		Assertions.assertEquals(2, textResponses.size());
 		Assertions.assertEquals("This is topic 1", textResponses.get(0));
 		Assertions.assertEquals("What is your name ?", textResponses.get(1));
+		Assertions.assertTrue(response.getMetadatas().containsKey("accepttext"));
 		//--
 		response = executorManager.handleUserMessage(uuid, new BotInput("John"));
 		textResponses = response.getHtmlTexts();
@@ -188,6 +196,7 @@ public class ExecutorTest {
 		Assertions.assertEquals(BotStatus.Ended, response.getStatus());
 		Assertions.assertEquals(1, textResponses.size());
 		Assertions.assertEquals("Nice to meet you John", textResponses.get(0));
+		Assertions.assertFalse(response.getMetadatas().containsKey("accepttext"));
 	}
 
 	private void buildBot(final String welcome, final String end, final String... topics) {

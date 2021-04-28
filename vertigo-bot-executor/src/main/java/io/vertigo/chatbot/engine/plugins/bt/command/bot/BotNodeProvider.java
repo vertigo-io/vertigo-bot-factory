@@ -113,7 +113,7 @@ public final class BotNodeProvider {
 				() -> {
 					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/key"), keyTemplate);
 					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/type"), "string");
-					bb.putInteger(BBKey.of(BotEngine.BOT_OUT_PATH, "/accepttext"), 1);
+					bb.putInteger(BBKey.of(BotEngine.BOT_OUT_METADATA_PATH, "/accepttext"), 1);
 					return BTStatus.Running;
 				});
 	}
@@ -124,7 +124,7 @@ public final class BotNodeProvider {
 				() -> {
 					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/key"), keyTemplate);
 					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/type"), "integer");
-					bb.putInteger(BBKey.of(BotEngine.BOT_OUT_PATH, "/accepttext"), 1);
+					bb.putInteger(BBKey.of(BotEngine.BOT_OUT_METADATA_PATH, "/accepttext"), 1);
 					return BTStatus.Running;
 				});
 	}
@@ -290,7 +290,7 @@ public final class BotNodeProvider {
 		return () -> {
 			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/nlu/key"), keyTemplate);
 			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/nlu/type"), "nlu");
-			bb.putInteger(BBKey.of(BotEngine.BOT_OUT_PATH, "/accepttext"), 1);
+			bb.putInteger(BBKey.of(BotEngine.BOT_OUT_METADATA_PATH, "/accepttext"), 1);
 			return BTStatus.Succeeded;
 		};
 	}
@@ -300,6 +300,7 @@ public final class BotNodeProvider {
 		final List<BTNode> sequence = new ArrayList<>();
 
 		sequence.add(set(bb, BotEngine.BOT_CHOICES_KEY.key() + "/class", clazz.getName()));
+		sequence.add(set(bb, BotEngine.BOT_OUT_METADATA_PATH.key() + "/buttontype", clazz.getSimpleName()));
 
 		int choiceNumber = 0;
 		for (final T button : buttons) {

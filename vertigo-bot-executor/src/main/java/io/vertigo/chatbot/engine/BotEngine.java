@@ -56,6 +56,7 @@ public class BotEngine {
 
 	public static final BBKey BOT_RESPONSE_KEY = BBKey.of(BOT_OUT_PATH, "/responses");
 	public static final BBKey BOT_CHOICES_KEY = BBKey.of(BOT_OUT_PATH, "/choices");
+	public static final BBKey BOT_OUT_METADATA_PATH = BBKey.of(BOT_OUT_PATH, "/metadata");
 
 	public static final BBKey BOT_TOPIC_KEY = BBKey.of(BOT_STATUS_PATH, "/topic");
 	public static final BBKey BOT_EXPECT_INPUT_PATH = BBKey.of(BOT_STATUS_PATH, "/expect");
@@ -142,12 +143,34 @@ public class BotEngine {
 		}
 		botResponseBuilder.addAllChoices(buildChoices());
 
-		final var keyAcceptText = BBKey.of(BOT_OUT_PATH, "/accepttext");
-		if (bb.exists(keyAcceptText)) {
-			botResponseBuilder.addMetadata("acceptText", bb.getInteger(keyAcceptText));
+		// add all metadatas
+		for (final BBKey key : bb.keys(BBKeyPattern.ofRoot(BOT_OUT_METADATA_PATH))) {
+			botResponseBuilder.addMetadata(getKeyName(key), getKeyValue(key));
 		}
 
 		return botResponseBuilder.build();
+	}
+
+	private static String getKeyName(final BBKey key) {
+		final var fullName = key.key();
+		return fullName.substring(fullName.lastIndexOf('/') + 1);
+	}
+
+	private Object getKeyValue(final BBKey key) {
+		switch (bb.getType(key)) {
+			case String:
+				return bb.getString(key);
+			case Integer:
+				return bb.getInteger(key);
+			case List:
+				final var list = new ArrayList<String>();
+				for (int i = 0; i < bb.listSize(key); i++) {
+					list.add(bb.listGet(key, i));
+				}
+				return list;
+			default:
+				throw new VSystemException("Unknown key type '{0}'", bb.getType(key));
+		}
 	}
 
 	private void handleExpected(final BotInput input) {

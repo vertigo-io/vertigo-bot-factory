@@ -104,7 +104,7 @@ public class BTBotParserTest {
 		Assertions.assertEquals(1, blackBoard.listSize(BotEngine.BOT_RESPONSE_KEY), "Expected only one say");
 		Assertions.assertEquals("case2", blackBoard.listGet(BotEngine.BOT_RESPONSE_KEY, 0));
 
-		blackBoard.delete(BBKeyPattern.of("*"));
+		blackBoard.delete(BBKeyPattern.of("/*"));
 
 		blackBoard.putString(BBKey.of("/val"), "42");
 		rootNode = nodeProducer.apply(List.of(blackBoard));
