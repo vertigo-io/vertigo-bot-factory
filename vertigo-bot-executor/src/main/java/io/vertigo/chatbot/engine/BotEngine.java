@@ -64,8 +64,6 @@ public class BotEngine {
 	private final BlackBoard bb;
 	private final BehaviorTreeManager behaviorTreeManager;
 	private final NluManager nluManager;
-	private final Boolean hasBusinessTopic;
-	private final Boolean hasEndTopic;
 
 	private final Map<String, TopicDefinition> topicDefinitionMap;
 
@@ -83,9 +81,6 @@ public class BotEngine {
 
 		this.behaviorTreeManager = behaviorTreeManager;
 		this.nluManager = nluManager;
-
-		hasBusinessTopic = topicDefinitionMap.size() > 1;
-		hasEndTopic = topicDefinitionMap.containsKey(END_TOPIC_NAME);
 	}
 
 	public BotResponse runTick(final BotInput input) {
@@ -113,13 +108,7 @@ public class BotEngine {
 			// exec
 			status = behaviorTreeManager.run(topic.getBtRoot(List.of(bb)));
 
-			if (status.isSucceeded() && !topic.getCode().startsWith("!")) { // end of business topic (special topics starts with !)
-				nextTopic = topicDefinitionMap.get(END_TOPIC_NAME); // may be null if no end topic
-				switchToTopic(END_TOPIC_NAME);
-			} else if (status.isSucceeded() && FALLBACK_TOPIC_NAME.equals(topic.getCode())) {
-				nextTopic = topicDefinitionMap.get(START_TOPIC_NAME);
-				switchToTopic(START_TOPIC_NAME);
-			} else if (bb.exists(BOT_NEXT_TOPIC_KEY)) {
+			if (bb.exists(BOT_NEXT_TOPIC_KEY)) {
 				final var nextTopicName = bb.getString(BOT_NEXT_TOPIC_KEY);
 				nextTopic = topicDefinitionMap.get(nextTopicName); // handle forward to another topic
 				Assertion.check().isNotNull(nextTopic, "Topic '{0}' not found, cant forward to it", nextTopicName);
@@ -135,9 +124,7 @@ public class BotEngine {
 		}
 
 		// build response
-		final BotStatus botStatus = resolveResponseStatus(topic, status);
-
-		final var botResponseBuilder = new BotResponseBuilder(botStatus);
+		final var botResponseBuilder = new BotResponseBuilder(status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking);
 		for (int i = 0; i < bb.listSize(BOT_RESPONSE_KEY); i++) {
 			botResponseBuilder.addMessage(bb.listGet(BOT_RESPONSE_KEY, i));
 		}
@@ -227,19 +214,6 @@ public class BotEngine {
 			return bb.getString(BOT_TOPIC_KEY);
 		}
 		return START_TOPIC_NAME;
-	}
-
-	private BotStatus resolveResponseStatus(final TopicDefinition topic, final BTStatus status) {
-		if (hasBusinessTopic) {
-			if (hasEndTopic) {
-				// end is after end topic
-				return END_TOPIC_NAME.equals(topic.getCode()) && status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking;
-			}
-			// end is after business topic
-			return !topic.getCode().startsWith("!") && status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking;
-		}
-		// end is after start topic
-		return status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking;
 	}
 
 	private void switchToTopic(final String newTopic) {

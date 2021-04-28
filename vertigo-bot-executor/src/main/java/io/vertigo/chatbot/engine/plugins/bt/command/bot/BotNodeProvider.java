@@ -257,6 +257,18 @@ public final class BotNodeProvider {
 		};
 	}
 
+	public static BTNode switchTopicStart(final BlackBoard bb) {
+		return switchTopic(bb, BotEngine.START_TOPIC_NAME);
+	}
+
+	public static BTNode switchTopicFallback(final BlackBoard bb) {
+		return switchTopic(bb, BotEngine.FALLBACK_TOPIC_NAME);
+	}
+
+	public static BTNode switchTopicEnd(final BlackBoard bb) {
+		return switchTopic(bb, BotEngine.END_TOPIC_NAME);
+	}
+
 	public static BTNode chooseButton(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<BotButton> buttons) {
 		return selector(
 				fulfilled(bb, keyTemplate),

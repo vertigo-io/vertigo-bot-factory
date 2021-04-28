@@ -57,17 +57,20 @@ public class ExecutorTest {
 			"\n	begin sequence" +
 			"\n		say \"This is topic 1\"" +
 			"\n		inputString /user/global/name \"What is your name ?\"" +
+			"\n		topic:end" +
 			"\n	end sequence";
 
 	private final String botTopic2 = "" +
 			"\n	begin sequence" +
 			"\n		say \"This is topic 2\"" +
 			"\n		inputString /user/global/city \"What is your city ?\"" +
+			"\n		topic:end" +
 			"\n	end sequence";
 
 	private final String botTopic3 = "" +
 			"\n	begin sequence" +
 			"\n		say \"This is topic 3\"" +
+			"\n		topic:end" +
 			"\n	end sequence";
 
 	private final String botEnd = "" +
@@ -92,6 +95,7 @@ public class ExecutorTest {
 	private final String botFallback = "" +
 			"\n	begin sequence" +
 			"\n		say \"Sorry, try again.\"" +
+			"\n		topic:start" +
 			"\n	end sequence";
 
 	private final List<String> topic1Nlu = List.of(
