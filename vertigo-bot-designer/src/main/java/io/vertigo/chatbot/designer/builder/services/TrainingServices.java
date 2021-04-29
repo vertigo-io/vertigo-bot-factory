@@ -274,8 +274,8 @@ public class TrainingServices implements Component {
 	public Map<Long, DtList<NluTrainingSentence>> exportSmallTalkRelativeTrainingSentence(@SecuredOperation("botContributor") final Chatbot bot) {
 		final DtList<NluTrainingExport> export = trainingPAO.exportSmallTalkRelativeTrainingSentence(bot.getBotId());
 		return export.stream().collect(Collector.of(
-				() -> new HashMap<Long, DtList<NluTrainingSentence>>(),
-				(result, nlu) -> addNluToMap(result, nlu),
+				HashMap::new,
+				this::addNluToMap,
 				(map1, map2) -> {
 					map1.putAll(map2);
 					return map1;
