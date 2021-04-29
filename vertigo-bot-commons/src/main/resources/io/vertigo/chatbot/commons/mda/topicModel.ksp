@@ -8,15 +8,18 @@ package io.vertigo.chatbot.commons.domain.topic
 create DtDefinition DtTypeTopic {
 	stereotype : "StaticMasterData"
 	id    ttoCd 		{domain: DoCode 	label: "ID"}
-	field label 		{domain: DoLabel 	label: "Title" 		cardinality : "1"	}
+	field label 		{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "TitleFr" 		cardinality : "1"	}
 	values : `{
         "SMALLTALK" : {
             "ttoCd" : "SMALLTALK",
-            "label" : "Small talk"           
+            "label" : "Small talk",
+            "labelFr" : "Small talk"           
         },
         "SCRIPTINTENTION" : {
             "ttoCd" : "SCRIPTINTENTION",
-            "label" : "Script intention"
+            "label" : "Script intention",
+            "labelFr" : "Intention Scriptée"
         }
      }`
     sortField : "ttoCd"
@@ -91,16 +94,19 @@ create DtDefinition DtResponseType {
 	stereotype : "StaticMasterData"
 	id    rtyId 		{domain: DoCode 	label: "ID"}
 	field label 		{domain: DoLabel 	label: "Title" 		cardinality : "1"}
+	field labelFr 		{domain: DoLabel 	label: "TitleFR"	cardinality : "1"}
 	field sortOrder 	{domain: DoNumber 	label: "Order" 		cardinality : "1"}
 	values : `{
         "RICH_TEXT" : {
             "rtyId" : "RICH_TEXT",
             "label" : "Rich text",
+            "labelFr" : "Text unique",
             "sortOrder" : 1
         },
         "RANDOM_TEXT" : {
             "rtyId" : "RANDOM_TEXT",
             "label" : "Random text",
+            "labelFr" : "Texte aléatoire",
             "sortOrder" : 2
         }
 

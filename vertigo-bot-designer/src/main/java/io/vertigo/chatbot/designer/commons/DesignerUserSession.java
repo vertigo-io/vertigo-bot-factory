@@ -60,7 +60,7 @@ public class DesignerUserSession extends UserSession {
 	/** {@inheritDoc} */
 	@Override
 	public Locale getLocale() {
-		return Locale.FRANCE;
+		return Locale.US;
 	}
 
 	/** {@inheritDoc} */

@@ -20,6 +20,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$welcomeBT,
 	/**
+	 * end BT.
+	 */
+	fldBotExport$endBT,
+	/**
 	 * fallback BT.
 	 */
 	fldBotExport$fallbackBT,
@@ -189,70 +193,6 @@ public enum DtResources implements MessageKey {
 	fldMediaFileInfo$fileData,
 
 	/***********************************************************
-	/** NluTrainingSentence.
-	/***********************************************************
-	/**
-	 * ID.
-	 */
-	fldNluTrainingSentence$ntsId,
-	/**
-	 * Text.
-	 */
-	fldNluTrainingSentence$text,
-	/**
-	 * SmallTalk.
-	 */
-	fldNluTrainingSentence$smtId,
-
-	/***********************************************************
-	/** ResponseButton.
-	/***********************************************************
-	/**
-	 * ID.
-	 */
-	fldResponseButton$btnId,
-	/**
-	 * Text.
-	 */
-	fldResponseButton$text,
-	/**
-	 * SmallTalk.
-	 */
-	fldResponseButton$smtId,
-	/**
-	 * SmallTalkResponse.
-	 */
-	fldResponseButton$smtIdResponse,
-	/**
-	 * welcome buttons.
-	 */
-	fldResponseButton$botIdWelcome,
-	/**
-	 * Default buttons.
-	 */
-	fldResponseButton$botIdDefault,
-
-	/***********************************************************
-	/** ResponseType.
-	/***********************************************************
-	/**
-	 * ID.
-	 */
-	fldResponseType$rtyId,
-	/**
-	 * Title.
-	 */
-	fldResponseType$label,
-	/**
-	 * TitleFr.
-	 */
-	fldResponseType$labelFr,
-	/**
-	 * Order.
-	 */
-	fldResponseType$sortOrder,
-
-	/***********************************************************
 	/** RunnerInfo.
 	/***********************************************************
 	/**
@@ -271,34 +211,6 @@ public enum DtResources implements MessageKey {
 	 * Model version.
 	 */
 	fldRunnerInfo$loadedModelVersion,
-
-	/***********************************************************
-	/** SmallTalk.
-	/***********************************************************
-	/**
-	 * ID.
-	 */
-	fldSmallTalk$smtId,
-	/**
-	 * Title.
-	 */
-	fldSmallTalk$title,
-	/**
-	 * Description.
-	 */
-	fldSmallTalk$description,
-	/**
-	 * Enabled.
-	 */
-	fldSmallTalk$isEnabled,
-	/**
-	 * Chatbot.
-	 */
-	fldSmallTalk$botId,
-	/**
-	 * Response type.
-	 */
-	fldSmallTalk$rtyId,
 
 	/***********************************************************
 	/** TopicExport.
@@ -403,20 +315,4 @@ public enum DtResources implements MessageKey {
 	 * Model.
 	 */
 	fldTraining$filIdModel,
-
-	/***********************************************************
-	/** UtterText.
-	/***********************************************************
-	/**
-	 * ID.
-	 */
-	fldUtterText$uttId,
-	/**
-	 * Text.
-	 */
-	fldUtterText$text,
-	/**
-	 * SmallTalk.
-	 */
-	fldUtterText$smtId,
 }

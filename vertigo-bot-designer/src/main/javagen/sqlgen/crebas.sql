@@ -387,7 +387,7 @@ comment on column RESPONSE_TYPE.LABEL is
 'Title';
 
 comment on column RESPONSE_TYPE.LABEL_FR is
-'TitleFr';
+'TitleFR';
 
 comment on column RESPONSE_TYPE.SORT_ORDER is
 'Order';
@@ -555,6 +555,7 @@ create table TYPE_TOPIC
 (
     TTO_CD      	 VARCHAR(100)	not null,
     LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
     constraint PK_TYPE_TOPIC primary key (TTO_CD)
 );
 
@@ -563,6 +564,9 @@ comment on column TYPE_TOPIC.TTO_CD is
 
 comment on column TYPE_TOPIC.LABEL is
 'Title';
+
+comment on column TYPE_TOPIC.LABEL_FR is
+'TitleFr';
 
 -- ============================================================
 --   Table : UTTER_TEXT                                        

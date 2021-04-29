@@ -330,7 +330,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		rtyId,
 		/** Propriété 'Title'. */
 		label,
-		/** Propriété 'TitleFr'. */
+		/** Propriété 'TitleFR'. */
 		labelFr,
 		/** Propriété 'Order'. */
 		sortOrder	}
@@ -578,7 +578,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'ID'. */
 		ttoCd,
 		/** Propriété 'Title'. */
-		label	}
+		label,
+		/** Propriété 'TitleFr'. */
+		labelFr	}
 
 	/**
 	 * Enumération des champs de UtterText.

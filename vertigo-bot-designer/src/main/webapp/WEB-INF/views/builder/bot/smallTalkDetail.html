@@ -45,7 +45,7 @@
 						class="q-mb-md"
 						v-model="vueData.smallTalk.rtyId"
 						toggle-color="primary"
-						:options= 'vueData.locale == "fr_FR" ? transformListForSelection("responseTypes", "rtyId", "label") : transformListForSelection("responseTypes", "rtyId", "labelFr")' 
+						:options= 'vueData.locale == "fr_FR" ? transformListForSelection("responseTypes", "rtyId", "labelFr") : transformListForSelection("responseTypes", "rtyId", "label")' 
 					></q-btn-toggle>
 					<q-icon 
 						v-if="vueData.smallTalk.rtyId === 'RICH_TEXT' && getUtterTextResolvedList().length > 2"

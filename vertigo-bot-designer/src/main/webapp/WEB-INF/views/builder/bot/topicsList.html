@@ -7,7 +7,7 @@
 	>
 	
 	<head>
-		<title>Topic List</title>
+		<title th:text="#{topic.title.page}"></title>
 		<script th:inline="javascript">
 			function redirectDetail(row) {
 			// voir https://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf.html#script-inlining-javascript-and-dart
@@ -30,7 +30,7 @@
 	
 	<body>
 		<section layout:fragment="content-header-actions">
-			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="add" aria-label="Add" title="Add" 
+			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" 
 					       @click="vueData.newTopic = Vue.util.extend({}, vueData.newTopic); $refs.newTopic.show()"></q-btn>				
 		</section>
 		
@@ -42,40 +42,41 @@
 					  <vu:include-data object="topicsIhm" field="sinId" />
 					  <vu:include-data object="topicsIhm" field="ttoCd" />
 					<vu:include-data object="topicsIhm" field="topId" />
-					<vu:column field="isEnabled" style="width:100px;">
+					<vu:column field="isEnabled" th:label="#{topic.isEnabled}" style="width:100px;">
 						<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
 						<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>
 					</vu:column>
-					<vu:column field="title">
+					<vu:column field="title" th:label="#{topic.title}">
 						<a :href="redirectDetail(props.row)"
 						   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
 						   >
 						   <span style="height:100%" class="row items-center">{{props.row.title}}</span>
 						</a>
 					</vu:column>
-					<vu:column field="catLabel">
+					<vu:column field="catLabel" th:label="#{topic.category}">
 					   <span style="height:100%" class="row items-center">{{props.row.catLabel}}</span>
 					</vu:column>
-					<vu:column field="type" sortable="true" />
+					<vu:column field="type" th:label="#{topic.type}" sortable="true" />
 			</vu:table>
 			
 			<q-dialog ref="newTopic" th:with="viewMode='edit'" >
 				<q-card>
 					<q-form method="post" action="createTopic">
 					<q-card-section>
-						<div class="text-h6">New topic</div>
+						<div class="text-h6" th:text="#{topic.title.popup}"></div>
 						
 					</q-card-section>
+					
+						<vu:include-data-primitive key="locale" />
 					<q-card-section style="width: 400px;">
-						<vu:include-data object="typeTopicList" field="ttoCd"/>
-						<vu:include-data object="typeTopicList" field="label"/>
+						<vu:include-data object="typeTopicList" field="'*'"/>
 						<q-select
 							filled
 							map-options
 							emit-value
 							v-model="vueData.selectionList"
-							:options="transformListForSelection('typeTopicList', 'ttoCd', 'label')"
-							label="Type Topic"
+							:options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
+							th:label="#{topic.type}"
 							stack-label>
 						</q-select>
 					</q-card-section>
@@ -84,8 +85,8 @@
 					<q-card-actions align="around">
 						
 							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
-							<q-btn flat label="Cancel" color="primary" v-close-popup ></q-btn>
-							<q-btn type="submit" title="Confirm" label="Confirm" aria-label="Confirm" color="primary" ></q-btn> 
+							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
+							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn> 
 					
 					</q-card-actions>
 					</q-form>

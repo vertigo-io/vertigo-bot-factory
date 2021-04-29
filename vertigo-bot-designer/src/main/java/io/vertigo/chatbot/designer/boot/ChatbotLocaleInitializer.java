@@ -18,6 +18,7 @@ public class ChatbotLocaleInitializer implements ComponentInitializer {
 		localeManager.add("io.vertigo.chatbot.designer.domain.DtResources", io.vertigo.chatbot.designer.domain.DtResources.values());
 		localeManager.add("io.vertigo.chatbot.designer.domain.admin.DtResources", io.vertigo.chatbot.designer.domain.admin.DtResources.values());
 		localeManager.add("io.vertigo.chatbot.designer.domain.commons.DtResources", io.vertigo.chatbot.designer.domain.commons.DtResources.values());
+		localeManager.add("io.vertigo.chatbot.commons.domain.topic.DtResources", io.vertigo.chatbot.commons.domain.topic.DtResources.values());
 		localeManager.add("io.vertigo.chatbot.designer.domain.commons.EnumResources", EnumResource.values());
 	}
 

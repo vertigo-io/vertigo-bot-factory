@@ -66,17 +66,17 @@ public final class ResponseType implements DtStaticMasterData {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'TitleFr'.
+	 * Récupère la valeur de la propriété 'TitleFR'.
 	 * @return String labelFr <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "TitleFr")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "TitleFR")
 	public String getLabelFr() {
 		return labelFr;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'TitleFr'.
+	 * Définit la valeur de la propriété 'TitleFR'.
 	 * @param labelFr String <b>Obligatoire</b>
 	 */
 	public void setLabelFr(final String labelFr) {

@@ -16,6 +16,7 @@ public final class TypeTopic implements DtStaticMasterData {
 
 	private String ttoCd;
 	private String label;
+	private String labelFr;
 
 	/** {@inheritDoc} */
 	@Override
@@ -61,6 +62,25 @@ public final class TypeTopic implements DtStaticMasterData {
 	 */
 	public void setLabel(final String label) {
 		this.label = label;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'TitleFr'.
+	 * @return String labelFr <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "TitleFr")
+	public String getLabelFr() {
+		return labelFr;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'TitleFr'.
+	 * @param labelFr String <b>Obligatoire</b>
+	 */
+	public void setLabelFr(final String labelFr) {
+		this.labelFr = labelFr;
 	}
 	
 	/** {@inheritDoc} */
