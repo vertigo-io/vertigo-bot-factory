@@ -164,15 +164,15 @@ create Association ASmallTalkResponseButtons {
 	labelB : "SmallTalk"
 }
 
-create Association AResponseButtonSmallTalkResponse {
-	fkFieldName : "smtIdResponse"
+create Association AResponseButtonTopicResponse {
+	fkFieldName : "topIdResponse"
     
  	dtDefinitionA : DtResponseButton
 	type : "*>1"
-	dtDefinitionB : DtSmallTalk
+	dtDefinitionB : DtTopic
 	
-	labelB : "SmallTalkResponse"
-	roleB : "SmallTalkResponse"
+	labelB : "TopicResponse"
+	roleB : "TopicResponse"
 }
 
 /** Category **/

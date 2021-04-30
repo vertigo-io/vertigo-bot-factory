@@ -16,4 +16,9 @@
 		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_13.sql" />	
 	</changeSet>
 	
+	<changeSet author="vbaillet" id="response buttons return on topic">
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_30.sql" />	
+	</changeSet>
+	
+	
 </databaseChangeLog>

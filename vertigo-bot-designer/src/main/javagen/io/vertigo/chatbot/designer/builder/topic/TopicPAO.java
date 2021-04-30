@@ -85,11 +85,13 @@ public final class TopicPAO implements StoreServices {
  "					sin.sin_id," + 
  "					top.is_enabled," + 
  "					tto.label as type," + 
- "					top.tto_cd" + 
+ "					top.tto_cd," + 
+ "					tpc.label as cat_label" + 
  "			from topic top " + 
  "			left join small_talk smt on smt.top_id = top.top_id" + 
  "			left join script_intention sin on sin.top_id = top.top_id" + 
  "			join type_topic tto on top.tto_cd = tto.tto_cd" + 
+ "			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)" + 
  "			where top.top_id = #topId#" + 
  "			LIMIT 1",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
