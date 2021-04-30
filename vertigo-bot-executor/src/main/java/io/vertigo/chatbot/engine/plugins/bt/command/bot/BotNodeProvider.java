@@ -4,6 +4,7 @@ import static io.vertigo.ai.bt.BTNodes.condition;
 import static io.vertigo.ai.bt.BTNodes.running;
 import static io.vertigo.ai.bt.BTNodes.selector;
 import static io.vertigo.ai.bt.BTNodes.sequence;
+import static io.vertigo.ai.bt.BTNodes.succeed;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -172,6 +173,9 @@ public final class BotNodeProvider {
 	}
 
 	public static BTNode say(final BlackBoard bb, final String msg) {
+		if (StringUtil.isBlank(msg)) {
+			return succeed();
+		}
 		return () -> {
 			bb.listPush(BotEngine.BOT_RESPONSE_KEY, bb.format(msg));
 			return BTStatus.Succeeded;
