@@ -59,33 +59,6 @@ public final class TrainingPAO implements StoreServices {
 	}
 
 	/**
-	 * Execute la tache TkExportSmallTalkRelativeTrainingSentence.
-	 * @param botId Long
-	 * @return DtList de NluTrainingExport trainingSentences
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkExportSmallTalkRelativeTrainingSentence",
-			request = "select " + 
- "            	nts.nts_id," + 
- "            	nts.text," + 
- "            	smt.smt_id" + 
- "			from nlu_training_sentence nts" + 
- "			join topic top on (top.top_id = nts.top_id)" + 
- "			join small_talk smt on (smt.top_id = top.top_id)" + 
- "			where top.bot_id = #botId#" + 
- "			and top.is_enabled = true",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtNluTrainingExport")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.NluTrainingExport> exportSmallTalkRelativeTrainingSentence(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
-		final Task task = createTaskBuilder("TkExportSmallTalkRelativeTrainingSentence")
-				.addValue("botId", botId)
-				.build();
-		return getTaskManager()
-				.execute(task)
-				.getResult();
-	}
-
-	/**
 	 * Execute la tache TkGetAllTrainingFilIdsByBotId.
 	 * @param botId Long
 	 * @return List de Long filIds

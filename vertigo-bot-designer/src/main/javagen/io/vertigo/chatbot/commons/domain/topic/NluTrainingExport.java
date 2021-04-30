@@ -13,27 +13,27 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 public final class NluTrainingExport implements DtObject {
 	private static final long serialVersionUID = 1L;
 
-	private Long smtId;
+	private Long topId;
 	private Long ntsId;
 	private String text;
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'smt ID'.
-	 * @return Long smtId
+	 * Récupère la valeur de la propriété 'topId'.
+	 * @return Long topId
 	 */
-	@Field(smartType = "STyId", label = "smt ID")
-	public Long getSmtId() {
-		return smtId;
+	@Field(smartType = "STyId", label = "topId")
+	public Long getTopId() {
+		return topId;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'smt ID'.
-	 * @param smtId Long
+	 * Définit la valeur de la propriété 'topId'.
+	 * @param topId Long
 	 */
-	public void setSmtId(final Long smtId) {
-		this.smtId = smtId;
+	public void setTopId(final Long topId) {
+		this.topId = topId;
 	}
 	
 	/**

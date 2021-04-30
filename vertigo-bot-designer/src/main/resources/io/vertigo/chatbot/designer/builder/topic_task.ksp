@@ -23,6 +23,30 @@ create Task TkGetAllTopicFromCategory {
 	out tpcs 				{domain : DoDtTopic		 			cardinality:"*"}
 } 
 
+create Task TkGetAllTopicRelativeSmallTalkByBotId{  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select top.*
+			from topic top
+			join small_talk smt on (smt.top_id = top.top_id)
+			where top.bot_id = #botId#
+             "
+	in botId				{domain : DoId,						cardinality:"1"} 
+	out tpcs 				{domain : DoDtTopic		 			cardinality:"*"}
+} 
+
+create Task TkGetAllTopicRelativeScriptIntentByBotId{  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select top.*
+			from topic top
+			join script_intention sin on (sin.top_id = top.top_id)
+			where top.bot_id = #botId#
+             "
+	in botId				{domain : DoId,						cardinality:"1"} 
+	out tpcs 				{domain : DoDtTopic		 			cardinality:"*"}
+} 
+
 
 create Task TkRemoveAllTopicsFromBot {
     className : "io.vertigo.basics.task.TaskEngineProc"
@@ -77,4 +101,6 @@ create Task TkGetTopicIhmById {
 	in topId  				{domain : DoId         		cardinality : "1"  }
 	out topicIHM			{domain : DoDtTopicIhm,		cardinality : "1"  } 
 }
+
+
 

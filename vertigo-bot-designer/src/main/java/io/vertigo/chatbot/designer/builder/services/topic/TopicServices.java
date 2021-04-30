@@ -106,6 +106,14 @@ public class TopicServices implements Component {
 		return topicDAO.getAllTopicFromCategory(category.getTopCatId());
 	}
 
+	public DtList<Topic> getAllTopicRelativeSmallTalkByBot(final Chatbot bot) {
+		return topicDAO.getAllTopicRelativeSmallTalkByBotId(bot.getBotId());
+	}
+
+	public DtList<Topic> getAllTopicRelativeScriptIntentionByBot(final Chatbot bot) {
+		return topicDAO.getAllTopicRelativeScriptIntentByBotId(bot.getBotId());
+	}
+
 	//********* NTS part ********/
 
 	public DtList<NluTrainingSentence> getNluTrainingSentenceByTopic(@SecuredOperation("botVisitor") final Chatbot bot, final Topic topic) {

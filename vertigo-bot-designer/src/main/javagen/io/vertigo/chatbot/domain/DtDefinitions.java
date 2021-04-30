@@ -235,8 +235,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de NluTrainingExport.
 	 */
 	public enum NluTrainingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.NluTrainingExport> {
-		/** Propriété 'smt ID'. */
-		smtId,
+		/** Propriété 'topId'. */
+		topId,
 		/** Propriété 'nlu ID'. */
 		ntsId,
 		/** Propriété 'Text'. */

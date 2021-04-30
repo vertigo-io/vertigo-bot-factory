@@ -240,7 +240,7 @@ create DtDefinition DtSmallTalkIhm {
 }
 
 create DtDefinition DtNluTrainingExport {
-	field smtId		{domain: DoId 		label: "smt ID"}
+	field topId		{domain: DoId 		label: "topId"}
 	field ntsId 	{domain: DoId 		label: "nlu ID"}
 	field text 		{domain: DoLabel 	label: "Text" cardinality : "1"}
 }
