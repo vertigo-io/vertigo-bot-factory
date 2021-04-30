@@ -34,19 +34,19 @@ public final class ResponseButton implements Entity {
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.SmallTalk> smtIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.SmallTalk.class, "SmallTalk");
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
-			name = "AResponseButtonSmallTalkResponse",
-			fkFieldName = "smtIdResponse",
-			primaryDtDefinitionName = "DtSmallTalk",
+			name = "AResponseButtonTopicResponse",
+			fkFieldName = "topIdResponse",
+			primaryDtDefinitionName = "DtTopic",
 			primaryIsNavigable = true,
-			primaryRole = "SmallTalkResponse",
-			primaryLabel = "SmallTalkResponse",
+			primaryRole = "TopicResponse",
+			primaryLabel = "TopicResponse",
 			primaryMultiplicity = "1..1",
 			foreignDtDefinitionName = "DtResponseButton",
 			foreignIsNavigable = false,
 			foreignRole = "ResponseButton",
 			foreignLabel = "ResponseButton",
 			foreignMultiplicity = "0..*")
-	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.SmallTalk> smtIdResponseAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.SmallTalk.class, "SmallTalkResponse");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.Topic> topIdResponseAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.Topic.class, "TopicResponse");
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotWelcomeButtons",
@@ -143,21 +143,21 @@ public final class ResponseButton implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'SmallTalkResponse'.
-	 * @return Long smtIdResponse <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'TopicResponse'.
+	 * @return Long topIdResponse <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "SmallTalkResponse", fkDefinition = "DtSmallTalk" )
-	public Long getSmtIdResponse() {
-		return (Long) smtIdResponseAccessor.getId();
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "TopicResponse", fkDefinition = "DtTopic" )
+	public Long getTopIdResponse() {
+		return (Long) topIdResponseAccessor.getId();
 	}
 
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'SmallTalkResponse'.
-	 * @param smtIdResponse Long <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'TopicResponse'.
+	 * @param topIdResponse Long <b>Obligatoire</b>
 	 */
-	public void setSmtIdResponse(final Long smtIdResponse) {
-		smtIdResponseAccessor.setId(smtIdResponse);
+	public void setTopIdResponse(final Long topIdResponse) {
+		topIdResponseAccessor.setId(topIdResponse);
 	}
 	
 	/**
@@ -215,11 +215,11 @@ public final class ResponseButton implements Entity {
 	}
 
  	/**
-	 * Association : SmallTalkResponse.
-	 * @return l'accesseur vers la propriété 'SmallTalkResponse'
+	 * Association : TopicResponse.
+	 * @return l'accesseur vers la propriété 'TopicResponse'
 	 */
-	public StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.SmallTalk> smallTalkResponse() {
-		return smtIdResponseAccessor;
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.Topic> topicResponse() {
+		return topIdResponseAccessor;
 	}
 
  	/**

@@ -67,12 +67,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		StatCriteria(io.vertigo.chatbot.designer.domain.StatCriteria.class),
 		/** Objet de données TopIntent. */
 		TopIntent(io.vertigo.chatbot.designer.domain.TopIntent.class),
-		/** Objet de données TopicExport. */
-		TopicExport(io.vertigo.chatbot.commons.domain.TopicExport.class),
 		/** Objet de données Topic. */
 		Topic(io.vertigo.chatbot.commons.domain.topic.Topic.class),
 		/** Objet de données TopicCategory. */
 		TopicCategory(io.vertigo.chatbot.commons.domain.topic.TopicCategory.class),
+		/** Objet de données TopicExport. */
+		TopicExport(io.vertigo.chatbot.commons.domain.TopicExport.class),
 		/** Objet de données TopicIhm. */
 		TopicIhm(io.vertigo.chatbot.commons.domain.topic.TopicIhm.class),
 		/** Objet de données TrainerInfo. */
@@ -313,8 +313,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		text,
 		/** Propriété 'SmallTalk'. */
 		smtId,
-		/** Propriété 'SmallTalkResponse'. */
-		smtIdResponse,
+		/** Propriété 'TopicResponse'. */
+		topIdResponse,
 		/** Propriété 'welcome buttons'. */
 		botIdWelcome,
 		/** Propriété 'Default buttons'. */
@@ -443,17 +443,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		count	}
 
 	/**
-	 * Enumération des champs de TopicExport.
-	 */
-	public enum TopicExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TopicExport> {
-		/** Propriété 'Topic name'. */
-		name,
-		/** Propriété 'nluTrainingSentences'. */
-		nluTrainingSentences,
-		/** Propriété 'Topic BT'. */
-		topicBT	}
-
-	/**
 	 * Enumération des champs de Topic.
 	 */
 	public enum TopicFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.Topic> {
@@ -486,6 +475,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isEnabled,
 		/** Propriété 'Chatbot'. */
 		botId	}
+
+	/**
+	 * Enumération des champs de TopicExport.
+	 */
+	public enum TopicExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TopicExport> {
+		/** Propriété 'Topic name'. */
+		name,
+		/** Propriété 'nluTrainingSentences'. */
+		nluTrainingSentences,
+		/** Propriété 'Topic BT'. */
+		topicBT	}
 
 	/**
 	 * Enumération des champs de TopicIhm.

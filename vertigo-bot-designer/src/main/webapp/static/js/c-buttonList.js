@@ -17,7 +17,7 @@ Vue.component('c-buttonlist', {
 				<div v-for="(button, index) in VertigoUi.vueData[buttonList]">
 					<template v-if="modeEdit">
 						<input class="hidden" type="text" :name="'vContext['+buttonList+']['+index+'][text]'" :value="button.text" />
-						<input class="hidden" type="text" :name="'vContext['+buttonList+']['+index+'][smtIdResponse]'" :value="button.smtIdResponse" />
+						<input class="hidden" type="text" :name="'vContext['+buttonList+']['+index+'][topIdResponse]'" :value="button.topIdResponse" />
 					</template>
 					
 					<div>
@@ -27,7 +27,7 @@ Vue.component('c-buttonlist', {
 							:removable="modeEdit" @remove="VertigoUi.vueData[buttonList].splice(index, 1);"
 							>
 						</q-chip>
-						<q-tooltip>{{getChoiceTitleById(button.smtIdResponse)}}</q-tooltip>
+						<q-tooltip>{{getChoiceTitleById(button.topIdResponse)}}</q-tooltip>
 					</div>
 				</div>
 			</draggable>
@@ -48,15 +48,15 @@ Vue.component('c-buttonlist', {
 							 dense
 					         map-options
 					         emit-value
-							 v-model="popupContent.smtIdResponse"
+							 v-model="popupContent.topIdResponse"
 					         :options='transformListForSelection(choiceList, "topId", "title")'
-					         label="Small talk"
+					         label="Topic"
 				         ></q-select>
 					</q-card-section>
 					
 					<q-card-actions align="around">
-						<q-btn v-if="editIndex === -1" :disable="!popupContent.text || !popupContent.smtIdResponse" label="Add" color="primary" v-close-popup @click="VertigoUi.vueData[buttonList].push(popupContent)" ></q-btn>
-						<q-btn v-if="editIndex !== -1" :disable="!popupContent.text || !popupContent.smtIdResponse" label="Save" color="primary" v-close-popup @click="Vue.set(VertigoUi.vueData[buttonList], editIndex, popupContent)" ></q-btn>
+						<q-btn v-if="editIndex === -1" :disable="!popupContent.text || !popupContent.topIdResponse" label="Add" color="primary" v-close-popup @click="VertigoUi.vueData[buttonList].push(popupContent)" ></q-btn>
+						<q-btn v-if="editIndex !== -1" :disable="!popupContent.text || !popupContent.topIdResponse" label="Save" color="primary" v-close-popup @click="Vue.set(VertigoUi.vueData[buttonList], editIndex, popupContent)" ></q-btn>
 					</q-card-actions>
 			</q-dialog>
 				

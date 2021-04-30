@@ -344,7 +344,7 @@ create table RESPONSE_BUTTON
     BTN_ID      	 NUMERIC     	not null,
     TEXT        	 TEXT        	not null,
     SMT_ID      	 NUMERIC     	,
-    SMT_ID_RESPONSE	 NUMERIC     	not null,
+    TOP_ID_RESPONSE	 NUMERIC     	not null,
     BOT_ID_WELCOME	 NUMERIC     	,
     BOT_ID_DEFAULT	 NUMERIC     	,
     constraint PK_RESPONSE_BUTTON primary key (BTN_ID)
@@ -359,8 +359,8 @@ comment on column RESPONSE_BUTTON.TEXT is
 comment on column RESPONSE_BUTTON.SMT_ID is
 'SmallTalk';
 
-comment on column RESPONSE_BUTTON.SMT_ID_RESPONSE is
-'SmallTalkResponse';
+comment on column RESPONSE_BUTTON.TOP_ID_RESPONSE is
+'TopicResponse';
 
 comment on column RESPONSE_BUTTON.BOT_ID_WELCOME is
 'welcome buttons';
@@ -654,10 +654,10 @@ alter table PERSON
 create index A_PERSON_ROLE_PERSON_ROLE_FK on PERSON (ROL_CD asc);
 
 alter table RESPONSE_BUTTON
-	add constraint FK_A_RESPONSE_BUTTON_SMALL_TALK_RESPONSE_SMALL_TALK foreign key (SMT_ID_RESPONSE)
-	references SMALL_TALK (SMT_ID);
+	add constraint FK_A_RESPONSE_BUTTON_TOPIC_RESPONSE_TOPIC foreign key (TOP_ID_RESPONSE)
+	references TOPIC (TOP_ID);
 
-create index A_RESPONSE_BUTTON_SMALL_TALK_RESPONSE_SMALL_TALK_FK on RESPONSE_BUTTON (SMT_ID_RESPONSE asc);
+create index A_RESPONSE_BUTTON_TOPIC_RESPONSE_TOPIC_FK on RESPONSE_BUTTON (TOP_ID_RESPONSE asc);
 
 alter table SCRIPT_INTENTION
 	add constraint FK_A_SCRIPT_INTENTION_TOPIC_TOPIC foreign key (TOP_ID)
