@@ -99,8 +99,21 @@ create Task TkGetTopicIhmById {
 			LIMIT 1
              "
 	in topId  				{domain : DoId         		cardinality : "1"  }
-	out topicIHM			{domain : DoDtTopicIhm,		cardinality : "1"  } 
+	out topicIHM			{domain : DoDtTopicIhm		cardinality : "1"  } 
 }
 
+create Task TkGetMaxCodeByBotId{
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select 	
+				top.code
+			from topic top
+			left join topic top_min on (top.code < top_min.code and top.bot_id = top_min.bot_id)
+			where top_min.top_id  is null and top.bot_id = #botId#
+			limit 1
+             "
+	in botId  				{domain : DoId         		cardinality : "1"  }
+	out code				{domain : DoNumber			cardinality : "1"  } 
+}
 
 

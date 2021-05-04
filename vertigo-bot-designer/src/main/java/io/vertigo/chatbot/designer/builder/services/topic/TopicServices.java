@@ -49,12 +49,20 @@ public class TopicServices implements Component {
 	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences,
 			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
+		//create code for export
+		if (topic.getCode() == null) {
+			topic.setCode(getMaxCodeByBotId(topic.getBotId()) + 1);
+		}
 		// save and remove NTS
 		final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences);
 		removeNTS(nluTrainingSentencesToDelete);
 		topic.setIsEnabled(!ntsToSave.isEmpty() || isEnabled);
 
 		return topicDAO.save(topic);
+	}
+
+	private Long getMaxCodeByBotId(final Long botId) {
+		return topicPAO.getMaxCodeByBotId(botId);
 	}
 
 	public Topic createTopic(@SecuredOperation("botContributor") final Topic topic) {

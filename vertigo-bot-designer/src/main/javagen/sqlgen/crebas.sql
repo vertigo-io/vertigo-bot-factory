@@ -441,6 +441,7 @@ create table TOPIC
     TITLE       	 VARCHAR(100)	not null,
     DESCRIPTION 	 VARCHAR(100)	,
     IS_ENABLED  	 bool        	not null,
+    CODE        	 NUMERIC     	not null,
     TTO_CD      	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     TOP_CAT_ID  	 NUMERIC     	not null,
@@ -458,6 +459,9 @@ comment on column TOPIC.DESCRIPTION is
 
 comment on column TOPIC.IS_ENABLED is
 'Enabled';
+
+comment on column TOPIC.CODE is
+'Code';
 
 comment on column TOPIC.TTO_CD is
 'Type du topic';

@@ -1,7 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.BotExport;
@@ -15,23 +13,25 @@ import io.vertigo.datamodel.structure.model.DtList;
 public class BotExportServices implements Component {
 
 	@Inject
-	private List<TopicsExportServices> services;
+	private SmallTalkExportServices smallTalkExportServices;
+
+	@Inject
+	private ScriptIntentionExportServices scriptIntentionExportServices;
 
 	public BotExport exportBot(final Chatbot bot) {
 		final BotExport export = new BotExport();
 		export.setBot(bot);
 		export.setTopics(exportActiveTopics(bot));
-		export.setFallbackBT("");
-		export.setEndBT("");
-		export.setWelcomeBT("");
+		export.setFallbackBT(smallTalkExportServices.getFallbackBt(bot));
+		export.setEndBT(smallTalkExportServices.getEndBt(bot));
+		export.setWelcomeBT(smallTalkExportServices.getWelcomeBt(bot));
 		return export;
 	}
 
 	private DtList<TopicExport> exportActiveTopics(final Chatbot bot) {
 		final DtList<TopicExport> result = new DtList<>(TopicExport.class);
-		for (final TopicsExportServices service : services) {
-			result.addAll(service.exportTopics(bot));
-		}
+		result.addAll(smallTalkExportServices.exportTopics(bot));
+		result.addAll(scriptIntentionExportServices.exportTopics(bot));
 		return result;
 	}
 

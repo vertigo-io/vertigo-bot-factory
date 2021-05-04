@@ -47,8 +47,7 @@ import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
-import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
-import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.designer.builder.services.topic.export.BotExportServices;
 import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
@@ -75,10 +74,7 @@ public class TrainingServices implements Component {
 	private static final String API_KEY = "apiKey";
 
 	@Inject
-	private ResponsesButtonServices responsesButtonServices;
-
-	@Inject
-	private UtterTextServices utterTextServices;
+	private BotExportServices botExportServices;
 
 	@Inject
 	private FileServices fileServices;
@@ -120,7 +116,6 @@ public class TrainingServices implements Component {
 
 		final Map<String, Object> requestData = Map.of(
 				"botExport", exportBot(bot),
-				//"smallTalkExport", exportSmallTalk(bot),
 				"trainingId", training.getTraId(),
 				"modelId", versionNumber,
 				"nluThreshold", training.getNluThreshold());
@@ -229,13 +224,7 @@ public class TrainingServices implements Component {
 	}
 
 	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
-		final UtterText welcomeText = utterTextServices.getWelcomeTextByBot(bot);
-		final UtterText defaultText = utterTextServices.getDefaultTextByBot(bot);
-		final DtList<ResponseButton> welcomeButtons = responsesButtonServices.getWelcomeButtonsByBot(bot);
-		final DtList<ResponseButton> defaultButtons = responsesButtonServices.getDefaultButtonsByBot(bot);
-		final BotExport retour = new BotExport();
-		retour.setBot(bot);
-		return retour;
+		return botExportServices.exportBot(bot);
 	}
 
 	public void loadModel(@SecuredOperation("botContributor") final Chatbot bot, final Long traId, final Long nodId) {
