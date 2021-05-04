@@ -16,6 +16,14 @@ public class BtBuilderUtils {
 		//Classe utilitaire
 	}
 
+	/*
+	 * choose:button:nlu topic/<topicCode>/responseButton "text"
+	 * button value "label"
+	 * button value2 "label2"
+	 * end choose:button:nlu
+	 * topic topic/<topicCode>/responseButton
+	 *
+	 */
 	public static void createButton(final String text, final List<ResponseButtonExport> responses, final StringBuilder bt) {
 		final String bb = getResponseBB(responses.get(0).getTopCode());
 		bt.append("choose:button:nlu ");
@@ -42,6 +50,7 @@ public class BtBuilderUtils {
 		addLineBreak(bt);
 	}
 
+	//Get topic/<topCode>/responseButton
 	private static String getResponseBB(final Long topCode) {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("topic/");
@@ -50,11 +59,26 @@ public class BtBuilderUtils {
 		return builder.toString();
 	}
 
+	/*
+	 * begin random
+	 * say "text"
+	 * say "text2"
+	 * end random
+	 * choose:button:nlu topic/<topicCode>/responseButton ""
+	 * button value "label"
+	 * button value2 "label2"
+	 * end choose:button:nlu
+	 * topic topic/<topicCode>/responseButton
+	 *
+	 */
 	public static void createButtonRandomText(final String[] splitUtter, final List<ResponseButtonExport> responses, final StringBuilder bt) {
 		createRandomSequence(splitUtter, bt);
 		createButton("", responses, bt);
 	}
 
+	/*
+	 * say "<splitUtter[0]>"
+	 */
 	public static void createRichtext(final String[] splitUtter, final StringBuilder bt) {
 		bt.append("say");
 		addSpaceQuote(bt);
@@ -64,6 +88,12 @@ public class BtBuilderUtils {
 		addLineBreak(bt);
 	}
 
+	/*
+	 * begin random
+	 * say "text"
+	 * say "text2"
+	 * end random
+	 */
 	public static void createRandomSequence(final String[] splitUtter, final StringBuilder bt) {
 		bt.append("begin random");
 		addLineBreak(bt);
