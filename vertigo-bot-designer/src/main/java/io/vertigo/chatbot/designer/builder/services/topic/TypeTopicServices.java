@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.builder.services;
+package io.vertigo.chatbot.designer.builder.services.topic;
 
 import javax.inject.Inject;
 

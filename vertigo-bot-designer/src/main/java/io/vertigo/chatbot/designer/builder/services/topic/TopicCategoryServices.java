@@ -59,6 +59,10 @@ public class TopicCategoryServices implements Component {
 		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId(), Optional.of(true), Optional.of(false));
 	}
 
+	public TopicCategory getTechnicalCategoryByBot(@SecuredOperation("botContributor") final Chatbot bot) {
+		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId(), Optional.of(true), Optional.of(true)).get(0);
+	}
+
 	public TopicCategory getNewTopicCategory(@SecuredOperation("botAdm") final Chatbot bot) {
 		final TopicCategory category = new TopicCategory();
 		category.setBotId(bot.getBotId());
@@ -78,6 +82,15 @@ public class TopicCategoryServices implements Component {
 
 	public void removeAllCategoryByBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		topicCategoryPAO.removeAllCategoryByBotId(bot.getBotId());
+	}
+
+	public TopicCategory initializeBasicCategory() {
+		final TopicCategory topicCategory = new TopicCategory();
+		topicCategory.setIsEnabled(true);
+		topicCategory.setLabel("Basics");
+		topicCategory.setIsTechnical(true);
+		topicCategory.setLevel(1L);
+		return topicCategory;
 	}
 
 }

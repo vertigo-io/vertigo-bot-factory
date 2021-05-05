@@ -13,6 +13,7 @@ import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
@@ -35,6 +36,9 @@ public class SmallTalkServices implements Component {
 
 	@Inject
 	private TopicServices topicServices;
+
+	@Inject
+	private TopicCategoryServices topicCategoryServices;
 
 	@Inject
 	private ResponsesButtonServices responsesButtonServices;
@@ -96,7 +100,6 @@ public class SmallTalkServices implements Component {
 
 		// delete smallTalk
 		smallTalkDAO.delete(smallTalk.getUID());
-
 		topicServices.deleteTopic(chatbot, topic);
 	}
 
@@ -120,4 +123,23 @@ public class SmallTalkServices implements Component {
 		return null;
 	}
 
+	public void initializeBasicSmallTalk(final Chatbot chatbot, final Topic topic, SmallTalk smt, final UtterText utterText) {
+		topic.setBotId(chatbot.getBotId());
+		final TopicCategory topicCategory = topicCategoryServices.getTechnicalCategoryByBot(chatbot);
+		topic.setTopCatId(topicCategory.getTopCatId());
+		//final SmallTalk smt = getSmallTalkByTopId(topic.getTopId());
+		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
+		topicServices.save(topic);
+
+		if (smt == null) {
+			smt = new SmallTalk();
+			smt.setTopId(topic.getTopId());
+			smt.setRtyId(ResponseTypeEnum.RICH_TEXT.name());
+		}
+		final DtList<UtterText> utterTexts = new DtList<UtterText>(UtterText.class);
+		utterTexts.add(utterText);
+
+		saveSmallTalk(chatbot, smt, new DtList<NluTrainingSentence>(NluTrainingSentence.class), new DtList<NluTrainingSentence>(NluTrainingSentence.class), utterTexts,
+				new DtList<>(ResponseButton.class), topic);
+	}
 }

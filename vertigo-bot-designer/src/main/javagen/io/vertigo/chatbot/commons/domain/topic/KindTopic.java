@@ -16,6 +16,8 @@ public final class KindTopic implements DtStaticMasterData {
 
 	private String ktoCd;
 	private String label;
+	private String defaultEnglish;
+	private String defaultFrench;
 
 	/** {@inheritDoc} */
 	@Override
@@ -61,6 +63,44 @@ public final class KindTopic implements DtStaticMasterData {
 	 */
 	public void setLabel(final String label) {
 		this.label = label;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Default text (English)'.
+	 * @return String defaultEnglish <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Default text (English)")
+	public String getDefaultEnglish() {
+		return defaultEnglish;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Default text (English)'.
+	 * @param defaultEnglish String <b>Obligatoire</b>
+	 */
+	public void setDefaultEnglish(final String defaultEnglish) {
+		this.defaultEnglish = defaultEnglish;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Default text (French)'.
+	 * @return String defaultFrench <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Default text (French)")
+	public String getDefaultFrench() {
+		return defaultFrench;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Default text (French)'.
+	 * @param defaultFrench String <b>Obligatoire</b>
+	 */
+	public void setDefaultFrench(final String defaultFrench) {
+		this.defaultFrench = defaultFrench;
 	}
 	
 	/** {@inheritDoc} */

@@ -30,7 +30,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.designer.builder.services.ScriptIntentionServices;
+import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;

@@ -10,6 +10,8 @@ import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
+import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.core.lang.Assertion;
@@ -38,6 +40,10 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 
 	@Inject
 	protected TopicServices topicServices;
+	@Inject
+	protected SmallTalkServices smallTalkServices;
+	@Inject
+	protected ScriptIntentionServices scriptIntentionServices;
 	@Inject
 	protected TopicCategoryServices topicCategoryServices;
 
@@ -165,7 +171,28 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete);
 
 	@PostMapping("/_delete")
-	abstract String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("object") final D object,
-			@ViewAttribute("topic") final Topic topic);
+	String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("object") final D object,
+			@ViewAttribute("topic") final Topic topic) {
+		final DtList<Topic> listTopicRef = topicServices.getTopicReferencingTopId(topic.getTopId());
+		if (!listTopicRef.isEmpty()) {
+			final StringBuilder errorMessage = new StringBuilder("This topic cannot be removed because it is referenced in response button in the following topics : ");
+			String prefix = "";
+			for (final Topic topicRef : listTopicRef) {
+				errorMessage.append(prefix);
+				errorMessage.append(topicRef.getTitle());
+				prefix = ", ";
+			}
+			errorMessage.append(".");
+			throw new VUserException(errorMessage.toString());
+		}
+
+		if (TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd())) {
+			smallTalkServices.deleteSmallTalk(chatbot, smallTalkServices.getSmallTalkByTopId(topic.getTopId()), topic);
+		} else if (TypeTopicEnum.SCRIPTINTENTION.name().equals(topic.getTtoCd())) {
+			scriptIntentionServices.deleteScriptIntention(chatbot, scriptIntentionServices.getScriptIntentionByTopId(topic.getTopId()), topic);
+		}
+		topicServices.deleteTopic(chatbot, topic);
+		return "redirect:/bot/" + topic.getBotId() + "/topics/";
+	}
 
 }

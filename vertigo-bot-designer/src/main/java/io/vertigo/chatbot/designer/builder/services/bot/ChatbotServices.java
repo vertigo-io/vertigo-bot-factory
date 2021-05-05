@@ -11,10 +11,6 @@ import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
-import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
-import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
-import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
@@ -107,34 +103,15 @@ public class ChatbotServices implements Component {
 		topicCategoryServices.saveCategory(chatbot, topicCategory);
 
 		//TopicFailure
-		manageBasicTopic(savedChatbot, topicCategory, topicFailure, utterTextFailure);
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicFailure, smallTalkServices.getSmallTalkByTopId(topicFailure.getTopId()), utterTextFailure);
 
 		//Topic Start
-		manageBasicTopic(savedChatbot, topicCategory, topicStart, utterTextStart);
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicStart, smallTalkServices.getSmallTalkByTopId(topicStart.getTopId()), utterTextStart);
 
 		//Topic End
-		manageBasicTopic(savedChatbot, topicCategory, topicEnd, utterTextEnd);
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicEnd, smallTalkServices.getSmallTalkByTopId(topicEnd.getTopId()), utterTextEnd);
 
 		return savedChatbot;
-	}
-
-	public void manageBasicTopic(@SecuredOperation("botAdm") final Chatbot chatbot, final TopicCategory topicCategory, final Topic topic, final UtterText utterText) {
-		topic.setBotId(chatbot.getBotId());
-		topic.setTopCatId(topicCategory.getTopCatId());
-		SmallTalk smt = smallTalkServices.getSmallTalkByTopId(topic.getTopId());
-		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
-		topicServices.save(topic);
-
-		if (smt == null) {
-			smt = new SmallTalk();
-			smt.setTopId(topic.getTopId());
-			smt.setRtyId(ResponseTypeEnum.RICH_TEXT.name());
-		}
-		final DtList<UtterText> utterTexts = new DtList<UtterText>(UtterText.class);
-		utterTexts.add(utterText);
-
-		smallTalkServices.saveSmallTalk(chatbot, smt, new DtList<NluTrainingSentence>(NluTrainingSentence.class), new DtList<NluTrainingSentence>(NluTrainingSentence.class), utterTexts,
-				new DtList<>(ResponseButton.class), topic);
 	}
 
 	public Boolean deleteChatbot(@SecuredOperation("botAdm") final Chatbot bot) {

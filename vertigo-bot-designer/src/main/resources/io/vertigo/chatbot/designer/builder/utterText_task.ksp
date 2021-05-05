@@ -22,15 +22,15 @@ create Task TkRemoveAllUtterTextByBotId {
 	in botId  				{domain : DoId         		cardinality : "1"  }
 }
 
-create Task TkGetUtterTextsByTopId {
+create Task TkGetUtterTextByTopId {
     className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
 			SELECT 	utt.*
 			from utter_text utt 
 			join small_talk smt on smt.smt_id = utt.smt_id
-			where utt.top_id = #topId#
+			where smt.top_id = #topId#
 			LIMIT 1
              "
 	in topId  				{domain : DoId         		cardinality : "1"  }
-	out utterTexts			{domain : DoDtTopic,		cardinality : "*"  } 
+	out utterTexts			{domain : DoDtUtterText		cardinality : "*"  } 
 }

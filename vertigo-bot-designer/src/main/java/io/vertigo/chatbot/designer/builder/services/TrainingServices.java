@@ -225,8 +225,8 @@ public class TrainingServices implements Component {
 
 	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
 		return botExportServices.exportBot(bot);
-	}
-
+		}
+	*/
 	public void loadModel(@SecuredOperation("botContributor") final Chatbot bot, final Long traId, final Long nodId) {
 		Assertion.check()
 				.isNotNull(traId)

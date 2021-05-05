@@ -8,11 +8,14 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.topic.KindTopic;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
@@ -24,6 +27,8 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.ui.core.ViewContext;
+import io.vertigo.ui.core.ViewContextKey;
 
 @Transactional
 public class TopicServices implements Component {
@@ -36,6 +41,9 @@ public class TopicServices implements Component {
 
 	@Inject
 	private NluTrainingSentenceDAO nluTrainingSentenceDAO;
+
+	@Inject
+	private KindTopicServices kindTopicServices;
 
 	public Topic findTopicById(@SecuredOperation("botVisitor") final Long id) {
 		return topicDAO.get(id);
@@ -138,7 +146,7 @@ public class TopicServices implements Component {
 		return topicDAO.getBasicTopicByBotIdKtoCd(botId, ktoCd);
 	}
 
-	public DtList<TopicIhm> getAllNormalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+	public DtList<TopicIhm> getAllNonTechnicalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), Optional.of(KindTopicEnum.NORMAL.name()));
 	}
 
@@ -146,6 +154,33 @@ public class TopicServices implements Component {
 		return topicDAO.getTopicReferencingTopId(topId);
 	}
 
+	public void initNewBasicTopic(final ViewContext viewContext, final String ktoCd, final String title, final String description, final ViewContextKey<Topic> topickey,
+			final ViewContextKey<UtterText> uttertextkey) {
+		final Topic topic = new Topic();
+		final KindTopic kto = kindTopicServices.findKindTopicByCd(ktoCd);
+		topic.setIsEnabled(true);
+		topic.setTitle(title);
+		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
+		topic.setKtoCd(ktoCd);
+		topic.setDescription(description);
+		viewContext.publishDto(topickey, topic);
+		final UtterText utterText = new UtterText();
+		utterText.setText(kto.getDefaultEnglish());
+		viewContext.publishDto(uttertextkey, utterText);
+
+	}
+
+	/*
+	public void manageBasicTopic(@SecuredOperation("botAdm") final Chatbot chatbot, final TopicCategory topicCategory, final Topic topic, final UtterText utterText) {
+		topic.setBotId(chatbot.getBotId());
+		topic.setTopCatId(topicCategory.getTopCatId());
+		final SmallTalk smt = smallTalkServices.getSmallTalkByTopId(topic.getTopId());
+		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
+		this.save(topic);
+	
+		smallTalkServices.initializeBasicSmallTalk(chatbot, topic, smt, utterText);
+	}
+	*/
 	//********* NTS part ********/
 
 	public DtList<NluTrainingSentence> getNluTrainingSentenceByTopic(@SecuredOperation("botVisitor") final Chatbot bot, final Topic topic) {
