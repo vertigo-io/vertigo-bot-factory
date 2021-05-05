@@ -19,6 +19,7 @@ package io.vertigo.chatbot.designer.admin.services;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -106,6 +107,7 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 				});
 		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(loggedAccount.getId()));
 		UserSessionUtils.getUserSession().setLoggedPerson(person);
+		UserSessionUtils.getUserSession().setLocale(Locale.US);
 		authorizationServices.addUserAuthorization(person);
 	}
 

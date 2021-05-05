@@ -19,12 +19,15 @@ package io.vertigo.chatbot.designer.boot;
 
 import java.util.Set;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.servlet.LocaleResolver;
 
 import io.vertigo.core.node.Node;
 import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.ui.impl.springmvc.config.VSpringWebConfig;
+import io.vertigo.ui.impl.springmvc.config.VertigoLocaleResolver;
 
 @ComponentScan({
 		"io.vertigo.chatbot.designer.commons.controllers",
@@ -51,5 +54,10 @@ public class ChatbotDesignerVSpringWebConfig extends VSpringWebConfig {
 		return paramManager.getOptionalParam("devMode")
 				.map(Param::getValueAsBoolean)
 				.orElse(false);
+	}
+
+	@Bean
+	public LocaleResolver localeResolver() {
+		return new VertigoLocaleResolver();
 	}
 }
