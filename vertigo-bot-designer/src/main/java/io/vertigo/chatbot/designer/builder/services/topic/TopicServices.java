@@ -150,7 +150,7 @@ public class TopicServices implements Component {
 		return topicDAO.getBasicTopicByBotIdKtoCd(botId, ktoCd);
 	}
 
-	public DtList<TopicIhm> getAllNormalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+	public DtList<TopicIhm> getAllNonTechnicalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), Optional.of(KindTopicEnum.NORMAL.name()));
 	}
 

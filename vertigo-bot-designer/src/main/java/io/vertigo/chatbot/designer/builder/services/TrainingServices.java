@@ -105,7 +105,7 @@ public class TrainingServices implements Component {
 			training.setStatus("OK");
 			node.setTraId(training.getTraId());
 			asynchronousServices.saveNodeWithoutAuthorizations(node);
-		}
+	}
 		training.setEndTime(Instant.now());
 		asynchronousServices.saveTrainingWithoutAuthorizations(training);
 		return "response handled";
@@ -121,7 +121,7 @@ public class TrainingServices implements Component {
 		training.setVersionNumber(versionNumber);
 		training.setNluThreshold(BigDecimal.valueOf(0.6));
 		return training;
-	}
+		}
 
 	private ExecutorConfiguration getExecutorConfig(final Training training, final ChatbotNode node) {
 		final Long botId = training.getBotId();
@@ -134,16 +134,16 @@ public class TrainingServices implements Component {
 		result.setNluThreshold(training.getNluThreshold());
 		result.setCustomConfig("nothing");
 		return result;
-	}
+			}
 
 	public Optional<Training> getCurrentTraining(final Chatbot bot) {
 		return trainingDAO.getCurrentTrainingByBotId(bot.getBotId());
-	}
+		}
 
 	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
 		return botExportServices.exportBot(bot);
-	}
-
+		}
+	*/
 	public DtList<Training> getAllTrainings(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return trainingDAO.findAll(
 				Criterions.isEqualTo(TrainingFields.botId, bot.getBotId()),

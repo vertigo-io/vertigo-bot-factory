@@ -58,13 +58,6 @@ public class ResponsesButtonServices implements Component {
 	}
 
 	/**
-	 * public void removeAllButtonsByBot(@SecuredOperation("botAdm") final Chatbot bot) {
-	 * // clear old buttons
-	 * responsesButtonPAO.removeAllButtonsByBotId(bot.getBotId());
-	 * }
-	 */
-
-	/**
 	 * Remove all buttons on all smts of bot
 	 *
 	 * @param bot

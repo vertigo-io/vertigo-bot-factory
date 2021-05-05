@@ -158,4 +158,23 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 		}
 		return null;
 	}
+	public void initializeBasicSmallTalk(final Chatbot chatbot, final Topic topic, SmallTalk smt, final UtterText utterText) {
+		topic.setBotId(chatbot.getBotId());
+		final TopicCategory topicCategory = topicCategoryServices.getTechnicalCategoryByBot(chatbot);
+		topic.setTopCatId(topicCategory.getTopCatId());
+		//final SmallTalk smt = getSmallTalkByTopId(topic.getTopId());
+		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
+		topicServices.save(topic);
+
+		if (smt == null) {
+			smt = new SmallTalk();
+			smt.setTopId(topic.getTopId());
+			smt.setRtyId(ResponseTypeEnum.RICH_TEXT.name());
+		}
+		final DtList<UtterText> utterTexts = new DtList<UtterText>(UtterText.class);
+		utterTexts.add(utterText);
+
+		saveSmallTalk(chatbot, smt, new DtList<NluTrainingSentence>(NluTrainingSentence.class), new DtList<NluTrainingSentence>(NluTrainingSentence.class), utterTexts,
+				new DtList<>(ResponseButton.class), topic);
+	}
 }

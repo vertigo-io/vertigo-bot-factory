@@ -109,34 +109,15 @@ public class ChatbotServices implements Component {
 		topicCategoryServices.saveCategory(chatbot, topicCategory);
 
 		//TopicFailure
-		manageBasicTopic(savedChatbot, topicCategory, topicFailure, utterTextFailure);
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicFailure, smallTalkServices.getSmallTalkByTopId(topicFailure.getTopId()), utterTextFailure);
 
 		//Topic Start
-		manageBasicTopic(savedChatbot, topicCategory, topicStart, utterTextStart);
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicStart, smallTalkServices.getSmallTalkByTopId(topicStart.getTopId()), utterTextStart);
 
 		//Topic End
-		manageBasicTopic(savedChatbot, topicCategory, topicEnd, utterTextEnd);
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicEnd, smallTalkServices.getSmallTalkByTopId(topicEnd.getTopId()), utterTextEnd);
 
 		return savedChatbot;
-	}
-
-	public void manageBasicTopic(@SecuredOperation("botAdm") final Chatbot chatbot, final TopicCategory topicCategory, final Topic topic, final UtterText utterText) {
-		topic.setBotId(chatbot.getBotId());
-		topic.setTopCatId(topicCategory.getTopCatId());
-		SmallTalk smt = smallTalkServices.getSmallTalkByTopId(topic.getTopId());
-		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
-		topicServices.save(topic);
-
-		if (smt == null) {
-			smt = new SmallTalk();
-			smt.setTopId(topic.getTopId());
-			smt.setRtyId(ResponseTypeEnum.RICH_TEXT.name());
-		}
-		final DtList<UtterText> utterTexts = new DtList<UtterText>(UtterText.class);
-		utterTexts.add(utterText);
-
-		smallTalkServices.saveSmallTalk(chatbot, smt, new DtList<NluTrainingSentence>(NluTrainingSentence.class), new DtList<NluTrainingSentence>(NluTrainingSentence.class), utterTexts,
-				new DtList<>(ResponseButton.class), topic);
 	}
 
 	public Boolean deleteChatbot(@SecuredOperation("botAdm") final Chatbot bot) {

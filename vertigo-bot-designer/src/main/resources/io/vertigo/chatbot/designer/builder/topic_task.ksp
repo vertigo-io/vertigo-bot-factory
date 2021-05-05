@@ -129,7 +129,6 @@ create Task TkGetBasicTopicByBotIdKtoCd {
 			from topic top 
 			where top.bot_id = #botId#
 			and top.kto_cd = #ktoCd#
-			LIMIT 1
              "
 	in botId  				{domain : DoId         		cardinality : "1"  }
 	in ktoCd  				{domain : DoCode         	cardinality : "1"  }

@@ -76,8 +76,7 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
 			request = "SELECT 	top.*" + 
  "			from topic top " + 
  "			where top.bot_id = #botId#" + 
- "			and top.kto_cd = #ktoCd#" + 
- "			LIMIT 1",
+ "			and top.kto_cd = #ktoCd#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
 	public io.vertigo.chatbot.commons.domain.topic.Topic getBasicTopicByBotIdKtoCd(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCd", smartType = "STyCode") final String ktoCd) {
@@ -106,29 +105,6 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getTopicReferencingTopId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
 		final Task task = createTaskBuilder("TkGetTopicReferencingTopId")
-				.addValue("topId", topId)
-				.build();
-		return getTaskManager()
-				.execute(task)
-				.getResult();
-	}
-
-	/**
-	 * Execute la tache TkGetUtterTextsByTopId.
-	 * @param topId Long
-	 * @return DtList de Topic utterTexts
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkGetUtterTextsByTopId",
-			request = "SELECT 	utt.*" + 
- "			from utter_text utt " + 
- "			join small_talk smt on smt.smt_id = utt.smt_id" + 
- "			where utt.top_id = #topId#" + 
- "			LIMIT 1",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getUtterTextsByTopId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
-		final Task task = createTaskBuilder("TkGetUtterTextsByTopId")
 				.addValue("topId", topId)
 				.build();
 		return getTaskManager()

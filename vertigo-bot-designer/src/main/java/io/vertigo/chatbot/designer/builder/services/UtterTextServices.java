@@ -45,7 +45,6 @@ public class UtterTextServices implements Component {
 		utterTextDAO.delete(uid);
 	}
 
-	
 	public DtList<UtterText> getUtterTextList(@SecuredOperation("botVisitor") final Chatbot bot, final SmallTalk smallTalk) {
 		Assertion.check()
 				.isNotNull(smallTalk)
