@@ -13,3 +13,5 @@ set code = rownumbers.code
 from rownumbers 
 where rownumbers.top_id = topic.top_id;
 
+alter table topic
+add constraint topic_unique_code UNIQUE (code);
