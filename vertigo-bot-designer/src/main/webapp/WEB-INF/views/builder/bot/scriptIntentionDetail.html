@@ -7,7 +7,7 @@
 	>
 	
 	<head>
-		<title>Script intention detail</title>
+		<title th:text="#{script.detail.title}"></title>
 	</head>
 	
 	<body>
@@ -28,7 +28,7 @@
 		</section>
 		
 		<section layout:fragment="content-specific">
-			<vu:popup object="scriptIntention" action="_delete" vModel="showPopup"></vu:popup>
+			<vu:popup action="_delete" vModel="showPopup" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
 			
 			<vu:block id="script" title="Script">
 				<vu:include-data object="scriptIntention" field="script" />	

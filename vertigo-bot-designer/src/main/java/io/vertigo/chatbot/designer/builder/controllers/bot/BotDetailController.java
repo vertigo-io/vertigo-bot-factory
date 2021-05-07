@@ -180,7 +180,7 @@ public class BotDetailController extends AbstractBotController {
 	}
 
 	@PostMapping("/_deleteNode")
-	@Secured("SuperAdmin")
+	@Secured("SuperAdm")
 	public ViewContext doDeleteNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@RequestParam("nodId") final Long nodId) {
 

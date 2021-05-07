@@ -28,7 +28,7 @@
 		
 		<section layout:fragment="content-specific">
 			
-			<vu:popup object="smallTalk" action="_delete" vModel="showPopup"></vu:popup>
+			<vu:popup action="_delete" vModel="showPopup" th:message="#{smalltalk.popup.message}" th:confirm="#{action.delete}"></vu:popup>
 			
 			<vu:block id="response" th:title="#{smallTalk.menu.responses}">
 				<vu:include-data object="utterTexts" field="text" />

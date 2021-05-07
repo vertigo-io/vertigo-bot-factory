@@ -7,7 +7,7 @@
 	>
 	
 	<head>
-		<title>Bot list</title>
+		<title th:text="#{botList.title}"></title>
 	</head>
 	
 	<body>
@@ -24,7 +24,7 @@
 					<q-card-section class="row" >
 						<div class="col ellipsis text-center text-grey" >
 							<span class="text-primary small-caps text-bigger">{{item.name}}</span><br/>
-							<span>Born : {{item.creationDate}}</span><br/>
+							<span th:text="|#{botList.born}  {{item.creationDate}}|">Born : {{item.creationDate}}</span><br/>
 							<span>{{item.description}}</span>
 						</div>		
 					</q-card-section>
@@ -32,7 +32,7 @@
 			</vu:cards>
 			
 			<q-page-sticky position="bottom-right" th:if="${model.userAuthorizations[AtzSuperAdm]}">
-				<vu:button-link icon="person_add" label="Create" url="@{/bot/new}" size="lg" color="primary" /> 
+				<vu:button-link icon="person_add" th:label="#{action.create}" url="@{/bot/new}" size="lg" color="primary" /> 
 			</q-page-sticky>
 		</section>
 		

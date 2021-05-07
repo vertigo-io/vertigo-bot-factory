@@ -17,24 +17,6 @@
 		<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
 		
-		<script th:inline="javascript">
-			function deleteNode() {
-				VUiPage.$q.dialog({
-			        title: 'Confirm',
-			        message: 'Do you want to delete node ' + VertigoUi.vueData.nodeEdit.name,
-					ok: {
-						label: "Delete",
-						color: "red"
-					},
-					cancel: {
-						label: "Cancel"
-					}
-			    }).onOk(() => {
-			    	VUiPage.httpPostAjax('_deleteNode', {'nodId': VertigoUi.vueData.nodeEdit.nodId}, {onSuccess: VUiPage.$refs.nodeEdit.hide})
-			    })
-			}
-			
-		</script>
 	</head>
 	
 	<body>
@@ -56,7 +38,8 @@
 		
 		<section layout:fragment="content">
 			
-			<vu:popup object="chatbot" action="_delete" vModel="showPopup"></vu:popup>
+			<vu:popup action="_delete" vModel="showPopup" th:message=#{bot.popup.message} th:confirm=#{bot.delete}></vu:popup>
+			<vu:popup-ajax action="_deleteNode" vModel="showPopupNode" th:message="#{bot.popup.node.message}" th:confirm=#{bot.delete} dataName="nodId" successAction="'VUiPage.$refs.nodeEdit.hide'"></vu:popup-ajax>
 			
 			<vu:block id="identity" th:title="#{bot.identity}">
 				<vu:text-field object="bot" field="name" th:if="${viewMode=='edit'}"/>
@@ -176,7 +159,7 @@
 					</q-card-section>
 				
 					<q-card-actions align="around">
-						<q-btn v-if="vueData.nodeEdit.nodId" th:label="#{bot.delete}" color="red" @click="deleteNode" ></q-btn>
+						<q-btn v-if="vueData.nodeEdit.nodId" th:label="#{bot.delete}" color="red" @click="componentStates.nodId = vueData.nodeEdit.nodId; componentStates.showPopupNode = true " ></q-btn>
 						<q-btn th:label="#{action.save}" color="primary" @click="httpPostAjax('_saveNode', vueDataParams(['nodeEdit']), {onSuccess: $refs.nodeEdit.hide})" ></q-btn>
 					</q-card-actions>
 				</q-card>

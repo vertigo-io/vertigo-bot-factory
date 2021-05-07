@@ -7,23 +7,6 @@
 	>
 <head>
 	<title th:text="#{personChatbot.title}"></title>
-	<script type="text/javascript">
-	function confirmDelete(person) {
-		VUiPage.$q.dialog({
-	        title: 'Confirm',
-	        message: 'Do you want to remove this person : ' + person.name + ' from this chatbot',
-			ok: {
-				label: "Remove",
-				color: "red"
-			},
-			cancel: {
-				label: "Cancel"
-			}
-	    }).onOk(() => {
-			VUiPage.httpPostAjax("_delete", {'rowId':person.chpId});
-	    })
-	}
-	</script>
 </head>
 	<body>
 		<section layout:fragment="content">
@@ -66,12 +49,14 @@
 				</q-card-actions>
 			</vu:block>
 			<!--  users list -->
+			
+			<vu:popup-ajax action="_delete" vModel="showPopup" th:message="#{personChatbot.popup.message}" th:confirm=#{action.delete} dataName="rowId"></vu:popup-ajax>
 			<vu:include-data object="personProfilList" field="chpId"/>
 			<vu:table list="personProfilList" th:title="#{personChatbot.profilList}" rowKey="chpId" componentId="personsProfilList" tr_style="cursor : pointer;"
 					  sortBy="name" :binary-state-sort="true" >
 	  				<vu:slot name="actions_slot">
 						<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{personChatbot.profil.delete}" th:title="#{personChatbot.profil.delete}"
-								 @click="confirmDelete(props.row)"></q-btn>
+								 @click="componentStates.rowId = props.row.chpId; componentStates.showPopup = true"></q-btn>
 					</vu:slot>
 					<vu:column field="name" th:label="#{personChatbot.name}">
 						<span style="height:100%" class="row items-center">{{props.row.name}}</span>
