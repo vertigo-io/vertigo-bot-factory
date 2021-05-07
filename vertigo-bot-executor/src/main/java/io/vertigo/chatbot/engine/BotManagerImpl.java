@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.engine;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -62,8 +63,7 @@ public final class BotManagerImpl implements BotManager {
 
 	@Override
 	public BotEngine createBotEngine(final UUID convId, final String storeName) {
-		final var bb = blackBoardManager.connect(storeName, BBKey.of("/" + codecManager.getHexEncoder().encode(convId.toString().getBytes())));
-		// TODO : bb.shift on convId
+		final var bb = blackBoardManager.connect(storeName, BBKey.of("/" + codecManager.getHexEncoder().encode(convId.toString().getBytes(StandardCharsets.UTF_8))));
 		return new BotEngine(bb, topicDefinitionMap, behaviorTreeManager, nluManager);
 	}
 
