@@ -72,7 +72,7 @@ public class BTBotParserTest {
 
 		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
 
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		final BTNode rootNode = nodeProducer.apply(List.of(blackBoard));
 		final BTStatus status = rootNode.eval();
 		//---
@@ -95,7 +95,7 @@ public class BTBotParserTest {
 
 		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
 
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 
 		blackBoard.putString(BBKey.of("/val"), "2");
 		BTNode rootNode = nodeProducer.apply(List.of(blackBoard));
@@ -118,7 +118,7 @@ public class BTBotParserTest {
 	public void testNoCompositeRoot() {
 		final String bt = "say bonjour\n";
 
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 
 		final Exception exception = Assertions.assertThrows(IllegalStateException.class, () -> {
 			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
@@ -135,7 +135,7 @@ public class BTBotParserTest {
 				"end case\n" +
 				"end sequence";
 
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 
 		final Exception exception = Assertions.assertThrows(VSystemException.class, () -> {
 			final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
@@ -158,7 +158,7 @@ public class BTBotParserTest {
 
 		final Function<List<Object>, BTNode> nodeProducer = btCommandManager.parse(bt);
 
-		final BlackBoard blackBoard = blackBoardManager.connect();
+		final BlackBoard blackBoard = blackBoardManager.connect(BBKey.of("/test"));
 		blackBoard.putString(BBKey.of("/val/1"), "1");
 
 		final BTNode rootNode = nodeProducer.apply(List.of(blackBoard));
