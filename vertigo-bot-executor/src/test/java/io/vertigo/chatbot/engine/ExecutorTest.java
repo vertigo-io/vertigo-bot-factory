@@ -228,6 +228,55 @@ public class ExecutorTest {
 		Assertions.assertTrue(nbTry < maxTry, "Always the same answer :'(");
 	}
 
+	@Test
+	public void testMultipleConversation() {
+		buildBot(botTopic1, botEnd);
+
+		// start conv 1
+		BotResponse response = executorManager.startNewConversation(new BotInput());
+		var textResponses = response.getHtmlTexts();
+		final UUID uuid = (UUID) response.getMetadatas().get("sessionId");
+
+		Assertions.assertEquals(BotStatus.Talking, response.getStatus());
+		Assertions.assertEquals(2, textResponses.size());
+		Assertions.assertEquals("This is topic 1", textResponses.get(0));
+		Assertions.assertEquals("What is your name ?", textResponses.get(1));
+		Assertions.assertTrue(response.getMetadatas().containsKey("accepttext"));
+
+		// start conv 2
+
+		response = executorManager.startNewConversation(new BotInput());
+		textResponses = response.getHtmlTexts();
+		final UUID uuid2 = (UUID) response.getMetadatas().get("sessionId");
+
+		Assertions.assertEquals(BotStatus.Talking, response.getStatus());
+		Assertions.assertEquals(2, textResponses.size());
+		Assertions.assertEquals("This is topic 1", textResponses.get(0));
+		Assertions.assertEquals("What is your name ?", textResponses.get(1));
+		Assertions.assertTrue(response.getMetadatas().containsKey("accepttext"));
+
+		// respond conv 1
+
+		response = executorManager.handleUserMessage(uuid, new BotInput("John"));
+		textResponses = response.getHtmlTexts();
+
+		Assertions.assertEquals(BotStatus.Ended, response.getStatus());
+		Assertions.assertEquals(1, textResponses.size());
+		Assertions.assertEquals("Nice to meet you John", textResponses.get(0));
+		Assertions.assertFalse(response.getMetadatas().containsKey("accepttext"));
+
+		// respond conv 1
+
+		response = executorManager.handleUserMessage(uuid2, new BotInput("Mike"));
+		textResponses = response.getHtmlTexts();
+
+		Assertions.assertEquals(BotStatus.Ended, response.getStatus());
+		Assertions.assertEquals(1, textResponses.size());
+		Assertions.assertEquals("Nice to meet you Mike", textResponses.get(0));
+		Assertions.assertFalse(response.getMetadatas().containsKey("accepttext"));
+
+	}
+
 	private void buildBot(final String bt) {
 		buildBot(bt, null, null, Collections.emptyList());
 	}
