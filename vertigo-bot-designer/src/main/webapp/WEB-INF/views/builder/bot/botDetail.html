@@ -96,7 +96,7 @@
 			<vu:include-data object="nodeNew" field="color" />
 			<vu:include-data object="nodeNew" field="isDev" />
 			
-			<vu:table th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" id="nodes" list="nodeList" th:title="Nodes" componentId="nodeList" rowsPerPage="10" autoColClass
+			<vu:table th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" id="nodes" list="nodeList" th:title="#{bot.nodes}" componentId="nodeList" rowsPerPage="10" autoColClass
 					  tr_@click.native="|vueData.nodeEdit = Vue.util.extend({},props.row); $refs.nodeEdit.show()|" tr_class="nav">
 				<vu:slot name="top_right_slot">
 					<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" 
@@ -110,7 +110,7 @@
 				<vu:column field="isDev" label="" class="col_Small">
 					<q-icon name="build" size="2rem" v-if="props.row.isDev"></q-icon>
 				</vu:column>
-				<vu:column field="name" label="Node">
+				<vu:column field="name" th:label="#{bot.node}">
 					<q-chip :style="'background: '+ props.row.color" text-color="white">
 						{{props.row.name}}
 					</q-chip>

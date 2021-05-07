@@ -136,7 +136,7 @@
 					th::mode-edit="${!model.modeReadOnly}">
 				</c-buttonlist>
 				
-				<div th:if="${model.modeReadOnly && model.vContext.buttons.isEmpty()}">No button</div>
+				<div th:if="${model.modeReadOnly && model.vContext.buttons.isEmpty()}" th:text=#{smalltalk.noButton}></div>
 			</vu:block>
 			
 		</section>

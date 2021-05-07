@@ -7,7 +7,7 @@
 	>
 	
 	<head>
-		<title th:text="#{models.title}"></title>
+		<title th:text="#{model.title}"></title>
 		
 		<link  th:href="@{/static/chatbot/chatbot.css}" rel="stylesheet"/>
 		<script th:src="@{/static/chatbot/v-chatbot-dev.js}"></script>
@@ -201,7 +201,7 @@
 				<vu:include-data object="trainerState" field="duration"/>
 				<vu:include-data object="trainerState" field="trainingPercent" />
 				
-				<vu:text-field-read-reactive object="trainerState" field="trainingState" label="State" />
+				<vu:text-field-read-reactive object="trainerState" field="trainingState" th:label="#{model.state}" />
 				
 				<q-linear-progress :class="vueData.trainerState.trainingInProgress ? '':'invisible'"
 						stripe rounded style="height: 10px"

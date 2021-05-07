@@ -107,7 +107,7 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 				});
 		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(loggedAccount.getId()));
 		UserSessionUtils.getUserSession().setLoggedPerson(person);
-		UserSessionUtils.getUserSession().setLocale(Locale.US);
+		UserSessionUtils.getUserSession().setLocale(Locale.FRANCE);
 		authorizationServices.addUserAuthorization(person);
 	}
 

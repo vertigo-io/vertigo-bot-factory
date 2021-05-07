@@ -36,7 +36,7 @@
 		</div>	
 		<section layout:fragment="content">
 	
-			<vu:popup th:message="#{person.delete.message}" action="_delete" vModel="showPopup"></vu:popup>
+			<vu:popup th:message="#{person.delete.message}" action="_delete" vModel="showPopup" th:confirm="#{action.delete}"></vu:popup>
 	
 			<vu:block id="identity" th:title="#{person.identity.title}">
 				<vu:text-field object="person" field="name" readonly="${model.modeReadOnly}"/>

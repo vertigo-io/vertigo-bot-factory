@@ -75,7 +75,7 @@
 					<q-toggle v-model="vueData.topic.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
 				</vu:label>
 				
-				<vu:select object="topic" field="topCatId" list="topicCategoryList" valueField="topCatId" labelField="label" readonly="${model.modeReadOnly}"/>
+				<vu:select object="topic" field="topCatId" list="topicCategoryList" label="#{topic.category}" valueField="topCatId" labelField="label" readonly="${model.modeReadOnly}"/>
 				<vu:include-data object="topic" field="description" />
 				<vu:text-area object="topic" field="description" readonly="${model.modeReadOnly}"/>
 			</vu:block>
