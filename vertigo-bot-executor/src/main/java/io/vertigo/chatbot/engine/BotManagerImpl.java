@@ -24,7 +24,7 @@ public final class BotManagerImpl implements BotManager {
 	private final NluManager nluManager;
 	private final CodecManager codecManager;
 
-	private Map<String, TopicDefinition> topicDefinitionMap; // immutable map of topics
+	private final Map<String, TopicDefinition> topicDefinitionMap; // immutable map of topics
 
 	@Inject
 	public BotManagerImpl(
