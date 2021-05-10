@@ -7,7 +7,7 @@
 	>
 	
 	<head>
-		<title>Category detail</title>
+		<title th:text="#{topicCategory.title}"></title>
 	</head>
 	
 	<body>
@@ -22,7 +22,7 @@
 				
 		<section layout:fragment="content">
 			
-			<vu:popup object="topicCategory" action="_delete" vModel="showPopup"></vu:popup>
+			<vu:popup action="_delete" vModel="showPopup" message="#{topicCategory.popup.message}" confirm="#{action.confirm}"></vu:popup>
 
 			<vu:block id="detail" title="Informations">
 				<vu:text-field object="topicCategory" field="label" />

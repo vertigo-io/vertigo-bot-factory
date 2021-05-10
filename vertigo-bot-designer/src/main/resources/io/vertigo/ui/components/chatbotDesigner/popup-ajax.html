@@ -1,0 +1,22 @@
+
+<th:block th:fragment="popup-ajax(color,vModel,confirm,action, dataName, message, successAction)"
+			th:assert="${vModel} != null and ${action} != null and ${message} != null and confirm != null"
+			th:with="objectKey=${model.vContext['componentStates'].addComponentState(vModel)},colorSet=${color != null? $color : 'red'},hasDataName=${dataName != null? 'true' : 'false'}
+					">
+	<th:block th:if="${hasDataName}" 
+				th:attr="dataObject=${model.vContext['componentStates'].addComponentState(dataName)}" th:remove="all"/>
+
+	<q-dialog th:v-model="|componentStates.${vModel}|" persistent>
+		<q-card>
+				<q-card-section class="row items-center">
+					<span  class="q-ml-sm" th:utext="${message}"></span>
+				</q-card-section>
+				<q-card-actions align="right">
+					<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
+					<q-btn th:v-if="${successAction !=null }" flat th:title="${confirm}" th:label="${confirm}" th:aria-label="${confirm}" color="primary" th:v-on:click="|httpPostAjax('${action}', {'${dataName}' : componentStates.${dataName}}, {onSuccess: ${successAction}});|" v-close-popup></q-btn>
+					<q-btn v-else flat th:title="${confirm}" th:label="${confirm}" th:aria-label="${confirm}"  th:color="${colorSet}"  th:v-on:click="|httpPostAjax('${action}', {'${dataName}' : componentStates.${dataName}});|" v-close-popup></q-btn> 
+				</q-card-actions>
+		</q-card>
+	</q-dialog>
+
+</th:block>

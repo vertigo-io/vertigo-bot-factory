@@ -37,6 +37,8 @@ public class DesignerUserSession extends UserSession {
 
 	private Person loggedPerson;
 
+	private Locale locale;
+
 	private final List<FileInfoURI> tmpFiles = new ArrayList<>();
 
 	/**
@@ -60,7 +62,11 @@ public class DesignerUserSession extends UserSession {
 	/** {@inheritDoc} */
 	@Override
 	public Locale getLocale() {
-		return Locale.FRANCE;
+		return locale;
+	}
+
+	public void setLocale(final Locale locale) {
+		this.locale = locale;
 	}
 
 	/** {@inheritDoc} */

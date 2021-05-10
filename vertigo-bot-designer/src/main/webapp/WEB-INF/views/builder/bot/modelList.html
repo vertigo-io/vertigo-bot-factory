@@ -7,7 +7,7 @@
 	>
 	
 	<head>
-		<title>Models</title>
+		<title th:text="#{model.title}"></title>
 		
 		<link  th:href="@{/static/chatbot/chatbot.css}" rel="stylesheet"/>
 		<script th:src="@{/static/chatbot/v-chatbot-dev.js}"></script>
@@ -182,17 +182,17 @@
 	
 	<body>
 		<section layout:fragment="content-nav">
-			<q-item tag="a" href="#run">Node state</q-item>
-			<q-item tag="a" href="#load">Manage models</q-item>
-			<q-item tag="a" href="#train">Training</q-item>
+			<q-item tag="a" href="#run" th:text="#{model.menu.node.state}"></q-item>
+			<q-item tag="a" href="#load" th:text="#{model.menu.model}"></q-item>
+			<q-item tag="a" href="#train"  th:text="#{model.menu.training}"></q-item>
 		</section>
 		
 		<section layout:fragment="content">
 			
 			 
-			<vu:block id="train" title="Build new model">
+			<vu:block id="train" th:title="#{model.model.title}">
 				<vu:slot name="actions_slot">
-					<q-btn class="fab-block" round color="primary" icon="refresh" aria-label="Refresh" title="Refresh" 
+					<q-btn class="fab-block" round color="primary" icon="refresh" th:aria-label="#{action.refresh}" th:title="#{action.refresh}" 
 					       @click="refreshTraining" :loading="dataX.loadingTraining"></q-btn>
 				</vu:slot>
 				
@@ -201,7 +201,7 @@
 				<vu:include-data object="trainerState" field="duration"/>
 				<vu:include-data object="trainerState" field="trainingPercent" />
 				
-				<vu:text-field-read-reactive object="trainerState" field="trainingState" label="State" />
+				<vu:text-field-read-reactive object="trainerState" field="trainingState" th:label="#{model.state}" />
 				
 				<q-linear-progress :class="vueData.trainerState.trainingInProgress ? '':'invisible'"
 						stripe rounded style="height: 10px"
@@ -210,22 +210,21 @@
 				<q-card-actions th:if="${model.userAuthorizations[AtzChatbot$botContributor]}">
 					<vu:include-data object="trainerState" field="trainingInProgress" />
 					
-					<q-btn color="primary" icon="build" size="lg" label="Start build" :loading="vueData.trainerState.trainingInProgress" :disable="getDevNode() == null || vueData.trainerState.trainingInProgress"
+					<q-btn color="primary" icon="build" size="lg" th:label="#{action.refresh}" :loading="vueData.trainerState.trainingInProgress" :disable="getDevNode() == null || vueData.trainerState.trainingInProgress"
 							@click="httpPostAjax('_train', {}, {onSuccess: postTrain})" style="width: 200px">
-						<span slot="loading">
+						<span slot="loading" th:text="#{action.build.start}">
 							<q-spinner-gears class="on-left"></q-spinner-gears>
-							Start build
 						</span>
 					</q-btn>
 					
-					<q-btn color="red" icon="warning" size="lg" label="Stop build" v-if="vueData.trainerState.trainingInProgress"
+					<q-btn color="red" icon="warning" size="lg" th:label="#{action.build.start}" v-if="vueData.trainerState.trainingInProgress"
 							@click="httpPostAjax('_stop', {}, {onSuccess: refreshModels})"></q-btn>
 				</q-card-actions>
 				
 				<q-card-separator></q-card-separator>
 				
 				<q-list bordered class="rounded-borders">
-					<q-expansion-item label="Details" icon="details">
+					<q-expansion-item th:label="#{model.detail}" icon="details">
 						<q-card>
 	          				<q-card-section>
 								<vu:label object="trainerState" field="startTime">
@@ -239,7 +238,7 @@
 								<vu:label object="trainerState" field="latestTrainingLog">
 									<vu:include-data-primitive key="autoscroll" />
 									<div class="col">
-										<q-toggle label="Auto scroll logs" v-model="vueData.autoscroll" ></q-toggle>
+										<q-toggle th:label="#{model.scroll}" v-model="vueData.autoscroll" ></q-toggle>
 										
 										<pre id="log" style="max-height:300px; overflow:auto">{{vueData.trainerState.latestTrainingLog}}</pre>
 									</div>
@@ -251,16 +250,16 @@
 			</vu:block>
 			
 			 
-			<vu:table id="load" list="trainingList" title="Manage models" :dense="|$q.screen.lt.lg|" componentId="trainingList" rowsPerPage="10" autoColClass >
+			<vu:table id="load" list="trainingList" th:title="#{model.manage}" :dense="|$q.screen.lt.lg|" componentId="trainingList" rowsPerPage="10" autoColClass >
 				<vu:slot name="top_right_slot">
-					<q-btn class="fab-block" round color="primary" icon="refresh" aria-label="Refresh" title="Refresh" 
+					<q-btn class="fab-block" round color="primary" icon="refresh" th:aria-label="#{action.refresh}" th:title="#{action.refresh}"
 					       @click="refreshModels" :loading="dataX.loadingModels"></q-btn>
 				</vu:slot>
 				<vu:slot name="actions_slot">
-					<q-btn class="on-right" round color="primary" icon="cloud_upload" aria-label="Deploy this model on..." title="Deploy this model on..."
+					<q-btn class="on-right" round color="primary" icon="cloud_upload" th:aria-label="#{node.deployment.action.on}" th:title="#{node.deployment.action.on}"
 							th:if="${model.userAuthorizations[AtzChatbot$botContributor]} and |props.row.status == 'OK'|"
 							@click="showTrainingPopin(props.row)"></q-btn>
-					<q-btn class="on-right" round color="red" icon="delete" aria-label="Delete this model" title="Delete this model"
+					<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{node.deployment.delete}" th:title="#{node.deployment.delete}"
 					 		th:if="${model.userAuthorizations[AtzChatbot$botContributor]} and |props.row.status != 'TRAINING'|"
 							@click="deleteTraining(props.row)"></q-btn>
 				</vu:slot>
@@ -274,8 +273,8 @@
 					<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="props.row.status == 'TRAINING'"></q-spinner-gears>
 				</vu:column>
 				<vu:column field="versionNumber" class="col_Small"/>
-				<vu:column field="startTime" label="Start" />
-				<vu:column field="duration" class="col_Small" label="Time" >
+				<vu:column field="startTime" th:label="#{node.deployment.start}" />
+				<vu:column field="duration" class="col_Small" th:label="#{node.deployment.time}" >
 					<vu:content v-if="props.row.endTime">
 						{{ props.row.duration }}
 						<q-tooltip content-style="font-size: 13px"
@@ -301,7 +300,7 @@
 							round icon="warning" color="orange" class="on-right"
 							@click="dataX.modalLog.col = 'warnings'; dataX.modalLog.row = props.row; dataX.modalLog.show = true"></q-btn>
 				</vu:column>
-				<vu:column name="node" label="Deployed on">
+				<vu:column name="node" th:label="#{node.deployment.action.already}">
 					<vu:include-data object="nodeList" field="nodId" />
 					<vu:include-data object="nodeList" field="traId" />
 					<vu:include-data object="nodeList" field="name" />
@@ -338,7 +337,7 @@
 					</q-card-section>
 					
 					<q-card-section>
-						<p>Select deployment node :</p>
+						<p th:text="#{model.deployment.title}"></p>
 
 						<q-chip v-for="node in vueData.nodeList" clickable :selected="isSelected(node)" @update:selected="state => selectNode(node, state)"
 							    icon="panorama_fish_eye" :style="'background: '+ node.color" text-color="white">
@@ -348,13 +347,13 @@
 					</q-card-section>
 					
 					<q-card-section>
-						<div v-if="!dataX.loadModel.selectedNode" class="text-italic">Please select a deployment node</div>
+						<div v-if="!dataX.loadModel.selectedNode" class="text-italic" th:text=#{model.deployment.phrase}></div>
 						<div v-if="dataX.loadModel.selectedNode">Deploy <span v-html="getMigrationAdjective()"></span> model on node <span class="text-italic" :style="'color: '+ dataX.loadModel.selectedNode.color">"{{dataX.loadModel.selectedNode.name}}"</span></div>
 					</q-card-section>
 					
 					<q-card-actions align="around">
-						<q-btn label="Cancel" color="red" v-close-popup></q-btn>
-						<q-btn label="Load" color="green" :disable="!dataX.loadModel.selectedNode" :loading="dataX.loadModel.processing" @click="loadTraining()" ></q-btn>
+						<q-btn th:label="#{model.deployment.title}" color="red" v-close-popup></q-btn>
+						<q-btn th:label="#{action.laod}" color="green" :disable="!dataX.loadModel.selectedNode" :loading="dataX.loadModel.processing" @click="loadTraining()" ></q-btn>
 					</q-card-actions>
 				</q-card>
 			</q-dialog>

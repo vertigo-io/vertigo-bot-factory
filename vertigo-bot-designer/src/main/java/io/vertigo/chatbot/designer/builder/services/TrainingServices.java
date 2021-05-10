@@ -130,7 +130,7 @@ public class TrainingServices implements Component {
 
 		final Map<String, Object> requestData = Map.of(
 				//"botExport", exportBot(bot),
-				"smallTalkExport", exportSmallTalk(bot),
+				//"smallTalkExport", exportSmallTalk(bot),
 				"trainingId", training.getTraId(),
 				"modelId", versionNumber,
 				"nluThreshold", training.getNluThreshold());

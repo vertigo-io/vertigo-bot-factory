@@ -8,7 +8,7 @@ mdaConfig:
   targetGenDir : src/main/
   properties: 
     vertigo.domain.java: true
-    vertigo.domain.java.generateDtResources: false
+    vertigo.domain.java.generateDtResources: true
     vertigo.domain.sql: true
     vertigo.domain.sql.targetSubDir: javagen/sqlgen
     vertigo.domain.sql.baseCible: Postgres

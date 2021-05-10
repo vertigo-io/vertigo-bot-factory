@@ -16,6 +16,7 @@ public final class ResponseType implements DtStaticMasterData {
 
 	private String rtyId;
 	private String label;
+	private String labelFr;
 	private Long sortOrder;
 
 	/** {@inheritDoc} */
@@ -61,6 +62,25 @@ public final class ResponseType implements DtStaticMasterData {
 	 */
 	public void setLabel(final String label) {
 		this.label = label;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'TitleFR'.
+	 * @return String labelFr <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "TitleFR")
+	public String getLabelFr() {
+		return labelFr;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'TitleFR'.
+	 * @param labelFr String <b>Obligatoire</b>
+	 */
+	public void setLabelFr(final String labelFr) {
+		this.labelFr = labelFr;
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 mda/modele.ksp
 mda/person.ksp
 mda/chatbot/chatbotModel.ksp
-
+mda/commonModel.ksp
 admin/person.ksp

@@ -75,11 +75,11 @@
 					<q-toggle v-model="vueData.topic.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
 				</vu:label>
 				
-				<vu:select object="topic" field="topCatId" list="topicCategoryList" valueField="topCatId" labelField="label" readonly="${model.modeReadOnly}"/>
+				<vu:select object="topic" field="topCatId" list="topicCategoryList" label="#{topic.category}" valueField="topCatId" labelField="label" readonly="${model.modeReadOnly}"/>
 				<vu:include-data object="topic" field="description" />
 				<vu:text-area object="topic" field="description" readonly="${model.modeReadOnly}"/>
 			</vu:block>
-			<vu:block id="training" title="Training phrases">
+			<vu:block id="training" th:title="#{topic.menu.training}">
 				<vu:slot name="actions_slot">
 					<q-input v-model="componentStates.nluTrainingSentences.pagination.search" dense clearable 
 	      				type="search" placeholder="Filter"
@@ -97,7 +97,7 @@
 				<div th:if="${!model.modeReadOnly}">
 					<q-input v-model="vueData.newNluTrainingSentence" dense class="q-pb-sm"
 					    @keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) {httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence}); componentStates.nluTrainingSentences.pagination.page = 1; componentStates.nluTrainingSentences.pagination.search = '';}"
-						placeholder="Add training sentence"
+						th:placeholder="#{topic.training.add }"
 						name="vContext['newNluTrainingSentence']"
 						:before="[{icon: 'format_quote'}]"
 						>

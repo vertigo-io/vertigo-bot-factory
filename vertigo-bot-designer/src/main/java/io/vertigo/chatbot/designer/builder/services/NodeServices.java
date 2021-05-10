@@ -74,7 +74,7 @@ public class NodeServices implements Component {
 		chatbotNodeDAO.save(node);
 	}
 
-	@Secured("SuperAdmin")
+	@Secured("SuperAdm")
 	public void deleteNode(final Long nodId) {
 		chatbotNodeDAO.delete(nodId);
 	}

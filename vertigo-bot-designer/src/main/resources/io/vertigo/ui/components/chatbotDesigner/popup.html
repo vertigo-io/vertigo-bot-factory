@@ -1,21 +1,23 @@
 
-<th:block th:fragment="popup(color,vModel,object,confirm,action)"
-			th:assert="${object} != null and ${vModel} != null and ${action} != null"
-			th:with="objectKey=${model.vContext['componentStates'].addComponentState(vModel)},colorSet=${color != null? $color : 'red'},
-					confirmSet=${confirm != null? $confirm : 'delete'}">
+<th:block th:fragment="popup(color,vModel,confirm,action, dataName, message)"
+			th:assert="${vModel} != null and ${action} != null and ${message} != null and confirm != null"
+			th:with="objectKey=${model.vContext['componentStates'].addComponentState(vModel)},colorSet=${color != null? $color : 'red'},hasDataName=${dataName != null? 'true' : 'false'}
+					">
 
-
+	<th:block th:if="${hasDataName}" 
+				th:attr="dataObject=${model.vContext['componentStates'].addComponentState(dataName)}" th:remove="all"/>
 
 	<q-dialog th:v-model="|componentStates.${vModel}|" persistent>
 		<q-card>
 				<q-card-section class="row items-center">
-					<span class="q-ml-sm" th:utext="|Do you want to delete this ${object}|"></span>
+					<span  class="q-ml-sm" th:utext="${message}"></span>
 				</q-card-section>
 				<q-card-actions align="right">
 				<q-form method="post" th:action="${action}">
 					<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
-					<q-btn flat label="Cancel" color="primary" v-close-popup ></q-btn>
-					<q-btn type="submit" th:title="${confirmSet}" th:label="${confirmSet}" th:aria-label="${confirmSet}" th:color="${colorSet}"></q-btn> 
+					<input th:if="${hasDataName}" type="hidden" th:name="${dataName}" th::value="|componentStates.${dataName}|">
+					<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
+					<q-btn type="submit" th:title="${confirm}" th:label="${confirm}" th:aria-label="${confirm}" th:color="${colorSet}" v-close-popup></q-btn> 
 				</q-form>
 				</q-card-actions>
 		</q-card>

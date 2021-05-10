@@ -7,28 +7,28 @@
 	>
 	
 	<head>
-		<title>Script intention detail</title>
+		<title th:text="#{script.detail.title}"></title>
 	</head>
 	
 	<body>
 		<section layout:fragment="content-header-actions">
-			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/scriptIntention/(id=${model.bot.botId})} + ${model.scriptIntention.sinId}" ariaLabel="Cancel" icon="fas fa-ban"
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/scriptIntention/(id=${model.bot.botId})} + ${model.scriptIntention.sinId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
-			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" aria-label="Delete" title="Delete" icon="delete"
+			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
 							class="on-left" round size="lg" color="red" ></q-btn>
 		</section>
 				
 		<section layout:fragment="content-nav">
-			<q-item tag="a" href="#detail">Informations</q-item>
-			<q-item tag="a" href="#training">Training phrases</q-item>
-			<q-item tag="a" href="#script">Script</q-item>
+			<q-item tag="a" href="#detail" th:text="#{script.menu.informations}"></q-item>
+			<q-item tag="a" href="#training" th:text="#{script.menu.training}"></q-item>
+			<q-item tag="a" href="#script" th:text="#{script.menu.script}"></q-item>
 			
 		</section>
 		
 		<section layout:fragment="content-specific">
-			<vu:popup object="scriptIntention" action="_delete" vModel="showPopup"></vu:popup>
+			<vu:popup action="_delete" vModel="showPopup" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
 			
 			<vu:block id="script" title="Script">
 				<vu:include-data object="scriptIntention" field="script" />	

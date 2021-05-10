@@ -1,7 +1,7 @@
 ---
 boot:
   params:
-    locales: fr_FR
+    locales: en_US,fr_FR
   plugins:
     - io.vertigo.core.plugins.resource.classpath.ClassPathResourceResolverPlugin: {}
     - io.vertigo.core.plugins.param.env.EnvParamPlugin: {}
@@ -106,3 +106,4 @@ modules:
 initializers:
   - io.vertigo.chatbot.designer.boot.DataBaseInitializer:
       __flags__: ["crebase"]
+  - io.vertigo.chatbot.designer.boot.ChatbotLocaleInitializer:

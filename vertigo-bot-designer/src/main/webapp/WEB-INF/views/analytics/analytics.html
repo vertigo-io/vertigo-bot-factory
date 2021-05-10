@@ -5,7 +5,7 @@
 	layout:decorate="~{templates/basicLayout}">
 
 <head>
-<title>Statistics</title>
+<title th:text="#{analytics.title}"></title>
 
 <script
 	src="https://cdn.jsdelivr.net/npm/apexcharts@3.6.6/dist/apexcharts.min.js"></script>
@@ -190,7 +190,7 @@
 		
 			<div class="col-xl-4 col-md-6 col-xs-12"> 
 				<q-card>
-					<q-card-section class="text-h6 bg-secondary text-white">Chatbot sessions</q-card-section>
+					<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.session}"></q-card-section>
 					<q-card-section class="row justify-center items-center">
 						<apexchart width="100%" height="250" type="area"
 							:options="dataX.apexCharts.chartSession.options"
@@ -201,7 +201,7 @@
 			
 			<div class="col-xl-4 col-md-6 col-xs-12"> 
 				<q-card>
-					<q-card-section class="text-h6 bg-secondary text-white">Chatbot messages</q-card-section>
+					<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.message}"></q-card-section>
 					<q-card-section class="row justify-center items-center">
 						<apexchart width="100%" height="250" type="line"
 							:options="dataX.apexCharts.chartMessages.options"
@@ -212,7 +212,7 @@
 
 			<template v-if="vueData.criteria.botId">
 				<div class="col-12"> 
-					<vu:table componentId="messageList" list="unknownSentenses" title="Messages not understood" rowsPerPage="10" autoColClass >
+					<vu:table componentId="messageList" list="unknownSentenses" th:title="#{analytics.message.understanding}" rowsPerPage="10" autoColClass >
 						<vu:column field="date"/>
 						<vu:column field="text"/>
 						<!-- 
@@ -229,7 +229,7 @@
 				
 				<div class="col-12"> 
 					<vu:table componentId="intentList"
-							  list="topIntents" title="Intent usage" rowsPerPage="10" autoColClass
+							  list="topIntents" th:title="#{analytics.intents.usage}"  rowsPerPage="10" autoColClass
 							  sortBy="count" descending>
 							  
 						<vu:column field="smtId" label="Intent">
@@ -237,7 +237,7 @@
 						</vu:column>
 						<vu:column field="count" class="col_Small"/>
 						<vu:column field="intentRasa" label="detail" class="col_Small">
-							<q-btn class="fab-block" round color="primary" icon="search" aria-label="Messages" title="Messages" 
+							<q-btn class="fab-block" round color="primary" icon="search" th:aria-label="#{analytics.message}"  th:title="#{analytics.message}"
 							 	@click="displayIntentDetail(props.row)"></q-btn>
 						</vu:column>
 					</vu:table>
@@ -246,7 +246,7 @@
 						<q-card style="width: 600px; height: 500px;">
 							<q-card-section>
 								<vu:table componentId="intentDetailList"
-										  list="intentDetails" title="|Received messages for '{{dataX.popinDetailLabel}}'|" rowsPerPage="10" autoColClass>
+										  list="intentDetails" title="|#{analytics.messages} '{{dataX.popinDetailLabel}}'|" rowsPerPage="10" autoColClass>
 									<vu:column field="date"/>
 									<vu:column field="text"/>
 								</vu:table>
@@ -267,8 +267,8 @@
 			         emit-value
 					 v-model="vueData.criteria.botId"
 			         :options='transformListForSelection("bots", "botId", "name")'
-			         label="Chatbot selection"
-			         @input="vueData.criteria.nodId = null; httpPostAjax('_updateStats', vueDataParams(['criteria']));"
+			         th:label="#{analytics.selection.chatbot}"
+			         @input="delete vueData.criteria.nodId; httpPostAjax('_updateStats', vueDataParams(['criteria']));"
 		         ></q-select>
 		         
 		         <q-space></q-space>
@@ -282,21 +282,17 @@
 			         emit-value
 					 v-model="vueData.criteria.nodId"
 			         :options='transformListForSelection("nodes", "nodId", "name")'
-			         label="Node selection"
+			         th:label="#{analytics.selection.node}"
 			         @input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
 		         ></q-select>
 		         
 				<q-space></q-space>
+				<vu:include-data object="timeOptions" field="'*'" />
 						
 				<q-btn-toggle
 					v-model="vueData.criteria.timeOption"
 					toggle-color="primary"
-					:options="[
-							{label: 'Day', value: 'DAY'},
-							{label: 'Week', value: 'WEEK'},
-							{label: 'Month', value: 'MONTH'},
-							{label: 'Year', value: 'YEAR'},
-						]"
+					:options='transformListForSelection("timeOptions", "value","label")'
 					@input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
 				></q-btn-toggle>
 				
