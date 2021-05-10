@@ -73,6 +73,30 @@ public final class TopicPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkGetMaxCodeByBotId.
+	 * @param botId Long
+	 * @return Long code
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetMaxCodeByBotId",
+			request = "select 	" + 
+ "				COALESCE(top.code, 0)" + 
+ "			from topic top" + 
+ "			left join topic top_min on (top.code < top_min.code and top.bot_id = top_min.bot_id)" + 
+ "			where top_min.top_id  is null and top.bot_id = #botId#" + 
+ "			limit 1",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber")
+	public Long getMaxCodeByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkGetMaxCodeByBotId")
+				.addValue("botId", botId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkGetTopicIhmById.
 	 * @param topId Long
 	 * @return TopicIhm topicIHM

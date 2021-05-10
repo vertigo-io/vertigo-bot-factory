@@ -1,0 +1,20 @@
+package io.vertigo.chatbot.designer.builder.topic.export
+
+
+create DtDefinition DtResponseButtonExport {
+	field topId 			{domain: DoId 					label: "Topic id" 					}
+	field topCode			{domain: DoId 					label: "Topic code"				 	}
+	field topCodeResponse	{domain: DoId 					label: "Topic code response"	 	}
+	field text				{domain: DoText					label: "Button text" 				}
+}
+
+create DtDefinition DtUtterTextExport {
+	field topId 			{domain: DoId 					label: "Topic id" 					}
+	field utterTexts		{domain: DoText 				label: "Utters"				 		}
+	field responseType		{domain: DoText					label: "Response type" 				}
+}
+
+create DtDefinition DtScriptIntentionExport {
+	field topId 			{domain: DoId 					label: "Topic id" 					}
+	field bt				{domain: DoText 				label: "Bt"					 		}
+}

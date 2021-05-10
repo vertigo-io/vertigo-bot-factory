@@ -47,12 +47,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ProfilPerChatbot(io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot.class),
 		/** Objet de données ResponseButton. */
 		ResponseButton(io.vertigo.chatbot.commons.domain.topic.ResponseButton.class),
+		/** Objet de données ResponseButtonExport. */
+		ResponseButtonExport(io.vertigo.chatbot.designer.builder.topic.export.ResponseButtonExport.class),
 		/** Objet de données ResponseType. */
 		ResponseType(io.vertigo.chatbot.commons.domain.topic.ResponseType.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
 		/** Objet de données ScriptIntention. */
 		ScriptIntention(io.vertigo.chatbot.commons.domain.topic.ScriptIntention.class),
+		/** Objet de données ScriptIntentionExport. */
+		ScriptIntentionExport(io.vertigo.chatbot.designer.builder.topic.export.ScriptIntentionExport.class),
 		/** Objet de données ScriptIntentionIhm. */
 		ScriptIntentionIhm(io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm.class),
 		/** Objet de données SelectProfilChatbotPerson. */
@@ -84,7 +88,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Objet de données TypeTopic. */
 		TypeTopic(io.vertigo.chatbot.commons.domain.topic.TypeTopic.class),
 		/** Objet de données UtterText. */
-		UtterText(io.vertigo.chatbot.commons.domain.topic.UtterText.class)		;
+		UtterText(io.vertigo.chatbot.commons.domain.topic.UtterText.class),
+		/** Objet de données UtterTextExport. */
+		UtterTextExport(io.vertigo.chatbot.designer.builder.topic.export.UtterTextExport.class)		;
 
 		private final Class<?> clazz;
 
@@ -235,8 +241,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de NluTrainingExport.
 	 */
 	public enum NluTrainingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.NluTrainingExport> {
-		/** Propriété 'smt ID'. */
-		smtId,
+		/** Propriété 'topId'. */
+		topId,
 		/** Propriété 'nlu ID'. */
 		ntsId,
 		/** Propriété 'Text'. */
@@ -323,6 +329,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botIdDefault	}
 
 	/**
+	 * Enumération des champs de ResponseButtonExport.
+	 */
+	public enum ResponseButtonExportFields implements DtFieldName<io.vertigo.chatbot.designer.builder.topic.export.ResponseButtonExport> {
+		/** Propriété 'Topic id'. */
+		topId,
+		/** Propriété 'Topic code'. */
+		topCode,
+		/** Propriété 'Topic code response'. */
+		topCodeResponse,
+		/** Propriété 'Button text'. */
+		text	}
+
+	/**
 	 * Enumération des champs de ResponseType.
 	 */
 	public enum ResponseTypeFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.ResponseType> {
@@ -358,6 +377,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		script,
 		/** Propriété 'Topic'. */
 		topId	}
+
+	/**
+	 * Enumération des champs de ScriptIntentionExport.
+	 */
+	public enum ScriptIntentionExportFields implements DtFieldName<io.vertigo.chatbot.designer.builder.topic.export.ScriptIntentionExport> {
+		/** Propriété 'Topic id'. */
+		topId,
+		/** Propriété 'Bt'. */
+		bt	}
 
 	/**
 	 * Enumération des champs de ScriptIntentionIhm.
@@ -467,6 +495,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		description,
 		/** Propriété 'Enabled'. */
 		isEnabled,
+		/** Propriété 'Code'. */
+		code,
 		/** Propriété 'Type du topic'. */
 		ttoCd,
 		/** Propriété 'Chatbot'. */
@@ -592,6 +622,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		text,
 		/** Propriété 'SmallTalk'. */
 		smtId	}
+
+	/**
+	 * Enumération des champs de UtterTextExport.
+	 */
+	public enum UtterTextExportFields implements DtFieldName<io.vertigo.chatbot.designer.builder.topic.export.UtterTextExport> {
+		/** Propriété 'Topic id'. */
+		topId,
+		/** Propriété 'Utters'. */
+		utterTexts,
+		/** Propriété 'Response type'. */
+		responseType	}
 
 	/** {@inheritDoc} */
 	@Override

@@ -1,0 +1,89 @@
+package io.vertigo.chatbot.designer.builder.topic.export
+
+
+create Task TkExportSmallTalkRelativeTrainingSentence{  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				select   
+             	nts.nts_id,  
+             	nts.text,  
+             	top.top_id
+ 			from nlu_training_sentence nts  
+ 			join topic top on (top.top_id = nts.top_id)  
+ 			join small_talk smt on (smt.top_id = top.top_id)  
+ 			where top.bot_id = #botId#  
+ 			and top.is_enabled = true
+ 			"
+	in botId				{domain : DoId,						cardinality:"1"} 
+	out tpcs 				{domain : DoDtNluTrainingExport		cardinality:"*"}
+} 
+
+create Task TkExportScriptIntentionRelativeTrainingSentence{  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				select   
+             	nts.nts_id,  
+             	nts.text,  
+             	smt.smt_id  
+ 			from nlu_training_sentence nts  
+ 			join topic top on (top.top_id = nts.top_id)  
+ 			join script_intention sin on (sin.top_id = top.top_id)  
+ 			where top.bot_id = #botId#  
+ 			and top.is_enabled = true
+ 			"
+	in botId				{domain : DoId,						cardinality:"1"} 
+	out tpcs 				{domain : DoDtNluTrainingExport		cardinality:"*"}
+} 
+
+create Task TkExportResponseButtonByBotId{  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				select   
+             	top.top_id,
+             	top.code as top_code,
+             	top_response.code as top_code_response,  
+             	rbu.text  
+ 			from response_button rbu
+ 			join small_talk smt on (smt.smt_id = rbu.smt_id)  
+ 			join topic top on (top.top_id = smt.top_id)
+ 			join topic top_response on (top_response.top_id = rbu.top_id_response)  
+ 			where top.bot_id = #botId#  
+ 			and top.is_enabled = true
+ 			"
+	in botId				{domain : DoId,							cardinality:"1"} 
+	out rbes 				{domain : DoDtResponseButtonExport		cardinality:"*"}
+}
+
+create Task TkExportUtterTextByBotId{  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				select   
+             	top.top_id,  
+             	STRING_AGG (ut.text, '|') as utter_texts,  
+             	rty.rty_id as response_type
+ 			from utter_text ut
+ 			join small_talk smt on (smt.smt_id = ut.smt_id)  
+ 			join response_type rty on (rty.rty_id = smt.rty_id)
+ 			join topic top on (top.top_id = smt.top_id)  
+ 			where top.bot_id = #botId# 
+ 			and top.is_enabled = true
+ 			group by top.top_id, rty.rty_id 
+ 			"
+	in botId				{domain : DoId,							cardinality:"1"} 
+	out rbes 				{domain : DoDtUtterTextExport			cardinality:"*"}
+}
+
+create Task TkGetScriptIntentionExportByBotId{  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				select   
+             	top.top_id,  
+             	sci.script as bt
+ 			from topic topic
+ 			join script_intention sci on (sci.top_id = top.top_id)  
+ 			where top.bot_id = #botId# 
+ 			and top.is_enabled = true
+ 			"
+	in botId				{domain : DoId,								cardinality:"1"} 
+	out rbes 				{domain : DoDtScriptIntentionExport			cardinality:"*"}
+}

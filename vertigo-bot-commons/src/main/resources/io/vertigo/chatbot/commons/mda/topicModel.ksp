@@ -31,6 +31,7 @@ create DtDefinition DtTopic{
 	field 	title 			{domain: DoLabel 	label: "Title" 			cardinality : "1"}
 	field 	description		{domain: DoLabel 	label: "Description" 	}
 	field 	isEnabled 		{domain: DoYesNo 	label: "Enabled" 		cardinality : "1"}
+	field 	code	 		{domain: DoNumber 	label: "Code" 			cardinality : "1"}
 }
 
 create DtDefinition DtSmallTalk {
@@ -240,7 +241,7 @@ create DtDefinition DtSmallTalkIhm {
 }
 
 create DtDefinition DtNluTrainingExport {
-	field smtId		{domain: DoId 		label: "smt ID"}
+	field topId		{domain: DoId 		label: "topId"}
 	field ntsId 	{domain: DoId 		label: "nlu ID"}
 	field text 		{domain: DoLabel 	label: "Text" cardinality : "1"}
 }

@@ -2,4 +2,6 @@ mda/modele.ksp
 mda/person.ksp
 mda/chatbot/chatbotModel.ksp
 mda/commonModel.ksp
+mda/chatbot/exportModel.ksp
+
 admin/person.ksp

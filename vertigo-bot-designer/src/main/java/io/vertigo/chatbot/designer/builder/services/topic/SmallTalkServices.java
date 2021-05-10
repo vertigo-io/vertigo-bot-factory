@@ -1,14 +1,11 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.SmallTalkDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.SmallTalkExport;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
@@ -94,23 +91,6 @@ public class SmallTalkServices implements Component {
 		smallTalkDAO.delete(smallTalk.getUID());
 
 		topicServices.deleteTopic(chatbot, topic);
-	}
-
-	public DtList<SmallTalkExport> exportSmallTalks(@SecuredOperation("botContributor") final Chatbot bot, final DtList<SmallTalk> smallTalks,
-			final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap,
-			final Map<Long, DtList<UtterText>> utterTextsMap,
-			final Map<Long, DtList<ResponseButton>> buttonsMap) {
-		final DtList<SmallTalkExport> retour = new DtList<>(SmallTalkExport.class);
-		for (final SmallTalk smallTalk : smallTalks) {
-			final SmallTalkExport newExport = new SmallTalkExport();
-			newExport.setSmallTalk(smallTalk);
-			newExport.setNluTrainingSentences(trainingSentencesMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(NluTrainingSentence.class)));
-			newExport.setUtterTexts(utterTextsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(UtterText.class)));
-			newExport.setButtons(buttonsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(ResponseButton.class)));
-
-			retour.add(newExport);
-		}
-		return retour;
 	}
 
 	public void removeAllSmallTalkFromBot(@SecuredOperation("botAdm") final Chatbot bot) {

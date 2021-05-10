@@ -20,5 +20,7 @@
 		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_30.sql" />	
 	</changeSet>
 	
-	
+	<changeSet author="vbaillet" id="add code to topics">
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_30-2.sql" />	
+	</changeSet>
 </databaseChangeLog>

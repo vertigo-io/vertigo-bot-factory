@@ -12,9 +12,9 @@ public enum DtResources implements MessageKey {
 	/** NluTrainingExport.
 	/***********************************************************
 	/**
-	 * smt ID.
+	 * topId.
 	 */
-	fldNluTrainingExport$smtId,
+	fldNluTrainingExport$topId,
 	/**
 	 * nlu ID.
 	 */
@@ -183,6 +183,10 @@ public enum DtResources implements MessageKey {
 	 * Enabled.
 	 */
 	fldTopic$isEnabled,
+	/**
+	 * Code.
+	 */
+	fldTopic$code,
 	/**
 	 * Type du topic.
 	 */

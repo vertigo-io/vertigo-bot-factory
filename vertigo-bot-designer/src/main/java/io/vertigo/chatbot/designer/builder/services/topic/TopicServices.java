@@ -43,18 +43,30 @@ public class TopicServices implements Component {
 	}
 
 	public Topic save(final Topic topic) {
+		//create code for export
+		generateAndSetCode(topic);
 		return topicDAO.save(topic);
 	}
 
 	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences,
 			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
+		//create code for export
+		generateAndSetCode(topic);
 		// save and remove NTS
 		final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences);
 		removeNTS(nluTrainingSentencesToDelete);
 		topic.setIsEnabled(!ntsToSave.isEmpty() || isEnabled);
 
 		return topicDAO.save(topic);
+	}
+
+	private Topic generateAndSetCode(final Topic topic) {
+		final Long code = topicPAO.getMaxCodeByBotId(topic.getBotId());
+		if (topic.getCode() == null) {
+			topic.setCode(code + 1);
+		}
+		return topic;
 	}
 
 	public Topic createTopic(@SecuredOperation("botContributor") final Topic topic) {
@@ -104,6 +116,14 @@ public class TopicServices implements Component {
 
 	public DtList<Topic> getTopicFromTopicCategory(final TopicCategory category) {
 		return topicDAO.getAllTopicFromCategory(category.getTopCatId());
+	}
+
+	public DtList<Topic> getAllTopicRelativeSmallTalkByBot(final Chatbot bot) {
+		return topicDAO.getAllTopicRelativeSmallTalkByBotId(bot.getBotId());
+	}
+
+	public DtList<Topic> getAllTopicRelativeScriptIntentionByBot(final Chatbot bot) {
+		return topicDAO.getAllTopicRelativeScriptIntentByBotId(bot.getBotId());
 	}
 
 	//********* NTS part ********/
