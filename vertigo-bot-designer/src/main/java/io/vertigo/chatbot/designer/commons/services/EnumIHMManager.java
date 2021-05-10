@@ -18,7 +18,7 @@ public class EnumIHMManager implements Component {
 
 	public DtList<SelectionOption> getSelectionOptions(final IHMEnum[] values) {
 		final Locale locale = localeManager.getCurrentLocale();
-		final DtList<SelectionOption> result = new DtList<SelectionOption>(SelectionOption.class);
+		final DtList<SelectionOption> result = new DtList<>(SelectionOption.class);
 
 		for (final IHMEnum value : values) {
 			final SelectionOption option = new SelectionOption();

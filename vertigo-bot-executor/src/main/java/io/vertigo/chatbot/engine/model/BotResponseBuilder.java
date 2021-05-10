@@ -29,7 +29,7 @@ import io.vertigo.core.lang.Builder;
 
 public final class BotResponseBuilder implements Builder<BotResponse> {
 	private final List<String> htmlTexts;
-	private final List<IBotChoice> choices;
+	private final List<IBotChoice> botChoices;
 	private final Map<String, Object> metadatas;
 	private final BotStatus status;
 
@@ -38,7 +38,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 				.isNotNull(status);
 		//--
 		htmlTexts = new ArrayList<>();
-		choices = new ArrayList<>();
+		botChoices = new ArrayList<>();
 		metadatas = new HashMap<>();
 		this.status = status;
 	}
@@ -63,7 +63,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 		Assertion.check()
 				.isNotNull(choice);
 		//-----
-		choices.add(choice);
+		botChoices.add(choice);
 		return this;
 	}
 
@@ -95,7 +95,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 
 	@Override
 	public BotResponse build() {
-		return new BotResponse(htmlTexts, choices, metadatas, status);
+		return new BotResponse(htmlTexts, botChoices, metadatas, status);
 	}
 
 }
