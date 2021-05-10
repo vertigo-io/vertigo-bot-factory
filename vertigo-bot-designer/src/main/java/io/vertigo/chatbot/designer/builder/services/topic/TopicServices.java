@@ -43,6 +43,8 @@ public class TopicServices implements Component {
 	}
 
 	public Topic save(final Topic topic) {
+		//create code for export
+		generateAndSetCode(topic);
 		return topicDAO.save(topic);
 	}
 
@@ -50,9 +52,7 @@ public class TopicServices implements Component {
 			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
 		//create code for export
-		if (topic.getCode() == null) {
-			topic.setCode(getMaxCodeByBotId(topic.getBotId()) + 1);
-		}
+		generateAndSetCode(topic);
 		// save and remove NTS
 		final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences);
 		removeNTS(nluTrainingSentencesToDelete);
@@ -61,8 +61,12 @@ public class TopicServices implements Component {
 		return topicDAO.save(topic);
 	}
 
-	private Long getMaxCodeByBotId(final Long botId) {
-		return topicPAO.getMaxCodeByBotId(botId);
+	private Topic generateAndSetCode(final Topic topic) {
+		final Long code = topicPAO.getMaxCodeByBotId(topic.getBotId());
+		if (topic.getCode() == null) {
+			topic.setCode(code + 1);
+		}
+		return topic;
 	}
 
 	public Topic createTopic(@SecuredOperation("botContributor") final Topic topic) {

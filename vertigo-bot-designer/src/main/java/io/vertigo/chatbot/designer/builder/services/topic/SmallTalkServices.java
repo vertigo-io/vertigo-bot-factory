@@ -93,23 +93,6 @@ public class SmallTalkServices implements Component {
 		topicServices.deleteTopic(chatbot, topic);
 	}
 
-	/*	public DtList<SmallTalkExport> exportSmallTalks(@SecuredOperation("botContributor") final Chatbot bot, final DtList<SmallTalk> smallTalks,
-				final Map<Long, DtList<NluTrainingSentence>> trainingSentencesMap,
-				final Map<Long, DtList<UtterText>> utterTextsMap,
-				final Map<Long, DtList<ResponseButton>> buttonsMap) {
-			final DtList<SmallTalkExport> retour = new DtList<>(SmallTalkExport.class);
-			for (final SmallTalk smallTalk : smallTalks) {
-				final SmallTalkExport newExport = new SmallTalkExport();
-				newExport.setSmallTalk(smallTalk);
-				newExport.setNluTrainingSentences(trainingSentencesMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(NluTrainingSentence.class)));
-				newExport.setUtterTexts(utterTextsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(UtterText.class)));
-				newExport.setButtons(buttonsMap.getOrDefault(smallTalk.getSmtId(), new DtList<>(ResponseButton.class)));
-
-				retour.add(newExport);
-			}
-			return retour;
-		}*/
-
 	public void removeAllSmallTalkFromBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		smallTalkPAO.removeAllSmallTalkByBotId(bot.getBotId());
 	}

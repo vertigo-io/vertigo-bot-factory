@@ -19,7 +19,10 @@ public class TopicsExportUtils {
 		final DtList<TopicExport> exports = new DtList<TopicExport>(TopicExport.class);
 		for (final Topic topic : topics) {
 			final Long topId = topic.getTopId();
-			final List<String> topicNlu = nlus.stream().filter(x -> x.getTopId().equals(topId)).map(x -> x.getText()).collect(Collectors.toList());
+			final List<String> topicNlu = nlus.stream()
+					.filter(x -> x.getTopId().equals(topId))
+					.map(x -> x.getText())
+					.collect(Collectors.toList());
 			final TopicExport export = new TopicExport();
 			export.setName(prefix + topId);
 			export.setNluTrainingSentences(topicNlu);

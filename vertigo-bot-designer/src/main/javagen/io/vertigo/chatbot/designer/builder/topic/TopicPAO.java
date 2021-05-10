@@ -80,7 +80,7 @@ public final class TopicPAO implements StoreServices {
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetMaxCodeByBotId",
 			request = "select 	" + 
- "				top.code" + 
+ "				COALESCE(top.code, 0)" + 
  "			from topic top" + 
  "			left join topic top_min on (top.code < top_min.code and top.bot_id = top_min.bot_id)" + 
  "			where top_min.top_id  is null and top.bot_id = #botId#" + 

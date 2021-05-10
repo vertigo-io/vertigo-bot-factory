@@ -25,7 +25,7 @@ public class BtBuilderUtils {
 	 *
 	 */
 	public static void createButton(final String text, final List<ResponseButtonExport> responses, final StringBuilder bt) {
-		final String bb = getResponseBB(responses.get(0).getTopCode());
+		final String bb = String.format("user/local/topic/%s/responseButton", responses.get(0).getTopCode());
 		bt.append("choose:button:nlu ");
 		bt.append(bb);
 		addQuote(bt);
@@ -48,15 +48,6 @@ public class BtBuilderUtils {
 		bt.append(bb);
 		bt.append(CLOSE_BRACKET);
 		addLineBreak(bt);
-	}
-
-	//Get topic/<topCode>/responseButton
-	private static String getResponseBB(final Long topCode) {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("topic/");
-		builder.append(topCode);
-		builder.append("/responseButton ");
-		return builder.toString();
 	}
 
 	/*
@@ -84,7 +75,7 @@ public class BtBuilderUtils {
 		addSpaceQuote(bt);
 		//Only one utter text
 		bt.append(splitUtter[0]);
-		addSpaceQuote(bt);
+		addQuote(bt);
 		addLineBreak(bt);
 	}
 
@@ -117,7 +108,8 @@ public class BtBuilderUtils {
 	}
 
 	public static void addSpaceQuote(final StringBuilder bt) {
-		bt.append(SPACE + QUOTE);
+		bt.append(SPACE);
+		bt.append(QUOTE);
 	}
 
 }
