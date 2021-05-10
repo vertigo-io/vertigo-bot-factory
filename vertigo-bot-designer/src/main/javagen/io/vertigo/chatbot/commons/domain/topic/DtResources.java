@@ -56,9 +56,9 @@ public enum DtResources implements MessageKey {
 	 */
 	fldResponseButton$smtId,
 	/**
-	 * SmallTalkResponse.
+	 * TopicResponse.
 	 */
-	fldResponseButton$smtIdResponse,
+	fldResponseButton$topIdResponse,
 	/**
 	 * welcome buttons.
 	 */
