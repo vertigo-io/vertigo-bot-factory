@@ -75,7 +75,7 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
 			request = "select top.*" + 
  "			from topic top" + 
  "			join script_intention sin on (sin.top_id = top.top_id)" + 
- "			where top.bot_id = #botId#",
+ "			where top.bot_id = #botId# and top.is_enabled = true",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getAllTopicRelativeScriptIntentByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
@@ -97,7 +97,7 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
 			request = "select top.*" + 
  "			from topic top" + 
  "			join small_talk smt on (smt.top_id = top.top_id)" + 
- "			where top.bot_id = #botId#",
+ "			where top.bot_id = #botId# and top.is_enabled = true",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getAllTopicRelativeSmallTalkByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
