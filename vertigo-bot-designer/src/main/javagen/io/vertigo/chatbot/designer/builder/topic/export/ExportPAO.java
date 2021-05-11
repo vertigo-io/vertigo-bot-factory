@@ -79,7 +79,7 @@ public final class ExportPAO implements StoreServices {
 			request = "select   " + 
  "             	nts.nts_id,  " + 
  "             	nts.text,  " + 
- "             	smt.smt_id  " + 
+ "             	sin.top_id  " + 
  " 			from nlu_training_sentence nts  " + 
  " 			join topic top on (top.top_id = nts.top_id)  " + 
  " 			join script_intention sin on (sin.top_id = top.top_id)  " + 
@@ -162,7 +162,7 @@ public final class ExportPAO implements StoreServices {
 			request = "select   " + 
  "             	top.top_id,  " + 
  "             	sci.script as bt" + 
- " 			from topic topic" + 
+ " 			from topic top" + 
  " 			join script_intention sci on (sci.top_id = top.top_id)  " + 
  " 			where top.bot_id = #botId# " + 
  " 			and top.is_enabled = true",
