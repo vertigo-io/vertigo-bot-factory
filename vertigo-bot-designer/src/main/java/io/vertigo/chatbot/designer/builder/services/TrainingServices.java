@@ -100,25 +100,18 @@ public class TrainingServices implements Component {
 		final Long botId = bot.getBotId();
 		trainingPAO.cleanOldTrainings(botId);
 
-		final Long versionNumber = trainingPAO.getNextModelNumber(botId);
-
 		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(botId)
 				.orElseThrow(() -> new VUserException("No training node configured"));
 
-		final Training training = new Training();
-		training.setBotId(botId);
-		training.setStartTime(Instant.now());
-		training.setStatus("TRAINING");
-		training.setVersionNumber(versionNumber);
-		training.setNluThreshold(BigDecimal.valueOf(0.6));
-
+		//Set training
+		final Training training = createTraining(bot);
 		saveTraining(bot, training);
+
+		final ExecutorConfiguration execConfig = getExecutorConfig(training, devNode);
 
 		final Map<String, Object> requestData = Map.of(
 				"botExport", exportBot(bot),
-				"trainingId", training.getTraId(),
-				"modelId", versionNumber,
-				"nluThreshold", training.getNluThreshold());
+				"executorConfig", execConfig);
 
 		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
 				.request(MediaType.APPLICATION_JSON_TYPE)
@@ -130,6 +123,31 @@ public class TrainingServices implements Component {
 		}
 
 		return training;
+	}
+
+	private Training createTraining(final Chatbot bot) {
+		final Long botId = bot.getBotId();
+		final Long versionNumber = trainingPAO.getNextModelNumber(botId);
+		final Training training = new Training();
+		training.setBotId(botId);
+		training.setStartTime(Instant.now());
+		training.setStatus("TRAINING");
+		training.setVersionNumber(versionNumber);
+		training.setNluThreshold(BigDecimal.valueOf(0.6));
+		return training;
+	}
+
+	private ExecutorConfiguration getExecutorConfig(final Training training, final ChatbotNode node) {
+		final Long botId = training.getBotId();
+
+		final ExecutorConfiguration result = new ExecutorConfiguration();
+		result.setBotId(botId);
+		result.setNodId(node.getNodId());
+		result.setTraId(training.getTraId());
+		result.setModelName("test");
+		result.setNluThreshold(training.getNluThreshold());
+		result.setCustomConfig("");
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")
