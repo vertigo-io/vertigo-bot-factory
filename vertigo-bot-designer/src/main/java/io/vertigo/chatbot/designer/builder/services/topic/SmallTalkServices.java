@@ -29,7 +29,7 @@ import io.vertigo.datamodel.structure.model.DtListState;
 
 @Transactional
 @Secured("BotUser")
-public class SmallTalkServices implements Component {
+public class SmallTalkServices implements Component, TopicInterfaceServices<SmallTalk> {
 
 	@Inject
 	private UtterTextServices utterTextServices;
@@ -61,6 +61,11 @@ public class SmallTalkServices implements Component {
 		return smallTalk;
 	}
 
+	@Override
+	public SmallTalk save(final SmallTalk smt) {
+		return smallTalkDAO.save(smt);
+	}
+
 	public SmallTalk saveSmallTalk(@SecuredOperation("botContributor") final Chatbot chatbot, final SmallTalk smallTalk,
 			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList, final Topic topic) {
@@ -78,7 +83,7 @@ public class SmallTalkServices implements Component {
 		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
 		final Topic savedTopic = topicServices.save(topic);
 		smallTalk.setTopId(savedTopic.getTopId());
-		final SmallTalk savedST = smallTalkDAO.save(smallTalk);
+		final SmallTalk savedST = save(smallTalk);
 
 		// save utter textes, remove all + create all
 		utterTextServices.removeAllUtterTextBySmtId(chatbot, savedST.getSmtId());
@@ -92,14 +97,15 @@ public class SmallTalkServices implements Component {
 		return savedST;
 	}
 
-	public void deleteSmallTalk(@SecuredOperation("botContributor") final Chatbot chatbot, final SmallTalk smallTalk, final Topic topic) {
+	@Override
+	public void delete(@SecuredOperation("botContributor") final Chatbot chatbot, final SmallTalk smallTalk, final Topic topic) {
 
 		utterTextServices.deleteUtterTextsBySmallTalk(chatbot, smallTalk);
 
 		responsesButtonServices.deleteResponsesButtonsBySmallTalk(chatbot, smallTalk);
 
 		// delete smallTalk
-		smallTalkDAO.delete(smallTalk.getUID());
+		delete(smallTalk);
 		topicServices.deleteTopic(chatbot, topic);
 	}
 
@@ -115,19 +121,10 @@ public class SmallTalkServices implements Component {
 		return smallTalkPAO.getSmallTalkIHMByBot(bot.getBotId());
 	}
 
-	@Secured("SuperAdm")
-	public SmallTalk getSmallTalkByTopId(final Long topId) {
-		if (topId != null) {
-			return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.topId, topId), DtListState.of(1)).get(0);
-		}
-		return null;
-	}
-
 	public void initializeBasicSmallTalk(final Chatbot chatbot, final Topic topic, SmallTalk smt, final UtterText utterText) {
 		topic.setBotId(chatbot.getBotId());
 		final TopicCategory topicCategory = topicCategoryServices.getTechnicalCategoryByBot(chatbot);
 		topic.setTopCatId(topicCategory.getTopCatId());
-		//final SmallTalk smt = getSmallTalkByTopId(topic.getTopId());
 		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
 		topicServices.save(topic);
 
@@ -141,5 +138,24 @@ public class SmallTalkServices implements Component {
 
 		saveSmallTalk(chatbot, smt, new DtList<NluTrainingSentence>(NluTrainingSentence.class), new DtList<NluTrainingSentence>(NluTrainingSentence.class), utterTexts,
 				new DtList<>(ResponseButton.class), topic);
+	}
+
+	@Override
+	public void delete(final SmallTalk smallTalk) {
+		smallTalkDAO.delete(smallTalk.getUID());
+
+	}
+
+	@Override
+	public boolean handleObject(final Topic topic) {
+		return TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd());
+	}
+
+	@Override
+	public SmallTalk findByTopId(final Long topId) {
+		if (topId != null) {
+			return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.topId, topId), DtListState.of(1)).get(0);
+		}
+		return null;
 	}
 }

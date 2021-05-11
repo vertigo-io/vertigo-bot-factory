@@ -85,12 +85,11 @@ public final class TopicPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetMaxCodeByBotId",
-			request = "select 	" + 
- "				COALESCE(top.code, 0)" + 
+			request = "select coalesce ((select top.code" + 
  "			from topic top" + 
  "			left join topic top_min on (top.code < top_min.code and top.bot_id = top_min.bot_id)" + 
  "			where top_min.top_id  is null and top.bot_id = #botId#" + 
- "			limit 1",
+ "			limit 1), 0)",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber")
 	public Long getMaxCodeByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {

@@ -22,7 +22,7 @@ import io.vertigo.datamodel.structure.model.DtListState;
 
 @Transactional
 @Secured("BotUser")
-public class ScriptIntentionServices implements Component {
+public class ScriptIntentionServices implements Component, TopicInterfaceServices<ScriptIntention> {
 
 	@Inject
 	private TopicServices topicServices;
@@ -44,7 +44,7 @@ public class ScriptIntentionServices implements Component {
 		return scriptIntention;
 	}
 
-	public ScriptIntention saveScriptIntention(@SecuredOperation("botAdm") final Chatbot chatbot, final ScriptIntention scriptIntention,
+	public ScriptIntention save(@SecuredOperation("botAdm") final Chatbot chatbot, final ScriptIntention scriptIntention,
 			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			final Topic topic) {
 
@@ -56,15 +56,16 @@ public class ScriptIntentionServices implements Component {
 		topic.setTtoCd(TypeTopicEnum.SCRIPTINTENTION.name());
 		final Topic savedTopic = topicServices.save(topic);
 		scriptIntention.setTopId(savedTopic.getTopId());
-		final ScriptIntention savedSI = scriptIntentionDAO.save(scriptIntention);
+		final ScriptIntention savedSI = this.save(scriptIntention);
 		topicServices.save(savedTopic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 		return savedSI;
 	}
 
-	public void deleteScriptIntention(@SecuredOperation("botAdm") final Chatbot chatbot, final ScriptIntention scriptIntention, final Topic topic) {
+	@Override
+	public void delete(@SecuredOperation("botAdm") final Chatbot chatbot, final ScriptIntention scriptIntention, final Topic topic) {
 
 		// delete scriptIntention
-		scriptIntentionDAO.delete(scriptIntention.getUID());
+		delete(scriptIntention);
 
 		topicServices.deleteTopic(chatbot, topic);
 	}
@@ -81,8 +82,23 @@ public class ScriptIntentionServices implements Component {
 		return scriptIntentionPAO.getScriptIntentionIHMByBot(bot.getBotId());
 	}
 
-	@Secured("SuperAdm")
-	public ScriptIntention getScriptIntentionByTopId(final Long topId) {
+	@Override
+	public ScriptIntention save(final ScriptIntention scriptIntention) {
+		return scriptIntentionDAO.save(scriptIntention);
+	}
+
+	@Override
+	public void delete(final ScriptIntention scriptIntention) {
+		scriptIntentionDAO.delete(scriptIntention.getUID());
+	}
+
+	@Override
+	public boolean handleObject(final Topic topic) {
+		return TypeTopicEnum.SCRIPTINTENTION.name().equals(topic.getTtoCd());
+	}
+
+	@Override
+	public ScriptIntention findByTopId(final Long topId) {
 		if (topId != null) {
 			return scriptIntentionDAO.findAll(Criterions.isEqualTo(ScriptIntentionFields.topId, topId), DtListState.of(1)).get(0);
 		}

@@ -225,8 +225,8 @@ public class TrainingServices implements Component {
 
 	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
 		return botExportServices.exportBot(bot);
-		}
-	*/
+	}
+
 	public void loadModel(@SecuredOperation("botContributor") final Chatbot bot, final Long traId, final Long nodId) {
 		Assertion.check()
 				.isNotNull(traId)
@@ -235,7 +235,7 @@ public class TrainingServices implements Component {
 		final Training training = getTraining(bot, traId);
 		final ChatbotNode node = nodeServices.getNodeByNodeId(bot, nodId);
 
-		Assertion.check().isTrue(training.getBotId().equals(node.getBotId()), "Incohérence des paramètres");
+		Assertion.check().isTrue(training.getBotId().equals(node.getBotId()), "Incoherent parameters");
 
 		final VFile model = fileServices.getFile(training.getFilIdModel());
 
@@ -267,12 +267,12 @@ public class TrainingServices implements Component {
 					.put(Entity.entity(fdmp, fdmp.getMediaType()));
 
 		} catch (final IOException e) {
-			throw new VSystemException(e, "Impossible de lire le modèle");
+			throw new VSystemException(e, "Impossible to read the model");
 		}
 
 		if (response.getStatus() != 204) {
-			LOGGER.info("Impossible de charger le modèle. {}", response.getStatusInfo());
-			throw new VUserException("Impossible de charger le modèle");
+			LOGGER.info("Impossible to load the model. {}", response.getStatusInfo());
+			throw new VUserException("Impossible to load the model");
 		}
 	}
 

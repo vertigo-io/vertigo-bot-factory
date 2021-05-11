@@ -151,7 +151,7 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 			errorMessage.append(".");
 			throw new VUserException(errorMessage.toString());
 		}
-		smallTalkServices.deleteSmallTalk(chatbot, smallTalk, topic);
+		smallTalkServices.delete(chatbot, smallTalk, topic);
 		return "redirect:/bot/" + topic.getBotId() + "/topics/";
 	}
 

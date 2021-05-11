@@ -29,7 +29,8 @@ create Task TkGetAllTopicRelativeSmallTalkByBotId{
 			select top.*
 			from topic top
 			join small_talk smt on (smt.top_id = top.top_id)
-			where top.bot_id = #botId# and top.is_enabled = true
+			join topic_category tca on tca.top_cat_id = top.top_cat_id
+			where top.bot_id = #botId# and top.is_enabled = true and tca.is_technical = false
              "
 	in botId				{domain : DoId,						cardinality:"1"} 
 	out tpcs 				{domain : DoDtTopic		 			cardinality:"*"}
@@ -41,7 +42,8 @@ create Task TkGetAllTopicRelativeScriptIntentByBotId{
 			select top.*
 			from topic top
 			join script_intention sin on (sin.top_id = top.top_id)
-			where top.bot_id = #botId# and top.is_enabled = true
+			join topic_category tca on tca.top_cat_id = top.top_cat_id
+			where top.bot_id = #botId# and top.is_enabled = true and tca.is_technical = false
              "
 	in botId				{domain : DoId,						cardinality:"1"} 
 	out tpcs 				{domain : DoDtTopic		 			cardinality:"*"}
@@ -109,12 +111,11 @@ create Task TkGetTopicIhmById {
 create Task TkGetMaxCodeByBotId{
     className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
-			select 	
-				COALESCE(top.code, 0)
+			select coalesce ((select top.code
 			from topic top
 			left join topic top_min on (top.code < top_min.code and top.bot_id = top_min.bot_id)
 			where top_min.top_id  is null and top.bot_id = #botId#
-			limit 1
+			limit 1), 0)
              "
 	in botId  				{domain : DoId         		cardinality : "1"  }
 	out code				{domain : DoNumber			cardinality : "1"  } 

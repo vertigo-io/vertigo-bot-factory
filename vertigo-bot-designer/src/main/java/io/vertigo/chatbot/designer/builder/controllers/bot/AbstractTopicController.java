@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,9 +12,8 @@ import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
-import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
@@ -41,14 +42,12 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	@Inject
 	protected TopicServices topicServices;
 	@Inject
-	protected SmallTalkServices smallTalkServices;
-	@Inject
-	protected ScriptIntentionServices scriptIntentionServices;
+	protected List<TopicInterfaceServices> topicInterfaceServices;
 	@Inject
 	protected TopicCategoryServices topicCategoryServices;
 
 	public void initContext(final ViewContext viewContext, final Chatbot bot, final Topic topic) {
-		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Paramètres incohérents");
+		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Incoherent parameters");
 
 		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name()));
 		viewContext.publishDto(topicKey, topic);
@@ -186,11 +185,13 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			throw new VUserException(errorMessage.toString());
 		}
 
-		if (TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd())) {
-			smallTalkServices.deleteSmallTalk(chatbot, smallTalkServices.getSmallTalkByTopId(topic.getTopId()), topic);
-		} else if (TypeTopicEnum.SCRIPTINTENTION.name().equals(topic.getTtoCd())) {
-			scriptIntentionServices.deleteScriptIntention(chatbot, scriptIntentionServices.getScriptIntentionByTopId(topic.getTopId()), topic);
+		for (final TopicInterfaceServices services : topicInterfaceServices) {
+
+			if (services.handleObject(topic)) {
+				services.delete(chatbot, services.findByTopId(topic.getTopId()), topic);
+			}
 		}
+
 		topicServices.deleteTopic(chatbot, topic);
 		return "redirect:/bot/" + topic.getBotId() + "/topics/";
 	}

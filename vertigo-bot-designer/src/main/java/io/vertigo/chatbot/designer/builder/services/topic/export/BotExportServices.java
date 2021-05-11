@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.TopicExport;
+import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -22,9 +23,9 @@ public class BotExportServices implements Component {
 		final BotExport export = new BotExport();
 		export.setBot(bot);
 		export.setTopics(exportActiveTopics(bot));
-		export.setFallbackBT(smallTalkExportServices.getFallbackBt(bot));
-		export.setEndBT(smallTalkExportServices.getEndBt(bot));
-		export.setWelcomeBT(smallTalkExportServices.getWelcomeBt(bot));
+		export.setFallbackBT(smallTalkExportServices.getBasicBt(bot, KindTopicEnum.FAILURE.name()));
+		export.setEndBT(smallTalkExportServices.getBasicBt(bot, KindTopicEnum.END.name()));
+		export.setWelcomeBT(smallTalkExportServices.getBasicBt(bot, KindTopicEnum.START.name()));
 		return export;
 	}
 

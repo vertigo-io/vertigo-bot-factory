@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,11 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
+import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
 import io.vertigo.chatbot.designer.builder.topic.export.ResponseButtonExport;
@@ -28,6 +33,12 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 
 	@Inject
 	private TopicServices topicServices;
+
+	@Inject
+	private SmallTalkServices smallTalkServices;
+
+	@Inject
+	private UtterTextServices utterTextServices;
 
 	@Inject
 	private ExportPAO exportPAO;
@@ -127,19 +138,16 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 		return utters.getResponseType().equals(ResponseTypeEnum.RANDOM_TEXT.name());
 	}
 
-	public String getFallbackBt(final Chatbot bot) {
-		// TODO Auto-generated method stub
-		return "";
-	}
+	public String getBasicBt(final Chatbot bot, final String ktoCd) {
+		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
+		final SmallTalk smallTalk = smallTalkServices.findByTopId(topic.getTopId());
+		final UtterText utterText = utterTextServices.getUtterTextByTopId(topic.getTopId());
+		final UtterTextExport utterTextExport = new UtterTextExport();
+		utterTextExport.setUtterTexts(utterText.getText());
+		utterTextExport.setTopId(topic.getTopId());
+		utterTextExport.setResponseType(smallTalk.getRtyId());
 
-	public String getEndBt(final Chatbot bot) {
-		// TODO Auto-generated method stub
-		return "";
-	}
-
-	public String getWelcomeBt(final Chatbot bot) {
-		// TODO Auto-generated method stub
-		return "";
+		return createBt(utterTextExport, new ArrayList<ResponseButtonExport>());
 	}
 
 }

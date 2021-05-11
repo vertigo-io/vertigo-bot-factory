@@ -103,13 +103,13 @@ public class ChatbotServices implements Component {
 		topicCategoryServices.saveCategory(chatbot, topicCategory);
 
 		//TopicFailure
-		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicFailure, smallTalkServices.getSmallTalkByTopId(topicFailure.getTopId()), utterTextFailure);
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicFailure, smallTalkServices.findByTopId(topicFailure.getTopId()), utterTextFailure);
 
 		//Topic Start
-		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicStart, smallTalkServices.getSmallTalkByTopId(topicStart.getTopId()), utterTextStart);
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicStart, smallTalkServices.findByTopId(topicStart.getTopId()), utterTextStart);
 
 		//Topic End
-		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicEnd, smallTalkServices.getSmallTalkByTopId(topicEnd.getTopId()), utterTextEnd);
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicEnd, smallTalkServices.findByTopId(topicEnd.getTopId()), utterTextEnd);
 
 		return savedChatbot;
 	}

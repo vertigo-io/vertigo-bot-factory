@@ -92,7 +92,7 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 		// add training sentence who is not "validated" by enter and still in the input
 		addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 
-		scriptIntentionServices.saveScriptIntention(chatbot, scriptIntention, nluTrainingSentences, nluTrainingSentencesToDelete, topic);
+		scriptIntentionServices.save(chatbot, scriptIntention, nluTrainingSentences, nluTrainingSentencesToDelete, topic);
 		return "redirect:/bot/" + botId + "/scriptIntention/" + scriptIntention.getSinId();
 	}
 
@@ -101,7 +101,7 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 	@Secured("BotAdm")
 	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("scriptIntention") final ScriptIntention scriptIntention,
 			@ViewAttribute("topic") final Topic topic) {
-		scriptIntentionServices.deleteScriptIntention(chatbot, scriptIntention, topic);
+		scriptIntentionServices.delete(chatbot, scriptIntention, topic);
 		return "redirect:/bot/" + topic.getBotId() + "/topics/";
 	}
 
