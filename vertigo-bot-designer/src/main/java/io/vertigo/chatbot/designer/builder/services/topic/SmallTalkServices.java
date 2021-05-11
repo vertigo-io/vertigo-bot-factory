@@ -162,7 +162,6 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 		topic.setBotId(chatbot.getBotId());
 		final TopicCategory topicCategory = topicCategoryServices.getTechnicalCategoryByBot(chatbot);
 		topic.setTopCatId(topicCategory.getTopCatId());
-		//final SmallTalk smt = getSmallTalkByTopId(topic.getTopId());
 		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
 		topicServices.save(topic);
 
@@ -176,5 +175,24 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 
 		saveSmallTalk(chatbot, smt, new DtList<NluTrainingSentence>(NluTrainingSentence.class), new DtList<NluTrainingSentence>(NluTrainingSentence.class), utterTexts,
 				new DtList<>(ResponseButton.class), topic);
+	}
+
+	@Override
+	public void delete(final SmallTalk smallTalk) {
+		smallTalkDAO.delete(smallTalk.getUID());
+
+	}
+
+	@Override
+	public boolean handleObject(final Topic topic) {
+		return TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd());
+	}
+
+	@Override
+	public SmallTalk findByTopId(final Long topId) {
+		if (topId != null) {
+			return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.topId, topId), DtListState.of(1)).get(0);
+		}
+		return null;
 	}
 }

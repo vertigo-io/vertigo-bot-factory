@@ -142,8 +142,70 @@ public class TrainingServices implements Component {
 
 	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
 		return botExportServices.exportBot(bot);
+	}
+
+	public void loadModel(@SecuredOperation("botContributor") final Chatbot bot, final Long traId, final Long nodId) {
+		Assertion.check()
+				.isNotNull(traId)
+				.isNotNull(nodId);
+
+		final Training training = getTraining(bot, traId);
+		final ChatbotNode node = nodeServices.getNodeByNodeId(bot, nodId);
+
+		Assertion.check().isTrue(training.getBotId().equals(node.getBotId()), "Incoherent parameters");
+
+		final VFile model = fileServices.getFile(training.getFilIdModel());
+
+		doLoadModel(training, model, node);
+
+		// update node-training link
+		node.setTraId(traId);
+		nodeServices.save(bot, node);
+	}
+
+	private void doLoadModel(final Training training, final VFile model, final ChatbotNode node) {
+		final ExecutorConfiguration config = new ExecutorConfiguration();
+		config.setBotId(node.getBotId());
+		config.setNodId(node.getNodId());
+		config.setTraId(training.getTraId());
+		config.setModelName(training.getVersionNumber().toString());
+		config.setNluThreshold(training.getNluThreshold());
+
+		final Response response;
+		try (final FormDataMultiPart fdmp = new FormDataMultiPart()) {
+			final StreamDataBodyPart modelBodyPart = new StreamDataBodyPart("model", model.createInputStream(), model.getFileName());
+			fdmp.bodyPart(modelBodyPart);
+
+			addObjectToMultipart(fdmp, "config", config);
+
+			response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/admin/model")
+					.request(MediaType.APPLICATION_JSON)
+					.header(API_KEY, node.getApiKey())
+					.put(Entity.entity(fdmp, fdmp.getMediaType()));
+
+		} catch (final IOException e) {
+			throw new VSystemException(e, "Impossible to read the model");
 		}
-	*/
+
+		if (response.getStatus() != 204) {
+			LOGGER.info("Impossible to load the model. {}", response.getStatusInfo());
+			throw new VUserException("Impossible to load the model");
+		}
+	}
+
+	private void addObjectToMultipart(final FormDataMultiPart fdmp, final String name, final DtObject dto) {
+		final DtDefinition def = DtObjectUtil.findDtDefinition(dto);
+
+		for (final DtField field : def.getFields()) {
+			final Object value = field.getDataAccessor().getValue(dto);
+
+			if (value != null) {
+				// TODO: date handling ?
+				fdmp.field(name + '.' + field.getName(), value.toString());
+			}
+		}
+	}
+
 	public DtList<Training> getAllTrainings(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return trainingDAO.findAll(
 				Criterions.isEqualTo(TrainingFields.botId, bot.getBotId()),

@@ -12,8 +12,6 @@ import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
-import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
