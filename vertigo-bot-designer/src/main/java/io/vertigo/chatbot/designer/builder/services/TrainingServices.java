@@ -121,7 +121,7 @@ public class TrainingServices implements Component {
 		training.setVersionNumber(versionNumber);
 		training.setNluThreshold(BigDecimal.valueOf(0.6));
 		return training;
-		}
+	}
 
 	private ExecutorConfiguration getExecutorConfig(final Training training, final ChatbotNode node) {
 		final Long botId = training.getBotId();
@@ -134,7 +134,7 @@ public class TrainingServices implements Component {
 		result.setNluThreshold(training.getNluThreshold());
 		result.setCustomConfig("nothing");
 		return result;
-			}
+	}
 
 	public Optional<Training> getCurrentTraining(final Chatbot bot) {
 		return trainingDAO.getCurrentTrainingByBotId(bot.getBotId());

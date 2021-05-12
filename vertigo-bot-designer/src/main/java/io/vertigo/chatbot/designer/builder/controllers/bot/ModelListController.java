@@ -41,6 +41,7 @@ import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
+import io.vertigo.chatbot.designer.builder.services.BotConversationServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.TrainerInfoServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
@@ -76,6 +77,9 @@ public class ModelListController extends AbstractBotController {
 
 	@Inject
 	private NodeServices nodeServices;
+
+	@Inject
+	private BotConversationServices botConversationServices;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
@@ -188,6 +192,21 @@ public class ModelListController extends AbstractBotController {
 		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/start", publisher);
 		final HttpResponse<String> result = HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 200);
 		return ObjectConvertionUtils.jsonToObject(result.body(), BotResponse.class);
+	}
+
+	@PostMapping("/_start")
+	public ViewContext start(
+			final ViewContext viewContext,
+			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList) {
+
+		final ChatbotNode devNode = nodeList.stream()
+				.filter(ChatbotNode::getIsDev)
+				.findFirst()
+				.orElseThrow(() -> new VUserException("No training node configured"));
+		final BodyPublisher publisher = BodyPublishers.ofString(botConversationServices.createBotInput(""));
+		final HttpRequest request = botConversationServices.createPostRequest(devNode.getUrl() + "/api/chatbot/start", publisher);
+		final HttpResponse<String> result = botConversationServices.sendRequest(null, request, BodyHandlers.ofString(), 204);
+		return viewContext;
 	}
 
 }
