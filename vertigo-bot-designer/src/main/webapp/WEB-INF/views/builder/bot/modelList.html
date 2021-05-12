@@ -371,6 +371,7 @@
 								   ref="chatbot"
 								   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot"
 								   :bot-url="'_talk?CTX=' + vueData.CTX"
+								   :start-call="'_start?CTX=' + vueData.CTX"
 								   :dev-mode="!true"
 								   :placeholder="'Speak to ' + vueData.bot.name"></v-chatbot>
 		  			</q-drawer>

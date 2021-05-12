@@ -38,12 +38,6 @@ public class AdminWebService implements WebServices {
 	@Inject
 	private ExecutorManager executorManager;
 
-	//@Inject
-	//private RasaRunnerServices runnerServices;
-	//
-	//@Inject
-	//private RasaTrainerServices trainerServices;
-
 	@GET("/")
 	public Boolean checkAlive() {
 		return true;

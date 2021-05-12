@@ -17,6 +17,12 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublisher;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
@@ -35,6 +41,7 @@ import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
+import io.vertigo.chatbot.designer.builder.services.BotConversationServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.core.lang.VUserException;
@@ -62,6 +69,9 @@ public class ModelListController extends AbstractBotController {
 
 	@Inject
 	private NodeServices nodeServices;
+
+	@Inject
+	private BotConversationServices botConversationServices;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
@@ -152,6 +162,21 @@ public class ModelListController extends AbstractBotController {
 				.orElseThrow(() -> new VUserException("No training node configured"));
 
 		return ChatbotUtils.postToUrl(devNode.getUrl() + "/api/chatbot/talk", input);
+	}
+
+	@PostMapping("/_start")
+	public ViewContext start(
+			final ViewContext viewContext,
+			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList) {
+
+		final ChatbotNode devNode = nodeList.stream()
+				.filter(ChatbotNode::getIsDev)
+				.findFirst()
+				.orElseThrow(() -> new VUserException("No training node configured"));
+		final BodyPublisher publisher = BodyPublishers.ofString(botConversationServices.createBotInput(""));
+		final HttpRequest request = botConversationServices.createPostRequest(devNode.getUrl() + "/api/chatbot/start", publisher);
+		final HttpResponse<String> result = botConversationServices.sendRequest(null, request, BodyHandlers.ofString(), 204);
+		return viewContext;
 	}
 
 }

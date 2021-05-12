@@ -67,6 +67,7 @@ Vue.component('v-chatbot-dev', {
 			botAvatar: { type: String, required:true },
 			botName: { type: String, required:true },
 			placeholder: { type: String },
+			startCall: {type:String, 'default' : '_start'}
 		},
 		data: function () {
 			return {
@@ -94,9 +95,21 @@ Vue.component('v-chatbot-dev', {
 		},
 		created : function () {
 			this.convId = Math.random();
-			this.askBot('/start'); // lancement de la phrase d'accueil
+			this.startConversation(this.startCall); // lancement de la phrase d'accueil
 		},
 		methods: {
+			startConversation: function (){
+				this.lastUserInteraction = Date.now();
+				
+				this.$http.post(this.startCall, {})
+					.then(httpResponse => {}).catch(error => {
+						// error
+						this.error = true;
+						
+						this.processing = false;
+						this._scrollToBottom();
+					});
+			},
 			postAnswerBtn: function (btn) {
 				this.messages.push({
 					text: [btn.title],

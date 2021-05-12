@@ -20,7 +20,13 @@ package io.vertigo.chatbot.designer.builder.services;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublisher;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -94,6 +100,9 @@ public class TrainingServices implements Component {
 	@Inject
 	private NodeServices nodeServices;
 
+	@Inject
+	private BotConversationServices botConversationServices;
+
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
 	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot) {
@@ -109,18 +118,20 @@ public class TrainingServices implements Component {
 
 		final ExecutorConfiguration execConfig = getExecutorConfig(training, devNode);
 
-		final Map<String, Object> requestData = Map.of(
-				"botExport", exportBot(bot),
-				"executorConfig", execConfig);
+		final Map<String, Object> requestData = new HashMap<String, Object>();
+		requestData.put("botExport", exportBot(bot));
+		requestData.put("executorConfig", execConfig);
 
-		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
-				.request(MediaType.APPLICATION_JSON_TYPE)
-				.header(API_KEY, devNode.getApiKey())
-				.post(Entity.json(requestData));
+		final Map<String, String> headers = Map.of(API_KEY, devNode.getApiKey(),
+				"Content-type", "application/json");
 
-		if (response.getStatus() != 204) {
-			throw new VUserException(getMessageFromVUserResponse(response));
-		}
+		final BodyPublisher publisher = BodyPublishers.ofString(botConversationServices.objectToJson(requestData));
+		final HttpRequest request = botConversationServices.createPutRequest(devNode.getUrl() + "/api/chatbot/admin/model", headers, publisher);
+		final HttpResponse<String> response = botConversationServices.sendRequest(null, request, BodyHandlers.ofString(), 204);
+		//		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("api/chatbot/admin/model")
+		//				.request(MediaType.APPLICATION_JSON_TYPE)
+		//				.header(API_KEY, devNode.getApiKey())
+		//				.put(Entity.json(requestData));
 
 		return training;
 	}
@@ -146,13 +157,8 @@ public class TrainingServices implements Component {
 		result.setTraId(training.getTraId());
 		result.setModelName("test");
 		result.setNluThreshold(training.getNluThreshold());
-		result.setCustomConfig("");
+		result.setCustomConfig("nothing");
 		return result;
-	}
-
-	@SuppressWarnings("unchecked")
-	private String getMessageFromVUserResponse(final Response response) {
-		return ((List<String>) response.readEntity(Map.class).get("globalErrors")).get(0);
 	}
 
 	public void stopAgent(@SecuredOperation("botContributor") final Chatbot bot) {

@@ -25,7 +25,7 @@ public class BtBuilderUtils {
 	 *
 	 */
 	public static void createButton(final String text, final List<ResponseButtonExport> responses, final StringBuilder bt) {
-		final String bb = String.format("user/local/topic/%s/responseButton", responses.get(0).getTopCode());
+		final String bb = String.format("user/local/topic/%s/responseButton ", responses.get(0).getTopCode());
 		bt.append("choose:button:nlu ");
 		bt.append(bb);
 		addQuote(bt);
@@ -35,7 +35,7 @@ public class BtBuilderUtils {
 		for (final ResponseButtonExport response : responses) {
 			bt.append("button ");
 			addQuote(bt);
-			bt.append(response.getText());
+			bt.append(response.getText().replaceAll("'", "\'"));
 			addQuote(bt);
 			bt.append(" topic");
 			bt.append(response.getTopCodeResponse());
@@ -74,7 +74,7 @@ public class BtBuilderUtils {
 		bt.append("say");
 		addSpaceQuote(bt);
 		//Only one utter text
-		bt.append(splitUtter[0]);
+		bt.append(splitUtter[0].replaceAll("'", "\'"));
 		addQuote(bt);
 		addLineBreak(bt);
 	}
@@ -91,7 +91,7 @@ public class BtBuilderUtils {
 		for (final String text : splitUtter) {
 			bt.append("say ");
 			addQuote(bt);
-			bt.append(text);
+			bt.append(text.replaceAll("'", "\'"));
 			addQuote(bt);
 			addLineBreak(bt);
 		}
