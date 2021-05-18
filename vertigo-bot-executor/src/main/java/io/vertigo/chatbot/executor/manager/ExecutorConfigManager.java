@@ -83,7 +83,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		// Nothing
 	}
 
-	public void saveConfig(final ExecutorGlobalConfig executorGlobalConfig) {
+	public synchronized void saveConfig(final ExecutorGlobalConfig executorGlobalConfig) {
 		this.executorGlobalConfig = executorGlobalConfig;
 
 		final String json = jsonEngine.toJson(executorGlobalConfig);
