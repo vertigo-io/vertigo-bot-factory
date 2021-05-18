@@ -3,10 +3,14 @@
 -- ============================================================
 create table KIND_TOPIC
 (
-    KTO_CD      	 VARCHAR(100)	not null,
-    LABEL       	 VARCHAR(100)	not null,
-    default_english  TEXT			not null,
-    default_french 	 TEXT			not null,
+    KTO_CD      	 	VARCHAR(100)	not null,
+    LABEL				VARCHAR(100)	not null,
+    TITLE_ENGLISH    	VARCHAR(100)	not null,
+    TITLE_FRENCH		VARCHAR(100)	not null,
+    description_english VARCHAR(100),
+    description_french 	VARCHAR(100),
+    default_english  	TEXT			not null,
+    default_french 		TEXT			not null,
     constraint PK_KIND_TOPIC primary key (KTO_CD)
 );
 
@@ -14,15 +18,34 @@ comment on column KIND_TOPIC.KTO_CD is
 'ID';
 
 comment on column KIND_TOPIC.LABEL is
-'Title';
+'Label';
+
+comment on column KIND_TOPIC.TITLE_ENGLISH is
+'Title (English)';
+
+comment on column KIND_TOPIC.TITLE_FRENCH is
+'Title (French)';
+
+comment on column KIND_TOPIC.DESCRIPTION_ENGLISH is
+'Description (English)';
+
+comment on column KIND_TOPIC.DESCRIPTION_FRENCH is
+'Description (French)';
+
+comment on column KIND_TOPIC.DEFAULT_ENGLISH is
+'Default text (English)';
+
+comment on column KIND_TOPIC.DEFAULT_FRENCH is
+'Default text (French)';
 
 -- ============================================================
 --   Insert MasterData values : KIND_TOPIC                                        
 -- ============================================================
-insert into KIND_TOPIC(KTO_CD, LABEL, DEFAULT_ENGLISH, DEFAULT_FRENCH) values ('START', 'Start', 'Hello !', 'Bonjour !');
-insert into KIND_TOPIC(KTO_CD, LABEL, DEFAULT_ENGLISH, DEFAULT_FRENCH) values ('END', 'End', 'Bye !', 'Au revoir !');
-insert into KIND_TOPIC(KTO_CD, LABEL, DEFAULT_ENGLISH, DEFAULT_FRENCH) values ('FAILURE', 'Failure', 'Sorry, I don''t understand.', 'Désolé, je n''ai pas compris.');
-insert into KIND_TOPIC(KTO_CD, LABEL, DEFAULT_ENGLISH, DEFAULT_FRENCH) values ('NORMAL', 'Normal', 'Text', 'Texte');
+insert into KIND_TOPIC(KTO_CD, LABEL, TITLE_ENGLISH, TITLE_FRENCH, DESCRIPTION_ENGLISH, DESCRIPTION_FRENCH, DEFAULT_ENGLISH, DEFAULT_FRENCH) values ('START', 'Start', 'Start', 'Début', 'Default start response', 'Réponse de début par défaut', 'Hello !', 'Bonjour !');
+insert into KIND_TOPIC(KTO_CD, LABEL, TITLE_ENGLISH, TITLE_FRENCH, DESCRIPTION_ENGLISH, DESCRIPTION_FRENCH, DEFAULT_ENGLISH, DEFAULT_FRENCH) values ('END', 'End', 'End', 'Fin', 'Default end response', 'Réponse de fin par défaut', 'Bye !', 'Au revoir !');
+insert into KIND_TOPIC(KTO_CD, LABEL, TITLE_ENGLISH, TITLE_FRENCH, DESCRIPTION_ENGLISH, DESCRIPTION_FRENCH, DEFAULT_ENGLISH, DEFAULT_FRENCH) values ('FAILURE', 'Failure', 'Failure', 'Echec', 'Default failure response', 'Réponse de d''échec par défaut', 'Sorry, I don''t understand.', 'Désolé, je n''ai pas compris.');
+insert into KIND_TOPIC(KTO_CD, LABEL, TITLE_ENGLISH, TITLE_FRENCH, DESCRIPTION_ENGLISH, DESCRIPTION_FRENCH, DEFAULT_ENGLISH, DEFAULT_FRENCH) values ('NORMAL', 'Normal', 'Normal', 'Normal', 'null', 'null', 'Text', 'Texte');
+
 
 ALTER TABLE TOPIC
 ADD COLUMN KTO_CD VARCHAR(100) ;

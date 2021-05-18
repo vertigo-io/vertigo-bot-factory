@@ -222,8 +222,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum KindTopicFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.KindTopic> {
 		/** Propriété 'ID'. */
 		ktoCd,
-		/** Propriété 'Title'. */
+		/** Propriété 'Label'. */
 		label,
+		/** Propriété 'Title (English)'. */
+		titleEnglish,
+		/** Propriété 'Title (French)'. */
+		titleFrench,
+		/** Propriété 'Description (English)'. */
+		descriptionEnglish,
+		/** Propriété 'Description (French)'. */
+		descriptionFrench,
 		/** Propriété 'Default text (English)'. */
 		defaultEnglish,
 		/** Propriété 'Default text (French)'. */

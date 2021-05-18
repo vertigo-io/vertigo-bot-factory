@@ -39,7 +39,6 @@ import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
-import io.vertigo.chatbot.designer.builder.services.topic.KindTopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
@@ -69,9 +68,6 @@ public class BotDetailController extends AbstractBotController {
 
 	@Inject
 	private TopicCategoryServices topicCategoryServices;
-
-	@Inject
-	private KindTopicServices kindTopicServices;
 
 	private static final ViewContextKey<UtterText> utterTextFailureKey = ViewContextKey.of("utterTextFailure");
 	private static final ViewContextKey<UtterText> utterTextStartKey = ViewContextKey.of("utterTextStart");
@@ -126,9 +122,9 @@ public class BotDetailController extends AbstractBotController {
 		initEmptyCommonContext(viewContext);
 
 		//Init topic failure
-		topicServices.initNewBasicTopic(viewContext, KindTopicEnum.FAILURE.name(), "Failure", "Default failure response", topicFailureKey, utterTextFailureKey);
-		topicServices.initNewBasicTopic(viewContext, KindTopicEnum.START.name(), "Start", "Default start response", topicStartKey, utterTextStartKey);
-		topicServices.initNewBasicTopic(viewContext, KindTopicEnum.END.name(), "End", "Default end response", topicEndKey, utterTextEndKey);
+		topicServices.initNewBasicTopic(viewContext, KindTopicEnum.FAILURE.name(), topicFailureKey, utterTextFailureKey);
+		topicServices.initNewBasicTopic(viewContext, KindTopicEnum.START.name(), topicStartKey, utterTextStartKey);
+		topicServices.initNewBasicTopic(viewContext, KindTopicEnum.END.name(), topicEndKey, utterTextEndKey);
 		final TopicCategory topicCategory = topicCategoryServices.initializeBasicCategory();
 		viewContext.publishDto(topicCategoryKey, topicCategory);
 		viewContext.publishDtList(topicKey, new DtList<>(Topic.class));

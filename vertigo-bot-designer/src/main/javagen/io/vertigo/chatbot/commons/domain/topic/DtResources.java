@@ -16,9 +16,25 @@ public enum DtResources implements MessageKey {
 	 */
 	fldKindTopic$ktoCd,
 	/**
-	 * Title.
+	 * Label.
 	 */
 	fldKindTopic$label,
+	/**
+	 * Title (English).
+	 */
+	fldKindTopic$titleEnglish,
+	/**
+	 * Title (French).
+	 */
+	fldKindTopic$titleFrench,
+	/**
+	 * Description (English).
+	 */
+	fldKindTopic$descriptionEnglish,
+	/**
+	 * Description (French).
+	 */
+	fldKindTopic$descriptionFrench,
 	/**
 	 * Default text (English).
 	 */

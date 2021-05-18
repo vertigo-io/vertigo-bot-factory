@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -17,6 +18,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
+import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -154,33 +156,40 @@ public class TopicServices implements Component {
 		return topicDAO.getTopicReferencingTopId(topId);
 	}
 
-	public void initNewBasicTopic(final ViewContext viewContext, final String ktoCd, final String title, final String description, final ViewContextKey<Topic> topickey,
+	public void initNewBasicTopic(final ViewContext viewContext, final String ktoCd, final ViewContextKey<Topic> topickey,
 			final ViewContextKey<UtterText> uttertextkey) {
+		final Locale locale = UserSessionUtils.getUserSession().getLocale();
+
 		final Topic topic = new Topic();
 		final KindTopic kto = kindTopicServices.findKindTopicByCd(ktoCd);
 		topic.setIsEnabled(true);
-		topic.setTitle(title);
+		topic.setTitle(getTitle(kto, locale));
 		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
 		topic.setKtoCd(ktoCd);
-		topic.setDescription(description);
+		topic.setDescription(getDescription(kto, locale));
 		viewContext.publishDto(topickey, topic);
 		final UtterText utterText = new UtterText();
-		utterText.setText(kto.getDefaultEnglish());
+		utterText.setText(kindTopicServices.getDefaultTextByLocale(kto, locale));
 		viewContext.publishDto(uttertextkey, utterText);
 
 	}
 
-	/*
-	public void manageBasicTopic(@SecuredOperation("botAdm") final Chatbot chatbot, final TopicCategory topicCategory, final Topic topic, final UtterText utterText) {
-		topic.setBotId(chatbot.getBotId());
-		topic.setTopCatId(topicCategory.getTopCatId());
-		final SmallTalk smt = smallTalkServices.getSmallTalkByTopId(topic.getTopId());
-		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
-		this.save(topic);
-	
-		smallTalkServices.initializeBasicSmallTalk(chatbot, topic, smt, utterText);
+	private String getTitle(final KindTopic kto, final Locale locale) {
+		if (Locale.FRANCE.equals(locale)) {
+			return kto.getTitleFrench();
+		} else {
+			return kto.getTitleEnglish();
+		}
 	}
-	*/
+
+	private String getDescription(final KindTopic kto, final Locale locale) {
+		if (Locale.FRANCE.equals(locale)) {
+			return kto.getDescriptionFrench();
+		} else {
+			return kto.getDescriptionEnglish();
+		}
+	}
+
 	//********* NTS part ********/
 
 	public DtList<NluTrainingSentence> getNluTrainingSentenceByTopic(@SecuredOperation("botVisitor") final Chatbot bot, final Topic topic) {

@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
+import java.util.Locale;
+
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
@@ -28,6 +30,13 @@ public class KindTopicServices implements Component {
 
 	public KindTopic findKindTopicByCd(final String ktoCd) {
 		return kindTopicDAO.get(ktoCd);
+	}
+
+	public String getDefaultTextByLocale(final KindTopic kto, final Locale locale) {
+		if (Locale.FRANCE.equals(locale)) {
+			return kto.getDefaultFrench();
+		}
+		return kto.getDefaultEnglish();
 	}
 
 }

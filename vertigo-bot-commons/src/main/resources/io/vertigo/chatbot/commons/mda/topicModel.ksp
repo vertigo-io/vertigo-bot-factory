@@ -28,32 +28,50 @@ create DtDefinition DtTypeTopic {
 
 create DtDefinition DtKindTopic {
 	stereotype : "StaticMasterData"
-	id    ktoCd 			{domain: DoCode 	label: "ID"												}
-	field label 			{domain: DoLabel 	label: "Title" 						cardinality : "1"	}
-	field defaultEnglish 	{domain: DoText 	label: "Default text (English)" 	cardinality : "1"	}
-	field defaultFrench 	{domain: DoText 	label: "Default text (French)" 		cardinality : "1"	}
+	id    ktoCd 				{domain: DoCode 	label: "ID"												}
+	field label 				{domain: DoLabel 	label: "Label" 						cardinality : "1"	} 
+	field titleEnglish 			{domain: DoLabel 	label: "Title (English)" 			cardinality : "1"	} 
+	field titleFrench			{domain: DoLabel 	label: "Title (French)" 			cardinality : "1"	} 
+	field descriptionEnglish	{domain: DoLabel 	label: "Description (English)" 		cardinality : "?"	}
+	field descriptionFrench		{domain: DoLabel 	label: "Description (French)" 		cardinality : "?"	}	
+	field defaultEnglish 		{domain: DoText 	label: "Default text (English)" 	cardinality : "1"	}
+	field defaultFrench 		{domain: DoText 	label: "Default text (French)" 		cardinality : "1"	}
 	values : `{
         "START" : {
             "ktoCd" : "START",
             "label" : "Start",
+            "titleEnglish" : "Start",
+            "titleFrench" : "Début",
+            "descriptionEnglish" : "Default start response",
+            "descriptionFrench" : "Réponse de début par défaut",
             "defaultEnglish" : "Hello !",
             "defaultFrench" : "Bonjour !"          
         },
         "END" : {
             "ktoCd" : "END",
             "label" : "End",
+            "titleEnglish" : "End",
+            "titleFrench" : "Fin",
+            "descriptionEnglish" : "Default end response",
+            "descriptionFrench" : "Réponse de fin par défaut",
             "defaultEnglish" : "Bye !",
             "defaultFrench" : "Au revoir !"      
         },
         "FAILURE" : {
             "ktoCd" : "FAILURE",
             "label" : "Failure",
+            "titleEnglish" : "Failure",
+            "titleFrench" : "Echec",
+            "descriptionEnglish" : "Default failure response",
+            "descriptionFrench" : "Réponse de d'échec par défaut",
             "defaultEnglish" : "Sorry, I don't understand.",
             "defaultFrench" : "Désolé, je n'ai pas compris."
         },
          "NORMAL" : {
             "ktoCd" : "NORMAL",
             "label" : "Normal",
+            "titleEnglish" : "Normal",
+            "titleFrench" : "Normal",
             "defaultEnglish" : "Text",
             "defaultFrench" : "Texte"
         }

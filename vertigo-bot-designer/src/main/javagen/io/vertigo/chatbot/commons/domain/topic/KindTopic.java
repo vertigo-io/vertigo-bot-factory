@@ -16,6 +16,10 @@ public final class KindTopic implements DtStaticMasterData {
 
 	private String ktoCd;
 	private String label;
+	private String titleEnglish;
+	private String titleFrench;
+	private String descriptionEnglish;
+	private String descriptionFrench;
 	private String defaultEnglish;
 	private String defaultFrench;
 
@@ -47,10 +51,10 @@ public final class KindTopic implements DtStaticMasterData {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Title'.
+	 * Récupère la valeur de la propriété 'Label'.
 	 * @return String label <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Title")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Label")
 	@io.vertigo.datamodel.structure.stereotype.DisplayField
 	public String getLabel() {
 		return label;
@@ -58,11 +62,87 @@ public final class KindTopic implements DtStaticMasterData {
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Title'.
+	 * Définit la valeur de la propriété 'Label'.
 	 * @param label String <b>Obligatoire</b>
 	 */
 	public void setLabel(final String label) {
 		this.label = label;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Title (English)'.
+	 * @return String titleEnglish <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Title (English)")
+	public String getTitleEnglish() {
+		return titleEnglish;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Title (English)'.
+	 * @param titleEnglish String <b>Obligatoire</b>
+	 */
+	public void setTitleEnglish(final String titleEnglish) {
+		this.titleEnglish = titleEnglish;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Title (French)'.
+	 * @return String titleFrench <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Title (French)")
+	public String getTitleFrench() {
+		return titleFrench;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Title (French)'.
+	 * @param titleFrench String <b>Obligatoire</b>
+	 */
+	public void setTitleFrench(final String titleFrench) {
+		this.titleFrench = titleFrench;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Description (English)'.
+	 * @return String descriptionEnglish
+	 */
+	@Field(smartType = "STyLabel", label = "Description (English)")
+	public String getDescriptionEnglish() {
+		return descriptionEnglish;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Description (English)'.
+	 * @param descriptionEnglish String
+	 */
+	public void setDescriptionEnglish(final String descriptionEnglish) {
+		this.descriptionEnglish = descriptionEnglish;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Description (French)'.
+	 * @return String descriptionFrench
+	 */
+	@Field(smartType = "STyLabel", label = "Description (French)")
+	public String getDescriptionFrench() {
+		return descriptionFrench;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Description (French)'.
+	 * @param descriptionFrench String
+	 */
+	public void setDescriptionFrench(final String descriptionFrench) {
+		this.descriptionFrench = descriptionFrench;
 	}
 	
 	/**

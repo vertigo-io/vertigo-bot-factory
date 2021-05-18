@@ -58,7 +58,7 @@
 				<vu:include-data object="topics" field="topId" />
 				<vu:include-data object="topics" field="title" />
 				
-				<div class="text-subtitle1" th:text=#{welcome.message}></div>
+				<div class="text-subtitle1" th:text=#{bot.welcome}></div>
 				<c-richtext
 						class="q-pb-sm"
 						v-model="vueData.utterTextStart.text"
@@ -74,7 +74,7 @@
 						th::mode-edit="${!model.modeReadOnly}">
 				</c-richtext>
 				
-				<div class="text-subtitle1">End message</div>
+				<div class="text-subtitle1" th:text=#{bot.end}></div>
 				<c-richtext
 					class="q-pb-sm"
 						v-model="vueData.utterTextEnd.text"
