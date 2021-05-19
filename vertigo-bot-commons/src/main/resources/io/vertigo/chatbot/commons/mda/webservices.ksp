@@ -35,15 +35,6 @@ create DtDefinition DtTrainerInfo {
 								 expression:"return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());" }
 }
 
-create DtDefinition DtExecutorTrainingCallback {
-	field trainingId 			{domain: DoId 						label: "Training ID" 			cardinality : "1"}
-	field success				{domain: DoYesNo 					label: "Succes" 				cardinality : "1"}
-	field log					{domain: DoText 					label: "Logs" 					cardinality : "1"}
-	field infos					{domain: DoText						label: "Informations"	 		}
-	field warnings				{domain: DoText						label: "Warnings"	 			}
-	field apiKey				{domain: DoLabel					label: "Client Api Key"	 		}
-}
-
 create DtDefinition DtExecutorConfiguration {
 	field botId 				{domain: DoId						label: "Bot ID" 						cardinality : "1"}
 	field nodId					{domain: DoId 						label: "Node ID" 						cardinality : "1"}

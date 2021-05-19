@@ -27,8 +27,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ChatbotProfiles(io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
-		/** Objet de données ExecutorTrainingCallback. */
-		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
 		/** Objet de données Groups. */
 		Groups(io.vertigo.chatbot.designer.domain.commons.Groups.class),
 		/** Objet de données KindTopic. */
@@ -189,23 +187,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		nluThreshold,
 		/** Propriété 'Additional config for executor'. */
 		customConfig	}
-
-	/**
-	 * Enumération des champs de ExecutorTrainingCallback.
-	 */
-	public enum ExecutorTrainingCallbackFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback> {
-		/** Propriété 'Training ID'. */
-		trainingId,
-		/** Propriété 'Succes'. */
-		success,
-		/** Propriété 'Logs'. */
-		log,
-		/** Propriété 'Informations'. */
-		infos,
-		/** Propriété 'Warnings'. */
-		warnings,
-		/** Propriété 'Client Api Key'. */
-		apiKey	}
 
 	/**
 	 * Enumération des champs de Groups.

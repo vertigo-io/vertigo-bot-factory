@@ -25,8 +25,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ChatbotNode(io.vertigo.chatbot.commons.domain.ChatbotNode.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
-		/** Objet de données ExecutorTrainingCallback. */
-		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données NluTrainingSentence. */
@@ -48,7 +46,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Objet de données Training. */
 		Training(io.vertigo.chatbot.commons.domain.Training.class),
 		/** Objet de données UtterText. */
-		UtterText(io.vertigo.chatbot.commons.domain.UtterText.class)		;
+		UtterText(io.vertigo.chatbot.commons.domain.UtterText.class);
 
 		private final Class<?> clazz;
 
@@ -56,9 +54,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 			this.clazz = clazz;
 		}
 
-		/** 
+		/**
 		 * Classe associée.
-		 * @return Class d'implémentation de l'objet 
+		 *
+		 * @return Class d'implémentation de l'objet
 		 */
 		public Class<?> getDtClass() {
 			return clazz;
@@ -78,7 +77,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'fallback BT'. */
 		fallbackBT,
 		/** Propriété 'fallback BT'. */
-		topics	}
+		topics
+	}
 
 	/**
 	 * Enumération des champs de Chatbot.
@@ -99,7 +99,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Welcome text'. */
 		uttIdWelcome,
 		/** Propriété 'Default text'. */
-		uttIdDefault	}
+		uttIdDefault
+	}
 
 	/**
 	 * Enumération des champs de ChatbotNode.
@@ -120,7 +121,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Loaded model'. */
-		traId	}
+		traId
+	}
 
 	/**
 	 * Enumération des champs de ExecutorConfiguration.
@@ -137,24 +139,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'NLU Threshold'. */
 		nluThreshold,
 		/** Propriété 'Additional config for executor'. */
-		customConfig	}
-
-	/**
-	 * Enumération des champs de ExecutorTrainingCallback.
-	 */
-	public enum ExecutorTrainingCallbackFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback> {
-		/** Propriété 'Training ID'. */
-		trainingId,
-		/** Propriété 'Succes'. */
-		success,
-		/** Propriété 'Logs'. */
-		log,
-		/** Propriété 'Informations'. */
-		infos,
-		/** Propriété 'Warnings'. */
-		warnings,
-		/** Propriété 'Client Api Key'. */
-		apiKey	}
+		customConfig
+	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.
@@ -173,7 +159,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'path'. */
 		filePath,
 		/** Propriété 'data'. */
-		fileData	}
+		fileData
+	}
 
 	/**
 	 * Enumération des champs de NluTrainingSentence.
@@ -184,7 +171,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Text'. */
 		text,
 		/** Propriété 'SmallTalk'. */
-		smtId	}
+		smtId
+	}
 
 	/**
 	 * Enumération des champs de RasaConfig.
@@ -197,7 +185,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'nlu'. */
 		nlu,
 		/** Propriété 'config'. */
-		config	}
+		config
+	}
 
 	/**
 	 * Enumération des champs de ResponseButton.
@@ -214,7 +203,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'welcome buttons'. */
 		botIdWelcome,
 		/** Propriété 'Default buttons'. */
-		botIdDefault	}
+		botIdDefault
+	}
 
 	/**
 	 * Enumération des champs de ResponseType.
@@ -225,7 +215,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Title'. */
 		label,
 		/** Propriété 'Order'. */
-		sortOrder	}
+		sortOrder
+	}
 
 	/**
 	 * Enumération des champs de RunnerInfo.
@@ -238,7 +229,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Component version'. */
 		agentVersion,
 		/** Propriété 'Model version'. */
-		loadedModelVersion	}
+		loadedModelVersion
+	}
 
 	/**
 	 * Enumération des champs de SmallTalk.
@@ -255,7 +247,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Response type'. */
-		rtyId	}
+		rtyId
+	}
 
 	/**
 	 * Enumération des champs de TopicExport.
@@ -266,7 +259,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'nluTrainingSentences'. */
 		nluTrainingSentences,
 		/** Propriété 'Topic BT'. */
-		topicBT	}
+		topicBT
+	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.
@@ -287,7 +281,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Training percentage'. */
 		trainingPercent,
 		/** Propriété 'Duration'. */
-		duration	}
+		duration
+	}
 
 	/**
 	 * Enumération des champs de Training.
@@ -316,7 +311,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Model'. */
-		filIdModel	}
+		filIdModel
+	}
 
 	/**
 	 * Enumération des champs de UtterText.
@@ -327,13 +323,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Text'. */
 		text,
 		/** Propriété 'SmallTalk'. */
-		smtId	}
+		smtId
+	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Iterator<Class<?>> iterator() {
 		return new Iterator<>() {
-			private Iterator<Definitions> it = Arrays.asList(Definitions.values()).iterator();
+			private final Iterator<Definitions> it = Arrays.asList(Definitions.values()).iterator();
 
 			/** {@inheritDoc} */
 			@Override

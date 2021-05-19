@@ -42,6 +42,7 @@ import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.builder.services.TrainerInfoServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.utils.BotConversationUtils;
 import io.vertigo.chatbot.designer.utils.HttpRequestUtils;
@@ -71,6 +72,9 @@ public class ModelListController extends AbstractBotController {
 	private TrainingServices trainingServices;
 
 	@Inject
+	private TrainerInfoServices trainerInfoServices;
+
+	@Inject
 	private NodeServices nodeServices;
 
 	@GetMapping("/")
@@ -86,9 +90,10 @@ public class ModelListController extends AbstractBotController {
 		toModeReadOnly();
 	}
 
+	//TODO delete when modify IHM
 	@PostMapping("/_refreshRunner")
 	public ViewContext refreshRunnerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		final RunnerInfo state = trainingServices.getRunnerState(bot);
+		final RunnerInfo state = new RunnerInfo();//trainerInfoServices.getRunnerState(bot);
 		viewContext.publishDto(runnerStateKey, state);
 
 		return viewContext;
@@ -96,7 +101,7 @@ public class ModelListController extends AbstractBotController {
 
 	@PostMapping("/_refreshTrainer")
 	public ViewContext refreshTrainerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, @ViewAttribute("trainerState") final TrainerInfo trainerInfo) {
-		final TrainerInfo state = trainingServices.getTrainingState(bot, trainerInfo);
+		final TrainerInfo state = trainerInfoServices.getTrainingState(bot, trainerInfo);
 		viewContext.publishDto(trainerStateKey, state);
 
 		return viewContext;
@@ -132,24 +137,27 @@ public class ModelListController extends AbstractBotController {
 	@PostMapping("/_train")
 	public ViewContext doTrain(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		trainingServices.trainAgent(bot);
-		viewContext.publishDto(trainerStateKey, trainingServices.createTrainingState(bot));
+		viewContext.publishDto(trainerStateKey, trainerInfoServices.createTrainingState(bot));
 		return viewContext;
 	}
 
+	//TODO delete function
 	@PostMapping("/_stop")
 	public ViewContext doStop(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		trainingServices.stopAgent(bot);
+		//trainingServices.stopAgent(bot);
 
 		return viewContext;
 	}
 
+	//TODO use train function
+	// with node selection
 	@PostMapping("/_loadTraining")
 	public ViewContext doLoadTraining(final ViewContext viewContext,
 			@RequestParam("traId") final Long traId,
 			@RequestParam("nodId") final Long nodId,
 			@ViewAttribute("bot") final Chatbot bot) {
 
-		trainingServices.loadModel(bot, traId, nodId);
+		//trainingServices.loadModel(bot, traId, nodId);
 
 		refreshRunnerState(viewContext, bot);
 		refreshTrainings(viewContext, bot);

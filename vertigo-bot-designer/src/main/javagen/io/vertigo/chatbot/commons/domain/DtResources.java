@@ -125,34 +125,6 @@ public enum DtResources implements MessageKey {
 	fldExecutorConfiguration$customConfig,
 
 	/***********************************************************
-	/** ExecutorTrainingCallback.
-	/***********************************************************
-	/**
-	 * Training ID.
-	 */
-	fldExecutorTrainingCallback$trainingId,
-	/**
-	 * Succes.
-	 */
-	fldExecutorTrainingCallback$success,
-	/**
-	 * Logs.
-	 */
-	fldExecutorTrainingCallback$log,
-	/**
-	 * Informations.
-	 */
-	fldExecutorTrainingCallback$infos,
-	/**
-	 * Warnings.
-	 */
-	fldExecutorTrainingCallback$warnings,
-	/**
-	 * Client Api Key.
-	 */
-	fldExecutorTrainingCallback$apiKey,
-
-	/***********************************************************
 	/** MediaFileInfo.
 	/***********************************************************
 	/**
