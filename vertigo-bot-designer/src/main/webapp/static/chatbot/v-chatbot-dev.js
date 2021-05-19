@@ -15,7 +15,7 @@ Vue.component('v-chatbot-dev', {
 						<div class="q-pb-sm">
 							{{$q.lang.vui.chatbot.errorMessage}}
 						</div>
-						<q-btn class="full-width" @click="askBot(lastPayload)" :label="$q.lang.vui.chatbot.tryAgain" color="white" text-color="black" ></q-btn>
+						<q-btn class="full-width" @click="askBot(lastPayload, true)" :label="$q.lang.vui.chatbot.tryAgain" color="white" text-color="black" ></q-btn>
 					</q-chat-message>
 				</div>
 				<div class="sys-chat non-selectable">
@@ -24,7 +24,7 @@ Vue.component('v-chatbot-dev', {
 							{{$q.lang.vui.suggestedAnswers}}
 						</div>
 						<div class="row docs-btn">
-							<q-btn v-for="(btn, index) in inputConfig.buttons" class="full-width" :key="'repChatBtn-'+index" @click="postAnswerBtn(btn)" :label="btn.title" color="white" text-color="black" ></q-btn>
+							<q-btn v-for="(btn, index) in inputConfig.buttons" class="full-width" :key="'repChatBtn-'+index" @click="postAnswerBtn(btn)" :label="btn.label" color="white" text-color="black" ></q-btn>
 						</div>
 					</q-chat-message>
 				</div>
@@ -72,7 +72,7 @@ Vue.component('v-chatbot-dev', {
 		data: function () {
 			return {
 				// config
-				convId: 42,
+				convId: null,
 				// technique
 				inputConfig: {
 					modeTextarea : false, // TODO, il exste d'autres modes, par ex email
@@ -93,26 +93,26 @@ Vue.component('v-chatbot-dev', {
 				watingMessagesStack: []
 			}
 		},
-		created : function () {
-			this.convId = Math.random();
-			this.startConversation(this.startCall); // lancement de la phrase d'accueil
+		created : function (){
+			this.startConversation();
 		},
 		methods: {
-			startConversation: function (){
-				this.lastUserInteraction = Date.now();
-				
+			startConversation: function (value){
+			this.lastUserInteraction = Date.now();
 				this.$http.post(this.startCall, {})
-					.then(httpResponse => {}).catch(error => {
+					.then(httpResponse => {
+							this.convId = httpResponse.data.metadatas.sessionId
+							this._handleResponse(httpResponse)
+						}).catch(error => {
 						// error
 						this.error = true;
-						
 						this.processing = false;
 						this._scrollToBottom();
 					});
 			},
 			postAnswerBtn: function (btn) {
 				this.messages.push({
-					text: [btn.title],
+					text: [btn.label],
 					sent: true,
 					bgColor: "primary",
 					textColor: "white"
@@ -120,7 +120,7 @@ Vue.component('v-chatbot-dev', {
 
 				this._scrollToBottom();
 				
-				this.askBot(btn.payload);
+				this.askBot(btn.payload, true);
 			},
 			postAnswerText: function () {
 				var sanitizedString = this.inputConfig.responseText.trim().replace(/(?:\r\n|\r|\n)/g, '<br>');
@@ -138,36 +138,25 @@ Vue.component('v-chatbot-dev', {
 				var response = this.inputConfig.responsePattern === "" ? sanitizedString.replace(/(")/g, "\"")
 															  : this.inputConfig.responsePattern.replace("#", sanitizedString.replace(/(")/g, "\\\""));
 				
-				this.askBot(response);
+				this.askBot(response, false);
 			},
 			_scrollToBottom: function () {
 				if (this.$refs.scroller) {
 					this.$refs.scroller.setScrollPosition(this.$refs.scroller.scrollSize, 400);
 				}
 			},
-			askBot: function (value) {
+			askBot: function (value, isButton) {
 				this.prevInputConfig = JSON.parse(JSON.stringify(this.inputConfig));
 				this.reinitInput();
 				this.lastPayload = value;
 				this.processing = true;
 				
 				this.lastUserInteraction = Date.now();
-				
-				this.$http.post(this.botUrl, {sender: this.convId, message: value})
+			
+				this.$http.post(this.botUrl, {sender: this.convId, message: value, isButton: isButton})
 					.then(httpResponse => {
 						// success
-						httpResponse.data.forEach(function(value, key) {
-							var textes = value.text.split(/<hr>|<hr \/>/);
-							
-							for (var i = 0; i < textes.length - 1; i++) {
-								this.watingMessagesStack.push({text: textes[i]});
-							}
-							
-							value.text = textes[textes.length - 1];
-							this.watingMessagesStack.push(value);
-						}, this);
-						
-						this._displayMessages();
+						this._handleResponse(httpResponse);
 					}).catch(error => {
 						// error
 						this.error = true;
@@ -176,6 +165,18 @@ Vue.component('v-chatbot-dev', {
 						this._scrollToBottom();
 					});
 					
+			},
+			_handleResponse: function(httpResponse) {
+				// success
+				var responses = httpResponse.data.htmlTexts;
+				var buttons = httpResponse.data.choices;
+				
+				for (var i = 0; i < responses.length - 1; i++){
+					this.watingMessagesStack.push({text: responses[i]})
+				}
+				this.watingMessagesStack.push({text: responses[responses.length -1], buttons : buttons})
+				
+				this._displayMessages();
 			},
 			_displayMessages: function () {
 				if (this.watingMessagesStack.length > 0) {
@@ -216,15 +217,7 @@ Vue.component('v-chatbot-dev', {
 				
 				if (response.buttons) {
 					response.buttons.forEach(function(value, key) {
-						if (value.title.startsWith("#")) {
-							var cmd = value.title.substring(1);
-							if (cmd === "textarea") this.inputConfig.modeTextarea = true;
-							if (cmd === "eval") this.inputConfig.showRating = true;
-							if (cmd === "keep_action") this.keepAction = true;
-							if (value.payload) this.inputConfig.responsePattern = value.payload;
-						} else {
-							this.inputConfig.buttons.push(value);
-						}
+						this.inputConfig.buttons.push(value);
 					}, this);
 				}
 				
@@ -237,7 +230,7 @@ Vue.component('v-chatbot-dev', {
 				
 				this.$http.post(this.botUrl, '{"sender":"' + this.convId + '","message":"/restart"}')
 				.then(httpResponse => {
-					this.askBot("/start"); // lancement de la phrase d'accueil
+					this.startConversation("/start"); // lancement de la phrase d'accueil
 				});
 			},
 			reinitInput: function () {

@@ -224,6 +224,10 @@ public enum DtResources implements MessageKey {
 	/** TrainerInfo.
 	/***********************************************************
 	/**
+	 * Training id.
+	 */
+	fldTrainerInfo$traId,
+	/**
 	 * Name.
 	 */
 	fldTrainerInfo$name,

@@ -27,11 +27,11 @@ public final class BotResponse {
 	}
 
 	private final List<String> htmlTexts;
-	private final List<IBotChoice> choices;
+	private final List<BotButton> choices;
 	private final Map<String, Object> metadatas;
 	private final BotStatus status;
 
-	BotResponse(final List<String> htmlTexts, final List<IBotChoice> choices, final Map<String, Object> metadatas, final BotStatus status) {
+	BotResponse(final List<String> htmlTexts, final List<BotButton> choices, final Map<String, Object> metadatas, final BotStatus status) {
 		this.htmlTexts = Collections.unmodifiableList(htmlTexts);
 		this.choices = Collections.unmodifiableList(choices);
 		this.metadatas = metadatas;
@@ -48,7 +48,7 @@ public final class BotResponse {
 	/**
 	 * @return the choices
 	 */
-	public List<IBotChoice> getChoices() {
+	public List<BotButton> getChoices() {
 		return choices;
 	}
 

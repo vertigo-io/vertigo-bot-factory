@@ -23,6 +23,7 @@ create DtDefinition DtRunnerInfo {
 }
 
 create DtDefinition DtTrainerInfo {
+	field traId					{domain: DoId						label: "Training id"			cardinality : "1"}
 	field name 					{domain: DoLabel					label: "Name" 					cardinality : "1"}
 	field trainingInProgress 	{domain: DoYesNo 					label: "Training in progress" 	cardinality : "1"}
 	field trainingState			{domain: DoLabel 					label: "Training state" 		cardinality : "1"}

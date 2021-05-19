@@ -17,15 +17,10 @@
  */
 package io.vertigo.chatbot.engine.model;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
-public final class BotInput implements Serializable {
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3841860183155872723L;
+public final class BotInput {
 
 	private String message;
 	private Map<String, Object> metadatas;

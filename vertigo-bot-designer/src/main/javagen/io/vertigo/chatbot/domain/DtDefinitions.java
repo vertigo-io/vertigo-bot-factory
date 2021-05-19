@@ -576,6 +576,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de TrainerInfo.
 	 */
 	public enum TrainerInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TrainerInfo> {
+		/** Propriété 'Training id'. */
+		traId,
 		/** Propriété 'Name'. */
 		name,
 		/** Propriété 'Training in progress'. */

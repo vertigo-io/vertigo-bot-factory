@@ -25,10 +25,10 @@ public class BtBuilderUtils {
 	 *
 	 */
 	public static void createButton(final String text, final List<ResponseButtonExport> responses, final StringBuilder bt) {
-		final String bb = String.format("user/local/topic/%s/responseButton ", responses.get(0).getTopCode());
-		bt.append("choose:button:nlu ");
+		final String bb = String.format("/user/local/topic/%s/responsebutton", responses.get(0).getTopCode());
+		bt.append("begin choose:button:nlu ");
 		bt.append(bb);
-		addQuote(bt);
+		addSpaceQuote(bt);
 		bt.append(text);
 		addQuote(bt);
 		addLineBreak(bt);

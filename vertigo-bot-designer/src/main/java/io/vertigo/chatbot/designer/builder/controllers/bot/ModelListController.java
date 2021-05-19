@@ -44,6 +44,8 @@ import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.designer.builder.services.BotConversationServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
+import io.vertigo.chatbot.engine.model.BotResponse;
+import io.vertigo.chatbot.engine.model.TalkInput;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
@@ -80,7 +82,7 @@ public class ModelListController extends AbstractBotController {
 		viewContext.publishRef(autoscrollKey, Boolean.TRUE);
 
 		refreshRunnerState(viewContext, bot);
-		refreshTrainerState(viewContext, bot);
+		refreshTrainerState(viewContext, bot, new TrainerInfo());
 		refreshTrainings(viewContext, bot);
 
 		toModeReadOnly();
@@ -95,8 +97,8 @@ public class ModelListController extends AbstractBotController {
 	}
 
 	@PostMapping("/_refreshTrainer")
-	public ViewContext refreshTrainerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		final TrainerInfo state = trainingServices.getTrainingState(bot);
+	public ViewContext refreshTrainerState(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, @ViewAttribute("trainerState") final TrainerInfo trainerInfo) {
+		final TrainerInfo state = trainingServices.getTrainingState(bot, trainerInfo);
 		viewContext.publishDto(trainerStateKey, state);
 
 		return viewContext;
@@ -122,10 +124,17 @@ public class ModelListController extends AbstractBotController {
 		return viewContext;
 	}
 
+	@PostMapping("/_refreshTrainingInfo")
+	public ViewContext doUpdateTrainingInfo(final ViewContext viewContext) {
+
+		viewContext.publishDto(trainerStateKey, new TrainerInfo());
+		return viewContext;
+	}
+
 	@PostMapping("/_train")
 	public ViewContext doTrain(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		trainingServices.trainAgent(bot);
-
+		viewContext.publishDto(trainerStateKey, trainingServices.createTrainingState(bot));
 		return viewContext;
 	}
 
@@ -154,18 +163,21 @@ public class ModelListController extends AbstractBotController {
 	@ResponseBody
 	public String talk(
 			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList,
-			@RequestBody final byte[] input) {
+			@RequestBody final String input) {
 
 		final ChatbotNode devNode = nodeList.stream()
 				.filter(ChatbotNode::getIsDev)
 				.findFirst()
 				.orElseThrow(() -> new VUserException("No training node configured"));
 
-		return ChatbotUtils.postToUrl(devNode.getUrl() + "/api/chatbot/talk", input);
+		final TalkInput talkInput = botConversationServices.jsonToObject(input, TalkInput.class);
+		final String botInput = botConversationServices.createBotInput(talkInput);
+		return ChatbotUtils.postToUrl(devNode.getUrl() + "/api/chatbot/talk/" + talkInput.getSender(), botInput.getBytes());
 	}
 
 	@PostMapping("/_start")
-	public ViewContext start(
+	@ResponseBody
+	public BotResponse start(
 			final ViewContext viewContext,
 			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList) {
 
@@ -173,10 +185,10 @@ public class ModelListController extends AbstractBotController {
 				.filter(ChatbotNode::getIsDev)
 				.findFirst()
 				.orElseThrow(() -> new VUserException("No training node configured"));
-		final BodyPublisher publisher = BodyPublishers.ofString(botConversationServices.createBotInput(""));
+		final BodyPublisher publisher = BodyPublishers.ofByteArray(botConversationServices.createBotInput("").getBytes());
 		final HttpRequest request = botConversationServices.createPostRequest(devNode.getUrl() + "/api/chatbot/start", publisher);
-		final HttpResponse<String> result = botConversationServices.sendRequest(null, request, BodyHandlers.ofString(), 204);
-		return viewContext;
+		final HttpResponse<String> result = botConversationServices.sendRequest(null, request, BodyHandlers.ofString(), 200);
+		return botConversationServices.jsonToObject(result.body(), BotResponse.class);
 	}
 
 }

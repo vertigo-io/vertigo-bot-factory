@@ -29,7 +29,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 @Transactional
 public class SmallTalkExportServices implements TopicsExportServices, Component {
 
-	private final static String PREFIX = "smt_";
+	private final static String PREFIX = "topic";
 
 	@Inject
 	private TopicServices topicServices;
@@ -148,6 +148,16 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 		utterTextExport.setResponseType(smallTalk.getRtyId());
 }	public String getFallbackBt(final Chatbot bot) {
 		// TODO Auto-generated method stub
+		return "\n	begin sequence" +
+				"\n		say \"Sorry, try again.\"" +
+				"\n		topic:start" +
+				"\n	end sequence";
+	}
+
+		return createBt(utterTextExport, new ArrayList<ResponseButtonExport>());
+	}
+
+	public String getWelcomeBt(final Chatbot bot) {
 		return "" +
 				"\n	begin sequence" +
 				"\n		say:once \"Welcome to this test bot.\"" +
@@ -156,16 +166,6 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 				"\n			button \"Le topic 2\" topic2" +
 				"\n		end choose:button" +
 				"\n		topic {{" + "/user/local" + "/topic}}" +
-				"\n	end sequence";
-	}
-
-		return createBt(utterTextExport, new ArrayList<ResponseButtonExport>());
-	}
-
-	public String getWelcomeBt(final Chatbot bot) {
-		return "\n	begin sequence" +
-				"\n		say \"Sorry, try again.\"" +
-				"\n		topic:start" +
 				"\n	end sequence";
 	}
 

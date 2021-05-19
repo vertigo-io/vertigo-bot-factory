@@ -43,10 +43,15 @@
 						if (!VertigoUi.vueData.trainerState.trainingInProgress && interval != null) {
 							clearInterval(interval);
 							interval = null;
+							setTimeout(refreshTrainingInfo, 500)
 							setTimeout(refreshModels, 500); // timeout to ensure callback is processed
 						}
 					}
 				});
+			}
+			
+			function refreshTrainingInfo(){
+				VUiPage.httpPostAjax("_refreshTrainingInfo", {});
 			}
 			
 			function refreshModels() {
@@ -337,7 +342,7 @@
 					</q-card-section>
 					
 					<q-card-section>
-						<p th:text="#{model.deployment.title}"></p>
+						<p th:text="#{node.deployment.title}"></p>
 
 						<q-chip v-for="node in vueData.nodeList" clickable :selected="isSelected(node)" @update:selected="state => selectNode(node, state)"
 							    icon="panorama_fish_eye" :style="'background: '+ node.color" text-color="white">
@@ -347,12 +352,12 @@
 					</q-card-section>
 					
 					<q-card-section>
-						<div v-if="!dataX.loadModel.selectedNode" class="text-italic" th:text=#{model.deployment.phrase}></div>
+						<div v-if="!dataX.loadModel.selectedNode" class="text-italic" th:text=#{node.deployment.phrase}></div>
 						<div v-if="dataX.loadModel.selectedNode">Deploy <span v-html="getMigrationAdjective()"></span> model on node <span class="text-italic" :style="'color: '+ dataX.loadModel.selectedNode.color">"{{dataX.loadModel.selectedNode.name}}"</span></div>
 					</q-card-section>
 					
 					<q-card-actions align="around">
-						<q-btn th:label="#{model.deployment.title}" color="red" v-close-popup></q-btn>
+						<q-btn th:label="#{node.deployment.title}" color="red" v-close-popup></q-btn>
 						<q-btn th:label="#{action.laod}" color="green" :disable="!dataX.loadModel.selectedNode" :loading="dataX.loadModel.processing" @click="loadTraining()" ></q-btn>
 					</q-card-actions>
 				</q-card>

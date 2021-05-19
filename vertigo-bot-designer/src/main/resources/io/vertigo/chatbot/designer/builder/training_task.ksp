@@ -62,6 +62,18 @@ create Task TkGetAllTrainingFilIdsByBotId {
 	out filIds 				{domain : DoId			 	cardinality:"*"}
 } 
 
+
+create Task TkGetCurrentTrainingByBotId {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select tra.*
+            from training tra
+            where tra.bot_id = #botId# and tra.status = 'TRAINING'
+             "
+	in botId				{domain : DoId,				cardinality:"1"} 
+	out tra 				{domain : DoDtTraining	 	cardinality:"?"}
+} 
+
 create Task TkRemoveTrainingFileByFilIds{
     className : "io.vertigo.basics.task.TaskEngineProc"
     request : "
