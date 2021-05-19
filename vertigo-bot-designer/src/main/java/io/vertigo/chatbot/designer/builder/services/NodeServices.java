@@ -15,6 +15,7 @@ import io.vertigo.chatbot.designer.builder.chatbotNode.ChatbotNodePAO;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -93,5 +94,12 @@ public class NodeServices implements Component {
 
 	public void deleteChatbotNodeByBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		chatbotNodePAO.removeChatbotNodeByBotId(bot.getBotId());
+	}
+
+	public ChatbotNode getDevNodeFromList(final DtList<ChatbotNode> nodeList) {
+		return nodeList.stream()
+				.filter(ChatbotNode::getIsDev)
+				.findFirst()
+				.orElseThrow(() -> new VUserException("No training node configured"));
 	}
 }

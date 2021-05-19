@@ -56,6 +56,8 @@ import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.designer.builder.services.topic.export.BotExportServices;
 import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.utils.HttpRequestUtils;
+import io.vertigo.chatbot.designer.utils.ObjectConvertionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -103,9 +105,6 @@ public class TrainingServices implements Component {
 	@Inject
 	private NodeServices nodeServices;
 
-	@Inject
-	private BotConversationServices botConversationServices;
-
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
 	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot) {
@@ -128,9 +127,9 @@ public class TrainingServices implements Component {
 		final Map<String, String> headers = Map.of(API_KEY, devNode.getApiKey(),
 				"Content-type", "application/json");
 
-		final BodyPublisher publisher = BodyPublishers.ofString(botConversationServices.objectToJson(requestData));
-		final HttpRequest request = botConversationServices.createPutRequest(devNode.getUrl() + "/api/chatbot/admin/model", headers, publisher);
-		botConversationServices.sendAsyncRequest(null, request, BodyHandlers.ofString())
+		final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
+		final HttpRequest request = HttpRequestUtils.createPutRequest(devNode.getUrl() + "/api/chatbot/admin/model", headers, publisher);
+		HttpRequestUtils.sendAsyncRequest(null, request, BodyHandlers.ofString())
 				.thenApply(response -> this.handleResponse(response, training, devNode, bot));
 
 		return training;
