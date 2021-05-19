@@ -11,6 +11,10 @@
 
 	<artifactId>vertigo-bot-designer</artifactId>
 	<packaging>war</packaging>
+	
+	<properties>
+		<sonar.javascript.globals>Vue,VertigoUi,VUiPage</sonar.javascript.globals>
+	</properties>
 
 	<dependencies>
 		<dependency>

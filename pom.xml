@@ -36,6 +36,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<vertigo.version>3.0.0</vertigo.version>
+		
+		<sonar.exclusions>**/javagen/**</sonar.exclusions>
 	</properties>
 
 	<modules>
