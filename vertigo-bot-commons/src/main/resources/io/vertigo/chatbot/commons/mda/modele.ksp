@@ -24,53 +24,6 @@ create Association AChatbotMediaFileInfo {
 	labelB : "Avatar"
 }
 
-create Association AChatbotUtterTextWelcome {
-	fkFieldName : "uttIdWelcome"
-    
- 	dtDefinitionA : DtChatbot
-	dtDefinitionB : DtUtterText
-	
-	type : "*>1"
-	
-	roleB : "utterTextWelcome"
-	labelB : "Welcome text"
-}
-
-create Association AChatbotWelcomeButtons {
-	fkFieldName : "botIdWelcome"
-    
- 	dtDefinitionA : DtResponseButton
-	type : "*>?"
-	dtDefinitionB : DtChatbot
-	
-	labelB : "welcome buttons"
-	roleB : "chatbotWelcome"
-}
-
-create Association AChatbotUtterTextDefault {
-	fkFieldName : "uttIdDefault"
-    
- 	dtDefinitionA : DtChatbot
-	dtDefinitionB : DtUtterText
-	
-	type : "*>1"
-	
-	roleB : "utterTextDefault"
-	labelB : "Default text"
-}
-
-create Association AChatbotDefaultButtons {
-	fkFieldName : "botIdDefault"
-    
- 	dtDefinitionA : DtResponseButton
-	type : "*>?"
-	dtDefinitionB : DtChatbot
-	
-	labelB : "Default buttons"
-	roleB : "chatbotDefault"
-}
-
-
 /**********************/
 /* **** Training **** */
 /**********************/

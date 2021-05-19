@@ -59,14 +59,6 @@ public enum DtResources implements MessageKey {
 	 * Avatar.
 	 */
 	fldChatbot$filIdAvatar,
-	/**
-	 * Welcome text.
-	 */
-	fldChatbot$uttIdWelcome,
-	/**
-	 * Default text.
-	 */
-	fldChatbot$uttIdDefault,
 
 	/***********************************************************
 	/** ChatbotNode.

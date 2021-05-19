@@ -37,6 +37,7 @@ import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -77,7 +78,7 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 
 		viewContext.publishDto(smallTalkKey, smallTalk);
 		viewContext.publishMdl(responseTypeKey, ResponseType.class, null);
-		viewContext.publishDtListModifiable(buttonsKey, responsesButtonServices.getButtonsBySmalltalk(bot, smallTalk));
+		viewContext.publishDtListModifiable(buttonsKey, responsesButtonServices.getButtonsBySmalltalk(bot, smallTalk.getSmtId()));
 		final DtList<UtterText> utterTextList = utterTextServices.getUtterTextList(bot, smallTalk);
 		utterTextList.add(new UtterText()); // add the next for random, or the 1st for rich text if 0 lines
 		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
@@ -138,7 +139,19 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 	@PostMapping("/_delete")
 	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("smallTalk") final SmallTalk smallTalk,
 			@ViewAttribute("topic") final Topic topic) {
-		smallTalkServices.deleteSmallTalk(chatbot, smallTalk, topic);
+		final DtList<Topic> listTopicRef = topicServices.getTopicReferencingTopId(topic.getTopId());
+		if (!listTopicRef.isEmpty()) {
+			final StringBuilder errorMessage = new StringBuilder("This topic cannot be removed because it is referenced in response button in the following topics : ");
+			String prefix = "";
+			for (final Topic topicRef : listTopicRef) {
+				errorMessage.append(prefix);
+				errorMessage.append(topicRef.getTitle());
+				prefix = ", ";
+			}
+			errorMessage.append(".");
+			throw new VUserException(errorMessage.toString());
+		}
+		smallTalkServices.delete(chatbot, smallTalk, topic);
 		return "redirect:/bot/" + topic.getBotId() + "/topics/";
 	}
 

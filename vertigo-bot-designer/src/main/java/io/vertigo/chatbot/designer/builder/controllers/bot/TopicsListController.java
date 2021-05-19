@@ -30,8 +30,8 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.designer.builder.services.TypeTopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicIhmFields;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.ui.core.ViewContext;
@@ -58,7 +58,7 @@ public class TopicsListController extends AbstractBotController {
 	@Secured("BotUser")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
-		viewContext.publishDtList(topicIhmListKey, TopicIhmFields.topId, topicServices.getAllTopicIhmByBot(bot));
+		viewContext.publishDtList(topicIhmListKey, TopicIhmFields.topId, topicServices.getAllNonTechnicalTopicIhmByBot(bot));
 		viewContext.publishDtListModifiable(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 
 		viewContext.publishRef(selectionList, "");

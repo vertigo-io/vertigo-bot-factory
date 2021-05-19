@@ -41,36 +41,13 @@ public class ResponsesButtonServices implements Component {
 				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
-	public DtList<ResponseButton> getWelcomeButtonsByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+	public DtList<ResponseButton> getButtonsBySmalltalk(@SecuredOperation("botVisitor") final Chatbot bot, final Long smtId) {
 		Assertion.check()
-				.isNotNull(bot)
-				.isNotNull(bot.getBotId());
+				.isNotNull(smtId);
 		// ---
 
 		return responseButtonDAO.findAll(
-				Criterions.isEqualTo(ResponseButtonFields.botIdWelcome, bot.getBotId()),
-				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
-	}
-
-	public DtList<ResponseButton> getDefaultButtonsByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-		Assertion.check()
-				.isNotNull(bot)
-				.isNotNull(bot.getBotId());
-		// ---
-
-		return responseButtonDAO.findAll(
-				Criterions.isEqualTo(ResponseButtonFields.botIdDefault, bot.getBotId()),
-				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
-	}
-
-	public DtList<ResponseButton> getButtonsBySmalltalk(@SecuredOperation("botVisitor") final Chatbot bot, final SmallTalk smallTalk) {
-		Assertion.check()
-				.isNotNull(smallTalk)
-				.isNotNull(smallTalk.getSmtId());
-		// ---
-
-		return responseButtonDAO.findAll(
-				Criterions.isEqualTo(ResponseButtonFields.smtId, smallTalk.getSmtId()),
+				Criterions.isEqualTo(ResponseButtonFields.smtId, smtId),
 				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
@@ -78,11 +55,6 @@ public class ResponsesButtonServices implements Component {
 		// clear old buttons
 		responsesButtonPAO.removeAllButtonsBySmtId(smt.getSmtId());
 
-	}
-
-	public void removeAllButtonsByBot(@SecuredOperation("botAdm") final Chatbot bot) {
-		// clear old buttons
-		responsesButtonPAO.removeAllButtonsByBotId(bot.getBotId());
 	}
 
 	/**
@@ -116,28 +88,6 @@ public class ResponsesButtonServices implements Component {
 				.stream()
 				.collect(Collectors.groupingBy(ResponseButton::getSmtId,
 						VCollectors.toDtList(ResponseButton.class)));
-	}
-
-	public void saveAllDefaultButtonsByBot(@SecuredOperation("botAdm") final Chatbot bot, final DtList<ResponseButton> buttonList) {
-		// save new buttons
-		final Long botId = bot.getBotId();
-		for (final ResponseButton btn : buttonList) {
-			btn.setBtnId(null); // force creation
-			btn.setBotIdDefault(botId);
-			responseButtonDAO.save(btn);
-		}
-
-	}
-
-	public void saveAllWelcomeButtonsByBot(@SecuredOperation("botAdm") final Chatbot bot, final DtList<ResponseButton> buttonList) {
-		// save new buttons
-		final Long botId = bot.getBotId();
-		for (final ResponseButton btn : buttonList) {
-			btn.setBtnId(null); // force creation
-			btn.setBotIdWelcome(botId);
-			responseButtonDAO.save(btn);
-		}
-
 	}
 
 }

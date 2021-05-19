@@ -9,6 +9,42 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
+	/** KindTopic.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldKindTopic$ktoCd,
+	/**
+	 * Label.
+	 */
+	fldKindTopic$label,
+	/**
+	 * Title (English).
+	 */
+	fldKindTopic$titleEnglish,
+	/**
+	 * Title (French).
+	 */
+	fldKindTopic$titleFrench,
+	/**
+	 * Description (English).
+	 */
+	fldKindTopic$descriptionEnglish,
+	/**
+	 * Description (French).
+	 */
+	fldKindTopic$descriptionFrench,
+	/**
+	 * Default text (English).
+	 */
+	fldKindTopic$defaultEnglish,
+	/**
+	 * Default text (French).
+	 */
+	fldKindTopic$defaultFrench,
+
+	/***********************************************************
 	/** NluTrainingExport.
 	/***********************************************************
 	/**
@@ -59,14 +95,6 @@ public enum DtResources implements MessageKey {
 	 * TopicResponse.
 	 */
 	fldResponseButton$topIdResponse,
-	/**
-	 * welcome buttons.
-	 */
-	fldResponseButton$botIdWelcome,
-	/**
-	 * Default buttons.
-	 */
-	fldResponseButton$botIdDefault,
 
 	/***********************************************************
 	/** ResponseType.
@@ -199,6 +227,10 @@ public enum DtResources implements MessageKey {
 	 * Topic.
 	 */
 	fldTopic$topCatId,
+	/**
+	 * Kind of topic.
+	 */
+	fldTopic$ktoCd,
 
 	/***********************************************************
 	/** TopicCategory.
@@ -219,6 +251,10 @@ public enum DtResources implements MessageKey {
 	 * Enabled.
 	 */
 	fldTopicCategory$isEnabled,
+	/**
+	 * Technical.
+	 */
+	fldTopicCategory$isTechnical,
 	/**
 	 * Chatbot.
 	 */
@@ -259,6 +295,10 @@ public enum DtResources implements MessageKey {
 	 * Enabled.
 	 */
 	fldTopicIhm$isEnabled,
+	/**
+	 * Code Kind.
+	 */
+	fldTopicIhm$ktoCd,
 
 	/***********************************************************
 	/** TypeTopic.

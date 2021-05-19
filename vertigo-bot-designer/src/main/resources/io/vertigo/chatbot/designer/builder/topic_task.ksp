@@ -29,7 +29,8 @@ create Task TkGetAllTopicRelativeSmallTalkByBotId{
 			select top.*
 			from topic top
 			join small_talk smt on (smt.top_id = top.top_id)
-			where top.bot_id = #botId# and top.is_enabled = true
+			join topic_category tca on tca.top_cat_id = top.top_cat_id
+			where top.bot_id = #botId# and top.is_enabled = true and tca.is_technical = false
              "
 	in botId				{domain : DoId,						cardinality:"1"} 
 	out tpcs 				{domain : DoDtTopic		 			cardinality:"*"}
@@ -41,7 +42,8 @@ create Task TkGetAllTopicRelativeScriptIntentByBotId{
 			select top.*
 			from topic top
 			join script_intention sin on (sin.top_id = top.top_id)
-			where top.bot_id = #botId# and top.is_enabled = true
+			join topic_category tca on tca.top_cat_id = top.top_cat_id
+			where top.bot_id = #botId# and top.is_enabled = true and tca.is_technical = false
              "
 	in botId				{domain : DoId,						cardinality:"1"} 
 	out tpcs 				{domain : DoDtTopic		 			cardinality:"*"}
@@ -74,8 +76,12 @@ create Task TkGetAllTopicsIhmFromBot {
 			join type_topic tto on top.tto_cd = tto.tto_cd
 			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)
 			where top.bot_id = #botId#
+			<% if (ktoCd != null){ %>
+				and top.kto_cd = #ktoCd#
+			<% } %>
              "
 	in botId  				{domain : DoId         		cardinality : "1"  }
+	in ktoCd  				{domain : DoCode         	cardinality : "?"  }
 	out topicIHM			{domain : DoDtTopicIhm,		cardinality : "*"  } 
 }
 
@@ -105,15 +111,42 @@ create Task TkGetTopicIhmById {
 create Task TkGetMaxCodeByBotId{
     className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
-			select 	
-				COALESCE(top.code, 0)
+			select coalesce ((select top.code
 			from topic top
 			left join topic top_min on (top.code < top_min.code and top.bot_id = top_min.bot_id)
 			where top_min.top_id  is null and top.bot_id = #botId#
-			limit 1
+			limit 1), 0)
              "
 	in botId  				{domain : DoId         		cardinality : "1"  }
 	out code				{domain : DoNumber			cardinality : "1"  } 
 }
+
+
+create Task TkGetBasicTopicByBotIdKtoCd {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	top.*
+			from topic top 
+			where top.bot_id = #botId#
+			and top.kto_cd = #ktoCd#
+             "
+	in botId  				{domain : DoId         		cardinality : "1"  }
+	in ktoCd  				{domain : DoCode         	cardinality : "1"  }
+	out topic				{domain : DoDtTopic,		cardinality : "1"  } 
+}
+
+create Task TkGetTopicReferencingTopId {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select top.*
+			from topic top
+			join small_talk smt on smt.top_id = top.top_id
+			inner join response_button rbu on smt.smt_id = rbu.smt_id
+			where rbu.top_id_response = #topId#
+            "
+	in topId				{domain : DoId,						cardinality:"1"} 
+	out topic 				{domain : DoDtTopic		 			cardinality:"*"}
+} 
+
 
 

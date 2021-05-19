@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +11,9 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
@@ -38,12 +42,14 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	@Inject
 	protected TopicServices topicServices;
 	@Inject
+	protected List<TopicInterfaceServices> topicInterfaceServices;
+	@Inject
 	protected TopicCategoryServices topicCategoryServices;
 
 	public void initContext(final ViewContext viewContext, final Chatbot bot, final Topic topic) {
-		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Paramètres incohérents");
+		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Incoherent parameters");
 
-		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
+		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name()));
 		viewContext.publishDto(topicKey, topic);
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
@@ -57,6 +63,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	}
 
 	public void initContextNew(final ViewContext viewContext, final Chatbot bot) {
+		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name()));
 		viewContext.publishDto(topicKey, topicServices.getNewTopic(bot));
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
@@ -64,8 +71,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey,
 				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
-
-		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 
 		viewContext.publishDto(topicCategoryKey, new TopicCategory());
 		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
@@ -165,7 +170,30 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete);
 
 	@PostMapping("/_delete")
-	abstract String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("object") final D object,
-			@ViewAttribute("topic") final Topic topic);
+	String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("object") final D object,
+			@ViewAttribute("topic") final Topic topic) {
+		final DtList<Topic> listTopicRef = topicServices.getTopicReferencingTopId(topic.getTopId());
+		if (!listTopicRef.isEmpty()) {
+			final StringBuilder errorMessage = new StringBuilder("This topic cannot be removed because it is referenced in response button in the following topics : ");
+			String prefix = "";
+			for (final Topic topicRef : listTopicRef) {
+				errorMessage.append(prefix);
+				errorMessage.append(topicRef.getTitle());
+				prefix = ", ";
+			}
+			errorMessage.append(".");
+			throw new VUserException(errorMessage.toString());
+		}
+
+		for (final TopicInterfaceServices services : topicInterfaceServices) {
+
+			if (services.handleObject(topic)) {
+				services.delete(chatbot, services.findByTopId(topic.getTopId()), topic);
+			}
+		}
+
+		topicServices.deleteTopic(chatbot, topic);
+		return "redirect:/bot/" + topic.getBotId() + "/topics/";
+	}
 
 }

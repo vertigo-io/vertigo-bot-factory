@@ -2,6 +2,7 @@ package io.vertigo.chatbot.designer.builder.services.topic;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -47,11 +48,19 @@ public class TopicCategoryServices implements Component {
 	}
 
 	public DtList<TopicCategory> getAllCategoriesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId());
+		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId(), Optional.empty(), Optional.empty());
+	}
+
+	public DtList<TopicCategory> getAllNonTechnicalCategoriesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId(), Optional.empty(), Optional.of(false));
 	}
 
 	public DtList<TopicCategory> getAllActiveCategoriesByBot(@SecuredOperation("botContributor") final Chatbot bot) {
-		return topicCategoryDAO.getAllActiveCategoriesByBotId(bot.getBotId());
+		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId(), Optional.of(true), Optional.of(false));
+	}
+
+	public TopicCategory getTechnicalCategoryByBot(@SecuredOperation("botContributor") final Chatbot bot) {
+		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId(), Optional.of(true), Optional.of(true)).get(0);
 	}
 
 	public TopicCategory getNewTopicCategory(@SecuredOperation("botAdm") final Chatbot bot) {
@@ -60,6 +69,7 @@ public class TopicCategoryServices implements Component {
 		// Modify in the futur if sublevel needs
 		category.setLevel(1L);
 		category.setIsEnabled(true);
+		category.setIsTechnical(false);
 		return category;
 	}
 
@@ -72,6 +82,15 @@ public class TopicCategoryServices implements Component {
 
 	public void removeAllCategoryByBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		topicCategoryPAO.removeAllCategoryByBotId(bot.getBotId());
+	}
+
+	public TopicCategory initializeBasicCategory() {
+		final TopicCategory topicCategory = new TopicCategory();
+		topicCategory.setIsEnabled(true);
+		topicCategory.setLabel("Basics");
+		topicCategory.setIsTechnical(true);
+		topicCategory.setLevel(1L);
+		return topicCategory;
 	}
 
 }

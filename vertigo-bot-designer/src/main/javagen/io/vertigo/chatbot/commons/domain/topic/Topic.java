@@ -68,6 +68,21 @@ public final class Topic implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.TopicCategory> topCatIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.TopicCategory.class, "Topic");
 
+	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "ATopicKindTopic",
+			fkFieldName = "ktoCd",
+			primaryDtDefinitionName = "DtKindTopic",
+			primaryIsNavigable = true,
+			primaryRole = "KindTopic",
+			primaryLabel = "Kind of topic",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtTopic",
+			foreignIsNavigable = false,
+			foreignRole = "Topic",
+			foreignLabel = "Topic",
+			foreignMultiplicity = "0..*")
+	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.topic.KindTopic, io.vertigo.chatbot.commons.domain.topic.KindTopicEnum> ktoCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.KindTopic.class, "KindTopic", io.vertigo.chatbot.commons.domain.topic.KindTopicEnum.class);
+
 	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
 			name = "AnnTopicCategory",
 			tableName = "TOPIC_TOPIC_CATEGORY",
@@ -238,6 +253,25 @@ public final class Topic implements Entity {
 	public void setTopCatId(final Long topCatId) {
 		topCatIdAccessor.setId(topCatId);
 	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Kind of topic'.
+	 * @return String ktoCd <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Kind of topic", fkDefinition = "DtKindTopic" )
+	public String getKtoCd() {
+		return (String) ktoCdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Kind of topic'.
+	 * @param ktoCd String <b>Obligatoire</b>
+	 */
+	public void setKtoCd(final String ktoCd) {
+		ktoCdAccessor.setId(ktoCd);
+	}
 
  	/**
 	 * Association : Topic.
@@ -253,6 +287,14 @@ public final class Topic implements Entity {
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbot() {
 		return botIdAccessor;
+	}
+
+ 	/**
+	 * Association : Kind of topic.
+	 * @return l'accesseur vers la propriété 'Kind of topic'
+	 */
+	public EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.topic.KindTopic, io.vertigo.chatbot.commons.domain.topic.KindTopicEnum> kindTopic() {
+		return ktoCdAccessor;
 	}
 
  	/**

@@ -27,6 +27,6 @@ public class TopicCategoryListController extends AbstractBotController {
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
-		viewContext.publishDtList(topicCategorieskKey, topicCategoryServices.getAllCategoriesByBot(bot));
+		viewContext.publishDtList(topicCategorieskKey, topicCategoryServices.getAllNonTechnicalCategoriesByBot(bot));
 	}
 }

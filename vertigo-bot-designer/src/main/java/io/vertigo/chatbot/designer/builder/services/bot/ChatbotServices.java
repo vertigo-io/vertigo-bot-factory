@@ -11,7 +11,8 @@ import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
@@ -68,22 +69,16 @@ public class ChatbotServices implements Component {
 	private TopicCategoryServices topicCategoryServices;
 
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
-			final UtterText defaultText, final DtList<ResponseButton> defaultButtons,
-			final UtterText welcomeText, final DtList<ResponseButton> welcomeButtons) {
+			final UtterText utterTextFailure,
+			final UtterText utterTextStart,
+			final UtterText utterTextEnd,
+			final Topic topicFailure, final Topic topicStart, final Topic topicEnd, final TopicCategory topicCategory) {
 
 		Assertion.check().isNotNull(chatbot);
-		Assertion.check().isNotNull(defaultText);
-		Assertion.check().isNotNull(defaultButtons);
-		Assertion.check().isNotNull(welcomeText);
-		Assertion.check().isNotNull(welcomeButtons);
+		Assertion.check().isNotNull(utterTextFailure);
+		Assertion.check().isNotNull(utterTextStart);
+		Assertion.check().isNotNull(utterTextEnd);
 		// ---
-
-		// default text
-		utterTextServices.save(chatbot, defaultText);
-		chatbot.setUttIdDefault(defaultText.getUttId());
-		// welcome
-		utterTextServices.save(chatbot, welcomeText);
-		chatbot.setUttIdWelcome(welcomeText.getUttId());
 
 		// Avatar
 		Long oldAvatar = null;
@@ -103,11 +98,18 @@ public class ChatbotServices implements Component {
 			fileServices.deleteFile(oldAvatar);
 		}
 
-		// clear old buttons
-		responsesButtonServices.removeAllButtonsByBot(chatbot);
-		// save new buttons
-		responsesButtonServices.saveAllDefaultButtonsByBot(savedChatbot, defaultButtons);
-		responsesButtonServices.saveAllWelcomeButtonsByBot(savedChatbot, welcomeButtons);
+		// save default topics
+		topicCategory.setBotId(chatbot.getBotId());
+		topicCategoryServices.saveCategory(chatbot, topicCategory);
+
+		//TopicFailure
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicFailure, smallTalkServices.findByTopId(topicFailure.getTopId()), utterTextFailure);
+
+		//Topic Start
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicStart, smallTalkServices.findByTopId(topicStart.getTopId()), utterTextStart);
+
+		//Topic End
+		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicEnd, smallTalkServices.findByTopId(topicEnd.getTopId()), utterTextEnd);
 
 		return savedChatbot;
 	}
@@ -119,7 +121,6 @@ public class ChatbotServices implements Component {
 		// Delete training and all media file
 		trainingServices.removeAllTraining(bot);
 		utterTextServices.removeAllUtterTextByBotId(bot);
-		responsesButtonServices.removeAllButtonsByBot(bot);
 		responsesButtonServices.removeAllSMTButtonsByBot(bot);
 		// Delete training, reponsetype and smallTalk
 		topicServices.removeAllNTSFromBot(bot);

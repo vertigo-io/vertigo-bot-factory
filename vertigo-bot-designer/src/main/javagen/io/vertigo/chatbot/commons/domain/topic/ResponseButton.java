@@ -48,36 +48,6 @@ public final class ResponseButton implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.Topic> topIdResponseAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.Topic.class, "TopicResponse");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
-			name = "AChatbotWelcomeButtons",
-			fkFieldName = "botIdWelcome",
-			primaryDtDefinitionName = "DtChatbot",
-			primaryIsNavigable = true,
-			primaryRole = "chatbotWelcome",
-			primaryLabel = "welcome buttons",
-			primaryMultiplicity = "0..1",
-			foreignDtDefinitionName = "DtResponseButton",
-			foreignIsNavigable = false,
-			foreignRole = "ResponseButton",
-			foreignLabel = "ResponseButton",
-			foreignMultiplicity = "0..*")
-	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdWelcomeAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "chatbotWelcome");
-
-	@io.vertigo.datamodel.structure.stereotype.Association(
-			name = "AChatbotDefaultButtons",
-			fkFieldName = "botIdDefault",
-			primaryDtDefinitionName = "DtChatbot",
-			primaryIsNavigable = true,
-			primaryRole = "chatbotDefault",
-			primaryLabel = "Default buttons",
-			primaryMultiplicity = "0..1",
-			foreignDtDefinitionName = "DtResponseButton",
-			foreignIsNavigable = false,
-			foreignRole = "ResponseButton",
-			foreignLabel = "ResponseButton",
-			foreignMultiplicity = "0..*")
-	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdDefaultAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "chatbotDefault");
-
 	/** {@inheritDoc} */
 	@Override
 	public UID<ResponseButton> getUID() {
@@ -158,60 +128,6 @@ public final class ResponseButton implements Entity {
 	 */
 	public void setTopIdResponse(final Long topIdResponse) {
 		topIdResponseAccessor.setId(topIdResponse);
-	}
-	
-	/**
-	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'welcome buttons'.
-	 * @return Long botIdWelcome
-	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "welcome buttons", fkDefinition = "DtChatbot" )
-	public Long getBotIdWelcome() {
-		return (Long) botIdWelcomeAccessor.getId();
-	}
-
-	/**
-	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'welcome buttons'.
-	 * @param botIdWelcome Long
-	 */
-	public void setBotIdWelcome(final Long botIdWelcome) {
-		botIdWelcomeAccessor.setId(botIdWelcome);
-	}
-	
-	/**
-	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Default buttons'.
-	 * @return Long botIdDefault
-	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Default buttons", fkDefinition = "DtChatbot" )
-	public Long getBotIdDefault() {
-		return (Long) botIdDefaultAccessor.getId();
-	}
-
-	/**
-	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Default buttons'.
-	 * @param botIdDefault Long
-	 */
-	public void setBotIdDefault(final Long botIdDefault) {
-		botIdDefaultAccessor.setId(botIdDefault);
-	}
-
- 	/**
-	 * Association : Default buttons.
-	 * @return l'accesseur vers la propriété 'Default buttons'
-	 */
-	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbotDefault() {
-		return botIdDefaultAccessor;
-	}
-
- 	/**
-	 * Association : welcome buttons.
-	 * @return l'accesseur vers la propriété 'welcome buttons'
-	 */
-	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbotWelcome() {
-		return botIdWelcomeAccessor;
 	}
 
  	/**

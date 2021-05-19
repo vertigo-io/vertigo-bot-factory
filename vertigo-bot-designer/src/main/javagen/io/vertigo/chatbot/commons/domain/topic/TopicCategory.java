@@ -20,6 +20,7 @@ public final class TopicCategory implements Entity {
 	private String label;
 	private Long level;
 	private Boolean isEnabled;
+	private Boolean isTechnical;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ATopicCategoryChatbot",
@@ -129,6 +130,25 @@ public final class TopicCategory implements Entity {
 	 */
 	public void setIsEnabled(final Boolean isEnabled) {
 		this.isEnabled = isEnabled;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Technical'.
+	 * @return Boolean isTechnical <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Technical")
+	public Boolean getIsTechnical() {
+		return isTechnical;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Technical'.
+	 * @param isTechnical Boolean <b>Obligatoire</b>
+	 */
+	public void setIsTechnical(final Boolean isTechnical) {
+		this.isTechnical = isTechnical;
 	}
 	
 	/**

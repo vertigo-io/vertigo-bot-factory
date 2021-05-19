@@ -6,31 +6,39 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.SmallTalkDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.smallTalk.SmallTalkPAO;
+import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtListState;
 
 @Transactional
 @Secured("BotUser")
-public class SmallTalkServices implements Component {
+public class SmallTalkServices implements Component, TopicInterfaceServices<SmallTalk> {
 
 	@Inject
 	private UtterTextServices utterTextServices;
 
 	@Inject
 	private TopicServices topicServices;
+
+	@Inject
+	private TopicCategoryServices topicCategoryServices;
 
 	@Inject
 	private ResponsesButtonServices responsesButtonServices;
@@ -53,21 +61,29 @@ public class SmallTalkServices implements Component {
 		return smallTalk;
 	}
 
+	@Override
+	public SmallTalk save(final SmallTalk smt) {
+		return smallTalkDAO.save(smt);
+	}
+
 	public SmallTalk saveSmallTalk(@SecuredOperation("botContributor") final Chatbot chatbot, final SmallTalk smallTalk,
 			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList, final Topic topic) {
 
 		Assertion.check()
-				.isNotNull(smallTalk)
-				.isNotNull(nluTrainingSentences)
-				.isNotNull(nluTrainingSentencesToDelete)
+				.isNotNull(smallTalk).isNotNull(topic)
 				.isNotNull(utterTexts)
 				.isNotNull(buttonList);
 		// ---
+		if (KindTopicEnum.NORMAL.name().equals(topic.getKtoCd())) {
+			Assertion.check().isNotNull(nluTrainingSentences)
+					.isNotNull(nluTrainingSentencesToDelete);
+		}
+
 		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
 		final Topic savedTopic = topicServices.save(topic);
 		smallTalk.setTopId(savedTopic.getTopId());
-		final SmallTalk savedST = smallTalkDAO.save(smallTalk);
+		final SmallTalk savedST = save(smallTalk);
 
 		// save utter textes, remove all + create all
 		utterTextServices.removeAllUtterTextBySmtId(chatbot, savedST.getSmtId());
@@ -81,15 +97,15 @@ public class SmallTalkServices implements Component {
 		return savedST;
 	}
 
-	public void deleteSmallTalk(@SecuredOperation("botContributor") final Chatbot chatbot, final SmallTalk smallTalk, final Topic topic) {
+	@Override
+	public void delete(@SecuredOperation("botContributor") final Chatbot chatbot, final SmallTalk smallTalk, final Topic topic) {
 
 		utterTextServices.deleteUtterTextsBySmallTalk(chatbot, smallTalk);
 
 		responsesButtonServices.deleteResponsesButtonsBySmallTalk(chatbot, smallTalk);
 
 		// delete smallTalk
-		smallTalkDAO.delete(smallTalk.getUID());
-
+		delete(smallTalk);
 		topicServices.deleteTopic(chatbot, topic);
 	}
 
@@ -105,4 +121,41 @@ public class SmallTalkServices implements Component {
 		return smallTalkPAO.getSmallTalkIHMByBot(bot.getBotId());
 	}
 
+	public void initializeBasicSmallTalk(final Chatbot chatbot, final Topic topic, SmallTalk smt, final UtterText utterText) {
+		topic.setBotId(chatbot.getBotId());
+		final TopicCategory topicCategory = topicCategoryServices.getTechnicalCategoryByBot(chatbot);
+		topic.setTopCatId(topicCategory.getTopCatId());
+		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
+		topicServices.save(topic);
+
+		if (smt == null) {
+			smt = new SmallTalk();
+			smt.setTopId(topic.getTopId());
+			smt.setRtyId(ResponseTypeEnum.RICH_TEXT.name());
+		}
+		final DtList<UtterText> utterTexts = new DtList<UtterText>(UtterText.class);
+		utterTexts.add(utterText);
+
+		saveSmallTalk(chatbot, smt, new DtList<NluTrainingSentence>(NluTrainingSentence.class), new DtList<NluTrainingSentence>(NluTrainingSentence.class), utterTexts,
+				new DtList<>(ResponseButton.class), topic);
+	}
+
+	@Override
+	public void delete(final SmallTalk smallTalk) {
+		smallTalkDAO.delete(smallTalk.getUID());
+
+	}
+
+	@Override
+	public boolean handleObject(final Topic topic) {
+		return TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd());
+	}
+
+	@Override
+	public SmallTalk findByTopId(final Long topId) {
+		if (topId != null) {
+			return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.topId, topId), DtListState.of(1)).get(0);
+		}
+		return null;
+	}
 }

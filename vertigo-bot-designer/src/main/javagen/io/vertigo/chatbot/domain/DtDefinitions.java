@@ -31,6 +31,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
 		/** Objet de données Groups. */
 		Groups(io.vertigo.chatbot.designer.domain.commons.Groups.class),
+		/** Objet de données KindTopic. */
+		KindTopic(io.vertigo.chatbot.commons.domain.topic.KindTopic.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données NluTrainingExport. */
@@ -137,11 +139,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Status'. */
 		status,
 		/** Propriété 'Avatar'. */
-		filIdAvatar,
-		/** Propriété 'Welcome text'. */
-		uttIdWelcome,
-		/** Propriété 'Default text'. */
-		uttIdDefault	}
+		filIdAvatar	}
 
 	/**
 	 * Enumération des champs de ChatbotNode.
@@ -217,6 +215,27 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		grpId,
 		/** Propriété 'Name'. */
 		name	}
+
+	/**
+	 * Enumération des champs de KindTopic.
+	 */
+	public enum KindTopicFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.KindTopic> {
+		/** Propriété 'ID'. */
+		ktoCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Title (English)'. */
+		titleEnglish,
+		/** Propriété 'Title (French)'. */
+		titleFrench,
+		/** Propriété 'Description (English)'. */
+		descriptionEnglish,
+		/** Propriété 'Description (French)'. */
+		descriptionFrench,
+		/** Propriété 'Default text (English)'. */
+		defaultEnglish,
+		/** Propriété 'Default text (French)'. */
+		defaultFrench	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.
@@ -322,11 +341,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'SmallTalk'. */
 		smtId,
 		/** Propriété 'TopicResponse'. */
-		topIdResponse,
-		/** Propriété 'welcome buttons'. */
-		botIdWelcome,
-		/** Propriété 'Default buttons'. */
-		botIdDefault	}
+		topIdResponse	}
 
 	/**
 	 * Enumération des champs de ResponseButtonExport.
@@ -502,7 +517,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Topic'. */
-		topCatId	}
+		topCatId,
+		/** Propriété 'Kind of topic'. */
+		ktoCd	}
 
 	/**
 	 * Enumération des champs de TopicCategory.
@@ -516,6 +533,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		level,
 		/** Propriété 'Enabled'. */
 		isEnabled,
+		/** Propriété 'Technical'. */
+		isTechnical,
 		/** Propriété 'Chatbot'. */
 		botId	}
 
@@ -549,7 +568,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Category'. */
 		catLabel,
 		/** Propriété 'Enabled'. */
-		isEnabled	}
+		isEnabled,
+		/** Propriété 'Code Kind'. */
+		ktoCd	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.
