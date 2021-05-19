@@ -152,7 +152,7 @@ Vue.component('v-chatbot-dev', {
 				this.processing = true;
 				
 				this.lastUserInteraction = Date.now();
-				
+			
 				this.$http.post(this.botUrl, {sender: this.convId, message: value, isButton: isButton})
 					.then(httpResponse => {
 						// success
@@ -217,7 +217,7 @@ Vue.component('v-chatbot-dev', {
 				
 				if (response.buttons) {
 					response.buttons.forEach(function(value, key) {
-							this.inputConfig.buttons.push(value);
+						this.inputConfig.buttons.push(value);
 					}, this);
 				}
 				

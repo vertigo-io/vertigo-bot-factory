@@ -62,6 +62,9 @@ public class TrainingServices implements Component {
 	private BotExportServices botExportServices;
 
 	@Inject
+	private BotExportServices botExportServices;
+
+	@Inject
 	private TrainingDAO trainingDAO;
 
 	@Inject
@@ -138,7 +141,68 @@ public class TrainingServices implements Component {
 
 	public Optional<Training> getCurrentTraining(final Chatbot bot) {
 		return trainingDAO.getCurrentTrainingByBotId(bot.getBotId());
+	}
+
+	public TrainerInfo getTrainingState(@SecuredOperation("botContributor") final Chatbot bot, final TrainerInfo info) {
+		final Optional<ChatbotNode> optDevNode = nodeServices.getDevNodeByBotId(bot.getBotId());
+
+		if (info.getTraId() == null) {
+			return new TrainerInfo();
 		}
+
+		if (!optDevNode.isPresent()) {
+			final TrainerInfo trainerInfo = new TrainerInfo();
+			trainerInfo.setName("No training node configured");
+			return trainerInfo;
+		}
+
+		final Training training = getTraining(bot, info.getTraId());
+		final String name = "Training" + training.getVersionNumber();
+		final boolean isTraining = training.getStatus().equals("TRAINING");
+		return createTrainerInfo(training.getTraId(), isTraining, training.getStartTime(), name, training.getStatus(), training.getEndTime());
+	}
+
+	private Optional<Training> getCurrentTraining(final Chatbot bot) {
+		return trainingDAO.getCurrentTrainingByBotId(bot.getBotId());
+	}
+
+	public RunnerInfo getRunnerState(@SecuredOperation("botContributor") final Chatbot bot) {
+		final Optional<ChatbotNode> optDevNode = nodeServices.getDevNodeByBotId(bot.getBotId());
+
+		if (!optDevNode.isPresent()) {
+			final RunnerInfo runnerInfo = new RunnerInfo();
+			runnerInfo.setName("No training node configured");
+			return runnerInfo;
+		}
+		final ChatbotNode devNode = optDevNode.get();
+
+		String error = null;
+		RunnerInfo retour = null;
+		try {
+			final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/runnerStatus")
+					.request(MediaType.APPLICATION_JSON)
+					.header(API_KEY, devNode.getApiKey())
+					.get();
+
+			error = response.getStatus() != 200 ? "Code HTTP : " + response.getStatus() : null;
+
+			if (error == null) {
+				retour = response.readEntity(RunnerInfo.class);
+			}
+		} catch (final Exception e) {
+			error = e.getLocalizedMessage();
+			LOGGER.info("Impossible d'accéder au noeud.", e);
+		}
+
+		if (error != null) {
+			final RunnerInfo runnerInfo = new RunnerInfo();
+			runnerInfo.setName("Node unavailable");
+			runnerInfo.setState(error);
+			return runnerInfo;
+		}
+
+		return retour;
+	}
 
 	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
 		return botExportServices.exportBot(bot);
@@ -229,6 +293,39 @@ public class TrainingServices implements Component {
 		final List<Long> filesId = trainingPAO.getAllTrainingFilIdsByBotId(botId);
 		trainingPAO.removeTrainingByBotId(botId);
 		trainingPAO.removeTrainingFileByFilIds(filesId);
+	}
+
+	public TrainerInfo createTrainingState(final Chatbot bot) {
+		String error = null;
+		Training training = null;
+		final Optional<Training> currentTrainingOpt = getCurrentTraining(bot);
+
+		if (currentTrainingOpt.isPresent()) {
+			training = currentTrainingOpt.get();
+		} else {
+			error = "No current training";
+		}
+
+		if (error != null) {
+			final TrainerInfo trainerInfo = new TrainerInfo();
+			trainerInfo.setName("Node unavailable");
+			trainerInfo.setTrainingState(error);
+			return trainerInfo;
+		}
+
+		return createTrainerInfo(training.getTraId(), true, Instant.now(), "Training" + training.getVersionNumber(), "TRAINING", null);
+
+	}
+
+	public TrainerInfo createTrainerInfo(final Long traId, final boolean isTraining, final Instant startTime, final String name, final String status, final Instant endTime) {
+		final TrainerInfo retour = new TrainerInfo();
+		retour.setTraId(traId);
+		retour.setTrainingInProgress(isTraining);
+		retour.setStartTime(Instant.now());
+		retour.setName(name);
+		retour.setTrainingState("TRAINING");
+		retour.setEndTime(endTime);
+		return retour;
 	}
 
 }

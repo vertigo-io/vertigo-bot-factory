@@ -181,21 +181,14 @@ public class ModelListController extends AbstractBotController {
 		return ChatbotUtils.postToUrl(devNode.getUrl() + "/api/chatbot/talk/" + talkInput.getSender(), botInput.getBytes());
 	}
 
-	@PostMapping("/_start")
-	@ResponseBody
-	public BotResponse start(
-			final ViewContext viewContext,
-			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList) {
-
-		final ChatbotNode devNode = nodeServices.getDevNodeFromList(nodeList);
-		final BodyPublisher publisher = BodyPublishers.ofByteArray(BotConversationUtils.createBotInput("").getBytes());
-		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/start", publisher);
-		final HttpResponse<String> result = HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 200);
-		return ObjectConvertionUtils.jsonToObject(result.body(), BotResponse.class);
+		final TalkInput talkInput = botConversationServices.jsonToObject(input, TalkInput.class);
+		final String botInput = botConversationServices.createBotInput(talkInput);
+		return ChatbotUtils.postToUrl(devNode.getUrl() + "/api/chatbot/talk/" + talkInput.getSender(), botInput.getBytes());
 	}
 
 	@PostMapping("/_start")
-	public ViewContext start(
+	@ResponseBody
+	public BotResponse start(
 			final ViewContext viewContext,
 			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList) {
 
@@ -203,10 +196,10 @@ public class ModelListController extends AbstractBotController {
 				.filter(ChatbotNode::getIsDev)
 				.findFirst()
 				.orElseThrow(() -> new VUserException("No training node configured"));
-		final BodyPublisher publisher = BodyPublishers.ofString(botConversationServices.createBotInput(""));
+		final BodyPublisher publisher = BodyPublishers.ofByteArray(botConversationServices.createBotInput("").getBytes());
 		final HttpRequest request = botConversationServices.createPostRequest(devNode.getUrl() + "/api/chatbot/start", publisher);
-		final HttpResponse<String> result = botConversationServices.sendRequest(null, request, BodyHandlers.ofString(), 204);
-		return viewContext;
+		final HttpResponse<String> result = botConversationServices.sendRequest(null, request, BodyHandlers.ofString(), 200);
+		return botConversationServices.jsonToObject(result.body(), BotResponse.class);
 	}
 
 }
