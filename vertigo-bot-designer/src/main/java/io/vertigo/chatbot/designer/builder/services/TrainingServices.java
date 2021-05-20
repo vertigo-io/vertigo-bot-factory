@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.designer.builder.services;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublisher;
@@ -30,25 +31,43 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
+import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.Training;
+import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
 import io.vertigo.chatbot.designer.builder.services.topic.export.BotExportServices;
 import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
+import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.utils.HttpRequestUtils;
 import io.vertigo.chatbot.designer.utils.ObjectConvertionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
+import io.vertigo.datamodel.structure.definitions.DtDefinition;
+import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datastore.filestore.model.VFile;
 
 @Transactional
 public class TrainingServices implements Component {
@@ -62,18 +81,23 @@ public class TrainingServices implements Component {
 	private BotExportServices botExportServices;
 
 	@Inject
-	private BotExportServices botExportServices;
-
-	@Inject
 	private TrainingDAO trainingDAO;
 
 	@Inject
 	private TrainingPAO trainingPAO;
 
 	@Inject
+	private JaxrsProvider jaxrsProvider;
+
+	@Inject
 	private NodeServices nodeServices;
 
-	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot) {
+	@Inject
+	private FileServices fileServices;
+
+	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
+
+	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
 		final Long botId = bot.getBotId();
 		trainingPAO.cleanOldTrainings(botId);
 
@@ -103,9 +127,9 @@ public class TrainingServices implements Component {
 
 	public <T> String handleResponse(final HttpResponse<T> response, final Training training, final ChatbotNode node, final Chatbot bot) {
 		if (response.statusCode() != 204) {
-			training.setStatus("KO");
+			training.setStrCd(TrainingStatusEnum.KO.name());
 		} else {
-			training.setStatus("OK");
+			training.setStrCd(TrainingStatusEnum.OK.name());
 			node.setTraId(training.getTraId());
 			asynchronousServices.saveNodeWithoutAuthorizations(node);
 		}
@@ -120,7 +144,7 @@ public class TrainingServices implements Component {
 		final Training training = new Training();
 		training.setBotId(botId);
 		training.setStartTime(Instant.now());
-		training.setStatus("TRAINING");
+		training.setStrCd(TrainingStatusEnum.TRAINING.name());
 		training.setVersionNumber(versionNumber);
 		training.setNluThreshold(BigDecimal.valueOf(0.6));
 		return training;
@@ -143,27 +167,8 @@ public class TrainingServices implements Component {
 		return trainingDAO.getCurrentTrainingByBotId(bot.getBotId());
 	}
 
-	public TrainerInfo getTrainingState(@SecuredOperation("botContributor") final Chatbot bot, final TrainerInfo info) {
-		final Optional<ChatbotNode> optDevNode = nodeServices.getDevNodeByBotId(bot.getBotId());
-
-		if (info.getTraId() == null) {
-			return new TrainerInfo();
-		}
-
-		if (!optDevNode.isPresent()) {
-			final TrainerInfo trainerInfo = new TrainerInfo();
-			trainerInfo.setName("No training node configured");
-			return trainerInfo;
-		}
-
-		final Training training = getTraining(bot, info.getTraId());
-		final String name = "Training" + training.getVersionNumber();
-		final boolean isTraining = training.getStatus().equals("TRAINING");
-		return createTrainerInfo(training.getTraId(), isTraining, training.getStartTime(), name, training.getStatus(), training.getEndTime());
-	}
-
-	private Optional<Training> getCurrentTraining(final Chatbot bot) {
-		return trainingDAO.getCurrentTrainingByBotId(bot.getBotId());
+	public Optional<Training> getDeployedTraining(final Chatbot bot) {
+		return trainingDAO.getDeployedTrainingByBotId(bot.getBotId());
 	}
 
 	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {

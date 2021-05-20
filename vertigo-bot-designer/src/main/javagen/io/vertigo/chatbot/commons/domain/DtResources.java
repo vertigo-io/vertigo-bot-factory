@@ -252,10 +252,6 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTraining$versionNumber,
 	/**
-	 * Status.
-	 */
-	fldTraining$status,
-	/**
 	 * Log.
 	 */
 	fldTraining$log,
@@ -280,7 +276,27 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTraining$botId,
 	/**
+	 * Status.
+	 */
+	fldTraining$strCd,
+	/**
 	 * Model.
 	 */
 	fldTraining$filIdModel,
+
+	/***********************************************************
+	/** TrainingStatus.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldTrainingStatus$strCd,
+	/**
+	 * Label.
+	 */
+	fldTrainingStatus$label,
+	/**
+	 * LabelFr.
+	 */
+	fldTrainingStatus$labelFr,
 }

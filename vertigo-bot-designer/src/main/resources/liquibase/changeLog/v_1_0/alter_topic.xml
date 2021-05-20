@@ -29,4 +29,8 @@
 	<changeSet author="vbaillet" id="add code to topics">
 		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_30-2.sql" />	
 	</changeSet>
+	
+	<changeSet author="vprima" id="add and populate training status">
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_05_26.sql" />	
+	</changeSet>
 </databaseChangeLog>

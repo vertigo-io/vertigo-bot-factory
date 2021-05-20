@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.TopicExport;
+import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
@@ -80,7 +81,7 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 		for (final Entry<UtterTextExport, List<ResponseButtonExport>> entry : map.entrySet()) {
 			final UtterTextExport utter = entry.getKey();
 			final List<ResponseButtonExport> responses = entry.getValue();
-			result.put(utter.getTopId(), createBt(utter, responses));
+			result.put(utter.getTopId(), createBt(utter, responses, false));
 		}
 		return result;
 	}
@@ -90,18 +91,16 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 	 * create bt
 	 * end sequence
 	 */
-	private String createBt(final UtterTextExport utter, final List<ResponseButtonExport> responses) {
+	private String createBt(final UtterTextExport utter, final List<ResponseButtonExport> responses, final boolean isStart) {
 		final StringBuilder bt = new StringBuilder();
 		//create sequence
 		bt.append("begin sequence");
 		BtBuilderUtils.addLineBreak(bt);
-		//If no buttons responses return to topic:start
-		if (responses.size() == 0) {
-			bt.append(createSayBt(utter));
+
+		if (isStart) {
+			bt.append(createWelcomeBt(utter));
 		} else {
-			//Needs to stock the value and return to the topic selected
-			//Use choose:button:nlu to allow text field
-			bt.append(createButtonBt(utter, responses));
+			bt.append(createCurrentBt(responses, utter));
 		}
 		bt.append("end sequence");
 		return bt.toString();
@@ -134,6 +133,31 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 		return bt.toString();
 	}
 
+	private String createWelcomeBt(final UtterTextExport utter) {
+		final String[] splitUtter = utter.getUtterTexts().split("\\|");
+		final StringBuilder bt = new StringBuilder();
+
+		BtBuilderUtils.addLineBreak(bt);
+		BtBuilderUtils.askNlu(bt, splitUtter[0]);
+		BtBuilderUtils.addLineBreak(bt);
+
+		return bt.toString();
+
+	}
+
+	private String createCurrentBt(final List<ResponseButtonExport> responses, final UtterTextExport utter) {
+		final StringBuilder bt = new StringBuilder();
+		//If no buttons responses return to topic:start
+		if (responses.size() == 0) {
+			bt.append(createSayBt(utter));
+		} else {
+			//Needs to stock the value and return to the topic selected
+			//Use choose:button:nlu to allow text field
+			bt.append(createButtonBt(utter, responses));
+		}
+		return bt.toString();
+	}
+
 	private boolean isRandomText(final UtterTextExport utters) {
 		return utters.getResponseType().equals(ResponseTypeEnum.RANDOM_TEXT.name());
 	}
@@ -143,18 +167,20 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 		final SmallTalk smallTalk = smallTalkServices.findByTopId(topic.getTopId());
 		final UtterText utterText = utterTextServices.getUtterTextByTopId(topic.getTopId());
 		final UtterTextExport utterTextExport = new UtterTextExport();
+
 		utterTextExport.setUtterTexts(utterText.getText());
 		utterTextExport.setTopId(topic.getTopId());
 		utterTextExport.setResponseType(smallTalk.getRtyId());
-}	public String getFallbackBt(final Chatbot bot) {
+
+		return createBt(utterTextExport, new ArrayList<ResponseButtonExport>(), ktoCd.equals(KindTopicEnum.START.name()));
+	}
+
+	public String getFallbackBt(final Chatbot bot) {
 		// TODO Auto-generated method stub
 		return "\n	begin sequence" +
 				"\n		say \"Sorry, try again.\"" +
 				"\n		topic:start" +
 				"\n	end sequence";
-	}
-
-		return createBt(utterTextExport, new ArrayList<ResponseButtonExport>());
 	}
 
 	public String getWelcomeBt(final Chatbot bot) {

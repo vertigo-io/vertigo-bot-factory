@@ -10,6 +10,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
+import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 
@@ -40,17 +41,17 @@ public class TrainerInfoServices implements Component {
 			return trainerInfo;
 		}
 
-		return createTrainerInfo(training.getTraId(), true, Instant.now(), "Training" + training.getVersionNumber(), "TRAINING", null);
+		return createTrainerInfo(training.getTraId(), true, Instant.now(), "Training" + training.getVersionNumber(), TrainingStatusEnum.TRAINING.name(), null);
 
 	}
 
-	public TrainerInfo createTrainerInfo(final Long traId, final boolean isTraining, final Instant startTime, final String name, final String status, final Instant endTime) {
+	public TrainerInfo createTrainerInfo(final Long traId, final boolean isTraining, final Instant startTime, final String name, final String strCd, final Instant endTime) {
 		final TrainerInfo retour = new TrainerInfo();
 		retour.setTraId(traId);
 		retour.setTrainingInProgress(isTraining);
 		retour.setStartTime(Instant.now());
 		retour.setName(name);
-		retour.setTrainingState("TRAINING");
+		retour.setTrainingState(strCd);
 		retour.setEndTime(endTime);
 		return retour;
 	}
@@ -70,7 +71,7 @@ public class TrainerInfoServices implements Component {
 
 		final Training training = trainingServices.getTraining(bot, info.getTraId());
 		final String name = "Training" + training.getVersionNumber();
-		final boolean isTraining = training.getStatus().equals("TRAINING");
-		return createTrainerInfo(training.getTraId(), isTraining, training.getStartTime(), name, training.getStatus(), training.getEndTime());
+		final boolean isTraining = TrainingStatusEnum.TRAINING.name().equals(training.getStrCd());
+		return createTrainerInfo(training.getTraId(), isTraining, training.getStartTime(), name, training.getStrCd(), training.getEndTime());
 	}
 }

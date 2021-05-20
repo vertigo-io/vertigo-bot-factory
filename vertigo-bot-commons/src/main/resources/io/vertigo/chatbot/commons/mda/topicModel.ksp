@@ -36,8 +36,6 @@ create DtDefinition DtKindTopic {
 	field descriptionFrench		{domain: DoLabel 	label: "Description (French)" 		cardinality : "?"	}	
 	field defaultEnglish 		{domain: DoText 	label: "Default text (English)" 	cardinality : "1"	}
 	field defaultFrench 		{domain: DoText 	label: "Default text (French)" 		cardinality : "1"	}
-	field defaultEnglish 	{domain: DoText 	label: "Default text (English)" 	cardinality : "1"	}
-	field defaultFrench 	{domain: DoText 	label: "Default text (French)" 		cardinality : "1"	}
 	values : `{
         "START" : {
             "ktoCd" : "START",

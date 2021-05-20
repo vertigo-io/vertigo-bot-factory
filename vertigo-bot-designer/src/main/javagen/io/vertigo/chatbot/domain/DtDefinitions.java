@@ -85,6 +85,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
 		Training(io.vertigo.chatbot.commons.domain.Training.class),
+		/** Objet de données TrainingStatus. */
+		TrainingStatus(io.vertigo.chatbot.commons.domain.TrainingStatus.class),
 		/** Objet de données TypeTopic. */
 		TypeTopic(io.vertigo.chatbot.commons.domain.topic.TypeTopic.class),
 		/** Objet de données UtterText. */
@@ -588,8 +590,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		endTime,
 		/** Propriété 'Version'. */
 		versionNumber,
-		/** Propriété 'Status'. */
-		status,
 		/** Propriété 'Log'. */
 		log,
 		/** Propriété 'Informations'. */
@@ -602,8 +602,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		duration,
 		/** Propriété 'Chatbot'. */
 		botId,
+		/** Propriété 'Status'. */
+		strCd,
 		/** Propriété 'Model'. */
 		filIdModel	}
+
+	/**
+	 * Enumération des champs de TrainingStatus.
+	 */
+	public enum TrainingStatusFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TrainingStatus> {
+		/** Propriété 'ID'. */
+		strCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'LabelFr'. */
+		labelFr	}
 
 	/**
 	 * Enumération des champs de TypeTopic.

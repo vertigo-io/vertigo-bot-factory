@@ -99,6 +99,16 @@ public class BtBuilderUtils {
 		addLineBreak(bt);
 	}
 
+	/*
+	 * choose:nlu "text"
+	 */
+	public static void askNlu(final StringBuilder bt, final String text) {
+		bt.append("choose:nlu");
+		addSpaceQuote(bt);
+		bt.append(text);
+		addQuote(bt);
+	}
+
 	public static void addLineBreak(final StringBuilder builder) {
 		builder.append(LINE_BREAK);
 	}

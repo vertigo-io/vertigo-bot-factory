@@ -32,7 +32,6 @@ create DtDefinition DtTraining {
 	field startTime		{domain: DoInstant 		label: "Start time"			cardinality : "1"}
 	field endTime		{domain: DoInstant 		label: "End time" 			}
 	field versionNumber	{domain: DoNumber 		label: "Version" 			cardinality : "1"}
-	field status		{domain: DoCode			label: "Status" 			cardinality : "1"}
 	field log			{domain: DoText			label: "Log"	 			}
 	field infos			{domain: DoText			label: "Informations"	 	}
 	field warnings		{domain: DoText			label: "Warnings"	 		}
@@ -92,4 +91,46 @@ create Association ANodeTraining{
 	dtDefinitionB : DtTraining
 	
 	labelB : "Loaded model"
+}
+
+
+/************************/
+/* ****    TRAINING STATUS    **** */
+/************************/
+
+create DtDefinition DtTrainingStatus {
+	stereotype : "StaticMasterData"
+	id    strCd 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Label" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "LabelFr" 		cardinality : "1"	}
+	values : `{
+        "OK" : {
+            "strCd" : "OK",
+            "label" : "OK",
+            "labelFr" : "OK"           
+        },
+        "KO" : {
+            "strCd" : "KO",
+            "label" : "KO",
+            "labelFr" : "KO"           
+        },
+        "TRAINING" : {
+            "strCd" : "TRAINING",
+            "label" : "TRAINING",
+            "labelFr" : "En cours"           
+        }
+     }`
+    sortField : "strCd"
+ 	displayField : "label"
+}
+
+
+create Association ATrainingTrainingStatus{
+	fkFieldName : "strCd"
+    
+ 	dtDefinitionA : DtTraining
+	type : "*>1"
+	dtDefinitionB : DtTrainingStatus
+	
+	labelB : "Status"
 }
