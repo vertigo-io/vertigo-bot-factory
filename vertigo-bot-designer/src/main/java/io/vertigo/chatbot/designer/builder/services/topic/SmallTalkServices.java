@@ -89,7 +89,7 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 		utterTextServices.removeAllUtterTextBySmtId(chatbot, savedST.getSmtId());
 		final DtList<UtterText> uttToSave = utterTextServices.createNoBlankUtterTextBySmallTalk(chatbot, savedST, utterTexts);
 
-		topicServices.save(savedTopic, !uttToSave.isEmpty(), nluTrainingSentences, nluTrainingSentencesToDelete);
+		topicServices.save(savedTopic, !uttToSave.isEmpty() && topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 
 		// remove and create buttons
 		responsesButtonServices.removeAllButtonsBySmtId(chatbot, savedST);

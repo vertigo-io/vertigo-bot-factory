@@ -55,9 +55,13 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 		// ---
 		topic.setTtoCd(TypeTopicEnum.SCRIPTINTENTION.name());
 		final Topic savedTopic = topicServices.save(topic);
+
 		scriptIntention.setTopId(savedTopic.getTopId());
 		final ScriptIntention savedSI = this.save(scriptIntention);
-		topicServices.save(savedTopic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
+
+		boolean isEnabled = scriptIntention.getScript() != null ? !scriptIntention.getScript().isBlank() : false;
+		isEnabled &= topic.getIsEnabled();
+		topicServices.save(savedTopic, isEnabled, nluTrainingSentences, nluTrainingSentencesToDelete);
 		return savedSI;
 	}
 
