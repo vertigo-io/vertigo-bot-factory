@@ -69,7 +69,7 @@ public class TopicServices implements Component {
 		// save and remove NTS
 		final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences);
 		removeNTS(nluTrainingSentencesToDelete);
-		topic.setIsEnabled(!ntsToSave.isEmpty() || isEnabled);
+		topic.setIsEnabled(!ntsToSave.isEmpty() && isEnabled);
 
 		return topicDAO.save(topic);
 	}
