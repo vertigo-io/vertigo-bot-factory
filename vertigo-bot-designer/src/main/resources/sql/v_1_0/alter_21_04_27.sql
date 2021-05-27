@@ -90,7 +90,7 @@ BEGIN
 		INSERT INTO TOPIC (top_id, title, description, is_enabled, bot_id, top_cat_id, tto_cd, kto_cd)
 		values (topId, 'Failure', 'Default failure response', true, bot.bot_id, topCatId, 'SMALLTALK', 'FAILURE');
 		
-		INSERT INTO small_talk (smt_id, rty_id, top_id) VALUES (smtId, 'RICHTEXT', topId);
+		INSERT INTO small_talk (smt_id, rty_id, top_id) VALUES (smtId, 'RICH_TEXT', topId);
 		UPDATE utter_text set smt_id = smtId where utt_id = uttDefault.utt_id;
 		
 		
@@ -100,7 +100,7 @@ BEGIN
 		INSERT INTO TOPIC (top_id, title, description, is_enabled, bot_id, top_cat_id, tto_cd, kto_cd)
 		values (topId, 'Start', 'Default start response', true, bot.bot_id, topCatId, 'SMALLTALK', 'START');
 		
-		INSERT INTO small_talk (smt_id, rty_id, top_id) VALUES (smtId, 'RICHTEXT', topId);
+		INSERT INTO small_talk (smt_id, rty_id, top_id) VALUES (smtId, 'RICH_TEXT', topId);
 		UPDATE utter_text set smt_id = smtId where utt_id = uttWelcome.utt_id;
 		
 		SELECT nextval('SEQ_TOPIC') INTO topId;
@@ -109,7 +109,7 @@ BEGIN
 		INSERT INTO TOPIC (top_id, title, description, is_enabled, bot_id, top_cat_id, tto_cd, kto_cd)
 		values (topId, 'End', 'Default end response', true, bot.bot_id, topCatId, 'SMALLTALK', 'END');
 		
-		INSERT INTO small_talk (smt_id, rty_id, top_id) VALUES (smtId, 'RICHTEXT', topId);
+		INSERT INTO small_talk (smt_id, rty_id, top_id) VALUES (smtId, 'RICH_TEXT', topId);
 		INSERT INTO utter_text (utt_id, text, smt_id) VALUES (nextval('SEQ_UTTER_TEXT'), 'Bye !', smtId);
 		
 		

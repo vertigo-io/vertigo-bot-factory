@@ -82,18 +82,6 @@ services:
     networks:
       - cb_factory
   
-  rabbitmq:
-    image: 'rabbitmq:3'
-    hostname: 'rabbit-rasa'
-    ports:
-      - '5672:5672'
-    labels:
-      NAME: 'rabbit-rasa'
-    volumes:
-      - "cf_rabbitmq_data:/var/lib/rabbitmq/mnesia/"
-    networks:
-      - cb_factory
-      
   rasa:
     image: rasa/rasa:2.4.0-full
     ports:

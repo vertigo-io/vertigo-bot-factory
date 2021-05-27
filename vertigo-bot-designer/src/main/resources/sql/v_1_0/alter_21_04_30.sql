@@ -1,5 +1,5 @@
 alter table response_button
-drop constraint FK_A_RESPONSE_BUTTON_SMALL_TALK_RESPONSE_SMALL_TALK;
+drop constraint if exists FK_A_RESPONSE_BUTTON_SMALL_TALK_RESPONSE_SMALL_TALK;
 
 alter table response_button
 add column top_id_response numeric;

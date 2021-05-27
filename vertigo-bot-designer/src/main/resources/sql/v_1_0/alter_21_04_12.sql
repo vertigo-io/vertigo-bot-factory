@@ -32,7 +32,29 @@ comment on column TOPIC_CATEGORY.BOT_ID is
 'Chatbot';
 
 alter table topic
-add column TOP_CAT_ID  	 NUMERIC     	not null;
+add column TOP_CAT_ID  	 NUMERIC;
+
+with  botIds as(select bot_id
+				from chatbot)
+
+
+insert into topic_category(top_cat_id, label, level, is_enabled, bot_id)
+select nextval('SEQ_TOPIC_CATEGORY'), 'rattrapage', 1, true, bot_id
+from botIds;
+
+with topcats as (
+			select bot_id, top_cat_id
+			from topic_category
+			)
+
+update topic top
+set top_cat_id = (select tc.top_cat_id 
+					from topcats tc
+					where top.bot_id = tc.bot_id
+					);
+
+alter table topic
+alter column top_cat_id set not null;
 
 alter table TOPIC
 	add constraint FK_A_TOPIC_CATEGORY_TOPIC_TOPIC_CATEGORY foreign key (TOP_CAT_ID)
