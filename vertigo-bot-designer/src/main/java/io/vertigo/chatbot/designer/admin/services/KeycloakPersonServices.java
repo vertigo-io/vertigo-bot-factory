@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.designer.admin.services;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -22,7 +23,7 @@ public class KeycloakPersonServices implements Component {
 	/**
 	 * Init person and save it
 	 * Empty collections is the default value for chatbot
-	 * 
+	 *
 	 * @param login of the user
 	 * @param rol
 	 * @param name
@@ -40,11 +41,11 @@ public class KeycloakPersonServices implements Component {
 
 	/**
 	 * Create a person
-	 * 
+	 *
 	 * @param newPerson to create
 	 * @return the person after the creation
 	 */
-	public Person createPerson(Person newPerson) {
+	public Person createPerson(final Person newPerson) {
 		return personDAO.create(newPerson);
 
 	}
@@ -52,13 +53,15 @@ public class KeycloakPersonServices implements Component {
 	/**
 	 * Get the role from keycloak groups
 	 * By default the groups RUser is used
-	 * 
+	 *
 	 * @param token
 	 * @return the role
 	 */
-	public String getRoleFromToken(IDToken token) {
-		List<?> groups = (List<?>) token.getOtherClaims().get("groups");
-		if (groups.isEmpty()) {
+	public String getRoleFromToken(final IDToken token) {
+
+		final Map<String, Object> claim = token.getOtherClaims();
+		final List<?> groups = (List<?>) claim.get("groups");
+		if (claim.isEmpty() || groups.isEmpty()) {
 			return PersonRoleEnum.RUser.name();
 		}
 		return (String) groups.get(0);
@@ -66,11 +69,11 @@ public class KeycloakPersonServices implements Component {
 
 	/**
 	 * Get the username from the auth token
-	 * 
+	 *
 	 * @param token
 	 * @return the name of connected user
 	 */
-	public String getNameFromToken(IDToken token) {
+	public String getNameFromToken(final IDToken token) {
 		final String name = token.getName() != null ? token.getName() : "";
 		return name;
 	}
