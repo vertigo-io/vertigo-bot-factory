@@ -157,7 +157,7 @@ public class TrainingServices implements Component {
 		result.setBotId(botId);
 		result.setNodId(node.getNodId());
 		result.setTraId(training.getTraId());
-		result.setModelName("test");
+		result.setModelName("model " + training.getVersionNumber());
 		result.setNluThreshold(training.getNluThreshold());
 		result.setCustomConfig("nothing");
 		return result;

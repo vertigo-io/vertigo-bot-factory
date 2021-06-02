@@ -175,24 +175,4 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 		return createBt(utterTextExport, new ArrayList<ResponseButtonExport>(), ktoCd.equals(KindTopicEnum.START.name()));
 	}
 
-	public String getFallbackBt(final Chatbot bot) {
-		// TODO Auto-generated method stub
-		return "\n	begin sequence" +
-				"\n		say \"Sorry, try again.\"" +
-				"\n		topic:start" +
-				"\n	end sequence";
-	}
-
-	public String getWelcomeBt(final Chatbot bot) {
-		return "" +
-				"\n	begin sequence" +
-				"\n		say:once \"Welcome to this test bot.\"" +
-				"\n		begin choose:button " + "/user/local" + "/topic \"Please choose topic.\"" +
-				"\n			button \"Le topic 1\" topic1" +
-				"\n			button \"Le topic 2\" topic2" +
-				"\n		end choose:button" +
-				"\n		topic {{" + "/user/local" + "/topic}}" +
-				"\n	end sequence";
-	}
-
 }
