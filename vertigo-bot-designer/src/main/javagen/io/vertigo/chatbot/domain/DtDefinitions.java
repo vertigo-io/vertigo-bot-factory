@@ -27,8 +27,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ChatbotProfiles(io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
-		/** Objet de données ExecutorTrainingCallback. */
-		ExecutorTrainingCallback(io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback.class),
 		/** Objet de données Groups. */
 		Groups(io.vertigo.chatbot.designer.domain.commons.Groups.class),
 		/** Objet de données KindTopic. */
@@ -87,6 +85,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
 		Training(io.vertigo.chatbot.commons.domain.Training.class),
+		/** Objet de données TrainingStatus. */
+		TrainingStatus(io.vertigo.chatbot.commons.domain.TrainingStatus.class),
 		/** Objet de données TypeTopic. */
 		TypeTopic(io.vertigo.chatbot.commons.domain.topic.TypeTopic.class),
 		/** Objet de données UtterText. */
@@ -189,23 +189,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		nluThreshold,
 		/** Propriété 'Additional config for executor'. */
 		customConfig	}
-
-	/**
-	 * Enumération des champs de ExecutorTrainingCallback.
-	 */
-	public enum ExecutorTrainingCallbackFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback> {
-		/** Propriété 'Training ID'. */
-		trainingId,
-		/** Propriété 'Succes'. */
-		success,
-		/** Propriété 'Logs'. */
-		log,
-		/** Propriété 'Informations'. */
-		infos,
-		/** Propriété 'Warnings'. */
-		warnings,
-		/** Propriété 'Client Api Key'. */
-		apiKey	}
 
 	/**
 	 * Enumération des champs de Groups.
@@ -576,6 +559,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de TrainerInfo.
 	 */
 	public enum TrainerInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TrainerInfo> {
+		/** Propriété 'Training id'. */
+		traId,
 		/** Propriété 'Name'. */
 		name,
 		/** Propriété 'Training in progress'. */
@@ -605,8 +590,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		endTime,
 		/** Propriété 'Version'. */
 		versionNumber,
-		/** Propriété 'Status'. */
-		status,
 		/** Propriété 'Log'. */
 		log,
 		/** Propriété 'Informations'. */
@@ -619,8 +602,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		duration,
 		/** Propriété 'Chatbot'. */
 		botId,
+		/** Propriété 'Status'. */
+		strCd,
 		/** Propriété 'Model'. */
 		filIdModel	}
+
+	/**
+	 * Enumération des champs de TrainingStatus.
+	 */
+	public enum TrainingStatusFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TrainingStatus> {
+		/** Propriété 'ID'. */
+		strCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'LabelFr'. */
+		labelFr	}
 
 	/**
 	 * Enumération des champs de TypeTopic.

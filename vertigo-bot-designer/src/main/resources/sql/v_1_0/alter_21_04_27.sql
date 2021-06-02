@@ -3,8 +3,8 @@
 -- ============================================================
 create table KIND_TOPIC
 (
-    KTO_CD      	 	VARCHAR(100)	not null,
-    LABEL				VARCHAR(100)	not null,
+    KTO_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
     TITLE_ENGLISH    	VARCHAR(100)	not null,
     TITLE_FRENCH		VARCHAR(100)	not null,
     description_english VARCHAR(100),
@@ -91,7 +91,7 @@ BEGIN
 		values (topId, 'Failure', 'Default failure response', true, bot.bot_id, topCatId, 'SMALLTALK', 'FAILURE');
 		
 		INSERT INTO small_talk (smt_id, rty_id, top_id) VALUES (smtId, 'RICHTEXT', topId);
-		UPDATE utter_text set smt_id = smtId where utt_id = utterTextDefault.utt_id;
+		UPDATE utter_text set smt_id = smtId where utt_id = uttDefault.utt_id;
 		
 		
 		SELECT nextval('SEQ_TOPIC') INTO topId;
@@ -101,7 +101,7 @@ BEGIN
 		values (topId, 'Start', 'Default start response', true, bot.bot_id, topCatId, 'SMALLTALK', 'START');
 		
 		INSERT INTO small_talk (smt_id, rty_id, top_id) VALUES (smtId, 'RICHTEXT', topId);
-		UPDATE utter_text set smt_id = smtId where utt_id = utterTextWelcome.utt_id;
+		UPDATE utter_text set smt_id = smtId where utt_id = uttWelcome.utt_id;
 		
 		SELECT nextval('SEQ_TOPIC') INTO topId;
 		SELECT nextval('SEQ_SMALL_TALK') INTO smtId;
@@ -121,15 +121,22 @@ LANGUAGE plpgsql;
 SELECT reprise_basic_message();
 
 ALTER TABLE CHATBOT
-DROP COLUMN UTT_ID_WELCOME,
-DROP COLUMN UTT_ID_DEFAULT;
+DROP COLUMN IF EXISTS UTT_ID_WELCOME,
+DROP COLUMN IF EXISTS UTT_ID_DEFAULT;
 
 ALTER TABLE RESPONSE_BUTTON
-DROP COLUMN BOT_ID_WELCOME,
-DROP COLUMN BOT_ID_DEFAULT;
+DROP COLUMN IF EXISTS BOT_ID_WELCOME,
+DROP COLUMN IF EXISTS BOT_ID_DEFAULT;
 
 alter table response_type
 add column label_fr varchar(100);
+
+comment on column KIND_TOPIC.KTO_CD is
+'ID';
+
+comment on column KIND_TOPIC.LABEL is
+'Title';
+
 
 update response_type
 set label_fr = 'Texte'

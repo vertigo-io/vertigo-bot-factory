@@ -19,7 +19,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 @Transactional
 public class ScriptIntentionExportServices implements TopicsExportServices, Component {
 
-	private final static String PREFIX = "si_";
+	private final static String PREFIX = "topic";
 
 	@Inject
 	private TopicServices topicServices;

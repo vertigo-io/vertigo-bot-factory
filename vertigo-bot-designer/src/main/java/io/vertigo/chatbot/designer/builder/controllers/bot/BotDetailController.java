@@ -39,6 +39,7 @@ import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.builder.services.topic.KindTopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
@@ -68,6 +69,9 @@ public class BotDetailController extends AbstractBotController {
 
 	@Inject
 	private TopicCategoryServices topicCategoryServices;
+
+	@Inject
+	private KindTopicServices kindTopicServices;
 
 	private static final ViewContextKey<UtterText> utterTextFailureKey = ViewContextKey.of("utterTextFailure");
 	private static final ViewContextKey<UtterText> utterTextStartKey = ViewContextKey.of("utterTextStart");

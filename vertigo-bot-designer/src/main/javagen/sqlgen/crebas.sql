@@ -36,6 +36,7 @@ drop table IF EXISTS TOPIC_CATEGORY cascade;
 drop sequence IF EXISTS SEQ_TOPIC_CATEGORY;
 drop table IF EXISTS TRAINING cascade;
 drop sequence IF EXISTS SEQ_TRAINING;
+drop table IF EXISTS TRAINING_STATUS cascade;
 drop table IF EXISTS TYPE_TOPIC cascade;
 drop table IF EXISTS UTTER_TEXT cascade;
 drop sequence IF EXISTS SEQ_UTTER_TEXT;
@@ -88,6 +89,7 @@ create sequence SEQ_TOPIC_CATEGORY
 
 create sequence SEQ_TRAINING
 	start with 1000 cache 20; 
+
 
 
 create sequence SEQ_UTTER_TEXT
@@ -543,12 +545,12 @@ create table TRAINING
     START_TIME  	 TIMESTAMP   	not null,
     END_TIME    	 TIMESTAMP   	,
     VERSION_NUMBER	 NUMERIC     	not null,
-    STATUS      	 VARCHAR(100)	not null,
     LOG         	 TEXT        	,
     INFOS       	 TEXT        	,
     WARNINGS    	 TEXT        	,
     NLU_THRESHOLD	 NUMERIC(3,2)	not null,
     BOT_ID      	 NUMERIC     	not null,
+    STR_CD      	 VARCHAR(100)	not null,
     FIL_ID_MODEL	 NUMERIC     	,
     constraint PK_TRAINING primary key (TRA_ID)
 );
@@ -565,9 +567,6 @@ comment on column TRAINING.END_TIME is
 comment on column TRAINING.VERSION_NUMBER is
 'Version';
 
-comment on column TRAINING.STATUS is
-'Status';
-
 comment on column TRAINING.LOG is
 'Log';
 
@@ -583,8 +582,31 @@ comment on column TRAINING.NLU_THRESHOLD is
 comment on column TRAINING.BOT_ID is
 'Chatbot';
 
+comment on column TRAINING.STR_CD is
+'Status';
+
 comment on column TRAINING.FIL_ID_MODEL is
 'Model';
+
+-- ============================================================
+--   Table : TRAINING_STATUS                                        
+-- ============================================================
+create table TRAINING_STATUS
+(
+    STR_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_TRAINING_STATUS primary key (STR_CD)
+);
+
+comment on column TRAINING_STATUS.STR_CD is
+'ID';
+
+comment on column TRAINING_STATUS.LABEL is
+'Label';
+
+comment on column TRAINING_STATUS.LABEL_FR is
+'LabelFr';
 
 -- ============================================================
 --   Table : TYPE_TOPIC                                        
@@ -758,6 +780,12 @@ alter table TRAINING
 	references MEDIA_FILE_INFO (FIL_ID);
 
 create index A_TRAINING_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on TRAINING (FIL_ID_MODEL asc);
+
+alter table TRAINING
+	add constraint FK_A_TRAINING_TRAINING_STATUS_TRAINING_STATUS foreign key (STR_CD)
+	references TRAINING_STATUS (STR_CD);
+
+create index A_TRAINING_TRAINING_STATUS_TRAINING_STATUS_FK on TRAINING (STR_CD asc);
 
 
 create table TOPIC_TOPIC_CATEGORY

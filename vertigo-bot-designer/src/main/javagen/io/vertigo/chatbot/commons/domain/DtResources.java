@@ -125,34 +125,6 @@ public enum DtResources implements MessageKey {
 	fldExecutorConfiguration$customConfig,
 
 	/***********************************************************
-	/** ExecutorTrainingCallback.
-	/***********************************************************
-	/**
-	 * Training ID.
-	 */
-	fldExecutorTrainingCallback$trainingId,
-	/**
-	 * Succes.
-	 */
-	fldExecutorTrainingCallback$success,
-	/**
-	 * Logs.
-	 */
-	fldExecutorTrainingCallback$log,
-	/**
-	 * Informations.
-	 */
-	fldExecutorTrainingCallback$infos,
-	/**
-	 * Warnings.
-	 */
-	fldExecutorTrainingCallback$warnings,
-	/**
-	 * Client Api Key.
-	 */
-	fldExecutorTrainingCallback$apiKey,
-
-	/***********************************************************
 	/** MediaFileInfo.
 	/***********************************************************
 	/**
@@ -224,6 +196,10 @@ public enum DtResources implements MessageKey {
 	/** TrainerInfo.
 	/***********************************************************
 	/**
+	 * Training id.
+	 */
+	fldTrainerInfo$traId,
+	/**
 	 * Name.
 	 */
 	fldTrainerInfo$name,
@@ -276,10 +252,6 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTraining$versionNumber,
 	/**
-	 * Status.
-	 */
-	fldTraining$status,
-	/**
 	 * Log.
 	 */
 	fldTraining$log,
@@ -304,7 +276,27 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTraining$botId,
 	/**
+	 * Status.
+	 */
+	fldTraining$strCd,
+	/**
 	 * Model.
 	 */
 	fldTraining$filIdModel,
+
+	/***********************************************************
+	/** TrainingStatus.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldTrainingStatus$strCd,
+	/**
+	 * Label.
+	 */
+	fldTrainingStatus$label,
+	/**
+	 * LabelFr.
+	 */
+	fldTrainingStatus$labelFr,
 }

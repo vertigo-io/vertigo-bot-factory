@@ -3,6 +3,8 @@ package io.vertigo.chatbot.designer.builder.services.topic;
 import java.util.Locale;
 import java.util.Optional;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;

@@ -158,4 +158,5 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 		}
 		return null;
 	}
+
 }

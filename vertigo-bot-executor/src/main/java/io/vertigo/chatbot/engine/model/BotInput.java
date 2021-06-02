@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public final class BotInput {
+
 	private String message;
 	private Map<String, Object> metadatas;
 

@@ -18,9 +18,14 @@
 package io.vertigo.chatbot.designer.builder.services;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublisher;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,20 +42,18 @@ import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.JaxrsProvider;
-import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
-import io.vertigo.chatbot.commons.domain.ExecutorTrainingCallback;
-import io.vertigo.chatbot.commons.domain.RunnerInfo;
-import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
+import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
 import io.vertigo.chatbot.designer.builder.services.topic.export.BotExportServices;
 import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
-import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
+import io.vertigo.chatbot.designer.utils.HttpRequestUtils;
+import io.vertigo.chatbot.designer.utils.ObjectConvertionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
@@ -64,9 +67,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
-import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
-import io.vertigo.datastore.impl.filestore.model.StreamFile;
 
 @Transactional
 public class TrainingServices implements Component {
@@ -74,10 +75,10 @@ public class TrainingServices implements Component {
 	private static final String API_KEY = "apiKey";
 
 	@Inject
-	private BotExportServices botExportServices;
+	private AsynchronousServices asynchronousServices;
 
 	@Inject
-	private FileServices fileServices;
+	private BotExportServices botExportServices;
 
 	@Inject
 	private TrainingDAO trainingDAO;
@@ -86,141 +87,88 @@ public class TrainingServices implements Component {
 	private TrainingPAO trainingPAO;
 
 	@Inject
-	private ChatbotNodeDAO chatbotNodeDAO;
-
-	@Inject
 	private JaxrsProvider jaxrsProvider;
 
 	@Inject
 	private NodeServices nodeServices;
 
+	@Inject
+	private FileServices fileServices;
+
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
-	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot) {
+	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
 		final Long botId = bot.getBotId();
 		trainingPAO.cleanOldTrainings(botId);
-
-		final Long versionNumber = trainingPAO.getNextModelNumber(botId);
 
 		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(botId)
 				.orElseThrow(() -> new VUserException("No training node configured"));
 
-		final Training training = new Training();
-		training.setBotId(botId);
-		training.setStartTime(Instant.now());
-		training.setStatus("TRAINING");
-		training.setVersionNumber(versionNumber);
-		training.setNluThreshold(BigDecimal.valueOf(0.6));
-
+		//Set training
+		final Training training = createTraining(bot);
 		saveTraining(bot, training);
 
-		final Map<String, Object> requestData = Map.of(
-				"botExport", exportBot(bot),
-				"trainingId", training.getTraId(),
-				"modelId", versionNumber,
-				"nluThreshold", training.getNluThreshold());
+		final ExecutorConfiguration execConfig = getExecutorConfig(training, devNode);
 
-		final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
-				.request(MediaType.APPLICATION_JSON_TYPE)
-				.header(API_KEY, devNode.getApiKey())
-				.post(Entity.json(requestData));
+		final Map<String, Object> requestData = new HashMap<String, Object>();
+		requestData.put("botExport", exportBot(bot));
+		requestData.put("executorConfig", execConfig);
 
-		if (response.getStatus() != 204) {
-			throw new VUserException(getMessageFromVUserResponse(response));
-		}
+		final Map<String, String> headers = Map.of(API_KEY, devNode.getApiKey(),
+				"Content-type", "application/json");
+
+		final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
+		final HttpRequest request = HttpRequestUtils.createPutRequest(devNode.getUrl() + "/api/chatbot/admin/model", headers, publisher);
+		HttpRequestUtils.sendAsyncRequest(null, request, BodyHandlers.ofString())
+				.thenApply(response -> this.handleResponse(response, training, devNode, bot));
 
 		return training;
 	}
 
-	@SuppressWarnings("unchecked")
-	private String getMessageFromVUserResponse(final Response response) {
-		return ((List<String>) response.readEntity(Map.class).get("globalErrors")).get(0);
+	public <T> String handleResponse(final HttpResponse<T> response, final Training training, final ChatbotNode node, final Chatbot bot) {
+		if (response.statusCode() != 204) {
+			training.setStrCd(TrainingStatusEnum.KO.name());
+		} else {
+			training.setStrCd(TrainingStatusEnum.OK.name());
+			node.setTraId(training.getTraId());
+			asynchronousServices.saveNodeWithoutAuthorizations(node);
+		}
+		training.setEndTime(Instant.now());
+		asynchronousServices.saveTrainingWithoutAuthorizations(training);
+		return "response handled";
 	}
 
-	public void stopAgent(@SecuredOperation("botContributor") final Chatbot bot) {
-		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(bot.getBotId()).get();
-
-		jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/train")
-				.request(MediaType.APPLICATION_JSON)
-				.header(API_KEY, devNode.getApiKey())
-				.delete();
-
+	private Training createTraining(final Chatbot bot) {
+		final Long botId = bot.getBotId();
+		final Long versionNumber = trainingPAO.getNextModelNumber(botId);
+		final Training training = new Training();
+		training.setBotId(botId);
+		training.setStartTime(Instant.now());
+		training.setStrCd(TrainingStatusEnum.TRAINING.name());
+		training.setVersionNumber(versionNumber);
+		training.setNluThreshold(BigDecimal.valueOf(0.6));
+		return training;
 	}
 
-	public TrainerInfo getTrainingState(@SecuredOperation("botContributor") final Chatbot bot) {
-		final Optional<ChatbotNode> optDevNode = nodeServices.getDevNodeByBotId(bot.getBotId());
+	private ExecutorConfiguration getExecutorConfig(final Training training, final ChatbotNode node) {
+		final Long botId = training.getBotId();
 
-		if (!optDevNode.isPresent()) {
-			final TrainerInfo trainerInfo = new TrainerInfo();
-			trainerInfo.setName("No training node configured");
-			return trainerInfo;
-		}
-		final ChatbotNode devNode = optDevNode.get();
-
-		String error = null;
-		TrainerInfo retour = null;
-		try {
-			final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/trainStatus")
-					.request(MediaType.APPLICATION_JSON)
-					.header(API_KEY, devNode.getApiKey())
-					.get();
-
-			error = response.getStatus() != 200 ? "Code HTTP : " + response.getStatus() : null;
-
-			if (error == null) {
-				retour = response.readEntity(TrainerInfo.class);
-			}
-		} catch (final Exception e) {
-			error = e.getLocalizedMessage();
-			LOGGER.info("Impossible d'accéder au noeud.", e);
-		}
-
-		if (error != null) {
-			final TrainerInfo trainerInfo = new TrainerInfo();
-			trainerInfo.setName("Node unavailable");
-			trainerInfo.setTrainingState(error);
-			return trainerInfo;
-		}
-
-		return retour;
+		final ExecutorConfiguration result = new ExecutorConfiguration();
+		result.setBotId(botId);
+		result.setNodId(node.getNodId());
+		result.setTraId(training.getTraId());
+		result.setModelName("model " + training.getVersionNumber());
+		result.setNluThreshold(training.getNluThreshold());
+		result.setCustomConfig("nothing");
+		return result;
 	}
 
-	public RunnerInfo getRunnerState(@SecuredOperation("botContributor") final Chatbot bot) {
-		final Optional<ChatbotNode> optDevNode = nodeServices.getDevNodeByBotId(bot.getBotId());
+	public Optional<Training> getCurrentTraining(final Chatbot bot) {
+		return trainingDAO.getCurrentTrainingByBotId(bot.getBotId());
+	}
 
-		if (!optDevNode.isPresent()) {
-			final RunnerInfo runnerInfo = new RunnerInfo();
-			runnerInfo.setName("No training node configured");
-			return runnerInfo;
-		}
-		final ChatbotNode devNode = optDevNode.get();
-
-		String error = null;
-		RunnerInfo retour = null;
-		try {
-			final Response response = jaxrsProvider.getWebTarget(devNode.getUrl()).path("/api/chatbot/admin/runnerStatus")
-					.request(MediaType.APPLICATION_JSON)
-					.header(API_KEY, devNode.getApiKey())
-					.get();
-
-			error = response.getStatus() != 200 ? "Code HTTP : " + response.getStatus() : null;
-
-			if (error == null) {
-				retour = response.readEntity(RunnerInfo.class);
-			}
-		} catch (final Exception e) {
-			error = e.getLocalizedMessage();
-			LOGGER.info("Impossible d'accéder au noeud.", e);
-		}
-
-		if (error != null) {
-			final RunnerInfo runnerInfo = new RunnerInfo();
-			runnerInfo.setName("Node unavailable");
-			runnerInfo.setState(error);
-			return runnerInfo;
-		}
-
-		return retour;
+	public Optional<Training> getDeployedTraining(final Chatbot bot) {
+		return trainingDAO.getDeployedTrainingByBotId(bot.getBotId());
 	}
 
 	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
@@ -305,46 +253,6 @@ public class TrainingServices implements Component {
 
 	public void removeTraining(@SecuredOperation("botContributor") final Chatbot bot, final Long traId) {
 		trainingDAO.delete(traId);
-	}
-
-	public void trainingCallback(@SecuredOperation("botContributor") final Chatbot bot, final ExecutorTrainingCallback callback) {
-		final Training training = getTraining(bot, callback.getTrainingId());
-		final ChatbotNode node = chatbotNodeDAO.findOptional(
-				Criterions.isEqualTo(ChatbotNodeFields.botId, training.getBotId())
-						.and(Criterions.isEqualTo(ChatbotNodeFields.isDev, true)))
-				.get();
-
-		Assertion.check().isTrue(node.getApiKey().equals(callback.getApiKey()), "Access denied");
-
-		// TODO : Limiter au dernier en cours en mode "trop tard, je refuse ton callback" ?
-
-		if (Boolean.TRUE.equals(callback.getSuccess())) {
-			final VFile model = fetchModel(node, training.getVersionNumber());
-			final FileInfoURI fileInfoUri = fileServices.saveFile(model);
-			training.setFilIdModel((Long) fileInfoUri.getKey());
-
-			training.setStatus("OK");
-		} else {
-			training.setStatus("KO");
-		}
-
-		training.setLog(callback.getLog());
-		training.setInfos(callback.getInfos());
-		training.setWarnings(callback.getWarnings());
-		training.setEndTime(Instant.now());
-
-		saveTraining(bot, training);
-	}
-
-	private VFile fetchModel(final ChatbotNode node, final Long modelVersion) {
-		final Response response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/admin/model/" + modelVersion)
-				.request(MediaType.APPLICATION_OCTET_STREAM)
-				.header(API_KEY, node.getApiKey())
-				.get();
-
-		response.bufferEntity();
-
-		return new StreamFile(modelVersion + ".tar.gz", response.getHeaderString("Content-Type"), Instant.now(), response.getLength(), () -> response.readEntity(InputStream.class));
 	}
 
 	public void removeAllTraining(@SecuredOperation("botAdm") final Chatbot bot) {

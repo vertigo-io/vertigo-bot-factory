@@ -17,10 +17,13 @@
  */
 package io.vertigo.chatbot.executor.webservices;
 
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
+import io.vertigo.chatbot.executor.manager.ExecutorManager;
 import io.vertigo.chatbot.vega.webservice.stereotype.RequireApiKey;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.GET;
@@ -32,11 +35,8 @@ import io.vertigo.vega.webservice.stereotype.PathPrefix;
 @PathPrefix("/chatbot/admin")
 public class AdminWebService implements WebServices {
 
-	//@Inject
-	//private RasaRunnerServices runnerServices;
-	//
-	//@Inject
-	//private RasaTrainerServices trainerServices;
+	@Inject
+	private ExecutorManager executorManager;
 
 	@GET("/")
 	public Boolean checkAlive() {
@@ -46,7 +46,7 @@ public class AdminWebService implements WebServices {
 	@PUT("/model")
 	public void loadModel(@InnerBodyParam("botExport") final BotExport bot,
 			@InnerBodyParam("executorConfig") final ExecutorConfiguration executorConfig) {
-		//trainerServices.trainModel(bot, smallTalkList, trainingId, modelId, nluThreshold);
+		executorManager.loadModel(bot, executorConfig);
 	}
 
 	@GET("/trainStatus")

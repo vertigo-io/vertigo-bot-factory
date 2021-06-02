@@ -17,22 +17,14 @@
  */
 package io.vertigo.chatbot.executor.webservices;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.executor.manager.ExecutorManager;
 import io.vertigo.chatbot.executor.model.IncomeRating;
-import io.vertigo.core.lang.WrappedException;
-import io.vertigo.core.param.Param;
-import io.vertigo.core.param.ParamManager;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.POST;
 import io.vertigo.vega.webservice.stereotype.PathParam;
@@ -40,9 +32,6 @@ import io.vertigo.vega.webservice.stereotype.PathPrefix;
 
 @PathPrefix("/chatbot")
 public class TalkWebService implements WebServices {
-
-	@Inject
-	private ParamManager paramManager;
 
 	@Inject
 	private ExecutorManager executorManager;
@@ -60,24 +49,6 @@ public class TalkWebService implements WebServices {
 	@POST("/rating")
 	public void rate(final IncomeRating rating) {
 		// todo
-	}
-
-	private void doSendRawResponse(final HttpServletResponse httpResponse, final String response) {
-
-		httpResponse.setContentType("application/json;charset=UTF-8");
-		httpResponse.setContentLength(response.length());
-
-		final Optional<String> corsValue = paramManager.getOptionalParam("HTTP_CORS").map(Param::getValue); // TODO, passer en filtre
-		if (corsValue.isPresent()) {
-			httpResponse.setHeader("Access-Control-Allow-Origin", corsValue.get());
-		}
-
-		try (ServletOutputStream os = httpResponse.getOutputStream()) {
-			os.write(response.getBytes(StandardCharsets.UTF_8));
-			os.flush();
-		} catch (final IOException e) {
-			throw WrappedException.wrap(e);
-		}
 	}
 
 }

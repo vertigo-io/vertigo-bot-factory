@@ -26,12 +26,16 @@ modules:
     featuresConfig:
       - webservices.javalin:
           apiPrefix: /api
+      - webservices.swagger:
     plugins:
       - io.vertigo.chatbot.vega.plugins.webservice.handler.ApiTokenWebServiceHandlerPlugin:
           apiKey: ${API_KEY}
   io.vertigo.ai.AiFeatures:
     features:
       - nlu:
+      - blackboard:
+      - blackboard.memory:
+      - parser:
     featuresConfig:
       - nlu.rasa:
           rasaUrl: http://localhost:5005

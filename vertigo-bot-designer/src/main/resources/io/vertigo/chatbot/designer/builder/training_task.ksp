@@ -28,8 +28,8 @@ create Task TkCleanOldTrainings {
     className : "io.vertigo.basics.task.TaskEngineProc"
     request : "
             update training
-			set status = 'KO'
-			where status = 'TRAINING'
+			set str_cd = 'KO'
+			where str_cd = 'TRAINING'
 			and bot_id = #botId#
              "
 	in botId  				{domain : DoId         					cardinality:"1"}
@@ -60,6 +60,30 @@ create Task TkGetAllTrainingFilIdsByBotId {
              "
 	in botId				{domain : DoId,				cardinality:"1"} 
 	out filIds 				{domain : DoId			 	cardinality:"*"}
+} 
+
+
+create Task TkGetCurrentTrainingByBotId {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select tra.*
+            from training tra
+            where tra.bot_id = #botId# and tra.str_cd = 'TRAINING'
+             "
+	in botId				{domain : DoId,				cardinality:"1"} 
+	out tra 				{domain : DoDtTraining	 	cardinality:"?"}
+} 
+
+create Task TkGetDeployedTrainingByBotId {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select tra.*
+            from training tra
+            join chatbot_node cn on cn.tra_id = tra.tra_id
+            where tra.bot_id = #botId# and cn.is_dev = true
+             "
+	in botId				{domain : DoId,				cardinality:"1"} 
+	out tra 				{domain : DoDtTraining	 	cardinality:"?"}
 } 
 
 create Task TkRemoveTrainingFileByFilIds{
