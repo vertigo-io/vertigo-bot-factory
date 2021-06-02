@@ -136,6 +136,30 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
 	}
 
 	/**
+	 * Execute la tache TkGetTopicByCodeBotId.
+	 * @param botId Long
+	 * @param code String
+	 * @return DtList de Topic topic
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetTopicByCodeBotId",
+			request = "select top.*" + 
+ "			from topic top" + 
+ "			where top.bot_id = #botId#" + 
+ "			and top.code = #code#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getTopicByCodeBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "code", smartType = "STyCode") final String code) {
+		final Task task = createTaskBuilder("TkGetTopicByCodeBotId")
+				.addValue("botId", botId)
+				.addValue("code", code)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkGetTopicReferencingTopId.
 	 * @param topId Long
 	 * @return DtList de Topic topic

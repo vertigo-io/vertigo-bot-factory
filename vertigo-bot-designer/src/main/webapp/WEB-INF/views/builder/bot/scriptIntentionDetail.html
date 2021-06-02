@@ -18,6 +18,7 @@
 							class="on-left" :round size="lg" color="primary" />
 			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
 							class="on-left" round size="lg" color="red" ></q-btn>
+			
 		</section>
 				
 		<section layout:fragment="content-nav">

@@ -75,11 +75,11 @@ create Association ATopicKindTopic{
 }
 
 create DtDefinition DtTopic{
-	id		topId			{domain: DoId 		label: "ID"}
-	field 	title 			{domain: DoLabel 	label: "Title" 			cardinality : "1"}
-	field 	description		{domain: DoLabel 	label: "Description" 	}
-	field 	isEnabled 		{domain: DoYesNo 	label: "Enabled" 		cardinality : "1"}
-	field 	code	 		{domain: DoLabel 	label: "Code" 			cardinality : "1"}
+	id		topId			{domain: DoId 		label: "ID"									}
+	field 	title 			{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field 	description		{domain: DoLabel 	label: "Description" 						}
+	field 	isEnabled 		{domain: DoYesNo 	label: "Enabled" 		cardinality : "1"	}
+	field 	code	 		{domain: DoLabel 	label: "Code" 			cardinality : "1"	}
 }
 
 create DtDefinition DtSmallTalk {
@@ -234,11 +234,12 @@ create Association AResponseButtonTopicResponse {
 /** Category **/
 
 create DtDefinition DtTopicCategory{
-	id topCatId 		{domain: DoId		label: "Topic category id"}
-	field label			{domain: DoLabel	label: "Topic category label" 	cardinality:"1"}
-	field level 		{domain: DoNumber	label: "Category level"}
-	field isEnabled		{domain: DoYesNo	label: "Enabled" 				cardinality:"1"}
-	field isTechnical	{domain: DoYesNo	label: "Technical" 				cardinality:"1"}
+	id topCatId 		{domain: DoId		label: "Topic category id"						}
+	field code			{domain: DoLabel	label: "Code" 					cardinality:"1"	}
+	field label			{domain: DoLabel	label: "Topic category label" 	cardinality:"1"	}
+	field level 		{domain: DoNumber	label: "Category level"						 	}
+	field isEnabled		{domain: DoYesNo	label: "Enabled" 				cardinality:"1"	}
+	field isTechnical	{domain: DoYesNo	label: "Technical" 				cardinality:"1"	}
 }
 
 create Association ATopicCategoryChatbot{
@@ -313,4 +314,26 @@ create DtDefinition DtScriptIntentionIhm {
 	field title		{domain: DoLabel	label: "Script Intention label"	}
 	field sinId		{domain: DoId		label: "Script Intention id"	}
 	field isEnabled	{domain: DoYesNo	label: "Enabled"				}
+}
+
+create DtDefinition DtTopicFileExport {
+	field code 				{domain: DoCode 						label: "Code" 					cardinality : "1"}
+	field title 			{domain: DoLabel 						label: "Title" 					cardinality : "1"}
+	field category			{domain: DoLabel	 					label: "Category" 				cardinality : "1"}
+	field description		{domain: DoLabel	 					label: "Description" 			cardinality : "?"}
+	field tag				{domain: DoLabel	 					label: "Tag" 					cardinality : "?"}
+	field dateStart			{domain: DoLabel	 					label: "Start date" 			cardinality : "?"}
+	field dateEnd 			{domain: DoLabel	 					label: "End date" 				cardinality : "?"}
+	field active			{domain: DoLabel	 					label: "Active" 				cardinality : "1"}
+	field trainingPhrases	{domain: DoText	 						label: "Training phrases" 		cardinality : "?"}
+	field typeTopic			{domain: DoLabel	 					label: "Topic type" 			cardinality : "1"}
+	field script			{domain: DoText	 						label: "Script" 				cardinality : "?"}
+	field response			{domain: DoText	 						label: "Response" 				cardinality : "?"}
+	field buttons			{domain: DoText	 						label: "Buttons" 				cardinality : "?"}
+	field isEnd				{domain: DoLabel	 					label: "End of conversation" 	cardinality : "1"}
+}
+
+create DtDefinition DtSelectCategory {
+	field topCatId 		{domain: DoId 						label: "Category id"	 		cardinality:"*"}
+	field code 			{domain: DoCode 					label: "Code"	 				cardinality:"?"}
 }

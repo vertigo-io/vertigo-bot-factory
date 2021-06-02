@@ -130,10 +130,10 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 				uiMessageStack);
 
 		// add training sentence who is not "validated" by enter and still in the input
-		addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 
 		smallTalkServices.saveSmallTalk(chatbot, smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts,
-				buttonList, topic);
+				buttonList, topic, topic.getIsEnabled());
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
 	}
 

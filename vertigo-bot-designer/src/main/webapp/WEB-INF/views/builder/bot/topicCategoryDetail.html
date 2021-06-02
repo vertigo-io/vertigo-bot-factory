@@ -25,14 +25,16 @@
 			<vu:popup action="_delete" vModel="showPopup" message="#{topicCategory.popup.message}" confirm="#{action.confirm}"></vu:popup>
 
 			<vu:block id="detail" title="Informations">
-				<vu:text-field object="topicCategory" field="label" />
-				
-				<vu:label object="topicCategory" field="isEnabled">
-					<vu:include-data object="topicCategory" field="isEnabled" />
-					<q-input v-model="vueData.topicCategory.isEnabled" name="vContext[topicCategory][isEnabled]" class="hidden" ></q-input>
+				<vu:grid cols="2">
+					<vu:text-field object="topicCategory" field="label" />
+					<vu:text-field object="topicCategory" field="code"/>
+					<vu:label object="topicCategory" field="isEnabled">
+						<vu:include-data object="topicCategory" field="isEnabled" />
+						<q-input v-model="vueData.topicCategory.isEnabled" name="vContext[topicCategory][isEnabled]" class="hidden" ></q-input>
 					
-					<q-toggle v-model="vueData.topicCategory.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
-				</vu:label>
+						<q-toggle v-model="vueData.topicCategory.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
+					</vu:label>
+				</vu:grid>
 			</vu:block>
 			
 			<vu:table list="topics" componentId="topicsList" sortBy="title" :binary-state-sort="true">

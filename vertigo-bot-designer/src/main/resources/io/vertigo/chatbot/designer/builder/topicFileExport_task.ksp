@@ -1,0 +1,57 @@
+package io.vertigo.chatbot.designer.builder.topicFileExport
+
+
+create Task TkGetTopicFileExport {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select top.code,
+			top.tto_cd as type_topic,
+			top.title,
+			tca.code as category,
+			top.description,
+			null as tag,
+			null as date_start,
+			null as date_end,
+			CASE 
+				WHEN top.is_enabled THEN 'ACTIVE'
+				ELSE 'INACTIVE'
+			END	as active,
+			sin.script,
+			tph.agg as training_phrases,
+			utt.text as response,
+			buttons.doublons as buttons,
+			CASE 
+				WHEN smt.is_end THEN 'TRUE'
+				ELSE 'FALSE'
+			END	as is_end
+			from topic top
+			left join (
+					select nts.top_id,
+					string_agg(nts.text,'|') agg	
+					from nlu_training_sentence nts
+					join topic top on top.top_id = nts.top_id					
+					group by (nts.top_id)
+				) as tph  on top.top_id = tph.top_id
+			left join topic_category tca on tca.top_cat_id = top.top_cat_id	
+			left join script_intention sin on sin.top_id = top.top_id
+			left join small_talk smt on smt.top_id = top.top_id
+			left join utter_text utt on utt.smt_id = smt.smt_id
+			left join (
+					select t.top_id, string_agg(concat('[',rbu.text,'¤',tre.code,']'),'|') as doublons
+					from response_button rbu
+					join topic tre on tre.top_id = rbu.top_id_response
+					join small_talk st on st.smt_id = rbu.smt_id 
+					join topic t on t.top_id = st.top_id 
+					group by (t.top_id)
+				) buttons on buttons.top_id = top.top_id
+			where top.bot_id = #botId#
+			and tca.is_technical = false
+			<%if (tcaId != null) { %>
+				and tca.top_cat_id = #tcaId#
+			<% } %>
+			order by top.code
+            "
+	in botId				{domain : DoId,						cardinality:"1"} 
+	in tcaId				{domain : DoId,						cardinality:"?"} 
+	out topic 				{domain : DoDtTopicFileExport		cardinality:"*"}
+} 

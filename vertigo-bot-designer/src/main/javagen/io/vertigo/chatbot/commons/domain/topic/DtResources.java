@@ -137,6 +137,18 @@ public enum DtResources implements MessageKey {
 	fldScriptIntentionIhm$isEnabled,
 
 	/***********************************************************
+	/** SelectCategory.
+	/***********************************************************
+	/**
+	 * Category id.
+	 */
+	fldSelectCategory$topCatId,
+	/**
+	 * Code.
+	 */
+	fldSelectCategory$code,
+
+	/***********************************************************
 	/** SmallTalk.
 	/***********************************************************
 	/**
@@ -228,6 +240,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTopicCategory$topCatId,
 	/**
+	 * Code.
+	 */
+	fldTopicCategory$code,
+	/**
 	 * Topic category label.
 	 */
 	fldTopicCategory$label,
@@ -247,6 +263,66 @@ public enum DtResources implements MessageKey {
 	 * Chatbot.
 	 */
 	fldTopicCategory$botId,
+
+	/***********************************************************
+	/** TopicFileExport.
+	/***********************************************************
+	/**
+	 * Code.
+	 */
+	fldTopicFileExport$code,
+	/**
+	 * Title.
+	 */
+	fldTopicFileExport$title,
+	/**
+	 * Category.
+	 */
+	fldTopicFileExport$category,
+	/**
+	 * Description.
+	 */
+	fldTopicFileExport$description,
+	/**
+	 * Tag.
+	 */
+	fldTopicFileExport$tag,
+	/**
+	 * Start date.
+	 */
+	fldTopicFileExport$dateStart,
+	/**
+	 * End date.
+	 */
+	fldTopicFileExport$dateEnd,
+	/**
+	 * Active.
+	 */
+	fldTopicFileExport$active,
+	/**
+	 * Training phrases.
+	 */
+	fldTopicFileExport$trainingPhrases,
+	/**
+	 * Topic type.
+	 */
+	fldTopicFileExport$typeTopic,
+	/**
+	 * Script.
+	 */
+	fldTopicFileExport$script,
+	/**
+	 * Response.
+	 */
+	fldTopicFileExport$response,
+	/**
+	 * Buttons.
+	 */
+	fldTopicFileExport$buttons,
+	/**
+	 * End of conversation.
+	 */
+	fldTopicFileExport$isEnd,
 
 	/***********************************************************
 	/** TopicIhm.
