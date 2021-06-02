@@ -33,7 +33,7 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 	@Inject
 	private ScriptIntentionPAO scriptIntentionPAO;
 
-	public ScriptIntention getScriptIntentionById(@SecuredOperation("botAdm") final Chatbot bot, final Long sinId) {
+	public ScriptIntention getScriptIntentionById(@SecuredOperation("botVisitor") final Chatbot bot, final Long sinId) {
 		Assertion.check().isNotNull(sinId);
 		// ---
 		return scriptIntentionDAO.get(sinId);
