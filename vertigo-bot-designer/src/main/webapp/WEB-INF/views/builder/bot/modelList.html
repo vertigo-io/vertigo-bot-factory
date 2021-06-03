@@ -90,7 +90,9 @@
 							onSuccess: function() {
 								postTrain();
 								if (VUiExtensions.dataX.loadModel.selectedNode.isDev) {
-									VUiPage.$refs.chatbot.systemMessage("Model V" + VertigoUi.vueData.deployedTraining.versionNumber  + " loaded.");
+									var name = /*[[#{model.name}]]*/ '';
+									var loaded = /*[[#{model.loaded}]]*/ '';
+									VUiPage.$refs.chatbot.systemMessage(name + " V" + VertigoUi.vueData.deployedTraining.versionNumber  + " " + loaded);
 									VUiPage.$refs.chatbot.restart(true);
 								}
 							}
@@ -123,7 +125,7 @@
 			}
 			
 			function getCurrentTrainingVersionNumber() {
-				return VUiExtensions.dataX.loadModel.currentTraining && VUiExtensions.dataX.loadModel.currentTraining.versionNumber;
+				return VertigoUi.vueData.deployedTraining.versionNumber;
 			}
 			function getCurrentSelectedNodeVersionNumber() {
 				return VUiExtensions.dataX.loadModel.selectedNode && getVersionNumberByTrainingId(VUiExtensions.dataX.loadModel.selectedNode.traId)
@@ -131,15 +133,14 @@
 			function getMigrationAdjective() {
 				let currentTrainingVersionNumber = getCurrentTrainingVersionNumber();
 				let currentSelectedNodeVersionNumber = getCurrentSelectedNodeVersionNumber();
-				
 				if (currentSelectedNodeVersionNumber === null) {
-					return "";
+					return "<span>" + /*[[#{node.deployment.article}]]*/ + "</span>";
 				} else if (currentTrainingVersionNumber > currentSelectedNodeVersionNumber) {
-					return "<span class='text-green'>newer</span>";
+					return "<span class='text-green'>" + /*[[#{node.deployment.new}]]*/ + "</span>";
 				} else if (currentTrainingVersionNumber < currentSelectedNodeVersionNumber) {
-					return "<span class='text-red'>older</span>";
+					return "<span class='text-red'>" + /*[[#{node.deployment.older}]]*/ + "</span>";
 				} else if (currentTrainingVersionNumber === currentSelectedNodeVersionNumber){
-					return "<span class='text-orange'>same</span>";
+					return "<span class='text-orange'>" + /*[[#{node.deployment.same}]]*/ + "</span>";
 				}
 			}
 			function getDevNode() {
@@ -153,6 +154,11 @@
 			function canTrainBot(trainingInProgress) {
 				node = getDevNode();
 				return node == null || trainingInProgress;
+			}
+			
+			function getTalkToBot() {
+				var speakTo = /*[[#{model.speakto}]]*/ '';
+				return speakTo + " " + VertigoUi.vueData.bot.name;
 			}
 			
 		</script>
@@ -264,7 +270,7 @@
 			<q-dialog ref="loadModelDialog">
 				<q-card style="max-width: 50vw;">
 					<q-card-section>
-						<div class="text-h6">Deploying version {{getCurrentTrainingVersionNumber()}}</div>
+						<div class="text-h6"><span th:text="#{node.deployment.popuptitle}"></span> {{getCurrentTrainingVersionNumber()}}</div>
 					</q-card-section>
 					
 					<q-card-section>
@@ -279,7 +285,7 @@
 					
 					<q-card-section>
 						<div v-if="!dataX.loadModel.selectedNode" class="text-italic" th:text=#{node.deployment.phrase}></div>
-						<div v-if="dataX.loadModel.selectedNode">Deploy <span v-html="getMigrationAdjective()"></span> model on node <span class="text-italic" :style="'color: '+ dataX.loadModel.selectedNode.color">"{{dataX.loadModel.selectedNode.name}}"</span></div>
+						<div v-if="dataX.loadModel.selectedNode"><span th:text="#{node.deployment.action} + ' '"></span><span v-html="getMigrationAdjective()"></span><span th:text="' ' + #{node.deployment.modelnode} + ' '"></span><span class="text-italic" :style="'color: '+ dataX.loadModel.selectedNode.color">"{{dataX.loadModel.selectedNode.name}}"</span></div>
 					</q-card-section>
 					
 					<q-card-actions align="around">
@@ -304,7 +310,7 @@
 								   :bot-url="'_talk?CTX=' + vueData.CTX"
 								   :start-call="'_start?CTX=' + vueData.CTX"
 								   :dev-mode="!true"
-								   :placeholder="'Speak to ' + vueData.bot.name"></v-chatbot>
+								   :placeholder="getTalkToBot()"></v-chatbot>
 		  			</q-drawer>
 				</th:block>
 			</template>
