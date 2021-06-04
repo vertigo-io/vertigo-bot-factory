@@ -38,7 +38,7 @@ modules:
       - parser:
     featuresConfig:
       - nlu.rasa:
-          rasaUrl: http://localhost:5005
+          rasaUrl: ${RASA_URL}
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
   io.vertigo.chatbot.engine.EngineFeatures:
