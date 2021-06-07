@@ -8,6 +8,7 @@
 	<Parameter name="DESIGNER_URL" value="http://localhost:8080/vertigo-bot-designer" override="false"/>
 	<Parameter name="API_KEY" value="MyNodeApiKey!" override="false"/>
 	<Parameter name="CONFIG_DATA_FILE" value="${user.home}/botExecutor/config.json" override="false"/>
+	<Parameter name="RASA_URL" value="http://localhost:5005" override="false"/>
 	
 	<!-- <Parameter name="HTTP_CORS" value="*" override="false"/> -->
 </Context>

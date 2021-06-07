@@ -59,7 +59,7 @@ comment on column TOPIC.BOT_ID is
 
 -- change table
 alter table small_talk 
-add column top_id numeric not null;
+add column top_id numeric;
 
 update small_talk 
 set top_id = nextval('SEQ_TOPIC');
@@ -69,7 +69,7 @@ select top_id, title, description, is_enabled, bot_id
 from small_talk;
 
 alter table small_talk 
-drop constraint FK_A_SMALL_TALK_CHATBOT_CHATBOT;
+drop constraint if exists FK_A_SMALL_TALK_CHATBOT_CHATBOT;
 
 alter table small_talk 
 drop column if exists title,
@@ -77,8 +77,11 @@ drop column if exists description,
 drop column if exists is_enabled,
 drop column if exists bot_id;
 
+alter table small_talk
+alter column top_id set not null;
+
 alter table nlu_training_sentence 
-add column top_id numeric not null;
+add column top_id numeric;
 
 update nlu_training_sentence 
 set top_id = small_talk.top_id
@@ -86,10 +89,13 @@ from small_talk
 where nlu_training_sentence.smt_id  = small_talk.smt_id ; 
 
 alter table nlu_training_sentence 
-drop constraint FK_A_SMALL_TALK_NLU_TRAINING_SENTENCE_SMALL_TALK;
+drop constraint if exists FK_A_SMALL_TALK_NLU_TRAINING_SENTENCE_SMALL_TALK;
 
 alter table nlu_training_sentence 
 drop column smt_id;
+
+alter table nlu_training_sentence
+alter column top_id set not null;
 
 -- Add constraint 
 alter table SCRIPT_INTENTION

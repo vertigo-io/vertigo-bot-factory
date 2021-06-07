@@ -14,6 +14,7 @@
 	
 	<properties>
 		<sonar.javascript.globals>Vue,VertigoUi,VUiPage</sonar.javascript.globals>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
@@ -97,7 +98,6 @@
 		</dependency>
 
 	</dependencies>
-
 
 	<build>
 		<plugins>

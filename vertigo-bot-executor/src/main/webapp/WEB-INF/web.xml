@@ -12,14 +12,6 @@
 		<param-name>boot.applicationConfiguration</param-name>
 		<param-value>/boot/chatbot-executor.yaml</param-value>
 	</context-param>
-	<context-param>
-		<param-name>rabbitMq.queueName</param-name>
-		<param-value>rasa</param-value>
-	</context-param>
-	<context-param>
-		<param-name>rabbitMq.consumerTag</param-name>
-		<param-value>consumerTag</param-value>
-	</context-param>	
 
 	<filter>
 		<filter-name>Character Encoding Filter</filter-name>
