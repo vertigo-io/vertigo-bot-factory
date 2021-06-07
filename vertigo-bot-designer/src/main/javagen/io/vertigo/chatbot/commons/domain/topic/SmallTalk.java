@@ -17,6 +17,7 @@ public final class SmallTalk implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private Long smtId;
+	private Boolean isEnd;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ASmallTalkTopic",
@@ -71,6 +72,25 @@ public final class SmallTalk implements Entity {
 	 */
 	public void setSmtId(final Long smtId) {
 		this.smtId = smtId;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Is conversation over ?'.
+	 * @return Boolean isEnd <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Is conversation over ?")
+	public Boolean getIsEnd() {
+		return isEnd;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Is conversation over ?'.
+	 * @param isEnd Boolean <b>Obligatoire</b>
+	 */
+	public void setIsEnd(final Boolean isEnd) {
+		this.isEnd = isEnd;
 	}
 	
 	/**

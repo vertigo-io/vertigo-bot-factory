@@ -133,14 +133,15 @@ public final class ExportPAO implements StoreServices {
 			request = "select   " + 
  "             	top.top_id,  " + 
  "             	STRING_AGG (ut.text, '|') as utter_texts,  " + 
- "             	rty.rty_id as response_type" + 
+ "             	rty.rty_id as response_type, " + 
+ "             	coalesce (smt.is_end, false) as is_end" + 
  " 			from utter_text ut" + 
  " 			join small_talk smt on (smt.smt_id = ut.smt_id)  " + 
  " 			join response_type rty on (rty.rty_id = smt.rty_id)" + 
  " 			join topic top on (top.top_id = smt.top_id)  " + 
  " 			where top.bot_id = #botId# " + 
  " 			and top.is_enabled = true" + 
- " 			group by top.top_id, rty.rty_id",
+ " 			group by top.top_id, rty.rty_id, smt.is_end",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtUtterTextExport")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.builder.topic.export.UtterTextExport> exportUtterTextByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {

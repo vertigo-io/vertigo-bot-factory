@@ -160,6 +160,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldSmallTalk$smtId,
 	/**
+	 * Is conversation over ?.
+	 */
+	fldSmallTalk$isEnd,
+	/**
 	 * Topic.
 	 */
 	fldSmallTalk$topId,

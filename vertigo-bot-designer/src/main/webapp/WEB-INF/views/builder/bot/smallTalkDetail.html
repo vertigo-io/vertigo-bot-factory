@@ -24,6 +24,7 @@
 			<q-item tag="a" href="#training" th:text="#{smallTalk.menu.training}"></q-item>
 			<q-item tag="a" href="#response" th:text="#{smallTalk.menu.responses}"></q-item>
 			<q-item tag="a" href="#buttons" th:text="#{smallTalk.menu.buttons}"></q-item>
+			<q-item tag="a" href="#conversationOver" th:text="#{smallTalk.menu.isEnd}"></q-item>
 		</section>
 		
 		<section layout:fragment="content-specific">
@@ -137,6 +138,14 @@
 				</c-buttonlist>
 				
 				<div th:if="${model.modeReadOnly && model.vContext.buttons.isEmpty()}" th:text=#{smalltalk.noButton}></div>
+			</vu:block>
+				
+			<vu:block id="conversationOver" title="#{smallTalk.menu.isEnd}">
+				<vu:label object="smallTalk" field="isEnd">
+					<vu:include-data object="smallTalk" field="isEnd" />
+					<q-input v-model="vueData.smallTalk.isEnd" name="vContext[smallTalk][isEnd]" class="hidden" ></q-input>					
+					<q-toggle v-model="vueData.smallTalk.isEnd" th::disable="${model.modeReadOnly}"></q-toggle>
+				</vu:label>
 			</vu:block>
 			
 		</section>

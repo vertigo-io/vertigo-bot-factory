@@ -55,4 +55,8 @@ public enum DtResources implements MessageKey {
 	 * Response type.
 	 */
 	fldUtterTextExport$responseType,
+	/**
+	 * Is conversation over ?.
+	 */
+	fldUtterTextExport$isEnd,
 }
