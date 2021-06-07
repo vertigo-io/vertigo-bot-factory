@@ -109,11 +109,11 @@
 		},
 		series : function() {
 			return [ {
-						name : 'User actions',
+						name : /*[[#{analytics.message.useractions}]]*/ '',
 						data : serieToApex("name:count", VertigoUi.vueData.requestsStats, {fill: 0})
 					},
 					{
-						name : 'Messages not understood',
+						name : /*[[#{analytics.message.understanding}]]*/ '',
 						data : serieToApex("isFallback:sum", VertigoUi.vueData.requestsStats, {fill: 0})
 					} 
 				];
