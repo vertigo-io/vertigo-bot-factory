@@ -3,8 +3,6 @@ package io.vertigo.chatbot.designer.builder.services.topic;
 import java.util.Locale;
 import java.util.Optional;
 
-import java.util.Optional;
-
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
@@ -25,6 +23,7 @@ import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
@@ -59,7 +58,7 @@ public class TopicServices implements Component {
 
 	public Topic save(final Topic topic) {
 		//create code for export
-		generateAndSetCode(topic);
+		hasUniqueCode(topic);
 		return topicDAO.save(topic);
 	}
 
@@ -67,7 +66,7 @@ public class TopicServices implements Component {
 			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
 		//create code for export
-		generateAndSetCode(topic);
+		hasUniqueCode(topic);
 		// save and remove NTS
 		final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences);
 		removeNTS(nluTrainingSentencesToDelete);
@@ -76,12 +75,11 @@ public class TopicServices implements Component {
 		return topicDAO.save(topic);
 	}
 
-	private Topic generateAndSetCode(final Topic topic) {
-		final Long code = topicPAO.getMaxCodeByBotId(topic.getBotId());
-		if (topic.getCode() == null) {
-			topic.setCode(code + 1);
+	private void hasUniqueCode(final Topic topic) {
+		Optional<Long> topIdOpt = topic.getTopId() != null ? Optional.of(topic.getTopId()) : Optional.empty();
+		if (topicPAO.checkUnicityTopicCode(topic.getBotId(), topic.getCode(), topIdOpt)) {
+			throw new VUserException("the code is not unique, please select another");
 		}
-		return topic;
 	}
 
 	public Topic createTopic(@SecuredOperation("botContributor") final Topic topic) {
@@ -169,6 +167,7 @@ public class TopicServices implements Component {
 		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
 		topic.setKtoCd(ktoCd);
 		topic.setDescription(getDescription(kto, locale));
+		topic.setCode(ktoCd);
 		viewContext.publishDto(topickey, topic);
 		final UtterText utterText = new UtterText();
 		utterText.setText(kindTopicServices.getDefaultTextByLocale(kto, locale));

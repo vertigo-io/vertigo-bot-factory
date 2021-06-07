@@ -97,7 +97,7 @@ create DtDefinition DtTopic{
 	field 	title 			{domain: DoLabel 	label: "Title" 			cardinality : "1"}
 	field 	description		{domain: DoLabel 	label: "Description" 	}
 	field 	isEnabled 		{domain: DoYesNo 	label: "Enabled" 		cardinality : "1"}
-	field 	code	 		{domain: DoNumber 	label: "Code" 			cardinality : "1"}
+	field 	code	 		{domain: DoLabel 	label: "Code" 			cardinality : "1"}
 }
 
 create DtDefinition DtSmallTalk {

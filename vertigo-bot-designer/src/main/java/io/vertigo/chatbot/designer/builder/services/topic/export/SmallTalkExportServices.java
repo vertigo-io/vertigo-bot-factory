@@ -30,8 +30,6 @@ import io.vertigo.datamodel.structure.model.DtList;
 @Transactional
 public class SmallTalkExportServices implements TopicsExportServices, Component {
 
-	private final static String PREFIX = "topic";
-
 	@Inject
 	private TopicServices topicServices;
 
@@ -51,7 +49,7 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 		//Create bt by topics and map to topId
 		final Map<Long, String> mapBtTopic = mapTopicToBt(bot);
 		//Map Topic to NLU and BT
-		final DtList<TopicExport> result = TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapBtTopic, PREFIX);
+		final DtList<TopicExport> result = TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapBtTopic);
 		return result;
 	}
 

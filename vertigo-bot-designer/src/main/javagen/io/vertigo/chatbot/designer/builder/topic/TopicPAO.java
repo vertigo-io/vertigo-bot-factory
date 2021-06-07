@@ -42,6 +42,36 @@ public final class TopicPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkCheckUnicityTopicCode.
+	 * @param botId Long
+	 * @param code String
+	 * @param topId Long
+	 * @return Boolean exist
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkCheckUnicityTopicCode",
+			request = "select exists(" + 
+ "					select 1" + 
+ "					from topic top " + 
+ "					where top.bot_id = #botId# and top.code = #code#" + 
+ "					<%if (topId != null) { %>" + 
+ "						and top.top_id != #topId#" + 
+ "					<% } %>" + 
+ "				)",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyYesNo")
+	public Boolean checkUnicityTopicCode(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "code", smartType = "STyLabel") final String code, @io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Optional<Long> topId) {
+		final Task task = createTaskBuilder("TkCheckUnicityTopicCode")
+				.addValue("botId", botId)
+				.addValue("code", code)
+				.addValue("topId", topId.orElse(null))
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkGetAllTopicsIhmFromBot.
 	 * @param botId Long
 	 * @param ktoCd String
@@ -72,29 +102,6 @@ public final class TopicPAO implements StoreServices {
 		final Task task = createTaskBuilder("TkGetAllTopicsIhmFromBot")
 				.addValue("botId", botId)
 				.addValue("ktoCd", ktoCd.orElse(null))
-				.build();
-		return getTaskManager()
-				.execute(task)
-				.getResult();
-	}
-
-	/**
-	 * Execute la tache TkGetMaxCodeByBotId.
-	 * @param botId Long
-	 * @return Long code
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkGetMaxCodeByBotId",
-			request = "select coalesce ((select top.code" + 
- "			from topic top" + 
- "			left join topic top_min on (top.code < top_min.code and top.bot_id = top_min.bot_id)" + 
- "			where top_min.top_id  is null and top.bot_id = #botId#" + 
- "			limit 1), 0)",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber")
-	public Long getMaxCodeByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
-		final Task task = createTaskBuilder("TkGetMaxCodeByBotId")
-				.addValue("botId", botId)
 				.build();
 		return getTaskManager()
 				.execute(task)

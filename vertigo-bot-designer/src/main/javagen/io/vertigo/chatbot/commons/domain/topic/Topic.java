@@ -21,7 +21,7 @@ public final class Topic implements Entity {
 	private String title;
 	private String description;
 	private Boolean isEnabled;
-	private Long code;
+	private String code;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ATopicTypeTopic",
@@ -181,19 +181,19 @@ public final class Topic implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Code'.
-	 * @return Long code <b>Obligatoire</b>
+	 * @return String code <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyNumber", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Code")
-	public Long getCode() {
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Code")
+	public String getCode() {
 		return code;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Code'.
-	 * @param code Long <b>Obligatoire</b>
+	 * @param code String <b>Obligatoire</b>
 	 */
-	public void setCode(final Long code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 	

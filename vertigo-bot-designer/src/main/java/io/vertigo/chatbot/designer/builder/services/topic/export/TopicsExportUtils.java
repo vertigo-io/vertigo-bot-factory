@@ -15,17 +15,17 @@ public class TopicsExportUtils {
 		//classe utilitaire
 	}
 
-	public static DtList<TopicExport> mapTopicsToNluTrainingSentences(final DtList<Topic> topics, final DtList<NluTrainingExport> nlus, final Map<Long, String> mapBtTopic, final String prefix) {
+	public static DtList<TopicExport> mapTopicsToNluTrainingSentences(final DtList<Topic> topics, final DtList<NluTrainingExport> nlus, final Map<Long, String> mapBtTopic) {
 		final DtList<TopicExport> exports = new DtList<>(TopicExport.class);
 		for (final Topic topic : topics) {
 			final Long topId = topic.getTopId();
-			final Long code = topic.getCode();
+			final String code = topic.getCode();
 			final List<String> topicNlu = nlus.stream()
 					.filter(x -> x.getTopId().equals(topId))
 					.map(NluTrainingExport::getText)
 					.collect(Collectors.toList());
 			final TopicExport export = new TopicExport();
-			export.setName(prefix + code);
+			export.setName(code);
 			export.setNluTrainingSentences(topicNlu);
 			export.setTopicBT(mapBtTopic.get(topId));
 			exports.add(export);
