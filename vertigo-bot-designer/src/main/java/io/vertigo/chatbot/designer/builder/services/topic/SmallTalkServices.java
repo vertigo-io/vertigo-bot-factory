@@ -132,6 +132,7 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 			smt = new SmallTalk();
 			smt.setTopId(topic.getTopId());
 			smt.setRtyId(ResponseTypeEnum.RICH_TEXT.name());
+			smt.setIsEnd(false);
 		}
 		final DtList<UtterText> utterTexts = new DtList<UtterText>(UtterText.class);
 		utterTexts.add(utterText);

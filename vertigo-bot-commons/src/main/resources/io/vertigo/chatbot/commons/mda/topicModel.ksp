@@ -101,7 +101,8 @@ create DtDefinition DtTopic{
 }
 
 create DtDefinition DtSmallTalk {
-	id    smtId 		{domain: DoId 		label: "ID"}
+	id    	smtId 		{domain: DoId 		label: "ID"}
+	field 	isEnd 		{domain: DoYesNo 	label: "Is conversation over ?" 			cardinality : "1"}
 }
 
 

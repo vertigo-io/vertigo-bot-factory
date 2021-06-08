@@ -439,6 +439,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum SmallTalkFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.SmallTalk> {
 		/** Propriété 'ID'. */
 		smtId,
+		/** Propriété 'Is conversation over ?'. */
+		isEnd,
 		/** Propriété 'Topic'. */
 		topId,
 		/** Propriété 'Response type'. */
@@ -649,7 +651,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Utters'. */
 		utterTexts,
 		/** Propriété 'Response type'. */
-		responseType	}
+		responseType,
+		/** Propriété 'Is conversation over ?'. */
+		isEnd	}
 
 	/** {@inheritDoc} */
 	@Override

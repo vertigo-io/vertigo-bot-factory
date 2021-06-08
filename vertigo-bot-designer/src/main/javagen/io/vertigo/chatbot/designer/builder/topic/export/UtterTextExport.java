@@ -16,6 +16,7 @@ public final class UtterTextExport implements DtObject {
 	private Long topId;
 	private String utterTexts;
 	private String responseType;
+	private Boolean isEnd;
 	
 	/**
 	 * Champ : DATA.
@@ -72,6 +73,25 @@ public final class UtterTextExport implements DtObject {
 	 */
 	public void setResponseType(final String responseType) {
 		this.responseType = responseType;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Is conversation over ?'.
+	 * @return Boolean isEnd
+	 */
+	@Field(smartType = "STyYesNo", label = "Is conversation over ?")
+	public Boolean getIsEnd() {
+		return isEnd;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Is conversation over ?'.
+	 * @param isEnd Boolean
+	 */
+	public void setIsEnd(final Boolean isEnd) {
+		this.isEnd = isEnd;
 	}
 	
 	/** {@inheritDoc} */

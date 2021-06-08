@@ -125,8 +125,11 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 		} else {
 			BtBuilderUtils.createRichtext(splitUtter, bt);
 		}
-
-		bt.append("topic:start");
+		if (utter.getIsEnd()) {
+			bt.append("topic:end");
+		} else {
+			bt.append("topic:start");
+		}
 		BtBuilderUtils.addLineBreak(bt);
 		return bt.toString();
 	}
@@ -169,6 +172,7 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 		utterTextExport.setUtterTexts(utterText.getText());
 		utterTextExport.setTopId(topic.getTopId());
 		utterTextExport.setResponseType(smallTalk.getRtyId());
+		utterTextExport.setIsEnd(smallTalk.getIsEnd());
 
 		return createBt(utterTextExport, new ArrayList<ResponseButtonExport>(), ktoCd.equals(KindTopicEnum.START.name()));
 	}

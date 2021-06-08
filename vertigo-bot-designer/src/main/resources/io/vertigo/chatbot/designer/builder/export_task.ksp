@@ -60,14 +60,15 @@ create Task TkExportUtterTextByBotId{
 				select   
              	top.top_id,  
              	STRING_AGG (ut.text, '|') as utter_texts,  
-             	rty.rty_id as response_type
+             	rty.rty_id as response_type, 
+             	coalesce (smt.is_end, false) as is_end
  			from utter_text ut
  			join small_talk smt on (smt.smt_id = ut.smt_id)  
  			join response_type rty on (rty.rty_id = smt.rty_id)
  			join topic top on (top.top_id = smt.top_id)  
  			where top.bot_id = #botId# 
  			and top.is_enabled = true
- 			group by top.top_id, rty.rty_id 
+ 			group by top.top_id, rty.rty_id, smt.is_end 
  			"
 	in botId				{domain : DoId,							cardinality:"1"} 
 	out rbes 				{domain : DoDtUtterTextExport			cardinality:"*"}

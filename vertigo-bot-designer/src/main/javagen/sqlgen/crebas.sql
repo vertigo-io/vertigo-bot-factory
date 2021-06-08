@@ -446,6 +446,7 @@ comment on column SCRIPT_INTENTION.TOP_ID is
 create table SMALL_TALK
 (
     SMT_ID      	 NUMERIC     	not null,
+    IS_END      	 bool        	not null,
     TOP_ID      	 NUMERIC     	not null,
     RTY_ID      	 VARCHAR(100)	not null,
     constraint PK_SMALL_TALK primary key (SMT_ID)
@@ -453,6 +454,9 @@ create table SMALL_TALK
 
 comment on column SMALL_TALK.SMT_ID is
 'ID';
+
+comment on column SMALL_TALK.IS_END is
+'Is conversation over ?';
 
 comment on column SMALL_TALK.TOP_ID is
 'Topic';
