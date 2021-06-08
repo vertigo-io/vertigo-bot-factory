@@ -35,4 +35,8 @@
 	<changeSet author="vprima" id="add column to small talk">
 		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_03.sql" />	
 	</changeSet>
+	
+	<changeSet author="vbaillet" id="change code type for topic">
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_04.sql" />	
+	</changeSet>
 </databaseChangeLog>
