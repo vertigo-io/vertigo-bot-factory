@@ -19,8 +19,6 @@ import io.vertigo.datamodel.structure.model.DtList;
 @Transactional
 public class ScriptIntentionExportServices implements TopicsExportServices, Component {
 
-	private final static String PREFIX = "topic";
-
 	@Inject
 	private TopicServices topicServices;
 
@@ -32,7 +30,7 @@ public class ScriptIntentionExportServices implements TopicsExportServices, Comp
 		final DtList<Topic> topics = topicServices.getAllTopicRelativeScriptIntentionByBot(bot);
 		final DtList<NluTrainingExport> nlus = exportPAO.exportScriptIntentionRelativeTrainingSentence(bot.getBotId());
 		final Map<Long, String> mapTopicBt = mapTopicToBt(bot);
-		final DtList<TopicExport> exports = TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt, PREFIX);
+		final DtList<TopicExport> exports = TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt);
 		return exports;
 
 	}

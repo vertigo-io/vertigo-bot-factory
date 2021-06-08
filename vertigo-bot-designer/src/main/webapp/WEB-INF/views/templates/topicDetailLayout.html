@@ -65,19 +65,22 @@
 
 		<section layout:fragment="content">
 			<vu:block id="detail" title="Informations">
-				<vu:text-field object="topic" field="title" />
-				
-				<vu:label object="topic" field="isEnabled">
-					<vu:include-data object="topic" field="isEnabled" />
-					
-					<q-input v-model="vueData.topic.isEnabled" name="vContext[topic][isEnabled]" class="hidden" ></q-input>
-					
-					<q-toggle v-model="vueData.topic.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
-				</vu:label>
-				
-				<vu:select object="topic" field="topCatId" list="topicCategoryList" label="#{topic.category}" valueField="topCatId" labelField="label" readonly="${model.modeReadOnly}"/>
-				<vu:include-data object="topic" field="description" />
-				<vu:text-area object="topic" field="description" readonly="${model.modeReadOnly}"/>
+				<vu:grid cols="2">
+					<vu:text-field object="topic" field="title" />
+					<vu:text-field object="topic" field="code"/>
+					<vu:label object="topic" field="isEnabled">
+						<vu:include-data object="topic" field="isEnabled" />
+						
+						<q-input v-model="vueData.topic.isEnabled" name="vContext[topic][isEnabled]" class="hidden" ></q-input>
+						
+						<q-toggle v-model="vueData.topic.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
+					</vu:label>
+					<vu:grid-cell></vu:grid-cell>
+					<vu:select object="topic" field="topCatId" list="topicCategoryList" label="#{topic.category}" valueField="topCatId" labelField="label" readonly="${model.modeReadOnly}"/>
+					<vu:include-data object="topic" field="description" />
+					<vu:text-area object="topic" field="description" readonly="${model.modeReadOnly}"/>
+					<vu:grid-cell></vu:grid-cell>
+				</vu:grid>
 			</vu:block>
 			<vu:block id="training" th:title="#{topic.menu.training}">
 				<vu:slot name="actions_slot">
