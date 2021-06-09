@@ -13,7 +13,7 @@ create DtDefinition DtUtterTextExport {
 	field utterTexts		{domain: DoText 				label: "Utters"				 		}
 	field responseType		{domain: DoText					label: "Response type" 				}
 	field isEnd 			{domain: DoYesNo 				label: "Is conversation over ?" 	}
-	
+	field ktoCd 			{domain: DoCode 				label: "Kind Topic Code"			}	
 }
 
 create DtDefinition DtScriptIntentionExport {

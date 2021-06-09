@@ -653,7 +653,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Response type'. */
 		responseType,
 		/** Propriété 'Is conversation over ?'. */
-		isEnd	}
+		isEnd,
+		/** Propriété 'Kind Topic Code'. */
+		ktoCd	}
 
 	/** {@inheritDoc} */
 	@Override
