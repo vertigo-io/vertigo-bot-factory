@@ -1,0 +1,38 @@
+FROM adoptopenjdk:11.0.8_10-jre-hotspot
+ 
+ 
+##############
+# Add Tomcat #
+##############
+# Add tomcat user
+RUN useradd -m tomcat \ 
+ && mkdir /opt/tomcat \
+ && mkdir /opt/tomcat/logs \
+  && chown -R tomcat. /opt/tomcat 
+ 
+# Add binaries
+COPY --chown=tomcat apache-tomcat-* /opt/tomcat/
+COPY --chown=tomcat Runner/vertigo-bot-executor-*.war /opt/tomcat/war/runner.war
+COPY --chown=tomcat Runner/ROOT.xml /opt/tomcat/conf/Catalina/localhost/ROOT.xml
+COPY --chown=tomcat Runner/setenv.sh /opt/tomcat/bin/
+
+# Environment parameters
+ENV JAVA_OPTS -Xmx256m
+ENV CATALINA_PID /opt/tomcat/tomcat.pid
+ENV DESIGNER_URL http://host.docker.internal:8080/vertigo-bot-designer
+ENV API_KEY MyNodeApiKey!
+ENV ANALYTICA_HOST analytica
+ENV ANALYTICA_PORT 4562
+ENV ANALYTICA_DBNAME chatbot
+
+# Expose tomcat port
+EXPOSE 8080
+
+#######################
+# start configuration #
+#######################
+COPY Runner/start.sh /
+RUN chmod +x /start.sh
+
+ENTRYPOINT [] # clear entrypoint from base image
+CMD ["/start.sh"] # override CMD from base image
