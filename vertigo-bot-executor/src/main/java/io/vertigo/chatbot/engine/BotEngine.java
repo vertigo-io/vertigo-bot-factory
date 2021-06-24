@@ -2,7 +2,6 @@ package io.vertigo.chatbot.engine;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,6 +17,7 @@ import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.nlu.NluResult;
 import io.vertigo.ai.nlu.ScoredIntent;
+import io.vertigo.chatbot.analytics.AnalyticsSenderServices;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
@@ -25,9 +25,6 @@ import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
 import io.vertigo.chatbot.engine.model.BotResponseBuilder;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
-import io.vertigo.core.analytics.AnalyticsManager;
-import io.vertigo.core.analytics.process.AProcess;
-import io.vertigo.core.analytics.process.AProcessBuilder;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.lang.VSystemException;
@@ -71,18 +68,18 @@ public class BotEngine {
 	private final BlackBoard bb;
 	private final BehaviorTreeManager behaviorTreeManager;
 	private final NluManager nluManager;
-	private final AnalyticsManager analyticsManager;
 
 	private final Map<String, TopicDefinition> topicDefinitionMap;
+	private final AnalyticsSenderServices analyticsSenderServices;
 
 	public BotEngine(final BlackBoard blackBoard, final Map<String, TopicDefinition> topicDefinitionMap,
-			final BehaviorTreeManager behaviorTreeManager, final NluManager nluManager, final AnalyticsManager analyticsManager) {
+			final BehaviorTreeManager behaviorTreeManager, final NluManager nluManager, final AnalyticsSenderServices analyticsSenderServices) {
 		Assertion.check()
 				.isNotNull(blackBoard)
 				.isNotNull(topicDefinitionMap)
 				.isNotNull(behaviorTreeManager)
 				.isNotNull(nluManager)
-				.isNotNull(analyticsManager)
+				.isNotNull(analyticsSenderServices)
 				.isTrue(topicDefinitionMap.containsKey(START_TOPIC_NAME), "You need to provide a starting topic with key BotEngine.START_TOPIC_NAME");
 		// ---
 		bb = blackBoard;
@@ -90,7 +87,9 @@ public class BotEngine {
 
 		this.behaviorTreeManager = behaviorTreeManager;
 		this.nluManager = nluManager;
-		this.analyticsManager = analyticsManager;
+
+		this.analyticsSenderServices = analyticsSenderServices;
+
 	}
 
 	public BotResponse runTick(final BotInput input, final Optional<ExecutorConfiguration> execConfiguration) {
@@ -146,31 +145,9 @@ public class BotEngine {
 			botResponseBuilder.addMetadata(getKeyName(key), getKeyValue(key));
 		}
 
-		BotResponse response = botResponseBuilder.build();
+		analyticsSenderServices.sendEventToDb(currentTopic, execConfiguration, eventLog, input);
 
-		if (execConfiguration.isPresent()) {
-			final boolean isSessionStart = currentTopic.getCode().equals(START_TOPIC_NAME);
-			final boolean isFallback = currentTopic.getCode().equals(FALLBACK_TOPIC_NAME);
-			final boolean isNlu = eventLog.getVal1() != null;
-			final ExecutorConfiguration executorConfiguration = execConfiguration.get();
-			final AProcessBuilder processBuilder = AProcess.builder("chatbotmessages", currentTopic.getCode(), Instant.now(), Instant.now()) // timestamp of emitted event
-					.addTag("text", input.getMessage() != null ? input.getMessage() : input.getMetadatas().get("payload") != null ? input.getMetadatas().get("payload").toString() : "rien")
-					.addTag("codeTopic", currentTopic.getCode())
-					.addTag("type", input.getMetadatas().get("payload") != null ? "button" : "text")
-					.addTag("botId", String.valueOf(executorConfiguration.getBotId()))
-					.addTag("nodId", String.valueOf(executorConfiguration.getNodId()))
-					.addTag("traId", String.valueOf(executorConfiguration.getTraId()))
-					.addTag("modelName", String.valueOf(executorConfiguration.getModelName()))
-					.setMeasure("isNlu", isNlu ? 1d : 0d)
-					.setMeasure("isUserMessage", 1d)
-					.setMeasure("isSessionStart", isSessionStart ? 1d : 0d)
-					.setMeasure("isFallback", isFallback ? 1d : 0d)
-					.setMeasure("confidence", isNlu ? eventLog.getVal1() : 1d);
-
-			analyticsManager.addProcess(processBuilder.build());
-		}
-
-		return response;
+		return botResponseBuilder.build();
 	}
 
 	private static String getKeyName(final BBKey key) {

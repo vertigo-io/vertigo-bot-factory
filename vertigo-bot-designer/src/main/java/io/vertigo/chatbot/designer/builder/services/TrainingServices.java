@@ -146,7 +146,7 @@ public class TrainingServices implements Component {
 		training.setStartTime(Instant.now());
 		training.setStrCd(TrainingStatusEnum.TRAINING.name());
 		training.setVersionNumber(versionNumber);
-		training.setNluThreshold(BigDecimal.valueOf(0.95));
+		training.setNluThreshold(BigDecimal.valueOf(0.6));
 		return training;
 	}
 

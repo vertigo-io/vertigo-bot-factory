@@ -158,7 +158,7 @@ public class AnalyticsController extends AbstractDesignerController {
 			@ViewAttribute("criteria") final StatCriteria criteria,
 			@RequestParam("intentRasa") final String intentRasa) {
 
-		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.messageId, analyticsServices.getKnownSentensesDetail(criteria, intentRasa)); // "st_1102_blague"
+		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.text, analyticsServices.getKnownSentensesDetail(criteria, intentRasa)); // "st_1102_blague"
 
 		return viewContext;
 	}

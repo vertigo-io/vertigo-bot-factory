@@ -474,6 +474,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		topId,
 		/** Propriété 'Rasa intent'. */
 		intentRasa,
+		/** Propriété 'Topic code'. */
+		code,
 		/** Propriété 'Count'. */
 		count	}
 

@@ -64,6 +64,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTopIntent$intentRasa,
 	/**
+	 * Topic code.
+	 */
+	fldTopIntent$code,
+	/**
 	 * Count.
 	 */
 	fldTopIntent$count,

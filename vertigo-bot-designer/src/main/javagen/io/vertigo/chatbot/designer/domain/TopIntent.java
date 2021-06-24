@@ -15,6 +15,7 @@ public final class TopIntent implements DtObject {
 
 	private Long topId;
 	private String intentRasa;
+	private String code;
 	private Long count;
 	
 	/**
@@ -53,6 +54,25 @@ public final class TopIntent implements DtObject {
 	 */
 	public void setIntentRasa(final String intentRasa) {
 		this.intentRasa = intentRasa;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Topic code'.
+	 * @return String code
+	 */
+	@Field(smartType = "STyLabel", label = "Topic code")
+	public String getCode() {
+		return code;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Topic code'.
+	 * @param code String
+	 */
+	public void setCode(final String code) {
+		this.code = code;
 	}
 	
 	/**

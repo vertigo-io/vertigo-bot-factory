@@ -80,7 +80,7 @@
 		} 
 	};
 	
-	VUiExtensions.dataX.apexCharts.chartMessages = {
+	VUiExtensions.dataX.apexCharts.nluMessageChart = {
 		options : {
 			chart : {
 				id : 'vuechart-example-2',
@@ -109,7 +109,7 @@
 		},
 		series : function() {
 			return [ {
-						name : /*[[#{analytics.message.useractions}]]*/ '',
+						name : /*[[#{analytics.message.nluMessages}]]*/ '',
 						data : serieToApex("isNlu:sum", VertigoUi.vueData.requestsStats, {fill: 0})
 					},
 					{
@@ -144,7 +144,7 @@
 			} 
 		};
 	
-	VUiExtensions.dataX.apexCharts.nluMessageChart = {
+	VUiExtensions.dataX.apexCharts.chartMessages = {
 			options : {
 				chart : {
 					id : 'vuechart-example-3',
@@ -210,6 +210,24 @@
 		return result.length === 0 ? null : result[0].title;
 	}
 	
+	VUiExtensions.dataX.popinDetailLabel = '';
+	function displayIntentDetail(intent) {
+		VUiExtensions.dataX.popinDetailLabel = getTopicTitleByTopicId(intent.topId);
+		
+		VertigoUi.vueData.intentDetails = [];
+		VUiPage.componentStates.intentDetailList.loading = true;
+		
+		let params = VUiPage.vueDataParams(['criteria']);
+		params.append('intentRasa', intent.code)
+		VUiPage.httpPostAjax('_intentDetails', params, {
+				onSuccess: function() {
+					VUiPage.componentStates.intentDetailList.loading = false;
+				}
+			}
+		);
+		
+		VUiPage.$refs.intentDetailsDialog.show();
+	}
 </script>
 </head>
 
@@ -246,8 +264,8 @@
 					<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.message}"></q-card-section>
 					<q-card-section class="row justify-center items-center">
 						<apexchart width="100%" height="250" type="bar"
-							:options="dataX.apexCharts.chartMessages.options"
-							:series="dataX.apexCharts.chartMessages.series()"></apexchart>
+							:options="dataX.apexCharts.nluMessageChart.options"
+							:series="dataX.apexCharts.nluMessageChart.series()"></apexchart>
 					</q-card-section>
 				</q-card>
 			</div>
@@ -257,8 +275,8 @@
 					<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.nlu}"></q-card-section>
 					<q-card-section class="row justify-center items-center">
 						<apexchart width="100%" height="250" type="bar"
-							:options="dataX.apexCharts.nluMessageChart.options"
-							:series="dataX.apexCharts.nluMessageChart.series()"></apexchart>
+							:options="dataX.apexCharts.chartMessages.options"
+							:series="dataX.apexCharts.chartMessages.series()"></apexchart>
 					</q-card-section>
 				</q-card>
 			</div>
@@ -276,15 +294,17 @@
 				<vu:include-data object="topics" field="title" />
 				
 				<vu:include-data object="intentDetails" field="'*'" />
+				<vu:include-data object="topIntents" field="code"/>
 				
 				<div class="col-12"> 
-					<vu:table componentId="intentList"
-							  list="topIntents" th:title="#{analytics.intents.usage}"  rowsPerPage="10" sortBy="count" descending>
+					<vu:table componentId="intentList"  list="topIntents" th:title="#{analytics.intents.usage}"  rowsPerPage="10" sortBy="count" descending>
 							  
-						<vu:column field="topId" label="Intent">
-							{{getTopicTitleByTopicId(props.row.topId)}}
+						<vu:column field="intentRasa" label="Intent"/>
+						<vu:column field="count"/>
+						<vu:column field="intentRasa" label="detail"  class="col_Small">
+							<q-btn class="fab-block" round color="primary" icon="search" th:aria-label="#{analytics.message}"  th:title="#{analytics.message}"
+							 	@click="displayIntentDetail(props.row)"></q-btn>
 						</vu:column>
-						<vu:column field="count" class="col_Small"/>
 					</vu:table>
 					
 					<q-dialog ref="intentDetailsDialog">

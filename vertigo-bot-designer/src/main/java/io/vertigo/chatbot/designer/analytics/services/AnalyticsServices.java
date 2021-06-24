@@ -28,7 +28,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import io.vertigo.chatbot.commons.RasaTypeAction;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.domain.SentenseDetail;
@@ -87,7 +86,7 @@ public class AnalyticsServices implements Component, Activeable {
 
 	public DtList<SentenseDetail> getSentenseDetails(final StatCriteria criteria) {
 		// get data from influxdb
-		final TimedDatas tabularTimedData = timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("messageId", "text", "name", "confidence"),
+		final TimedDatas tabularTimedData = timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence"),
 				getDataFilter(criteria).withAdditionalWhereClause("isFallback = 1").build(),
 				getTimeFilter(criteria),
 				Optional.empty());
@@ -123,6 +122,7 @@ public class AnalyticsServices implements Component, Activeable {
 		final TabularDatas tabularDatas = timeSeriesManager.getTabularData(influxDbName, Arrays.asList("name:count"),
 				getDataFilter(criteria)
 						.withAdditionalWhereClause("isFallback = 0")
+						.withAdditionalWhereClause("isNlu = 1")
 						.build(),
 				getTimeFilter(criteria),
 				"name");
@@ -140,6 +140,7 @@ public class AnalyticsServices implements Component, Activeable {
 				topIntent.setCount(((Double) values.get("name:count")).longValue());
 				topIntent.setIntentRasa(topic.getTitle());
 				topIntent.setTopId(topic.getTopId());
+				topIntent.setCode(topic.getCode());
 
 				retour.add(topIntent);
 			}
@@ -150,10 +151,10 @@ public class AnalyticsServices implements Component, Activeable {
 
 	public DtList<SentenseDetail> getKnownSentensesDetail(final StatCriteria criteria, final String intentRasa) {
 		// get data from influxdb
-		final TimedDatas tabularTimedData = timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("messageId", "text", "name", "confidence"),
+		final TimedDatas tabularTimedData = timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence"),
 				getDataFilter(criteria)
-						.addFilter("type", RasaTypeAction.MESSAGE.name())
 						.addFilter("name", intentRasa)
+						.withAdditionalWhereClause("isNlu = 1")
 						.build(),
 				getTimeFilter(criteria),
 				Optional.of(5000L));
@@ -162,34 +163,19 @@ public class AnalyticsServices implements Component, Activeable {
 		final DtList<SentenseDetail> retour = new DtList<>(SentenseDetail.class);
 		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
-			final Long smtId = extractSmtIdFromIntentName(intentRasa);
+			final Topic topic = getTopicByCode(intentRasa, criteria.getBotId()).orElseThrow();
 
 			final SentenseDetail newSentenseDetail = new SentenseDetail();
 			newSentenseDetail.setDate(timedData.getTime());
-			newSentenseDetail.setMessageId((String) values.get("messageId"));
 			newSentenseDetail.setText((String) values.get("text"));
 			newSentenseDetail.setIntentRasa(intentRasa);
 			newSentenseDetail.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
-			newSentenseDetail.setTopId(smtId);
+			newSentenseDetail.setTopId(topic.getTopId());
 
 			retour.add(newSentenseDetail);
 		}
 
 		return retour;
-	}
-
-	private Long extractSmtIdFromIntentName(final String intentName) {
-		final String[] intentSplit = intentName.split("_");
-		if (intentSplit.length < 2) {
-			return null;
-		}
-		try {
-			// try to extract the ID from the name
-			return Long.valueOf(intentSplit[1]);
-		} catch (final NumberFormatException e) {
-			// fail silently, unknown intent
-		}
-		return null;
 	}
 
 	private Optional<Topic> getTopicByCode(final String intentName, final Long botId) {
@@ -215,7 +201,7 @@ public class AnalyticsServices implements Component, Activeable {
 	}
 
 	public TimedDatas getTopicStats(final StatCriteria criteria) {
-		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("codeTopic", "name"),
+		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("name"),
 				getDataFilter(criteria).build(),
 				getTimeFilter(criteria),
 				Optional.empty());

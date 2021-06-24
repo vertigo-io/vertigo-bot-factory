@@ -17,8 +17,9 @@ create DtDefinition DtSentenseDetail {
 }
 
 create DtDefinition DtTopIntent {
-	field topId			{domain: DoId 					label: "Topic ID" 			}
+	field topId			{domain: DoId 					label: "Topic ID" 				}
 	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			}
+	field code			{domain: DoLabel				label: "Topic code"				}
 	field count			{domain: DoNumber 				label: "Count" 					}
 }
 
