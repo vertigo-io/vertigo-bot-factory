@@ -6,6 +6,7 @@ FROM adoptopenjdk:11.0.8_10-jre-hotspot
 # user home is used for berkeley database
 RUN useradd -m tomcat \ 
  && mkdir /opt/tomcat \
+ && mkdir /opt/tomcat/logs \
  && chown -R tomcat. /opt/tomcat
 
 # Add binaries
