@@ -77,7 +77,7 @@ public class TopicServices implements Component {
 	}
 
 	private void checkPatternCode(final String code) {
-		final String pattern = "^([A-zÀ-ÿ]?\\d?[-_]?){1,10}$";
+		final String pattern = "^([a-zA-z]?\\d?[-_]?){1,10}$";
 		if (code == null || !code.matches(pattern)) {
 			throw new VUserException("the code must only contains letters digits and specials characters (-_)");
 		}
