@@ -16,6 +16,7 @@ import io.vertigo.ai.nlu.NluIntent;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.commons.codec.CodecManager;
+import io.vertigo.core.analytics.AnalyticsManager;
 import io.vertigo.core.lang.Assertion;
 
 public final class BotManagerImpl implements BotManager {
@@ -23,6 +24,7 @@ public final class BotManagerImpl implements BotManager {
 	private final BehaviorTreeManager behaviorTreeManager;
 	private final NluManager nluManager;
 	private final CodecManager codecManager;
+	private final AnalyticsManager analyticsManager;
 
 	private Map<String, TopicDefinition> topicDefinitionMap; // immutable map of topics
 
@@ -31,17 +33,20 @@ public final class BotManagerImpl implements BotManager {
 			final CodecManager codecManager,
 			final BlackBoardManager blackBoardManager,
 			final BehaviorTreeManager behaviorTreeManager,
-			final NluManager nluManager) {
+			final NluManager nluManager,
+			final AnalyticsManager analyticsManager) {
 		Assertion.check()
 				.isNotNull(codecManager)
 				.isNotNull(blackBoardManager)
 				.isNotNull(behaviorTreeManager)
-				.isNotNull(nluManager);
+				.isNotNull(nluManager)
+				.isNotNull(analyticsManager);
 		//---
 		this.blackBoardManager = blackBoardManager;
 		this.behaviorTreeManager = behaviorTreeManager;
 		this.nluManager = nluManager;
 		this.codecManager = codecManager;
+		this.analyticsManager = analyticsManager;
 
 		topicDefinitionMap = Collections.emptyMap();
 	}
@@ -64,7 +69,7 @@ public final class BotManagerImpl implements BotManager {
 	@Override
 	public BotEngine createBotEngine(final UUID convId, final String storeName) {
 		final var bb = blackBoardManager.connect(storeName, BBKey.of("/" + codecManager.getHexEncoder().encode(convId.toString().getBytes(StandardCharsets.UTF_8))));
-		return new BotEngine(bb, topicDefinitionMap, behaviorTreeManager, nluManager);
+		return new BotEngine(bb, topicDefinitionMap, behaviorTreeManager, nluManager, analyticsManager);
 	}
 
 	@Override

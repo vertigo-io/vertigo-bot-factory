@@ -19,13 +19,18 @@ package io.vertigo.chatbot.designer.analytics.services;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.RasaTypeAction;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.domain.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
 import io.vertigo.chatbot.designer.domain.TopIntent;
@@ -52,6 +57,9 @@ public class AnalyticsServices implements Component, Activeable {
 	@Inject
 	private ParamManager paramManager;
 
+	@Inject
+	private TopicServices topicServices;
+
 	private String influxDbName;
 
 	@Override
@@ -65,13 +73,13 @@ public class AnalyticsServices implements Component, Activeable {
 	}
 
 	public TimedDatas getSessionsStats(final StatCriteria criteria) {
-		return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("isTypeOpen:sum"),
+		return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("isSessionStart:sum"),
 				getDataFilter(criteria).build(),
 				getTimeFilter(criteria));
 	}
 
 	public TimedDatas getRequestStats(final StatCriteria criteria) {
-		return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum"),
+		return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum", "isNlu:sum"),
 				getDataFilter(criteria).withAdditionalWhereClause("isUserMessage = 1").build(),
 				getTimeFilter(criteria));
 
@@ -89,17 +97,22 @@ public class AnalyticsServices implements Component, Activeable {
 		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 			final String intentName = (String) values.get("name");
-			final Long smtId = extractSmtIdFromIntentName(intentName);
 
-			final SentenseDetail newSentenseDetail = new SentenseDetail();
-			newSentenseDetail.setDate(timedData.getTime());
-			newSentenseDetail.setMessageId((String) values.get("messageId"));
-			newSentenseDetail.setText((String) values.get("text"));
-			newSentenseDetail.setIntentRasa(intentName);
-			newSentenseDetail.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
-			newSentenseDetail.setSmtId(smtId);
+			//get the failure or fallback topic
+			final Optional<Topic> topicOpt = getTopicByCode("FAILURE", criteria.getBotId());
+			if (topicOpt.isPresent()) {
 
-			retour.add(newSentenseDetail);
+				final Topic topic = topicOpt.get();
+				final SentenseDetail newSentenseDetail = new SentenseDetail();
+				newSentenseDetail.setDate(timedData.getTime());
+				newSentenseDetail.setMessageId((String) values.get("messageId"));
+				newSentenseDetail.setText((String) values.get("text"));
+				newSentenseDetail.setIntentRasa(intentName);
+				newSentenseDetail.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
+				newSentenseDetail.setTopId(topic.getTopId());
+
+				retour.add(newSentenseDetail);
+			}
 		}
 
 		return retour;
@@ -109,7 +122,6 @@ public class AnalyticsServices implements Component, Activeable {
 		// get data from influxdb
 		final TabularDatas tabularDatas = timeSeriesManager.getTabularData(influxDbName, Arrays.asList("name:count"),
 				getDataFilter(criteria)
-						.addFilter("type", RasaTypeAction.MESSAGE.name())
 						.withAdditionalWhereClause("isFallback = 0")
 						.build(),
 				getTimeFilter(criteria),
@@ -120,13 +132,14 @@ public class AnalyticsServices implements Component, Activeable {
 		for (final TabularDataSerie tabularData : tabularDatas.getTabularDataSeries()) {
 			final Map<String, Object> values = tabularData.getValues();
 			final String intentName = (String) values.get("name");
-			final Long smtId = extractSmtIdFromIntentName(intentName);
-
-			if (smtId != null) {
+			final Optional<Topic> topicOpt = getTopicByCode(intentName, criteria.getBotId());
+			//Don't do anythings if intentName is null or intentName is a technical topic (start, end, fallback)
+			if (intentName != null && !intentName.startsWith("!") && topicOpt.isPresent()) {
+				final Topic topic = topicOpt.get();
 				final TopIntent topIntent = new TopIntent();
 				topIntent.setCount(((Double) values.get("name:count")).longValue());
-				topIntent.setIntentRasa(intentName);
-				topIntent.setSmtId(smtId);
+				topIntent.setIntentRasa(topic.getTitle());
+				topIntent.setTopId(topic.getTopId());
 
 				retour.add(topIntent);
 			}
@@ -157,7 +170,7 @@ public class AnalyticsServices implements Component, Activeable {
 			newSentenseDetail.setText((String) values.get("text"));
 			newSentenseDetail.setIntentRasa(intentRasa);
 			newSentenseDetail.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
-			newSentenseDetail.setSmtId(smtId);
+			newSentenseDetail.setTopId(smtId);
 
 			retour.add(newSentenseDetail);
 		}
@@ -179,6 +192,10 @@ public class AnalyticsServices implements Component, Activeable {
 		return null;
 	}
 
+	private Optional<Topic> getTopicByCode(final String intentName, final Long botId) {
+		return topicServices.getTopicByCode(intentName, botId);
+	}
+
 	private DataFilterBuilder getDataFilter(final StatCriteria criteria) {
 		final DataFilterBuilder dataFilterBuilder = DataFilter.builder("chatbotmessages");
 		if (criteria.getBotId() != null) {
@@ -197,52 +214,26 @@ public class AnalyticsServices implements Component, Activeable {
 		return TimeFilter.builder(now + " - " + timeOption.getRange(), now).withTimeDim(timeOption.getGrain()).build();
 	}
 
-	/*private TimedDatas mergeTimedDatas(final TimedDatas data, final TimedDatas data2, final TimedDatas... otherDatas) {
-		Assertion.checkNotNull(data);
-		Assertion.checkNotNull(data2);
+	public TimedDatas getTopicStats(final StatCriteria criteria) {
+		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("codeTopic", "name"),
+				getDataFilter(criteria).build(),
+				getTimeFilter(criteria),
+				Optional.empty());
 
-		final TimedDatas newTimedDatas = new TimedDatas(new ArrayList<>(), new ArrayList<>());
-
-		// Juste recopy first TimedDatas
-		newTimedDatas.getSeriesNames().addAll(data.getSeriesNames());
-		for (final TimedDataSerie timedDataSerie : data.getTimedDataSeries()) {
-			final Map<String, Object> newMapValues = new HashMap<>();
-			newMapValues.putAll(timedDataSerie.getValues());
-
-			final TimedDataSerie newTimedDataSerie = new TimedDataSerie(timedDataSerie.getTime(), newMapValues);
-
-			newTimedDatas.getTimedDataSeries().add(newTimedDataSerie);
-		}
-
-		// add every other timedDatas with consistency check
-		addToTimedDatas(newTimedDatas, data2);
-		for (final TimedDatas otherData : otherDatas) {
-			addToTimedDatas(newTimedDatas, otherData);
-		}
-
-		return newTimedDatas;
 	}
 
-	private void addToTimedDatas(final TimedDatas data, final TimedDatas otherData) {
-		if (otherData.getSeriesNames().isEmpty()) {
-			return; // no data, no merge
+	public List<String> getDistinctCodeByTimeDatas(final StatCriteria criteria) {
+		final TimedDatas timedData = getTopicStats(criteria);
+		final List<String> resultTimedData = new ArrayList<String>();
+		for (TimedDataSerie serie : timedData.getTimedDataSeries()) {
+			final Map<String, Object> values = serie.getValues();
+			for (Entry<String, Object> value : values.entrySet()) {
+				if (!resultTimedData.contains(value.getValue().toString())) {
+					resultTimedData.add(value.getValue().toString());
+				}
+			}
 		}
+		return resultTimedData;
+	}
 
-		Assertion.checkArgument(data.getTimedDataSeries().size() == otherData.getTimedDataSeries().size(), "Series haven't the same size");
-		Assertion.checkArgument(otherData.getSeriesNames().stream().noneMatch(name -> data.getSeriesNames().contains(name)), "Duplicated series");
-
-		data.getSeriesNames().addAll(otherData.getSeriesNames());
-
-		int i = 0;
-		for (final TimedDataSerie timedDataSerie : otherData.getTimedDataSeries()) {
-			final TimedDataSerie curTimedDataSerie = data.getTimedDataSeries().get(i);
-
-			Assertion.checkState(timedDataSerie.getTime().equals(curTimedDataSerie.getTime()), "Series are not time synchronous");
-
-			curTimedDataSerie.getValues().putAll(timedDataSerie.getValues());
-
-			i++;
-		}
-
-	}*/
 }

@@ -424,8 +424,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		intentRasa,
 		/** Propriété 'Confidence'. */
 		confidence,
-		/** Propriété 'Small Talk selection'. */
-		smtId	}
+		/** Propriété 'Topic selection'. */
+		topId	}
 
 	/**
 	 * Enumération des champs de SmallTalk.
@@ -470,8 +470,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de TopIntent.
 	 */
 	public enum TopIntentFields implements DtFieldName<io.vertigo.chatbot.designer.domain.TopIntent> {
-		/** Propriété 'Small Talk ID'. */
-		smtId,
+		/** Propriété 'Topic ID'. */
+		topId,
 		/** Propriété 'Rasa intent'. */
 		intentRasa,
 		/** Propriété 'Count'. */
@@ -584,7 +584,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Enabled'. */
 		isEnabled,
 		/** Propriété 'Code Kind'. */
-		ktoCd	}
+		ktoCd,
+		/** Propriété 'Code'. */
+		code	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.

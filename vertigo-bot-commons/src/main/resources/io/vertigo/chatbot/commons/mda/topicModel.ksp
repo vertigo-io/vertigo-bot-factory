@@ -307,6 +307,7 @@ create DtDefinition DtTopicIhm {
 	field catLabel	{domain: DoLabel	label: "Category"				cardinality:"1"	}
 	field isEnabled	{domain: DoYesNo	label: "Enabled"								}
 	field ktoCd		{domain: DoCode		label: "Code Kind"				cardinality:"?"	}
+	field code		{domain: DoLabel	label: "Code"					cardinality:"1"	}
 }
 
 create DtDefinition DtScriptIntentionIhm {

@@ -81,6 +81,7 @@ public final class TopicPAO implements StoreServices {
 			name = "TkGetAllTopicsIhmFromBot",
 			request = "SELECT 	top.top_id," + 
  "					top.title," + 
+ "					top.code," + 
  "					smt.smt_id," + 
  "					sin.sin_id," + 
  "					top.is_enabled," + 
@@ -117,6 +118,7 @@ public final class TopicPAO implements StoreServices {
 			name = "TkGetTopicIhmById",
 			request = "SELECT 	top.top_id," + 
  "					top.title," + 
+ "					top.code," + 
  "					smt.smt_id," + 
  "					sin.sin_id," + 
  "					top.is_enabled," + 

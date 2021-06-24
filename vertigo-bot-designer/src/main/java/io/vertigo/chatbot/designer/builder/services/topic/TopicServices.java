@@ -55,6 +55,7 @@ public class TopicServices implements Component {
 	}
 
 	public Topic save(final Topic topic) {
+		checkPatternCode(topic.getCode());
 		//create code for export
 		hasUniqueCode(topic);
 		return topicDAO.save(topic);
@@ -63,6 +64,8 @@ public class TopicServices implements Component {
 	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences,
 			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
+		//check if code matches the pattern
+		checkPatternCode(topic.getCode());
 		//create code for export
 		hasUniqueCode(topic);
 		// save and remove NTS
@@ -71,6 +74,13 @@ public class TopicServices implements Component {
 		topic.setIsEnabled(!ntsToSave.isEmpty() && isEnabled);
 
 		return topicDAO.save(topic);
+	}
+
+	private void checkPatternCode(final String code) {
+		final String pattern = "^([A-zÀ-ÿ]?\\d?[-_]?){1,10}$";
+		if (code == null || !code.matches(pattern)) {
+			throw new VUserException("the code must only contains letters digits and specials characters (-_)");
+		}
 	}
 
 	private void hasUniqueCode(final Topic topic) {
@@ -229,4 +239,8 @@ public class TopicServices implements Component {
 		return string.contains("[") || string.contains("]") || string.contains("|") || string.contains("¤");
 	}
 
+
+	public Optional<Topic> getTopicByCode(final String intentName, final Long botId) {
+		return topicDAO.getTopicFromCode(intentName, botId);
+	}
 }

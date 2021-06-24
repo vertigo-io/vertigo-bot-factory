@@ -74,7 +74,7 @@
 		series : function() {
 			return [ {
 						name : 'User sessions',
-						data : serieToApex("isTypeOpen:sum", VertigoUi.vueData.sessionStats, {fill: 0})
+						data : serieToApex("isSessionStart:sum", VertigoUi.vueData.sessionStats, {fill: 0})
 					}
 				];
 		} 
@@ -110,7 +110,7 @@
 		series : function() {
 			return [ {
 						name : /*[[#{analytics.message.useractions}]]*/ '',
-						data : serieToApex("name:count", VertigoUi.vueData.requestsStats, {fill: 0})
+						data : serieToApex("isNlu:sum", VertigoUi.vueData.requestsStats, {fill: 0})
 					},
 					{
 						name : /*[[#{analytics.message.understanding}]]*/ '',
@@ -119,6 +119,66 @@
 				];
 		} 
 	};
+	
+	VUiExtensions.dataX.apexCharts.chartTopics = {
+			options : {
+				chart : {
+					id : 'vuechart-example-3',
+					zoom: {
+						enabled: false
+					},
+					toolbar: {
+						show: false
+					}
+				},
+				dataLabels: {
+	                enabled: false
+	            },
+			},
+			series : function() {
+				return [ {
+							name : /*[[#{analytics.message.useractions}]]*/ '',
+							data : serieToApex("test", VertigoUi.vueData.topicStats, {fill: 0})
+						},
+					];
+			} 
+		};
+	
+	VUiExtensions.dataX.apexCharts.nluMessageChart = {
+			options : {
+				chart : {
+					id : 'vuechart-example-3',
+					zoom: {
+						enabled: false
+					},
+					toolbar: {
+						show: false
+					}
+				},
+				dataLabels: {
+	                enabled: false
+	            },
+				xaxis : {
+					type: 'datetime'
+				},
+				tooltip: {
+					x : {
+						formatter: timeFormatter
+					}
+				},
+				colors : ['#2E93fA', '#FF2200'],
+				stroke: {
+					curve: 'smooth'
+				},
+			},
+			series : function() {
+				return [ {
+							name : /*[[#{analytics.message.useractions}]]*/ '',
+							data : serieToApex("name:count", VertigoUi.vueData.requestsStats, {fill: 0})
+						},
+					];
+			} 
+		};
 	
 	function serieToApex(serieName, dataIn, options) {
 		let ret = [];
@@ -136,38 +196,20 @@
 			// null value = hole
 			// undefined value = stroke between existing values
 			if (valueResolved !== undefined) {
-				ret.push([new Date(e.time).getTime()* 1000 , valueResolved]);
+				ret.push([new Date(e.time).getTime() , valueResolved]);
 			}
 		});
 		return ret;
 	};
 	// "statsRequests" : {"seriesNames":["name:count","isFallback:mean"],"timedDataSeries":[{"time":{"epochSecond":1574726400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574812800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574899200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574985600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575072000,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575158400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575244800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575331200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575417600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575504000,"nano":0},"values":{"isFallback:mean":0.16666666666666666,"name:count":7.0}},{"time":{"epochSecond":1575590400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}}]}
 
-	function getTopicTitleByTopId(topId) {
+	function getTopicTitleByTopicId(topId) {
 		if (topId == null) return null;
 		
 		let result = VertigoUi.vueData.topics.filter(t => t.topId === topId);
 		return result.length === 0 ? null : result[0].title;
 	}
 	
-	VUiExtensions.dataX.popinDetailLabel = '';
-	function displayIntentDetail(intent) {
-		VUiExtensions.dataX.popinDetailLabel = getTopicTitleByTopId(intent.topId);
-		
-		VertigoUi.vueData.intentDetails = [];
-		VUiPage.componentStates.intentDetailList.loading = true;
-		
-		let params = VUiPage.vueDataParams(['criteria']);
-		params['intentRasa'] = intent.intentRasa;
-		VUiPage.httpPostAjax('_intentDetails', params, {
-				onSuccess: function() {
-					VUiPage.componentStates.intentDetailList.loading = false;
-				}
-			}
-		);
-		
-		VUiPage.$refs.intentDetailsDialog.show();
-	}
 </script>
 </head>
 
@@ -192,7 +234,7 @@
 				<q-card>
 					<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.session}"></q-card-section>
 					<q-card-section class="row justify-center items-center">
-						<apexchart width="100%" height="250" type="area"
+						<apexchart width="100%" height="250" type="bar"
 							:options="dataX.apexCharts.chartSession.options"
 							:series="dataX.apexCharts.chartSession.series()"></apexchart>
 					</q-card-section>
@@ -203,9 +245,20 @@
 				<q-card>
 					<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.message}"></q-card-section>
 					<q-card-section class="row justify-center items-center">
-						<apexchart width="100%" height="250" type="line"
+						<apexchart width="100%" height="250" type="bar"
 							:options="dataX.apexCharts.chartMessages.options"
 							:series="dataX.apexCharts.chartMessages.series()"></apexchart>
+					</q-card-section>
+				</q-card>
+			</div>
+			
+			<div class="col-xl-4 col-md-6 col-xs-12"> 
+				<q-card>
+					<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.nlu}"></q-card-section>
+					<q-card-section class="row justify-center items-center">
+						<apexchart width="100%" height="250" type="bar"
+							:options="dataX.apexCharts.nluMessageChart.options"
+							:series="dataX.apexCharts.nluMessageChart.series()"></apexchart>
 					</q-card-section>
 				</q-card>
 			</div>
@@ -215,10 +268,7 @@
 					<vu:table componentId="messageList" list="unknownSentenses" th:title="#{analytics.message.understanding}" rowsPerPage="10" autoColClass >
 						<vu:column field="date"/>
 						<vu:column field="text"/>
-						<!-- 
-						<vu:column field="intentRasa" label="Possible intent"/>
-						<vu:column field="confidence"/>
-						 -->
+
 					</vu:table>
 				</div>
 				
@@ -229,17 +279,12 @@
 				
 				<div class="col-12"> 
 					<vu:table componentId="intentList"
-							  list="topIntents" th:title="#{analytics.intents.usage}"  rowsPerPage="10" autoColClass
-							  sortBy="count" descending>
+							  list="topIntents" th:title="#{analytics.intents.usage}"  rowsPerPage="10" sortBy="count" descending>
 							  
-						<vu:column field="smtId" label="Intent">
+						<vu:column field="topId" label="Intent">
 							{{getTopicTitleByTopicId(props.row.topId)}}
 						</vu:column>
 						<vu:column field="count" class="col_Small"/>
-						<vu:column field="intentRasa" label="detail" class="col_Small">
-							<q-btn class="fab-block" round color="primary" icon="search" th:aria-label="#{analytics.message}"  th:title="#{analytics.message}"
-							 	@click="displayIntentDetail(props.row)"></q-btn>
-						</vu:column>
 					</vu:table>
 					
 					<q-dialog ref="intentDetailsDialog">
@@ -253,6 +298,18 @@
 							</q-card-section>
 						</q-card>
 					</q-dialog>
+
+										
+				</div>
+				
+				<div class="col-12">
+					<vu:include-data object="topicsNotUsed" field="'*'" />
+					
+					<vu:table componentId="notUsedTopics"
+							  list="topicsNotUsed" th:title="#{analytics.message.notUsed}"  rowsPerPage="10" autoColClass>							  
+							<vu:column field="title"/>
+						</vu:column>
+					</vu:table>
 				</div>
 			</template>
 		</div>

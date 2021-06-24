@@ -13,27 +13,27 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 public final class TopIntent implements DtObject {
 	private static final long serialVersionUID = 1L;
 
-	private Long smtId;
+	private Long topId;
 	private String intentRasa;
 	private Long count;
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Small Talk ID'.
-	 * @return Long smtId
+	 * Récupère la valeur de la propriété 'Topic ID'.
+	 * @return Long topId
 	 */
-	@Field(smartType = "STyId", label = "Small Talk ID")
-	public Long getSmtId() {
-		return smtId;
+	@Field(smartType = "STyId", label = "Topic ID")
+	public Long getTopId() {
+		return topId;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Small Talk ID'.
-	 * @param smtId Long
+	 * Définit la valeur de la propriété 'Topic ID'.
+	 * @param topId Long
 	 */
-	public void setSmtId(final Long smtId) {
-		this.smtId = smtId;
+	public void setTopId(final Long topId) {
+		this.topId = topId;
 	}
 	
 	/**

@@ -19,6 +19,7 @@ package io.vertigo.chatbot.executor.manager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -118,7 +119,7 @@ public class ExecutorManager implements Manager, Activeable {
 		final var newUUID = UUID.randomUUID();
 
 		final var botEngine = botManager.createBotEngine(newUUID);
-		final var botResponse = botEngine.runTick(input);
+		final var botResponse = botEngine.runTick(input, Optional.of(executorConfigManager.getConfig().getExecutorConfiguration()));
 
 		botResponse.getMetadatas().put("sessionId", newUUID);
 		return botResponse;
@@ -130,6 +131,6 @@ public class ExecutorManager implements Manager, Activeable {
 		//--
 		final var botEngine = botManager.createBotEngine(sessionId);
 
-		return botEngine.runTick(input);
+		return botEngine.runTick(input, Optional.of(executorConfigManager.getConfig().getExecutorConfiguration()));
 	}
 }
