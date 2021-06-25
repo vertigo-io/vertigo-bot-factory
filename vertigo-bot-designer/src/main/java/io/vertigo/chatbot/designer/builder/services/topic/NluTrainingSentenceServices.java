@@ -46,10 +46,11 @@ public class NluTrainingSentenceServices implements Component {
 	}
 
 	public DtList<NluTrainingSentence> extractNlutsFromTfe(final TopicFileExport tfe) {
+		//nluSentences must be separated by |
 		final String[] listTrainingPhrases = tfe.getTrainingPhrases().split("\\|");
 
 		final DtList<NluTrainingSentence> nluTrainingSentences = new DtList<NluTrainingSentence>(NluTrainingSentence.class);
-
+		//When a sentence is added to the list, first the unicity is checked
 		for (final String newNluTrainingSentence : listTrainingPhrases) {
 			addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 		}

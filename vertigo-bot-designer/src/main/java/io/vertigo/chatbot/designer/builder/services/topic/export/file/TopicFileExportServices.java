@@ -100,15 +100,16 @@ public class TopicFileExportServices implements Component {
 
 	public List<TopicFileExport> transformFileToList(final CSVReader csvReader) {
 		try {
+			// Check length of header, to make sure all columns are there
 			final String[] header = csvReader.readNext();
 			if (header.length != 14) {
 				throw new VUserException("Please make sure that your csv is delimited by ';' and has 14 columns.");
 			}
 			final CsvToBean<TopicFileExport> csvToBean = new CsvToBean<TopicFileExport>();
 			final ColumnPositionMappingStrategy<TopicFileExport> mappingStrategy = new ColumnPositionMappingStrategy<TopicFileExport>();
-			//Set mappingStrategy type to Employee Type
+			//Set mappingStrategy type to TopicFileExport Type
 			mappingStrategy.setType(TopicFileExport.class);
-			//Fields in Employee Bean
+			//Fields in TopicFileExport Bean (to avoid alphabetical order)
 			final String[] columns = new String[] {
 					TopicFileExportFields.code.name(),
 					TopicFileExportFields.typeTopic.name(),
@@ -138,9 +139,14 @@ public class TopicFileExportServices implements Component {
 
 		// Unicity check
 		final HashSet<String> codeSet = new HashSet<String>();
+		int i = 1;
 		for (final TopicFileExport tfe : list) {
+			i++;
+			if (tfe.getCode().isEmpty() || tfe.getCode().isBlank()) {
+				throw new VUserException(lineError(i) + "Please provide a code for every topic.");
+			}
 			if (!codeSet.add(tfe.getCode())) {
-				throw new VUserException("Please provide a file with uniques topics (" + tfe.getCode() + " is duplicated).");
+				throw new VUserException(lineError(i) + "Please provide a file with uniques topics (" + tfe.getCode() + " is duplicated).");
 			}
 		}
 		final Map<String, Topic> mapTopic = new HashMap<>();
@@ -148,19 +154,21 @@ public class TopicFileExportServices implements Component {
 
 		final DtList<TopicCategory> listCategory = topicCategoryServices.getAllCategoriesByBot(chatbot);
 
-		//Map category Initialization (only one call to database)
+		//Map category initialization (only one call to database)
 		final Map<String, Long> mapCategory = new HashMap<>();
 		for (final TopicCategory category : listCategory) {
 			mapCategory.put(category.getCode(), category.getTopCatId());
 		}
 
 		//First, create/modify topic (topic might be referenced by small talk, so it has to be done in another loop)
+		i = 1;
 		for (final TopicFileExport tfe : list) {
+			i++;
 			try {
 				//Check if category is in mapCategory (in database)
 				final Long topCatId = mapCategory.get(tfe.getCategory());
 				if (topCatId == null) {
-					throw new VUserException("The category " + tfe.getCategory() + " does not exist.");
+					throw new VUserException(lineError(i) + "The category " + tfe.getCategory() + " does not exist.");
 				}
 				Topic topic = new Topic();
 				boolean creation = true;
@@ -190,17 +198,21 @@ public class TopicFileExportServices implements Component {
 				final Topic topicSaved = topicServices.save(topic, topic.getIsEnabled(), new DtList<NluTrainingSentence>(NluTrainingSentence.class),
 						nluTSToDelete);
 
-				// isEnabled is resetted independently to what appends during the saving of the topic. it will be calculated again in the next block
+				// At this point, topicSaved isEnabled is false, because the topic has no nluTrainingSentences.
+				// So isEnabled is resetted anyway. it will be calculated again in the next loop
+
 				topic.setIsEnabled(isEnabled);
 				mapTopic.put(tfe.getCode(), topicSaved);
 				mapCreation.put(tfe.getCode(), creation);
 			} catch (final Exception e) {
-				throw new VUserException("Error in topic " + tfe.getCode() + " : " + e.getMessage());
+				throw new VUserException(lineError(i) + "Error in topic " + tfe.getCode() + " : " + e.getMessage());
 			}
 		}
 
 		//Then, create/modify smallTalk/ScriptIntention (topics just created may be referenced in the response button)
+		i = 1;
 		for (final TopicFileExport tfe : list) {
+			i++;
 			try {
 				final Topic topicSaved = mapTopic.get(tfe.getCode());
 				final boolean creation = mapCreation.get(tfe.getCode());
@@ -212,7 +224,7 @@ public class TopicFileExportServices implements Component {
 					gestionSmallTalk(chatbot, topicSaved, tfe, creation, nluTrainingSentences);
 				}
 			} catch (final Exception e) {
-				throw new VUserException("Error in topic " + tfe.getCode() + " : " + e.getMessage());
+				throw new VUserException(lineError(i) + "Error in topic " + tfe.getCode() + " : " + e.getMessage());
 			}
 		}
 
@@ -252,7 +264,7 @@ public class TopicFileExportServices implements Component {
 	public DtList<ResponseButton> extractButtonsFromTfe(final Long botId, final TopicFileExport tfe) {
 
 		final DtList<ResponseButton> listButtons = new DtList<ResponseButton>(ResponseButton.class);
-
+		// if there are buttons, they must have the following shape : [name¤topicCode] and be separated by |
 		if (!tfe.getButtons().isEmpty()) {
 			final String[] listDoublons = tfe.getButtons().split("\\|");
 			for (final String doublon : listDoublons) {
@@ -267,6 +279,10 @@ public class TopicFileExportServices implements Component {
 			}
 		}
 		return listButtons;
+	}
+
+	public String lineError(final int i) {
+		return "[Line " + i + "] ";
 	}
 
 }
