@@ -17,6 +17,7 @@ public final class UtterTextExport implements DtObject {
 	private String utterTexts;
 	private String responseType;
 	private Boolean isEnd;
+	private String ktoCd;
 	
 	/**
 	 * Champ : DATA.
@@ -92,6 +93,25 @@ public final class UtterTextExport implements DtObject {
 	 */
 	public void setIsEnd(final Boolean isEnd) {
 		this.isEnd = isEnd;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Kind Topic Code'.
+	 * @return String ktoCd
+	 */
+	@Field(smartType = "STyCode", label = "Kind Topic Code")
+	public String getKtoCd() {
+		return ktoCd;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Kind Topic Code'.
+	 * @param ktoCd String
+	 */
+	public void setKtoCd(final String ktoCd) {
+		this.ktoCd = ktoCd;
 	}
 	
 	/** {@inheritDoc} */

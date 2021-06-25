@@ -61,7 +61,8 @@ create Task TkExportUtterTextByBotId{
              	top.top_id,  
              	STRING_AGG (ut.text, '|') as utter_texts,  
              	rty.rty_id as response_type, 
-             	coalesce (smt.is_end, false) as is_end
+             	coalesce (smt.is_end, false) as is_end,
+             	top.kto_cd
  			from utter_text ut
  			join small_talk smt on (smt.smt_id = ut.smt_id)  
  			join response_type rty on (rty.rty_id = smt.rty_id)
