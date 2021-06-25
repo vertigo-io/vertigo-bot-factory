@@ -1,7 +1,11 @@
 package io.vertigo.chatbot.designer.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
@@ -9,11 +13,16 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 
+import org.apache.commons.io.IOUtils;
+
+import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.locale.MessageText;
 
 public final class HttpRequestUtils {
 
@@ -39,10 +48,10 @@ public final class HttpRequestUtils {
 		try {
 			response = client.send(request, handler);
 			if (response.statusCode() != successStatutCode) {
-				throw new VSystemException("Error during sending request : " + request.uri().toString());
+				throw new VSystemException(MessageText.of(UtilsMultilingualResources.SEND_REQUEST_ERROR).getDisplay() + request.uri().toString());
 			}
 		} catch (IOException | InterruptedException e) {
-			throw new VSystemException(e.getMessage());
+			throw new VSystemException(e.getMessage(), MessageText.of(UtilsMultilingualResources.SEND_REQUEST_ERROR).getDisplay());
 		}
 		return response;
 	}
@@ -65,6 +74,31 @@ public final class HttpRequestUtils {
 			}
 		}
 		return builder;
+	}
+
+	public static String postToUrl(final String url, final byte[] data) {
+		final HttpURLConnection urlConnection;
+		try {
+			urlConnection = (HttpURLConnection) new URL(url).openConnection();
+
+			urlConnection.setRequestMethod("POST");
+			urlConnection.setDoOutput(true);
+			try (final OutputStream os = urlConnection.getOutputStream()) {
+				os.write(data);
+				os.flush();
+			}
+
+			final int responseCode = urlConnection.getResponseCode();
+			if (responseCode == HttpURLConnection.HTTP_OK) { // success
+				try (final InputStream is = urlConnection.getInputStream()) {
+					return IOUtils.toString(is, StandardCharsets.UTF_8);
+				}
+			}
+
+			throw new VSystemException(MessageText.of(UtilsMultilingualResources.SEND_REQUEST_ERROR_WITH_PARAMS).getDisplay(), responseCode);
+		} catch (final IOException e) {
+			throw new VSystemException(e, MessageText.of(UtilsMultilingualResources.SEND_REQUEST_ERROR).getDisplay());
+		}
 	}
 
 }

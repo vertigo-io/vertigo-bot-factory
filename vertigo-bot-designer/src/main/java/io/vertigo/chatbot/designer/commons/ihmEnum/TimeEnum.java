@@ -7,11 +7,11 @@ public enum TimeEnum implements IHMEnum {
 	MONTH("TD_MONTH", "MONTH"),
 	YEAR("TD_YEAR", "YEAR");
 
-	public String label = "";
+	private String label = "";
 
-	public String value = "";
+	private String value = "";
 
-	private TimeEnum(final String label, final String value) {
+	TimeEnum(final String label, final String value) {
 		this.label = label;
 		this.value = value;
 	}

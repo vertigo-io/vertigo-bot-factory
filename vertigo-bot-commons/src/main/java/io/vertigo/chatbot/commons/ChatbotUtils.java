@@ -17,19 +17,10 @@
  */
 package io.vertigo.chatbot.commons;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 
-import org.apache.commons.io.IOUtils;
-
-import io.vertigo.core.lang.VSystemException;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.util.VCollectors;
@@ -70,7 +61,7 @@ public class ChatbotUtils {
 	 * If start is null, return "-".
 	 *
 	 * @param start Start of interval
-	 * @param end   End of interval
+	 * @param end End of interval
 	 * @return Human readable string
 	 */
 	public static String durationBetween(final Instant start, final Instant end) {
@@ -114,37 +105,6 @@ public class ChatbotUtils {
 					// rien
 				}), uiMessageStack))
 				.collect(VCollectors.toDtList(uiList.getDtDefinition()));
-
-		// mauvaise synchronisation ...
-		//		return uiList.mergeAndCheckInput(
-		//				Collections.singletonList((a, b, c) -> {
-		//										// rien
-		//				}),
-		//				uiMessageStack);
 	}
 
-	public static String postToUrl(final String url, final byte[] data) {
-		final HttpURLConnection urlConnection;
-		try {
-			urlConnection = (HttpURLConnection) new URL(url).openConnection();
-
-			urlConnection.setRequestMethod("POST");
-			urlConnection.setDoOutput(true);
-			try (final OutputStream os = urlConnection.getOutputStream()) {
-				os.write(data);
-				os.flush();
-			}
-
-			final int responseCode = urlConnection.getResponseCode();
-			if (responseCode == HttpURLConnection.HTTP_OK) { // success
-				try (final InputStream is = urlConnection.getInputStream();) {
-					return IOUtils.toString(is, StandardCharsets.UTF_8);
-				}
-			}
-
-			throw new VSystemException("POST request error (code {0})", responseCode);
-		} catch (final IOException e) {
-			throw new VSystemException(e, "POST request error");
-		}
-	}
 }

@@ -11,11 +11,13 @@ import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
+import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.designer.builder.chatbotNode.ChatbotNodePAO;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -37,12 +39,11 @@ public class NodeServices implements Component {
 	public ChatbotNode getNodeByNodeId(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
 		final ChatbotNode node = chatbotNodeDAO.get(nodId);
 		if (!node.getBotId().equals(bot.getBotId())) {
-			throw new VSystemException("this node is not part of the bot");
+			throw new VSystemException(MessageText.of(ModelMultilingualResources.NODE_BOT_ERROR).getDisplay());
 		}
 		return node;
 	}
 
-	//TODO voir quelle sécurité lui mettre
 	public DtList<ChatbotNode> getAllNodesByBotId(final Long botId) {
 		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, botId), DtListState.of(100));
 	}
@@ -100,6 +101,6 @@ public class NodeServices implements Component {
 		return nodeList.stream()
 				.filter(ChatbotNode::getIsDev)
 				.findFirst()
-				.orElseThrow(() -> new VUserException("No training node configured"));
+				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
 	}
 }
