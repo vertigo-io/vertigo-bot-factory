@@ -7,6 +7,9 @@ import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResource
 import io.vertigo.chatbot.commons.multilingual.kindTopic.KindTopicMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.person.PersonMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
 import io.vertigo.chatbot.designer.domain.commons.EnumResource;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.component.ComponentInitializer;
@@ -28,6 +31,8 @@ public class ChatbotLocaleInitializer implements ComponentInitializer {
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.kindTopic.KindTopicMultilingualResources", KindTopicMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources", TopicFileExportMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources", ModelMultilingualResources.values());
+		localeManager.add("io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources", UtilsMultilingualResources.values());
+		localeManager.add("io.vertigo.chatbot.commons.multilingual.person.PersonMultilingualResources", PersonMultilingualResources.values());
 	}
 
 }
