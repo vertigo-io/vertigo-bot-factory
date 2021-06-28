@@ -46,7 +46,7 @@
 		                                } else {
 		                                    this.appendToFormData(params, 'vContext[' + contextKey + '][' + propertyKey + ']', vueDataValue[propertyKey][index]);
 		                                }
-		                            });
+		                            }.bind(this));
 		                        } else {
 		                            if (vueDataValue[propertyKey] && typeof vueDataValue[propertyKey] === 'object') {
 		                                this.appendToFormData(params, 'vContext[' + contextKey + '][' + propertyKey + ']', vueDataValue[propertyKey]['_v_inputValue']);
