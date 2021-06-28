@@ -1,6 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.util.Locale;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -18,7 +17,6 @@ import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
-import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -76,7 +74,7 @@ public class TopicServices implements Component {
 	}
 
 	private void hasUniqueCode(final Topic topic) {
-		Optional<Long> topIdOpt = topic.getTopId() != null ? Optional.of(topic.getTopId()) : Optional.empty();
+		final Optional<Long> topIdOpt = topic.getTopId() != null ? Optional.of(topic.getTopId()) : Optional.empty();
 		if (topicPAO.checkUnicityTopicCode(topic.getBotId(), topic.getCode(), topIdOpt)) {
 			throw new VUserException("the code is not unique, please select another");
 		}
@@ -158,37 +156,19 @@ public class TopicServices implements Component {
 
 	public void initNewBasicTopic(final ViewContext viewContext, final String ktoCd, final ViewContextKey<Topic> topickey,
 			final ViewContextKey<UtterText> uttertextkey) {
-		final Locale locale = UserSessionUtils.getUserSession().getLocale();
-
 		final Topic topic = new Topic();
 		final KindTopic kto = kindTopicServices.findKindTopicByCd(ktoCd);
 		topic.setIsEnabled(true);
-		topic.setTitle(getTitle(kto, locale));
+		topic.setTitle(kto.getLabel());
 		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
 		topic.setKtoCd(ktoCd);
-		topic.setDescription(getDescription(kto, locale));
+		topic.setDescription(kto.getDescription());
 		topic.setCode(ktoCd);
 		viewContext.publishDto(topickey, topic);
 		final UtterText utterText = new UtterText();
-		utterText.setText(kindTopicServices.getDefaultTextByLocale(kto, locale));
+		utterText.setText(kindTopicServices.initializeDefaultText(ktoCd));
 		viewContext.publishDto(uttertextkey, utterText);
 
-	}
-
-	private String getTitle(final KindTopic kto, final Locale locale) {
-		if (Locale.FRANCE.equals(locale)) {
-			return kto.getTitleFrench();
-		} else {
-			return kto.getTitleEnglish();
-		}
-	}
-
-	private String getDescription(final KindTopic kto, final Locale locale) {
-		if (Locale.FRANCE.equals(locale)) {
-			return kto.getDescriptionFrench();
-		} else {
-			return kto.getDescriptionEnglish();
-		}
 	}
 
 	//********* NTS part ********/

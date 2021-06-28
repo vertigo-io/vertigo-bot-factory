@@ -16,12 +16,8 @@ public final class KindTopic implements DtStaticMasterData {
 
 	private String ktoCd;
 	private String label;
-	private String titleEnglish;
-	private String titleFrench;
-	private String descriptionEnglish;
-	private String descriptionFrench;
-	private String defaultEnglish;
-	private String defaultFrench;
+	private String description;
+	private String defaultText;
 
 	/** {@inheritDoc} */
 	@Override
@@ -71,116 +67,40 @@ public final class KindTopic implements DtStaticMasterData {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Title (English)'.
-	 * @return String titleEnglish <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Description'.
+	 * @return String description <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Title (English)")
-	public String getTitleEnglish() {
-		return titleEnglish;
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Description")
+	public String getDescription() {
+		return description;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Title (English)'.
-	 * @param titleEnglish String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Description'.
+	 * @param description String <b>Obligatoire</b>
 	 */
-	public void setTitleEnglish(final String titleEnglish) {
-		this.titleEnglish = titleEnglish;
+	public void setDescription(final String description) {
+		this.description = description;
 	}
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Title (French)'.
-	 * @return String titleFrench <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Default text'.
+	 * @return String defaultText <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Title (French)")
-	public String getTitleFrench() {
-		return titleFrench;
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Default text")
+	public String getDefaultText() {
+		return defaultText;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Title (French)'.
-	 * @param titleFrench String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Default text'.
+	 * @param defaultText String <b>Obligatoire</b>
 	 */
-	public void setTitleFrench(final String titleFrench) {
-		this.titleFrench = titleFrench;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Description (English)'.
-	 * @return String descriptionEnglish
-	 */
-	@Field(smartType = "STyLabel", label = "Description (English)")
-	public String getDescriptionEnglish() {
-		return descriptionEnglish;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Description (English)'.
-	 * @param descriptionEnglish String
-	 */
-	public void setDescriptionEnglish(final String descriptionEnglish) {
-		this.descriptionEnglish = descriptionEnglish;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Description (French)'.
-	 * @return String descriptionFrench
-	 */
-	@Field(smartType = "STyLabel", label = "Description (French)")
-	public String getDescriptionFrench() {
-		return descriptionFrench;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Description (French)'.
-	 * @param descriptionFrench String
-	 */
-	public void setDescriptionFrench(final String descriptionFrench) {
-		this.descriptionFrench = descriptionFrench;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Default text (English)'.
-	 * @return String defaultEnglish <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Default text (English)")
-	public String getDefaultEnglish() {
-		return defaultEnglish;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Default text (English)'.
-	 * @param defaultEnglish String <b>Obligatoire</b>
-	 */
-	public void setDefaultEnglish(final String defaultEnglish) {
-		this.defaultEnglish = defaultEnglish;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Default text (French)'.
-	 * @return String defaultFrench <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Default text (French)")
-	public String getDefaultFrench() {
-		return defaultFrench;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Default text (French)'.
-	 * @param defaultFrench String <b>Obligatoire</b>
-	 */
-	public void setDefaultFrench(final String defaultFrench) {
-		this.defaultFrench = defaultFrench;
+	public void setDefaultText(final String defaultText) {
+		this.defaultText = defaultText;
 	}
 	
 	/** {@inheritDoc} */
