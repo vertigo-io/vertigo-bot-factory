@@ -64,10 +64,10 @@ public class TopicsListController extends AbstractBotController {
 	private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
 	private static final ViewContextKey<TopicCategory> categoryListKey = ViewContextKey.of("categoryList");
 	// return of the select
-	private static final ViewContextKey<String> selectionList = ViewContextKey.of("selectionList");
-	private static final ViewContextKey<TopicCategory> selectionCatList = ViewContextKey.of("selectionCatList");
-	private static final ViewContextKey<String> topIdDetail = ViewContextKey.of("topIdDetail");
-	private static final ViewContextKey<String> topicImport = ViewContextKey.of("topicImport");
+	private static final ViewContextKey<String> selectionListKey = ViewContextKey.of("selectionList");
+	private static final ViewContextKey<TopicCategory> selectionCatListKey = ViewContextKey.of("selectionCatList");
+	private static final ViewContextKey<String> topIdDetailKey = ViewContextKey.of("topIdDetail");
+	private static final ViewContextKey<String> topicImportKey = ViewContextKey.of("topicImport");
 
 	@Inject
 	private TopicServices topicServices;
@@ -88,10 +88,10 @@ public class TopicsListController extends AbstractBotController {
 		viewContext.publishDtList(topicIhmListKey, TopicIhmFields.topId, topicServices.getAllNonTechnicalTopicIhmByBot(bot));
 		viewContext.publishDtListModifiable(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 		viewContext.publishDtList(categoryListKey, categoryServices.getAllActiveCategoriesByBot(bot));
-		viewContext.publishRef(selectionList, "");
-		viewContext.publishDto(selectionCatList, new TopicCategory());
-		viewContext.publishRef(topIdDetail, "");
-		viewContext.publishRef(topicImport, "");
+		viewContext.publishRef(selectionListKey, "");
+		viewContext.publishDto(selectionCatListKey, new TopicCategory());
+		viewContext.publishRef(topIdDetailKey, "");
+		viewContext.publishRef(topicImportKey, "");
 		toModeReadOnly();
 	}
 
@@ -114,10 +114,8 @@ public class TopicsListController extends AbstractBotController {
 	@Secured("SuperAdm")
 	public VFile doExportTopicFile(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, @ViewAttribute("selectionCatList") final String selectCat) {
 
-		Long topCatId = null;
-		if (!selectCat.isEmpty()) {
-			topCatId = Long.valueOf(selectCat);
-		}
+		final Long topCatId = !selectCat.isEmpty() ? Long.valueOf(selectCat) : null;
+
 		final DtList<TopicFileExport> listTopics = topicFileExportServices.getTopicFileExport(bot.getBotId(), topCatId);
 
 		return topicFileExportServices.exportTopicFile(bot, listTopics);
@@ -139,6 +137,8 @@ public class TopicsListController extends AbstractBotController {
 			final List<TopicFileExport> list = topicFileExportServices.transformFileToList(csvReader);
 
 			topicFileExportServices.importTopicFromList(bot, list);
+		} catch (final Exception e) {
+			throw e;
 		}
 
 		return "redirect:/bot/" + bot.getBotId() + "/topics/";

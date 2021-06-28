@@ -18,7 +18,7 @@ create Task TkGetTopicFileExport {
 			END	as active,
 			sin.script,
 			tph.agg as training_phrases,
-			utt.text as response,
+			res.agg as response,
 			buttons.doublons as buttons,
 			CASE 
 				WHEN smt.is_end THEN 'TRUE'
@@ -34,8 +34,15 @@ create Task TkGetTopicFileExport {
 				) as tph  on top.top_id = tph.top_id
 			left join topic_category tca on tca.top_cat_id = top.top_cat_id	
 			left join script_intention sin on sin.top_id = top.top_id
-			left join small_talk smt on smt.top_id = top.top_id
-			left join utter_text utt on utt.smt_id = smt.smt_id
+			left join small_talk smt on smt.top_id = top.top_id		
+			left join (
+					select smt.top_id,
+					string_agg(utt.text,'|') agg	
+					from utter_text utt
+					join small_talk smt on smt.smt_id = utt.smt_id
+					join topic top on smt.top_id = top.top_id									
+					group by (smt.top_id)
+				) as res  on top.top_id = res.top_id				
 			left join (
 					select t.top_id, string_agg(concat('[',rbu.text,'¤',tre.code,']'),'|') as doublons
 					from response_button rbu

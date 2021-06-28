@@ -38,9 +38,9 @@ import io.vertigo.quarto.exporter.model.ExportSheet;
 import io.vertigo.quarto.impl.exporter.util.ExporterUtil;
 
 /**
- * Export avec ETAT.
+ * Overload to be able to export in cp1252 instead of utf8
  *
- * @author pchretien, npiedeloup
+ * @author skerdudou, vprima
  */
 final class CSVExporter {
 	/**

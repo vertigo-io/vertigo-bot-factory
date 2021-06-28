@@ -22,18 +22,7 @@
 				}
 				return url;
 			}
-			function onSubmit () {
-					
-					let params = VUiPage.vueDataParams(['selectionCatList']);
-					console.log(params);
-					VUiPage.httpPostAjax("_exportTopicFile", params, {
-						onSuccess: function() {
-							VUiPage.$refs.exportTopic.hide();
-						}
-					}
-				);
-				
-				  }
+			
 		</script>
 		
 		
@@ -137,8 +126,7 @@
 					<q-card-section>
 						<div class="text-h6" th:text="#{popup.export.title}"></div>						
 					</q-card-section>
-					
-					<vu:include-data-primitive key="locale" />
+									
 					<q-card-section style="width: 400px;">
 						<vu:include-data object="categoryList" field="'*'"/>
 						<q-select

@@ -137,18 +137,6 @@ public enum DtResources implements MessageKey {
 	fldScriptIntentionIhm$isEnabled,
 
 	/***********************************************************
-	/** SelectCategory.
-	/***********************************************************
-	/**
-	 * Category id.
-	 */
-	fldSelectCategory$topCatId,
-	/**
-	 * Code.
-	 */
-	fldSelectCategory$code,
-
-	/***********************************************************
 	/** SmallTalk.
 	/***********************************************************
 	/**

@@ -333,7 +333,3 @@ create DtDefinition DtTopicFileExport {
 	field isEnd				{domain: DoLabel	 					label: "End of conversation" 	cardinality : "1"}
 }
 
-create DtDefinition DtSelectCategory {
-	field topCatId 		{domain: DoId 						label: "Category id"	 		cardinality:"*"}
-	field code 			{domain: DoCode 					label: "Code"	 				cardinality:"?"}
-}

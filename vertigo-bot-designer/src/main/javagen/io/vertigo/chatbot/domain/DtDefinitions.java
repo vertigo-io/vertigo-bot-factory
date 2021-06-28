@@ -59,8 +59,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ScriptIntentionExport(io.vertigo.chatbot.designer.builder.topic.export.ScriptIntentionExport.class),
 		/** Objet de données ScriptIntentionIhm. */
 		ScriptIntentionIhm(io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm.class),
-		/** Objet de données SelectCategory. */
-		SelectCategory(io.vertigo.chatbot.commons.domain.topic.SelectCategory.class),
 		/** Objet de données SelectProfilChatbotPerson. */
 		SelectProfilChatbotPerson(io.vertigo.chatbot.designer.domain.admin.SelectProfilChatbotPerson.class),
 		/** Objet de données SelectionOption. */
@@ -393,15 +391,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		sinId,
 		/** Propriété 'Enabled'. */
 		isEnabled	}
-
-	/**
-	 * Enumération des champs de SelectCategory.
-	 */
-	public enum SelectCategoryFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.SelectCategory> {
-		/** Propriété 'Category id'. */
-		topCatId,
-		/** Propriété 'Code'. */
-		code	}
 
 	/**
 	 * Enumération des champs de SelectProfilChatbotPerson.
