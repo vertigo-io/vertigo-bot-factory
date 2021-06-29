@@ -44,16 +44,3 @@ create Task TkRemoveAllCategoryByBotId{
 	in botId				{domain : DoId,						cardinality:"1"} 
 }
 
-create Task TkGetCategoryByCodeBotId {  
-    className : "io.vertigo.basics.task.TaskEngineSelect"
-    request : "
-			select tpc.*
-			from topic_category tpc
-			where tpc.bot_id = #botId#
-			and tpc.is_enabled = true
-			and tpc.code = #code#	
-             "
-	in botId				{domain : DoId,						cardinality:"1" } 
-	in code					{domain : DoCode         			cardinality:"1" }
-	out tpcs 				{domain : DoDtTopicCategory		 	cardinality:"*"	}
-} 

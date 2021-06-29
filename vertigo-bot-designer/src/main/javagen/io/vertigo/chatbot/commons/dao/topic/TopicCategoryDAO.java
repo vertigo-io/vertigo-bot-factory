@@ -76,29 +76,4 @@ public final class TopicCategoryDAO extends DAO<TopicCategory, java.lang.Long> i
 				.getResult();
 	}
 
-	/**
-	 * Execute la tache TkGetCategoryByCodeBotId.
-	 * @param botId Long
-	 * @param code String
-	 * @return DtList de TopicCategory tpcs
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkGetCategoryByCodeBotId",
-			request = "select tpc.*" + 
- "			from topic_category tpc" + 
- "			where tpc.bot_id = #botId#" + 
- "			and tpc.is_enabled = true" + 
- "			and tpc.code = #code#",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicCategory")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicCategory> getCategoryByCodeBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "code", smartType = "STyCode") final String code) {
-		final Task task = createTaskBuilder("TkGetCategoryByCodeBotId")
-				.addValue("botId", botId)
-				.addValue("code", code)
-				.build();
-		return getTaskManager()
-				.execute(task)
-				.getResult();
-	}
-
 }

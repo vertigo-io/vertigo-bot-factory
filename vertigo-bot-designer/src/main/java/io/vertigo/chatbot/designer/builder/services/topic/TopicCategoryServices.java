@@ -15,7 +15,6 @@ import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.builder.topicCategory.TopicCategoryPAO;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
 
@@ -94,17 +93,6 @@ public class TopicCategoryServices implements Component {
 		topicCategory.setLevel(1L);
 
 		return topicCategory;
-	}
-
-	public TopicCategory getCategorybyCodeBotId(final Long botId, final String code) {
-		final DtList<TopicCategory> listCategories = topicCategoryDAO.getCategoryByCodeBotId(botId, code);
-		if (listCategories.isEmpty()) {
-			return null;
-		}
-		if (listCategories.size() > 1) {
-			throw new VUserException("Several categories have the same code : " + code + ".");
-		}
-		return listCategories.get(0);
 	}
 
 }

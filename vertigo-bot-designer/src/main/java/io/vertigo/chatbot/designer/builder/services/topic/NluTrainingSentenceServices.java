@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
+import java.util.stream.Stream;
+
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.dao.topic.NluTrainingSentenceDAO;
@@ -51,9 +53,8 @@ public class NluTrainingSentenceServices implements Component {
 
 		final DtList<NluTrainingSentence> nluTrainingSentences = new DtList<NluTrainingSentence>(NluTrainingSentence.class);
 		//When a sentence is added to the list, first the unicity is checked
-		for (final String newNluTrainingSentence : listTrainingPhrases) {
-			addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
-		}
+		Stream.of(listTrainingPhrases).forEach(x -> addTrainingSentense(x, nluTrainingSentences));
+
 		return nluTrainingSentences;
 	}
 }
