@@ -37,6 +37,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicFileExport;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
@@ -130,7 +131,7 @@ public class TopicsListController extends AbstractBotController {
 
 		final VFile fileTmp = fileServices.getFileTmp(importTopicFile);
 		if (!fileTmp.getMimeType().equals("application/vnd.ms-excel")) {
-			throw new VUserException("Please use a csv file.");
+			throw new VUserException(TopicFileExportMultilingualResources.ERR_CSV_FILE);
 		}
 		try (CSVReader csvReader = new CSVReader(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")), ';', CSVReader.DEFAULT_QUOTE_CHARACTER, 0)) {
 

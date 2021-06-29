@@ -23,6 +23,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicFileExport;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
@@ -32,6 +33,7 @@ import io.vertigo.chatbot.designer.builder.topicFileExport.TopicFileExportPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFileExportFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
@@ -112,7 +114,7 @@ public class TopicFileExportServices implements Component {
 			// Check length of header, to make sure all columns are there
 			final String[] header = csvReader.readNext();
 			if (header.length != 14) {
-				throw new VUserException("Please make sure that your csv is delimited by ';' and has 14 columns.");
+				throw new VUserException(TopicFileExportMultilingualResources.ERR_SIZE_FILE);
 			}
 			final CsvToBean<TopicFileExport> csvToBean = new CsvToBean<TopicFileExport>();
 			final ColumnPositionMappingStrategy<TopicFileExport> mappingStrategy = new ColumnPositionMappingStrategy<TopicFileExport>();
@@ -140,7 +142,9 @@ public class TopicFileExportServices implements Component {
 			final List<TopicFileExport> list = csvToBean.parse(mappingStrategy, csvReader);
 			return list;
 		} catch (final Exception e) {
-			throw new VUserException("Error during the file mapping : " + e);
+			final StringBuilder errorMessage = new StringBuilder(MessageText.of(TopicFileExportMultilingualResources.ERR_MAPPING_FILE).getDisplay());
+			errorMessage.append(e);
+			throw new VUserException(errorMessage.toString());
 		}
 	}
 
@@ -196,10 +200,11 @@ public class TopicFileExportServices implements Component {
 		for (final TopicFileExport tfe : list) {
 			i++;
 			if (tfe.getCode().isEmpty() || tfe.getCode().isBlank()) {
-				throw new VUserException(lineError(i) + "Please provide a code for every topic.");
+				errorManagement(i, MessageText.of(TopicFileExportMultilingualResources.ERR_CODE_EMPTY).getDisplay());
 			}
 			if (!codeSet.add(tfe.getCode())) {
-				throw new VUserException(lineError(i) + "Please provide a file with uniques topics (" + tfe.getCode() + " is duplicated).");
+				final StringBuilder erreur = new StringBuilder(MessageText.of(TopicFileExportMultilingualResources.ERR_CODE_DUPLICATED, tfe.getCode()).getDisplay());
+				errorManagement(i, erreur.toString());
 			}
 		}
 
@@ -257,7 +262,9 @@ public class TopicFileExportServices implements Component {
 			mapCreation.put(tfe.getCode(), creation);
 
 		} catch (final Exception e) {
-			throw new VUserException(lineError(line) + "Error in topic " + tfe.getCode() + " : " + e.getMessage());
+			final StringBuilder erreur = new StringBuilder(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC, tfe.getCode()).getDisplay());
+			erreur.append(e.getMessage());
+			errorManagement(line, erreur.toString());
 		}
 	}
 
@@ -267,7 +274,7 @@ public class TopicFileExportServices implements Component {
 	private Long checkCategory(final TopicFileExport tfe, final Map<String, Long> mapCategory) {
 		final Long topCatId = mapCategory.get(tfe.getCategory());
 		if (topCatId == null) {
-			throw new VUserException("The category " + tfe.getCategory() + " does not exist.");
+			throw new VUserException(TopicFileExportMultilingualResources.ERR_CATEGORY, tfe.getCategory());
 		}
 		return topCatId;
 	}
@@ -277,7 +284,7 @@ public class TopicFileExportServices implements Component {
 	 */
 	private void checkType(final TopicFileExport tfe) {
 		if (!TypeTopicEnum.SCRIPTINTENTION.name().equals(tfe.getTypeTopic()) && !TypeTopicEnum.SMALLTALK.name().equals(tfe.getTypeTopic())) {
-			throw new VUserException("Type Topic must be either SCRIPTINTENTION or SMALLTALK");
+			throw new VUserException(TopicFileExportMultilingualResources.ERR_TYPE_TOPIC);
 		}
 	}
 
@@ -286,7 +293,7 @@ public class TopicFileExportServices implements Component {
 	 */
 	private void checkTitle(final TopicFileExport tfe) {
 		if (tfe.getTitle().isEmpty() || tfe.getTitle().isBlank()) {
-			throw new VUserException("Title cannot be empty.");
+			throw new VUserException(TopicFileExportMultilingualResources.ERR_TITLE);
 		}
 	}
 
@@ -337,7 +344,9 @@ public class TopicFileExportServices implements Component {
 			}
 
 		} catch (final Exception e) {
-			throw new VUserException(lineError(line) + "Error in topic " + tfe.getCode() + " : " + e.getMessage());
+			final StringBuilder erreur = new StringBuilder(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC, tfe.getCode()).getDisplay());
+			erreur.append(e.getMessage());
+			errorManagement(line, erreur.toString());
 		}
 	}
 
@@ -420,11 +429,11 @@ public class TopicFileExportServices implements Component {
 
 				final String code = StringUtils.substringBetween(doublon, "¤", "]");
 				if (code == null) {
-					throw new VUserException("a response button must have a topic code");
+					throw new VUserException(TopicFileExportMultilingualResources.BUTTON_CODE_EMPTY);
 				}
 				final Topic topic = topicServices.getTopicByCodeBotId(botId, code);
 				if (topic == null) {
-					throw new VUserException("the topic " + code + " was not found. It cannot be referenced by a response button.");
+					throw new VUserException(TopicFileExportMultilingualResources.BUTTON_CODE_NOT_FOUND);
 				}
 				button.setTopIdResponse(topic.getTopId());
 
@@ -439,6 +448,12 @@ public class TopicFileExportServices implements Component {
 	 */
 	public String lineError(final int i) {
 		return "[Line " + i + "] ";
+	}
+
+	public void errorManagement(final int i, final String erreur) {
+		final StringBuilder errorMessage = new StringBuilder(lineError(i));
+		errorMessage.append(erreur);
+		throw new VUserException(errorMessage.toString());
 	}
 
 }
