@@ -87,6 +87,8 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
+		checkCategory(topic);
+
 		final Long botId = chatbot.getBotId();
 
 		// add training sentence who is not "validated" by enter and still in the input
