@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
@@ -72,7 +73,7 @@ public class TopicFileExportServices implements Component {
 	/*
 	 * Return a File from a list of topicFileExport
 	 */
-	public VFile exportTopicFile(final Chatbot bot, final DtList<TopicFileExport> dtc) {
+	public VFile exportTopicFile(@SecuredOperation("SuperAdm") final Chatbot bot, final DtList<TopicFileExport> dtc) {
 
 		final Export export = new ExportBuilder(ExportFormat.CSV, "export " + bot.getName())
 				.beginSheet(dtc, null)
@@ -101,7 +102,7 @@ public class TopicFileExportServices implements Component {
 	/*
 	 * Return a list of TopicFileExport from a bot (and possibly a category)
 	 */
-	public DtList<TopicFileExport> getTopicFileExport(final Long botId, final Long topCatId) {
+	public DtList<TopicFileExport> getTopicFileExport(@SecuredOperation("SuperAdm") final Long botId, final Long topCatId) {
 		final Optional<Long> topCatIdOpt = topCatId != null ? Optional.of(topCatId) : Optional.empty();
 		return topicFileExportPAO.getTopicFileExport(botId, topCatIdOpt);
 	}
@@ -109,7 +110,7 @@ public class TopicFileExportServices implements Component {
 	/*
 	 * Return a list of TopicFileExport from a CSV file
 	 */
-	public List<TopicFileExport> transformFileToList(final CSVReader csvReader) {
+	public List<TopicFileExport> transformFileToList(@SecuredOperation("SuperAdm") final CSVReader csvReader) {
 		try {
 			// Check length of header, to make sure all columns are there
 			final String[] header = csvReader.readNext();
@@ -151,7 +152,7 @@ public class TopicFileExportServices implements Component {
 	/*
 	 * Use a list of TopicFileExport to create/modify topics
 	 */
-	public void importTopicFromList(final Chatbot chatbot, final List<TopicFileExport> list) throws IOException {
+	public void importTopicFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<TopicFileExport> list) throws IOException {
 
 		codeCheck(list);
 
