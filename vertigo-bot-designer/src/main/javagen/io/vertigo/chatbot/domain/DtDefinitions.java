@@ -31,6 +31,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Groups(io.vertigo.chatbot.designer.domain.commons.Groups.class),
 		/** Objet de données KindTopic. */
 		KindTopic(io.vertigo.chatbot.commons.domain.topic.KindTopic.class),
+		/** Objet de données Meaning. */
+		Meaning(io.vertigo.chatbot.designer.domain.Meaning.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données NluTrainingExport. */
@@ -71,6 +73,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		SmallTalkIhm(io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm.class),
 		/** Objet de données StatCriteria. */
 		StatCriteria(io.vertigo.chatbot.designer.domain.StatCriteria.class),
+		/** Objet de données Synonym. */
+		Synonym(io.vertigo.chatbot.designer.domain.Synonym.class),
 		/** Objet de données TopIntent. */
 		TopIntent(io.vertigo.chatbot.designer.domain.TopIntent.class),
 		/** Objet de données Topic. */
@@ -213,6 +217,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		description,
 		/** Propriété 'Default text'. */
 		defaultText	}
+
+	/**
+	 * Enumération des champs de Meaning.
+	 */
+	public enum MeaningFields implements DtFieldName<io.vertigo.chatbot.designer.domain.Meaning> {
+		/** Propriété 'Meaning id'. */
+		meaId,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Chatbot'. */
+		botId	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.
@@ -465,6 +480,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		timeOption,
 		/** Propriété 'Node selection'. */
 		nodId	}
+
+	/**
+	 * Enumération des champs de Synonym.
+	 */
+	public enum SynonymFields implements DtFieldName<io.vertigo.chatbot.designer.domain.Synonym> {
+		/** Propriété 'Synonym id'. */
+		synId,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Intention'. */
+		meaId	}
 
 	/**
 	 * Enumération des champs de TopIntent.
