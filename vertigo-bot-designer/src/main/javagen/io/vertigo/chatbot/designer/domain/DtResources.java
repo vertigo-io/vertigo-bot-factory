@@ -9,6 +9,22 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
+	/** Meaning.
+	/***********************************************************
+	/**
+	 * Meaning id.
+	 */
+	fldMeaning$meaId,
+	/**
+	 * Label.
+	 */
+	fldMeaning$label,
+	/**
+	 * Chatbot.
+	 */
+	fldMeaning$botId,
+
+	/***********************************************************
 	/** SentenseDetail.
 	/***********************************************************
 	/**
@@ -51,6 +67,26 @@ public enum DtResources implements MessageKey {
 	 * Node selection.
 	 */
 	fldStatCriteria$nodId,
+
+	/***********************************************************
+	/** Synonym.
+	/***********************************************************
+	/**
+	 * Synonym id.
+	 */
+	fldSynonym$synId,
+	/**
+	 * Label.
+	 */
+	fldSynonym$label,
+	/**
+	 * Chatbot.
+	 */
+	fldSynonym$botId,
+	/**
+	 * Intention.
+	 */
+	fldSynonym$meaId,
 
 	/***********************************************************
 	/** TopIntent.

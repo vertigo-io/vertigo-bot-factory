@@ -14,6 +14,8 @@ drop table IF EXISTS CHATBOT_PROFILES cascade;
 drop table IF EXISTS GROUPS cascade;
 drop sequence IF EXISTS SEQ_GROUPS;
 drop table IF EXISTS KIND_TOPIC cascade;
+drop table IF EXISTS MEANING cascade;
+drop sequence IF EXISTS SEQ_MEANING;
 drop table IF EXISTS MEDIA_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_MEDIA_FILE_INFO;
 drop table IF EXISTS NLU_TRAINING_SENTENCE cascade;
@@ -30,6 +32,8 @@ drop table IF EXISTS SCRIPT_INTENTION cascade;
 drop sequence IF EXISTS SEQ_SCRIPT_INTENTION;
 drop table IF EXISTS SMALL_TALK cascade;
 drop sequence IF EXISTS SEQ_SMALL_TALK;
+drop table IF EXISTS SYNONYM cascade;
+drop sequence IF EXISTS SEQ_SYNONYM;
 drop table IF EXISTS TOPIC cascade;
 drop sequence IF EXISTS SEQ_TOPIC;
 drop table IF EXISTS TOPIC_CATEGORY cascade;
@@ -58,6 +62,9 @@ create sequence SEQ_GROUPS
 	start with 1000 cache 20; 
 
 
+create sequence SEQ_MEANING
+	start with 1000 cache 20; 
+
 create sequence SEQ_MEDIA_FILE_INFO
 	start with 1000 cache 20; 
 
@@ -79,6 +86,9 @@ create sequence SEQ_SCRIPT_INTENTION
 	start with 1000 cache 20; 
 
 create sequence SEQ_SMALL_TALK
+	start with 1000 cache 20; 
+
+create sequence SEQ_SYNONYM
 	start with 1000 cache 20; 
 
 create sequence SEQ_TOPIC
@@ -227,6 +237,26 @@ comment on column KIND_TOPIC.DESCRIPTION is
 
 comment on column KIND_TOPIC.DEFAULT_TEXT is
 'Default text';
+
+-- ============================================================
+--   Table : MEANING                                        
+-- ============================================================
+create table MEANING
+(
+    MEA_ID      	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_MEANING primary key (MEA_ID)
+);
+
+comment on column MEANING.MEA_ID is
+'Meaning id';
+
+comment on column MEANING.LABEL is
+'Label';
+
+comment on column MEANING.BOT_ID is
+'Chatbot';
 
 -- ============================================================
 --   Table : MEDIA_FILE_INFO                                        
@@ -449,6 +479,30 @@ comment on column SMALL_TALK.RTY_ID is
 'Response type';
 
 -- ============================================================
+--   Table : SYNONYM                                        
+-- ============================================================
+create table SYNONYM
+(
+    SYN_ID      	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    MEA_ID      	 NUMERIC     	not null,
+    constraint PK_SYNONYM primary key (SYN_ID)
+);
+
+comment on column SYNONYM.SYN_ID is
+'Synonym id';
+
+comment on column SYNONYM.LABEL is
+'Label';
+
+comment on column SYNONYM.BOT_ID is
+'Chatbot';
+
+comment on column SYNONYM.MEA_ID is
+'Intention';
+
+-- ============================================================
 --   Table : TOPIC                                        
 -- ============================================================
 create table TOPIC
@@ -647,6 +701,12 @@ alter table CHATBOT
 
 create index A_CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on CHATBOT (FIL_ID_AVATAR asc);
 
+alter table MEANING
+	add constraint FK_A_MEANING_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_MEANING_CHATBOT_CHATBOT_FK on MEANING (BOT_ID asc);
+
 alter table CHATBOT_NODE
 	add constraint FK_A_NODE_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
@@ -724,6 +784,18 @@ alter table UTTER_TEXT
 	references SMALL_TALK (SMT_ID);
 
 create index A_SMALL_TALK_UTTER_TEXT_SMALL_TALK_FK on UTTER_TEXT (SMT_ID asc);
+
+alter table SYNONYM
+	add constraint FK_A_SYNONYM_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_SYNONYM_CHATBOT_CHATBOT_FK on SYNONYM (BOT_ID asc);
+
+alter table SYNONYM
+	add constraint FK_A_SYNONYM_MEANING_MEANING foreign key (MEA_ID)
+	references MEANING (MEA_ID);
+
+create index A_SYNONYM_MEANING_MEANING_FK on SYNONYM (MEA_ID asc);
 
 alter table TOPIC_CATEGORY
 	add constraint FK_A_TOPIC_CATEGORY_CHATBOT_CHATBOT foreign key (BOT_ID)

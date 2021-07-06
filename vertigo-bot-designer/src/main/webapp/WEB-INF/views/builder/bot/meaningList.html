@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/botDetailLayout}" th:with="tab=dictionary"
+	>
+	
+	<head>
+		<script th:inline="javascript">
+			function normalizeString(str) {
+				if (str)
+					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+				else
+					return '';
+			}
+			
+			function getDisplayedSynonyms() {
+				let searchNormarlized = normalizeString(VertigoUi.componentStates.synonyms.pagination.search);
+				
+				return VertigoUi.vueData.synonyms
+						// copy and reverse
+						.slice().reverse()
+						// search
+						.filter(syn => normalizeString(syn.label).includes(searchNormarlized))
+						// pagination
+						.slice((VertigoUi.componentStates.synonyms.pagination.page - 1) * VertigoUi.componentStates.synonyms.pagination.rowsPerPage,
+								VertigoUi.componentStates.synonyms.pagination.page * VertigoUi.componentStates.synonyms.pagination.rowsPerPage);
+			}
+		</script>
+		<title th:text="#{dictionary.title}"></title>
+	</head>
+	
+	<body>
+		<section layout:fragment="content-header-actions">
+			<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" 
+					       @click="vueData.meaningEdit = Vue.util.extend({}, vueData.nodeNew); $refs.meaningEdit.show()"></q-btn>
+		</section>
+		
+		<section layout:fragment="page-content">
+			
+			<vu:block id="meanings" th:title="#{dictionary.list}">
+				<vu:slot name="actions_slot">
+				 	<q-input v-model="componentStates.synonyms.pagination.search" dense clearable 
+	      				type="search" 
+	      				placeholder= Filter
+	      				@keydown.esc="componentStates.synonyms.pagination.search = '';"
+	      				style="width:300px">
+						<template v-slot:prepend>
+				        	<q-icon name="search" ></q-icon>
+				        </template>	
+        			</q-input> 				
+				</vu:slot>
+				<q-list dense>
+					<q-item v-for="(synonym, index) in getDisplayedSynonyms()" 
+							@click.native="goTo('../meaning/' + synonym.meaId)"	
+							style="cursor : pointer;"		
+					>	
+						<q-item-section> 							
+								{{synonym.label}}																										
+						</q-item-section>
+					</q-item>
+				</q-list>
+			</vu:block>
+				
+			<vu:popup-ajax action="_deletemeaning" vModel="showPopupMeaning" th:message="supprimer"  dataName="meaId" successAction="'VUiPage.$refs.meaningEdit.hide'"></vu:popup-ajax>
+			
+			<vu:table list="synonyms" 
+						componentId="synonyms"  
+						tr_style="cursor : pointer;"
+					  	sortBy="label" 
+					  	:binary-state-sort="true"
+					  	tr_@click.native="|goTo('@{/bot/{id}/meaning/(id=${model.bot.botId})}'+props.row.meaId)|" 
+			>
+				
+					<vu:include-data object="synonyms" field="'*'" />
+					<vu:column field="label" />
+			</vu:table>
+			
+			
+			<q-dialog ref="meaningEdit" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.meaningEdit">
+				<q-card>
+					<q-form method="post" action="savemeaning">
+						<q-card-section>
+							<div class="text-h6" th:text="#{dictionary.new}"></div>
+						</q-card-section>
+						
+						<q-card-section >
+							<vu:text-field object="meaningEdit" field="label"/>
+						</q-card-section>
+						
+					<input type="hidden" name="meaningEdit" :value="vueData.meaningEdit" />
+					
+						<q-card-actions align="around">
+							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<q-btn v-if="vueData.meaningEdit.meaId" th:label="#{bot.delete}" color="red" @click="componentStates.meaId = vueData.meaningEdit.meaId; componentStates.showPopupMeaning = true " ></q-btn>
+							<q-btn type="submit" th:title="#{dictionary.create}" th:label="#{dictionary.create}" th:aria-label="#{dictionary.create}" color="primary" ></q-btn> 
+						</q-card-actions>
+					</q-form>
+				</q-card>
+			</q-dialog>
+			
+			
+		</section>
+	</body>
+</html>
