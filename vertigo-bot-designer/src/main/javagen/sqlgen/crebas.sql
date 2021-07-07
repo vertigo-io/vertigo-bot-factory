@@ -211,12 +211,8 @@ create table KIND_TOPIC
 (
     KTO_CD      	 VARCHAR(100)	not null,
     LABEL       	 VARCHAR(100)	not null,
-    TITLE_ENGLISH	 VARCHAR(100)	not null,
-    TITLE_FRENCH	 VARCHAR(100)	not null,
-    DESCRIPTION_ENGLISH	 VARCHAR(100)	,
-    DESCRIPTION_FRENCH	 VARCHAR(100)	,
-    DEFAULT_ENGLISH	 TEXT        	not null,
-    DEFAULT_FRENCH	 TEXT        	not null,
+    DESCRIPTION 	 VARCHAR(100)	not null,
+    DEFAULT_TEXT	 TEXT        	not null,
     constraint PK_KIND_TOPIC primary key (KTO_CD)
 );
 
@@ -226,23 +222,11 @@ comment on column KIND_TOPIC.KTO_CD is
 comment on column KIND_TOPIC.LABEL is
 'Label';
 
-comment on column KIND_TOPIC.TITLE_ENGLISH is
-'Title (English)';
+comment on column KIND_TOPIC.DESCRIPTION is
+'Description';
 
-comment on column KIND_TOPIC.TITLE_FRENCH is
-'Title (French)';
-
-comment on column KIND_TOPIC.DESCRIPTION_ENGLISH is
-'Description (English)';
-
-comment on column KIND_TOPIC.DESCRIPTION_FRENCH is
-'Description (French)';
-
-comment on column KIND_TOPIC.DEFAULT_ENGLISH is
-'Default text (English)';
-
-comment on column KIND_TOPIC.DEFAULT_FRENCH is
-'Default text (French)';
+comment on column KIND_TOPIC.DEFAULT_TEXT is
+'Default text';
 
 -- ============================================================
 --   Table : MEDIA_FILE_INFO                                        

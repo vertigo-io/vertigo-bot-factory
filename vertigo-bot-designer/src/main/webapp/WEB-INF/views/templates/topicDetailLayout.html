@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true"
+	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=topics"
 	>
   <head>
  
@@ -82,6 +82,7 @@
 					<vu:grid-cell></vu:grid-cell>
 				</vu:grid>
 			</vu:block>
+			
 			<vu:block id="training" th:title="#{topic.menu.training}">
 				<vu:slot name="actions_slot">
 					<q-input v-model="componentStates.nluTrainingSentences.pagination.search" dense clearable 
@@ -145,7 +146,9 @@
 	      				  :direction-links="true" ></q-pagination>
     			</div>
 			</vu:block>
-			<section layout:fragment="content-specific"></section>
+			
+			<section layout:fragment="content-specific" class="q-col-gutter-md"></section>
+			
 			<q-page-sticky position="bottom-right">
 				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
 			</q-page-sticky>

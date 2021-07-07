@@ -20,29 +20,13 @@ public enum DtResources implements MessageKey {
 	 */
 	fldKindTopic$label,
 	/**
-	 * Title (English).
+	 * Description.
 	 */
-	fldKindTopic$titleEnglish,
+	fldKindTopic$description,
 	/**
-	 * Title (French).
+	 * Default text.
 	 */
-	fldKindTopic$titleFrench,
-	/**
-	 * Description (English).
-	 */
-	fldKindTopic$descriptionEnglish,
-	/**
-	 * Description (French).
-	 */
-	fldKindTopic$descriptionFrench,
-	/**
-	 * Default text (English).
-	 */
-	fldKindTopic$defaultEnglish,
-	/**
-	 * Default text (French).
-	 */
-	fldKindTopic$defaultFrench,
+	fldKindTopic$defaultText,
 
 	/***********************************************************
 	/** NluTrainingExport.

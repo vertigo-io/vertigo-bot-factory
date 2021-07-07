@@ -207,18 +207,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ktoCd,
 		/** Propriété 'Label'. */
 		label,
-		/** Propriété 'Title (English)'. */
-		titleEnglish,
-		/** Propriété 'Title (French)'. */
-		titleFrench,
-		/** Propriété 'Description (English)'. */
-		descriptionEnglish,
-		/** Propriété 'Description (French)'. */
-		descriptionFrench,
-		/** Propriété 'Default text (English)'. */
-		defaultEnglish,
-		/** Propriété 'Default text (French)'. */
-		defaultFrench	}
+		/** Propriété 'Description'. */
+		description,
+		/** Propriété 'Default text'. */
+		defaultText	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.
