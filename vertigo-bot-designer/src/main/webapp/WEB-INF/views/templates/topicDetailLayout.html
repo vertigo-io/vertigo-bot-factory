@@ -15,7 +15,16 @@
 		<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
 		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		
+		<script th:src="@{/static/js/jquery.lettering-0.6.1.min.js}"></script>
+		
 		<script th:inline="javascript">
+		
+			$(document).ready(function() {
+			  $(".word_split").lettering('words');
+			});
+		
 			function normalizeString(str) {
 				if (str)
 					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -59,6 +68,7 @@
 					VertigoUi.vueData.utterTexts.push({});
 				}
 			}
+			
 			
 		</script>
 		</head>
@@ -117,8 +127,8 @@
 							<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.nluTrainingSentences.length - 1 - index})"
 								color="primary" dense size="sm" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
 						</q-item-section>
-						<q-item-section>
-							{{nluTrainingSentence.text}}
+						<q-item-section >
+							<span class="word_split">{{nluTrainingSentence.text}}</span>
 							<q-popup-edit th:if="${!model.modeReadOnly}"
 										  buttons label-set="Save" label-cancel="Cancel"
 										  v-model="nluTrainingSentence.text"
@@ -154,5 +164,11 @@
 			</q-page-sticky>
 		</section>
 		
-
+		<script th:inline="javascript">
+			
+			var elements = document.getElementsByClassName('word*');
+			elements.addEventListener("mouseenter", function( event ) {
+				console.log("coucou");				
+				}, false);
+		</script>
 </html>
