@@ -120,6 +120,8 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
+		checkCategory(topic);
+
 		final Long botId = chatbot.getBotId();
 		final DtList<UtterText> utterTexts = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey),
 				uiMessageStack);

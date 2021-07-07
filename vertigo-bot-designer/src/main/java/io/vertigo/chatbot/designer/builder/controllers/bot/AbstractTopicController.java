@@ -12,6 +12,7 @@ import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
@@ -194,6 +195,12 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 
 		topicServices.deleteTopic(chatbot, topic);
 		return "redirect:/bot/" + topic.getBotId() + "/topics/";
+	}
+
+	public void checkCategory(final Topic topic) {
+		if (topic.getTopCatId() == null) {
+			throw new VUserException(TopicsMultilingualResources.ERR_CATEGORY);
+		}
 	}
 
 }
