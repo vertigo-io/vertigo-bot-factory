@@ -76,7 +76,10 @@ public class TopicServices implements Component {
 	private void hasUniqueCode(final Topic topic) {
 		final Optional<Long> topIdOpt = topic.getTopId() != null ? Optional.of(topic.getTopId()) : Optional.empty();
 		if (topicPAO.checkUnicityTopicCode(topic.getBotId(), topic.getCode(), topIdOpt)) {
-			throw new VUserException("the code is not unique, please select another");
+			throw new VUserException("The code is not unique, please select another");
+		}
+		if (checkSpecialCharacters(topic.getCode())) {
+			throw new VUserException("The code cannot contain the following characters : '[', ']', '|', '¤'. ");
 		}
 	}
 
@@ -196,8 +199,12 @@ public class TopicServices implements Component {
 				.collect(VCollectors.toDtList(NluTrainingSentence.class));
 
 		for (final NluTrainingSentence nts : ntsToSave) {
+			if (checkSpecialCharacters(nts.getText())) {
+				throw new VUserException("The responses cannot contain the following characters : '[', ']', '|', '¤'. ");
+			}
 			nts.setTopId(topic.getTopId());
 			nluTrainingSentenceDAO.save(nts);
+
 		}
 
 		return ntsToSave;
@@ -206,4 +213,20 @@ public class TopicServices implements Component {
 	public void removeAllNTSFromBot(final Chatbot bot) {
 		topicPAO.removeAllNluTrainingSentenceByBotId(bot.getBotId());
 	}
+
+	public Topic getTopicByCodeBotId(final Long botId, final String code) {
+		final DtList<Topic> listTopics = topicDAO.getTopicByCodeBotId(botId, code);
+		if (listTopics.isEmpty()) {
+			return null;
+		}
+		if (listTopics.size() > 1) {
+			throw new VUserException("Several topics have the same code : " + code + ".");
+		}
+		return listTopics.get(0);
+	}
+
+	public boolean checkSpecialCharacters(final String string) {
+		return string.contains("[") || string.contains("]") || string.contains("|") || string.contains("¤");
+	}
+
 }

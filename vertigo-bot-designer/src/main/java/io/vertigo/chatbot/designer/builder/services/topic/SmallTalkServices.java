@@ -22,6 +22,7 @@ import io.vertigo.chatbot.designer.builder.smallTalk.SmallTalkPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -68,7 +69,7 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 
 	public SmallTalk saveSmallTalk(@SecuredOperation("botContributor") final Chatbot chatbot, final SmallTalk smallTalk,
 			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList, final Topic topic) {
+			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList, final Topic topic, boolean isEnabled) {
 
 		Assertion.check()
 				.isNotNull(smallTalk).isNotNull(topic)
@@ -89,9 +90,16 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 		utterTextServices.removeAllUtterTextBySmtId(chatbot, savedST.getSmtId());
 		final DtList<UtterText> uttToSave = utterTextServices.createNoBlankUtterTextBySmallTalk(chatbot, savedST, utterTexts);
 
-		topicServices.save(savedTopic, !uttToSave.isEmpty() && topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
+		isEnabled &= !(uttToSave.isEmpty() && buttonList.isEmpty()) && topic.getIsEnabled();
+		topicServices.save(savedTopic, isEnabled, nluTrainingSentences, nluTrainingSentencesToDelete);
 
 		// remove and create buttons
+
+		for (final ResponseButton button : buttonList) {
+			if (topicServices.checkSpecialCharacters(button.getText())) {
+				throw new VUserException("The button cannot contain the following characters : '[', ']', '|', '¤'. ");
+			}
+		}
 		responsesButtonServices.removeAllButtonsBySmtId(chatbot, savedST);
 		responsesButtonServices.saveAllButtonsBySmtId(chatbot, savedST, buttonList);
 		return savedST;
@@ -138,7 +146,7 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 		utterTexts.add(utterText);
 
 		saveSmallTalk(chatbot, smt, new DtList<NluTrainingSentence>(NluTrainingSentence.class), new DtList<NluTrainingSentence>(NluTrainingSentence.class), utterTexts,
-				new DtList<>(ResponseButton.class), topic);
+				new DtList<>(ResponseButton.class), topic, topic.getIsEnabled());
 	}
 
 	@Override

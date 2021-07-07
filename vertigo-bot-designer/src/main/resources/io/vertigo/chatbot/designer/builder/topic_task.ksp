@@ -153,5 +153,18 @@ create Task TkGetTopicReferencingTopId {
 	out topic 				{domain : DoDtTopic		 			cardinality:"*"}
 } 
 
+create Task TkGetTopicByCodeBotId {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select top.*
+			from topic top
+			where top.bot_id = #botId#
+			and top.code = #code#
+            "
+	in botId				{domain : DoId,						cardinality:"1"} 
+	in code					{domain : DoCode         			cardinality:"1" }
+	out topic 				{domain : DoDtTopic		 			cardinality:"*"}
+} 
+
 
 

@@ -46,7 +46,7 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 
 	public ScriptIntention save(@SecuredOperation("botAdm") final Chatbot chatbot, final ScriptIntention scriptIntention,
 			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-			final Topic topic) {
+			final Topic topic, boolean isEnabled) {
 
 		Assertion.check().isNotNull(scriptIntention)
 				.isNotNull(nluTrainingSentences)
@@ -59,8 +59,8 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 		scriptIntention.setTopId(savedTopic.getTopId());
 		final ScriptIntention savedSI = this.save(scriptIntention);
 
-		boolean isEnabled = scriptIntention.getScript() != null ? !scriptIntention.getScript().isBlank() : false;
-		isEnabled &= topic.getIsEnabled();
+		isEnabled &= scriptIntention.getScript() != null ? !scriptIntention.getScript().isBlank() : false;
+
 		topicServices.save(savedTopic, isEnabled, nluTrainingSentences, nluTrainingSentencesToDelete);
 		return savedSI;
 	}

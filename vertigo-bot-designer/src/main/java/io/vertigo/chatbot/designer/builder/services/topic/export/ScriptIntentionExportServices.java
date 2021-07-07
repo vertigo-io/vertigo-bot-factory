@@ -1,6 +1,8 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -12,15 +14,28 @@ import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
 import io.vertigo.chatbot.designer.builder.topic.export.ScriptIntentionExport;
+import io.vertigo.chatbot.domain.DtDefinitions.ScriptIntentionFields;
+import io.vertigo.commons.codec.CodecManager;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datastore.entitystore.EntityStoreManager;
 
 @Transactional
 public class ScriptIntentionExportServices implements TopicsExportServices, Component {
 
 	@Inject
 	private TopicServices topicServices;
+
+	@Inject
+	private CodecManager codecManager;
+
+	@Inject
+	private EntityStoreManager storeManager;
+
+	@Inject
+	private SmartTypeManager smartTypeManager;
 
 	@Inject
 	private ExportPAO exportPAO;
@@ -43,5 +58,13 @@ public class ScriptIntentionExportServices implements TopicsExportServices, Comp
 			result.put(export.getTopId(), export.getBt());
 		}
 		return result;
+	}
+
+	public List<String> getColumnNameListToExport() {
+		final List<String> columnNameList = new ArrayList<>();
+		columnNameList.add(ScriptIntentionFields.topId.name());
+		columnNameList.add(ScriptIntentionFields.sinId.name());
+		columnNameList.add(ScriptIntentionFields.script.name());
+		return columnNameList;
 	}
 }

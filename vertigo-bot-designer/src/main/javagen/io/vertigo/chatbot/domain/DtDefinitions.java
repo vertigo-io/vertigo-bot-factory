@@ -79,6 +79,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TopicCategory(io.vertigo.chatbot.commons.domain.topic.TopicCategory.class),
 		/** Objet de données TopicExport. */
 		TopicExport(io.vertigo.chatbot.commons.domain.TopicExport.class),
+		/** Objet de données TopicFileExport. */
+		TopicFileExport(io.vertigo.chatbot.commons.domain.topic.TopicFileExport.class),
 		/** Objet de données TopicIhm. */
 		TopicIhm(io.vertigo.chatbot.commons.domain.topic.TopicIhm.class),
 		/** Objet de données TrainerInfo. */
@@ -504,6 +506,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum TopicCategoryFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.TopicCategory> {
 		/** Propriété 'Topic category id'. */
 		topCatId,
+		/** Propriété 'Code'. */
+		code,
 		/** Propriété 'Topic category label'. */
 		label,
 		/** Propriété 'Category level'. */
@@ -525,6 +529,39 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		nluTrainingSentences,
 		/** Propriété 'Topic BT'. */
 		topicBT	}
+
+	/**
+	 * Enumération des champs de TopicFileExport.
+	 */
+	public enum TopicFileExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.TopicFileExport> {
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Category'. */
+		category,
+		/** Propriété 'Description'. */
+		description,
+		/** Propriété 'Tag'. */
+		tag,
+		/** Propriété 'Start date'. */
+		dateStart,
+		/** Propriété 'End date'. */
+		dateEnd,
+		/** Propriété 'Active'. */
+		active,
+		/** Propriété 'Training phrases'. */
+		trainingPhrases,
+		/** Propriété 'Topic type'. */
+		typeTopic,
+		/** Propriété 'Script'. */
+		script,
+		/** Propriété 'Response'. */
+		response,
+		/** Propriété 'Buttons'. */
+		buttons,
+		/** Propriété 'End of conversation'. */
+		isEnd	}
 
 	/**
 	 * Enumération des champs de TopicIhm.

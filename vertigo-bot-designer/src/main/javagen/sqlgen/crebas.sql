@@ -498,6 +498,7 @@ comment on column TOPIC.KTO_CD is
 create table TOPIC_CATEGORY
 (
     TOP_CAT_ID  	 NUMERIC     	not null,
+    CODE        	 VARCHAR(100)	not null,
     LABEL       	 VARCHAR(100)	not null,
     LEVEL       	 NUMERIC     	,
     IS_ENABLED  	 bool        	not null,
@@ -508,6 +509,9 @@ create table TOPIC_CATEGORY
 
 comment on column TOPIC_CATEGORY.TOP_CAT_ID is
 'Topic category id';
+
+comment on column TOPIC_CATEGORY.CODE is
+'Code';
 
 comment on column TOPIC_CATEGORY.LABEL is
 'Topic category label';

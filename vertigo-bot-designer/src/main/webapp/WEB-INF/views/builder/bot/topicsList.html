@@ -31,7 +31,15 @@
 	<body>
 		<section layout:fragment="content-header-actions">
 			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" 
-					       @click="vueData.newTopic = Vue.util.extend({}, vueData.newTopic); $refs.newTopic.show()"></q-btn>				
+					       @click="vueData.newTopic = Vue.util.extend({}, vueData.newTopic); $refs.newTopic.show()"></q-btn>	
+					      
+			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="file_download" th:aria-label="#{action.add}" th:title="#{action.add}" 
+					       @click="$refs.exportTopic.show()"></q-btn>	
+					       		       		
+			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="file_upload" th:aria-label="#{action.add}" th:title="#{action.add}" 
+					       @click="$refs.importTopic.show()"></q-btn>	
+							
+					
 		</section>
 		
 		<section layout:fragment="page-content">
@@ -83,11 +91,60 @@
 					<input type="hidden" name="vContext[selectionList]" :value="vueData.selectionList" />
 					
 					<q-card-actions align="around">
-						
 							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
 							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
 							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn> 
+					</q-card-actions>
+					</q-form>
+				</q-card>
+			</q-dialog>
+			
+			<q-dialog ref="importTopic" th:with="viewMode='edit'" >
+				<q-card>
+					<q-form method="post" action="_importTopic">
+					<q-card-section>
+						<div class="text-h6" th:text="#{popup.import.title}"></div>						
+					</q-card-section>
 					
+					<vu:include-data-primitive key="locale" />
+					<vu:fileupload th:url="'@{/commons/upload}'" key="importTopicFileUri" multiple="false"/>
+				
+					
+					
+					<q-card-actions align="around">
+							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
+							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn> 
+					</q-card-actions>
+					</q-form>
+				</q-card>
+			</q-dialog>
+			
+			<q-dialog ref="exportTopic" th:with="viewMode='edit'" >
+				<q-card>
+					<q-form method="post" action="_exportTopicFile">
+					<q-card-section>
+						<div class="text-h6" th:text="#{popup.export.title}"></div>						
+					</q-card-section>
+									
+					<q-card-section style="width: 400px;">
+						<vu:include-data object="categoryList" field="'*'"/>
+						<q-select
+							clearable
+							filled
+							map-options
+							emit-value
+							v-model="vueData.selectionCatList"
+							:options="transformListForSelection('categoryList', 'topCatId', 'label')"
+							th:label="category"
+							stack-label>
+						</q-select>
+					</q-card-section>
+					<input type="hidden" name="vContext[selectionCatList]" :value="vueData.selectionCatList" />
+					<q-card-actions align="around">
+							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
+							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" v-close-popup></q-btn> 
 					</q-card-actions>
 					</q-form>
 				</q-card>

@@ -17,6 +17,7 @@ public final class TopicCategory implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private Long topCatId;
+	private String code;
 	private String label;
 	private Long level;
 	private Boolean isEnabled;
@@ -73,6 +74,25 @@ public final class TopicCategory implements Entity {
 	 */
 	public void setTopCatId(final Long topCatId) {
 		this.topCatId = topCatId;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Code'.
+	 * @return String code <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Code")
+	public String getCode() {
+		return code;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Code'.
+	 * @param code String <b>Obligatoire</b>
+	 */
+	public void setCode(final String code) {
+		this.code = code;
 	}
 	
 	/**

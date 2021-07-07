@@ -13,6 +13,7 @@ import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
@@ -46,6 +47,9 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	protected List<TopicInterfaceServices> topicInterfaceServices;
 	@Inject
 	protected TopicCategoryServices topicCategoryServices;
+
+	@Inject
+	protected NluTrainingSentenceServices nluTrainingSentenceServices;
 
 	public void initContext(final ViewContext viewContext, final Chatbot bot, final Topic topic) {
 		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Incoherent parameters");
@@ -87,7 +91,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentenceIn,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
 
-		addTrainingSentense(newNluTrainingSentenceIn, nluTrainingSentences);
+		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentenceIn, nluTrainingSentences);
 
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluTrainingSentences);
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
@@ -137,26 +141,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey, nluTrainingSentencesToDelete);
 
 		return viewContext;
-	}
-
-	public void addTrainingSentense(final String newNluTrainingSentenceIn,
-			final DtList<NluTrainingSentence> nluTrainingSentences) {
-		if (StringUtil.isBlank(newNluTrainingSentenceIn)) {
-			return;
-		}
-
-		final String newNluTrainingSentence = newNluTrainingSentenceIn.trim();
-
-		final boolean exists = nluTrainingSentences.stream()
-				.anyMatch(its -> its.getText().equalsIgnoreCase(newNluTrainingSentence));
-		if (exists) {
-			throw new VUserException("This sentense already exists");
-		}
-
-		final NluTrainingSentence newText = new NluTrainingSentence();
-		newText.setText(newNluTrainingSentence);
-
-		nluTrainingSentences.add(newText);
 	}
 
 	abstract Topic getTopic(final D object);

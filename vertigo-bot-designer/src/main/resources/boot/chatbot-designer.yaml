@@ -91,9 +91,13 @@ modules:
     features:
       - webservices:
     featuresConfig:
-      - webservices.javalin:
+      - webservices.javalin: 
           apiPrefix: /api
-  
+  io.vertigo.quarto.QuartoFeatures:
+    features:      
+      - export : # export
+    featuresConfig:
+      - exporter.csv: # export csv 
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
 
 # utilisation de nos modules métier  

@@ -40,6 +40,10 @@
 		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_04.sql" />	
 	</changeSet>
 	
+	<changeSet author="vprima" id="add code to topic category">
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_15.sql" />	
+	</changeSet>
+	
 	<changeSet author="vprima" id="change code type for topic">
 		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_28.sql" />	
 	</changeSet>
