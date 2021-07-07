@@ -356,3 +356,7 @@ table .col_DoInstant {
 	border-radius: 30px;
 	overflow: hidden;
 }
+
+.word_split span:hover {
+    font-weight:bold;
+}
