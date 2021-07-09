@@ -113,7 +113,7 @@ public class MeaningServices implements Component {
 		syn.setMeaId(meaId);
 		syn.setBotId(botId);
 		return synonymServices.save(syn);
-	}
+		}
 
 	/**
 	 * get meaning by label and botId

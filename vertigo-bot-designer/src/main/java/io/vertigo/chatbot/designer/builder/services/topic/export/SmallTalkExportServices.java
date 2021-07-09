@@ -20,11 +20,15 @@ import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
+import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
+import io.vertigo.chatbot.designer.builder.services.topic.SynonymServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
 import io.vertigo.chatbot.designer.builder.topic.export.ResponseButtonExport;
 import io.vertigo.chatbot.designer.builder.topic.export.UtterTextExport;
+import io.vertigo.chatbot.designer.domain.Meaning;
+import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -40,6 +44,12 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Scr
 
 	@Inject
 	private MeaningServices meaningServices;
+
+	@Inject
+	private MeaningServices meaningServices;
+
+	@Inject
+	private SynonymServices synonymServices;
 
 	@Inject
 	private ExportPAO exportPAO;
