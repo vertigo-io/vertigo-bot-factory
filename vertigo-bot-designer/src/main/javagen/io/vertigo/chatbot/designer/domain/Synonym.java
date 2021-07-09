@@ -39,7 +39,7 @@ public final class Synonym implements Entity {
 			primaryDtDefinitionName = "DtMeaning",
 			primaryIsNavigable = true,
 			primaryRole = "Meaning",
-			primaryLabel = "Intention",
+			primaryLabel = "Meaning",
 			primaryMultiplicity = "1..1",
 			foreignDtDefinitionName = "DtSynonym",
 			foreignIsNavigable = false,
@@ -113,17 +113,17 @@ public final class Synonym implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Intention'.
+	 * Récupère la valeur de la propriété 'Meaning'.
 	 * @return Long meaId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Intention", fkDefinition = "DtMeaning" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Meaning", fkDefinition = "DtMeaning" )
 	public Long getMeaId() {
 		return (Long) meaIdAccessor.getId();
 	}
 
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Intention'.
+	 * Définit la valeur de la propriété 'Meaning'.
 	 * @param meaId Long <b>Obligatoire</b>
 	 */
 	public void setMeaId(final Long meaId) {
@@ -139,8 +139,8 @@ public final class Synonym implements Entity {
 	}
 
  	/**
-	 * Association : Intention.
-	 * @return l'accesseur vers la propriété 'Intention'
+	 * Association : Meaning.
+	 * @return l'accesseur vers la propriété 'Meaning'
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.designer.domain.Meaning> meaning() {
 		return meaIdAccessor;

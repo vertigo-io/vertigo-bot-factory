@@ -2,7 +2,12 @@ package io.vertigo.chatbot.designer.dao;
 
 import javax.inject.Inject;
 
+import java.util.Optional;
 import io.vertigo.core.lang.Generated;
+import io.vertigo.core.node.Node;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
@@ -26,6 +31,43 @@ public final class MeaningDAO extends DAO<Meaning, java.lang.Long> implements St
 	@Inject
 	public MeaningDAO(final EntityStoreManager entityStoreManager, final TaskManager taskManager, final SmartTypeManager smartTypeManager) {
 		super(Meaning.class, entityStoreManager, taskManager, smartTypeManager);
+	}
+
+
+	/**
+	 * Creates a taskBuilder.
+	 * @param name  the name of the task
+	 * @return the builder 
+	 */
+	private static TaskBuilder createTaskBuilder(final String name) {
+		final TaskDefinition taskDefinition = Node.getNode().getDefinitionSpace().resolve(name, TaskDefinition.class);
+		return Task.builder(taskDefinition);
+	}
+
+	/**
+	 * Execute la tache TkGetMeaningByLabelAndBotId.
+	 * @param botId Long
+	 * @param label String
+	 * @return Option de Meaning meaning
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetMeaningByLabelAndBotId",
+			request = "SELECT 	mea.*" + 
+ "			from meaning mea " + 
+ "			join synonym syn on syn.mea_id = mea.mea_id			" + 
+ "			where mea.bot_id = #botId#			" + 
+ "			and syn.label = #label#" + 
+ "			LIMIT 1",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtMeaning")
+	public Optional<io.vertigo.chatbot.designer.domain.Meaning> getMeaningByLabelAndBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "label", smartType = "STyLabel") final String label) {
+		final Task task = createTaskBuilder("TkGetMeaningByLabelAndBotId")
+				.addValue("botId", botId)
+				.addValue("label", label)
+				.build();
+		return Optional.ofNullable((io.vertigo.chatbot.designer.domain.Meaning) getTaskManager()
+				.execute(task)
+				.getResult());
 	}
 
 }

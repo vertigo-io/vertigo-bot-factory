@@ -491,7 +491,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Chatbot'. */
 		botId,
-		/** Propriété 'Intention'. */
+		/** Propriété 'Meaning'. */
 		meaId	}
 
 	/**

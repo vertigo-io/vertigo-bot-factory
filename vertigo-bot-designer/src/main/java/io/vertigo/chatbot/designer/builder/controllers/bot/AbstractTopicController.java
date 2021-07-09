@@ -183,7 +183,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 
 	public void checkCategory(final Topic topic) {
 		if (topic.getTopCatId() == null) {
-			throw new VUserException(TopicsMultilingualResources.ERR_CATEGORY);
+			throw new VUserException(TopicsMultilingualResources.ERR_MANDATORY_CATEGORY);
 		}
 	}
 

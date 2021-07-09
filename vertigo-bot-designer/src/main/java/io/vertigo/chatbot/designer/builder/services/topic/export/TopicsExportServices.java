@@ -23,4 +23,5 @@ public interface TopicsExportServices {
 	 * @return map<topId, bt> associated
 	 */
 	public Map<Long, String> mapTopicToBt(final Chatbot bot);
+
 }

@@ -37,7 +37,8 @@ public class SynonymServices implements Component {
 	}
 
 	public DtList<Synonym> getAllSynonymByMeaning(@SecuredOperation("botVisitor") final Meaning meaning) {
-		return synonymDAO.findAll(Criterions.isEqualTo(SynonymFields.meaId, meaning.getMeaId()), DtListState.of(1000));
+
+		return synonymDAO.getSynonymByMeaning(meaning.getMeaId());
 	}
 
 }
