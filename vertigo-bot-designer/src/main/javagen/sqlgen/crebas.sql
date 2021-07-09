@@ -500,7 +500,7 @@ comment on column SYNONYM.BOT_ID is
 'Chatbot';
 
 comment on column SYNONYM.MEA_ID is
-'Intention';
+'Meaning';
 
 -- ============================================================
 --   Table : TOPIC                                        

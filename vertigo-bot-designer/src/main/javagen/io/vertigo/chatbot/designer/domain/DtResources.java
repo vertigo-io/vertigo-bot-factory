@@ -84,7 +84,7 @@ public enum DtResources implements MessageKey {
 	 */
 	fldSynonym$botId,
 	/**
-	 * Intention.
+	 * Meaning.
 	 */
 	fldSynonym$meaId,
 

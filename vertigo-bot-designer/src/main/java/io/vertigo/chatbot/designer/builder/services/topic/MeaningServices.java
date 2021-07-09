@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
@@ -74,6 +76,11 @@ public class MeaningServices implements Component {
 		synonymsToDelete.stream()
 				.filter(itt -> itt.getSynId() != null)
 				.forEach(itt -> synonymDAO.delete(itt.getSynId()));
+	}
+
+	public Meaning findMeaningByLabelAndBotId(final String label, final Long botId) {
+		final Optional<Meaning> result = meaningDAO.getMeaningByLabelAndBotId(botId, label);
+		return result.isPresent() ? result.get() : null;
 	}
 
 }

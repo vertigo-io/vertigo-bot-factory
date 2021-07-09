@@ -1,0 +1,17 @@
+package io.vertigo.chatbot.designer.builder.meaning
+
+
+create Task TkGetMeaningByLabelAndBotId {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	mea.*
+			from meaning mea 
+			join synonym syn on syn.mea_id = mea.mea_id			
+			where mea.bot_id = #botId#			
+			and syn.label = #label#
+			LIMIT 1
+             "
+	in botId  			{domain : DoId         		cardinality : "1"  }
+	in label			{domain : DoLabel			cardinality : "1"  }
+	out meaning			{domain : DoDtMeaning		cardinality : "?"  } 
+}

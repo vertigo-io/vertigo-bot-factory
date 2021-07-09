@@ -1,0 +1,13 @@
+package io.vertigo.chatbot.designer.builder.synonym
+
+
+create Task TkGetSynonymByMeaning {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	syn.*
+			from synonym syn 						
+			where syn.mea_id = #meaId#
+             "
+	in meaId  			{domain : DoId         		cardinality : "1"  }
+	out synonyms		{domain : DoDtSynonym		cardinality : "*"  } 
+}

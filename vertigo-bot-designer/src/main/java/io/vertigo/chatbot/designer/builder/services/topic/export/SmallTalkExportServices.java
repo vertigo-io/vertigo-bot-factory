@@ -19,11 +19,15 @@ import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
+import io.vertigo.chatbot.designer.builder.services.topic.SynonymServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
 import io.vertigo.chatbot.designer.builder.topic.export.ResponseButtonExport;
 import io.vertigo.chatbot.designer.builder.topic.export.UtterTextExport;
+import io.vertigo.chatbot.designer.domain.Meaning;
+import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -38,6 +42,12 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Scr
 	private SmallTalkServices smallTalkServices;
 
 	@Inject
+	private MeaningServices meaningServices;
+
+	@Inject
+	private SynonymServices synonymServices;
+
+	@Inject
 	private ExportPAO exportPAO;
 
 	@Override
@@ -48,7 +58,8 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Scr
 	@Override
 	public DtList<TopicExport> exportTopics(final Chatbot bot) {
 		final DtList<Topic> topics = topicServices.getAllTopicRelativeSmallTalkByBot(bot);
-		final DtList<NluTrainingExport> nlus = exportPAO.exportSmallTalkRelativeTrainingSentence(bot.getBotId());
+		final DtList<NluTrainingExport> nlus = generateNLUSynonyms(bot.getBotId());
+		System.out.println(nlus);
 		//Create bt by topics and map to topId
 		final Map<Long, String> mapBtTopic = mapTopicToBt(bot);
 		//Map Topic to NLU and BT
@@ -71,6 +82,138 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Scr
 			responseButtonExport.removeAll(responseList);
 		}
 		return result;
+	}
+
+	/*
+	 * Generate all combinaison of nlu training sentences with synonyms
+	 */
+	final DtList<NluTrainingExport> generateNLUSynonyms(final Long botId) {
+		final DtList<NluTrainingExport> listNluExit = new DtList<>(NluTrainingExport.class);
+		for (final NluTrainingExport nluOriginal : exportPAO.exportSmallTalkRelativeTrainingSentence(botId)) {
+			final String[] listWord = nluOriginal.getText().split("([.,!?:;'\"-]|\\s)+");
+			StringBuilder sequence = new StringBuilder();
+			int key = 0;
+			final Map<Integer, String> mapSequence = new HashMap<>();
+			final Map<Integer, Meaning> mapMeaning = new HashMap<>();
+			Meaning meaning = null;
+			int i = 0;
+			String word = null;
+			//loop on every word, to restructure the phrase into sequence + meaning
+			while (i < listWord.length) {
+				word = listWord[i];
+				meaning = meaningServices.findMeaningByLabelAndBotId(word, botId);
+				//If a meaning is found, the sequence is over
+				if (meaning != null) {
+					mapSequence.put(key, sequence.toString());
+					mapMeaning.put(key, meaning);
+					key++;
+					sequence = new StringBuilder();
+				} else {
+					//if no meaning, the sequence continue
+					sequence.append(word);
+					sequence.append(" ");
+				}
+				i++;
+			}
+			//End of loop, last word
+			if (meaning == null) {
+				if (sequence.length() == 0) {
+					sequence.append(word);
+				}
+				mapSequence.put(key, sequence.toString());
+				mapMeaning.put(key, null);
+			}
+
+			//Creation des combinaisons
+			final List<String> listText = combine(mapMeaning, mapSequence, mapMeaning.size() - 1);
+
+			for (final String text : listText) {
+				final NluTrainingExport nlu = new NluTrainingExport();
+				nlu.setText(text.trim());
+				nlu.setTopId(nluOriginal.getTopId());
+				listNluExit.add(nlu);
+			}
+
+		}
+		return listNluExit;
+
+	}
+
+	/*
+	 * Recursive method to generate nlu with synonyms from portions of an original nlu
+	 * Each part of the final text will be built as follow :
+	 * Text + Synonym + Entry
+	 * The entry is built the same way until no synonym is found
+	 * in the end, the final text will have this structure : text0 + synonym0 + text1 + synonym1 + ... + textn
+	 *
+	 */
+	private List<String> combine(final Map<Integer, Meaning> mapMeaning, final Map<Integer, String> mapSequence, final int i) {
+		final List<String> listExit = new ArrayList<>();
+
+		// The loop is stopped when we hit the first portion
+		if (i >= 0) {
+			final Meaning meaning = mapMeaning.get(i);
+			DtList<Synonym> listSynonyms = new DtList<>(Synonym.class);
+			// The portion can have no meaning in it (last portion)
+			if (meaning != null) {
+				listSynonyms = synonymServices.getAllSynonymByMeaning(meaning);
+			}
+
+			//
+			final List<String> listEntry = combine(mapMeaning, mapSequence, i - 1);
+
+			boolean hasEntry = false;
+			for (int j = 0; j <= listEntry.size(); j++) {
+				boolean hasSynonym = false;
+				for (int k = 0; k <= listSynonyms.size(); k++) {
+
+					Synonym synonym = null;
+					if (k != listSynonyms.size()) {
+						synonym = listSynonyms.get(k);
+						hasSynonym = true;
+					}
+					String entry = null;
+					if (j != listEntry.size()) {
+						entry = listEntry.get(j);
+						hasEntry = true;
+					}
+
+					final StringBuilder portion = new StringBuilder();
+					if (mapSequence.get(i) != null) {
+						portion.append(mapSequence.get(i));
+					}
+					if (synonym != null) {
+						portion.append(synonym.getLabel());
+					}
+					// To add an entry, there has to be either some text or a synonym (ie a portion)
+					// and if a synonym is expected, it has to be not null
+					// and if a previous entry is expected, it has to be not null
+					if (!portion.toString().isEmpty() && !(hasSynonym && synonym == null) && !(hasEntry && entry == null)) {
+						listExit.addAll(populateExit(portion.toString(), entry));
+					}
+				}
+
+			}
+
+		}
+		return listExit;
+	}
+
+	public List<String> populateExit(final String portion, final String entry) {
+		final List<String> listExit = new ArrayList<>();
+		final StringBuilder builder = new StringBuilder();
+
+		if (entry != null) {
+			builder.append(entry);
+		}
+
+		if (portion != null) {
+			builder.append(portion);
+			builder.append(" ");
+		}
+
+		listExit.add(builder.toString());
+		return listExit;
 	}
 
 	@Override
