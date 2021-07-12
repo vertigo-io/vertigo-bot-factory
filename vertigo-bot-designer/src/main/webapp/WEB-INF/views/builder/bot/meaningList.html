@@ -23,9 +23,7 @@
 						.slice().reverse()
 						// search
 						.filter(syn => normalizeString(syn.label).includes(searchNormarlized))
-						// pagination
-						.slice((VertigoUi.componentStates.synonyms.pagination.page - 1) * VertigoUi.componentStates.synonyms.pagination.rowsPerPage,
-								VertigoUi.componentStates.synonyms.pagination.page * VertigoUi.componentStates.synonyms.pagination.rowsPerPage);
+						
 			}
 		</script>
 		<title th:text="#{dictionary.title}"></title>
@@ -51,31 +49,46 @@
 				        </template>	
         			</q-input> 				
 				</vu:slot>
-				<q-list dense>
-					<q-item v-for="(synonym, index) in getDisplayedSynonyms()" 
-							@click.native="goTo('../meaning/' + synonym.meaId)"	
-							style="cursor : pointer;"		
-					>	
-						<q-item-section> 							
-								{{synonym.label}}																										
-						</q-item-section>
-					</q-item>
-				</q-list>
-			</vu:block>
 				
+				
+				<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('synonyms').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
+				<vu:include-data object="synonyms" field="'*'" />
+				<q-table
+				   	:ref="'synonyms'"
+				    :data="getDisplayedSynonyms()"
+				    row-key="synId"
+				    :selected.sync="componentStates.synonyms.selected"
+				    :loading="componentStates.synonyms.loading"
+				    :pagination.sync="componentStates.synonyms.pagination"
+				    :sort-method="VertigoUi.methods.sortCiAi"
+				    table-class="table-secondary" :binary-state-sort="true"
+				    :visible-columns="['label']"
+				  >
+				
+					 <q-tr slot="body" slot-scope="props" :props="props" @click.native="goTo('../../' +props.row.botId + '/meaning/'+props.row.meaId)" style="cursor : pointer;" >
+						 <q-td key="label" :props="props" class="col_STyLabel" >
+							{{ props.row.label }}
+						</q-td>
+					</q-tr>
+					<div class="q-pa-lg flex flex-center">
+					<q-pagination
+					      v-model="componentStates.synonyms.pagination.page"
+					    
+					      :max="Math.ceil(vueData.synonyms.length / componentStates.synonyms.pagination.rowsPerPage)"
+					      :max-pages="6"
+	      				  :boundary-numbers="true"
+	      				  :direction-links="true" >
+	      			</q-pagination>
+	      			</div>
+	      				  
+        
+				</q-table>
+			</vu:block>
+			
+			 				
 			<vu:popup-ajax action="_deletemeaning" vModel="showPopupMeaning" th:message="supprimer"  dataName="meaId" successAction="'VUiPage.$refs.meaningEdit.hide'"></vu:popup-ajax>
 			
-			<vu:table list="synonyms" 
-						componentId="synonyms"  
-						tr_style="cursor : pointer;"
-					  	sortBy="label" 
-					  	:binary-state-sort="true"
-					  	tr_@click.native="|goTo('@{/bot/{id}/meaning/(id=${model.bot.botId})}'+props.row.meaId)|" 
-			>
-				
-					<vu:include-data object="synonyms" field="'*'" />
-					<vu:column field="label" />
-			</vu:table>
+			
 			
 			
 			<q-dialog ref="meaningEdit" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.meaningEdit">

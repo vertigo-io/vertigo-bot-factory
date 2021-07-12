@@ -11,6 +11,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
 import io.vertigo.chatbot.designer.builder.topic.export.ScriptIntentionExport;
@@ -36,6 +37,9 @@ public class ScriptIntentionExportServices implements TopicsExportServices, Comp
 
 	@Inject
 	private SmartTypeManager smartTypeManager;
+
+	@Inject
+	private MeaningServices meaningServices;
 
 	@Inject
 	private ExportPAO exportPAO;
@@ -66,5 +70,27 @@ public class ScriptIntentionExportServices implements TopicsExportServices, Comp
 		columnNameList.add(ScriptIntentionFields.sinId.name());
 		columnNameList.add(ScriptIntentionFields.script.name());
 		return columnNameList;
+	}
+
+	/*
+	 * Generate all combinaison of nlu training sentences with synonyms
+	 */
+	final DtList<NluTrainingExport> generateNLUSynonyms(final Long botId) {
+		final DtList<NluTrainingExport> listNluExit = new DtList<>(NluTrainingExport.class);
+		for (final NluTrainingExport nluOriginal : exportPAO.exportScriptIntentionRelativeTrainingSentence(botId)) {
+
+			//Creation des combinaisons
+			final List<String> listText = meaningServices.generateSentenceWithSynonyms(nluOriginal, botId);
+
+			for (final String text : listText) {
+				final NluTrainingExport nlu = new NluTrainingExport();
+				nlu.setText(text.trim());
+				nlu.setTopId(nluOriginal.getTopId());
+				listNluExit.add(nlu);
+			}
+
+		}
+		return listNluExit;
+
 	}
 }
