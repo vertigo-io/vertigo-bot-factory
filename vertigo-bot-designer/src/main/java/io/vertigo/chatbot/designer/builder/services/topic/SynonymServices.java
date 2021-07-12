@@ -20,25 +20,31 @@ public class SynonymServices implements Component {
 	@Inject
 	private SynonymDAO synonymDAO;
 
-	public Synonym findSynonymById(@SecuredOperation("botVisitor") final Long id) {
+	public Synonym findSynonymById(@SecuredOperation("botAdm") final Long id) {
 		return synonymDAO.get(id);
 	}
 
-	public Synonym save(final Synonym synonym) {
+	public Synonym save(@SecuredOperation("botAdm") final Synonym synonym) {
 		return synonymDAO.save(synonym);
 	}
 
-	public void deleteSynonym(@SecuredOperation("botContributor") final Chatbot bot, final Long synId) {
+	public void delete(@SecuredOperation("botAdm") final Long synId) {
 		synonymDAO.delete(synId);
 	}
 
-	public DtList<Synonym> getAllSynonymByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+	public DtList<Synonym> getAllSynonymByBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		return synonymDAO.findAll(Criterions.isEqualTo(SynonymFields.botId, bot.getBotId()), DtListState.of(1000));
 	}
 
 	public DtList<Synonym> getAllSynonymByMeaning(@SecuredOperation("botVisitor") final Meaning meaning) {
 
 		return synonymDAO.getSynonymByMeaning(meaning.getMeaId());
+	}
+
+	public void removeSynonym(@SecuredOperation("botAdm") final DtList<Synonym> synonymsToDelete) {
+		synonymsToDelete.stream()
+				.filter(itt -> itt.getSynId() != null)
+				.forEach(itt -> delete(itt.getSynId()));
 	}
 
 }
