@@ -9,11 +9,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.TalkInput;
 import io.vertigo.core.lang.VSystemException;
-import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
@@ -21,6 +22,8 @@ public class BotConversationServices implements Component {
 
 	@Inject
 	private JsonEngine jsonEngine;
+
+	private static final Logger LOGGER = LogManager.getLogger(BotConversationServices.class);
 
 	public String createBotInput(final String message, final Map<String, Object> metadatas) {
 		final BotInput input = new BotInput(message, metadatas);
@@ -50,7 +53,8 @@ public class BotConversationServices implements Component {
 		try (ObjectInput in = new ObjectInputStream(bis);) {
 			return (D) in.readObject();
 		} catch (IOException | ClassNotFoundException e) {
-			throw new VSystemException(e.getMessage(), MessageText.of(UtilsMultilingualResources.SERIALIZATION_ERROR).getDisplay());
+			LOGGER.info("error during deserialization of an object", e);
+			throw new VSystemException("error during serialization of object");
 		}
 
 	}

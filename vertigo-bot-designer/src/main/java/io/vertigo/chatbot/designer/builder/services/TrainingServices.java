@@ -60,7 +60,6 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
@@ -217,7 +216,8 @@ public class TrainingServices implements Component {
 					.put(Entity.entity(fdmp, fdmp.getMediaType()));
 
 		} catch (final IOException e) {
-			throw new VSystemException(e, MessageText.of(ModelMultilingualResources.READ_MODEL_ERROR).getDisplay());
+			LOGGER.info("error during loading model");
+			throw new VSystemException(e, "error during loading model");
 		}
 
 		if (response.getStatus() != 204) {

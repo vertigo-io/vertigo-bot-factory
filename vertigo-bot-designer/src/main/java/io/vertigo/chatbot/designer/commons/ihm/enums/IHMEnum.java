@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.commons.ihmEnum;
+package io.vertigo.chatbot.designer.commons.ihm.enums;
 
 public interface IHMEnum {
 	String getLabel();

@@ -6,9 +6,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
 
-import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
 import io.vertigo.core.lang.VSystemException;
-import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
@@ -34,7 +32,7 @@ public final class ObjectConvertionUtils {
 		try (ObjectInput in = new ObjectInputStream(bis);) {
 			return (D) in.readObject();
 		} catch (IOException | ClassNotFoundException e) {
-			throw new VSystemException(e.getMessage(), MessageText.of(UtilsMultilingualResources.SERIALIZATION_ERROR).getDisplay());
+			throw new VSystemException(e, "serialization error");
 		}
 
 	}

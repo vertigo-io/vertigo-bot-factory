@@ -20,9 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.io.IOUtils;
 
-import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
 import io.vertigo.core.lang.VSystemException;
-import io.vertigo.core.locale.MessageText;
 
 public final class HttpRequestUtils {
 
@@ -48,10 +46,10 @@ public final class HttpRequestUtils {
 		try {
 			response = client.send(request, handler);
 			if (response.statusCode() != successStatutCode) {
-				throw new VSystemException(MessageText.of(UtilsMultilingualResources.SEND_REQUEST_ERROR).getDisplay() + request.uri().toString());
+				throw new VSystemException("error during sending request {0}", request.uri().toString());
 			}
 		} catch (IOException | InterruptedException e) {
-			throw new VSystemException(e.getMessage(), MessageText.of(UtilsMultilingualResources.SEND_REQUEST_ERROR).getDisplay());
+			throw new VSystemException("error during sending request {0}", request.uri().toString());
 		}
 		return response;
 	}
@@ -95,9 +93,9 @@ public final class HttpRequestUtils {
 				}
 			}
 
-			throw new VSystemException(MessageText.of(UtilsMultilingualResources.SEND_REQUEST_ERROR_WITH_PARAMS).getDisplay(), responseCode);
+			throw new VSystemException("error during send a request {0}", responseCode);
 		} catch (final IOException e) {
-			throw new VSystemException(e, MessageText.of(UtilsMultilingualResources.SEND_REQUEST_ERROR).getDisplay());
+			throw new VSystemException(e, "error during send a request");
 		}
 	}
 

@@ -17,7 +17,6 @@ import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -39,13 +38,13 @@ public class NodeServices implements Component {
 	public ChatbotNode getNodeByNodeId(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
 		final ChatbotNode node = chatbotNodeDAO.get(nodId);
 		if (!node.getBotId().equals(bot.getBotId())) {
-			throw new VSystemException(MessageText.of(ModelMultilingualResources.NODE_BOT_ERROR).getDisplay());
+			throw new VSystemException("this node is not a part of this bot");
 		}
 		return node;
 	}
 
-	public DtList<ChatbotNode> getAllNodesByBotId(final Long botId) {
-		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, botId), DtListState.of(100));
+	public DtList<ChatbotNode> getAllNodesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, bot.getBotId()), DtListState.of(100));
 	}
 
 	public Optional<ChatbotNode> getDevNodeByBotId(final Long botId) {
@@ -83,7 +82,7 @@ public class NodeServices implements Component {
 
 	public DtList<ChatbotNode> getNodesByBot(@SecuredOperation("botVisitor") final Chatbot chatbot) {
 		if (authorizationManager.isAuthorized(chatbot, ChatbotOperations.botAdm)) {
-			return getAllNodesByBotId(chatbot.getBotId());
+			return getAllNodesByBot(chatbot);
 		}
 		final DtList<ChatbotNode> nodes = new DtList<>(ChatbotNode.class);
 		final Optional<ChatbotNode> devNode = getDevNodeByBotId(chatbot.getBotId());
