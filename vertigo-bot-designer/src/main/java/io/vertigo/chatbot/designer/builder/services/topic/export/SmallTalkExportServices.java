@@ -10,17 +10,12 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
-import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
-import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
-import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
@@ -31,7 +26,7 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
 
 @Transactional
-public class SmallTalkExportServices implements TopicExportInterfaceServices<ScriptIntention>, Component {
+public class SmallTalkExportServices implements TopicExportInterfaceServices<SmallTalk>, Component {
 
 	@Inject
 	private TopicServices topicServices;
@@ -40,29 +35,11 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Scr
 	private SmallTalkServices smallTalkServices;
 
 	@Inject
-	private MeaningServices meaningServices;
-
-	@Inject
-	private MeaningServices meaningServices;
-
-	@Inject
 	private ExportPAO exportPAO;
 
 	@Override
 	public boolean handleObject(final Topic topic) {
 		return TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd());
-	}
-
-	@Override
-	public DtList<TopicExport> exportTopics(final Chatbot bot) {
-		final DtList<Topic> topics = topicServices.getAllTopicRelativeSmallTalkByBot(bot);
-		final DtList<NluTrainingExport> nlus = generateNLUSynonyms(bot.getBotId());
-		System.out.println(nlus);
-		//Create bt by topics and map to topId
-		final Map<Long, String> mapBtTopic = mapTopicToBt(bot);
-		//Map Topic to NLU and BT
-		final DtList<TopicExport> result = TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapBtTopic);
-		return result;
 	}
 
 	private Map<UtterTextExport, List<ResponseButtonExport>> getUtterAndResponseForBt(final Long botId) {
@@ -80,28 +57,6 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Scr
 			responseButtonExport.removeAll(responseList);
 		}
 		return result;
-	}
-
-	/*
-	 * Generate all combinaison of nlu training sentences with synonyms
-	 */
-	final DtList<NluTrainingExport> generateNLUSynonyms(final Long botId) {
-		final DtList<NluTrainingExport> listNluExit = new DtList<>(NluTrainingExport.class);
-		for (final NluTrainingExport nluOriginal : exportPAO.exportSmallTalkRelativeTrainingSentence(botId)) {
-
-			//Creation des combinaisons
-			final List<String> listText = meaningServices.generateSentenceWithSynonyms(nluOriginal, botId);
-
-			for (final String text : listText) {
-				final NluTrainingExport nlu = new NluTrainingExport();
-				nlu.setText(text.trim());
-				nlu.setTopId(nluOriginal.getTopId());
-				listNluExit.add(nlu);
-			}
-
-		}
-		return listNluExit;
-
 	}
 
 	@Override
@@ -212,6 +167,11 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Scr
 		utterTextExport.setKtoCd(topic.getKtoCd());
 
 		return createBt(utterTextExport, new ArrayList<ResponseButtonExport>(), ktoCd.equals(KindTopicEnum.START.name()));
+	}
+
+	@Override
+	public DtList<Topic> getAllNonTechnicalTopicByBot(final Chatbot bot) {
+		return topicServices.getAllNonTechnicalTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name());
 	}
 
 }

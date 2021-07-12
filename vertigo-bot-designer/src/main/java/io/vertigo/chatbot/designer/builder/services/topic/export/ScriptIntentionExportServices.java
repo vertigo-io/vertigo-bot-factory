@@ -8,13 +8,10 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.TopicExport;
-import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
-import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
 import io.vertigo.chatbot.designer.builder.topic.export.ScriptIntentionExport;
@@ -28,12 +25,8 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 
 	@Inject
 	private TopicServices topicServices;
-
 	@Inject
 	private ScriptIntentionServices scriptIntentionServices;
-
-	@Inject
-	private MeaningServices meaningServices;
 
 	@Inject
 	private ExportPAO exportPAO;
@@ -41,16 +34,6 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 	@Override
 	public boolean handleObject(final Topic topic) {
 		return TypeTopicEnum.SCRIPTINTENTION.name().equals(topic.getTtoCd());
-	}
-
-	@Override
-	public DtList<TopicExport> exportTopics(final Chatbot bot) {
-		final DtList<Topic> topics = topicServices.getAllTopicRelativeScriptIntentionByBot(bot);
-		final DtList<NluTrainingExport> nlus = exportPAO.exportScriptIntentionRelativeTrainingSentence(bot.getBotId());
-		final Map<Long, String> mapTopicBt = mapTopicToBt(bot);
-		final DtList<TopicExport> exports = TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt);
-		return exports;
-
 	}
 
 	@Override
@@ -78,25 +61,9 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 		return scriptIntention.getScript();
 	}
 
-	/*
-	 * Generate all combinaison of nlu training sentences with synonyms
-	 */
-	final DtList<NluTrainingExport> generateNLUSynonyms(final Long botId) {
-		final DtList<NluTrainingExport> listNluExit = new DtList<>(NluTrainingExport.class);
-		for (final NluTrainingExport nluOriginal : exportPAO.exportScriptIntentionRelativeTrainingSentence(botId)) {
-
-			//Creation des combinaisons
-			final List<String> listText = meaningServices.generateSentenceWithSynonyms(nluOriginal, botId);
-
-			for (final String text : listText) {
-				final NluTrainingExport nlu = new NluTrainingExport();
-				nlu.setText(text.trim());
-				nlu.setTopId(nluOriginal.getTopId());
-				listNluExit.add(nlu);
-			}
-
-		}
-		return listNluExit;
-
+	@Override
+	public DtList<Topic> getAllNonTechnicalTopicByBot(final Chatbot bot) {
+		return topicServices.getAllNonTechnicalTopicByBotTtoCd(bot, TypeTopicEnum.SCRIPTINTENTION.name());
 	}
+
 }

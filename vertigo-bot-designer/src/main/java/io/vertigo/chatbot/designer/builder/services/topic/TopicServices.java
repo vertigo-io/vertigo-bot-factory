@@ -147,6 +147,14 @@ public class TopicServices implements Component, Activeable {
 		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, bot.getBotId()).and(Criterions.isEqualTo(TopicFields.ttoCd, ttoCd)), DtListState.of(1000));
 	}
 
+	public DtList<Topic> getAllNonTechnicalTopicByBotTtoCd(@SecuredOperation("botVisitor") final Chatbot bot, final String ttoCd) {
+		return topicDAO.findAll(
+				Criterions.isEqualTo(TopicFields.botId, bot.getBotId())
+						.and(Criterions.isEqualTo(TopicFields.ttoCd, ttoCd)
+								.and(Criterions.isEqualTo(TopicFields.ktoCd, KindTopicEnum.NORMAL.name()))),
+				DtListState.of(1000));
+	}
+
 	public DtList<TopicIhm> getAllTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), Optional.empty());
 	}

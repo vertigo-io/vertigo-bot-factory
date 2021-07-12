@@ -5,14 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.designer.builder.meaning.MeaningPAO;
 import io.vertigo.chatbot.designer.dao.MeaningDAO;
 import io.vertigo.chatbot.designer.domain.Meaning;
@@ -113,7 +110,7 @@ public class MeaningServices implements Component {
 		syn.setMeaId(meaId);
 		syn.setBotId(botId);
 		return synonymServices.save(syn);
-		}
+	}
 
 	/**
 	 * get meaning by label and botId
@@ -125,30 +122,6 @@ public class MeaningServices implements Component {
 	public Meaning findMeaningBySynonymLabelAndBotId(final String label, final Long botId) {
 		final Optional<Meaning> result = meaningDAO.getMeaningBySynonymLabelAndBotId(botId, label);
 		return result.isPresent() ? result.get() : null;
-	}
-
-	/**
-	 * Return sentences generated from original nlu training sentences, with all synonyms
-	 *
-	 * @param nluOriginal
-	 * @param botId
-	 * @return
-	 */
-	public ArrayList<String> generateSentenceWithSynonyms(final NluTrainingExport nluOriginal, final Long botId) {
-		// Word are separated by space or ponctuation
-
-		final List<String> listWord = Stream.of(nluOriginal.getText().split("([.,!?:;'\"-]|\\s)+"))
-				.collect(Collectors.toList());
-
-		// get a list of Tuple <word, synonym> from the original sentence
-		final DtList<TupleSynonymIhm> listTupleSynonymIhm = getTuplesSynonym(listWord, botId);
-
-		// group the result by original word
-		final Map<String, List<TupleSynonymIhm>> tupleSynonymIhmPerWord = listTupleSynonymIhm.stream()
-				.collect(Collectors.groupingBy(TupleSynonymIhm::getWord));
-
-		//Generation of all possible combinaison from the original sentences and the synonyms found
-		return combine(tupleSynonymIhmPerWord, nluOriginal.getText());
 	}
 
 	/*
@@ -173,7 +146,7 @@ public class MeaningServices implements Component {
 	 *
 	 *
 	 */
-	private ArrayList<String> combine(final Map<String, List<TupleSynonymIhm>> listTupleSynonymIhmPerWord, final String nluOriginal) {
+	public ArrayList<String> combine(final Map<String, List<TupleSynonymIhm>> listTupleSynonymIhmPerWord, final String nluOriginal) {
 
 		final ArrayList<String> listText = new ArrayList<String>();
 		listText.add(nluOriginal);
