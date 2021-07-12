@@ -13,7 +13,7 @@ public class EnumIHMManager implements Component {
 
 		for (final IHMEnum value : values) {
 			final SelectionOption option = new SelectionOption();
-			option.setLabel(MessageText.of(value.getLabel()).getDisplay());
+			option.setLabel(MessageText.of(value.getValue()).getDisplay());
 			option.setValue(value.getValue());
 			result.add(option);
 		}
