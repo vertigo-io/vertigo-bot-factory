@@ -8,8 +8,4 @@ public enum ModelMultilingualResources implements MessageKey {
 
 	LOAD_MODEL_ERROR,
 
-	NODE_BOT_ERROR,
-
-	READ_MODEL_ERROR
-
 }
