@@ -147,10 +147,12 @@ public class AnalyticsController extends AbstractDesignerController {
 		if (criteria.getBotId() != null) {
 			final List<String> resultTimedData = analyticsServices.getDistinctCodeByTimeDatas(criteria);
 			DtList<TopicIhm> topics = topicServices.getAllNonTechnicalTopicIhmByBot(chatbotServices.getChatbotById(criteria.getBotId()));
-			topics = topics.stream().filter(x -> !resultTimedData.contains(x.getCode())).collect(VCollectors.toDtList(TopicIhm.class));
+			topics = topics.stream()
+					.filter(x -> !resultTimedData.contains(x.getCode()))
+					.collect(VCollectors.toDtList(TopicIhm.class));
 			return topics;
 		}
-		return new DtList<TopicIhm>(TopicIhm.class);
+		return new DtList<>(TopicIhm.class);
 	}
 
 	@PostMapping("/_intentDetails")
@@ -158,7 +160,7 @@ public class AnalyticsController extends AbstractDesignerController {
 			@ViewAttribute("criteria") final StatCriteria criteria,
 			@RequestParam("intentRasa") final String intentRasa) {
 
-		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.text, analyticsServices.getKnownSentensesDetail(criteria, intentRasa)); // "st_1102_blague"
+		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.text, analyticsServices.getKnownSentensesDetail(criteria, intentRasa));
 
 		return viewContext;
 	}

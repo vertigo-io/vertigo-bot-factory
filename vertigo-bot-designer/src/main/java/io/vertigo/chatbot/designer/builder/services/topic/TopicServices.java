@@ -16,6 +16,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
@@ -24,6 +25,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
@@ -76,10 +78,10 @@ public class TopicServices implements Component {
 		return topicDAO.save(topic);
 	}
 
-	private void checkPatternCode(final String code) {
+	private static void checkPatternCode(final String code) {
 		final String pattern = "^([a-zA-z]?\\d?[-_]?){1,10}$";
 		if (code == null || !code.matches(pattern)) {
-			throw new VUserException("the code must only contains letters digits and specials characters (-_)");
+			throw new VUserException(TopicsMultilingualResources.CODE_PATTERN_DIGIT_ERROR);
 		}
 	}
 
@@ -241,6 +243,7 @@ public class TopicServices implements Component {
 
 
 	public Optional<Topic> getTopicByCode(final String intentName, final Long botId) {
-		return topicDAO.getTopicFromCode(intentName, botId);
+		Criteria<Topic> criteria = Criterions.isEqualTo(TopicFields.code, intentName).and(Criterions.isEqualTo(TopicFields.botId, botId));
+		return topicDAO.findOptional(criteria);
 	}
 }

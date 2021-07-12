@@ -19,12 +19,11 @@ package io.vertigo.chatbot.designer.analytics.services;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -91,14 +90,14 @@ public class AnalyticsServices implements Component, Activeable {
 				getTimeFilter(criteria),
 				Optional.empty());
 
+		final Optional<Topic> topicOpt = getTopicByCode("FAILURE", criteria.getBotId());
+
 		// build DtList from InfluxDb data
 		final DtList<SentenseDetail> retour = new DtList<>(SentenseDetail.class);
 		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 			final String intentName = (String) values.get("name");
 
-			//get the failure or fallback topic
-			final Optional<Topic> topicOpt = getTopicByCode("FAILURE", criteria.getBotId());
 			if (topicOpt.isPresent()) {
 
 				final Topic topic = topicOpt.get();
@@ -163,14 +162,14 @@ public class AnalyticsServices implements Component, Activeable {
 		final DtList<SentenseDetail> retour = new DtList<>(SentenseDetail.class);
 		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
-			final Topic topic = getTopicByCode(intentRasa, criteria.getBotId()).orElseThrow();
+			final Optional<Topic> topic = getTopicByCode(intentRasa, criteria.getBotId());
 
 			final SentenseDetail newSentenseDetail = new SentenseDetail();
 			newSentenseDetail.setDate(timedData.getTime());
 			newSentenseDetail.setText((String) values.get("text"));
 			newSentenseDetail.setIntentRasa(intentRasa);
 			newSentenseDetail.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
-			newSentenseDetail.setTopId(topic.getTopId());
+			newSentenseDetail.setTopId(topic.isPresent() ? topic.get().getTopId() : null);
 
 			retour.add(newSentenseDetail);
 		}
@@ -210,16 +209,11 @@ public class AnalyticsServices implements Component, Activeable {
 
 	public List<String> getDistinctCodeByTimeDatas(final StatCriteria criteria) {
 		final TimedDatas timedData = getTopicStats(criteria);
-		final List<String> resultTimedData = new ArrayList<String>();
-		for (TimedDataSerie serie : timedData.getTimedDataSeries()) {
-			final Map<String, Object> values = serie.getValues();
-			for (Entry<String, Object> value : values.entrySet()) {
-				if (!resultTimedData.contains(value.getValue().toString())) {
-					resultTimedData.add(value.getValue().toString());
-				}
-			}
-		}
-		return resultTimedData;
+		return timedData.getTimedDataSeries().stream()
+				.flatMap(serie -> serie.getValues().values().stream())
+				.map(Object::toString)
+				.distinct()
+				.collect(Collectors.toList());
 	}
 
 }
