@@ -79,7 +79,7 @@ public class TopicServices implements Component {
 	}
 
 	private static void checkPatternCode(final String code) {
-		final String pattern = "^([a-zA-z]?\\d?[-_]?){1,10}$";
+		final String pattern = "^([a-zA-z]?\\d?){1,10}$";
 		if (code == null || !code.matches(pattern)) {
 			throw new VUserException(TopicsMultilingualResources.CODE_PATTERN_DIGIT_ERROR);
 		}
