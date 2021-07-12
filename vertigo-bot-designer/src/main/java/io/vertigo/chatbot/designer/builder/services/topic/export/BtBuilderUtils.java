@@ -6,11 +6,11 @@ import io.vertigo.chatbot.designer.builder.topic.export.ResponseButtonExport;
 
 public class BtBuilderUtils {
 
-	private final static String LINE_BREAK = "\n";
-	private final static String QUOTE = "\"";
-	private final static String SPACE = " ";
-	private final static String OPEN_BRACKET = "{{";
-	private final static String CLOSE_BRACKET = "}}";
+	private static final String LINE_BREAK = "\n";
+	private static final String QUOTE = "\"";
+	private static final String SPACE = " ";
+	private static final String OPEN_BRACKET = "{{";
+	private static final String CLOSE_BRACKET = "}}";
 
 	private BtBuilderUtils() {
 		//Classe utilitaire
@@ -37,7 +37,7 @@ public class BtBuilderUtils {
 			addQuote(bt);
 			bt.append(response.getText().replaceAll("'", "\'"));
 			addQuote(bt);
-			bt.append(" topic");
+			bt.append(SPACE);
 			bt.append(response.getTopCodeResponse());
 			addLineBreak(bt);
 		}

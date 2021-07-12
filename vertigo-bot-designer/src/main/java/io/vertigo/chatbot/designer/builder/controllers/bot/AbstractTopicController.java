@@ -11,7 +11,6 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
-import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
@@ -54,7 +53,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	public void initContext(final ViewContext viewContext, final Chatbot bot, final Topic topic) {
 		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Incoherent parameters");
 
-		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name()));
+		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 		viewContext.publishDto(topicKey, topic);
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
@@ -68,7 +67,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	}
 
 	public void initContextNew(final ViewContext viewContext, final Chatbot bot) {
-		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name()));
+		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 		viewContext.publishDto(topicKey, topicServices.getNewTopic(bot));
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
@@ -183,7 +182,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 
 	public void checkCategory(final Topic topic) {
 		if (topic.getTopCatId() == null) {
-			throw new VUserException(TopicsMultilingualResources.ERR_CATEGORY);
+			throw new VUserException(TopicsMultilingualResources.ERROR_CATEGORY);
 		}
 	}
 
