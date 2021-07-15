@@ -4,5 +4,5 @@ import io.vertigo.core.locale.MessageKey;
 
 public enum TopicsMultilingualResources implements MessageKey {
 
-	ERR_CATEGORY,
+	ERROR_CATEGORY,
 }

@@ -14,8 +14,8 @@ public final class ResponseButtonExport implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private Long topId;
-	private Long topCode;
-	private Long topCodeResponse;
+	private String topCode;
+	private String topCodeResponse;
 	private String text;
 	
 	/**
@@ -40,38 +40,38 @@ public final class ResponseButtonExport implements DtObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Topic code'.
-	 * @return Long topCode
+	 * @return String topCode
 	 */
-	@Field(smartType = "STyId", label = "Topic code")
-	public Long getTopCode() {
+	@Field(smartType = "STyText", label = "Topic code")
+	public String getTopCode() {
 		return topCode;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Topic code'.
-	 * @param topCode Long
+	 * @param topCode String
 	 */
-	public void setTopCode(final Long topCode) {
+	public void setTopCode(final String topCode) {
 		this.topCode = topCode;
 	}
 	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Topic code response'.
-	 * @return Long topCodeResponse
+	 * @return String topCodeResponse
 	 */
-	@Field(smartType = "STyId", label = "Topic code response")
-	public Long getTopCodeResponse() {
+	@Field(smartType = "STyText", label = "Topic code response")
+	public String getTopCodeResponse() {
 		return topCodeResponse;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Topic code response'.
-	 * @param topCodeResponse Long
+	 * @param topCodeResponse String
 	 */
-	public void setTopCodeResponse(final Long topCodeResponse) {
+	public void setTopCodeResponse(final String topCodeResponse) {
 		this.topCodeResponse = topCodeResponse;
 	}
 	
