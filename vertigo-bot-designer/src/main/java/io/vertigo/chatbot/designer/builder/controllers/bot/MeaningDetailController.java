@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.multilingual.meanings.MeaningsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SynonymServices;
@@ -173,6 +174,12 @@ public class MeaningDetailController extends AbstractBotController {
 		return viewContext;
 	}
 
+	/**
+	 * Add a synonym and modify table
+	 *
+	 * @param newSynonymIn
+	 * @param synonyms
+	 */
 	public void addSynonym(final String newSynonymIn,
 			final DtList<Synonym> synonyms) {
 		if (StringUtil.isBlank(newSynonymIn)) {
@@ -184,7 +191,7 @@ public class MeaningDetailController extends AbstractBotController {
 		final boolean exists = synonyms.stream()
 				.anyMatch(its -> its.getLabel().equalsIgnoreCase(newSynonym));
 		if (exists) {
-			throw new VUserException("This synonym is already registered");
+			throw new VUserException(MeaningsMultilingualResources.ERR_UNIQUE_SYNONYM);
 		}
 
 		final Synonym newText = new Synonym();

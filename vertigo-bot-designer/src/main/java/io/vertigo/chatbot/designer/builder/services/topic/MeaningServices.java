@@ -29,17 +29,34 @@ public class MeaningServices implements Component {
 	@Inject
 	private SynonymServices synonymServices;
 
-	//	@Inject
-	//	private meaningPAO meaningPAO;
-
-	public Meaning findmeaningById(@SecuredOperation("botAdm") final Long id) {
+	/**
+	 * get Meaning by id
+	 *
+	 * @param id
+	 * @return meaning
+	 */
+	public Meaning findmeaningById(final Long id) {
 		return meaningDAO.get(id);
 	}
 
+	/**
+	 * Save meaning
+	 *
+	 * @param meaning
+	 * @return meaning
+	 */
 	public Meaning save(@SecuredOperation("botAdm") final Meaning meaning) {
 		return meaningDAO.save(meaning);
 	}
 
+	/**
+	 * Save meaning with synonyms
+	 *
+	 * @param meaning
+	 * @param synonyms
+	 * @param synonymsToDelete
+	 * @return meaning
+	 */
 	public Meaning save(@SecuredOperation("botAdm") final Meaning meaning,
 			final DtList<Synonym> synonyms,
 			final DtList<Synonym> synonymsToDelete) {
@@ -50,6 +67,12 @@ public class MeaningServices implements Component {
 		return meaningDAO.save(meaning);
 	}
 
+	/**
+	 * delete meaning
+	 *
+	 * @param bot
+	 * @param meaId
+	 */
 	public void deleteMeaning(@SecuredOperation("botAdm") final Chatbot bot, final Long meaId) {
 		meaningDAO.delete(meaId);
 	}
@@ -69,11 +92,25 @@ public class MeaningServices implements Component {
 		return synToSave;
 	}
 
+	/**
+	 * get meaning by label and botId
+	 *
+	 * @param label
+	 * @param botId
+	 * @return meaning
+	 */
 	public Meaning findMeaningByLabelAndBotId(final String label, final Long botId) {
 		final Optional<Meaning> result = meaningDAO.getMeaningByLabelAndBotId(botId, label);
 		return result.isPresent() ? result.get() : null;
 	}
 
+	/**
+	 * Return sentences generated from original nlu training sentences, with all synonyms
+	 *
+	 * @param nluOriginal
+	 * @param botId
+	 * @return
+	 */
 	public ArrayList<String> generateSentenceWithSynonyms(final NluTrainingExport nluOriginal, final Long botId) {
 		// Word are separated by space or ponctuation
 		final String[] listWord = nluOriginal.getText().split("([.,!?:;'\"-]|\\s)+");
@@ -151,10 +188,25 @@ public class MeaningServices implements Component {
 		return listText;
 	}
 
+	/**
+	 * Modify entry by replacing occurence of a word with its synonyms
+	 *
+	 * @param synonym
+	 * @param originalWord
+	 * @param entry
+	 * @return string
+	 */
 	private String populateExit(final Synonym synonym, final String originalWord, final String entry) {
 		return entry.replaceAll(originalWord, synonym.getLabel());
 	}
 
+	/**
+	 * Return a map with an index and a array with a word and the meaning associated
+	 *
+	 * @param listWord
+	 * @param botId
+	 * @return map
+	 */
 	private Map<Integer, ArrayList<Object>> analyzeListWord(final String[] listWord, final Long botId) {
 		int key = 0;
 

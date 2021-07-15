@@ -86,14 +86,14 @@
 			</vu:block>
 			
 			 				
-			<vu:popup-ajax action="_deletemeaning" vModel="showPopupMeaning" th:message="supprimer"  dataName="meaId" successAction="'VUiPage.$refs.meaningEdit.hide'"></vu:popup-ajax>
+			<vu:popup-ajax action="_deleteMeaning" vModel="showPopupMeaning" th:message="supprimer"  dataName="meaId" successAction="'VUiPage.$refs.meaningEdit.hide'"></vu:popup-ajax>
 			
 			
 			
 			
 			<q-dialog ref="meaningEdit" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.meaningEdit">
 				<q-card>
-					<q-form method="post" action="savemeaning">
+					<q-form method="post" action="saveMeaning">
 						<q-card-section>
 							<div class="text-h6" th:text="#{dictionary.new}"></div>
 						</q-card-section>
