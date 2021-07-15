@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BBKeyPattern;
@@ -17,8 +16,6 @@ import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.nlu.NluResult;
 import io.vertigo.ai.nlu.ScoredIntent;
-import io.vertigo.chatbot.analytics.AnalyticsSenderServices;
-import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
@@ -70,16 +67,14 @@ public class BotEngine {
 	private final NluManager nluManager;
 
 	private final Map<String, TopicDefinition> topicDefinitionMap;
-	private final AnalyticsSenderServices analyticsSenderServices;
 
 	public BotEngine(final BlackBoard blackBoard, final Map<String, TopicDefinition> topicDefinitionMap,
-			final BehaviorTreeManager behaviorTreeManager, final NluManager nluManager, final AnalyticsSenderServices analyticsSenderServices) {
+			final BehaviorTreeManager behaviorTreeManager, final NluManager nluManager) {
 		Assertion.check()
 				.isNotNull(blackBoard)
 				.isNotNull(topicDefinitionMap)
 				.isNotNull(behaviorTreeManager)
 				.isNotNull(nluManager)
-				.isNotNull(analyticsSenderServices)
 				.isTrue(topicDefinitionMap.containsKey(START_TOPIC_NAME), "You need to provide a starting topic with key BotEngine.START_TOPIC_NAME");
 		// ---
 		bb = blackBoard;
@@ -88,11 +83,9 @@ public class BotEngine {
 		this.behaviorTreeManager = behaviorTreeManager;
 		this.nluManager = nluManager;
 
-		this.analyticsSenderServices = analyticsSenderServices;
-
 	}
 
-	public BotResponse runTick(final BotInput input, final Optional<ExecutorConfiguration> execConfiguration) {
+	public BotResponse runTick(final BotInput input) {
 		// clear old input/outputs context
 		bb.delete(BBKeyPattern.ofRoot(BOT_IN_PATH));
 		bb.delete(BBKeyPattern.ofRoot(BOT_OUT_PATH));
@@ -145,7 +138,8 @@ public class BotEngine {
 			botResponseBuilder.addMetadata(getKeyName(key), getKeyValue(key));
 		}
 
-		analyticsSenderServices.sendEventToDb(currentTopic, execConfiguration, eventLog, input);
+		botResponseBuilder.addMetadata("eventLog", eventLog);
+		botResponseBuilder.addMetadata("currentTopic", currentTopic);
 
 		return botResponseBuilder.build();
 	}

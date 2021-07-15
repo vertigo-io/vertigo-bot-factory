@@ -2,7 +2,6 @@ package io.vertigo.chatbot.engine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 
 import javax.inject.Inject;
@@ -69,7 +68,7 @@ public class SampleBotText {
 	}
 
 	BotResponse runTick(final BotEngine botEngine, final BotInput userInput) {
-		final BotResponse botResponse = botEngine.runTick(userInput, Optional.empty());
+		final BotResponse botResponse = botEngine.runTick(userInput);
 		System.out.println(String.join("\n", botResponse.getHtmlTexts()));
 		return botResponse;
 	}
