@@ -3,11 +3,10 @@ package io.vertigo.chatbot.designer.boot;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.DtResources;
-import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.kindTopic.KindTopicMultilingualResources;
-import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.person.PersonMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
 import io.vertigo.chatbot.designer.domain.commons.EnumResource;
