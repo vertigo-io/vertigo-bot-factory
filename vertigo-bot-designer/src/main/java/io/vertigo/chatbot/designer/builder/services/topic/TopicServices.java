@@ -16,6 +16,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
@@ -24,6 +25,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
@@ -55,6 +57,7 @@ public class TopicServices implements Component {
 	}
 
 	public Topic save(final Topic topic) {
+		checkPatternCode(topic.getCode());
 		//create code for export
 		hasUniqueCode(topic);
 		return topicDAO.save(topic);
@@ -63,6 +66,8 @@ public class TopicServices implements Component {
 	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences,
 			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
+		//check if code matches the pattern
+		checkPatternCode(topic.getCode());
 		//create code for export
 		hasUniqueCode(topic);
 		// save and remove NTS
@@ -71,6 +76,13 @@ public class TopicServices implements Component {
 		topic.setIsEnabled(!ntsToSave.isEmpty() && isEnabled);
 
 		return topicDAO.save(topic);
+	}
+
+	private static void checkPatternCode(final String code) {
+		final String pattern = "^([a-zA-z]?\\d?){1,10}$";
+		if (code == null || !code.matches(pattern)) {
+			throw new VUserException(TopicsMultilingualResources.CODE_PATTERN_DIGIT_ERROR);
+		}
 	}
 
 	private void hasUniqueCode(final Topic topic) {
@@ -214,19 +226,12 @@ public class TopicServices implements Component {
 		topicPAO.removeAllNluTrainingSentenceByBotId(bot.getBotId());
 	}
 
-	public Topic getTopicByCodeBotId(final Long botId, final String code) {
-		final DtList<Topic> listTopics = topicDAO.getTopicByCodeBotId(botId, code);
-		if (listTopics.isEmpty()) {
-			return null;
-		}
-		if (listTopics.size() > 1) {
-			throw new VUserException("Several topics have the same code : " + code + ".");
-		}
-		return listTopics.get(0);
-	}
-
 	public boolean checkSpecialCharacters(final String string) {
 		return string.contains("[") || string.contains("]") || string.contains("|") || string.contains("¤");
 	}
 
+	public Optional<Topic> getTopicByCode(final String code, final Long botId) {
+		Criteria<Topic> criteria = Criterions.isEqualTo(TopicFields.code, code).and(Criterions.isEqualTo(TopicFields.botId, botId));
+		return topicDAO.findOptional(criteria);
+	}
 }

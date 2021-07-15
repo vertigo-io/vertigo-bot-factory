@@ -32,9 +32,9 @@ public enum DtResources implements MessageKey {
 	 */
 	fldSentenseDetail$confidence,
 	/**
-	 * Small Talk selection.
+	 * Topic selection.
 	 */
-	fldSentenseDetail$smtId,
+	fldSentenseDetail$topId,
 
 	/***********************************************************
 	/** StatCriteria.
@@ -56,13 +56,17 @@ public enum DtResources implements MessageKey {
 	/** TopIntent.
 	/***********************************************************
 	/**
-	 * Small Talk ID.
+	 * Topic ID.
 	 */
-	fldTopIntent$smtId,
+	fldTopIntent$topId,
 	/**
 	 * Rasa intent.
 	 */
 	fldTopIntent$intentRasa,
+	/**
+	 * Topic code.
+	 */
+	fldTopIntent$code,
 	/**
 	 * Count.
 	 */

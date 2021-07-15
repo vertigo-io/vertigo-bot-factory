@@ -351,6 +351,10 @@ public enum DtResources implements MessageKey {
 	 * Code Kind.
 	 */
 	fldTopicIhm$ktoCd,
+	/**
+	 * Code.
+	 */
+	fldTopicIhm$code,
 
 	/***********************************************************
 	/** TypeTopic.

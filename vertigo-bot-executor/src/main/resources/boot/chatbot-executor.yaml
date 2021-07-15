@@ -41,6 +41,7 @@ modules:
           rasaUrl: ${RASA_URL}
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
+  io.vertigo.chatbot.analytics.AnalyticsFeatures:
   io.vertigo.chatbot.engine.EngineFeatures:
   io.vertigo.chatbot.executor.ExecutorFeatures:
-  io.vertigo.chatbot.analytics.AnalyticsFeatures:
+  
