@@ -90,9 +90,6 @@ public class TopicServices implements Component {
 		if (topicPAO.checkUnicityTopicCode(topic.getBotId(), topic.getCode(), topIdOpt)) {
 			throw new VUserException("The code is not unique, please select another");
 		}
-		if (checkSpecialCharacters(topic.getCode())) {
-			throw new VUserException("The code cannot contain the following characters : '[', ']', '|', '¤'. ");
-		}
 	}
 
 	public Topic createTopic(@SecuredOperation("botContributor") final Topic topic) {

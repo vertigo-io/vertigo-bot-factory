@@ -12,11 +12,11 @@ import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 public final class ObjectConvertionUtils {
 
+	private static final JsonEngine jsonEngine = Node.getNode().getComponentSpace().resolve(JsonEngine.class);
+
 	private ObjectConvertionUtils() {
 		// Nothing utils class
 	}
-
-	private static final JsonEngine jsonEngine = Node.getNode().getComponentSpace().resolve(JsonEngine.class);
 
 	public static String objectToJson(final Object input) {
 		return jsonEngine.toJson(input);
@@ -32,7 +32,7 @@ public final class ObjectConvertionUtils {
 		try (ObjectInput in = new ObjectInputStream(bis);) {
 			return (D) in.readObject();
 		} catch (IOException | ClassNotFoundException e) {
-			throw new VSystemException("error");
+			throw new VSystemException(e, "serialization error");
 		}
 
 	}

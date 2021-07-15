@@ -13,11 +13,13 @@ import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.Entity;
@@ -114,7 +116,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			if (curIdx == index) {
 				nts.setText(newNluTrainingSentence);
 			} else if (newNluTrainingSentence.equalsIgnoreCase(nts.getText())) {
-				throw new VUserException("This sentense already exists");
+				throw new VUserException(TopicsMultilingualResources.NLU_ALREADY_EXISTS);
 			}
 			curIdx++;
 		}
@@ -158,7 +160,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			@ViewAttribute("topic") final Topic topic) {
 		final DtList<Topic> listTopicRef = topicServices.getTopicReferencingTopId(topic.getTopId());
 		if (!listTopicRef.isEmpty()) {
-			final StringBuilder errorMessage = new StringBuilder("This topic cannot be removed because it is referenced in response button in the following topics : ");
+			final StringBuilder errorMessage = new StringBuilder(MessageText.of(TopicsMultilingualResources.DELETION_REF_ERROR).getDisplay());
 			String prefix = "";
 			for (final Topic topicRef : listTopicRef) {
 				errorMessage.append(prefix);

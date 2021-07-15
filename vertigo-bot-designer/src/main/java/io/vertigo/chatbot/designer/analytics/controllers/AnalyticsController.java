@@ -38,7 +38,7 @@ import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
-import io.vertigo.chatbot.designer.commons.ihmEnum.TimeEnum;
+import io.vertigo.chatbot.designer.commons.ihm.enums.TimeEnum;
 import io.vertigo.chatbot.designer.commons.services.EnumIHMManager;
 import io.vertigo.chatbot.designer.domain.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
@@ -120,9 +120,6 @@ public class AnalyticsController extends AbstractDesignerController {
 	}
 
 	private void updateGraph(final ViewContext viewContext, final StatCriteria criteria) {
-		if (criteria.getBotId() != null) {
-			viewContext.publishDtList(nodesKey, nodeServices.getAllNodesByBotId(criteria.getBotId()));
-		}
 
 		viewContext.publishRef(sessionStatsKey, analyticsServices.getSessionsStats(criteria));
 		viewContext.publishRef(requestsStatsKey, analyticsServices.getRequestStats(criteria));

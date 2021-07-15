@@ -39,6 +39,7 @@ import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.export.file.TopicFileExportServices;
@@ -100,7 +101,7 @@ public class TopicsListController extends AbstractBotController {
 	@Secured("BotAdm")
 	public String doCreateTopic(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, @ViewAttribute("selectionList") final String ttoCd) {
 		if (ttoCd.isEmpty()) {
-			throw new VUserException("Choose a type of topic");
+			throw new VUserException(TopicsMultilingualResources.CHOOSE_TYPE_ERROR);
 		}
 		final Long botId = bot.getBotId();
 		if (TypeTopicEnum.SMALLTALK.name().equals(ttoCd)) {
