@@ -226,24 +226,12 @@ public class TopicServices implements Component {
 		topicPAO.removeAllNluTrainingSentenceByBotId(bot.getBotId());
 	}
 
-	public Topic getTopicByCodeBotId(final Long botId, final String code) {
-		final DtList<Topic> listTopics = topicDAO.getTopicByCodeBotId(botId, code);
-		if (listTopics.isEmpty()) {
-			return null;
-		}
-		if (listTopics.size() > 1) {
-			throw new VUserException("Several topics have the same code : " + code + ".");
-		}
-		return listTopics.get(0);
-	}
-
 	public boolean checkSpecialCharacters(final String string) {
 		return string.contains("[") || string.contains("]") || string.contains("|") || string.contains("¤");
 	}
 
-
-	public Optional<Topic> getTopicByCode(final String intentName, final Long botId) {
-		Criteria<Topic> criteria = Criterions.isEqualTo(TopicFields.code, intentName).and(Criterions.isEqualTo(TopicFields.botId, botId));
+	public Optional<Topic> getTopicByCode(final String code, final Long botId) {
+		Criteria<Topic> criteria = Criterions.isEqualTo(TopicFields.code, code).and(Criterions.isEqualTo(TopicFields.botId, botId));
 		return topicDAO.findOptional(criteria);
 	}
 }

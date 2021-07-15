@@ -33,10 +33,10 @@
 			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" 
 					       @click="vueData.newTopic = Vue.util.extend({}, vueData.newTopic); $refs.newTopic.show()"></q-btn>	
 					      
-			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="file_download" th:aria-label="#{action.add}" th:title="#{action.add}" 
+			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="file_download" th:aria-label="#{action.export}" th:title="#{action.export}" 
 					       @click="$refs.exportTopic.show()"></q-btn>	
 					       		       		
-			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="file_upload" th:aria-label="#{action.add}" th:title="#{action.add}" 
+			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="file_upload" th:aria-label="#{action.import}" th:title="#{action.import}" 
 					       @click="$refs.importTopic.show()"></q-btn>	
 							
 					

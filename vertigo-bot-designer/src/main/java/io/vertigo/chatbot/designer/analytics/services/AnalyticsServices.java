@@ -160,8 +160,8 @@ public class AnalyticsServices implements Component, Activeable {
 		return topicServices.getAllTopicByBot(chatbot);
 	}
 
-	private Optional<Topic> getTopicByCode(final String intentName, final Long botId) {
-		return topicServices.getTopicByCode(intentName, botId);
+	private Optional<Topic> getTopicByCode(final String code, final Long botId) {
+		return topicServices.getTopicByCode(code, botId);
 	}
 
 	//Filter topics and create topIntent object

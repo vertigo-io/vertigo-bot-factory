@@ -238,11 +238,11 @@ public class TopicFileExportServices implements Component {
 			Topic topic = new Topic();
 
 			//Try to find the topic in database
-			final Topic topicBase = topicServices.getTopicByCodeBotId(chatbot.getBotId(), tfe.getCode());
+			final Optional<Topic> topicBase = topicServices.getTopicByCode(tfe.getCode(), chatbot.getBotId());
 
-			if (topicBase != null) {
+			if (topicBase.isPresent()) {
 				// If it already exists, then modification
-				topic = topicBase;
+				topic = topicBase.get();
 				creation = false;
 				// All preexisting nlu will be replaced by the ones in the file
 				nluTSToDelete = topicServices.getNluTrainingSentenceByTopic(chatbot, topic);
@@ -432,11 +432,11 @@ public class TopicFileExportServices implements Component {
 				if (code == null) {
 					throw new VUserException(TopicFileExportMultilingualResources.BUTTON_CODE_EMPTY);
 				}
-				final Topic topic = topicServices.getTopicByCodeBotId(botId, code);
-				if (topic == null) {
+				final Optional<Topic> topic = topicServices.getTopicByCode(code, botId);
+				if (topic.isEmpty()) {
 					throw new VUserException(TopicFileExportMultilingualResources.BUTTON_CODE_NOT_FOUND);
 				}
-				button.setTopIdResponse(topic.getTopId());
+				button.setTopIdResponse(topic.get().getTopId());
 
 				listButtons.add(button);
 			}
