@@ -46,14 +46,16 @@
 				
 			<vu:block id="meaning" th:title="${model.meaning.label}">
 				<vu:slot name="actions_slot">
-				 	<q-input v-model="componentStates.synonyms.pagination.search" dense clearable 
+				 	<q-input v-model="componentStates.synonyms.pagination.search" 
+				 		dense 
+				 		clearable 
 	      				type="search" 
 	      				placeholder="Filter"
 	      				@keydown.esc="componentStates.synonyms.pagination.search = '';"
-	      				>
+	      			>
 						<template v-slot:prepend>
 				        	<q-icon name="search" ></q-icon>
-				        </template>
+				    	</template>
         			</q-input> 
 					
 				</vu:slot>
@@ -62,24 +64,26 @@
 				<vu:include-data object="synonyms" field="label" />
 				
 				<div th:if="${!model.modeReadOnly}">
-					<q-input v-model="vueData.newSynonym" dense class="q-pb-sm"
+					<q-input v-model="vueData.newSynonym" 
+						dense class="q-pb-sm"
 					    @keydown.enter.prevent="if (vueData.newSynonym.trim().length > 0) {httpPostAjax('_addSynonym', {'vContext[newSynonym]':vueData.newSynonym}); componentStates.synonyms.pagination.page = 1; componentStates.synonyms.pagination.search = '';}"
 						th:placeholder="synonym"
 						name="vContext['newSynonym']"						
-						>
+					>
 					</q-input>
 				</div>
+				
 				<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('synonyms').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
-				<q-list dense>
-					<q-item th::clickable="${!model.modeReadOnly}" v-for="(synonym, index) in getDisplayedSynonyms()">
+					<q-list dense>
+						<q-item th::clickable="${!model.modeReadOnly}" v-for="(synonym, index) in getDisplayedSynonyms()">
 						
-						<q-item-section side left th:if="${!model.modeReadOnly}">
-							<q-btn @click="httpPostAjax('_removeSynonym', {'index':vueData.synonyms.length - 1 - index})"
-								color="primary" dense size="sm" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
-						</q-item-section>
-						<q-item-section>
-							{{synonym.label}}
-							<q-popup-edit th:if="${!model.modeReadOnly}"
+							<q-item-section side left th:if="${!model.modeReadOnly}">
+								<q-btn @click="httpPostAjax('_removeSynonym', {'index':vueData.synonyms.length - 1 - index})"
+									color="primary" dense size="sm" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
+							</q-item-section>
+							<q-item-section>
+								{{synonym.label}}
+								<q-popup-edit th:if="${!model.modeReadOnly}"
 										  buttons label-set="Save" label-cancel="Cancel"
 										  v-model="synonym.label"
 										  @save="function(value, initialValue) {
@@ -90,7 +94,8 @@
 													 		synonym.label = initialValue;
 													 	}
 													 });
-												}">
+													}"
+							>
 								<q-input v-model="synonym.label" dense autofocus />
 							</q-popup-edit>
 						</q-item-section>

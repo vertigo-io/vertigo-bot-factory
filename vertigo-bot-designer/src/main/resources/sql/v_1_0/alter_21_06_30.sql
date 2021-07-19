@@ -75,3 +75,6 @@ create index A_SYNONYM_MEANING_MEANING_FK on SYNONYM (MEA_ID asc);
 
 alter table meaning
 add constraint meaning_unique UNIQUE (bot_id, label);
+
+alter table synonym
+add constraint synonym_unique UNIQUE (bot_id, label);

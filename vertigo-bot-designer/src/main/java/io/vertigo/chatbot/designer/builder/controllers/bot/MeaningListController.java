@@ -54,7 +54,7 @@ public class MeaningListController extends AbstractBotController {
 		final boolean creation = meaningEdit.getMeaId() == null;
 		meaningEdit.setLabel(meaningEdit.getLabel().toLowerCase());
 
-		final Meaning meaningSaved = meaningServices.save(meaningEdit);
+		final Meaning meaningSaved = meaningServices.save(bot, meaningEdit);
 		if (creation) {
 			final Synonym synonym = new Synonym();
 			synonym.setBotId(bot.getBotId());

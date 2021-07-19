@@ -98,7 +98,7 @@ public class MeaningDetailController extends AbstractBotController {
 			@ViewAttribute("synonymsToDelete") final DtList<Synonym> synonymsToDelete) {
 
 		addSynonym(newSynonym, synonyms);
-		meaningServices.save(meaning, synonyms, synonymsToDelete);
+		meaningServices.save(bot, meaning, synonyms, synonymsToDelete);
 
 		if (synonyms.isEmpty()) {
 			//If all synonyms are removed, the meaning is deleted

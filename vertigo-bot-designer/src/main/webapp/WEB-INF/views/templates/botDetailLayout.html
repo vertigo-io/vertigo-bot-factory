@@ -16,7 +16,7 @@
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'informations'} ? 'active' : ''" flat th:label="#{layout.information}" url="@{/bot/{id}(id=${model.bot.botId})}" />
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'topics'} ? 'active' : ''" flat label="Topics" url="@{/bot/{id}/topics/(id=${model.bot.botId})}" />
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'categories'} ? 'active' : ''" flat label="Categories" url="@{/bot/{id}/categories/(id=${model.bot.botId})}" />
-		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'dictionary'} ? 'active' : ''" flat label="#{layout.dictionary}" url="@{/bot/{id}/dictionary/(id=${model.bot.botId})}" />
+		<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" disabled="${noNavigation == true}" class="${tab == 'dictionary'} ? 'active' : ''" flat label="#{layout.dictionary}" url="@{/bot/{id}/dictionary/(id=${model.bot.botId})}" />
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'models'} ? 'active' : ''" flat  th:label="#{layout.model}" url="@{/bot/{id}/models/(id=${model.bot.botId})}" />
 		<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" disabled="${noNavigation == true}" class="${tab == 'users'} ? 'active' : ''" flat th:label="#{layout.profil}" url="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}" />
 	</div>

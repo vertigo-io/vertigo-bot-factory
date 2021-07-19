@@ -45,7 +45,7 @@ public class MeaningServices implements Component {
 	 * @param meaning
 	 * @return meaning
 	 */
-	public Meaning save(@SecuredOperation("botAdm") final Meaning meaning) {
+	public Meaning save(@SecuredOperation("botAdm") final Chatbot chatbot, final Meaning meaning) {
 		return meaningDAO.save(meaning);
 	}
 
@@ -57,7 +57,7 @@ public class MeaningServices implements Component {
 	 * @param synonymsToDelete
 	 * @return meaning
 	 */
-	public Meaning save(@SecuredOperation("botAdm") final Meaning meaning,
+	public Meaning save(@SecuredOperation("botAdm") final Chatbot chatbot, final Meaning meaning,
 			final DtList<Synonym> synonyms,
 			final DtList<Synonym> synonymsToDelete) {
 
@@ -77,19 +77,35 @@ public class MeaningServices implements Component {
 		meaningDAO.delete(meaId);
 	}
 
+	/**
+	 * Save synonyms
+	 *
+	 * @param meaning
+	 * @param synonyms
+	 * @return list of synonyms
+	 */
 	protected DtList<Synonym> saveAllNotBlankSynonym(final Meaning meaning, final DtList<Synonym> synonyms) {
-		// save nlu textes
-		final DtList<Synonym> synToSave = synonyms.stream()
+
+		final Long meaId = meaning.getMeaId();
+		final Long botId = meaning.getBotId();
+		return synonyms.stream()
 				.filter(syn -> !StringUtil.isBlank(syn.getLabel()))
+				.map(syn -> createSynonym(syn, botId, meaId))
 				.collect(VCollectors.toDtList(Synonym.class));
+	}
 
-		for (final Synonym syn : synToSave) {
-			syn.setMeaId(meaning.getMeaId());
-			syn.setBotId(meaning.getBotId());
-			synonymServices.save(syn);
-		}
-
-		return synToSave;
+	/**
+	 * create Synonym
+	 *
+	 * @param syn
+	 * @param meaId
+	 * @param botId
+	 * @return synonym
+	 */
+	protected Synonym createSynonym(final Synonym syn, final Long meaId, final Long botId) {
+		syn.setMeaId(meaId);
+		syn.setBotId(botId);
+		return synonymServices.save(syn);
 	}
 
 	/**
