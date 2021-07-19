@@ -172,13 +172,12 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		}
 
 		for (final TopicInterfaceServices services : topicInterfaceServices) {
-
 			if (services.handleObject(topic)) {
 				services.delete(chatbot, services.findByTopId(topic.getTopId()), topic);
+				topicServices.deleteTopic(chatbot, topic);
 			}
 		}
 
-		topicServices.deleteTopic(chatbot, topic);
 		return "redirect:/bot/" + topic.getBotId() + "/topics/";
 	}
 

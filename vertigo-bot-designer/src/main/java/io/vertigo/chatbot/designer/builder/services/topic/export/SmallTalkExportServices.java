@@ -14,10 +14,11 @@ import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
+import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
-import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
@@ -28,7 +29,7 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
 
 @Transactional
-public class SmallTalkExportServices implements TopicsExportServices, Component {
+public class SmallTalkExportServices implements TopicExportInterfaceServices<ScriptIntention>, Component {
 
 	@Inject
 	private TopicServices topicServices;
@@ -37,10 +38,12 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 	private SmallTalkServices smallTalkServices;
 
 	@Inject
-	private UtterTextServices utterTextServices;
-
-	@Inject
 	private ExportPAO exportPAO;
+
+	@Override
+	public boolean handleObject(final Topic topic) {
+		return TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd());
+	}
 
 	@Override
 	public DtList<TopicExport> exportTopics(final Chatbot bot) {
@@ -164,10 +167,11 @@ public class SmallTalkExportServices implements TopicsExportServices, Component 
 		return utters.getResponseType().equals(ResponseTypeEnum.RANDOM_TEXT.name());
 	}
 
+	@Override
 	public String getBasicBt(final Chatbot bot, final String ktoCd) {
 		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
 		final SmallTalk smallTalk = smallTalkServices.findByTopId(topic.getTopId());
-		final UtterText utterText = utterTextServices.getUtterTextByTopId(topic.getTopId());
+		final UtterText utterText = smallTalkServices.getBasicUtterTextByTopId(topic.getTopId());
 		final UtterTextExport utterTextExport = new UtterTextExport();
 
 		utterTextExport.setUtterTexts(utterText.getText());

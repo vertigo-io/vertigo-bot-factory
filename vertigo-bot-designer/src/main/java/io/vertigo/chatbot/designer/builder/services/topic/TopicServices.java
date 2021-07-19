@@ -1,6 +1,8 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -23,18 +25,18 @@ import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datamodel.structure.util.VCollectors;
-import io.vertigo.ui.core.ViewContext;
-import io.vertigo.ui.core.ViewContextKey;
 
 @Transactional
-public class TopicServices implements Component {
+public class TopicServices implements Component, Activeable {
 
 	@Inject
 	private TopicDAO topicDAO;
@@ -47,6 +49,14 @@ public class TopicServices implements Component {
 
 	@Inject
 	private KindTopicServices kindTopicServices;
+
+	private final Set<TopicInterfaceServices> topicInterfaceServices = new HashSet();
+
+	@Inject
+	private SmallTalkServices smallTalkServices;
+
+	@Inject
+	private ScriptIntentionServices scriptIntentionServices;
 
 	public Topic findTopicById(@SecuredOperation("botVisitor") final Long id) {
 		return topicDAO.get(id);
@@ -68,6 +78,10 @@ public class TopicServices implements Component {
 
 		//check if code matches the pattern
 		checkPatternCode(topic.getCode());
+		if (KindTopicEnum.NORMAL.name().equals(topic.getKtoCd())) {
+			Assertion.check().isNotNull(nluTrainingSentences)
+					.isNotNull(nluTrainingSentencesToDelete);
+		}
 		//create code for export
 		hasUniqueCode(topic);
 		// save and remove NTS
@@ -89,6 +103,9 @@ public class TopicServices implements Component {
 		final Optional<Long> topIdOpt = topic.getTopId() != null ? Optional.of(topic.getTopId()) : Optional.empty();
 		if (topicPAO.checkUnicityTopicCode(topic.getBotId(), topic.getCode(), topIdOpt)) {
 			throw new VUserException("The code is not unique, please select another");
+		}
+		if (TopicsUtils.checkSpecialCharacters(topic.getCode())) {
+			throw new VUserException("The code cannot contain the following characters : '[', ']', '|', '¤'. ");
 		}
 	}
 
@@ -166,8 +183,7 @@ public class TopicServices implements Component {
 		return topicDAO.getTopicReferencingTopId(topId);
 	}
 
-	public void initNewBasicTopic(final ViewContext viewContext, final String ktoCd, final ViewContextKey<Topic> topickey,
-			final ViewContextKey<UtterText> uttertextkey) {
+	public Topic initNewBasicTopic(final String ktoCd) {
 		final Topic topic = new Topic();
 		final KindTopic kto = kindTopicServices.findKindTopicByCd(ktoCd);
 		topic.setIsEnabled(true);
@@ -176,11 +192,38 @@ public class TopicServices implements Component {
 		topic.setKtoCd(ktoCd);
 		topic.setDescription(kto.getDescription());
 		topic.setCode(ktoCd);
-		viewContext.publishDto(topickey, topic);
-		final UtterText utterText = new UtterText();
-		utterText.setText(kindTopicServices.initializeDefaultText(ktoCd));
-		viewContext.publishDto(uttertextkey, utterText);
+		return topic;
 
+	}
+
+	public void initializeBasicTopic(final Chatbot chatbot, final TopicCategory topicCategory, final Topic topic, final UtterText utterText) {
+		topic.setBotId(chatbot.getBotId());
+
+		topic.setTopCatId(topicCategory.getTopCatId());
+		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
+		topicDAO.save(topic);
+
+		for (final TopicInterfaceServices services : topicInterfaceServices) {
+			final Entity object = services.findByTopId(topic.getTopId());
+			if (object != null) {
+				services.delete(chatbot, object, topic);
+			}
+			if (services.handleObject(topic)) {
+				services.initializeBasic(chatbot, topic, utterText.getText());
+			}
+		}
+
+	}
+
+	public Topic saveTtoCd(final Topic topic, final String ttoCd) {
+		topic.setTtoCd(ttoCd);
+		return save(topic);
+	}
+
+	public UtterText initUtterTextBasicTopic(final Topic topic) {
+		final UtterText utt = new UtterText();
+
+		return utt;
 	}
 
 	//********* NTS part ********/
@@ -208,7 +251,7 @@ public class TopicServices implements Component {
 				.collect(VCollectors.toDtList(NluTrainingSentence.class));
 
 		for (final NluTrainingSentence nts : ntsToSave) {
-			if (checkSpecialCharacters(nts.getText())) {
+			if (TopicsUtils.checkSpecialCharacters(nts.getText())) {
 				throw new VUserException("The responses cannot contain the following characters : '[', ']', '|', '¤'. ");
 			}
 			nts.setTopId(topic.getTopId());
@@ -223,12 +266,19 @@ public class TopicServices implements Component {
 		topicPAO.removeAllNluTrainingSentenceByBotId(bot.getBotId());
 	}
 
-	public boolean checkSpecialCharacters(final String string) {
-		return string.contains("[") || string.contains("]") || string.contains("|") || string.contains("¤");
+	@Override
+	public void start() {
+		topicInterfaceServices.add(scriptIntentionServices);
+		topicInterfaceServices.add(smallTalkServices);
+	}
+
+	@Override
+	public void stop() {
+		//nothing
 	}
 
 	public Optional<Topic> getTopicByCode(final String code, final Long botId) {
-		Criteria<Topic> criteria = Criterions.isEqualTo(TopicFields.code, code).and(Criterions.isEqualTo(TopicFields.botId, botId));
+		final Criteria<Topic> criteria = Criterions.isEqualTo(TopicFields.code, code).and(Criterions.isEqualTo(TopicFields.botId, botId));
 		return topicDAO.findOptional(criteria);
 	}
 }

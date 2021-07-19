@@ -33,6 +33,7 @@ import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.ResponseType;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
@@ -48,7 +49,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 @Secured("BotUser")
 public class SmallTalkDetailController extends AbstractTopicController<SmallTalk> {
 
-	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalk");
+	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("object");
 
 	private static final ViewContextKey<ResponseType> responseTypeKey = ViewContextKey.of("responseTypes");
 
@@ -112,7 +113,7 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 	@PostMapping("/_save")
 	@Override
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
+			@ViewAttribute("object") final SmallTalk smallTalk,
 			@ViewAttribute("topic") final Topic topic,
 			@ViewAttribute("bot") final Chatbot chatbot,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
@@ -131,8 +132,12 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 		// add training sentence who is not "validated" by enter and still in the input
 		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 
-		smallTalkServices.saveSmallTalk(chatbot, smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts,
-				buttonList, topic, topic.getIsEnabled());
+		topicServices.saveTtoCd(topic, TypeTopicEnum.SMALLTALK.name());
+
+		smallTalkServices.saveSmallTalk(chatbot, smallTalk, utterTexts, buttonList, topic);
+
+		topicServices.save(topic, smallTalkServices.isEnabled(smallTalk, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
+
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
 	}
 

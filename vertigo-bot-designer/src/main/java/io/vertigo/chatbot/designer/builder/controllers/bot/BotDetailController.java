@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -35,12 +36,16 @@ import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
@@ -69,11 +74,20 @@ public class BotDetailController extends AbstractBotController {
 	@Inject
 	private TopicCategoryServices topicCategoryServices;
 
+	@Inject
+	private TypeTopicServices typeTopicServices;
+
+	@Inject
+	private List<TopicInterfaceServices> topicInterfaceServices;
+
 	private static final ViewContextKey<UtterText> utterTextFailureKey = ViewContextKey.of("utterTextFailure");
 	private static final ViewContextKey<UtterText> utterTextStartKey = ViewContextKey.of("utterTextStart");
 	private static final ViewContextKey<UtterText> utterTextEndKey = ViewContextKey.of("utterTextEnd");
 
-	private static final ViewContextKey<Topic> topicKey = ViewContextKey.of("topics");
+	private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
+	private static final ViewContextKey<String> ttoCdFailureKey = ViewContextKey.of("ttoCdFailure");
+	private static final ViewContextKey<String> ttoCdStartKey = ViewContextKey.of("ttoCdStart");
+	private static final ViewContextKey<String> ttoCdEndKey = ViewContextKey.of("ttoCdEnd");
 
 	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
 	private static final ViewContextKey<ChatbotNode> nodeEditKey = ViewContextKey.of("nodeEdit");
@@ -89,8 +103,6 @@ public class BotDetailController extends AbstractBotController {
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
 
-		viewContext.publishDtList(topicKey, topicServices.getAllTopicByBot(bot));
-
 		if (AuthorizationUtils.isAuthorized(bot, ChatbotOperations.botAdm)) {
 			viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
 		}
@@ -98,13 +110,13 @@ public class BotDetailController extends AbstractBotController {
 		viewContext.publishRef(deletePopinKey, false);
 		initNodeEdit(viewContext);
 
-		initBasicTopic(bot, viewContext, KindTopicEnum.FAILURE.name(), topicFailureKey, utterTextFailureKey);
-		initBasicTopic(bot, viewContext, KindTopicEnum.START.name(), topicStartKey, utterTextStartKey);
-		initBasicTopic(bot, viewContext, KindTopicEnum.END.name(), topicEndKey, utterTextEndKey);
+		initBasicTopic(bot, viewContext, KindTopicEnum.FAILURE.name(), topicFailureKey, utterTextFailureKey, ttoCdFailureKey);
+		initBasicTopic(bot, viewContext, KindTopicEnum.START.name(), topicStartKey, utterTextStartKey, ttoCdStartKey);
+		initBasicTopic(bot, viewContext, KindTopicEnum.END.name(), topicEndKey, utterTextEndKey, ttoCdEndKey);
 
 		final TopicCategory topicCategory = topicCategoryServices.getTechnicalCategoryByBot(bot);
 		viewContext.publishDto(topicCategoryKey, topicCategory);
-
+		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 		toModeReadOnly();
 	}
 
@@ -120,27 +132,43 @@ public class BotDetailController extends AbstractBotController {
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext) {
 		initEmptyCommonContext(viewContext);
-
+		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 		//Init topic failure
-		topicServices.initNewBasicTopic(viewContext, KindTopicEnum.FAILURE.name(), topicFailureKey, utterTextFailureKey);
-		topicServices.initNewBasicTopic(viewContext, KindTopicEnum.START.name(), topicStartKey, utterTextStartKey);
-		topicServices.initNewBasicTopic(viewContext, KindTopicEnum.END.name(), topicEndKey, utterTextEndKey);
+
+		initNewBasicTopic(viewContext, KindTopicEnum.FAILURE.name(), topicFailureKey, utterTextFailureKey);
+		initNewBasicTopic(viewContext, KindTopicEnum.START.name(), topicStartKey, utterTextStartKey);
+		initNewBasicTopic(viewContext, KindTopicEnum.END.name(), topicEndKey, utterTextEndKey);
 		final TopicCategory topicCategory = topicCategoryServices.initializeBasicCategory();
 		viewContext.publishDto(topicCategoryKey, topicCategory);
-		viewContext.publishDtList(topicKey, new DtList<>(Topic.class));
 		viewContext.publishDtList(nodeListKey, new DtList<>(ChatbotNode.class));
+		viewContext.publishRef(ttoCdStartKey, TypeTopicEnum.SMALLTALK.name());
+		viewContext.publishRef(ttoCdEndKey, TypeTopicEnum.SMALLTALK.name());
+		viewContext.publishRef(ttoCdFailureKey, TypeTopicEnum.SMALLTALK.name());
 		initNodeEdit(viewContext);
 
 		toModeCreate();
 	}
 
-	private void initBasicTopic(final Chatbot bot, final ViewContext viewContext, final String ktoCd, final ViewContextKey<Topic> topickey,
+	private void initNewBasicTopic(final ViewContext viewContext, final String ktoCd, final ViewContextKey<Topic> topicBasicKey,
 			final ViewContextKey<UtterText> uttertextkey) {
-		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
+		viewContext.publishDto(topicBasicKey, topicServices.initNewBasicTopic(ktoCd));
+		viewContext.publishDto(uttertextkey, utterTextServices.initNewBasicUttText(ktoCd));
+	}
 
-		final UtterText utterText = utterTextServices.getUtterTextByTopId(topic.getTopId());
+	private void initBasicTopic(final Chatbot bot, final ViewContext viewContext, final String ktoCd, final ViewContextKey<Topic> topicBasicKey,
+			final ViewContextKey<UtterText> uttertextkey, final ViewContextKey<String> ttoCdkey) {
+		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
+		UtterText utterText = new UtterText();
+
+		for (final TopicInterfaceServices services : topicInterfaceServices) {
+			if (services.handleObject(topic)) {
+				utterText = services.getBasicUtterTextByTopId(topic.getTopId());
+			}
+		}
+
 		viewContext.publishDto(uttertextkey, utterText);
-		viewContext.publishDto(topickey, topic);
+		viewContext.publishDto(topicBasicKey, topic);
+		viewContext.publishRef(ttoCdkey, topic.getTtoCd());
 	}
 
 	@PostMapping("/_edit")
@@ -166,8 +194,14 @@ public class BotDetailController extends AbstractBotController {
 			@ViewAttribute("topicFailure") final Topic topicFailure,
 			@ViewAttribute("topicStart") final Topic topicStart,
 			@ViewAttribute("topicEnd") final Topic topicEnd,
+			@ViewAttribute("ttoCdFailure") final String ttoCdFailure,
+			@ViewAttribute("ttoCdStart") final String ttoCdStart,
+			@ViewAttribute("ttoCdEnd") final String ttoCdEnd,
 			@ViewAttribute("topicCategory") final TopicCategory topicCategory) {
 
+		topicStart.setTtoCd(ttoCdStart);
+		topicFailure.setTtoCd(ttoCdFailure);
+		topicEnd.setTtoCd(ttoCdEnd);
 		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, utterTextFailure,
 				utterTextStart, utterTextEnd, topicFailure, topicStart, topicEnd, topicCategory);
 
