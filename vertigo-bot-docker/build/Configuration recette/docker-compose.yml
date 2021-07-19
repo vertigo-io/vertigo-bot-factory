@@ -1,0 +1,252 @@
+version: '3.5'
+
+services:
+  postgres:
+    image: postgres:12.1
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - cf_postgres_data:/var/lib/postgresql/data/pgdata
+      - ./initSql/:/docker-entrypoint-initdb.d/
+      - ./backup/postgres:/opt/backup
+    ports:
+      - "5432:5432" 
+    networks:
+      - cb_factory
+    restart: unless-stopped
+
+  postgresKC:
+    image: postgres:12.1
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_PASSWORD: keycloak
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+    volumes:
+      - cf_postgresKC_data:/var/lib/postgresql/data/pgdata
+    ports:
+      - "5434:5432" 
+    networks:
+      - cb_factory    
+ 
+  keycloak:
+    image: jboss/keycloak:12.0.2
+    command: -Dkeycloak.frontendUrl=https://chatbot-factory-dev.dev.klee.lan.net/sso/auth
+    environment:
+      DB_VENDOR: postgres
+      DB_ADDR: postgresKC
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: keycloak
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: changeme
+    ports:
+      - 8200:8080
+    depends_on:
+      - postgresKC
+    networks: 
+      - cb_factory
+  
+ 
+  influxdb:
+    image: influxdb:1.7.8
+    volumes:
+      - cf_influxdb_data:/var/lib/influxdb
+      - ./backup/influxdb:/opt/backup
+    ports: 
+      - "8086:8086"
+    networks:
+      - cb_factory
+    restart: unless-stopped
+
+  analytica:
+    image: vertigoio/analytics-server:0.6
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+    depends_on:
+      - influxdb
+#    ports:
+#      - "4562:4562"
+    networks:
+      - cb_factory
+    restart: unless-stopped
+  
+  designer:
+    image: vertigoio/bot-factory-designer:0.6.0
+    environment:
+      - JAVA_OPTS=-Xmx512m -Xms512m
+      - DB_URL=//postgres:5432/chatbot
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - INFLUXDB_URL=http://influxdb:8086
+      - ANALYTICA_DBNAME=chatbot
+      - devMode=true
+      - DEPLOY_PATH=designer
+    depends_on:
+      - postgres
+      - influxdb
+      - analytica
+    ports:
+      - '127.0.0.1:8080:8080'
+    networks:
+      - cb_factory
+    restart: unless-stopped
+      
+  runnerMarsDev:
+    image: vertigoio/bot-factory-runner:0.6.0
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=runnerMarsDev
+      - RASA_URL=http://rasaMarsDev:5005
+    depends_on:
+      - influxdb
+      - analytica
+      - rasaMarsDev
+    ports:
+      - '127.0.0.1:8181:8080'
+    volumes:
+      - cf_runner_mars_dev_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+    
+  rasaMarsDev:
+    image: rasa/rasa:2.4.0-full
+    ports:
+      - 5005:5005
+    volumes:
+      - ./:/app
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+    networks:
+      - cb_factory
+      
+  rasaMarsProd:
+    image: rasa/rasa:2.4.0-full
+    ports:
+      - 5006:5005
+    volumes:
+      - ./:/app
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+    networks:
+      - cb_factory      
+      
+
+  runnerDevFSE:
+    image: vertigoio/bot-factory-runner:0.6.0
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=runnerDevFSE
+      - RASA_URL=http://rasaDevFSE:5005
+    depends_on:
+      - influxdb
+      - analytica
+      - rasaDevFSE
+    ports:
+      - '127.0.0.1:8183:8080'
+    volumes:
+      - cf_runner_mars_prod_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+    
+  rasaDevFSE:
+    image: rasa/rasa:2.4.0-full
+    ports:
+      - 5007:5005
+    volumes:
+      - ./:/app
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+    networks:
+      - cb_factory      
+
+  runnerRecetteFSE:
+    image: vertigoio/bot-factory-runner:0.6.0
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=runnerRecetteFSE
+      - RASA_URL=http://rasaRecetteFSE:5005
+    depends_on:
+      - influxdb
+      - analytica
+      - rasaRecetteFSE
+    ports:
+      - '127.0.0.1:8184:8080'
+    volumes:
+      - cf_runner_mars_prod_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+    
+  rasaRecetteFSE:
+    image: rasa/rasa:2.4.0-full
+    ports:
+      - 5008:5005
+    volumes:
+      - ./:/app
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+    networks:
+      - cb_factory      
+      
+      
+
+  runnerMarsProd:
+    image: vertigoio/bot-factory-runner:0.6.0
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=runnerMarsProd
+      - RASA_URL=http://rasaMarsProd:5005
+    depends_on:
+      - influxdb
+      - analytica
+      - rasaMarsProd
+    ports:
+      - '127.0.0.1:8182:8080'
+    volumes:
+      - cf_runner_mars_prod_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+    
+
+
+
+volumes:
+  cf_postgres_data:
+  cf_postgresKC_data:
+  cf_influxdb_data:
+  cf_runner_mars_dev_data:
+  cf_runner_mars_prod_data:
+    
+networks:
+  cb_factory:
+  
