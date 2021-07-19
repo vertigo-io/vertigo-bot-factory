@@ -124,7 +124,7 @@ public class ExecutorManager implements Manager, Activeable {
 
 		final var botEngine = botManager.createBotEngine(newUUID);
 		final var botResponse = botEngine.runTick(input);
-		analyticsSenderServices.sendEventToDb(botResponse.getMetadatas(), executorConfigManager.getConfig().getExecutorConfiguration(), input);
+		analyticsSenderServices.sendEventStartToDb(executorConfigManager.getConfig().getExecutorConfiguration());
 		botResponse.getMetadatas().put("sessionId", newUUID);
 		return botResponse;
 	}

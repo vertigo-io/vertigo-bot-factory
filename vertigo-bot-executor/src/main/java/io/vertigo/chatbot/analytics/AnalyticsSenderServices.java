@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.analytics;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -13,7 +14,6 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.analytics.AnalyticsManager;
 import io.vertigo.core.analytics.process.AProcess;
 import io.vertigo.core.analytics.process.AProcessBuilder;
-import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.node.component.Component;
 
 @Transactional
@@ -22,39 +22,86 @@ public class AnalyticsSenderServices implements Component {
 	@Inject
 	private AnalyticsManager analyticsManager;
 
-	@SuppressWarnings("unchecked")
 	public void sendEventToDb(final Map<String, Object> metadatas, final ExecutorConfiguration executorConfiguration, final BotInput input) {
 		//Get values from response
-		final TopicDefinition currentTopic = (TopicDefinition) metadatas.get("currentTopic");
-		final Tuple<Double, String> eventLog = (Tuple<Double, String>) metadatas.get("eventLog");
-		final String codeTopic = currentTopic.getCode();
+		final AnalyticsObjectSend analytics = (AnalyticsObjectSend) metadatas.get(BotEngine.ANALYTICS_KEY);
+		final String codeTopic = analytics.getTopic().getCode();
+		final Double accuracy = analytics.getAccuracy();
+		final List<TopicDefinition> topicsPast = analytics.getTopicsPast();
 
-		//Create the measurements
-		final boolean isSessionStart = codeTopic.equals(BotEngine.START_TOPIC_NAME);
-		final boolean isFallback = codeTopic.equals(BotEngine.FALLBACK_TOPIC_NAME);
-		final boolean isEnd = codeTopic.equals(BotEngine.END_TOPIC_NAME);
-		final boolean isNlu = eventLog.getVal1() != null;
+		final boolean isNlu = accuracy != null;
 
-		//Create the process
-		final AProcessBuilder processBuilder = AProcess.builder("chatbotmessages", currentTopic.getCode(), Instant.now(), Instant.now()) // timestamp of emitted event
-				.addTag("text", input.getMessage() != null ? input.getMessage() : input.getMetadatas().get("payload") != null ? input.getMetadatas().get("payload").toString() : "rien")
-				.addTag("type", input.getMetadatas().get("payload") != null ? "button" : "text")
-				.addTag("botId", String.valueOf(executorConfiguration.getBotId()))
-				.addTag("nodId", String.valueOf(executorConfiguration.getNodId()))
-				.addTag("traId", String.valueOf(executorConfiguration.getTraId()))
-				.addTag("modelName", String.valueOf(executorConfiguration.getModelName()))
-				.setMeasure("isNlu", isNlu ? 1D : 0D)
+		if (isNlu) {
+			sendNluEvent(input, codeTopic, accuracy, topicsPast, executorConfiguration);
+		} else {
+			preparePastTopics(topicsPast, executorConfiguration);
+		}
+	}
+
+	private void sendNluEvent(final BotInput input, final String codeTopic, final Double accuracy, final List<TopicDefinition> topicsPast, final ExecutorConfiguration executorConfiguration) {
+		final AProcessBuilder processBuilder = AProcess.builder("chatbotmessages", codeTopic, Instant.now(), Instant.now()) // timestamp of emitted event
+				.addTag("text", input.getMessage())
+				.addTag("type", "text")
+				.setMeasure("isNlu", 1D)
 				.setMeasure("isUserMessage", 1D)
-				.setMeasure("isSessionStart", isSessionStart ? 1D : 0D)
-				.setMeasure("isFallback", isFallback ? 1D : 0D)
-				.setMeasure("confidence", isNlu ? eventLog.getVal1() : 1D)
-				.setMeasure("isTechnical", isTechnical(isSessionStart, isFallback, isEnd));
+				.setMeasure("confidence", accuracy);
+		if (codeTopic.equals(BotEngine.FALLBACK_TOPIC_NAME)) {
+			prepareFallBackEvent(processBuilder, input, codeTopic, executorConfiguration, accuracy);
+		}
+		preparePastTopics(topicsPast, executorConfiguration);
+		setConfigurationInformation(processBuilder, executorConfiguration);
+		analyticsManager.addProcess(processBuilder.build());
+	}
+
+	private static void prepareFallBackEvent(final AProcessBuilder builder, final BotInput input, final String codeTopic, final ExecutorConfiguration executorConfiguration, final Double accuracy) {
+		builder
+				.setMeasure("isTechnical", 1D)
+				.setMeasure("isFallback", 1D);
+
+	}
+
+	private void preparePastTopics(final List<TopicDefinition> topicsPast, final ExecutorConfiguration executorConfiguration) {
+		for (TopicDefinition topic : topicsPast) {
+			//Create the measurements
+			final String codeTopic = topic.getCode();
+			final boolean isFallback = codeTopic.equals(BotEngine.FALLBACK_TOPIC_NAME);
+			final boolean isEnd = codeTopic.equals(BotEngine.END_TOPIC_NAME);
+
+			final AProcessBuilder processBuilder = AProcess.builder("chatbotmessages", topic.getCode(), Instant.now(), Instant.now()) // timestamp of emitted event
+					.addTag("text", "")
+					.addTag("type", "text")
+					.setMeasure("isTechnical", isTechnical(isFallback, isEnd))
+					.setMeasure("confidence", 1D);
+			setConfigurationInformation(processBuilder, executorConfiguration);
+			analyticsManager.addProcess(processBuilder.build());
+		}
+
+	}
+
+	public void sendEventStartToDb(final ExecutorConfiguration executorConfiguration) {
+		//Create the process
+		final AProcessBuilder processBuilder = AProcess.builder("chatbotmessages", BotEngine.START_TOPIC_NAME, Instant.now(), Instant.now()) // timestamp of emitted event
+				.addTag("text", "")
+				.addTag("type", "technical")
+				.setMeasure("isSessionStart", 1D)
+				.setMeasure("confidence", 1D)
+				.setMeasure("isTechnical", 1D);
+
+		setConfigurationInformation(processBuilder, executorConfiguration);
 
 		analyticsManager.addProcess(processBuilder.build());
 	}
 
+	private static void setConfigurationInformation(final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {
+		builder
+				.addTag("botId", String.valueOf(executorConfiguration.getBotId()))
+				.addTag("nodId", String.valueOf(executorConfiguration.getNodId()))
+				.addTag("traId", String.valueOf(executorConfiguration.getTraId()))
+				.addTag("modelName", String.valueOf(executorConfiguration.getModelName()));
+	}
+
 	//return 1D if topic is technical
-	private static double isTechnical(final boolean isSessionStart, final boolean isFallback, final boolean isEnd) {
-		return isSessionStart || isFallback || isEnd ? 1D : 0D;
+	private static double isTechnical(final boolean isFallback, final boolean isEnd) {
+		return isFallback || isEnd ? 1D : 0D;
 	}
 }

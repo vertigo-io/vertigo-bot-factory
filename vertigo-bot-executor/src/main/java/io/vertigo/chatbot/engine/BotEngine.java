@@ -16,6 +16,7 @@ import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.nlu.NluResult;
 import io.vertigo.ai.nlu.ScoredIntent;
+import io.vertigo.chatbot.analytics.AnalyticsObjectSend;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
@@ -44,6 +45,7 @@ public class BotEngine {
 	public static final String START_TOPIC_NAME = "!START";
 	public static final String END_TOPIC_NAME = "!END";
 	public static final String FALLBACK_TOPIC_NAME = "!FALLBACK";
+	public static final String ANALYTICS_KEY = "analytics";
 
 	public static final BBKey BOT_IN_PATH = BBKey.of("/bot/in");
 	public static final BBKey BOT_OUT_PATH = BBKey.of("/bot/out");
@@ -98,7 +100,9 @@ public class BotEngine {
 
 		// Continue on previous topic or start from scratch
 		TopicDefinition topic = topicDefinitionMap.get(getTopic());
-		TopicDefinition currentTopic = topic;
+
+		//Object use for the analytics sender services
+		final AnalyticsObjectSend analyticsToSend = new AnalyticsObjectSend(topic, eventLog.getVal1());
 
 		BTStatus status;
 		TopicDefinition nextTopic = null;
@@ -114,6 +118,7 @@ public class BotEngine {
 			if (bb.exists(BOT_NEXT_TOPIC_KEY)) {
 				final var nextTopicName = bb.getString(BOT_NEXT_TOPIC_KEY);
 				nextTopic = topicDefinitionMap.get(nextTopicName); // handle forward to another topic
+				analyticsToSend.getTopicsPast().add(nextTopic);
 				Assertion.check().isNotNull(nextTopic, "Topic '{0}' not found, cant forward to it", nextTopicName);
 				bb.delete(BBKeyPattern.of(BOT_NEXT_TOPIC_KEY.key()));
 				switchToTopic(nextTopicName);
@@ -138,9 +143,7 @@ public class BotEngine {
 			botResponseBuilder.addMetadata(getKeyName(key), getKeyValue(key));
 		}
 
-		botResponseBuilder.addMetadata("eventLog", eventLog);
-		botResponseBuilder.addMetadata("currentTopic", currentTopic);
-
+		botResponseBuilder.addMetadata(ANALYTICS_KEY, analyticsToSend);
 		return botResponseBuilder.build();
 	}
 
