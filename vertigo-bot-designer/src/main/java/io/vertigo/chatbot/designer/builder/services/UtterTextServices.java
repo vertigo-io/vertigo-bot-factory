@@ -14,11 +14,13 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.multilingual.kindTopic.KindTopicMultilingualResources;
 import io.vertigo.chatbot.designer.builder.utterText.UtterTextPAO;
 import io.vertigo.chatbot.designer.utils.HtmlInputUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
@@ -105,10 +107,32 @@ public class UtterTextServices implements Component {
 		utterTextPAO.removeAllUtterTextByBotId(bot.getBotId());
 	}
 
-	public UtterText getUtterTextByTopId(final Long topId) {
+	public UtterText initNewBasicUttText(final String ktoCd) {
+		final UtterText utterText = new UtterText();
+		utterText.setText(initializeDefaultText(ktoCd));
+		return utterText;
+	}
+
+	private static String initializeDefaultText(final String ktoCd) {
+		switch (ktoCd) {
+			case "START":
+				return MessageText.of(KindTopicMultilingualResources.DEFAULT_START).getDisplay();
+
+			case "FAILURE":
+				return MessageText.of(KindTopicMultilingualResources.DEFAULT_FALLBACK).getDisplay();
+
+			case "END":
+				return MessageText.of(KindTopicMultilingualResources.DEFAULT_END).getDisplay();
+
+			default:
+				return "";
+		}
+	}
+
+	public UtterText getBasicUtterTextByTopId(final Long topId) {
 		Assertion.check()
 				.isNotNull(topId);
 		// ---
-		return utterTextDAO.getUtterTextByTopId(topId).get(0);
+		return utterTextDAO.getBasicUtterTextByTopId(topId).get(0);
 	}
 }

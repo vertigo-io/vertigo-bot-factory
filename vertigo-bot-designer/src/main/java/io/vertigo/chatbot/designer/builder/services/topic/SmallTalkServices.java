@@ -1,19 +1,18 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.SmallTalkDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
@@ -26,7 +25,6 @@ import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
 
 @Transactional
 @Secured("BotUser")
@@ -34,12 +32,6 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 
 	@Inject
 	private UtterTextServices utterTextServices;
-
-	@Inject
-	private TopicServices topicServices;
-
-	@Inject
-	private TopicCategoryServices topicCategoryServices;
 
 	@Inject
 	private ResponsesButtonServices responsesButtonServices;
@@ -68,35 +60,26 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 	}
 
 	public SmallTalk saveSmallTalk(@SecuredOperation("botContributor") final Chatbot chatbot, final SmallTalk smallTalk,
-			final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList, final Topic topic, boolean isEnabled) {
+
+			final DtList<UtterText> utterTexts, final DtList<ResponseButton> buttonList, final Topic topic) {
 
 		Assertion.check()
 				.isNotNull(smallTalk).isNotNull(topic)
 				.isNotNull(utterTexts)
 				.isNotNull(buttonList);
 		// ---
-		if (KindTopicEnum.NORMAL.name().equals(topic.getKtoCd())) {
-			Assertion.check().isNotNull(nluTrainingSentences)
-					.isNotNull(nluTrainingSentencesToDelete);
-		}
 
-		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
-		final Topic savedTopic = topicServices.save(topic);
-		smallTalk.setTopId(savedTopic.getTopId());
+		smallTalk.setTopId(topic.getTopId());
 		final SmallTalk savedST = save(smallTalk);
 
 		// save utter textes, remove all + create all
 		utterTextServices.removeAllUtterTextBySmtId(chatbot, savedST.getSmtId());
-		final DtList<UtterText> uttToSave = utterTextServices.createNoBlankUtterTextBySmallTalk(chatbot, savedST, utterTexts);
-
-		isEnabled &= !(uttToSave.isEmpty() && buttonList.isEmpty()) && topic.getIsEnabled();
-		topicServices.save(savedTopic, isEnabled, nluTrainingSentences, nluTrainingSentencesToDelete);
+		utterTextServices.createNoBlankUtterTextBySmallTalk(chatbot, savedST, utterTexts);
 
 		// remove and create buttons
 
 		for (final ResponseButton button : buttonList) {
-			if (topicServices.checkSpecialCharacters(button.getText())) {
+			if (TopicsUtils.checkSpecialCharacters(button.getText())) {
 				throw new VUserException("The button cannot contain the following characters : '[', ']', '|', '¤'. ");
 			}
 		}
@@ -114,7 +97,6 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 
 		// delete smallTalk
 		delete(smallTalk);
-		topicServices.deleteTopic(chatbot, topic);
 	}
 
 	public void removeAllSmallTalkFromBot(@SecuredOperation("botAdm") final Chatbot bot) {
@@ -129,30 +111,26 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 		return smallTalkPAO.getSmallTalkIHMByBot(bot.getBotId());
 	}
 
-	public void initializeBasicSmallTalk(final Chatbot chatbot, final Topic topic, SmallTalk smt, final UtterText utterText) {
-		topic.setBotId(chatbot.getBotId());
-		final TopicCategory topicCategory = topicCategoryServices.getTechnicalCategoryByBot(chatbot);
-		topic.setTopCatId(topicCategory.getTopCatId());
-		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
-		topicServices.save(topic);
-
-		if (smt == null) {
-			smt = new SmallTalk();
-			smt.setTopId(topic.getTopId());
-			smt.setRtyId(ResponseTypeEnum.RICH_TEXT.name());
-			smt.setIsEnd(false);
-		}
+	@Override
+	public void initializeBasic(final Chatbot chatbot, final Topic topic, final String text) {
+		final SmallTalk smt = new SmallTalk();
+		smt.setTopId(topic.getTopId());
+		smt.setRtyId(ResponseTypeEnum.RICH_TEXT.name());
+		smt.setIsEnd(false);
+		final UtterText utt = new UtterText();
+		utt.setText(text);
 		final DtList<UtterText> utterTexts = new DtList<UtterText>(UtterText.class);
-		utterTexts.add(utterText);
+		utterTexts.add(utt);
 
-		saveSmallTalk(chatbot, smt, new DtList<NluTrainingSentence>(NluTrainingSentence.class), new DtList<NluTrainingSentence>(NluTrainingSentence.class), utterTexts,
-				new DtList<>(ResponseButton.class), topic, topic.getIsEnabled());
+		saveSmallTalk(chatbot, smt, utterTexts,
+				new DtList<>(ResponseButton.class), topic);
 	}
 
 	@Override
 	public void delete(final SmallTalk smallTalk) {
-		smallTalkDAO.delete(smallTalk.getUID());
-
+		if (smallTalk != null) {
+			smallTalkDAO.delete(smallTalk.getUID());
+		}
 	}
 
 	@Override
@@ -163,9 +141,22 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 	@Override
 	public SmallTalk findByTopId(final Long topId) {
 		if (topId != null) {
-			return smallTalkDAO.findAll(Criterions.isEqualTo(SmallTalkFields.topId, topId), DtListState.of(1)).get(0);
+			final Optional<SmallTalk> result = smallTalkDAO.findOptional(Criterions.isEqualTo(SmallTalkFields.topId, topId));
+			return result.isPresent() ? result.get() : null;
 		}
 		return null;
 	}
 
+	@Override
+	public boolean isEnabled(final SmallTalk object, final boolean isEnabled, final Chatbot bot) {
+		final DtList<UtterText> utt = utterTextServices.getUtterTextList(bot, object);
+		final DtList<ResponseButton> buttonList = responsesButtonServices.getResponsesButtonList(bot, object);
+		return !(utt.isEmpty() && buttonList.isEmpty()) && isEnabled;
+	}
+
+	@Override
+	public UtterText getBasicUtterTextByTopId(final Long topId) {
+		return utterTextServices.getBasicUtterTextByTopId(topId);
+
+	}
 }

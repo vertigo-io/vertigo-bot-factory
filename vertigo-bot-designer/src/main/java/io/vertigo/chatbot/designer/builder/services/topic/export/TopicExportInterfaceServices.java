@@ -4,9 +4,13 @@ import java.util.Map;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.TopicExport;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.Entity;
 
-public interface TopicsExportServices {
+public interface TopicExportInterfaceServices<D extends Entity> {
+
+	boolean handleObject(final Topic topic);
 
 	/**
 	 * Get topicExport by bot
@@ -23,4 +27,7 @@ public interface TopicsExportServices {
 	 * @return map<topId, bt> associated
 	 */
 	public Map<Long, String> mapTopicToBt(final Chatbot bot);
+
+	public String getBasicBt(Chatbot bot, String ktoCd);
+
 }

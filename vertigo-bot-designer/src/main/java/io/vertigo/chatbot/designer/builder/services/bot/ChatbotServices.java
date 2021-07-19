@@ -18,6 +18,7 @@ import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
+import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
@@ -51,6 +52,9 @@ public class ChatbotServices implements Component {
 	private SmallTalkServices smallTalkServices;
 
 	@Inject
+	private ScriptIntentionServices scriptIntentionServices;
+
+	@Inject
 	private TopicServices topicServices;
 
 	@Inject
@@ -72,7 +76,10 @@ public class ChatbotServices implements Component {
 			final UtterText utterTextFailure,
 			final UtterText utterTextStart,
 			final UtterText utterTextEnd,
-			final Topic topicFailure, final Topic topicStart, final Topic topicEnd, final TopicCategory topicCategory) {
+			final Topic topicFailure,
+			final Topic topicStart,
+			final Topic topicEnd,
+			final TopicCategory topicCategory) {
 
 		Assertion.check().isNotNull(chatbot);
 		Assertion.check().isNotNull(utterTextFailure);
@@ -103,13 +110,13 @@ public class ChatbotServices implements Component {
 		topicCategoryServices.saveCategory(chatbot, topicCategory);
 
 		//TopicFailure
-		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicFailure, smallTalkServices.findByTopId(topicFailure.getTopId()), utterTextFailure);
+		topicServices.initializeBasicTopic(savedChatbot, topicCategory, topicFailure, utterTextFailure);
 
 		//Topic Start
-		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicStart, smallTalkServices.findByTopId(topicStart.getTopId()), utterTextStart);
+		topicServices.initializeBasicTopic(savedChatbot, topicCategory, topicStart, utterTextStart);
 
 		//Topic End
-		smallTalkServices.initializeBasicSmallTalk(savedChatbot, topicEnd, smallTalkServices.findByTopId(topicEnd.getTopId()), utterTextEnd);
+		topicServices.initializeBasicTopic(savedChatbot, topicCategory, topicEnd, utterTextEnd);
 
 		return savedChatbot;
 	}
@@ -124,6 +131,7 @@ public class ChatbotServices implements Component {
 		responsesButtonServices.removeAllSMTButtonsByBot(bot);
 		// Delete training, reponsetype and smallTalk
 		topicServices.removeAllNTSFromBot(bot);
+		scriptIntentionServices.removeAllScriptIntentionFromBot(bot);
 		smallTalkServices.removeAllSmallTalkFromBot(bot);
 		topicServices.removeAllTopicsFromBot(bot);
 		topicCategoryServices.removeAllCategoryByBot(bot);

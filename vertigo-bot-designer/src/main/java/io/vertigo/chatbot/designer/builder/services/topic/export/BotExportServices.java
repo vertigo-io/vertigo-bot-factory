@@ -19,13 +19,16 @@ public class BotExportServices implements Component {
 	@Inject
 	private ScriptIntentionExportServices scriptIntentionExportServices;
 
+	@Inject
+	private TopicExportServices topicExportServices;
+
 	public BotExport exportBot(final Chatbot bot) {
 		final BotExport export = new BotExport();
 		export.setBot(bot);
 		export.setTopics(exportActiveTopics(bot));
-		export.setFallbackBT(smallTalkExportServices.getBasicBt(bot, KindTopicEnum.FAILURE.name()));
-		export.setEndBT(smallTalkExportServices.getBasicBt(bot, KindTopicEnum.END.name()));
-		export.setWelcomeBT(smallTalkExportServices.getBasicBt(bot, KindTopicEnum.START.name()));
+		export.setFallbackBT(topicExportServices.getBasicBt(bot, KindTopicEnum.FAILURE.name()));
+		export.setEndBT(topicExportServices.getBasicBt(bot, KindTopicEnum.END.name()));
+		export.setWelcomeBT(topicExportServices.getBasicBt(bot, KindTopicEnum.START.name()));
 		return export;
 	}
 
