@@ -30,50 +30,32 @@ create DtDefinition DtKindTopic {
 	stereotype : "StaticMasterData"
 	id    ktoCd 				{domain: DoCode 	label: "ID"												}
 	field label 				{domain: DoLabel 	label: "Label" 						cardinality : "1"	} 
-	field titleEnglish 			{domain: DoLabel 	label: "Title (English)" 			cardinality : "1"	} 
-	field titleFrench			{domain: DoLabel 	label: "Title (French)" 			cardinality : "1"	} 
-	field descriptionEnglish	{domain: DoLabel 	label: "Description (English)" 		cardinality : "?"	}
-	field descriptionFrench		{domain: DoLabel 	label: "Description (French)" 		cardinality : "?"	}	
-	field defaultEnglish 		{domain: DoText 	label: "Default text (English)" 	cardinality : "1"	}
-	field defaultFrench 		{domain: DoText 	label: "Default text (French)" 		cardinality : "1"	}
+	field description			{domain: DoLabel 	label: "Description" 				cardinality : "1"	}
+	field defaultText 			{domain: DoText 	label: "Default text" 				cardinality : "1"	}
 	values : `{
         "START" : {
             "ktoCd" : "START",
-            "label" : "Start",
-            "titleEnglish" : "Start",
-            "titleFrench" : "Début",
-            "descriptionEnglish" : "Default start response",
-            "descriptionFrench" : "Réponse de début par défaut",
-            "defaultEnglish" : "Hello !",
-            "defaultFrench" : "Bonjour !"          
+            "label" : "Start",        
+            "description" : "Default start response",          
+            "defaultText" : "Hello !"           
         },
         "END" : {
             "ktoCd" : "END",
             "label" : "End",
-            "titleEnglish" : "End",
-            "titleFrench" : "Fin",
-            "descriptionEnglish" : "Default end response",
-            "descriptionFrench" : "Réponse de fin par défaut",
-            "defaultEnglish" : "Bye !",
-            "defaultFrench" : "Au revoir !"      
+            "description" : "Default end response",
+            "defaultText" : "Bye !"   
         },
         "FAILURE" : {
             "ktoCd" : "FAILURE",
             "label" : "Failure",
-            "titleEnglish" : "Failure",
-            "titleFrench" : "Echec",
-            "descriptionEnglish" : "Default failure response",
-            "descriptionFrench" : "Réponse de d'échec par défaut",
-            "defaultEnglish" : "Sorry, I don't understand.",
-            "defaultFrench" : "Désolé, je n'ai pas compris."
+            "description" : "Default failure response",
+            "defaultText" : "Sorry, I don't understand."
         },
          "NORMAL" : {
             "ktoCd" : "NORMAL",
             "label" : "Normal",
-            "titleEnglish" : "Normal",
-            "titleFrench" : "Normal",
-            "defaultEnglish" : "Text",
-            "defaultFrench" : "Texte"
+            "description" : "Normal",
+            "defaultText" : "Text"
         }
      }`
     sortField : "ktoCd"
@@ -93,11 +75,11 @@ create Association ATopicKindTopic{
 }
 
 create DtDefinition DtTopic{
-	id		topId			{domain: DoId 		label: "ID"}
-	field 	title 			{domain: DoLabel 	label: "Title" 			cardinality : "1"}
-	field 	description		{domain: DoLabel 	label: "Description" 	}
-	field 	isEnabled 		{domain: DoYesNo 	label: "Enabled" 		cardinality : "1"}
-	field 	code	 		{domain: DoLabel 	label: "Code" 			cardinality : "1"}
+	id		topId			{domain: DoId 		label: "ID"									}
+	field 	title 			{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field 	description		{domain: DoLabel 	label: "Description" 						}
+	field 	isEnabled 		{domain: DoYesNo 	label: "Enabled" 		cardinality : "1"	}
+	field 	code	 		{domain: DoLabel 	label: "Code" 			cardinality : "1"	}
 }
 
 create DtDefinition DtSmallTalk {
@@ -252,11 +234,12 @@ create Association AResponseButtonTopicResponse {
 /** Category **/
 
 create DtDefinition DtTopicCategory{
-	id topCatId 		{domain: DoId		label: "Topic category id"}
-	field label			{domain: DoLabel	label: "Topic category label" 	cardinality:"1"}
-	field level 		{domain: DoNumber	label: "Category level"}
-	field isEnabled		{domain: DoYesNo	label: "Enabled" 				cardinality:"1"}
-	field isTechnical	{domain: DoYesNo	label: "Technical" 				cardinality:"1"}
+	id topCatId 		{domain: DoId		label: "Topic category id"						}
+	field code			{domain: DoLabel	label: "Code" 					cardinality:"1"	}
+	field label			{domain: DoLabel	label: "Topic category label" 	cardinality:"1"	}
+	field level 		{domain: DoNumber	label: "Category level"						 	}
+	field isEnabled		{domain: DoYesNo	label: "Enabled" 				cardinality:"1"	}
+	field isTechnical	{domain: DoYesNo	label: "Technical" 				cardinality:"1"	}
 }
 
 create Association ATopicCategoryChatbot{
@@ -324,6 +307,7 @@ create DtDefinition DtTopicIhm {
 	field catLabel	{domain: DoLabel	label: "Category"				cardinality:"1"	}
 	field isEnabled	{domain: DoYesNo	label: "Enabled"								}
 	field ktoCd		{domain: DoCode		label: "Code Kind"				cardinality:"?"	}
+	field code		{domain: DoLabel	label: "Code"					cardinality:"1"	}
 }
 
 create DtDefinition DtScriptIntentionIhm {
@@ -332,3 +316,21 @@ create DtDefinition DtScriptIntentionIhm {
 	field sinId		{domain: DoId		label: "Script Intention id"	}
 	field isEnabled	{domain: DoYesNo	label: "Enabled"				}
 }
+
+create DtDefinition DtTopicFileExport {
+	field code 				{domain: DoCode 						label: "Code" 					cardinality : "1"}
+	field title 			{domain: DoLabel 						label: "Title" 					cardinality : "1"}
+	field category			{domain: DoLabel	 					label: "Category" 				cardinality : "1"}
+	field description		{domain: DoLabel	 					label: "Description" 			cardinality : "?"}
+	field tag				{domain: DoLabel	 					label: "Tag" 					cardinality : "?"}
+	field dateStart			{domain: DoLabel	 					label: "Start date" 			cardinality : "?"}
+	field dateEnd 			{domain: DoLabel	 					label: "End date" 				cardinality : "?"}
+	field active			{domain: DoLabel	 					label: "Active" 				cardinality : "1"}
+	field trainingPhrases	{domain: DoText	 						label: "Training phrases" 		cardinality : "?"}
+	field typeTopic			{domain: DoLabel	 					label: "Topic type" 			cardinality : "1"}
+	field script			{domain: DoText	 						label: "Script" 				cardinality : "?"}
+	field response			{domain: DoText	 						label: "Response" 				cardinality : "?"}
+	field buttons			{domain: DoText	 						label: "Buttons" 				cardinality : "?"}
+	field isEnd				{domain: DoLabel	 					label: "End of conversation" 	cardinality : "1"}
+}
+

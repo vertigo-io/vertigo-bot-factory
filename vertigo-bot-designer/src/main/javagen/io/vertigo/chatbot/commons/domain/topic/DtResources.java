@@ -20,29 +20,13 @@ public enum DtResources implements MessageKey {
 	 */
 	fldKindTopic$label,
 	/**
-	 * Title (English).
+	 * Description.
 	 */
-	fldKindTopic$titleEnglish,
+	fldKindTopic$description,
 	/**
-	 * Title (French).
+	 * Default text.
 	 */
-	fldKindTopic$titleFrench,
-	/**
-	 * Description (English).
-	 */
-	fldKindTopic$descriptionEnglish,
-	/**
-	 * Description (French).
-	 */
-	fldKindTopic$descriptionFrench,
-	/**
-	 * Default text (English).
-	 */
-	fldKindTopic$defaultEnglish,
-	/**
-	 * Default text (French).
-	 */
-	fldKindTopic$defaultFrench,
+	fldKindTopic$defaultText,
 
 	/***********************************************************
 	/** NluTrainingExport.
@@ -244,6 +228,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTopicCategory$topCatId,
 	/**
+	 * Code.
+	 */
+	fldTopicCategory$code,
+	/**
 	 * Topic category label.
 	 */
 	fldTopicCategory$label,
@@ -263,6 +251,66 @@ public enum DtResources implements MessageKey {
 	 * Chatbot.
 	 */
 	fldTopicCategory$botId,
+
+	/***********************************************************
+	/** TopicFileExport.
+	/***********************************************************
+	/**
+	 * Code.
+	 */
+	fldTopicFileExport$code,
+	/**
+	 * Title.
+	 */
+	fldTopicFileExport$title,
+	/**
+	 * Category.
+	 */
+	fldTopicFileExport$category,
+	/**
+	 * Description.
+	 */
+	fldTopicFileExport$description,
+	/**
+	 * Tag.
+	 */
+	fldTopicFileExport$tag,
+	/**
+	 * Start date.
+	 */
+	fldTopicFileExport$dateStart,
+	/**
+	 * End date.
+	 */
+	fldTopicFileExport$dateEnd,
+	/**
+	 * Active.
+	 */
+	fldTopicFileExport$active,
+	/**
+	 * Training phrases.
+	 */
+	fldTopicFileExport$trainingPhrases,
+	/**
+	 * Topic type.
+	 */
+	fldTopicFileExport$typeTopic,
+	/**
+	 * Script.
+	 */
+	fldTopicFileExport$script,
+	/**
+	 * Response.
+	 */
+	fldTopicFileExport$response,
+	/**
+	 * Buttons.
+	 */
+	fldTopicFileExport$buttons,
+	/**
+	 * End of conversation.
+	 */
+	fldTopicFileExport$isEnd,
 
 	/***********************************************************
 	/** TopicIhm.
@@ -303,6 +351,10 @@ public enum DtResources implements MessageKey {
 	 * Code Kind.
 	 */
 	fldTopicIhm$ktoCd,
+	/**
+	 * Code.
+	 */
+	fldTopicIhm$code,
 
 	/***********************************************************
 	/** TypeTopic.

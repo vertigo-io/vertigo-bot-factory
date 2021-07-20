@@ -79,6 +79,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TopicCategory(io.vertigo.chatbot.commons.domain.topic.TopicCategory.class),
 		/** Objet de données TopicExport. */
 		TopicExport(io.vertigo.chatbot.commons.domain.TopicExport.class),
+		/** Objet de données TopicFileExport. */
+		TopicFileExport(io.vertigo.chatbot.commons.domain.topic.TopicFileExport.class),
 		/** Objet de données TopicIhm. */
 		TopicIhm(io.vertigo.chatbot.commons.domain.topic.TopicIhm.class),
 		/** Objet de données TrainerInfo. */
@@ -207,18 +209,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ktoCd,
 		/** Propriété 'Label'. */
 		label,
-		/** Propriété 'Title (English)'. */
-		titleEnglish,
-		/** Propriété 'Title (French)'. */
-		titleFrench,
-		/** Propriété 'Description (English)'. */
-		descriptionEnglish,
-		/** Propriété 'Description (French)'. */
-		descriptionFrench,
-		/** Propriété 'Default text (English)'. */
-		defaultEnglish,
-		/** Propriété 'Default text (French)'. */
-		defaultFrench	}
+		/** Propriété 'Description'. */
+		description,
+		/** Propriété 'Default text'. */
+		defaultText	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.
@@ -430,8 +424,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		intentRasa,
 		/** Propriété 'Confidence'. */
 		confidence,
-		/** Propriété 'Small Talk selection'. */
-		smtId	}
+		/** Propriété 'Topic selection'. */
+		topId	}
 
 	/**
 	 * Enumération des champs de SmallTalk.
@@ -476,10 +470,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de TopIntent.
 	 */
 	public enum TopIntentFields implements DtFieldName<io.vertigo.chatbot.designer.domain.TopIntent> {
-		/** Propriété 'Small Talk ID'. */
-		smtId,
+		/** Propriété 'Topic ID'. */
+		topId,
 		/** Propriété 'Rasa intent'. */
 		intentRasa,
+		/** Propriété 'Topic code'. */
+		code,
 		/** Propriété 'Count'. */
 		count	}
 
@@ -512,6 +508,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum TopicCategoryFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.TopicCategory> {
 		/** Propriété 'Topic category id'. */
 		topCatId,
+		/** Propriété 'Code'. */
+		code,
 		/** Propriété 'Topic category label'. */
 		label,
 		/** Propriété 'Category level'. */
@@ -535,6 +533,39 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		topicBT	}
 
 	/**
+	 * Enumération des champs de TopicFileExport.
+	 */
+	public enum TopicFileExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.TopicFileExport> {
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Category'. */
+		category,
+		/** Propriété 'Description'. */
+		description,
+		/** Propriété 'Tag'. */
+		tag,
+		/** Propriété 'Start date'. */
+		dateStart,
+		/** Propriété 'End date'. */
+		dateEnd,
+		/** Propriété 'Active'. */
+		active,
+		/** Propriété 'Training phrases'. */
+		trainingPhrases,
+		/** Propriété 'Topic type'. */
+		typeTopic,
+		/** Propriété 'Script'. */
+		script,
+		/** Propriété 'Response'. */
+		response,
+		/** Propriété 'Buttons'. */
+		buttons,
+		/** Propriété 'End of conversation'. */
+		isEnd	}
+
+	/**
 	 * Enumération des champs de TopicIhm.
 	 */
 	public enum TopicIhmFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.TopicIhm> {
@@ -555,7 +586,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Enabled'. */
 		isEnabled,
 		/** Propriété 'Code Kind'. */
-		ktoCd	}
+		ktoCd,
+		/** Propriété 'Code'. */
+		code	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.
@@ -653,7 +686,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Response type'. */
 		responseType,
 		/** Propriété 'Is conversation over ?'. */
-		isEnd	}
+		isEnd,
+		/** Propriété 'Kind Topic Code'. */
+		ktoCd	}
 
 	/** {@inheritDoc} */
 	@Override

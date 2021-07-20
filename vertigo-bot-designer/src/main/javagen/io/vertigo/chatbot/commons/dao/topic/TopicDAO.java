@@ -2,6 +2,7 @@ package io.vertigo.chatbot.commons.dao.topic;
 
 import javax.inject.Inject;
 
+import java.util.Optional;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.core.node.Node;
 import io.vertigo.datamodel.task.definitions.TaskDefinition;
@@ -133,6 +134,53 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
 		return getTaskManager()
 				.execute(task)
 				.getResult();
+	}
+
+	/**
+	 * Execute la tache TkGetTopicByCodeBotId.
+	 * @param botId Long
+	 * @param code String
+	 * @return DtList de Topic topic
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetTopicByCodeBotId",
+			request = "select top.*" + 
+ "			from topic top" + 
+ "			where top.bot_id = #botId#" + 
+ "			and top.code = #code#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getTopicByCodeBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "code", smartType = "STyCode") final String code) {
+		final Task task = createTaskBuilder("TkGetTopicByCodeBotId")
+				.addValue("botId", botId)
+				.addValue("code", code)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
+	 * Execute la tache TkGetTopicFromCode.
+	 * @param code String
+	 * @param botId Long
+	 * @return Option de Topic topic
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetTopicFromCode",
+			request = "select top.*" + 
+ "			from topic top" + 
+ "			where top.code = #code# and top.bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	public Optional<io.vertigo.chatbot.commons.domain.topic.Topic> getTopicFromCode(@io.vertigo.datamodel.task.proxy.TaskInput(name = "code", smartType = "STyLabel") final String code, @io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkGetTopicFromCode")
+				.addValue("code", code)
+				.addValue("botId", botId)
+				.build();
+		return Optional.ofNullable((io.vertigo.chatbot.commons.domain.topic.Topic) getTaskManager()
+				.execute(task)
+				.getResult());
 	}
 
 	/**

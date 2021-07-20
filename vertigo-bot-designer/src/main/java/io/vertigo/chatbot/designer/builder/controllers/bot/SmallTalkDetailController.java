@@ -33,11 +33,11 @@ import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.ResponseType;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
-import io.vertigo.core.lang.VUserException;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -49,7 +49,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 @Secured("BotUser")
 public class SmallTalkDetailController extends AbstractTopicController<SmallTalk> {
 
-	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("smallTalk");
+	private static final ViewContextKey<SmallTalk> smallTalkKey = ViewContextKey.of("object");
 
 	private static final ViewContextKey<ResponseType> responseTypeKey = ViewContextKey.of("responseTypes");
 
@@ -113,12 +113,14 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 	@PostMapping("/_save")
 	@Override
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("smallTalk") final SmallTalk smallTalk,
+			@ViewAttribute("object") final SmallTalk smallTalk,
 			@ViewAttribute("topic") final Topic topic,
 			@ViewAttribute("bot") final Chatbot chatbot,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
+
+		checkCategory(topic);
 
 		final Long botId = chatbot.getBotId();
 		final DtList<UtterText> utterTexts = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey),
@@ -128,31 +130,15 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 				uiMessageStack);
 
 		// add training sentence who is not "validated" by enter and still in the input
-		addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 
-		smallTalkServices.saveSmallTalk(chatbot, smallTalk, nluTrainingSentences, nluTrainingSentencesToDelete, utterTexts,
-				buttonList, topic);
+		topicServices.saveTtoCd(topic, TypeTopicEnum.SMALLTALK.name());
+
+		smallTalkServices.saveSmallTalk(chatbot, smallTalk, utterTexts, buttonList, topic);
+
+		topicServices.save(topic, smallTalkServices.isEnabled(smallTalk, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
+
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
-	}
-
-	@Override
-	@PostMapping("/_delete")
-	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("smallTalk") final SmallTalk smallTalk,
-			@ViewAttribute("topic") final Topic topic) {
-		final DtList<Topic> listTopicRef = topicServices.getTopicReferencingTopId(topic.getTopId());
-		if (!listTopicRef.isEmpty()) {
-			final StringBuilder errorMessage = new StringBuilder("This topic cannot be removed because it is referenced in response button in the following topics : ");
-			String prefix = "";
-			for (final Topic topicRef : listTopicRef) {
-				errorMessage.append(prefix);
-				errorMessage.append(topicRef.getTitle());
-				prefix = ", ";
-			}
-			errorMessage.append(".");
-			throw new VUserException(errorMessage.toString());
-		}
-		smallTalkServices.delete(chatbot, smallTalk, topic);
-		return "redirect:/bot/" + topic.getBotId() + "/topics/";
 	}
 
 }

@@ -11,7 +11,7 @@
 	
 	<body>
 		<section layout:fragment="content-header-actions">
-			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/smallTalk/(id=${model.bot.botId})} + ${model.smallTalk.smtId}" ariaLabel="Cancel" icon="fas fa-ban"
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/smallTalk/(id=${model.bot.botId})} + ${model.object.smtId}" ariaLabel="Cancel" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
@@ -36,7 +36,7 @@
 				<vu:include-data object="responseTypes" field="'*'" />
 				
 				<div class="hidden">
-					<vu:text-field-edit object="smallTalk" field="rtyId" />
+					<vu:text-field-edit object="object" field="rtyId" />
 				</div>
 				
 				<vu:include-data-primitive key="locale"/>
@@ -44,19 +44,19 @@
 				<div th:if="${!model.modeReadOnly}">
 					<q-btn-toggle
 						class="q-mb-md"
-						v-model="vueData.smallTalk.rtyId"
+						v-model="vueData.object.rtyId"
 						toggle-color="primary"
 						:options= 'vueData.locale == "fr_FR" ? transformListForSelection("responseTypes", "rtyId", "labelFr") : transformListForSelection("responseTypes", "rtyId", "label")' 
 					></q-btn-toggle>
 					<q-icon 
-						v-if="vueData.smallTalk.rtyId === 'RICH_TEXT' && getUtterTextResolvedList().length > 2"
+						v-if="vueData.object.rtyId === 'RICH_TEXT' && getUtterTextResolvedList().length > 2"
 						name="warning" class="vertical-top q-ma-xs text-orange" style="font-size: 2rem;">
 						<q-tooltip content-style="font-size: 14px" th:text="#{action.save.errorMessage}">
 				        </q-tooltip>
 					</q-icon>
 				</div>
 				
-				<div v-if="vueData.smallTalk.rtyId === 'RICH_TEXT'" >
+				<div v-if="vueData.object.rtyId === 'RICH_TEXT'" >
 					<c-richtext
 						v-model="vueData.utterTexts[0].text"
 						name="vContext[utterTexts][0][text]"
@@ -65,7 +65,7 @@
 					</c-richtext>
 				</div>
 				
-				<div v-if="vueData.smallTalk.rtyId === 'RANDOM_TEXT'">
+				<div v-if="vueData.object.rtyId === 'RANDOM_TEXT'">
 					<q-list th:if="${!model.modeReadOnly}">
 						<q-item v-for="(utterText, index) in getUtterTextResolvedList()" dense>
 							<q-item-section side left th:if="${!model.modeReadOnly}" style="width:40px">
@@ -141,10 +141,10 @@
 			</vu:block>
 				
 			<vu:block id="conversationOver" title="#{smallTalk.menu.isEnd}">
-				<vu:label object="smallTalk" field="isEnd">
-					<vu:include-data object="smallTalk" field="isEnd" />
-					<q-input v-model="vueData.smallTalk.isEnd" name="vContext[smallTalk][isEnd]" class="hidden" ></q-input>					
-					<q-toggle v-model="vueData.smallTalk.isEnd" th::disable="${model.modeReadOnly}"></q-toggle>
+				<vu:label object="object" field="isEnd">
+					<vu:include-data object="object" field="isEnd" />
+					<q-input v-model="vueData.object.isEnd" name="vContext[object][isEnd]" class="hidden" ></q-input>					
+					<q-toggle v-model="vueData.object.isEnd" th::disable="${model.modeReadOnly}"></q-toggle>
 				</vu:label>
 			</vu:block>
 			

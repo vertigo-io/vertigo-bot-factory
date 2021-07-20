@@ -18,7 +18,7 @@ public final class SentenseDetail implements DtObject {
 	private String text;
 	private String intentRasa;
 	private java.math.BigDecimal confidence;
-	private Long smtId;
+	private Long topId;
 	
 	/**
 	 * Champ : DATA.
@@ -117,21 +117,21 @@ public final class SentenseDetail implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Small Talk selection'.
-	 * @return Long smtId
+	 * Récupère la valeur de la propriété 'Topic selection'.
+	 * @return Long topId
 	 */
-	@Field(smartType = "STyId", label = "Small Talk selection")
-	public Long getSmtId() {
-		return smtId;
+	@Field(smartType = "STyId", label = "Topic selection")
+	public Long getTopId() {
+		return topId;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Small Talk selection'.
-	 * @param smtId Long
+	 * Définit la valeur de la propriété 'Topic selection'.
+	 * @param topId Long
 	 */
-	public void setSmtId(final Long smtId) {
-		this.smtId = smtId;
+	public void setTopId(final Long topId) {
+		this.topId = topId;
 	}
 	
 	/** {@inheritDoc} */

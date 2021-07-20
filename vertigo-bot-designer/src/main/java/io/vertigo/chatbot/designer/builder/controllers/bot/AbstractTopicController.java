@@ -11,12 +11,15 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
-import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.Entity;
@@ -46,10 +49,13 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	@Inject
 	protected TopicCategoryServices topicCategoryServices;
 
+	@Inject
+	protected NluTrainingSentenceServices nluTrainingSentenceServices;
+
 	public void initContext(final ViewContext viewContext, final Chatbot bot, final Topic topic) {
 		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Incoherent parameters");
 
-		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name()));
+		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 		viewContext.publishDto(topicKey, topic);
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
@@ -63,7 +69,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	}
 
 	public void initContextNew(final ViewContext viewContext, final Chatbot bot) {
-		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name()));
+		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 		viewContext.publishDto(topicKey, topicServices.getNewTopic(bot));
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
@@ -86,7 +92,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentenceIn,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
 
-		addTrainingSentense(newNluTrainingSentenceIn, nluTrainingSentences);
+		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentenceIn, nluTrainingSentences);
 
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluTrainingSentences);
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
@@ -110,7 +116,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			if (curIdx == index) {
 				nts.setText(newNluTrainingSentence);
 			} else if (newNluTrainingSentence.equalsIgnoreCase(nts.getText())) {
-				throw new VUserException("This sentense already exists");
+				throw new VUserException(TopicsMultilingualResources.NLU_ALREADY_EXISTS);
 			}
 			curIdx++;
 		}
@@ -138,26 +144,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		return viewContext;
 	}
 
-	public void addTrainingSentense(final String newNluTrainingSentenceIn,
-			final DtList<NluTrainingSentence> nluTrainingSentences) {
-		if (StringUtil.isBlank(newNluTrainingSentenceIn)) {
-			return;
-		}
-
-		final String newNluTrainingSentence = newNluTrainingSentenceIn.trim();
-
-		final boolean exists = nluTrainingSentences.stream()
-				.anyMatch(its -> its.getText().equalsIgnoreCase(newNluTrainingSentence));
-		if (exists) {
-			throw new VUserException("This sentense already exists");
-		}
-
-		final NluTrainingSentence newText = new NluTrainingSentence();
-		newText.setText(newNluTrainingSentence);
-
-		nluTrainingSentences.add(newText);
-	}
-
 	abstract Topic getTopic(final D object);
 
 	@PostMapping("/_save")
@@ -174,7 +160,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			@ViewAttribute("topic") final Topic topic) {
 		final DtList<Topic> listTopicRef = topicServices.getTopicReferencingTopId(topic.getTopId());
 		if (!listTopicRef.isEmpty()) {
-			final StringBuilder errorMessage = new StringBuilder("This topic cannot be removed because it is referenced in response button in the following topics : ");
+			final StringBuilder errorMessage = new StringBuilder(MessageText.of(TopicsMultilingualResources.DELETION_REF_ERROR).getDisplay());
 			String prefix = "";
 			for (final Topic topicRef : listTopicRef) {
 				errorMessage.append(prefix);
@@ -186,14 +172,19 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		}
 
 		for (final TopicInterfaceServices services : topicInterfaceServices) {
-
 			if (services.handleObject(topic)) {
 				services.delete(chatbot, services.findByTopId(topic.getTopId()), topic);
+				topicServices.deleteTopic(chatbot, topic);
 			}
 		}
 
-		topicServices.deleteTopic(chatbot, topic);
 		return "redirect:/bot/" + topic.getBotId() + "/topics/";
+	}
+
+	public void checkCategory(final Topic topic) {
+		if (topic.getTopCatId() == null) {
+			throw new VUserException(TopicsMultilingualResources.ERROR_CATEGORY);
+		}
 	}
 
 }

@@ -59,4 +59,8 @@ public enum DtResources implements MessageKey {
 	 * Is conversation over ?.
 	 */
 	fldUtterTextExport$isEnd,
+	/**
+	 * Kind Topic Code.
+	 */
+	fldUtterTextExport$ktoCd,
 }

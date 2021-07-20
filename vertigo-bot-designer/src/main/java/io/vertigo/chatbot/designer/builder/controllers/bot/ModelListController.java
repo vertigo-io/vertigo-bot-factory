@@ -36,16 +36,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import io.vertigo.account.authorization.annotations.Secured;
-import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
+import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.BotConversationServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.TrainerInfoServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.utils.BotConversationUtils;
+import io.vertigo.chatbot.designer.utils.HttpRequestUtils;
 import io.vertigo.chatbot.designer.utils.ObjectConvertionUtils;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.TalkInput;
@@ -141,7 +142,7 @@ public class ModelListController extends AbstractBotController {
 		final ChatbotNode devNode = nodeServices.getDevNodeFromList(nodeList);
 		final TalkInput talkInput = ObjectConvertionUtils.jsonToObject(input, TalkInput.class);
 		final String botInput = BotConversationUtils.createBotInput(talkInput);
-		return ChatbotUtils.postToUrl(devNode.getUrl() + "/api/chatbot/talk/" + talkInput.getSender(), botInput.getBytes());
+		return HttpRequestUtils.postToUrl(devNode.getUrl() + "/api/chatbot/talk/" + talkInput.getSender(), botInput.getBytes());
 	}
 
 	@PostMapping("/_start")
@@ -153,10 +154,10 @@ public class ModelListController extends AbstractBotController {
 		final ChatbotNode devNode = nodeList.stream()
 				.filter(ChatbotNode::getIsDev)
 				.findFirst()
-				.orElseThrow(() -> new VUserException("No training node configured"));
+				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
 		final BodyPublisher publisher = BodyPublishers.ofByteArray(botConversationServices.createBotInput("").getBytes());
-		final HttpRequest request = botConversationServices.createPostRequest(devNode.getUrl() + "/api/chatbot/start", publisher);
-		final HttpResponse<String> result = botConversationServices.sendRequest(null, request, BodyHandlers.ofString(), 200);
+		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/start", publisher);
+		final HttpResponse<String> result = HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 200);
 		return botConversationServices.jsonToObject(result.body(), BotResponse.class);
 	}
 

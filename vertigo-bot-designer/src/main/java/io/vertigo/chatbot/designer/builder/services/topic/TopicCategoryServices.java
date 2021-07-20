@@ -88,8 +88,10 @@ public class TopicCategoryServices implements Component {
 		final TopicCategory topicCategory = new TopicCategory();
 		topicCategory.setIsEnabled(true);
 		topicCategory.setLabel("Basics");
+		topicCategory.setCode("BASICS");
 		topicCategory.setIsTechnical(true);
 		topicCategory.setLevel(1L);
+
 		return topicCategory;
 	}
 

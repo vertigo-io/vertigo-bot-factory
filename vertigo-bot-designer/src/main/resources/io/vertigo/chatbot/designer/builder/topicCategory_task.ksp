@@ -43,3 +43,4 @@ create Task TkRemoveAllCategoryByBotId{
              "
 	in botId				{domain : DoId,						cardinality:"1"} 
 }
+

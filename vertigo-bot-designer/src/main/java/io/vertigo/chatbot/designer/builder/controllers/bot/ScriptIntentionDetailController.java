@@ -30,6 +30,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
@@ -42,7 +43,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 @Secured("BotUser")
 public class ScriptIntentionDetailController extends AbstractTopicController<ScriptIntention> {
 
-	private static final ViewContextKey<ScriptIntention> scriptIntentionKey = ViewContextKey.of("scriptIntention");
+	private static final ViewContextKey<ScriptIntention> scriptIntentionKey = ViewContextKey.of("object");
 
 	@Inject
 	private ScriptIntentionServices scriptIntentionServices;
@@ -80,29 +81,23 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 	@PostMapping("/_save")
 	@Secured("BotAdm")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("scriptIntention") final ScriptIntention scriptIntention,
+			@ViewAttribute("object") final ScriptIntention scriptIntention,
 			@ViewAttribute("topic") final Topic topic,
 			@ViewAttribute("bot") final Chatbot chatbot,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
 			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
+		checkCategory(topic);
+
 		final Long botId = chatbot.getBotId();
 
 		// add training sentence who is not "validated" by enter and still in the input
-		addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
-
-		scriptIntentionServices.save(chatbot, scriptIntention, nluTrainingSentences, nluTrainingSentencesToDelete, topic);
+		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+		topicServices.saveTtoCd(topic, TypeTopicEnum.SCRIPTINTENTION.name());
+		scriptIntentionServices.save(chatbot, scriptIntention, topic);
+		topicServices.save(topic, scriptIntentionServices.isEnabled(scriptIntention, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
 		return "redirect:/bot/" + botId + "/scriptIntention/" + scriptIntention.getSinId();
-	}
-
-	@Override
-	@PostMapping("/_delete")
-	@Secured("BotAdm")
-	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("scriptIntention") final ScriptIntention scriptIntention,
-			@ViewAttribute("topic") final Topic topic) {
-		scriptIntentionServices.delete(chatbot, scriptIntention, topic);
-		return "redirect:/bot/" + topic.getBotId() + "/topics/";
 	}
 
 	@Override

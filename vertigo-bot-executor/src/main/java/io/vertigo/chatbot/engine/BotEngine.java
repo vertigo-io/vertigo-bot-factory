@@ -16,6 +16,7 @@ import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.nlu.NluResult;
 import io.vertigo.ai.nlu.ScoredIntent;
+import io.vertigo.chatbot.analytics.AnalyticsObjectSend;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
@@ -23,6 +24,7 @@ import io.vertigo.chatbot.engine.model.BotResponseBuilder;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.lang.VSystemException;
 
 /**
@@ -43,6 +45,7 @@ public class BotEngine {
 	public static final String START_TOPIC_NAME = "!START";
 	public static final String END_TOPIC_NAME = "!END";
 	public static final String FALLBACK_TOPIC_NAME = "!FALLBACK";
+	public static final String ANALYTICS_KEY = "analytics";
 
 	public static final BBKey BOT_IN_PATH = BBKey.of("/bot/in");
 	public static final BBKey BOT_OUT_PATH = BBKey.of("/bot/out");
@@ -81,6 +84,7 @@ public class BotEngine {
 
 		this.behaviorTreeManager = behaviorTreeManager;
 		this.nluManager = nluManager;
+
 	}
 
 	public BotResponse runTick(final BotInput input) {
@@ -92,10 +96,13 @@ public class BotEngine {
 		inputToBB(input);
 
 		// Handle text/button answers questions inside a BT (put into provided bb target key)
-		handleExpected(input);
+		final Tuple<Double, String> eventLog = handleExpected(input);
 
 		// Continue on previous topic or start from scratch
 		TopicDefinition topic = topicDefinitionMap.get(getTopic());
+
+		//Object use for the analytics sender services
+		final AnalyticsObjectSend analyticsToSend = new AnalyticsObjectSend(topic, eventLog.getVal1());
 
 		BTStatus status;
 		TopicDefinition nextTopic = null;
@@ -111,6 +118,7 @@ public class BotEngine {
 			if (bb.exists(BOT_NEXT_TOPIC_KEY)) {
 				final var nextTopicName = bb.getString(BOT_NEXT_TOPIC_KEY);
 				nextTopic = topicDefinitionMap.get(nextTopicName); // handle forward to another topic
+				analyticsToSend.getTopicsPast().add(nextTopic);
 				Assertion.check().isNotNull(nextTopic, "Topic '{0}' not found, cant forward to it", nextTopicName);
 				bb.delete(BBKeyPattern.of(BOT_NEXT_TOPIC_KEY.key()));
 				switchToTopic(nextTopicName);
@@ -135,6 +143,7 @@ public class BotEngine {
 			botResponseBuilder.addMetadata(getKeyName(key), getKeyValue(key));
 		}
 
+		botResponseBuilder.addMetadata(ANALYTICS_KEY, analyticsToSend);
 		return botResponseBuilder.build();
 	}
 
@@ -160,18 +169,22 @@ public class BotEngine {
 		}
 	}
 
-	private void handleExpected(final BotInput input) {
+	private Tuple<Double, String> handleExpected(final BotInput input) {
 		final String textMessage = input.getMessage();
 		final String buttonPayload = (String) input.getMetadatas().get("payload");
+		Tuple<Double, String> eventLog = Tuple.of(null, null);
 
 		doHandleExpected("text", textMessage);
-		doHandleExpected("nlu", textMessage);
+		eventLog = doHandleExpected("nlu", textMessage);
 		doHandleExpected("button", buttonPayload);
 
 		bb.delete(BBKeyPattern.ofRoot(BOT_EXPECT_INPUT_PATH));
+
+		return eventLog;
 	}
 
-	private void doHandleExpected(final String prefix, final String value) {
+	private Tuple<Double, String> doHandleExpected(final String prefix, final String value) {
+		Tuple<Double, String> response = Tuple.of(null, null);
 		if (value != null && bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/key"))) { // if value and expected
 			final var key = bb.getString(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/key"));
 			final var type = bb.getString(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/type"));
@@ -183,12 +196,14 @@ public class BotEngine {
 					bb.putString(BBKey.of(key), value);
 					break;
 				case "nlu":
-					bb.putString(BBKey.of(key), getTopicFromNlu(value));
+					response = getTopicFromNlu(value);
+					bb.putString(BBKey.of(key), response.getVal2());
 					break;
 				default:
 					throw new VSystemException("Unknown expected type '{0}'", type);
 			}
 		}
+		return response;
 	}
 
 	private void inputToBB(final BotInput input) {
@@ -225,7 +240,7 @@ public class BotEngine {
 		bb.delete(BBKeyPattern.ofRoot(USER_LOCAL_PATH)); // clean context relative to a BT
 	}
 
-	private String getTopicFromNlu(final String sentence) {
+	private Tuple<Double, String> getTopicFromNlu(final String sentence) {
 		final NluResult nluResponse = nluManager.recognize(sentence, NluManager.DEFAULT_ENGINE_NAME);
 		final var scoredIntents = nluResponse.getScoredIntents();
 		scoredIntents.sort(Comparator.comparing(ScoredIntent::getAccuracy, Comparator.reverseOrder()));
@@ -235,10 +250,10 @@ public class BotEngine {
 			final var topic = topicDefinitionMap.get(intent.getIntent().getCode());
 			Assertion.check().isNotNull(topic, "Topic '{0}' not found, is NLU backend up to date ?", intent.getIntent().getCode());
 			if (intent.getAccuracy() >= topic.getNluThreshold().doubleValue()) { // dont take if not accurate enough
-				return topic.getCode();
+				return Tuple.of(intent.getAccuracy(), topic.getCode());
 			}
 		}
-		return FALLBACK_TOPIC_NAME;
+		return Tuple.of(scoredIntents.get(0).getAccuracy(), FALLBACK_TOPIC_NAME);
 	}
 
 	private List<IBotChoice> buildChoices() {

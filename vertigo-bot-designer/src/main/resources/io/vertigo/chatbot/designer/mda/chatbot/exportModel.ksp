@@ -3,8 +3,8 @@ package io.vertigo.chatbot.designer.builder.topic.export
 
 create DtDefinition DtResponseButtonExport {
 	field topId 			{domain: DoId 					label: "Topic id" 					}
-	field topCode			{domain: DoId 					label: "Topic code"				 	}
-	field topCodeResponse	{domain: DoId 					label: "Topic code response"	 	}
+	field topCode			{domain: DoText 				label: "Topic code"				 	}
+	field topCodeResponse	{domain: DoText					label: "Topic code response"	 	}
 	field text				{domain: DoText					label: "Button text" 				}
 }
 
@@ -13,7 +13,7 @@ create DtDefinition DtUtterTextExport {
 	field utterTexts		{domain: DoText 				label: "Utters"				 		}
 	field responseType		{domain: DoText					label: "Response type" 				}
 	field isEnd 			{domain: DoYesNo 				label: "Is conversation over ?" 	}
-	
+	field ktoCd 			{domain: DoCode 				label: "Kind Topic Code"			}	
 }
 
 create DtDefinition DtScriptIntentionExport {

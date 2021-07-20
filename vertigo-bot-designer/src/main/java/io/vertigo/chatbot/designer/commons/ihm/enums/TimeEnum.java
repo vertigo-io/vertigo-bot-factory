@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.commons.ihmEnum;
+package io.vertigo.chatbot.designer.commons.ihm.enums;
 
 public enum TimeEnum implements IHMEnum {
 
@@ -7,11 +7,11 @@ public enum TimeEnum implements IHMEnum {
 	MONTH("TD_MONTH", "MONTH"),
 	YEAR("TD_YEAR", "YEAR");
 
-	public String label = "";
+	private final String label;
 
-	public String value = "";
+	private final String value;
 
-	private TimeEnum(final String label, final String value) {
+	TimeEnum(final String label, final String value) {
 		this.label = label;
 		this.value = value;
 	}

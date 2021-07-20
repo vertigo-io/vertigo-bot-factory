@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-bot-factory</artifactId>
-		<version>0.5.0-SNAPSHOT</version>
+		<version>0.6.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vertigo-bot-designer</artifactId>
@@ -96,6 +96,23 @@
 			<artifactId>owasp-java-html-sanitizer</artifactId>
 			<version>20191001.1</version>
 		</dependency>
+	
+		<!-- https://mvnrepository.com/artifact/io.vertigo/vertigo-quarto-impl -->
+		<dependency>
+		    <groupId>io.vertigo</groupId>
+		    <artifactId>vertigo-quarto</artifactId>
+		    <version>${vertigo.version}</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		    <version>3.12.0</version>
+		</dependency>
+		
+		
+
 
 	</dependencies>
 

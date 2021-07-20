@@ -41,3 +41,16 @@ create Task TkGetSmallTalkIHMByBot {
 	out smts 				{domain : DoDtSmallTalkIhm		 	cardinality:"*"}
 } 
 
+create Task TkGetBasicUtterTextByTopId {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	utt.*
+			from utter_text utt 
+			join small_talk smt on smt.smt_id = utt.smt_id
+			where smt.top_id = #topId#
+			LIMIT 1
+             "
+	in topId  				{domain : DoId         		cardinality : "1"  }
+	out utterTexts			{domain : DoDtUtterText		cardinality : "*"  } 
+}
+

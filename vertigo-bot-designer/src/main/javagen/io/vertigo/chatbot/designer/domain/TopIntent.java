@@ -13,27 +13,28 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 public final class TopIntent implements DtObject {
 	private static final long serialVersionUID = 1L;
 
-	private Long smtId;
+	private Long topId;
 	private String intentRasa;
+	private String code;
 	private Long count;
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Small Talk ID'.
-	 * @return Long smtId
+	 * Récupère la valeur de la propriété 'Topic ID'.
+	 * @return Long topId
 	 */
-	@Field(smartType = "STyId", label = "Small Talk ID")
-	public Long getSmtId() {
-		return smtId;
+	@Field(smartType = "STyId", label = "Topic ID")
+	public Long getTopId() {
+		return topId;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Small Talk ID'.
-	 * @param smtId Long
+	 * Définit la valeur de la propriété 'Topic ID'.
+	 * @param topId Long
 	 */
-	public void setSmtId(final Long smtId) {
-		this.smtId = smtId;
+	public void setTopId(final Long topId) {
+		this.topId = topId;
 	}
 	
 	/**
@@ -53,6 +54,25 @@ public final class TopIntent implements DtObject {
 	 */
 	public void setIntentRasa(final String intentRasa) {
 		this.intentRasa = intentRasa;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Topic code'.
+	 * @return String code
+	 */
+	@Field(smartType = "STyLabel", label = "Topic code")
+	public String getCode() {
+		return code;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Topic code'.
+	 * @param code String
+	 */
+	public void setCode(final String code) {
+		this.code = code;
 	}
 	
 	/**

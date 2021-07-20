@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import io.vertigo.ai.command.BtCommandManager;
+import io.vertigo.chatbot.analytics.AnalyticsSenderServices;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
@@ -48,21 +49,25 @@ public class ExecutorManager implements Manager, Activeable {
 	private final ExecutorConfigManager executorConfigManager;
 	private final BotManager botManager;
 	private final BtCommandManager btCommandManager;
+	private final AnalyticsSenderServices analyticsSenderServices;
 
 	@Inject
 	public ExecutorManager(
 			final ExecutorConfigManager executorConfigManager,
 			final BotManager botManager,
-			final BtCommandManager btCommandManager) {
+			final BtCommandManager btCommandManager,
+			final AnalyticsSenderServices analyticsSenderServices) {
 
 		Assertion.check()
 				.isNotNull(executorConfigManager)
 				.isNotNull(botManager)
-				.isNotNull(btCommandManager);
+				.isNotNull(btCommandManager)
+				.isNotNull(analyticsSenderServices);
 		//--
 		this.executorConfigManager = executorConfigManager;
 		this.botManager = botManager;
 		this.btCommandManager = btCommandManager;
+		this.analyticsSenderServices = analyticsSenderServices;
 	}
 
 	@Override
@@ -119,7 +124,7 @@ public class ExecutorManager implements Manager, Activeable {
 
 		final var botEngine = botManager.createBotEngine(newUUID);
 		final var botResponse = botEngine.runTick(input);
-
+		analyticsSenderServices.sendEventStartToDb(executorConfigManager.getConfig().getExecutorConfiguration());
 		botResponse.getMetadatas().put("sessionId", newUUID);
 		return botResponse;
 	}
@@ -130,6 +135,10 @@ public class ExecutorManager implements Manager, Activeable {
 		//--
 		final var botEngine = botManager.createBotEngine(sessionId);
 
-		return botEngine.runTick(input);
+		final var botResponse = botEngine.runTick(input);
+
+		analyticsSenderServices.sendEventToDb(botResponse.getMetadatas(), executorConfigManager.getConfig().getExecutorConfiguration(), input);
+
+		return botResponse;
 	}
 }

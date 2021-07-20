@@ -13,12 +13,13 @@ create DtDefinition DtSentenseDetail {
 	field text			{domain: DoLabel 				label: "User text" 				}
 	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			}
 	field confidence	{domain: DoPercentage 			label: "Confidence" 			}
-	field smtId			{domain: DoId 					label: "Small Talk selection" 	}
+	field topId			{domain: DoId 					label: "Topic selection" 	}
 }
 
 create DtDefinition DtTopIntent {
-	field smtId			{domain: DoId 					label: "Small Talk ID" 			}
+	field topId			{domain: DoId 					label: "Topic ID" 				}
 	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			}
+	field code			{domain: DoLabel				label: "Topic code"				}
 	field count			{domain: DoNumber 				label: "Count" 					}
 }
 

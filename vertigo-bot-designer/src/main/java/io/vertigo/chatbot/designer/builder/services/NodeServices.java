@@ -11,6 +11,7 @@ import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotNodeDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
+import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.designer.builder.chatbotNode.ChatbotNodePAO;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -37,14 +38,13 @@ public class NodeServices implements Component {
 	public ChatbotNode getNodeByNodeId(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
 		final ChatbotNode node = chatbotNodeDAO.get(nodId);
 		if (!node.getBotId().equals(bot.getBotId())) {
-			throw new VSystemException("this node is not part of the bot");
+			throw new VSystemException("this node is not a part of this bot");
 		}
 		return node;
 	}
 
-	//TODO voir quelle sécurité lui mettre
-	public DtList<ChatbotNode> getAllNodesByBotId(final Long botId) {
-		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, botId), DtListState.of(100));
+	public DtList<ChatbotNode> getAllNodesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, bot.getBotId()), DtListState.of(100));
 	}
 
 	public Optional<ChatbotNode> getDevNodeByBotId(final Long botId) {
@@ -82,7 +82,7 @@ public class NodeServices implements Component {
 
 	public DtList<ChatbotNode> getNodesByBot(@SecuredOperation("botVisitor") final Chatbot chatbot) {
 		if (authorizationManager.isAuthorized(chatbot, ChatbotOperations.botAdm)) {
-			return getAllNodesByBotId(chatbot.getBotId());
+			return getAllNodesByBot(chatbot);
 		}
 		final DtList<ChatbotNode> nodes = new DtList<>(ChatbotNode.class);
 		final Optional<ChatbotNode> devNode = getDevNodeByBotId(chatbot.getBotId());
@@ -100,6 +100,6 @@ public class NodeServices implements Component {
 		return nodeList.stream()
 				.filter(ChatbotNode::getIsDev)
 				.findFirst()
-				.orElseThrow(() -> new VUserException("No training node configured"));
+				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
 	}
 }

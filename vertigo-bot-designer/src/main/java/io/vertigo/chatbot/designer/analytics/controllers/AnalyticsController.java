@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.designer.analytics.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -30,13 +31,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
-import io.vertigo.chatbot.designer.commons.ihmEnum.TimeEnum;
+import io.vertigo.chatbot.designer.commons.ihm.enums.TimeEnum;
 import io.vertigo.chatbot.designer.commons.services.EnumIHMManager;
 import io.vertigo.chatbot.designer.domain.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
@@ -45,8 +47,10 @@ import io.vertigo.chatbot.designer.domain.commons.SelectionOption;
 import io.vertigo.chatbot.domain.DtDefinitions.SelectionOptionFields;
 import io.vertigo.chatbot.domain.DtDefinitions.SentenseDetailFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopIntentFields;
+import io.vertigo.chatbot.domain.DtDefinitions.TopicIhmFields;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -63,6 +67,7 @@ public class AnalyticsController extends AbstractDesignerController {
 	private static final ViewContextKey<SelectionOption> timeOptionsList = ViewContextKey.of("timeOptions");
 
 	private static final ViewContextKey<Topic> topicsKey = ViewContextKey.of("topics");
+	private static final ViewContextKey<TopicIhm> topicsNotUsedKey = ViewContextKey.of("topicsNotUsed");
 
 	private static final ViewContextKey<Chatbot> botsKey = ViewContextKey.of("bots");
 	private static final ViewContextKey<ChatbotNode> nodesKey = ViewContextKey.of("nodes");
@@ -115,26 +120,36 @@ public class AnalyticsController extends AbstractDesignerController {
 	}
 
 	private void updateGraph(final ViewContext viewContext, final StatCriteria criteria) {
-		if (criteria.getBotId() != null) {
-			viewContext.publishDtList(nodesKey, nodeServices.getAllNodesByBotId(criteria.getBotId()));
-		}
 
 		viewContext.publishRef(sessionStatsKey, analyticsServices.getSessionsStats(criteria));
 		viewContext.publishRef(requestsStatsKey, analyticsServices.getRequestStats(criteria));
+		viewContext.publishDtList(topicsNotUsedKey, TopicIhmFields.code, refreshTopicsList(criteria));
 
 		if (criteria.getBotId() != null) {
 			final Chatbot bot = chatbotServices.getChatbotById(criteria.getBotId());
-			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.smtId, analyticsServices.getSentenseDetails(criteria));
-			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, analyticsServices.getTopIntents(criteria));
+			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.topId, analyticsServices.getSentenseDetails(criteria));
+			viewContext.publishDtList(topIntentsKey, TopIntentFields.topId, analyticsServices.getTopIntents(criteria));
 
 			viewContext.publishDtList(topicsKey, topicServices.getAllTopicByBot(bot));
 		} else {
-			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.smtId, new DtList<SentenseDetail>(SentenseDetail.class));
-			viewContext.publishDtList(topIntentsKey, TopIntentFields.smtId, new DtList<TopIntent>(TopIntent.class));
+			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
+			viewContext.publishDtList(topIntentsKey, TopIntentFields.topId, new DtList<TopIntent>(TopIntent.class));
 			viewContext.publishDtList(topicsKey, new DtList<Topic>(Topic.class));
 		}
 
-		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.smtId, new DtList<SentenseDetail>(SentenseDetail.class));
+		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
+	}
+
+	private DtList<TopicIhm> refreshTopicsList(final StatCriteria criteria) {
+		if (criteria.getBotId() != null) {
+			final List<String> resultTimedData = analyticsServices.getDistinctCodeByTimeDatas(criteria);
+			DtList<TopicIhm> topics = topicServices.getAllNonTechnicalTopicIhmByBot(chatbotServices.getChatbotById(criteria.getBotId()));
+			topics = topics.stream()
+					.filter(x -> !resultTimedData.contains(x.getCode()))
+					.collect(VCollectors.toDtList(TopicIhm.class));
+			return topics;
+		}
+		return new DtList<>(TopicIhm.class);
 	}
 
 	@PostMapping("/_intentDetails")
@@ -142,7 +157,7 @@ public class AnalyticsController extends AbstractDesignerController {
 			@ViewAttribute("criteria") final StatCriteria criteria,
 			@RequestParam("intentRasa") final String intentRasa) {
 
-		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.messageId, analyticsServices.getKnownSentensesDetail(criteria, intentRasa)); // "st_1102_blague"
+		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.text, analyticsServices.getKnownSentensesDetail(criteria, intentRasa));
 
 		return viewContext;
 	}

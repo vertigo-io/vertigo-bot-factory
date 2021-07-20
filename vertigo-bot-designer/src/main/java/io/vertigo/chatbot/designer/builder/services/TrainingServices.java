@@ -49,6 +49,7 @@ import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
+import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.export.BotExportServices;
 import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
@@ -102,7 +103,7 @@ public class TrainingServices implements Component {
 		trainingPAO.cleanOldTrainings(botId);
 
 		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(botId)
-				.orElseThrow(() -> new VUserException("No training node configured"));
+				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
 
 		//Set training
 		final Training training = createTraining(bot);
@@ -215,12 +216,13 @@ public class TrainingServices implements Component {
 					.put(Entity.entity(fdmp, fdmp.getMediaType()));
 
 		} catch (final IOException e) {
-			throw new VSystemException(e, "Impossible to read the model");
+			LOGGER.info("error during loading model");
+			throw new VSystemException(e, "error during loading model");
 		}
 
 		if (response.getStatus() != 204) {
 			LOGGER.info("Impossible to load the model. {}", response.getStatusInfo());
-			throw new VUserException("Impossible to load the model");
+			throw new VUserException(ModelMultilingualResources.LOAD_MODEL_ERROR);
 		}
 	}
 
