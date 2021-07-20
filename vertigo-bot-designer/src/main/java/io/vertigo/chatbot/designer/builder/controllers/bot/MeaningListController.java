@@ -60,7 +60,7 @@ public class MeaningListController extends AbstractBotController {
 			synonym.setBotId(bot.getBotId());
 			synonym.setMeaId(meaningSaved.getMeaId());
 			synonym.setLabel(meaningSaved.getLabel());
-			if (meaningServices.findMeaningByLabelAndBotId(meaningSaved.getLabel(), bot.getBotId()) != null) {
+			if (meaningServices.findMeaningBySynonymLabelAndBotId(meaningSaved.getLabel(), bot.getBotId()) != null) {
 				throw new VUserException(MeaningsMultilingualResources.ERR_UNIQUE_SYNONYM);
 			}
 			synonymServices.save(synonym);

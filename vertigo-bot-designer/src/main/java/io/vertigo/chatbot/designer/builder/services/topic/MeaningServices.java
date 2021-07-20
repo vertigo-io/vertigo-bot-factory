@@ -1,19 +1,23 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
+import io.vertigo.chatbot.designer.builder.meaning.MeaningPAO;
 import io.vertigo.chatbot.designer.dao.MeaningDAO;
 import io.vertigo.chatbot.designer.domain.Meaning;
 import io.vertigo.chatbot.designer.domain.Synonym;
+import io.vertigo.chatbot.designer.domain.TupleSynonymIhm;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
@@ -25,6 +29,9 @@ public class MeaningServices implements Component {
 
 	@Inject
 	private MeaningDAO meaningDAO;
+
+	@Inject
+	private MeaningPAO meaningPAO;
 
 	@Inject
 	private SynonymServices synonymServices;
@@ -90,7 +97,7 @@ public class MeaningServices implements Component {
 		final Long botId = meaning.getBotId();
 		return synonyms.stream()
 				.filter(syn -> !StringUtil.isBlank(syn.getLabel()))
-				.map(syn -> createSynonym(syn, botId, meaId))
+				.map(syn -> createSynonym(syn, meaId, botId))
 				.collect(VCollectors.toDtList(Synonym.class));
 	}
 
@@ -115,8 +122,8 @@ public class MeaningServices implements Component {
 	 * @param botId
 	 * @return meaning
 	 */
-	public Meaning findMeaningByLabelAndBotId(final String label, final Long botId) {
-		final Optional<Meaning> result = meaningDAO.getMeaningByLabelAndBotId(botId, label);
+	public Meaning findMeaningBySynonymLabelAndBotId(final String label, final Long botId) {
+		final Optional<Meaning> result = meaningDAO.getMeaningBySynonymLabelAndBotId(botId, label);
 		return result.isPresent() ? result.get() : null;
 	}
 
@@ -129,16 +136,19 @@ public class MeaningServices implements Component {
 	 */
 	public ArrayList<String> generateSentenceWithSynonyms(final NluTrainingExport nluOriginal, final Long botId) {
 		// Word are separated by space or ponctuation
-		final String[] listWord = nluOriginal.getText().split("([.,!?:;'\"-]|\\s)+");
 
-		// An analyze of each word to find meaning is made, and the results registered in a map
-		final Map<Integer, ArrayList<Object>> mapMeaning = analyzeListWord(listWord, botId);
+		final List<String> listWord = Stream.of(nluOriginal.getText().split("([.,!?:;'\"-]|\\s)+"))
+				.collect(Collectors.toList());
 
-		final ArrayList<String> listText = new ArrayList<String>();
-		listText.add(nluOriginal.getText());
+		// get a list of Tuple <word, synonym> from the original sentence
+		final DtList<TupleSynonymIhm> listTupleSynonymIhm = getTuplesSynonym(listWord, botId);
+
+		// group the result by original word
+		final Map<String, List<TupleSynonymIhm>> tupleSynonymIhmPerWord = listTupleSynonymIhm.stream()
+				.collect(Collectors.groupingBy(TupleSynonymIhm::getWord));
 
 		//Generation of all possible combinaison from the original sentences and the synonyms found
-		return combine(mapMeaning, listText, mapMeaning.size() - 1);
+		return combine(tupleSynonymIhmPerWord, nluOriginal.getText());
 	}
 
 	/*
@@ -163,44 +173,29 @@ public class MeaningServices implements Component {
 	 *
 	 *
 	 */
-	private ArrayList<String> combine(final Map<Integer, ArrayList<Object>> mapMeaning, final ArrayList<String> listText, final int i) {
+	private ArrayList<String> combine(final Map<String, List<TupleSynonymIhm>> listTupleSynonymIhmPerWord, final String nluOriginal) {
 
-		// The loop is stopped when we hit the first portion
-		if (i >= 0) {
-			DtList<Synonym> listSynonyms = new DtList<>(Synonym.class);
-			String word = null;
+		final ArrayList<String> listText = new ArrayList<String>();
+		listText.add(nluOriginal);
 
-			if (!mapMeaning.get(i).isEmpty()) {
-				final Meaning meaning = (Meaning) mapMeaning.get(i).get(0);
-				word = (String) mapMeaning.get(i).get(1);
+		// loop on words with synonyms
+		for (final Entry<String, List<TupleSynonymIhm>> entry : listTupleSynonymIhmPerWord.entrySet()) {
 
-				if (meaning != null) {
-					listSynonyms = synonymServices.getAllSynonymByMeaning(meaning);
-				}
-			}
-
-			// self call to method combine, but to work on another word with synonyms
-			final List<String> listEntry = combine(mapMeaning, listText, i - 1);
+			final List<TupleSynonymIhm> listTupleSynonyms = entry.getValue();
 
 			// The size of the listEntry is saved because listEntry is modified in the loops
-			final int size = listEntry.size();
+			final int size = listText.size();
+			// loop on text entries (sentences already generated)
 			for (int j = 0; j < size; j++) {
-				for (int k = 0; k < listSynonyms.size(); k++) {
-					Synonym synonym = null;
-					if (k != listSynonyms.size()) {
-						synonym = listSynonyms.get(k);
-					}
-					String entry = null;
-					if (j != listEntry.size()) {
-						entry = listEntry.get(j);
-					}
-					if (word != null && synonym != null && !word.equals(synonym.getLabel())) {
-						// the sentence is generated with the word replaced by a synonym
-						listText.add(populateExit(synonym, word, entry));
-					}
+				// loop on synonyms
+				for (final TupleSynonymIhm tupleSyn : listTupleSynonyms) {
+					// the sentence is generated with the word replaced by a synonym
+					listText.add(populateExit(tupleSyn, listText.get(j)));
 				}
 			}
+
 		}
+
 		return listText;
 	}
 
@@ -212,44 +207,19 @@ public class MeaningServices implements Component {
 	 * @param entry
 	 * @return string
 	 */
-	private String populateExit(final Synonym synonym, final String originalWord, final String entry) {
-		return entry.replaceAll(originalWord, synonym.getLabel());
+	private String populateExit(final TupleSynonymIhm tupleSyn, final String entry) {
+		return entry.replaceAll(tupleSyn.getWord(), tupleSyn.getSynonymLabel());
 	}
 
 	/**
-	 * Return a map with an index and a array with a word and the meaning associated
+	 * Return a list tuple <word,synonym>
 	 *
-	 * @param listWord
+	 * @param words
 	 * @param botId
-	 * @return map
+	 * @return list of TupleSynonymIhm
 	 */
-	private Map<Integer, ArrayList<Object>> analyzeListWord(final String[] listWord, final Long botId) {
-		int key = 0;
-
-		final Map<Integer, ArrayList<Object>> mapMeaning = new HashMap<>();
-
-		Meaning meaning = null;
-
-		String word = null;
-
-		//loop on every word, to find if there are synonyms to a a word
-		for (int i = 0; i < listWord.length; i++) {
-			word = listWord[i];
-			meaning = findMeaningByLabelAndBotId(word, botId);
-			final ArrayList<Object> values = new ArrayList<Object>();
-			//If a meaning is found, the word is registered with an index and the meaning associated
-			if (meaning != null) {
-				values.add(meaning);
-				values.add(word);
-				mapMeaning.put(key, values);
-				key++;
-			}
-		}
-		// If no meaning was found, the map is populated with an ampty array (the sentence can have no synonyms)
-		if (meaning == null) {
-			mapMeaning.put(key, new ArrayList<Object>());
-		}
-		return mapMeaning;
+	public DtList<TupleSynonymIhm> getTuplesSynonym(final List<String> words, final Long botId) {
+		return meaningPAO.getTuplesSynonym(botId, words);
 	}
 
 }

@@ -44,4 +44,10 @@ create Association ASynonymMeaning {
 	labelB : "Meaning"
 }	
 
+create DtDefinition DtTupleSynonymIhm {
+
+	field word				{domain: DoLabel	label: "Word"	}
+	field synonymLabel		{domain: DoLabel	label: "Synonym label"	}
+}
+
 	

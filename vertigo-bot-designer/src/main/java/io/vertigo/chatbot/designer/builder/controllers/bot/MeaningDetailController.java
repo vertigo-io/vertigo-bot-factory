@@ -44,7 +44,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot/{botId}/meaning")
-@Secured("BotUser")
+@Secured("BotAdm")
 public class MeaningDetailController extends AbstractBotController {
 
 	private static final ViewContextKey<Chatbot> botKey = ViewContextKey.of("bot");

@@ -107,4 +107,16 @@ public enum DtResources implements MessageKey {
 	 * Count.
 	 */
 	fldTopIntent$count,
+
+	/***********************************************************
+	/** TupleSynonymIhm.
+	/***********************************************************
+	/**
+	 * Word.
+	 */
+	fldTupleSynonymIhm$word,
+	/**
+	 * Synonym label.
+	 */
+	fldTupleSynonymIhm$synonymLabel,
 }

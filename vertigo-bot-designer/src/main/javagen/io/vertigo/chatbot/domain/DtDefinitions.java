@@ -93,6 +93,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Training(io.vertigo.chatbot.commons.domain.Training.class),
 		/** Objet de données TrainingStatus. */
 		TrainingStatus(io.vertigo.chatbot.commons.domain.TrainingStatus.class),
+		/** Objet de données TupleSynonymIhm. */
+		TupleSynonymIhm(io.vertigo.chatbot.designer.domain.TupleSynonymIhm.class),
 		/** Objet de données TypeTopic. */
 		TypeTopic(io.vertigo.chatbot.commons.domain.topic.TypeTopic.class),
 		/** Objet de données UtterText. */
@@ -680,6 +682,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'LabelFr'. */
 		labelFr	}
+
+	/**
+	 * Enumération des champs de TupleSynonymIhm.
+	 */
+	public enum TupleSynonymIhmFields implements DtFieldName<io.vertigo.chatbot.designer.domain.TupleSynonymIhm> {
+		/** Propriété 'Word'. */
+		word,
+		/** Propriété 'Synonym label'. */
+		synonymLabel	}
 
 	/**
 	 * Enumération des champs de TypeTopic.
