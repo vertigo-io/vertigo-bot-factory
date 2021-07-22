@@ -1,20 +1,17 @@
 package io.vertigo.chatbot.designer.analytics.services;
 
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
 import io.vertigo.chatbot.designer.domain.StatCriteria;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.ParamManager;
-import io.vertigo.database.timeseries.DataFilter;
-import io.vertigo.database.timeseries.DataFilterBuilder;
 import io.vertigo.database.timeseries.TabularDatas;
-import io.vertigo.database.timeseries.TimeFilter;
 import io.vertigo.database.timeseries.TimeSeriesManager;
 import io.vertigo.database.timeseries.TimedDatas;
 
@@ -55,8 +52,8 @@ public class TimeSerieServices implements Component, Activeable {
 	 */
 	public TimedDatas getSessionsStats(final StatCriteria criteria) {
 		return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("isSessionStart:sum"),
-				getDataFilter(criteria).build(),
-				getTimeFilter(criteria));
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
+				AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
 	/**
@@ -67,8 +64,8 @@ public class TimeSerieServices implements Component, Activeable {
 	 */
 	public TimedDatas getRequestStats(final StatCriteria criteria) {
 		return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum", "isNlu:sum"),
-				getDataFilter(criteria).withAdditionalWhereClause("isUserMessage = 1").build(),
-				getTimeFilter(criteria));
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isUserMessage = 1").build(),
+				AnalyticsServicesUtils.getTimeFilter(criteria));
 
 	}
 
@@ -80,8 +77,8 @@ public class TimeSerieServices implements Component, Activeable {
 	 */
 	public TimedDatas getSentenceDetails(final StatCriteria criteria) {
 		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence"),
-				getDataFilter(criteria).withAdditionalWhereClause("isFallback = 1").build(),
-				getTimeFilter(criteria),
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isFallback = 1").build(),
+				AnalyticsServicesUtils.getTimeFilter(criteria),
 				Optional.empty());
 	}
 
@@ -94,12 +91,12 @@ public class TimeSerieServices implements Component, Activeable {
 	 */
 	public TabularDatas getAllTopIntents(final StatCriteria criteria) {
 		return timeSeriesManager.getTabularData(influxDbName, Arrays.asList("name:count"),
-				getDataFilter(criteria)
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
 						.withAdditionalWhereClause("isNlu = 1")
 						//No technical issues must be get
 						.withAdditionalWhereClause("isTechnical = 0")
 						.build(),
-				getTimeFilter(criteria),
+				AnalyticsServicesUtils.getTimeFilter(criteria),
 				"name");
 
 	}
@@ -113,11 +110,11 @@ public class TimeSerieServices implements Component, Activeable {
 	 */
 	public TimedDatas getKnowSentence(final StatCriteria criteria, final String intentRasa) {
 		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence"),
-				getDataFilter(criteria)
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
 						.addFilter("name", intentRasa)
 						.withAdditionalWhereClause("isNlu = 1")
 						.build(),
-				getTimeFilter(criteria),
+				AnalyticsServicesUtils.getTimeFilter(criteria),
 				Optional.of(5000L));
 	}
 
@@ -129,27 +126,16 @@ public class TimeSerieServices implements Component, Activeable {
 	 */
 	public TimedDatas getTopicsStats(final StatCriteria criteria) {
 		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("name"),
-				getDataFilter(criteria).build(),
-				getTimeFilter(criteria),
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
+				AnalyticsServicesUtils.getTimeFilter(criteria),
 				Optional.empty());
 	}
 
-	private static DataFilterBuilder getDataFilter(final StatCriteria criteria) {
-		final DataFilterBuilder dataFilterBuilder = DataFilter.builder("chatbotmessages");
-		if (criteria.getBotId() != null) {
-			dataFilterBuilder.addFilter("botId", criteria.getBotId().toString());
-			if (criteria.getNodId() != null) {
-				dataFilterBuilder.addFilter("nodId", criteria.getNodId().toString());
-			}
-		}
-		return dataFilterBuilder;
-	}
-
-	private static TimeFilter getTimeFilter(final StatCriteria criteria) {
-		final TimeOption timeOption = TimeOption.valueOf(criteria.getTimeOption());
-		final String now = '\'' + Instant.now().toString() + '\'';
-
-		return TimeFilter.builder(now + " - " + timeOption.getRange(), now).withTimeDim(timeOption.getGrain()).build();
+	public TimedDatas getRatingStats(final StatCriteria criteria) {
+		return timeSeriesManager.getTimeSeries(influxDbName,
+				Arrays.asList("rating1:count", "rating2:count", "rating3:count", "rating4:count"),
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.RATING_MSRMT).build(),
+				AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
 }

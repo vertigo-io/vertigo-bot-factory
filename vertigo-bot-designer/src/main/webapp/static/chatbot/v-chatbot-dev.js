@@ -35,7 +35,11 @@ Vue.component('v-chatbot-dev', {
 				</div>
 				<div class="non-selectable">
 					<q-chat-message v-if="inputConfig.showRating" class="animate-fade" bg-color="primary" sent >
-						<q-rating v-model="rating" :max="4" style="font-size: 2rem;" ></q-rating>
+						<q-rating v-model="rating" :max="4" style="font-size: 2rem;" 
+							icon="star_border"
+       						icon-selected="star"
+        					icon-half="star_half" 
+        					@input="rateBot"></q-rating>
 					</q-chat-message>
 				</div>
 			</div>
@@ -67,7 +71,9 @@ Vue.component('v-chatbot-dev', {
 			botAvatar: { type: String, required:true },
 			botName: { type: String, required:true },
 			placeholder: { type: String },
-			startCall: {type:String, 'default' : '_start'}
+			startCall: {type:String, 'default' : '_start'},
+			rateCall: {type:String, 'default' : '_rate'},
+			rating: {type:Number}
 		},
 		data: function () {
 			return {
@@ -90,7 +96,8 @@ Vue.component('v-chatbot-dev', {
 				keepAction: false,
 				menu: false,
 				lastUserInteraction: 0,
-				watingMessagesStack: []
+				watingMessagesStack: [],
+				rating: 0,
 			}
 		},
 		created : function (){
@@ -102,7 +109,7 @@ Vue.component('v-chatbot-dev', {
 				this.$http.post(this.startCall, {})
 					.then(httpResponse => {
 							this.convId = httpResponse.data.metadatas.sessionId
-							this._handleResponse(httpResponse)
+							this._handleResponse(httpResponse, false)
 						}).catch(error => {
 						// error
 						this.error = true;
@@ -156,7 +163,7 @@ Vue.component('v-chatbot-dev', {
 				this.$http.post(this.botUrl, {sender: this.convId, message: value, isButton: isButton})
 					.then(httpResponse => {
 						// success
-						this._handleResponse(httpResponse);
+						this._handleResponse(httpResponse, false);
 					}).catch(error => {
 						// error
 						this.error = true;
@@ -166,19 +173,21 @@ Vue.component('v-chatbot-dev', {
 					});
 					
 			},
-			_handleResponse: function(httpResponse) {
+			_handleResponse: function(httpResponse, isRating) {
 				// success
 				var responses = httpResponse.data.htmlTexts;
 				var buttons = httpResponse.data.choices;
-				
+				var isEnded = httpResponse.data.status  === 'Ended'
+				isEnded &= !isRating
+								
 				for (var i = 0; i < responses.length - 1; i++){
 					this.watingMessagesStack.push({text: responses[i]})
 				}
 				this.watingMessagesStack.push({text: responses[responses.length -1], buttons : buttons})
 				
-				this._displayMessages();
+				this._displayMessages(isEnded);
 			},
-			_displayMessages: function () {
+			_displayMessages: function (isEnded) {
 				if (this.watingMessagesStack.length > 0) {
 					var currentMessage = this.watingMessagesStack.shift();
 					var watingTime = this.lastUserInteraction - Date.now() + this.minTimeBetweenMessages;
@@ -186,7 +195,7 @@ Vue.component('v-chatbot-dev', {
 					this.sleep(watingTime).then(() => {
 						this._processResponse(currentMessage);
 						this.lastUserInteraction = Date.now();
-						this._displayMessages();
+						this._displayMessages(isEnded);
 					});
 				} else {
 					this.processing = false;
@@ -197,8 +206,10 @@ Vue.component('v-chatbot-dev', {
 					}
 					
 					this.sleep(1).then(() => { // en différé le temps que la vue soit mise à jour
+						this.inputConfig.showRating = isEnded;
 						this.$refs.input.focus();
 					});
+					
 				}
 			},
 			_processResponse: function (response) {
@@ -252,6 +263,14 @@ Vue.component('v-chatbot-dev', {
 					sys: true
 				});
 				this._scrollToBottom();
+			},
+			rateBot: function(value){
+				this.$http.post(this.rateCall, {sender: this.convId, note: value})
+					.then(httpResponse => {
+						httpResponse.data.htmlText = "Merci de m'avoir noté";
+						this._handleResponse(httpResponse, true);
+						
+					})
 			}
 		}
 });

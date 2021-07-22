@@ -179,4 +179,8 @@ public class AnalyticsServices implements Component, Activeable {
 		}
 	}
 
+	public TimedDatas getRatingStats(final StatCriteria criteria) {
+		return timeSerieServices.getRatingStats(criteria);
+	}
+
 }

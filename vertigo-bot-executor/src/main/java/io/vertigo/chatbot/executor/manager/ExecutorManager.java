@@ -37,6 +37,7 @@ import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
+import io.vertigo.chatbot.executor.model.IncomeRating;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
@@ -50,6 +51,7 @@ public class ExecutorManager implements Manager, Activeable {
 	private final BotManager botManager;
 	private final BtCommandManager btCommandManager;
 	private final AnalyticsSenderServices analyticsSenderServices;
+	private ExecutorConfiguration executorConfiguration;
 
 	@Inject
 	public ExecutorManager(
@@ -72,6 +74,7 @@ public class ExecutorManager implements Manager, Activeable {
 
 	@Override
 	public void start() {
+		executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
 		final var botExport = executorConfigManager.getConfig().getBot();
 		if (botExport == null) {
 			// nothing to load
@@ -124,7 +127,7 @@ public class ExecutorManager implements Manager, Activeable {
 
 		final var botEngine = botManager.createBotEngine(newUUID);
 		final var botResponse = botEngine.runTick(input);
-		analyticsSenderServices.sendEventStartToDb(executorConfigManager.getConfig().getExecutorConfiguration());
+		analyticsSenderServices.sendEventStartToDb(executorConfiguration);
 		botResponse.getMetadatas().put("sessionId", newUUID);
 		return botResponse;
 	}
@@ -137,8 +140,12 @@ public class ExecutorManager implements Manager, Activeable {
 
 		final var botResponse = botEngine.runTick(input);
 
-		analyticsSenderServices.sendEventToDb(botResponse.getMetadatas(), executorConfigManager.getConfig().getExecutorConfiguration(), input);
+		analyticsSenderServices.sendEventToDb(botResponse.getMetadatas(), executorConfiguration, input);
 
 		return botResponse;
+	}
+
+	public void rate(final IncomeRating rating) {
+		analyticsSenderServices.rate(rating, executorConfiguration);
 	}
 }

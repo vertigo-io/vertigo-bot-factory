@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.designer.analytics.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,6 @@ import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
-import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
@@ -61,6 +61,7 @@ public class AnalyticsController extends AbstractDesignerController {
 
 	private static final ViewContextKey<TimedDatas> sessionStatsKey = ViewContextKey.of("sessionStats");
 	private static final ViewContextKey<TimedDatas> requestsStatsKey = ViewContextKey.of("requestsStats");
+	private static final ViewContextKey<TimedDatas> ratingStatsKey = ViewContextKey.of("ratingStats");
 	private static final ViewContextKey<SentenseDetail> unknownSentensesKey = ViewContextKey.of("unknownSentenses");
 	private static final ViewContextKey<TopIntent> topIntentsKey = ViewContextKey.of("topIntents");
 	private static final ViewContextKey<SentenseDetail> intentDetailsKey = ViewContextKey.of("intentDetails");
@@ -79,9 +80,6 @@ public class AnalyticsController extends AbstractDesignerController {
 
 	@Inject
 	private ChatbotServices chatbotServices;
-
-	@Inject
-	private NodeServices nodeServices;
 
 	@Inject
 	private TopicServices topicServices;
@@ -124,17 +122,17 @@ public class AnalyticsController extends AbstractDesignerController {
 		viewContext.publishRef(sessionStatsKey, analyticsServices.getSessionsStats(criteria));
 		viewContext.publishRef(requestsStatsKey, analyticsServices.getRequestStats(criteria));
 		viewContext.publishDtList(topicsNotUsedKey, TopicIhmFields.code, refreshTopicsList(criteria));
-
 		if (criteria.getBotId() != null) {
 			final Chatbot bot = chatbotServices.getChatbotById(criteria.getBotId());
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.topId, analyticsServices.getSentenseDetails(criteria));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.topId, analyticsServices.getTopIntents(criteria));
-
 			viewContext.publishDtList(topicsKey, topicServices.getAllTopicByBot(bot));
+			viewContext.publishRef(ratingStatsKey, analyticsServices.getRatingStats(criteria));
 		} else {
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.topId, new DtList<TopIntent>(TopIntent.class));
 			viewContext.publishDtList(topicsKey, new DtList<Topic>(Topic.class));
+			viewContext.publishRef(ratingStatsKey, new TimedDatas(new ArrayList<>(), new ArrayList<>()));
 		}
 
 		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
