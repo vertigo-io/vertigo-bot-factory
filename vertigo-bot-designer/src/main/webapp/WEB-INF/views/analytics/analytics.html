@@ -8,9 +8,9 @@
 <title th:text="#{analytics.title}"></title>
 
 <script
-	src="https://cdn.jsdelivr.net/npm/apexcharts@3.6.6/dist/apexcharts.min.js"></script>
+	src="https://cdn.jsdelivr.net/npm/apexcharts@3.27.1/dist/apexcharts.min.js"></script>
 <script
-	src="https://cdn.jsdelivr.net/npm/vue-apexcharts@1.5.1/dist/vue-apexcharts.min.js"></script>
+	src="https://cdn.jsdelivr.net/npm/vue-apexcharts@1.6.1/dist/vue-apexcharts.min.js"></script>
 
 <script th:inline="javascript">
 	Vue.use(VueApexCharts);
@@ -180,6 +180,64 @@
 			} 
 		};
 	
+	VUiExtensions.dataX.apexCharts.rating = {
+			options : {
+				chart : {
+					id : 'vuechart-example-4',
+					stacked : true,
+					zoom: {
+						enabled: false
+					},
+					toolbar: {
+						show: false
+					},
+				},
+				dataLabels: {
+	                enabled: false
+	            },
+				xaxis : {
+					type: 'datetime'
+				},
+				tooltip: {
+					x : {
+						formatter: timeFormatter
+					}
+				},
+
+				stroke: {
+					curve: 'smooth'
+				},
+				plotOptions: {
+					bar : {
+						rangeBarOverlap: false,
+					}
+					
+				}, 
+		        legend: {
+		            position: 'right',
+		            horizontalAlign: 'left',
+		            offsetY: 40
+		          },
+		         colors : ['#ff4560','#feb019','#00e396', '#008ffb']
+			},
+			series : function() {
+				return [ {
+							name : /*[[#{analytics.message.oneStart}]]*/ '',
+							data : serieToApex("rating1:count", VertigoUi.vueData.ratingStats, {fill: 0})
+						},{
+							name : /*[[#{analytics.message.twoStart}]]*/ '',
+							data : serieToApex("rating2:count", VertigoUi.vueData.ratingStats, {fill: 0})
+						},{
+							name : /*[[#{analytics.message.threeStart}]]*/ '',
+							data : serieToApex("rating3:count", VertigoUi.vueData.ratingStats, {fill: 0})
+						},{
+							name : /*[[#{analytics.message.fourStart}]]*/ '',
+							data : serieToApex("rating4:count", VertigoUi.vueData.ratingStats, {fill: 0})
+						},
+					];
+			} 
+		};
+	
 	function serieToApex(serieName, dataIn, options) {
 		let ret = [];
 		dataIn.timedDataSeries.forEach(e => {
@@ -282,6 +340,18 @@
 			</div>
 
 			<template v-if="vueData.criteria.botId">
+			
+			<vu:include-data-primitive key="ratingStats" />
+				
+				<div class="col-12"> 
+					<q-card>
+						<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.rating}"></q-card-section>
+							<apexchart width="100%" height="250" type="bar"
+								:options="dataX.apexCharts.rating.options"
+								:series="dataX.apexCharts.rating.series()"></apexchart>
+					</q-card>
+				</div>
+				
 				<div class="col-12"> 
 					<vu:table componentId="messageList" list="unknownSentenses" th:title="#{analytics.message.understanding}" rowsPerPage="10" autoColClass >
 						<vu:column field="date"/>
@@ -295,13 +365,13 @@
 				
 				<vu:include-data object="intentDetails" field="'*'" />
 				<vu:include-data object="topIntents" field="code"/>
-				
+
 				<div class="col-12"> 
 					<vu:table componentId="intentList"  list="topIntents" th:title="#{analytics.intents.usage}"  rowsPerPage="10" sortBy="count" descending>
 							  
 						<vu:column field="intentRasa" label="Intent"/>
 						<vu:column field="count"/>
-						<vu:column field="intentRasa" label="detail"  class="col_Small">
+						<vu:column field="intentRasa" label="detail" >
 							<q-btn class="fab-block" round color="primary" icon="search" th:aria-label="#{analytics.message}"  th:title="#{analytics.message}"
 							 	@click="displayIntentDetail(props.row)"></q-btn>
 						</vu:column>

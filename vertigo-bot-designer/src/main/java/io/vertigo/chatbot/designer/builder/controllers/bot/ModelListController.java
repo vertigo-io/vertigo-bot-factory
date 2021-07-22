@@ -161,4 +161,17 @@ public class ModelListController extends AbstractBotController {
 		return botConversationServices.jsonToObject(result.body(), BotResponse.class);
 	}
 
+	@PostMapping("/_rate")
+	@ResponseBody
+	public void rate(
+			final ViewContext viewContext,
+			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList,
+			@RequestBody final String input) {
+
+		final ChatbotNode devNode = nodeServices.getDevNodeFromList(nodeList);
+		final BodyPublisher publisher = BodyPublishers.ofString(input);
+		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/rating", publisher);
+		HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 204);
+	}
+
 }

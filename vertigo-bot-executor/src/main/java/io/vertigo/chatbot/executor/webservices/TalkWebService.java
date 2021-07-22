@@ -48,7 +48,7 @@ public class TalkWebService implements WebServices {
 
 	@POST("/rating")
 	public void rate(final IncomeRating rating) {
-		// todo
+		executorManager.rate(rating);
 	}
 
 }
