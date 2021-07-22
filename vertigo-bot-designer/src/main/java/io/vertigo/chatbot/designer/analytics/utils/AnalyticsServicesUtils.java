@@ -3,7 +3,7 @@ package io.vertigo.chatbot.designer.analytics.utils;
 import java.time.Instant;
 
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
-import io.vertigo.chatbot.designer.domain.StatCriteria;
+import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.database.timeseries.DataFilter;
 import io.vertigo.database.timeseries.DataFilterBuilder;
 import io.vertigo.database.timeseries.TimeFilter;

@@ -2,7 +2,7 @@ package io.vertigo.chatbot.designer.builder.services.topic.export;
 
 import java.util.List;
 
-import io.vertigo.chatbot.designer.builder.topic.export.ResponseButtonExport;
+import io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonExport;
 
 public class BtBuilderUtils {
 

@@ -291,7 +291,7 @@
 
 <body>
 	
-	<section layout:fragment="content">
+		<section layout:fragment="content">
 		<vu:include-data object="bots" field="botId" />
 		<vu:include-data object="bots" field="name" />
 		
@@ -303,8 +303,13 @@
 		<vu:include-data-primitive key="sessionStats" />
 		<vu:include-data-primitive key="requestsStats" />
 		
+		<vu:include-data-primitive key="locale" />
 		
-		<div class="row wrap justify-start q-col-gutter-md q-mt-lg">
+		<q-page-sticky expand position="relative-top" >
+			<vu:messages />
+		</q-page-sticky>
+		
+		<div class="row wrap justify-start q-col-gutter-md q-mt-xl" >
 		
 			<div class="col-xl-4 col-md-6 col-xs-12"> 
 				<q-card>
@@ -356,7 +361,7 @@
 					<vu:table componentId="messageList" list="unknownSentenses" th:title="#{analytics.message.understanding}" rowsPerPage="10" autoColClass >
 						<vu:column field="date"/>
 						<vu:column field="text"/>
-
+						<vu:column field="modelName"/>
 					</vu:table>
 				</div>
 				
@@ -404,7 +409,10 @@
 			</template>
 		</div>
 		
-		<q-page-sticky expand position="top" >
+		
+		
+		<q-page-sticky expand position="top">
+		
 			<q-toolbar class="bg-secondary text-white shadow-2">
 				<q-select
 					 style="width: 250px; background-color: white"
@@ -442,11 +450,48 @@
 					:options='transformListForSelection("timeOptions", "value","label")'
 					@input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
 				></q-btn-toggle>
-				
-				
+				<q-space></q-space>
+				<q-btn  class="fab-block" round color="primary" size="lg" icon="file_download" th:aria-label="export" th:title="export" 
+					       @click="$refs.exportStatistic.show()"></q-btn>	
 			</q-toolbar>
+			
 		</q-page-sticky>
-	</section>
-
+		
+		
+		
+		
+		
+		<q-dialog ref="exportStatistic" th:with="viewMode='edit'" >
+				<q-card>
+					<q-form method="post" action="_exportStatisticFile">
+					<q-card-section>
+						<div class="text-h6" th:text="#{popup.export.title}"></div>						
+					</q-card-section>
+					<q-card-section style="width: 400px;">
+						<vu:include-data object="typeExportAnalyticsList" field="'*'"/>
+						<q-select
+							clearable
+							filled
+							map-options
+							emit-value
+							v-model="vueData.selectTypeExportAnalytics"
+							:options="vueData.locale == 'fr_FR' ? transformListForSelection('typeExportAnalyticsList', 'teaCd', 'labelFr') : transformListForSelection('typeExportAnalyticsList', 'teaCd', 'label')"
+							th:label="Type"
+							stack-label>
+						</q-select>
+					</q-card-section>
+					<input type="hidden" name="vContext[selectTypeExportAnalytics]" :value="vueData.selectTypeExportAnalytics" />				
+					
+					<q-card-actions align="around">
+							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<q-btn flat th:label="#{popup.export.cancel}" color="primary" v-close-popup ></q-btn>
+							<q-btn type="submit" th:title="#{popup.export.export}" th:label="#{popup.export.export}" th:aria-label="#{popup.export.export}" color="primary" v-close-popup></q-btn> 
+					</q-card-actions>
+					</q-form>
+				</q-card>
+			</q-dialog>
+		
+		</section>
+		
 </body>
 </html>

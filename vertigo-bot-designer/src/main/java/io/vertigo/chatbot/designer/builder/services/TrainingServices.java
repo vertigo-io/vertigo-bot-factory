@@ -61,6 +61,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.definitions.DtField;
@@ -247,6 +248,11 @@ public class TrainingServices implements Component {
 
 	public Training getTraining(@SecuredOperation("botVisitor") final Chatbot bot, final Long traId) {
 		return trainingDAO.get(traId);
+	}
+
+	public Optional<Training> getTrainingByTraIdAndBotId(final Long botId, final Long traId) {
+		final Criteria<Training> criteria = Criterions.isEqualTo(TrainingFields.botId, botId).and(Criterions.isEqualTo(TrainingFields.traId, traId));
+		return trainingDAO.findOptional(criteria);
 	}
 
 	public Training saveTraining(@SecuredOperation("botContributor") final Chatbot bot, final Training training) {

@@ -41,6 +41,7 @@ drop sequence IF EXISTS SEQ_TOPIC_CATEGORY;
 drop table IF EXISTS TRAINING cascade;
 drop sequence IF EXISTS SEQ_TRAINING;
 drop table IF EXISTS TRAINING_STATUS cascade;
+drop table IF EXISTS TYPE_EXPORT_ANALYTICS cascade;
 drop table IF EXISTS TYPE_TOPIC cascade;
 drop table IF EXISTS UTTER_TEXT cascade;
 drop sequence IF EXISTS SEQ_UTTER_TEXT;
@@ -99,6 +100,7 @@ create sequence SEQ_TOPIC_CATEGORY
 
 create sequence SEQ_TRAINING
 	start with 1000 cache 20; 
+
 
 
 
@@ -653,6 +655,26 @@ comment on column TRAINING_STATUS.LABEL is
 
 comment on column TRAINING_STATUS.LABEL_FR is
 'LabelFr';
+
+-- ============================================================
+--   Table : TYPE_EXPORT_ANALYTICS                                        
+-- ============================================================
+create table TYPE_EXPORT_ANALYTICS
+(
+    TEA_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_TYPE_EXPORT_ANALYTICS primary key (TEA_CD)
+);
+
+comment on column TYPE_EXPORT_ANALYTICS.TEA_CD is
+'Code';
+
+comment on column TYPE_EXPORT_ANALYTICS.LABEL is
+'Title';
+
+comment on column TYPE_EXPORT_ANALYTICS.LABEL_FR is
+'Titre';
 
 -- ============================================================
 --   Table : TYPE_TOPIC                                        

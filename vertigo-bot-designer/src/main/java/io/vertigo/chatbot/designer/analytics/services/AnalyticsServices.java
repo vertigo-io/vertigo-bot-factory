@@ -25,16 +25,15 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
-import io.vertigo.chatbot.designer.domain.SentenseDetail;
-import io.vertigo.chatbot.designer.domain.StatCriteria;
-import io.vertigo.chatbot.designer.domain.TopIntent;
+import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
+import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
+import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Tuple;
-import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimedDataSerie;
@@ -42,7 +41,7 @@ import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.structure.model.DtList;
 
 @Transactional
-public class AnalyticsServices implements Component, Activeable {
+public class AnalyticsServices implements Component {
 
 	@Inject
 	private TopicServices topicServices;
@@ -51,17 +50,10 @@ public class AnalyticsServices implements Component, Activeable {
 	private ChatbotServices chatbotServices;
 
 	@Inject
+	private TrainingServices trainingServices;
+
+	@Inject
 	private TimeSerieServices timeSerieServices;
-
-	@Override
-	public void start() {
-		//Nothing
-	}
-
-	@Override
-	public void stop() {
-		// Nothing
-	}
 
 	public TimedDatas getSessionsStats(final StatCriteria criteria) {
 		return timeSerieServices.getSessionsStats(criteria);
@@ -91,7 +83,7 @@ public class AnalyticsServices implements Component, Activeable {
 			newSentenseDetail.setDate(timedData.getTime());
 			newSentenseDetail.setText((String) values.get("text"));
 			newSentenseDetail.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
-
+			newSentenseDetail.setModelName((String) values.get("modelName"));
 			retour.add(newSentenseDetail);
 		}
 
@@ -103,7 +95,7 @@ public class AnalyticsServices implements Component, Activeable {
 		final TabularDatas tabularDatas = timeSerieServices.getAllTopIntents(criteria);
 		// build DtList from InfluxDb data
 		final DtList<TopIntent> retour = new DtList<>(TopIntent.class);
-		final DtList<Topic> topics = getAllTopicsFromBot(criteria);
+		final DtList<Topic> topics = topicServices.getAllTopicByBotId(criteria.getBotId());
 		//Get the tuple (name, name:count)
 		final List<Tuple<Object, Object>> listValues = tabularDatas.getTabularDataSeries().stream().map(x -> Tuple.of(x.getValues().get("name"), x.getValues().get("name:count")))
 				.collect(Collectors.toList());
@@ -124,7 +116,7 @@ public class AnalyticsServices implements Component, Activeable {
 		// get data from influxdb
 		final TimedDatas tabularTimedData = timeSerieServices.getKnowSentence(criteria, intentRasa);
 		final DtList<SentenseDetail> retour = new DtList<>(SentenseDetail.class);
-		final Optional<Topic> topic = getTopicByCode(intentRasa, criteria.getBotId());
+		final Optional<Topic> topic = topicServices.getTopicByCode(intentRasa, criteria.getBotId());
 		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 
@@ -153,15 +145,6 @@ public class AnalyticsServices implements Component, Activeable {
 				.map(Object::toString)
 				.distinct()
 				.collect(Collectors.toList());
-	}
-
-	private DtList<Topic> getAllTopicsFromBot(final StatCriteria criteria) {
-		final Chatbot chatbot = chatbotServices.getChatbotById(criteria.getBotId());
-		return topicServices.getAllTopicByBot(chatbot);
-	}
-
-	private Optional<Topic> getTopicByCode(final String code, final Long botId) {
-		return topicServices.getTopicByCode(code, botId);
 	}
 
 	//Filter topics and create topIntent object
