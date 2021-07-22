@@ -267,7 +267,7 @@ Vue.component('v-chatbot-dev', {
 			rateBot: function(value){
 				this.$http.post(this.rateCall, {sender: this.convId, note: value})
 					.then(httpResponse => {
-						httpResponse.data.htmlText = "Merci de m'avoir noté";
+						httpResponse.data = {htmlTexts : ["Merci de m'avoir noté"]}
 						this._handleResponse(httpResponse, true);
 						
 					})
