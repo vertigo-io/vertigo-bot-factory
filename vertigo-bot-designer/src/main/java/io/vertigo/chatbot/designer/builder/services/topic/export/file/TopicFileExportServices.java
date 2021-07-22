@@ -362,8 +362,10 @@ public class TopicFileExportServices implements Component {
 		sin.setScript(tfe.getScript());
 		sin.setTopId(topic.getTopId());
 
+		final DtList<NluTrainingSentence> nluTrainingSentencesToDelete = topicServices.getNluTrainingSentenceByTopic(chatbot, topic);
+
 		scriptIntentionServices.save(chatbot, sin, topic);
-		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentences);
+		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 
 	}
 
@@ -377,9 +379,12 @@ public class TopicFileExportServices implements Component {
 		final DtList<ResponseButton> listButtons = extractButtonsFromTfe(chatbot.getBotId(), tfe);
 
 		final SmallTalk smt = populateSmallTalkFromTopicFileExport(topic, creation, tfe, listResponse);
+
+		final DtList<NluTrainingSentence> nluTrainingSentencesToDelete = topicServices.getNluTrainingSentenceByTopic(chatbot, topic);
+
 		topicServices.saveTtoCd(topic, TypeTopicEnum.SMALLTALK.name());
 		smallTalkServices.saveSmallTalk(chatbot, smt, listResponse, listButtons, topic);
-		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentences);
+		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 	}
 
 	/*
