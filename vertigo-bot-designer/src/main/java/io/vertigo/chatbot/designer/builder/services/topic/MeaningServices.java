@@ -39,7 +39,7 @@ public class MeaningServices implements Component {
 	 * @param id
 	 * @return meaning
 	 */
-	public Meaning findmeaningById(final Long id) {
+	public Meaning findMeaningById(final Long id) {
 		return meaningDAO.get(id);
 	}
 

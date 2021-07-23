@@ -72,7 +72,7 @@ public class MeaningDetailController extends AbstractBotController {
 		final Chatbot chatbot = chatbotServices.getChatbotById(botId);
 		viewContext.publishDto(botKey, chatbot);
 
-		final Meaning meaning = meaningServices.findmeaningById(meaId);
+		final Meaning meaning = meaningServices.findMeaningById(meaId);
 
 		viewContext.publishDto(meaningKey, meaning);
 		viewContext.publishDtList(synonymsKey, synonymServices.getAllSynonymByMeaning(meaning));
@@ -109,7 +109,7 @@ public class MeaningDetailController extends AbstractBotController {
 	}
 
 	@PostMapping("/_delete")
-	public String deletemeaning(final ViewContext viewContext,
+	public String deleteMeaning(final ViewContext viewContext,
 			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("topicCategory") final Meaning meaning) {
 		meaningServices.deleteMeaning(bot, meaning.getMeaId());
@@ -146,7 +146,7 @@ public class MeaningDetailController extends AbstractBotController {
 			if (curIdx == index) {
 				syn.setLabel(newSynonym);
 			} else if (newSynonym.equalsIgnoreCase(syn.getLabel())) {
-				throw new VUserException("This synonym is already registered");
+				throw new VUserException(MeaningsMultilingualResources.ERR_UNIQUE_SYNONYM);
 			}
 			curIdx++;
 		}

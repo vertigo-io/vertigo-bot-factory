@@ -4,5 +4,5 @@ import io.vertigo.core.locale.MessageKey;
 
 public enum MeaningsMultilingualResources implements MessageKey {
 
-	ERR_UNIQUE_SYNONYM,
+	ERR_UNIQUE_SYNONYM
 }

@@ -111,6 +111,12 @@ public class TopicExportServices implements Component, Activeable {
 		return meaningServices.combine(tupleSynonymIhmPerWord, nluOriginal.getText());
 	}
 
+	/**
+	 * Export topics to be trained
+	 *
+	 * @param bot
+	 * @return list Topic Export
+	 */
 	public DtList<TopicExport> exportActiveTopics(final Chatbot bot) {
 		final DtList<TopicExport> result = new DtList<>(TopicExport.class);
 		final DtList<NluTrainingExport> nlus = generateNLUSynonyms(bot.getBotId());
