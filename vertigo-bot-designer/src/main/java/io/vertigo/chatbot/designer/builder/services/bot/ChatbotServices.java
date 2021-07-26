@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -14,6 +15,8 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.DateUtils;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
@@ -27,6 +30,7 @@ import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -71,6 +75,8 @@ public class ChatbotServices implements Component {
 
 	@Inject
 	private TopicCategoryServices topicCategoryServices;
+
+	static final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern(DateUtils.FORMAT_JJMMAAAA);
 
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 			final UtterText utterTextFailure,
@@ -186,6 +192,14 @@ public class ChatbotServices implements Component {
 				"noAvatar.png",
 				"image/png",
 				ChatbotServices.class.getResource("/noAvatar.png"));
+	}
+
+	public String getBotNameDisplay(final Chatbot bot) {
+		return bot != null ? bot.getName() : MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
+	}
+
+	public String getBotDateDisplay(final Chatbot bot) {
+		return bot != null ? bot.getCreationDate().format(formatterDate) : null;
 	}
 
 }

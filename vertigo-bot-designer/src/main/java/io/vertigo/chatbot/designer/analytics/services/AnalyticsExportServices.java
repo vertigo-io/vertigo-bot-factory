@@ -3,7 +3,6 @@ package io.vertigo.chatbot.designer.analytics.services;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -57,7 +56,6 @@ public class AnalyticsExportServices implements Component {
 
 		// build DtList from InfluxDb data
 		final DtList<SessionExport> retour = new DtList<>(SessionExport.class);
-		final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 
@@ -68,14 +66,14 @@ public class AnalyticsExportServices implements Component {
 			//It's possible in local environment that the database was reinitialized, but eventlogs still have obsolete values
 			if (botId != null) {
 				final Chatbot bot = chatbotServices.getChatbotById(botId);
-				final String botName = bot != null ? bot.getName() : MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
-				final String dateBot = bot != null ? bot.getCreationDate().format(formatterDate) : null;
+				final String botName = chatbotServices.getBotNameDisplay(bot);
+				final String dateBot = chatbotServices.getBotDateDisplay(bot);
 				newSessionExport.setBotName(botName);
 				newSessionExport.setCreationBot(dateBot);
 				final Long traId = Long.valueOf((String) values.get("traId"));
 				if (traId != null) {
 					final Optional<Training> training = trainingServices.getTrainingByTraIdAndBotId(botId, traId);
-					final java.time.Instant dateTraining = training.isPresent() ? training.get().getEndTime() : null;
+					final java.time.Instant dateTraining = trainingServices.getInstantEndDisplay(training);
 					newSessionExport.setDateTraining(dateTraining);
 				}
 			}
@@ -118,7 +116,6 @@ public class AnalyticsExportServices implements Component {
 
 		// build DtList from InfluxDb data
 		final DtList<UnknownSentenseExport> retour = new DtList<>(UnknownSentenseExport.class);
-		final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 
@@ -131,14 +128,14 @@ public class AnalyticsExportServices implements Component {
 			//It's possible in local environment that the database was reinitialized, but eventlogs still have obsolete values
 			if (botId != null) {
 				final Chatbot bot = chatbotServices.getChatbotById(botId);
-				final String botName = bot != null ? bot.getName() : MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
-				final String dateBot = bot != null ? bot.getCreationDate().format(formatterDate) : null;
+				final String botName = chatbotServices.getBotNameDisplay(bot);
+				final String dateBot = chatbotServices.getBotDateDisplay(bot);
 				newUnknownSentenseExport.setBotName(botName);
 				newUnknownSentenseExport.setCreationBot(dateBot);
 				final Long traId = Long.valueOf((String) values.get("traId"));
 				if (traId != null) {
 					final Optional<Training> training = trainingServices.getTrainingByTraIdAndBotId(botId, traId);
-					final java.time.Instant dateTraining = training.isPresent() ? training.get().getEndTime() : null;
+					final java.time.Instant dateTraining = trainingServices.getInstantEndDisplay(training);
 					newUnknownSentenseExport.setDateTraining(dateTraining);
 				}
 			}
