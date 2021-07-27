@@ -53,11 +53,11 @@ public final class MeaningDAO extends DAO<Meaning, java.lang.Long> implements St
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetMeaningBySynonymLabelAndBotId",
 			request = "SELECT 	mea.*" + 
- "			from meaning mea " + 
- "			join synonym syn on syn.mea_id = mea.mea_id			" + 
- "			where mea.bot_id = #botId#			" + 
- "			and syn.label = #label#" + 
- "			LIMIT 1",
+ "				from meaning mea " + 
+ "				join synonym syn on syn.mea_id = mea.mea_id			" + 
+ "				where mea.bot_id = #botId#			" + 
+ "				and syn.label = #label#" + 
+ "				LIMIT 1",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtMeaning")
 	public Optional<io.vertigo.chatbot.designer.domain.Meaning> getMeaningBySynonymLabelAndBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "label", smartType = "STyLabel") final String label) {
