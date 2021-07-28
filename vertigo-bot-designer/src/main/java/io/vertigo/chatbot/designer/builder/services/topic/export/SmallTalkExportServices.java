@@ -10,11 +10,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
-import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
@@ -29,7 +26,7 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
 
 @Transactional
-public class SmallTalkExportServices implements TopicExportInterfaceServices<ScriptIntention>, Component {
+public class SmallTalkExportServices implements TopicExportInterfaceServices<SmallTalk>, Component {
 
 	@Inject
 	private TopicServices topicServices;
@@ -43,17 +40,6 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Scr
 	@Override
 	public boolean handleObject(final Topic topic) {
 		return TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd());
-	}
-
-	@Override
-	public DtList<TopicExport> exportTopics(final Chatbot bot) {
-		final DtList<Topic> topics = topicServices.getAllTopicRelativeSmallTalkByBot(bot);
-		final DtList<NluTrainingExport> nlus = exportPAO.exportSmallTalkRelativeTrainingSentence(bot.getBotId());
-		//Create bt by topics and map to topId
-		final Map<Long, String> mapBtTopic = mapTopicToBt(bot);
-		//Map Topic to NLU and BT
-		final DtList<TopicExport> result = TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapBtTopic);
-		return result;
 	}
 
 	private Map<UtterTextExport, List<ResponseButtonExport>> getUtterAndResponseForBt(final Long botId) {
@@ -181,6 +167,11 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Scr
 		utterTextExport.setKtoCd(topic.getKtoCd());
 
 		return createBt(utterTextExport, new ArrayList<ResponseButtonExport>(), ktoCd.equals(KindTopicEnum.START.name()));
+	}
+
+	@Override
+	public DtList<Topic> getAllNonTechnicalTopicByBot(final Chatbot bot) {
+		return topicServices.getAllNonTechnicalTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name());
 	}
 
 }

@@ -1,7 +1,7 @@
 package io.vertigo.chatbot.designer.builder.topic.export
 
 
-create Task TkExportSmallTalkRelativeTrainingSentence{  
+create Task TkExportRelativeTrainingSentence{  
     className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
 				select   
@@ -10,24 +10,6 @@ create Task TkExportSmallTalkRelativeTrainingSentence{
              	top.top_id
  			from nlu_training_sentence nts  
  			join topic top on (top.top_id = nts.top_id)  
- 			join small_talk smt on (smt.top_id = top.top_id)  
- 			where top.bot_id = #botId#  
- 			and top.is_enabled = true
- 			"
-	in botId				{domain : DoId,						cardinality:"1"} 
-	out tpcs 				{domain : DoDtNluTrainingExport		cardinality:"*"}
-} 
-
-create Task TkExportScriptIntentionRelativeTrainingSentence{  
-    className : "io.vertigo.basics.task.TaskEngineSelect"
-    request : "
-				select   
-             	nts.nts_id,  
-             	nts.text,  
-             	sin.top_id  
- 			from nlu_training_sentence nts  
- 			join topic top on (top.top_id = nts.top_id)  
- 			join script_intention sin on (sin.top_id = top.top_id)  
  			where top.bot_id = #botId#  
  			and top.is_enabled = true
  			"

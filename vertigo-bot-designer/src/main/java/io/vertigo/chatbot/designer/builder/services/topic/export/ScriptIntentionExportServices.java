@@ -8,8 +8,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.TopicExport;
-import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
@@ -27,7 +25,6 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 
 	@Inject
 	private TopicServices topicServices;
-
 	@Inject
 	private ScriptIntentionServices scriptIntentionServices;
 
@@ -37,16 +34,6 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 	@Override
 	public boolean handleObject(final Topic topic) {
 		return TypeTopicEnum.SCRIPTINTENTION.name().equals(topic.getTtoCd());
-	}
-
-	@Override
-	public DtList<TopicExport> exportTopics(final Chatbot bot) {
-		final DtList<Topic> topics = topicServices.getAllTopicRelativeScriptIntentionByBot(bot);
-		final DtList<NluTrainingExport> nlus = exportPAO.exportScriptIntentionRelativeTrainingSentence(bot.getBotId());
-		final Map<Long, String> mapTopicBt = mapTopicToBt(bot);
-		final DtList<TopicExport> exports = TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt);
-		return exports;
-
 	}
 
 	@Override
@@ -72,6 +59,11 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
 		final ScriptIntention scriptIntention = scriptIntentionServices.findByTopId(topic.getTopId());
 		return scriptIntention.getScript();
+	}
+
+	@Override
+	public DtList<Topic> getAllNonTechnicalTopicByBot(final Chatbot bot) {
+		return topicServices.getAllNonTechnicalTopicByBotTtoCd(bot, TypeTopicEnum.SCRIPTINTENTION.name());
 	}
 
 }
