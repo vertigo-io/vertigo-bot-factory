@@ -2,13 +2,13 @@ package io.vertigo.chatbot.engine.plugins.bt.confluence.model.result;
 
 public abstract class AbstractConfluenceResponses {
 
-	private ConfluenceLinks links;
+	private ConfluenceLinks _links;
 
 	public ConfluenceLinks getLinks() {
-		return links;
+		return _links;
 	}
 
 	public void setLinks(final ConfluenceLinks links) {
-		this.links = links;
+		this._links = links;
 	}
 }

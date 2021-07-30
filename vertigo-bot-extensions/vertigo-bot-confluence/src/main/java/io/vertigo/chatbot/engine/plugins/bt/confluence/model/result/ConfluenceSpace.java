@@ -1,8 +1,6 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence.model.result;
 
-import io.vertigo.core.node.component.Component;
-
-public final class ConfluenceSpace implements Component {
+public final class ConfluenceSpace {
 
 	private double id;
 

@@ -85,6 +85,15 @@
 					</execution>
 				</executions>
 			</plugin>
+	        <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${maven-war-plugin.version}</version>
+                <configuration>
+                    <!-- Exclusion du packaging, la conf est externalisee par environnement -->
+                    <packagingExcludes>META-INF/context.xml</packagingExcludes>
+                    <attachClasses>true</attachClasses>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

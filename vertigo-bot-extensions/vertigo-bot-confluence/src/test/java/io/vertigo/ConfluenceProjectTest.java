@@ -2,7 +2,6 @@ package io.vertigo;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,21 +11,19 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.vertigo.chatbot.engine.plugins.bt.confluence.impl.ConfluenceServerImpl;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.impl.ConfluenceServerService;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResponse;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpace;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpaceResponse;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSearchOperator;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.MultipleConfluenceSearch;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.SingleConfluenceSearch;
-import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.AutoCloseableNode;
 import io.vertigo.core.node.component.di.DIInjector;
 import io.vertigo.core.node.config.BootConfig;
 import io.vertigo.core.node.config.ModuleConfig;
 import io.vertigo.core.node.config.NodeConfig;
-import io.vertigo.core.param.Param;
-import io.vertigo.core.param.ParamManager;
 import io.vertigo.core.plugins.resource.classpath.ClassPathResourceResolverPlugin;
 import io.vertigo.core.plugins.resource.url.URLResourceResolverPlugin;
 
@@ -35,14 +32,11 @@ public class ConfluenceProjectTest {
 	private AutoCloseableNode node;
 
 	@Inject
-	private ParamManager paramManager;
-
-	@Inject
-	private ConfluenceServerImpl confluenceServerImpl;
+	private ConfluenceServerService confluenceServerImpl;
 
 	@Test
 	public void testSpaceList() {
-		final Map<String, String> headers = getHeadersWithAuthorization();
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
 		final ConfluenceSpaceResponse responses = confluenceServerImpl.searchAllSpaceOnConfluence(headers);
 		assertNotEquals(responses.getResults().length, 0);
 		final String spaceKey = responses.getResults()[0].getKey();
@@ -52,7 +46,7 @@ public class ConfluenceProjectTest {
 
 	@Test
 	public void testSearchInTitle() {
-		final Map<String, String> headers = getHeadersWithAuthorization();
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
 
 		//create cql search
 		final SingleConfluenceSearch title1 = new SingleConfluenceSearch("title", ConfluenceSearchOperator.CONTAINS, "dossier");
@@ -71,7 +65,7 @@ public class ConfluenceProjectTest {
 
 	@Test
 	public void testSearchContentBody() {
-		final Map<String, String> headers = getHeadersWithAuthorization();
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
 
 		//create cql search
 		final SingleConfluenceSearch type = new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page");
@@ -86,7 +80,7 @@ public class ConfluenceProjectTest {
 
 	@Test
 	public void testSearchLabelContent() {
-		final Map<String, String> headers = getHeadersWithAuthorization();
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
 
 		//create cql search
 		final SingleConfluenceSearch type = new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page");
@@ -101,7 +95,7 @@ public class ConfluenceProjectTest {
 
 	@Test
 	public void testSearchTitleAndBodyContent() {
-		final Map<String, String> headers = getHeadersWithAuthorization();
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
 
 		//create cql search
 		final SingleConfluenceSearch type = new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page");
@@ -120,7 +114,7 @@ public class ConfluenceProjectTest {
 
 	@Test
 	public void testSearchSentenceInTitle() {
-		final Map<String, String> headers = getHeadersWithAuthorization();
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
 
 		//create cql search
 		final SingleConfluenceSearch type = new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page");
@@ -132,20 +126,6 @@ public class ConfluenceProjectTest {
 
 		final ConfluenceSearchResponse response = confluenceServerImpl.searchOnConfluence(params, headers, new MultipleConfluenceSearch(type, title, ConfluenceSearchOperator.AND));
 		assertNotEquals(response.getSize(), 0);
-	}
-
-	private Map<String, String> getHeadersWithAuthorization() {
-		//final String password = "chatbot";
-		//final String user = "chatbot";
-		final String password = paramManager.getOptionalParam("confluencePassword").map(Param::getValue).orElseThrow(() -> new VSystemException("not params password found : use  -D"));
-		final String user = paramManager.getOptionalParam("confluenceUser").map(Param::getValue).orElseThrow(() -> new VSystemException("not params user found : use  -D"));
-		final Map<String, String> result = new HashMap<>();
-		result.put("Authorization", basicAuth(user, password));
-		return result;
-	}
-
-	private String basicAuth(final String username, final String password) {
-		return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
 	}
 
 	@BeforeEach
@@ -167,11 +147,10 @@ public class ConfluenceProjectTest {
 						.withLocales("fr_FR")
 						.addPlugin(ClassPathResourceResolverPlugin.class)
 						.addPlugin(URLResourceResolverPlugin.class)
-						.addPlugin(CommandLineParamPlugin.class)
 						.build())
 				.addModule(
 						ModuleConfig.builder("confluence")
-								.addComponent(ConfluenceServerImpl.class)
+								.addComponent(ConfluenceServerService.class)
 								.build())
 				.build();
 	}

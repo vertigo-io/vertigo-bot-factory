@@ -12,14 +12,21 @@ import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import io.vertigo.core.lang.VSystemException;
 
-public class ConfluenceHttpRequestHelper {
+public final class ConfluenceHttpRequestHelper {
 
-	public static final String BASE_URL = "https://preprod-jira-temp.kleegroup.com/confluence/rest/api";
+	private ConfluenceHttpRequestHelper() {
+		//helper
+	}
+
+	public static final String BASE_URL = "https://preprod-jira-temp.kleegroup.com/confluence";
+	public static final String API_URL = BASE_URL + "/rest/api";
 
 	private static HttpClient getBasicHttpClient() {
 		return HttpClient.newBuilder().version(Version.HTTP_1_1).build();
@@ -27,7 +34,7 @@ public class ConfluenceHttpRequestHelper {
 
 	private static Builder createRequestBuilder(final String url, final Map<String, String> headers, final Map<String, String> params) {
 		final URI uri = params != null ? createURIWithParams(url, params) : URI.create(url);
-		final Builder builder = HttpRequest.newBuilder().uri(uri);
+		final var builder = HttpRequest.newBuilder().uri(uri);
 		for (final Entry<String, String> entry : headers.entrySet()) {
 			builder.setHeader(entry.getKey(), entry.getValue());
 		}
@@ -35,7 +42,7 @@ public class ConfluenceHttpRequestHelper {
 	}
 
 	private static URI createURIWithParams(final String url, final Map<String, String> params) {
-		final StringBuilder builder = new StringBuilder();
+		final var builder = new StringBuilder();
 		builder.append(url);
 		builder.append("?");
 		for (final Entry<String, String> entry : params.entrySet()) {
@@ -82,4 +89,19 @@ public class ConfluenceHttpRequestHelper {
 			throw new VSystemException("can't encode {0}", urlToEncode);
 		}
 	}
+
+	public static Map<String, String> getHeadersWithAuthorization() {
+		final var password = "chatbot";
+		final var user = "chatbot";
+		//final String password = paramManager.getOptionalParam("confluencePassword").map(Param::getValue).orElseThrow(() -> new VSystemException("not params password found : use  -D"));
+		//final String user = paramManager.getOptionalParam("confluenceUser").map(Param::getValue).orElseThrow(() -> new VSystemException("not params user found : use  -D"));
+		final Map<String, String> result = new HashMap<>();
+		result.put("Authorization", basicAuth(user, password));
+		return result;
+	}
+
+	private static String basicAuth(final String username, final String password) {
+		return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
+	}
+
 }

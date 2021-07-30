@@ -6,13 +6,13 @@ public class ConfluenceVisitor {
 
 	public String visitMultipleSearch(final MultipleConfluenceSearch multipleConfluenceSearch) {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("( ");
+		builder.append("(");
 		builder.append(multipleConfluenceSearch.getFirstObject().accept(this));
 		addSeparator(builder);
 		builder.append(multipleConfluenceSearch.getOperator().getValue());
 		addSeparator(builder);
 		builder.append(multipleConfluenceSearch.getSecondObject().accept(this));
-		builder.append(" ) ");
+		builder.append(") ");
 		return builder.toString();
 	}
 
@@ -33,7 +33,7 @@ public class ConfluenceVisitor {
 	 * @return "value" if a phrase else value
 	 */
 	private String getAllStringForValue(final String value) {
-		return value.split(" ").length == 1 ? value : "\"" + value + "\"";
+		return "\"" + value + "\"";
 	}
 
 	private void addSeparator(final StringBuilder builder) {
