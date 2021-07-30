@@ -13,7 +13,7 @@ public class JsonHelper {
 		//utils
 	}
 
-	public static <T> ObjectMapper createCustomObjectMapper() {
+	private static ObjectMapper createCustomObjectMapper() {
 		final ObjectMapper mapper = new ObjectMapper();
 		mapper.setSerializationInclusion(Include.NON_NULL);
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -26,6 +26,11 @@ public class JsonHelper {
 		} catch (final JsonProcessingException e) {
 			throw new VSystemException("error during the creation of json from {0}. Reason : {1}", object, e.getMessage());
 		}
+	}
+
+	public static <T> T getObjectFromJson(final String json, final Class<T> clazz) {
+		final var mapper = createCustomObjectMapper();
+		return getObjectFromJson(mapper, json, clazz);
 	}
 
 	public static <T> T getObjectFromJson(final ObjectMapper mapper, final String json, final Class<T> clazz) {

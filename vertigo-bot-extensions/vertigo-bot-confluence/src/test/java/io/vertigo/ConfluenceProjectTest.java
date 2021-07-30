@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper;
-import io.vertigo.chatbot.engine.plugins.bt.confluence.impl.ConfluenceServerService;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.impl.ConfluenceServerServices;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResponse;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpace;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpaceResponse;
@@ -30,23 +30,25 @@ import io.vertigo.core.plugins.resource.url.URLResourceResolverPlugin;
 public class ConfluenceProjectTest {
 
 	private AutoCloseableNode node;
+	private final String user = "chatbot";
+	private final String password = "chatbot";
 
 	@Inject
-	private ConfluenceServerService confluenceServerImpl;
+	private ConfluenceServerServices confluenceServerServices;
 
 	@Test
 	public void testSpaceList() {
-		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
-		final ConfluenceSpaceResponse responses = confluenceServerImpl.searchAllSpaceOnConfluence(headers);
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization(user, password);
+		final ConfluenceSpaceResponse responses = confluenceServerServices.searchAllSpaceOnConfluence(headers);
 		assertNotEquals(responses.getResults().length, 0);
 		final String spaceKey = responses.getResults()[0].getKey();
-		final ConfluenceSpace space = confluenceServerImpl.searchSpaceOnClonfluence(headers, spaceKey);
+		final ConfluenceSpace space = confluenceServerServices.searchSpaceOnClonfluence(headers, spaceKey);
 		assertNotEquals(space, null);
 	}
 
 	@Test
 	public void testSearchInTitle() {
-		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization(user, password);
 
 		//create cql search
 		final SingleConfluenceSearch title1 = new SingleConfluenceSearch("title", ConfluenceSearchOperator.CONTAINS, "dossier");
@@ -59,13 +61,13 @@ public class ConfluenceProjectTest {
 		final Map<String, String> params = new HashMap<>();
 		params.put("limit", "10");
 
-		final ConfluenceSearchResponse response = confluenceServerImpl.searchOnConfluence(params, headers, search);
+		final ConfluenceSearchResponse response = confluenceServerServices.searchOnConfluence(params, headers, search);
 		assertNotEquals(response.getSize(), 0);
 	}
 
 	@Test
 	public void testSearchContentBody() {
-		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization(user, password);
 
 		//create cql search
 		final SingleConfluenceSearch type = new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page");
@@ -74,13 +76,13 @@ public class ConfluenceProjectTest {
 		final Map<String, String> params = new HashMap<>();
 		params.put("limit", "10");
 
-		final ConfluenceSearchResponse response = confluenceServerImpl.searchOnConfluence(params, headers, new MultipleConfluenceSearch(type, text, ConfluenceSearchOperator.AND));
+		final ConfluenceSearchResponse response = confluenceServerServices.searchOnConfluence(params, headers, new MultipleConfluenceSearch(type, text, ConfluenceSearchOperator.AND));
 		assertNotEquals(response.getSize(), 0);
 	}
 
 	@Test
 	public void testSearchLabelContent() {
-		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization(user, password);
 
 		//create cql search
 		final SingleConfluenceSearch type = new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page");
@@ -89,13 +91,13 @@ public class ConfluenceProjectTest {
 		final Map<String, String> params = new HashMap<>();
 		params.put("limit", "10");
 
-		final ConfluenceSearchResponse response = confluenceServerImpl.searchOnConfluence(params, headers, new MultipleConfluenceSearch(type, label, ConfluenceSearchOperator.AND));
+		final ConfluenceSearchResponse response = confluenceServerServices.searchOnConfluence(params, headers, new MultipleConfluenceSearch(type, label, ConfluenceSearchOperator.AND));
 		assertNotEquals(response.getSize(), 0);
 	}
 
 	@Test
 	public void testSearchTitleAndBodyContent() {
-		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization(user, password);
 
 		//create cql search
 		final SingleConfluenceSearch type = new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page");
@@ -108,13 +110,13 @@ public class ConfluenceProjectTest {
 		final Map<String, String> params = new HashMap<>();
 		params.put("limit", "10");
 
-		final ConfluenceSearchResponse response = confluenceServerImpl.searchOnConfluence(params, headers, new MultipleConfluenceSearch(type, textSearch, ConfluenceSearchOperator.AND));
+		final ConfluenceSearchResponse response = confluenceServerServices.searchOnConfluence(params, headers, new MultipleConfluenceSearch(type, textSearch, ConfluenceSearchOperator.AND));
 		assertNotEquals(response.getSize(), 0);
 	}
 
 	@Test
 	public void testSearchSentenceInTitle() {
-		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization();
+		final Map<String, String> headers = ConfluenceHttpRequestHelper.getHeadersWithAuthorization(user, password);
 
 		//create cql search
 		final SingleConfluenceSearch type = new SingleConfluenceSearch("type", ConfluenceSearchOperator.EQUALS, "page");
@@ -124,7 +126,7 @@ public class ConfluenceProjectTest {
 		final Map<String, String> params = new HashMap<>();
 		params.put("limit", "10");
 
-		final ConfluenceSearchResponse response = confluenceServerImpl.searchOnConfluence(params, headers, new MultipleConfluenceSearch(type, title, ConfluenceSearchOperator.AND));
+		final ConfluenceSearchResponse response = confluenceServerServices.searchOnConfluence(params, headers, new MultipleConfluenceSearch(type, title, ConfluenceSearchOperator.AND));
 		assertNotEquals(response.getSize(), 0);
 	}
 
@@ -150,7 +152,7 @@ public class ConfluenceProjectTest {
 						.build())
 				.addModule(
 						ModuleConfig.builder("confluence")
-								.addComponent(ConfluenceServerService.class)
+								.addComponent(ConfluenceServerServices.class)
 								.build())
 				.build();
 	}

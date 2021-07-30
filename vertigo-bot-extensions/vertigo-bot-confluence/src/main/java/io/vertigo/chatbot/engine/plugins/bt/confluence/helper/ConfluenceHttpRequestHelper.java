@@ -17,43 +17,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSearchObject;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceVisitor;
 import io.vertigo.core.lang.VSystemException;
 
 public final class ConfluenceHttpRequestHelper {
+
+	public static final String API_URL = "/rest/api";
+	public static final String SEARCH_URL = "/search";
+	public static final String SPACE_URL = "/space";
 
 	private ConfluenceHttpRequestHelper() {
 		//helper
 	}
 
-	public static final String BASE_URL = "https://preprod-jira-temp.kleegroup.com/confluence";
-	public static final String API_URL = BASE_URL + "/rest/api";
-
 	private static HttpClient getBasicHttpClient() {
 		return HttpClient.newBuilder().version(Version.HTTP_1_1).build();
-	}
-
-	private static Builder createRequestBuilder(final String url, final Map<String, String> headers, final Map<String, String> params) {
-		final URI uri = params != null ? createURIWithParams(url, params) : URI.create(url);
-		final var builder = HttpRequest.newBuilder().uri(uri);
-		for (final Entry<String, String> entry : headers.entrySet()) {
-			builder.setHeader(entry.getKey(), entry.getValue());
-		}
-		return builder;
-	}
-
-	private static URI createURIWithParams(final String url, final Map<String, String> params) {
-		final var builder = new StringBuilder();
-		builder.append(url);
-		builder.append("?");
-		for (final Entry<String, String> entry : params.entrySet()) {
-			builder.append(entry.getKey());
-			builder.append("=");
-			builder.append(entry.getValue());
-			builder.append("&");
-		}
-
-		builder.setLength(builder.length() - 1);
-		return URI.create(builder.toString());
 	}
 
 	public static HttpRequest createGetRequest(final String url, final Map<String, String> headers, final Map<String, String> params) {
@@ -90,18 +69,45 @@ public final class ConfluenceHttpRequestHelper {
 		}
 	}
 
-	public static Map<String, String> getHeadersWithAuthorization() {
-		final var password = "chatbot";
-		final var user = "chatbot";
-		//final String password = paramManager.getOptionalParam("confluencePassword").map(Param::getValue).orElseThrow(() -> new VSystemException("not params password found : use  -D"));
-		//final String user = paramManager.getOptionalParam("confluenceUser").map(Param::getValue).orElseThrow(() -> new VSystemException("not params user found : use  -D"));
+	public static Map<String, String> getHeadersWithAuthorization(final String user, final String password) {
 		final Map<String, String> result = new HashMap<>();
 		result.put("Authorization", basicAuth(user, password));
 		return result;
 	}
 
+	public static String createSearchArgs(final ConfluenceSearchObject filter) {
+		final var builder = new StringBuilder();
+		final var visitor = new ConfluenceVisitor();
+		builder.append(filter.accept(visitor));
+		return ConfluenceHttpRequestHelper.encodeUrl(builder.toString());
+	}
+
 	private static String basicAuth(final String username, final String password) {
 		return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
+	}
+
+	private static Builder createRequestBuilder(final String url, final Map<String, String> headers, final Map<String, String> params) {
+		final URI uri = params != null ? createURIWithParams(url, params) : URI.create(url);
+		final var builder = HttpRequest.newBuilder().uri(uri);
+		for (final Entry<String, String> entry : headers.entrySet()) {
+			builder.setHeader(entry.getKey(), entry.getValue());
+		}
+		return builder;
+	}
+
+	private static URI createURIWithParams(final String url, final Map<String, String> params) {
+		final var builder = new StringBuilder();
+		builder.append(url);
+		builder.append("?");
+		for (final Entry<String, String> entry : params.entrySet()) {
+			builder.append(entry.getKey());
+			builder.append("=");
+			builder.append(entry.getValue());
+			builder.append("&");
+		}
+
+		builder.setLength(builder.length() - 1);
+		return URI.create(builder.toString());
 	}
 
 }

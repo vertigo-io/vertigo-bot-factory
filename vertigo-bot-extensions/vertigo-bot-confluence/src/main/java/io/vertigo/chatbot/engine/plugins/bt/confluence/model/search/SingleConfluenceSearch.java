@@ -1,6 +1,6 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence.model.search;
 
-public class SingleConfluenceSearch extends ConfluenceSearchObject {
+public class SingleConfluenceSearch implements ConfluenceSearchObject {
 
 	public SingleConfluenceSearch(final String key, final ConfluenceSearchOperator operator, final String value) {
 		super();

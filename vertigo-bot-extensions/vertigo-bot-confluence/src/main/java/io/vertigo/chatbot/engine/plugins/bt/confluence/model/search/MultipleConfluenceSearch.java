@@ -1,6 +1,6 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence.model.search;
 
-public class MultipleConfluenceSearch extends ConfluenceSearchObject {
+public class MultipleConfluenceSearch implements ConfluenceSearchObject {
 
 	private ConfluenceSearchObject firstObject;
 
