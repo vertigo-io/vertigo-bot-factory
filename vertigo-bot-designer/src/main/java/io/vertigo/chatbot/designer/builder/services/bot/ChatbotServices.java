@@ -201,12 +201,12 @@ public class ChatbotServices implements Component {
 		return chatbotDAO.findOptional(criteria);
 	}
 
-	public String getBotNameDisplay(final Chatbot bot) {
-		return bot != null ? bot.getName() : MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
+	public String getBotNameDisplay(final Optional<Chatbot> bot) {
+		return bot.isPresent() ? bot.get().getName() : MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
 	}
 
-	public String getBotDateDisplay(final Chatbot bot) {
-		return bot != null ? bot.getCreationDate().format(formatterDate) : null;
+	public String getBotDateDisplay(final Optional<Chatbot> bot) {
+		return bot.isPresent() ? bot.get().getCreationDate().format(formatterDate) : null;
 	}
 
 }

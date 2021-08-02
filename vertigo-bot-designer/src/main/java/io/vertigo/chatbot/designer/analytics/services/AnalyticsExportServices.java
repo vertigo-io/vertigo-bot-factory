@@ -65,7 +65,7 @@ public class AnalyticsExportServices implements Component {
 			final Long botId = Long.valueOf((String) values.get("botId"));
 			//It's possible in local environment that the database was reinitialized, but eventlogs still have obsolete values
 			if (botId != null) {
-				final Chatbot bot = chatbotServices.getChatbotById(botId);
+				final Optional<Chatbot> bot = chatbotServices.getChatbotByBotId(botId);
 				final String botName = chatbotServices.getBotNameDisplay(bot);
 				final String dateBot = chatbotServices.getBotDateDisplay(bot);
 				newSessionExport.setBotName(botName);
@@ -127,7 +127,7 @@ public class AnalyticsExportServices implements Component {
 			final Long botId = Long.valueOf((String) values.get("botId"));
 			//It's possible in local environment that the database was reinitialized, but eventlogs still have obsolete values
 			if (botId != null) {
-				final Chatbot bot = chatbotServices.getChatbotById(botId);
+				final Optional<Chatbot> bot = chatbotServices.getChatbotByBotId(botId);
 				final String botName = chatbotServices.getBotNameDisplay(bot);
 				final String dateBot = chatbotServices.getBotDateDisplay(bot);
 				newUnknownSentenseExport.setBotName(botName);
