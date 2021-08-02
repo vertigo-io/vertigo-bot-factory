@@ -28,10 +28,12 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
+import io.vertigo.chatbot.domain.DtDefinitions.ChatbotFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
@@ -192,6 +194,11 @@ public class ChatbotServices implements Component {
 				"noAvatar.png",
 				"image/png",
 				ChatbotServices.class.getResource("/noAvatar.png"));
+	}
+
+	public Optional<Chatbot> getChatbotByBotId(final Long botId) {
+		final Criteria<Chatbot> criteria = Criterions.isEqualTo(ChatbotFields.botId, botId);
+		return chatbotDAO.findOptional(criteria);
 	}
 
 	public String getBotNameDisplay(final Chatbot bot) {
