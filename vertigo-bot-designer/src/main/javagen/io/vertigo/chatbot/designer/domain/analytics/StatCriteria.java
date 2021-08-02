@@ -16,6 +16,8 @@ public final class StatCriteria implements DtObject {
 	private Long botId;
 	private String timeOption;
 	private Long nodId;
+	private java.time.LocalDate fromDate;
+	private java.time.LocalDate toDate;
 	
 	/**
 	 * Champ : DATA.
@@ -72,6 +74,44 @@ public final class StatCriteria implements DtObject {
 	 */
 	public void setNodId(final Long nodId) {
 		this.nodId = nodId;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'From'.
+	 * @return LocalDate fromDate
+	 */
+	@Field(smartType = "STyLocaldate", label = "From")
+	public java.time.LocalDate getFromDate() {
+		return fromDate;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'From'.
+	 * @param fromDate LocalDate
+	 */
+	public void setFromDate(final java.time.LocalDate fromDate) {
+		this.fromDate = fromDate;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'To'.
+	 * @return LocalDate toDate
+	 */
+	@Field(smartType = "STyLocaldate", label = "To")
+	public java.time.LocalDate getToDate() {
+		return toDate;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'To'.
+	 * @param toDate LocalDate
+	 */
+	public void setToDate(final java.time.LocalDate toDate) {
+		this.toDate = toDate;
 	}
 	
 	/** {@inheritDoc} */

@@ -79,6 +79,14 @@ public enum DtResources implements MessageKey {
 	 * Node selection.
 	 */
 	fldStatCriteria$nodId,
+	/**
+	 * From.
+	 */
+	fldStatCriteria$fromDate,
+	/**
+	 * To.
+	 */
+	fldStatCriteria$toDate,
 
 	/***********************************************************
 	/** TopIntent.

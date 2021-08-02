@@ -284,9 +284,14 @@
 			}
 		);
 		
-		VUiPage.$refs.intentDetailsDialog.show();
+		VUiPage.$refs.intentDetailsDialog.show();		
 	}
-</script>
+	
+	function closeDialog() {
+		VUiPage.$refs.popupFromDate.hide();
+		VUiPage.$refs.popupToDate.hide();
+	}
+	</script>
 </head>
 
 <body>
@@ -427,7 +432,7 @@
 		         ></q-select>
 		         
 		         <q-space></q-space>
-		          
+		        
 		         <q-select
 		         	 v-if="vueData.criteria.botId && vueData.nodes.length > 0"
 					 style="width: 250px; background-color: white"
@@ -441,13 +446,68 @@
 			         @input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
 		         ></q-select>
 		         
+		          <q-space></q-space>
+		         
+		        <q-input 
+					v-bind:value="decodeDate('criteria', 'fromDate', 'DD/MM/YYYY')" 
+					dense clearable 
+					class="q-pa-none"
+					style="width: 200px;background-color: white"
+					@change="function (event) { encodeDate('criteria','fromDate', event.target.value, 'DD/MM/YYYY') }"
+					th:label="#{analytics.date.from}"
+					:error="hasFieldsError('criteria', 'fromDate')"
+					:error-message="getErrorMessage('criteria', 'fromDate')" 
+					@clear="vueData.criteria.fromDate=null;httpPostAjax('_updateStats', vueDataParams(['criteria']));"
+				>
+					<template v-slot:prepend>
+						<q-icon name="event" class="cursor-pointer">
+							<q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupFromDate">
+					             <q-date 
+					             	v-model="vueData.criteria.fromDate"
+					             	landscape
+					             	mask="DD/MM/YYYY"
+					             	@input="closeDialog();httpPostAjax('_updateStats', vueDataParams(['criteria']));"></q-date> 
+				       		</q-popup-proxy>
+				       	</q-icon>
+			       	</template>
+			    </q-input>
+				<input type="hidden" name="vContext[criteria][fromDate]" v-bind:value="vueData.criteria.fromDate" />
+		        
+		        <q-space></q-space>
+		        
+		        <q-input 
+					v-bind:value="decodeDate('criteria', 'toDate', 'DD/MM/YYYY')" 
+					dense clearable 
+					class="q-pa-none"
+					style="width: 200px;background-color: white"
+					@change="function (event) { encodeDate('criteria','toDate', event.target.value, 'DD/MM/YYYY') }"
+					th:label="#{analytics.date.to}"
+					:error="hasFieldsError('criteria', 'toDate')"
+					:error-message="getErrorMessage('criteria', 'toDate')" 
+					@clear="vueData.criteria.toDate=null;httpPostAjax('_updateStats', vueDataParams(['criteria']));"
+				>
+					<template v-slot:prepend>
+						<q-icon name="event" class="cursor-pointer">
+							<q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupToDate">
+					             <q-date 
+					             	v-model="vueData.criteria.toDate"
+					             	landscape
+					             	mask="DD/MM/YYYY"
+					             	@input="closeDialog();httpPostAjax('_updateStats', vueDataParams(['criteria']));"></q-date> 
+				       		</q-popup-proxy>
+				       	</q-icon>
+			       	</template>
+			    </q-input>
+				<input type="hidden" name="vContext[criteria][toDate]" v-bind:value="vueData.criteria.toDate" />
+		     
+		  
 				<q-space></q-space>
 				<vu:include-data object="timeOptions" field="'*'" />
 						
 				<q-btn-toggle
 					v-model="vueData.criteria.timeOption"
 					toggle-color="primary"
-					:options='transformListForSelection("timeOptions", "value","label")'
+					:options='transformListForSelection("timeOptions", "value", "label")'
 					@input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
 				></q-btn-toggle>
 				<q-space></q-space>

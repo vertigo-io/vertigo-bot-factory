@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.designer.analytics.controllers;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -118,7 +119,10 @@ public class AnalyticsController extends AbstractDesignerController {
 		viewContext.publishDtList(nodesKey, new DtList<ChatbotNode>(ChatbotNode.class));
 
 		final StatCriteria statCriteria = new StatCriteria();
+
+		statCriteria.setToDate(LocalDate.now());
 		statCriteria.setTimeOption(timeOption.orElse(TimeOption.DAY).name());
+
 		botId.ifPresent(statCriteria::setBotId);
 		nodId.ifPresent(statCriteria::setNodId);
 
