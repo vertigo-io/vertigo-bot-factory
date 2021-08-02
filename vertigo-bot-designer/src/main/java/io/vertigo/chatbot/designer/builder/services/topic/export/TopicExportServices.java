@@ -121,7 +121,7 @@ public class TopicExportServices implements Component, Activeable {
 		final DtList<TopicExport> result = new DtList<>(TopicExport.class);
 		final DtList<NluTrainingExport> nlus = generateNLUSynonyms(bot.getBotId());
 		for (final TopicExportInterfaceServices services : topicExportInterfaceServices) {
-			final DtList<Topic> topics = services.getAllNonTechnicalTopicByBot(bot);
+			final DtList<Topic> topics = services.getAllNonTechnicalAndActiveTopicByBot(bot, services.getHandleObject());
 			final Map<Long, String> mapTopicBt = services.mapTopicToBt(bot);
 			result.addAll(TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt));
 		}

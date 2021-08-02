@@ -4,20 +4,21 @@ import java.util.Map;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.Entity;
 
 public interface TopicExportInterfaceServices<D extends Entity> {
 
-	public static final MeaningServices meaningServices = new MeaningServices();
+	TypeTopicEnum getHandleObject();
 
-	boolean handleObject(final Topic topic);
-
-	public String getBasicBt(Chatbot bot, String ktoCd);
+	String getBasicBt(Chatbot bot, String ktoCd);
 
 	Map<Long, String> mapTopicToBt(Chatbot bot);
 
-	public DtList<Topic> getAllNonTechnicalTopicByBot(Chatbot bot);
+	DtList<Topic> getAllNonTechnicalAndActiveTopicByBot(Chatbot bot, TypeTopicEnum typeEnum);
 
+	default boolean handleObject(final Topic topic) {
+		return getHandleObject().name().equals(topic.getTtoCd());
+	}
 }

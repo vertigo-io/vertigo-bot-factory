@@ -12,12 +12,6 @@ import io.vertigo.core.node.component.Component;
 public class BotExportServices implements Component {
 
 	@Inject
-	private SmallTalkExportServices smallTalkExportServices;
-
-	@Inject
-	private ScriptIntentionExportServices scriptIntentionExportServices;
-
-	@Inject
 	private TopicExportServices topicExportServices;
 
 	public BotExport exportBot(final Chatbot bot) {
