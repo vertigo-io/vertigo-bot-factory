@@ -49,6 +49,6 @@
 	</changeSet>
 	
 	<changeSet author="vprima" id="add meanings and synonyms">
-		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_30.sql" />	
+		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_06_30.sql" />	
 	</changeSet>
 </databaseChangeLog>
