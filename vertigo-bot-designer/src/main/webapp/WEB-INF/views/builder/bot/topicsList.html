@@ -61,8 +61,11 @@
 						   <span style="height:100%" class="row items-center">{{props.row.title}}</span>
 						</a>
 					</vu:column>
-					<vu:column field="catLabel" th:label="#{topic.category}">
+					<vu:column field="labels" th:label="#{topic.category}">
 					   <span style="height:100%" class="row items-center">{{props.row.catLabel}}</span>
+					</vu:column>
+					<vu:column field="labels" th:label="#{topic.labels}">
+					   <span style="height:100%" class="row items-center">{{props.row.labels}}</span>
 					</vu:column>
 					<vu:column field="type" th:label="#{topic.type}" sortable="true" />
 			</vu:table>

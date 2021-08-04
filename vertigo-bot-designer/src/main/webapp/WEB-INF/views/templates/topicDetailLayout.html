@@ -111,10 +111,11 @@
 				<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('labels').addObject('filterOptions', {label:null})}" th:remove="all" />
 				
 				<q-select 
-					label="Test"
+					th:label="#{topic.label}"
 					v-model="vueData.initialTopicLabelList"
 					multiple
 					use-chips
+					th::readonly="${model.modeReadOnly}"
 					use-input
 					:options="componentStates.labels.filterOptions"
 					@filter="filterFn"

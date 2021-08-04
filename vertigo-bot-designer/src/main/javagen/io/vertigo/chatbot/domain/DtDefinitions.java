@@ -647,7 +647,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Code Kind'. */
 		ktoCd,
 		/** Propriété 'Code'. */
-		code	}
+		code,
+		/** Propriété 'Labels'. */
+		labels	}
 
 	/**
 	 * Enumération des champs de TopicLabel.

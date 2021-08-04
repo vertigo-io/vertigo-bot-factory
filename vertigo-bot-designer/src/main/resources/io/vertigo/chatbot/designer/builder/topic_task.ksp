@@ -70,16 +70,29 @@ create Task TkGetAllTopicsIhmFromBot {
 					top.is_enabled,
 					tto.label as type,
 					top.tto_cd,
-					tpc.label as cat_label
+					tpc.label as cat_label,
+					string_agg(tpl.label, ',') as labels
 			from topic top 
 			left join small_talk smt on smt.top_id = top.top_id
 			left join script_intention sin on sin.top_id = top.top_id
 			join type_topic tto on top.tto_cd = tto.tto_cd
 			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)
+			left join topic_topic_label ttl on (ttl.top_id = top.top_id)
+			left join topic_label tpl on (tpl.label_id = ttl.label_id)
 			where top.bot_id = #botId#
 			<% if (ktoCd != null){ %>
 				and top.kto_cd = #ktoCd#
 			<% } %>
+			group by top.top_id,
+					top.title,
+					top.code,
+					smt.smt_id,
+					sin.sin_id,
+					top.is_enabled,
+					tto.label ,
+					top.tto_cd,
+					tpc.label
+			
              "
 	in botId  				{domain : DoId         		cardinality : "1"  }
 	in ktoCd  				{domain : DoCode         	cardinality : "?"  }
@@ -97,13 +110,26 @@ create Task TkGetTopicIhmById {
 					top.is_enabled,
 					tto.label as type,
 					top.tto_cd,
-					tpc.label as cat_label
+					tpc.label as cat_label,
+					string_agg(tpl.label, ',') as labels
 			from topic top 
 			left join small_talk smt on smt.top_id = top.top_id
 			left join script_intention sin on sin.top_id = top.top_id
 			join type_topic tto on top.tto_cd = tto.tto_cd
 			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)
+			left join topic_topic_label ttl on (ttl.top_id = top.top_id)
+			left join topic_label tpl on (tpl.label_id = ttl.label_id)
 			where top.top_id = #topId#
+			group by top.top_id,
+					top.title,
+					top.code,
+					smt.smt_id,
+					sin.sin_id,
+					top.is_enabled,
+					tto.label ,
+					top.tto_cd,
+					tpc.label
+			
 			LIMIT 1
              "
 	in topId  				{domain : DoId         		cardinality : "1"  }
