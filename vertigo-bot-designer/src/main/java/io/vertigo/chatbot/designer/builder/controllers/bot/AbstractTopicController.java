@@ -43,6 +43,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	protected static final ViewContextKey<NluTrainingSentence> nluTrainingSentencesToDeleteKey = ViewContextKey
 			.of("nluTrainingSentencesToDelete");
 
+	// Label
 	protected static final ViewContextKey<TopicLabel> topicLabelListKey = ViewContextKey
 			.of("topicLabelList");
 	protected static final ViewContextKey<TopicLabel> initialTopicLabelListKey = ViewContextKey
@@ -81,7 +82,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		//Label
 		final DtList<TopicLabel> initialList = this.topicLabelServices.getTopicLabelByBotIdAndTopId(bot, topic.getTopId());
 		viewContext.publishDtList(initialTopicLabelListKey, initialList);
-		viewContext.publishDtListModifiable(topicLabelListKey, initialList);
+		viewContext.publishDtListModifiable(topicLabelListKey, new DtList<>(TopicLabel.class));
 		viewContext.publishDtList(allTopicLabelListKey, this.topicLabelServices.getTopicLabelByBotId(bot));
 
 	}

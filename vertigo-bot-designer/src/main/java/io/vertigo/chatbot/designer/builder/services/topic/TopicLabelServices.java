@@ -19,7 +19,6 @@ import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.util.VCollectors;
 
 @Transactional
 @Secured("BotUser")
@@ -35,6 +34,13 @@ public class TopicLabelServices implements Component {
 		return topicLabelDAO.save(label);
 	}
 
+	public TopicLabel save(@SecuredOperation("botAdm") final Chatbot bot, final String label) {
+		final TopicLabel topicLabel = new TopicLabel();
+		topicLabel.setLabel(label);
+		topicLabel.setBotId(bot.getBotId());
+		return save(bot, topicLabel);
+	}
+
 	public DtList<TopicLabel> getTopicLabelByBotId(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return topicLabelDAO.findAll(getBotCriteria(bot), DtListState.of(1000));
 	}
@@ -44,40 +50,39 @@ public class TopicLabelServices implements Component {
 	}
 
 	public void manageLabels(@SecuredOperation("botAdm") final Chatbot bot, final Topic topic, final DtList<TopicLabel> labels, final DtList<TopicLabel> initialLabels) {
-		removeLabels(bot, topic, labels, initialLabels);
-		addLabels(bot, topic, labels, initialLabels);
+		final List<String> initialLabelsList = initialLabels.stream().map(TopicLabel::getLabel).collect(Collectors.toList());
+		final List<String> labelsList = labels.stream().map(TopicLabel::getLabel).collect(Collectors.toList());
+		removeLabels(bot, topic, labelsList, initialLabelsList);
+		addLabels(bot, topic, labelsList, initialLabelsList);
 	}
 
-	private void addLabels(final Chatbot bot, final Topic topic, final DtList<TopicLabel> labels, final DtList<TopicLabel> initialLabels) {
-		final Long botId = bot.getBotId();
-		final DtList<TopicLabel> listToAdd = labels.stream()
-				.filter(x -> x.getLabelId() != null)
-				.filter(x -> !initialLabels.contains(x))
-				.collect(VCollectors.toDtList(TopicLabel.class));
-		final DtList<TopicLabel> listNotSave = labels.stream().filter(x -> x.getLabelId() == null).collect(VCollectors.toDtList(TopicLabel.class));
-		for (TopicLabel toSave : listNotSave) {
-			toSave.setBotId(botId);
-			listToAdd.add(save(bot, toSave));
-		}
-
-		updateNN(topic, listToAdd);
+	private void addLabels(final Chatbot bot, final Topic topic, final List<String> labelsList, final List<String> initialLabelsList) {
+		createLabel(bot, labelsList);
+		addLabelsToTopics(bot, topic, labelsList);
 
 	}
 
-	private void updateNN(final Topic topic, final DtList<TopicLabel> listToAdd) {
-		final List<Long> ids = listToAdd.stream().map(x -> x.getLabelId()).collect(Collectors.toList());
-		topicLabelPAO.updateNNTopicLabel(ids, topic.getTopId());
+	private void addLabelsToTopics(final Chatbot bot, final Topic topic, final List<String> labelsList) {
+		topic.label().load();
+		final List<String> topicLabelsList = topic.label().get().stream().map(TopicLabel::getLabel).collect(Collectors.toList());
+		final List<String> toAdd = labelsList.stream().filter(x -> !topicLabelsList.contains(x)).collect(Collectors.toList());
+		topicLabelPAO.addInNNTopicLabel(toAdd, topic.getTopId(), bot.getBotId());
 	}
 
-	private void removeLabels(final Chatbot bot, final Topic topic, final DtList<TopicLabel> labels, final DtList<TopicLabel> initialLabels) {
-		final DtList<TopicLabel> listToDelete = initialLabels.stream().filter(x -> !labels.contains(x)).collect(VCollectors.toDtList(TopicLabel.class));
+	private void createLabel(final Chatbot bot, final List<String> labelsList) {
+		DtList<TopicLabel> botLabels = getTopicLabelByBotId(bot);
+		List<String> botLabelsString = botLabels.stream().map(TopicLabel::getLabel).collect(Collectors.toList());
+		labelsList.stream().filter(x -> !botLabelsString.contains(x)).forEach(x -> save(bot, x));
+	}
+
+	private void removeLabels(final Chatbot bot, final Topic topic, final List<String> labelsList, final List<String> initialLabels) {
+		final List<String> listToDelete = initialLabels.stream().filter(x -> !labelsList.contains(x)).collect(Collectors.toList());
 		removeFromNN(bot, topic, listToDelete);
 	}
 
-	private void removeFromNN(final Chatbot bot, final Topic topic, final DtList<TopicLabel> listToDelete) {
-		final List<Long> ids = listToDelete.stream().map(TopicLabel::getLabelId).collect(Collectors.toList());
-		if (!ids.isEmpty()) {
-			topicLabelPAO.removeFromNNTopicLabel(ids, topic.getTopId());
+	private void removeFromNN(final Chatbot bot, final Topic topic, final List<String> listToDelete) {
+		if (!listToDelete.isEmpty()) {
+			topicLabelPAO.removeFromNNTopicLabel(listToDelete, topic.getTopId(), bot.getBotId());
 			final DtList<TopicLabel> topicLabelToDelete = topicLabelDAO.getAllUnusedLabelByBotId(bot.getBotId());
 			topicLabelToDelete.stream().forEach(x -> delete(x));
 		}

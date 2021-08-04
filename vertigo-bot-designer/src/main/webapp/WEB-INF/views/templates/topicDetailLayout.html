@@ -62,16 +62,27 @@
 			
 			function createValue (val, done) {
 		        if (val.length > 0) {
-		        	if(val.labelId == null){
-		        		val = {labelId :null, label:val}
-		        	}
-		          	done(val, 'toggle')
-		        }
-	      	}
+		        	let find = VertigoUi.componentStates.labels.filterOptions.find(element => element.label === val);
+		        	val = find != null ? find : {label:val}
+		          	done(val, 'add-unique')
+		       	 } 
+		     }
 			
-			function remove (details) {
-		        VertigoUi.vueData.topicLabelList.remove(details.value);
-	      	}
+			
+			
+			function filterFn (val, update) {
+		        update(() => {
+		            if (val === '') {
+		            	VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.allTopicLabelList
+		            }
+		            else {
+		              const needle = normalizeString(val.toLowerCase())
+		              VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.allTopicLabelList.filter(
+		                v => normalizeString(v.label.toLowerCase()).indexOf(needle) > -1
+		              )
+		            }
+		          })
+		        }
 			
 		</script>
 		</head>
@@ -95,19 +106,23 @@
 					<vu:grid-cell></vu:grid-cell>
 				</vu:grid>
 				
-				<vu:include-data object="topicLabelList" field="'*'" />
+				<vu:include-data object="initialTopicLabelList" field="'*'" />
+				<vu:include-data object="allTopicLabelList" field="'*'" />
+				<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('labels').addObject('filterOptions', {label:null})}" th:remove="all" />
+				
 				<q-select 
 					label="Test"
-					v-model="vueData.topicLabelList"
+					v-model="vueData.initialTopicLabelList"
 					multiple
-					hide-dropdown-icon
 					use-chips
 					use-input
+					:options="componentStates.labels.filterOptions"
+					@filter="filterFn"
+					input-debounce="0"
 					@new-value="createValue"
-					@remove="remove"
 					stack-label>
 				</q-select>
-				<div v-for="(topic, index) in vueData.topicLabelList">
+				<div v-for="(topic, index) in vueData.initialTopicLabelList">
 					<input  type="hidden" :name="'vContext[topicLabelList][' + index + '][label]'" :value="topic.label" />
 				</div>
 			</vu:block>

@@ -74,11 +74,10 @@ public final class TopicLabelDAO extends DAO<TopicLabel, java.lang.Long> impleme
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetAllUnusedLabelByBotId",
-			request = "select tpl.*, " + 
+			request = "select tpl.*" + 
  "			from topic_label tpl" + 
  "			left join topic_topic_label ttl on (ttl.label_id = tpl.label_id)" + 
- "			join topic top on (top.top_id = ttl.top_id)" + 
- "			where top.bot_id = #botId# and ttl.label_id is null;",
+ "			where tpl.bot_id = #botId# and ttl.label_id is null;",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicLabel")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicLabel> getAllUnusedLabelByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {

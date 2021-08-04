@@ -41,37 +41,48 @@ public final class TopicLabelPAO implements StoreServices {
 	}
 
 	/**
-	 * Execute la tache TkRemoveFromNNTopicLabel.
-	 * @param tpls List de Long
+	 * Execute la tache TkAddInNNTopicLabel.
+	 * @param tpls List de String
 	 * @param topId Long
+	 * @param botId Long
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkRemoveFromNNTopicLabel",
-			request = "delete from topic_topic_label" + 
- "				where top_id = #topId# and label_id in (#tpls.rownum#);",
+			name = "TkAddInNNTopicLabel",
+			request = "INSERT INTO topic_topic_label" + 
+ "				select #topId#, tpl.label_id" + 
+ "				from topic_label tpl" + 
+ "				where tpl.label in (#tpls.rownum#) and tpl.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void removeFromNNTopicLabel(@io.vertigo.datamodel.task.proxy.TaskInput(name = "tpls", smartType = "STyId") final java.util.List<Long> tpls, @io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
-		final Task task = createTaskBuilder("TkRemoveFromNNTopicLabel")
+	public void addInNNTopicLabel(@io.vertigo.datamodel.task.proxy.TaskInput(name = "tpls", smartType = "STyLabel") final java.util.List<String> tpls, @io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkAddInNNTopicLabel")
 				.addValue("tpls", tpls)
 				.addValue("topId", topId)
+				.addValue("botId", botId)
 				.build();
 		getTaskManager().execute(task);
 	}
 
 	/**
-	 * Execute la tache TkUpdateNNTopicLabel.
-	 * @param tpls List de Long
+	 * Execute la tache TkRemoveFromNNTopicLabel.
+	 * @param tpls List de String
 	 * @param topId Long
+	 * @param botId Long
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkUpdateNNTopicLabel",
-			request = "INSERT INTO topic_topic_label" + 
- "				VALUES(#topId#, #tpls#)",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineProcBatch.class)
-	public void updateNNTopicLabel(@io.vertigo.datamodel.task.proxy.TaskInput(name = "tpls", smartType = "STyId") final java.util.List<Long> tpls, @io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
-		final Task task = createTaskBuilder("TkUpdateNNTopicLabel")
+			name = "TkRemoveFromNNTopicLabel",
+			request = "delete " + 
+ "				from topic_topic_label ttl" + 
+ "				using topic_label tpl " + 
+ "				where ttl.label_id = tpl.label_id " + 
+ "				and tpl.label in (#tpls.rownum#) " + 
+ "				and tpl.bot_id = #botId# " + 
+ "				and ttl.top_id = #topId#;",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeFromNNTopicLabel(@io.vertigo.datamodel.task.proxy.TaskInput(name = "tpls", smartType = "STyLabel") final java.util.List<String> tpls, @io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkRemoveFromNNTopicLabel")
 				.addValue("tpls", tpls)
 				.addValue("topId", topId)
+				.addValue("botId", botId)
 				.build();
 		getTaskManager().execute(task);
 	}
