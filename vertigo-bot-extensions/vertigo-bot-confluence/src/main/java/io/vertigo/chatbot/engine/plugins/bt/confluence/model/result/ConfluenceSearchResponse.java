@@ -8,10 +8,6 @@ public class ConfluenceSearchResponse extends AbstractConfluenceResponses {
 
 	private Integer size;
 
-	public ConfluenceSearchResponse() {
-		super();
-	}
-
 	public ConfluenceSearchResult[] getResults() {
 		return results;
 	}

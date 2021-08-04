@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence.impl;
 
+import java.util.List;
 import java.util.Map;
 
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResponse;
@@ -7,11 +8,13 @@ import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSp
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpaceResponse;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSearchObject;
 
-public interface ConfluenceConnector {
+public interface IConfluenceService {
 
 	abstract ConfluenceSearchResponse searchOnConfluence(final Map<String, String> params, final Map<String, String> headers, ConfluenceSearchObject filter);
 
 	abstract ConfluenceSpaceResponse searchAllSpaceOnConfluence(final Map<String, String> headers);
 
 	abstract ConfluenceSpace searchSpaceOnClonfluence(final Map<String, String> headers, final String spaceKey);
+
+	abstract List<String> searchOnConfluenceCommand(final String search);
 }

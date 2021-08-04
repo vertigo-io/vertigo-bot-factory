@@ -6,10 +6,6 @@ public class ConfluenceSearchLinks {
 
 	private String self;
 
-	public ConfluenceSearchLinks() {
-
-	}
-
 	public String getWebui() {
 		return webui;
 	}

@@ -37,7 +37,7 @@ public class JsonHelper {
 		try {
 			return mapper.readValue(json, clazz);
 		} catch (final JsonProcessingException e) {
-			throw new VSystemException("error during reading json from {0}. Reason : {1}", json, e.getMessage());
+			throw new VSystemException(e, "error during reading json from {0}.", json);
 		}
 	}
 

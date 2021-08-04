@@ -91,6 +91,7 @@
                 <configuration>
                     <!-- Exclusion du packaging, la conf est externalisee par environnement -->
                     <packagingExcludes>META-INF/context.xml</packagingExcludes>
+                    <packagingExcludes>META-INF/context-example.xml</packagingExcludes>
                     <attachClasses>true</attachClasses>
                 </configuration>
             </plugin>

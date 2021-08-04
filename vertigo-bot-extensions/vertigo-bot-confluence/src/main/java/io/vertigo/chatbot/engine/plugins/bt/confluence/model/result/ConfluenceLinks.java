@@ -2,9 +2,6 @@ package io.vertigo.chatbot.engine.plugins.bt.confluence.model.result;
 
 public class ConfluenceLinks {
 
-	public ConfluenceLinks() {
-	}
-
 	private String base;
 
 	private String context;

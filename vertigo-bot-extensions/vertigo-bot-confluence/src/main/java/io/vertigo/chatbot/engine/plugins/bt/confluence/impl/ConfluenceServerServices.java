@@ -7,11 +7,17 @@ import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceH
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceSearchHelper;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.JsonHelper;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResponse;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResult;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpace;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpaceResponse;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSearchObject;
@@ -22,7 +28,7 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.ParamManager;
 
 @Transactional
-public class ConfluenceServerServices implements ConfluenceConnector, Component, Activeable {
+public class ConfluenceServerServices implements IConfluenceService, Component, Activeable {
 
 	private ParamManager paramManager;
 
@@ -74,16 +80,37 @@ public class ConfluenceServerServices implements ConfluenceConnector, Component,
 		return ConfluenceHttpRequestHelper.sendRequest(null, request, handler, successCode);
 	}
 
-	public String getBaseUrl() {
+	private String getBaseUrl() {
 		return baseUrl;
 	}
 
-	public String getApiUrl() {
+	private String getApiUrl() {
 		return baseUrl + API_URL;
 	}
 
-	public Map<String, String> getHeadersWithAuthorization() {
+	private Map<String, String> getHeadersWithAuthorization() {
 		return ConfluenceHttpRequestHelper.getHeadersWithAuthorization(user, password);
+	}
+
+	@Override
+	public List<String> searchOnConfluenceCommand(final String search) {
+		final Map<String, String> headers = getHeadersWithAuthorization();
+		final Map<String, String> params = new HashMap<>();
+		final var searchObject = ConfluenceSearchHelper.createConfluenceSearchObject(search);
+		final ConfluenceSearchResponse searchResult = searchOnConfluence(params, headers, searchObject);
+		final List<ConfluenceSearchResult> results = Arrays.asList(searchResult.getResults());
+		return results.stream().map(x -> createLinkUrl(x.getUrl(), x.getDetail().getTitle())).collect(Collectors.toList());
+	}
+
+	private String createLinkUrl(final String link, final String name) {
+		final String url = getBaseUrl() + "/" + link;
+		final var builder = new StringBuilder();
+		builder.append("<a href=\"");
+		builder.append(url);
+		builder.append("\">");
+		builder.append(name);
+		builder.append("</a>");
+		return builder.toString();
 	}
 
 }

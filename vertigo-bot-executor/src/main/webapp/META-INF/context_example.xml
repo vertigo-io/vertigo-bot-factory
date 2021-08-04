@@ -18,7 +18,7 @@
 	
 	<!--  Use for confluence plugin -->
    <Resources className="org.apache.catalina.webresources.StandardRoot">
-        <PostResources base="${extension}\vertigo-bot-confluence\target\classes"
+        <PostResources base="C:\Users\vbaillet\Documents\Projets\chatbot\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-confluence\target\classes"
                  className="org.apache.catalina.webresources.DirResourceSet"
                  webAppMount="/WEB-INF/classes"/>
     </Resources>

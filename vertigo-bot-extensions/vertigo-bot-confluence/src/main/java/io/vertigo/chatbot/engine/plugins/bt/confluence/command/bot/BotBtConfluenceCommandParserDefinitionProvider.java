@@ -27,7 +27,7 @@ public class BotBtConfluenceCommandParserDefinitionProvider implements SimpleDef
 				.filter(o -> o instanceof BlackBoard)
 				.map(o -> (BlackBoard) o)
 				.findFirst()
-				.orElseThrow(() -> new VSystemException("Bot parser plugin needs a BackBoard in parameters."));
+				.orElseThrow(() -> new VSystemException("No BlackBoard found"));
 	}
 
 }
