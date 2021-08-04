@@ -622,7 +622,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Buttons'. */
 		buttons,
 		/** Propriété 'End of conversation'. */
-		isEnd	}
+		isEnd,
+		/** Propriété 'labels'. */
+		labels	}
 
 	/**
 	 * Enumération des champs de TopicIhm.

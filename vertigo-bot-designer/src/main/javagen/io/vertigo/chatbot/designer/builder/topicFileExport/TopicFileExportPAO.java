@@ -68,8 +68,11 @@ public final class TopicFileExportPAO implements StoreServices {
  "			CASE " + 
  "				WHEN smt.is_end THEN 'TRUE'" + 
  "				ELSE 'FALSE'" + 
- "			END	as is_end" + 
+ "			END	as is_end," + 
+ "			string_agg(tpl.label, ',') as labels" + 
  "			from topic top" + 
+ "			left join topic_topic_label ttl on (ttl.top_id = top.top_id)" + 
+ "			left join topic_label tpl on (tpl.label_id = ttl.label_id)" + 
  "			left join (" + 
  "					select nts.top_id," + 
  "					string_agg(nts.text,'|') agg	" + 
@@ -101,6 +104,20 @@ public final class TopicFileExportPAO implements StoreServices {
  "			<%if (tcaId != null) { %>" + 
  "				and tca.top_cat_id = #tcaId#" + 
  "			<% } %>" + 
+ "			group by top.code," + 
+ "				type_topic," + 
+ "				top.title," + 
+ "				category," + 
+ "				top.description," + 
+ "				tag," + 
+ "				date_start," + 
+ "				date_end," + 
+ "				active," + 
+ "				sin.script," + 
+ "				training_phrases," + 
+ "				response," + 
+ "				buttons," + 
+ "				is_end" + 
  "			order by top.code",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicFileExport")

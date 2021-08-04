@@ -43,6 +43,16 @@ create Task TkRemoveFromNNTopicLabel {
 	in botId				{domain : DoId,							cardinality:"1" } 
 }
 
+create Task TkResetNNTopicLabel{  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+				delete 
+				from topic_topic_label ttl
+				where ttl.top_id = #topId#
+             "
+	in topId				{domain : DoId,							cardinality:"1" }
+}
+
 create Task TkGetAllUnusedLabelByBotId {  
     className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "

@@ -353,5 +353,6 @@ create DtDefinition DtTopicFileExport {
 	field response			{domain: DoText	 						label: "Response" 				cardinality : "?"}
 	field buttons			{domain: DoText	 						label: "Buttons" 				cardinality : "?"}
 	field isEnd				{domain: DoLabel	 					label: "End of conversation" 	cardinality : "1"}
+	field labels			{domain: DoLabel	 					label: "labels"				 	cardinality : "1"}
 }
 

@@ -87,6 +87,23 @@ public final class TopicLabelPAO implements StoreServices {
 		getTaskManager().execute(task);
 	}
 
+	/**
+	 * Execute la tache TkResetNNTopicLabel.
+	 * @param topId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkResetNNTopicLabel",
+			request = "delete " + 
+ "				from topic_topic_label ttl" + 
+ "				where ttl.top_id = #topId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void resetNNTopicLabel(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
+		final Task task = createTaskBuilder("TkResetNNTopicLabel")
+				.addValue("topId", topId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
 	private TaskManager getTaskManager() {
 		return taskManager;
 	}
