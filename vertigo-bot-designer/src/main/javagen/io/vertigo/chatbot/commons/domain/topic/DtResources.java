@@ -357,6 +357,22 @@ public enum DtResources implements MessageKey {
 	fldTopicIhm$code,
 
 	/***********************************************************
+	/** TopicLabel.
+	/***********************************************************
+	/**
+	 * Label id.
+	 */
+	fldTopicLabel$labelId,
+	/**
+	 * Label label.
+	 */
+	fldTopicLabel$label,
+	/**
+	 * Chatbot.
+	 */
+	fldTopicLabel$botId,
+
+	/***********************************************************
 	/** TypeTopic.
 	/***********************************************************
 	/**

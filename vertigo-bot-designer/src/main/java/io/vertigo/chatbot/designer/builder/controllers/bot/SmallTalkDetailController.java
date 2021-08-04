@@ -33,6 +33,7 @@ import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.ResponseType;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
@@ -118,7 +119,9 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 			@ViewAttribute("bot") final Chatbot chatbot,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
-			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
+			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+			@ViewAttribute("topicLabelList") final DtList<TopicLabel> labels,
+			@ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels) {
 
 		checkCategory(topic);
 
@@ -137,7 +140,7 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 		smallTalkServices.saveSmallTalk(chatbot, smallTalk, utterTexts, buttonList, topic);
 
 		topicServices.save(topic, smallTalkServices.isEnabled(smallTalk, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
-
+		topicLabelServices.manageLabels(chatbot, topic, labels, initialLabels);
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
 	}
 

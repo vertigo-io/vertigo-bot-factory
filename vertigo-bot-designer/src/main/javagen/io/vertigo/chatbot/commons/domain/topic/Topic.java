@@ -84,17 +84,17 @@ public final class Topic implements Entity {
 	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.topic.KindTopic, io.vertigo.chatbot.commons.domain.topic.KindTopicEnum> ktoCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.KindTopic.class, "KindTopic", io.vertigo.chatbot.commons.domain.topic.KindTopicEnum.class);
 
 	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
-			name = "AnnTopicCategory",
-			tableName = "TOPIC_TOPIC_CATEGORY",
+			name = "AnnTopicLabel",
+			tableName = "TOPIC_TOPIC_LABEL",
 			dtDefinitionA = "DtTopic",
-			dtDefinitionB = "DtTopicCategory",
+			dtDefinitionB = "DtTopicLabel",
 			navigabilityA = true,
 			navigabilityB = true,
 			roleA = "Topic",
-			roleB = "Category",
+			roleB = "Label",
 			labelA = "Topic",
-			labelB = "Category")
-	private final StoreListVAccessor<io.vertigo.chatbot.commons.domain.topic.TopicCategory> categoryAccessor = new StoreListVAccessor<>(this, "AnnTopicCategory", "Category");
+			labelB = "Label")
+	private final StoreListVAccessor<io.vertigo.chatbot.commons.domain.topic.TopicLabel> labelAccessor = new StoreListVAccessor<>(this, "AnnTopicLabel", "Label");
 
 	/** {@inheritDoc} */
 	@Override
@@ -306,11 +306,11 @@ public final class Topic implements Entity {
 	}
 
 	/**
-	 * Association : Category.
-	 * @return l'accesseur vers la propriété 'Category'
+	 * Association : Label.
+	 * @return l'accesseur vers la propriété 'Label'
 	 */
-	public StoreListVAccessor<io.vertigo.chatbot.commons.domain.topic.TopicCategory> category() {
-		return categoryAccessor;
+	public StoreListVAccessor<io.vertigo.chatbot.commons.domain.topic.TopicLabel> label() {
+		return labelAccessor;
 	}
 	
 	/** {@inheritDoc} */

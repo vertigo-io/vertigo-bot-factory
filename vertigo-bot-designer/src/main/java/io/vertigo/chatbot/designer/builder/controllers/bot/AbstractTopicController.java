@@ -11,11 +11,12 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
-import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
@@ -42,6 +43,13 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	protected static final ViewContextKey<NluTrainingSentence> nluTrainingSentencesToDeleteKey = ViewContextKey
 			.of("nluTrainingSentencesToDelete");
 
+	protected static final ViewContextKey<TopicLabel> topicLabelListKey = ViewContextKey
+			.of("topicLabelList");
+	protected static final ViewContextKey<TopicLabel> initialTopicLabelListKey = ViewContextKey
+			.of("initialTopicLabelList");
+	protected static final ViewContextKey<TopicLabel> allTopicLabelListKey = ViewContextKey
+			.of("allTopicLabelList");
+
 	@Inject
 	protected TopicServices topicServices;
 	@Inject
@@ -51,6 +59,9 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 
 	@Inject
 	protected NluTrainingSentenceServices nluTrainingSentenceServices;
+
+	@Inject
+	protected TopicLabelServices topicLabelServices;
 
 	public void initContext(final ViewContext viewContext, final Chatbot bot, final Topic topic) {
 		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Incoherent parameters");
@@ -66,6 +77,13 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 
 		viewContext.publishDto(topicCategoryKey, topicCategoryServices.getTopicCategoryById(bot, topic.getTopCatId()));
 		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
+
+		//Label
+		final DtList<TopicLabel> initialList = this.topicLabelServices.getTopicLabelByBotIdAndTopId(bot, topic.getTopId());
+		viewContext.publishDtList(initialTopicLabelListKey, initialList);
+		viewContext.publishDtListModifiable(topicLabelListKey, initialList);
+		viewContext.publishDtList(allTopicLabelListKey, this.topicLabelServices.getTopicLabelByBotId(bot));
+
 	}
 
 	public void initContextNew(final ViewContext viewContext, final Chatbot bot) {
@@ -80,7 +98,15 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 
 		viewContext.publishDto(topicCategoryKey, new TopicCategory());
 		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
+
+		//Labels
+		viewContext.publishDtList(initialTopicLabelListKey, new DtList<>(TopicLabel.class));
+		viewContext.publishDtListModifiable(topicLabelListKey, new DtList<>(TopicLabel.class));
+		viewContext.publishDtList(allTopicLabelListKey, this.topicLabelServices.getTopicLabelByBotId(bot));
+
 	}
+
+	abstract Topic getTopic(final D object);
 
 	@PostMapping("/_edit")
 	public void doEdit() {
@@ -144,8 +170,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		return viewContext;
 	}
 
-	abstract Topic getTopic(final D object);
-
 	@PostMapping("/_save")
 	abstract String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("object") final D object,
@@ -153,7 +177,9 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			@ViewAttribute("bot") final Chatbot chatbot,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
-			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete);
+			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+			@ViewAttribute("topicLabelList") final DtList<TopicLabel> labels,
+			@ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels);
 
 	@PostMapping("/_delete")
 	String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("object") final D object,

@@ -1,0 +1,50 @@
+package io.vertigo.chatbot.designer.builder.topicLabel
+
+create Task TkGetAllLabelsByBotId {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select tpl.*
+			from topic_label tpl
+			join topic_topic_label ttl on (ttl.label_id = tpl.label_id)
+			where tpl.bot_id = #botId# and ttl.top_id = #topId#
+
+             "
+	in botId				{domain : DoId,						cardinality:"1" } 
+	in topId				{domain : DoId,						cardinality:"1" } 
+	out tpls 				{domain : DoDtTopicLabel		 	cardinality:"*"	}
+}
+
+create Task TkUpdateNNTopicLabel {  
+    className : "io.vertigo.basics.task.TaskEngineProcBatch"
+    request : "
+			INSERT INTO topic_topic_label
+				(top_id, label_id)
+				VALUES(#topId#, #tpls.rownum#);
+             "
+	in tpls					{domain : DoId,						cardinality:"*" } 
+	in topId				{domain : DoId,						cardinality:"1" } 
+}
+
+create Task TkRemoveFromNNTopicLabel {  
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+				delete from topic_topic_label
+				where top_id = #topId# and label_id = #tpls.rownum#;
+             "
+	in tpls					{domain : DoId,						cardinality:"*" } 
+	in topId				{domain : DoId,						cardinality:"1" } 
+}
+
+create Task TkGetAllUnusedLabelByBotId {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select tpl.*, 
+			from topic_label tpl
+			left join topic_topic_label ttl on (ttl.label_id = tpl.label_id)
+			join topic top on (top.top_id = ttl.top_id)
+			where top.bot_id = #botId# and ttl.label_id is null;
+
+             "
+	in botId				{domain : DoId,						cardinality:"1" }  
+	out tpls 				{domain : DoDtTopicLabel		 	cardinality:"*"	}
+}

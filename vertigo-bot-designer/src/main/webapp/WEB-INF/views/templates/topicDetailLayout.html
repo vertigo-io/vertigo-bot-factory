@@ -60,6 +60,13 @@
 				}
 			}
 			
+			function createValue (val, done) {
+		        if (val.length > 0) {
+	        		val = {label:val}
+		          	done(val, 'toggle')
+		        }
+		      }
+			
 		</script>
 		</head>
 
@@ -81,6 +88,21 @@
 					<vu:text-area object="topic" field="description" readonly="${model.modeReadOnly}"/>
 					<vu:grid-cell></vu:grid-cell>
 				</vu:grid>
+				
+				<vu:include-data object="topicLabelList" field="'*'" />
+				<q-select 
+					label="Test"
+					v-model="vueData.topicLabelList"
+					multiple
+					hide-dropdown-icon
+					use-chips
+					use-input
+					@new-value="createValue"
+					stack-label>
+				</q-select>
+				<div v-for="(topic, index) in vueData.topicLabelList">
+					<input  type="hidden" :name="'vContext[topicLabelList][' + index + '][label]'" :value="topic.label" />
+				</div>
 			</vu:block>
 			
 			<vu:block id="training" th:title="#{topic.menu.training}">
