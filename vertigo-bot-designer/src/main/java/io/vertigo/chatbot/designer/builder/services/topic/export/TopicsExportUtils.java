@@ -15,9 +15,11 @@ public class TopicsExportUtils {
 		//classe utilitaire
 	}
 
-	public static DtList<TopicExport> mapTopicsToNluTrainingSentences(final DtList<Topic> topics, final DtList<NluTrainingExport> nlus, final Map<Long, String> mapBtTopic) {
+	public static DtList<TopicExport> mapTopicsToNluTrainingSentences(final DtList<Topic> topics, final DtList<NluTrainingExport> nlus, final Map<Long, String> mapBtTopic, final StringBuilder logs) {
 		final DtList<TopicExport> exports = new DtList<>(TopicExport.class);
 		for (final Topic topic : topics) {
+			logs.append("Export topic " + topic.getCode() + ":\r\n");
+
 			final Long topId = topic.getTopId();
 			final String code = topic.getCode();
 			final List<String> topicNlu = nlus.stream()
@@ -29,6 +31,7 @@ public class TopicsExportUtils {
 			export.setNluTrainingSentences(topicNlu);
 			export.setTopicBT(mapBtTopic.get(topId));
 			exports.add(export);
+			logs.append("Nlu : " + topicNlu + "\r\n");
 		}
 		return exports;
 	}

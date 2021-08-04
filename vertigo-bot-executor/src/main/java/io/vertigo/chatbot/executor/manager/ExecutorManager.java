@@ -80,7 +80,7 @@ public class ExecutorManager implements Manager, Activeable {
 			// nothing to load
 			LOGGER.info("New runner, load a bot to start using it.");
 		} else {
-			doLoadModel(botExport);
+			doLoadModel(botExport, new StringBuilder());
 		}
 	}
 
@@ -89,34 +89,44 @@ public class ExecutorManager implements Manager, Activeable {
 		// nothing
 	}
 
-	public void loadModel(final BotExport bot, final ExecutorConfiguration executorConfig) {
+	public void loadModel(final BotExport bot, final ExecutorConfiguration executorConfig, final StringBuilder logs) {
 		final var globalConfig = new ExecutorGlobalConfig();
 		globalConfig.setBot(bot);
 		globalConfig.setExecutorConfiguration(executorConfig);
 
 		executorConfigManager.saveConfig(globalConfig);
 
-		doLoadModel(bot);
+		doLoadModel(bot, logs);
 	}
 
-	private void doLoadModel(final BotExport botExport) {
+	private void doLoadModel(final BotExport botExport, final StringBuilder logs) {
+		logs.append("Node recovery...");
 		final var nluThreshold = executorConfigManager.getConfig().getExecutorConfiguration().getNluThreshold().doubleValue();
-
+		logs.append("OK\r\n");
 		final List<TopicDefinition> topics = new ArrayList<>();
-
+		logs.append("START topic addition...");
 		topics.add(TopicDefinition.of(BotEngine.START_TOPIC_NAME, btCommandManager.parse(botExport.getWelcomeBT())));
+		logs.append("OK\r\n");
+
 		if (!StringUtil.isBlank(botExport.getEndBT())) {
+			logs.append("END topic addition...");
 			topics.add(TopicDefinition.of(BotEngine.END_TOPIC_NAME, btCommandManager.parse(botExport.getEndBT())));
+			logs.append("OK\r\n");
 		}
+
 		if (!StringUtil.isBlank(botExport.getFallbackBT())) {
+			logs.append("FALLBACK topic addition...");
 			topics.add(TopicDefinition.of(BotEngine.FALLBACK_TOPIC_NAME, btCommandManager.parse(botExport.getFallbackBT())));
+			logs.append("OK\r\n");
 		}
 
 		for (final TopicExport topic : botExport.getTopics()) {
+			logs.append(topic.getName() + " topic addition...");
 			topics.add(TopicDefinition.of(topic.getName(), btCommandManager.parse(topic.getTopicBT()), topic.getNluTrainingSentences(), nluThreshold));
+			logs.append("OK\r\n");
 		}
 
-		botManager.updateConfig(topics);
+		botManager.updateConfig(topics, logs);
 	}
 
 	public BotResponse startNewConversation(final BotInput input) {

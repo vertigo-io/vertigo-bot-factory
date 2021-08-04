@@ -117,15 +117,15 @@ public class TopicExportServices implements Component, Activeable {
 	 * @param bot
 	 * @return list Topic Export
 	 */
-	public DtList<TopicExport> exportActiveTopics(final Chatbot bot) {
+	public DtList<TopicExport> exportActiveTopics(final Chatbot bot, final StringBuilder logs) {
 		final DtList<TopicExport> result = new DtList<>(TopicExport.class);
 		final DtList<NluTrainingExport> nlus = generateNLUSynonyms(bot.getBotId());
 		for (final TopicExportInterfaceServices services : topicExportInterfaceServices) {
 			final DtList<Topic> topics = services.getAllNonTechnicalAndActiveTopicByBot(bot, services.getHandleObject());
 			final Map<Long, String> mapTopicBt = services.mapTopicToBt(bot);
-			result.addAll(TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt));
+			result.addAll(TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt, logs));
 		}
-
+		logs.append("Export topics OK\r\n");
 		return result;
 	}
 

@@ -20,7 +20,7 @@ public class MockNluEnginePlugin implements NluEnginePlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public synchronized void train(final Map<NluIntent, List<String>> trainingData) {
+	public synchronized void train(final Map<NluIntent, List<String>> trainingData, final StringBuilder logs) {
 		this.trainingData = trainingData;
 	}
 
@@ -52,4 +52,5 @@ public class MockNluEnginePlugin implements NluEnginePlugin {
 	public boolean isReady() {
 		return true;
 	}
+
 }

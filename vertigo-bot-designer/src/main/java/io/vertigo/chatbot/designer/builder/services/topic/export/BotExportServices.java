@@ -14,13 +14,20 @@ public class BotExportServices implements Component {
 	@Inject
 	private TopicExportServices topicExportServices;
 
-	public BotExport exportBot(final Chatbot bot) {
+	public BotExport exportBot(final Chatbot bot, final StringBuilder logs) {
 		final BotExport export = new BotExport();
 		export.setBot(bot);
-		export.setTopics(topicExportServices.exportActiveTopics(bot));
+		logs.append("Active topics export\r\n");
+		export.setTopics(topicExportServices.exportActiveTopics(bot, logs));
+		logs.append("Failure topic export...");
 		export.setFallbackBT(topicExportServices.getBasicBt(bot, KindTopicEnum.FAILURE.name()));
+		logs.append("OK\r\n");
+		logs.append("End topic export...");
 		export.setEndBT(topicExportServices.getBasicBt(bot, KindTopicEnum.END.name()));
+		logs.append("OK\r\n");
+		logs.append("Start topic export...");
 		export.setWelcomeBT(topicExportServices.getBasicBt(bot, KindTopicEnum.START.name()));
+		logs.append("OK\r\n");
 		return export;
 	}
 

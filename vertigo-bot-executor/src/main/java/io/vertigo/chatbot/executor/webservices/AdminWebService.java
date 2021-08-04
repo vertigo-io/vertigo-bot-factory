@@ -44,9 +44,11 @@ public class AdminWebService implements WebServices {
 	}
 
 	@PUT("/model")
-	public void loadModel(@InnerBodyParam("botExport") final BotExport bot,
+	public String loadModel(@InnerBodyParam("botExport") final BotExport bot,
 			@InnerBodyParam("executorConfig") final ExecutorConfiguration executorConfig) {
-		executorManager.loadModel(bot, executorConfig);
+		final StringBuilder logs = new StringBuilder("\r\nExecutor logs\r\n");
+		executorManager.loadModel(bot, executorConfig, logs);
+		return logs.toString();
 	}
 
 	@GET("/trainStatus")

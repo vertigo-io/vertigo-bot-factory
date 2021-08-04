@@ -100,42 +100,65 @@ public class TrainingServices implements Component {
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
 	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
+		final StringBuilder logs = new StringBuilder("new Training \r\n");
+
 		final Long botId = bot.getBotId();
+
 		trainingPAO.cleanOldTrainings(botId);
 
 		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(botId)
 				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
 
 		//Set training
+
 		final Training training = createTraining(bot);
 		saveTraining(bot, training);
 
-		final ExecutorConfiguration execConfig = getExecutorConfig(training, devNode);
+		try {
+			logs.append("Executor configuration... ");
+			final ExecutorConfiguration execConfig = getExecutorConfig(training, devNode);
+			logs.append("OK \r\n");
 
-		final Map<String, Object> requestData = new HashMap<String, Object>();
-		requestData.put("botExport", exportBot(bot));
-		requestData.put("executorConfig", execConfig);
+			logs.append("Bot export :\r\n");
+			final Map<String, Object> requestData = new HashMap<String, Object>();
+			requestData.put("botExport", exportBot(bot, logs));
+			requestData.put("executorConfig", execConfig);
+			logs.append("Bot export OK \r\n");
 
-		final Map<String, String> headers = Map.of(API_KEY, devNode.getApiKey(),
-				"Content-type", "application/json");
+			final Map<String, String> headers = Map.of(API_KEY, devNode.getApiKey(),
+					"Content-type", "application/json");
 
-		final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
-		final HttpRequest request = HttpRequestUtils.createPutRequest(devNode.getUrl() + "/api/chatbot/admin/model", headers, publisher);
-		HttpRequestUtils.sendAsyncRequest(null, request, BodyHandlers.ofString())
-				.thenApply(response -> this.handleResponse(response, training, devNode, bot));
-
-		return training;
+			logs.append("Call executor training :\r\n");
+			final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
+			final HttpRequest request = HttpRequestUtils.createPutRequest(devNode.getUrl() + "/api/chatbot/admin/model", headers, publisher);
+			HttpRequestUtils.sendAsyncRequest(null, request, BodyHandlers.ofString())
+					.thenApply(response -> this.handleResponse(response, training, devNode, bot, logs));
+			logs.append("Call training OK, training in progress...");
+			return training;
+		} catch (final Exception e) {
+			logs.append("KO :\r\n");
+			logs.append(e.getMessage());
+			training.setLog(logs.toString());
+			throw e;
+		} finally {
+			training.setLog(logs.toString());
+			saveTraining(bot, training);
+		}
 	}
 
-	public <T> String handleResponse(final HttpResponse<T> response, final Training training, final ChatbotNode node, final Chatbot bot) {
-		if (response.statusCode() != 204) {
+	public <T> String handleResponse(final HttpResponse<T> response, final Training training, final ChatbotNode node, final Chatbot bot, final StringBuilder logs) {
+		if (response.statusCode() != 200) {
 			training.setStrCd(TrainingStatusEnum.KO.name());
+			logs.append("KO\r\n");
 		} else {
 			training.setStrCd(TrainingStatusEnum.OK.name());
 			node.setTraId(training.getTraId());
 			asynchronousServices.saveNodeWithoutAuthorizations(node);
+			logs.append("OK\r\n");
 		}
 		training.setEndTime(Instant.now());
+		logs.append(response.body());
+		training.setLog(logs.toString());
 		asynchronousServices.saveTrainingWithoutAuthorizations(training);
 		return "response handled";
 	}
@@ -173,8 +196,8 @@ public class TrainingServices implements Component {
 		return trainingDAO.getDeployedTrainingByBotId(bot.getBotId());
 	}
 
-	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
-		return botExportServices.exportBot(bot);
+	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot, final StringBuilder logs) {
+		return botExportServices.exportBot(bot, logs);
 	}
 
 	public void loadModel(@SecuredOperation("botContributor") final Chatbot bot, final Long traId, final Long nodId) {
