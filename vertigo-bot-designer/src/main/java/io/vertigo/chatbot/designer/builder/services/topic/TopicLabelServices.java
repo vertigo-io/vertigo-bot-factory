@@ -124,4 +124,14 @@ public class TopicLabelServices implements Component {
 		final DtList<TopicLabel> topicLabelToDelete = topicLabelDAO.getAllUnusedLabelByBotId(botId);
 		topicLabelToDelete.stream().forEach(x -> delete(x));
 	}
+
+	public void cleanLabelFromTopic(@SecuredOperation("botContributor") final Chatbot bot, final Long topId) {
+		topicLabelPAO.removeAllLabelByTopicId(topId);
+		removeUnusedLabel(bot.getBotId());
+	}
+
+	public void cleanLabelFromBot(@SecuredOperation("botAdm") final Chatbot bot) {
+		topicLabelPAO.removeAllLabelFromBotId(bot.getBotId());
+		topicLabelPAO.removeAllLabelByBotId(bot.getBotId());
+	}
 }

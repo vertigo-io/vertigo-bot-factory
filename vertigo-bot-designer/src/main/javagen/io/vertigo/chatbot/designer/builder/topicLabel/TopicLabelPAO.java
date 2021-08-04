@@ -63,6 +63,58 @@ public final class TopicLabelPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkRemoveAllLabelByBotId.
+	 * @param botId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveAllLabelByBotId",
+			request = "delete " + 
+ "				from topic_label tpl" + 
+ "				where tpl.bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeAllLabelByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkRemoveAllLabelByBotId")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkRemoveAllLabelByTopicId.
+	 * @param topId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveAllLabelByTopicId",
+			request = "delete " + 
+ "				from topic_topic_label ttl" + 
+ "				where ttl.top_id = #topId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeAllLabelByTopicId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
+		final Task task = createTaskBuilder("TkRemoveAllLabelByTopicId")
+				.addValue("topId", topId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkRemoveAllLabelFromBotId.
+	 * @param botId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveAllLabelFromBotId",
+			request = "delete " + 
+ "				from topic_topic_label ttl" + 
+ "				using topic top" + 
+ "				where top.top_id = ttl.top_id and top.bot_id = #botId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeAllLabelFromBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkRemoveAllLabelFromBotId")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
 	 * Execute la tache TkRemoveFromNNTopicLabel.
 	 * @param tpls List de String
 	 * @param topId Long
