@@ -62,10 +62,16 @@
 			
 			function createValue (val, done) {
 		        if (val.length > 0) {
-	        		val = {label:val}
+		        	if(val.labelId == null){
+		        		val = {labelId :null, label:val}
+		        	}
 		          	done(val, 'toggle')
 		        }
-		      }
+	      	}
+			
+			function remove (details) {
+		        VertigoUi.vueData.topicLabelList.remove(details.value);
+	      	}
 			
 		</script>
 		</head>
@@ -98,6 +104,7 @@
 					use-chips
 					use-input
 					@new-value="createValue"
+					@remove="remove"
 					stack-label>
 				</q-select>
 				<div v-for="(topic, index) in vueData.topicLabelList">

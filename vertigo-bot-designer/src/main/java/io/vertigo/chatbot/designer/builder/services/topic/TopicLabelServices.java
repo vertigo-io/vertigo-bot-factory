@@ -70,15 +70,17 @@ public class TopicLabelServices implements Component {
 	}
 
 	private void removeLabels(final Chatbot bot, final Topic topic, final DtList<TopicLabel> labels, final DtList<TopicLabel> initialLabels) {
-		final DtList<TopicLabel> listToDelete = initialLabels.stream().filter(x -> labels.contains(x)).collect(VCollectors.toDtList(TopicLabel.class));
+		final DtList<TopicLabel> listToDelete = initialLabels.stream().filter(x -> !labels.contains(x)).collect(VCollectors.toDtList(TopicLabel.class));
 		removeFromNN(bot, topic, listToDelete);
 	}
 
 	private void removeFromNN(final Chatbot bot, final Topic topic, final DtList<TopicLabel> listToDelete) {
 		final List<Long> ids = listToDelete.stream().map(TopicLabel::getLabelId).collect(Collectors.toList());
-		topicLabelPAO.removeFromNNTopicLabel(ids, topic.getTopId());
-		final DtList<TopicLabel> topicLabelToDelete = topicLabelDAO.getAllUnusedLabelByBotId(bot.getBotId());
-		topicLabelToDelete.stream().forEach(x -> delete(x));
+		if (!ids.isEmpty()) {
+			topicLabelPAO.removeFromNNTopicLabel(ids, topic.getTopId());
+			final DtList<TopicLabel> topicLabelToDelete = topicLabelDAO.getAllUnusedLabelByBotId(bot.getBotId());
+			topicLabelToDelete.stream().forEach(x -> delete(x));
+		}
 
 	}
 

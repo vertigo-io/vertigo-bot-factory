@@ -18,8 +18,7 @@ create Task TkUpdateNNTopicLabel {
     className : "io.vertigo.basics.task.TaskEngineProcBatch"
     request : "
 			INSERT INTO topic_topic_label
-				(top_id, label_id)
-				VALUES(#topId#, #tpls.rownum#);
+				VALUES(#topId#, #tpls#)
              "
 	in tpls					{domain : DoId,						cardinality:"*" } 
 	in topId				{domain : DoId,						cardinality:"1" } 
@@ -29,7 +28,7 @@ create Task TkRemoveFromNNTopicLabel {
     className : "io.vertigo.basics.task.TaskEngineProc"
     request : "
 				delete from topic_topic_label
-				where top_id = #topId# and label_id = #tpls.rownum#;
+				where top_id = #topId# and label_id in (#tpls.rownum#);
              "
 	in tpls					{domain : DoId,						cardinality:"*" } 
 	in topId				{domain : DoId,						cardinality:"1" } 
