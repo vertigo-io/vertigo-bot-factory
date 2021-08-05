@@ -5,50 +5,50 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
 	<changeSet author="vbaillet" id="add topic and script intent">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_04_02.sql" />
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_02.sql" />
 	</changeSet>
 	
 	<changeSet author="vbaillet" id="add category topic">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_04_12.sql" />	
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_12.sql" />	
 	</changeSet>
 	
 	<changeSet author="vprima" id="add and populate type topic">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_04_13.sql" />	
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_13.sql" />	
 	</changeSet>
 	
 	<changeSet author="vbaillet" id="response buttons return on topic">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_04_30.sql" />	
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_30.sql" />	
 	</changeSet>	
 	
 	<changeSet author="vprima" id="add and populate kind topic">
-		<createProcedure encoding="utf8" path="/sql/v_0_6/alter_21_04_27.sql" />	
+		<createProcedure encoding="utf8" path="/sql/v_1_0/alter_21_04_27.sql" />	
 	</changeSet>	
 	
 	<changeSet author="vbaillet" id="add code to topics">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_04_30-2.sql" />	
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_04_30-2.sql" />	
 	</changeSet>
 	
 	<changeSet author="vprima" id="add and populate training status">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_05_26.sql" />	
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_05_26.sql" />	
 	</changeSet>
 	
 	<changeSet author="vprima" id="add column to small talk">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_06_03.sql" />	
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_03.sql" />	
 	</changeSet>
 	
 	<changeSet author="vbaillet" id="change code type for topic">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_06_04.sql" />	
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_04.sql" />	
 	</changeSet>
 	
 	<changeSet author="vprima" id="add code to topic category">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_06_15.sql" />	
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_15.sql" />	
 	</changeSet>
 	
 	<changeSet author="vprima" id="change code type for topic">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_06_28.sql" />	
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_28.sql" />	
 	</changeSet>
 	
 	<changeSet author="vprima" id="add meanings and synonyms">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_06_30.sql" />	
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_30.sql" />	
 	</changeSet>
 </databaseChangeLog>

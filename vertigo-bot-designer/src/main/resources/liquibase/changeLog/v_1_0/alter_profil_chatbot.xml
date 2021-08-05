@@ -6,8 +6,8 @@
 
 	<changeSet author="vbaillet" id="alter_profil_chatbot">
 		<!-- Adding profil by chatbot -->
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_21_02_25.sql" />
-		<sqlFile encoding="utf8" path="/sql/v_0_6/init_masterdata_chatbot_profiles.sql" />
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_02_25.sql" />
+		<sqlFile encoding="utf8" path="/sql/v_1_0/init_masterdata_chatbot_profiles.sql" />
 		<!-- End adding profil by chatbot -->
 	</changeSet>
 </databaseChangeLog>

@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
 	<changeSet author="vprima" id="export statistic">
-		<sqlFile encoding="utf8" path="/sql/v_0_7/alter_21_07_21.sql" />
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_07_21.sql" />
 	</changeSet>
 	
 </databaseChangeLog>
