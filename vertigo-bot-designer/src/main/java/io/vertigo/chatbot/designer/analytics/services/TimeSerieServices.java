@@ -159,7 +159,7 @@ public class TimeSerieServices implements Component, Activeable {
 
 	public TimedDatas getRatingStats(final StatCriteria criteria) {
 		return timeSeriesManager.getTimeSeries(influxDbName,
-				Arrays.asList("rating1:count", "rating2:count", "rating3:count", "rating4:count"),
+				Arrays.asList("rating1:count", "rating2:count", "rating3:count", "rating4:count", "rating5:count"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.RATING_MSRMT).build(),
 				AnalyticsServicesUtils.getTimeFilter(criteria));
 	}

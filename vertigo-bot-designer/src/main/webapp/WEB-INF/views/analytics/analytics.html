@@ -218,21 +218,24 @@
 		            horizontalAlign: 'left',
 		            offsetY: 40
 		          },
-		         colors : ['#ff4560','#feb019','#00e396', '#008ffb']
+		         colors : ['#785dd0', '#ff4560','#feb019','#00e396', '#008ffb', ]
 			},
 			series : function() {
 				return [ {
-							name : /*[[#{analytics.message.oneStart}]]*/ '',
+							name : /*[[#{analytics.message.oneStar}]]*/ '',
 							data : serieToApex("rating1:count", VertigoUi.vueData.ratingStats, {fill: 0})
 						},{
-							name : /*[[#{analytics.message.twoStart}]]*/ '',
+							name : /*[[#{analytics.message.twoStar}]]*/ '',
 							data : serieToApex("rating2:count", VertigoUi.vueData.ratingStats, {fill: 0})
 						},{
-							name : /*[[#{analytics.message.threeStart}]]*/ '',
+							name : /*[[#{analytics.message.threeStar}]]*/ '',
 							data : serieToApex("rating3:count", VertigoUi.vueData.ratingStats, {fill: 0})
 						},{
-							name : /*[[#{analytics.message.fourStart}]]*/ '',
+							name : /*[[#{analytics.message.fourStar}]]*/ '',
 							data : serieToApex("rating4:count", VertigoUi.vueData.ratingStats, {fill: 0})
+						},{
+							name : /*[[#{analytics.message.fiveStar}]]*/ '',
+							data : serieToApex("rating5:count", VertigoUi.vueData.ratingStats, {fill: 0})
 						},
 					];
 			} 

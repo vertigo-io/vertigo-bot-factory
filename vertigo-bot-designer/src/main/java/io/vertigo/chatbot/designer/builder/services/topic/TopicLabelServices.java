@@ -32,11 +32,11 @@ public class TopicLabelServices implements Component {
 	@Inject
 	private TopicLabelPAO topicLabelPAO;
 
-	public TopicLabel save(@SecuredOperation("botAdm") final Chatbot bot, final TopicLabel label) {
+	public TopicLabel save(@SecuredOperation("botContributor") final Chatbot bot, final TopicLabel label) {
 		return topicLabelDAO.save(label);
 	}
 
-	public TopicLabel save(@SecuredOperation("botAdm") final Chatbot bot, final String label) {
+	public TopicLabel save(@SecuredOperation("botContributor") final Chatbot bot, final String label) {
 		final TopicLabel topicLabel = new TopicLabel();
 		topicLabel.setLabel(label);
 		topicLabel.setBotId(bot.getBotId());
@@ -47,11 +47,11 @@ public class TopicLabelServices implements Component {
 		return topicLabelDAO.findAll(getBotCriteria(bot), DtListState.of(1000));
 	}
 
-	public DtList<TopicLabel> getTopicLabelByBotIdAndTopId(@SecuredOperation("botAdm") final Chatbot bot, final Long topId) {
+	public DtList<TopicLabel> getTopicLabelByBotIdAndTopId(@SecuredOperation("botContributor") final Chatbot bot, final Long topId) {
 		return topicLabelDAO.getAllLabelsByBotId(bot.getBotId(), topId);
 	}
 
-	public void manageLabels(@SecuredOperation("botAdm") final Chatbot bot, final Topic topic, final DtList<TopicLabel> labels, final DtList<TopicLabel> initialLabels) {
+	public void manageLabels(@SecuredOperation("botContributor") final Chatbot bot, final Topic topic, final DtList<TopicLabel> labels, final DtList<TopicLabel> initialLabels) {
 		final List<String> initialLabelsList = initialLabels.stream().map(TopicLabel::getLabel).collect(Collectors.toList());
 		final List<String> labelsList = labels.stream().map(TopicLabel::getLabel).collect(Collectors.toList());
 		removeLabels(bot.getBotId(), topic, labelsList, initialLabelsList);
