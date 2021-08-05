@@ -35,7 +35,7 @@ Vue.component('v-chatbot-dev', {
 				</div>
 				<div class="non-selectable">
 					<q-chat-message v-if="inputConfig.showRating" class="animate-fade" bg-color="primary" sent >
-						<q-rating v-model="rating" :max="4" style="font-size: 2rem;" 
+						<q-rating v-model="rating" :max="5" style="font-size: 2rem;" 
 							icon="star_border"
        						icon-selected="star"
         					icon-half="star_half" 
