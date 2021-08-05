@@ -89,6 +89,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TopicFileExport(io.vertigo.chatbot.commons.domain.topic.TopicFileExport.class),
 		/** Objet de données TopicIhm. */
 		TopicIhm(io.vertigo.chatbot.commons.domain.topic.TopicIhm.class),
+		/** Objet de données TopicLabel. */
+		TopicLabel(io.vertigo.chatbot.commons.domain.topic.TopicLabel.class),
 		/** Objet de données TrainerInfo. */
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
 		/** Objet de données Training. */
@@ -620,7 +622,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Buttons'. */
 		buttons,
 		/** Propriété 'End of conversation'. */
-		isEnd	}
+		isEnd,
+		/** Propriété 'labels'. */
+		labels	}
 
 	/**
 	 * Enumération des champs de TopicIhm.
@@ -645,7 +649,20 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Code Kind'. */
 		ktoCd,
 		/** Propriété 'Code'. */
-		code	}
+		code,
+		/** Propriété 'Labels'. */
+		labels	}
+
+	/**
+	 * Enumération des champs de TopicLabel.
+	 */
+	public enum TopicLabelFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.TopicLabel> {
+		/** Propriété 'Label id'. */
+		labelId,
+		/** Propriété 'Label label'. */
+		label,
+		/** Propriété 'Chatbot'. */
+		botId	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.

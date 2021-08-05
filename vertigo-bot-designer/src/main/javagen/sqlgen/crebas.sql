@@ -5,7 +5,7 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
-drop table IF EXISTS TOPIC_TOPIC_CATEGORY cascade;
+drop table IF EXISTS TOPIC_TOPIC_LABEL cascade;
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_NODE cascade;
@@ -38,6 +38,8 @@ drop table IF EXISTS TOPIC cascade;
 drop sequence IF EXISTS SEQ_TOPIC;
 drop table IF EXISTS TOPIC_CATEGORY cascade;
 drop sequence IF EXISTS SEQ_TOPIC_CATEGORY;
+drop table IF EXISTS TOPIC_LABEL cascade;
+drop sequence IF EXISTS SEQ_TOPIC_LABEL;
 drop table IF EXISTS TRAINING cascade;
 drop sequence IF EXISTS SEQ_TRAINING;
 drop table IF EXISTS TRAINING_STATUS cascade;
@@ -96,6 +98,9 @@ create sequence SEQ_TOPIC
 	start with 1000 cache 20; 
 
 create sequence SEQ_TOPIC_CATEGORY
+	start with 1000 cache 20; 
+
+create sequence SEQ_TOPIC_LABEL
 	start with 1000 cache 20; 
 
 create sequence SEQ_TRAINING
@@ -585,6 +590,26 @@ comment on column TOPIC_CATEGORY.BOT_ID is
 'Chatbot';
 
 -- ============================================================
+--   Table : TOPIC_LABEL                                        
+-- ============================================================
+create table TOPIC_LABEL
+(
+    LABEL_ID    	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_TOPIC_LABEL primary key (LABEL_ID)
+);
+
+comment on column TOPIC_LABEL.LABEL_ID is
+'Label id';
+
+comment on column TOPIC_LABEL.LABEL is
+'Label label';
+
+comment on column TOPIC_LABEL.BOT_ID is
+'Chatbot';
+
+-- ============================================================
 --   Table : TRAINING                                        
 -- ============================================================
 create table TRAINING
@@ -843,6 +868,12 @@ alter table TOPIC
 
 create index A_TOPIC_KIND_TOPIC_KIND_TOPIC_FK on TOPIC (KTO_CD asc);
 
+alter table TOPIC_LABEL
+	add constraint FK_A_TOPIC_LABEL_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_TOPIC_LABEL_CHATBOT_CHATBOT_FK on TOPIC_LABEL (BOT_ID asc);
+
 alter table NLU_TRAINING_SENTENCE
 	add constraint FK_A_TOPIC_NLU_TRAINING_SENTENCE_TOPIC foreign key (TOP_ID)
 	references TOPIC (TOP_ID);
@@ -874,20 +905,20 @@ alter table TRAINING
 create index A_TRAINING_TRAINING_STATUS_TRAINING_STATUS_FK on TRAINING (STR_CD asc);
 
 
-create table TOPIC_TOPIC_CATEGORY
+create table TOPIC_TOPIC_LABEL
 (
 	TOP_ID      	 NUMERIC     	 not null,
-	TOP_CAT_ID  	 NUMERIC     	 not null,
-	constraint PK_TOPIC_TOPIC_CATEGORY primary key (TOP_ID, TOP_CAT_ID),
-	constraint FK_ANN_TOPIC_CATEGORY_TOPIC 
+	LABEL_ID    	 NUMERIC     	 not null,
+	constraint PK_TOPIC_TOPIC_LABEL primary key (TOP_ID, LABEL_ID),
+	constraint FK_ANN_TOPIC_LABEL_TOPIC 
 		foreign key(TOP_ID)
 		references TOPIC (TOP_ID),
-	constraint FK_ANN_TOPIC_CATEGORY_TOPIC_CATEGORY 
-		foreign key(TOP_CAT_ID)
-		references TOPIC_CATEGORY (TOP_CAT_ID)
+	constraint FK_ANN_TOPIC_LABEL_TOPIC_LABEL 
+		foreign key(LABEL_ID)
+		references TOPIC_LABEL (LABEL_ID)
 );
 
-create index ANN_TOPIC_CATEGORY_TOPIC_FK on TOPIC_TOPIC_CATEGORY (TOP_ID asc);
+create index ANN_TOPIC_LABEL_TOPIC_FK on TOPIC_TOPIC_LABEL (TOP_ID asc);
 
-create index ANN_TOPIC_CATEGORY_TOPIC_CATEGORY_FK on TOPIC_TOPIC_CATEGORY (TOP_CAT_ID asc);
+create index ANN_TOPIC_LABEL_TOPIC_LABEL_FK on TOPIC_TOPIC_LABEL (LABEL_ID asc);
 

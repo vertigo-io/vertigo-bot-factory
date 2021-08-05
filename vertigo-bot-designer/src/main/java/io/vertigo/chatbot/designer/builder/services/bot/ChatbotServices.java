@@ -23,6 +23,7 @@ import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
@@ -77,6 +78,9 @@ public class ChatbotServices implements Component {
 
 	@Inject
 	private TopicCategoryServices topicCategoryServices;
+
+	@Inject
+	private TopicLabelServices topicLabelServices;
 
 	static final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern(DateUtils.FORMAT_JJMMAAAA);
 
@@ -139,6 +143,7 @@ public class ChatbotServices implements Component {
 		responsesButtonServices.removeAllSMTButtonsByBot(bot);
 		// Delete training, reponsetype and smallTalk
 		topicServices.removeAllNTSFromBot(bot);
+		topicLabelServices.cleanLabelFromBot(bot);
 		scriptIntentionServices.removeAllScriptIntentionFromBot(bot);
 		smallTalkServices.removeAllSmallTalkFromBot(bot);
 		topicServices.removeAllTopicsFromBot(bot);

@@ -267,17 +267,37 @@ create Association ATopicCategoryTopic{
 }
 
 
-create AssociationNN AnnTopicCategory{
-	tableName : "TOPIC_TOPIC_CATEGORY"
+/** Labels **/
+
+create DtDefinition DtTopicLabel{
+	id labelId	 		{domain: DoId		label: "Label id"								}
+	field label			{domain: DoLabel	label: "Label label" 			cardinality:"1"	}
+}
+
+create Association ATopicLabelChatbot{
+	fkFieldName : "botId"
+    
+ 	dtDefinitionA : DtTopicLabel
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+	roleB : "Chatbot"
+	
+}
+
+
+create AssociationNN AnnTopicLabel{
+	tableName : "TOPIC_TOPIC_LABEL"
 
 	dtDefinitionA : DtTopic
-	dtDefinitionB : DtTopicCategory
+	dtDefinitionB : DtTopicLabel
 	navigabilityA : "true"
 	navigabilityB : "true"
 	roleA : "Topic"
 	labelA : "Topic"
-	roleB : "Category"
-	labelB : "Category"
+	roleB : "Label"
+	labelB : "Label"
 }
 
 
@@ -308,6 +328,7 @@ create DtDefinition DtTopicIhm {
 	field isEnabled	{domain: DoYesNo	label: "Enabled"								}
 	field ktoCd		{domain: DoCode		label: "Code Kind"				cardinality:"?"	}
 	field code		{domain: DoLabel	label: "Code"					cardinality:"1"	}
+	field labels	{domain: DoLabel	label: "Labels"					cardinality:"1"	}
 }
 
 create DtDefinition DtScriptIntentionIhm {
@@ -332,5 +353,6 @@ create DtDefinition DtTopicFileExport {
 	field response			{domain: DoText	 						label: "Response" 				cardinality : "?"}
 	field buttons			{domain: DoText	 						label: "Buttons" 				cardinality : "?"}
 	field isEnd				{domain: DoLabel	 					label: "End of conversation" 	cardinality : "1"}
+	field labels			{domain: DoLabel	 					label: "labels"				 	cardinality : "1"}
 }
 

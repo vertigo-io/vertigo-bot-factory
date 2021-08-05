@@ -5,7 +5,7 @@ Vue.component('v-chatbot-dev', {
 			<div class="q-pr-md">
 				<div v-for="(msg, index) in messages">
 					<q-chat-message v-if="msg.rating" class= "animate-fade" :key="'msgRating-'+index" :sent="msg.sent" :bg-color= "msg.bgColor" :avatar = "msg.avatar" >
-						<q-rating v-model="msg.rating" :max="5" style="font-size: 2rem;" readonly ></q-rating>
+						<q-rating v-model="msg.rating" style="font-size: 2rem;" readonly ></q-rating>
 					</q-chat-message>
 					<q-chat-message v-if="msg.text" class="animate-fade" :key="'msg-'+index" :label="msg.label" :text-sanitize="msg.sent" :sent="msg.sent" :text-color="msg.textColor"
 						:bg-color="msg.bgColor" :name="msg.name" :avatar="msg.avatar" :text="msg.text" :stamp="msg.stamp" ></q-chat-message>
@@ -35,7 +35,7 @@ Vue.component('v-chatbot-dev', {
 				</div>
 				<div class="non-selectable">
 					<q-chat-message v-if="inputConfig.showRating" class="animate-fade" bg-color="primary" sent >
-						<q-rating v-model="rating" :max="5" style="font-size: 2rem;" 
+						<q-rating v-model="rating" style="font-size: 2rem;" 
 							icon="star_border"
        						icon-selected="star"
         					icon-half="star_half" 

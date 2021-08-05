@@ -27,6 +27,7 @@ public final class TopicFileExport implements DtObject {
 	private String response;
 	private String buttons;
 	private String isEnd;
+	private String labels;
 	
 	/**
 	 * Champ : DATA.
@@ -292,6 +293,25 @@ public final class TopicFileExport implements DtObject {
 	 */
 	public void setIsEnd(final String isEnd) {
 		this.isEnd = isEnd;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'labels'.
+	 * @return String labels <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "labels")
+	public String getLabels() {
+		return labels;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'labels'.
+	 * @param labels String <b>Obligatoire</b>
+	 */
+	public void setLabels(final String labels) {
+		this.labels = labels;
 	}
 	
 	/** {@inheritDoc} */

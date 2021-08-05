@@ -2,7 +2,6 @@ package io.vertigo.chatbot.commons.domain.topic;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 import io.vertigo.datamodel.structure.stereotype.Field;
@@ -37,19 +36,6 @@ public final class TopicCategory implements Entity {
 			foreignLabel = "TopicCategory",
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
-
-	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
-			name = "AnnTopicCategory",
-			tableName = "TOPIC_TOPIC_CATEGORY",
-			dtDefinitionA = "DtTopic",
-			dtDefinitionB = "DtTopicCategory",
-			navigabilityA = true,
-			navigabilityB = true,
-			roleA = "Topic",
-			roleB = "Category",
-			labelA = "Topic",
-			labelB = "Category")
-	private final StoreListVAccessor<io.vertigo.chatbot.commons.domain.topic.Topic> topicAccessor = new StoreListVAccessor<>(this, "AnnTopicCategory", "Topic");
 
 	/** {@inheritDoc} */
 	@Override
@@ -196,14 +182,6 @@ public final class TopicCategory implements Entity {
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbot() {
 		return botIdAccessor;
-	}
-
-	/**
-	 * Association : Topic.
-	 * @return l'accesseur vers la propriété 'Topic'
-	 */
-	public StoreListVAccessor<io.vertigo.chatbot.commons.domain.topic.Topic> topic() {
-		return topicAccessor;
 	}
 	
 	/** {@inheritDoc} */

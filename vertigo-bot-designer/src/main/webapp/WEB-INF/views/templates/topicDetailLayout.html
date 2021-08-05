@@ -60,6 +60,30 @@
 				}
 			}
 			
+			function createValue (val, done) {
+		        if (val.length > 0 && !val.includes(',')) {
+		        	let find = VertigoUi.componentStates.labels.filterOptions.find(element => element.label === val);
+		        	val = find != null ? find : {label:val}
+		          	done(val, 'add-unique')
+		       	 } 
+		     }
+			
+			
+			
+			function filterFn (val, update) {
+		        update(() => {
+		            if (val === '') {
+		            	VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.allTopicLabelList
+		            }
+		            else {
+		              const needle = normalizeString(val.toLowerCase())
+		              VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.allTopicLabelList.filter(
+		                v => normalizeString(v.label.toLowerCase()).indexOf(needle) > -1
+		              )
+		            }
+		          })
+		        }
+			
 		</script>
 		</head>
 
@@ -81,6 +105,28 @@
 					<vu:text-area object="topic" field="description" readonly="${model.modeReadOnly}"/>
 					<vu:grid-cell></vu:grid-cell>
 				</vu:grid>
+				
+				<vu:include-data object="initialTopicLabelList" field="'*'" />
+				<vu:include-data object="allTopicLabelList" field="'*'" />
+				<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('labels').addObject('filterOptions', {label:null})}" th:remove="all" />
+				
+				<q-select 
+					th:label="#{topic.label}"
+					v-model="vueData.initialTopicLabelList"
+					multiple
+					use-chips
+					th::readonly="${model.modeReadOnly}"
+					use-input
+					:options="componentStates.labels.filterOptions"
+					@filter="filterFn"
+					reactive-rules
+					input-debounce="0"
+					@new-value="createValue"
+					stack-label>
+				</q-select>
+				<div v-for="(topic, index) in vueData.initialTopicLabelList">
+					<input  type="hidden" :name="'vContext[topicLabelList][' + index + '][label]'" :value="topic.label" />
+				</div>
 			</vu:block>
 			
 			<vu:block id="training" th:title="#{topic.menu.training}">

@@ -311,6 +311,10 @@ public enum DtResources implements MessageKey {
 	 * End of conversation.
 	 */
 	fldTopicFileExport$isEnd,
+	/**
+	 * labels.
+	 */
+	fldTopicFileExport$labels,
 
 	/***********************************************************
 	/** TopicIhm.
@@ -355,6 +359,26 @@ public enum DtResources implements MessageKey {
 	 * Code.
 	 */
 	fldTopicIhm$code,
+	/**
+	 * Labels.
+	 */
+	fldTopicIhm$labels,
+
+	/***********************************************************
+	/** TopicLabel.
+	/***********************************************************
+	/**
+	 * Label id.
+	 */
+	fldTopicLabel$labelId,
+	/**
+	 * Label label.
+	 */
+	fldTopicLabel$label,
+	/**
+	 * Chatbot.
+	 */
+	fldTopicLabel$botId,
 
 	/***********************************************************
 	/** TypeTopic.

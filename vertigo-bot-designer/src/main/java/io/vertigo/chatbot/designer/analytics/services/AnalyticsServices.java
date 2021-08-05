@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.designer.builder.services.TrainingServices;
-import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
@@ -45,12 +43,6 @@ public class AnalyticsServices implements Component {
 
 	@Inject
 	private TopicServices topicServices;
-
-	@Inject
-	private ChatbotServices chatbotServices;
-
-	@Inject
-	private TrainingServices trainingServices;
 
 	@Inject
 	private TimeSerieServices timeSerieServices;
