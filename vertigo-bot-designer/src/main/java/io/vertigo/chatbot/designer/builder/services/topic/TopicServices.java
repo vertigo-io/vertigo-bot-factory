@@ -151,9 +151,12 @@ public class TopicServices implements Component, Activeable {
 		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, bot.getBotId()).and(Criterions.isEqualTo(TopicFields.ttoCd, ttoCd)), DtListState.of(1000));
 	}
 
-	public DtList<Topic> getAllNonTechnicalTopicByBotTtoCd(@SecuredOperation("botVisitor") final Chatbot bot, final String ttoCd) {
+	public DtList<Topic> getAllNonTechnicalTopicAndActiveByBotTtoCd(@SecuredOperation("botVisitor") final Chatbot bot, final String ttoCd) {
 		return topicDAO.findAll(
-				Criterions.isEqualTo(TopicFields.botId, bot.getBotId()).and(Criterions.isEqualTo(TopicFields.ttoCd, ttoCd).and(Criterions.isEqualTo(TopicFields.ktoCd, KindTopicEnum.NORMAL.name()))),
+				Criterions.isEqualTo(TopicFields.botId, bot.getBotId())
+						.and(Criterions.isEqualTo(TopicFields.isEnabled, true))
+						.and(Criterions.isEqualTo(TopicFields.ttoCd, ttoCd)
+								.and(Criterions.isEqualTo(TopicFields.ktoCd, KindTopicEnum.NORMAL.name()))),
 				DtListState.of(1000));
 	}
 
@@ -231,9 +234,7 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	public UtterText initUtterTextBasicTopic(final Topic topic) {
-		final UtterText utt = new UtterText();
-
-		return utt;
+		return new UtterText();
 	}
 
 	//********* NTS part ********/

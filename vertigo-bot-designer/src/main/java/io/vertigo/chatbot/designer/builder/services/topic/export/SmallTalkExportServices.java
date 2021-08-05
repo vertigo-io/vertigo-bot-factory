@@ -38,8 +38,8 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Sma
 	private ExportPAO exportPAO;
 
 	@Override
-	public boolean handleObject(final Topic topic) {
-		return TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd());
+	public TypeTopicEnum getHandleObject() {
+		return TypeTopicEnum.SMALLTALK;
 	}
 
 	private Map<UtterTextExport, List<ResponseButtonExport>> getUtterAndResponseForBt(final Long botId) {
@@ -170,8 +170,8 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Sma
 	}
 
 	@Override
-	public DtList<Topic> getAllNonTechnicalTopicByBot(final Chatbot bot) {
-		return topicServices.getAllNonTechnicalTopicByBotTtoCd(bot, TypeTopicEnum.SMALLTALK.name());
+	public DtList<Topic> getAllNonTechnicalAndActiveTopicByBot(final Chatbot bot, final TypeTopicEnum typeEnum) {
+		return topicServices.getAllNonTechnicalTopicAndActiveByBotTtoCd(bot, typeEnum.name());
 	}
 
 }

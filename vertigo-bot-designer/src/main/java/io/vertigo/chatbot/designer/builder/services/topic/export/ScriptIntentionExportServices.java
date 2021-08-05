@@ -32,8 +32,8 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 	private ExportPAO exportPAO;
 
 	@Override
-	public boolean handleObject(final Topic topic) {
-		return TypeTopicEnum.SCRIPTINTENTION.name().equals(topic.getTtoCd());
+	public TypeTopicEnum getHandleObject() {
+		return TypeTopicEnum.SCRIPTINTENTION;
 	}
 
 	@Override
@@ -62,8 +62,7 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 	}
 
 	@Override
-	public DtList<Topic> getAllNonTechnicalTopicByBot(final Chatbot bot) {
-		return topicServices.getAllNonTechnicalTopicByBotTtoCd(bot, TypeTopicEnum.SCRIPTINTENTION.name());
+	public DtList<Topic> getAllNonTechnicalAndActiveTopicByBot(final Chatbot bot, final TypeTopicEnum typeEnum) {
+		return topicServices.getAllNonTechnicalTopicAndActiveByBotTtoCd(bot, typeEnum.name());
 	}
-
 }
