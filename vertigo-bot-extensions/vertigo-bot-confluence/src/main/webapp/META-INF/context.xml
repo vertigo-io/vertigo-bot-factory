@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context debug="0" reloadable="false" allowCasualMultipartParsing="true">
+
+	<Parameter name="confluenceUser" value="chatbot" override="false"/>
+	<Parameter name="confluencePassword" value="chatbot" override="false"/>
+</Context>

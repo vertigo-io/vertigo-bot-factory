@@ -11,6 +11,7 @@ import io.vertigo.ai.impl.command.BtCommandParserDefinition;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.node.component.Component;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleDefinitionProvider;
 
@@ -19,7 +20,7 @@ import io.vertigo.core.node.definition.SimpleDefinitionProvider;
  *
  * @author skerdudou
  */
-public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionProvider {
+public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionProvider, Component {
 
 	@Override
 	public List<BtCommandParserDefinition> provideDefinitions(final DefinitionSpace definitionSpace) {
