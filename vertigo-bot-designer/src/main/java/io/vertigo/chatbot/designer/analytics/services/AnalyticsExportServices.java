@@ -3,6 +3,7 @@ package io.vertigo.chatbot.designer.analytics.services;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -71,7 +72,7 @@ public class AnalyticsExportServices implements Component {
 				newSessionExport.setCreationBot(dateBot);
 				final Long traId = Long.valueOf((String) values.get("traId"));
 				if (traId != null) {
-					final java.time.Instant dateTraining = trainingServices.getInstantEndDisplay(botId, traId);
+					final Instant dateTraining = trainingServices.getInstantEndDisplay(botId, traId);
 					newSessionExport.setDateTraining(dateTraining);
 				}
 			}
@@ -132,7 +133,7 @@ public class AnalyticsExportServices implements Component {
 				newUnknownSentenseExport.setCreationBot(dateBot);
 				final Long traId = Long.valueOf((String) values.get("traId"));
 				if (traId != null) {
-					final java.time.Instant dateTraining = trainingServices.getInstantEndDisplay(botId, traId);
+					final Instant dateTraining = trainingServices.getInstantEndDisplay(botId, traId);
 					newUnknownSentenseExport.setDateTraining(dateTraining);
 				}
 			}
