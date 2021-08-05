@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.builder.topic.export;
+package io.vertigo.chatbot.designer.domain.topic.export;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.DtObject;

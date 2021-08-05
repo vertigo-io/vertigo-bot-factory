@@ -25,50 +25,6 @@ public enum DtResources implements MessageKey {
 	fldMeaning$botId,
 
 	/***********************************************************
-	/** SentenseDetail.
-	/***********************************************************
-	/**
-	 * Rasa message ID.
-	 */
-	fldSentenseDetail$messageId,
-	/**
-	 * Date.
-	 */
-	fldSentenseDetail$date,
-	/**
-	 * User text.
-	 */
-	fldSentenseDetail$text,
-	/**
-	 * Rasa intent.
-	 */
-	fldSentenseDetail$intentRasa,
-	/**
-	 * Confidence.
-	 */
-	fldSentenseDetail$confidence,
-	/**
-	 * Topic selection.
-	 */
-	fldSentenseDetail$topId,
-
-	/***********************************************************
-	/** StatCriteria.
-	/***********************************************************
-	/**
-	 * Chatbot selection.
-	 */
-	fldStatCriteria$botId,
-	/**
-	 * Time option.
-	 */
-	fldStatCriteria$timeOption,
-	/**
-	 * Node selection.
-	 */
-	fldStatCriteria$nodId,
-
-	/***********************************************************
 	/** Synonym.
 	/***********************************************************
 	/**
@@ -87,26 +43,6 @@ public enum DtResources implements MessageKey {
 	 * Meaning.
 	 */
 	fldSynonym$meaId,
-
-	/***********************************************************
-	/** TopIntent.
-	/***********************************************************
-	/**
-	 * Topic ID.
-	 */
-	fldTopIntent$topId,
-	/**
-	 * Rasa intent.
-	 */
-	fldTopIntent$intentRasa,
-	/**
-	 * Topic code.
-	 */
-	fldTopIntent$code,
-	/**
-	 * Count.
-	 */
-	fldTopIntent$count,
 
 	/***********************************************************
 	/** TupleSynonymIhm.

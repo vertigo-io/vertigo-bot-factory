@@ -6,7 +6,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
-import io.vertigo.chatbot.designer.domain.StatCriteria;
+import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
@@ -73,10 +73,36 @@ public class TimeSerieServices implements Component, Activeable {
 	 * Get all messages unrecognized
 	 *
 	 * @param criteria statscriteria
-	 * @return all the messages unreconized
+	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getSentenceDetails(final StatCriteria criteria) {
-		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence"),
+		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence", "modelName"),
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isFallback = 1").build(),
+				AnalyticsServicesUtils.getTimeFilter(criteria),
+				Optional.empty());
+	}
+
+	/**
+	 * Get all sessions for export
+	 *
+	 * @param criteria statscriteria
+	 * @return all the messages unrecognized
+	 */
+	public TimedDatas getSessionsExport(final StatCriteria criteria) {
+		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("name", "modelName", "botId", "traId"),
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isSessionStart = 1").build(),
+				AnalyticsServicesUtils.getTimeFilter(criteria),
+				Optional.empty());
+	}
+
+	/**
+	 * Get all messages unrecognized for export
+	 *
+	 * @param criteria statscriteria
+	 * @return all the messages unrecognized
+	 */
+	public TimedDatas getUnknowSentenceExport(final StatCriteria criteria) {
+		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence", "modelName", "botId", "traId"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isFallback = 1").build(),
 				AnalyticsServicesUtils.getTimeFilter(criteria),
 				Optional.empty());

@@ -1,0 +1,64 @@
+package io.vertigo.chatbot.designer.domain.analytics
+
+create DtDefinition DtTypeExportAnalytics {
+stereotype : "StaticMasterData"
+	id    teaCd 		{domain: DoCode 	label: "Code"}
+	field label 		{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "Titre" 			cardinality : "1"	}
+	values : `{
+        "UNKNOWN_MESSAGES" : {
+            "teaCd" 	: "UNKNOWN_MESSAGES",
+            "label" 	: "Unknown messages",
+            "labelFr" 	: "Messages inconnus"
+           
+        },
+        "SESSIONS" : {
+            "teaCd" 	: "SESSIONS",
+            "label" 	: "Sessions",
+            "labelFr" 	: "Sessions"      
+        }
+     }`
+    sortField : "teaCd"
+ 	displayField : "label"
+}
+
+create DtDefinition DtStatCriteria {
+	field botId 		{domain: DoId 					label: "Chatbot selection" 		}
+	field timeOption	{domain: DoCode 				label: "Time option" 			}
+	field nodId			{domain: DoId 					label: "Node selection" 		}
+}
+
+create DtDefinition DtSentenseDetail {
+	field messageId 	{domain: DoIdStr 				label: "Rasa message ID" 		}
+	field date 			{domain: DoInstant 				label: "Date" 					}
+	field text			{domain: DoLabel 				label: "User text" 				}
+	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			}
+	field confidence	{domain: DoPercentage 			label: "Confidence" 			}
+	field topId			{domain: DoId 					label: "Topic selection" 		}
+	field modelName		{domain: DoLabel 				label: "Model Name" 			}
+}
+
+create DtDefinition DtUnknownSentenseExport {	
+	field date 			{domain: DoInstant 				label: "Date" 					}
+	field text			{domain: DoLabel 				label: "User text" 				}	
+	field modelName		{domain: DoLabel 				label: "Model Name" 			}
+	field dateTraining	{domain: DoInstant 				label: "Date training"	 		}
+	field confidence	{domain: DoPercentage 			label: "Confidence" 			}
+	field botName		{domain: DoLabel 				label: "Bot name" 				}
+	field creationBot	{domain: DoLabel 				label: "Date bot creation" 		}
+}
+
+create DtDefinition DtTopIntent {
+	field topId			{domain: DoId 					label: "Topic ID" 				}
+	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			}
+	field code			{domain: DoLabel				label: "Topic code"				}
+	field count			{domain: DoNumber 				label: "Count" 					}
+}
+
+create DtDefinition DtSessionExport {	
+	field date 			{domain: DoInstant 				label: "Date" 					}
+	field modelName		{domain: DoLabel 				label: "Model Name" 			}
+	field dateTraining	{domain: DoInstant 				label: "Date training"	 		}
+	field botName		{domain: DoLabel 				label: "Bot name" 				}
+	field creationBot	{domain: DoLabel 				label: "Date bot creation" 		}
+}

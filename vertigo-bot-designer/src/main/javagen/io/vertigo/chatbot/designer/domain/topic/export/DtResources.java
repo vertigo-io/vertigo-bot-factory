@@ -1,10 +1,10 @@
-package io.vertigo.chatbot.designer.builder.topic.export;
+package io.vertigo.chatbot.designer.domain.topic.export;
 
 import io.vertigo.core.locale.MessageKey;
 
 /**
  * Attention cette classe est générée automatiquement !
- * Resources du module io.vertigo.chatbot.designer.builder.topic.export
+ * Resources du module io.vertigo.chatbot.designer.domain.topic.export
  */
 public enum DtResources implements MessageKey {
 

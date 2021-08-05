@@ -4,9 +4,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-	<!-- Création de la BDD -->
-	<changeSet author="vbaillet" id="alter_1_0">
-		<sqlFile encoding="utf8" path="/sql/v_0_6/alter_20_03_05.sql" />
-		<!-- <sqlFile encoding="utf8" path="/sql/v_1_0/alter_20_04_15.sql" /> -->
+	<changeSet author="vprima" id="export statistic">
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_07_21.sql" />
 	</changeSet>
+	
 </databaseChangeLog>
