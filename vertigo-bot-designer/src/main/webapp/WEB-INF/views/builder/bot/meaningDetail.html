@@ -28,7 +28,7 @@
 							VertigoUi.componentStates.synonyms.pagination.page * VertigoUi.componentStates.synonyms.pagination.rowsPerPage);
 		}
 		</script>
-		<title th:text="meaning"></title>
+		<title th:text="#{meaning.title}"></title>
 	</head>
 	
 	<body>
@@ -67,7 +67,7 @@
 					<q-input v-model="vueData.newSynonym" 
 						dense class="q-pb-sm"
 					    @keydown.enter.prevent="if (vueData.newSynonym.trim().length > 0) {httpPostAjax('_addSynonym', {'vContext[newSynonym]':vueData.newSynonym}); componentStates.synonyms.pagination.page = 1; componentStates.synonyms.pagination.search = '';}"
-						th:placeholder="synonym"
+						th:placeholder="#{meaning.placeholder}"
 						name="vContext['newSynonym']"						
 					>
 					</q-input>

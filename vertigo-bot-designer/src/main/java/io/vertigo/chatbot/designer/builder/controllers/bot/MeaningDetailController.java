@@ -69,6 +69,7 @@ public class MeaningDetailController extends AbstractBotController {
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId,
 			@PathVariable("meaId") final Long meaId) {
 
+		super.initCommonContext(viewContext, botId);
 		final Chatbot chatbot = chatbotServices.getChatbotById(botId);
 		viewContext.publishDto(botKey, chatbot);
 
