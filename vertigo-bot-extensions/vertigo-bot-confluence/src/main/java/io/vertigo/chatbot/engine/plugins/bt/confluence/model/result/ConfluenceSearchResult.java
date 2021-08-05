@@ -11,9 +11,6 @@ public class ConfluenceSearchResult {
 
 	private String url;
 
-	public ConfluenceSearchResult() {
-	}
-
 	public ConfluenceSearchResultDetail getDetail() {
 		return detail;
 	}

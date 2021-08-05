@@ -56,7 +56,7 @@ public final class ConfluenceHttpRequestHelper {
 				throw new VSystemException("Error during sending request : " + request.uri().toString());
 			}
 		} catch (IOException | InterruptedException e) {
-			throw new VSystemException(e.getMessage());
+			throw new VSystemException(e, "Error during sending request");
 		}
 		return response;
 	}

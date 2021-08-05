@@ -15,10 +15,6 @@ public class ConfluenceSearchResultDetail {
 	@JsonProperty(value = "_links")
 	private ConfluenceSearchLinks links;
 
-	public ConfluenceSearchResultDetail() {
-
-	}
-
 	public String getId() {
 		return id;
 	}

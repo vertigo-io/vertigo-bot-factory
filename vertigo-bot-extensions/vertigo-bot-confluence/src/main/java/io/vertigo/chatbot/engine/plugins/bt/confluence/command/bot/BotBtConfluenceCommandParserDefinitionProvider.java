@@ -19,7 +19,8 @@ public class BotBtConfluenceCommandParserDefinitionProvider implements SimpleDef
 	@Override
 	public List<BtCommandParserDefinition> provideDefinitions(final DefinitionSpace definitionSpace) {
 		return List.of(
-				BtCommandParserDefinition.basicCommand("confluence", (c, p) -> botConfluenceNodeProvider.confluenceSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getStringParam(2))));
+				BtCommandParserDefinition.basicCommand("confluence:search",
+						(c, p) -> botConfluenceNodeProvider.confluenceSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getStringParam(2))));
 	}
 
 	private static BlackBoard getBB(final List<Object> params) {

@@ -8,10 +8,6 @@ public class ConfluenceSpaceResponse extends AbstractConfluenceResponses {
 
 	private Integer limit;
 
-	public ConfluenceSpaceResponse() {
-
-	}
-
 	public ConfluenceSpace[] getResults() {
 		return results;
 	}
