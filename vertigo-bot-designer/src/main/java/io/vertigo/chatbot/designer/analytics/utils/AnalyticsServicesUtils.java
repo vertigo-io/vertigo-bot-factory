@@ -30,9 +30,22 @@ public final class AnalyticsServicesUtils {
 
 	public static TimeFilter getTimeFilter(final StatCriteria criteria) {
 		final TimeOption timeOption = TimeOption.valueOf(criteria.getTimeOption());
-		final String now = '\'' + Instant.now().toString() + '\'';
+		final String toDate;
+		if (criteria.getToDate() == null) {
+			toDate = '\'' + Instant.now().toString() + '\'';
+		} else {
+			toDate = '\'' + criteria.getToDate().toString() + "T23:59:59.999999999Z" + '\'';
+		}
 
-		return TimeFilter.builder(now + " - " + timeOption.getRange(), now).withTimeDim(timeOption.getGrain()).build();
+		final String fromDate;
+		if (criteria.getFromDate() == null) {
+			fromDate = toDate + " - " + timeOption.getRange();
+		} else {
+			fromDate = '\'' + criteria.getFromDate().toString() + "T00:00:00.000000000Z" + '\'';
+		}
+
+		return TimeFilter.builder(fromDate, toDate).withTimeDim(timeOption.getGrain()).build();
+
 	}
 
 }

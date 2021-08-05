@@ -504,7 +504,11 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Time option'. */
 		timeOption,
 		/** Propriété 'Node selection'. */
-		nodId	}
+		nodId,
+		/** Propriété 'From'. */
+		fromDate,
+		/** Propriété 'To'. */
+		toDate	}
 
 	/**
 	 * Enumération des champs de Synonym.

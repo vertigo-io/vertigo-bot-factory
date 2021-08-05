@@ -3,6 +3,7 @@ package io.vertigo.chatbot.designer.analytics.services;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -10,7 +11,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
@@ -65,15 +65,14 @@ public class AnalyticsExportServices implements Component {
 			final Long botId = Long.valueOf((String) values.get("botId"));
 			//It's possible in local environment that the database was reinitialized, but eventlogs still have obsolete values
 			if (botId != null) {
-				final Chatbot bot = chatbotServices.getChatbotById(botId);
+				final Optional<Chatbot> bot = chatbotServices.getChatbotByBotId(botId);
 				final String botName = chatbotServices.getBotNameDisplay(bot);
 				final String dateBot = chatbotServices.getBotDateDisplay(bot);
 				newSessionExport.setBotName(botName);
 				newSessionExport.setCreationBot(dateBot);
 				final Long traId = Long.valueOf((String) values.get("traId"));
 				if (traId != null) {
-					final Optional<Training> training = trainingServices.getTrainingByTraIdAndBotId(botId, traId);
-					final java.time.Instant dateTraining = trainingServices.getInstantEndDisplay(training);
+					final Instant dateTraining = trainingServices.getInstantEndDisplay(botId, traId);
 					newSessionExport.setDateTraining(dateTraining);
 				}
 			}
@@ -127,15 +126,14 @@ public class AnalyticsExportServices implements Component {
 			final Long botId = Long.valueOf((String) values.get("botId"));
 			//It's possible in local environment that the database was reinitialized, but eventlogs still have obsolete values
 			if (botId != null) {
-				final Chatbot bot = chatbotServices.getChatbotById(botId);
+				final Optional<Chatbot> bot = chatbotServices.getChatbotByBotId(botId);
 				final String botName = chatbotServices.getBotNameDisplay(bot);
 				final String dateBot = chatbotServices.getBotDateDisplay(bot);
 				newUnknownSentenseExport.setBotName(botName);
 				newUnknownSentenseExport.setCreationBot(dateBot);
 				final Long traId = Long.valueOf((String) values.get("traId"));
 				if (traId != null) {
-					final Optional<Training> training = trainingServices.getTrainingByTraIdAndBotId(botId, traId);
-					final java.time.Instant dateTraining = trainingServices.getInstantEndDisplay(training);
+					final Instant dateTraining = trainingServices.getInstantEndDisplay(botId, traId);
 					newUnknownSentenseExport.setDateTraining(dateTraining);
 				}
 			}
@@ -162,9 +160,6 @@ public class AnalyticsExportServices implements Component {
 				.addField(UnknownSentenseExportFields.creationBot)
 				.endSheet()
 				.build();
-		final VFile result = exportManager.createExportFile(export);
-
-		return result;
-
+		return exportManager.createExportFile(export);
 	}
 }

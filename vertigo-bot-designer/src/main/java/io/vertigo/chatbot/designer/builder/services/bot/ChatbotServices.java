@@ -16,7 +16,6 @@ import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
-import io.vertigo.chatbot.designer.builder.services.DateUtils;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
@@ -27,6 +26,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
+import io.vertigo.chatbot.designer.utils.DateUtils;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -201,12 +201,12 @@ public class ChatbotServices implements Component {
 		return chatbotDAO.findOptional(criteria);
 	}
 
-	public String getBotNameDisplay(final Chatbot bot) {
-		return bot != null ? bot.getName() : MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
+	public String getBotNameDisplay(final Optional<Chatbot> bot) {
+		return bot.isPresent() ? bot.get().getName() : MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
 	}
 
-	public String getBotDateDisplay(final Chatbot bot) {
-		return bot != null ? bot.getCreationDate().format(formatterDate) : null;
+	public String getBotDateDisplay(final Optional<Chatbot> bot) {
+		return bot.isPresent() ? bot.get().getCreationDate().format(formatterDate) : null;
 	}
 
 }

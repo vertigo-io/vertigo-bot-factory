@@ -270,7 +270,8 @@ public class TrainingServices implements Component {
 		trainingPAO.removeTrainingFileByFilIds(filesId);
 	}
 
-	public Instant getInstantEndDisplay(final Optional<Training> optionalTraining) {
+	public Instant getInstantEndDisplay(final Long botId, final Long traId) {
+		final Optional<Training> optionalTraining = getTrainingByTraIdAndBotId(botId, traId);
 		return optionalTraining.isPresent() ? optionalTraining.get().getEndTime() : null;
 	}
 
