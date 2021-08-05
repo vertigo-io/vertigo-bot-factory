@@ -24,6 +24,9 @@ comment on column TOPIC_LABEL.BOT_ID is
 alter table TOPIC_LABEL
 	add constraint FK_A_TOPIC_LABEL_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
+	
+alter table topic_label
+add constraint label_botId_topic_label unique (bot_id , label);
 
 create index A_TOPIC_LABEL_CHATBOT_CHATBOT_FK on TOPIC_LABEL (BOT_ID asc);
 

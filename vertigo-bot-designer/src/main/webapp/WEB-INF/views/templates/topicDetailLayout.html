@@ -61,7 +61,7 @@
 			}
 			
 			function createValue (val, done) {
-		        if (val.length > 0) {
+		        if (val.length > 0 && !val.includes(',')) {
 		        	let find = VertigoUi.componentStates.labels.filterOptions.find(element => element.label === val);
 		        	val = find != null ? find : {label:val}
 		          	done(val, 'add-unique')
@@ -119,6 +119,7 @@
 					use-input
 					:options="componentStates.labels.filterOptions"
 					@filter="filterFn"
+					reactive-rules
 					input-debounce="0"
 					@new-value="createValue"
 					stack-label>
