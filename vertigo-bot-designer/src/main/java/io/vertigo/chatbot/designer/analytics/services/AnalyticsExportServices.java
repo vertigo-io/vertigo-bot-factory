@@ -10,7 +10,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
@@ -72,8 +71,7 @@ public class AnalyticsExportServices implements Component {
 				newSessionExport.setCreationBot(dateBot);
 				final Long traId = Long.valueOf((String) values.get("traId"));
 				if (traId != null) {
-					final Optional<Training> training = trainingServices.getTrainingByTraIdAndBotId(botId, traId);
-					final java.time.Instant dateTraining = trainingServices.getInstantEndDisplay(training);
+					final java.time.Instant dateTraining = trainingServices.getInstantEndDisplay(botId, traId);
 					newSessionExport.setDateTraining(dateTraining);
 				}
 			}
@@ -134,8 +132,7 @@ public class AnalyticsExportServices implements Component {
 				newUnknownSentenseExport.setCreationBot(dateBot);
 				final Long traId = Long.valueOf((String) values.get("traId"));
 				if (traId != null) {
-					final Optional<Training> training = trainingServices.getTrainingByTraIdAndBotId(botId, traId);
-					final java.time.Instant dateTraining = trainingServices.getInstantEndDisplay(training);
+					final java.time.Instant dateTraining = trainingServices.getInstantEndDisplay(botId, traId);
 					newUnknownSentenseExport.setDateTraining(dateTraining);
 				}
 			}
@@ -162,9 +159,6 @@ public class AnalyticsExportServices implements Component {
 				.addField(UnknownSentenseExportFields.creationBot)
 				.endSheet()
 				.build();
-		final VFile result = exportManager.createExportFile(export);
-
-		return result;
-
+		return exportManager.createExportFile(export);
 	}
 }
