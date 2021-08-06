@@ -24,7 +24,7 @@ public final class BotConfluenceNodeProvider implements Component {
 	public BTNode confluenceSearch(final BlackBoard bb, final String keyTemplate, final String question, final String listPresentation) {
 		return sequence(
 				inputString(bb, keyTemplate, question),
-				() -> {
+				() -> { 
 					bb.listPush(BotEngine.BOT_RESPONSE_KEY, listPresentation);
 					final var searchObject = bb.getString(BBKey.of(keyTemplate));
 					final List<String> searchResult = confluenceServerService.searchOnConfluenceCommand(searchObject);
