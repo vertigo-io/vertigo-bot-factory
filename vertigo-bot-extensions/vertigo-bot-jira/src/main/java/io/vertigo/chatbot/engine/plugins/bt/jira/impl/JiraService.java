@@ -4,4 +4,8 @@ import io.vertigo.core.node.component.Component;
 
 public class JiraService implements Component, IJiraService {
 
+	public void createRequestJira() {
+
+	}
+
 }
