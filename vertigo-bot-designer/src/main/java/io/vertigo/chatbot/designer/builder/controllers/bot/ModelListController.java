@@ -71,6 +71,8 @@ public class ModelListController extends AbstractBotController {
 
 	private static final ViewContextKey<Training> deployedTrainingKey = ViewContextKey.of("deployedTraining");
 
+	private static final ViewContextKey<Training> trainingDisplayedKey = ViewContextKey.of("trainingDisplayed");
+
 	@Inject
 	private TrainingServices trainingServices;
 
@@ -98,6 +100,7 @@ public class ModelListController extends AbstractBotController {
 		} else {
 			viewContext.publishDto(deployedTrainingKey, new Training());
 		}
+		viewContext.publishDto(trainingDisplayedKey, new Training());
 		toModeReadOnly();
 	}
 

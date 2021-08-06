@@ -19,6 +19,7 @@ package io.vertigo.chatbot.executor.webservices;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
@@ -45,10 +46,17 @@ public class AdminWebService implements WebServices {
 
 	@PUT("/model")
 	public String loadModel(@InnerBodyParam("botExport") final BotExport bot,
-			@InnerBodyParam("executorConfig") final ExecutorConfiguration executorConfig) {
-		final StringBuilder logs = new StringBuilder("\r\nExecutor logs\r\n");
-		executorManager.loadModel(bot, executorConfig, logs);
+			@InnerBodyParam("executorConfig") final ExecutorConfiguration executorConfig) throws Exception {
+		final StringBuilder logs = new StringBuilder(LogsUtils.BR + LogsUtils.BR + "Executor logs" + LogsUtils.BR);
+		try {
+			executorManager.loadModel(bot, executorConfig, logs);
+		} catch (final Exception e) {
+			logs.append(LogsUtils.KO + LogsUtils.BR);
+			logs.append(e.toString());
+			throw new Exception(logs.toString(), e);
+		}
 		return logs.toString();
+
 	}
 
 	@GET("/trainStatus")

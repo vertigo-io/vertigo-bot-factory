@@ -14,6 +14,7 @@ import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.nlu.NluIntent;
 import io.vertigo.ai.nlu.NluManager;
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.commons.codec.CodecManager;
 import io.vertigo.core.lang.Assertion;
@@ -73,17 +74,17 @@ public final class BotManagerImpl implements BotManager {
 		final Map<String, TopicDefinition> topicDefinitionTempMap = new HashMap<>();
 
 		for (final TopicDefinition t : newTopics) {
-			logs.append(t.getCode() + "mapping : ");
+			logs.append(t.getCode() + " mapping : ");
 			if (!t.getTrainingPhrases().isEmpty()) {
-				logs.append(t.getTrainingPhrases() + "\r\n");
+				logs.append(t.getTrainingPhrases() + LogsUtils.BR);
 				nluTtrainingData.put(NluIntent.of(t.getCode()), t.getTrainingPhrases()); // build NLU training data
 			}
 			topicDefinitionTempMap.put(t.getCode(), t);
-			logs.append(t.getCode() + " mapping OK\r\n");
+			logs.append(t.getCode() + " mapping " + LogsUtils.OK + LogsUtils.BR);
 		}
-
-		nluManager.train(nluTtrainingData, NluManager.DEFAULT_ENGINE_NAME, logs); // the new NLU model is effectively running after this line
-
+		logs.append("Rasa training mapping ");
+		nluManager.train(nluTtrainingData, NluManager.DEFAULT_ENGINE_NAME); // the new NLU model is effectively running after this line
+		logs.append(LogsUtils.OK + LogsUtils.BR);
 		// training ok, update state
 		topicDefinitionMap = Collections.unmodifiableMap(topicDefinitionTempMap);
 	}

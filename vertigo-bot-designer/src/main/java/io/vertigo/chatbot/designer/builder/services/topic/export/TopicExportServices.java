@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
@@ -125,7 +126,8 @@ public class TopicExportServices implements Component, Activeable {
 			final Map<Long, String> mapTopicBt = services.mapTopicToBt(bot);
 			result.addAll(TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt, logs));
 		}
-		logs.append("Export topics OK\r\n");
+		logs.append("Export topics ");
+		logs.append(LogsUtils.OK + LogsUtils.BR);
 		return result;
 	}
 

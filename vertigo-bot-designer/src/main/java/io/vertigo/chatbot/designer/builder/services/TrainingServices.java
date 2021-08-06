@@ -40,8 +40,14 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.JaxrsProvider;
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -100,7 +106,7 @@ public class TrainingServices implements Component {
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
 	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
-		final StringBuilder logs = new StringBuilder("new Training \r\n");
+		final StringBuilder logs = new StringBuilder("new Training" + LogsUtils.BR);
 
 		final Long botId = bot.getBotId();
 
@@ -117,26 +123,28 @@ public class TrainingServices implements Component {
 		try {
 			logs.append("Executor configuration... ");
 			final ExecutorConfiguration execConfig = getExecutorConfig(training, devNode);
-			logs.append("OK \r\n");
+			logs.append(LogsUtils.OK + LogsUtils.BR);
 
-			logs.append("Bot export :\r\n");
+			logs.append("Bot export :" + LogsUtils.BR);
 			final Map<String, Object> requestData = new HashMap<String, Object>();
 			requestData.put("botExport", exportBot(bot, logs));
 			requestData.put("executorConfig", execConfig);
-			logs.append("Bot export OK \r\n");
+			logs.append("Bot export " + LogsUtils.OK + LogsUtils.BR);
 
 			final Map<String, String> headers = Map.of(API_KEY, devNode.getApiKey(),
 					"Content-type", "application/json");
 
-			logs.append("Call executor training :\r\n");
+			logs.append("Call executor training :" + LogsUtils.BR);
 			final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
 			final HttpRequest request = HttpRequestUtils.createPutRequest(devNode.getUrl() + "/api/chatbot/admin/model", headers, publisher);
 			HttpRequestUtils.sendAsyncRequest(null, request, BodyHandlers.ofString())
-					.thenApply(response -> this.handleResponse(response, training, devNode, bot, logs));
-			logs.append("Call training OK, training in progress...");
+					.thenApply(response -> {
+						return this.handleResponse(response, training, devNode, bot, logs);
+					});
+			logs.append("Call training " + LogsUtils.OK + ", training in progress...");
 			return training;
 		} catch (final Exception e) {
-			logs.append("KO :\r\n");
+			logs.append(LogsUtils.KO + LogsUtils.BR);
 			logs.append(e.getMessage());
 			training.setLog(logs.toString());
 			throw e;
@@ -147,20 +155,50 @@ public class TrainingServices implements Component {
 	}
 
 	public <T> String handleResponse(final HttpResponse<T> response, final Training training, final ChatbotNode node, final Chatbot bot, final StringBuilder logs) {
-		if (response.statusCode() != 200) {
-			training.setStrCd(TrainingStatusEnum.KO.name());
-			logs.append("KO\r\n");
-		} else {
+		training.setEndTime(Instant.now());
+		if (HttpRequestUtils.isResponseOk(response, 200)) {
+
 			training.setStrCd(TrainingStatusEnum.OK.name());
 			node.setTraId(training.getTraId());
 			asynchronousServices.saveNodeWithoutAuthorizations(node);
-			logs.append("OK\r\n");
+			logs.append(LogsUtils.OK + LogsUtils.BR);
+			logs.append(response.body());
+
+		} else {
+			training.setStrCd(TrainingStatusEnum.KO.name());
+			logs.append(LogsUtils.KO + LogsUtils.BR);
+			if (!HttpRequestUtils.isResponseKo(response, 404, 405)) {
+				final ObjectMapper mapper = new ObjectMapper();
+				JsonNode root = null;
+				try {
+					root = mapper.readTree(response.body().toString());
+					final String responseString = root.get("globalErrors").get(0).toString();
+
+					logs.append(responseString.substring(1, responseString.length() - 1));
+				} catch (final JsonMappingException e) {
+					logs.append(e);
+					e.printStackTrace();
+				} catch (final JsonProcessingException e) {
+					logs.append(e);
+					e.printStackTrace();
+				}
+
+			} else {
+				logs.append(response.body());
+			}
+
 		}
-		training.setEndTime(Instant.now());
-		logs.append(response.body());
 		training.setLog(logs.toString());
 		asynchronousServices.saveTrainingWithoutAuthorizations(training);
 		return "response handled";
+	}
+
+	private static String getField(final JsonNode root, final String name) {
+		final JsonNode findPath = root.findPath(name);
+		if (!findPath.isMissingNode() && !findPath.isNull()) {
+			return findPath.asText();
+		}
+		return null;
 	}
 
 	private Training createTraining(final Chatbot bot) {

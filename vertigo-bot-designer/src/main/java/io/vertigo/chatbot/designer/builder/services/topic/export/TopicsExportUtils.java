@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
@@ -18,7 +19,7 @@ public class TopicsExportUtils {
 	public static DtList<TopicExport> mapTopicsToNluTrainingSentences(final DtList<Topic> topics, final DtList<NluTrainingExport> nlus, final Map<Long, String> mapBtTopic, final StringBuilder logs) {
 		final DtList<TopicExport> exports = new DtList<>(TopicExport.class);
 		for (final Topic topic : topics) {
-			logs.append("Export topic " + topic.getCode() + ":\r\n");
+			logs.append("Export topic " + topic.getCode() + ":" + LogsUtils.BR);
 
 			final Long topId = topic.getTopId();
 			final String code = topic.getCode();
@@ -31,7 +32,7 @@ public class TopicsExportUtils {
 			export.setNluTrainingSentences(topicNlu);
 			export.setTopicBT(mapBtTopic.get(topId));
 			exports.add(export);
-			logs.append("Nlu : " + topicNlu + "\r\n");
+			logs.append("Nlu : " + topicNlu + LogsUtils.BR);
 		}
 		return exports;
 	}
