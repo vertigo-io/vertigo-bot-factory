@@ -1,6 +1,6 @@
 {
   "realm": "chatbot",
-  "auth-server-url": "http://keycloak:8080/auth/",
+  "auth-server-url": "http://localhost:8200/auth/",
   "ssl-required": "external",
   "resource": "chatbot",
   "public-client": true,
