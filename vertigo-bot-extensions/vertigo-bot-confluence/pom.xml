@@ -10,7 +10,7 @@
   <description>Confluence plugin for bot</description>
   <packaging>jar</packaging>
   
-  
+
   <dependencies>
 	<dependency>
 	    <groupId>com.fasterxml.jackson.core</groupId>
@@ -22,6 +22,9 @@
 		<artifactId>vertigo-bot-executor</artifactId>
 		<version>${project.version}</version>
 		<classifier>classes</classifier>
+		
+
+	
 	</dependency>
 		
 	
