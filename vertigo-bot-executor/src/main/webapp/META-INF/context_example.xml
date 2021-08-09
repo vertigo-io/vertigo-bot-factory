@@ -16,9 +16,21 @@
 	<Parameter name="CONFLUENCE_URL" value="" override="false"/>
 	<Parameter name="CONFLUENCE_LIMIT" value="3" override="false"/>
 	
+	<!-- Use for jira plugin -->
+	<Parameter name="JIRA_USER" value="" override="false"/>
+	<Parameter name="JIRA_PWD" value="" override="false"/>
+	<Parameter name="JIRA_URL" value="" override="false"/>
+	
+	
 	<!--  Use for confluence plugin -->
    <Resources className="org.apache.catalina.webresources.StandardRoot">
         <PostResources base="C:\Users\vbaillet\Documents\Projets\chatbot\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-confluence\target\classes"
+                 className="org.apache.catalina.webresources.DirResourceSet"
+                 webAppMount="/WEB-INF/classes"/>
+    </Resources>
+    <!--  Use for jira plugin -->
+   <Resources className="org.apache.catalina.webresources.StandardRoot">
+        <PostResources base="C:\Users\vbaillet\Documents\Projets\chatbot\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-jira\target\classes"
                  className="org.apache.catalina.webresources.DirResourceSet"
                  webAppMount="/WEB-INF/classes"/>
     </Resources>
