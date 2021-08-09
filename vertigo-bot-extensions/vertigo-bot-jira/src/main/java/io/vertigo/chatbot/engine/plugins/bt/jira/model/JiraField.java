@@ -6,18 +6,28 @@ import io.vertigo.core.lang.VSystemException;
 
 public class JiraField implements BTNode {
 
-	private String value;
+	private String key;
+	private String question;
 
-	public JiraField(final String value) {
-		this.value = value;
+	public JiraField(final String key, final String question) {
+		setKey(key);
+		setQuestion(question);
 	}
 
-	public String getValue() {
-		return value;
+	public String getKey() {
+		return key;
 	}
 
-	public void setValue(final String value) {
-		this.value = value;
+	public void setKey(final String key) {
+		this.key = key;
+	}
+
+	public String getQuestion() {
+		return question;
+	}
+
+	public void setQuestion(final String question) {
+		this.question = question;
 	}
 
 	@Override
