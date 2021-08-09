@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.impl.command.BtCommandParserDefinition;
+import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.node.definition.Definition;
@@ -27,7 +28,8 @@ public class BotBtJiraCommandParserDefinitionProvider implements SimpleDefinitio
 		LOGGER.info("loading jira plugin");
 		return List.of(
 				BtCommandParserDefinition.basicCommand("jira:issue:create",
-						(c, p) -> botJiraNodeProvider.jiraIssueCreation(getBB(p))));
+						(c, p) -> botJiraNodeProvider.jiraIssueCreation(getBB(p))),
+				BtCommandParserDefinition.basicCommand("jira:field", (c, p) -> new JiraField(c.getStringParam(0))));
 	}
 
 	private static BlackBoard getBB(final List<Object> params) {
