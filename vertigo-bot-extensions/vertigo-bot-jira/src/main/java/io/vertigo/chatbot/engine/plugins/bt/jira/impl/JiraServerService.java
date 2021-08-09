@@ -38,7 +38,7 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		//do nothing
 	}
 
-	public BasicIssue createRequestJira() {
+	public BasicIssue createIssue() {
 		URI jiraServerUri = URI.create(baseJira);
 		AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
 
@@ -64,6 +64,24 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 			}
 		}
 
+	}
+
+	@Override
+	public String createIssueJiraCommand() {
+		var createdIssue = createIssue();
+		return createLinkUrl(createdIssue.getKey());
+
+	}
+
+	private String createLinkUrl(final String key) {
+		final String url = baseJira + "/browse/" + key;
+		final var builder = new StringBuilder();
+		builder.append("<a href=\"");
+		builder.append(url);
+		builder.append("\">");
+		builder.append(key);
+		builder.append("</a>");
+		return builder.toString();
 	}
 
 }
