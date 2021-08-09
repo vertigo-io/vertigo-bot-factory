@@ -32,8 +32,8 @@ public class BotBtJiraCommandParserDefinitionProvider implements SimpleDefinitio
 		LOGGER.info("loading jira plugin");
 		return List.of(
 				BtCommandParserDefinition.compositeCommand("jira:issue:create",
-						BotBtJiraCommandParserDefinitionProvider::buildJiraCreation),
-				BtCommandParserDefinition.basicCommand("jira:field", (c, p) -> new JiraField(c.getStringParam(0))));
+						(c, p, l) -> buildJiraCreation(c, p, l)),
+				BtCommandParserDefinition.basicCommand("jira:field", (c, p) -> new JiraField(c.getStringParam(0), c.getStringParam(1))));
 	}
 
 	private static BlackBoard getBB(final List<Object> params) {
@@ -44,15 +44,14 @@ public class BotBtJiraCommandParserDefinitionProvider implements SimpleDefinitio
 				.orElseThrow(() -> new VSystemException("No BlackBoard found"));
 	}
 
-	private static BTNode buildJiraCreation(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
+	private BTNode buildJiraCreation(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
 		Assertion.check()
-				.isTrue(childs.stream().allMatch(x -> x instanceof JiraField), "Only 'jira field' is allowen inside 'jira create issue'");
+				.isTrue(childs.stream().allMatch(x -> x instanceof JiraField), "Only 'jira field' is allowed inside 'jira create issue'");
 
-		var jiraFields = childs.stream().map(n -> (JiraField) n).collect(Collectors.toList());
+		final var jiraFields = childs.stream().map(n -> (JiraField) n).collect(Collectors.toList());
 
-		return BotJiraNodeProvider.buildJiraCreateIssue(getBB(params), jiraFields);
+		return botJiraNodeProvider.buildJiraCreateIssue(getBB(params), jiraFields);
 
-		return null;
 	}
 
 }
