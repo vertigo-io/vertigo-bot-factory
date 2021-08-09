@@ -12,18 +12,25 @@ import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 
+import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.core.param.ParamManager;
 
 public class JiraServerService implements Component, IJiraService, Activeable {
 
-	private final String baseJira = "";
-	private final String user = "";
-	private final String password = "";
+	private ParamManager paramManager;
+
+	private String baseJira;
+	private String user;
+	private String password;
 
 	@Override
 	public void start() {
-		//nothing
+		paramManager = Node.getNode().getComponentSpace().resolve(ParamManager.class);
+		baseJira = paramManager.getParam("JIRA_URL").getValueAsString();
+		user = paramManager.getParam("JIRA_USER").getValueAsString();
+		password = paramManager.getParam("JIRA_PWD").getValueAsString();
 	}
 
 	@Override
