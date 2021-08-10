@@ -21,6 +21,9 @@
 	<Parameter name="JIRA_PWD" value="" override="false"/>
 	<Parameter name="JIRA_URL" value="" override="false"/>
 	
+	<!-- webservice -->
+	<Parameter name="WEB_SERVICE" value="" override="false"/>
+	
 	
 	<!--  Use for confluence plugin -->
    <Resources className="org.apache.catalina.webresources.StandardRoot">
