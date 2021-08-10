@@ -42,7 +42,7 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		//do nothing
 	}
 
-	public BasicIssue createIssue(final List<String> jfFields) {
+	public BasicIssue createIssue(final List<String> jfFields, final List<String> versions) {
 		final URI jiraServerUri = URI.create(baseJira);
 		final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
 
@@ -56,7 +56,7 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 			iib.setProjectKey("CHATBOTPOC");
 			iib.setIssueTypeId(10004L);
 			iib.setSummary(jfFields.get(1).substring(0, Math.min(jfFields.get(1).length(), 49)));
-			iib.setDescription("La référence du client est " + jfFields.get(0));
+			iib.setDescription(getDescriptionFromVersion(versions, "La référence du client est " + jfFields.get(0)));
 			setScenario(iib, jfFields.get(1));
 			setExpectedResult(iib, jfFields.get(2));
 			setObtainedResult(iib, jfFields.get(3));
@@ -75,9 +75,24 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 
 	}
 
+	private String getDescriptionFromVersion(final List<String> versions, final String refClient) {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(refClient);
+		builder.append("\n");
+		builder.append("Numéro de version du back : ");
+		builder.append(versions.get(0));
+		builder.append("\n");
+		builder.append("Numéro de version du front : ");
+		builder.append(versions.get(1));
+		builder.append("\n");
+		builder.append("Numéro de version du paramétrage : ");
+		builder.append(versions.get(2));
+		return builder.toString();
+	}
+
 	@Override
-	public String createIssueJiraCommand(final List<String> jfStrings) {
-		final var createdIssue = createIssue(jfStrings);
+	public String createIssueJiraCommand(final List<String> jfStrings, final List<String> versions) {
+		final var createdIssue = createIssue(jfStrings, versions);
 		return createLinkUrl(createdIssue.getKey());
 
 	}
@@ -106,13 +121,13 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 	}
 
 	private void setCriticityCode(final IssueInputBuilder iib, final String value) {
-		final Map<String, Object> customField = new HashMap<String, Object>();
+		final Map<String, Object> customField = new HashMap<>();
 		customField.put("id", value);
 		iib.setFieldValue("customfield_10412", new ComplexIssueInputFieldValue(customField));
 	}
 
 	private void setReproductibilityCode(final IssueInputBuilder iib, final String value) {
-		final Map<String, Object> customField = new HashMap<String, Object>();
+		final Map<String, Object> customField = new HashMap<>();
 		customField.put("id", value);
 		iib.setFieldValue("customfield_10413", new ComplexIssueInputFieldValue(customField));
 	}

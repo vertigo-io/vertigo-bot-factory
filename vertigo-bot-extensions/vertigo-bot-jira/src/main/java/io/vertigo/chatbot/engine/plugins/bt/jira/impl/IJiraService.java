@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface IJiraService {
 
-	String createIssueJiraCommand(final List<String> jfStrings);
+	String createIssueJiraCommand(final List<String> jfStrings, final List<String> versions);
 
 }
