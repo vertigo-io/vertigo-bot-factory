@@ -56,7 +56,7 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 			iib.setProjectKey("CHATBOTPOC");
 			iib.setIssueTypeId(10004L);
 			iib.setSummary(jfFields.get(1).substring(0, Math.min(jfFields.get(1).length(), 49)));
-			iib.setDescription("La référence du client est " + jfFields.get(0));
+			iib.setDescription(getDescriptionFromVersion(versions, "La référence du client est " + jfFields.get(0)));
 			setScenario(iib, jfFields.get(1));
 			setExpectedResult(iib, jfFields.get(2));
 			setObtainedResult(iib, jfFields.get(3));
@@ -75,8 +75,10 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 
 	}
 
-	private String getDescriptionFromVersion(final List<String> versions) {
+	private String getDescriptionFromVersion(final List<String> versions, final String refClient) {
 		final StringBuilder builder = new StringBuilder();
+		builder.append(refClient);
+		builder.append("\n");
 		builder.append("Numéro de version du back : ");
 		builder.append(versions.get(0));
 		builder.append("\n");
