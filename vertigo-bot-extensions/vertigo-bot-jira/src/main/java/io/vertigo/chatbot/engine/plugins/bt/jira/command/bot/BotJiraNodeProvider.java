@@ -24,15 +24,15 @@ public class BotJiraNodeProvider implements Component {
 	@Inject
 	private JiraServerService jiraService;
 
-	public BTNode jiraIssueCreation(final BlackBoard bb, final List<String> jfStrings) {
+	public BTNode jiraIssueCreation(final BlackBoard bb, final List<String> jfStrings, final String urlSentence) {
 		return () -> {
 			final String result = jiraService.createIssueJiraCommand(jfStrings);
-			bb.listPush(BotEngine.BOT_RESPONSE_KEY, result);
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, urlSentence + " " + result);
 			return BTStatus.Succeeded;
 		};
 	}
 
-	public BTNode buildJiraCreateIssue(final BlackBoard bb, final List<JiraField> jiraFields) {
+	public BTNode buildJiraCreateIssue(final BlackBoard bb, final List<JiraField> jiraFields, final String urlSentence) {
 		final Predicate<String> validator = t -> !StringUtil.isBlank(t);
 		final List<BTNode> sequence = new ArrayList<>();
 		final List<String> jfStrings = new ArrayList<>();
@@ -40,7 +40,7 @@ public class BotJiraNodeProvider implements Component {
 			sequence.add(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion(), validator));
 			jfStrings.add(bb.getString(BBKey.of(jiraField.getKey())));
 		}
-		sequence.add(jiraIssueCreation(bb, jfStrings));
+		sequence.add(jiraIssueCreation(bb, jfStrings, urlSentence));
 
 		return sequence(sequence);
 
