@@ -42,7 +42,7 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		//do nothing
 	}
 
-	public BasicIssue createIssue(final List<String> jfFields) {
+	public BasicIssue createIssue(final List<String> jfFields, final List<String> versions) {
 		final URI jiraServerUri = URI.create(baseJira);
 		final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
 
@@ -75,9 +75,22 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 
 	}
 
+	private String getDescriptionFromVersion(final List<String> versions) {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Numéro de version du back : ");
+		builder.append(versions.get(0));
+		builder.append("\n");
+		builder.append("Numéro de version du front : ");
+		builder.append(versions.get(1));
+		builder.append("\n");
+		builder.append("Numéro de version du paramétrage : ");
+		builder.append(versions.get(2));
+		return builder.toString();
+	}
+
 	@Override
-	public String createIssueJiraCommand(final List<String> jfStrings) {
-		final var createdIssue = createIssue(jfStrings);
+	public String createIssueJiraCommand(final List<String> jfStrings, final List<String> versions) {
+		final var createdIssue = createIssue(jfStrings, versions);
 		return createLinkUrl(createdIssue.getKey());
 
 	}
@@ -106,13 +119,13 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 	}
 
 	private void setCriticityCode(final IssueInputBuilder iib, final String value) {
-		final Map<String, Object> customField = new HashMap<String, Object>();
+		final Map<String, Object> customField = new HashMap<>();
 		customField.put("id", value);
 		iib.setFieldValue("customfield_10412", new ComplexIssueInputFieldValue(customField));
 	}
 
 	private void setReproductibilityCode(final IssueInputBuilder iib, final String value) {
-		final Map<String, Object> customField = new HashMap<String, Object>();
+		final Map<String, Object> customField = new HashMap<>();
 		customField.put("id", value);
 		iib.setFieldValue("customfield_10413", new ComplexIssueInputFieldValue(customField));
 	}
