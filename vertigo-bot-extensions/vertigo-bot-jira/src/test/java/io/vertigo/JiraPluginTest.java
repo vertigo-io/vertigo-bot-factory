@@ -1,14 +1,7 @@
 package io.vertigo;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
-import javax.inject.Inject;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 
 import io.vertigo.chatbot.engine.plugins.bt.jira.impl.JiraServerService;
 import io.vertigo.core.node.AutoCloseableNode;
@@ -22,15 +15,6 @@ import io.vertigo.core.plugins.resource.url.URLResourceResolverPlugin;
 public class JiraPluginTest {
 
 	private AutoCloseableNode node;
-
-	@Inject
-	private JiraServerService jiraServerService;
-
-	@Test
-	void testSpaceList() {
-		BasicIssue issue = jiraServerService.createRequestJira();
-		assertNotEquals(issue.getId(), null);
-	}
 
 	@BeforeEach
 	public final void setUp() {
