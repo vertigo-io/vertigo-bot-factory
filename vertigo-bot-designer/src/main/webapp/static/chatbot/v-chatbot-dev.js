@@ -109,6 +109,7 @@ Vue.component('v-chatbot-dev', {
 				this.$http.post(this.startCall, {})
 					.then(httpResponse => {
 							this.convId = httpResponse.data.metadatas.sessionId
+							this.url = window.location.href;							
 							this._handleResponse(httpResponse, false)
 						}).catch(error => {
 						// error
@@ -179,10 +180,11 @@ Vue.component('v-chatbot-dev', {
 				var buttons = httpResponse.data.choices;
 				var isEnded = httpResponse.data.status  === 'Ended'
 				isEnded &= !isRating
-								
-				for (var i = 0; i < responses.length - 1; i++){
+							
+				for (var i = 0; i < responses.length - 1; i++){				
 					this.watingMessagesStack.push({text: responses[i]})
 				}
+				//this.watingMessagesStack.push({text: "Vous vous trouvez sur l'url " + this.url});
 				this.watingMessagesStack.push({text: responses[responses.length -1], buttons : buttons})
 				
 				this._displayMessages(isEnded);

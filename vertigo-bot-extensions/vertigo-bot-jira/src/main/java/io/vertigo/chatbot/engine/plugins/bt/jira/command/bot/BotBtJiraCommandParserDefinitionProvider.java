@@ -50,7 +50,7 @@ public class BotBtJiraCommandParserDefinitionProvider implements SimpleDefinitio
 
 		final var jiraFields = childs.stream().map(n -> (JiraField) n).collect(Collectors.toList());
 
-		return botJiraNodeProvider.buildJiraCreateIssue(getBB(params), jiraFields);
+		return botJiraNodeProvider.buildJiraCreateIssue(getBB(params), jiraFields, command.getStringParam(0));
 
 	}
 
