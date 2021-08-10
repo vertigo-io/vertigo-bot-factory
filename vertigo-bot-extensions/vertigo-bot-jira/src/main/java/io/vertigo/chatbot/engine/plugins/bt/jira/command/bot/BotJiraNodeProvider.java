@@ -15,6 +15,7 @@ import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.jira.impl.JiraServerService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.WebService;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
@@ -24,9 +25,13 @@ public class BotJiraNodeProvider implements Component {
 	@Inject
 	private JiraServerService jiraService;
 
-	public BTNode jiraIssueCreation(final BlackBoard bb, final List<String> jfStrings, final String urlSentence) {
+	@Inject
+	private WebService webServices;
+
+public BTNode jiraIssueCreation(final BlackBoard bb, final List<String> jfStrings, final String urlSentence) {
 		return () -> {
-			final String result = jiraService.createIssueJiraCommand(jfStrings);
+			List<String> versions = webServices.getAllVersions();
+			final String result = jiraService.createIssueJiraCommand(jfStrings, versions);
 			bb.listPush(BotEngine.BOT_RESPONSE_KEY, urlSentence + " " + result);
 			return BTStatus.Succeeded;
 		};
