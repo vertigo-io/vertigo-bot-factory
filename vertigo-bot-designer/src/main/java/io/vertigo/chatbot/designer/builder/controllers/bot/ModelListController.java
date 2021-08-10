@@ -22,6 +22,7 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -142,7 +143,10 @@ public class ModelListController extends AbstractBotController {
 		final ChatbotNode devNode = nodeServices.getDevNodeFromList(nodeList);
 		final TalkInput talkInput = ObjectConvertionUtils.jsonToObject(input, TalkInput.class);
 		final String botInput = BotConversationUtils.createBotInput(talkInput);
-		return HttpRequestUtils.postToUrl(devNode.getUrl() + "/api/chatbot/talk/" + talkInput.getSender(), botInput.getBytes());
+		final BodyPublisher publisher = BodyPublishers.ofByteArray(botInput.getBytes(StandardCharsets.UTF_8));
+		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/talk/" + talkInput.getSender(), publisher);
+		final HttpResponse<String> result = HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 200);
+		return result.body();
 	}
 
 	@PostMapping("/_start")
