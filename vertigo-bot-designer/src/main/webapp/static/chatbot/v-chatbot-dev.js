@@ -15,7 +15,7 @@ Vue.component('v-chatbot-dev', {
 						<div class="q-pb-sm">
 							{{$q.lang.vui.chatbot.errorMessage}}
 						</div>
-						<q-btn class="full-width" @click="askBot(lastPayload, true)" :label="$q.lang.vui.chatbot.tryAgain" color="white" text-color="black" ></q-btn>
+						<q-btn class="full-width" @click="postAswerBtn(lastPayload)" :label="$q.lang.vui.chatbot.tryAgain" color="white" text-color="black" ></q-btn>
 					</q-chat-message>
 				</div>
 				<div class="sys-chat non-selectable">
@@ -126,8 +126,8 @@ Vue.component('v-chatbot-dev', {
 				});
 
 				this._scrollToBottom();
-				
-				this.askBot(btn.payload, true);
+				let botInput = {sender: this.convId, message: null, metadatas:{payload : btn.payload}}
+				this.askBot(botInput);
 			},
 			postAnswerText: function () {
 				var sanitizedString = this.inputConfig.responseText.trim().replace(/(?:\r\n|\r|\n)/g, '<br>');
@@ -144,23 +144,23 @@ Vue.component('v-chatbot-dev', {
 				
 				var response = this.inputConfig.responsePattern === "" ? sanitizedString.replace(/(")/g, "\"")
 															  : this.inputConfig.responsePattern.replace("#", sanitizedString.replace(/(")/g, "\\\""));
-				
-				this.askBot(response, false);
+				let botInput = {sender: this.convId, message: response, metadatas:{}}
+				this.askBot(botInput);
 			},
 			_scrollToBottom: function () {
 				if (this.$refs.scroller) {
 					this.$refs.scroller.setScrollPosition(this.$refs.scroller.scrollSize, 400);
 				}
 			},
-			askBot: function (value, isButton) {
+			askBot: function (value) {
 				this.prevInputConfig = JSON.parse(JSON.stringify(this.inputConfig));
 				this.reinitInput();
 				this.lastPayload = value;
 				this.processing = true;
 				
 				this.lastUserInteraction = Date.now();
-			
-				this.$http.post(this.botUrl, {sender: this.convId, message: value, isButton: isButton})
+				
+				this.$http.post(this.botUrl, value)
 					.then(httpResponse => {
 						// success
 						this._handleResponse(httpResponse, false);

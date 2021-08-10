@@ -1,19 +1,20 @@
 package io.vertigo.chatbot.engine.model;
 
+import java.util.Map;
 import java.util.UUID;
 
 public final class TalkInput {
 
 	private UUID sender;
 	private String message;
-	private boolean isButton;
+	private Map<String, Object> metadatas;
 
-	public boolean isButton() {
-		return isButton;
+	public Map<String, Object> getMetadatas() {
+		return metadatas;
 	}
 
-	public void setButton(final boolean isButton) {
-		this.isButton = isButton;
+	public void setMetadatas(final Map<String, Object> metadatas) {
+		this.metadatas = metadatas;
 	}
 
 	public String getMessage() {
