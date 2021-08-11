@@ -58,7 +58,7 @@ public class BotJiraNodeProvider implements Component {
 		sequence.add(getCriticiteButton(bb, "/user/local/criticite", "Quelle est la criticité ?"));
 		sequence.add(getComponentIssue(bb, "/user/local/components", "Quel est le composant ?"));
 		sequence.add(jiraIssueCreation(bb, jiraFields, urlSentence));
-
+		final boolean test = webServices.getIsErrorTarifReduit("0000000");
 		return sequence(sequence);
 
 	}
