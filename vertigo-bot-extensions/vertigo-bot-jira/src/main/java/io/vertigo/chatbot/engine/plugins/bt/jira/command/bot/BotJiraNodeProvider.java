@@ -4,7 +4,6 @@ import static io.vertigo.ai.bt.BTNodes.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -22,7 +21,6 @@ import io.vertigo.chatbot.engine.plugins.bt.jira.impl.JiraServerService;
 import io.vertigo.chatbot.engine.plugins.bt.jira.impl.WebService;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.core.util.StringUtil;
 
 public class BotJiraNodeProvider implements Component {
 
@@ -32,8 +30,11 @@ public class BotJiraNodeProvider implements Component {
 	@Inject
 	private WebService webServices;
 
-	public BTNode jiraIssueCreation(final BlackBoard bb, final List<String> jfStrings, final String urlSentence) {
+	public BTNode jiraIssueCreation(final BlackBoard bb, final List<JiraField> jiraFields, final String urlSentence) {
 		return () -> {
+			final List<String> jfStrings = jiraFields.stream().map(x -> bb.getString(BBKey.of(x.getKey()))).collect(Collectors.toList());
+
+			jfStrings.add(bb.getString(BBKey.of("/user/local/components")));
 			final List<String> versions = webServices.getAllVersions();
 			final String result = jiraService.createIssueJiraCommand(jfStrings, versions);
 			bb.listPush(BotEngine.BOT_RESPONSE_KEY, urlSentence + " " + result);
@@ -42,34 +43,25 @@ public class BotJiraNodeProvider implements Component {
 	}
 
 	public BTNode buildJiraCreateIssue(final BlackBoard bb, final List<JiraField> jiraFields, final String urlSentence) {
-		final Predicate<String> validator = t -> !StringUtil.isBlank(t);
 		final List<BTNode> sequence = new ArrayList<>();
 		final List<String> jfStrings = new ArrayList<>();
 		for (final JiraField jiraField : jiraFields) {
-			if (jiraField.getKey().equals("/user/local/reference")) {
-				BTNode issues = getIssueFromReference(bb, "/user/local/reference");
-				if (issues != null) {
-					sequence.add(issues);
-				}
-
-			} else {
-				sequence.add(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion(), validator));
-				jfStrings.add(bb.getString(BBKey.of(jiraField.getKey())));
-			}
-
+			sequence.add(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()));
 		}
 		sequence.add(getComponentIssue(bb, "/user/local/components", "Quel est le composant ?"));
-		jfStrings.add(bb.getString(BBKey.of("/user/local/components")));
-		sequence.add(jiraIssueCreation(bb, jfStrings, urlSentence));
+
+		sequence.add(jiraIssueCreation(bb, jiraFields, urlSentence));
 
 		return sequence(sequence);
 
 	}
 
 	private BTNode getComponentIssue(final BlackBoard bb, final String keyTemplate, final String question) {
-		final List<BasicComponent> listComponents = (List<BasicComponent>) jiraService.getProject().getComponents();
-		final List<BotButton> listButtons = listComponents.stream().map(x -> mapComponentToButtonNode(x)).collect(Collectors.toList());
-		return BotNodeProvider.chooseButton(bb, keyTemplate, question, listButtons);
+		return () -> {
+			final List<BasicComponent> listComponents = (List<BasicComponent>) jiraService.getProject().getComponents();
+			final List<BotButton> listButtons = listComponents.stream().map(x -> mapComponentToButtonNode(x)).collect(Collectors.toList());
+			return BotNodeProvider.chooseButton(bb, keyTemplate, question, listButtons).eval();
+		};
 	}
 
 	private BotButton mapComponentToButtonNode(final BasicComponent component) {
@@ -77,20 +69,23 @@ public class BotJiraNodeProvider implements Component {
 	}
 
 	private BTNode getIssueFromReference(final BlackBoard bb, final String string) {
-		final List<String> result = new ArrayList<>();
-		result.add("J'ai trouvé une anomalie qui porte déjà sur ce client.");
-		result.add("Pourriez-vous vérifier que votre problème n'est pas déjà référencé?");
-		final String refClient = bb.getString(BBKey.of(string));
-		if (refClient != null) {
+		return () -> {
+			final List<String> result = new ArrayList<>();
+			final List<BTNode> sequence = new ArrayList<>();
+			result.add("J'ai trouvÃ© une anomalie qui porte dÃ©jÃ  sur ce client.");
+			result.add("Pourriez-vous vÃ©rifier que votre problÃ¨me n'est pas dÃ©jÃ  rÃ©fÃ©rencÃ©?");
+			final String refClient = bb.getString(BBKey.of(string));
 			final String jqlSearch = "description ~ " + bb.getString(BBKey.of(string));
-			result.addAll(jiraService.getIssues(jqlSearch));
-			if (result.size() > 2) {
-				final List<BTNode> sequence = new ArrayList<>();
-				result.stream().forEach(x -> bb.listPush(BotEngine.BOT_RESPONSE_KEY, x));
-				return sequence(sequence);
+			final List<String> jiraIssues = jiraService.getIssues(jqlSearch);
+			if (jiraIssues != null) {
+				result.addAll(jiraIssues);
 			}
-		}
-		return null;
+			if (result.size() > 2) {
+				result.stream().forEach(x -> bb.listPush(BotEngine.BOT_RESPONSE_KEY, x));
+				bb.getString(BBKey.of(jqlSearch));
+			}
+			return sequence(sequence).eval();
+		};
 	}
 
 }
