@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.atlassian.jira.rest.client.api.AuthenticationHandler;
 import com.atlassian.jira.rest.client.api.IssueRestClient;
@@ -13,9 +15,8 @@ import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.ProjectRestClient;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
-import com.atlassian.jira.rest.client.api.domain.Project;
-import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldValue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldValue;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
@@ -47,7 +48,7 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		//do nothing
 	}
 
-	public BasicIssue createIssue(final List<String> jfFields, final List<String> versions) {
+	private JiraRestClient createJiraRestClient() {
 		final URI jiraServerUri = URI.create(baseJira);
 		final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
 
@@ -55,7 +56,7 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		return factory.create(jiraServerUri, auth);
 	}
 
-	public BasicIssue createIssue() {
+	public BasicIssue createIssue(final List<String> jfFields, final List<String> versions) {
 		JiraRestClient restClient = createJiraRestClient();
 		IssueRestClient issueClient = restClient.getIssueClient();
 
@@ -102,10 +103,12 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		return builder.toString();
 	}
 
-	public boolean compteSearchIssues(final String jqlSearch) {
+	public List<String> getIssues(final String jqlSearch) {
 		SearchRestClient searchClient = createJiraRestClient().getSearchClient();
 		SearchResult searchResult = searchClient.searchJql(jqlSearch).claim();
-		return searchResult.getTotal() != 0;
+		return StreamSupport.stream(searchResult.getIssues().spliterator(), false)
+				.map(x -> createLinkUrl(x.getKey()))
+				.collect(Collectors.toList());
 
 	}
 

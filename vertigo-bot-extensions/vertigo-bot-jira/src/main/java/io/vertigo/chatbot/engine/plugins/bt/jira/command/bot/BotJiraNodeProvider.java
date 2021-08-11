@@ -46,8 +46,17 @@ public class BotJiraNodeProvider implements Component {
 		final List<BTNode> sequence = new ArrayList<>();
 		final List<String> jfStrings = new ArrayList<>();
 		for (final JiraField jiraField : jiraFields) {
-			sequence.add(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion(), validator));
-			jfStrings.add(bb.getString(BBKey.of(jiraField.getKey())));
+			if (jiraField.getKey().equals("/user/local/reference")) {
+				BTNode issues = getIssueFromReference(bb, "/user/local/reference");
+				if (issues != null) {
+					sequence.add(issues);
+				}
+
+			} else {
+				sequence.add(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion(), validator));
+				jfStrings.add(bb.getString(BBKey.of(jiraField.getKey())));
+			}
+
 		}
 		sequence.add(getComponentIssue(bb, "/user/local/components", "Quel est le composant ?"));
 		jfStrings.add(bb.getString(BBKey.of("/user/local/components")));
@@ -65,6 +74,23 @@ public class BotJiraNodeProvider implements Component {
 
 	private BotButton mapComponentToButtonNode(final BasicComponent component) {
 		return new BotButton(component.getName(), component.getName());
+	}
+
+	private BTNode getIssueFromReference(final BlackBoard bb, final String string) {
+		final List<String> result = new ArrayList<>();
+		result.add("J'ai trouvé une anomalie qui porte déjà sur ce client.");
+		result.add("Pourriez-vous vérifier que votre problème n'est pas déjà référencé?");
+		final String refClient = bb.getString(BBKey.of(string));
+		if (refClient != null) {
+			final String jqlSearch = "description ~ " + bb.getString(BBKey.of(string));
+			result.addAll(jiraService.getIssues(jqlSearch));
+			if (result.size() > 2) {
+				final List<BTNode> sequence = new ArrayList<>();
+				result.stream().forEach(x -> bb.listPush(BotEngine.BOT_RESPONSE_KEY, x));
+				return sequence(sequence);
+			}
+		}
+		return null;
 	}
 
 }
