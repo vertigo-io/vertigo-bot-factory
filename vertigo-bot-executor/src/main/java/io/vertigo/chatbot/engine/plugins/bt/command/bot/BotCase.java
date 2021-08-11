@@ -15,7 +15,7 @@ public final class BotCase implements BTNode {
 	private final String compare;
 	private final List<BTNode> nodes;
 
-	BotCase(final String compare, final List<BTNode> nodes) {
+	public BotCase(final String compare, final List<BTNode> nodes) {
 		this.compare = compare;
 		this.nodes = nodes;
 	}
