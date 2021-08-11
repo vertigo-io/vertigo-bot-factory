@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -14,12 +15,15 @@ import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.ProjectRestClient;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
+import com.atlassian.jira.rest.client.api.VersionRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.Project;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.atlassian.jira.rest.client.api.domain.Version;
 import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldValue;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
+import com.atlassian.jira.rest.client.api.domain.input.VersionInput;
 import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 
@@ -67,7 +71,7 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 			iib.setProjectKey("CHATBOTPOC");
 			iib.setIssueTypeId(10004L);
 			iib.setSummary(jfFields.get(1).substring(0, Math.min(jfFields.get(1).length(), 49)));
-			iib.setDescription(getDescriptionFromVersion(versions, "La référence du client est " + jfFields.get(0)));
+			iib.setDescription("La référence du client est " + jfFields.get(0));
 			setScenario(iib, jfFields.get(1));
 			setExpectedResult(iib, jfFields.get(2));
 			setObtainedResult(iib, jfFields.get(3));
@@ -76,6 +80,7 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 			final ArrayList<String> listComponents = new ArrayList<>();
 			listComponents.add(jfFields.get(6));
 			iib.setComponentsNames(listComponents);
+			createAndSetAffectVersion(iib, versions, restClient);
 
 			final IssueInput issue = iib.build();
 			return issueClient.createIssue(issue).claim();
@@ -89,19 +94,23 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		}
 	}
 
-	private String getDescriptionFromVersion(final List<String> versions, final String refClient) {
-		final StringBuilder builder = new StringBuilder();
-		builder.append(refClient);
-		builder.append("\n");
-		builder.append("Numéro de version du back : ");
-		builder.append(versions.get(0));
-		builder.append("\n");
-		builder.append("Numéro de version du front : ");
-		builder.append(versions.get(1));
-		builder.append("\n");
-		builder.append("Numéro de version du paramétrage : ");
-		builder.append(versions.get(2));
-		return builder.toString();
+	private void createAndSetAffectVersion(final IssueInputBuilder iib, final List<String> versions, final JiraRestClient restClient) {
+		final String projectKey = "CHATBOTPOC";
+		final String version = versions.get(0) + "_" + versions.get(2);
+		final ProjectRestClient projectClient = restClient.getProjectClient();
+		final VersionRestClient versionClient = restClient.getVersionRestClient();
+		final Project project = projectClient.getProject(projectKey).claim();
+		Optional<Version> versionProject = StreamSupport.stream(project.getVersions().spliterator(), false).filter(x -> x.getName().equals(version)).findAny();
+		Version versionToSet;
+		if (versionProject.isEmpty()) {
+			//Not find the correct version creation
+			VersionInput versionToCreate = new VersionInput(projectKey, version, null, null, false, false);
+			versionToSet = versionClient.createVersion(versionToCreate).claim();
+		} else {
+			versionToSet = versionProject.get();
+		}
+		iib.setAffectedVersions(List.of(versionToSet));
+
 	}
 
 	public List<String> getIssues(final String jqlSearch) {
