@@ -34,10 +34,6 @@ public class BotBtJiraCommandParserDefinitionProvider implements SimpleDefinitio
 				BtCommandParserDefinition.compositeCommand("jira:issue:create",
 						(c, p, l) -> buildJiraCreation(c, p, l)),
 				BtCommandParserDefinition.basicCommand("jira:field", (c, p) -> new JiraField(c.getStringParam(0), c.getStringParam(1))));
-				BtCommandParserDefinition.basicCommand("jira:issue:create",
-						(c, p) -> botJiraNodeProvider.jiraIssueCreation(getBB(p))),
-				BtCommandParserDefinition.basicCommand("jira:issue:findany",
-						(c, p) -> botJiraNodeProvider.jiraIssueSearchAny(getBB(p), c.getStringParam(0))));
 	}
 
 	private static BlackBoard getBB(final List<Object> params) {
