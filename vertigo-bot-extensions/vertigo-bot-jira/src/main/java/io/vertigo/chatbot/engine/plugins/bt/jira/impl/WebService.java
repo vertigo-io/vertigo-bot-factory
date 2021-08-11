@@ -29,9 +29,9 @@ public class WebService implements Component, Activeable {
 	public void start() {
 		var paramManager = Node.getNode().getComponentSpace().resolve(ParamManager.class);
 		url = paramManager.getParam("WEB_SERVICE").getValueAsString();
-		urlTarifReduit = "http://comu-usi-batch-rec:8001/sigRest/v1/customers/33263038/summary";
-		user = "Admin SIG";
-		pwd = "test";
+		urlTarifReduit = "";
+		user = "";
+		pwd = "";
 	}
 
 	@Override
