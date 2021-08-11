@@ -6,13 +6,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.atlassian.jira.rest.client.api.AuthenticationHandler;
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.ProjectRestClient;
+import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
 import com.atlassian.jira.rest.client.api.domain.Project;
+import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldValue;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
@@ -45,13 +49,17 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		//do nothing
 	}
 
-	public BasicIssue createIssue(final List<String> jfFields, final List<String> versions) {
+	private JiraRestClient createJiraRestClient() {
 		final URI jiraServerUri = URI.create(baseJira);
 		final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
 
-		final AuthenticationHandler auth = new BasicHttpAuthenticationHandler(user, password);
-		final JiraRestClient restClient = factory.create(jiraServerUri, auth);
-		final IssueRestClient issueClient = restClient.getIssueClient();
+		AuthenticationHandler auth = new BasicHttpAuthenticationHandler(user, password);
+		return factory.create(jiraServerUri, auth);
+	}
+
+	public BasicIssue createIssue(final List<String> jfFields, final List<String> versions) {
+		JiraRestClient restClient = createJiraRestClient();
+		IssueRestClient issueClient = restClient.getIssueClient();
 
 		try {
 			final IssueInputBuilder iib = new IssueInputBuilder();
@@ -94,6 +102,15 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		builder.append("Numéro de version du paramétrage : ");
 		builder.append(versions.get(2));
 		return builder.toString();
+	}
+
+	public List<String> getIssues(final String jqlSearch) {
+		SearchRestClient searchClient = createJiraRestClient().getSearchClient();
+		SearchResult searchResult = searchClient.searchJql(jqlSearch).claim();
+		return StreamSupport.stream(searchResult.getIssues().spliterator(), false)
+				.map(x -> createLinkUrl(x.getKey()))
+				.collect(Collectors.toList());
+
 	}
 
 	@Override
