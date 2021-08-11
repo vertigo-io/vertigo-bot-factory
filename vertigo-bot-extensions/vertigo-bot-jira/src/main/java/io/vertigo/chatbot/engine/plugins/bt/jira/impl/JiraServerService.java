@@ -2,6 +2,7 @@ package io.vertigo.chatbot.engine.plugins.bt.jira.impl;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,9 @@ import java.util.Map;
 import com.atlassian.jira.rest.client.api.AuthenticationHandler;
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.ProjectRestClient;
 import com.atlassian.jira.rest.client.api.domain.BasicIssue;
+import com.atlassian.jira.rest.client.api.domain.Project;
 import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldValue;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
@@ -62,6 +65,10 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 			setObtainedResult(iib, jfFields.get(3));
 			setReproductibilityCode(iib, jfFields.get(4));
 			setCriticityCode(iib, jfFields.get(5));
+			final ArrayList<String> listComponents = new ArrayList<>();
+			listComponents.add(jfFields.get(6));
+			iib.setComponentsNames(listComponents);
+
 			final IssueInput issue = iib.build();
 			return issueClient.createIssue(issue).claim();
 
@@ -72,7 +79,6 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	private String getDescriptionFromVersion(final List<String> versions, final String refClient) {
@@ -130,6 +136,21 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		final Map<String, Object> customField = new HashMap<>();
 		customField.put("id", value);
 		iib.setFieldValue("customfield_10413", new ComplexIssueInputFieldValue(customField));
+	}
+
+	public Project getProject() {
+		final URI jiraServerUri = URI.create(baseJira);
+		final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
+
+		final AuthenticationHandler auth = new BasicHttpAuthenticationHandler(user, password);
+		final JiraRestClient restClient = factory.create(jiraServerUri, auth);
+		final ProjectRestClient projectClient = restClient.getProjectClient();
+		try {
+			return projectClient.getProject("CHATBOTPOC").claim();
+		} finally {
+
+		}
+
 	}
 
 }
