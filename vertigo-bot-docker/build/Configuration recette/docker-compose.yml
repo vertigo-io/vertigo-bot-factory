@@ -108,7 +108,7 @@ services:
       - analytica
       - rasaDevFSE
     ports:
-      - '127.0.0.1:8183:8080'
+      - '8183:8080'
     volumes:
       - cf_runner_dev_fse_data:/opt/data
     networks:
@@ -143,7 +143,7 @@ services:
       - analytica
       - rasaRecetteFSE
     ports:
-      - '127.0.0.1:8185:8080'
+      - '8185:8080'
     volumes:
       - cf_runner_recette_jira_data:/opt/data
     networks:
@@ -179,7 +179,7 @@ services:
       - analytica
       - rasaRecetteFSE
     ports:
-      - '127.0.0.1:8184:8080'
+      - '8184:8080'
     volumes:
       - cf_runner_recette_fse_data:/opt/data
     networks:
