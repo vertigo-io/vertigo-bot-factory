@@ -15,7 +15,7 @@ Vue.component('v-chatbot-dev', {
 						<div class="q-pb-sm">
 							{{$q.lang.vui.chatbot.errorMessage}}
 						</div>
-						<q-btn class="full-width" @click="postAswerBtn(lastPayload)" :label="$q.lang.vui.chatbot.tryAgain" color="white" text-color="black" ></q-btn>
+						<q-btn class="full-width" @click="postAnswerBtn(lastPayload)" :label="$q.lang.vui.chatbot.tryAgain" color="white" text-color="black" ></q-btn>
 					</q-chat-message>
 				</div>
 				<div class="sys-chat non-selectable">
