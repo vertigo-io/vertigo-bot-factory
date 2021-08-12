@@ -93,7 +93,7 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 
 	private static BTNode buildChooseButtonNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
 		Assertion.check()
-				.isTrue(childs.stream().allMatch(b -> b instanceof BotButton), "Only 'button' is allowen inside 'choose:button'");
+				.isTrue(childs.stream().allMatch(b -> b instanceof BotButton), "Only 'button' is allowed inside 'choose:button'");
 
 		final var botButtons = childs.stream()
 				.map(b -> (BotButton) b)
@@ -104,7 +104,7 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 
 	private static BTNode buildChooseButtonNluNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
 		Assertion.check()
-				.isTrue(childs.stream().allMatch(b -> b instanceof BotButton), "Only 'button' is allowen inside 'choose:button:nlu'");
+				.isTrue(childs.stream().allMatch(b -> b instanceof BotButton), "Only 'button' is allowed inside 'choose:button:nlu'");
 
 		final var botButtons = childs.stream()
 				.map(b -> (BotButton) b)
