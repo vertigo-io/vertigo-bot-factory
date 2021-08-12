@@ -73,7 +73,7 @@ public final class JiraHttpRequestHelper {
 		return result;
 	}
 
-	private static String basicAuth(final String username, final String password) {
+	public static String basicAuth(final String username, final String password) {
 		return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
 	}
 

@@ -14,6 +14,7 @@ import com.atlassian.jira.rest.client.api.domain.BasicComponent;
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
+import io.vertigo.ai.bt.BTNodes;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
@@ -47,24 +48,52 @@ public class BotJiraNodeProvider implements Component {
 		final List<BTNode> sequence = new ArrayList<>();
 
 		sequence.add(BotNodeProvider.inputString(bb, "/user/local/reference", "Bien sûr, quelle est la référence du client impacté par cette anomalie ?"));
+		sequence.add(poursuiteSelector(bb));
+
+		if ("NON".equals(bb.getString(BBKey.of("/user/local/poursuite")))) {
+			sequence.add(BotNodeProvider.switchTopicEnd(bb));
+		}
 		sequence.add(getIssueFromReference(bb, "/user/local/reference"));
 		if ("NON".equals(bb.getString(BBKey.of("/user/local/jira/continue")))) {
 			sequence.add(BotNodeProvider.switchTopicEnd(bb));
 		}
+
 		sequence.add(BotNodeProvider.inputString(bb, "/user/local/scenario", "Quel est le scénario de test ?"));
 		sequence.add(BotNodeProvider.inputString(bb, "/user/local/attendu", "Quel est le résultat attendu ?"));
 		sequence.add(BotNodeProvider.inputString(bb, "/user/local/obtenu", "Quel est le résultat obtenu?"));
 		sequence.add(getReproButton(bb, "/user/local/reproductibilite", "Quelle est la reproductibilité ?"));
 		sequence.add(getCriticiteButton(bb, "/user/local/criticite", "Quelle est la criticité ?"));
-		sequence.add(getComponentIssue(bb, "/user/local/components", "Quel est le composant ?"));
+		sequence.add(getComponentIssue(bb, "/user/local/components", "Quel est le produit ?"));
 		sequence.add(jiraIssueCreation(bb, jiraFields, urlSentence));
 
 		return sequence(sequence);
+	}
+
+	public BTNode buildQuestionPoursuite(final BlackBoard bb) {
+		return () -> {
+			final boolean isErrorTarifReduit = webServices.getIsErrorTarifReduit(bb.getString(BBKey.of("/user/local/reference")));
+
+			bb.putString(BBKey.of("/user/local/jira/poursuite"), "done");
+			if (isErrorTarifReduit) {
+				final String question = "Le contrat NL+ du client ne dispose d'aucun profil tarifaire, ce qui n'est pas possible fonctionnellement. Êtes-vous sûr.e de vouloir poursuivre ?";
+				final List<BotButton> buttonList = new ArrayList<>();
+				buttonList.add(new BotButton("Oui", "OUI"));
+				buttonList.add(new BotButton("Non", "NON"));
+				return BotNodeProvider.chooseButton(bb, "/user/local/poursuite", question, buttonList).eval();
+			}
+			return BTStatus.Succeeded;
+		};
+	}
+
+	public BTNode poursuiteSelector(final BlackBoard bb) {
+		return BTNodes.selector(
+				BotNodeProvider.fulfilled(bb, "/user/local/jira/poursuite"),
+				buildQuestionPoursuite(bb));
 
 	}
 
 	private BTNode getCriticiteButton(final BlackBoard bb, final String keyTemplate, final String question) {
-		List<BotButton> buttons = new ArrayList<>();
+		final List<BotButton> buttons = new ArrayList<>();
 		buttons.add(new BotButton("Critique", "10408"));
 		buttons.add(new BotButton("Bloquant", "10409"));
 		buttons.add(new BotButton("Majeur", "10410"));
@@ -82,7 +111,7 @@ public class BotJiraNodeProvider implements Component {
 	}
 
 	private BTNode getReproButton(final BlackBoard bb, final String keyTemplate, final String question) {
-		List<BotButton> buttons = new ArrayList<>();
+		final List<BotButton> buttons = new ArrayList<>();
 		buttons.add(new BotButton("Reproductible", "10413"));
 		buttons.add(new BotButton("Aléatoire", "10414"));
 		buttons.add(new BotButton("Non reproductible", "10415"));
@@ -105,7 +134,7 @@ public class BotJiraNodeProvider implements Component {
 			final List<String> result = new ArrayList<>();
 			bb.putString(BBKey.of(BotEngine.USER_LOCAL_PATH.key() + "/jira/ws"), "done");
 			result.add("J'ai trouvé une anomalie qui porte déjà sur ce client.");
-			result.add("Pourriez-vous vérifier que votre problème n'est pas déjà référencé?");
+			result.add("Pourriez-vous vérifier que votre problème n'est pas déjà référencé ?");
 			final String jqlSearch = "description ~ " + bb.getString(BBKey.of(string));
 			final List<String> jiraIssues = jiraService.getIssues(jqlSearch);
 			if (jiraIssues != null) {
@@ -120,7 +149,7 @@ public class BotJiraNodeProvider implements Component {
 	}
 
 	private BTNode getIssueButton(final BlackBoard bb, final String keyTemplate, final String question) {
-		List<BotButton> buttons = new ArrayList<>();
+		final List<BotButton> buttons = new ArrayList<>();
 		buttons.add(new BotButton("Oui", "OUI"));
 		buttons.add(new BotButton("Non", "NON"));
 		return BotNodeProvider.chooseButton(bb, keyTemplate, question, buttons);

@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.engine.plugins.bt.jira.impl;
 
 import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.ArrayList;
@@ -19,12 +20,20 @@ import io.vertigo.core.param.ParamManager;
 
 public class WebService implements Component, Activeable {
 
+	private ParamManager paramManager;
+
 	private String url;
+	private String urlTarifReduit;
+	private String user;
+	private String pwd;
 
 	@Override
 	public void start() {
-		var paramManager = Node.getNode().getComponentSpace().resolve(ParamManager.class);
+		final var paramManager = Node.getNode().getComponentSpace().resolve(ParamManager.class);
 		url = paramManager.getParam("WEB_SERVICE").getValueAsString();
+		urlTarifReduit = paramManager.getParam("SIG_URL").getValueAsString();
+		user = paramManager.getParam("SIG_USER").getValueAsString();
+		pwd = paramManager.getParam("SIG_PWD").getValueAsString();
 	}
 
 	@Override
@@ -43,10 +52,49 @@ public class WebService implements Component, Activeable {
 			result.add(node.at("/back/version").asText());
 			result.add(node.at("/front/version").asText());
 			result.add(node.at("/database/param").asText());
-		} catch (JsonProcessingException e) {
+		} catch (final JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
 
+	public boolean getIsErrorTarifReduit(final String clientNumber) {
+		final Map<String, String> headers = Map.of("AuthorizationSIG", JiraHttpRequestHelper.basicAuth(user, pwd),
+				"Content-type", "application/json");
+		final String json = "{" +
+				"\"searchLevel\": 1," +
+				"\"searches\":" +
+				"[{  \"holderPayerInd\":2," +
+				"\"productCodes\": [5]," +
+				"\"states\":[3]" +
+				"}]" +
+
+				"}";
+		final String urlClient = urlTarifReduit + clientNumber + "/summary";
+		final HttpRequest request = JiraHttpRequestHelper.createPostRequest(urlClient, headers, BodyPublishers.ofString(json));
+		final HttpResponse<String> response = JiraHttpRequestHelper.sendRequest(null, request, BodyHandlers.ofString(), 200);
+		final String body = response.body();
+		return checkBody(body);
+	}
+
+	private boolean checkBody(final String body) {
+		try {
+			final ObjectMapper mapper = new ObjectMapper();
+			final JsonNode results = mapper.readTree(body);
+			for (final JsonNode node : results) {
+				final JsonNode contract = node.findPath("contract");
+				final String productCode = contract.at("/productCode").asText();
+				//Test : il faut avoir un contrat de type 5 avec un currentProfile non null
+				if (productCode == "5") {
+					final JsonNode currentProfile = contract.findPath("currentProfile");
+					return currentProfile.isEmpty();
+				}
+			}
+			return false;
+		} catch (final JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return false;
+
+	}
 }

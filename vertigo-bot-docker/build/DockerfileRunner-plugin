@@ -13,4 +13,8 @@ ENV CONFLUENCE_PWD chatbot
 ENV CONFLUENCE_URL https://preprod-jira-temp.kleegroup.com/confluence
 ENV CONFLUENCE_LIMIT 3
 
+ENV SIG_USER Admin SIG
+ENV SIG_PWD test
+ENV SIG_URL http://comu-usi-batch-rec:8001/sigRest/v1/customers/
+	
 ENV WEB_SERVICE http://comu-usi-batch-rec:8001/sigRest/v2/tools/health-check
