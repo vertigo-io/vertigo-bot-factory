@@ -44,6 +44,12 @@
 							interval = null;
 							setTimeout(refreshTrainingInfo, 500)
 							setTimeout(refreshModels, 500); // timeout to ensure callback is processed
+							if (VUiExtensions.dataX.loadModel.selectedNode.isDev && VertigoUi.vueData.trainerState.trainingState == "OK") {
+								var name = /*[[#{model.name}]]*/ '';
+								var loaded = /*[[#{model.loaded}]]*/ '';
+								VUiPage.$refs.chatbot.systemMessage(name + " V" + VertigoUi.vueData.deployedTraining.versionNumber  + " " + loaded);
+								VUiPage.$refs.chatbot.restart(true);
+							}
 						}
 					}
 				});
@@ -89,12 +95,7 @@
 						{
 							onSuccess: function() {
 								postTrain();
-								if (VUiExtensions.dataX.loadModel.selectedNode.isDev) {
-									var name = /*[[#{model.name}]]*/ '';
-									var loaded = /*[[#{model.loaded}]]*/ '';
-									VUiPage.$refs.chatbot.systemMessage(name + " V" + VertigoUi.vueData.deployedTraining.versionNumber  + " " + loaded);
-									VUiPage.$refs.chatbot.restart(true);
-								}
+								
 							}
 						}
 					);

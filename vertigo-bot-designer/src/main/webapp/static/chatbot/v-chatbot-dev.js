@@ -104,7 +104,7 @@ Vue.component('v-chatbot-dev', {
 			this.startConversation();
 		},
 		methods: {
-			startConversation: function (value){
+			startConversation: function (){
 			this.lastUserInteraction = Date.now();
 				this.$http.post(this.startCall, {})
 					.then(httpResponse => {
@@ -238,11 +238,8 @@ Vue.component('v-chatbot-dev', {
 				if (!silent) {
 					this.systemMessage(this.$q.lang.vui.chatbot.restartMessage);
 				}
+				this.startConversation(); // lancement de la phrase d'accueil
 				
-				this.$http.post(this.botUrl, '{"sender":"' + this.convId + '","message":"/restart"}')
-				.then(httpResponse => {
-					this.startConversation("/start"); // lancement de la phrase d'accueil
-				});
 			},
 			reinitInput: function () {
 				this.inputConfig.modeTextarea = false;
