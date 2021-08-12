@@ -32,6 +32,9 @@ public final class BotNodeProvider {
 
 	private static final Random RND = new Random();
 
+	private static final String TRUE = "TRUE";
+	private static final String FALSE = "FALSE";
+
 	private BotNodeProvider() {
 		// only static
 	}
@@ -353,5 +356,27 @@ public final class BotNodeProvider {
 				return BTStatus.Succeeded;
 			};
 		}*/
+
+	public static BTNode askConfirmation(final BlackBoard bb, final String keyTemplate, final String question, final String yes, final String no) {
+		final List<BTNode> sequence = new ArrayList<>();
+		sequence.add(BotNodeProvider.chooseButton(bb, keyTemplate, question, buildYesNoButton(yes, no)));
+
+		return sequence(sequence);
+	}
+
+	public static BTNode postConfirmation(final BlackBoard bb, final String keyTemplate, final BTNode negativeScenario) {
+		final List<BTNode> sequence = new ArrayList<>();
+		if (FALSE.equals(bb.getString(BBKey.of(keyTemplate)))) {
+			sequence.add(negativeScenario);
+		}
+		return sequence(sequence);
+	}
+
+	public static List<BotButton> buildYesNoButton(final String yes, final String no) {
+		final List<BotButton> buttonList = new ArrayList<>();
+		buttonList.add(new BotButton(yes, TRUE));
+		buttonList.add(new BotButton(no, FALSE));
+		return buttonList;
+	}
 
 }

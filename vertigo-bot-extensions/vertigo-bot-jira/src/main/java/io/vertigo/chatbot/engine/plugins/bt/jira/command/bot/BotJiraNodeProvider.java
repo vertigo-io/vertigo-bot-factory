@@ -48,15 +48,9 @@ public class BotJiraNodeProvider implements Component {
 		final List<BTNode> sequence = new ArrayList<>();
 
 		sequence.add(BotNodeProvider.inputString(bb, "/user/local/reference", "Bien sûr, quelle est la référence du client impacté par cette anomalie ?"));
-		sequence.add(poursuiteSelector(bb));
 
-		if ("NON".equals(bb.getString(BBKey.of("/user/local/poursuite")))) {
-			sequence.add(BotNodeProvider.switchTopicEnd(bb));
-		}
-		sequence.add(getIssueFromReference(bb, "/user/local/reference"));
-		if ("NON".equals(bb.getString(BBKey.of("/user/local/jira/continue")))) {
-			sequence.add(BotNodeProvider.switchTopicEnd(bb));
-		}
+		sequence.add(poursuiteSelector(bb, "/user/local/poursuite"));
+		sequence.add(issueFromReferenceSelector(bb, "/user/local/reference", "/user/local/continue"));
 
 		sequence.add(BotNodeProvider.inputString(bb, "/user/local/scenario", "Quel est le scénario de test ?"));
 		sequence.add(BotNodeProvider.inputString(bb, "/user/local/attendu", "Quel est le résultat attendu ?"));
@@ -69,27 +63,55 @@ public class BotJiraNodeProvider implements Component {
 		return sequence(sequence);
 	}
 
-	public BTNode buildQuestionPoursuite(final BlackBoard bb) {
+	public BTNode poursuiteSelector(final BlackBoard bb, final String keyTemplate) {
+		final List<BTNode> sequence = new ArrayList<>();
+		sequence.add(BTNodes.selector(
+				BotNodeProvider.fulfilled(bb, keyTemplate),
+				buildQuestionPoursuite(bb, keyTemplate)));
+		sequence.add(BotNodeProvider.postConfirmation(bb, keyTemplate, BotNodeProvider.switchTopicEnd(bb)));
+		return sequence(sequence);
+	}
+
+	public BTNode buildQuestionPoursuite(final BlackBoard bb, final String keyTemplate) {
 		return () -> {
 			final boolean isErrorTarifReduit = webServices.getIsErrorTarifReduit(bb.getString(BBKey.of("/user/local/reference")));
 
-			bb.putString(BBKey.of("/user/local/jira/poursuite"), "done");
+			bb.putString(BBKey.of(keyTemplate + "/call"), "done");
 			if (isErrorTarifReduit) {
 				final String question = "Le contrat NL+ du client ne dispose d'aucun profil tarifaire, ce qui n'est pas possible fonctionnellement. Êtes-vous sûr.e de vouloir poursuivre ?";
-				final List<BotButton> buttonList = new ArrayList<>();
-				buttonList.add(new BotButton("Oui", "OUI"));
-				buttonList.add(new BotButton("Non", "NON"));
-				return BotNodeProvider.chooseButton(bb, "/user/local/poursuite", question, buttonList).eval();
+				return BotNodeProvider.askConfirmation(bb, keyTemplate, question, "Oui", "Non").eval();
 			}
 			return BTStatus.Succeeded;
 		};
 	}
 
-	public BTNode poursuiteSelector(final BlackBoard bb) {
-		return BTNodes.selector(
-				BotNodeProvider.fulfilled(bb, "/user/local/jira/poursuite"),
-				buildQuestionPoursuite(bb));
+	private BTNode issueFromReferenceSelector(final BlackBoard bb, final String keyReference, final String keyTemplate) {
+		final List<BTNode> sequence = new ArrayList<>();
+		sequence.add(selector(
+				BotNodeProvider.fulfilled(bb, keyTemplate),
+				getIssue(bb, keyReference, keyTemplate)));
+		sequence.add(BotNodeProvider.postConfirmation(bb, keyTemplate, BotNodeProvider.switchTopicEnd(bb)));
+		return sequence(sequence);
 
+	}
+
+	private BTNode getIssue(final BlackBoard bb, final String keyReference, final String keyTemplate) {
+		return () -> {
+			final List<String> result = new ArrayList<>();
+			bb.putString(BBKey.of(keyTemplate + "/call"), "done");
+			result.add("J'ai trouvé une anomalie qui porte déjà sur ce client.");
+			result.add("Pourriez-vous vérifier que votre problème n'est pas déjà référencé ?");
+			final String jqlSearch = "description ~ " + bb.getString(BBKey.of(keyReference));
+			final List<String> jiraIssues = jiraService.getIssues(jqlSearch);
+			if (jiraIssues != null) {
+				result.addAll(jiraIssues);
+			}
+			if (result.size() > 2) {
+				result.stream().forEach(x -> bb.listPush(BotEngine.BOT_RESPONSE_KEY, x));
+				return BotNodeProvider.askConfirmation(bb, keyTemplate, "Voulez-vous continuer ?", "Oui", "Non").eval();
+			}
+			return BTStatus.Succeeded;
+		};
 	}
 
 	private BTNode getCriticiteButton(final BlackBoard bb, final String keyTemplate, final String question) {
@@ -121,38 +143,6 @@ public class BotJiraNodeProvider implements Component {
 
 	private BotButton mapComponentToButtonNode(final BasicComponent component) {
 		return new BotButton(component.getName(), component.getName());
-	}
-
-	private BTNode getIssueFromReference(final BlackBoard bb, final String string) {
-		return selector(
-				BotNodeProvider.fulfilled(bb, BotEngine.USER_LOCAL_PATH.key() + "/jira/ws"),
-				getIssue(bb, string));
-	}
-
-	private BTNode getIssue(final BlackBoard bb, final String string) {
-		return () -> {
-			final List<String> result = new ArrayList<>();
-			bb.putString(BBKey.of(BotEngine.USER_LOCAL_PATH.key() + "/jira/ws"), "done");
-			result.add("J'ai trouvé une anomalie qui porte déjà sur ce client.");
-			result.add("Pourriez-vous vérifier que votre problème n'est pas déjà référencé ?");
-			final String jqlSearch = "description ~ " + bb.getString(BBKey.of(string));
-			final List<String> jiraIssues = jiraService.getIssues(jqlSearch);
-			if (jiraIssues != null) {
-				result.addAll(jiraIssues);
-			}
-			if (result.size() > 2) {
-				result.stream().forEach(x -> bb.listPush(BotEngine.BOT_RESPONSE_KEY, x));
-				return getIssueButton(bb, "/user/local/jira/continue", "Voulez vous continuez ?").eval();
-			}
-			return BTStatus.Succeeded;
-		};
-	}
-
-	private BTNode getIssueButton(final BlackBoard bb, final String keyTemplate, final String question) {
-		final List<BotButton> buttons = new ArrayList<>();
-		buttons.add(new BotButton("Oui", "OUI"));
-		buttons.add(new BotButton("Non", "NON"));
-		return BotNodeProvider.chooseButton(bb, keyTemplate, question, buttons);
 	}
 
 }
