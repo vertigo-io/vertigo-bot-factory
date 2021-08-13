@@ -55,7 +55,8 @@ public class TopicExportServices implements Component, Activeable {
 		//nothing
 	}
 
-	public String getBasicBt(final Chatbot bot, final String ktoCd) {
+	public String getBasicBt(final Chatbot bot, final String ktoCd, final StringBuilder logs) {
+		LogsUtils.addLogs(logs, ktoCd, " topic export...");
 		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
 		String basicBt = null;
 		for (final TopicExportInterfaceServices services : topicExportInterfaceServices) {
@@ -63,6 +64,7 @@ public class TopicExportServices implements Component, Activeable {
 				basicBt = services.getBasicBt(bot, ktoCd);
 			}
 		}
+		LogsUtils.logOK(logs);
 		return basicBt;
 	}
 
@@ -126,8 +128,8 @@ public class TopicExportServices implements Component, Activeable {
 			final Map<Long, String> mapTopicBt = services.mapTopicToBt(bot);
 			result.addAll(TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt, logs));
 		}
-		logs.append("Export topics ");
-		logs.append(LogsUtils.OK + LogsUtils.BR);
+		LogsUtils.addLogs(logs, "Export topics ");
+		LogsUtils.logOK(logs);
 		return result;
 	}
 

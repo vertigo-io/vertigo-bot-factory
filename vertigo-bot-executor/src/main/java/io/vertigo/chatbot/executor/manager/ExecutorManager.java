@@ -105,30 +105,30 @@ public class ExecutorManager implements Manager, Activeable {
 
 	private void doLoadModel(final BotExport botExport, final StringBuilder logs) {
 
-		logs.append("Node recovery...");
+		LogsUtils.addLogs(logs, "Node recovery...");
 		final var nluThreshold = executorConfigManager.getConfig().getExecutorConfiguration().getNluThreshold().doubleValue();
-		logs.append(LogsUtils.OK + LogsUtils.BR);
+		LogsUtils.logOK(logs);
 		final List<TopicDefinition> topics = new ArrayList<>();
-		logs.append("START topic addition...");
+		LogsUtils.addLogs(logs, "START topic addition...");
 		topics.add(TopicDefinition.of(BotEngine.START_TOPIC_NAME, btCommandManager.parse(botExport.getWelcomeBT())));
-		logs.append(LogsUtils.OK + LogsUtils.BR);
+		LogsUtils.logOK(logs);
 
 		if (!StringUtil.isBlank(botExport.getEndBT())) {
-			logs.append("END topic addition...");
+			LogsUtils.addLogs(logs, "END topic addition...");
 			topics.add(TopicDefinition.of(BotEngine.END_TOPIC_NAME, btCommandManager.parse(botExport.getEndBT())));
-			logs.append(LogsUtils.OK + LogsUtils.BR);
+			LogsUtils.logOK(logs);
 		}
 
 		if (!StringUtil.isBlank(botExport.getFallbackBT())) {
-			logs.append("FALLBACK topic addition...");
+			LogsUtils.addLogs(logs, "FALLBACK topic addition...");
 			topics.add(TopicDefinition.of(BotEngine.FALLBACK_TOPIC_NAME, btCommandManager.parse(botExport.getFallbackBT())));
-			logs.append(LogsUtils.OK + LogsUtils.BR);
+			LogsUtils.logOK(logs);
 		}
 
 		for (final TopicExport topic : botExport.getTopics()) {
-			logs.append(topic.getName() + " topic addition...");
+			LogsUtils.addLogs(logs, topic.getName(), " topic addition...");
 			topics.add(TopicDefinition.of(topic.getName(), btCommandManager.parse(topic.getTopicBT()), topic.getNluTrainingSentences(), nluThreshold));
-			logs.append(LogsUtils.OK + LogsUtils.BR);
+			LogsUtils.logOK(logs);
 		}
 
 		botManager.updateConfig(topics, logs);

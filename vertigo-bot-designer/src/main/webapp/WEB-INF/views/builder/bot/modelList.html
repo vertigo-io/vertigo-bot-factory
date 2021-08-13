@@ -311,24 +311,20 @@
 			
 			
 			
-			 <q-dialog  ref="trainingDisplayedDialog"  full-width >
-			 <vu:include-data object="trainingDisplayed" field="log" />
-		      <q-card >
-		        <q-card-section>
-		          <div class="text-h6" th:text="#{model.traininglogs}"></div>
-		        </q-card-section>
-		
-		        
-		        
+			<q-dialog  ref="trainingDisplayedDialog"  full-width >
+				<vu:include-data object="trainingDisplayed" field="log" />
+		      	<q-card >
+		        	<q-card-section>
+		        	  <div class="text-h6" th:text="#{model.traininglogs}"></div>
+		        	</q-card-section>
 		         
-				 <q-card-section style="max-height: 50vh" class="scroll" v-html="vueData.trainingDisplayed.log">
-			     </q-card-section>
-
-		
-		        <q-card-actions align="right">
-		          <q-btn flat label="Close" color="primary" v-close-popup />		          
-		        </q-card-actions>
-		      </q-card>
+				 	<q-card-section style="max-height: 50vh" class="scroll" v-html="vueData.trainingDisplayed.log">
+			     	</q-card-section>
+			     	
+		       		<q-card-actions align="right">
+		          		<q-btn flat label="Close" color="primary" v-close-popup />		          
+		        	</q-card-actions>
+		      	</q-card>
 		    </q-dialog>
 			
 			

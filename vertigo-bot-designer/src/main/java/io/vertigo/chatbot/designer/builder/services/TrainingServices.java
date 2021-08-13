@@ -41,7 +41,6 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -105,8 +104,11 @@ public class TrainingServices implements Component {
 
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
+	private static final String URL_MODEL = "/api/chatbot/admin/model";
+
 	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
-		final StringBuilder logs = new StringBuilder("new Training" + LogsUtils.BR);
+		final StringBuilder logs = new StringBuilder("new Training");
+		LogsUtils.breakLine(logs);
 
 		final Long botId = bot.getBotId();
 
@@ -121,33 +123,37 @@ public class TrainingServices implements Component {
 		saveTraining(bot, training);
 
 		try {
-			logs.append("Executor configuration... ");
+			LogsUtils.addLogs(logs, "Executor configuration... ");
 			final ExecutorConfiguration execConfig = getExecutorConfig(training, devNode);
-			logs.append(LogsUtils.OK + LogsUtils.BR);
+			LogsUtils.logOK(logs);
 
-			logs.append("Bot export :" + LogsUtils.BR);
+			LogsUtils.addLogs(logs, "Bot export :");
+			LogsUtils.breakLine(logs);
 			final Map<String, Object> requestData = new HashMap<String, Object>();
 			requestData.put("botExport", exportBot(bot, logs));
 			requestData.put("executorConfig", execConfig);
-			logs.append("Bot export " + LogsUtils.OK + LogsUtils.BR);
+			LogsUtils.addLogs(logs, "Bot export ");
+			LogsUtils.logOK(logs);
 
 			final Map<String, String> headers = Map.of(API_KEY, devNode.getApiKey(),
 					"Content-type", "application/json");
 
-			logs.append("Call executor training :" + LogsUtils.BR);
+			LogsUtils.addLogs(logs, "Call executor training :");
+			LogsUtils.breakLine(logs);
 			final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
-			final HttpRequest request = HttpRequestUtils.createPutRequest(devNode.getUrl() + "/api/chatbot/admin/model", headers, publisher);
+			final HttpRequest request = HttpRequestUtils.createPutRequest(devNode.getUrl() + URL_MODEL, headers, publisher);
 			HttpRequestUtils.sendAsyncRequest(null, request, BodyHandlers.ofString())
 					.thenApply(response -> {
 						return this.handleResponse(response, training, devNode, bot, logs);
 					});
-			logs.append("Call training " + LogsUtils.OK + ", training in progress...");
+			LogsUtils.addLogs(logs, "Call training OK, training in progress...");
 			return training;
 		} catch (final Exception e) {
-			logs.append(LogsUtils.KO + LogsUtils.BR);
-			logs.append(e.getMessage());
+			LogsUtils.logKO(logs);
+			LogsUtils.addLogs(logs, e.getMessage());
+			LOGGER.error("error", e);
 			training.setLog(logs.toString());
-			throw e;
+			throw new VSystemException("error training", e);
 		} finally {
 			training.setLog(logs.toString());
 			saveTraining(bot, training);
@@ -161,31 +167,13 @@ public class TrainingServices implements Component {
 			training.setStrCd(TrainingStatusEnum.OK.name());
 			node.setTraId(training.getTraId());
 			asynchronousServices.saveNodeWithoutAuthorizations(node);
-			logs.append(LogsUtils.OK + LogsUtils.BR);
-			logs.append(response.body());
+			LogsUtils.logOK(logs);
+			LogsUtils.addLogs(logs, response.body());
 
 		} else {
 			training.setStrCd(TrainingStatusEnum.KO.name());
-			logs.append(LogsUtils.KO + LogsUtils.BR);
-			if (!HttpRequestUtils.isResponseKo(response, 404, 405)) {
-				final ObjectMapper mapper = new ObjectMapper();
-				JsonNode root = null;
-				try {
-					root = mapper.readTree(response.body().toString());
-					final String responseString = root.get("globalErrors").get(0).toString();
-
-					logs.append(responseString.substring(1, responseString.length() - 1));
-				} catch (final JsonMappingException e) {
-					logs.append(e);
-					e.printStackTrace();
-				} catch (final JsonProcessingException e) {
-					logs.append(e);
-					e.printStackTrace();
-				}
-
-			} else {
-				logs.append(response.body());
-			}
+			LogsUtils.logKO(logs);
+			errorTreatment(response, logs);
 
 		}
 		training.setLog(logs.toString());
@@ -193,12 +181,27 @@ public class TrainingServices implements Component {
 		return "response handled";
 	}
 
-	private static String getField(final JsonNode root, final String name) {
-		final JsonNode findPath = root.findPath(name);
-		if (!findPath.isMissingNode() && !findPath.isNull()) {
-			return findPath.asText();
+	private <T> void errorTreatment(final HttpResponse<T> response, final StringBuilder logs) {
+		if (!HttpRequestUtils.isResponseKo(response, 404, 405)) {
+			errorJsonTreatment(response, logs);
+		} else {
+			LogsUtils.addLogs(logs, response.body());
 		}
-		return null;
+	}
+
+	private <T> void errorJsonTreatment(final HttpResponse<T> response, final StringBuilder logs) {
+		final ObjectMapper mapper = new ObjectMapper();
+		JsonNode root = null;
+		try {
+			root = mapper.readTree(response.body().toString());
+			final String responseString = root.get("globalErrors").get(0).toString();
+			LogsUtils.addLogs(logs, responseString.substring(1, responseString.length() - 1));
+
+		} catch (final JsonProcessingException e) {
+			LOGGER.info("error on deserialization");
+			LogsUtils.addLogs(logs, e);
+			e.printStackTrace();
+		}
 	}
 
 	private Training createTraining(final Chatbot bot) {
@@ -272,7 +275,7 @@ public class TrainingServices implements Component {
 
 			addObjectToMultipart(fdmp, "config", config);
 
-			response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/admin/model")
+			response = jaxrsProvider.getWebTarget(node.getUrl()).path(URL_MODEL)
 					.request(MediaType.APPLICATION_JSON)
 					.header(API_KEY, node.getApiKey())
 					.put(Entity.entity(fdmp, fdmp.getMediaType()));
