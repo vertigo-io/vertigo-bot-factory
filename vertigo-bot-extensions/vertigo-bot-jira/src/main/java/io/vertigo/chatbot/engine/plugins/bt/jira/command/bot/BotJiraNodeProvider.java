@@ -37,6 +37,7 @@ public class BotJiraNodeProvider implements Component {
 			final List<String> jfStrings = jiraFields.stream().map(x -> bb.getString(BBKey.of(x.getKey()))).collect(Collectors.toList());
 
 			jfStrings.add(bb.getString(BBKey.of("/user/local/components")));
+			jfStrings.add(bb.getString(BBKey.of("/url")));
 			final List<String> versions = webServices.getAllVersions();
 			final String result = jiraService.createIssueJiraCommand(jfStrings, versions);
 			bb.listPush(BotEngine.BOT_RESPONSE_KEY, urlSentence + " " + result);
@@ -58,12 +59,12 @@ public class BotJiraNodeProvider implements Component {
 			sequence.add(BotNodeProvider.switchTopicEnd(bb));
 		}
 
+		sequence.add(getComponentIssue(bb, "/user/local/components", "Quel est le produit ?"));
 		sequence.add(BotNodeProvider.inputString(bb, "/user/local/scenario", "Quel est le scénario de test ?"));
 		sequence.add(BotNodeProvider.inputString(bb, "/user/local/attendu", "Quel est le résultat attendu ?"));
 		sequence.add(BotNodeProvider.inputString(bb, "/user/local/obtenu", "Quel est le résultat obtenu?"));
 		sequence.add(getReproButton(bb, "/user/local/reproductibilite", "Quelle est la reproductibilité ?"));
 		sequence.add(getCriticiteButton(bb, "/user/local/criticite", "Quelle est la criticité ?"));
-		sequence.add(getComponentIssue(bb, "/user/local/components", "Quel est le produit ?"));
 		sequence.add(jiraIssueCreation(bb, jiraFields, urlSentence));
 
 		return sequence(sequence);
