@@ -73,6 +73,7 @@ Vue.component('v-chatbot-dev', {
 			placeholder: { type: String },
 			startCall: {type:String, 'default' : '_start'},
 			rateCall: {type:String, 'default' : '_rate'},
+			saveUrlCall: {type:String, 'default' : '_saveUrl'},
 			rating: {type:Number}
 		},
 		data: function () {
@@ -106,17 +107,27 @@ Vue.component('v-chatbot-dev', {
 		methods: {
 			startConversation: function (){
 			this.lastUserInteraction = Date.now();
+			url =  window.location.href
 				this.$http.post(this.startCall, {})
 					.then(httpResponse => {
-							this.convId = httpResponse.data.metadatas.sessionId
-							this.url = window.location.href;							
+							this.convId = httpResponse.data.metadatas.sessionId																		
 							this._handleResponse(httpResponse, false)
+							this.$http.post(this.saveUrlCall, {sender: this.convId, message: url, isButton: false})
+							.then(httpResponse => {
+									// success
+								}).catch(error => {
+									// error
+									this.error = true;									
+									this.processing = false;
+									this._scrollToBottom();
+								});
 						}).catch(error => {
 						// error
 						this.error = true;
 						this.processing = false;
-						this._scrollToBottom();
+						this._scrollToBottom();						
 					});
+					
 			},
 			postAnswerBtn: function (btn) {
 				this.messages.push({

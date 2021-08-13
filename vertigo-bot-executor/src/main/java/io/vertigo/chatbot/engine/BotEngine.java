@@ -303,4 +303,10 @@ public class BotEngine {
 		}
 	}
 
+	public BotResponse handleUrl(final BotInput input) {
+		bb.putString(BBKey.of("/url"), input.getMessage());
+		final var botResponseBuilder = new BotResponseBuilder(BotStatus.Talking);
+		return botResponseBuilder.build();
+	}
+
 }

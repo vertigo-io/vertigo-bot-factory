@@ -178,4 +178,19 @@ public class ModelListController extends AbstractBotController {
 		HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 204);
 	}
 
+	@PostMapping("/_saveUrl")
+	@ResponseBody
+	public String saveUrl(
+			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList,
+			@RequestBody final String input) {
+
+		final ChatbotNode devNode = nodeServices.getDevNodeFromList(nodeList);
+		final TalkInput talkInput = ObjectConvertionUtils.jsonToObject(input, TalkInput.class);
+		final String botInput = BotConversationUtils.createBotInput(talkInput);
+		final BodyPublisher publisher = BodyPublishers.ofByteArray(botInput.getBytes(StandardCharsets.UTF_8));
+		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/saveUrl/" + talkInput.getSender(), publisher);
+		final HttpResponse<String> result = HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 200);
+		return result.body();
+	}
+
 }
