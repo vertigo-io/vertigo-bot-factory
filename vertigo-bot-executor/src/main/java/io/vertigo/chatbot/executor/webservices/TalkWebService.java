@@ -56,4 +56,9 @@ public class TalkWebService implements WebServices {
 		executorManager.rate(rating);
 	}
 
+	@POST("/saveUrl/{sessionId}")
+	public BotResponse saveUrl(@PathParam("sessionId") final UUID sessionId, final BotInput input) {
+		return executorManager.handleUrl(sessionId, input);
+	}
+
 }

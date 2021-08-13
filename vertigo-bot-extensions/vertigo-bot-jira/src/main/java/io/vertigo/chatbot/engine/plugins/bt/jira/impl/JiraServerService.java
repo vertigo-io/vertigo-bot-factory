@@ -57,13 +57,13 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		final URI jiraServerUri = URI.create(baseJira);
 		final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
 
-		AuthenticationHandler auth = new BasicHttpAuthenticationHandler(user, password);
+		final AuthenticationHandler auth = new BasicHttpAuthenticationHandler(user, password);
 		return factory.create(jiraServerUri, auth);
 	}
 
 	public BasicIssue createIssue(final List<String> jfFields, final List<String> versions) {
-		JiraRestClient restClient = createJiraRestClient();
-		IssueRestClient issueClient = restClient.getIssueClient();
+		final JiraRestClient restClient = createJiraRestClient();
+		final IssueRestClient issueClient = restClient.getIssueClient();
 
 		try {
 			final IssueInputBuilder iib = new IssueInputBuilder();
@@ -71,7 +71,8 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 			iib.setProjectKey("CHATBOTPOC");
 			iib.setIssueTypeId(10004L);
 			iib.setSummary(jfFields.get(1).substring(0, Math.min(jfFields.get(1).length(), 49)));
-			iib.setDescription("La référence du client est " + jfFields.get(0));
+
+			iib.setDescription(buildDescription(jfFields.get(0), jfFields.get(7)));
 			setScenario(iib, jfFields.get(1));
 			setExpectedResult(iib, jfFields.get(2));
 			setObtainedResult(iib, jfFields.get(3));
@@ -100,11 +101,11 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		final ProjectRestClient projectClient = restClient.getProjectClient();
 		final VersionRestClient versionClient = restClient.getVersionRestClient();
 		final Project project = projectClient.getProject(projectKey).claim();
-		Optional<Version> versionProject = StreamSupport.stream(project.getVersions().spliterator(), false).filter(x -> x.getName().equals(version)).findAny();
+		final Optional<Version> versionProject = StreamSupport.stream(project.getVersions().spliterator(), false).filter(x -> x.getName().equals(version)).findAny();
 		Version versionToSet;
 		if (versionProject.isEmpty()) {
 			//Not find the correct version creation
-			VersionInput versionToCreate = new VersionInput(projectKey, version, null, null, false, false);
+			final VersionInput versionToCreate = new VersionInput(projectKey, version, null, null, false, false);
 			versionToSet = versionClient.createVersion(versionToCreate).claim();
 		} else {
 			versionToSet = versionProject.get();
@@ -114,8 +115,8 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 	}
 
 	public List<String> getIssues(final String jqlSearch) {
-		SearchRestClient searchClient = createJiraRestClient().getSearchClient();
-		SearchResult searchResult = searchClient.searchJql(jqlSearch).claim();
+		final SearchRestClient searchClient = createJiraRestClient().getSearchClient();
+		final SearchResult searchResult = searchClient.searchJql(jqlSearch).claim();
 		return StreamSupport.stream(searchResult.getIssues().spliterator(), false)
 				.map(x -> createLinkUrl(x.getKey()))
 				.collect(Collectors.toList());
@@ -176,6 +177,17 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		} finally {
 
 		}
+
+	}
+
+	private String buildDescription(final String reference, final String url) {
+		final StringBuilder descriptionBuilder = new StringBuilder();
+		descriptionBuilder.append("La référence du client est ");
+		descriptionBuilder.append(reference);
+		descriptionBuilder.append("\n");
+		descriptionBuilder.append("Le scenario a eu lieu à l'adresse suivante : ");
+		descriptionBuilder.append(url);
+		return descriptionBuilder.toString();
 
 	}
 
