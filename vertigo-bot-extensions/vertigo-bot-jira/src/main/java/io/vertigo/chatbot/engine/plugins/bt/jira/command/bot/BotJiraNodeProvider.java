@@ -37,7 +37,7 @@ public class BotJiraNodeProvider implements Component {
 			final List<String> jfStrings = jiraFields.stream().map(x -> bb.getString(BBKey.of(x.getKey()))).collect(Collectors.toList());
 
 			jfStrings.add(bb.getString(BBKey.of("/user/local/components")));
-			jfStrings.add(bb.getString(BBKey.of("/url")));
+			jfStrings.add(bb.getString(BBKey.of(BotEngine.BOT_CONTEXT_KEY, "/url")));
 			final List<String> versions = webServices.getAllVersions();
 			final String result = jiraService.createIssueJiraCommand(jfStrings, versions);
 			bb.listPush(BotEngine.BOT_RESPONSE_KEY, urlSentence + " " + result);
