@@ -106,7 +106,10 @@ Vue.component('v-chatbot-dev', {
 		methods: {
 			startConversation: function (){
 			this.lastUserInteraction = Date.now();
-				this.$http.post(this.startCall, {})
+			urlPage =  window.location.href
+			context = {}
+			context['url'] =  urlPage
+			this.$http.post(this.startCall, {message: null, metadatas: {'context' : context}})
 					.then(httpResponse => {
 							this.convId = httpResponse.data.metadatas.sessionId
 							this._handleResponse(httpResponse, false)

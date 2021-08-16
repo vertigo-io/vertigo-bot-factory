@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BBKeyPattern;
@@ -46,6 +47,7 @@ public class BotEngine {
 	public static final String END_TOPIC_NAME = "!END";
 	public static final String FALLBACK_TOPIC_NAME = "!FALLBACK";
 	public static final String ANALYTICS_KEY = "analytics";
+	public static final String CONTEXT_KEY = "context";
 
 	public static final BBKey BOT_IN_PATH = BBKey.of("/bot/in");
 	public static final BBKey BOT_OUT_PATH = BBKey.of("/bot/out");
@@ -56,6 +58,7 @@ public class BotEngine {
 	public static final BBKey BOT_IN_MESSAGE_KEY = BBKey.of(BOT_IN_PATH, "/message");
 	public static final BBKey BOT_IN_BUTTON_KEY = BBKey.of(BOT_IN_PATH, "/button");
 	public static final BBKey BOT_NEXT_TOPIC_KEY = BBKey.of(BOT_IN_PATH, "/nexttopic");
+	public static final BBKey BOT_CONTEXT_KEY = BBKey.of(USER_GLOBAL_PATH, "/context");
 
 	public static final BBKey BOT_RESPONSE_KEY = BBKey.of(BOT_OUT_PATH, "/responses");
 	public static final BBKey BOT_CHOICES_KEY = BBKey.of(BOT_OUT_PATH, "/choices");
@@ -300,6 +303,14 @@ public class BotEngine {
 			throw new VSystemException(e, "Choice class '{0}' not found", className);
 		} catch (NoSuchMethodException | SecurityException e) {
 			throw new VSystemException(e, "Choice class '{0}' do not implements constructing method 'of'", className);
+		}
+	}
+
+	public void saveContext(final BotInput input) {
+		final Map<String, String> context = (Map<String, String>) input.getMetadatas().get(CONTEXT_KEY);
+		for (Entry<String, String> entry : context.entrySet()) {
+			BBKey key = BBKey.of(BOT_CONTEXT_KEY, "/" + entry.getKey());
+			bb.putString(key, entry.getValue());
 		}
 	}
 
