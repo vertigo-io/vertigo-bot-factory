@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
@@ -54,7 +55,8 @@ public class TopicExportServices implements Component, Activeable {
 		//nothing
 	}
 
-	public String getBasicBt(final Chatbot bot, final String ktoCd) {
+	public String getBasicBt(final Chatbot bot, final String ktoCd, final StringBuilder logs) {
+		LogsUtils.addLogs(logs, ktoCd, " topic export...");
 		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
 		String basicBt = null;
 		for (final TopicExportInterfaceServices services : topicExportInterfaceServices) {
@@ -62,6 +64,7 @@ public class TopicExportServices implements Component, Activeable {
 				basicBt = services.getBasicBt(bot, ktoCd);
 			}
 		}
+		LogsUtils.logOK(logs);
 		return basicBt;
 	}
 
@@ -117,15 +120,16 @@ public class TopicExportServices implements Component, Activeable {
 	 * @param bot
 	 * @return list Topic Export
 	 */
-	public DtList<TopicExport> exportActiveTopics(final Chatbot bot) {
+	public DtList<TopicExport> exportActiveTopics(final Chatbot bot, final StringBuilder logs) {
 		final DtList<TopicExport> result = new DtList<>(TopicExport.class);
 		final DtList<NluTrainingExport> nlus = generateNLUSynonyms(bot.getBotId());
 		for (final TopicExportInterfaceServices services : topicExportInterfaceServices) {
 			final DtList<Topic> topics = services.getAllNonTechnicalAndActiveTopicByBot(bot, services.getHandleObject());
 			final Map<Long, String> mapTopicBt = services.mapTopicToBt(bot);
-			result.addAll(TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt));
+			result.addAll(TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt, logs));
 		}
-
+		LogsUtils.addLogs(logs, "Export topics ");
+		LogsUtils.logOK(logs);
 		return result;
 	}
 

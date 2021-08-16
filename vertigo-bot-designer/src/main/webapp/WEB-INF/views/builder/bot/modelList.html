@@ -162,6 +162,15 @@
 				return speakTo + " " + VertigoUi.vueData.bot.name;
 			}
 			
+			function displayTrainingLog(training) {
+				
+				
+				VertigoUi.vueData.trainingDisplayed = training;
+				
+				
+				VUiPage.$refs.trainingDisplayedDialog.show();		
+			}
+			
 		</script>
 	</head>
 	
@@ -210,7 +219,8 @@
 			</vu:block>
 			
 			 
-			<vu:table id="load" list="trainingList" th:title="#{model.manage}" :dense="|$q.screen.lt.lg|" componentId="trainingList" rowsPerPage="10" autoColClass >
+			<vu:table id="load" list="trainingList" th:title="#{model.manage}" :dense="|$q.screen.lt.lg|" componentId="trainingList" 
+						rowsPerPage="10" autoColClass >
 				<vu:slot name="top_right_slot">
 					<q-btn class="fab-block" round color="primary" icon="refresh" th:aria-label="#{action.refresh}" th:title="#{action.refresh}"
 					       @click="refreshModels" :loading="dataX.loadingModels"></q-btn>
@@ -219,6 +229,7 @@
 				<vu:include-data object="trainingList" field="traId" />
 				<vu:include-data object="trainingList" field="endTime" />
 				<vu:include-data object="trainingList" field="duration" />
+				<vu:include-data object="trainingList" field="log" />
 				
 				<vu:column field="strCd" label="" sortable="false" class="col_Small">
 					<q-icon name="check" color="green" size="2rem" v-if="props.row.strCd == 'OK'"></q-icon>
@@ -244,11 +255,14 @@
 					<vu:include-data object="nodeList" field="name" />
 					<vu:include-data object="nodeList" field="color" />
 					<vu:include-data object="nodeList" field="isDev" />
-					<vu:include-data object="nodeList" field="url" />
-					
+					<vu:include-data object="nodeList" field="url" />					
 					<q-chip v-for="node in vueData.nodeList" v-if="node.traId === props.row.traId" :style="'background: '+ node.color" text-color="white" icon="cloud_done">
 						{{node.name}}
 					</q-chip>
+				</vu:column>
+				
+				<vu:column field="traId" label="" sortable="false" class="col_Small">
+					<q-btn icon="info" color="grey" @click="displayTrainingLog(props.row);" th:aria-label="#{model.traininglogs}" th:title="#{model.traininglogs}"></q-icon>
 				</vu:column>
 			</vu:table>
 			
@@ -295,6 +309,25 @@
 					</q-card-actions>
 				</q-card>
 			</q-dialog>
+			
+			
+			
+			<q-dialog  ref="trainingDisplayedDialog"  full-width >
+				<vu:include-data object="trainingDisplayed" field="log" />
+		      	<q-card >
+		        	<q-card-section>
+		        	  <div class="text-h6" th:text="#{model.traininglogs}"></div>
+		        	</q-card-section>
+		         
+				 	<q-card-section style="max-height: 50vh" class="scroll" v-html="vueData.trainingDisplayed.log">
+			     	</q-card-section>
+			     	
+		       		<q-card-actions align="right">
+		          		<q-btn flat label="Close" color="primary" v-close-popup />		          
+		        	</q-card-actions>
+		      	</q-card>
+		    </q-dialog>
+			
 			
 			
 			<template v-if="canTalkToBot()">

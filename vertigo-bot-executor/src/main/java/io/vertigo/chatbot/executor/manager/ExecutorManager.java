@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.chatbot.analytics.AnalyticsSenderServices;
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
@@ -80,7 +81,9 @@ public class ExecutorManager implements Manager, Activeable {
 			// nothing to load
 			LOGGER.info("New runner, load a bot to start using it.");
 		} else {
-			doLoadModel(botExport);
+
+			doLoadModel(botExport, new StringBuilder());
+
 		}
 	}
 
@@ -89,34 +92,47 @@ public class ExecutorManager implements Manager, Activeable {
 		// nothing
 	}
 
-	public void loadModel(final BotExport bot, final ExecutorConfiguration executorConfig) {
+	public void loadModel(final BotExport bot, final ExecutorConfiguration executorConfig, final StringBuilder logs) {
 		final var globalConfig = new ExecutorGlobalConfig();
 		globalConfig.setBot(bot);
 		globalConfig.setExecutorConfiguration(executorConfig);
 
 		executorConfigManager.saveConfig(globalConfig);
 
-		doLoadModel(bot);
+		doLoadModel(bot, logs);
+
 	}
 
-	private void doLoadModel(final BotExport botExport) {
+	private void doLoadModel(final BotExport botExport, final StringBuilder logs) {
+
+		LogsUtils.addLogs(logs, "Node recovery...");
 		final var nluThreshold = executorConfigManager.getConfig().getExecutorConfiguration().getNluThreshold().doubleValue();
-
+		LogsUtils.logOK(logs);
 		final List<TopicDefinition> topics = new ArrayList<>();
-
+		LogsUtils.addLogs(logs, "START topic addition...");
 		topics.add(TopicDefinition.of(BotEngine.START_TOPIC_NAME, btCommandManager.parse(botExport.getWelcomeBT())));
+		LogsUtils.logOK(logs);
+
 		if (!StringUtil.isBlank(botExport.getEndBT())) {
+			LogsUtils.addLogs(logs, "END topic addition...");
 			topics.add(TopicDefinition.of(BotEngine.END_TOPIC_NAME, btCommandManager.parse(botExport.getEndBT())));
+			LogsUtils.logOK(logs);
 		}
+
 		if (!StringUtil.isBlank(botExport.getFallbackBT())) {
+			LogsUtils.addLogs(logs, "FALLBACK topic addition...");
 			topics.add(TopicDefinition.of(BotEngine.FALLBACK_TOPIC_NAME, btCommandManager.parse(botExport.getFallbackBT())));
+			LogsUtils.logOK(logs);
 		}
 
 		for (final TopicExport topic : botExport.getTopics()) {
+			LogsUtils.addLogs(logs, topic.getName(), " topic addition...");
 			topics.add(TopicDefinition.of(topic.getName(), btCommandManager.parse(topic.getTopicBT()), topic.getNluTrainingSentences(), nluThreshold));
+			LogsUtils.logOK(logs);
 		}
 
-		botManager.updateConfig(topics);
+		botManager.updateConfig(topics, logs);
+
 	}
 
 	public BotResponse startNewConversation(final BotInput input) {

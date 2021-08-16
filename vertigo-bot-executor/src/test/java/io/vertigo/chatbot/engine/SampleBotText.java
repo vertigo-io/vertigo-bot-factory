@@ -77,7 +77,7 @@ public class SampleBotText {
 		// create or parse or retrieve the brain
 		final List<TopicDefinition> topics = new ArrayList<>();
 		topics.add(TopicDefinition.of(BotEngine.START_TOPIC_NAME, btCommandManager.parse(botText)));
-		botManager.updateConfig(topics);
+		botManager.updateConfig(topics, new StringBuilder());
 
 		// create a botEngine that is bound to a specific context
 		botEngine = botManager.createBotEngine();

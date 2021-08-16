@@ -44,6 +44,6 @@ public interface BotManager extends Manager {
 	 *
 	 * @param newTopics new topics to replace old ones
 	 */
-	void updateConfig(final Iterable<TopicDefinition> newTopics);
+	void updateConfig(Iterable<TopicDefinition> newTopics, StringBuilder logs);
 
 }
