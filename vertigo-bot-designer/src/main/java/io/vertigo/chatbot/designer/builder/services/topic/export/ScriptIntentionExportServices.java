@@ -8,15 +8,13 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.TopicExport;
-import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
-import io.vertigo.chatbot.designer.builder.topic.export.ScriptIntentionExport;
+import io.vertigo.chatbot.designer.domain.topic.export.ScriptIntentionExport;
 import io.vertigo.chatbot.domain.DtDefinitions.ScriptIntentionFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
@@ -27,7 +25,6 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 
 	@Inject
 	private TopicServices topicServices;
-
 	@Inject
 	private ScriptIntentionServices scriptIntentionServices;
 
@@ -35,18 +32,8 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 	private ExportPAO exportPAO;
 
 	@Override
-	public boolean handleObject(final Topic topic) {
-		return TypeTopicEnum.SCRIPTINTENTION.name().equals(topic.getTtoCd());
-	}
-
-	@Override
-	public DtList<TopicExport> exportTopics(final Chatbot bot) {
-		final DtList<Topic> topics = topicServices.getAllTopicRelativeScriptIntentionByBot(bot);
-		final DtList<NluTrainingExport> nlus = exportPAO.exportScriptIntentionRelativeTrainingSentence(bot.getBotId());
-		final Map<Long, String> mapTopicBt = mapTopicToBt(bot);
-		final DtList<TopicExport> exports = TopicsExportUtils.mapTopicsToNluTrainingSentences(topics, nlus, mapTopicBt);
-		return exports;
-
+	public TypeTopicEnum getHandleObject() {
+		return TypeTopicEnum.SCRIPTINTENTION;
 	}
 
 	@Override
@@ -74,4 +61,8 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 		return scriptIntention.getScript();
 	}
 
+	@Override
+	public DtList<Topic> getAllNonTechnicalAndActiveTopicByBot(final Chatbot bot, final TypeTopicEnum typeEnum) {
+		return topicServices.getAllNonTechnicalTopicAndActiveByBotTtoCd(bot, typeEnum.name());
+	}
 }

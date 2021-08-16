@@ -47,4 +47,12 @@
 	<changeSet author="vprima" id="change code type for topic">
 		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_28.sql" />	
 	</changeSet>
+	
+	<changeSet author="vprima" id="add meanings and synonyms">
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_06_30.sql" />	
+	</changeSet>
+	
+	<changeSet author="vbaillet" id="add labels for topic">
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_08_02.sql" />	
+	</changeSet>
 </databaseChangeLog>

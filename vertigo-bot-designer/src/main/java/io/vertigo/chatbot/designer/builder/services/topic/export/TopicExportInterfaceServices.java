@@ -3,31 +3,22 @@ package io.vertigo.chatbot.designer.builder.services.topic.export;
 import java.util.Map;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.Entity;
 
 public interface TopicExportInterfaceServices<D extends Entity> {
 
-	boolean handleObject(final Topic topic);
+	TypeTopicEnum getHandleObject();
 
-	/**
-	 * Get topicExport by bot
-	 *
-	 * @param bot chatbot to export
-	 * @return List of topicExports
-	 */
-	public DtList<TopicExport> exportTopics(final Chatbot bot);
+	String getBasicBt(Chatbot bot, String ktoCd);
 
-	/**
-	 * Create or get bt to topic
-	 *
-	 * @param bot chatbot to export
-	 * @return map<topId, bt> associated
-	 */
-	public Map<Long, String> mapTopicToBt(final Chatbot bot);
+	Map<Long, String> mapTopicToBt(Chatbot bot);
 
-	public String getBasicBt(Chatbot bot, String ktoCd);
+	DtList<Topic> getAllNonTechnicalAndActiveTopicByBot(Chatbot bot, TypeTopicEnum typeEnum);
 
+	default boolean handleObject(final Topic topic) {
+		return getHandleObject().name().equals(topic.getTtoCd());
+	}
 }

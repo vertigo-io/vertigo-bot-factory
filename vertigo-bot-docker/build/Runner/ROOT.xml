@@ -3,4 +3,11 @@
 	<Parameter name="boot.ANALYTICA_HOST" value="${ANALYTICA_HOST}" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="${ANALYTICA_PORT}" override="false"/>
 	<Parameter name="boot.ANALYTICA_DBNAME" value="${ANALYTICA_DBNAME}" override="false"/>
+
+	<!--  Use for confluence plugin -->
+   	<Resources className="org.apache.catalina.webresources.StandardRoot">
+       <JarResources className="org.apache.catalina.webresources.DirResourceSet"
+					base="/opt/plugins"
+					webAppMount="/WEB-INF/lib"/>
+    	</Resources>
 </Context>

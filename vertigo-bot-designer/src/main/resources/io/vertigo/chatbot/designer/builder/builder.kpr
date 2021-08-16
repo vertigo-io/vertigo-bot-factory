@@ -10,3 +10,6 @@ topic_task.ksp
 topicCategory_task.ksp
 export_task.ksp
 topicFileExport_task.ksp
+meaning_task.ksp
+synonym_task.ksp
+topicLabel_task.ksp

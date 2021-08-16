@@ -23,6 +23,7 @@ public final class TopicIhm implements DtObject {
 	private Boolean isEnabled;
 	private String ktoCd;
 	private String code;
+	private String labels;
 	
 	/**
 	 * Champ : DATA.
@@ -212,6 +213,25 @@ public final class TopicIhm implements DtObject {
 	 */
 	public void setCode(final String code) {
 		this.code = code;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Labels'.
+	 * @return String labels <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Labels")
+	public String getLabels() {
+		return labels;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Labels'.
+	 * @param labels String <b>Obligatoire</b>
+	 */
+	public void setLabels(final String labels) {
+		this.labels = labels;
 	}
 	
 	/** {@inheritDoc} */

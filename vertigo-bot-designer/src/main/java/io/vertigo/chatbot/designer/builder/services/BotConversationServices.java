@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import io.vertigo.chatbot.engine.model.BotInput;
-import io.vertigo.chatbot.engine.model.TalkInput;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
@@ -29,14 +28,6 @@ public class BotConversationServices implements Component {
 		final BotInput input = new BotInput(message, metadatas);
 		return objectToJson(input);
 
-	}
-
-	public String createBotInput(final TalkInput talkInput) {
-		String message = talkInput.getMessage();
-		if (talkInput.isButton()) {
-			return objectToJson(new BotInput(Map.of("payload", message)));
-		}
-		return createBotInput(message);
 	}
 
 	public String objectToJson(final Object input) {

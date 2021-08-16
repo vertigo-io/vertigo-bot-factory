@@ -30,6 +30,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -86,7 +87,9 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 			@ViewAttribute("bot") final Chatbot chatbot,
 			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
 			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
-			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
+			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+			@ViewAttribute("topicLabelList") final DtList<TopicLabel> labels,
+			@ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels) {
 
 		checkCategory(topic);
 
@@ -97,6 +100,7 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 		topicServices.saveTtoCd(topic, TypeTopicEnum.SCRIPTINTENTION.name());
 		scriptIntentionServices.save(chatbot, scriptIntention, topic);
 		topicServices.save(topic, scriptIntentionServices.isEnabled(scriptIntention, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
+		topicLabelServices.manageLabels(chatbot, topic, labels, initialLabels);
 		return "redirect:/bot/" + botId + "/scriptIntention/" + scriptIntention.getSinId();
 	}
 

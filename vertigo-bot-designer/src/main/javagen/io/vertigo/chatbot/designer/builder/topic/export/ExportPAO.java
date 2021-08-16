@@ -41,6 +41,32 @@ public final class ExportPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkExportRelativeTrainingSentence.
+	 * @param botId Long
+	 * @return DtList de NluTrainingExport tpcs
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkExportRelativeTrainingSentence",
+			request = "select   " + 
+ "             	nts.nts_id,  " + 
+ "             	nts.text,  " + 
+ "             	top.top_id" + 
+ " 			from nlu_training_sentence nts  " + 
+ " 			join topic top on (top.top_id = nts.top_id)  " + 
+ " 			where top.bot_id = #botId#  " + 
+ " 			and top.is_enabled = true",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtNluTrainingExport")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.NluTrainingExport> exportRelativeTrainingSentence(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkExportRelativeTrainingSentence")
+				.addValue("botId", botId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkExportResponseButtonByBotId.
 	 * @param botId Long
 	 * @return DtList de ResponseButtonExport rbes
@@ -60,62 +86,8 @@ public final class ExportPAO implements StoreServices {
  " 			and top.is_enabled = true",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtResponseButtonExport")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.builder.topic.export.ResponseButtonExport> exportResponseButtonByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonExport> exportResponseButtonByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkExportResponseButtonByBotId")
-				.addValue("botId", botId)
-				.build();
-		return getTaskManager()
-				.execute(task)
-				.getResult();
-	}
-
-	/**
-	 * Execute la tache TkExportScriptIntentionRelativeTrainingSentence.
-	 * @param botId Long
-	 * @return DtList de NluTrainingExport tpcs
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkExportScriptIntentionRelativeTrainingSentence",
-			request = "select   " + 
- "             	nts.nts_id,  " + 
- "             	nts.text,  " + 
- "             	sin.top_id  " + 
- " 			from nlu_training_sentence nts  " + 
- " 			join topic top on (top.top_id = nts.top_id)  " + 
- " 			join script_intention sin on (sin.top_id = top.top_id)  " + 
- " 			where top.bot_id = #botId#  " + 
- " 			and top.is_enabled = true",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtNluTrainingExport")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.NluTrainingExport> exportScriptIntentionRelativeTrainingSentence(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
-		final Task task = createTaskBuilder("TkExportScriptIntentionRelativeTrainingSentence")
-				.addValue("botId", botId)
-				.build();
-		return getTaskManager()
-				.execute(task)
-				.getResult();
-	}
-
-	/**
-	 * Execute la tache TkExportSmallTalkRelativeTrainingSentence.
-	 * @param botId Long
-	 * @return DtList de NluTrainingExport tpcs
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkExportSmallTalkRelativeTrainingSentence",
-			request = "select   " + 
- "             	nts.nts_id,  " + 
- "             	nts.text,  " + 
- "             	top.top_id" + 
- " 			from nlu_training_sentence nts  " + 
- " 			join topic top on (top.top_id = nts.top_id)  " + 
- " 			join small_talk smt on (smt.top_id = top.top_id)  " + 
- " 			where top.bot_id = #botId#  " + 
- " 			and top.is_enabled = true",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtNluTrainingExport")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.NluTrainingExport> exportSmallTalkRelativeTrainingSentence(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
-		final Task task = createTaskBuilder("TkExportSmallTalkRelativeTrainingSentence")
 				.addValue("botId", botId)
 				.build();
 		return getTaskManager()
@@ -145,7 +117,7 @@ public final class ExportPAO implements StoreServices {
  " 			group by top.top_id, rty.rty_id, smt.is_end",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtUtterTextExport")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.builder.topic.export.UtterTextExport> exportUtterTextByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.UtterTextExport> exportUtterTextByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkExportUtterTextByBotId")
 				.addValue("botId", botId)
 				.build();
@@ -170,7 +142,7 @@ public final class ExportPAO implements StoreServices {
  " 			and top.is_enabled = true",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtScriptIntentionExport")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.builder.topic.export.ScriptIntentionExport> getScriptIntentionExportByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ScriptIntentionExport> getScriptIntentionExportByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetScriptIntentionExportByBotId")
 				.addValue("botId", botId)
 				.build();

@@ -52,4 +52,5 @@ public class MockNluEnginePlugin implements NluEnginePlugin {
 	public boolean isReady() {
 		return true;
 	}
+
 }

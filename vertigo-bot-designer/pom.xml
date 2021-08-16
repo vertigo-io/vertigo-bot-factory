@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-bot-factory</artifactId>
-		<version>0.6.0-SNAPSHOT</version>
+		<version>0.8.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vertigo-bot-designer</artifactId>
@@ -111,6 +111,11 @@
 		    <version>3.12.0</version>
 		</dependency>
 		
+		<dependency>
+		    <groupId>org.jsoup</groupId>
+		    <artifactId>jsoup</artifactId>
+		    <version>1.10.2</version>
+		</dependency>
 		
 
 

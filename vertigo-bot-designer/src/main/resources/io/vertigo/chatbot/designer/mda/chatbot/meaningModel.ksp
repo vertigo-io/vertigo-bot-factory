@@ -1,0 +1,53 @@
+package io.vertigo.chatbot.designer.domain
+
+/************************/
+/* **** Meaning  **** */
+/************************/
+
+create DtDefinition DtMeaning {
+	id meaId 		{domain: DoId		label: "Meaning id"}
+	field label		{domain: DoLabel	label: "Label" 	cardinality:"1"}
+	}
+	
+create Association AMeaningChatbot {
+	fkFieldName : "botId" 
+    
+ 	dtDefinitionA : DtMeaning
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+}	
+
+create DtDefinition DtSynonym {
+	id synId 		{domain: DoId		label: "Synonym id"}
+	field label		{domain: DoLabel	label: "Label" 	cardinality:"1"}
+	}
+	
+create Association ASynonymChatbot {
+	fkFieldName : "botId" 
+    
+ 	dtDefinitionA : DtSynonym
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+}	
+
+create Association ASynonymMeaning {
+	fkFieldName : "meaId" 
+    
+ 	dtDefinitionA : DtSynonym
+	type : "*>1"
+	dtDefinitionB : DtMeaning
+	
+	labelB : "Meaning"
+}	
+
+create DtDefinition DtTupleSynonymIhm {
+
+	field word				{domain: DoLabel	label: "Word"	}
+	field synonymLabel		{domain: DoLabel	label: "Synonym label"	}
+}
+
+	

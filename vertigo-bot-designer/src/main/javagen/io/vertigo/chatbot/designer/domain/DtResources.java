@@ -9,66 +9,50 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
-	/** SentenseDetail.
+	/** Meaning.
 	/***********************************************************
 	/**
-	 * Rasa message ID.
+	 * Meaning id.
 	 */
-	fldSentenseDetail$messageId,
+	fldMeaning$meaId,
 	/**
-	 * Date.
+	 * Label.
 	 */
-	fldSentenseDetail$date,
+	fldMeaning$label,
 	/**
-	 * User text.
+	 * Chatbot.
 	 */
-	fldSentenseDetail$text,
-	/**
-	 * Rasa intent.
-	 */
-	fldSentenseDetail$intentRasa,
-	/**
-	 * Confidence.
-	 */
-	fldSentenseDetail$confidence,
-	/**
-	 * Topic selection.
-	 */
-	fldSentenseDetail$topId,
+	fldMeaning$botId,
 
 	/***********************************************************
-	/** StatCriteria.
+	/** Synonym.
 	/***********************************************************
 	/**
-	 * Chatbot selection.
+	 * Synonym id.
 	 */
-	fldStatCriteria$botId,
+	fldSynonym$synId,
 	/**
-	 * Time option.
+	 * Label.
 	 */
-	fldStatCriteria$timeOption,
+	fldSynonym$label,
 	/**
-	 * Node selection.
+	 * Chatbot.
 	 */
-	fldStatCriteria$nodId,
+	fldSynonym$botId,
+	/**
+	 * Meaning.
+	 */
+	fldSynonym$meaId,
 
 	/***********************************************************
-	/** TopIntent.
+	/** TupleSynonymIhm.
 	/***********************************************************
 	/**
-	 * Topic ID.
+	 * Word.
 	 */
-	fldTopIntent$topId,
+	fldTupleSynonymIhm$word,
 	/**
-	 * Rasa intent.
+	 * Synonym label.
 	 */
-	fldTopIntent$intentRasa,
-	/**
-	 * Topic code.
-	 */
-	fldTopIntent$code,
-	/**
-	 * Count.
-	 */
-	fldTopIntent$count,
+	fldTupleSynonymIhm$synonymLabel,
 }

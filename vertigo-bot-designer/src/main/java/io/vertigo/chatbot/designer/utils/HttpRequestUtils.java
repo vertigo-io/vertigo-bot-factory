@@ -14,6 +14,7 @@ import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
@@ -99,4 +100,11 @@ public final class HttpRequestUtils {
 		}
 	}
 
+	public static <T> boolean isResponseOk(final HttpResponse<T> response, final int code) {
+		return response.statusCode() == code;
+	}
+
+	public static <T> boolean isResponseKo(final HttpResponse<T> response, final int... codes) {
+		return Arrays.stream(codes).anyMatch(x -> x == response.statusCode());
+	}
 }

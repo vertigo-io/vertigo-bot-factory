@@ -8,9 +8,9 @@
 <title th:text="#{analytics.title}"></title>
 
 <script
-	src="https://cdn.jsdelivr.net/npm/apexcharts@3.6.6/dist/apexcharts.min.js"></script>
+	src="https://cdn.jsdelivr.net/npm/apexcharts@3.27.1/dist/apexcharts.min.js"></script>
 <script
-	src="https://cdn.jsdelivr.net/npm/vue-apexcharts@1.5.1/dist/vue-apexcharts.min.js"></script>
+	src="https://cdn.jsdelivr.net/npm/vue-apexcharts@1.6.1/dist/vue-apexcharts.min.js"></script>
 
 <script th:inline="javascript">
 	Vue.use(VueApexCharts);
@@ -180,6 +180,67 @@
 			} 
 		};
 	
+	VUiExtensions.dataX.apexCharts.rating = {
+			options : {
+				chart : {
+					id : 'vuechart-example-4',
+					stacked : true,
+					zoom: {
+						enabled: false
+					},
+					toolbar: {
+						show: false
+					},
+				},
+				dataLabels: {
+	                enabled: false
+	            },
+				xaxis : {
+					type: 'datetime'
+				},
+				tooltip: {
+					x : {
+						formatter: timeFormatter
+					}
+				},
+
+				stroke: {
+					curve: 'smooth'
+				},
+				plotOptions: {
+					bar : {
+						rangeBarOverlap: false,
+					}
+					
+				}, 
+		        legend: {
+		            position: 'right',
+		            horizontalAlign: 'left',
+		            offsetY: 40
+		          },
+		         colors : ['#785dd0', '#ff4560','#feb019','#00e396', '#008ffb', ]
+			},
+			series : function() {
+				return [ {
+							name : /*[[#{analytics.message.oneStar}]]*/ '',
+							data : serieToApex("rating1:count", VertigoUi.vueData.ratingStats, {fill: 0})
+						},{
+							name : /*[[#{analytics.message.twoStar}]]*/ '',
+							data : serieToApex("rating2:count", VertigoUi.vueData.ratingStats, {fill: 0})
+						},{
+							name : /*[[#{analytics.message.threeStar}]]*/ '',
+							data : serieToApex("rating3:count", VertigoUi.vueData.ratingStats, {fill: 0})
+						},{
+							name : /*[[#{analytics.message.fourStar}]]*/ '',
+							data : serieToApex("rating4:count", VertigoUi.vueData.ratingStats, {fill: 0})
+						},{
+							name : /*[[#{analytics.message.fiveStar}]]*/ '',
+							data : serieToApex("rating5:count", VertigoUi.vueData.ratingStats, {fill: 0})
+						},
+					];
+			} 
+		};
+	
 	function serieToApex(serieName, dataIn, options) {
 		let ret = [];
 		dataIn.timedDataSeries.forEach(e => {
@@ -226,14 +287,19 @@
 			}
 		);
 		
-		VUiPage.$refs.intentDetailsDialog.show();
+		VUiPage.$refs.intentDetailsDialog.show();		
 	}
-</script>
+	
+	function closeDialog() {
+		VUiPage.$refs.popupFromDate.hide();
+		VUiPage.$refs.popupToDate.hide();
+	}
+	</script>
 </head>
 
 <body>
 	
-	<section layout:fragment="content">
+		<section layout:fragment="content">
 		<vu:include-data object="bots" field="botId" />
 		<vu:include-data object="bots" field="name" />
 		
@@ -245,8 +311,13 @@
 		<vu:include-data-primitive key="sessionStats" />
 		<vu:include-data-primitive key="requestsStats" />
 		
+		<vu:include-data-primitive key="locale" />
 		
-		<div class="row wrap justify-start q-col-gutter-md q-mt-lg">
+		<q-page-sticky expand position="relative-top" >
+			<vu:messages />
+		</q-page-sticky>
+		
+		<div class="row wrap justify-start q-col-gutter-md q-mt-xl" >
 		
 			<div class="col-xl-4 col-md-6 col-xs-12"> 
 				<q-card>
@@ -282,11 +353,23 @@
 			</div>
 
 			<template v-if="vueData.criteria.botId">
+			
+			<vu:include-data-primitive key="ratingStats" />
+				
+				<div class="col-12"> 
+					<q-card>
+						<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.rating}"></q-card-section>
+							<apexchart width="100%" height="250" type="bar"
+								:options="dataX.apexCharts.rating.options"
+								:series="dataX.apexCharts.rating.series()"></apexchart>
+					</q-card>
+				</div>
+				
 				<div class="col-12"> 
 					<vu:table componentId="messageList" list="unknownSentenses" th:title="#{analytics.message.understanding}" rowsPerPage="10" autoColClass >
 						<vu:column field="date"/>
 						<vu:column field="text"/>
-
+						<vu:column field="modelName"/>
 					</vu:table>
 				</div>
 				
@@ -295,13 +378,13 @@
 				
 				<vu:include-data object="intentDetails" field="'*'" />
 				<vu:include-data object="topIntents" field="code"/>
-				
+
 				<div class="col-12"> 
 					<vu:table componentId="intentList"  list="topIntents" th:title="#{analytics.intents.usage}"  rowsPerPage="10" sortBy="count" descending>
 							  
 						<vu:column field="intentRasa" label="Intent"/>
 						<vu:column field="count"/>
-						<vu:column field="intentRasa" label="detail"  class="col_Small">
+						<vu:column field="intentRasa" label="detail" >
 							<q-btn class="fab-block" round color="primary" icon="search" th:aria-label="#{analytics.message}"  th:title="#{analytics.message}"
 							 	@click="displayIntentDetail(props.row)"></q-btn>
 						</vu:column>
@@ -334,7 +417,10 @@
 			</template>
 		</div>
 		
-		<q-page-sticky expand position="top" >
+		
+		
+		<q-page-sticky expand position="top">
+		
 			<q-toolbar class="bg-secondary text-white shadow-2">
 				<q-select
 					 style="width: 250px; background-color: white"
@@ -349,7 +435,7 @@
 		         ></q-select>
 		         
 		         <q-space></q-space>
-		          
+		        
 		         <q-select
 		         	 v-if="vueData.criteria.botId && vueData.nodes.length > 0"
 					 style="width: 250px; background-color: white"
@@ -363,20 +449,112 @@
 			         @input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
 		         ></q-select>
 		         
+		          <q-space></q-space>
+		         
+		        <q-input 
+					v-bind:value="decodeDate('criteria', 'fromDate', 'DD/MM/YYYY')" 
+					dense clearable 
+					class="q-pa-none"
+					style="width: 200px;background-color: white"
+					@change="function (event) { encodeDate('criteria','fromDate', event.target.value, 'DD/MM/YYYY') }"
+					th:label="#{analytics.date.from}"
+					:error="hasFieldsError('criteria', 'fromDate')"
+					:error-message="getErrorMessage('criteria', 'fromDate')" 
+					@clear="vueData.criteria.fromDate=null;httpPostAjax('_updateStats', vueDataParams(['criteria']));"
+				>
+					<template v-slot:prepend>
+						<q-icon name="event" class="cursor-pointer">
+							<q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupFromDate">
+					             <q-date 
+					             	v-model="vueData.criteria.fromDate"
+					             	landscape
+					             	mask="DD/MM/YYYY"
+					             	@input="closeDialog();httpPostAjax('_updateStats', vueDataParams(['criteria']));"></q-date> 
+				       		</q-popup-proxy>
+				       	</q-icon>
+			       	</template>
+			    </q-input>
+				<input type="hidden" name="vContext[criteria][fromDate]" v-bind:value="vueData.criteria.fromDate" />
+		        
+		        <q-space></q-space>
+		        
+		        <q-input 
+					v-bind:value="decodeDate('criteria', 'toDate', 'DD/MM/YYYY')" 
+					dense clearable 
+					class="q-pa-none"
+					style="width: 200px;background-color: white"
+					@change="function (event) { encodeDate('criteria','toDate', event.target.value, 'DD/MM/YYYY') }"
+					th:label="#{analytics.date.to}"
+					:error="hasFieldsError('criteria', 'toDate')"
+					:error-message="getErrorMessage('criteria', 'toDate')" 
+					@clear="vueData.criteria.toDate=null;httpPostAjax('_updateStats', vueDataParams(['criteria']));"
+				>
+					<template v-slot:prepend>
+						<q-icon name="event" class="cursor-pointer">
+							<q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupToDate">
+					             <q-date 
+					             	v-model="vueData.criteria.toDate"
+					             	landscape
+					             	mask="DD/MM/YYYY"
+					             	@input="closeDialog();httpPostAjax('_updateStats', vueDataParams(['criteria']));"></q-date> 
+				       		</q-popup-proxy>
+				       	</q-icon>
+			       	</template>
+			    </q-input>
+				<input type="hidden" name="vContext[criteria][toDate]" v-bind:value="vueData.criteria.toDate" />
+		     
+		  
 				<q-space></q-space>
 				<vu:include-data object="timeOptions" field="'*'" />
 						
 				<q-btn-toggle
 					v-model="vueData.criteria.timeOption"
 					toggle-color="primary"
-					:options='transformListForSelection("timeOptions", "value","label")'
+					:options='transformListForSelection("timeOptions", "value", "label")'
 					@input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
 				></q-btn-toggle>
-				
-				
+				<q-space></q-space>
+				<q-btn  class="fab-block" round color="primary" size="lg" icon="file_download" th:aria-label="export" th:title="export" 
+					       @click="$refs.exportStatistic.show()"></q-btn>	
 			</q-toolbar>
+			
 		</q-page-sticky>
-	</section>
-
+		
+		
+		
+		
+		
+		<q-dialog ref="exportStatistic" th:with="viewMode='edit'" >
+				<q-card>
+					<q-form method="post" action="_exportStatisticFile">
+					<q-card-section>
+						<div class="text-h6" th:text="#{popup.export.title}"></div>						
+					</q-card-section>
+					<q-card-section style="width: 400px;">
+						<vu:include-data object="typeExportAnalyticsList" field="'*'"/>
+						<q-select
+							clearable
+							filled
+							map-options
+							emit-value
+							v-model="vueData.selectTypeExportAnalytics"
+							:options="vueData.locale == 'fr_FR' ? transformListForSelection('typeExportAnalyticsList', 'teaCd', 'labelFr') : transformListForSelection('typeExportAnalyticsList', 'teaCd', 'label')"
+							th:label="Type"
+							stack-label>
+						</q-select>
+					</q-card-section>
+					<input type="hidden" name="vContext[selectTypeExportAnalytics]" :value="vueData.selectTypeExportAnalytics" />				
+					
+					<q-card-actions align="around">
+							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<q-btn flat th:label="#{popup.export.cancel}" color="primary" v-close-popup ></q-btn>
+							<q-btn type="submit" th:title="#{popup.export.export}" th:label="#{popup.export.export}" th:aria-label="#{popup.export.export}" color="primary" v-close-popup></q-btn> 
+					</q-card-actions>
+					</q-form>
+				</q-card>
+			</q-dialog>
+		
+		</section>
+		
 </body>
 </html>

@@ -29,6 +29,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceSer
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topicFileExport.TopicFileExportPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFileExportFields;
@@ -68,6 +69,9 @@ public class TopicFileExportServices implements Component {
 	private NluTrainingSentenceServices nluTrainingSentenceServices;
 
 	@Inject
+	private TopicLabelServices topicLabelServices;
+
+	@Inject
 	private ExporterManager exportManager;
 
 	/*
@@ -91,6 +95,7 @@ public class TopicFileExportServices implements Component {
 				.addField(TopicFileExportFields.response)
 				.addField(TopicFileExportFields.buttons)
 				.addField(TopicFileExportFields.isEnd)
+				.addField(TopicFileExportFields.labels)
 				.endSheet()
 				.build();
 		final VFile result = exportManager.createExportFile(export);
@@ -114,7 +119,7 @@ public class TopicFileExportServices implements Component {
 		try {
 			// Check length of header, to make sure all columns are there
 			final String[] header = csvReader.readNext();
-			if (header.length != 14) {
+			if (header.length != 15) {
 				throw new VUserException(TopicFileExportMultilingualResources.ERR_SIZE_FILE);
 			}
 			final CsvToBean<TopicFileExport> csvToBean = new CsvToBean<TopicFileExport>();
@@ -136,7 +141,8 @@ public class TopicFileExportServices implements Component {
 					TopicFileExportFields.trainingPhrases.name(),
 					TopicFileExportFields.response.name(),
 					TopicFileExportFields.buttons.name(),
-					TopicFileExportFields.isEnd.name()
+					TopicFileExportFields.isEnd.name(),
+					TopicFileExportFields.labels.name()
 			};
 			//Setting the colums for mappingStrategy
 			mappingStrategy.setColumnMapping(columns);
@@ -344,6 +350,8 @@ public class TopicFileExportServices implements Component {
 				gestionSmallTalk(chatbot, topicSaved, tfe, creation, nluTrainingSentences);
 			}
 
+			topicLabelServices.replaceLabel(tfe, topicSaved);
+
 		} catch (final Exception e) {
 			final StringBuilder erreur = new StringBuilder(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC, tfe.getCode()).getDisplay());
 			erreur.append(e.getMessage());
@@ -362,8 +370,10 @@ public class TopicFileExportServices implements Component {
 		sin.setScript(tfe.getScript());
 		sin.setTopId(topic.getTopId());
 
+		final DtList<NluTrainingSentence> nluTrainingSentencesToDelete = topicServices.getNluTrainingSentenceByTopic(chatbot, topic);
+
 		scriptIntentionServices.save(chatbot, sin, topic);
-		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentences);
+		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 
 	}
 
@@ -377,9 +387,12 @@ public class TopicFileExportServices implements Component {
 		final DtList<ResponseButton> listButtons = extractButtonsFromTfe(chatbot.getBotId(), tfe);
 
 		final SmallTalk smt = populateSmallTalkFromTopicFileExport(topic, creation, tfe, listResponse);
+
+		final DtList<NluTrainingSentence> nluTrainingSentencesToDelete = topicServices.getNluTrainingSentenceByTopic(chatbot, topic);
+
 		topicServices.saveTtoCd(topic, TypeTopicEnum.SMALLTALK.name());
 		smallTalkServices.saveSmallTalk(chatbot, smt, listResponse, listButtons, topic);
-		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentences);
+		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 	}
 
 	/*

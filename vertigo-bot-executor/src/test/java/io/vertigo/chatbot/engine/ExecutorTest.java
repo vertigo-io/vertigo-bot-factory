@@ -317,7 +317,7 @@ public class ExecutorTest {
 		final var executorConfig = new ExecutorConfiguration();
 		executorConfig.setNluThreshold(BigDecimal.valueOf(0.6));
 
-		executorManager.loadModel(botExport, executorConfig);
+		executorManager.loadModel(botExport, executorConfig, new StringBuilder());
 	}
 
 	@BeforeEach

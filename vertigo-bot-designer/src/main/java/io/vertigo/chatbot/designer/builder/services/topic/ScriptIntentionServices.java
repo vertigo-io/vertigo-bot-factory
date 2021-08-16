@@ -106,7 +106,7 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 
 	@Override
 	public boolean isEnabled(final ScriptIntention object, final boolean isEnabled, final Chatbot bot) {
-		return object.getScript() != null ? !object.getScript().isBlank() : false;
+		return object.getScript() != null ? !object.getScript().isBlank() && isEnabled : false;
 	}
 
 	@Override

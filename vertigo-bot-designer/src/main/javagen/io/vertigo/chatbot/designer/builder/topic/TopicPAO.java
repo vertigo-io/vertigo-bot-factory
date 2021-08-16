@@ -87,16 +87,28 @@ public final class TopicPAO implements StoreServices {
  "					top.is_enabled," + 
  "					tto.label as type," + 
  "					top.tto_cd," + 
- "					tpc.label as cat_label" + 
+ "					tpc.label as cat_label," + 
+ "					string_agg(tpl.label, ',') as labels" + 
  "			from topic top " + 
  "			left join small_talk smt on smt.top_id = top.top_id" + 
  "			left join script_intention sin on sin.top_id = top.top_id" + 
  "			join type_topic tto on top.tto_cd = tto.tto_cd" + 
  "			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)" + 
+ "			left join topic_topic_label ttl on (ttl.top_id = top.top_id)" + 
+ "			left join topic_label tpl on (tpl.label_id = ttl.label_id)" + 
  "			where top.bot_id = #botId#" + 
  "			<% if (ktoCd != null){ %>" + 
  "				and top.kto_cd = #ktoCd#" + 
- "			<% } %>",
+ "			<% } %>" + 
+ "			group by top.top_id," + 
+ "					top.title," + 
+ "					top.code," + 
+ "					smt.smt_id," + 
+ "					sin.sin_id," + 
+ "					top.is_enabled," + 
+ "					tto.label ," + 
+ "					top.tto_cd," + 
+ "					tpc.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicIhm> getAllTopicsIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCd", smartType = "STyCode") final Optional<String> ktoCd) {
@@ -124,13 +136,26 @@ public final class TopicPAO implements StoreServices {
  "					top.is_enabled," + 
  "					tto.label as type," + 
  "					top.tto_cd," + 
- "					tpc.label as cat_label" + 
+ "					tpc.label as cat_label," + 
+ "					string_agg(tpl.label, ',') as labels" + 
  "			from topic top " + 
  "			left join small_talk smt on smt.top_id = top.top_id" + 
  "			left join script_intention sin on sin.top_id = top.top_id" + 
  "			join type_topic tto on top.tto_cd = tto.tto_cd" + 
  "			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)" + 
+ "			left join topic_topic_label ttl on (ttl.top_id = top.top_id)" + 
+ "			left join topic_label tpl on (tpl.label_id = ttl.label_id)" + 
  "			where top.top_id = #topId#" + 
+ "			group by top.top_id," + 
+ "					top.title," + 
+ "					top.code," + 
+ "					smt.smt_id," + 
+ "					sin.sin_id," + 
+ "					top.is_enabled," + 
+ "					tto.label ," + 
+ "					top.tto_cd," + 
+ "					tpc.label" + 
+ "			" + 
  "			LIMIT 1",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm")

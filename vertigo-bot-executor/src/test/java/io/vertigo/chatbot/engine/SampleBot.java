@@ -58,7 +58,7 @@ public class SampleBot {
 					main(bb),
 					BotNodeProvider.say(bb, "bye bye {{/u/name}}"));
 		}));
-		botManager.updateConfig(topics);
+		botManager.updateConfig(topics, new StringBuilder());
 
 		// create a botEngine that is bound to a specific context
 		botEngine = botManager.createBotEngine();

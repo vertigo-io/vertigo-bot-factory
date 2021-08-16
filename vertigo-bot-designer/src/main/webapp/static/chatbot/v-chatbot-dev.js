@@ -5,7 +5,7 @@ Vue.component('v-chatbot-dev', {
 			<div class="q-pr-md">
 				<div v-for="(msg, index) in messages">
 					<q-chat-message v-if="msg.rating" class= "animate-fade" :key="'msgRating-'+index" :sent="msg.sent" :bg-color= "msg.bgColor" :avatar = "msg.avatar" >
-						<q-rating v-model="msg.rating" :max="5" style="font-size: 2rem;" readonly ></q-rating>
+						<q-rating v-model="msg.rating" style="font-size: 2rem;" readonly ></q-rating>
 					</q-chat-message>
 					<q-chat-message v-if="msg.text" class="animate-fade" :key="'msg-'+index" :label="msg.label" :text-sanitize="msg.sent" :sent="msg.sent" :text-color="msg.textColor"
 						:bg-color="msg.bgColor" :name="msg.name" :avatar="msg.avatar" :text="msg.text" :stamp="msg.stamp" ></q-chat-message>
@@ -15,7 +15,7 @@ Vue.component('v-chatbot-dev', {
 						<div class="q-pb-sm">
 							{{$q.lang.vui.chatbot.errorMessage}}
 						</div>
-						<q-btn class="full-width" @click="askBot(lastPayload, true)" :label="$q.lang.vui.chatbot.tryAgain" color="white" text-color="black" ></q-btn>
+						<q-btn class="full-width" @click="postAnswerBtn(lastPayload)" :label="$q.lang.vui.chatbot.tryAgain" color="white" text-color="black" ></q-btn>
 					</q-chat-message>
 				</div>
 				<div class="sys-chat non-selectable">
@@ -35,7 +35,11 @@ Vue.component('v-chatbot-dev', {
 				</div>
 				<div class="non-selectable">
 					<q-chat-message v-if="inputConfig.showRating" class="animate-fade" bg-color="primary" sent >
-						<q-rating v-model="rating" :max="4" style="font-size: 2rem;" ></q-rating>
+						<q-rating v-model="rating" style="font-size: 2rem;" 
+							icon="star_border"
+       						icon-selected="star"
+        					icon-half="star_half" 
+        					@input="rateBot"></q-rating>
 					</q-chat-message>
 				</div>
 			</div>
@@ -67,7 +71,9 @@ Vue.component('v-chatbot-dev', {
 			botAvatar: { type: String, required:true },
 			botName: { type: String, required:true },
 			placeholder: { type: String },
-			startCall: {type:String, 'default' : '_start'}
+			startCall: {type:String, 'default' : '_start'},
+			rateCall: {type:String, 'default' : '_rate'},
+			rating: {type:Number}
 		},
 		data: function () {
 			return {
@@ -90,19 +96,23 @@ Vue.component('v-chatbot-dev', {
 				keepAction: false,
 				menu: false,
 				lastUserInteraction: 0,
-				watingMessagesStack: []
+				watingMessagesStack: [],
+				rating: 0,
 			}
 		},
 		created : function (){
 			this.startConversation();
 		},
 		methods: {
-			startConversation: function (value){
+			startConversation: function (){
 			this.lastUserInteraction = Date.now();
-				this.$http.post(this.startCall, {})
+			urlPage =  window.location.href
+			context = {}
+			context['url'] =  urlPage
+			this.$http.post(this.startCall, {message: null, metadatas: {'context' : context}})
 					.then(httpResponse => {
 							this.convId = httpResponse.data.metadatas.sessionId
-							this._handleResponse(httpResponse)
+							this._handleResponse(httpResponse, false)
 						}).catch(error => {
 						// error
 						this.error = true;
@@ -119,8 +129,8 @@ Vue.component('v-chatbot-dev', {
 				});
 
 				this._scrollToBottom();
-				
-				this.askBot(btn.payload, true);
+				let botInput = {sender: this.convId, message: null, metadatas:{payload : btn.payload}}
+				this.askBot(botInput);
 			},
 			postAnswerText: function () {
 				var sanitizedString = this.inputConfig.responseText.trim().replace(/(?:\r\n|\r|\n)/g, '<br>');
@@ -137,26 +147,26 @@ Vue.component('v-chatbot-dev', {
 				
 				var response = this.inputConfig.responsePattern === "" ? sanitizedString.replace(/(")/g, "\"")
 															  : this.inputConfig.responsePattern.replace("#", sanitizedString.replace(/(")/g, "\\\""));
-				
-				this.askBot(response, false);
+				let botInput = {sender: this.convId, message: response, metadatas:{}}
+				this.askBot(botInput);
 			},
 			_scrollToBottom: function () {
 				if (this.$refs.scroller) {
 					this.$refs.scroller.setScrollPosition(this.$refs.scroller.scrollSize, 400);
 				}
 			},
-			askBot: function (value, isButton) {
+			askBot: function (value) {
 				this.prevInputConfig = JSON.parse(JSON.stringify(this.inputConfig));
 				this.reinitInput();
 				this.lastPayload = value;
 				this.processing = true;
 				
 				this.lastUserInteraction = Date.now();
-			
-				this.$http.post(this.botUrl, {sender: this.convId, message: value, isButton: isButton})
+				
+				this.$http.post(this.botUrl, value)
 					.then(httpResponse => {
 						// success
-						this._handleResponse(httpResponse);
+						this._handleResponse(httpResponse, false);
 					}).catch(error => {
 						// error
 						this.error = true;
@@ -166,19 +176,21 @@ Vue.component('v-chatbot-dev', {
 					});
 					
 			},
-			_handleResponse: function(httpResponse) {
+			_handleResponse: function(httpResponse, isRating) {
 				// success
 				var responses = httpResponse.data.htmlTexts;
 				var buttons = httpResponse.data.choices;
-				
+				var isEnded = httpResponse.data.status  === 'Ended'
+				isEnded &= !isRating
+								
 				for (var i = 0; i < responses.length - 1; i++){
 					this.watingMessagesStack.push({text: responses[i]})
 				}
 				this.watingMessagesStack.push({text: responses[responses.length -1], buttons : buttons})
 				
-				this._displayMessages();
+				this._displayMessages(isEnded);
 			},
-			_displayMessages: function () {
+			_displayMessages: function (isEnded) {
 				if (this.watingMessagesStack.length > 0) {
 					var currentMessage = this.watingMessagesStack.shift();
 					var watingTime = this.lastUserInteraction - Date.now() + this.minTimeBetweenMessages;
@@ -186,7 +198,7 @@ Vue.component('v-chatbot-dev', {
 					this.sleep(watingTime).then(() => {
 						this._processResponse(currentMessage);
 						this.lastUserInteraction = Date.now();
-						this._displayMessages();
+						this._displayMessages(isEnded);
 					});
 				} else {
 					this.processing = false;
@@ -197,8 +209,10 @@ Vue.component('v-chatbot-dev', {
 					}
 					
 					this.sleep(1).then(() => { // en différé le temps que la vue soit mise à jour
+						this.inputConfig.showRating = isEnded;
 						this.$refs.input.focus();
 					});
+					
 				}
 			},
 			_processResponse: function (response) {
@@ -227,11 +241,8 @@ Vue.component('v-chatbot-dev', {
 				if (!silent) {
 					this.systemMessage(this.$q.lang.vui.chatbot.restartMessage);
 				}
+				this.startConversation(); // lancement de la phrase d'accueil
 				
-				this.$http.post(this.botUrl, '{"sender":"' + this.convId + '","message":"/restart"}')
-				.then(httpResponse => {
-					this.startConversation("/start"); // lancement de la phrase d'accueil
-				});
 			},
 			reinitInput: function () {
 				this.inputConfig.modeTextarea = false;
@@ -252,6 +263,14 @@ Vue.component('v-chatbot-dev', {
 					sys: true
 				});
 				this._scrollToBottom();
+			},
+			rateBot: function(value){
+				this.$http.post(this.rateCall, {sender: this.convId, note: value})
+					.then(httpResponse => {
+						httpResponse.data = {htmlTexts : ["Merci de m'avoir noté"]}
+						this._handleResponse(httpResponse, true);
+						
+					})
 			}
 		}
 });

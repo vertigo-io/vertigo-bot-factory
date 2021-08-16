@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
@@ -21,13 +23,18 @@ import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
+import io.vertigo.chatbot.designer.utils.DateUtils;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
+import io.vertigo.chatbot.domain.DtDefinitions.ChatbotFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
@@ -71,6 +78,11 @@ public class ChatbotServices implements Component {
 
 	@Inject
 	private TopicCategoryServices topicCategoryServices;
+
+	@Inject
+	private TopicLabelServices topicLabelServices;
+
+	static final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern(DateUtils.FORMAT_JJMMAAAA);
 
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 			final UtterText utterTextFailure,
@@ -131,6 +143,7 @@ public class ChatbotServices implements Component {
 		responsesButtonServices.removeAllSMTButtonsByBot(bot);
 		// Delete training, reponsetype and smallTalk
 		topicServices.removeAllNTSFromBot(bot);
+		topicLabelServices.cleanLabelFromBot(bot);
 		scriptIntentionServices.removeAllScriptIntentionFromBot(bot);
 		smallTalkServices.removeAllSmallTalkFromBot(bot);
 		topicServices.removeAllTopicsFromBot(bot);
@@ -186,6 +199,19 @@ public class ChatbotServices implements Component {
 				"noAvatar.png",
 				"image/png",
 				ChatbotServices.class.getResource("/noAvatar.png"));
+	}
+
+	public Optional<Chatbot> getChatbotByBotId(final Long botId) {
+		final Criteria<Chatbot> criteria = Criterions.isEqualTo(ChatbotFields.botId, botId);
+		return chatbotDAO.findOptional(criteria);
+	}
+
+	public String getBotNameDisplay(final Optional<Chatbot> bot) {
+		return bot.isPresent() ? bot.get().getName() : MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
+	}
+
+	public String getBotDateDisplay(final Optional<Chatbot> bot) {
+		return bot.isPresent() ? bot.get().getCreationDate().format(formatterDate) : null;
 	}
 
 }

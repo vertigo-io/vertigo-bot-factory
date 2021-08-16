@@ -5,7 +5,7 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
-drop table IF EXISTS TOPIC_TOPIC_CATEGORY cascade;
+drop table IF EXISTS TOPIC_TOPIC_LABEL cascade;
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_NODE cascade;
@@ -14,6 +14,8 @@ drop table IF EXISTS CHATBOT_PROFILES cascade;
 drop table IF EXISTS GROUPS cascade;
 drop sequence IF EXISTS SEQ_GROUPS;
 drop table IF EXISTS KIND_TOPIC cascade;
+drop table IF EXISTS MEANING cascade;
+drop sequence IF EXISTS SEQ_MEANING;
 drop table IF EXISTS MEDIA_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_MEDIA_FILE_INFO;
 drop table IF EXISTS NLU_TRAINING_SENTENCE cascade;
@@ -30,13 +32,18 @@ drop table IF EXISTS SCRIPT_INTENTION cascade;
 drop sequence IF EXISTS SEQ_SCRIPT_INTENTION;
 drop table IF EXISTS SMALL_TALK cascade;
 drop sequence IF EXISTS SEQ_SMALL_TALK;
+drop table IF EXISTS SYNONYM cascade;
+drop sequence IF EXISTS SEQ_SYNONYM;
 drop table IF EXISTS TOPIC cascade;
 drop sequence IF EXISTS SEQ_TOPIC;
 drop table IF EXISTS TOPIC_CATEGORY cascade;
 drop sequence IF EXISTS SEQ_TOPIC_CATEGORY;
+drop table IF EXISTS TOPIC_LABEL cascade;
+drop sequence IF EXISTS SEQ_TOPIC_LABEL;
 drop table IF EXISTS TRAINING cascade;
 drop sequence IF EXISTS SEQ_TRAINING;
 drop table IF EXISTS TRAINING_STATUS cascade;
+drop table IF EXISTS TYPE_EXPORT_ANALYTICS cascade;
 drop table IF EXISTS TYPE_TOPIC cascade;
 drop table IF EXISTS UTTER_TEXT cascade;
 drop sequence IF EXISTS SEQ_UTTER_TEXT;
@@ -57,6 +64,9 @@ create sequence SEQ_CHATBOT_NODE
 create sequence SEQ_GROUPS
 	start with 1000 cache 20; 
 
+
+create sequence SEQ_MEANING
+	start with 1000 cache 20; 
 
 create sequence SEQ_MEDIA_FILE_INFO
 	start with 1000 cache 20; 
@@ -81,14 +91,21 @@ create sequence SEQ_SCRIPT_INTENTION
 create sequence SEQ_SMALL_TALK
 	start with 1000 cache 20; 
 
+create sequence SEQ_SYNONYM
+	start with 1000 cache 20; 
+
 create sequence SEQ_TOPIC
 	start with 1000 cache 20; 
 
 create sequence SEQ_TOPIC_CATEGORY
 	start with 1000 cache 20; 
 
+create sequence SEQ_TOPIC_LABEL
+	start with 1000 cache 20; 
+
 create sequence SEQ_TRAINING
 	start with 1000 cache 20; 
+
 
 
 
@@ -227,6 +244,26 @@ comment on column KIND_TOPIC.DESCRIPTION is
 
 comment on column KIND_TOPIC.DEFAULT_TEXT is
 'Default text';
+
+-- ============================================================
+--   Table : MEANING                                        
+-- ============================================================
+create table MEANING
+(
+    MEA_ID      	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_MEANING primary key (MEA_ID)
+);
+
+comment on column MEANING.MEA_ID is
+'Meaning id';
+
+comment on column MEANING.LABEL is
+'Label';
+
+comment on column MEANING.BOT_ID is
+'Chatbot';
 
 -- ============================================================
 --   Table : MEDIA_FILE_INFO                                        
@@ -449,6 +486,30 @@ comment on column SMALL_TALK.RTY_ID is
 'Response type';
 
 -- ============================================================
+--   Table : SYNONYM                                        
+-- ============================================================
+create table SYNONYM
+(
+    SYN_ID      	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    MEA_ID      	 NUMERIC     	not null,
+    constraint PK_SYNONYM primary key (SYN_ID)
+);
+
+comment on column SYNONYM.SYN_ID is
+'Synonym id';
+
+comment on column SYNONYM.LABEL is
+'Label';
+
+comment on column SYNONYM.BOT_ID is
+'Chatbot';
+
+comment on column SYNONYM.MEA_ID is
+'Meaning';
+
+-- ============================================================
 --   Table : TOPIC                                        
 -- ============================================================
 create table TOPIC
@@ -529,6 +590,26 @@ comment on column TOPIC_CATEGORY.BOT_ID is
 'Chatbot';
 
 -- ============================================================
+--   Table : TOPIC_LABEL                                        
+-- ============================================================
+create table TOPIC_LABEL
+(
+    LABEL_ID    	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_TOPIC_LABEL primary key (LABEL_ID)
+);
+
+comment on column TOPIC_LABEL.LABEL_ID is
+'Label id';
+
+comment on column TOPIC_LABEL.LABEL is
+'Label label';
+
+comment on column TOPIC_LABEL.BOT_ID is
+'Chatbot';
+
+-- ============================================================
 --   Table : TRAINING                                        
 -- ============================================================
 create table TRAINING
@@ -601,6 +682,26 @@ comment on column TRAINING_STATUS.LABEL_FR is
 'LabelFr';
 
 -- ============================================================
+--   Table : TYPE_EXPORT_ANALYTICS                                        
+-- ============================================================
+create table TYPE_EXPORT_ANALYTICS
+(
+    TEA_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_TYPE_EXPORT_ANALYTICS primary key (TEA_CD)
+);
+
+comment on column TYPE_EXPORT_ANALYTICS.TEA_CD is
+'Code';
+
+comment on column TYPE_EXPORT_ANALYTICS.LABEL is
+'Title';
+
+comment on column TYPE_EXPORT_ANALYTICS.LABEL_FR is
+'Titre';
+
+-- ============================================================
 --   Table : TYPE_TOPIC                                        
 -- ============================================================
 create table TYPE_TOPIC
@@ -646,6 +747,12 @@ alter table CHATBOT
 	references MEDIA_FILE_INFO (FIL_ID);
 
 create index A_CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on CHATBOT (FIL_ID_AVATAR asc);
+
+alter table MEANING
+	add constraint FK_A_MEANING_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_MEANING_CHATBOT_CHATBOT_FK on MEANING (BOT_ID asc);
 
 alter table CHATBOT_NODE
 	add constraint FK_A_NODE_CHATBOT_CHATBOT foreign key (BOT_ID)
@@ -725,6 +832,18 @@ alter table UTTER_TEXT
 
 create index A_SMALL_TALK_UTTER_TEXT_SMALL_TALK_FK on UTTER_TEXT (SMT_ID asc);
 
+alter table SYNONYM
+	add constraint FK_A_SYNONYM_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_SYNONYM_CHATBOT_CHATBOT_FK on SYNONYM (BOT_ID asc);
+
+alter table SYNONYM
+	add constraint FK_A_SYNONYM_MEANING_MEANING foreign key (MEA_ID)
+	references MEANING (MEA_ID);
+
+create index A_SYNONYM_MEANING_MEANING_FK on SYNONYM (MEA_ID asc);
+
 alter table TOPIC_CATEGORY
 	add constraint FK_A_TOPIC_CATEGORY_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
@@ -748,6 +867,12 @@ alter table TOPIC
 	references KIND_TOPIC (KTO_CD);
 
 create index A_TOPIC_KIND_TOPIC_KIND_TOPIC_FK on TOPIC (KTO_CD asc);
+
+alter table TOPIC_LABEL
+	add constraint FK_A_TOPIC_LABEL_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_TOPIC_LABEL_CHATBOT_CHATBOT_FK on TOPIC_LABEL (BOT_ID asc);
 
 alter table NLU_TRAINING_SENTENCE
 	add constraint FK_A_TOPIC_NLU_TRAINING_SENTENCE_TOPIC foreign key (TOP_ID)
@@ -780,20 +905,20 @@ alter table TRAINING
 create index A_TRAINING_TRAINING_STATUS_TRAINING_STATUS_FK on TRAINING (STR_CD asc);
 
 
-create table TOPIC_TOPIC_CATEGORY
+create table TOPIC_TOPIC_LABEL
 (
 	TOP_ID      	 NUMERIC     	 not null,
-	TOP_CAT_ID  	 NUMERIC     	 not null,
-	constraint PK_TOPIC_TOPIC_CATEGORY primary key (TOP_ID, TOP_CAT_ID),
-	constraint FK_ANN_TOPIC_CATEGORY_TOPIC 
+	LABEL_ID    	 NUMERIC     	 not null,
+	constraint PK_TOPIC_TOPIC_LABEL primary key (TOP_ID, LABEL_ID),
+	constraint FK_ANN_TOPIC_LABEL_TOPIC 
 		foreign key(TOP_ID)
 		references TOPIC (TOP_ID),
-	constraint FK_ANN_TOPIC_CATEGORY_TOPIC_CATEGORY 
-		foreign key(TOP_CAT_ID)
-		references TOPIC_CATEGORY (TOP_CAT_ID)
+	constraint FK_ANN_TOPIC_LABEL_TOPIC_LABEL 
+		foreign key(LABEL_ID)
+		references TOPIC_LABEL (LABEL_ID)
 );
 
-create index ANN_TOPIC_CATEGORY_TOPIC_FK on TOPIC_TOPIC_CATEGORY (TOP_ID asc);
+create index ANN_TOPIC_LABEL_TOPIC_FK on TOPIC_TOPIC_LABEL (TOP_ID asc);
 
-create index ANN_TOPIC_CATEGORY_TOPIC_CATEGORY_FK on TOPIC_TOPIC_CATEGORY (TOP_CAT_ID asc);
+create index ANN_TOPIC_LABEL_TOPIC_LABEL_FK on TOPIC_TOPIC_LABEL (LABEL_ID asc);
 

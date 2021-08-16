@@ -17,20 +17,17 @@
  */
 package io.vertigo.chatbot.engine;
 
-import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotBtCommandParserDefinitionProvider;
-import io.vertigo.core.node.config.Features;
+import io.vertigo.core.node.config.discovery.ModuleDiscoveryFeatures;
 
-public class EngineFeatures extends Features<EngineFeatures> {
+public class EngineFeatures extends ModuleDiscoveryFeatures<EngineFeatures> {
 
 	public EngineFeatures() {
 		super("ChatbotEngine");
 	}
 
 	@Override
-	protected void buildFeatures() {
-		getModuleConfigBuilder()
-				.addComponent(BotManager.class, BotManagerImpl.class)
-				.addDefinitionProvider(BotBtCommandParserDefinitionProvider.class);
+	protected String getPackageRoot() {
+		return this.getClass().getPackage().getName();
 	}
 
 }

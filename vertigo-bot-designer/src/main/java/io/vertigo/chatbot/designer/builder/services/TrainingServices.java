@@ -40,8 +40,13 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.JaxrsProvider;
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -61,6 +66,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
 import io.vertigo.datamodel.structure.definitions.DtField;
@@ -98,45 +104,104 @@ public class TrainingServices implements Component {
 
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
+	private static final String URL_MODEL = "/api/chatbot/admin/model";
+
 	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
+		final StringBuilder logs = new StringBuilder("new Training");
+		LogsUtils.breakLine(logs);
+
 		final Long botId = bot.getBotId();
+
 		trainingPAO.cleanOldTrainings(botId);
 
 		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(botId)
 				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
 
 		//Set training
+
 		final Training training = createTraining(bot);
 		saveTraining(bot, training);
 
-		final ExecutorConfiguration execConfig = getExecutorConfig(training, devNode);
+		try {
+			LogsUtils.addLogs(logs, "Executor configuration... ");
+			final ExecutorConfiguration execConfig = getExecutorConfig(training, devNode);
+			LogsUtils.logOK(logs);
 
-		final Map<String, Object> requestData = new HashMap<String, Object>();
-		requestData.put("botExport", exportBot(bot));
-		requestData.put("executorConfig", execConfig);
+			LogsUtils.addLogs(logs, "Bot export :");
+			LogsUtils.breakLine(logs);
+			final Map<String, Object> requestData = new HashMap<String, Object>();
+			requestData.put("botExport", exportBot(bot, logs));
+			requestData.put("executorConfig", execConfig);
+			LogsUtils.addLogs(logs, "Bot export ");
+			LogsUtils.logOK(logs);
 
-		final Map<String, String> headers = Map.of(API_KEY, devNode.getApiKey(),
-				"Content-type", "application/json");
+			final Map<String, String> headers = Map.of(API_KEY, devNode.getApiKey(),
+					"Content-type", "application/json");
 
-		final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
-		final HttpRequest request = HttpRequestUtils.createPutRequest(devNode.getUrl() + "/api/chatbot/admin/model", headers, publisher);
-		HttpRequestUtils.sendAsyncRequest(null, request, BodyHandlers.ofString())
-				.thenApply(response -> this.handleResponse(response, training, devNode, bot));
-
-		return training;
+			LogsUtils.addLogs(logs, "Call executor training :");
+			LogsUtils.breakLine(logs);
+			final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
+			final HttpRequest request = HttpRequestUtils.createPutRequest(devNode.getUrl() + URL_MODEL, headers, publisher);
+			HttpRequestUtils.sendAsyncRequest(null, request, BodyHandlers.ofString())
+					.thenApply(response -> {
+						return this.handleResponse(response, training, devNode, bot, logs);
+					});
+			LogsUtils.addLogs(logs, "Call training OK, training in progress...");
+			return training;
+		} catch (final Exception e) {
+			LogsUtils.logKO(logs);
+			LogsUtils.addLogs(logs, e.getMessage());
+			LOGGER.error("error", e);
+			training.setLog(logs.toString());
+			throw new VSystemException("error training", e);
+		} finally {
+			training.setLog(logs.toString());
+			saveTraining(bot, training);
+		}
 	}
 
-	public <T> String handleResponse(final HttpResponse<T> response, final Training training, final ChatbotNode node, final Chatbot bot) {
-		if (response.statusCode() != 204) {
-			training.setStrCd(TrainingStatusEnum.KO.name());
-		} else {
+	public <T> String handleResponse(final HttpResponse<T> response, final Training training, final ChatbotNode node, final Chatbot bot, final StringBuilder logs) {
+		training.setEndTime(Instant.now());
+		if (HttpRequestUtils.isResponseOk(response, 200)) {
+
 			training.setStrCd(TrainingStatusEnum.OK.name());
 			node.setTraId(training.getTraId());
 			asynchronousServices.saveNodeWithoutAuthorizations(node);
+			LogsUtils.logOK(logs);
+			LogsUtils.addLogs(logs, response.body());
+
+		} else {
+			training.setStrCd(TrainingStatusEnum.KO.name());
+			LogsUtils.logKO(logs);
+			errorTreatment(response, logs);
+
 		}
-		training.setEndTime(Instant.now());
+		training.setLog(logs.toString());
 		asynchronousServices.saveTrainingWithoutAuthorizations(training);
 		return "response handled";
+	}
+
+	private <T> void errorTreatment(final HttpResponse<T> response, final StringBuilder logs) {
+		if (!HttpRequestUtils.isResponseKo(response, 404, 405)) {
+			errorJsonTreatment(response, logs);
+		} else {
+			LogsUtils.addLogs(logs, response.body());
+		}
+	}
+
+	private <T> void errorJsonTreatment(final HttpResponse<T> response, final StringBuilder logs) {
+		final ObjectMapper mapper = new ObjectMapper();
+		JsonNode root = null;
+		try {
+			root = mapper.readTree(response.body().toString());
+			final String responseString = root.get("globalErrors").get(0).toString();
+			LogsUtils.addLogs(logs, responseString.substring(1, responseString.length() - 1));
+
+		} catch (final JsonProcessingException e) {
+			LOGGER.info("error on deserialization");
+			LogsUtils.addLogs(logs, e);
+			e.printStackTrace();
+		}
 	}
 
 	private Training createTraining(final Chatbot bot) {
@@ -172,8 +237,8 @@ public class TrainingServices implements Component {
 		return trainingDAO.getDeployedTrainingByBotId(bot.getBotId());
 	}
 
-	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot) {
-		return botExportServices.exportBot(bot);
+	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot, final StringBuilder logs) {
+		return botExportServices.exportBot(bot, logs);
 	}
 
 	public void loadModel(@SecuredOperation("botContributor") final Chatbot bot, final Long traId, final Long nodId) {
@@ -210,7 +275,7 @@ public class TrainingServices implements Component {
 
 			addObjectToMultipart(fdmp, "config", config);
 
-			response = jaxrsProvider.getWebTarget(node.getUrl()).path("/api/chatbot/admin/model")
+			response = jaxrsProvider.getWebTarget(node.getUrl()).path(URL_MODEL)
 					.request(MediaType.APPLICATION_JSON)
 					.header(API_KEY, node.getApiKey())
 					.put(Entity.entity(fdmp, fdmp.getMediaType()));
@@ -249,6 +314,11 @@ public class TrainingServices implements Component {
 		return trainingDAO.get(traId);
 	}
 
+	public Optional<Training> getTrainingByTraIdAndBotId(final Long botId, final Long traId) {
+		final Criteria<Training> criteria = Criterions.isEqualTo(TrainingFields.botId, botId).and(Criterions.isEqualTo(TrainingFields.traId, traId));
+		return trainingDAO.findOptional(criteria);
+	}
+
 	public Training saveTraining(@SecuredOperation("botContributor") final Chatbot bot, final Training training) {
 		return trainingDAO.save(training);
 	}
@@ -262,6 +332,11 @@ public class TrainingServices implements Component {
 		final List<Long> filesId = trainingPAO.getAllTrainingFilIdsByBotId(botId);
 		trainingPAO.removeTrainingByBotId(botId);
 		trainingPAO.removeTrainingFileByFilIds(filesId);
+	}
+
+	public Instant getInstantEndDisplay(final Long botId, final Long traId) {
+		final Optional<Training> optionalTraining = getTrainingByTraIdAndBotId(botId, traId);
+		return optionalTraining.isPresent() ? optionalTraining.get().getEndTime() : null;
 	}
 
 }

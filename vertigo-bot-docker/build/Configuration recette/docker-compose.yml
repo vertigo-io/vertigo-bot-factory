@@ -74,7 +74,7 @@ services:
     restart: unless-stopped
   
   designer:
-    image: vertigoio/bot-factory-designer:0.6.0
+    image: vertigoio/bot-factory-designer:0.8.0
     environment:
       - JAVA_OPTS=-Xmx512m -Xms512m
       - DB_URL=//postgres:5432/chatbot
@@ -93,59 +93,9 @@ services:
     networks:
       - cb_factory
     restart: unless-stopped
-      
-  runnerMarsDev:
-    image: vertigoio/bot-factory-runner:0.6.0
-    environment:
-      - DESIGNER_URL=http://designer:8080/designer/
-      - ANALYTICA_HOST=analytica
-      - ANALYTICA_PORT=4562
-      - ANALYTICA_DBNAME=chatbot
-      - API_KEY=runnerMarsDev
-      - RASA_URL=http://rasaMarsDev:5005
-    depends_on:
-      - influxdb
-      - analytica
-      - rasaMarsDev
-    ports:
-      - '127.0.0.1:8181:8080'
-    volumes:
-      - cf_runner_mars_dev_data:/opt/data
-    networks:
-      - cb_factory
-    restart: unless-stopped
-    
-  rasaMarsDev:
-    image: rasa/rasa:2.4.0-full
-    ports:
-      - 5005:5005
-    volumes:
-      - ./:/app
-    command:
-      - run
-      - --enable-api
-      - --cors
-      - "*"
-    networks:
-      - cb_factory
-      
-  rasaMarsProd:
-    image: rasa/rasa:2.4.0-full
-    ports:
-      - 5006:5005
-    volumes:
-      - ./:/app
-    command:
-      - run
-      - --enable-api
-      - --cors
-      - "*"
-    networks:
-      - cb_factory      
-      
-
+            
   runnerDevFSE:
-    image: vertigoio/bot-factory-runner:0.6.0
+    image: vertigoio/bot-factory-runner-plugins:0.8.0
     environment:
       - DESIGNER_URL=http://designer:8080/designer/
       - ANALYTICA_HOST=analytica
@@ -160,7 +110,7 @@ services:
     ports:
       - '127.0.0.1:8183:8080'
     volumes:
-      - cf_runner_mars_prod_data:/opt/data
+      - cf_runner_dev_fse_data:/opt/data
     networks:
       - cb_factory
     restart: unless-stopped
@@ -179,8 +129,44 @@ services:
     networks:
       - cb_factory      
 
+  runnerRecetteJira:
+    image: vertigoio/bot-factory-runner-plugins:0.8.0
+    environment:
+      - DESIGNER_URL=http://designer:8080/designer/
+      - ANALYTICA_HOST=analytica
+      - ANALYTICA_PORT=4562
+      - ANALYTICA_DBNAME=chatbot
+      - API_KEY=runnerRecetteFSE
+      - RASA_URL=http://rasaRecetteJira:5005
+    depends_on:
+      - influxdb
+      - analytica
+      - rasaRecetteFSE
+    ports:
+      - '127.0.0.1:8185:8080'
+    volumes:
+      - cf_runner_recette_jira_data:/opt/data
+    networks:
+      - cb_factory
+    restart: unless-stopped
+    
+  rasaRecetteJira:
+    image: rasa/rasa:2.4.0-full
+    ports:
+      - 5009:5005
+    volumes:
+      - ./:/app
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+    networks:
+      - cb_factory      
+      
+
   runnerRecetteFSE:
-    image: vertigoio/bot-factory-runner:0.6.0
+    image: vertigoio/bot-factory-runner-plugins:0.8.0
     environment:
       - DESIGNER_URL=http://designer:8080/designer/
       - ANALYTICA_HOST=analytica
@@ -195,7 +181,7 @@ services:
     ports:
       - '127.0.0.1:8184:8080'
     volumes:
-      - cf_runner_mars_prod_data:/opt/data
+      - cf_runner_recette_fse_data:/opt/data
     networks:
       - cb_factory
     restart: unless-stopped
@@ -214,38 +200,15 @@ services:
     networks:
       - cb_factory      
       
-      
-
-  runnerMarsProd:
-    image: vertigoio/bot-factory-runner:0.6.0
-    environment:
-      - DESIGNER_URL=http://designer:8080/designer/
-      - ANALYTICA_HOST=analytica
-      - ANALYTICA_PORT=4562
-      - ANALYTICA_DBNAME=chatbot
-      - API_KEY=runnerMarsProd
-      - RASA_URL=http://rasaMarsProd:5005
-    depends_on:
-      - influxdb
-      - analytica
-      - rasaMarsProd
-    ports:
-      - '127.0.0.1:8182:8080'
-    volumes:
-      - cf_runner_mars_prod_data:/opt/data
-    networks:
-      - cb_factory
-    restart: unless-stopped
-    
-
 
 
 volumes:
   cf_postgres_data:
   cf_postgresKC_data:
   cf_influxdb_data:
-  cf_runner_mars_dev_data:
-  cf_runner_mars_prod_data:
+  cf_runner_recette_fse_data:
+  cf_runner_dev_fse_data:
+  cf_runner_recette_jira_data:
     
 networks:
   cb_factory:

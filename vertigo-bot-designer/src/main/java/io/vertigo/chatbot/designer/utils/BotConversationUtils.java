@@ -19,10 +19,8 @@ public class BotConversationUtils {
 
 	public static String createBotInput(final TalkInput talkInput) {
 		String message = talkInput.getMessage();
-		if (talkInput.isButton()) {
-			return ObjectConvertionUtils.objectToJson(new BotInput(Map.of("payload", message)));
-		}
-		return createBotInput(message);
+		Map<String, Object> payload = talkInput.getMetadatas();
+		return ObjectConvertionUtils.objectToJson(new BotInput(message, payload));
 	}
 
 	public static String createBotInput(final String message) {

@@ -48,6 +48,7 @@ import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.utils.BotConversationUtils;
 import io.vertigo.chatbot.designer.utils.HttpRequestUtils;
 import io.vertigo.chatbot.designer.utils.ObjectConvertionUtils;
+import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.TalkInput;
 import io.vertigo.core.lang.VUserException;
@@ -70,6 +71,8 @@ public class ModelListController extends AbstractBotController {
 	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
 
 	private static final ViewContextKey<Training> deployedTrainingKey = ViewContextKey.of("deployedTraining");
+
+	private static final ViewContextKey<Training> trainingDisplayedKey = ViewContextKey.of("trainingDisplayed");
 
 	@Inject
 	private TrainingServices trainingServices;
@@ -98,6 +101,7 @@ public class ModelListController extends AbstractBotController {
 		} else {
 			viewContext.publishDto(deployedTrainingKey, new Training());
 		}
+		viewContext.publishDto(trainingDisplayedKey, new Training());
 		toModeReadOnly();
 	}
 
@@ -149,16 +153,30 @@ public class ModelListController extends AbstractBotController {
 	@ResponseBody
 	public BotResponse start(
 			final ViewContext viewContext,
+			@RequestBody final BotInput input,
 			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList) {
 
 		final ChatbotNode devNode = nodeList.stream()
 				.filter(ChatbotNode::getIsDev)
 				.findFirst()
 				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
-		final BodyPublisher publisher = BodyPublishers.ofByteArray(botConversationServices.createBotInput("").getBytes());
+		final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(input));
 		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/start", publisher);
 		final HttpResponse<String> result = HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 200);
 		return botConversationServices.jsonToObject(result.body(), BotResponse.class);
+	}
+
+	@PostMapping("/_rate")
+	@ResponseBody
+	public void rate(
+			final ViewContext viewContext,
+			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList,
+			@RequestBody final String input) {
+
+		final ChatbotNode devNode = nodeServices.getDevNodeFromList(nodeList);
+		final BodyPublisher publisher = BodyPublishers.ofString(input);
+		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/rating", publisher);
+		HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 204);
 	}
 
 }

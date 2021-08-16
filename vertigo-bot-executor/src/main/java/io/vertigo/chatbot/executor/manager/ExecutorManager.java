@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.chatbot.analytics.AnalyticsSenderServices;
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
@@ -37,6 +38,7 @@ import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
+import io.vertigo.chatbot.executor.model.IncomeRating;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
@@ -50,6 +52,7 @@ public class ExecutorManager implements Manager, Activeable {
 	private final BotManager botManager;
 	private final BtCommandManager btCommandManager;
 	private final AnalyticsSenderServices analyticsSenderServices;
+	private ExecutorConfiguration executorConfiguration;
 
 	@Inject
 	public ExecutorManager(
@@ -72,12 +75,15 @@ public class ExecutorManager implements Manager, Activeable {
 
 	@Override
 	public void start() {
+		executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
 		final var botExport = executorConfigManager.getConfig().getBot();
 		if (botExport == null) {
 			// nothing to load
 			LOGGER.info("New runner, load a bot to start using it.");
 		} else {
-			doLoadModel(botExport);
+
+			doLoadModel(botExport, new StringBuilder());
+
 		}
 	}
 
@@ -86,34 +92,47 @@ public class ExecutorManager implements Manager, Activeable {
 		// nothing
 	}
 
-	public void loadModel(final BotExport bot, final ExecutorConfiguration executorConfig) {
+	public void loadModel(final BotExport bot, final ExecutorConfiguration executorConfig, final StringBuilder logs) {
 		final var globalConfig = new ExecutorGlobalConfig();
 		globalConfig.setBot(bot);
 		globalConfig.setExecutorConfiguration(executorConfig);
 
 		executorConfigManager.saveConfig(globalConfig);
 
-		doLoadModel(bot);
+		doLoadModel(bot, logs);
+
 	}
 
-	private void doLoadModel(final BotExport botExport) {
+	private void doLoadModel(final BotExport botExport, final StringBuilder logs) {
+
+		LogsUtils.addLogs(logs, "Node recovery...");
 		final var nluThreshold = executorConfigManager.getConfig().getExecutorConfiguration().getNluThreshold().doubleValue();
-
+		LogsUtils.logOK(logs);
 		final List<TopicDefinition> topics = new ArrayList<>();
-
+		LogsUtils.addLogs(logs, "START topic addition...");
 		topics.add(TopicDefinition.of(BotEngine.START_TOPIC_NAME, btCommandManager.parse(botExport.getWelcomeBT())));
+		LogsUtils.logOK(logs);
+
 		if (!StringUtil.isBlank(botExport.getEndBT())) {
+			LogsUtils.addLogs(logs, "END topic addition...");
 			topics.add(TopicDefinition.of(BotEngine.END_TOPIC_NAME, btCommandManager.parse(botExport.getEndBT())));
+			LogsUtils.logOK(logs);
 		}
+
 		if (!StringUtil.isBlank(botExport.getFallbackBT())) {
+			LogsUtils.addLogs(logs, "FALLBACK topic addition...");
 			topics.add(TopicDefinition.of(BotEngine.FALLBACK_TOPIC_NAME, btCommandManager.parse(botExport.getFallbackBT())));
+			LogsUtils.logOK(logs);
 		}
 
 		for (final TopicExport topic : botExport.getTopics()) {
+			LogsUtils.addLogs(logs, topic.getName(), " topic addition...");
 			topics.add(TopicDefinition.of(topic.getName(), btCommandManager.parse(topic.getTopicBT()), topic.getNluTrainingSentences(), nluThreshold));
+			LogsUtils.logOK(logs);
 		}
 
-		botManager.updateConfig(topics);
+		botManager.updateConfig(topics, logs);
+
 	}
 
 	public BotResponse startNewConversation(final BotInput input) {
@@ -123,6 +142,7 @@ public class ExecutorManager implements Manager, Activeable {
 		final var newUUID = UUID.randomUUID();
 
 		final var botEngine = botManager.createBotEngine(newUUID);
+		botEngine.saveContext(input);
 		final var botResponse = botEngine.runTick(input);
 		analyticsSenderServices.sendEventStartToDb(executorConfigManager.getConfig().getExecutorConfiguration());
 		botResponse.getMetadatas().put("sessionId", newUUID);
@@ -140,5 +160,9 @@ public class ExecutorManager implements Manager, Activeable {
 		analyticsSenderServices.sendEventToDb(botResponse.getMetadatas(), executorConfigManager.getConfig().getExecutorConfiguration(), input);
 
 		return botResponse;
+	}
+
+	public void rate(final IncomeRating rating) {
+		analyticsSenderServices.rate(rating, executorConfigManager.getConfig().getExecutorConfiguration());
 	}
 }

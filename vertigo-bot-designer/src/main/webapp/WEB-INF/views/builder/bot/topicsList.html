@@ -49,6 +49,8 @@
 					  <vu:include-data object="topicsIhm" field="smtId" />
 					  <vu:include-data object="topicsIhm" field="sinId" />
 					  <vu:include-data object="topicsIhm" field="ttoCd" />
+					  <vu:include-data object="topicsIhm" field="catLabel" />
+					  <vu:include-data object="topicsIhm" field="labels" />
 					<vu:include-data object="topicsIhm" field="topId" />
 					<vu:column field="isEnabled" th:label="#{topic.isEnabled}" style="width:100px;">
 						<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
@@ -61,8 +63,11 @@
 						   <span style="height:100%" class="row items-center">{{props.row.title}}</span>
 						</a>
 					</vu:column>
-					<vu:column field="catLabel" th:label="#{topic.category}">
+					<vu:column field="labels" th:label="#{topic.category}">
 					   <span style="height:100%" class="row items-center">{{props.row.catLabel}}</span>
+					</vu:column>
+					<vu:column field="labels" th:label="#{topic.labels}">
+					   <span style="height:100%" class="row items-center">{{props.row.labels}}</span>
 					</vu:column>
 					<vu:column field="type" th:label="#{topic.type}" sortable="true" />
 			</vu:table>
@@ -75,7 +80,7 @@
 						
 					</q-card-section>
 					
-						<vu:include-data-primitive key="locale" />
+					<vu:include-data-primitive key="locale" />
 					<q-card-section style="width: 400px;">
 						<vu:include-data object="typeTopicList" field="'*'"/>
 						<q-select
