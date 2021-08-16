@@ -190,16 +190,6 @@ public class ExecutorManager implements Manager, Activeable {
 		return botResponse;
 	}
 
-	public BotResponse handleUrl(final UUID sessionId, final BotInput input) {
-		Assertion.check()
-				.isNotNull(sessionId, "Please provide sessionId");
-
-		final var botEngine = botManager.createBotEngine(sessionId);
-
-		return botEngine.handleUrl(input);
-
-	}
-
 	public void rate(final IncomeRating rating) {
 		analyticsSenderServices.rate(rating, executorConfigManager.getConfig().getExecutorConfiguration());
 	}
