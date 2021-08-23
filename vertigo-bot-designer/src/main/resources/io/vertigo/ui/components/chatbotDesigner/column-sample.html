@@ -1,0 +1,9 @@
+<th:block th:fragment="column-sample(list,field, classes, sort , align, component)"
+	th:assert="${list != null and field != null and classes != null and sort != null and align != null and component!=null} "
+	th:with="columnLabel=${model.util.label('__${list + '.' + field}__')}"
+	th:attr="objectKey=${model.vContext['componentStates']['__${component}__'].addObjectToList('columns', {name:'__${field}__', field:'__${field}__', label:'__${columnLabel}__', align:'${align}', sortable:'${sort}', 'classes':'{classes}'})}">
+<q-td th:key="${field}" :props=props >
+	<vu:content>{{props.row.[[${field}]]}} </vu:content>
+</q-td>
+
+</th:block>
