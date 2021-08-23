@@ -1,0 +1,35 @@
+<th:block th:fragment="search-table(data, componentId, rowKey, sortBy, rowsPerPage, tableClass, autoColClass)"
+	th:assert="${componentId} != null" 
+	th:with="myRowKey=${rowKey?:model.util.getIdField('__${list}__')}, myRowsPerPage=${rowsPerPage?:10}, myAutoColClass=${autoColClass?:false}"
+	th:attr="objectKey=${model.vContext['componentStates'].addComponentState(componentId).addList('columns')}, objectKey=${model.vContext['componentStates'][__${componentId}__][loading] = false }, objectKey=${model.vContext['componentStates'][__${componentId}__].addObject('pagination', {page: 1 , rowsPerPage : __${myRowsPerPage}__, componentId : '__${componentId}__', search : ''})}">
+	<th:block th:if="${sortBy != null}" th:attr="objectKey=${model.vContext['componentStates'][__${componentId}__]['pagination'].put('sortBy', '__${sortBy}__')}" th:remove="all" />  	
+	<div class="col-12">
+		<q-table
+			  	th::ref="|'${componentId}'|"
+				th::data=${data}
+				th::columns=|componentStates.${componentId}.columns|
+				th:row-key="${myRowKey}"
+			    th::pagination.sync="|componentStates.${componentId}.pagination|"
+		    	:sort-method="VertigoUi.methods.sortCiAi"
+				th::loading="|componentStates.${componentId}.loading|"
+				th:table-class="${tableClass?:'table-'+(color?:'secondary')}"
+				binary-state-sort
+				>
+			<template v-slot:top-right>
+	        	<q-input borderless dense debounce="300" th:v-model="|componentStates.${componentId}.pagination.search|" placeholder="Search">
+					<template v-slot:append>
+            			<q-icon name="search" />
+					</template>
+				</q-input>
+			</template>
+			
+			<q-tr slot="body" slot-scope="props" :props="props" >
+			
+			<vu:content></vu:content>
+		  </q-tr>
+		</q-table>
+	</div>
+</th:block>
+
+
+

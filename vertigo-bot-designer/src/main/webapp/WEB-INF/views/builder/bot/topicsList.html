@@ -33,7 +33,9 @@
 			
 			function filter() {
 				let searchNormarlized = normalizeString(VertigoUi.componentStates.topics.pagination.search);
-				
+				if (searchNormarlized ===''){
+					return VertigoUi.vueData.topicsIhm
+				}
 				return VertigoUi.vueData.topicsIhm
 						// copy and reverse
 						.slice().reverse()
@@ -64,53 +66,30 @@
 		<section layout:fragment="page-content">
 			<vu:messages/>
 			
-			<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('topics').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
-			<th:block th:attr="objectKey=${model.vContext['componentStates'][topics].addList('columns')}" th:remove="all" />
 			<div class="col-12">
 			
-				<vu:include-data object="topicsIhm" field="'*'" />
-				<q-table
-					:data=filter()
-					:columns=componentStates.topics.columns
-					row-key=topId
-				    :pagination.sync="componentStates.topics.pagination"
-			    	:sort-method="VertigoUi.methods.sortCiAi"
-					table-class="table-secondary"
-				>
-			      <template v-slot:top-right>
-			        <q-input borderless dense debounce="300" v-model="componentStates.topics.pagination.search" placeholder="Search">
-			          <template v-slot:append>
-			            <q-icon name="search" />
-			          </template>
-			        </q-input>
-			      </template>
-	
-	
-					 <q-tr slot="body" slot-scope="props" :props="props" @click.native="goTo(redirectDetail(props.row))" style="cursor : pointer;" >
-					 
-					 	<vu:column-sample list=topicsIhm field=isEnabled classes='col_STyYesNo' sort=true align='left' component=topics>
+		
+				<vu:search-table
+					data='filter()'
+					rowKey='topId'
+					componentId='topics'
+					sortBy='title'>
+					 	<vu:column-sample list=topicsIhm field=isEnabled classes='col_STyYesNo'>
 							<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
 							<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>												 	
 					 	</vu:column-sample>
 
-						<vu:column-sample list=topicsIhm field=title classes='col_STyLabel' sort=true align='left' component=topics>
+						<vu:column-sample list=topicsIhm field=title >
 							<a :href="redirectDetail(props.row)"
 							   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
 						   	>
 						   		<span style="height:100%" class="row items-center">{{props.row.title}}</span>
 							</a>
 						</vu:column-sample>
-
-						<vu:column-sample list=topicsIhm field=catLabel classes='col_STyLabel' sort=true align='left' component=topics/>
-
-						<vu:column-sample list=topicsIhm field=labels classes='col_STyLabel' sort=true align='left' component=topics/>
-						
-								
-						<vu:column-sample list=topicsIhm field=type classes='col_STyLabel' sort=true align='left' component=topics/>
-					</q-tr>
-	
-	
-				</q-table>
+						<vu:column-sample list=topicsIhm field=catLabel/>
+						<vu:column-sample list=topicsIhm field=labels />
+						<vu:column-sample list=topicsIhm field=type  />
+				</vu:search-table>
 			</div>
 			
 			<q-dialog ref="newTopic" th:with="viewMode='edit'" >
