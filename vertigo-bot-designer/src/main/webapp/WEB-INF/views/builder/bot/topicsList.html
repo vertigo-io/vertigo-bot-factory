@@ -23,6 +23,25 @@
 				return url;
 			}
 			
+			function normalizeString(str) {
+				if (str)
+					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+				else
+					return '';
+			}
+			
+			
+			function filter() {
+				let searchNormarlized = normalizeString(VertigoUi.componentStates.topics.pagination.search);
+				
+				return VertigoUi.vueData.topicsIhm
+						// copy and reverse
+						.slice().reverse()
+						// search
+						.filter(topic => normalizeString(topic.title).includes(searchNormarlized))
+						
+			}
+			
 		</script>
 		
 		
@@ -44,33 +63,80 @@
 		
 		<section layout:fragment="page-content">
 			<vu:messages/>
-			<vu:table list="topicsIhm" componentId="topicsList" tr_@click.native="goTo(redirectDetail(props.row))" tr_style="cursor : pointer;"
-					  sortBy="title" :binary-state-sort="true" >
-					  <vu:include-data object="topicsIhm" field="smtId" />
-					  <vu:include-data object="topicsIhm" field="sinId" />
-					  <vu:include-data object="topicsIhm" field="ttoCd" />
-					  <vu:include-data object="topicsIhm" field="catLabel" />
-					  <vu:include-data object="topicsIhm" field="labels" />
-					<vu:include-data object="topicsIhm" field="topId" />
-					<vu:column field="isEnabled" th:label="#{topic.isEnabled}" style="width:100px;">
-						<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
-						<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>
-					</vu:column>
-					<vu:column field="title" th:label="#{topic.title}">
-						<a :href="redirectDetail(props.row)"
-						   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
-						   >
-						   <span style="height:100%" class="row items-center">{{props.row.title}}</span>
-						</a>
-					</vu:column>
-					<vu:column field="labels" th:label="#{topic.category}">
-					   <span style="height:100%" class="row items-center">{{props.row.catLabel}}</span>
-					</vu:column>
-					<vu:column field="labels" th:label="#{topic.labels}">
-					   <span style="height:100%" class="row items-center">{{props.row.labels}}</span>
-					</vu:column>
-					<vu:column field="type" th:label="#{topic.type}" sortable="true" />
-			</vu:table>
+			
+			<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('topics').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
+			<th:block th:attr="objectKey=${model.vContext['componentStates'][topics].addList('topicsColumns')}" th:remove="all" />
+			<div class="col-12">
+			
+				<vu:include-data object="topicsIhm" field="'*'" />
+				<q-table
+					:data=filter()
+					:columns=componentStates.topics.topicsColumns
+					row-key=topId
+				    :pagination.sync="componentStates.topics.pagination"
+			    	:sort-method="VertigoUi.methods.sortCiAi"
+					table-class="table-secondary"
+				>
+			      <template v-slot:top-right>
+			        <q-input borderless dense debounce="300" v-model="componentStates.topics.pagination.search" placeholder="Search">
+			          <template v-slot:append>
+			            <q-icon name="search" />
+			          </template>
+			        </q-input>
+			      </template>
+	
+	
+					 <q-tr slot="body" slot-scope="props" :props="props" @click.native="goTo(redirectDetail(props.row))" style="cursor : pointer;" >
+					 
+					 	<th:block 
+					 		th:with="columnLabel=${model.util.label('topicsIhm.isEnabled')}"
+					 		th:attr="objectKey=${model.vContext['componentStates'][topics].addObjectToList('topicsColumns', {name:'isEnabled', field:'isEnabled', label:'__${columnLabel}__', align:'left', sortable:true, classes:'col_STyLabel'})}" th:remove="all" />
+						<q-td key="isEnabled" :props="props">
+							<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
+							<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>
+						</q-td>
+
+					 	<th:block 
+					 		th:with="columnLabel=${model.util.label('topicsIhm.title')}"
+					 		th:attr="objectKey=${model.vContext['componentStates'][topics].addObjectToList('topicsColumns', {name:'title', field:'title', label:'__${columnLabel}__', align:'left', sortable:true, classes:'col_STyLabel'})}" th:remove="all" />
+	
+						 <q-td key="title" :props="props">
+							<a :href="redirectDetail(props.row)"
+							   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
+							   >
+							   <span style="height:100%" class="row items-center">{{props.row.title}}</span>
+							</a>
+						</q-td>
+	
+				 	<th:block 
+					 		th:with="columnLabel=${model.util.label('topicsIhm.catLabel')}"
+					 		th:attr="objectKey=${model.vContext['componentStates'][topics].addObjectToList('topicsColumns', {name:'catLabel', field:catLabel, label:'__${columnLabel}__', align:'left', sortable:true, classes:'col_STyLabel'})}" th:remove="all" />
+							
+						<q-td key="catLabel"  :props="props"  >
+							<span style="height:100%" class="row items-center">{{props.row.catLabel}}</span>
+						</q-td>
+
+				 	<th:block 
+					 		th:with="columnLabel=${model.util.label('topicsIhm.labels')}"
+					 		th:attr="objectKey=${model.vContext['componentStates'][topics].addObjectToList('topicsColumns', {name:'labels', field:'labels', label:'__${columnLabel}__', align:'left', sortable:true, classes:'col_STyLabel'})}" th:remove="all" />
+						   
+						<q-td key="labels"  :props="props"  >
+							<span style="height:100%" class="row items-center">{{props.row.labels}}</span>
+						</q-td>
+	
+				 	<th:block 
+					 		th:with="columnLabel=${model.util.label('topicsIhm.type')}"
+					 		th:attr="objectKey=${model.vContext['componentStates'][topics].addObjectToList('topicsColumns', {name:'type', field:'type', label:'__${columnLabel}__', align:'left', sortable:true, classes:'col_STyLabel'})}" th:remove="all" />
+							
+	
+						<q-td key="type"  :props="props"  >
+							<span style="height:100%" class="row items-center">{{props.row.type}}</span>
+						</q-td>
+					</q-tr>
+	
+	
+				</q-table>
+			</div>
 			
 			<q-dialog ref="newTopic" th:with="viewMode='edit'" >
 				<q-card>
