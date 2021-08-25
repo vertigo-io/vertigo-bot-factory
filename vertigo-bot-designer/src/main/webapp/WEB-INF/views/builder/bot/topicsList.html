@@ -43,6 +43,7 @@
 		</section>
 		
 		<section layout:fragment="page-content">
+
 			<vu:messages/>
 			<vu:table list="topicsIhm" componentId="topicsList" tr_@click.native="goTo(redirectDetail(props.row))" tr_style="cursor : pointer;"
 					  sortBy="title" :binary-state-sort="true" >

@@ -45,7 +45,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 @Controller
 @RequestMapping("/bot/{botId}/meaning")
 @Secured("BotAdm")
-public class MeaningDetailController extends AbstractBotController {
+public class MeaningDetailController extends AbstractBotController<Meaning> {
 
 	private static final ViewContextKey<Chatbot> botKey = ViewContextKey.of("bot");
 
@@ -81,6 +81,7 @@ public class MeaningDetailController extends AbstractBotController {
 
 		viewContext.publishDtList(synonymsToDeleteKey,
 				new DtList<Synonym>(Synonym.class));
+		super.initBreadCrums(viewContext, meaning);
 		toModeReadOnly();
 	}
 
@@ -199,6 +200,11 @@ public class MeaningDetailController extends AbstractBotController {
 		newText.setLabel(newSynonym);
 
 		synonyms.add(newText);
+	}
+
+	@Override
+	protected String getBreadCrums(final Meaning object) {
+		return object.getLabel();
 	}
 
 }

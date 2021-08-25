@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotProfilServices;
 import io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles;
 import io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil;
 import io.vertigo.chatbot.designer.domain.admin.SelectProfilChatbotPerson;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -25,7 +27,7 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 @Controller
 @RequestMapping("/bot/{botId}/personChatbot")
 @Secured("BotUser")
-public class PersonChatbotDetailController extends AbstractBotController {
+public class PersonChatbotDetailController extends AbstractBotController<Chatbot> {
 
 	// for all users
 	private static final ViewContextKey<Person> personsListKey = ViewContextKey.of("personList");
@@ -46,6 +48,7 @@ public class PersonChatbotDetailController extends AbstractBotController {
 		viewContext.publishMdl(chatbotProfilList, ChatbotProfiles.class, null);
 		viewContext.publishDtListModifiable(personsListKey, chatbotProfilServices.getAllUsers(chatbot));
 		viewContext.publishDto(selectionList, new SelectProfilChatbotPerson());
+		super.initBreadCrums(viewContext, chatbot);
 		toModeReadOnly();
 	}
 
@@ -66,6 +69,11 @@ public class PersonChatbotDetailController extends AbstractBotController {
 		persons.remove(persToDelete);
 		viewContext.publishDtListModifiable(personsProfilListKey, persons);
 		return viewContext;
+	}
+
+	@Override
+	protected String getBreadCrums(final Chatbot object) {
+		return MessageText.of(BotMultilingualResources.PERSON_LIST).getDisplay();
 	}
 
 }

@@ -29,7 +29,7 @@ import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
-public abstract class AbstractTopicController<D extends Entity> extends AbstractBotController {
+public abstract class AbstractTopicController<D extends Entity> extends AbstractBotCreationController<Topic> {
 
 	protected static final ViewContextKey<Topic> topicKey = ViewContextKey.of("topic");
 	protected static final ViewContextKey<Topic> topicListKey = ViewContextKey.of("topicList");

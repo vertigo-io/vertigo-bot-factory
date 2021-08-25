@@ -37,7 +37,7 @@
 		
 		
 		<section layout:fragment="content">
-			
+
 			<vu:popup action="_delete" vModel="showPopup" th:message=#{bot.popup.message} th:confirm=#{bot.delete}></vu:popup>
 			<vu:popup-ajax action="_deleteNode" vModel="showPopupNode" th:message="#{bot.popup.node.message}" th:confirm=#{bot.delete} dataName="nodId" successAction="'VUiPage.$refs.nodeEdit.hide'"></vu:popup-ajax>
 			

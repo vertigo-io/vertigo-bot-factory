@@ -39,6 +39,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
@@ -47,6 +48,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
@@ -57,7 +59,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot")
-public class BotDetailController extends AbstractBotController {
+public class BotDetailController extends AbstractBotController<Chatbot> {
 
 	@Inject
 	private UtterTextServices utterTextServices;
@@ -117,6 +119,7 @@ public class BotDetailController extends AbstractBotController {
 		final TopicCategory topicCategory = topicCategoryServices.getTechnicalCategoryByBot(bot);
 		viewContext.publishDto(topicCategoryKey, topicCategory);
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
+		super.initBreadCrums(viewContext, bot);
 		toModeReadOnly();
 	}
 
@@ -234,6 +237,11 @@ public class BotDetailController extends AbstractBotController {
 		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
 
 		return viewContext;
+	}
+
+	@Override
+	protected String getBreadCrums(final Chatbot object) {
+		return MessageText.of(BotMultilingualResources.BOT_DETAIL).getDisplay();
 	}
 
 }

@@ -21,7 +21,7 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 @Controller
 @RequestMapping("/bot/{botId}/category")
 @Secured("BotUser")
-public class TopicCategoryDetailController extends AbstractBotController {
+public class TopicCategoryDetailController extends AbstractBotCreationController<TopicCategory> {
 
 	private static final ViewContextKey<TopicCategory> topicCategoryKey = ViewContextKey.of("topicCategory");
 	private static final ViewContextKey<Topic> topicsKey = ViewContextKey.of("topics");
@@ -37,6 +37,7 @@ public class TopicCategoryDetailController extends AbstractBotController {
 		final DtList<Topic> topics = topicCategoryServices.getAllTopicFromCategory(bot, topicCategory);
 		viewContext.publishDto(topicCategoryKey, topicCategory);
 		viewContext.publishDtList(topicsKey, topics);
+		super.initBreadCrums(viewContext, topicCategory);
 		toModeReadOnly();
 	}
 
@@ -45,6 +46,7 @@ public class TopicCategoryDetailController extends AbstractBotController {
 		final Chatbot bot = initCommonContext(viewContext, botId);
 		viewContext.publishDto(topicCategoryKey, topicCategoryServices.getNewTopicCategory(bot));
 		viewContext.publishDtList(topicsKey, new DtList<Topic>(Topic.class));
+		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
 	}
 
@@ -63,5 +65,10 @@ public class TopicCategoryDetailController extends AbstractBotController {
 	@PostMapping("/_edit")
 	public void doEdit() {
 		toModeEdit();
+	}
+
+	@Override
+	protected String getBreadCrums(final TopicCategory object) {
+		return object.getLabel();
 	}
 }

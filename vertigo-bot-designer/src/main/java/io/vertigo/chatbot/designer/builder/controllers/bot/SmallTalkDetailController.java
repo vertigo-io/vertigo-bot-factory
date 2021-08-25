@@ -83,7 +83,7 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 		final DtList<UtterText> utterTextList = utterTextServices.getUtterTextList(bot, smallTalk);
 		utterTextList.add(new UtterText()); // add the next for random, or the 1st for rich text if 0 lines
 		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
-
+		super.initBreadCrums(viewContext, topic);
 		toModeReadOnly();
 	}
 
@@ -102,7 +102,7 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 		viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
 
 		viewContext.publishDtListModifiable(buttonsKey, new DtList<>(ResponseButton.class));
-
+		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
 	}
 
@@ -144,4 +144,8 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
 	}
 
+	@Override
+	protected String getBreadCrums(final Topic object) {
+		return object.getTitle();
+	}
 }
