@@ -7,7 +7,7 @@ import io.vertigo.ui.core.ViewContext;
 
 public abstract class AbstractBotListController<D extends Entity> extends AbstractBotController<D> {
 
-	private final String LIST_KEY = "_LIST";
+	private static final String LIST_KEY = "_LIST";
 
 	@SuppressWarnings("unchecked")
 	@Override
