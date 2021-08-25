@@ -59,7 +59,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot")
-public class BotDetailController extends AbstractBotController<Chatbot> {
+public class BotDetailController extends AbstractBotCreationController<Chatbot> {
 
 	@Inject
 	private UtterTextServices utterTextServices;
@@ -148,7 +148,7 @@ public class BotDetailController extends AbstractBotController<Chatbot> {
 		viewContext.publishRef(ttoCdEndKey, TypeTopicEnum.SMALLTALK.name());
 		viewContext.publishRef(ttoCdFailureKey, TypeTopicEnum.SMALLTALK.name());
 		initNodeEdit(viewContext);
-
+		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
 	}
 
