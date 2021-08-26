@@ -1,4 +1,4 @@
-<th:block th:fragment="search-table(data, componentId, rowKey, sortBy, rowsPerPage, tableClass, autoColClass)"
+<th:block th:fragment="search-table(data, componentId, rowKey, sortBy, rowsPerPage, tableClass, autoColClass, tr_attrs)"
 	th:assert="${componentId} != null" 
 	th:with="myRowKey=${rowKey?:model.util.getIdField('__${list}__')}, myRowsPerPage=${rowsPerPage?:10}, myAutoColClass=${autoColClass?:false}"
 	th:attr="objectKey=${model.vContext['componentStates'].addComponentState(componentId).addList('columns')}, objectKey=${model.vContext['componentStates'][__${componentId}__][loading] = false }, objectKey=${model.vContext['componentStates'][__${componentId}__].addObject('pagination', {page: 1 , rowsPerPage : __${myRowsPerPage}__, componentId : '__${componentId}__', search : ''})}">
@@ -23,7 +23,7 @@
 				</q-input>
 			</template>
 			
-			<q-tr slot="body" slot-scope="props" :props="props" >
+			<q-tr slot="body" slot-scope="props" :props="props" th:attr="__${tr_attrs}__">
 			
 			<vu:content></vu:content>
 		  </q-tr>

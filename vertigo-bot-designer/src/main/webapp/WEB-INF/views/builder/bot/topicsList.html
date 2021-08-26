@@ -69,12 +69,17 @@
 			
 			<div class="col-12">
 			
-		
+			<!-- Use for the redirections -->
+				<vu:include-data object="topicsIhm" field="ttoCd"/>
+				<vu:include-data object="topicsIhm" field="smtId"/>
+				<vu:include-data object="topicsIhm" field="sinId"/>
 				<vu:search-table
 					data='filter()'
 					rowKey='topId'
 					componentId='topics'
-					sortBy='title'>
+					sortBy='title'
+					tr_@click.native="goTo(redirectDetail(props.row))" 
+					tr_style="cursor : pointer;">
 					 	<vu:column-sample list=topicsIhm field=isEnabled classes='col_STyYesNo'>
 							<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
 							<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>												 	
