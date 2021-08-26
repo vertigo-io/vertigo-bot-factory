@@ -60,7 +60,7 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 @Controller
 @RequestMapping("/bot/{botId}/models")
 @Secured("BotUser")
-public class ModelListController extends AbstractBotController {
+public class ModelListController extends AbstractBotListController<Training> {
 
 	private static final ViewContextKey<TrainerInfo> trainerStateKey = ViewContextKey.of("trainerState");
 
@@ -102,6 +102,7 @@ public class ModelListController extends AbstractBotController {
 			viewContext.publishDto(deployedTrainingKey, new Training());
 		}
 		viewContext.publishDto(trainingDisplayedKey, new Training());
+		super.initBreadCrums(viewContext, Training.class);
 		toModeReadOnly();
 	}
 

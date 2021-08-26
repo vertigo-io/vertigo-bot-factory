@@ -61,7 +61,7 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 		initContext(viewContext, bot, topic);
 
 		viewContext.publishDto(scriptIntentionKey, scriptIntention);
-
+		super.initBreadCrums(viewContext, topic);
 		toModeReadOnly();
 	}
 
@@ -74,7 +74,7 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 		initContextNew(viewContext, bot);
 
 		viewContext.publishDto(scriptIntentionKey, scriptIntentionServices.getNewScriptIntention(bot));
-
+		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
 	}
 
@@ -107,6 +107,11 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 	@Override
 	Topic getTopic(final ScriptIntention object) {
 		return topicServices.findTopicById(object.getTopId());
+	}
+
+	@Override
+	protected String getBreadCrums(final Topic object) {
+		return object.getTitle();
 	}
 
 }

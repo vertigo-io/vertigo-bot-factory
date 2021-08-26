@@ -17,7 +17,7 @@ import io.vertigo.ui.core.ViewContextKey;
 @Controller
 @RequestMapping("/bot/{botId}/categories")
 @Secured("BotUser")
-public class TopicCategoryListController extends AbstractBotController {
+public class TopicCategoryListController extends AbstractBotListController<TopicCategory> {
 
 	private static final ViewContextKey<TopicCategory> topicCategorieskKey = ViewContextKey.of("topicCategories");
 
@@ -28,5 +28,7 @@ public class TopicCategoryListController extends AbstractBotController {
 	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, botId);
 		viewContext.publishDtList(topicCategorieskKey, topicCategoryServices.getAllNonTechnicalCategoriesByBot(bot));
+		super.initBreadCrums(viewContext, TopicCategory.class);
 	}
+
 }

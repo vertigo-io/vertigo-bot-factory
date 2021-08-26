@@ -9,7 +9,10 @@
 	</div>
 	<div layout:fragment="content-header-title" id="baseTitle">
 		<vu:include-data object="bot" field="name" />
+		<vu:include-data-primitive key="breadCrums" />
 		<span class="text-bigger">{{vueData.bot.name}}</span> <br />
+		<span class="text-bigger">{{vueData.breadCrums}}</span> <br />
+		
 	</div>
 
 	<div layout:fragment="content-header-tabs">

@@ -32,14 +32,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicFileExport;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.export.file.TopicFileExportServices;
@@ -59,7 +60,7 @@ import liquibase.util.csv.CSVReader;
 @Controller
 @RequestMapping("/bot/{botId}/topics")
 @Secured("BotUser")
-public class TopicsListController extends AbstractBotController {
+public class TopicsListController extends AbstractBotListController<Topic> {
 
 	private static final ViewContextKey<TopicIhm> topicIhmListKey = ViewContextKey.of("topicsIhm");
 	// All the topic types
@@ -94,6 +95,7 @@ public class TopicsListController extends AbstractBotController {
 		viewContext.publishDto(selectionCatListKey, new TopicCategory());
 		viewContext.publishRef(topIdDetailKey, "");
 		viewContext.publishRef(topicImportKey, "");
+		super.initBreadCrums(viewContext, Topic.class);
 		toModeReadOnly();
 	}
 

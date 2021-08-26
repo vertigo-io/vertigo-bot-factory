@@ -24,7 +24,7 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 @Controller
 @RequestMapping("/bot/{botId}/dictionary")
 @Secured("botAdm")
-public class MeaningListController extends AbstractBotController {
+public class MeaningListController extends AbstractBotListController<Meaning> {
 
 	private static final ViewContextKey<Synonym> synonymEditKey = ViewContextKey.of("synonymEdit");
 	private static final ViewContextKey<Synonym> synonymsKey = ViewContextKey.of("synonyms");
@@ -42,6 +42,7 @@ public class MeaningListController extends AbstractBotController {
 		viewContext.publishDtList(synonymsKey, synonymServices.getAllSynonymByBot(bot));
 		viewContext.publishDto(meaningEditKey, new Meaning());
 		viewContext.publishDto(synonymEditKey, new Synonym());
+		super.initBreadCrums(viewContext, Meaning.class);
 	}
 
 	@PostMapping("/saveMeaning")
@@ -81,4 +82,5 @@ public class MeaningListController extends AbstractBotController {
 
 		return viewContext;
 	}
+
 }
