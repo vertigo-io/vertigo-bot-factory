@@ -102,7 +102,7 @@ public class TopicServices implements Component, Activeable {
 	private void hasUniqueCode(final Topic topic) {
 		final Optional<Long> topIdOpt = topic.getTopId() != null ? Optional.of(topic.getTopId()) : Optional.empty();
 		if (topicPAO.checkUnicityTopicCode(topic.getBotId(), topic.getCode(), topIdOpt)) {
-			throw new VUserException("The code is not unique, please select another");
+			throw new VUserException(TopicsMultilingualResources.CODE_PATTERN_ERROR);
 		}
 		if (TopicsUtils.checkSpecialCharacters(topic.getCode())) {
 			throw new VUserException("The code cannot contain the following characters : '[', ']', '|', '¤'. ");
