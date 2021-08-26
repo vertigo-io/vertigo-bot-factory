@@ -1,0 +1,11 @@
+<th:block th:fragment="column-sample(list,field, classes, sort , align, label)"
+	th:assert="${list != null and (field != null or label != null)} "
+	th:with="columnLabel=${label ?: model.util.label('__${list + '.' + field}__')}, sortColumn=${sort?:true}, alignColumn=${align?: 'left'}, classColumn='${classes?:col_StyLabel}'"
+	th:attr="objectKey=${model.vContext['componentStates']['__${componentId}__'].addObjectToList('columns', {name:'__${field}__', field:'__${field}__', label:'__${columnLabel}__', sortable:sortColumn, align:'__${alignColumn}__','classes':'${classes?:col_StyLabel}'})}">
+	
+<vu:include-data th:if="${field != null}" object="${list}" field="${field}"/> 
+<q-td th:key="${field}" :props=props th:class="${class?:classColumn}">
+	<vu:content>{{props.row.[[${field}]]}} </vu:content>
+</q-td>
+
+</th:block>

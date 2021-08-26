@@ -23,6 +23,27 @@
 				return url;
 			}
 			
+			function normalizeString(str) {
+				if (str)
+					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+				else
+					return '';
+			}
+			
+			
+			function filter() {
+				let searchNormarlized = normalizeString(VertigoUi.componentStates.topics.pagination.search);
+				if (searchNormarlized ===''){
+					return VertigoUi.vueData.topicsIhm
+				}
+				return VertigoUi.vueData.topicsIhm
+						// copy and reverse
+						.slice().reverse()
+						// search
+						.filter(topic => normalizeString(topic.title).includes(searchNormarlized))
+						
+			}
+			
 		</script>
 		
 		
@@ -44,33 +65,32 @@
 		
 		<section layout:fragment="page-content">
 			<vu:messages/>
-			<vu:table list="topicsIhm" componentId="topicsList" tr_@click.native="goTo(redirectDetail(props.row))" tr_style="cursor : pointer;"
-					  sortBy="title" :binary-state-sort="true" >
-					  <vu:include-data object="topicsIhm" field="smtId" />
-					  <vu:include-data object="topicsIhm" field="sinId" />
-					  <vu:include-data object="topicsIhm" field="ttoCd" />
-					  <vu:include-data object="topicsIhm" field="catLabel" />
-					  <vu:include-data object="topicsIhm" field="labels" />
-					<vu:include-data object="topicsIhm" field="topId" />
-					<vu:column field="isEnabled" th:label="#{topic.isEnabled}" style="width:100px;">
-						<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
-						<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>
-					</vu:column>
-					<vu:column field="title" th:label="#{topic.title}">
-						<a :href="redirectDetail(props.row)"
-						   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
-						   >
-						   <span style="height:100%" class="row items-center">{{props.row.title}}</span>
-						</a>
-					</vu:column>
-					<vu:column field="labels" th:label="#{topic.category}">
-					   <span style="height:100%" class="row items-center">{{props.row.catLabel}}</span>
-					</vu:column>
-					<vu:column field="labels" th:label="#{topic.labels}">
-					   <span style="height:100%" class="row items-center">{{props.row.labels}}</span>
-					</vu:column>
-					<vu:column field="type" th:label="#{topic.type}" sortable="true" />
-			</vu:table>
+			
+			<div class="col-12">
+			
+		
+				<vu:search-table
+					data='filter()'
+					rowKey='topId'
+					componentId='topics'
+					sortBy='title'>
+					 	<vu:column-sample list=topicsIhm field=isEnabled classes='col_STyYesNo'>
+							<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
+							<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>												 	
+					 	</vu:column-sample>
+
+						<vu:column-sample list=topicsIhm field=title >
+							<a :href="redirectDetail(props.row)"
+							   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
+						   	>
+						   		<span style="height:100%" class="row items-center">{{props.row.title}}</span>
+							</a>
+						</vu:column-sample>
+						<vu:column-sample list=topicsIhm field=catLabel/>
+						<vu:column-sample list=topicsIhm field=labels />
+						<vu:column-sample list=topicsIhm field=type  />
+				</vu:search-table>
+			</div>
 			
 			<q-dialog ref="newTopic" th:with="viewMode='edit'" >
 				<q-card>
