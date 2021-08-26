@@ -93,9 +93,14 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	private static void checkPatternCode(final String code) {
-		final String pattern = "^([a-zA-z]?\\d?){1,10}$";
+		final String pattern = "^[a-zA-Z0-9_.-]*$";
+
 		if (code == null || !code.matches(pattern)) {
 			throw new VUserException(TopicsMultilingualResources.CODE_PATTERN_DIGIT_ERROR);
+		}
+
+		if (code.length() > 10) {
+			throw new VUserException(TopicsMultilingualResources.CODE_PATTERN_LENGTH);
 		}
 	}
 
