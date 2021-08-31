@@ -205,13 +205,9 @@ public abstract class AbstractTopicController<D extends Entity, S extends TopicI
 	}
 
 	public void addMessageDeactivate(final UiMessageStack uiMessageStack, final Topic topic, final DtList<NluTrainingSentence> sentences, final Chatbot chatbot) {
-		for (TopicInterfaceServices<D> service : topicInterfaceServices) {
-			if (service.handleObject(topic)) {
-				final boolean hasToBeDeactivate = service.hasToBeDeactivated(service.findByTopId(topic.getTopId()), chatbot);
-				if (hasToBeDeactivate || sentences.isEmpty()) {
-					uiMessageStack.info(service.getDeactivateMessage());
-				}
-			}
+		final boolean hasToBeDeactivate = service.hasToBeDeactivated(service.findByTopId(topic.getTopId()), chatbot);
+		if (hasToBeDeactivate || sentences.isEmpty()) {
+			uiMessageStack.info(service.getDeactivateMessage());
 		}
 	}
 
@@ -227,5 +223,38 @@ public abstract class AbstractTopicController<D extends Entity, S extends TopicI
 			@ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels);
 
 	abstract Topic getTopic(final D object);
+
+	public void saveTopic(final Topic topic,
+			final Chatbot chatbot,
+			final D object,
+			final String newNluTrainingSentence,
+			final DtList<NluTrainingSentence> nluTrainingSentences,
+			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+			final DtList<TopicLabel> labels,
+			final DtList<TopicLabel> initialLabels) {
+		saveTopic(topic, chatbot, object, null, null, nluTrainingSentences, newNluTrainingSentence, nluTrainingSentencesToDelete, labels, initialLabels);
+
+	}
+
+	public void saveTopic(final Topic topic,
+			final Chatbot chatbot,
+			final D object,
+			final DtList<ResponseButton> buttonList,
+			final DtList<UtterText> utterTexts,
+			final DtList<NluTrainingSentence> nluTrainingSentences,
+			final String newNluTrainingSentence,
+			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+			final DtList<TopicLabel> labels,
+			final DtList<TopicLabel> initialLabels) {
+		checkCategory(topic);
+		// add training sentence who is not "validated" by enter and still in the input
+		final SaveTopicObject<D> objectToSave = new SaveTopicObject<>(topic, chatbot, object, buttonList, utterTexts);
+		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+		topicServices.saveTtoCd(topic, TypeTopicEnum.SCRIPTINTENTION.name());
+		service.saveFromSaveTopicObject(objectToSave);
+		topicServices.save(topic, service.isEnabled(object, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
+		topicLabelServices.manageLabels(chatbot, topic, labels, initialLabels);
+
+	}
 
 }
