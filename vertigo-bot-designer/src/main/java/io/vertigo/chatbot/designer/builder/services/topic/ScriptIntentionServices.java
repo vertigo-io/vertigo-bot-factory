@@ -14,6 +14,7 @@ import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.scriptIntention.ScriptIntentionPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.ScriptIntentionFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -131,6 +132,11 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 	@Override
 	public String getDeactivateMessage() {
 		return MessageText.of(TopicsMultilingualResources.DEACTIVATE_TOPIC_SCRIPT_INTENTION).getDisplay();
+	}
+
+	@Override
+	public ScriptIntention saveFromSaveTopicObject(final SaveTopicObject<ScriptIntention> saveObject) {
+		return save(saveObject.getBot(), saveObject.getObject(), saveObject.getTopic());
 	}
 
 }

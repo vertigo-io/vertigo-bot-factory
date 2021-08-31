@@ -1,7 +1,5 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,10 +7,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
@@ -29,7 +31,7 @@ import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
-public abstract class AbstractTopicController<D extends Entity> extends AbstractBotCreationController<Topic> {
+public abstract class AbstractTopicController<D extends Entity, S extends TopicInterfaceServices<D>> extends AbstractBotCreationController<Topic> {
 
 	protected static final ViewContextKey<Topic> topicKey = ViewContextKey.of("topic");
 	protected static final ViewContextKey<Topic> topicListKey = ViewContextKey.of("topicList");
@@ -53,8 +55,10 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 
 	@Inject
 	protected TopicServices topicServices;
+
 	@Inject
-	protected List<TopicInterfaceServices<D>> topicInterfaceServices;
+	protected S service;
+
 	@Inject
 	protected TopicCategoryServices topicCategoryServices;
 
@@ -186,15 +190,12 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			throw new VUserException(errorMessage.toString());
 		}
 
-		for (final TopicInterfaceServices<D> services : topicInterfaceServices) {
-			if (services.handleObject(topic)) {
-				services.delete(chatbot, services.findByTopId(topic.getTopId()), topic);
-				topicLabelServices.cleanLabelFromTopic(chatbot, topic.getTopId());
-				topicServices.deleteTopic(chatbot, topic);
-			}
-		}
+		service.delete(chatbot, service.findByTopId(topic.getTopId()), topic);
+		topicLabelServices.cleanLabelFromTopic(chatbot, topic.getTopId());
+		topicServices.deleteTopic(chatbot, topic);
 
 		return "redirect:/bot/" + topic.getBotId() + "/topics/";
+
 	}
 
 	public void checkCategory(final Topic topic) {

@@ -3,11 +3,14 @@ package io.vertigo.chatbot.designer.builder.services.topic;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.datamodel.structure.model.Entity;
 
 public interface TopicInterfaceServices<D extends Entity> {
 
 	D save(final D object);
+
+	D saveFromSaveTopicObject(final SaveTopicObject<D> saveObject);
 
 	void delete(final Chatbot chatbot, final D object, final Topic topic);
 
