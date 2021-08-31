@@ -15,6 +15,7 @@ import io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.smallTalk.SmallTalkPAO;
@@ -22,6 +23,7 @@ import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -149,14 +151,24 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 
 	@Override
 	public boolean isEnabled(final SmallTalk object, final boolean isEnabled, final Chatbot bot) {
-		final DtList<UtterText> utt = utterTextServices.getUtterTextList(bot, object);
-		final DtList<ResponseButton> buttonList = responsesButtonServices.getResponsesButtonList(bot, object);
-		return !(utt.isEmpty() && buttonList.isEmpty()) && isEnabled;
+		return !(hasToBeDeactivated(object, bot)) && isEnabled;
 	}
 
 	@Override
 	public UtterText getBasicUtterTextByTopId(final Long topId) {
 		return utterTextServices.getBasicUtterTextByTopId(topId);
 
+	}
+
+	@Override
+	public boolean hasToBeDeactivated(final SmallTalk object, final Chatbot bot) {
+		final DtList<UtterText> utt = utterTextServices.getUtterTextList(bot, object);
+		final DtList<ResponseButton> buttonList = responsesButtonServices.getResponsesButtonList(bot, object);
+		return utt.isEmpty() && buttonList.isEmpty();
+	}
+
+	@Override
+	public String getDeactivateMessage() {
+		return MessageText.of(TopicsMultilingualResources.DEACTIVATE_TOPIC_SMALL_TALK).getDisplay();
 	}
 }

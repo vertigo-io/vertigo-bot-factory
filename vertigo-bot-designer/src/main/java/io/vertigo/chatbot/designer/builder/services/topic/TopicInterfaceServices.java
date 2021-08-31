@@ -21,5 +21,9 @@ public interface TopicInterfaceServices<D extends Entity> {
 
 	boolean isEnabled(final D object, final boolean isEnabled, final Chatbot bot);
 
+	boolean hasToBeDeactivated(final D object, final Chatbot bot);
+
 	UtterText getBasicUtterTextByTopId(Long topId);
+
+	String getDeactivateMessage();
 }

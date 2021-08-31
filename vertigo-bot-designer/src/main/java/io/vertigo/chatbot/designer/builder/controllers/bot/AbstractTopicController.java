@@ -54,7 +54,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	@Inject
 	protected TopicServices topicServices;
 	@Inject
-	protected List<TopicInterfaceServices> topicInterfaceServices;
+	protected List<TopicInterfaceServices<D>> topicInterfaceServices;
 	@Inject
 	protected TopicCategoryServices topicCategoryServices;
 
@@ -64,15 +64,15 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	@Inject
 	protected TopicLabelServices topicLabelServices;
 
-	public void initContext(final ViewContext viewContext, final Chatbot bot, final Topic topic) {
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, final Chatbot bot, final Topic topic) {
 		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Incoherent parameters");
 
 		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 		viewContext.publishDto(topicKey, topic);
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
-		viewContext.publishDtListModifiable(nluTrainingSentencesKey,
-				topicServices.getNluTrainingSentenceByTopic(bot, topic));
+		final DtList<NluTrainingSentence> nluSentences = topicServices.getNluTrainingSentenceByTopic(bot, topic);
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluSentences);
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey,
 				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
@@ -84,6 +84,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		viewContext.publishDtList(initialTopicLabelListKey, initialList);
 		viewContext.publishDtListModifiable(topicLabelListKey, new DtList<>(TopicLabel.class));
 		viewContext.publishDtList(allTopicLabelListKey, this.topicLabelServices.getTopicLabelByBotId(bot));
+		addMessageDeactivate(uiMessageStack, topic, nluSentences, bot);
 
 	}
 
@@ -106,8 +107,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		viewContext.publishDtList(allTopicLabelListKey, this.topicLabelServices.getTopicLabelByBotId(bot));
 
 	}
-
-	abstract Topic getTopic(final D object);
 
 	@PostMapping("/_edit")
 	public void doEdit() {
@@ -171,17 +170,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		return viewContext;
 	}
 
-	@PostMapping("/_save")
-	abstract String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("object") final D object,
-			@ViewAttribute("topic") final Topic topic,
-			@ViewAttribute("bot") final Chatbot chatbot,
-			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
-			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
-			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-			@ViewAttribute("topicLabelList") final DtList<TopicLabel> labels,
-			@ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels);
-
 	@PostMapping("/_delete")
 	String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("object") final D object,
 			@ViewAttribute("topic") final Topic topic) {
@@ -198,7 +186,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			throw new VUserException(errorMessage.toString());
 		}
 
-		for (final TopicInterfaceServices services : topicInterfaceServices) {
+		for (final TopicInterfaceServices<D> services : topicInterfaceServices) {
 			if (services.handleObject(topic)) {
 				services.delete(chatbot, services.findByTopId(topic.getTopId()), topic);
 				topicLabelServices.cleanLabelFromTopic(chatbot, topic.getTopId());
@@ -214,5 +202,29 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			throw new VUserException(TopicsMultilingualResources.ERROR_CATEGORY);
 		}
 	}
+
+	public void addMessageDeactivate(final UiMessageStack uiMessageStack, final Topic topic, final DtList<NluTrainingSentence> sentences, final Chatbot chatbot) {
+		for (TopicInterfaceServices<D> service : topicInterfaceServices) {
+			if (service.handleObject(topic)) {
+				final boolean hasToBeDeactivate = service.hasToBeDeactivated(service.findByTopId(topic.getTopId()), chatbot);
+				if (hasToBeDeactivate || sentences.isEmpty()) {
+					uiMessageStack.info(service.getDeactivateMessage());
+				}
+			}
+		}
+	}
+
+	@PostMapping("/_save")
+	abstract String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
+			@ViewAttribute("object") final D object,
+			@ViewAttribute("topic") final Topic topic,
+			@ViewAttribute("bot") final Chatbot chatbot,
+			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
+			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
+			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+			@ViewAttribute("topicLabelList") final DtList<TopicLabel> labels,
+			@ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels);
+
+	abstract Topic getTopic(final D object);
 
 }

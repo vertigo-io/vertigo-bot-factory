@@ -51,14 +51,14 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 
 	@GetMapping("/{sinId}")
 	@Secured("BotVisitor")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId,
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
 			@PathVariable("sinId") final Long sinId) {
 
 		final Chatbot bot = initCommonContext(viewContext, botId);
 		final ScriptIntention scriptIntention = scriptIntentionServices.getScriptIntentionById(bot, sinId);
 		final Topic topic = getTopic(scriptIntention);
 
-		initContext(viewContext, bot, topic);
+		initContext(viewContext, uiMessageStack, bot, topic);
 
 		viewContext.publishDto(scriptIntentionKey, scriptIntention);
 		super.initBreadCrums(viewContext, topic);

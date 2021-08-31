@@ -68,14 +68,14 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 	private ResponsesButtonServices responsesButtonServices;
 
 	@GetMapping("/{smtId}")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId,
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
 			@PathVariable("smtId") final Long smtId) {
 
 		final Chatbot bot = initCommonContext(viewContext, botId);
 		final SmallTalk smallTalk = smallTalkServices.getSmallTalkById(bot, smtId);
 		final Topic topic = getTopic(smallTalk);
 
-		initContext(viewContext, bot, topic);
+		initContext(viewContext, uiMessageStack, bot, topic);
 
 		viewContext.publishDto(smallTalkKey, smallTalk);
 		viewContext.publishMdl(responseTypeKey, ResponseType.class, null);
@@ -148,4 +148,5 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 	protected String getBreadCrums(final Topic object) {
 		return object.getTitle();
 	}
+
 }

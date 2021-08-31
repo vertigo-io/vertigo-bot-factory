@@ -13,10 +13,12 @@ import io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.scriptIntention.ScriptIntentionPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.ScriptIntentionFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -106,7 +108,7 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 
 	@Override
 	public boolean isEnabled(final ScriptIntention object, final boolean isEnabled, final Chatbot bot) {
-		return object.getScript() != null ? !object.getScript().isBlank() && isEnabled : false;
+		return object.getScript() != null ? (!hasToBeDeactivated(object, bot) && isEnabled) : false;
 	}
 
 	@Override
@@ -119,6 +121,16 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 		utt.setText(sin != null ? sin.getScript() : null);
 		return utt;
 
+	}
+
+	@Override
+	public boolean hasToBeDeactivated(final ScriptIntention object, final Chatbot bot) {
+		return object.getScript() != null ? object.getScript().isBlank() : true;
+	}
+
+	@Override
+	public String getDeactivateMessage() {
+		return MessageText.of(TopicsMultilingualResources.DEACTIVATE_TOPIC_SCRIPT_INTENTION).getDisplay();
 	}
 
 }
