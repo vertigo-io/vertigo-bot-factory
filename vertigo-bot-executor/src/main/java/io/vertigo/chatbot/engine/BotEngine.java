@@ -307,10 +307,12 @@ public class BotEngine {
 	}
 
 	public void saveContext(final BotInput input) {
-		final Map<String, String> context = (Map<String, String>) input.getMetadatas().get(CONTEXT_KEY);
-		for (Entry<String, String> entry : context.entrySet()) {
-			BBKey key = BBKey.of(BOT_CONTEXT_KEY, "/" + entry.getKey());
-			bb.putString(key, entry.getValue());
+		if (input.getMetadatas() != null) {
+			final Map<String, String> context = (Map<String, String>) input.getMetadatas().get(CONTEXT_KEY);
+			for (Entry<String, String> entry : context.entrySet()) {
+				BBKey key = BBKey.of(BOT_CONTEXT_KEY, "/" + entry.getKey());
+				bb.putString(key, entry.getValue());
+			}
 		}
 	}
 
