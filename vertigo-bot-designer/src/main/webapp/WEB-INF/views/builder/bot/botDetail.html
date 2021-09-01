@@ -48,7 +48,7 @@
 					<vu:fileupload th:url="'@{/commons/upload}'" key="botTmpPictureUri" multiple="false"/>
 				</vu:label-edit>
 				
-				<vu:text-area object="bot" field="description"/>
+				<vu:text-area object="bot" field="description" readonly="${model.modeReadOnly}"/>
 			</vu:block>
 			
 			<vu:block id="custom" th:title="#{bot.customization}">
@@ -85,8 +85,8 @@
 							style="width: calc(100% - 300px);"
 							label="script"
 							object="utterTextStart"		
-							field="text"					
-							th::mode-edit="${!model.modeReadOnly}">
+							field="text"
+							readonly="${model.modeReadOnly}">							
 						</vu:text-area>
 					</div>
 				<div class="text-subtitle1" th:text=#{bot.fallback}></div>
@@ -113,8 +113,8 @@
 							style="width: calc(100% - 300px);"
 							label="script"
 							object="utterTextFailure"		
-							field="text"					
-							th::mode-edit="${!model.modeReadOnly}">
+							field="text"
+							readonly="${model.modeReadOnly}">
 						</vu:text-area>
 					</div>
 				<div class="text-subtitle1" th:text=#{bot.end}></div>
@@ -141,8 +141,8 @@
 							style="width: calc(100% - 300px);"
 							label="script"
 							object="utterTextEnd"		
-							field="text"					
-							th::mode-edit="${!model.modeReadOnly}">
+							field="text"
+							readonly="${model.modeReadOnly}">
 						</vu:text-area>
 					</div>
 			</vu:block>
