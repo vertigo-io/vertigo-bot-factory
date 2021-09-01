@@ -378,6 +378,7 @@
 				
 				<vu:include-data object="intentDetails" field="'*'" />
 				<vu:include-data object="topIntents" field="code"/>
+				<vu:include-data object="topIntents" field="topId"/>
 
 				<div class="col-12"> 
 					<vu:table componentId="intentList"  list="topIntents" th:title="#{analytics.intents.usage}"  rowsPerPage="10" sortBy="count" descending>
