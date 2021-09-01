@@ -1,7 +1,5 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,10 +7,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
@@ -29,7 +31,7 @@ import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
-public abstract class AbstractTopicController<D extends Entity> extends AbstractBotCreationController<Topic> {
+public abstract class AbstractTopicController<D extends Entity, S extends TopicInterfaceServices<D>> extends AbstractBotCreationController<Topic> {
 
 	protected static final ViewContextKey<Topic> topicKey = ViewContextKey.of("topic");
 	protected static final ViewContextKey<Topic> topicListKey = ViewContextKey.of("topicList");
@@ -53,8 +55,10 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 
 	@Inject
 	protected TopicServices topicServices;
+
 	@Inject
-	protected List<TopicInterfaceServices> topicInterfaceServices;
+	protected S service;
+
 	@Inject
 	protected TopicCategoryServices topicCategoryServices;
 
@@ -64,15 +68,15 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 	@Inject
 	protected TopicLabelServices topicLabelServices;
 
-	public void initContext(final ViewContext viewContext, final Chatbot bot, final Topic topic) {
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, final Chatbot bot, final Topic topic) {
 		Assertion.check().isTrue(topic.getBotId().equals(bot.getBotId()), "Incoherent parameters");
 
 		viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
 		viewContext.publishDto(topicKey, topic);
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
-		viewContext.publishDtListModifiable(nluTrainingSentencesKey,
-				topicServices.getNluTrainingSentenceByTopic(bot, topic));
+		final DtList<NluTrainingSentence> nluSentences = topicServices.getNluTrainingSentenceByTopic(bot, topic);
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluSentences);
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey,
 				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
@@ -84,6 +88,7 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		viewContext.publishDtList(initialTopicLabelListKey, initialList);
 		viewContext.publishDtListModifiable(topicLabelListKey, new DtList<>(TopicLabel.class));
 		viewContext.publishDtList(allTopicLabelListKey, this.topicLabelServices.getTopicLabelByBotId(bot));
+		addMessageDeactivate(uiMessageStack, topic, nluSentences, bot);
 
 	}
 
@@ -106,8 +111,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		viewContext.publishDtList(allTopicLabelListKey, this.topicLabelServices.getTopicLabelByBotId(bot));
 
 	}
-
-	abstract Topic getTopic(final D object);
 
 	@PostMapping("/_edit")
 	public void doEdit() {
@@ -171,17 +174,6 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 		return viewContext;
 	}
 
-	@PostMapping("/_save")
-	abstract String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-			@ViewAttribute("object") final D object,
-			@ViewAttribute("topic") final Topic topic,
-			@ViewAttribute("bot") final Chatbot chatbot,
-			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
-			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
-			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-			@ViewAttribute("topicLabelList") final DtList<TopicLabel> labels,
-			@ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels);
-
 	@PostMapping("/_delete")
 	String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("object") final D object,
 			@ViewAttribute("topic") final Topic topic) {
@@ -198,21 +190,71 @@ public abstract class AbstractTopicController<D extends Entity> extends Abstract
 			throw new VUserException(errorMessage.toString());
 		}
 
-		for (final TopicInterfaceServices services : topicInterfaceServices) {
-			if (services.handleObject(topic)) {
-				services.delete(chatbot, services.findByTopId(topic.getTopId()), topic);
-				topicLabelServices.cleanLabelFromTopic(chatbot, topic.getTopId());
-				topicServices.deleteTopic(chatbot, topic);
-			}
-		}
+		service.delete(chatbot, service.findByTopId(topic.getTopId()), topic);
+		topicLabelServices.cleanLabelFromTopic(chatbot, topic.getTopId());
+		topicServices.deleteTopic(chatbot, topic);
 
 		return "redirect:/bot/" + topic.getBotId() + "/topics/";
+
 	}
 
 	public void checkCategory(final Topic topic) {
 		if (topic.getTopCatId() == null) {
 			throw new VUserException(TopicsMultilingualResources.ERROR_CATEGORY);
 		}
+	}
+
+	public void addMessageDeactivate(final UiMessageStack uiMessageStack, final Topic topic, final DtList<NluTrainingSentence> sentences, final Chatbot chatbot) {
+		final boolean hasToBeDeactivate = service.hasToBeDeactivated(service.findByTopId(topic.getTopId()), chatbot);
+		if (hasToBeDeactivate || sentences.isEmpty()) {
+			uiMessageStack.info(service.getDeactivateMessage());
+		}
+	}
+
+	@PostMapping("/_save")
+	abstract String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
+			@ViewAttribute("object") final D object,
+			@ViewAttribute("topic") final Topic topic,
+			@ViewAttribute("bot") final Chatbot chatbot,
+			@ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
+			@ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
+			@ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+			@ViewAttribute("topicLabelList") final DtList<TopicLabel> labels,
+			@ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels);
+
+	abstract Topic getTopic(final D object);
+
+	public void saveTopic(final Topic topic,
+			final Chatbot chatbot,
+			final D object,
+			final String newNluTrainingSentence,
+			final DtList<NluTrainingSentence> nluTrainingSentences,
+			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+			final DtList<TopicLabel> labels,
+			final DtList<TopicLabel> initialLabels) {
+		saveTopic(topic, chatbot, object, null, null, nluTrainingSentences, newNluTrainingSentence, nluTrainingSentencesToDelete, labels, initialLabels);
+
+	}
+
+	public void saveTopic(final Topic topic,
+			final Chatbot chatbot,
+			final D object,
+			final DtList<ResponseButton> buttonList,
+			final DtList<UtterText> utterTexts,
+			final DtList<NluTrainingSentence> nluTrainingSentences,
+			final String newNluTrainingSentence,
+			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+			final DtList<TopicLabel> labels,
+			final DtList<TopicLabel> initialLabels) {
+		checkCategory(topic);
+		// add training sentence who is not "validated" by enter and still in the input
+		final SaveTopicObject<D> objectToSave = new SaveTopicObject<>(topic, chatbot, object, buttonList, utterTexts);
+		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+		topicServices.saveTtoCd(topic, TypeTopicEnum.SCRIPTINTENTION.name());
+		service.saveFromSaveTopicObject(objectToSave);
+		topicServices.save(topic, service.isEnabled(object, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
+		topicLabelServices.manageLabels(chatbot, topic, labels, initialLabels);
+
 	}
 
 }

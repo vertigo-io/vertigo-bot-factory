@@ -17,8 +17,6 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +29,6 @@ import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
-import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
@@ -42,23 +39,20 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 @Controller
 @RequestMapping("/bot/{botId}/scriptIntention")
 @Secured("BotUser")
-public class ScriptIntentionDetailController extends AbstractTopicController<ScriptIntention> {
+public class ScriptIntentionDetailController extends AbstractTopicController<ScriptIntention, ScriptIntentionServices> {
 
 	private static final ViewContextKey<ScriptIntention> scriptIntentionKey = ViewContextKey.of("object");
 
-	@Inject
-	private ScriptIntentionServices scriptIntentionServices;
-
 	@GetMapping("/{sinId}")
 	@Secured("BotVisitor")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId,
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
 			@PathVariable("sinId") final Long sinId) {
 
 		final Chatbot bot = initCommonContext(viewContext, botId);
-		final ScriptIntention scriptIntention = scriptIntentionServices.getScriptIntentionById(bot, sinId);
+		final ScriptIntention scriptIntention = service.getScriptIntentionById(bot, sinId);
 		final Topic topic = getTopic(scriptIntention);
 
-		initContext(viewContext, bot, topic);
+		initContext(viewContext, uiMessageStack, bot, topic);
 
 		viewContext.publishDto(scriptIntentionKey, scriptIntention);
 		super.initBreadCrums(viewContext, topic);
@@ -73,7 +67,7 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 
 		initContextNew(viewContext, bot);
 
-		viewContext.publishDto(scriptIntentionKey, scriptIntentionServices.getNewScriptIntention(bot));
+		viewContext.publishDto(scriptIntentionKey, service.getNewScriptIntention(bot));
 		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
 	}
@@ -91,16 +85,9 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 			@ViewAttribute("topicLabelList") final DtList<TopicLabel> labels,
 			@ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels) {
 
-		checkCategory(topic);
-
 		final Long botId = chatbot.getBotId();
 
-		// add training sentence who is not "validated" by enter and still in the input
-		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
-		topicServices.saveTtoCd(topic, TypeTopicEnum.SCRIPTINTENTION.name());
-		scriptIntentionServices.save(chatbot, scriptIntention, topic);
-		topicServices.save(topic, scriptIntentionServices.isEnabled(scriptIntention, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
-		topicLabelServices.manageLabels(chatbot, topic, labels, initialLabels);
+		super.saveTopic(topic, chatbot, scriptIntention, newNluTrainingSentence, nluTrainingSentences, nluTrainingSentencesToDelete, labels, initialLabels);
 		return "redirect:/bot/" + botId + "/scriptIntention/" + scriptIntention.getSinId();
 	}
 
