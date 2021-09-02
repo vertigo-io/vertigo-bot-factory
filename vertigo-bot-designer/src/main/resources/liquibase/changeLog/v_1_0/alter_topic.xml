@@ -59,4 +59,8 @@
 	<changeSet author="vbaillet" id="modify label for type topic">
 		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_08_24.sql" />	
 	</changeSet>
+	
+	<changeSet author="vprima" id="correction : small talk transformed to script intention due to a bug">
+		<sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_09_02.sql" />	
+	</changeSet>
 </databaseChangeLog>

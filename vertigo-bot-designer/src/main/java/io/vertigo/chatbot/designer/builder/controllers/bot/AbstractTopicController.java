@@ -11,7 +11,6 @@ import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
-import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
@@ -225,6 +224,7 @@ public abstract class AbstractTopicController<D extends Entity, S extends TopicI
 	abstract Topic getTopic(final D object);
 
 	public void saveTopic(final Topic topic,
+			final String ttoCd,
 			final Chatbot chatbot,
 			final D object,
 			final String newNluTrainingSentence,
@@ -232,11 +232,12 @@ public abstract class AbstractTopicController<D extends Entity, S extends TopicI
 			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 			final DtList<TopicLabel> labels,
 			final DtList<TopicLabel> initialLabels) {
-		saveTopic(topic, chatbot, object, null, null, nluTrainingSentences, newNluTrainingSentence, nluTrainingSentencesToDelete, labels, initialLabels);
+		saveTopic(topic, ttoCd, chatbot, object, null, null, nluTrainingSentences, newNluTrainingSentence, nluTrainingSentencesToDelete, labels, initialLabels);
 
 	}
 
 	public void saveTopic(final Topic topic,
+			final String ttoCd,
 			final Chatbot chatbot,
 			final D object,
 			final DtList<ResponseButton> buttonList,
@@ -250,7 +251,7 @@ public abstract class AbstractTopicController<D extends Entity, S extends TopicI
 		// add training sentence who is not "validated" by enter and still in the input
 		final SaveTopicObject<D> objectToSave = new SaveTopicObject<>(topic, chatbot, object, buttonList, utterTexts);
 		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
-		topicServices.saveTtoCd(topic, TypeTopicEnum.SCRIPTINTENTION.name());
+		topicServices.saveTtoCd(topic, ttoCd);
 		service.saveFromSaveTopicObject(objectToSave);
 		topicServices.save(topic, service.isEnabled(object, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
 		topicLabelServices.manageLabels(chatbot, topic, labels, initialLabels);
