@@ -241,6 +241,7 @@ Vue.component('v-chatbot-dev', {
 				if (!silent) {
 					this.systemMessage(this.$q.lang.vui.chatbot.restartMessage);
 				}
+				this.reinitInput();
 				this.startConversation(); // lancement de la phrase d'accueil
 				
 			},
