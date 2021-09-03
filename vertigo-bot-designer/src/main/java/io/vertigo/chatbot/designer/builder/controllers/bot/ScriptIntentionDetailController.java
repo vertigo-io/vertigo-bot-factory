@@ -29,6 +29,7 @@ import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
@@ -87,7 +88,7 @@ public class ScriptIntentionDetailController extends AbstractTopicController<Scr
 
 		final Long botId = chatbot.getBotId();
 
-		super.saveTopic(topic, chatbot, scriptIntention, newNluTrainingSentence, nluTrainingSentences, nluTrainingSentencesToDelete, labels, initialLabels);
+		super.saveTopic(topic, TypeTopicEnum.SCRIPTINTENTION.name(), chatbot, scriptIntention, newNluTrainingSentence, nluTrainingSentences, nluTrainingSentencesToDelete, labels, initialLabels);
 		return "redirect:/bot/" + botId + "/scriptIntention/" + scriptIntention.getSinId();
 	}
 

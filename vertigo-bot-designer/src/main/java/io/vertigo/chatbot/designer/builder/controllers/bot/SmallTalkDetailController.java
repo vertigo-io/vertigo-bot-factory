@@ -34,6 +34,7 @@ import io.vertigo.chatbot.commons.domain.topic.ResponseType;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
@@ -126,7 +127,8 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 		final DtList<ResponseButton> buttonList = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsKey),
 				uiMessageStack);
 
-		super.saveTopic(topic, chatbot, smallTalk, buttonList, utterTexts, nluTrainingSentences, newNluTrainingSentence, nluTrainingSentencesToDelete, labels, initialLabels);
+		super.saveTopic(topic, TypeTopicEnum.SMALLTALK.name(), chatbot, smallTalk, buttonList, utterTexts, nluTrainingSentences, newNluTrainingSentence, nluTrainingSentencesToDelete, labels,
+				initialLabels);
 		return "redirect:/bot/" + botId + "/smallTalk/" + smallTalk.getSmtId();
 	}
 
