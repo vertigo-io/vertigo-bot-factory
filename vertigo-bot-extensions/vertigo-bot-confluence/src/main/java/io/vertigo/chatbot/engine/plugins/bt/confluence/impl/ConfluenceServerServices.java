@@ -107,7 +107,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component, 
 		final var builder = new StringBuilder();
 		builder.append("<a href=\"");
 		builder.append(url);
-		builder.append("\">");
+		builder.append("\" target=\"_blank\" rel=\"noopener noreferrer\">");
 		builder.append(name);
 		builder.append("</a>");
 		return builder.toString();
