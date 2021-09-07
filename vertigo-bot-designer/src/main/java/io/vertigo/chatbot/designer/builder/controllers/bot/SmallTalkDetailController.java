@@ -68,7 +68,7 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
 			@PathVariable("smtId") final Long smtId) {
 
-		final Chatbot bot = initCommonContext(viewContext, botId);
+		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		final SmallTalk smallTalk = service.getSmallTalkById(bot, smtId);
 		final Topic topic = getTopic(smallTalk);
 
@@ -85,9 +85,9 @@ public class SmallTalkDetailController extends AbstractTopicController<SmallTalk
 	}
 
 	@GetMapping("/new")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 
-		final Chatbot bot = initCommonContext(viewContext, botId);
+		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 
 		initContextNew(viewContext, bot);
 

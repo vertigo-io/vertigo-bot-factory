@@ -66,10 +66,10 @@ public class MeaningDetailController extends AbstractBotCreationController<Meani
 	private SynonymServices synonymServices;
 
 	@GetMapping("/{meaId}")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId,
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
 			@PathVariable("meaId") final Long meaId) {
 
-		super.initCommonContext(viewContext, botId);
+		super.initCommonContext(viewContext, uiMessageStack, botId);
 		final Chatbot chatbot = chatbotServices.getChatbotById(botId);
 		viewContext.publishDto(botKey, chatbot);
 

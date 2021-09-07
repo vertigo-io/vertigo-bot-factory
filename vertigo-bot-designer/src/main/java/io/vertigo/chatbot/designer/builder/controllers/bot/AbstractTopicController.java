@@ -253,7 +253,7 @@ public abstract class AbstractTopicController<D extends Entity, S extends TopicI
 		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 		topicServices.saveTtoCd(topic, ttoCd);
 		service.saveFromSaveTopicObject(objectToSave);
-		topicServices.save(topic, service.isEnabled(object, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
+		topicServices.save(topic, chatbot, service.isEnabled(object, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
 		topicLabelServices.manageLabels(chatbot, topic, labels, initialLabels);
 
 	}

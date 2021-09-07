@@ -102,8 +102,8 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	private static final ViewContextKey<Topic> topicEndKey = ViewContextKey.of("topicEnd");
 
 	@GetMapping("/{botId}")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = initCommonContext(viewContext, botId);
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
+		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 
 		if (AuthorizationUtils.isAuthorized(bot, ChatbotOperations.botAdm)) {
 			viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
@@ -129,6 +129,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		final ChatbotNode templateCreation = new ChatbotNode();
 		templateCreation.setColor("#00838f");
 		templateCreation.setIsDev(false);
+		templateCreation.setIsUpToDate(false);
 		viewContext.publishDto(nodeNewKey, templateCreation);
 	}
 
@@ -216,8 +217,14 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	public ViewContext doSaveNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("nodeEdit") final ChatbotNode nodeEdit) {
 
+		//if the node has modification, it is flagged as not uptodate
+		if (nodeEdit.getNodId() != null) {
+			final ChatbotNode oldNode = nodeServices.getNodeByNodeId(bot, nodeEdit.getNodId());
+			if (oldNode == null || !oldNode.getApiKey().equals(nodeEdit.getApiKey()) || !oldNode.getUrl().equals(nodeEdit.getUrl())) {
+				nodeEdit.setIsUpToDate(false);
+			}
+		}
 		nodeEdit.setBotId(bot.getBotId());
-
 		nodeServices.saveNode(nodeEdit);
 
 		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));

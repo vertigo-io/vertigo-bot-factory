@@ -173,6 +173,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		color,
 		/** Propriété 'ApiKey'. */
 		apiKey,
+		/** Propriété 'Is up to date'. */
+		isUpToDate,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Loaded model'. */

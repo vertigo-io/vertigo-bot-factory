@@ -23,6 +23,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot/{botId}/personChatbot")
@@ -42,8 +43,8 @@ public class PersonChatbotDetailController extends AbstractBotController<Chatbot
 	private ChatbotProfilServices chatbotProfilServices;
 
 	@GetMapping("/")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		final Chatbot chatbot = initCommonContext(viewContext, botId);
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
+		final Chatbot chatbot = initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtListModifiable(personsProfilListKey, chatbotProfilServices.getPersonProfilIHMbyChatbotId(chatbot));
 		viewContext.publishMdl(chatbotProfilList, ChatbotProfiles.class, null);
 		viewContext.publishDtListModifiable(personsListKey, chatbotProfilServices.getAllUsers(chatbot));

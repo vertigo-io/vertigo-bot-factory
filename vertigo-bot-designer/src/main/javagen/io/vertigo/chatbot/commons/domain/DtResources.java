@@ -88,6 +88,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotNode$apiKey,
 	/**
+	 * Is up to date.
+	 */
+	fldChatbotNode$isUpToDate,
+	/**
 	 * Chatbot.
 	 */
 	fldChatbotNode$botId,
