@@ -71,6 +71,7 @@ create DtDefinition DtChatbotNode {
 	field isDev			{domain: DoYesNo 	label: "Dev node" 			cardinality : "1"}
 	field color			{domain: DoColor 	label: "Color" 				cardinality : "1"}
 	field apiKey		{domain: DoLabel 	label: "ApiKey" 			cardinality : "1"}
+	field isUpToDate	{domain: DoYesNo 	label: "Is up to date" 		cardinality : "1"}
 }
 
 create Association ANodeChatbot {

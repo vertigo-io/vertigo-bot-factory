@@ -152,6 +152,7 @@
 			<vu:include-data object="nodeNew" field="url" />
 			<vu:include-data object="nodeNew" field="color" />
 			<vu:include-data object="nodeNew" field="isDev" />
+			<vu:include-data object="nodeNew" field="isUpToDate" />
 			
 			<vu:table th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" id="nodes" list="nodeList" th:title="#{bot.nodes}" componentId="nodeList" rowsPerPage="10" autoColClass
 					  tr_@click.native="|vueData.nodeEdit = Vue.util.extend({},props.row); $refs.nodeEdit.show()|" tr_class="nav">

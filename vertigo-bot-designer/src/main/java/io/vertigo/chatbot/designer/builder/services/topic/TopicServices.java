@@ -19,6 +19,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
@@ -58,6 +59,9 @@ public class TopicServices implements Component, Activeable {
 	@Inject
 	private ScriptIntentionServices scriptIntentionServices;
 
+	@Inject
+	private NodeServices nodeServices;
+
 	public Topic findTopicById(@SecuredOperation("botVisitor") final Long id) {
 		return topicDAO.get(id);
 	}
@@ -73,7 +77,7 @@ public class TopicServices implements Component, Activeable {
 		return topicDAO.save(topic);
 	}
 
-	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences,
+	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Chatbot bot, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences,
 			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
 		//check if code matches the pattern
@@ -88,6 +92,8 @@ public class TopicServices implements Component, Activeable {
 		final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences);
 		removeNTS(nluTrainingSentencesToDelete);
 		topic.setIsEnabled(!ntsToSave.isEmpty() && isEnabled);
+
+		nodeServices.updateNodes(bot);
 
 		return topicDAO.save(topic);
 	}
@@ -230,6 +236,7 @@ public class TopicServices implements Component, Activeable {
 				services.initializeBasic(chatbot, topic, utterText.getText());
 			}
 		}
+		nodeServices.updateNodes(chatbot);
 
 	}
 

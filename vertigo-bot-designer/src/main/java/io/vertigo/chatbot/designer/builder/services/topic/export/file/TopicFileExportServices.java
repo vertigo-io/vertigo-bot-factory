@@ -257,7 +257,7 @@ public class TopicFileExportServices implements Component {
 			// populate topic with infos from the TopicFileExport
 			topic = populateTopic(topic, chatbot, tfe, isEnabled, topCatId, nluTSToDelete, creation);
 
-			final Topic topicSaved = topicServices.save(topic, topic.getIsEnabled(), new DtList<NluTrainingSentence>(NluTrainingSentence.class),
+			final Topic topicSaved = topicServices.save(topic, chatbot, topic.getIsEnabled(), new DtList<NluTrainingSentence>(NluTrainingSentence.class),
 					nluTSToDelete);
 
 			// At this point, topicSaved isEnabled is false, because the topic has no nluTrainingSentences.
@@ -373,7 +373,7 @@ public class TopicFileExportServices implements Component {
 		final DtList<NluTrainingSentence> nluTrainingSentencesToDelete = topicServices.getNluTrainingSentenceByTopic(chatbot, topic);
 
 		scriptIntentionServices.save(chatbot, sin, topic);
-		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
+		topicServices.save(topic, chatbot, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 
 	}
 
@@ -392,7 +392,7 @@ public class TopicFileExportServices implements Component {
 
 		topicServices.saveTtoCd(topic, TypeTopicEnum.SMALLTALK.name());
 		smallTalkServices.saveSmallTalk(chatbot, smt, listResponse, listButtons, topic);
-		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
+		topicServices.save(topic, chatbot, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 	}
 
 	/*

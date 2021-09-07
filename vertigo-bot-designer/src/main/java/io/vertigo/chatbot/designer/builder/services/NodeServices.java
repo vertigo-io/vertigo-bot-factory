@@ -102,4 +102,12 @@ public class NodeServices implements Component {
 				.findFirst()
 				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
 	}
+
+	public void updateNodes(final Chatbot bot) {
+		final DtList<ChatbotNode> listNode = getNodesByBot(bot);
+		for (final ChatbotNode node : listNode) {
+			node.setIsUpToDate(false);
+			saveNode(node);
+		}
+	}
 }

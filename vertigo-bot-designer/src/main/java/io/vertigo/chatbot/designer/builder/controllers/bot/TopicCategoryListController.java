@@ -13,6 +13,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot/{botId}/categories")
@@ -25,8 +26,8 @@ public class TopicCategoryListController extends AbstractBotListController<Topic
 	private TopicCategoryServices topicCategoryServices;
 
 	@GetMapping("/")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = initCommonContext(viewContext, botId);
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
+		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtList(topicCategorieskKey, topicCategoryServices.getAllNonTechnicalCategoriesByBot(bot));
 		super.initBreadCrums(viewContext, TopicCategory.class);
 	}

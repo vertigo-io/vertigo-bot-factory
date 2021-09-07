@@ -57,6 +57,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot/{botId}/models")
@@ -88,8 +89,8 @@ public class ModelListController extends AbstractBotListController<Training> {
 	private BotConversationServices botConversationServices;
 
 	@GetMapping("/")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = initCommonContext(viewContext, botId);
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
+		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 
 		viewContext.publishRef(autoscrollKey, Boolean.TRUE);
 

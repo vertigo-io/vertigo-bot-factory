@@ -17,6 +17,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot/{botId}/category")
@@ -30,9 +31,9 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
 	private TopicCategoryServices topicCategoryServices;
 
 	@GetMapping("/{topCatId}")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId,
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
 			@PathVariable("topCatId") final Long topCatId) {
-		final Chatbot bot = initCommonContext(viewContext, botId);
+		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		final TopicCategory topicCategory = topicCategoryServices.getTopicCategoryById(bot, topCatId);
 		final DtList<Topic> topics = topicCategoryServices.getAllTopicFromCategory(bot, topicCategory);
 		viewContext.publishDto(topicCategoryKey, topicCategory);
@@ -42,8 +43,8 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
 	}
 
 	@GetMapping("/new")
-	public void getNewCategory(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = initCommonContext(viewContext, botId);
+	public void getNewCategory(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
+		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDto(topicCategoryKey, topicCategoryServices.getNewTopicCategory(bot));
 		viewContext.publishDtList(topicsKey, new DtList<Topic>(Topic.class));
 		super.initEmptyBreadcrums(viewContext);

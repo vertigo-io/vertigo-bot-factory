@@ -166,6 +166,7 @@ public class TrainingServices implements Component {
 
 			training.setStrCd(TrainingStatusEnum.OK.name());
 			node.setTraId(training.getTraId());
+			node.setIsUpToDate(true);
 			asynchronousServices.saveNodeWithoutAuthorizations(node);
 			LogsUtils.logOK(logs);
 			LogsUtils.addLogs(logs, response.body());

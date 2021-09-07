@@ -55,6 +55,7 @@ import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
 import liquibase.util.csv.CSVReader;
 
 @Controller
@@ -86,8 +87,8 @@ public class TopicsListController extends AbstractBotListController<Topic> {
 
 	@GetMapping("/")
 	@Secured("BotUser")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = initCommonContext(viewContext, botId);
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
+		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtList(topicIhmListKey, TopicIhmFields.topId, topicServices.getAllNonTechnicalTopicIhmByBot(bot));
 		viewContext.publishDtListModifiable(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 		viewContext.publishDtList(categoryListKey, categoryServices.getAllActiveCategoriesByBot(bot));

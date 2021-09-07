@@ -20,6 +20,7 @@ import io.vertigo.core.lang.VUserException;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
 @RequestMapping("/bot/{botId}/dictionary")
@@ -37,8 +38,8 @@ public class MeaningListController extends AbstractBotListController<Meaning> {
 	private SynonymServices synonymServices;
 
 	@GetMapping("/")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = initCommonContext(viewContext, botId);
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
+		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtList(synonymsKey, synonymServices.getAllSynonymByBot(bot));
 		viewContext.publishDto(meaningEditKey, new Meaning());
 		viewContext.publishDto(synonymEditKey, new Synonym());
