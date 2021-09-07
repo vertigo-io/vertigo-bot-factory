@@ -55,7 +55,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component, 
 
 	@Override
 	public ConfluenceSearchResponse searchOnConfluence(final Map<String, String> params, final Map<String, String> headers, final ConfluenceSearchObject filter) {
-		final String searchArgs = ConfluenceHttpRequestHelper.createSearchArgs(filter);
+		final String searchArgs = ConfluenceHttpRequestHelper.createSearchArgs(filter, true);
 		params.put("cql", searchArgs);
 		params.put("limit", limit);
 		final HttpResponse<String> response = sendRequestToConfluence(params, headers, SEARCH_URL, 200, BodyHandlers.ofString());
