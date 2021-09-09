@@ -8,6 +8,21 @@
 	
 	<head>
 		<title th:text="#{script.detail.title}"></title>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/mode/javascript/javascript.min.js"></script>
+		<script src="//cdn.jsdelivr.net/npm/vue-codemirror"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css" />
+		<script th:inline="javascript">
+		 	Vue.use(window.VueCodemirror)
+		 	
+		 	VUiExtensions.dataX.vueCodeMirror = {
+		 			options :{
+		 				tabSize: 4,
+		 				lineNumbers : true,
+		 				mode: 'javascript',
+		 			}
+		 	}
+		</script>
 	</head>
 	
 	<body>
@@ -32,11 +47,11 @@
 			<vu:popup action="_delete" vModel="showPopup" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
 			
 			<vu:block id="script" title="Script">
-				<vu:include-data object="object" field="script" />	
-				<vu:text-area label=' ' object="object" field="script" readonly="${model.modeReadOnly}" />
-			</vu:block>		
-				
+				<vu:include-data object="object" field="script" />
+				<codemirror v-model="vueData.object.script" :options="dataX.vueCodeMirror.options"/>
+			</vu:block>
+			
 		</section>
-		
+
 	</body>
 </html>
