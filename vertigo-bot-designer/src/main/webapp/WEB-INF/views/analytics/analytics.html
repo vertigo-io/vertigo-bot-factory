@@ -383,9 +383,9 @@
 				<div class="col-12"> 
 					<vu:table componentId="intentList"  list="topIntents" th:title="#{analytics.intents.usage}"  rowsPerPage="10" sortBy="count" descending>
 							  
-						<vu:column field="intentRasa" label="Intent"/>
+						<vu:column field="intentRasa" th:label="#{analytics.intent.intent}"/>
 						<vu:column field="count"/>
-						<vu:column field="intentRasa" label="detail" >
+						<vu:column field="intentRasa" th:label="#{analytics.intent.detail}" >
 							<q-btn class="fab-block" round color="primary" icon="search" th:aria-label="#{analytics.message}"  th:title="#{analytics.message}"
 							 	@click="displayIntentDetail(props.row)"></q-btn>
 						</vu:column>

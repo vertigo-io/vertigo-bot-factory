@@ -68,7 +68,10 @@ create Task TkGetAllTopicsIhmFromBot {
 					smt.smt_id,
 					sin.sin_id,
 					top.is_enabled,
-					tto.label as type,
+					CASE #locale#
+						WHEN 'fr_FR' THEN tto.label_fr
+						ELSE tto.label
+					END as type,
 					top.tto_cd,
 					tpc.label as cat_label,
 					string_agg(tpl.label, ',') as labels
@@ -89,13 +92,15 @@ create Task TkGetAllTopicsIhmFromBot {
 					smt.smt_id,
 					sin.sin_id,
 					top.is_enabled,
-					tto.label ,
+					tto.label,
+					tto.label_fr,
 					top.tto_cd,
 					tpc.label
 			
              "
-	in botId  				{domain : DoId         		cardinality : "1"  }
+	in botId  				{domain : DoId         		cardinality : "1"  }	
 	in ktoCd  				{domain : DoCode         	cardinality : "?"  }
+	in locale  				{domain : DoCode         	cardinality : "1"  }
 	out topicIHM			{domain : DoDtTopicIhm,		cardinality : "*"  } 
 }
 

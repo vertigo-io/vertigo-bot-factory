@@ -89,7 +89,7 @@ public class TopicsListController extends AbstractBotListController<Topic> {
 	@Secured("BotUser")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
-		viewContext.publishDtList(topicIhmListKey, TopicIhmFields.topId, topicServices.getAllNonTechnicalTopicIhmByBot(bot));
+		viewContext.publishDtList(topicIhmListKey, TopicIhmFields.topId, topicServices.getAllNonTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString()));
 		viewContext.publishDtListModifiable(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 		viewContext.publishDtList(categoryListKey, categoryServices.getAllActiveCategoriesByBot(bot));
 		viewContext.publishRef(selectionListKey, "");

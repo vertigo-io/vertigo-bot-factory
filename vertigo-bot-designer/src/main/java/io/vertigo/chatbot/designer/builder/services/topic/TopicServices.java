@@ -171,10 +171,6 @@ public class TopicServices implements Component, Activeable {
 				DtListState.of(1000));
 	}
 
-	public DtList<TopicIhm> getAllTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), Optional.empty());
-	}
-
 	public DtList<Topic> getAllTopicEnableByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, bot.getBotId()).and(Criterions.isEqualTo(TopicFields.isEnabled, true)), DtListState.of(1000));
 	}
@@ -199,8 +195,8 @@ public class TopicServices implements Component, Activeable {
 		return topicDAO.getBasicTopicByBotIdKtoCd(botId, ktoCd);
 	}
 
-	public DtList<TopicIhm> getAllNonTechnicalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), Optional.of(KindTopicEnum.NORMAL.name()));
+	public DtList<TopicIhm> getAllNonTechnicalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot, final String locale) {
+		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), Optional.of(KindTopicEnum.NORMAL.name()), locale);
 	}
 
 	public DtList<Topic> getTopicReferencingTopId(final Long topId) {
