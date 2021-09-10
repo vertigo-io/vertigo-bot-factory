@@ -1,8 +1,15 @@
 Vue.component('c-richtext', {
+	
 	props : {
 		value:    { type: String,  required: true },
 		name:     { type: String,  required: true },
 		modeEdit: { type: Boolean, 'default': true },
+		locale:   { type: String, 'default': 'en_US' },
+	},
+	data: function () {
+		return {
+			imageUrl: null,			
+		}
 	},
 	template : `
 		<div class="row wrap">
@@ -33,16 +40,59 @@ Vue.component('c-richtext', {
 			      ['link', 'removeFormat'],
 			      ['hr'],
 			      ['undo', 'redo'],
-			      ['viewsource']
+			      ['viewsource'],
+			      ['customimage']
 			    ]"
 			    :definitions="{hr: {tip: 'Pause'}}"
 				>
+				 <template v-slot:customimage>
+			          <q-btn
+			            dense no-caps
+			            ref="custom"
+			            color="white"
+			            text-color="primary"
+			            :label="locale == 'fr_FR' ? 'Insérer une image' : 'Insert image'"
+			            size="sm"
+			            @click="addCustomImage"
+			          >
+			          </q-btn>
+			      </template>
+			     
 			</q-editor>
 			
 			<div style="width:300px" class="q-px-md">
 				<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" bg-color="grey-4" ></q-chat-message>
 			</div>
+			 <q-dialog ref="newImage"  >
+			 	<q-card style="width: 600px;">
+					 <q-form @submit="handleCustomImage" class="q-gutter-md">
+						<q-card-section>
+							<div class="text-h6" >{{locale == 'fr_FR' ? 'Ajouter une image' : 'Add image'}}</div>
+						</q-card-section>	
+						
+						<q-card-section>							
+							<q-input 
+								filled 
+								type="text" 					
+								v-model="imageUrl"	
+								label = "URL"	
+								ref="imageUrlRef"
+								autofocus
+								required
+	       					>
+       					</q-card-section>	
+       					
+						<q-card-actions align="around">					
+							<q-btn :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>
+						</q-card-actions>
+					</div>
+				</q-card
+			</q-dialog>
+			
 		</div>
+		
+		
+		
 	`
 		,
 		methods: {
@@ -94,6 +144,21 @@ Vue.component('c-richtext', {
 						this.value
 						.replace("<a ", "<a target='_blank' rel='nofollow noopener noreferrer' ")
 						.split(/<hr>|<hr \/>/);
-			}
+			},
+			
+			addCustomImage () {
+		     this.$refs.newImage.show();
+     		 this.imageUrl = null
+		    },
+		    
+			handleCustomImage () {
+			  var url = this.$refs.imageUrlRef.value			  
+	 		  this.$refs.newImage.hide()
+			  
+		      const edit = this.$refs.editor_ref
+		      edit.caret.restore()
+		      edit.runCmd('insertHTML', `<div class="imgUrl"><img class="imgUrl" src="${url}"/></div>`)
+		      edit.focus()      
+		    },
 		}
 });

@@ -77,6 +77,7 @@
 							class="q-pb-sm"
 							v-model="vueData.utterTextStart.text"
 							name="vContext[utterTextStart][text]"
+							:locale="vueData.locale"
 							th::mode-edit="${!model.modeReadOnly}">
 						</c-richtext>
 					</div>
@@ -106,6 +107,7 @@
 							class="q-pb-sm"
 							v-model="vueData.utterTextFailure.text"
 							name="vContext[utterTextFailure][text]"
+							:locale="vueData.locale"
 							th::mode-edit="${!model.modeReadOnly}">
 						</c-richtext>
 					</div>
@@ -134,6 +136,7 @@
 							class="q-pb-sm"
 							v-model="vueData.utterTextEnd.text"
 							name="vContext[utterTextEnd][text]"
+							:locale="vueData.locale"
 							th::mode-edit="${!model.modeReadOnly}">
 						</c-richtext>
 					</div>

@@ -125,7 +125,8 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Sma
 	}
 
 	private String createWelcomeBt(final UtterTextExport utter) {
-		final String[] splitUtter = utter.getUtterTexts().split("\\|");
+		// JIRA 127 - All " have been replaced by &#34; except for links.
+		final String[] splitUtter = utter.getUtterTexts().replace("\"", "").split("\\|");
 		final StringBuilder bt = new StringBuilder();
 
 		BtBuilderUtils.addLineBreak(bt);
