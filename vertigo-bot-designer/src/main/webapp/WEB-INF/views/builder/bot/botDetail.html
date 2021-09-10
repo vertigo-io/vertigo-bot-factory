@@ -67,7 +67,7 @@
 					        v-model="vueData.ttoCdStart"
 					        toggle-color="primary"
 					        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
-					     	th::mode-edit="${!model.modeReadOnly}"
+							th::mode-edit="${!model.modeReadOnly}"
 					      />
 				    </div>
 				    <input type="hidden" name="vContext[ttoCdStart]" :value="vueData.ttoCdStart" />
@@ -77,9 +77,10 @@
 							v-model="vueData.utterTextStart.text"
 							name="vContext[utterTextStart][text]"
 							:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"						
-							th::mode-edit="${!model.modeReadOnly}"							
-							>
 							
+							:locale="vueData.locale"
+							th::mode-edit="${!model.modeReadOnly}"
+>
 						</c-richtext>
 					</div>
 					<div v-else>
@@ -108,6 +109,7 @@
 							v-model="vueData.utterTextFailure.text"
 							name="vContext[utterTextFailure][text]"
 							:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"	
+							:locale="vueData.locale"
 							th::mode-edit="${!model.modeReadOnly}">
 						</c-richtext>
 					</div>
@@ -137,6 +139,7 @@
 							v-model="vueData.utterTextEnd.text"
 							name="vContext[utterTextEnd][text]"
 							:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"	
+							:locale="vueData.locale"
 							th::mode-edit="${!model.modeReadOnly}">
 						</c-richtext>
 					</div>
