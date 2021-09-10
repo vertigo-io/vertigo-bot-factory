@@ -56,6 +56,7 @@ public abstract class AbstractBotController<O extends Entity> extends AbstractDe
 
 	protected void initEmptyCommonContext(final ViewContext viewContext) {
 		viewContext.publishDto(botKey, chatbotServices.getNewChatbot());
+		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
 	}
 
 	@GetMapping("/{botId}/avatar")
