@@ -47,7 +47,8 @@ public final class TrainingPAO implements StoreServices {
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkCleanOldTrainings",
 			request = "update training" + 
- "			set str_cd = 'KO'" + 
+ "			set str_cd = 'KO'," + 
+ "			log = CONCAT(log,' KO<br>The training was stopped.')" + 
  "			where str_cd = 'TRAINING'" + 
  "			and bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)

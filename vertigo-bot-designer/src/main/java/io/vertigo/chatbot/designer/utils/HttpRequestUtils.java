@@ -33,6 +33,10 @@ public final class HttpRequestUtils {
 		return createPostRequest(url, Map.of(), publisher);
 	}
 
+	public static HttpRequest createGetRequest(final String url, final Map<String, String> headers) {
+		return createRequestBuilder(url, headers).GET().build();
+	}
+
 	public static HttpRequest createPostRequest(final String url, final Map<String, String> headers, final BodyPublisher publisher) {
 		return createRequestBuilder(url, headers).POST(publisher).build();
 	}
@@ -107,4 +111,5 @@ public final class HttpRequestUtils {
 	public static <T> boolean isResponseKo(final HttpResponse<T> response, final int... codes) {
 		return Arrays.stream(codes).anyMatch(x -> x == response.statusCode());
 	}
+
 }

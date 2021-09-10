@@ -106,6 +106,8 @@ public class TrainingServices implements Component {
 
 	private static final String URL_MODEL = "/api/chatbot/admin/model";
 
+	private static final String URL_PING = "/api/chatbot/admin/";
+
 	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
 		final StringBuilder logs = new StringBuilder("new Training");
 		LogsUtils.breakLine(logs);
@@ -138,7 +140,9 @@ public class TrainingServices implements Component {
 			final Map<String, String> headers = Map.of(API_KEY, devNode.getApiKey(),
 					"Content-type", "application/json");
 
-			LogsUtils.addLogs(logs, "Call executor training :");
+			tryPing(devNode.getUrl(), headers, training, logs);
+
+			LogsUtils.addLogs(logs, "Call executor training (", devNode.getUrl(), ") :");
 			LogsUtils.breakLine(logs);
 			final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
 			final HttpRequest request = HttpRequestUtils.createPutRequest(devNode.getUrl() + URL_MODEL, headers, publisher);
@@ -147,16 +151,32 @@ public class TrainingServices implements Component {
 						return this.handleResponse(response, training, devNode, bot, logs);
 					});
 			LogsUtils.addLogs(logs, "Call training OK, training in progress...");
-			return training;
+
 		} catch (final Exception e) {
 			LogsUtils.logKO(logs);
 			LogsUtils.addLogs(logs, e.getMessage());
 			LOGGER.error("error", e);
-			training.setLog(logs.toString());
-			throw new VSystemException("error training", e);
+			training.setEndTime(Instant.now());
+			training.setStrCd(TrainingStatusEnum.KO.name());
 		} finally {
 			training.setLog(logs.toString());
 			saveTraining(bot, training);
+		}
+		return training;
+	}
+
+	private void tryPing(final String url, final Map<String, String> headers, final Training training, final StringBuilder logs) {
+		final HttpRequest requestPing = HttpRequestUtils.createGetRequest(url + URL_PING, headers);
+		try {
+			final HttpResponse<String> responsePing = HttpRequestUtils.sendRequest(null, requestPing, BodyHandlers.ofString(), 200);
+			if (!responsePing.body().equals("true")) {
+				LogsUtils.logKO(logs);
+				LogsUtils.addLogs(logs, url, " cannot be used to train the model.");
+				training.setLog(logs.toString());
+				throw new VSystemException(url + " cannot be used to train the model.");
+			}
+		} catch (final Exception e) {
+			throw new VSystemException(url + " cannot be used to train the model.");
 		}
 	}
 
