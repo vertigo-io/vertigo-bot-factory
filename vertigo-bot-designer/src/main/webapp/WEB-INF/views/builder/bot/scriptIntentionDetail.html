@@ -11,17 +11,90 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/mode/javascript/javascript.min.js"></script>
 		<script src="//cdn.jsdelivr.net/npm/vue-codemirror"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/mode/simple.min.js" integrity="sha512-9YoNYsegWvbA5aiSshQ2BNW2FAq3CQVLqpg2r6urw9Tfl1GklM9PNgrMRVz8fhEtjM+uZfO/1X3RURkMcil8wg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css" />
+		<script th:src="@{/static/chatbot/chatbotMode.js}"></script>
 		<script th:inline="javascript">
 		 	Vue.use(window.VueCodemirror)
 		 	
 		 	VUiExtensions.dataX.vueCodeMirror = {
 		 			options :{
+		 				indentWithTabs:true,
+		 				indentUnit: 4,
 		 				tabSize: 4,
 		 				lineNumbers : true,
-		 				mode: 'javascript',
+		 				mode: 'chatbot',
+		 				readOnly : true
 		 			}
 		 	}
+		 	
+		 	
+		 	//getCursor position and line
+		 	function getCursor(){
+		 		const cursor = VUiPage.$refs.cm.codemirror.getCursor();
+		 		return {line : cursor.line, ch: cursor.ch};
+		 	}
+		 	
+		 	//Create the string to add
+		 	//Get only the first string if it's simple node i.e. say
+		 	//Get tabulation for end composite node
+		 	function createStringToAdd(beginString, endString, currentLine){
+		 		var stringToAdd = beginString + '\n';
+		 		if (endString == null){
+		 			return stringToAdd;
+		 		}
+		 		//matchs the tabulation pattern
+		 		var count = (currentLine.match(/\t/g) || []).length;
+		 		for (let i = 0; i < count; i++){
+		 			endString =  '\t'.concat(endString);
+		 		}
+		 		return stringToAdd + endString
+		 	}
+		 	
+		 	//Add string of node into the editor value
+		 	//addEndString must be null for simple node
+		 	function modifyValue(addBeginString, addEndString){
+		 		var position = getCursor();
+		 		const value = VUiPage.$refs.cm.codemirror.getValue();
+		 		const lines = value.split('\n');
+		 		chs = lines[position.line];
+		 		stringToAdd = createStringToAdd(addBeginString, addEndString, chs);
+		 		lines[position.line] = chs.substring(0,position.ch) + stringToAdd + chs.substring(position.ch, chs.length);
+		 		VUiPage.$refs.cm.codemirror.setValue(lines.join('\n'));
+		 	}
+		 	
+		 	function addSequence(){
+		 		modifyValue('begin sequence','end sequence');
+		 	}
+		 	
+		 	function addChooseButton(){
+		 		modifyValue('begin choose:button /user/local ""','end choose:button');
+		 	}
+		 	
+		 	function addChooseButtonNlu(){
+		 		modifyValue('begin choose:button:nlu /user/local ""','end choose:button:nlu');
+		 	}
+		 	
+		 	function addSwitch(){
+		 		modifyValue('begin switch /user/local ""','end switch');
+		 	}
+		 	
+		 	function addCase(){
+		 		modifyValue('begin case ""','end case');
+		 	}
+		 	
+		 	function addButton(){
+		 		modifyValue('button "" value');
+		 	}
+		 	
+		 	function addSay(){
+		 		modifyValue('say ""');
+		 	}
+		 	
+		 	function addInputString(){
+		 		modifyValue('inputString /user/local ""');
+		 	}
+		 
 		</script>
 	</head>
 	
@@ -48,10 +121,67 @@
 			
 			<vu:block id="script" title="Script">
 				<vu:include-data object="object" field="script" />
-				<codemirror v-model="vueData.object.script" :options="dataX.vueCodeMirror.options"/>
+				  <q-btn-dropdown th:if="${model.modeEdit}"  color="primary" label="Noeud composite">
+				      <q-list>
+				        <q-item clickable v-close-popup @click="addSequence">
+				          <q-item-section>
+				            <q-item-label>Sequence</q-item-label>
+				          </q-item-section>
+				        </q-item>
+				
+				        <q-item clickable v-close-popup @click="addChooseButton">
+				          <q-item-section>
+				            <q-item-label>choose Button</q-item-label>
+				          </q-item-section>
+				        </q-item>
+				
+				        <q-item clickable v-close-popup @click="addChooseButtonNlu">
+				          <q-item-section>
+				            <q-item-label>chooseButtonNlu</q-item-label>
+				          </q-item-section>
+				        </q-item>
+				        
+    			        <q-item clickable v-close-popup @click="addSwitch">
+				          <q-item-section>
+				            <q-item-label>switch</q-item-label>
+				          </q-item-section>
+				        </q-item>
+				        
+				        <q-item clickable v-close-popup @click="addCase">
+				          <q-item-section>
+				            <q-item-label>case</q-item-label>
+				          </q-item-section>
+				        </q-item>
+				      </q-list>
+			      </q-btn-dropdown>
+			      <q-btn-dropdown th:if="${model.modeEdit}" color="primary" label="Noeud simple">
+				      <q-list>
+				        <q-item clickable v-close-popup @click="addButton">
+				          <q-item-section>
+				            <q-item-label>Button</q-item-label>
+				          </q-item-section>
+				        </q-item>
+				
+				        <q-item clickable v-close-popup @click="addSay">
+				          <q-item-section>
+				            <q-item-label>Say</q-item-label>
+				          </q-item-section>
+				        </q-item>
+				
+				        <q-item clickable v-close-popup @click="addInputString">
+				          <q-item-section>
+				            <q-item-label>inputString</q-item-label>
+				          </q-item-section>
+				        </q-item>
+				      </q-list>
+			      </q-btn-dropdown>
+
+				<codemirror ref="cm" v-model="vueData.object.script" :options="dataX.vueCodeMirror.options"></codemirror>
+				<input type="hidden" name="vContext[object][script]" :value="vueData.object.script"/>
+				
 			</vu:block>
 			
 		</section>
-
+		
 	</body>
 </html>
