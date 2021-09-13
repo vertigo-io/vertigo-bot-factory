@@ -1,3 +1,7 @@
+// ***********
+// ** Color **
+// ***********
+
 CodeMirror.defineSimpleMode("chatbot", {
 	start: [
 		{regex: /(\s*)(begin\b)(\s+[A-Za-z0-9:]+)?/, sol: true, token: [null, "keyword", "def strong"], indent: true},
@@ -12,20 +16,24 @@ CodeMirror.defineSimpleMode("chatbot", {
 	}
 });
 
+// ******************
+// ** Autocomplete **
+// ******************
+
+const fixedKeywords = ["begin", "end", "end"];
+const fixedCommands = ["set", "setInt", "copy", "incr", "decr", "append", "remove", "eq", "eqInt", "gt", "lt",
+				   "say", "say:always", "say:once",
+				   "topic", "topic:start", "topic:fallback", "fullfiled", "choose:nlu",
+				   "inputString", "button"];
+const fixedCompositeCommands = ["random", "switch", "case", "sequence", "choose:button", "choose:button:nlu"];
+const fixedParams = ["/user/global/", "/user/local/", "/user/local/topic"];
+	
 CodeMirror.registerHelper("hint", "chatbot", function(editor, options) {
 	let wordAcceptedChars = /[^\s"]/;
 	let cur = editor.getCursor(), curLine = editor.getLine(cur.line);
 	let end = cur.ch, start = end;
 	while (start && wordAcceptedChars.test(curLine.charAt(start - 1))) --start;
 	let curWord = start != end && curLine.slice(start, end);
-
-	let fixedKeywords = ["begin", "end", "end"];
-	let fixedCommands = ["set", "setInt", "copy", "incr", "decr", "append", "remove", "eq", "eqInt", "gt", "lt",
-					   "say", "say:always", "say:once",
-					   "topic", "topic:start", "topic:fallback", "fullfiled", "choose:nlu",
-					   "inputString", "button"];
-	let fixedCompositeCommands = ["random", "switch", "case", "choose:button", "choose:button:nlu", "sequence"];
-	let fixedParams = ["/user/global/", "/user/local/", "/user/local/topic"];
 	
 	let dynamicParams = getDynamicParameters(editor);
 
@@ -45,8 +53,8 @@ CodeMirror.registerHelper("hint", "chatbot", function(editor, options) {
 							if (e1.startsWith(curWord) && !e2.startsWith(curWord)) return -1;
 							if (!e1.startsWith(curWord) && e2.startsWith(curWord)) return 1;
 							
-							if (e1 < e2) {return -1;}
-							if (e1 > e2) {return 1;}
+							if (e1 < e2) return -1;
+							if (e1 > e2) return 1;
 							return 0;
 						});
 
@@ -57,9 +65,6 @@ CodeMirror.registerHelper("hint", "chatbot", function(editor, options) {
 	}
 });
 
-function uniqueFilter(value, index, self) {
-	return self.indexOf(value) === index;
-}
 
 function getDynamicParameters(editor) {
 	let cur = editor.getCursor();
@@ -83,3 +88,30 @@ function getDynamicParameters(editor) {
 	
 	return result;
 }
+
+// ***********************
+// ** Errors / Warnings **
+// ***********************
+
+CodeMirror.registerHelper("lint", "chatbot", function(text, options) {
+	let found = [];
+	let compositeStack = [];
+	text.split(/\n/).forEach((line, count) => {
+		let matchComposite = line.match(/^\s*(begin|end)\s+([\w\/\:$]+)/);
+		if (matchComposite && matchComposite[1] === "begin") {
+			compositeStack.push(matchComposite[2]);
+		} else if (matchComposite && matchComposite[1] === "end") {
+			let previousBegin = compositeStack.pop();
+			if (previousBegin !== matchComposite[2]) {
+				found.push({
+					from: CodeMirror.Pos(count, line.indexOf("end")),
+					to: CodeMirror.Pos(count, line.length),
+					message: "Invalid 'end' value, expected '" + previousBegin + "'",
+					severity : 'error'
+				});
+			}
+		}
+	});
+
+	return found;
+});
