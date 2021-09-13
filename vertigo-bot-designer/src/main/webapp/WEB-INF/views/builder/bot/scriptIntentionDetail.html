@@ -26,7 +26,6 @@
 		 				tabSize: 4,
 		 				lineNumbers : true,
 		 				mode: 'chatbot',
-		 				readOnly : true,
 		 				extraKeys: {"Ctrl-Space": "autocomplete"}
 		 			}
 		 	}
@@ -124,7 +123,7 @@
 			
 			<vu:block id="script" title="Script">
 				<vu:include-data object="object" field="script" />
-				  <q-btn-dropdown th:if="${model.modeEdit}"  color="primary" label="Noeud composite">
+				  <q-btn-dropdown class="q-ma-sm" th:if="${model.modeEdit}"  color="primary" label="Noeud composite">
 				      <q-list>
 				        <q-item clickable v-close-popup @click="addSequence">
 				          <q-item-section>
@@ -157,7 +156,7 @@
 				        </q-item>
 				      </q-list>
 			      </q-btn-dropdown>
-			      <q-btn-dropdown th:if="${model.modeEdit}" color="primary" label="Noeud simple">
+			      <q-btn-dropdown class="q-ma-sm"th:if="${model.modeEdit}" color="primary" label="Noeud simple">
 				      <q-list>
 				        <q-item clickable v-close-popup @click="addButton">
 				          <q-item-section>
@@ -179,7 +178,7 @@
 				      </q-list>
 			      </q-btn-dropdown>
 
-				<codemirror ref="cm" v-model="vueData.object.script" :options="dataX.vueCodeMirror.options"></codemirror>
+				<codemirror ref="cm" v-model="vueData.object.script" th::options="|{...dataX.vueCodeMirror.options, readOnly : ${model.modeReadOnly}}|"></codemirror>
 				<input type="hidden" name="vContext[object][script]" :value="vueData.object.script"/>
 				
 			</vu:block>

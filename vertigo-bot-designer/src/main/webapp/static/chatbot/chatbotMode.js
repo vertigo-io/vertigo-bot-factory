@@ -24,7 +24,7 @@ CodeMirror.registerHelper("hint", "chatbot", function(editor, options) {
 					   "say", "say:always", "say:once",
 					   "topic", "topic:start", "topic:fallback", "fullfiled", "choose:nlu",
 					   "inputString", "button"];
-	let fixedCompositeCommands = ["random", "switch", "case", "choose:button", "choose:button:nlu"];
+	let fixedCompositeCommands = ["random", "switch", "case", "choose:button", "choose:button:nlu", "sequence"];
 	let fixedParams = ["/user/global/", "/user/local/", "/user/local/topic"];
 	
 	let dynamicParams = getDynamicParameters(editor);
