@@ -96,22 +96,50 @@ function getDynamicParameters(editor) {
 CodeMirror.registerHelper("lint", "chatbot", function(text, options) {
 	let found = [];
 	let compositeStack = [];
-	text.split(/\n/).forEach((line, count) => {
-		let matchComposite = line.match(/^\s*(begin|end)\s+([\w\/\:$]+)/);
+	let lastLineNumber = 0;
+	text.split(/\n/).forEach((lineTxt, lineNumber) => {
+		let matchComposite = lineTxt.match(/^\s*(begin|end)\s+([\w\/\:$]+)/);
 		if (matchComposite && matchComposite[1] === "begin") {
 			compositeStack.push(matchComposite[2]);
 		} else if (matchComposite && matchComposite[1] === "end") {
 			let previousBegin = compositeStack.pop();
-			if (previousBegin !== matchComposite[2]) {
+			if (previousBegin === undefined) {
 				found.push({
-					from: CodeMirror.Pos(count, line.indexOf("end")),
-					to: CodeMirror.Pos(count, line.length),
+					from: CodeMirror.Pos(lineNumber, lineTxt.indexOf("end")),
+					to: CodeMirror.Pos(lineNumber, lineTxt.length),
+					message: "Unexpected 'end' (no begin found)",
+					severity : 'error'
+				});
+			} else if (previousBegin !== matchComposite[2]) {
+				found.push({
+					from: CodeMirror.Pos(lineNumber, lineTxt.indexOf("end")),
+					to: CodeMirror.Pos(lineNumber, lineTxt.length),
 					message: "Invalid 'end' value, expected '" + previousBegin + "'",
 					severity : 'error'
 				});
 			}
 		}
+		
+		if (!matchComposite && lineTxt.match(/^\s*(begin|end)\s*$/)) {
+			found.push({
+				from: CodeMirror.Pos(lineNumber, lineTxt.indexOf("begin") || lineTxt.indexOf("end")),
+				to: CodeMirror.Pos(lineNumber, lineTxt.length),
+				message: "Missing command",
+				severity : 'error'
+			});
+		}
+		
+		lastLineNumber = lineNumber;
 	});
+	
+	if (compositeStack.length > 0) {
+		found.push({
+			from: CodeMirror.Pos(lastLineNumber, 0),
+			to: CodeMirror.Pos(lastLineNumber, 0),
+			message: "Missing 'end', expected 'end " + compositeStack.pop() + "'",
+			severity : 'error'
+		});
+	}
 
 	return found;
 });
