@@ -42,6 +42,16 @@ Vue.component('c-richtext', {
 				class="col-grow"
 				ref="editor_ref"
 			    @paste.native="evt => pasteCapture(evt, 'editor_ref')"			    
+				:definitions="{
+					hr: {
+						tip: 'Pause'
+						},
+					customimage: {
+						tip: 'Insert image',
+						label: 'Image',							
+						handler: addCustomImage
+					},
+				}"
 			    :toolbar="
 			    [
 			      [{
@@ -64,20 +74,9 @@ Vue.component('c-richtext', {
 			      ['viewsource'],
 			      ['customimage']
 			    ]"
-			    :definitions="{hr: {tip: 'Pause'}}"
+			   
 				>
-				 <template v-slot:customimage>
-			          <q-btn
-			            dense no-caps
-			            ref="custom"
-			            color="white"
-			            text-color="primary"
-			            :label="locale == 'fr_FR' ? 'Insérer une image' : 'Insert image'"
-			            size="sm"
-			            @click="addCustomImage"
-			          >
-			          </q-btn>
-			      </template>
+				
 			     
 			</q-editor>
 			
@@ -103,8 +102,9 @@ Vue.component('c-richtext', {
 	       					>
        					</q-card-section>	
        					
-						<q-card-actions align="around">					
-							<q-btn :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>
+						<q-card-actions align="around">			
+							<q-btn flat :label="locale == 'fr_FR' ? 'Annuler' : 'Cancel'" v-close-popup color="primary"/>		
+							<q-btn :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>							
 						</q-card-actions>
 					</div>
 				</q-card
@@ -189,7 +189,7 @@ Vue.component('c-richtext', {
 		      edit.caret.restore()
 		      edit.runCmd('insertHTML', `<div class="imgUrl"><img class="imgUrl" src="${url}"/></div>`)
 		      edit.focus()      
-		    },
+		    }		
 		}
 		}
 });
