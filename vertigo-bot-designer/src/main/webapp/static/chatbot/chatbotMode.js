@@ -9,7 +9,7 @@ CodeMirror.defineSimpleMode("chatbot", {
 		{regex: /(\s*)([A-Za-z0-9:]+)/, sol: true, token: [null, "def strong"]},
 		{regex: /"(?:[^"\\]|\\.)*"/, token: "tag"},
 		{regex: /(\s)(\/\S*)/, token: [null, "string-2"]},
-		{regex: /#.*/, token: "comment"}
+		{regex: /--.*/, token: "comment"}
 	],
 	meta: {
 		electricInput: /end/
@@ -34,6 +34,11 @@ CodeMirror.registerHelper("hint", "chatbot", function(editor, options) {
 	let end = cur.ch, start = end;
 	while (start && wordAcceptedChars.test(curLine.charAt(start - 1))) --start;
 	let curWord = start != end && curLine.slice(start, end);
+	
+	let curLineWithoutComment = curLine.replace(/^(\s*((("([^"\\]|\\.)*")|-([^-\s]|(?=\s))|([^"-\s]([^-\s]|-([^-\s]|(?=\s)))*))\s*)*)--.*/,"$1"); // remove comments
+	if (end > curLineWithoutComment.length) {
+		return;
+	}
 	
 	let dynamicParams = getDynamicParameters(editor);
 
@@ -71,10 +76,11 @@ function getDynamicParameters(editor) {
 	let result = [];
 	for (let i = editor.firstLine(); i < editor.lastLine(); i++) {
 		if (i != cur.line) {
-			let textLine = editor.getLine(i).trim();
+			let textLine = editor.getLine(i);
 			
-			let parsedLine = textLine.replace(/^(begin|end)\s+/, '') // remove begin/end
-									 .match(/^[A-Za-z0-9:]+\s+(.+)$/);
+			let parsedLine = textLine.replace(/^\s*(begin|end)\s+/, '') // remove begin/end
+									 .replace(/^(\s*((("([^"\\]|\\.)*")|-([^-\s]|(?=\s))|([^"-\s]([^-\s]|-([^-\s]|(?=\s)))*))\s*)*)--.*/,"$1") // remove comments
+									 .match(/^\s*[A-Za-z0-9:]+\s+(.+)$/);
 			if (!parsedLine) continue; // no args found
 			
 			parsedLine[1] // get the arg part
@@ -94,6 +100,10 @@ function getDynamicParameters(editor) {
 // ***********************
 
 CodeMirror.registerHelper("lint", "chatbot", function(text, options) {
+	return [...checkBeginEnd(text), ...checkQuotes(text)];
+});
+
+function checkBeginEnd(text) {
 	let found = [];
 	let compositeStack = [];
 	let lastLineNumber = 0;
@@ -140,6 +150,86 @@ CodeMirror.registerHelper("lint", "chatbot", function(text, options) {
 			severity : 'error'
 		});
 	}
-
+	
 	return found;
-});
+}
+
+function checkQuotes(text) {
+	let found = [];
+	text.split(/\n/).forEach((lineTxt, lineNumber) => {
+		let parsedLine = lineTxt.replace(/^\s*(begin|end)\s+/, '') // remove begin/end
+								.replace(/^(\s*((("([^"\\]|\\.)*")|-([^-\s]|(?=\s))|([^"-\s]([^-\s]|-([^-\s]|(?=\s)))*))\s*)*)--.*/,"$1") // remove comments
+								.match(/^\s*[A-Za-z0-9:]+(.*)$/);
+		if (!parsedLine || parsedLine[1].length === 0) return; // no args found
+		
+		let args = parsedLine[1]; // get the arg part
+		let beginIndex = lineTxt.length - args.length;
+		
+		if (!args[0].match(/\s/)) {
+			found.push({
+				from: CodeMirror.Pos(lineNumber, beginIndex),
+				to: CodeMirror.Pos(lineNumber, beginIndex + 1),
+				message: "Invalid command character",
+				severity : 'error'
+			});
+			return;
+		}
+			
+		let isEscaping = false;
+		let isNewParam = true;
+		let isQuoting = false;
+		let isNormalParam = false;
+		for (let i = 0; i < args.length; i++) {
+			let c = args.charAt(i);
+			if (isEscaping) {
+				isEscaping = false;
+			} else if (c === '\\') {
+				isEscaping = true;
+			} else if (isNewParam && c === '"') {
+				isQuoting = true;
+				isNewParam = false;
+			} else if (isQuoting && c === '"'){
+				isQuoting = false;
+			} else if (!isQuoting && c.match(/\s/)) {
+				isNewParam = true;
+				isNormalParam = false;
+			} else if (!isQuoting) {
+				if (c === '"') {
+					found.push({
+						from: CodeMirror.Pos(lineNumber, beginIndex + i),
+						to: CodeMirror.Pos(lineNumber, beginIndex + i + 1),
+						message: "Quotes only allowed around text. Quotes inside quoted string must be escaped with '\\'.",
+						severity : 'warning'
+					});
+				}
+				if (!isNewParam && !isNormalParam) {
+					found.push({
+						from: CodeMirror.Pos(lineNumber, beginIndex + i),
+						to: CodeMirror.Pos(lineNumber, beginIndex + i + 1),
+						message: "Missing space after end quote",
+						severity : 'warning'
+					});
+				}
+				isNewParam = false;
+				isNormalParam = true;
+			}
+		}
+		if (isQuoting) {
+			found.push({
+				from: CodeMirror.Pos(lineNumber, lineTxt.length - 1),
+				to: CodeMirror.Pos(lineNumber, lineTxt.length),
+				message: "Quoted string not ended",
+				severity : 'error'
+			});
+		}
+		if (isEscaping) {
+			found.push({
+				from: CodeMirror.Pos(lineNumber, lineTxt.length - 1),
+				to: CodeMirror.Pos(lineNumber, lineTxt.length),
+				message: "A line can't end with an escaping character",
+				severity : 'error'
+			});
+		}
+	});
+	return found;
+}
