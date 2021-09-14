@@ -1,3 +1,8 @@
+String.prototype.stripComments = function() {
+	return this.replace(/^(\s*((("([^"\\]|\\.)*")|-([^-\s]|(?=\s))|([^"-\s]([^-\s]|-([^-\s]|(?=\s)))*))\s*)*)--.*/,"$1");
+}
+	
+
 // ***********
 // ** Color **
 // ***********
@@ -35,7 +40,7 @@ CodeMirror.registerHelper("hint", "chatbot", function(editor, options) {
 	while (start && wordAcceptedChars.test(curLine.charAt(start - 1))) --start;
 	let curWord = start != end && curLine.slice(start, end);
 	
-	let curLineWithoutComment = curLine.replace(/^(\s*((("([^"\\]|\\.)*")|-([^-\s]|(?=\s))|([^"-\s]([^-\s]|-([^-\s]|(?=\s)))*))\s*)*)--.*/,"$1"); // remove comments
+	let curLineWithoutComment = curLine.stripComments(); // see the start of this file
 	if (end > curLineWithoutComment.length) {
 		return;
 	}
@@ -79,7 +84,7 @@ function getDynamicParameters(editor) {
 			let textLine = editor.getLine(i);
 			
 			let parsedLine = textLine.replace(/^\s*(begin|end)\s+/, '') // remove begin/end
-									 .replace(/^(\s*((("([^"\\]|\\.)*")|-([^-\s]|(?=\s))|([^"-\s]([^-\s]|-([^-\s]|(?=\s)))*))\s*)*)--.*/,"$1") // remove comments
+									 .stripComments() // see the start of this file
 									 .match(/^\s*[A-Za-z0-9:]+\s+(.+)$/);
 			if (!parsedLine) continue; // no args found
 			
@@ -158,7 +163,7 @@ function checkQuotes(text) {
 	let found = [];
 	text.split(/\n/).forEach((lineTxt, lineNumber) => {
 		let parsedLine = lineTxt.replace(/^\s*(begin|end)\s+/, '') // remove begin/end
-								.replace(/^(\s*((("([^"\\]|\\.)*")|-([^-\s]|(?=\s))|([^"-\s]([^-\s]|-([^-\s]|(?=\s)))*))\s*)*)--.*/,"$1") // remove comments
+								.stripComments() // see the start of this file
 								.match(/^\s*[A-Za-z0-9:]+(.*)$/);
 		if (!parsedLine || parsedLine[1].length === 0) return; // no args found
 		
