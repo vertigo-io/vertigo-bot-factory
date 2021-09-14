@@ -1,5 +1,37 @@
 String.prototype.stripComments = function() {
-	return this.replace(/^(\s*((("([^"\\]|\\.)*")|-([^-\s]|(?=\s))|([^"-\s]([^-\s]|-([^-\s]|(?=\s)))*))\s*)*)--.*/,"$1");
+	let isEscaping = false;
+	let isNewParam = true;
+	let isQuoting = false;
+	let hasFirstDash = false;
+	for (let i = 0; i < this.length; i++) {
+		let c = this.charAt(i);
+		if (isEscaping) {
+			isEscaping = false;
+		} else if (isQuoting && c === '\\') {
+			isEscaping = true;
+		} else if (isNewParam && c === '"') {
+			isQuoting = true;
+			isNewParam = false;
+		} else if (isQuoting && c === '"'){
+			isQuoting = false;
+		} else if (!isQuoting && c.match(/\s/)) {
+			isNewParam = true;
+		} else if (!isQuoting) {
+			isNewParam = false;
+			
+			if (c === '-') {
+				if (!hasFirstDash) {
+					hasFirstDash = true;
+				} else {
+					return this.substr(0, i - 1);
+				}
+			} else {
+				hasFirstDash = false;
+			}
+		}
+	}
+	
+	return this; // no comment found
 }
 	
 
@@ -163,12 +195,12 @@ function checkQuotes(text) {
 	let found = [];
 	text.split(/\n/).forEach((lineTxt, lineNumber) => {
 		let parsedLine = lineTxt.replace(/^\s*(begin|end)\s+/, '') // remove begin/end
-								.stripComments() // see the start of this file
 								.match(/^\s*[A-Za-z0-9:]+(.*)$/);
 		if (!parsedLine || parsedLine[1].length === 0) return; // no args found
 		
 		let args = parsedLine[1]; // get the arg part
 		let beginIndex = lineTxt.length - args.length;
+		args = args.stripComments(); // see the start of this file
 		
 		if (!args[0].match(/\s/)) {
 			found.push({
