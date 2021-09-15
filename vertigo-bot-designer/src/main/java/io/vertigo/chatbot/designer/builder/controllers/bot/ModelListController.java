@@ -54,9 +54,11 @@ import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.TalkInput;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
@@ -179,6 +181,19 @@ public class ModelListController extends AbstractBotListController<Training> {
 		final ChatbotNode devNode = nodeServices.getDevNodeFromList(nodeList);
 		final BodyPublisher publisher = BodyPublishers.ofString(input);
 		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/rating", publisher);
+		HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 204);
+	}
+
+	@PostMapping("/_upload")
+	@ResponseBody
+	public void upload(
+			final ViewContext viewContext,
+			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList,
+			@QueryParam("uploadedFile") final Optional<FileInfoURI> uploadedFile) {
+
+		final ChatbotNode devNode = nodeServices.getDevNodeFromList(nodeList);
+		final BodyPublisher publisher = BodyPublishers.ofString("");
+		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/upload", publisher);
 		HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 204);
 	}
 

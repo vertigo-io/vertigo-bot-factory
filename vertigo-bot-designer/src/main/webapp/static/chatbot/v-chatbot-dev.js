@@ -55,13 +55,36 @@ Vue.component('v-chatbot-dev', {
 					 :disable="processing || error"
 					 :loading="processing"></q-input>
 		
+			<q-btn round color="primary" icon="upload_file" @click="uploadFile()" :disable="processing" ></q-btn>
 			<q-btn round color="primary" icon="send" @click="postAnswerText()" :disable="processing || (inputConfig.responseText.trim() === '' && inputConfig.rating === 0)"></q-btn>
 		</div>
 		<div class="message-response row docs-btn q-pl-sm non-selectable justify-center" v-if="devMode === true">
 			<q-btn round color="black" icon="arrow_back" @click="restart(false)"><q-tooltip>Back one step</q-tooltip></q-btn>
 			<q-btn round color="red" icon="refresh" @click="restart(false)"><q-tooltip>Restart conversation</q-tooltip></q-btn>
 		</div>
-	</div>
+		<q-dialog ref="uploadFile" class="q-pa-md q-gutter-sm" >
+					<q-card style="width: 600px;">
+						<q-card-section>
+							<div class="text-h6" >Ajout d'un fichier</div>
+						</q-card-section>
+						
+							<q-card-section>
+								  <q-uploader th:url="@{/commons/upload}"
+									field-name="file"
+									auto-upload
+									auto-expand
+									:multiple="false"
+									:ref="'uploaderbotTmpPictureUri'"
+									@added="uploader_addedFile(false, 'uploaderbotTmpPictureUri')"
+									@uploaded="uploader_uploadedFiles($event, 'uploaderbotTmpPictureUri')"
+									@removed="uploader_removeFiles($event, 'uploaderbotTmpPictureUri')">
+								</q-uploader>
+							</q-card-section>
+						
+					</q-card>
+		</q-dialog>
+	</div>	
+	
 	`
 		,
 		props : {
@@ -73,7 +96,8 @@ Vue.component('v-chatbot-dev', {
 			placeholder: { type: String },
 			startCall: {type:String, 'default' : '_start'},
 			rateCall: {type:String, 'default' : '_rate'},
-			rating: {type:Number}
+			rating: {type:Number},
+			fileCall: {type:String, 'default' : '_upload'},
 		},
 		data: function () {
 			return {
@@ -272,6 +296,9 @@ Vue.component('v-chatbot-dev', {
 						this._handleResponse(httpResponse, true);
 						
 					})
+			},
+			uploadFile: function(){
+				this.$refs.uploadFile.show();
 			}
 		}
 });
