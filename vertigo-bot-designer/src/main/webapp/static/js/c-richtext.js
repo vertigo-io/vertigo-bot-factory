@@ -3,17 +3,39 @@ Vue.component('c-richtext', {
 		value:    { type: String,  required: true },
 		name:     { type: String,  required: true },
 		modeEdit: { type: Boolean, 'default': true },
+		empty : { type: String,  required: true },
+		showWarning: false,
+		styleWYSIWYG:  "border: 1px solid;border-color: #D1CDC8;border-radius:5px;",
 	},
 	template : `
-		<div class="row wrap">
+	<div>
+		<div	aria-hidden="true"
+	            v-show="showWarning"
+		        role="presentation"
+		        style="font-size: 20px; color:#FF0000"
+		        class="row wrap"
+			>
+			
+			
+			<i class="absolute-middle-left q-pt-xs q-pr-sm material-icons q-icon notranslate text-negative">error</i>
+           	{{empty}}
+           	</div>
+           	
+			<div class="row wrap">
+			
 			<input v-if="name" class="hidden" type="text" :name="name" :value="value" />
 			
+			
+           
 			<q-editor v-bind:value="value" @input="val => $emit('input', val)"
+			v-model="value"
 				v-if="modeEdit"
+				:style="styleWYSIWYG"
+				@focusout="checkMessage()"				
 				@keyup.enter.stop
 				class="col-grow"
 				ref="editor_ref"
-			    @paste.native="evt => pasteCapture(evt, 'editor_ref')"
+			    @paste.native="evt => pasteCapture(evt, 'editor_ref')"			    
 			    :toolbar="
 			    [
 			      [{
@@ -42,6 +64,8 @@ Vue.component('c-richtext', {
 			<div style="width:300px" class="q-px-md">
 				<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" bg-color="grey-4" ></q-chat-message>
 			</div>
+			
+		</div>
 		</div>
 	`
 		,
@@ -94,6 +118,15 @@ Vue.component('c-richtext', {
 						this.value
 						.replace("<a ", "<a target='_blank' rel='nofollow noopener noreferrer' ")
 						.split(/<hr>|<hr \/>/);
-			}
+			},
+			checkMessage() {
+		      if (this.value == "") {
+		        this.styleWYSIWYG = "border: 2px solid;border-color: #C10015;border-radius:5px;";
+		        this.showWarning = true;
+		      } else {
+		        this.styleWYSIWYG = "border: 1px solid;border-color: #D1CDC8;border-radius:5px;";
+		        this.showWarning = false;
+		      }
+		}
 		}
 });

@@ -55,11 +55,11 @@
 				<vu:include-data object="utterTextFailure" field="text" />
 				<vu:include-data object="utterTextStart" field="text" />
 				<vu:include-data object="utterTextEnd" field="text" />
-				<vu:include-data object="typeTopicList" field="'*'"/>
+				<vu:include-data object="typeTopicList" field="'*'" />
 				<vu:include-data object="ttoCdFailure" field="'*'" />
 				<vu:include-data object="ttoCdStart" field="'*'" />
 				<vu:include-data object="ttoCdEnd" field="'*'" />
-				<vu:include-data-primitive key="locale" />
+				<vu:include-data-primitive key="locale"/>
 				<div class="text-subtitle1" th:text=#{bot.welcome}></div>
 					<div>				
 					   <q-btn-toggle
@@ -67,22 +67,23 @@
 					        v-model="vueData.ttoCdStart"
 					        toggle-color="primary"
 					        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
-							th::mode-edit="${!model.modeReadOnly}"
+					     	th::mode-edit="${!model.modeReadOnly}"
 					      />
 				    </div>
 				    <input type="hidden" name="vContext[ttoCdStart]" :value="vueData.ttoCdStart" />
 				    <div v-if="vueData.ttoCdStart == 'SMALLTALK'">
 						<c-richtext 
-							
 							class="q-pb-sm"
 							v-model="vueData.utterTextStart.text"
 							name="vContext[utterTextStart][text]"
-							th::mode-edit="${!model.modeReadOnly}">
+							:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"						
+							th::mode-edit="${!model.modeReadOnly}"							
+							>
+							
 						</c-richtext>
 					</div>
 					<div v-else>
 						<vu:text-area 
-							
 							style="width: calc(100% - 300px);"
 							label="script"
 							object="utterTextStart"		
@@ -106,6 +107,7 @@
 							class="q-pb-sm"
 							v-model="vueData.utterTextFailure.text"
 							name="vContext[utterTextFailure][text]"
+							:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"	
 							th::mode-edit="${!model.modeReadOnly}">
 						</c-richtext>
 					</div>
@@ -134,6 +136,7 @@
 							class="q-pb-sm"
 							v-model="vueData.utterTextEnd.text"
 							name="vContext[utterTextEnd][text]"
+							:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"	
 							th::mode-edit="${!model.modeReadOnly}">
 						</c-richtext>
 					</div>

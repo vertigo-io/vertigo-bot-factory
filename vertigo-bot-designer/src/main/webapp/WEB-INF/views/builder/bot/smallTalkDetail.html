@@ -61,6 +61,7 @@
 						v-model="vueData.utterTexts[0].text"
 						name="vContext[utterTexts][0][text]"
 						th::mode-edit="${!model.modeReadOnly}"
+						:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"	
 						class="q-pb-sm">
 					</c-richtext>
 				</div>
