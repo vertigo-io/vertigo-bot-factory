@@ -18,6 +18,8 @@
 							class="on-left" :round size="lg" color="primary" />
 			<q-btn th:if="|${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor] && #lists.size(model.topics) == 0}|" @click="componentStates.showPopup = true" aria-label="Delete" title="Delete" icon="delete"
 							class="on-left" round size="lg" color="red" ></q-btn>
+			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" @click="componentStates.showPopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
+							class="on-left" round size="lg" color="red" ></q-btn>
 		</section>
 				
 		<section layout:fragment="content">

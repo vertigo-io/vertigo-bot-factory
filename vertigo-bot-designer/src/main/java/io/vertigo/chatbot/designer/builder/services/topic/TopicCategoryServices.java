@@ -35,8 +35,12 @@ public class TopicCategoryServices implements Component {
 		return topicCategoryDAO.save(category);
 	}
 
-	public void deleteCategory(@SecuredOperation("botAdm") final Chatbot bot, final Long id) {
-		topicCategoryDAO.delete(id);
+	public void deleteCategory(@SecuredOperation("botAdm") final Chatbot bot, final TopicCategory category) {
+
+		for (final Topic topic : getAllTopicFromCategory(bot, category)) {
+			topicServices.deleteCompleteTopic(bot, topic);
+		}
+		topicCategoryDAO.delete(category.getTopCatId());
 	}
 
 	public TopicCategory getTopicCategoryById(@SecuredOperation("botVisitor") final Chatbot bot, final Long categoryId) {
