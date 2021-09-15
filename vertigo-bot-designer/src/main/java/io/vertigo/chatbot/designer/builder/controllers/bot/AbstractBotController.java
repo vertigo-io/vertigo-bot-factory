@@ -33,7 +33,7 @@ public abstract class AbstractBotController<O extends Entity> extends AbstractDe
 	private NodeServices nodeServices;
 
 	@Inject
-	private LocaleManager localeManager;
+	protected LocaleManager localeManager;
 
 	private static final ViewContextKey<Chatbot> botKey = ViewContextKey.of("bot");
 	private static final ViewContextKey<String> localeKey = ViewContextKey.of("locale");

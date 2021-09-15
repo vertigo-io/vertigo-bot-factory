@@ -172,7 +172,7 @@ public class AnalyticsController extends AbstractDesignerController {
 	private DtList<TopicIhm> refreshTopicsList(final StatCriteria criteria) {
 		if (criteria.getBotId() != null) {
 			final List<String> resultTimedData = analyticsServices.getDistinctCodeByTimeDatas(criteria);
-			DtList<TopicIhm> topics = topicServices.getAllNonTechnicalTopicIhmByBot(chatbotServices.getChatbotById(criteria.getBotId()));
+			DtList<TopicIhm> topics = topicServices.getAllNonTechnicalTopicIhmByBot(chatbotServices.getChatbotById(criteria.getBotId()), localeManager.getCurrentLocale().toString());
 			topics = topics.stream()
 					.filter(x -> !resultTimedData.contains(x.getCode()))
 					.collect(VCollectors.toDtList(TopicIhm.class));

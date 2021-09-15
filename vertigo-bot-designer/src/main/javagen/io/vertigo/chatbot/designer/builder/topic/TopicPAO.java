@@ -75,6 +75,7 @@ public final class TopicPAO implements StoreServices {
 	 * Execute la tache TkGetAllTopicsIhmFromBot.
 	 * @param botId Long
 	 * @param ktoCd String
+	 * @param locale String
 	 * @return DtList de TopicIhm topicIHM
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
@@ -85,7 +86,10 @@ public final class TopicPAO implements StoreServices {
  "					smt.smt_id," + 
  "					sin.sin_id," + 
  "					top.is_enabled," + 
- "					tto.label as type," + 
+ "					CASE #locale#" + 
+ "						WHEN 'fr_FR' THEN tto.label_fr" + 
+ "						ELSE tto.label" + 
+ "					END as type," + 
  "					top.tto_cd," + 
  "					tpc.label as cat_label," + 
  "					string_agg(tpl.label, ',') as labels" + 
@@ -106,15 +110,17 @@ public final class TopicPAO implements StoreServices {
  "					smt.smt_id," + 
  "					sin.sin_id," + 
  "					top.is_enabled," + 
- "					tto.label ," + 
+ "					tto.label," + 
+ "					tto.label_fr," + 
  "					top.tto_cd," + 
  "					tpc.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicIhm> getAllTopicsIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCd", smartType = "STyCode") final Optional<String> ktoCd) {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicIhm> getAllTopicsIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCd", smartType = "STyCode") final Optional<String> ktoCd, @io.vertigo.datamodel.task.proxy.TaskInput(name = "locale", smartType = "STyCode") final String locale) {
 		final Task task = createTaskBuilder("TkGetAllTopicsIhmFromBot")
 				.addValue("botId", botId)
 				.addValue("ktoCd", ktoCd.orElse(null))
+				.addValue("locale", locale)
 				.build();
 		return getTaskManager()
 				.execute(task)
