@@ -16,7 +16,19 @@
 		<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
 		<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
-		
+		<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/mode/javascript/javascript.min.js"></script>
+		<script src="//cdn.jsdelivr.net/npm/vue-codemirror"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/mode/simple.min.js" integrity="sha512-9YoNYsegWvbA5aiSshQ2BNW2FAq3CQVLqpg2r6urw9Tfl1GklM9PNgrMRVz8fhEtjM+uZfO/1X3RURkMcil8wg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.js" integrity="sha512-kCn9g92k3GM90eTPGMNwvpCAtLmvyqbpvrdnhm0NMt6UEHYs+DjRO4me8VcwInLWQ9azmamS1U1lbQV627/TBQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+ 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.css" integrity="sha512-OmcLQEy8iGiD7PSm85s06dnR7G7C9C0VqahIPAj/KHk5RpOCmnC6R2ob1oK4/uwYhWa9BF1GC6tzxsC8TIx7Jg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css" />
+		<script th:src="@{/static/chatbot/chatbotMode.js}"></script>
+		<script th:src="@{/static/js/c-codemirror.js}"></script>
+		<script th:inline="javascript">
+		 	Vue.use(window.VueCodemirror)
+		 	
+		</script>
 	</head>
 	
 	<body>
@@ -84,13 +96,8 @@
 						</c-richtext>
 					</div>
 					<div v-else>
-						<vu:text-area 
-							style="width: calc(100% - 300px);"
-							label="script"
-							object="utterTextStart"		
-							field="text"
-							readonly="${model.modeReadOnly}">							
-						</vu:text-area>
+						<c-codemirror object="utterTextStart" field="text" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
+
 					</div>
 				<div class="text-subtitle1" th:text=#{bot.fallback}></div>
 					<div>				
@@ -114,13 +121,7 @@
 						</c-richtext>
 					</div>
 					<div v-else>
-						<vu:text-area 							
-							style="width: calc(100% - 300px);"
-							label="script"
-							object="utterTextFailure"		
-							field="text"
-							readonly="${model.modeReadOnly}">
-						</vu:text-area>
+						<c-codemirror object="utterTextFailure" field="text" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
 					</div>
 				<div class="text-subtitle1" th:text=#{bot.end}></div>
 					<div>				
@@ -144,13 +145,7 @@
 						</c-richtext>
 					</div>
 					<div v-else>
-						<vu:text-area 						
-							style="width: calc(100% - 300px);"
-							label="script"
-							object="utterTextEnd"		
-							field="text"
-							readonly="${model.modeReadOnly}">
-						</vu:text-area>
+						<c-codemirror object="utterTextEnd" field="text" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
 					</div>
 			</vu:block>
 			
