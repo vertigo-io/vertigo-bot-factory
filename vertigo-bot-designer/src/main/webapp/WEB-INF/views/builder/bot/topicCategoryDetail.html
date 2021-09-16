@@ -15,10 +15,8 @@
 			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/category/(id=${model.bot.botId})} + ${model.topicCategory.topCatId}" ariaLabel="Cancel" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
-							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="|${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor] && #lists.size(model.topics) == 0}|" @click="componentStates.showPopup = true" aria-label="Delete" title="Delete" icon="delete"
-							class="on-left" round size="lg" color="red" ></q-btn>
-			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" @click="componentStates.showPopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
+							class="on-left" :round size="lg" color="primary" />			
+			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
 							class="on-left" round size="lg" color="red" ></q-btn>
 		</section>
 				
