@@ -173,6 +173,7 @@ Vue.component('c-richtext', {
 		      } else {
 		        this.styleWYSIWYG = "border: 1px solid;border-color: #D1CDC8;border-radius:5px;";
 				this.showWarning = false;
+			}
 			},
 			
 			addCustomImage () {
@@ -191,5 +192,5 @@ Vue.component('c-richtext', {
 		      edit.focus()      
 		    }		
 		}
-		}
+		
 });
