@@ -59,7 +59,7 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
 
 	@PostMapping("/_delete")
 	public String deleteTopicCategory(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, @ViewAttribute("topicCategory") final TopicCategory category) {
-		topicCategoryServices.deleteCategory(bot, category.getTopCatId());
+		topicCategoryServices.deleteCategory(bot, category);
 		return "redirect:/bot/" + bot.getBotId() + "/categories/";
 	}
 

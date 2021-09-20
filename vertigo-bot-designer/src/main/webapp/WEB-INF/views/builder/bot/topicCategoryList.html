@@ -20,6 +20,7 @@
 			<vu:table list="topicCategories" componentId="topicCategoriesList" tr_@click.native="|goTo('@{/bot/{id}/category/(id=${model.bot.botId})}'+props.row.topCatId)|" tr_style="cursor : pointer;"
 					  sortBy="label" :binary-state-sort="true">
 					<vu:include-data object="topicCategories" field="topCatId" />
+					<vu:include-data object="topicCategories" field="code" />
 					<vu:column field="isEnabled" style="width:100px;">
 						<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
 						<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>
@@ -31,6 +32,7 @@
 						   <span style="height:100%" class="row items-center">{{props.row.label}}</span>
 						</a>
 					</vu:column>
+					<vu:column field="code"/>
 			</vu:table>
 		</section>
 	</body>

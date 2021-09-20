@@ -146,8 +146,18 @@ public class TopicServices implements Component, Activeable {
 		for (final NluTrainingSentence its : getNluTrainingSentenceByTopic(bot, topic)) {
 			nluTrainingSentenceDAO.delete(its.getUID());
 		}
-
 		topicDAO.delete(topic.getTopId());
+		nodeServices.updateNodes(bot);
+	}
+
+	public void deleteCompleteTopic(@SecuredOperation("botContributor") final Chatbot bot, final Topic topic) {
+		for (final TopicInterfaceServices services : topicInterfaceServices) {
+			final Entity object = services.findByTopId(topic.getTopId());
+			if (object != null) {
+				services.delete(bot, object, topic);
+			}
+		}
+		deleteTopic(bot, topic);
 	}
 
 	public DtList<Topic> getAllTopicByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
