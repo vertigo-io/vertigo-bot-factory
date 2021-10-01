@@ -25,6 +25,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ChatbotNode(io.vertigo.chatbot.commons.domain.ChatbotNode.class),
 		/** Objet de données ChatbotProfiles. */
 		ChatbotProfiles(io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles.class),
+		/** Objet de données ContextValue. */
+		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données Groups. */
@@ -137,8 +139,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		endBT,
 		/** Propriété 'fallback BT'. */
 		fallbackBT,
-		/** Propriété 'fallback BT'. */
-		topics	}
+		/** Propriété 'topics export'. */
+		topics,
+		/** Propriété 'map Context'. */
+		mapContext	}
 
 	/**
 	 * Enumération des champs de Chatbot.
@@ -190,6 +194,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Order'. */
 		sortOrder	}
+
+	/**
+	 * Enumération des champs de ContextValue.
+	 */
+	public enum ContextValueFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ContextValue> {
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Key'. */
+		key,
+		/** Propriété 'Chatbot'. */
+		botId	}
 
 	/**
 	 * Enumération des champs de ExecutorConfiguration.

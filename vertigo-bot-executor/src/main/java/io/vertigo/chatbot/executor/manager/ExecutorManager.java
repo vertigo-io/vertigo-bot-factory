@@ -131,6 +131,8 @@ public class ExecutorManager implements Manager, Activeable {
 			LogsUtils.logOK(logs);
 		}
 
+		executorConfigManager.updateMapContext(botExport);
+
 		botManager.updateConfig(topics, logs);
 
 	}
@@ -165,4 +167,5 @@ public class ExecutorManager implements Manager, Activeable {
 	public void rate(final IncomeRating rating) {
 		analyticsSenderServices.rate(rating, executorConfigManager.getConfig().getExecutorConfiguration());
 	}
+
 }

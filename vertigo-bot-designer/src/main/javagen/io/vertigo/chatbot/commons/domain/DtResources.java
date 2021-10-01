@@ -28,9 +28,13 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$fallbackBT,
 	/**
-	 * fallback BT.
+	 * topics export.
 	 */
 	fldBotExport$topics,
+	/**
+	 * map Context.
+	 */
+	fldBotExport$mapContext,
 
 	/***********************************************************
 	/** Chatbot.
@@ -99,6 +103,26 @@ public enum DtResources implements MessageKey {
 	 * Loaded model.
 	 */
 	fldChatbotNode$traId,
+
+	/***********************************************************
+	/** ContextValue.
+	/***********************************************************
+	/**
+	 * Context value id.
+	 */
+	fldContextValue$cvaId,
+	/**
+	 * Label.
+	 */
+	fldContextValue$label,
+	/**
+	 * Key.
+	 */
+	fldContextValue$key,
+	/**
+	 * Chatbot.
+	 */
+	fldContextValue$botId,
 
 	/***********************************************************
 	/** ExecutorConfiguration.

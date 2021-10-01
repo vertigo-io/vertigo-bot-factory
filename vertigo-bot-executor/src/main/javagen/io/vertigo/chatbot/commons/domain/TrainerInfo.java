@@ -13,6 +13,7 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 public final class TrainerInfo implements DtObject {
 	private static final long serialVersionUID = 1L;
 
+	private Long traId;
 	private String name;
 	private Boolean trainingInProgress;
 	private String trainingState;
@@ -20,6 +21,25 @@ public final class TrainerInfo implements DtObject {
 	private java.time.Instant startTime;
 	private java.time.Instant endTime;
 	private Long trainingPercent;
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Training id'.
+	 * @return Long traId <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Training id")
+	public Long getTraId() {
+		return traId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Training id'.
+	 * @param traId Long <b>Obligatoire</b>
+	 */
+	public void setTraId(final Long traId) {
+		this.traId = traId;
+	}
 	
 	/**
 	 * Champ : DATA.

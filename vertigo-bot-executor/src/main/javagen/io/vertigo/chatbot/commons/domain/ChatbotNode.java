@@ -21,6 +21,7 @@ public final class ChatbotNode implements Entity {
 	private Boolean isDev;
 	private String color;
 	private String apiKey;
+	private Boolean isUpToDate;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ANodeChatbot",
@@ -170,6 +171,25 @@ public final class ChatbotNode implements Entity {
 	 */
 	public void setApiKey(final String apiKey) {
 		this.apiKey = apiKey;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Is up to date'.
+	 * @return Boolean isUpToDate <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Is up to date")
+	public Boolean getIsUpToDate() {
+		return isUpToDate;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Is up to date'.
+	 * @param isUpToDate Boolean <b>Obligatoire</b>
+	 */
+	public void setIsUpToDate(final Boolean isUpToDate) {
+		this.isUpToDate = isUpToDate;
 	}
 	
 	/**
