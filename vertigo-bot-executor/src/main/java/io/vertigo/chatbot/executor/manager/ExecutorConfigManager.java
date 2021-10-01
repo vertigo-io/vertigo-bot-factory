@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 
+import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
@@ -41,6 +42,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private final JsonEngine jsonEngine;
 
 	private File configDataFile;
+	private File contextDataFile;
 	private ExecutorGlobalConfig executorGlobalConfig;
 
 	@Inject
@@ -58,6 +60,10 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 	@Override
 	public void start() {
+
+		final String contextDataFilePath = paramManager.getOptionalParam("CONTEXT_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/runnerContext");
+		contextDataFile = new File(contextDataFilePath);
+
 		final String configDataFilePath = paramManager.getOptionalParam("CONFIG_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/runnerConfig");
 		configDataFile = new File(configDataFilePath);
 
@@ -100,6 +106,15 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	 */
 	public ExecutorGlobalConfig getConfig() {
 		return executorGlobalConfig;
+	}
+
+	public synchronized void updateMapContext(final BotExport botExport) {
+
+		try {
+			FileUtils.writeStringToFile(contextDataFile, botExport.getMapContext(), StandardCharsets.UTF_8);
+		} catch (final IOException e) {
+			throw new VSystemException(e, "Error writing parameter file {0}", contextDataFile.getPath());
+		}
 	}
 
 }

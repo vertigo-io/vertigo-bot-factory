@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/botDetailLayout}" th:with="tab=context"
+	>
+	
+	<head>		
+		<title th:text="#{context.title}"></title>
+	</head>
+	
+	<body>
+		<section layout:fragment="content-header-actions">
+		<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/contextValue/new(id=${model.bot.botId})}" th:ariaLabel="#{context.add}" icon="add"
+							class="on-left" round size="lg" color="primary" />
+		
+		</section>
+		
+		<section layout:fragment="content">
+			<vu:table list="contextValues" componentId="contextValueList" tr_@click.native="|goTo('@{/bot/{id}/contextValue/(id=${model.bot.botId})}'+props.row.cvaId)|" tr_style="cursor : pointer;"
+					  sortBy="label" :binary-state-sort="true">
+					<vu:include-data object="contextValues" field="cvaId" />
+					<vu:include-data object="contextValues" field="label" />
+					<vu:include-data object="contextValues" field="key" />
+					<vu:column field="label">
+						<a th::href="|'@{/bot/{id}/contextValue/(id=${model.bot.botId})}'+props.row.cvaId|"
+						   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
+						   >
+						   <span style="height:100%" class="row items-center">{{props.row.label}}</span>
+						</a>
+					</vu:column>
+					<vu:column field="key"/>
+			</vu:table>
+		</section>
+	</body>
+</html>

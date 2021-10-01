@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.DtResources;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.context.ContextValueMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.kindTopic.KindTopicMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.person.PersonMultilingualResources;
@@ -34,6 +35,7 @@ public class ChatbotLocaleInitializer implements ComponentInitializer {
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources", ModelMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources", UtilsMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.person.PersonMultilingualResources", PersonMultilingualResources.values());
+		localeManager.add("io.vertigo.chatbot.commons.multilingual.context.ContextValueMultilingualResources", ContextValueMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources", AnalyticsMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources", BotMultilingualResources.values());
 	}

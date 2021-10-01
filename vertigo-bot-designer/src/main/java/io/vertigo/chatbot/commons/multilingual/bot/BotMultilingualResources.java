@@ -17,4 +17,6 @@ public enum BotMultilingualResources implements MessageKey {
 	TOPIC_LIST,
 
 	NODE_NOT_UP_TO_DATE,
+
+	CONTEXTVALUE_LIST,
 }

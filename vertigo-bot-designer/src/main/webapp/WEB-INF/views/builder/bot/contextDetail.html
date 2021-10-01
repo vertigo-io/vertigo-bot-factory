@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=context"
+	>
+	
+	<head>
+		<title th:text="#{contextvalue.title}"></title>
+	</head>
+	
+	<body>
+		<section layout:fragment="content-header-actions">
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/contextValue/(id=${model.bot.botId})} + ${model.contextValue.cvaId}" ariaLabel="Cancel" icon="fas fa-ban"
+							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
+			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+							class="on-left" :round size="lg" color="primary" />			
+			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
+							class="on-left" round size="lg" color="red" ></q-btn>
+		</section>
+				
+		<section layout:fragment="content">
+			
+			<vu:popup action="_delete" vModel="showPopup" message="#{contextValue.popup.message}" confirm="#{action.confirm}"></vu:popup>
+
+			<vu:block id="detail" title="Informations">
+				<vu:grid cols="2">
+					<vu:text-field object="contextValue" field="label" />
+					<vu:text-field object="contextValue" field="key" />
+				</vu:grid>
+			</vu:block>
+			
+			
+			
+			<q-page-sticky position="bottom-right">
+				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="#{action.save}" action="@{_save}" size="lg" color="primary" /> 
+			</q-page-sticky>
+	</body>
+</html>
