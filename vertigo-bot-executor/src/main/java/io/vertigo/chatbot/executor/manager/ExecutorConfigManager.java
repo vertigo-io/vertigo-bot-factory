@@ -83,15 +83,15 @@ public class ExecutorConfigManager implements Manager, Activeable {
 			executorGlobalConfig = new ExecutorGlobalConfig();
 		}
 		final String contextDataFilePath = paramManager.getOptionalParam("CONTEXT_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/contextConfig");
-		final File test = new File(contextDataFilePath);
-		if (test.exists() && test.canRead()) {
+		contextDataFile = new File(contextDataFilePath);
+		if (contextDataFile.exists() && contextDataFile.canRead()) {
 			try {
-				final String json = FileUtils.readFileToString(test, StandardCharsets.UTF_8);
+				final String json = FileUtils.readFileToString(contextDataFile, StandardCharsets.UTF_8);
 				contextMap = jsonEngine.fromJson(json, HashMap.class);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-	}
+			}
 
 		} else {
 			contextMap = new HashMap<String, String>();
