@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -306,12 +307,14 @@ public class BotEngine {
 		}
 	}
 
-	public void saveContext(final BotInput input) {
+	public void saveContext(final BotInput input, final HashMap<String, String> contextMap) {
 		if (input.getMetadatas() != null) {
 			final Map<String, String> context = (Map<String, String>) input.getMetadatas().get(CONTEXT_KEY);
 			for (Entry<String, String> entry : context.entrySet()) {
-				BBKey key = BBKey.of(BOT_CONTEXT_KEY, "/" + entry.getKey());
-				bb.putString(key, entry.getValue());
+				if (contextMap.containsKey(entry.getKey())) {
+					BBKey key = BBKey.of(BOT_CONTEXT_KEY, "/" + entry.getKey());
+					bb.putString(key, entry.getValue());
+				}
 			}
 		}
 	}

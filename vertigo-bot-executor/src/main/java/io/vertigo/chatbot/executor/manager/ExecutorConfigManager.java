@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
@@ -44,6 +45,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private File configDataFile;
 	private File contextDataFile;
 	private ExecutorGlobalConfig executorGlobalConfig;
+	private HashMap<String, String> contextMap;
 
 	@Inject
 	public ExecutorConfigManager(
@@ -65,6 +67,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		contextDataFile = new File(contextDataFilePath);
 
 		final String configDataFilePath = paramManager.getOptionalParam("CONFIG_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/runnerConfig");
+
 		configDataFile = new File(configDataFilePath);
 
 		if (configDataFile.exists() && configDataFile.canRead()) {
@@ -81,6 +84,20 @@ public class ExecutorConfigManager implements Manager, Activeable {
 			}
 		} else {
 			executorGlobalConfig = new ExecutorGlobalConfig();
+		}
+		final String contextDataFilePath = paramManager.getOptionalParam("CONTEXT_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/contextConfig");
+		final File test = new File(contextDataFilePath);
+		if (test.exists() && test.canRead()) {
+			try {
+				final String json = FileUtils.readFileToString(test, StandardCharsets.UTF_8);
+				contextMap = jsonEngine.fromJson(json, HashMap.class);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} else {
+			contextMap = new HashMap<String, String>();
 		}
 	}
 
@@ -106,6 +123,10 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	 */
 	public ExecutorGlobalConfig getConfig() {
 		return executorGlobalConfig;
+	}
+
+	public HashMap<String, String> getContextMap() {
+		return contextMap;
 	}
 
 	public synchronized void updateMapContext(final BotExport botExport) {

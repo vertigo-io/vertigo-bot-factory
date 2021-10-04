@@ -109,7 +109,8 @@ Vue.component('v-chatbot-dev', {
 			urlPage =  window.location.href
 			context = {}
 			context['url'] =  urlPage
-			this.$http.post(this.startCall, {message: null, metadatas: {'context' : context}})
+			context['user'] = 'toto'
+ 			this.$http.post(this.startCall, {message: null, metadatas: {'context' : context}})
 					.then(httpResponse => {
 							this.convId = httpResponse.data.metadatas.sessionId
 							this._handleResponse(httpResponse, false)
@@ -129,7 +130,10 @@ Vue.component('v-chatbot-dev', {
 				});
 
 				this._scrollToBottom();
-				let botInput = {sender: this.convId, message: null, metadatas:{payload : btn.payload}}
+				context = {}
+				context['url'] =  urlPage
+				context['user'] = 'toto'
+				let botInput = {sender: this.convId, message: null, metadatas:{payload : btn.payload, 'context' : context}}
 				this.askBot(botInput);
 			},
 			postAnswerText: function () {
@@ -147,7 +151,10 @@ Vue.component('v-chatbot-dev', {
 				
 				var response = this.inputConfig.responsePattern === "" ? sanitizedString.replace(/(")/g, "\"")
 															  : this.inputConfig.responsePattern.replace("#", sanitizedString.replace(/(")/g, "\\\""));
-				let botInput = {sender: this.convId, message: response, metadatas:{}}
+	  			context = {}
+				context['url'] =  urlPage
+				context['user'] = 'toto'
+				let botInput = {sender: this.convId, message: response, metadatas:{'context' : context}}
 				this.askBot(botInput);
 			},
 			_scrollToBottom: function () {
