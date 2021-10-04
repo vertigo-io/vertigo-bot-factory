@@ -63,9 +63,6 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	@Override
 	public void start() {
 
-		final String contextDataFilePath = paramManager.getOptionalParam("CONTEXT_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/runnerContext");
-		contextDataFile = new File(contextDataFilePath);
-
 		final String configDataFilePath = paramManager.getOptionalParam("CONFIG_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/runnerConfig");
 
 		configDataFile = new File(configDataFilePath);
