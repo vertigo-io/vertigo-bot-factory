@@ -91,7 +91,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+	}
 
 		} else {
 			contextMap = new HashMap<String, String>();
