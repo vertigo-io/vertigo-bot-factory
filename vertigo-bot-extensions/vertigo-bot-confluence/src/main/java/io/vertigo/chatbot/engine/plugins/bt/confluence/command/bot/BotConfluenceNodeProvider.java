@@ -15,8 +15,6 @@ import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.impl.ConfluenceServerServices;
-import io.vertigo.chatbot.engine.plugins.bt.confluence.multilingual.ConfluenceMultilingualResources;
-import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 
 public final class BotConfluenceNodeProvider implements Component {
@@ -24,7 +22,7 @@ public final class BotConfluenceNodeProvider implements Component {
 	@Inject
 	private ConfluenceServerServices confluenceServerService;
 
-	public BTNode confluenceSearch(final BlackBoard bb, final String keyTemplate, final String question, final String listPresentation, final String urlManual) {
+	public BTNode confluenceSearch(final BlackBoard bb, final String keyTemplate, final String question, final String listPresentation, final String topicFallbackConfluence) {
 		return sequence(
 				inputString(bb, keyTemplate, question),
 				() -> {
@@ -33,13 +31,13 @@ public final class BotConfluenceNodeProvider implements Component {
 					if (!searchResult.isEmpty()) {
 						bb.listPush(BotEngine.BOT_RESPONSE_KEY, listPresentation);
 
-						for (String result : searchResult) {
+						for (final String result : searchResult) {
 							bb.listPush(BotEngine.BOT_RESPONSE_KEY, result);
 						}
 						bb.delete(BBKeyPattern.of(keyTemplate));
 						return BTStatus.Succeeded;
 					}
-					return BotNodeProvider.say(bb, MessageText.of(ConfluenceMultilingualResources.MESSAGE_ERROR, urlManual).getDisplay()).eval();
+					return BotNodeProvider.switchTopic(bb, topicFallbackConfluence).eval();
 				});
 
 	}
