@@ -18,6 +18,7 @@ public final class BotExport implements DtObject {
 	private String endBT;
 	private String fallbackBT;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.TopicExport.class);
+	private String mapContext;
 	
 	/**
 	 * Champ : DATA.
@@ -97,23 +98,42 @@ public final class BotExport implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'fallback BT'.
+	 * Récupère la valeur de la propriété 'topics export'.
 	 * @return DtList de TopicExport topics
 	 */
-	@Field(smartType = "STyDtTopicExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "fallback BT")
+	@Field(smartType = "STyDtTopicExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "topics export")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> getTopics() {
 		return topics;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'fallback BT'.
+	 * Définit la valeur de la propriété 'topics export'.
 	 * @param topics DtList de TopicExport
 	 */
 	public void setTopics(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics) {
 		io.vertigo.core.lang.Assertion.check().isNotNull(topics);
 		//---
 		this.topics = topics;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'map Context'.
+	 * @return String mapContext <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "map Context")
+	public String getMapContext() {
+		return mapContext;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'map Context'.
+	 * @param mapContext String <b>Obligatoire</b>
+	 */
+	public void setMapContext(final String mapContext) {
+		this.mapContext = mapContext;
 	}
 	
 	/** {@inheritDoc} */

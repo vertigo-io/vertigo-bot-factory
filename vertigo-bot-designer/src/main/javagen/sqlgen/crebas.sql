@@ -11,6 +11,8 @@ drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_NODE cascade;
 drop sequence IF EXISTS SEQ_CHATBOT_NODE;
 drop table IF EXISTS CHATBOT_PROFILES cascade;
+drop table IF EXISTS CONTEXT_VALUE cascade;
+drop sequence IF EXISTS SEQ_CONTEXT_VALUE;
 drop table IF EXISTS GROUPS cascade;
 drop sequence IF EXISTS SEQ_GROUPS;
 drop table IF EXISTS KIND_TOPIC cascade;
@@ -60,6 +62,9 @@ create sequence SEQ_CHATBOT
 create sequence SEQ_CHATBOT_NODE
 	start with 1000 cache 20; 
 
+
+create sequence SEQ_CONTEXT_VALUE
+	start with 1000 cache 20; 
 
 create sequence SEQ_GROUPS
 	start with 1000 cache 20; 
@@ -208,6 +213,30 @@ comment on column CHATBOT_PROFILES.LABEL is
 
 comment on column CHATBOT_PROFILES.SORT_ORDER is
 'Order';
+
+-- ============================================================
+--   Table : CONTEXT_VALUE                                        
+-- ============================================================
+create table CONTEXT_VALUE
+(
+    CVA_ID      	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    KEY         	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_CONTEXT_VALUE primary key (CVA_ID)
+);
+
+comment on column CONTEXT_VALUE.CVA_ID is
+'Context value id';
+
+comment on column CONTEXT_VALUE.LABEL is
+'Label';
+
+comment on column CONTEXT_VALUE.KEY is
+'Key';
+
+comment on column CONTEXT_VALUE.BOT_ID is
+'Chatbot';
 
 -- ============================================================
 --   Table : GROUPS                                        
@@ -751,6 +780,12 @@ alter table CHATBOT
 	references MEDIA_FILE_INFO (FIL_ID);
 
 create index A_CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on CHATBOT (FIL_ID_AVATAR asc);
+
+alter table CONTEXT_VALUE
+	add constraint FK_A_CONTEXT_VALUE_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_CONTEXT_VALUE_CHATBOT_CHATBOT_FK on CONTEXT_VALUE (BOT_ID asc);
 
 alter table MEANING
 	add constraint FK_A_MEANING_CHATBOT_CHATBOT foreign key (BOT_ID)

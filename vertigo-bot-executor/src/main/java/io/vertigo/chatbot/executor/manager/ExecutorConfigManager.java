@@ -21,11 +21,13 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 
+import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
@@ -41,7 +43,9 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private final JsonEngine jsonEngine;
 
 	private File configDataFile;
+	private File contextDataFile;
 	private ExecutorGlobalConfig executorGlobalConfig;
+	private HashMap<String, String> contextMap;
 
 	@Inject
 	public ExecutorConfigManager(
@@ -58,7 +62,9 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 	@Override
 	public void start() {
+
 		final String configDataFilePath = paramManager.getOptionalParam("CONFIG_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/runnerConfig");
+
 		configDataFile = new File(configDataFilePath);
 
 		if (configDataFile.exists() && configDataFile.canRead()) {
@@ -75,6 +81,20 @@ public class ExecutorConfigManager implements Manager, Activeable {
 			}
 		} else {
 			executorGlobalConfig = new ExecutorGlobalConfig();
+		}
+		final String contextDataFilePath = paramManager.getOptionalParam("CONTEXT_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/contextConfig");
+		contextDataFile = new File(contextDataFilePath);
+		if (contextDataFile.exists() && contextDataFile.canRead()) {
+			try {
+				final String json = FileUtils.readFileToString(contextDataFile, StandardCharsets.UTF_8);
+				contextMap = jsonEngine.fromJson(json, HashMap.class);
+			} catch (final IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} else {
+			contextMap = new HashMap<String, String>();
 		}
 	}
 
@@ -100,6 +120,19 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	 */
 	public ExecutorGlobalConfig getConfig() {
 		return executorGlobalConfig;
+	}
+
+	public HashMap<String, String> getContextMap() {
+		return contextMap;
+	}
+
+	public synchronized void updateMapContext(final BotExport botExport) {
+
+		try {
+			FileUtils.writeStringToFile(contextDataFile, botExport.getMapContext(), StandardCharsets.UTF_8);
+		} catch (final IOException e) {
+			throw new VSystemException(e, "Error writing parameter file {0}", contextDataFile.getPath());
+		}
 	}
 
 }
