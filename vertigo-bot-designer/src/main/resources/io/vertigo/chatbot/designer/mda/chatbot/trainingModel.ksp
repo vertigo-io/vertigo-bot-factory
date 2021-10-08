@@ -1,28 +1,6 @@
 package io.vertigo.chatbot.commons.domain
 
 
-/*********************/
-/* **** Chatbot **** */
-/*********************/
-create DtDefinition DtChatbot {
-	stereotype : "KeyConcept"
-	id    botId 		{domain: DoId 			label: "ID"}
-	field name 			{domain: DoLabel 		label: "Name" 			cardinality : "1"}
-	field description 	{domain: DoText 		label: "Description"	cardinality : "1"}
-	field creationDate	{domain: DoLocaldate 	label: "Creation date" 	cardinality : "1"}
-	field status		{domain: DoCode		 	label: "Status" 		cardinality : "1"}
-}
-
-create Association AChatbotMediaFileInfo {
-	fkFieldName : "filIdAvatar"
-    
- 	dtDefinitionA : DtChatbot
-	dtDefinitionB : DtMediaFileInfo
-	
-	type : "*>?"
-	
-	labelB : "Avatar"
-}
 
 /**********************/
 /* **** Training **** */

@@ -41,21 +41,6 @@ public final class Training implements Entity {
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
-			name = "ATrainingTrainingStatus",
-			fkFieldName = "strCd",
-			primaryDtDefinitionName = "DtTrainingStatus",
-			primaryIsNavigable = true,
-			primaryRole = "TrainingStatus",
-			primaryLabel = "Status",
-			primaryMultiplicity = "1..1",
-			foreignDtDefinitionName = "DtTraining",
-			foreignIsNavigable = false,
-			foreignRole = "Training",
-			foreignLabel = "Training",
-			foreignMultiplicity = "0..*")
-	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.TrainingStatus, io.vertigo.chatbot.commons.domain.TrainingStatusEnum> strCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.TrainingStatus.class, "TrainingStatus", io.vertigo.chatbot.commons.domain.TrainingStatusEnum.class);
-
-	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ATrainingMediaFileInfo",
 			fkFieldName = "filIdModel",
 			primaryDtDefinitionName = "DtMediaFileInfo",
@@ -69,6 +54,21 @@ public final class Training implements Entity {
 			foreignLabel = "Training",
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> filIdModelAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.MediaFileInfo.class, "MediaFileInfo");
+
+	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "ATrainingTrainingStatus",
+			fkFieldName = "strCd",
+			primaryDtDefinitionName = "DtTrainingStatus",
+			primaryIsNavigable = true,
+			primaryRole = "TrainingStatus",
+			primaryLabel = "Status",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtTraining",
+			foreignIsNavigable = false,
+			foreignRole = "Training",
+			foreignLabel = "Training",
+			foreignMultiplicity = "0..*")
+	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.TrainingStatus, io.vertigo.chatbot.commons.domain.TrainingStatusEnum> strCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.TrainingStatus.class, "TrainingStatus", io.vertigo.chatbot.commons.domain.TrainingStatusEnum.class);
 
 	/** {@inheritDoc} */
 	@Override
@@ -249,25 +249,6 @@ public final class Training implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Status'.
-	 * @return String strCd <b>Obligatoire</b>
-	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Status", fkDefinition = "DtTrainingStatus" )
-	public String getStrCd() {
-		return (String) strCdAccessor.getId();
-	}
-
-	/**
-	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Status'.
-	 * @param strCd String <b>Obligatoire</b>
-	 */
-	public void setStrCd(final String strCd) {
-		strCdAccessor.setId(strCd);
-	}
-	
-	/**
-	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Model'.
 	 * @return Long filIdModel
 	 */
@@ -283,6 +264,25 @@ public final class Training implements Entity {
 	 */
 	public void setFilIdModel(final Long filIdModel) {
 		filIdModelAccessor.setId(filIdModel);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Status'.
+	 * @return String strCd <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Status", fkDefinition = "DtTrainingStatus" )
+	public String getStrCd() {
+		return (String) strCdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Status'.
+	 * @param strCd String <b>Obligatoire</b>
+	 */
+	public void setStrCd(final String strCd) {
+		strCdAccessor.setId(strCd);
 	}
 	
 	/**

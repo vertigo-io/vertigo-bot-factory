@@ -730,10 +730,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		duration,
 		/** Propriété 'Chatbot'. */
 		botId,
-		/** Propriété 'Status'. */
-		strCd,
 		/** Propriété 'Model'. */
-		filIdModel	}
+		filIdModel,
+		/** Propriété 'Status'. */
+		strCd	}
 
 	/**
 	 * Enumération des champs de TrainingStatus.
