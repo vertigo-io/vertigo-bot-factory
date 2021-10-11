@@ -9,10 +9,7 @@ import io.vertigo.chatbot.executor.ExecutorPlugin;
 public class ChatbotPluginManagerImpl implements ChatbotPluginManager {
 
 	@Inject
-	public ChatbotPluginManagerImpl(
-			final List<ExecutorPlugin> listPlugins) {
-
-		listPlugins.forEach(x -> x.init());
+	public ChatbotPluginManagerImpl(final List<ExecutorPlugin> listPlugins) {
 	}
 
 }

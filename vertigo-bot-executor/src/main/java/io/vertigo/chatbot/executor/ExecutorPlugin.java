@@ -4,6 +4,4 @@ import io.vertigo.core.node.component.Plugin;
 
 public interface ExecutorPlugin extends Plugin {
 
-	void init();
-
 }
