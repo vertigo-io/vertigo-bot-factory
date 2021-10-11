@@ -656,8 +656,8 @@ create table TRAINING
     WARNINGS    	 TEXT        	,
     NLU_THRESHOLD	 NUMERIC(3,2)	not null,
     BOT_ID      	 NUMERIC     	not null,
-    STR_CD      	 VARCHAR(100)	not null,
     FIL_ID_MODEL	 NUMERIC     	,
+    STR_CD      	 VARCHAR(100)	not null,
     constraint PK_TRAINING primary key (TRA_ID)
 );
 
@@ -688,11 +688,11 @@ comment on column TRAINING.NLU_THRESHOLD is
 comment on column TRAINING.BOT_ID is
 'Chatbot';
 
-comment on column TRAINING.STR_CD is
-'Status';
-
 comment on column TRAINING.FIL_ID_MODEL is
 'Model';
+
+comment on column TRAINING.STR_CD is
+'Status';
 
 -- ============================================================
 --   Table : TRAINING_STATUS                                        

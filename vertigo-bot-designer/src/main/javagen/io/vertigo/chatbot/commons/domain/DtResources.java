@@ -304,13 +304,13 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTraining$botId,
 	/**
-	 * Status.
-	 */
-	fldTraining$strCd,
-	/**
 	 * Model.
 	 */
 	fldTraining$filIdModel,
+	/**
+	 * Status.
+	 */
+	fldTraining$strCd,
 
 	/***********************************************************
 	/** TrainingStatus.
