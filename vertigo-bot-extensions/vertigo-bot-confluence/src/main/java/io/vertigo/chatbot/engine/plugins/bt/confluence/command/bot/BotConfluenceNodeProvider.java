@@ -22,7 +22,7 @@ public final class BotConfluenceNodeProvider implements Component {
 	@Inject
 	private ConfluenceServerServices confluenceServerService;
 
-	public BTNode confluenceSearch(final BlackBoard bb, final String keyTemplate, final String question, final String listPresentation) {
+	public BTNode confluenceSearch(final BlackBoard bb, final String keyTemplate, final String question, final String listPresentation, final String topicFallbackConfluence) {
 		return sequence(
 				inputString(bb, keyTemplate, question),
 				() -> {
@@ -31,13 +31,13 @@ public final class BotConfluenceNodeProvider implements Component {
 					if (!searchResult.isEmpty()) {
 						bb.listPush(BotEngine.BOT_RESPONSE_KEY, listPresentation);
 
-						for (String result : searchResult) {
+						for (final String result : searchResult) {
 							bb.listPush(BotEngine.BOT_RESPONSE_KEY, result);
 						}
 						bb.delete(BBKeyPattern.of(keyTemplate));
 						return BTStatus.Succeeded;
 					}
-					return BotNodeProvider.switchTopicFallback(bb).eval();
+					return BotNodeProvider.switchTopic(bb, topicFallbackConfluence).eval();
 				});
 
 	}
