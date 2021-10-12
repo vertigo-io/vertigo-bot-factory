@@ -308,12 +308,14 @@ public class BotEngine {
 	}
 
 	public void saveContext(final BotInput input, final HashMap<String, String> contextMap) {
-		if (input.getMetadatas() != null) {
+		if (input.getMetadatas() != null && !input.getMetadatas().isEmpty()) {
 			final Map<String, String> context = (Map<String, String>) input.getMetadatas().get(CONTEXT_KEY);
-			for (Entry<String, String> entry : context.entrySet()) {
-				if (contextMap.containsKey(entry.getKey())) {
-					BBKey key = BBKey.of(BOT_CONTEXT_KEY, "/" + entry.getKey());
-					bb.putString(key, entry.getValue());
+			if (context != null) {
+				for (final Entry<String, String> entry : context.entrySet()) {
+					if (contextMap.containsKey(entry.getKey())) {
+						final BBKey key = BBKey.of(BOT_CONTEXT_KEY, "/" + entry.getKey());
+						bb.putString(key, entry.getValue());
+					}
 				}
 			}
 		}
