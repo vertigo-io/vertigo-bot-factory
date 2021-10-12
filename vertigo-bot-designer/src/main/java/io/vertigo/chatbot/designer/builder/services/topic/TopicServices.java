@@ -159,6 +159,7 @@ public class TopicServices implements Component, Activeable {
 		for (final NluTrainingSentence its : getNluTrainingSentenceByTopic(bot, topic)) {
 			nluTrainingSentenceDAO.delete(its.getUID());
 		}
+		topicLabelServices.cleanLabelFromTopic(bot, topic.getTopId());
 		topicDAO.delete(topic.getTopId());
 		nodeServices.updateNodes(bot);
 	}
