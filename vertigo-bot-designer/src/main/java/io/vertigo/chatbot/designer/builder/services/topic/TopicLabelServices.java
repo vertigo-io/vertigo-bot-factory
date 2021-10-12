@@ -72,8 +72,8 @@ public class TopicLabelServices implements Component {
 	}
 
 	private void createLabel(final Long botId, final List<String> labelsList) {
-		DtList<TopicLabel> botLabels = getTopicLabelByBotId(botId);
-		List<String> botLabelsString = botLabels.stream().map(TopicLabel::getLabel).collect(Collectors.toList());
+		final DtList<TopicLabel> botLabels = getTopicLabelByBotId(botId);
+		final List<String> botLabelsString = botLabels.stream().map(TopicLabel::getLabel).collect(Collectors.toList());
 		labelsList.stream().filter(x -> !botLabelsString.contains(x)).forEach(x -> save(botId, x));
 	}
 
