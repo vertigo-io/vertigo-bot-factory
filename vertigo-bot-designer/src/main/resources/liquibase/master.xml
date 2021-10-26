@@ -11,4 +11,5 @@
 	<include file="changeLog/v_1_0/alter_profil_chatbot.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_0/alter_topic.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_0/alter_v_1_0.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_1_1_0/alter_v_1_1_0.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
