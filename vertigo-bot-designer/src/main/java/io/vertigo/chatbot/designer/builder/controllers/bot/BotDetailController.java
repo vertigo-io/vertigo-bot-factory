@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.jsoup.Jsoup;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +49,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
@@ -206,6 +208,15 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		topicStart.setTtoCd(ttoCdStart);
 		topicFailure.setTtoCd(ttoCdFailure);
 		topicEnd.setTtoCd(ttoCdEnd);
+		if (Jsoup.parse(utterTextStart.getText()).text().isEmpty()) {
+			throw new VUserException(BotMultilingualResources.ERROR_WELCOME);
+		}
+		if (Jsoup.parse(utterTextFailure.getText()).text().isEmpty()) {
+			throw new VUserException(BotMultilingualResources.ERROR_FALLBACK);
+		}
+		if (Jsoup.parse(utterTextEnd.getText()).text().isEmpty()) {
+			throw new VUserException(BotMultilingualResources.ERROR_END);
+		}
 		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, utterTextFailure,
 				utterTextStart, utterTextEnd, topicFailure, topicStart, topicEnd, topicCategory);
 

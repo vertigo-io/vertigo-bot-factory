@@ -167,7 +167,7 @@ Vue.component('c-richtext', {
 						.split(/<hr>|<hr \/>/);
 			},
 			checkMessage() {
-		      if (this.value == "") {
+		      if (this.value.replace(/<[^>]*>/g, "").length == 0) {
 		        this.styleWYSIWYG = "border: 2px solid;border-color: #C10015;border-radius:5px;";
 		        this.showWarning = true;
 		      } else {

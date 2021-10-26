@@ -77,7 +77,11 @@ Vue.component('c-codemirror', {
 				      </q-list>
 			      </q-btn-dropdown>
 				<codemirror ref="cm" v-model='VertigoUi.vueData[object][field]' :options="options"></codemirror>
-				<input type="hidden" :name="'vContext['+object+']['+field+']'" :value="VertigoUi.vueData[object][field]"/>
+				<input type="hidden" 
+						:name="'vContext['+object+']['+field+']'" 
+						:value="VertigoUi.vueData[object][field]" 
+						required
+				/>
 				
 				
 			</div>

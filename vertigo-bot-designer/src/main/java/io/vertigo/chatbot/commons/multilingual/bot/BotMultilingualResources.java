@@ -19,4 +19,8 @@ public enum BotMultilingualResources implements MessageKey {
 	NODE_NOT_UP_TO_DATE,
 
 	CONTEXTVALUE_LIST,
+
+	ERROR_FALLBACK,
+	ERROR_WELCOME,
+	ERROR_END,
 }

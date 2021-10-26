@@ -88,8 +88,7 @@
 							class="q-pb-sm"
 							v-model="vueData.utterTextStart.text"
 							name="vContext[utterTextStart][text]"
-							:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"						
-							
+							:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"	
 							:locale="vueData.locale"
 							th::mode-edit="${!model.modeReadOnly}"
 >
@@ -225,7 +224,7 @@
 				</q-card>
 			</q-dialog>
 			
-			<q-page-sticky position="bottom-right">
+			<q-page-sticky position="bottom-right" style="z-index: 3">
 				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" /> 
 			</q-page-sticky>
 		</section>
