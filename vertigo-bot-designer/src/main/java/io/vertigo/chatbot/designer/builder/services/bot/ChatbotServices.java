@@ -1,7 +1,6 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -28,8 +27,10 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.utils.DateUtils;
+import io.vertigo.chatbot.designer.utils.StringUtils;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotFields;
+import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.MessageText;
@@ -41,6 +42,7 @@ import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
+import io.vertigo.vega.webservice.validation.UiErrorBuilder;
 
 @Transactional
 @Secured("BotUser")
@@ -82,8 +84,6 @@ public class ChatbotServices implements Component {
 	@Inject
 	private TopicLabelServices topicLabelServices;
 
-	static final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern(DateUtils.FORMAT_JJMMAAAA);
-
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 			final UtterText utterTextFailure,
 			final UtterText utterTextStart,
@@ -98,6 +98,19 @@ public class ChatbotServices implements Component {
 		Assertion.check().isNotNull(utterTextStart);
 		Assertion.check().isNotNull(utterTextEnd);
 		// ---
+
+		// Check if start/end/error messages are not empty html strings
+		final UiErrorBuilder errorBuilder = new UiErrorBuilder();
+		if (StringUtils.isHtmlEmpty(utterTextFailure.getText())) {
+			errorBuilder.addError(utterTextFailure, UtterTextFields.text.name(), MessageText.of("Le champ doit être renseigné"));
+		}
+		if (StringUtils.isHtmlEmpty(utterTextStart.getText())) {
+			errorBuilder.addError(utterTextStart, UtterTextFields.text.name(), MessageText.of("Le champ doit être renseigné"));
+		}
+		if (StringUtils.isHtmlEmpty(utterTextEnd.getText())) {
+			errorBuilder.addError(utterTextEnd, UtterTextFields.text.name(), MessageText.of("Le champ doit être renseigné"));
+		}
+		errorBuilder.throwUserExceptionIfErrors();
 
 		// Avatar
 		Long oldAvatar = null;
@@ -211,7 +224,7 @@ public class ChatbotServices implements Component {
 	}
 
 	public String getBotDateDisplay(final Optional<Chatbot> bot) {
-		return bot.isPresent() ? bot.get().getCreationDate().format(formatterDate) : null;
+		return bot.isPresent() ? DateUtils.toStringJJMMAAAA(bot.get().getCreationDate()) : null;
 	}
 
 }

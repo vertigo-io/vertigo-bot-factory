@@ -97,8 +97,13 @@
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-richtext>
 				</div>
-				<div v-else :style="hasFieldsError('utterTextStart', 'text') ? 'border: 2px solid;border-color: #C10015;border-radius:5px;':''">
-					<c-codemirror object="utterTextStart" field="text" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
+				<div v-else>
+					<c-codemirror
+						object="utterTextStart"
+						field="text"
+						:error="hasFieldsError('utterTextStart', 'text')"
+						th::mode-edit="${!model.modeReadOnly}">
+					</c-codemirror>
 				</div>
 				
 				<div v-if="hasFieldsError('utterTextStart', 'text')" class="text-red">{{getErrorMessage('utterTextStart', 'text')}}</div>
@@ -128,8 +133,13 @@
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-richtext>
 				</div>
-				<div v-else :style="hasFieldsError('utterTextFailure', 'text') ? 'border: 2px solid;border-color: #C10015;border-radius:5px;':''">
-					<c-codemirror object="utterTextFailure" field="text" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
+				<div v-else>
+					<c-codemirror
+						object="utterTextFailure"
+						field="text"
+						:error="hasFieldsError('utterTextFailure', 'text')"
+						th::mode-edit="${!model.modeReadOnly}">
+					</c-codemirror>
 				</div>
 				
 				<div v-if="hasFieldsError('utterTextFailure', 'text')" class="text-red">{{getErrorMessage('utterTextFailure', 'text')}}</div>
@@ -159,8 +169,13 @@
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-richtext>
 				</div>
-				<div v-else :style="hasFieldsError('utterTextEnd', 'text') ? 'border: 2px solid;border-color: #C10015;border-radius:5px;':''">
-					<c-codemirror object="utterTextEnd" field="text" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
+				<div v-else>
+					<c-codemirror
+						object="utterTextEnd"
+						field="text"
+						:error="hasFieldsError('utterTextEnd', 'text')"
+						th::mode-edit="${!model.modeReadOnly}">
+					</c-codemirror>
 				</div>
 				
 				<div v-if="hasFieldsError('utterTextEnd', 'text')" class="text-red">{{getErrorMessage('utterTextEnd', 'text')}}</div>
