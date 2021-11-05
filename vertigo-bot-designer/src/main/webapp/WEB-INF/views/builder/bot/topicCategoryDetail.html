@@ -45,7 +45,7 @@
 			</vu:table>
 			
 			<q-page-sticky position="bottom-right">
-				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="Save" action="@{_save}" size="lg" color="primary" /> 
+				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
 			</q-page-sticky>
 	</body>
 </html>
