@@ -93,8 +93,6 @@ services:
     image: rasa/rasa:2.4.0-full
     ports:
       - 5005:5005
-    volumes:
-      - ./:/app
     command:
       - run
       - --enable-api
