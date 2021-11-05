@@ -74,111 +74,108 @@
 			<vu:include-data object="typeTopicList" field="'*'" />
 			
 			<vu:block id="welcome" th:title="#{bot.welcome}">
-				<vu:include-data object="utterTextStart" field="text" />
-				<vu:include-data object="ttoCdStart" field="'*'" />
+				<vu:include-data object="startTopic" field="'*'" />
 				
 				<div>				
 				   <q-btn-toggle
 				      th:if="${!model.modeReadOnly}"
-				        v-model="vueData.ttoCdStart"
+				        v-model="vueData.startTopic.ttoCd"
 				        toggle-color="primary"
 				        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
 						th::mode-edit="${!model.modeReadOnly}"
 				      />
 			    </div>
-			    <input type="hidden" name="vContext[ttoCdStart]" :value="vueData.ttoCdStart" />
-			    <div v-if="vueData.ttoCdStart == 'SMALLTALK'">
+			    <input type="hidden" name="vContext[startTopic][ttoCd]" :value="vueData.startTopic.ttoCd" />
+			    <div v-if="vueData.startTopic.ttoCd == 'SMALLTALK'">
 					<c-richtext 
 						class="q-py-sm"
-						v-model="vueData.utterTextStart.text"
-						name="vContext[utterTextStart][text]"
-						:error="hasFieldsError('utterTextStart', 'text')"
+						v-model="vueData.startTopic.value"
+						name="vContext[startTopic][value]"
+						:error="hasFieldsError('startTopic', 'value')"
 						:locale="vueData.locale"
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-richtext>
 				</div>
 				<div v-else>
 					<c-codemirror
-						object="utterTextStart"
-						field="text"
-						:error="hasFieldsError('utterTextStart', 'text')"
+						object="startTopic"
+						field="value"
+						:error="hasFieldsError('startTopic', 'value')"
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-codemirror>
 				</div>
 				
-				<div v-if="hasFieldsError('utterTextStart', 'text')" class="text-red">{{getErrorMessage('utterTextStart', 'text')}}</div>
+				<div v-if="hasFieldsError('startTopic', 'value')" class="text-red">{{getErrorMessage('startTopic', 'value')}}</div>
 			</vu:block>
 			
 			<vu:block id="fallback" th:title="'#{bot.fallback}'">
-				<vu:include-data object="utterTextFailure" field="text" />
-				<vu:include-data object="ttoCdFailure" field="'*'" />
+				<vu:include-data object="failureTopic" field="'*'" />
 				
 				<div>				
 					<q-btn-toggle
 				      	th:if="${!model.modeReadOnly}"
-				        v-model="vueData.ttoCdFailure"
+				        v-model="vueData.failureTopic.ttoCd"
 				        toggle-color="primary"
 				        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
 				      	th::mode-edit="${!model.modeReadOnly}"
 				     />
 			    </div>
-			    <input type="hidden" name="vContext[ttoCdFailure]" :value="vueData.ttoCdFailure" />
-			    <div v-if="vueData.ttoCdFailure == 'SMALLTALK'">
+			    <input type="hidden" name="vContext[failureTopic][ttoCd]" :value="vueData.failureTopic.ttoCd" />
+			    <div v-if="vueData.failureTopic.ttoCd == 'SMALLTALK'">
 					<c-richtext 
 						class="q-py-sm"
-						v-model="vueData.utterTextFailure.text"
-						name="vContext[utterTextFailure][text]"
-						:error="hasFieldsError('utterTextFailure', 'text')"
+						v-model="vueData.failureTopic.value"
+						name="vContext[failureTopic][value]"
+						:error="hasFieldsError('failureTopic', 'value')"
 						:locale="vueData.locale"
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-richtext>
 				</div>
 				<div v-else>
 					<c-codemirror
-						object="utterTextFailure"
-						field="text"
-						:error="hasFieldsError('utterTextFailure', 'text')"
+						object="failureTopic"
+						field="value"
+						:error="hasFieldsError('failureTopic', 'value')"
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-codemirror>
 				</div>
 				
-				<div v-if="hasFieldsError('utterTextFailure', 'text')" class="text-red">{{getErrorMessage('utterTextFailure', 'text')}}</div>
+				<div v-if="hasFieldsError('failureTopic', 'value')" class="text-red">{{getErrorMessage('failureTopic', 'value')}}</div>
 			</vu:block>
 			
 			<vu:block id="end" th:title="#{bot.end}">
-				<vu:include-data object="utterTextEnd" field="text" />
-				<vu:include-data object="ttoCdEnd" field="'*'" />
+				<vu:include-data object="endTopic" field="'*'" />
 				
 				<div>				
 					<q-btn-toggle
 				      	th:if="${!model.modeReadOnly}"
-				        v-model="vueData.ttoCdEnd"
+				        v-model="vueData.endTopic.ttoCd"
 				        toggle-color="primary"
 				        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
 				      	th::mode-edit="${!model.modeReadOnly}"
 					/>
 			    </div>
-			    <input type="hidden" name="vContext[ttoCdEnd]" :value="vueData.ttoCdEnd" />
-			    <div v-if="vueData.ttoCdEnd == 'SMALLTALK'">
+			    <input type="hidden" name="vContext[endTopic][ttoCd]" :value="vueData.endTopic.ttoCd" />
+			    <div v-if="vueData.endTopic.ttoCd == 'SMALLTALK'">
 					<c-richtext	
 						class="q-py-sm"
-						v-model="vueData.utterTextEnd.text"
-						name="vContext[utterTextEnd][text]"
-						:error="hasFieldsError('utterTextEnd', 'text')"
+						v-model="vueData.endTopic.value"
+						name="vContext[endTopic][value]"
+						:error="hasFieldsError('endTopic', 'value')"
 						:locale="vueData.locale"
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-richtext>
 				</div>
 				<div v-else>
 					<c-codemirror
-						object="utterTextEnd"
-						field="text"
-						:error="hasFieldsError('utterTextEnd', 'text')"
+						object="endTopic"
+						field="value"
+						:error="hasFieldsError('endTopic', 'value')"
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-codemirror>
 				</div>
 				
-				<div v-if="hasFieldsError('utterTextEnd', 'text')" class="text-red">{{getErrorMessage('utterTextEnd', 'text')}}</div>
+				<div v-if="hasFieldsError('endTopic', 'value')" class="text-red">{{getErrorMessage('endTopic', 'value')}}</div>
 			</vu:block>
 			
 			

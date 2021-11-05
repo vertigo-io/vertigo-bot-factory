@@ -20,6 +20,9 @@ public final class StringUtils {
 	 * @return true if content is empty
 	 */
 	public static boolean isHtmlEmpty(final String html) {
+		if (html == null) {
+			return true;
+		}
 		return StringUtil.isBlank(emptyHtmlCleanerPattern.matcher(html).replaceAll(r -> ""));
 	}
 }

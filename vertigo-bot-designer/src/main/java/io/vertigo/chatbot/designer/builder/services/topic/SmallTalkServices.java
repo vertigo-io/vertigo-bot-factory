@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.SmallTalkDAO;
+import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
@@ -20,6 +21,7 @@ import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.smallTalk.SmallTalkPAO;
+import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
@@ -44,6 +46,9 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 
 	@Inject
 	private SmallTalkPAO smallTalkPAO;
+
+	@Inject
+	private TopicDAO topicDAO;
 
 	public SmallTalk getSmallTalkById(@SecuredOperation("botVisitor") final Chatbot bot, final Long smtId) {
 		Assertion.check().isNotNull(smtId);
@@ -92,14 +97,16 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 	}
 
 	@Override
-	public void delete(@SecuredOperation("botContributor") final Chatbot chatbot, final SmallTalk smallTalk, final Topic topic) {
+	public void deleteIfExists(@SecuredOperation("botContributor") final Chatbot chatbot, final Topic topic) {
+		findByTopId(topic.getTopId())
+				.ifPresent(smallTalk -> {
+					utterTextServices.deleteUtterTextsBySmallTalk(chatbot, smallTalk);
 
-		utterTextServices.deleteUtterTextsBySmallTalk(chatbot, smallTalk);
+					responsesButtonServices.deleteResponsesButtonsBySmallTalk(chatbot, smallTalk);
 
-		responsesButtonServices.deleteResponsesButtonsBySmallTalk(chatbot, smallTalk);
-
-		// delete smallTalk
-		delete(smallTalk);
+					// delete smallTalk
+					delete(smallTalk);
+				});
 	}
 
 	public void removeAllSmallTalkFromBot(@SecuredOperation("botAdm") final Chatbot bot) {
@@ -115,14 +122,14 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 	}
 
 	@Override
-	public void initializeBasic(final Chatbot chatbot, final Topic topic, final String text) {
-		final SmallTalk smt = new SmallTalk();
+	public void createOrUpdateFromTopic(final Chatbot chatbot, final Topic topic, final String text) {
+		final SmallTalk smt = findByTopId(topic.getTopId()).orElse(new SmallTalk());
 		smt.setTopId(topic.getTopId());
 		smt.setRtyId(ResponseTypeEnum.RICH_TEXT.name());
 		smt.setIsEnd(false);
 		final UtterText utt = new UtterText();
 		utt.setText(text);
-		final DtList<UtterText> utterTexts = new DtList<UtterText>(UtterText.class);
+		final DtList<UtterText> utterTexts = new DtList<>(UtterText.class);
 		utterTexts.add(utt);
 
 		saveSmallTalk(chatbot, smt, utterTexts,
@@ -142,23 +149,30 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 	}
 
 	@Override
-	public SmallTalk findByTopId(final Long topId) {
-		if (topId != null) {
-			final Optional<SmallTalk> result = smallTalkDAO.findOptional(Criterions.isEqualTo(SmallTalkFields.topId, topId));
-			return result.isPresent() ? result.get() : null;
-		}
-		return null;
-	}
+	public Optional<SmallTalk> findByTopId(final Long topId) {
+		Assertion.check().isNotNull(topId);
 
-	@Override
-	public boolean isEnabled(final SmallTalk object, final boolean isEnabled, final Chatbot bot) {
-		return !(hasToBeDeactivated(object, bot)) && isEnabled;
+		return smallTalkDAO.findOptional(Criterions.isEqualTo(SmallTalkFields.topId, topId));
 	}
 
 	@Override
 	public UtterText getBasicUtterTextByTopId(final Long topId) {
 		return utterTextServices.getBasicUtterTextByTopId(topId);
+	}
 
+	@Override
+	public BotPredefinedTopic getBotPredefinedTopicByTopId(final Long topId) {
+		Assertion.check()
+				.isNotNull(topId);
+		// ---
+		final Topic topic = topicDAO.get(topId);
+		final UtterText utter = getBasicUtterTextByTopId(topId);
+
+		final BotPredefinedTopic predefinedTopic = new BotPredefinedTopic();
+		predefinedTopic.setTopId(topId);
+		predefinedTopic.setTtoCd(topic.getTtoCd());
+		predefinedTopic.setValue(utter.getText());
+		return predefinedTopic;
 	}
 
 	@Override

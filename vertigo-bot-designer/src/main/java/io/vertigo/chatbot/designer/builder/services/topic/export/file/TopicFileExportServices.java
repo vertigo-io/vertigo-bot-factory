@@ -122,8 +122,8 @@ public class TopicFileExportServices implements Component {
 			if (header.length != 15) {
 				throw new VUserException(TopicFileExportMultilingualResources.ERR_SIZE_FILE);
 			}
-			final CsvToBean<TopicFileExport> csvToBean = new CsvToBean<TopicFileExport>();
-			final ColumnPositionMappingStrategy<TopicFileExport> mappingStrategy = new ColumnPositionMappingStrategy<TopicFileExport>();
+			final CsvToBean<TopicFileExport> csvToBean = new CsvToBean<>();
+			final ColumnPositionMappingStrategy<TopicFileExport> mappingStrategy = new ColumnPositionMappingStrategy<>();
 			//Set mappingStrategy type to TopicFileExport Type
 			mappingStrategy.setType(TopicFileExport.class);
 			//Fields in TopicFileExport Bean (to avoid alphabetical order)
@@ -202,7 +202,7 @@ public class TopicFileExportServices implements Component {
 	 */
 	private void codeCheck(final List<TopicFileExport> list) {
 		// Unicity check
-		final HashSet<String> codeSet = new HashSet<String>();
+		final HashSet<String> codeSet = new HashSet<>();
 		int i = 1;
 		for (final TopicFileExport tfe : list) {
 			i++;
@@ -239,7 +239,7 @@ public class TopicFileExportServices implements Component {
 			final boolean isEnabled = "ACTIVE".equals(tfe.getActive());
 
 			// The list of nluTS to deleted can be modified if the topic already exists
-			DtList<NluTrainingSentence> nluTSToDelete = new DtList<NluTrainingSentence>(NluTrainingSentence.class);
+			DtList<NluTrainingSentence> nluTSToDelete = new DtList<>(NluTrainingSentence.class);
 
 			Topic topic = new Topic();
 
@@ -363,9 +363,11 @@ public class TopicFileExportServices implements Component {
 	 * Generate a ScriptIntention from TopicFileExport
 	 */
 	private void gestionScriptIntention(final Chatbot chatbot, final Topic topic, final TopicFileExport tfe, final boolean creation, final DtList<NluTrainingSentence> nluTrainingSentences) {
-		ScriptIntention sin = new ScriptIntention();
-		if (!creation) {
-			sin = scriptIntentionServices.findByTopId(topic.getTopId());
+		final ScriptIntention sin;
+		if (creation) {
+			sin = new ScriptIntention();
+		} else {
+			sin = scriptIntentionServices.findByTopId(topic.getTopId()).orElseThrow();
 		}
 		sin.setScript(tfe.getScript());
 		sin.setTopId(topic.getTopId());
@@ -399,9 +401,11 @@ public class TopicFileExportServices implements Component {
 	 * Return a smallTalk with infos from the TopicFileExport
 	 */
 	private SmallTalk populateSmallTalkFromTopicFileExport(final Topic topic, final boolean creation, final TopicFileExport tfe, final DtList<UtterText> listResponse) {
-		SmallTalk smt = new SmallTalk();
-		if (!creation) {
-			smt = smallTalkServices.findByTopId(topic.getTopId());
+		final SmallTalk smt;
+		if (creation) {
+			smt = new SmallTalk();
+		} else {
+			smt = smallTalkServices.findByTopId(topic.getTopId()).orElseThrow();
 		}
 		smt.setIsEnd("TRUE".equals(tfe.getIsEnd()));
 
@@ -420,7 +424,7 @@ public class TopicFileExportServices implements Component {
 
 		final String[] listResponses = tfe.getResponse().split("\\|");
 
-		final DtList<UtterText> responses = new DtList<UtterText>(UtterText.class);
+		final DtList<UtterText> responses = new DtList<>(UtterText.class);
 		//When a sentence is added to the list, first the unicity is checked
 		for (final String newResponse : listResponses) {
 			final UtterText response = new UtterText();
@@ -435,7 +439,7 @@ public class TopicFileExportServices implements Component {
 	 */
 	public DtList<ResponseButton> extractButtonsFromTfe(final Long botId, final TopicFileExport tfe) {
 
-		final DtList<ResponseButton> listButtons = new DtList<ResponseButton>(ResponseButton.class);
+		final DtList<ResponseButton> listButtons = new DtList<>(ResponseButton.class);
 		// if there are buttons, they must have the following shape : [name¤topicCode] and be separated by |
 		if (!tfe.getButtons().isEmpty()) {
 			final String[] listDoublons = tfe.getButtons().split("\\|");

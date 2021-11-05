@@ -21,6 +21,7 @@ import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
+import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -51,7 +52,7 @@ public class TopicServices implements Component, Activeable {
 	@Inject
 	private KindTopicServices kindTopicServices;
 
-	private final Set<TopicInterfaceServices> topicInterfaceServices = new HashSet();
+	private final Set<TopicInterfaceServices<? extends Entity>> topicInterfaceServices = new HashSet<>();
 
 	@Inject
 	private SmallTalkServices smallTalkServices;
@@ -151,11 +152,8 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	public void deleteCompleteTopic(@SecuredOperation("botContributor") final Chatbot bot, final Topic topic) {
-		for (final TopicInterfaceServices services : topicInterfaceServices) {
-			final Entity object = services.findByTopId(topic.getTopId());
-			if (object != null) {
-				services.delete(bot, object, topic);
-			}
+		for (final TopicInterfaceServices<? extends Entity> services : topicInterfaceServices) {
+			services.deleteIfExists(bot, topic);
 		}
 		deleteTopic(bot, topic);
 	}
@@ -226,20 +224,24 @@ public class TopicServices implements Component, Activeable {
 
 	}
 
-	public void initializeBasicTopic(final Chatbot chatbot, final TopicCategory topicCategory, final Topic topic, final UtterText utterText) {
+	public void saveBotTopic(final Chatbot chatbot, final TopicCategory topicCategory, final String ktoCd, final BotPredefinedTopic botTopic) {
+		final Topic topic;
+		if (botTopic.getTopId() == null) {
+			topic = initNewBasicTopic(ktoCd);
+		} else {
+			topic = topicDAO.get(botTopic.getTopId());
+		}
 		topic.setBotId(chatbot.getBotId());
-
+		topic.setTtoCd(botTopic.getTtoCd());
 		topic.setTopCatId(topicCategory.getTopCatId());
 		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
 		topicDAO.save(topic);
 
-		for (final TopicInterfaceServices services : topicInterfaceServices) {
-			final Entity object = services.findByTopId(topic.getTopId());
-			if (object != null) {
-				services.delete(chatbot, object, topic);
-			}
-			if (services.handleObject(topic)) {
-				services.initializeBasic(chatbot, topic, utterText.getText());
+		for (final TopicInterfaceServices<? extends Entity> service : topicInterfaceServices) {
+			if (service.handleObject(topic)) {
+				service.createOrUpdateFromTopic(chatbot, topic, botTopic.getValue());
+			} else {
+				service.deleteIfExists(chatbot, topic);
 			}
 		}
 		nodeServices.updateNodes(chatbot);

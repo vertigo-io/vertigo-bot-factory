@@ -189,7 +189,7 @@ public abstract class AbstractTopicController<D extends Entity, S extends TopicI
 			throw new VUserException(errorMessage.toString());
 		}
 
-		service.delete(chatbot, service.findByTopId(topic.getTopId()), topic);
+		service.deleteIfExists(chatbot, topic);
 		topicLabelServices.cleanLabelFromTopic(chatbot, topic.getTopId());
 		topicServices.deleteTopic(chatbot, topic);
 
@@ -204,7 +204,8 @@ public abstract class AbstractTopicController<D extends Entity, S extends TopicI
 	}
 
 	public void addMessageDeactivate(final UiMessageStack uiMessageStack, final Topic topic, final DtList<NluTrainingSentence> sentences, final Chatbot chatbot) {
-		final boolean hasToBeDeactivate = service.hasToBeDeactivated(service.findByTopId(topic.getTopId()), chatbot);
+		final D obj = service.findByTopId(topic.getTopId()).orElseThrow();
+		final boolean hasToBeDeactivate = service.hasToBeDeactivated(obj, chatbot);
 		if (hasToBeDeactivate || sentences.isEmpty()) {
 			uiMessageStack.info(service.getDeactivateMessage());
 		}

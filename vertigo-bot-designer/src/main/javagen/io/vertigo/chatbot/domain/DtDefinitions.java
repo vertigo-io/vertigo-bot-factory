@@ -19,6 +19,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum Definitions {
 		/** Objet de données BotExport. */
 		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
+		/** Objet de données BotPredefinedTopic. */
+		BotPredefinedTopic(io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic.class),
 		/** Objet de données Chatbot. */
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
 		/** Objet de données ChatbotNode. */
@@ -143,6 +145,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		topics,
 		/** Propriété 'map Context'. */
 		mapContext	}
+
+	/**
+	 * Enumération des champs de BotPredefinedTopic.
+	 */
+	public enum BotPredefinedTopicFields implements DtFieldName<io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic> {
+		/** Propriété 'Id topic'. */
+		topId,
+		/** Propriété 'Type topic code'. */
+		ttoCd,
+		/** Propriété 'SmallTalk / Script'. */
+		value	}
 
 	/**
 	 * Enumération des champs de Chatbot.

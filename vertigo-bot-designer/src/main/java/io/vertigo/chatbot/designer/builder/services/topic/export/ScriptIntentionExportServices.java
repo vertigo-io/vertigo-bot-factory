@@ -57,7 +57,7 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 	@Override
 	public String getBasicBt(final Chatbot bot, final String ktoCd) {
 		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
-		final ScriptIntention scriptIntention = scriptIntentionServices.findByTopId(topic.getTopId());
+		final ScriptIntention scriptIntention = scriptIntentionServices.findByTopId(topic.getTopId()).orElseThrow();
 		return scriptIntention.getScript();
 	}
 
