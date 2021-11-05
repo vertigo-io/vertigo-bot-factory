@@ -161,7 +161,7 @@
 				        </q-item-section>
 						<q-item-section side left th:if="${!model.modeReadOnly}">
 							<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.nluTrainingSentences.length - 1 - index})"
-								color="primary" dense size="sm" icon="delete" class="bg-grey" aria-label="Remove" title="Remove"></q-btn>
+								color="primary" dense size="sm" icon="delete" class="bg-grey" th:aria-label="#{action.remove}" th:title="#{action.remove}"></q-btn>
 						</q-item-section>
 						<q-item-section>
 							{{nluTrainingSentence.text}}
