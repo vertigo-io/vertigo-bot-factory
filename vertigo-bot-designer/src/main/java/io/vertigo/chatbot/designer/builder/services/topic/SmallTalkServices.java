@@ -18,9 +18,11 @@ import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.smallTalk.SmallTalkPAO;
+import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -46,6 +48,9 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 
 	@Inject
 	private SmallTalkPAO smallTalkPAO;
+
+	@Inject
+	private NodeServices nodeServices;
 
 	@Inject
 	private TopicDAO topicDAO;
@@ -81,18 +86,25 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 		final SmallTalk savedST = save(smallTalk);
 
 		// save utter textes, remove all + create all
-		utterTextServices.removeAllUtterTextBySmtId(chatbot, savedST.getSmtId());
-		utterTextServices.createNoBlankUtterTextBySmallTalk(chatbot, savedST, utterTexts);
+		DtList<UtterText> oldUtterText = utterTextServices.getUtterTextList(chatbot, smallTalk);
+		if (!HashUtils.generateHashCodeForUtterTexts(oldUtterText).equals(HashUtils.generateHashCodeForUtterTexts(utterTexts))) {
+			utterTextServices.removeAllUtterTextBySmtId(chatbot, savedST.getSmtId());
+			utterTextServices.createNoBlankUtterTextBySmallTalk(chatbot, savedST, utterTexts);
+			nodeServices.updateNodes(chatbot);
+		}
 
 		// remove and create buttons
-
-		for (final ResponseButton button : buttonList) {
-			if (TopicsUtils.checkSpecialCharacters(button.getText())) {
-				throw new VUserException("The button cannot contain the following characters : '[', ']', '|', '¤'. ");
+		DtList<ResponseButton> oldResponseButtons = responsesButtonServices.getResponsesButtonList(chatbot, smallTalk);
+		if (!HashUtils.generateHashCodeForResponseButtons(oldResponseButtons).equals(HashUtils.generateHashCodeForResponseButtons(buttonList))) {
+			for (final ResponseButton button : buttonList) {
+				if (TopicsUtils.checkSpecialCharacters(button.getText())) {
+					throw new VUserException("The button cannot contain the following characters : '[', ']', '|', '¤'. ");
+				}
 			}
+			responsesButtonServices.removeAllButtonsBySmtId(chatbot, savedST);
+			responsesButtonServices.saveAllButtonsBySmtId(chatbot, savedST, buttonList);
+			nodeServices.updateNodes(chatbot);
 		}
-		responsesButtonServices.removeAllButtonsBySmtId(chatbot, savedST);
-		responsesButtonServices.saveAllButtonsBySmtId(chatbot, savedST, buttonList);
 		return savedST;
 	}
 

@@ -16,6 +16,7 @@ import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.scriptIntention.ScriptIntentionPAO;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.domain.DtDefinitions.ScriptIntentionFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -37,6 +38,9 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 	private ScriptIntentionPAO scriptIntentionPAO;
 
 	@Inject
+	private NodeServices nodeServices;
+
+	@Inject
 	private TopicDAO topicDAO;
 
 	public ScriptIntention getScriptIntentionById(@SecuredOperation("botVisitor") final Chatbot bot, final Long sinId) {
@@ -54,8 +58,13 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 			final ScriptIntention scriptIntention,
 			final Topic topic) {
 
+		ScriptIntention oldScriptIntention = findByTopId(topic.getTopId()).orElse(null);
+		if (oldScriptIntention == null || !oldScriptIntention.getScript().equals(scriptIntention.getScript())) {
+			nodeServices.updateNodes(chatbot);
+		}
 		scriptIntention.setTopId(topic.getTopId());
-		return save(scriptIntention);
+		return this.save(scriptIntention);
+
 	}
 
 	@Override
