@@ -13,7 +13,6 @@ import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.scriptIntention.ScriptIntentionPAO;
@@ -106,18 +105,6 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 		sin.setTopId(topic.getTopId());
 		sin.setScript(text);
 		save(chatbot, sin, topic);
-	}
-
-	@Override
-	public UtterText getBasicUtterTextByTopId(final Long topId) {
-		Assertion.check()
-				.isNotNull(topId);
-		// ---
-		final UtterText utt = new UtterText();
-		final ScriptIntention sin = findByTopId(topId).orElseThrow();
-		utt.setText(sin != null ? sin.getScript() : null);
-		return utt;
-
 	}
 
 	@Override

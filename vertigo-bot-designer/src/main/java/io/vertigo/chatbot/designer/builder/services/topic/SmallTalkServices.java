@@ -155,7 +155,6 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 		return smallTalkDAO.findOptional(Criterions.isEqualTo(SmallTalkFields.topId, topId));
 	}
 
-	@Override
 	public UtterText getBasicUtterTextByTopId(final Long topId) {
 		return utterTextServices.getBasicUtterTextByTopId(topId);
 	}
