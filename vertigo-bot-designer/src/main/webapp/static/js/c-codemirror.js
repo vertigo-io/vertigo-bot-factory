@@ -5,6 +5,7 @@ Vue.component('c-codemirror', {
 		field:			{ type: String,  required: true },
 		compositeNode: 	{ type: String,  'default': 'Noeud composite'},
 		simpleNode: 	{ type: String,  'default': 'Noeud simple'},
+		error : false
 	},
 	data: function () {
 		return {
@@ -22,63 +23,64 @@ Vue.component('c-codemirror', {
 	template : 
 		`	<div>
 				<q-btn-dropdown class="q-ma-sm" v-if="modeEdit"  color="primary" :label=compositeNode>
-				      <q-list>
-				        <q-item clickable v-close-popup @click="addSequence">
-				          <q-item-section>
-				            <q-item-label>Sequence</q-item-label>
-				          </q-item-section>
-				        </q-item>
+					<q-list>
+						<q-item clickable v-close-popup @click="addSequence">
+							<q-item-section>
+								<q-item-label>Sequence</q-item-label>
+							</q-item-section>
+						</q-item>
 				
-				        <q-item clickable v-close-popup @click="addChooseButton">
-				          <q-item-section>
-				            <q-item-label>choose Button</q-item-label>
-				          </q-item-section>
-				        </q-item>
+						<q-item clickable v-close-popup @click="addChooseButton">
+							<q-item-section>
+								<q-item-label>choose Button</q-item-label>
+							</q-item-section>
+						</q-item>
 				
-				        <q-item clickable v-close-popup @click="addChooseButtonNlu">
-				          <q-item-section>
-				            <q-item-label>chooseButtonNlu</q-item-label>
-				          </q-item-section>
-				        </q-item>
-				        
-    			        <q-item clickable v-close-popup @click="addSwitch">
-				          <q-item-section>
-				            <q-item-label>switch</q-item-label>
-				          </q-item-section>
-				        </q-item>
-				        
-				        <q-item clickable v-close-popup @click="addCase">
-				          <q-item-section>
-				            <q-item-label>case</q-item-label>
-				          </q-item-section>
-				        </q-item>
-				      </q-list>
-			      </q-btn-dropdown>
-			      
-			      <q-btn-dropdown class="q-ma-sm" v-if="modeEdit" color="primary" :label=simpleNode>
-				      <q-list>
-				        <q-item clickable v-close-popup @click="addButton">
-				          <q-item-section>
-				            <q-item-label>Button</q-item-label>
-				          </q-item-section>
-				        </q-item>
+						<q-item clickable v-close-popup @click="addChooseButtonNlu">
+							<q-item-section>
+								<q-item-label>chooseButtonNlu</q-item-label>
+							</q-item-section>
+						</q-item>
+						
+						<q-item clickable v-close-popup @click="addSwitch">
+							<q-item-section>
+								<q-item-label>switch</q-item-label>
+							</q-item-section>
+						</q-item>
+						
+						<q-item clickable v-close-popup @click="addCase">
+							<q-item-section>
+								<q-item-label>case</q-item-label>
+							</q-item-section>
+						</q-item>
+					</q-list>
+				</q-btn-dropdown>
 				
-				        <q-item clickable v-close-popup @click="addSay">
-				          <q-item-section>
-				            <q-item-label>Say</q-item-label>
-				          </q-item-section>
-				        </q-item>
-				
-				        <q-item clickable v-close-popup @click="addInputString">
-				          <q-item-section>
-				            <q-item-label>inputString</q-item-label>
-				          </q-item-section>
-				        </q-item>
-				      </q-list>
-			      </q-btn-dropdown>
-				<codemirror ref="cm" v-model='VertigoUi.vueData[object][field]' :options="options"></codemirror>
+				<q-btn-dropdown class="q-ma-sm" v-if="modeEdit" color="primary" :label=simpleNode>
+					<q-list>
+						<q-item clickable v-close-popup @click="addButton">
+							<q-item-section>
+								<q-item-label>Button</q-item-label>
+							</q-item-section>
+						</q-item>
+						
+						<q-item clickable v-close-popup @click="addSay">
+							<q-item-section>
+								<q-item-label>Say</q-item-label>
+							</q-item-section>
+						</q-item>
+						
+						<q-item clickable v-close-popup @click="addInputString">
+							<q-item-section>
+								<q-item-label>inputString</q-item-label>
+							</q-item-section>
+						</q-item>
+					</q-list>
+				</q-btn-dropdown>
+				<div :style="error ? 'border: 2px solid;border-color: #C10015;border-radius:5px;':''">
+					<codemirror ref="cm" v-model='VertigoUi.vueData[object][field]' :options="options"></codemirror>
+				</div>
 				<input type="hidden" :name="'vContext['+object+']['+field+']'" :value="VertigoUi.vueData[object][field]"/>
-				
 				
 			</div>
 		`

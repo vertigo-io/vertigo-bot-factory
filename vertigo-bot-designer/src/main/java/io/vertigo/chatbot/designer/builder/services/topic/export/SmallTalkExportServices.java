@@ -157,7 +157,7 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Sma
 	@Override
 	public String getBasicBt(final Chatbot bot, final String ktoCd) {
 		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
-		final SmallTalk smallTalk = smallTalkServices.findByTopId(topic.getTopId());
+		final SmallTalk smallTalk = smallTalkServices.findByTopId(topic.getTopId()).orElseThrow();
 		final UtterText utterText = smallTalkServices.getBasicUtterTextByTopId(topic.getTopId());
 		final UtterTextExport utterTextExport = new UtterTextExport();
 

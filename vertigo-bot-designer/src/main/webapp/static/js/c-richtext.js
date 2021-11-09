@@ -4,51 +4,34 @@ Vue.component('c-richtext', {
 		value:    { type: String,  required: true },
 		name:     { type: String,  required: true },
 		modeEdit: { type: Boolean, 'default': true },
-		locale:   { type: String, 'default': 'en_US' },		empty : { type: String,  required: true },
-		showWarning: false,
-		styleWYSIWYG:  "border: 1px solid;border-color: #D1CDC8;border-radius:5px;",
+		locale:   { type: String, 'default': 'en_US' },
+		error : false
 	},
 	data: function () {
 		return {
-			imageUrl: null,			
+			imageUrl: null,	
 		}
 	},
 	template : `
 	<div>
-		<div	aria-hidden="true"
-	            v-show="showWarning"
-		        role="presentation"
-		        style="font-size: 20px; color:#FF0000"
-		        class="row wrap"
-			>
-			
-			
-			<i class="absolute-middle-left q-pt-xs q-pr-sm material-icons q-icon notranslate text-negative">error</i>
-           	{{empty}}
-           	</div>
-           	
 		<div class="row wrap">
-			
 			<input v-if="name" class="hidden" type="text" :name="name" :value="value" />
 			
-			
-           
 			<q-editor v-bind:value="value" @input="val => $emit('input', val)"
-			v-model="value"
+				v-model="value"
 				v-if="modeEdit"
-				:style="styleWYSIWYG"
-				@focusout="checkMessage()"				
+				:style="error ? 'border: 2px solid;border-color: #C10015;border-radius:5px;':''"
 				@keyup.enter.stop
 				class="col-grow"
 				ref="editor_ref"
-			    @paste.native="evt => pasteCapture(evt, 'editor_ref')"			    
+			    @paste.native="evt => pasteCapture(evt, 'editor_ref')" 
 				:definitions="{
 					hr: {
 						tip: 'Pause'
 						},
 					customimage: {
 						tip: 'Insert image',
-						label: 'Image',							
+						label: 'Image',
 						handler: addCustomImage
 					},
 				}"
@@ -88,23 +71,23 @@ Vue.component('c-richtext', {
 					 <q-form @submit="handleCustomImage" class="q-gutter-md">
 						<q-card-section>
 							<div class="text-h6" >{{locale == 'fr_FR' ? 'Ajouter une image' : 'Add image'}}</div>
-						</q-card-section>	
+						</q-card-section>
 						
-						<q-card-section>							
+						<q-card-section>
 							<q-input 
 								filled 
-								type="text" 					
-								v-model="imageUrl"	
+								type="text"
+								v-model="imageUrl"
 								label = "URL"	
 								ref="imageUrlRef"
 								autofocus
 								required
 	       					>
-       					</q-card-section>	
+       					</q-card-section>
        					
-						<q-card-actions align="around">			
-							<q-btn flat :label="locale == 'fr_FR' ? 'Annuler' : 'Cancel'" v-close-popup color="primary"/>		
-							<q-btn :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>							
+						<q-card-actions align="around">
+							<q-btn flat :label="locale == 'fr_FR' ? 'Annuler' : 'Cancel'" v-close-popup color="primary"/>
+							<q-btn :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>
 						</q-card-actions>
 					</div>
 				</q-card
@@ -167,7 +150,7 @@ Vue.component('c-richtext', {
 						.split(/<hr>|<hr \/>/);
 			},
 			checkMessage() {
-		      if (this.value == "") {
+		      if (this.value == "" || this.value == "<br />" || this.value == "<div><br></div>") {
 		        this.styleWYSIWYG = "border: 2px solid;border-color: #C10015;border-radius:5px;";
 		        this.showWarning = true;
 		      } else {
@@ -178,19 +161,19 @@ Vue.component('c-richtext', {
 			
 			addCustomImage () {
 		     this.$refs.newImage.show();
-     		 this.imageUrl = null
+     		 this.imageUrl = null;
 		    },
 		    
-		        
+		    
 			handleCustomImage () {
-			  var url = this.$refs.imageUrlRef.value			  
-	 		  this.$refs.newImage.hide()
+			  var url = this.$refs.imageUrlRef.value;
+	 		  this.$refs.newImage.hide();
 			  
-		      const edit = this.$refs.editor_ref
-		      edit.caret.restore()
-		      edit.runCmd('insertHTML', `<div class="imgUrl"><img class="imgUrl" src="${url}"/></div>`)
-		      edit.focus()      
-		    }		
+		      const edit = this.$refs.editor_ref;
+		      edit.caret.restore();
+		      edit.runCmd('insertHTML', `<div class="imgUrl"><img class="imgUrl" src="${url}"/></div>`);
+		      edit.focus();
+		    }
 		}
 		
 });

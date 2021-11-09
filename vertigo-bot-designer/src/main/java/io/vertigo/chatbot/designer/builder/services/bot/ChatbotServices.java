@@ -1,7 +1,6 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -12,9 +11,8 @@ import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
-import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
@@ -26,8 +24,10 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.utils.DateUtils;
+import io.vertigo.chatbot.designer.utils.StringUtils;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -82,22 +82,22 @@ public class ChatbotServices implements Component {
 	@Inject
 	private TopicLabelServices topicLabelServices;
 
-	static final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern(DateUtils.FORMAT_JJMMAAAA);
-
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
-			final UtterText utterTextFailure,
-			final UtterText utterTextStart,
-			final UtterText utterTextEnd,
-			final Topic topicFailure,
-			final Topic topicStart,
-			final Topic topicEnd,
-			final TopicCategory topicCategory) {
+			final BotPredefinedTopic botTopicFailure,
+			final BotPredefinedTopic botTopicStart,
+			final BotPredefinedTopic botTopicEnd) {
 
-		Assertion.check().isNotNull(chatbot);
-		Assertion.check().isNotNull(utterTextFailure);
-		Assertion.check().isNotNull(utterTextStart);
-		Assertion.check().isNotNull(utterTextEnd);
+		Assertion.check()
+				.isNotNull(chatbot)
+				.isNotNull(botTopicFailure)
+				.isNotNull(botTopicStart)
+				.isNotNull(botTopicEnd)
+				.isFalse(StringUtils.isHtmlEmpty(botTopicFailure.getValue()), "Failure text must have content")
+				.isFalse(StringUtils.isHtmlEmpty(botTopicStart.getValue()), "Start text must have content")
+				.isFalse(StringUtils.isHtmlEmpty(botTopicEnd.getValue()), "End text must have content");
 		// ---
+
+		final boolean newBot = chatbot.getBotId() == null;
 
 		// Avatar
 		Long oldAvatar = null;
@@ -118,17 +118,23 @@ public class ChatbotServices implements Component {
 		}
 
 		// save default topics
-		topicCategory.setBotId(chatbot.getBotId());
-		topicCategoryServices.saveCategory(chatbot, topicCategory);
+		final TopicCategory topicCategory;
+		if (newBot) {
+			topicCategory = topicCategoryServices.initializeBasicCategory();
+			topicCategory.setBotId(chatbot.getBotId());
+			topicCategoryServices.saveCategory(chatbot, topicCategory);
+		} else {
+			topicCategory = topicCategoryServices.getTechnicalCategoryByBot(chatbot);
+		}
 
 		//TopicFailure
-		topicServices.initializeBasicTopic(savedChatbot, topicCategory, topicFailure, utterTextFailure);
+		topicServices.saveBotTopic(savedChatbot, topicCategory, KindTopicEnum.FAILURE.name(), botTopicFailure);
 
 		//Topic Start
-		topicServices.initializeBasicTopic(savedChatbot, topicCategory, topicStart, utterTextStart);
+		topicServices.saveBotTopic(savedChatbot, topicCategory, KindTopicEnum.START.name(), botTopicStart);
 
 		//Topic End
-		topicServices.initializeBasicTopic(savedChatbot, topicCategory, topicEnd, utterTextEnd);
+		topicServices.saveBotTopic(savedChatbot, topicCategory, KindTopicEnum.END.name(), botTopicEnd);
 
 		return savedChatbot;
 	}
@@ -211,7 +217,7 @@ public class ChatbotServices implements Component {
 	}
 
 	public String getBotDateDisplay(final Optional<Chatbot> bot) {
-		return bot.isPresent() ? bot.get().getCreationDate().format(formatterDate) : null;
+		return bot.isPresent() ? DateUtils.toStringJJMMAAAA(bot.get().getCreationDate()) : null;
 	}
 
 }

@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/botDetailLayout}" th:with="tab=informations, noNavigation=${model.modeCreate}"
+	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=informations, noNavigation=${model.modeCreate}"
 	>
 	
 	<head>
@@ -47,6 +47,13 @@
 		</section>
 		
 		
+		<section layout:fragment="content-nav">
+			<q-item tag="a" href="#identity" th:text="#{bot.identity}"></q-item>
+			<q-item tag="a" href="#welcome" th:text="#{bot.welcome}"></q-item>
+			<q-item tag="a" href="#fallback" th:text="#{bot.fallback}"></q-item>
+			<q-item tag="a" href="#end" th:text="#{bot.end}"></q-item>
+			<q-item th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" tag="a" href="#nodes" th:text="#{bot.nodes}"></q-item>
+		</section>
 		
 		<section layout:fragment="content">
 
@@ -63,90 +70,112 @@
 				<vu:text-area object="bot" field="description" readonly="${model.modeReadOnly}"/>
 			</vu:block>
 			
-			<vu:block id="custom" th:title="#{bot.customization}">
-				<vu:include-data object="utterTextFailure" field="text" />
-				<vu:include-data object="utterTextStart" field="text" />
-				<vu:include-data object="utterTextEnd" field="text" />
-				<vu:include-data object="typeTopicList" field="'*'" />
-				<vu:include-data object="ttoCdFailure" field="'*'" />
-				<vu:include-data object="ttoCdStart" field="'*'" />
-				<vu:include-data object="ttoCdEnd" field="'*'" />
-				<vu:include-data-primitive key="locale"/>
-				<div class="text-subtitle1" th:text=#{bot.welcome}></div>
-					<div>				
-					   <q-btn-toggle
-					      th:if="${!model.modeReadOnly}"
-					        v-model="vueData.ttoCdStart"
-					        toggle-color="primary"
-					        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
-							th::mode-edit="${!model.modeReadOnly}"
-					      />
-				    </div>
-				    <input type="hidden" name="vContext[ttoCdStart]" :value="vueData.ttoCdStart" />
-				    <div v-if="vueData.ttoCdStart == 'SMALLTALK'">
-						<c-richtext 
-							class="q-pb-sm"
-							v-model="vueData.utterTextStart.text"
-							name="vContext[utterTextStart][text]"
-							:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"						
-							
-							:locale="vueData.locale"
-							th::mode-edit="${!model.modeReadOnly}"
->
-						</c-richtext>
-					</div>
-					<div v-else>
-						<c-codemirror object="utterTextStart" field="text" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
-
-					</div>
-				<div class="text-subtitle1" th:text=#{bot.fallback}></div>
-					<div>				
-						<q-btn-toggle
-					      	th:if="${!model.modeReadOnly}"
-					        v-model="vueData.ttoCdFailure"
-					        toggle-color="primary"
-					        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
-					      	th::mode-edit="${!model.modeReadOnly}"
-					     />
-				    </div>
-				    <input type="hidden" name="vContext[ttoCdFailure]" :value="vueData.ttoCdFailure" />
-				    <div v-if="vueData.ttoCdFailure == 'SMALLTALK'">
-						<c-richtext							
-							class="q-pb-sm"
-							v-model="vueData.utterTextFailure.text"
-							name="vContext[utterTextFailure][text]"
-							:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"	
-							:locale="vueData.locale"
-							th::mode-edit="${!model.modeReadOnly}">
-						</c-richtext>
-					</div>
-					<div v-else>
-						<c-codemirror object="utterTextFailure" field="text" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
-					</div>
-				<div class="text-subtitle1" th:text=#{bot.end}></div>
-					<div>				
-						<q-btn-toggle
-					      	th:if="${!model.modeReadOnly}"
-					        v-model="vueData.ttoCdEnd"
-					        toggle-color="primary"
-					        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
-					      	th::mode-edit="${!model.modeReadOnly}"
-						/>
-				    </div>
-				    <input type="hidden" name="vContext[ttoCdEnd]" :value="vueData.ttoCdEnd" />
-				    <div v-if="vueData.ttoCdEnd == 'SMALLTALK'">
-						<c-richtext						
-							class="q-pb-sm"
-							v-model="vueData.utterTextEnd.text"
-							name="vContext[utterTextEnd][text]"
-							:empty = "vueData.locale == 'fr_FR' ? 'Le champ doit être renseigné' : 'Field must be completed'"	
-							:locale="vueData.locale"
-							th::mode-edit="${!model.modeReadOnly}">
-						</c-richtext>
-					</div>
-					<div v-else>
-						<c-codemirror object="utterTextEnd" field="text" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
-					</div>
+			<vu:include-data-primitive key="locale"/>
+			<vu:include-data object="typeTopicList" field="'*'" />
+			
+			<vu:block id="welcome" th:title="#{bot.welcome}">
+				<vu:include-data object="startTopic" field="'*'" />
+				
+				<div>				
+				   <q-btn-toggle
+				      th:if="${!model.modeReadOnly}"
+				        v-model="vueData.startTopic.ttoCd"
+				        toggle-color="primary"
+				        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
+						th::mode-edit="${!model.modeReadOnly}"
+				      />
+			    </div>
+			    <input type="hidden" name="vContext[startTopic][ttoCd]" :value="vueData.startTopic.ttoCd" />
+			    <div v-if="vueData.startTopic.ttoCd == 'SMALLTALK'">
+					<c-richtext 
+						class="q-py-sm"
+						v-model="vueData.startTopic.value"
+						name="vContext[startTopic][value]"
+						:error="hasFieldsError('startTopic', 'value')"
+						:locale="vueData.locale"
+						th::mode-edit="${!model.modeReadOnly}">
+					</c-richtext>
+				</div>
+				<div v-else>
+					<c-codemirror
+						object="startTopic"
+						field="value"
+						:error="hasFieldsError('startTopic', 'value')"
+						th::mode-edit="${!model.modeReadOnly}">
+					</c-codemirror>
+				</div>
+				
+				<div v-if="hasFieldsError('startTopic', 'value')" class="text-red">{{getErrorMessage('startTopic', 'value')}}</div>
+			</vu:block>
+			
+			<vu:block id="fallback" th:title="'#{bot.fallback}'">
+				<vu:include-data object="failureTopic" field="'*'" />
+				
+				<div>				
+					<q-btn-toggle
+				      	th:if="${!model.modeReadOnly}"
+				        v-model="vueData.failureTopic.ttoCd"
+				        toggle-color="primary"
+				        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
+				      	th::mode-edit="${!model.modeReadOnly}"
+				     />
+			    </div>
+			    <input type="hidden" name="vContext[failureTopic][ttoCd]" :value="vueData.failureTopic.ttoCd" />
+			    <div v-if="vueData.failureTopic.ttoCd == 'SMALLTALK'">
+					<c-richtext 
+						class="q-py-sm"
+						v-model="vueData.failureTopic.value"
+						name="vContext[failureTopic][value]"
+						:error="hasFieldsError('failureTopic', 'value')"
+						:locale="vueData.locale"
+						th::mode-edit="${!model.modeReadOnly}">
+					</c-richtext>
+				</div>
+				<div v-else>
+					<c-codemirror
+						object="failureTopic"
+						field="value"
+						:error="hasFieldsError('failureTopic', 'value')"
+						th::mode-edit="${!model.modeReadOnly}">
+					</c-codemirror>
+				</div>
+				
+				<div v-if="hasFieldsError('failureTopic', 'value')" class="text-red">{{getErrorMessage('failureTopic', 'value')}}</div>
+			</vu:block>
+			
+			<vu:block id="end" th:title="#{bot.end}">
+				<vu:include-data object="endTopic" field="'*'" />
+				
+				<div>				
+					<q-btn-toggle
+				      	th:if="${!model.modeReadOnly}"
+				        v-model="vueData.endTopic.ttoCd"
+				        toggle-color="primary"
+				        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
+				      	th::mode-edit="${!model.modeReadOnly}"
+					/>
+			    </div>
+			    <input type="hidden" name="vContext[endTopic][ttoCd]" :value="vueData.endTopic.ttoCd" />
+			    <div v-if="vueData.endTopic.ttoCd == 'SMALLTALK'">
+					<c-richtext	
+						class="q-py-sm"
+						v-model="vueData.endTopic.value"
+						name="vContext[endTopic][value]"
+						:error="hasFieldsError('endTopic', 'value')"
+						:locale="vueData.locale"
+						th::mode-edit="${!model.modeReadOnly}">
+					</c-richtext>
+				</div>
+				<div v-else>
+					<c-codemirror
+						object="endTopic"
+						field="value"
+						:error="hasFieldsError('endTopic', 'value')"
+						th::mode-edit="${!model.modeReadOnly}">
+					</c-codemirror>
+				</div>
+				
+				<div v-if="hasFieldsError('endTopic', 'value')" class="text-red">{{getErrorMessage('endTopic', 'value')}}</div>
 			</vu:block>
 			
 			

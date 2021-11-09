@@ -107,13 +107,7 @@ public class UtterTextServices implements Component {
 		utterTextPAO.removeAllUtterTextByBotId(bot.getBotId());
 	}
 
-	public UtterText initNewBasicUttText(final String ktoCd) {
-		final UtterText utterText = new UtterText();
-		utterText.setText(initializeDefaultText(ktoCd));
-		return utterText;
-	}
-
-	private static String initializeDefaultText(final String ktoCd) {
+	public static String initializeDefaultText(final String ktoCd) {
 		switch (ktoCd) {
 			case "START":
 				return MessageText.of(KindTopicMultilingualResources.DEFAULT_START).getDisplay();

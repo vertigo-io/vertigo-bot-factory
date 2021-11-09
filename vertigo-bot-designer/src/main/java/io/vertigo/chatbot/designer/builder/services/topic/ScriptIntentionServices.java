@@ -7,20 +7,22 @@ import javax.inject.Inject;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.ScriptIntentionDAO;
+import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.scriptIntention.ScriptIntentionPAO;
+import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.domain.DtDefinitions.ScriptIntentionFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 
@@ -33,6 +35,9 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 
 	@Inject
 	private ScriptIntentionPAO scriptIntentionPAO;
+
+	@Inject
+	private TopicDAO topicDAO;
 
 	public ScriptIntention getScriptIntentionById(@SecuredOperation("botVisitor") final Chatbot bot, final Long sinId) {
 		Assertion.check().isNotNull(sinId);
@@ -50,17 +55,14 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 			final Topic topic) {
 
 		scriptIntention.setTopId(topic.getTopId());
-		final ScriptIntention savedSI = this.save(scriptIntention);
-
-		return savedSI;
+		return save(scriptIntention);
 	}
 
 	@Override
-	public void delete(@SecuredOperation("botAdm") final Chatbot chatbot, final ScriptIntention scriptIntention, final Topic topic) {
-
+	public void deleteIfExists(@SecuredOperation("botAdm") final Chatbot chatbot, final Topic topic) {
 		// delete scriptIntention
-		delete(scriptIntention);
-
+		findByTopId(topic.getTopId())
+				.ifPresent(this::delete);
 	}
 
 	public void removeAllScriptIntentionFromBot(@SecuredOperation("botAdm") final Chatbot bot) {
@@ -91,42 +93,38 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 	}
 
 	@Override
-	public ScriptIntention findByTopId(final Long topId) {
-		if (topId != null) {
-			final Optional<ScriptIntention> result = scriptIntentionDAO.findOptional(Criterions.isEqualTo(ScriptIntentionFields.topId, topId));
-			return result.isPresent() ? result.get() : null;
-		}
-		return null;
+	public Optional<ScriptIntention> findByTopId(final Long topId) {
+		Assertion.check().isNotNull(topId);
+
+		return scriptIntentionDAO.findOptional(Criterions.isEqualTo(ScriptIntentionFields.topId, topId));
 	}
 
 	@Override
-	public void initializeBasic(final Chatbot chatbot, final Topic topic, final String text) {
-		final ScriptIntention sin = new ScriptIntention();
+	public void createOrUpdateFromTopic(final Chatbot chatbot, final Topic topic, final String text) {
+		final ScriptIntention sin = findByTopId(topic.getTopId()).orElse(new ScriptIntention());
 		sin.setTopId(topic.getTopId());
 		sin.setScript(text);
 		save(chatbot, sin, topic);
 	}
 
 	@Override
-	public boolean isEnabled(final ScriptIntention object, final boolean isEnabled, final Chatbot bot) {
-		return object.getScript() != null ? (!hasToBeDeactivated(object, bot) && isEnabled) : false;
-	}
-
-	@Override
-	public UtterText getBasicUtterTextByTopId(final Long topId) {
+	public BotPredefinedTopic getBotPredefinedTopicByTopId(final Long topId) {
 		Assertion.check()
 				.isNotNull(topId);
 		// ---
-		final UtterText utt = new UtterText();
-		final ScriptIntention sin = findByTopId(topId);
-		utt.setText(sin != null ? sin.getScript() : null);
-		return utt;
+		final Topic topic = topicDAO.get(topId);
+		final ScriptIntention sin = findByTopId(topId).orElseThrow();
 
+		final BotPredefinedTopic predefinedTopic = new BotPredefinedTopic();
+		predefinedTopic.setTopId(topId);
+		predefinedTopic.setTtoCd(topic.getTtoCd());
+		predefinedTopic.setValue(sin.getScript());
+		return predefinedTopic;
 	}
 
 	@Override
 	public boolean hasToBeDeactivated(final ScriptIntention object, final Chatbot bot) {
-		return object.getScript() != null ? object.getScript().isBlank() : true;
+		return StringUtil.isBlank(object.getScript());
 	}
 
 	@Override
