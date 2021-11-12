@@ -9,13 +9,7 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.SmallTalkDAO;
 import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
-import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
-import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
-import io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm;
-import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.domain.topic.*;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
@@ -201,5 +195,12 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 	@Override
 	public SmallTalk saveFromSaveTopicObject(final SaveTopicObject<SmallTalk> saveObject) {
 		return saveSmallTalk(saveObject.getBot(), saveObject.getObject(), saveObject.getUtters(), saveObject.getButtons(), saveObject.getTopic());
+	}
+
+	@Override
+	public boolean saveTopic(Topic topic, Chatbot chatbot, ScriptIntention scriptIntention, SmallTalk smallTalk, DtList<ResponseButton> buttonList, DtList<UtterText> utterTexts) {
+		final SaveTopicObject<SmallTalk> objectToSave = new SaveTopicObject<>(topic, chatbot, smallTalk, buttonList, utterTexts);
+		saveFromSaveTopicObject(objectToSave);
+		return isEnabled(smallTalk, topic.getIsEnabled(), chatbot);
 	}
 }

@@ -9,10 +9,7 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.ScriptIntentionDAO;
 import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
-import io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm;
-import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.*;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.scriptIntention.ScriptIntentionPAO;
@@ -144,6 +141,13 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 	@Override
 	public ScriptIntention saveFromSaveTopicObject(final SaveTopicObject<ScriptIntention> saveObject) {
 		return save(saveObject.getBot(), saveObject.getObject(), saveObject.getTopic());
+	}
+
+	@Override
+	public boolean saveTopic(Topic topic, Chatbot chatbot, ScriptIntention scriptIntention, SmallTalk smallTalk, DtList<ResponseButton> buttonList, DtList<UtterText> utterTexts) {
+		final SaveTopicObject<ScriptIntention> objectToSave = new SaveTopicObject<>(topic, chatbot, scriptIntention, buttonList, utterTexts);
+		saveFromSaveTopicObject(objectToSave);
+		return isEnabled(scriptIntention, topic.getIsEnabled(), chatbot);
 	}
 
 }

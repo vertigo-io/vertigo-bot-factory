@@ -29,7 +29,7 @@
 	
 	<body>
 		<section layout:fragment="content-header-actions">
-			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/scriptIntention/(id=${model.bot.botId})} + ${model.object.sinId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/scriptIntention/(id=${model.bot.botId})} + ${model.scriptIntention.sinId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
@@ -45,13 +45,13 @@
 			
 		</section>
 		
-		<section layout:fragment="content-specific">
+		<section th:fragment="content-specific">
 			<vu:popup action="_delete" vModel="showPopup" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
 			
 			<vu:block id="script" title="Script">
-				<vu:include-data object="object" field="script" />
+				<vu:include-data object="scriptIntention" field="script" />
 
-				<c-codemirror object="object" field="script" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
+				<c-codemirror object="scriptIntention" field="script" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
 				
 			</vu:block>
 			
