@@ -21,6 +21,7 @@ import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
+import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
@@ -71,15 +72,20 @@ public class TopicServices implements Component, Activeable {
 		return topicPAO.getTopicIhmById(id);
 	}
 
-	public Topic save(final Topic topic) {
+	private Topic doSave(final Topic topic, final Chatbot bot) {
 		checkPatternCode(topic.getCode());
 		//create code for export
 		hasUniqueCode(topic);
+		if (topic.getTopId() != null) {
+			Topic oldTopic = this.findTopicById(topic.getTopId());
+			if (!oldTopic.getCode().equals(topic.getCode())) {
+				nodeServices.updateNodes(bot);
+			}
+		}
 		return topicDAO.save(topic);
 	}
 
-	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Chatbot bot, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences,
-			final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
+	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Chatbot bot, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
 		//check if code matches the pattern
 		checkPatternCode(topic.getCode());
@@ -90,11 +96,16 @@ public class TopicServices implements Component, Activeable {
 		//create code for export
 		hasUniqueCode(topic);
 		// save and remove NTS
+		DtList<NluTrainingSentence> oldNluSentences = getNluTrainingSentenceByTopic(bot, topic);
 		final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences);
 		removeNTS(nluTrainingSentencesToDelete);
 		topic.setIsEnabled(!ntsToSave.isEmpty() && isEnabled);
 
-		nodeServices.updateNodes(bot);
+		Topic oldTopic = this.findTopicById(topic.getTopId());
+		if (!oldTopic.getCode().equals(topic.getCode()) || !nluTrainingSentencesToDelete.isEmpty()
+				|| !HashUtils.generateHashCodeForNluTrainingSentences(oldNluSentences).equals(HashUtils.generateHashCodeForNluTrainingSentences(nluTrainingSentences))) {
+			nodeServices.updateNodes(bot);
+		}
 
 		return topicDAO.save(topic);
 	}
@@ -244,13 +255,12 @@ public class TopicServices implements Component, Activeable {
 				service.deleteIfExists(chatbot, topic);
 			}
 		}
-		nodeServices.updateNodes(chatbot);
 
 	}
 
-	public Topic saveTtoCd(final Topic topic, final String ttoCd) {
+	public Topic saveTtoCd(final Topic topic, final String ttoCd, final Chatbot bot) {
 		topic.setTtoCd(ttoCd);
-		return save(topic);
+		return doSave(topic, bot);
 	}
 
 	public UtterText initUtterTextBasicTopic(final Topic topic) {

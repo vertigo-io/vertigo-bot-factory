@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.designer.utils.HashUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
@@ -257,8 +258,9 @@ public class TopicFileExportServices implements Component {
 			// populate topic with infos from the TopicFileExport
 			topic = populateTopic(topic, chatbot, tfe, isEnabled, topCatId, nluTSToDelete, creation);
 
-			final Topic topicSaved = topicServices.save(topic, chatbot, topic.getIsEnabled(), new DtList<NluTrainingSentence>(NluTrainingSentence.class),
-					nluTSToDelete);
+			final DtList<NluTrainingSentence> nluTrainingSentences = new DtList<NluTrainingSentence>(NluTrainingSentence.class);
+
+			final Topic topicSaved = topicServices.save(topic, chatbot, topic.getIsEnabled(), nluTrainingSentences, nluTSToDelete);
 
 			// At this point, topicSaved isEnabled is false, because the topic has no nluTrainingSentences.
 			// So isEnabled is resetted anyway. it will be calculated again in the next loop
@@ -392,7 +394,7 @@ public class TopicFileExportServices implements Component {
 
 		final DtList<NluTrainingSentence> nluTrainingSentencesToDelete = topicServices.getNluTrainingSentenceByTopic(chatbot, topic);
 
-		topicServices.saveTtoCd(topic, TypeTopicEnum.SMALLTALK.name());
+		topicServices.saveTtoCd(topic, TypeTopicEnum.SMALLTALK.name(), chatbot);
 		smallTalkServices.saveSmallTalk(chatbot, smt, listResponse, listButtons, topic);
 		topicServices.save(topic, chatbot, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 	}

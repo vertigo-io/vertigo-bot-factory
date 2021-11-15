@@ -2,12 +2,14 @@ package io.vertigo.chatbot.designer.builder.services.topic;
 
 import java.util.Optional;
 
+import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.datamodel.structure.model.Entity;
 
+@Secured("BotUser")
 public interface TopicInterfaceServices<D extends Entity> {
 
 	D save(final D object);

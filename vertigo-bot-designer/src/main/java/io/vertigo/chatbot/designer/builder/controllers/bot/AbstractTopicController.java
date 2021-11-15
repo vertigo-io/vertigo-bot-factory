@@ -75,10 +75,10 @@ public abstract class AbstractTopicController<D extends Entity, S extends TopicI
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
 		final DtList<NluTrainingSentence> nluSentences = topicServices.getNluTrainingSentenceByTopic(bot, topic);
+
 		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluSentences);
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey,
 				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
-
 		viewContext.publishDto(topicCategoryKey, topicCategoryServices.getTopicCategoryById(bot, topic.getTopCatId()));
 		viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
 
@@ -96,8 +96,9 @@ public abstract class AbstractTopicController<D extends Entity, S extends TopicI
 		viewContext.publishDto(topicKey, topicServices.getNewTopic(bot));
 
 		viewContext.publishRef(newNluTrainingSentenceKey, "");
-		viewContext.publishDtListModifiable(nluTrainingSentencesKey,
-				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
+		
+		final DtList<NluTrainingSentence> nluSentences = new DtList<NluTrainingSentence>(NluTrainingSentence.class);
+		viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluSentences);
 		viewContext.publishDtList(nluTrainingSentencesToDeleteKey,
 				new DtList<NluTrainingSentence>(NluTrainingSentence.class));
 
@@ -252,7 +253,7 @@ public abstract class AbstractTopicController<D extends Entity, S extends TopicI
 		// add training sentence who is not "validated" by enter and still in the input
 		final SaveTopicObject<D> objectToSave = new SaveTopicObject<>(topic, chatbot, object, buttonList, utterTexts);
 		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
-		topicServices.saveTtoCd(topic, ttoCd);
+		topicServices.saveTtoCd(topic, ttoCd, chatbot);
 		service.saveFromSaveTopicObject(objectToSave);
 		topicServices.save(topic, chatbot, service.isEnabled(object, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
 		topicLabelServices.manageLabels(chatbot, topic, labels, initialLabels);

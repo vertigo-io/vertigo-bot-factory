@@ -11,10 +11,12 @@ import javax.inject.Inject;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.builder.meaning.MeaningPAO;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.dao.MeaningDAO;
 import io.vertigo.chatbot.designer.domain.Meaning;
 import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.chatbot.designer.domain.TupleSynonymIhm;
+import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
@@ -32,6 +34,9 @@ public class MeaningServices implements Component {
 
 	@Inject
 	private SynonymServices synonymServices;
+	
+	@Inject
+	private NodeServices nodeServices;
 
 	/**
 	 * get Meaning by id
@@ -65,6 +70,10 @@ public class MeaningServices implements Component {
 			final DtList<Synonym> synonyms,
 			final DtList<Synonym> synonymsToDelete) {
 
+		DtList<Synonym> oldSynonyms = synonymServices.getAllSynonymByMeaning(this.findMeaningById(meaning.getMeaId()));
+		if (!synonymsToDelete.isEmpty() || !HashUtils.generateHashCodeForSynonyms(oldSynonyms).equals(HashUtils.generateHashCodeForSynonyms(synonyms))) {
+			nodeServices.updateNodes(chatbot);
+		}
 		saveAllNotBlankSynonym(meaning, synonyms);
 		synonymServices.removeSynonym(synonymsToDelete);
 
