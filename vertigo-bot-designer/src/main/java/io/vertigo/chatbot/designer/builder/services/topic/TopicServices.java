@@ -96,13 +96,13 @@ public class TopicServices implements Component, Activeable {
 		//create code for export
 		hasUniqueCode(topic);
 		// save and remove NTS
-		DtList<NluTrainingSentence> oldNluSentences = getNluTrainingSentenceByTopic(bot, topic);
+		DtList<NluTrainingSentence> oldNluSentences = topic.getTopId() != null ? getNluTrainingSentenceByTopic(bot, topic) : new DtList<>(NluTrainingSentence.class);
 		final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences);
 		removeNTS(nluTrainingSentencesToDelete);
 		topic.setIsEnabled(!ntsToSave.isEmpty() && isEnabled);
 
-		Topic oldTopic = this.findTopicById(topic.getTopId());
-		if (!oldTopic.getCode().equals(topic.getCode()) || !nluTrainingSentencesToDelete.isEmpty()
+		Topic oldTopic = topic.getTopId() != null ? this.findTopicById(topic.getTopId()) : null;
+		if ((oldTopic != null && !oldTopic.getCode().equals(topic.getCode())) || !nluTrainingSentencesToDelete.isEmpty()
 				|| !HashUtils.generateHashCodeForNluTrainingSentences(oldNluSentences).equals(HashUtils.generateHashCodeForNluTrainingSentences(nluTrainingSentences))) {
 			nodeServices.updateNodes(bot);
 		}
