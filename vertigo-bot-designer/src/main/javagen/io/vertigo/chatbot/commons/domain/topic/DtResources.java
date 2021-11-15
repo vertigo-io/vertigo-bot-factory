@@ -253,6 +253,14 @@ public enum DtResources implements MessageKey {
 	fldTopicCategory$botId,
 
 	/***********************************************************
+	/** TopicCriteria.
+	/***********************************************************
+	/**
+	 * Category selection.
+	 */
+	fldTopicCriteria$catId,
+
+	/***********************************************************
 	/** TopicFileExport.
 	/***********************************************************
 	/**

@@ -356,3 +356,6 @@ create DtDefinition DtTopicFileExport {
 	field labels			{domain: DoLabel	 					label: "labels"				 	cardinality : "1"}
 }
 
+create DtDefinition DtTopicCriteria {
+	field catId 		{domain: DoId 					label: "Category selection"     }
+}
