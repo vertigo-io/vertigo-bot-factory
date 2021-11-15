@@ -32,16 +32,26 @@
 			
 			
 			function filter() {
-				let searchNormarlized = normalizeString(VertigoUi.componentStates.topics.pagination.search);
-				if (searchNormarlized ===''){
-					return VertigoUi.vueData.topicsIhm
+				let filteredTopics = VertigoUi.vueData.topicsIhm
+				if (VertigoUi.vueData.criteria.catId !== null) {
+					let category = VertigoUi.vueData.categoryList.find(cat => cat.topCatId === VertigoUi.vueData.criteria.catId)
+					if (category !== undefined) {
+						filteredTopics = filteredTopics
+							// copy and reverse
+							.slice().reverse()
+							// search
+							.filter(topic => topic.catLabel === category.label)
+					}
 				}
-				return VertigoUi.vueData.topicsIhm
+				let searchNormarlized = normalizeString(VertigoUi.componentStates.topics.pagination.search);
+				if (searchNormarlized !==''){
+					filteredTopics =  filteredTopics
 						// copy and reverse
 						.slice().reverse()
 						// search
-						.filter(topic => normalizeString(topic.title).includes(searchNormarlized))
-						
+						.filter(topic => normalizeString(topic.title).includes(searchNormarlized) || normalizeString(topic.code).includes(searchNormarlized))
+				}
+				return filteredTopics
 			}
 			
 		</script>
@@ -73,6 +83,25 @@
 				<vu:include-data object="topicsIhm" field="ttoCd"/>
 				<vu:include-data object="topicsIhm" field="smtId"/>
 				<vu:include-data object="topicsIhm" field="sinId"/>
+				<vu:include-data object="criteria" field="catId"/>
+				<div style="background-color:white;display:flex;justify-content:flex-end">
+					<q-select style="width: 250px;"
+						  	clearable
+							filled
+							map-options
+							emit-value
+							v-model="vueData.criteria.catId"
+							:options="transformListForSelection('categoryList', 'topCatId', 'label')"
+							th:label="#{topic.selection.category}"
+						  	@input="filter();"
+							stack-label>
+					</q-select>
+					<q-input style="margin-left:10px" borderless dense debounce="300" th:v-model="VertigoUi.componentStates.topics.pagination.search" th:placeholder="#{topic.selection.search}">
+						<template v-slot:append>
+							<q-icon name="search" />
+						</template>
+					</q-input>
+				</div>
 				<vu:search-table
 					data='filter()'
 					rowKey='topId'

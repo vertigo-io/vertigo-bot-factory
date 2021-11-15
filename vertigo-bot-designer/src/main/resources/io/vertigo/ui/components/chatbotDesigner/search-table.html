@@ -15,13 +15,6 @@
 				th:table-class="${tableClass?:'table-'+(color?:'secondary')}"
 				binary-state-sort
 				>
-			<template v-slot:top-right>
-	        	<q-input borderless dense debounce="300" th:v-model="|componentStates.${componentId}.pagination.search|" placeholder="Search">
-					<template v-slot:append>
-            			<q-icon name="search" />
-					</template>
-				</q-input>
-			</template>
 			
 			<q-tr slot="body" slot-scope="props" :props="props" th:attr="__${tr_attrs}__">
 			

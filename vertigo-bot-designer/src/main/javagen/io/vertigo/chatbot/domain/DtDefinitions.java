@@ -87,6 +87,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Topic(io.vertigo.chatbot.commons.domain.topic.Topic.class),
 		/** Objet de données TopicCategory. */
 		TopicCategory(io.vertigo.chatbot.commons.domain.topic.TopicCategory.class),
+		/** Objet de données TopicCriteria. */
+		TopicCriteria(io.vertigo.chatbot.commons.domain.topic.TopicCriteria.class),
 		/** Objet de données TopicExport. */
 		TopicExport(io.vertigo.chatbot.commons.domain.TopicExport.class),
 		/** Objet de données TopicFileExport. */
@@ -611,6 +613,13 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isTechnical,
 		/** Propriété 'Chatbot'. */
 		botId	}
+
+	/**
+	 * Enumération des champs de TopicCriteria.
+	 */
+	public enum TopicCriteriaFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.TopicCriteria> {
+		/** Propriété 'Category selection'. */
+		catId	}
 
 	/**
 	 * Enumération des champs de TopicExport.
