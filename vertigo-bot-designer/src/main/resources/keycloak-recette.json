@@ -1,0 +1,8 @@
+{
+  "realm": "chatbot",
+  "auth-server-url": "http://keycloak:8080/auth/",
+  "ssl-required": "external",
+  "resource": "chatbot",
+  "public-client": true,
+  "confidential-port": 0
+}
