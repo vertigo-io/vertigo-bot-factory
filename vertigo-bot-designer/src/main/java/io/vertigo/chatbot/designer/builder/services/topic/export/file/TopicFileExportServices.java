@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import io.vertigo.chatbot.designer.utils.HashUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
@@ -25,7 +24,9 @@ import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicFileExport;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.export.InterfaceExportServices;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
@@ -49,7 +50,7 @@ import liquibase.util.csv.opencsv.bean.ColumnPositionMappingStrategy;
 import liquibase.util.csv.opencsv.bean.CsvToBean;
 
 @Transactional
-public class TopicFileExportServices implements Component {
+public class TopicFileExportServices implements Component, InterfaceExportServices {
 
 	@Inject
 	private TopicFileExportPAO topicFileExportPAO;
@@ -74,6 +75,8 @@ public class TopicFileExportServices implements Component {
 
 	@Inject
 	private ExporterManager exportManager;
+
+	private final int SIZE_FILE = 15;
 
 	/*
 	 * Return a File from a list of topicFileExport
@@ -120,8 +123,8 @@ public class TopicFileExportServices implements Component {
 		try {
 			// Check length of header, to make sure all columns are there
 			final String[] header = csvReader.readNext();
-			if (header.length != 15) {
-				throw new VUserException(TopicFileExportMultilingualResources.ERR_SIZE_FILE);
+			if (header.length != SIZE_FILE) {
+				throw new VUserException(ExportMultilingualResources.ERR_SIZE_FILE, SIZE_FILE);
 			}
 			final CsvToBean<TopicFileExport> csvToBean = new CsvToBean<>();
 			final ColumnPositionMappingStrategy<TopicFileExport> mappingStrategy = new ColumnPositionMappingStrategy<>();
@@ -150,7 +153,7 @@ public class TopicFileExportServices implements Component {
 			final List<TopicFileExport> list = csvToBean.parse(mappingStrategy, csvReader);
 			return list;
 		} catch (final Exception e) {
-			final StringBuilder errorMessage = new StringBuilder(MessageText.of(TopicFileExportMultilingualResources.ERR_MAPPING_FILE).getDisplay());
+			final StringBuilder errorMessage = new StringBuilder(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay());
 			errorMessage.append(e);
 			throw new VUserException(errorMessage.toString());
 		}
@@ -463,19 +466,6 @@ public class TopicFileExportServices implements Component {
 			}
 		}
 		return listButtons;
-	}
-
-	/*
-	 * Return an error message with the line concerned
-	 */
-	public String lineError(final int i) {
-		return "[Line " + i + "] ";
-	}
-
-	public void errorManagement(final int i, final String erreur) {
-		final StringBuilder errorMessage = new StringBuilder(lineError(i));
-		errorMessage.append(erreur);
-		throw new VUserException(errorMessage.toString());
 	}
 
 }

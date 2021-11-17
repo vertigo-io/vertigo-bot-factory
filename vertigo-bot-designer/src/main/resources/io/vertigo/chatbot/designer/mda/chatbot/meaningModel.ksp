@@ -50,4 +50,10 @@ create DtDefinition DtTupleSynonymIhm {
 	field synonymLabel		{domain: DoLabel	label: "Synonym label"	}
 }
 
+create DtDefinition DtDictionaryExport {
+
+	field meaningLabel				{domain: DoLabel	label: "Meaning Label"	}
+	field synonymsList				{domain: DoLabel	label: "Synonyms list"	}
+}
+
 	

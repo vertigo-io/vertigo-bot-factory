@@ -4,9 +4,6 @@ import io.vertigo.core.locale.MessageKey;
 
 public enum TopicFileExportMultilingualResources implements MessageKey {
 
-	ERR_CSV_FILE,
-	ERR_SIZE_FILE,
-	ERR_MAPPING_FILE,
 	ERR_CODE_EMPTY,
 	ERR_CODE_DUPLICATED,
 	ERR_TOPIC,

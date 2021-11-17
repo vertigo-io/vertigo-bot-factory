@@ -41,6 +41,32 @@ public final class MeaningPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkGetDictionaryExportByBotId.
+	 * @param botId Long
+	 * @return DtList de DictionaryExport res
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetDictionaryExportByBotId",
+			request = "select   " + 
+ "             	mea.label as meaning_label,  " + 
+ "             	STRING_AGG (syn.label, '|') as synonyms_list " + 
+ " 				from meaning mea" + 
+ " 				join synonym syn on syn.mea_id = mea.mea_id  " + 
+ " 			" + 
+ " 				where mea.bot_id = #botId#" + 
+ " 				group by mea.label",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtDictionaryExport")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.DictionaryExport> getDictionaryExportByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkGetDictionaryExportByBotId")
+				.addValue("botId", botId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkGetTuplesSynonym.
 	 * @param botId Long
 	 * @param words List de String

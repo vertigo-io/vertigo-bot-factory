@@ -9,6 +9,18 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
+	/** DictionaryExport.
+	/***********************************************************
+	/**
+	 * Meaning Label.
+	 */
+	fldDictionaryExport$meaningLabel,
+	/**
+	 * Synonyms list.
+	 */
+	fldDictionaryExport$synonymsList,
+
+	/***********************************************************
 	/** Meaning.
 	/***********************************************************
 	/**
