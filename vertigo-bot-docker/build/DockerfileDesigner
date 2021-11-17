@@ -1,4 +1,5 @@
 FROM adoptopenjdk:11.0.8_10-jre-hotspot
+ARG VERSION
  
 ##############
 # Add Tomcat #
@@ -13,7 +14,8 @@ RUN useradd -m tomcat \
 COPY --chown=tomcat apache-tomcat-* /opt/tomcat/
 COPY --chown=tomcat Designer/setenv.sh /opt/tomcat/bin/
 COPY --chown=tomcat Designer/context.xml /opt/tomcat/conf/Catalina/localhost/designer.xml.ref
-COPY --chown=tomcat Designer/vertigo-bot-designer-*.war /opt/tomcat/war/designer.war
+COPY --chown=tomcat Designer/vertigo-bot-designer-$VERSION.war /opt/tomcat/war/designer.war
+RUN chmod 777 /opt/tomcat/bin/startup.sh
 
 # Environment parameters
 ENV JAVA_OPTS -Xmx512m -Xms512m
@@ -36,7 +38,7 @@ EXPOSE 8080
 # start configuration #
 #######################
 COPY Designer/start.sh /
-RUN chmod +x /start.sh
+RUN chmod 777 /start.sh
 
 ENTRYPOINT [] # clear entrypoint from base image
 CMD ["/start.sh"] # override CMD from base image

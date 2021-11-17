@@ -1,4 +1,5 @@
 FROM adoptopenjdk:11.0.8_10-jre-hotspot
+ARG VERSION
  
  
 ##############
@@ -14,9 +15,10 @@ RUN useradd -m tomcat \
  
 # Add binaries
 COPY --chown=tomcat apache-tomcat-* /opt/tomcat/
-COPY --chown=tomcat Runner/vertigo-bot-executor-*.war /opt/tomcat/war/runner.war
+ADD --chown=tomcat Runner/vertigo-bot-executor-$VERSION.war /opt/tomcat/war/runner.war
 COPY --chown=tomcat Runner/ROOT.xml /opt/tomcat/conf/Catalina/localhost/ROOT.xml
 COPY --chown=tomcat Runner/setenv.sh /opt/tomcat/bin/
+RUN chmod 777 /opt/tomcat/bin/startup.sh
 
 # Environment parameters
 ENV JAVA_OPTS -Xmx256m
@@ -34,7 +36,7 @@ EXPOSE 8080
 # start configuration #
 #######################
 COPY Runner/start.sh /
-RUN chmod +x /start.sh
+RUN chmod 777 /start.sh
 
 ENTRYPOINT [] # clear entrypoint from base image
 CMD ["/start.sh"] # override CMD from base image
