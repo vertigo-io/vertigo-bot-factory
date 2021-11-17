@@ -12,6 +12,7 @@
 	<Parameter name="boot.ANALYTICA_HOST" value="localhost" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="4562" override="false"/>
 	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot-test" override="false"/>
+	<Parameter name="KEYCLOAK_CONFIG" value="keycloak.json" override="false"/>
 	
 	<!-- Env variable in production -->
 	<Parameter name="INFLUXDB_URL" value="http://localhost:8086" override="false"/>

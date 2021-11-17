@@ -1,0 +1,12 @@
+ARG VERSION
+FROM vertigoio/bot-factory-runner:$VERSION
+ARG VERSION
+
+ 
+# Add binaries
+COPY --chown=tomcat Runner/plugins/vertigo-bot-confluence-$VERSION.jar /opt/plugins/vertigo-bot-confluence-$VERSION.jar
+
+ENV CONFLUENCE_USER user
+ENV CONFLUENCE_PWD password
+ENV CONFLUENCE_URL https://example.com
+ENV CONFLUENCE_LIMIT 3
