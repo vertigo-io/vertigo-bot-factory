@@ -67,6 +67,7 @@ modules:
   io.vertigo.connectors.keycloak.KeycloakFeatures:
     features:
       - deployment:
+          configUrl: ${KEYCLOAK_CONFIG}
   io.vertigo.account.AccountFeatures:
     features:
       - security:
