@@ -29,6 +29,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ChatbotProfiles(io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
+		/** Objet de données DictionaryExport. */
+		DictionaryExport(io.vertigo.chatbot.designer.domain.DictionaryExport.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données Groups. */
@@ -222,6 +224,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		key,
 		/** Propriété 'Chatbot'. */
 		botId	}
+
+	/**
+	 * Enumération des champs de DictionaryExport.
+	 */
+	public enum DictionaryExportFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DictionaryExport> {
+		/** Propriété 'Meaning Label'. */
+		meaningLabel,
+		/** Propriété 'Synonyms list'. */
+		synonymsList	}
 
 	/**
 	 * Enumération des champs de ExecutorConfiguration.

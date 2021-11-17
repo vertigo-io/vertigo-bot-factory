@@ -16,6 +16,24 @@ create Task TkGetMeaningBySynonymLabelAndBotId {
 }
 
 
+create Task TkGetDictionaryExportByBotId {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				select   
+             	mea.label as meaning_label,  
+             	STRING_AGG (syn.label, '|') as synonyms_list 
+ 				from meaning mea
+ 				join synonym syn on syn.mea_id = mea.mea_id  
+ 			
+ 				where mea.bot_id = #botId#
+ 				group by mea.label
+ 			
+ 			"
+	in botId				{domain : DoId,							cardinality:"1"} 
+	out res 				{domain : DoDtDictionaryExport			cardinality:"*"}
+}
+
+
 create Task TkGetTuplesSynonym {
     className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "

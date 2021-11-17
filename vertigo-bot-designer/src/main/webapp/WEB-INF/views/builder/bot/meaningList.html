@@ -31,8 +31,19 @@
 	
 	<body>
 		<section layout:fragment="content-header-actions">
-			<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" 
-					       @click="vueData.meaningEdit = Vue.util.extend({}, vueData.nodeNew); $refs.meaningEdit.show()"></q-btn>
+			<q-form method="post" action="_exportDictionary">	
+				<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" size="lg"
+						       @click="vueData.meaningEdit = Vue.util.extend({}, vueData.nodeNew); $refs.meaningEdit.show()"></q-btn>
+				<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">	
+				<q-btn type="submit" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" 
+				icon="file_upload" th:aria-label="#{action.import}" th:title="#{action.import}"></q-btn> 
+				
+				<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg"
+				icon="file_download" th:aria-label="#{action.export}" th:title="#{action.export}" 
+						       @click="$refs.importDictionary.show()"></q-btn>	
+						
+										       
+				</q-form>
 		</section>
 		
 		<section layout:fragment="content">
@@ -113,6 +124,26 @@
 				</q-card>
 			</q-dialog>
 			
+			<q-dialog ref="importDictionary" th:with="viewMode='edit'" >
+				<q-card>
+					<q-form method="post" action="_importDictionary">
+					<q-card-section>
+						<div class="text-h6" th:text="#{popup.import.title}"></div>						
+					</q-card-section>
+					
+					<vu:include-data-primitive key="locale" />
+					<vu:fileupload th:url="'@{/commons/upload}'" key="importDictionaryFileUri" multiple="false"/>
+				
+					
+					
+					<q-card-actions align="around">
+							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
+							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn> 
+					</q-card-actions>
+					</q-form>
+				</q-card>
+			</q-dialog>
 			
 		</section>
 	</body>
