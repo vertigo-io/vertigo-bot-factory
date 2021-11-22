@@ -181,6 +181,22 @@ public enum DtResources implements MessageKey {
 	fldSmallTalkIhm$catLabel,
 
 	/***********************************************************
+	/** SmallTalkWrapper.
+	/***********************************************************
+	/**
+	 * SmallTalk.
+	 */
+	fldSmallTalkWrapper$smallTalk,
+	/**
+	 * Buttons.
+	 */
+	fldSmallTalkWrapper$buttons,
+	/**
+	 * Utter texts.
+	 */
+	fldSmallTalkWrapper$utterTexts,
+
+	/***********************************************************
 	/** Topic.
 	/***********************************************************
 	/**

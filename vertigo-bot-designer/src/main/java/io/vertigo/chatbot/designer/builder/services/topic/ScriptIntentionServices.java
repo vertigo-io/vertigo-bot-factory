@@ -1,17 +1,15 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.ScriptIntentionDAO;
 import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.*;
+import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
+import io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
-import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.scriptIntention.ScriptIntentionPAO;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
@@ -24,6 +22,9 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
+
+import javax.inject.Inject;
+import java.util.Optional;
 
 @Transactional
 @Secured("BotUser")
@@ -57,7 +58,7 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 			final Topic topic) {
 
 		ScriptIntention oldScriptIntention = findByTopId(topic.getTopId()).orElse(null);
-		if (oldScriptIntention == null || !oldScriptIntention.getScript().equals(scriptIntention.getScript())) {
+		if (oldScriptIntention == null || (oldScriptIntention.getScript() != null && !oldScriptIntention.getScript().equals(scriptIntention.getScript()))) {
 			nodeServices.updateNodes(chatbot);
 		}
 		scriptIntention.setTopId(topic.getTopId());
@@ -141,14 +142,8 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 	}
 
 	@Override
-	public ScriptIntention saveFromSaveTopicObject(final SaveTopicObject<ScriptIntention> saveObject) {
-		return save(saveObject.getBot(), saveObject.getObject(), saveObject.getTopic());
-	}
-
-	@Override
-	public void saveTopic(Topic topic, Chatbot chatbot, DtObject dtObject, DtList<ResponseButton> buttonList, DtList<UtterText> utterTexts) {
-		final SaveTopicObject<ScriptIntention> objectToSave = new SaveTopicObject<>(topic, chatbot, (ScriptIntention) dtObject, buttonList, utterTexts);
-		saveFromSaveTopicObject(objectToSave);
+	public void saveTopic(Topic topic, Chatbot chatbot, DtObject dtObject) {
+		save(chatbot, (ScriptIntention) dtObject, topic);
 	}
 
 }

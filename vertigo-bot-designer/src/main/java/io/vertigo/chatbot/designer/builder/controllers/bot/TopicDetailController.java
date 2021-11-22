@@ -5,12 +5,9 @@ import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.*;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
-import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.topic.*;
-import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
-import io.vertigo.chatbot.designer.utils.StringUtils;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
@@ -64,7 +61,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
     protected TopicCategoryServices topicCategoryServices;
 
     @Inject
-    protected NluTrainingSentenceServices nluTrainingSentenceServices;
+    private NluTrainingSentenceServices nluTrainingSentenceServices;
 
     @Inject
     protected TopicLabelServices topicLabelServices;
@@ -201,7 +198,9 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
     }
 
     private void addMessageDeactivate(final UiMessageStack uiMessageStack, final SmallTalk smallTalk, final DtList<NluTrainingSentence> sentences, final Chatbot chatbot) {
-        final boolean hasToBeDeactivate = smallTalkServices.hasToBeDeactivated(smallTalk, chatbot);
+        SmallTalkWrapper smallTalkWrapper = new SmallTalkWrapper();
+        smallTalkWrapper.setSmallTalk(smallTalk);
+        final boolean hasToBeDeactivate = smallTalkServices.hasToBeDeactivated(smallTalkWrapper, chatbot);
         if (hasToBeDeactivate || sentences.isEmpty()) {
             uiMessageStack.info(smallTalkServices.getDeactivateMessage());
         }
@@ -230,34 +229,17 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
                          @ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels) {
 
         final Long botId = chatbot.getBotId();
-        DtList<UtterText> utterTexts = new DtList<>(UtterText.class);
-        DtList<ResponseButton> buttonList = new DtList<>(ResponseButton.class);
-        DtObject dtObject = scriptIntention;
+        DtObject topicTypeObject = scriptIntention;
         if (TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd())) {
-            utterTexts = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey),
-                    uiMessageStack);
-            buttonList = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsKey),
-                    uiMessageStack);
-            dtObject = smallTalk;
+            SmallTalkWrapper smallTalkWrapper = new SmallTalkWrapper();
+            smallTalkWrapper.setSmallTalk(smallTalk);
+            smallTalkWrapper.setUtterTexts(ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey), uiMessageStack));
+            smallTalkWrapper.setButtons(ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsKey), uiMessageStack));
+            topicTypeObject = smallTalkWrapper;
         }
 
-        saveTopic(topic, chatbot, dtObject, buttonList, utterTexts, nluTrainingSentences, newNluTrainingSentence, nluTrainingSentencesToDelete, labels,
-                initialLabels);
+        topicServices.saveTopic(topic, chatbot, newNluTrainingSentence, nluTrainingSentences, nluTrainingSentencesToDelete, topicTypeObject, labels, initialLabels);
         return "redirect:/bot/" + botId + "/topics/detail/" + topic.getTopId();
-    }
-
-    private void saveTopic(final Topic topic,
-                          final Chatbot chatbot,
-                          final DtObject dtObject,
-                          final DtList<ResponseButton> buttonList,
-                          final DtList<UtterText> utterTexts,
-                          final DtList<NluTrainingSentence> nluTrainingSentences,
-                          final String newNluTrainingSentence,
-                          final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-                          final DtList<TopicLabel> labels,
-                          final DtList<TopicLabel> initialLabels) {
-        topicServices.saveTopic(topic, chatbot, newNluTrainingSentence, nluTrainingSentences, nluTrainingSentencesToDelete, dtObject, buttonList, utterTexts, labels, initialLabels);
-
     }
 
     public static final class TopicCategoryNotEmptyValidator extends AbstractDtObjectValidator<Topic> {

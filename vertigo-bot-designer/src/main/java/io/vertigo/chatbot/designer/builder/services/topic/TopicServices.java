@@ -274,16 +274,12 @@ public class TopicServices implements Component, Activeable {
 	 * @param nluTrainingSentences Nlu training sentences (including updated sentences)
 	 * @param nluTrainingSentencesToDelete Nlu training sentences to be deleted
 	 * @param dtObject High level object holding different types of topic (smalltalk, scriptIntention ...)
-	 * @param buttonList List of buttons
-	 * @param utterTexts List of text responses
 	 * @param labels Topic's tags
 	 * @param initialLabels Initial topic's tags
 	 */
 	public void saveTopic(final Topic topic, final Chatbot chatbot,
 						  final String newNluTrainingSentence, final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
 						  final DtObject dtObject,
-						  final DtList<ResponseButton> buttonList,
-						  final DtList<UtterText> utterTexts,
 						  final DtList<TopicLabel> labels,
 						  final DtList<TopicLabel> initialLabels) {
 
@@ -291,7 +287,7 @@ public class TopicServices implements Component, Activeable {
 		saveTtoCd(topic, topic.getTtoCd(), chatbot);
 		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
 			if (service.handleObject(topic)) {
-				service.saveTopic(topic, chatbot, dtObject, buttonList, utterTexts);
+				service.saveTopic(topic, chatbot, dtObject);
 				save(topic, chatbot, service.isEnabled(dtObject, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
 			} else {
 				service.deleteIfExists(chatbot, topic);

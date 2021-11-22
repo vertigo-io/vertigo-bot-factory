@@ -1,9 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.SmallTalkDAO;
@@ -11,13 +7,12 @@ import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.*;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
-import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.smallTalk.SmallTalkPAO;
-import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
+import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
@@ -27,6 +22,9 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
+
+import javax.inject.Inject;
+import java.util.Optional;
 
 @Transactional
 @Secured("BotUser")
@@ -183,8 +181,9 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk> {
 
 	@Override
 	public boolean hasToBeDeactivated(final DtObject object, final Chatbot bot) {
-		final DtList<UtterText> utt = utterTextServices.getUtterTextList(bot, (SmallTalk) object);
-		final DtList<ResponseButton> buttonList = responsesButtonServices.getResponsesButtonList(bot, (SmallTalk) object);
+		SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) object;
+		final DtList<UtterText> utt = utterTextServices.getUtterTextList(bot, smallTalkWrapper.getSmallTalk());
+		final DtList<ResponseButton> buttonList = responsesButtonServices.getResponsesButtonList(bot, smallTalkWrapper.getSmallTalk());
 		return utt.isEmpty() && buttonList.isEmpty();
 	}
 
@@ -194,13 +193,8 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk> {
 	}
 
 	@Override
-	public SmallTalk saveFromSaveTopicObject(final SaveTopicObject<SmallTalk> saveObject) {
-		return saveSmallTalk(saveObject.getBot(), saveObject.getObject(), saveObject.getUtters(), saveObject.getButtons(), saveObject.getTopic());
-	}
-
-	@Override
-	public void saveTopic(Topic topic, Chatbot chatbot, DtObject dtObject, DtList<ResponseButton> buttonList, DtList<UtterText> utterTexts) {
-		final SaveTopicObject<SmallTalk> objectToSave = new SaveTopicObject<>(topic, chatbot, (SmallTalk) dtObject, buttonList, utterTexts);
-		saveFromSaveTopicObject(objectToSave);
+	public void saveTopic(Topic topic, Chatbot chatbot, DtObject dtObject) {
+		SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) dtObject;
+		saveSmallTalk(chatbot, smallTalkWrapper.getSmallTalk(), smallTalkWrapper.getUtterTexts(), smallTalkWrapper.getButtons(), topic);
 	}
 }
