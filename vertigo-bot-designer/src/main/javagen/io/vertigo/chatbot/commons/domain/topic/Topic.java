@@ -183,7 +183,7 @@ public final class Topic implements Entity {
 	 * Récupère la valeur de la propriété 'Code'.
 	 * @return String code <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Code")
+	@Field(smartType = "STyTopicCode", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Code")
 	public String getCode() {
 		return code;
 	}

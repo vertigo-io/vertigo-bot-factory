@@ -1113,7 +1113,7 @@ create table TOPIC
     TITLE       	 VARCHAR(100)	not null,
     DESCRIPTION 	 VARCHAR(100)	,
     IS_ENABLED  	 bool        	not null,
-    CODE        	 VARCHAR(100)	not null,
+    CODE        	 VARCHAR(10) 	not null,
     TTO_CD      	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     TOP_CAT_ID  	 NUMERIC     	not null,

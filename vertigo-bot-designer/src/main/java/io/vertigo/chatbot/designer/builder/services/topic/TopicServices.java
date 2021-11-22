@@ -92,7 +92,6 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	private Topic doSave(final Topic topic, final Chatbot bot) {
-		checkPatternCode(topic.getCode());
 		//create code for export
 		hasUniqueCode(topic);
 		if (topic.getTopId() != null) {
@@ -104,11 +103,10 @@ public class TopicServices implements Component, Activeable {
 		return topicDAO.save(topic);
 	}
 
-	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Chatbot bot, final Boolean isEnabled,
-					  final DtList<NluTrainingSentence> nluTrainingSentences, DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
+	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Chatbot bot, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences,
+			 DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
 		//check if code matches the pattern
-		checkPatternCode(topic.getCode());
 		if (KindTopicEnum.NORMAL.name().equals(topic.getKtoCd())) {
 			Assertion.check().isNotNull(nluTrainingSentences)
 					.isNotNull(nluTrainingSentencesToDelete);
@@ -135,22 +133,10 @@ public class TopicServices implements Component, Activeable {
 		return topicDAO.save(topic);
 	}
 
-	private static void checkPatternCode(final String code) {
-		final String pattern = "^[a-zA-Z0-9_.-]*$";
-
-		if (code == null || !code.matches(pattern)) {
-			throw new VUserException(TopicsMultilingualResources.CODE_PATTERN_DIGIT_ERROR);
-		}
-
-		if (code.length() > 10) {
-			throw new VUserException(TopicsMultilingualResources.CODE_PATTERN_LENGTH);
-		}
-	}
-
 	private void hasUniqueCode(final Topic topic) {
 		final Optional<Long> topIdOpt = topic.getTopId() != null ? Optional.of(topic.getTopId()) : Optional.empty();
 		if (topicPAO.checkUnicityTopicCode(topic.getBotId(), topic.getCode(), topIdOpt)) {
-			throw new VUserException(TopicsMultilingualResources.CODE_PATTERN_ERROR);
+			throw new VUserException(TopicsMultilingualResources.CODE_NON_UNIQUE_ERROR);
 		}
 		if (TopicsUtils.checkSpecialCharacters(topic.getCode())) {
 			throw new VUserException("The code cannot contain the following characters : '[', ']', '|', '¤'. ");
