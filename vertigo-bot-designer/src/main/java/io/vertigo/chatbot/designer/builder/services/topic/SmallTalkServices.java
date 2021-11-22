@@ -26,10 +26,11 @@ import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtObject;
 
 @Transactional
 @Secured("BotUser")
-public class SmallTalkServices implements Component, TopicInterfaceServices<SmallTalk> {
+public class SmallTalkServices implements Component, ITopicService<SmallTalk> {
 
 	@Inject
 	private UtterTextServices utterTextServices;
@@ -181,9 +182,9 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 	}
 
 	@Override
-	public boolean hasToBeDeactivated(final SmallTalk object, final Chatbot bot) {
-		final DtList<UtterText> utt = utterTextServices.getUtterTextList(bot, object);
-		final DtList<ResponseButton> buttonList = responsesButtonServices.getResponsesButtonList(bot, object);
+	public boolean hasToBeDeactivated(final DtObject object, final Chatbot bot) {
+		final DtList<UtterText> utt = utterTextServices.getUtterTextList(bot, (SmallTalk) object);
+		final DtList<ResponseButton> buttonList = responsesButtonServices.getResponsesButtonList(bot, (SmallTalk) object);
 		return utt.isEmpty() && buttonList.isEmpty();
 	}
 
@@ -198,9 +199,8 @@ public class SmallTalkServices implements Component, TopicInterfaceServices<Smal
 	}
 
 	@Override
-	public boolean saveTopic(Topic topic, Chatbot chatbot, ScriptIntention scriptIntention, SmallTalk smallTalk, DtList<ResponseButton> buttonList, DtList<UtterText> utterTexts) {
-		final SaveTopicObject<SmallTalk> objectToSave = new SaveTopicObject<>(topic, chatbot, smallTalk, buttonList, utterTexts);
+	public void saveTopic(Topic topic, Chatbot chatbot, DtObject dtObject, DtList<ResponseButton> buttonList, DtList<UtterText> utterTexts) {
+		final SaveTopicObject<SmallTalk> objectToSave = new SaveTopicObject<>(topic, chatbot, (SmallTalk) dtObject, buttonList, utterTexts);
 		saveFromSaveTopicObject(objectToSave);
-		return isEnabled(smallTalk, topic.getIsEnabled(), chatbot);
 	}
 }

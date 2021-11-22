@@ -28,6 +28,7 @@ import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datamodel.structure.util.VCollectors;
 
@@ -46,7 +47,7 @@ public class TopicServices implements Component, Activeable {
 	@Inject
 	private KindTopicServices kindTopicServices;
 
-	private final Set<TopicInterfaceServices<? extends Entity>> topicInterfaceServices = new HashSet<>();
+	private final Set<ITopicService<? extends Entity>> topicInterfaceServices = new HashSet<>();
 
 	@Inject
 	private SmallTalkServices smallTalkServices;
@@ -61,7 +62,7 @@ public class TopicServices implements Component, Activeable {
 	protected NluTrainingSentenceServices nluTrainingSentenceServices;
 
 	@Inject
-	protected TopicLabelServices topicLabelServices;
+	private TopicLabelServices topicLabelServices;
 
 	public Topic findTopicById(@SecuredOperation("botVisitor") final Long id) {
 		return topicDAO.get(id);
@@ -163,7 +164,7 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	public void deleteCompleteTopic(@SecuredOperation("botContributor") final Chatbot bot, final Topic topic) {
-		for (final TopicInterfaceServices<? extends Entity> services : topicInterfaceServices) {
+		for (final ITopicService<? extends Entity> services : topicInterfaceServices) {
 			services.deleteIfExists(bot, topic);
 		}
 		deleteTopic(bot, topic);
@@ -248,7 +249,7 @@ public class TopicServices implements Component, Activeable {
 		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
 		topicDAO.save(topic);
 
-		for (final TopicInterfaceServices<? extends Entity> service : topicInterfaceServices) {
+		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
 			if (service.handleObject(topic)) {
 				service.createOrUpdateFromTopic(chatbot, topic, botTopic.getValue());
 			} else {
@@ -267,21 +268,20 @@ public class TopicServices implements Component, Activeable {
 	 * Save a topic with its generic elements (nlu training sentences)
 	 * Then delegate to a specific service implementation
 	 * depending on its type
-	 * @param topic
-	 * @param chatbot
-	 * @param newNluTrainingSentence
-	 * @param nluTrainingSentences
-	 * @param nluTrainingSentencesToDelete
-	 * @param scriptIntention
-	 * @param smallTalk
-	 * @param buttonList
-	 * @param utterTexts
-	 * @param labels
-	 * @param initialLabels
+	 * @param topic Global topic to save
+	 * @param chatbot Topic's chatbot
+	 * @param newNluTrainingSentence New nlu training sentences
+	 * @param nluTrainingSentences Nlu training sentences (including updated sentences)
+	 * @param nluTrainingSentencesToDelete Nlu training sentences to be deleted
+	 * @param dtObject High level object holding different types of topic (smalltalk, scriptIntention ...)
+	 * @param buttonList List of buttons
+	 * @param utterTexts List of text responses
+	 * @param labels Topic's tags
+	 * @param initialLabels Initial topic's tags
 	 */
 	public void saveTopic(final Topic topic, final Chatbot chatbot,
-						  final String newNluTrainingSentence, final DtList<NluTrainingSentence> nluTrainingSentences,  final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-						  final ScriptIntention scriptIntention, final SmallTalk smallTalk,
+						  final String newNluTrainingSentence, final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+						  final DtObject dtObject,
 						  final DtList<ResponseButton> buttonList,
 						  final DtList<UtterText> utterTexts,
 						  final DtList<TopicLabel> labels,
@@ -289,10 +289,10 @@ public class TopicServices implements Component, Activeable {
 
 		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 		saveTtoCd(topic, topic.getTtoCd(), chatbot);
-		for (final TopicInterfaceServices<? extends Entity> service : topicInterfaceServices) {
+		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
 			if (service.handleObject(topic)) {
-				boolean isEnabled = service.saveTopic(topic, chatbot, scriptIntention, smallTalk, buttonList, utterTexts);
-				save(topic, chatbot, isEnabled, nluTrainingSentences, nluTrainingSentencesToDelete);
+				service.saveTopic(topic, chatbot, dtObject, buttonList, utterTexts);
+				save(topic, chatbot, service.isEnabled(dtObject, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
 			} else {
 				service.deleteIfExists(chatbot, topic);
 			}
@@ -301,7 +301,7 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	public void deleteTopic(Topic topic, Chatbot chatbot) {
-		for (final TopicInterfaceServices<? extends Entity> service : topicInterfaceServices) {
+		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
 			if (service.handleObject(topic)) {
 				service.deleteIfExists(chatbot, topic);
 			}

@@ -23,10 +23,11 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtObject;
 
 @Transactional
 @Secured("BotUser")
-public class ScriptIntentionServices implements Component, TopicInterfaceServices<ScriptIntention> {
+public class ScriptIntentionServices implements Component, ITopicService<ScriptIntention> {
 
 	@Inject
 	private ScriptIntentionDAO scriptIntentionDAO;
@@ -129,8 +130,9 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 	}
 
 	@Override
-	public boolean hasToBeDeactivated(final ScriptIntention object, final Chatbot bot) {
-		return StringUtil.isBlank(object.getScript());
+	public boolean hasToBeDeactivated(final DtObject object, final Chatbot bot) {
+		ScriptIntention scriptIntention = (ScriptIntention) object;
+		return StringUtil.isBlank(scriptIntention.getScript());
 	}
 
 	@Override
@@ -144,10 +146,9 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 	}
 
 	@Override
-	public boolean saveTopic(Topic topic, Chatbot chatbot, ScriptIntention scriptIntention, SmallTalk smallTalk, DtList<ResponseButton> buttonList, DtList<UtterText> utterTexts) {
-		final SaveTopicObject<ScriptIntention> objectToSave = new SaveTopicObject<>(topic, chatbot, scriptIntention, buttonList, utterTexts);
+	public void saveTopic(Topic topic, Chatbot chatbot, DtObject dtObject, DtList<ResponseButton> buttonList, DtList<UtterText> utterTexts) {
+		final SaveTopicObject<ScriptIntention> objectToSave = new SaveTopicObject<>(topic, chatbot, (ScriptIntention) dtObject, buttonList, utterTexts);
 		saveFromSaveTopicObject(objectToSave);
-		return isEnabled(scriptIntention, topic.getIsEnabled(), chatbot);
 	}
 
 }

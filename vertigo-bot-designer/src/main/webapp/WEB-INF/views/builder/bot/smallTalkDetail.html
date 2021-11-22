@@ -4,151 +4,134 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{templates/topicDetailLayout}" th:with="nav=true, tab=smallTalks"
 	>
-	
-	<head>
-		<title th:text="#{smallTalk.detail.title}"></title>
-	</head>
-	
-	<body>
-		<section layout:fragment="content-header-actions">
-			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/smallTalk/(id=${model.bot.botId})} + ${model.smallTalk.smtId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
-							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
-			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
-							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
-							class="on-left" round size="lg" color="red" ></q-btn>
-		</section>
-				
-		<section layout:fragment="content-nav">
-			<q-item tag="a" href="#detail" th:text="#{smallTalk.menu.informations}"></q-item>
-			<q-item tag="a" href="#training" th:text="#{smallTalk.menu.training}"></q-item>
-			<q-item tag="a" href="#response" th:text="#{smallTalk.menu.responses}"></q-item>
-			<q-item tag="a" href="#buttons" th:text="#{smallTalk.menu.buttons}"></q-item>
-			<q-item tag="a" href="#conversationOver" th:text="#{smallTalk.menu.isEndMini}"></q-item>
-		</section>
+
+	<section th:fragment="content-nav">
+		<q-item tag="a" href="#response" th:text="#{smallTalk.menu.responses}"></q-item>
+		<q-item tag="a" href="#buttons" th:text="#{smallTalk.menu.buttons}"></q-item>
+		<q-item tag="a" href="#conversationOver" th:text="#{smallTalk.menu.isEndMini}"></q-item>
+	</section>
 		
-		<section th:fragment="content-specific">
-			
-			<vu:popup action="_delete" vModel="showPopup" th:message="#{smalltalk.popup.message}" th:confirm="#{action.delete}"></vu:popup>
-			
-			<vu:block id="response" th:title="#{smallTalk.menu.responses}">
-				<vu:include-data object="utterTexts" field="text" />
-				<vu:include-data object="responseTypes" field="'*'" />
-				
-				<div class="hidden">
-					<vu:text-field-edit object="smallTalk" field="rtyId" />
-				</div>
-				
-				<vu:include-data-primitive key="locale"/>
-				
-				<div th:if="${!model.modeReadOnly}">
-					<q-btn-toggle
-						class="q-mb-md"
-						v-model="vueData.smallTalk.rtyId"
-						toggle-color="primary"
-						:options= 'vueData.locale == "fr_FR" ? transformListForSelection("responseTypes", "rtyId", "labelFr") : transformListForSelection("responseTypes", "rtyId", "label")' 
-					></q-btn-toggle>
-					<q-icon 
-						v-if="vueData.smallTalk.rtyId === 'RICH_TEXT' && getUtterTextResolvedList().length > 2"
-						name="warning" class="vertical-top q-ma-xs text-orange" style="font-size: 2rem;">
-						<q-tooltip content-style="font-size: 14px" th:text="#{action.save.errorMessage}">
-				        </q-tooltip>
-					</q-icon>
-				</div>
-				
-				<div v-if="vueData.smallTalk.rtyId === 'RICH_TEXT'" >
-					<c-richtext
-						v-model="vueData.utterTexts[0].text"
-						name="vContext[utterTexts][0][text]"
-						th::mode-edit="${!model.modeReadOnly}"
-						:locale="vueData.locale"
-						class="q-pb-sm">
-					</c-richtext>
-				</div>
-				
-				<div v-if="vueData.smallTalk.rtyId === 'RANDOM_TEXT'">
-					<q-list th:if="${!model.modeReadOnly}">
-						<q-item v-for="(utterText, index) in getUtterTextResolvedList()" dense>
-							<q-item-section side left th:if="${!model.modeReadOnly}" style="width:40px">
-								<q-btn @click="vueData.utterTexts.splice(index, 1); vueData.utterTexts.push({});"
-									v-if="index < getUtterTextResolvedList().length - 1 || utterText.text"
-									tabindex="-1"
-									color="primary" dense size="sm" icon="delete" class="bg-grey" th:aria-label="#{action.remove}" th:title="#{action.remove}"></q-btn>
+	<section th:fragment="content-specific">
+
+		<vu:popup action="_delete" vModel="showPopup" th:message="#{smalltalk.popup.message}" th:confirm="#{action.delete}"></vu:popup>
+
+		<vu:block id="response" th:title="#{smallTalk.menu.responses}">
+			<vu:include-data object="utterTexts" field="text" />
+			<vu:include-data object="responseTypes" field="'*'" />
+
+			<div class="hidden">
+				<vu:text-field-edit object="smallTalk" field="rtyId" />
+			</div>
+
+			<vu:include-data-primitive key="locale"/>
+
+			<div th:if="${!model.modeReadOnly}">
+				<q-btn-toggle
+					class="q-mb-md"
+					v-model="vueData.smallTalk.rtyId"
+					toggle-color="primary"
+					:options= 'vueData.locale == "fr_FR" ? transformListForSelection("responseTypes", "rtyId", "labelFr") : transformListForSelection("responseTypes", "rtyId", "label")'
+				></q-btn-toggle>
+				<q-icon
+					v-if="vueData.smallTalk.rtyId === 'RICH_TEXT' && getUtterTextResolvedList().length > 2"
+					name="warning" class="vertical-top q-ma-xs text-orange" style="font-size: 2rem;">
+					<q-tooltip content-style="font-size: 14px" th:text="#{action.save.errorMessage}">
+					</q-tooltip>
+				</q-icon>
+			</div>
+
+			<div v-if="vueData.smallTalk.rtyId === 'RICH_TEXT'" >
+				<c-richtext
+					v-model="vueData.utterTexts[0].text"
+					name="vContext[utterTexts][0][text]"
+					th::mode-edit="${!model.modeReadOnly}"
+					:locale="vueData.locale"
+					class="q-pb-sm">
+				</c-richtext>
+			</div>
+
+			<div v-if="vueData.smallTalk.rtyId === 'RANDOM_TEXT'">
+				<q-list th:if="${!model.modeReadOnly}">
+					<q-item v-for="(utterText, index) in getUtterTextResolvedList()" dense>
+						<q-item-section side left th:if="${!model.modeReadOnly}" style="width:40px">
+							<q-btn @click="vueData.utterTexts.splice(index, 1); vueData.utterTexts.push({});"
+								v-if="index < getUtterTextResolvedList().length - 1 || utterText.text"
+								tabindex="-1"
+								color="primary" dense size="sm" icon="delete" class="bg-grey" th:aria-label="#{action.remove}" th:title="#{action.remove}"></q-btn>
+						</q-item-section>
+						<q-item-section side left th:if="${!model.modeReadOnly}" style="width:40px">
+							<q-btn tabindex="-1"
+								color="primary" dense size="sm" icon="edit" class="bg-grey" th:aria-label="#{action.edit}" th:title="#{action.edit}">
+
+								<q-popup-edit v-model="utterText.text"
+											  buttons label-set="Save" label-cancel="Cancel"
+											  @save="addMoreUtterTextIfNeeded"
+											  anchor="top left">
+									<c-richtext
+										v-model="utterText.text"
+										class="q-pb-sm">
+									</c-richtext>
+								</q-popup-edit>
+							</q-btn>
+						</q-item-section>
+						<q-item-section class="cursor-pointer">
+							<q-input
+								v-model="utterText.text"
+								:ref="'utter_input_'+index"
+								:name="'vContext[\'utterTexts\']['+index+'][\'text\']'"
+								placeholder="Enter text variant" dense
+								@input="addMoreUtterTextIfNeeded"
+								@keydown.enter.prevent="if (index < getUtterTextResolvedList().length - 1) $refs['utter_input_'+(index+1)][0].focus()"
+								>
+								</q-input>
+						</q-item-section>
+					</q-item>
+				</q-list>
+
+				<div th:if="${model.modeReadOnly}">
+					<q-list>
+						<q-item v-for="(utterText, index) in vueData.utterTexts.slice(0, -1)" dense>
+							<q-item-section avatar>
+								<q-icon color="black" name="fas fa-dice"></q-icon>
 							</q-item-section>
-							<q-item-section side left th:if="${!model.modeReadOnly}" style="width:40px">
-								<q-btn tabindex="-1"
-									color="primary" dense size="sm" icon="edit" class="bg-grey" th:aria-label="#{action.edit}" th:title="#{action.edit}">
-									
-									<q-popup-edit v-model="utterText.text"
-												  buttons label-set="Save" label-cancel="Cancel"
-												  @save="addMoreUtterTextIfNeeded"
-												  anchor="top left">
-										<c-richtext
-											v-model="utterText.text"
-											class="q-pb-sm">
-										</c-richtext>
-									</q-popup-edit>
-								</q-btn>
-							</q-item-section>
-							<q-item-section class="cursor-pointer">
-								<q-input
-									v-model="utterText.text" 
-									:ref="'utter_input_'+index"
-									:name="'vContext[\'utterTexts\']['+index+'][\'text\']'"
-									placeholder="Enter text variant" dense
-									@input="addMoreUtterTextIfNeeded"
-									@keydown.enter.prevent="if (index < getUtterTextResolvedList().length - 1) $refs['utter_input_'+(index+1)][0].focus()"
-									>
-									</q-input>
+							<q-item-section>
+								<c-richtext
+									v-model="utterText.text"
+									:mode-edit="false">
+								</c-richtext>
 							</q-item-section>
 						</q-item>
 					</q-list>
-
-					<div th:if="${model.modeReadOnly}">
-						<q-list>
-							<q-item v-for="(utterText, index) in vueData.utterTexts.slice(0, -1)" dense>
-								<q-item-section avatar>
-						        	<q-icon color="black" name="fas fa-dice"></q-icon>
-						        </q-item-section>
-						        <q-item-section>
-						        	<c-richtext
-										v-model="utterText.text"
-										:mode-edit="false">
-									</c-richtext>
-						        </q-item-section>
-							</q-item>
-						</q-list>
-					</div>
-					
 				</div>
-				
-				
-			</vu:block>
-			
-			<vu:block id="buttons" th:title="#{smallTalk.menu.buttons}">
-				<vu:include-data object="buttons" field="text" />
-				<vu:include-data object="buttons" field="topIdResponse" />
-				<vu:include-data object="topicList" field="topId" />
-				<vu:include-data object="topicList" field="title" />
-			
-				<c-buttonlist
-					class="q-pb-sm"
-					button-list="buttons"
-					choice-list="topicList"
-					th::mode-edit="${!model.modeReadOnly}">
-				</c-buttonlist>
-				
-				<div th:if="${model.modeReadOnly && model.vContext.buttons.isEmpty()}" th:text=#{smalltalk.noButton}></div>
-			</vu:block>
-				
-			<vu:block id="conversationOver" title="#{smallTalk.menu.isEnd}">
-				<vu:label object="smallTalk" field="isEnd">
-					<vu:include-data object="smallTalk" field="isEnd" />
-					<q-input v-model="vueData.smallTalk.isEnd" name="vContext[smallTalk][isEnd]" class="hidden" ></q-input>
-					<q-toggle v-model="vueData.smallTalk.isEnd" th::disable="${model.modeReadOnly}"></q-toggle>
-				</vu:label>
-			</vu:block>
-			
-		</section>
-	</body>
+
+			</div>
+
+
+		</vu:block>
+
+		<vu:block id="buttons" th:title="#{smallTalk.menu.buttons}">
+			<vu:include-data object="buttons" field="text" />
+			<vu:include-data object="buttons" field="topIdResponse" />
+			<vu:include-data object="topicList" field="topId" />
+			<vu:include-data object="topicList" field="title" />
+
+			<c-buttonlist
+				class="q-pb-sm"
+				button-list="buttons"
+				choice-list="topicList"
+				th::mode-edit="${!model.modeReadOnly}">
+			</c-buttonlist>
+
+			<div th:if="${model.modeReadOnly && model.vContext.buttons.isEmpty()}" th:text=#{smalltalk.noButton}></div>
+		</vu:block>
+
+		<vu:block id="conversationOver" title="#{smallTalk.menu.isEnd}">
+			<vu:label object="smallTalk" field="isEnd">
+				<vu:include-data object="smallTalk" field="isEnd" />
+				<q-input v-model="vueData.smallTalk.isEnd" name="vContext[smallTalk][isEnd]" class="hidden" ></q-input>
+				<q-toggle v-model="vueData.smallTalk.isEnd" th::disable="${model.modeReadOnly}"></q-toggle>
+			</vu:label>
+		</vu:block>
+
+	</section>
 </html>

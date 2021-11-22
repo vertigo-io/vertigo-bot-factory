@@ -18,6 +18,7 @@ import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -231,22 +232,23 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         final Long botId = chatbot.getBotId();
         DtList<UtterText> utterTexts = new DtList<>(UtterText.class);
         DtList<ResponseButton> buttonList = new DtList<>(ResponseButton.class);
+        DtObject dtObject = scriptIntention;
         if (TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd())) {
             utterTexts = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey),
                     uiMessageStack);
             buttonList = ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsKey),
                     uiMessageStack);
+            dtObject = smallTalk;
         }
 
-        saveTopic(topic, chatbot, smallTalk, scriptIntention, buttonList, utterTexts, nluTrainingSentences, newNluTrainingSentence, nluTrainingSentencesToDelete, labels,
+        saveTopic(topic, chatbot, dtObject, buttonList, utterTexts, nluTrainingSentences, newNluTrainingSentence, nluTrainingSentencesToDelete, labels,
                 initialLabels);
         return "redirect:/bot/" + botId + "/topics/detail/" + topic.getTopId();
     }
 
     private void saveTopic(final Topic topic,
                           final Chatbot chatbot,
-                          final SmallTalk smallTalk,
-                          final ScriptIntention scriptIntention,
+                          final DtObject dtObject,
                           final DtList<ResponseButton> buttonList,
                           final DtList<UtterText> utterTexts,
                           final DtList<NluTrainingSentence> nluTrainingSentences,
@@ -254,7 +256,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
                           final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
                           final DtList<TopicLabel> labels,
                           final DtList<TopicLabel> initialLabels) {
-        topicServices.saveTopic(topic, chatbot, newNluTrainingSentence, nluTrainingSentences, nluTrainingSentencesToDelete, scriptIntention, smallTalk, buttonList, utterTexts, labels, initialLabels);
+        topicServices.saveTopic(topic, chatbot, newNluTrainingSentence, nluTrainingSentences, nluTrainingSentencesToDelete, dtObject, buttonList, utterTexts, labels, initialLabels);
 
     }
 
@@ -263,9 +265,9 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         /** {@inheritDoc} */
         @Override
         protected void checkMonoFieldConstraints(final Topic topic, final DtField dtField, final DtObjectErrors dtObjectErrors) {
-            if (DtDefinitions.BotPredefinedTopicFields.value.name().equals(dtField.getName())) {
-                final String value = (String) dtField.getDataAccessor().getValue(topic);
-                if (StringUtils.isHtmlEmpty(value)) {
+            if (DtDefinitions.TopicFields.topCatId.name().equals(dtField.getName())) {
+                final Long value = (Long) dtField.getDataAccessor().getValue(topic);
+                if (value == null) {
                     dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné")); // TODO: use same i18n resource when avaiable in DefaultDtObjectValidator
                 }
             }

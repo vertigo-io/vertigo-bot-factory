@@ -112,14 +112,10 @@
 			</section>
 
 			<section layout:fragment="content-nav">
-				<q-item v-if="vueData.topic.ttoCd === 'SMALLTALK'" tag="a" href="#detail" th:text="#{smallTalk.menu.informations}"></q-item>
-				<q-item v-if="vueData.topic.ttoCd === 'SMALLTALK'" tag="a" href="#training" th:text="#{smallTalk.menu.training}"></q-item>
-				<q-item v-if="vueData.topic.ttoCd === 'SMALLTALK'" tag="a" href="#response" th:text="#{smallTalk.menu.responses}"></q-item>
-				<q-item v-if="vueData.topic.ttoCd === 'SMALLTALK'" tag="a" href="#buttons" th:text="#{smallTalk.menu.buttons}"></q-item>
-				<q-item v-if="vueData.topic.ttoCd === 'SMALLTALK'" tag="a" href="#conversationOver" th:text="#{smallTalk.menu.isEndMini}"></q-item>
-				<q-item v-if="vueData.topic.ttoCd === 'SCRIPTINTENTION'" tag="a" href="#detail" th:text="#{script.menu.informations}"></q-item>
-				<q-item v-if="vueData.topic.ttoCd === 'SCRIPTINTENTION'" tag="a" href="#training" th:text="#{script.menu.training}"></q-item>
-				<q-item v-if="vueData.topic.ttoCd === 'SCRIPTINTENTION'" tag="a" href="#script" th:text="#{script.menu.script}"></q-item>
+				<q-item tag="a" href="#detail" th:text="#{smallTalk.menu.informations}"></q-item>
+				<q-item tag="a" href="#training" th:text="#{smallTalk.menu.training}"></q-item>
+				<section v-if="vueData.topic.ttoCd === 'SMALLTALK'" th:insert="builder/bot/smallTalkDetail.html :: content-nav" ></section>
+				<section v-if="vueData.topic.ttoCd === 'SCRIPTINTENTION'" th:insert="builder/bot/scriptIntentionDetail.html :: content-nav" ></section>
 			</section>
 
 			<section layout:fragment="content">
