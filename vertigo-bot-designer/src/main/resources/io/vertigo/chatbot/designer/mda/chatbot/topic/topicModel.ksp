@@ -114,7 +114,7 @@ create DtDefinition DtTopic{
 	field 	title 			{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
 	field 	description		{domain: DoLabel 	label: "Description" 						}
 	field 	isEnabled 		{domain: DoYesNo 	label: "Enabled" 		cardinality : "1"	}
-	field 	code	 		{domain: DoLabel 	label: "Code" 			cardinality : "1"	}
+	field 	code	 		{domain: DoTopicCode 	label: "Code" 			cardinality : "1"	}
 	computed isTechnical    {domain: DoYesNo 					        label: "Is technical"
     								 expression:"return io.vertigo.chatbot.designer.builder.services.topic.TopicServices.isTechnical(this);" }
 }
@@ -395,7 +395,7 @@ create DtDefinition DtTopicIhm {
 	field catLabel	{domain: DoLabel	label: "Category"				cardinality:"1"	}
 	field isEnabled	{domain: DoYesNo	label: "Enabled"								}
 	field ktoCd		{domain: DoCode		label: "Code Kind"				cardinality:"?"	}
-	field code		{domain: DoLabel	label: "Code"					cardinality:"1"	}
+	field code		{domain: DoTopicCode label: "Code"					cardinality:"1"	}
 	field labels	{domain: DoLabel	label: "Labels"					cardinality:"1"	}
 }
 

@@ -6,11 +6,7 @@ public enum TopicsMultilingualResources implements MessageKey {
 
 	ERROR_CATEGORY,
 
-	CODE_PATTERN_DIGIT_ERROR,
-
-	CODE_PATTERN_ERROR,
-
-	CODE_PATTERN_LENGTH,
+	CODE_NON_UNIQUE_ERROR,
 
 	NLU_ALREADY_EXISTS,
 
