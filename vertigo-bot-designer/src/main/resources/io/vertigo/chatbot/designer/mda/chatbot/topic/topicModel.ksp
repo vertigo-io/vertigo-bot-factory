@@ -87,6 +87,12 @@ create DtDefinition DtSmallTalk {
 	field 	isEnd 		{domain: DoYesNo 	label: "Is conversation over ?" 			cardinality : "1"}
 }
 
+create DtDefinition DtSmallTalkWrapper {
+	field 	smallTalk 		{domain: DoDtSmallTalk 	label: "SmallTalk" 			cardinality : "1"}
+	field 	buttons 		{domain: DoDtResponseButton 	label: "Buttons" 			cardinality : "*"}
+	field 	utterTexts 		{domain: DoDtUtterText 	label: "Utter texts" 			cardinality : "*"}
+}
+
 
 
 

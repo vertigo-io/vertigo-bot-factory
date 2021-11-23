@@ -40,7 +40,7 @@ import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
+import io.vertigo.chatbot.designer.builder.services.topic.ITopicService;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
@@ -78,7 +78,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	private TypeTopicServices typeTopicServices;
 
 	@Inject
-	private List<TopicInterfaceServices<? extends Entity>> topicInterfaceServices;
+	private List<ITopicService<? extends Entity>> topicInterfaceServices;
 
 	private static final ViewContextKey<BotPredefinedTopic> startTopicKey = ViewContextKey.of("startTopic");
 	private static final ViewContextKey<BotPredefinedTopic> failureTopicKey = ViewContextKey.of("failureTopic");
@@ -148,7 +148,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
 		BotPredefinedTopic predefinedTopic = null;
 
-		for (final TopicInterfaceServices<? extends Entity> services : topicInterfaceServices) {
+		for (final ITopicService<? extends Entity> services : topicInterfaceServices) {
 			if (services.handleObject(topic)) {
 				predefinedTopic = services.getBotPredefinedTopicByTopId(topic.getTopId());
 			}

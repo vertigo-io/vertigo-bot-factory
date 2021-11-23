@@ -10,14 +10,7 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.KindTopic;
-import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
-import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
-import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
-import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.domain.topic.*;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
@@ -35,6 +28,7 @@ import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datamodel.structure.util.VCollectors;
 
@@ -53,7 +47,7 @@ public class TopicServices implements Component, Activeable {
 	@Inject
 	private KindTopicServices kindTopicServices;
 
-	private final Set<TopicInterfaceServices<? extends Entity>> topicInterfaceServices = new HashSet<>();
+	private final Set<ITopicService<? extends Entity>> topicInterfaceServices = new HashSet<>();
 
 	@Inject
 	private SmallTalkServices smallTalkServices;
@@ -63,6 +57,12 @@ public class TopicServices implements Component, Activeable {
 
 	@Inject
 	private NodeServices nodeServices;
+
+	@Inject
+	protected NluTrainingSentenceServices nluTrainingSentenceServices;
+
+	@Inject
+	private TopicLabelServices topicLabelServices;
 
 	public Topic findTopicById(@SecuredOperation("botVisitor") final Long id) {
 		return topicDAO.get(id);
@@ -150,6 +150,7 @@ public class TopicServices implements Component, Activeable {
 		topic.setBotId(bot.getBotId());
 		topic.setIsEnabled(true);
 		topic.setKtoCd(KindTopicEnum.NORMAL.name());
+		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
 		return topic;
 	}
 
@@ -163,7 +164,7 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	public void deleteCompleteTopic(@SecuredOperation("botContributor") final Chatbot bot, final Topic topic) {
-		for (final TopicInterfaceServices<? extends Entity> services : topicInterfaceServices) {
+		for (final ITopicService<? extends Entity> services : topicInterfaceServices) {
 			services.deleteIfExists(bot, topic);
 		}
 		deleteTopic(bot, topic);
@@ -248,7 +249,7 @@ public class TopicServices implements Component, Activeable {
 		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
 		topicDAO.save(topic);
 
-		for (final TopicInterfaceServices<? extends Entity> service : topicInterfaceServices) {
+		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
 			if (service.handleObject(topic)) {
 				service.createOrUpdateFromTopic(chatbot, topic, botTopic.getValue());
 			} else {
@@ -263,8 +264,46 @@ public class TopicServices implements Component, Activeable {
 		return doSave(topic, bot);
 	}
 
-	public UtterText initUtterTextBasicTopic(final Topic topic) {
-		return new UtterText();
+	/**
+	 * Save a topic with its generic elements (nlu training sentences)
+	 * Then delegate to a specific service implementation
+	 * depending on its type
+	 * @param topic Global topic to save
+	 * @param chatbot Topic's chatbot
+	 * @param newNluTrainingSentence New nlu training sentences
+	 * @param nluTrainingSentences Nlu training sentences (including updated sentences)
+	 * @param nluTrainingSentencesToDelete Nlu training sentences to be deleted
+	 * @param dtObject High level object holding different types of topic (smalltalk, scriptIntention ...)
+	 * @param labels Topic's tags
+	 * @param initialLabels Initial topic's tags
+	 */
+	public void saveTopic(final Topic topic, final Chatbot chatbot,
+						  final String newNluTrainingSentence, final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
+						  final DtObject dtObject,
+						  final DtList<TopicLabel> labels,
+						  final DtList<TopicLabel> initialLabels) {
+
+		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+		saveTtoCd(topic, topic.getTtoCd(), chatbot);
+		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
+			if (service.handleObject(topic)) {
+				service.saveTopic(topic, chatbot, dtObject);
+				save(topic, chatbot, service.isEnabled(dtObject, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
+			} else {
+				service.deleteIfExists(chatbot, topic);
+			}
+		}
+		topicLabelServices.manageLabels(chatbot, topic, labels, initialLabels);
+	}
+
+	public void deleteTopic(Topic topic, Chatbot chatbot) {
+		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
+			if (service.handleObject(topic)) {
+				service.deleteIfExists(chatbot, topic);
+			}
+		}
+		topicLabelServices.cleanLabelFromTopic(chatbot, topic.getTopId());
+		deleteTopic(chatbot, topic);
 	}
 
 	//********* NTS part ********/

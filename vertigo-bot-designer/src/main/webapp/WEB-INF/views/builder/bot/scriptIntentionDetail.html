@@ -1,61 +1,25 @@
 <!DOCTYPE html>
 <html
-	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:th="http://www.thymeleaf.org"
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{templates/topicDetailLayout}" th:with="nav=true, tab=scriptIntentions"
 	>
-	
-	<head>
-		<title th:text="#{script.detail.title}"></title>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js" integrity="sha512-hGVnilhYD74EGnPbzyvje74/Urjrg5LSNGx0ARG1Ucqyiaz+lFvtsXk/1jCwT9/giXP0qoXSlVDjxNxjLvmqAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<script src="https://cdn.jsdelivr.net/npm/vue-codemirror@4.0.6/dist/vue-codemirror.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/mode/simple.min.js" integrity="sha512-9YoNYsegWvbA5aiSshQ2BNW2FAq3CQVLqpg2r6urw9Tfl1GklM9PNgrMRVz8fhEtjM+uZfO/1X3RURkMcil8wg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.js" integrity="sha512-kCn9g92k3GM90eTPGMNwvpCAtLmvyqbpvrdnhm0NMt6UEHYs+DjRO4me8VcwInLWQ9azmamS1U1lbQV627/TBQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/selection/active-line.min.js" integrity="sha512-UNVAZmixdjeBtJVQcH5eSKXuVdzbSV6rzfTfNVyYWUIIDCdI9/G8/Z/nWplnSHXXxz9U8TA1BiJ1trK7abL/dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.js" integrity="sha512-uVoZbG/kkAWc+ceMzfYqsyI2ONb5qMV0nc1UZ8gOvuDuc0EWt8VcXg3fWR7z1EIpn4yyWSEeK9lmrR30VSpYLQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<section th:fragment="content-nav">
+		<q-item tag="a" href="#script" th:text="#{script.menu.script}"></q-item>
+	</section>
 
- 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.css" integrity="sha512-OmcLQEy8iGiD7PSm85s06dnR7G7C9C0VqahIPAj/KHk5RpOCmnC6R2ob1oK4/uwYhWa9BF1GC6tzxsC8TIx7Jg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.css" integrity="sha512-jP1+o6s94WQS9boYeDP3Azh8ihI5BxGgBZNjkABhx05MqH5WuDzfzSnoPxGxVzWi/gxxVHZHvWkdRM6SMy5B0Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css" integrity="sha512-6sALqOPMrNSc+1p5xOhPwGIzs6kIlST+9oGWlI4Wwcbj1saaX9J3uzO3Vub016dmHV7hM+bMi/rfXLiF5DNIZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<section th:fragment="content-specific">
+		<vu:popup action="_delete" vModel="showPopup" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
 
-		<script th:src="@{/static/chatbot/chatbotMode.js}"></script>
-		<script th:src="@{/static/js/c-codemirror.js}"></script>
-		<script th:inline="javascript">
-		 	Vue.use(window.VueCodemirror)
-		 	
-		</script>
-	</head>
-	
-	<body>
-		<section layout:fragment="content-header-actions">
-			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/scriptIntention/(id=${model.bot.botId})} + ${model.object.sinId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
-							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
-			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
-							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
-							class="on-left" round size="lg" color="red" ></q-btn>
-			
-		</section>
-				
-		<section layout:fragment="content-nav">
-			<q-item tag="a" href="#detail" th:text="#{script.menu.informations}"></q-item>
-			<q-item tag="a" href="#training" th:text="#{script.menu.training}"></q-item>
-			<q-item tag="a" href="#script" th:text="#{script.menu.script}"></q-item>
-			
-		</section>
-		
-		<section layout:fragment="content-specific">
-			<vu:popup action="_delete" vModel="showPopup" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
-			
-			<vu:block id="script" title="Script">
-				<vu:include-data object="object" field="script" />
+		<vu:block id="script" title="Script">
+			<vu:include-data object="scriptIntention" field="script" />
 
-				<c-codemirror object="object" field="script" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
-				
-			</vu:block>
-			
-		</section>
-		
-	</body>
+			<c-codemirror object="scriptIntention" field="script" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
+
+		</vu:block>
+
+	</section>
+
 </html>

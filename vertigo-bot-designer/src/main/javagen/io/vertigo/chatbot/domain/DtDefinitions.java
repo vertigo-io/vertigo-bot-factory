@@ -77,6 +77,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		SmallTalk(io.vertigo.chatbot.commons.domain.topic.SmallTalk.class),
 		/** Objet de données SmallTalkIhm. */
 		SmallTalkIhm(io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm.class),
+		/** Objet de données SmallTalkWrapper. */
+		SmallTalkWrapper(io.vertigo.chatbot.commons.domain.topic.SmallTalkWrapper.class),
 		/** Objet de données StatCriteria. */
 		StatCriteria(io.vertigo.chatbot.designer.domain.analytics.StatCriteria.class),
 		/** Objet de données Synonym. */
@@ -530,6 +532,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isEnabled,
 		/** Propriété 'Category'. */
 		catLabel	}
+
+	/**
+	 * Enumération des champs de SmallTalkWrapper.
+	 */
+	public enum SmallTalkWrapperFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.SmallTalkWrapper> {
+		/** Propriété 'SmallTalk'. */
+		smallTalk,
+		/** Propriété 'Buttons'. */
+		buttons,
+		/** Propriété 'Utter texts'. */
+		utterTexts	}
 
 	/**
 	 * Enumération des champs de StatCriteria.

@@ -1,20 +1,27 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.util.Optional;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.designer.builder.model.topic.SaveTopicObject;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
+import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.Entity;
 
+import java.util.Optional;
+
 @Secured("BotUser")
-public interface TopicInterfaceServices<D extends Entity> {
+public interface ITopicService<D extends Entity> {
 
 	D save(final D object);
 
-	D saveFromSaveTopicObject(final SaveTopicObject<D> saveObject);
+	/**
+	 * Save a topic and its specific elements depending on its type (smalltalk, scriptIntention)
+	 * @param topic Global topic to save
+	 * @param chatbot Topic's chatbot
+	 * @param dtObject High level object holding different types of topic (smalltalk, scriptIntention ...)
+	 */
+	void saveTopic(Topic topic, Chatbot chatbot,
+						  DtObject dtObject);
 
 	void deleteIfExists(final Chatbot chatbot, final Topic topic);
 
@@ -26,11 +33,11 @@ public interface TopicInterfaceServices<D extends Entity> {
 
 	void createOrUpdateFromTopic(final Chatbot chatbot, final Topic topic, final String text);
 
-	default boolean isEnabled(final D object, final boolean isEnabled, final Chatbot bot) {
+	default boolean isEnabled(final DtObject object, final boolean isEnabled, final Chatbot bot) {
 		return !(hasToBeDeactivated(object, bot)) && isEnabled;
 	}
 
-	boolean hasToBeDeactivated(final D object, final Chatbot bot);
+	boolean hasToBeDeactivated(final DtObject object, final Chatbot bot);
 
 	String getDeactivateMessage();
 

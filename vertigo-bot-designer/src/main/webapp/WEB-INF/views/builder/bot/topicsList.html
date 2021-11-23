@@ -9,19 +9,6 @@
 	<head>
 		<title th:text="#{topic.title.page}"></title>
 		<script th:inline="javascript">
-			function redirectDetail(row) {
-			// voir https://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf.html#script-inlining-javascript-and-dart
-				var url;
-				if (row.ttoCd === 'SMALLTALK'){
-					var smallTalkUrl = /*[[@{/bot/{id}/smallTalk/(id=${model.bot.botId})}]]*/ '';
-					url = smallTalkUrl + row.smtId					
-				}
-				else if (row.ttoCd === 'SCRIPTINTENTION'){
-					var scriptInscriptionUrl = /*[[@{/bot/{id}/scriptIntention/(id=${model.bot.botId})}]]*/ '';
-					url = scriptInscriptionUrl +row.sinId;
-				}
-				return url;
-			}
 			
 			function normalizeString(str) {
 				if (str)
@@ -61,8 +48,7 @@
 	
 	<body>
 		<section layout:fragment="content-header-actions">
-			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" 
-					       @click="vueData.newTopic = Vue.util.extend({}, vueData.newTopic); $refs.newTopic.show()"></q-btn>	
+			<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/topics/detail/new(id=${model.bot.botId})}" class="fab-block" round color="primary" size="lg" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" />
 					      
 			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}" 
 					       @click="$refs.exportTopic.show()"></q-btn>	
@@ -81,6 +67,7 @@
 			
 			<!-- Use for the redirections -->
 				<vu:include-data object="topicsIhm" field="ttoCd"/>
+				<vu:include-data object="topicsIhm" field="topId"/>
 				<vu:include-data object="topicsIhm" field="smtId"/>
 				<vu:include-data object="topicsIhm" field="sinId"/>
 				<vu:include-data object="criteria" field="catId"/>
@@ -107,7 +94,7 @@
 					rowKey='topId'
 					componentId='topics'
 					sortBy='title'
-					tr_@click.native="goTo(redirectDetail(props.row))" 
+					tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|"
 					tr_style="cursor : pointer;">
 					 	<vu:column-sample list=topicsIhm field=isEnabled classes='col_STyYesNo'>
 							<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
@@ -115,7 +102,7 @@
 					 	</vu:column-sample>
 
 						<vu:column-sample list=topicsIhm field=title >
-							<a :href="redirectDetail(props.row)"
+							<a th::href="|'@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId|"
 							   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
 						   	>
 						   		<span style="height:100%" class="row items-center">{{props.row.title}}</span>
@@ -127,38 +114,6 @@
 						<vu:column-sample list=topicsIhm field=code  />
 				</vu:search-table>
 			</div>
-			
-			<q-dialog ref="newTopic" th:with="viewMode='edit'" >
-				<q-card>
-					<q-form method="post" action="createTopic">
-					<q-card-section>
-						<div class="text-h6" th:text="#{topic.title.popup}"></div>
-						
-					</q-card-section>
-					
-					<vu:include-data-primitive key="locale" />
-					<q-card-section style="width: 400px;">
-						<vu:include-data object="typeTopicList" field="'*'"/>
-						<q-select
-							filled
-							map-options
-							emit-value
-							v-model="vueData.selectionList"
-							:options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
-							th:label="#{topic.type}"
-							stack-label>
-						</q-select>
-					</q-card-section>
-					<input type="hidden" name="vContext[selectionList]" :value="vueData.selectionList" />
-					
-					<q-card-actions align="around">
-							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
-							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
-							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn> 
-					</q-card-actions>
-					</q-form>
-				</q-card>
-			</q-dialog>
 			
 			<q-dialog ref="importTopic" th:with="viewMode='edit'" >
 				<q-card>
