@@ -15,7 +15,7 @@ import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResource
 import io.vertigo.chatbot.commons.multilingual.meanings.MeaningsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.meaning.MeaningPAO;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
-import io.vertigo.chatbot.designer.builder.services.export.InterfaceExportServices;
+import io.vertigo.chatbot.designer.builder.services.export.IExportServices;
 import io.vertigo.chatbot.designer.dao.MeaningDAO;
 import io.vertigo.chatbot.designer.domain.DictionaryExport;
 import io.vertigo.chatbot.designer.domain.Meaning;
@@ -43,7 +43,7 @@ import liquibase.util.csv.opencsv.bean.ColumnPositionMappingStrategy;
 import liquibase.util.csv.opencsv.bean.CsvToBean;
 
 @Transactional
-public class MeaningServices implements Component, InterfaceExportServices {
+public class MeaningServices implements Component, IExportServices {
 
 	@Inject
 	private MeaningDAO meaningDAO;
@@ -315,29 +315,26 @@ public class MeaningServices implements Component, InterfaceExportServices {
 
 		try {
 
-			Meaning meaning = new Meaning();
+			final Meaning meaning = new Meaning();
 
 			//Try to find the meaning in database
 			final Optional<Meaning> meaningBase = findMeaningByLabelAndBotId(chatbot.getBotId(), dex.getMeaningLabel());
-
+			final Meaning meaningSaved;
 			if (meaningBase.isPresent()) {
-				meaning = meaningBase.get();
+				meaningSaved = meaningBase.get();
+			} else {
+				// if the meaning is not already in database, it is saved
+				meaning.setBotId(chatbot.getBotId());
+				meaning.setLabel(dex.getMeaningLabel());
+				meaningSaved = this.save(chatbot, meaning);
 			}
-
-			meaning.setBotId(chatbot.getBotId());
-			meaning.setLabel(dex.getMeaningLabel());
-
-			final Meaning meaningSaved = this.save(chatbot, meaning);
-
 			final DtList<Synonym> listSynonyms = synonymServices.extractSynonymsFromDictionaryExport(dex, meaningSaved);
-			for (Synonym synonym : listSynonyms) {
-
+			for (final Synonym synonym : listSynonyms) {
 				final Optional<Synonym> synonymBase = synonymServices.findSynonymByLabelAndMeaId(meaningSaved.getMeaId(), synonym.getLabel());
-
-				if (synonymBase.isPresent()) {
-					synonym = synonymBase.get();
+				//If the synonym is not already in database, it is saved
+				if (!synonymBase.isPresent()) {
+					synonymServices.save(synonym);
 				}
-				synonymServices.save(synonym);
 			}
 
 		} catch (final Exception e) {

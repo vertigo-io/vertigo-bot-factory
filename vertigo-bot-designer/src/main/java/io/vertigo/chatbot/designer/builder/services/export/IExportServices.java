@@ -4,7 +4,7 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
 
 @Transactional
-public interface InterfaceExportServices {
+public interface IExportServices {
 
 	/*
 	* Return an error message with the line concerned

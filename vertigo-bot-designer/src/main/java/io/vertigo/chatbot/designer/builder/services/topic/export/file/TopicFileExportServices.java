@@ -26,7 +26,7 @@ import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
-import io.vertigo.chatbot.designer.builder.services.export.InterfaceExportServices;
+import io.vertigo.chatbot.designer.builder.services.export.IExportServices;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
@@ -50,7 +50,7 @@ import liquibase.util.csv.opencsv.bean.ColumnPositionMappingStrategy;
 import liquibase.util.csv.opencsv.bean.CsvToBean;
 
 @Transactional
-public class TopicFileExportServices implements Component, InterfaceExportServices {
+public class TopicFileExportServices implements Component, IExportServices {
 
 	@Inject
 	private TopicFileExportPAO topicFileExportPAO;
