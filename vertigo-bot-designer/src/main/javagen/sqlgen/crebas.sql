@@ -13,11 +13,11 @@ drop sequence IF EXISTS SEQ_CHATBOT_NODE;
 drop table IF EXISTS CHATBOT_PROFILES cascade;
 drop table IF EXISTS CONTEXT_VALUE cascade;
 drop sequence IF EXISTS SEQ_CONTEXT_VALUE;
+drop table IF EXISTS DICTIONARY_ENTITY cascade;
+drop sequence IF EXISTS SEQ_DICTIONARY_ENTITY;
 drop table IF EXISTS GROUPS cascade;
 drop sequence IF EXISTS SEQ_GROUPS;
 drop table IF EXISTS KIND_TOPIC cascade;
-drop table IF EXISTS MEANING cascade;
-drop sequence IF EXISTS SEQ_MEANING;
 drop table IF EXISTS MEDIA_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_MEDIA_FILE_INFO;
 drop table IF EXISTS NLU_TRAINING_SENTENCE cascade;
@@ -66,12 +66,12 @@ create sequence SEQ_CHATBOT_NODE
 create sequence SEQ_CONTEXT_VALUE
 	start with 1000 cache 20; 
 
+create sequence SEQ_DICTIONARY_ENTITY
+	start with 1000 cache 20; 
+
 create sequence SEQ_GROUPS
 	start with 1000 cache 20; 
 
-
-create sequence SEQ_MEANING
-	start with 1000 cache 20; 
 
 create sequence SEQ_MEDIA_FILE_INFO
 	start with 1000 cache 20; 
@@ -239,6 +239,26 @@ comment on column CONTEXT_VALUE.BOT_ID is
 'Chatbot';
 
 -- ============================================================
+--   Table : DICTIONARY_ENTITY                                        
+-- ============================================================
+create table DICTIONARY_ENTITY
+(
+    DIC_ENT_ID  	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_DICTIONARY_ENTITY primary key (DIC_ENT_ID)
+);
+
+comment on column DICTIONARY_ENTITY.DIC_ENT_ID is
+'Dictionary entity id';
+
+comment on column DICTIONARY_ENTITY.LABEL is
+'Label';
+
+comment on column DICTIONARY_ENTITY.BOT_ID is
+'Chatbot';
+
+-- ============================================================
 --   Table : GROUPS                                        
 -- ============================================================
 create table GROUPS
@@ -277,26 +297,6 @@ comment on column KIND_TOPIC.DESCRIPTION is
 
 comment on column KIND_TOPIC.DEFAULT_TEXT is
 'Default text';
-
--- ============================================================
---   Table : MEANING                                        
--- ============================================================
-create table MEANING
-(
-    MEA_ID      	 NUMERIC     	not null,
-    LABEL       	 VARCHAR(100)	not null,
-    BOT_ID      	 NUMERIC     	not null,
-    constraint PK_MEANING primary key (MEA_ID)
-);
-
-comment on column MEANING.MEA_ID is
-'Meaning id';
-
-comment on column MEANING.LABEL is
-'Label';
-
-comment on column MEANING.BOT_ID is
-'Chatbot';
 
 -- ============================================================
 --   Table : MEDIA_FILE_INFO                                        
@@ -526,7 +526,7 @@ create table SYNONYM
     SYN_ID      	 NUMERIC     	not null,
     LABEL       	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
-    MEA_ID      	 NUMERIC     	not null,
+    DIC_ENT_ID  	 NUMERIC     	not null,
     constraint PK_SYNONYM primary key (SYN_ID)
 );
 
@@ -539,8 +539,8 @@ comment on column SYNONYM.LABEL is
 comment on column SYNONYM.BOT_ID is
 'Chatbot';
 
-comment on column SYNONYM.MEA_ID is
-'Meaning';
+comment on column SYNONYM.DIC_ENT_ID is
+'DictionaryEntity';
 
 -- ============================================================
 --   Table : TOPIC                                        
@@ -787,11 +787,11 @@ alter table CONTEXT_VALUE
 
 create index A_CONTEXT_VALUE_CHATBOT_CHATBOT_FK on CONTEXT_VALUE (BOT_ID asc);
 
-alter table MEANING
-	add constraint FK_A_MEANING_CHATBOT_CHATBOT foreign key (BOT_ID)
+alter table DICTIONARY_ENTITY
+	add constraint FK_A_DICTIONARY_ENTITY_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
 
-create index A_MEANING_CHATBOT_CHATBOT_FK on MEANING (BOT_ID asc);
+create index A_DICTIONARY_ENTITY_CHATBOT_CHATBOT_FK on DICTIONARY_ENTITY (BOT_ID asc);
 
 alter table CHATBOT_NODE
 	add constraint FK_A_NODE_CHATBOT_CHATBOT foreign key (BOT_ID)
@@ -878,10 +878,10 @@ alter table SYNONYM
 create index A_SYNONYM_CHATBOT_CHATBOT_FK on SYNONYM (BOT_ID asc);
 
 alter table SYNONYM
-	add constraint FK_A_SYNONYM_MEANING_MEANING foreign key (MEA_ID)
-	references MEANING (MEA_ID);
+	add constraint FK_A_SYNONYM_DICTIONARY_ENTITY_DICTIONARY_ENTITY foreign key (DIC_ENT_ID)
+	references DICTIONARY_ENTITY (DIC_ENT_ID);
 
-create index A_SYNONYM_MEANING_MEANING_FK on SYNONYM (MEA_ID asc);
+create index A_SYNONYM_DICTIONARY_ENTITY_DICTIONARY_ENTITY_FK on SYNONYM (DIC_ENT_ID asc);
 
 alter table TOPIC_CATEGORY
 	add constraint FK_A_TOPIC_CATEGORY_CHATBOT_CHATBOT foreign key (BOT_ID)

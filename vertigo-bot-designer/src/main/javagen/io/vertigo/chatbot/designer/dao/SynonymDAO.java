@@ -44,20 +44,20 @@ public final class SynonymDAO extends DAO<Synonym, java.lang.Long> implements St
 	}
 
 	/**
-	 * Execute la tache TkGetSynonymByMeaning.
-	 * @param meaId Long
+	 * Execute la tache TkGetSynonymByDictionaryEntity.
+	 * @param dicEntId Long
 	 * @return DtList de Synonym synonyms
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkGetSynonymByMeaning",
+			name = "TkGetSynonymByDictionaryEntity",
 			request = "SELECT 	syn.*" + 
  "			from synonym syn 						" + 
- "			where syn.mea_id = #meaId#",
+ "			where syn.dic_ent_id = #dicEntId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtSynonym")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.Synonym> getSynonymByMeaning(@io.vertigo.datamodel.task.proxy.TaskInput(name = "meaId", smartType = "STyId") final Long meaId) {
-		final Task task = createTaskBuilder("TkGetSynonymByMeaning")
-				.addValue("meaId", meaId)
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.Synonym> getSynonymByDictionaryEntity(@io.vertigo.datamodel.task.proxy.TaskInput(name = "dicEntId", smartType = "STyId") final Long dicEntId) {
+		final Task task = createTaskBuilder("TkGetSynonymByDictionaryEntity")
+				.addValue("dicEntId", dicEntId)
 				.build();
 		return getTaskManager()
 				.execute(task)

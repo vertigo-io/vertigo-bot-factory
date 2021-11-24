@@ -7,6 +7,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.designer.domain.DictionaryEntity;
+import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,12 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
-import io.vertigo.chatbot.commons.multilingual.meanings.MeaningsMultilingualResources;
-import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
+import io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SynonymServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
-import io.vertigo.chatbot.designer.domain.DictionaryExport;
-import io.vertigo.chatbot.designer.domain.Meaning;
 import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -39,14 +40,14 @@ import liquibase.util.csv.CSVReader;
 @Controller
 @RequestMapping("/bot/{botId}/dictionary")
 @Secured("botAdm")
-public class MeaningListController extends AbstractBotListController<Meaning> {
+public class DictionaryEntityListController extends AbstractBotListController<DictionaryEntity> {
 
 	private static final ViewContextKey<Synonym> synonymEditKey = ViewContextKey.of("synonymEdit");
-	private static final ViewContextKey<Synonym> synonymsKey = ViewContextKey.of("synonyms");
-	private static final ViewContextKey<Meaning> meaningEditKey = ViewContextKey.of("meaningEdit");
+	private static final ViewContextKey<DictionaryEntityWrapper> dictionaryEntityWrappersKey = ViewContextKey.of("dictionaryEntityWrappers");
+	private static final ViewContextKey<DictionaryEntity> dictionaryEntityEditKey = ViewContextKey.of("dictionaryEntityEdit");
 
 	@Inject
-	private MeaningServices meaningServices;
+	private DictionaryEntityServices dictionaryEntityServices;
 
 	@Inject
 	private SynonymServices synonymServices;
@@ -56,47 +57,47 @@ public class MeaningListController extends AbstractBotListController<Meaning> {
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
-		viewContext.publishDtList(synonymsKey, synonymServices.getAllSynonymByBot(bot));
-		viewContext.publishDto(meaningEditKey, new Meaning());
+		initCommonContext(viewContext, uiMessageStack, botId);
+		viewContext.publishDtList(dictionaryEntityWrappersKey, DtDefinitions.DictionaryEntityWrapperFields.dictionaryEntityLabel, dictionaryEntityServices.getDictionaryExportByBotId(botId, "; "));
+		viewContext.publishDto(dictionaryEntityEditKey, new DictionaryEntity());
 		viewContext.publishDto(synonymEditKey, new Synonym());
-		super.initBreadCrums(viewContext, Meaning.class);
+		super.initBreadCrums(viewContext, DictionaryEntity.class);
 	}
 
-	@PostMapping("/saveMeaning")
+	@PostMapping("/saveDictionaryEntity")
 	@Secured("botAdm")
-	public String doSaveMeaning(final ViewContext viewContext,
-			@ViewAttribute("bot") final Chatbot bot,
-			@ViewAttribute("meaningEdit") final Meaning meaningEdit) {
+	public String doSaveDictionaryEntity(final ViewContext viewContext,
+										 @ViewAttribute("bot") final Chatbot bot,
+										 @ViewAttribute("dictionaryEntityEdit") final DictionaryEntity dictionaryEntityEdit) {
 
-		meaningEdit.setBotId(bot.getBotId());
-		final boolean creation = meaningEdit.getMeaId() == null;
-		meaningEdit.setLabel(meaningEdit.getLabel().toLowerCase());
+		dictionaryEntityEdit.setBotId(bot.getBotId());
+		final boolean creation = dictionaryEntityEdit.getDicEntId() == null;
+		dictionaryEntityEdit.setLabel(dictionaryEntityEdit.getLabel().toLowerCase());
 
-		final Meaning meaningSaved = meaningServices.save(bot, meaningEdit);
+		final DictionaryEntity dictionaryEntitySaved = dictionaryEntityServices.save(bot, dictionaryEntityEdit);
 		if (creation) {
 			final Synonym synonym = new Synonym();
 			synonym.setBotId(bot.getBotId());
-			synonym.setMeaId(meaningSaved.getMeaId());
-			synonym.setLabel(meaningSaved.getLabel());
-			if (meaningServices.findMeaningBySynonymLabelAndBotId(meaningSaved.getLabel(), bot.getBotId()) != null) {
-				throw new VUserException(MeaningsMultilingualResources.ERR_UNIQUE_SYNONYM);
+			synonym.setDicEntId(dictionaryEntitySaved.getDicEntId());
+			synonym.setLabel(dictionaryEntitySaved.getLabel());
+			if (dictionaryEntityServices.findDictionaryEntityBySynonymLabelAndBotId(dictionaryEntitySaved.getLabel(), bot.getBotId()) != null) {
+				throw new VUserException(DictionaryEntityMultilingualResources.ERR_UNIQUE_SYNONYM);
 			}
 			synonymServices.save(synonym);
 		}
 
-		return "redirect:/bot/" + meaningSaved.getBotId() + "/meaning/" + meaningSaved.getMeaId();
+		return "redirect:/bot/" + dictionaryEntitySaved.getBotId() + "/dictionaryEntity/" + dictionaryEntitySaved.getDicEntId();
 
 	}
 
-	@PostMapping("/_deleteMeaning")
+	@PostMapping("/_deleteDictionaryEntity")
 	@Secured("botAdm")
-	public ViewContext doDeleteMeaning(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
-			@RequestParam("meaId") final Long meaId) {
+	public ViewContext doDeleteDictionaryEntity(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
+												@RequestParam("dicEntId") final Long dicEntId) {
 
-		meaningServices.deleteMeaning(bot, meaId);
+		dictionaryEntityServices.deleteDictionaryEntity(bot, dicEntId);
 
-		viewContext.publishDtList(synonymsKey, synonymServices.getAllSynonymByBot(bot));
+		viewContext.publishDtList(dictionaryEntityWrappersKey, dictionaryEntityServices.getDictionaryExportByBotId(bot.getBotId(), "; "));
 
 		return viewContext;
 	}
@@ -105,9 +106,9 @@ public class MeaningListController extends AbstractBotListController<Meaning> {
 	@Secured("SuperAdm")
 	public VFile doExportDictionary(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 
-		final DtList<DictionaryExport> listDictionaryExport = meaningServices.getDictionaryExportByBotId(bot.getBotId());
+		final DtList<DictionaryEntityWrapper> listDictionaryEntitiesToExport = dictionaryEntityServices.getDictionaryExportByBotId(bot.getBotId(), "|");
 
-		return meaningServices.exportDictionary(bot, listDictionaryExport);
+		return dictionaryEntityServices.exportDictionary(bot, listDictionaryEntitiesToExport);
 
 	}
 
@@ -123,9 +124,9 @@ public class MeaningListController extends AbstractBotListController<Meaning> {
 		}
 		try (CSVReader csvReader = new CSVReader(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")), ';', CSVReader.DEFAULT_QUOTE_CHARACTER, 0)) {
 
-			final List<DictionaryExport> list = meaningServices.transformFileToList(csvReader);
+			final List<DictionaryEntityWrapper> list = dictionaryEntityServices.transformFileToList(csvReader);
 
-			meaningServices.importDictionaryFromList(bot, list);
+			dictionaryEntityServices.importDictionaryFromList(bot, list);
 		} catch (final Exception e) {
 			throw e;
 		}

@@ -28,12 +28,12 @@
 							VertigoUi.componentStates.synonyms.pagination.page * VertigoUi.componentStates.synonyms.pagination.rowsPerPage);
 		}
 		</script>
-		<title th:text="#{meaning.title}"></title>
+		<title th:text="#{dictionaryEntity.title}"></title>
 	</head>
 	
 	<body>
 		<section layout:fragment="content-header-actions">
-			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/meaning/(id=${model.bot.botId})} + ${model.meaning.meaId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/dictionaryEntity/(id=${model.bot.botId})} + ${model.dictionaryEntity.dicEntId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
 							class="on-left" :round size="lg" color="primary" />
@@ -44,7 +44,7 @@
 		
 		<section layout:fragment="content">
 				
-			<vu:block id="meaning" title="${model.meaning.label}">
+			<vu:block id="dictionaryEntity" title="${model.dictionaryEntity.label}">
 				<vu:slot name="actions_slot">
 				 	<q-input v-model="componentStates.synonyms.pagination.search" 
 				 		dense 
@@ -67,7 +67,7 @@
 					<q-input v-model="vueData.newSynonym" 
 						dense class="q-pb-sm"
 					    @keydown.enter.prevent="if (vueData.newSynonym.trim().length > 0) {httpPostAjax('_addSynonym', {'vContext[newSynonym]':vueData.newSynonym}); componentStates.synonyms.pagination.page = 1; componentStates.synonyms.pagination.search = '';}"
-						th:placeholder="#{meaning.placeholder}"
+						th:placeholder="#{dictionaryEntity.placeholder}"
 						name="vContext['newSynonym']"						
 					>
 					</q-input>

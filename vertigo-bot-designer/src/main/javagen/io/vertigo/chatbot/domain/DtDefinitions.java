@@ -29,16 +29,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ChatbotProfiles(io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
-		/** Objet de données DictionaryExport. */
-		DictionaryExport(io.vertigo.chatbot.designer.domain.DictionaryExport.class),
+		/** Objet de données DictionaryEntity. */
+		DictionaryEntity(io.vertigo.chatbot.designer.domain.DictionaryEntity.class),
+		/** Objet de données DictionaryEntityWrapper. */
+		DictionaryEntityWrapper(io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données Groups. */
 		Groups(io.vertigo.chatbot.designer.domain.commons.Groups.class),
 		/** Objet de données KindTopic. */
 		KindTopic(io.vertigo.chatbot.commons.domain.topic.KindTopic.class),
-		/** Objet de données Meaning. */
-		Meaning(io.vertigo.chatbot.designer.domain.Meaning.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données NluTrainingExport. */
@@ -228,11 +228,24 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botId	}
 
 	/**
-	 * Enumération des champs de DictionaryExport.
+	 * Enumération des champs de DictionaryEntity.
 	 */
-	public enum DictionaryExportFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DictionaryExport> {
-		/** Propriété 'Meaning Label'. */
-		meaningLabel,
+	public enum DictionaryEntityFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DictionaryEntity> {
+		/** Propriété 'Dictionary entity id'. */
+		dicEntId,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de DictionaryEntityWrapper.
+	 */
+	public enum DictionaryEntityWrapperFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper> {
+		/** Propriété 'Dictionary Entity id'. */
+		dicEntId,
+		/** Propriété 'Dictionary Entity Label'. */
+		dictionaryEntityLabel,
 		/** Propriété 'Synonyms list'. */
 		synonymsList	}
 
@@ -274,17 +287,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		description,
 		/** Propriété 'Default text'. */
 		defaultText	}
-
-	/**
-	 * Enumération des champs de Meaning.
-	 */
-	public enum MeaningFields implements DtFieldName<io.vertigo.chatbot.designer.domain.Meaning> {
-		/** Propriété 'Meaning id'. */
-		meaId,
-		/** Propriété 'Label'. */
-		label,
-		/** Propriété 'Chatbot'. */
-		botId	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.
@@ -580,8 +582,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Chatbot'. */
 		botId,
-		/** Propriété 'Meaning'. */
-		meaId	}
+		/** Propriété 'DictionaryEntity'. */
+		dicEntId	}
 
 	/**
 	 * Enumération des champs de TopIntent.

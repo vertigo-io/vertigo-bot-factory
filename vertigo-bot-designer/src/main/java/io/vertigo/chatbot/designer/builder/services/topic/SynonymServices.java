@@ -7,8 +7,8 @@ import javax.inject.Inject;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.dao.SynonymDAO;
-import io.vertigo.chatbot.designer.domain.DictionaryExport;
-import io.vertigo.chatbot.designer.domain.Meaning;
+import io.vertigo.chatbot.designer.domain.DictionaryEntity;
+import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
 import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.chatbot.domain.DtDefinitions.SynonymFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -40,13 +40,13 @@ public class SynonymServices implements Component {
 		return synonymDAO.findAll(Criterions.isEqualTo(SynonymFields.botId, bot.getBotId()), DtListState.of(1000));
 	}
 
-	public DtList<Synonym> getAllSynonymByMeaning(@SecuredOperation("botVisitor") final Meaning meaning) {
+	public DtList<Synonym> getAllSynonymByDictionaryEntity(@SecuredOperation("botVisitor") final DictionaryEntity dictionaryEntity) {
 
-		return synonymDAO.getSynonymByMeaning(meaning.getMeaId());
+		return synonymDAO.getSynonymByDictionaryEntity(dictionaryEntity.getDicEntId());
 	}
 
-	public Optional<Synonym> findSynonymByLabelAndMeaId(final Long meaId, final String label) {
-		final Criteria<Synonym> criteria = Criterions.isEqualTo(SynonymFields.meaId, meaId).and(Criterions.isEqualTo(SynonymFields.label, label));
+	public Optional<Synonym> findSynonymByLabelAndMeaId(final Long dicEntId, final String label) {
+		final Criteria<Synonym> criteria = Criterions.isEqualTo(SynonymFields.dicEntId, dicEntId).and(Criterions.isEqualTo(SynonymFields.label, label));
 		return synonymDAO.findOptional(criteria);
 	}
 
@@ -59,7 +59,7 @@ public class SynonymServices implements Component {
 	/*
 	 * Return a list of Response from DictionaryExport
 	 */
-	public DtList<Synonym> extractSynonymsFromDictionaryExport(final DictionaryExport dex, final Meaning meaning) {
+	public DtList<Synonym> extractSynonymsFromDictionaryExport(final DictionaryEntityWrapper dex, final DictionaryEntity dictionaryEntity) {
 
 		final String[] listSynonyms = dex.getSynonymsList().split("\\|");
 
@@ -68,8 +68,8 @@ public class SynonymServices implements Component {
 		for (final String newSynonym : listSynonyms) {
 			final Synonym syn = new Synonym();
 			syn.setLabel(newSynonym);
-			syn.setMeaId(meaning.getMeaId());
-			syn.setBotId(meaning.getBotId());
+			syn.setDicEntId(dictionaryEntity.getDicEntId());
+			syn.setBotId(dictionaryEntity.getBotId());
 			synonyms.add(syn);
 		}
 		return synonyms;

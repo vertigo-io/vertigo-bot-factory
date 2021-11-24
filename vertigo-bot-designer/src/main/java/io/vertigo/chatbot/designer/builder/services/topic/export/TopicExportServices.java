@@ -15,7 +15,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
+import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
 import io.vertigo.chatbot.designer.domain.TupleSynonymIhm;
@@ -39,7 +39,7 @@ public class TopicExportServices implements Component, Activeable {
 	private ScriptIntentionExportServices scriptIntentionExportServices;
 
 	@Inject
-	private MeaningServices meaningServices;
+	private DictionaryEntityServices dictionaryEntityServices;
 
 	@Inject
 	private ExportPAO exportPAO;
@@ -104,14 +104,14 @@ public class TopicExportServices implements Component, Activeable {
 				.collect(Collectors.toList());
 
 		// get a list of Tuple <word, synonym> from the original sentence
-		final DtList<TupleSynonymIhm> listTupleSynonymIhm = meaningServices.getTuplesSynonym(listWord, botId);
+		final DtList<TupleSynonymIhm> listTupleSynonymIhm = dictionaryEntityServices.getTuplesSynonym(listWord, botId);
 
 		// group the result by original word
 		final Map<String, List<TupleSynonymIhm>> tupleSynonymIhmPerWord = listTupleSynonymIhm.stream()
 				.collect(Collectors.groupingBy(TupleSynonymIhm::getWord));
 
 		//Generation of all possible combinaison from the original sentences and the synonyms found
-		return meaningServices.combine(tupleSynonymIhmPerWord, nluOriginal.getText());
+		return dictionaryEntityServices.combine(tupleSynonymIhmPerWord, nluOriginal.getText());
 	}
 
 	/**
