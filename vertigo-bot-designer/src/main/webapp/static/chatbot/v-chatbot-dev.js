@@ -110,9 +110,16 @@ Vue.component('v-chatbot-dev', {
 			context = {}
 			context['url'] =  urlPage
 			context['user'] = 'toto'
- 			this.$http.post(this.startCall, {message: null, metadatas: {'context' : context}})
+			if (sessionStorage.convId) {
+			    this.convId = sessionStorage.convId;
+			    this.inputConfig = JSON.parse(sessionStorage.inputConfig);
+			    this.messages = JSON.parse(sessionStorage.messages);
+			} else {
+ 			    this.$http.post(this.startCall, {message: null, metadatas: {'context' : context}})
 					.then(httpResponse => {
 							this.convId = httpResponse.data.metadatas.sessionId
+							sessionStorage.convId = this.convId;
+							sessionStorage.setItem('inputConfig', JSON.stringify(this.inputConfig));
 							this._handleResponse(httpResponse, false)
 						}).catch(error => {
 						// error
@@ -120,6 +127,7 @@ Vue.component('v-chatbot-dev', {
 						this.processing = false;
 						this._scrollToBottom();
 					});
+            }
 			},
 			postAnswerBtn: function (btn) {
 				this.messages.push({
@@ -128,6 +136,7 @@ Vue.component('v-chatbot-dev', {
 					bgColor: "primary",
 					textColor: "white"
 				});
+				sessionStorage.setItem('messages', JSON.stringify(this.messages));
 
 				this._scrollToBottom();
 				context = {}
@@ -146,6 +155,7 @@ Vue.component('v-chatbot-dev', {
 					bgColor: "primary",
 					textColor: "white"
 				});
+				sessionStorage.setItem('messages', JSON.stringify(this.messages));
 
 				this._scrollToBottom();
 				
@@ -213,10 +223,12 @@ Vue.component('v-chatbot-dev', {
 						this.inputConfig = this.prevInputConfig;
 						this.inputConfig.responseText = "";
 						this.keepAction = false;
+						sessionStorage.setItem('inputConfig', JSON.stringify(this.inputConfig));
 					}
 					
 					this.sleep(1).then(() => { // en différé le temps que la vue soit mise à jour
 						this.inputConfig.showRating = isEnded;
+						sessionStorage.setItem('inputConfig', JSON.stringify(this.inputConfig));
 						this.$refs.input.focus();
 					});
 					
@@ -227,6 +239,7 @@ Vue.component('v-chatbot-dev', {
 				if (lastMsg && !lastMsg.sent && !lastMsg.sys) {
 					// ajoute un message à un précédent message du bot
 					lastMsg.text.push(response.text);
+					sessionStorage.setItem('messages', JSON.stringify(this.messages));
 				} else {
 					// première réponse du bot
 					this.messages.push({
@@ -234,11 +247,14 @@ Vue.component('v-chatbot-dev', {
 						text: [response.text],
 						bgColor: "grey-4"
 					});
+					sessionStorage.setItem('messages', JSON.stringify(this.messages));
+
 				}
 				
 				if (response.buttons) {
 					response.buttons.forEach(function(value, key) {
 						this.inputConfig.buttons.push(value);
+						sessionStorage.setItem('inputConfig', JSON.stringify(this.inputConfig));
 					}, this);
 				}
 				
@@ -260,6 +276,7 @@ Vue.component('v-chatbot-dev', {
 				this.inputConfig.rating = 0;
 				this.inputConfig.buttons = [];
 				this.error = false;
+				sessionStorage.setItem('inputConfig', JSON.stringify(this.inputConfig));
 			},
 			sleep: function(milliseconds) {
 			  return new Promise(function(resolve) {setTimeout(resolve, milliseconds)});
@@ -270,6 +287,7 @@ Vue.component('v-chatbot-dev', {
 					bgColor: "orange",
 					sys: true
 				});
+				sessionStorage.setItem('messages', JSON.stringify(this.messages));
 				this._scrollToBottom();
 			},
 			rateBot: function(value){
