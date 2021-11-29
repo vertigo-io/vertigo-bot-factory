@@ -56,7 +56,14 @@ create DtDefinition DtKindTopic {
             "label" : "Normal",
             "description" : "Normal",
             "defaultText" : "Text"
+        },
+        "UNREACHABLE" : {
+            "ktoCd" : "UNREACHABLE",
+            "label" : "Unreachable",
+            "description" : "Unreachable",
+            "defaultText" : "Text"
         }
+
      }`
     sortField : "ktoCd"
  	displayField : "label"
@@ -355,6 +362,7 @@ create DtDefinition DtTopicFileExport {
 	field active			{domain: DoLabel	 					label: "Active" 				cardinality : "1"}
 	field trainingPhrases	{domain: DoText	 						label: "Training phrases" 		cardinality : "?"}
 	field typeTopic			{domain: DoLabel	 					label: "Topic type" 			cardinality : "1"}
+	field kindTopic			{domain: DoLabel	 					label: "Topic kind" 			cardinality : "1"}
 	field script			{domain: DoText	 						label: "Script" 				cardinality : "?"}
 	field response			{domain: DoText	 						label: "Response" 				cardinality : "?"}
 	field buttons			{domain: DoText	 						label: "Buttons" 				cardinality : "?"}

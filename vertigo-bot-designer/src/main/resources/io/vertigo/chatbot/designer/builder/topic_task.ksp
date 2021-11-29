@@ -83,8 +83,8 @@ create Task TkGetAllTopicsIhmFromBot {
 			left join topic_topic_label ttl on (ttl.top_id = top.top_id)
 			left join topic_label tpl on (tpl.label_id = ttl.label_id)
 			where top.bot_id = #botId#
-			<% if (ktoCd != null){ %>
-				and top.kto_cd = #ktoCd#
+			<% if (ktoCds != null){ %>
+				and top.kto_cd in (#ktoCds.rownum#)
 			<% } %>
 			group by top.top_id,
 					top.title,
@@ -99,7 +99,7 @@ create Task TkGetAllTopicsIhmFromBot {
 			
              "
 	in botId  				{domain : DoId         		cardinality : "1"  }	
-	in ktoCd  				{domain : DoCode         	cardinality : "?"  }
+	in ktoCds  				{domain : DoCode         	cardinality : "*"  }
 	in locale  				{domain : DoCode         	cardinality : "1"  }
 	out topicIHM			{domain : DoDtTopicIhm,		cardinality : "*"  } 
 }

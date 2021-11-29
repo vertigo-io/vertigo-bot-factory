@@ -51,6 +51,7 @@ public final class TopicFileExportPAO implements StoreServices {
 			name = "TkGetTopicFileExport",
 			request = "select top.code," + 
  "			top.tto_cd as type_topic," + 
+ "			top.kto_cd as kind_topic," + 
  "			top.title," + 
  "			tca.code as category," + 
  "			top.description," + 
@@ -106,6 +107,7 @@ public final class TopicFileExportPAO implements StoreServices {
  "			<% } %>" + 
  "			group by top.code," + 
  "				type_topic," + 
+ "				kind_topic," + 
  "				top.title," + 
  "				category," + 
  "				top.description," + 

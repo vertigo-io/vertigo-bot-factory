@@ -682,6 +682,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		trainingPhrases,
 		/** Propriété 'Topic type'. */
 		typeTopic,
+		/** Propriété 'Topic kind'. */
+		kindTopic,
 		/** Propriété 'Script'. */
 		script,
 		/** Propriété 'Response'. */
