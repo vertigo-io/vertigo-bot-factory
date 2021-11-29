@@ -20,6 +20,7 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
+import kotlin.text.Regex;
 
 @Transactional
 public class ContextValueServices implements Component {
@@ -76,9 +77,10 @@ public class ContextValueServices implements Component {
 	}
 
 	private static void checkPatternKey(final String key) {
-		final String pattern = "^[a-zA-Z0-9_.-]*$";
+		// regex : letters, digits and "/"
+		final Regex regex = new Regex("^[a-z0-9]+(\\/[a-z0-9]+)*$");
 
-		if (key == null || !key.matches(pattern)) {
+		if (key == null || !regex.matches(key)) {
 			throw new VUserException(ContextValueMultilingualResources.KEY_PATTERN_DIGIT_ERROR);
 		}
 
