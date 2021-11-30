@@ -26,7 +26,6 @@ ENV DB_USER chatbot
 ENV DB_PWD chatbot
 ENV ANALYTICA_HOST analytica
 ENV ANALYTICA_PORT 4562
-ENV INFLUXDB_URL http://analytica.part.klee.lan.net:8086
 ENV ANALYTICA_DBNAME chatbot-test
 ENV DEPLOY_PATH ROOT
 ENV KEYCLOAK_CONFIG keycloak-recette.json

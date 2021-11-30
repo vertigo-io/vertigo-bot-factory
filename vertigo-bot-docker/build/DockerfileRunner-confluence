@@ -4,10 +4,4 @@ ARG VERSION
 
  
 # Add binaries
-COPY Runner/plugins/vertigo-bot-confluence-$VERSION.jar /opt/plugins/vertigo-bot-confluence-$VERSION.jar
-
-
-ENV CONFLUENCE_USER chatbot
-ENV CONFLUENCE_PWD chatbot
-ENV CONFLUENCE_URL https://preprod-jira-temp.kleegroup.com/confluence
-ENV CONFLUENCE_LIMIT 3
+COPY --chown=tomcat Runner/plugins/vertigo-bot-confluence-$VERSION.jar /opt/plugins/vertigo-bot-confluence-$VERSION.jar

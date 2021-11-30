@@ -4,20 +4,4 @@ ARG VERSION
  
 
 # Add binaries
-COPY Runner/plugins/ /opt/plugins/
-
-
-ENV CONFLUENCE_USER chatbot
-ENV CONFLUENCE_PWD chatbot
-ENV CONFLUENCE_URL https://preprod-jira-temp.kleegroup.com/confluence
-ENV CONFLUENCE_LIMIT 3
-
-ENV JIRA_USER apiuser_chatbot
-ENV JIRA_PWD chatbot
-ENV JIRA_URL https://pprd-jirasoft.kleegroup.com
-
-ENV SIG_USER Admin SIG
-ENV SIG_PWD test
-ENV SIG_URL http://comu-prod-batch:8001/sigRest/v1/customers/
-
-ENV WEB_SERVICE http://comu-prod-batch:8001/sigRest/v2/tools/health-check
+COPY --chown=tomcat Runner/plugins/ /opt/plugins/
