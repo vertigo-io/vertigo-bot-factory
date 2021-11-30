@@ -1,6 +1,8 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +17,7 @@ import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResource
 import io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources;
 import io.vertigo.chatbot.designer.builder.dictionaryEntity.DictionaryEntityPAO;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
-import io.vertigo.chatbot.designer.builder.services.export.IExportServices;
+import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.dao.DictionaryEntityDAO;
 import io.vertigo.chatbot.designer.domain.DictionaryEntity;
 import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
@@ -32,7 +34,9 @@ import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.datastore.filestore.util.VFileUtil;
 import io.vertigo.quarto.exporter.ExporterManager;
 import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
@@ -41,8 +45,10 @@ import liquibase.util.csv.CSVReader;
 import liquibase.util.csv.opencsv.bean.ColumnPositionMappingStrategy;
 import liquibase.util.csv.opencsv.bean.CsvToBean;
 
+import static io.vertigo.chatbot.designer.utils.StringUtils.errorManagement;
+
 @Transactional
-public class DictionaryEntityServices implements Component, IExportServices {
+public class DictionaryEntityServices implements Component {
 
 	@Inject
 	private DictionaryEntityDAO dictionaryEntityDAO;
@@ -58,6 +64,9 @@ public class DictionaryEntityServices implements Component, IExportServices {
 
 	@Inject
 	private ExporterManager exportManager;
+
+	@Inject
+	private FileServices fileServices;
 
 	private final int SIZE_FILE = 2;
 
@@ -81,7 +90,22 @@ public class DictionaryEntityServices implements Component, IExportServices {
 	 * @return dictionaryEntity
 	 */
 	public DictionaryEntity save(@SecuredOperation("botAdm") final Chatbot chatbot, final DictionaryEntity dictionaryEntity) {
-		return dictionaryEntityDAO.save(dictionaryEntity);
+		dictionaryEntity.setBotId(chatbot.getBotId());
+		final boolean creation = dictionaryEntity.getDicEntId() == null;
+		dictionaryEntity.setLabel(dictionaryEntity.getLabel().toLowerCase());
+
+		final DictionaryEntity dictionaryEntitySaved = dictionaryEntityDAO.save(dictionaryEntity);
+		if (creation) {
+			final Synonym synonym = new Synonym();
+			synonym.setBotId(chatbot.getBotId());
+			synonym.setDicEntId(dictionaryEntitySaved.getDicEntId());
+			synonym.setLabel(dictionaryEntitySaved.getLabel());
+			if (findDictionaryEntityBySynonymLabelAndBotId(dictionaryEntitySaved.getLabel(), chatbot.getBotId()) != null) {
+				throw new VUserException(DictionaryEntityMultilingualResources.ERR_UNIQUE_SYNONYM);
+			}
+			synonymServices.save(synonym);
+		}
+		return dictionaryEntitySaved;
 	}
 
 	/**
@@ -103,7 +127,12 @@ public class DictionaryEntityServices implements Component, IExportServices {
 		saveAllNotBlankSynonym(dictionaryEntity, synonyms);
 		synonymServices.removeSynonym(synonymsToDelete);
 
-		return dictionaryEntityDAO.save(dictionaryEntity);
+		DictionaryEntity dictionaryEntitySaved = dictionaryEntityDAO.save(dictionaryEntity);
+		if (synonyms.isEmpty()) {
+			//If all synonyms are removed, the dictionaryEntity is deleted
+			deleteDictionaryEntity(chatbot, dictionaryEntity.getDicEntId());
+		}
+		return dictionaryEntitySaved;
 	}
 
 	/**
@@ -263,7 +292,7 @@ public class DictionaryEntityServices implements Component, IExportServices {
 	/*
 	 * Return a list of DictionaryExport from a CSV file
 	 */
-	public List<DictionaryEntityWrapper> transformFileToList(@SecuredOperation("SuperAdm") final CSVReader csvReader) throws IOException {
+	private List<DictionaryEntityWrapper> transformFileToList(@SecuredOperation("SuperAdm") final CSVReader csvReader) throws IOException {
 
 		// Check length of header, to make sure all columns are there
 		final String[] header = csvReader.readNext();
@@ -295,7 +324,7 @@ public class DictionaryEntityServices implements Component, IExportServices {
 	/*
 	 * Use a list of DictionaryExport to create/modify dictionary entities and synonyms
 	 */
-	public void importDictionaryFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<DictionaryEntityWrapper> list) throws IOException {
+	private void importDictionaryFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<DictionaryEntityWrapper> list) throws IOException {
 
 		int line = 1;
 		for (final DictionaryEntityWrapper dex : list) {
@@ -303,6 +332,26 @@ public class DictionaryEntityServices implements Component, IExportServices {
 			generateDictionaryFromDictionaryExport(dex, chatbot, line);
 		}
 
+	}
+
+	/**
+	 * Use a CSV file to import a dictionary within a specific chatbot
+	 * @param chatbot
+	 * @param importDictionaryFile
+	 */
+	public void importDictionaryFromCSVFile(Chatbot chatbot, FileInfoURI importDictionaryFile) {
+		final VFile fileTmp = fileServices.getFileTmp(importDictionaryFile);
+		if (!fileServices.isCSVFile(fileTmp)) {
+			throw new VUserException(ExportMultilingualResources.ERR_CSV_FILE);
+		}
+		try (CSVReader csvReader = new CSVReader(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")), ';', CSVReader.DEFAULT_QUOTE_CHARACTER, 0)) {
+
+			final List<DictionaryEntityWrapper> list = transformFileToList(csvReader);
+
+			importDictionaryFromList(chatbot, list);
+		} catch (final Exception e) {
+			throw new VUserException(ExportMultilingualResources.ERR_UNEXPECTED);
+		}
 	}
 
 	/*

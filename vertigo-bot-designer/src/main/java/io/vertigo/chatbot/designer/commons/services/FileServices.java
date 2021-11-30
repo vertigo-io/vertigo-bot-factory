@@ -92,4 +92,9 @@ public class FileServices implements Component {
 		mediaFileInfoDAO.delete(filId);
 	}
 
+	public boolean isCSVFile(VFile file) {
+		String mimeType = file.getMimeType();
+		return mimeType.equals("application/vnd.ms-excel") || mimeType.equals("text/csv");
+	}
+
 }

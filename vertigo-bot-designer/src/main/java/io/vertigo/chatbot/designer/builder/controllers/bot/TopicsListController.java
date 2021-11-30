@@ -134,20 +134,9 @@ public class TopicsListController extends AbstractBotListController<Topic> {
 	@Secured("SuperAdm")
 	public String doImportTopic(final ViewContext viewContext,
 			@ViewAttribute("bot") final Chatbot bot,
-			@QueryParam("importTopicFileUri") final FileInfoURI importTopicFile) throws IOException {
+			@QueryParam("importTopicFileUri") final FileInfoURI importTopicFile) {
 
-		final VFile fileTmp = fileServices.getFileTmp(importTopicFile);
-		if (!fileTmp.getMimeType().equals("application/vnd.ms-excel")) {
-			throw new VUserException(ExportMultilingualResources.ERR_CSV_FILE);
-		}
-		try (CSVReader csvReader = new CSVReader(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")), ';', CSVReader.DEFAULT_QUOTE_CHARACTER, 0)) {
-
-			final List<TopicFileExport> list = topicFileExportServices.transformFileToList(csvReader);
-
-			topicFileExportServices.importTopicFromList(bot, list);
-		} catch (final Exception e) {
-			throw e;
-		}
+		topicFileExportServices.importTopicFromCSVFile(bot, importTopicFile);
 
 		return "redirect:/bot/" + bot.getBotId() + "/topics/";
 	}

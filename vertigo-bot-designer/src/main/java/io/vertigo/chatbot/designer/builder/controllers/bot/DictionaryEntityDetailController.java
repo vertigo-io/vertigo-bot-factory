@@ -103,8 +103,6 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 		dictionaryEntityServices.save(bot, dictionaryEntity, synonyms, synonymsToDelete);
 
 		if (synonyms.isEmpty()) {
-			//If all synonyms are removed, the dictionaryEntity is deleted
-			dictionaryEntityServices.deleteDictionaryEntity(bot, dictionaryEntity.getDicEntId());
 			return "redirect:/bot/" + dictionaryEntity.getBotId() + "/dictionary/";
 		}
 		return "redirect:/bot/" + dictionaryEntity.getBotId() + "/dictionaryEntity/" + dictionaryEntity.getDicEntId();

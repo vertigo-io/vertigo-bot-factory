@@ -1,6 +1,8 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export.file;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +11,9 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.datastore.filestore.util.VFileUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
@@ -26,7 +31,6 @@ import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
-import io.vertigo.chatbot.designer.builder.services.export.IExportServices;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
@@ -49,8 +53,10 @@ import liquibase.util.csv.CSVReader;
 import liquibase.util.csv.opencsv.bean.ColumnPositionMappingStrategy;
 import liquibase.util.csv.opencsv.bean.CsvToBean;
 
+import static io.vertigo.chatbot.designer.utils.StringUtils.errorManagement;
+
 @Transactional
-public class TopicFileExportServices implements Component, IExportServices {
+public class TopicFileExportServices implements Component {
 
 	@Inject
 	private TopicFileExportPAO topicFileExportPAO;
@@ -75,6 +81,9 @@ public class TopicFileExportServices implements Component, IExportServices {
 
 	@Inject
 	private ExporterManager exportManager;
+
+	@Inject
+	private FileServices fileServices;
 
 	private final int SIZE_FILE = 15;
 
@@ -116,10 +125,25 @@ public class TopicFileExportServices implements Component, IExportServices {
 		return topicFileExportPAO.getTopicFileExport(botId, topCatIdOpt);
 	}
 
+	public void importTopicFromCSVFile(Chatbot chatbot, FileInfoURI importTopicFile) {
+		final VFile fileTmp = fileServices.getFileTmp(importTopicFile);
+		if (!fileServices.isCSVFile(fileTmp)) {
+			throw new VUserException(ExportMultilingualResources.ERR_CSV_FILE);
+		}
+		try (CSVReader csvReader = new CSVReader(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")), ';', CSVReader.DEFAULT_QUOTE_CHARACTER, 0)) {
+
+			final List<TopicFileExport> list = transformFileToList(csvReader);
+
+			importTopicFromList(chatbot, list);
+		} catch (final Exception e) {
+			throw new VUserException(ExportMultilingualResources.ERR_UNEXPECTED);
+		}
+	}
+
 	/*
 	 * Return a list of TopicFileExport from a CSV file
 	 */
-	public List<TopicFileExport> transformFileToList(@SecuredOperation("SuperAdm") final CSVReader csvReader) {
+	private List<TopicFileExport> transformFileToList(@SecuredOperation("SuperAdm") final CSVReader csvReader) {
 		try {
 			// Check length of header, to make sure all columns are there
 			final String[] header = csvReader.readNext();
@@ -162,7 +186,7 @@ public class TopicFileExportServices implements Component, IExportServices {
 	/*
 	 * Use a list of TopicFileExport to create/modify topics
 	 */
-	public void importTopicFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<TopicFileExport> list) throws IOException {
+	private void importTopicFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<TopicFileExport> list) throws IOException {
 
 		codeCheck(list);
 
