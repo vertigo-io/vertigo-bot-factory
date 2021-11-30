@@ -3,18 +3,6 @@
 	<Parameter name="boot.ANALYTICA_HOST" value="${ANALYTICA_HOST}" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="${ANALYTICA_PORT}" override="false"/>
 	<Parameter name="boot.ANALYTICA_DBNAME" value="${ANALYTICA_DBNAME}" override="false"/>
-	<Parameter name="API_KEY" value="${API_KEY}" override="false"/>
-	<Parameter name="CONFLUENCE_USER" value="${CONFLUENCE_USER}" override="false"/>
-	<Parameter name="CONFLUENCE_PWD" value="${CONFLUENCE_PWD}" override="false"/>
-	<Parameter name="CONFLUENCE_URL" value="${CONFLUENCE_URL}" override="false"/>
-	<Parameter name="CONFLUENCE_LIMIT" value="${CONFLUENCE_LIMIT}" override="false"/>
-	<Parameter name="JIRA_USER" value="${JIRA_USER}" override="false"/>
-	<Parameter name="JIRA_PWD" value="${JIRA_PWD}" override="false"/>
-	<Parameter name="JIRA_URL" value="${JIRA_URL}" override="false"/>
-	<Parameter name="SIG_USER" value="${SIG_USER}" override="false"/>
-	<Parameter name="SIG_PWD" value="${SIG_PWD}" override="false"/>
-	<Parameter name="SIG_URL" value="${SIG_URL}" override="false"/>
-	<Parameter name="WEB_SERVICE" value="${WEB_SERVICE}" override="false"/>
 
 	<!--  Use for confluence plugin -->
    	<Resources className="org.apache.catalina.webresources.StandardRoot">
