@@ -10,5 +10,4 @@
 	<Parameter name="boot.ANALYTICA_HOST" value="${ANALYTICA_HOST}" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="${ANALYTICA_PORT}" override="false"/>
 	<Parameter name="boot.ANALYTICA_DBNAME" value="${ANALYTICA_DBNAME}" override="false"/>
-	<Parameter name="INFLUXDB_URL" value="${INFLUXDB_URL}" override="false"/>
 </Context>
