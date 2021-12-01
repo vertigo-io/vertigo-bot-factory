@@ -1,22 +1,14 @@
-ARG VERSION
-FROM vertigoio/bot-factory-runner:$VERSION
-ARG VERSION
+FROM vertigoio/bot-factory-runner:0.8.0
+ 
  
 
+
+ 
 # Add binaries
-COPY --chown=tomcat Runner/plugins/ /opt/plugins/
+COPY --chown=tomcat Runner/plugins/*.jar /opt/plugins/
 
-ENV CONFLUENCE_USER user
-ENV CONFLUENCE_PWD password
-ENV CONFLUENCE_URL https://example.com
+
+ENV CONFLUENCE_USER chatbot
+ENV CONFLUENCE_PWD chatbot
+ENV CONFLUENCE_URL https://preprod-jira-temp.kleegroup.com/confluence
 ENV CONFLUENCE_LIMIT 3
-
-ENV JIRA_USER user
-ENV JIRA_PWD password
-ENV JIRA_URL https://example.com
-
-ENV SIG_USER user
-ENV SIG_PWD password
-ENV SIG_URL http://example.com
-
-ENV WEB_SERVICE http://example.com
