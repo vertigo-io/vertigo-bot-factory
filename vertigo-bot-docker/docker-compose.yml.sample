@@ -55,9 +55,7 @@ services:
       - ANALYTICA_DBNAME=chatbot
       - DEPLOY_PATH=designer
     volumes:
-      - type: bind
-        source: ./keycloak.json
-        target: /opt/keycloak/keycloak.json
+      - ./keycloak.json:/opt/keycloak/keycloak.json:ro
     depends_on:
       - postgres
       - influxdb
