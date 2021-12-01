@@ -23,6 +23,10 @@ COPY --chown=tomcat Runner/setenv.sh /opt/tomcat/bin/
 ENV JAVA_OPTS -Xmx256m
 ENV CATALINA_PID /opt/tomcat/tomcat.pid
 ENV DESIGNER_URL http://host.docker.internal:8080/vertigo-bot-designer
+ENV API_KEY MyNodeApiKey!
+ENV ANALYTICA_HOST analytica
+ENV ANALYTICA_PORT 4562
+ENV ANALYTICA_DBNAME chatbot
 
 # Expose tomcat port
 EXPOSE 8080

@@ -54,6 +54,10 @@ services:
       - INFLUXDB_URL=http://influxdb:8086
       - ANALYTICA_DBNAME=chatbot
       - DEPLOY_PATH=designer
+    volumes:
+      - type: bind
+        source: ./keycloak.json
+        target: /opt/keycloak/keycloak.json
     depends_on:
       - postgres
       - influxdb

@@ -13,6 +13,7 @@ RUN useradd -m tomcat \
 # Add binaries
 COPY --chown=tomcat apache-tomcat-* /opt/tomcat/
 COPY --chown=tomcat Designer/setenv.sh /opt/tomcat/bin/
+COPY --chown=tomcat Designer/keycloak.json /opt/keycloak/keycloak.json
 COPY --chown=tomcat Designer/context.xml /opt/tomcat/conf/Catalina/localhost/designer.xml.ref
 COPY --chown=tomcat Designer/vertigo-bot-designer-$VERSION.war /opt/tomcat/war/designer.war
 
@@ -26,6 +27,7 @@ ENV DB_USER chatbot
 ENV DB_PWD chatbot
 ENV ANALYTICA_HOST analytica
 ENV ANALYTICA_PORT 4562
+ENV INFLUXDB_URL http://analytics-server:8086
 ENV ANALYTICA_DBNAME chatbot-test
 ENV DEPLOY_PATH ROOT
 ENV KEYCLOAK_CONFIG /opt/keycloak/keycloak.json

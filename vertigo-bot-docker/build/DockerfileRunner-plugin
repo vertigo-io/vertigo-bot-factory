@@ -8,15 +8,15 @@ COPY --chown=tomcat Runner/plugins/ /opt/plugins/
 
 ENV CONFLUENCE_USER user
 ENV CONFLUENCE_PWD password
-ENV CONFLUENCE_URL https://confluence.com
+ENV CONFLUENCE_URL https://example.com
 ENV CONFLUENCE_LIMIT 3
 
 ENV JIRA_USER user
 ENV JIRA_PWD password
-ENV JIRA_URL https://jira.com
+ENV JIRA_URL https://example.com
 
 ENV SIG_USER user
 ENV SIG_PWD password
-ENV SIG_URL http://sig.com
+ENV SIG_URL http://example.com
 
-ENV WEB_SERVICE http://sig-webservice.com
+ENV WEB_SERVICE http://example.com

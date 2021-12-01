@@ -8,5 +8,5 @@ COPY --chown=tomcat Runner/plugins/vertigo-bot-confluence-$VERSION.jar /opt/plug
 
 ENV CONFLUENCE_USER user
 ENV CONFLUENCE_PWD password
-ENV CONFLUENCE_URL https://confluence.com
+ENV CONFLUENCE_URL https://example.com
 ENV CONFLUENCE_LIMIT 3
