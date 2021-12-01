@@ -15,6 +15,7 @@
 	<properties>
 		<sonar.javascript.globals>Vue,VertigoUi,VUiPage</sonar.javascript.globals>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<openCSV.version>5.5.2</openCSV.version>
 	</properties>
 
 	<dependencies>
@@ -115,6 +116,12 @@
 		    <groupId>org.jsoup</groupId>
 		    <artifactId>jsoup</artifactId>
 		    <version>1.10.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>${openCSV.version}</version>
 		</dependency>
 		
 

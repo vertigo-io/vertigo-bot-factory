@@ -1,59 +1,44 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export.file;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
-import io.vertigo.chatbot.designer.commons.services.FileServices;
-import io.vertigo.datastore.filestore.model.FileInfoURI;
-import io.vertigo.datastore.filestore.util.VFileUtil;
-import org.apache.commons.lang3.StringUtils;
-
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.CsvToBean;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
-import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
-import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
-import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
-import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
-import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
-import io.vertigo.chatbot.commons.domain.topic.TopicFileExport;
-import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.domain.topic.*;
 import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
-import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
-import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
-import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
+import io.vertigo.chatbot.designer.builder.services.topic.*;
 import io.vertigo.chatbot.designer.builder.topicFileExport.TopicFileExportPAO;
+import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFileExportFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.datastore.filestore.util.VFileUtil;
 import io.vertigo.quarto.exporter.ExporterManager;
 import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
-import liquibase.util.csv.CSVReader;
-import liquibase.util.csv.opencsv.bean.ColumnPositionMappingStrategy;
-import liquibase.util.csv.opencsv.bean.CsvToBean;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.inject.Inject;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.vertigo.chatbot.designer.utils.StringUtils.errorManagement;
+import static io.vertigo.chatbot.designer.utils.StringUtils.lineError;
 
 @Transactional
 public class TopicFileExportServices implements Component {
@@ -85,6 +70,10 @@ public class TopicFileExportServices implements Component {
 	@Inject
 	private FileServices fileServices;
 
+	@Inject
+	protected LocaleManager localeManager;
+
+
 	private final int SIZE_FILE = 15;
 
 	/*
@@ -111,9 +100,8 @@ public class TopicFileExportServices implements Component {
 				.addField(TopicFileExportFields.labels)
 				.endSheet()
 				.build();
-		final VFile result = exportManager.createExportFile(export);
 
-		return result;
+		return exportManager.createExportFile(export);
 
 	}
 
@@ -130,13 +118,15 @@ public class TopicFileExportServices implements Component {
 		if (!fileServices.isCSVFile(fileTmp)) {
 			throw new VUserException(ExportMultilingualResources.ERR_CSV_FILE);
 		}
-		try (CSVReader csvReader = new CSVReader(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")), ';', CSVReader.DEFAULT_QUOTE_CHARACTER, 0)) {
-
+		try {
+			CSVReader csvReader = new CSVReaderBuilder(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")))
+					.withErrorLocale(localeManager.getCurrentLocale())
+					.withCSVParser(new CSVParserBuilder().withSeparator(';').withQuoteChar(CSVParser.DEFAULT_QUOTE_CHARACTER).build()).build();
 			final List<TopicFileExport> list = transformFileToList(csvReader);
 
 			importTopicFromList(chatbot, list);
 		} catch (final Exception e) {
-			throw new VUserException(ExportMultilingualResources.ERR_UNEXPECTED);
+			throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_UNEXPECTED).getDisplay() + e);
 		}
 	}
 
@@ -174,12 +164,17 @@ public class TopicFileExportServices implements Component {
 			};
 			//Setting the colums for mappingStrategy
 			mappingStrategy.setColumnMapping(columns);
-			final List<TopicFileExport> list = csvToBean.parse(mappingStrategy, csvReader);
+			csvToBean.setMappingStrategy(mappingStrategy);
+			csvToBean.setCsvReader(csvReader);
+			csvToBean.setThrowExceptions(false);
+			final List<TopicFileExport> list = csvToBean.parse();
+			if (!csvToBean.getCapturedExceptions().isEmpty()) {
+				String errorMessage = csvToBean.getCapturedExceptions().stream().map(exception -> lineError(exception.getLine()[0], exception.getMessage())).collect(Collectors.joining(","));
+				throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay() + errorMessage);
+			}
 			return list;
 		} catch (final Exception e) {
-			final StringBuilder errorMessage = new StringBuilder(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay());
-			errorMessage.append(e);
-			throw new VUserException(errorMessage.toString());
+			throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay() + e);
 		}
 	}
 

@@ -27,14 +27,12 @@ public final class StringUtils {
 		return StringUtil.isBlank(emptyHtmlCleanerPattern.matcher(html).replaceAll(r -> ""));
 	}
 
-	/*
-	 * Return an error message with the line concerned
-	 */
-	public static String lineError(final int i) {
-		return "[Line " + i + "] ";
+
+	public static String lineError(final String line, final String message) {
+		return "[Line " + line + ", Error: " + message + "] ";
 	}
 
 	public static void errorManagement(final int i, final String erreur) {
-		throw new VUserException(lineError(i) + erreur);
+		throw new VUserException("[Line " + i + "] " + erreur);
 	}
 }

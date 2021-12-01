@@ -1,20 +1,15 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.CsvToBean;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.chatbot.designer.builder.dictionaryEntity.DictionaryEntityPAO;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
@@ -27,6 +22,7 @@ import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
@@ -41,11 +37,17 @@ import io.vertigo.quarto.exporter.ExporterManager;
 import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
-import liquibase.util.csv.CSVReader;
-import liquibase.util.csv.opencsv.bean.ColumnPositionMappingStrategy;
-import liquibase.util.csv.opencsv.bean.CsvToBean;
+
+import javax.inject.Inject;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import static io.vertigo.chatbot.designer.utils.StringUtils.errorManagement;
+import static io.vertigo.chatbot.designer.utils.StringUtils.lineError;
 
 @Transactional
 public class DictionaryEntityServices implements Component {
@@ -67,6 +69,9 @@ public class DictionaryEntityServices implements Component {
 
 	@Inject
 	private FileServices fileServices;
+
+	@Inject
+	protected LocaleManager localeManager;
 
 	private final int SIZE_FILE = 2;
 
@@ -283,9 +288,8 @@ public class DictionaryEntityServices implements Component {
 				.addField(DtDefinitions.DictionaryEntityWrapperFields.synonymsList)
 				.endSheet()
 				.build();
-		final VFile result = exportManager.createExportFile(export);
 
-		return result;
+		return exportManager.createExportFile(export);
 
 	}
 
@@ -294,12 +298,13 @@ public class DictionaryEntityServices implements Component {
 	 */
 	private List<DictionaryEntityWrapper> transformFileToList(@SecuredOperation("SuperAdm") final CSVReader csvReader) throws IOException {
 
-		// Check length of header, to make sure all columns are there
-		final String[] header = csvReader.readNext();
-		if (header.length != SIZE_FILE) {
-			throw new VUserException(ExportMultilingualResources.ERR_SIZE_FILE, SIZE_FILE);
-		}
 		try {
+		// Check length of header, to make sure all columns are there
+			final String[] header = csvReader.readNext();
+			if (header.length != SIZE_FILE) {
+				throw new VUserException(ExportMultilingualResources.ERR_SIZE_FILE, SIZE_FILE);
+			}
+
 			final CsvToBean<DictionaryEntityWrapper> csvToBean = new CsvToBean<>();
 			final ColumnPositionMappingStrategy<DictionaryEntityWrapper> mappingStrategy = new ColumnPositionMappingStrategy<>();
 			//Set mappingStrategy type to DictionaryExport Type
@@ -308,16 +313,20 @@ public class DictionaryEntityServices implements Component {
 			final String[] columns = new String[] {
 					DtDefinitions.DictionaryEntityWrapperFields.dictionaryEntityLabel.name(),
 					DtDefinitions.DictionaryEntityWrapperFields.synonymsList.name(),
-
 			};
 			//Setting the colums for mappingStrategy
 			mappingStrategy.setColumnMapping(columns);
-			final List<DictionaryEntityWrapper> list = csvToBean.parse(mappingStrategy, csvReader);
-			return list;
-		} catch (final Exception e) {
-			final StringBuilder errorMessage = new StringBuilder(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay());
-			errorMessage.append(e);
-			throw new VUserException(errorMessage.toString());
+			csvToBean.setMappingStrategy(mappingStrategy);
+			csvToBean.setCsvReader(csvReader);
+			csvToBean.setThrowExceptions(false);
+			List<DictionaryEntityWrapper> dictionaryEntityWrappers = csvToBean.parse();
+			if (!csvToBean.getCapturedExceptions().isEmpty()) {
+				String errorMessage = csvToBean.getCapturedExceptions().stream().map(exception -> lineError(exception.getLine()[0], exception.getMessage())).collect(Collectors.joining(","));
+				throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay() + errorMessage);
+			}
+			return dictionaryEntityWrappers;
+		} catch (Exception e) {
+			throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay() + e);
 		}
 	}
 
@@ -344,13 +353,15 @@ public class DictionaryEntityServices implements Component {
 		if (!fileServices.isCSVFile(fileTmp)) {
 			throw new VUserException(ExportMultilingualResources.ERR_CSV_FILE);
 		}
-		try (CSVReader csvReader = new CSVReader(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")), ';', CSVReader.DEFAULT_QUOTE_CHARACTER, 0)) {
-
+		try {
+			CSVReader csvReader = new CSVReaderBuilder(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")))
+					.withErrorLocale(localeManager.getCurrentLocale())
+					.withCSVParser(new CSVParserBuilder().withSeparator(';').withQuoteChar(CSVParser.DEFAULT_QUOTE_CHARACTER).build()).build();
 			final List<DictionaryEntityWrapper> list = transformFileToList(csvReader);
 
 			importDictionaryFromList(chatbot, list);
-		} catch (final Exception e) {
-			throw new VUserException(ExportMultilingualResources.ERR_UNEXPECTED);
+		} catch (IOException e) {
+			throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay() + e);
 		}
 	}
 
@@ -386,9 +397,7 @@ public class DictionaryEntityServices implements Component {
 			}
 
 		} catch (final Exception e) {
-			final StringBuilder erreur = new StringBuilder(MessageText.of(DictionaryEntityMultilingualResources.ERR_IMPORT, dex.getDictionaryEntityLabel()).getDisplay());
-			erreur.append(e.getMessage());
-			errorManagement(line, erreur.toString());
+			errorManagement(line, MessageText.of(DictionaryEntityMultilingualResources.ERR_IMPORT, dex.getDictionaryEntityLabel()).getDisplay() + e.getMessage());
 		}
 	}
 

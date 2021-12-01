@@ -5,7 +5,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet author="cmarechal" id="alter meaning">
-        <sqlFile encoding="utf8" path="/sql/v_1_0/alter_21_11_24.sql" />
+        <sqlFile encoding="utf8" path="/sql/v_1_1_0/alter_21_11_24.sql" />
     </changeSet>
 
 </databaseChangeLog>
