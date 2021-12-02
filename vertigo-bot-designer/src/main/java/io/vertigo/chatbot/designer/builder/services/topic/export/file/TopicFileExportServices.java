@@ -1,15 +1,8 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export.file;
 
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
-import com.opencsv.bean.ColumnPositionMappingStrategy;
-import com.opencsv.bean.CsvToBean;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.*;
-import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.*;
 import io.vertigo.chatbot.designer.builder.topicFileExport.TopicFileExportPAO;
@@ -17,13 +10,11 @@ import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFileExportFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
-import io.vertigo.datastore.filestore.util.VFileUtil;
 import io.vertigo.quarto.exporter.ExporterManager;
 import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
@@ -31,14 +22,9 @@ import io.vertigo.quarto.exporter.model.ExportFormat;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static io.vertigo.chatbot.designer.utils.StringUtils.errorManagement;
-import static io.vertigo.chatbot.designer.utils.StringUtils.lineError;
 
 @Transactional
 public class TopicFileExportServices implements Component {
@@ -69,12 +55,6 @@ public class TopicFileExportServices implements Component {
 
 	@Inject
 	private FileServices fileServices;
-
-	@Inject
-	protected LocaleManager localeManager;
-
-
-	private final int SIZE_FILE = 15;
 
 	/*
 	 * Return a File from a list of topicFileExport
@@ -114,69 +94,32 @@ public class TopicFileExportServices implements Component {
 	}
 
 	public void importTopicFromCSVFile(Chatbot chatbot, FileInfoURI importTopicFile) {
-		final VFile fileTmp = fileServices.getFileTmp(importTopicFile);
-		if (!fileServices.isCSVFile(fileTmp)) {
-			throw new VUserException(ExportMultilingualResources.ERR_CSV_FILE);
-		}
-		try {
-			CSVReader csvReader = new CSVReaderBuilder(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")))
-					.withErrorLocale(localeManager.getCurrentLocale())
-					.withCSVParser(new CSVParserBuilder().withSeparator(';').withQuoteChar(CSVParser.DEFAULT_QUOTE_CHARACTER).build()).build();
-			final List<TopicFileExport> list = transformFileToList(csvReader);
-			csvReader.close();
-
-			importTopicFromList(chatbot, list);
-		} catch (final Exception e) {
-			throw new VUserException(ExportMultilingualResources.ERR_UNEXPECTED, e.getMessage());
-		}
+		final List<TopicFileExport> list = transformFileToList(fileServices.getFileTmp(importTopicFile));
+		importTopicFromList(chatbot, list);
 	}
 
 	/*
 	 * Return a list of TopicFileExport from a CSV file
 	 */
-	private List<TopicFileExport> transformFileToList(@SecuredOperation("SuperAdm") final CSVReader csvReader) {
-		try {
-			// Check length of header, to make sure all columns are there
-			final String[] header = csvReader.readNext();
-			if (header.length != SIZE_FILE) {
-				throw new VUserException(ExportMultilingualResources.ERR_SIZE_FILE, SIZE_FILE);
-			}
-			final CsvToBean<TopicFileExport> csvToBean = new CsvToBean<>();
-			final ColumnPositionMappingStrategy<TopicFileExport> mappingStrategy = new ColumnPositionMappingStrategy<>();
-			//Set mappingStrategy type to TopicFileExport Type
-			mappingStrategy.setType(TopicFileExport.class);
-			//Fields in TopicFileExport Bean (to avoid alphabetical order)
-			final String[] columns = new String[] {
-					TopicFileExportFields.code.name(),
-					TopicFileExportFields.typeTopic.name(),
-					TopicFileExportFields.title.name(),
-					TopicFileExportFields.category.name(),
-					TopicFileExportFields.description.name(),
-					TopicFileExportFields.tag.name(),
-					TopicFileExportFields.dateStart.name(),
-					TopicFileExportFields.dateEnd.name(),
-					TopicFileExportFields.active.name(),
-					TopicFileExportFields.script.name(),
-					TopicFileExportFields.trainingPhrases.name(),
-					TopicFileExportFields.response.name(),
-					TopicFileExportFields.buttons.name(),
-					TopicFileExportFields.isEnd.name(),
-					TopicFileExportFields.labels.name()
-			};
-			//Setting the colums for mappingStrategy
-			mappingStrategy.setColumnMapping(columns);
-			csvToBean.setMappingStrategy(mappingStrategy);
-			csvToBean.setCsvReader(csvReader);
-			csvToBean.setThrowExceptions(false);
-			final List<TopicFileExport> list = csvToBean.parse();
-			if (!csvToBean.getCapturedExceptions().isEmpty()) {
-				String errorMessage = csvToBean.getCapturedExceptions().stream().map(exception -> lineError(exception.getLine()[0], exception.getMessage())).collect(Collectors.joining(","));
-				throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, errorMessage);
-			}
-			return list;
-		} catch (final Exception e) {
-			throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, e.getMessage());
-		}
+	private List<TopicFileExport> transformFileToList(@SecuredOperation("SuperAdm") final VFile file) {
+		final String[] columns = new String[] {
+				TopicFileExportFields.code.name(),
+				TopicFileExportFields.typeTopic.name(),
+				TopicFileExportFields.title.name(),
+				TopicFileExportFields.category.name(),
+				TopicFileExportFields.description.name(),
+				TopicFileExportFields.tag.name(),
+				TopicFileExportFields.dateStart.name(),
+				TopicFileExportFields.dateEnd.name(),
+				TopicFileExportFields.active.name(),
+				TopicFileExportFields.script.name(),
+				TopicFileExportFields.trainingPhrases.name(),
+				TopicFileExportFields.response.name(),
+				TopicFileExportFields.buttons.name(),
+				TopicFileExportFields.isEnd.name(),
+				TopicFileExportFields.labels.name()
+		};
+		return fileServices.readCsvFile(TopicFileExport.class, file, columns);
 	}
 
 	/*

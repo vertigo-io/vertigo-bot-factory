@@ -17,20 +17,37 @@
  */
 package io.vertigo.chatbot.designer.commons.services;
 
-import javax.inject.Inject;
-
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.exceptions.CsvValidationException;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.MediaFileInfoDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datastore.filestore.FileStoreManager;
 import io.vertigo.datastore.filestore.definitions.FileInfoDefinition;
 import io.vertigo.datastore.filestore.model.FileInfo;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
-import org.apache.commons.io.FilenameUtils;
+import io.vertigo.datastore.filestore.util.VFileUtil;
+
+import javax.inject.Inject;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static io.vertigo.chatbot.designer.utils.StringUtils.lineError;
 
 @Transactional
 public class FileServices implements Component {
@@ -40,6 +57,9 @@ public class FileServices implements Component {
 
 	@Inject
 	private MediaFileInfoDAO mediaFileInfoDAO;
+
+	@Inject
+	protected LocaleManager localeManager;
 
 	public FileInfoURI saveFileTmp(final VFile file) {
 		//apply security check
@@ -94,7 +114,43 @@ public class FileServices implements Component {
 	}
 
 	public boolean isCSVFile(VFile file) {
-		return "csv".equals(FilenameUtils.getExtension(file.getFileName()));
+		return file.getFileName().toLowerCase().endsWith(".csv");
 	}
 
+	public CSVReader buildCsvReader(VFile fileTmp) throws IOException {
+		return new CSVReaderBuilder(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")))
+					.withErrorLocale(localeManager.getCurrentLocale())
+					.withCSVParser(new CSVParserBuilder().withSeparator(';').withQuoteChar(CSVParser.DEFAULT_QUOTE_CHARACTER).build()).build();
+
+	}
+
+	public <G> List<G> readCsvFile(Class<G> clazz, VFile file, String[] columns) {
+		try (CSVReader csvReader = buildCsvReader(file)) {
+			if (!isCSVFile(file)) {
+				throw new VUserException(ExportMultilingualResources.ERR_CSV_FILE);
+			}
+			final String[] header = csvReader.readNext();
+			if (header.length != columns.length) {
+				throw new VUserException(ExportMultilingualResources.ERR_SIZE_FILE, columns.length);
+			}
+			final CsvToBean<G> csvToBean = new CsvToBean<>();
+			final ColumnPositionMappingStrategy<G> mappingStrategy = new ColumnPositionMappingStrategy<>();
+			mappingStrategy.setType(clazz);
+			mappingStrategy.setColumnMapping(columns);
+			csvToBean.setMappingStrategy(mappingStrategy);
+			csvToBean.setCsvReader(csvReader);
+			csvToBean.setThrowExceptions(false);
+			final List<G> list = csvToBean.parse();
+			if (!csvToBean.getCapturedExceptions().isEmpty()) {
+				String errorMessage = csvToBean.getCapturedExceptions().stream().map(exception -> lineError(exception.getLine()[0], exception.getMessage())).collect(Collectors.joining(","));
+				throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, errorMessage);
+			}
+			return list;
+
+		} catch (IOException | RuntimeException e) {
+			throw new VUserException(ExportMultilingualResources.ERR_UNEXPECTED, e.getMessage());
+		} catch (CsvValidationException csvValidationException) {
+			throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, csvValidationException.getMessage());
+		}
+	}
 }
