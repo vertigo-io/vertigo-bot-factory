@@ -30,6 +30,7 @@ import io.vertigo.datastore.filestore.definitions.FileInfoDefinition;
 import io.vertigo.datastore.filestore.model.FileInfo;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
+import org.apache.commons.io.FilenameUtils;
 
 @Transactional
 public class FileServices implements Component {
@@ -93,8 +94,7 @@ public class FileServices implements Component {
 	}
 
 	public boolean isCSVFile(VFile file) {
-		String mimeType = file.getMimeType();
-		return mimeType.equals("application/vnd.ms-excel") || mimeType.equals("text/csv");
+		return "csv".equals(FilenameUtils.getExtension(file.getFileName()));
 	}
 
 }

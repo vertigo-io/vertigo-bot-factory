@@ -123,10 +123,11 @@ public class TopicFileExportServices implements Component {
 					.withErrorLocale(localeManager.getCurrentLocale())
 					.withCSVParser(new CSVParserBuilder().withSeparator(';').withQuoteChar(CSVParser.DEFAULT_QUOTE_CHARACTER).build()).build();
 			final List<TopicFileExport> list = transformFileToList(csvReader);
+			csvReader.close();
 
 			importTopicFromList(chatbot, list);
 		} catch (final Exception e) {
-			throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_UNEXPECTED).getDisplay() + e);
+			throw new VUserException(ExportMultilingualResources.ERR_UNEXPECTED, e.getMessage());
 		}
 	}
 
@@ -170,18 +171,18 @@ public class TopicFileExportServices implements Component {
 			final List<TopicFileExport> list = csvToBean.parse();
 			if (!csvToBean.getCapturedExceptions().isEmpty()) {
 				String errorMessage = csvToBean.getCapturedExceptions().stream().map(exception -> lineError(exception.getLine()[0], exception.getMessage())).collect(Collectors.joining(","));
-				throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay() + errorMessage);
+				throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, errorMessage);
 			}
 			return list;
 		} catch (final Exception e) {
-			throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay() + e);
+			throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, e.getMessage());
 		}
 	}
 
 	/*
 	 * Use a list of TopicFileExport to create/modify topics
 	 */
-	private void importTopicFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<TopicFileExport> list) throws IOException {
+	private void importTopicFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<TopicFileExport> list) {
 
 		codeCheck(list);
 

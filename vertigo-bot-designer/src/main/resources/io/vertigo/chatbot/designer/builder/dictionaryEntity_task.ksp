@@ -47,7 +47,6 @@ create Task TkGetTuplesSynonym {
 				and syn.syn_id != word.syn_id
 				and word.label in (#words.rownum#)
 				and ent.bot_id = #botId#
-				GROUP BY syn.label, word.label
              "
 	in botId  			{domain : DoId         				cardinality : "1"  }
 	in words			{domain : DoLabel					cardinality : "*"  }

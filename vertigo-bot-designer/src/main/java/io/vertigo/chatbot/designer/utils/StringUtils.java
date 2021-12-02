@@ -33,6 +33,6 @@ public final class StringUtils {
 	}
 
 	public static void errorManagement(final int i, final String erreur) {
-		throw new VUserException("[Line " + i + "] " + erreur);
+		throw new VUserException(lineError(Integer.toString(i), erreur));
 	}
 }

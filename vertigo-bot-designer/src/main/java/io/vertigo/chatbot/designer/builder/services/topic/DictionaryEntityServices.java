@@ -322,18 +322,18 @@ public class DictionaryEntityServices implements Component {
 			List<DictionaryEntityWrapper> dictionaryEntityWrappers = csvToBean.parse();
 			if (!csvToBean.getCapturedExceptions().isEmpty()) {
 				String errorMessage = csvToBean.getCapturedExceptions().stream().map(exception -> lineError(exception.getLine()[0], exception.getMessage())).collect(Collectors.joining(","));
-				throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay() + errorMessage);
+				throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, errorMessage);
 			}
 			return dictionaryEntityWrappers;
 		} catch (Exception e) {
-			throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay() + e);
+			throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, e.getMessage());
 		}
 	}
 
 	/*
 	 * Use a list of DictionaryExport to create/modify dictionary entities and synonyms
 	 */
-	private void importDictionaryFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<DictionaryEntityWrapper> list) throws IOException {
+	private void importDictionaryFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<DictionaryEntityWrapper> list) {
 
 		int line = 1;
 		for (final DictionaryEntityWrapper dex : list) {
@@ -358,10 +358,10 @@ public class DictionaryEntityServices implements Component {
 					.withErrorLocale(localeManager.getCurrentLocale())
 					.withCSVParser(new CSVParserBuilder().withSeparator(';').withQuoteChar(CSVParser.DEFAULT_QUOTE_CHARACTER).build()).build();
 			final List<DictionaryEntityWrapper> list = transformFileToList(csvReader);
-
+			csvReader.close();
 			importDictionaryFromList(chatbot, list);
 		} catch (IOException e) {
-			throw new VUserException(MessageText.of(ExportMultilingualResources.ERR_MAPPING_FILE).getDisplay() + e);
+			throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, e.getMessage());
 		}
 	}
 

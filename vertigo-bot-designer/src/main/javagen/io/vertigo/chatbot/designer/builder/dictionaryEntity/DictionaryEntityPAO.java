@@ -84,8 +84,7 @@ public final class DictionaryEntityPAO implements StoreServices {
  "				where 1=1" + 
  "				and syn.syn_id != word.syn_id" + 
  "				and word.label in (#words.rownum#)" + 
- "				and ent.bot_id = #botId#" + 
- "				GROUP BY syn.label, word.label",
+ "				and ent.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTupleSynonymIhm")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.TupleSynonymIhm> getTuplesSynonym(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "words", smartType = "STyLabel") final java.util.List<String> words) {
