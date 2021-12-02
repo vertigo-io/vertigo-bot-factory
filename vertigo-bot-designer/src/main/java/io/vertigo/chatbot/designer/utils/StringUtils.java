@@ -2,6 +2,7 @@ package io.vertigo.chatbot.designer.utils;
 
 import java.util.regex.Pattern;
 
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.util.StringUtil;
 
 public final class StringUtils {
@@ -24,5 +25,14 @@ public final class StringUtils {
 			return true;
 		}
 		return StringUtil.isBlank(emptyHtmlCleanerPattern.matcher(html).replaceAll(r -> ""));
+	}
+
+
+	public static String lineError(final String line, final String message) {
+		return "[Line " + line + ", Error: " + message + "] ";
+	}
+
+	public static void errorManagement(final int i, final String erreur) {
+		throw new VUserException(lineError(Integer.toString(i), erreur));
 	}
 }

@@ -5,7 +5,9 @@ import javax.inject.Inject;
 import io.vertigo.chatbot.commons.domain.DtResources;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.context.ContextValueMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.kindTopic.KindTopicMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.person.PersonMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
@@ -24,6 +26,7 @@ public class ChatbotLocaleInitializer implements ComponentInitializer {
 	@Override
 	public void init() {
 		localeManager.add("io.vertigo.chatbot.commons.domain.DtResources", DtResources.values());
+		localeManager.add("io.vertigo.chatbot.designer.domain.DtResources", io.vertigo.chatbot.designer.domain.DtResources.values());
 		localeManager.add("io.vertigo.chatbot.designer.domain.analytics.DtResources", io.vertigo.chatbot.designer.domain.analytics.DtResources.values());
 		localeManager.add("io.vertigo.chatbot.designer.domain.admin.DtResources", io.vertigo.chatbot.designer.domain.admin.DtResources.values());
 		localeManager.add("io.vertigo.chatbot.designer.domain.commons.DtResources", io.vertigo.chatbot.designer.domain.commons.DtResources.values());
@@ -38,6 +41,9 @@ public class ChatbotLocaleInitializer implements ComponentInitializer {
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.context.ContextValueMultilingualResources", ContextValueMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources", AnalyticsMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources", BotMultilingualResources.values());
+		localeManager.add("io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources", ExportMultilingualResources.values());
+		localeManager.add("io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources", DictionaryEntityMultilingualResources.values());
+
 	}
 
 }

@@ -6,7 +6,7 @@ public enum BotMultilingualResources implements MessageKey {
 
 	BOT_DETAIL,
 
-	MEANING_LIST,
+	DICTIONARYENTITY_LIST,
 
 	TRAINING_LIST,
 

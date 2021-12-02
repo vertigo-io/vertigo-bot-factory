@@ -19,6 +19,7 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.designer.domain.DictionaryEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,11 +29,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.multilingual.meanings.MeaningsMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
-import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
+import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SynonymServices;
-import io.vertigo.chatbot.designer.domain.Meaning;
 import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.util.StringUtil;
@@ -43,13 +43,13 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
-@RequestMapping("/bot/{botId}/meaning")
+@RequestMapping("/bot/{botId}/dictionaryEntity")
 @Secured("BotAdm")
-public class MeaningDetailController extends AbstractBotCreationController<Meaning> {
+public class DictionaryEntityDetailController extends AbstractBotCreationController<DictionaryEntity> {
 
 	private static final ViewContextKey<Chatbot> botKey = ViewContextKey.of("bot");
 
-	private static final ViewContextKey<Meaning> meaningKey = ViewContextKey.of("meaning");
+	private static final ViewContextKey<DictionaryEntity> dictionaryEntityKey = ViewContextKey.of("dictionaryEntity");
 
 	private static final ViewContextKey<Synonym> synonymsKey = ViewContextKey.of("synonyms");
 	protected static final ViewContextKey<String> newSynonymKey = ViewContextKey.of("newSynonym");
@@ -60,28 +60,28 @@ public class MeaningDetailController extends AbstractBotCreationController<Meani
 	private ChatbotServices chatbotServices;
 
 	@Inject
-	private MeaningServices meaningServices;
+	private DictionaryEntityServices dictionaryEntityServices;
 
 	@Inject
 	private SynonymServices synonymServices;
 
-	@GetMapping("/{meaId}")
+	@GetMapping("/{dicEntId}")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
-			@PathVariable("meaId") final Long meaId) {
+			@PathVariable("dicEntId") final Long dicEntId) {
 
 		super.initCommonContext(viewContext, uiMessageStack, botId);
 		final Chatbot chatbot = chatbotServices.getChatbotById(botId);
 		viewContext.publishDto(botKey, chatbot);
 
-		final Meaning meaning = meaningServices.findMeaningById(meaId);
+		final DictionaryEntity dictionaryEntity = dictionaryEntityServices.findDictionaryEntityById(dicEntId);
 
-		viewContext.publishDto(meaningKey, meaning);
-		viewContext.publishDtList(synonymsKey, synonymServices.getAllSynonymByMeaning(meaning));
+		viewContext.publishDto(dictionaryEntityKey, dictionaryEntity);
+		viewContext.publishDtList(synonymsKey, synonymServices.getAllSynonymByDictionaryEntity(dictionaryEntity));
 		viewContext.publishRef(newSynonymKey, "");
 
 		viewContext.publishDtList(synonymsToDeleteKey,
 				new DtList<Synonym>(Synonym.class));
-		super.initBreadCrums(viewContext, meaning);
+		super.initBreadCrums(viewContext, dictionaryEntity);
 		toModeReadOnly();
 	}
 
@@ -91,31 +91,29 @@ public class MeaningDetailController extends AbstractBotCreationController<Meani
 	}
 
 	@PostMapping("/_save")
-	public String saveMeaning(final ViewContext viewContext,
-			final UiMessageStack uiMessageStack,
-			@ViewAttribute("bot") final Chatbot bot,
-			@ViewAttribute("meaning") final Meaning meaning,
-			@ViewAttribute("newSynonym") final String newSynonym,
-			@ViewAttribute("synonyms") final DtList<Synonym> synonyms,
-			@ViewAttribute("synonymsToDelete") final DtList<Synonym> synonymsToDelete) {
+	public String saveDictionaryEntity(final ViewContext viewContext,
+									   final UiMessageStack uiMessageStack,
+									   @ViewAttribute("bot") final Chatbot bot,
+									   @ViewAttribute("dictionaryEntity") final DictionaryEntity dictionaryEntity,
+									   @ViewAttribute("newSynonym") final String newSynonym,
+									   @ViewAttribute("synonyms") final DtList<Synonym> synonyms,
+									   @ViewAttribute("synonymsToDelete") final DtList<Synonym> synonymsToDelete) {
 
 		addSynonym(newSynonym, synonyms);
-		meaningServices.save(bot, meaning, synonyms, synonymsToDelete);
+		dictionaryEntityServices.save(bot, dictionaryEntity, synonyms, synonymsToDelete);
 
 		if (synonyms.isEmpty()) {
-			//If all synonyms are removed, the meaning is deleted
-			meaningServices.deleteMeaning(bot, meaning.getMeaId());
-			return "redirect:/bot/" + meaning.getBotId() + "/dictionary/";
+			return "redirect:/bot/" + dictionaryEntity.getBotId() + "/dictionary/";
 		}
-		return "redirect:/bot/" + meaning.getBotId() + "/meaning/" + meaning.getMeaId();
+		return "redirect:/bot/" + dictionaryEntity.getBotId() + "/dictionaryEntity/" + dictionaryEntity.getDicEntId();
 	}
 
 	@PostMapping("/_delete")
-	public String deleteMeaning(final ViewContext viewContext,
-			@ViewAttribute("bot") final Chatbot bot,
-			@ViewAttribute("topicCategory") final Meaning meaning) {
-		meaningServices.deleteMeaning(bot, meaning.getMeaId());
-		return "redirect:/bot/" + bot.getBotId() + "/meaning/";
+	public String deleteDictionaryEntity(final ViewContext viewContext,
+										 @ViewAttribute("bot") final Chatbot bot,
+										 @ViewAttribute("dictionaryEntity") final DictionaryEntity dictionaryEntity) {
+		dictionaryEntityServices.deleteDictionaryEntity(bot, dictionaryEntity.getDicEntId());
+		return "redirect:/bot/" + bot.getBotId() + "/dictionaryEntity/";
 	}
 
 	@PostMapping("/_addSynonym")
@@ -148,7 +146,7 @@ public class MeaningDetailController extends AbstractBotCreationController<Meani
 			if (curIdx == index) {
 				syn.setLabel(newSynonym);
 			} else if (newSynonym.equalsIgnoreCase(syn.getLabel())) {
-				throw new VUserException(MeaningsMultilingualResources.ERR_UNIQUE_SYNONYM);
+				throw new VUserException(DictionaryEntityMultilingualResources.ERR_UNIQUE_SYNONYM);
 			}
 			curIdx++;
 		}
@@ -193,7 +191,7 @@ public class MeaningDetailController extends AbstractBotCreationController<Meani
 		final boolean exists = synonyms.stream()
 				.anyMatch(its -> its.getLabel().equalsIgnoreCase(newSynonym));
 		if (exists) {
-			throw new VUserException(MeaningsMultilingualResources.ERR_UNIQUE_SYNONYM);
+			throw new VUserException(DictionaryEntityMultilingualResources.ERR_UNIQUE_SYNONYM);
 		}
 
 		final Synonym newText = new Synonym();
@@ -203,7 +201,7 @@ public class MeaningDetailController extends AbstractBotCreationController<Meani
 	}
 
 	@Override
-	protected String getBreadCrums(final Meaning object) {
+	protected String getBreadCrums(final DictionaryEntity object) {
 		return object.getLabel();
 	}
 

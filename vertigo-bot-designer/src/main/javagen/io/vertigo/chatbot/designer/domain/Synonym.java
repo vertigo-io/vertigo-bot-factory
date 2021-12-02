@@ -34,19 +34,19 @@ public final class Synonym implements Entity {
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
-			name = "ASynonymMeaning",
-			fkFieldName = "meaId",
-			primaryDtDefinitionName = "DtMeaning",
+			name = "ASynonymDictionaryEntity",
+			fkFieldName = "dicEntId",
+			primaryDtDefinitionName = "DtDictionaryEntity",
 			primaryIsNavigable = true,
-			primaryRole = "Meaning",
-			primaryLabel = "Meaning",
+			primaryRole = "DictionaryEntity",
+			primaryLabel = "DictionaryEntity",
 			primaryMultiplicity = "1..1",
 			foreignDtDefinitionName = "DtSynonym",
 			foreignIsNavigable = false,
 			foreignRole = "Synonym",
 			foreignLabel = "Synonym",
 			foreignMultiplicity = "0..*")
-	private final StoreVAccessor<io.vertigo.chatbot.designer.domain.Meaning> meaIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.designer.domain.Meaning.class, "Meaning");
+	private final StoreVAccessor<io.vertigo.chatbot.designer.domain.DictionaryEntity> dicEntIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.designer.domain.DictionaryEntity.class, "DictionaryEntity");
 
 	/** {@inheritDoc} */
 	@Override
@@ -113,21 +113,21 @@ public final class Synonym implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Meaning'.
-	 * @return Long meaId <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'DictionaryEntity'.
+	 * @return Long dicEntId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Meaning", fkDefinition = "DtMeaning" )
-	public Long getMeaId() {
-		return (Long) meaIdAccessor.getId();
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "DictionaryEntity", fkDefinition = "DtDictionaryEntity" )
+	public Long getDicEntId() {
+		return (Long) dicEntIdAccessor.getId();
 	}
 
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Meaning'.
-	 * @param meaId Long <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'DictionaryEntity'.
+	 * @param dicEntId Long <b>Obligatoire</b>
 	 */
-	public void setMeaId(final Long meaId) {
-		meaIdAccessor.setId(meaId);
+	public void setDicEntId(final Long dicEntId) {
+		dicEntIdAccessor.setId(dicEntId);
 	}
 
  	/**
@@ -139,11 +139,11 @@ public final class Synonym implements Entity {
 	}
 
  	/**
-	 * Association : Meaning.
-	 * @return l'accesseur vers la propriété 'Meaning'
+	 * Association : DictionaryEntity.
+	 * @return l'accesseur vers la propriété 'DictionaryEntity'
 	 */
-	public StoreVAccessor<io.vertigo.chatbot.designer.domain.Meaning> meaning() {
-		return meaIdAccessor;
+	public StoreVAccessor<io.vertigo.chatbot.designer.domain.DictionaryEntity> dictionaryEntity() {
+		return dicEntIdAccessor;
 	}
 	
 	/** {@inheritDoc} */

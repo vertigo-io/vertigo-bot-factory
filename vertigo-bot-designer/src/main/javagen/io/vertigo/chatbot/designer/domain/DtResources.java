@@ -9,20 +9,36 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
-	/** Meaning.
+	/** DictionaryEntity.
 	/***********************************************************
 	/**
-	 * Meaning id.
+	 * Dictionary entity id.
 	 */
-	fldMeaning$meaId,
+	fldDictionaryEntity$dicEntId,
 	/**
 	 * Label.
 	 */
-	fldMeaning$label,
+	fldDictionaryEntity$label,
 	/**
 	 * Chatbot.
 	 */
-	fldMeaning$botId,
+	fldDictionaryEntity$botId,
+
+	/***********************************************************
+	/** DictionaryEntityWrapper.
+	/***********************************************************
+	/**
+	 * Dictionary Entity id.
+	 */
+	fldDictionaryEntityWrapper$dicEntId,
+	/**
+	 * Dictionary Entity Label.
+	 */
+	fldDictionaryEntityWrapper$dictionaryEntityLabel,
+	/**
+	 * Synonyms list.
+	 */
+	fldDictionaryEntityWrapper$synonymsList,
 
 	/***********************************************************
 	/** Synonym.
@@ -40,9 +56,9 @@ public enum DtResources implements MessageKey {
 	 */
 	fldSynonym$botId,
 	/**
-	 * Meaning.
+	 * DictionaryEntity.
 	 */
-	fldSynonym$meaId,
+	fldSynonym$dicEntId,
 
 	/***********************************************************
 	/** TupleSynonymIhm.

@@ -1,0 +1,60 @@
+package io.vertigo.chatbot.designer.domain
+
+/************************/
+/* **** Dictionary Entity  **** */
+/************************/
+
+create DtDefinition DtDictionaryEntity {
+	id dicEntId 		{domain: DoId		label: "Dictionary entity id"}
+	field label		    {domain: DoLabel	label: "Label" 	cardinality:"1"}
+	}
+	
+create Association ADictionaryEntityChatbot {
+	fkFieldName : "botId" 
+    
+ 	dtDefinitionA : DtDictionaryEntity
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+}	
+
+create DtDefinition DtSynonym {
+	id synId 		{domain: DoId		label: "Synonym id"}
+	field label		{domain: DoLabel	label: "Label" 	cardinality:"1"}
+	}
+	
+create Association ASynonymChatbot {
+	fkFieldName : "botId" 
+    
+ 	dtDefinitionA : DtSynonym
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+}	
+
+create Association ASynonymDictionaryEntity {
+	fkFieldName : "dicEntId"
+    
+ 	dtDefinitionA : DtSynonym
+	type : "*>1"
+	dtDefinitionB : DtDictionaryEntity
+	
+	labelB : "DictionaryEntity"
+}	
+
+create DtDefinition DtTupleSynonymIhm {
+
+	field word				{domain: DoLabel	label: "Word"	}
+	field synonymLabel		{domain: DoLabel	label: "Synonym label"	}
+}
+
+create DtDefinition DtDictionaryEntityWrapper {
+
+    field dicEntId 			                {domain: DoId 					label: "Dictionary Entity id" 	}
+	field dictionaryEntityLabel				{domain: DoLabel	            label: "Dictionary Entity Label"	}
+	field synonymsList				        {domain: DoLabel	            label: "Synonyms list"	}
+}
+
+	
