@@ -288,63 +288,42 @@ public class DictionaryEntityServices implements Component {
 		return fileServices.readCsvFile(DictionaryEntityWrapper.class, file, columns);
 	}
 
-	/*
-	 * Use a list of DictionaryExport to create/modify dictionary entities and synonyms
-	 */
-	private void importDictionaryFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<DictionaryEntityWrapper> list) {
-
-		int line = 1;
-		for (final DictionaryEntityWrapper dex : list) {
-			line++;
-			generateDictionaryFromDictionaryExport(dex, chatbot, line);
-		}
-
-	}
-
 	/**
 	 * Use a CSV file to import a dictionary within a specific chatbot
 	 * @param chatbot
 	 * @param importDictionaryFile
 	 */
 	public void importDictionaryFromCSVFile(Chatbot chatbot, FileInfoURI importDictionaryFile) {
-		final List<DictionaryEntityWrapper> list = transformFileToList(fileServices.getFileTmp(importDictionaryFile));
-		importDictionaryFromList(chatbot, list);
+		transformFileToList(fileServices.getFileTmp(importDictionaryFile)).forEach(dex -> generateDictionaryFromDictionaryExport(dex, chatbot));
 	}
 
 	/*
 	 * Generate dictionary entity and synonyms from a DictionaryExport
 	 */
-	private void generateDictionaryFromDictionaryExport(final DictionaryEntityWrapper dex,
-			final Chatbot chatbot,
-			final int line) {
+	private void generateDictionaryFromDictionaryExport(final DictionaryEntityWrapper dex, final Chatbot chatbot) {
 
-		try {
+		final DictionaryEntity dictionaryEntity = new DictionaryEntity();
 
-			final DictionaryEntity dictionaryEntity = new DictionaryEntity();
-
-			//Try to find the dictionaryEntity in database
-			final Optional<DictionaryEntity> dictionaryEntityBase = findDictionaryEntityByLabelAndBotId(chatbot.getBotId(), dex.getDictionaryEntityLabel());
-			final DictionaryEntity dictionaryEntitySaved;
-			if (dictionaryEntityBase.isPresent()) {
-				dictionaryEntitySaved = dictionaryEntityBase.get();
-			} else {
-				// if the dictionaryEntity is not already in database, it is saved
-				dictionaryEntity.setBotId(chatbot.getBotId());
-				dictionaryEntity.setLabel(dex.getDictionaryEntityLabel());
-				dictionaryEntitySaved = this.save(chatbot, dictionaryEntity);
-			}
-			final DtList<Synonym> listSynonyms = synonymServices.extractSynonymsFromDictionaryExport(dex, dictionaryEntitySaved);
-			for (final Synonym synonym : listSynonyms) {
-				final Optional<Synonym> synonymBase = synonymServices.findSynonymByLabelAndMeaId(dictionaryEntitySaved.getDicEntId(), synonym.getLabel());
-				//If the synonym is not already in database, it is saved
-				if (!synonymBase.isPresent()) {
-					synonymServices.save(synonym);
-				}
-			}
-
-		} catch (final Exception e) {
-			errorManagement(line, MessageText.of(DictionaryEntityMultilingualResources.ERR_IMPORT, dex.getDictionaryEntityLabel()).getDisplay() + e.getMessage());
+		//Try to find the dictionaryEntity in database
+		final Optional<DictionaryEntity> dictionaryEntityBase = findDictionaryEntityByLabelAndBotId(chatbot.getBotId(), dex.getDictionaryEntityLabel());
+		final DictionaryEntity dictionaryEntitySaved;
+		if (dictionaryEntityBase.isPresent()) {
+			dictionaryEntitySaved = dictionaryEntityBase.get();
+		} else {
+			// if the dictionaryEntity is not already in database, it is saved
+			dictionaryEntity.setBotId(chatbot.getBotId());
+			dictionaryEntity.setLabel(dex.getDictionaryEntityLabel());
+			dictionaryEntitySaved = this.save(chatbot, dictionaryEntity);
 		}
+		final DtList<Synonym> listSynonyms = synonymServices.extractSynonymsFromDictionaryExport(dex, dictionaryEntitySaved);
+		for (final Synonym synonym : listSynonyms) {
+			final Optional<Synonym> synonymBase = synonymServices.findSynonymByLabelAndMeaId(dictionaryEntitySaved.getDicEntId(), synonym.getLabel());
+			//If the synonym is not already in database, it is saved
+			if (!synonymBase.isPresent()) {
+				synonymServices.save(synonym);
+			}
+		}
+
 	}
 
 }

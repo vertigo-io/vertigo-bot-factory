@@ -117,18 +117,14 @@ public class FileServices implements Component {
 		return file.getFileName().toLowerCase().endsWith(".csv");
 	}
 
-	public CSVReader buildCsvReader(VFile fileTmp) throws IOException {
-		return new CSVReaderBuilder(new FileReader(VFileUtil.obtainReadOnlyPath(fileTmp).toString(), Charset.forName("cp1252")))
-					.withErrorLocale(localeManager.getCurrentLocale())
-					.withCSVParser(new CSVParserBuilder().withSeparator(';').withQuoteChar(CSVParser.DEFAULT_QUOTE_CHARACTER).build()).build();
-
-	}
-
 	public <G> List<G> readCsvFile(Class<G> clazz, VFile file, String[] columns) {
-		try (CSVReader csvReader = buildCsvReader(file)) {
-			if (!isCSVFile(file)) {
-				throw new VUserException(ExportMultilingualResources.ERR_CSV_FILE);
-			}
+		if (!isCSVFile(file)) {
+			throw new VUserException(ExportMultilingualResources.ERR_CSV_FILE);
+		}
+		try (CSVReader csvReader = new CSVReaderBuilder(new FileReader(VFileUtil.obtainReadOnlyPath(file).toString(), Charset.forName("cp1252")))
+				.withErrorLocale(localeManager.getCurrentLocale())
+				.withCSVParser(new CSVParserBuilder().withSeparator(';').build()).build()) {
+
 			final String[] header = csvReader.readNext();
 			if (header.length != columns.length) {
 				throw new VUserException(ExportMultilingualResources.ERR_SIZE_FILE, columns.length);
