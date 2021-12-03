@@ -50,7 +50,15 @@ public class ContextValueServices implements Component {
 	 */
 	public ContextValue save(@SecuredOperation("botAdm") final Chatbot bot, final ContextValue contextValue) {
 		checkPatternKey(contextValue.getKey());
-		nodeServices.updateNodes(bot);
+		if (contextValue.getCvaId()!= null) {
+			ContextValue oldContextValue = contextValueDAO.get(contextValue.getCvaId());
+			if (!oldContextValue.getKey().equals(contextValue.getKey()) || !oldContextValue.getLabel().equals(contextValue.getLabel())) {
+				nodeServices.updateNodes(bot);
+			}
+		} else {
+			nodeServices.updateNodes(bot);
+		}
+
 		return contextValueDAO.save(contextValue);
 
 	}
