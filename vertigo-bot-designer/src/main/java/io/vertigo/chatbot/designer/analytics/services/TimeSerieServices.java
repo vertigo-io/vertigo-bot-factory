@@ -1,19 +1,14 @@
 package io.vertigo.chatbot.designer.analytics.services;
 
-import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.database.timeseries.TabularDatas;
-import io.vertigo.database.timeseries.TimeSeriesManager;
 import io.vertigo.database.timeseries.TimedDatas;
-
-import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Use for search in influxdb
@@ -26,8 +21,8 @@ public class TimeSerieServices implements Component, Activeable {
 
 	private String influxDbName;
 
-	@Inject
-	private TimeSeriesManager timeSeriesManager;
+	//	@Inject
+	//	private TimeSeriesManager timeSeriesManager;
 
 	@Inject
 	private ParamManager paramManager;
@@ -51,9 +46,10 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return sum of sessions
 	 */
 	public TimedDatas getSessionsStats(final StatCriteria criteria) {
-		return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("isSessionStart:sum"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
-				AnalyticsServicesUtils.getTimeFilter(criteria));
+		return null;
+		//return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("isSessionStart:sum"),
+		//		AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
+		//		AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
 	/**
@@ -63,17 +59,18 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return timeDatas with messages sum and fallbacksum
 	 */
 	public TimedDatas getRequestStats(final StatCriteria criteria) {
-		return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum", "isNlu:sum"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isUserMessage = 1").build(),
-				AnalyticsServicesUtils.getTimeFilter(criteria));
+		return null;
+		//return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum", "isNlu:sum"),
+		//				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isUserMessage = 1").build(),
+		//	AnalyticsServicesUtils.getTimeFilter(criteria));
 
 	}
 
 	public TimedDatas getUserInteractions(final StatCriteria criteria) {
-		return timeSeriesManager.getTimeSeries(influxDbName, List.of("name:count"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
-				AnalyticsServicesUtils.getTimeFilter(criteria));
-
+		return null;
+		//return timeSeriesManager.getTimeSeries(influxDbName, List.of("name:count"),
+		//		AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
+		//		AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
 	/**
@@ -83,10 +80,11 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getSentenceDetails(final StatCriteria criteria) {
-		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence", "modelName"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isFallback = 1").build(),
-				AnalyticsServicesUtils.getTimeFilter(criteria),
-				Optional.empty());
+		return null;
+		//		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence", "modelName"),
+		//				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isFallback = 1").build(),
+		//				AnalyticsServicesUtils.getTimeFilter(criteria),
+		//				Optional.empty());
 	}
 
 	/**
@@ -96,10 +94,11 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getSessionsExport(final StatCriteria criteria) {
-		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("name", "modelName", "botId", "traId", "nodId"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isSessionStart = 1").build(),
-				AnalyticsServicesUtils.getTimeFilter(criteria),
-				Optional.empty());
+		return null;
+		//return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("name", "modelName", "botId", "traId"),
+		//		AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isSessionStart = 1").build(),
+		//		AnalyticsServicesUtils.getTimeFilter(criteria),
+		//		Optional.empty());
 	}
 
 	/**
@@ -109,10 +108,11 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getUnknowSentenceExport(final StatCriteria criteria) {
-		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence", "modelName", "botId", "traId", "nodId"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isFallback = 1").build(),
-				AnalyticsServicesUtils.getTimeFilter(criteria),
-				Optional.empty());
+		return null;
+		//		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence", "modelName", "botId", "traId"),
+		//		AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isFallback = 1").build(),
+		//		AnalyticsServicesUtils.getTimeFilter(criteria),
+		//		Optional.empty());
 	}
 
 	/**
@@ -123,14 +123,15 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all topIntents
 	 */
 	public TabularDatas getAllTopIntents(final StatCriteria criteria) {
-		return timeSeriesManager.getTabularData(influxDbName, Arrays.asList("name:count"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
-						.withAdditionalWhereClause("isNlu = 1")
-						//No technical issues must be get
-						.withAdditionalWhereClause("isTechnical = 0")
-						.build(),
-				AnalyticsServicesUtils.getTimeFilter(criteria),
-				"name");
+		return null;
+		//return timeSeriesManager.getTabularData(influxDbName, Arrays.asList("name:count"),
+		//		AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
+		//				.withAdditionalWhereClause("isNlu = 1")
+		//No technical issues must be get
+		//				.withAdditionalWhereClause("isTechnical = 0")
+		//				.build(),
+		//		AnalyticsServicesUtils.getTimeFilter(criteria),
+		//		"name");
 
 	}
 
@@ -142,13 +143,14 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all the sentences recognized
 	 */
 	public TimedDatas getKnowSentence(final StatCriteria criteria, final String intentRasa) {
-		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
-						.addFilter("name", intentRasa)
-						.withAdditionalWhereClause("isNlu = 1")
-						.build(),
-				AnalyticsServicesUtils.getTimeFilter(criteria),
-				Optional.of(5000L));
+		return null;
+		//return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence"),
+		//		AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
+		//				.addFilter("name", intentRasa)
+		//				.withAdditionalWhereClause("isNlu = 1")
+		//				.build(),
+		//		AnalyticsServicesUtils.getTimeFilter(criteria),
+		//		Optional.of(5000L));
 	}
 
 	/**
@@ -158,17 +160,19 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all topics used at least one time
 	 */
 	public TimedDatas getTopicsStats(final StatCriteria criteria) {
-		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("name"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
-				AnalyticsServicesUtils.getTimeFilter(criteria),
-				Optional.empty());
+		return null;
+		//return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("name"),
+		//		AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
+		//		AnalyticsServicesUtils.getTimeFilter(criteria),
+		//		Optional.empty());
 	}
 
 	public TimedDatas getRatingStats(final StatCriteria criteria) {
-		return timeSeriesManager.getTimeSeries(influxDbName,
-				Arrays.asList("rating1:count", "rating2:count", "rating3:count", "rating4:count", "rating5:count"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.RATING_MSRMT).build(),
-				AnalyticsServicesUtils.getTimeFilter(criteria));
+		return null;
+		//return timeSeriesManager.getTimeSeries(influxDbName,
+		//		Arrays.asList("rating1:count", "rating2:count", "rating3:count", "rating4:count", "rating5:count"),
+		//		AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.RATING_MSRMT).build(),
+		//		AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
 }

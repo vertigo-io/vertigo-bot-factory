@@ -28,12 +28,13 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/dictionary")
-@Secured("botAdm")
+@Secured("Chatbot$botAdm")
 public class DictionaryEntityListController extends AbstractBotListEntityController<DictionaryEntity> {
 
 	private static final ViewContextKey<Synonym> synonymEditKey = ViewContextKey.of("synonymEdit");
 	private static final ViewContextKey<DictionaryEntityWrapper> dictionaryEntityWrappersKey = ViewContextKey.of("dictionaryEntityWrappers");
 	private static final ViewContextKey<DictionaryEntity> dictionaryEntityEditKey = ViewContextKey.of("dictionaryEntityEdit");
+	private static final ViewContextKey<FileInfoURI> importDictionaryFileUri = ViewContextKey.of("importDictionaryFileUri");
 
 	@Inject
 	private DictionaryEntityServices dictionaryEntityServices;
@@ -44,12 +45,13 @@ public class DictionaryEntityListController extends AbstractBotListEntityControl
 		viewContext.publishDtList(dictionaryEntityWrappersKey, DtDefinitions.DictionaryEntityWrapperFields.dictionaryEntityLabel, dictionaryEntityServices.getDictionaryExportByBotId(botId, "; "));
 		viewContext.publishDto(dictionaryEntityEditKey, new DictionaryEntity());
 		viewContext.publishDto(synonymEditKey, new Synonym());
+		viewContext.publishFileInfoURI(importDictionaryFileUri, null);
 		super.initBreadCrums(viewContext, DictionaryEntity.class);
 		listLimitReached(viewContext, uiMessageStack);
 	}
 
 	@PostMapping("/saveDictionaryEntity")
-	@Secured("botAdm")
+	@Secured("Chatbot$botAdm")
 	public String doSaveDictionaryEntity(final ViewContext viewContext,
 										 @ViewAttribute("bot") final Chatbot bot,
 										 @ViewAttribute("dictionaryEntityEdit") final DictionaryEntity dictionaryEntityEdit) {
@@ -61,7 +63,7 @@ public class DictionaryEntityListController extends AbstractBotListEntityControl
 	}
 
 	@PostMapping("/_deleteDictionaryEntity")
-	@Secured("botAdm")
+	@Secured("Chatbot$botAdm")
 	public ViewContext doDeleteDictionaryEntity(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 												@RequestParam("dicEntId") final Long dicEntId, final UiMessageStack uiMessageStack) {
 

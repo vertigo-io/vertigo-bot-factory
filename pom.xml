@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-parent</artifactId>
-		<version>3.0.0</version>
+		<version>3.3.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vertigo-bot-factory</artifactId>
@@ -35,7 +35,7 @@
 		<maven.compiler.target>11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<vertigo.version>3.0.0</vertigo.version>
+		<vertigo.version>3.3.0-SNAPSHOT</vertigo.version>
 		
 		<sonar.exclusions>**/javagen/**</sonar.exclusions>
 		<log4j.version>2.16.0</log4j.version>

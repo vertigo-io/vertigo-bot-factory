@@ -45,7 +45,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/dictionaryEntity")
-@Secured("BotAdm")
+@Secured("Chatbot$botAdm")
 public class DictionaryEntityDetailController extends AbstractBotCreationController<DictionaryEntity> {
 
 	private static final ViewContextKey<Chatbot> botKey = ViewContextKey.of("bot");

@@ -20,7 +20,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/contextList")
-@Secured("botAdm")
+@Secured("Chatbot$botAdm")
 public class ContextListController extends AbstractBotListEntityController<ContextValue> {
 
 	private static final ViewContextKey<ContextValue> contextValuesKey = ViewContextKey.of("contextValues");
@@ -38,7 +38,7 @@ public class ContextListController extends AbstractBotListEntityController<Conte
 	}
 
 	@PostMapping("/createContextValue")
-	@Secured("BotAdm")
+	@Secured("Chatbot$botAdm")
 	public String doCreateContextValue(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		final Long botId = bot.getBotId();
 		return "redirect:/bot/" + botId + "/contextValue/new";

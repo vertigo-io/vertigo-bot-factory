@@ -68,6 +68,7 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 	private static final ViewContextKey<String> topIdDetailKey = ViewContextKey.of("topIdDetail");
 	private static final ViewContextKey<String> topicImportKey = ViewContextKey.of("topicImport");
 	private static final ViewContextKey<TopicCriteria> criteriaKey = ViewContextKey.of("criteria");
+	private static final ViewContextKey<FileInfoURI> importTopicFileUri = ViewContextKey.of("importTopicFileUri");
 
 	@Inject
 	private TopicServices topicServices;
@@ -93,13 +94,14 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 		viewContext.publishDto(selectionCatListKey, new SelectTopicCategory());
 		viewContext.publishRef(topIdDetailKey, "");
 		viewContext.publishRef(topicImportKey, "");
+		viewContext.publishFileInfoURI(importTopicFileUri, null);
 		super.initBreadCrums(viewContext, Topic.class);
 		listLimitReached(viewContext, uiMessageStack);
 		toModeReadOnly();
 	}
 
 	@PostMapping("/createTopic")
-	@Secured("BotAdm")
+	@Secured("Chatbot$botAdm")
 	public String doCreateTopic(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, @ViewAttribute("selectionList") final String ttoCd) {
 		if (ttoCd.isEmpty()) {
 			throw new VUserException(TopicsMultilingualResources.CHOOSE_TYPE_ERROR);
