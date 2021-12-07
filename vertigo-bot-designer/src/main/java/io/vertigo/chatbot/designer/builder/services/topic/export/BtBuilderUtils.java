@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
-import java.util.List;
-
 import io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonExport;
+
+import java.util.List;
 
 public class BtBuilderUtils {
 
@@ -11,6 +11,7 @@ public class BtBuilderUtils {
 	private static final String SPACE = " ";
 	private static final String OPEN_BRACKET = "{{";
 	private static final String CLOSE_BRACKET = "}}";
+	private static final String BREAK_DELIMITER = "<hr />";
 
 	private BtBuilderUtils() {
 		//Classe utilitaire
@@ -71,12 +72,14 @@ public class BtBuilderUtils {
 	 * say "<splitUtter[0]>"
 	 */
 	public static void createRichtext(final String[] splitUtter, final StringBuilder bt) {
-		bt.append("say");
-		addSpaceQuote(bt);
-		//Only one utter text
-		bt.append(splitUtter[0].replaceAll("'", "\'"));
-		addQuote(bt);
-		addLineBreak(bt);
+		for (final String text : splitUtter[0].split(BREAK_DELIMITER)) {
+			bt.append("say");
+			addSpaceQuote(bt);
+			//Only one utter text
+			bt.append(text.replaceAll("'", "\'"));
+			addQuote(bt);
+			addLineBreak(bt);
+		}
 	}
 
 	/*
@@ -89,12 +92,19 @@ public class BtBuilderUtils {
 		bt.append("begin random");
 		addLineBreak(bt);
 		for (final String text : splitUtter) {
-			bt.append("say ");
-			addQuote(bt);
-			bt.append(text.replaceAll("'", "\'"));
-			addQuote(bt);
+			bt.append("begin sequence");
+			addLineBreak(bt);
+			for (final String messageBubble : text.split(BREAK_DELIMITER)) {
+				bt.append("say ");
+				addQuote(bt);
+				bt.append(messageBubble.replaceAll("'", "\'"));
+				addQuote(bt);
+				addLineBreak(bt);
+			}
+			bt.append("end sequence");
 			addLineBreak(bt);
 		}
+		addLineBreak(bt);
 		bt.append("end random");
 		addLineBreak(bt);
 	}
