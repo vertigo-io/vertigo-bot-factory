@@ -36,7 +36,7 @@ import javax.inject.Inject;
 
 @Controller
 @RequestMapping("/bot/{botId}/contextValue")
-@Secured("BotAdm")
+@Secured("Chatbot$botAdm")
 public class ContextDetailController extends AbstractBotCreationController<ContextValue> {
 
 	private static final ViewContextKey<Chatbot> botKey = ViewContextKey.of("bot");
