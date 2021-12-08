@@ -16,7 +16,7 @@
 		<vu:popup action="_delete" vModel="showPopup" th:message="#{smalltalk.popup.message}" th:confirm="#{action.delete}"></vu:popup>
 
 		<vu:block id="response" th:title="#{smallTalk.menu.responses}">
-			<vu:include-data object="utterTexts" field="text" />
+			<vu:include-data object="utterTexts" field="text" modifiable="true" />
 			<vu:include-data object="responseTypes" field="'*'" />
 
 			<div class="hidden">
@@ -132,7 +132,7 @@
 
 		<vu:block id="conversationOver" title="#{smallTalk.menu.isEnd}">
 			<vu:label object="smallTalk" field="isEnd">
-				<vu:include-data object="smallTalk" field="isEnd" />
+				<vu:include-data object="smallTalk" field="isEnd" modifiable="true" />
 				<q-input v-model="vueData.smallTalk.isEnd" name="vContext[smallTalk][isEnd]" class="hidden" ></q-input>
 				<q-toggle v-model="vueData.smallTalk.isEnd" th::disable="${model.modeReadOnly}"></q-toggle>
 			</vu:label>

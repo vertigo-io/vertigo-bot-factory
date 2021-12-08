@@ -110,7 +110,8 @@
 			<vu:include-data object="typeTopicList" field="'*'" />
 			
 			<vu:block id="welcome" th:title="#{bot.welcome}">
-				<vu:include-data object="startTopic" field="'*'" />
+				<vu:include-data object="startTopic" field="ttoCd" modifiable="true"/>
+				<vu:include-data object="startTopic" field="value" modifiable="true"/>
 				
 				<div>				
 				   <q-btn-toggle
@@ -146,7 +147,8 @@
 			</vu:block>
 			
 			<vu:block id="fallback" th:title="'#{bot.fallback}'">
-				<vu:include-data object="failureTopic" field="'*'" />
+				<vu:include-data object="failureTopic" field="ttoCd" modifiable="true"/>
+				<vu:include-data object="failureTopic" field="value" modifiable="true"/>
 				
 				<div>				
 					<q-btn-toggle
@@ -182,7 +184,8 @@
 			</vu:block>
 			
 			<vu:block id="end" th:title="#{bot.end}">
-				<vu:include-data object="endTopic" field="'*'" />
+				<vu:include-data object="endTopic" field="ttoCd" modifiable="true"/>
+				<vu:include-data object="endTopic" field="value" modifiable="true"/>
 				
 				<div>				
 					<q-btn-toggle
@@ -272,7 +275,6 @@
 			<vu:include-data object="nodeNew" field="url" />
 			<vu:include-data object="nodeNew" field="color" />
 			<vu:include-data object="nodeNew" field="isDev" />
-			<vu:include-data object="nodeNew" field="isUpToDate" />
 			
 			<vu:table th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" id="nodes" list="nodeList" th:title="#{bot.nodes}" componentId="nodeList" rowsPerPage="10" autoColClass
 					  tr_@click.native="|vueData.nodeEdit = Vue.util.extend({},props.row); $refs.nodeEdit.show()|" tr_class="nav">
@@ -308,10 +310,12 @@
 					</q-card-section>
 					
 					<q-card-section style="height: 350px; width: 400px;">
+						<vu:include-data object="nodeEdit" field="nodId" modifiable="true"/>
 						<vu:text-field object="nodeEdit" field="name"/>
 						<vu:text-field object="nodeEdit" field="url"/>
 						<vu:text-field object="nodeEdit" field="apiKey"/>
 						<vu:include-data object="nodeList" field="isUpToDate" />
+						<vu:include-data object="nodeEdit" field="color" modifiable="true"/>
 						<q-btn push :style="'background: '+ vueData.nodeEdit.color" class="q-my-sm" text-color="white" th:label="#{bot.node.color}">
 							<q-popup-proxy ref="colorPopup" width="1000">
 								<q-color
@@ -329,6 +333,7 @@
 							</q-popup-proxy>
 						</q-btn>
 						
+						<vu:include-data object="nodeEdit" field="isDev" modifiable="true"/>
 						<p>
 							<q-toggle th:label="#{bot.node.training}" v-model="vueData.nodeEdit.isDev" ></q-toggle>
 						</p>

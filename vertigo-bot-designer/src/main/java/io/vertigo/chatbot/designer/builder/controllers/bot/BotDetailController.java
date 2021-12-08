@@ -99,6 +99,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	private static final ViewContextKey<ChatbotNode> nodeEditKey = ViewContextKey.of("nodeEdit");
 	private static final ViewContextKey<ChatbotNode> nodeNewKey = ViewContextKey.of("nodeNew"); // template for creation
 	private static final ViewContextKey<Boolean> deletePopinKey = ViewContextKey.of("deletePopin");
+	private static final ViewContextKey<FileInfoURI> botTmpPictureUriKey = ViewContextKey.of("botTmpPictureUri");
 	private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
 
 	@GetMapping("/{botId}")
@@ -110,6 +111,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		}
 
 		viewContext.publishRef(deletePopinKey, false);
+		viewContext.publishFileInfoURI(botTmpPictureUriKey, null);
 		initNodeEdit(viewContext);
 
 		loadBotTopic(bot, viewContext, KindTopicEnum.FAILURE.name(), failureTopicKey);
@@ -145,6 +147,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		newBotTopic(viewContext, KindTopicEnum.IDLE.name(), idleTopicKey);
 
 		viewContext.publishDtList(nodeListKey, new DtList<>(ChatbotNode.class));
+		viewContext.publishFileInfoURI(botTmpPictureUriKey, null);
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
 		initNodeEdit(viewContext);
 		super.initEmptyBreadcrums(viewContext);

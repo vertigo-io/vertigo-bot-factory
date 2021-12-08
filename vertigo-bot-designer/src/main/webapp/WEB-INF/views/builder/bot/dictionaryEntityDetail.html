@@ -60,7 +60,7 @@
 					
 				</vu:slot>
 				
-				<vu:include-data-primitive key="newSynonym" />
+				<vu:include-data-primitive key="newSynonym" modifiable="true" />
 				<vu:include-data object="synonyms" field="label" />
 				
 				<div th:if="${!model.modeReadOnly}">
@@ -68,7 +68,7 @@
 						dense class="q-pb-sm"
 					    @keydown.enter.prevent="if (vueData.newSynonym.trim().length > 0) {httpPostAjax('_addSynonym', {'vContext[newSynonym]':vueData.newSynonym}); componentStates.synonyms.pagination.page = 1; componentStates.synonyms.pagination.search = '';}"
 						th:placeholder="#{dictionaryEntity.placeholder}"
-						name="vContext['newSynonym']"						
+						name="vContext[newSynonym]"						
 					>
 					</q-input>
 				</div>
