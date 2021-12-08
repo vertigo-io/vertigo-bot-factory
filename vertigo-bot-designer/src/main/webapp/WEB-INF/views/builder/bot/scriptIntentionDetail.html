@@ -15,7 +15,7 @@
 
 		<vu:block id="script" title="Script">
 			<vu:include-data-primitive key="locale"/>
-			<vu:include-data object="scriptIntention" field="script" />
+			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
 
 			<c-codemirror object="scriptIntention" field="script" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale"></c-codemirror>
 
