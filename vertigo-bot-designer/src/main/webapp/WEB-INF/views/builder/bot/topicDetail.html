@@ -125,7 +125,7 @@
 						<vu:text-field object="topic" field="title" />
 						<vu:text-field object="topic" field="code"/>
 						<vu:label object="topic" field="isEnabled">
-							<vu:include-data object="topic" field="isEnabled" />
+							<vu:include-data object="topic" field="isEnabled" modifiable="true" />
 
 							<q-input v-model="vueData.topic.isEnabled" name="vContext[topic][isEnabled]" class="hidden" ></q-input>
 
@@ -133,7 +133,7 @@
 						</vu:label>
 						<vu:grid-cell></vu:grid-cell>
 						<vu:select object="topic" field="topCatId" list="topicCategoryList" label="#{topic.category}" valueField="topCatId" labelField="label" readonly="${model.modeReadOnly}"/>
-						<vu:include-data object="topic" field="description" />
+						<vu:include-data object="topic" field="description" modifiable="true" />
 						<vu:text-area object="topic" field="description" readonly="${model.modeReadOnly}"/>
 						<vu:grid-cell></vu:grid-cell>
 					</vu:grid>
@@ -179,7 +179,7 @@
 
 					<q-toggle checked-icon="clear" color="red" left-label size="lg" th:label="#{topic.unreachable}" v-model="vueData.unreachable" th::disable="${model.modeReadOnly}"></q-toggle>
 
-					<vu:include-data-primitive key="newNluTrainingSentence" />
+					<vu:include-data-primitive key="newNluTrainingSentence" modifiable="true" />
 					<vu:include-data object="nluTrainingSentences" field="text" />
 
 					<div v-if="vueData.unreachable == false">
@@ -187,7 +187,7 @@
 							<q-input v-model="vueData.newNluTrainingSentence" dense class="q-pb-sm"
 								@keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) {httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence}); componentStates.nluTrainingSentences.pagination.page = 1; componentStates.nluTrainingSentences.pagination.search = '';}"
 								th:placeholder="#{topic.training.add }"
-								name="vContext['newNluTrainingSentence']"
+								name="vContext[newNluTrainingSentence]"
 								:before="[{icon: 'format_quote'}]"
 								>
 							</q-input>
@@ -244,7 +244,7 @@
 					<input type="hidden" name="vContext[topic][ttoCd]" :value="vueData.topic.ttoCd" />
 				</div>
 				<section layout:fragment="content-specific" class="q-col-gutter-md"></section>
-				<vu:include-data object="topic" field="'*'" />
+				<vu:include-data object="topic" field="ttoCd" modifiable="true" />
 				<vu:include-data object="typeTopicList" field="'*'" />
 
 				<div v-if="vueData.topic.ttoCd === 'SMALLTALK'" th:insert="builder/bot/smallTalkDetail.html :: content-specific"></div>
