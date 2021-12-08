@@ -23,6 +23,7 @@ public final class TopicFileExport implements DtObject {
 	private String active;
 	private String trainingPhrases;
 	private String typeTopic;
+	private String kindTopic;
 	private String script;
 	private String response;
 	private String buttons;
@@ -217,6 +218,25 @@ public final class TopicFileExport implements DtObject {
 	 */
 	public void setTypeTopic(final String typeTopic) {
 		this.typeTopic = typeTopic;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Topic kind'.
+	 * @return String kindTopic <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Topic kind")
+	public String getKindTopic() {
+		return kindTopic;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Topic kind'.
+	 * @param kindTopic String <b>Obligatoire</b>
+	 */
+	public void setKindTopic(final String kindTopic) {
+		this.kindTopic = kindTopic;
 	}
 	
 	/**

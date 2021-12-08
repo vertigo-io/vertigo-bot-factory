@@ -84,6 +84,8 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
 
+    private static final ViewContextKey<Boolean> unreachableKey = ViewContextKey.of("unreachable");
+
     @Inject
     private UtterTextServices utterTextServices;
 
@@ -102,7 +104,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         initTopicContext(viewContext, uiMessageStack, bot, topic);
         if (TypeTopicEnum.SCRIPTINTENTION.name().equals(topic.getTtoCd())) {
             final ScriptIntention scriptIntention = scriptIntentionServices.findByTopId(topId).orElseThrow();
-            addMessageDeactivate(uiMessageStack, scriptIntention, viewContext.readDtListModifiable(nluTrainingSentencesKey, uiMessageStack), bot);
+            addMessageDeactivate(uiMessageStack, scriptIntention, viewContext.readDtListModifiable(nluTrainingSentencesKey, uiMessageStack), bot, topic);
             viewContext.publishDto(scriptIntentionKey, scriptIntention);
             viewContext.publishDto(smallTalkKey, smallTalkServices.getNewSmallTalk(bot));
             viewContext.publishDtListModifiable(buttonsKey, new DtList<>(ResponseButton.class));
@@ -111,7 +113,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
             viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
         } else {
             final SmallTalk smallTalk = smallTalkServices.findByTopId(topId).orElseThrow();
-            addMessageDeactivate(uiMessageStack, smallTalk, viewContext.readDtListModifiable(nluTrainingSentencesKey, uiMessageStack), bot);
+            addMessageDeactivate(uiMessageStack, smallTalk, viewContext.readDtListModifiable(nluTrainingSentencesKey, uiMessageStack), bot, topic);
             viewContext.publishDto(smallTalkKey, smallTalk);
             viewContext.publishDtListModifiable(buttonsKey, responsesButtonServices.getButtonsBySmalltalk(bot, smallTalk.getSmtId()));
             final DtList<UtterText> utterTextList = utterTextServices.getUtterTextList(bot, smallTalk);
@@ -168,6 +170,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         viewContext.publishDtList(initialTopicLabelListKey, initialList);
         viewContext.publishDtListModifiable(topicLabelListKey, new DtList<>(TopicLabel.class));
         viewContext.publishDtList(allTopicLabelListKey, this.topicLabelServices.getTopicLabelByBotId(bot));
+        viewContext.publishRef(unreachableKey, KindTopicEnum.UNREACHABLE.name().equals(topic.getKtoCd()));
     }
 
     public void initContextNewTopic(final ViewContext viewContext, final Chatbot bot) {
@@ -187,21 +190,22 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         viewContext.publishDtList(initialTopicLabelListKey, new DtList<>(TopicLabel.class));
         viewContext.publishDtListModifiable(topicLabelListKey, new DtList<>(TopicLabel.class));
         viewContext.publishDtList(allTopicLabelListKey, this.topicLabelServices.getTopicLabelByBotId(bot));
+        viewContext.publishRef(unreachableKey, false);
 
     }
 
-    private void addMessageDeactivate(final UiMessageStack uiMessageStack, final ScriptIntention scriptIntention, final DtList<NluTrainingSentence> sentences, final Chatbot chatbot) {
-        final boolean hasToBeDeactivate = scriptIntentionServices.hasToBeDeactivated(scriptIntention, chatbot);
-        if (hasToBeDeactivate || sentences.isEmpty()) {
+    private void addMessageDeactivate(final UiMessageStack uiMessageStack, final ScriptIntention scriptIntention,
+                                      final DtList<NluTrainingSentence> sentences, final Chatbot chatbot, final Topic topic) {
+        if (scriptIntentionServices.hasToBeDeactivated(topic, sentences, scriptIntention, chatbot)) {
             uiMessageStack.info(scriptIntentionServices.getDeactivateMessage());
         }
     }
 
-    private void addMessageDeactivate(final UiMessageStack uiMessageStack, final SmallTalk smallTalk, final DtList<NluTrainingSentence> sentences, final Chatbot chatbot) {
+    private void addMessageDeactivate(final UiMessageStack uiMessageStack, final SmallTalk smallTalk,
+                                      final DtList<NluTrainingSentence> sentences, final Chatbot chatbot, final Topic topic) {
         SmallTalkWrapper smallTalkWrapper = new SmallTalkWrapper();
         smallTalkWrapper.setSmallTalk(smallTalk);
-        final boolean hasToBeDeactivate = smallTalkServices.hasToBeDeactivated(smallTalkWrapper, chatbot);
-        if (hasToBeDeactivate || sentences.isEmpty()) {
+        if (smallTalkServices.hasToBeDeactivated(topic, sentences, smallTalkWrapper, chatbot)) {
             uiMessageStack.info(smallTalkServices.getDeactivateMessage());
         }
     }
@@ -222,6 +226,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
                          @ViewAttribute("scriptIntention") final ScriptIntention scriptIntention,
                          @ViewAttribute("topic") @Validate(TopicCategoryNotEmptyValidator.class) final Topic topic,
                          @ViewAttribute("bot") final Chatbot chatbot,
+                         @ViewAttribute("unreachable") final String unreachable,
                          @ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
                          @ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
                          @ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
@@ -230,6 +235,12 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
         final Long botId = chatbot.getBotId();
         DtObject topicTypeObject = scriptIntention;
+        if ("true".equals(unreachable)) {
+            topic.setKtoCd(KindTopicEnum.UNREACHABLE.name());
+        } else {
+            topic.setKtoCd(KindTopicEnum.NORMAL.name());
+            nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+        }
         if (TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd())) {
             SmallTalkWrapper smallTalkWrapper = new SmallTalkWrapper();
             smallTalkWrapper.setSmallTalk(smallTalk);

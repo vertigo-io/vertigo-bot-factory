@@ -74,7 +74,7 @@ public final class TopicPAO implements StoreServices {
 	/**
 	 * Execute la tache TkGetAllTopicsIhmFromBot.
 	 * @param botId Long
-	 * @param ktoCd String
+	 * @param ktoCds List de String
 	 * @param locale String
 	 * @return DtList de TopicIhm topicIHM
 	*/
@@ -101,8 +101,8 @@ public final class TopicPAO implements StoreServices {
  "			left join topic_topic_label ttl on (ttl.top_id = top.top_id)" + 
  "			left join topic_label tpl on (tpl.label_id = ttl.label_id)" + 
  "			where top.bot_id = #botId#" + 
- "			<% if (ktoCd != null){ %>" + 
- "				and top.kto_cd = #ktoCd#" + 
+ "			<% if (ktoCds != null){ %>" + 
+ "				and top.kto_cd in (#ktoCds.rownum#)" + 
  "			<% } %>" + 
  "			group by top.top_id," + 
  "					top.title," + 
@@ -116,10 +116,10 @@ public final class TopicPAO implements StoreServices {
  "					tpc.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicIhm> getAllTopicsIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCd", smartType = "STyCode") final Optional<String> ktoCd, @io.vertigo.datamodel.task.proxy.TaskInput(name = "locale", smartType = "STyCode") final String locale) {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicIhm> getAllTopicsIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCds", smartType = "STyCode") final java.util.List<String> ktoCds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "locale", smartType = "STyCode") final String locale) {
 		final Task task = createTaskBuilder("TkGetAllTopicsIhmFromBot")
 				.addValue("botId", botId)
-				.addValue("ktoCd", ktoCd.orElse(null))
+				.addValue("ktoCds", ktoCds)
 				.addValue("locale", locale)
 				.build();
 		return getTaskManager()

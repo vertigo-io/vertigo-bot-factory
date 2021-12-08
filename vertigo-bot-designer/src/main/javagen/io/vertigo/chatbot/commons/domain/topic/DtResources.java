@@ -320,6 +320,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTopicFileExport$typeTopic,
 	/**
+	 * Topic kind.
+	 */
+	fldTopicFileExport$kindTopic,
+	/**
 	 * Script.
 	 */
 	fldTopicFileExport$script,

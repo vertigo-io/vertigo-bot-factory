@@ -65,6 +65,7 @@ public class TopicFileExportServices implements Component {
 				.beginSheet(dtc, null)
 				.addField(TopicFileExportFields.code)
 				.addField(TopicFileExportFields.typeTopic)
+				.addField(TopicFileExportFields.kindTopic)
 				.addField(TopicFileExportFields.title)
 				.addField(TopicFileExportFields.category)
 				.addField(TopicFileExportFields.description)
@@ -287,7 +288,7 @@ public class TopicFileExportServices implements Component {
 		topic.setTitle(tfe.getTitle());
 		topic.setDescription(tfe.getDescription());
 		topic.setTopCatId(topCatId);
-		topic.setKtoCd(KindTopicEnum.NORMAL.name());
+		topic.setKtoCd(tfe.getKindTopic());
 		topic.setTtoCd(tfe.getTypeTopic());
 		topic.setCode(tfe.getCode());
 		topic.setIsEnabled(isEnabled);

@@ -161,8 +161,9 @@
 				</vu:block>
 
 				<vu:block id="training" th:title="#{topic.menu.training}">
+
 					<vu:slot name="actions_slot">
-						<q-input v-model="componentStates.nluTrainingSentences.pagination.search" dense clearable
+						<q-input v-model="componentStates.nluTrainingSentences.pagination.search" v-if="vueData.unreachable == false" dense clearable
 							type="search" placeholder="Filter"
 							@keydown.esc="componentStates.nluTrainingSentences.pagination.search = '';"
 							style="width:300px">
@@ -172,55 +173,62 @@
 						</q-input>
 					</vu:slot>
 
+					<vu:include-data-primitive key="unreachable" />
+					<q-input v-model="vueData.unreachable" name="vContext[unreachable]" class="hidden" ></q-input>
+
+					<q-toggle checked-icon="clear" color="red" left-label size="lg" th:label="#{topic.unreachable}" v-model="vueData.unreachable" th::disable="${model.modeReadOnly}"></q-toggle>
+
 					<vu:include-data-primitive key="newNluTrainingSentence" />
 					<vu:include-data object="nluTrainingSentences" field="text" />
 
-					<div th:if="${!model.modeReadOnly}">
-						<q-input v-model="vueData.newNluTrainingSentence" dense class="q-pb-sm"
-							@keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) {httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence}); componentStates.nluTrainingSentences.pagination.page = 1; componentStates.nluTrainingSentences.pagination.search = '';}"
-							th:placeholder="#{topic.training.add }"
-							name="vContext['newNluTrainingSentence']"
-							:before="[{icon: 'format_quote'}]"
-							>
-						</q-input>
-					</div>
-					<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('nluTrainingSentences').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
-					<q-list dense>
-						<q-item th::clickable="${!model.modeReadOnly}" v-for="(nluTrainingSentence, index) in getDisplayedTrainingSentenses()">
-							<q-item-section avatar th:if="${model.modeReadOnly}">
-								<q-icon color="black" name="format_quote"></q-icon>
-							</q-item-section>
-							<q-item-section side left th:if="${!model.modeReadOnly}">
-								<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.nluTrainingSentences.length - 1 - index})"
-									color="primary" dense size="sm" icon="delete" class="bg-grey" th:aria-label="#{action.remove}" th:title="#{action.remove}"></q-btn>
-							</q-item-section>
-							<q-item-section>
-								{{nluTrainingSentence.text}}
-								<q-popup-edit th:if="${!model.modeReadOnly}"
-											  buttons label-set="Save" label-cancel="Cancel"
-											  v-model="nluTrainingSentence.text"
-											  @save="function(value, initialValue) {
-														httpPostAjax('_editTrainingSentence',
-															 {'vContext[newNluTrainingSentence]':value, 'index':vueData.nluTrainingSentences.length - 1 - index}
-														).then(function() {
-															if (uiMessageStack.globalErrors.length > 0) {
-																nluTrainingSentence.text = initialValue;
-															}
-														 });
-													}">
-									<q-input v-model="nluTrainingSentence.text" dense autofocus />
-								</q-popup-edit>
-							</q-item-section>
-						</q-item>
-					</q-list>
-					<div class="q-pa-lg flex flex-center">
-						<q-pagination
-							  v-model="componentStates.nluTrainingSentences.pagination.page"
-							  v-if="Math.ceil(vueData.nluTrainingSentences.length / componentStates.nluTrainingSentences.pagination.rowsPerPage) > 1"
-							  :max="Math.ceil(vueData.nluTrainingSentences.length / componentStates.nluTrainingSentences.pagination.rowsPerPage)"
-							  :max-pages="6"
-							  :boundary-numbers="true"
-							  :direction-links="true" ></q-pagination>
+					<div v-if="vueData.unreachable == false">
+						<div th:if="${!model.modeReadOnly}">
+							<q-input v-model="vueData.newNluTrainingSentence" dense class="q-pb-sm"
+								@keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) {httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence}); componentStates.nluTrainingSentences.pagination.page = 1; componentStates.nluTrainingSentences.pagination.search = '';}"
+								th:placeholder="#{topic.training.add }"
+								name="vContext['newNluTrainingSentence']"
+								:before="[{icon: 'format_quote'}]"
+								>
+							</q-input>
+						</div>
+						<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('nluTrainingSentences').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
+						<q-list dense>
+							<q-item th::clickable="${!model.modeReadOnly}" v-for="(nluTrainingSentence, index) in getDisplayedTrainingSentenses()">
+								<q-item-section avatar th:if="${model.modeReadOnly}">
+									<q-icon color="black" name="format_quote"></q-icon>
+								</q-item-section>
+								<q-item-section side left th:if="${!model.modeReadOnly}">
+									<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.nluTrainingSentences.length - 1 - index})"
+										color="primary" dense size="sm" icon="delete" class="bg-grey" th:aria-label="#{action.remove}" th:title="#{action.remove}"></q-btn>
+								</q-item-section>
+								<q-item-section>
+									{{nluTrainingSentence.text}}
+									<q-popup-edit th:if="${!model.modeReadOnly}"
+												  buttons label-set="Save" label-cancel="Cancel"
+												  v-model="nluTrainingSentence.text"
+												  @save="function(value, initialValue) {
+															httpPostAjax('_editTrainingSentence',
+																 {'vContext[newNluTrainingSentence]':value, 'index':vueData.nluTrainingSentences.length - 1 - index}
+															).then(function() {
+																if (uiMessageStack.globalErrors.length > 0) {
+																	nluTrainingSentence.text = initialValue;
+																}
+															 });
+														}">
+										<q-input v-model="nluTrainingSentence.text" dense autofocus />
+									</q-popup-edit>
+								</q-item-section>
+							</q-item>
+						</q-list>
+						<div class="q-pa-lg flex flex-center">
+							<q-pagination
+								  v-model="componentStates.nluTrainingSentences.pagination.page"
+								  v-if="Math.ceil(vueData.nluTrainingSentences.length / componentStates.nluTrainingSentences.pagination.rowsPerPage) > 1"
+								  :max="Math.ceil(vueData.nluTrainingSentences.length / componentStates.nluTrainingSentences.pagination.rowsPerPage)"
+								  :max-pages="6"
+								  :boundary-numbers="true"
+								  :direction-links="true" ></q-pagination>
+						</div>
 					</div>
 				</vu:block>
 

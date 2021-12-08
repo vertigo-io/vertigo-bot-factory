@@ -1,21 +1,22 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.*;
+import io.vertigo.chatbot.commons.domain.topic.KindTopic;
+import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
+import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
-import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
+import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -31,6 +32,13 @@ import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datamodel.structure.util.VCollectors;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Transactional
 public class TopicServices implements Component, Activeable {
@@ -85,7 +93,7 @@ public class TopicServices implements Component, Activeable {
 		return topicDAO.save(topic);
 	}
 
-	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Chatbot bot, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
+	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Chatbot bot, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences, DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
 		//check if code matches the pattern
 		checkPatternCode(topic.getCode());
@@ -97,9 +105,14 @@ public class TopicServices implements Component, Activeable {
 		hasUniqueCode(topic);
 		// save and remove NTS
 		DtList<NluTrainingSentence> oldNluSentences = topic.getTopId() != null ? getNluTrainingSentenceByTopic(bot, topic) : new DtList<>(NluTrainingSentence.class);
-		final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences);
+		if (KindTopicEnum.UNREACHABLE.name().equals(topic.getKtoCd())) {
+			nluTrainingSentencesToDelete = oldNluSentences;
+			topic.setIsEnabled(isEnabled);
+		} else {
+			final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences); //TODO do this check before this function
+			topic.setIsEnabled(!ntsToSave.isEmpty() && isEnabled);
+		}
 		removeNTS(nluTrainingSentencesToDelete);
-		topic.setIsEnabled(!ntsToSave.isEmpty() && isEnabled);
 
 		Topic oldTopic = topic.getTopId() != null ? this.findTopicById(topic.getTopId()) : null;
 		if ((oldTopic != null && !oldTopic.getCode().equals(topic.getCode())) || !nluTrainingSentencesToDelete.isEmpty()
@@ -217,7 +230,10 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	public DtList<TopicIhm> getAllNonTechnicalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot, final String locale) {
-		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), Optional.of(KindTopicEnum.NORMAL.name()), locale);
+		List<String> kindTopics = new ArrayList<>();
+		kindTopics.add(KindTopicEnum.NORMAL.name());
+		kindTopics.add(KindTopicEnum.UNREACHABLE.name());
+		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), kindTopics, locale);
 	}
 
 	public DtList<Topic> getTopicReferencingTopId(final Long topId) {
@@ -284,12 +300,12 @@ public class TopicServices implements Component, Activeable {
 						  final DtList<TopicLabel> labels,
 						  final DtList<TopicLabel> initialLabels) {
 
-		nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
 		saveTtoCd(topic, topic.getTtoCd(), chatbot);
 		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
 			if (service.handleObject(topic)) {
 				service.saveTopic(topic, chatbot, dtObject);
-				save(topic, chatbot, service.isEnabled(dtObject, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
+				boolean isEnabled = service.isEnabled(topic, nluTrainingSentences, dtObject, topic.getIsEnabled(), chatbot);
+				save(topic, chatbot, isEnabled, nluTrainingSentences, nluTrainingSentencesToDelete);
 			} else {
 				service.deleteIfExists(chatbot, topic);
 			}
