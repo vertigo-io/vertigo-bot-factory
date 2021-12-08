@@ -3,6 +3,7 @@ package io.vertigo.chatbot.designer.builder.services.topic.export;
 import io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonExport;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class BtBuilderUtils {
 
@@ -11,7 +12,7 @@ public class BtBuilderUtils {
 	private static final String SPACE = " ";
 	private static final String OPEN_BRACKET = "{{";
 	private static final String CLOSE_BRACKET = "}}";
-	private static final String BREAK_DELIMITER = "<hr />";
+	private static final Pattern BREAK_DELIMITER_PATTERN = Pattern.compile("<hr\\s*/?>");
 
 	private BtBuilderUtils() {
 		//Classe utilitaire
@@ -72,7 +73,7 @@ public class BtBuilderUtils {
 	 * say "<splitUtter[0]>"
 	 */
 	public static void createRichtext(final String[] splitUtter, final StringBuilder bt) {
-		for (final String text : splitUtter[0].split(BREAK_DELIMITER)) {
+		for (final String text : BREAK_DELIMITER_PATTERN.split(splitUtter[0])) {
 			bt.append("say");
 			addSpaceQuote(bt);
 			//Only one utter text
@@ -94,7 +95,7 @@ public class BtBuilderUtils {
 		for (final String text : splitUtter) {
 			bt.append("begin sequence");
 			addLineBreak(bt);
-			for (final String messageBubble : text.split(BREAK_DELIMITER)) {
+			for (final String messageBubble : BREAK_DELIMITER_PATTERN.split(text)) {
 				bt.append("say ");
 				addQuote(bt);
 				bt.append(messageBubble.replaceAll("'", "\'"));
