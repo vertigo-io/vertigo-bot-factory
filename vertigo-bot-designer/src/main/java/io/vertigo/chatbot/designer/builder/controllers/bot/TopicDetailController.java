@@ -196,8 +196,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     private void addMessageDeactivate(final UiMessageStack uiMessageStack, final ScriptIntention scriptIntention,
                                       final DtList<NluTrainingSentence> sentences, final Chatbot chatbot, final Topic topic) {
-        final boolean hasToBeDeactivate = scriptIntentionServices.hasToBeDeactivated(scriptIntention, chatbot);
-        if (hasToBeDeactivate || (!topic.getKtoCd().equals(KindTopicEnum.UNREACHABLE.name()) && sentences.isEmpty())) {
+        if (scriptIntentionServices.hasToBeDeactivated(topic, sentences, scriptIntention, chatbot)) {
             uiMessageStack.info(scriptIntentionServices.getDeactivateMessage());
         }
     }
@@ -206,8 +205,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
                                       final DtList<NluTrainingSentence> sentences, final Chatbot chatbot, final Topic topic) {
         SmallTalkWrapper smallTalkWrapper = new SmallTalkWrapper();
         smallTalkWrapper.setSmallTalk(smallTalk);
-        final boolean hasToBeDeactivate = smallTalkServices.hasToBeDeactivated(smallTalkWrapper, chatbot);
-        if (hasToBeDeactivate || (!topic.getKtoCd().equals(KindTopicEnum.UNREACHABLE.name()) && sentences.isEmpty())) {
+        if (smallTalkServices.hasToBeDeactivated(topic, sentences, smallTalkWrapper, chatbot)) {
             uiMessageStack.info(smallTalkServices.getDeactivateMessage());
         }
     }
@@ -237,7 +235,12 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
         final Long botId = chatbot.getBotId();
         DtObject topicTypeObject = scriptIntention;
-        topic.setKtoCd(unreachable.equals("true") ? KindTopicEnum.UNREACHABLE.name() : KindTopicEnum.NORMAL.name());
+        if ("true".equals(unreachable)) {
+            topic.setKtoCd(KindTopicEnum.UNREACHABLE.name());
+        } else {
+            topic.setKtoCd(KindTopicEnum.NORMAL.name());
+            nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+        }
         if (TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd())) {
             SmallTalkWrapper smallTalkWrapper = new SmallTalkWrapper();
             smallTalkWrapper.setSmallTalk(smallTalk);

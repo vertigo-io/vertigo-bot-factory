@@ -180,11 +180,11 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk> {
 	}
 
 	@Override
-	public boolean hasToBeDeactivated(final DtObject object, final Chatbot bot) {
+	public boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DtObject object, final Chatbot bot) {
 		SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) object;
 		final DtList<UtterText> utt = utterTextServices.getUtterTextList(bot, smallTalkWrapper.getSmallTalk());
 		final DtList<ResponseButton> buttonList = responsesButtonServices.getResponsesButtonList(bot, smallTalkWrapper.getSmallTalk());
-		return utt.isEmpty() && buttonList.isEmpty();
+		return (!KindTopicEnum.UNREACHABLE.name().equals(topic.getKtoCd())  && sentences.isEmpty()) || (utt.isEmpty() && buttonList.isEmpty());
 	}
 
 	@Override

@@ -109,7 +109,7 @@ public class TopicServices implements Component, Activeable {
 			nluTrainingSentencesToDelete = oldNluSentences;
 			topic.setIsEnabled(isEnabled);
 		} else {
-			final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences);
+			final DtList<NluTrainingSentence> ntsToSave = saveAllNotBlankNTS(topic, nluTrainingSentences); //TODO do this check before this function
 			topic.setIsEnabled(!ntsToSave.isEmpty() && isEnabled);
 		}
 		removeNTS(nluTrainingSentencesToDelete);
@@ -300,14 +300,12 @@ public class TopicServices implements Component, Activeable {
 						  final DtList<TopicLabel> labels,
 						  final DtList<TopicLabel> initialLabels) {
 
-		if (!topic.getKtoCd().equals(KindTopicEnum.UNREACHABLE.name())) {
-			nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
-		}
 		saveTtoCd(topic, topic.getTtoCd(), chatbot);
 		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
 			if (service.handleObject(topic)) {
 				service.saveTopic(topic, chatbot, dtObject);
-				save(topic, chatbot, service.isEnabled(dtObject, topic.getIsEnabled(), chatbot), nluTrainingSentences, nluTrainingSentencesToDelete);
+				boolean isEnabled = service.isEnabled(topic, nluTrainingSentences, dtObject, topic.getIsEnabled(), chatbot);
+				save(topic, chatbot, isEnabled, nluTrainingSentences, nluTrainingSentencesToDelete);
 			} else {
 				service.deleteIfExists(chatbot, topic);
 			}

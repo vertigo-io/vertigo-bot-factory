@@ -2,8 +2,11 @@ package io.vertigo.chatbot.designer.builder.services.topic;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
+import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.Entity;
 
@@ -33,11 +36,11 @@ public interface ITopicService<D extends Entity> {
 
 	void createOrUpdateFromTopic(final Chatbot chatbot, final Topic topic, final String text);
 
-	default boolean isEnabled(final DtObject object, final boolean isEnabled, final Chatbot bot) {
-		return !(hasToBeDeactivated(object, bot)) && isEnabled;
+	default boolean isEnabled(final Topic topic, final DtList<NluTrainingSentence> sentences, final DtObject object, final boolean isEnabled, final Chatbot bot) {
+		return !(hasToBeDeactivated(topic, sentences, object, bot)) && isEnabled;
 	}
 
-	boolean hasToBeDeactivated(final DtObject object, final Chatbot bot);
+	boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DtObject object, final Chatbot bot);
 
 	String getDeactivateMessage();
 
