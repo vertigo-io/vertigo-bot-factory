@@ -42,9 +42,9 @@ modules:
       - webservices.javalin:
           apiPrefix: /api
       - webservices.swagger:
-    plugins:
-      - io.vertigo.chatbot.vega.plugins.webservice.handler.ApiTokenWebServiceHandlerPlugin:
+      - webservices.apiKey:
           apiKey: ${API_KEY}
+  
   io.vertigo.ai.AiFeatures:
     features:
       - nlu:
