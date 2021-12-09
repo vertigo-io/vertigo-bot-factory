@@ -15,8 +15,8 @@
 			<vu:include-data object="personList" field="name"/>
 			<vu:include-data object="chatbotProfilesList" field="chpCd"/>
 			<vu:include-data object="chatbotProfilesList" field="label"/>
-			<vu:include-data object="selectionList" field="prfId"/>
-			<vu:include-data object="selectionList" field="perId"/>
+			<vu:include-data object="selectionList" field="prfId" modifiable="true" />
+			<vu:include-data object="selectionList" field="perId" modifiable="true" />
 			<vu:block id="add users" th:title="#{personChatbot.addProfil}" >
 				<q-select 
 					filled
