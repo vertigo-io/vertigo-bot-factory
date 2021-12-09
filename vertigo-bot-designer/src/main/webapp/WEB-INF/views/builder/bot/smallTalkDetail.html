@@ -16,7 +16,7 @@
 		<vu:popup action="_delete" vModel="showPopup" th:message="#{smalltalk.popup.message}" th:confirm="#{action.delete}"></vu:popup>
 
 		<vu:block id="response" th:title="#{smallTalk.menu.responses}">
-			<vu:include-data object="utterTexts" field="text" modifiable="true" />
+			<vu:include-data object="utterTexts" field="text" modifiableAllLines="true" />
 			<vu:include-data object="responseTypes" field="'*'" />
 
 			<div class="hidden">
@@ -78,7 +78,7 @@
 							<q-input
 								v-model="utterText.text"
 								:ref="'utter_input_'+index"
-								:name="'vContext[\'utterTexts\']['+index+'][\'text\']'"
+								:name="'vContext[utterTexts]['+index+'][text]'"
 								placeholder="Enter text variant" dense
 								@input="addMoreUtterTextIfNeeded"
 								@keydown.enter.prevent="if (index < getUtterTextResolvedList().length - 1) $refs['utter_input_'+(index+1)][0].focus()"
@@ -110,8 +110,8 @@
 		</vu:block>
 
 		<vu:block id="buttons" th:title="#{smallTalk.menu.buttons}">
-			<vu:include-data object="buttons" field="text" />
-			<vu:include-data object="buttons" field="topIdResponse" />
+			<vu:include-data object="buttons" field="text" modifiableAllLines="true" />
+			<vu:include-data object="buttons" field="topIdResponse" modifiableAllLines="true" />
 			<vu:include-data object="buttonsUrl" field="text" />
 			<vu:include-data object="buttonsUrl" field="url" />
 			<vu:include-data object="buttonsUrl" field="newTab" />
