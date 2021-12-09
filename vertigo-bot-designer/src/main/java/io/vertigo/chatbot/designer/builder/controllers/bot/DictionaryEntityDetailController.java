@@ -19,7 +19,6 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 
 import javax.inject.Inject;
 
-import io.vertigo.chatbot.designer.domain.DictionaryEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +32,7 @@ import io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEnti
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SynonymServices;
+import io.vertigo.chatbot.designer.domain.DictionaryEntity;
 import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.util.StringUtil;
@@ -92,28 +92,25 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 
 	@PostMapping("/_save")
 	public String saveDictionaryEntity(final ViewContext viewContext,
-									   final UiMessageStack uiMessageStack,
-									   @ViewAttribute("bot") final Chatbot bot,
-									   @ViewAttribute("dictionaryEntity") final DictionaryEntity dictionaryEntity,
-									   @ViewAttribute("newSynonym") final String newSynonym,
-									   @ViewAttribute("synonyms") final DtList<Synonym> synonyms,
-									   @ViewAttribute("synonymsToDelete") final DtList<Synonym> synonymsToDelete) {
+			final UiMessageStack uiMessageStack,
+			@ViewAttribute("bot") final Chatbot bot,
+			@ViewAttribute("dictionaryEntity") final DictionaryEntity dictionaryEntity,
+			@ViewAttribute("newSynonym") final String newSynonym,
+			@ViewAttribute("synonyms") final DtList<Synonym> synonyms,
+			@ViewAttribute("synonymsToDelete") final DtList<Synonym> synonymsToDelete) {
 
 		addSynonym(newSynonym, synonyms);
 		dictionaryEntityServices.save(bot, dictionaryEntity, synonyms, synonymsToDelete);
 
-		if (synonyms.isEmpty()) {
-			return "redirect:/bot/" + dictionaryEntity.getBotId() + "/dictionary/";
-		}
 		return "redirect:/bot/" + dictionaryEntity.getBotId() + "/dictionaryEntity/" + dictionaryEntity.getDicEntId();
 	}
 
 	@PostMapping("/_delete")
 	public String deleteDictionaryEntity(final ViewContext viewContext,
-										 @ViewAttribute("bot") final Chatbot bot,
-										 @ViewAttribute("dictionaryEntity") final DictionaryEntity dictionaryEntity) {
+			@ViewAttribute("bot") final Chatbot bot,
+			@ViewAttribute("dictionaryEntity") final DictionaryEntity dictionaryEntity) {
 		dictionaryEntityServices.deleteDictionaryEntity(bot, dictionaryEntity.getDicEntId());
-		return "redirect:/bot/" + bot.getBotId() + "/dictionaryEntity/";
+		return "redirect:/bot/" + bot.getBotId() + "/dictionary/";
 	}
 
 	@PostMapping("/_addSynonym")

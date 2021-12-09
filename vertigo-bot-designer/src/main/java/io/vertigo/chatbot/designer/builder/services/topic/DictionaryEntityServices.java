@@ -1,5 +1,13 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources;
@@ -28,15 +36,6 @@ import io.vertigo.quarto.exporter.ExporterManager;
 import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-
-import static io.vertigo.chatbot.designer.utils.StringUtils.errorManagement;
 
 @Transactional
 public class DictionaryEntityServices implements Component {
@@ -116,11 +115,8 @@ public class DictionaryEntityServices implements Component {
 		saveAllNotBlankSynonym(dictionaryEntity, synonyms);
 		synonymServices.removeSynonym(synonymsToDelete);
 
-		DictionaryEntity dictionaryEntitySaved = dictionaryEntityDAO.save(dictionaryEntity);
-		if (synonyms.isEmpty()) {
-			//If all synonyms are removed, the dictionaryEntity is deleted
-			deleteDictionaryEntity(chatbot, dictionaryEntity.getDicEntId());
-		}
+		final DictionaryEntity dictionaryEntitySaved = dictionaryEntityDAO.save(dictionaryEntity);
+
 		return dictionaryEntitySaved;
 	}
 
@@ -178,7 +174,8 @@ public class DictionaryEntityServices implements Component {
 	}
 
 	public Optional<DictionaryEntity> findDictionaryEntityByLabelAndBotId(final Long botId, final String label) {
-		final Criteria<DictionaryEntity> criteria = Criterions.isEqualTo(DtDefinitions.DictionaryEntityFields.botId, botId).and(Criterions.isEqualTo(DtDefinitions.DictionaryEntityFields.label, label));
+		final Criteria<DictionaryEntity> criteria = Criterions.isEqualTo(DtDefinitions.DictionaryEntityFields.botId, botId)
+				.and(Criterions.isEqualTo(DtDefinitions.DictionaryEntityFields.label, label));
 		return dictionaryEntityDAO.findOptional(criteria);
 	}
 
@@ -232,6 +229,7 @@ public class DictionaryEntityServices implements Component {
 
 	/**
 	 * Modify entry by replacing occurence of a word with its synonyms
+	 *
 	 * @param tupleSyn
 	 * @param entry
 	 * @return
@@ -253,6 +251,7 @@ public class DictionaryEntityServices implements Component {
 
 	/**
 	 * Return a list of DictionaryEntityWrapper by botId
+	 *
 	 * @param botId
 	 * @param separator
 	 * @return list of DictionaryEntityWrapper
@@ -290,10 +289,11 @@ public class DictionaryEntityServices implements Component {
 
 	/**
 	 * Use a CSV file to import a dictionary within a specific chatbot
+	 *
 	 * @param chatbot
 	 * @param importDictionaryFile
 	 */
-	public void importDictionaryFromCSVFile(Chatbot chatbot, FileInfoURI importDictionaryFile) {
+	public void importDictionaryFromCSVFile(final Chatbot chatbot, final FileInfoURI importDictionaryFile) {
 		transformFileToList(fileServices.getFileTmp(importDictionaryFile)).forEach(dex -> generateDictionaryFromDictionaryExport(dex, chatbot));
 	}
 

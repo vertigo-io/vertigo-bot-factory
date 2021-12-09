@@ -53,7 +53,7 @@ public final class DictionaryEntityPAO implements StoreServices {
  "             	ent.label as dictionary_entity_label," + 
  "             	STRING_AGG (syn.label, #separator#) as synonyms_list" + 
  " 				from dictionary_entity ent" + 
- " 				join synonym syn on syn.dic_ent_id = ent.dic_ent_id" + 
+ " 				left join synonym syn on syn.dic_ent_id = ent.dic_ent_id" + 
  " 			" + 
  " 				where ent.bot_id = #botId#" + 
  " 				group by ent.dic_ent_id",
