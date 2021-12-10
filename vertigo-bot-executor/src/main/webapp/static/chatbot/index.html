@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible"
+          content="IE=edge">
+    <meta name="format-detection"
+          content="telephone=no">
+    <meta name="msapplication-tap-highlight"
+          content="no">
+    <meta name="viewport"
+          content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width">
+
+    <title>Chatbot</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"
+          rel="stylesheet"
+          type="text/css">
+    <!--    <link href="https://cdn.jsdelivr.net/npm/quasar-framework@^0.17.19/dist/umd/quasar.mat.min.css" rel="stylesheet" type="text/css"> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/quasar-framework/0.17.19/quasar.mat.min.css"
+          rel="stylesheet"
+          type="text/css">
+
+    <link href="style/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body style="color:black">
+    <div id="q-app">
+      <q-layout view="hHh lpr fFf">
+        <q-layout-header class="bg-primary text-white row items-center non-selectable">
+          <div class="title col-grow q-ml-md">
+            {{ botName }}
+          </div>
+          <q-btn round
+                 flat
+                 v-if="false"
+                 color="white"
+                 text-color="white"
+                 size="md"
+                 @click="menu = !menu"
+                 icon="menu"></q-btn>
+          <q-btn round
+                 flat
+                 color="white"
+                 text-color="white"
+                 size="md"
+                 @click="minimize()"
+                 icon="minimize"></q-btn>
+          <q-btn round
+                 flat
+                 color="white"
+                 text-color="white"
+                 size="md"
+                 @click="close()"
+                 icon="close"></q-btn>
+        </q-layout-header>
+        <q-page-container>
+          <div id="loading"
+               class="column items-center q-pt-xl">Chargement ...
+          </div>
+          <q-page id="page"
+                  class="column animate-fade"
+                  style="height: calc(100vh - 115px)"> <!-- style pour IE uniquement -->
+            <div v-if="!menu"
+                 id="main"
+                 class="column col-grow no-wrap">
+              <q-scroll-area class="row q-pa-sm col-grow"
+                             ref="scroller">
+                <div class="q-pr-md">
+                  <div v-for="(msg, index) in messages">
+                    <q-chat-message
+                      v-if="msg.text"
+                      class="animate-fade"
+                      :key="'msg-'+index"
+                      :label="msg.label"
+                      :text-sanitize="msg.sent"
+                      :sent="msg.sent"
+                      :text-color="msg.textColor"
+                      :bg-color="msg.bgColor"
+                      :name="msg.name"
+                      :avatar="msg.avatar"
+                      :text="msg.text"
+                      :stamp="msg.stamp"
+                    ></q-chat-message>
+                  </div>
+                  <div class="sys-chat">
+                    <q-chat-message
+                      v-if="error"
+                      class="animate-fade"
+                      bg-color="orange-4"
+                      text-color="black"
+                      size="12"
+                    >
+                      <div class="q-pb-sm">
+                        Une erreur est survenue lors de l'envoi du message
+                      </div>
+                      <q-btn
+                        class="full-width"
+                        @click="askBot(lastPayload)"
+                        label="Essayez de nouveau"
+                        color="white"
+                        text-color="black"
+                      ></q-btn>
+                    </q-chat-message>
+                  </div>
+
+                  <div class="message-processing sys-chat non-selectable">
+                    <q-chat-message
+                      v-if="processing"
+                      class="animate-fade"
+                      bg-color="grey-grdf"
+                    >
+                      <q-spinner-dots size="2em"></q-spinner-dots>
+                    </q-chat-message>
+                  </div>
+                  <div class="non-selectable">
+                    <q-chat-message v-if="inputConfig.showRating" class="animate-fade" bg-color="primary" sent >
+                      <q-rating v-model="inputConfig.rating" style="font-size: 2rem;"
+                                icon="star_border"
+                                icon-selected="star"
+                                icon-half="star_half"
+                                @input="rateBot"></q-rating>
+                    </q-chat-message>
+                  </div>
+                  <div v-if="inputConfig.buttons.length > 0"
+                       class="non-selectable animate-fade row reverse no-wrap">
+                    <div class="col-10">
+                      <div class="q-caption text-light text-right">
+                        Réponses suggérées
+                      </div>
+                      <div class="row docs-btn">
+                        <q-btn
+                          v-for="(btn, index) in inputConfig.buttons"
+                          class="full-width"
+                          :key="'repChatBtn-'+index"
+                          @click="postAnswerBtn(btn)"
+                          :label="btn.label"
+                          color="white"
+                          text-color="black">
+                        </q-btn>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </q-scroll-area>
+
+            </div>
+          </q-page>
+        </q-page-container>
+        <q-layout-footer class="bg-grey-3">
+          <div class="message-response row docs-btn non-selectable">
+            <div class="col-grow">
+              <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
+                       ref="input"
+                       class="bg-white q-px-sm round-borders"
+                       @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText()"
+                       :max-height="100"
+                       v-model="inputConfig.responseText"
+                       placeholder="Répondre"
+                       :disable="processing || error"
+                       :loading="processing"></q-input>
+            </div>
+
+            <q-btn round
+                   color="primary"
+                   style="margin-top: 0px;"
+                   icon="send"
+                   @click="postAnswerText()"
+                   :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
+
+            <q-btn round
+                   color="red"
+                   @click="restart"
+                   v-if="devMode === true && false"
+                   icon="refresh"></q-btn>
+          </div>
+        </q-layout-footer>
+      </q-layout>
+
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.6/vue.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quasar-framework/0.17.19/quasar.mat.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quasar-framework/0.17.19/quasar.ie.polyfills.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.1/vue-resource.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/3.0.1/main/clipboard-polyfill.min.js"
+            integrity="sha512-QpQT1tpnIGTHF8DZQmL2Xp9QhAYp7Kfl8yJwlyjoYNe1YDWgE1kd9NfnzPVo2GPDpHtLyixEKaSNL/CNe6ZzYg=="
+            crossorigin="anonymous"></script>
+
+    <script src="js/chatbot.js"></script>
+  </body>
+</html>
