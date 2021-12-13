@@ -44,6 +44,7 @@ modules:
       - webservices.swagger:
       - webservices.apiKey:
           apiKey: ${API_KEY}
+          headerName: apiKey
   
   io.vertigo.ai.AiFeatures:
     features:
