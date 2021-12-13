@@ -171,7 +171,7 @@ Vue.component('c-richtext', {
 			  
 		      const edit = this.$refs.editor_ref;
 		      edit.caret.restore();
-		      edit.runCmd('insertHTML', `<div class="imgUrl"> <a href="${url}" target="_blank"><img class="imgUrl" src="${url}"/></a></div>`);
+		      edit.runCmd('insertHTML', `<img class="imgClass" src="${url}"/>`);
 		      edit.focus();
 		    }
 		}
