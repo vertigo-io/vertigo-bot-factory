@@ -19,7 +19,7 @@ public class HtmlInputUtils {
 				.and(new HtmlPolicyBuilder()
 						.allowElements("font", "hr")
 						.allowAttributes("size").onElements("font")
-						.allowAttributes("class").onElements("img")
+						.allowAttributes("class").onElements("img").allowElements("img")
 						.allowElements( // force target _blank https://github.com/OWASP/java-html-sanitizer/issues/147
 								(elementName, attrs) -> {
 									final int targetIndex = attrs.indexOf("target");
@@ -32,15 +32,6 @@ public class HtmlInputUtils {
 									return elementName;
 								},
 								"a")
-						.allowElements(
-								(elementName, attrs) -> {
-									final int classIndex = attrs.indexOf("class");
-									if (classIndex >= 0) {
-										attrs.set(classIndex, attrs.get(classIndex));
-									}
-									return elementName;
-								},
-								"img")
 						.toFactory());
 
 		return sanitizer.sanitize(in);
