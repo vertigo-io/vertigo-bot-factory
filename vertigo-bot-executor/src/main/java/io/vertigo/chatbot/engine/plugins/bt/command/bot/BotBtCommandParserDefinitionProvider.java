@@ -61,7 +61,7 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.compositeCommand("choose:button", BotBtCommandParserDefinitionProvider::buildChooseButtonNode),
 				BtCommandParserDefinition.compositeCommand("choose:button:nlu", BotBtCommandParserDefinitionProvider::buildChooseButtonNluNode),
 				BtCommandParserDefinition.basicCommand("button", (c, p) -> new BotButton(c.getStringParam(0), c.getStringParam(1))),
-				BtCommandParserDefinition.basicCommand("jsEvent:start", (c, p) -> BotNodeProvider.launchJsEvent(getBB(p), c.getStringParam(0))));
+				BtCommandParserDefinition.basicCommand("jsEvent", (c, p) -> BotNodeProvider.launchJsEvent(getBB(p), c.getStringParam(0))));
 	}
 
 	private static BTNode buildSwitchNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
