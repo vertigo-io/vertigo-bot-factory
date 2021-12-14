@@ -9,7 +9,6 @@
   <name>vertigo-bot-extensions</name>
   <packaging>pom</packaging>
   <modules>
-  	  <module>vertigo-bot-confluence</module>
-      <module>vertigo-bot-welcometour</module>
+  	<module>vertigo-bot-confluence</module>
   </modules>
 </project>
