@@ -43,7 +43,7 @@
 			
 		
 		<section layout:fragment="content">
-				
+			<vu:popup action="_delete" vModel="showPopup" th:message=#{popup.message} th:confirm=#{action.delete}></vu:popup>	
 			<vu:block id="dictionaryEntity" title="${model.dictionaryEntity.label}">
 				<vu:slot name="actions_slot">
 				 	<q-input v-model="componentStates.synonyms.pagination.search" 
