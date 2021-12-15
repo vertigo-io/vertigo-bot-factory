@@ -1,9 +1,5 @@
 package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.impl.command.BtCommand;
@@ -14,6 +10,10 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleDefinitionProvider;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Bot commands.
@@ -61,7 +61,9 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.compositeCommand("choose:button", BotBtCommandParserDefinitionProvider::buildChooseButtonNode),
 				BtCommandParserDefinition.compositeCommand("choose:button:nlu", BotBtCommandParserDefinitionProvider::buildChooseButtonNluNode),
 				BtCommandParserDefinition.basicCommand("button", (c, p) -> new BotButton(c.getStringParam(0), c.getStringParam(1))),
-				BtCommandParserDefinition.basicCommand("jsevent", (c, p) -> BotNodeProvider.launchJsEvent(getBB(p), c.getStringParam(0))));
+				BtCommandParserDefinition.basicCommand("jsevent", (c, p) -> BotNodeProvider.launchJsEvent(getBB(p), c.getStringParam(0))),
+				BtCommandParserDefinition.basicCommand("link", (c, p) -> BotNodeProvider.link(getBB(p), c.getStringParam(0))),
+				BtCommandParserDefinition.basicCommand("image", (c, p) -> BotNodeProvider.image(getBB(p), c.getStringParam(0))));
 	}
 
 	private static BTNode buildSwitchNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {

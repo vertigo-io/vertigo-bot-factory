@@ -1,20 +1,5 @@
 package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
-import static io.vertigo.ai.bt.BTNodes.condition;
-import static io.vertigo.ai.bt.BTNodes.running;
-import static io.vertigo.ai.bt.BTNodes.selector;
-import static io.vertigo.ai.bt.BTNodes.sequence;
-import static io.vertigo.ai.bt.BTNodes.succeed;
-
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
-
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.bb.BBKeyTemplate;
@@ -25,8 +10,25 @@ import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.util.StringUtil;
+
+import java.math.BigInteger;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
+
+import static io.vertigo.ai.bt.BTNodes.condition;
+import static io.vertigo.ai.bt.BTNodes.running;
+import static io.vertigo.ai.bt.BTNodes.selector;
+import static io.vertigo.ai.bt.BTNodes.sequence;
+import static io.vertigo.ai.bt.BTNodes.succeed;
 
 public final class BotNodeProvider {
 
@@ -267,6 +269,44 @@ public final class BotNodeProvider {
 			return BTStatus.Succeeded;
 		};
 	}
+
+
+	public static BTNode link(final BlackBoard bb, final String url) {
+		return () -> {
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, formatLink(url));
+			return BTStatus.Succeeded;
+		};
+	}
+
+	public static BTNode image(final BlackBoard bb, final String url) {
+		return () -> {
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, formatImageUrl(url));
+			return BTStatus.Succeeded;
+		};
+	}
+
+	public static String formatImageUrl(String url) {
+		Assertion.check().isNotNull(url);
+		Assertion.check().isTrue(isValidURL(url), "Not a valid URL");
+		return "<img src='" + url + "' class='imgClass' />";
+	}
+
+	public static String formatLink(final String url) {
+		Assertion.check().isNotNull(url);
+		Assertion.check().isTrue(isValidURL(url), "Not a valid URL");
+		return "<a href='" + url + "' target='_blank' >" + url + "</a>";
+	}
+
+	public static boolean isValidURL(String url) {
+		try {
+			URL validUrl = new URL(url);
+			validUrl.toURI();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 
 	public static BTNode switchTopicStart(final BlackBoard bb) {
 		return switchTopic(bb, BotEngine.START_TOPIC_NAME);
