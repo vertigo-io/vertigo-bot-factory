@@ -8,4 +8,4 @@ COPY start/start.sh /
 RUN chmod +x /start.sh
 
 ENTRYPOINT []
-CMD ["sh", "-c", "/start.sh ${RUNNER_URL_ENV} ${BOT_IHM_BASE_URL_ENV}"]
+CMD ["/start.sh"]
