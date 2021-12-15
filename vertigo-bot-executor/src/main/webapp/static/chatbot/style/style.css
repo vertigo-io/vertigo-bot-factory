@@ -1,0 +1,86 @@
+.text-primary {
+    color: #1aab8d !important;
+}
+
+.bg-primary {
+    background: #1aab8d !important;
+}
+
+body {
+    color: black;
+}
+
+main, footer {
+    padding: 8px;
+}
+
+#page {
+    visibility: hidden;
+    z-index: 1;
+}
+
+
+.q-loading-bar.top {
+    top: 42px;
+    height: 4px !important;
+}
+
+.message-processing {
+    width: 80px;
+}
+
+.docs-btn .q-btn {
+    margin: 5px;
+}
+
+.sys-chat .q-message-received .q-message-text {
+    border-radius: 5px;
+}
+
+.q-message-received .q-message-text {
+    border-radius: 0px 15px 0px 0px;
+}
+
+.q-message-sent .q-message-text {
+    border-radius: 15px 0px 0px 0px;
+}
+
+.q-message-avatar {
+    background-color: #ccccc6;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    pointer-events: none !important;
+    border-radius: 25% 0%;
+}
+
+div.q-message-container > div {
+    /* overflow-wrap: break-word; */
+    /* overflow: hidden; */
+}
+
+.text-grey-grdf {
+    color: #ccccc6 !important;
+}
+
+.bg-grey-grdf {
+    background: #ccccc6 !important;
+}
+
+.q-btn-round {
+    border-radius: 15px 0px 0px 0px;
+}
+
+img {
+    /* needed, else there is a bottom-margin like for text */
+    display: block;
+    max-width: 100%;
+}
+
+.imgClass {
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.imgClass:hover {opacity: 0.7; !important;}

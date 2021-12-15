@@ -263,7 +263,7 @@ public final class BotNodeProvider {
 
 	public static BTNode launchJsEvent(final BlackBoard bb, final String eventName) {
 		return () -> {
-			bb.putString(BBKey.of(BotEngine.BOT_OUT_METADATA_PATH, "/jsEvent"), eventName);
+			bb.putString(BBKey.of(BotEngine.BOT_OUT_METADATA_PATH, "/jsevent"), eventName);
 			return BTStatus.Succeeded;
 		};
 	}

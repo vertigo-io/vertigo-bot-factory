@@ -1,0 +1,37 @@
+<html>
+<head>
+    <title>Page 2</title>
+    <script src="chatbot/chatbot.js"></script>
+    <link href="chatbot/chatbot.css" rel="stylesheet">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Chatbot.init({
+                runnerUrl: "RUNNER_URL",
+                botIHMBaseUrl: "BOT_IHM_BASE_URL",
+                botName: "Chatbot demo",
+                useRating: false,
+                optionalParameters: [
+                    {
+                        key: "contextPrefix",
+                        value: "chatbot"
+                    },
+                    {
+                        key: "siret",
+                        value: "siretValue"
+                    },
+                    {
+                        key: "siret_confirm",
+                        value: "true"
+                    }
+                ]
+            })
+        });
+    </script>
+</head>
+<body style="background-image: url('background/background-2.png')">
+    <a href="index.html">Lien vers accueil</a>
+    <input type="hidden" id="chatbot_role" name="role" value="visitor">
+    <input type="hidden" id="chatbot_permission" name="permission" value="view">
+</body>
+
+</html>
