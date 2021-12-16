@@ -17,11 +17,17 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices;
+import io.vertigo.datamodel.structure.model.DtObject;
+import liquibase.pro.packaged.O;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +67,9 @@ import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
+import static io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices.RATING_KEY;
+import static io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices.RATING_MESSAGE;
+
 @Controller
 @RequestMapping("/bot")
 public class BotDetailController extends AbstractBotCreationController<Chatbot> {
@@ -78,6 +87,9 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	private TypeTopicServices typeTopicServices;
 
 	@Inject
+	private ChabotCustomConfigServices chabotCustomConfigServices;
+
+	@Inject
 	private List<ITopicService<? extends Entity>> topicInterfaceServices;
 
 	private static final ViewContextKey<BotPredefinedTopic> startTopicKey = ViewContextKey.of("startTopic");
@@ -90,6 +102,8 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	private static final ViewContextKey<ChatbotNode> nodeEditKey = ViewContextKey.of("nodeEdit");
 	private static final ViewContextKey<ChatbotNode> nodeNewKey = ViewContextKey.of("nodeNew"); // template for creation
 	private static final ViewContextKey<Boolean> deletePopinKey = ViewContextKey.of("deletePopin");
+	private static final ViewContextKey<Boolean> chatbotCustomConfigRatingKey = ViewContextKey.of("chatbotCustomConfigRating");
+	private static final ViewContextKey<String> chatbotCustomConfigRatingMessageKey = ViewContextKey.of("chatbotCustomConfigRatingMessage");
 
 	@GetMapping("/{botId}")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
@@ -107,6 +121,13 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		loadBotTopic(bot, viewContext, KindTopicEnum.END.name(), endTopicKey);
 
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
+		Map<String, Object> chatbotCustomConfigMap = new HashMap<>();
+		ChatbotCustomConfig chatbotCustomConfig = chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
+		if (chatbotCustomConfig != null) {
+			chatbotCustomConfigMap= chabotCustomConfigServices.getChatbotCustomConfigMapByBotId(chatbotCustomConfig);
+		}
+		viewContext.publishRef(chatbotCustomConfigRatingKey, (Boolean) chatbotCustomConfigMap.getOrDefault(RATING_KEY, false));
+		viewContext.publishRef(chatbotCustomConfigRatingMessageKey, (String) chatbotCustomConfigMap.getOrDefault(RATING_MESSAGE, ""));
 		super.initBreadCrums(viewContext, bot);
 		toModeReadOnly();
 	}
@@ -131,6 +152,8 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		newBotTopic(viewContext, KindTopicEnum.END.name(), endTopicKey);
 
 		viewContext.publishDtList(nodeListKey, new DtList<>(ChatbotNode.class));
+		viewContext.publishRef(chatbotCustomConfigRatingKey, true);
+		viewContext.publishRef(chatbotCustomConfigRatingMessageKey, "");
 		initNodeEdit(viewContext);
 		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
@@ -176,9 +199,12 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 			@QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile,
 			@ViewAttribute("failureTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic failureBotTopic,
 			@ViewAttribute("startTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic startBotTopic,
-			@ViewAttribute("endTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic endBotTopic) {
+			@ViewAttribute("endTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic endBotTopic,
+		 	@ViewAttribute("chatbotCustomConfigRating") final String chatbotCustomConfigRating,
+		 	@ViewAttribute("chatbotCustomConfigRatingMessage") final String chatbotCustomConfigRatingMessage) {
 
-		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, failureBotTopic, startBotTopic, endBotTopic);
+		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, failureBotTopic, startBotTopic, endBotTopic,
+				chatbotCustomConfigRating.equals("true"), chatbotCustomConfigRatingMessage);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();
 	}

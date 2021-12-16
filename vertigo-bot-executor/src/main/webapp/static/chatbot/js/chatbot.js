@@ -15,7 +15,6 @@ const getUrlVars = function () {
 const urlVars = getUrlVars();
 const _botRunnerUrl = urlVars['runnerUrl'];
 const _botName = decodeURI(urlVars['botName']);
-const _useRating = urlVars['useRating'];
 const _avatar = _botRunnerUrl + "/static/chatbot/images/avatar/avatar.png"
 
 const _botBaseUrl = _botRunnerUrl + "/api/chatbot";
@@ -57,10 +56,13 @@ const chatbot = new Vue({
                 modeTextarea: false, // TODO, il exste d'autres modes, par ex email
                 responseText: "",
                 responsePattern: "",
-                useRating: _useRating === "true",
                 showRating: false,
                 rating: 0,
                 buttons: []
+            },
+            customConfig: {
+              useRating: true,
+              ratingMessage: "Merci !"
             },
             isEnded: false,
 
@@ -111,6 +113,8 @@ const chatbot = new Vue({
                         this.$http.post(chatbot.botUrl + "/start", {message: null, metadatas: {'context': chatbot.context}})
                             .then(httpResponse => {
                                 chatbot.convId = httpResponse.data.metadatas.sessionId;
+                                chatbot.customConfig.useRating = httpResponse.data.metadatas.customConfig.rating;
+                                chatbot.customConfig.ratingMessage = httpResponse.data.metadatas.customConfig.ratingMessage;
                                 chatbot.updateSessionStorage()
                                 chatbot._handleResponse(httpResponse, false);
                             }).catch(error => {
@@ -233,7 +237,7 @@ const chatbot = new Vue({
                     }
 
                     sleep(1).then(function() { // en différé le temps que la vue soit mise à jour
-                        if (chatbot.inputConfig.useRating) { // si les dialogues sont fermés
+                        if (chatbot.customConfig.useRating) { // si les dialogues sont fermés
                             chatbot.inputConfig.showRating = chatbot.isEnded;
                             chatbot.updateSessionStorage();
                             chatbot.focusInput();
@@ -289,7 +293,7 @@ const chatbot = new Vue({
             rateBot: function(value){
                 this.$http.post(chatbot.botUrl + "/rating", {sender: chatbot.convId, note: value})
                     .then(httpResponse => {
-                        httpResponse.data = {htmlTexts : ["Merci de m'avoir noté"]}
+                        httpResponse.data = {htmlTexts : [chatbot.customConfig.ratingMessage]}
                         chatbot._handleResponse(httpResponse, true);
 
                     })

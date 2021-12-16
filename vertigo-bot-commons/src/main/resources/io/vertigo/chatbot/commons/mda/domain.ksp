@@ -86,3 +86,8 @@ create Domain DoPercentage {
 	dataType : BigDecimal
 	storeType: "NUMERIC(3,2)"
 }
+
+create Domain DoJson {
+    dataType: String
+    storeType: "JSONB"
+}

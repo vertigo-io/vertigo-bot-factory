@@ -44,3 +44,18 @@ create DtDefinition DtExecutorConfiguration {
 	field nluThreshold			{domain: DoPercentage 				label: "NLU Threshold" 					cardinality : "1"}
 	field customConfig			{domain: DoText 					label: "Additional config for executor" cardinality : "1"}
 }
+
+create DtDefinition DtChatbotCustomConfig {
+	id cccId 		{domain: DoId		label: "Context value id"}
+	field value		{domain: DoJson	    label: "Value" 	cardinality:"1"}
+}
+
+create Association AChatbotCustomConfigChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtChatbotCustomConfig
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}

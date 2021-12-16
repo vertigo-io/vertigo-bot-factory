@@ -23,6 +23,8 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import com.google.gson.JsonElement;
+import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,6 +55,9 @@ public class ExecutorManager implements Manager, Activeable {
 	private final BtCommandManager btCommandManager;
 	private final AnalyticsSenderServices analyticsSenderServices;
 	private ExecutorConfiguration executorConfiguration;
+
+	@Inject
+	private JsonEngine jsonEngine;
 
 	@Inject
 	public ExecutorManager(
@@ -148,6 +153,7 @@ public class ExecutorManager implements Manager, Activeable {
 		final var botResponse = botEngine.runTick(input);
 		analyticsSenderServices.sendEventStartToDb(executorConfigManager.getConfig().getExecutorConfiguration());
 		botResponse.getMetadatas().put("sessionId", newUUID);
+		botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class));
 		return botResponse;
 	}
 
@@ -159,7 +165,7 @@ public class ExecutorManager implements Manager, Activeable {
 
 		botEngine.saveContext(input, executorConfigManager.getContextMap());
 		final var botResponse = botEngine.runTick(input);
-
+		botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class));
 		analyticsSenderServices.sendEventToDb(botResponse.getMetadatas(), executorConfigManager.getConfig().getExecutorConfiguration(), input);
 
 		return botResponse;

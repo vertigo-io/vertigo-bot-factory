@@ -35,6 +35,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.vertigo.chatbot.commons.domain.*;
+import io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices;
+import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -48,12 +51,6 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
-import io.vertigo.chatbot.commons.domain.BotExport;
-import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ChatbotNode;
-import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
-import io.vertigo.chatbot.commons.domain.Training;
-import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.export.BotExportServices;
 import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
@@ -101,6 +98,9 @@ public class TrainingServices implements Component {
 
 	@Inject
 	private FileServices fileServices;
+
+	@Inject
+	private ChabotCustomConfigServices chatbotCustomConfigServices;
 
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
@@ -246,7 +246,12 @@ public class TrainingServices implements Component {
 		result.setTraId(training.getTraId());
 		result.setModelName("model " + training.getVersionNumber());
 		result.setNluThreshold(training.getNluThreshold());
-		result.setCustomConfig("nothing");
+		ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(training.getBotId());
+		if (chatbotCustomConfig != null) {
+			result.setCustomConfig(chatbotCustomConfig.getValue());
+		} else {
+			result.setCustomConfig("{}");
+		}
 		return result;
 	}
 

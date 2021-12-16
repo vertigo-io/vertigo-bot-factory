@@ -4,7 +4,7 @@
 		auth="SERVLET"
 		type="javax.sql.DataSource"
 		driverClassName="org.postgresql.Driver"
-		url="jdbc:postgresql://localhost:5433/chatbot"
+		url="jdbc:postgresql://localhost:5433/chatbot?stringtype=unspecified"
 		username="chatbot"
 		password="chatbot" />
 		
