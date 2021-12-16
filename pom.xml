@@ -38,8 +38,8 @@
 		<vertigo.version>3.0.0</vertigo.version>
 		
 		<sonar.exclusions>**/javagen/**</sonar.exclusions>
+		<log4j.version>2.16.0</log4j.version>
 	</properties>
-
 	<modules>
 		<module>vertigo-bot-designer</module>
 		<module>vertigo-bot-executor</module>
