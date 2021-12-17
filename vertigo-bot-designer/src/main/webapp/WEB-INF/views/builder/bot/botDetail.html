@@ -220,11 +220,9 @@
 					
 					<q-card-section style="height: 350px; width: 400px;">
 						<vu:text-field object="nodeEdit" field="name"/>
-						
 						<vu:text-field object="nodeEdit" field="url"/>
-						
 						<vu:text-field object="nodeEdit" field="apiKey"/>
-						
+						<vu:include-data object="nodeList" field="isUpToDate" />
 						<q-btn push :style="'background: '+ vueData.nodeEdit.color" class="q-my-sm" text-color="white" th:label="#{bot.node.color}">
 							<q-popup-proxy ref="colorPopup" width="1000">
 								<q-color
