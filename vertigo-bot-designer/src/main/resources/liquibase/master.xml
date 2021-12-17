@@ -14,4 +14,5 @@
 	<include file="changeLog/v_1_1_0/alter_v_1_1_0.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/create_custom_config.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_custom_config.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_1_1_0/create_saved_training.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

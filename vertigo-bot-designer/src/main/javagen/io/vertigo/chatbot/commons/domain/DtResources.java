@@ -225,6 +225,54 @@ public enum DtResources implements MessageKey {
 	fldRunnerInfo$loadedModelVersion,
 
 	/***********************************************************
+	/** SavedTraining.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldSavedTraining$savedTraId,
+	/**
+	 * Name.
+	 */
+	fldSavedTraining$name,
+	/**
+	 * Creation time.
+	 */
+	fldSavedTraining$creationTime,
+	/**
+	 * Description.
+	 */
+	fldSavedTraining$description,
+	/**
+	 * Bot Export.
+	 */
+	fldSavedTraining$botExport,
+	/**
+	 * Training.
+	 */
+	fldSavedTraining$traId,
+	/**
+	 * Bot.
+	 */
+	fldSavedTraining$botId,
+
+	/***********************************************************
+	/** SavedTrainingCriteria.
+	/***********************************************************
+	/**
+	 * Search text.
+	 */
+	fldSavedTrainingCriteria$text,
+	/**
+	 * From.
+	 */
+	fldSavedTrainingCriteria$fromDate,
+	/**
+	 * To.
+	 */
+	fldSavedTrainingCriteria$toDate,
+
+	/***********************************************************
 	/** TopicExport.
 	/***********************************************************
 	/**
