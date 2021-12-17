@@ -65,6 +65,26 @@ public enum DtResources implements MessageKey {
 	fldChatbot$filIdAvatar,
 
 	/***********************************************************
+	/** ChatbotCustomConfig.
+	/***********************************************************
+	/**
+	 * Context value id.
+	 */
+	fldChatbotCustomConfig$cccId,
+	/**
+	 * Rating.
+	 */
+	fldChatbotCustomConfig$rating,
+	/**
+	 * Rating message.
+	 */
+	fldChatbotCustomConfig$ratingMessage,
+	/**
+	 * Chatbot.
+	 */
+	fldChatbotCustomConfig$botId,
+
+	/***********************************************************
 	/** ChatbotNode.
 	/***********************************************************
 	/**

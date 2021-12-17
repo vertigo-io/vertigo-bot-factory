@@ -8,6 +8,8 @@
 drop table IF EXISTS TOPIC_TOPIC_LABEL cascade;
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
+drop table IF EXISTS CHATBOT_CUSTOM_CONFIG cascade;
+drop sequence IF EXISTS SEQ_CHATBOT_CUSTOM_CONFIG;
 drop table IF EXISTS CHATBOT_NODE cascade;
 drop sequence IF EXISTS SEQ_CHATBOT_NODE;
 drop table IF EXISTS CHATBOT_PROFILES cascade;
@@ -57,6 +59,9 @@ drop sequence IF EXISTS SEQ_UTTER_TEXT;
 --   Sequences                                      
 -- ============================================================
 create sequence SEQ_CHATBOT
+	start with 1000 cache 20; 
+
+create sequence SEQ_CHATBOT_CUSTOM_CONFIG
 	start with 1000 cache 20; 
 
 create sequence SEQ_CHATBOT_NODE
@@ -149,6 +154,30 @@ comment on column CHATBOT.STATUS is
 
 comment on column CHATBOT.FIL_ID_AVATAR is
 'Avatar';
+
+-- ============================================================
+--   Table : CHATBOT_CUSTOM_CONFIG                                        
+-- ============================================================
+create table CHATBOT_CUSTOM_CONFIG
+(
+    CCC_ID      	 NUMERIC     	not null,
+    RATING      	 bool        	not null,
+    RATING_MESSAGE	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
+);
+
+comment on column CHATBOT_CUSTOM_CONFIG.CCC_ID is
+'Context value id';
+
+comment on column CHATBOT_CUSTOM_CONFIG.RATING is
+'Rating';
+
+comment on column CHATBOT_CUSTOM_CONFIG.RATING_MESSAGE is
+'Rating message';
+
+comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
+'Chatbot';
 
 -- ============================================================
 --   Table : CHATBOT_NODE                                        
@@ -774,6 +803,12 @@ comment on column UTTER_TEXT.TEXT is
 comment on column UTTER_TEXT.SMT_ID is
 'SmallTalk';
 
+
+alter table CHATBOT_CUSTOM_CONFIG
+	add constraint FK_A_CHATBOT_CUSTOM_CONFIG_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_CHATBOT_CUSTOM_CONFIG_CHATBOT_CHATBOT_FK on CHATBOT_CUSTOM_CONFIG (BOT_ID asc);
 
 alter table CHATBOT
 	add constraint FK_A_CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO foreign key (FIL_ID_AVATAR)

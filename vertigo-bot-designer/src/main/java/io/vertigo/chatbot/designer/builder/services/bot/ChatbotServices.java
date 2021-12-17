@@ -1,16 +1,12 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
@@ -41,6 +37,10 @@ import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
+
+import javax.inject.Inject;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Transactional
 @Secured("BotUser")
@@ -82,10 +82,14 @@ public class ChatbotServices implements Component {
 	@Inject
 	private TopicLabelServices topicLabelServices;
 
+	@Inject
+	private ChabotCustomConfigServices chabotCustomConfigServices;
+
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 			final BotPredefinedTopic botTopicFailure,
 			final BotPredefinedTopic botTopicStart,
-			final BotPredefinedTopic botTopicEnd) {
+			final BotPredefinedTopic botTopicEnd,
+		   	final ChatbotCustomConfig chatbotCustomConfig) {
 
 		Assertion.check()
 				.isNotNull(chatbot)
@@ -135,6 +139,8 @@ public class ChatbotServices implements Component {
 
 		//Topic End
 		topicServices.saveBotTopic(savedChatbot, topicCategory, KindTopicEnum.END.name(), botTopicEnd);
+
+		chabotCustomConfigServices.save(savedChatbot, chatbotCustomConfig);
 
 		return savedChatbot;
 	}

@@ -23,6 +23,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		BotPredefinedTopic(io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic.class),
 		/** Objet de données Chatbot. */
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
+		/** Objet de données ChatbotCustomConfig. */
+		ChatbotCustomConfig(io.vertigo.chatbot.commons.domain.ChatbotCustomConfig.class),
 		/** Objet de données ChatbotNode. */
 		ChatbotNode(io.vertigo.chatbot.commons.domain.ChatbotNode.class),
 		/** Objet de données ChatbotProfiles. */
@@ -179,6 +181,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		status,
 		/** Propriété 'Avatar'. */
 		filIdAvatar	}
+
+	/**
+	 * Enumération des champs de ChatbotCustomConfig.
+	 */
+	public enum ChatbotCustomConfigFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotCustomConfig> {
+		/** Propriété 'Context value id'. */
+		cccId,
+		/** Propriété 'Rating'. */
+		rating,
+		/** Propriété 'Rating message'. */
+		ratingMessage,
+		/** Propriété 'Chatbot'. */
+		botId	}
 
 	/**
 	 * Enumération des champs de ChatbotNode.

@@ -17,21 +17,10 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
@@ -39,6 +28,7 @@ import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ITopicService;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
@@ -60,6 +50,16 @@ import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/bot")
@@ -78,6 +78,9 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	private TypeTopicServices typeTopicServices;
 
 	@Inject
+	private ChabotCustomConfigServices chabotCustomConfigServices;
+
+	@Inject
 	private List<ITopicService<? extends Entity>> topicInterfaceServices;
 
 	private static final ViewContextKey<BotPredefinedTopic> startTopicKey = ViewContextKey.of("startTopic");
@@ -90,6 +93,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	private static final ViewContextKey<ChatbotNode> nodeEditKey = ViewContextKey.of("nodeEdit");
 	private static final ViewContextKey<ChatbotNode> nodeNewKey = ViewContextKey.of("nodeNew"); // template for creation
 	private static final ViewContextKey<Boolean> deletePopinKey = ViewContextKey.of("deletePopin");
+	private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
 
 	@GetMapping("/{botId}")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
@@ -107,6 +111,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		loadBotTopic(bot, viewContext, KindTopicEnum.END.name(), endTopicKey);
 
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
+		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
 		super.initBreadCrums(viewContext, bot);
 		toModeReadOnly();
 	}
@@ -131,6 +136,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		newBotTopic(viewContext, KindTopicEnum.END.name(), endTopicKey);
 
 		viewContext.publishDtList(nodeListKey, new DtList<>(ChatbotNode.class));
+		viewContext.publishRef(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
 		initNodeEdit(viewContext);
 		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
@@ -176,9 +182,10 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 			@QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile,
 			@ViewAttribute("failureTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic failureBotTopic,
 			@ViewAttribute("startTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic startBotTopic,
-			@ViewAttribute("endTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic endBotTopic) {
+			@ViewAttribute("endTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic endBotTopic,
+		 	@ViewAttribute("chatbotCustomConfig") final ChatbotCustomConfig chatbotCustomConfig) {
 
-		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, failureBotTopic, startBotTopic, endBotTopic);
+		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, failureBotTopic, startBotTopic, endBotTopic, chatbotCustomConfig);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();
 	}

@@ -52,6 +52,7 @@
 			<q-item tag="a" href="#welcome" th:text="#{bot.welcome}"></q-item>
 			<q-item tag="a" href="#fallback" th:text="#{bot.fallback}"></q-item>
 			<q-item tag="a" href="#end" th:text="#{bot.end}"></q-item>
+			<q-item tag="a" href="#rating" th:text="#{bot.rating}"></q-item>
 			<q-item th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" tag="a" href="#nodes" th:text="#{bot.nodes}"></q-item>
 		</section>
 		
@@ -177,7 +178,13 @@
 				
 				<div v-if="hasFieldsError('endTopic', 'value')" class="text-red">{{getErrorMessage('endTopic', 'value')}}</div>
 			</vu:block>
-			
+			<vu:block id="rating" th:title="#{bot.rating}">
+				<vu:include-data object="chatbotCustomConfig" field="'*'" />
+				<q-toggle left-label th:label="#{bot.rating.activate}" v-model="vueData.chatbotCustomConfig.rating" th::disable="${model.modeReadOnly}"></q-toggle>
+				<input type="hidden" name="vContext[chatbotCustomConfig][rating]" :value="vueData.chatbotCustomConfig.rating" />
+				<q-input v-model="vueData.chatbotCustomConfig.ratingMessage"  name="vContext[chatbotCustomConfig][ratingMessage]" th:label="#{bot.rating.message}" th::disable="${model.modeReadOnly}" />
+
+			</vu:block>
 			
 			<vu:include-data object="nodeNew" field="name" />
 			<vu:include-data object="nodeNew" field="url" />
