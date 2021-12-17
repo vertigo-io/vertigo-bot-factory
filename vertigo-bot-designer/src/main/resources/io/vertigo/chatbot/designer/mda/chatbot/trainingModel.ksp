@@ -18,6 +18,21 @@ create DtDefinition DtTraining {
 						 expression:"return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());" }
 }
 
+create DtDefinition DtSavedTraining {
+    id    savedTraId 		        {domain: DoId 			label: "ID"                                                 }
+    field name			            {domain: DoLabel	    label: "Name"	 			    cardinality : "1"           }
+    field creationTime		        {domain: DoInstant 		label: "Creation time"			cardinality : "1"           }
+    field description			    {domain: DoText			label: "Description"	 			                        }
+    field botExport			        {domain: DoJson			label: "Bot Export"	 			cardinality : "1"           }
+}
+
+create DtDefinition DtSavedTrainingCriteria {
+	field text   		    {domain: DoLabel 					label: "Search text" 		            }
+	field fromDate		    {domain: DoLocaldate 				label: "From"		 		            }
+	field toDate		    {domain: DoLocaldate				label: "To" 				            }
+}
+
+
 create Association ATrainingChatbot {
 	fkFieldName : "botId"
     
@@ -37,6 +52,28 @@ create Association ATrainingMediaFileInfo {
 	
 	
 	labelB : "Model"
+}
+
+create Association ASavedTrainingTraining {
+	fkFieldName : "traId"
+
+ 	dtDefinitionA : DtSavedTraining
+	type : "*>1"
+	dtDefinitionB : DtTraining
+
+
+	labelB : "Training"
+}
+
+create Association ASavedTrainingChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtSavedTraining
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+
+	labelB : "Bot"
 }
 
 /*******************/

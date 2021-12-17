@@ -29,6 +29,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
+import io.vertigo.chatbot.commons.domain.SavedTraining;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
@@ -106,6 +107,9 @@ public class TrainingServices implements Component {
 	private ChabotCustomConfigServices chatbotCustomConfigServices;
 
 	@Inject
+	private SavedTrainingServices savedTrainingServices;
+
+	@Inject
 	private JsonEngine jsonEngine;
 
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
@@ -129,36 +133,44 @@ public class TrainingServices implements Component {
 
 		final Training training = createTraining(bot);
 		saveTraining(bot, training);
+		LogsUtils.addLogs(logs, "Bot export :");
+		LogsUtils.breakLine(logs);
+		BotExport botExport = exportBot(bot, logs);
+		LogsUtils.addLogs(logs, "Bot export ");
+		LogsUtils.logOK(logs);
 
+		trainNode(bot, training, devNode, logs, botExport);
+
+		return training;
+	}
+
+	private void trainNode(Chatbot bot, Training training, ChatbotNode node, StringBuilder logs, BotExport botExport) {
 		try {
 			LogsUtils.addLogs(logs, "Executor configuration... ");
-			final ExecutorConfiguration execConfig = getExecutorConfig(training, devNode);
+			final ExecutorConfiguration execConfig = getExecutorConfig(training, node);
 			LogsUtils.logOK(logs);
 
 			LogsUtils.addLogs(logs, "Bot export :");
 			LogsUtils.breakLine(logs);
 			final Map<String, Object> requestData = new HashMap<String, Object>();
-			requestData.put("botExport", exportBot(bot, logs));
+			requestData.put("botExport", botExport);
 			requestData.put("executorConfig", execConfig);
-			LogsUtils.addLogs(logs, "Bot export ");
-			LogsUtils.logOK(logs);
 
-			final Map<String, String> headers = Map.of(API_KEY, devNode.getApiKey(),
+			final Map<String, String> headers = Map.of(API_KEY, node.getApiKey(),
 					"Content-type", "application/json");
 
-			tryPing(devNode.getUrl(), headers, training, logs);
+			tryPing(node.getUrl(), headers, training, logs);
 
-			LogsUtils.addLogs(logs, "Call executor training (", devNode.getUrl(), ") :");
+			LogsUtils.addLogs(logs, "Call executor training (", node.getUrl(), ") :");
 			LogsUtils.breakLine(logs);
 			final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
-			final HttpRequest request = HttpRequestUtils.createPutRequest(devNode.getUrl() + URL_MODEL, headers, publisher);
+			final HttpRequest request = HttpRequestUtils.createPutRequest(node.getUrl() + URL_MODEL, headers, publisher);
 			HttpRequestUtils.sendAsyncRequest(null, request, BodyHandlers.ofString())
 					.thenApply(response -> {
-						return this.handleResponse(response, training, devNode, bot, logs);
+						return this.handleResponse(response, training, node, bot, logs);
 					});
 			LogsUtils.addLogs(logs, "Call training OK, training in progress...");
-
-		} catch (final Exception e) {
+		}  catch (final Exception e) {
 			LogsUtils.logKO(logs);
 			LogsUtils.addLogs(logs, e.getMessage());
 			LOGGER.error("error", e);
@@ -168,7 +180,23 @@ public class TrainingServices implements Component {
 			training.setLog(logs.toString());
 			saveTraining(bot, training);
 		}
-		return training;
+	}
+
+	public void deployTraining(final Chatbot bot, final Long savedTrainingId, final Long nodeId) {
+		SavedTraining savedTraining = savedTrainingServices.getById(savedTrainingId);
+		Training training = getTraining(bot, savedTraining.getTraId());
+		ChatbotNode node = nodeServices.getNodeByNodeId(bot, nodeId);
+		updateTraining(training);
+		saveTraining(bot, training);
+		final StringBuilder logs = new StringBuilder("Starting deployment of training " + training.getTraId() + " on node " + node.getName() + " ...");
+		LogsUtils.breakLine(logs);
+		try {
+			trainNode(bot, training, node, logs, jsonEngine.fromJson(savedTraining.getBotExport(), BotExport.class));
+		} catch (final Exception e) {
+			LogsUtils.logKO(logs);
+			LogsUtils.addLogs(logs, e.getMessage());
+			LOGGER.error("error", e);
+		}
 	}
 
 	private void tryPing(final String url, final Map<String, String> headers, final Training training, final StringBuilder logs) {
@@ -243,6 +271,12 @@ public class TrainingServices implements Component {
 		return training;
 	}
 
+	private Training updateTraining(Training training) {
+		training.setStartTime(Instant.now());
+		training.setStrCd(TrainingStatusEnum.TRAINING.name());
+		return training;
+	}
+
 	private ExecutorConfiguration getExecutorConfig(final Training training, final ChatbotNode node) {
 		final Long botId = training.getBotId();
 
@@ -265,7 +299,7 @@ public class TrainingServices implements Component {
 		return trainingDAO.getDeployedTrainingByBotId(bot.getBotId());
 	}
 
-	private BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot, final StringBuilder logs) {
+	public BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot, final StringBuilder logs) {
 		return botExportServices.exportBot(bot, logs);
 	}
 

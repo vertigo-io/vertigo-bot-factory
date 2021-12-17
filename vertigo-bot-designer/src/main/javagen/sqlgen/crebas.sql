@@ -32,6 +32,8 @@ drop sequence IF EXISTS SEQ_PROFIL_PER_CHATBOT;
 drop table IF EXISTS RESPONSE_BUTTON cascade;
 drop sequence IF EXISTS SEQ_RESPONSE_BUTTON;
 drop table IF EXISTS RESPONSE_TYPE cascade;
+drop table IF EXISTS SAVED_TRAINING cascade;
+drop sequence IF EXISTS SEQ_SAVED_TRAINING;
 drop table IF EXISTS SCRIPT_INTENTION cascade;
 drop sequence IF EXISTS SEQ_SCRIPT_INTENTION;
 drop table IF EXISTS SMALL_TALK cascade;
@@ -94,6 +96,9 @@ create sequence SEQ_PROFIL_PER_CHATBOT
 create sequence SEQ_RESPONSE_BUTTON
 	start with 1000 cache 20; 
 
+
+create sequence SEQ_SAVED_TRAINING
+	start with 1000 cache 20; 
 
 create sequence SEQ_SCRIPT_INTENTION
 	start with 1000 cache 20; 
@@ -504,6 +509,42 @@ comment on column RESPONSE_TYPE.SORT_ORDER is
 'Order';
 
 -- ============================================================
+--   Table : SAVED_TRAINING                                        
+-- ============================================================
+create table SAVED_TRAINING
+(
+    SAVED_TRA_ID	 NUMERIC     	not null,
+    NAME        	 VARCHAR(100)	not null,
+    CREATION_TIME	 TIMESTAMP   	not null,
+    DESCRIPTION 	 TEXT        	,
+    BOT_EXPORT  	 JSONB       	not null,
+    TRA_ID      	 NUMERIC     	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_SAVED_TRAINING primary key (SAVED_TRA_ID)
+);
+
+comment on column SAVED_TRAINING.SAVED_TRA_ID is
+'ID';
+
+comment on column SAVED_TRAINING.NAME is
+'Name';
+
+comment on column SAVED_TRAINING.CREATION_TIME is
+'Creation time';
+
+comment on column SAVED_TRAINING.DESCRIPTION is
+'Description';
+
+comment on column SAVED_TRAINING.BOT_EXPORT is
+'Bot Export';
+
+comment on column SAVED_TRAINING.TRA_ID is
+'Training';
+
+comment on column SAVED_TRAINING.BOT_ID is
+'Bot';
+
+-- ============================================================
 --   Table : SCRIPT_INTENTION                                        
 -- ============================================================
 create table SCRIPT_INTENTION
@@ -875,6 +916,18 @@ alter table RESPONSE_BUTTON
 	references TOPIC (TOP_ID);
 
 create index A_RESPONSE_BUTTON_TOPIC_RESPONSE_TOPIC_FK on RESPONSE_BUTTON (TOP_ID_RESPONSE asc);
+
+alter table SAVED_TRAINING
+	add constraint FK_A_SAVED_TRAINING_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_SAVED_TRAINING_CHATBOT_CHATBOT_FK on SAVED_TRAINING (BOT_ID asc);
+
+alter table SAVED_TRAINING
+	add constraint FK_A_SAVED_TRAINING_TRAINING_TRAINING foreign key (TRA_ID)
+	references TRAINING (TRA_ID);
+
+create index A_SAVED_TRAINING_TRAINING_TRAINING_FK on SAVED_TRAINING (TRA_ID asc);
 
 alter table SCRIPT_INTENTION
 	add constraint FK_A_SCRIPT_INTENTION_TOPIC_TOPIC foreign key (TOP_ID)

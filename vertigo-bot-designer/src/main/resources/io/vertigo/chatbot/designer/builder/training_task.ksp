@@ -104,3 +104,40 @@ create Task TkRemoveTrainingByBotId{
              "
 	in botId				{domain : DoNumber,						cardinality:"1"}
 }
+
+create Task TkGetSavedTrainingByBotIdAndWithDateBetween {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select savtra.*
+            from saved_training savtra
+            where savtra.bot_id = #botId# and savtra.creation_time between #fromDate# and #toDate#
+             "
+	in botId				{domain : DoId,				        cardinality:"1"}
+	in fromDate				{domain : DoLocaldate,				cardinality:"1"}
+	in toDate				{domain : DoLocaldate,				cardinality:"1"}
+	out tra 				{domain : DoDtSavedTraining	 	    cardinality:"*"}
+}
+
+create Task TkGetSavedTrainingByBotIdAndWithDateAfter {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select savtra.*
+            from saved_training savtra
+            where savtra.bot_id = #botId# and savtra.creation_time >= #fromDate#
+             "
+	in botId				{domain : DoId,				        cardinality:"1"}
+	in fromDate				{domain : DoLocaldate,				cardinality:"1"}
+	out tra 				{domain : DoDtSavedTraining	 	    cardinality:"*"}
+}
+
+create Task TkGetSavedTrainingByBotIdAndWithDateBefore {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select savtra.*
+            from saved_training savtra
+            where savtra.bot_id = #botId# and savtra.creation_time <= #toDate#
+             "
+	in botId				{domain : DoId,				        cardinality:"1"}
+	in toDate				{domain : DoLocaldate,				cardinality:"1"}
+	out tra 				{domain : DoDtSavedTraining	 	    cardinality:"*"}
+}

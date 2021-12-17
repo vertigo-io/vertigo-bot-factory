@@ -63,6 +63,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ResponseType(io.vertigo.chatbot.commons.domain.topic.ResponseType.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
+		/** Objet de données SavedTraining. */
+		SavedTraining(io.vertigo.chatbot.commons.domain.SavedTraining.class),
+		/** Objet de données SavedTrainingCriteria. */
+		SavedTrainingCriteria(io.vertigo.chatbot.commons.domain.SavedTrainingCriteria.class),
 		/** Objet de données ScriptIntention. */
 		ScriptIntention(io.vertigo.chatbot.commons.domain.topic.ScriptIntention.class),
 		/** Objet de données ScriptIntentionExport. */
@@ -447,6 +451,36 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		agentVersion,
 		/** Propriété 'Model version'. */
 		loadedModelVersion	}
+
+	/**
+	 * Enumération des champs de SavedTraining.
+	 */
+	public enum SavedTrainingFields implements DtFieldName<io.vertigo.chatbot.commons.domain.SavedTraining> {
+		/** Propriété 'ID'. */
+		savedTraId,
+		/** Propriété 'Name'. */
+		name,
+		/** Propriété 'Creation time'. */
+		creationTime,
+		/** Propriété 'Description'. */
+		description,
+		/** Propriété 'Bot Export'. */
+		botExport,
+		/** Propriété 'Training'. */
+		traId,
+		/** Propriété 'Bot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de SavedTrainingCriteria.
+	 */
+	public enum SavedTrainingCriteriaFields implements DtFieldName<io.vertigo.chatbot.commons.domain.SavedTrainingCriteria> {
+		/** Propriété 'Search text'. */
+		text,
+		/** Propriété 'From'. */
+		fromDate,
+		/** Propriété 'To'. */
+		toDate	}
 
 	/**
 	 * Enumération des champs de ScriptIntention.
