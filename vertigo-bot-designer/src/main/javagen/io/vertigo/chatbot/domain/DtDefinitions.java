@@ -188,8 +188,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum ChatbotCustomConfigFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotCustomConfig> {
 		/** Propriété 'Context value id'. */
 		cccId,
-		/** Propriété 'Value'. */
-		value,
+		/** Propriété 'Rating'. */
+		rating,
+		/** Propriété 'Rating message'. */
+		ratingMessage,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

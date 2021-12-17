@@ -1,12 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
@@ -45,8 +38,9 @@ import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
 
-import static io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices.RATING_KEY;
-import static io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices.RATING_MESSAGE;
+import javax.inject.Inject;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Transactional
 @Secured("BotUser")
@@ -95,8 +89,7 @@ public class ChatbotServices implements Component {
 			final BotPredefinedTopic botTopicFailure,
 			final BotPredefinedTopic botTopicStart,
 			final BotPredefinedTopic botTopicEnd,
-		   	final Boolean rating,
-		   	final String ratingMessage) {
+		   	final ChatbotCustomConfig chatbotCustomConfig) {
 
 		Assertion.check()
 				.isNotNull(chatbot)
@@ -147,22 +140,7 @@ public class ChatbotServices implements Component {
 		//Topic End
 		topicServices.saveBotTopic(savedChatbot, topicCategory, KindTopicEnum.END.name(), botTopicEnd);
 
-		ChatbotCustomConfig chatbotCustomConfig = chabotCustomConfigServices.getChatbotCustomConfigByBotId(savedChatbot.getBotId());
-		if (chatbotCustomConfig == null) {
-			chatbotCustomConfig = new ChatbotCustomConfig();
-			chatbotCustomConfig.setBotId(savedChatbot.getBotId());
-			Map<String, Object> configMap = new HashMap<>();
-			configMap.put(RATING_KEY, rating);
-			configMap.put(RATING_MESSAGE, ratingMessage);
-			chatbotCustomConfig.setValue(chabotCustomConfigServices.getChatbotCustomConfigJsonString(configMap));
-			chabotCustomConfigServices.save(savedChatbot, chatbotCustomConfig);
-		} else {
-			Map<String, Object> configMap = chabotCustomConfigServices.getChatbotCustomConfigMapByBotId(chatbotCustomConfig);
-			configMap.put(RATING_KEY, rating);
-			configMap.put(RATING_MESSAGE, ratingMessage);
-			chatbotCustomConfig.setValue(chabotCustomConfigServices.getChatbotCustomConfigJsonString(configMap));
-			chabotCustomConfigServices.save(savedChatbot, chatbotCustomConfig);
-		}
+		chabotCustomConfigServices.save(savedChatbot, chatbotCustomConfig);
 
 		return savedChatbot;
 	}

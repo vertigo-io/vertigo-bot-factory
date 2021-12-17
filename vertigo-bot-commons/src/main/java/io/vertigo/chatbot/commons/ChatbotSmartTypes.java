@@ -100,11 +100,6 @@ public enum ChatbotSmartTypes {
 	@SmartTypeDefinition(BigDecimal.class)
 	@Formatter(clazz = FormatterDefault.class)
 	@SmartTypeProperty(property = "storeType", value = "NUMERIC(3,2)")
-	Percentage,
-
-	@SmartTypeDefinition(String.class)
-	@Formatter(clazz = FormatterDefault.class)
-	@SmartTypeProperty(property = "storeType", value = "JSONB")
-	Json;
+	Percentage;
 
 }

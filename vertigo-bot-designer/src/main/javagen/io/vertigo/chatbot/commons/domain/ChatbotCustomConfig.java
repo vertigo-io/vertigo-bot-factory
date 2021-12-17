@@ -16,7 +16,8 @@ public final class ChatbotCustomConfig implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private Long cccId;
-	private String value;
+	private Boolean rating;
+	private String ratingMessage;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -60,21 +61,40 @@ public final class ChatbotCustomConfig implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Value'.
-	 * @return String value <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Rating'.
+	 * @return Boolean rating <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyJson", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Value")
-	public String getValue() {
-		return value;
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Rating")
+	public Boolean getRating() {
+		return rating;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Value'.
-	 * @param value String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Rating'.
+	 * @param rating Boolean <b>Obligatoire</b>
 	 */
-	public void setValue(final String value) {
-		this.value = value;
+	public void setRating(final Boolean rating) {
+		this.rating = rating;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Rating message'.
+	 * @return String ratingMessage <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Rating message")
+	public String getRatingMessage() {
+		return ratingMessage;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Rating message'.
+	 * @param ratingMessage String <b>Obligatoire</b>
+	 */
+	public void setRatingMessage(final String ratingMessage) {
+		this.ratingMessage = ratingMessage;
 	}
 	
 	/**

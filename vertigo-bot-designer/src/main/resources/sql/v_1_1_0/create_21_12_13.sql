@@ -7,7 +7,8 @@ create sequence SEQ_CHATBOT_CUSTOM_CONFIG
 create table CHATBOT_CUSTOM_CONFIG
 (
     CCC_ID      	 NUMERIC     	not null,
-    VALUE       	 JSONB       	not null,
+    RATING      	 bool        	not null,
+    RATING_MESSAGE	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
 );
@@ -15,8 +16,11 @@ create table CHATBOT_CUSTOM_CONFIG
 comment on column CHATBOT_CUSTOM_CONFIG.CCC_ID is
 'Context value id';
 
-comment on column CHATBOT_CUSTOM_CONFIG.VALUE is
-'Value';
+comment on column CHATBOT_CUSTOM_CONFIG.RATING is
+'Rating';
+
+comment on column CHATBOT_CUSTOM_CONFIG.RATING_MESSAGE is
+'Rating message';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';

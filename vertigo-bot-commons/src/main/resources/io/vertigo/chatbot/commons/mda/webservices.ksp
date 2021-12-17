@@ -46,8 +46,9 @@ create DtDefinition DtExecutorConfiguration {
 }
 
 create DtDefinition DtChatbotCustomConfig {
-	id cccId 		{domain: DoId		label: "Context value id"}
-	field value		{domain: DoJson	    label: "Value" 	cardinality:"1"}
+	id cccId 		    {domain: DoId		    label: "Context value id"                       }
+	field rating		{domain: DoYesNo	    label: "Rating" 	            cardinality:"1" }
+	field ratingMessage {domain: DoLabel        label: "Rating message"         cardinality:"1"}
 }
 
 create Association AChatbotCustomConfigChatbot {
