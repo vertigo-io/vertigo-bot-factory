@@ -136,9 +136,9 @@ public enum DtResources implements MessageKey {
 	 */
 	fldContextValue$label,
 	/**
-	 * Key.
+	 * Xpath.
 	 */
-	fldContextValue$key,
+	fldContextValue$xpath,
 	/**
 	 * Chatbot.
 	 */

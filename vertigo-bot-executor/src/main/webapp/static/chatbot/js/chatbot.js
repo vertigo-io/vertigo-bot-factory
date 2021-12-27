@@ -19,7 +19,7 @@ const _avatar = _botRunnerUrl + '/static/chatbot/images/avatar/avatar.png';
 
 const _botBaseUrl = _botRunnerUrl + '/api/chatbot';
 
-const scanContextKeys = () => new Promise((res, rej) => {
+const scanContextKeys = (context) => new Promise((res, rej) => {
     const channel = new MessageChannel();
     channel.port1.onmessage = ({data}) => {
         channel.port1.close();
@@ -30,7 +30,7 @@ const scanContextKeys = () => new Promise((res, rej) => {
         }
     };
 
-    parent.postMessage('scanContext', '*', [channel.port2]);
+    parent.postMessage({context: context}, '*', [channel.port2]);
 });
 
 const chatbot = new Vue({
@@ -77,15 +77,25 @@ const chatbot = new Vue({
             menu: false,
             lastUserInteraction: 0,
             watingMessagesStack: [],
-            context: {}
+            context: {},
+            contextMap: {}
         },
         methods: {
 
-            initBot() {
+            initBot: function() {
                 document.getElementById('page').style.visibility = 'visible';
                 document.getElementById('loading').style.display = 'none';
-                // lancement de la phrase d'accueil
-                chatbot.startConversation();
+                if (sessionStorage.contextMap) {
+                    chatbot.contextMap = JSON.parse(sessionStorage.contextMap);
+                    this.startConversation();
+                } else {
+                    this.$http.post(chatbot.botUrl + '/context').then(contextResponse => {
+                        chatbot.contextMap = contextResponse.data;
+                        sessionStorage.setItem('contextMap', JSON.stringify(chatbot.contextMap));
+                        chatbot.startConversation();
+                    });
+                }
+
             },
             updateSessionStorage() {
                 sessionStorage.convId = chatbot.convId;
@@ -101,7 +111,7 @@ const chatbot = new Vue({
             startConversation() {
                 chatbot.lastUserInteraction = Date.now();
                 const urlPage =  window.location.href;
-                scanContextKeys().then(value => {
+                scanContextKeys(new Map(Object.entries(chatbot.contextMap))).then(value => {
                     chatbot.context = value;
                     if(chatbot.context['url'] === undefined) {
                         chatbot.context['url'] =  urlPage;
@@ -116,7 +126,7 @@ const chatbot = new Vue({
                                 chatbot.convId = httpResponse.data.metadatas.sessionId;
                                 chatbot.customConfig.useRating = httpResponse.data.metadatas.customConfig.rating;
                                 chatbot.customConfig.ratingMessage = httpResponse.data.metadatas.customConfig.ratingMessage;
-                                chatbot.updateSessionStorage()
+                                chatbot.updateSessionStorage();
                                 chatbot._handleResponse(httpResponse, false);
                             }).catch(() => {
                             // error

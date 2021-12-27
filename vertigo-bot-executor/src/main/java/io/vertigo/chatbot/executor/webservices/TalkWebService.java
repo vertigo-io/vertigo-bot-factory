@@ -17,10 +17,6 @@
  */
 package io.vertigo.chatbot.executor.webservices;
 
-import java.util.UUID;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.executor.manager.ExecutorManager;
@@ -29,6 +25,10 @@ import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.POST;
 import io.vertigo.vega.webservice.stereotype.PathParam;
 import io.vertigo.vega.webservice.stereotype.PathPrefix;
+
+import javax.inject.Inject;
+import java.util.Map;
+import java.util.UUID;
 
 @PathPrefix("/chatbot")
 public class TalkWebService implements WebServices {
@@ -39,6 +39,11 @@ public class TalkWebService implements WebServices {
 	@POST("/start")
 	public BotResponse start(final BotInput input) {
 		return executorManager.startNewConversation(input);
+	}
+
+	@POST("/context")
+	public Map<String, String> getContext() {
+		return executorManager.getContext();
 	}
 
 	@POST("/talk/{sessionId}")

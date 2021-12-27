@@ -4,8 +4,7 @@ import io.vertigo.core.locale.MessageKey;
 
 public enum ContextValueMultilingualResources implements MessageKey {
 
-	KEY_PATTERN_DIGIT_ERROR,
-
-	KEY_PATTERN_LENGTH,
+	XPATH_PATTERN_NULL_ERROR,
+	XPATH_PATTERN_DIGIT_ERROR,
 
 }

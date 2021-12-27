@@ -200,16 +200,21 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (event.data === 'Chatbot.close') {
               Chatbot.close();
             }
-            else if (event.data === 'scanContext') {
-              const contextPrefix = _initParam.optionalParameters.find(param => param.key === 'contextPrefix');
+            else if (event.data.context) {
               const map = {};
-              if (contextPrefix !== undefined) {
-                document
-                    .querySelectorAll(`input[type=hidden][id^=${contextPrefix.value}]`)
-                    .forEach(function (input) {
-                      map[input.getAttribute('name')] = input.getAttribute('value');
-                    });
-              }
+              event.data.context.forEach(function (value, key) {
+                  const element = document.evaluate(value, document, null, XPathResult.ANY_TYPE, null);
+                  const node = element.iterateNext();
+                  if (node !== null) {
+                    let elementValue;
+                    if (node.attributes['value']) {
+                      elementValue = node.attributes['value'].value;
+                    } else {
+                      elementValue = node.innerHTML;
+                    }
+                    map[key] = elementValue;
+                  }
+              });
               event.ports[0].postMessage({result : map});
             }
             else if (event.data.pictureModal) {

@@ -23,11 +23,10 @@
 		<section layout:fragment="content">
 			
 			<vu:popup action="_delete" vModel="showPopup" message="#{contextValue.popup.message}" confirm="#{action.confirm}"></vu:popup>
-
 			<vu:block id="detail" title="Informations">
 				<vu:grid cols="2">
 					<vu:text-field object="contextValue" field="label" />
-					<vu:text-field object="contextValue" field="key" />
+					<vu:text-field object="contextValue" field="xpath" />
 				</vu:grid>
 			</vu:block>
 			

@@ -7,8 +7,8 @@ package io.vertigo.chatbot.commons.domain
 create DtDefinition DtContextValue {
 	id cvaId 		{domain: DoId		label: "Context value id"}
 	field label		{domain: DoLabel	label: "Label" 		cardinality:"1"}
-	field key		{domain: DoLabel	label: "Key" 	cardinality:"1"}
-	}
+	field xpath     {domain: DoLabel	label: "Xpath" 	    cardinality:"1"}
+}
 	
 create Association AContextValueChatbot {
 	fkFieldName : "botId" 
