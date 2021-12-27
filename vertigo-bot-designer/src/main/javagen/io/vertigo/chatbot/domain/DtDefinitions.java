@@ -241,8 +241,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cvaId,
 		/** Propriété 'Label'. */
 		label,
-		/** Propriété 'Key'. */
-		key,
+		/** Propriété 'Xpath'. */
+		xpath,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

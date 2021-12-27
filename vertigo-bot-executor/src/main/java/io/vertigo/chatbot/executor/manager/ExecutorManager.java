@@ -17,17 +17,7 @@
  */
 package io.vertigo.chatbot.executor.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import javax.inject.Inject;
-
 import com.google.gson.JsonElement;
-import io.vertigo.vega.engines.webservice.json.JsonEngine;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.chatbot.analytics.AnalyticsSenderServices;
 import io.vertigo.chatbot.commons.LogsUtils;
@@ -45,6 +35,15 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.vega.engines.webservice.json.JsonEngine;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class ExecutorManager implements Manager, Activeable {
 
@@ -173,6 +172,10 @@ public class ExecutorManager implements Manager, Activeable {
 
 	public void rate(final IncomeRating rating) {
 		analyticsSenderServices.rate(rating, executorConfigManager.getConfig().getExecutorConfiguration());
+	}
+
+	public Map<String, String> getContext() {
+		return executorConfigManager.getContextMap();
 	}
 
 }

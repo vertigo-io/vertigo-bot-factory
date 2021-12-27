@@ -1,10 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.ContextValueDAO;
@@ -20,7 +15,13 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
-import kotlin.text.Regex;
+
+import javax.inject.Inject;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 @Transactional
 public class ContextValueServices implements Component {
@@ -49,10 +50,10 @@ public class ContextValueServices implements Component {
 	 * @return contextValue
 	 */
 	public ContextValue save(@SecuredOperation("botAdm") final Chatbot bot, final ContextValue contextValue) {
-		checkPatternKey(contextValue.getKey());
+		checkPatternKey(contextValue.getXpath());
 		if (contextValue.getCvaId()!= null) {
 			ContextValue oldContextValue = contextValueDAO.get(contextValue.getCvaId());
-			if (!oldContextValue.getKey().equals(contextValue.getKey()) || !oldContextValue.getLabel().equals(contextValue.getLabel())) {
+			if (!oldContextValue.getLabel().equals(contextValue.getLabel()) || !oldContextValue.getXpath().equals(contextValue.getXpath())) {
 				nodeServices.updateNodes(bot);
 			}
 		} else {
@@ -85,16 +86,19 @@ public class ContextValueServices implements Component {
 	}
 
 	private static void checkPatternKey(final String key) {
-		// regex : letters, digits and "/"
-		final Regex regex = new Regex("^[a-z0-9]+(\\/[a-z0-9]+)*$");
 
-		if (key == null || !regex.matches(key)) {
-			throw new VUserException(ContextValueMultilingualResources.KEY_PATTERN_DIGIT_ERROR);
+		if (key == null) {
+			throw new VUserException(ContextValueMultilingualResources.XPATH_PATTERN_NULL_ERROR);
 		}
 
-		if (key.length() > 10) {
-			throw new VUserException(ContextValueMultilingualResources.KEY_PATTERN_LENGTH);
+		XPathFactory factory = XPathFactory.newInstance();
+		XPath xPath = factory.newXPath();
+		try {
+			xPath.compile(key);
+		} catch (XPathExpressionException e) {
+			throw new VUserException(ContextValueMultilingualResources.XPATH_PATTERN_DIGIT_ERROR);
 		}
+
 	}
 
 	public String exportContextValuesToMapByBot(@SecuredOperation("botAdm") final Chatbot bot, final StringBuilder logs) {
@@ -104,7 +108,7 @@ public class ContextValueServices implements Component {
 
 			final Map<String, String> map = new HashMap<>();
 			for (final ContextValue contextValue : list) {
-				map.put(contextValue.getLabel(), "/user/global/context/" + contextValue.getKey());
+				map.put(contextValue.getLabel(), contextValue.getXpath());
 			}
 			final String json = jsonEngine.toJson(map);
 

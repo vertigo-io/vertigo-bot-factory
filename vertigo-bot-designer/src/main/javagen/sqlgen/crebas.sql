@@ -255,7 +255,7 @@ create table CONTEXT_VALUE
 (
     CVA_ID      	 NUMERIC     	not null,
     LABEL       	 VARCHAR(100)	not null,
-    KEY         	 VARCHAR(100)	not null,
+    XPATH       	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_CONTEXT_VALUE primary key (CVA_ID)
 );
@@ -266,8 +266,8 @@ comment on column CONTEXT_VALUE.CVA_ID is
 comment on column CONTEXT_VALUE.LABEL is
 'Label';
 
-comment on column CONTEXT_VALUE.KEY is
-'Key';
+comment on column CONTEXT_VALUE.XPATH is
+'Xpath';
 
 comment on column CONTEXT_VALUE.BOT_ID is
 'Chatbot';

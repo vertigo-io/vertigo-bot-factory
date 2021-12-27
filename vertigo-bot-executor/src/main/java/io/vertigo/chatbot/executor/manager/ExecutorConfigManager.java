@@ -17,16 +17,6 @@
  */
 package io.vertigo.chatbot.executor.manager;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-
-import javax.inject.Inject;
-
-import org.apache.commons.io.FileUtils;
-
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.core.lang.Assertion;
@@ -36,6 +26,14 @@ import io.vertigo.core.node.component.Manager;
 import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
+import org.apache.commons.io.FileUtils;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 
 public class ExecutorConfigManager implements Manager, Activeable {
 
@@ -130,6 +128,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 		try {
 			FileUtils.writeStringToFile(contextDataFile, botExport.getMapContext(), StandardCharsets.UTF_8);
+			contextMap = jsonEngine.fromJson(botExport.getMapContext(), HashMap.class);
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", contextDataFile.getPath());
 		}
