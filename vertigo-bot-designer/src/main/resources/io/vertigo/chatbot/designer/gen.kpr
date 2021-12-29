@@ -5,6 +5,7 @@ mda/chatbot/exportModel.ksp
 mda/chatbot/dictionaryEntityModel.ksp
 mda/chatbot/profileModel.ksp
 mda/chatbot/trainingModel.ksp
+mda/chatbot/unknownSentences.ksp
 mda/chatbot/topic/topicModel.ksp
 
 admin/person.ksp
