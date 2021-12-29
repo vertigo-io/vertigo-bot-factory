@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{templates/botDetailLayout}" th:with="tab=followup"
+>
+
+    <head>
+        <title th:text="#{unknownSentence.title}"></title>
+        <script th:inline="javascript">
+            function filter() {
+                VertigoUi.componentStates.topicSelection.selects.options = VertigoUi.vueData.topics.filter(topic => {
+                    return topic.topCatId === VertigoUi.componentStates.topicSelection.selects.catId
+                }).map(function (topic) {
+                    return { value: topic.topId, label: topic.title };
+                });
+            }
+
+            function treatUnknownMessage(text, topId, unknownSentenceId, sentences) {
+                let sentencesToSend = [];
+                if (sentences && sentences.length > 0 ){
+                    sentences.forEach(sentence => {
+                       sentencesToSend.push({unkSeId: sentence.unkSeId, text: sentence.text})
+                    });
+                } else if (text !== null && unknownSentenceId !== null) {
+                    sentencesToSend.push({unkSeId: unknownSentenceId, text: text})
+                }
+                const formData = new FormData();
+                formData.append("unknownSentencesToUpdate", JSON.stringify(sentencesToSend));
+                formData.append('topId', topId);
+                VUiPage.httpPostAjax("_treatUnknownSentence", formData, {
+                    onSuccess: function () {
+                        filterSentences()
+                    }
+                });
+            }
+
+            function rejectUnknownSentence(unknownSentenceId) {
+                VUiPage.httpPostAjax("_rejectUnknownSentence", {
+                    'unknownSentenceId': unknownSentenceId
+                }, {
+                    onSuccess: function() {
+                        filterSentences()
+                    }
+                });
+            }
+
+            function refreshUnknownSentences() {
+                VUiExtensions.dataX.loadingUnknownSentences = true;
+                VUiPage.httpPostAjax("_refreshUnknownSentences", {}, {
+                    onSuccess: function() {
+                        VUiExtensions.dataX.loadingUnknownSentences = false;
+                        filterSentences()
+                    }
+                });
+            }
+
+            function normalizeString(str) {
+                if (str)
+                    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                else
+                    return '';
+            }
+
+            function filterSentences() {
+                VertigoUi.vueData.unknownSentenceFilteredList = VertigoUi.vueData.unknownSentenceList
+                if (VertigoUi.componentStates.statuses.selectedStatus.strCd !== null) {
+                    VertigoUi.vueData.unknownSentenceFilteredList = VertigoUi.vueData.unknownSentenceFilteredList
+                            // copy and reverse
+                            .slice().reverse()
+                            // search
+                            .filter(sentence => sentence.status === VertigoUi.componentStates.statuses.selectedStatus.strCd)
+                }
+
+                let searchNormarlized = normalizeString(VertigoUi.componentStates.search.searchText.value);
+                if (searchNormarlized !==''){
+                    VertigoUi.vueData.unknownSentenceFilteredList =  VertigoUi.vueData.unknownSentenceFilteredList
+                        // copy and reverse
+                        .slice().reverse()
+                        // search
+                        .filter(sentence => normalizeString(sentence.text).includes(searchNormarlized))
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+               filterSentences();
+            });
+        </script>
+    </head>
+
+    <body>
+        <section layout:fragment="content">
+            <vu:table list="unknownSentenceFilteredList" th:title="#{unknownSentence.title}" selectable="true" componentId="unknownSentenceList" sortBy="date" :binary-state-sort="true">
+                <vu:slot name="top_right_slot">
+                    <vu:include-data object="statuses" field="'*'"/>
+                    <vu:include-data-primitive key="locale"/>
+                    <q-select
+                            th:attr="dataObject=${model.vContext['componentStates'].addComponentState('statuses').addObject('selectedStatus', {strCd: 'TO_TREAT'})}"
+                            style="width: 250px; margin-right: 10px"
+                            clearable
+                            filled
+                            map-options
+                            emit-value
+                            v-model="componentStates.statuses.selectedStatus.strCd"
+                            :options="vueData.locale == 'fr_FR' ? transformListForSelection('statuses', 'strCd', 'labelFr') : transformListForSelection('statuses', 'strCd', 'label') "
+                            th:label="#{unknownSentence.selection.status}"
+                            @input="filterSentences();"
+                            stack-label>
+                    </q-select>
+                    <q-input style="margin-right:10px" borderless dense debounce="300" v- @input="filterSentences();" th:v-model="VertigoUi.componentStates.search.searchText.value" th:attr="dataObject=${model.vContext['componentStates'].addComponentState('search').addObject('searchText', {value: ''})}" th:placeholder="#{unknownSentence.selection.search}">
+                        <template v-slot:append>
+                            <q-icon name="search" />
+                        </template>
+                    </q-input>
+                    <q-btn round color="primary" icon="refresh" th:aria-label="#{action.refresh}" th:title="#{action.refresh}"
+                           @click="refreshUnknownSentences()" :loading="dataX.loadingUnknownSentences"></q-btn>
+                </vu:slot>
+                <vu:slot name="actions_slot">
+                    <q-btn class="on-right" round color="blue" icon="check_circle" th:aria-label="#{unknownSentence.treat}" th:title="#{unknownSentence.treat}"
+                           @click="componentStates.treatUnknownSentence.unknownSentence.text = props.row.text; componentStates.treatUnknownSentence.unknownSentence.unknownSentenceId = props.row.unkSeId; $refs.treatDialog.show()"></q-btn>
+                    <q-btn class="on-right" round color="red" icon="cancel" th:aria-label="#{unknownSentence.reject}" th:title="#{unknownSentence.reject}"
+                           @click="rejectUnknownSentence(props.row.unkSeId)"></q-btn>
+
+                </vu:slot>
+                <vu:include-data object="unknownSentenceList" field="'*'" />
+                <vu:include-data object="unknownSentenceFilteredList" field="unkSeId" />
+                <vu:include-data object="unknownSentenceFilteredList" field="status" />
+                <vu:include-data object="unknownSentenceFilteredList" field="date" />
+                <vu:include-data object="unknownSentenceFilteredList" field="text" />
+                <vu:include-data object="unknownSentenceFilteredList" field="modelName" />
+                <vu:column name="status" th:label="#{unknownSentence.status}" class="col_Small">
+                    <q-icon name="check" v-if="props.row.status == 'TREATED'" ></q-icon>
+                    <q-icon name="cancel" v-if="props.row.status == 'REJECTED'" ></q-icon>
+                    <q-icon name="help" v-if="props.row.status == 'TO_TREAT'" ></q-icon>
+                </vu:column>
+                <vu:column field="date"/>
+                <vu:column field="text"/>
+                <vu:column field="modelName"/>
+            </vu:table>
+            <div class="col-12">
+                <div style="display:flex;justify-content:flex-end">
+                    <q-btn th:label="#{action.treat.multiple}" color="primary" :disable="componentStates.unknownSentenceList.selected.length === 0"
+                           @click="componentStates.treatUnknownSentence.unknownSentence.sentences = componentStates.unknownSentenceList.selected; $refs.treatDialog.show()"></q-btn>
+                </div>
+            </div>
+
+
+            <q-dialog ref="treatDialog" th:attr="dataObject=${model.vContext['componentStates'].addComponentState('treatUnknownSentence').addObject('unknownSentence', {text: null, unknownSentenceId: null, sentences: null})}">
+                <q-card>
+                    <q-card-section>
+                        <div class="text-h6"><span th:text="#{unknownSentence.treat.popuptitle}"></span></div>
+                    </q-card-section>
+                    <q-card-section>
+
+                        <div v-if="componentStates.treatUnknownSentence.unknownSentence.sentences && componentStates.treatUnknownSentence.unknownSentence.sentences.length > 0">
+                            <div class="q-table__container q-table--horizontal-separator column no-wrap q-table__card q-table--no-wrap">
+                                <div class="q-table__middle scroll table-secondary">
+                                    <table class="q-table">
+                                      <thead>
+                                        <tr>
+                                            <th th:text="#{unknownSentence.treat.multiple.table.title}"></th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr v-for="sentence in componentStates.treatUnknownSentence.unknownSentence.sentences">
+                                            <td >{{sentence.text}}</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <q-input v-else v-model="componentStates.treatUnknownSentence.unknownSentence.text" th:label="#{unknownSentence.text}" />
+                    </q-card-section>
+                    <q-card-section th:attr="dataObject=${model.vContext['componentStates'].addComponentState('topicSelection').addObject('selects', {catId: null, options: {label: null}, topicId: null})}">
+                        <vu:include-data object="topicCategories" field="'*'"/>
+                        <vu:include-data object="topics" field="'*'"/>
+                        <div style="display:flex;justify-content:flex-end">
+                            <q-select style="width: 250px;margin-right: 10px"
+                                      clearable
+                                      filled
+                                      map-options
+                                      emit-value
+                                      v-model="componentStates.topicSelection.selects.catId"
+                                      :options="transformListForSelection('topicCategories', 'topCatId', 'label')"
+                                      th:label="#{unknownSentence.selection.category}"
+                                      @input="filter();"
+                                      stack-label>
+                            </q-select>
+                            <q-select style="width: 250px;"
+                                      clearable
+                                      filled
+                                      map-options
+                                      emit-value
+                                      v-model="componentStates.topicSelection.selects.topicId"
+                                      :options="componentStates.topicSelection.selects.options"
+                                      th:label="#{unknownSentence.selection.topic}"
+                                      stack-label>
+                            </q-select>
+                        </div>
+                    </q-card-section>
+
+                    <q-card-actions align="around">
+                        <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                        <q-btn th:label="#{action.treat.cancel}" color="red" @click="componentStates.treatUnknownSentence.unknownSentence.sentences = []" v-close-popup></q-btn>
+                        <q-btn th:label="#{action.treat}" color="primary" @click="treatUnknownMessage(componentStates.treatUnknownSentence.unknownSentence.text, componentStates.topicSelection.selects.topicId, componentStates.treatUnknownSentence.unknownSentence.unknownSentenceId, componentStates.treatUnknownSentence.unknownSentence.sentences); componentStates.treatUnknownSentence.unknownSentence.sentences = []" v-close-popup></q-btn>
+                    </q-card-actions>
+
+                </q-card>
+            </q-dialog>
+        </section>
+
+    </body>
+</html>

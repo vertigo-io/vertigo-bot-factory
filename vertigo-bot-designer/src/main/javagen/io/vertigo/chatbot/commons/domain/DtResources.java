@@ -395,4 +395,80 @@ public enum DtResources implements MessageKey {
 	 * LabelFr.
 	 */
 	fldTrainingStatus$labelFr,
+
+	/***********************************************************
+	/** UnknownSentenceDetail.
+	/***********************************************************
+	/**
+	 * Unknown sentence id.
+	 */
+	fldUnknownSentenceDetail$unkSeId,
+	/**
+	 * Date.
+	 */
+	fldUnknownSentenceDetail$date,
+	/**
+	 * User text.
+	 */
+	fldUnknownSentenceDetail$text,
+	/**
+	 * Model Name.
+	 */
+	fldUnknownSentenceDetail$modelName,
+	/**
+	 * Status.
+	 */
+	fldUnknownSentenceDetail$status,
+	/**
+	 * Bot.
+	 */
+	fldUnknownSentenceDetail$botId,
+
+	/***********************************************************
+	/** UnknownSentenceStatus.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldUnknownSentenceStatus$strCd,
+	/**
+	 * Label.
+	 */
+	fldUnknownSentenceStatus$label,
+	/**
+	 * LabelFr.
+	 */
+	fldUnknownSentenceStatus$labelFr,
+
+	/***********************************************************
+	/** UnknownSentenceToUpdateIhm.
+	/***********************************************************
+	/**
+	 * Unknown sentence Id.
+	 */
+	fldUnknownSentenceToUpdateIhm$unkSeId,
+	/**
+	 * User text.
+	 */
+	fldUnknownSentenceToUpdateIhm$text,
+
+	/***********************************************************
+	/** UnknownSentencesCriteria.
+	/***********************************************************
+	/**
+	 * Chatbot selection.
+	 */
+	fldUnknownSentencesCriteria$botId,
+	/**
+	 * From.
+	 */
+	fldUnknownSentencesCriteria$fromDate,
+	/**
+	 * To.
+	 */
+	fldUnknownSentencesCriteria$toDate,
+	/**
+	 * Status.
+	 */
+	fldUnknownSentencesCriteria$status,
 }

@@ -19,4 +19,6 @@ public enum BotMultilingualResources implements MessageKey {
 	NODE_NOT_UP_TO_DATE,
 
 	CONTEXTVALUE_LIST,
+
+	UNKNOWNSENTENCEDETAIL_LIST,
 }

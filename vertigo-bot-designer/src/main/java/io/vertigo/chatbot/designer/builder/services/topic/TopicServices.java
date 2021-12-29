@@ -4,6 +4,9 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.UnknownSentenceDetail;
+import io.vertigo.chatbot.commons.domain.UnknownSentenceStatusEnum;
+import io.vertigo.chatbot.commons.domain.UnknownSentenceToUpdateIhm;
 import io.vertigo.chatbot.commons.domain.topic.KindTopic;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
@@ -14,6 +17,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.builder.services.UnknownSentencesServices;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.designer.utils.HashUtils;
@@ -71,6 +75,9 @@ public class TopicServices implements Component, Activeable {
 
 	@Inject
 	private TopicLabelServices topicLabelServices;
+
+	@Inject
+	private UnknownSentencesServices unknownSentencesServices;
 
 	public Topic findTopicById(@SecuredOperation("botVisitor") final Long id) {
 		return topicDAO.get(id);
@@ -324,6 +331,19 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	//********* NTS part ********/
+
+	public DtList<NluTrainingSentence> addTrainingSentence(final Chatbot bot, List<UnknownSentenceToUpdateIhm> sentencesToUpdate, final Long topId) {
+		Topic topic = findTopicById(topId);
+		DtList<NluTrainingSentence> nluTrainingSentenceDtList = getNluTrainingSentenceByTopic(bot, topic);
+		for (UnknownSentenceToUpdateIhm sentence : sentencesToUpdate) {
+			UnknownSentenceDetail unknownSentenceDetail = unknownSentencesServices.findById(sentence.getUnkSeId());
+			nluTrainingSentenceServices.addTrainingSentense(sentence.getText(), nluTrainingSentenceDtList);
+			unknownSentencesServices.updateStatus(unknownSentenceDetail, UnknownSentenceStatusEnum.TREATED);
+		}
+		DtList<NluTrainingSentence> savedNluTrainingSentences = saveAllNotBlankNTS(topic, nluTrainingSentenceDtList);
+		nodeServices.updateNodes(bot);
+		return savedNluTrainingSentences;
+	}
 
 	public DtList<NluTrainingSentence> getNluTrainingSentenceByTopic(@SecuredOperation("botVisitor") final Chatbot bot, final Topic topic) {
 		Assertion.check()

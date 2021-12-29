@@ -119,6 +119,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TypeExportAnalytics(io.vertigo.chatbot.designer.domain.analytics.TypeExportAnalytics.class),
 		/** Objet de données TypeTopic. */
 		TypeTopic(io.vertigo.chatbot.commons.domain.topic.TypeTopic.class),
+		/** Objet de données UnknownSentenceDetail. */
+		UnknownSentenceDetail(io.vertigo.chatbot.commons.domain.UnknownSentenceDetail.class),
+		/** Objet de données UnknownSentenceStatus. */
+		UnknownSentenceStatus(io.vertigo.chatbot.commons.domain.UnknownSentenceStatus.class),
+		/** Objet de données UnknownSentenceToUpdateIhm. */
+		UnknownSentenceToUpdateIhm(io.vertigo.chatbot.commons.domain.UnknownSentenceToUpdateIhm.class),
+		/** Objet de données UnknownSentencesCriteria. */
+		UnknownSentencesCriteria(io.vertigo.chatbot.commons.domain.UnknownSentencesCriteria.class),
 		/** Objet de données UnknownSentenseExport. */
 		UnknownSentenseExport(io.vertigo.chatbot.designer.domain.analytics.UnknownSentenseExport.class),
 		/** Objet de données UtterText. */
@@ -875,6 +883,56 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'TitleFr'. */
 		labelFr	}
+
+	/**
+	 * Enumération des champs de UnknownSentenceDetail.
+	 */
+	public enum UnknownSentenceDetailFields implements DtFieldName<io.vertigo.chatbot.commons.domain.UnknownSentenceDetail> {
+		/** Propriété 'Unknown sentence id'. */
+		unkSeId,
+		/** Propriété 'Date'. */
+		date,
+		/** Propriété 'User text'. */
+		text,
+		/** Propriété 'Model Name'. */
+		modelName,
+		/** Propriété 'Status'. */
+		status,
+		/** Propriété 'Bot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de UnknownSentenceStatus.
+	 */
+	public enum UnknownSentenceStatusFields implements DtFieldName<io.vertigo.chatbot.commons.domain.UnknownSentenceStatus> {
+		/** Propriété 'ID'. */
+		strCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'LabelFr'. */
+		labelFr	}
+
+	/**
+	 * Enumération des champs de UnknownSentenceToUpdateIhm.
+	 */
+	public enum UnknownSentenceToUpdateIhmFields implements DtFieldName<io.vertigo.chatbot.commons.domain.UnknownSentenceToUpdateIhm> {
+		/** Propriété 'Unknown sentence Id'. */
+		unkSeId,
+		/** Propriété 'User text'. */
+		text	}
+
+	/**
+	 * Enumération des champs de UnknownSentencesCriteria.
+	 */
+	public enum UnknownSentencesCriteriaFields implements DtFieldName<io.vertigo.chatbot.commons.domain.UnknownSentencesCriteria> {
+		/** Propriété 'Chatbot selection'. */
+		botId,
+		/** Propriété 'From'. */
+		fromDate,
+		/** Propriété 'To'. */
+		toDate,
+		/** Propriété 'Status'. */
+		status	}
 
 	/**
 	 * Enumération des champs de UnknownSentenseExport.
