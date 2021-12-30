@@ -5,12 +5,25 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.SmallTalkDAO;
 import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.*;
+import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalkWrapper;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.HistoryServices;
+import io.vertigo.chatbot.designer.builder.services.IRecordable;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.smallTalk.SmallTalkPAO;
+import io.vertigo.chatbot.designer.domain.History;
+import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
@@ -28,7 +41,7 @@ import java.util.Optional;
 
 @Transactional
 @Secured("BotUser")
-public class SmallTalkServices implements Component, ITopicService<SmallTalk> {
+public class SmallTalkServices implements Component, ITopicService<SmallTalk>, IRecordable<SmallTalk> {
 
 	@Inject
 	private UtterTextServices utterTextServices;
@@ -47,6 +60,9 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk> {
 
 	@Inject
 	private TopicDAO topicDAO;
+
+	@Inject
+	private HistoryServices historyServices;
 
 	public SmallTalk getSmallTalkById(@SecuredOperation("botVisitor") final Chatbot bot, final Long smtId) {
 		Assertion.check().isNotNull(smtId);
@@ -74,7 +90,8 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk> {
 				.isNotNull(utterTexts)
 				.isNotNull(buttonList);
 		// ---
-
+		boolean isNew = smallTalk.getSmtId() == null;
+		boolean updated = isNew;
 		smallTalk.setTopId(topic.getTopId());
 		final SmallTalk savedST = save(smallTalk);
 
@@ -84,6 +101,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk> {
 			utterTextServices.removeAllUtterTextBySmtId(chatbot, savedST.getSmtId());
 			utterTextServices.createNoBlankUtterTextBySmallTalk(chatbot, savedST, utterTexts);
 			nodeServices.updateNodes(chatbot);
+			updated = true;
 		}
 
 		// remove and create buttons
@@ -97,7 +115,13 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk> {
 			responsesButtonServices.removeAllButtonsBySmtId(chatbot, savedST);
 			responsesButtonServices.saveAllButtonsBySmtId(chatbot, savedST, buttonList);
 			nodeServices.updateNodes(chatbot);
+			updated = true;
 		}
+
+		if (updated) {
+			record(chatbot, smallTalk, isNew ? HistoryActionEnum.ADDED : HistoryActionEnum.UPDATED);
+		}
+
 		return savedST;
 	}
 
@@ -111,6 +135,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk> {
 
 					// delete smallTalk
 					delete(smallTalk);
+					record(chatbot, smallTalk, HistoryActionEnum.DELETED);
 				});
 	}
 
@@ -196,5 +221,13 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk> {
 	public void saveTopic(Topic topic, Chatbot chatbot, DtObject dtObject) {
 		SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) dtObject;
 		saveSmallTalk(chatbot, smallTalkWrapper.getSmallTalk(), smallTalkWrapper.getUtterTexts(), smallTalkWrapper.getButtons(), topic);
+	}
+
+	@Override
+	public History record(Chatbot bot, SmallTalk smallTalk, HistoryActionEnum action) {
+		smallTalk.topic().load();
+		Topic topic = smallTalk.topic().get();
+		String message = topic.getKtoCd() + " - " + topic.getTitle();
+		return historyServices.record(bot, action, smallTalk.getClass().getSimpleName(), message);
 	}
 }

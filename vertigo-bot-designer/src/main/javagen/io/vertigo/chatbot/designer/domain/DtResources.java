@@ -41,6 +41,54 @@ public enum DtResources implements MessageKey {
 	fldDictionaryEntityWrapper$synonymsList,
 
 	/***********************************************************
+	/** History.
+	/***********************************************************
+	/**
+	 * History id.
+	 */
+	fldHistory$histId,
+	/**
+	 * Date.
+	 */
+	fldHistory$date,
+	/**
+	 * Class name.
+	 */
+	fldHistory$className,
+	/**
+	 * Label.
+	 */
+	fldHistory$message,
+	/**
+	 * User.
+	 */
+	fldHistory$userName,
+	/**
+	 * Action.
+	 */
+	fldHistory$hacCd,
+	/**
+	 * Chatbot.
+	 */
+	fldHistory$botId,
+
+	/***********************************************************
+	/** HistoryAction.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldHistoryAction$hacCd,
+	/**
+	 * Title.
+	 */
+	fldHistoryAction$label,
+	/**
+	 * TitleFr.
+	 */
+	fldHistoryAction$labelFr,
+
+	/***********************************************************
 	/** Synonym.
 	/***********************************************************
 	/**

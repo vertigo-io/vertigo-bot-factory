@@ -13,7 +13,11 @@ import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.scriptIntention.ScriptIntentionPAO;
+import io.vertigo.chatbot.designer.builder.services.HistoryServices;
+import io.vertigo.chatbot.designer.builder.services.IRecordable;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.domain.History;
+import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.domain.DtDefinitions.ScriptIntentionFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -30,7 +34,7 @@ import java.util.Optional;
 
 @Transactional
 @Secured("BotUser")
-public class ScriptIntentionServices implements Component, ITopicService<ScriptIntention> {
+public class ScriptIntentionServices implements Component, ITopicService<ScriptIntention>, IRecordable<ScriptIntention> {
 
 	@Inject
 	private ScriptIntentionDAO scriptIntentionDAO;
@@ -43,6 +47,9 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 
 	@Inject
 	private TopicDAO topicDAO;
+
+	@Inject
+	private HistoryServices historyServices;
 
 	public ScriptIntention getScriptIntentionById(@SecuredOperation("botVisitor") final Chatbot bot, final Long sinId) {
 		Assertion.check().isNotNull(sinId);
@@ -58,13 +65,15 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 	public ScriptIntention save(@SecuredOperation("botAdm") final Chatbot chatbot,
 			final ScriptIntention scriptIntention,
 			final Topic topic) {
-
+		boolean isNew = scriptIntention.getSinId() == null;
 		ScriptIntention oldScriptIntention = findByTopId(topic.getTopId()).orElse(null);
+		scriptIntention.setTopId(topic.getTopId());
+		ScriptIntention savedScriptIntention = save(scriptIntention);
 		if (oldScriptIntention == null || (oldScriptIntention.getScript() != null && !oldScriptIntention.getScript().equals(scriptIntention.getScript()))) {
 			nodeServices.updateNodes(chatbot);
+			record(chatbot, savedScriptIntention, isNew ? HistoryActionEnum.ADDED : HistoryActionEnum.UPDATED);
 		}
-		scriptIntention.setTopId(topic.getTopId());
-		return this.save(scriptIntention);
+		return savedScriptIntention;
 
 	}
 
@@ -72,7 +81,11 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 	public void deleteIfExists(@SecuredOperation("botAdm") final Chatbot chatbot, final Topic topic) {
 		// delete scriptIntention
 		findByTopId(topic.getTopId())
-				.ifPresent(this::delete);
+				.ifPresent(scriptIntention -> {
+					delete(scriptIntention);
+					record(chatbot, scriptIntention, HistoryActionEnum.DELETED);
+				});
+
 	}
 
 	public void removeAllScriptIntentionFromBot(@SecuredOperation("botAdm") final Chatbot bot) {
@@ -148,4 +161,11 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 		save(chatbot, (ScriptIntention) dtObject, topic);
 	}
 
+	@Override
+	public History record(Chatbot bot, ScriptIntention scriptIntention, HistoryActionEnum action) {
+		scriptIntention.topic().load();
+		Topic topic = scriptIntention.topic().get();
+		String message = topic.getKtoCd() + " - " + topic.getTitle();
+		return historyServices.record(bot, action, scriptIntention.getClass().getSimpleName(), message);
+	}
 }

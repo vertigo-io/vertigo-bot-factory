@@ -7,6 +7,7 @@ mda/chatbot/profileModel.ksp
 mda/chatbot/trainingModel.ksp
 mda/chatbot/unknownSentences.ksp
 mda/chatbot/topic/topicModel.ksp
+mda/chatbot/history.ksp
 
 admin/person.ksp
 

@@ -24,6 +24,7 @@
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'users'} ? 'active' : ''" 			flat th:label="#{layout.profil}" 		url="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}" 	th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"/>
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'models'} ? 'active' : ''" 			flat th:label="#{layout.model}" url="@{/bot/{id}/models/(id=${model.bot.botId})}" />
 		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'followup'} ? 'active' : ''" 			flat th:label="#{layout.followup}" 		url="@{/bot/{id}/followup/(id=${model.bot.botId})}" 	th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"/>
+		<vu:button-link disabled="${noNavigation == true}" class="${tab == 'history'} ? 'active' : ''" 			flat th:label="#{layout.history}" url="@{/bot/{id}/history/(id=${model.bot.botId})}" />
 	</div>
 	
 		<section layout:fragment="informations"></section>

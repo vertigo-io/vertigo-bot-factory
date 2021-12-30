@@ -37,6 +37,8 @@ import io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServic
 import io.vertigo.chatbot.designer.builder.services.topic.export.BotExportServices;
 import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.domain.History;
+import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
 import io.vertigo.chatbot.designer.utils.HttpRequestUtils;
 import io.vertigo.chatbot.designer.utils.ObjectConvertionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.TrainingFields;
@@ -78,7 +80,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Transactional
-public class TrainingServices implements Component {
+public class TrainingServices implements Component, IRecordable<Training> {
 
 	private static final String API_KEY = "apiKey";
 
@@ -111,6 +113,9 @@ public class TrainingServices implements Component {
 
 	@Inject
 	private JsonEngine jsonEngine;
+
+	@Inject
+	private HistoryServices historyServices;
 
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
@@ -180,6 +185,7 @@ public class TrainingServices implements Component {
 			training.setLog(logs.toString());
 			saveTraining(bot, training);
 		}
+		record(bot, training, HistoryActionEnum.ADDED);
 	}
 
 	public void deployTraining(final Chatbot bot, final Long savedTrainingId, final Long nodeId) {
@@ -404,4 +410,8 @@ public class TrainingServices implements Component {
 		return optionalTraining.isPresent() ? optionalTraining.get().getEndTime() : null;
 	}
 
+	@Override
+	public History record(Chatbot bot, Training training, HistoryActionEnum action) {
+		return historyServices.record(bot, action, training.getClass().getSimpleName(), "Version " + training.getVersionNumber());
+	}
 }

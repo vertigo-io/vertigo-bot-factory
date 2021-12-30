@@ -39,6 +39,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données Groups. */
 		Groups(io.vertigo.chatbot.designer.domain.commons.Groups.class),
+		/** Objet de données History. */
+		History(io.vertigo.chatbot.designer.domain.History.class),
+		/** Objet de données HistoryAction. */
+		HistoryAction(io.vertigo.chatbot.designer.domain.HistoryAction.class),
 		/** Objet de données KindTopic. */
 		KindTopic(io.vertigo.chatbot.commons.domain.topic.KindTopic.class),
 		/** Objet de données MediaFileInfo. */
@@ -303,6 +307,36 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		grpId,
 		/** Propriété 'Name'. */
 		name	}
+
+	/**
+	 * Enumération des champs de History.
+	 */
+	public enum HistoryFields implements DtFieldName<io.vertigo.chatbot.designer.domain.History> {
+		/** Propriété 'History id'. */
+		histId,
+		/** Propriété 'Date'. */
+		date,
+		/** Propriété 'Class name'. */
+		className,
+		/** Propriété 'Label'. */
+		message,
+		/** Propriété 'User'. */
+		userName,
+		/** Propriété 'Action'. */
+		hacCd,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de HistoryAction.
+	 */
+	public enum HistoryActionFields implements DtFieldName<io.vertigo.chatbot.designer.domain.HistoryAction> {
+		/** Propriété 'ID'. */
+		hacCd,
+		/** Propriété 'Title'. */
+		label,
+		/** Propriété 'TitleFr'. */
+		labelFr	}
 
 	/**
 	 * Enumération des champs de KindTopic.

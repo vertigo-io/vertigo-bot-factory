@@ -219,7 +219,7 @@
 				</vu:column>
 			</vu:table>
 			
-			<q-dialog ref="nodeEdit" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.nodeEdit">
+			<q-dialog ref="nodeEdit" th:if="${model.userAuthorizations[AtzSuperAdm]}" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.nodeEdit">
 				<q-card>
 					<q-card-section>
 						<div class="text-h6" th:text="#{bot.node.edition}"></div>
