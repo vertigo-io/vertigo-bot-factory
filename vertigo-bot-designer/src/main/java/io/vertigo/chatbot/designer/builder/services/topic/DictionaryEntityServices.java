@@ -1,22 +1,18 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources;
 import io.vertigo.chatbot.designer.builder.dictionaryEntity.DictionaryEntityPAO;
+import io.vertigo.chatbot.designer.builder.services.HistoryServices;
+import io.vertigo.chatbot.designer.builder.services.IRecordable;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.dao.DictionaryEntityDAO;
 import io.vertigo.chatbot.designer.domain.DictionaryEntity;
 import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
+import io.vertigo.chatbot.designer.domain.History;
+import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
 import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.chatbot.designer.domain.TupleSynonymIhm;
 import io.vertigo.chatbot.designer.utils.HashUtils;
@@ -29,6 +25,7 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
@@ -37,8 +34,15 @@ import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+
 @Transactional
-public class DictionaryEntityServices implements Component {
+public class DictionaryEntityServices implements Component, IRecordable<DictionaryEntity> {
 
 	@Inject
 	private DictionaryEntityDAO dictionaryEntityDAO;
@@ -57,6 +61,9 @@ public class DictionaryEntityServices implements Component {
 
 	@Inject
 	private FileServices fileServices;
+
+	@Inject
+	private HistoryServices historyServices;
 
 	public DictionaryEntityServices() {
 	}
@@ -93,6 +100,7 @@ public class DictionaryEntityServices implements Component {
 			}
 			synonymServices.save(synonym);
 		}
+		record(chatbot, dictionaryEntitySaved, creation ? HistoryActionEnum.ADDED : HistoryActionEnum.UPDATED);
 		return dictionaryEntitySaved;
 	}
 
@@ -108,6 +116,7 @@ public class DictionaryEntityServices implements Component {
 			final DtList<Synonym> synonyms,
 			final DtList<Synonym> synonymsToDelete) {
 
+		boolean isNew = DtObjectUtil.getId(dictionaryEntity) == null;
 		final DtList<Synonym> oldSynonyms = synonymServices.getAllSynonymByDictionaryEntity(findDictionaryEntityById(dictionaryEntity.getDicEntId()));
 		if (!synonymsToDelete.isEmpty() || !HashUtils.generateHashCodeForSynonyms(oldSynonyms).equals(HashUtils.generateHashCodeForSynonyms(synonyms))) {
 			nodeServices.updateNodes(chatbot);
@@ -116,6 +125,7 @@ public class DictionaryEntityServices implements Component {
 		synonymServices.removeSynonym(synonymsToDelete);
 
 		final DictionaryEntity dictionaryEntitySaved = dictionaryEntityDAO.save(dictionaryEntity);
+		record(chatbot, dictionaryEntitySaved, isNew ? HistoryActionEnum.ADDED : HistoryActionEnum.UPDATED);
 
 		return dictionaryEntitySaved;
 	}
@@ -127,7 +137,9 @@ public class DictionaryEntityServices implements Component {
 	 * @param dicEntId
 	 */
 	public void deleteDictionaryEntity(@SecuredOperation("botAdm") final Chatbot bot, final Long dicEntId) {
+		DictionaryEntity dictionaryEntity = dictionaryEntityDAO.get(dicEntId);
 		dictionaryEntityDAO.delete(dicEntId);
+		record(bot, dictionaryEntity, HistoryActionEnum.DELETED);
 	}
 
 	/**
@@ -326,4 +338,8 @@ public class DictionaryEntityServices implements Component {
 
 	}
 
+	@Override
+	public History record(Chatbot bot, DictionaryEntity dictionaryEntity, HistoryActionEnum action) {
+		return historyServices.record(bot, action, dictionaryEntity.getClass().getSimpleName(), dictionaryEntity.getLabel());
+	}
 }

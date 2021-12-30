@@ -6,7 +6,11 @@ import io.vertigo.chatbot.commons.dao.ContextValueDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ContextValue;
 import io.vertigo.chatbot.commons.multilingual.context.ContextValueMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.HistoryServices;
+import io.vertigo.chatbot.designer.builder.services.IRecordable;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.domain.History;
+import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
 import io.vertigo.chatbot.domain.DtDefinitions.ContextValueFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
@@ -24,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Transactional
-public class ContextValueServices implements Component {
+public class ContextValueServices implements Component, IRecordable<ContextValue> {
 
 	@Inject
 	private ContextValueDAO contextValueDAO;
@@ -32,6 +36,9 @@ public class ContextValueServices implements Component {
 	private JsonEngine jsonEngine;
 	@Inject
 	private NodeServices nodeServices;
+
+	@Inject
+	private HistoryServices historyServices;
 
 	/**
 	 * get ContextValue by id
@@ -51,16 +58,20 @@ public class ContextValueServices implements Component {
 	 */
 	public ContextValue save(@SecuredOperation("botAdm") final Chatbot bot, final ContextValue contextValue) {
 		checkPatternKey(contextValue.getXpath());
+		HistoryActionEnum action;
 		if (contextValue.getCvaId()!= null) {
+			action = HistoryActionEnum.UPDATED;
 			ContextValue oldContextValue = contextValueDAO.get(contextValue.getCvaId());
 			if (!oldContextValue.getLabel().equals(contextValue.getLabel()) || !oldContextValue.getXpath().equals(contextValue.getXpath())) {
 				nodeServices.updateNodes(bot);
 			}
 		} else {
+			action = HistoryActionEnum.ADDED;
 			nodeServices.updateNodes(bot);
 		}
-
-		return contextValueDAO.save(contextValue);
+		ContextValue savedContextValue = contextValueDAO.save(contextValue);
+		record(bot, savedContextValue, action);
+		return savedContextValue;
 
 	}
 
@@ -71,8 +82,10 @@ public class ContextValueServices implements Component {
 	 * @param cvaId
 	 */
 	public void deleteContextValue(@SecuredOperation("botAdm") final Chatbot bot, final Long cvaId) {
+		ContextValue contextValue = contextValueDAO.get(cvaId);
 		contextValueDAO.delete(cvaId);
 		nodeServices.updateNodes(bot);
+		record(bot, contextValue, HistoryActionEnum.DELETED);
 	}
 
 	public DtList<ContextValue> getAllContextValueByBotId(final Long botId) {
@@ -125,4 +138,8 @@ public class ContextValueServices implements Component {
 
 	}
 
+	@Override
+	public History record(Chatbot bot, ContextValue contextValue, HistoryActionEnum action) {
+		return historyServices.record(bot, action, contextValue.getClass().getSimpleName(), contextValue.getLabel());
+	}
 }

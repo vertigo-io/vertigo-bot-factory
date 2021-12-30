@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{templates/botDetailLayout}" th:with="tab=history"
+>
+
+    <head>
+        <title th:text="#{history.title}"></title>
+    </head>
+
+    <body>
+
+        <section layout:fragment="content">
+
+            <vu:table th:title="#{history.table.title}" list="historyList" componentId="historyList" sortBy="date" :binary-state-sort="true">
+                <vu:include-data object="historyList" field="date" />
+                <vu:include-data object="historyList" field="hacCd" />
+                <vu:include-data object="historyList" field="className" />
+                <vu:include-data object="historyList" field="message" />
+                <vu:include-data object="historyList" field="userName" />
+                <vu:column field="date"/>
+                <vu:column field="hacCd"/>
+                <vu:column field="className"/>
+                <vu:column field="message"/>
+                <vu:column field="userName"/>
+            </vu:table>
+        </section>
+    </body>
+</html>
