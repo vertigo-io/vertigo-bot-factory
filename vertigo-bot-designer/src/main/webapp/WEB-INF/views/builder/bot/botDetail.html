@@ -58,8 +58,8 @@
 		
 		<section layout:fragment="content">
 
-			<vu:popup action="_delete" vModel="showPopup" th:message=#{bot.popup.message} th:confirm=#{bot.delete}></vu:popup>
-			<vu:popup-ajax action="_deleteNode" vModel="showPopupNode" th:message="#{bot.popup.node.message}" th:confirm=#{bot.delete} dataName="nodId" successAction="'VUiPage.$refs.nodeEdit.hide'"></vu:popup-ajax>
+			<vu:popup action="_delete" vModel="showPopup" th:message="#{bot.popup.message}" th:confirm="#{bot.delete}"></vu:popup>
+			<vu:popup-ajax action="_deleteNode" vModel="showPopupNode" th:message="#{bot.popup.node.message}" th:confirm="#{bot.delete}" dataName="nodId" successAction="'VUiPage.$refs.nodeEdit.hide'"></vu:popup-ajax>
 			
 			<vu:block id="identity" th:title="#{bot.identity}">
 				<vu:text-field object="bot" field="name" th:if="${viewMode=='edit'}"/>
@@ -182,8 +182,8 @@
 				<vu:include-data object="chatbotCustomConfig" field="'*'" />
 				<q-toggle left-label th:label="#{bot.rating.activate}" v-model="vueData.chatbotCustomConfig.rating" th::disable="${model.modeReadOnly}"></q-toggle>
 				<input type="hidden" name="vContext[chatbotCustomConfig][rating]" :value="vueData.chatbotCustomConfig.rating" />
+				<div v-if="hasFieldsError('chatbotCustomConfig', 'ratingMessage')" class="text-red">{{getErrorMessage('chatbotCustomConfig', 'ratingMessage')}}</div>
 				<q-input v-model="vueData.chatbotCustomConfig.ratingMessage"  name="vContext[chatbotCustomConfig][ratingMessage]" th:label="#{bot.rating.message}" th::disable="${model.modeReadOnly}" />
-
 			</vu:block>
 			
 			<vu:include-data object="nodeNew" field="name" />

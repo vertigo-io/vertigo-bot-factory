@@ -162,6 +162,7 @@ public class ChatbotServices implements Component {
 		topicCategoryServices.removeAllCategoryByBot(bot);
 
 		chatbotProfilServices.deleteAllProfilByBot(bot);
+		chabotCustomConfigServices.deleteChatbotCustomConfig(bot);
 		chatbotDAO.delete(bot.getBotId());
 
 		// Delete avatar file reference in bot

@@ -162,7 +162,7 @@ create table CHATBOT_CUSTOM_CONFIG
 (
     CCC_ID      	 NUMERIC     	not null,
     RATING      	 bool        	not null,
-    RATING_MESSAGE	 VARCHAR(100)	not null,
+    RATING_MESSAGE	 VARCHAR(100)	,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
 );

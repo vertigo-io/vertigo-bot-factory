@@ -33,18 +33,19 @@ public class ChabotCustomConfigServices implements Component {
 		if (chatbotCustomConfig.getCccId() != null) {
 			ChatbotCustomConfig oldChatbotCustomConfig = chatbotCustomConfigDAO.get(chatbotCustomConfig.getCccId());
 			if (oldChatbotCustomConfig.getRating() != chatbotCustomConfig.getRating() ||
-					!oldChatbotCustomConfig.getRatingMessage().equals(chatbotCustomConfig.getRatingMessage())) {
+					(oldChatbotCustomConfig.getRatingMessage() != null && !oldChatbotCustomConfig.getRatingMessage().equals(chatbotCustomConfig.getRatingMessage()))) {
 				nodeServices.updateNodes(bot);
 			}
 		} else {
 			nodeServices.updateNodes(bot);
 		}
+		chatbotCustomConfig.setBotId(bot.getBotId());
 		return chatbotCustomConfigDAO.save(chatbotCustomConfig);
 	}
 
-	public void deleteChatbotCustomConfig(@SecuredOperation("botAdm") final Chatbot bot, final Long id) {
-		nodeServices.updateNodes(bot);
-		chatbotCustomConfigDAO.delete(id);
+	public void deleteChatbotCustomConfig(@SecuredOperation("botAdm") final Chatbot bot) {
+		ChatbotCustomConfig chatbotCustomConfig = getChatbotCustomConfigByBotId(bot.getBotId());
+		chatbotCustomConfigDAO.delete(chatbotCustomConfig.getCccId());
 	}
 
 	public ChatbotCustomConfig getChatbotCustomConfigByBotId(final Long botId) {

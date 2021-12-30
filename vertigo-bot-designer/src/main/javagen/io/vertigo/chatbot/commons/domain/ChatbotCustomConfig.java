@@ -81,9 +81,9 @@ public final class ChatbotCustomConfig implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Rating message'.
-	 * @return String ratingMessage <b>Obligatoire</b>
+	 * @return String ratingMessage
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Rating message")
+	@Field(smartType = "STyLabel", label = "Rating message")
 	public String getRatingMessage() {
 		return ratingMessage;
 	}
@@ -91,7 +91,7 @@ public final class ChatbotCustomConfig implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Rating message'.
-	 * @param ratingMessage String <b>Obligatoire</b>
+	 * @param ratingMessage String
 	 */
 	public void setRatingMessage(final String ratingMessage) {
 		this.ratingMessage = ratingMessage;

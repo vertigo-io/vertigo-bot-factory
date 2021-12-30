@@ -36,6 +36,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.utils.StringUtils;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.chatbot.domain.DtDefinitions.BotPredefinedTopicFields;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.datamodel.structure.definitions.DtField;
@@ -183,7 +184,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 			@ViewAttribute("failureTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic failureBotTopic,
 			@ViewAttribute("startTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic startBotTopic,
 			@ViewAttribute("endTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic endBotTopic,
-		 	@ViewAttribute("chatbotCustomConfig") final ChatbotCustomConfig chatbotCustomConfig) {
+		 	@ViewAttribute("chatbotCustomConfig")  @Validate(ChatbotCustomConfigValidator.class) final ChatbotCustomConfig chatbotCustomConfig) {
 
 		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, failureBotTopic, startBotTopic, endBotTopic, chatbotCustomConfig);
 
@@ -240,6 +241,23 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 			if (BotPredefinedTopicFields.value.name().equals(dtField.getName())) {
 				final String value = (String) dtField.getDataAccessor().getValue(botTopic);
 				if (StringUtils.isHtmlEmpty(value)) {
+					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné")); // TODO: use same i18n resource when avaiable in DefaultDtObjectValidator
+				}
+			}
+		}
+	}
+
+	/**
+	 * Check if value field is not empty or meaningless html.
+	 */
+	public static final class ChatbotCustomConfigValidator extends AbstractDtObjectValidator<ChatbotCustomConfig> {
+
+		/** {@inheritDoc} */
+		@Override
+		protected void checkMonoFieldConstraints(final ChatbotCustomConfig chatbotCustomConfig, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+			if (DtDefinitions.ChatbotCustomConfigFields.ratingMessage.name().equals(dtField.getName())) {
+				final String value = (String) dtField.getDataAccessor().getValue(chatbotCustomConfig);
+				if (StringUtils.isHtmlEmpty(value) && chatbotCustomConfig.getRating()) {
 					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné")); // TODO: use same i18n resource when avaiable in DefaultDtObjectValidator
 				}
 			}
