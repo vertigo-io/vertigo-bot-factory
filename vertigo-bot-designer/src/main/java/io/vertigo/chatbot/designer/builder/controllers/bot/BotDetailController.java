@@ -136,7 +136,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		newBotTopic(viewContext, KindTopicEnum.END.name(), endTopicKey);
 
 		viewContext.publishDtList(nodeListKey, new DtList<>(ChatbotNode.class));
-		viewContext.publishRef(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
+		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
 		initNodeEdit(viewContext);
 		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
