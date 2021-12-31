@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-  xmlns:vu="http://www.morphbit.com/thymeleaf/component"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{templates/rootLayout}">
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	  layout:decorate="~{templates/rootLayout}">
 
 	<section layout:fragment="page">
 	
@@ -91,8 +91,9 @@
 			</q-page-container>
 			
 			<div class="fixed-bottom-right version-watermark non-selectable">
+				<vu:include-data-primitive key="versionNumber" />
 	   			<div class="row items-center">
-					v1.1.0
+					{{vueData.versionNumber}}
 				</div>
 	 		</div>
 	 			
