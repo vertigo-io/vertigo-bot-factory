@@ -17,26 +17,30 @@
  */
 package io.vertigo.chatbot.designer.commons.controllers;
 
-import java.util.HashMap;
-
-import javax.inject.Inject;
-
-import org.springframework.web.bind.annotation.ModelAttribute;
-
 import io.vertigo.account.authorization.AuthorizationManager;
 import io.vertigo.account.authorization.definitions.AuthorizationName;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
+import io.vertigo.core.param.ParamManager;
 import io.vertigo.datamodel.structure.model.KeyConcept;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+import javax.inject.Inject;
+import java.util.HashMap;
 
 public abstract class AbstractDesignerController extends AbstractVSpringMvcController {
 
 	@Inject
 	private AuthorizationManager authorizationManager;
 
+	@Inject
+	private ParamManager paramManager;
+
 	private static final ViewContextKey<HashMap<String, Boolean>> userAuthorizationsKey = ViewContextKey.of("userAuthorizations");
+
+	private static final ViewContextKey<String> versionNumberKey = ViewContextKey.of("versionNumber");
 
 	private final HashMap<String, Boolean> userAuthorizations = new HashMap<>();
 
@@ -49,6 +53,11 @@ public abstract class AbstractDesignerController extends AbstractVSpringMvcContr
 			}
 			viewContext.publishRef(userAuthorizationsKey, userAuthorizations);
 		}
+	}
+
+	@ModelAttribute
+	public void initVersionNumber(final ViewContext viewContext) {
+		viewContext.publishRef(versionNumberKey, paramManager.getParam("VERSION").getValueAsString());
 	}
 
 	protected <K extends KeyConcept> void addKeyConceptSecurityToContext(final K keyConcept, final AuthorizationName[] authorizations) {
