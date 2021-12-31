@@ -42,13 +42,14 @@ create DtDefinition DtExecutorConfiguration {
 	field traId					{domain: DoId 						label: "Model ID" 						cardinality : "1"}
 	field modelName				{domain: DoLabel 					label: "Model name" 					cardinality : "1"}
 	field nluThreshold			{domain: DoPercentage 				label: "NLU Threshold" 					cardinality : "1"}
+	field avatar                {domain: DoText                     label: "Avatar"                         cardinality:  "?"}
 	field customConfig			{domain: DoText 					label: "Additional config for executor" cardinality : "1"}
 }
 
 create DtDefinition DtChatbotCustomConfig {
-	id cccId 		    {domain: DoId		    label: "Context value id"                       }
-	field rating		{domain: DoYesNo	    label: "Rating" 	            cardinality:"1" }
-	field ratingMessage {domain: DoLabel        label: "Rating message"         cardinality:"?"}
+	id cccId 		    {domain: DoId		        label: "Context value id"                           }
+	field rating		{domain: DoYesNo	        label: "Rating" 	            cardinality:"1"     }
+	field ratingMessage {domain: DoLabel            label: "Rating message"         cardinality:"?"     }
 }
 
 create Association AChatbotCustomConfigChatbot {

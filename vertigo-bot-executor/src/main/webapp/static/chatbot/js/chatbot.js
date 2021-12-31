@@ -126,6 +126,9 @@ const chatbot = new Vue({
                                 chatbot.convId = httpResponse.data.metadatas.sessionId;
                                 chatbot.customConfig.useRating = httpResponse.data.metadatas.customConfig.rating;
                                 chatbot.customConfig.ratingMessage = httpResponse.data.metadatas.customConfig.ratingMessage;
+                                if (httpResponse.data.metadatas.avatar) {
+                                    chatbot.botAvatar = "data:image/png;base64," + httpResponse.data.metadatas.avatar;
+                                }
                                 chatbot.updateSessionStorage();
                                 chatbot._handleResponse(httpResponse, false);
                             }).catch(() => {

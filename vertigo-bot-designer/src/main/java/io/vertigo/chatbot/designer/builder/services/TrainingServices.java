@@ -147,7 +147,7 @@ public class TrainingServices implements Component {
 	private void trainNode(Chatbot bot, Training training, ChatbotNode node, StringBuilder logs, BotExport botExport) {
 		try {
 			LogsUtils.addLogs(logs, "Executor configuration... ");
-			final ExecutorConfiguration execConfig = getExecutorConfig(training, node);
+			final ExecutorConfiguration execConfig = getExecutorConfig(bot, training, node);
 			LogsUtils.logOK(logs);
 
 			LogsUtils.addLogs(logs, "Bot export :");
@@ -277,7 +277,7 @@ public class TrainingServices implements Component {
 		return training;
 	}
 
-	private ExecutorConfiguration getExecutorConfig(final Training training, final ChatbotNode node) {
+	private ExecutorConfiguration getExecutorConfig(final Chatbot bot, final Training training, final ChatbotNode node) {
 		final Long botId = training.getBotId();
 
 		final ExecutorConfiguration result = new ExecutorConfiguration();
@@ -286,7 +286,10 @@ public class TrainingServices implements Component {
 		result.setTraId(training.getTraId());
 		result.setModelName("model " + training.getVersionNumber());
 		result.setNluThreshold(training.getNluThreshold());
-		ChatbotCustomConfig chatbotCustomConfig =  chatbotCustomConfigServices.getChatbotCustomConfigByBotId(training.getBotId());
+		if (bot.getFilIdAvatar() != null) {
+			result.setAvatar(fileServices.getFileAsBase64(bot.getFilIdAvatar()));
+		}
+		ChatbotCustomConfig chatbotCustomConfig =  chatbotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId());
 		result.setCustomConfig(jsonEngine.toJson(chatbotCustomConfig));
 		return result;
 	}

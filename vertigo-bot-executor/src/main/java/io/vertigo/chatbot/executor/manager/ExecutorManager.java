@@ -150,9 +150,13 @@ public class ExecutorManager implements Manager, Activeable {
 		final var botEngine = botManager.createBotEngine(newUUID);
 		botEngine.saveContext(input, executorConfigManager.getContextMap());
 		final var botResponse = botEngine.runTick(input);
-		analyticsSenderServices.sendEventStartToDb(executorConfigManager.getConfig().getExecutorConfiguration());
+		ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
+		analyticsSenderServices.sendEventStartToDb(executorConfiguration);
 		botResponse.getMetadatas().put("sessionId", newUUID);
-		botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class));
+		if (executorConfiguration.getAvatar() != null) {
+			botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
+		}
+		botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfiguration.getCustomConfig(), JsonElement.class));
 		return botResponse;
 	}
 

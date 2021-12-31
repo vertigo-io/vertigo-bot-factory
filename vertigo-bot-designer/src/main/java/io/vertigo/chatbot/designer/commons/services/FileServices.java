@@ -17,7 +17,6 @@
  */
 package io.vertigo.chatbot.designer.commons.services;
 
-import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -27,6 +26,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.MediaFileInfoDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.MediaFileInfo;
 import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
@@ -43,7 +43,9 @@ import io.vertigo.datastore.filestore.util.VFileUtil;
 import javax.inject.Inject;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -148,5 +150,18 @@ public class FileServices implements Component {
 		} catch (CsvValidationException csvValidationException) {
 			throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, csvValidationException.getMessage());
 		}
+	}
+
+	public String getFileAsBase64(Long id) {
+		try (InputStream fileInputStream = getMediaFileInfoById(id).getFileData().createInputStream()) {
+			return Base64.getEncoder().encodeToString(fileInputStream.readAllBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private MediaFileInfo getMediaFileInfoById(Long id) {
+		return mediaFileInfoDAO.get(id);
 	}
 }

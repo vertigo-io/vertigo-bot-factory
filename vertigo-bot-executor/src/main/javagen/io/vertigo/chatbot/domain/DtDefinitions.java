@@ -21,6 +21,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
 		/** Objet de données Chatbot. */
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
+		/** Objet de données ChatbotCustomConfig. */
+		ChatbotCustomConfig(io.vertigo.chatbot.commons.domain.ChatbotCustomConfig.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
 		/** Objet de données ExecutorConfiguration. */
@@ -86,6 +88,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		filIdAvatar	}
 
 	/**
+	 * Enumération des champs de ChatbotCustomConfig.
+	 */
+	public enum ChatbotCustomConfigFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotCustomConfig> {
+		/** Propriété 'Context value id'. */
+		cccId,
+		/** Propriété 'Rating'. */
+		rating,
+		/** Propriété 'Rating message'. */
+		ratingMessage,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
 	 * Enumération des champs de ContextValue.
 	 */
 	public enum ContextValueFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ContextValue> {
@@ -112,6 +127,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		modelName,
 		/** Propriété 'NLU Threshold'. */
 		nluThreshold,
+		/** Propriété 'Avatar'. */
+		avatar,
 		/** Propriété 'Additional config for executor'. */
 		customConfig	}
 
