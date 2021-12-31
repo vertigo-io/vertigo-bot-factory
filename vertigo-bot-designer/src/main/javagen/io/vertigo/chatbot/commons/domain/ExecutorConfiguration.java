@@ -18,6 +18,7 @@ public final class ExecutorConfiguration implements DtObject {
 	private Long traId;
 	private String modelName;
 	private java.math.BigDecimal nluThreshold;
+	private String avatar;
 	private String customConfig;
 	
 	/**
@@ -113,6 +114,25 @@ public final class ExecutorConfiguration implements DtObject {
 	 */
 	public void setNluThreshold(final java.math.BigDecimal nluThreshold) {
 		this.nluThreshold = nluThreshold;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Avatar'.
+	 * @return String avatar
+	 */
+	@Field(smartType = "STyText", label = "Avatar")
+	public String getAvatar() {
+		return avatar;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Avatar'.
+	 * @param avatar String
+	 */
+	public void setAvatar(final String avatar) {
+		this.avatar = avatar;
 	}
 	
 	/**

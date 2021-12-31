@@ -290,6 +290,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		modelName,
 		/** Propriété 'NLU Threshold'. */
 		nluThreshold,
+		/** Propriété 'Avatar'. */
+		avatar,
 		/** Propriété 'Additional config for executor'. */
 		customConfig	}
 

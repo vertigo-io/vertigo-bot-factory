@@ -168,6 +168,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldExecutorConfiguration$nluThreshold,
 	/**
+	 * Avatar.
+	 */
+	fldExecutorConfiguration$avatar,
+	/**
 	 * Additional config for executor.
 	 */
 	fldExecutorConfiguration$customConfig,
