@@ -2,9 +2,23 @@ package io.vertigo.chatbot.designer.builder.services.topic.export.file;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.*;
+import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
+import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TopicFileExport;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
-import io.vertigo.chatbot.designer.builder.services.topic.*;
+import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
+import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
+import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topicFileExport.TopicFileExportPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFileExportFields;
@@ -22,7 +36,11 @@ import io.vertigo.quarto.exporter.model.ExportFormat;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static io.vertigo.chatbot.designer.utils.StringUtils.errorManagement;
 
@@ -106,6 +124,7 @@ public class TopicFileExportServices implements Component {
 		final String[] columns = new String[] {
 				TopicFileExportFields.code.name(),
 				TopicFileExportFields.typeTopic.name(),
+				TopicFileExportFields.kindTopic.name(),
 				TopicFileExportFields.title.name(),
 				TopicFileExportFields.category.name(),
 				TopicFileExportFields.description.name(),
