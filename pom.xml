@@ -39,6 +39,7 @@
 		
 		<sonar.exclusions>**/javagen/**</sonar.exclusions>
 		<log4j.version>2.16.0</log4j.version>
+		<apache.common.version>3.12.0</apache.common.version>
 	</properties>
 	<modules>
 		<module>vertigo-bot-designer</module>

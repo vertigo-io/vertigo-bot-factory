@@ -1,14 +1,5 @@
 package io.vertigo.chatbot.engine;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.inject.Inject;
-
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bt.BehaviorTreeManager;
@@ -18,6 +9,16 @@ import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.commons.codec.CodecManager;
 import io.vertigo.core.lang.Assertion;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import javax.inject.Inject;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 
 public final class BotManagerImpl implements BotManager {
 	private final BlackBoardManager blackBoardManager;
@@ -85,10 +86,22 @@ public final class BotManagerImpl implements BotManager {
 			LogsUtils.logOK(logs);
 		}
 		LogsUtils.addLogs(logs, "Rasa training mapping ");
-		nluManager.train(nluTtrainingData, NluManager.DEFAULT_ENGINE_NAME); // the new NLU model is effectively running after this line
-		LogsUtils.logOK(logs);
-		// training ok, update state
+		if (!generateTopicDefinitionMapHash(topicDefinitionMap).equals(generateTopicDefinitionMapHash(topicDefinitionTempMap))) {
+			nluManager.train(nluTtrainingData, NluManager.DEFAULT_ENGINE_NAME); // the new NLU model is effectively running after this line
+			LogsUtils.logOK(logs);
+		} else {
+			LogsUtils.addLogs(logs, "Topic definition map is the same as before, no nlu training necessary.");
+		}
 		topicDefinitionMap = Collections.unmodifiableMap(topicDefinitionTempMap);
+	}
+
+	private String generateTopicDefinitionMapHash(final Map<String, TopicDefinition> topicDefinitionMap) {
+		HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(17, 37);
+		topicDefinitionMap.forEach((key, topicDefinition) -> {
+			hashCodeBuilder.append(key);
+			topicDefinition.getTrainingPhrases().forEach(hashCodeBuilder::append);
+		});
+		return Integer.toString(hashCodeBuilder.toHashCode());
 	}
 
 }
