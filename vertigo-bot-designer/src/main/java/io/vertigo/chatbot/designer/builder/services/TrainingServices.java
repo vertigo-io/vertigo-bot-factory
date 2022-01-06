@@ -79,6 +79,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
+
 @Transactional
 public class TrainingServices implements Component, IRecordable<Training> {
 
@@ -378,7 +381,7 @@ public class TrainingServices implements Component, IRecordable<Training> {
 	public DtList<Training> getAllTrainings(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return trainingDAO.findAll(
 				Criterions.isEqualTo(TrainingFields.botId, bot.getBotId()),
-				DtListState.of(1000, 0, TrainingFields.versionNumber.name(), true));
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE, 0, TrainingFields.versionNumber.name(), true));
 	}
 
 	public Training getTraining(@SecuredOperation("botVisitor") final Chatbot bot, final Long traId) {

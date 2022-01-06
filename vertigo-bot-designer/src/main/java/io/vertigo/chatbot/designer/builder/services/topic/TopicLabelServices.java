@@ -1,11 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.TopicLabelDAO;
@@ -21,6 +15,14 @@ import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 
 @Transactional
 @Secured("BotUser")
@@ -44,7 +46,7 @@ public class TopicLabelServices implements Component {
 	}
 
 	public DtList<TopicLabel> getTopicLabelByBotId(@SecuredOperation("botVisitor") final Chatbot bot) {
-		return topicLabelDAO.findAll(getBotCriteria(bot), DtListState.of(1000));
+		return topicLabelDAO.findAll(getBotCriteria(bot), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public DtList<TopicLabel> getTopicLabelByBotIdAndTopId(@SecuredOperation("botContributor") final Chatbot bot, final Long topId) {
@@ -110,7 +112,7 @@ public class TopicLabelServices implements Component {
 	}
 
 	private DtList<TopicLabel> getTopicLabelByBotId(final Long botId) {
-		return topicLabelDAO.findAll(Criterions.isEqualTo(TopicLabelFields.botId, botId), DtListState.of(1000));
+		return topicLabelDAO.findAll(Criterions.isEqualTo(TopicLabelFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	private TopicLabel save(final Long botId, final String label) {

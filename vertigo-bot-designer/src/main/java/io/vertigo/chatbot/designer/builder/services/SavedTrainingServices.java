@@ -17,6 +17,8 @@ import io.vertigo.datamodel.structure.util.VCollectors;
 import javax.inject.Inject;
 import java.time.LocalDate;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 @Transactional
 public class SavedTrainingServices implements Component {
 
@@ -37,7 +39,7 @@ public class SavedTrainingServices implements Component {
 	}
 
 	public DtList<SavedTraining> getAllSavedTrainingByBotId(final Long botId) {
-		return savedTrainingDAO.findAll(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.botId, botId), DtListState.of(100));
+		return savedTrainingDAO.findAll(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public SavedTraining getById(final Long savedTraId) {

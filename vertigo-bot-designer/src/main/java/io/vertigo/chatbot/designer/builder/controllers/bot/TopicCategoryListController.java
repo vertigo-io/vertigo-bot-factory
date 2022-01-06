@@ -1,12 +1,5 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
@@ -14,6 +7,14 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.inject.Inject;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/categories")
@@ -30,6 +31,7 @@ public class TopicCategoryListController extends AbstractBotListController<Topic
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtList(topicCategorieskKey, topicCategoryServices.getAllNonTechnicalCategoriesByBot(bot));
 		super.initBreadCrums(viewContext, TopicCategory.class);
+		listLimitReached(viewContext, uiMessageStack);
 	}
 
 }

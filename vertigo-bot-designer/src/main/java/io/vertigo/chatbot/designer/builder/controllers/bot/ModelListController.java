@@ -63,6 +63,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+
 @Controller
 @RequestMapping("/bot/{botId}/models")
 @Secured("BotUser")
@@ -111,7 +113,7 @@ public class ModelListController extends AbstractBotListController<Training> {
 		viewContext.publishRef(autoscrollKey, Boolean.TRUE);
 
 		refreshTrainerState(viewContext, bot, new TrainerInfo());
-		refreshTrainings(viewContext, bot);
+		refreshTrainings(viewContext, bot, uiMessageStack);
 		final Optional<Training> deployedTrainingOpt = trainingServices.getDeployedTraining(bot);
 		SavedTraining newSavedTraining = new SavedTraining();
 		if (deployedTrainingOpt.isPresent()) {
@@ -130,6 +132,7 @@ public class ModelListController extends AbstractBotListController<Training> {
 		viewContext.publishDto(criteriaKey, savedTrainingCriteria);
 
 		super.initBreadCrums(viewContext, Training.class);
+		listLimitReached(viewContext, uiMessageStack);
 		toModeReadOnly();
 	}
 
@@ -142,10 +145,11 @@ public class ModelListController extends AbstractBotListController<Training> {
 	}
 
 	@PostMapping("/_refreshTrainings")
-	public ViewContext refreshTrainings(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
+	public ViewContext refreshTrainings(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, final UiMessageStack uiMessageStack) {
 		viewContext.publishDtList(trainingListKey, trainingServices.getAllTrainings(bot));
 
 		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
+		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
 
@@ -212,6 +216,7 @@ public class ModelListController extends AbstractBotListController<Training> {
 
 	@PostMapping("/_saveTraining")
 	public ViewContext saveTraining(final ViewContext viewContext,
+									final UiMessageStack uiMessageStack,
 							 @ViewAttribute("bot") final Chatbot bot,
 							 @ViewAttribute("deployedTraining") final Training deployedTraining,
 							 @RequestParam("name") final String name,
@@ -225,20 +230,24 @@ public class ModelListController extends AbstractBotListController<Training> {
 		newSavedTraining.setBotExport(jsonEngine.toJson(trainingServices.exportBot(bot, new StringBuilder())));
 		savedTrainingServices.save(newSavedTraining);
 		viewContext.publishDtList(savedTrainingListKey, savedTrainingServices.getAllSavedTrainingByBotId(bot.getBotId()));
+		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
 
 	@PostMapping("/_refreshSavedTraining")
-	public ViewContext refreshSavedTraining(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
+	public ViewContext refreshSavedTraining(final ViewContext viewContext, final UiMessageStack uiMessageStack, @ViewAttribute("bot") final Chatbot bot) {
 		viewContext.publishDtList(savedTrainingListKey, savedTrainingServices.getAllSavedTrainingByBotId(bot.getBotId()));
+		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
 
 	@PostMapping("/_deleteSavedTraining")
-	public ViewContext deleteSavedTraining(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
+	public ViewContext deleteSavedTraining(final ViewContext viewContext, final UiMessageStack uiMessageStack,
+								   	@ViewAttribute("bot") final Chatbot bot,
 									@RequestParam("savedTraId") final Long savedTraId) {
 		savedTrainingServices.delete(savedTraId);
 		viewContext.publishDtList(savedTrainingListKey, savedTrainingServices.getAllSavedTrainingByBotId(bot.getBotId()));
+		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
 
@@ -253,10 +262,12 @@ public class ModelListController extends AbstractBotListController<Training> {
 
 	@PostMapping("/_filterSavedTraining")
 	public ViewContext filterSavedTraining(
-			final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
+			final ViewContext viewContext, final UiMessageStack uiMessageStack,
+			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("criteria") final SavedTrainingCriteria criteria) {
 
 		viewContext.publishDtList(savedTrainingListKey, savedTrainingServices.filter(bot, criteria));
+		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
 

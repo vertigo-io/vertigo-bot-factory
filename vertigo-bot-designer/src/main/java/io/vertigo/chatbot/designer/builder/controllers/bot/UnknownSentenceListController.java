@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.inject.Inject;
 import java.util.List;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+
 @Controller
 @RequestMapping("/bot/{botId}/followup")
 @Secured("BotUser")
@@ -65,7 +67,7 @@ public class UnknownSentenceListController extends AbstractBotListController<Unk
 		viewContext.publishDtList(topickKey, topicServices.getAllTopicByBot(bot));
 
 		viewContext.publishDtList(statusKey, unknownSentenceStatusServices.findAll());
-
+		listLimitReached(viewContext, uiMessageStack);
 		super.initBreadCrums(viewContext, UnknownSentenceDetail.class);
 		toModeReadOnly();
 	}
@@ -77,6 +79,7 @@ public class UnknownSentenceListController extends AbstractBotListController<Unk
 
 		topicServices.addTrainingSentence(bot,  jsonEngine.fromJson(unknownSentencesToUpdate, new TypeToken<List<UnknownSentenceToUpdateIhm>>(){}.getType()), topId);
 		viewContext.publishDtList(unknownSentenceListKey, unknownSentencesServices.findUnknownSentences(bot.getBotId()));
+		listLimitReached(viewContext, uiMessageStack);
 		this.nodeMessageDisplay(bot, uiMessageStack);
 		return viewContext;
 	}
@@ -86,6 +89,7 @@ public class UnknownSentenceListController extends AbstractBotListController<Unk
 											@RequestParam("unknownSentenceId") final Long unknownSentenceId) {
 		unknownSentencesServices.updateStatus(unknownSentencesServices.findById(unknownSentenceId), UnknownSentenceStatusEnum.REJECTED);
 		viewContext.publishDtList(unknownSentenceListKey, unknownSentencesServices.findUnknownSentences(bot.getBotId()));
+		listLimitReached(viewContext, uiMessageStack);
 		this.nodeMessageDisplay(bot, uiMessageStack);
 		return viewContext;
 	}
@@ -95,6 +99,7 @@ public class UnknownSentenceListController extends AbstractBotListController<Unk
 		DtList<UnknownSentenceDetail> unknownSentenceDetailDtList = unknownSentencesServices.findUnknownSentences(bot.getBotId());
 		viewContext.publishDtList(unknownSentenceListKey, unknownSentenceDetailDtList);
 		viewContext.publishDtList(unknownSentenceFilteredListKey, unknownSentenceDetailDtList);
+		listLimitReached(viewContext, uiMessageStack);
 		this.nodeMessageDisplay(bot, uiMessageStack);
 		return viewContext;
 	}

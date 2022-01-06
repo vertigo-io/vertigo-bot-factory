@@ -62,6 +62,8 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+
 @Controller
 @RequestMapping("/bot")
 public class BotDetailController extends AbstractBotCreationController<Chatbot> {
@@ -115,6 +117,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
 		super.initBreadCrums(viewContext, bot);
 		toModeReadOnly();
+		listLimitReached(viewContext, uiMessageStack);
 	}
 
 	private static void initNodeEdit(final ViewContext viewContext) {
@@ -128,7 +131,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	}
 
 	@GetMapping("/new")
-	public void initContext(final ViewContext viewContext) {
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack) {
 		initEmptyCommonContext(viewContext);
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 
@@ -141,6 +144,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		initNodeEdit(viewContext);
 		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
+		listLimitReached(viewContext, uiMessageStack);
 	}
 
 	private static void newBotTopic(final ViewContext viewContext, final String ktoCd, final ViewContextKey<BotPredefinedTopic> viewModelKey) {
@@ -194,7 +198,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	@PostMapping("/_saveNode")
 	@Secured("SuperAdm")
 	public ViewContext doSaveNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
-			@ViewAttribute("nodeEdit") final ChatbotNode nodeEdit) {
+			@ViewAttribute("nodeEdit") final ChatbotNode nodeEdit, final UiMessageStack uiMessageStack) {
 
 		//if the node has modification, it is flagged as not uptodate
 		if (nodeEdit.getNodId() != null) {
@@ -209,6 +213,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
 		viewContext.publishDto(nodeEditKey, new ChatbotNode()); // reset nodeEdit so previous values are not used for
 																// subsequent requests
+		listLimitReached(viewContext, uiMessageStack);
 
 		return viewContext;
 	}
@@ -216,11 +221,13 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	@PostMapping("/_deleteNode")
 	@Secured("SuperAdm")
 	public ViewContext doDeleteNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
-			@RequestParam("nodId") final Long nodId) {
+			@RequestParam("nodId") final Long nodId, final UiMessageStack uiMessageStack) {
 
 		nodeServices.deleteNode(nodId);
 
 		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
+
+		listLimitReached(viewContext, uiMessageStack);
 
 		return viewContext;
 	}

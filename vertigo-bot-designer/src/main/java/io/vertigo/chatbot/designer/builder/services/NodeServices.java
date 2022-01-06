@@ -1,9 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.AuthorizationManager;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
@@ -21,6 +17,11 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
+
+import javax.inject.Inject;
+import java.util.Optional;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 @Transactional
 @Secured("BotUser")
@@ -44,7 +45,7 @@ public class NodeServices implements Component {
 	}
 
 	public DtList<ChatbotNode> getAllNodesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, bot.getBotId()), DtListState.of(100));
+		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public Optional<ChatbotNode> getDevNodeByBotId(final Long botId) {

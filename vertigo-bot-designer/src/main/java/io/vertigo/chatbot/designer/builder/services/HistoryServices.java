@@ -15,6 +15,8 @@ import io.vertigo.datamodel.structure.model.DtListState;
 import javax.inject.Inject;
 import java.time.Instant;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 @Transactional
 public class HistoryServices implements Component {
 
@@ -26,7 +28,7 @@ public class HistoryServices implements Component {
 	}
 
 	public DtList<History> findAllByBotId (final Long botId) {
-		return historyDAO.findAll(Criterions.isEqualTo(DtDefinitions.HistoryFields.botId, botId), DtListState.of(1000));
+		return historyDAO.findAll(Criterions.isEqualTo(DtDefinitions.HistoryFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public History save (final History history) {

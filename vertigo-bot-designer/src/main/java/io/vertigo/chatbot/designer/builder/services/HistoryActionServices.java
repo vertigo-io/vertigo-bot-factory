@@ -10,6 +10,8 @@ import io.vertigo.datamodel.structure.model.DtListState;
 
 import javax.inject.Inject;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 @Transactional
 public class HistoryActionServices implements Component {
 
@@ -21,6 +23,6 @@ public class HistoryActionServices implements Component {
 	}
 
 	public DtList<HistoryAction> findAll() {
-		return historyActionDAO.findAll(Criterions.alwaysTrue(), DtListState.of(1000));
+		return historyActionDAO.findAll(Criterions.alwaysTrue(), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 }

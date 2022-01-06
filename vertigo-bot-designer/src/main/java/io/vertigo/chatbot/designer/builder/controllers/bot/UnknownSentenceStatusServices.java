@@ -10,6 +10,8 @@ import io.vertigo.datamodel.structure.model.DtListState;
 
 import javax.inject.Inject;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 @Transactional
 public class UnknownSentenceStatusServices implements Component {
 
@@ -21,7 +23,7 @@ public class UnknownSentenceStatusServices implements Component {
 	}
 
 	public DtList<UnknownSentenceStatus> findAll() {
-		return unknownSentenceStatusDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
+		return unknownSentenceStatusDAO.findAll(Criterions.alwaysTrue(), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 }

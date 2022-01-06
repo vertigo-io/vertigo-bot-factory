@@ -1,9 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.dao.SynonymDAO;
@@ -17,6 +13,12 @@ import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
+
+import javax.inject.Inject;
+import java.util.Optional;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 
 @Transactional
 public class SynonymServices implements Component {
@@ -37,7 +39,7 @@ public class SynonymServices implements Component {
 	}
 
 	public DtList<Synonym> getAllSynonymByBot(@SecuredOperation("botAdm") final Chatbot bot) {
-		return synonymDAO.findAll(Criterions.isEqualTo(SynonymFields.botId, bot.getBotId()), DtListState.of(1000));
+		return synonymDAO.findAll(Criterions.isEqualTo(SynonymFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public DtList<Synonym> getAllSynonymByDictionaryEntity(@SecuredOperation("botVisitor") final DictionaryEntity dictionaryEntity) {

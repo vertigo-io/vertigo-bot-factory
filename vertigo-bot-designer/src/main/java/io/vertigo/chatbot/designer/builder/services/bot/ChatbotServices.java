@@ -42,6 +42,9 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
+
 @Transactional
 @Secured("BotUser")
 public class ChatbotServices implements Component {
@@ -181,7 +184,7 @@ public class ChatbotServices implements Component {
 
 	@Secured("SuperAdm")
 	public DtList<Chatbot> getAllChatbots() {
-		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
+		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	@Secured("SuperAdm")

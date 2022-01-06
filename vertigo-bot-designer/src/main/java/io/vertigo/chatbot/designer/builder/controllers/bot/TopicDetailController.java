@@ -3,11 +3,29 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.*;
+import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.ResponseType;
+import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
+import io.vertigo.chatbot.commons.domain.topic.SmallTalkWrapper;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
-import io.vertigo.chatbot.designer.builder.services.topic.*;
+import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
+import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
+import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
@@ -24,10 +42,16 @@ import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
 import java.util.stream.Collectors;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/topics/detail")
@@ -126,6 +150,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 
         super.initBreadCrums(viewContext, topic);
+        listLimitReached(viewContext, uiMessageStack);
         toModeReadOnly();
     }
 
@@ -147,6 +172,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
         viewContext.publishDtListModifiable(buttonsKey, new DtList<>(ResponseButton.class));
         super.initEmptyBreadcrums(viewContext);
+        listLimitReached(viewContext, uiMessageStack);
         toModeCreate();
     }
 
@@ -271,20 +297,22 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
     @PostMapping("/_addTrainingSentence")
     public ViewContext doAddTrainingSentence(final ViewContext viewContext,
                                              @ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentenceIn,
-                                             @ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
+                                             @ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
+                                             final UiMessageStack uiMessageStack) {
 
         nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentenceIn, nluTrainingSentences);
 
         viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluTrainingSentences);
         viewContext.publishRef(newNluTrainingSentenceKey, "");
-
+        listLimitReached(viewContext, uiMessageStack);
         return viewContext;
     }
 
     @PostMapping("/_editTrainingSentence")
     public ViewContext doEditTrainingSentence(final ViewContext viewContext, @RequestParam("index") final int index,
                                               @ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
-                                              @ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
+                                              @ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
+                                              final UiMessageStack uiMessageStack) {
 
         if (StringUtil.isBlank(newNluTrainingSentence)) {
             // empty edit, rollback modification
@@ -303,6 +331,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         }
 
         viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluTrainingSentences);
+        listLimitReached(viewContext, uiMessageStack);
 
         return viewContext;
     }
@@ -310,7 +339,8 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
     @PostMapping("/_removeTrainingSentence")
     public ViewContext doRemoveTrainingSentence(final ViewContext viewContext, @RequestParam("index") final int index,
                                                 @ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-                                                @ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences) {
+                                                @ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
+                                                final UiMessageStack uiMessageStack) {
 
         // remove from list
         final NluTrainingSentence removed = nluTrainingSentences.remove(index);
@@ -321,6 +351,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
             nluTrainingSentencesToDelete.add(removed);
         }
         viewContext.publishDtList(nluTrainingSentencesToDeleteKey, nluTrainingSentencesToDelete);
+        listLimitReached(viewContext, uiMessageStack);
 
         return viewContext;
     }
