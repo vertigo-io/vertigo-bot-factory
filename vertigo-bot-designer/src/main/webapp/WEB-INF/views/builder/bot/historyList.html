@@ -8,18 +8,148 @@
 
     <head>
         <title th:text="#{history.title}"></title>
+        <script th:src="@{/static/utils/moment.min.js}"></script>
+        <script th:inline="javascript">
+
+            function closeDialog() {
+                VUiPage.$refs.popupFromDate.hide();
+                VUiPage.$refs.popupToDate.hide();
+            }
+
+            function normalizeString(str) {
+                if (str)
+                    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                else
+                    return '';
+            }
+
+            function filterHistory() {
+                VertigoUi.vueData.historyListFiltered = VertigoUi.vueData.historyList
+
+                if (VertigoUi.componentStates.historyActions.selectedAction.hacCd !== null)  {
+                    VertigoUi.vueData.historyListFiltered = VertigoUi.vueData.historyListFiltered.slice().reverse().filter(history =>
+                        history.hacCd === VertigoUi.componentStates.historyActions.selectedAction.hacCd
+                    );
+                }
+
+                if (VertigoUi.vueData.criteria.fromDate !== null && VertigoUi.vueData.criteria.fromDate !== '') {
+                    let dateFrom = moment(VertigoUi.vueData.criteria.fromDate, 'DD/MM/YYYY');
+                    VertigoUi.vueData.historyListFiltered = VertigoUi.vueData.historyListFiltered.slice().reverse().filter(history => {
+                        let historyDate = moment(history.date.substr(0,10), 'DD/MM/YYYY');
+                        return historyDate.isSameOrAfter(dateFrom);
+                    });
+                }
+
+                if (VertigoUi.vueData.criteria.toDate !== null && VertigoUi.vueData.criteria.toDate !== '') {
+                    let toDate = moment(VertigoUi.vueData.criteria.toDate, 'DD/MM/YYYY');
+                    VertigoUi.vueData.historyListFiltered = VertigoUi.vueData.historyListFiltered.slice().reverse().filter(history => {
+                        let historyDate = moment(history.date.substr(0,10), 'DD/MM/YYYY');
+                        return historyDate.isSameOrBefore(toDate);
+                    });
+                }
+
+                let searchNormarlized = normalizeString(VertigoUi.componentStates.search.searchText.value);
+                if (searchNormarlized !==''){
+                    VertigoUi.vueData.historyListFiltered =  VertigoUi.vueData.historyListFiltered
+                        // copy and reverse
+                        .slice().reverse()
+                        // search
+                        .filter(history => normalizeString(history.className).includes(searchNormarlized) ||
+                            normalizeString(history.userName).includes(searchNormarlized) || normalizeString(history.message).includes(searchNormarlized))
+                }
+            }
+
+        </script>
     </head>
 
     <body>
 
         <section layout:fragment="content">
 
-            <vu:table th:title="#{history.table.title}" list="historyList" componentId="historyList" sortBy="date" :binary-state-sort="true">
-                <vu:include-data object="historyList" field="date" />
-                <vu:include-data object="historyList" field="hacCd" />
-                <vu:include-data object="historyList" field="className" />
-                <vu:include-data object="historyList" field="message" />
-                <vu:include-data object="historyList" field="userName" />
+            <vu:table th:title="#{history.table.title}" list="historyListFiltered" componentId="historyList" sortBy="date" :binary-state-sort="true">
+                <vu:slot name="top_right_slot">
+                    <vu:include-data object="criteria" field="'*'" />
+                    <vu:include-data object="historyActions" field="'*'" />
+                    <vu:include-data-primitive key="locale"/>
+                    <q-select
+                            th:attr="dataObject=${model.vContext['componentStates'].addComponentState('historyActions').addObject('selectedAction', {hacCd: null})}"
+                            style="width: 250px; margin-right: 10px"
+                            clearable
+                            filled
+                            map-options
+                            emit-value
+                            v-model="componentStates.historyActions.selectedAction.hacCd"
+                            :options="vueData.locale == 'fr_FR' ? transformListForSelection('historyActions', 'hacCd', 'labelFr') : transformListForSelection('historyActions', 'hacCd', 'label') "
+                            th:label="#{history.selection.action}"
+                            @input="filterHistory();"
+                            stack-label>
+                    </q-select>
+
+                    <q-input
+                            v-bind:value="decodeDate('criteria', 'fromDate', 'DD/MM/YYYY')"
+                            dense clearable
+                            class="q-pa-none"
+                            style="width: 200px;background-color: white; margin-right: 10px;"
+                            @change="function (event) { encodeDate('criteria','fromDate', event.target.value, 'DD/MM/YYYY') }"
+                            th:label="#{history.date.from}"
+                            :error="hasFieldsError('criteria', 'fromDate')"
+                            :error-message="getErrorMessage('criteria', 'fromDate')"
+                            @clear="vueData.criteria.fromDate=null;filterHistory();"
+                    >
+                        <template v-slot:prepend>
+                            <q-icon name="event" class="cursor-pointer">
+                                <q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupFromDate">
+                                    <q-date
+                                            v-model="vueData.criteria.fromDate"
+                                            landscape
+                                            mask="DD/MM/YYYY"
+                                            @input="closeDialog();filterHistory();"></q-date>
+                                </q-popup-proxy>
+                            </q-icon>
+                        </template>
+                    </q-input>
+                    <input type="hidden" name="vContext[criteria][fromDate]" v-bind:value="vueData.criteria.fromDate" />
+
+                    <q-input
+                            v-bind:value="decodeDate('criteria', 'toDate', 'DD/MM/YYYY')"
+                            dense clearable
+                            class="q-pa-none"
+                            style="width: 200px;background-color: white"
+                            @change="function (event) { encodeDate('criteria','toDate', event.target.value, 'DD/MM/YYYY') }"
+                            th:label="#{history.date.to}"
+                            :error="hasFieldsError('criteria', 'toDate')"
+                            :error-message="getErrorMessage('criteria', 'toDate')"
+                            @clear="vueData.criteria.toDate=null;filterHistory();"
+                    >
+                        <template v-slot:prepend>
+                            <q-icon name="event" class="cursor-pointer">
+                                <q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupToDate">
+                                    <q-date
+                                            v-model="vueData.criteria.toDate"
+                                            landscape
+                                            mask="DD/MM/YYYY"
+                                            @input="closeDialog();filterHistory();"></q-date>
+                                </q-popup-proxy>
+                            </q-icon>
+                        </template>
+                    </q-input>
+
+
+
+                    <q-input style="margin-right:10px; margin-left: 10px;" borderless dense debounce="300" v- @input="filterHistory();" th:v-model="VertigoUi.componentStates.search.searchText.value"
+                             th:attr="dataObject=${model.vContext['componentStates'].addComponentState('search').addObject('searchText', {value: ''})}"
+                             th:placeholder="#{history.search}">
+                        <template v-slot:append>
+                            <q-icon name="search" />
+                        </template>
+                    </q-input>
+                </vu:slot>
+                <vu:include-data object="historyList" field="'*'" />
+                <vu:include-data object="historyListFiltered" field="date" />
+                <vu:include-data object="historyListFiltered" field="hacCd" />
+                <vu:include-data object="historyListFiltered" field="className" />
+                <vu:include-data object="historyListFiltered" field="message" />
+                <vu:include-data object="historyListFiltered" field="userName" />
                 <vu:column field="date"/>
                 <vu:column field="hacCd"/>
                 <vu:column field="className"/>

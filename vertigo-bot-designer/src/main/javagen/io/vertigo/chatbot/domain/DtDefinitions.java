@@ -43,6 +43,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		History(io.vertigo.chatbot.designer.domain.History.class),
 		/** Objet de données HistoryAction. */
 		HistoryAction(io.vertigo.chatbot.designer.domain.HistoryAction.class),
+		/** Objet de données HistoryCriteria. */
+		HistoryCriteria(io.vertigo.chatbot.designer.domain.HistoryCriteria.class),
 		/** Objet de données KindTopic. */
 		KindTopic(io.vertigo.chatbot.commons.domain.topic.KindTopic.class),
 		/** Objet de données MediaFileInfo. */
@@ -337,6 +339,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'TitleFr'. */
 		labelFr	}
+
+	/**
+	 * Enumération des champs de HistoryCriteria.
+	 */
+	public enum HistoryCriteriaFields implements DtFieldName<io.vertigo.chatbot.designer.domain.HistoryCriteria> {
+		/** Propriété 'From'. */
+		fromDate,
+		/** Propriété 'To'. */
+		toDate	}
 
 	/**
 	 * Enumération des champs de KindTopic.
