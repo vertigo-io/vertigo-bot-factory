@@ -17,14 +17,6 @@
  */
 package io.vertigo.chatbot.designer.admin.controllers;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
 import io.vertigo.chatbot.designer.domain.commons.Person;
@@ -35,6 +27,15 @@ import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.inject.Inject;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/person")
@@ -49,12 +50,13 @@ public class PersonDetailController extends AbstractDesignerController {
 	public static final ViewContextKey<Boolean> IS_LAST_ADMIN = ViewContextKey.of("isLastAdmin");
 
 	@GetMapping("/{perId}")
-	public void initContext(final ViewContext viewContext, @PathVariable("perId") final Long perId) {
+	public void initContext(final ViewContext viewContext, @PathVariable("perId") final Long perId, final UiMessageStack uiMessageStack) {
 		final Person person = personServices.getPersonById(perId);
 		viewContext.publishDto(personKey, person);
 		viewContext.publishRef(IS_SAME_USER_KEY, isPersonConnected(person));
 		viewContext.publishMdl(ROLES_CONTEXT_KEY, PersonRole.class, null); // all
 		viewContext.publishRef(IS_LAST_ADMIN, isLastAdmin(person));
+		listLimitReached(viewContext, uiMessageStack);
 		toModeReadOnly();
 	}
 

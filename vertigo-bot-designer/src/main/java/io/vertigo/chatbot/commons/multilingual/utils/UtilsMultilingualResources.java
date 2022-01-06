@@ -8,6 +8,8 @@ public enum UtilsMultilingualResources implements MessageKey {
 
 	SEND_REQUEST_ERROR,
 
-	SEND_REQUEST_ERROR_WITH_PARAMS
+	SEND_REQUEST_ERROR_WITH_PARAMS,
+
+	LIST_TOO_BIG
 
 }

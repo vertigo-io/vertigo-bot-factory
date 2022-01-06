@@ -44,6 +44,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
+
 @Transactional
 public class TopicServices implements Component, Activeable {
 
@@ -192,15 +195,15 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	public DtList<Topic> getAllTopicByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, bot.getBotId()), DtListState.of(1000));
+		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public DtList<Topic> getAllTopicByBotId(final Long botId) {
-		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, botId), DtListState.of(1000));
+		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public DtList<Topic> getAllTopicByBotTtoCd(@SecuredOperation("botVisitor") final Chatbot bot, final String ttoCd) {
-		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, bot.getBotId()).and(Criterions.isEqualTo(TopicFields.ttoCd, ttoCd)), DtListState.of(1000));
+		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, bot.getBotId()).and(Criterions.isEqualTo(TopicFields.ttoCd, ttoCd)), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public DtList<Topic> getAllNonTechnicalTopicAndActiveByBotTtoCd(@SecuredOperation("botVisitor") final Chatbot bot, final String ttoCd) {
@@ -209,11 +212,11 @@ public class TopicServices implements Component, Activeable {
 						.and(Criterions.isEqualTo(TopicFields.isEnabled, true))
 						.and(Criterions.isEqualTo(TopicFields.ttoCd, ttoCd)
 								.and(Criterions.isEqualTo(TopicFields.ktoCd, KindTopicEnum.NORMAL.name()))),
-				DtListState.of(1000));
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public DtList<Topic> getAllTopicEnableByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, bot.getBotId()).and(Criterions.isEqualTo(TopicFields.isEnabled, true)), DtListState.of(1000));
+		return topicDAO.findAll(Criterions.isEqualTo(TopicFields.botId, bot.getBotId()).and(Criterions.isEqualTo(TopicFields.isEnabled, true)), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public void removeAllTopicsFromBot(@SecuredOperation("botAdm") final Chatbot bot) {
@@ -352,7 +355,7 @@ public class TopicServices implements Component, Activeable {
 
 		return nluTrainingSentenceDAO.findAll(
 				Criterions.isEqualTo(NluTrainingSentenceFields.topId, topic.getTopId()),
-				DtListState.of(1000, 0, NluTrainingSentenceFields.ntsId.name(), false));
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE, 0, NluTrainingSentenceFields.ntsId.name(), false));
 	}
 
 	public void removeNTS(final DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {

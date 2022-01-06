@@ -17,19 +17,6 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
@@ -39,7 +26,6 @@ import io.vertigo.chatbot.commons.domain.topic.TopicFileExport;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
@@ -51,13 +37,20 @@ import io.vertigo.core.lang.VUserException;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
-import io.vertigo.datastore.filestore.util.VFileUtil;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import liquibase.util.csv.CSVReader;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.inject.Inject;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/topics")
@@ -100,6 +93,7 @@ public class TopicsListController extends AbstractBotListController<Topic> {
 		viewContext.publishRef(topIdDetailKey, "");
 		viewContext.publishRef(topicImportKey, "");
 		super.initBreadCrums(viewContext, Topic.class);
+		listLimitReached(viewContext, uiMessageStack);
 		toModeReadOnly();
 	}
 

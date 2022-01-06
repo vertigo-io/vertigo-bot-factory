@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.inject.Inject;
 import java.time.LocalDate;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+
 @Controller
 @RequestMapping("/bot/{botId}/history")
 @Secured("BotUser")
@@ -45,6 +47,7 @@ public class HistoryListController extends AbstractBotListController<History> {
 		criteria.setToDate(LocalDate.now());
 		viewContext.publishDto(historyCriteriaKey, criteria);
 		viewContext.publishDtList(historyActionsKey, historyActionServices.findAll());
+		listLimitReached(viewContext, uiMessageStack);
 		super.initBreadCrums(viewContext, History.class);
 	}
 }

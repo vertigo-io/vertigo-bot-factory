@@ -17,19 +17,6 @@
  */
 package io.vertigo.chatbot.designer.analytics.controllers;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
@@ -64,6 +51,20 @@ import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.inject.Inject;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/analytics")
@@ -112,9 +113,10 @@ public class AnalyticsController extends AbstractDesignerController {
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext,
-			@RequestParam("botId") final Optional<Long> botId,
-			@RequestParam("nodId") final Optional<Long> nodId,
-			@RequestParam("time") final Optional<TimeOption> timeOption) {
+							@RequestParam("botId") final Optional<Long> botId,
+							@RequestParam("nodId") final Optional<Long> nodId,
+							@RequestParam("time") final Optional<TimeOption> timeOption,
+							final UiMessageStack uiMessageStack) {
 		viewContext.publishDtList(botsKey, chatbotServices.getMySupervisedChatbots());
 		viewContext.publishDtList(nodesKey, new DtList<ChatbotNode>(ChatbotNode.class));
 
@@ -136,15 +138,16 @@ public class AnalyticsController extends AbstractDesignerController {
 
 		updateGraph(viewContext, statCriteria);
 
+		listLimitReached(viewContext, uiMessageStack);
 		toModeEdit();
 	}
 
 	@PostMapping("/_updateStats")
 	public ViewContext doUpdateStats(final ViewContext viewContext,
-			@ViewAttribute("criteria") final StatCriteria criteria) {
+			@ViewAttribute("criteria") final StatCriteria criteria, final UiMessageStack uiMessageStack) {
 
 		updateGraph(viewContext, criteria);
-
+		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
 
@@ -184,10 +187,10 @@ public class AnalyticsController extends AbstractDesignerController {
 	@PostMapping("/_intentDetails")
 	public ViewContext doGetIntentDetails(final ViewContext viewContext,
 			@ViewAttribute("criteria") final StatCriteria criteria,
-			@RequestParam("intentRasa") final String intentRasa) {
+			@RequestParam("intentRasa") final String intentRasa, final UiMessageStack uiMessageStack) {
 
 		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.text, analyticsServices.getKnownSentensesDetail(criteria, intentRasa));
-
+		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
 

@@ -28,6 +28,9 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
+
 @Transactional
 @Secured("BotUser")
 public class ChatbotProfilServices implements Component, IRecordable<ProfilPerChatbot> {
@@ -79,7 +82,7 @@ public class ChatbotProfilServices implements Component, IRecordable<ProfilPerCh
 	 * @return the list of users
 	 */
 	public DtList<Person> getAllUsers(@SecuredOperation("botAdm") final Chatbot chatbot) {
-		return personDAO.findAll(Criterions.isEqualTo(PersonFields.rolCd, PersonRoleEnum.RUser.name()), DtListState.of(100));
+		return personDAO.findAll(Criterions.isEqualTo(PersonFields.rolCd, PersonRoleEnum.RUser.name()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public void deleteProfilForChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final PersonChatbotProfil persToDelete) {
@@ -90,7 +93,7 @@ public class ChatbotProfilServices implements Component, IRecordable<ProfilPerCh
 
 	public DtList<ProfilPerChatbot> getProfilByPerId() {
 		final Long perId = UserSessionUtils.getLoggedPerson().getPerId();
-		return profilPerChatbotDAO.findAll(Criterions.isEqualTo(ProfilPerChatbotFields.perId, perId), DtListState.of(100));
+		return profilPerChatbotDAO.findAll(Criterions.isEqualTo(ProfilPerChatbotFields.perId, perId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public void deleteAllProfilByBot(@SecuredOperation("botAdm") final Chatbot bot) {

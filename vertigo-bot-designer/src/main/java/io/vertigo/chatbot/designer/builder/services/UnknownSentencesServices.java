@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 @Transactional
 public class UnknownSentencesServices implements Component, Activeable {
 
@@ -99,7 +101,7 @@ public class UnknownSentencesServices implements Component, Activeable {
 	}
 
 	private DtList<UnknownSentenceDetail> findAllByBotId(Long botId) {
-		return unknownSentenceDetailDAO.findAll(Criterions.isEqualTo(DtDefinitions.UnknownSentenceDetailFields.botId, botId), DtListState.of(100));
+		return unknownSentenceDetailDAO.findAll(Criterions.isEqualTo(DtDefinitions.UnknownSentenceDetailFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	/**

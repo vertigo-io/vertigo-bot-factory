@@ -17,6 +17,8 @@ import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+
 @Controller
 @RequestMapping("/bot/{botId}/contextList")
 @Secured("botAdm")
@@ -33,6 +35,7 @@ public class ContextListController extends AbstractBotListController<ContextValu
 		viewContext.publishDtList(contextValuesKey, contextValueServices.getAllContextValueByBotId(botId));
 
 		super.initBreadCrums(viewContext, ContextValue.class);
+		listLimitReached(viewContext, uiMessageStack);
 	}
 
 	@PostMapping("/createContextValue")

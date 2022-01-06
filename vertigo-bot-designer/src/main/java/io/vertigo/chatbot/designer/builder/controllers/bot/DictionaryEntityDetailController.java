@@ -42,6 +42,8 @@ import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+
 @Controller
 @RequestMapping("/bot/{botId}/dictionaryEntity")
 @Secured("BotAdm")
@@ -83,6 +85,7 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 				new DtList<Synonym>(Synonym.class));
 		super.initBreadCrums(viewContext, dictionaryEntity);
 		toModeReadOnly();
+		listLimitReached(viewContext, uiMessageStack);
 	}
 
 	@PostMapping("/_edit")
@@ -116,12 +119,13 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 	@PostMapping("/_addSynonym")
 	public ViewContext doAddSynonym(final ViewContext viewContext,
 			@ViewAttribute("newSynonym") final String newSynonymIn,
-			@ViewAttribute("synonyms") final DtList<Synonym> synonyms) {
+			@ViewAttribute("synonyms") final DtList<Synonym> synonyms, final UiMessageStack uiMessageStack) {
 
 		addSynonym(newSynonymIn, synonyms);
 
 		viewContext.publishDtListModifiable(synonymsKey, synonyms);
 		viewContext.publishRef(newSynonymKey, "");
+		listLimitReached(viewContext, uiMessageStack);
 
 		return viewContext;
 	}
@@ -130,7 +134,7 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 	public ViewContext doEditSynonym(final ViewContext viewContext,
 			@RequestParam("index") final int index,
 			@ViewAttribute("newSynonym") final String newSynonym,
-			@ViewAttribute("synonyms") final DtList<Synonym> synonyms) {
+			@ViewAttribute("synonyms") final DtList<Synonym> synonyms, final UiMessageStack uiMessageStack) {
 
 		if (StringUtil.isBlank(newSynonym)) {
 			// empty edit, rollback modification
@@ -149,6 +153,7 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 		}
 
 		viewContext.publishDtListModifiable(synonymsKey, synonyms);
+		listLimitReached(viewContext, uiMessageStack);
 
 		return viewContext;
 	}
@@ -156,7 +161,7 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 	@PostMapping("/_removeSynonym")
 	public ViewContext doRemoveSynonym(final ViewContext viewContext, @RequestParam("index") final int index,
 			@ViewAttribute("synonymsToDelete") final DtList<Synonym> synonymsToDelete,
-			@ViewAttribute("synonyms") final DtList<Synonym> synonyms) {
+			@ViewAttribute("synonyms") final DtList<Synonym> synonyms, final UiMessageStack uiMessageStack) {
 
 		// remove from list
 		final Synonym removed = synonyms.remove(index);
@@ -167,6 +172,7 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 			synonymsToDelete.add(removed);
 		}
 		viewContext.publishDtList(synonymsToDeleteKey, synonymsToDelete);
+		listLimitReached(viewContext, uiMessageStack);
 
 		return viewContext;
 	}

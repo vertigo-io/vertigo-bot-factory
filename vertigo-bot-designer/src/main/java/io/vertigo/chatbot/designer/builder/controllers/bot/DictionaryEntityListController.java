@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+
 @Controller
 @RequestMapping("/bot/{botId}/dictionary")
 @Secured("botAdm")
@@ -39,6 +41,7 @@ public class DictionaryEntityListController extends AbstractBotListController<Di
 		viewContext.publishDto(dictionaryEntityEditKey, new DictionaryEntity());
 		viewContext.publishDto(synonymEditKey, new Synonym());
 		super.initBreadCrums(viewContext, DictionaryEntity.class);
+		listLimitReached(viewContext, uiMessageStack);
 	}
 
 	@PostMapping("/saveDictionaryEntity")
@@ -56,11 +59,12 @@ public class DictionaryEntityListController extends AbstractBotListController<Di
 	@PostMapping("/_deleteDictionaryEntity")
 	@Secured("botAdm")
 	public ViewContext doDeleteDictionaryEntity(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
-												@RequestParam("dicEntId") final Long dicEntId) {
+												@RequestParam("dicEntId") final Long dicEntId, final UiMessageStack uiMessageStack) {
 
 		dictionaryEntityServices.deleteDictionaryEntity(bot, dicEntId);
 
 		viewContext.publishDtList(dictionaryEntityWrappersKey, dictionaryEntityServices.getDictionaryExportByBotId(bot.getBotId(), "; "));
+		listLimitReached(viewContext, uiMessageStack);
 
 		return viewContext;
 	}
