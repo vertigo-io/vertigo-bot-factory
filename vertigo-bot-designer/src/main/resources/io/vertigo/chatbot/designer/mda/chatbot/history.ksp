@@ -12,6 +12,11 @@ create DtDefinition DtHistory {
 	field userName		            {domain: DoLabel	    label: "User" 	            cardinality:  "1"   }
 }
 
+create DtDefinition DtHistoryCriteria {
+    field fromDate		    {domain: DoLocaldate 				label: "From"		 		            }
+	field toDate		    {domain: DoLocaldate				label: "To" 				            }
+}
+
 create DtDefinition DtHistoryAction {
 	stereotype : "StaticMasterData"
 	id    hacCd 		{domain: DoCode 	label: "ID"}

@@ -89,6 +89,18 @@ public enum DtResources implements MessageKey {
 	fldHistoryAction$labelFr,
 
 	/***********************************************************
+	/** HistoryCriteria.
+	/***********************************************************
+	/**
+	 * From.
+	 */
+	fldHistoryCriteria$fromDate,
+	/**
+	 * To.
+	 */
+	fldHistoryCriteria$toDate,
+
+	/***********************************************************
 	/** Synonym.
 	/***********************************************************
 	/**
