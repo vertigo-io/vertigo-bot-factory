@@ -17,6 +17,7 @@ public final class BotExport implements DtObject {
 	private String welcomeBT;
 	private String endBT;
 	private String fallbackBT;
+	private String idleBT;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.TopicExport.class);
 	private String mapContext;
 	
@@ -94,6 +95,25 @@ public final class BotExport implements DtObject {
 	 */
 	public void setFallbackBT(final String fallbackBT) {
 		this.fallbackBT = fallbackBT;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'idle BT'.
+	 * @return String idleBT <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "idle BT")
+	public String getIdleBT() {
+		return idleBT;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'idle BT'.
+	 * @param idleBT String <b>Obligatoire</b>
+	 */
+	public void setIdleBT(final String idleBT) {
+		this.idleBT = idleBT;
 	}
 	
 	/**

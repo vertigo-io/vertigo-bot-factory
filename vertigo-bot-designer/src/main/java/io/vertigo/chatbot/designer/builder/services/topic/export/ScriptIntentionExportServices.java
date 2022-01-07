@@ -1,12 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
@@ -19,6 +12,12 @@ import io.vertigo.chatbot.domain.DtDefinitions.ScriptIntentionFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Transactional
 public class ScriptIntentionExportServices implements TopicExportInterfaceServices<ScriptIntention>, Component {
@@ -56,7 +55,7 @@ public class ScriptIntentionExportServices implements TopicExportInterfaceServic
 
 	@Override
 	public String getBasicBt(final Chatbot bot, final String ktoCd) {
-		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
+		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd).orElseThrow();
 		final ScriptIntention scriptIntention = scriptIntentionServices.findByTopId(topic.getTopId()).orElseThrow();
 		return scriptIntention.getScript();
 	}

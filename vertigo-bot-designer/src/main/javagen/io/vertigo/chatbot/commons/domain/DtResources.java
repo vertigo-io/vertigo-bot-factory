@@ -28,6 +28,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$fallbackBT,
 	/**
+	 * idle BT.
+	 */
+	fldBotExport$idleBT,
+	/**
 	 * topics export.
 	 */
 	fldBotExport$topics,

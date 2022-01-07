@@ -44,6 +44,7 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.basicCommand("topic:start", (c, p) -> BotNodeProvider.switchTopicStart(getBB(p))),
 				BtCommandParserDefinition.basicCommand("topic:fallback", (c, p) -> BotNodeProvider.switchTopicFallback(getBB(p))),
 				BtCommandParserDefinition.basicCommand("topic:end", (c, p) -> BotNodeProvider.switchTopicEnd(getBB(p))),
+				BtCommandParserDefinition.basicCommand("topic:idle", (c, p) -> BotNodeProvider.switchTopicIdle(getBB(p))),
 				BtCommandParserDefinition.compositeCommand("random", (c, p, l) -> BotNodeProvider.random(l)),
 				BtCommandParserDefinition.basicCommand("inputString", (c, p) -> {
 					final var optFirstChoice = c.getOptStringParam(2);

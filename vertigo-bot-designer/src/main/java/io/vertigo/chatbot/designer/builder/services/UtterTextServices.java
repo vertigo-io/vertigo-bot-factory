@@ -120,6 +120,9 @@ public class UtterTextServices implements Component {
 			case "END":
 				return MessageText.of(KindTopicMultilingualResources.DEFAULT_END).getDisplay();
 
+			case "IDLE":
+				return MessageText.of(KindTopicMultilingualResources.DEFAULT_IDLE).getDisplay();
+
 			default:
 				return "";
 		}

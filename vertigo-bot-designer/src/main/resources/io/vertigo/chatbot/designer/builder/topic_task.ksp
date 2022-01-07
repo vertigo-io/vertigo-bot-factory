@@ -170,7 +170,7 @@ create Task TkGetBasicTopicByBotIdKtoCd {
              "
 	in botId  				{domain : DoId         		cardinality : "1"  }
 	in ktoCd  				{domain : DoCode         	cardinality : "1"  }
-	out topic				{domain : DoDtTopic,		cardinality : "1"  } 
+	out topic				{domain : DoDtTopic,		cardinality : "?"  }
 }
 
 create Task TkGetTopicReferencingTopId {  

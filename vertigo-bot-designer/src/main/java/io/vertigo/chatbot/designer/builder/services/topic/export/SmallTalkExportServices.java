@@ -1,14 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
@@ -24,6 +15,14 @@ import io.vertigo.chatbot.designer.domain.topic.export.UtterTextExport;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 @Transactional
 public class SmallTalkExportServices implements TopicExportInterfaceServices<SmallTalk>, Component {
@@ -118,7 +117,7 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Sma
 		if (utter.getIsEnd()) {
 			bt.append("topic:end");
 		} else if (!KindTopicEnum.END.name().equals(utter.getKtoCd())) {
-			bt.append("topic:start");
+			bt.append("topic:idle");
 		}
 		BtBuilderUtils.addLineBreak(bt);
 		return bt.toString();
@@ -156,7 +155,7 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Sma
 
 	@Override
 	public String getBasicBt(final Chatbot bot, final String ktoCd) {
-		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
+		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd).orElseThrow();
 		final SmallTalk smallTalk = smallTalkServices.findByTopId(topic.getTopId()).orElseThrow();
 		final UtterText utterText = smallTalkServices.getBasicUtterTextByTopId(topic.getTopId());
 		final UtterTextExport utterTextExport = new UtterTextExport();

@@ -89,6 +89,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	private static final ViewContextKey<BotPredefinedTopic> startTopicKey = ViewContextKey.of("startTopic");
 	private static final ViewContextKey<BotPredefinedTopic> failureTopicKey = ViewContextKey.of("failureTopic");
 	private static final ViewContextKey<BotPredefinedTopic> endTopicKey = ViewContextKey.of("endTopic");
+	private static final ViewContextKey<BotPredefinedTopic> idleTopicKey = ViewContextKey.of("idleTopic");
 
 	private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
 
@@ -112,6 +113,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		loadBotTopic(bot, viewContext, KindTopicEnum.FAILURE.name(), failureTopicKey);
 		loadBotTopic(bot, viewContext, KindTopicEnum.START.name(), startTopicKey);
 		loadBotTopic(bot, viewContext, KindTopicEnum.END.name(), endTopicKey);
+		loadBotTopic(bot, viewContext, KindTopicEnum.IDLE.name(), idleTopicKey);
 
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
@@ -138,6 +140,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		newBotTopic(viewContext, KindTopicEnum.FAILURE.name(), failureTopicKey);
 		newBotTopic(viewContext, KindTopicEnum.START.name(), startTopicKey);
 		newBotTopic(viewContext, KindTopicEnum.END.name(), endTopicKey);
+		newBotTopic(viewContext, KindTopicEnum.IDLE.name(), idleTopicKey);
 
 		viewContext.publishDtList(nodeListKey, new DtList<>(ChatbotNode.class));
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
@@ -148,24 +151,32 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	}
 
 	private static void newBotTopic(final ViewContext viewContext, final String ktoCd, final ViewContextKey<BotPredefinedTopic> viewModelKey) {
-		final BotPredefinedTopic botTopic = new BotPredefinedTopic();
-		botTopic.setValue(UtterTextServices.initializeDefaultText(ktoCd));
-		botTopic.setTtoCd("SMALLTALK");
-
+		final BotPredefinedTopic botTopic = createNewBotTopic(ktoCd);
 		viewContext.publishDto(viewModelKey, botTopic);
 	}
 
-	private void loadBotTopic(final Chatbot bot, final ViewContext viewContext, final String ktoCd, final ViewContextKey<BotPredefinedTopic> viewModelKey) {
-		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
-		BotPredefinedTopic predefinedTopic = null;
+	private static BotPredefinedTopic createNewBotTopic(String ktoCd) {
+		final BotPredefinedTopic botTopic = new BotPredefinedTopic();
+		botTopic.setValue(UtterTextServices.initializeDefaultText(ktoCd));
+		if (ktoCd.equals(KindTopicEnum.IDLE.name())) {
+			botTopic.setTtoCd("SCRIPTINTENTION");
+		} else {
+			botTopic.setTtoCd("SMALLTALK");
+		}
+		return botTopic;
+	}
+
+	private void loadBotTopic(final Chatbot bot, final ViewContext viewContext, final String ktoCd,
+							  final ViewContextKey<BotPredefinedTopic> viewModelKey) {
+		Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd)
+				.orElseGet(() -> chatbotServices.saveBotTopic(bot, ktoCd, createNewBotTopic(ktoCd)));
 
 		for (final ITopicService<? extends Entity> services : topicInterfaceServices) {
 			if (services.handleObject(topic)) {
-				predefinedTopic = services.getBotPredefinedTopicByTopId(topic.getTopId());
+				viewContext.publishDto(viewModelKey, services.getBotPredefinedTopicByTopId(topic.getTopId()));
 			}
 		}
 
-		viewContext.publishDto(viewModelKey, predefinedTopic);
 	}
 
 	@PostMapping("/_edit")
@@ -188,9 +199,10 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 			@ViewAttribute("failureTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic failureBotTopic,
 			@ViewAttribute("startTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic startBotTopic,
 			@ViewAttribute("endTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic endBotTopic,
+		 	@ViewAttribute("idleTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic idleBotTopic,
 		 	@ViewAttribute("chatbotCustomConfig")  @Validate(ChatbotCustomConfigValidator.class) final ChatbotCustomConfig chatbotCustomConfig) {
 
-		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, failureBotTopic, startBotTopic, endBotTopic, chatbotCustomConfig);
+		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, failureBotTopic, startBotTopic, endBotTopic, idleBotTopic, chatbotCustomConfig);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();
 	}

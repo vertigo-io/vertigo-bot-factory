@@ -1,15 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.TopicExport;
@@ -23,6 +13,15 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Transactional
 public class TopicExportServices implements Component, Activeable {
@@ -57,7 +56,7 @@ public class TopicExportServices implements Component, Activeable {
 
 	public String getBasicBt(final Chatbot bot, final String ktoCd, final StringBuilder logs) {
 		LogsUtils.addLogs(logs, ktoCd, " topic export...");
-		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
+		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd).orElseThrow();
 		String basicBt = null;
 		for (final TopicExportInterfaceServices services : topicExportInterfaceServices) {
 			if (services.handleObject(topic)) {
