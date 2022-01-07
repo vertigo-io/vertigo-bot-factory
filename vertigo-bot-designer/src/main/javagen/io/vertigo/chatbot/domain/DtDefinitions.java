@@ -167,6 +167,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		endBT,
 		/** Propriété 'fallback BT'. */
 		fallbackBT,
+		/** Propriété 'idle BT'. */
+		idleBT,
 		/** Propriété 'topics export'. */
 		topics,
 		/** Propriété 'map Context'. */

@@ -8,6 +8,7 @@ import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
@@ -92,6 +93,7 @@ public class ChatbotServices implements Component {
 			final BotPredefinedTopic botTopicFailure,
 			final BotPredefinedTopic botTopicStart,
 			final BotPredefinedTopic botTopicEnd,
+		   	final BotPredefinedTopic botTopicIdle,
 		   	final ChatbotCustomConfig chatbotCustomConfig) {
 
 		Assertion.check()
@@ -101,7 +103,8 @@ public class ChatbotServices implements Component {
 				.isNotNull(botTopicEnd)
 				.isFalse(StringUtils.isHtmlEmpty(botTopicFailure.getValue()), "Failure text must have content")
 				.isFalse(StringUtils.isHtmlEmpty(botTopicStart.getValue()), "Start text must have content")
-				.isFalse(StringUtils.isHtmlEmpty(botTopicEnd.getValue()), "End text must have content");
+				.isFalse(StringUtils.isHtmlEmpty(botTopicEnd.getValue()), "End text must have content")
+				.isFalse(StringUtils.isHtmlEmpty(botTopicIdle.getValue()), "Idle text must have content");
 		// ---
 
 		final boolean newBot = chatbot.getBotId() == null;
@@ -143,9 +146,17 @@ public class ChatbotServices implements Component {
 		//Topic End
 		topicServices.saveBotTopic(savedChatbot, topicCategory, KindTopicEnum.END.name(), botTopicEnd);
 
+		//Topic Idle
+		topicServices.saveBotTopic(savedChatbot, topicCategory, KindTopicEnum.IDLE.name(), botTopicIdle);
+
 		chabotCustomConfigServices.save(savedChatbot, chatbotCustomConfig);
 
 		return savedChatbot;
+	}
+
+	public Topic saveBotTopic(Chatbot bot, String ktoCd, BotPredefinedTopic botTopic) {
+		TopicCategory topicCategory = topicCategoryServices.getTechnicalCategoryByBot(bot);
+		return topicServices.saveBotTopic(bot, topicCategory, ktoCd, botTopic);
 	}
 
 	public Boolean deleteChatbot(@SecuredOperation("botAdm") final Chatbot bot) {

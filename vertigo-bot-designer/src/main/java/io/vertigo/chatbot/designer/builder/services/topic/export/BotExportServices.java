@@ -1,7 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -9,6 +7,8 @@ import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
+
+import javax.inject.Inject;
 
 @Transactional
 public class BotExportServices implements Component {
@@ -28,6 +28,7 @@ public class BotExportServices implements Component {
 		export.setFallbackBT(topicExportServices.getBasicBt(bot, KindTopicEnum.FAILURE.name(), logs));
 		export.setEndBT(topicExportServices.getBasicBt(bot, KindTopicEnum.END.name(), logs));
 		export.setWelcomeBT(topicExportServices.getBasicBt(bot, KindTopicEnum.START.name(), logs));
+		export.setIdleBT(topicExportServices.getBasicBt(bot, KindTopicEnum.IDLE.name(), logs));
 		export.setMapContext(contextValueServices.exportContextValuesToMapByBot(bot, logs));
 		return export;
 	}

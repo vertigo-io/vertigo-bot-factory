@@ -116,7 +116,7 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
 	 * Execute la tache TkGetBasicTopicByBotIdKtoCd.
 	 * @param botId Long
 	 * @param ktoCd String
-	 * @return Topic topic
+	 * @return Option de Topic topic
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetBasicTopicByBotIdKtoCd",
@@ -126,14 +126,14 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
  "			and top.kto_cd = #ktoCd#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
-	public io.vertigo.chatbot.commons.domain.topic.Topic getBasicTopicByBotIdKtoCd(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCd", smartType = "STyCode") final String ktoCd) {
+	public Optional<io.vertigo.chatbot.commons.domain.topic.Topic> getBasicTopicByBotIdKtoCd(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCd", smartType = "STyCode") final String ktoCd) {
 		final Task task = createTaskBuilder("TkGetBasicTopicByBotIdKtoCd")
 				.addValue("botId", botId)
 				.addValue("ktoCd", ktoCd)
 				.build();
-		return getTaskManager()
+		return Optional.ofNullable((io.vertigo.chatbot.commons.domain.topic.Topic) getTaskManager()
 				.execute(task)
-				.getResult();
+				.getResult());
 	}
 
 	/**

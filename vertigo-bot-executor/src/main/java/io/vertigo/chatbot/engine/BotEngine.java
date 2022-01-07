@@ -1,15 +1,5 @@
 package io.vertigo.chatbot.engine;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.bb.BlackBoard;
@@ -29,6 +19,16 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.lang.VSystemException;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * Bot engine that handle user interactions through a Vertigo BlackBoard.
  * <br>
@@ -47,6 +47,7 @@ public class BotEngine {
 	public static final String START_TOPIC_NAME = "!START";
 	public static final String END_TOPIC_NAME = "!END";
 	public static final String FALLBACK_TOPIC_NAME = "!FALLBACK";
+	public static final String IDLE_TOPIC_NAME = "!IDLE";
 	public static final String ANALYTICS_KEY = "analytics";
 	public static final String CONTEXT_KEY = "context";
 
@@ -81,7 +82,8 @@ public class BotEngine {
 				.isNotNull(topicDefinitionMap)
 				.isNotNull(behaviorTreeManager)
 				.isNotNull(nluManager)
-				.isTrue(topicDefinitionMap.containsKey(START_TOPIC_NAME), "You need to provide a starting topic with key BotEngine.START_TOPIC_NAME");
+				.isTrue(topicDefinitionMap.containsKey(START_TOPIC_NAME), "You need to provide a starting topic with key BotEngine.START_TOPIC_NAME")
+				.isTrue(topicDefinitionMap.containsKey(IDLE_TOPIC_NAME), "You need to provide an idle topic with key BotEngine.IDLE_TOPIC_NAME");
 		// ---
 		bb = blackBoard;
 		this.topicDefinitionMap = topicDefinitionMap;
@@ -118,6 +120,9 @@ public class BotEngine {
 
 			// exec
 			status = behaviorTreeManager.run(topic.getBtRoot(List.of(bb)));
+			if (!bb.exists(BOT_NEXT_TOPIC_KEY) && !checkIfExpectingInput() && checkTopicIsNotStartEndOrIdle(topic)) {
+				status = behaviorTreeManager.run(topicDefinitionMap.get(IDLE_TOPIC_NAME).getBtRoot(List.of(bb)));
+			}
 
 			if (bb.exists(BOT_NEXT_TOPIC_KEY)) {
 				final var nextTopicName = bb.getString(BOT_NEXT_TOPIC_KEY);
@@ -149,6 +154,15 @@ public class BotEngine {
 
 		botResponseBuilder.addMetadata(ANALYTICS_KEY, analyticsToSend);
 		return botResponseBuilder.build();
+	}
+
+	private boolean checkIfExpectingInput() {
+		return bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/text/key")) || bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/button/key"))
+				|| bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/nlu/key"));
+	}
+
+	private boolean checkTopicIsNotStartEndOrIdle(TopicDefinition topic) {
+		return !topic.getCode().equals(IDLE_TOPIC_NAME) && !topic.getCode().equals(START_TOPIC_NAME) && !topic.getCode().equals(END_TOPIC_NAME);
 	}
 
 	private static String getKeyName(final BBKey key) {

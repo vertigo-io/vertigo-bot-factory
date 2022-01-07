@@ -62,6 +62,12 @@ create DtDefinition DtKindTopic {
             "label" : "Unreachable",
             "description" : "Unreachable",
             "defaultText" : "Text"
+        },
+         "IDLE" : {
+            "ktoCd" : "IDLE",
+            "label" : "Idle",
+            "description" : "Idle",
+            "defaultText" : "Something else ?"
         }
 
      }`

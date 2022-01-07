@@ -52,6 +52,7 @@
 			<q-item tag="a" href="#welcome" th:text="#{bot.welcome}"></q-item>
 			<q-item tag="a" href="#fallback" th:text="#{bot.fallback}"></q-item>
 			<q-item tag="a" href="#end" th:text="#{bot.end}"></q-item>
+			<q-item tag="a" href="#idle" th:text="#{bot.idle}"></q-item>
 			<q-item tag="a" href="#rating" th:text="#{bot.rating}"></q-item>
 			<q-item th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" tag="a" href="#nodes" th:text="#{bot.nodes}"></q-item>
 		</section>
@@ -177,6 +178,17 @@
 				</div>
 				
 				<div v-if="hasFieldsError('endTopic', 'value')" class="text-red">{{getErrorMessage('endTopic', 'value')}}</div>
+			</vu:block>
+			<vu:block id="idle" th:title="#{bot.idle}">
+				<vu:include-data object="idleTopic" field="'*'" />
+				<c-codemirror
+						object="idleTopic"
+						field="value"
+						:error="hasFieldsError('idleTopic', 'value')"
+						th::mode-edit="${!model.modeReadOnly}">
+				</c-codemirror>
+
+				<div v-if="hasFieldsError('idleTopic', 'value')" class="text-red">{{getErrorMessage('idleTopic', 'value')}}</div>
 			</vu:block>
 			<vu:block id="rating" th:title="#{bot.rating}">
 				<vu:include-data object="chatbotCustomConfig" field="'*'" />

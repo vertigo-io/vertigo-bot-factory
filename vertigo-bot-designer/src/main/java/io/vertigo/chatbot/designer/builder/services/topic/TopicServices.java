@@ -235,7 +235,7 @@ public class TopicServices implements Component, Activeable {
 		return topicDAO.getAllTopicRelativeScriptIntentByBotId(bot.getBotId());
 	}
 
-	public Topic getBasicTopicByBotIdKtoCd(final Long botId, final String ktoCd) {
+	public Optional<Topic> getBasicTopicByBotIdKtoCd(final Long botId, final String ktoCd) {
 		return topicDAO.getBasicTopicByBotIdKtoCd(botId, ktoCd);
 	}
 
@@ -255,7 +255,11 @@ public class TopicServices implements Component, Activeable {
 		final KindTopic kto = kindTopicServices.findKindTopicByCd(ktoCd);
 		topic.setIsEnabled(true);
 		topic.setTitle(kto.getLabel());
-		topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
+		if (ktoCd.equals(KindTopicEnum.IDLE.name())) {
+			topic.setTtoCd(TypeTopicEnum.SCRIPTINTENTION.name());
+		} else {
+			topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
+		}
 		topic.setKtoCd(ktoCd);
 		topic.setDescription(kto.getDescription());
 		topic.setCode(ktoCd);
@@ -263,7 +267,7 @@ public class TopicServices implements Component, Activeable {
 
 	}
 
-	public void saveBotTopic(final Chatbot chatbot, final TopicCategory topicCategory, final String ktoCd, final BotPredefinedTopic botTopic) {
+	public Topic saveBotTopic(final Chatbot chatbot, final TopicCategory topicCategory, final String ktoCd, final BotPredefinedTopic botTopic) {
 		final Topic topic;
 		if (botTopic.getTopId() == null) {
 			topic = initNewBasicTopic(ktoCd);
@@ -283,6 +287,7 @@ public class TopicServices implements Component, Activeable {
 				service.deleteIfExists(chatbot, topic);
 			}
 		}
+		return topic;
 
 	}
 
