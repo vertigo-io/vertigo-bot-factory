@@ -59,6 +59,8 @@ drop sequence IF EXISTS SEQ_UNKNOWN_SENTENCE_DETAIL;
 drop table IF EXISTS UNKNOWN_SENTENCE_STATUS cascade;
 drop table IF EXISTS UTTER_TEXT cascade;
 drop sequence IF EXISTS SEQ_UTTER_TEXT;
+drop table IF EXISTS WELCOME_TOUR cascade;
+drop sequence IF EXISTS SEQ_WELCOME_TOUR;
 
 
 
@@ -86,7 +88,7 @@ create sequence SEQ_GROUPS
 	start with 1000 cache 20; 
 
 create sequence SEQ_HISTORY
-	start with 1000 cache 20; 
+	start with 1000 cache 20;
 
 
 
@@ -108,7 +110,7 @@ create sequence SEQ_RESPONSE_BUTTON
 
 
 create sequence SEQ_SAVED_TRAINING
-	start with 1000 cache 20; 
+	start with 1000 cache 20;
 
 create sequence SEQ_SCRIPT_INTENTION
 	start with 1000 cache 20; 
@@ -135,11 +137,14 @@ create sequence SEQ_TRAINING
 
 
 create sequence SEQ_UNKNOWN_SENTENCE_DETAIL
-	start with 1000 cache 20; 
+	start with 1000 cache 20;
 
 
 create sequence SEQ_UTTER_TEXT
 	start with 1000 cache 20; 
+
+create sequence SEQ_WELCOME_TOUR
+	start with 1000 cache 20;
 
 
 -- ============================================================
@@ -323,7 +328,7 @@ comment on column GROUPS.NAME is
 'Name';
 
 -- ============================================================
---   Table : HISTORY                                        
+--   Table : HISTORY
 -- ============================================================
 create table HISTORY
 (
@@ -359,7 +364,7 @@ comment on column HISTORY.BOT_ID is
 'Chatbot';
 
 -- ============================================================
---   Table : HISTORY_ACTION                                        
+--   Table : HISTORY_ACTION
 -- ============================================================
 create table HISTORY_ACTION
 (
@@ -579,7 +584,7 @@ comment on column RESPONSE_TYPE.SORT_ORDER is
 'Order';
 
 -- ============================================================
---   Table : SAVED_TRAINING                                        
+--   Table : SAVED_TRAINING
 -- ============================================================
 create table SAVED_TRAINING
 (
@@ -895,7 +900,7 @@ comment on column TYPE_TOPIC.LABEL_FR is
 'TitleFr';
 
 -- ============================================================
---   Table : UNKNOWN_SENTENCE_DETAIL                                        
+--   Table : UNKNOWN_SENTENCE_DETAIL
 -- ============================================================
 create table UNKNOWN_SENTENCE_DETAIL
 (
@@ -927,7 +932,7 @@ comment on column UNKNOWN_SENTENCE_DETAIL.BOT_ID is
 'Bot';
 
 -- ============================================================
---   Table : UNKNOWN_SENTENCE_STATUS                                        
+--   Table : UNKNOWN_SENTENCE_STATUS
 -- ============================================================
 create table UNKNOWN_SENTENCE_STATUS
 (
@@ -965,6 +970,30 @@ comment on column UTTER_TEXT.TEXT is
 
 comment on column UTTER_TEXT.SMT_ID is
 'SmallTalk';
+
+-- ============================================================
+--   Table : WELCOME_TOUR
+-- ============================================================
+create table WELCOME_TOUR
+(
+    WEL_ID      	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    TECHNICAL_CODE	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_WELCOME_TOUR primary key (WEL_ID)
+);
+
+comment on column WELCOME_TOUR.WEL_ID is
+'Welcome tour id';
+
+comment on column WELCOME_TOUR.LABEL is
+'Label';
+
+comment on column WELCOME_TOUR.TECHNICAL_CODE is
+'Technical code';
+
+comment on column WELCOME_TOUR.BOT_ID is
+'Chatbot';
 
 
 alter table CHATBOT_CUSTOM_CONFIG
@@ -1176,6 +1205,12 @@ alter table UNKNOWN_SENTENCE_DETAIL
 	references UNKNOWN_SENTENCE_STATUS (STR_CD);
 
 create index A_UNKNOWN_SENTENCE_UNKNOWN_SENTENCE_STATUS_UNKNOWN_SENTENCE_STATUS_FK on UNKNOWN_SENTENCE_DETAIL (STATUS asc);
+
+alter table WELCOME_TOUR
+	add constraint FK_A_WELCOME_TOUR_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_WELCOME_TOUR_CHATBOT_CHATBOT_FK on WELCOME_TOUR (BOT_ID asc);
 
 
 create table TOPIC_TOPIC_LABEL

@@ -36,6 +36,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$topics,
 	/**
+	 * Welcome tours map.
+	 */
+	fldBotExport$welcomeTours,
+	/**
 	 * map Context.
 	 */
 	fldBotExport$mapContext,
@@ -479,4 +483,24 @@ public enum DtResources implements MessageKey {
 	 * Status.
 	 */
 	fldUnknownSentencesCriteria$status,
+
+	/***********************************************************
+	/** WelcomeTour.
+	/***********************************************************
+	/**
+	 * Welcome tour id.
+	 */
+	fldWelcomeTour$welId,
+	/**
+	 * Label.
+	 */
+	fldWelcomeTour$label,
+	/**
+	 * Technical code.
+	 */
+	fldWelcomeTour$technicalCode,
+	/**
+	 * Chatbot.
+	 */
+	fldWelcomeTour$botId,
 }

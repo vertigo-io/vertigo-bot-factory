@@ -20,6 +20,14 @@ import java.util.Map;
 import java.util.UUID;
 
 
+import javax.inject.Inject;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 public final class BotManagerImpl implements BotManager {
 	private final BlackBoardManager blackBoardManager;
 	private final BehaviorTreeManager behaviorTreeManager;
@@ -27,6 +35,8 @@ public final class BotManagerImpl implements BotManager {
 	private final CodecManager codecManager;
 
 	private Map<String, TopicDefinition> topicDefinitionMap; // immutable map of topics
+
+	private Map<String, String> welcomeTourMap;
 
 	@Inject
 	public BotManagerImpl(
@@ -46,6 +56,7 @@ public final class BotManagerImpl implements BotManager {
 		this.codecManager = codecManager;
 
 		topicDefinitionMap = Collections.emptyMap();
+		welcomeTourMap = Collections.emptyMap();
 	}
 
 	@Override

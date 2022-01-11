@@ -5,7 +5,7 @@ import io.vertigo.core.locale.MessageText;
 import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.ui.core.ViewContext;
 
-public abstract class AbstractBotListController<D extends Entity> extends AbstractBotController<D> {
+public abstract class AbstractBotListEntityController<D extends Entity> extends AbstractBotEntityController<D> {
 
 	private static final String LIST_KEY = "_LIST";
 

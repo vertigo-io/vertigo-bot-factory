@@ -21,4 +21,5 @@
 	<include file="changeLog/v_1_1_0/alter_history_action.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_unknown_sentences_statuses.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_kind_topic_idle.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_1_1_0/create_extensions.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

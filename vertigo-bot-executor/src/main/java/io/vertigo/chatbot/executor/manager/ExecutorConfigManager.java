@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ExecutorConfigManager implements Manager, Activeable {
 
@@ -44,6 +45,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private File contextDataFile;
 	private ExecutorGlobalConfig executorGlobalConfig;
 	private HashMap<String, String> contextMap;
+	private Map<String, String> welcomeTourMap;
 
 	@Inject
 	public ExecutorConfigManager(

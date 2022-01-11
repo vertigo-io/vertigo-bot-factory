@@ -8,6 +8,7 @@ create DtDefinition DtBotExport {
 	field fallbackBT				{domain: DoText 						label: "fallback BT" 				cardinality : "1"}
 	field idleBT				    {domain: DoText 						label: "idle BT" 				    cardinality : "1"}
 	field topics					{domain: DoDtTopicExport 				label: "topics export" 				cardinality : "*"}
+	field welcomeTours				{domain: DoText 			            label: "Welcome tours map" 	        cardinality : "1"}
 	field mapContext				{domain: DoText 						label: "map Context" 				cardinality : "1"}
 }
 

@@ -22,5 +22,7 @@ public enum BotMultilingualResources implements MessageKey {
 
 	UNKNOWNSENTENCEDETAIL_LIST,
 
-	HISTORY_LIST
+	HISTORY_LIST,
+
+	EXTENSION
 }
