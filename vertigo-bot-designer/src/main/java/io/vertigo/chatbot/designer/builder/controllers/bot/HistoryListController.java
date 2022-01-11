@@ -23,7 +23,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 @Controller
 @RequestMapping("/bot/{botId}/history")
 @Secured("BotUser")
-public class HistoryListController extends AbstractBotListController<History> {
+public class HistoryListController extends AbstractBotListEntityController<History> {
 
 
 	private static final ViewContextKey<History> historyListKey = ViewContextKey.of("historyList");

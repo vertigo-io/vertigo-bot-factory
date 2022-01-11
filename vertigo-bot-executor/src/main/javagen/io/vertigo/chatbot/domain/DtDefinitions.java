@@ -69,6 +69,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		idleBT,
 		/** Propriété 'topics export'. */
 		topics,
+		/** Propriété 'Welcome tours map'. */
+		welcomeTours,
 		/** Propriété 'map Context'. */
 		mapContext	}
 

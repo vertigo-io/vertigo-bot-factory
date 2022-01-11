@@ -1,0 +1,17 @@
+package io.vertigo.chatbot.commons.domain
+
+create DtDefinition DtWelcomeTour {
+	id welId 		            {domain: DoId		label: "Welcome tour id"                                    }
+	field label 		        {domain: DoLabel 	label: "Label" 			                cardinality : "1"	}
+	field technicalCode 		{domain: DoLabel 	label: "Technical code" 			    cardinality : "1"	}
+}
+
+create Association AWelcomeTourChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtWelcomeTour
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}

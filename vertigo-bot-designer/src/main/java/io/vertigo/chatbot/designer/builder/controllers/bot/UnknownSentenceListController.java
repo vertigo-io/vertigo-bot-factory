@@ -33,7 +33,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 @Controller
 @RequestMapping("/bot/{botId}/followup")
 @Secured("BotUser")
-public class UnknownSentenceListController extends AbstractBotListController<UnknownSentenceDetail> {
+public class UnknownSentenceListController extends AbstractBotListEntityController<UnknownSentenceDetail> {
 
 	@Inject
 	private UnknownSentencesServices unknownSentencesServices;

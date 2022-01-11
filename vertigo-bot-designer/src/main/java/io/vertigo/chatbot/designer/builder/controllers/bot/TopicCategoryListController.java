@@ -19,7 +19,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 @Controller
 @RequestMapping("/bot/{botId}/categories")
 @Secured("BotUser")
-public class TopicCategoryListController extends AbstractBotListController<TopicCategory> {
+public class TopicCategoryListController extends AbstractBotListEntityController<TopicCategory> {
 
 	private static final ViewContextKey<TopicCategory> topicCategorieskKey = ViewContextKey.of("topicCategories");
 

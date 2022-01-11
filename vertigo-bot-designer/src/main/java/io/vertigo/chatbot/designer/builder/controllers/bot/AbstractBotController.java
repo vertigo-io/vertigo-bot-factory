@@ -1,14 +1,6 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotAuthorizations;
-import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
+import io.vertigo.chatbot.authorization.SecuredEntities;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
@@ -18,13 +10,17 @@ import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerControlle
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.locale.MessageText;
-import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-public abstract class AbstractBotController<O extends Entity> extends AbstractDesignerController {
+import javax.inject.Inject;
+import java.util.Optional;
+
+public abstract class AbstractBotController extends AbstractDesignerController {
 
 	@Inject
 	private ChatbotServices chatbotServices;
@@ -43,16 +39,14 @@ public abstract class AbstractBotController<O extends Entity> extends AbstractDe
 		final Chatbot chatbot = chatbotServices.getChatbotById(botId);
 		viewContext.publishDto(botKey, chatbot);
 		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
-		addKeyConceptSecurityToContext(chatbot, ChatbotAuthorizations.values());
+		addKeyConceptSecurityToContext(chatbot, SecuredEntities.ChatbotAuthorizations.values());
 		this.nodeMessageDisplay(chatbot, uiMessageStack);
 		return chatbot;
 	}
 
-	protected void initBreadCrums(final ViewContext viewContext, final O object) {
-		viewContext.publishRef(breadCrumsKey, getBreadCrums(object));
+	protected void initBreadCrums(final ViewContext viewContext, final String keyMessage) {
+		viewContext.publishRef(breadCrumsKey, MessageText.of(BotMultilingualResources.valueOf(keyMessage)).getDisplay());
 	}
-
-	protected abstract String getBreadCrums(final O object);
 
 	protected void initEmptyCommonContext(final ViewContext viewContext) {
 		viewContext.publishDto(botKey, chatbotServices.getNewChatbot());
@@ -70,11 +64,12 @@ public abstract class AbstractBotController<O extends Entity> extends AbstractDe
 	}
 
 	public void nodeMessageDisplay(final Chatbot chatbot, final UiMessageStack uiMessageStack) {
-		if (AuthorizationUtils.isAuthorized(chatbot, ChatbotOperations.botAdm)) {
+		if (AuthorizationUtils.isAuthorized(chatbot, SecuredEntities.ChatbotOperations.botAdm)) {
 			final Optional<ChatbotNode> devNode = nodeServices.getDevNodeByBotId(chatbot.getBotId());
 			if (devNode.isEmpty() || !devNode.get().getIsUpToDate()) {
 				uiMessageStack.info(MessageText.of(BotMultilingualResources.NODE_NOT_UP_TO_DATE).getDisplay());
 			}
 		}
 	}
+
 }

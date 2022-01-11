@@ -138,7 +138,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Objet de données UtterText. */
 		UtterText(io.vertigo.chatbot.commons.domain.topic.UtterText.class),
 		/** Objet de données UtterTextExport. */
-		UtterTextExport(io.vertigo.chatbot.designer.domain.topic.export.UtterTextExport.class)		;
+		UtterTextExport(io.vertigo.chatbot.designer.domain.topic.export.UtterTextExport.class),
+		/** Objet de données WelcomeTour. */
+		WelcomeTour(io.vertigo.chatbot.commons.domain.WelcomeTour.class)		;
 
 		private final Class<?> clazz;
 
@@ -171,6 +173,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		idleBT,
 		/** Propriété 'topics export'. */
 		topics,
+		/** Propriété 'Welcome tours map'. */
+		welcomeTours,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -1027,6 +1031,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isEnd,
 		/** Propriété 'Kind Topic Code'. */
 		ktoCd	}
+
+	/**
+	 * Enumération des champs de WelcomeTour.
+	 */
+	public enum WelcomeTourFields implements DtFieldName<io.vertigo.chatbot.commons.domain.WelcomeTour> {
+		/** Propriété 'Welcome tour id'. */
+		welId,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Technical code'. */
+		technicalCode,
+		/** Propriété 'Chatbot'. */
+		botId	}
 
 	/** {@inheritDoc} */
 	@Override

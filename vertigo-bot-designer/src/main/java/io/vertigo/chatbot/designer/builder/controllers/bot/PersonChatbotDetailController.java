@@ -29,7 +29,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 @Controller
 @RequestMapping("/bot/{botId}/personChatbot")
 @Secured("BotUser")
-public class PersonChatbotDetailController extends AbstractBotController<Chatbot> {
+public class PersonChatbotDetailController extends AbstractBotEntityController<Chatbot> {
 
 	// for all users
 	private static final ViewContextKey<Person> personsListKey = ViewContextKey.of("personList");

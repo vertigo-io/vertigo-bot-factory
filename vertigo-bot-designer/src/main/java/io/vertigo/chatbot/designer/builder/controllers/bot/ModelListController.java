@@ -68,7 +68,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 @Controller
 @RequestMapping("/bot/{botId}/models")
 @Secured("BotUser")
-public class ModelListController extends AbstractBotListController<Training> {
+public class ModelListController extends AbstractBotListEntityController<Training> {
 
 	private static final ViewContextKey<TrainerInfo> trainerStateKey = ViewContextKey.of("trainerState");
 

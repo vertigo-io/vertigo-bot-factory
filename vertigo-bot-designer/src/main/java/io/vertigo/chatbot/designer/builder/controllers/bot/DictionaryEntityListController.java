@@ -16,7 +16,11 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
 
@@ -25,7 +29,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 @Controller
 @RequestMapping("/bot/{botId}/dictionary")
 @Secured("botAdm")
-public class DictionaryEntityListController extends AbstractBotListController<DictionaryEntity> {
+public class DictionaryEntityListController extends AbstractBotListEntityController<DictionaryEntity> {
 
 	private static final ViewContextKey<Synonym> synonymEditKey = ViewContextKey.of("synonymEdit");
 	private static final ViewContextKey<DictionaryEntityWrapper> dictionaryEntityWrappersKey = ViewContextKey.of("dictionaryEntityWrappers");

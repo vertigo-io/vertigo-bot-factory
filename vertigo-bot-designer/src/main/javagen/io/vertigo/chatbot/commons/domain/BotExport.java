@@ -19,6 +19,7 @@ public final class BotExport implements DtObject {
 	private String fallbackBT;
 	private String idleBT;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.TopicExport.class);
+	private String welcomeTours;
 	private String mapContext;
 	
 	/**
@@ -135,6 +136,25 @@ public final class BotExport implements DtObject {
 		io.vertigo.core.lang.Assertion.check().isNotNull(topics);
 		//---
 		this.topics = topics;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Welcome tours map'.
+	 * @return String welcomeTours <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Welcome tours map")
+	public String getWelcomeTours() {
+		return welcomeTours;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Welcome tours map'.
+	 * @param welcomeTours String <b>Obligatoire</b>
+	 */
+	public void setWelcomeTours(final String welcomeTours) {
+		this.welcomeTours = welcomeTours;
 	}
 	
 	/**

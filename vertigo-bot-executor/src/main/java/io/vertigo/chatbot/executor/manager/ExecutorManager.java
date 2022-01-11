@@ -32,6 +32,7 @@ import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.chatbot.executor.model.IncomeRating;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
 import io.vertigo.core.util.StringUtil;
@@ -41,6 +42,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -186,6 +188,15 @@ public class ExecutorManager implements Manager, Activeable {
 
 	public Map<String, String> getContext() {
 		return executorConfigManager.getContextMap();
+	}
+
+	public String getWelcomeTourTechnicalCode(String welcomeTourLabel) {
+		HashMap<String, String> welcomeTourMap = jsonEngine.fromJson(executorConfigManager.getConfig().getBot().getWelcomeTours(), HashMap.class);
+		String welcomeTourTechnicalCode = welcomeTourMap.get(welcomeTourLabel);
+		if (welcomeTourTechnicalCode == null) {
+			throw new VSystemException("Welcome tour with label " + welcomeTourLabel + " doesn't exist");
+		}
+		return welcomeTourTechnicalCode;
 	}
 
 }
