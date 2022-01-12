@@ -49,6 +49,12 @@
 			<artifactId>vertigo-redis-connector</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-mail-connector</artifactId>
+			<version>${vertigo.version}</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>io.vertigo</groupId>

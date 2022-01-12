@@ -216,6 +216,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		rating,
 		/** Propriété 'Rating message'. */
 		ratingMessage,
+		/** Propriété 'Bot email address'. */
+		botEmailAddress,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

@@ -18,6 +18,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private Long cccId;
 	private Boolean rating;
 	private String ratingMessage;
+	private String botEmailAddress;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -97,6 +98,25 @@ public final class ChatbotCustomConfig implements Entity {
 		this.ratingMessage = ratingMessage;
 	}
 	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot email address'.
+	 * @return String botEmailAddress
+	 */
+	@Field(smartType = "STyLabel", label = "Bot email address")
+	public String getBotEmailAddress() {
+		return botEmailAddress;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot email address'.
+	 * @param botEmailAddress String
+	 */
+	public void setBotEmailAddress(final String botEmailAddress) {
+		this.botEmailAddress = botEmailAddress;
+	}
+
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.

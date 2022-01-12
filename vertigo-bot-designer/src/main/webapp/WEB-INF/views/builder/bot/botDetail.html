@@ -55,6 +55,7 @@
 			<q-item tag="a" href="#end" th:text="#{bot.end}"></q-item>
 			<q-item tag="a" href="#idle" th:text="#{bot.idle}"></q-item>
 			<q-item tag="a" href="#rating" th:text="#{bot.rating}"></q-item>
+			<q-item tag="a" href="#botEmail" th:text="#{bot.email.address}"></q-item>
 			<q-item th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" tag="a" href="#nodes" th:text="#{bot.nodes}"></q-item>
 		</section>
 		
@@ -200,6 +201,11 @@
 				<input type="hidden" name="vContext[chatbotCustomConfig][rating]" :value="vueData.chatbotCustomConfig.rating" />
 				<div v-if="hasFieldsError('chatbotCustomConfig', 'ratingMessage')" class="text-red">{{getErrorMessage('chatbotCustomConfig', 'ratingMessage')}}</div>
 				<q-input v-model="vueData.chatbotCustomConfig.ratingMessage"  name="vContext[chatbotCustomConfig][ratingMessage]" th:label="#{bot.rating.message}" th::disable="${model.modeReadOnly}" />
+			</vu:block>
+			<vu:block id="botEmail" th:title="#{bot.email.address}">
+				<q-input v-model="vueData.chatbotCustomConfig.botEmailAddress" :error="hasFieldsError('chatbotCustomConfig', 'botEmailAddress')"
+						 :error-message="getErrorMessage('chatbotCustomConfig', 'botEmailAddress')"  name="vContext[chatbotCustomConfig][botEmailAddress]"
+						 th:label="#{bot.email.address}" th::disable="${model.modeReadOnly}" />
 			</vu:block>
 			
 			<vu:include-data object="nodeNew" field="name" />
