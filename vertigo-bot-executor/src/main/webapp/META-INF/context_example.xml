@@ -3,6 +3,11 @@
 	<Parameter name="boot.ANALYTICA_HOST" value="localhost" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="4562" override="false"/>
 	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot-test" override="false"/>
+
+	<Parameter name="boot.MAIL_NAME" value="KleeMail" override="false"/>
+	<Parameter name="boot.MAIL_PROTOCOL" value="smtp" override="false"/>
+	<Parameter name="boot.MAIL_HOST" value="localdelivery.klee.lan.net" override="false"/>
+	<Parameter name="boot.MAIL_PORT" value="25" override="false"/>
 	
 	<!-- Env variable in production -->
 	<Parameter name="DESIGNER_URL" value="http://localhost:8080/vertigo-bot-designer" override="false"/>

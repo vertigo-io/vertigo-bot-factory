@@ -22,6 +22,7 @@ import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.chatbot.analytics.AnalyticsSenderServices;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.engine.BotEngine;
@@ -202,6 +203,12 @@ public class ExecutorManager implements Manager, Activeable {
 			throw new VSystemException("Welcome tour with label " + welcomeTourLabel + " doesn't exist");
 		}
 		return welcomeTourTechnicalCode;
+	}
+
+	public String getBotEmailAddress() {
+		ChatbotCustomConfig chatbotCustomConfig = jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(),
+				ChatbotCustomConfig.class);
+		return chatbotCustomConfig.getBotEmailAddress();
 	}
 
 }

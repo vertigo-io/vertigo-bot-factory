@@ -61,6 +61,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
@@ -271,6 +273,8 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	 */
 	public static final class ChatbotCustomConfigValidator extends AbstractDtObjectValidator<ChatbotCustomConfig> {
 
+		private static final Pattern emailPattern = Pattern.compile("^[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*(\\.[a-zA-Z0-9-]{2,3})+$");
+
 		/** {@inheritDoc} */
 		@Override
 		protected void checkMonoFieldConstraints(final ChatbotCustomConfig chatbotCustomConfig, final DtField dtField, final DtObjectErrors dtObjectErrors) {
@@ -278,6 +282,15 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 				final String value = (String) dtField.getDataAccessor().getValue(chatbotCustomConfig);
 				if (StringUtils.isHtmlEmpty(value) && chatbotCustomConfig.getRating()) {
 					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné")); // TODO: use same i18n resource when avaiable in DefaultDtObjectValidator
+				}
+			}
+			if (DtDefinitions.ChatbotCustomConfigFields.botEmailAddress.name().equals(dtField.getName())) {
+				final String value = (String) dtField.getDataAccessor().getValue(chatbotCustomConfig);
+				if (!StringUtils.isHtmlEmpty(value)) {
+					final Matcher matcher = emailPattern.matcher(value);
+					if (!matcher.matches()) {
+						dtObjectErrors.addError(dtField.getName(), MessageText.of("L'email n'est pas valide"));
+					}
 				}
 			}
 		}
