@@ -99,14 +99,15 @@ const chatbot = new Vue({
             },
             updateSessionStorage() {
                 sessionStorage.convId = chatbot.convId;
-                sessionStorage.inputConfig = chatbot.inputConfig;
                 sessionStorage.setItem('inputConfig', JSON.stringify(chatbot.inputConfig));
                 sessionStorage.setItem('messages', JSON.stringify(chatbot.messages));
+                sessionStorage.setItem('customConfig', JSON.stringify(chatbot.customConfig));
             },
             restoreFromSessionStorage() {
                 chatbot.convId = sessionStorage.convId;
                 chatbot.inputConfig = JSON.parse(sessionStorage.inputConfig);
                 chatbot.messages = JSON.parse(sessionStorage.messages);
+                chatbot.customConfig = JSON.parse(sessionStorage.customConfig);
             },
             startConversation() {
                 chatbot.lastUserInteraction = Date.now();

@@ -8,9 +8,11 @@
 	
 	<head>
 		<title th:text="#{model.title}"></title>
-		
-		<link  th:href="@{/static/chatbot/chatbot.css}" rel="stylesheet"/>
-		<script th:src="@{/static/chatbot/v-chatbot-dev.js}"></script>
+
+		<script v-if="canTalkToBot()" th:src="@{/static/chatbot/chatbot.js}"></script>
+		<script v-if="canTalkToBot()" th:src="@{/static/chatbot/shepherd.min.js}"></script>
+		<link v-if="canTalkToBot()" th:href="@{/static/chatbot/shepherd.css}" rel="stylesheet" />
+		<link v-if="canTalkToBot()" th:href="@{/static/chatbot/chatbot.css}" rel="stylesheet">
 		<vu:include-data object="deployedTraining" field="versionNumber" />
 		<script th:inline="javascript">
 			// ## training ##
@@ -200,11 +202,6 @@
 				return node == null || trainingInProgress;
 			}
 			
-			function getTalkToBot() {
-				var speakTo = /*[[#{model.speakto}]]*/ '';
-				return speakTo + " " + VertigoUi.vueData.bot.name;
-			}
-			
 			function displayTrainingLog(training) {
 				
 				
@@ -233,6 +230,17 @@
 				})
 			}
 
+
+			document.addEventListener('DOMContentLoaded', function () {
+				Chatbot.init({
+					runnerUrl: getDevNode().url,
+					botIHMBaseUrl: getDevNode().url + '/static/chatbot/index.html',
+					botName: "Chatbot test",
+					useRating: false,
+					avatarUrl: getDevNode().url + '/static/chatbot/images/avatar/avatar.png'
+				})
+			});
+
 		</script>
 	</head>
 	
@@ -255,7 +263,7 @@
 				<vu:include-data object="trainerState" field="duration"/>
 				<vu:include-data object="trainerState" field="trainingPercent" />
 				<vu:include-data object="deployedTraining" field="versionNumber" />
-				
+
 				<vu:text-field-read-reactive object="trainerState" field="trainingState" th:label="#{model.state}" />
 				<vu:text-field-read-reactive object="deployedTraining" field="versionNumber" th:label="#{model.deployedTraining.versionNumber}" />
 
@@ -273,7 +281,7 @@
 						</span>
 					</q-btn>
 					<q-btn color="primary" icon="save" size="lg" th:label="#{action.build.save}" @click="$refs.saveTrainingModal.show()"></q-btn>
-					
+
 					
 				</q-card-actions>
 				
@@ -427,7 +435,7 @@
 					<span v-html="getTrainingVersion(props.row.traId)"></span>
 				</vu:column>
 			</vu:table>
-			
+
 			<q-dialog v-model="dataX.modalLog.show">
 				<q-card style="max-width: 90vw; width: 1200px;">
 					<q-card-section class="row items-center">
@@ -526,7 +534,7 @@
 
 				</q-card>
 			</q-dialog>
-			
+
 			
 			
 			<q-dialog  ref="trainingDisplayedDialog"  full-width >
@@ -544,28 +552,7 @@
 		        	</q-card-actions>
 		      	</q-card>
 		    </q-dialog>
-			
 
-
-			<template v-if="canTalkToBot()">
-				<th:block th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}" >
-	  				<q-page-sticky v-if="$q.screen.lt.lg" position="bottom-right" :offset="[-16 + (componentStates.botDrawer.open ? 300:0),36]">
-					    <q-btn round size="lg" @click="componentStates.botDrawer.open = !componentStates.botDrawer.open" class="chatbotSickyBtn">
-					    	<img th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" style="width: 60px; height: 60px"/>
-					    </q-btn>
-					</q-page-sticky>
-		  			<q-drawer :value="!$q.screen.lt.lg || componentStates.botDrawer.open" elevated ref="botDrawer" side="right" behavior="desktop" :overlay="$q.screen.lt.lg">
-						<v-chatbot-dev class="column chatbot-container"
-								   ref="chatbot"
-								   th:bot-avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" bot-name="test-bot"
-								   :bot-url="'_talk?CTX=' + vueData.CTX"
-								   :start-call="'_start?CTX=' + vueData.CTX"
-								   :rate-call="'_rate?CTX=' + vueData.CTX"
-								   :dev-mode="!true"
-								   :placeholder="getTalkToBot()"></v-chatbot>
-		  			</q-drawer>
-				</th:block>
-			</template>
 		</section>
 		
 		<section layout:fragment="javascript-footer">

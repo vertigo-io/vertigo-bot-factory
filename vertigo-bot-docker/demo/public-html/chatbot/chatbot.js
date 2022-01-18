@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const img = document.createElement('img');
         img.style.cssText = 'width: 63px; height: 63px; background-color: white; color: black;';
-        img.src = '/chatbot/images/avatar/avatar.png';
+        img.src = _initParam.avatarUrl;
         img.alt = _initParam.botName;
         _button.appendChild(img);
 

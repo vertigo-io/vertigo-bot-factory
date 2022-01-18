@@ -24,20 +24,11 @@ import io.vertigo.chatbot.commons.domain.SavedTraining;
 import io.vertigo.chatbot.commons.domain.SavedTrainingCriteria;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
-import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.BotConversationServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.SavedTrainingServices;
 import io.vertigo.chatbot.designer.builder.services.TrainerInfoServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
-import io.vertigo.chatbot.designer.utils.BotConversationUtils;
-import io.vertigo.chatbot.designer.utils.HttpRequestUtils;
-import io.vertigo.chatbot.designer.utils.ObjectConvertionUtils;
-import io.vertigo.chatbot.engine.model.BotInput;
-import io.vertigo.chatbot.engine.model.BotResponse;
-import io.vertigo.chatbot.engine.model.TalkInput;
-import io.vertigo.core.lang.VUserException;
-import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -47,18 +38,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.inject.Inject;
-import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublisher;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -170,48 +153,6 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 		newSavedTraining.setName("Model " + deployedTraining.getVersionNumber());
 		viewContext.publishDto(newSavedTrainingKey, newSavedTraining);
 		return viewContext;
-	}
-
-	@PostMapping("/_talk")
-	@ResponseBody
-	public String talk(
-			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList,
-			@RequestBody final String input) {
-
-		final ChatbotNode devNode = nodeServices.getDevNodeFromList(nodeList);
-		final TalkInput talkInput = ObjectConvertionUtils.jsonToObject(input, TalkInput.class);
-		final String botInput = BotConversationUtils.createBotInput(talkInput);
-		return HttpRequestUtils.postToUrl(devNode.getUrl() + "/api/chatbot/talk/" + talkInput.getSender(), botInput.getBytes(StandardCharsets.UTF_8));
-	}
-
-	@PostMapping("/_start")
-	@ResponseBody
-	public BotResponse start(
-			final ViewContext viewContext,
-			@RequestBody final BotInput input,
-			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList) {
-
-		final ChatbotNode devNode = nodeList.stream()
-				.filter(ChatbotNode::getIsDev)
-				.findFirst()
-				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
-		final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(input));
-		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/start", publisher);
-		final HttpResponse<String> result = HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 200);
-		return botConversationServices.jsonToObject(result.body(), BotResponse.class);
-	}
-
-	@PostMapping("/_rate")
-	@ResponseBody
-	public void rate(
-			final ViewContext viewContext,
-			@ViewAttribute("nodeList") final DtList<ChatbotNode> nodeList,
-			@RequestBody final String input) {
-
-		final ChatbotNode devNode = nodeServices.getDevNodeFromList(nodeList);
-		final BodyPublisher publisher = BodyPublishers.ofString(input);
-		final HttpRequest request = HttpRequestUtils.createPostRequest(devNode.getUrl() + "/api/chatbot/rating", publisher);
-		HttpRequestUtils.sendRequest(null, request, BodyHandlers.ofString(), 204);
 	}
 
 	@PostMapping("/_saveTraining")
