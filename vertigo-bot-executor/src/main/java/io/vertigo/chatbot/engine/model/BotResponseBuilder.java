@@ -17,19 +17,22 @@
  */
 package io.vertigo.chatbot.engine.model;
 
+import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
+import io.vertigo.chatbot.engine.model.choice.BotButton;
+import io.vertigo.chatbot.engine.model.choice.BotCard;
+import io.vertigo.chatbot.engine.model.choice.IBotChoice;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.Builder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
-import io.vertigo.chatbot.engine.model.choice.IBotChoice;
-import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.lang.Builder;
-
 public final class BotResponseBuilder implements Builder<BotResponse> {
 	private final List<String> htmlTexts;
 	private final List<IBotChoice> botChoices;
+	private final List<IBotChoice> botCards;
 	private final Map<String, Object> metadatas;
 	private final BotStatus status;
 
@@ -39,6 +42,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 		//--
 		htmlTexts = new ArrayList<>();
 		botChoices = new ArrayList<>();
+		botCards = new ArrayList<>();
 		metadatas = new HashMap<>();
 		this.status = status;
 	}
@@ -63,7 +67,13 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 		Assertion.check()
 				.isNotNull(choice);
 		//-----
-		botChoices.add(choice);
+
+		if (choice instanceof BotButton) {
+			botChoices.add(choice);
+		} else if (choice instanceof BotCard) {
+			botCards.add(choice);
+		}
+
 		return this;
 	}
 
@@ -95,7 +105,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 
 	@Override
 	public BotResponse build() {
-		return new BotResponse(htmlTexts, botChoices, metadatas, status);
+		return new BotResponse(htmlTexts, botChoices, botCards, metadatas, status);
 	}
 
 }

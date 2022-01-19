@@ -9,6 +9,7 @@ import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
+import io.vertigo.chatbot.engine.model.choice.BotCard;
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
@@ -330,6 +331,16 @@ public final class BotNodeProvider {
 				sequence(
 						say(bb, question),
 						storeButtons(bb, buttons, BotButton.class),
+						queryButton(bb, keyTemplate),
+						running()));
+	}
+
+	public static BTNode chooseCard(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<BotCard> cards) {
+		return selector(
+				fulfilled(bb, keyTemplate),
+				sequence(
+						say(bb, question),
+						storeButtons(bb, cards, BotCard.class),
 						queryButton(bb, keyTemplate),
 						running()));
 	}

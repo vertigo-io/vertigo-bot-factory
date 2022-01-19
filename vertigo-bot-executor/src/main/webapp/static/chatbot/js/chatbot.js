@@ -59,7 +59,8 @@ const chatbot = new Vue({
                 responsePattern: '',
                 showRating: false,
                 rating: 0,
-                buttons: []
+                buttons: [],
+                cards: []
             },
             customConfig: {
               useRating: false,
@@ -209,6 +210,7 @@ const chatbot = new Vue({
                 // success
                 const responses = httpResponse.data.htmlTexts;
                 const buttons = httpResponse.data.choices;
+                const cards = httpResponse.data.cards;
                 chatbot.isEnded = httpResponse.data.status === 'Ended' && !isRating;
                 if (httpResponse.data.metadatas.avatar) {
                     chatbot.botAvatar = "data:image/png;base64," + httpResponse.data.metadatas.avatar;
@@ -221,7 +223,7 @@ const chatbot = new Vue({
                 for (let i = 0; i < responses.length - 1; i++) {
                     chatbot.watingMessagesStack.push({ text: responses[i] });
                 }
-                chatbot.watingMessagesStack.push({ text: responses[responses.length - 1], buttons: buttons });
+                chatbot.watingMessagesStack.push({ text: responses[responses.length - 1], buttons: buttons, cards: cards });
 
                 chatbot._displayMessages();
             }
@@ -290,6 +292,13 @@ const chatbot = new Vue({
                     }, chatbot);
                 }
 
+                if (response.cards) {
+                    response.cards.forEach(function(value, key) {
+                        chatbot.inputConfig.cards.push(value);
+                        chatbot.updateSessionStorage();
+                    }, chatbot);
+                }
+
                 chatbot._scrollToBottom();
             },
             reinitInput() {
@@ -298,6 +307,7 @@ const chatbot = new Vue({
                 chatbot.inputConfig.responseText = '';
                 chatbot.inputConfig.rating = 0;
                 chatbot.inputConfig.buttons = [];
+                chatbot.inputConfig.cards = [];
                 chatbot.error = false;
                 chatbot.updateSessionStorage();
             },

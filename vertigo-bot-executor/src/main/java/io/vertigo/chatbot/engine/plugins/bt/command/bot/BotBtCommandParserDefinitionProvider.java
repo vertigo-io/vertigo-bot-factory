@@ -5,6 +5,7 @@ import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.impl.command.BtCommand;
 import io.vertigo.ai.impl.command.BtCommandParserDefinition;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
+import io.vertigo.chatbot.engine.model.choice.BotCard;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
@@ -60,8 +61,11 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 
 				BtCommandParserDefinition.basicCommand("choose:nlu", (c, p) -> BotNodeProvider.chooseNlu(getBB(p), c.getStringParam(0))),
 				BtCommandParserDefinition.compositeCommand("choose:button", BotBtCommandParserDefinitionProvider::buildChooseButtonNode),
+				BtCommandParserDefinition.compositeCommand("choose:card", BotBtCommandParserDefinitionProvider::buildChooseCardNode),
 				BtCommandParserDefinition.compositeCommand("choose:button:nlu", BotBtCommandParserDefinitionProvider::buildChooseButtonNluNode),
 				BtCommandParserDefinition.basicCommand("button", (c, p) -> new BotButton(c.getStringParam(0), c.getStringParam(1))),
+				BtCommandParserDefinition.basicCommand("card", (c, p) -> new BotCard(c.getStringParam(0),
+						c.getStringParam(1), c.getStringParam(2), c.getOptStringParam(3))),
 				BtCommandParserDefinition.basicCommand("jsevent", (c, p) -> BotNodeProvider.launchJsEvent(getBB(p), c.getStringParam(0))),
 				BtCommandParserDefinition.basicCommand("link", (c, p) -> BotNodeProvider.link(getBB(p), c.getStringParam(0))),
 				BtCommandParserDefinition.basicCommand("image", (c, p) -> BotNodeProvider.image(getBB(p), c.getStringParam(0))));
@@ -103,6 +107,17 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				.collect(Collectors.toList());
 
 		return BotNodeProvider.chooseButton(getBB(params), command.getStringParam(0), command.getStringParam(1), botButtons);
+	}
+
+	private static BTNode buildChooseCardNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
+		Assertion.check()
+				.isTrue(childs.stream().allMatch(b -> b instanceof BotCard), "Only 'card' is allow inside 'choose:card'");
+
+		final var botCards = childs.stream()
+				.map(b -> (BotCard) b)
+				.collect(Collectors.toList());
+
+		return BotNodeProvider.chooseCard(getBB(params), command.getStringParam(0), command.getStringParam(1), botCards);
 	}
 
 	private static BTNode buildChooseButtonNluNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
