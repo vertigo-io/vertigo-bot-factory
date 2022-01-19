@@ -34,6 +34,11 @@ Vue.component('c-richtext', {
 						label: 'Image',
 						handler: addCustomImage
 					},
+					emoji: {
+						tip: 'Add Emoji',
+						label: 'Emoji',
+						handler: addEmoji
+					}
 				}"
 			    :toolbar="
 			    [
@@ -55,7 +60,8 @@ Vue.component('c-richtext', {
 			      ['hr'],
 			      ['undo', 'redo'],
 			      ['viewsource'],
-			      ['customimage']
+			      ['customimage'],
+			      ['emoji']
 			    ]"
 			   
 				>
@@ -90,6 +96,16 @@ Vue.component('c-richtext', {
 							<q-btn :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>
 						</q-card-actions>
 					</div>
+				</q-card
+			</q-dialog>
+			<q-dialog ref="newEmoji" id="newEmoji" >
+			 	<q-card>
+					<q-card-section>
+						<div class="text-h6" >{{locale == 'fr_FR' ? 'Ajouter une emoji' : 'Add emoji'}}</div>
+					</q-card-section>
+					<q-card-section>
+						<emoji-picker></emoji-picker>
+					</q-card-section>
 				</q-card
 			</q-dialog>
 			
@@ -163,6 +179,13 @@ Vue.component('c-richtext', {
 		     this.$refs.newImage.show();
      		 this.imageUrl = null;
 		    },
+
+			addEmoji() {
+				this.$refs.newEmoji.show();
+				this.$nextTick(() => {
+					document.querySelector('emoji-picker').addEventListener('emoji-click', event => this.handleEmoji(event.detail.unicode));
+				});
+			},
 		    
 		    
 			handleCustomImage () {
@@ -173,7 +196,16 @@ Vue.component('c-richtext', {
 		      edit.caret.restore();
 		      edit.runCmd('insertHTML', `<img class="imgClass" src="${url}"/>`);
 		      edit.focus();
-		    }
+		    },
+
+			handleEmoji(emoji) {
+				this.$refs.newEmoji.hide();
+
+				const edit = this.$refs.editor_ref;
+				edit.caret.restore();
+				edit.runCmd('insertHTML', emoji);
+				edit.focus();
+			}
 		}
 		
 });

@@ -5,6 +5,7 @@ Vue.component('c-codemirror', {
 		field:			{ type: String,  required: true },
 		compositeNode: 	{ type: String,  'default': 'Noeud composite'},
 		simpleNode: 	{ type: String,  'default': 'Noeud simple'},
+		locale:   		{ type: String, 'default': 'en_US' },
 		error : false
 	},
 	data: function () {
@@ -77,11 +78,21 @@ Vue.component('c-codemirror', {
 						</q-item>
 					</q-list>
 				</q-btn-dropdown>
+				<q-btn v-if="modeEdit" label="Emoji" color="primary" @click="addEmoji()"/>
 				<div :style="error ? 'border: 2px solid;border-color: #C10015;border-radius:5px;':''">
 					<codemirror ref="cm" v-model='VertigoUi.vueData[object][field]' :options="options"></codemirror>
 				</div>
 				<input type="hidden" :name="'vContext['+object+']['+field+']'" :value="VertigoUi.vueData[object][field]"/>
-				
+				<q-dialog ref="newEmoji" id="newEmoji" >
+					<q-card>
+						<q-card-section>
+							<div class="text-h6" >{{locale == 'fr_FR' ? 'Ajouter une emoji' : 'Add emoji'}}</div>
+						</q-card-section>
+						<q-card-section>
+							<emoji-picker></emoji-picker>
+						</q-card-section>
+					</q-card
+				</q-dialog>
 			</div>
 		`
 		,
@@ -151,5 +162,20 @@ Vue.component('c-codemirror', {
 		 	addInputString : function(){
 		 		this.modifyValue('inputString /user/local ""');
 		 	},
+			addEmoji() {
+				this.$refs.newEmoji.show();
+				this.$nextTick(() => {
+					document.querySelector('emoji-picker').addEventListener('emoji-click', event => this.handleEmoji(event.detail.unicode));
+				});
+			},
+			handleEmoji(emoji) {
+				this.$refs.newEmoji.hide();
+				const position = this.getCursor();
+				const value = this.$refs.cm.codemirror.getValue();
+				const lines = value.split('\n');
+				chs = lines[position.line];
+				lines[position.line] = chs.substring(0,position.ch) + emoji + chs.substring(position.ch, chs.length);
+				this.$refs.cm.codemirror.setValue(lines.join('\n'));
+			}
 		}
 });

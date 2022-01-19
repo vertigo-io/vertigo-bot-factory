@@ -8,7 +8,8 @@
 	
 	<head>
 		<title th:text="#{bot.detail.title}"></title>
-		
+
+		<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 		<script th:src="@{/static/js/c-richtext.js}"></script>
 		<script th:src="@{/static/js/c-buttonList.js}"></script>
 		
@@ -103,6 +104,7 @@
 						object="startTopic"
 						field="value"
 						:error="hasFieldsError('startTopic', 'value')"
+						:locale="vueData.locale"
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-codemirror>
 				</div>
@@ -138,6 +140,7 @@
 						object="failureTopic"
 						field="value"
 						:error="hasFieldsError('failureTopic', 'value')"
+						:locale="vueData.locale"
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-codemirror>
 				</div>
@@ -173,6 +176,7 @@
 						object="endTopic"
 						field="value"
 						:error="hasFieldsError('endTopic', 'value')"
+						:locale="vueData.locale"
 						th::mode-edit="${!model.modeReadOnly}">
 					</c-codemirror>
 				</div>

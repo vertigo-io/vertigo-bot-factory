@@ -14,9 +14,10 @@
 		<vu:popup action="_delete" vModel="showPopup" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
 
 		<vu:block id="script" title="Script">
+			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="scriptIntention" field="script" />
 
-			<c-codemirror object="scriptIntention" field="script" th::mode-edit="${!model.modeReadOnly}"></c-codemirror>
+			<c-codemirror object="scriptIntention" field="script" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale"></c-codemirror>
 
 		</vu:block>
 
