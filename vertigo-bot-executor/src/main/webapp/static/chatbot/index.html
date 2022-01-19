@@ -120,6 +120,35 @@
                                 @input="rateBot"></q-rating>
                     </q-chat-message>
                   </div>
+                  <div v-if="inputConfig.cards.length > 0"
+                       class="non-selectable animate-fade row reverse no-wrap">
+                    <div class="col-10">
+                      <div class="q-caption text-light text-right">
+                        Réponses suggérées
+                      </div>
+                      <div class="row docs-btn">
+                        <q-carousel
+                                transition-prev="scale"
+                                transition-next="scale"
+                                swipeable
+                                animated
+                                control-color="primary"
+                                navigation
+                                padding
+                                arrows
+                                class="bg-primary text-white shadow-1 rounded-borders"
+                        >
+                          <q-carousel-slide  v-for="(card, index) in inputConfig.cards" name="style" class="column no-wrap flex-center" >
+                            <div class="q-mt-md text-center cursor-pointer" @click="postAnswerBtn(card)">
+                              <img v-if= "card.imageUrl !== null" :src="card.imageUrl" :alt="card.label"/>
+                              <div class="text-h2">{{ card.label }}</div>
+                              <div class="text-subtitle1">{{ card.content }}</div>
+                            </div>
+                          </q-carousel-slide>
+                        </q-carousel>
+                      </div>
+                    </div>
+                  </div>
                   <div v-if="inputConfig.buttons.length > 0"
                        class="non-selectable animate-fade row reverse no-wrap">
                     <div class="col-10">
