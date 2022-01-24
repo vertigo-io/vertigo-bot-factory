@@ -121,7 +121,7 @@ public class BotEngine {
 			// exec
 			status = behaviorTreeManager.run(topic.getBtRoot(List.of(bb)));
 			if (!bb.exists(BOT_NEXT_TOPIC_KEY) && !checkIfExpectingInput() && checkTopicIsNotStartEndOrIdle(topic)) {
-				status = behaviorTreeManager.run(topicDefinitionMap.get(IDLE_TOPIC_NAME).getBtRoot(List.of(bb)));
+				bb.putString(BOT_NEXT_TOPIC_KEY, IDLE_TOPIC_NAME);
 			}
 
 			if (bb.exists(BOT_NEXT_TOPIC_KEY)) {
