@@ -379,3 +379,7 @@ create DtDefinition DtTopicFileExport {
 create DtDefinition DtTopicCriteria {
 	field catId 		{domain: DoId 					label: "Category selection"     }
 }
+
+create DtDefinition DtSelectTopicCategory {
+	field topCatId 		{domain: DoId 						label: "Topic category id"	 		cardinality:"*"}
+}

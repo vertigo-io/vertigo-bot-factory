@@ -57,9 +57,7 @@ create Task TkGetTopicFileExport {
 				) buttons on buttons.top_id = top.top_id
 			where top.bot_id = #botId#
 			and tca.is_technical = false
-			<%if (tcaId != null) { %>
-				and tca.top_cat_id = #tcaId#
-			<% } %>
+            and tca.top_cat_id in (#tcaIds.rownum#)
 			group by top.code,
 				type_topic,
 				kind_topic,
@@ -78,6 +76,6 @@ create Task TkGetTopicFileExport {
 			order by top.code
             "
 	in botId				{domain : DoId,						cardinality:"1"} 
-	in tcaId				{domain : DoId,						cardinality:"?"} 
+	in tcaIds				{domain : DoId,						cardinality:"*"}
 	out topic 				{domain : DoDtTopicFileExport		cardinality:"*"}
 } 

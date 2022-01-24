@@ -145,18 +145,20 @@
 									
 					<q-card-section style="width: 400px;">
 						<vu:include-data object="categoryList" field="'*'"/>
+						<vu:include-data object="selectionCatList" field="topCatId"/>
 						<q-select
 							clearable
 							filled
 							map-options
 							emit-value
-							v-model="vueData.selectionCatList"
+							multiple
+							v-model="vueData.selectionCatList.topCatId"
 							:options="transformListForSelection('categoryList', 'topCatId', 'label')"
 							th:label="#{popup.export.category}"
 							stack-label>
 						</q-select>
 					</q-card-section>
-					<input type="hidden" name="vContext[selectionCatList]" :value="vueData.selectionCatList" />
+					<input v-for="id in vueData.selectionCatList.topCatId" type="hidden" name="vContext[selectionCatList][topCatId]" :value="id" />
 					<q-card-actions align="around">
 							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
 							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
