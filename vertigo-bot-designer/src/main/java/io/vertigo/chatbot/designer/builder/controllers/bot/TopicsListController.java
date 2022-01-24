@@ -19,6 +19,7 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.topic.SelectTopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicCriteria;
@@ -63,7 +64,7 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 	private static final ViewContextKey<TopicCategory> categoryListKey = ViewContextKey.of("categoryList");
 	// return of the select
 	private static final ViewContextKey<String> selectionListKey = ViewContextKey.of("selectionList");
-	private static final ViewContextKey<TopicCategory> selectionCatListKey = ViewContextKey.of("selectionCatList");
+	private static final ViewContextKey<SelectTopicCategory> selectionCatListKey = ViewContextKey.of("selectionCatList");
 	private static final ViewContextKey<String> topIdDetailKey = ViewContextKey.of("topIdDetail");
 	private static final ViewContextKey<String> topicImportKey = ViewContextKey.of("topicImport");
 	private static final ViewContextKey<TopicCriteria> criteriaKey = ViewContextKey.of("criteria");
@@ -89,7 +90,7 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 		viewContext.publishDtList(categoryListKey, categoryServices.getAllActiveCategoriesByBot(bot));
 		viewContext.publishDto(criteriaKey, new TopicCriteria());
 		viewContext.publishRef(selectionListKey, "");
-		viewContext.publishDto(selectionCatListKey, new TopicCategory());
+		viewContext.publishDto(selectionCatListKey, new SelectTopicCategory());
 		viewContext.publishRef(topIdDetailKey, "");
 		viewContext.publishRef(topicImportKey, "");
 		super.initBreadCrums(viewContext, Topic.class);
@@ -114,11 +115,11 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 
 	@PostMapping("/_exportTopicFile")
 	@Secured("SuperAdm")
-	public VFile doExportTopicFile(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, @ViewAttribute("selectionCatList") final String selectCat) {
+	public VFile doExportTopicFile(final ViewContext viewContext,
+								   @ViewAttribute("bot") final Chatbot bot,
+								   @ViewAttribute("selectionCatList") final SelectTopicCategory selectTopicCategory) {
 
-		final Long topCatId = !selectCat.isEmpty() ? Long.valueOf(selectCat) : null;
-
-		final DtList<TopicFileExport> listTopics = topicFileExportServices.getTopicFileExport(bot.getBotId(), topCatId);
+		final DtList<TopicFileExport> listTopics = topicFileExportServices.getTopicFileExport(bot.getBotId(), selectTopicCategory.getTopCatId());
 
 		return topicFileExportServices.exportTopicFile(bot, listTopics);
 

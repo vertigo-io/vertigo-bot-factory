@@ -88,7 +88,7 @@ create sequence SEQ_GROUPS
 	start with 1000 cache 20; 
 
 create sequence SEQ_HISTORY
-	start with 1000 cache 20;
+	start with 1000 cache 20; 
 
 
 
@@ -110,7 +110,7 @@ create sequence SEQ_RESPONSE_BUTTON
 
 
 create sequence SEQ_SAVED_TRAINING
-	start with 1000 cache 20;
+	start with 1000 cache 20; 
 
 create sequence SEQ_SCRIPT_INTENTION
 	start with 1000 cache 20; 
@@ -137,14 +137,14 @@ create sequence SEQ_TRAINING
 
 
 create sequence SEQ_UNKNOWN_SENTENCE_DETAIL
-	start with 1000 cache 20;
+	start with 1000 cache 20; 
 
 
 create sequence SEQ_UTTER_TEXT
 	start with 1000 cache 20; 
 
 create sequence SEQ_WELCOME_TOUR
-	start with 1000 cache 20;
+	start with 1000 cache 20; 
 
 
 -- ============================================================
@@ -332,7 +332,7 @@ comment on column GROUPS.NAME is
 'Name';
 
 -- ============================================================
---   Table : HISTORY
+--   Table : HISTORY                                        
 -- ============================================================
 create table HISTORY
 (
@@ -368,7 +368,7 @@ comment on column HISTORY.BOT_ID is
 'Chatbot';
 
 -- ============================================================
---   Table : HISTORY_ACTION
+--   Table : HISTORY_ACTION                                        
 -- ============================================================
 create table HISTORY_ACTION
 (
@@ -588,7 +588,7 @@ comment on column RESPONSE_TYPE.SORT_ORDER is
 'Order';
 
 -- ============================================================
---   Table : SAVED_TRAINING
+--   Table : SAVED_TRAINING                                        
 -- ============================================================
 create table SAVED_TRAINING
 (
@@ -904,7 +904,7 @@ comment on column TYPE_TOPIC.LABEL_FR is
 'TitleFr';
 
 -- ============================================================
---   Table : UNKNOWN_SENTENCE_DETAIL
+--   Table : UNKNOWN_SENTENCE_DETAIL                                        
 -- ============================================================
 create table UNKNOWN_SENTENCE_DETAIL
 (
@@ -936,7 +936,7 @@ comment on column UNKNOWN_SENTENCE_DETAIL.BOT_ID is
 'Bot';
 
 -- ============================================================
---   Table : UNKNOWN_SENTENCE_STATUS
+--   Table : UNKNOWN_SENTENCE_STATUS                                        
 -- ============================================================
 create table UNKNOWN_SENTENCE_STATUS
 (
@@ -976,7 +976,7 @@ comment on column UTTER_TEXT.SMT_ID is
 'SmallTalk';
 
 -- ============================================================
---   Table : WELCOME_TOUR
+--   Table : WELCOME_TOUR                                        
 -- ============================================================
 create table WELCOME_TOUR
 (

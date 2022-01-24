@@ -107,9 +107,8 @@ public class TopicFileExportServices implements Component {
 	/*
 	 * Return a list of TopicFileExport from a bot (and possibly a category)
 	 */
-	public DtList<TopicFileExport> getTopicFileExport(@SecuredOperation("SuperAdm") final Long botId, final Long topCatId) {
-		final Optional<Long> topCatIdOpt = topCatId != null ? Optional.of(topCatId) : Optional.empty();
-		return topicFileExportPAO.getTopicFileExport(botId, topCatIdOpt);
+	public DtList<TopicFileExport> getTopicFileExport(@SecuredOperation("SuperAdm") final Long botId, final List<Long> categories) {
+		return topicFileExportPAO.getTopicFileExport(botId, categories);
 	}
 
 	public void importTopicFromCSVFile(Chatbot chatbot, FileInfoURI importTopicFile) {

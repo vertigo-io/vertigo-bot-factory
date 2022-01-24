@@ -2,7 +2,6 @@ package io.vertigo.chatbot.designer.builder.topicFileExport;
 
 import javax.inject.Inject;
 
-import java.util.Optional;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Generated;
@@ -44,7 +43,7 @@ public final class TopicFileExportPAO implements StoreServices {
 	/**
 	 * Execute la tache TkGetTopicFileExport.
 	 * @param botId Long
-	 * @param tcaId Long
+	 * @param tcaIds List de Long
 	 * @return DtList de TopicFileExport topic
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
@@ -102,9 +101,7 @@ public final class TopicFileExportPAO implements StoreServices {
  "				) buttons on buttons.top_id = top.top_id" + 
  "			where top.bot_id = #botId#" + 
  "			and tca.is_technical = false" + 
- "			<%if (tcaId != null) { %>" + 
- "				and tca.top_cat_id = #tcaId#" + 
- "			<% } %>" + 
+ "            and tca.top_cat_id in (#tcaIds.rownum#)" + 
  "			group by top.code," + 
  "				type_topic," + 
  "				kind_topic," + 
@@ -123,10 +120,10 @@ public final class TopicFileExportPAO implements StoreServices {
  "			order by top.code",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicFileExport")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicFileExport> getTopicFileExport(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "tcaId", smartType = "STyId") final Optional<Long> tcaId) {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicFileExport> getTopicFileExport(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "tcaIds", smartType = "STyId") final java.util.List<Long> tcaIds) {
 		final Task task = createTaskBuilder("TkGetTopicFileExport")
 				.addValue("botId", botId)
-				.addValue("tcaId", tcaId.orElse(null))
+				.addValue("tcaIds", tcaIds)
 				.build();
 		return getTaskManager()
 				.execute(task)
