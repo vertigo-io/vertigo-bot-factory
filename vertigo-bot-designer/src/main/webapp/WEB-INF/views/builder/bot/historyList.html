@@ -66,7 +66,7 @@
 
         <section layout:fragment="content">
 
-            <vu:table th:title="#{history.table.title}" list="historyListFiltered" componentId="historyList" sortBy="date" :binary-state-sort="true">
+            <vu:table th:title="#{history.table.title}" list="historyListFiltered" componentId="historyList" sortBy="date" descending :binary-state-sort="true">
                 <vu:slot name="top_right_slot">
                     <vu:include-data object="criteria" field="'*'" />
                     <vu:include-data object="historyActions" field="'*'" />
