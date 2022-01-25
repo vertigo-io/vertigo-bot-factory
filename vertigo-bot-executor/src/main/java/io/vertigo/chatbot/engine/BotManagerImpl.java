@@ -19,15 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
-import javax.inject.Inject;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 public final class BotManagerImpl implements BotManager {
 	private final BlackBoardManager blackBoardManager;
 	private final BehaviorTreeManager behaviorTreeManager;
@@ -87,7 +78,7 @@ public final class BotManagerImpl implements BotManager {
 
 		for (final TopicDefinition t : newTopics) {
 			LogsUtils.addLogs(logs, t.getCode(), " mapping : ");
-			if (!t.getTrainingPhrases().isEmpty()) {
+			if (!t.getTrainingPhrases().isEmpty() && !t.getUnreachable()) {
 				LogsUtils.addLogs(logs, t.getTrainingPhrases());
 				LogsUtils.breakLine(logs);
 				nluTtrainingData.put(NluIntent.of(t.getCode()), t.getTrainingPhrases()); // build NLU training data

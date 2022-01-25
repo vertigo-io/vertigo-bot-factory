@@ -16,6 +16,7 @@ public final class TopicExport implements DtObject {
 	private String name;
 	private java.util.List<String> nluTrainingSentences = new java.util.ArrayList<>();
 	private String topicBT;
+	private Boolean unreachable;
 	
 	/**
 	 * Champ : DATA.
@@ -74,6 +75,25 @@ public final class TopicExport implements DtObject {
 	 */
 	public void setTopicBT(final String topicBT) {
 		this.topicBT = topicBT;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Unreachable'.
+	 * @return Boolean unreachable <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Unreachable")
+	public Boolean getUnreachable() {
+		return unreachable;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Unreachable'.
+	 * @param unreachable Boolean <b>Obligatoire</b>
+	 */
+	public void setUnreachable(final Boolean unreachable) {
+		this.unreachable = unreachable;
 	}
 	
 	/** {@inheritDoc} */

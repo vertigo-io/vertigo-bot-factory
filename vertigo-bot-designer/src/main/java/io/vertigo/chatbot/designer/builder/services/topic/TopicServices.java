@@ -211,7 +211,8 @@ public class TopicServices implements Component, Activeable {
 				Criterions.isEqualTo(TopicFields.botId, bot.getBotId())
 						.and(Criterions.isEqualTo(TopicFields.isEnabled, true))
 						.and(Criterions.isEqualTo(TopicFields.ttoCd, ttoCd)
-								.and(Criterions.isEqualTo(TopicFields.ktoCd, KindTopicEnum.NORMAL.name()))),
+								.and(Criterions.isEqualTo(TopicFields.ktoCd, KindTopicEnum.NORMAL.name())
+										.or(Criterions.isEqualTo(TopicFields.ktoCd, KindTopicEnum.UNREACHABLE.name())))),
 				DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
