@@ -59,6 +59,15 @@
                 }
             }
 
+            function getHistoryActionLabel(action) {
+                let historyAction = VertigoUi.vueData.historyActions.find(currentAction => currentAction.hacCd === action);
+                if (historyAction !== undefined) {
+                    return VertigoUi.vueData.locale === 'fr_FR' ? historyAction.labelFr : historyAction.label;
+                } else {
+                    return action;
+                }
+            }
+
         </script>
     </head>
 
@@ -151,8 +160,22 @@
                 <vu:include-data object="historyListFiltered" field="message" />
                 <vu:include-data object="historyListFiltered" field="userName" />
                 <vu:column field="date"/>
-                <vu:column field="hacCd"/>
-                <vu:column field="className"/>
+                <vu:column field="hacCd">
+                    <vu:content>
+                        <span v-html="getHistoryActionLabel(props.row.hacCd)"></span>
+                    </vu:content>
+                </vu:column>
+                <vu:column field="className">
+                    <vu:content>
+                        <span th:text="#{history.training}" v-if="props.row.className == 'Training'"></span>
+                        <span th:text="#{history.scriptIntention}" v-else-if="props.row.className == 'ScriptIntention'"></span>
+                        <span th:text="#{history.smalltalk}" v-else-if="props.row.className == 'SmallTalk'"></span>
+                        <span th:text="#{history.dictionaryEntity}" v-else-if="props.row.className == 'DictionaryEntity'"></span>
+                        <span th:text="#{history.contextValue}" v-else-if="props.row.className == 'ContextValue'"></span>
+                        <span th:text="#{history.profile}" v-else-if="props.row.className == 'ProfilPerChatbot'"></span>
+                        <span v-else>{{props.row.className}}</span>
+                    </vu:content>
+                </vu:column>
                 <vu:column field="message"/>
                 <vu:column field="userName"/>
             </vu:table>
