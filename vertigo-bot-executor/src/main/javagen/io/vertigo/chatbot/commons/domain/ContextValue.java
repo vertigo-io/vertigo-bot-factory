@@ -17,7 +17,7 @@ public final class ContextValue implements Entity {
 
 	private Long cvaId;
 	private String label;
-	private String key;
+	private String xpath;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AContextValueChatbot",
@@ -80,21 +80,21 @@ public final class ContextValue implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Key'.
-	 * @return String key <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Xpath'.
+	 * @return String xpath <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Key")
-	public String getKey() {
-		return key;
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Xpath")
+	public String getXpath() {
+		return xpath;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Key'.
-	 * @param key String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Xpath'.
+	 * @param xpath String <b>Obligatoire</b>
 	 */
-	public void setKey(final String key) {
-		this.key = key;
+	public void setXpath(final String xpath) {
+		this.xpath = xpath;
 	}
 	
 	/**

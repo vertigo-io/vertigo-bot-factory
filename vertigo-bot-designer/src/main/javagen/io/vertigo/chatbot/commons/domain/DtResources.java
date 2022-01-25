@@ -291,6 +291,10 @@ public enum DtResources implements MessageKey {
 	 * Topic BT.
 	 */
 	fldTopicExport$topicBT,
+	/**
+	 * Unreachable.
+	 */
+	fldTopicExport$unreachable,
 
 	/***********************************************************
 	/** TrainerInfo.

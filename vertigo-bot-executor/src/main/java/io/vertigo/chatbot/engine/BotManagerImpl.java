@@ -76,7 +76,7 @@ public final class BotManagerImpl implements BotManager {
 
 		for (final TopicDefinition t : newTopics) {
 			LogsUtils.addLogs(logs, t.getCode(), " mapping : ");
-			if (!t.getTrainingPhrases().isEmpty()) {
+			if (!t.getTrainingPhrases().isEmpty() && !t.getUnreachable()) {
 				LogsUtils.addLogs(logs, t.getTrainingPhrases());
 				LogsUtils.breakLine(logs);
 				nluTtrainingData.put(NluIntent.of(t.getCode()), t.getTrainingPhrases()); // build NLU training data

@@ -108,8 +108,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cvaId,
 		/** Propriété 'Label'. */
 		label,
-		/** Propriété 'Key'. */
-		key,
+		/** Propriété 'Xpath'. */
+		xpath,
 		/** Propriété 'Chatbot'. */
 		botId	}
 
@@ -186,7 +186,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'nluTrainingSentences'. */
 		nluTrainingSentences,
 		/** Propriété 'Topic BT'. */
-		topicBT	}
+		topicBT,
+		/** Propriété 'Unreachable'. */
+		unreachable	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.

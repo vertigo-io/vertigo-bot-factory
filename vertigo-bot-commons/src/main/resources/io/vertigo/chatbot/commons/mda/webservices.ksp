@@ -14,6 +14,7 @@ create DtDefinition DtTopicExport {
 	field name 						{domain: DoLabel 						label: "Topic name" 				cardinality : "1"}
 	field nluTrainingSentences 		{domain: DoLabel 						label: "nluTrainingSentences" 		cardinality : "*"}
 	field topicBT			 		{domain: DoText	 						label: "Topic BT" 					cardinality : "1"}
+    field unreachable			 	{domain: DoYesNo	 					label: "Unreachable" 				cardinality : "1"}
 }
 
 create DtDefinition DtRunnerInfo {
