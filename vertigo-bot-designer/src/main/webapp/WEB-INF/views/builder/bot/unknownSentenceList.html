@@ -67,18 +67,12 @@
                 VertigoUi.vueData.unknownSentenceFilteredList = VertigoUi.vueData.unknownSentenceList
                 if (VertigoUi.componentStates.statuses.selectedStatus.strCd !== null) {
                     VertigoUi.vueData.unknownSentenceFilteredList = VertigoUi.vueData.unknownSentenceFilteredList
-                            // copy and reverse
-                            .slice().reverse()
-                            // search
                             .filter(sentence => sentence.status === VertigoUi.componentStates.statuses.selectedStatus.strCd)
                 }
 
                 let searchNormarlized = normalizeString(VertigoUi.componentStates.search.searchText.value);
                 if (searchNormarlized !==''){
                     VertigoUi.vueData.unknownSentenceFilteredList =  VertigoUi.vueData.unknownSentenceFilteredList
-                        // copy and reverse
-                        .slice().reverse()
-                        // search
                         .filter(sentence => normalizeString(sentence.text).includes(searchNormarlized))
                 }
             }
@@ -117,9 +111,9 @@
                            @click="refreshUnknownSentences()" :loading="dataX.loadingUnknownSentences"></q-btn>
                 </vu:slot>
                 <vu:slot name="actions_slot">
-                    <q-btn class="on-right" round color="blue" icon="check_circle" th:aria-label="#{unknownSentence.treat}" th:title="#{unknownSentence.treat}"
+                    <q-btn v-if="props.row.status != 'TREATED'" class="on-right" round color="blue" icon="check_circle" th:aria-label="#{unknownSentence.treat}" th:title="#{unknownSentence.treat}"
                            @click="componentStates.treatUnknownSentence.unknownSentence.text = props.row.text; componentStates.treatUnknownSentence.unknownSentence.unknownSentenceId = props.row.unkSeId; $refs.treatDialog.show()"></q-btn>
-                    <q-btn class="on-right" round color="red" icon="cancel" th:aria-label="#{unknownSentence.reject}" th:title="#{unknownSentence.reject}"
+                    <q-btn v-if="props.row.status != 'TREATED' && props.row.status != 'REJECTED' " class="on-right" round color="red" icon="cancel" th:aria-label="#{unknownSentence.reject}" th:title="#{unknownSentence.reject}"
                            @click="rejectUnknownSentence(props.row.unkSeId)"></q-btn>
 
                 </vu:slot>
