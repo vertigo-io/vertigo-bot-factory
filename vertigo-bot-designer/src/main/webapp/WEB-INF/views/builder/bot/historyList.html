@@ -157,5 +157,10 @@
                 <vu:column field="userName"/>
             </vu:table>
         </section>
+        <section layout:fragment="javascript-footer" >
+            <script type="text/javascript">
+                VUiPage.$data.componentStates.historyList.columns[0].sort = VertigoUi.methods.sortDatesAsString("DD/MM/YYYY HH:mm");
+            </script>
+        </section>
     </body>
 </html>
