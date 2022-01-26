@@ -65,6 +65,7 @@
 
             function filterSentences() {
                 VertigoUi.vueData.unknownSentenceFilteredList = VertigoUi.vueData.unknownSentenceList
+                console.log(VertigoUi.vueData.unknownSentenceFilteredList);
                 if (VertigoUi.componentStates.statuses.selectedStatus.strCd !== null) {
                     VertigoUi.vueData.unknownSentenceFilteredList = VertigoUi.vueData.unknownSentenceFilteredList
                             .filter(sentence => sentence.status === VertigoUi.componentStates.statuses.selectedStatus.strCd)
@@ -85,7 +86,7 @@
 
     <body>
         <section layout:fragment="content">
-            <vu:table list="unknownSentenceFilteredList" th:title="#{unknownSentence.title}" selectable="true" componentId="unknownSentenceList" sortBy="date" :binary-state-sort="true">
+            <vu:table list="unknownSentenceFilteredList" th:title="#{unknownSentence.title}" selectable="true" componentId="unknownSentenceList" sortBy="date" descending :binary-state-sort="true">
                 <vu:slot name="top_right_slot">
                     <vu:include-data object="statuses" field="'*'"/>
                     <vu:include-data-primitive key="locale"/>
@@ -204,6 +205,10 @@
                 </q-card>
             </q-dialog>
         </section>
-
+        <section layout:fragment="javascript-footer" >
+            <script type="text/javascript">
+                VUiPage.$data.componentStates.unknownSentenceList.columns[1].sort = VertigoUi.methods.sortDatesAsString("DD/MM/YYYY HH:mm");
+            </script>
+        </section>
     </body>
 </html>
