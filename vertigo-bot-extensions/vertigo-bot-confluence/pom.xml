@@ -22,9 +22,6 @@
 		<artifactId>vertigo-bot-executor</artifactId>
 		<version>${project.version}</version>
 		<classifier>classes</classifier>
-		
-
-	
 	</dependency>
 		
 	

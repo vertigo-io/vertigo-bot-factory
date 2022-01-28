@@ -134,6 +134,9 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 			for (final ContextValue contextValue : list) {
 				map.put(contextValue.getLabel(), contextValue.getXpath());
 			}
+			if (!map.containsKey("url")) {
+				map.put("url", "");
+			}
 			final String json = jsonEngine.toJson(map);
 
 			LogsUtils.logOK(logs);

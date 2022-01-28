@@ -25,14 +25,7 @@
 	<Parameter name="JIRA_USER" value="" override="false"/>
 	<Parameter name="JIRA_PWD" value="" override="false"/>
 	<Parameter name="JIRA_URL" value="" override="false"/>
-	
-	<!-- webservice -->
-	<Parameter name="WEB_SERVICE" value="" override="false"/>
-	
-	<!-- Use for SIG connexion -->
-	<Parameter name="SIG_USER" value="Admin SIG" override="false"/>
-	<Parameter name="SIG_PWD" value="test" override="false"/>
-	<Parameter name="SIG_URL" value="http://comu-usi-batch-rec:8001/sigRest/v1/customers/" override="false"/>
+	<Parameter name="JIRA_PROJECT" value="" override="false"/>
 	
 	
 	<!--  Use for confluence plugin -->

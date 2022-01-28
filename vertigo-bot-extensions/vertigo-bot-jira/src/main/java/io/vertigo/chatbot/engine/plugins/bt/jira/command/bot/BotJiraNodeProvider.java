@@ -1,45 +1,69 @@
 package io.vertigo.chatbot.engine.plugins.bt.jira.command.bot;
 
-import static io.vertigo.ai.bt.BTNodes.selector;
-import static io.vertigo.ai.bt.BTNodes.sequence;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import com.atlassian.jira.rest.client.api.domain.BasicComponent;
-
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
-import io.vertigo.ai.bt.BTNodes;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
-import io.vertigo.chatbot.engine.model.choice.BotButton;
-import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.AffectedVersionFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.AssigneeFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.ComponentFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.DescriptionFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.FixVersionFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.IJiraFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.IssueTypeFieldService;
 import io.vertigo.chatbot.engine.plugins.bt.jira.impl.JiraServerService;
-import io.vertigo.chatbot.engine.plugins.bt.jira.impl.WebService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.PrioritiesFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.ReporterFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.SummaryFieldService;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
+import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 
-public class BotJiraNodeProvider implements Component {
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
+import static io.vertigo.ai.bt.BTNodes.sequence;
+
+public class BotJiraNodeProvider implements Component, Activeable {
 
 	@Inject
 	private JiraServerService jiraService;
 
 	@Inject
-	private WebService webServices;
+	private SummaryFieldService summaryFieldService;
+
+	@Inject
+	private DescriptionFieldService descriptionFieldService;
+
+	@Inject
+	private IssueTypeFieldService issueTypeFieldService;
+
+	@Inject
+	private ComponentFieldService componentFieldService;
+
+	@Inject
+	private FixVersionFieldService fixVersionFieldService;
+
+	@Inject
+	private AffectedVersionFieldService affectedVersionFieldService;
+
+	@Inject
+	private PrioritiesFieldService prioritiesFieldService;
+
+	@Inject
+	private AssigneeFieldService assigneeFieldService;
+
+	@Inject
+	private ReporterFieldService reporterFieldService;
+
+	private List<IJiraFieldService> fieldServices = new ArrayList<>();
 
 	public BTNode jiraIssueCreation(final BlackBoard bb, final List<JiraField> jiraFields, final String urlSentence) {
 		return () -> {
-			final List<String> jfStrings = jiraFields.stream().map(x -> bb.getString(BBKey.of(x.getKey()))).collect(Collectors.toList());
-
-			jfStrings.add(bb.getString(BBKey.of("/user/local/components")));
-			jfStrings.add(bb.getString(BBKey.of(BotEngine.BOT_CONTEXT_KEY, "/url")));
-			final List<String> versions = webServices.getAllVersions();
-			final String result = jiraService.createIssueJiraCommand(jfStrings, versions);
+			jiraFields.forEach(field -> field.setValue(bb.getString(BBKey.of(field.getKey()))));
+			final String result = jiraService.createIssueJiraCommand(bb, jiraFields, fieldServices);
 			bb.listPush(BotEngine.BOT_RESPONSE_KEY, urlSentence + " " + result);
 			return BTStatus.Succeeded;
 		};
@@ -47,113 +71,31 @@ public class BotJiraNodeProvider implements Component {
 
 	public BTNode buildJiraCreateIssue(final BlackBoard bb, final List<JiraField> jiraFields, final String urlSentence) {
 		final List<BTNode> sequence = new ArrayList<>();
+		jiraFields.forEach(jiraField -> fieldServices.forEach(fieldService -> {
+			if (fieldService.supports(jiraField.getFieldType())) {
+				fieldService.processConversation(bb, jiraField, sequence);
+			}
+		}));
 
-		sequence.add(BotNodeProvider.inputString(bb, "/user/local/reference", "Bien sûr, quelle est la référence du client impacté par cette anomalie ?"));
-		sequence.add(poursuiteSelector(bb));
-
-		if ("NON".equals(bb.getString(BBKey.of("/user/local/poursuite")))) {
-			sequence.add(BotNodeProvider.switchTopicEnd(bb));
-		}
-		sequence.add(getIssueFromReference(bb, "/user/local/reference"));
-		if ("NON".equals(bb.getString(BBKey.of("/user/local/jira/continue")))) {
-			sequence.add(BotNodeProvider.switchTopicEnd(bb));
-		}
-
-		sequence.add(getComponentIssue(bb, "/user/local/components", "Quel est le produit ?"));
-		sequence.add(BotNodeProvider.inputString(bb, "/user/local/scenario", "Quel est le scénario de test ?"));
-		sequence.add(BotNodeProvider.inputString(bb, "/user/local/attendu", "Quel est le résultat attendu ?"));
-		sequence.add(BotNodeProvider.inputString(bb, "/user/local/obtenu", "Quel est le résultat obtenu?"));
-		sequence.add(getReproButton(bb, "/user/local/reproductibilite", "Quelle est la reproductibilité ?"));
-		sequence.add(getCriticiteButton(bb, "/user/local/criticite", "Quelle est la criticité ?"));
 		sequence.add(jiraIssueCreation(bb, jiraFields, urlSentence));
-
 		return sequence(sequence);
 	}
 
-	public BTNode buildQuestionPoursuite(final BlackBoard bb) {
-		return () -> {
-			final boolean isErrorTarifReduit = webServices.getIsErrorTarifReduit(bb.getString(BBKey.of("/user/local/reference")));
-
-			bb.putString(BBKey.of("/user/local/jira/poursuite"), "done");
-			if (isErrorTarifReduit) {
-				final String question = "Le contrat NL+ du client ne dispose d'aucun profil tarifaire, ce qui n'est pas possible fonctionnellement. Êtes-vous sûr.e de vouloir poursuivre ?";
-				final List<BotButton> buttonList = new ArrayList<>();
-				buttonList.add(new BotButton("Oui", "OUI"));
-				buttonList.add(new BotButton("Non", "NON"));
-				return BotNodeProvider.chooseButton(bb, "/user/local/poursuite", question, buttonList).eval();
-			}
-			return BTStatus.Succeeded;
-		};
+	@Override
+	public void start() {
+		this.fieldServices.add(summaryFieldService);
+		this.fieldServices.add(descriptionFieldService);
+		this.fieldServices.add(issueTypeFieldService);
+		this.fieldServices.add(componentFieldService);
+		this.fieldServices.add(fixVersionFieldService);
+		this.fieldServices.add(affectedVersionFieldService);
+		this.fieldServices.add(prioritiesFieldService);
+		this.fieldServices.add(assigneeFieldService);
+		this.fieldServices.add(reporterFieldService);
 	}
 
-	public BTNode poursuiteSelector(final BlackBoard bb) {
-		return BTNodes.selector(
-				BotNodeProvider.fulfilled(bb, "/user/local/jira/poursuite"),
-				buildQuestionPoursuite(bb));
+	@Override
+	public void stop() {
 
 	}
-
-	private BTNode getCriticiteButton(final BlackBoard bb, final String keyTemplate, final String question) {
-		final List<BotButton> buttons = new ArrayList<>();
-		buttons.add(new BotButton("Critique", "10408"));
-		buttons.add(new BotButton("Bloquant", "10409"));
-		buttons.add(new BotButton("Majeur", "10410"));
-		buttons.add(new BotButton("Mineur", "10411"));
-		buttons.add(new BotButton("Esthétique", "10412"));
-		return BotNodeProvider.chooseButton(bb, keyTemplate, question, buttons);
-	}
-
-	private BTNode getComponentIssue(final BlackBoard bb, final String keyTemplate, final String question) {
-		return () -> {
-			final List<BasicComponent> listComponents = (List<BasicComponent>) jiraService.getProject().getComponents();
-			final List<BotButton> listButtons = listComponents.stream().map(x -> mapComponentToButtonNode(x)).collect(Collectors.toList());
-			return BotNodeProvider.chooseButton(bb, keyTemplate, question, listButtons).eval();
-		};
-	}
-
-	private BTNode getReproButton(final BlackBoard bb, final String keyTemplate, final String question) {
-		final List<BotButton> buttons = new ArrayList<>();
-		buttons.add(new BotButton("Reproductible", "10413"));
-		buttons.add(new BotButton("Aléatoire", "10414"));
-		buttons.add(new BotButton("Non reproductible", "10415"));
-		buttons.add(new BotButton("N'a pas essayé", "10416"));
-		return BotNodeProvider.chooseButton(bb, keyTemplate, question, buttons);
-	}
-
-	private BotButton mapComponentToButtonNode(final BasicComponent component) {
-		return new BotButton(component.getName(), component.getName());
-	}
-
-	private BTNode getIssueFromReference(final BlackBoard bb, final String string) {
-		return selector(
-				BotNodeProvider.fulfilled(bb, BotEngine.USER_LOCAL_PATH.key() + "/jira/ws"),
-				getIssue(bb, string));
-	}
-
-	private BTNode getIssue(final BlackBoard bb, final String string) {
-		return () -> {
-			final List<String> result = new ArrayList<>();
-			bb.putString(BBKey.of(BotEngine.USER_LOCAL_PATH.key() + "/jira/ws"), "done");
-			result.add("J'ai trouvé une anomalie qui porte déjà sur ce client.");
-			result.add("Pourriez-vous vérifier que votre problème n'est pas déjà référencé ?");
-			final String jqlSearch = "description ~ " + bb.getString(BBKey.of(string));
-			final List<String> jiraIssues = jiraService.getIssues(jqlSearch);
-			if (jiraIssues != null) {
-				result.addAll(jiraIssues);
-			}
-			if (result.size() > 2) {
-				result.stream().forEach(x -> bb.listPush(BotEngine.BOT_RESPONSE_KEY, x));
-				return getIssueButton(bb, "/user/local/jira/continue", "Voulez vous continuez ?").eval();
-			}
-			return BTStatus.Succeeded;
-		};
-	}
-
-	private BTNode getIssueButton(final BlackBoard bb, final String keyTemplate, final String question) {
-		final List<BotButton> buttons = new ArrayList<>();
-		buttons.add(new BotButton("Oui", "OUI"));
-		buttons.add(new BotButton("Non", "NON"));
-		return BotNodeProvider.chooseButton(bb, keyTemplate, question, buttons);
-	}
-
 }
