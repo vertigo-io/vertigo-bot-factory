@@ -29,6 +29,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
+		/** Objet de données JiraFieldSettingExport. */
+		JiraFieldSettingExport(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class),
+		/** Objet de données JiraSettingExport. */
+		JiraSettingExport(io.vertigo.chatbot.commons.domain.JiraSettingExport.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données RasaConfig. */
@@ -75,6 +79,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		welcomeTours,
 		/** Propriété 'Confluence setting'. */
 		confluenceSetting,
+		/** Propriété 'Jira setting'. */
+		jiraSetting,
+		/** Propriété 'Jira fields setting'. */
+		jiraFieldSetting,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -154,6 +162,30 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		avatar,
 		/** Propriété 'Additional config for executor'. */
 		customConfig	}
+
+	/**
+	 * Enumération des champs de JiraFieldSettingExport.
+	 */
+	public enum JiraFieldSettingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> {
+		/** Propriété 'Jira field key'. */
+		fieldKey,
+		/** Propriété 'Enabled'. */
+		enabled,
+		/** Propriété 'Mandatory'. */
+		mandatory	}
+
+	/**
+	 * Enumération des champs de JiraSettingExport.
+	 */
+	public enum JiraSettingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.JiraSettingExport> {
+		/** Propriété 'Jira URL'. */
+		url,
+		/** Propriété 'Login'. */
+		login,
+		/** Propriété 'Password'. */
+		password,
+		/** Propriété 'Project'. */
+		project	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.

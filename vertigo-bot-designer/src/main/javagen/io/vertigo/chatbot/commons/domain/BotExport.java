@@ -21,6 +21,8 @@ public final class BotExport implements DtObject {
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.TopicExport.class);
 	private String welcomeTours;
 	private io.vertigo.chatbot.commons.domain.ConfluenceSettingExport confluenceSetting;
+	private io.vertigo.chatbot.commons.domain.JiraSettingExport jiraSetting;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> jiraFieldSetting =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class);
 	private String mapContext;
 	
 	/**
@@ -175,6 +177,46 @@ public final class BotExport implements DtObject {
 	 */
 	public void setConfluenceSetting(final io.vertigo.chatbot.commons.domain.ConfluenceSettingExport confluenceSetting) {
 		this.confluenceSetting = confluenceSetting;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Jira setting'.
+	 * @return JiraSettingExport jiraSetting
+	 */
+	@Field(smartType = "STyDtJiraSettingExport", label = "Jira setting")
+	public io.vertigo.chatbot.commons.domain.JiraSettingExport getJiraSetting() {
+		return jiraSetting;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Jira setting'.
+	 * @param jiraSetting JiraSettingExport
+	 */
+	public void setJiraSetting(final io.vertigo.chatbot.commons.domain.JiraSettingExport jiraSetting) {
+		this.jiraSetting = jiraSetting;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Jira fields setting'.
+	 * @return DtList de JiraFieldSettingExport jiraFieldSetting
+	 */
+	@Field(smartType = "STyDtJiraFieldSettingExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Jira fields setting")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> getJiraFieldSetting() {
+		return jiraFieldSetting;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Jira fields setting'.
+	 * @param jiraFieldSetting DtList de JiraFieldSettingExport
+	 */
+	public void setJiraFieldSetting(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> jiraFieldSetting) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(jiraFieldSetting);
+		//---
+		this.jiraFieldSetting = jiraFieldSetting;
 	}
 	
 	/**

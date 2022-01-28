@@ -1,138 +1,95 @@
 package io.vertigo.chatbot.engine.plugins.bt.jira.impl;
 
-import java.io.IOException;
+import com.atlassian.jira.rest.client.api.IssueRestClient;
+import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.OptionalIterable;
+import com.atlassian.jira.rest.client.api.SearchRestClient;
+import com.atlassian.jira.rest.client.api.domain.BasicComponent;
+import com.atlassian.jira.rest.client.api.domain.BasicIssue;
+import com.atlassian.jira.rest.client.api.domain.Field;
+import com.atlassian.jira.rest.client.api.domain.FieldType;
+import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.IssueType;
+import com.atlassian.jira.rest.client.api.domain.Priority;
+import com.atlassian.jira.rest.client.api.domain.Project;
+import com.atlassian.jira.rest.client.api.domain.SearchResult;
+import com.atlassian.jira.rest.client.api.domain.Transition;
+import com.atlassian.jira.rest.client.api.domain.User;
+import com.atlassian.jira.rest.client.api.domain.Version;
+import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
+import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import io.vertigo.ai.bb.BlackBoard;
+import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
+import io.vertigo.chatbot.commons.domain.JiraSettingExport;
+import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
+import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.structure.model.DtList;
+
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.atlassian.jira.rest.client.api.AuthenticationHandler;
-import com.atlassian.jira.rest.client.api.IssueRestClient;
-import com.atlassian.jira.rest.client.api.JiraRestClient;
-import com.atlassian.jira.rest.client.api.ProjectRestClient;
-import com.atlassian.jira.rest.client.api.SearchRestClient;
-import com.atlassian.jira.rest.client.api.VersionRestClient;
-import com.atlassian.jira.rest.client.api.domain.BasicIssue;
-import com.atlassian.jira.rest.client.api.domain.Project;
-import com.atlassian.jira.rest.client.api.domain.SearchResult;
-import com.atlassian.jira.rest.client.api.domain.Version;
-import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldValue;
-import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
-import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
-import com.atlassian.jira.rest.client.api.domain.input.VersionInput;
-import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
-import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
-
-import io.vertigo.core.node.Node;
-import io.vertigo.core.node.component.Activeable;
-import io.vertigo.core.node.component.Component;
-import io.vertigo.core.param.ParamManager;
-
-public class JiraServerService implements Component, IJiraService, Activeable {
-
-	private ParamManager paramManager;
+public class JiraServerService implements Component, IJiraService {
 
 	private String baseJira;
 	private String user;
 	private String password;
+	private String project;
+	private JiraRestClient jiraRestClient;
+	private DtList<JiraFieldSettingExport> jiraFieldSettingExports;
 
-	@Override
-	public void start() {
-		paramManager = Node.getNode().getComponentSpace().resolve(ParamManager.class);
-		baseJira = paramManager.getParam("JIRA_URL").getValueAsString();
-		user = paramManager.getParam("JIRA_USER").getValueAsString();
-		password = paramManager.getParam("JIRA_PWD").getValueAsString();
+	public void refreshConfig(JiraSettingExport jiraSettingExport, DtList<JiraFieldSettingExport> jiraFieldSettingExports) {
+		this.baseJira = jiraSettingExport.getUrl();
+		this.user = jiraSettingExport.getLogin();
+		this.password = jiraSettingExport.getPassword();
+		this.project = jiraSettingExport.getProject();
+		jiraRestClient = createJiraRestClient();
+		this.jiraFieldSettingExports = jiraFieldSettingExports;
 	}
 
-	@Override
-	public void stop() {
-		//do nothing
+	public DtList<JiraFieldSettingExport> getJiraFieldSettingExports() {
+		return jiraFieldSettingExports;
 	}
 
 	private JiraRestClient createJiraRestClient() {
-		final URI jiraServerUri = URI.create(baseJira);
-		final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
-
-		final AuthenticationHandler auth = new BasicHttpAuthenticationHandler(user, password);
-		return factory.create(jiraServerUri, auth);
+		return new AsynchronousJiraRestClientFactory()
+				.createWithBasicHttpAuthentication(URI.create(baseJira), this.user, this.password);
 	}
 
-	public BasicIssue createIssue(final List<String> jfFields, final List<String> versions) {
-		final JiraRestClient restClient = createJiraRestClient();
-		final IssueRestClient issueClient = restClient.getIssueClient();
-
-		try {
-			final IssueInputBuilder iib = new IssueInputBuilder();
-
-			iib.setProjectKey("CHATBOTPOC");
-			iib.setIssueTypeId(10004L);
-			iib.setSummary(jfFields.get(1).substring(0, Math.min(jfFields.get(1).length(), 49)));
-
-			iib.setDescription(buildDescription(jfFields.get(0), jfFields.get(7)));
-			setScenario(iib, jfFields.get(1));
-			setExpectedResult(iib, jfFields.get(2));
-			setObtainedResult(iib, jfFields.get(3));
-			setReproductibilityCode(iib, jfFields.get(4));
-			setCriticityCode(iib, jfFields.get(5));
-			final ArrayList<String> listComponents = new ArrayList<>();
-			listComponents.add(jfFields.get(6));
-			iib.setComponentsNames(listComponents);
-			createAndSetAffectVersion(iib, versions, restClient);
-
-			final IssueInput issue = iib.build();
-			return issueClient.createIssue(issue).claim();
-
-		} finally {
-			try {
-				restClient.close();
-			} catch (final IOException e) {
-				e.printStackTrace();
+	public BasicIssue createIssue(final BlackBoard bb, final List<JiraField> jfFields, List<IJiraFieldService> fieldServices) {
+		final IssueRestClient issueClient = jiraRestClient.getIssueClient();
+		final IssueInputBuilder iib = new IssueInputBuilder();
+		iib.setProjectKey(project);
+		jfFields.forEach(jiraField -> fieldServices.forEach(fieldService -> {
+			if (fieldService.supports(jiraField.getFieldType())) {
+				fieldService.processTicket(bb, iib, jiraField);
 			}
-		}
+		}));
+		final IssueInput issue = iib.build();
+		return issueClient.createIssue(issue).claim();
 	}
 
-	private void createAndSetAffectVersion(final IssueInputBuilder iib, final List<String> versions, final JiraRestClient restClient) {
-		final String projectKey = "CHATBOTPOC";
-		final String version = versions.get(0) + "_" + versions.get(2);
-		final ProjectRestClient projectClient = restClient.getProjectClient();
-		final VersionRestClient versionClient = restClient.getVersionRestClient();
-		final Project project = projectClient.getProject(projectKey).claim();
-		final Optional<Version> versionProject = StreamSupport.stream(project.getVersions().spliterator(), false).filter(x -> x.getName().equals(version)).findAny();
-		Version versionToSet;
-		if (versionProject.isEmpty()) {
-			//Not find the correct version creation
-			final VersionInput versionToCreate = new VersionInput(projectKey, version, null, null, false, false);
-			versionToSet = versionClient.createVersion(versionToCreate).claim();
-		} else {
-			versionToSet = versionProject.get();
-		}
-		iib.setAffectedVersions(List.of(versionToSet));
-
-	}
 
 	public List<String> getIssues(final String jqlSearch) {
-		final SearchRestClient searchClient = createJiraRestClient().getSearchClient();
+		final SearchRestClient searchClient = jiraRestClient.getSearchClient();
 		final SearchResult searchResult = searchClient.searchJql(jqlSearch).claim();
 		return StreamSupport.stream(searchResult.getIssues().spliterator(), false)
 				.map(x -> createLinkUrl(x.getKey()))
 				.collect(Collectors.toList());
-
 	}
 
 	@Override
-	public String createIssueJiraCommand(final List<String> jfStrings, final List<String> versions) {
-		final var createdIssue = createIssue(jfStrings, versions);
+	public String createIssueJiraCommand(final BlackBoard bb, final List<JiraField> jiraFields, List<IJiraFieldService> fieldServices) {
+		final var createdIssue = createIssue(bb, jiraFields, fieldServices);
 		return createLinkUrl(createdIssue.getKey());
 
 	}
 
 	private String createLinkUrl(final String key) {
 		final String url = baseJira + "/browse/" + key;
-		final var builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("<a href=\"");
 		builder.append(url);
 		builder.append("\">");
@@ -141,54 +98,41 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		return builder.toString();
 	}
 
-	private void setScenario(final IssueInputBuilder iib, final String value) {
-		iib.setFieldValue("customfield_10409", value);
-	}
-
-	private void setExpectedResult(final IssueInputBuilder iib, final String value) {
-		iib.setFieldValue("customfield_10410", value);
-	}
-
-	private void setObtainedResult(final IssueInputBuilder iib, final String value) {
-		iib.setFieldValue("customfield_10411", value);
-	}
-
-	private void setCriticityCode(final IssueInputBuilder iib, final String value) {
-		final Map<String, Object> customField = new HashMap<>();
-		customField.put("id", value);
-		iib.setFieldValue("customfield_10412", new ComplexIssueInputFieldValue(customField));
-	}
-
-	private void setReproductibilityCode(final IssueInputBuilder iib, final String value) {
-		final Map<String, Object> customField = new HashMap<>();
-		customField.put("id", value);
-		iib.setFieldValue("customfield_10413", new ComplexIssueInputFieldValue(customField));
-	}
-
 	public Project getProject() {
-		final URI jiraServerUri = URI.create(baseJira);
-		final AsynchronousJiraRestClientFactory factory = new AsynchronousJiraRestClientFactory();
-
-		final AuthenticationHandler auth = new BasicHttpAuthenticationHandler(user, password);
-		final JiraRestClient restClient = factory.create(jiraServerUri, auth);
-		final ProjectRestClient projectClient = restClient.getProjectClient();
-		try {
-			return projectClient.getProject("CHATBOTPOC").claim();
-		} finally {
-
-		}
-
+		return jiraRestClient.getProjectClient().getProject(project).claim();
 	}
 
-	private String buildDescription(final String reference, final String url) {
-		final StringBuilder descriptionBuilder = new StringBuilder();
-		descriptionBuilder.append("La référence du client est ");
-		descriptionBuilder.append(reference);
-		descriptionBuilder.append("\n");
-		descriptionBuilder.append("Le scenario a eu lieu à l'adresse suivante : ");
-		descriptionBuilder.append(url);
-		return descriptionBuilder.toString();
+	public OptionalIterable<IssueType> getIssueTypes() {
+		return getProject().getIssueTypes();
+	}
 
+	public List<Version> getVersions() {
+		return (List<Version>) getProject().getVersions();
+	}
+
+	public List<User> findUserByUsername(String username) {
+		return (List<User>) jiraRestClient.getUserClient().findUsers(username).claim();
+	}
+
+	public List<Priority> getPriorities() {
+		return (List<Priority>) jiraRestClient.getMetadataClient().getPriorities().claim();
+	}
+
+	public Issue getIssueByKey(String key) {
+		return jiraRestClient.getIssueClient().getIssue(key).claim();
+	}
+
+	public List<Transition> getIssueTransitions(Issue issue) {
+		return (List<Transition>) jiraRestClient.getIssueClient().getTransitions(issue).claim();
+	}
+
+	public List<Field> getCustomFields() {
+		List<Field> allFields = (List<Field>) jiraRestClient.getMetadataClient().getFields().claim();
+		return allFields.stream().filter(field -> field.getFieldType() == FieldType.CUSTOM).collect(Collectors.toList());
+	}
+
+	public Iterable<BasicComponent> getComponents() {
+		return getProject().getComponents();
 	}
 
 }

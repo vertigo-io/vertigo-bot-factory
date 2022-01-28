@@ -44,6 +44,14 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$confluenceSetting,
 	/**
+	 * Jira setting.
+	 */
+	fldBotExport$jiraSetting,
+	/**
+	 * Jira fields setting.
+	 */
+	fldBotExport$jiraFieldSetting,
+	/**
 	 * map Context.
 	 */
 	fldBotExport$mapContext,
@@ -243,6 +251,118 @@ public enum DtResources implements MessageKey {
 	 * Additional config for executor.
 	 */
 	fldExecutorConfiguration$customConfig,
+
+	/***********************************************************
+	/** JiraField.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldJiraField$jirFieldCd,
+	/**
+	 * Jira id.
+	 */
+	fldJiraField$jiraId,
+	/**
+	 * Title.
+	 */
+	fldJiraField$label,
+	/**
+	 * TitleFr.
+	 */
+	fldJiraField$labelFr,
+
+	/***********************************************************
+	/** JiraFieldSetting.
+	/***********************************************************
+	/**
+	 * Jira field setting id.
+	 */
+	fldJiraFieldSetting$jirFieldSetId,
+	/**
+	 * Jira field enabled.
+	 */
+	fldJiraFieldSetting$enabled,
+	/**
+	 * Jira field mandatory.
+	 */
+	fldJiraFieldSetting$mandatory,
+	/**
+	 * Chatbot.
+	 */
+	fldJiraFieldSetting$botId,
+	/**
+	 * Field.
+	 */
+	fldJiraFieldSetting$jirFieldCd,
+
+	/***********************************************************
+	/** JiraFieldSettingExport.
+	/***********************************************************
+	/**
+	 * Jira field key.
+	 */
+	fldJiraFieldSettingExport$fieldKey,
+	/**
+	 * Enabled.
+	 */
+	fldJiraFieldSettingExport$enabled,
+	/**
+	 * Mandatory.
+	 */
+	fldJiraFieldSettingExport$mandatory,
+
+	/***********************************************************
+	/** JiraSetting.
+	/***********************************************************
+	/**
+	 * Jira setting id.
+	 */
+	fldJiraSetting$jirSetId,
+	/**
+	 * Jira URL.
+	 */
+	fldJiraSetting$url,
+	/**
+	 * Login.
+	 */
+	fldJiraSetting$login,
+	/**
+	 * Password.
+	 */
+	fldJiraSetting$password,
+	/**
+	 * Jira project.
+	 */
+	fldJiraSetting$project,
+	/**
+	 * Chatbot.
+	 */
+	fldJiraSetting$botId,
+	/**
+	 * Node.
+	 */
+	fldJiraSetting$nodId,
+
+	/***********************************************************
+	/** JiraSettingExport.
+	/***********************************************************
+	/**
+	 * Jira URL.
+	 */
+	fldJiraSettingExport$url,
+	/**
+	 * Login.
+	 */
+	fldJiraSettingExport$login,
+	/**
+	 * Password.
+	 */
+	fldJiraSettingExport$password,
+	/**
+	 * Project.
+	 */
+	fldJiraSettingExport$project,
 
 	/***********************************************************
 	/** MediaFileInfo.

@@ -9,7 +9,9 @@ create DtDefinition DtBotExport {
 	field idleBT				    {domain: DoText 						label: "idle BT" 				    cardinality : "1"}
 	field topics					{domain: DoDtTopicExport 				label: "topics export" 				cardinality : "*"}
 	field welcomeTours				{domain: DoText 			            label: "Welcome tours map" 	        cardinality : "1"}
-	field confluenceSetting			{domain: DoDtConfluenceSettingExport 	    label: "Confluence setting" 	    cardinality : "?"}
+	field confluenceSetting			{domain: DoDtConfluenceSettingExport 	label: "Confluence setting" 	    cardinality : "?"}
+	field jiraSetting			    {domain: DoDtJiraSettingExport 	        label: "Jira setting" 	            cardinality : "?"}
+	field jiraFieldSetting			{domain: DoDtJiraFieldSettingExport 	label: "Jira fields setting" 	    cardinality : "*"}
 	field mapContext				{domain: DoText 						label: "map Context" 				cardinality : "1"}
 }
 
@@ -25,6 +27,19 @@ create DtDefinition DtConfluenceSettingExport {
 	field login 		            {domain: DoLabel 						label: "Login" 		                cardinality : "1"}
 	field password			 		{domain: DoPassword	 					label: "Password" 					cardinality : "1"}
     field numberOfResults			{domain: DoNumber	 					label: "Number max of results" 	    cardinality : "1"}
+}
+
+create DtDefinition DtJiraSettingExport {
+	field url 						{domain: DoUrl 						    label: "Jira URL" 		            cardinality : "1"}
+	field login 		            {domain: DoLabel 						label: "Login" 		                cardinality : "1"}
+	field password			 		{domain: DoPassword	 					label: "Password" 					cardinality : "1"}
+    field project			        {domain: DoLabel	 					label: "Project" 	                cardinality : "1"}
+}
+
+create DtDefinition DtJiraFieldSettingExport {
+	field fieldKey 					{domain: DoLabel 						label: "Jira field key" 		    cardinality : "1"}
+	field enabled 		            {domain: DoYesNo 						label: "Enabled" 		            cardinality : "1"}
+	field mandatory			 		{domain: DoYesNo	 					label: "Mandatory" 					cardinality : "1"}
 }
 
 create DtDefinition DtRunnerInfo {

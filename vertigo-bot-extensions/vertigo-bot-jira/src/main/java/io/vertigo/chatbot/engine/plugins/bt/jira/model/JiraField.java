@@ -8,10 +8,13 @@ public class JiraField implements BTNode {
 
 	private String key;
 	private String question;
+	private String fieldType;
+	private String value;
 
-	public JiraField(final String key, final String question) {
-		setKey(key);
-		setQuestion(question);
+	public JiraField(final String key, final String question, final String fieldType) {
+		this.key = key;
+		this.question = question;
+		this.fieldType = fieldType;
 	}
 
 	public String getKey() {
@@ -28,6 +31,22 @@ public class JiraField implements BTNode {
 
 	public void setQuestion(final String question) {
 		this.question = question;
+	}
+
+	public String getFieldType() {
+		return fieldType;
+	}
+
+	public void setFieldType(String fieldType) {
+		this.fieldType = fieldType;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	@Override
