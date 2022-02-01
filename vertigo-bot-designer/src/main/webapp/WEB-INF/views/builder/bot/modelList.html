@@ -422,7 +422,7 @@
 				<vu:include-data object="nodeList" field="color" />
 				<vu:include-data object="nodeList" field="traId" />
 
-				<vu:column field="name" th:title="#{node.name}">
+				<vu:column field="name" th:label="#{node.name}">
 					<q-chip :style="'background: '+ props.row.color" text-color="white">
 						{{props.row.name}}
 					</q-chip>

@@ -88,14 +88,7 @@ public class ExecutorManager implements Manager, Activeable {
 			// nothing to load
 			LOGGER.info("New runner, load a bot to start using it.");
 		} else {
-			//TODO remove this. Created only for migration of old models without the unreachable tag
-			botExport.getTopics().forEach(topicExport -> {
-				if (topicExport.getUnreachable() == null) {
-					topicExport.setUnreachable(false);
-				}
-			});
 			doLoadModel(botExport, new StringBuilder());
-
 		}
 	}
 
@@ -116,6 +109,13 @@ public class ExecutorManager implements Manager, Activeable {
 	}
 
 	private void doLoadModel(final BotExport botExport, final StringBuilder logs) {
+
+		//TODO remove this. Created only for migration of old models without the unreachable tag
+		botExport.getTopics().forEach(topicExport -> {
+			if (topicExport.getUnreachable() == null) {
+				topicExport.setUnreachable(false);
+			}
+		});
 
 		LogsUtils.addLogs(logs, "Node recovery...");
 		final var nluThreshold = executorConfigManager.getConfig().getExecutorConfiguration().getNluThreshold().doubleValue();
