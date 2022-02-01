@@ -36,7 +36,7 @@ public final class ListUtils {
 					viewContext.publishDtList(ViewContextKey.of(key), dtList.stream().limit(MAX_ELEMENTS)
 							.collect(VCollectors.toDtList(dtList.getDefinition())));
 				}
-				uiMessageStack.info(MessageText.of(UtilsMultilingualResources.LIST_TOO_BIG, key, MAX_ELEMENTS).getDisplay());
+				uiMessageStack.info(MessageText.of(UtilsMultilingualResources.LIST_TOO_BIG, MAX_ELEMENTS).getDisplay());
 			}
 		});
 	}
