@@ -57,7 +57,7 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 		return scriptIntentionDAO.get(sinId);
 	}
 
-	public ScriptIntention getNewScriptIntention(@SecuredOperation("botAdm") final Chatbot bot) {
+	public ScriptIntention getNewScriptIntention(@SecuredOperation("botVisitor") final Chatbot bot) {
 		final ScriptIntention scriptIntention = new ScriptIntention();
 		return scriptIntention;
 	}
@@ -78,7 +78,7 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 	}
 
 	@Override
-	public void deleteIfExists(@SecuredOperation("botAdm") final Chatbot chatbot, final Topic topic) {
+	public void deleteIfExists(@SecuredOperation("botContributor") final Chatbot chatbot, final Topic topic) {
 		// delete scriptIntention
 		findByTopId(topic.getTopId())
 				.ifPresent(scriptIntention -> {
