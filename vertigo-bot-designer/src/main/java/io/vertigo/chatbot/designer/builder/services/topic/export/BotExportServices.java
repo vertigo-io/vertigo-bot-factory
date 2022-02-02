@@ -3,13 +3,16 @@ package io.vertigo.chatbot.designer.builder.services.topic.export;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
+import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
 import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 @Transactional
 public class BotExportServices implements Component {
@@ -22,6 +25,9 @@ public class BotExportServices implements Component {
 
 	@Inject
 	private WelcomeTourServices welcomeTourServices;
+
+	@Inject
+	private ConfluenceSettingServices confluenceSettingServices;
 
 	public BotExport exportBot(final Chatbot bot, final StringBuilder logs) {
 		final BotExport export = new BotExport();
@@ -36,6 +42,10 @@ public class BotExportServices implements Component {
 		export.setIdleBT(topicExportServices.getBasicBt(bot, KindTopicEnum.IDLE.name(), logs));
 		export.setMapContext(contextValueServices.exportContextValuesToMapByBot(bot, logs));
 		return export;
+	}
+
+	public Optional<ConfluenceSettingExport> exportConfluenceSetting(final long botId, final long nodId) {
+		return confluenceSettingServices.exportConfluenceSetting(botId, nodId);
 	}
 
 }

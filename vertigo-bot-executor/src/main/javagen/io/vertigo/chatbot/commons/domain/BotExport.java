@@ -20,6 +20,7 @@ public final class BotExport implements DtObject {
 	private String idleBT;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.TopicExport.class);
 	private String welcomeTours;
+	private io.vertigo.chatbot.commons.domain.ConfluenceSettingExport confluenceSetting;
 	private String mapContext;
 	
 	/**
@@ -155,6 +156,25 @@ public final class BotExport implements DtObject {
 	 */
 	public void setWelcomeTours(final String welcomeTours) {
 		this.welcomeTours = welcomeTours;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Confluence setting'.
+	 * @return ConfluenceSettingExport confluenceSetting
+	 */
+	@Field(smartType = "STyDtConfluenceSettingExport", label = "Confluence setting")
+	public io.vertigo.chatbot.commons.domain.ConfluenceSettingExport getConfluenceSetting() {
+		return confluenceSetting;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Confluence setting'.
+	 * @param confluenceSetting ConfluenceSettingExport
+	 */
+	public void setConfluenceSetting(final io.vertigo.chatbot.commons.domain.ConfluenceSettingExport confluenceSetting) {
+		this.confluenceSetting = confluenceSetting;
 	}
 	
 	/**

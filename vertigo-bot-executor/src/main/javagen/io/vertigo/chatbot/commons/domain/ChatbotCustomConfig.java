@@ -116,7 +116,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setBotEmailAddress(final String botEmailAddress) {
 		this.botEmailAddress = botEmailAddress;
 	}
-
+	
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.

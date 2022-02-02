@@ -2,11 +2,16 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ChatbotNode;
+import io.vertigo.chatbot.commons.domain.ConfluenceSetting;
 import io.vertigo.chatbot.commons.domain.WelcomeTour;
+import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.datamodel.structure.definitions.DtField;
+import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -32,14 +37,33 @@ public class ExtensionsController extends AbstractBotController {
 
 	private static final ViewContextKey<WelcomeTour> newWelcomeTourKey = ViewContextKey.of("newWelcomeTour");
 
+	private static final ViewContextKey<ConfluenceSetting> confluenceSettingsKey = ViewContextKey.of("confluenceSettings");
+
+	private static final ViewContextKey<ConfluenceSetting> confluenceSettingsFilteredKey = ViewContextKey.of("confluenceSettingsFiltered");
+
+	private static final ViewContextKey<ConfluenceSetting> newConfluenceSettingKey = ViewContextKey.of("newConfluenceSetting");
+
+	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
+
 	@Inject
 	private WelcomeTourServices welcomeTourServices;
 
+	@Inject
+	private ConfluenceSettingServices confluenceSettingServices;
+
+	@Inject
+	private NodeServices nodeServices;
+
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
-		super.initCommonContext(viewContext, uiMessageStack, botId);
+		final Chatbot bot = super.initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtList(welcomeToursKey, welcomeTourServices.findAllByBotId(botId));
 		viewContext.publishDto(newWelcomeTourKey, new WelcomeTour());
+		DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(botId);
+		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
+		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
+		viewContext.publishDto(newConfluenceSettingKey, new ConfluenceSetting());
+		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
 		super.initBreadCrums(viewContext, "EXTENSION");
 	}
 
@@ -65,6 +89,32 @@ public class ExtensionsController extends AbstractBotController {
 		return viewContext;
 	}
 
+	@PostMapping("/_saveConfluenceSetting")
+	public ViewContext saveConfluenceSetting(final ViewContext viewContext,
+										  final UiMessageStack uiMessageStack,
+										  @ViewAttribute("bot") final Chatbot bot,
+										  @ViewAttribute("newConfluenceSetting")  @Validate(ConfluenceSettingNotEmptyValidator.class) final ConfluenceSetting confluenceSetting) {
+
+		confluenceSettingServices.save(confluenceSetting);
+
+		DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot.getBotId());
+		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
+		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
+		return viewContext;
+	}
+
+	@PostMapping("/_deleteConfluenceSetting")
+	public ViewContext deleteConfluenceSetting(final ViewContext viewContext,
+										 final UiMessageStack uiMessageStack,
+										 @ViewAttribute("bot") final Chatbot bot,
+										 @RequestParam("conSetId") final Long conSetId) {
+		confluenceSettingServices.delete(conSetId);
+		DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot.getBotId());
+		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
+		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
+		return viewContext;
+	}
+
 	/**
 	 * Check if value field is not empty or meaningless html.
 	 */
@@ -77,6 +127,35 @@ public class ExtensionsController extends AbstractBotController {
 					|| DtDefinitions.WelcomeTourFields.technicalCode.name().equals(dtField.getName())) {
 				final String value = (String) dtField.getDataAccessor().getValue(welcomeTour);
 				if (value == null || "".equals(value)) {
+					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné"));
+				}
+			}
+		}
+	}
+
+	public static final class ConfluenceSettingNotEmptyValidator extends AbstractDtObjectValidator<ConfluenceSetting> {
+
+		/** {@inheritDoc} */
+		@Override
+		protected void checkMonoFieldConstraints(final ConfluenceSetting confluenceSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+			if (DtDefinitions.ConfluenceSettingFields.url.name().equals(dtField.getName())
+					|| DtDefinitions.ConfluenceSettingFields.login.name().equals(dtField.getName())
+					|| DtDefinitions.ConfluenceSettingFields.password.name().equals(dtField.getName())
+			) {
+				final String value = (String) dtField.getDataAccessor().getValue(confluenceSetting);
+				if (value == null || "".equals(value)) {
+					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné"));
+				}
+			}
+			if (DtDefinitions.ConfluenceSettingFields.numberOfResults.name().equals(dtField.getName())) {
+				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSetting);
+				if (value == null || value <= 0) {
+					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné et avoir une valeur supérieure à 0"));
+				}
+			}
+			if (DtDefinitions.ConfluenceSettingFields.nodId.name().equals(dtField.getName())) {
+				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSetting);
+				if (value == null) {
 					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné"));
 				}
 			}

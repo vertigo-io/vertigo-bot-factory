@@ -24,4 +24,5 @@
 	<include file="changeLog/v_1_1_0/create_extensions.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_custom_config_bot_email_address.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_history_action_labelFr.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_1_1_0/create_confluence_settings.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

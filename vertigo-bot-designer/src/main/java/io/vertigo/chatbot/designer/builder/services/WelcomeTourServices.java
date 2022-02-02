@@ -16,6 +16,8 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 @Transactional
 public class WelcomeTourServices implements Component {
 
@@ -38,7 +40,7 @@ public class WelcomeTourServices implements Component {
 	}
 
 	public DtList<WelcomeTour> findAllByBotId(final long botId) {
-		return welcomeTourDAO.findAll(Criterions.isEqualTo(DtDefinitions.WelcomeTourFields.botId, botId), DtListState.of(1000));
+		return welcomeTourDAO.findAll(Criterions.isEqualTo(DtDefinitions.WelcomeTourFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public void deleteAllByBotId(final long botId) {
