@@ -52,11 +52,13 @@ public class BtBuilderUtils {
 		addLineBreak(bt);
 	}
 
-	/*
+	/* begin selector
+	 * fulfilled /user/local/<topicCode>/responseButton
 	 * begin random
 	 * say "text"
 	 * say "text2"
 	 * end random
+	 * end selector
 	 * choose:button:nlu topic/<topicCode>/responseButton ""
 	 * button value "label"
 	 * button value2 "label2"
@@ -64,8 +66,15 @@ public class BtBuilderUtils {
 	 * topic topic/<topicCode>/responseButton
 	 *
 	 */
-	public static void createButtonRandomText(final String[] splitUtter, final List<ResponseButtonExport> responses, final StringBuilder bt) {
+	public static void createSelectorRandomSequence(final String[] splitUtter, final List<ResponseButtonExport> responses, final StringBuilder bt)  {
+		bt.append("begin selector");
+		addLineBreak(bt);
+		final String bb = String.format("fulfilled /user/local/topic/%s/responsebutton", responses.get(0).getTopCode().toLowerCase());
+		bt.append(bb);
+		addLineBreak(bt);
 		createRandomSequence(splitUtter, bt);
+		bt.append("end selector");
+		addLineBreak(bt);
 		createButton("", responses, bt);
 	}
 

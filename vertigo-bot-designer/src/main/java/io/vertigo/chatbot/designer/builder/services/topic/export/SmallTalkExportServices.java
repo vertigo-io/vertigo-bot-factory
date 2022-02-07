@@ -97,7 +97,7 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Sma
 		//Utter text are aggregated by |
 		final String[] splitUtter = utter.getUtterTexts().split("\\|");
 		if (isRandomText(utter)) {
-			BtBuilderUtils.createButtonRandomText(splitUtter, responses, bt);
+			BtBuilderUtils.createSelectorRandomSequence(splitUtter, responses, bt);
 		} else {
 			BtBuilderUtils.createButton(splitUtter[0], responses, bt);
 		}
