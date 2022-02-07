@@ -56,7 +56,7 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.basicCommand("fulfilled", (c, p) -> BotNodeProvider.fulfilled(getBB(p), c.getStringParam(0))),
 
 				BtCommandParserDefinition.compositeCommand("switch", BotBtCommandParserDefinitionProvider::buildSwitchNode),
-				BtCommandParserDefinition.compositeCommand("case", (c, p, l) -> new BotCase(c.getStringParam(0), l)),
+				BtCommandParserDefinition.compositeCommand("case", (c, p, l) -> new BotCase(c.getRemainingStringParam(0), l)),
 
 				BtCommandParserDefinition.basicCommand("choose:nlu", (c, p) -> BotNodeProvider.chooseNlu(getBB(p), c.getStringParam(0))),
 				BtCommandParserDefinition.compositeCommand("choose:button", BotBtCommandParserDefinitionProvider::buildChooseButtonNode),
@@ -78,7 +78,10 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 					throw new VSystemException("'case' must be placed before normal command");
 				}
 				final var botCase = (BotCase) node;
-				switchBuilder.when(botCase.getCompare(), botCase.getNodes());
+				for (final String compare : botCase.getCompare()) {
+					switchBuilder.when(compare, botCase.getNodes());
+				}
+
 			} else {
 				isOthers = true;
 				otherNodes.add(node);
