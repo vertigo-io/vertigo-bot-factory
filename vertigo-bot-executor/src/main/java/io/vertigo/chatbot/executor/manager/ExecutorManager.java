@@ -182,6 +182,9 @@ public class ExecutorManager implements Manager, Activeable {
 
 		botEngine.saveContext(input, executorConfigManager.getContextMap());
 		final var botResponse = botEngine.runTick(input);
+		if (executorConfiguration.getAvatar() != null) {
+			botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
+		}
 		botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class));
 		analyticsSenderServices.sendEventToDb(botResponse.getMetadatas(), executorConfigManager.getConfig().getExecutorConfiguration(), input);
 
