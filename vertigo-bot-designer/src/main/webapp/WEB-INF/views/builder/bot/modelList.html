@@ -230,14 +230,13 @@
 				})
 			}
 
-
 			document.addEventListener('DOMContentLoaded', function () {
 				Chatbot.init({
 					runnerUrl: getDevNode().url,
 					botIHMBaseUrl: getDevNode().url + '/static/chatbot/index.html',
 					botName: "Chatbot test",
 					useRating: false,
-					avatarUrl: getDevNode().url + '/static/chatbot/images/avatar/avatar.png'
+					avatarUrl: VertigoUi.vueData.bot.botId + '/avatar'
 				})
 			});
 
@@ -251,8 +250,8 @@
 		</section>
 		
 		<section layout:fragment="content">
-			
-			 
+
+			<vu:include-data object="bot" field="botId" />
 			<vu:block id="modelManagement" th:title="#{model.model.title}">
 				<vu:slot name="actions_slot">
 					<q-btn class="fab-block" round color="primary" icon="refresh" th:aria-label="#{action.refresh}" th:title="#{action.refresh}" 
