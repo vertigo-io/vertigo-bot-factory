@@ -63,7 +63,7 @@ const chatbot = new Vue({
                 cards: []
             },
             customConfig: {
-              useRating: false,
+              useRating: true,
               ratingMessage: 'Merci !'
             },
             isEnded: false,
@@ -128,6 +128,9 @@ const chatbot = new Vue({
                                 chatbot.convId = httpResponse.data.metadatas.sessionId;
                                 chatbot.customConfig.useRating = httpResponse.data.metadatas.customConfig.rating;
                                 chatbot.customConfig.ratingMessage = httpResponse.data.metadatas.customConfig.ratingMessage;
+                                if (httpResponse.data.metadatas.avatar) {
+                                    chatbot.botAvatar = "data:image/png;base64," + httpResponse.data.metadatas.avatar;
+                                }
                                 chatbot.updateSessionStorage();
                                 chatbot._handleResponse(httpResponse, false);
                             }).catch(() => {
@@ -212,9 +215,7 @@ const chatbot = new Vue({
                 const buttons = httpResponse.data.choices;
                 const cards = httpResponse.data.cards;
                 chatbot.isEnded = httpResponse.data.status === 'Ended' && !isRating;
-                if (httpResponse.data.metadatas.avatar) {
-                    chatbot.botAvatar = "data:image/png;base64," + httpResponse.data.metadatas.avatar;
-                }
+
 
                 if (httpResponse.data.metadatas && httpResponse.data.metadatas.jsevent) {
                     parent.postMessage({jsevent: httpResponse.data.metadatas.jsevent}, '*');
