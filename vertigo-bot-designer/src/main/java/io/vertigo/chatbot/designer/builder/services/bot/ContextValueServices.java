@@ -27,10 +27,6 @@ import javax.xml.xpath.XPathFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
-
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 
@@ -95,8 +91,16 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 		record(bot, contextValue, HistoryActionEnum.DELETED);
 	}
 
+	public void delete(final long contextValueId) {
+		contextValueDAO.delete(contextValueId);
+	}
+
 	public DtList<ContextValue> getAllContextValueByBotId(final Long botId) {
 		return contextValueDAO.findAll(Criterions.isEqualTo(ContextValueFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+	}
+
+	public void deleteAllByBotId(final long botId) {
+		getAllContextValueByBotId(botId).forEach(contextValue -> delete(contextValue.getCvaId()));
 	}
 
 	public ContextValue getNewContextValue(@SecuredOperation("botAdm") final Chatbot bot) {

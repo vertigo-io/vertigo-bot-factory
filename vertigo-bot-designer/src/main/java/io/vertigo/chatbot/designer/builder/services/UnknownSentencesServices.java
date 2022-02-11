@@ -59,6 +59,10 @@ public class UnknownSentencesServices implements Component, Activeable {
 		return unknownSentenceDetailDAO.get(unknownSentenceId);
 	}
 
+	public void delete(final long unknownSentenceId) {
+		unknownSentenceDetailDAO.delete(unknownSentenceId);
+	}
+
 	public UnknownSentenceDetail updateStatus(final UnknownSentenceDetail unknownSentenceDetail, UnknownSentenceStatusEnum status) {
 		unknownSentenceDetail.setStatus(status.name());
 		return save(unknownSentenceDetail);
@@ -102,6 +106,10 @@ public class UnknownSentencesServices implements Component, Activeable {
 
 	private DtList<UnknownSentenceDetail> findAllByBotId(Long botId) {
 		return unknownSentenceDetailDAO.findAll(Criterions.isEqualTo(DtDefinitions.UnknownSentenceDetailFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+	}
+
+	public void deleteAllByBotId(final long botId) {
+		findAllByBotId(botId).forEach(unknownSentenceDetail -> delete(unknownSentenceDetail.getUnkSeId()));
 	}
 
 	/**

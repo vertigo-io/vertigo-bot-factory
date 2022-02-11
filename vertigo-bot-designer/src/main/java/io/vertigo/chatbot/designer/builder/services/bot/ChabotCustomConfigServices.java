@@ -45,7 +45,9 @@ public class ChabotCustomConfigServices implements Component {
 
 	public void deleteChatbotCustomConfig(@SecuredOperation("botAdm") final Chatbot bot) {
 		ChatbotCustomConfig chatbotCustomConfig = getChatbotCustomConfigByBotId(bot.getBotId());
-		chatbotCustomConfigDAO.delete(chatbotCustomConfig.getCccId());
+		if (chatbotCustomConfig.getCccId() != null) {
+			chatbotCustomConfigDAO.delete(chatbotCustomConfig.getCccId());
+		}
 	}
 
 	public ChatbotCustomConfig getChatbotCustomConfigByBotId(final Long botId) {

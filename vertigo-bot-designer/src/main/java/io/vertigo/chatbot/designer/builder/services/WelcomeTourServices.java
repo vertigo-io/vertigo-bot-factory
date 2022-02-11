@@ -41,6 +41,10 @@ public class WelcomeTourServices implements Component {
 		return welcomeTourDAO.findAll(Criterions.isEqualTo(DtDefinitions.WelcomeTourFields.botId, botId), DtListState.of(1000));
 	}
 
+	public void deleteAllByBotId(final long botId) {
+		findAllByBotId(botId).forEach(welcomeTour -> delete(welcomeTour.getWelId()));
+	}
+
 	public String exportBotWelcomeTours(final Chatbot bot, final StringBuilder logs) {
 		LogsUtils.addLogs(logs, " Welcome tours export...");
 		Map<String, String> welcomeTourMap = new HashMap<>();

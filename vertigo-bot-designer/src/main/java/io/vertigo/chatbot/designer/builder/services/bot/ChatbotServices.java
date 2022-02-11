@@ -11,10 +11,14 @@ import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.HistoryServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
+import io.vertigo.chatbot.designer.builder.services.SavedTrainingServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
+import io.vertigo.chatbot.designer.builder.services.UnknownSentencesServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
+import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
@@ -88,6 +92,21 @@ public class ChatbotServices implements Component {
 
 	@Inject
 	private ChabotCustomConfigServices chabotCustomConfigServices;
+
+	@Inject
+	private HistoryServices historyServices;
+
+	@Inject
+	private UnknownSentencesServices unknownSentencesServices;
+
+	@Inject
+	private WelcomeTourServices welcomeTourServices;
+
+	@Inject
+	private SavedTrainingServices savedTrainingServices;
+
+	@Inject
+	private ContextValueServices contextValueServices;
 
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 			final BotPredefinedTopic botTopicFailure,
@@ -164,6 +183,7 @@ public class ChatbotServices implements Component {
 		// Delete node
 		nodeServices.deleteChatbotNodeByBot(bot);
 		// Delete training and all media file
+		savedTrainingServices.deleteAllByBotId(bot.getBotId());
 		trainingServices.removeAllTraining(bot);
 		utterTextServices.removeAllUtterTextByBotId(bot);
 		responsesButtonServices.removeAllSMTButtonsByBot(bot);
@@ -177,6 +197,10 @@ public class ChatbotServices implements Component {
 
 		chatbotProfilServices.deleteAllProfilByBot(bot);
 		chabotCustomConfigServices.deleteChatbotCustomConfig(bot);
+		contextValueServices.deleteAllByBotId(bot.getBotId());
+		historyServices.deleteAllByBotId(bot.getBotId());
+		unknownSentencesServices.deleteAllByBotId(bot.getBotId());
+		welcomeTourServices.deleteAllByBotId(bot.getBotId());
 		chatbotDAO.delete(bot.getBotId());
 
 		// Delete avatar file reference in bot

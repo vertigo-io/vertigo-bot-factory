@@ -42,6 +42,10 @@ public class SavedTrainingServices implements Component {
 		return savedTrainingDAO.findAll(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
+	public void deleteAllByBotId(final long botId) {
+		getAllSavedTrainingByBotId(botId).forEach(savedTraining -> delete(savedTraining.getSavedTraId()));
+	}
+
 	public SavedTraining getById(final Long savedTraId) {
 		return savedTrainingDAO.get(savedTraId);
 	}
