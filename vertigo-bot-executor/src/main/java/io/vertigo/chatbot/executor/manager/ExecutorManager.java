@@ -56,7 +56,6 @@ public class ExecutorManager implements Manager, Activeable {
 	private final BotManager botManager;
 	private final BtCommandManager btCommandManager;
 	private final AnalyticsSenderServices analyticsSenderServices;
-	private ExecutorConfiguration executorConfiguration;
 
 	@Inject
 	private JsonEngine jsonEngine;
@@ -82,7 +81,6 @@ public class ExecutorManager implements Manager, Activeable {
 
 	@Override
 	public void start() {
-		executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
 		final var botExport = executorConfigManager.getConfig().getBot();
 		if (botExport == null) {
 			// nothing to load
@@ -182,6 +180,10 @@ public class ExecutorManager implements Manager, Activeable {
 
 		botEngine.saveContext(input, executorConfigManager.getContextMap());
 		final var botResponse = botEngine.runTick(input);
+		ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
+		if (executorConfiguration.getAvatar() != null) {
+			botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
+		}
 		botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class));
 		analyticsSenderServices.sendEventToDb(botResponse.getMetadatas(), executorConfigManager.getConfig().getExecutorConfiguration(), input);
 
