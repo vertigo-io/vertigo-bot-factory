@@ -1,0 +1,34 @@
+package io.vertigo.chatbot.designer.builder.responsesButtonUrl
+
+
+
+create Task TkRemoveAllButtonsUrlByBotId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from response_button_url
+			where bot_id_welcome = #botId#
+			or bot_id_default = #botId#
+             "
+	in botId  				{domain : DoId         		cardinality : "1"  }
+}
+
+create Task TkRemoveAllSMTButtonsUrlByBotId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from response_button_url
+			using small_talk smt
+			join topic top on (top.top_id = smt.top_id)
+			where smt.smt_id = response_button.smt_id
+			and top.bot_id = #botId#
+             "
+	in botId  				{domain : DoId         		cardinality : "1"  }
+}
+
+create Task TkRemoveAllButtonsUrlBySmtId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from response_button_url
+			where smt_id = #smtId#
+             "
+	in smtId  				{domain : DoId         		cardinality : "1"  }
+}

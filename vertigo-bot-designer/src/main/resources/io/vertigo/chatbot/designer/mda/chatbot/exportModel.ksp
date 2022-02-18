@@ -8,6 +8,14 @@ create DtDefinition DtResponseButtonExport {
 	field text				{domain: DoText					label: "Button text" 				}
 }
 
+create DtDefinition DtResponseButtonUrlExport {
+	field topId 			{domain: DoId 					label: "Topic id" 					}
+	field topCode			{domain: DoText 				label: "Topic code"				 	}
+	field text				{domain: DoText					label: "Button text" 				}
+	field url				{domain: DoUrl					label: "Button url" 				}
+	field newTab			{domain: DoYesNo				label: "New tab" 				    }
+}
+
 create DtDefinition DtUtterTextExport {
 	field topId 			{domain: DoId 					label: "Topic id" 					}
 	field utterTexts		{domain: DoText 				label: "Utters"				 		}

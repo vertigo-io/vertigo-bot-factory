@@ -1,6 +1,7 @@
 chatbot_task.ksp
 chatbotNode_task.ksp
 responsesButton_task.ksp
+responsesButtonUrl_task.ksp
 smallTalk_task.ksp
 scriptIntention_task.ksp
 utterText_task.ksp

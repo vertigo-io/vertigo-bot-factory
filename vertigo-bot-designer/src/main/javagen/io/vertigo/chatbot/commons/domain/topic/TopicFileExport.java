@@ -27,6 +27,7 @@ public final class TopicFileExport implements DtObject {
 	private String script;
 	private String response;
 	private String buttons;
+	private String buttonsUrl;
 	private String isEnd;
 	private String labels;
 	
@@ -294,6 +295,25 @@ public final class TopicFileExport implements DtObject {
 	 */
 	public void setButtons(final String buttons) {
 		this.buttons = buttons;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Buttons URL'.
+	 * @return String buttonsUrl
+	 */
+	@Field(smartType = "STyText", label = "Buttons URL")
+	public String getButtonsUrl() {
+		return buttonsUrl;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Buttons URL'.
+	 * @param buttonsUrl String
+	 */
+	public void setButtonsUrl(final String buttonsUrl) {
+		this.buttonsUrl = buttonsUrl;
 	}
 	
 	/**

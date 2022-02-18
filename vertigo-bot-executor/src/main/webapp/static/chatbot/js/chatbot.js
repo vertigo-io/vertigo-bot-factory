@@ -151,6 +151,18 @@ const chatbot = new Vue({
 
                 chatbot._scrollToBottom();
 
+                if (btn.url !== undefined) {
+                    const link = document.createElement('a');
+                    link.href = btn.url;
+                    if (btn.newTab) {
+                        link.target = '_blank';
+                    } else {
+                        link.target = '_top';
+                    }
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
                 chatbot.askBot(btn.payload, true);
             }
             ,
@@ -269,7 +281,7 @@ const chatbot = new Vue({
             ,
             _processResponse(response) {
                 const lastMsg = chatbot.messages[chatbot.messages.length - 1];
-                if (response.text !== '') {
+                if (response.text !== undefined && response.text !== '') {
                     if (lastMsg && !lastMsg.sent) {
                         // ajoute un message à un précédent message du bot
                         lastMsg.text.push(response.text);

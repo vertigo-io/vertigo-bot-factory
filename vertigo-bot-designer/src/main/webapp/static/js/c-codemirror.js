@@ -64,6 +64,11 @@ Vue.component('c-codemirror', {
 								<q-item-label>Button</q-item-label>
 							</q-item-section>
 						</q-item>
+						<q-item clickable v-close-popup @click="addButtonUrl">
+							<q-item-section>
+								<q-item-label>Button URL</q-item-label>
+							</q-item-section>
+						</q-item>
 						
 						<q-item clickable v-close-popup @click="addSay">
 							<q-item-section>
@@ -154,6 +159,9 @@ Vue.component('c-codemirror', {
 		 	addButton : function(){
 		 		this.modifyValue('button "" value');
 		 	},
+			addButtonUrl : function(){
+				this.modifyValue('button:url "" value url true');
+			},
 		 	
 		 	addSay : function(){
 		 		this.modifyValue('say ""');

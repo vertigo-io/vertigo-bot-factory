@@ -6,6 +6,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButtonUrl;
 import io.vertigo.chatbot.commons.domain.topic.ResponseType;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
@@ -18,6 +19,7 @@ import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
+import io.vertigo.chatbot.designer.builder.services.ResponsesButtonUrlServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
@@ -104,6 +106,8 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     private static final ViewContextKey<ResponseButton> buttonsKey = ViewContextKey.of("buttons");
 
+    private static final ViewContextKey<ResponseButtonUrl> buttonsUrlKey = ViewContextKey.of("buttonsUrl");
+
     private static final ViewContextKey<ScriptIntention> scriptIntentionKey = ViewContextKey.of("scriptIntention");
 
     private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
@@ -115,6 +119,9 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     @Inject
     private ResponsesButtonServices responsesButtonServices;
+
+    @Inject
+    private ResponsesButtonUrlServices responsesButtonUrlServices;
 
     @Inject
     private TypeTopicServices typeTopicServices;
@@ -132,6 +139,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
             viewContext.publishDto(scriptIntentionKey, scriptIntention);
             viewContext.publishDto(smallTalkKey, smallTalkServices.getNewSmallTalk(bot));
             viewContext.publishDtListModifiable(buttonsKey, new DtList<>(ResponseButton.class));
+            viewContext.publishDtListModifiable(buttonsUrlKey, new DtList<>(ResponseButtonUrl.class));
             final DtList<UtterText> utterTextList =  new DtList<>(UtterText.class);
             utterTextList.add(new UtterText());
             viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
@@ -140,6 +148,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
             addMessageDeactivate(uiMessageStack, smallTalk, viewContext.readDtListModifiable(nluTrainingSentencesKey, uiMessageStack), bot, topic);
             viewContext.publishDto(smallTalkKey, smallTalk);
             viewContext.publishDtListModifiable(buttonsKey, responsesButtonServices.getButtonsBySmalltalk(bot, smallTalk.getSmtId()));
+             viewContext.publishDtListModifiable(buttonsUrlKey, responsesButtonUrlServices.getButtonsUrlBySmalltalk(bot, smallTalk.getSmtId()));
             final DtList<UtterText> utterTextList = utterTextServices.getUtterTextList(bot, smallTalk);
             utterTextList.add(new UtterText()); // add the next for random, or the 1st for rich text if 0 lines
             viewContext.publishDtListModifiable(utterTextsKey, utterTextList);
@@ -171,6 +180,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 
         viewContext.publishDtListModifiable(buttonsKey, new DtList<>(ResponseButton.class));
+        viewContext.publishDtListModifiable(buttonsUrlKey, new DtList<>(ResponseButtonUrl.class));
         super.initEmptyBreadcrums(viewContext);
         listLimitReached(viewContext, uiMessageStack);
         toModeCreate();
@@ -272,6 +282,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
             smallTalkWrapper.setSmallTalk(smallTalk);
             smallTalkWrapper.setUtterTexts(ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey), uiMessageStack));
             smallTalkWrapper.setButtons(ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsKey), uiMessageStack));
+            smallTalkWrapper.setButtonsUrl(ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsUrlKey), uiMessageStack));
             topicTypeObject = smallTalkWrapper;
         }
 

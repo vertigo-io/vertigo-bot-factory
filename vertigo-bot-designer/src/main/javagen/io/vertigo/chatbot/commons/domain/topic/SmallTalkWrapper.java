@@ -15,6 +15,7 @@ public final class SmallTalkWrapper implements DtObject {
 
 	private io.vertigo.chatbot.commons.domain.topic.SmallTalk smallTalk;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.ResponseButton> buttons =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.topic.ResponseButton.class);
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.ResponseButtonUrl> buttonsUrl =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.topic.ResponseButtonUrl.class);
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.UtterText> utterTexts =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.topic.UtterText.class);
 	
 	/**
@@ -55,6 +56,27 @@ public final class SmallTalkWrapper implements DtObject {
 		io.vertigo.core.lang.Assertion.check().isNotNull(buttons);
 		//---
 		this.buttons = buttons;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Buttons url'.
+	 * @return DtList de ResponseButtonUrl buttonsUrl
+	 */
+	@Field(smartType = "STyDtResponseButtonUrl", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Buttons url")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.ResponseButtonUrl> getButtonsUrl() {
+		return buttonsUrl;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Buttons url'.
+	 * @param buttonsUrl DtList de ResponseButtonUrl
+	 */
+	public void setButtonsUrl(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.ResponseButtonUrl> buttonsUrl) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(buttonsUrl);
+		//---
+		this.buttonsUrl = buttonsUrl;
 	}
 	
 	/**

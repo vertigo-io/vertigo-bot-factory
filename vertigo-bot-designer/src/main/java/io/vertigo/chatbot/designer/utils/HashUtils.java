@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.designer.utils;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButtonUrl;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.datamodel.structure.model.DtList;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class HashUtils {
 	
@@ -35,6 +35,16 @@ public class HashUtils {
 		responseButtons.stream().forEach(button -> {
 			hashCodeBuilder.append(button.getTopIdResponse());
 			hashCodeBuilder.append(button.getText());
+		});
+		return Integer.toString(hashCodeBuilder.toHashCode());
+	}
+
+	public static String generateHashCodeForResponseButtonsUrl(DtList<ResponseButtonUrl> responseButtonsUrl) {
+		HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(17, 37);
+		responseButtonsUrl.forEach(button -> {
+			hashCodeBuilder.append(button.getUrl());
+			hashCodeBuilder.append(button.getText());
+			hashCodeBuilder.append(button.getNewTab());
 		});
 		return Integer.toString(hashCodeBuilder.toHashCode());
 	}

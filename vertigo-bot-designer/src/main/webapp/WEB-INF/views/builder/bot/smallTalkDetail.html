@@ -112,17 +112,22 @@
 		<vu:block id="buttons" th:title="#{smallTalk.menu.buttons}">
 			<vu:include-data object="buttons" field="text" />
 			<vu:include-data object="buttons" field="topIdResponse" />
+			<vu:include-data object="buttonsUrl" field="text" />
+			<vu:include-data object="buttonsUrl" field="url" />
+			<vu:include-data object="buttonsUrl" field="newTab" />
 			<vu:include-data object="topicList" field="topId" />
 			<vu:include-data object="topicList" field="title" />
 
 			<c-buttonlist
 				class="q-pb-sm"
 				button-list="buttons"
+				button-url-list="buttonsUrl"
 				choice-list="topicList"
+				:locale="vueData.locale"
 				th::mode-edit="${!model.modeReadOnly}">
 			</c-buttonlist>
 
-			<div th:if="${model.modeReadOnly && model.vContext.buttons.isEmpty()}" th:text=#{smalltalk.noButton}></div>
+			<div th:if="${model.modeReadOnly && model.vContext.buttons.isEmpty()}" th:text="#{smalltalk.noButton}"></div>
 		</vu:block>
 
 		<vu:block id="conversationOver" title="#{smallTalk.menu.isEnd}">

@@ -4,6 +4,7 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButtonUrl;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
@@ -36,6 +37,9 @@ import io.vertigo.quarto.exporter.model.ExportFormat;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -95,6 +99,7 @@ public class TopicFileExportServices implements Component {
 				.addField(TopicFileExportFields.trainingPhrases)
 				.addField(TopicFileExportFields.response)
 				.addField(TopicFileExportFields.buttons)
+				.addField(TopicFileExportFields.buttonsUrl)
 				.addField(TopicFileExportFields.isEnd)
 				.addField(TopicFileExportFields.labels)
 				.endSheet()
@@ -135,6 +140,7 @@ public class TopicFileExportServices implements Component {
 				TopicFileExportFields.trainingPhrases.name(),
 				TopicFileExportFields.response.name(),
 				TopicFileExportFields.buttons.name(),
+				TopicFileExportFields.buttonsUrl.name(),
 				TopicFileExportFields.isEnd.name(),
 				TopicFileExportFields.labels.name()
 		};
@@ -375,12 +381,14 @@ public class TopicFileExportServices implements Component {
 
 		final DtList<ResponseButton> listButtons = extractButtonsFromTfe(chatbot.getBotId(), tfe);
 
+		final DtList<ResponseButtonUrl> listButtonsUrl = extractButtonsUrlFromTfe(tfe);
+
 		final SmallTalk smt = populateSmallTalkFromTopicFileExport(topic, creation, tfe, listResponse);
 
 		final DtList<NluTrainingSentence> nluTrainingSentencesToDelete = topicServices.getNluTrainingSentenceByTopic(chatbot, topic);
 
 		topicServices.saveTtoCd(topic, TypeTopicEnum.SMALLTALK.name(), chatbot);
-		smallTalkServices.saveSmallTalk(chatbot, smt, listResponse, listButtons, topic);
+		smallTalkServices.saveSmallTalk(chatbot, smt, listResponse, listButtons, listButtonsUrl, topic);
 		topicServices.save(topic, chatbot, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 	}
 
@@ -448,6 +456,39 @@ public class TopicFileExportServices implements Component {
 			}
 		}
 		return listButtons;
+	}
+
+	/*
+	 * Return a list of ResponseButtonsUrl from TopicFileExport
+	 */
+	public DtList<ResponseButtonUrl> extractButtonsUrlFromTfe(final TopicFileExport tfe) {
+
+		final DtList<ResponseButtonUrl> listButtons = new DtList<>(ResponseButtonUrl.class);
+		// if there are buttons, they must have the following shape : [name¤url¤newTab] and be separated by |
+		if (!tfe.getButtonsUrl().isEmpty()) {
+			final String[] listDoublons = tfe.getButtonsUrl().split("\\|");
+			for (final String doublon : listDoublons) {
+				final ResponseButtonUrl button = new ResponseButtonUrl();
+				String[] args = doublon.split("¤");
+				button.setText(args[0].substring(1));
+				final String url = args[1];
+				try {
+					isValidURL(url);
+					button.setUrl(url);
+				} catch (URISyntaxException | MalformedURLException e) {
+					throw new VUserException(TopicFileExportMultilingualResources.BUTTON_URL_NOT_VALID);
+				}
+				button.setNewTab(Boolean.parseBoolean(args[2].substring(0, args[2].length() -1 )));
+
+				listButtons.add(button);
+			}
+		}
+		return listButtons;
+	}
+
+	private void isValidURL(String url) throws URISyntaxException, MalformedURLException {
+		URL validUrl = new URL(url);
+		validUrl.toURI();
 	}
 
 }

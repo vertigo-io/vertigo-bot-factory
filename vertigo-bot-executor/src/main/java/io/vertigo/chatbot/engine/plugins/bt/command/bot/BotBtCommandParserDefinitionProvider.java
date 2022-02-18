@@ -5,7 +5,9 @@ import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.impl.command.BtCommand;
 import io.vertigo.ai.impl.command.BtCommandParserDefinition;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
+import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
 import io.vertigo.chatbot.engine.model.choice.BotCard;
+import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
@@ -64,6 +66,8 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.compositeCommand("choose:card", BotBtCommandParserDefinitionProvider::buildChooseCardNode),
 				BtCommandParserDefinition.compositeCommand("choose:button:nlu", BotBtCommandParserDefinitionProvider::buildChooseButtonNluNode),
 				BtCommandParserDefinition.basicCommand("button", (c, p) -> new BotButton(c.getStringParam(0), c.getStringParam(1))),
+				BtCommandParserDefinition.basicCommand("button:url", (c, p) -> new BotButtonUrl(c.getStringParam(0),
+						c.getStringParam(1), c.getStringParam(2), Boolean.parseBoolean(c.getStringParam(3)))),
 				BtCommandParserDefinition.basicCommand("card", (c, p) -> new BotCard(c.getStringParam(0),
 						c.getStringParam(1), c.getStringParam(2), c.getOptStringParam(3))),
 				BtCommandParserDefinition.basicCommand("jsevent", (c, p) -> BotNodeProvider.launchJsEvent(getBB(p), c.getStringParam(0))),
@@ -100,13 +104,17 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 
 	private static BTNode buildChooseButtonNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
 		Assertion.check()
-				.isTrue(childs.stream().allMatch(b -> b instanceof BotButton), "Only 'button' is allowed inside 'choose:button'");
+				.isTrue(childs.stream().allMatch(b -> b instanceof BotButton || b instanceof BotButtonUrl), "Only 'button' or 'button:url' are allowed inside 'choose:button'");
 
-		final var botButtons = childs.stream()
-				.map(b -> (BotButton) b)
-				.collect(Collectors.toList());
+		final List<? extends IBotChoice> botChoices = childs.stream().map(b -> {
+			if (b instanceof BotButton) {
+				return (BotButton) b;
+			} else {
+				return (BotButtonUrl) b;
+			}
+		}).collect(Collectors.toList());
 
-		return BotNodeProvider.chooseButton(getBB(params), command.getStringParam(0), command.getStringParam(1), botButtons);
+		return BotNodeProvider.chooseButton(getBB(params), command.getStringParam(0), command.getStringParam(1), botChoices);
 	}
 
 	private static BTNode buildChooseCardNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
@@ -122,13 +130,17 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 
 	private static BTNode buildChooseButtonNluNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
 		Assertion.check()
-				.isTrue(childs.stream().allMatch(b -> b instanceof BotButton), "Only 'button' is allowed inside 'choose:button:nlu'");
+				.isTrue(childs.stream().allMatch(b -> b instanceof BotButton || b instanceof BotButtonUrl), "Only 'button' is allowed inside 'choose:button:nlu'");
 
-		final var botButtons = childs.stream()
-				.map(b -> (BotButton) b)
-				.collect(Collectors.toList());
+		final List<? extends IBotChoice> botChoices = childs.stream().map(b -> {
+			if (b instanceof BotButton) {
+				return (BotButton) b;
+			} else {
+				return (BotButtonUrl) b;
+			}
+		}).collect(Collectors.toList());
 
-		return BotNodeProvider.chooseButtonOrNlu(getBB(params), command.getStringParam(0), command.getStringParam(1), botButtons);
+		return BotNodeProvider.chooseButtonOrNlu(getBB(params), command.getStringParam(0), command.getStringParam(1), botChoices);
 	}
 
 	private static BlackBoard getBB(final List<Object> params) {

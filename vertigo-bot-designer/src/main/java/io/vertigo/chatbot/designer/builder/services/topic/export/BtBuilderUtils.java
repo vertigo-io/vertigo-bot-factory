@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
 import io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonExport;
+import io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonUrlExport;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -26,7 +27,7 @@ public class BtBuilderUtils {
 	 * topic topic/<topicCode>/responseButton
 	 *
 	 */
-	public static void createButton(final String text, final List<ResponseButtonExport> responses, final StringBuilder bt) {
+	public static void createButton(final String text, final List<ResponseButtonExport> responses, final List<ResponseButtonUrlExport> responsesUrl, final StringBuilder bt) {
 		final String bb = String.format("/user/local/topic/%s/responsebutton", responses.get(0).getTopCode().toLowerCase());
 		bt.append("begin choose:button:nlu ");
 		bt.append(bb);
@@ -43,12 +44,43 @@ public class BtBuilderUtils {
 			bt.append(response.getTopCodeResponse());
 			addLineBreak(bt);
 		}
+		for (final ResponseButtonUrlExport responseUrl : responsesUrl) {
+			bt.append("button:url ");
+			addQuote(bt);
+			bt.append(responseUrl.getText().replaceAll("'", "\'"));
+			addQuote(bt);
+			bt.append(SPACE);
+			bt.append("LINK");
+			bt.append(SPACE);
+			addQuote(bt);
+			bt.append(responseUrl.getUrl());
+			addQuote(bt);
+			bt.append(SPACE);
+			bt.append(responseUrl.getNewTab().toString());
+			addLineBreak(bt);
+		}
 		bt.append("end choose:button:nlu");
+		addLineBreak(bt);
+		bt.append("begin switch");
+		bt.append(SPACE);
+		bt.append(bb);
+		addLineBreak(bt);
+		bt.append("begin case");
+		bt.append(SPACE);
+		addQuote(bt);
+		bt.append("LINK");
+		addQuote(bt);
+		addLineBreak(bt);
+		bt.append("topic !IDLE");
+		addLineBreak(bt);
+		bt.append("end case");
 		addLineBreak(bt);
 		bt.append("topic ");
 		bt.append(OPEN_BRACKET);
 		bt.append(bb);
 		bt.append(CLOSE_BRACKET);
+		addLineBreak(bt);
+		bt.append("end switch");
 		addLineBreak(bt);
 	}
 
@@ -66,7 +98,8 @@ public class BtBuilderUtils {
 	 * topic topic/<topicCode>/responseButton
 	 *
 	 */
-	public static void createSelectorRandomSequence(final String[] splitUtter, final List<ResponseButtonExport> responses, final StringBuilder bt)  {
+	public static void createSelectorRandomSequence(final String[] splitUtter, final List<ResponseButtonExport> responses,
+													final List<ResponseButtonUrlExport> responsesUrl, final StringBuilder bt)  {
 		bt.append("begin selector");
 		addLineBreak(bt);
 		final String bb = String.format("fulfilled /user/local/topic/%s/responsebutton", responses.get(0).getTopCode().toLowerCase());
@@ -75,7 +108,7 @@ public class BtBuilderUtils {
 		createRandomSequence(splitUtter, bt);
 		bt.append("end selector");
 		addLineBreak(bt);
-		createButton("", responses, bt);
+		createButton("", responses, responsesUrl, bt);
 	}
 
 	/*

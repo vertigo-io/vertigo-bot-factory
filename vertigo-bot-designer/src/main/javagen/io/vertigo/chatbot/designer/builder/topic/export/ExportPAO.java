@@ -96,6 +96,35 @@ public final class ExportPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkExportResponseButtonUrlByBotId.
+	 * @param botId Long
+	 * @return DtList de ResponseButtonUrlExport rbes
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkExportResponseButtonUrlByBotId",
+			request = "select" + 
+ "             	top.top_id," + 
+ "             	top.code as top_code," + 
+ "             	rbu.text," + 
+ "             	rbu.url," + 
+ "             	rbu.new_tab" + 
+ " 			from response_button_url rbu" + 
+ " 			join small_talk smt on (smt.smt_id = rbu.smt_id)" + 
+ " 			join topic top on (top.top_id = smt.top_id)" + 
+ " 			where top.bot_id = #botId#" + 
+ " 			and top.is_enabled = true",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtResponseButtonUrlExport")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonUrlExport> exportResponseButtonUrlByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkExportResponseButtonUrlByBotId")
+				.addValue("botId", botId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkExportUtterTextByBotId.
 	 * @param botId Long
 	 * @return DtList de UtterTextExport rbes

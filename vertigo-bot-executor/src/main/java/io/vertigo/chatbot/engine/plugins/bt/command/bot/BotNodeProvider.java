@@ -9,6 +9,7 @@ import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
+import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
 import io.vertigo.chatbot.engine.model.choice.BotCard;
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 import io.vertigo.core.lang.Assertion;
@@ -325,12 +326,12 @@ public final class BotNodeProvider {
 		return switchTopic(bb, BotEngine.IDLE_TOPIC_NAME);
 	}
 
-	public static BTNode chooseButton(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<BotButton> buttons) {
+	public static BTNode chooseButton(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<? extends IBotChoice > buttons) {
 		return selector(
 				fulfilled(bb, keyTemplate),
 				sequence(
 						say(bb, question),
-						storeButtons(bb, buttons, BotButton.class),
+						storeButtons(bb, buttons, List.of(BotButton.class, BotButtonUrl.class)),
 						queryButton(bb, keyTemplate),
 						running()));
 	}
@@ -340,7 +341,7 @@ public final class BotNodeProvider {
 				fulfilled(bb, keyTemplate),
 				sequence(
 						say(bb, question),
-						storeButtons(bb, cards, BotCard.class),
+						storeButtons(bb, cards, List.of(BotCard.class)),
 						queryButton(bb, keyTemplate),
 						running()));
 	}
@@ -352,18 +353,18 @@ public final class BotNodeProvider {
 				running());
 	}
 
-	public static BTNode chooseButtonOrNlu(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<BotButton> buttons) {
+	public static BTNode chooseButtonOrNlu(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<? extends IBotChoice > buttons) {
 		return selector(
 				fulfilled(bb, keyTemplate),
 				sequence(
 						say(bb, question),
-						storeButtons(bb, buttons, BotButton.class),
+						storeButtons(bb, buttons, List.of(BotButton.class, BotButtonUrl.class)),
 						queryButton(bb, keyTemplate),
 						queryNlu(bb, BotEngine.BOT_NEXT_TOPIC_KEY.key()),
 						running()));
 	}
 
-	private static BTNode queryButton(final BlackBoard bb, final String keyTemplate) {
+	public static BTNode queryButton(final BlackBoard bb, final String keyTemplate) {
 		return () -> {
 			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/button/key"), keyTemplate);
 			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/button/type"), "string");
@@ -381,16 +382,17 @@ public final class BotNodeProvider {
 	}
 
 	// store all buttons in the BB, engine will reconstruct button back when constructing response object
-	private static <T extends IBotChoice> BTNode storeButtons(final BlackBoard bb, final Iterable<T> buttons, final Class<T> clazz) {
+	public static <T extends IBotChoice> BTNode storeButtons(final BlackBoard bb, final Iterable<? extends IBotChoice> buttons, final List<Class<? extends IBotChoice>> clazzs) {
 		final List<BTNode> sequence = new ArrayList<>();
 
-		sequence.add(set(bb, BotEngine.BOT_CHOICES_KEY.key() + "/class", clazz.getName()));
-		sequence.add(set(bb, BotEngine.BOT_OUT_METADATA_PATH.key() + "/buttontype", clazz.getSimpleName()));
-
 		int choiceNumber = 0;
-		for (final T button : buttons) {
+		for (final IBotChoice button : buttons) {
+			String className = clazzs.stream().filter(clazz -> clazz.isAssignableFrom(button.getClass()))
+					.findFirst().orElseThrow().getName();
+
+			sequence.add(set(bb, BotEngine.BOT_CHOICES_KEY.key() + "/" + choiceNumber +  "/class", className));
 			for (final String param : button.exportParams()) {
-				sequence.add(listPush(bb, BotEngine.BOT_CHOICES_KEY.key() + "/" + choiceNumber, param));
+				sequence.add(listPush(bb, BotEngine.BOT_CHOICES_KEY.key() +  "/" + choiceNumber, param));
 			}
 
 			choiceNumber++;

@@ -101,9 +101,10 @@ create DtDefinition DtSmallTalk {
 }
 
 create DtDefinition DtSmallTalkWrapper {
-	field 	smallTalk 		{domain: DoDtSmallTalk 	label: "SmallTalk" 			cardinality : "1"}
-	field 	buttons 		{domain: DoDtResponseButton 	label: "Buttons" 			cardinality : "*"}
-	field 	utterTexts 		{domain: DoDtUtterText 	label: "Utter texts" 			cardinality : "*"}
+	field 	smallTalk 		{domain: DoDtSmallTalk 	label: "SmallTalk" 			            cardinality : "1"}
+	field 	buttons 		{domain: DoDtResponseButton 	label: "Buttons" 			    cardinality : "*"}
+	field 	buttonsUrl 		{domain: DoDtResponseButtonUrl 	label: "Buttons url" 			cardinality : "*"}
+	field 	utterTexts 		{domain: DoDtUtterText 	label: "Utter texts" 			        cardinality : "*"}
 }
 
 
@@ -229,6 +230,13 @@ create DtDefinition DtResponseButton {
 	field text 		{domain: DoText 	label: "Text" cardinality : "1"}
 }
 
+create DtDefinition DtResponseButtonUrl {
+	id    btnId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoText 	label: "Text"       cardinality : "1"}
+	field url 		{domain: DoUrl 	    label: "URL"        cardinality : "1"}
+	field newTab 	{domain: DoYesNo 	label: "New tab"    cardinality : "1"}
+}
+
 create Association ASmallTalkResponseButtons {
 	fkFieldName : "smtId"
     
@@ -236,6 +244,16 @@ create Association ASmallTalkResponseButtons {
 	type : "*>?"
 	dtDefinitionB : DtSmallTalk
 	
+	labelB : "SmallTalk"
+}
+
+create Association ASmallTalkResponseButtonsUrl {
+	fkFieldName : "smtId"
+
+ 	dtDefinitionA : DtResponseButtonUrl
+	type : "*>?"
+	dtDefinitionB : DtSmallTalk
+
 	labelB : "SmallTalk"
 }
 
@@ -372,6 +390,7 @@ create DtDefinition DtTopicFileExport {
 	field script			{domain: DoText	 						label: "Script" 				cardinality : "?"}
 	field response			{domain: DoText	 						label: "Response" 				cardinality : "?"}
 	field buttons			{domain: DoText	 						label: "Buttons" 				cardinality : "?"}
+	field buttonsUrl		{domain: DoText	 						label: "Buttons URL" 			cardinality : "?"}
 	field isEnd				{domain: DoLabel	 					label: "End of conversation" 	cardinality : "1"}
 	field labels			{domain: DoLabel	 					label: "labels"				 	cardinality : "1"}
 }

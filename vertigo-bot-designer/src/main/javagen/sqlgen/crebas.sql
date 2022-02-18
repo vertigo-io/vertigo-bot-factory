@@ -41,6 +41,8 @@ drop table IF EXISTS PROFIL_PER_CHATBOT cascade;
 drop sequence IF EXISTS SEQ_PROFIL_PER_CHATBOT;
 drop table IF EXISTS RESPONSE_BUTTON cascade;
 drop sequence IF EXISTS SEQ_RESPONSE_BUTTON;
+drop table IF EXISTS RESPONSE_BUTTON_URL cascade;
+drop sequence IF EXISTS SEQ_RESPONSE_BUTTON_URL;
 drop table IF EXISTS RESPONSE_TYPE cascade;
 drop table IF EXISTS SAVED_TRAINING cascade;
 drop sequence IF EXISTS SEQ_SAVED_TRAINING;
@@ -122,6 +124,9 @@ create sequence SEQ_PROFIL_PER_CHATBOT
 	start with 1000 cache 20; 
 
 create sequence SEQ_RESPONSE_BUTTON
+	start with 1000 cache 20; 
+
+create sequence SEQ_RESPONSE_BUTTON_URL
 	start with 1000 cache 20; 
 
 
@@ -704,6 +709,34 @@ comment on column RESPONSE_BUTTON.TOP_ID_RESPONSE is
 'TopicResponse';
 
 -- ============================================================
+--   Table : RESPONSE_BUTTON_URL                                        
+-- ============================================================
+create table RESPONSE_BUTTON_URL
+(
+    BTN_ID      	 NUMERIC     	not null,
+    TEXT        	 TEXT        	not null,
+    URL         	 TEXT        	not null,
+    NEW_TAB     	 bool        	not null,
+    SMT_ID      	 NUMERIC     	,
+    constraint PK_RESPONSE_BUTTON_URL primary key (BTN_ID)
+);
+
+comment on column RESPONSE_BUTTON_URL.BTN_ID is
+'ID';
+
+comment on column RESPONSE_BUTTON_URL.TEXT is
+'Text';
+
+comment on column RESPONSE_BUTTON_URL.URL is
+'URL';
+
+comment on column RESPONSE_BUTTON_URL.NEW_TAB is
+'New tab';
+
+comment on column RESPONSE_BUTTON_URL.SMT_ID is
+'SmallTalk';
+
+-- ============================================================
 --   Table : RESPONSE_TYPE                                        
 -- ============================================================
 create table RESPONSE_TYPE
@@ -1283,6 +1316,12 @@ alter table RESPONSE_BUTTON
 	references SMALL_TALK (SMT_ID);
 
 create index A_SMALL_TALK_RESPONSE_BUTTONS_SMALL_TALK_FK on RESPONSE_BUTTON (SMT_ID asc);
+
+alter table RESPONSE_BUTTON_URL
+	add constraint FK_A_SMALL_TALK_RESPONSE_BUTTONS_URL_SMALL_TALK foreign key (SMT_ID)
+	references SMALL_TALK (SMT_ID);
+
+create index A_SMALL_TALK_RESPONSE_BUTTONS_URL_SMALL_TALK_FK on RESPONSE_BUTTON_URL (SMT_ID asc);
 
 alter table SMALL_TALK
 	add constraint FK_A_SMALL_TALK_RESPONSE_TYPE_RESPONSE_TYPE foreign key (RTY_ID)

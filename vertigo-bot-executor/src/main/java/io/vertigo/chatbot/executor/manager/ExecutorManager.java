@@ -86,7 +86,7 @@ public class ExecutorManager implements Manager, Activeable {
 			// nothing to load
 			LOGGER.info("New runner, load a bot to start using it.");
 		} else {
-			doLoadModel(botExport, new StringBuilder());
+			//doLoadModel(botExport, new StringBuilder());
 		}
 	}
 
