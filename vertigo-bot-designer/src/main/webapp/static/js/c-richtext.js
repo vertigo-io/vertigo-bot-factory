@@ -9,7 +9,9 @@ Vue.component('c-richtext', {
 	},
 	data: function () {
 		return {
-			imageUrl: null,	
+			imageUrl: null,
+			linkUrl: null,
+			newTab: true
 		}
 	},
 	template : `
@@ -34,6 +36,11 @@ Vue.component('c-richtext', {
 						label: 'Image',
 						handler: addCustomImage
 					},
+					customlink: {
+						tip: 'Insert link',
+						label: 'Link',
+						handler: addCustomLink
+					},
 					emoji: {
 						tip: 'Add Emoji',
 						label: 'Emoji',
@@ -56,11 +63,11 @@ Vue.component('c-richtext', {
 		          }],
 				  ['bold', 'italic'],
 			      ['unordered', 'ordered'],
-			      ['link', 'removeFormat'],
 			      ['hr'],
 			      ['undo', 'redo'],
 			      ['viewsource'],
 			      ['customimage'],
+			      ['customlink'],
 			      ['emoji']
 			    ]"
 			   
@@ -91,6 +98,34 @@ Vue.component('c-richtext', {
 	       					>
        					</q-card-section>
        					
+						<q-card-actions align="around">
+							<q-btn flat :label="locale == 'fr_FR' ? 'Annuler' : 'Cancel'" v-close-popup color="primary"/>
+							<q-btn :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>
+						</q-card-actions>
+					</div>
+				</q-card
+			</q-dialog>
+			<q-dialog ref="newLink"  >
+			 	<q-card style="width: 600px;">
+					 <q-form @submit="handleCustomLink" class="q-gutter-md">
+						<q-card-section>
+							<div class="text-h6" >{{locale == 'fr_FR' ? 'Ajouter un lien' : 'Add a link'}}</div>
+						</q-card-section>
+						
+						<q-card-section>
+							<q-input 
+								filled 
+								type="text"
+								v-model="linkUrl"
+								label = "URL"	
+								ref="linkUrlRef"
+								autofocus
+								required
+	       					>
+       					</q-card-section>
+       					<q-card-section>
+       						<q-toggle left-label :label="locale === 'fr_FR' ? 'Nouvel onglet' : 'New tab'" ref="linkNewTabRef" v-model="newTab"></q-toggle>
+						</q-card-section>
 						<q-card-actions align="around">
 							<q-btn flat :label="locale == 'fr_FR' ? 'Annuler' : 'Cancel'" v-close-popup color="primary"/>
 							<q-btn :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>
@@ -180,6 +215,12 @@ Vue.component('c-richtext', {
      		 this.imageUrl = null;
 		    },
 
+			addCustomLink () {
+				this.$refs.newLink.show();
+				this.linkUrl = null;
+				this.newTab = true;
+			},
+
 			addEmoji() {
 				this.$refs.newEmoji.show();
 				this.$nextTick(() => {
@@ -197,6 +238,19 @@ Vue.component('c-richtext', {
 		      edit.runCmd('insertHTML', `<img class="imgClass" src="${url}"/>`);
 		      edit.focus();
 		    },
+
+			handleCustomLink() {
+				const url = this.$refs.linkUrlRef.value;
+				let target = '_top';
+				if (this.$refs.linkNewTabRef.value) {
+					target = '_blank';
+				}
+				this.$refs.newLink.hide();
+				const edit = this.$refs.editor_ref;
+				edit.caret.restore();
+				edit.runCmd('insertHTML', `<a href="${url}" target="${target}"/>${url}</a>`);
+				edit.focus();
+			},
 
 			handleEmoji(emoji) {
 				this.$refs.newEmoji.hide();

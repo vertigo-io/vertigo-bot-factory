@@ -71,7 +71,8 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.basicCommand("card", (c, p) -> new BotCard(c.getStringParam(0),
 						c.getStringParam(1), c.getStringParam(2), c.getOptStringParam(3))),
 				BtCommandParserDefinition.basicCommand("jsevent", (c, p) -> BotNodeProvider.launchJsEvent(getBB(p), c.getStringParam(0))),
-				BtCommandParserDefinition.basicCommand("link", (c, p) -> BotNodeProvider.link(getBB(p), c.getStringParam(0))),
+				BtCommandParserDefinition.basicCommand("link", (c, p) -> BotNodeProvider.link(getBB(p), c.getStringParam(0),
+						Boolean.parseBoolean(c.getOptStringParam(1).orElse("TRUE")))),
 				BtCommandParserDefinition.basicCommand("image", (c, p) -> BotNodeProvider.image(getBB(p), c.getStringParam(0))));
 	}
 
