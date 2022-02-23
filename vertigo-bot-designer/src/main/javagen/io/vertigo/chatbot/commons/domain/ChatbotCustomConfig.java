@@ -19,6 +19,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private Boolean rating;
 	private String ratingMessage;
 	private String botEmailAddress;
+	private Boolean reinitializationButton;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -115,6 +116,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setBotEmailAddress(final String botEmailAddress) {
 		this.botEmailAddress = botEmailAddress;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Reinitialization button'.
+	 * @return Boolean reinitializationButton
+	 */
+	@Field(smartType = "STyYesNo", label = "Reinitialization button")
+	public Boolean getReinitializationButton() {
+		return reinitializationButton;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Reinitialization button'.
+	 * @param reinitializationButton Boolean
+	 */
+	public void setReinitializationButton(final Boolean reinitializationButton) {
+		this.reinitializationButton = reinitializationButton;
 	}
 	
 	/**

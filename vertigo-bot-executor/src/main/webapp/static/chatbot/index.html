@@ -31,12 +31,12 @@
           </div>
           <q-btn round
                  flat
-                 v-if="false"
+                 v-if="customConfig.reinitializationButton"
                  color="white"
                  text-color="white"
                  size="md"
-                 @click="menu = !menu"
-                 icon="menu"></q-btn>
+                 @click="refresh()"
+                 icon="refresh"></q-btn>
           <q-btn round
                  flat
                  color="white"

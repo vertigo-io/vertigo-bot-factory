@@ -209,6 +209,7 @@ create table CHATBOT_CUSTOM_CONFIG
     RATING      	 bool        	not null,
     RATING_MESSAGE	 VARCHAR(100)	,
     BOT_EMAIL_ADDRESS	 VARCHAR(100)	,
+    REINITIALIZATION_BUTTON	 bool        	,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
 );
@@ -224,6 +225,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.RATING_MESSAGE is
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_EMAIL_ADDRESS is
 'Bot email address';
+
+comment on column CHATBOT_CUSTOM_CONFIG.REINITIALIZATION_BUTTON is
+'Reinitialization button';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';

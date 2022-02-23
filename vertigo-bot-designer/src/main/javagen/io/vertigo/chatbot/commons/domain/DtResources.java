@@ -104,6 +104,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$botEmailAddress,
 	/**
+	 * Reinitialization button.
+	 */
+	fldChatbotCustomConfig$reinitializationButton,
+	/**
 	 * Chatbot.
 	 */
 	fldChatbotCustomConfig$botId,
