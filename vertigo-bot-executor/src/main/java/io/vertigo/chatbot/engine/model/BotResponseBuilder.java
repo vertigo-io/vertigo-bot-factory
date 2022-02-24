@@ -21,6 +21,7 @@ import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
 import io.vertigo.chatbot.engine.model.choice.BotCard;
+import io.vertigo.chatbot.engine.model.choice.BotFileButton;
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Builder;
@@ -33,6 +34,7 @@ import java.util.Map;
 public final class BotResponseBuilder implements Builder<BotResponse> {
 	private final List<String> htmlTexts;
 	private final List<IBotChoice> botChoices;
+	private final List<IBotChoice> botFiles;
 	private final List<IBotChoice> botCards;
 	private final Map<String, Object> metadatas;
 	private final BotStatus status;
@@ -43,6 +45,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 		//--
 		htmlTexts = new ArrayList<>();
 		botChoices = new ArrayList<>();
+		botFiles = new ArrayList<>();
 		botCards = new ArrayList<>();
 		metadatas = new HashMap<>();
 		this.status = status;
@@ -73,6 +76,8 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 			botChoices.add(choice);
 		} else if (choice instanceof BotCard) {
 			botCards.add(choice);
+		} else if (choice instanceof BotFileButton) {
+			botFiles.add(choice);
 		}
 
 		return this;
@@ -106,7 +111,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 
 	@Override
 	public BotResponse build() {
-		return new BotResponse(htmlTexts, botChoices, botCards, metadatas, status);
+		return new BotResponse(htmlTexts, botChoices, botCards, botFiles, metadatas, status);
 	}
 
 }

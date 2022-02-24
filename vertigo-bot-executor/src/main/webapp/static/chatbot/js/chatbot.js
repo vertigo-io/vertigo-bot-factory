@@ -60,7 +60,8 @@ const chatbot = new Vue({
                 showRating: false,
                 rating: 0,
                 buttons: [],
-                cards: []
+                cards: [],
+                files: []
             },
             customConfig: {
               useRating: false,
@@ -170,7 +171,15 @@ const chatbot = new Vue({
                     link.click();
                     document.body.removeChild(link);
                 }
-                chatbot.askBot(btn.payload, true);
+                chatbot.askBot(btn.payload, true, null,null);
+            },
+            fileUpload(btn, index) {
+                const file = document.getElementById('file_' + index).files[0];
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function (evt) {
+                    chatbot.askBot(btn.payload, false, evt.target.result, file.name);
+                };
             }
             ,
             postAnswerText() {
@@ -190,7 +199,7 @@ const chatbot = new Vue({
                 const response = chatbot.inputConfig.responsePattern === '' ? sanitizedString.replace(/(")/g, '"')
                     : chatbot.inputConfig.responsePattern.replace('#', sanitizedString.replace(/(")/g, '\\"'));
 
-                chatbot.askBot(response, false);
+                chatbot.askBot(response, false, null, null);
             }
             ,
             _scrollToBottom() {
@@ -198,7 +207,7 @@ const chatbot = new Vue({
                 this.$refs.scroller.setScrollPosition(scrollHeight, 400);
             }
             ,
-            askBot(value, isButton) {
+            askBot(value, isButton, fileContent, fileName) {
                 chatbot.prevInputConfig = JSON.parse(JSON.stringify(chatbot.inputConfig));
                 chatbot.reinitInput();
                 chatbot.lastPayload = value;
@@ -206,7 +215,9 @@ const chatbot = new Vue({
 
                 chatbot.lastUserInteraction = Date.now();
                 let botInput;
-                if (isButton) {
+                if (fileContent) {
+                    botInput = { message: null, metadatas: { context: chatbot.context, payload: value, filecontent: fileContent, filename: fileName } };
+                } else if (isButton) {
                     botInput = { message: null, metadatas: { context: chatbot.context, payload: value } };
                 } else {
                     botInput = { message: value, metadatas: { context: chatbot.context } };
@@ -230,6 +241,7 @@ const chatbot = new Vue({
                 const responses = httpResponse.data.htmlTexts;
                 const buttons = httpResponse.data.choices;
                 const cards = httpResponse.data.cards;
+                const files = httpResponse.data.files;
                 chatbot.isEnded = httpResponse.data.status === 'Ended' && !isRating;
                 if (httpResponse.data.metadatas && httpResponse.data.metadatas.avatar) {
                     chatbot.botAvatar = 'data:image/png;base64,' + httpResponse.data.metadatas.avatar;
@@ -242,7 +254,7 @@ const chatbot = new Vue({
                 for (let i = 0; i < responses.length - 1; i++) {
                     chatbot.watingMessagesStack.push({ text: responses[i] });
                 }
-                chatbot.watingMessagesStack.push({ text: responses[responses.length - 1], buttons: buttons, cards: cards });
+                chatbot.watingMessagesStack.push({ text: responses[responses.length - 1], buttons: buttons, cards: cards, files: files });
 
                 chatbot._displayMessages();
             }
@@ -318,6 +330,13 @@ const chatbot = new Vue({
                     }, chatbot);
                 }
 
+                if (response.files) {
+                    response.files.forEach(function(value, key) {
+                        chatbot.inputConfig.files.push(value);
+                        chatbot.updateSessionStorage();
+                    }, chatbot);
+                }
+
                 chatbot._scrollToBottom();
             },
             reinitInput() {
@@ -327,6 +346,7 @@ const chatbot = new Vue({
                 chatbot.inputConfig.rating = 0;
                 chatbot.inputConfig.buttons = [];
                 chatbot.inputConfig.cards = [];
+                chatbot.inputConfig.files = [];
                 chatbot.error = false;
                 chatbot.updateSessionStorage();
             },

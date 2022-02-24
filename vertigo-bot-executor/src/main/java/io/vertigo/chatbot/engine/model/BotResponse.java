@@ -31,13 +31,15 @@ public final class BotResponse {
 	private final List<String> htmlTexts;
 	private final List<IBotChoice> choices;
 	private final List<IBotChoice> cards;
+	private final List<IBotChoice> files;
 	private final Map<String, Object> metadatas;
 	private final BotStatus status;
 
-	BotResponse(final List<String> htmlTexts, final List<IBotChoice> choices, final List<IBotChoice> cards, final Map<String, Object> metadatas, final BotStatus status) {
+	BotResponse(final List<String> htmlTexts, final List<IBotChoice> choices, final List<IBotChoice> cards, final List<IBotChoice> files, final Map<String, Object> metadatas, final BotStatus status) {
 		this.htmlTexts = Collections.unmodifiableList(htmlTexts);
 		this.choices = Collections.unmodifiableList(choices);
 		this.cards = Collections.unmodifiableList(cards);
+		this.files = Collections.unmodifiableList(files);
 		this.metadatas = metadatas;
 		this.status = status;
 	}
