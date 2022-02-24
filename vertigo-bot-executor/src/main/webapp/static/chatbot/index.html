@@ -25,7 +25,7 @@
   <body style="color:black">
     <div id="q-app">
       <q-layout view="hHh lpr fFf">
-        <q-layout-header class="bg-primary text-white row items-center non-selectable">
+        <q-layout-header :style="'--background-color: ' + customConfig.backgroundColor" class="bg-primary text-white row items-center non-selectable">
           <div class="title col-grow q-ml-md">
             {{ botName }}
           </div>
@@ -79,6 +79,7 @@
                       :avatar="msg.avatar"
                       :text="msg.text"
                       :stamp="msg.stamp"
+                      :style="'--background-color: ' + customConfig.backgroundColor"
                     ></q-chat-message>
                   </div>
                   <div class="sys-chat">
@@ -112,7 +113,7 @@
                     </q-chat-message>
                   </div>
                   <div class="non-selectable">
-                    <q-chat-message v-if="inputConfig.showRating" class="animate-fade" bg-color="primary" sent >
+                    <q-chat-message :style="'--background-color: ' + customConfig.backgroundColor" v-if="inputConfig.showRating" class="animate-fade" bg-color="primary" sent >
                       <q-rating v-model="inputConfig.rating" style="font-size: 2rem;"
                                 icon="star_border"
                                 icon-selected="star"
@@ -136,6 +137,7 @@
                                 navigation
                                 padding
                                 arrows
+                                :style="'--background-color: ' + customConfig.backgroundColor"
                                 class="bg-primary text-white shadow-1 rounded-borders"
                         >
                           <q-carousel-slide  v-for="(card, index) in inputConfig.cards" name="style" class="column no-wrap flex-center" >
@@ -180,6 +182,7 @@
             <div class="col-grow">
               <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
                        ref="input"
+                       :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor"
                        class="bg-white q-px-sm round-borders"
                        @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText()"
                        :max-height="100"
@@ -191,6 +194,7 @@
 
             <q-btn round
                    color="primary"
+                   :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor"
                    style="margin-top: 0px;"
                    icon="send"
                    @click="postAnswerText()"

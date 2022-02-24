@@ -246,6 +246,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botEmailAddress,
 		/** Propriété 'Reinitialization button'. */
 		reinitializationButton,
+		/** Propriété 'Bot background color'. */
+		backgroundColor,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

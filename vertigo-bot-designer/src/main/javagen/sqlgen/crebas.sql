@@ -88,7 +88,7 @@ create sequence SEQ_CHATBOT_NODE
 
 
 create sequence SEQ_CONFLUENCE_SETTING
-	start with 1000 cache 20; 
+	start with 1000 cache 20;
 
 create sequence SEQ_CONTEXT_VALUE
 	start with 1000 cache 20; 
@@ -104,10 +104,10 @@ create sequence SEQ_HISTORY
 
 
 create sequence SEQ_JIRA_FIELD_SETTING
-	start with 1000 cache 20; 
+	start with 1000 cache 20;
 
 create sequence SEQ_JIRA_SETTING
-	start with 1000 cache 20; 
+	start with 1000 cache 20;
 
 
 create sequence SEQ_MEDIA_FILE_INFO
@@ -127,7 +127,7 @@ create sequence SEQ_RESPONSE_BUTTON
 	start with 1000 cache 20; 
 
 create sequence SEQ_RESPONSE_BUTTON_URL
-	start with 1000 cache 20; 
+	start with 1000 cache 20;
 
 
 create sequence SEQ_SAVED_TRAINING
@@ -210,6 +210,7 @@ create table CHATBOT_CUSTOM_CONFIG
     RATING_MESSAGE	 VARCHAR(100)	,
     BOT_EMAIL_ADDRESS	 VARCHAR(100)	,
     REINITIALIZATION_BUTTON	 bool        	,
+    BACKGROUND_COLOR	 VARCHAR(100)	,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
 );
@@ -228,6 +229,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.BOT_EMAIL_ADDRESS is
 
 comment on column CHATBOT_CUSTOM_CONFIG.REINITIALIZATION_BUTTON is
 'Reinitialization button';
+
+comment on column CHATBOT_CUSTOM_CONFIG.BACKGROUND_COLOR is
+'Bot background color';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';
@@ -297,7 +301,7 @@ comment on column CHATBOT_PROFILES.SORT_ORDER is
 'Order';
 
 -- ============================================================
---   Table : CONFLUENCE_SETTING                                        
+--   Table : CONFLUENCE_SETTING
 -- ============================================================
 create table CONFLUENCE_SETTING
 (
@@ -449,7 +453,7 @@ comment on column HISTORY_ACTION.LABEL_FR is
 'TitleFr';
 
 -- ============================================================
---   Table : JIRA_FIELD                                        
+--   Table : JIRA_FIELD
 -- ============================================================
 create table JIRA_FIELD
 (
@@ -473,7 +477,7 @@ comment on column JIRA_FIELD.LABEL_FR is
 'TitleFr';
 
 -- ============================================================
---   Table : JIRA_FIELD_SETTING                                        
+--   Table : JIRA_FIELD_SETTING
 -- ============================================================
 create table JIRA_FIELD_SETTING
 (
@@ -501,7 +505,7 @@ comment on column JIRA_FIELD_SETTING.JIR_FIELD_CD is
 'Field';
 
 -- ============================================================
---   Table : JIRA_SETTING                                        
+--   Table : JIRA_SETTING
 -- ============================================================
 create table JIRA_SETTING
 (
@@ -713,7 +717,7 @@ comment on column RESPONSE_BUTTON.TOP_ID_RESPONSE is
 'TopicResponse';
 
 -- ============================================================
---   Table : RESPONSE_BUTTON_URL                                        
+--   Table : RESPONSE_BUTTON_URL
 -- ============================================================
 create table RESPONSE_BUTTON_URL
 (

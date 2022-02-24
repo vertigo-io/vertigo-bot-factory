@@ -65,7 +65,8 @@ const chatbot = new Vue({
             customConfig: {
               useRating: false,
               ratingMessage: 'Merci !',
-              reinitializationButton: false
+              reinitializationButton: false,
+              backgroundColor: 'black'
             },
             isEnded: false,
 
@@ -133,6 +134,7 @@ const chatbot = new Vue({
                                 chatbot.customConfig.useRating = httpResponse.data.metadatas.customConfig.rating;
                                 chatbot.customConfig.ratingMessage = httpResponse.data.metadatas.customConfig.ratingMessage;
                                 chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
+                                chatbot.customConfig.backgroundColor = httpResponse.data.metadatas.customConfig.backgroundColor;
                                 chatbot.updateSessionStorage();
                                 chatbot._handleResponse(httpResponse, false);
                             }).catch(() => {

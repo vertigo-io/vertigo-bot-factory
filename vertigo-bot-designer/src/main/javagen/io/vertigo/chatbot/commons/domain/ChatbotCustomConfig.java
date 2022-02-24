@@ -20,6 +20,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private String ratingMessage;
 	private String botEmailAddress;
 	private Boolean reinitializationButton;
+	private String backgroundColor;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -136,7 +137,26 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setReinitializationButton(final Boolean reinitializationButton) {
 		this.reinitializationButton = reinitializationButton;
 	}
-	
+
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot background color'.
+	 * @return String backgroundColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot background color")
+	public String getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot background color'.
+	 * @param backgroundColor String
+	 */
+	public void setBackgroundColor(final String backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
+
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.
