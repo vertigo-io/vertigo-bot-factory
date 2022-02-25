@@ -114,7 +114,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 		if (!HashUtils.generateHashCodeForResponseButtons(oldResponseButtons).equals(HashUtils.generateHashCodeForResponseButtons(buttonList))) {
 			for (final ResponseButton button : buttonList) {
 				if (TopicsUtils.checkSpecialCharacters(button.getText())) {
-					throw new VUserException("The button cannot contain the following characters : '[', ']', '|', '¤'. ");
+					throw new VUserException(MessageText.of(TopicsMultilingualResources.CODE_SPECIAL_CHAR_ERROR));
 				}
 			}
 			responsesButtonServices.removeAllButtonsBySmtId(chatbot, savedST);
@@ -127,7 +127,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 		if (!HashUtils.generateHashCodeForResponseButtonsUrl(oldResponseUrlButtons).equals(HashUtils.generateHashCodeForResponseButtonsUrl(buttonUrlList))) {
 			for (final ResponseButtonUrl button : buttonUrlList) {
 				if (TopicsUtils.checkSpecialCharacters(button.getText())) {
-					throw new VUserException("The button cannot contain the following characters : '[', ']', '|', '¤'. ");
+					throw new VUserException(MessageText.of(TopicsMultilingualResources.CODE_SPECIAL_CHAR_ERROR));
 				}
 			}
 			responsesButtonUrlServices.removeAllButtonsUrlBySmtId(chatbot, savedST);
