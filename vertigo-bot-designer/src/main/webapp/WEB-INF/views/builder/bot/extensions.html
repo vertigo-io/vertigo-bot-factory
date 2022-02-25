@@ -8,6 +8,30 @@
 
 <head>
     <title th:text="#{extensions.title}"></title>
+    <script th:inline="javascript">
+        VUiExtensions.dataX.isPwd = true;
+        function isSelected(node) {
+            return VertigoUi.vueData.newConfluenceSetting.nodId && VertigoUi.vueData.newConfluenceSetting.nodId === node.nodId;
+        }
+
+        function selectNode(node, state) {
+            if (state) {
+                VertigoUi.vueData.newConfluenceSetting.nodId = node.nodId;
+            } else {
+                VertigoUi.vueData.newConfluenceSetting.nodId = null;
+            }
+        }
+
+        function filterConfluenceSettings() {
+            VertigoUi.vueData.confluenceSettingsFiltered = VertigoUi.vueData.confluenceSettings;
+
+            if (VertigoUi.componentStates.nodes.selectedNode.nodId !== null) {
+                VertigoUi.vueData.confluenceSettingsFiltered = VertigoUi.vueData.confluenceSettingsFiltered.slice().reverse().filter(confluenceSetting =>
+                    confluenceSetting.nodId === VertigoUi.componentStates.nodes.selectedNode.nodId
+                );
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -17,11 +41,17 @@
 
     <section layout:fragment="content-nav">
         <q-item tag="a" href="#WELCOMETOUR" th:text="#{extensions.welcometour}"></q-item>
+        <q-item tag="a" href="#CONFLUENCE" th:text="#{extensions.confluence}"></q-item>
     </section>
     <section layout:fragment="content">
         <vu:include-data object="bot" field="botId" />
+        <vu:include-data object="nodeList" field="nodId" />
+        <vu:include-data object="nodeList" field="name" />
+        <vu:include-data object="nodeList" field="color" />
         <vu:popup-ajax action="_deleteWelcomeTour" vModel="showDeleteWelcomeTourPopup" th:message="#{extension.welcometour.delete.popup.message}"
                        th:confirm="#{action.delete}" dataName="welId" ></vu:popup-ajax>
+        <vu:popup-ajax action="_deleteConfluenceSetting" vModel="showDeleteConfluenceSettingPopup" th:message="#{extension.confluence.delete.popup.message}"
+                       th:confirm="#{action.delete}" dataName="conSetId" ></vu:popup-ajax>
         <vu:table id="WELCOMETOUR" th:title="#{extensions.welcometour}" list="welcomeTours" componentId="welcomeTours" sortBy="label" :binary-state-sort="true">
             <vu:slot name="top_right_slot">
                 <q-btn color="primary" round icon="add" th:aria-label="#{action.add}" th:title="#{action.add}"
@@ -79,6 +109,128 @@
             </q-card>
         </q-dialog>
 
+        <vu:table id="CONFLUENCE" th:title="#{extensions.confluence}" list="confluenceSettingsFiltered" componentId="confluenceSettingsFiltered" sortBy="url" :binary-state-sort="true">
+            <vu:slot name="top_right_slot">
+                <q-select
+                        th:attr="dataObject=${model.vContext['componentStates'].addComponentState('nodes').addObject('selectedNode', {nodId: null})}"
+                        style="width: 250px; margin-right: 10px"
+                        clearable
+                        filled
+                        map-options
+                        emit-value
+                        v-model="componentStates.nodes.selectedNode.nodId"
+                        :options="transformListForSelection('nodeList', 'nodId', 'name')"
+                        th:label="#{extension.confluence.filter.node}"
+                        @input="filterConfluenceSettings();"
+                        stack-label>
+                </q-select>
+                <q-btn color="primary" round icon="add" th:aria-label="#{action.add}" th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" th:title="#{action.add}"
+                       @click="componentStates.isPwd = true; vueData.newConfluenceSetting.conSetId = null;
+                       vueData.newConfluenceSetting.botId = vueData.bot.botId;
+                       vueData.newConfluenceSetting.nodId = null;
+                       vueData.newConfluenceSetting.url = null;
+                       vueData.newConfluenceSetting.login = null ;
+                       vueData.newConfluenceSetting.password = null ;
+                       vueData.newConfluenceSetting.numberOfResults = null ;
+                       $refs.confluenceSettingDialog.show()"></q-btn>
+            </vu:slot>
+            <vu:slot name="actions_slot">
+                <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                       th:title="#{action.update}"
+                       @click="componentStates.isPwd = true;
+                       vueData.newConfluenceSetting.botId = props.row.botId;
+                       vueData.newConfluenceSetting.conSetId = props.row.conSetId;
+                       vueData.newConfluenceSetting.nodId = props.row.nodId;
+                       vueData.newConfluenceSetting.url = props.row.url;
+                       vueData.newConfluenceSetting.login = props.row.login;
+                       vueData.newConfluenceSetting.password = props.row.password;
+                       vueData.newConfluenceSetting.numberOfResults = props.row.numberOfResults; $refs.confluenceSettingDialog.show()"></q-btn>
+                <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
+                       th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
+                       @click="componentStates.conSetId = props.row.conSetId; componentStates.showDeleteConfluenceSettingPopup = true"></q-btn>
+            </vu:slot>
+            <vu:include-data object="confluenceSettings" field="'*'" />
+            <vu:include-data object="confluenceSettingsFiltered" field="conSetId" />
+            <vu:include-data object="confluenceSettingsFiltered" field="botId" />
+            <vu:include-data object="confluenceSettingsFiltered" field="nodId" />
+            <vu:include-data object="confluenceSettingsFiltered" field="url" />
+            <vu:include-data object="confluenceSettingsFiltered" field="login" />
+            <vu:include-data object="confluenceSettingsFiltered" field="password" />
+            <vu:include-data object="confluenceSettingsFiltered" field="numberOfResults" />
+            <vu:column name="node" th:label="#{extension.confluence.noeud}">
+                <q-chip v-for="node in vueData.nodeList" v-if="node.nodId === props.row.nodId" :style="'background: '+ node.color" text-color="white">
+                    {{node.name}}
+                </q-chip>
+            </vu:column>
+            <vu:column field="url"/>
+            <vu:column field="login"/>
+            <vu:column field="numberOfResults"/>
+        </vu:table>
+
+
+        <q-dialog ref="confluenceSettingDialog">
+            <vu:include-data object="newConfluenceSetting" field="conSetId" />
+            <vu:include-data object="newConfluenceSetting" field="botId" />
+            <vu:include-data object="newConfluenceSetting" field="nodId" />
+            <vu:include-data object="newConfluenceSetting" field="url" />
+            <vu:include-data object="newConfluenceSetting" field="login" />
+            <vu:include-data object="newConfluenceSetting" field="password" />
+            <vu:include-data object="newConfluenceSetting" field="numberOfResults" />
+            <q-card>
+                <q-card-section>
+                    <div class="text-h6">
+                        <span v-if="vueData.newConfluenceSetting.conSetId !== null" th:text="#{extensions.confluence.update.popup.title}"></span>
+                        <span v-else th:text="#{extensions.confluence.add.popup.title}"></span>
+                    </div>
+                </q-card-section>
+                <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
+                    <input type="hidden" v-model="vueData.newConfluenceSetting.conSetId" name="vContext[newConfluenceSetting][conSetId]">
+                    <input type="hidden" v-model="vueData.newConfluenceSetting.botId" name="vContext[newConfluenceSetting][botId]">
+                    <q-input v-model="vueData.newConfluenceSetting.url" th:label="#{extensions.confluence.url}"
+                             name="vContext[newConfluenceSetting][url]" :error="hasFieldsError('newConfluenceSetting', 'url')"
+                             :error-message="getErrorMessage('newConfluenceSetting', 'url')"  />
+                </q-card-section>
+                <q-card-section  th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
+                    <q-input v-model="vueData.newConfluenceSetting.login" th:label="#{extensions.confluence.login}"
+                             name="vContext[newConfluenceSetting][login]" :error="hasFieldsError('newConfluenceSetting', 'login')"
+                             :error-message="getErrorMessage('newConfluenceSetting', 'login')" />
+                </q-card-section>
+                <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" >
+                    <q-input v-model="vueData.newConfluenceSetting.password" th:label="#{extensions.confluence.password}"
+                             name="vContext[newConfluenceSetting][password]" :error="hasFieldsError('newConfluenceSetting', 'password')"
+                             :error-message="getErrorMessage('newConfluenceSetting', 'password')" :type="dataX.isPwd ? 'password' : 'text'">
+                        <template v-slot:append>
+                            <q-icon
+                                    :name="dataX.isPwd  ? 'visibility_off' : 'visibility'"
+                                    class="cursor-pointer"
+                                    @click="VUiExtensions.dataX.isPwd = !VUiExtensions.dataX.isPwd;"
+                            />
+                        </template>
+                    </q-input>
+                </q-card-section>
+                <q-card-section>
+                    <q-input v-model="vueData.newConfluenceSetting.numberOfResults" th:label="#{extensions.confluence.numberOfResults}"
+                             name="vContext[newConfluenceSetting][numberOfResults]" :error="hasFieldsError('newConfluenceSetting', 'numberOfResults')"
+                             :error-message="getErrorMessage('newConfluenceSetting', 'numberOfResults')" />
+                </q-card-section>
+
+                <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" >
+                    <q-chip v-for="node in vueData.nodeList" clickable :selected="isSelected(node)" @update:selected="state => selectNode(node, state)"
+                            icon="panorama_fish_eye" :style="'background: '+ node.color" text-color="white">
+                        {{node.name}}
+                    </q-chip>
+                    <div v-if="hasFieldsError('newConfluenceSetting', 'nodId')" class="text-red">{{getErrorMessage('newConfluenceSetting', 'nodId')}}</div>
+                </q-card-section>
+
+                <q-card-actions align="around">
+                    <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                    <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                    <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                           @click="httpPostAjax('_saveConfluenceSetting', vueDataParams(['newConfluenceSetting']))"
+                           color="primary" v-close-popup></q-btn>
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
     </section>
 </body>
 </html>

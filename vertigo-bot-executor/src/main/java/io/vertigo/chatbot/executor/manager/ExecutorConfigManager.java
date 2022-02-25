@@ -18,6 +18,7 @@
 package io.vertigo.chatbot.executor.manager;
 
 import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.executor.ExecutorPlugin;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
@@ -33,7 +34,9 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ExecutorConfigManager implements Manager, Activeable {
@@ -46,6 +49,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private ExecutorGlobalConfig executorGlobalConfig;
 	private HashMap<String, String> contextMap;
 	private Map<String, String> welcomeTourMap;
+	private List<ExecutorPlugin> plugins = new ArrayList<>();
 
 	@Inject
 	public ExecutorConfigManager(
@@ -74,6 +78,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", configDataFilePath);
 			}
+			plugins.forEach(executorPlugin -> executorPlugin.refreshConfig(executorGlobalConfig));
 
 			// Migration purpose as 18/02/2020
 			if (executorGlobalConfig.getExecutorConfiguration() != null && executorGlobalConfig.getExecutorConfiguration().getNluThreshold() == null) {
@@ -105,7 +110,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 	public synchronized void saveConfig(final ExecutorGlobalConfig executorGlobalConfig) {
 		this.executorGlobalConfig = executorGlobalConfig;
-
+		plugins.forEach(executorPlugin -> executorPlugin.refreshConfig(executorGlobalConfig));
 		final String json = jsonEngine.toJson(executorGlobalConfig);
 
 		try {
@@ -136,4 +141,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		}
 	}
 
+	public void addPlugin(ExecutorPlugin executorPlugin) {
+		plugins.add(executorPlugin);
+	}
 }

@@ -23,6 +23,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
 		/** Objet de données ChatbotCustomConfig. */
 		ChatbotCustomConfig(io.vertigo.chatbot.commons.domain.ChatbotCustomConfig.class),
+		/** Objet de données ConfluenceSettingExport. */
+		ConfluenceSettingExport(io.vertigo.chatbot.commons.domain.ConfluenceSettingExport.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
 		/** Objet de données ExecutorConfiguration. */
@@ -71,6 +73,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		topics,
 		/** Propriété 'Welcome tours map'. */
 		welcomeTours,
+		/** Propriété 'Confluence setting'. */
+		confluenceSetting,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -105,6 +109,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botEmailAddress,
 		/** Propriété 'Chatbot'. */
 		botId	}
+
+	/**
+	 * Enumération des champs de ConfluenceSettingExport.
+	 */
+	public enum ConfluenceSettingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ConfluenceSettingExport> {
+		/** Propriété 'Knowledge base URL'. */
+		url,
+		/** Propriété 'Login'. */
+		login,
+		/** Propriété 'Password'. */
+		password,
+		/** Propriété 'Number max of results'. */
+		numberOfResults	}
 
 	/**
 	 * Enumération des champs de ContextValue.

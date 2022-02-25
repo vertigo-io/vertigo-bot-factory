@@ -1,13 +1,12 @@
 package io.vertigo.chatbot.designer.boot;
 
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.domain.DtResources;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.context.ContextValueMultilingualResources;
-import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
-import io.vertigo.chatbot.commons.multilingual.kindTopic.KindTopicMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.kindTopic.KindTopicMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.person.PersonMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
@@ -17,6 +16,8 @@ import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualR
 import io.vertigo.chatbot.designer.domain.commons.EnumResource;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.component.ComponentInitializer;
+
+import javax.inject.Inject;
 
 public class ChatbotLocaleInitializer implements ComponentInitializer {
 
@@ -43,6 +44,7 @@ public class ChatbotLocaleInitializer implements ComponentInitializer {
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources", BotMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources", ExportMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources", DictionaryEntityMultilingualResources.values());
+		localeManager.add("io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources", ExtensionsMultilingualResources.values());
 
 	}
 

@@ -13,6 +13,8 @@ drop sequence IF EXISTS SEQ_CHATBOT_CUSTOM_CONFIG;
 drop table IF EXISTS CHATBOT_NODE cascade;
 drop sequence IF EXISTS SEQ_CHATBOT_NODE;
 drop table IF EXISTS CHATBOT_PROFILES cascade;
+drop table IF EXISTS CONFLUENCE_SETTING cascade;
+drop sequence IF EXISTS SEQ_CONFLUENCE_SETTING;
 drop table IF EXISTS CONTEXT_VALUE cascade;
 drop sequence IF EXISTS SEQ_CONTEXT_VALUE;
 drop table IF EXISTS DICTIONARY_ENTITY cascade;
@@ -77,6 +79,9 @@ create sequence SEQ_CHATBOT_CUSTOM_CONFIG
 create sequence SEQ_CHATBOT_NODE
 	start with 1000 cache 20; 
 
+
+create sequence SEQ_CONFLUENCE_SETTING
+	start with 1000 cache 20; 
 
 create sequence SEQ_CONTEXT_VALUE
 	start with 1000 cache 20; 
@@ -270,6 +275,42 @@ comment on column CHATBOT_PROFILES.LABEL is
 
 comment on column CHATBOT_PROFILES.SORT_ORDER is
 'Order';
+
+-- ============================================================
+--   Table : CONFLUENCE_SETTING                                        
+-- ============================================================
+create table CONFLUENCE_SETTING
+(
+    CON_SET_ID  	 NUMERIC     	not null,
+    URL         	 TEXT        	not null,
+    LOGIN       	 VARCHAR(100)	not null,
+    PASSWORD    	 VARCHAR(100)	not null,
+    NUMBER_OF_RESULTS	 NUMERIC     	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    NOD_ID      	 NUMERIC     	not null,
+    constraint PK_CONFLUENCE_SETTING primary key (CON_SET_ID)
+);
+
+comment on column CONFLUENCE_SETTING.CON_SET_ID is
+'Confluence setting id';
+
+comment on column CONFLUENCE_SETTING.URL is
+'Knowledge base URL';
+
+comment on column CONFLUENCE_SETTING.LOGIN is
+'Login';
+
+comment on column CONFLUENCE_SETTING.PASSWORD is
+'Password';
+
+comment on column CONFLUENCE_SETTING.NUMBER_OF_RESULTS is
+'Number max of results';
+
+comment on column CONFLUENCE_SETTING.BOT_ID is
+'Chatbot';
+
+comment on column CONFLUENCE_SETTING.NOD_ID is
+'Node';
 
 -- ============================================================
 --   Table : CONTEXT_VALUE                                        
@@ -1011,6 +1052,18 @@ alter table CHATBOT
 	references MEDIA_FILE_INFO (FIL_ID);
 
 create index A_CHATBOT_MEDIA_FILE_INFO_MEDIA_FILE_INFO_FK on CHATBOT (FIL_ID_AVATAR asc);
+
+alter table CONFLUENCE_SETTING
+	add constraint FK_A_CONFLUENCE_SETTING_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_CONFLUENCE_SETTING_CHATBOT_CHATBOT_FK on CONFLUENCE_SETTING (BOT_ID asc);
+
+alter table CONFLUENCE_SETTING
+	add constraint FK_A_CONFLUENCE_SETTING_NODE_CHATBOT_NODE foreign key (NOD_ID)
+	references CHATBOT_NODE (NOD_ID);
+
+create index A_CONFLUENCE_SETTING_NODE_CHATBOT_NODE_FK on CONFLUENCE_SETTING (NOD_ID asc);
 
 alter table CONTEXT_VALUE
 	add constraint FK_A_CONTEXT_VALUE_CHATBOT_CHATBOT foreign key (BOT_ID)

@@ -29,6 +29,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ChatbotNode(io.vertigo.chatbot.commons.domain.ChatbotNode.class),
 		/** Objet de données ChatbotProfiles. */
 		ChatbotProfiles(io.vertigo.chatbot.designer.domain.admin.ChatbotProfiles.class),
+		/** Objet de données ConfluenceSetting. */
+		ConfluenceSetting(io.vertigo.chatbot.commons.domain.ConfluenceSetting.class),
+		/** Objet de données ConfluenceSettingExport. */
+		ConfluenceSettingExport(io.vertigo.chatbot.commons.domain.ConfluenceSettingExport.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
 		/** Objet de données DictionaryEntity. */
@@ -177,6 +181,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		topics,
 		/** Propriété 'Welcome tours map'. */
 		welcomeTours,
+		/** Propriété 'Confluence setting'. */
+		confluenceSetting,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -256,6 +262,38 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Order'. */
 		sortOrder	}
+
+	/**
+	 * Enumération des champs de ConfluenceSetting.
+	 */
+	public enum ConfluenceSettingFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ConfluenceSetting> {
+		/** Propriété 'Confluence setting id'. */
+		conSetId,
+		/** Propriété 'Knowledge base URL'. */
+		url,
+		/** Propriété 'Login'. */
+		login,
+		/** Propriété 'Password'. */
+		password,
+		/** Propriété 'Number max of results'. */
+		numberOfResults,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Node'. */
+		nodId	}
+
+	/**
+	 * Enumération des champs de ConfluenceSettingExport.
+	 */
+	public enum ConfluenceSettingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ConfluenceSettingExport> {
+		/** Propriété 'Knowledge base URL'. */
+		url,
+		/** Propriété 'Login'. */
+		login,
+		/** Propriété 'Password'. */
+		password,
+		/** Propriété 'Number max of results'. */
+		numberOfResults	}
 
 	/**
 	 * Enumération des champs de ContextValue.

@@ -144,6 +144,7 @@ public class TrainingServices implements Component, IRecordable<Training> {
 		LogsUtils.addLogs(logs, "Bot export :");
 		LogsUtils.breakLine(logs);
 		BotExport botExport = exportBot(bot, logs);
+		botExportServices.exportConfluenceSetting(botId, devNode.getNodId()).ifPresent(botExport::setConfluenceSetting);
 		LogsUtils.addLogs(logs, "Bot export ");
 		LogsUtils.logOK(logs);
 
@@ -200,7 +201,9 @@ public class TrainingServices implements Component, IRecordable<Training> {
 		final StringBuilder logs = new StringBuilder("Starting deployment of training " + training.getTraId() + " on node " + node.getName() + " ...");
 		LogsUtils.breakLine(logs);
 		try {
-			trainNode(bot, training, node, logs, jsonEngine.fromJson(savedTraining.getBotExport(), BotExport.class));
+			BotExport botExport = jsonEngine.fromJson(savedTraining.getBotExport(), BotExport.class);
+			botExportServices.exportConfluenceSetting(bot.getBotId(), nodeId).ifPresent(botExport::setConfluenceSetting);
+			trainNode(bot, training, node, logs, botExport);
 		} catch (final Exception e) {
 			LogsUtils.logKO(logs);
 			LogsUtils.addLogs(logs, e.getMessage());

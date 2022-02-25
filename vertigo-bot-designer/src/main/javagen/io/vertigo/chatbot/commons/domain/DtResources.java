@@ -40,6 +40,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$welcomeTours,
 	/**
+	 * Confluence setting.
+	 */
+	fldBotExport$confluenceSetting,
+	/**
 	 * map Context.
 	 */
 	fldBotExport$mapContext,
@@ -135,6 +139,58 @@ public enum DtResources implements MessageKey {
 	 * Loaded model.
 	 */
 	fldChatbotNode$traId,
+
+	/***********************************************************
+	/** ConfluenceSetting.
+	/***********************************************************
+	/**
+	 * Confluence setting id.
+	 */
+	fldConfluenceSetting$conSetId,
+	/**
+	 * Knowledge base URL.
+	 */
+	fldConfluenceSetting$url,
+	/**
+	 * Login.
+	 */
+	fldConfluenceSetting$login,
+	/**
+	 * Password.
+	 */
+	fldConfluenceSetting$password,
+	/**
+	 * Number max of results.
+	 */
+	fldConfluenceSetting$numberOfResults,
+	/**
+	 * Chatbot.
+	 */
+	fldConfluenceSetting$botId,
+	/**
+	 * Node.
+	 */
+	fldConfluenceSetting$nodId,
+
+	/***********************************************************
+	/** ConfluenceSettingExport.
+	/***********************************************************
+	/**
+	 * Knowledge base URL.
+	 */
+	fldConfluenceSettingExport$url,
+	/**
+	 * Login.
+	 */
+	fldConfluenceSettingExport$login,
+	/**
+	 * Password.
+	 */
+	fldConfluenceSettingExport$password,
+	/**
+	 * Number max of results.
+	 */
+	fldConfluenceSettingExport$numberOfResults,
 
 	/***********************************************************
 	/** ContextValue.
