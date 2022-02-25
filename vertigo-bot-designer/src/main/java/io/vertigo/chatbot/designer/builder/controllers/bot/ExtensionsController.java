@@ -10,6 +10,7 @@ import io.vertigo.chatbot.commons.domain.JiraSetting;
 import io.vertigo.chatbot.commons.domain.WelcomeTour;
 import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
+import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
 import io.vertigo.chatbot.designer.builder.services.JiraFieldService;
 import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
@@ -271,14 +272,14 @@ public class ExtensionsController extends AbstractBotController {
 					|| DtDefinitions.JiraSettingFields.project.name().equals(dtField.getName())
 			) {
 				final String value = (String) dtField.getDataAccessor().getValue(jiraSetting);
-				if (value == null || "".equals(value)) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné"));
+				if (value == null || value.trim().isEmpty()) {
+					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
 				}
 			}
 			if (DtDefinitions.JiraSettingFields.nodId.name().equals(dtField.getName())) {
 				final Long value = (Long) dtField.getDataAccessor().getValue(jiraSetting);
 				if (value == null) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné"));
+					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
 				}
 			}
 		}
