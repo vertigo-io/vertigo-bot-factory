@@ -273,9 +273,9 @@ public final class BotNodeProvider {
 	}
 
 
-	public static BTNode link(final BlackBoard bb, final String url) {
+	public static BTNode link(final BlackBoard bb, final String url, final Boolean newTab) {
 		return () -> {
-			bb.listPush(BotEngine.BOT_RESPONSE_KEY, formatLink(url));
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, formatLink(url, newTab));
 			return BTStatus.Succeeded;
 		};
 	}
@@ -293,10 +293,14 @@ public final class BotNodeProvider {
 		return "<img src='" + url + "' class='imgClass' />";
 	}
 
-	public static String formatLink(final String url) {
+	public static String formatLink(final String url, final Boolean newTab) {
 		Assertion.check().isNotNull(url);
 		Assertion.check().isTrue(isValidURL(url), "Not a valid URL");
-		return "<a href='" + url + "' target='_blank' >" + url + "</a>";
+		String target = "_top";
+		if (newTab) {
+			target = "_blank";
+		}
+		return "<a href='" + url + "' target='"+target+"' >" + url + "</a>";
 	}
 
 	public static boolean isValidURL(String url) {
