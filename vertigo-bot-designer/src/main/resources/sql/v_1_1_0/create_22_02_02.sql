@@ -13,6 +13,7 @@ create table CONFLUENCE_SETTING
     NUMBER_OF_RESULTS	 NUMERIC     	not null,
     BOT_ID      	 NUMERIC     	not null,
     NOD_ID      	 NUMERIC     	not null,
+    UNIQUE (BOT_ID, NOD_ID),
     constraint PK_CONFLUENCE_SETTING primary key (CON_SET_ID)
 );
 

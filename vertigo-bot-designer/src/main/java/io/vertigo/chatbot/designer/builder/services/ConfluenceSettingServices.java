@@ -5,7 +5,6 @@ import io.vertigo.chatbot.commons.domain.ConfluenceSetting;
 import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -27,13 +26,6 @@ public class ConfluenceSettingServices implements Component {
 	}
 
 	public ConfluenceSetting save (ConfluenceSetting confluenceSetting) {
-		if (confluenceSetting.getConSetId() == null) {
-			confluenceSettingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.ConfluenceSettingFields.botId, confluenceSetting.getBotId())
-							.and(Criterions.isEqualTo(DtDefinitions.ConfluenceSettingFields.nodId, confluenceSetting.getNodId())))
-					.ifPresent(it -> {
-						throw new VSystemException("A confluence setting already exist for this bot and node");
-					});
-		}
 		return confluenceSettingDAO.save(confluenceSetting);
 	}
 

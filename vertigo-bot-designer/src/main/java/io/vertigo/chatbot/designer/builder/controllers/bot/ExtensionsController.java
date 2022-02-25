@@ -5,6 +5,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ConfluenceSetting;
 import io.vertigo.chatbot.commons.domain.WelcomeTour;
+import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
@@ -127,7 +128,7 @@ public class ExtensionsController extends AbstractBotController {
 					|| DtDefinitions.WelcomeTourFields.technicalCode.name().equals(dtField.getName())) {
 				final String value = (String) dtField.getDataAccessor().getValue(welcomeTour);
 				if (value == null || "".equals(value)) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné"));
+					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
 				}
 			}
 		}
@@ -143,20 +144,20 @@ public class ExtensionsController extends AbstractBotController {
 					|| DtDefinitions.ConfluenceSettingFields.password.name().equals(dtField.getName())
 			) {
 				final String value = (String) dtField.getDataAccessor().getValue(confluenceSetting);
-				if (value == null || "".equals(value)) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné"));
+				if (value == null || value.trim().isEmpty()) {
+					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
 				}
 			}
 			if (DtDefinitions.ConfluenceSettingFields.numberOfResults.name().equals(dtField.getName())) {
 				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSetting);
 				if (value == null || value <= 0) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné et avoir une valeur supérieure à 0"));
+					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.VALUE_SHOULD_BE_GREATER_THAN_ZERO));
 				}
 			}
 			if (DtDefinitions.ConfluenceSettingFields.nodId.name().equals(dtField.getName())) {
 				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSetting);
 				if (value == null) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné"));
+					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
 				}
 			}
 		}
