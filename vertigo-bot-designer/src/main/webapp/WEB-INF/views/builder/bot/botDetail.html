@@ -56,6 +56,7 @@
 			<q-item tag="a" href="#idle" th:text="#{bot.idle}"></q-item>
 			<q-item tag="a" href="#rating" th:text="#{bot.rating}"></q-item>
 			<q-item tag="a" href="#botEmail" th:text="#{bot.email.address}"></q-item>
+			<q-item tag="a" href="#reinitialization" th:text="#{bot.reinitialization}"></q-item>
 			<q-item th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" tag="a" href="#nodes" th:text="#{bot.nodes}"></q-item>
 		</section>
 		
@@ -206,6 +207,10 @@
 				<q-input v-model="vueData.chatbotCustomConfig.botEmailAddress" :error="hasFieldsError('chatbotCustomConfig', 'botEmailAddress')"
 						 :error-message="getErrorMessage('chatbotCustomConfig', 'botEmailAddress')"  name="vContext[chatbotCustomConfig][botEmailAddress]"
 						 th:label="#{bot.email.address}" th::disable="${model.modeReadOnly}" />
+			</vu:block>
+			<vu:block id="reinitialization" th:title="#{bot.reinitialization}">
+				<q-toggle left-label th:label="#{bot.reinitialization.active}" v-model="vueData.chatbotCustomConfig.reinitializationButton" th::disable="${model.modeReadOnly}"></q-toggle>
+				<input type="hidden" name="vContext[chatbotCustomConfig][reinitializationButton]" :value="vueData.chatbotCustomConfig.reinitializationButton"/>
 			</vu:block>
 			
 			<vu:include-data object="nodeNew" field="name" />

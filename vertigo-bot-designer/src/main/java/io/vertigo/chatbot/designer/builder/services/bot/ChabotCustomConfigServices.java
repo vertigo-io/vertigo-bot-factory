@@ -62,6 +62,7 @@ public class ChabotCustomConfigServices implements Component {
 		ChatbotCustomConfig chatbotCustomConfig = new ChatbotCustomConfig();
 		chatbotCustomConfig.setRating(false);
 		chatbotCustomConfig.setRatingMessage("");
+		chatbotCustomConfig.setReinitializationButton(false);
 		return chatbotCustomConfig;
 	}
 }

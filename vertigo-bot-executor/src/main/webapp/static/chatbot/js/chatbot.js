@@ -64,7 +64,8 @@ const chatbot = new Vue({
             },
             customConfig: {
               useRating: false,
-              ratingMessage: 'Merci !'
+              ratingMessage: 'Merci !',
+              reinitializationButton: false
             },
             isEnded: false,
 
@@ -110,6 +111,9 @@ const chatbot = new Vue({
                 chatbot.messages = JSON.parse(sessionStorage.messages);
                 chatbot.customConfig = JSON.parse(sessionStorage.customConfig);
             },
+            clearSessionStorage() {
+                sessionStorage.clear();
+            },
             startConversation() {
                 chatbot.lastUserInteraction = Date.now();
                 const urlPage =  window.location.href;
@@ -128,6 +132,7 @@ const chatbot = new Vue({
                                 chatbot.convId = httpResponse.data.metadatas.sessionId;
                                 chatbot.customConfig.useRating = httpResponse.data.metadatas.customConfig.rating;
                                 chatbot.customConfig.ratingMessage = httpResponse.data.metadatas.customConfig.ratingMessage;
+                                chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
                                 chatbot.updateSessionStorage();
                                 chatbot._handleResponse(httpResponse, false);
                             }).catch(() => {
@@ -325,6 +330,27 @@ const chatbot = new Vue({
             },
             minimize() {
                 parent.postMessage('Chatbot.minimize', '*');
+            },
+            refresh(){
+                chatbot.inputConfig =  {
+                    modeTextarea: false,
+                    responseText: '',
+                    responsePattern: '',
+                    showRating: false,
+                    rating: 0,
+                    buttons: [],
+                    cards: []
+                };
+                chatbot.customConfig = {
+                    useRating: false,
+                    ratingMessage: 'Merci !'
+                };
+                chatbot.error = false;
+                chatbot.convId = null;
+                chatbot.contextMap = {};
+                chatbot.messages = [];
+                chatbot.clearSessionStorage();
+                chatbot.initBot();
             },
             rateBot(value){
                 this.$http.post(chatbot.botUrl + '/rating', {sender: chatbot.convId, note: value})
