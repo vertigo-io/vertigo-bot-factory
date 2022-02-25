@@ -163,33 +163,4 @@ public class ExtensionsController extends AbstractBotController {
 		}
 	}
 
-	public static final class ConfluenceSettingNotEmptyValidator extends AbstractDtObjectValidator<ConfluenceSetting> {
-
-		/** {@inheritDoc} */
-		@Override
-		protected void checkMonoFieldConstraints(final ConfluenceSetting confluenceSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
-			if (DtDefinitions.ConfluenceSettingFields.url.name().equals(dtField.getName())
-					|| DtDefinitions.ConfluenceSettingFields.login.name().equals(dtField.getName())
-					|| DtDefinitions.ConfluenceSettingFields.password.name().equals(dtField.getName())
-			) {
-				final String value = (String) dtField.getDataAccessor().getValue(confluenceSetting);
-				if (value == null || "".equals(value)) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné"));
-				}
-			}
-			if (DtDefinitions.ConfluenceSettingFields.numberOfResults.name().equals(dtField.getName())) {
-				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSetting);
-				if (value == null || value <= 0) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné et avoir une valeur supérieure à 0"));
-				}
-			}
-			if (DtDefinitions.ConfluenceSettingFields.nodId.name().equals(dtField.getName())) {
-				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSetting);
-				if (value == null) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné"));
-				}
-			}
-		}
-	}
-
 }
