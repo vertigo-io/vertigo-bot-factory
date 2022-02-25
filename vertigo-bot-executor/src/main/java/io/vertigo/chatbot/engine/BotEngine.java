@@ -22,7 +22,6 @@ import io.vertigo.core.lang.VSystemException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +63,7 @@ public class BotEngine {
 
 	public static final BBKey BOT_RESPONSE_KEY = BBKey.of(BOT_OUT_PATH, "/responses");
 	public static final BBKey BOT_CHOICES_KEY = BBKey.of(BOT_OUT_PATH, "/choices");
+	public static final BBKey BOT_CHOICES_NUMBER_KEY = BBKey.of(BOT_OUT_PATH, "/choicesnumber");
 	public static final BBKey BOT_OUT_METADATA_PATH = BBKey.of(BOT_OUT_PATH, "/metadata");
 
 	public static final BBKey BOT_TOPIC_KEY = BBKey.of(BOT_STATUS_PATH, "/topic");
@@ -275,12 +275,6 @@ public class BotEngine {
 	}
 
 	private List<IBotChoice> buildChoices() {
-		if (!bb.exists(BBKey.of(BOT_CHOICES_KEY, "/class"))) {
-			return Collections.emptyList();
-		}
-
-		final Method method = resolveChoiceConstructMethod();
-
 		final List<IBotChoice> choices = new ArrayList<>();
 		int choiceNumber = 0;
 		while (bb.listSize(BBKey.of(BOT_CHOICES_KEY, "/" + choiceNumber)) > 0) {
@@ -292,7 +286,8 @@ public class BotEngine {
 			}
 
 			try {
-				final Object[] invokeParams = { params };
+				final Object[] invokeParams = {params};
+				final Method method = resolveChoiceConstructMethod(choiceNumber);
 				choices.add((IBotChoice) method.invoke(null, invokeParams));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				throw new VSystemException(e, "Error while calling choice construct method");
@@ -303,8 +298,8 @@ public class BotEngine {
 		return choices;
 	}
 
-	private Method resolveChoiceConstructMethod() {
-		final var className = bb.getString(BBKey.of(BOT_CHOICES_KEY, "/class"));
+	private Method resolveChoiceConstructMethod(int choiceNumber) {
+		final var className = bb.getString(BBKey.of(BOT_CHOICES_KEY, "/" + choiceNumber + "/class"));
 		try {
 			final Class<?> choiceClazz = Class.forName(className);
 			final var method = choiceClazz.getMethod("of", String[].class);

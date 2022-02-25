@@ -81,6 +81,30 @@ public enum DtResources implements MessageKey {
 	fldResponseButton$topIdResponse,
 
 	/***********************************************************
+	/** ResponseButtonUrl.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldResponseButtonUrl$btnId,
+	/**
+	 * Text.
+	 */
+	fldResponseButtonUrl$text,
+	/**
+	 * URL.
+	 */
+	fldResponseButtonUrl$url,
+	/**
+	 * New tab.
+	 */
+	fldResponseButtonUrl$newTab,
+	/**
+	 * SmallTalk.
+	 */
+	fldResponseButtonUrl$smtId,
+
+	/***********************************************************
 	/** ResponseType.
 	/***********************************************************
 	/**
@@ -199,6 +223,10 @@ public enum DtResources implements MessageKey {
 	 * Buttons.
 	 */
 	fldSmallTalkWrapper$buttons,
+	/**
+	 * Buttons url.
+	 */
+	fldSmallTalkWrapper$buttonsUrl,
 	/**
 	 * Utter texts.
 	 */
@@ -343,6 +371,10 @@ public enum DtResources implements MessageKey {
 	 * Buttons.
 	 */
 	fldTopicFileExport$buttons,
+	/**
+	 * Buttons URL.
+	 */
+	fldTopicFileExport$buttonsUrl,
 	/**
 	 * End of conversation.
 	 */

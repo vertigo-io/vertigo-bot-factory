@@ -19,6 +19,7 @@ package io.vertigo.chatbot.engine.model;
 
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
+import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
 import io.vertigo.chatbot.engine.model.choice.BotCard;
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 import io.vertigo.core.lang.Assertion;
@@ -68,7 +69,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 				.isNotNull(choice);
 		//-----
 
-		if (choice instanceof BotButton) {
+		if (choice instanceof BotButton || choice instanceof BotButtonUrl) {
 			botChoices.add(choice);
 		} else if (choice instanceof BotCard) {
 			botCards.add(choice);

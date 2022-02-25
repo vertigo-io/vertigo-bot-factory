@@ -65,6 +65,7 @@ public final class TopicFileExportPAO implements StoreServices {
  "			tph.agg as training_phrases," + 
  "			res.agg as response," + 
  "			buttons.doublons as buttons," + 
+ "			buttons_url.doublons as buttons_url," + 
  "			CASE " + 
  "				WHEN smt.is_end THEN 'TRUE'" + 
  "				ELSE 'FALSE'" + 
@@ -99,6 +100,14 @@ public final class TopicFileExportPAO implements StoreServices {
  "					join topic t on t.top_id = st.top_id " + 
  "					group by (t.top_id)" + 
  "				) buttons on buttons.top_id = top.top_id" + 
+ "			left join (" + 
+ "                    select t.top_id," + 
+ "                    string_agg(concat('[',rbuurl.text,'¤',rbuurl.url,'¤', CASE WHEN rbuurl.new_tab THEN 'TRUE' ELSE 'FALSE' END,']'),'|') as doublons" + 
+ "                    from response_button_url rbuurl" + 
+ "                    join small_talk st on st.smt_id = rbuurl.smt_id" + 
+ "                    join topic t on t.top_id = st.top_id" + 
+ "                    group by (t.top_id)" + 
+ "                ) buttons_url on buttons_url.top_id = top.top_id" + 
  "			where top.bot_id = #botId#" + 
  "			and tca.is_technical = false" + 
  "            and tca.top_cat_id in (#tcaIds.rownum#)" + 
@@ -116,6 +125,7 @@ public final class TopicFileExportPAO implements StoreServices {
  "				training_phrases," + 
  "				response," + 
  "				buttons," + 
+ "				buttons_url," + 
  "				is_end" + 
  "			order by top.code",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)

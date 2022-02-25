@@ -79,6 +79,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ResponseButton(io.vertigo.chatbot.commons.domain.topic.ResponseButton.class),
 		/** Objet de données ResponseButtonExport. */
 		ResponseButtonExport(io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonExport.class),
+		/** Objet de données ResponseButtonUrl. */
+		ResponseButtonUrl(io.vertigo.chatbot.commons.domain.topic.ResponseButtonUrl.class),
+		/** Objet de données ResponseButtonUrlExport. */
+		ResponseButtonUrlExport(io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonUrlExport.class),
 		/** Objet de données ResponseType. */
 		ResponseType(io.vertigo.chatbot.commons.domain.topic.ResponseType.class),
 		/** Objet de données RunnerInfo. */
@@ -615,6 +619,36 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		text	}
 
 	/**
+	 * Enumération des champs de ResponseButtonUrl.
+	 */
+	public enum ResponseButtonUrlFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.ResponseButtonUrl> {
+		/** Propriété 'ID'. */
+		btnId,
+		/** Propriété 'Text'. */
+		text,
+		/** Propriété 'URL'. */
+		url,
+		/** Propriété 'New tab'. */
+		newTab,
+		/** Propriété 'SmallTalk'. */
+		smtId	}
+
+	/**
+	 * Enumération des champs de ResponseButtonUrlExport.
+	 */
+	public enum ResponseButtonUrlExportFields implements DtFieldName<io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonUrlExport> {
+		/** Propriété 'Topic id'. */
+		topId,
+		/** Propriété 'Topic code'. */
+		topCode,
+		/** Propriété 'Button text'. */
+		text,
+		/** Propriété 'Button url'. */
+		url,
+		/** Propriété 'New tab'. */
+		newTab	}
+
+	/**
 	 * Enumération des champs de ResponseType.
 	 */
 	public enum ResponseTypeFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.ResponseType> {
@@ -798,6 +832,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		smallTalk,
 		/** Propriété 'Buttons'. */
 		buttons,
+		/** Propriété 'Buttons url'. */
+		buttonsUrl,
 		/** Propriété 'Utter texts'. */
 		utterTexts	}
 
@@ -936,6 +972,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		response,
 		/** Propriété 'Buttons'. */
 		buttons,
+		/** Propriété 'Buttons URL'. */
+		buttonsUrl,
 		/** Propriété 'End of conversation'. */
 		isEnd,
 		/** Propriété 'labels'. */
