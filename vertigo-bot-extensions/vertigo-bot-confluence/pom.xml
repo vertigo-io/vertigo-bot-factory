@@ -10,7 +10,7 @@
   <description>Confluence plugin for bot</description>
   <packaging>jar</packaging>
   
-  
+
   <dependencies>
 	<dependency>
 	    <groupId>com.fasterxml.jackson.core</groupId>

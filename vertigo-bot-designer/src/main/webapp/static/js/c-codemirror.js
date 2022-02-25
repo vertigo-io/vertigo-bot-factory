@@ -162,6 +162,9 @@ Vue.component('c-codemirror', {
 		 	addInputString : function(){
 		 		this.modifyValue('inputString /user/local ""');
 		 	},
+			clearContent: function () {
+				this.$refs.cm.codemirror.setValue('');
+			},
 			addEmoji() {
 				this.$refs.newEmoji.show();
 				this.$nextTick(() => {

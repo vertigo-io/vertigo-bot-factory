@@ -43,6 +43,8 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 	@Inject
 	private HistoryServices historyServices;
 
+	private static final String URL = "url";
+
 	/**
 	 * get ContextValue by id
 	 *
@@ -133,6 +135,9 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 			final Map<String, String> map = new HashMap<>();
 			for (final ContextValue contextValue : list) {
 				map.put(contextValue.getLabel(), contextValue.getXpath());
+			}
+			if (!map.containsKey(URL)) {
+				map.put(URL, "");
 			}
 			final String json = jsonEngine.toJson(map);
 

@@ -203,16 +203,20 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (event.data.context) {
               const map = {};
               event.data.context.forEach(function (value, key) {
-                  const element = document.evaluate(value, document, null, XPathResult.ANY_TYPE, null);
-                  const node = element.iterateNext();
-                  if (node !== null) {
-                    let elementValue;
-                    if (node.attributes['value']) {
-                      elementValue = node.attributes['value'].value;
-                    } else {
-                      elementValue = node.innerHTML;
+                  if ( key === 'url' && value === '' ) {
+                    map[key] = window.location.href;
+                  } else {
+                    const element = document.evaluate(value, document, null, XPathResult.ANY_TYPE, null);
+                    const node = element.iterateNext();
+                    if (node !== null) {
+                      let elementValue;
+                      if (node.attributes['value']) {
+                        elementValue = node.attributes['value'].value;
+                      } else {
+                        elementValue = node.innerHTML;
+                      }
+                      map[key] = elementValue;
                     }
-                    map[key] = elementValue;
                   }
               });
               event.ports[0].postMessage({result : map});

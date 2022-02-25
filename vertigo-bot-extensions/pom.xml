@@ -10,5 +10,6 @@
   <packaging>pom</packaging>
   <modules>
   	<module>vertigo-bot-confluence</module>
+  	<module>vertigo-bot-jira</module>
   </modules>
 </project>

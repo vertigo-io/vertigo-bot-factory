@@ -49,6 +49,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		HistoryAction(io.vertigo.chatbot.designer.domain.HistoryAction.class),
 		/** Objet de données HistoryCriteria. */
 		HistoryCriteria(io.vertigo.chatbot.designer.domain.HistoryCriteria.class),
+		/** Objet de données JiraField. */
+		JiraField(io.vertigo.chatbot.commons.domain.JiraField.class),
+		/** Objet de données JiraFieldSetting. */
+		JiraFieldSetting(io.vertigo.chatbot.commons.domain.JiraFieldSetting.class),
+		/** Objet de données JiraFieldSettingExport. */
+		JiraFieldSettingExport(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class),
+		/** Objet de données JiraSetting. */
+		JiraSetting(io.vertigo.chatbot.commons.domain.JiraSetting.class),
+		/** Objet de données JiraSettingExport. */
+		JiraSettingExport(io.vertigo.chatbot.commons.domain.JiraSettingExport.class),
 		/** Objet de données KindTopic. */
 		KindTopic(io.vertigo.chatbot.commons.domain.topic.KindTopic.class),
 		/** Objet de données MediaFileInfo. */
@@ -183,6 +193,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		welcomeTours,
 		/** Propriété 'Confluence setting'. */
 		confluenceSetting,
+		/** Propriété 'Jira setting'. */
+		jiraSetting,
+		/** Propriété 'Jira fields setting'. */
+		jiraFieldSetting,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -396,6 +410,77 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fromDate,
 		/** Propriété 'To'. */
 		toDate	}
+
+	/**
+	 * Enumération des champs de JiraField.
+	 */
+	public enum JiraFieldFields implements DtFieldName<io.vertigo.chatbot.commons.domain.JiraField> {
+		/** Propriété 'ID'. */
+		jirFieldCd,
+		/** Propriété 'Jira id'. */
+		jiraId,
+		/** Propriété 'Title'. */
+		label,
+		/** Propriété 'TitleFr'. */
+		labelFr	}
+
+	/**
+	 * Enumération des champs de JiraFieldSetting.
+	 */
+	public enum JiraFieldSettingFields implements DtFieldName<io.vertigo.chatbot.commons.domain.JiraFieldSetting> {
+		/** Propriété 'Jira field setting id'. */
+		jirFieldSetId,
+		/** Propriété 'Jira field enabled'. */
+		enabled,
+		/** Propriété 'Jira field mandatory'. */
+		mandatory,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Field'. */
+		jirFieldCd	}
+
+	/**
+	 * Enumération des champs de JiraFieldSettingExport.
+	 */
+	public enum JiraFieldSettingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> {
+		/** Propriété 'Jira field key'. */
+		fieldKey,
+		/** Propriété 'Enabled'. */
+		enabled,
+		/** Propriété 'Mandatory'. */
+		mandatory	}
+
+	/**
+	 * Enumération des champs de JiraSetting.
+	 */
+	public enum JiraSettingFields implements DtFieldName<io.vertigo.chatbot.commons.domain.JiraSetting> {
+		/** Propriété 'Jira setting id'. */
+		jirSetId,
+		/** Propriété 'Jira URL'. */
+		url,
+		/** Propriété 'Login'. */
+		login,
+		/** Propriété 'Password'. */
+		password,
+		/** Propriété 'Jira project'. */
+		project,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Node'. */
+		nodId	}
+
+	/**
+	 * Enumération des champs de JiraSettingExport.
+	 */
+	public enum JiraSettingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.JiraSettingExport> {
+		/** Propriété 'Jira URL'. */
+		url,
+		/** Propriété 'Login'. */
+		login,
+		/** Propriété 'Password'. */
+		password,
+		/** Propriété 'Project'. */
+		project	}
 
 	/**
 	 * Enumération des champs de KindTopic.
