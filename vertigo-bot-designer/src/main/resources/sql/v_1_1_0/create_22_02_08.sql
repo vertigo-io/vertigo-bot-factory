@@ -68,6 +68,7 @@ create table JIRA_SETTING
     PROJECT     	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     NOD_ID      	 NUMERIC     	not null,
+    UNIQUE (BOT_ID, NOD_ID),
     constraint PK_JIRA_SETTING primary key (JIR_SET_ID)
 );
 

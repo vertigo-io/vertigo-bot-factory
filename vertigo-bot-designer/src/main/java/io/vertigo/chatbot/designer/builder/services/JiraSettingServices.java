@@ -5,7 +5,6 @@ import io.vertigo.chatbot.commons.domain.JiraSetting;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -27,13 +26,6 @@ public class JiraSettingServices implements Component {
 	}
 
 	public JiraSetting save (final JiraSetting jiraSetting) {
-		if (jiraSetting.getJirSetId() == null) {
-			jiraSettingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.JiraSettingFields.botId, jiraSetting.getBotId())
-							.and(Criterions.isEqualTo(DtDefinitions.JiraSettingFields.nodId, jiraSetting.getNodId())))
-					.ifPresent(it -> {
-						throw new VSystemException("A jira setting already exist for this bot and node");
-					});
-		}
 		return jiraSettingDAO.save(jiraSetting);
 	}
 
