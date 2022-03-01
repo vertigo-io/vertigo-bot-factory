@@ -130,8 +130,8 @@ Vue.component('c-richtext', {
 							<q-btn flat :label="locale == 'fr_FR' ? 'Annuler' : 'Cancel'" v-close-popup color="primary"/>
 							<q-btn :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>
 						</q-card-actions>
-					</div>
-				</q-card
+					</q-form>
+				</q-card>
 			</q-dialog>
 			<q-dialog ref="newEmoji" id="newEmoji" >
 			 	<q-card>
@@ -141,7 +141,7 @@ Vue.component('c-richtext', {
 					<q-card-section>
 						<emoji-picker></emoji-picker>
 					</q-card-section>
-				</q-card
+				</q-card>
 			</q-dialog>
 			
 		</div>
