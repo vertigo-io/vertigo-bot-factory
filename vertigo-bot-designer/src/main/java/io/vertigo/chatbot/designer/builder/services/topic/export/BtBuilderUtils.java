@@ -28,7 +28,8 @@ public class BtBuilderUtils {
 	 *
 	 */
 	public static void createButton(final String text, final List<ResponseButtonExport> responses, final List<ResponseButtonUrlExport> responsesUrl, final StringBuilder bt) {
-		final String bb = String.format("/user/local/topic/%s/responsebutton", responses.get(0).getTopCode().toLowerCase());
+		String topicCode = !responses.isEmpty() ? responses.get(0).getTopCode() : responsesUrl.get(0).getTopCode() ;
+		final String bb = String.format("/user/local/topic/%s/responsebutton", topicCode.toLowerCase());
 		bt.append("begin choose:button:nlu ");
 		bt.append(bb);
 		addSpaceQuote(bt);

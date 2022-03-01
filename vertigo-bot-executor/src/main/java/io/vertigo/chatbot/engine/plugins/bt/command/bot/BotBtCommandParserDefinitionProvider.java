@@ -67,7 +67,7 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.compositeCommand("choose:button:nlu", BotBtCommandParserDefinitionProvider::buildChooseButtonNluNode),
 				BtCommandParserDefinition.basicCommand("button", (c, p) -> new BotButton(c.getStringParam(0), c.getStringParam(1))),
 				BtCommandParserDefinition.basicCommand("button:url", (c, p) -> new BotButtonUrl(c.getStringParam(0),
-						c.getStringParam(1), c.getStringParam(2), Boolean.parseBoolean(c.getStringParam(3)))),
+						c.getStringParam(1), c.getStringParam(2), Boolean.parseBoolean(c.getOptStringParam(3).orElse("TRUE")))),
 				BtCommandParserDefinition.basicCommand("card", (c, p) -> new BotCard(c.getStringParam(0),
 						c.getStringParam(1), c.getStringParam(2), c.getOptStringParam(3))),
 				BtCommandParserDefinition.basicCommand("jsevent", (c, p) -> BotNodeProvider.launchJsEvent(getBB(p), c.getStringParam(0))),
