@@ -1,9 +1,12 @@
+:root {
+    --background-color: #1aab8d;
+}
 .text-primary {
-    color: #1aab8d !important;
+    color: var(--background-color) !important;
 }
 
 .bg-primary {
-    background: #1aab8d !important;
+    background: var(--background-color) !important;
 }
 
 body {

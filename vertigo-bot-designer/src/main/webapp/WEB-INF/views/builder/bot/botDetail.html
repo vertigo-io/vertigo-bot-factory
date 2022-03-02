@@ -57,6 +57,7 @@
 			<q-item tag="a" href="#rating" th:text="#{bot.rating}"></q-item>
 			<q-item tag="a" href="#botEmail" th:text="#{bot.email.address}"></q-item>
 			<q-item tag="a" href="#reinitialization" th:text="#{bot.reinitialization}"></q-item>
+			<q-item tag="a" href="#botStyling" th:text="#{bot.styling}"></q-item>
 			<q-item th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" tag="a" href="#nodes" th:text="#{bot.nodes}"></q-item>
 		</section>
 		
@@ -212,7 +213,10 @@
 				<q-toggle left-label th:label="#{bot.reinitialization.active}" v-model="vueData.chatbotCustomConfig.reinitializationButton" th::disable="${model.modeReadOnly}"></q-toggle>
 				<input type="hidden" name="vContext[chatbotCustomConfig][reinitializationButton]" :value="vueData.chatbotCustomConfig.reinitializationButton"/>
 			</vu:block>
-			
+			<vu:block id="botStyling" th:title="#{bot.styling}">
+				<q-color v-model="vueData.chatbotCustomConfig.backgroundColor" default-value="#000000" name="vContext[chatbotCustomConfig][backgroundColor]"/>
+			</vu:block>
+
 			<vu:include-data object="nodeNew" field="name" />
 			<vu:include-data object="nodeNew" field="url" />
 			<vu:include-data object="nodeNew" field="color" />

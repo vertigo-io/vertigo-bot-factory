@@ -68,38 +68,20 @@ document.addEventListener('DOMContentLoaded', function () {
       function _createFlottingButton() {
         _button = document.createElement('div');
 
-        _button.style.cssText = 'position: fixed;' +
-                'display: flex;' +
-                'align-items: center;' +
-                'bottom: 140px;' +
-                'right: -90px;' +
-                'width: 160px;' +
-                'height: 63px;' +
-                'transition: right 0.3s ease 0s;' +
-                'background-color: #1aab8d;' +
-                'color: white;' +
-                'border: solid 1px black;' +
-                'border-radius: 10px 0 0 10px;' +
-                'cursor: pointer;' +
-                'overflow: hidden;' +
-                '-webkit-user-select: none;' +
-                '-ms-user-select: none;' +
-                '-moz-user-select: none;' +
-                'user-select: none;' +
-                'font-family: Verdana, Arial, Helvetica, sans-serif;';
+        _button.className = 'floating-button';
 
         _button.addEventListener('click', Chatbot.show);
         _button.addEventListener('mouseover', _buttonOver);
         _button.addEventListener('mouseout', _buttonOut);
 
         const img = document.createElement('img');
-        img.style.cssText = 'width: 63px; height: 63px; background-color: white; color: black;';
+        img.className = 'avatar-img';
         img.src = _initParam.avatarUrl;
         img.alt = _initParam.botName;
         _button.appendChild(img);
 
         const text = document.createElement('div');
-        text.style.cssText = 'flex-grow: 1; text-align: center; font-size: 16px; color: white;';
+        text.className = 'avatar-text';
         text.textContent = _initParam.botName;
         _button.appendChild(text);
 
@@ -141,19 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
       function _createIframe() {
         _iframe = document.createElement('iframe');
 
-        _iframe.style.cssText = 'position: fixed;' +
-                'bottom: 0px;' +
-                'right: 5px;' +
-                'z-index: 10000;' +
-                'max-width: 415px;' +
-                'min-width: 300px;' +
-                'width: 50%; ' +
-                'max-height: 750px;' +
-                'min-height: 400px;' +
-                'height: 95%;' +
-                'box-shadow: 0px 0px 15px 5px grey;' +
-                'background-color: white;' +
-                'border: solid 1px black;';
+        _iframe.className = 'iframe';
         _iframe.src = `${_initParam.botIHMBaseUrl}?runnerUrl=${_initParam.runnerUrl}&botName=${_initParam.botName}&useRating=${_initParam.useRating}`;
 
         if (_initParam.optionalParameters) {

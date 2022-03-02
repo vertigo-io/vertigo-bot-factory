@@ -28,4 +28,5 @@
 	<include file="changeLog/v_1_1_0/create_jira_settings.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/create_button_url.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_custom_config_reinitialization.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_1_1_0/alter_custom_config_style.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
