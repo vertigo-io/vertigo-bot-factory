@@ -33,7 +33,7 @@ public class BtBuilderUtils {
 		bt.append("begin choose:button:nlu ");
 		bt.append(bb);
 		addSpaceQuote(bt);
-		bt.append(text);
+		bt.append(text.replaceAll("'", "\'"));
 		addQuote(bt);
 		addLineBreak(bt);
 		for (final ResponseButtonExport response : responses) {
