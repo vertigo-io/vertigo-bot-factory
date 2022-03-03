@@ -111,7 +111,7 @@
                 .map(jiraFieldSetting => getJiraFieldId(jiraFieldSetting.jirFieldCd));
             let jiraSequence = 'begin sequence \n    begin jira:issue:create "Message du bot lorsque le ticket a été crée" \n';
             fieldIds.forEach(fieldId => {
-                jiraSequence += '        jira:field /user/local/jira/' + fieldId + ' "Question posée par le bot" "' + fieldId + '"\n';
+                jiraSequence += '        jira:field /user/local/jira/' + fieldId.toLowerCase() + ' "Question posée par le bot" "' + fieldId + '"\n';
             });
             jiraSequence += '    end jira:issue:create\nend sequence';
             VUiPage.$refs.jiraCodeMirror.modifyValue(jiraSequence);
