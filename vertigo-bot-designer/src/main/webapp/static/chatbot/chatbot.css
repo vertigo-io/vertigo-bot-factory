@@ -55,7 +55,7 @@
 }
 
 /* The Modal (background) */
-.modal {
+.modalChatbot {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 100000; /* Sit on top */
@@ -70,7 +70,7 @@
 }
 
 /* Modal Content (Image) */
-.modal-content {
+.modal-content-chatbot {
     margin: auto;
     display: block;
     max-width: 80%;
@@ -90,7 +90,7 @@
 }
 
 /* Add Animation - Zoom in the Modal */
-.modal-content, #caption {
+.modal-content-chatbot, #caption {
     animation-name: zoom;
     animation-duration: 0.6s;
 }
@@ -120,7 +120,7 @@
 
 /* 100% Image Width on Smaller Screens */
 @media only screen and (max-width: 700px){
-    .modal-content {
+    .modal-content-chatbot {
         width: 100%;
     }
 }

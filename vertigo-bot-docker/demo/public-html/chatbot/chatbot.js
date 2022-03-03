@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
       function addImageViewerModal() {
         const modal = document.createElement('div');
         modal.id = 'imageViewerModal';
-        modal.className = 'modal';
+        modal.className = 'modalChatbot';
 
         const spanClose = document.createElement('span');
         spanClose.id = 'close';
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const img = document.createElement('img');
         img.id = 'imgToView';
-        img.className = 'modal-content';
+        img.className = 'modal-content-chatbot';
         modal.appendChild(spanClose);
         modal.appendChild(img);
 
