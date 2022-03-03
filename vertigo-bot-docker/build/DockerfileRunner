@@ -22,7 +22,7 @@ COPY --chown=tomcat Runner/setenv.sh /opt/tomcat/bin/
 # Environment parameters
 ENV JAVA_OPTS -Xmx256m
 ENV CATALINA_PID /opt/tomcat/tomcat.pid
-ENV FRAME_ANCESTORS http://site1.com http://site2.com
+ENV FRAME_ANCESTORS *
 ENV DESIGNER_URL http://host.docker.internal:8080/vertigo-bot-designer
 ENV API_KEY MyNodeApiKey!
 ENV ANALYTICA_HOST analytica
