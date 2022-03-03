@@ -320,6 +320,7 @@ public class BotEngine {
 		if (input.getMetadatas() != null && !input.getMetadatas().isEmpty()) {
 			final Map<String, String> context = (Map<String, String>) input.getMetadatas().get(CONTEXT_KEY);
 			if (context != null) {
+				bb.delete(BBKeyPattern.ofRoot(BOT_CONTEXT_KEY));
 				for (final Entry<String, String> entry : context.entrySet()) {
 					if (contextMap.containsKey(entry.getKey())) {
 						final BBKey key = BBKey.of(BOT_CONTEXT_KEY, "/" + entry.getKey());
