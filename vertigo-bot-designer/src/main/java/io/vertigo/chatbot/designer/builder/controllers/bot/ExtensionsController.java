@@ -8,7 +8,6 @@ import io.vertigo.chatbot.commons.domain.JiraField;
 import io.vertigo.chatbot.commons.domain.JiraFieldSetting;
 import io.vertigo.chatbot.commons.domain.JiraSetting;
 import io.vertigo.chatbot.commons.domain.WelcomeTour;
-import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
@@ -190,7 +189,11 @@ public class ExtensionsController extends AbstractBotController {
 											   @RequestParam("enabled") final String enabled) {
 
 		jiraFieldSettingServices.findByBotIdAndFieldName(bot.getBotId(), fieldKey).ifPresent(jiraFieldSetting -> {
-			jiraFieldSetting.setEnabled("true".equals(enabled));
+			boolean isEnabled = "true".equals(enabled);
+			jiraFieldSetting.setEnabled(isEnabled);
+			if (!isEnabled) {
+				jiraFieldSetting.setMandatory(false);
+			}
 			jiraFieldSettingServices.save(jiraFieldSetting);
 		});
 

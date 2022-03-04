@@ -344,10 +344,12 @@
                     </vu:content>
                 </vu:column>
                 <vu:column name="enabled" th:label="#{extension.jira.field.setting.enabled}">
-                    <q-toggle v-model="props.row.enabled" @input="enabledDisabledJiraField(props.row.jirFieldCd, props.row.enabled)" ></q-toggle>
+                    <q-toggle v-model="props.row.enabled"
+                              :disable="props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"
+                              @input="enabledDisabledJiraField(props.row.jirFieldCd, props.row.enabled)" ></q-toggle>
                 </vu:column>
                 <vu:column name="mandatory" th:label="#{extension.jira.field.setting.mandatory}" >
-                    <q-toggle v-model="props.row.mandatory" :disable="!props.row.enabled"  @input="mandatoryJiraField(props.row.jirFieldCd, props.row.mandatory)"></q-toggle>
+                    <q-toggle v-model="props.row.mandatory" :disable="!props.row.enabled || props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"  @input="mandatoryJiraField(props.row.jirFieldCd, props.row.mandatory)"></q-toggle>
                 </vu:column>
             </vu:table>
             <vu:include-data object="scriptIntention" field="script" />

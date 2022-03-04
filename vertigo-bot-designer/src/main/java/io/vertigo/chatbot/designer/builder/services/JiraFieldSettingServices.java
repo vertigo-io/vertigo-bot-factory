@@ -12,7 +12,6 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.util.VCollectors;
 
 import javax.inject.Inject;
-import java.util.Comparator;
 import java.util.Optional;
 
 @Transactional
@@ -50,7 +49,9 @@ public class JiraFieldSettingServices implements Component {
 			JiraFieldSetting jiraFieldSetting = new JiraFieldSetting();
 			jiraFieldSetting.setBotId(botId);
 			jiraFieldSetting.setJirFieldCd(value.getJirFieldCd());
-			if (value.getJirFieldCd().equals(JiraFieldEnum.SUMMARY.name()) || value.getJirFieldCd().equals(JiraFieldEnum.DESCRIPTION.name())) {
+			if (value.getJirFieldCd().equals(JiraFieldEnum.SUMMARY.name())
+					|| value.getJirFieldCd().equals(JiraFieldEnum.DESCRIPTION.name())
+					|| value.getJirFieldCd().equals(JiraFieldEnum.TYPE.name())) {
 				jiraFieldSetting.setEnabled(true);
 				jiraFieldSetting.setMandatory(true);
 			} else {
@@ -58,7 +59,7 @@ public class JiraFieldSettingServices implements Component {
 				jiraFieldSetting.setMandatory(false);
 			}
 			return jiraFieldSettingDAO.save(jiraFieldSetting);
-		})).sorted(Comparator.comparing(JiraFieldSetting::getEnabled, Comparator.reverseOrder())).collect(VCollectors.toDtList(JiraFieldSetting.class));
+		})).collect(VCollectors.toDtList(JiraFieldSetting.class));
 	}
 
 	public DtList<JiraFieldSettingExport> exportJiraSetting(final long botId) {
