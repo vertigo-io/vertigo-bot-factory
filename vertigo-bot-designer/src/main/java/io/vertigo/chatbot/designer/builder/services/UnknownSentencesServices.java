@@ -73,7 +73,7 @@ public class UnknownSentencesServices implements Component, Activeable {
 		UnknownSentencesCriteria unknownSentencesCriteria = new UnknownSentencesCriteria();
 		unknownSentencesCriteria.setBotId(botId);
 
-		UnknownSentenceDetail latestUnknownSentenceDetail = findLatestUnknownSentence();
+		UnknownSentenceDetail latestUnknownSentenceDetail = findLatestUnknownSentence(botId);
 		if (latestUnknownSentenceDetail != null) {
 			unknownSentencesCriteria.setFromDate(latestUnknownSentenceDetail.getDate());
 		}
@@ -96,8 +96,8 @@ public class UnknownSentencesServices implements Component, Activeable {
 		return findAllByBotId(botId);
 	}
 
-	private UnknownSentenceDetail findLatestUnknownSentence() {
-		return unknownSentenceDetailDAO.findLatestUnknownSentence().orElse(null);
+	private UnknownSentenceDetail findLatestUnknownSentence(final Long botId) {
+		return unknownSentenceDetailDAO.findLatestUnknownSentence(botId).orElse(null);
 	}
 
 	public UnknownSentenceDetail save(final UnknownSentenceDetail unknownSentenceDetail) {

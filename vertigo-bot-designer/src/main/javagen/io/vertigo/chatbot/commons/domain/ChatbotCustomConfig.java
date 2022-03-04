@@ -137,7 +137,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setReinitializationButton(final Boolean reinitializationButton) {
 		this.reinitializationButton = reinitializationButton;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Bot background color'.
@@ -156,7 +156,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setBackgroundColor(final String backgroundColor) {
 		this.backgroundColor = backgroundColor;
 	}
-
+	
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.

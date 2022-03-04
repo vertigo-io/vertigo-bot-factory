@@ -6,7 +6,10 @@ create Task TkFindLatestUnknownSentence {
             select
                 *
             from unknown_sentence_detail usd
-            where usd.date = (SELECT MAX(date) FROM unknown_sentence_detail)
+            where usd.bot_id = #botId#
+            order by usd.unk_se_id desc
+            limit 1
              "
+    in botId  				            {domain : DoId         					            cardinality:"1"}
 	out unknownSentenceDetail 			{domain : DoDtUnknownSentenceDetail 				cardinality:"?"}
 }
