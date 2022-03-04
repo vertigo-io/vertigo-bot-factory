@@ -41,6 +41,7 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.basicCommand("say:once", (c, p) -> BotNodeProvider.sayOnce(getBB(p), c.getStringParam(0))),
 				BtCommandParserDefinition.basicCommand("eqInt", (c, p) -> BotNodeProvider.eq(getBB(p), c.getStringParam(0), c.getIntParam(1))),
 				BtCommandParserDefinition.basicCommand("eq", (c, p) -> BotNodeProvider.eq(getBB(p), c.getStringParam(0), c.getStringParam(1))),
+				BtCommandParserDefinition.basicCommand("contains", (c, p) -> BotNodeProvider.contains(getBB(p), c.getStringParam(0), c.getStringParam(1))),
 				BtCommandParserDefinition.basicCommand("gt", (c, p) -> BotNodeProvider.gt(getBB(p), c.getStringParam(0), c.getIntParam(1))),
 				BtCommandParserDefinition.basicCommand("lt", (c, p) -> BotNodeProvider.lt(getBB(p), c.getStringParam(0), c.getIntParam(1))),
 				BtCommandParserDefinition.basicCommand("topic", (c, p) -> BotNodeProvider.switchTopic(getBB(p), c.getStringParam(0))),

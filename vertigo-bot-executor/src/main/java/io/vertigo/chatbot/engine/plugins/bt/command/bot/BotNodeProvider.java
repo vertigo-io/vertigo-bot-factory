@@ -246,6 +246,10 @@ public final class BotNodeProvider {
 		return condition(() -> bb.eq(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
 	}
 
+	public static BTCondition contains(final BlackBoard bb, final String keyTemplate, final String compare) {
+		return condition(() -> bb.contains(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
+	}
+
 	public static BTCondition eqCaseInsensitive(final BlackBoard bb, final String keyTemplate, final String compare) {
 		return condition(() -> bb.eqCaseInsensitive(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
 	}
