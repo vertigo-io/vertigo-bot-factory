@@ -25,7 +25,7 @@
   <body style="color:black">
     <div id="q-app">
       <q-layout view="hHh lpr fFf">
-        <q-layout-header :style="'--background-color: ' + customConfig.backgroundColor" class="bg-primary text-white row items-center non-selectable">
+        <q-layout-header :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily" class="bg-primary text-white row items-center non-selectable">
           <div class="title col-grow q-ml-md">
             {{ botName }}
           </div>
@@ -79,7 +79,7 @@
                       :avatar="msg.avatar"
                       :text="msg.text"
                       :stamp="msg.stamp"
-                      :style="'--background-color: ' + customConfig.backgroundColor"
+                      :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily"
                     ></q-chat-message>
                   </div>
                   <div class="sys-chat">
@@ -124,7 +124,7 @@
                   <div v-if="inputConfig.cards.length > 0"
                        class="non-selectable animate-fade row reverse no-wrap">
                     <div class="col-10">
-                      <div class="q-caption text-light text-right">
+                      <div class="q-caption text-light text-right" :style="'--font-family: ' + customConfig.fontFamily">
                         Réponses suggérées
                       </div>
                       <div class="row docs-btn">
@@ -137,7 +137,7 @@
                                 navigation
                                 padding
                                 arrows
-                                :style="'--background-color: ' + customConfig.backgroundColor"
+                                :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily"
                                 class="bg-primary text-white shadow-1 rounded-borders"
                         >
                           <q-carousel-slide  v-for="(card, index) in inputConfig.cards" name="style" class="column no-wrap flex-center" >
@@ -154,7 +154,7 @@
                   <div v-if="inputConfig.buttons.length > 0"
                        class="non-selectable animate-fade row reverse no-wrap">
                     <div class="col-10">
-                      <div class="q-caption text-light text-right">
+                      <div class="q-caption text-light text-right" :style="'--font-family: ' + customConfig.fontFamily">
                         Réponses suggérées
                       </div>
                       <div class="row docs-btn">
@@ -165,6 +165,7 @@
                           @click="postAnswerBtn(btn)"
                           :label="btn.label"
                           color="white"
+                          :style="'--font-family: ' + customConfig.fontFamily"
                           text-color="black">
                         </q-btn>
                       </div>
@@ -204,7 +205,7 @@
             <div class="col-grow">
               <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
                        ref="input"
-                       :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor"
+                       :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily"
                        class="bg-white q-px-sm round-borders"
                        @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText()"
                        :max-height="100"

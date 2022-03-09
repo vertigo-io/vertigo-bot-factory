@@ -77,10 +77,11 @@ const chatbot = new Vue({
                 files: []
             },
             customConfig: {
-              useRating: false,
-              ratingMessage: 'Merci !',
-              reinitializationButton: false,
-              backgroundColor: 'black'
+                useRating: false,
+                ratingMessage: 'Merci !',
+                reinitializationButton: false,
+                backgroundColor: 'black',
+                fontFamily: 'Arial, Helvetica, sans-serif'
             },
             isEnded: false,
 
@@ -149,6 +150,7 @@ const chatbot = new Vue({
                                 chatbot.customConfig.ratingMessage = httpResponse.data.metadatas.customConfig.ratingMessage;
                                 chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
                                 chatbot.customConfig.backgroundColor = httpResponse.data.metadatas.customConfig.backgroundColor;
+                                chatbot.customConfig.fontFamily = httpResponse.data.metadatas.customConfig.fontFamily;
                                 chatbot.updateSessionStorage();
                                 chatbot._handleResponse(httpResponse, false);
                             }).catch(() => {

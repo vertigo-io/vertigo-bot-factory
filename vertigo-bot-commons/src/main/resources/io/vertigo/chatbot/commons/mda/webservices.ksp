@@ -79,6 +79,7 @@ create DtDefinition DtChatbotCustomConfig {
 	field botEmailAddress           {domain: DoLabel        label: "Bot email address"                  cardinality:"?"}
 	field reinitializationButton    {domain: DoYesNo        label: "Reinitialization button"            cardinality:"?"}
 	field backgroundColor           {domain: DoLabel        label: "Bot background color"               cardinality:"?"}
+	field fontFamily                {domain: DoLabel        label: "Bot font family"                    cardinality:"?"}
 }
 
 create Association AChatbotCustomConfigChatbot {

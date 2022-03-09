@@ -212,6 +212,7 @@ create table CHATBOT_CUSTOM_CONFIG
     BOT_EMAIL_ADDRESS	 VARCHAR(100)	,
     REINITIALIZATION_BUTTON	 bool        	,
     BACKGROUND_COLOR	 VARCHAR(100)	,
+    FONT_FAMILY 	 VARCHAR(100)	,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
 );
@@ -233,6 +234,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.REINITIALIZATION_BUTTON is
 
 comment on column CHATBOT_CUSTOM_CONFIG.BACKGROUND_COLOR is
 'Bot background color';
+
+comment on column CHATBOT_CUSTOM_CONFIG.FONT_FAMILY is
+'Bot font family';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';

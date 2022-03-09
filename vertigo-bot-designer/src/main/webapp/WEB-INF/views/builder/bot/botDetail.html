@@ -28,8 +28,32 @@
 		<script th:src="@{/static/js/c-codemirror.js}"></script>
 		<script th:inline="javascript">
 		 	Vue.use(window.VueCodemirror)
-		 	
+			function getChatPreview() {
+				return [VertigoUi.vueData.chatbotCustomConfig.fontFamily];
+			}
+			function changeChatMessageBgColor() {
+				 Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
+					 element.style.setProperty('--chat-message-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
+				 });
+			}
+
+			function changeChatMessageFontFamily() {
+				Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-family', VertigoUi.vueData.chatbotCustomConfig.fontFamily);
+				});
+			}
+
+			document.addEventListener('DOMContentLoaded', function () {
+				changeChatMessageBgColor();
+				changeChatMessageFontFamily();
+			});
 		</script>
+		<style>
+			.q-message-text--received {
+				color: var(--chat-message-bg-color) !important;
+				font-family: var(--chat-message-font-family) !important;
+			}
+		</style>
 	</head>
 	
 	<body>
@@ -214,7 +238,23 @@
 				<input type="hidden" name="vContext[chatbotCustomConfig][reinitializationButton]" :value="vueData.chatbotCustomConfig.reinitializationButton"/>
 			</vu:block>
 			<vu:block id="botStyling" th:title="#{bot.styling}">
-				<q-color v-model="vueData.chatbotCustomConfig.backgroundColor" default-value="#000000" name="vContext[chatbotCustomConfig][backgroundColor]"/>
+
+				<div style="width:300px" class="q-px-md">
+					<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
+
+					</q-chat-message>
+				</div>
+
+				<q-select style="margin-bottom: 20px;"
+						v-model="vueData.chatbotCustomConfig.fontFamily" name="vContext[chatbotCustomConfig][fontFamily]" th:label="#{bot.styling.font.family}"
+						@input="changeChatMessageFontFamily()"
+					  	th::disable="${model.modeReadOnly}"
+						:options="['Arial, sans-serif', 'Verdana, sans-serif', 'Helvetica, sans-serif', 'Tahoma, sans-serif',
+						'Trebuchet MS, sans-serif', 'Times New Roman, serif', 'Georgia, serif', 'Garamond, serif', 'Courier New, monospace', 'Brush Script MT, cursive']">
+
+				</q-select>
+				<q-color th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.backgroundColor" @change="function (event) { changeChatMessageBgColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][backgroundColor]"/>
+
 			</vu:block>
 
 			<vu:include-data object="nodeNew" field="name" />
