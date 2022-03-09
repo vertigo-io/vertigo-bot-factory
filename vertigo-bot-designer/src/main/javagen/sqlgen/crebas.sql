@@ -213,6 +213,7 @@ create table CHATBOT_CUSTOM_CONFIG
     REINITIALIZATION_BUTTON	 bool        	,
     BACKGROUND_COLOR	 VARCHAR(100)	,
     FONT_FAMILY 	 VARCHAR(100)	,
+    DISPLAY_AVATAR	 bool        	,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
 );
@@ -237,6 +238,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.BACKGROUND_COLOR is
 
 comment on column CHATBOT_CUSTOM_CONFIG.FONT_FAMILY is
 'Bot font family';
+
+comment on column CHATBOT_CUSTOM_CONFIG.DISPLAY_AVATAR is
+'Display avatar';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';

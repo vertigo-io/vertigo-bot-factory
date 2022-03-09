@@ -22,6 +22,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private Boolean reinitializationButton;
 	private String backgroundColor;
 	private String fontFamily;
+	private Boolean displayAvatar;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -176,7 +177,26 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setFontFamily(final String fontFamily) {
 		this.fontFamily = fontFamily;
 	}
-	
+
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Display avatar'.
+	 * @return Boolean displayAvatar
+	 */
+	@Field(smartType = "STyYesNo", label = "Display avatar")
+	public Boolean getDisplayAvatar() {
+		return displayAvatar;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Display avatar'.
+	 * @param displayAvatar Boolean
+	 */
+	public void setDisplayAvatar(final Boolean displayAvatar) {
+		this.displayAvatar = displayAvatar;
+	}
+
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.
