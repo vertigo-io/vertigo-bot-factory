@@ -1,5 +1,11 @@
 package io.vertigo.chatbot.designer.utils;
 
+import io.vertigo.core.lang.VSystemException;
+import org.apache.commons.io.IOUtils;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,14 +20,13 @@ import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
-
-import org.apache.commons.io.IOUtils;
-
-import io.vertigo.core.lang.VSystemException;
 
 public final class HttpRequestUtils {
 
@@ -112,4 +117,26 @@ public final class HttpRequestUtils {
 		return Arrays.stream(codes).anyMatch(x -> x == response.statusCode());
 	}
 
+	public static HttpClient createHttpClientWithoutSSL() {
+		try {
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init(null, new TrustManager[]{
+					new X509TrustManager() {
+						public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+							return null;
+						}
+
+						public void checkClientTrusted(
+								java.security.cert.X509Certificate[] certs, String authType) {
+						}
+
+						public void checkServerTrusted(
+								java.security.cert.X509Certificate[] certs, String authType) {
+						}
+					}}, new SecureRandom());
+			return HttpClient.newBuilder().sslContext(sslContext).version(HttpClient.Version.HTTP_1_1).build();
+		} catch (NoSuchAlgorithmException | KeyManagementException e) {
+			throw new VSystemException(e, "error during http client without ssl creation");
+		}
+	}
 }

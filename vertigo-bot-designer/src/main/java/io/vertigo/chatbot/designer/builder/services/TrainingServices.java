@@ -46,7 +46,10 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.core.param.Param;
+import io.vertigo.core.param.ParamManager;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.definitions.DtDefinition;
@@ -68,6 +71,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
@@ -83,7 +87,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 
 @Transactional
-public class TrainingServices implements Component, IRecordable<Training> {
+public class TrainingServices implements Component, IRecordable<Training>, Activeable {
 
 	private static final String API_KEY = "apiKey";
 
@@ -120,11 +124,30 @@ public class TrainingServices implements Component, IRecordable<Training> {
 	@Inject
 	private HistoryServices historyServices;
 
+	@Inject
+	private ParamManager paramManager;
+
 	private static final Logger LOGGER = LogManager.getLogger(TrainingServices.class);
 
 	private static final String URL_MODEL = "/api/chatbot/admin/model";
 
 	private static final String URL_PING = "/api/chatbot/admin/";
+
+	private HttpClient httpClient;
+
+	@Override
+	public void start() {
+		boolean useSSL = paramManager.getOptionalParam("USE_SSL")
+				.orElse(Param.of("USE_SSL", "true")).getValueAsBoolean();
+		if (!useSSL) {
+			this.httpClient = HttpRequestUtils.createHttpClientWithoutSSL();
+		}
+	}
+
+	@Override
+	public void stop() {
+
+	}
 
 	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
 		final StringBuilder logs = new StringBuilder("new Training");
@@ -175,7 +198,7 @@ public class TrainingServices implements Component, IRecordable<Training> {
 			LogsUtils.breakLine(logs);
 			final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
 			final HttpRequest request = HttpRequestUtils.createPutRequest(node.getUrl() + URL_MODEL, headers, publisher);
-			HttpRequestUtils.sendAsyncRequest(null, request, BodyHandlers.ofString())
+			HttpRequestUtils.sendAsyncRequest(httpClient, request, BodyHandlers.ofString())
 					.thenApply(response -> {
 						return this.handleResponse(response, training, node, bot, logs);
 					});
@@ -216,7 +239,7 @@ public class TrainingServices implements Component, IRecordable<Training> {
 	private void tryPing(final String url, final Map<String, String> headers, final Training training, final StringBuilder logs) {
 		final HttpRequest requestPing = HttpRequestUtils.createGetRequest(url + URL_PING, headers);
 		try {
-			final HttpResponse<String> responsePing = HttpRequestUtils.sendRequest(null, requestPing, BodyHandlers.ofString(), 200);
+			final HttpResponse<String> responsePing = HttpRequestUtils.sendRequest(httpClient, requestPing, BodyHandlers.ofString(), 200);
 			if (!responsePing.body().equals("true")) {
 				LogsUtils.logKO(logs);
 				LogsUtils.addLogs(logs, url, " cannot be used to train the model.");
