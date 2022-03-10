@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,7 +48,7 @@ public final class HttpRequestUtils {
 	}
 
 	public static HttpRequest createPutRequest(final String url, final Map<String, String> headers, final BodyPublisher publisher) {
-		return createRequestBuilder(url, headers).PUT(publisher).build();
+		return createRequestBuilder(url, headers).timeout(Duration.ofMinutes(5)).PUT(publisher).build();
 	}
 
 	public static <T extends Object> HttpResponse<T> sendRequest(HttpClient client, final HttpRequest request, final BodyHandler<T> handler, final int successStatutCode) {
