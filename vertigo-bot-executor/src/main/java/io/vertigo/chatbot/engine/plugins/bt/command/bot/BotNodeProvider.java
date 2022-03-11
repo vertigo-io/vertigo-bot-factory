@@ -211,6 +211,23 @@ public final class BotNodeProvider {
 						set(bb, storeTree.key() + "/displayedmessages/" + digest, "1")));
 	}
 
+	public static BTNode doNodeOncePerTree(final BlackBoard bb, final BTNode node, final String msg) {
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (final NoSuchAlgorithmException e) {
+			throw new VSystemException(e, "Error calculating message hash");
+		}
+		md.update(msg.getBytes(StandardCharsets.UTF_8));
+		final var digest = new BigInteger(1, md.digest()).toString(16);
+
+		return selector(
+				fulfilled(bb, BotEngine.USER_LOCAL_PATH.key() + "/displayedmessages/" + digest),
+				sequence(
+						node,
+						set(bb, BotEngine.USER_LOCAL_PATH.key() + "/displayedmessages/" + digest, "1")));
+	}
+
 	// Integer
 	public static BTCondition eq(final BlackBoard bb, final String keyTemplate, final Integer compare) {
 		return condition(() -> bb.eq(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
