@@ -171,6 +171,28 @@
 
                     </div>
                   </div>
+                  <div v-if="inputConfig.files.length > 0"
+                       class="non-selectable animate-fade row reverse no-wrap">
+                    <div class="col-10">
+                      <div class="q-caption text-light text-right">
+                        Réponses suggérées
+                      </div>
+                      <div class="row docs-btn">
+                        <div v-for="(btn, index) in inputConfig.files">
+                            <input  type="file" :id="'file_' + index"/>
+                            <q-btn
+                                    class="full-width"
+                                    :key="'upload-'+index"
+                                    @click="fileUpload(btn, index)"
+                                    :label="btn.label"
+                                    color="white"
+                                    text-color="black">
+                            </q-btn>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
                 </div>
               </q-scroll-area>
 

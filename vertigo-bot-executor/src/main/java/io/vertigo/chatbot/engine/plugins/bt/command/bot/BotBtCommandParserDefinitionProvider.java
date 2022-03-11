@@ -7,6 +7,7 @@ import io.vertigo.ai.impl.command.BtCommandParserDefinition;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
 import io.vertigo.chatbot.engine.model.choice.BotCard;
+import io.vertigo.chatbot.engine.model.choice.BotFileButton;
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
@@ -67,6 +68,8 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.compositeCommand("choose:card", BotBtCommandParserDefinitionProvider::buildChooseCardNode),
 				BtCommandParserDefinition.compositeCommand("choose:button:nlu", BotBtCommandParserDefinitionProvider::buildChooseButtonNluNode),
 				BtCommandParserDefinition.basicCommand("button", (c, p) -> new BotButton(c.getStringParam(0), c.getStringParam(1))),
+				BtCommandParserDefinition.basicCommand("button:file", (c, p) -> new BotFileButton(c.getStringParam(0), c.getStringParam(1), null, null)),
+				BtCommandParserDefinition.compositeCommand("choose:button:file", BotBtCommandParserDefinitionProvider::buildChooseButtonFileNode),
 				BtCommandParserDefinition.basicCommand("button:url", (c, p) -> new BotButtonUrl(c.getStringParam(0),
 						c.getStringParam(1), c.getStringParam(2), Boolean.parseBoolean(c.getOptStringParam(3).orElse("TRUE")))),
 				BtCommandParserDefinition.basicCommand("card", (c, p) -> new BotCard(c.getStringParam(0),
@@ -118,6 +121,17 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 		}).collect(Collectors.toList());
 
 		return BotNodeProvider.chooseButton(getBB(params), command.getStringParam(0), command.getStringParam(1), botChoices);
+	}
+
+	private static BTNode buildChooseButtonFileNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
+
+		Assertion.check()
+				.isTrue(childs.stream().allMatch(b -> b instanceof BotFileButton), "Only 'button:file' are allowed inside 'choose:button:file'");
+		Assertion.check().isTrue(childs.size() == 1, "Only one 'button:file' is allowed inside 'choose:button:file'");
+
+		BotFileButton button = (BotFileButton) childs.get(0);
+
+		return BotNodeProvider.chooseFileButton(getBB(params), command.getStringParam(0), command.getStringParam(1), button);
 	}
 
 	private static BTNode buildChooseCardNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {

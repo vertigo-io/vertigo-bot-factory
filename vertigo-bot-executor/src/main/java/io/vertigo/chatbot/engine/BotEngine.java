@@ -158,6 +158,7 @@ public class BotEngine {
 
 	private boolean checkIfExpectingInput() {
 		return bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/text/key")) || bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/button/key"))
+				|| bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/filebutton/key"))
 				|| bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/nlu/key"));
 	}
 
@@ -190,18 +191,21 @@ public class BotEngine {
 	private Tuple<Double, String> handleExpected(final BotInput input) {
 		final String textMessage = input.getMessage();
 		final String buttonPayload = (String) input.getMetadatas().get("payload");
+		final String fileContent = (String) input.getMetadatas().get("filecontent");
+		final String fileName = (String) input.getMetadatas().get("filename");
 		Tuple<Double, String> eventLog = Tuple.of(null, null);
 
-		doHandleExpected("text", textMessage);
-		eventLog = doHandleExpected("nlu", textMessage);
-		doHandleExpected("button", buttonPayload);
+		doHandleExpected("text", textMessage, fileContent, fileName);
+		eventLog = doHandleExpected("nlu", textMessage, fileContent, fileName);
+		doHandleExpected("button", buttonPayload, fileContent, fileName);
+		doHandleExpected("filebutton", buttonPayload, fileContent, fileName);
 
 		bb.delete(BBKeyPattern.ofRoot(BOT_EXPECT_INPUT_PATH));
 
 		return eventLog;
 	}
 
-	private Tuple<Double, String> doHandleExpected(final String prefix, final String value) {
+	private Tuple<Double, String> doHandleExpected(final String prefix, final String value, String fileContent, String fileName) {
 		Tuple<Double, String> response = Tuple.of(null, null);
 		if (value != null && bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/key"))) { // if value and expected
 			final var key = bb.getString(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/key"));
@@ -212,6 +216,11 @@ public class BotEngine {
 					break;
 				case "string":
 					bb.putString(BBKey.of(key), value);
+					break;
+				case "file":
+					bb.putString(BBKey.of(key), value);
+					bb.putString(BBKey.of(key + "/filecontent"), fileContent);
+					bb.putString(BBKey.of(key + "/filename"), fileName);
 					break;
 				case "nlu":
 					response = getTopicFromNlu(value);

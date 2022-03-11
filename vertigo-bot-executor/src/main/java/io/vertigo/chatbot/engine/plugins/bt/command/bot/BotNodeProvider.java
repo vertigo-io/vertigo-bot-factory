@@ -11,6 +11,7 @@ import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
 import io.vertigo.chatbot.engine.model.choice.BotCard;
+import io.vertigo.chatbot.engine.model.choice.BotFileButton;
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
@@ -361,6 +362,17 @@ public final class BotNodeProvider {
 						running()));
 	}
 
+	public static BTNode chooseFileButton(final BlackBoard bb, final String keyTemplate, final String question, final BotFileButton button) {
+		return selector(
+				fulfilled(bb, keyTemplate),
+				sequence(
+						say(bb, question),
+						storeButtons(bb, List.of(button), List.of(BotFileButton.class)),
+						queryFileButton(bb, keyTemplate),
+						running())
+				);
+	}
+
 	public static BTNode chooseCard(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<BotCard> cards) {
 		return selector(
 				fulfilled(bb, keyTemplate),
@@ -393,6 +405,14 @@ public final class BotNodeProvider {
 		return () -> {
 			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/button/key"), keyTemplate);
 			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/button/type"), "string");
+			return BTStatus.Succeeded;
+		};
+	}
+
+	public static BTNode queryFileButton(final BlackBoard bb, final String keyTemplate) {
+		return () -> {
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/filebutton/key"), keyTemplate);
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/filebutton/type"), "file");
 			return BTStatus.Succeeded;
 		};
 	}
