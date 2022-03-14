@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 
 public class BotBtMailCommandParserDefinitionProvider implements SimpleDefinitionProvider, Component {
 
@@ -24,10 +25,9 @@ public class BotBtMailCommandParserDefinitionProvider implements SimpleDefinitio
 		LOGGER.info("loading mail grammar");
 		return List.of(
 				BtCommandParserDefinition.basicCommand("mail", (c, p) ->
-						btNodeMailProvider.sendMail(getBB(p),
-								c.getStringParam(0), c.getStringParam(1),
-								c.getStringParam(2), c.getStringParam(3),
-								c.getStringParam(4), c.getStringParam(5))));
+						btNodeMailProvider.sendMail(getBB(p), c.getStringParam(0), c.getStringParam(1), Optional.empty(), c.getRemainingStringParam(2))),
+				BtCommandParserDefinition.basicCommand("mail:attachment", (c, p) ->
+						btNodeMailProvider.sendMail(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getOptStringParam(2), c.getRemainingStringParam(3))));
 	}
 
 	private static BlackBoard getBB(final List<Object> params) {
