@@ -362,12 +362,12 @@ public final class BotNodeProvider {
 						running()));
 	}
 
-	public static BTNode chooseFileButton(final BlackBoard bb, final String keyTemplate, final String question, final BotFileButton button) {
+	public static BTNode chooseFileButton(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<? extends IBotChoice > buttons) {
 		return selector(
 				fulfilled(bb, keyTemplate),
 				sequence(
 						say(bb, question),
-						storeButtons(bb, List.of(button), List.of(BotFileButton.class)),
+						storeButtons(bb, buttons, List.of(BotFileButton.class, BotButton.class)),
 						queryFileButton(bb, keyTemplate),
 						running())
 				);
