@@ -43,6 +43,12 @@ Vue.component('c-codemirror', {
 							</q-item-section>
 						</q-item>
 						
+						<q-item clickable v-close-popup @click="addChooseButtonFile">
+							<q-item-section>
+								<q-item-label>chooseButtonFile</q-item-label>
+							</q-item-section>
+						</q-item>
+						
 						<q-item clickable v-close-popup @click="addSwitch">
 							<q-item-section>
 								<q-item-label>switch</q-item-label>
@@ -52,6 +58,21 @@ Vue.component('c-codemirror', {
 						<q-item clickable v-close-popup @click="addCase">
 							<q-item-section>
 								<q-item-label>case</q-item-label>
+							</q-item-section>
+						</q-item>
+						<q-item clickable v-close-popup @click="addIfElse">
+							<q-item-section>
+								<q-item-label>If else</q-item-label>
+							</q-item-section>
+						</q-item>
+						<q-item clickable v-close-popup @click="addIf">
+							<q-item-section>
+								<q-item-label>If</q-item-label>
+							</q-item-section>
+						</q-item>
+						<q-item clickable v-close-popup @click="addElse">
+							<q-item-section>
+								<q-item-label>Else</q-item-label>
 							</q-item-section>
 						</q-item>
 					</q-list>
@@ -69,6 +90,11 @@ Vue.component('c-codemirror', {
 								<q-item-label>Button URL</q-item-label>
 							</q-item-section>
 						</q-item>
+						<q-item clickable v-close-popup @click="addButtonFile">
+							<q-item-section>
+								<q-item-label>Button File</q-item-label>
+							</q-item-section>
+						</q-item>
 						
 						<q-item clickable v-close-popup @click="addSay">
 							<q-item-section>
@@ -81,8 +107,26 @@ Vue.component('c-codemirror', {
 								<q-item-label>inputString</q-item-label>
 							</q-item-section>
 						</q-item>
+						
+						<q-item clickable v-close-popup @click="addContains">
+							<q-item-section>
+								<q-item-label>contains</q-item-label>
+							</q-item-section>
+						</q-item>
+						<q-item clickable v-close-popup @click="addMail">
+							<q-item-section>
+								<q-item-label>mail</q-item-label>
+							</q-item-section>
+						</q-item>
+						<q-item clickable v-close-popup @click="addMailWithAttachment">
+							<q-item-section>
+								<q-item-label>mail attachment</q-item-label>
+							</q-item-section>
+						</q-item>
 					</q-list>
 				</q-btn-dropdown>
+				<q-btn v-if="modeEdit" label="Image" color="primary" @click="addImage()"/>
+				<q-btn v-if="modeEdit" :label="locale == 'fr_FR' ? 'Lien' : 'Link'" color="primary" @click="addLink()"/>
 				<q-btn v-if="modeEdit" label="Emoji" color="primary" @click="addEmoji()"/>
 				<div :style="error ? 'border: 2px solid;border-color: #C10015;border-radius:5px;':''">
 					<codemirror ref="cm" v-model='VertigoUi.vueData[object][field]' :options="options"></codemirror>
@@ -147,7 +191,12 @@ Vue.component('c-codemirror', {
 		 	addChooseButtonNlu : function(){
 		 		this.modifyValue('begin choose:button:nlu /user/local ""','end choose:button:nlu');
 		 	},
-		 	
+
+			addChooseButtonFile : function(){
+				this.modifyValue('begin choose:button:file /user/local ""','end choose:button:file');
+			},
+
+
 		 	addSwitch : function(){
 		 		this.modifyValue('begin switch /user/local ','end switch');
 		 	},
@@ -155,6 +204,15 @@ Vue.component('c-codemirror', {
 		 	addCase : function(){
 		 		this.modifyValue('begin case ""','end case');
 		 	},
+			addIfElse : function(){
+				this.modifyValue('begin ifelse','end ifelse');
+			},
+			addIf : function(){
+				this.modifyValue('begin if','end if');
+			},
+			addElse : function(){
+				this.modifyValue('begin else','end else');
+			},
 		 	
 		 	addButton : function(){
 		 		this.modifyValue('button "" value');
@@ -162,7 +220,21 @@ Vue.component('c-codemirror', {
 			addButtonUrl : function(){
 				this.modifyValue('button:url "" value url true');
 			},
-		 	
+			addButtonFile: function () {
+				this.modifyValue('button:file "" value');
+			},
+
+			addContains: function () {
+				this.modifyValue('contains /user/local compare');
+			},
+
+			addMail: function () {
+				this.modifyValue('mail /user/local/subject /user/local/message /user/local/destinataire /user/local/destinatairedeux');
+			},
+			addMailWithAttachment: function () {
+				this.modifyValue('mail:attachment /user/local/subject /user/local/message /user/local/pj /user/local/destinataire /user/local/destinatairedeux ');
+			},
+
 		 	addSay : function(){
 		 		this.modifyValue('say ""');
 		 	},
@@ -170,6 +242,12 @@ Vue.component('c-codemirror', {
 		 	addInputString : function(){
 		 		this.modifyValue('inputString /user/local ""');
 		 	},
+			addImage: function () {
+				this.modifyValue('image "url"');
+			},
+			addLink: function () {
+				this.modifyValue('link "url" true');
+			},
 			clearContent: function () {
 				this.$refs.cm.codemirror.setValue('');
 			},
