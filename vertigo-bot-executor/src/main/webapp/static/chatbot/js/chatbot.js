@@ -374,6 +374,7 @@ const chatbot = new Vue({
                     showRating: false,
                     rating: 0,
                     buttons: [],
+                    files: [],
                     cards: []
                 };
                 chatbot.customConfig = {
