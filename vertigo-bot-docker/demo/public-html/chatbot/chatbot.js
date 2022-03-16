@@ -156,8 +156,13 @@ document.addEventListener('DOMContentLoaded', function () {
             _iframe.src += '&' + optionalParam.key + '=' + optionalParam.value;
           });
         }
+        _iframe.style.visibility = 'hidden';
 
         document.body.appendChild(_iframe);
+      }
+
+      function checkIfConversationAlreadyExists() {
+        _iframe.contentWindow.postMessage('conversationExist', '*');
       }
 
       function _initIframeListener() {
@@ -169,6 +174,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             else if (event.data === 'Chatbot.close') {
               Chatbot.close();
+            }
+            else if (event.data.conversationExist !== undefined) {
+              if (event.data.conversationExist) {
+                Chatbot.show();
+              }
             }
             else if (event.data.context) {
               const map = {};
@@ -205,21 +215,25 @@ document.addEventListener('DOMContentLoaded', function () {
       Chatbot = {
         init(param) {
           _initParam = param;
-          _createFlottingButton();
           addImageViewerModal();
           _initIframeListener();
-          if (sessionStorage.showChatbot === 'true') {
-            this.show();
-          }
+          _createIframe();
+          _iframe.addEventListener('load', function() {
+            _createFlottingButton();
+            if (sessionStorage.showChatbot !== undefined) {
+              if (sessionStorage.showChatbot === 'true') {
+                Chatbot.show();
+              }
+            } else {
+              checkIfConversationAlreadyExists();
+            }
+          });
         },
 
         show() {
           sessionStorage.showChatbot = true;
-          if (_iframe === null) {
-            _createIframe();
-          } else {
-            _iframe.style.visibility = 'visible';
-          }
+          _iframe.contentWindow.postMessage('start', '*');
+          _iframe.style.visibility = 'visible';
         },
 
         showPictureModal(src) {
@@ -238,6 +252,11 @@ document.addEventListener('DOMContentLoaded', function () {
           sessionStorage.showChatbot = false;
           document.body.removeChild(_iframe);
           _iframe = null;
+        },
+
+        clearSessionStorage() {
+          sessionStorage.clear();
+          _iframe.contentWindow.postMessage('clearSessionStorage', '*');
         },
 
         startJsEvent(eventName) {

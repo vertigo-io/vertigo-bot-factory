@@ -33,6 +33,19 @@ const scanContextKeys = (context) => new Promise((res, rej) => {
     parent.postMessage({context: context}, '*', [channel.port2]);
 });
 
+window.addEventListener(
+    'message',
+    function (event) {
+        if (event.data === 'start') {
+            chatbot.initBot();
+        }
+        if (event.data === 'clearSessionStorage') {
+            sessionStorage.clear();
+        } else if (event.data === 'conversationExist') {
+            parent.postMessage({conversationExist : sessionStorage.convId !== undefined }, '*');
+        }
+});
+
 const chatbot = new Vue({
         el: '#q-app',
         updated() {
@@ -368,5 +381,3 @@ const chatbot = new Vue({
         }
     })
 ;
-
-chatbot.initBot();
