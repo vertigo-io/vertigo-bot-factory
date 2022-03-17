@@ -17,7 +17,11 @@ import io.vertigo.core.node.definition.SimpleDefinitionProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static io.vertigo.ai.bt.BTNodes.selector;
+import static io.vertigo.ai.bt.BTNodes.sequence;
 
 /**
  * Bot commands.
@@ -65,6 +69,9 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 
 				BtCommandParserDefinition.basicCommand("choose:nlu", (c, p) -> BotNodeProvider.chooseNlu(getBB(p), c.getStringParam(0))),
 				BtCommandParserDefinition.compositeCommand("choose:button", BotBtCommandParserDefinitionProvider::buildChooseButtonNode),
+				BtCommandParserDefinition.compositeCommand("ifelse", BotBtCommandParserDefinitionProvider::buildIfElseNode),
+				BtCommandParserDefinition.compositeCommand("if", (c, p, l) -> new BotIf(l)),
+				BtCommandParserDefinition.compositeCommand("else", (c, p, l) -> new BotElse(l)),
 				BtCommandParserDefinition.compositeCommand("choose:card", BotBtCommandParserDefinitionProvider::buildChooseCardNode),
 				BtCommandParserDefinition.compositeCommand("choose:button:nlu", BotBtCommandParserDefinitionProvider::buildChooseButtonNluNode),
 				BtCommandParserDefinition.basicCommand("button", (c, p) -> new BotButton(c.getStringParam(0), c.getStringParam(1))),
@@ -106,6 +113,26 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 		}
 
 		return switchBuilder.build();
+	}
+
+	private static BTNode buildIfElseNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
+
+		Assertion.check()
+				.isTrue(childs.stream().anyMatch(b -> b instanceof BotIf), "You need to provide one IF case in a IF ELSE node");
+
+		List<BTNode> sequences = childs.stream()
+				.filter(b -> b instanceof BotIf).map(node -> {
+					BotIf nodeIf = (BotIf) node;
+					return sequence(nodeIf.getNodes());
+				}).collect(Collectors.toList());
+
+		Optional<BTNode> optBotElse = childs.stream().filter(b -> b instanceof BotElse).findFirst();
+
+		if (optBotElse.isPresent()) {
+			BotElse botElse = (BotElse) optBotElse.get();
+			sequences.add(sequence(botElse.getNodes()));
+		}
+		return selector(sequences);
 	}
 
 	private static BTNode buildChooseButtonNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
