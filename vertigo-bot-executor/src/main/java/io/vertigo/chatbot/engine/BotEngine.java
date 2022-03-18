@@ -141,8 +141,8 @@ public class BotEngine {
 		}
 
 		// build response
-		final var botResponseBuilder = new BotResponseBuilder(status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking,
-				bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/nlu/key")));
+		Boolean expectNluOrText = bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/nlu/key")) || bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/text/key"));
+		final var botResponseBuilder = new BotResponseBuilder(status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking, expectNluOrText);
 		for (int i = 0; i < bb.listSize(BOT_RESPONSE_KEY); i++) {
 			botResponseBuilder.addMessage(bb.listGet(BOT_RESPONSE_KEY, i));
 		}
