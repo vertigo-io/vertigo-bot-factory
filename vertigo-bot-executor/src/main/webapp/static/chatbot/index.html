@@ -211,7 +211,7 @@
                        :max-height="100"
                        v-model="inputConfig.responseText"
                        placeholder="Répondre"
-                       :disable="processing || error"
+                       :disable="processing || error || !acceptNlu"
                        :loading="processing"></q-input>
             </div>
 
