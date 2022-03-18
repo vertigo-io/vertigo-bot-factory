@@ -248,6 +248,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		reinitializationButton,
 		/** Propriété 'Bot background color'. */
 		backgroundColor,
+		/** Propriété 'Bot font family'. */
+		fontFamily,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

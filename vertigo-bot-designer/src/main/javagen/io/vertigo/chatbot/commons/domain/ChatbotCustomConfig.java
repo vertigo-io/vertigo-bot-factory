@@ -21,6 +21,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private String botEmailAddress;
 	private Boolean reinitializationButton;
 	private String backgroundColor;
+	private String fontFamily;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -155,6 +156,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setBackgroundColor(final String backgroundColor) {
 		this.backgroundColor = backgroundColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot font family'.
+	 * @return String fontFamily
+	 */
+	@Field(smartType = "STyLabel", label = "Bot font family")
+	public String getFontFamily() {
+		return fontFamily;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot font family'.
+	 * @param fontFamily String
+	 */
+	public void setFontFamily(final String fontFamily) {
+		this.fontFamily = fontFamily;
 	}
 	
 	/**

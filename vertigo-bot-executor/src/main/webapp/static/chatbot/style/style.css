@@ -1,12 +1,15 @@
 :root {
     --background-color: #1aab8d;
+    --font-family: Arial, Helvetica, sans-serif;
 }
 .text-primary {
     color: var(--background-color) !important;
+    font-family: var(--font-family) !important;
 }
 
 .bg-primary {
     background: var(--background-color) !important;
+    font-family: var(--font-family) !important;
 }
 
 body {
@@ -38,6 +41,18 @@ main, footer {
 
 .sys-chat .q-message-received .q-message-text {
     border-radius: 5px;
+}
+
+.q-message-text-content {
+    font-family: var(--font-family);
+}
+
+.q-btn {
+    font-family: var(--font-family);
+}
+
+.q-caption {
+    font-family: var(--font-family);
 }
 
 .q-message-received .q-message-text {
