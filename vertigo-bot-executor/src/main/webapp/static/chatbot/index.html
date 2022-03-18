@@ -121,13 +121,13 @@
                                 @input="rateBot"></q-rating>
                     </q-chat-message>
                   </div>
-                  <div v-if="inputConfig.cards.length > 0"
+                  <div v-if="inputConfig.cards.length > 0 || inputConfig.buttons.length > 0 || inputConfig.files.length > 0"
                        class="non-selectable animate-fade row reverse no-wrap">
                     <div class="col-10">
                       <div class="q-caption text-light text-right" :style="'--font-family: ' + customConfig.fontFamily">
                         Réponses suggérées
                       </div>
-                      <div class="row docs-btn">
+                      <div class="row docs-btn" v-if="inputConfig.cards.length > 0" >
                         <q-carousel
                                 transition-prev="scale"
                                 transition-next="scale"
@@ -149,49 +149,32 @@
                           </q-carousel-slide>
                         </q-carousel>
                       </div>
-                    </div>
-                  </div>
-                  <div v-if="inputConfig.buttons.length > 0"
-                       class="non-selectable animate-fade row reverse no-wrap">
-                    <div class="col-10">
-                      <div class="q-caption text-light text-right" :style="'--font-family: ' + customConfig.fontFamily">
-                        Réponses suggérées
-                      </div>
-                      <div class="row docs-btn">
+                      <div class="row docs-btn" v-if="inputConfig.buttons.length > 0 ">
                         <q-btn
-                          v-for="(btn, index) in inputConfig.buttons"
-                          class="full-width"
-                          :key="'repChatBtn-'+index"
-                          @click="postAnswerBtn(btn)"
-                          :label="btn.label"
-                          color="white"
-                          :style="'--font-family: ' + customConfig.fontFamily"
-                          text-color="black">
+                                v-for="(btn, index) in inputConfig.buttons"
+                                class="full-width"
+                                :key="'repChatBtn-'+index"
+                                @click="postAnswerBtn(btn)"
+                                :label="btn.label"
+                                color="white"
+                                :style="'--font-family: ' + customConfig.fontFamily"
+                                text-color="black">
                         </q-btn>
-                      </div>
-
                     </div>
-                  </div>
-                  <div v-if="inputConfig.files.length > 0"
-                       class="non-selectable animate-fade row reverse no-wrap">
-                    <div class="col-10">
-                      <div class="q-caption text-light text-right">
-                        Réponses suggérées
-                      </div>
-                      <div class="row docs-btn">
+                      <div class="row docs-btn" v-if="inputConfig.files.length > 0">
                         <div v-for="(btn, index) in inputConfig.files">
-                            <input  type="file" :id="'file_' + index"/>
-                            <q-btn
-                                    class="full-width"
-                                    :key="'upload-'+index"
-                                    @click="fileUpload(btn, index)"
-                                    :label="btn.label"
-                                    color="white"
-                                    text-color="black">
-                            </q-btn>
+                          <input  type="file" :id="'file_' + index"/>
+                          <q-btn
+                                  class="full-width"
+                                  :key="'upload-'+index"
+                                  @click="fileUpload(btn, index)"
+                                  :label="btn.label"
+                                  color="white"
+                                  :style="'--font-family: ' + customConfig.fontFamily"
+                                  text-color="black">
+                          </q-btn>
                         </div>
                       </div>
-
                     </div>
                   </div>
                 </div>

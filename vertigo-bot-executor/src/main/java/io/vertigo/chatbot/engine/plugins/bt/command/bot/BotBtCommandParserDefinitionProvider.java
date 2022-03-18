@@ -126,12 +126,17 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 	private static BTNode buildChooseButtonFileNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
 
 		Assertion.check()
-				.isTrue(childs.stream().allMatch(b -> b instanceof BotFileButton), "Only 'button:file' are allowed inside 'choose:button:file'");
-		Assertion.check().isTrue(childs.size() == 1, "Only one 'button:file' is allowed inside 'choose:button:file'");
+				.isTrue(childs.stream().allMatch(b -> b instanceof BotFileButton || b instanceof BotButton), "Only 'button' or 'button:file' are allowed inside 'choose:button:file'");
 
-		BotFileButton button = (BotFileButton) childs.get(0);
+		final List<? extends IBotChoice> botChoices = childs.stream().map(b -> {
+			if (b instanceof BotButton) {
+				return (BotButton) b;
+			} else {
+				return (BotFileButton) b;
+			}
+		}).collect(Collectors.toList());
 
-		return BotNodeProvider.chooseFileButton(getBB(params), command.getStringParam(0), command.getStringParam(1), button);
+		return BotNodeProvider.chooseFileButton(getBB(params), command.getStringParam(0), command.getStringParam(1), botChoices);
 	}
 
 	private static BTNode buildChooseCardNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
