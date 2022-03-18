@@ -81,7 +81,8 @@ const chatbot = new Vue({
                 ratingMessage: 'Merci !',
                 reinitializationButton: false,
                 backgroundColor: 'black',
-                fontFamily: 'Arial, Helvetica, sans-serif'
+                fontFamily: 'Arial, Helvetica, sans-serif',
+                displayAvatar: true
             },
             isEnded: false,
 
@@ -151,6 +152,7 @@ const chatbot = new Vue({
                                 chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
                                 chatbot.customConfig.backgroundColor = httpResponse.data.metadatas.customConfig.backgroundColor;
                                 chatbot.customConfig.fontFamily = httpResponse.data.metadatas.customConfig.fontFamily;
+                                chatbot.customConfig.displayAvatar = httpResponse.data.metadatas.customConfig.displayAvatar;
                                 chatbot.updateSessionStorage();
                                 chatbot._handleResponse(httpResponse, false);
                             }).catch(() => {
@@ -321,11 +323,18 @@ const chatbot = new Vue({
                         lastMsg.text.push(response.text);
                     } else {
                         // première réponse du bot
-                        chatbot.messages.push({
-                            avatar: chatbot.botAvatar,
-                            text: [response.text],
-                            bgColor: 'grey-grdf'
-                        });
+                        if (chatbot.customConfig.displayAvatar) {
+                            chatbot.messages.push({
+                                avatar: chatbot.botAvatar,
+                                text: [response.text],
+                                bgColor: 'grey-grdf'
+                            });
+                        } else {
+                            chatbot.messages.push({
+                                text: [response.text],
+                                bgColor: 'grey-grdf'
+                            });
+                        }
                     }
                     chatbot.updateSessionStorage();
 

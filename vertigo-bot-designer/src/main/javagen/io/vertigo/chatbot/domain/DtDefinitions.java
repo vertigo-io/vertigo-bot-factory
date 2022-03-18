@@ -250,6 +250,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		backgroundColor,
 		/** Propriété 'Bot font family'. */
 		fontFamily,
+		/** Propriété 'Display avatar'. */
+		displayAvatar,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

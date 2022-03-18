@@ -96,6 +96,11 @@
 				<vu:label-edit object="bot" field="filIdAvatar" th:if="${viewMode=='edit'}">
 					<vu:fileupload th:url="'@{/commons/upload}'" key="botTmpPictureUri" multiple="false"/>
 				</vu:label-edit>
+				<vu:include-data object="chatbotCustomConfig" field="displayAvatar" />
+				<vu:label-edit object="chatbotCustomConfig" field="displayAvatar" th:if="${viewMode=='edit'}">
+					<q-toggle left-label th:label="#{bot.avatar.display}" v-model="vueData.chatbotCustomConfig.displayAvatar" th::disable="${model.modeReadOnly}"></q-toggle>
+					<input type="hidden" name="vContext[chatbotCustomConfig][displayAvatar]" :value="vueData.chatbotCustomConfig.displayAvatar"/>
+				</vu:label-edit>
 				
 				<vu:text-area object="bot" field="description" readonly="${model.modeReadOnly}"/>
 			</vu:block>
