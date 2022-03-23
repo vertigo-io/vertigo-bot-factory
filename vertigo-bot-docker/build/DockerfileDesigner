@@ -33,6 +33,7 @@ ENV DEPLOY_PATH ROOT
 ENV KEYCLOAK_CONFIG /opt/keycloak/keycloak.json
 ENV VERSION $VERSION
 ENV USE_SSL true
+ENV FILE_STORE_PATH /opt/attachments/
 # Expose tomcat port
 EXPOSE 8080
 

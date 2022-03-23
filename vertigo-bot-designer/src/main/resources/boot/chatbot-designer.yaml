@@ -58,6 +58,11 @@ modules:
           fileInfoClass: io.vertigo.chatbot.designer.commons.services.FileInfoTmp
           path: ${java.io.tmpdir}/chatbotUploadedFiles/
           purgeDelayMinutes: 30
+      - filestore.filesystem:
+          name: attachment
+          storeDtName: DtAttachmentFileInfo
+          fileInfoClass: io.vertigo.chatbot.commons.AttachmentInfo
+          path: ${FILE_STORE_PATH}
       - kvStore.delayedMemory:
           collections: protected-value
           timeToLiveSeconds: 3600

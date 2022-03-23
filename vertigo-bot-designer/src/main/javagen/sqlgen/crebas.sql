@@ -6,6 +6,10 @@
 --   Drop                                       
 -- ============================================================
 drop table IF EXISTS TOPIC_TOPIC_LABEL cascade;
+drop table IF EXISTS ATTACHMENT cascade;
+drop sequence IF EXISTS SEQ_ATTACHMENT;
+drop table IF EXISTS ATTACHMENT_FILE_INFO cascade;
+drop sequence IF EXISTS SEQ_ATTACHMENT_FILE_INFO;
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_CUSTOM_CONFIG cascade;
@@ -77,6 +81,12 @@ drop sequence IF EXISTS SEQ_WELCOME_TOUR;
 -- ============================================================
 --   Sequences                                      
 -- ============================================================
+create sequence SEQ_ATTACHMENT
+	start with 1000 cache 20; 
+
+create sequence SEQ_ATTACHMENT_FILE_INFO
+	start with 1000 cache 20; 
+
 create sequence SEQ_CHATBOT
 	start with 1000 cache 20; 
 
@@ -170,6 +180,70 @@ create sequence SEQ_WELCOME_TOUR
 
 
 -- ============================================================
+--   Table : ATTACHMENT                                        
+-- ============================================================
+create table ATTACHMENT
+(
+    ATT_ID      	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    TYPE        	 VARCHAR(100)	not null,
+    LENGTH      	 NUMERIC     	not null,
+    ATT_FI_ID   	 NUMERIC     	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_ATTACHMENT primary key (ATT_ID)
+);
+
+comment on column ATTACHMENT.ATT_ID is
+'Attachment id';
+
+comment on column ATTACHMENT.LABEL is
+'Label';
+
+comment on column ATTACHMENT.TYPE is
+'MimeType';
+
+comment on column ATTACHMENT.LENGTH is
+'Size';
+
+comment on column ATTACHMENT.ATT_FI_ID is
+'AttachmentFileInfo';
+
+comment on column ATTACHMENT.BOT_ID is
+'Chatbot';
+
+-- ============================================================
+--   Table : ATTACHMENT_FILE_INFO                                        
+-- ============================================================
+create table ATTACHMENT_FILE_INFO
+(
+    ATT_FI_ID   	 NUMERIC     	not null,
+    FILE_NAME   	 VARCHAR(100)	not null,
+    MIME_TYPE   	 VARCHAR(100)	not null,
+    LENGTH      	 NUMERIC     	not null,
+    LAST_MODIFIED	 TIMESTAMP   	not null,
+    FILE_PATH   	 VARCHAR(500)	,
+    constraint PK_ATTACHMENT_FILE_INFO primary key (ATT_FI_ID)
+);
+
+comment on column ATTACHMENT_FILE_INFO.ATT_FI_ID is
+'Id';
+
+comment on column ATTACHMENT_FILE_INFO.FILE_NAME is
+'Name';
+
+comment on column ATTACHMENT_FILE_INFO.MIME_TYPE is
+'MimeType';
+
+comment on column ATTACHMENT_FILE_INFO.LENGTH is
+'Size';
+
+comment on column ATTACHMENT_FILE_INFO.LAST_MODIFIED is
+'Modification Date';
+
+comment on column ATTACHMENT_FILE_INFO.FILE_PATH is
+'path';
+
+-- ============================================================
 --   Table : CHATBOT                                        
 -- ============================================================
 create table CHATBOT
@@ -214,6 +288,7 @@ create table CHATBOT_CUSTOM_CONFIG
     BACKGROUND_COLOR	 VARCHAR(100)	,
     FONT_FAMILY 	 VARCHAR(100)	,
     DISPLAY_AVATAR	 bool        	,
+    TOTAL_MAX_ATTACHMENT_SIZE	 NUMERIC     	,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
 );
@@ -241,6 +316,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.FONT_FAMILY is
 
 comment on column CHATBOT_CUSTOM_CONFIG.DISPLAY_AVATAR is
 'Display avatar';
+
+comment on column CHATBOT_CUSTOM_CONFIG.TOTAL_MAX_ATTACHMENT_SIZE is
+'Total maximum attachment size';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';
@@ -1189,6 +1267,18 @@ comment on column WELCOME_TOUR.TECHNICAL_CODE is
 comment on column WELCOME_TOUR.BOT_ID is
 'Chatbot';
 
+
+alter table ATTACHMENT
+	add constraint FK_A_ATTACHMENT_ATTACHMENT_FILE_INFO_ATTACHMENT_FILE_INFO foreign key (ATT_FI_ID)
+	references ATTACHMENT_FILE_INFO (ATT_FI_ID);
+
+create index A_ATTACHMENT_ATTACHMENT_FILE_INFO_ATTACHMENT_FILE_INFO_FK on ATTACHMENT (ATT_FI_ID asc);
+
+alter table ATTACHMENT
+	add constraint FK_A_ATTACHMENT_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_ATTACHMENT_CHATBOT_CHATBOT_FK on ATTACHMENT (BOT_ID asc);
 
 alter table CHATBOT_CUSTOM_CONFIG
 	add constraint FK_A_CHATBOT_CUSTOM_CONFIG_CHATBOT_CHATBOT foreign key (BOT_ID)

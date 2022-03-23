@@ -1,0 +1,37 @@
+package io.vertigo.chatbot.commons.domain
+
+create DtDefinition DtAttachmentFileInfo {
+	 id  attFiId 			{domain : DoId 			label : "Id" }
+	 field fileName 	    {domain : DoLabel 		label : "Name" 				cardinality : "1" }
+	 field mimeType		    {domain : DoLabel 		label : "MimeType" 			cardinality : "1" }
+ 	 field length 		    {domain : DoSize 		label : "Size" 			    cardinality : "1" }
+	 field lastModified     {domain : DoInstant		label : "Modification Date" cardinality : "1" }
+	 field filePath 	    {domain : DoFilePath	label : "path" 				}
+}
+
+create DtDefinition DtAttachment {
+	id attId 		        {domain: DoId		label: "Attachment id"}
+	field label		        {domain: DoLabel	label: "Label" 		                    cardinality:"1"}
+	field type		        {domain : DoLabel 	label : "MimeType" 			            cardinality : "1" }
+	field length 		    {domain : DoSize 		label : "Size" 			    cardinality : "1" }
+}
+
+create Association AAttachmentAttachmentFileInfo {
+	fkFieldName : "attFiId"
+
+ 	dtDefinitionA : DtAttachment
+	type : "*>1"
+	dtDefinitionB : DtAttachmentFileInfo
+
+	labelB : "AttachmentFileInfo"
+}
+
+create Association AAttachmentChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtAttachment
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}

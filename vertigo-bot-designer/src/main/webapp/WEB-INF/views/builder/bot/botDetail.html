@@ -82,6 +82,7 @@
 			<q-item tag="a" href="#botEmail" th:text="#{bot.email.address}"></q-item>
 			<q-item tag="a" href="#reinitialization" th:text="#{bot.reinitialization}"></q-item>
 			<q-item tag="a" href="#botStyling" th:text="#{bot.styling}"></q-item>
+			<q-item tag="a" href="#attachments" th:text="#{bot.attachments}"></q-item>
 			<q-item th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" tag="a" href="#nodes" th:text="#{bot.nodes}"></q-item>
 		</section>
 		
@@ -260,6 +261,11 @@
 				</q-select>
 				<q-color th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.backgroundColor" @change="function (event) { changeChatMessageBgColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][backgroundColor]"/>
 
+			</vu:block>
+			<vu:block id="attachments" th:title="#{bot.attachments}">
+				<q-input type="number" v-model="vueData.chatbotCustomConfig.totalMaxAttachmentSize"  :error="hasFieldsError('chatbotCustomConfig', 'totalMaxAttachmentSize')"
+						 :error-message="getErrorMessage('chatbotCustomConfig', 'totalMaxAttachmentSize')" name="vContext[chatbotCustomConfig][totalMaxAttachmentSize]"
+						 th:label="#{bot.attachments.maxsize.label}" th::disable="${model.modeReadOnly}" />
 			</vu:block>
 
 			<vu:include-data object="nodeNew" field="name" />
