@@ -3,3 +3,4 @@ mda/webservices.ksp
 mda/file.ksp
 mda/contextModel.ksp
 mda/chatbotModel.ksp
+mda/attachmentModel.ksp

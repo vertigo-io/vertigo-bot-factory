@@ -37,6 +37,7 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,13 +97,13 @@ public class ExecutorManager implements Manager, Activeable {
 	}
 
 	public void loadModel(final BotExport bot, final ExecutorConfiguration executorConfig, final StringBuilder logs) {
+
+		doLoadModel(bot, logs);
 		final var globalConfig = new ExecutorGlobalConfig();
 		globalConfig.setBot(bot);
 		globalConfig.setExecutorConfiguration(executorConfig);
 
 		executorConfigManager.saveConfig(globalConfig);
-
-		doLoadModel(bot, logs);
 
 	}
 
@@ -148,6 +149,7 @@ public class ExecutorManager implements Manager, Activeable {
 		}
 
 		executorConfigManager.updateMapContext(botExport);
+		executorConfigManager.updateMapAttachment(botExport);
 
 		botManager.updateConfig(topics, logs);
 
@@ -196,6 +198,10 @@ public class ExecutorManager implements Manager, Activeable {
 
 	public Map<String, String> getContext() {
 		return executorConfigManager.getContextMap();
+	}
+
+	public VFile getAttachment(String label) {
+		return executorConfigManager.getAttachment(label);
 	}
 
 	public String getWelcomeTourTechnicalCode(String welcomeTourLabel) {

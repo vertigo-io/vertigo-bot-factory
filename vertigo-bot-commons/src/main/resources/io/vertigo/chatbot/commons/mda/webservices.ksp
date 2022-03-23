@@ -13,6 +13,7 @@ create DtDefinition DtBotExport {
 	field jiraSetting			    {domain: DoDtJiraSettingExport 	        label: "Jira setting" 	            cardinality : "?"}
 	field jiraFieldSetting			{domain: DoDtJiraFieldSettingExport 	label: "Jira fields setting" 	    cardinality : "*"}
 	field mapContext				{domain: DoText 						label: "map Context" 				cardinality : "1"}
+	field attachments				{domain: DoDtAttachmentExport			label: "Attachments" 			    cardinality : "*"}
 }
 
 create DtDefinition DtTopicExport {
@@ -40,6 +41,14 @@ create DtDefinition DtJiraFieldSettingExport {
 	field fieldKey 					{domain: DoLabel 						label: "Jira field key" 		    cardinality : "1"}
 	field enabled 		            {domain: DoYesNo 						label: "Enabled" 		            cardinality : "1"}
 	field mandatory			 		{domain: DoYesNo	 					label: "Mandatory" 					cardinality : "1"}
+}
+
+create DtDefinition DtAttachmentExport {
+	field label 					{domain: DoLabel 						label: "Label" 		                cardinality : "1"}
+	field fileName 	                {domain : DoLabel 		                label : "Name" 				        cardinality : "1" }
+    field mimeType		            {domain : DoLabel 		                label : "MimeType" 			        cardinality : "1" }
+    field length 		            {domain : DoSize 		                label : "Size" 			            cardinality : "1" }
+	field fileData			 		{domain: DoText	 					    label: "Data" 					    cardinality : "1"}
 }
 
 create DtDefinition DtRunnerInfo {
@@ -81,6 +90,7 @@ create DtDefinition DtChatbotCustomConfig {
 	field backgroundColor           {domain: DoLabel        label: "Bot background color"               cardinality:"?"}
 	field fontFamily                {domain: DoLabel        label: "Bot font family"                    cardinality:"?"}
 	field displayAvatar             {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
+	field totalMaxAttachmentSize    {domain: DoNumber       label: "Total maximum attachment size"      cardinality:"?"}
 }
 
 create Association AChatbotCustomConfigChatbot {

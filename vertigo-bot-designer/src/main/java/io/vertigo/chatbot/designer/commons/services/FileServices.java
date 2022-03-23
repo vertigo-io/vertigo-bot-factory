@@ -24,6 +24,7 @@ import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.exceptions.CsvValidationException;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
+import io.vertigo.chatbot.commons.AttachmentInfo;
 import io.vertigo.chatbot.commons.dao.MediaFileInfoDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.MediaFileInfo;
@@ -69,6 +70,32 @@ public class FileServices implements Component {
 		return fileInfo.getURI();
 	}
 
+	public FileInfoURI saveAttachment(final VFile file) {
+		//apply security check
+		final FileInfo fileInfo = fileStoreManager.create(new AttachmentInfo(file));
+		return fileInfo.getURI();
+	}
+
+	public void deleteAttachment(final FileInfoURI attachmentUri) {
+		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class);
+		Assertion.check().isTrue(tmpFileInfoDefinition.equals(attachmentUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
+		fileStoreManager.delete(attachmentUri);
+	}
+
+	public VFile getAttachment(final FileInfoURI attachmentUri) {
+		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class);
+		Assertion.check().isTrue(tmpFileInfoDefinition.equals(attachmentUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
+		return fileStoreManager.read(attachmentUri).getVFile();
+	}
+
+	public VFile getAttachment(final Long attFiId) {
+		return getAttachment(toAttachmentFileInfoUri(attFiId));
+	}
+
+	public void deleteAttachment(final Long attFiId) {
+		deleteAttachment(toAttachmentFileInfoUri(attFiId));
+	}
+
 	public VFile getFileTmp(final FileInfoURI fileTmpUri) {
 		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoTmp.class);
 		Assertion.check().isTrue(tmpFileInfoDefinition.equals(fileTmpUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
@@ -79,6 +106,10 @@ public class FileServices implements Component {
 		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoTmp.class);
 		Assertion.check().isTrue(tmpFileInfoDefinition.equals(fileTmpUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
 		fileStoreManager.delete(fileTmpUri);
+	}
+
+	public FileInfoURI toAttachmentFileInfoUri(final Long attFiId) {
+		return new FileInfoURI(FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class), attFiId);
 	}
 
 	public FileInfoURI toStdFileInfoUri(final Long fileId) {
