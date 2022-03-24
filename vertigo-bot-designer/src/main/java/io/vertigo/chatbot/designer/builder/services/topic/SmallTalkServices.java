@@ -150,6 +150,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 					utterTextServices.deleteUtterTextsBySmallTalk(chatbot, smallTalk);
 
 					responsesButtonServices.deleteResponsesButtonsBySmallTalk(chatbot, smallTalk);
+					responsesButtonUrlServices.removeAllButtonsUrlBySmtId(chatbot, smallTalk);
 
 					// delete smallTalk
 					delete(smallTalk);
