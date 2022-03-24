@@ -60,6 +60,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldSessionExport$botName,
 	/**
+	 * Node name.
+	 */
+	fldSessionExport$node,
+	/**
 	 * Date bot creation.
 	 */
 	fldSessionExport$creationBot,
@@ -151,6 +155,10 @@ public enum DtResources implements MessageKey {
 	 * Bot name.
 	 */
 	fldUnknownSentenseExport$botName,
+	/**
+	 * Node name.
+	 */
+	fldUnknownSentenseExport$node,
 	/**
 	 * Date bot creation.
 	 */

@@ -1,10 +1,5 @@
 package io.vertigo.chatbot.designer.analytics.services;
 
-import java.util.Arrays;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.commons.transaction.Transactional;
@@ -14,6 +9,10 @@ import io.vertigo.core.param.ParamManager;
 import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimeSeriesManager;
 import io.vertigo.database.timeseries.TimedDatas;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Use for search in influxdb
@@ -89,7 +88,7 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getSessionsExport(final StatCriteria criteria) {
-		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("name", "modelName", "botId", "traId"),
+		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("name", "modelName", "botId", "traId", "nodId"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isSessionStart = 1").build(),
 				AnalyticsServicesUtils.getTimeFilter(criteria),
 				Optional.empty());
@@ -102,7 +101,7 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getUnknowSentenceExport(final StatCriteria criteria) {
-		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence", "modelName", "botId", "traId"),
+		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence", "modelName", "botId", "traId", "nodId"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isFallback = 1").build(),
 				AnalyticsServicesUtils.getTimeFilter(criteria),
 				Optional.empty());

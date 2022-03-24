@@ -261,6 +261,11 @@ public class ChatbotServices implements Component {
 		return bot.isPresent() ? bot.get().getName() : MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
 	}
 
+	public String getNodeName(final Optional<Chatbot> bot, final Long nodId) {
+		return bot.isPresent() ? nodeServices.getNodeByNodeId(bot.get(), nodId).getName()
+				: MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
+	}
+
 	public String getBotDateDisplay(final Optional<Chatbot> bot) {
 		return bot.isPresent() ? DateUtils.toStringJJMMAAAA(bot.get().getCreationDate()) : null;
 	}
