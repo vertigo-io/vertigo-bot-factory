@@ -140,7 +140,7 @@
 
 					<vu:include-data object="initialTopicLabelList" field="'*'" />
 					<vu:include-data object="allTopicLabelList" field="'*'" />
-					<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('labels').addObject('filterOptions', {label:null})}" th:remove="all" />
+					<th:block th:attr="objectKey=${model.vContext[componentStates].addComponentState('labels').addObject('filterOptions', {label:null})}" th:remove="all" />
 
 					<q-select
 						th:label="#{topic.label}"
@@ -174,7 +174,7 @@
 						</q-input>
 					</vu:slot>
 
-					<vu:include-data-primitive key="unreachable" />
+					<vu:include-data-primitive key="unreachable" modifiable="true" />
 					<q-input v-model="vueData.unreachable" name="vContext[unreachable]" class="hidden" ></q-input>
 
 					<q-toggle checked-icon="clear" color="red" left-label size="lg" th:label="#{topic.unreachable}" v-model="vueData.unreachable" th::disable="${model.modeReadOnly}"></q-toggle>
@@ -192,7 +192,7 @@
 								>
 							</q-input>
 						</div>
-						<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('nluTrainingSentences').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
+						<th:block th:attr="objectKey=${model.vContext[componentStates].addComponentState('nluTrainingSentences').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
 						<q-list dense>
 							<q-item th::clickable="${!model.modeReadOnly}" v-for="(nluTrainingSentence, index) in getDisplayedTrainingSentenses()">
 								<q-item-section avatar th:if="${model.modeReadOnly}">
