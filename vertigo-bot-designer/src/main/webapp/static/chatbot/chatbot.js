@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
               Chatbot.minimize();
             }
             else if (event.data === 'Chatbot.close') {
-              Chatbot.close();
+              Chatbot.minimize();
             }
             else if (event.data.conversationExist !== undefined) {
               if (event.data.conversationExist) {
