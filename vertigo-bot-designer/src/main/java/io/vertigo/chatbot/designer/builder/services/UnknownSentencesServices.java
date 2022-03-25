@@ -1,10 +1,17 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.dao.UnknownSentenceDetailDAO;
 import io.vertigo.chatbot.commons.domain.UnknownSentenceDetail;
 import io.vertigo.chatbot.commons.domain.UnknownSentenceStatusEnum;
 import io.vertigo.chatbot.commons.domain.UnknownSentencesCriteria;
-import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Activeable;
@@ -13,21 +20,11 @@ import io.vertigo.core.param.ParamManager;
 import io.vertigo.database.timeseries.DataFilter;
 import io.vertigo.database.timeseries.DataFilterBuilder;
 import io.vertigo.database.timeseries.TimeFilter;
-import io.vertigo.database.timeseries.TimeSeriesManager;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
-
-import javax.inject.Inject;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
-
-import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 @Transactional
 public class UnknownSentencesServices implements Component, Activeable {
@@ -37,8 +34,8 @@ public class UnknownSentencesServices implements Component, Activeable {
 	@Inject
 	private UnknownSentenceDetailDAO unknownSentenceDetailDAO;
 
-	@Inject
-	private TimeSeriesManager timeSeriesManager;
+	//@Inject
+	//private TimeSeriesManager timeSeriesManager;
 
 	@Inject
 	private ParamManager paramManager;
@@ -63,17 +60,17 @@ public class UnknownSentencesServices implements Component, Activeable {
 		unknownSentenceDetailDAO.delete(unknownSentenceId);
 	}
 
-	public UnknownSentenceDetail updateStatus(final UnknownSentenceDetail unknownSentenceDetail, UnknownSentenceStatusEnum status) {
+	public UnknownSentenceDetail updateStatus(final UnknownSentenceDetail unknownSentenceDetail, final UnknownSentenceStatusEnum status) {
 		unknownSentenceDetail.setStatus(status.name());
 		return save(unknownSentenceDetail);
 	}
 
 	public DtList<UnknownSentenceDetail> findUnknownSentences(final Long botId) {
 
-		UnknownSentencesCriteria unknownSentencesCriteria = new UnknownSentencesCriteria();
+		final UnknownSentencesCriteria unknownSentencesCriteria = new UnknownSentencesCriteria();
 		unknownSentencesCriteria.setBotId(botId);
 
-		UnknownSentenceDetail latestUnknownSentenceDetail = findLatestUnknownSentence(botId);
+		final UnknownSentenceDetail latestUnknownSentenceDetail = findLatestUnknownSentence(botId);
 		if (latestUnknownSentenceDetail != null) {
 			unknownSentencesCriteria.setFromDate(latestUnknownSentenceDetail.getDate());
 		}
@@ -104,7 +101,7 @@ public class UnknownSentencesServices implements Component, Activeable {
 		return unknownSentenceDetailDAO.save(unknownSentenceDetail);
 	}
 
-	private DtList<UnknownSentenceDetail> findAllByBotId(Long botId) {
+	private DtList<UnknownSentenceDetail> findAllByBotId(final Long botId) {
 		return unknownSentenceDetailDAO.findAll(Criterions.isEqualTo(DtDefinitions.UnknownSentenceDetailFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
@@ -119,10 +116,11 @@ public class UnknownSentencesServices implements Component, Activeable {
 	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getSentenceDetails(final UnknownSentencesCriteria unknownSentencesCriteria) {
-		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence", "modelName"),
-				getDataFilter(unknownSentencesCriteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isFallback = 1").build(),
-				getTimeFilter(unknownSentencesCriteria),
-				Optional.empty());
+		return null;
+		//return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("text", "name", "confidence", "modelName"),
+		//		getDataFilter(unknownSentencesCriteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isFallback = 1").build(),
+		//		getTimeFilter(unknownSentencesCriteria),
+		//		Optional.empty());
 	}
 
 	private DataFilterBuilder getDataFilter(final UnknownSentencesCriteria unknownSentencesCriteria, final String measurement) {
@@ -142,8 +140,8 @@ public class UnknownSentencesServices implements Component, Activeable {
 		if (unknownSentencesCriteria.getFromDate() != null) {
 			fromDate = unknownSentencesCriteria.getFromDate();
 		}
-		String toDateString = '\'' + toDate.toString() + '\'';
-		String fromDateString = '\'' + fromDate.toString() + '\'';
+		final String toDateString = '\'' + toDate.toString() + '\'';
+		final String fromDateString = '\'' + fromDate.toString() + '\'';
 
 		return TimeFilter.builder(fromDateString, toDateString).build();
 
