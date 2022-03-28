@@ -29,6 +29,13 @@ services:
     networks:
       - cb_factory
 
+  clamav:
+    image: clamav/clamav
+    ports:
+      - "127.0.0.1:3310:3310"
+    networks:
+      - cb_factory
+
   postgresKC:
     image: postgres:12.1
     environment:

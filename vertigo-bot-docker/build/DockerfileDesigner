@@ -34,6 +34,8 @@ ENV KEYCLOAK_CONFIG /opt/keycloak/keycloak.json
 ENV VERSION $VERSION
 ENV USE_SSL true
 ENV FILE_STORE_PATH /opt/attachments/
+ENV CLAMAV_HOST localhost
+ENV CLAMAV_PORT 3310
 # Expose tomcat port
 EXPOSE 8080
 

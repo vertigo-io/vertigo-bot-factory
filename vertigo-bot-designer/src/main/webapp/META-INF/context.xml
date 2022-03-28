@@ -19,4 +19,6 @@
 	<!-- Env variable in production -->
 	<Parameter name="INFLUXDB_URL" value="http://localhost:8086" override="false"/>
 	<Parameter name="USE_SSL" value="true" override="false"/>
+	<Parameter name="CLAMAV_HOST" value="localhost" override="false"/>
+	<Parameter name="CLAMAV_PORT" value="3310" override="false"/>
 </Context>
