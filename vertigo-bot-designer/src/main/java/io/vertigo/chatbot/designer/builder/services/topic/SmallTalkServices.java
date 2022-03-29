@@ -75,7 +75,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 		return smallTalkDAO.get(smtId);
 	}
 
-	public SmallTalk getNewSmallTalk(@SecuredOperation("botContributor") final Chatbot bot) {
+	public SmallTalk getNewSmallTalk(@SecuredOperation("botVisitor") final Chatbot bot) {
 		final SmallTalk smallTalk = new SmallTalk();
 		smallTalk.responseType().setEnumValue(ResponseTypeEnum.RICH_TEXT);
 		return smallTalk;

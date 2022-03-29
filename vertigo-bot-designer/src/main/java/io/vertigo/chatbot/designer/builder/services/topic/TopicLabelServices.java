@@ -49,7 +49,7 @@ public class TopicLabelServices implements Component {
 		return topicLabelDAO.findAll(getBotCriteria(bot), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
-	public DtList<TopicLabel> getTopicLabelByBotIdAndTopId(@SecuredOperation("botContributor") final Chatbot bot, final Long topId) {
+	public DtList<TopicLabel> getTopicLabelByBotIdAndTopId(@SecuredOperation("botVisitor") final Chatbot bot, final Long topId) {
 		return topicLabelDAO.getAllLabelsByBotId(bot.getBotId(), topId);
 	}
 
