@@ -178,6 +178,12 @@ public class ExecutorManager implements Manager, Activeable {
 		Assertion.check()
 				.isNotNull(sessionId, "Please provide sessionId");
 		//--
+
+		if (input.getMetadatas().containsKey("filecontent")) {
+			executorConfigManager.checkFileSafe((String) input.getMetadatas().get("filecontent"),
+					(String) input.getMetadatas().get("filename"));
+		}
+
 		final var botEngine = botManager.createBotEngine(sessionId);
 
 		botEngine.saveContext(input, executorConfigManager.getContextMap());

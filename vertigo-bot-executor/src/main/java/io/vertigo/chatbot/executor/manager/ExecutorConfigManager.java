@@ -40,6 +40,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -186,19 +187,27 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		try {
 			attachmentMap.forEach((key, value) -> fileServices.deleteAttachment(FileInfoURI.fromURN(value)));
 			HashMap<String, String> attachmentsMap = new HashMap<>();
-			botExport.getAttachments().forEach(attachmentExport -> {
+			for (AttachmentExport attachmentExport : botExport.getAttachments()) {
+				byte[] decodedFileContent = Base64.getDecoder().decode(attachmentExport.getFileData());
+				fileServices.checkSafeFile(attachmentExport.getFileName(), attachmentExport.getMimeType(), decodedFileContent);
 				StreamFile streamFile = StreamFile.of(attachmentExport.getFileName(), attachmentExport.getMimeType(),
-						Instant.now(), attachmentExport.getLength(),
-						() -> new ByteArrayInputStream((Base64.getDecoder().decode(attachmentExport.getFileData()))));
+						Instant.now(), attachmentExport.getLength(), () -> new ByteArrayInputStream(decodedFileContent));
 
 				FileInfoURI fileInfoURI = fileServices.saveAttachment(streamFile);
 				attachmentsMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
-			});
+			}
 			FileUtils.writeStringToFile(attachmentDataFile, jsonEngine.toJson(attachmentsMap), StandardCharsets.UTF_8);
 			attachmentMap = attachmentsMap;
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", contextDataFile.getPath());
 		}
+	}
+
+	public void checkFileSafe(String fileContent, String fileName) {
+		String[] fileData = fileContent.split(",");
+		Assertion.check().isTrue(fileData.length == 2, "Attachment " + fileName + " is not Base64 encoded");
+		fileServices.checkSafeFile(fileName, URLConnection.guessContentTypeFromName(fileName),
+				Base64.getDecoder().decode(fileData[1]));
 	}
 
 	public void addPlugin(ExecutorPlugin executorPlugin) {
