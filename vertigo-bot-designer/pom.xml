@@ -130,6 +130,18 @@
 			<version>${clamav-client.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>${apache-tika.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers-standard-package</artifactId>
+			<version>${apache-tika.version}</version>
+		</dependency>
+
 
 	</dependencies>
 

@@ -42,6 +42,7 @@
 		<apache.common.version>3.12.0</apache.common.version>
 		<liquibase.version>4.6.2</liquibase.version>
 		<clamav-client.version>2.1.2</clamav-client.version>
+		<apache-tika.version>2.3.0</apache-tika.version>
 	</properties>
 	<modules>
 		<module>vertigo-bot-designer</module>

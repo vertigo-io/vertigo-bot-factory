@@ -12,7 +12,9 @@ import io.vertigo.chatbot.designer.builder.services.AntivirusServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -20,6 +22,10 @@ import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
 import xyz.capybara.clamav.commands.scan.result.ScanResult;
 
 import javax.inject.Inject;
@@ -34,7 +40,7 @@ import java.util.stream.Collectors;
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 @Transactional
-public class AttachmentServices implements Component {
+public class AttachmentServices implements Component, Activeable {
 
 	@Inject
 	private AttachmentDAO attachmentDAO;
@@ -45,8 +51,22 @@ public class AttachmentServices implements Component {
 	@Inject
 	private AntivirusServices antivirusServices;
 
+	private TikaConfig tikaConfig;
+
+	private Metadata metadata;
+
 	public Attachment findById(final long attachmentId) {
 		return attachmentDAO.get(attachmentId);
+	}
+
+	@Override
+	public void start() {
+		try {
+			tikaConfig = new TikaConfig();
+		} catch (TikaException | IOException exception) {
+			throw new VSystemException("Failed to instantiate tika config", exception);
+		}
+		metadata = new Metadata();
 	}
 
 	public Attachment save(Attachment attachment, Optional<FileInfoURI> optFileInfoURI, Long maxSize, Long attachmentTotalSize) {
@@ -73,8 +93,13 @@ public class AttachmentServices implements Component {
 							.flatMap(Collection::stream).collect(Collectors.joining(","));
 					throw new VUserException(AttachmentMultilingualResources.VIRUSES_FOUND, viruses);
 				}
+				String mimeType = tikaConfig.getDetector()
+						.detect(TikaInputStream.get(newAttachmentFile.createInputStream()), metadata).toString();
+				if (!mimeType.equals(newAttachmentFile.getMimeType())) {
+					throw new VUserException(AttachmentMultilingualResources.MIME_TYPE_DIDNT_MATCH, newAttachmentFile.getFileName());
+				}
 			} catch (IOException ioException) {
-				throw new VUserException(AttachmentMultilingualResources.COULD_NOT_OPEN_FILE_ANTIVIRUS, newAttachmentFile.getFileName(), ioException);
+				throw new VUserException(AttachmentMultilingualResources.COULD_NOT_OPEN_FILE, newAttachmentFile.getFileName(), ioException);
 			}
 
 			if (isMaxSizeExceeded(maxSize, attachmentTotalSize, oldAttachmentSize, newAttachmentFile.getLength())) {
@@ -143,6 +168,11 @@ public class AttachmentServices implements Component {
 			LogsUtils.addLogs(logs, e);
 			return null;
 		}
+
+	}
+
+	@Override
+	public void stop() {
 
 	}
 }
