@@ -34,7 +34,7 @@ public class ResponsesButtonServices implements Component {
 	@Inject
 	private ResponsesButtonPAO responsesButtonPAO;
 
-	public DtList<ResponseButton> getResponsesButtonList(@SecuredOperation("botContributor") final Chatbot bot, final SmallTalk smallTalk) {
+	public DtList<ResponseButton> getResponsesButtonList(@SecuredOperation("botVisitor") final Chatbot bot, final SmallTalk smallTalk) {
 		Assertion.check()
 				.isNotNull(smallTalk)
 				.isNotNull(smallTalk.getSmtId());
