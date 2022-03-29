@@ -334,7 +334,9 @@
 				</vu:column>
 			</vu:table>
 			<vu:popup-ajax action="_deleteSavedTraining" vModel="showDeleteSavedTrainingPopup" th:message="#{model.savedTraining.deletePopup.message}" th:confirm="#{action.delete}" dataName="savedTraId" ></vu:popup-ajax>
-			<vu:include-data object="criteria" field="'*'" />
+			<vu:include-data object="criteria" field="text" modifiable="true" />
+			<vu:include-data object="criteria" field="fromDate" modifiable="true" />
+			<vu:include-data object="criteria" field="toDate" modifiable="true" />
 			<input type="hidden" name="vContext[criteria][toDate]" v-bind:value="vueData.criteria.toDate" />
 			<vu:table list="savedTrainingList" th:title="#{model.savedTraining}" :dense="|$q.screen.lt.lg|" componentId="savedTrainingList"
 					  rowsPerPage="10" autoColClass >
