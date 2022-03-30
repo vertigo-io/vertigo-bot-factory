@@ -93,7 +93,7 @@ public final class ProfilPerChatbot implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -112,7 +112,7 @@ public final class ProfilPerChatbot implements Entity {
 	 * Récupère la valeur de la propriété 'Person'.
 	 * @return Long perId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Person", fkDefinition = "DtPerson" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Person", fkDefinition = "DtPerson", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getPerId() {
 		return (Long) perIdAccessor.getId();
 	}
@@ -131,7 +131,7 @@ public final class ProfilPerChatbot implements Entity {
 	 * Récupère la valeur de la propriété 'Profil pour un chatbot'.
 	 * @return String chpCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Profil pour un chatbot", fkDefinition = "DtChatbotProfiles" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Profil pour un chatbot", fkDefinition = "DtChatbotProfiles", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getChpCd() {
 		return (String) chpCdAccessor.getId();
 	}

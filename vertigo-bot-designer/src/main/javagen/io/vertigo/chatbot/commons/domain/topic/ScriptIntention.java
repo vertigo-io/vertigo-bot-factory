@@ -82,7 +82,7 @@ public final class ScriptIntention implements Entity {
 	 * Récupère la valeur de la propriété 'Topic'.
 	 * @return Long topId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Topic", fkDefinition = "DtTopic" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Topic", fkDefinition = "DtTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getTopId() {
 		return (Long) topIdAccessor.getId();
 	}

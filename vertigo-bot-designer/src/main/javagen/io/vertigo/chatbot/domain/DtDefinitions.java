@@ -478,7 +478,11 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'From'. */
 		fromDate,
 		/** Propriété 'To'. */
-		toDate	}
+		toDate,
+		/** Propriété 'Action'. */
+		hacCd,
+		/** Propriété 'Search'. */
+		text	}
 
 	/**
 	 * Enumération des champs de JiraField.

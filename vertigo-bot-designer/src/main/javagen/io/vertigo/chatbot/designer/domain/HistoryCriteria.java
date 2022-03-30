@@ -15,6 +15,8 @@ public final class HistoryCriteria implements DtObject {
 
 	private java.time.LocalDate fromDate;
 	private java.time.LocalDate toDate;
+	private String hacCd;
+	private String text;
 	
 	/**
 	 * Champ : DATA.
@@ -52,6 +54,44 @@ public final class HistoryCriteria implements DtObject {
 	 */
 	public void setToDate(final java.time.LocalDate toDate) {
 		this.toDate = toDate;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Action'.
+	 * @return String hacCd
+	 */
+	@Field(smartType = "STyCode", label = "Action")
+	public String getHacCd() {
+		return hacCd;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Action'.
+	 * @param hacCd String
+	 */
+	public void setHacCd(final String hacCd) {
+		this.hacCd = hacCd;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Search'.
+	 * @return String text
+	 */
+	@Field(smartType = "STyLabel", label = "Search")
+	public String getText() {
+		return text;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Search'.
+	 * @param text String
+	 */
+	public void setText(final String text) {
+		this.text = text;
 	}
 	
 	/** {@inheritDoc} */

@@ -46,11 +46,11 @@ public final class TrainingPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkCleanOldTrainings",
-			request = "update training" + 
- "			set str_cd = 'KO'," + 
- "			log = CONCAT(log,' KO<br>The training was stopped.')" + 
- "			where str_cd = 'TRAINING'" + 
- "			and bot_id = #botId#",
+			request = "update training\n" + 
+ " 			set str_cd = 'KO',\n" + 
+ " 			log = CONCAT(log,' KO<br>The training was stopped.')\n" + 
+ " 			where str_cd = 'TRAINING'\n" + 
+ " 			and bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void cleanOldTrainings(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkCleanOldTrainings")
@@ -66,10 +66,10 @@ public final class TrainingPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetAllTrainingFilIdsByBotId",
-			request = "select mdi.fil_id" + 
- "            from media_file_info mdi" + 
- "            join training tr on (mdi.fil_id = tr.fil_id_model)" + 
- "            where tr.bot_id = #botId#",
+			request = "select mdi.fil_id\n" + 
+ "             from media_file_info mdi\n" + 
+ "             join training tr on (mdi.fil_id = tr.fil_id_model)\n" + 
+ "             where tr.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyId")
 	public java.util.List<Long> getAllTrainingFilIdsByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
@@ -88,9 +88,9 @@ public final class TrainingPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetNextModelNumber",
-			request = "select coalesce(max(version_number) + 1, 1)" + 
- "			from training tra" + 
- "			where bot_id = #botId#",
+			request = "select coalesce(max(version_number) + 1, 1)\n" + 
+ " 			from training tra\n" + 
+ " 			where bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber")
 	public Long getNextModelNumber(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
@@ -108,8 +108,8 @@ public final class TrainingPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveTrainingByBotId",
-			request = "delete from training" + 
- "			where bot_id = #botId#",
+			request = "delete from training\n" + 
+ " 			where bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeTrainingByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyNumber") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveTrainingByBotId")
@@ -124,8 +124,8 @@ public final class TrainingPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveTrainingFileByFilIds",
-			request = "delete from media_file_info mfi" + 
- "			where mfi.fil_id in (#filIds.rownum#)",
+			request = "delete from media_file_info mfi\n" + 
+ " 			where mfi.fil_id in (#filIds.rownum#)",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeTrainingFileByFilIds(@io.vertigo.datamodel.task.proxy.TaskInput(name = "filIds", smartType = "STyId") final java.util.List<Long> filIds) {
 		final Task task = createTaskBuilder("TkRemoveTrainingFileByFilIds")

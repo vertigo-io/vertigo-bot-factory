@@ -48,86 +48,86 @@ public final class TopicFileExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetTopicFileExport",
-			request = "select top.code," + 
- "			top.tto_cd as type_topic," + 
- "			top.kto_cd as kind_topic," + 
- "			top.title," + 
- "			tca.code as category," + 
- "			top.description," + 
- "			null as tag," + 
- "			null as date_start," + 
- "			null as date_end," + 
- "			CASE " + 
- "				WHEN top.is_enabled THEN 'ACTIVE'" + 
- "				ELSE 'INACTIVE'" + 
- "			END	as active," + 
- "			sin.script," + 
- "			tph.agg as training_phrases," + 
- "			res.agg as response," + 
- "			buttons.doublons as buttons," + 
- "			buttons_url.doublons as buttons_url," + 
- "			CASE " + 
- "				WHEN smt.is_end THEN 'TRUE'" + 
- "				ELSE 'FALSE'" + 
- "			END	as is_end," + 
- "			string_agg(tpl.label, ',') as labels" + 
- "			from topic top" + 
- "			left join topic_topic_label ttl on (ttl.top_id = top.top_id)" + 
- "			left join topic_label tpl on (tpl.label_id = ttl.label_id)" + 
- "			left join (" + 
- "					select nts.top_id," + 
- "					string_agg(nts.text,'|') agg	" + 
- "					from nlu_training_sentence nts" + 
- "					join topic top on top.top_id = nts.top_id					" + 
- "					group by (nts.top_id)" + 
- "				) as tph  on top.top_id = tph.top_id" + 
- "			left join topic_category tca on tca.top_cat_id = top.top_cat_id	" + 
- "			left join script_intention sin on sin.top_id = top.top_id" + 
- "			left join small_talk smt on smt.top_id = top.top_id		" + 
- "			left join (" + 
- "					select smt.top_id," + 
- "					string_agg(utt.text,'|') agg	" + 
- "					from utter_text utt" + 
- "					join small_talk smt on smt.smt_id = utt.smt_id" + 
- "					join topic top on smt.top_id = top.top_id									" + 
- "					group by (smt.top_id)" + 
- "				) as res  on top.top_id = res.top_id				" + 
- "			left join (" + 
- "					select t.top_id, string_agg(concat('[',rbu.text,'¤',tre.code,']'),'|') as doublons" + 
- "					from response_button rbu" + 
- "					join topic tre on tre.top_id = rbu.top_id_response" + 
- "					join small_talk st on st.smt_id = rbu.smt_id " + 
- "					join topic t on t.top_id = st.top_id " + 
- "					group by (t.top_id)" + 
- "				) buttons on buttons.top_id = top.top_id" + 
- "			left join (" + 
- "                    select t.top_id," + 
- "                    string_agg(concat('[',rbuurl.text,'¤',rbuurl.url,'¤', CASE WHEN rbuurl.new_tab THEN 'TRUE' ELSE 'FALSE' END,']'),'|') as doublons" + 
- "                    from response_button_url rbuurl" + 
- "                    join small_talk st on st.smt_id = rbuurl.smt_id" + 
- "                    join topic t on t.top_id = st.top_id" + 
- "                    group by (t.top_id)" + 
- "                ) buttons_url on buttons_url.top_id = top.top_id" + 
- "			where top.bot_id = #botId#" + 
- "			and tca.is_technical = false" + 
- "            and tca.top_cat_id in (#tcaIds.rownum#)" + 
- "			group by top.code," + 
- "				type_topic," + 
- "				kind_topic," + 
- "				top.title," + 
- "				category," + 
- "				top.description," + 
- "				tag," + 
- "				date_start," + 
- "				date_end," + 
- "				active," + 
- "				sin.script," + 
- "				training_phrases," + 
- "				response," + 
- "				buttons," + 
- "				buttons_url," + 
- "				is_end" + 
- "			order by top.code",
+			request = "select top.code,\n" + 
+ " 			top.tto_cd as type_topic,\n" + 
+ " 			top.kto_cd as kind_topic,\n" + 
+ " 			top.title,\n" + 
+ " 			tca.code as category,\n" + 
+ " 			top.description,\n" + 
+ " 			null as tag,\n" + 
+ " 			null as date_start,\n" + 
+ " 			null as date_end,\n" + 
+ " 			CASE \n" + 
+ " 				WHEN top.is_enabled THEN 'ACTIVE'\n" + 
+ " 				ELSE 'INACTIVE'\n" + 
+ " 			END	as active,\n" + 
+ " 			sin.script,\n" + 
+ " 			tph.agg as training_phrases,\n" + 
+ " 			res.agg as response,\n" + 
+ " 			buttons.doublons as buttons,\n" + 
+ " 			buttons_url.doublons as buttons_url,\n" + 
+ " 			CASE \n" + 
+ " 				WHEN smt.is_end THEN 'TRUE'\n" + 
+ " 				ELSE 'FALSE'\n" + 
+ " 			END	as is_end,\n" + 
+ " 			string_agg(tpl.label, ',') as labels\n" + 
+ " 			from topic top\n" + 
+ " 			left join topic_topic_label ttl on (ttl.top_id = top.top_id)\n" + 
+ " 			left join topic_label tpl on (tpl.label_id = ttl.label_id)\n" + 
+ " 			left join (\n" + 
+ " 					select nts.top_id,\n" + 
+ " 					string_agg(nts.text,'|') agg	\n" + 
+ " 					from nlu_training_sentence nts\n" + 
+ " 					join topic top on top.top_id = nts.top_id					\n" + 
+ " 					group by (nts.top_id)\n" + 
+ " 				) as tph  on top.top_id = tph.top_id\n" + 
+ " 			left join topic_category tca on tca.top_cat_id = top.top_cat_id	\n" + 
+ " 			left join script_intention sin on sin.top_id = top.top_id\n" + 
+ " 			left join small_talk smt on smt.top_id = top.top_id		\n" + 
+ " 			left join (\n" + 
+ " 					select smt.top_id,\n" + 
+ " 					string_agg(utt.text,'|') agg	\n" + 
+ " 					from utter_text utt\n" + 
+ " 					join small_talk smt on smt.smt_id = utt.smt_id\n" + 
+ " 					join topic top on smt.top_id = top.top_id									\n" + 
+ " 					group by (smt.top_id)\n" + 
+ " 				) as res  on top.top_id = res.top_id				\n" + 
+ " 			left join (\n" + 
+ " 					select t.top_id, string_agg(concat('[',rbu.text,'¤',tre.code,']'),'|') as doublons\n" + 
+ " 					from response_button rbu\n" + 
+ " 					join topic tre on tre.top_id = rbu.top_id_response\n" + 
+ " 					join small_talk st on st.smt_id = rbu.smt_id \n" + 
+ " 					join topic t on t.top_id = st.top_id \n" + 
+ " 					group by (t.top_id)\n" + 
+ " 				) buttons on buttons.top_id = top.top_id\n" + 
+ " 			left join (\n" + 
+ "                     select t.top_id,\n" + 
+ "                     string_agg(concat('[',rbuurl.text,'¤',rbuurl.url,'¤', CASE WHEN rbuurl.new_tab THEN 'TRUE' ELSE 'FALSE' END,']'),'|') as doublons\n" + 
+ "                     from response_button_url rbuurl\n" + 
+ "                     join small_talk st on st.smt_id = rbuurl.smt_id\n" + 
+ "                     join topic t on t.top_id = st.top_id\n" + 
+ "                     group by (t.top_id)\n" + 
+ "                 ) buttons_url on buttons_url.top_id = top.top_id\n" + 
+ " 			where top.bot_id = #botId#\n" + 
+ " 			and tca.is_technical = false\n" + 
+ "             and tca.top_cat_id in (#tcaIds.rownum#)\n" + 
+ " 			group by top.code,\n" + 
+ " 				type_topic,\n" + 
+ " 				kind_topic,\n" + 
+ " 				top.title,\n" + 
+ " 				category,\n" + 
+ " 				top.description,\n" + 
+ " 				tag,\n" + 
+ " 				date_start,\n" + 
+ " 				date_end,\n" + 
+ " 				active,\n" + 
+ " 				sin.script,\n" + 
+ " 				training_phrases,\n" + 
+ " 				response,\n" + 
+ " 				buttons,\n" + 
+ " 				buttons_url,\n" + 
+ " 				is_end\n" + 
+ " 			order by top.code",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicFileExport")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicFileExport> getTopicFileExport(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "tcaIds", smartType = "STyId") final java.util.List<Long> tcaIds) {

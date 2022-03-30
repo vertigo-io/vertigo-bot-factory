@@ -157,7 +157,7 @@ public final class JiraSetting implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -176,7 +176,7 @@ public final class JiraSetting implements Entity {
 	 * Récupère la valeur de la propriété 'Node'.
 	 * @return Long nodId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Node", fkDefinition = "DtChatbotNode" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Node", fkDefinition = "DtChatbotNode", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getNodId() {
 		return (Long) nodIdAccessor.getId();
 	}

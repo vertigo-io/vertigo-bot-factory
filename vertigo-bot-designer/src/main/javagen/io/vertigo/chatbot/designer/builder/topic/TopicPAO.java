@@ -50,14 +50,14 @@ public final class TopicPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkCheckUnicityTopicCode",
-			request = "select exists(" + 
- "					select 1" + 
- "					from topic top " + 
- "					where top.bot_id = #botId# and top.code = #code#" + 
- "					<%if (topId != null) { %>" + 
- "						and top.top_id != #topId#" + 
- "					<% } %>" + 
- "				)",
+			request = "select exists(\n" + 
+ " 					select 1\n" + 
+ " 					from topic top \n" + 
+ " 					where top.bot_id = #botId# and top.code = #code#\n" + 
+ " 					<%if (topId != null) { %>\n" + 
+ " 						and top.top_id != #topId#\n" + 
+ " 					<% } %>\n" + 
+ " 				)",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyYesNo")
 	public Boolean checkUnicityTopicCode(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "code", smartType = "STyLabel") final String code, @io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Optional<Long> topId) {
@@ -80,40 +80,40 @@ public final class TopicPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetAllTopicsIhmFromBot",
-			request = "SELECT 	top.top_id," + 
- "					top.title," + 
- "					top.code," + 
- "					smt.smt_id," + 
- "					sin.sin_id," + 
- "					top.is_enabled," + 
- "					CASE #locale#" + 
- "						WHEN 'fr_FR' THEN tto.label_fr" + 
- "						ELSE tto.label" + 
- "					END as type," + 
- "					top.tto_cd," + 
- "					tpc.label as cat_label," + 
- "					string_agg(tpl.label, ',') as labels" + 
- "			from topic top " + 
- "			left join small_talk smt on smt.top_id = top.top_id" + 
- "			left join script_intention sin on sin.top_id = top.top_id" + 
- "			join type_topic tto on top.tto_cd = tto.tto_cd" + 
- "			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)" + 
- "			left join topic_topic_label ttl on (ttl.top_id = top.top_id)" + 
- "			left join topic_label tpl on (tpl.label_id = ttl.label_id)" + 
- "			where top.bot_id = #botId#" + 
- "			<% if (ktoCds != null){ %>" + 
- "				and top.kto_cd in (#ktoCds.rownum#)" + 
- "			<% } %>" + 
- "			group by top.top_id," + 
- "					top.title," + 
- "					top.code," + 
- "					smt.smt_id," + 
- "					sin.sin_id," + 
- "					top.is_enabled," + 
- "					tto.label," + 
- "					tto.label_fr," + 
- "					top.tto_cd," + 
- "					tpc.label",
+			request = "SELECT 	top.top_id,\n" + 
+ " 					top.title,\n" + 
+ " 					top.code,\n" + 
+ " 					smt.smt_id,\n" + 
+ " 					sin.sin_id,\n" + 
+ " 					top.is_enabled,\n" + 
+ " 					CASE #locale#\n" + 
+ " 						WHEN 'fr_FR' THEN tto.label_fr\n" + 
+ " 						ELSE tto.label\n" + 
+ " 					END as type,\n" + 
+ " 					top.tto_cd,\n" + 
+ " 					tpc.label as cat_label,\n" + 
+ " 					string_agg(tpl.label, ',') as labels\n" + 
+ " 			from topic top \n" + 
+ " 			left join small_talk smt on smt.top_id = top.top_id\n" + 
+ " 			left join script_intention sin on sin.top_id = top.top_id\n" + 
+ " 			join type_topic tto on top.tto_cd = tto.tto_cd\n" + 
+ " 			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)\n" + 
+ " 			left join topic_topic_label ttl on (ttl.top_id = top.top_id)\n" + 
+ " 			left join topic_label tpl on (tpl.label_id = ttl.label_id)\n" + 
+ " 			where top.bot_id = #botId#\n" + 
+ " 			<% if (ktoCds != null){ %>\n" + 
+ " 				and top.kto_cd in (#ktoCds.rownum#)\n" + 
+ " 			<% } %>\n" + 
+ " 			group by top.top_id,\n" + 
+ " 					top.title,\n" + 
+ " 					top.code,\n" + 
+ " 					smt.smt_id,\n" + 
+ " 					sin.sin_id,\n" + 
+ " 					top.is_enabled,\n" + 
+ " 					tto.label,\n" + 
+ " 					tto.label_fr,\n" + 
+ " 					top.tto_cd,\n" + 
+ " 					tpc.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicIhm> getAllTopicsIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCds", smartType = "STyCode") final java.util.List<String> ktoCds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "locale", smartType = "STyCode") final String locale) {
@@ -134,35 +134,35 @@ public final class TopicPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetTopicIhmById",
-			request = "SELECT 	top.top_id," + 
- "					top.title," + 
- "					top.code," + 
- "					smt.smt_id," + 
- "					sin.sin_id," + 
- "					top.is_enabled," + 
- "					tto.label as type," + 
- "					top.tto_cd," + 
- "					tpc.label as cat_label," + 
- "					string_agg(tpl.label, ',') as labels" + 
- "			from topic top " + 
- "			left join small_talk smt on smt.top_id = top.top_id" + 
- "			left join script_intention sin on sin.top_id = top.top_id" + 
- "			join type_topic tto on top.tto_cd = tto.tto_cd" + 
- "			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)" + 
- "			left join topic_topic_label ttl on (ttl.top_id = top.top_id)" + 
- "			left join topic_label tpl on (tpl.label_id = ttl.label_id)" + 
- "			where top.top_id = #topId#" + 
- "			group by top.top_id," + 
- "					top.title," + 
- "					top.code," + 
- "					smt.smt_id," + 
- "					sin.sin_id," + 
- "					top.is_enabled," + 
- "					tto.label ," + 
- "					top.tto_cd," + 
- "					tpc.label" + 
- "			" + 
- "			LIMIT 1",
+			request = "SELECT 	top.top_id,\n" + 
+ " 					top.title,\n" + 
+ " 					top.code,\n" + 
+ " 					smt.smt_id,\n" + 
+ " 					sin.sin_id,\n" + 
+ " 					top.is_enabled,\n" + 
+ " 					tto.label as type,\n" + 
+ " 					top.tto_cd,\n" + 
+ " 					tpc.label as cat_label,\n" + 
+ " 					string_agg(tpl.label, ',') as labels\n" + 
+ " 			from topic top \n" + 
+ " 			left join small_talk smt on smt.top_id = top.top_id\n" + 
+ " 			left join script_intention sin on sin.top_id = top.top_id\n" + 
+ " 			join type_topic tto on top.tto_cd = tto.tto_cd\n" + 
+ " 			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)\n" + 
+ " 			left join topic_topic_label ttl on (ttl.top_id = top.top_id)\n" + 
+ " 			left join topic_label tpl on (tpl.label_id = ttl.label_id)\n" + 
+ " 			where top.top_id = #topId#\n" + 
+ " 			group by top.top_id,\n" + 
+ " 					top.title,\n" + 
+ " 					top.code,\n" + 
+ " 					smt.smt_id,\n" + 
+ " 					sin.sin_id,\n" + 
+ " 					top.is_enabled,\n" + 
+ " 					tto.label ,\n" + 
+ " 					top.tto_cd,\n" + 
+ " 					tpc.label\n" + 
+ " 			\n" + 
+ " 			LIMIT 1",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm")
 	public io.vertigo.chatbot.commons.domain.topic.TopicIhm getTopicIhmById(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
@@ -180,9 +180,9 @@ public final class TopicPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllNluTrainingSentenceByBotId",
-			request = "delete from nlu_training_sentence nts" + 
- "			using topic top" + 
- "			where nts.top_id = top.top_id and top.bot_id = #botId#",
+			request = "delete from nlu_training_sentence nts\n" + 
+ " 			using topic top\n" + 
+ " 			where nts.top_id = top.top_id and top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllNluTrainingSentenceByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllNluTrainingSentenceByBotId")
@@ -197,8 +197,8 @@ public final class TopicPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllTopicsFromBot",
-			request = "delete from topic top " + 
- "			where top.bot_id = #botId#",
+			request = "delete from topic top \n" + 
+ " 			where top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllTopicsFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllTopicsFromBot")

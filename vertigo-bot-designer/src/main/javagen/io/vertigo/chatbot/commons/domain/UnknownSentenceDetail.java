@@ -138,7 +138,7 @@ public final class UnknownSentenceDetail implements Entity {
 	 * Récupère la valeur de la propriété 'Status'.
 	 * @return String status <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Status", fkDefinition = "DtUnknownSentenceStatus" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Status", fkDefinition = "DtUnknownSentenceStatus", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getStatus() {
 		return (String) statusAccessor.getId();
 	}
@@ -157,7 +157,7 @@ public final class UnknownSentenceDetail implements Entity {
 	 * Récupère la valeur de la propriété 'Bot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Bot", fkDefinition = "DtChatbot" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Bot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
