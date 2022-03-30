@@ -19,7 +19,7 @@
                     return action;
                 }
             }
-            
+
         </script>
     </head>
 
@@ -35,7 +35,7 @@
 
                     <vu:date-edit object="criteria" field="fromDate" label="#{history.date.from}" clearable @clear="vueData.criteria.fromDate=null" style="width:210px; margin-right: 10px"/>
                     <vu:date-edit object="criteria" field="toDate" label="#{history.date.to}" clearable @clear="vueData.criteria.toDate=null" style="width:210px; margin-right: 10px"/>
-                    
+
                     <vu:text-field-edit object="criteria" field="text" label="#{history.search}" clearable debounce="300" style="width:210px"/>
                     <q-icon name="search" class="q-field__marginal" ></q-icon>
 
@@ -66,7 +66,7 @@
         <section layout:fragment="javascript-footer" >
             <script type="text/javascript">
                 VUiPage.$data.componentStates.historyList.columns[0].sort = VertigoUi.methods.sortDatesAsString("DD/MM/YYYY HH:mm");
-                
+
                 VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
                 	VUiPage.httpPostAjax('_filterHistory', VUiPage.vueDataParams(['criteria']));
                 }, { deep: true });
