@@ -333,68 +333,27 @@
 					<q-btn icon="info" color="grey" @click="displayTrainingLog(props.row);" th:aria-label="#{model.traininglogs}" th:title="#{model.traininglogs}"></q-icon>
 				</vu:column>
 			</vu:table>
+			
 			<vu:popup-ajax action="_deleteSavedTraining" vModel="showDeleteSavedTrainingPopup" th:message="#{model.savedTraining.deletePopup.message}" th:confirm="#{action.delete}" dataName="savedTraId" ></vu:popup-ajax>
-			<vu:include-data object="criteria" field="text" modifiable="true" />
-			<vu:include-data object="criteria" field="fromDate" modifiable="true" />
-			<vu:include-data object="criteria" field="toDate" modifiable="true" />
-			<input type="hidden" name="vContext[criteria][toDate]" v-bind:value="vueData.criteria.toDate" />
+			
 			<vu:table list="savedTrainingList" th:title="#{model.savedTraining}" :dense="|$q.screen.lt.lg|" componentId="savedTrainingList"
 					  rowsPerPage="10" autoColClass >
 				<vu:slot name="top_right_slot">
-					<q-input
-							v-bind:value="decodeDate('criteria', 'fromDate', 'DD/MM/YYYY')"
-							dense clearable
-							class="q-pa-none"
-							style="width: 200px;background-color: white"
-							@change="function (event) { encodeDate('criteria','fromDate', event.target.value, 'DD/MM/YYYY') }"
-							th:label="#{savedTraining.date.from}"
-							:error="hasFieldsError('criteria', 'fromDate')"
-							:error-message="getErrorMessage('criteria', 'fromDate')"
-							@clear="vueData.criteria.fromDate=null;httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
-					>
-						<template v-slot:prepend>
-							<q-icon name="event" class="cursor-pointer">
-								<q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupFromDate">
-									<q-date
-											v-model="vueData.criteria.fromDate"
-											landscape
-											mask="DD/MM/YYYY"
-											@input="closeDialog();httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"></q-date>
-								</q-popup-proxy>
-							</q-icon>
-						</template>
-					</q-input>
-					<input type="hidden" name="vContext[criteria][fromDate]" v-bind:value="vueData.criteria.fromDate" />
-
-					<q-input
-							v-bind:value="decodeDate('criteria', 'toDate', 'DD/MM/YYYY')"
-							dense clearable
-							class="q-pa-none"
-							style="width: 200px;background-color: white"
-							@change="function (event) { encodeDate('criteria','toDate', event.target.value, 'DD/MM/YYYY') }"
-							th:label="#{savedTraining.date.to}"
-							:error="hasFieldsError('criteria', 'toDate')"
-							:error-message="getErrorMessage('criteria', 'toDate')"
-							@clear="vueData.criteria.toDate=null;httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
-					>
-						<template v-slot:prepend>
-							<q-icon name="event" class="cursor-pointer">
-								<q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupToDate">
-									<q-date
-											v-model="vueData.criteria.toDate"
-											landscape
-											mask="DD/MM/YYYY"
-											@input="closeDialog();httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"></q-date>
-								</q-popup-proxy>
-							</q-icon>
-						</template>
-					</q-input>
-					<q-input style="margin-left:10px" borderless dense debounce="300" v-model="vueData.criteria.text" th:placeholder="#{savedTraining.search}"
-							 @input="httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));">
-						<template v-slot:append>
-							<q-icon name="search" />
-						</template>
-					</q-input>
+					<vu:date-edit object="criteria" field="fromDate" label="#{savedTraining.date.from}"
+								  change="httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
+								  clearable @clear="vueData.criteria.fromDate=null; httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
+								  style="width:210px; margin-right: 10px"/>
+								  
+					<vu:date-edit object="criteria" field="toDate" label="#{savedTraining.date.to}"
+								  change="httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
+								  clearable @clear="vueData.criteria.toDate=null; httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
+								  style="width:210px; margin-right: 10px"/>
+								  
+					<vu:text-field-edit object="criteria" field="text" label="#{savedTraining.search}"
+										@input="httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
+										clearable debounce="300" style="width:210px"/>
+                    <q-icon name="search" class="q-field__marginal" ></q-icon>
+                    
 				</vu:slot>
 				<vu:slot name="actions_slot">
 					<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{model.savedTraining.delete}" th:title="#{model.savedTraining.delete}"
