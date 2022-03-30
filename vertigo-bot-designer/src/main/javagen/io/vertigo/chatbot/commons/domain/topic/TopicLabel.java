@@ -36,7 +36,7 @@ public final class TopicLabel implements Entity {
 
 	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
 			name = "AnnTopicLabel",
-			tableName = "TOPIC_TOPIC_LABEL",
+			tableName = "topicTopicLabel",
 			dtDefinitionA = "DtTopic",
 			dtDefinitionB = "DtTopicLabel",
 			navigabilityA = true,
@@ -96,7 +96,7 @@ public final class TopicLabel implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}

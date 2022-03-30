@@ -50,10 +50,10 @@ public final class ResponseButtonDAO extends DAO<ResponseButton, java.lang.Long>
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkExportSmallTalkRelativeButtons",
-			request = "select " + 
- "            	*" + 
- "			from response_button btn" + 
- "			where btn.smt_id in (#stIds.rownum#)",
+			request = "select \n" + 
+ "             	*\n" + 
+ " 			from response_button btn\n" + 
+ " 			where btn.smt_id in (#stIds.rownum#)",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtResponseButton")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.ResponseButton> exportSmallTalkRelativeButtons(@io.vertigo.datamodel.task.proxy.TaskInput(name = "stIds", smartType = "STyNumber") final java.util.List<Long> stIds) {

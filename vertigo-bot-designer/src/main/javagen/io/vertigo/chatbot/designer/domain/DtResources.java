@@ -99,6 +99,14 @@ public enum DtResources implements MessageKey {
 	 * To.
 	 */
 	fldHistoryCriteria$toDate,
+	/**
+	 * Action.
+	 */
+	fldHistoryCriteria$hacCd,
+	/**
+	 * Search.
+	 */
+	fldHistoryCriteria$text,
 
 	/***********************************************************
 	/** Synonym.

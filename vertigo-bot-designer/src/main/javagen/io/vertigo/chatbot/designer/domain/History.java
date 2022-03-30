@@ -158,7 +158,7 @@ public final class History implements Entity {
 	 * Récupère la valeur de la propriété 'Action'.
 	 * @return String hacCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Action", fkDefinition = "DtHistoryAction" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Action", fkDefinition = "DtHistoryAction", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getHacCd() {
 		return (String) hacCdAccessor.getId();
 	}
@@ -177,7 +177,7 @@ public final class History implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}

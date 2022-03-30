@@ -53,16 +53,16 @@ public final class TopicCategoryDAO extends DAO<TopicCategory, java.lang.Long> i
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetAllCategoriesByBotId",
-			request = "select tpc.*" + 
- "			from topic_category tpc" + 
- "			where tpc.bot_id = #botId#" + 
- "			<% if (isEnabled != null){ %>" + 
- "				and tpc.is_enabled = #isEnabled#" + 
- "			<% } %>" + 
- "			<% if (isTechnical != null){ %>" + 
- "				and tpc.is_technical = #isTechnical#" + 
- "			<% } %>" + 
- "			order by tpc.label",
+			request = "select tpc.*\n" + 
+ " 			from topic_category tpc\n" + 
+ " 			where tpc.bot_id = #botId#\n" + 
+ " 			<% if (isEnabled != null){ %>\n" + 
+ " 				and tpc.is_enabled = #isEnabled#\n" + 
+ " 			<% } %>\n" + 
+ " 			<% if (isTechnical != null){ %>\n" + 
+ " 				and tpc.is_technical = #isTechnical#\n" + 
+ " 			<% } %>\n" + 
+ " 			order by tpc.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicCategory")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicCategory> getAllCategoriesByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "isEnabled", smartType = "STyYesNo") final Optional<Boolean> isEnabled, @io.vertigo.datamodel.task.proxy.TaskInput(name = "isTechnical", smartType = "STyYesNo") final Optional<Boolean> isTechnical) {

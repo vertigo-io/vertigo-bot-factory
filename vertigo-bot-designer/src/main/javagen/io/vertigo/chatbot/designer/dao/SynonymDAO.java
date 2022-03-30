@@ -50,9 +50,9 @@ public final class SynonymDAO extends DAO<Synonym, java.lang.Long> implements St
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetSynonymByDictionaryEntity",
-			request = "SELECT 	syn.*" + 
- "			from synonym syn 						" + 
- "			where syn.dic_ent_id = #dicEntId#",
+			request = "SELECT 	syn.*\n" + 
+ " 			from synonym syn 						\n" + 
+ " 			where syn.dic_ent_id = #dicEntId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtSynonym")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.Synonym> getSynonymByDictionaryEntity(@io.vertigo.datamodel.task.proxy.TaskInput(name = "dicEntId", smartType = "STyId") final Long dicEntId) {

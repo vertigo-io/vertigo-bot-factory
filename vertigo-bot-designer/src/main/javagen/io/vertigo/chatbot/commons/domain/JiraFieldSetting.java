@@ -118,7 +118,7 @@ public final class JiraFieldSetting implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -137,7 +137,7 @@ public final class JiraFieldSetting implements Entity {
 	 * Récupère la valeur de la propriété 'Field'.
 	 * @return String jirFieldCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Field", fkDefinition = "DtJiraField" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Field", fkDefinition = "DtJiraField", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getJirFieldCd() {
 		return (String) jirFieldCdAccessor.getId();
 	}

@@ -116,7 +116,7 @@ public final class ResponseButton implements Entity {
 	 * Récupère la valeur de la propriété 'TopicResponse'.
 	 * @return Long topIdResponse <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "TopicResponse", fkDefinition = "DtTopic" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "TopicResponse", fkDefinition = "DtTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getTopIdResponse() {
 		return (Long) topIdResponseAccessor.getId();
 	}
