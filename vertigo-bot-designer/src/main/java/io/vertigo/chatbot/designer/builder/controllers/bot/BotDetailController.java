@@ -17,6 +17,22 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -51,20 +67,6 @@ import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot")
@@ -160,7 +162,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		viewContext.publishDto(viewModelKey, botTopic);
 	}
 
-	private static BotPredefinedTopic createNewBotTopic(String ktoCd) {
+	private static BotPredefinedTopic createNewBotTopic(final String ktoCd) {
 		final BotPredefinedTopic botTopic = new BotPredefinedTopic();
 		botTopic.setValue(UtterTextServices.initializeDefaultText(ktoCd));
 		if (ktoCd.equals(KindTopicEnum.IDLE.name())) {
@@ -172,8 +174,8 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	}
 
 	private void loadBotTopic(final Chatbot bot, final ViewContext viewContext, final String ktoCd,
-							  final ViewContextKey<BotPredefinedTopic> viewModelKey) {
-		Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd)
+			final ViewContextKey<BotPredefinedTopic> viewModelKey) {
+		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd)
 				.orElseGet(() -> chatbotServices.saveBotTopic(bot, ktoCd, createNewBotTopic(ktoCd)));
 
 		for (final ITopicService<? extends Entity> services : topicInterfaceServices) {
@@ -204,8 +206,8 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 			@ViewAttribute("failureTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic failureBotTopic,
 			@ViewAttribute("startTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic startBotTopic,
 			@ViewAttribute("endTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic endBotTopic,
-		 	@ViewAttribute("idleTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic idleBotTopic,
-		 	@ViewAttribute("chatbotCustomConfig")  @Validate(ChatbotCustomConfigValidator.class) final ChatbotCustomConfig chatbotCustomConfig) {
+			@ViewAttribute("idleTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic idleBotTopic,
+			@ViewAttribute("chatbotCustomConfig") @Validate(ChatbotCustomConfigValidator.class) final ChatbotCustomConfig chatbotCustomConfig) {
 
 		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, failureBotTopic, startBotTopic, endBotTopic, idleBotTopic, chatbotCustomConfig);
 
@@ -217,13 +219,6 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	public ViewContext doSaveNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("nodeEdit") final ChatbotNode nodeEdit, final UiMessageStack uiMessageStack) {
 
-		//if the node has modification, it is flagged as not uptodate
-		if (nodeEdit.getNodId() != null) {
-			final ChatbotNode oldNode = nodeServices.getNodeByNodeId(bot, nodeEdit.getNodId());
-			if (oldNode == null || !oldNode.getApiKey().equals(nodeEdit.getApiKey()) || !oldNode.getUrl().equals(nodeEdit.getUrl())) {
-				nodeEdit.setIsUpToDate(false);
-			}
-		}
 		nodeEdit.setBotId(bot.getBotId());
 		nodeServices.saveNode(nodeEdit);
 
