@@ -42,7 +42,7 @@ modules:
       - webservices.javalin:
           apiPrefix: /api
       - webservices.swagger:
-      - webservices.apiKey:
+      - webservices.auth.apiKey:
           apiKey: ${API_KEY}
           headerName: apiKey
   
