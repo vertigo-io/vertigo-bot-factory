@@ -1,5 +1,11 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.AuthorizationManager;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
@@ -17,11 +23,6 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
-
-import javax.inject.Inject;
-import java.util.Optional;
-
-import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 @Transactional
 @Secured("BotUser")
@@ -57,11 +58,18 @@ public class NodeServices implements Component {
 	@Secured("SuperAdm")
 	public void saveNode(final ChatbotNode node) {
 		if (node.getNodId() != null) {
-			// enforce previous values
 			final ChatbotNode previousValues = chatbotNodeDAO.get(node.getNodId());
 
+			// enforce previous values
 			node.setBotId(previousValues.getBotId());
 			node.setTraId(previousValues.getTraId());
+
+			//if the node has modification, it is flagged as not uptodate
+			if (!previousValues.getApiKey().equals(node.getApiKey()) || !previousValues.getUrl().equals(node.getUrl())) {
+				node.setIsUpToDate(false);
+			}
+		} else {
+			node.setIsUpToDate(false); // a new node is not uptodate
 		}
 
 		if (Boolean.TRUE.equals(node.getIsDev())) {
