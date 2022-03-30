@@ -48,15 +48,15 @@ public final class DictionaryEntityPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetDictionaryEntityWrapperByBotId",
-			request = "select" + 
- "				ent.dic_ent_id as dic_ent_id," + 
- "             	ent.label as dictionary_entity_label," + 
- "             	STRING_AGG (syn.label, #separator#) as synonyms_list" + 
- " 				from dictionary_entity ent" + 
- " 				left join synonym syn on syn.dic_ent_id = ent.dic_ent_id" + 
- " 			" + 
- " 				where ent.bot_id = #botId#" + 
- " 				group by ent.dic_ent_id",
+			request = "select\n" + 
+ " 				ent.dic_ent_id as dic_ent_id,\n" + 
+ "              	ent.label as dictionary_entity_label,\n" + 
+ "              	STRING_AGG (syn.label, #separator#) as synonyms_list\n" + 
+ "  				from dictionary_entity ent\n" + 
+ "  				left join synonym syn on syn.dic_ent_id = ent.dic_ent_id\n" + 
+ "  			\n" + 
+ "  				where ent.bot_id = #botId#\n" + 
+ "  				group by ent.dic_ent_id",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtDictionaryEntityWrapper")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper> getDictionaryEntityWrapperByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "separator", smartType = "STyLabel") final String separator) {
@@ -77,14 +77,14 @@ public final class DictionaryEntityPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetTuplesSynonym",
-			request = "SELECT word.label as word, syn.label as synonym_label" + 
- "				from dictionary_entity ent" + 
- "				join synonym word on word.dic_ent_id = ent.dic_ent_id" + 
- "				join synonym syn on syn.dic_ent_id = ent.dic_ent_id" + 
- "				where 1=1" + 
- "				and syn.syn_id != word.syn_id" + 
- "				and word.label in (#words.rownum#)" + 
- "				and ent.bot_id = #botId#",
+			request = "SELECT word.label as word, syn.label as synonym_label\n" + 
+ " 				from dictionary_entity ent\n" + 
+ " 				join synonym word on word.dic_ent_id = ent.dic_ent_id\n" + 
+ " 				join synonym syn on syn.dic_ent_id = ent.dic_ent_id\n" + 
+ " 				where 1=1\n" + 
+ " 				and syn.syn_id != word.syn_id\n" + 
+ " 				and word.label in (#words.rownum#)\n" + 
+ " 				and ent.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTupleSynonymIhm")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.TupleSynonymIhm> getTuplesSynonym(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "words", smartType = "STyLabel") final java.util.List<String> words) {

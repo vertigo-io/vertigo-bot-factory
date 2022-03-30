@@ -157,7 +157,7 @@ public final class SavedTraining implements Entity {
 	 * Récupère la valeur de la propriété 'Training'.
 	 * @return Long traId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Training", fkDefinition = "DtTraining" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Training", fkDefinition = "DtTraining", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getTraId() {
 		return (Long) traIdAccessor.getId();
 	}
@@ -176,7 +176,7 @@ public final class SavedTraining implements Entity {
 	 * Récupère la valeur de la propriété 'Bot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Bot", fkDefinition = "DtChatbot" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Bot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}

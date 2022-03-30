@@ -97,7 +97,7 @@ public final class Synonym implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -116,7 +116,7 @@ public final class Synonym implements Entity {
 	 * Récupère la valeur de la propriété 'DictionaryEntity'.
 	 * @return Long dicEntId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "DictionaryEntity", fkDefinition = "DtDictionaryEntity" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "DictionaryEntity", fkDefinition = "DtDictionaryEntity", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getDicEntId() {
 		return (Long) dicEntIdAccessor.getId();
 	}

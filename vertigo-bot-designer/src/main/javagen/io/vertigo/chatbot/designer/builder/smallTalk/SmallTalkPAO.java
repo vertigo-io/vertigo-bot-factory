@@ -47,15 +47,15 @@ public final class SmallTalkPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetSmallTalkIHMByBot",
-			request = "select smt.smt_id," + 
- "				   top.is_enabled," + 
- "				   top.top_id," + 
- "				   top.title," + 
- "				   tpc.label as cat_Label" + 
- "			from topic top" + 
- "			join small_talk smt on (smt.top_id = top.top_id)" + 
- "			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)" + 
- "			where top.bot_id = #botId#",
+			request = "select smt.smt_id,\n" + 
+ " 				   top.is_enabled,\n" + 
+ " 				   top.top_id,\n" + 
+ " 				   top.title,\n" + 
+ " 				   tpc.label as cat_Label\n" + 
+ " 			from topic top\n" + 
+ " 			join small_talk smt on (smt.top_id = top.top_id)\n" + 
+ " 			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)\n" + 
+ " 			where top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtSmallTalkIhm")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm> getSmallTalkIHMByBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
@@ -73,9 +73,9 @@ public final class SmallTalkPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllSmallTalkByBotId",
-			request = "delete from small_talk smt" + 
- "			using topic top" + 
- "			where top.top_id = smt.top_id and top.bot_id = #botId#",
+			request = "delete from small_talk smt\n" + 
+ " 			using topic top\n" + 
+ " 			where top.top_id = smt.top_id and top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllSmallTalkByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllSmallTalkByBotId")

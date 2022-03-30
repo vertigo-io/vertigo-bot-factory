@@ -47,9 +47,9 @@ public final class TopicCategoryPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkAddTopicWithCategory",
-			request = "update topic" + 
- "			set top_cat_id = #topCatId#" + 
- "			where top_id in (#topIds.rownum#)",
+			request = "update topic\n" + 
+ " 			set top_cat_id = #topCatId#\n" + 
+ " 			where top_id in (#topIds.rownum#)",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void addTopicWithCategory(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topCatId", smartType = "STyId") final Long topCatId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "topIds", smartType = "STyId") final java.util.List<Long> topIds) {
 		final Task task = createTaskBuilder("TkAddTopicWithCategory")
@@ -65,8 +65,8 @@ public final class TopicCategoryPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllCategoryByBotId",
-			request = "delete from topic_category" + 
- "			where bot_id = #botId#",
+			request = "delete from topic_category\n" + 
+ " 			where bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllCategoryByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllCategoryByBotId")
