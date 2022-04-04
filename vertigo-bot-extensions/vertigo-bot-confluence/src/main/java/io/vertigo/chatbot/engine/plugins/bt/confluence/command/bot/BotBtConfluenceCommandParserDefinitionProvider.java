@@ -24,7 +24,9 @@ public class BotBtConfluenceCommandParserDefinitionProvider implements SimpleDef
 		LOGGER.info("loading confluence plugin");
 		return List.of(
 				BtCommandParserDefinition.basicCommand("confluence:search",
-						(c, p) -> botConfluenceNodeProvider.confluenceSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getStringParam(2), c.getStringParam(3))));
+						(c, p) -> botConfluenceNodeProvider.confluenceSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getStringParam(2), c.getStringParam(3))),
+				BtCommandParserDefinition.basicCommand("confluence:search:auto",
+						(c, p) -> botConfluenceNodeProvider.confluenceAutomaticSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getRemainingStringParam(2))));
 	}
 
 }
