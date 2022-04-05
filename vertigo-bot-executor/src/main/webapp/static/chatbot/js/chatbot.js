@@ -406,9 +406,6 @@ const chatbot = new Vue({
                 chatbot.rating = false;
                 chatbot.clearSessionStorage();
                 chatbot.initBot();
-            },
-            close() {
-                parent.postMessage('Chatbot.close', '*');
             }
         }
     })
