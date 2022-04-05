@@ -340,17 +340,14 @@
 					  rowsPerPage="10" autoColClass >
 				<vu:slot name="top_right_slot">
 					<vu:date-edit object="criteria" field="fromDate" label="#{savedTraining.date.from}"
-								  change="httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
-								  clearable @clear="vueData.criteria.fromDate=null; httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
+								  clearable @clear="vueData.criteria.fromDate=null"
 								  style="width:210px; margin-right: 10px"/>
 								  
 					<vu:date-edit object="criteria" field="toDate" label="#{savedTraining.date.to}"
-								  change="httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
-								  clearable @clear="vueData.criteria.toDate=null; httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
+								  clearable @clear="vueData.criteria.toDate=null"
 								  style="width:210px; margin-right: 10px"/>
 								  
 					<vu:text-field-edit object="criteria" field="text" label="#{savedTraining.search}"
-										@input="httpPostAjax('_filterSavedTraining', vueDataParams(['criteria']));"
 										clearable debounce="300" style="width:210px"/>
                     <q-icon name="search" class="q-field__marginal" ></q-icon>
                     
@@ -519,7 +516,11 @@
 			<script>
 				if (VertigoUi.vueData.trainerState.trainingInProgress) {
 					postTrain();
-				}				
+				}
+				
+                VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
+                	VUiPage.httpPostAjax('_filterSavedTraining', VUiPage.vueDataParams(['criteria']));;
+                }, { deep: true });
 			</script>
 		</section>
 	</body>

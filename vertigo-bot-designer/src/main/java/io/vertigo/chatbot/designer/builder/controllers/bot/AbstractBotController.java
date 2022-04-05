@@ -1,5 +1,12 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import io.vertigo.chatbot.authorization.SecuredEntities;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
@@ -14,11 +21,6 @@ import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import javax.inject.Inject;
-import java.util.Optional;
 
 public abstract class AbstractBotController extends AbstractDesignerController {
 
@@ -40,7 +42,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 		viewContext.publishDto(botKey, chatbot);
 		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
 		addKeyConceptSecurityToContext(chatbot, SecuredEntities.ChatbotAuthorizations.values());
-		this.nodeMessageDisplay(chatbot, uiMessageStack);
+		nodeMessageDisplay(chatbot, uiMessageStack);
 		return chatbot;
 	}
 
@@ -70,6 +72,10 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 				uiMessageStack.info(MessageText.of(BotMultilingualResources.NODE_NOT_UP_TO_DATE).getDisplay());
 			}
 		}
+	}
+
+	protected Long getBotId(final ViewContext viewContext) {
+		return viewContext.getUiObject(botKey).getLong("botId");
 	}
 
 }

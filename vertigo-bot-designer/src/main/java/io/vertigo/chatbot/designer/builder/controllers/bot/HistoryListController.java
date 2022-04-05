@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import io.vertigo.account.authorization.annotations.Secured;
@@ -20,6 +21,7 @@ import io.vertigo.chatbot.designer.domain.HistoryCriteria;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
+import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
@@ -48,5 +50,11 @@ public class HistoryListController extends AbstractBotListEntityController<Histo
 		viewContext.publishDtList(historyActionsKey, historyActionServices.findAll());
 		listLimitReached(viewContext, uiMessageStack);
 		super.initBreadCrums(viewContext, History.class);
+	}
+
+	@PostMapping("/_filterHistory")
+	public ViewContext filterHistory(final ViewContext viewContext, @ViewAttribute("criteria") final HistoryCriteria criteria) {
+		viewContext.publishDtList(historyListKey, historyServices.findByCriteria(getBotId(viewContext), criteria));
+		return viewContext;
 	}
 }
