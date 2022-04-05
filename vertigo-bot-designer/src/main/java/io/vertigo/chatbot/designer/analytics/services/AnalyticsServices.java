@@ -17,14 +17,6 @@
  */
 package io.vertigo.chatbot.designer.analytics.services;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
@@ -37,6 +29,13 @@ import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.structure.model.DtList;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 public class AnalyticsServices implements Component {
@@ -53,7 +52,10 @@ public class AnalyticsServices implements Component {
 
 	public TimedDatas getRequestStats(final StatCriteria criteria) {
 		return timeSerieServices.getRequestStats(criteria);
+	}
 
+	public TimedDatas getUserInteractions(final StatCriteria criteria) {
+		return timeSerieServices.getUserInteractions(criteria);
 	}
 
 	/**
