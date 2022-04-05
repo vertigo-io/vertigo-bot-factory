@@ -95,9 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (event.data === 'Chatbot.minimize') {
               Chatbot.minimize();
             }
-            else if (event.data === 'Chatbot.close') {
-              Chatbot.minimize();
-            }
             else if (event.data.conversationExist !== undefined) {
               if (event.data.conversationExist) {
                 Chatbot.show();
@@ -171,12 +168,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         hideDrawer() {
           sessionStorage.showChatbot = false;
-        },
-
-        close() {
-          sessionStorage.showChatbot = false;
-          document.body.removeChild(_iframe);
-          _iframe = null;
         },
 
         clearSessionStorage() {
