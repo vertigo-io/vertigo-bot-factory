@@ -53,8 +53,9 @@ public class HistoryListController extends AbstractBotListEntityController<Histo
 	}
 
 	@PostMapping("/_filterHistory")
-	public ViewContext filterHistory(final ViewContext viewContext, @ViewAttribute("criteria") final HistoryCriteria criteria) {
+	public ViewContext filterHistory(final ViewContext viewContext, final UiMessageStack uiMessageStack, @ViewAttribute("criteria") final HistoryCriteria criteria) {
 		viewContext.publishDtList(historyListKey, historyServices.findByCriteria(getBotId(viewContext), criteria));
+		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
 }
