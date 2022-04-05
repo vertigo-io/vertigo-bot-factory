@@ -135,9 +135,11 @@ public class AnalyticsController extends AbstractDesignerController {
 			Chatbot chatbot = chatbotServices.getChatbotById(botId.get());
 			viewContext.publishDtList(nodesKey, nodeServices.getNodesByBot(chatbot));
 			statCriteria.setBotId(botId.get());
+			viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getAllTypeExportAnalytics());
 			viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId.get()));
 		} else {
 			viewContext.publishDtList(nodesKey, new DtList<ChatbotNode>(ChatbotNode.class));
+			viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getNonBotRelatedTypeExportAnalytics());
 			viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
 		}
 
@@ -149,7 +151,6 @@ public class AnalyticsController extends AbstractDesignerController {
 		viewContext.publishDtList(timeOptionsList, SelectionOptionFields.label, enumIHMManager.getSelectionOptions(TimeEnum.values()));
 		viewContext.publishDto(criteriaKey, statCriteria);
 
-		viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getAllTypeExportAnalytics());
 		viewContext.publishDto(selectTypeExportAnalyticsKey, new TypeExportAnalytics());
 
 		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
@@ -183,12 +184,14 @@ public class AnalyticsController extends AbstractDesignerController {
 			viewContext.publishRef(ratingStatsKey, analyticsServices.getRatingStats(criteria));
 			viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId()));
 			viewContext.publishDtList(nodesKey, nodeServices.getNodesByBot(bot));
+			viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getAllTypeExportAnalytics());
 		} else {
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.topId, new DtList<TopIntent>(TopIntent.class));
 			viewContext.publishDtList(topicsKey, new DtList<Topic>(Topic.class));
 			viewContext.publishRef(ratingStatsKey, new TimedDatas(new ArrayList<>(), new ArrayList<>()));
 			viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
+			viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getNonBotRelatedTypeExportAnalytics());
 		}
 
 		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));

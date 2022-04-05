@@ -1139,6 +1139,7 @@ create table TYPE_EXPORT_ANALYTICS
     TEA_CD      	 VARCHAR(100)	not null,
     LABEL       	 VARCHAR(100)	not null,
     LABEL_FR    	 VARCHAR(100)	not null,
+    BOT_RELATED 	 bool        	not null,
     constraint PK_TYPE_EXPORT_ANALYTICS primary key (TEA_CD)
 );
 
@@ -1150,6 +1151,9 @@ comment on column TYPE_EXPORT_ANALYTICS.LABEL is
 
 comment on column TYPE_EXPORT_ANALYTICS.LABEL_FR is
 'Titre';
+
+comment on column TYPE_EXPORT_ANALYTICS.BOT_RELATED is
+'Bot related';
 
 -- ============================================================
 --   Table : TYPE_TOPIC                                        
