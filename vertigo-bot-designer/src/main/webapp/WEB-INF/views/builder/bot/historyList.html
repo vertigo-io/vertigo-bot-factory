@@ -11,53 +11,6 @@
         <script th:src="@{/static/utils/moment.min.js}"></script>
         <script th:inline="javascript">
 
-            function normalizeString(str) {
-                if (str)
-                    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
-                else
-                    return '';
-            }
-
-            
-            function filterHistory(historyList) {
-                let historyListFiltered = historyList;
-                let criteria = VertigoUi.vueData.criteria;
-
-                if (criteria.hacCd !== null)  {
-                    historyListFiltered = historyListFiltered.slice().reverse().filter(history =>
-                        history.hacCd === criteria.hacCd
-                    );
-                }
-
-                if (criteria.fromDate !== null && criteria.fromDate !== '') {
-                    let dateFrom = moment(criteria.fromDate, 'DD/MM/YYYY');
-                    historyListFiltered = historyListFiltered.slice().reverse().filter(history => {
-                        let historyDate = moment(history.date.substr(0,10), 'DD/MM/YYYY');
-                        return historyDate.isSameOrAfter(dateFrom);
-                    });
-                }
-
-                if (criteria.toDate !== null && criteria.toDate !== '') {
-                    let toDate = moment(criteria.toDate, 'DD/MM/YYYY');
-                    historyListFiltered = historyListFiltered.slice().reverse().filter(history => {
-                        let historyDate = moment(history.date.substr(0,10), 'DD/MM/YYYY');
-                        return historyDate.isSameOrBefore(toDate);
-                    });
-                }
-
-                let searchNormarlized = normalizeString(criteria.text);
-                if (searchNormarlized !==''){
-                    historyListFiltered = historyListFiltered
-                        // copy and reverse
-                        .slice().reverse()
-                        // search
-                        .filter(history => normalizeString(history.className).includes(searchNormarlized) ||
-                            normalizeString(history.userName).includes(searchNormarlized) || normalizeString(history.message).includes(searchNormarlized))
-                }
-                
-                return historyListFiltered;
-            }
-
             function getHistoryActionLabel(action) {
                 let historyAction = VertigoUi.vueData.historyActions.find(currentAction => currentAction.hacCd === action);
                 if (historyAction !== undefined) {
@@ -66,7 +19,7 @@
                     return action;
                 }
             }
-
+            
         </script>
     </head>
 
@@ -74,7 +27,7 @@
 
         <section layout:fragment="content">
 
-            <vu:table th:title="#{history.table.title}" list="historyList" transformFunction="filterHistory" componentId="historyList" sortBy="date" descending :binary-state-sort="true">
+            <vu:table th:title="#{history.table.title}" list="historyList" componentId="historyList" sortBy="date" descending :binary-state-sort="true">
                 <vu:slot name="top_right_slot">
                     <vu:select-edit object="criteria" field="hacCd"
                     				list="historyActions" labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"
@@ -113,6 +66,10 @@
         <section layout:fragment="javascript-footer" >
             <script type="text/javascript">
                 VUiPage.$data.componentStates.historyList.columns[0].sort = VertigoUi.methods.sortDatesAsString("DD/MM/YYYY HH:mm");
+                
+                VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
+                	VUiPage.httpPostAjax('_filterHistory', VUiPage.vueDataParams(['criteria']));
+                }, { deep: true });
             </script>
         </section>
     </body>

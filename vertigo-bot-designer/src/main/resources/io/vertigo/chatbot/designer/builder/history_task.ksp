@@ -1,0 +1,31 @@
+package io.vertigo.chatbot.designer.builder.history
+
+create Task TkSearchHistory {  
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select *
+ 			from history hist
+ 			where hist.bot_id = #botId#
+ 			<% if (criteria.getHacCd() != null) { %>
+ 				and hist.hac_cd = #criteria.hacCd#
+ 			<% } %>
+ 			<% if (criteria.getFromDate() != null) { %>
+ 				and hist.date >= #criteria.fromDate#
+ 			<% } %>
+ 			<% if (criteria.getToDate() != null) { %>
+ 				and hist.date <= #criteria.toDate#
+ 			<% } %>
+ 			<% if (criteria.getText() != null) { %>
+ 			and (
+ 				translate(lower(hist.message),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') like '%' || translate(lower(#criteria.text#),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') || '%'
+ 				or
+ 				translate(lower(hist.class_name),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') like '%' || translate(lower(#criteria.text#),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') || '%'
+ 				or
+ 				translate(lower(hist.user_name),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') like '%' || translate(lower(#criteria.text#),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') || '%'
+			)
+ 			<% } %>
+ 			"
+	in botId				{domain : DoId,							cardinality:"1"} 
+	in criteria				{domain : DoDtHistoryCriteria,			cardinality:"1"} 
+	out history 			{domain : DoDtHistory					cardinality:"*"}
+}

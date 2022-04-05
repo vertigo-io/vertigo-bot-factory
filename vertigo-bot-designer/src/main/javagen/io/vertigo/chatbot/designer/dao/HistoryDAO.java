@@ -3,6 +3,10 @@ package io.vertigo.chatbot.designer.dao;
 import javax.inject.Inject;
 
 import io.vertigo.core.lang.Generated;
+import io.vertigo.core.node.Node;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
@@ -26,6 +30,58 @@ public final class HistoryDAO extends DAO<History, java.lang.Long> implements St
 	@Inject
 	public HistoryDAO(final EntityStoreManager entityStoreManager, final TaskManager taskManager, final SmartTypeManager smartTypeManager) {
 		super(History.class, entityStoreManager, taskManager, smartTypeManager);
+	}
+
+
+	/**
+	 * Creates a taskBuilder.
+	 * @param name  the name of the task
+	 * @return the builder 
+	 */
+	private static TaskBuilder createTaskBuilder(final String name) {
+		final TaskDefinition taskDefinition = Node.getNode().getDefinitionSpace().resolve(name, TaskDefinition.class);
+		return Task.builder(taskDefinition);
+	}
+
+	/**
+	 * Execute la tache TkSearchHistory.
+	 * @param botId Long
+	 * @param criteria HistoryCriteria
+	 * @return DtList de History history
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkSearchHistory",
+			request = "select *\n" + 
+ "  			from history hist\n" + 
+ "  			where hist.bot_id = #botId#\n" + 
+ "  			<% if (criteria.getHacCd() != null) { %>\n" + 
+ "  				and hist.hac_cd = #criteria.hacCd#\n" + 
+ "  			<% } %>\n" + 
+ "  			<% if (criteria.getFromDate() != null) { %>\n" + 
+ "  				and hist.date >= #criteria.fromDate#\n" + 
+ "  			<% } %>\n" + 
+ "  			<% if (criteria.getToDate() != null) { %>\n" + 
+ "  				and hist.date <= #criteria.toDate#\n" + 
+ "  			<% } %>\n" + 
+ "  			<% if (criteria.getText() != null) { %>\n" + 
+ "  			and (\n" + 
+ "  				translate(lower(hist.message),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') like '%' || translate(lower(#criteria.text#),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') || '%'\n" + 
+ "  				or\n" + 
+ "  				translate(lower(hist.class_name),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') like '%' || translate(lower(#criteria.text#),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') || '%'\n" + 
+ "  				or\n" + 
+ "  				translate(lower(hist.user_name),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') like '%' || translate(lower(#criteria.text#),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') || '%'\n" + 
+ " 			)\n" + 
+ "  			<% } %>",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtHistory")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.History> searchHistory(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "criteria", smartType = "STyDtHistoryCriteria") final io.vertigo.chatbot.designer.domain.HistoryCriteria criteria) {
+		final Task task = createTaskBuilder("TkSearchHistory")
+				.addValue("botId", botId)
+				.addValue("criteria", criteria)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
 	}
 
 }
