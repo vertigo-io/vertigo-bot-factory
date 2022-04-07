@@ -21,7 +21,6 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsExportServices;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
@@ -44,12 +43,10 @@ import io.vertigo.chatbot.designer.domain.commons.SelectionOption;
 import io.vertigo.chatbot.domain.DtDefinitions.SelectionOptionFields;
 import io.vertigo.chatbot.domain.DtDefinitions.SentenseDetailFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopIntentFields;
-import io.vertigo.chatbot.domain.DtDefinitions.TopicIhmFields;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -64,7 +61,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
@@ -86,7 +82,6 @@ public class AnalyticsController extends AbstractDesignerController {
 	private static final ViewContextKey<TypeExportAnalytics> selectTypeExportAnalyticsKey = ViewContextKey.of("selectTypeExportAnalytics");
 
 	private static final ViewContextKey<Topic> topicsKey = ViewContextKey.of("topics");
-	private static final ViewContextKey<TopicIhm> topicsNotUsedKey = ViewContextKey.of("topicsNotUsed");
 
 	private static final ViewContextKey<Chatbot> botsKey = ViewContextKey.of("bots");
 	private static final ViewContextKey<ChatbotNode> nodesKey = ViewContextKey.of("nodes");
@@ -175,11 +170,10 @@ public class AnalyticsController extends AbstractDesignerController {
 		viewContext.publishRef(sessionStatsKey, analyticsServices.getSessionsStats(criteria));
 		viewContext.publishRef(requestsStatsKey, analyticsServices.getRequestStats(criteria));
 		viewContext.publishRef(userInteractionsStatsKey, analyticsServices.getUserInteractions(criteria));
-		viewContext.publishDtList(topicsNotUsedKey, TopicIhmFields.code, refreshTopicsList(criteria));
 		if (criteria.getBotId() != null) {
 			final Chatbot bot = chatbotServices.getChatbotById(criteria.getBotId());
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.topId, analyticsServices.getSentenseDetails(criteria));
-			viewContext.publishDtList(topIntentsKey, TopIntentFields.topId, analyticsServices.getTopIntents(criteria));
+			viewContext.publishDtList(topIntentsKey, TopIntentFields.topId, analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria));
 			viewContext.publishDtList(topicsKey, topicServices.getAllTopicByBot(bot));
 			viewContext.publishRef(ratingStatsKey, analyticsServices.getRatingStats(criteria));
 			viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId()));
@@ -195,18 +189,6 @@ public class AnalyticsController extends AbstractDesignerController {
 		}
 
 		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
-	}
-
-	private DtList<TopicIhm> refreshTopicsList(final StatCriteria criteria) {
-		if (criteria.getBotId() != null) {
-			final List<String> resultTimedData = analyticsServices.getDistinctCodeByTimeDatas(criteria);
-			DtList<TopicIhm> topics = topicServices.getAllNonTechnicalTopicIhmByBot(chatbotServices.getChatbotById(criteria.getBotId()), localeManager.getCurrentLocale().toString());
-			topics = topics.stream()
-					.filter(x -> !resultTimedData.contains(x.getCode()))
-					.collect(VCollectors.toDtList(TopicIhm.class));
-			return topics;
-		}
-		return new DtList<>(TopicIhm.class);
 	}
 
 	@PostMapping("/_intentDetails")

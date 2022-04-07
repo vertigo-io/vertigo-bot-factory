@@ -185,6 +185,13 @@
 			chart: {
 				type: 'pie',
 			},
+			colors : [
+				'#FF2200',
+				'#ff6a00',
+				'#ffd801',
+				'#77a819',
+				'#09a802'
+			],
 			labels: [
 				/*[[#{analytics.message.oneStar}]]*/ '',
 				/*[[#{analytics.message.twoStar}]]*/ '',
@@ -197,7 +204,12 @@
 			return serieToApexPie(["rating1:count", "rating2:count", "rating3:count", "rating4:count", "rating5:count"], VertigoUi.vueData.ratingStats, {fill: 0})
 		}
 	};
-	
+
+	function percentageOfRating() {
+		return Math.round((VUiExtensions.dataX.apexCharts.rating.series().reduce((a,b) => a + b, 0 ) /
+				serieToApexPie(["isSessionStart:sum"], VertigoUi.vueData.sessionStats, {fill: 0})[0]) * 100);
+	}
+
 	function serieToApex(serieName, dataIn, options) {
 		let ret = [];
 		dataIn.timedDataSeries.forEach(e => {
@@ -338,17 +350,58 @@
 
 			<template v-if="vueData.criteria.botId">
 			
-			<vu:include-data-primitive key="ratingStats" />
-			<vu:include-data object="chatbotCustomConfig" field="rating" />
-				
-				<div class="col-12" v-if="vueData.chatbotCustomConfig.rating">
-					<q-card>
-						<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.rating}"></q-card-section>
-							<apexchart width="100%" height="250"
-								:options="dataX.apexCharts.rating.options"
-								:series="dataX.apexCharts.rating.series()"></apexchart>
-					</q-card>
-				</div>
+				<vu:include-data-primitive key="ratingStats" />
+				<vu:include-data object="chatbotCustomConfig" field="rating" />
+
+					<div class="col-xl-4 col-md-6 col-xs-12" v-if="vueData.chatbotCustomConfig.rating">
+						<q-card>
+							<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.rating}"></q-card-section>
+								<apexchart width="100%" height="250"
+									:options="dataX.apexCharts.rating.options"
+									:series="dataX.apexCharts.rating.series()"></apexchart>
+							<div style="margin: 20px; display: flex; justify-content: flex-end">
+								<div>
+									<div style="font-weight: bold; font-size: x-large">
+										<span v-html="percentageOfRating()"></span> <span>%</span>
+									</div>
+									<div>
+										<span>[[#{analytics.rating.percentage}]]</span>
+									</div>
+								</div>
+
+							</div>
+						</q-card>
+					</div>
+					<div :class="vueData.chatbotCustomConfig.rating ? 'col-xl-8 col-md-6 col-xs-12' : 'col-xl-12 col-md-6 col-xs-12'">
+						<vu:include-data object="topics" field="topId" />
+						<vu:include-data object="topics" field="title" />
+
+						<vu:include-data object="intentDetails" field="'*'" />
+						<vu:include-data object="topIntents" field="code"/>
+						<vu:include-data object="topIntents" field="topId"/>
+
+						<vu:table componentId="intentList"  list="topIntents"  rowsPerPage="5" sortBy="count" descending>
+
+							<vu:column field="intentRasa" th:label="#{analytics.intent.intent}"/>
+							<vu:column field="count"/>
+							<vu:column field="intentRasa" th:label="#{analytics.intent.detail}" >
+								<q-btn v-if="props.row.count > 0" class="fab-block" round color="primary" icon="search" th:aria-label="#{analytics.message}"  th:title="#{analytics.message}"
+									   @click="displayIntentDetail(props.row)"></q-btn>
+							</vu:column>
+						</vu:table>
+
+						<q-dialog ref="intentDetailsDialog">
+							<q-card style="width: 600px; height: 500px;">
+								<q-card-section>
+									<vu:table componentId="intentDetailList"
+											  list="intentDetails" title="|#{analytics.messages} '{{dataX.popinDetailLabel}}'|" rowsPerPage="10" autoColClass>
+										<vu:column field="date"/>
+										<vu:column field="text"/>
+									</vu:table>
+								</q-card-section>
+							</q-card>
+						</q-dialog>
+					</div>
 				
 				<div class="col-12"> 
 					<vu:table componentId="messageList" list="unknownSentenses" th:title="#{analytics.message.understanding}" rowsPerPage="10" autoColClass >
@@ -357,49 +410,7 @@
 						<vu:column field="modelName"/>
 					</vu:table>
 				</div>
-				
-				<vu:include-data object="topics" field="topId" />
-				<vu:include-data object="topics" field="title" />
-				
-				<vu:include-data object="intentDetails" field="'*'" />
-				<vu:include-data object="topIntents" field="code"/>
-				<vu:include-data object="topIntents" field="topId"/>
 
-				<div class="col-12"> 
-					<vu:table componentId="intentList"  list="topIntents" th:title="#{analytics.intents.usage}"  rowsPerPage="10" sortBy="count" descending>
-							  
-						<vu:column field="intentRasa" th:label="#{analytics.intent.intent}"/>
-						<vu:column field="count"/>
-						<vu:column field="intentRasa" th:label="#{analytics.intent.detail}" >
-							<q-btn class="fab-block" round color="primary" icon="search" th:aria-label="#{analytics.message}"  th:title="#{analytics.message}"
-							 	@click="displayIntentDetail(props.row)"></q-btn>
-						</vu:column>
-					</vu:table>
-					
-					<q-dialog ref="intentDetailsDialog">
-						<q-card style="width: 600px; height: 500px;">
-							<q-card-section>
-								<vu:table componentId="intentDetailList"
-										  list="intentDetails" title="|#{analytics.messages} '{{dataX.popinDetailLabel}}'|" rowsPerPage="10" autoColClass>
-									<vu:column field="date"/>
-									<vu:column field="text"/>
-								</vu:table>
-							</q-card-section>
-						</q-card>
-					</q-dialog>
-
-										
-				</div>
-				
-				<div class="col-12">
-					<vu:include-data object="topicsNotUsed" field="'*'" />
-					
-					<vu:table componentId="notUsedTopics"
-							  list="topicsNotUsed" th:title="#{analytics.message.notUsed}"  rowsPerPage="10" autoColClass>							  
-							<vu:column field="title"/>
-						</vu:column>
-					</vu:table>
-				</div>
 			</template>
 		</div>
 		
