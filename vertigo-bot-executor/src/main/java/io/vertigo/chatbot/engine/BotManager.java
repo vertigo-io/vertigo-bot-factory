@@ -1,9 +1,12 @@
 package io.vertigo.chatbot.engine;
 
-import java.util.UUID;
-
+import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.core.node.component.Manager;
+import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datastore.filestore.model.VFile;
+
+import java.util.UUID;
 
 public interface BotManager extends Manager {
 
@@ -45,5 +48,13 @@ public interface BotManager extends Manager {
 	 * @param newTopics new topics to replace old ones
 	 */
 	void updateConfig(Iterable<TopicDefinition> newTopics, StringBuilder logs);
+
+	/**
+	 * Update bot attachments.
+	 * @param attachmentExports new attachments
+	 */
+	void updateAttachments(DtList<AttachmentExport> attachmentExports);
+
+	VFile getAttachment(String label);
 
 }

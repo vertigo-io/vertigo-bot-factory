@@ -257,9 +257,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Jira fields setting'. */
 		jiraFieldSetting,
 		/** Propriété 'map Context'. */
-		mapContext,
-		/** Propriété 'Attachments'. */
-		attachments	}
+		mapContext	}
 
 	/**
 	 * Enumération des champs de BotPredefinedTopic.

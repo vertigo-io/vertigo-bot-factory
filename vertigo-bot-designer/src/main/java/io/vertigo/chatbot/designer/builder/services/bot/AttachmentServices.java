@@ -12,25 +12,23 @@ import io.vertigo.chatbot.designer.builder.services.AntivirusServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.core.param.Param;
+import io.vertigo.core.param.ParamManager;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.io.TikaInputStream;
-import org.apache.tika.metadata.Metadata;
 import xyz.capybara.clamav.commands.scan.result.ScanResult;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Map;
@@ -51,25 +49,22 @@ public class AttachmentServices implements Component, Activeable {
 	@Inject
 	private AntivirusServices antivirusServices;
 
-	private TikaConfig tikaConfig;
+	@Inject
+	private ParamManager paramManager;
 
-	private Metadata metadata;
+	private String[] extensionsWhiteList;
+
+	@Override
+	public void start() {
+		extensionsWhiteList = paramManager.getOptionalParam("EXTENSIONS_WHITELIST")
+				.map(Param::getValueAsString).orElse("png,jpg,jpeg,pdf").split(",");
+	}
 
 	public Attachment findById(final long attachmentId) {
 		return attachmentDAO.get(attachmentId);
 	}
 
-	@Override
-	public void start() {
-		try {
-			tikaConfig = new TikaConfig();
-		} catch (TikaException | IOException exception) {
-			throw new VSystemException("Failed to instantiate tika config", exception);
-		}
-		metadata = new Metadata();
-	}
-
-	public Attachment save(Attachment attachment, Optional<FileInfoURI> optFileInfoURI, Long maxSize, Long attachmentTotalSize) {
+	public Attachment save(final Attachment attachment, final Optional<FileInfoURI> optFileInfoURI, final Long maxSize, final Long attachmentTotalSize) {
 
 		if (attachment.getAttId() == null && optFileInfoURI.isEmpty()) {
 			throw new VUserException(AttachmentMultilingualResources.MUST_CONTAINS_A_FILE);
@@ -79,57 +74,47 @@ public class AttachmentServices implements Component, Activeable {
 			Long oldAttachmentFileId = attachment.getAttFiId();
 			Long oldAttachmentSize = 0L;
 			if (attachment.getAttId() != null) {
-				Attachment oldAttachment = findById(attachment.getAttId());
+				final Attachment oldAttachment = findById(attachment.getAttId());
 				oldAttachmentSize = oldAttachment.getLength();
 				oldAttachmentFileId = oldAttachment.getAttFiId();
 			}
-			VFile newAttachmentFile = fileServices.getFileTmp(optFileInfoURI.get());
+			final VFile newAttachmentFile = fileServices.getFileTmp(optFileInfoURI.get());
+			final String newAttachmentFileMimeType = newAttachmentFile.getMimeType();
+			if (Arrays.stream(extensionsWhiteList).noneMatch(newAttachmentFileMimeType::contains)) {
+				throw new VUserException(AttachmentMultilingualResources.EXTENSION_NOT_ALLOWED, newAttachmentFileMimeType,
+						String.join(",", extensionsWhiteList));
+			}
 
 			try {
-				ScanResult result = antivirusServices.checkForViruses(newAttachmentFile.createInputStream());
+				final ScanResult result = antivirusServices.checkForViruses(newAttachmentFile.createInputStream());
 				if (result instanceof ScanResult.VirusFound) {
-					Map<String, Collection<String>> virusesMap = ((ScanResult.VirusFound) result).getFoundViruses();
-					String viruses = virusesMap.values().stream()
+					final Map<String, Collection<String>> virusesMap = ((ScanResult.VirusFound) result).getFoundViruses();
+					final String viruses = virusesMap.values().stream()
 							.flatMap(Collection::stream).collect(Collectors.joining(","));
 					throw new VUserException(AttachmentMultilingualResources.VIRUSES_FOUND, viruses);
 				}
-				String mimeType = tikaConfig.getDetector()
-						.detect(TikaInputStream.get(newAttachmentFile.createInputStream()), metadata).toString();
-				if (!mimeType.equals(newAttachmentFile.getMimeType())) {
-					throw new VUserException(AttachmentMultilingualResources.MIME_TYPE_DIDNT_MATCH, newAttachmentFile.getFileName());
-				}
-			} catch (IOException ioException) {
+			} catch (final IOException ioException) {
 				throw new VUserException(AttachmentMultilingualResources.COULD_NOT_OPEN_FILE, newAttachmentFile.getFileName(), ioException);
 			}
 
 			if (isMaxSizeExceeded(maxSize, attachmentTotalSize, oldAttachmentSize, newAttachmentFile.getLength())) {
 				throw new VUserException(AttachmentMultilingualResources.MAX_TOTAL_SIZE_EXCEEDED, maxSize);
 			}
-			FileInfoURI fileInfoUri = fileServices.saveAttachment(newAttachmentFile);
+			final FileInfoURI fileInfoUri = fileServices.saveAttachment(newAttachmentFile);
 			attachment.setAttFiId((Long) fileInfoUri.getKey());
 			attachment.setType(newAttachmentFile.getMimeType());
 			attachment.setLength(newAttachmentFile.getLength());
-			Attachment savedAttachment = attachmentDAO.save(attachment);
+			final Attachment savedAttachment = attachmentDAO.save(attachment);
 			if (oldAttachmentFileId != null) {
 				fileServices.deleteAttachment(oldAttachmentFileId);
 			}
 			return savedAttachment;
-		} else {
-			return attachmentDAO.save(attachment);
 		}
-
-	}
-
-	private boolean isMaxSizeExceeded(Long maxSize, Long totalSize, Long oldAttachmentSize, Long newAttachmentSize) {
-		if (maxSize == null || maxSize < 0) {
-			return false;
-		} else {
-			return ((totalSize - oldAttachmentSize) + newAttachmentSize) > (1024 * 1024 * maxSize);
-		}
-	}
-
-	public Attachment save(final Attachment attachment) {
 		return attachmentDAO.save(attachment);
+	}
+
+	private static boolean isMaxSizeExceeded(final Long maxSize, final Long totalSize, final Long oldAttachmentSize, final Long newAttachmentSize) {
+		return maxSize != null && maxSize > 0 && ((totalSize - oldAttachmentSize) + newAttachmentSize) > (1024 * 1024 * maxSize);
 	}
 
 	public DtList<Attachment> findAllByBotId(final long botId) {
@@ -137,7 +122,7 @@ public class AttachmentServices implements Component, Activeable {
 	}
 
 	public void delete (final long attachmentId) {
-		Attachment attachment = findById(attachmentId);
+		final Attachment attachment = findById(attachmentId);
 		attachmentDAO.delete(attachmentId);
 		fileServices.deleteAttachment(attachment.getAttFiId());
 	}
@@ -147,16 +132,16 @@ public class AttachmentServices implements Component, Activeable {
 		try {
 			return findAllByBotId(bot.getBotId()).stream().map(attachment -> {
 				attachment.attachmentFileInfo().load();
-				AttachmentFileInfo attachmentFileInfo = attachment.attachmentFileInfo().get();
-				AttachmentExport attachmentExport = new AttachmentExport();
+				final AttachmentFileInfo attachmentFileInfo = attachment.attachmentFileInfo().get();
+				final AttachmentExport attachmentExport = new AttachmentExport();
 				attachmentExport.setLabel(attachment.getLabel());
 				attachmentExport.setFileName(attachmentFileInfo.getFileName());
 				attachmentExport.setMimeType(attachmentFileInfo.getMimeType());
 				attachmentExport.setLength(attachmentFileInfo.getLength());
-				VFile file = fileServices.getAttachment(attachment.getAttFiId());
-				try (InputStream inputStream = file.createInputStream()) {
+				final VFile file = fileServices.getAttachment(attachment.getAttFiId());
+				try (final InputStream inputStream = file.createInputStream()) {
 					attachmentExport.setFileData(Base64.getEncoder().encodeToString(inputStream.readAllBytes()));
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					LogsUtils.logKO(logs);
 					LogsUtils.addLogs(logs, e);
 				}
@@ -166,7 +151,7 @@ public class AttachmentServices implements Component, Activeable {
 		} catch (final Exception e) {
 			LogsUtils.logKO(logs);
 			LogsUtils.addLogs(logs, e);
-			return null;
+			throw new VUserException(AttachmentMultilingualResources.EXPORT_UNEXPECTED_ERROR, e);
 		}
 
 	}

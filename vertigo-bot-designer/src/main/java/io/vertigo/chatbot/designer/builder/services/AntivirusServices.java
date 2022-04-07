@@ -19,14 +19,14 @@ public class AntivirusServices implements Component, Activeable {
 
 	@Override
 	public void start() {
-		String clamAvHost = paramManager.getParam("CLAMAV_HOST").getValueAsString();
-		int clamAvPort = paramManager.getOptionalParam("CLAMAV_PORT")
-				.orElse(Param.of("CLAMAV_PORT", "3310")).getValueAsInt();
+		final String clamAvHost = paramManager.getParam("CLAMAV_HOST").getValueAsString();
+		final int clamAvPort = paramManager.getOptionalParam("CLAMAV_PORT")
+				.map(Param::getValueAsInt).orElse(3310);
 
-		this.clamavClient = new ClamavClient(clamAvHost, clamAvPort);
+		clamavClient = new ClamavClient(clamAvHost, clamAvPort);
 	}
 
-	public ScanResult checkForViruses(InputStream inputStream) {
+	public ScanResult checkForViruses(final InputStream inputStream) {
 		return clamavClient.scan(inputStream);
 	}
 

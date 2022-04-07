@@ -24,7 +24,6 @@ public final class BotExport implements DtObject {
 	private io.vertigo.chatbot.commons.domain.JiraSettingExport jiraSetting;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> jiraFieldSetting =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class);
 	private String mapContext;
-	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.AttachmentExport> attachments =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.AttachmentExport.class);
 	
 	/**
 	 * Champ : DATA.
@@ -237,27 +236,6 @@ public final class BotExport implements DtObject {
 	 */
 	public void setMapContext(final String mapContext) {
 		this.mapContext = mapContext;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Attachments'.
-	 * @return DtList de AttachmentExport attachments
-	 */
-	@Field(smartType = "STyDtAttachmentExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Attachments")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.AttachmentExport> getAttachments() {
-		return attachments;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Attachments'.
-	 * @param attachments DtList de AttachmentExport
-	 */
-	public void setAttachments(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.AttachmentExport> attachments) {
-		io.vertigo.core.lang.Assertion.check().isNotNull(attachments);
-		//---
-		this.attachments = attachments;
 	}
 	
 	/** {@inheritDoc} */

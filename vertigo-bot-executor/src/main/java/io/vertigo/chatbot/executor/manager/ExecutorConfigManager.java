@@ -17,33 +17,25 @@
  */
 package io.vertigo.chatbot.executor.manager;
 
-import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.engine.services.FileServices;
 import io.vertigo.chatbot.executor.ExecutorPlugin;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
-import io.vertigo.chatbot.executor.webservices.FileServices;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
 import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datastore.filestore.model.FileInfoURI;
-import io.vertigo.datastore.filestore.model.VFile;
-import io.vertigo.datastore.impl.filestore.model.StreamFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import org.apache.commons.io.FileUtils;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,11 +46,9 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 	private File configDataFile;
 	private File contextDataFile;
-	private File attachmentDataFile;
 	private ExecutorGlobalConfig executorGlobalConfig;
 	private HashMap<String, String> contextMap;
-	private HashMap<String, String> attachmentMap;
-	private List<ExecutorPlugin> plugins = new ArrayList<>();
+	private final List<ExecutorPlugin> plugins = new ArrayList<>();
 
 	@Inject
 	private FileServices fileServices;
@@ -113,21 +103,6 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		} else {
 			contextMap = new HashMap<String, String>();
 		}
-
-		final String attachmentDataFilePath = paramManager.getOptionalParam("ATTACHMENT_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/attachmentConfig");
-		attachmentDataFile = new File(attachmentDataFilePath);
-		if (attachmentDataFile.exists() && attachmentDataFile.canRead()) {
-			try {
-				final String json = FileUtils.readFileToString(attachmentDataFile, StandardCharsets.UTF_8);
-				attachmentMap = jsonEngine.fromJson(json, HashMap.class);
-			} catch (final IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		} else {
-			attachmentMap = new HashMap<String, String>();
-		}
 	}
 
 	@Override
@@ -136,7 +111,6 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	}
 
 	public synchronized void saveConfig(final ExecutorGlobalConfig executorGlobalConfig) {
-		executorGlobalConfig.getBot().setAttachments(new DtList<>(AttachmentExport.class));
 		this.executorGlobalConfig = executorGlobalConfig;
 		plugins.forEach(executorPlugin -> executorPlugin.refreshConfig(executorGlobalConfig));
 		final String json = jsonEngine.toJson(executorGlobalConfig);
@@ -159,18 +133,6 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		return contextMap;
 	}
 
-	public HashMap<String, String> getAttachmentMap() {
-		return attachmentMap;
-	}
-
-	public VFile getAttachment(String label) {
-		String urn = attachmentMap.get(label);
-		if (urn == null) {
-			throw new VSystemException("Attachment with label " + label + " doesn't exist...");
-		}
-		return fileServices.getFile(urn);
-	}
-
 	public synchronized void updateMapContext(final BotExport botExport) {
 
 		try {
@@ -181,27 +143,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		}
 	}
 
-	public synchronized void updateMapAttachment(final BotExport botExport) {
-
-		try {
-			attachmentMap.forEach((key, value) -> fileServices.deleteAttachment(FileInfoURI.fromURN(value)));
-			HashMap<String, String> attachmentsMap = new HashMap<>();
-			botExport.getAttachments().forEach(attachmentExport -> {
-				StreamFile streamFile = StreamFile.of(attachmentExport.getFileName(), attachmentExport.getMimeType(),
-						Instant.now(), attachmentExport.getLength(),
-						() -> new ByteArrayInputStream((Base64.getDecoder().decode(attachmentExport.getFileData()))));
-
-				FileInfoURI fileInfoURI = fileServices.saveAttachment(streamFile);
-				attachmentsMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
-			});
-			FileUtils.writeStringToFile(attachmentDataFile, jsonEngine.toJson(attachmentsMap), StandardCharsets.UTF_8);
-			attachmentMap = attachmentsMap;
-		} catch (final IOException e) {
-			throw new VSystemException(e, "Error writing parameter file {0}", contextDataFile.getPath());
-		}
-	}
-
-	public void addPlugin(ExecutorPlugin executorPlugin) {
+	public void addPlugin(final ExecutorPlugin executorPlugin) {
 		plugins.add(executorPlugin);
 	}
 }

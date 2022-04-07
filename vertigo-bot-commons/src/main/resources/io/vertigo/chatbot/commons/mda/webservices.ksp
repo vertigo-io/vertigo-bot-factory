@@ -13,7 +13,6 @@ create DtDefinition DtBotExport {
 	field jiraSetting			    {domain: DoDtJiraSettingExport 	        label: "Jira setting" 	            cardinality : "?"}
 	field jiraFieldSetting			{domain: DoDtJiraFieldSettingExport 	label: "Jira fields setting" 	    cardinality : "*"}
 	field mapContext				{domain: DoText 						label: "map Context" 				cardinality : "1"}
-	field attachments				{domain: DoDtAttachmentExport			label: "Attachments" 			    cardinality : "*"}
 }
 
 create DtDefinition DtTopicExport {

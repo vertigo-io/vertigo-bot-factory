@@ -135,10 +135,6 @@ public enum DtResources implements MessageKey {
 	 * map Context.
 	 */
 	fldBotExport$mapContext,
-	/**
-	 * Attachments.
-	 */
-	fldBotExport$attachments,
 
 	/***********************************************************
 	/** Chatbot.

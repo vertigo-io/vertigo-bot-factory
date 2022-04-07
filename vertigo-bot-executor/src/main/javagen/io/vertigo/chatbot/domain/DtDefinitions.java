@@ -75,6 +75,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'MimeType'. */
 		type,
+		/** Propriété 'Size'. */
+		length,
 		/** Propriété 'AttachmentFileInfo'. */
 		attFiId,
 		/** Propriété 'Chatbot'. */
@@ -137,9 +139,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Jira fields setting'. */
 		jiraFieldSetting,
 		/** Propriété 'map Context'. */
-		mapContext,
-		/** Propriété 'Attachments'. */
-		attachments	}
+		mapContext	}
 
 	/**
 	 * Enumération des champs de Chatbot.
@@ -178,6 +178,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fontFamily,
 		/** Propriété 'Display avatar'. */
 		displayAvatar,
+		/** Propriété 'Total maximum attachment size'. */
+		totalMaxAttachmentSize,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

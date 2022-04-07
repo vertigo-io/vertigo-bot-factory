@@ -36,6 +36,7 @@ ENV USE_SSL true
 ENV FILE_STORE_PATH /opt/attachments/
 ENV CLAMAV_HOST localhost
 ENV CLAMAV_PORT 3310
+ENV EXTENSIONS_WHITELIST png,jpg,jpeg,pdf
 # Expose tomcat port
 EXPOSE 8080
 

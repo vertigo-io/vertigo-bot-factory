@@ -65,18 +65,16 @@ public class FileServices implements Component {
 	protected LocaleManager localeManager;
 
 	public FileInfoURI saveFileTmp(final VFile file) {
-		//apply security check
 		final FileInfo fileInfo = fileStoreManager.create(new FileInfoTmp(file));
 		return fileInfo.getURI();
 	}
 
 	public FileInfoURI saveAttachment(final VFile file) {
-		//apply security check
 		final FileInfo fileInfo = fileStoreManager.create(new AttachmentInfo(file));
 		return fileInfo.getURI();
 	}
 
-	public void deleteAttachment(final FileInfoURI attachmentUri) {
+	private void deleteAttachment(final FileInfoURI attachmentUri) {
 		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class);
 		Assertion.check().isTrue(tmpFileInfoDefinition.equals(attachmentUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
 		fileStoreManager.delete(attachmentUri);
@@ -108,7 +106,7 @@ public class FileServices implements Component {
 		fileStoreManager.delete(fileTmpUri);
 	}
 
-	public FileInfoURI toAttachmentFileInfoUri(final Long attFiId) {
+	private FileInfoURI toAttachmentFileInfoUri(final Long attFiId) {
 		return new FileInfoURI(FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class), attFiId);
 	}
 
@@ -146,15 +144,15 @@ public class FileServices implements Component {
 		mediaFileInfoDAO.delete(filId);
 	}
 
-	public boolean isCSVFile(VFile file) {
+	public boolean isCSVFile(final VFile file) {
 		return file.getFileName().toLowerCase().endsWith(".csv");
 	}
 
-	public <G> List<G> readCsvFile(Class<G> clazz, VFile file, String[] columns) {
+	public <G> List<G> readCsvFile(final Class<G> clazz, final VFile file, final String[] columns) {
 		if (!isCSVFile(file)) {
 			throw new VUserException(ExportMultilingualResources.ERR_CSV_FILE);
 		}
-		try (CSVReader csvReader = new CSVReaderBuilder(new FileReader(VFileUtil.obtainReadOnlyPath(file).toString(), Charset.forName("cp1252")))
+		try (final CSVReader csvReader = new CSVReaderBuilder(new FileReader(VFileUtil.obtainReadOnlyPath(file).toString(), Charset.forName("cp1252")))
 				.withErrorLocale(localeManager.getCurrentLocale())
 				.withCSVParser(new CSVParserBuilder().withSeparator(';').build()).build()) {
 
@@ -171,28 +169,28 @@ public class FileServices implements Component {
 			csvToBean.setThrowExceptions(false);
 			final List<G> list = csvToBean.parse();
 			if (!csvToBean.getCapturedExceptions().isEmpty()) {
-				String errorMessage = csvToBean.getCapturedExceptions().stream().map(exception -> lineError(exception.getLine()[0], exception.getMessage())).collect(Collectors.joining(","));
+				final String errorMessage = csvToBean.getCapturedExceptions().stream().map(exception -> lineError(exception.getLine()[0], exception.getMessage())).collect(Collectors.joining(","));
 				throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, errorMessage);
 			}
 			return list;
 
-		} catch (IOException | RuntimeException e) {
+		} catch (final IOException | RuntimeException e) {
 			throw new VUserException(ExportMultilingualResources.ERR_UNEXPECTED, e.getMessage());
-		} catch (CsvValidationException csvValidationException) {
+		} catch (final CsvValidationException csvValidationException) {
 			throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, csvValidationException.getMessage());
 		}
 	}
 
-	public String getFileAsBase64(Long id) {
-		try (InputStream fileInputStream = getMediaFileInfoById(id).getFileData().createInputStream()) {
+	public String getFileAsBase64(final Long id) {
+		try (final InputStream fileInputStream = getMediaFileInfoById(id).getFileData().createInputStream()) {
 			return Base64.getEncoder().encodeToString(fileInputStream.readAllBytes());
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	private MediaFileInfo getMediaFileInfoById(Long id) {
+	private MediaFileInfo getMediaFileInfoById(final Long id) {
 		return mediaFileInfoDAO.get(id);
 	}
 }

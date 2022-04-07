@@ -21,6 +21,7 @@ import com.google.gson.JsonElement;
 import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.chatbot.analytics.AnalyticsSenderServices;
 import io.vertigo.chatbot.commons.LogsUtils;
+import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
@@ -37,6 +38,7 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import org.apache.logging.log4j.LogManager;
@@ -97,13 +99,13 @@ public class ExecutorManager implements Manager, Activeable {
 	}
 
 	public void loadModel(final BotExport bot, final ExecutorConfiguration executorConfig, final StringBuilder logs) {
-
-		doLoadModel(bot, logs);
 		final var globalConfig = new ExecutorGlobalConfig();
 		globalConfig.setBot(bot);
 		globalConfig.setExecutorConfiguration(executorConfig);
 
 		executorConfigManager.saveConfig(globalConfig);
+
+		doLoadModel(bot, logs);
 
 	}
 
@@ -149,10 +151,12 @@ public class ExecutorManager implements Manager, Activeable {
 		}
 
 		executorConfigManager.updateMapContext(botExport);
-		executorConfigManager.updateMapAttachment(botExport);
-
 		botManager.updateConfig(topics, logs);
 
+	}
+
+	public void updateAttachments(final DtList<AttachmentExport> attachmentExports) {
+		botManager.updateAttachments(attachmentExports);
 	}
 
 	public BotResponse startNewConversation(final BotInput input) {
@@ -164,7 +168,7 @@ public class ExecutorManager implements Manager, Activeable {
 		final var botEngine = botManager.createBotEngine(newUUID);
 		botEngine.saveContext(input, executorConfigManager.getContextMap());
 		final var botResponse = botEngine.runTick(input);
-		ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
+		final ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
 		analyticsSenderServices.sendEventStartToDb(executorConfiguration);
 		botResponse.getMetadatas().put("sessionId", newUUID);
 		if (executorConfiguration.getAvatar() != null) {
@@ -182,7 +186,7 @@ public class ExecutorManager implements Manager, Activeable {
 
 		botEngine.saveContext(input, executorConfigManager.getContextMap());
 		final var botResponse = botEngine.runTick(input);
-		ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
+		final ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
 		if (executorConfiguration.getAvatar() != null) {
 			botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
 		}
@@ -200,13 +204,9 @@ public class ExecutorManager implements Manager, Activeable {
 		return executorConfigManager.getContextMap();
 	}
 
-	public VFile getAttachment(String label) {
-		return executorConfigManager.getAttachment(label);
-	}
-
-	public String getWelcomeTourTechnicalCode(String welcomeTourLabel) {
-		HashMap<String, String> welcomeTourMap = jsonEngine.fromJson(executorConfigManager.getConfig().getBot().getWelcomeTours(), HashMap.class);
-		String welcomeTourTechnicalCode = welcomeTourMap.get(welcomeTourLabel);
+	public String getWelcomeTourTechnicalCode(final String welcomeTourLabel) {
+		final HashMap<String, String> welcomeTourMap = jsonEngine.fromJson(executorConfigManager.getConfig().getBot().getWelcomeTours(), HashMap.class);
+		final String welcomeTourTechnicalCode = welcomeTourMap.get(welcomeTourLabel);
 		if (welcomeTourTechnicalCode == null) {
 			throw new VSystemException("Welcome tour with label " + welcomeTourLabel + " doesn't exist");
 		}
@@ -214,9 +214,13 @@ public class ExecutorManager implements Manager, Activeable {
 	}
 
 	public String getBotEmailAddress() {
-		ChatbotCustomConfig chatbotCustomConfig = jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(),
+		final ChatbotCustomConfig chatbotCustomConfig = jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(),
 				ChatbotCustomConfig.class);
 		return chatbotCustomConfig.getBotEmailAddress();
+	}
+
+	public VFile getAttachment(final String label) {
+		return botManager.getAttachment(label);
 	}
 
 }

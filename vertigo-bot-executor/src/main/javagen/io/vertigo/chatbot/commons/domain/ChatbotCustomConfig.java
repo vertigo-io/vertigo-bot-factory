@@ -23,6 +23,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private String backgroundColor;
 	private String fontFamily;
 	private Boolean displayAvatar;
+	private Long totalMaxAttachmentSize;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -195,6 +196,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setDisplayAvatar(final Boolean displayAvatar) {
 		this.displayAvatar = displayAvatar;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Total maximum attachment size'.
+	 * @return Long totalMaxAttachmentSize
+	 */
+	@Field(smartType = "STyNumber", label = "Total maximum attachment size")
+	public Long getTotalMaxAttachmentSize() {
+		return totalMaxAttachmentSize;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Total maximum attachment size'.
+	 * @param totalMaxAttachmentSize Long
+	 */
+	public void setTotalMaxAttachmentSize(final Long totalMaxAttachmentSize) {
+		this.totalMaxAttachmentSize = totalMaxAttachmentSize;
 	}
 	
 	/**

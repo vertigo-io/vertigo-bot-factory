@@ -18,6 +18,7 @@ public final class Attachment implements Entity {
 	private Long attId;
 	private String label;
 	private String type;
+	private Long length;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AAttachmentAttachmentFileInfo",
@@ -110,6 +111,25 @@ public final class Attachment implements Entity {
 	 */
 	public void setType(final String type) {
 		this.type = type;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Size'.
+	 * @return Long length <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STySize", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Size")
+	public Long getLength() {
+		return length;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Size'.
+	 * @param length Long <b>Obligatoire</b>
+	 */
+	public void setLength(final Long length) {
+		this.length = length;
 	}
 	
 	/**

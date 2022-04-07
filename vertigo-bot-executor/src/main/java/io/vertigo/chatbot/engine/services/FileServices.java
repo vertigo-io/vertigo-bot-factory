@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.executor.webservices;
+package io.vertigo.chatbot.engine.services;
 
 import io.vertigo.chatbot.commons.AttachmentInfo;
 import io.vertigo.commons.transaction.Transactional;
@@ -20,7 +20,7 @@ public class FileServices implements Component {
 
 
 	public VFile getFile(final String urn) {
-		FileInfoURI fileInfoURI = FileInfoURI.fromURN(urn);
+		final FileInfoURI fileInfoURI = FileInfoURI.fromURN(urn);
 		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class);
 		Assertion.check().isTrue(tmpFileInfoDefinition.equals(fileInfoURI.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
 		return fileStoreManager.read(fileInfoURI).getVFile();

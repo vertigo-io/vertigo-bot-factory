@@ -61,8 +61,6 @@
                 </vu:slot>
                 <vu:include-data object="attachments" field="attId" />
                 <vu:include-data object="attachments" field="attFiId" />
-                <vu:include-data object="attachments" field="label" />
-                <vu:include-data object="attachments" field="type" />
                 <vu:column field="label" />
                 <vu:column field="type" />
                 <vu:column name="preview" th:label="#{attachment.preview}">
@@ -97,7 +95,6 @@
                     </q-card-section>
 
                     <q-card-actions align="around">
-                        <input type="hidden" name=F"CTX" :value="VertigoUi.vueData['CTX']">
                         <q-btn th:label="#{attachment.cancel}" color="red" v-close-popup></q-btn>
                         <q-btn th:title="#{attachment.save}" th:label="#{attachment.save}" th:aria-label="#{attachment.save}"
                                @click="addAttachment()"
