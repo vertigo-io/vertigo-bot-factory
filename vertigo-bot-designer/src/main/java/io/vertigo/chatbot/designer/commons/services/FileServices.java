@@ -74,24 +74,12 @@ public class FileServices implements Component {
 		return fileInfo.getURI();
 	}
 
-	private void deleteAttachment(final FileInfoURI attachmentUri) {
-		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class);
-		Assertion.check().isTrue(tmpFileInfoDefinition.equals(attachmentUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
-		fileStoreManager.delete(attachmentUri);
-	}
-
-	public VFile getAttachment(final FileInfoURI attachmentUri) {
-		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class);
-		Assertion.check().isTrue(tmpFileInfoDefinition.equals(attachmentUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
-		return fileStoreManager.read(attachmentUri).getVFile();
-	}
-
 	public VFile getAttachment(final Long attFiId) {
-		return getAttachment(toAttachmentFileInfoUri(attFiId));
+		return fileStoreManager.read(toAttachmentFileInfoUri(attFiId)).getVFile();
 	}
 
 	public void deleteAttachment(final Long attFiId) {
-		deleteAttachment(toAttachmentFileInfoUri(attFiId));
+		fileStoreManager.delete(toAttachmentFileInfoUri(attFiId));
 	}
 
 	public VFile getFileTmp(final FileInfoURI fileTmpUri) {
@@ -106,7 +94,7 @@ public class FileServices implements Component {
 		fileStoreManager.delete(fileTmpUri);
 	}
 
-	private FileInfoURI toAttachmentFileInfoUri(final Long attFiId) {
+	private static FileInfoURI toAttachmentFileInfoUri(final Long attFiId) {
 		return new FileInfoURI(FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class), attFiId);
 	}
 

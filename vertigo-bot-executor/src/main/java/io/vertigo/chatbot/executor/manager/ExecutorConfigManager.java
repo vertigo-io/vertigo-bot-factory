@@ -17,27 +17,36 @@
  */
 package io.vertigo.chatbot.executor.manager;
 
+import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
-import io.vertigo.chatbot.engine.services.FileServices;
 import io.vertigo.chatbot.executor.ExecutorPlugin;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
+import io.vertigo.chatbot.executor.services.FileServices;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
 import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
+import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.datastore.impl.filestore.model.StreamFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import org.apache.commons.io.FileUtils;
 
 import javax.inject.Inject;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExecutorConfigManager implements Manager, Activeable {
 
@@ -49,6 +58,8 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private ExecutorGlobalConfig executorGlobalConfig;
 	private HashMap<String, String> contextMap;
 	private final List<ExecutorPlugin> plugins = new ArrayList<>();
+	private Map<String, String> mapAttachments;
+	private File attachmentDataFile;
 
 	@Inject
 	private FileServices fileServices;
@@ -103,6 +114,21 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		} else {
 			contextMap = new HashMap<String, String>();
 		}
+
+		final String attachmentDataFilePath = paramManager.getOptionalParam("ATTACHMENT_DATA_FILE")
+				.map(Param::getValueAsString).orElse("/tmp/attachmentConfig");
+		attachmentDataFile = new File(attachmentDataFilePath);
+		if (attachmentDataFile.exists() && attachmentDataFile.canRead()) {
+			try {
+				final String json = FileUtils.readFileToString(attachmentDataFile, StandardCharsets.UTF_8);
+				mapAttachments = jsonEngine.fromJson(json, HashMap.class);
+			} catch (final IOException e) {
+				throw new VSystemException("Could not retrieve attachments map at startup...", e);
+			}
+
+		} else {
+			mapAttachments = new HashMap<>();
+		}
 	}
 
 	@Override
@@ -141,6 +167,33 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", contextDataFile.getPath());
 		}
+	}
+
+	public void updateAttachments(final DtList<AttachmentExport> attachmentExports) {
+		try {
+			mapAttachments.forEach((key, value) -> fileServices.deleteAttachment(FileInfoURI.fromURN(value)));
+			final HashMap<String, String> attachmentsMap = new HashMap<>();
+			attachmentExports.forEach(attachmentExport -> {
+				final StreamFile streamFile = StreamFile.of(attachmentExport.getFileName(), attachmentExport.getMimeType(),
+						Instant.now(), attachmentExport.getLength(),
+						() -> new ByteArrayInputStream((Base64.getDecoder().decode(attachmentExport.getFileData()))));
+
+				final FileInfoURI fileInfoURI = fileServices.saveAttachment(streamFile);
+				attachmentsMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
+			});
+			FileUtils.writeStringToFile(attachmentDataFile, jsonEngine.toJson(attachmentsMap), StandardCharsets.UTF_8);
+			mapAttachments = attachmentsMap;
+		} catch (final IOException e) {
+			throw new VSystemException(e, "Error writing parameter file {0}", attachmentDataFile.getPath());
+		}
+	}
+
+	public VFile getAttachment(final String label) {
+		final String urn = mapAttachments.get(label);
+		if (urn == null) {
+			throw new VSystemException("Attachment with label " + label + " doesn't exist...");
+		}
+		return fileServices.getFile(urn);
 	}
 
 	public void addPlugin(final ExecutorPlugin executorPlugin) {

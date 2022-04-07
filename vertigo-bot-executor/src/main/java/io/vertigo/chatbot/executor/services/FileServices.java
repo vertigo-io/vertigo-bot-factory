@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.engine.services;
+package io.vertigo.chatbot.executor.services;
 
 import io.vertigo.chatbot.commons.AttachmentInfo;
 import io.vertigo.commons.transaction.Transactional;

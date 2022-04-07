@@ -156,7 +156,7 @@ public class ExecutorManager implements Manager, Activeable {
 	}
 
 	public void updateAttachments(final DtList<AttachmentExport> attachmentExports) {
-		botManager.updateAttachments(attachmentExports);
+		executorConfigManager.updateAttachments(attachmentExports);
 	}
 
 	public BotResponse startNewConversation(final BotInput input) {
@@ -220,7 +220,7 @@ public class ExecutorManager implements Manager, Activeable {
 	}
 
 	public VFile getAttachment(final String label) {
-		return botManager.getAttachment(label);
+		return executorConfigManager.getAttachment(label);
 	}
 
 }
