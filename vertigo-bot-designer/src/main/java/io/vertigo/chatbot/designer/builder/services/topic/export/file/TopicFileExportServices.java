@@ -24,6 +24,7 @@ import io.vertigo.chatbot.designer.builder.topicFileExport.TopicFileExportPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFileExportFields;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
@@ -46,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.vertigo.chatbot.designer.builder.services.topic.TopicsUtils.DEFAULT_TOPIC_CAT_CODE;
 import static io.vertigo.chatbot.designer.utils.StringUtils.errorManagement;
 
 @Transactional
@@ -116,7 +118,7 @@ public class TopicFileExportServices implements Component {
 		return topicFileExportPAO.getTopicFileExport(botId, categories);
 	}
 
-	public void importTopicFromCSVFile(Chatbot chatbot, FileInfoURI importTopicFile) {
+	public void importTopicFromCSVFile(final Chatbot chatbot, final FileInfoURI importTopicFile) {
 		final List<TopicFileExport> list = transformFileToList(fileServices.getFileTmp(importTopicFile));
 		importTopicFromList(chatbot, list);
 	}
@@ -237,6 +239,10 @@ public class TopicFileExportServices implements Component {
 
 			//Try to find the topic in database
 			final Optional<Topic> topicBase = topicServices.getTopicByCode(tfe.getCode(), chatbot.getBotId());
+
+			if (topicBase.isEmpty() && tfe.getCategory().equals(DEFAULT_TOPIC_CAT_CODE)) {
+				throw new VSystemException(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC_CATEGORY).getDisplay());
+			}
 
 			if (topicBase.isPresent()) {
 				// If it already exists, then modification
@@ -360,7 +366,13 @@ public class TopicFileExportServices implements Component {
 		if (creation) {
 			sin = new ScriptIntention();
 		} else {
-			sin = scriptIntentionServices.findByTopId(topic.getTopId()).orElseThrow();
+			final Optional<ScriptIntention> optSin = scriptIntentionServices.findByTopId(topic.getTopId());
+			if (optSin.isEmpty()) {
+				smallTalkServices.deleteIfExists(chatbot, topic);
+				sin = new ScriptIntention();
+			} else {
+				sin = optSin.get();
+			}
 		}
 		sin.setScript(tfe.getScript());
 		sin.setTopId(topic.getTopId());
@@ -383,7 +395,7 @@ public class TopicFileExportServices implements Component {
 
 		final DtList<ResponseButtonUrl> listButtonsUrl = extractButtonsUrlFromTfe(tfe);
 
-		final SmallTalk smt = populateSmallTalkFromTopicFileExport(topic, creation, tfe, listResponse);
+		final SmallTalk smt = populateSmallTalkFromTopicFileExport(chatbot, topic, creation, tfe, listResponse);
 
 		final DtList<NluTrainingSentence> nluTrainingSentencesToDelete = topicServices.getNluTrainingSentenceByTopic(chatbot, topic);
 
@@ -395,12 +407,18 @@ public class TopicFileExportServices implements Component {
 	/*
 	 * Return a smallTalk with infos from the TopicFileExport
 	 */
-	private SmallTalk populateSmallTalkFromTopicFileExport(final Topic topic, final boolean creation, final TopicFileExport tfe, final DtList<UtterText> listResponse) {
+	private SmallTalk populateSmallTalkFromTopicFileExport(final Chatbot chatbot, final Topic topic, final boolean creation, final TopicFileExport tfe, final DtList<UtterText> listResponse) {
 		final SmallTalk smt;
 		if (creation) {
 			smt = new SmallTalk();
 		} else {
-			smt = smallTalkServices.findByTopId(topic.getTopId()).orElseThrow();
+			final Optional<SmallTalk> optSmt = smallTalkServices.findByTopId(topic.getTopId());
+			if (optSmt.isEmpty()) {
+				scriptIntentionServices.deleteIfExists(chatbot, topic);
+				smt = new SmallTalk();
+			} else {
+				smt = optSmt.get();
+			}
 		}
 		smt.setIsEnd("TRUE".equals(tfe.getIsEnd()));
 
@@ -469,13 +487,13 @@ public class TopicFileExportServices implements Component {
 			final String[] listDoublons = tfe.getButtonsUrl().split("\\|");
 			for (final String doublon : listDoublons) {
 				final ResponseButtonUrl button = new ResponseButtonUrl();
-				String[] args = doublon.split("¤");
+				final String[] args = doublon.split("¤");
 				button.setText(args[0].substring(1));
 				final String url = args[1];
 				try {
 					isValidURL(url);
 					button.setUrl(url);
-				} catch (URISyntaxException | MalformedURLException e) {
+				} catch (final URISyntaxException | MalformedURLException e) {
 					throw new VUserException(TopicFileExportMultilingualResources.BUTTON_URL_NOT_VALID);
 				}
 				button.setNewTab(Boolean.parseBoolean(args[2].substring(0, args[2].length() -1 )));
@@ -486,8 +504,8 @@ public class TopicFileExportServices implements Component {
 		return listButtons;
 	}
 
-	private void isValidURL(String url) throws URISyntaxException, MalformedURLException {
-		URL validUrl = new URL(url);
+	private void isValidURL(final String url) throws URISyntaxException, MalformedURLException {
+		final URL validUrl = new URL(url);
 		validUrl.toURI();
 	}
 

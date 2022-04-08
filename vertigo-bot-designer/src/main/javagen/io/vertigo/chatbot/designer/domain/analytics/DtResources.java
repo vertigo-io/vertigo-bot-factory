@@ -93,22 +93,6 @@ public enum DtResources implements MessageKey {
 	fldConversationStat$rate,
 
 	/***********************************************************
-	/** RatingOption.
-	/***********************************************************
-	/**
-	 * Code.
-	 */
-	fldRatingOption$raOptCd,
-	/**
-	 * Title.
-	 */
-	fldRatingOption$label,
-	/**
-	 * Titre.
-	 */
-	fldRatingOption$labelFr,
-
-	/***********************************************************
 	/** RatingDetail.
 	/***********************************************************
 	/**
@@ -131,6 +115,22 @@ public enum DtResources implements MessageKey {
 	 * Last topic.
 	 */
 	fldRatingDetail$lastTopic,
+
+	/***********************************************************
+	/** RatingOption.
+	/***********************************************************
+	/**
+	 * Code.
+	 */
+	fldRatingOption$raOptCd,
+	/**
+	 * Title.
+	 */
+	fldRatingOption$label,
+	/**
+	 * Titre.
+	 */
+	fldRatingOption$labelFr,
 
 	/***********************************************************
 	/** SentenseDetail.

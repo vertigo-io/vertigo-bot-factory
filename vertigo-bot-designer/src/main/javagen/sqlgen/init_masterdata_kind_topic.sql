@@ -1,9 +1,9 @@
 -- ============================================================
 --   Insert MasterData values : KIND_TOPIC                                        
 -- ============================================================
-insert into KIND_TOPIC(KTO_CD, LABEL, DESCRIPTION, DEFAULT_TEXT) values ('START', 'Start', 'Default start response', 'Hello !');
-insert into KIND_TOPIC(KTO_CD, LABEL, DESCRIPTION, DEFAULT_TEXT) values ('END', 'End', 'Default end response', 'Bye !');
-insert into KIND_TOPIC(KTO_CD, LABEL, DESCRIPTION, DEFAULT_TEXT) values ('FAILURE', 'Failure', 'Default failure response', 'Sorry, I don't understand.');
-insert into KIND_TOPIC(KTO_CD, LABEL, DESCRIPTION, DEFAULT_TEXT) values ('NORMAL', 'Normal', 'Normal', 'Text');
-insert into KIND_TOPIC(KTO_CD, LABEL, DESCRIPTION, DEFAULT_TEXT) values ('UNREACHABLE', 'Unreachable', 'Unreachable', 'Text');
-insert into KIND_TOPIC(KTO_CD, LABEL, DESCRIPTION, DEFAULT_TEXT) values ('IDLE', 'Idle', 'Idle', 'Something else ?');
+insert into KIND_TOPIC(KTO_CD, LABEL, LABEL_FR, DESCRIPTION, DESCRIPTION_FR, DEFAULT_TEXT) values ('START', 'Start topic', 'Intention d'accueil', 'Start topic describes bot behavior when starting a new conversation.', 'L'intention d'accueil décrit le comportement du bot à l'ouverture de la conversation avec un utilisateur.', 'Hello !');
+insert into KIND_TOPIC(KTO_CD, LABEL, LABEL_FR, DESCRIPTION, DESCRIPTION_FR, DEFAULT_TEXT) values ('END', 'End topic', 'Intention de clôture', 'End topic describes bot behavior when a conversation is ending. It can be followed by an evaluation question.', 'L'intention de clôture décrit le comportement du bot lorsque la conversation se termine. Cette intention peut être suivie ou non de la phase d'évaluation.', 'Bye !');
+insert into KIND_TOPIC(KTO_CD, LABEL, LABEL_FR, DESCRIPTION, DESCRIPTION_FR, DEFAULT_TEXT) values ('FAILURE', 'Failure topic', 'Intention d'erreur', 'Failure topic describes bot behavior when user question was not understood.', 'L'intention d'erreur décrit le comportement du bot dans le cas où celui-ci n'a pas compris la question de l'utilisateur.', 'Sorry, I don't understand.');
+insert into KIND_TOPIC(KTO_CD, LABEL, LABEL_FR, DESCRIPTION, DESCRIPTION_FR, DEFAULT_TEXT) values ('NORMAL', 'Normal', 'Normal', 'Normal', 'Normal', 'Text');
+insert into KIND_TOPIC(KTO_CD, LABEL, LABEL_FR, DESCRIPTION, DESCRIPTION_FR, DEFAULT_TEXT) values ('UNREACHABLE', 'Unreachable', 'Non atteignable', 'Unreachable', 'Non atteignable', 'Text');
+insert into KIND_TOPIC(KTO_CD, LABEL, LABEL_FR, DESCRIPTION, DESCRIPTION_FR, DEFAULT_TEXT) values ('IDLE', 'Idle topic', 'Intention de reprise de conversation', 'When bot answers a question but conversation isn't over, the bot offers to ask another question.', 'Dans le cas où le bot répond à la question d'un utilisateur mais que la conversation n'est pas terminée, alors celui-ci relance la conversation en donnant à l'utilisateur l'opportunité de reposer une question ou en lui faisant une nouvelle proposition. C'est ce comportement qui est décrit dans l'intention de reprise de conversation', 'Something else ?');

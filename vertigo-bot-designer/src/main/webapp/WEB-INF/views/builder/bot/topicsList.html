@@ -62,6 +62,16 @@
 		<section layout:fragment="content">
 
 			<div class="text-primary text-h6 text-weight-bold" th:text="#{layout.topics}"></div>
+
+			<div class="col-12">
+				<vu:include-data object="technicalTopicIhm" field="topId"/>
+				<vu:table list="technicalTopicIhm" th:title="#{topic.default.title}"  componentId="technicalTopicIhm" sortBy="ktoCd" :binary-state-sort="true" tr_style="cursor : pointer;"  tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|">
+					<vu:column field="catLabel" />
+					<vu:column field="type" />
+					<vu:column field="code" />
+				</vu:table>
+			</div>
+
 			<div class="col-12">
 			
 			<!-- Use for the redirections -->
@@ -70,6 +80,8 @@
 				<vu:include-data object="topicsIhm" field="smtId"/>
 				<vu:include-data object="topicsIhm" field="sinId"/>
 				<vu:include-data object="criteria" field="catId"/>
+				<vu:include-data object="nonTechnicalCategoryList" field="topCatId"/>
+				<vu:include-data object="nonTechnicalCategoryList" field="label"/>
 				<div style="background-color:white;display:flex;justify-content:flex-end">
 					<q-select style="width: 250px;"
 						  	clearable
@@ -77,7 +89,7 @@
 							map-options
 							emit-value
 							v-model="vueData.criteria.catId"
-							:options="transformListForSelection('categoryList', 'topCatId', 'label')"
+							:options="transformListForSelection('nonTechnicalCategoryList', 'topCatId', 'label')"
 							th:label="#{topic.selection.category}"
 						  	@input="filter();"
 							stack-label>

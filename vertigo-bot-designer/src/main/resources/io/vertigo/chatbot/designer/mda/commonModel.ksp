@@ -4,9 +4,3 @@ create DtDefinition DtSelectionOption {
 	field label 		{domain: DoLabel					label: "Label"		 		cardinality:"1"}
 	field value			{domain: DoLabel 					label: "Value"	 			cardinality:"1"}
 }
-
-create DtDefinition DtBotPredefinedTopic {
-	field topId			{domain: DoId						label: "Id topic"	 		cardinality:"1"}
-	field ttoCd			{domain: DoCode 					label: "Type topic code"	cardinality:"1"}
-	field value 		{domain: DoText						label: "SmallTalk / Script"	cardinality:"1"}
-}

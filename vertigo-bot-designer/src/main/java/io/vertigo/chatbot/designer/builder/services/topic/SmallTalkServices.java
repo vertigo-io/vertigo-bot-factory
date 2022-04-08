@@ -26,7 +26,6 @@ import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.smallTalk.SmallTalkPAO;
 import io.vertigo.chatbot.designer.domain.History;
 import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
-import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.commons.transaction.Transactional;
@@ -95,13 +94,13 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 				.isNotNull(utterTexts)
 				.isNotNull(buttonList);
 		// ---
-		boolean isNew = smallTalk.getSmtId() == null;
+		final boolean isNew = smallTalk.getSmtId() == null;
 		boolean updated = isNew;
 		smallTalk.setTopId(topic.getTopId());
 		final SmallTalk savedST = save(smallTalk);
 
 		// save utter textes, remove all + create all
-		DtList<UtterText> oldUtterText = utterTextServices.getUtterTextList(chatbot, smallTalk);
+		final DtList<UtterText> oldUtterText = utterTextServices.getUtterTextList(chatbot, smallTalk);
 		if (!HashUtils.generateHashCodeForUtterTexts(oldUtterText).equals(HashUtils.generateHashCodeForUtterTexts(utterTexts))) {
 			utterTextServices.removeAllUtterTextBySmtId(chatbot, savedST.getSmtId());
 			utterTextServices.createNoBlankUtterTextBySmallTalk(chatbot, savedST, utterTexts);
@@ -110,7 +109,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 		}
 
 		// remove and create buttons
-		DtList<ResponseButton> oldResponseButtons = responsesButtonServices.getResponsesButtonList(chatbot, smallTalk);
+		final DtList<ResponseButton> oldResponseButtons = responsesButtonServices.getResponsesButtonList(chatbot, smallTalk);
 		if (!HashUtils.generateHashCodeForResponseButtons(oldResponseButtons).equals(HashUtils.generateHashCodeForResponseButtons(buttonList))) {
 			for (final ResponseButton button : buttonList) {
 				if (TopicsUtils.checkSpecialCharacters(button.getText())) {
@@ -123,7 +122,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 			updated = true;
 		}
 
-		DtList<ResponseButtonUrl> oldResponseUrlButtons = responsesButtonUrlServices.getResponsesButtonUrlList(chatbot, smallTalk);
+		final DtList<ResponseButtonUrl> oldResponseUrlButtons = responsesButtonUrlServices.getResponsesButtonUrlList(chatbot, smallTalk);
 		if (!HashUtils.generateHashCodeForResponseButtonsUrl(oldResponseUrlButtons).equals(HashUtils.generateHashCodeForResponseButtonsUrl(buttonUrlList))) {
 			for (final ResponseButtonUrl button : buttonUrlList) {
 				if (TopicsUtils.checkSpecialCharacters(button.getText())) {
@@ -209,23 +208,8 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 	}
 
 	@Override
-	public BotPredefinedTopic getBotPredefinedTopicByTopId(final Long topId) {
-		Assertion.check()
-				.isNotNull(topId);
-		// ---
-		final Topic topic = topicDAO.get(topId);
-		final UtterText utter = getBasicUtterTextByTopId(topId);
-
-		final BotPredefinedTopic predefinedTopic = new BotPredefinedTopic();
-		predefinedTopic.setTopId(topId);
-		predefinedTopic.setTtoCd(topic.getTtoCd());
-		predefinedTopic.setValue(utter.getText());
-		return predefinedTopic;
-	}
-
-	@Override
 	public boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DtObject object, final Chatbot bot) {
-		SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) object;
+		final SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) object;
 		final DtList<UtterText> utt = utterTextServices.getUtterTextList(bot, smallTalkWrapper.getSmallTalk());
 		final DtList<ResponseButton> buttonList = responsesButtonServices.getResponsesButtonList(bot, smallTalkWrapper.getSmallTalk());
 		return (!KindTopicEnum.UNREACHABLE.name().equals(topic.getKtoCd())  && sentences.isEmpty()) || (utt.isEmpty() && buttonList.isEmpty());
@@ -237,16 +221,16 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 	}
 
 	@Override
-	public void saveTopic(Topic topic, Chatbot chatbot, DtObject dtObject) {
-		SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) dtObject;
+	public void saveTopic(final Topic topic, final Chatbot chatbot, final DtObject dtObject) {
+		final SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) dtObject;
 		saveSmallTalk(chatbot, smallTalkWrapper.getSmallTalk(), smallTalkWrapper.getUtterTexts(), smallTalkWrapper.getButtons(), smallTalkWrapper.getButtonsUrl(), topic);
 	}
 
 	@Override
-	public History record(Chatbot bot, SmallTalk smallTalk, HistoryActionEnum action) {
+	public History record(final Chatbot bot, final SmallTalk smallTalk, final HistoryActionEnum action) {
 		smallTalk.topic().load();
-		Topic topic = smallTalk.topic().get();
-		String message = topic.getKtoCd() + " - " + topic.getTitle();
+		final Topic topic = smallTalk.topic().get();
+		final String message = topic.getKtoCd() + " - " + topic.getTitle();
 		return historyServices.record(bot, action, smallTalk.getClass().getSimpleName(), message);
 	}
 }

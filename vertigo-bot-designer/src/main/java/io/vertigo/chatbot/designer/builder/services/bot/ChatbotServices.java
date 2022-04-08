@@ -7,11 +7,10 @@ import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.dao.ChatbotDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
-import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.HistoryServices;
+import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.SavedTrainingServices;
@@ -25,14 +24,13 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
-import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.utils.DateUtils;
-import io.vertigo.chatbot.designer.utils.StringUtils;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criteria;
@@ -103,27 +101,21 @@ public class ChatbotServices implements Component {
 	private WelcomeTourServices welcomeTourServices;
 
 	@Inject
+	private JiraFieldSettingServices jiraFieldSettingServices;
+
+	@Inject
 	private SavedTrainingServices savedTrainingServices;
 
 	@Inject
 	private ContextValueServices contextValueServices;
 
+	@Inject
+	private LocaleManager localeManager;
+
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
-			final BotPredefinedTopic botTopicFailure,
-			final BotPredefinedTopic botTopicStart,
-			final BotPredefinedTopic botTopicEnd,
-		   	final BotPredefinedTopic botTopicIdle,
 		   	final ChatbotCustomConfig chatbotCustomConfig) {
 
-		Assertion.check()
-				.isNotNull(chatbot)
-				.isNotNull(botTopicFailure)
-				.isNotNull(botTopicStart)
-				.isNotNull(botTopicEnd)
-				.isFalse(StringUtils.isHtmlEmpty(botTopicFailure.getValue()), "Failure text must have content")
-				.isFalse(StringUtils.isHtmlEmpty(botTopicStart.getValue()), "Start text must have content")
-				.isFalse(StringUtils.isHtmlEmpty(botTopicEnd.getValue()), "End text must have content")
-				.isFalse(StringUtils.isHtmlEmpty(botTopicIdle.getValue()), "Idle text must have content");
+		Assertion.check().isNotNull(chatbot);
 		// ---
 
 		final boolean newBot = chatbot.getBotId() == null;
@@ -146,36 +138,14 @@ public class ChatbotServices implements Component {
 			fileServices.deleteFile(oldAvatar);
 		}
 
-		// save default topics
-		final TopicCategory topicCategory;
 		if (newBot) {
-			topicCategory = topicCategoryServices.initializeBasicCategory();
-			topicCategory.setBotId(chatbot.getBotId());
-			topicCategoryServices.saveCategory(chatbot, topicCategory);
-		} else {
-			topicCategory = topicCategoryServices.getTechnicalCategoryByBot(chatbot);
+			final TopicCategory topicCategory = topicCategoryServices.initializeBasicCategory(savedChatbot);
+			topicServices.initTechnicalTopics(savedChatbot, topicCategory.getTopCatId(), localeManager.getCurrentLocale().toString());
 		}
-
-		//TopicFailure
-		topicServices.saveBotTopic(savedChatbot, topicCategory, KindTopicEnum.FAILURE.name(), botTopicFailure);
-
-		//Topic Start
-		topicServices.saveBotTopic(savedChatbot, topicCategory, KindTopicEnum.START.name(), botTopicStart);
-
-		//Topic End
-		topicServices.saveBotTopic(savedChatbot, topicCategory, KindTopicEnum.END.name(), botTopicEnd);
-
-		//Topic Idle
-		topicServices.saveBotTopic(savedChatbot, topicCategory, KindTopicEnum.IDLE.name(), botTopicIdle);
 
 		chabotCustomConfigServices.save(savedChatbot, chatbotCustomConfig);
 
 		return savedChatbot;
-	}
-
-	public Topic saveBotTopic(Chatbot bot, String ktoCd, BotPredefinedTopic botTopic) {
-		TopicCategory topicCategory = topicCategoryServices.getTechnicalCategoryByBot(bot);
-		return topicServices.saveBotTopic(bot, topicCategory, ktoCd, botTopic);
 	}
 
 	public Boolean deleteChatbot(@SecuredOperation("botAdm") final Chatbot bot) {
@@ -201,6 +171,7 @@ public class ChatbotServices implements Component {
 		historyServices.deleteAllByBotId(bot.getBotId());
 		unknownSentencesServices.deleteAllByBotId(bot.getBotId());
 		welcomeTourServices.deleteAllByBotId(bot.getBotId());
+		jiraFieldSettingServices.deleteAllByBotId(bot.getBotId());
 		chatbotDAO.delete(bot.getBotId());
 
 		// Delete avatar file reference in bot

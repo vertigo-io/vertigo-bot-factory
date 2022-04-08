@@ -65,7 +65,6 @@ create Task TkGetTopicFileExport {
                     group by (t.top_id)
                 ) buttons_url on buttons_url.top_id = top.top_id
 			where top.bot_id = #botId#
-			and tca.is_technical = false
             and tca.top_cat_id in (#tcaIds.rownum#)
 			group by top.code,
 				type_topic,

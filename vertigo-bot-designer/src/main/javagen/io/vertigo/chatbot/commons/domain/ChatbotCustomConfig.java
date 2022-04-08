@@ -124,7 +124,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setComment(final Boolean comment) {
 		this.comment = comment;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Comment message'.
@@ -143,7 +143,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setCommentMessage(final String commentMessage) {
 		this.commentMessage = commentMessage;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Bot email address'.
@@ -219,7 +219,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setFontFamily(final String fontFamily) {
 		this.fontFamily = fontFamily;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Display avatar'.
@@ -238,7 +238,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setDisplayAvatar(final Boolean displayAvatar) {
 		this.displayAvatar = displayAvatar;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Total maximum attachment size'.
@@ -257,7 +257,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setTotalMaxAttachmentSize(final Long totalMaxAttachmentSize) {
 		this.totalMaxAttachmentSize = totalMaxAttachmentSize;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Disable NlU'.
@@ -276,7 +276,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setDisableNlu(final Boolean disableNlu) {
 		this.disableNlu = disableNlu;
 	}
-
+	
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.

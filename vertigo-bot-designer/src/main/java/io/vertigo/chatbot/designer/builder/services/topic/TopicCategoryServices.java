@@ -1,22 +1,22 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.TopicCategoryDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.topicCategory.TopicCategoryPAO;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
+
+import javax.inject.Inject;
+import java.util.Optional;
+
+import static io.vertigo.chatbot.designer.builder.services.topic.TopicsUtils.DEFAULT_TOPIC_CAT_CODE;
 
 @Transactional
 @Secured("BotUser")
@@ -63,10 +63,6 @@ public class TopicCategoryServices implements Component {
 		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId(), Optional.of(true), Optional.of(false));
 	}
 
-	public TopicCategory getTechnicalCategoryByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId(), Optional.of(true), Optional.of(true)).get(0);
-	}
-
 	public TopicCategory getNewTopicCategory(@SecuredOperation("botAdm") final Chatbot bot) {
 		final TopicCategory category = new TopicCategory();
 		category.setBotId(bot.getBotId());
@@ -77,26 +73,19 @@ public class TopicCategoryServices implements Component {
 		return category;
 	}
 
-	public TopicCategory saveCategory(@SecuredOperation("botContributor") final Chatbot bot, final TopicCategory category, final String[] addTopics) {
-		final TopicCategory savedCategory = saveCategory(bot, category);
-		final List<Long> topicsIds = Arrays.asList(addTopics).stream().map(Long::parseLong).collect(Collectors.toList());
-		topicCategoryPAO.addTopicWithCategory(savedCategory.getTopCatId(), topicsIds);
-		return savedCategory;
-	}
-
 	public void removeAllCategoryByBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		topicCategoryPAO.removeAllCategoryByBotId(bot.getBotId());
 	}
 
-	public TopicCategory initializeBasicCategory() {
+	public TopicCategory initializeBasicCategory(final Chatbot chatbot) {
 		final TopicCategory topicCategory = new TopicCategory();
 		topicCategory.setIsEnabled(true);
-		topicCategory.setLabel("Basics");
-		topicCategory.setCode("BASICS");
+		topicCategory.setLabel(MessageText.of(TopicsMultilingualResources.DEFAULT_TOPICS).getDisplay());
+		topicCategory.setCode(DEFAULT_TOPIC_CAT_CODE);
 		topicCategory.setIsTechnical(true);
 		topicCategory.setLevel(1L);
-
-		return topicCategory;
+		topicCategory.setBotId(chatbot.getBotId());
+		return topicCategoryDAO.save(topicCategory);
 	}
 
 }

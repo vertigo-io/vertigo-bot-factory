@@ -29,7 +29,7 @@ public class TopicCategoryListController extends AbstractBotListEntityController
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
-		viewContext.publishDtList(topicCategorieskKey, topicCategoryServices.getAllNonTechnicalCategoriesByBot(bot));
+		viewContext.publishDtList(topicCategorieskKey, topicCategoryServices.getAllCategoriesByBot(bot));
 		super.initBreadCrums(viewContext, TopicCategory.class);
 		listLimitReached(viewContext, uiMessageStack);
 	}

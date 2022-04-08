@@ -109,7 +109,6 @@ public final class TopicFileExportPAO implements StoreServices {
  "                     group by (t.top_id)\n" + 
  "                 ) buttons_url on buttons_url.top_id = top.top_id\n" + 
  " 			where top.bot_id = #botId#\n" + 
- " 			and tca.is_technical = false\n" + 
  "             and tca.top_cat_id in (#tcaIds.rownum#)\n" + 
  " 			group by top.code,\n" + 
  " 				type_topic,\n" + 
