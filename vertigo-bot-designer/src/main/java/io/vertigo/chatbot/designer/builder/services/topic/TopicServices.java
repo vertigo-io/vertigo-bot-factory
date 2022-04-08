@@ -18,8 +18,8 @@ import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.UnknownSentencesServices;
+import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.topic.TopicPAO;
-import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.NluTrainingSentenceFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
@@ -95,7 +96,7 @@ public class TopicServices implements Component, Activeable {
 		//create code for export
 		hasUniqueCode(topic);
 		if (topic.getTopId() != null) {
-			Topic oldTopic = this.findTopicById(topic.getTopId());
+			final Topic oldTopic = findTopicById(topic.getTopId());
 			if (!oldTopic.getCode().equals(topic.getCode())) {
 				nodeServices.updateNodes(bot);
 			}
@@ -103,7 +104,8 @@ public class TopicServices implements Component, Activeable {
 		return topicDAO.save(topic);
 	}
 
-	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Chatbot bot, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences, DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
+	public Topic save(@SecuredOperation("botContributor") final Topic topic, final Chatbot bot, final Boolean isEnabled,
+					  final DtList<NluTrainingSentence> nluTrainingSentences, DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
 		//check if code matches the pattern
 		checkPatternCode(topic.getCode());
@@ -114,7 +116,7 @@ public class TopicServices implements Component, Activeable {
 		//create code for export
 		hasUniqueCode(topic);
 		// save and remove NTS
-		DtList<NluTrainingSentence> oldNluSentences = topic.getTopId() != null ? getNluTrainingSentenceByTopic(bot, topic) : new DtList<>(NluTrainingSentence.class);
+		final DtList<NluTrainingSentence> oldNluSentences = topic.getTopId() != null ? getNluTrainingSentenceByTopic(bot, topic) : new DtList<>(NluTrainingSentence.class);
 		if (KindTopicEnum.UNREACHABLE.name().equals(topic.getKtoCd())) {
 			nluTrainingSentencesToDelete = oldNluSentences;
 			topic.setIsEnabled(isEnabled);
@@ -124,7 +126,7 @@ public class TopicServices implements Component, Activeable {
 		}
 		removeNTS(nluTrainingSentencesToDelete);
 
-		Topic oldTopic = topic.getTopId() != null ? this.findTopicById(topic.getTopId()) : null;
+		final Topic oldTopic = topic.getTopId() != null ? findTopicById(topic.getTopId()) : null;
 		if ((oldTopic != null && !oldTopic.getCode().equals(topic.getCode())) || !nluTrainingSentencesToDelete.isEmpty()
 				|| !HashUtils.generateHashCodeForNluTrainingSentences(oldNluSentences).equals(HashUtils.generateHashCodeForNluTrainingSentences(nluTrainingSentences))) {
 			nodeServices.updateNodes(bot);
@@ -241,9 +243,18 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	public DtList<TopicIhm> getAllNonTechnicalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot, final String locale) {
-		List<String> kindTopics = new ArrayList<>();
+		final List<String> kindTopics = new ArrayList<>();
 		kindTopics.add(KindTopicEnum.NORMAL.name());
 		kindTopics.add(KindTopicEnum.UNREACHABLE.name());
+		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), kindTopics, locale);
+	}
+
+	public DtList<TopicIhm> getAllTechnicalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot, final String locale) {
+		final List<String> kindTopics = new ArrayList<>();
+		kindTopics.add(KindTopicEnum.START.name());
+		kindTopics.add(KindTopicEnum.FAILURE.name());
+		kindTopics.add(KindTopicEnum.END.name());
+		kindTopics.add(KindTopicEnum.IDLE.name());
 		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), kindTopics, locale);
 	}
 
@@ -251,45 +262,46 @@ public class TopicServices implements Component, Activeable {
 		return topicDAO.getTopicReferencingTopId(topId);
 	}
 
-	public Topic initNewBasicTopic(final String ktoCd) {
+	public Topic initNewBasicTopic(final Chatbot chatbot, final String ktoCd, final long catId, final String locale) {
 		final Topic topic = new Topic();
 		final KindTopic kto = kindTopicServices.findKindTopicByCd(ktoCd);
+		topic.setBotId(chatbot.getBotId());
 		topic.setIsEnabled(true);
-		topic.setTitle(kto.getLabel());
+		topic.setTitle(locale.equals(Locale.FRANCE.toString()) ? kto.getLabelFr() : kto.getLabel());
+		topic.setTopCatId(catId);
 		if (ktoCd.equals(KindTopicEnum.IDLE.name())) {
 			topic.setTtoCd(TypeTopicEnum.SCRIPTINTENTION.name());
 		} else {
 			topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
 		}
 		topic.setKtoCd(ktoCd);
-		topic.setDescription(kto.getDescription());
+		topic.setDescription(locale.equals(Locale.FRANCE.toString()) ? kto.getDescriptionFr() : kto.getDescription());
 		topic.setCode(ktoCd);
 		return topic;
 
 	}
 
-	public Topic saveBotTopic(final Chatbot chatbot, final TopicCategory topicCategory, final String ktoCd, final BotPredefinedTopic botTopic) {
-		final Topic topic;
-		if (botTopic.getTopId() == null) {
-			topic = initNewBasicTopic(ktoCd);
-		} else {
-			topic = topicDAO.get(botTopic.getTopId());
-		}
-		topic.setBotId(chatbot.getBotId());
-		topic.setTtoCd(botTopic.getTtoCd());
-		topic.setTopCatId(topicCategory.getTopCatId());
-		//Saving the topic is executed after, because a null response is needed if the topic has no topId yet
+	public Topic saveBotTopic(final Chatbot chatbot, final Topic topic, final String text) {
 		topicDAO.save(topic);
-
 		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
 			if (service.handleObject(topic)) {
-				service.createOrUpdateFromTopic(chatbot, topic, botTopic.getValue());
+				service.createOrUpdateFromTopic(chatbot, topic, text);
 			} else {
 				service.deleteIfExists(chatbot, topic);
 			}
 		}
 		return topic;
 
+	}
+
+	public void initTechnicalTopics(final Chatbot chatbot, final long catId, final String locale) {
+		getTechnicalKindTopics().stream()
+				.map(ktoCd -> initNewBasicTopic(chatbot, ktoCd, catId, locale))
+				.forEach(topic -> saveBotTopic(chatbot, topic, UtterTextServices.initializeDefaultText(topic.getKtoCd())));
+	}
+
+	public List<String> getTechnicalKindTopics() {
+		return List.of(KindTopicEnum.START.name(), KindTopicEnum.END.name(), KindTopicEnum.FAILURE.name(), KindTopicEnum.IDLE.name());
 	}
 
 	public Topic saveTtoCd(final Topic topic, final String ttoCd, final Chatbot bot) {
@@ -320,7 +332,7 @@ public class TopicServices implements Component, Activeable {
 		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
 			if (service.handleObject(topic)) {
 				service.saveTopic(topic, chatbot, dtObject);
-				boolean isEnabled = service.isEnabled(topic, nluTrainingSentences, dtObject, topic.getIsEnabled(), chatbot);
+				final boolean isEnabled = service.isEnabled(topic, nluTrainingSentences, dtObject, topic.getIsEnabled(), chatbot);
 				save(topic, chatbot, isEnabled, nluTrainingSentences, nluTrainingSentencesToDelete);
 			} else {
 				service.deleteIfExists(chatbot, topic);
@@ -329,7 +341,7 @@ public class TopicServices implements Component, Activeable {
 		topicLabelServices.manageLabels(chatbot, topic, labels, initialLabels);
 	}
 
-	public void deleteTopic(Topic topic, Chatbot chatbot) {
+	public void deleteTopic(final Topic topic, final Chatbot chatbot) {
 		for (final ITopicService<? extends Entity> service : topicInterfaceServices) {
 			if (service.handleObject(topic)) {
 				service.deleteIfExists(chatbot, topic);
@@ -341,15 +353,15 @@ public class TopicServices implements Component, Activeable {
 
 	//********* NTS part ********/
 
-	public DtList<NluTrainingSentence> addTrainingSentence(final Chatbot bot, List<UnknownSentenceToUpdateIhm> sentencesToUpdate, final Long topId) {
-		Topic topic = findTopicById(topId);
-		DtList<NluTrainingSentence> nluTrainingSentenceDtList = getNluTrainingSentenceByTopic(bot, topic);
-		for (UnknownSentenceToUpdateIhm sentence : sentencesToUpdate) {
-			UnknownSentenceDetail unknownSentenceDetail = unknownSentencesServices.findById(sentence.getUnkSeId());
+	public DtList<NluTrainingSentence> addTrainingSentence(final Chatbot bot, final List<UnknownSentenceToUpdateIhm> sentencesToUpdate, final Long topId) {
+		final Topic topic = findTopicById(topId);
+		final DtList<NluTrainingSentence> nluTrainingSentenceDtList = getNluTrainingSentenceByTopic(bot, topic);
+		for (final UnknownSentenceToUpdateIhm sentence : sentencesToUpdate) {
+			final UnknownSentenceDetail unknownSentenceDetail = unknownSentencesServices.findById(sentence.getUnkSeId());
 			nluTrainingSentenceServices.addTrainingSentense(sentence.getText(), nluTrainingSentenceDtList);
 			unknownSentencesServices.updateStatus(unknownSentenceDetail, UnknownSentenceStatusEnum.TREATED);
 		}
-		DtList<NluTrainingSentence> savedNluTrainingSentences = saveAllNotBlankNTS(topic, nluTrainingSentenceDtList);
+		final DtList<NluTrainingSentence> savedNluTrainingSentences = saveAllNotBlankNTS(topic, nluTrainingSentenceDtList);
 		nodeServices.updateNodes(bot);
 		return savedNluTrainingSentences;
 	}

@@ -18,7 +18,6 @@ import io.vertigo.chatbot.designer.builder.services.IRecordable;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.domain.History;
 import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
-import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.domain.DtDefinitions.ScriptIntentionFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
@@ -65,10 +64,10 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 	public ScriptIntention save(@SecuredOperation("botAdm") final Chatbot chatbot,
 			final ScriptIntention scriptIntention,
 			final Topic topic) {
-		boolean isNew = scriptIntention.getSinId() == null;
-		ScriptIntention oldScriptIntention = findByTopId(topic.getTopId()).orElse(null);
+		final boolean isNew = scriptIntention.getSinId() == null;
+		final ScriptIntention oldScriptIntention = findByTopId(topic.getTopId()).orElse(null);
 		scriptIntention.setTopId(topic.getTopId());
-		ScriptIntention savedScriptIntention = save(scriptIntention);
+		final ScriptIntention savedScriptIntention = save(scriptIntention);
 		if (oldScriptIntention == null || (oldScriptIntention.getScript() != null && !oldScriptIntention.getScript().equals(scriptIntention.getScript()))) {
 			nodeServices.updateNodes(chatbot);
 			record(chatbot, savedScriptIntention, isNew ? HistoryActionEnum.ADDED : HistoryActionEnum.UPDATED);
@@ -131,23 +130,8 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 	}
 
 	@Override
-	public BotPredefinedTopic getBotPredefinedTopicByTopId(final Long topId) {
-		Assertion.check()
-				.isNotNull(topId);
-		// ---
-		final Topic topic = topicDAO.get(topId);
-		final ScriptIntention sin = findByTopId(topId).orElseThrow();
-
-		final BotPredefinedTopic predefinedTopic = new BotPredefinedTopic();
-		predefinedTopic.setTopId(topId);
-		predefinedTopic.setTtoCd(topic.getTtoCd());
-		predefinedTopic.setValue(sin.getScript());
-		return predefinedTopic;
-	}
-
-	@Override
 	public boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DtObject object, final Chatbot bot) {
-		ScriptIntention scriptIntention = (ScriptIntention) object;
+		final ScriptIntention scriptIntention = (ScriptIntention) object;
 		return (!KindTopicEnum.UNREACHABLE.name().equals(topic.getKtoCd()) && sentences.isEmpty()) || StringUtil.isBlank(scriptIntention.getScript());
 	}
 
@@ -157,15 +141,15 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 	}
 
 	@Override
-	public void saveTopic(Topic topic, Chatbot chatbot, DtObject dtObject) {
+	public void saveTopic(final Topic topic, final Chatbot chatbot, final DtObject dtObject) {
 		save(chatbot, (ScriptIntention) dtObject, topic);
 	}
 
 	@Override
-	public History record(Chatbot bot, ScriptIntention scriptIntention, HistoryActionEnum action) {
+	public History record(final Chatbot bot, final ScriptIntention scriptIntention, final HistoryActionEnum action) {
 		scriptIntention.topic().load();
-		Topic topic = scriptIntention.topic().get();
-		String message = topic.getKtoCd() + " - " + topic.getTitle();
+		final Topic topic = scriptIntention.topic().get();
+		final String message = topic.getKtoCd() + " - " + topic.getTitle();
 		return historyServices.record(bot, action, scriptIntention.getClass().getSimpleName(), message);
 	}
 }

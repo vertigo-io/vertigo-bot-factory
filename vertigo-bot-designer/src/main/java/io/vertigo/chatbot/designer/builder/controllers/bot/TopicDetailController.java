@@ -114,6 +114,8 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     private static final ViewContextKey<Boolean> unreachableKey = ViewContextKey.of("unreachable");
 
+    private static final ViewContextKey<Boolean> technicalTopicKey = ViewContextKey.of("technicalTopic");
+
     @Inject
     private UtterTextServices utterTextServices;
 
@@ -191,7 +193,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
         viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
         viewContext.publishDto(topicKey, topic);
-
+        viewContext.publishRef(technicalTopicKey, isTechnicalTopic(topic));
         viewContext.publishRef(newNluTrainingSentenceKey, "");
         final DtList<NluTrainingSentence> nluSentences = topicServices.getNluTrainingSentenceByTopic(bot, topic);
         viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluSentences);
@@ -202,10 +204,10 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
 
         //Label
-        final DtList<TopicLabel> initialList = this.topicLabelServices.getTopicLabelByBotIdAndTopId(bot, topic.getTopId());
+        final DtList<TopicLabel> initialList = topicLabelServices.getTopicLabelByBotIdAndTopId(bot, topic.getTopId());
         viewContext.publishDtList(initialTopicLabelListKey, initialList);
         viewContext.publishDtListModifiable(topicLabelListKey, new DtList<>(TopicLabel.class));
-        viewContext.publishDtList(allTopicLabelListKey, this.topicLabelServices.getTopicLabelByBotId(bot));
+        viewContext.publishDtList(allTopicLabelListKey, topicLabelServices.getTopicLabelByBotId(bot));
         viewContext.publishRef(unreachableKey, KindTopicEnum.UNREACHABLE.name().equals(topic.getKtoCd()));
     }
 
@@ -225,23 +227,24 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         //Labels
         viewContext.publishDtList(initialTopicLabelListKey, new DtList<>(TopicLabel.class));
         viewContext.publishDtListModifiable(topicLabelListKey, new DtList<>(TopicLabel.class));
-        viewContext.publishDtList(allTopicLabelListKey, this.topicLabelServices.getTopicLabelByBotId(bot));
+        viewContext.publishDtList(allTopicLabelListKey, topicLabelServices.getTopicLabelByBotId(bot));
         viewContext.publishRef(unreachableKey, false);
+        viewContext.publishRef(technicalTopicKey, false);
 
     }
 
     private void addMessageDeactivate(final UiMessageStack uiMessageStack, final ScriptIntention scriptIntention,
                                       final DtList<NluTrainingSentence> sentences, final Chatbot chatbot, final Topic topic) {
-        if (scriptIntentionServices.hasToBeDeactivated(topic, sentences, scriptIntention, chatbot)) {
+        if (!isTechnicalTopic(topic) && scriptIntentionServices.hasToBeDeactivated(topic, sentences, scriptIntention, chatbot)) {
             uiMessageStack.info(scriptIntentionServices.getDeactivateMessage());
         }
     }
 
     private void addMessageDeactivate(final UiMessageStack uiMessageStack, final SmallTalk smallTalk,
                                       final DtList<NluTrainingSentence> sentences, final Chatbot chatbot, final Topic topic) {
-        SmallTalkWrapper smallTalkWrapper = new SmallTalkWrapper();
+        final SmallTalkWrapper smallTalkWrapper = new SmallTalkWrapper();
         smallTalkWrapper.setSmallTalk(smallTalk);
-        if (smallTalkServices.hasToBeDeactivated(topic, sentences, smallTalkWrapper, chatbot)) {
+        if (!isTechnicalTopic(topic) && smallTalkServices.hasToBeDeactivated(topic, sentences, smallTalkWrapper, chatbot)) {
             uiMessageStack.info(smallTalkServices.getDeactivateMessage());
         }
     }
@@ -263,6 +266,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
                          @ViewAttribute("topic") @Validate(TopicCategoryNotEmptyValidator.class) final Topic topic,
                          @ViewAttribute("bot") final Chatbot chatbot,
                          @ViewAttribute("unreachable") final String unreachable,
+                         @ViewAttribute("technicalTopic") final String technicalTopic,
                          @ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
                          @ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
                          @ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
@@ -270,23 +274,31 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
                          @ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels) {
 
         final Long botId = chatbot.getBotId();
-        DtObject topicTypeObject = scriptIntention;
-        if ("true".equals(unreachable)) {
-            topic.setKtoCd(KindTopicEnum.UNREACHABLE.name());
+        if ("true".equals(technicalTopic)) {
+            if (TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd())) {
+                topicServices.saveBotTopic(chatbot, topic, ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey), uiMessageStack).get(0).getText());
+            } else {
+                topicServices.saveBotTopic(chatbot, topic, scriptIntention.getScript());
+            }
         } else {
-            topic.setKtoCd(KindTopicEnum.NORMAL.name());
-            nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
-        }
-        if (TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd())) {
-            SmallTalkWrapper smallTalkWrapper = new SmallTalkWrapper();
-            smallTalkWrapper.setSmallTalk(smallTalk);
-            smallTalkWrapper.setUtterTexts(ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey), uiMessageStack));
-            smallTalkWrapper.setButtons(ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsKey), uiMessageStack));
-            smallTalkWrapper.setButtonsUrl(ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsUrlKey), uiMessageStack));
-            topicTypeObject = smallTalkWrapper;
-        }
+            DtObject topicTypeObject = scriptIntention;
+            if ("true".equals(unreachable)) {
+                topic.setKtoCd(KindTopicEnum.UNREACHABLE.name());
+            } else {
+                topic.setKtoCd(KindTopicEnum.NORMAL.name());
+                nluTrainingSentenceServices.addTrainingSentense(newNluTrainingSentence, nluTrainingSentences);
+            }
+            if (TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd())) {
+                final SmallTalkWrapper smallTalkWrapper = new SmallTalkWrapper();
+                smallTalkWrapper.setSmallTalk(smallTalk);
+                smallTalkWrapper.setUtterTexts(ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey), uiMessageStack));
+                smallTalkWrapper.setButtons(ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsKey), uiMessageStack));
+                smallTalkWrapper.setButtonsUrl(ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(buttonsUrlKey), uiMessageStack));
+                topicTypeObject = smallTalkWrapper;
+            }
 
-        topicServices.saveTopic(topic, chatbot, newNluTrainingSentence, nluTrainingSentences, nluTrainingSentencesToDelete, topicTypeObject, labels, initialLabels);
+            topicServices.saveTopic(topic, chatbot, newNluTrainingSentence, nluTrainingSentences, nluTrainingSentencesToDelete, topicTypeObject, labels, initialLabels);
+        }
         return "redirect:/bot/" + botId + "/topics/detail/" + topic.getTopId();
     }
 
@@ -381,5 +393,9 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
         return "redirect:/bot/" + topic.getBotId() + "/topics/";
 
+    }
+
+    private boolean isTechnicalTopic(final Topic topic) {
+        return topicServices.getTechnicalKindTopics().contains(topic.getKtoCd());
     }
 }

@@ -40,4 +40,7 @@
 	<include file="changeLog/v_1_1_0/alter_type_export_analytics.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/create_rating_options.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_type_export_analytics_categories.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_1_1_0/alter_default_topic.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_1_1_0/alter_kind_topic_labels.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_1_1_0/update_kind_topic.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

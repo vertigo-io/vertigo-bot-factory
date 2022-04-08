@@ -651,7 +651,9 @@ create table KIND_TOPIC
 (
     KTO_CD      	 VARCHAR(100)	not null,
     LABEL       	 VARCHAR(100)	not null,
-    DESCRIPTION 	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    DESCRIPTION 	 TEXT        	not null,
+    DESCRIPTION_FR	 TEXT        	not null,
     DEFAULT_TEXT	 TEXT        	not null,
     constraint PK_KIND_TOPIC primary key (KTO_CD)
 );
@@ -662,8 +664,14 @@ comment on column KIND_TOPIC.KTO_CD is
 comment on column KIND_TOPIC.LABEL is
 'Label';
 
+comment on column KIND_TOPIC.LABEL_FR is
+'Label FR';
+
 comment on column KIND_TOPIC.DESCRIPTION is
 'Description';
+
+comment on column KIND_TOPIC.DESCRIPTION_FR is
+'Description FR';
 
 comment on column KIND_TOPIC.DEFAULT_TEXT is
 'Default text';

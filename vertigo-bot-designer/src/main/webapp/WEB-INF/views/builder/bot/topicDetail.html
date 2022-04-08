@@ -113,11 +113,15 @@
 			</section>
 
 			<section layout:fragment="content">
+				<vu:include-data-primitive key="technicalTopic" modifiable="true"/>
+				<q-input v-model="vueData.technicalTopic" name="vContext[technicalTopic]" class="hidden" ></q-input>
+				<vu:include-data-primitive key="unreachable" />
+				<q-input v-model="vueData.unreachable" name="vContext[unreachable]" class="hidden" ></q-input>
 				<vu:block id="detail" title="Informations">
 					<vu:grid cols="2">
-						<vu:text-field object="topic" field="title" />
-						<vu:text-field object="topic" field="code"/>
-						<vu:label object="topic" field="isEnabled">
+						<vu:text-field object="topic" field="title" :disable="vueData.technicalTopic == true"/>
+						<vu:text-field object="topic" field="code" :disable="vueData.technicalTopic == true"/>
+						<vu:label object="topic" field="isEnabled" v-if="!vueData.technicalTopic == true" >
 							<vu:include-data object="topic" field="isEnabled" modifiable="true" />
 
 							<q-input v-model="vueData.topic.isEnabled" name="vContext[topic][isEnabled]" class="hidden" ></q-input>
@@ -125,9 +129,9 @@
 							<q-toggle v-model="vueData.topic.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
 						</vu:label>
 						<vu:grid-cell></vu:grid-cell>
-						<vu:select object="topic" field="topCatId" list="topicCategoryList" label="#{topic.category}" valueField="topCatId" labelField="label" />
-						<vu:include-data object="topic" field="description" modifiable="true" />
-						<vu:text-area object="topic" field="description" />
+						<vu:select object="topic" field="topCatId" list="topicCategoryList" label="#{topic.category}" v-if="vueData.technicalTopic == false" valueField="topCatId" labelField="label" readonly="${model.modeReadOnly}"/>
+						<vu:include-data object="topic" field="description" modifiable="true"/>
+						<vu:text-area object="topic" field="description" readonly="${model.modeReadOnly}" :disable="vueData.technicalTopic == true"/>
 						<vu:grid-cell></vu:grid-cell>
 					</vu:grid>
 
@@ -137,6 +141,7 @@
 					<th:block th:attr="objectKey=${model.vContext[componentStates].addComponentState('labels').addObject('filterOptions', {label:null})}" th:remove="all" />
 
 					<q-select
+						v-if="vueData.technicalTopic == false"
 						th:label="#{topic.label}"
 						v-model="vueData.initialTopicLabelList"
 						multiple
@@ -155,7 +160,7 @@
 					</div>
 				</vu:block>
 
-				<vu:block id="training" th:title="#{topic.menu.training}">
+				<vu:block id="training" th:title="#{topic.menu.training}" v-if="vueData.technicalTopic == false">
 
 					<vu:slot name="actions_slot">
 						<q-input v-model="componentStates.nluTrainingSentences.pagination.search" v-if="vueData.unreachable == false" dense clearable

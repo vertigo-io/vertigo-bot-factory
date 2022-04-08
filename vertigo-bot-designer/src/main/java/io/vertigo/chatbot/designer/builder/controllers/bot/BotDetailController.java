@@ -20,24 +20,17 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
-import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
-import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
-import io.vertigo.chatbot.designer.builder.services.topic.ITopicService;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
-import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.chatbot.designer.utils.StringUtils;
 import io.vertigo.chatbot.domain.DtDefinitions;
-import io.vertigo.chatbot.domain.DtDefinitions.BotPredefinedTopicFields;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -54,7 +47,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,14 +72,6 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	@Inject
 	private ChabotCustomConfigServices chabotCustomConfigServices;
 
-	@Inject
-	private List<ITopicService<? extends Entity>> topicInterfaceServices;
-
-	private static final ViewContextKey<BotPredefinedTopic> startTopicKey = ViewContextKey.of("startTopic");
-	private static final ViewContextKey<BotPredefinedTopic> failureTopicKey = ViewContextKey.of("failureTopic");
-	private static final ViewContextKey<BotPredefinedTopic> endTopicKey = ViewContextKey.of("endTopic");
-	private static final ViewContextKey<BotPredefinedTopic> idleTopicKey = ViewContextKey.of("idleTopic");
-
 	private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
 	// template for creation
 	private static final ViewContextKey<Boolean> deletePopinKey = ViewContextKey.of("deletePopin");
@@ -101,11 +85,6 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		viewContext.publishRef(deletePopinKey, false);
 		viewContext.publishFileInfoURI(botTmpPictureUriKey, null);
 
-		loadBotTopic(bot, viewContext, KindTopicEnum.FAILURE.name(), failureTopicKey);
-		loadBotTopic(bot, viewContext, KindTopicEnum.START.name(), startTopicKey);
-		loadBotTopic(bot, viewContext, KindTopicEnum.END.name(), endTopicKey);
-		loadBotTopic(bot, viewContext, KindTopicEnum.IDLE.name(), idleTopicKey);
-
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
 		super.initBreadCrums(viewContext, bot);
@@ -118,45 +97,11 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		initEmptyCommonContext(viewContext);
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 
-		newBotTopic(viewContext, KindTopicEnum.FAILURE.name(), failureTopicKey);
-		newBotTopic(viewContext, KindTopicEnum.START.name(), startTopicKey);
-		newBotTopic(viewContext, KindTopicEnum.END.name(), endTopicKey);
-		newBotTopic(viewContext, KindTopicEnum.IDLE.name(), idleTopicKey);
-
 		viewContext.publishFileInfoURI(botTmpPictureUriKey, null);
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
 		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
 		listLimitReached(viewContext, uiMessageStack);
-	}
-
-	private static void newBotTopic(final ViewContext viewContext, final String ktoCd, final ViewContextKey<BotPredefinedTopic> viewModelKey) {
-		final BotPredefinedTopic botTopic = createNewBotTopic(ktoCd);
-		viewContext.publishDto(viewModelKey, botTopic);
-	}
-
-	private static BotPredefinedTopic createNewBotTopic(final String ktoCd) {
-		final BotPredefinedTopic botTopic = new BotPredefinedTopic();
-		botTopic.setValue(UtterTextServices.initializeDefaultText(ktoCd));
-		if (ktoCd.equals(KindTopicEnum.IDLE.name())) {
-			botTopic.setTtoCd("SCRIPTINTENTION");
-		} else {
-			botTopic.setTtoCd("SMALLTALK");
-		}
-		return botTopic;
-	}
-
-	private void loadBotTopic(final Chatbot bot, final ViewContext viewContext, final String ktoCd,
-			final ViewContextKey<BotPredefinedTopic> viewModelKey) {
-		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd)
-				.orElseGet(() -> chatbotServices.saveBotTopic(bot, ktoCd, createNewBotTopic(ktoCd)));
-
-		for (final ITopicService<? extends Entity> services : topicInterfaceServices) {
-			if (services.handleObject(topic)) {
-				viewContext.publishDto(viewModelKey, services.getBotPredefinedTopicByTopId(topic.getTopId()));
-			}
-		}
-
 	}
 
 	@PostMapping("/_edit")
@@ -169,13 +114,9 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
 			@QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile,
-			@ViewAttribute("failureTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic failureBotTopic,
-			@ViewAttribute("startTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic startBotTopic,
-			@ViewAttribute("endTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic endBotTopic,
-			@ViewAttribute("idleTopic") @Validate(BotTopicNotEmptyValidator.class) final BotPredefinedTopic idleBotTopic,
-			@ViewAttribute("chatbotCustomConfig") @Validate(ChatbotCustomConfigValidator.class) final ChatbotCustomConfig chatbotCustomConfig) {
+		 	@ViewAttribute("chatbotCustomConfig")  @Validate(ChatbotCustomConfigValidator.class) final ChatbotCustomConfig chatbotCustomConfig) {
 
-		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, failureBotTopic, startBotTopic, endBotTopic, idleBotTopic, chatbotCustomConfig);
+		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, chatbotCustomConfig);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();
 	}
@@ -183,23 +124,6 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	@Override
 	protected String getBreadCrums(final Chatbot object) {
 		return MessageText.of(BotMultilingualResources.BOT_DETAIL).getDisplay();
-	}
-
-	/**
-	 * Check if value field is not empty or meaningless html.
-	 */
-	public static final class BotTopicNotEmptyValidator extends AbstractDtObjectValidator<BotPredefinedTopic> {
-
-		/** {@inheritDoc} */
-		@Override
-		protected void checkMonoFieldConstraints(final BotPredefinedTopic botTopic, final DtField dtField, final DtObjectErrors dtObjectErrors) {
-			if (BotPredefinedTopicFields.value.name().equals(dtField.getName())) {
-				final String value = (String) dtField.getDataAccessor().getValue(botTopic);
-				if (StringUtils.isHtmlEmpty(value)) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné")); // TODO: use same i18n resource when avaiable in DefaultDtObjectValidator
-				}
-			}
-		}
 	}
 
 	/**

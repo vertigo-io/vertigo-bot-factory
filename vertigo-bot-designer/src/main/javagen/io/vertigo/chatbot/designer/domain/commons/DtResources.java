@@ -9,22 +9,6 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
-	/** BotPredefinedTopic.
-	/***********************************************************
-	/**
-	 * Id topic.
-	 */
-	fldBotPredefinedTopic$topId,
-	/**
-	 * Type topic code.
-	 */
-	fldBotPredefinedTopic$ttoCd,
-	/**
-	 * SmallTalk / Script.
-	 */
-	fldBotPredefinedTopic$value,
-
-	/***********************************************************
 	/** Groups.
 	/***********************************************************
 	/**

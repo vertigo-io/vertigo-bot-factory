@@ -2,10 +2,8 @@ package io.vertigo.chatbot.designer.builder.services.topic;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.model.Entity;
@@ -44,5 +42,4 @@ public interface ITopicService<D extends Entity> {
 
 	String getDeactivateMessage();
 
-	BotPredefinedTopic getBotPredefinedTopicByTopId(Long topId);
 }

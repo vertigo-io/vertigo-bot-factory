@@ -58,9 +58,11 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 public class TopicsListController extends AbstractBotListEntityController<Topic> {
 
 	private static final ViewContextKey<TopicIhm> topicIhmListKey = ViewContextKey.of("topicsIhm");
+	private static final ViewContextKey<TopicIhm> technicalTopicIhmListKey = ViewContextKey.of("technicalTopicIhm");
 	// All the topic types
 	private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
 	private static final ViewContextKey<TopicCategory> categoryListKey = ViewContextKey.of("categoryList");
+	private static final ViewContextKey<TopicCategory> nonTechnicalCategoryListKey = ViewContextKey.of("nonTechnicalCategoryList");
 	// return of the select
 	private static final ViewContextKey<String> selectionListKey = ViewContextKey.of("selectionList");
 	private static final ViewContextKey<SelectTopicCategory> selectionCatListKey = ViewContextKey.of("selectionCatList");
@@ -84,8 +86,10 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtList(topicIhmListKey, TopicIhmFields.topId, topicServices.getAllNonTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString()));
+		viewContext.publishDtList(technicalTopicIhmListKey, TopicIhmFields.topId, topicServices.getAllTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString()));
 		viewContext.publishDtListModifiable(typeTopicListKey, typeTopicServices.getAllTypeTopic());
-		viewContext.publishDtList(categoryListKey, categoryServices.getAllActiveCategoriesByBot(bot));
+		viewContext.publishDtList(categoryListKey, categoryServices.getAllCategoriesByBot(bot));
+		viewContext.publishDtList(nonTechnicalCategoryListKey, categoryServices.getAllNonTechnicalCategoriesByBot(bot));
 		viewContext.publishDto(criteriaKey, new TopicCriteria());
 		viewContext.publishRef(selectionListKey, "");
 		viewContext.publishDto(selectionCatListKey, new SelectTopicCategory());
