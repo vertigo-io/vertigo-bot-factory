@@ -27,6 +27,14 @@ modules:
     featuresConfig:
       - script.janino:
   io.vertigo.datamodel.DataModelFeatures:
+  io.vertigo.datastore.DataStoreFeatures:
+    features:
+      - filestore: #activation du support du stockage des fichier
+    featuresConfig:
+      - filestore.fullFilesystem:
+          name: attachment
+          fileInfoClass: io.vertigo.chatbot.commons.AttachmentInfo
+          path: ${FILE_STORE_PATH}
   io.vertigo.vega.VegaFeatures:
     features:
       - webservices:

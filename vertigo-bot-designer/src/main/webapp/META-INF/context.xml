@@ -14,8 +14,11 @@
 	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot-test" override="false"/>
 	<Parameter name="KEYCLOAK_CONFIG" value="keycloak.json" override="false"/>
 	<Parameter name="VERSION" value="1.3.2" override="false"/>
+	<Parameter name="FILE_STORE_PATH" value="C:\designer/attachments/" override="false"/>
 	
 	<!-- Env variable in production -->
 	<Parameter name="INFLUXDB_URL" value="http://localhost:8086" override="false"/>
 	<Parameter name="USE_SSL" value="true" override="false"/>
+	<Parameter name="CLAMAV_HOST" value="localhost" override="false"/>
+	<Parameter name="CLAMAV_PORT" value="3310" override="false"/>
 </Context>

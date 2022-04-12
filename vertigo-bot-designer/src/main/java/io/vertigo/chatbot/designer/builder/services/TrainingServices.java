@@ -24,6 +24,7 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
+import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
@@ -137,10 +138,10 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 
 	@Override
 	public void start() {
-		boolean useSSL = paramManager.getOptionalParam("USE_SSL")
+		final boolean useSSL = paramManager.getOptionalParam("USE_SSL")
 				.orElse(Param.of("USE_SSL", "true")).getValueAsBoolean();
 		if (!useSSL) {
-			this.httpClient = HttpRequestUtils.createHttpClientWithoutSSL();
+			httpClient = HttpRequestUtils.createHttpClientWithoutSSL();
 		}
 	}
 
@@ -166,18 +167,19 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		saveTraining(bot, training);
 		LogsUtils.addLogs(logs, "Bot export :");
 		LogsUtils.breakLine(logs);
-		BotExport botExport = exportBot(bot, logs);
+		final BotExport botExport = exportBot(bot, logs);
 		botExportServices.exportConfluenceSetting(botId, devNode.getNodId()).ifPresent(botExport::setConfluenceSetting);
 		botExportServices.exportJiraSetting(botId, devNode.getNodId()).ifPresent(botExport::setJiraSetting);
+		final DtList<AttachmentExport> attachmentExports = botExportServices.exportBotAttachments(bot, logs);
 		LogsUtils.addLogs(logs, "Bot export ");
 		LogsUtils.logOK(logs);
 
-		trainNode(bot, training, devNode, logs, botExport);
+		trainNode(bot, training, devNode, logs, botExport, attachmentExports);
 
 		return training;
 	}
 
-	private void trainNode(Chatbot bot, Training training, ChatbotNode node, StringBuilder logs, BotExport botExport) {
+	private void trainNode(final Chatbot bot, final Training training, final ChatbotNode node, final StringBuilder logs, final BotExport botExport, final DtList<AttachmentExport> attachmentExports) {
 		try {
 			LogsUtils.addLogs(logs, "Executor configuration... ");
 			final ExecutorConfiguration execConfig = getExecutorConfig(bot, training, node);
@@ -187,6 +189,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 			LogsUtils.breakLine(logs);
 			final Map<String, Object> requestData = new HashMap<String, Object>();
 			requestData.put("botExport", botExport);
+			requestData.put("attachmentsExport", attachmentExports);
 			requestData.put("executorConfig", execConfig);
 
 			final Map<String, String> headers = Map.of(API_KEY, node.getApiKey(),
@@ -200,7 +203,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 			final HttpRequest request = HttpRequestUtils.createPutRequest(node.getUrl() + URL_MODEL, headers, publisher);
 			HttpRequestUtils.sendAsyncRequest(httpClient, request, BodyHandlers.ofString())
 					.thenApply(response -> {
-						return this.handleResponse(response, training, node, bot, logs);
+						return handleResponse(response, training, node, bot, logs);
 					});
 			LogsUtils.addLogs(logs, "Call training OK, training in progress...");
 		}  catch (final Exception e) {
@@ -217,18 +220,19 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 	}
 
 	public void deployTraining(final Chatbot bot, final Long savedTrainingId, final Long nodeId) {
-		SavedTraining savedTraining = savedTrainingServices.getById(savedTrainingId);
-		Training training = getTraining(bot, savedTraining.getTraId());
-		ChatbotNode node = nodeServices.getNodeByNodeId(bot, nodeId);
+		final SavedTraining savedTraining = savedTrainingServices.getById(savedTrainingId);
+		final Training training = getTraining(bot, savedTraining.getTraId());
+		final ChatbotNode node = nodeServices.getNodeByNodeId(bot, nodeId);
 		updateTraining(training);
 		saveTraining(bot, training);
 		final StringBuilder logs = new StringBuilder("Starting deployment of training " + training.getTraId() + " on node " + node.getName() + " ...");
 		LogsUtils.breakLine(logs);
 		try {
-			BotExport botExport = jsonEngine.fromJson(savedTraining.getBotExport(), BotExport.class);
+			final BotExport botExport = jsonEngine.fromJson(savedTraining.getBotExport(), BotExport.class);
 			botExportServices.exportConfluenceSetting(bot.getBotId(), nodeId).ifPresent(botExport::setConfluenceSetting);
 			botExportServices.exportJiraSetting(bot.getBotId(), nodeId).ifPresent(botExport::setJiraSetting);
-			trainNode(bot, training, node, logs, botExport);
+			final DtList<AttachmentExport> attachmentExports = botExportServices.exportBotAttachments(bot, logs);
+			trainNode(bot, training, node, logs, botExport, attachmentExports);
 		} catch (final Exception e) {
 			LogsUtils.logKO(logs);
 			LogsUtils.addLogs(logs, e.getMessage());
@@ -308,7 +312,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		return training;
 	}
 
-	private Training updateTraining(Training training) {
+	private Training updateTraining(final Training training) {
 		training.setStartTime(Instant.now());
 		training.setStrCd(TrainingStatusEnum.TRAINING.name());
 		return training;
@@ -326,7 +330,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		if (bot.getFilIdAvatar() != null) {
 			result.setAvatar(fileServices.getFileAsBase64(bot.getFilIdAvatar()));
 		}
-		ChatbotCustomConfig chatbotCustomConfig =  chatbotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId());
+		final ChatbotCustomConfig chatbotCustomConfig =  chatbotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId());
 		result.setCustomConfig(jsonEngine.toJson(chatbotCustomConfig));
 		return result;
 	}
@@ -442,7 +446,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 	}
 
 	@Override
-	public History record(Chatbot bot, Training training, HistoryActionEnum action) {
+	public History record(final Chatbot bot, final Training training, final HistoryActionEnum action) {
 		return historyServices.record(bot, action, training.getClass().getSimpleName(), "Version " + training.getVersionNumber());
 	}
 }

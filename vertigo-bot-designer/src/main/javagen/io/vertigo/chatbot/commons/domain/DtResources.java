@@ -9,6 +9,86 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
+	/** Attachment.
+	/***********************************************************
+	/**
+	 * Attachment id.
+	 */
+	fldAttachment$attId,
+	/**
+	 * Label.
+	 */
+	fldAttachment$label,
+	/**
+	 * MimeType.
+	 */
+	fldAttachment$type,
+	/**
+	 * Size.
+	 */
+	fldAttachment$length,
+	/**
+	 * AttachmentFileInfo.
+	 */
+	fldAttachment$attFiId,
+	/**
+	 * Chatbot.
+	 */
+	fldAttachment$botId,
+
+	/***********************************************************
+	/** AttachmentExport.
+	/***********************************************************
+	/**
+	 * Label.
+	 */
+	fldAttachmentExport$label,
+	/**
+	 * Name.
+	 */
+	fldAttachmentExport$fileName,
+	/**
+	 * MimeType.
+	 */
+	fldAttachmentExport$mimeType,
+	/**
+	 * Size.
+	 */
+	fldAttachmentExport$length,
+	/**
+	 * Data.
+	 */
+	fldAttachmentExport$fileData,
+
+	/***********************************************************
+	/** AttachmentFileInfo.
+	/***********************************************************
+	/**
+	 * Id.
+	 */
+	fldAttachmentFileInfo$attFiId,
+	/**
+	 * Name.
+	 */
+	fldAttachmentFileInfo$fileName,
+	/**
+	 * MimeType.
+	 */
+	fldAttachmentFileInfo$mimeType,
+	/**
+	 * Size.
+	 */
+	fldAttachmentFileInfo$length,
+	/**
+	 * Modification Date.
+	 */
+	fldAttachmentFileInfo$lastModified,
+	/**
+	 * path.
+	 */
+	fldAttachmentFileInfo$filePath,
+
+	/***********************************************************
 	/** BotExport.
 	/***********************************************************
 	/**
@@ -119,6 +199,10 @@ public enum DtResources implements MessageKey {
 	 * Display avatar.
 	 */
 	fldChatbotCustomConfig$displayAvatar,
+	/**
+	 * Total maximum attachment size.
+	 */
+	fldChatbotCustomConfig$totalMaxAttachmentSize,
 	/**
 	 * Chatbot.
 	 */

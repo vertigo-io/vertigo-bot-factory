@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{templates/botDetailLayout}" th:with="tab=attachments"
+>
+
+    <head>
+        <title th:text="#{attachment.title}"></title>
+        <script th:inline="javascript">
+            VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+
+            function addAttachment() {
+                VUiPage.httpPostAjax("_saveAttachment", {
+                    'attId': VertigoUi.vueData.newAttachment.attId,
+                    'label': VertigoUi.vueData.newAttachment.label,
+                    'importAttachmentFileUri': VUiPage.componentStates.uploaderimportAttachmentFileUri.fileUris.toString()
+                });
+            }
+
+            function onRejected (rejectedEntries) {
+                let message = VertigoUi.vueData.locale === 'fr_FR' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
+                    : 'File ' + rejectedEntries[0].file.name + ' was rejected.';
+                if (rejectedEntries[0].failedPropValidation === 'accept') {
+                    message += VertigoUi.vueData.locale === 'fr_FR' ? ' Le format du fichier n\'est pas accepté' : ' File format isn\'t accepted';
+                }
+                VUiExtensions.dataX.attachmentError = {'show': true, 'message': message};
+            }
+
+            function onStart() {
+                VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+            }
+
+            function isImage(type) {
+                return type.includes('image');
+            }
+        </script>
+    </head>
+
+    <body>
+        <section layout:fragment="content">
+            <vu:include-data object="bot" field="botId" />
+            <vu:popup-ajax action="_deleteAttachment" vModel="showDeleteAttachmentPopup" th:message="#{attachment.delete.message}"
+                           th:confirm="#{attachment.delete}" dataName="attId" ></vu:popup-ajax>
+            <vu:table list="attachments" componentId="attachments" sortBy="label" :binary-state-sort="true">
+                <vu:slot name="top_right_slot">
+                    <q-btn color="primary" round icon="add" th:aria-label="#{attachment.add}" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" th:title="#{attachment.add}"
+                           @click="vueData.newAttachment.attId = null;
+                       vueData.newAttachment.botId = vueData.bot.botId;
+                       vueData.newAttachment.label = null;
+                       componentStates.uploaderimportAttachmentFileUri.fileUris = [];
+                       $refs.attachmentDialog.show()"></q-btn>
+                </vu:slot>
+                <vu:slot name="actions_slot">
+                    <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{attachment.update}" th:title="#{attachment.update}"
+                           @click="vueData.newAttachment.botId = props.row.botId; vueData.newAttachment.attId = props.row.attId;
+                           vueData.newAttachment.label = props.row.label; componentStates.uploaderimportAttachmentFileUri.fileUris = []; $refs.attachmentDialog.show()"></q-btn>
+                    <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{attachment.delete}" th:title="#{attachment.delete}"
+                           @click="componentStates.attId = props.row.attId; componentStates.showDeleteAttachmentPopup = true"></q-btn>
+                </vu:slot>
+                <vu:include-data object="attachments" field="attId" />
+                <vu:include-data object="attachments" field="attFiId" />
+                <vu:column field="label" />
+                <vu:column field="type" />
+                <vu:column name="preview" th:label="#{attachment.preview}">
+                    <img v-if="isImage(props.row.type)" th::src="|'@{/commons/getAttachment}?attFiId=' + props.row.attFiId|" class="detailImg" />
+                    <a v-else th::href="|'@{/commons/getAttachment}?attFiId=' + props.row.attFiId|" target="_blank"><q-icon name="attachment" size="2rem"></q-icon></a>
+                </vu:column>
+            </vu:table>
+
+
+            <q-dialog ref="attachmentDialog">
+                <vu:include-data object="newAttachment" field="attId" />
+                <vu:include-data object="newAttachment" field="botId" />
+                <vu:include-data object="newAttachment" field="label" />
+                <q-card>
+                    <q-card-section>
+                        <div class="text-h6">
+                            <span v-if="vueData.newAttachment.attId !== null" th:text="#{attachment.update.popup.title}"></span>
+                            <span v-else th:text="#{attachment.add.popup.title}"></span>
+                        </div>
+                    </q-card-section>
+                    <q-card-section>
+                        <input type="hidden" v-model="vueData.newAttachment.attId" name="vContext[newAttachment][attId]">
+                        <input type="hidden" v-model="vueData.newAttachment.botId" name="vContext[newAttachment][botId]">
+                        <q-input v-model="vueData.newAttachment.label" th:label="#{attachment.label}"
+                                 name="vContext[newAttachment][label]" :error="hasFieldsError('newAttachment', 'label')"
+                                 :error-message="getErrorMessage('newAttachment', 'label')"  />
+                    </q-card-section>
+                    <q-card-section>
+                        <vu:fileupload th:url="'@{/commons/upload}'" key="importAttachmentFileUri" multiple="false" accept="'.png,.jpg,.jpeg,.pdf'"
+                                       @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
+                        <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
+                    </q-card-section>
+
+                    <q-card-actions align="around">
+                        <q-btn th:label="#{attachment.cancel}" color="red" v-close-popup></q-btn>
+                        <q-btn th:title="#{attachment.save}" th:label="#{attachment.save}" th:aria-label="#{attachment.save}"
+                               @click="addAttachment()"
+                               color="primary" v-close-popup></q-btn>
+                    </q-card-actions>
+                </q-card>
+            </q-dialog>
+
+
+        </section>
+    </body>
+</html>

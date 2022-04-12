@@ -1,9 +1,9 @@
 package io.vertigo.chatbot.engine;
 
-import java.util.UUID;
-
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.core.node.component.Manager;
+
+import java.util.UUID;
 
 public interface BotManager extends Manager {
 

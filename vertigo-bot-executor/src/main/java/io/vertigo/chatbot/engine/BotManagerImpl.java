@@ -27,8 +27,6 @@ public final class BotManagerImpl implements BotManager {
 
 	private Map<String, TopicDefinition> topicDefinitionMap; // immutable map of topics
 
-	private Map<String, String> welcomeTourMap;
-
 	@Inject
 	public BotManagerImpl(
 			final CodecManager codecManager,
@@ -47,7 +45,6 @@ public final class BotManagerImpl implements BotManager {
 		this.codecManager = codecManager;
 
 		topicDefinitionMap = Collections.emptyMap();
-		welcomeTourMap = Collections.emptyMap();
 	}
 
 	@Override
@@ -72,7 +69,8 @@ public final class BotManagerImpl implements BotManager {
 	}
 
 	@Override
-	public synchronized void updateConfig(final Iterable<TopicDefinition> newTopics, final StringBuilder logs) {
+	public synchronized void updateConfig(final Iterable<TopicDefinition> newTopics,
+										  final StringBuilder logs) {
 		final var nluTtrainingData = new HashMap<NluIntent, List<String>>();
 		final Map<String, TopicDefinition> topicDefinitionTempMap = new HashMap<>();
 
@@ -97,13 +95,12 @@ public final class BotManagerImpl implements BotManager {
 		topicDefinitionMap = Collections.unmodifiableMap(topicDefinitionTempMap);
 	}
 
-	private String generateTopicDefinitionMapHash(final Map<String, TopicDefinition> topicDefinitionMap) {
-		HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(17, 37);
+	private static String generateTopicDefinitionMapHash(final Map<String, TopicDefinition> topicDefinitionMap) {
+		final HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(17, 37);
 		topicDefinitionMap.forEach((key, topicDefinition) -> {
 			hashCodeBuilder.append(key);
 			topicDefinition.getTrainingPhrases().forEach(hashCodeBuilder::append);
 		});
 		return Integer.toString(hashCodeBuilder.toHashCode());
 	}
-
 }

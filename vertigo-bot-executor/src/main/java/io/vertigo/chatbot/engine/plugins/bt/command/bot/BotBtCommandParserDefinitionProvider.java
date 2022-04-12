@@ -1,6 +1,5 @@
 package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
-import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.impl.command.BtCommand;
 import io.vertigo.ai.impl.command.BtCommandParserDefinition;
@@ -22,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static io.vertigo.ai.bt.BTNodes.selector;
 import static io.vertigo.ai.bt.BTNodes.sequence;
+import static io.vertigo.chatbot.engine.util.BlackBoardUtils.getBB;
 
 /**
  * Bot commands.
@@ -120,16 +120,16 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 		Assertion.check()
 				.isTrue(childs.stream().anyMatch(b -> b instanceof BotIf), "You need to provide one IF case in a IF ELSE node");
 
-		List<BTNode> sequences = childs.stream()
+		final List<BTNode> sequences = childs.stream()
 				.filter(b -> b instanceof BotIf).map(node -> {
-					BotIf nodeIf = (BotIf) node;
+					final BotIf nodeIf = (BotIf) node;
 					return sequence(nodeIf.getNodes());
 				}).collect(Collectors.toList());
 
-		Optional<BTNode> optBotElse = childs.stream().filter(b -> b instanceof BotElse).findFirst();
+		final Optional<BTNode> optBotElse = childs.stream().filter(b -> b instanceof BotElse).findFirst();
 
 		if (optBotElse.isPresent()) {
-			BotElse botElse = (BotElse) optBotElse.get();
+			final BotElse botElse = (BotElse) optBotElse.get();
 			sequences.add(sequence(botElse.getNodes()));
 		}
 		return selector(sequences);
@@ -190,14 +190,5 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 		}).collect(Collectors.toList());
 
 		return BotNodeProvider.chooseButtonOrNlu(getBB(params), command.getStringParam(0), command.getStringParam(1), botChoices);
-	}
-
-	private static BlackBoard getBB(final List<Object> params) {
-		return params.stream()
-				.filter(o -> o instanceof BlackBoard)
-				.map(o -> (BlackBoard) o)
-				.findFirst()
-				.orElseThrow(() -> new VSystemException("Bot parser plugin needs a BackBoard in parameters."));
-
 	}
 }

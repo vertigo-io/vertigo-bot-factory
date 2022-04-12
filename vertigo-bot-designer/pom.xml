@@ -124,7 +124,11 @@
 			<version>${openCSV.version}</version>
 		</dependency>
 
-
+		<dependency>
+			<groupId>xyz.capybara</groupId>
+			<artifactId>clamav-client</artifactId>
+			<version>${clamav-client.version}</version>
+		</dependency>
 
 	</dependencies>
 

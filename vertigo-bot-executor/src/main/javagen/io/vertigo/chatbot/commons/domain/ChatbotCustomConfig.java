@@ -19,6 +19,11 @@ public final class ChatbotCustomConfig implements Entity {
 	private Boolean rating;
 	private String ratingMessage;
 	private String botEmailAddress;
+	private Boolean reinitializationButton;
+	private String backgroundColor;
+	private String fontFamily;
+	private Boolean displayAvatar;
+	private Long totalMaxAttachmentSize;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -115,6 +120,101 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setBotEmailAddress(final String botEmailAddress) {
 		this.botEmailAddress = botEmailAddress;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Reinitialization button'.
+	 * @return Boolean reinitializationButton
+	 */
+	@Field(smartType = "STyYesNo", label = "Reinitialization button")
+	public Boolean getReinitializationButton() {
+		return reinitializationButton;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Reinitialization button'.
+	 * @param reinitializationButton Boolean
+	 */
+	public void setReinitializationButton(final Boolean reinitializationButton) {
+		this.reinitializationButton = reinitializationButton;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot background color'.
+	 * @return String backgroundColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot background color")
+	public String getBackgroundColor() {
+		return backgroundColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot background color'.
+	 * @param backgroundColor String
+	 */
+	public void setBackgroundColor(final String backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot font family'.
+	 * @return String fontFamily
+	 */
+	@Field(smartType = "STyLabel", label = "Bot font family")
+	public String getFontFamily() {
+		return fontFamily;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot font family'.
+	 * @param fontFamily String
+	 */
+	public void setFontFamily(final String fontFamily) {
+		this.fontFamily = fontFamily;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Display avatar'.
+	 * @return Boolean displayAvatar
+	 */
+	@Field(smartType = "STyYesNo", label = "Display avatar")
+	public Boolean getDisplayAvatar() {
+		return displayAvatar;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Display avatar'.
+	 * @param displayAvatar Boolean
+	 */
+	public void setDisplayAvatar(final Boolean displayAvatar) {
+		this.displayAvatar = displayAvatar;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Total maximum attachment size'.
+	 * @return Long totalMaxAttachmentSize
+	 */
+	@Field(smartType = "STyNumber", label = "Total maximum attachment size")
+	public Long getTotalMaxAttachmentSize() {
+		return totalMaxAttachmentSize;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Total maximum attachment size'.
+	 * @param totalMaxAttachmentSize Long
+	 */
+	public void setTotalMaxAttachmentSize(final Long totalMaxAttachmentSize) {
+		this.totalMaxAttachmentSize = totalMaxAttachmentSize;
 	}
 	
 	/**

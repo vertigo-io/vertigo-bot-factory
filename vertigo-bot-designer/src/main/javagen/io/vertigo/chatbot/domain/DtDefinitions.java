@@ -17,6 +17,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des DtDefinitions.
 	 */
 	public enum Definitions {
+		/** Objet de données Attachment. */
+		Attachment(io.vertigo.chatbot.commons.domain.Attachment.class),
+		/** Objet de données AttachmentExport. */
+		AttachmentExport(io.vertigo.chatbot.commons.domain.AttachmentExport.class),
+		/** Objet de données AttachmentFileInfo. */
+		AttachmentFileInfo(io.vertigo.chatbot.commons.domain.AttachmentFileInfo.class),
 		/** Objet de données BotExport. */
 		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
 		/** Objet de données BotPredefinedTopic. */
@@ -178,6 +184,55 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	}
 
 	/**
+	 * Enumération des champs de Attachment.
+	 */
+	public enum AttachmentFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Attachment> {
+		/** Propriété 'Attachment id'. */
+		attId,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'MimeType'. */
+		type,
+		/** Propriété 'Size'. */
+		length,
+		/** Propriété 'AttachmentFileInfo'. */
+		attFiId,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de AttachmentExport.
+	 */
+	public enum AttachmentExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.AttachmentExport> {
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Name'. */
+		fileName,
+		/** Propriété 'MimeType'. */
+		mimeType,
+		/** Propriété 'Size'. */
+		length,
+		/** Propriété 'Data'. */
+		fileData	}
+
+	/**
+	 * Enumération des champs de AttachmentFileInfo.
+	 */
+	public enum AttachmentFileInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.AttachmentFileInfo> {
+		/** Propriété 'Id'. */
+		attFiId,
+		/** Propriété 'Name'. */
+		fileName,
+		/** Propriété 'MimeType'. */
+		mimeType,
+		/** Propriété 'Size'. */
+		length,
+		/** Propriété 'Modification Date'. */
+		lastModified,
+		/** Propriété 'path'. */
+		filePath	}
+
+	/**
 	 * Enumération des champs de BotExport.
 	 */
 	public enum BotExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.BotExport> {
@@ -252,6 +307,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fontFamily,
 		/** Propriété 'Display avatar'. */
 		displayAvatar,
+		/** Propriété 'Total maximum attachment size'. */
+		totalMaxAttachmentSize,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

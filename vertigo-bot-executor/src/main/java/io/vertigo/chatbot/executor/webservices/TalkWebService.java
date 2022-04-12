@@ -21,10 +21,13 @@ import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.executor.manager.ExecutorManager;
 import io.vertigo.chatbot.executor.model.IncomeRating;
+import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.webservice.WebServices;
+import io.vertigo.vega.webservice.stereotype.GET;
 import io.vertigo.vega.webservice.stereotype.POST;
 import io.vertigo.vega.webservice.stereotype.PathParam;
 import io.vertigo.vega.webservice.stereotype.PathPrefix;
+import io.vertigo.vega.webservice.stereotype.QueryParam;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -54,6 +57,11 @@ public class TalkWebService implements WebServices {
 	@POST("/rating")
 	public void rate(final IncomeRating rating) {
 		executorManager.rate(rating);
+	}
+
+	@GET("/getAttachment")
+	public VFile getAttachment(@QueryParam("label") final String label) {
+		return  executorManager.getAttachment(label);
 	}
 
 }
