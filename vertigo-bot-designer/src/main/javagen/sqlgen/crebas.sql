@@ -289,6 +289,7 @@ create table CHATBOT_CUSTOM_CONFIG
     FONT_FAMILY 	 VARCHAR(100)	,
     DISPLAY_AVATAR	 bool        	,
     TOTAL_MAX_ATTACHMENT_SIZE	 NUMERIC     	,
+    DISABLE_NLU 	 bool        	,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
 );
@@ -319,6 +320,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.DISPLAY_AVATAR is
 
 comment on column CHATBOT_CUSTOM_CONFIG.TOTAL_MAX_ATTACHMENT_SIZE is
 'Total maximum attachment size';
+
+comment on column CHATBOT_CUSTOM_CONFIG.DISABLE_NLU is
+'Disable NlU';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';

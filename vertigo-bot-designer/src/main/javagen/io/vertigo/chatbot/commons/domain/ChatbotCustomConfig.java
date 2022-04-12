@@ -24,6 +24,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private String fontFamily;
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
+	private Boolean disableNlu;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -215,6 +216,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setTotalMaxAttachmentSize(final Long totalMaxAttachmentSize) {
 		this.totalMaxAttachmentSize = totalMaxAttachmentSize;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Disable NlU'.
+	 * @return Boolean disableNlu
+	 */
+	@Field(smartType = "STyYesNo", label = "Disable NlU")
+	public Boolean getDisableNlu() {
+		return disableNlu;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Disable NlU'.
+	 * @param disableNlu Boolean
+	 */
+	public void setDisableNlu(final Boolean disableNlu) {
+		this.disableNlu = disableNlu;
 	}
 	
 	/**
