@@ -11,7 +11,9 @@ RUN useradd -m tomcat \
  && mkdir /opt/tomcat/logs \
  && mkdir /opt/plugins \
  && chown -R tomcat. /opt/tomcat \
- && chown -R tomcat. /opt/plugins
+ && chown -R tomcat. /opt/plugins \
+ && mkdir /opt/attachments \
+ && chown -R tomcat. /opt/attachments
  
 # Add binaries
 COPY --chown=tomcat apache-tomcat-* /opt/tomcat/
