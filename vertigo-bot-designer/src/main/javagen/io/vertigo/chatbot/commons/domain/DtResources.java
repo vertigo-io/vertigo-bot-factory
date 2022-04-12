@@ -204,6 +204,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$totalMaxAttachmentSize,
 	/**
+	 * Disable NlU.
+	 */
+	fldChatbotCustomConfig$disableNlu,
+	/**
 	 * Chatbot.
 	 */
 	fldChatbotCustomConfig$botId,

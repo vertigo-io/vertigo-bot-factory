@@ -309,6 +309,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		displayAvatar,
 		/** Propriété 'Total maximum attachment size'. */
 		totalMaxAttachmentSize,
+		/** Propriété 'Disable NlU'. */
+		disableNlu,
 		/** Propriété 'Chatbot'. */
 		botId	}
 
