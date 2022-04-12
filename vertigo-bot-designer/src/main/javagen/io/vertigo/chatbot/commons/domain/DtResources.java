@@ -120,6 +120,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$displayAvatar,
 	/**
+	 * Disable NlU.
+	 */
+	fldChatbotCustomConfig$disableNlu,
+	/**
 	 * Chatbot.
 	 */
 	fldChatbotCustomConfig$botId,

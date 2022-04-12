@@ -81,6 +81,7 @@ create DtDefinition DtChatbotCustomConfig {
 	field backgroundColor           {domain: DoLabel        label: "Bot background color"               cardinality:"?"}
 	field fontFamily                {domain: DoLabel        label: "Bot font family"                    cardinality:"?"}
 	field displayAvatar             {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
+	field disableNlu                {domain: DoYesNo        label: "Disable NlU"                        cardinality:"?"}
 }
 
 create Association AChatbotCustomConfigChatbot {

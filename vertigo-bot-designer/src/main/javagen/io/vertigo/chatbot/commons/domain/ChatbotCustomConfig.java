@@ -23,6 +23,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private String backgroundColor;
 	private String fontFamily;
 	private Boolean displayAvatar;
+	private Boolean disableNlu;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -195,6 +196,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setDisplayAvatar(final Boolean displayAvatar) {
 		this.displayAvatar = displayAvatar;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Disable NlU'.
+	 * @return Boolean disableNlu
+	 */
+	@Field(smartType = "STyYesNo", label = "Disable NlU")
+	public Boolean getDisableNlu() {
+		return disableNlu;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Disable NlU'.
+	 * @param disableNlu Boolean
+	 */
+	public void setDisableNlu(final Boolean disableNlu) {
+		this.disableNlu = disableNlu;
 	}
 
 	/**

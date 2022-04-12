@@ -252,6 +252,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fontFamily,
 		/** Propriété 'Display avatar'. */
 		displayAvatar,
+		/** Propriété 'Disable NlU'. */
+		disableNlu,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

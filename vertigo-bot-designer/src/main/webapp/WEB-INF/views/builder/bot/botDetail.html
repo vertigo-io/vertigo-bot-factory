@@ -80,8 +80,7 @@
 			<q-item tag="a" href="#idle" th:text="#{bot.idle}"></q-item>
 			<q-item tag="a" href="#rating" th:text="#{bot.rating}"></q-item>
 			<q-item tag="a" href="#botEmail" th:text="#{bot.email.address}"></q-item>
-			<q-item tag="a" href="#reinitialization" th:text="#{bot.reinitialization}"></q-item>
-			<q-item tag="a" href="#botStyling" th:text="#{bot.styling}"></q-item>
+			<q-item tag="a" href="#botWindowCustomization" th:text="#{bot.window.customization}"></q-item>
 			<q-item th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" tag="a" href="#nodes" th:text="#{bot.nodes}"></q-item>
 		</section>
 		
@@ -238,13 +237,17 @@
 						 :error-message="getErrorMessage('chatbotCustomConfig', 'botEmailAddress')"  name="vContext[chatbotCustomConfig][botEmailAddress]"
 						 th:label="#{bot.email.address}" th::disable="${model.modeReadOnly}" />
 			</vu:block>
-			<vu:block id="reinitialization" th:title="#{bot.reinitialization}">
-				<q-toggle left-label th:label="#{bot.reinitialization.active}" v-model="vueData.chatbotCustomConfig.reinitializationButton" th::disable="${model.modeReadOnly}"></q-toggle>
-				<input type="hidden" name="vContext[chatbotCustomConfig][reinitializationButton]" :value="vueData.chatbotCustomConfig.reinitializationButton"/>
-			</vu:block>
-			<vu:block id="botStyling" th:title="#{bot.styling}">
+			<vu:block id="botWindowCustomization" th:title="#{bot.window.customization}">
+				<div>
+					<q-toggle left-label th:label="#{bot.reinitialization.active}" v-model="vueData.chatbotCustomConfig.reinitializationButton" th::disable="${model.modeReadOnly}"></q-toggle>
+					<input type="hidden" name="vContext[chatbotCustomConfig][reinitializationButton]" :value="vueData.chatbotCustomConfig.reinitializationButton"/>
+				</div>
+				<div>
+					<q-toggle left-label th:label="#{bot.disable.nlu}" v-model="vueData.chatbotCustomConfig.disableNlu" th::disable="${model.modeReadOnly}"></q-toggle>
+					<input type="hidden" name="vContext[chatbotCustomConfig][disableNlu]" :value="vueData.chatbotCustomConfig.disableNlu"/>
+				</div>
 
-				<div style="width:300px" class="q-px-md">
+				<div style="width:300px; margin-bottom: 20px; margin-top: 20px" class="q-px-md">
 					<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
 
 					</q-chat-message>
