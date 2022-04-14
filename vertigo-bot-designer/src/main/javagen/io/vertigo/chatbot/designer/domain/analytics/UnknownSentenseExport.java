@@ -19,6 +19,7 @@ public final class UnknownSentenseExport implements DtObject {
 	private java.time.Instant dateTraining;
 	private java.math.BigDecimal confidence;
 	private String botName;
+	private String node;
 	private String creationBot;
 	
 	/**
@@ -133,6 +134,25 @@ public final class UnknownSentenseExport implements DtObject {
 	 */
 	public void setBotName(final String botName) {
 		this.botName = botName;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Node name'.
+	 * @return String node
+	 */
+	@Field(smartType = "STyLabel", label = "Node name")
+	public String getNode() {
+		return node;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Node name'.
+	 * @param node String
+	 */
+	public void setNode(final String node) {
+		this.node = node;
 	}
 	
 	/**

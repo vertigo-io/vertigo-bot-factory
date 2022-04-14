@@ -858,6 +858,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		dateTraining,
 		/** Propriété 'Bot name'. */
 		botName,
+		/** Propriété 'Node name'. */
+		node,
 		/** Propriété 'Date bot creation'. */
 		creationBot	}
 
@@ -1242,6 +1244,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		confidence,
 		/** Propriété 'Bot name'. */
 		botName,
+		/** Propriété 'Node name'. */
+		node,
 		/** Propriété 'Date bot creation'. */
 		creationBot	}
 
