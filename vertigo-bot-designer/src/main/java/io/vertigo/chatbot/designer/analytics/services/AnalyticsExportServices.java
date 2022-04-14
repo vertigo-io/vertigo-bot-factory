@@ -1,15 +1,5 @@
 package io.vertigo.chatbot.designer.analytics.services;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
@@ -29,6 +19,15 @@ import io.vertigo.quarto.exporter.ExporterManager;
 import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
 
 public class AnalyticsExportServices implements Component {
 
@@ -63,13 +62,16 @@ public class AnalyticsExportServices implements Component {
 			newSessionExport.setDate(timedData.getTime());
 			newSessionExport.setModelName((String) values.get("modelName"));
 			final Long botId = Long.valueOf((String) values.get("botId"));
+			final Long nodId = Long.valueOf((String) values.get("nodId"));
 			//It's possible in local environment that the database was reinitialized, but eventlogs still have obsolete values
 			if (botId != null) {
 				final Optional<Chatbot> bot = chatbotServices.getChatbotByBotId(botId);
 				final String botName = chatbotServices.getBotNameDisplay(bot);
 				final String dateBot = chatbotServices.getBotDateDisplay(bot);
+				final String nodeName = chatbotServices.getNodeName(bot, nodId);
 				newSessionExport.setBotName(botName);
 				newSessionExport.setCreationBot(dateBot);
+				newSessionExport.setNode(nodeName);
 				final Long traId = Long.valueOf((String) values.get("traId"));
 				if (traId != null) {
 					final Instant dateTraining = trainingServices.getInstantEndDisplay(botId, traId);
@@ -94,6 +96,7 @@ public class AnalyticsExportServices implements Component {
 				.addField(SessionExportFields.modelName)
 				.addField(SessionExportFields.dateTraining)
 				.addField(SessionExportFields.botName)
+				.addField(SessionExportFields.node)
 				.addField(SessionExportFields.creationBot)
 				.endSheet()
 				.build();
@@ -124,13 +127,16 @@ public class AnalyticsExportServices implements Component {
 			newUnknownSentenseExport.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
 			newUnknownSentenseExport.setModelName((String) values.get("modelName"));
 			final Long botId = Long.valueOf((String) values.get("botId"));
+			final Long nodId = Long.valueOf((String) values.get("nodId"));
 			//It's possible in local environment that the database was reinitialized, but eventlogs still have obsolete values
 			if (botId != null) {
 				final Optional<Chatbot> bot = chatbotServices.getChatbotByBotId(botId);
 				final String botName = chatbotServices.getBotNameDisplay(bot);
 				final String dateBot = chatbotServices.getBotDateDisplay(bot);
+				final String nodeName = chatbotServices.getNodeName(bot, nodId);
 				newUnknownSentenseExport.setBotName(botName);
 				newUnknownSentenseExport.setCreationBot(dateBot);
+				newUnknownSentenseExport.setNode(nodeName);
 				final Long traId = Long.valueOf((String) values.get("traId"));
 				if (traId != null) {
 					final Instant dateTraining = trainingServices.getInstantEndDisplay(botId, traId);
@@ -157,6 +163,7 @@ public class AnalyticsExportServices implements Component {
 				.addField(UnknownSentenseExportFields.modelName)
 				.addField(UnknownSentenseExportFields.dateTraining)
 				.addField(UnknownSentenseExportFields.botName)
+				.addField(UnknownSentenseExportFields.node)
 				.addField(UnknownSentenseExportFields.creationBot)
 				.endSheet()
 				.build();

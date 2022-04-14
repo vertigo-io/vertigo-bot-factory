@@ -47,6 +47,7 @@ create DtDefinition DtUnknownSentenseExport {
 	field dateTraining	{domain: DoInstant 				label: "Date training"	 		}
 	field confidence	{domain: DoPercentage 			label: "Confidence" 			}
 	field botName		{domain: DoLabel 				label: "Bot name" 				}
+	field node		    {domain: DoLabel 				label: "Node name" 				}
 	field creationBot	{domain: DoLabel 				label: "Date bot creation" 		}
 }
 
@@ -62,5 +63,6 @@ create DtDefinition DtSessionExport {
 	field modelName		{domain: DoLabel 				label: "Model Name" 			}
 	field dateTraining	{domain: DoInstant 				label: "Date training"	 		}
 	field botName		{domain: DoLabel 				label: "Bot name" 				}
+	field node		    {domain: DoLabel 				label: "Node name" 				}
 	field creationBot	{domain: DoLabel 				label: "Date bot creation" 		}
 }

@@ -26,6 +26,7 @@ import io.vertigo.chatbot.designer.analytics.services.AnalyticsExportServices;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.analytics.services.TypeExportAnalyticsServices;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
@@ -97,6 +98,9 @@ public class AnalyticsController extends AbstractDesignerController {
 	private ChatbotServices chatbotServices;
 
 	@Inject
+	private NodeServices nodeServices;
+
+	@Inject
 	private TopicServices topicServices;
 
 	@Inject
@@ -118,7 +122,13 @@ public class AnalyticsController extends AbstractDesignerController {
 							@RequestParam("time") final Optional<TimeOption> timeOption,
 							final UiMessageStack uiMessageStack) {
 		viewContext.publishDtList(botsKey, chatbotServices.getMySupervisedChatbots());
-		viewContext.publishDtList(nodesKey, new DtList<ChatbotNode>(ChatbotNode.class));
+
+		if (botId.isPresent()) {
+			Chatbot chatbot = chatbotServices.getChatbotById(botId.get());
+			viewContext.publishDtList(nodesKey, nodeServices.getNodesByBot(chatbot));
+		} else {
+			viewContext.publishDtList(nodesKey, new DtList<ChatbotNode>(ChatbotNode.class));
+		}
 
 		final StatCriteria statCriteria = new StatCriteria();
 
@@ -162,6 +172,7 @@ public class AnalyticsController extends AbstractDesignerController {
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.topId, analyticsServices.getTopIntents(criteria));
 			viewContext.publishDtList(topicsKey, topicServices.getAllTopicByBot(bot));
 			viewContext.publishRef(ratingStatsKey, analyticsServices.getRatingStats(criteria));
+			viewContext.publishDtList(nodesKey, nodeServices.getNodesByBot(bot));
 		} else {
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.topId, new DtList<TopIntent>(TopIntent.class));
