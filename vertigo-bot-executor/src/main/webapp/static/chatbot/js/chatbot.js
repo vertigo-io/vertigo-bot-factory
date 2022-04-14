@@ -271,7 +271,7 @@ const chatbot = new Vue({
                 const buttons = httpResponse.data.choices;
                 const cards = httpResponse.data.cards;
                 const files = httpResponse.data.files;
-                chatbot.acceptNlu = httpResponse.data.acceptNlu;
+                chatbot.acceptNlu = httpResponse.data.acceptNlu !== undefined ? httpResponse.data.acceptNlu : true;
                 chatbot.rating = httpResponse.data.rating;
                 chatbot.isEnded = httpResponse.data.status === 'Ended' && !isRating;
                 if (httpResponse.data.metadatas && httpResponse.data.metadatas.avatar) {
