@@ -17,22 +17,32 @@
  */
 package io.vertigo.chatbot.designer.analytics.services;
 
-public enum TimeOption {
-	DAY("1d", "1h"), WEEK("7d", "12h"), MONTH("30d", "1d"), YEAR("52w", "1w");
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalUnit;
 
-	private final String range;
+public enum TimeOption {
+	DAY(1, ChronoUnit.DAYS, "1d"), WEEK(7, ChronoUnit.DAYS, "12h"), MONTH(30, ChronoUnit.DAYS, "1d"), YEAR(52, ChronoUnit.WEEKS, "1w");
+
+	private final long range;
+	private final TemporalUnit rangeUnit;
 	private final String grain;
 
-	private TimeOption(final String range, final String grain) {
+	TimeOption(final long range, final TemporalUnit rangeUnit, final String grain) {
 		this.range = range;
+		this.rangeUnit = rangeUnit;
 		this.grain = grain;
 	}
 
-	/**
-	 * @return the range
-	 */
-	public String getRange() {
-		return range;
+	public LocalDateTime getFromNow() {
+		final LocalDateTime ldt = LocalDateTime.now();
+		return getFrom(ldt);
+	}
+
+	@SuppressWarnings("unchecked") // Temporal method return same type
+	public <T extends Temporal> T getFrom(final T toDate) {
+		return (T) toDate.minus(range, rangeUnit);
 	}
 
 	/**
