@@ -17,6 +17,13 @@
  */
 package io.vertigo.chatbot.designer.analytics.services;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
@@ -31,12 +38,6 @@ import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.util.VCollectors;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Transactional
 public class AnalyticsServices implements Component {
@@ -91,7 +92,7 @@ public class AnalyticsServices implements Component {
 		// build DtList from InfluxDb data
 		final DtList<TopicIhm> topics = topicServices.getAllNonTechnicalTopicIhmByBot(bot, locale);
 		final Map<String, Long> topicCountMap = new HashMap<>();
-		tabularDatas.getTabularDataSeries().forEach(x -> topicCountMap.put(x.getValues().get("name").toString(), ((Double) x.getValues().get("name:count")).longValue()));
+		tabularDatas.getTabularDataSeries().forEach(x -> topicCountMap.put(x.getValues().get("name").toString(), ((Long) x.getValues().get("name:count"))));
 
 		return topics.stream().map(topic -> {
 			final TopIntent topIntent = new TopIntent();

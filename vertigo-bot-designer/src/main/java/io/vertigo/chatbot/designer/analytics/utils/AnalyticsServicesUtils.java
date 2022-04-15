@@ -1,6 +1,11 @@
 package io.vertigo.chatbot.designer.analytics.utils;
 
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
@@ -28,24 +33,39 @@ public final class AnalyticsServicesUtils {
 		return dataFilterBuilder;
 	}
 
+	public static Map<String, String> getBotNodFilter(final StatCriteria criteria) {
+		final Map<String, String> ret = new HashMap<>();
+		if (criteria.getBotId() != null) {
+			ret.put("botId", '"' + criteria.getBotId().toString() + '"');
+			if (criteria.getNodId() != null) {
+				ret.put("nodId", '"' + criteria.getNodId().toString() + '"');
+			}
+		}
+
+		return ret;
+	}
+
 	public static TimeFilter getTimeFilter(final StatCriteria criteria) {
 		final TimeOption timeOption = TimeOption.valueOf(criteria.getTimeOption());
-		final String toDate;
+		final LocalDateTime toDate;
 		if (criteria.getToDate() == null) {
-			toDate = '\'' + Instant.now().toString() + '\'';
+			toDate = atEndOfDay(LocalDate.now());
 		} else {
-			toDate = '\'' + criteria.getToDate().toString() + "T23:59:59.999999999Z" + '\'';
+			toDate = atEndOfDay(criteria.getToDate());
 		}
 
-		final String fromDate;
+		final LocalDateTime fromDate;
 		if (criteria.getFromDate() == null) {
-			fromDate = toDate + " - " + timeOption.getRange();
+			fromDate = timeOption.getFrom(toDate);
 		} else {
-			fromDate = '\'' + criteria.getFromDate().toString() + "T00:00:00.000000000Z" + '\'';
+			fromDate = criteria.getFromDate().atStartOfDay();
 		}
 
-		return TimeFilter.builder(fromDate, toDate).withTimeDim(timeOption.getGrain()).build();
+		return TimeFilter.builder(fromDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + 'Z', toDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + 'Z').withTimeDim(timeOption.getGrain()).build();
+	}
 
+	private static LocalDateTime atEndOfDay(final LocalDate date) {
+		return date.plus(1, ChronoUnit.DAYS).atStartOfDay();
 	}
 
 }
