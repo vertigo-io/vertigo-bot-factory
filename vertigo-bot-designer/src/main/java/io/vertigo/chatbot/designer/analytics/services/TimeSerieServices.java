@@ -12,6 +12,7 @@ import io.vertigo.database.timeseries.TimedDatas;
 
 import javax.inject.Inject;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -64,6 +65,13 @@ public class TimeSerieServices implements Component, Activeable {
 	public TimedDatas getRequestStats(final StatCriteria criteria) {
 		return timeSeriesManager.getTimeSeries(influxDbName, Arrays.asList("name:count", "isFallback:sum", "isNlu:sum"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).withAdditionalWhereClause("isUserMessage = 1").build(),
+				AnalyticsServicesUtils.getTimeFilter(criteria));
+
+	}
+
+	public TimedDatas getUserInteractions(final StatCriteria criteria) {
+		return timeSeriesManager.getTimeSeries(influxDbName, List.of("name:count"),
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
 				AnalyticsServicesUtils.getTimeFilter(criteria));
 
 	}

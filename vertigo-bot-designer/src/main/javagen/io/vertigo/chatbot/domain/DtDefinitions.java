@@ -1110,7 +1110,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Title'. */
 		label,
 		/** Propriété 'Titre'. */
-		labelFr	}
+		labelFr,
+		/** Propriété 'Bot related'. */
+		botRelated	}
 
 	/**
 	 * Enumération des champs de TypeTopic.

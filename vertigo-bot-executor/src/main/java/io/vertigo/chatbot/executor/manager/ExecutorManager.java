@@ -162,8 +162,8 @@ public class ExecutorManager implements Manager, Activeable {
 		final var botEngine = botManager.createBotEngine(newUUID);
 		botEngine.saveContext(input, executorConfigManager.getContextMap());
 		final var botResponse = botEngine.runTick(input);
-		ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
-		analyticsSenderServices.sendEventStartToDb(botResponse.getMetadatas(), executorConfiguration);
+		final ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
+		analyticsSenderServices.sendEventStartToDb(newUUID, botResponse.getMetadatas(), executorConfiguration);
 		botResponse.getMetadatas().put("sessionId", newUUID);
 		if (executorConfiguration.getAvatar() != null) {
 			botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
@@ -185,13 +185,13 @@ public class ExecutorManager implements Manager, Activeable {
 			botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
 		}
 		botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class));
-		analyticsSenderServices.sendEventToDb(botResponse.getMetadatas(), executorConfigManager.getConfig().getExecutorConfiguration(), input);
+		analyticsSenderServices.sendEventToDb(sessionId, botResponse.getMetadatas(), executorConfigManager.getConfig().getExecutorConfiguration(), input);
 
 		return botResponse;
 	}
 
-	public void rate(final IncomeRating rating) {
-		analyticsSenderServices.rate(rating, executorConfigManager.getConfig().getExecutorConfiguration());
+	public void rate(final UUID sessionId, final IncomeRating rating) {
+		analyticsSenderServices.rate(sessionId, rating, executorConfigManager.getConfig().getExecutorConfiguration());
 	}
 
 	public Map<String, String> getContext() {

@@ -33,4 +33,5 @@
 	<include file="changeLog/v_1_1_0/alter_custom_config_font_family.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_custom_config_display_avatar.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_custom_config_disable_nlu.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_1_1_0/alter_type_export_analytics_bot_related.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

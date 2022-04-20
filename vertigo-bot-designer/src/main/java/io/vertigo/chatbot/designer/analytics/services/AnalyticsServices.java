@@ -17,26 +17,26 @@
  */
 package io.vertigo.chatbot.designer.analytics.services;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
+import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.util.VCollectors;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Transactional
 public class AnalyticsServices implements Component {
@@ -53,7 +53,10 @@ public class AnalyticsServices implements Component {
 
 	public TimedDatas getRequestStats(final StatCriteria criteria) {
 		return timeSerieServices.getRequestStats(criteria);
+	}
 
+	public TimedDatas getUserInteractions(final StatCriteria criteria) {
+		return timeSerieServices.getUserInteractions(criteria);
 	}
 
 	/**
@@ -82,19 +85,22 @@ public class AnalyticsServices implements Component {
 		return retour;
 	}
 
-	public DtList<TopIntent> getTopIntents(final StatCriteria criteria) {
+	public DtList<TopIntent> getTopIntents(final Chatbot bot, final String locale, final StatCriteria criteria) {
 		// get data from influxdb
 		final TabularDatas tabularDatas = timeSerieServices.getAllTopIntents(criteria);
 		// build DtList from InfluxDb data
-		final DtList<TopIntent> retour = new DtList<>(TopIntent.class);
-		final DtList<Topic> topics = topicServices.getAllTopicByBotId(criteria.getBotId());
-		//Get the tuple (name, name:count)
-		final List<Tuple<Object, Object>> listValues = tabularDatas.getTabularDataSeries().stream().map(x -> Tuple.of(x.getValues().get("name"), x.getValues().get("name:count")))
-				.collect(Collectors.toList());
-		//create top intent for each values in listValues
-		listValues.stream().forEach(x -> createTopIntent(x, topics, retour));
+		final DtList<TopicIhm> topics = topicServices.getAllNonTechnicalTopicIhmByBot(bot, locale);
+		final Map<String, Long> topicCountMap = new HashMap<>();
+		tabularDatas.getTabularDataSeries().forEach(x -> topicCountMap.put(x.getValues().get("name").toString(), ((Double) x.getValues().get("name:count")).longValue()));
 
-		return retour;
+		return topics.stream().map(topic -> {
+			final TopIntent topIntent = new TopIntent();
+			topIntent.setIntentRasa(topic.getTitle());
+			topIntent.setTopId(topic.getTopId());
+			topIntent.setCode(topic.getCode());
+			topIntent.setCount(topicCountMap.getOrDefault(topic.getCode(), 0L));
+			return topIntent;
+		}).collect(VCollectors.toDtList(TopIntent.class));
 	}
 
 	/**
@@ -123,35 +129,6 @@ public class AnalyticsServices implements Component {
 		}
 
 		return retour;
-	}
-
-	public TimedDatas getTopicStats(final StatCriteria criteria) {
-		return timeSerieServices.getTopicsStats(criteria);
-
-	}
-
-	public List<String> getDistinctCodeByTimeDatas(final StatCriteria criteria) {
-		final TimedDatas timedData = getTopicStats(criteria);
-		return timedData.getTimedDataSeries().stream()
-				.flatMap(serie -> serie.getValues().values().stream())
-				.map(Object::toString)
-				.distinct()
-				.collect(Collectors.toList());
-	}
-
-	//Filter topics and create topIntent object
-	private static void createTopIntent(final Tuple<Object, Object> values, final DtList<Topic> topics, final DtList<TopIntent> retour) {
-		final String intentName = values.getVal1().toString();
-		final Topic topic = topics.stream().filter(x -> x.getCode().equals(intentName)).findFirst().orElse(null);
-		if (topic != null) {
-			final TopIntent topIntent = new TopIntent();
-			topIntent.setCount(((Double) values.getVal2()).longValue());
-			topIntent.setIntentRasa(topic.getTitle());
-			topIntent.setTopId(topic.getTopId());
-			topIntent.setCode(topic.getCode());
-
-			retour.add(topIntent);
-		}
 	}
 
 	public TimedDatas getRatingStats(final StatCriteria criteria) {
