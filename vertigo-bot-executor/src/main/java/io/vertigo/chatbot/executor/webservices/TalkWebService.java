@@ -54,9 +54,9 @@ public class TalkWebService implements WebServices {
 		return executorManager.handleUserMessage(sessionId, input);
 	}
 
-	@POST("/rating")
-	public void rate(final IncomeRating rating) {
-		executorManager.rate(rating);
+	@POST("/rating/{sessionId}")
+	public void rate(@PathParam("sessionId") final UUID sessionId, final IncomeRating rating) {
+		executorManager.rate(sessionId, rating);
 	}
 
 	@GET("/getAttachment")

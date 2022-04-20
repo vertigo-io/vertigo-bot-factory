@@ -1,10 +1,5 @@
 package io.vertigo.chatbot.analytics;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.model.BotInput;
@@ -14,6 +9,11 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.analytics.AnalyticsManager;
 import io.vertigo.core.analytics.process.AProcessBuilder;
 import io.vertigo.core.node.component.Component;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Transactional
 public class AnalyticsSenderServices implements Component {
@@ -28,7 +28,7 @@ public class AnalyticsSenderServices implements Component {
 	 * @param executorConfiguration the executor configuration (i.e. node, bot)
 	 * @param input the user input
 	 */
-	public void sendEventToDb(final Map<String, Object> metadatas, final ExecutorConfiguration executorConfiguration, final BotInput input) {
+	public void sendEventToDb(final UUID sessionId, final Map<String, Object> metadatas, final ExecutorConfiguration executorConfiguration, final BotInput input) {
 		//Get values from response
 		final AnalyticsObjectSend analytics = (AnalyticsObjectSend) metadatas.get(BotEngine.ANALYTICS_KEY);
 		final String codeTopic = analytics.getTopic().getCode();
@@ -38,14 +38,14 @@ public class AnalyticsSenderServices implements Component {
 		final boolean isNlu = accuracy != null;
 
 		if (isNlu) {
-			sendNluEvent(input, codeTopic, accuracy, executorConfiguration);
+			sendNluEvent(sessionId, input, codeTopic, accuracy, executorConfiguration);
 		}
-		sendPastTopics(topicsPast, executorConfiguration);
+		sendPastTopics(sessionId, topicsPast, executorConfiguration);
 	}
 
 	//Send an event with the nlu topics
 	//Send also all the topics passed with topic {} instruction
-	private void sendNluEvent(final BotInput input, final String codeTopic, final Double accuracy, final ExecutorConfiguration executorConfiguration) {
+	private void sendNluEvent(final UUID sessionId, final BotInput input, final String codeTopic, final Double accuracy, final ExecutorConfiguration executorConfiguration) {
 		final AProcessBuilder processBuilder = AnalyticsUtils.prepareMessageProcess(codeTopic, input.getMessage(), AnalyticsUtils.TEXT_KEY)
 				.setMeasure(AnalyticsUtils.NLU_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
 				.setMeasure(AnalyticsUtils.USER_MESSAGE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
@@ -56,7 +56,7 @@ public class AnalyticsSenderServices implements Component {
 		} else {
 			processBuilder.setMeasure(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.FALSE_BIGDECIMAL);
 		}
-		sendProcessWithConfiguration(processBuilder, executorConfiguration);
+		sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 	}
 
 	private static void prepareFallBackEvent(final AProcessBuilder builder) {
@@ -67,7 +67,7 @@ public class AnalyticsSenderServices implements Component {
 	}
 
 	//Send all the topics passed during the sequence in BT
-	private void sendPastTopics(final List<TopicDefinition> topicsPast, final ExecutorConfiguration executorConfiguration) {
+	private void sendPastTopics(final UUID sessionId, final List<TopicDefinition> topicsPast, final ExecutorConfiguration executorConfiguration) {
 		boolean isFirst = true;
 		//Can't have fallback instructions
 		for (TopicDefinition topic : topicsPast) {
@@ -79,7 +79,7 @@ public class AnalyticsSenderServices implements Component {
 					.addTag(AnalyticsUtils.TYPE_KEY, isFirst ? AnalyticsUtils.BUTTONS_INPUT_KEY : AnalyticsUtils.SWITCH_INPUT_KEY)
 					.setMeasure(AnalyticsUtils.TECHNICAL_KEY, isEnd ? AnalyticsUtils.TRUE_BIGDECIMAL : AnalyticsUtils.FALSE_BIGDECIMAL)
 					.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL);
-			sendProcessWithConfiguration(processBuilder, executorConfiguration);
+			sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 			isFirst = false;
 		}
 
@@ -90,23 +90,23 @@ public class AnalyticsSenderServices implements Component {
 	 *
 	 * @param executorConfiguration the executor configuration (i.e. node, bot etc...)
 	 */
-	public void sendEventStartToDb(final ExecutorConfiguration executorConfiguration) {
+	public void sendEventStartToDb(final UUID sessionId, final ExecutorConfiguration executorConfiguration) {
 		//Create the process
 		final AProcessBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(BotEngine.START_TOPIC_NAME, AnalyticsUtils.TECHNICAL_INPUT_KEY)
 				.setMeasure(AnalyticsUtils.SESSION_START_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
 				.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
 				.setMeasure(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE_BIGDECIMAL);
 
-		sendProcessWithConfiguration(processBuilder, executorConfiguration);
+		sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 	}
 
-	private void sendProcessWithConfiguration(final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {
-		AnalyticsUtils.setConfiguration(builder, executorConfiguration);
+	private void sendProcessWithConfiguration(final UUID sessionId, final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {
+		AnalyticsUtils.setConfiguration(sessionId, builder, executorConfiguration);
 		analyticsManager.addProcess(builder.build());
 	}
 
-	public void rate(final IncomeRating rating, final ExecutorConfiguration executorConfiguration) {
-		sendProcessWithConfiguration(AnalyticsUtils.prepareRatingProcess(rating.getNote()), executorConfiguration);
+	public void rate(final UUID sessionId, final IncomeRating rating, final ExecutorConfiguration executorConfiguration) {
+		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareRatingProcess(rating.getNote()), executorConfiguration);
 	}
 
 }

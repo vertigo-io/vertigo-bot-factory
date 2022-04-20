@@ -402,7 +402,7 @@ const chatbot = new Vue({
                 chatbot.initBot();
             },
             rateBot(value){
-                this.$http.post(chatbot.botUrl + '/rating', {sender: chatbot.convId, note: value})
+                this.$http.post(chatbot.botUrl + '/rating/' + chatbot.convId, {note: value})
                     .then(httpResponse => {
                         httpResponse.data = {htmlTexts : [chatbot.customConfig.ratingMessage]};
                         chatbot._handleResponse(httpResponse, true);

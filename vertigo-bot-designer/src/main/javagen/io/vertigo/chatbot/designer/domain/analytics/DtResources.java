@@ -127,6 +127,10 @@ public enum DtResources implements MessageKey {
 	 * Titre.
 	 */
 	fldTypeExportAnalytics$labelFr,
+	/**
+	 * Bot related.
+	 */
+	fldTypeExportAnalytics$botRelated,
 
 	/***********************************************************
 	/** UnknownSentenseExport.

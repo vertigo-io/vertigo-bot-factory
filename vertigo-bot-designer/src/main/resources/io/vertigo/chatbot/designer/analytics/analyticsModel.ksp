@@ -5,17 +5,20 @@ stereotype : "StaticMasterData"
 	id    teaCd 		{domain: DoCode 	label: "Code"}
 	field label 		{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
 	field labelFr 		{domain: DoLabel 	label: "Titre" 			cardinality : "1"	}
+    field botRelated 	{domain: DoYesNo 	label: "Bot related"    cardinality : "1"	}
 	values : `{
         "UNKNOWN_MESSAGES" : {
-            "teaCd" 	: "UNKNOWN_MESSAGES",
-            "label" 	: "Unknown messages",
-            "labelFr" 	: "Messages inconnus"
+            "teaCd" 	    : "UNKNOWN_MESSAGES",
+            "label" 	    : "Unknown messages",
+            "labelFr" 	    : "Messages inconnus",
+            "botRelated"    : "true"
            
         },
         "SESSIONS" : {
-            "teaCd" 	: "SESSIONS",
-            "label" 	: "Sessions",
-            "labelFr" 	: "Sessions"      
+            "teaCd" 	    : "SESSIONS",
+            "label" 	    : "Sessions",
+            "labelFr" 	    : "Sessions",
+            "botRelated"    : "false"
         }
      }`
     sortField : "teaCd"

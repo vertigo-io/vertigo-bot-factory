@@ -1,15 +1,17 @@
 package io.vertigo.chatbot.analytics;
 
-import java.time.Instant;
-
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.core.analytics.process.AProcess;
 import io.vertigo.core.analytics.process.AProcessBuilder;
+
+import java.time.Instant;
+import java.util.UUID;
 
 public final class AnalyticsUtils {
 
 	//Analytics keys
 	public static final String DB_KEY = "chatbotmessages";
+	public static final String SESSION_ID_KEY = "sessionId";
 	public static final String TEXT_KEY = "text";
 	public static final String TYPE_KEY = "type";
 	public static final String RATING_KEY = "rating";
@@ -57,8 +59,9 @@ public final class AnalyticsUtils {
 				.setMeasure(RATING_KEY, rating);
 	}
 
-	public static void setConfiguration(final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {
+	public static void setConfiguration(final UUID sessionId, final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {
 		builder
+				.addTag(SESSION_ID_KEY, sessionId.toString())
 				.addTag(BOT_KEY, String.valueOf(executorConfiguration.getBotId()))
 				.addTag(NODE_KEY, String.valueOf(executorConfiguration.getNodId()))
 				.addTag(TRAINING_KEY, String.valueOf(executorConfiguration.getTraId()))
