@@ -17,6 +17,20 @@
  */
 package io.vertigo.chatbot.designer.analytics.controllers;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
@@ -25,6 +39,7 @@ import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualR
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsExportServices;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsServices;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
+import io.vertigo.chatbot.designer.analytics.services.TimeSerieServices;
 import io.vertigo.chatbot.designer.analytics.services.TypeExportAnalyticsServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices;
@@ -52,18 +67,6 @@ import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Optional;
-
-import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/analytics")
@@ -94,6 +97,9 @@ public class AnalyticsController extends AbstractDesignerController {
 	private AnalyticsServices analyticsServices;
 
 	@Inject
+	private TimeSerieServices timeSerieServices;
+
+	@Inject
 	private ChatbotServices chatbotServices;
 
 	@Inject
@@ -119,15 +125,15 @@ public class AnalyticsController extends AbstractDesignerController {
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext,
-							@RequestParam("botId") final Optional<Long> botId,
-							@RequestParam("nodId") final Optional<Long> nodId,
-							@RequestParam("time") final Optional<TimeOption> timeOption,
-							final UiMessageStack uiMessageStack) {
+			@RequestParam("botId") final Optional<Long> botId,
+			@RequestParam("nodId") final Optional<Long> nodId,
+			@RequestParam("time") final Optional<TimeOption> timeOption,
+			final UiMessageStack uiMessageStack) {
 		viewContext.publishDtList(botsKey, chatbotServices.getMySupervisedChatbots());
 		final StatCriteria statCriteria = new StatCriteria();
 
 		if (botId.isPresent()) {
-			Chatbot chatbot = chatbotServices.getChatbotById(botId.get());
+			final Chatbot chatbot = chatbotServices.getChatbotById(botId.get());
 			viewContext.publishDtList(nodesKey, nodeServices.getNodesByBot(chatbot));
 			statCriteria.setBotId(botId.get());
 			viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getAllTypeExportAnalytics());
@@ -167,15 +173,15 @@ public class AnalyticsController extends AbstractDesignerController {
 
 	private void updateGraph(final ViewContext viewContext, final StatCriteria criteria) {
 
-		viewContext.publishRef(sessionStatsKey, analyticsServices.getSessionsStats(criteria));
-		viewContext.publishRef(requestsStatsKey, analyticsServices.getRequestStats(criteria));
-		viewContext.publishRef(userInteractionsStatsKey, analyticsServices.getUserInteractions(criteria));
+		viewContext.publishRef(sessionStatsKey, timeSerieServices.getSessionsStats(criteria));
+		viewContext.publishRef(requestsStatsKey, timeSerieServices.getRequestStats(criteria));
+		viewContext.publishRef(userInteractionsStatsKey, timeSerieServices.getUserInteractions(criteria));
 		if (criteria.getBotId() != null) {
 			final Chatbot bot = chatbotServices.getChatbotById(criteria.getBotId());
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.topId, analyticsServices.getSentenseDetails(criteria));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.topId, analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria));
 			viewContext.publishDtList(topicsKey, topicServices.getAllTopicByBot(bot));
-			viewContext.publishRef(ratingStatsKey, analyticsServices.getRatingStats(criteria));
+			viewContext.publishRef(ratingStatsKey, timeSerieServices.getRatingStats(criteria));
 			viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId()));
 			viewContext.publishDtList(nodesKey, nodeServices.getNodesByBot(bot));
 			viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getAllTypeExportAnalytics());
