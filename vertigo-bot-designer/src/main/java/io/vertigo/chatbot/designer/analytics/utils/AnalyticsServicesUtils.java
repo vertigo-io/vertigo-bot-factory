@@ -2,6 +2,7 @@ package io.vertigo.chatbot.designer.analytics.utils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -9,9 +10,11 @@ import java.util.Map;
 
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.database.timeseries.DataFilter;
 import io.vertigo.database.timeseries.DataFilterBuilder;
 import io.vertigo.database.timeseries.TimeFilter;
+import io.vertigo.database.timeseries.TimeFilterBuilder;
 
 public final class AnalyticsServicesUtils {
 
@@ -46,22 +49,39 @@ public final class AnalyticsServicesUtils {
 	}
 
 	public static TimeFilter getTimeFilter(final StatCriteria criteria) {
-		final TimeOption timeOption = TimeOption.valueOf(criteria.getTimeOption());
+		Assertion.check()
+				.isFalse(criteria.getFromDate() != null && criteria.getFromInstant() != null, "Time criteria must not be from date AND instant")
+				.isFalse(criteria.getToDate() != null && criteria.getToInstant() != null, "Time criteria must not be to date AND instant");
+
+		final TimeOption timeOption = criteria.getTimeOption() == null ? null : TimeOption.valueOf(criteria.getTimeOption());
 		final LocalDateTime toDate;
-		if (criteria.getToDate() == null) {
-			toDate = atEndOfDay(LocalDate.now());
-		} else {
+		if (criteria.getToInstant() != null) {
+			toDate = LocalDateTime.ofInstant(criteria.getToInstant(), ZoneOffset.UTC);
+		} else if (criteria.getToDate() != null) {
 			toDate = atEndOfDay(criteria.getToDate());
+		} else {
+			toDate = atEndOfDay(LocalDate.now());
 		}
 
 		final LocalDateTime fromDate;
-		if (criteria.getFromDate() == null) {
+		if (criteria.getFromInstant() != null) {
+			fromDate = LocalDateTime.ofInstant(criteria.getFromInstant(), ZoneOffset.UTC);
+		} else if (criteria.getFromDate() != null) {
+			fromDate = criteria.getFromDate().atStartOfDay();
+		} else if (timeOption != null) {
 			fromDate = timeOption.getFrom(toDate);
 		} else {
-			fromDate = criteria.getFromDate().atStartOfDay();
+			fromDate = null;
 		}
 
-		return TimeFilter.builder(fromDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + 'Z', toDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + 'Z').withTimeDim(timeOption.getGrain()).build();
+		final TimeFilterBuilder timeFilterBuilder = TimeFilter.builder(
+				fromDate == null ? "0" : (fromDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + 'Z'),
+				toDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + 'Z');
+		if (timeOption != null) {
+			timeFilterBuilder.withTimeDim(timeOption.getGrain());
+		}
+
+		return timeFilterBuilder.build();
 	}
 
 	private static LocalDateTime atEndOfDay(final LocalDate date) {

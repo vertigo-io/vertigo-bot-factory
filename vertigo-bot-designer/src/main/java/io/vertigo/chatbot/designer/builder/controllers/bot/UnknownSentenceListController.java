@@ -1,6 +1,20 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.google.gson.reflect.TypeToken;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.UnknownSentenceDetail;
@@ -18,17 +32,6 @@ import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.inject.Inject;
-import java.util.List;
-
-import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/followup")
@@ -61,7 +64,7 @@ public class UnknownSentenceListController extends AbstractBotListEntityControll
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtList(topicCategorieskKey, topicCategoryServices.getAllNonTechnicalCategoriesByBot(bot));
-		DtList<UnknownSentenceDetail> unknownSentenceDetailDtList = unknownSentencesServices.findUnknownSentences(botId);
+		final DtList<UnknownSentenceDetail> unknownSentenceDetailDtList = unknownSentencesServices.findUnknownSentences(botId);
 		viewContext.publishDtList(unknownSentenceListKey, unknownSentenceDetailDtList);
 		viewContext.publishDtList(unknownSentenceFilteredListKey, unknownSentenceDetailDtList);
 		viewContext.publishDtList(topickKey, topicServices.getAllTopicByBot(bot));
@@ -73,34 +76,35 @@ public class UnknownSentenceListController extends AbstractBotListEntityControll
 	}
 
 	@PostMapping("/_treatUnknownSentence")
-	public ViewContext treatUnknownSentence(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, UiMessageStack uiMessageStack,
-											@RequestParam("unknownSentencesToUpdate") final String unknownSentencesToUpdate,
-											@RequestParam("topId") final Long topId) {
+	public ViewContext treatUnknownSentence(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, final UiMessageStack uiMessageStack,
+			@RequestParam("unknownSentencesToUpdate") final String unknownSentencesToUpdate,
+			@RequestParam("topId") final Long topId) {
 
-		topicServices.addTrainingSentence(bot,  jsonEngine.fromJson(unknownSentencesToUpdate, new TypeToken<List<UnknownSentenceToUpdateIhm>>(){}.getType()), topId);
+		topicServices.addTrainingSentence(bot, jsonEngine.fromJson(unknownSentencesToUpdate, new TypeToken<List<UnknownSentenceToUpdateIhm>>() {
+		}.getType()), topId);
 		viewContext.publishDtList(unknownSentenceListKey, unknownSentencesServices.findUnknownSentences(bot.getBotId()));
 		listLimitReached(viewContext, uiMessageStack);
-		this.nodeMessageDisplay(bot, uiMessageStack);
+		nodeMessageDisplay(bot, uiMessageStack);
 		return viewContext;
 	}
 
 	@PostMapping("/_rejectUnknownSentence")
-	public ViewContext rejectUnknownSentence(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, UiMessageStack uiMessageStack,
-											@RequestParam("unknownSentenceId") final Long unknownSentenceId) {
+	public ViewContext rejectUnknownSentence(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, final UiMessageStack uiMessageStack,
+			@RequestParam("unknownSentenceId") final Long unknownSentenceId) {
 		unknownSentencesServices.updateStatus(unknownSentencesServices.findById(unknownSentenceId), UnknownSentenceStatusEnum.REJECTED);
 		viewContext.publishDtList(unknownSentenceListKey, unknownSentencesServices.findUnknownSentences(bot.getBotId()));
 		listLimitReached(viewContext, uiMessageStack);
-		this.nodeMessageDisplay(bot, uiMessageStack);
+		nodeMessageDisplay(bot, uiMessageStack);
 		return viewContext;
 	}
 
 	@PostMapping("/_refreshUnknownSentences")
-	public ViewContext refreshUnknownSentences(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, UiMessageStack uiMessageStack) {
-		DtList<UnknownSentenceDetail> unknownSentenceDetailDtList = unknownSentencesServices.findUnknownSentences(bot.getBotId());
+	public ViewContext refreshUnknownSentences(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, final UiMessageStack uiMessageStack) {
+		final DtList<UnknownSentenceDetail> unknownSentenceDetailDtList = unknownSentencesServices.findUnknownSentences(bot.getBotId());
 		viewContext.publishDtList(unknownSentenceListKey, unknownSentenceDetailDtList);
 		viewContext.publishDtList(unknownSentenceFilteredListKey, unknownSentenceDetailDtList);
 		listLimitReached(viewContext, uiMessageStack);
-		this.nodeMessageDisplay(bot, uiMessageStack);
+		nodeMessageDisplay(bot, uiMessageStack);
 		return viewContext;
 	}
 }

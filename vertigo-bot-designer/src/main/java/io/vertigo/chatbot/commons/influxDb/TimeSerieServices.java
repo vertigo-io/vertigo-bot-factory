@@ -1,6 +1,5 @@
-package io.vertigo.chatbot.designer.analytics.services;
+package io.vertigo.chatbot.commons.influxDb;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -23,15 +22,12 @@ import io.vertigo.database.timeseries.TimedDatas;
  * Use for search in influxdb
  * All the request need at least a statCriteria
  *
- * @author vbaillet
+ * @author vbaillet, skerdudou
  */
 @Transactional
 public class TimeSerieServices implements Component, Activeable {
 
 	private String influxDbName;
-
-	//@Inject
-	//private TimeSeriesManager timeSeriesManager;
 
 	@Inject
 	private InfluxDbConnector influxDbConnector;
@@ -186,26 +182,32 @@ public class TimeSerieServices implements Component, Activeable {
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}
 
-	/**
-	 * Get all topics already used in test bot
-	 *
-	 * @param criteria
-	 * @return all topics used at least one time
-	 */
-	public TimedDatas getTopicsStats(final StatCriteria criteria) {
-		return new TimedDatas(new ArrayList<>(), new ArrayList<>());
-		//return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("name"),
-		//		AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
-		//		AnalyticsServicesUtils.getTimeFilter(criteria),
-		//		Optional.empty());
-	}
-
 	public TimedDatas getRatingStats(final StatCriteria criteria) {
 		return InfluxRequestUtil.getTimeSeries(influxDbConnector.getClient(), influxDbName,
 				Arrays.asList("rating1:count", "rating2:count", "rating3:count", "rating4:count", "rating5:count"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.RATING_MSRMT).build(),
 				Map.of(),
 				AnalyticsServicesUtils.getTimeFilter(criteria));
+	}
+
+	/**
+	 * Get all messages unrecognized
+	 *
+	 * @param criteria StatCriteria
+	 * @return all the messages unrecognized
+	 */
+	public TimedDatas getUnrecognizedSentences(final StatCriteria criteria) {
+		final String q = new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isFallback", "confidence"))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "text", "name", "modelName", "_field", "_value"))
+				.pivot()
+				.filterByColumn(Map.of("isFallback", "1"))
+				.keep(List.of("_time", "text", "name", "confidence", "modelName"))
+				.build();
+
+		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}
 
 }

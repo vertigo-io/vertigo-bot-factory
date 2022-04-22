@@ -29,8 +29,10 @@ create DtDefinition DtStatCriteria {
 	field botId 		{domain: DoId 					label: "Chatbot selection" 		}
 	field timeOption	{domain: DoCode 				label: "Time option" 			}
 	field nodId			{domain: DoId 					label: "Node selection" 		}
-	field fromDate		{domain: DoLocaldate 				label: "From"		 		}
-	field toDate		{domain: DoLocaldate				label: "To" 				}
+	field fromDate		{domain: DoLocaldate 			label: "From"			 		}
+	field toDate		{domain: DoLocaldate			label: "To" 					}
+	field fromInstant	{domain: DoInstant				label: "From"		 			}
+	field toInstant		{domain: DoInstant				label: "To" 					}
 }
 
 create DtDefinition DtSentenseDetail {
