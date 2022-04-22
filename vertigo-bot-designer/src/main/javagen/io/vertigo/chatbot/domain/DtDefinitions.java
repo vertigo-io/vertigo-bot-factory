@@ -157,8 +157,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		UnknownSentenceStatus(io.vertigo.chatbot.commons.domain.UnknownSentenceStatus.class),
 		/** Objet de données UnknownSentenceToUpdateIhm. */
 		UnknownSentenceToUpdateIhm(io.vertigo.chatbot.commons.domain.UnknownSentenceToUpdateIhm.class),
-		/** Objet de données UnknownSentencesCriteria. */
-		UnknownSentencesCriteria(io.vertigo.chatbot.commons.domain.UnknownSentencesCriteria.class),
 		/** Objet de données UnknownSentenseExport. */
 		UnknownSentenseExport(io.vertigo.chatbot.designer.domain.analytics.UnknownSentenseExport.class),
 		/** Objet de données UtterText. */
@@ -923,7 +921,11 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'From'. */
 		fromDate,
 		/** Propriété 'To'. */
-		toDate	}
+		toDate,
+		/** Propriété 'From'. */
+		fromInstant,
+		/** Propriété 'To'. */
+		toInstant	}
 
 	/**
 	 * Enumération des champs de Synonym.
@@ -1222,19 +1224,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		unkSeId,
 		/** Propriété 'User text'. */
 		text	}
-
-	/**
-	 * Enumération des champs de UnknownSentencesCriteria.
-	 */
-	public enum UnknownSentencesCriteriaFields implements DtFieldName<io.vertigo.chatbot.commons.domain.UnknownSentencesCriteria> {
-		/** Propriété 'Chatbot selection'. */
-		botId,
-		/** Propriété 'From'. */
-		fromDate,
-		/** Propriété 'To'. */
-		toDate,
-		/** Propriété 'Status'. */
-		status	}
 
 	/**
 	 * Enumération des champs de UnknownSentenseExport.

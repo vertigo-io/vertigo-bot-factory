@@ -18,6 +18,8 @@ public final class StatCriteria implements DtObject {
 	private Long nodId;
 	private java.time.LocalDate fromDate;
 	private java.time.LocalDate toDate;
+	private java.time.Instant fromInstant;
+	private java.time.Instant toInstant;
 	
 	/**
 	 * Champ : DATA.
@@ -112,6 +114,44 @@ public final class StatCriteria implements DtObject {
 	 */
 	public void setToDate(final java.time.LocalDate toDate) {
 		this.toDate = toDate;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'From'.
+	 * @return Instant fromInstant
+	 */
+	@Field(smartType = "STyInstant", label = "From")
+	public java.time.Instant getFromInstant() {
+		return fromInstant;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'From'.
+	 * @param fromInstant Instant
+	 */
+	public void setFromInstant(final java.time.Instant fromInstant) {
+		this.fromInstant = fromInstant;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'To'.
+	 * @return Instant toInstant
+	 */
+	@Field(smartType = "STyInstant", label = "To")
+	public java.time.Instant getToInstant() {
+		return toInstant;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'To'.
+	 * @param toInstant Instant
+	 */
+	public void setToInstant(final java.time.Instant toInstant) {
+		this.toInstant = toInstant;
 	}
 	
 	/** {@inheritDoc} */

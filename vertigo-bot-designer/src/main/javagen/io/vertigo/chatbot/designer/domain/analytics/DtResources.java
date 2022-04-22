@@ -91,6 +91,14 @@ public enum DtResources implements MessageKey {
 	 * To.
 	 */
 	fldStatCriteria$toDate,
+	/**
+	 * From.
+	 */
+	fldStatCriteria$fromInstant,
+	/**
+	 * To.
+	 */
+	fldStatCriteria$toInstant,
 
 	/***********************************************************
 	/** TopIntent.

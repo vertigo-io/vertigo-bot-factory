@@ -59,10 +59,3 @@ create Association AUnknownSentenceChatbot{
 	labelB : "Bot"
 }
 
-
-create DtDefinition DtUnknownSentencesCriteria {
-	field botId 		{domain: DoId 					    label: "Chatbot selection" 		}
-	field fromDate		{domain: DoInstant 				    label: "From"		 		    }
-	field toDate		{domain: DoInstant				    label: "To" 				    }
-	field status        {domain: DoLabel                    label: "Status"                 }
-}
