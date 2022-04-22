@@ -48,18 +48,6 @@ public class AnalyticsServices implements Component {
 	@Inject
 	private TimeSerieServices timeSerieServices;
 
-	public TimedDatas getSessionsStats(final StatCriteria criteria) {
-		return timeSerieServices.getSessionsStats(criteria);
-	}
-
-	public TimedDatas getRequestStats(final StatCriteria criteria) {
-		return timeSerieServices.getRequestStats(criteria);
-	}
-
-	public TimedDatas getUserInteractions(final StatCriteria criteria) {
-		return timeSerieServices.getUserInteractions(criteria);
-	}
-
 	/**
 	 * Get the sentence unreconized by the bot
 	 *
@@ -130,10 +118,6 @@ public class AnalyticsServices implements Component {
 		}
 
 		return retour;
-	}
-
-	public TimedDatas getRatingStats(final StatCriteria criteria) {
-		return timeSerieServices.getRatingStats(criteria);
 	}
 
 }
