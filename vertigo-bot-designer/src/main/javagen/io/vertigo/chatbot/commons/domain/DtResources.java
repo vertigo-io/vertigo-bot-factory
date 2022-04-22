@@ -749,26 +749,6 @@ public enum DtResources implements MessageKey {
 	fldUnknownSentenceToUpdateIhm$text,
 
 	/***********************************************************
-	/** UnknownSentencesCriteria.
-	/***********************************************************
-	/**
-	 * Chatbot selection.
-	 */
-	fldUnknownSentencesCriteria$botId,
-	/**
-	 * From.
-	 */
-	fldUnknownSentencesCriteria$fromDate,
-	/**
-	 * To.
-	 */
-	fldUnknownSentencesCriteria$toDate,
-	/**
-	 * Status.
-	 */
-	fldUnknownSentencesCriteria$status,
-
-	/***********************************************************
 	/** WelcomeTour.
 	/***********************************************************
 	/**
