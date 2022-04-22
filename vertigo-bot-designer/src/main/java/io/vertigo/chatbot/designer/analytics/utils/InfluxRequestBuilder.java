@@ -51,7 +51,7 @@ public final class InfluxRequestBuilder {
 		return this;
 	}
 
-	public InfluxRequestBuilder filterColumn(final Map<String, String> filters) {
+	public InfluxRequestBuilder filterByColumn(final Map<String, String> filters) {
 		if (filters.isEmpty()) {
 			return this;
 		}

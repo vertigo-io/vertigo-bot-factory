@@ -78,10 +78,10 @@ public class TimeSerieServices implements Component, Activeable {
 	}
 
 	public TimedDatas getUserInteractions(final StatCriteria criteria) {
-		return null;
-		//return timeSeriesManager.getTimeSeries(influxDbName, List.of("name:count"),
-		//		AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
-		//		AnalyticsServicesUtils.getTimeFilter(criteria));
+		return InfluxRequestUtil.getTimeSeries(influxDbConnector.getClient(), influxDbName, Arrays.asList("name:count"),
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
+				Map.of(),
+				AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
 	/**
@@ -94,10 +94,10 @@ public class TimeSerieServices implements Component, Activeable {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("confidence", "isFallback"))
-				.filterColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
 				.keep(List.of("_time", "text", "name", "modelName", "_field", "_value"))
 				.pivot()
-				.filterColumn(Map.of("isFallback", "1"))
+				.filterByColumn(Map.of("isFallback", "1"))
 				.build();
 
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
@@ -113,10 +113,10 @@ public class TimeSerieServices implements Component, Activeable {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isSessionStart"))
-				.filterColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "name", "modelName", "botId", "traId", "_field", "_value"))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "name", "modelName", "botId", "nodId", "traId", "_field", "_value"))
 				.pivot()
-				.filterColumn(Map.of("isSessionStart", "1"))
+				.filterByColumn(Map.of("isSessionStart", "1"))
 				.build();
 
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
@@ -132,10 +132,10 @@ public class TimeSerieServices implements Component, Activeable {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isSessionStart"))
-				.filterColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "text", "name", "confidence", "modelName", "botId", "traId", "_field", "_value"))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "text", "name", "confidence", "modelName", "botId", "nodId", "traId", "_field", "_value"))
 				.pivot()
-				.filterColumn(Map.of("isFallback", "1"))
+				.filterByColumn(Map.of("isFallback", "1"))
 				.build();
 
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
@@ -152,10 +152,10 @@ public class TimeSerieServices implements Component, Activeable {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isNlu", "isTechnical"))
-				.filterColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
 				.keep(List.of("_time", "name", "_field", "_value"))
 				.pivot()
-				.filterColumn(Map.of("isNlu", "1", "isTechnical", "0"))
+				.filterByColumn(Map.of("isNlu", "1", "isTechnical", "0"))
 				.keep(List.of("name"))
 				.append("|> duplicate(column: \"name\", as: \"name:count\")")
 				.append("|> count(column: \"name:count\")")
@@ -175,11 +175,11 @@ public class TimeSerieServices implements Component, Activeable {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isNlu", "confidence"))
-				.filterColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.filterColumn(Map.of("name", '"' + intentRasa + '"'))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.filterByColumn(Map.of("name", '"' + intentRasa + '"'))
 				.keep(List.of("_time", "text", "_field", "_value"))
 				.pivot()
-				.filterColumn(Map.of("isNlu", "1"))
+				.filterByColumn(Map.of("isNlu", "1"))
 				.keep(List.of("_time", "text", "confidence"))
 				.build(5_000L);
 
