@@ -1,44 +1,54 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-  xmlns:vu="http://www.morphbit.com/thymeleaf/component"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{templates/basicLayout}">
+<html
+		xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+		layout:decorate="~{templates/basicLayout}">
   
 	<section layout:fragment="page-header">
-  		<section th:ref="detailHeader" class="col-12" v-minify="{topOffsetEl:'.q-header', leftOffsetEl:'.q-drawer--left'}">
-			<div th:ref="maxiHeader" class="row justify-between items-center bg-secondary header-content" >
+		<q-toolbar class="bg-secondary">
+			<div  class="col" style="display:flex;">
 				<div layout:fragment="content-header-left"></div>
 				<!-- Brand and toggle get grouped for better mobile display -->
-				<div class="col column ">				
+				<div class="q-ml-md" style="align-items: center; display: flex">
 					<div class="row col">
-						<div class="detailTitle q-px-md self-center  text-secondary-inverted" layout:fragment="content-header-title"></div>
-						<div class="col self-end bg-accent header-tabs text-accent-inverted eq-mini gt-sm" layout:fragment="content-header-tabs"></div>
-						<div class="row self-center ne-mini justify-end col">
-							<vu:form>
-								<div class="primary" layout:fragment="content-header-actions"></div>
-							</vu:form>
-						</div>
+						<div class="detailTitle self-center justify-start" layout:fragment="content-header-title"></div>
 					</div>
-					<div class="row bg-accent text-accent-inverted items-end header-tabs ne-mini" layout:fragment="content-header-tabs"></div>
+				</div>
+				<div class="text-dark self-center justify-center" style="flex-grow: 2; align-items: center">
+					<div layout:fragment="content-header-infos"></div>
+				</div>
+				<div  style="align-items: center; display: flex">
+					<div class="self-center ne-mini justify-end col" layout:fragment="content-header-actions"></div>
 				</div>
 			</div>
-			<div class="bg-secondary mini" th:insert="~{:: maxiHeader}"/>
-		</section>
+		</q-toolbar>
 	</section>
 	
   	<section layout:fragment="page-content">
-  		<div class="col-2 gt-md" th:if="${nav}">
-			<nav v-scroll-spy="{offset:54+50, padding:20}">
-			    <q-list link class="column items-stretch" style="height:100%">
-			    	<section layout:fragment="content-nav"></section>
-			    </q-list>
-	        </nav>
+  		<div>
+			<q-btn flat round dense class="lt-md"
+				   @click="$refs.menuDrawer.toggle()" icon="menu" aria-label="Toggle menu on left side"></q-btn>
+			<q-drawer show-if-above side="left" bordered :mini="false" ref="menuDrawer">
+				<nav>
+					<q-list class="column items-stretch" style="height:100%">
+						<section layout:fragment="content-nav"></section>
+					</q-list>
+				</nav>
+			</q-drawer>
 		</div>
 		<div class="col content-body">
+			<vu:messages/>
+			<div class="col-12">
+				<div class="row self-center ne-mini justify-end col">
+					<vu:form>
+						<div class="primary" layout:fragment="content-actions"></div>
+					</vu:form>
+				</div>
+			</div>
 			<vu:form>
-	 			<vu:messages/>
 				<section layout:fragment="content" class="q-col-gutter-md q-mt-auto"></section>
 	 		</vu:form>
  		</div>
+		<section layout:fragment="content-bot-drawer" ></section>
 	</section>
 </html>

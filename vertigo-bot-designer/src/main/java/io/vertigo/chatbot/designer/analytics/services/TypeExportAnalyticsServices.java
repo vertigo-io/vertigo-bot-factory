@@ -29,4 +29,9 @@ public class TypeExportAnalyticsServices implements Component {
 		return typeExportAnalyticsDAO.findAll(Criterions.isEqualTo(DtDefinitions.TypeExportAnalyticsFields.botRelated, false), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
+	public DtList<TypeExportAnalytics> getBotRelatedTypeExportAnalytics() {
+		return typeExportAnalyticsDAO.findAll(Criterions.isEqualTo(DtDefinitions.TypeExportAnalyticsFields.botRelated, true), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+	}
+
+
 }

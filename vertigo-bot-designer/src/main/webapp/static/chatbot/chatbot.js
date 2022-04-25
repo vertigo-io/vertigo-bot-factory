@@ -131,9 +131,9 @@ document.addEventListener('DOMContentLoaded', function () {
             _iframe.src += '&' + optionalParam.key + '=' + optionalParam.value;
           });
         }
-        _iframe.style.visibility = 'hidden';
+        _iframe.style.visibility = 'visible';
 
-        document.body.appendChild(_iframe);
+        document.getElementById('botDrawerContent').appendChild(_iframe);
       }
 
       function checkIfConversationAlreadyExists() {
@@ -194,10 +194,9 @@ document.addEventListener('DOMContentLoaded', function () {
           _initIframeListener();
           _createIframe();
           _iframe.addEventListener('load', function() {
-            _createFlottingButton();
             if (sessionStorage.showChatbot !== undefined) {
               if (sessionStorage.showChatbot === 'true') {
-                Chatbot.show();
+                document.getElementById('botDrawerButton').click();
               }
             } else {
               checkIfConversationAlreadyExists();
@@ -208,7 +207,6 @@ document.addEventListener('DOMContentLoaded', function () {
         show() {
           sessionStorage.showChatbot = true;
           _iframe.contentWindow.postMessage('start', '*');
-          _iframe.style.visibility = 'visible';
         },
 
         showPictureModal(src) {
@@ -220,7 +218,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         minimize() {
           sessionStorage.showChatbot = false;
-          _iframe.style.visibility = 'hidden';
+          document.getElementById('botDrawerButton').click();
+        },
+
+        hideDrawer() {
+          sessionStorage.showChatbot = false;
         },
 
         close() {

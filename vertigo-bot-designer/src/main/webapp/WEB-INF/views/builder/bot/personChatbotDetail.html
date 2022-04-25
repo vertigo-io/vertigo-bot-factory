@@ -10,6 +10,8 @@
 </head>
 	<body>
 		<section layout:fragment="content">
+
+			<div class="text-primary text-h6 text-weight-bold" th:text="#{layout.profil}"></div>
 			<!-- Add users -->
 			<vu:include-data object="personList" field="perId"/>
 			<vu:include-data object="personList" field="name"/>

@@ -1,13 +1,13 @@
 /******** CSS SPECIFIQUE A CERTAINES PAGES *******/
 :root {
-  	--q-color-body-background: #f5f5f5;
+  	--q-color-body-background: #ffffff;
 	--q-color-body-color: #0c0c0c;
 	/*--q-color-primary: #027be3;
 	--q-color-secondary:#fad9c2;*/
 	--q-color-primary: #027be3;
 	--q-color-primary-invert: rgba(255, 255, 255, 0.9);
-	--q-color-secondary:#00BCD4;
-	--q-color-secondary-invert: rgba(255, 255, 255, 0.9);
+	--q-color-secondary: #E5E5E5;
+	--q-color-secondary-invert: rgba(0, 0, 0, 0.9);
 	--q-color-accent:	#B2EBF2;
 	--q-color-accent-invert:	rgba(60, 60, 60, 0.8);
 	
@@ -92,6 +92,11 @@ img {
 }
 .detailImg, .detailImg img {
 	height: 100%;
+}
+
+#baseImg {
+	height: 80px;
+	width: 80px;
 }
 
 .detailTypeIcon {
@@ -239,15 +244,10 @@ nav a.q-item, .nav a.q_item {
 }
 
 .header-content {
-	height: 160px;
+	height: 80px;
 	position: relative;
     z-index: 10;
 }
-
-@media (min-width: 1500px) {
-.header-content {
-	height: 150px;
-}}
 
 .mini .header-content {
 	height: 50px;
@@ -256,9 +256,8 @@ nav a.q-item, .nav a.q_item {
 .header-content > div {
 	height: 100%;
 }
-
-.header-tabs a.active {
-	color: black;
+nav a.q-item.q-item--active.active {
+	background-color: #E5E5E5;
 }
 
 .header-tabs a.active .q-btn__content {

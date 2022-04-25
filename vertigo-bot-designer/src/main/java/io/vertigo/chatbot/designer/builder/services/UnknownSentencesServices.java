@@ -1,11 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services;
 
-import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
-
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.dao.UnknownSentenceDetailDAO;
 import io.vertigo.chatbot.commons.domain.UnknownSentenceDetail;
 import io.vertigo.chatbot.commons.domain.UnknownSentenceStatusEnum;
@@ -19,6 +13,11 @@ import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
+
+import javax.inject.Inject;
+import java.util.Map;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 @Transactional
 public class UnknownSentencesServices implements Component {
@@ -65,16 +64,14 @@ public class UnknownSentencesServices implements Component {
 			save(unknownSentenceDetail);
 
 		}
-		return
-
-		findAllByBotId(botId);
+		return findAllByBotId(botId);
 	}
 
 	public UnknownSentenceDetail save(final UnknownSentenceDetail unknownSentenceDetail) {
 		return unknownSentenceDetailDAO.save(unknownSentenceDetail);
 	}
 
-	private DtList<UnknownSentenceDetail> findAllByBotId(final Long botId) {
+	public DtList<UnknownSentenceDetail> findAllByBotId(final Long botId) {
 		return unknownSentenceDetailDAO.findAll(Criterions.isEqualTo(DtDefinitions.UnknownSentenceDetailFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 

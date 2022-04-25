@@ -303,9 +303,9 @@ const chatbot = new Vue({
                         chatbot.updateSessionStorage();
                     }
 
-                    // en différé le temps que la vue soit mise à jour
+                    // en diffÃ©rÃ© le temps que la vue soit mise Ã  jour
                     sleep(1).then(function() {
-                        // si les dialogues sont fermés
+                        // si les dialogues sont fermÃ©s
                         if (chatbot.customConfig.useRating) {
                             chatbot.inputConfig.showRating = chatbot.isEnded;
                             chatbot.updateSessionStorage();
@@ -323,10 +323,10 @@ const chatbot = new Vue({
                 const lastMsg = chatbot.messages[chatbot.messages.length - 1];
                 if (response.text !== undefined && response.text !== '') {
                     if (lastMsg && !lastMsg.sent) {
-                        // ajoute un message à un précédent message du bot
+                        // ajoute un message Ã  un prÃ©cÃ©dent message du bot
                         lastMsg.text.push(response.text);
                     } else {
-                        // première réponse du bot
+                        // premiÃ¨re rÃ©ponse du bot
                         if (chatbot.customConfig.displayAvatar) {
                             chatbot.messages.push({
                                 avatar: chatbot.botAvatar,
