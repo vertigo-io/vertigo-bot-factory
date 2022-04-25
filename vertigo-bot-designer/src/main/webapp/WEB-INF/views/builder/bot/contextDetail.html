@@ -11,13 +11,13 @@
 	</head>
 	
 	<body>
-		<section layout:fragment="content-header-actions">
+		<section layout:fragment="content-actions">
 			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/contextValue/(id=${model.bot.botId})} + ${model.contextValue.cvaId}" ariaLabel="Cancel" icon="fas fa-ban"
-							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
+							class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
-							class="on-left" :round size="lg" color="primary" />			
+							class="on-left" :round size="md" color="primary" />
 			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
-							class="on-left" round size="lg" color="red" ></q-btn>
+							class="on-left" round size="md" color="red" ></q-btn>
 		</section>
 				
 		<section layout:fragment="content">

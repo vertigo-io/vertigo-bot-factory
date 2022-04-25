@@ -17,27 +17,9 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import io.vertigo.account.authorization.annotations.Secured;
-import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
-import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
@@ -50,13 +32,11 @@ import io.vertigo.chatbot.designer.builder.services.topic.ITopicService;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic;
-import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.utils.StringUtils;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.chatbot.domain.DtDefinitions.BotPredefinedTopicFields;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
@@ -67,6 +47,19 @@ import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot")
@@ -96,10 +89,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	private static final ViewContextKey<BotPredefinedTopic> idleTopicKey = ViewContextKey.of("idleTopic");
 
 	private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
-
-	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
-	private static final ViewContextKey<ChatbotNode> nodeEditKey = ViewContextKey.of("nodeEdit");
-	private static final ViewContextKey<ChatbotNode> nodeNewKey = ViewContextKey.of("nodeNew"); // template for creation
+	// template for creation
 	private static final ViewContextKey<Boolean> deletePopinKey = ViewContextKey.of("deletePopin");
 	private static final ViewContextKey<FileInfoURI> botTmpPictureUriKey = ViewContextKey.of("botTmpPictureUri");
 	private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
@@ -108,13 +98,8 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 
-		if (AuthorizationUtils.isAuthorized(bot, ChatbotOperations.botAdm)) {
-			viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
-		}
-
 		viewContext.publishRef(deletePopinKey, false);
 		viewContext.publishFileInfoURI(botTmpPictureUriKey, null);
-		initNodeEdit(viewContext);
 
 		loadBotTopic(bot, viewContext, KindTopicEnum.FAILURE.name(), failureTopicKey);
 		loadBotTopic(bot, viewContext, KindTopicEnum.START.name(), startTopicKey);
@@ -128,16 +113,6 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		listLimitReached(viewContext, uiMessageStack);
 	}
 
-	private static void initNodeEdit(final ViewContext viewContext) {
-		viewContext.publishDto(nodeEditKey, new ChatbotNode());
-
-		final ChatbotNode templateCreation = new ChatbotNode();
-		templateCreation.setColor("#00838f");
-		templateCreation.setIsDev(false);
-		templateCreation.setIsUpToDate(false);
-		viewContext.publishDto(nodeNewKey, templateCreation);
-	}
-
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack) {
 		initEmptyCommonContext(viewContext);
@@ -148,10 +123,8 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		newBotTopic(viewContext, KindTopicEnum.END.name(), endTopicKey);
 		newBotTopic(viewContext, KindTopicEnum.IDLE.name(), idleTopicKey);
 
-		viewContext.publishDtList(nodeListKey, new DtList<>(ChatbotNode.class));
 		viewContext.publishFileInfoURI(botTmpPictureUriKey, null);
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
-		initNodeEdit(viewContext);
 		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
 		listLimitReached(viewContext, uiMessageStack);
@@ -191,13 +164,6 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		toModeEdit();
 	}
 
-	@PostMapping("/_delete")
-	@Secured("BotUser")
-	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		chatbotServices.deleteChatbot(bot);
-		return "redirect:/bots/";
-	}
-
 	@PostMapping("/_save")
 	@Secured("BotUser")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
@@ -212,36 +178,6 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, failureBotTopic, startBotTopic, endBotTopic, idleBotTopic, chatbotCustomConfig);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();
-	}
-
-	@PostMapping("/_saveNode")
-	@Secured("SuperAdm")
-	public ViewContext doSaveNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
-			@ViewAttribute("nodeEdit") final ChatbotNode nodeEdit, final UiMessageStack uiMessageStack) {
-
-		nodeEdit.setBotId(bot.getBotId());
-		nodeServices.saveNode(nodeEdit);
-
-		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
-		viewContext.publishDto(nodeEditKey, new ChatbotNode()); // reset nodeEdit so previous values are not used for
-																// subsequent requests
-		listLimitReached(viewContext, uiMessageStack);
-
-		return viewContext;
-	}
-
-	@PostMapping("/_deleteNode")
-	@Secured("SuperAdm")
-	public ViewContext doDeleteNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
-			@RequestParam("nodId") final Long nodId, final UiMessageStack uiMessageStack) {
-
-		nodeServices.deleteNode(nodId);
-
-		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
-
-		listLimitReached(viewContext, uiMessageStack);
-
-		return viewContext;
 	}
 
 	@Override

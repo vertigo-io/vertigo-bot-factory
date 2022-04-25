@@ -16,7 +16,7 @@
 			<vu:include-data object="bots" field="name" />
 			<vu:include-data object="bots" field="description" />
 			<vu:include-data object="bots" field="creationDate" />
-			
+			<div class="text-primary text-h4 text-center text-weight-bold q-ma-lg" th:text="#{botList.catchPhrase}"></div>
 			<vu:cards list="bots" componentId="botCards" cardClass="botCard col-xl-3 col-md-4 col-xs-6" 
 					  rowsPerPage="10" showMore="true" showMoreLabel="Show more" >
 				<a th::href="|'@{/bot/}'+item.botId|" class="nav">

@@ -29,7 +29,6 @@ import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.export.file.TopicFileExportServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
@@ -70,8 +69,6 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 	private static final ViewContextKey<TopicCriteria> criteriaKey = ViewContextKey.of("criteria");
 	private static final ViewContextKey<FileInfoURI> importTopicFileUri = ViewContextKey.of("importTopicFileUri");
 
-	@Inject
-	private TopicServices topicServices;
 	@Inject
 	private TypeTopicServices typeTopicServices;
 	@Inject

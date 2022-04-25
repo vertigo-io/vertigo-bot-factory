@@ -11,17 +11,29 @@
 			<q-header elevated>
 				<q-toolbar>
 					<div class="row items-center">
-						<q-btn flat round dense class="lt-md"
-						@click="$refs.menuDrawer.toggle()" icon="menu" aria-label="Toggle menu on left side"></q-btn>
-						<q-toolbar-title>
-							<div>Chatbot designer</div>
-							<div class="text-subtitle2" th:text="#{parent.intro}"></div>
+						<a class="q-link text-weight-bold q-layout__section--marginal" th:href="@{/bots/}">
+							<q-toolbar-title>
+							<div>Chatbot Factory</div>
 						</q-toolbar-title>
+						</a>
 					</div>
-					<div class="col q-mx-xl">
+					<div class="col q-mx-xl" style="display: flex; justify-content: center">
+						<div class="row">
+							<div class="q-mr-lg q-my-sm q-link q-layout__section--marginal cursor-pointer text-uppercase" @click="hideOrShowBotToolbar()">
+								<span th:text="#{parent.bot}"></span>
+								<q-icon name="expand_more"></q-icon>
+							</div>
+							<a class="q-mr-lg q-my-sm q-link q-layout__section--marginal text-uppercase" th:href="@{/persons/}" th:if="${model.userAuthorizations[AtzSuperAdm]}">
+								<span th:text="#{parent.users}"></span>
+							</a>
+							<a class="q-mr-lg q-my-sm q-link q-layout__section--marginal text-uppercase" th:href="@{/analytics/}">
+								<span th:text="#{parent.statistics}"></span>
+							</a>
+						</div>
 					</div>
 					<div>
-						<q-btn-dropdown color="primary" icon="mdi-account">
+						<vu:include-data-primitive key="personName" />
+						<q-btn-dropdown color="primary" icon="mdi-account" th:label="${model.personName}">
 							<q-list>
 								<q-item clickable v-close-popup >
 									<q-btn  type="a" color="grey" icon="mdi-reload" round th:aria-label="#{action.reload}" th:href="@{/login/_reloadAuthorizations}" >
@@ -37,55 +49,29 @@
 						</q-btn-dropdown>
 					</div>
 				</q-toolbar>
-				
+				<div id="toolBarBots" class="hidden">
+					<hr style="color: white">
+					<q-toolbar>
+						<vu:include-data object="bots" field="'*'"/>
+						<q-card v-for="bot in vueData.bots" style="height: 100px; width: 100px" class="q-ma-sm">
+							<a th::href="|'@{/bot/}'+bot.botId|" class="nav">
+								<div class="row q-pt-md" style="justify-content: center">
+									<q-img th::src="|'@{/bot/}'+bot.botId+'/avatar'|" style="width: 50%; height: 50%"></q-img>
+								</div>
+								<div class="row" >
+									<div class="col ellipsis text-center text-grey" >
+										<span class="text-primary small-caps">{{bot.name}}</span>
+									</div>
+								</div>
+							</a>
+						</q-card>
+					</q-toolbar>
+				</div>
+				<section layout:fragment="page-header"></section>
 			</q-header>
 	       	<!-- END HEADER-->
-	       			
-	 			
-	 		<q-drawer
-	 			  th:with="mini=${model.vContext['componentStates'].addComponentState('navDrawer').addPrimitive('mini', true)}"
-	 			  content-class="bg-white text-primary"
-			      side="left"
-			      ref="menuDrawer"
-			      show-if-above
-			      elevated
-			      width="200"
-			      breakpoint="1006"
-			      
-			      :mini="$q.screen.lt.lg && componentStates.navDrawer.mini"
-		          @mouseover="componentStates.navDrawer.mini = false"
-		          @mouseout="componentStates.navDrawer.mini = true"
-		          :mini-to-overlay="$q.screen.lt.lg"
-			    >
-		      
-		      <nav class="text-no-wrap">
-		       <q-list :class="{'dense-list-header':!componentStates.navDrawer.mini}" style="height:100%">
-		      	<q-item tag="a" th:href="@{/persons/}" th:if="${model.userAuthorizations[AtzSuperAdm]}">
-		          <q-item-section avatar>
-			        <q-icon name="fas fa-users"></q-icon>
-			      </q-item-section>
-		          <q-item-section th:text="#{parent.users}"></q-item-section>
-		        </q-item>
-		        
-		        <q-item tag="a" th:href="@{/bots/}" th:if="${model.userAuthorizations[AtzBotUser]}">
-		          <q-item-section avatar>
-			        <q-icon name="fas fa-robot"></q-icon>
-			      </q-item-section>
-		          <q-item-section th:text="#{parent.bot}"></q-item-section>
-		        </q-item>
-		        
-		        <q-item tag="a"  th:href="@{/analytics/}">
-		          <q-item-section avatar>
-			        <q-icon name="fas fa-chart-bar"></q-icon>
-			      </q-item-section>
-		          <q-item-section th:text="#{parent.statistics}"></q-item-section>
-		        </q-item>
-					
-		       </q-list>
-		      </nav>
-		        
-		    </q-drawer>
-		    
+
+
 			<q-page-container class="row justify-center" >
 				<section class="col" layout:fragment="page-container"></section>
 			</q-page-container>

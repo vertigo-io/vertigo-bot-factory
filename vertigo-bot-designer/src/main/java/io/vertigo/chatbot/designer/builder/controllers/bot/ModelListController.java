@@ -17,21 +17,6 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
@@ -46,8 +31,21 @@ import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.inject.Inject;
+import java.time.Instant;
+import java.time.LocalDate;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/models")
@@ -61,8 +59,6 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 	private static final ViewContextKey<Training> trainingListKey = ViewContextKey.of("trainingList");
 
 	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
-
-	private static final ViewContextKey<Training> deployedTrainingKey = ViewContextKey.of("deployedTraining");
 
 	private static final ViewContextKey<Training> trainingDisplayedKey = ViewContextKey.of("trainingDisplayed");
 
@@ -95,17 +91,9 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 
 		refreshTrainerState(viewContext, bot, new TrainerInfo());
 		refreshTrainings(viewContext, bot, uiMessageStack);
-		final Optional<Training> deployedTrainingOpt = trainingServices.getDeployedTraining(bot);
-		final SavedTraining newSavedTraining = new SavedTraining();
-		if (deployedTrainingOpt.isPresent()) {
-			final Training deployedTraining = deployedTrainingOpt.get();
-			viewContext.publishDto(deployedTrainingKey, deployedTraining);
-			newSavedTraining.setName("Model " + deployedTraining.getVersionNumber());
-		} else {
-			viewContext.publishDto(deployedTrainingKey, new Training());
-		}
 		viewContext.publishDto(trainingDisplayedKey, new Training());
-
+		final SavedTraining newSavedTraining = new SavedTraining();
+		newSavedTraining.setName("Model " + viewContext.readDto(AbstractBotController.trainingKey, uiMessageStack).getVersionNumber());
 		viewContext.publishDto(newSavedTrainingKey, newSavedTraining);
 		viewContext.publishDtList(savedTrainingListKey, savedTrainingServices.getAllSavedTrainingByBotId(botId));
 		final SavedTrainingCriteria savedTrainingCriteria = new SavedTrainingCriteria();
@@ -114,7 +102,7 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 
 		super.initBreadCrums(viewContext, Training.class);
 		listLimitReached(viewContext, uiMessageStack);
-		toModeReadOnly();
+		AbstractVSpringMvcController.toModeReadOnly();
 	}
 
 	@PostMapping("/_refreshTrainer")
@@ -128,8 +116,10 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 	@PostMapping("/_refreshTrainings")
 	public ViewContext refreshTrainings(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, final UiMessageStack uiMessageStack) {
 		viewContext.publishDtList(trainingListKey, trainingServices.getAllTrainings(bot));
-
 		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
+		final SavedTraining newSavedTraining = new SavedTraining();
+		newSavedTraining.setName("Model " + viewContext.readDto(AbstractBotController.trainingKey, uiMessageStack).getVersionNumber());
+		viewContext.publishDto(newSavedTrainingKey, newSavedTraining);
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
@@ -141,23 +131,11 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 		return viewContext;
 	}
 
-	@PostMapping("/_train")
-	public ViewContext doTrain(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
-			@RequestParam("nodId") final Long nodId) {
-		final Training deployedTraining = trainingServices.trainAgent(bot, nodId);
-		viewContext.publishDto(trainerStateKey, trainerInfoServices.createTrainingState(bot));
-		viewContext.publishDto(deployedTrainingKey, deployedTraining);
-		final SavedTraining newSavedTraining = new SavedTraining();
-		newSavedTraining.setName("Model " + deployedTraining.getVersionNumber());
-		viewContext.publishDto(newSavedTrainingKey, newSavedTraining);
-		return viewContext;
-	}
-
 	@PostMapping("/_saveTraining")
 	public ViewContext saveTraining(final ViewContext viewContext,
 			final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
-			@ViewAttribute("deployedTraining") final Training deployedTraining,
+			@ViewAttribute("training") final Training deployedTraining,
 			@RequestParam("name") final String name,
 			@RequestParam("description") final String description) {
 		final SavedTraining newSavedTraining = new SavedTraining();

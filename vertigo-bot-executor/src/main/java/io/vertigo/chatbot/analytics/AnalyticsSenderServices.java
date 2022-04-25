@@ -78,7 +78,8 @@ public class AnalyticsSenderServices implements Component {
 			final AProcessBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(codeTopic, type)
 					.addTag(AnalyticsUtils.TYPE_KEY, isFirst ? AnalyticsUtils.BUTTONS_INPUT_KEY : AnalyticsUtils.SWITCH_INPUT_KEY)
 					.setMeasure(AnalyticsUtils.TECHNICAL_KEY, isEnd ? AnalyticsUtils.TRUE_BIGDECIMAL : AnalyticsUtils.FALSE_BIGDECIMAL)
-					.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL);
+					.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
+					.setMeasure(AnalyticsUtils.NLU_KEY, AnalyticsUtils.FALSE_BIGDECIMAL);
 			sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 			isFirst = false;
 		}

@@ -102,21 +102,14 @@
 		</head>
 
 		<body>
-			<section layout:fragment="content-header-actions">
+			<section layout:fragment="content-actions">
 				<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/topics/detail/(id=${model.bot.botId})} + ${model.topic.topId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
-								class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
+								class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
 				<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
-								  class="on-left" :round size="lg" color="primary" />
+								  class="on-left" :round size="md" color="primary" />
 				<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
-					   class="on-left" round size="lg" color="red" ></q-btn>
+					   class="on-left" round size="md" color="red" ></q-btn>
 
-			</section>
-
-			<section layout:fragment="content-nav">
-				<q-item tag="a" href="#detail" th:text="#{smallTalk.menu.informations}"></q-item>
-				<q-item tag="a" href="#training" th:text="#{smallTalk.menu.training}"></q-item>
-				<section v-if="vueData.topic.ttoCd === 'SMALLTALK'" th:insert="builder/bot/smallTalkDetail.html :: content-nav" ></section>
-				<section v-if="vueData.topic.ttoCd === 'SCRIPTINTENTION'" th:insert="builder/bot/scriptIntentionDetail.html :: content-nav" ></section>
 			</section>
 
 			<section layout:fragment="content">

@@ -40,6 +40,9 @@
 
     <body>
         <section layout:fragment="content">
+
+            <div class="text-primary text-h6 text-weight-bold" th:text="#{layout.attachment}"></div>
+
             <vu:include-data object="bot" field="botId" />
             <vu:popup-ajax action="_deleteAttachment" vModel="showDeleteAttachmentPopup" th:message="#{attachment.delete.message}"
                            th:confirm="#{attachment.delete}" dataName="attId" ></vu:popup-ajax>

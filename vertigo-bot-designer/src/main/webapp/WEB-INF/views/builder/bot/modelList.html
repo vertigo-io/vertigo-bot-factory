@@ -9,11 +9,7 @@
 	<head>
 		<title th:text="#{model.title}"></title>
 
-		<script v-if="canTalkToBot()" th:src="@{/static/chatbot/chatbot.js}"></script>
-		<script v-if="canTalkToBot()" th:src="@{/static/chatbot/shepherd.min.js}"></script>
-		<link v-if="canTalkToBot()" th:href="@{/static/chatbot/shepherd.css}" rel="stylesheet" />
-		<link v-if="canTalkToBot()" th:href="@{/static/chatbot/chatbot.css}" rel="stylesheet">
-		<vu:include-data object="deployedTraining" field="versionNumber" />
+		<vu:include-data object="training" field="versionNumber" />
 		<script th:inline="javascript">
 			// ## training ##
 			
@@ -29,40 +25,7 @@
 				else
 					return '';
 			}
-			
-			function postTrain() {
-				interval = setInterval(function() {
-					refreshTraining();
-				}, 1000);
-				
-				refreshModels();
-				VUiPage.$refs.loadModelDialog.hide();
-			}
-			
-			function refreshTraining() {
-				VUiExtensions.dataX.loadingTraining = true;
-				
-				VUiPage.httpPostAjax("_refreshTrainer", {}, {
-					onSuccess: function() {
-						VUiExtensions.dataX.loadingTraining = false;
-						
-					
-						if (!VertigoUi.vueData.trainerState.trainingInProgress && interval != null) {
-							clearInterval(interval);
-							interval = null;
-							setTimeout(refreshTrainingInfo, 500)
-							setTimeout(refreshModels, 500); // timeout to ensure callback is processed
-							if (VUiExtensions.dataX.loadModel.selectedNode.isDev && VertigoUi.vueData.trainerState.trainingState == "OK") {
-								var name = /*[[#{model.name}]]*/ '';
-								var loaded = /*[[#{model.loaded}]]*/ '';
-								VUiPage.$refs.chatbot.systemMessage(name + " V" + VertigoUi.vueData.deployedTraining.versionNumber  + " " + loaded);
-								VUiPage.$refs.chatbot.restart(true);
-							}
-						}
-					}
-				});
-			}
-			
+
 			function refreshTrainingInfo(){
 				VUiPage.httpPostAjax("_refreshTrainingInfo", {});
 			}
@@ -160,7 +123,7 @@
 			}
 			
 			function getCurrentTrainingVersionNumber() {
-				return VertigoUi.vueData.deployedTraining.versionNumber;
+				return VertigoUi.vueData.training.versionNumber;
 			}
 			function getCurrentSelectedNodeVersionNumber() {
 				return VUiExtensions.dataX.loadModel.selectedNode && getVersionNumberByTrainingId(VUiExtensions.dataX.loadModel.selectedNode.traId)
@@ -189,18 +152,6 @@
 					return "<span class='text-orange'>" + /*[[#{node.deployment.same}]]*/ + "</span>";
 				}
 			}
-			function getDevNode() {
-				let result = VertigoUi.vueData.nodeList.filter(n => n.isDev === true);
-				return result.length === 0 ? null : result[0];
-			}
-			function canTalkToBot() {
-				node = getDevNode();
-				return node !== null && node.traId !==null;
-			}
-			function canTrainBot(trainingInProgress) {
-				node = getDevNode();
-				return node == null || trainingInProgress;
-			}
 			
 			function displayTrainingLog(training) {
 
@@ -214,79 +165,31 @@
 			function filterFn (val, update) {
 				update(() => {
 					if (val === '') {
-						VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.savedTrainingList.map(function (savedTraining) {
-							return { value: savedTraining.savedTraId, label: savedTraining.name + " - " + getVersionNumberByTrainingId(savedTraining.traId)}
+						VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.nodeList.map(function (node) {
+							return { value: node.nodId, label: node.name }
 						});
 					}
 					else {
 						const needle = normalizeString(val.toLowerCase())
-						VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.savedTrainingList.filter(
-								savedTraining => (normalizeString(savedTraining.name.toLowerCase()).indexOf(needle) > -1 ||
-										normalizeString(getVersionNumberByTrainingId(savedTraining.traId).toString()).indexOf(needle)> -1)
-						).map(function (savedTraining) {
-							return { value: savedTraining.savedTraId, label: savedTraining.name + " - " + getVersionNumberByTrainingId(savedTraining.traId)}
+						VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.nodeList.filter(
+								node => (normalizeString(node.name.toLowerCase()).indexOf(needle) > -1)
+						).map(function (node) {
+							return { value: node.nodId, label: node.name }
 						});
 					}
 				})
 			}
 
-			document.addEventListener('DOMContentLoaded', function () {
-				Chatbot.init({
-					runnerUrl: getDevNode().url,
-					botIHMBaseUrl: getDevNode().url + '/static/chatbot/index.html',
-					botName: "Chatbot test",
-					useRating: false,
-					avatarUrl: VertigoUi.vueData.bot.botId + '/avatar'
-				})
-			});
-
 		</script>
 	</head>
 	
 	<body>
-		<section layout:fragment="content-nav">
-			<q-item tag="a" href="#modelManagement"  th:text="#{model.menu.modelManagement}"></q-item>
-			<q-item tag="a" href="#deployment" th:text="#{model.menu.deployment}"></q-item>
-		</section>
 		
 		<section layout:fragment="content">
 
+			<div class="text-primary text-h6 text-weight-bold" th:text="#{layout.model}"></div>
+
 			<vu:include-data object="bot" field="botId" />
-			<vu:block id="modelManagement" th:title="#{model.model.title}">
-				<vu:slot name="actions_slot">
-					<q-btn class="fab-block" round color="primary" icon="refresh" th:aria-label="#{action.refresh}" th:title="#{action.refresh}" 
-					       @click="refreshTraining" :loading="dataX.loadingTraining"></q-btn>
-				</vu:slot>
-				
-				<vu:include-data object="trainerState" field="startTime"/>
-				<vu:include-data object="trainerState" field="duration"/>
-				<vu:include-data object="trainerState" field="trainingPercent" />
-				<vu:include-data object="deployedTraining" field="versionNumber" />
-
-				<vu:text-field-read-reactive object="trainerState" field="trainingState" th:label="#{model.state}" />
-				<vu:text-field-read-reactive object="deployedTraining" field="versionNumber" th:label="#{model.deployedTraining.versionNumber}" />
-
-				<q-linear-progress :class="vueData.trainerState.trainingInProgress ? '':'invisible'"
-						stripe rounded style="height: 10px"
-						:value="vueData.trainerState.trainingPercent / 100"></q-linear-progress>
-				
-				<q-card-actions th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" align="around">
-					<vu:include-data object="trainerState" field="trainingInProgress" />
-					
-					<q-btn color="primary" icon="build" size="lg" th:label="#{action.build.start}" :loading="vueData.trainerState.trainingInProgress" :disable="canTrainBot(vueData.trainerState.trainingInProgress)"
-							@click="showTrainingPopin(null)" style="width: 200px">
-						<span slot="loading" th:text="#{action.node.loading}">
-							<q-spinner-gears class="on-left"></q-spinner-gears>
-						</span>
-					</q-btn>
-					<q-btn color="primary" icon="save" size="lg" th:label="#{action.build.save}" @click="$refs.saveTrainingModal.show()"></q-btn>
-
-					
-				</q-card-actions>
-				
-				<q-card-separator></q-card-separator>
-			
-			</vu:block>
 			<vu:table list="trainingList" th:title="#{model.history}" :dense="|$q.screen.lt.lg|" componentId="trainingList"
 					  rowsPerPage="10" autoColClass >
 				<vu:slot name="top_right_slot">
@@ -294,65 +197,58 @@
 						   @click="refreshModels" :loading="dataX.loadingModels"></q-btn>
 				</vu:slot>
 
+				<vu:slot name="actions_slot">
+					<q-btn class="on-right" v-if="vueData.training.versionNumber == props.row.versionNumber" round color="primary" icon="save" th:aria-label="#{action.build.save}" th:title="#{action.build.save}"
+						   @click="$refs.saveTrainingModal.show()"></q-btn>
+				</vu:slot>
+
 				<vu:include-data object="trainingList" field="traId" />
 				<vu:include-data object="trainingList" field="endTime" />
 				<vu:include-data object="trainingList" field="duration" />
 				<vu:include-data object="trainingList" field="log" />
 
-				<vu:column field="strCd" label="" sortable="false" class="col_Small">
-					<q-icon name="check" color="green" size="2rem" v-if="props.row.strCd == 'OK'"></q-icon>
-					<q-icon name="block" color="red" size="2rem" v-if="props.row.strCd == 'KO'"></q-icon>
-					<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="props.row.strCd == 'TRAINING'"></q-spinner-gears>
-				</vu:column>
 				<vu:column field="versionNumber" class="col_Small"/>
 				<vu:column field="startTime" th:label="#{node.deployment.start}" />
 				<vu:column field="duration" class="col_Small" th:label="#{node.deployment.time}" >
 					<vu:content v-if="props.row.endTime">
-						{{ props.row.duration }}
-						<q-tooltip content-style="font-size: 13px"
-								   anchor="center right" self="center left"
-								   transition-show="jump-right" transition-hide="jump-left">
-							End time : {{ props.row.endTime }}
-						</q-tooltip>
+							<span class="q-ma-md" style="display: inline-block; min-width: 20px">{{ props.row.duration }}</span>
+							<q-tooltip content-style="font-size: 13px"
+									   anchor="center right" self="center left"
+									   transition-show="jump-right" transition-hide="jump-left">
+								End time : {{ props.row.endTime }}
+							</q-tooltip>
+							<q-icon size="sm" name="info_outlined" class="cursor-pointer" @click="displayTrainingLog(props.row);"></q-icon>
 					</vu:content>
 				</vu:column>
-
-				<vu:column name="node" th:label="#{node.deployment.action.already}">
-					<vu:include-data object="nodeList" field="nodId" />
-					<vu:include-data object="nodeList" field="traId" />
-					<vu:include-data object="nodeList" field="name" />
-					<vu:include-data object="nodeList" field="color" />
-					<vu:include-data object="nodeList" field="isDev" />
-					<vu:include-data object="nodeList" field="url" />
-					<q-chip v-for="node in vueData.nodeList" v-if="node.traId === props.row.traId" :style="'background: '+ node.color" text-color="white" icon="cloud_done">
-						{{node.name}}
-					</q-chip>
+				<vu:column field="strCd" sortable="false" class="col_Small">
+					<q-icon name="check" color="green" size="2rem" v-if="props.row.strCd == 'OK'"></q-icon>
+					<q-icon name="block" color="red" size="2rem" v-if="props.row.strCd == 'KO'"></q-icon>
+					<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="props.row.strCd == 'TRAINING'"></q-spinner-gears>
 				</vu:column>
 
-				<vu:column field="traId" label="" sortable="false" class="col_Small">
-					<q-btn icon="info" color="grey" @click="displayTrainingLog(props.row);" th:aria-label="#{model.traininglogs}" th:title="#{model.traininglogs}"></q-icon>
-				</vu:column>
 			</vu:table>
-			
+
 			<vu:popup-ajax action="_deleteSavedTraining" vModel="showDeleteSavedTrainingPopup" th:message="#{model.savedTraining.deletePopup.message}" th:confirm="#{action.delete}" dataName="savedTraId" ></vu:popup-ajax>
-			
+
 			<vu:table list="savedTrainingList" th:title="#{model.savedTraining}" :dense="|$q.screen.lt.lg|" componentId="savedTrainingList"
 					  rowsPerPage="10" autoColClass >
 				<vu:slot name="top_right_slot">
 					<vu:date-edit object="criteria" field="fromDate" label="#{savedTraining.date.from}"
 								  clearable @clear="vueData.criteria.fromDate=null"
 								  style="width:210px; margin-right: 10px"/>
-								  
+
 					<vu:date-edit object="criteria" field="toDate" label="#{savedTraining.date.to}"
 								  clearable @clear="vueData.criteria.toDate=null"
 								  style="width:210px; margin-right: 10px"/>
-								  
+
 					<vu:text-field-edit object="criteria" field="text" label="#{savedTraining.search}"
 										clearable debounce="300" style="width:210px"/>
                     <q-icon name="search" class="q-field__marginal" ></q-icon>
-                    
+
 				</vu:slot>
 				<vu:slot name="actions_slot">
+					<q-btn class="on-right" round color="blue" icon="cloud_upload" th:aria-label="#{savedTraining.deploy}" th:title="#{savedTraining.deploy}"
+						   @click="componentStates.savedTraId = props.row.savedTraId;  ;$refs.deployTraining.show()"></q-btn>
 					<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{model.savedTraining.delete}" th:title="#{model.savedTraining.delete}"
 						   @click="componentStates.savedTraId = props.row.savedTraId; componentStates.showDeleteSavedTrainingPopup = true"></q-btn>
 				</vu:slot>
@@ -368,28 +264,16 @@
 				</vu:column>
 				<vu:column field="description"/>
 				<vu:column field="creationTime" />
-			</vu:table>
-			<vu:table id="deployment" th:title="#{model.deployment}" list="nodeList" componentId="nodeList" rowsPerPage="10" autoColClass >
-
-				<vu:slot name="actions_slot">
-					<q-btn class="on-right" round color="blue" icon="cloud_upload" th:aria-label="#{savedTraining.deploy}" th:title="#{savedTraining.deploy}"
-						   @click="componentStates.noId = props.row.nodId;  ;$refs.deployTraining.show()"></q-btn>
-				</vu:slot>
-				<vu:include-data object="nodeList" field="nodId" />
-				<vu:include-data object="nodeList" field="color" />
-				<vu:include-data object="nodeList" field="traId" />
-
-				<vu:column field="name" th:label="#{node.name}">
-					<q-chip :style="'background: '+ props.row.color" text-color="white">
-						{{props.row.name}}
+				<vu:column name="node" th:label="#{node.deployment.action.already}">
+					<vu:include-data object="nodeList" field="nodId" />
+					<vu:include-data object="nodeList" field="traId" />
+					<vu:include-data object="nodeList" field="name" />
+					<vu:include-data object="nodeList" field="color" />
+					<vu:include-data object="nodeList" field="isDev" />
+					<vu:include-data object="nodeList" field="url" />
+					<q-chip v-for="node in vueData.nodeList" v-if="node.traId === props.row.traId" :style="'background: '+ node.color" text-color="white" icon="cloud_done">
+						{{node.name}}
 					</q-chip>
-				</vu:column>
-				<vu:column field="url"/>
-				<vu:column name="savedTrainingName" th:label="#{savedTraining.name}">
-					<span v-html="getSavedTrainingName(props.row.traId)"></span>
-				</vu:column>
-				<vu:column name="version" th:label="#{savedTraining.version}">
-					<span v-html="getTrainingVersion(props.row.traId)"></span>
 				</vu:column>
 			</vu:table>
 
@@ -461,23 +345,23 @@
 				</q-card>
 			</q-dialog>
 
-			<q-dialog ref="deployTraining" th:attr="dataObject=${model.vContext['componentStates'].addComponentState('noId')}">
+			<q-dialog ref="deployTraining" th:attr="dataObject=${model.vContext['componentStates'].addComponentState('savedTraId')}">
 				<q-card>
-					<vu:include-data object="savedTrainingList" field="'*'"/>
+					<vu:include-data object="nodeList" field="'*'"/>
 					<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('labels').addObject('filterOptions', {label:null})}" th:remove="all" />
 					<q-card-section>
 						<div class="text-h6"><span th:text="#{savedTraining.deploy}"></span></div>
 					</q-card-section>
-					<q-card-section th:attr="objectKey=${model.vContext['componentStates'].addComponentState('savedTrainingToDeploy').addObject('savedTraining', {savedTraId:null})}">
+					<q-card-section th:attr="objectKey=${model.vContext['componentStates'].addComponentState('nodeToDeploy').addObject('node', {noId:null})}">
 						<q-select
-								v-model="componentStates.savedTrainingToDeploy.savedTraining.savedTraId"
+								v-model="componentStates.nodeToDeploy.node.noId"
 								clearable
 								filled
 								map-options
 								emit-value
 								use-input
 								:options="componentStates.labels.filterOptions"
-								th:label="#{savedTraining.version}"
+								th:label="#{savedTraining.node}"
 								@filter="filterFn"
 								stack-label>
 						</q-select>
@@ -486,7 +370,7 @@
 					<q-card-actions align="around">
 						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
 						<q-btn th:label="#{action.deploy.cancel}" color="red" v-close-popup></q-btn>
-						<q-btn th:label="#{action.deploy}" color="positive" @click="deploySavedTraining(componentStates.noId, componentStates.savedTrainingToDeploy.savedTraining.savedTraId);" v-close-popup></q-btn>
+						<q-btn th:label="#{action.deploy}" color="positive" @click="deploySavedTraining(componentStates.nodeToDeploy.node.noId, componentStates.savedTraId);" v-close-popup></q-btn>
 					</q-card-actions>
 
 				</q-card>
@@ -514,10 +398,6 @@
 		
 		<section layout:fragment="javascript-footer">
 			<script>
-				if (VertigoUi.vueData.trainerState.trainingInProgress) {
-					postTrain();
-				}
-				
                 VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
                 	VUiPage.httpPostAjax('_filterSavedTraining', VUiPage.vueDataParams(['criteria']));;
                 }, { deep: true });

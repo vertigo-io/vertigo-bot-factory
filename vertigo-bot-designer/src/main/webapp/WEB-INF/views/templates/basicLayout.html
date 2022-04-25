@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-  xmlns:vu="http://www.morphbit.com/thymeleaf/component"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{templates/parentLayout}">
-  
+<html
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+		layout:decorate="~{templates/parentLayout}">
+
   	<section layout:fragment="page-container">
-	    <section layout:fragment="page-header"></section>
 	 	<q-page padding>			
 	 		<section layout:fragment="page-content" class="row col-12 layout-padding q-gutter-md">
 	 			<section layout:fragment="content" class="col content-body" />
