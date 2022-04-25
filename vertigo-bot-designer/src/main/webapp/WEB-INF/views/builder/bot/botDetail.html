@@ -273,6 +273,7 @@
 
 			</vu:block>
 			<vu:block id="attachments" th:title="#{bot.attachments}">
+				<vu:include-data object="chatbotCustomConfig" field="totalMaxAttachmentSize" modifiable="true" />
 				<q-input type="number" v-model="vueData.chatbotCustomConfig.totalMaxAttachmentSize"  :error="hasFieldsError('chatbotCustomConfig', 'totalMaxAttachmentSize')"
 						 :error-message="getErrorMessage('chatbotCustomConfig', 'totalMaxAttachmentSize')" name="vContext[chatbotCustomConfig][totalMaxAttachmentSize]"
 						 th:label="#{bot.attachments.maxsize.label}" th::disable="${model.modeReadOnly}" />
@@ -323,6 +324,7 @@
 						<vu:text-field object="nodeEdit" field="apiKey"/>
 						<vu:include-data object="nodeList" field="isUpToDate" />
 						<vu:include-data object="nodeEdit" field="color" modifiable="true"/>
+						<vu:include-data object="nodeEdit" field="isUpToDate" modifiable="true"/>
 						<q-btn push :style="'background: '+ vueData.nodeEdit.color" class="q-my-sm" text-color="white" th:label="#{bot.node.color}">
 							<q-popup-proxy ref="colorPopup" width="1000">
 								<q-color

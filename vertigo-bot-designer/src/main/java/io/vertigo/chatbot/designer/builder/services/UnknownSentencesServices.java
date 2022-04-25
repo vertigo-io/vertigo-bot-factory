@@ -48,7 +48,7 @@ public class UnknownSentencesServices implements Component {
 		unknownSentencesCriteria.setBotId(botId);
 
 		unknownSentenceDetailDAO.findLatestUnknownSentence(botId)
-				.ifPresent(latestUnknownSentence -> unknownSentencesCriteria.setFromInstant(latestUnknownSentence.getDate()));
+				.ifPresent(latestUnknownSentence -> unknownSentencesCriteria.setFromInstant(latestUnknownSentence.getDate().plusNanos(1)));
 
 		final TimedDatas tabularTimedData = timeSerieServices.getUnrecognizedSentences(unknownSentencesCriteria);
 

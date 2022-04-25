@@ -170,9 +170,10 @@
             <vu:column field="technicalCode"/>
         </vu:table>
         <q-dialog ref="welcomeTourDialog">
-            <vu:include-data object="newWelcomeTour" field="welId" />
-            <vu:include-data object="newWelcomeTour" field="label" />
-            <vu:include-data object="newWelcomeTour" field="technicalCode" />
+            <vu:include-data object="newWelcomeTour" field="botId" modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="welId" modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="label" modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="technicalCode" modifiable="true" />
             <q-card>
                 <q-card-section>
                     <div class="text-h6">
@@ -263,13 +264,13 @@
 
 
         <q-dialog ref="confluenceSettingDialog">
-            <vu:include-data object="newConfluenceSetting" field="conSetId" />
-            <vu:include-data object="newConfluenceSetting" field="botId" />
-            <vu:include-data object="newConfluenceSetting" field="nodId" />
-            <vu:include-data object="newConfluenceSetting" field="url" />
-            <vu:include-data object="newConfluenceSetting" field="login" />
-            <vu:include-data object="newConfluenceSetting" field="password" />
-            <vu:include-data object="newConfluenceSetting" field="numberOfResults" />
+            <vu:include-data object="newConfluenceSetting" field="conSetId" modifiable="true" />
+            <vu:include-data object="newConfluenceSetting" field="botId" modifiable="true" />
+            <vu:include-data object="newConfluenceSetting" field="nodId" modifiable="true" />
+            <vu:include-data object="newConfluenceSetting" field="url" modifiable="true" />
+            <vu:include-data object="newConfluenceSetting" field="login" modifiable="true" />
+            <vu:include-data object="newConfluenceSetting" field="password" modifiable="true" />
+            <vu:include-data object="newConfluenceSetting" field="numberOfResults" modifiable="true" />
             <q-card>
                 <q-card-section>
                     <div class="text-h6">
@@ -414,13 +415,13 @@
 
 
         <q-dialog ref="jiraSettingDialog">
-            <vu:include-data object="newJiraSetting" field="jirSetId" />
-            <vu:include-data object="newJiraSetting" field="botId" />
-            <vu:include-data object="newJiraSetting" field="nodId" />
-            <vu:include-data object="newJiraSetting" field="url" />
-            <vu:include-data object="newJiraSetting" field="login" />
-            <vu:include-data object="newJiraSetting" field="password" />
-            <vu:include-data object="newJiraSetting" field="project" />
+            <vu:include-data object="newJiraSetting" field="jirSetId" modifiable="true" />
+            <vu:include-data object="newJiraSetting" field="botId" modifiable="true" />
+            <vu:include-data object="newJiraSetting" field="nodId" modifiable="true" />
+            <vu:include-data object="newJiraSetting" field="url" modifiable="true" />
+            <vu:include-data object="newJiraSetting" field="login" modifiable="true" />
+            <vu:include-data object="newJiraSetting" field="password" modifiable="true" />
+            <vu:include-data object="newJiraSetting" field="project" modifiable="true" />
             <q-card>
                 <q-card-section>
                     <div class="text-h6">

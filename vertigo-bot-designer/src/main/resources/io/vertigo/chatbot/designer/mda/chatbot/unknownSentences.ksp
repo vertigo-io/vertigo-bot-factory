@@ -3,7 +3,7 @@ package io.vertigo.chatbot.commons.domain
 create DtDefinition DtUnknownSentenceDetail {
     id unkSeId 		    {domain: DoId		            label: "Unknown sentence id"    }
 	field date 			{domain: DoInstant 				label: "Date" 					}
-	field text			{domain: DoLabel 				label: "User text" 				}
+	field text			{domain: DoText 				label: "User text" 				}
 	field modelName		{domain: DoLabel 				label: "Model Name" 			}
 }
 

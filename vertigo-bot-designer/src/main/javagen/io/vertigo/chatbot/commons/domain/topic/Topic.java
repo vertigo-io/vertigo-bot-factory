@@ -85,7 +85,7 @@ public final class Topic implements Entity {
 
 	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
 			name = "AnnTopicLabel",
-			tableName = "topicTopicLabel",
+			tableName = "TOPIC_TOPIC_LABEL",
 			dtDefinitionA = "DtTopic",
 			dtDefinitionB = "DtTopicLabel",
 			navigabilityA = true,
