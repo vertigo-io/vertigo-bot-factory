@@ -139,6 +139,7 @@
 					</vu:grid>
 
 					<vu:include-data object="initialTopicLabelList" field="'*'" />
+					<vu:include-data object="topicLabelList" field="label" modifiableAllLines="true" />
 					<vu:include-data object="allTopicLabelList" field="'*'" />
 					<th:block th:attr="objectKey=${model.vContext[componentStates].addComponentState('labels').addObject('filterOptions', {label:null})}" th:remove="all" />
 

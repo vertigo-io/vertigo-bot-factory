@@ -100,7 +100,7 @@ public final class UnknownSentenceDetail implements Entity {
 	 * Récupère la valeur de la propriété 'User text'.
 	 * @return String text
 	 */
-	@Field(smartType = "STyLabel", label = "User text")
+	@Field(smartType = "STyText", label = "User text")
 	public String getText() {
 		return text;
 	}

@@ -1,0 +1,1 @@
+alter table unknown_sentence_detail alter column text type TEXT

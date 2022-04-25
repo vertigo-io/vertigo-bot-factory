@@ -7,7 +7,7 @@ create Task TkFindLatestUnknownSentence {
                 *
             from unknown_sentence_detail usd
             where usd.bot_id = #botId#
-            order by usd.unk_se_id desc
+            order by usd.date desc
             limit 1
              "
     in botId  				            {domain : DoId         					            cardinality:"1"}

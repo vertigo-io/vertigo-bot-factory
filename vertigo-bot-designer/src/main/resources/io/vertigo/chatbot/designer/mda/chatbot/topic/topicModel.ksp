@@ -325,7 +325,7 @@ create Association ATopicLabelChatbot{
 
 
 create AssociationNN AnnTopicLabel{
-	tableName : "topicTopicLabel"
+	tableName : "TOPIC_TOPIC_LABEL"
 
 	dtDefinitionA : DtTopic
 	dtDefinitionB : DtTopicLabel
