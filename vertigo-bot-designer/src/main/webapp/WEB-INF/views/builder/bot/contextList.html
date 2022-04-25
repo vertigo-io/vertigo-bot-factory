@@ -11,13 +11,16 @@
 	</head>
 	
 	<body>
-		<section layout:fragment="content-header-actions">
+		<section layout:fragment="content-actions">
 		<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/contextValue/new(id=${model.bot.botId})}" th:ariaLabel="#{context.add}" icon="add"
-							class="on-left" round size="lg" color="primary" />
+							class="on-left" round size="md" color="primary" />
 		
 		</section>
 		
 		<section layout:fragment="content">
+
+			<div class="text-primary text-h6 text-weight-bold" th:text="#{layout.context}"></div>
+
 			<vu:table list="contextValues" componentId="contextValueList" tr_@click.native="|goTo('@{/bot/{id}/contextValue/(id=${model.bot.botId})}'+props.row.cvaId)|" tr_style="cursor : pointer;"
 					  sortBy="label" :binary-state-sort="true">
 					<vu:include-data object="contextValues" field="cvaId" />

@@ -65,10 +65,9 @@
 
             function filterSentences() {
                 VertigoUi.vueData.unknownSentenceFilteredList = VertigoUi.vueData.unknownSentenceList
-                console.log(VertigoUi.vueData.unknownSentenceFilteredList);
                 if (VertigoUi.componentStates.statuses.selectedStatus.strCd !== null) {
                     VertigoUi.vueData.unknownSentenceFilteredList = VertigoUi.vueData.unknownSentenceFilteredList
-                            .filter(sentence => sentence.status === VertigoUi.componentStates.statuses.selectedStatus.strCd)
+                            .filter(sentence => VertigoUi.componentStates.statuses.selectedStatus.strCd.includes(sentence.status))
                 }
 
                 let searchNormarlized = normalizeString(VertigoUi.componentStates.search.searchText.value);
@@ -79,6 +78,7 @@
             }
 
             document.addEventListener('DOMContentLoaded', function () {
+                VertigoUi.componentStates.statuses.selectedStatus.strCd = ['TO_TREAT'];
                filterSentences();
             });
         </script>
@@ -86,16 +86,20 @@
 
     <body>
         <section layout:fragment="content">
-            <vu:table list="unknownSentenceFilteredList" th:title="#{unknownSentence.title}" selectable="true" componentId="unknownSentenceList" sortBy="date" descending :binary-state-sort="true">
+
+            <div class="text-primary text-h6 text-weight-bold" th:text="#{layout.followup}"></div>
+
+            <vu:table list="unknownSentenceFilteredList"selectable="true" componentId="unknownSentenceList" sortBy="date" descending :binary-state-sort="true">
                 <vu:slot name="top_right_slot">
                     <vu:include-data object="statuses" field="'*'"/>
                     <vu:include-data-primitive key="locale"/>
                     <q-select
-                            th:attr="dataObject=${model.vContext['componentStates'].addComponentState('statuses').addObject('selectedStatus', {strCd: 'TO_TREAT'})}"
+                            th:attr="dataObject=${model.vContext['componentStates'].addComponentState('statuses').addObject('selectedStatus', {strCd: ['TO_TREAT']})}"
                             style="width: 250px; margin-right: 10px"
                             clearable
                             filled
                             map-options
+                            multiple
                             emit-value
                             v-model="componentStates.statuses.selectedStatus.strCd"
                             :options="vueData.locale == 'fr_FR' ? transformListForSelection('statuses', 'strCd', 'labelFr') : transformListForSelection('statuses', 'strCd', 'label') "
@@ -124,14 +128,14 @@
                 <vu:include-data object="unknownSentenceFilteredList" field="date" />
                 <vu:include-data object="unknownSentenceFilteredList" field="text" />
                 <vu:include-data object="unknownSentenceFilteredList" field="modelName" />
-                <vu:column name="status" th:label="#{unknownSentence.status}" class="col_Small">
-                    <q-icon name="check" v-if="props.row.status == 'TREATED'" ></q-icon>
-                    <q-icon name="cancel" v-if="props.row.status == 'REJECTED'" ></q-icon>
-                    <q-icon name="help" v-if="props.row.status == 'TO_TREAT'" ></q-icon>
-                </vu:column>
                 <vu:column field="date"/>
                 <vu:column field="text"/>
                 <vu:column field="modelName"/>
+                <vu:column name="status" th:label="#{unknownSentence.status}" class="col_Small">
+                    <q-icon name="check" color="green" size="2rem"v-if="props.row.status == 'TREATED'" ></q-icon>
+                    <q-icon name="close" color="red" size="2rem" v-if="props.row.status == 'REJECTED'" ></q-icon>
+                    <span th:text="#{unknownSentence.to.treat}" v-if="props.row.status == 'TO_TREAT'" ></span>
+                </vu:column>
             </vu:table>
             <div class="col-12">
                 <div style="display:flex;justify-content:flex-end">

@@ -1,20 +1,6 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.google.gson.reflect.TypeToken;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.UnknownSentenceDetail;
@@ -23,15 +9,25 @@ import io.vertigo.chatbot.commons.domain.UnknownSentenceStatusEnum;
 import io.vertigo.chatbot.commons.domain.UnknownSentenceToUpdateIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
-import io.vertigo.chatbot.designer.builder.services.UnknownSentencesServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/followup")
@@ -39,13 +35,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 public class UnknownSentenceListController extends AbstractBotListEntityController<UnknownSentenceDetail> {
 
 	@Inject
-	private UnknownSentencesServices unknownSentencesServices;
-
-	@Inject
 	private TopicCategoryServices topicCategoryServices;
-
-	@Inject
-	private TopicServices topicServices;
 
 	@Inject
 	private JsonEngine jsonEngine;
@@ -72,7 +62,7 @@ public class UnknownSentenceListController extends AbstractBotListEntityControll
 		viewContext.publishDtList(statusKey, unknownSentenceStatusServices.findAll());
 		listLimitReached(viewContext, uiMessageStack);
 		super.initBreadCrums(viewContext, UnknownSentenceDetail.class);
-		toModeReadOnly();
+		AbstractVSpringMvcController.toModeReadOnly();
 	}
 
 	@PostMapping("/_treatUnknownSentence")
@@ -90,7 +80,7 @@ public class UnknownSentenceListController extends AbstractBotListEntityControll
 
 	@PostMapping("/_rejectUnknownSentence")
 	public ViewContext rejectUnknownSentence(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, final UiMessageStack uiMessageStack,
-			@RequestParam("unknownSentenceId") final Long unknownSentenceId) {
+											 @RequestParam("unknownSentenceId") final Long unknownSentenceId) {
 		unknownSentencesServices.updateStatus(unknownSentencesServices.findById(unknownSentenceId), UnknownSentenceStatusEnum.REJECTED);
 		viewContext.publishDtList(unknownSentenceListKey, unknownSentencesServices.findUnknownSentences(bot.getBotId()));
 		listLimitReached(viewContext, uiMessageStack);

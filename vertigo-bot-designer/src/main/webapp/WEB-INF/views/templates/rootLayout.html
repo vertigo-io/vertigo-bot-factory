@@ -70,6 +70,8 @@
 		    }
 		 }
 	</script>
+	<div layout:fragment="javascript-header">
+	</div>
 
 	<vu:page>
      	<section class="col container-bottom-padding" layout:fragment="page">
@@ -86,6 +88,18 @@
 				paramsResolved = VUiPage.objectToFormData(params);
 			}
 			oldHttpPostAjax(url, paramsResolved, options);
+		}
+	</script>
+	<script>
+		function hideOrShowBotToolbar() {
+			const botToolbar = document.getElementById("toolBarBots");
+			if (botToolbar !== undefined) {
+				if (botToolbar.classList.contains("hidden")) {
+					botToolbar.classList.remove("hidden");
+				} else {
+					botToolbar.classList.add("hidden");
+				}
+			}
 		}
 	</script>
 	

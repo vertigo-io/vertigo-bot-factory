@@ -3,31 +3,180 @@
   xmlns:vu="http://www.morphbit.com/thymeleaf/component"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   layout:decorate="~{templates/detailLayout}">
-  
-	<div layout:fragment="content-header-left" id="baseImg">
- 		<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" class="detailImg" />
+	<div layout:fragment="javascript-header">
+		<script th:src="@{/static/chatbot/chatbot.js}"></script>
+		<script th:src="@{/static/chatbot/shepherd.min.js}"></script>
+		<link th:href="@{/static/chatbot/shepherd.css}" rel="stylesheet" />
+		<link th:href="@{/static/chatbot/chatbot.css}" rel="stylesheet">
+		<script>
+			VUiExtensions.dataX.loadingTraining = false;
+			function train() {
+				VUiPage.httpPostAjax("train", {}, {
+					onSuccess: function() {
+						postTrain();
+					}
+				});
+			}
+			function postTrain() {
+				interval = setInterval(function() {
+					refreshTraining();
+				}, 1000);
+			}
+
+			function refreshTraining () {
+				VUiExtensions.dataX.loadingTraining = true;
+
+				VUiPage.httpPostAjax("refreshTrainer", {}, {
+					onSuccess: function() {
+						if (!VertigoUi.vueData.trainerState.trainingInProgress && interval != null) {
+							VUiExtensions.dataX.loadingTraining = false;
+							clearInterval(interval);
+							interval = null;
+						}
+					}
+				});
+			}
+			function canTalkToBot() {
+				console.log(VertigoUi.vueData.devNode !== null && VertigoUi.vueData.devNode.traId !==null);
+				return VertigoUi.vueData.devNode !== null && VertigoUi.vueData.devNode.traId !==null;
+			}
+
+			document.addEventListener('DOMContentLoaded', function () {
+				if (canTalkToBot()) {
+					Chatbot.init({
+						runnerUrl: VertigoUi.vueData.devNode.url,
+						botIHMBaseUrl: VertigoUi.vueData.devNode.url + '/static/chatbot/index.html',
+						botName: "Chatbot test",
+						useRating: false,
+						avatarUrl: VertigoUi.vueData.bot.botId + '/avatar'
+					})
+				}
+			});
+		</script>
 	</div>
-	<div layout:fragment="content-header-title" id="baseTitle">
+	<div layout:fragment="content-header-left" id="baseImg" class="row items-center">
+		<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" />
+	</div>
+	<div layout:fragment="content-header-title" id="baseTitle" class="items-center">
+		<vu:include-data object="devNode" field="'*'" />
+		<vu:include-data object="bot" field="botId" />
 		<vu:include-data object="bot" field="name" />
+		<vu:include-data object="bot" field="description" />
 		<vu:include-data-primitive key="breadCrums" />
-		<span class="text-bigger">{{vueData.bot.name}}</span> <br />
-		<span class="text-bigger">{{vueData.breadCrums}}</span> <br />
+		<span class="text-bigger text-primary text-weight-bold text-uppercase">{{vueData.bot.name}}</span> <br />
+		<span class="text-primary">{{vueData.bot.description}}</span> <br />
 		
 	</div>
-
-	<div layout:fragment="content-header-tabs">
-		<vu:button-link disabled="${noNavigation == true}" th:class="${tab == 'informations'} ? 'active' : ''" 	flat th:label="#{layout.information}" url="@{/bot/{id}(id=${model.bot.botId})}" />
-		<vu:button-link disabled="${noNavigation == true}" th:class="${tab == 'categories'} ? 'active' : ''" 		flat label="#{layout.category}" url="@{/bot/{id}/categories/(id=${model.bot.botId})}" />
-		<vu:button-link disabled="${noNavigation == true}" th:class="${tab == 'topics'} ? 'active' : ''" 			flat label="#{layout.topics}" url="@{/bot/{id}/topics/(id=${model.bot.botId})}" />
-		<vu:button-link disabled="${noNavigation == true}" th:class="${tab == 'dictionary'} ? 'active' : ''" 		flat label="#{layout.dictionary}" 		url="@{/bot/{id}/dictionary/(id=${model.bot.botId})}" 		th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"/>
-		<vu:button-link disabled="${noNavigation == true}" th:class="${tab == 'context'} ? 'active' : ''" 			flat th:label="#{layout.context}" 		url="@{/bot/{id}/contextList/(id=${model.bot.botId})}" 		th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"/>
-		<vu:button-link disabled="${noNavigation == true}" th:class="${tab == 'attachments'} ? 'active' : ''" 		flat th:label="#{layout.attachment}" 		url="@{/bot/{id}/attachments/(id=${model.bot.botId})}" 		th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"/>
-		<vu:button-link disabled="${noNavigation == true}" th:class="${tab == 'extensions'} ? 'active' : ''" 		flat th:label="#{layout.extensions}" 	url="@{/bot/{id}/extensions/(id=${model.bot.botId})}" 	th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"/>
-		<vu:button-link disabled="${noNavigation == true}" th:class="${tab == 'users'} ? 'active' : ''" 			flat th:label="#{layout.profil}" 		url="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}" 	th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"/>
-		<vu:button-link disabled="${noNavigation == true}" th:class="${tab == 'models'} ? 'active' : ''" 			flat th:label="#{layout.model}" url="@{/bot/{id}/models/(id=${model.bot.botId})}" />
-		<vu:button-link disabled="${noNavigation == true}" th:class="${tab == 'followup'} ? 'active' : ''" 		flat th:label="#{layout.followup}" 		url="@{/bot/{id}/followup/(id=${model.bot.botId})}" 	th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"/>
-		<vu:button-link disabled="${noNavigation == true}" th:class="${tab == 'history'} ? 'active' : ''" 			flat th:label="#{layout.history}" url="@{/bot/{id}/history/(id=${model.bot.botId})}" />
+	<div layout:fragment="content-header-infos" id="headerInfos" class="row items-center justify-center">
+		<vu:include-data-primitive key="enabledTopics" />
+		<vu:include-data-primitive key="totalTopics" />
+		<vu:include-data object="training" field="versionNumber" />
+		<vu:include-data object="training" field="endTime" />
+		<span class="q-ma-md">
+			<span th:text="#{header.infos.topics}"></span>
+			<span class="text-weight-bold">{{vueData.enabledTopics}}</span>
+			<span th:text="#{header.infos.enabled}"></span>
+			<span>/ {{vueData.totalTopics}}</span>
+		</span>
+		<span class="q-ma-md">
+			<span th:text="#{header.infos.version}"> </span>
+			<span class="text-weight-bold">{{vueData.training.versionNumber}}</span>
+		</span>
+		<span class="q-ma-md">
+			<span th:text="#{header.infos.lastTraining}"></span>
+			<span class="text-weight-bold">{{vueData.training.endTime}}</span>
+		</span>
 	</div>
-	
-		<section layout:fragment="informations"></section>
+	<div layout:fragment="content-header-actions" id="headerActions" class="items-center">
+		<vu:popup action="delete" vModel="showPopup" th:message="#{bot.popup.message}" th:confirm="#{bot.delete}"></vu:popup>
+		<vu:include-data object="trainerState" field="'*'"/>
+		<q-btn color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train"></q-btn>
+		<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="dataX.loadingTraining"></q-spinner-gears>
+		<q-fab class="q-mr-xl" outline flat color="primary" icon="more_vert" direction="down">
+			<q-fab-action disable color="primary" th:label="#{bot.export}" icon="file_upload"></q-fab-action>
+			<q-fab-action color="primary" th:label="#{bot.delete.label}" @click="componentStates.showPopup = true" icon="delete"></q-fab-action>
+		</q-fab>
+	</div>
+	<section layout:fragment="content-nav">
+		<vu:include-data-primitive key="unknownSentencesToTreat" />
+		<q-item header>
+			<q-item-section avatar>
+				<q-icon color="primary" name="settings" />
+			</q-item-section>
+			<q-item-section th:text="#{layout.configuration}"></q-item-section>
+		</q-item>
+		<q-item tag="a" th::active="${tab == 'informations'}" active-class="active" th:href="@{/bot/{id}(id=${model.bot.botId})}" th:text="#{layout.information}"></q-item>
+		<q-item tag="a" th::active="${tab == 'categories'}" active-class="active" th:href="@{/bot/{id}/categories/(id=${model.bot.botId})}" th:text="#{layout.category}"></q-item>
+		<q-item tag="a" th::active="${tab == 'topics'}" active-class="active" th:href="@{/bot/{id}/topics/(id=${model.bot.botId})}" th:text="#{layout.topics}"></q-item>
+		<q-item tag="a" th::active="${tab == 'dictionary'}" active-class="active" th:href="@{/bot/{id}/dictionary/(id=${model.bot.botId})}" th:text="#{layout.dictionary}"></q-item>
+		<q-item tag="a" th::active="${tab == 'context'}" active-class="active" th:href="@{/bot/{id}/contextList/(id=${model.bot.botId})}" th:text="#{layout.context}"></q-item>
+		<q-item tag="a" th::active="${tab == 'attachments'}" active-class="active" th:href="@{/bot/{id}/attachments/(id=${model.bot.botId})}" th:text="#{layout.attachment}"></q-item>
+		<q-item tag="a" th::active="${tab == 'followup'}" active-class="active" th:href="@{/bot/{id}/followup/(id=${model.bot.botId})}" >
+			<div th:text="#{layout.followup}" class="q-mr-md">
+			</div>
+			<q-badge rounded color="red" :label="vueData.unknownSentencesToTreat" />
+		</q-item>
+
+		<q-separator></q-separator>
+
+		<q-item header>
+			<q-item-section avatar>
+				<q-icon color="primary" name="extension" />
+			</q-item-section>
+			<q-item-section th:text="#{layout.extensions}"></q-item-section>
+		</q-item>
+		<q-item tag="a" th::active="${tab == 'extensions'}" active-class="active" th:href="@{/bot/{id}/extensions/(id=${model.bot.botId})}" th:text="#{layout.plugins}"></q-item>
+		<q-item tag="a" th::active="${tab == 'welcometours'}" active-class="active" th:href="@{/bot/{id}/welcomeTours/(id=${model.bot.botId})}" th:text="#{layout.welcometours}"></q-item>
+		<q-separator></q-separator>
+
+		<q-item header>
+			<q-item-section avatar>
+				<q-icon color="primary" name="dynamic_feed" />
+			</q-item-section>
+			<q-item-section th:text="#{layout.versionAndEnvironment}"></q-item-section>
+		</q-item>
+		<q-item tag="a" th::active="${tab == 'history'}" active-class="active" th:href="@{/bot/{id}/history/(id=${model.bot.botId})}" th:text="#{layout.history}"></q-item>
+		<q-item tag="a" th::active="${tab == 'models'}" active-class="active" th:href="@{/bot/{id}/models/(id=${model.bot.botId})}" th:text="#{layout.model}"></q-item>
+		<q-item tag="a" th::active="${tab == 'environment'}"  th:if="${model.userAuthorizations[AtzSuperAdm]}" active-class="active"
+				th:href="@{/bot/{id}/environments/(id=${model.bot.botId})}" th:text="#{layout.environment}"></q-item>
+		<q-separator></q-separator>
+		<q-item tag="a" th::active="${tab == 'users'}" active-class="active" th:href="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}">
+			<q-item-section avatar>
+				<q-icon color="primary" name="group" />
+			</q-item-section>
+			<q-item-section>
+				<span th:text="#{layout.profil}" class="text-dark"></span>
+			</q-item-section>
+		</q-item>
+		<q-separator></q-separator>
+		<q-item tag="a" th::active="${tab == 'statistic'}" active-class="active"  th:href="@{/bot/{id}/statistic/(id=${model.bot.botId})}">
+			<q-item-section avatar>
+				<q-icon color="primary" name="assessment" />
+			</q-item-section>
+			<q-item-section>
+				<span th:text="#{layout.stats}" class="text-dark"></span>
+			</q-item-section>
+		</q-item>
+	</section>
+	<section layout:fragment="informations"></section>
+	<section layout:fragment="content-bot-drawer"  th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}">
+		<q-page-sticky position="bottom-right" :offset="[0,36]">
+			<q-btn round size="lg" id="botDrawerButton" @click="componentStates.botDrawer.open = !componentStates.botDrawer.open; if (componentStates.botDrawer.open) { Chatbot.show() } else { Chatbot.hideDrawer() }">
+				<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" style="width: 60px; height: 60px" alt="avatar chatbot"/>
+			</q-btn>
+		</q-page-sticky>
+		<q-drawer :value="componentStates.botDrawer.open" id="botDrawer" ref="botDrawer" :width="400" elevated side="right" >
+			<div id="botDrawerContent" ></div>
+		</q-drawer>
+	</section>
+	<section layout:fragment="javascript-footer">
+		<vu:include-data object="trainerState" field="'*'"/>
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+				if (VertigoUi.vueData.trainerState.trainingInProgress) {
+					postTrain();
+				}
+			});
+		</script>
+	</section>
 </html>

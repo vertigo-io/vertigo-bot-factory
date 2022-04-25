@@ -47,22 +47,21 @@
 	</head>
 	
 	<body>
-		<section layout:fragment="content-header-actions">
-			<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/topics/detail/new(id=${model.bot.botId})}" class="fab-block" round color="primary" size="lg" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" />
+		<section layout:fragment="content-actions">
+			<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/topics/detail/new(id=${model.bot.botId})}" class="fab-block" round color="primary" size="md" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" />
 					      
-			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}" 
+			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md" icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}"
 					       @click="$refs.exportTopic.show()"></q-btn>	
 					       		       		
-			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="file_download" th:aria-label="#{action.import}" th:title="#{action.import}" 
+			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md" icon="file_download" th:aria-label="#{action.import}" th:title="#{action.import}"
 					       @click="$refs.importTopic.show()"></q-btn>	
 							
 					
 		</section>
 		
-		<section layout:fragment="page-content">
+		<section layout:fragment="content">
 
-			<vu:messages/>
-			
+			<div class="text-primary text-h6 text-weight-bold" th:text="#{layout.topics}"></div>
 			<div class="col-12">
 			
 			<!-- Use for the redirections -->
@@ -96,11 +95,6 @@
 					sortBy='title'
 					tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|"
 					tr_style="cursor : pointer;">
-					 	<vu:column-sample list=topicsIhm field=isEnabled classes='col_STyYesNo'>
-							<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
-							<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>												 	
-					 	</vu:column-sample>
-
 						<vu:column-sample list=topicsIhm field=title >
 							<a th::href="|'@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId|"
 							   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
@@ -112,6 +106,10 @@
 						<vu:column-sample list=topicsIhm field=labels />
 						<vu:column-sample list=topicsIhm field=type  />
 						<vu:column-sample list=topicsIhm field=code  />
+						<vu:column-sample list=topicsIhm field=isEnabled classes='col_STyYesNo'>
+							<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
+							<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>
+						</vu:column-sample>
 				</vu:search-table>
 			</div>
 			

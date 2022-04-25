@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{templates/botDetailLayout}" th:with="tab=environment"
+>
+
+    <head>
+        <title th:text="#{environment.title}"></title>
+    </head>
+
+    <body>
+
+        <section layout:fragment="content">
+
+            <div class="text-primary text-h6 text-weight-bold" th:text="#{layout.environment}"></div>
+
+            <vu:popup-ajax action="_deleteNode" vModel="showPopupNode" th:message="#{environment.node.popup.message}" th:confirm="#{action.delete}" dataName="nodId" successAction="'VUiPage.$refs.nodeEdit.hide'"></vu:popup-ajax>
+            <vu:include-data object="nodeNew" field="name" modifiable="true" />
+            <vu:include-data object="nodeNew" field="url" modifiable="true" />
+            <vu:include-data object="nodeNew" field="color" modifiable="true" />
+            <vu:include-data object="nodeNew" field="isDev" modifiable="true" />
+            <vu:include-data object="nodeNew" field="isUpToDate" modifiable="true" />
+
+            <vu:table th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" id="nodes" list="nodeList" th:title="#{environment.nodes}" componentId="nodeList" rowsPerPage="10" autoColClass
+                      tr_@click.native="|vueData.nodeEdit = Vue.util.extend({},props.row); $refs.nodeEdit.show()|" tr_class="nav">
+                <vu:slot name="top_right_slot">
+                    <q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add"
+                           @click="vueData.nodeEdit = Vue.util.extend({}, vueData.nodeNew); $refs.nodeEdit.show()"></q-btn>
+                </vu:slot>
+
+                <vu:include-data object="nodeList" field="nodId" />
+                <vu:include-data object="nodeList" field="color" />
+                <vu:include-data object="nodeList" field="apiKey" />
+
+                <vu:column field="isDev" label="" class="col_Small">
+                    <q-icon name="build" size="2rem" v-if="props.row.isDev"></q-icon>
+                </vu:column>
+                <vu:column field="name" th:label="#{environment.node}">
+                    <q-chip :style="'background: '+ props.row.color" text-color="white">
+                        {{props.row.name}}
+                    </q-chip>
+                </vu:column>
+                <vu:column field="url"/>
+                <vu:column name="stat" th:label="#{environment.node.statistic}" class="col_Small">
+                    <vu:button-link dense url="@{/bot/{id}/statistic/(id=${model.bot.botId})} + '?nodId=\'+props.row.nodId+\'' " label="" icon="insert_chart_outlined"
+                                    class="bg-secondary" @click.stop="null"/>
+
+                </vu:column>
+            </vu:table>
+
+            <q-dialog ref="nodeEdit" th:if="${model.userAuthorizations[AtzSuperAdm]}" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.nodeEdit">
+                <vu:include-data object="nodeEdit" field="name" modifiable="true" />
+                <vu:include-data object="nodeEdit" field="url" modifiable="true" />
+                <vu:include-data object="nodeEdit" field="color" modifiable="true" />
+                <vu:include-data object="nodeEdit" field="isDev" modifiable="true" />
+                <vu:include-data object="nodeEdit" field="isUpToDate" modifiable="true" />
+                <vu:include-data object="nodeEdit" field="nodId" modifiable="true" />
+                <q-card>
+                    <q-card-section>
+                        <div class="text-h6" th:text="#{environment.node.edition}"></div>
+                    </q-card-section>
+
+                    <q-card-section style="height: 350px; width: 400px;">
+                        <vu:text-field object="nodeEdit" field="name"/>
+                        <vu:text-field object="nodeEdit" field="url"/>
+                        <vu:text-field object="nodeEdit" field="apiKey"/>
+                        <vu:include-data object="nodeList" field="isUpToDate" />
+                        <q-btn push :style="'background: '+ vueData.nodeEdit.color" class="q-my-sm" text-color="white" th:label="#{environment.node.color}">
+                            <q-popup-proxy ref="colorPopup" width="1000">
+                                <q-color
+                                        v-model="vueData.nodeEdit.color"
+                                        no-header
+                                        no-footer
+                                        default-view="palette"
+                                        @change="$refs.colorPopup.hide()"
+                                        :palette="[
+                                                    '#7e57c2', '#ab47bc', '#b2028a', '#6a1b9a', '#283593',
+                                                    '#1565c0', '#00838f', '#00695c', '#2e7d32', '#9e9d24',
+                                                    '#9ccc65', '#f9a825', '#ef6c00', '#d84315', '#ef5350',
+                                                    '#c62828', '#795548', '#5d4037', '#546e7a', '#424242'
+                                                ]"></q-color>
+                            </q-popup-proxy>
+                        </q-btn>
+
+                        <p>
+                            <q-toggle th:label="#{environment.node.training}" v-model="vueData.nodeEdit.isDev" ></q-toggle>
+                        </p>
+                    </q-card-section>
+
+                    <q-card-actions align="around">
+                        <q-btn v-if="vueData.nodeEdit.nodId" th:label="#{action.delete}" color="red" @click="componentStates.nodId = vueData.nodeEdit.nodId; componentStates.showPopupNode = true " ></q-btn>
+                        <q-btn th:label="#{action.save}" color="primary" @click="httpPostAjax('_saveNode', vueDataParams(['nodeEdit']), {onSuccess: $refs.nodeEdit.hide})" ></q-btn>
+                    </q-card-actions>
+                </q-card>
+            </q-dialog>
+        </section>
+    </body>
+</html>
