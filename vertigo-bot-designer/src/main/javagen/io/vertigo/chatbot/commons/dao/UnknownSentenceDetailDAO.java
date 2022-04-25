@@ -55,7 +55,7 @@ public final class UnknownSentenceDetailDAO extends DAO<UnknownSentenceDetail, j
  "                 *\n" + 
  "             from unknown_sentence_detail usd\n" + 
  "             where usd.bot_id = #botId#\n" + 
- "             order by usd.unk_se_id desc\n" + 
+ "             order by usd.date desc\n" + 
  "             limit 1",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtUnknownSentenceDetail")
