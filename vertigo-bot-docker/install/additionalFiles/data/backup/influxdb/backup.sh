@@ -9,7 +9,7 @@ log=backup.log
 rm -rf ./backup
 mkdir ./backup
 
-influxd backup -portable -database chatbot ./backup/ >./$log 2>&1
+influx backup ./backup/ -t ${DOCKER_INFLUXDB_INIT_ADMIN_TOKEN} >./$log 2>&1
 
 code=$?
 if [ $code -ne 0 ]; then
