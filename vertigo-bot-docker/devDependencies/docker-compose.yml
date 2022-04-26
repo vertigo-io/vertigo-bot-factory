@@ -98,9 +98,9 @@ services:
   analytica:
     image: vertigoio/vertigo-analytics-server:0.7
     environment:
-      INFLUXDB_URL: http://influxdb2:8086
-      INFLUXDB_ORG: KLEE
-      INFLUXDB_TOKEN: totoro
+      INFLUXDB_URL: http://influxdb:8086
+      INFLUXDB_ORG: chatbot
+      INFLUXDB_TOKEN: influxDevToken
     depends_on:
       - influxdb
     ports:
