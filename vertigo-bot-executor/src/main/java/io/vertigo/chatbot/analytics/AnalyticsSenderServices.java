@@ -70,7 +70,7 @@ public class AnalyticsSenderServices implements Component {
 	private void sendPastTopics(final UUID sessionId, final List<TopicDefinition> topicsPast, final ExecutorConfiguration executorConfiguration) {
 		boolean isFirst = true;
 		//Can't have fallback instructions
-		for (TopicDefinition topic : topicsPast) {
+		for (final TopicDefinition topic : topicsPast) {
 			//Create the measurements
 			final String codeTopic = topic.getCode();
 			final boolean isEnd = codeTopic.equals(BotEngine.END_TOPIC_NAME);
@@ -90,14 +90,17 @@ public class AnalyticsSenderServices implements Component {
 	 *
 	 * @param executorConfiguration the executor configuration (i.e. node, bot etc...)
 	 */
-	public void sendEventStartToDb(final UUID sessionId, final ExecutorConfiguration executorConfiguration) {
+	public void sendEventStartToDb(final UUID sessionId, final Map<String, Object> metadatas, final ExecutorConfiguration executorConfiguration) {
 		//Create the process
+		final AnalyticsObjectSend analytics = (AnalyticsObjectSend) metadatas.get(BotEngine.ANALYTICS_KEY);
+		final List<TopicDefinition> topicsPast = analytics.getTopicsPast();
 		final AProcessBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(BotEngine.START_TOPIC_NAME, AnalyticsUtils.TECHNICAL_INPUT_KEY)
 				.setMeasure(AnalyticsUtils.SESSION_START_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
 				.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
 				.setMeasure(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE_BIGDECIMAL);
 
 		sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
+		sendPastTopics(sessionId, topicsPast, executorConfiguration);
 	}
 
 	private void sendProcessWithConfiguration(final UUID sessionId, final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {

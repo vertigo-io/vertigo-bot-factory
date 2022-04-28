@@ -169,7 +169,7 @@ public class ExecutorManager implements Manager, Activeable {
 		botEngine.saveContext(input, executorConfigManager.getContextMap());
 		final var botResponse = botEngine.runTick(input);
 		final ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
-		analyticsSenderServices.sendEventStartToDb(newUUID, executorConfiguration);
+		analyticsSenderServices.sendEventStartToDb(newUUID, botResponse.getMetadatas(), executorConfiguration);
 		botResponse.getMetadatas().put("sessionId", newUUID);
 		if (executorConfiguration.getAvatar() != null) {
 			botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
