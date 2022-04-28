@@ -117,7 +117,6 @@ public class TimeSerieServices implements Component, Activeable {
 	public TabularDatas getAllTopIntents(final StatCriteria criteria) {
 		return timeSeriesManager.getTabularData(influxDbName, Arrays.asList("name:count"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
-						.withAdditionalWhereClause("isNlu = 1")
 						//No technical issues must be get
 						.withAdditionalWhereClause("isTechnical = 0")
 						.build(),

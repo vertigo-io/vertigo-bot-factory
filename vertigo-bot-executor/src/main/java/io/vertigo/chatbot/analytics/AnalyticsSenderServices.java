@@ -90,14 +90,17 @@ public class AnalyticsSenderServices implements Component {
 	 *
 	 * @param executorConfiguration the executor configuration (i.e. node, bot etc...)
 	 */
-	public void sendEventStartToDb(final ExecutorConfiguration executorConfiguration) {
+	public void sendEventStartToDb(final Map<String, Object> metadatas, final ExecutorConfiguration executorConfiguration) {
 		//Create the process
+		final AnalyticsObjectSend analytics = (AnalyticsObjectSend) metadatas.get(BotEngine.ANALYTICS_KEY);
+		final List<TopicDefinition> topicsPast = analytics.getTopicsPast();
 		final AProcessBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(BotEngine.START_TOPIC_NAME, AnalyticsUtils.TECHNICAL_INPUT_KEY)
 				.setMeasure(AnalyticsUtils.SESSION_START_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
 				.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
 				.setMeasure(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE_BIGDECIMAL);
 
 		sendProcessWithConfiguration(processBuilder, executorConfiguration);
+		sendPastTopics(topicsPast, executorConfiguration);
 	}
 
 	private void sendProcessWithConfiguration(final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {
