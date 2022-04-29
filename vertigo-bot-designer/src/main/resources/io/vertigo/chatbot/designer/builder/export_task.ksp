@@ -31,6 +31,7 @@ create Task TkExportResponseButtonByBotId{
  			join topic top_response on (top_response.top_id = rbu.top_id_response)  
  			where top.bot_id = #botId#  
  			and top.is_enabled = true
+ 			order by rbu.btn_id asc
  			"
 	in botId				{domain : DoId,							cardinality:"1"} 
 	out rbes 				{domain : DoDtResponseButtonExport		cardinality:"*"}
@@ -50,6 +51,7 @@ create Task TkExportResponseButtonUrlByBotId{
  			join topic top on (top.top_id = smt.top_id)
  			where top.bot_id = #botId#
  			and top.is_enabled = true
+ 			order by rbu.btn_id asc
  			"
 	in botId				{domain : DoId,							    cardinality:"1"}
 	out rbes 				{domain : DoDtResponseButtonUrlExport		cardinality:"*"}

@@ -83,7 +83,8 @@ public final class ExportPAO implements StoreServices {
  " 			join topic top on (top.top_id = smt.top_id)" + 
  " 			join topic top_response on (top_response.top_id = rbu.top_id_response)  " + 
  " 			where top.bot_id = #botId#  " + 
- " 			and top.is_enabled = true",
+ " 			and top.is_enabled = true" + 
+ " 			order by rbu.btn_id asc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtResponseButtonExport")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonExport> exportResponseButtonByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
@@ -112,7 +113,8 @@ public final class ExportPAO implements StoreServices {
  " 			join small_talk smt on (smt.smt_id = rbu.smt_id)" + 
  " 			join topic top on (top.top_id = smt.top_id)" + 
  " 			where top.bot_id = #botId#" + 
- " 			and top.is_enabled = true",
+ " 			and top.is_enabled = true" + 
+ " 			order by rbu.btn_id asc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtResponseButtonUrlExport")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonUrlExport> exportResponseButtonUrlByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
