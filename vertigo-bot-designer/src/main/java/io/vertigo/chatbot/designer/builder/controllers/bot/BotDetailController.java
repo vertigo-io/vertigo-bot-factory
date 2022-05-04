@@ -218,6 +218,12 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné")); // TODO: use same i18n resource when avaiable in DefaultDtObjectValidator
 				}
 			}
+			if (DtDefinitions.ChatbotCustomConfigFields.commentMessage.name().equals(dtField.getName())) {
+				final String value = (String) dtField.getDataAccessor().getValue(chatbotCustomConfig);
+				if (StringUtils.isHtmlEmpty(value) && chatbotCustomConfig.getComment()) {
+					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné")); // TODO: use same i18n resource when avaiable in DefaultDtObjectValidator
+				}
+			}
 			if (DtDefinitions.ChatbotCustomConfigFields.botEmailAddress.name().equals(dtField.getName())) {
 				final String value = (String) dtField.getDataAccessor().getValue(chatbotCustomConfig);
 				if (!StringUtils.isHtmlEmpty(value)) {

@@ -23,6 +23,7 @@ import io.vertigo.chatbot.designer.domain.analytics.CategoryStat;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationDetail;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationStat;
+import io.vertigo.chatbot.designer.domain.analytics.RatingDetail;
 import io.vertigo.chatbot.designer.domain.analytics.RatingOption;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.SessionExport;
@@ -83,6 +84,7 @@ public class StatisticController extends AbstractBotController {
 	private static final ViewContextKey<TopIntentCriteria> topIntentCriteriaKey = ViewContextKey.of("topIntentCriteria");
 	private static final ViewContextKey<TopicLabel> topicLabelsKey = ViewContextKey.of("topicLabels");
 	private static final ViewContextKey<CategoryStat> categoryStatKey = ViewContextKey.of("categoryStat");
+	private static final ViewContextKey<RatingDetail> ratingDetailsKey = ViewContextKey.of("ratingDetails");
 
 	@Inject
 	private NodeServices nodeServices;
@@ -156,6 +158,7 @@ public class StatisticController extends AbstractBotController {
 		viewContext.publishRef(sessionStatsKey, timeSerieServices.getSessionsStats(criteria));
 		viewContext.publishRef(requestsStatsKey, timeSerieServices.getRequestStats(criteria));
 		viewContext.publishRef(userInteractionsStatsKey, timeSerieServices.getUserInteractions(criteria));
+		viewContext.publishDtList(ratingDetailsKey, analyticsServices.getRatingDetails(criteria));
 		viewContext.publishDtList(unknownSentensesKey, DtDefinitions.SentenseDetailFields.topId, analyticsServices.getSentenseDetails(criteria));
 		viewContext.publishDtList(conversationStatKey, DtDefinitions.ConversationStatFields.sessionId,
 				analyticsServices.getConversationsStats(criteria, viewContext.readDto(conversationCriteriaKey, AbstractVSpringMvcController.getUiMessageStack())));

@@ -109,6 +109,30 @@ public enum DtResources implements MessageKey {
 	fldRatingOption$labelFr,
 
 	/***********************************************************
+	/** RatingDetail.
+	/***********************************************************
+	/**
+	 * Session ID.
+	 */
+	fldRatingDetail$sessionId,
+	/**
+	 * Date.
+	 */
+	fldRatingDetail$date,
+	/**
+	 * Rating.
+	 */
+	fldRatingDetail$rating,
+	/**
+	 * Comment.
+	 */
+	fldRatingDetail$comment,
+	/**
+	 * Last topic.
+	 */
+	fldRatingDetail$lastTopic,
+
+	/***********************************************************
 	/** SentenseDetail.
 	/***********************************************************
 	/**

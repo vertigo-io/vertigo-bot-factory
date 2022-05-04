@@ -136,7 +136,7 @@ public class AnalyticsSenderServices implements Component {
 	}
 
 	public void rate(final UUID sessionId, final IncomeRating rating, final ExecutorConfiguration executorConfiguration) {
-		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareRatingProcess(rating.getNote()), executorConfiguration);
+		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareRatingProcess(rating), executorConfiguration);
 	}
 
 	public void sendConversationEvent(final UUID sessionId, final String text, final boolean userMessage, final ExecutorConfiguration executorConfiguration) {

@@ -27,6 +27,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationDetail;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationStat;
+import io.vertigo.chatbot.designer.domain.analytics.RatingDetail;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
@@ -165,15 +166,6 @@ public class AnalyticsServices implements Component {
 		}
 	}
 
-	private Long getRating(final Map<String, Object> values) {
-		for (long i = 1; i <= 5; i++) {
-			if (values.get("rating" + i) != null) {
-				return i;
-			}
-		}
-		return 0L;
-	}
-
 	public DtList<TopIntent> getTopIntents(final Chatbot bot, final String locale, final StatCriteria criteria) {
 		// get data from influxdb
 		final TabularDatas tabularDatas = timeSerieServices.getAllTopIntents(criteria);
@@ -241,4 +233,31 @@ public class AnalyticsServices implements Component {
 		return retour;
 	}
 
+	public DtList<RatingDetail> getRatingDetails(final StatCriteria criteria) {
+		final TimedDatas tabularTimedData = timeSerieServices.getRatingDetailsStats(criteria);
+		final DtList<RatingDetail> retour = new DtList<>(RatingDetail.class);
+		tabularTimedData.getTimedDataSeries().forEach(timedDataSerie -> {
+			final Map<String, Object> values = timedDataSerie.getValues();
+			final RatingDetail ratingDetail = new RatingDetail();
+			ratingDetail.setSessionId((String) values.get("sessionId"));
+			ratingDetail.setDate(timedDataSerie.getTime());
+			ratingDetail.setComment((String)values.get("ratingComment"));
+			ratingDetail.setRating(getRating(values));
+			final List<TimedDataSerie> intents = timeSerieServices.getSessionNonTechnicalIntents(criteria, ratingDetail.getSessionId()).getTimedDataSeries();
+			if (!intents.isEmpty()) {
+				ratingDetail.setLastTopic((String) intents.get(intents.size() - 1).getValues().get("name"));
+			}
+			retour.add(ratingDetail);
+		});
+		return retour;
+	}
+
+	private static Long getRating(final Map<String, Object> values) {
+		for (long i=1; i<= 5; i++) {
+			if (values.get("rating" + i) != null) {
+				return i;
+			}
+		}
+		return 0L;
+	}
 }
