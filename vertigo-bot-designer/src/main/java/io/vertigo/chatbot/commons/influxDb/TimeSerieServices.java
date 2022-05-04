@@ -172,6 +172,19 @@ public class TimeSerieServices implements Component, Activeable {
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}
 
+	public TimedDatas getSessionNonTechnicalIntents(final StatCriteria criteria, final String sessionId) {
+		final String q = new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isTechnical"))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "name", "_field", "_value", "sessionId", "modelName"))
+				.pivot()
+				.filterByColumn(Map.of("sessionId", '"' + sessionId + '"', "isTechnical", "0"))
+				.build(true);
+
+		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
+	}
+
 	/**
 	 * Get the sentences recognized for a specific intentRasa
 	 *
@@ -226,6 +239,17 @@ public class TimeSerieServices implements Component, Activeable {
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.RATING_MSRMT).build(),
 				Map.of(),
 				AnalyticsServicesUtils.getTimeFilter(criteria));
+	}
+
+	public TimedDatas getRatingDetailsStats(final StatCriteria criteria) {
+		final String q = new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.filterFields(AnalyticsServicesUtils.RATING_MSRMT, List.of("rating1", "rating2", "rating3", "rating4", "rating5", "sessionId", "ratingComment"))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "_field", "_value", "sessionId", "ratingComment"))
+				.pivot()
+				.build(5_000L, true);
+		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}
 
 	public TimedDatas getRatingForSession(final StatCriteria criteria, final String sessionId) {

@@ -619,6 +619,15 @@
             </q-dialog>
         </div>
 
+        <div class="col-12" v-if="vueData.chatbotCustomConfig.rating">
+            <vu:table componentId="ratingDetails"  list="ratingDetails"  rowsPerPage="5" sortBy="rating" descending>
+                <vu:column field="date"/>
+                <vu:column field="rating"/>
+                <vu:column field="comment"/>
+                <vu:column field="lastTopic"/>
+            </vu:table>
+        </div>
+
         <vu:include-data-primitive key="ratingStats" />
         <vu:include-data object="chatbotCustomConfig" field="rating" />
 

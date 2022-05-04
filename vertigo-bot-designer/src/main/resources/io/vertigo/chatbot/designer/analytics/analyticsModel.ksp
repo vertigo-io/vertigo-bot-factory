@@ -129,7 +129,15 @@ create DtDefinition DtTopIntentCriteria {
 }
 
 
-create DtDefinition DtUnknownSentenseExport {	
+create DtDefinition DtRatingDetail {
+    field sessionId 	{domain: DoIdStr 				label: "Session ID" 		    }
+	field date 			{domain: DoInstant 				label: "Date" 					}
+	field rating		{domain: DoNumber 				label: "Rating" 				}
+	field comment	    {domain: DoLabel 				label: "Comment" 			    }
+	field lastTopic	    {domain: DoLabel 			    label: "Last topic" 			}
+}
+
+create DtDefinition DtUnknownSentenseExport {
 	field date 			{domain: DoInstant 				label: "Date" 					}
 	field text			{domain: DoLabel 				label: "User text" 				}	
 	field modelName		{domain: DoLabel 				label: "Model Name" 			}

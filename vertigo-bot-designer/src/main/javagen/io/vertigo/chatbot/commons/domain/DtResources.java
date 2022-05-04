@@ -180,6 +180,14 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$ratingMessage,
 	/**
+	 * Comment.
+	 */
+	fldChatbotCustomConfig$comment,
+	/**
+	 * Comment message.
+	 */
+	fldChatbotCustomConfig$commentMessage,
+	/**
 	 * Bot email address.
 	 */
 	fldChatbotCustomConfig$botEmailAddress,
