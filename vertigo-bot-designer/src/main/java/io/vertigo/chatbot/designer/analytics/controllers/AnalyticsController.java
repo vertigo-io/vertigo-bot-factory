@@ -33,6 +33,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
 import io.vertigo.chatbot.designer.commons.ihm.enums.TimeEnum;
 import io.vertigo.chatbot.designer.commons.services.EnumIHMManager;
+import io.vertigo.chatbot.designer.domain.analytics.RatingDetail;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.SessionExport;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
@@ -40,6 +41,7 @@ import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
 import io.vertigo.chatbot.designer.domain.analytics.TypeExportAnalytics;
 import io.vertigo.chatbot.designer.domain.analytics.UnknownSentenseExport;
 import io.vertigo.chatbot.designer.domain.commons.SelectionOption;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.chatbot.domain.DtDefinitions.SelectionOptionFields;
 import io.vertigo.chatbot.domain.DtDefinitions.SentenseDetailFields;
 import io.vertigo.chatbot.domain.DtDefinitions.TopIntentFields;
@@ -51,6 +53,7 @@ import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,6 +80,7 @@ public class AnalyticsController extends AbstractDesignerController {
 	private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
 	private static final ViewContextKey<TopIntent> topIntentsKey = ViewContextKey.of("topIntents");
 	private static final ViewContextKey<SentenseDetail> intentDetailsKey = ViewContextKey.of("intentDetails");
+	private static final ViewContextKey<RatingDetail> ratingDetailsKey = ViewContextKey.of("ratingDetails");
 	private static final ViewContextKey<SelectionOption> timeOptionsList = ViewContextKey.of("timeOptions");
 	private static final ViewContextKey<TypeExportAnalytics> typeExportAnalyticsListKey = ViewContextKey.of("typeExportAnalyticsList");
 	private static final ViewContextKey<TypeExportAnalytics> selectTypeExportAnalyticsKey = ViewContextKey.of("selectTypeExportAnalytics");
@@ -127,7 +131,7 @@ public class AnalyticsController extends AbstractDesignerController {
 		final StatCriteria statCriteria = new StatCriteria();
 
 		if (botId.isPresent()) {
-			Chatbot chatbot = chatbotServices.getChatbotById(botId.get());
+			final Chatbot chatbot = chatbotServices.getChatbotById(botId.get());
 			viewContext.publishDtList(nodesKey, nodeServices.getNodesByBot(chatbot));
 			statCriteria.setBotId(botId.get());
 			viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getAllTypeExportAnalytics());
@@ -153,7 +157,7 @@ public class AnalyticsController extends AbstractDesignerController {
 		updateGraph(viewContext, statCriteria);
 
 		listLimitReached(viewContext, uiMessageStack);
-		toModeEdit();
+		AbstractVSpringMvcController.toModeEdit();
 	}
 
 	@PostMapping("/_updateStats")
@@ -179,6 +183,7 @@ public class AnalyticsController extends AbstractDesignerController {
 			viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId()));
 			viewContext.publishDtList(nodesKey, nodeServices.getNodesByBot(bot));
 			viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getAllTypeExportAnalytics());
+			viewContext.publishDtList(ratingDetailsKey, DtDefinitions.RatingDetailFields.sessionId, analyticsServices.getRatingDetails(criteria));
 		} else {
 			viewContext.publishDtList(unknownSentensesKey, SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
 			viewContext.publishDtList(topIntentsKey, TopIntentFields.topId, new DtList<TopIntent>(TopIntent.class));
@@ -186,6 +191,7 @@ public class AnalyticsController extends AbstractDesignerController {
 			viewContext.publishRef(ratingStatsKey, new TimedDatas(new ArrayList<>(), new ArrayList<>()));
 			viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
 			viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getNonBotRelatedTypeExportAnalytics());
+			viewContext.publishDtList(ratingDetailsKey, DtDefinitions.RatingDetailFields.sessionId, new DtList<>(RatingDetail.class));
 		}
 
 		viewContext.publishDtList(intentDetailsKey, SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));

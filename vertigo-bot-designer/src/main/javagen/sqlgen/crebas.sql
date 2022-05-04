@@ -209,6 +209,8 @@ create table CHATBOT_CUSTOM_CONFIG
     CCC_ID      	 NUMERIC     	not null,
     RATING      	 bool        	not null,
     RATING_MESSAGE	 VARCHAR(100)	,
+    COMMENT     	 bool        	not null,
+    COMMENT_MESSAGE	 VARCHAR(100)	,
     BOT_EMAIL_ADDRESS	 VARCHAR(100)	,
     REINITIALIZATION_BUTTON	 bool        	,
     BACKGROUND_COLOR	 VARCHAR(100)	,
@@ -227,6 +229,12 @@ comment on column CHATBOT_CUSTOM_CONFIG.RATING is
 
 comment on column CHATBOT_CUSTOM_CONFIG.RATING_MESSAGE is
 'Rating message';
+
+comment on column CHATBOT_CUSTOM_CONFIG.COMMENT is
+'Comment';
+
+comment on column CHATBOT_CUSTOM_CONFIG.COMMENT_MESSAGE is
+'Comment message';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_EMAIL_ADDRESS is
 'Bot email address';

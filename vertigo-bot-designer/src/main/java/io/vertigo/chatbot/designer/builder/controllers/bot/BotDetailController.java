@@ -46,6 +46,7 @@ import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
@@ -120,7 +121,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
 		super.initBreadCrums(viewContext, bot);
-		toModeReadOnly();
+		AbstractVSpringMvcController.toModeReadOnly();
 		listLimitReached(viewContext, uiMessageStack);
 	}
 
@@ -148,7 +149,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
 		initNodeEdit(viewContext);
 		super.initEmptyBreadcrums(viewContext);
-		toModeCreate();
+		AbstractVSpringMvcController.toModeCreate();
 		listLimitReached(viewContext, uiMessageStack);
 	}
 
@@ -157,7 +158,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		viewContext.publishDto(viewModelKey, botTopic);
 	}
 
-	private static BotPredefinedTopic createNewBotTopic(String ktoCd) {
+	private static BotPredefinedTopic createNewBotTopic(final String ktoCd) {
 		final BotPredefinedTopic botTopic = new BotPredefinedTopic();
 		botTopic.setValue(UtterTextServices.initializeDefaultText(ktoCd));
 		if (ktoCd.equals(KindTopicEnum.IDLE.name())) {
@@ -170,7 +171,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 
 	private void loadBotTopic(final Chatbot bot, final ViewContext viewContext, final String ktoCd,
 							  final ViewContextKey<BotPredefinedTopic> viewModelKey) {
-		Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd)
+		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd)
 				.orElseGet(() -> chatbotServices.saveBotTopic(bot, ktoCd, createNewBotTopic(ktoCd)));
 
 		for (final ITopicService<? extends Entity> services : topicInterfaceServices) {
@@ -183,7 +184,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 
 	@PostMapping("/_edit")
 	public void doEdit() {
-		toModeEdit();
+		AbstractVSpringMvcController.toModeEdit();
 	}
 
 	@PostMapping("/_delete")
@@ -281,6 +282,12 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 			if (DtDefinitions.ChatbotCustomConfigFields.ratingMessage.name().equals(dtField.getName())) {
 				final String value = (String) dtField.getDataAccessor().getValue(chatbotCustomConfig);
 				if (StringUtils.isHtmlEmpty(value) && chatbotCustomConfig.getRating()) {
+					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné")); // TODO: use same i18n resource when avaiable in DefaultDtObjectValidator
+				}
+			}
+			if (DtDefinitions.ChatbotCustomConfigFields.commentMessage.name().equals(dtField.getName())) {
+				final String value = (String) dtField.getDataAccessor().getValue(chatbotCustomConfig);
+				if (StringUtils.isHtmlEmpty(value) && chatbotCustomConfig.getComment()) {
 					dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné")); // TODO: use same i18n resource when avaiable in DefaultDtObjectValidator
 				}
 			}

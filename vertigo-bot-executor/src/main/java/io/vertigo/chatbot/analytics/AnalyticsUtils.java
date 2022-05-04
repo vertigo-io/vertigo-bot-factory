@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.analytics;
 
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
+import io.vertigo.chatbot.executor.model.IncomeRating;
 import io.vertigo.core.analytics.process.AProcess;
 import io.vertigo.core.analytics.process.AProcessBuilder;
 
@@ -15,6 +16,7 @@ public final class AnalyticsUtils {
 	public static final String TEXT_KEY = "text";
 	public static final String TYPE_KEY = "type";
 	public static final String RATING_KEY = "rating";
+	public static final String RATING_COMMENT_KEY = "ratingComment";
 	public static final String NLU_KEY = "isNlu";
 	public static final String USER_MESSAGE_KEY = "isUserMessage";
 	public static final String CONFIDENCE_KEY = "confidence";
@@ -52,11 +54,15 @@ public final class AnalyticsUtils {
 		return prepareMessageProcess(codeTopic, "", type);
 	}
 
-	public static AProcessBuilder prepareRatingProcess(final Integer rating) {
-		return AProcess.builder(RATING_KEY, RATING_KEY, Instant.now(), Instant.now())
-				.addTag(RATING_INPUT_KEY, rating.toString())// timestamp of emitted event
-				.setMeasure(RATING_KEY + rating.toString(), TRUE_BIGDECIMAL)
-				.setMeasure(RATING_KEY, rating);
+	public static AProcessBuilder prepareRatingProcess(final IncomeRating incomeRating) {
+		final AProcessBuilder builder =  AProcess.builder(RATING_KEY, RATING_KEY, Instant.now(), Instant.now())
+				.addTag(RATING_INPUT_KEY, incomeRating.getNote().toString())// timestamp of emitted event
+				.setMeasure(RATING_KEY + incomeRating.getNote().toString(), TRUE_BIGDECIMAL)
+				.setMeasure(RATING_KEY, incomeRating.getNote());
+		if (incomeRating.getComment() != null) {
+			builder.addTag(RATING_COMMENT_KEY, incomeRating.getComment());
+		}
+		return builder;
 	}
 
 	public static void setConfiguration(final UUID sessionId, final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {

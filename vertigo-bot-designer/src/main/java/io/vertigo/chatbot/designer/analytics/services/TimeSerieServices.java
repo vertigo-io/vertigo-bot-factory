@@ -170,4 +170,20 @@ public class TimeSerieServices implements Component, Activeable {
 				AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
+	public TimedDatas getRatingDetailsStats(final StatCriteria criteria) {
+		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("sessionId", "rating1", "rating2", "rating3", "rating4", "rating5", "ratingComment"),
+		AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.RATING_MSRMT).build(),
+				AnalyticsServicesUtils.getTimeFilter(criteria),
+				Optional.of(5000L));
+	}
+
+	public TimedDatas getConversationIntents(final StatCriteria criteria, final String sessionId) {
+		return timeSeriesManager.getFlatTabularTimedData(influxDbName, Arrays.asList("name"),
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
+						.withAdditionalWhereClause("\"sessionId\" = '" + sessionId + "' and \"name\" != '!START' and \"name\" != '!END' and \"name\" != '!IDLE'")
+						.build(),
+				AnalyticsServicesUtils.getTimeFilter(criteria),
+				Optional.empty());
+	}
+
 }

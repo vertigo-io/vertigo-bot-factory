@@ -75,6 +75,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		PersonRole(io.vertigo.chatbot.designer.domain.commons.PersonRole.class),
 		/** Objet de données ProfilPerChatbot. */
 		ProfilPerChatbot(io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot.class),
+		/** Objet de données RatingDetail. */
+		RatingDetail(io.vertigo.chatbot.designer.domain.analytics.RatingDetail.class),
 		/** Objet de données ResponseButton. */
 		ResponseButton(io.vertigo.chatbot.commons.domain.topic.ResponseButton.class),
 		/** Objet de données ResponseButtonExport. */
@@ -242,6 +244,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		rating,
 		/** Propriété 'Rating message'. */
 		ratingMessage,
+		/** Propriété 'Comment'. */
+		comment,
+		/** Propriété 'Comment message'. */
+		commentMessage,
 		/** Propriété 'Bot email address'. */
 		botEmailAddress,
 		/** Propriété 'Reinitialization button'. */
@@ -601,6 +607,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		perId,
 		/** Propriété 'Profil pour un chatbot'. */
 		chpCd	}
+
+	/**
+	 * Enumération des champs de RatingDetail.
+	 */
+	public enum RatingDetailFields implements DtFieldName<io.vertigo.chatbot.designer.domain.analytics.RatingDetail> {
+		/** Propriété 'Session ID'. */
+		sessionId,
+		/** Propriété 'Date'. */
+		date,
+		/** Propriété 'Rating'. */
+		rating,
+		/** Propriété 'Comment'. */
+		comment,
+		/** Propriété 'Last topic'. */
+		lastTopic	}
 
 	/**
 	 * Enumération des champs de ResponseButton.

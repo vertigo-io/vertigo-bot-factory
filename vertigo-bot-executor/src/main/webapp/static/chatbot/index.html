@@ -187,6 +187,7 @@
           <div class="message-response row docs-btn non-selectable">
             <div class="col-grow">
               <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
+                       v-if="!inputConfig.showCommentInput"
                        ref="input"
                        :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily"
                        class="bg-white q-px-sm round-borders"
@@ -196,9 +197,20 @@
                        placeholder="Répondre"
                        :disable="processing || error || !acceptNlu || customConfig.disableNlu"
                        :loading="processing"></q-input>
+              <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
+                       v-else
+                       ref="input"
+                       :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily"
+                       class="bg-white q-px-sm round-borders"
+                       @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : sendRate()"
+                       :max-height="100"
+                       v-model="inputConfig.responseText"
+                       placeholder="Répondre"
+                       :loading="processing"></q-input>
             </div>
 
             <q-btn round
+                   v-if="!inputConfig.showCommentInput"
                    color="primary"
                    :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor"
                    style="margin-top: 0px;"
@@ -206,6 +218,14 @@
                    @click="postAnswerText()"
                    :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
 
+            <q-btn round
+                   v-else
+                   color="primary"
+                   :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor"
+                   style="margin-top: 0px;"
+                   icon="send"
+                   @click="sendRate()"
+                   :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
             <q-btn round
                    color="red"
                    @click="restart"

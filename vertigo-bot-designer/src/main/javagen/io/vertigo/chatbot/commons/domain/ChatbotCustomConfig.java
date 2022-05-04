@@ -18,6 +18,8 @@ public final class ChatbotCustomConfig implements Entity {
 	private Long cccId;
 	private Boolean rating;
 	private String ratingMessage;
+	private Boolean comment;
+	private String commentMessage;
 	private String botEmailAddress;
 	private Boolean reinitializationButton;
 	private String backgroundColor;
@@ -105,6 +107,44 @@ public final class ChatbotCustomConfig implements Entity {
 	
 	/**
 	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Comment'.
+	 * @return Boolean comment <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Comment")
+	public Boolean getComment() {
+		return comment;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Comment'.
+	 * @param comment Boolean <b>Obligatoire</b>
+	 */
+	public void setComment(final Boolean comment) {
+		this.comment = comment;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Comment message'.
+	 * @return String commentMessage
+	 */
+	@Field(smartType = "STyLabel", label = "Comment message")
+	public String getCommentMessage() {
+		return commentMessage;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Comment message'.
+	 * @param commentMessage String
+	 */
+	public void setCommentMessage(final String commentMessage) {
+		this.commentMessage = commentMessage;
+	}
+	
+	/**
+	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Bot email address'.
 	 * @return String botEmailAddress
 	 */
@@ -178,7 +218,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setFontFamily(final String fontFamily) {
 		this.fontFamily = fontFamily;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Display avatar'.
@@ -197,7 +237,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setDisplayAvatar(final Boolean displayAvatar) {
 		this.displayAvatar = displayAvatar;
 	}
-
+	
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Disable NlU'.
@@ -216,7 +256,7 @@ public final class ChatbotCustomConfig implements Entity {
 	public void setDisableNlu(final Boolean disableNlu) {
 		this.disableNlu = disableNlu;
 	}
-
+	
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.

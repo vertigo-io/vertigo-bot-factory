@@ -70,7 +70,7 @@ public class AnalyticsSenderServices implements Component {
 	private void sendPastTopics(final UUID sessionId, final List<TopicDefinition> topicsPast, final ExecutorConfiguration executorConfiguration) {
 		boolean isFirst = true;
 		//Can't have fallback instructions
-		for (TopicDefinition topic : topicsPast) {
+		for (final TopicDefinition topic : topicsPast) {
 			//Create the measurements
 			final String codeTopic = topic.getCode();
 			final boolean isEnd = codeTopic.equals(BotEngine.END_TOPIC_NAME);
@@ -109,7 +109,7 @@ public class AnalyticsSenderServices implements Component {
 	}
 
 	public void rate(final UUID sessionId, final IncomeRating rating, final ExecutorConfiguration executorConfiguration) {
-		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareRatingProcess(rating.getNote()), executorConfiguration);
+		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareRatingProcess(rating), executorConfiguration);
 	}
 
 }

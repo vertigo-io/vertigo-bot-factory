@@ -21,6 +21,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
+import io.vertigo.chatbot.designer.domain.analytics.RatingDetail;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
@@ -35,6 +36,7 @@ import io.vertigo.datamodel.structure.util.VCollectors;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -135,4 +137,32 @@ public class AnalyticsServices implements Component {
 		return timeSerieServices.getRatingStats(criteria);
 	}
 
+
+	public DtList<RatingDetail> getRatingDetails(final StatCriteria criteria) {
+		final TimedDatas tabularTimedData = timeSerieServices.getRatingDetailsStats(criteria);
+		final DtList<RatingDetail> retour = new DtList<>(RatingDetail.class);
+		tabularTimedData.getTimedDataSeries().forEach(timedDataSerie -> {
+			final Map<String, Object> values = timedDataSerie.getValues();
+			final RatingDetail ratingDetail = new RatingDetail();
+			ratingDetail.setSessionId((String) values.get("sessionId"));
+			ratingDetail.setDate(timedDataSerie.getTime());
+			ratingDetail.setComment((String)values.get("ratingComment"));
+			ratingDetail.setRating(getRating(values));
+			final List<TimedDataSerie> intents = timeSerieServices.getConversationIntents(criteria, ratingDetail.getSessionId()).getTimedDataSeries();
+			if (!intents.isEmpty()) {
+				ratingDetail.setLastTopic((String) intents.get(intents.size() - 1).getValues().get("name"));
+			}
+			retour.add(ratingDetail);
+		});
+		return retour;
+	}
+
+	private static Long getRating(final Map<String, Object> values) {
+		for (long i=1; i<= 5; i++) {
+			if (values.get("rating" + i) != null) {
+				return i;
+			}
+		}
+		return 0L;
+	}
 }

@@ -71,6 +71,7 @@ const chatbot = new Vue({
                 responseText: '',
                 responsePattern: '',
                 showRating: false,
+                showCommentInput: false,
                 rating: 0,
                 buttons: [],
                 cards: [],
@@ -78,7 +79,9 @@ const chatbot = new Vue({
             },
             customConfig: {
                 useRating: false,
+                useComment: false,
                 ratingMessage: 'Merci !',
+                commentMessage: 'Veuillez laisser un commentaire',
                 reinitializationButton: false,
                 backgroundColor: 'black',
                 fontFamily: 'Arial, Helvetica, sans-serif',
@@ -150,7 +153,9 @@ const chatbot = new Vue({
                             .then(httpResponse => {
                                 chatbot.convId = httpResponse.data.metadatas.sessionId;
                                 chatbot.customConfig.useRating = httpResponse.data.metadatas.customConfig.rating;
+                                chatbot.customConfig.useComment = httpResponse.data.metadatas.customConfig.comment;
                                 chatbot.customConfig.ratingMessage = httpResponse.data.metadatas.customConfig.ratingMessage;
+                                chatbot.customConfig.commentMessage = httpResponse.data.metadatas.customConfig.commentMessage;
                                 chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
                                 chatbot.customConfig.backgroundColor = httpResponse.data.metadatas.customConfig.backgroundColor;
                                 chatbot.customConfig.fontFamily = httpResponse.data.metadatas.customConfig.fontFamily;
@@ -372,6 +377,7 @@ const chatbot = new Vue({
                 chatbot.inputConfig.responsePattern = '';
                 chatbot.inputConfig.responseText = '';
                 chatbot.inputConfig.rating = 0;
+                chatbot.inputConfig.showCommentInput = false;
                 chatbot.inputConfig.buttons = [];
                 chatbot.inputConfig.cards = [];
                 chatbot.inputConfig.files = [];
@@ -387,6 +393,7 @@ const chatbot = new Vue({
                     responseText: '',
                     responsePattern: '',
                     showRating: false,
+                    showCommentInput: false,
                     rating: 0,
                     buttons: [],
                     files: [],
@@ -403,13 +410,39 @@ const chatbot = new Vue({
                 chatbot.clearSessionStorage();
                 chatbot.initBot();
             },
-            rateBot(value){
-                this.$http.post(chatbot.botUrl + '/rating/' + chatbot.convId, {note: value})
+            rateBot(){
+                if (chatbot.customConfig.useComment) {
+                    chatbot.inputConfig.showCommentInput = true;
+                    chatbot.inputConfig.showRating = false;
+                    chatbot.messages.push({
+                        avatar: chatbot.botAvatar,
+                        text: [chatbot.customConfig.commentMessage],
+                        bgColor: 'grey-grdf'
+                    });
+                } else {
+                    this.$http.post(chatbot.botUrl + '/rating/' + chatbot.convId, {note: chatbot.inputConfig.rating})
+                        .then(httpResponse => {
+                            httpResponse.data = {htmlTexts: [chatbot.customConfig.ratingMessage]};
+                            chatbot._handleResponse(httpResponse, true);
+                        });
+                }
+            },
+            sendRate() {
+                const sanitizedString = chatbot.inputConfig.responseText.trim().replace(/(?:\r\n|\r|\n)/g, '<br>');
+                chatbot.messages.push({
+                    text: sanitizedString !== '' ? [sanitizedString] : null,
+                    rating: chatbot.inputConfig.rating > 0 ? chatbot.inputConfig.rating : null,
+                    sent: true,
+                    bgColor: 'primary',
+                    textColor: 'white'
+                });
+                this.$http.post(chatbot.botUrl + '/rating/' + chatbot.convId, {note: chatbot.inputConfig.rating, comment: sanitizedString})
                     .then(httpResponse => {
                         httpResponse.data = {htmlTexts : [chatbot.customConfig.ratingMessage]};
+                        chatbot.inputConfig.showCommentInput = false;
+                        chatbot.reinitInput();
                         chatbot._handleResponse(httpResponse, true);
-
-                    });
+                });
             },
             close() {
                 parent.postMessage('Chatbot.close', '*');
