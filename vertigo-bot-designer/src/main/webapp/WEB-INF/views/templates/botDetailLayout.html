@@ -99,9 +99,9 @@
 	</div>
 	<section layout:fragment="content-nav">
 		<vu:include-data-primitive key="unknownSentencesToTreat" />
-		<q-item header>
+		<q-item header class="item-icon">
 			<q-item-section avatar>
-				<q-icon color="primary" name="settings" />
+				<q-icon color="primary" name="settings"/>
 			</q-item-section>
 			<q-item-section th:text="#{layout.configuration}"></q-item-section>
 		</q-item>
@@ -119,7 +119,7 @@
 
 		<q-separator></q-separator>
 
-		<q-item header>
+		<q-item header class="item-icon">
 			<q-item-section avatar>
 				<q-icon color="primary" name="extension" />
 			</q-item-section>
@@ -129,7 +129,7 @@
 		<q-item tag="a" th::active="${tab == 'welcometours'}" active-class="active" th:href="@{/bot/{id}/welcomeTours/(id=${model.bot.botId})}" th:text="#{layout.welcometours}"></q-item>
 		<q-separator></q-separator>
 
-		<q-item header>
+		<q-item header class="item-icon">
 			<q-item-section avatar>
 				<q-icon color="primary" name="dynamic_feed" />
 			</q-item-section>
@@ -140,7 +140,7 @@
 		<q-item tag="a" th::active="${tab == 'environment'}"  th:if="${model.userAuthorizations[AtzSuperAdm]}" active-class="active"
 				th:href="@{/bot/{id}/environments/(id=${model.bot.botId})}" th:text="#{layout.environment}"></q-item>
 		<q-separator></q-separator>
-		<q-item tag="a" th::active="${tab == 'users'}" active-class="active" th:href="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}">
+		<q-item class="icon-item-clickable" tag="a" th::active="${tab == 'users'}" active-class="active" th:href="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}">
 			<q-item-section avatar>
 				<q-icon color="primary" name="group" />
 			</q-item-section>
@@ -149,7 +149,7 @@
 			</q-item-section>
 		</q-item>
 		<q-separator></q-separator>
-		<q-item tag="a" th::active="${tab == 'statistic'}" active-class="active"  th:href="@{/bot/{id}/statistic/(id=${model.bot.botId})}">
+		<q-item class="icon-item-clickable" tag="a" th::active="${tab == 'statistic'}" active-class="active"  th:href="@{/bot/{id}/statistic/(id=${model.bot.botId})}">
 			<q-item-section avatar>
 				<q-icon color="primary" name="assessment" />
 			</q-item-section>

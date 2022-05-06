@@ -6,7 +6,7 @@
 
 	<include file="alter_meaning.xml" relativeToChangelogFile="true"/>
 	<include file="alter_kind_topic.xml" relativeToChangelogFile="true"/>
-	
+
 	<changeSet author="skerdudou" id="correct unknown_sentence_detail 'text' column">
         <sqlFile encoding="utf8" path="/sql/v_1_1_0/alter_22_04_25.sql" />
     </changeSet>
