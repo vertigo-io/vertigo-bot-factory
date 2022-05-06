@@ -172,6 +172,35 @@ nav.scroll-spy-nav a.q-item.active {
 nav a.q-item, .nav a.q_item {
 	color: grey;
 	align-items: center; /** replaced using q-item-section every times */
+	position: relative;
+	padding-left: 2rem;
+}
+nav a.q-item-type::before{
+	content: ".";
+	font-size: 5rem;
+	color: grey;
+	position: absolute;
+	top: -60px;
+	left: 5px;
+}
+.item-icon {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	color: grey;
+}
+.icon-item-clickable {
+	display: flex;
+	flex-direction: column;
+	padding: 20px 0 !important;
+}
+.q-item__section--side>.q-icon {
+	font-size: 45px;
+	color: grey !important;
+	margin-left: 15px;
+}
+.icon-item-clickable::before {
+	content: none !important;
 }
 
 .q-page-sticky.fixed-bottom-right {
