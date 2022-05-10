@@ -19,7 +19,9 @@ package io.vertigo.chatbot.designer.analytics.services;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
+import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
 import io.vertigo.chatbot.commons.influxDb.TimeSerieServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
@@ -28,6 +30,7 @@ import io.vertigo.chatbot.designer.domain.analytics.ConversationStat;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
+import io.vertigo.chatbot.designer.domain.analytics.TopIntentCriteria;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.database.timeseries.TabularDataSerie;
@@ -44,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.vertigo.chatbot.commons.domain.topic.KindTopicEnum.END;
@@ -141,9 +145,9 @@ public class AnalyticsServices implements Component {
 
 	public DtList<ConversationStat> getConversationsStats(final StatCriteria criteria, final ConversationCriteria conversationCriteria) {
 		Stream<ConversationStat> conversationStatStream = getConversationsStats(criteria).stream();
-		if (conversationCriteria.getRating() != null) {
+		if (!conversationCriteria.getRatings().isEmpty()) {
 			conversationStatStream = conversationStatStream.filter(conversationStat ->
-					conversationStat.getRate() != null && conversationStat.getRate().equals(conversationCriteria.getRating()));
+					conversationStat.getRate() != null && conversationCriteria.getRatings().contains(conversationStat.getRate()));
 		}
 		if (conversationCriteria.getModelName() != null) {
 			conversationStatStream = conversationStatStream.filter(conversationStat ->
@@ -183,9 +187,30 @@ public class AnalyticsServices implements Component {
 			topIntent.setIntentRasa(topic.getTitle());
 			topIntent.setTopId(topic.getTopId());
 			topIntent.setCode(topic.getCode());
+			topIntent.setCatLabel(topic.getCatLabel());
+			topIntent.setLabels(topic.getLabels());
 			topIntent.setCount(topicCountMap.getOrDefault(topic.getCode(), 0L));
 			return topIntent;
 		}).collect(VCollectors.toDtList(TopIntent.class));
+	}
+
+	public DtList<TopIntent> getTopIntents(final Chatbot bot, final String locale, final StatCriteria criteria,
+										   final TopIntentCriteria topIntentCriteria, final DtList<TopicCategory> categories, final DtList<TopicLabel> topicLabels) {
+		Stream<TopIntent> topIntents = getTopIntents(bot, locale, criteria).stream();
+		if (!topIntentCriteria.getCatIds().isEmpty()) {
+			final List<String> catLabels =
+					categories.stream().filter(topicCategory -> topIntentCriteria.getCatIds()
+							.contains(topicCategory.getTopCatId())).map(TopicCategory::getLabel).collect(Collectors.toList());
+
+			topIntents = topIntents.filter(topIntent -> catLabels.contains(topIntent.getCatLabel()));
+		}
+		if (!topIntentCriteria.getLabels().isEmpty()) {
+			final List<String> labels =
+					topicLabels.stream().filter(topicLabel -> topIntentCriteria.getLabels()
+							.contains(topicLabel.getLabelId())).map(TopicLabel::getLabel).collect(Collectors.toList());
+			topIntents = topIntents.filter(topIntent -> topIntent.getLabels() != null && labels.stream().anyMatch(label -> topIntent.getLabels().contains(label)));
+		}
+		return topIntents.collect(VCollectors.toDtList(TopIntent.class));
 	}
 
 	/**

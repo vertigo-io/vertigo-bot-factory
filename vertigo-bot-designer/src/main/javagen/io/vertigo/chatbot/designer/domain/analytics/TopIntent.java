@@ -14,6 +14,8 @@ public final class TopIntent implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private Long topId;
+	private String catLabel;
+	private String labels;
 	private String intentRasa;
 	private String code;
 	private Long count;
@@ -35,6 +37,44 @@ public final class TopIntent implements DtObject {
 	 */
 	public void setTopId(final Long topId) {
 		this.topId = topId;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Category label'.
+	 * @return String catLabel
+	 */
+	@Field(smartType = "STyLabel", label = "Category label")
+	public String getCatLabel() {
+		return catLabel;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Category label'.
+	 * @param catLabel String
+	 */
+	public void setCatLabel(final String catLabel) {
+		this.catLabel = catLabel;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Labels'.
+	 * @return String labels
+	 */
+	@Field(smartType = "STyLabel", label = "Labels")
+	public String getLabels() {
+		return labels;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Labels'.
+	 * @param labels String
+	 */
+	public void setLabels(final String labels) {
+		this.labels = labels;
 	}
 	
 	/**

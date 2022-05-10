@@ -426,7 +426,8 @@
             <vu:include-data object="conversationStat" field="ended" />
             <vu:table componentId="conversationStat" list="conversationStat" th:title="#{analytics.conversations}" tr_@click.native="displayConversationDetail(props.row.sessionId)" tr_style="cursor : pointer;" rowsPerPage="10" autoColClass >
                 <vu:slot name="top_right_slot">
-                    <vu:select-edit object="conversationCriteria" field="rating"
+                    <vu:select-edit object="conversationCriteria" field="ratings"
+                                    multiple
                                     list="ratingOptions" labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"
                                     label="#{analytics.conversation.rating}" clearable style="width: 250px; margin-right: 10px"/>
 
@@ -491,7 +492,21 @@
 
             <vu:table componentId="intentList"  list="topIntents"  rowsPerPage="5" sortBy="count" descending>
 
+                <vu:slot name="top_right_slot">
+                    <vu:select-edit object="topIntentCriteria" field="catIds"
+                                    multiple
+                                    list="topicCategories" labelField="label"
+                                    label="#{analytics.intent.category}" clearable style="width: 250px; margin-right: 10px"/>
+                    <vu:select-edit object="topIntentCriteria" field="labels"
+                                    multiple
+                                    list="topicLabels" labelField="label"
+                                    label="#{analytics.intent.label}" clearable style="width: 250px; margin-right: 10px"/>
+                    <q-icon name="search" class="q-field__marginal" ></q-icon>
+
+                </vu:slot>
                 <vu:column field="intentRasa" th:label="#{analytics.intent.intent}"/>
+                <vu:column field="catLabel"/>
+                <vu:column field="labels"/>
                 <vu:column field="count"/>
                 <vu:column field="intentRasa" th:label="#{analytics.intent.detail}" >
                     <q-btn v-if="props.row.count > 0" class="fab-block" round color="primary" icon="search" th:aria-label="#{analytics.message}"  th:title="#{analytics.message}"
@@ -564,6 +579,10 @@
 
         VUiPage.$watch('vueData.conversationCriteria', (newValue, oldValue) => {
             VUiPage.httpPostAjax('_filterConversation', VUiPage.vueDataParams(['conversationCriteria']));
+        }, { deep: true });
+
+        VUiPage.$watch('vueData.topIntentCriteria', (newValue, oldValue) => {
+            VUiPage.httpPostAjax('_filterTopIntent', VUiPage.vueDataParams(['topIntentCriteria']));
         }, { deep: true });
     </script>
 </section>

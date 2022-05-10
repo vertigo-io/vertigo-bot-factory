@@ -4,6 +4,8 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
 import io.vertigo.chatbot.commons.influxDb.TimeSerieServices;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.analytics.services.AnalyticsExportServices;
@@ -13,6 +15,8 @@ import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.analytics.services.TypeExportAnalyticsServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.commons.ihm.enums.TimeEnum;
 import io.vertigo.chatbot.designer.commons.services.EnumIHMManager;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
@@ -23,6 +27,7 @@ import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.SessionExport;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
+import io.vertigo.chatbot.designer.domain.analytics.TopIntentCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TypeExportAnalytics;
 import io.vertigo.chatbot.designer.domain.analytics.UnknownSentenseExport;
 import io.vertigo.chatbot.designer.domain.commons.SelectionOption;
@@ -71,6 +76,9 @@ public class StatisticController extends AbstractBotController {
 	private static final ViewContextKey<SentenseDetail> unknownSentensesKey = ViewContextKey.of("unknownSentenses");
 	private static final ViewContextKey<ConversationCriteria> conversationCriteriaKey = ViewContextKey.of("conversationCriteria");
 	private static final ViewContextKey<RatingOption> ratingOptionsKey = ViewContextKey.of("ratingOptions");
+	private static final ViewContextKey<TopicCategory> topicCategoriesKey = ViewContextKey.of("topicCategories");
+	private static final ViewContextKey<TopIntentCriteria> topIntentCriteriaKey = ViewContextKey.of("topIntentCriteria");
+	private static final ViewContextKey<TopicLabel> topicLabelsKey = ViewContextKey.of("topicLabels");
 
 	@Inject
 	private NodeServices nodeServices;
@@ -80,6 +88,12 @@ public class StatisticController extends AbstractBotController {
 
 	@Inject
 	private RatingOptionServices ratingOptionServices;
+
+	@Inject
+	private TopicCategoryServices topicCategoryServices;
+
+	@Inject
+	private TopicLabelServices topicLabelServices;
 
 	@Inject
 	private ChabotCustomConfigServices chabotCustomConfigServices;
@@ -106,6 +120,8 @@ public class StatisticController extends AbstractBotController {
 		final StatCriteria statCriteria = new StatCriteria();
 		viewContext.publishDtList(ratingOptionsKey, ratingOptionServices.getAllRatingOptions());
 		viewContext.publishDtList(nodesKey, nodeServices.getNodesByBot(bot));
+		viewContext.publishDtList(topicCategoriesKey, topicCategoryServices.getAllCategoriesByBot(bot));
+		viewContext.publishDtList(topicLabelsKey, topicLabelServices.getTopicLabelByBotId(bot));
 		statCriteria.setBotId(botId);
 		viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getBotRelatedTypeExportAnalytics());
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
@@ -129,6 +145,7 @@ public class StatisticController extends AbstractBotController {
 
 	private void updateGraph(final ViewContext viewContext, final StatCriteria criteria, final Chatbot bot) {
 		viewContext.publishDto(conversationCriteriaKey, new ConversationCriteria());
+		viewContext.publishDto(topIntentCriteriaKey, new TopIntentCriteria());
 		viewContext.publishRef(sessionStatsKey, timeSerieServices.getSessionsStats(criteria));
 		viewContext.publishRef(requestsStatsKey, timeSerieServices.getRequestStats(criteria));
 		viewContext.publishRef(userInteractionsStatsKey, timeSerieServices.getUserInteractions(criteria));
@@ -180,6 +197,21 @@ public class StatisticController extends AbstractBotController {
 										  @ViewAttribute("conversationCriteria") final ConversationCriteria conversationCriteria) {
 
 		viewContext.publishDtList(conversationStatKey, analyticsServices.getConversationsStats(criteria, conversationCriteria));
+
+		listLimitReached(viewContext, uiMessageStack);
+		return viewContext;
+	}
+
+	@PostMapping("/_filterTopIntent")
+	public ViewContext filterTopIntent(final ViewContext viewContext, final UiMessageStack uiMessageStack,
+									      @ViewAttribute("bot") final Chatbot bot,
+										  @ViewAttribute("criteria") final StatCriteria criteria,
+										  @ViewAttribute("topIntentCriteria") final TopIntentCriteria topIntentCriteria) {
+
+		final DtList<TopicCategory> categories = viewContext.readDtList(topicCategoriesKey, uiMessageStack);
+		final DtList<TopicLabel> topicLabels = viewContext.readDtList(topicLabelsKey, uiMessageStack);
+		viewContext.publishDtList(topIntentsKey, analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(),
+				criteria, topIntentCriteria, categories, topicLabels));
 
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;

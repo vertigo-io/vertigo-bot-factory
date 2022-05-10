@@ -105,18 +105,15 @@ create DtDefinition DtConversationDetail {
 }
 
 create DtDefinition DtConversationCriteria {
-	field modelName 			    {domain: DoLabel 				label: "Model Name" 					}
+	field modelName 			    {domain: DoLabel 				label: "Model Name" 					                }
+	field ratings 			        {domain: DoNumber		        label: "Ratings" 			cardinality:"*"		        }
 }
 
-create Association AConversationCriteriaRatingOptions {
-	fkFieldName : "rating"
-
- 	dtDefinitionA : DtConversationCriteria
-	type : "*>?"
-	dtDefinitionB : DtRatingOption
-
-	labelB : "Rating"
+create DtDefinition DtTopIntentCriteria {
+	field catIds 			    {domain: DoId 				label: "Category Ids" 		cardinality:"*"		        }
+	field labels 			    {domain: DoId 			label: "Labels" 			cardinality:"*"		        }
 }
+
 
 create DtDefinition DtUnknownSentenseExport {	
 	field date 			{domain: DoInstant 				label: "Date" 					}
@@ -130,10 +127,12 @@ create DtDefinition DtUnknownSentenseExport {
 }
 
 create DtDefinition DtTopIntent {
-	field topId			{domain: DoId 					label: "Topic ID" 				}
-	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			}
-	field code			{domain: DoLabel				label: "Topic code"				}
-	field count			{domain: DoNumber 				label: "Count" 					}
+	field topId			{domain: DoId 					label: "Topic ID" 				                    }
+	field catLabel		{domain: DoLabel 			    label: "Category label" 	                        }
+	field labels		{domain: DoLabel 			    label: "Labels" 	                                }
+	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			                    }
+	field code			{domain: DoLabel				label: "Topic code"				                    }
+	field count			{domain: DoNumber 				label: "Count" 					                    }
 }
 
 create DtDefinition DtSessionExport {	

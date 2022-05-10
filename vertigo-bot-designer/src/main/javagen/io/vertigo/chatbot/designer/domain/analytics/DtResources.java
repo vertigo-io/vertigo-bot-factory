@@ -16,9 +16,9 @@ public enum DtResources implements MessageKey {
 	 */
 	fldConversationCriteria$modelName,
 	/**
-	 * Rating.
+	 * Ratings.
 	 */
-	fldConversationCriteria$rating,
+	fldConversationCriteria$ratings,
 
 	/***********************************************************
 	/** ConversationDetail.
@@ -188,6 +188,14 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTopIntent$topId,
 	/**
+	 * Category label.
+	 */
+	fldTopIntent$catLabel,
+	/**
+	 * Labels.
+	 */
+	fldTopIntent$labels,
+	/**
 	 * Rasa intent.
 	 */
 	fldTopIntent$intentRasa,
@@ -199,6 +207,18 @@ public enum DtResources implements MessageKey {
 	 * Count.
 	 */
 	fldTopIntent$count,
+
+	/***********************************************************
+	/** TopIntentCriteria.
+	/***********************************************************
+	/**
+	 * Category Ids.
+	 */
+	fldTopIntentCriteria$catIds,
+	/**
+	 * Labels.
+	 */
+	fldTopIntentCriteria$labels,
 
 	/***********************************************************
 	/** TypeExportAnalytics.

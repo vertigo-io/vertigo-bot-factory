@@ -133,6 +133,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Synonym(io.vertigo.chatbot.designer.domain.Synonym.class),
 		/** Objet de données TopIntent. */
 		TopIntent(io.vertigo.chatbot.designer.domain.analytics.TopIntent.class),
+		/** Objet de données TopIntentCriteria. */
+		TopIntentCriteria(io.vertigo.chatbot.designer.domain.analytics.TopIntentCriteria.class),
 		/** Objet de données Topic. */
 		Topic(io.vertigo.chatbot.commons.domain.topic.Topic.class),
 		/** Objet de données TopicCategory. */
@@ -405,8 +407,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum ConversationCriteriaFields implements DtFieldName<io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria> {
 		/** Propriété 'Model Name'. */
 		modelName,
-		/** Propriété 'Rating'. */
-		rating	}
+		/** Propriété 'Ratings'. */
+		ratings	}
 
 	/**
 	 * Enumération des champs de ConversationDetail.
@@ -1006,12 +1008,25 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum TopIntentFields implements DtFieldName<io.vertigo.chatbot.designer.domain.analytics.TopIntent> {
 		/** Propriété 'Topic ID'. */
 		topId,
+		/** Propriété 'Category label'. */
+		catLabel,
+		/** Propriété 'Labels'. */
+		labels,
 		/** Propriété 'Rasa intent'. */
 		intentRasa,
 		/** Propriété 'Topic code'. */
 		code,
 		/** Propriété 'Count'. */
 		count	}
+
+	/**
+	 * Enumération des champs de TopIntentCriteria.
+	 */
+	public enum TopIntentCriteriaFields implements DtFieldName<io.vertigo.chatbot.designer.domain.analytics.TopIntentCriteria> {
+		/** Propriété 'Category Ids'. */
+		catIds,
+		/** Propriété 'Labels'. */
+		labels	}
 
 	/**
 	 * Enumération des champs de Topic.

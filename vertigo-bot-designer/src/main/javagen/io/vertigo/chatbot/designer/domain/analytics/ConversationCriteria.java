@@ -2,7 +2,6 @@ package io.vertigo.chatbot.designer.domain.analytics;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
 import io.vertigo.datamodel.structure.stereotype.Field;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 
@@ -15,21 +14,7 @@ public final class ConversationCriteria implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private String modelName;
-
-	@io.vertigo.datamodel.structure.stereotype.Association(
-			name = "AConversationCriteriaRatingOptions",
-			fkFieldName = "rating",
-			primaryDtDefinitionName = "DtRatingOption",
-			primaryIsNavigable = true,
-			primaryRole = "RatingOption",
-			primaryLabel = "Rating",
-			primaryMultiplicity = "0..1",
-			foreignDtDefinitionName = "DtConversationCriteria",
-			foreignIsNavigable = false,
-			foreignRole = "ConversationCriteria",
-			foreignLabel = "ConversationCriteria",
-			foreignMultiplicity = "0..*")
-	private final EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.analytics.RatingOption, io.vertigo.chatbot.designer.domain.analytics.RatingOptionEnum> ratingAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.designer.domain.analytics.RatingOption.class, "RatingOption", io.vertigo.chatbot.designer.domain.analytics.RatingOptionEnum.class);
+	private java.util.List<Long> ratings = new java.util.ArrayList<>();
 	
 	/**
 	 * Champ : DATA.
@@ -51,30 +36,24 @@ public final class ConversationCriteria implements DtObject {
 	}
 	
 	/**
-	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Rating'.
-	 * @return Long rating
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Ratings'.
+	 * @return List de Long ratings
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyNumber", label = "Rating", fkDefinition = "DtRatingOption" )
-	public Long getRating() {
-		return (Long) ratingAccessor.getId();
+	@Field(smartType = "STyNumber", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Ratings")
+	public java.util.List<Long> getRatings() {
+		return ratings;
 	}
 
 	/**
-	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Rating'.
-	 * @param rating Long
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Ratings'.
+	 * @param ratings List de Long
 	 */
-	public void setRating(final Long rating) {
-		ratingAccessor.setId(rating);
-	}
-
- 	/**
-	 * Association : Rating.
-	 * @return l'accesseur vers la propriété 'Rating'
-	 */
-	public EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.analytics.RatingOption, io.vertigo.chatbot.designer.domain.analytics.RatingOptionEnum> ratingOption() {
-		return ratingAccessor;
+	public void setRatings(final java.util.List<Long> ratings) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(ratings);
+		//---
+		this.ratings = ratings;
 	}
 	
 	/** {@inheritDoc} */
