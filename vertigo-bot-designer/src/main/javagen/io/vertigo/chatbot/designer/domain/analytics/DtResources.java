@@ -9,6 +9,86 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
+	/** ConversationCriteria.
+	/***********************************************************
+	/**
+	 * Model Name.
+	 */
+	fldConversationCriteria$modelName,
+	/**
+	 * Rating.
+	 */
+	fldConversationCriteria$rating,
+
+	/***********************************************************
+	/** ConversationDetail.
+	/***********************************************************
+	/**
+	 * sessionId.
+	 */
+	fldConversationDetail$sessionId,
+	/**
+	 * Date.
+	 */
+	fldConversationDetail$date,
+	/**
+	 * Text.
+	 */
+	fldConversationDetail$text,
+	/**
+	 * IsUserMessage.
+	 */
+	fldConversationDetail$isUserMessage,
+	/**
+	 * IsBotMessage.
+	 */
+	fldConversationDetail$isBotMessage,
+
+	/***********************************************************
+	/** ConversationStat.
+	/***********************************************************
+	/**
+	 * sessionId.
+	 */
+	fldConversationStat$sessionId,
+	/**
+	 * Date.
+	 */
+	fldConversationStat$date,
+	/**
+	 * Model Name.
+	 */
+	fldConversationStat$modelName,
+	/**
+	 * Interactions.
+	 */
+	fldConversationStat$interactions,
+	/**
+	 * Ended.
+	 */
+	fldConversationStat$ended,
+	/**
+	 * Rate.
+	 */
+	fldConversationStat$rate,
+
+	/***********************************************************
+	/** RatingOption.
+	/***********************************************************
+	/**
+	 * Code.
+	 */
+	fldRatingOption$raOptCd,
+	/**
+	 * Title.
+	 */
+	fldRatingOption$label,
+	/**
+	 * Titre.
+	 */
+	fldRatingOption$labelFr,
+
+	/***********************************************************
 	/** SentenseDetail.
 	/***********************************************************
 	/**

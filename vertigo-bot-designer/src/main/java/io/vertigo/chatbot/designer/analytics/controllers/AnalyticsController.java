@@ -40,6 +40,7 @@ import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -103,7 +104,7 @@ public class AnalyticsController extends AbstractDesignerController {
 		updateGraph(viewContext, statCriteria);
 
 		listLimitReached(viewContext, uiMessageStack);
-		toModeEdit();
+		AbstractVSpringMvcController.toModeEdit();
 	}
 
 	@PostMapping("/_updateStats")
@@ -128,12 +129,12 @@ public class AnalyticsController extends AbstractDesignerController {
 	@PostMapping("/_exportStatisticFile")
 	public VFile doExportStatisticFile(final ViewContext viewContext,
 			@ViewAttribute("criteria") final StatCriteria criteria,
-			@ViewAttribute("selectTypeExportAnalytics") final String selectTypeExportAnalytics) {
+			@ViewAttribute("selectTypeExportAnalytics") final TypeExportAnalytics selectTypeExportAnalytics) {
 
-		if (selectTypeExportAnalytics.isEmpty()) {
+		if (selectTypeExportAnalytics.getTeaCd() == null) {
 			throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
 		}
-		switch (selectTypeExportAnalytics) {
+		switch (selectTypeExportAnalytics.getTeaCd()) {
 			case "SESSIONS":
 				final DtList<SessionExport> listSessionExport = analyticsExportServices.getSessionExport(criteria);
 				return analyticsExportServices.exportSessions(listSessionExport);

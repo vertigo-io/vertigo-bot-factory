@@ -2,7 +2,7 @@
 <Context debug="0" reloadable="false" allowCasualMultipartParsing="true">
 	<Parameter name="boot.ANALYTICA_HOST" value="localhost" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="4562" override="false"/>
-	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot-test" override="false"/>
+	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot-test/autogen" override="false"/>
 
 	<Parameter name="boot.MAIL_NAME" value="KleeMail" override="false"/>
 	<Parameter name="boot.MAIL_PROTOCOL" value="smtp" override="false"/>

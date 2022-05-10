@@ -330,19 +330,20 @@
 					<div class="text-h6" th:text="#{popup.export.title}"></div>
 				</q-card-section>
 				<q-card-section style="width: 400px;">
+					<vu:include-data object="selectTypeExportAnalytics" field="teaCd" modifiable="true"/>
 					<vu:include-data object="typeExportAnalyticsList" field="'*'"/>
 					<q-select
 						clearable
 						filled
 						map-options
 						emit-value
-						v-model="vueData.selectTypeExportAnalytics"
+						v-model="vueData.selectTypeExportAnalytics.teaCd"
 						:options="vueData.locale == 'fr_FR' ? transformListForSelection('typeExportAnalyticsList', 'teaCd', 'labelFr') : transformListForSelection('typeExportAnalyticsList', 'teaCd', 'label')"
 						th:label="Type"
 						stack-label>
 					</q-select>
 				</q-card-section>
-				<input type="hidden" name="vContext[selectTypeExportAnalytics]" :value="vueData.selectTypeExportAnalytics" />
+				<input type="hidden" name="vContext[selectTypeExportAnalytics][teaCd]" :value="vueData.selectTypeExportAnalytics.teaCd" />
 
 				<q-card-actions align="around">
 						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">

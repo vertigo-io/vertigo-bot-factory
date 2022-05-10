@@ -47,13 +47,13 @@ public final class ExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkExportRelativeTrainingSentence",
-			request = "select   \n" +
- "              	nts.nts_id,  \n" +
- "              	nts.text,  \n" +
- "              	top.top_id\n" +
- "  			from nlu_training_sentence nts  \n" +
- "  			join topic top on (top.top_id = nts.top_id)  \n" +
- "  			where top.bot_id = #botId#  \n" +
+			request = "select   \n" + 
+ "              	nts.nts_id,  \n" + 
+ "              	nts.text,  \n" + 
+ "              	top.top_id\n" + 
+ "  			from nlu_training_sentence nts  \n" + 
+ "  			join topic top on (top.top_id = nts.top_id)  \n" + 
+ "  			where top.bot_id = #botId#  \n" + 
  "  			and top.is_enabled = true",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtNluTrainingExport")
@@ -73,18 +73,18 @@ public final class ExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkExportResponseButtonByBotId",
-			request = "select   \n" +
- "              	top.top_id,\n" +
- "              	top.code as top_code,\n" +
- "              	top_response.code as top_code_response,  \n" +
- "              	rbu.text  \n" +
- "  			from response_button rbu\n" +
- "  			join small_talk smt on (smt.smt_id = rbu.smt_id)  \n" +
- "  			join topic top on (top.top_id = smt.top_id)\n" +
- "  			join topic top_response on (top_response.top_id = rbu.top_id_response)  \n" +
- "  			where top.bot_id = #botId#  \n" +
- "  			and top.is_enabled = true \n" +
- " 				order by rbu.btn_id asc",
+			request = "select   \n" + 
+ "              	top.top_id,\n" + 
+ "              	top.code as top_code,\n" + 
+ "              	top_response.code as top_code_response,  \n" + 
+ "              	rbu.text  \n" + 
+ "  			from response_button rbu\n" + 
+ "  			join small_talk smt on (smt.smt_id = rbu.smt_id)  \n" + 
+ "  			join topic top on (top.top_id = smt.top_id)\n" + 
+ "  			join topic top_response on (top_response.top_id = rbu.top_id_response)  \n" + 
+ "  			where top.bot_id = #botId#  \n" + 
+ "  			and top.is_enabled = true\n" + 
+ "  			order by rbu.btn_id asc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtResponseButtonExport")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonExport> exportResponseButtonByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
@@ -103,18 +103,18 @@ public final class ExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkExportResponseButtonUrlByBotId",
-			request = "select\n" +
- "              	top.top_id,\n" +
- "              	top.code as top_code,\n" +
- "              	rbu.text,\n" +
- "              	rbu.url,\n" +
- "              	rbu.new_tab\n" +
- "  			from response_button_url rbu\n" +
- "  			join small_talk smt on (smt.smt_id = rbu.smt_id)\n" +
- "  			join topic top on (top.top_id = smt.top_id)\n" +
- "  			where top.bot_id = #botId#\n" +
- "  			and top.is_enabled = true\n" +
- " 				order by rbu.btn_id asc",
+			request = "select\n" + 
+ "              	top.top_id,\n" + 
+ "              	top.code as top_code,\n" + 
+ "              	rbu.text,\n" + 
+ "              	rbu.url,\n" + 
+ "              	rbu.new_tab\n" + 
+ "  			from response_button_url rbu\n" + 
+ "  			join small_talk smt on (smt.smt_id = rbu.smt_id)\n" + 
+ "  			join topic top on (top.top_id = smt.top_id)\n" + 
+ "  			where top.bot_id = #botId#\n" + 
+ "  			and top.is_enabled = true\n" + 
+ "  			order by rbu.btn_id asc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtResponseButtonUrlExport")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonUrlExport> exportResponseButtonUrlByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
@@ -133,18 +133,18 @@ public final class ExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkExportUtterTextByBotId",
-			request = "select   \n" +
- "              	top.top_id,  \n" +
- "              	STRING_AGG (ut.text, '|') as utter_texts,  \n" +
- "              	rty.rty_id as response_type, \n" +
- "              	coalesce (smt.is_end, false) as is_end,\n" +
- "              	top.kto_cd\n" +
- "  			from utter_text ut\n" +
- "  			join small_talk smt on (smt.smt_id = ut.smt_id)  \n" +
- "  			join response_type rty on (rty.rty_id = smt.rty_id)\n" +
- "  			join topic top on (top.top_id = smt.top_id)  \n" +
- "  			where top.bot_id = #botId# \n" +
- "  			and top.is_enabled = true\n" +
+			request = "select   \n" + 
+ "              	top.top_id,  \n" + 
+ "              	STRING_AGG (ut.text, '|') as utter_texts,  \n" + 
+ "              	rty.rty_id as response_type, \n" + 
+ "              	coalesce (smt.is_end, false) as is_end,\n" + 
+ "              	top.kto_cd\n" + 
+ "  			from utter_text ut\n" + 
+ "  			join small_talk smt on (smt.smt_id = ut.smt_id)  \n" + 
+ "  			join response_type rty on (rty.rty_id = smt.rty_id)\n" + 
+ "  			join topic top on (top.top_id = smt.top_id)  \n" + 
+ "  			where top.bot_id = #botId# \n" + 
+ "  			and top.is_enabled = true\n" + 
  "  			group by top.top_id, rty.rty_id, smt.is_end",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtUtterTextExport")
@@ -164,12 +164,12 @@ public final class ExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetScriptIntentionExportByBotId",
-			request = "select   \n" +
- "              	top.top_id,  \n" +
- "              	sci.script as bt\n" +
- "  			from topic top\n" +
- "  			join script_intention sci on (sci.top_id = top.top_id)  \n" +
- "  			where top.bot_id = #botId# \n" +
+			request = "select   \n" + 
+ "              	top.top_id,  \n" + 
+ "              	sci.script as bt\n" + 
+ "  			from topic top\n" + 
+ "  			join script_intention sci on (sci.top_id = top.top_id)  \n" + 
+ "  			where top.bot_id = #botId# \n" + 
  "  			and top.is_enabled = true",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtScriptIntentionExport")

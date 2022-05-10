@@ -5,9 +5,11 @@ import io.vertigo.chatbot.commons.influxDb.TimeSerieServices;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.domain.analytics.ConversationStat;
 import io.vertigo.chatbot.designer.domain.analytics.SessionExport;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.UnknownSentenseExport;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.chatbot.domain.DtDefinitions.SessionExportFields;
 import io.vertigo.chatbot.domain.DtDefinitions.UnknownSentenseExportFields;
 import io.vertigo.core.locale.MessageText;
@@ -166,6 +168,24 @@ public class AnalyticsExportServices implements Component {
 				.addField(UnknownSentenseExportFields.botName)
 				.addField(UnknownSentenseExportFields.node)
 				.addField(UnknownSentenseExportFields.creationBot)
+				.endSheet()
+				.build();
+		return exportManager.createExportFile(export);
+	}
+
+	/*
+	 * Return a file from a list of unknown messages
+	 */
+	public VFile exportConversations(final DtList<ConversationStat> dtc) {
+		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		final Date date = new Date();
+		final Export export = new ExportBuilder(ExportFormat.CSV, MessageText.of(AnalyticsMultilingualResources.CONVERSATION_FILENAME).getDisplay() + dateFormat.format(date))
+				.beginSheet(dtc, null)
+				.addField(DtDefinitions.ConversationStatFields.date)
+				.addField(DtDefinitions.ConversationStatFields.modelName)
+				.addField(DtDefinitions.ConversationStatFields.interactions)
+				.addField(DtDefinitions.ConversationStatFields.ended)
+				.addField(DtDefinitions.ConversationStatFields.rate)
 				.endSheet()
 				.build();
 		return exportManager.createExportFile(export);

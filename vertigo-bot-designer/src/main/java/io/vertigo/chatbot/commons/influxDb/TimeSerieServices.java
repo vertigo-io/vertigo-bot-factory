@@ -1,11 +1,5 @@
 package io.vertigo.chatbot.commons.influxDb;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
 import io.vertigo.chatbot.designer.analytics.utils.InfluxRequestBuilder;
 import io.vertigo.chatbot.designer.analytics.utils.InfluxRequestUtil;
@@ -17,6 +11,11 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimedDatas;
+
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Use for search in influxdb
@@ -94,7 +93,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.keep(List.of("_time", "text", "name", "modelName", "_field", "_value"))
 				.pivot()
 				.filterByColumn(Map.of("isFallback", "1"))
-				.build();
+				.build(true);
 
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}
@@ -113,7 +112,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.keep(List.of("_time", "name", "modelName", "botId", "nodId", "traId", "_field", "_value"))
 				.pivot()
 				.filterByColumn(Map.of("isSessionStart", "1"))
-				.build();
+				.build(true);
 
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}
@@ -132,7 +131,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.keep(List.of("_time", "text", "name", "confidence", "modelName", "botId", "nodId", "traId", "_field", "_value"))
 				.pivot()
 				.filterByColumn(Map.of("isFallback", "1"))
-				.build();
+				.build(true);
 
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}
@@ -155,9 +154,22 @@ public class TimeSerieServices implements Component, Activeable {
 				.keep(List.of("name"))
 				.append("|> duplicate(column: \"name\", as: \"name:count\")")
 				.append("|> count(column: \"name:count\")")
-				.build();
+				.build(true);
 
 		return InfluxRequestUtil.executeTabularQuery(influxDbConnector.getClient(), q);
+	}
+
+	public TimedDatas getSessionTechnicalIntents(final StatCriteria criteria, final String sessionId) {
+		final String q = new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isTechnical"))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "name", "_field", "_value", "sessionId", "modelName"))
+				.pivot()
+				.filterByColumn(Map.of("sessionId", '"' + sessionId + '"', "isTechnical", "1"))
+				.build(true);
+
+		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}
 
 	/**
@@ -177,9 +189,34 @@ public class TimeSerieServices implements Component, Activeable {
 				.pivot()
 				.filterByColumn(Map.of("isNlu", "1"))
 				.keep(List.of("_time", "text", "confidence"))
-				.build(5_000L);
+				.build(5_000L, true);
 
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
+	}
+
+	public TimedDatas getConversationDetails(final StatCriteria criteria, final String sessionId) {
+		final String q = new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.filterFields(AnalyticsServicesUtils.CONVERSATION_MSRMT, List.of("isUserMessage", "isBotMessage"))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "text", "_field", "_value", "sessionId"))
+				.pivot()
+				.filterByColumn(Map.of("sessionId", '"' + sessionId + '"'))
+				.keep(List.of("_time", "text", "isUserMessage", "isBotMessage"))
+				.build(5_000L, true);
+
+		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
+	}
+
+	public TabularDatas getConversationStats(final StatCriteria criteria) {
+		final String q = new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.filterFields(AnalyticsServicesUtils.CONVERSATION_MSRMT, List.of("isBotMessage"))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "_field", "_value", "isBotMessage", "sessionId"))
+				.pivot()
+				.group(List.of("sessionId")).count("isBotMessage").build(5_000L, true);
+		return InfluxRequestUtil.executeTabularQuery(influxDbConnector.getClient(), q);
 	}
 
 	public TimedDatas getRatingStats(final StatCriteria criteria) {
@@ -188,6 +225,19 @@ public class TimeSerieServices implements Component, Activeable {
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.RATING_MSRMT).build(),
 				Map.of(),
 				AnalyticsServicesUtils.getTimeFilter(criteria));
+	}
+
+	public TimedDatas getRatingForSession(final StatCriteria criteria, final String sessionId) {
+
+		final String q = new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.filterFields(AnalyticsServicesUtils.RATING_MSRMT, List.of("rating1", "rating2", "rating3", "rating4", "rating5", "sessionId"))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "_field", "_value", "sessionId"))
+				.pivot()
+				.filterByColumn(Map.of("sessionId", '"' + sessionId + '"'))
+				.build(5_000L, true);
+		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}
 
 	/**
@@ -205,7 +255,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.pivot()
 				.filterByColumn(Map.of("isFallback", "1"))
 				.keep(List.of("_time", "text", "name", "confidence", "modelName"))
-				.build();
+				.build(true);
 
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}

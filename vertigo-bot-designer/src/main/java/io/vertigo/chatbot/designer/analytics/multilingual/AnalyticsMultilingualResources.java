@@ -7,6 +7,7 @@ public enum AnalyticsMultilingualResources implements MessageKey {
 	DELETED_BOT,
 	SESSIONS_FILENAME,
 	UNKNOWN_MESSAGES_FILENAME,
+	CONVERSATION_FILENAME,
 	MANDATORY_TYPE_EXPORT_ANALYTICS
 
 }

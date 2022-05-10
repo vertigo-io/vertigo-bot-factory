@@ -287,6 +287,21 @@
             VUiPage.$refs.intentDetailsDialog.show();
         }
 
+        function displayConversationDetail(sessionId) {
+
+            VertigoUi.vueData.conversationDetails = [];
+
+            let params = VUiPage.vueDataParams(['criteria']);
+            params.append('sessionId', sessionId)
+            VUiPage.httpPostAjax('_conversationDetails', params, {
+                    onSuccess: function() {
+                    }
+                }
+            );
+
+            VUiPage.$refs.conversationDetailsDialog.show();
+        }
+
         function closeDialog() {
             VUiPage.$refs.popupFromDate.hide();
             VUiPage.$refs.popupToDate.hide();
@@ -336,57 +351,19 @@
 
             <q-space></q-space>
 
-            <q-input
-                    v-bind:value="decodeDate('criteria', 'fromDate', 'DD/MM/YYYY')"
-                    dense clearable
-                    class="q-pa-none"
-                    style="width: 200px;background-color: white"
-                    @change="function (event) { encodeDate('criteria','fromDate', event.target.value, 'DD/MM/YYYY') }"
-                    th:label="#{analytics.date.from}"
-                    :error="hasFieldsError('criteria', 'fromDate')"
-                    :error-message="getErrorMessage('criteria', 'fromDate')"
-                    @clear="vueData.criteria.fromDate=null;httpPostAjax('_updateStats', vueDataParams(['criteria']));"
-            >
-                <template v-slot:prepend>
-                    <q-icon name="event" class="cursor-pointer">
-                        <q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupFromDate">
-                            <q-date
-                                    v-model="vueData.criteria.fromDate"
-                                    landscape
-                                    mask="DD/MM/YYYY"
-                                    @input="closeDialog();httpPostAjax('_updateStats', vueDataParams(['criteria']));"></q-date>
-                        </q-popup-proxy>
-                    </q-icon>
-                </template>
-            </q-input>
-            <input type="hidden" name="vContext[criteria][fromDate]" v-bind:value="vueData.criteria.fromDate" />
+
+            <vu:date-edit object="criteria" field="fromDate" label="#{analytics.date.from}"
+                          dense clearable @clear="vueData.criteria.fromDate=null"
+                          class="q-pa-none" style="width:210px; background-color: white; margin-right: 10px"/>
 
             <q-space></q-space>
 
-            <q-input
-                    v-bind:value="decodeDate('criteria', 'toDate', 'DD/MM/YYYY')"
-                    dense clearable
-                    class="q-pa-none"
-                    style="width: 200px;background-color: white"
-                    @change="function (event) { encodeDate('criteria','toDate', event.target.value, 'DD/MM/YYYY') }"
-                    th:label="#{analytics.date.to}"
-                    :error="hasFieldsError('criteria', 'toDate')"
-                    :error-message="getErrorMessage('criteria', 'toDate')"
-                    @clear="vueData.criteria.toDate=null;httpPostAjax('_updateStats', vueDataParams(['criteria']));"
-            >
-                <template v-slot:prepend>
-                    <q-icon name="event" class="cursor-pointer">
-                        <q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupToDate">
-                            <q-date
-                                    v-model="vueData.criteria.toDate"
-                                    landscape
-                                    mask="DD/MM/YYYY"
-                                    @input="closeDialog();httpPostAjax('_updateStats', vueDataParams(['criteria']));"></q-date>
-                        </q-popup-proxy>
-                    </q-icon>
-                </template>
-            </q-input>
-            <input type="hidden" name="vContext[criteria][toDate]" v-bind:value="vueData.criteria.toDate" />
+            <vu:date-edit object="criteria" field="toDate" label="#{analytics.date.to}"
+                          dense clearable @clear="vueData.criteria.toDate=null"
+                          class="q-pa-none" style="width:210px; background-color: white; margin-right: 10px"/>
+
+
+            <q-space></q-space>
 
 
             <q-space></q-space>
@@ -438,6 +415,48 @@
                                :series="dataX.apexCharts.nluMessageChart.series()"></apexchart>
                 </q-card-section>
             </q-card>
+        </div>
+
+        <div class="col-12">
+            <vu:include-data-primitive key="locale"/>
+            <vu:include-data object="conversationDetails" field="text" />
+            <vu:include-data object="conversationDetails" field="isUserMessage" />
+            <vu:include-data object="conversationDetails" field="isBotMessage" />
+            <vu:include-data object="conversationStat" field="sessionId" />
+            <vu:include-data object="conversationStat" field="ended" />
+            <vu:table componentId="conversationStat" list="conversationStat" th:title="#{analytics.conversations}" tr_@click.native="displayConversationDetail(props.row.sessionId)" tr_style="cursor : pointer;" rowsPerPage="10" autoColClass >
+                <vu:slot name="top_right_slot">
+                    <vu:select-edit object="conversationCriteria" field="rating"
+                                    list="ratingOptions" labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"
+                                    label="#{analytics.conversation.rating}" clearable style="width: 250px; margin-right: 10px"/>
+
+                    <vu:text-field-edit object="conversationCriteria" field="modelName" label="#{analytics.conversation.search}" clearable debounce="300" style="width:210px"/>
+                    <q-icon name="search" class="q-field__marginal" ></q-icon>
+                </vu:slot>
+
+                <vu:column field="date"/>
+                <vu:column field="modelName"/>
+                <vu:column field="interactions"/>
+                <vu:column field="rate"/>
+                <vu:column name="ended" th:label="#{analytics.conversation.ended}" class="col_Small">
+                    <q-icon name="check" color="green" size="2rem"v-if="props.row.ended" ></q-icon>
+                    <q-icon name="close" color="red" size="2rem" v-else ></q-icon>
+                </vu:column>
+            </vu:table>
+
+            <q-dialog ref="conversationDetailsDialog">
+                <q-card style="width: 600px; height: 500px;">
+                    <q-card-section>
+                        <div class="text-h6 q-ma-md" th:text="#{analytics.conversation.detail}">
+                        </div>
+                        <div v-for="conversationDetail in vueData.conversationDetails">
+                            <q-chat-message :sent="conversationDetail.isUserMessage" >
+                                <span v-html="conversationDetail.text"></span>
+                            </q-chat-message>
+                        </div>
+                    </q-card-section>
+                </q-card>
+            </q-dialog>
         </div>
 
         <vu:include-data-primitive key="ratingStats" />
@@ -512,19 +531,20 @@
                     <div class="text-h6" th:text="#{popup.export.title}"></div>
                 </q-card-section>
                 <q-card-section style="width: 400px;">
+                    <vu:include-data object="selectTypeExportAnalytics" field="teaCd" modifiable="true"/>
                     <vu:include-data object="typeExportAnalyticsList" field="'*'"/>
                     <q-select
                             clearable
                             filled
                             map-options
                             emit-value
-                            v-model="vueData.selectTypeExportAnalytics"
+                            v-model="vueData.selectTypeExportAnalytics.teaCd"
                             :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeExportAnalyticsList', 'teaCd', 'labelFr') : transformListForSelection('typeExportAnalyticsList', 'teaCd', 'label')"
                             th:label="Type"
                             stack-label>
                     </q-select>
                 </q-card-section>
-                <input type="hidden" name="vContext[selectTypeExportAnalytics]" :value="vueData.selectTypeExportAnalytics" />
+                <input type="hidden" name="vContext[selectTypeExportAnalytics][teaCd]" :value="vueData.selectTypeExportAnalytics.teaCd" />
 
                 <q-card-actions align="around">
                     <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
@@ -535,6 +555,17 @@
         </q-card>
     </q-dialog>
 
+</section>
+<section layout:fragment="javascript-footer" >
+    <script type="text/javascript">
+        VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
+            VUiPage.httpPostAjax('_updateStats', VUiPage.vueDataParams(['criteria']));
+        }, { deep: true });
+
+        VUiPage.$watch('vueData.conversationCriteria', (newValue, oldValue) => {
+            VUiPage.httpPostAjax('_filterConversation', VUiPage.vueDataParams(['conversationCriteria']));
+        }, { deep: true });
+    </script>
 </section>
 
 </body>

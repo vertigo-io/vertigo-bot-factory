@@ -5,7 +5,7 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
-drop table IF EXISTS T_O_P_I_C___T_O_P_I_C___L_A_B_E_L cascade;
+drop table IF EXISTS TOPIC_TOPIC_LABEL cascade;
 drop table IF EXISTS ATTACHMENT cascade;
 drop sequence IF EXISTS SEQ_ATTACHMENT;
 drop table IF EXISTS ATTACHMENT_FILE_INFO cascade;
@@ -43,6 +43,8 @@ drop sequence IF EXISTS SEQ_PERSON;
 drop table IF EXISTS PERSON_ROLE cascade;
 drop table IF EXISTS PROFIL_PER_CHATBOT cascade;
 drop sequence IF EXISTS SEQ_PROFIL_PER_CHATBOT;
+drop table IF EXISTS RATING_OPTION cascade;
+drop sequence IF EXISTS SEQ_RATING_OPTION;
 drop table IF EXISTS RESPONSE_BUTTON cascade;
 drop sequence IF EXISTS SEQ_RESPONSE_BUTTON;
 drop table IF EXISTS RESPONSE_BUTTON_URL cascade;
@@ -132,6 +134,9 @@ create sequence SEQ_PERSON
 
 
 create sequence SEQ_PROFIL_PER_CHATBOT
+	start with 1000 cache 20; 
+
+create sequence SEQ_RATING_OPTION
 	start with 1000 cache 20; 
 
 create sequence SEQ_RESPONSE_BUTTON
@@ -782,6 +787,26 @@ comment on column PROFIL_PER_CHATBOT.PER_ID is
 
 comment on column PROFIL_PER_CHATBOT.CHP_CD is
 'Profil pour un chatbot';
+
+-- ============================================================
+--   Table : RATING_OPTION                                        
+-- ============================================================
+create table RATING_OPTION
+(
+    RA_OPT_CD   	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_RATING_OPTION primary key (RA_OPT_CD)
+);
+
+comment on column RATING_OPTION.RA_OPT_CD is
+'Code';
+
+comment on column RATING_OPTION.LABEL is
+'Title';
+
+comment on column RATING_OPTION.LABEL_FR is
+'Titre';
 
 -- ============================================================
 --   Table : RESPONSE_BUTTON                                        
@@ -1547,11 +1572,11 @@ alter table WELCOME_TOUR
 create index A_WELCOME_TOUR_CHATBOT_CHATBOT_FK on WELCOME_TOUR (BOT_ID asc);
 
 
-create table T_O_P_I_C___T_O_P_I_C___L_A_B_E_L
+create table TOPIC_TOPIC_LABEL
 (
 	TOP_ID      	 NUMERIC     	 not null,
 	LABEL_ID    	 NUMERIC     	 not null,
-	constraint PK_T_O_P_I_C___T_O_P_I_C___L_A_B_E_L primary key (TOP_ID, LABEL_ID),
+	constraint PK_TOPIC_TOPIC_LABEL primary key (TOP_ID, LABEL_ID),
 	constraint FK_ANN_TOPIC_LABEL_TOPIC 
 		foreign key(TOP_ID)
 		references TOPIC (TOP_ID),
@@ -1560,7 +1585,7 @@ create table T_O_P_I_C___T_O_P_I_C___L_A_B_E_L
 		references TOPIC_LABEL (LABEL_ID)
 );
 
-create index ANN_TOPIC_LABEL_TOPIC_FK on T_O_P_I_C___T_O_P_I_C___L_A_B_E_L (TOP_ID asc);
+create index ANN_TOPIC_LABEL_TOPIC_FK on TOPIC_TOPIC_LABEL (TOP_ID asc);
 
-create index ANN_TOPIC_LABEL_TOPIC_LABEL_FK on T_O_P_I_C___T_O_P_I_C___L_A_B_E_L (LABEL_ID asc);
+create index ANN_TOPIC_LABEL_TOPIC_LABEL_FK on TOPIC_TOPIC_LABEL (LABEL_ID asc);
 
