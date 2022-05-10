@@ -1,0 +1,1 @@
+insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR, BOT_RELATED) values ('CONVERSATIONS', 'Conversations', 'Conversations', 'true');

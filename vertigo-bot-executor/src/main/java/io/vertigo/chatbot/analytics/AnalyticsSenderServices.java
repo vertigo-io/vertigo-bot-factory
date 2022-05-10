@@ -3,20 +3,25 @@ package io.vertigo.chatbot.analytics;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.model.BotInput;
+import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.chatbot.executor.model.IncomeRating;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.analytics.AnalyticsManager;
 import io.vertigo.core.analytics.process.AProcessBuilder;
 import io.vertigo.core.node.component.Component;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Transactional
 public class AnalyticsSenderServices implements Component {
+
+	private static final Logger LOGGER = LogManager.getLogger(AnalyticsSenderServices.class);
 
 	@Inject
 	private AnalyticsManager analyticsManager;
@@ -24,13 +29,13 @@ public class AnalyticsSenderServices implements Component {
 	/**
 	 * Send all the events to the events database
 	 *
-	 * @param metadatas data from botResponse
+	 * @param botResponse botResponse
 	 * @param executorConfiguration the executor configuration (i.e. node, bot)
 	 * @param input the user input
 	 */
-	public void sendEventToDb(final UUID sessionId, final Map<String, Object> metadatas, final ExecutorConfiguration executorConfiguration, final BotInput input) {
+	public void sendEventToDb(final UUID sessionId, final BotResponse botResponse, final ExecutorConfiguration executorConfiguration, final BotInput input) {
 		//Get values from response
-		final AnalyticsObjectSend analytics = (AnalyticsObjectSend) metadatas.get(BotEngine.ANALYTICS_KEY);
+		final AnalyticsObjectSend analytics = (AnalyticsObjectSend) botResponse.getMetadatas().get(BotEngine.ANALYTICS_KEY);
 		final String codeTopic = analytics.getTopic().getCode();
 		final Double accuracy = analytics.getAccuracy();
 		final List<TopicDefinition> topicsPast = analytics.getTopicsPast();
@@ -41,6 +46,25 @@ public class AnalyticsSenderServices implements Component {
 			sendNluEvent(sessionId, input, codeTopic, accuracy, executorConfiguration);
 		}
 		sendPastTopics(sessionId, topicsPast, executorConfiguration);
+
+		sendBotInputEvent(sessionId, input, executorConfiguration);
+
+		botResponse.getHtmlTexts().forEach(text -> sendConversationEvent(sessionId, text, false, executorConfiguration));
+	}
+
+	private void sendBotInputEvent(final UUID sessionId, final BotInput input, final ExecutorConfiguration executorConfiguration) {
+		if (input.getMessage() != null) {
+			sendConversationEvent(sessionId, input.getMessage(), true, executorConfiguration);
+		} else if (input.getMetadatas().get("text") != null) {
+			sendConversationEvent(sessionId, (String) input.getMetadatas().get("text"), true, executorConfiguration);
+		} else if (input.getMetadatas().get("filename") != null) {
+			sendConversationEvent(sessionId, (String) input.getMetadatas().get("filename"), true, executorConfiguration);
+		}
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (final InterruptedException e) {
+			LOGGER.error(e);
+		}
 	}
 
 	//Send an event with the nlu topics
@@ -91,9 +115,9 @@ public class AnalyticsSenderServices implements Component {
 	 *
 	 * @param executorConfiguration the executor configuration (i.e. node, bot etc...)
 	 */
-	public void sendEventStartToDb(final UUID sessionId, final Map<String, Object> metadatas, final ExecutorConfiguration executorConfiguration) {
+	public void sendEventStartToDb(final UUID sessionId, final BotResponse botResponse, final ExecutorConfiguration executorConfiguration, final BotInput input) {
 		//Create the process
-		final AnalyticsObjectSend analytics = (AnalyticsObjectSend) metadatas.get(BotEngine.ANALYTICS_KEY);
+		final AnalyticsObjectSend analytics = (AnalyticsObjectSend) botResponse.getMetadatas().get(BotEngine.ANALYTICS_KEY);
 		final List<TopicDefinition> topicsPast = analytics.getTopicsPast();
 		final AProcessBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(BotEngine.START_TOPIC_NAME, AnalyticsUtils.TECHNICAL_INPUT_KEY)
 				.setMeasure(AnalyticsUtils.SESSION_START_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
@@ -102,6 +126,8 @@ public class AnalyticsSenderServices implements Component {
 
 		sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 		sendPastTopics(sessionId, topicsPast, executorConfiguration);
+		sendBotInputEvent(sessionId, input, executorConfiguration);
+		botResponse.getHtmlTexts().forEach(text -> sendConversationEvent(sessionId, text, false, executorConfiguration));
 	}
 
 	private void sendProcessWithConfiguration(final UUID sessionId, final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {
@@ -111,6 +137,15 @@ public class AnalyticsSenderServices implements Component {
 
 	public void rate(final UUID sessionId, final IncomeRating rating, final ExecutorConfiguration executorConfiguration) {
 		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareRatingProcess(rating.getNote()), executorConfiguration);
+	}
+
+	public void sendConversationEvent(final UUID sessionId, final String text, final boolean userMessage, final ExecutorConfiguration executorConfiguration) {
+		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareConversationProcess(text, userMessage), executorConfiguration);
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (final InterruptedException e) {
+			LOGGER.error(e);
+		}
 	}
 
 }

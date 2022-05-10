@@ -191,14 +191,14 @@ const chatbot = new Vue({
                     link.click();
                     document.body.removeChild(link);
                 }
-                chatbot.askBot(btn.payload, true, null,null);
+                chatbot.askBot(btn.payload, btn.label, true, null,null);
             },
             fileUpload(btn, index) {
                 const file = document.getElementById('file_' + index).files[0];
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = function (evt) {
-                    chatbot.askBot(btn.payload, false, evt.target.result, file.name);
+                    chatbot.askBot(btn.payload, null,false, evt.target.result, file.name);
                 };
             }
             ,
@@ -219,7 +219,7 @@ const chatbot = new Vue({
                 const response = chatbot.inputConfig.responsePattern === '' ? sanitizedString.replace(/(")/g, '"')
                     : chatbot.inputConfig.responsePattern.replace('#', sanitizedString.replace(/(")/g, '\\"'));
 
-                chatbot.askBot(response, false, null, null);
+                chatbot.askBot(response, null,false, null, null);
             }
             ,
             _scrollToBottom() {
@@ -227,7 +227,7 @@ const chatbot = new Vue({
                 this.$refs.scroller.setScrollPosition(scrollHeight, 400);
             }
             ,
-            askBot(value, isButton, fileContent, fileName) {
+            askBot(value, label, isButton, fileContent, fileName) {
                 chatbot.prevInputConfig = JSON.parse(JSON.stringify(chatbot.inputConfig));
                 chatbot.reinitInput();
                 chatbot.lastPayload = value;
@@ -238,7 +238,7 @@ const chatbot = new Vue({
                 if (fileContent) {
                     botInput = { message: null, metadatas: { context: chatbot.context, payload: value, filecontent: fileContent, filename: fileName } };
                 } else if (isButton) {
-                    botInput = { message: null, metadatas: { context: chatbot.context, payload: value } };
+                    botInput = { message: null, metadatas: { context: chatbot.context, payload: value, text: label } };
                 } else {
                     botInput = { message: value, metadatas: { context: chatbot.context } };
                 }

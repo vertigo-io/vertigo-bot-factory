@@ -8,7 +8,8 @@ import io.vertigo.datamodel.structure.model.UID;
 public enum TypeExportAnalyticsEnum implements MasterDataEnum<io.vertigo.chatbot.designer.domain.analytics.TypeExportAnalytics> {
 
 	UNKNOWN_MESSAGES("UNKNOWN_MESSAGES"), //
-	SESSIONS("SESSIONS")
+	SESSIONS("SESSIONS"), //
+	CONVERSATIONS("CONVERSATIONS")
 	;
 
 	private final Serializable entityId;

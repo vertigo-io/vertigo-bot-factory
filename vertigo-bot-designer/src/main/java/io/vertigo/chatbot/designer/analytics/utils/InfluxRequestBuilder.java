@@ -17,12 +17,12 @@
  */
 package io.vertigo.chatbot.designer.analytics.utils;
 
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.database.timeseries.TimeFilter;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import io.vertigo.core.lang.Assertion;
-import io.vertigo.database.timeseries.TimeFilter;
 
 /**
  * Light builder designed for flat tabular datas and to improve readability.
@@ -100,21 +100,30 @@ public final class InfluxRequestBuilder {
 		return this;
 	}
 
+	public InfluxRequestBuilder count(final String column) {
+		request.append("|> count(column: \"").append(column).append("\") \n");
+		return this;
+	}
+
 	public InfluxRequestBuilder append(final String s) {
 		request.append(s).append("\n");
 		return this;
 	}
 
-	public String build() {
-		return request
-				.append("|> group() \n") // merge all tables
-				.toString();
+	public String build(final boolean sortByTime) {
+		request.append("|> group() \n");// merge all tables
+		if (sortByTime) {
+			request.append("|> sort(columns: [\"_time\"], desc: false)");
+		}
+		return request.toString();
 	}
 
-	public String build(final long limit) {
-		return request
-				.append("|> group() \n") // merge all tables
-				.append("|> limit(n:").append(limit).append(") \n") // limit is per table (must be done after group())
+	public String build(final long limit, final boolean sortByTime) {
+		request.append("|> group() \n");// merge all tables
+		if (sortByTime) {
+			request.append("|> sort(columns: [\"_time\"], desc: false)");
+		}
+		return request.append("|> limit(n:").append(limit).append(") \n") // limit is per table (must be done after group())
 				.toString();
 	}
 

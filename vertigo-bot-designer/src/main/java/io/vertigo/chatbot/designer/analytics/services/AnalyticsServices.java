@@ -17,31 +17,42 @@
  */
 package io.vertigo.chatbot.designer.analytics.services;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.influxDb.TimeSerieServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
+import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
+import io.vertigo.chatbot.designer.domain.analytics.ConversationDetail;
+import io.vertigo.chatbot.designer.domain.analytics.ConversationStat;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.database.timeseries.TabularDataSerie;
 import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.util.VCollectors;
 
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static io.vertigo.chatbot.commons.domain.topic.KindTopicEnum.END;
+import static io.vertigo.chatbot.commons.domain.topic.KindTopicEnum.START;
+
 @Transactional
 public class AnalyticsServices implements Component {
+
+	public static final Double TRUE_BIGDECIMAL = 1D;
 
 	@Inject
 	private TopicServices topicServices;
@@ -73,6 +84,90 @@ public class AnalyticsServices implements Component {
 		}
 
 		return retour;
+	}
+
+	public DtList<ConversationDetail> getConversationDetails(final StatCriteria criteria, final String sessionId) {
+		// get data from influxdb
+		final TimedDatas tabularTimedData = timeSerieServices.getConversationDetails(criteria, sessionId);
+
+		// build DtList from InfluxDb data
+		final DtList<ConversationDetail> retour = new DtList<>(ConversationDetail.class);
+		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
+			final Map<String, Object> values = timedData.getValues();
+
+			final ConversationDetail conversationDetail = new ConversationDetail();
+			conversationDetail.setDate(timedData.getTime());
+			conversationDetail.setSessionId((String) values.get("sessionId"));
+			conversationDetail.setText((String) values.get("text"));
+			conversationDetail.setIsUserMessage(values.get("isUserMessage").equals(TRUE_BIGDECIMAL));
+			conversationDetail.setIsBotMessage(values.get("isBotMessage").equals(TRUE_BIGDECIMAL));
+			retour.add(conversationDetail);
+		}
+
+		return retour;
+	}
+
+	public DtList<ConversationStat> getConversationsStats(final StatCriteria criteria) {
+
+		final TabularDatas tabularTimedData = timeSerieServices.getConversationStats(criteria);
+
+		// build DtList from InfluxDb data
+		final DtList<ConversationStat> retour = new DtList<>(ConversationStat.class);
+		for (final TabularDataSerie tabularDataSerie : tabularTimedData.getTabularDataSeries()) {
+			final Map<String, Object> values = tabularDataSerie.getValues();
+
+			final ConversationStat conversationStat = new ConversationStat();
+			conversationStat.setDate(Instant.now());
+			conversationStat.setEnded(false);
+			conversationStat.setSessionId((String) values.get("sessionId"));
+			conversationStat.setInteractions((Long) values.get("isBotMessage"));
+
+			timeSerieServices.getSessionTechnicalIntents(criteria, conversationStat.getSessionId()).getTimedDataSeries().forEach( technicalIntent -> {
+				final String name = (String) technicalIntent.getValues().get("name");
+				if (name.replace("!", "").equals(START.name())) {
+					conversationStat.setModelName((String) technicalIntent.getValues().get("modelName"));
+					conversationStat.setDate(technicalIntent.getTime());
+				}
+				if (name.replace("!", "").equals(END.name())) {
+					conversationStat.setEnded(true);
+				}
+			});
+			conversationStat.setRate(getSessionRating(criteria, conversationStat.getSessionId()));
+			retour.add(conversationStat);
+		}
+
+		return retour;
+	}
+
+	public DtList<ConversationStat> getConversationsStats(final StatCriteria criteria, final ConversationCriteria conversationCriteria) {
+		Stream<ConversationStat> conversationStatStream = getConversationsStats(criteria).stream();
+		if (conversationCriteria.getRating() != null) {
+			conversationStatStream = conversationStatStream.filter(conversationStat ->
+					conversationStat.getRate() != null && conversationStat.getRate().equals(conversationCriteria.getRating()));
+		}
+		if (conversationCriteria.getModelName() != null) {
+			conversationStatStream = conversationStatStream.filter(conversationStat ->
+					conversationStat.getModelName() != null && conversationStat.getModelName().contains(conversationCriteria.getModelName()));
+		}
+		return conversationStatStream.collect(VCollectors.toDtList(ConversationStat.class));
+	}
+
+	private Long getSessionRating(final StatCriteria criteria, final String sessionId) {
+		final List<TimedDataSerie> ratingSeries =  timeSerieServices.getRatingForSession(criteria, sessionId).getTimedDataSeries();
+		if (ratingSeries.isEmpty()) {
+			return null;
+		} else {
+			return getRating(ratingSeries.get(0).getValues());
+		}
+	}
+
+	private Long getRating(final Map<String, Object> values) {
+		for (long i = 1; i <= 5; i++) {
+			if (values.get("rating" + i) != null) {
+				return i;
+			}
+		}
+		return 0L;
 	}
 
 	public DtList<TopIntent> getTopIntents(final Chatbot bot, final String locale, final StatCriteria criteria) {
