@@ -27,6 +27,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
 		/** Objet de données BotPredefinedTopic. */
 		BotPredefinedTopic(io.vertigo.chatbot.designer.domain.commons.BotPredefinedTopic.class),
+		/** Objet de données CategoryStat. */
+		CategoryStat(io.vertigo.chatbot.designer.domain.analytics.CategoryStat.class),
 		/** Objet de données Chatbot. */
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
 		/** Objet de données ChatbotCustomConfig. */
@@ -277,6 +279,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ttoCd,
 		/** Propriété 'SmallTalk / Script'. */
 		value	}
+
+	/**
+	 * Enumération des champs de CategoryStat.
+	 */
+	public enum CategoryStatFields implements DtFieldName<io.vertigo.chatbot.designer.domain.analytics.CategoryStat> {
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Percentage'. */
+		percentage,
+		/** Propriété 'Usage'. */
+		usage	}
 
 	/**
 	 * Enumération des champs de Chatbot.

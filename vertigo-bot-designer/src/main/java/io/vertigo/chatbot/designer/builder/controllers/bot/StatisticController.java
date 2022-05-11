@@ -19,6 +19,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.commons.ihm.enums.TimeEnum;
 import io.vertigo.chatbot.designer.commons.services.EnumIHMManager;
+import io.vertigo.chatbot.designer.domain.analytics.CategoryStat;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationDetail;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationStat;
@@ -39,6 +40,7 @@ import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -79,6 +82,7 @@ public class StatisticController extends AbstractBotController {
 	private static final ViewContextKey<TopicCategory> topicCategoriesKey = ViewContextKey.of("topicCategories");
 	private static final ViewContextKey<TopIntentCriteria> topIntentCriteriaKey = ViewContextKey.of("topIntentCriteria");
 	private static final ViewContextKey<TopicLabel> topicLabelsKey = ViewContextKey.of("topicLabels");
+	private static final ViewContextKey<CategoryStat> categoryStatKey = ViewContextKey.of("categoryStat");
 
 	@Inject
 	private NodeServices nodeServices;
@@ -151,7 +155,9 @@ public class StatisticController extends AbstractBotController {
 		viewContext.publishRef(userInteractionsStatsKey, timeSerieServices.getUserInteractions(criteria));
 		viewContext.publishDtList(unknownSentensesKey, DtDefinitions.SentenseDetailFields.topId, analyticsServices.getSentenseDetails(criteria));
 		viewContext.publishDtList(conversationStatKey, DtDefinitions.ConversationStatFields.sessionId, analyticsServices.getConversationsStats(criteria));
-		viewContext.publishDtList(topIntentsKey, DtDefinitions.TopIntentFields.topId, analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria));
+		final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
+		viewContext.publishDtList(topIntentsKey, DtDefinitions.TopIntentFields.topId, topIntents);
+		viewContext.publishDtList(categoryStatKey, buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()), topIntents));
 		viewContext.publishDtList(topicsKey, topicServices.getAllTopicByBot(bot));
 		viewContext.publishRef(ratingStatsKey, timeSerieServices.getRatingStats(criteria));
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId()));
@@ -159,6 +165,21 @@ public class StatisticController extends AbstractBotController {
 		viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getAllTypeExportAnalytics());
 		viewContext.publishDtList(intentDetailsKey, DtDefinitions.SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
 		viewContext.publishDtList(conversationDetailsKey, DtDefinitions.ConversationDetailFields.sessionId, new DtList<ConversationDetail>(ConversationDetail.class));
+	}
+
+	private static DtList<CategoryStat> buildCategoryStats(final DtList<TopicCategory> categories, final DtList<TopIntent> intents) {
+		final DtList<CategoryStat> categoryStats = new DtList<>(CategoryStat.class);
+		final long totalCount = intents.stream().mapToLong(TopIntent::getCount).sum();
+		categories.forEach(topicCategory -> {
+			final CategoryStat categoryStat = new CategoryStat();
+			categoryStat.setLabel(topicCategory.getLabel());
+			categoryStat.setCode(topicCategory.getCode());
+			final long count = intents.stream().filter(topIntent -> topIntent.getCatLabel().equals(topicCategory.getLabel())).mapToLong(TopIntent::getCount).sum();
+			categoryStat.setUsage(count);
+			categoryStat.setPercentage(BigDecimal.valueOf(((double) count/totalCount) * 100));
+			categoryStats.add(categoryStat);
+		});
+		return categoryStats;
 	}
 
 	@PostMapping("/_updateStats")
@@ -220,6 +241,7 @@ public class StatisticController extends AbstractBotController {
 	@PostMapping("/_exportStatisticFile")
 	public VFile doExportStatisticFile(final ViewContext viewContext,
 									   @ViewAttribute("criteria") final StatCriteria criteria,
+									   @ViewAttribute("bot") final Chatbot bot,
 									   @ViewAttribute("selectTypeExportAnalytics") final TypeExportAnalytics selectTypeExportAnalytics) {
 
 		if (selectTypeExportAnalytics.getTeaCd() == null) {
@@ -235,6 +257,10 @@ public class StatisticController extends AbstractBotController {
 			case "CONVERSATIONS":
 				final DtList<ConversationStat> conversationStats = analyticsServices.getConversationsStats(criteria);
 				return analyticsExportServices.exportConversations(conversationStats);
+			case "CATEGORIES":
+				final DtList<CategoryStat> categoryStats = buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()),
+						analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria));
+				return analyticsExportServices.exportCategories(categoryStats);
 			default:
 				throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
 		}

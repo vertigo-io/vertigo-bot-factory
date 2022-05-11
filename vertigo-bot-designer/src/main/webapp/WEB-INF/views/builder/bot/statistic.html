@@ -207,6 +207,35 @@
             }
         };
 
+        VUiExtensions.dataX.apexCharts.categories = {
+            options : {
+                chart: {
+                    type: 'pie',
+                },
+                labels: []
+            },
+            series :  function() {
+                return getCategorySerie();
+            }
+        };
+
+
+        function getCategorySerie() {
+            let values = [];
+            VertigoUi.vueData.categoryStat.forEach(categoryStat => {
+                values.push(categoryStat.usage);
+            });
+            return values;
+        }
+
+        function getCategoryLabels() {
+            let values = [];
+            VertigoUi.vueData.categoryStat.forEach(categoryStat => {
+                values.push(categoryStat.label);
+            });
+            return values;
+        }
+
         function percentageOfRating() {
             return Math.round((VUiExtensions.dataX.apexCharts.rating.series().reduce((a,b) => a + b, 0 ) /
                 serieToApexPie(["isSessionStart:sum"], VertigoUi.vueData.sessionStats, {fill: 0})[0]) * 100);
@@ -326,6 +355,9 @@
     <vu:include-data object="criteria" field="fromDate" modifiable="true" />
     <vu:include-data object="criteria" field="toDate" modifiable="true" />
     <vu:include-data object="criteria" field="timeOption" modifiable="true" />
+
+    <vu:include-data object="categoryStat" field="label" />
+    <vu:include-data object="categoryStat" field="usage" />
 
     <vu:include-data-primitive key="requestsStats" />
     <vu:include-data-primitive key="sessionStats" />
@@ -463,7 +495,7 @@
         <vu:include-data-primitive key="ratingStats" />
         <vu:include-data object="chatbotCustomConfig" field="rating" />
 
-        <div class="col-xl-4 col-md-6 col-xs-12" v-if="vueData.chatbotCustomConfig.rating">
+        <div class="col-xl-6 col-md-6 col-xs-12" v-if="vueData.chatbotCustomConfig.rating">
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.rating}"></q-card-section>
                 <apexchart width="100%" height="250"
@@ -482,7 +514,15 @@
                 </div>
             </q-card>
         </div>
-        <div :class="vueData.chatbotCustomConfig.rating ? 'col-xl-8 col-md-6 col-xs-12' : 'col-xl-12 col-md-6 col-xs-12'">
+        <div class="col-xl-6 col-md-6 col-xs-12" >
+            <q-card>
+                <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.categories}"></q-card-section>
+                <apexchart width="100%" height="250"
+                           :options="dataX.apexCharts.categories.options"
+                           :series="dataX.apexCharts.categories.series()"></apexchart>
+            </q-card>
+        </div>
+        <div class="col-12">
             <vu:include-data object="topics" field="topId" />
             <vu:include-data object="topics" field="title" />
 
@@ -573,6 +613,13 @@
 </section>
 <section layout:fragment="javascript-footer" >
     <script type="text/javascript">
+        VUiExtensions.dataX.apexCharts.categories.options = {
+            chart: {
+                type: 'pie',
+            },
+            labels: getCategoryLabels()
+        }
+
         VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
             VUiPage.httpPostAjax('_updateStats', VUiPage.vueDataParams(['criteria']));
         }, { deep: true });

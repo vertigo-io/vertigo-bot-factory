@@ -25,6 +25,12 @@ stereotype : "StaticMasterData"
             "label" 	    : "Conversations",
             "labelFr" 	    : "Conversations",
             "botRelated"    : "true"
+        },
+        "CATEGORIES" : {
+            "teaCd" 	    : "CATEGORIES",
+            "label" 	    : "Categories",
+            "labelFr" 	    : "Catégories",
+            "botRelated"    : "true"
         }
      }`
     sortField : "teaCd"
@@ -95,6 +101,14 @@ create DtDefinition DtConversationStat {
 	field ended			            {domain: DoYesNo 				label: "Ended" 				            }
 	field rate			            {domain: DoNumber 				label: "Rate" 				            }
 }
+
+create DtDefinition DtCategoryStat {
+	field label 	                {domain: DoLabel 				label: "Label" 		                    }
+	field code 			            {domain: DoLabel 				label: "Code" 					        }
+	field percentage		        {domain: DoPercentage 			label: "Percentage" 			        }
+	field usage			            {domain: DoNumber 				label: "Usage" 				            }
+}
+
 
 create DtDefinition DtConversationDetail {
 	field sessionId 	            {domain: DoIdStr 				label: "sessionId" 		                }

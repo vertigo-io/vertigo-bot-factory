@@ -9,6 +9,26 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
+	/** CategoryStat.
+	/***********************************************************
+	/**
+	 * Label.
+	 */
+	fldCategoryStat$label,
+	/**
+	 * Code.
+	 */
+	fldCategoryStat$code,
+	/**
+	 * Percentage.
+	 */
+	fldCategoryStat$percentage,
+	/**
+	 * Usage.
+	 */
+	fldCategoryStat$usage,
+
+	/***********************************************************
 	/** ConversationCriteria.
 	/***********************************************************
 	/**

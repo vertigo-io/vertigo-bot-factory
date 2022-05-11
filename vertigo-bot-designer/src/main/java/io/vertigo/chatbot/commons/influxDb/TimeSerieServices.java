@@ -146,11 +146,11 @@ public class TimeSerieServices implements Component, Activeable {
 	public TabularDatas getAllTopIntents(final StatCriteria criteria) {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isNlu", "isTechnical"))
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isTechnical"))
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
 				.keep(List.of("_time", "name", "_field", "_value"))
 				.pivot()
-				.filterByColumn(Map.of("isNlu", "1", "isTechnical", "0"))
+				.filterByColumn(Map.of( "isTechnical", "0"))
 				.keep(List.of("name"))
 				.append("|> duplicate(column: \"name\", as: \"name:count\")")
 				.append("|> count(column: \"name:count\")")
