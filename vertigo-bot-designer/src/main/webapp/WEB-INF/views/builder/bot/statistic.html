@@ -241,6 +241,22 @@
                 serieToApexPie(["isSessionStart:sum"], VertigoUi.vueData.sessionStats, {fill: 0})[0]) * 100);
         }
 
+        function totalOfConversations() {
+            return serieToApexPie(["isSessionStart:sum"], VertigoUi.vueData.sessionStats, {fill: 0})[0];
+        }
+
+        function totalOfUserActions() {
+            return serieToApexPie(["name:count"], VertigoUi.vueData.userInteractionsStats, {fill: 0})[0];
+        }
+
+        function totalOfRecognizedMessages() {
+            return serieToApexPie(["isNlu:sum"], VertigoUi.vueData.requestsStats, {fill: 0})[0];
+        }
+
+        function totalOfUnrecognizedMessages() {
+            return serieToApexPie(["isFallback:sum"], VertigoUi.vueData.requestsStats, {fill: 0})[0];
+        }
+
         function serieToApex(serieName, dataIn, options) {
             let ret = [];
             dataIn.timedDataSeries.forEach(e => {
@@ -424,6 +440,16 @@
                                :options="dataX.apexCharts.chartSession.options"
                                :series="dataX.apexCharts.chartSession.series()"></apexchart>
                 </q-card-section>
+                <q-card-section class="row justify-end">
+                    <div>
+                        <div style="font-weight: bold; font-size: x-large">
+                            <span v-html="totalOfConversations()"></span>
+                        </div>
+                        <div>
+                            <span>[[#{analytics.conversation.total}]]</span>
+                        </div>
+                    </div>
+                </q-card-section>
             </q-card>
         </div>
 
@@ -435,6 +461,16 @@
                                :options="dataX.apexCharts.chartMessages.options"
                                :series="dataX.apexCharts.chartMessages.series()"></apexchart>
                 </q-card-section>
+                <q-card-section class="row justify-end">
+                    <div>
+                        <div style="font-weight: bold; font-size: x-large">
+                            <span v-html="totalOfUserActions()"></span>
+                        </div>
+                        <div>
+                            <span>[[#{analytics.useractions.total}]]</span>
+                        </div>
+                    </div>
+                </q-card-section>
             </q-card>
         </div>
 
@@ -445,6 +481,24 @@
                     <apexchart width="100%" height="250" type="bar"
                                :options="dataX.apexCharts.nluMessageChart.options"
                                :series="dataX.apexCharts.nluMessageChart.series()"></apexchart>
+                </q-card-section>
+                <q-card-section class="row justify-end">
+                    <div class="q-mr-md">
+                        <div style="font-weight: bold; font-size: x-large">
+                            <span v-html="totalOfRecognizedMessages()"></span>
+                        </div>
+                        <div>
+                            <span>[[#{analytics.messages.recognized.total}]]</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-weight: bold; font-size: x-large">
+                            <span v-html="totalOfUnrecognizedMessages()"></span>
+                        </div>
+                        <div>
+                            <span>[[#{analytics.messages.unrecognized.total}]]</span>
+                        </div>
+                    </div>
                 </q-card-section>
             </q-card>
         </div>
@@ -498,10 +552,12 @@
         <div class="col-xl-6 col-md-6 col-xs-12" v-if="vueData.chatbotCustomConfig.rating">
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.rating}"></q-card-section>
-                <apexchart width="100%" height="250"
-                           :options="dataX.apexCharts.rating.options"
-                           :series="dataX.apexCharts.rating.series()"></apexchart>
-                <div style="margin: 20px; display: flex; justify-content: flex-end">
+                <q-card-section class="row justify-center items-center">
+                    <apexchart width="100%" height="250"
+                               :options="dataX.apexCharts.rating.options"
+                               :series="dataX.apexCharts.rating.series()"></apexchart>
+                </q-card-section>
+               <q-card-section class="row justify-end">
                     <div>
                         <div style="font-weight: bold; font-size: x-large">
                             <span v-html="percentageOfRating()"></span> <span>%</span>
@@ -510,8 +566,8 @@
                             <span>[[#{analytics.rating.percentage}]]</span>
                         </div>
                     </div>
+               </q-card-section>
 
-                </div>
             </q-card>
         </div>
         <div class="col-xl-6 col-md-6 col-xs-12" >
