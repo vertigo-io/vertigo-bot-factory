@@ -9,7 +9,8 @@ public enum TypeExportAnalyticsEnum implements MasterDataEnum<io.vertigo.chatbot
 
 	UNKNOWN_MESSAGES("UNKNOWN_MESSAGES"), //
 	SESSIONS("SESSIONS"), //
-	CONVERSATIONS("CONVERSATIONS")
+	CONVERSATIONS("CONVERSATIONS"), //
+	CATEGORIES("CATEGORIES")
 	;
 
 	private final Serializable entityId;

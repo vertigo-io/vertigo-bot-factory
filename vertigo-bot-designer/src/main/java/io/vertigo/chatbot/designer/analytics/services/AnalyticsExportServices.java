@@ -5,6 +5,7 @@ import io.vertigo.chatbot.commons.influxDb.TimeSerieServices;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.domain.analytics.CategoryStat;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationStat;
 import io.vertigo.chatbot.designer.domain.analytics.SessionExport;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
@@ -186,6 +187,20 @@ public class AnalyticsExportServices implements Component {
 				.addField(DtDefinitions.ConversationStatFields.interactions)
 				.addField(DtDefinitions.ConversationStatFields.ended)
 				.addField(DtDefinitions.ConversationStatFields.rate)
+				.endSheet()
+				.build();
+		return exportManager.createExportFile(export);
+	}
+
+	public VFile exportCategories(final DtList<CategoryStat> categoryStats) {
+		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		final Date date = new Date();
+		final Export export = new ExportBuilder(ExportFormat.CSV, MessageText.of(AnalyticsMultilingualResources.CATEGORIES_FILENAME).getDisplay() + dateFormat.format(date))
+				.beginSheet(categoryStats, null)
+				.addField(DtDefinitions.CategoryStatFields.label)
+				.addField(DtDefinitions.CategoryStatFields.code)
+				.addField(DtDefinitions.CategoryStatFields.percentage)
+				.addField(DtDefinitions.CategoryStatFields.usage)
 				.endSheet()
 				.build();
 		return exportManager.createExportFile(export);
