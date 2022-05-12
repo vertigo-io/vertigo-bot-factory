@@ -24,12 +24,14 @@
 	    <groupId>com.fasterxml.jackson.core</groupId>
 	    <artifactId>jackson-databind</artifactId>
 	    <version>2.12.1</version>
+		<scope>provided</scope>
 	</dependency>
 	<dependency>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-bot-executor</artifactId>
 		<version>${project.version}</version>
 		<classifier>classes</classifier>
+		<scope>provided</scope>
 	</dependency>
 
 	<dependency>
@@ -51,5 +53,33 @@
 	</dependency>
 	
   </dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>
+										io.vertigo.chatbot.engine.plugins.bt.jira.JiraPlugin
+									</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
