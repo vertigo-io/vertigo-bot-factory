@@ -124,7 +124,7 @@ public class AnalyticsServices implements Component {
 			conversationStat.setDate(Instant.now());
 			conversationStat.setEnded(false);
 			conversationStat.setSessionId((String) values.get("sessionId"));
-			conversationStat.setInteractions((Long) values.get("isBotMessage"));
+			conversationStat.setInteractions((Long) values.get("isUserMessage"));
 
 			timeSerieServices.getSessionTechnicalIntents(criteria, conversationStat.getSessionId()).getTimedDataSeries().forEach( technicalIntent -> {
 				final String name = (String) technicalIntent.getValues().get("name");
