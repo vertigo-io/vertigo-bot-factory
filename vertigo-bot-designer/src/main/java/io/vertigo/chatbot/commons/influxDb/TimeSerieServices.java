@@ -211,11 +211,12 @@ public class TimeSerieServices implements Component, Activeable {
 	public TabularDatas getConversationStats(final StatCriteria criteria) {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.CONVERSATION_MSRMT, List.of("isBotMessage"))
+				.filterFields(AnalyticsServicesUtils.CONVERSATION_MSRMT, List.of("isUserMessage"))
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "_field", "_value", "isBotMessage", "sessionId"))
+				.keep(List.of("_time", "_field", "_value", "isUserMessage", "sessionId"))
 				.pivot()
-				.group(List.of("sessionId")).count("isBotMessage").build(5_000L, true);
+				.filterByColumn(Map.of("isUserMessage", "1"))
+				.group(List.of("sessionId")).count("isUserMessage").build(5_000L, true);
 		return InfluxRequestUtil.executeTabularQuery(influxDbConnector.getClient(), q);
 	}
 

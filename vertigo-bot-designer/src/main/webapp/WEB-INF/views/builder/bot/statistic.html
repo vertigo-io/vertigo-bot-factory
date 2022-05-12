@@ -245,6 +245,26 @@
             return serieToApexPie(["isSessionStart:sum"], VertigoUi.vueData.sessionStats, {fill: 0})[0];
         }
 
+        function conversationsMean() {
+            let days = 1;
+            if (VertigoUi.vueData.criteria.timeOption === 'WEEK') {
+                days = 7;
+            } else if (VertigoUi.vueData.criteria.timeOption === 'MONTH') {
+                days = 30;
+            } else if (VertigoUi.vueData.criteria.timeOption === 'YEAR') {
+                days = 365;
+            }
+            return Math.round(totalOfConversations() / days);
+        }
+
+        function interactionPerConversationMean() {
+            return Math.round(totalOfUserActions()/totalOfConversations());
+        }
+
+        function recognizedMessageRatio() {
+            return Math.round((totalOfRecognizedMessages() / (totalOfRecognizedMessages() + totalOfUnrecognizedMessages())) *100);
+        }
+
         function totalOfUserActions() {
             return serieToApexPie(["name:count"], VertigoUi.vueData.userInteractionsStats, {fill: 0})[0];
         }
@@ -428,6 +448,58 @@
             <q-btn  class="fab-block" round color="primary" size="md" icon="file_upload" th:aria-label="export" th:title="export"
                     @click="$refs.exportStatistic.show()"></q-btn>
         </q-toolbar>
+    </div>
+    <div class="row">
+        <q-card class="col-12">
+            <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.summary}"></q-card-section>
+            <q-card-section>
+                <div class="row wrap justify-start q-col-gutter-md q-mt-md" >
+                    <div class="col-xl-4 col-md-6 col-xs-12">
+                        <q-card>
+                            <q-card-section class="row justify-center">
+                                <div>
+                                    <div style="font-weight: bold; font-size: x-large">
+                                        <span v-html="conversationsMean()"></span>
+                                    </div>
+                                    <div>
+                                        <span>[[#{analytics.conversation.mean}]]</span>
+                                    </div>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                    <vu:include-data object="chatbotCustomConfig" field="disableNlu" />
+                    <div class="col-xl-4 col-md-6 col-xs-12" v-if="!vueData.chatbotCustomConfig.disableNlu">
+                        <q-card>
+                            <q-card-section class="row justify-center">
+                                <div>
+                                    <div style="font-weight: bold; font-size: x-large">
+                                        <span v-html="recognizedMessageRatio()"></span><span> %</span>
+                                    </div>
+                                    <div>
+                                        <span>[[#{analytics.messages.recognized.ratio}]]</span>
+                                    </div>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                    <div class="col-xl-4 col-md-6 col-xs-12">
+                        <q-card>
+                            <q-card-section class="row justify-center">
+                                <div>
+                                    <div style="font-weight: bold; font-size: x-large">
+                                        <span v-html="interactionPerConversationMean()"></span>
+                                    </div>
+                                    <div>
+                                        <span>[[#{analytics.interactions.means}]]</span>
+                                    </div>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                </div>
+            </q-card-section>
+        </q-card>
     </div>
 
     <div class="row wrap justify-start q-col-gutter-md q-mt-md" >

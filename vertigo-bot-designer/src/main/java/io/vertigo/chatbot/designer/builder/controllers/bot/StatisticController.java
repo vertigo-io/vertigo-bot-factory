@@ -176,7 +176,11 @@ public class StatisticController extends AbstractBotController {
 			categoryStat.setCode(topicCategory.getCode());
 			final long count = intents.stream().filter(topIntent -> topIntent.getCatLabel().equals(topicCategory.getLabel())).mapToLong(TopIntent::getCount).sum();
 			categoryStat.setUsage(count);
-			categoryStat.setPercentage(BigDecimal.valueOf(((double) count/totalCount) * 100));
+			if (totalCount != 0) {
+				categoryStat.setPercentage(BigDecimal.valueOf(((double) count/totalCount) * 100));
+			} else {
+				categoryStat.setPercentage(BigDecimal.ZERO);
+			}
 			categoryStats.add(categoryStat);
 		});
 		return categoryStats;
