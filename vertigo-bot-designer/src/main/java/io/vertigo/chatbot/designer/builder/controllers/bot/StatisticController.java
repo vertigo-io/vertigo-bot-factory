@@ -123,9 +123,12 @@ public class StatisticController extends AbstractBotController {
 		final Chatbot bot = super.initCommonContext(viewContext, uiMessageStack, botId);
 		final StatCriteria statCriteria = new StatCriteria();
 		viewContext.publishDtList(ratingOptionsKey, ratingOptionServices.getAllRatingOptions());
-		viewContext.publishDtList(nodesKey, nodeServices.getNodesByBot(bot));
+		viewContext.publishDtList(nodesKey, nodeServices.getAllNodesByBot(bot));
 		viewContext.publishDtList(topicCategoriesKey, topicCategoryServices.getAllCategoriesByBot(bot));
 		viewContext.publishDtList(topicLabelsKey, topicLabelServices.getTopicLabelByBotId(bot));
+		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId()));
+		viewContext.publishDtList(typeExportAnalyticsListKey, typeExportAnalyticsServices.getAllTypeExportAnalytics());
+		viewContext.publishDtList(topicsKey, topicServices.getAllTopicByBot(bot));
 		statCriteria.setBotId(botId);
 		viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getBotRelatedTypeExportAnalytics());
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
@@ -161,11 +164,7 @@ public class StatisticController extends AbstractBotController {
 				viewContext.readDtList(topicLabelsKey, uiMessageStack));
 		viewContext.publishDtList(topIntentsKey, DtDefinitions.TopIntentFields.topId, topIntents);
 		viewContext.publishDtList(categoryStatKey, buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()), topIntents));
-		viewContext.publishDtList(topicsKey, topicServices.getAllTopicByBot(bot));
 		viewContext.publishRef(ratingStatsKey, timeSerieServices.getRatingStats(criteria));
-		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId()));
-		viewContext.publishDtList(nodesKey, nodeServices.getNodesByBot(bot));
-		viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getAllTypeExportAnalytics());
 		viewContext.publishDtList(intentDetailsKey, DtDefinitions.SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
 		viewContext.publishDtList(conversationDetailsKey, DtDefinitions.ConversationDetailFields.sessionId, new DtList<ConversationDetail>(ConversationDetail.class));
 	}
