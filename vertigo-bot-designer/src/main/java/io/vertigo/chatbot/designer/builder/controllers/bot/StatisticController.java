@@ -136,26 +136,29 @@ public class StatisticController extends AbstractBotController {
 
 		viewContext.publishDtList(timeOptionsList, DtDefinitions.SelectionOptionFields.label, enumIHMManager.getSelectionOptions(TimeEnum.values()));
 		viewContext.publishDto(criteriaKey, statCriteria);
+		viewContext.publishDto(conversationCriteriaKey, new ConversationCriteria());
+		viewContext.publishDto(topIntentCriteriaKey, new TopIntentCriteria());
 
 		viewContext.publishDto(selectTypeExportAnalyticsKey, new TypeExportAnalytics());
 
 		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
 
-		updateGraph(viewContext, statCriteria, bot);
+		updateGraph(viewContext, statCriteria, bot, uiMessageStack);
 
 		super.initBreadCrums(viewContext, "STATISTIC");
 		listLimitReached(viewContext, uiMessageStack);
 	}
 
-	private void updateGraph(final ViewContext viewContext, final StatCriteria criteria, final Chatbot bot) {
-		viewContext.publishDto(conversationCriteriaKey, new ConversationCriteria());
-		viewContext.publishDto(topIntentCriteriaKey, new TopIntentCriteria());
+	private void updateGraph(final ViewContext viewContext, final StatCriteria criteria, final Chatbot bot, final UiMessageStack uiMessageStack) {
 		viewContext.publishRef(sessionStatsKey, timeSerieServices.getSessionsStats(criteria));
 		viewContext.publishRef(requestsStatsKey, timeSerieServices.getRequestStats(criteria));
 		viewContext.publishRef(userInteractionsStatsKey, timeSerieServices.getUserInteractions(criteria));
 		viewContext.publishDtList(unknownSentensesKey, DtDefinitions.SentenseDetailFields.topId, analyticsServices.getSentenseDetails(criteria));
-		viewContext.publishDtList(conversationStatKey, DtDefinitions.ConversationStatFields.sessionId, analyticsServices.getConversationsStats(criteria));
-		final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
+		viewContext.publishDtList(conversationStatKey, DtDefinitions.ConversationStatFields.sessionId,
+				analyticsServices.getConversationsStats(criteria, viewContext.readDto(conversationCriteriaKey, AbstractVSpringMvcController.getUiMessageStack())));
+		final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(),
+				criteria, viewContext.readDto(topIntentCriteriaKey, uiMessageStack), viewContext.readDtList(topicCategoriesKey, uiMessageStack),
+				viewContext.readDtList(topicLabelsKey, uiMessageStack));
 		viewContext.publishDtList(topIntentsKey, DtDefinitions.TopIntentFields.topId, topIntents);
 		viewContext.publishDtList(categoryStatKey, buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()), topIntents));
 		viewContext.publishDtList(topicsKey, topicServices.getAllTopicByBot(bot));
@@ -191,7 +194,7 @@ public class StatisticController extends AbstractBotController {
 									 @ViewAttribute("bot") final Chatbot bot,
 									 @ViewAttribute("criteria") final StatCriteria criteria, final UiMessageStack uiMessageStack) {
 
-		updateGraph(viewContext, criteria, bot);
+		updateGraph(viewContext, criteria, bot, uiMessageStack);
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}

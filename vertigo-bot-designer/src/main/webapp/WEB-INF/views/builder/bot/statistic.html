@@ -46,7 +46,7 @@
                 });
             }
         }
-
+        VUiExtensions.dataX.disableTimeOption = false;
         VUiExtensions.dataX.apexCharts = {};
 
         VUiExtensions.dataX.apexCharts.chartSession = {
@@ -439,6 +439,7 @@
 
             <q-btn-toggle
                     text-color="dark"
+                    :disable="dataX.disableTimeOption"
                     v-model="vueData.criteria.timeOption"
                     toggle-color="primary"
                     :options='transformListForSelection("timeOptions", "value", "label")'
@@ -749,6 +750,13 @@
         }
 
         VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
+            if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
+                && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
+                VUiExtensions.dataX.disableTimeOption = true;
+                VertigoUi.vueData.criteria.timeOption = 'DAY';
+            } else {
+                VUiExtensions.dataX.disableTimeOption = false;
+            }
             VUiPage.httpPostAjax('_updateStats', VUiPage.vueDataParams(['criteria']));
         }, { deep: true });
 
