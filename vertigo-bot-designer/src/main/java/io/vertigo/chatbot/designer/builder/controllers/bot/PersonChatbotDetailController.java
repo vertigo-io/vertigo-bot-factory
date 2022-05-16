@@ -14,6 +14,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,17 +53,18 @@ public class PersonChatbotDetailController extends AbstractBotEntityController<C
 		viewContext.publishDto(selectionList, new SelectProfilChatbotPerson());
 		super.initBreadCrums(viewContext, chatbot);
 		listLimitReached(viewContext, uiMessageStack);
-		toModeReadOnly();
+		AbstractVSpringMvcController.toModeReadOnly();
 	}
 
 	@PostMapping("/_addUsers")
-	public void addUsersToProfil(final ViewContext viewContext,
+	public ViewContext addUsersToProfil(final ViewContext viewContext,
 								 @ViewAttribute("selectionList") final SelectProfilChatbotPerson selection,
 								 @ViewAttribute("bot") final Chatbot chatbot, final UiMessageStack uiMessageStack) {
 		final DtList<PersonChatbotProfil> newList = chatbotProfilServices.updateChatbotProfils(selection.getPrfId(), selection.getPerId(), chatbot);
 		viewContext.publishDtListModifiable(personsProfilListKey, newList);
 		viewContext.publishDto(selectionList, new SelectProfilChatbotPerson());
 		listLimitReached(viewContext, uiMessageStack);
+		return viewContext;
 	}
 
 	@PostMapping("/_delete")

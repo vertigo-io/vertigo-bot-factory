@@ -14,6 +14,7 @@ public final class PersonChatbotProfil implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private Long botId;
+	private Long perId;
 	private Long chpId;
 	private String name;
 	private String profilLabel;
@@ -35,6 +36,25 @@ public final class PersonChatbotProfil implements DtObject {
 	 */
 	public void setBotId(final Long botId) {
 		this.botId = botId;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Person id'.
+	 * @return Long perId
+	 */
+	@Field(smartType = "STyId", label = "Person id")
+	public Long getPerId() {
+		return perId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Person id'.
+	 * @param perId Long
+	 */
+	public void setPerId(final Long perId) {
+		this.perId = perId;
 	}
 	
 	/**

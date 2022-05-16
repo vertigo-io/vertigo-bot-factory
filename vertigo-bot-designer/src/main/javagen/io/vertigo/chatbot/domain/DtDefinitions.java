@@ -693,6 +693,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum PersonChatbotProfilFields implements DtFieldName<io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil> {
 		/** Propriété 'Chatbot selection'. */
 		botId,
+		/** Propriété 'Person id'. */
+		perId,
 		/** Propriété 'ProfilPerPerson id'. */
 		chpId,
 		/** Propriété 'Person name'. */

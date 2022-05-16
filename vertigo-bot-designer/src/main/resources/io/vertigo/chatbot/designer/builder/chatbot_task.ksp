@@ -15,6 +15,7 @@ create Task TkGetPersonProfilIHM {
 			select ppc.bot_id,
 					ppc.chp_id,
 					per.name,
+					per.per_id,
 					cp.chp_cd as profil_Label
 			from profil_per_chatbot ppc 
 			join person per on (per.per_id = ppc.per_id)
