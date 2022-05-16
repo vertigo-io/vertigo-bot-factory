@@ -71,9 +71,10 @@ create Association APRrofilChatbotToCodeProfil {
 
 create DtDefinition DtPersonChatbotProfil {
 	field botId 		{domain: DoId 					label: "Chatbot selection" 			}
+	field perId 		{domain: DoId 					label: "Person id" 			        }
 	field chpId 		{domain: DoId 					label: "ProfilPerPerson id"	 		}
 	field name			{domain: DoLabel 				label: "Person name" 				}
-	field profilLabel	{domain: DoLabel				label: "Profil label" 			}
+	field profilLabel	{domain: DoLabel				label: "Profil label" 			    }
 }
 
 create DtDefinition DtSelectProfilChatbotPerson {

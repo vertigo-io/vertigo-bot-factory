@@ -32,6 +32,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldPersonChatbotProfil$botId,
 	/**
+	 * Person id.
+	 */
+	fldPersonChatbotProfil$perId,
+	/**
 	 * ProfilPerPerson id.
 	 */
 	fldPersonChatbotProfil$chpId,

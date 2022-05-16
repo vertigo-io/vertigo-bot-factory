@@ -50,6 +50,7 @@ public final class ChatbotPAO implements StoreServices {
 			request = "select ppc.bot_id,\n" + 
  " 					ppc.chp_id,\n" + 
  " 					per.name,\n" + 
+ " 					per.per_id,\n" + 
  " 					cp.chp_cd as profil_Label\n" + 
  " 			from profil_per_chatbot ppc \n" + 
  " 			join person per on (per.per_id = ppc.per_id)\n" + 
