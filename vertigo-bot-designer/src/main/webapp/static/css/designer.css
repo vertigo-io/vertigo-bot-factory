@@ -389,3 +389,61 @@ table .col_DoInstant {
 .CodeMirror {
 	resize: vertical;
 }
+
+/*block msg*/
+
+.q-message-text:last-child {
+	background: #C4C4C4;
+	border-radius: 10px;
+}
+
+.q-message-text--received:last-child:before {
+	right: 70px;
+	top: 40px;
+	display: inline-block;
+	transform: rotate(279deg);
+	border-top: 15px solid #C4C4C4;
+	border-right: 10px solid transparent;
+	border-left: 15px solid transparent;
+	border-bottom: 0;
+}
+
+/*warning msg*/
+
+.bg-info {
+	background: white !important;
+	color: black !important;
+	border: 1px solid red;
+	position: relative;
+	padding-left: 4rem;
+}
+
+.bg-info::before {
+	content: '!';
+	color: white;
+	background: red;
+	position: absolute;
+	height: 100%;
+	top: 0;
+	left: 0;
+	padding: 0.9rem 2rem 0.9rem 2rem;
+	font-weight: 700;
+	display: flex;
+	align-items: center;
+}
+
+/* size bots card*/
+
+.toolbar-bot-card {
+	overflow-x: scroll ;
+	border-top: 1px solid white;
+	-ms-overflow-style: none; /* for Internet Explorer, Edge */
+	scrollbar-width: none; /* for Firefox */
+}
+.toolbar-bot-card::-webkit-scrollbar {
+	display: none; /* for Chrome, Safari, and Opera */
+}
+.q-ma-sm {
+	min-height: 100px;
+	min-width: 100px;
+}

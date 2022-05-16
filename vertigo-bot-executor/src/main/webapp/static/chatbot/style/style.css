@@ -102,3 +102,30 @@ img {
 }
 
 .imgClass:hover {opacity: 0.7; !important;}
+
+/*btn send msg*/
+
+.message-response {
+    background: white !important;
+}
+.btn-send {
+    border-radius: 50%;
+    background: #027BE3 !important;
+}
+
+/*block msg*/
+
+.q-message-text:last-child {
+    border-radius: 10px;
+}
+
+.q-message-text:last-child:before {
+    left: 0% !important;
+    top: 38px;
+    display: inline-block;
+    transform: rotate(305deg);
+    border-top: 15px solid;
+    border-right: 10px solid transparent !important;
+    border-left: 15px solid transparent !important;
+    border-bottom: 0 !important;
+}
