@@ -35,9 +35,10 @@ public final class BotResponse {
 	private final Map<String, Object> metadatas;
 	private final BotStatus status;
 	private final Boolean acceptNlu;
+	private final Boolean rating;
 
 	BotResponse(final List<String> htmlTexts, final List<IBotChoice> choices, final List<IBotChoice> cards,
-				final List<IBotChoice> files, final Map<String, Object> metadatas, final BotStatus status, final Boolean acceptNlu) {
+				final List<IBotChoice> files, final Map<String, Object> metadatas, final BotStatus status, final Boolean acceptNlu, final Boolean rating) {
 		this.htmlTexts = Collections.unmodifiableList(htmlTexts);
 		this.choices = Collections.unmodifiableList(choices);
 		this.cards = Collections.unmodifiableList(cards);
@@ -45,6 +46,7 @@ public final class BotResponse {
 		this.metadatas = metadatas;
 		this.status = status;
 		this.acceptNlu = acceptNlu;
+		this.rating = rating;
 	}
 
 	/**

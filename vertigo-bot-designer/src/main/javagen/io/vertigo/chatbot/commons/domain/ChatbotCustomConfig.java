@@ -16,10 +16,6 @@ public final class ChatbotCustomConfig implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private Long cccId;
-	private Boolean rating;
-	private String ratingMessage;
-	private Boolean comment;
-	private String commentMessage;
 	private String botEmailAddress;
 	private Boolean reinitializationButton;
 	private String backgroundColor;
@@ -66,82 +62,6 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setCccId(final Long cccId) {
 		this.cccId = cccId;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Rating'.
-	 * @return Boolean rating <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Rating")
-	public Boolean getRating() {
-		return rating;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Rating'.
-	 * @param rating Boolean <b>Obligatoire</b>
-	 */
-	public void setRating(final Boolean rating) {
-		this.rating = rating;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Rating message'.
-	 * @return String ratingMessage
-	 */
-	@Field(smartType = "STyLabel", label = "Rating message")
-	public String getRatingMessage() {
-		return ratingMessage;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Rating message'.
-	 * @param ratingMessage String
-	 */
-	public void setRatingMessage(final String ratingMessage) {
-		this.ratingMessage = ratingMessage;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Comment'.
-	 * @return Boolean comment <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Comment")
-	public Boolean getComment() {
-		return comment;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Comment'.
-	 * @param comment Boolean <b>Obligatoire</b>
-	 */
-	public void setComment(final Boolean comment) {
-		this.comment = comment;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Comment message'.
-	 * @return String commentMessage
-	 */
-	@Field(smartType = "STyLabel", label = "Comment message")
-	public String getCommentMessage() {
-		return commentMessage;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Comment message'.
-	 * @param commentMessage String
-	 */
-	public void setCommentMessage(final String commentMessage) {
-		this.commentMessage = commentMessage;
 	}
 	
 	/**

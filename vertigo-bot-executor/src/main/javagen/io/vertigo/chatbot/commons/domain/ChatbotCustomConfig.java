@@ -18,12 +18,15 @@ public final class ChatbotCustomConfig implements Entity {
 	private Long cccId;
 	private Boolean rating;
 	private String ratingMessage;
+	private Boolean comment;
+	private String commentMessage;
 	private String botEmailAddress;
 	private Boolean reinitializationButton;
 	private String backgroundColor;
 	private String fontFamily;
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
+	private Boolean disableNlu;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -101,6 +104,44 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setRatingMessage(final String ratingMessage) {
 		this.ratingMessage = ratingMessage;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Comment'.
+	 * @return Boolean comment <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Comment")
+	public Boolean getComment() {
+		return comment;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Comment'.
+	 * @param comment Boolean <b>Obligatoire</b>
+	 */
+	public void setComment(final Boolean comment) {
+		this.comment = comment;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Comment message'.
+	 * @return String commentMessage
+	 */
+	@Field(smartType = "STyLabel", label = "Comment message")
+	public String getCommentMessage() {
+		return commentMessage;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Comment message'.
+	 * @param commentMessage String
+	 */
+	public void setCommentMessage(final String commentMessage) {
+		this.commentMessage = commentMessage;
 	}
 	
 	/**
@@ -215,6 +256,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setTotalMaxAttachmentSize(final Long totalMaxAttachmentSize) {
 		this.totalMaxAttachmentSize = totalMaxAttachmentSize;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Disable NlU'.
+	 * @return Boolean disableNlu
+	 */
+	@Field(smartType = "STyYesNo", label = "Disable NlU")
+	public Boolean getDisableNlu() {
+		return disableNlu;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Disable NlU'.
+	 * @param disableNlu Boolean
+	 */
+	public void setDisableNlu(final Boolean disableNlu) {
+		this.disableNlu = disableNlu;
 	}
 	
 	/**

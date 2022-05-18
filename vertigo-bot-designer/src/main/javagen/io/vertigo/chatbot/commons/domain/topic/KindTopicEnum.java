@@ -12,7 +12,8 @@ public enum KindTopicEnum implements MasterDataEnum<io.vertigo.chatbot.commons.d
 	FAILURE("FAILURE"), //
 	NORMAL("NORMAL"), //
 	UNREACHABLE("UNREACHABLE"), //
-	IDLE("IDLE")
+	IDLE("IDLE"), //
+	RATING("RATING")
 	;
 
 	private final Serializable entityId;

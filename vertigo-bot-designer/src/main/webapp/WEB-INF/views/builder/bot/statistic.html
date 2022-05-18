@@ -619,7 +619,7 @@
             </q-dialog>
         </div>
 
-        <div class="col-12" v-if="vueData.chatbotCustomConfig.rating">
+        <div class="col-12">
             <vu:table componentId="ratingDetails"  list="ratingDetails"  rowsPerPage="5" sortBy="rating" descending>
                 <vu:column field="date"/>
                 <vu:column field="rating"/>
@@ -629,9 +629,8 @@
         </div>
 
         <vu:include-data-primitive key="ratingStats" />
-        <vu:include-data object="chatbotCustomConfig" field="rating" />
 
-        <div class="col-xl-6 col-md-6 col-xs-12" v-if="vueData.chatbotCustomConfig.rating">
+        <div class="col-xl-6 col-md-6 col-xs-12">
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.rating}"></q-card-section>
                 <q-card-section class="row justify-center items-center">

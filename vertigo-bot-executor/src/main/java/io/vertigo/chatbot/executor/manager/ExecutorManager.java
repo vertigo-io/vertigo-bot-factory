@@ -145,6 +145,12 @@ public class ExecutorManager implements Manager, Activeable {
 			LogsUtils.logOK(logs);
 		}
 
+		if (!StringUtil.isBlank(botExport.getRatingBT())) {
+			LogsUtils.addLogs(logs, "RATING topic addition...");
+			topics.add(TopicDefinition.of(BotEngine.RATING_TOPIC_NAME, btCommandManager.parse(botExport.getRatingBT())));
+			LogsUtils.logOK(logs);
+		}
+
 		for (final TopicExport topic : botExport.getTopics()) {
 			LogsUtils.addLogs(logs, topic.getName(), " topic addition...");
 			topics.add(TopicDefinition.of(topic.getName(), btCommandManager.parse(topic.getTopicBT()), topic.getNluTrainingSentences(), nluThreshold, topic.getUnreachable()));

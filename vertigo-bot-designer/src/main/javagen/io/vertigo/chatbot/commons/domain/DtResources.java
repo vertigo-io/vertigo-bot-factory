@@ -112,6 +112,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$idleBT,
 	/**
+	 * rating BT.
+	 */
+	fldBotExport$ratingBT,
+	/**
 	 * topics export.
 	 */
 	fldBotExport$topics,
@@ -171,22 +175,6 @@ public enum DtResources implements MessageKey {
 	 * Context value id.
 	 */
 	fldChatbotCustomConfig$cccId,
-	/**
-	 * Rating.
-	 */
-	fldChatbotCustomConfig$rating,
-	/**
-	 * Rating message.
-	 */
-	fldChatbotCustomConfig$ratingMessage,
-	/**
-	 * Comment.
-	 */
-	fldChatbotCustomConfig$comment,
-	/**
-	 * Comment message.
-	 */
-	fldChatbotCustomConfig$commentMessage,
 	/**
 	 * Bot email address.
 	 */

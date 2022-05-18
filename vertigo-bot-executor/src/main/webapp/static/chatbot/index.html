@@ -81,6 +81,12 @@
                       :stamp="msg.stamp"
                       :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily"
                     ></q-chat-message>
+                    <q-chat-message :style="'--background-color: ' + customConfig.backgroundColor" v-if="msg.rating" class="animate-fade" bg-color="primary" sent >
+                      <q-rating v-model="inputConfig.rating" style="font-size: 2rem;"
+                                icon="star_border"
+                                disable
+                                icon-selected="star"></q-rating>
+                    </q-chat-message>
                   </div>
                   <div class="sys-chat">
                     <q-chat-message
@@ -118,7 +124,7 @@
                                 icon="star_border"
                                 icon-selected="star"
                                 icon-half="star_half"
-                                @input="rateBot"></q-rating>
+                                @input="postAnswerText(true)"></q-rating>
                     </q-chat-message>
                   </div>
                   <div v-if="inputConfig.cards.length > 0 || inputConfig.buttons.length > 0 || inputConfig.files.length > 0"
@@ -187,45 +193,24 @@
           <div class="message-response row docs-btn non-selectable">
             <div class="col-grow">
               <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
-                       v-if="!inputConfig.showCommentInput"
                        ref="input"
                        :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily"
                        class="bg-white q-px-sm round-borders"
-                       @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText()"
+                       @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
                        :max-height="100"
                        v-model="inputConfig.responseText"
                        placeholder="Répondre"
                        :disable="processing || error || !acceptNlu || customConfig.disableNlu"
                        :loading="processing"></q-input>
-              <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
-                       v-else
-                       ref="input"
-                       :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily"
-                       class="bg-white q-px-sm round-borders"
-                       @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : sendRate()"
-                       :max-height="100"
-                       v-model="inputConfig.responseText"
-                       placeholder="Répondre"
-                       :loading="processing"></q-input>
             </div>
 
             <q-btn round
-                   v-if="!inputConfig.showCommentInput"
                    color="primary"
                    :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor"
                    style="margin-top: 0px;"
                    class="btn-send"
                    icon="send"
-                   @click="postAnswerText()"
-                   :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
-
-            <q-btn round
-                   v-else
-                   color="primary"
-                   :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor"
-                   style="margin-top: 0px;"
-                   icon="send"
-                   @click="sendRate()"
+                   @click="postAnswerText(false)"
                    :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
             <q-btn round
                    color="red"

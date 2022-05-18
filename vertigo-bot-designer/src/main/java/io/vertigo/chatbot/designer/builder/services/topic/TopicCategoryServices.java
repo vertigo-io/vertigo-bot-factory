@@ -59,6 +59,11 @@ public class TopicCategoryServices implements Component {
 		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId(), Optional.empty(), Optional.of(false));
 	}
 
+	public Optional<TopicCategory> getTechnicalCategoryByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId(), Optional.empty(), Optional.of(true))
+				.stream().filter(topicCategory -> topicCategory.getCode().equals(DEFAULT_TOPIC_CAT_CODE)).findFirst();
+	}
+
 	public DtList<TopicCategory> getAllActiveCategoriesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return topicCategoryDAO.getAllCategoriesByBotId(bot.getBotId(), Optional.of(true), Optional.of(false));
 	}

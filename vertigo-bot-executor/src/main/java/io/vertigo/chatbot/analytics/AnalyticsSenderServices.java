@@ -55,6 +55,12 @@ public class AnalyticsSenderServices implements Component {
 	private void sendBotInputEvent(final UUID sessionId, final BotInput input, final ExecutorConfiguration executorConfiguration) {
 		if (input.getMessage() != null) {
 			sendConversationEvent(sessionId, input.getMessage(), true, executorConfiguration);
+		} else if (input.getMetadatas().get("rating") != null) {
+			final String rating = (String) input.getMetadatas().get("rating");
+			final IncomeRating incomeRating = new IncomeRating();
+			incomeRating.setNote(Integer.parseInt(rating));
+			rate(sessionId, incomeRating, executorConfiguration);
+			sendConversationEvent(sessionId, rating, true, executorConfiguration);
 		} else if (input.getMetadatas().get("text") != null) {
 			sendConversationEvent(sessionId, (String) input.getMetadatas().get("text"), true, executorConfiguration);
 		} else if (input.getMetadatas().get("filename") != null) {
@@ -77,6 +83,8 @@ public class AnalyticsSenderServices implements Component {
 		//test if topic is a fallback topic
 		if (codeTopic.equals(BotEngine.FALLBACK_TOPIC_NAME)) {
 			prepareFallBackEvent(processBuilder);
+		} else if (codeTopic.equals(BotEngine.RATING_TOPIC_NAME)) {
+			prepareRatingEvent(processBuilder);
 		} else {
 			processBuilder.setMeasure(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.FALSE_BIGDECIMAL);
 		}
@@ -90,6 +98,13 @@ public class AnalyticsSenderServices implements Component {
 
 	}
 
+	private static void prepareRatingEvent(final AProcessBuilder builder) {
+		builder
+				.setMeasure(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
+				.setMeasure(AnalyticsUtils.RATING_KEY, AnalyticsUtils.TRUE_BIGDECIMAL);
+
+	}
+
 	//Send all the topics passed during the sequence in BT
 	private void sendPastTopics(final UUID sessionId, final List<TopicDefinition> topicsPast, final ExecutorConfiguration executorConfiguration) {
 		boolean isFirst = true;
@@ -97,11 +112,11 @@ public class AnalyticsSenderServices implements Component {
 		for (final TopicDefinition topic : topicsPast) {
 			//Create the measurements
 			final String codeTopic = topic.getCode();
-			final boolean isEnd = codeTopic.equals(BotEngine.END_TOPIC_NAME);
+			final boolean isTechnical = codeTopic.equals(BotEngine.END_TOPIC_NAME) || codeTopic.equals(BotEngine.RATING_TOPIC_NAME);
 			final String type = isFirst ? AnalyticsUtils.BUTTONS_INPUT_KEY : AnalyticsUtils.SWITCH_INPUT_KEY;
 			final AProcessBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(codeTopic, type)
 					.addTag(AnalyticsUtils.TYPE_KEY, isFirst ? AnalyticsUtils.BUTTONS_INPUT_KEY : AnalyticsUtils.SWITCH_INPUT_KEY)
-					.setMeasure(AnalyticsUtils.TECHNICAL_KEY, isEnd ? AnalyticsUtils.TRUE_BIGDECIMAL : AnalyticsUtils.FALSE_BIGDECIMAL)
+					.setMeasure(AnalyticsUtils.TECHNICAL_KEY, isTechnical ? AnalyticsUtils.TRUE_BIGDECIMAL : AnalyticsUtils.FALSE_BIGDECIMAL)
 					.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
 					.setMeasure(AnalyticsUtils.NLU_KEY, AnalyticsUtils.FALSE_BIGDECIMAL);
 			sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);

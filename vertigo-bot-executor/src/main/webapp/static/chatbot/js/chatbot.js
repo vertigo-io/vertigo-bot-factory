@@ -71,17 +71,12 @@ const chatbot = new Vue({
                 responseText: '',
                 responsePattern: '',
                 showRating: false,
-                showCommentInput: false,
                 rating: 0,
                 buttons: [],
                 cards: [],
                 files: []
             },
             customConfig: {
-                useRating: false,
-                useComment: false,
-                ratingMessage: 'Merci !',
-                commentMessage: 'Veuillez laisser un commentaire',
                 reinitializationButton: false,
                 backgroundColor: 'black',
                 fontFamily: 'Arial, Helvetica, sans-serif',
@@ -95,6 +90,7 @@ const chatbot = new Vue({
             lastPayload: null,
             processing: false,
             acceptNlu: true,
+            rating: false,
             error: false,
             messages: [],
             keepAction: false,
@@ -152,10 +148,6 @@ const chatbot = new Vue({
                         this.$http.post(chatbot.botUrl + '/start', {message: null, metadatas: {'context': chatbot.context}})
                             .then(httpResponse => {
                                 chatbot.convId = httpResponse.data.metadatas.sessionId;
-                                chatbot.customConfig.useRating = httpResponse.data.metadatas.customConfig.rating;
-                                chatbot.customConfig.useComment = httpResponse.data.metadatas.customConfig.comment;
-                                chatbot.customConfig.ratingMessage = httpResponse.data.metadatas.customConfig.ratingMessage;
-                                chatbot.customConfig.commentMessage = httpResponse.data.metadatas.customConfig.commentMessage;
                                 chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
                                 chatbot.customConfig.backgroundColor = httpResponse.data.metadatas.customConfig.backgroundColor;
                                 chatbot.customConfig.fontFamily = httpResponse.data.metadatas.customConfig.fontFamily;
@@ -196,43 +188,53 @@ const chatbot = new Vue({
                     link.click();
                     document.body.removeChild(link);
                 }
-                chatbot.askBot(btn.payload, btn.label, true, null,null);
+                chatbot.askBot(btn.payload, btn.label, true, null,null, false);
             },
             fileUpload(btn, index) {
                 const file = document.getElementById('file_' + index).files[0];
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = function (evt) {
-                    chatbot.askBot(btn.payload, null,false, evt.target.result, file.name);
+                    chatbot.askBot(btn.payload, null,false, evt.target.result, file.name, false);
                 };
             }
             ,
-            postAnswerText() {
-                const sanitizedString = chatbot.inputConfig.responseText.trim().replace(/(?:\r\n|\r|\n)/g, '<br>');
-
-                chatbot.messages.push({
-                    text: sanitizedString !== '' ? [sanitizedString] : null,
-                    rating: chatbot.inputConfig.rating > 0 ? chatbot.inputConfig.rating : null,
-                    sent: true,
-                    bgColor: 'primary',
-                    textColor: 'white'
-                });
+            postAnswerText(isRating) {
+                let sanitizedString = '';
+                if (isRating) {
+                    sanitizedString = chatbot.inputConfig.rating.toString();
+                    chatbot.inputConfig.showRating = false;
+                    chatbot.messages.push({
+                        text: null,
+                        rating: true,
+                        sent: true,
+                        bgColor: 'primary',
+                        textColor: 'white'
+                    });
+                } else {
+                    sanitizedString = chatbot.inputConfig.responseText.trim().replace(/(?:\r\n|\r|\n)/g, '<br>');
+                    chatbot.messages.push({
+                        text: sanitizedString !== '' ? [sanitizedString] : null,
+                        rating: isRating,
+                        sent: true,
+                        bgColor: 'primary',
+                        textColor: 'white'
+                    });
+                }
                 chatbot.updateSessionStorage();
 
                 chatbot._scrollToBottom();
 
                 const response = chatbot.inputConfig.responsePattern === '' ? sanitizedString.replace(/(")/g, '"')
                     : chatbot.inputConfig.responsePattern.replace('#', sanitizedString.replace(/(")/g, '\\"'));
-
-                chatbot.askBot(response, null,false, null, null);
-            }
-            ,
+                chatbot.askBot(response, null, false, null, null, isRating);
+            },
             _scrollToBottom() {
                 const scrollHeight = this.$refs.scroller.$el.children[0].children[0].scrollHeight; // workaround
                 this.$refs.scroller.setScrollPosition(scrollHeight, 400);
             }
             ,
-            askBot(value, label, isButton, fileContent, fileName) {
+            askBot(value, label, isButton, fileContent, fileName, rating) {
                 chatbot.prevInputConfig = JSON.parse(JSON.stringify(chatbot.inputConfig));
                 chatbot.reinitInput();
                 chatbot.lastPayload = value;
@@ -244,6 +246,8 @@ const chatbot = new Vue({
                     botInput = { message: null, metadatas: { context: chatbot.context, payload: value, filecontent: fileContent, filename: fileName } };
                 } else if (isButton) {
                     botInput = { message: null, metadatas: { context: chatbot.context, payload: value, text: label } };
+                } else if (rating) {
+                    botInput = { message: null, metadatas: { context: chatbot.context, rating: value, text: value } };
                 } else {
                     botInput = { message: value, metadatas: { context: chatbot.context } };
                 }
@@ -268,6 +272,7 @@ const chatbot = new Vue({
                 const cards = httpResponse.data.cards;
                 const files = httpResponse.data.files;
                 chatbot.acceptNlu = httpResponse.data.acceptNlu;
+                chatbot.rating = httpResponse.data.rating;
                 chatbot.isEnded = httpResponse.data.status === 'Ended' && !isRating;
                 if (httpResponse.data.metadatas && httpResponse.data.metadatas.avatar) {
                     chatbot.botAvatar = 'data:image/png;base64,' + httpResponse.data.metadatas.avatar;
@@ -300,6 +305,7 @@ const chatbot = new Vue({
                         chatbot._displayMessages();
                     });
                 } else {
+                    chatbot.inputConfig.showRating = chatbot.rating;
                     chatbot.processing = false;
                     if (chatbot.keepAction) {
                         chatbot.inputConfig = chatbot.prevInputConfig;
@@ -308,15 +314,6 @@ const chatbot = new Vue({
                         chatbot.updateSessionStorage();
                     }
 
-                    // en différé le temps que la vue soit mise à jour
-                    sleep(1).then(function() {
-                        // si les dialogues sont fermés
-                        if (chatbot.customConfig.useRating) {
-                            chatbot.inputConfig.showRating = chatbot.isEnded;
-                            chatbot.updateSessionStorage();
-                            chatbot.focusInput();
-                        }
-                    });
                 }
             }
             ,
@@ -376,8 +373,6 @@ const chatbot = new Vue({
                 chatbot.inputConfig.modeTextarea = false;
                 chatbot.inputConfig.responsePattern = '';
                 chatbot.inputConfig.responseText = '';
-                chatbot.inputConfig.rating = 0;
-                chatbot.inputConfig.showCommentInput = false;
                 chatbot.inputConfig.buttons = [];
                 chatbot.inputConfig.cards = [];
                 chatbot.inputConfig.files = [];
@@ -393,56 +388,20 @@ const chatbot = new Vue({
                     responseText: '',
                     responsePattern: '',
                     showRating: false,
-                    showCommentInput: false,
                     rating: 0,
                     buttons: [],
                     files: [],
                     cards: []
                 };
                 chatbot.customConfig = {
-                    useRating: false,
-                    ratingMessage: 'Merci !'
                 };
                 chatbot.error = false;
                 chatbot.convId = null;
                 chatbot.contextMap = {};
                 chatbot.messages = [];
+                chatbot.rating = false;
                 chatbot.clearSessionStorage();
                 chatbot.initBot();
-            },
-            rateBot(){
-                if (chatbot.customConfig.useComment) {
-                    chatbot.inputConfig.showCommentInput = true;
-                    chatbot.inputConfig.showRating = false;
-                    chatbot.messages.push({
-                        avatar: chatbot.botAvatar,
-                        text: [chatbot.customConfig.commentMessage],
-                        bgColor: 'grey-grdf'
-                    });
-                } else {
-                    this.$http.post(chatbot.botUrl + '/rating/' + chatbot.convId, {note: chatbot.inputConfig.rating})
-                        .then(httpResponse => {
-                            httpResponse.data = {htmlTexts: [chatbot.customConfig.ratingMessage]};
-                            chatbot._handleResponse(httpResponse, true);
-                        });
-                }
-            },
-            sendRate() {
-                const sanitizedString = chatbot.inputConfig.responseText.trim().replace(/(?:\r\n|\r|\n)/g, '<br>');
-                chatbot.messages.push({
-                    text: sanitizedString !== '' ? [sanitizedString] : null,
-                    rating: chatbot.inputConfig.rating > 0 ? chatbot.inputConfig.rating : null,
-                    sent: true,
-                    bgColor: 'primary',
-                    textColor: 'white'
-                });
-                this.$http.post(chatbot.botUrl + '/rating/' + chatbot.convId, {note: chatbot.inputConfig.rating, comment: sanitizedString})
-                    .then(httpResponse => {
-                        httpResponse.data = {htmlTexts : [chatbot.customConfig.ratingMessage]};
-                        chatbot.inputConfig.showCommentInput = false;
-                        chatbot.reinitInput();
-                        chatbot._handleResponse(httpResponse, true);
-                });
             },
             close() {
                 parent.postMessage('Chatbot.close', '*');

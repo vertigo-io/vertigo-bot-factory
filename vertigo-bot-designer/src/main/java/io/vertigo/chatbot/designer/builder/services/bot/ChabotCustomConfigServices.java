@@ -29,13 +29,13 @@ public class ChabotCustomConfigServices implements Component {
 		return chatbotCustomConfigDAO.get(id);
 	}
 
-	public ChatbotCustomConfig save(@SecuredOperation("botAdm") final Chatbot bot, ChatbotCustomConfig chatbotCustomConfig) {
+	public ChatbotCustomConfig save(@SecuredOperation("botAdm") final Chatbot bot, final ChatbotCustomConfig chatbotCustomConfig) {
 		if (chatbotCustomConfig.getCccId() != null) {
-			ChatbotCustomConfig oldChatbotCustomConfig = chatbotCustomConfigDAO.get(chatbotCustomConfig.getCccId());
-			if (oldChatbotCustomConfig.getRating() != chatbotCustomConfig.getRating() ||
+			final ChatbotCustomConfig oldChatbotCustomConfig = chatbotCustomConfigDAO.get(chatbotCustomConfig.getCccId());
+			/*if (oldChatbotCustomConfig.getRating() != chatbotCustomConfig.getRating() ||
 					(oldChatbotCustomConfig.getRatingMessage() != null && !oldChatbotCustomConfig.getRatingMessage().equals(chatbotCustomConfig.getRatingMessage()))) {
 				nodeServices.updateNodes(bot);
-			}
+			}*/
 		} else {
 			nodeServices.updateNodes(bot);
 		}
@@ -44,7 +44,7 @@ public class ChabotCustomConfigServices implements Component {
 	}
 
 	public void deleteChatbotCustomConfig(@SecuredOperation("botAdm") final Chatbot bot) {
-		ChatbotCustomConfig chatbotCustomConfig = getChatbotCustomConfigByBotId(bot.getBotId());
+		final ChatbotCustomConfig chatbotCustomConfig = getChatbotCustomConfigByBotId(bot.getBotId());
 		if (chatbotCustomConfig.getCccId() != null) {
 			chatbotCustomConfigDAO.delete(chatbotCustomConfig.getCccId());
 		}
@@ -52,16 +52,14 @@ public class ChabotCustomConfigServices implements Component {
 
 	public ChatbotCustomConfig getChatbotCustomConfigByBotId(final Long botId) {
 		return chatbotCustomConfigDAO.findOptional(Criterions.isEqualTo(DtDefinitions.ChatbotCustomConfigFields.botId, botId)).orElseGet(() -> {
-			ChatbotCustomConfig chatbotCustomConfig = getDefaultChatbotCustomConfig();
+			final ChatbotCustomConfig chatbotCustomConfig = getDefaultChatbotCustomConfig();
 			chatbotCustomConfig.setBotId(botId);
 			return chatbotCustomConfig;
 		});
 	}
 
 	public ChatbotCustomConfig getDefaultChatbotCustomConfig() {
-		ChatbotCustomConfig chatbotCustomConfig = new ChatbotCustomConfig();
-		chatbotCustomConfig.setRating(false);
-		chatbotCustomConfig.setRatingMessage("");
+		final ChatbotCustomConfig chatbotCustomConfig = new ChatbotCustomConfig();
 		chatbotCustomConfig.setReinitializationButton(false);
 		return chatbotCustomConfig;
 	}

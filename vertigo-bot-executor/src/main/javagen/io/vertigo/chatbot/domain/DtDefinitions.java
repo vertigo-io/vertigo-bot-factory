@@ -128,6 +128,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fallbackBT,
 		/** Propriété 'idle BT'. */
 		idleBT,
+		/** Propriété 'rating BT'. */
+		ratingBT,
 		/** Propriété 'topics export'. */
 		topics,
 		/** Propriété 'Welcome tours map'. */
@@ -168,6 +170,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		rating,
 		/** Propriété 'Rating message'. */
 		ratingMessage,
+		/** Propriété 'Comment'. */
+		comment,
+		/** Propriété 'Comment message'. */
+		commentMessage,
 		/** Propriété 'Bot email address'. */
 		botEmailAddress,
 		/** Propriété 'Reinitialization button'. */
@@ -180,6 +186,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		displayAvatar,
 		/** Propriété 'Total maximum attachment size'. */
 		totalMaxAttachmentSize,
+		/** Propriété 'Disable NlU'. */
+		disableNlu,
 		/** Propriété 'Chatbot'. */
 		botId	}
 

@@ -129,10 +129,11 @@ public final class BotNodeProvider {
 
 	private static BTNode queryInteger(final BlackBoard bb, final String keyTemplate, final String question, final Predicate<String> validator) {
 		return sequence(
+				set(bb, BotEngine.BOT_RATING_KEY.key(), "true"),
 				say(bb, question),
 				() -> {
-					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/key"), keyTemplate);
-					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/type"), "integer");
+					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/integer/key"), keyTemplate);
+					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/integer/type"), "integer");
 					bb.putInteger(BBKey.of(BotEngine.BOT_OUT_METADATA_PATH, "/accepttext"), 1);
 					return BTStatus.Running;
 				});
@@ -195,8 +196,13 @@ public final class BotNodeProvider {
 		return doSayOnce(bb, msg, BotEngine.USER_LOCAL_PATH);
 	}
 
+	public static BTNode rating(final BlackBoard bb, final String keyTemplate, final String msg) {
+		return inputInteger(bb, keyTemplate, msg);
+	}
+
+
 	private static BTNode doSayOnce(final BlackBoard bb, final String msg, final BBKey storeTree) {
-		MessageDigest md;
+		final MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("MD5");
 		} catch (final NoSuchAlgorithmException e) {
@@ -213,7 +219,7 @@ public final class BotNodeProvider {
 	}
 
 	public static BTNode doNodeOncePerTree(final BlackBoard bb, final BTNode node, final String msg) {
-		MessageDigest md;
+		final MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("MD5");
 		} catch (final NoSuchAlgorithmException e) {
@@ -309,7 +315,7 @@ public final class BotNodeProvider {
 		};
 	}
 
-	public static String formatImageUrl(String url) {
+	public static String formatImageUrl(final String url) {
 		Assertion.check().isNotNull(url);
 		Assertion.check().isTrue(isValidURL(url), "Not a valid URL");
 		return "<img src='" + url + "' class='imgClass' />";
@@ -325,12 +331,12 @@ public final class BotNodeProvider {
 		return "<a href='" + url + "' target='"+target+"' >" + url + "</a>";
 	}
 
-	public static boolean isValidURL(String url) {
+	public static boolean isValidURL(final String url) {
 		try {
-			URL validUrl = new URL(url);
+			final URL validUrl = new URL(url);
 			validUrl.toURI();
 			return true;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return false;
 		}
 	}
@@ -432,7 +438,7 @@ public final class BotNodeProvider {
 
 		int choiceNumber = 0;
 		for (final IBotChoice button : buttons) {
-			String className = clazzs.stream().filter(clazz -> clazz.isAssignableFrom(button.getClass()))
+			final String className = clazzs.stream().filter(clazz -> clazz.isAssignableFrom(button.getClass()))
 					.findFirst().orElseThrow().getName();
 
 			sequence.add(set(bb, BotEngine.BOT_CHOICES_KEY.key() + "/" + choiceNumber +  "/class", className));
