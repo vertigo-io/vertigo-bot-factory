@@ -249,13 +249,22 @@ public class TopicServices implements Component, Activeable {
 		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), kindTopics, locale);
 	}
 
-	public DtList<TopicIhm> getAllTechnicalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot, final String locale) {
+	public DtList<TopicIhm> getAllTechnicalTopicIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot, final String locale, final TopicCategory topicCategory) {
 		final List<String> kindTopics = new ArrayList<>();
 		kindTopics.add(KindTopicEnum.START.name());
 		kindTopics.add(KindTopicEnum.FAILURE.name());
 		kindTopics.add(KindTopicEnum.END.name());
 		kindTopics.add(KindTopicEnum.IDLE.name());
-		return topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), kindTopics, locale);
+		kindTopics.add(KindTopicEnum.RATING.name());
+		final DtList<TopicIhm> topicIhms = topicPAO.getAllTopicsIhmFromBot(bot.getBotId(), kindTopics, locale);
+		kindTopics.forEach(kindTopic -> {
+			if (topicIhms.stream().noneMatch(topicIhm -> topicIhm.getCode().equals(kindTopic))) {
+				Topic topic = initNewBasicTopic(bot, kindTopic, topicCategory.getTopCatId(), locale);
+				topic = saveBotTopic(bot, topic, UtterTextServices.initializeDefaultText(topic.getKtoCd()));
+				topicIhms.add(topicPAO.getTopicIhmById(topic.getTopId()));
+			}
+		});
+		return topicIhms;
 	}
 
 	public DtList<Topic> getTopicReferencingTopId(final Long topId) {
@@ -269,7 +278,7 @@ public class TopicServices implements Component, Activeable {
 		topic.setIsEnabled(true);
 		topic.setTitle(locale.equals(Locale.FRANCE.toString()) ? kto.getLabelFr() : kto.getLabel());
 		topic.setTopCatId(catId);
-		if (ktoCd.equals(KindTopicEnum.IDLE.name())) {
+		if (ktoCd.equals(KindTopicEnum.IDLE.name()) || ktoCd.equals(KindTopicEnum.RATING.name())) {
 			topic.setTtoCd(TypeTopicEnum.SCRIPTINTENTION.name());
 		} else {
 			topic.setTtoCd(TypeTopicEnum.SMALLTALK.name());
@@ -301,7 +310,7 @@ public class TopicServices implements Component, Activeable {
 	}
 
 	public List<String> getTechnicalKindTopics() {
-		return List.of(KindTopicEnum.START.name(), KindTopicEnum.END.name(), KindTopicEnum.FAILURE.name(), KindTopicEnum.IDLE.name());
+		return List.of(KindTopicEnum.START.name(), KindTopicEnum.END.name(), KindTopicEnum.FAILURE.name(), KindTopicEnum.IDLE.name(), KindTopicEnum.RATING.name());
 	}
 
 	public Topic saveTtoCd(final Topic topic, final String ttoCd, final Chatbot bot) {

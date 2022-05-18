@@ -39,8 +39,9 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 	private final Map<String, Object> metadatas;
 	private final BotStatus status;
 	private final Boolean acceptNlu;
+	private final Boolean rating;
 
-	public BotResponseBuilder(final BotStatus status, final Boolean acceptNlu) {
+	public BotResponseBuilder(final BotStatus status, final Boolean acceptNlu, final Boolean rating) {
 		Assertion.check()
 				.isNotNull(status);
 		//--
@@ -51,6 +52,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 		metadatas = new HashMap<>();
 		this.acceptNlu = acceptNlu;
 		this.status = status;
+		this.rating = rating;
 	}
 
 	public BotResponseBuilder addMessage(final String message) {
@@ -113,7 +115,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 
 	@Override
 	public BotResponse build() {
-		return new BotResponse(htmlTexts, botChoices, botCards, botFiles, metadatas, status, acceptNlu);
+		return new BotResponse(htmlTexts, botChoices, botCards, botFiles, metadatas, status, acceptNlu, rating);
 	}
 
 }

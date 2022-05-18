@@ -90,32 +90,12 @@
 			
 			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="typeTopicList" field="'*'" />
-
-			<vu:block id="rating" th:title="#{bot.rating}">
-				<vu:include-data object="chatbotCustomConfig" field="rating" modifiable="true" />
-				<vu:include-data object="chatbotCustomConfig" field="ratingMessage" modifiable="true" />
-				<vu:include-data object="chatbotCustomConfig" field="comment" modifiable="true" />
-				<vu:include-data object="chatbotCustomConfig" field="commentMessage" modifiable="true" />
-				<vu:include-data object="chatbotCustomConfig" field="botEmailAddress" modifiable="true" />
-				<vu:include-data object="chatbotCustomConfig" field="reinitializationButton" modifiable="true" />
-				<vu:include-data object="chatbotCustomConfig" field="disableNlu" modifiable="true" />
-				<vu:include-data object="chatbotCustomConfig" field="backgroundColor" modifiable="true" />
-				<vu:include-data object="chatbotCustomConfig" field="fontFamily" modifiable="true" />
-				<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
-
-				<div>
-					<q-toggle left-label th:label="#{bot.rating.activate}" v-model="vueData.chatbotCustomConfig.rating" th::disable="${model.modeReadOnly}"></q-toggle>
-					<input type="hidden" name="vContext[chatbotCustomConfig][rating]" :value="vueData.chatbotCustomConfig.rating"/>
-					<q-input v-model="vueData.chatbotCustomConfig.ratingMessage"  :error="hasFieldsError('chatbotCustomConfig', 'ratingMessage')"
-							 :error-message="getErrorMessage('chatbotCustomConfig', 'ratingMessage')" name="vContext[chatbotCustomConfig][ratingMessage]" th:label="#{bot.rating.message}" th::disable="${model.modeReadOnly}" />
-				</div>
-				<div>
-					<q-toggle left-label th:label="#{bot.comment.activate}" v-model="vueData.chatbotCustomConfig.comment" th::disable="${model.modeReadOnly}"></q-toggle>
-					<input type="hidden" name="vContext[chatbotCustomConfig][comment]" :value="vueData.chatbotCustomConfig.comment"/>
-					<q-input v-model="vueData.chatbotCustomConfig.commentMessage"  :error="hasFieldsError('chatbotCustomConfig', 'commentMessage')"
-							 :error-message="getErrorMessage('chatbotCustomConfig', 'commentMessage')" name="vContext[chatbotCustomConfig][commentMessage]" th:label="#{bot.comment.message}" th::disable="${model.modeReadOnly}" />
-				</div>
-			</vu:block>
+			<vu:include-data object="chatbotCustomConfig" field="botEmailAddress" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="reinitializationButton" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="disableNlu" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="backgroundColor" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="fontFamily" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
 			<vu:block id="botEmail" th:title="#{bot.email.address}">
 				<q-input v-model="vueData.chatbotCustomConfig.botEmailAddress" :error="hasFieldsError('chatbotCustomConfig', 'botEmailAddress')"
 						 :error-message="getErrorMessage('chatbotCustomConfig', 'botEmailAddress')"  name="vContext[chatbotCustomConfig][botEmailAddress]"

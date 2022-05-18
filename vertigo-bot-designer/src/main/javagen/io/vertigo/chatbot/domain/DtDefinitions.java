@@ -256,6 +256,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fallbackBT,
 		/** Propriété 'idle BT'. */
 		idleBT,
+		/** Propriété 'rating BT'. */
+		ratingBT,
 		/** Propriété 'topics export'. */
 		topics,
 		/** Propriété 'Welcome tours map'. */
@@ -305,14 +307,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum ChatbotCustomConfigFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotCustomConfig> {
 		/** Propriété 'Context value id'. */
 		cccId,
-		/** Propriété 'Rating'. */
-		rating,
-		/** Propriété 'Rating message'. */
-		ratingMessage,
-		/** Propriété 'Comment'. */
-		comment,
-		/** Propriété 'Comment message'. */
-		commentMessage,
 		/** Propriété 'Bot email address'. */
 		botEmailAddress,
 		/** Propriété 'Reinitialization button'. */

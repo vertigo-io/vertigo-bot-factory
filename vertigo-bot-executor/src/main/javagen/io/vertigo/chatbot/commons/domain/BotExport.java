@@ -18,6 +18,7 @@ public final class BotExport implements DtObject {
 	private String endBT;
 	private String fallbackBT;
 	private String idleBT;
+	private String ratingBT;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.TopicExport.class);
 	private String welcomeTours;
 	private io.vertigo.chatbot.commons.domain.ConfluenceSettingExport confluenceSetting;
@@ -118,6 +119,25 @@ public final class BotExport implements DtObject {
 	 */
 	public void setIdleBT(final String idleBT) {
 		this.idleBT = idleBT;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'rating BT'.
+	 * @return String ratingBT <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "rating BT")
+	public String getRatingBT() {
+		return ratingBT;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'rating BT'.
+	 * @param ratingBT String <b>Obligatoire</b>
+	 */
+	public void setRatingBT(final String ratingBT) {
+		this.ratingBT = ratingBT;
 	}
 	
 	/**

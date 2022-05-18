@@ -8,5 +8,6 @@ public enum KindTopicMultilingualResources implements MessageKey {
 	DEFAULT_FALLBACK,
 	DEFAULT_END,
 	DEFAULT_IDLE,
+	DEFAULT_RATING
 
 }

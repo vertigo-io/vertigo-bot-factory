@@ -47,6 +47,7 @@ public class BotEngine {
 	public static final String END_TOPIC_NAME = "!END";
 	public static final String FALLBACK_TOPIC_NAME = "!FALLBACK";
 	public static final String IDLE_TOPIC_NAME = "!IDLE";
+	public static final String RATING_TOPIC_NAME = "!RATING";
 	public static final String ANALYTICS_KEY = "analytics";
 	public static final String CONTEXT_KEY = "context";
 
@@ -63,6 +64,7 @@ public class BotEngine {
 
 	public static final BBKey BOT_RESPONSE_KEY = BBKey.of(BOT_OUT_PATH, "/responses");
 	public static final BBKey BOT_CHOICES_KEY = BBKey.of(BOT_OUT_PATH, "/choices");
+	public static final BBKey BOT_RATING_KEY = BBKey.of(BOT_OUT_PATH, "/rating");
 	public static final BBKey BOT_CHOICES_NUMBER_KEY = BBKey.of(BOT_OUT_PATH, "/choicesnumber");
 	public static final BBKey BOT_OUT_METADATA_PATH = BBKey.of(BOT_OUT_PATH, "/metadata");
 
@@ -120,7 +122,7 @@ public class BotEngine {
 
 			// exec
 			status = behaviorTreeManager.run(topic.getBtRoot(List.of(bb)));
-			if (!bb.exists(BOT_NEXT_TOPIC_KEY) && !checkIfExpectingInput() && checkTopicIsNotStartEndOrIdle(topic)) {
+			if (!bb.exists(BOT_NEXT_TOPIC_KEY) && !checkIfExpectingInput() && checkTopicIsNotStartEndOrIdleOrRating(topic)) {
 				bb.putString(BOT_NEXT_TOPIC_KEY, IDLE_TOPIC_NAME);
 			}
 
@@ -141,8 +143,9 @@ public class BotEngine {
 		}
 
 		// build response
-		Boolean expectNluOrText = bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/nlu/key")) || bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/text/key"));
-		final var botResponseBuilder = new BotResponseBuilder(status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking, expectNluOrText);
+		final Boolean expectNluOrText = bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/nlu/key")) || bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/text/key"));
+		final Boolean rating = bb.exists(BBKey.of(BOT_RATING_KEY.key()));
+		final var botResponseBuilder = new BotResponseBuilder(status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking, expectNluOrText, rating);
 		for (int i = 0; i < bb.listSize(BOT_RESPONSE_KEY); i++) {
 			botResponseBuilder.addMessage(bb.listGet(BOT_RESPONSE_KEY, i));
 		}
@@ -159,12 +162,16 @@ public class BotEngine {
 
 	private boolean checkIfExpectingInput() {
 		return bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/text/key")) || bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/button/key"))
+				|| bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/integer/key"))
 				|| bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/filebutton/key"))
 				|| bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/nlu/key"));
 	}
 
-	private boolean checkTopicIsNotStartEndOrIdle(TopicDefinition topic) {
-		return !topic.getCode().equals(IDLE_TOPIC_NAME) && !topic.getCode().equals(START_TOPIC_NAME) && !topic.getCode().equals(END_TOPIC_NAME);
+	private boolean checkTopicIsNotStartEndOrIdleOrRating(final TopicDefinition topic) {
+		return !topic.getCode().equals(IDLE_TOPIC_NAME)
+				&& !topic.getCode().equals(START_TOPIC_NAME)
+				&& !topic.getCode().equals(END_TOPIC_NAME)
+				&& !topic.getCode().equals(RATING_TOPIC_NAME);
 	}
 
 	private static String getKeyName(final BBKey key) {
@@ -194,9 +201,13 @@ public class BotEngine {
 		final String buttonPayload = (String) input.getMetadatas().get("payload");
 		final String fileContent = (String) input.getMetadatas().get("filecontent");
 		final String fileName = (String) input.getMetadatas().get("filename");
+		final String rating = (String) input.getMetadatas().get("rating");
 		Tuple<Double, String> eventLog = Tuple.of(null, null);
 
 		doHandleExpected("text", textMessage, fileContent, fileName);
+		if (rating != null) {
+			doHandleExpected("integer", rating.toString(), fileContent, fileName);
+		}
 		eventLog = doHandleExpected("nlu", textMessage, fileContent, fileName);
 		doHandleExpected("button", buttonPayload, fileContent, fileName);
 		doHandleExpected("filebutton", buttonPayload, fileContent, fileName);
@@ -206,7 +217,7 @@ public class BotEngine {
 		return eventLog;
 	}
 
-	private Tuple<Double, String> doHandleExpected(final String prefix, final String value, String fileContent, String fileName) {
+	private Tuple<Double, String> doHandleExpected(final String prefix, final String value, final String fileContent, final String fileName) {
 		Tuple<Double, String> response = Tuple.of(null, null);
 		if (value != null && bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/key"))) { // if value and expected
 			final var key = bb.getString(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/key"));
@@ -299,7 +310,7 @@ public class BotEngine {
 				final Object[] invokeParams = {params};
 				final Method method = resolveChoiceConstructMethod(choiceNumber);
 				choices.add((IBotChoice) method.invoke(null, invokeParams));
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				throw new VSystemException(e, "Error while calling choice construct method");
 			}
 			choiceNumber++;
@@ -308,7 +319,7 @@ public class BotEngine {
 		return choices;
 	}
 
-	private Method resolveChoiceConstructMethod(int choiceNumber) {
+	private Method resolveChoiceConstructMethod(final int choiceNumber) {
 		final var className = bb.getString(BBKey.of(BOT_CHOICES_KEY, "/" + choiceNumber + "/class"));
 		try {
 			final Class<?> choiceClazz = Class.forName(className);
@@ -321,7 +332,7 @@ public class BotEngine {
 			return method;
 		} catch (final ClassNotFoundException e) {
 			throw new VSystemException(e, "Choice class '{0}' not found", className);
-		} catch (NoSuchMethodException | SecurityException e) {
+		} catch (final NoSuchMethodException | SecurityException e) {
 			throw new VSystemException(e, "Choice class '{0}' do not implements constructing method 'of'", className);
 		}
 	}

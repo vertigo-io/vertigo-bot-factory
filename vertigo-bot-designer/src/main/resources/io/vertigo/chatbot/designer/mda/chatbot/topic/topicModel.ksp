@@ -38,9 +38,9 @@ create DtDefinition DtKindTopic {
         "START" : {
             "ktoCd" : "START",
             "label" : "Start topic",
-            "labelFr": "Intention d'accueil",
+            "labelFr": "Intention d''accueil",
             "description" : "Start topic describes bot behavior when starting a new conversation.",
-            "descriptionFr": "L'intention d'accueil décrit le comportement du bot à l'ouverture de la conversation avec un utilisateur.",
+            "descriptionFr": "L''intention d''accueil décrit le comportement du bot à l''ouverture de la conversation avec un utilisateur.",
             "defaultText" : "Hello !"           
         },
         "END" : {
@@ -48,16 +48,16 @@ create DtDefinition DtKindTopic {
             "label" : "End topic",
             "labelFr": "Intention de clôture",
             "description" : "End topic describes bot behavior when a conversation is ending. It can be followed by an evaluation question.",
-            "descriptionFr": "L'intention de clôture décrit le comportement du bot lorsque la conversation se termine. Cette intention peut être suivie ou non de la phase d'évaluation.",
+            "descriptionFr": "L''intention de clôture décrit le comportement du bot lorsque la conversation se termine. Cette intention peut être suivie ou non de la phase d''évaluation.",
             "defaultText" : "Bye !"   
         },
         "FAILURE" : {
             "ktoCd" : "FAILURE",
             "label" : "Failure topic",
-            "labelFr": "Intention d'erreur",
+            "labelFr": "Intention d''erreur",
             "description" : "Failure topic describes bot behavior when user question was not understood.",
-            "descriptionFr": "L'intention d'erreur décrit le comportement du bot dans le cas où celui-ci n'a pas compris la question de l'utilisateur.",
-            "defaultText" : "Sorry, I don't understand."
+            "descriptionFr": "L''intention d''erreur décrit le comportement du bot dans le cas où celui-ci n''a pas compris la question de l''utilisateur.",
+            "defaultText" : "Sorry, I don''t understand."
         },
          "NORMAL" : {
             "ktoCd" : "NORMAL",
@@ -79,9 +79,17 @@ create DtDefinition DtKindTopic {
             "ktoCd" : "IDLE",
             "label" : "Idle topic",
             "labelFr": "Intention de reprise de conversation",
-            "description" : "When bot answers a question but conversation isn't over, the bot offers to ask another question.",
-            "descriptionFr" : "Dans le cas où le bot répond à la question d'un utilisateur mais que la conversation n'est pas terminée, alors celui-ci relance la conversation en donnant à l'utilisateur l'opportunité de reposer une question ou en lui faisant une nouvelle proposition. C'est ce comportement qui est décrit dans l'intention de reprise de conversation",
+            "description" : "When bot answers a question but conversation isn''t over, the bot offers to ask another question.",
+            "descriptionFr" : "Dans le cas où le bot répond à la question d''un utilisateur mais que la conversation n''est pas terminée, alors celui-ci relance la conversation en donnant à l''utilisateur l''opportunité de reposer une question ou en lui faisant une nouvelle proposition. C''est ce comportement qui est décrit dans l''intention de reprise de conversation",
             "defaultText" : "Something else ?"
+        },
+        "RATING" : {
+            "ktoCd" : "RATING",
+            "label" : "Rating topic",
+            "labelFr": "Intention d''évaluation de la conversation",
+            "description" : "Ask the user for a conversation feedback",
+            "descriptionFr" : "Permet de proposer à l''utilisateur de laisser une appréciation sur la conversation",
+            "defaultText" : "How did it go ?"
         }
 
      }`

@@ -123,6 +123,9 @@ public class UtterTextServices implements Component {
 			case "IDLE":
 				return MessageText.of(KindTopicMultilingualResources.DEFAULT_IDLE).getDisplay();
 
+			case "RATING":
+				return MessageText.of(KindTopicMultilingualResources.DEFAULT_RATING).getDisplay();
+
 			default:
 				return "";
 		}
