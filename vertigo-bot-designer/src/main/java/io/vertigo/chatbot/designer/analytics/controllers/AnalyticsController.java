@@ -135,7 +135,7 @@ public class AnalyticsController extends AbstractDesignerController {
 			throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
 		}
 		switch (selectTypeExportAnalytics.getTeaCd()) {
-			case "SESSIONS":
+			case "USER_ACTIONS_CONVERSATIONS":
 				final DtList<SessionExport> listSessionExport = analyticsExportServices.getSessionExport(criteria);
 				return analyticsExportServices.exportSessions(listSessionExport);
 			case "UNKNOWN_MESSAGES":

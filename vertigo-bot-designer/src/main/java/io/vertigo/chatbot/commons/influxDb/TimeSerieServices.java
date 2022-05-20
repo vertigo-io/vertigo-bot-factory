@@ -105,16 +105,10 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getSessionsExport(final StatCriteria criteria) {
-		final String q = new InfluxRequestBuilder(influxDbName)
-				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isSessionStart"))
-				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "name", "modelName", "botId", "nodId", "traId", "_field", "_value"))
-				.pivot()
-				.filterByColumn(Map.of("isSessionStart", "1"))
-				.build(true);
-
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
+		return InfluxRequestUtil.getTimeSeries(influxDbConnector.getClient(), influxDbName, Arrays.asList("name:count", "isSessionStart:sum"),
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
+				Map.of(),
+				AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
 	/**

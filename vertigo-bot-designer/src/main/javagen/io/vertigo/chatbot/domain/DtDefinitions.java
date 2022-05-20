@@ -941,16 +941,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum SessionExportFields implements DtFieldName<io.vertigo.chatbot.designer.domain.analytics.SessionExport> {
 		/** Propriété 'Date'. */
 		date,
-		/** Propriété 'Model Name'. */
-		modelName,
-		/** Propriété 'Date training'. */
-		dateTraining,
-		/** Propriété 'Bot name'. */
-		botName,
-		/** Propriété 'Node name'. */
-		node,
-		/** Propriété 'Date bot creation'. */
-		creationBot	}
+		/** Propriété 'Conversation count'. */
+		conversationCount,
+		/** Propriété 'User actions count'. */
+		userActionsCount	}
 
 	/**
 	 * Enumération des champs de SmallTalk.

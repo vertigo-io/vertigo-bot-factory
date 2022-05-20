@@ -172,25 +172,13 @@ public enum DtResources implements MessageKey {
 	 */
 	fldSessionExport$date,
 	/**
-	 * Model Name.
+	 * Conversation count.
 	 */
-	fldSessionExport$modelName,
+	fldSessionExport$conversationCount,
 	/**
-	 * Date training.
+	 * User actions count.
 	 */
-	fldSessionExport$dateTraining,
-	/**
-	 * Bot name.
-	 */
-	fldSessionExport$botName,
-	/**
-	 * Node name.
-	 */
-	fldSessionExport$node,
-	/**
-	 * Date bot creation.
-	 */
-	fldSessionExport$creationBot,
+	fldSessionExport$userActionsCount,
 
 	/***********************************************************
 	/** StatCriteria.
