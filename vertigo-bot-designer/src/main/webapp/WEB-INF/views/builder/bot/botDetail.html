@@ -59,7 +59,7 @@
 	</head>
 	
 	<body>
-		<div layout:fragment="content-header-left" id="baseImg"  class="row items-center">
+		<div layout:fragment="content-header-left" id="baseImg"  class="row items-center header-bot-img">
 	 		<img v-if="componentStates.uploaderbotTmpPictureUri && componentStates.uploaderbotTmpPictureUri.fileUris.length > 0" th::src="|'@{/commons/upload}?file=' + componentStates.uploaderbotTmpPictureUri.fileUris[0]|"/>
 	 		<img v-if="!componentStates.uploaderbotTmpPictureUri || componentStates.uploaderbotTmpPictureUri.fileUris.length == 0" th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" />
 		</div>
