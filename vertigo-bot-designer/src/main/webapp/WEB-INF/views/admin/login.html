@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/rootLayout}">
+<html
+		xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+		layout:decorate="~{templates/rootLayout}">
 
 <head>
 <title>Login</title>
@@ -17,7 +17,9 @@
 		      	<div class="q-gutter-y-md">
 			    		<vu:include-data-primitive key="login" />
 			      		<vu:include-data-primitive key="password" />
-		      			<vu:messages/>
+						<div class="q-mb-md">
+							<vu:messages/>
+						</div>
 		      			
 						<q-input v-model="vueData.login" name="login" label="Login" orientation="vertical"></q-input>
 						<q-input type="password" v-model="vueData.password" name="password" label="Password" orientation="vertical"></q-input>

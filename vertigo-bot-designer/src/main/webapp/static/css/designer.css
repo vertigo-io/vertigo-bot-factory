@@ -417,7 +417,6 @@ table .col_DoInstant {
 	border: 1px solid red;
 	position: relative;
 	padding-left: 4rem;
-	margin-bottom: 10px;
 }
 
 .bg-info::before {
