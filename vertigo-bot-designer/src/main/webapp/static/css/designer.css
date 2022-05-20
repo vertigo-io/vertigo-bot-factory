@@ -393,18 +393,17 @@ table .col_DoInstant {
 /*block msg*/
 
 .q-message-text:last-child {
-	background: #C4C4C4;
 	border-radius: 10px;
 	position: relative;
 	padding: 10px;
 }
 
-.q-message-text--received:last-child:before {
-	left: 0;
+.q-message-text--received:last-child:before, .q-message-text--sent:last-child:before {
+	left: 0% !important;
 	bottom: -4px;
 	display: inline-block;
 	transform: rotate(279deg);
-	border-top: 15px solid #C4C4C4;
+	border-top: 15px solid;
 	border-right: 10px solid transparent;
 	border-left: 15px solid transparent;
 	border-bottom: 0;
