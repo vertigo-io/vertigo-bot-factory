@@ -10,14 +10,14 @@ stereotype : "StaticMasterData"
         "UNKNOWN_MESSAGES" : {
             "teaCd" 	    : "UNKNOWN_MESSAGES",
             "label" 	    : "Unknown messages",
-            "labelFr" 	    : "Messages inconnus",
+            "labelFr" 	    : "Intentions non reconnues",
             "botRelated"    : "true"
            
         },
-        "SESSIONS" : {
-            "teaCd" 	    : "SESSIONS",
-            "label" 	    : "Sessions",
-            "labelFr" 	    : "Sessions",
+        "USER_ACTIONS_CONVERSATIONS" : {
+            "teaCd" 	    : "USER_ACTIONS_CONVERSATIONS",
+            "label" 	    : "User actions and conversations",
+            "labelFr" 	    : "Actions utilisateur et conversations",
             "botRelated"    : "false"
         },
         "CONVERSATIONS" : {
@@ -30,6 +30,18 @@ stereotype : "StaticMasterData"
             "teaCd" 	    : "CATEGORIES",
             "label" 	    : "Categories",
             "labelFr" 	    : "Catégories",
+            "botRelated"    : "true"
+        },
+        "RATING" : {
+            "teaCd" 	    : "RATING",
+            "label" 	    : "Rating",
+            "labelFr" 	    : "Evaluation",
+            "botRelated"    : "true"
+        },
+        "TOPIC_USAGE" : {
+            "teaCd" 	    : "TOPIC_USAGE",
+            "label" 	    : "Topic usage",
+            "labelFr" 	    : "Utilisation des intentions",
             "botRelated"    : "true"
         }
      }`
@@ -158,10 +170,7 @@ create DtDefinition DtTopIntent {
 }
 
 create DtDefinition DtSessionExport {	
-	field date 			{domain: DoInstant 				label: "Date" 					}
-	field modelName		{domain: DoLabel 				label: "Model Name" 			}
-	field dateTraining	{domain: DoInstant 				label: "Date training"	 		}
-	field botName		{domain: DoLabel 				label: "Bot name" 				}
-	field node		    {domain: DoLabel 				label: "Node name" 				}
-	field creationBot	{domain: DoLabel 				label: "Date bot creation" 		}
+	field date 			    {domain: DoInstant 				label: "Date" 					    }
+	field conversationCount	{domain: DoNumber 				label: "Conversation count" 		}
+	field userActionsCount	{domain: DoNumber 				label: "User actions count" 		}
 }

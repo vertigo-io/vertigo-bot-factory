@@ -132,7 +132,6 @@ public class StatisticController extends AbstractBotController {
 		viewContext.publishDtList(typeExportAnalyticsListKey, typeExportAnalyticsServices.getAllTypeExportAnalytics());
 		viewContext.publishDtList(topicsKey, topicServices.getAllTopicByBot(bot));
 		statCriteria.setBotId(botId);
-		viewContext.publishDtListModifiable(typeExportAnalyticsListKey, typeExportAnalyticsServices.getBotRelatedTypeExportAnalytics());
 		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
 		statCriteria.setToDate(LocalDate.now());
 		statCriteria.setTimeOption(timeOption.orElse(TimeOption.DAY).name());
@@ -257,7 +256,7 @@ public class StatisticController extends AbstractBotController {
 			throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
 		}
 		switch (selectTypeExportAnalytics.getTeaCd()) {
-			case "SESSIONS":
+			case "USER_ACTIONS_CONVERSATIONS":
 				final DtList<SessionExport> listSessionExport = analyticsExportServices.getSessionExport(criteria);
 				return analyticsExportServices.exportSessions(listSessionExport);
 			case "UNKNOWN_MESSAGES":
@@ -270,6 +269,12 @@ public class StatisticController extends AbstractBotController {
 				final DtList<CategoryStat> categoryStats = buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()),
 						analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria));
 				return analyticsExportServices.exportCategories(categoryStats);
+			case "RATING":
+				final DtList<RatingDetail> ratingDetails = analyticsServices.getRatingDetails(criteria);
+				return analyticsExportServices.exportRatingDetails(ratingDetails);
+			case "TOPIC_USAGE":
+				final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
+				return analyticsExportServices.exportTopIntents(topIntents);
 			default:
 				throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
 		}
