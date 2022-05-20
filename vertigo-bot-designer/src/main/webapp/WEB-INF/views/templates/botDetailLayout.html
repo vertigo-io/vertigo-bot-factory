@@ -54,7 +54,7 @@
 			});
 		</script>
 	</div>
-	<div layout:fragment="content-header-left" id="baseImg" class="row items-center">
+	<div layout:fragment="content-header-left" id="baseImg" class="row items-center header-bot-img">
 		<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" />
 	</div>
 	<div layout:fragment="content-header-title" id="baseTitle" class="items-center">
@@ -162,7 +162,7 @@
 	<section layout:fragment="content-bot-drawer"  th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}">
 		<q-page-sticky position="bottom-right" :offset="[0,36]">
 			<q-btn round size="lg" id="botDrawerButton" @click="componentStates.botDrawer.open = !componentStates.botDrawer.open; if (componentStates.botDrawer.open) { Chatbot.show() } else { Chatbot.hideDrawer() }">
-				<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" style="width: 60px; height: 60px" alt="avatar chatbot"/>
+				<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" class="bot-img" alt="avatar chatbot"/>
 			</q-btn>
 		</q-page-sticky>
 		<q-drawer :value="componentStates.botDrawer.open" id="botDrawer" ref="botDrawer" :width="400" elevated side="right" >

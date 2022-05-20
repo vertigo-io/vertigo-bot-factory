@@ -118,11 +118,13 @@ img {
 .q-message-text:last-child {
     background: #C4C4C4;
     border-radius: 10px;
+    position: relative;
+    padding: 15px;
 }
 
 .q-message-text:last-child:before {
     left: 0% !important;
-    top: 38px;
+    bottom: -4px;
     display: inline-block;
     transform: rotate(305deg);
     border-top: 15px solid #C4C4C4;

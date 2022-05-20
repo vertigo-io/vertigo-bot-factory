@@ -395,11 +395,13 @@ table .col_DoInstant {
 .q-message-text:last-child {
 	background: #C4C4C4;
 	border-radius: 10px;
+	position: relative;
+	padding: 10px;
 }
 
 .q-message-text--received:last-child:before {
-	right: 70px;
-	top: 40px;
+	left: 0;
+	bottom: -4px;
 	display: inline-block;
 	transform: rotate(279deg);
 	border-top: 15px solid #C4C4C4;
@@ -416,6 +418,7 @@ table .col_DoInstant {
 	border: 1px solid red;
 	position: relative;
 	padding-left: 4rem;
+	margin-bottom: 10px;
 }
 
 .bg-info::before {
@@ -443,7 +446,24 @@ table .col_DoInstant {
 .toolbar-bot-card::-webkit-scrollbar {
 	display: none; /* for Chrome, Safari, and Opera */
 }
-.q-ma-sm {
+.card-toolbar {
 	min-height: 100px;
 	min-width: 100px;
+}
+
+.header-bot-img img {
+	width: 60px;
+	height: 60px;
+	border-radius: 50px;
+}
+.bot-img {
+	width: 60px;
+	height: 60px;
+	border-radius: 50px;
+}
+
+.card-img-scrollbar {
+	width: 50px !important;
+	height: 50px !important;
+	border-radius: 50px;
 }
