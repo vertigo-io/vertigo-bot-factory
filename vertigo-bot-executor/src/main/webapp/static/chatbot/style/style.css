@@ -55,12 +55,8 @@ main, footer {
     font-family: var(--font-family);
 }
 
-.q-message-received .q-message-text {
-    border-radius: 0px 15px 0px 0px;
-}
-
-.q-message-sent .q-message-text {
-    border-radius: 15px 0px 0px 0px;
+.q-message-received .q-message-text, .q-message-sent .q-message-text {
+    border-radius: 10px 10px 10px 10px;
 }
 
 .q-message-avatar {
