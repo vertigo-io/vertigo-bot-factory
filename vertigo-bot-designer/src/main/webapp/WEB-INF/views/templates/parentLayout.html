@@ -52,10 +52,10 @@
 				<div id="toolBarBots" class="hidden toolbar-bot-card">
 					<q-toolbar>
 						<vu:include-data object="bots" field="'*'"/>
-						<q-card v-for="bot in vueData.bots" style="height: 100px; width: 100px" class="q-ma-sm">
+						<q-card v-for="bot in vueData.bots" style="height: 100px; width: 100px" class="q-ma-sm card-toolbar">
 							<a th::href="|'@{/bot/}'+bot.botId|" class="nav">
 								<div class="row q-pt-md" style="justify-content: center">
-									<q-img th::src="|'@{/bot/}'+bot.botId+'/avatar'|" style="width: 50%; height: 50%"></q-img>
+									<img class="card-img-scrollbar" th::src="|'@{/bot/}'+bot.botId+'/avatar'|" style="width: 50%; height: 50%"/>
 								</div>
 								<div class="row" >
 									<div class="col ellipsis text-center text-grey" >
