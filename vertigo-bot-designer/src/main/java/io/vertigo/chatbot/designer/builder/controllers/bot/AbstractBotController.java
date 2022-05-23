@@ -86,6 +86,12 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	protected void initEmptyCommonContext(final ViewContext viewContext) {
 		viewContext.publishDto(botKey, chatbotServices.getNewChatbot());
 		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
+		viewContext.publishDto(trainingKey, new Training());
+		viewContext.publishDto(trainerStateKey, new TrainerInfo());
+		viewContext.publishRef(enabledTopicsKey, 0L);
+		viewContext.publishRef(unknownSentencesToTreatKey, 0L);
+		viewContext.publishRef(totalTopicsKey, 0);
+		viewContext.publishDto(devNodeKey, new ChatbotNode());
 	}
 
 	@GetMapping("/{botId}/avatar")
