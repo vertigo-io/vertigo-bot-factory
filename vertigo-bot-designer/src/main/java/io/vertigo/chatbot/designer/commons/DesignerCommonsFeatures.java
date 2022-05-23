@@ -35,7 +35,8 @@ public class DesignerCommonsFeatures extends ModuleDiscoveryFeatures<DesignerCom
 		getModuleConfigBuilder()
 				.addDefinitionProvider(DefinitionProviderConfig.builder(ModelDefinitionProvider.class)
 						.addDefinitionResource("dtobjects", "io.vertigo.chatbot.domain.DtDefinitions")
-						.build())
+						.addDefinitionResource("smarttypes", DesignerSmartTypes.class.getName())
+				.build())
 				.addDefinitionProvider(DefinitionProviderConfig.builder(JsonSecurityDefinitionProvider.class)
 						.addDefinitionResource("security", "io/vertigo/chatbot/designer/authorizations/auth-config.json")
 						.build())
@@ -44,7 +45,7 @@ public class DesignerCommonsFeatures extends ModuleDiscoveryFeatures<DesignerCom
 
 	@Override
 	protected String getPackageRoot() {
-		return this.getClass().getPackage().getName(); // nous utilisons la localisation de la classe de manisfeste comme racine du module
+		return getClass().getPackage().getName(); // nous utilisons la localisation de la classe de manisfeste comme racine du module
 	}
 
 }
