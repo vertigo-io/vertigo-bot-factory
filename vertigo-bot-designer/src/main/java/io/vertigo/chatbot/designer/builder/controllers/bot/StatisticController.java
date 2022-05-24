@@ -51,7 +51,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -73,6 +72,7 @@ public class StatisticController extends AbstractBotController {
 	private static final ViewContextKey<TimedDatas> ratingStatsKey = ViewContextKey.of("ratingStats");
 	private static final ViewContextKey<TimedDatas> userInteractionsStatsKey = ViewContextKey.of("userInteractionsStats");
 	private static final ViewContextKey<TopIntent> topIntentsKey = ViewContextKey.of("topIntents");
+	private static final ViewContextKey<TopIntent> topIntentsFilteredKey = ViewContextKey.of("topIntentsFiltered");
 	private static final ViewContextKey<SentenseDetail> intentDetailsKey = ViewContextKey.of("intentDetails");
 	private static final ViewContextKey<ConversationStat> conversationStatKey = ViewContextKey.of("conversationStat");
 	private static final ViewContextKey<ConversationDetail> conversationDetailsKey = ViewContextKey.of("conversationDetails");
@@ -85,6 +85,10 @@ public class StatisticController extends AbstractBotController {
 	private static final ViewContextKey<TopicLabel> topicLabelsKey = ViewContextKey.of("topicLabels");
 	private static final ViewContextKey<CategoryStat> categoryStatKey = ViewContextKey.of("categoryStat");
 	private static final ViewContextKey<RatingDetail> ratingDetailsKey = ViewContextKey.of("ratingDetails");
+	private static final ViewContextKey<Double> totalOfUserActionsKey = ViewContextKey.of("totalOfUserActions");
+	private static final ViewContextKey<Double> totalOfUnrecognizedMessageKey = ViewContextKey.of("totalOfUnrecognizedMessage");
+	private static final ViewContextKey<Double> totalOfRecognizedMessageKey = ViewContextKey.of("totalOfRecognizedMessage");
+	private static final ViewContextKey<Double> totalOfConversationsKey = ViewContextKey.of("totalOfConversations");
 
 	@Inject
 	private NodeServices nodeServices;
@@ -154,40 +158,34 @@ public class StatisticController extends AbstractBotController {
 	}
 
 	private void updateGraph(final ViewContext viewContext, final StatCriteria criteria, final Chatbot bot, final UiMessageStack uiMessageStack) {
-		viewContext.publishRef(sessionStatsKey, timeSerieServices.getSessionsStats(criteria));
-		viewContext.publishRef(requestsStatsKey, timeSerieServices.getRequestStats(criteria));
-		viewContext.publishRef(userInteractionsStatsKey, timeSerieServices.getUserInteractions(criteria));
+		final TimedDatas sessionStat = timeSerieServices.getSessionsStats(criteria);
+		viewContext.publishRef(sessionStatsKey, sessionStat);
+		viewContext.publishRef(totalOfConversationsKey, sessionStat.getTimedDataSeries().stream()
+				.mapToDouble(it -> (Double) it.getValues().get("isSessionStart:sum")).sum());
+
+		final TimedDatas requestsStat = timeSerieServices.getRequestStats(criteria);
+		viewContext.publishRef(requestsStatsKey, requestsStat);
+		viewContext.publishRef(totalOfUnrecognizedMessageKey, requestsStat.getTimedDataSeries().stream()
+				.mapToDouble(it -> (Double) it.getValues().get("isFallback:sum")).sum());
+		viewContext.publishRef(totalOfRecognizedMessageKey, requestsStat.getTimedDataSeries().stream()
+				.mapToDouble(it -> (Double) it.getValues().get("isNlu:sum")).sum());
+
+		final TimedDatas userInteractions = timeSerieServices.getUserInteractions(criteria);
+		viewContext.publishRef(userInteractionsStatsKey, userInteractions);
+		viewContext.publishRef(totalOfUserActionsKey, userInteractions.getTimedDataSeries().stream()
+				.mapToDouble(it -> (Double) it.getValues().get("name:count")).sum());
+
 		viewContext.publishDtList(ratingDetailsKey, analyticsServices.getRatingDetails(criteria));
 		viewContext.publishDtList(unknownSentensesKey, DtDefinitions.SentenseDetailFields.topId, analyticsServices.getSentenseDetails(criteria));
 		viewContext.publishDtList(conversationStatKey, DtDefinitions.ConversationStatFields.sessionId,
 				analyticsServices.getConversationsStats(criteria, viewContext.readDto(conversationCriteriaKey, AbstractVSpringMvcController.getUiMessageStack())));
-		final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(),
-				criteria, viewContext.readDto(topIntentCriteriaKey, uiMessageStack), viewContext.readDtList(topicCategoriesKey, uiMessageStack),
-				viewContext.readDtList(topicLabelsKey, uiMessageStack));
+		final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
 		viewContext.publishDtList(topIntentsKey, DtDefinitions.TopIntentFields.topId, topIntents);
-		viewContext.publishDtList(categoryStatKey, buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()), topIntents));
+		viewContext.publishDtList(topIntentsFilteredKey, DtDefinitions.TopIntentFields.topId, topIntents);
+		viewContext.publishDtList(categoryStatKey,analyticsServices.buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()), topIntents));
 		viewContext.publishRef(ratingStatsKey, timeSerieServices.getRatingStats(criteria));
 		viewContext.publishDtList(intentDetailsKey, DtDefinitions.SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
 		viewContext.publishDtList(conversationDetailsKey, DtDefinitions.ConversationDetailFields.sessionId, new DtList<ConversationDetail>(ConversationDetail.class));
-	}
-
-	private static DtList<CategoryStat> buildCategoryStats(final DtList<TopicCategory> categories, final DtList<TopIntent> intents) {
-		final DtList<CategoryStat> categoryStats = new DtList<>(CategoryStat.class);
-		final long totalCount = intents.stream().mapToLong(TopIntent::getCount).sum();
-		categories.forEach(topicCategory -> {
-			final CategoryStat categoryStat = new CategoryStat();
-			categoryStat.setLabel(topicCategory.getLabel());
-			categoryStat.setCode(topicCategory.getCode());
-			final long count = intents.stream().filter(topIntent -> topIntent.getCatLabel().equals(topicCategory.getLabel())).mapToLong(TopIntent::getCount).sum();
-			categoryStat.setUsage(count);
-			if (totalCount != 0) {
-				categoryStat.setPercentage(BigDecimal.valueOf(((double) count/totalCount) * 100));
-			} else {
-				categoryStat.setPercentage(BigDecimal.ZERO);
-			}
-			categoryStats.add(categoryStat);
-		});
-		return categoryStats;
 	}
 
 	@PostMapping("/_updateStats")
@@ -225,23 +223,7 @@ public class StatisticController extends AbstractBotController {
 										  @ViewAttribute("criteria") final StatCriteria criteria,
 										  @ViewAttribute("conversationCriteria") final ConversationCriteria conversationCriteria) {
 
-		viewContext.publishDtList(conversationStatKey, analyticsServices.getConversationsStats(criteria, conversationCriteria));
-
-		listLimitReached(viewContext, uiMessageStack);
-		return viewContext;
-	}
-
-	@PostMapping("/_filterTopIntent")
-	public ViewContext filterTopIntent(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-									      @ViewAttribute("bot") final Chatbot bot,
-										  @ViewAttribute("criteria") final StatCriteria criteria,
-										  @ViewAttribute("topIntentCriteria") final TopIntentCriteria topIntentCriteria) {
-
-		final DtList<TopicCategory> categories = viewContext.readDtList(topicCategoriesKey, uiMessageStack);
-		final DtList<TopicLabel> topicLabels = viewContext.readDtList(topicLabelsKey, uiMessageStack);
-		viewContext.publishDtList(topIntentsKey, analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(),
-				criteria, topIntentCriteria, categories, topicLabels));
-
+		viewContext.publishDtList(conversationStatKey, analyticsServices.getConversationsStats(criteria,conversationCriteria));
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
@@ -249,6 +231,7 @@ public class StatisticController extends AbstractBotController {
 	@PostMapping("/_exportStatisticFile")
 	public VFile doExportStatisticFile(final ViewContext viewContext,
 									   @ViewAttribute("criteria") final StatCriteria criteria,
+									   @ViewAttribute("conversationCriteria") final ConversationCriteria conversationCriteria,
 									   @ViewAttribute("bot") final Chatbot bot,
 									   @ViewAttribute("selectTypeExportAnalytics") final TypeExportAnalytics selectTypeExportAnalytics) {
 
@@ -263,10 +246,10 @@ public class StatisticController extends AbstractBotController {
 				final DtList<UnknownSentenseExport> listUnknownSentenseExport = analyticsExportServices.getUnknownSentenseExport(criteria);
 				return analyticsExportServices.exportUnknownMessages(listUnknownSentenseExport);
 			case "CONVERSATIONS":
-				final DtList<ConversationStat> conversationStats = analyticsServices.getConversationsStats(criteria);
+				final DtList<ConversationStat> conversationStats = analyticsServices.getConversationsStats(criteria, conversationCriteria);
 				return analyticsExportServices.exportConversations(conversationStats);
 			case "CATEGORIES":
-				final DtList<CategoryStat> categoryStats = buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()),
+				final DtList<CategoryStat> categoryStats = analyticsServices.buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()),
 						analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria));
 				return analyticsExportServices.exportCategories(categoryStats);
 			case "RATING":

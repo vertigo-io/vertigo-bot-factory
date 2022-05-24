@@ -10,18 +10,13 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.analytics.AnalyticsManager;
 import io.vertigo.core.analytics.process.AProcessBuilder;
 import io.vertigo.core.node.component.Component;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Transactional
 public class AnalyticsSenderServices implements Component {
-
-	private static final Logger LOGGER = LogManager.getLogger(AnalyticsSenderServices.class);
 
 	@Inject
 	private AnalyticsManager analyticsManager;
@@ -49,7 +44,7 @@ public class AnalyticsSenderServices implements Component {
 
 		sendBotInputEvent(sessionId, input, executorConfiguration);
 
-		botResponse.getHtmlTexts().forEach(text -> sendConversationEvent(sessionId, text, false, executorConfiguration));
+		sendConversationEvent(sessionId, String.join("\0", botResponse.getHtmlTexts()), false, executorConfiguration);
 	}
 
 	private void sendBotInputEvent(final UUID sessionId, final BotInput input, final ExecutorConfiguration executorConfiguration) {
@@ -65,11 +60,6 @@ public class AnalyticsSenderServices implements Component {
 			sendConversationEvent(sessionId, (String) input.getMetadatas().get("text"), true, executorConfiguration);
 		} else if (input.getMetadatas().get("filename") != null) {
 			sendConversationEvent(sessionId, (String) input.getMetadatas().get("filename"), true, executorConfiguration);
-		}
-		try {
-			TimeUnit.SECONDS.sleep(1);
-		} catch (final InterruptedException e) {
-			LOGGER.error(e);
 		}
 	}
 
@@ -142,7 +132,7 @@ public class AnalyticsSenderServices implements Component {
 		sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 		sendPastTopics(sessionId, topicsPast, executorConfiguration);
 		sendBotInputEvent(sessionId, input, executorConfiguration);
-		botResponse.getHtmlTexts().forEach(text -> sendConversationEvent(sessionId, text, false, executorConfiguration));
+		sendConversationEvent(sessionId, String.join("\0", botResponse.getHtmlTexts()), false, executorConfiguration);
 	}
 
 	private void sendProcessWithConfiguration(final UUID sessionId, final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {
@@ -156,11 +146,6 @@ public class AnalyticsSenderServices implements Component {
 
 	public void sendConversationEvent(final UUID sessionId, final String text, final boolean userMessage, final ExecutorConfiguration executorConfiguration) {
 		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareConversationProcess(text, userMessage), executorConfiguration);
-		try {
-			TimeUnit.SECONDS.sleep(1);
-		} catch (final InterruptedException e) {
-			LOGGER.error(e);
-		}
 	}
 
 }

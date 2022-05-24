@@ -114,8 +114,6 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     private static final ViewContextKey<Boolean> unreachableKey = ViewContextKey.of("unreachable");
 
-    private static final ViewContextKey<Boolean> technicalTopicKey = ViewContextKey.of("technicalTopic");
-
     @Inject
     private UtterTextServices utterTextServices;
 
@@ -193,7 +191,6 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
         viewContext.publishDtList(topicListKey, topicServices.getAllTopicByBot(bot));
         viewContext.publishDto(topicKey, topic);
-        viewContext.publishRef(technicalTopicKey, isTechnicalTopic(topic));
         viewContext.publishRef(newNluTrainingSentenceKey, "");
         final DtList<NluTrainingSentence> nluSentences = topicServices.getNluTrainingSentenceByTopic(bot, topic);
         viewContext.publishDtListModifiable(nluTrainingSentencesKey, nluSentences);
@@ -229,13 +226,12 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         viewContext.publishDtListModifiable(topicLabelListKey, new DtList<>(TopicLabel.class));
         viewContext.publishDtList(allTopicLabelListKey, topicLabelServices.getTopicLabelByBotId(bot));
         viewContext.publishRef(unreachableKey, false);
-        viewContext.publishRef(technicalTopicKey, false);
 
     }
 
     private void addMessageDeactivate(final UiMessageStack uiMessageStack, final ScriptIntention scriptIntention,
                                       final DtList<NluTrainingSentence> sentences, final Chatbot chatbot, final Topic topic) {
-        if (!isTechnicalTopic(topic) && scriptIntentionServices.hasToBeDeactivated(topic, sentences, scriptIntention, chatbot)) {
+        if (!topic.getIsTechnical() && scriptIntentionServices.hasToBeDeactivated(topic, sentences, scriptIntention, chatbot)) {
             uiMessageStack.info(scriptIntentionServices.getDeactivateMessage());
         }
     }
@@ -244,7 +240,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
                                       final DtList<NluTrainingSentence> sentences, final Chatbot chatbot, final Topic topic) {
         final SmallTalkWrapper smallTalkWrapper = new SmallTalkWrapper();
         smallTalkWrapper.setSmallTalk(smallTalk);
-        if (!isTechnicalTopic(topic) && smallTalkServices.hasToBeDeactivated(topic, sentences, smallTalkWrapper, chatbot)) {
+        if (!topic.getIsTechnical() && smallTalkServices.hasToBeDeactivated(topic, sentences, smallTalkWrapper, chatbot)) {
             uiMessageStack.info(smallTalkServices.getDeactivateMessage());
         }
     }
@@ -266,7 +262,6 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
                          @ViewAttribute("topic") @Validate(TopicCategoryNotEmptyValidator.class) final Topic topic,
                          @ViewAttribute("bot") final Chatbot chatbot,
                          @ViewAttribute("unreachable") final String unreachable,
-                         @ViewAttribute("technicalTopic") final String technicalTopic,
                          @ViewAttribute("newNluTrainingSentence") final String newNluTrainingSentence,
                          @ViewAttribute("nluTrainingSentences") final DtList<NluTrainingSentence> nluTrainingSentences,
                          @ViewAttribute("nluTrainingSentencesToDelete") final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
@@ -274,7 +269,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
                          @ViewAttribute("initialTopicLabelList") final DtList<TopicLabel> initialLabels) {
 
         final Long botId = chatbot.getBotId();
-        if ("true".equals(technicalTopic)) {
+        if (topic.getIsTechnical()) {
             if (TypeTopicEnum.SMALLTALK.name().equals(topic.getTtoCd())) {
                 topicServices.saveBotTopic(chatbot, topic, ChatbotUtils.getRawDtList(viewContext.getUiListModifiable(utterTextsKey), uiMessageStack).get(0).getText());
             } else {
@@ -393,9 +388,5 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
         return "redirect:/bot/" + topic.getBotId() + "/topics/";
 
-    }
-
-    private boolean isTechnicalTopic(final Topic topic) {
-        return topicServices.getTechnicalKindTopics().contains(topic.getKtoCd());
     }
 }

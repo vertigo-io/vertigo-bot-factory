@@ -238,11 +238,7 @@
 
         function percentageOfRating() {
             return Math.round((VUiExtensions.dataX.apexCharts.rating.series().reduce((a,b) => a + b, 0 ) /
-                serieToApexPie(["isSessionStart:sum"], VertigoUi.vueData.sessionStats, {fill: 0})[0]) * 100);
-        }
-
-        function totalOfConversations() {
-            return serieToApexPie(["isSessionStart:sum"], VertigoUi.vueData.sessionStats, {fill: 0})[0];
+                VertigoUi.vueData.totalOfConversations) * 100);
         }
 
         function conversationsMean() {
@@ -254,27 +250,15 @@
             } else if (VertigoUi.vueData.criteria.timeOption === 'YEAR') {
                 days = 365;
             }
-            return Math.round(totalOfConversations() / days);
+            return Math.round(VertigoUi.vueData.totalOfConversations / days);
         }
 
         function interactionPerConversationMean() {
-            return Math.round(totalOfUserActions()/totalOfConversations());
+            return Math.round(VertigoUi.vueData.totalOfUserActions/VertigoUi.vueData.totalOfConversations);
         }
 
         function recognizedMessageRatio() {
-            return Math.round((totalOfRecognizedMessages() / (totalOfRecognizedMessages() + totalOfUnrecognizedMessages())) *100);
-        }
-
-        function totalOfUserActions() {
-            return serieToApexPie(["name:count"], VertigoUi.vueData.userInteractionsStats, {fill: 0})[0];
-        }
-
-        function totalOfRecognizedMessages() {
-            return serieToApexPie(["isNlu:sum"], VertigoUi.vueData.requestsStats, {fill: 0})[0];
-        }
-
-        function totalOfUnrecognizedMessages() {
-            return serieToApexPie(["isFallback:sum"], VertigoUi.vueData.requestsStats, {fill: 0})[0];
+            return Math.round((VertigoUi.vueData.totalOfRecognizedMessage / (VertigoUi.vueData.totalOfRecognizedMessage + VertigoUi.vueData.totalOfUnrecognizedMessage)) *100);
         }
 
         function serieToApex(serieName, dataIn, options) {
@@ -298,7 +282,6 @@
             });
             return ret;
         }
-        // "statsRequests" : {"seriesNames":["name:count","isFallback:mean"],"timedDataSeries":[{"time":{"epochSecond":1574726400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574812800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574899200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574985600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575072000,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575158400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575244800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575331200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575417600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575504000,"nano":0},"values":{"isFallback:mean":0.16666666666666666,"name:count":7.0}},{"time":{"epochSecond":1575590400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}}]}
 
         function serieToApexPie(serieNames, dataIn, options) {
             let ret = [];
@@ -395,9 +378,14 @@
     <vu:include-data object="categoryStat" field="label" />
     <vu:include-data object="categoryStat" field="usage" />
 
+    <vu:include-data-primitive key="ratingStats" />
     <vu:include-data-primitive key="requestsStats" />
     <vu:include-data-primitive key="sessionStats" />
     <vu:include-data-primitive key="userInteractionsStats" />
+    <vu:include-data-primitive key="totalOfUserActions" />
+    <vu:include-data-primitive key="totalOfUnrecognizedMessage" />
+    <vu:include-data-primitive key="totalOfRecognizedMessage" />
+    <vu:include-data-primitive key="totalOfConversations" />
 
     <vu:include-data-primitive key="locale" />
 
@@ -414,7 +402,6 @@
                     v-model="vueData.criteria.nodId"
                     :options='transformListForSelection("nodes", "nodId", "name")'
                     th:label="#{analytics.selection.node}"
-                    @input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
             ></q-select>
 
             <q-space></q-space>
@@ -443,7 +430,6 @@
                     v-model="vueData.criteria.timeOption"
                     toggle-color="primary"
                     :options='transformListForSelection("timeOptions", "value", "label")'
-                    @input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
             ></q-btn-toggle>
             <q-space></q-space>
             <q-btn  class="fab-block" round color="primary" size="md" icon="file_upload" th:aria-label="export" th:title="export"
@@ -516,7 +502,7 @@
                 <q-card-section class="row justify-end">
                     <div>
                         <div style="font-weight: bold; font-size: x-large">
-                            <span v-html="totalOfConversations()"></span>
+                            <span>{{vueData.totalOfConversations}}</span>
                         </div>
                         <div>
                             <span>[[#{analytics.conversation.total}]]</span>
@@ -537,7 +523,7 @@
                 <q-card-section class="row justify-end">
                     <div>
                         <div style="font-weight: bold; font-size: x-large">
-                            <span v-html="totalOfUserActions()"></span>
+                            <span>{{vueData.totalOfUserActions}}</span>
                         </div>
                         <div>
                             <span>[[#{analytics.useractions.total}]]</span>
@@ -558,7 +544,7 @@
                 <q-card-section class="row justify-end">
                     <div class="q-mr-md">
                         <div style="font-weight: bold; font-size: x-large">
-                            <span v-html="totalOfRecognizedMessages()"></span>
+                            <span>{{vueData.totalOfRecognizedMessage}}</span>
                         </div>
                         <div>
                             <span>[[#{analytics.messages.recognized.total}]]</span>
@@ -566,7 +552,7 @@
                     </div>
                     <div>
                         <div style="font-weight: bold; font-size: x-large">
-                            <span v-html="totalOfUnrecognizedMessages()"></span>
+                            <span>{{vueData.totalOfUnrecognizedMessage}}</span>
                         </div>
                         <div>
                             <span>[[#{analytics.messages.unrecognized.total}]]</span>
@@ -628,8 +614,6 @@
             </vu:table>
         </div>
 
-        <vu:include-data-primitive key="ratingStats" />
-
         <div class="col-xl-6 col-md-6 col-xs-12">
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.rating}"></q-card-section>
@@ -664,10 +648,9 @@
             <vu:include-data object="topics" field="title" />
 
             <vu:include-data object="intentDetails" field="'*'" />
-            <vu:include-data object="topIntents" field="code"/>
-            <vu:include-data object="topIntents" field="topId"/>
+            <vu:include-data object="topIntents" field="'*'"/>
 
-            <vu:table componentId="intentList"  list="topIntents"  rowsPerPage="5" sortBy="count" descending>
+            <vu:table componentId="intentList"  list="topIntentsFiltered"  rowsPerPage="5" sortBy="count" descending>
 
                 <vu:slot name="top_right_slot">
                     <vu:select-edit object="topIntentCriteria" field="catIds"
@@ -773,7 +756,19 @@
         }, { deep: true });
 
         VUiPage.$watch('vueData.topIntentCriteria', (newValue, oldValue) => {
-            VUiPage.httpPostAjax('_filterTopIntent', VUiPage.vueDataParams(['topIntentCriteria']));
+            VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntents
+            if (VertigoUi.vueData.topIntentCriteria.catIds !== null && VertigoUi.vueData.topIntentCriteria.catIds.length > 0) {
+                const catLabels = VertigoUi.vueData.topicCategories.filter(topicCategory => VertigoUi.vueData.topIntentCriteria.catIds.includes(topicCategory.topCatId))
+                    .map(topicCategory => topicCategory.label);
+                VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntentsFiltered.filter(topIntent => catLabels.includes(topIntent.catLabel));
+            }
+            if (VertigoUi.vueData.topIntentCriteria.labels !== null && VertigoUi.vueData.topIntentCriteria.labels.length > 0) {
+                const labels = VertigoUi.vueData.topicLabels.filter(topicLabel => VertigoUi.vueData.topIntentCriteria.labels.includes(topicLabel.labelId))
+                    .map(topicLabel => topicLabel.label);
+
+                VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntentsFiltered.filter(topIntent =>
+                    topIntent.labels != null && labels.some(label => topIntent.labels.includes(label)));
+            }
         }, { deep: true });
     </script>
 </section>

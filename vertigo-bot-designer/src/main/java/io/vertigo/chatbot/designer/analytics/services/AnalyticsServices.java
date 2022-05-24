@@ -21,9 +21,9 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
-import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
 import io.vertigo.chatbot.commons.influxDb.TimeSerieServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
+import io.vertigo.chatbot.designer.domain.analytics.CategoryStat;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationDetail;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationStat;
@@ -31,10 +31,8 @@ import io.vertigo.chatbot.designer.domain.analytics.RatingDetail;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
-import io.vertigo.chatbot.designer.domain.analytics.TopIntentCriteria;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.database.timeseries.TabularDataSerie;
 import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
@@ -43,21 +41,16 @@ import io.vertigo.datamodel.structure.util.VCollectors;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static io.vertigo.chatbot.commons.domain.topic.KindTopicEnum.END;
-import static io.vertigo.chatbot.commons.domain.topic.KindTopicEnum.START;
 
 @Transactional
 public class AnalyticsServices implements Component {
 
 	public static final Double TRUE_BIGDECIMAL = 1D;
+	public static final Double FALSE_BIGDECIMAL = 0D;
 
 	@Inject
 	private TopicServices topicServices;
@@ -99,71 +92,63 @@ public class AnalyticsServices implements Component {
 		final DtList<ConversationDetail> retour = new DtList<>(ConversationDetail.class);
 		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
-
-			final ConversationDetail conversationDetail = new ConversationDetail();
-			conversationDetail.setDate(timedData.getTime());
-			conversationDetail.setSessionId((String) values.get("sessionId"));
-			conversationDetail.setText((String) values.get("text"));
-			conversationDetail.setIsUserMessage(values.get("isUserMessage").equals(TRUE_BIGDECIMAL));
-			conversationDetail.setIsBotMessage(values.get("isBotMessage").equals(TRUE_BIGDECIMAL));
-			retour.add(conversationDetail);
-		}
-
-		return retour;
-	}
-
-	public DtList<ConversationStat> getConversationsStats(final StatCriteria criteria) {
-
-		final TabularDatas tabularTimedData = timeSerieServices.getConversationStats(criteria);
-
-		// build DtList from InfluxDb data
-		final DtList<ConversationStat> retour = new DtList<>(ConversationStat.class);
-		for (final TabularDataSerie tabularDataSerie : tabularTimedData.getTabularDataSeries()) {
-			final Map<String, Object> values = tabularDataSerie.getValues();
-
-			final ConversationStat conversationStat = new ConversationStat();
-			conversationStat.setDate(Instant.now());
-			conversationStat.setEnded(false);
-			conversationStat.setSessionId((String) values.get("sessionId"));
-			conversationStat.setInteractions((Long) values.get("isUserMessage"));
-
-			timeSerieServices.getSessionTechnicalIntents(criteria, conversationStat.getSessionId()).getTimedDataSeries().forEach( technicalIntent -> {
-				final String name = (String) technicalIntent.getValues().get("name");
-				if (name.replace("!", "").equals(START.name())) {
-					conversationStat.setModelName((String) technicalIntent.getValues().get("modelName"));
-					conversationStat.setDate(technicalIntent.getTime());
-				}
-				if (name.replace("!", "").equals(END.name())) {
-					conversationStat.setEnded(true);
-				}
-			});
-			conversationStat.setRate(getSessionRating(criteria, conversationStat.getSessionId()));
-			retour.add(conversationStat);
+			final String text = (String) values.get("text");
+			if (text != null) {
+				Arrays.stream(text.split("\0")).forEach(bubble -> {
+					final ConversationDetail conversationDetail = new ConversationDetail();
+					conversationDetail.setDate(timedData.getTime());
+					conversationDetail.setSessionId((String) values.get("sessionId"));
+					conversationDetail.setText(bubble);
+					conversationDetail.setIsUserMessage(values.get("isUserMessage").equals(TRUE_BIGDECIMAL));
+					conversationDetail.setIsBotMessage(values.get("isBotMessage").equals(TRUE_BIGDECIMAL));
+					retour.add(conversationDetail);
+				});
+			}
 		}
 
 		return retour;
 	}
 
 	public DtList<ConversationStat> getConversationsStats(final StatCriteria criteria, final ConversationCriteria conversationCriteria) {
-		Stream<ConversationStat> conversationStatStream = getConversationsStats(criteria).stream();
-		if (!conversationCriteria.getRatings().isEmpty()) {
-			conversationStatStream = conversationStatStream.filter(conversationStat ->
-					conversationStat.getRate() != null && conversationCriteria.getRatings().contains(conversationStat.getRate()));
+
+		final TimedDatas timedDatas = timeSerieServices.getConversationStats(criteria, conversationCriteria);
+		// build DtList from InfluxDb data
+		final DtList<ConversationStat> retour = new DtList<>(ConversationStat.class);
+		for (final TimedDataSerie timedDataSerie : timedDatas.getTimedDataSeries()) {
+			final Map<String, Object> values = timedDataSerie.getValues();
+
+			final ConversationStat conversationStat = new ConversationStat();
+			conversationStat.setDate(timedDataSerie.getTime());
+			conversationStat.setEnded(values.get("isEnded") != null && values.get("isEnded").equals(TRUE_BIGDECIMAL));
+			conversationStat.setSessionId((String) values.get("sessionId"));
+			conversationStat.setInteractions(values.get("interactions") != null ? ((Double) values.get("interactions")).longValue() : null);
+			conversationStat.setRate(values.get("rating") != null ? ((Double) values.get("rating")).longValue() : null);
+			conversationStat.setModelName((String) values.get("modelName"));
+			retour.add(conversationStat);
 		}
-		if (conversationCriteria.getModelName() != null) {
-			conversationStatStream = conversationStatStream.filter(conversationStat ->
-					conversationStat.getModelName() != null && conversationStat.getModelName().contains(conversationCriteria.getModelName()));
-		}
-		return conversationStatStream.collect(VCollectors.toDtList(ConversationStat.class));
+
+		return retour;
 	}
 
-	private Long getSessionRating(final StatCriteria criteria, final String sessionId) {
-		final List<TimedDataSerie> ratingSeries =  timeSerieServices.getRatingForSession(criteria, sessionId).getTimedDataSeries();
-		if (ratingSeries.isEmpty()) {
-			return null;
-		} else {
-			return getRating(ratingSeries.get(0).getValues());
-		}
+	public DtList<CategoryStat> buildCategoryStats(final DtList<TopicCategory> categories, final DtList<TopIntent> intents) {
+		final DtList<CategoryStat> categoryStats = new DtList<>(CategoryStat.class);
+		final long totalCount = intents.stream().mapToLong(TopIntent::getCount).sum();
+		final Map<String, Long> categoriesCount = new HashMap<>();
+		intents.forEach(topIntent -> categoriesCount.put(topIntent.getCatLabel(), categoriesCount.getOrDefault(topIntent.getCatLabel(), 0L) + 1 ));
+		categories.forEach(topicCategory -> {
+			final CategoryStat categoryStat = new CategoryStat();
+			categoryStat.setLabel(topicCategory.getLabel());
+			categoryStat.setCode(topicCategory.getCode());
+			final long count = categoriesCount.getOrDefault(topicCategory.getLabel(), 0L);
+			categoryStat.setUsage(count);
+			if (totalCount != 0) {
+				categoryStat.setPercentage(BigDecimal.valueOf(((double) count/totalCount) * 100));
+			} else {
+				categoryStat.setPercentage(BigDecimal.ZERO);
+			}
+			categoryStats.add(categoryStat);
+		});
+		return categoryStats;
 	}
 
 	public DtList<TopIntent> getTopIntents(final Chatbot bot, final String locale, final StatCriteria criteria) {
@@ -184,25 +169,6 @@ public class AnalyticsServices implements Component {
 			topIntent.setCount(topicCountMap.getOrDefault(topic.getCode(), 0L));
 			return topIntent;
 		}).collect(VCollectors.toDtList(TopIntent.class));
-	}
-
-	public DtList<TopIntent> getTopIntents(final Chatbot bot, final String locale, final StatCriteria criteria,
-										   final TopIntentCriteria topIntentCriteria, final DtList<TopicCategory> categories, final DtList<TopicLabel> topicLabels) {
-		Stream<TopIntent> topIntents = getTopIntents(bot, locale, criteria).stream();
-		if (!topIntentCriteria.getCatIds().isEmpty()) {
-			final List<String> catLabels =
-					categories.stream().filter(topicCategory -> topIntentCriteria.getCatIds()
-							.contains(topicCategory.getTopCatId())).map(TopicCategory::getLabel).collect(Collectors.toList());
-
-			topIntents = topIntents.filter(topIntent -> catLabels.contains(topIntent.getCatLabel()));
-		}
-		if (!topIntentCriteria.getLabels().isEmpty()) {
-			final List<String> labels =
-					topicLabels.stream().filter(topicLabel -> topIntentCriteria.getLabels()
-							.contains(topicLabel.getLabelId())).map(TopicLabel::getLabel).collect(Collectors.toList());
-			topIntents = topIntents.filter(topIntent -> topIntent.getLabels() != null && labels.stream().anyMatch(label -> topIntent.getLabels().contains(label)));
-		}
-		return topIntents.collect(VCollectors.toDtList(TopIntent.class));
 	}
 
 	/**
@@ -234,30 +200,17 @@ public class AnalyticsServices implements Component {
 	}
 
 	public DtList<RatingDetail> getRatingDetails(final StatCriteria criteria) {
-		final TimedDatas tabularTimedData = timeSerieServices.getRatingDetailsStats(criteria);
+		final TimedDatas ratings = timeSerieServices.getRatingDetailsStats(criteria);
 		final DtList<RatingDetail> retour = new DtList<>(RatingDetail.class);
-		tabularTimedData.getTimedDataSeries().forEach(timedDataSerie -> {
+		ratings.getTimedDataSeries().forEach(timedDataSerie -> {
 			final Map<String, Object> values = timedDataSerie.getValues();
 			final RatingDetail ratingDetail = new RatingDetail();
 			ratingDetail.setSessionId((String) values.get("sessionId"));
 			ratingDetail.setDate(timedDataSerie.getTime());
-			ratingDetail.setComment((String)values.get("ratingComment"));
-			ratingDetail.setRating(getRating(values));
-			final List<TimedDataSerie> intents = timeSerieServices.getSessionNonTechnicalIntents(criteria, ratingDetail.getSessionId()).getTimedDataSeries();
-			if (!intents.isEmpty()) {
-				ratingDetail.setLastTopic((String) intents.get(intents.size() - 1).getValues().get("name"));
-			}
+			ratingDetail.setRating(((Double) values.get("rating")).longValue());
+			ratingDetail.setLastTopic((String) values.get("lastTopic"));
 			retour.add(ratingDetail);
 		});
 		return retour;
-	}
-
-	private static Long getRating(final Map<String, Object> values) {
-		for (long i=1; i<= 5; i++) {
-			if (values.get("rating" + i) != null) {
-				return i;
-			}
-		}
-		return 0L;
 	}
 }

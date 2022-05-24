@@ -272,6 +272,16 @@ public final class Topic implements Entity {
 	public void setKtoCd(final String ktoCd) {
 		ktoCdAccessor.setId(ktoCd);
 	}
+	
+	/**
+	 * Champ : COMPUTED.
+	 * Récupère la valeur de la propriété calculée 'Is technical'.
+	 * @return Boolean isTechnical
+	 */
+	@Field(smartType = "STyYesNo", type = "COMPUTED", persistent = false, label = "Is technical")
+	public Boolean getIsTechnical() {
+		return io.vertigo.chatbot.designer.builder.services.topic.TopicServices.isTechnical(this);
+	}
 
  	/**
 	 * Association : Topic.

@@ -50,7 +50,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class ExecutorManager implements Manager, Activeable {
 
@@ -176,7 +175,7 @@ public class ExecutorManager implements Manager, Activeable {
 		botEngine.saveContext(input, executorConfigManager.getContextMap());
 		final var botResponse = botEngine.runTick(input);
 		final ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
-		CompletableFuture.runAsync(() -> analyticsSenderServices.sendEventStartToDb(newUUID, botResponse, executorConfiguration, input));
+		analyticsSenderServices.sendEventStartToDb(newUUID, botResponse, executorConfiguration, input);
 		botResponse.getMetadatas().put("sessionId", newUUID);
 		if (executorConfiguration.getAvatar() != null) {
 			botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
@@ -198,13 +197,13 @@ public class ExecutorManager implements Manager, Activeable {
 			botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
 		}
 		botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class));
-		CompletableFuture.runAsync(() -> analyticsSenderServices.sendEventToDb(sessionId, botResponse, executorConfigManager.getConfig().getExecutorConfiguration(), input));
+		analyticsSenderServices.sendEventToDb(sessionId, botResponse, executorConfigManager.getConfig().getExecutorConfiguration(), input);
 
 		return botResponse;
 	}
 
 	public void rate(final UUID sessionId, final IncomeRating rating) {
-		CompletableFuture.runAsync(() -> analyticsSenderServices.rate(sessionId, rating, executorConfigManager.getConfig().getExecutorConfiguration()));
+		analyticsSenderServices.rate(sessionId, rating, executorConfigManager.getConfig().getExecutorConfiguration());
 	}
 
 	public Map<String, String> getContext() {

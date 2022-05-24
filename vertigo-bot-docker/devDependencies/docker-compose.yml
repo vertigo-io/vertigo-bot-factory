@@ -71,11 +71,12 @@ services:
   influxdb:
     image: influxdb:2.1.1
     volumes:
-      - cf_influxdb_data:/var/lib/influxdb
+      #- cf_influxdb_data:/var/lib/influxdb
       - cf_influxdb2_data:/var/lib/influxdb2
       - cf_influxdb2_config:/etc/influxdb2
     environment:
       DOCKER_INFLUXDB_INIT_MODE: setup
+      #DOCKER_INFLUXDB_INIT_MODE: upgrade
       DOCKER_INFLUXDB_INIT_USERNAME: admin
       DOCKER_INFLUXDB_INIT_PASSWORD: changeme
       DOCKER_INFLUXDB_INIT_ORG: chatbot

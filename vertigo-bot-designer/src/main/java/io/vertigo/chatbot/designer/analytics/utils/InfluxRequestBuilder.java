@@ -110,6 +110,10 @@ public final class InfluxRequestBuilder {
 		return this;
 	}
 
+	public String buildRaw() {
+		return request.toString();
+	}
+
 	public String build(final boolean sortByTime) {
 		request.append("|> group() \n");// merge all tables
 		if (sortByTime) {
@@ -118,10 +122,14 @@ public final class InfluxRequestBuilder {
 		return request.toString();
 	}
 
-	public String build(final long limit, final boolean sortByTime) {
+	public String build(final long limit, final boolean sortByTime, final String ... additionalColumns) {
 		request.append("|> group() \n");// merge all tables
 		if (sortByTime) {
-			request.append("|> sort(columns: [\"_time\"], desc: false)");
+			request.append("|> sort(columns: [\"_time\"");
+			for (final String column : additionalColumns) {
+				request.append(", \"").append(column).append("\"");
+			}
+			request.append("], desc:false)");
 		}
 		return request.append("|> limit(n:").append(limit).append(") \n") // limit is per table (must be done after group())
 				.toString();
