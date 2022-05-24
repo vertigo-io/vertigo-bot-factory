@@ -40,7 +40,6 @@ import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
-import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,7 +59,8 @@ public class AnalyticsController extends AbstractDesignerController {
 
 	private static final ViewContextKey<TimedDatas> sessionStatsKey = ViewContextKey.of("sessionStats");
 	private static final ViewContextKey<TimedDatas> requestsStatsKey = ViewContextKey.of("requestsStats");
-	private static final ViewContextKey<TimedDatas> userInteractionsStatsKey = ViewContextKey.of("userInteractionsStats");;
+	private static final ViewContextKey<TimedDatas> userInteractionsStatsKey = ViewContextKey.of("userInteractionsStats");
+
 	private static final ViewContextKey<SelectionOption> timeOptionsList = ViewContextKey.of("timeOptions");
 	private static final ViewContextKey<TypeExportAnalytics> typeExportAnalyticsListKey = ViewContextKey.of("typeExportAnalyticsList");
 	private static final ViewContextKey<TypeExportAnalytics> selectTypeExportAnalyticsKey = ViewContextKey.of("selectTypeExportAnalytics");
@@ -104,7 +104,7 @@ public class AnalyticsController extends AbstractDesignerController {
 		updateGraph(viewContext, statCriteria);
 
 		listLimitReached(viewContext, uiMessageStack);
-		AbstractVSpringMvcController.toModeEdit();
+		toModeEdit();
 	}
 
 	@PostMapping("/_updateStats")

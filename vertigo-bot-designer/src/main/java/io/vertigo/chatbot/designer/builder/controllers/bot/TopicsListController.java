@@ -40,7 +40,6 @@ import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
-import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
@@ -87,9 +86,8 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtList(topicIhmListKey, TopicIhmFields.topId, topicServices.getAllNonTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString()));
-		final TopicCategory technicalTopicCategory = categoryServices.getTechnicalCategoryByBot(bot).orElseGet(() -> categoryServices.initializeBasicCategory(bot));
 		viewContext.publishDtList(technicalTopicIhmListKey, TopicIhmFields.topId,
-				topicServices.getAllTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString(), technicalTopicCategory));
+				topicServices.getAllTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString()));
 		viewContext.publishDtListModifiable(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 		viewContext.publishDtList(categoryListKey, categoryServices.getAllCategoriesByBot(bot));
 		viewContext.publishDtList(nonTechnicalCategoryListKey, categoryServices.getAllNonTechnicalCategoriesByBot(bot));
@@ -101,7 +99,7 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 		viewContext.publishFileInfoURI(importTopicFileUri, null);
 		super.initBreadCrums(viewContext, Topic.class);
 		listLimitReached(viewContext, uiMessageStack);
-		AbstractVSpringMvcController.toModeReadOnly();
+		toModeReadOnly();
 	}
 
 	@PostMapping("/createTopic")

@@ -14,7 +14,6 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
-import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
@@ -62,7 +61,7 @@ public class UnknownSentenceListController extends AbstractBotListEntityControll
 		viewContext.publishDtList(statusKey, unknownSentenceStatusServices.findAll());
 		listLimitReached(viewContext, uiMessageStack);
 		super.initBreadCrums(viewContext, UnknownSentenceDetail.class);
-		AbstractVSpringMvcController.toModeReadOnly();
+		toModeReadOnly();
 	}
 
 	@PostMapping("/_treatUnknownSentence")

@@ -1059,6 +1059,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isEnabled,
 		/** Propriété 'Code'. */
 		code,
+		/** Propriété 'Is technical'. */
+		isTechnical,
 		/** Propriété 'Type du topic'. */
 		ttoCd,
 		/** Propriété 'Chatbot'. */

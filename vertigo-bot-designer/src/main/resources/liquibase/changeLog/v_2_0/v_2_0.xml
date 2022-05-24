@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="cmarechal" id="alter default topic title and description">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_04_11.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="alter kind topic label and description">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_04_11_2.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="Update kind topic">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_04_11_3.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="alter type export analytics add conversations">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_05_10.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="create rating options">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_22_05_10.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="alter type export analytics categories">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_05_11.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="add new kind topic rating">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_05_16.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="create proc for rating technical topic">
+        <createProcedure encoding="utf8" path="/sql/v_2_0/alter_22_05_31.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="alter custom config drop rating">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_05_17.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="alter type export analytics add rating and topic usage">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_05_20.sql" />
+    </changeSet>
+
+
+</databaseChangeLog>

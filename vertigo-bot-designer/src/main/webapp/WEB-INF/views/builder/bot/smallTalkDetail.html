@@ -6,14 +6,14 @@
 	>
 
 	<section th:fragment="content-nav">
-		<vu:include-data-primitive key="technicalTopic" />
+		<vu:include-data object="topic" field="isTechnical" />
 		<q-item tag="a" href="#response" th:text="#{smallTalk.menu.responses}"></q-item>
-		<q-item tag="a" href="#buttons" th:text="#{smallTalk.menu.buttons}" v-if="vueData.technicalTopic == false"></q-item>
-		<q-item tag="a" href="#conversationOver" th:text="#{smallTalk.menu.isEndMini}" v-if="vueData.technicalTopic == false"></q-item>
+		<q-item tag="a" href="#buttons" th:text="#{smallTalk.menu.buttons}" v-if="vueData.topic.isTechnical == false"></q-item>
+		<q-item tag="a" href="#conversationOver" th:text="#{smallTalk.menu.isEndMini}" v-if="vueData.topic.isTechnical == false"></q-item>
 	</section>
 		
 	<section th:fragment="content-specific">
-		<vu:include-data-primitive key="technicalTopic" />
+		<vu:include-data object="topic" field="isTechnical" />
 		<vu:popup action="_delete" vModel="showPopup" th:message="#{smalltalk.popup.message}" th:confirm="#{action.delete}"></vu:popup>
 
 		<vu:block id="response" th:title="#{smallTalk.menu.responses}">
@@ -110,7 +110,7 @@
 
 		</vu:block>
 
-		<vu:block id="buttons" th:title="#{smallTalk.menu.buttons}" v-if="vueData.technicalTopic == false">
+		<vu:block id="buttons" th:title="#{smallTalk.menu.buttons}" v-if="vueData.topic.isTechnical == false">
 			<vu:include-data object="buttons" field="text" modifiableAllLines="true" />
 			<vu:include-data object="buttons" field="topIdResponse" modifiableAllLines="true" />
 			<vu:include-data object="buttonsUrl" field="text" />
@@ -131,7 +131,7 @@
 			<div th:if="${model.modeReadOnly && model.vContext.buttons.isEmpty()}" th:text="#{smalltalk.noButton}"></div>
 		</vu:block>
 
-		<vu:block id="conversationOver" title="#{smallTalk.menu.isEnd}" v-if="vueData.technicalTopic == false">
+		<vu:block id="conversationOver" title="#{smallTalk.menu.isEnd}" v-if="vueData.topic.isTechnical == false">
 			<vu:label object="smallTalk" field="isEnd">
 				<vu:include-data object="smallTalk" field="isEnd" modifiable="true" />
 				<q-input v-model="vueData.smallTalk.isEnd" name="vContext[smallTalk][isEnd]" class="hidden" ></q-input>

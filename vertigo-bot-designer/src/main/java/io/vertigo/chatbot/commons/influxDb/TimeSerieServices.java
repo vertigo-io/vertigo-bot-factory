@@ -3,6 +3,7 @@ package io.vertigo.chatbot.commons.influxDb;
 import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
 import io.vertigo.chatbot.designer.analytics.utils.InfluxRequestBuilder;
 import io.vertigo.chatbot.designer.analytics.utils.InfluxRequestUtil;
+import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.connectors.influxdb.InfluxDbConnector;
@@ -14,8 +15,10 @@ import io.vertigo.database.timeseries.TimedDatas;
 
 import javax.inject.Inject;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Use for search in influxdb
@@ -153,29 +156,14 @@ public class TimeSerieServices implements Component, Activeable {
 		return InfluxRequestUtil.executeTabularQuery(influxDbConnector.getClient(), q);
 	}
 
-	public TimedDatas getSessionTechnicalIntents(final StatCriteria criteria, final String sessionId) {
+	public TimedDatas getAllIntents(final StatCriteria criteria) {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isTechnical"))
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
 				.keep(List.of("_time", "name", "_field", "_value", "sessionId", "modelName"))
 				.pivot()
-				.filterByColumn(Map.of("sessionId", '"' + sessionId + '"', "isTechnical", "1"))
 				.build(true);
-
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
-	}
-
-	public TimedDatas getSessionNonTechnicalIntents(final StatCriteria criteria, final String sessionId) {
-		final String q = new InfluxRequestBuilder(influxDbName)
-				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isTechnical"))
-				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "name", "_field", "_value", "sessionId", "modelName"))
-				.pivot()
-				.filterByColumn(Map.of("sessionId", '"' + sessionId + '"', "isTechnical", "0"))
-				.build(true);
-
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}
 
@@ -202,29 +190,99 @@ public class TimeSerieServices implements Component, Activeable {
 	}
 
 	public TimedDatas getConversationDetails(final StatCriteria criteria, final String sessionId) {
+		final Map<String, String> filterByColumnMap = AnalyticsServicesUtils.getBotNodFilter(criteria);
+		filterByColumnMap.put("sessionId", '"' + sessionId + '"');
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.filterFields(AnalyticsServicesUtils.CONVERSATION_MSRMT, List.of("isUserMessage", "isBotMessage"))
-				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.filterByColumn(filterByColumnMap)
 				.keep(List.of("_time", "text", "_field", "_value", "sessionId"))
 				.pivot()
-				.filterByColumn(Map.of("sessionId", '"' + sessionId + '"'))
 				.keep(List.of("_time", "text", "isUserMessage", "isBotMessage"))
-				.build(5_000L, true);
+				.build(5_000L, true, "isBotMessage");
 
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
 	}
 
-	public TabularDatas getConversationStats(final StatCriteria criteria) {
-		final String q = new InfluxRequestBuilder(influxDbName)
+	public TimedDatas getConversationStats(final StatCriteria criteria, final ConversationCriteria conversationCriteria) {
+		final Map<String, String> botNodeFilterMap = AnalyticsServicesUtils.getBotNodFilter(criteria);
+		final StringBuilder query = new StringBuilder();
+		query.append("import \"strings\"\n\n");
+		query.append("conv =  ").append(new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.CONVERSATION_MSRMT, List.of("isUserMessage"))
-				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "_field", "_value", "isUserMessage", "sessionId"))
-				.pivot()
-				.filterByColumn(Map.of("isUserMessage", "1"))
-				.group(List.of("sessionId")).count("isUserMessage").build(5_000L, true);
-		return InfluxRequestUtil.executeTabularQuery(influxDbConnector.getClient(), q);
+				.append("|> filter(fn: (r) => r._measurement == \"conversation\" and r._field == \"isUserMessage\" and r._value == 1)")
+				.append("|> filter(fn: (r) => exists r.sessionId)")
+				.filterByColumn(botNodeFilterMap)
+				.keep(List.of("_time", "_field", "_value", "isUserMessage", "sessionId", "modelName"))
+				.group(List.of("sessionId")).buildRaw());
+		query.append("\n\n");
+
+		query.append("rate = ").append(new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.filterFields(AnalyticsServicesUtils.RATING_MSRMT, List.of("rating"))
+				.filterByColumn(botNodeFilterMap)
+				.append("|> filter(fn: (r) => exists r.sessionId)")
+				.keep(List.of("_field", "_value", "sessionId", "rating"))
+				.group(List.of("sessionId")).buildRaw());
+
+		query.append("\n\n");
+
+		final Map<String, String> endMsgBotNodeFilterMap = new HashMap<>(botNodeFilterMap);
+		endMsgBotNodeFilterMap.put("name", "\"!END\"");
+		query.append("chatbotMessages = ").append(new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("name"))
+				.filterByColumn(endMsgBotNodeFilterMap )
+				.append("|> filter(fn: (r) => exists r.sessionId)")
+				.keep(List.of("sessionId"))
+				.append("|> set(key: \"_field\", value: \"isEnded\")")
+				.append("|> set(key: \"_value\", value: \"1\")")
+				.append("|> toFloat()")
+				.group(List.of("sessionId")).buildRaw());
+		query.append("\n\n");
+
+		query.append("msgCount = conv \n")
+				.append("|> count() \n")
+				.append("|> set(key: \"_field\", value: \"interactions\") \n")
+				.append("|> toFloat() \n\n");
+
+		query.append("modelName = conv \n")
+				.append("|> keep(columns: [\"_value\", \"modelName\", \"sessionId\"]) \n")
+				.append("|> first()");
+
+		query.append("\n\n");
+
+		query.append("sessionTime = conv").append("\n")
+				.append("|> keep(columns: [\"_time\", \"sessionId\"]) \n")
+				.append("|> rename(columns: {_time: \"_value\"}) \n")
+				.append("|> min()").append("\n")
+				.append("|> rename(columns: {_value: \"_time\"})");
+
+		query.append("\n\n");
+
+		query.append("unionCountRate = union(tables: [msgCount, rate, chatbotMessages]) \n")
+				.append("|> pivot(rowKey:[\"sessionId\"], columnKey: [\"_field\"], valueColumn: \"_value\") \n")
+				.append("|> group()");
+
+		query.append("\n\n");
+
+		query.append("joinTable = join(tables: {key1: unionCountRate, key2: sessionTime}, on: [\"sessionId\"], method: \"inner\") \n")
+				.append("|> group()");
+
+		query.append("\n\n");
+
+		query.append("join(tables: {key1: joinTable, key2: modelName}, on: [\"sessionId\"], method: \"inner\") \n");
+		if (!conversationCriteria.getRatings().isEmpty()) {
+			query.append("|> filter(fn: (r) => ");
+			query.append(conversationCriteria.getRatings().stream().map(r -> "r.rating ==  " + r).collect(Collectors.joining(" or ")));
+			query.append(")");
+		}
+		if (conversationCriteria.getModelName() != null) {
+			query.append("|> filter(fn: (r) => strings.containsStr(v: r.modelName, substr: \"").append(conversationCriteria.getModelName()).append("\")) \n");
+		}
+		query.append("|> group()");
+
+		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), query.toString());
 	}
 
 	public TimedDatas getRatingStats(final StatCriteria criteria) {
@@ -236,27 +294,33 @@ public class TimeSerieServices implements Component, Activeable {
 	}
 
 	public TimedDatas getRatingDetailsStats(final StatCriteria criteria) {
-		final String q = new InfluxRequestBuilder(influxDbName)
+		final StringBuilder query = new StringBuilder();
+		query.append("lastTopic = ").append(new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.RATING_MSRMT, List.of("rating1", "rating2", "rating3", "rating4", "rating5", "sessionId", "ratingComment"))
+				.append("|> filter(fn: (r) => r._measurement == \"chatbotmessages\" and r._field == \"isTechnical\" and r._value == 0)")
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "_field", "_value", "sessionId", "ratingComment"))
-				.pivot()
-				.build(5_000L, true);
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
-	}
+				.keep(List.of("_value", "name", "sessionId"))
+				.append("|> rename(columns: {name: \"lastTopic\"})")
+				.group(List.of("sessionId"))
+				.append("|> sort(columns: [\"_time\"], desc:false)|> limit(n:5000)")
+				.append("|> last()").buildRaw());
 
-	public TimedDatas getRatingForSession(final StatCriteria criteria, final String sessionId) {
+		query.append("\n\n");
 
-		final String q = new InfluxRequestBuilder(influxDbName)
+		query.append("rate = ").append(new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.RATING_MSRMT, List.of("rating1", "rating2", "rating3", "rating4", "rating5", "sessionId"))
+				.filterFields(AnalyticsServicesUtils.RATING_MSRMT, List.of("rating", "sessionId"))
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
 				.keep(List.of("_time", "_field", "_value", "sessionId"))
 				.pivot()
-				.filterByColumn(Map.of("sessionId", '"' + sessionId + '"'))
-				.build(5_000L, true);
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
+				.group(List.of("sessionId"))
+				.append("|> sort(columns: [\"_time\"], desc:false)|> limit(n:5000)").buildRaw());
+
+		query.append("\n\n");
+
+		query.append("join(tables: {key1: lastTopic, key2: rate}, on: [\"sessionId\"], method: \"inner\") \n");
+		query.append("|> group()");
+		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), query.toString());
 	}
 
 	/**

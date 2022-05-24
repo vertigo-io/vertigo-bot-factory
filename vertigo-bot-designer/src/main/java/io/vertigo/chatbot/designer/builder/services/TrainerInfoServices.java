@@ -24,12 +24,12 @@ public class TrainerInfoServices implements Component {
 
 	public TrainerInfo createTrainingState(final Chatbot bot) {
 		final Optional<Training> currentTrainingOpt = trainingServices.getCurrentTraining(bot);
+		TrainerInfo trainerInfo = new TrainerInfo();
 		if (currentTrainingOpt.isPresent()) {
 			final Training training = currentTrainingOpt.get();
-			return createTrainerInfo(training.getTraId(), true, training.getStartTime(), "Training" + training.getVersionNumber(), TrainingStatusEnum.TRAINING.name(), null);
-		} else {
-			return new TrainerInfo();
+			trainerInfo = createTrainerInfo(training.getTraId(), true, training.getStartTime(), "Training" + training.getVersionNumber(), TrainingStatusEnum.TRAINING.name(), null);
 		}
+		return trainerInfo;
 	}
 
 	public TrainerInfo createTrainingState(final Training training) {

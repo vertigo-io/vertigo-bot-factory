@@ -264,6 +264,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTopic$code,
 	/**
+	 * Is technical.
+	 */
+	fldTopic$isTechnical,
+	/**
 	 * Type du topic.
 	 */
 	fldTopic$ttoCd,

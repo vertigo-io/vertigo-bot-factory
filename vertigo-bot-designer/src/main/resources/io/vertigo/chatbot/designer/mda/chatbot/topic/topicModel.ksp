@@ -115,6 +115,8 @@ create DtDefinition DtTopic{
 	field 	description		{domain: DoLabel 	label: "Description" 						}
 	field 	isEnabled 		{domain: DoYesNo 	label: "Enabled" 		cardinality : "1"	}
 	field 	code	 		{domain: DoLabel 	label: "Code" 			cardinality : "1"	}
+	computed isTechnical    {domain: DoYesNo 					        label: "Is technical"
+    								 expression:"return io.vertigo.chatbot.designer.builder.services.topic.TopicServices.isTechnical(this);" }
 }
 
 create DtDefinition DtSmallTalk {
