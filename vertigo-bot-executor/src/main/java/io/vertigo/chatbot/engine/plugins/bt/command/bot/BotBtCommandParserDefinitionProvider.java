@@ -148,13 +148,12 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 		buttons.add(new BotButton(command.getStringParam(1), yesPayload));
 		buttons.add(new BotButton(command.getStringParam(2), noPayload));
 		final BTNode chooseButton = BotNodeProvider.chooseButton(getBB(params), whileButtonKey, command.getStringParam(0), buttons);
-		final List<BTNode> sequence = new ArrayList<>();
-		sequence.add(chooseButton);
-		childs.add(0, BotNodeProvider.eq(getBB(params), whileButtonKey, yesPayload));
-		childs.add(BotNodeProvider.remove(getBB(params), whileButtonKey));
-		childs.add(chooseButton);
-		sequence.add(selector(sequence(childs), sequence()));
-		return sequence(sequence);
+		final BTNode loopContent = sequence(
+		    BotNodeProvider.eq(getBB(params), whileButtonKey, yesPayload),
+		    sequence(childs),
+		    BotNodeProvider.remove(getBB(params), whileButtonKey),
+		    chooseButton);
+		return sequence(chooseButton, selector(loopContent, BTNodes.succeed())); // loop content always succeed, even if "no" is choosen
 	}
 
 	private static BTNode buildChooseButtonNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
