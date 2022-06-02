@@ -21,7 +21,7 @@ public class BtNodeMailProvider implements Component {
 
 	private static final Logger LOGGER = LogManager.getLogger(BtNodeMailProvider.class);
 
-	public BTNode sendMail(final BlackBoard bb, final String subjectKey, final String messageBodyKey, final Optional<String> attachmentKey, final String destinationKeys) {
+	public BTNode sendMail(final BlackBoard bb, final String subjectKey, final String messageBodyKey, final Optional<String> attachmentKey, final String destinationsKey) {
 		return () -> {
 				Optional<FileDescriptor> optFileDescriptor = Optional.empty();
 				final int recipientsCount = bb.listSize(BBKey.of(destinationKeys));
