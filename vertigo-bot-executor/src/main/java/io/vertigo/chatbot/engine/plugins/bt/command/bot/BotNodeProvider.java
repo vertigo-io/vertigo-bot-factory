@@ -300,6 +300,13 @@ public final class BotNodeProvider {
 		};
 	}
 
+	public static BTNode launchWelcomeTour(final BlackBoard bb, final String welcomeTourTechnicalCode) {
+		return () -> {
+			bb.putString(BBKey.of(BotEngine.BOT_OUT_METADATA_PATH, "/welcometour"), welcomeTourTechnicalCode);
+			return BTStatus.Succeeded;
+		};
+	}
+
 
 	public static BTNode link(final BlackBoard bb, final String url, final Boolean newTab) {
 		return () -> {

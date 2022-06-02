@@ -48,7 +48,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Objet de données TopicExport. */
 		TopicExport(io.vertigo.chatbot.commons.domain.TopicExport.class),
 		/** Objet de données TrainerInfo. */
-		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class)		;
+		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
+		/** Objet de données WelcomeTourExport. */
+		WelcomeTourExport(io.vertigo.chatbot.commons.domain.WelcomeTourExport.class)		;
 
 		private final Class<?> clazz;
 
@@ -132,7 +134,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ratingBT,
 		/** Propriété 'topics export'. */
 		topics,
-		/** Propriété 'Welcome tours map'. */
+		/** Propriété 'Welcome tours'. */
 		welcomeTours,
 		/** Propriété 'Confluence setting'. */
 		confluenceSetting,
@@ -166,14 +168,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum ChatbotCustomConfigFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotCustomConfig> {
 		/** Propriété 'Context value id'. */
 		cccId,
-		/** Propriété 'Rating'. */
-		rating,
-		/** Propriété 'Rating message'. */
-		ratingMessage,
-		/** Propriété 'Comment'. */
-		comment,
-		/** Propriété 'Comment message'. */
-		commentMessage,
 		/** Propriété 'Bot email address'. */
 		botEmailAddress,
 		/** Propriété 'Reinitialization button'. */
@@ -340,6 +334,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		trainingPercent,
 		/** Propriété 'Duration'. */
 		duration	}
+
+	/**
+	 * Enumération des champs de WelcomeTourExport.
+	 */
+	public enum WelcomeTourExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.WelcomeTourExport> {
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Technical code'. */
+		technicalCode,
+		/** Propriété 'Sheperd config'. */
+		config	}
 
 	/** {@inheritDoc} */
 	@Override

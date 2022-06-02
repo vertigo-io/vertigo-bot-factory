@@ -40,6 +40,10 @@
 				return VertigoUi.vueData.devNode !== null && VertigoUi.vueData.devNode.traId !==null;
 			}
 
+			function getWelcomeToursFileURL() {
+				return VertigoUi.vueData.devNode.url + '/api/chatbot/getWelcomeToursFile';
+			}
+
 			document.addEventListener('DOMContentLoaded', function () {
 				if (canTalkToBot()) {
 					Chatbot.init({
@@ -172,6 +176,10 @@
 		<vu:include-data object="trainerState" field="'*'"/>
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
+				const script = document.createElement('script');
+				script.type = 'text/javascript';
+				script.src = VertigoUi.vueData.devNode.url + '/api/chatbot/getWelcomeToursFile';
+				document.head.appendChild(script);
 				if (VertigoUi.vueData.trainerState.trainingInProgress) {
 					postTrain();
 				}

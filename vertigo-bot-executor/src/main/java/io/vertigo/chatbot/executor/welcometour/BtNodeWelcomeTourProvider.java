@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 
-import static io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider.launchJsEvent;
+import static io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider.launchWelcomeTour;
 
 public class BtNodeWelcomeTourProvider implements Component {
 
@@ -20,10 +20,10 @@ public class BtNodeWelcomeTourProvider implements Component {
 
 	private static final Logger LOGGER = LogManager.getLogger(BtNodeWelcomeTourProvider.class);
 
-	public BTNode startWelcomeTour(final BlackBoard bb, String welcomeTourLabel) {
+	public BTNode startWelcomeTour(final BlackBoard bb, final String welcomeTourLabel) {
 		try {
-			return launchJsEvent(bb, executorManager.getWelcomeTourTechnicalCode(welcomeTourLabel));
-		} catch (VSystemException vSystemException) {
+			return launchWelcomeTour(bb, executorManager.getWelcomeTourTechnicalCode(welcomeTourLabel));
+		} catch (final VSystemException vSystemException) {
 			LOGGER.error("Error when starting Welcome tour with label " + welcomeTourLabel, vSystemException);
 			return () -> BTStatus.Failed;
 		}

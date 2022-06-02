@@ -120,7 +120,7 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$topics,
 	/**
-	 * Welcome tours map.
+	 * Welcome tours.
 	 */
 	fldBotExport$welcomeTours,
 	/**
@@ -764,7 +764,59 @@ public enum DtResources implements MessageKey {
 	 */
 	fldWelcomeTour$technicalCode,
 	/**
+	 * Sheperd config.
+	 */
+	fldWelcomeTour$config,
+	/**
 	 * Chatbot.
 	 */
 	fldWelcomeTour$botId,
+
+	/***********************************************************
+	/** WelcomeTourExport.
+	/***********************************************************
+	/**
+	 * Label.
+	 */
+	fldWelcomeTourExport$label,
+	/**
+	 * Technical code.
+	 */
+	fldWelcomeTourExport$technicalCode,
+	/**
+	 * Sheperd config.
+	 */
+	fldWelcomeTourExport$config,
+
+	/***********************************************************
+	/** WelcomeTourStep.
+	/***********************************************************
+	/**
+	 * Welcome tour step id.
+	 */
+	fldWelcomeTourStep$welStepId,
+	/**
+	 * Id.
+	 */
+	fldWelcomeTourStep$id,
+	/**
+	 * Text.
+	 */
+	fldWelcomeTourStep$text,
+	/**
+	 * Title.
+	 */
+	fldWelcomeTourStep$title,
+	/**
+	 * Sequence.
+	 */
+	fldWelcomeTourStep$sequence,
+	/**
+	 * Enabled.
+	 */
+	fldWelcomeTourStep$enabled,
+	/**
+	 * Tour.
+	 */
+	fldWelcomeTourStep$tourId,
 }

@@ -9,7 +9,7 @@ create DtDefinition DtBotExport {
 	field idleBT				    {domain: DoText 						label: "idle BT" 				    cardinality : "1"}
 	field ratingBT				    {domain: DoText 						label: "rating BT" 				    cardinality : "1"}
 	field topics					{domain: DoDtTopicExport 				label: "topics export" 				cardinality : "*"}
-	field welcomeTours				{domain: DoText 			            label: "Welcome tours map" 	        cardinality : "1"}
+	field welcomeTours				{domain: DoDtWelcomeTourExport 			label: "Welcome tours" 	            cardinality : "*"}
 	field confluenceSetting			{domain: DoDtConfluenceSettingExport 	label: "Confluence setting" 	    cardinality : "?"}
 	field jiraSetting			    {domain: DoDtJiraSettingExport 	        label: "Jira setting" 	            cardinality : "?"}
 	field jiraFieldSetting			{domain: DoDtJiraFieldSettingExport 	label: "Jira fields setting" 	    cardinality : "*"}
@@ -21,6 +21,12 @@ create DtDefinition DtTopicExport {
 	field nluTrainingSentences 		{domain: DoLabel 						label: "nluTrainingSentences" 		cardinality : "*"}
 	field topicBT			 		{domain: DoText	 						label: "Topic BT" 					cardinality : "1"}
     field unreachable			 	{domain: DoYesNo	 					label: "Unreachable" 				cardinality : "1"}
+}
+
+create DtDefinition DtWelcomeTourExport {
+	field label 		        {domain: DoLabel 	label: "Label" 			                cardinality : "1"	}
+	field technicalCode 		{domain: DoLabel 	label: "Technical code" 			    cardinality : "1"	}
+	field config			    {domain: DoJson		label: "Sheperd config"	 			    cardinality : "1"   }
 }
 
 create DtDefinition DtConfluenceSettingExport {

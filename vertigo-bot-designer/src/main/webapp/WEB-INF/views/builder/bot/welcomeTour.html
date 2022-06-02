@@ -8,6 +8,32 @@
 
 <head>
     <title th:text="#{extensions.welcometour}"></title>
+    <script th:inline="javascript">
+        VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+
+        function addWelcomeTour() {
+            VUiPage.httpPostAjax("_saveWelcomeTour", {
+                'welId': VertigoUi.vueData.newWelcomeTour.welId,
+                'label': VertigoUi.vueData.newWelcomeTour.label,
+                'technicalCode': VertigoUi.vueData.newWelcomeTour.technicalCode,
+                'importSheperdConfigFileUri': VertigoUi.vueData.importSheperdConfigFileUri.toString()
+            });
+        }
+
+        function onRejected (rejectedEntries) {
+            let message = VertigoUi.vueData.locale === 'fr_FR' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
+                : 'File ' + rejectedEntries[0].file.name + ' was rejected.';
+            if (rejectedEntries[0].failedPropValidation === 'accept') {
+                message += VertigoUi.vueData.locale === 'fr_FR' ? ' Le format du fichier n\'est pas accepté' : ' File format isn\'t accepted';
+            }
+            VUiExtensions.dataX.attachmentError = {'show': true, 'message': message};
+        }
+
+        function onStart() {
+            VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+        }
+
+    </script>
 </head>
 
 <body>
@@ -30,12 +56,13 @@
                        vueData.newWelcomeTour.botId = vueData.bot.botId;
                        vueData.newWelcomeTour.label = null;
                        vueData.newWelcomeTour.technicalCode = null ;
+                       vueData.importSheperdConfigFileUri = [];
                        $refs.welcomeTourDialog.show()"></q-btn>
         </vu:slot>
         <vu:slot name="actions_slot">
             <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:title="#{action.update}"
                    @click="vueData.newWelcomeTour.botId = props.row.botId; vueData.newWelcomeTour.welId = props.row.welId; vueData.newWelcomeTour.label = props.row.label;
-                       vueData.newWelcomeTour.technicalCode = props.row.technicalCode; $refs.welcomeTourDialog.show()"></q-btn>
+                       vueData.newWelcomeTour.technicalCode = props.row.technicalCode; vueData.importSheperdConfigFileUri = []; $refs.welcomeTourDialog.show()"></q-btn>
             <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
                    @click="componentStates.welId = props.row.welId; componentStates.showDeleteWelcomeTourPopup = true"></q-btn>
         </vu:slot>
@@ -43,43 +70,49 @@
         <vu:include-data object="welcomeTours" field="welId" />
         <vu:include-data object="welcomeTours" field="botId" />
         <vu:include-data object="welcomeTours" field="technicalCode" />
-        <vu:column field="label"/>
-        <vu:column field="technicalCode"/>
+        <vu:column @click="|goTo('@{/bot/{id}/welcomeToursSteps/(id=${model.bot.botId})}'+props.row.welId)|" style="cursor : pointer;" field="label"/>
+        <vu:column @click="|goTo('@{/bot/{id}/welcomeToursSteps/(id=${model.bot.botId})}'+props.row.welId)|" style="cursor : pointer;" field="technicalCode"/>
     </vu:table>
-    <q-dialog ref="welcomeTourDialog">
-        <vu:include-data object="newWelcomeTour" field="botId" modifiable="true" />
-        <vu:include-data object="newWelcomeTour" field="welId" modifiable="true" />
-        <vu:include-data object="newWelcomeTour" field="label" modifiable="true" />
-        <vu:include-data object="newWelcomeTour" field="technicalCode"  modifiable="true" />
-        <q-card>
-            <q-card-section>
-                <div class="text-h6">
-                    <span v-if="vueData.newWelcomeTour.welId !== null" th:text="#{extensions.welcometour.update.popup.title}"></span>
-                    <span v-else th:text="#{extensions.welcometour.add.popup.title}"></span>
-                </div>
-            </q-card-section>
-            <q-card-section>
-                <input type="hidden" v-model="vueData.newWelcomeTour.welId" name="vContext[newWelcomeTour][welId]">
-                <input type="hidden" v-model="vueData.newWelcomeTour.botId" name="vContext[newWelcomeTour][botId]">
-                <q-input v-model="vueData.newWelcomeTour.label" th:label="#{extensions.welcometour.label}"
-                         name="vContext[newWelcomeTour][label]" :error="hasFieldsError('newWelcomeTour', 'label')"
-                         :error-message="getErrorMessage('newWelcomeTour', 'label')"  />
-            </q-card-section>
-            <q-card-section>
-                <q-input v-model="vueData.newWelcomeTour.technicalCode" th:label="#{extensions.welcometour.technicalCode}"
-                         name="vContext[newWelcomeTour][technicalCode]" :error="hasFieldsError('newWelcomeTour', 'technicalCode')"
-                         :error-message="getErrorMessage('newWelcomeTour', 'technicalCode')" />
-            </q-card-section>
+    <th:bloc th:with="viewMode='edit'">
+        <q-dialog ref="welcomeTourDialog">
+            <vu:include-data object="newWelcomeTour" field="botId" modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="welId" modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="label" modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="technicalCode"  modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="config" modifiable="true" />
+            <q-card>
+                <q-card-section>
+                    <div class="text-h6">
+                        <span v-if="vueData.newWelcomeTour.welId !== null" th:text="#{extensions.welcometour.update.popup.title}"></span>
+                        <span v-else th:text="#{extensions.welcometour.add.popup.title}"></span>
+                    </div>
+                </q-card-section>
+                <q-card-section>
+                    <input type="hidden" v-model="vueData.newWelcomeTour.welId" name="vContext[newWelcomeTour][welId]">
+                    <input type="hidden" v-model="vueData.newWelcomeTour.botId" name="vContext[newWelcomeTour][botId]">
+                    <vu:text-field object="newWelcomeTour" field="label"/>
+                </q-card-section>
+                <q-card-section>
+                    <vu:text-field object="newWelcomeTour" field="technicalCode"/>
+                </q-card-section>
+                <q-card-section>
+                    <vu:label-edit object="newWelcomeTour" field="config">
+                        <vu:fileupload th:url="'@{/commons/upload}'" key="importSheperdConfigFileUri" multiple="false" accept="'.js'"
+                                   @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
+                    </vu:label-edit>
+                    <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
+                </q-card-section>
 
-            <q-card-actions align="around">
-                <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
-                <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
-                <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-                       @click="httpPostAjax('_saveWelcomeTour', vueDataParams(['newWelcomeTour']))"
-                       color="primary" v-close-popup></q-btn>
-            </q-card-actions>
-        </q-card>
-    </q-dialog>
+                <q-card-actions align="around">
+                    <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                    <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                    <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                           @click="addWelcomeTour()"
+                           color="primary" v-close-popup></q-btn>
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
+    </th:bloc>
 </section>
 </body>
 </html>

@@ -7,6 +7,7 @@ public class ExecutorGlobalConfig {
 
 	private ExecutorConfiguration executorConfiguration;
 	private BotExport bot;
+	private String welcomeToursFileURN;
 
 	/**
 	 * @return the executorConfiguration
@@ -34,5 +35,13 @@ public class ExecutorGlobalConfig {
 	 */
 	public void setBot(final BotExport bot) {
 		this.bot = bot;
+	}
+
+	public String getWelcomeToursFileURN() {
+		return welcomeToursFileURN;
+	}
+
+	public void setWelcomeToursFileURN(final String welcomeToursFileURN) {
+		this.welcomeToursFileURN = welcomeToursFileURN;
 	}
 }

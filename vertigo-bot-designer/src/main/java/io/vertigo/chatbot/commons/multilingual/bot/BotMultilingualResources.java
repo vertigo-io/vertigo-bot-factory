@@ -30,6 +30,8 @@ public enum BotMultilingualResources implements MessageKey {
 
 	WELCOMETOUR_LIST,
 
+	WELCOMETOURSTEP_LIST,
+
 	TRAINING_STATE_MESSAGE_OK,
 
 	TRAINING_STATE_MESSAGE_KO,

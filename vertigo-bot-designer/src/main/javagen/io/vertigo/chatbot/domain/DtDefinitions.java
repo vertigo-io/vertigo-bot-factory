@@ -176,7 +176,11 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Objet de données UtterTextExport. */
 		UtterTextExport(io.vertigo.chatbot.designer.domain.topic.export.UtterTextExport.class),
 		/** Objet de données WelcomeTour. */
-		WelcomeTour(io.vertigo.chatbot.commons.domain.WelcomeTour.class)		;
+		WelcomeTour(io.vertigo.chatbot.commons.domain.WelcomeTour.class),
+		/** Objet de données WelcomeTourExport. */
+		WelcomeTourExport(io.vertigo.chatbot.commons.domain.WelcomeTourExport.class),
+		/** Objet de données WelcomeTourStep. */
+		WelcomeTourStep(io.vertigo.chatbot.commons.domain.WelcomeTourStep.class)		;
 
 		private final Class<?> clazz;
 
@@ -260,7 +264,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ratingBT,
 		/** Propriété 'topics export'. */
 		topics,
-		/** Propriété 'Welcome tours map'. */
+		/** Propriété 'Welcome tours'. */
 		welcomeTours,
 		/** Propriété 'Confluence setting'. */
 		confluenceSetting,
@@ -1376,8 +1380,40 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Technical code'. */
 		technicalCode,
+		/** Propriété 'Sheperd config'. */
+		config,
 		/** Propriété 'Chatbot'. */
 		botId	}
+
+	/**
+	 * Enumération des champs de WelcomeTourExport.
+	 */
+	public enum WelcomeTourExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.WelcomeTourExport> {
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Technical code'. */
+		technicalCode,
+		/** Propriété 'Sheperd config'. */
+		config	}
+
+	/**
+	 * Enumération des champs de WelcomeTourStep.
+	 */
+	public enum WelcomeTourStepFields implements DtFieldName<io.vertigo.chatbot.commons.domain.WelcomeTourStep> {
+		/** Propriété 'Welcome tour step id'. */
+		welStepId,
+		/** Propriété 'Id'. */
+		id,
+		/** Propriété 'Text'. */
+		text,
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Sequence'. */
+		sequence,
+		/** Propriété 'Enabled'. */
+		enabled,
+		/** Propriété 'Tour'. */
+		tourId	}
 
 	/** {@inheritDoc} */
 	@Override
