@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.mail.MessagingException;
 import java.net.URLConnection;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 public class BtNodeMailProvider implements Component {
 
@@ -24,10 +25,10 @@ public class BtNodeMailProvider implements Component {
 	public BTNode sendMail(final BlackBoard bb, final String subjectKey, final String messageBodyKey, final Optional<String> attachmentKey, final String destinationsKey) {
 		return () -> {
 				Optional<FileDescriptor> optFileDescriptor = Optional.empty();
-				final int recipientsCount = bb.listSize(BBKey.of(destinationKeys));
-				final String[] recipients = new String[recipientsCount];
+				final int recipientsCount = bb.listSize(BBKey.of(destinationsKey));
+				final StringJoiner recipients = new StringJoiner(",");
 				for (int i = 0; i < recipientsCount; i++) {
-					recipients[i] = bb.listGet(BBKey.of(destinationKeys), i);
+					recipients.add(bb.listGet(BBKey.of(destinationsKey), i));
 				}
 				if (attachmentKey.isPresent()) {
 					final FileDescriptor fileDescriptor = new FileDescriptor();
@@ -40,7 +41,7 @@ public class BtNodeMailProvider implements Component {
 					optFileDescriptor = Optional.of(fileDescriptor);
 				}
 				try {
-					mailService.sendMail(String.join(",", recipients), bb.getString(BBKey.of(subjectKey)), bb.getString(BBKey.of(messageBodyKey)), optFileDescriptor);
+					mailService.sendMail(recipients.toString(), bb.getString(BBKey.of(subjectKey)), bb.getString(BBKey.of(messageBodyKey)), optFileDescriptor);
 					return BTStatus.Succeeded;
 				} catch (final MessagingException messagingException) {
 					LOGGER.error("Error when sending mail to " + recipients + " with mail subject " + bb.getString(BBKey.of(subjectKey)), messagingException);

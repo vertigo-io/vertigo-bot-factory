@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
 import io.vertigo.ai.bt.BTNode;
+import io.vertigo.ai.bt.BTNodes;
 import io.vertigo.ai.impl.command.BtCommand;
 import io.vertigo.ai.impl.command.BtCommandParserDefinition;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
