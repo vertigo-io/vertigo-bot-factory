@@ -134,7 +134,8 @@ public class AnalyticsServices implements Component {
 		final DtList<CategoryStat> categoryStats = new DtList<>(CategoryStat.class);
 		final long totalCount = intents.stream().mapToLong(TopIntent::getCount).sum();
 		final Map<String, Long> categoriesCount = new HashMap<>();
-		intents.forEach(topIntent -> categoriesCount.put(topIntent.getCatLabel(), categoriesCount.getOrDefault(topIntent.getCatLabel(), 0L) + 1 ));
+		intents.forEach(topIntent -> categoriesCount.put(topIntent.getCatLabel(),
+				categoriesCount.getOrDefault(topIntent.getCatLabel(), 0L) + topIntent.getCount()));
 		categories.forEach(topicCategory -> {
 			final CategoryStat categoryStat = new CategoryStat();
 			categoryStat.setLabel(topicCategory.getLabel());
