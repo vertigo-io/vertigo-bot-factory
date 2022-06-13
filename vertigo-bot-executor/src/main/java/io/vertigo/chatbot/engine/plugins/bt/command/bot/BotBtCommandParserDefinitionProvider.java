@@ -33,7 +33,6 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 
 	public static final String yesPayload = "YES";
 	public static final String noPayload = "NO";
-	public static final String whileButtonKey = "/user/local/whilebutton";
 
 	@Override
 	public List<BtCommandParserDefinition> provideDefinitions(final DefinitionSpace definitionSpace) {
@@ -146,13 +145,13 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 
 	private static BTNode buildWhileNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
 		final List<BotButton> buttons = new ArrayList<>();
-		buttons.add(new BotButton(command.getStringParam(1), yesPayload));
-		buttons.add(new BotButton(command.getStringParam(2), noPayload));
-		final BTNode chooseButton = BotNodeProvider.chooseButton(getBB(params), whileButtonKey, command.getStringParam(0), buttons);
+		buttons.add(new BotButton(command.getStringParam(2), yesPayload));
+		buttons.add(new BotButton(command.getStringParam(3), noPayload));
+		final BTNode chooseButton = BotNodeProvider.chooseButton(getBB(params), command.getStringParam(0), command.getStringParam(1), buttons);
 		final BTNode loopContent = sequence(
-		    BotNodeProvider.eq(getBB(params), whileButtonKey, yesPayload),
+		    BotNodeProvider.eq(getBB(params), command.getStringParam(0), yesPayload),
 		    sequence(childs),
-		    BotNodeProvider.remove(getBB(params), whileButtonKey),
+		    BotNodeProvider.remove(getBB(params), command.getStringParam(0)),
 		    chooseButton);
 		return sequence(chooseButton, selector(loopContent, BTNodes.succeed())); // loop content always succeed, even if "no" is choosen
 	}
