@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
 import io.vertigo.ai.bt.BTNode;
+import io.vertigo.ai.bt.BTNodes;
 import io.vertigo.ai.impl.command.BtCommand;
 import io.vertigo.ai.impl.command.BtCommandParserDefinition;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
@@ -30,6 +31,9 @@ import static io.vertigo.chatbot.engine.util.BlackBoardUtils.getBB;
  */
 public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionProvider, Component {
 
+	public static final String yesPayload = "YES";
+	public static final String noPayload = "NO";
+
 	@Override
 	public List<BtCommandParserDefinition> provideDefinitions(final DefinitionSpace definitionSpace) {
 		return List.of(
@@ -40,6 +44,8 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.basicCommand("incrBy", (c, p) -> BotNodeProvider.incrBy(getBB(p), c.getStringParam(0), c.getIntParam(1))),
 				BtCommandParserDefinition.basicCommand("decr", (c, p) -> BotNodeProvider.decr(getBB(p), c.getStringParam(0))),
 				BtCommandParserDefinition.basicCommand("append", (c, p) -> BotNodeProvider.append(getBB(p), c.getStringParam(0), c.getStringParam(1))),
+				BtCommandParserDefinition.basicCommand("listPush", (c, p) -> BotNodeProvider.doNodeOncePerTree(getBB(p), BotNodeProvider.listPush(getBB(p),
+						c.getStringParam(0), getBB(p).format(c.getStringParam(1))), getBB(p).format(c.getStringParam(1)))),
 				BtCommandParserDefinition.basicCommand("remove", (c, p) -> BotNodeProvider.remove(getBB(p), c.getStringParam(0))),
 				BtCommandParserDefinition.basicCommand("say", (c, p) -> BotNodeProvider.sayOncePerTree(getBB(p), c.getStringParam(0))),
 				BtCommandParserDefinition.basicCommand("rating", (c, p) -> BotNodeProvider.rating(getBB(p), c.getStringParam(0), c.getStringParam(1))),
@@ -71,6 +77,7 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 				BtCommandParserDefinition.basicCommand("choose:nlu", (c, p) -> BotNodeProvider.chooseNlu(getBB(p), c.getStringParam(0))),
 				BtCommandParserDefinition.compositeCommand("choose:button", BotBtCommandParserDefinitionProvider::buildChooseButtonNode),
 				BtCommandParserDefinition.compositeCommand("ifelse", BotBtCommandParserDefinitionProvider::buildIfElseNode),
+				BtCommandParserDefinition.compositeCommand("while", BotBtCommandParserDefinitionProvider::buildWhileNode),
 				BtCommandParserDefinition.compositeCommand("if", (c, p, l) -> new BotIf(l)),
 				BtCommandParserDefinition.compositeCommand("else", (c, p, l) -> new BotElse(l)),
 				BtCommandParserDefinition.compositeCommand("choose:card", BotBtCommandParserDefinitionProvider::buildChooseCardNode),
@@ -134,6 +141,19 @@ public class BotBtCommandParserDefinitionProvider implements SimpleDefinitionPro
 			sequences.add(sequence(botElse.getNodes()));
 		}
 		return selector(sequences);
+	}
+
+	private static BTNode buildWhileNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
+		final List<BotButton> buttons = new ArrayList<>();
+		buttons.add(new BotButton(command.getStringParam(2), yesPayload));
+		buttons.add(new BotButton(command.getStringParam(3), noPayload));
+		final BTNode chooseButton = BotNodeProvider.chooseButton(getBB(params), command.getStringParam(0), command.getStringParam(1), buttons);
+		final BTNode loopContent = sequence(
+		    BotNodeProvider.eq(getBB(params), command.getStringParam(0), yesPayload),
+		    sequence(childs),
+		    BotNodeProvider.remove(getBB(params), command.getStringParam(0)),
+		    chooseButton);
+		return sequence(chooseButton, selector(loopContent, BTNodes.succeed())); // loop content always succeed, even if "no" is choosen
 	}
 
 	private static BTNode buildChooseButtonNode(final BtCommand command, final List<Object> params, final List<BTNode> childs) {

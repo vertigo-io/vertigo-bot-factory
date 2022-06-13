@@ -12,9 +12,8 @@ import org.apache.logging.log4j.Logger;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
 import java.net.URLConnection;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.StringJoiner;
 
 public class BtNodeMailProvider implements Component {
 
@@ -23,24 +22,28 @@ public class BtNodeMailProvider implements Component {
 
 	private static final Logger LOGGER = LogManager.getLogger(BtNodeMailProvider.class);
 
-	public BTNode sendMail(final BlackBoard bb, String subjectKey, String messageBodyKey, Optional<String> attachmentKey, String[] destinationKeys) {
+	public BTNode sendMail(final BlackBoard bb, final String subjectKey, final String messageBodyKey, final Optional<String> attachmentKey, final String destinationsKey) {
 		return () -> {
 				Optional<FileDescriptor> optFileDescriptor = Optional.empty();
-				String recipients = Arrays.stream(destinationKeys).map(dest -> bb.getString(BBKey.of(dest))).collect(Collectors.joining(","));
+				final int recipientsCount = bb.listSize(BBKey.of(destinationsKey));
+				final StringJoiner recipients = new StringJoiner(",");
+				for (int i = 0; i < recipientsCount; i++) {
+					recipients.add(bb.listGet(BBKey.of(destinationsKey), i));
+				}
 				if (attachmentKey.isPresent()) {
-					FileDescriptor fileDescriptor = new FileDescriptor();
-					BBKey rootFileKey = BBKey.of(attachmentKey.get());
+					final FileDescriptor fileDescriptor = new FileDescriptor();
+					final BBKey rootFileKey = BBKey.of(attachmentKey.get());
 					fileDescriptor.setFileName(bb.getString(BBKey.of(rootFileKey, "/filename")));
-					String[] fileData = bb.getString(BBKey.of(rootFileKey, "/filecontent")).split(",");
+					final String[] fileData = bb.getString(BBKey.of(rootFileKey, "/filecontent")).split(",");
 					Assertion.check().isTrue(fileData.length == 2, "Attachment " + fileDescriptor.getFileName() + " is not Base64 encoded");
 					fileDescriptor.setFileContent(fileData[1]);
 					fileDescriptor.setFileType(URLConnection.getFileNameMap().getContentTypeFor(fileDescriptor.getFileName()));
 					optFileDescriptor = Optional.of(fileDescriptor);
 				}
 				try {
-					mailService.sendMail(recipients, bb.getString(BBKey.of(subjectKey)), bb.getString(BBKey.of(messageBodyKey)), optFileDescriptor);
+					mailService.sendMail(recipients.toString(), bb.getString(BBKey.of(subjectKey)), bb.getString(BBKey.of(messageBodyKey)), optFileDescriptor);
 					return BTStatus.Succeeded;
-				} catch (MessagingException messagingException) {
+				} catch (final MessagingException messagingException) {
 					LOGGER.error("Error when sending mail to " + recipients + " with mail subject " + bb.getString(BBKey.of(subjectKey)), messagingException);
 					return BTStatus.Failed;
 				}

@@ -451,7 +451,7 @@ public final class BotNodeProvider {
 		return sequence(sequence);
 	}
 
-	private static BTNode listPush(final BlackBoard bb, final String keyTemplate, final String value) {
+	public static BTNode listPush(final BlackBoard bb, final String keyTemplate, final String value) {
 		return () -> {
 			bb.listPush(bb.eval(BBKeyTemplate.of(keyTemplate)), value);
 			return BTStatus.Succeeded;

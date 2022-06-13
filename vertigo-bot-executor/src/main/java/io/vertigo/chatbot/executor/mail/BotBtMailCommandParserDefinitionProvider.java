@@ -25,9 +25,9 @@ public class BotBtMailCommandParserDefinitionProvider implements SimpleDefinitio
 		LOGGER.info("loading mail grammar");
 		return List.of(
 				BtCommandParserDefinition.basicCommand("mail", (c, p) ->
-						btNodeMailProvider.sendMail(getBB(p), c.getStringParam(0), c.getStringParam(1), Optional.empty(), c.getRemainingStringParam(2))),
+						btNodeMailProvider.sendMail(getBB(p), c.getStringParam(0), c.getStringParam(1), Optional.empty(), c.getStringParam(2))),
 				BtCommandParserDefinition.basicCommand("mail:attachment", (c, p) ->
-						btNodeMailProvider.sendMail(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getOptStringParam(2), c.getRemainingStringParam(3))));
+						btNodeMailProvider.sendMail(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getOptStringParam(2), c.getStringParam(3))));
 	}
 
 }
