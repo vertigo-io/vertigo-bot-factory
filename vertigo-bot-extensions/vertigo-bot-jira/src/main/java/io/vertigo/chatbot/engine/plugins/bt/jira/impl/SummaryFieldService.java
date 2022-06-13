@@ -31,12 +31,12 @@ public class SummaryFieldService implements IJiraFieldService, Component {
 	private JiraServerService jiraServerService;
 
 	@Override
-	public boolean supports(String fieldKey) {
+	public boolean supports(final String fieldKey) {
 		return IssueFieldId.SUMMARY_FIELD.id.equals(fieldKey);
 	}
 
 	@Override
-	public void processConversation(BlackBoard bb, JiraField jiraField, List<BTNode> sequence) {
+	public void processConversation(final BlackBoard bb, final JiraField jiraField, final List<BTNode> sequence) {
 
 		sequence.add(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()));
 		sequence.add(getIssueFromReference(bb, jiraField.getKey()));
@@ -46,7 +46,7 @@ public class SummaryFieldService implements IJiraFieldService, Component {
 	}
 
 	@Override
-	public void processTicket(BlackBoard bb, IssueInputBuilder iib, JiraField jiraField) {
+	public void processTicket(final BlackBoard bb, final IssueInputBuilder iib, final JiraField jiraField) {
 		iib.setSummary(jiraField.getValue());
 	}
 
@@ -62,7 +62,7 @@ public class SummaryFieldService implements IJiraFieldService, Component {
 			bb.putString(wsBBPath, wsValue);
 			result.add(MessageText.of(JiraMultilingualResources.TICKET_FOUND).getDisplay());
 			result.add(MessageText.of(JiraMultilingualResources.TICKET_CHECK_ALREADY_EXISTS).getDisplay());
-			final String jqlSearch = "summary ~ " + bb.getString(BBKey.of(string)) + " OR description ~ " + bb.getString(BBKey.of(string));
+			final String jqlSearch = "summary ~ \"" + bb.getString(BBKey.of(string)) + "\" OR description ~ \"" + bb.getString(BBKey.of(string)) + "\"";
 			final List<String> jiraIssues = jiraServerService.getIssues(jqlSearch);
 			if (jiraIssues != null) {
 				result.addAll(jiraIssues);
