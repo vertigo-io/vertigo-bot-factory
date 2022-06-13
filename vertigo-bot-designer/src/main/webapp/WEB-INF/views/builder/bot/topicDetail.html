@@ -128,9 +128,9 @@
 							<q-toggle v-model="vueData.topic.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
 						</vu:label>
 						<vu:grid-cell></vu:grid-cell>
-						<vu:select object="topic" field="topCatId" list="topicCategoryList" label="#{topic.category}" v-if="vueData.topic.isTechnical == false" valueField="topCatId" labelField="label" readonly="${model.modeReadOnly}"/>
+						<vu:select-edit object="topic" field="topCatId" list="topicCategoryList" label="#{topic.category}" v-if="vueData.topic.isTechnical == false"  th:readonly="${model.modeReadOnly}" labelField="label"/>
 						<vu:include-data object="topic" field="description" modifiable="true"/>
-						<vu:text-area object="topic" field="description" readonly="${model.modeReadOnly}" :disable="vueData.topic.isTechnical == true"/>
+						<vu:text-area object="topic" field="description" th:readonly="${model.modeReadOnly}" :disable="vueData.topic.isTechnical == true"/>
 						<vu:grid-cell></vu:grid-cell>
 					</vu:grid>
 
