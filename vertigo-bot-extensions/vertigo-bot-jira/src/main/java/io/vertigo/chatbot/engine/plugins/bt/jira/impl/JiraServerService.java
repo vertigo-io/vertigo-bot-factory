@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider.formatLink;
+
 public class JiraServerService implements Component, IJiraService {
 
 	private String baseJira;
@@ -40,11 +42,11 @@ public class JiraServerService implements Component, IJiraService {
 	private JiraRestClient jiraRestClient;
 	private DtList<JiraFieldSettingExport> jiraFieldSettingExports;
 
-	public void refreshConfig(JiraSettingExport jiraSettingExport, DtList<JiraFieldSettingExport> jiraFieldSettingExports) {
-		this.baseJira = jiraSettingExport.getUrl();
-		this.user = jiraSettingExport.getLogin();
-		this.password = jiraSettingExport.getPassword();
-		this.project = jiraSettingExport.getProject();
+	public void refreshConfig(final JiraSettingExport jiraSettingExport, final DtList<JiraFieldSettingExport> jiraFieldSettingExports) {
+		baseJira = jiraSettingExport.getUrl();
+		user = jiraSettingExport.getLogin();
+		password = jiraSettingExport.getPassword();
+		project = jiraSettingExport.getProject();
 		jiraRestClient = createJiraRestClient();
 		this.jiraFieldSettingExports = jiraFieldSettingExports;
 	}
@@ -55,10 +57,10 @@ public class JiraServerService implements Component, IJiraService {
 
 	private JiraRestClient createJiraRestClient() {
 		return new AsynchronousJiraRestClientFactory()
-				.createWithBasicHttpAuthentication(URI.create(baseJira), this.user, this.password);
+				.createWithBasicHttpAuthentication(URI.create(baseJira), user, password);
 	}
 
-	public BasicIssue createIssue(final BlackBoard bb, final List<JiraField> jfFields, List<IJiraFieldService> fieldServices) {
+	public BasicIssue createIssue(final BlackBoard bb, final List<JiraField> jfFields, final List<IJiraFieldService> fieldServices) {
 		final IssueRestClient issueClient = jiraRestClient.getIssueClient();
 		final IssueInputBuilder iib = new IssueInputBuilder();
 		iib.setProjectKey(project);
@@ -81,7 +83,7 @@ public class JiraServerService implements Component, IJiraService {
 	}
 
 	@Override
-	public String createIssueJiraCommand(final BlackBoard bb, final List<JiraField> jiraFields, List<IJiraFieldService> fieldServices) {
+	public String createIssueJiraCommand(final BlackBoard bb, final List<JiraField> jiraFields, final List<IJiraFieldService> fieldServices) {
 		final var createdIssue = createIssue(bb, jiraFields, fieldServices);
 		return createLinkUrl(createdIssue.getKey());
 
@@ -89,13 +91,7 @@ public class JiraServerService implements Component, IJiraService {
 
 	private String createLinkUrl(final String key) {
 		final String url = baseJira + "/browse/" + key;
-		final StringBuilder builder = new StringBuilder();
-		builder.append("<a href=\"");
-		builder.append(url);
-		builder.append("\">");
-		builder.append(key);
-		builder.append("</a>");
-		return builder.toString();
+		return formatLink(url, true);
 	}
 
 	public Project getProject() {
@@ -110,7 +106,7 @@ public class JiraServerService implements Component, IJiraService {
 		return (List<Version>) getProject().getVersions();
 	}
 
-	public List<User> findUserByUsername(String username) {
+	public List<User> findUserByUsername(final String username) {
 		return (List<User>) jiraRestClient.getUserClient().findUsers(username).claim();
 	}
 
@@ -118,16 +114,16 @@ public class JiraServerService implements Component, IJiraService {
 		return (List<Priority>) jiraRestClient.getMetadataClient().getPriorities().claim();
 	}
 
-	public Issue getIssueByKey(String key) {
+	public Issue getIssueByKey(final String key) {
 		return jiraRestClient.getIssueClient().getIssue(key).claim();
 	}
 
-	public List<Transition> getIssueTransitions(Issue issue) {
+	public List<Transition> getIssueTransitions(final Issue issue) {
 		return (List<Transition>) jiraRestClient.getIssueClient().getTransitions(issue).claim();
 	}
 
 	public List<Field> getCustomFields() {
-		List<Field> allFields = (List<Field>) jiraRestClient.getMetadataClient().getFields().claim();
+		final List<Field> allFields = (List<Field>) jiraRestClient.getMetadataClient().getFields().claim();
 		return allFields.stream().filter(field -> field.getFieldType() == FieldType.CUSTOM).collect(Collectors.toList());
 	}
 
