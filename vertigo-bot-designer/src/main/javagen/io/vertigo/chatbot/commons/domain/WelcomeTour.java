@@ -100,17 +100,17 @@ public final class WelcomeTour implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Sheperd config'.
+	 * Récupère la valeur de la propriété 'Shepherd config'.
 	 * @return String config <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Sheperd config")
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Shepherd config")
 	public String getConfig() {
 		return config;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Sheperd config'.
+	 * Définit la valeur de la propriété 'Shepherd config'.
 	 * @param config String <b>Obligatoire</b>
 	 */
 	public void setConfig(final String config) {

@@ -764,7 +764,7 @@ public enum DtResources implements MessageKey {
 	 */
 	fldWelcomeTour$technicalCode,
 	/**
-	 * Sheperd config.
+	 * Shepherd config.
 	 */
 	fldWelcomeTour$config,
 	/**
@@ -784,7 +784,7 @@ public enum DtResources implements MessageKey {
 	 */
 	fldWelcomeTourExport$technicalCode,
 	/**
-	 * Sheperd config.
+	 * Shepherd config.
 	 */
 	fldWelcomeTourExport$config,
 
@@ -796,9 +796,9 @@ public enum DtResources implements MessageKey {
 	 */
 	fldWelcomeTourStep$welStepId,
 	/**
-	 * Id.
+	 * Internal step id.
 	 */
-	fldWelcomeTourStep$id,
+	fldWelcomeTourStep$internalStepId,
 	/**
 	 * Text.
 	 */

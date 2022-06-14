@@ -24,9 +24,9 @@ create DtDefinition DtTopicExport {
 }
 
 create DtDefinition DtWelcomeTourExport {
-	field label 		        {domain: DoLabel 	label: "Label" 			                cardinality : "1"	}
-	field technicalCode 		{domain: DoLabel 	label: "Technical code" 			    cardinality : "1"	}
-	field config			    {domain: DoJson		label: "Sheperd config"	 			    cardinality : "1"   }
+	field label 		        {domain: DoLabel 	label: "Label" 			                    cardinality : "1"	}
+	field technicalCode 		{domain: DoLabel 	label: "Technical code" 			        cardinality : "1"	}
+	field config			    {domain: DoJson		label: "Shepherd config"	 			    cardinality : "1"   }
 }
 
 create DtDefinition DtConfluenceSettingExport {

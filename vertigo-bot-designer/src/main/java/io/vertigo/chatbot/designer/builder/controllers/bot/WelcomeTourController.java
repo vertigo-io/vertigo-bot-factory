@@ -37,7 +37,7 @@ public class WelcomeTourController extends AbstractBotListEntityController<Welco
 
 	private static final ViewContextKey<WelcomeTour> newWelcomeTourKey = ViewContextKey.of("newWelcomeTour");
 
-	private static final ViewContextKey<FileInfoURI> importSheperdConfigFileUriKey = ViewContextKey.of("importSheperdConfigFileUri");
+	private static final ViewContextKey<FileInfoURI> importShepherdConfigFileUriKey = ViewContextKey.of("importShepherdConfigFileUri");
 
 	@Inject
 	private WelcomeTourServices welcomeTourServices;
@@ -47,7 +47,7 @@ public class WelcomeTourController extends AbstractBotListEntityController<Welco
 		initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtList(welcomeToursKey, welcomeTourServices.findAllByBotId(botId));
 		viewContext.publishDto(newWelcomeTourKey, new WelcomeTour());
-		viewContext.publishFileInfoURI(importSheperdConfigFileUriKey, null);
+		viewContext.publishFileInfoURI(importShepherdConfigFileUriKey, null);
 		super.initBreadCrums(viewContext, WelcomeTour.class);
 		listLimitReached(viewContext, uiMessageStack);
 	}
@@ -56,11 +56,11 @@ public class WelcomeTourController extends AbstractBotListEntityController<Welco
 	public ViewContext saveNewWelcomeTour(final ViewContext viewContext,
 										  final UiMessageStack uiMessageStack,
 										  @ViewAttribute("bot") final Chatbot bot,
-										  @RequestParam("welId") final Optional<Long> welId,
+										  @RequestParam("welIdOpt") final Optional<Long> welIdOpt,
 										  @RequestParam("label") final String label,
 										  @RequestParam("technicalCode") final String technicalCode,
-										  @QueryParam("importSheperdConfigFileUri") final Optional<FileInfoURI> configFileUri) {
-		final WelcomeTour welcomeTour = welId.isEmpty() ? new WelcomeTour() : welcomeTourServices.findById(welId.get());
+										  @QueryParam("importShepherdConfigFileUri") final Optional<FileInfoURI> configFileUri) {
+		final WelcomeTour welcomeTour = welIdOpt.isEmpty() ? new WelcomeTour() : welcomeTourServices.findById(welIdOpt.get());
 		welcomeTour.setTechnicalCode(technicalCode);
 		welcomeTour.setBotId(bot.getBotId());
 		welcomeTour.setLabel(label);

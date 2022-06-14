@@ -16,7 +16,7 @@ public final class WelcomeTourStep implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private Long welStepId;
-	private String id;
+	private String internalStepId;
 	private String text;
 	private String title;
 	private Long sequence;
@@ -64,21 +64,21 @@ public final class WelcomeTourStep implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Id'.
-	 * @return String id <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Internal step id'.
+	 * @return String internalStepId <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Id")
-	public String getId() {
-		return id;
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Internal step id")
+	public String getInternalStepId() {
+		return internalStepId;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Id'.
-	 * @param id String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Internal step id'.
+	 * @param internalStepId String <b>Obligatoire</b>
 	 */
-	public void setId(final String id) {
-		this.id = id;
+	public void setInternalStepId(final String internalStepId) {
+		this.internalStepId = internalStepId;
 	}
 	
 	/**
@@ -103,9 +103,9 @@ public final class WelcomeTourStep implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Title'.
-	 * @return String title
+	 * @return String title <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", label = "Title")
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Title")
 	public String getTitle() {
 		return title;
 	}
@@ -113,7 +113,7 @@ public final class WelcomeTourStep implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Title'.
-	 * @param title String
+	 * @param title String <b>Obligatoire</b>
 	 */
 	public void setTitle(final String title) {
 		this.title = title;
@@ -122,9 +122,9 @@ public final class WelcomeTourStep implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Sequence'.
-	 * @return Long sequence
+	 * @return Long sequence <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyNumber", label = "Sequence")
+	@Field(smartType = "STyNumber", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Sequence")
 	public Long getSequence() {
 		return sequence;
 	}
@@ -132,7 +132,7 @@ public final class WelcomeTourStep implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Sequence'.
-	 * @param sequence Long
+	 * @param sequence Long <b>Obligatoire</b>
 	 */
 	public void setSequence(final Long sequence) {
 		this.sequence = sequence;
@@ -141,9 +141,9 @@ public final class WelcomeTourStep implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Enabled'.
-	 * @return Boolean enabled
+	 * @return Boolean enabled <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyYesNo", label = "Enabled")
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Enabled")
 	public Boolean getEnabled() {
 		return enabled;
 	}
@@ -151,7 +151,7 @@ public final class WelcomeTourStep implements Entity {
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Enabled'.
-	 * @param enabled Boolean
+	 * @param enabled Boolean <b>Obligatoire</b>
 	 */
 	public void setEnabled(final Boolean enabled) {
 		this.enabled = enabled;

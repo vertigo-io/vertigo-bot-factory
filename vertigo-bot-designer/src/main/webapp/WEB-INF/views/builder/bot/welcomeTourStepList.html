@@ -37,15 +37,16 @@
             <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:title="#{action.update}"
                    @click="vueData.newStep.welStepId = props.row.welStepId;
                        vueData.newStep.tourId = props.row.tourId;
-                       vueData.newStep.id = props.row.id;
+                       vueData.newStep.internalStepId = props.row.internalStepId;
                        vueData.newStep.title = props.row.title;
                        vueData.newStep.text = props.row.text;
+                       vueData.newStep.sequence = props.row.sequence;
                        vueData.newStep.enabled = props.row.enabled;
                        $refs.welcomeTourStepDialog.show()"></q-btn>
         </vu:slot>
         <vu:include-data object="steps" field="welStepId" />
         <vu:include-data object="steps" field="tourId" />
-        <vu:column field="id"/>
+        <vu:column field="internalStepId"/>
         <vu:column field="title"/>
         <vu:column field="text"/>
         <vu:column field="sequence"/>
@@ -58,9 +59,8 @@
         <q-dialog ref="welcomeTourStepDialog" >
             <vu:include-data object="newStep" field="welStepId" modifiable="true" />
             <vu:include-data object="newStep" field="tourId" modifiable="true" />
-            <vu:include-data object="newStep" field="id" modifiable="true" />
-            <vu:include-data object="newStep" field="title" modifiable="true" />
-            <vu:include-data object="newStep" field="text"  modifiable="true" />
+            <vu:include-data object="newStep" field="internalStepId" modifiable="true" />
+            <vu:include-data object="newStep" field="sequence" modifiable="true" />
             <vu:include-data object="newStep" field="enabled" modifiable="true" />
             <q-card>
                 <q-card-section style="width: 700px; max-width: 80vw;">
@@ -69,9 +69,6 @@
                     </div>
                 </q-card-section>
                 <q-card-section>
-                    <input type="hidden" v-model="vueData.newStep.welStepId" name="vContext[newStep][welStepId]">
-                    <input type="hidden" v-model="vueData.newStep.tourId" name="vContext[newStep][tourId]">
-                    <input type="hidden" v-model="vueData.newStep.id" name="vContext[newStep][id]">
                     <vu:text-field object="newStep" field="title"/>
                 </q-card-section>
                 <q-card-section>
@@ -80,15 +77,13 @@
                 <q-card-section>
                     <vu:label-edit object="newStep" field="enabled">
                         <q-toggle left-label v-model="vueData.newStep.enabled"></q-toggle>
-                        <input type="hidden" name="vContext[newStep][enabled]" :value="vueData.newStep.enabled"/>
                     </vu:label-edit>
                 </q-card-section>
 
                 <q-card-actions align="around">
-                    <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
                     <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
                     <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-                           @click="saveWelcomeTourStep()"
+                           @click="httpPostAjax(vueData.newStep.tourId + '/_saveWelcomeTourStep', vueDataParams(['newStep']), {onSuccess: $refs.welcomeTourStepDialog.hide})"
                            color="primary" v-close-popup></q-btn>
                 </q-card-actions>
             </q-card>

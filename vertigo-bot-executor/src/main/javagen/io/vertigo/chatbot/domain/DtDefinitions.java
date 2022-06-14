@@ -343,7 +343,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Technical code'. */
 		technicalCode,
-		/** Propriété 'Sheperd config'. */
+		/** Propriété 'Shepherd config'. */
 		config	}
 
 	/** {@inheritDoc} */

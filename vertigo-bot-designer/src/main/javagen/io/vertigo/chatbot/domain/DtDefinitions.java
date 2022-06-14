@@ -1380,7 +1380,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Technical code'. */
 		technicalCode,
-		/** Propriété 'Sheperd config'. */
+		/** Propriété 'Shepherd config'. */
 		config,
 		/** Propriété 'Chatbot'. */
 		botId	}
@@ -1393,7 +1393,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Technical code'. */
 		technicalCode,
-		/** Propriété 'Sheperd config'. */
+		/** Propriété 'Shepherd config'. */
 		config	}
 
 	/**
@@ -1402,8 +1402,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum WelcomeTourStepFields implements DtFieldName<io.vertigo.chatbot.commons.domain.WelcomeTourStep> {
 		/** Propriété 'Welcome tour step id'. */
 		welStepId,
-		/** Propriété 'Id'. */
-		id,
+		/** Propriété 'Internal step id'. */
+		internalStepId,
 		/** Propriété 'Text'. */
 		text,
 		/** Propriété 'Title'. */

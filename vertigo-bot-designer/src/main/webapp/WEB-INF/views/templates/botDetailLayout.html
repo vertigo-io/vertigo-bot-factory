@@ -40,10 +40,6 @@
 				return VertigoUi.vueData.devNode !== null && VertigoUi.vueData.devNode.traId !==null;
 			}
 
-			function getWelcomeToursFileURL() {
-				return VertigoUi.vueData.devNode.url + '/api/chatbot/getWelcomeToursFile';
-			}
-
 			document.addEventListener('DOMContentLoaded', function () {
 				if (canTalkToBot()) {
 					Chatbot.init({

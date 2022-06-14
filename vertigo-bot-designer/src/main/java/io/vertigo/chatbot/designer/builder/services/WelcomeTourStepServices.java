@@ -4,6 +4,7 @@ import io.vertigo.chatbot.commons.dao.WelcomeTourStepDAO;
 import io.vertigo.chatbot.commons.domain.WelcomeTourStep;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -26,7 +27,12 @@ public class WelcomeTourStepServices implements Component {
 	@Inject
 	private WelcomeTourStepDAO welcomeTourStepDAO;
 
-	private final Pattern extractPattern = Pattern.compile("#\\[([A-Za-z1-9\\-]+)\\.([A-Za-z1-9\\-]+)\\s+(.+)\\]#");
+	/**
+	 * Regex to extract params from welcome tour step config file
+	 * Ex : #[start.title Bienvenue]#", "#[start.text Bienvenue sur notre site de démo. Nous allons vous guider !]#
+	 * Group 1 is the step key, group 2 the param and group 3 the default value
+	 */
+	private static final Pattern extractPattern = Pattern.compile("#\\[([A-Za-z1-9\\-]+)\\.([A-Za-z1-9\\-]+)\\s+(.+)\\]#");
 
 	public WelcomeTourStep findById(final long tourStepId) {
 		return welcomeTourStepDAO.get(tourStepId);
@@ -37,7 +43,7 @@ public class WelcomeTourStepServices implements Component {
 	}
 
 	public void deleteAllByTourId(final long tourId) {
-		findAllStepsByTourId(tourId).forEach(sheperdTourStep -> delete(sheperdTourStep.getWelStepId()));
+		findAllStepsByTourId(tourId).forEach(welcomeTourStep -> delete(welcomeTourStep.getWelStepId()));
 	}
 
 	public WelcomeTourStep save (final WelcomeTourStep welcomeTourStep) {
@@ -50,7 +56,7 @@ public class WelcomeTourStepServices implements Component {
 
 	public Optional<WelcomeTourStep> findStepByTourIdAndStepId(final long tourId, final String stepId) {
 		return welcomeTourStepDAO.findOptional(Criterions.isEqualTo(DtDefinitions.WelcomeTourStepFields.tourId, tourId)
-				.and(Criterions.isEqualTo(DtDefinitions.WelcomeTourStepFields.id, stepId)));
+				.and(Criterions.isEqualTo(DtDefinitions.WelcomeTourStepFields.internalStepId, stepId)));
 	}
 
 	public List<WelcomeTourStep> readStepsFromConfigString(final String config) {
@@ -59,10 +65,19 @@ public class WelcomeTourStepServices implements Component {
 		Long sequence = 1L;
 		for (final Map.Entry<String, Map<String, String>> entry : parsed.entrySet()) {
 			final WelcomeTourStep welcomeTourStep = new WelcomeTourStep();
-			welcomeTourStep.setTitle(entry.getValue().get("title"));
-			welcomeTourStep.setId(entry.getKey());
-			welcomeTourStep.setText(entry.getValue().get("text"));
-			welcomeTourStep.setEnabled("true".equals(entry.getValue().get("enabled")));
+			final Map<String, String> attributes = entry.getValue();
+			welcomeTourStep.setInternalStepId(entry.getKey());
+			if (attributes.get("title") != null) {
+				welcomeTourStep.setTitle(attributes.get("title"));
+			} else {
+				throw new VSystemException("Missing 'title' attribute on step '" + entry.getKey() + "'");
+			}
+			if (attributes.get("text") != null) {
+				welcomeTourStep.setText(attributes.get("text"));
+			} else {
+				throw new VSystemException("Missing 'text' attribute on step '" + entry.getKey() + "'");
+			}
+			welcomeTourStep.setEnabled("true".equals(attributes.getOrDefault("enabled", "true")));
 			welcomeTourStep.setSequence(sequence);
 			steps.add(welcomeTourStep);
 			sequence++;
@@ -72,6 +87,7 @@ public class WelcomeTourStepServices implements Component {
 
 	private Map<String, Map<String, String>> parseFile(final String file) {
 		final Matcher matcher = extractPattern.matcher(file);
+		//Extracting groups and build a map where the key is the step key and the value is a map of param/default value
 		return matcher.results().collect(Collectors.groupingBy(m -> m.group(1),
 				Collectors.toMap(m -> m.group(2), m -> m.group(3))));
 	}
@@ -80,19 +96,23 @@ public class WelcomeTourStepServices implements Component {
 		final DtList<WelcomeTourStep> steps = findAllStepsByTourId(welcomeTourId);
 		final Matcher matcher = extractPattern.matcher(file);
 		return matcher.replaceAll(match -> {
-			final Optional<WelcomeTourStep> optSheperdTourStep = steps.stream().filter(step -> step.getId().equals(match.group(1))).findFirst();
-			if (optSheperdTourStep.isEmpty()) {
-				return match.group(3);
+			final String shepherdStepId = match.group(1);
+			final String attributeName = match.group(2);
+			final String attributeValue = match.group(3);
+			final Optional<WelcomeTourStep> optWelcomeTourStep = steps.stream().filter(step -> step.getInternalStepId().equals(shepherdStepId)).findFirst();
+			if (optWelcomeTourStep.isEmpty()) {
+				throw new VSystemException("Step with internal ID '" + shepherdStepId + "' was not found in database. Could not complete training ...");
 			} else {
-				final WelcomeTourStep sheperdTourStep = optSheperdTourStep.get();
-				if ("title".equals(match.group(2))) {
-					return sheperdTourStep.getTitle();
-				} else if ("text".equals(match.group(2))) {
-					return sheperdTourStep.getText();
-				} else if ("enabled".equals(match.group(2))) {
-					return sheperdTourStep.getEnabled().toString();
-				} else {
-					return match.group(3);
+				final WelcomeTourStep welcomeTourStep = optWelcomeTourStep.get();
+				switch (attributeName) {
+					case "title":
+						return welcomeTourStep.getTitle();
+					case "text":
+						return welcomeTourStep.getText();
+					case "enabled":
+						return welcomeTourStep.getEnabled().toString();
+					default:
+						return attributeValue;
 				}
 			}
 		});

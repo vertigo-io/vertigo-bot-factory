@@ -1304,7 +1304,7 @@ comment on column WELCOME_TOUR.TECHNICAL_CODE is
 'Technical code';
 
 comment on column WELCOME_TOUR.CONFIG is
-'Sheperd config';
+'Shepherd config';
 
 comment on column WELCOME_TOUR.BOT_ID is
 'Chatbot';
@@ -1315,11 +1315,11 @@ comment on column WELCOME_TOUR.BOT_ID is
 create table WELCOME_TOUR_STEP
 (
     WEL_STEP_ID 	 NUMERIC     	not null,
-    ID          	 VARCHAR(100)	not null,
+    INTERNAL_STEP_ID	 VARCHAR(100)	not null,
     TEXT        	 TEXT        	not null,
-    TITLE       	 VARCHAR(100)	,
-    SEQUENCE    	 NUMERIC     	,
-    ENABLED     	 bool        	,
+    TITLE       	 VARCHAR(100)	not null,
+    SEQUENCE    	 NUMERIC     	not null,
+    ENABLED     	 bool        	not null,
     TOUR_ID     	 NUMERIC     	,
     constraint PK_WELCOME_TOUR_STEP primary key (WEL_STEP_ID)
 );
@@ -1327,8 +1327,8 @@ create table WELCOME_TOUR_STEP
 comment on column WELCOME_TOUR_STEP.WEL_STEP_ID is
 'Welcome tour step id';
 
-comment on column WELCOME_TOUR_STEP.ID is
-'Id';
+comment on column WELCOME_TOUR_STEP.INTERNAL_STEP_ID is
+'Internal step id';
 
 comment on column WELCOME_TOUR_STEP.TEXT is
 'Text';

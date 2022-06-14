@@ -6,13 +6,13 @@ import io.vertigo.chatbot.commons.domain.WelcomeTourStep;
 import io.vertigo.chatbot.designer.builder.services.WelcomeTourStepServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
+import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
 
@@ -46,15 +46,9 @@ public class WelcomeTourStepListController extends AbstractBotListEntityControll
 										   final UiMessageStack uiMessageStack,
 										   @PathVariable("botId") final Long botId,
 										   @PathVariable("tourId") final Long tourId,
-										   @RequestParam("welStepId") final Long welStepId,
-										   @RequestParam("title") final String title,
-										   @RequestParam("text") final String text,
-										   @RequestParam("enabled") final Boolean enabled) {
+										   @ViewAttribute("newStep") final WelcomeTourStep welcomeTourStep) {
 
-		final WelcomeTourStep welcomeTourStep = welcomeTourStepServices.findById(welStepId);
-		welcomeTourStep.setTitle(title);
-		welcomeTourStep.setText(text);
-		welcomeTourStep.setEnabled(enabled);
+		welcomeTourStep.setTourId(tourId);
 		welcomeTourStepServices.save(welcomeTourStep);
 		viewContext.publishDtList(stepsKey, welcomeTourStepServices.findAllStepsByTourId(tourId));
 		return viewContext;
