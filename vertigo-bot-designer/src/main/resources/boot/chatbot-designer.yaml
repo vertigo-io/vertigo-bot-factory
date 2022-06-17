@@ -7,7 +7,7 @@ boot:
     - io.vertigo.core.plugins.resource.local.LocalResourceResolverPlugin: {}
     - io.vertigo.core.plugins.param.env.EnvParamPlugin: {}
     - io.vertigo.vega.plugins.webservice.servlet.WebAppContextParamPlugin: {}
-    - io.vertigo.core.plugins.analytics.log.SocketLoggerAnalyticsConnectorPlugin:
+    - io.vertigo.core.plugins.analytics.log.ChatbotSocketLoggerAnalyticsConnectorPlugin:
         appName: ${boot.ANALYTICA_DBNAME}
         hostName: ${boot.ANALYTICA_HOST}
         port: ${boot.ANALYTICA_PORT}
