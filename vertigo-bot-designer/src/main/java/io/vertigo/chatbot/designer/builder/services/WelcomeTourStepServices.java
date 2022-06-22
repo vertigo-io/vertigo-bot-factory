@@ -5,6 +5,7 @@ import io.vertigo.chatbot.commons.domain.WelcomeTourStep;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -100,18 +101,17 @@ public class WelcomeTourStepServices implements Component {
 			final Optional<WelcomeTourStep> optWelcomeTourStep = steps.stream().filter(step -> step.getInternalStepId().equals(shepherdStepId)).findFirst();
 			if (optWelcomeTourStep.isEmpty()) {
 				throw new VSystemException("Step with internal ID '" + shepherdStepId + "' was not found in database. Could not complete training ...");
-			} else {
-				final WelcomeTourStep welcomeTourStep = optWelcomeTourStep.get();
-				switch (attributeName) {
-					case "title":
-						return welcomeTourStep.getTitle();
-					case "text":
-						return welcomeTourStep.getText();
-					case "enabled":
-						return welcomeTourStep.getEnabled().toString();
-					default:
-						return attributeValue;
-				}
+			}
+			final WelcomeTourStep welcomeTourStep = optWelcomeTourStep.get();
+			switch (attributeName) {
+				case "title":
+					return welcomeTourStep.getTitle();
+				case "text":
+					return welcomeTourStep.getText();
+				case "enabled":
+					return welcomeTourStep.getEnabled().toString();
+				default:
+					return attributeValue;
 			}
 		});
 	}

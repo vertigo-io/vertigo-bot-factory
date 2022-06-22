@@ -9,7 +9,7 @@ import io.vertigo.chatbot.commons.domain.WelcomeTourStep;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -56,7 +56,7 @@ public class WelcomeTourServices implements Component {
 				welcomeTour.setConfig(configString);
 				steps = welcomeTourStepServices.readStepsFromConfigString(configString);
 			} catch (final IOException e) {
-				throw new VUserException("Couldn't read welcome tour config file", e);
+				throw new VSystemException("Couldn't read welcome tour config file", e);
 			}
 		}
 		final WelcomeTour savedWelcomeTour = welcomeTourDAO.save(welcomeTour);
