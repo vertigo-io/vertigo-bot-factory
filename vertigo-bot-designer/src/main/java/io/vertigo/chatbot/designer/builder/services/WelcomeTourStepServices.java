@@ -67,16 +67,14 @@ public class WelcomeTourStepServices implements Component {
 			final WelcomeTourStep welcomeTourStep = new WelcomeTourStep();
 			final Map<String, String> attributes = entry.getValue();
 			welcomeTourStep.setInternalStepId(entry.getKey());
-			if (attributes.get("title") != null) {
-				welcomeTourStep.setTitle(attributes.get("title"));
-			} else {
-				throw new VSystemException("Missing 'title' attribute on step '" + entry.getKey() + "'");
+			if (!attributes.containsKey("title")) {
+				throw new VUserException("Missing 'title' attribute on step '{0}'", entry.getKey());
 			}
-			if (attributes.get("text") != null) {
-				welcomeTourStep.setText(attributes.get("text"));
-			} else {
-				throw new VSystemException("Missing 'text' attribute on step '" + entry.getKey() + "'");
+			welcomeTourStep.setTitle(attributes.get("title"));
+			if (!attributes.containsKey("text")) {
+				throw new VUserException("Missing 'text' attribute on step '{0}'", entry.getKey());
 			}
+			welcomeTourStep.setText(attributes.get("text"));
 			welcomeTourStep.setEnabled("true".equals(attributes.getOrDefault("enabled", "true")));
 			welcomeTourStep.setSequence(sequence);
 			steps.add(welcomeTourStep);
