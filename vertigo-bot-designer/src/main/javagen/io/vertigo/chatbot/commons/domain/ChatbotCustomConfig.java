@@ -19,6 +19,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private String botEmailAddress;
 	private Boolean reinitializationButton;
 	private String backgroundColor;
+	private String fontColor;
 	private String fontFamily;
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
@@ -119,6 +120,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setBackgroundColor(final String backgroundColor) {
 		this.backgroundColor = backgroundColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot font color'.
+	 * @return String fontColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot font color")
+	public String getFontColor() {
+		return fontColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot font color'.
+	 * @param fontColor String
+	 */
+	public void setFontColor(final String fontColor) {
+		this.fontColor = fontColor;
 	}
 	
 	/**

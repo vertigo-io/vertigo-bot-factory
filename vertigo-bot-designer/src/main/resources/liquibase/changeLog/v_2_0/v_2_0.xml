@@ -48,5 +48,9 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_05_24.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal" id="alter chatbot custom config add font color">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_06_23.sql" />
+    </changeSet>
+
 
 </databaseChangeLog>

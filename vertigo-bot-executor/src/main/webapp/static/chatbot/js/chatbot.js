@@ -78,7 +78,8 @@ const chatbot = new Vue({
             },
             customConfig: {
                 reinitializationButton: false,
-                backgroundColor: 'black',
+                backgroundColor: 'grey',
+                fontColor: 'black',
                 fontFamily: 'Arial, Helvetica, sans-serif',
                 displayAvatar: true,
                 disableNlu: false
@@ -150,6 +151,7 @@ const chatbot = new Vue({
                                 chatbot.convId = httpResponse.data.metadatas.sessionId;
                                 chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
                                 chatbot.customConfig.backgroundColor = httpResponse.data.metadatas.customConfig.backgroundColor;
+                                chatbot.customConfig.fontColor = httpResponse.data.metadatas.customConfig.fontColor;
                                 chatbot.customConfig.fontFamily = httpResponse.data.metadatas.customConfig.fontFamily;
                                 chatbot.customConfig.displayAvatar = httpResponse.data.metadatas.customConfig.displayAvatar;
                                 chatbot.customConfig.disableNlu = httpResponse.data.metadatas.customConfig.disableNlu;

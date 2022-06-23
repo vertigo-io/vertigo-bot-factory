@@ -24,7 +24,7 @@
   <body style="color:black">
     <div id="q-app">
       <q-layout view="hHh lpr fFf">
-        <q-layout-header :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily" class="bg-primary text-white row items-center non-selectable">
+        <q-layout-header :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor" class="bg-primary text-white row items-center non-selectable">
           <div class="title col-grow q-ml-md">
             {{ botName }}
           </div>
@@ -71,9 +71,9 @@
                       :avatar="msg.avatar"
                       :text="msg.text"
                       :stamp="msg.stamp"
-                      :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily"
+                      :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor"
                     ></q-chat-message>
-                    <q-chat-message :style="'--background-color: ' + customConfig.backgroundColor" v-if="msg.rating" class="animate-fade" bg-color="primary" sent >
+                    <q-chat-message :style="'--background-color: ' + customConfig.backgroundColor + '; --font-color: ' + customConfig.fontColor" v-if="msg.rating" class="animate-fade" bg-color="primary" sent >
                       <q-rating v-model="inputConfig.rating" style="font-size: 2rem;"
                                 icon="star_border"
                                 disable
@@ -111,7 +111,7 @@
                     </q-chat-message>
                   </div>
                   <div class="non-selectable">
-                    <q-chat-message :style="'--background-color: ' + customConfig.backgroundColor" v-if="inputConfig.showRating" class="animate-fade" bg-color="primary" sent >
+                    <q-chat-message :style="'--background-color: ' + customConfig.backgroundColor + '; --font-color: ' + customConfig.fontColor" v-if="inputConfig.showRating" class="animate-fade" bg-color="primary" sent >
                       <q-rating v-model="inputConfig.rating" style="font-size: 2rem;"
                                 icon="star_border"
                                 icon-selected="star"
@@ -122,7 +122,7 @@
                   <div v-if="inputConfig.cards.length > 0 || inputConfig.buttons.length > 0 || inputConfig.files.length > 0"
                        class="non-selectable animate-fade row reverse no-wrap">
                     <div class="col-10">
-                      <div class="q-caption text-light text-right" :style="'--font-family: ' + customConfig.fontFamily">
+                      <div class="q-caption text-light text-right" :style="'--font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor">
                         Réponses suggérées
                       </div>
                       <div class="row docs-btn" v-if="inputConfig.cards.length > 0" >
@@ -135,7 +135,7 @@
                                 navigation
                                 padding
                                 arrows
-                                :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily"
+                                :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor"
                                 class="bg-primary text-white shadow-1 rounded-borders"
                         >
                           <q-carousel-slide  v-for="(card, index) in inputConfig.cards" name="style" class="column no-wrap flex-center" >
@@ -155,7 +155,7 @@
                                 @click="postAnswerBtn(btn)"
                                 :label="btn.label"
                                 color="white"
-                                :style="'--font-family: ' + customConfig.fontFamily"
+                                :style="'--font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor"
                                 text-color="black">
                         </q-btn>
                     </div>
@@ -168,7 +168,7 @@
                                   @click="fileUpload(btn, index)"
                                   :label="btn.label"
                                   color="white"
-                                  :style="'--font-family: ' + customConfig.fontFamily"
+                                  :style="'--font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor"
                                   text-color="black">
                           </q-btn>
                         </div>
@@ -186,7 +186,7 @@
             <div class="col-grow">
               <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
                        ref="input"
-                       :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily"
+                       :style="'margin-top: 0px; --background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor"
                        class="bg-white q-px-sm round-borders"
                        @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
                        :max-height="100"

@@ -188,6 +188,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$backgroundColor,
 	/**
+	 * Bot font color.
+	 */
+	fldChatbotCustomConfig$fontColor,
+	/**
 	 * Bot font family.
 	 */
 	fldChatbotCustomConfig$fontFamily,

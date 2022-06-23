@@ -70,6 +70,9 @@ public class ChabotCustomConfigServices implements Component {
 	public ChatbotCustomConfig getDefaultChatbotCustomConfig() {
 		final ChatbotCustomConfig chatbotCustomConfig = new ChatbotCustomConfig();
 		chatbotCustomConfig.setReinitializationButton(false);
+		chatbotCustomConfig.setBackgroundColor("#cdcdcd");
+		chatbotCustomConfig.setFontColor("#000000");
+		chatbotCustomConfig.setFontFamily("Arial, sans-serif");
 		return chatbotCustomConfig;
 	}
 }

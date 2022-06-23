@@ -294,6 +294,7 @@ create table CHATBOT_CUSTOM_CONFIG
     BOT_EMAIL_ADDRESS	 VARCHAR(100)	,
     REINITIALIZATION_BUTTON	 bool        	,
     BACKGROUND_COLOR	 VARCHAR(100)	,
+    FONT_COLOR  	 VARCHAR(100)	,
     FONT_FAMILY 	 VARCHAR(100)	,
     DISPLAY_AVATAR	 bool        	,
     TOTAL_MAX_ATTACHMENT_SIZE	 NUMERIC     	,
@@ -313,6 +314,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.REINITIALIZATION_BUTTON is
 
 comment on column CHATBOT_CUSTOM_CONFIG.BACKGROUND_COLOR is
 'Bot background color';
+
+comment on column CHATBOT_CUSTOM_CONFIG.FONT_COLOR is
+'Bot font color';
 
 comment on column CHATBOT_CUSTOM_CONFIG.FONT_FAMILY is
 'Bot font family';
