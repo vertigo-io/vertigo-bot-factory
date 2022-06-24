@@ -31,6 +31,7 @@ import io.vertigo.vega.webservice.stereotype.QueryParam;
 
 import javax.inject.Inject;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @PathPrefix("/chatbot")
@@ -62,6 +63,12 @@ public class TalkWebService implements WebServices {
 	@GET("/getAttachment")
 	public VFile getAttachment(@QueryParam("label") final String label) {
 		return  executorManager.getAttachment(label);
+	}
+
+	@GET("/getWelcomeToursFile")
+	public VFile getWelcomeToursFile() {
+		final Optional<VFile> optWelcomeToursFile = executorManager.getWelcomeToursFile();
+		return optWelcomeToursFile.orElse(null);
 	}
 
 }

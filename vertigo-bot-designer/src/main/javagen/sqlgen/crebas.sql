@@ -76,6 +76,8 @@ drop table IF EXISTS UTTER_TEXT cascade;
 drop sequence IF EXISTS SEQ_UTTER_TEXT;
 drop table IF EXISTS WELCOME_TOUR cascade;
 drop sequence IF EXISTS SEQ_WELCOME_TOUR;
+drop table IF EXISTS WELCOME_TOUR_STEP cascade;
+drop sequence IF EXISTS SEQ_WELCOME_TOUR_STEP;
 
 
 
@@ -181,6 +183,9 @@ create sequence SEQ_UTTER_TEXT
 	start with 1000 cache 20; 
 
 create sequence SEQ_WELCOME_TOUR
+	start with 1000 cache 20; 
+
+create sequence SEQ_WELCOME_TOUR_STEP
 	start with 1000 cache 20; 
 
 
@@ -1284,6 +1289,7 @@ create table WELCOME_TOUR
     WEL_ID      	 NUMERIC     	not null,
     LABEL       	 VARCHAR(100)	not null,
     TECHNICAL_CODE	 VARCHAR(100)	not null,
+    CONFIG      	 TEXT        	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_WELCOME_TOUR primary key (WEL_ID)
 );
@@ -1297,8 +1303,47 @@ comment on column WELCOME_TOUR.LABEL is
 comment on column WELCOME_TOUR.TECHNICAL_CODE is
 'Technical code';
 
+comment on column WELCOME_TOUR.CONFIG is
+'Shepherd config';
+
 comment on column WELCOME_TOUR.BOT_ID is
 'Chatbot';
+
+-- ============================================================
+--   Table : WELCOME_TOUR_STEP                                        
+-- ============================================================
+create table WELCOME_TOUR_STEP
+(
+    WEL_STEP_ID 	 NUMERIC     	not null,
+    INTERNAL_STEP_ID	 VARCHAR(100)	not null,
+    TEXT        	 TEXT        	not null,
+    TITLE       	 VARCHAR(100)	not null,
+    SEQUENCE    	 NUMERIC     	not null,
+    ENABLED     	 bool        	not null,
+    TOUR_ID     	 NUMERIC     	,
+    constraint PK_WELCOME_TOUR_STEP primary key (WEL_STEP_ID)
+);
+
+comment on column WELCOME_TOUR_STEP.WEL_STEP_ID is
+'Welcome tour step id';
+
+comment on column WELCOME_TOUR_STEP.INTERNAL_STEP_ID is
+'Internal step id';
+
+comment on column WELCOME_TOUR_STEP.TEXT is
+'Text';
+
+comment on column WELCOME_TOUR_STEP.TITLE is
+'Title';
+
+comment on column WELCOME_TOUR_STEP.SEQUENCE is
+'Sequence';
+
+comment on column WELCOME_TOUR_STEP.ENABLED is
+'Enabled';
+
+comment on column WELCOME_TOUR_STEP.TOUR_ID is
+'Tour';
 
 
 alter table ATTACHMENT
@@ -1570,6 +1615,12 @@ alter table WELCOME_TOUR
 	references CHATBOT (BOT_ID);
 
 create index A_WELCOME_TOUR_CHATBOT_CHATBOT_FK on WELCOME_TOUR (BOT_ID asc);
+
+alter table WELCOME_TOUR_STEP
+	add constraint FK_A_WELCOME_TOUR_WELCOME_TOUR_STEPS_WELCOME_TOUR foreign key (TOUR_ID)
+	references WELCOME_TOUR (WEL_ID);
+
+create index A_WELCOME_TOUR_WELCOME_TOUR_STEPS_WELCOME_TOUR_FK on WELCOME_TOUR_STEP (TOUR_ID asc);
 
 
 create table T_O_P_I_C___T_O_P_I_C___L_A_B_E_L

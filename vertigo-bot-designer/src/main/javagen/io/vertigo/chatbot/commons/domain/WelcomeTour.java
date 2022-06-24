@@ -18,6 +18,7 @@ public final class WelcomeTour implements Entity {
 	private Long welId;
 	private String label;
 	private String technicalCode;
+	private String config;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AWelcomeTourChatbot",
@@ -95,6 +96,25 @@ public final class WelcomeTour implements Entity {
 	 */
 	public void setTechnicalCode(final String technicalCode) {
 		this.technicalCode = technicalCode;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Shepherd config'.
+	 * @return String config <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Shepherd config")
+	public String getConfig() {
+		return config;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Shepherd config'.
+	 * @param config String <b>Obligatoire</b>
+	 */
+	public void setConfig(final String config) {
+		this.config = config;
 	}
 	
 	/**

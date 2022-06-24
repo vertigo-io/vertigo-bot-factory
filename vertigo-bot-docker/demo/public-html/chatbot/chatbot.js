@@ -1,82 +1,5 @@
 let Chatbot = {};
 document.addEventListener('DOMContentLoaded', function () {
-    const tour = new Shepherd.Tour({
-      defaultStepOptions: {
-        cancelIcon: {
-          enabled: true
-        },
-        classes: 'class-1 class-2',
-        scrollTo: { behavior: 'smooth', block: 'center' }
-      }
-    });
-
-    tour.addStep({
-      title: 'Welcome tour',
-      text: `Bienvenue sur notre site de démo. Nous allons vous guider !`,
-      attachTo: {
-        element: 'body',
-        on: 'auto'
-      },
-      buttons: [
-        {
-          action() {
-            return this.next();
-          },
-          text: 'Suivant'
-        }
-      ],
-      id: 'start'
-    });
-
-    tour.addStep({
-      title: 'Chatbot',
-      text: `Ici c'est moi, le chatbot ! Tu peux me demander ce que tu veux, je suis la pour ça :)`,
-      attachTo: {
-        element: 'iframe',
-        on: 'auto'
-      },
-      buttons: [
-        {
-          action() {
-            return this.back();
-          },
-          classes: 'shepherd-button-secondary',
-          text: 'Précédent'
-        },
-        {
-          action() {
-            return this.next();
-          },
-          text: 'Suivant'
-        }
-      ],
-      id: 'chatbot'
-    });
-
-    tour.addStep({
-      title: 'Page suivante',
-      text: `Cliquez ici pour accéder à la page 2`,
-      attachTo: {
-        element: 'a',
-        on: 'auto'
-      },
-      buttons: [
-        {
-          action() {
-            return this.back();
-          },
-          classes: 'shepherd-button-secondary',
-          text: 'Précédent'
-        },
-        {
-          action() {
-            return this.complete();
-          },
-          text: 'Terminer'
-        }
-      ],
-      id: 'nextPage'
-    });
     if (!String.prototype.startsWith) {
       String.prototype.startsWith = function (searchString, position) {
         position = position || 0;
@@ -260,11 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         startJsEvent(eventName) {
-          if (eventName === 'welcomeTour1') {
-            tour.start();
-          } else if (eventName === 'welcomeTour2') {
-            tour.start();
-          }
         }
       };
     }

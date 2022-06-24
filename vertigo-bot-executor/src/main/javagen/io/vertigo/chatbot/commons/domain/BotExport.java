@@ -20,7 +20,7 @@ public final class BotExport implements DtObject {
 	private String idleBT;
 	private String ratingBT;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.TopicExport.class);
-	private String welcomeTours;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.WelcomeTourExport> welcomeTours =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.WelcomeTourExport.class);
 	private io.vertigo.chatbot.commons.domain.ConfluenceSettingExport confluenceSetting;
 	private io.vertigo.chatbot.commons.domain.JiraSettingExport jiraSetting;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> jiraFieldSetting =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class);
@@ -163,20 +163,22 @@ public final class BotExport implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Welcome tours map'.
-	 * @return String welcomeTours <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Welcome tours'.
+	 * @return DtList de WelcomeTourExport welcomeTours
 	 */
-	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Welcome tours map")
-	public String getWelcomeTours() {
+	@Field(smartType = "STyDtWelcomeTourExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Welcome tours")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.WelcomeTourExport> getWelcomeTours() {
 		return welcomeTours;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Welcome tours map'.
-	 * @param welcomeTours String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Welcome tours'.
+	 * @param welcomeTours DtList de WelcomeTourExport
 	 */
-	public void setWelcomeTours(final String welcomeTours) {
+	public void setWelcomeTours(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.WelcomeTourExport> welcomeTours) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(welcomeTours);
+		//---
 		this.welcomeTours = welcomeTours;
 	}
 	

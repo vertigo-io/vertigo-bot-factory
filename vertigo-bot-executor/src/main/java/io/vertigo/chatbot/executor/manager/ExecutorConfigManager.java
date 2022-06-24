@@ -19,6 +19,7 @@ package io.vertigo.chatbot.executor.manager;
 
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
 import io.vertigo.chatbot.executor.ExecutorPlugin;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.chatbot.executor.services.FileServices;
@@ -47,6 +48,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class ExecutorConfigManager implements Manager, Activeable {
 
@@ -139,13 +141,43 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	public synchronized void saveConfig(final ExecutorGlobalConfig executorGlobalConfig) {
 		this.executorGlobalConfig = executorGlobalConfig;
 		plugins.forEach(executorPlugin -> executorPlugin.refreshConfig(executorGlobalConfig));
-		final String json = jsonEngine.toJson(executorGlobalConfig);
+		updateGlobalConfig();
+	}
 
+	private void updateGlobalConfig() {
+		final String json = jsonEngine.toJson(executorGlobalConfig);
 		try {
 			FileUtils.writeStringToFile(configDataFile, json, StandardCharsets.UTF_8);
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", configDataFile.getPath());
 		}
+	}
+
+	public void updateWelcomeTour(final DtList<WelcomeTourExport> welcomeTourExports) {
+		final StringBuilder jsString = new StringBuilder();
+		jsString.append("const welcomeTours = []; \n");
+		welcomeTourExports.forEach(welcomeTourExport -> jsString.append("welcomeTours[\"")
+				.append(welcomeTourExport.getTechnicalCode()).append("\"]")
+				.append(" = ").append(" new Shepherd.Tour(")
+				.append(welcomeTourExport.getConfig()).append("); \n\n"));
+		jsString.append("window.addEventListener(\n" +
+				"          'message',\n" +
+				"          function (event) {\n" +
+				"            if (event.data.welcomeTour) {\n" +
+				"             	welcomeTours[event.data.welcomeTour].start();\n" +
+				"            }\n" +
+				"		}); \n");
+
+		if (executorGlobalConfig.getWelcomeToursFileURN() != null) {
+			fileServices.deleteFile(executorGlobalConfig.getWelcomeToursFileURN());
+		}
+		final byte[] jsBytes = jsString.toString().getBytes(StandardCharsets.UTF_8);
+		final StreamFile streamFile = StreamFile.of("welcomeTours.js", "text/javascript",
+				Instant.now(), jsBytes.length,
+				() -> new ByteArrayInputStream(jsBytes));
+
+		executorGlobalConfig.setWelcomeToursFileURN(fileServices.saveFile(streamFile).toURN());
+		updateGlobalConfig();
 	}
 
 	/**
@@ -171,14 +203,14 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 	public void updateAttachments(final DtList<AttachmentExport> attachmentExports) {
 		try {
-			mapAttachments.forEach((key, value) -> fileServices.deleteAttachment(FileInfoURI.fromURN(value)));
+			mapAttachments.forEach((key, value) -> fileServices.deleteFile(FileInfoURI.fromURN(value)));
 			final HashMap<String, String> attachmentsMap = new HashMap<>();
 			attachmentExports.forEach(attachmentExport -> {
 				final StreamFile streamFile = StreamFile.of(attachmentExport.getFileName(), attachmentExport.getMimeType(),
 						Instant.now(), attachmentExport.getLength(),
 						() -> new ByteArrayInputStream((Base64.getDecoder().decode(attachmentExport.getFileData()))));
 
-				final FileInfoURI fileInfoURI = fileServices.saveAttachment(streamFile);
+				final FileInfoURI fileInfoURI = fileServices.saveFile(streamFile);
 				attachmentsMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
 			});
 			FileUtils.writeStringToFile(attachmentDataFile, jsonEngine.toJson(attachmentsMap), StandardCharsets.UTF_8);
@@ -194,6 +226,11 @@ public class ExecutorConfigManager implements Manager, Activeable {
 			throw new VSystemException("Attachment with label " + label + " doesn't exist...");
 		}
 		return fileServices.getFile(urn);
+	}
+
+	public Optional<VFile> getWelcomeToursFile() {
+		final String welcomeToursFileURN = executorGlobalConfig.getWelcomeToursFileURN();
+		return welcomeToursFileURN != null ? Optional.of(fileServices.getFile(welcomeToursFileURN)) : Optional.empty();
 	}
 
 	public void addPlugin(final ExecutorPlugin executorPlugin) {

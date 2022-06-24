@@ -282,6 +282,10 @@ const chatbot = new Vue({
                     parent.postMessage({jsevent: httpResponse.data.metadatas.jsevent}, '*');
                 }
 
+                if (httpResponse.data.metadatas && httpResponse.data.metadatas.welcometour) {
+                    parent.postMessage({welcomeTour: httpResponse.data.metadatas.welcometour}, '*');
+                }
+
                 for (let i = 0; i < responses.length - 1; i++) {
                     chatbot.watingMessagesStack.push({ text: responses[i] });
                 }

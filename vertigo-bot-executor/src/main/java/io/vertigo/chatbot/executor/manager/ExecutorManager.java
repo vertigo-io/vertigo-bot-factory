@@ -26,6 +26,7 @@ import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
+import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.BotManager;
 import io.vertigo.chatbot.engine.model.BotInput;
@@ -46,9 +47,9 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ExecutorManager implements Manager, Activeable {
@@ -104,10 +105,12 @@ public class ExecutorManager implements Manager, Activeable {
 		globalConfig.setExecutorConfiguration(executorConfig);
 
 		executorConfigManager.saveConfig(globalConfig);
+		executorConfigManager.updateWelcomeTour(bot.getWelcomeTours());
 
 		doLoadModel(bot, logs);
 
 	}
+
 
 	private void doLoadModel(final BotExport botExport, final StringBuilder logs) {
 
@@ -211,12 +214,12 @@ public class ExecutorManager implements Manager, Activeable {
 	}
 
 	public String getWelcomeTourTechnicalCode(final String welcomeTourLabel) {
-		final HashMap<String, String> welcomeTourMap = jsonEngine.fromJson(executorConfigManager.getConfig().getBot().getWelcomeTours(), HashMap.class);
-		final String welcomeTourTechnicalCode = welcomeTourMap.get(welcomeTourLabel);
-		if (welcomeTourTechnicalCode == null) {
-			throw new VSystemException("Welcome tour with label " + welcomeTourLabel + " doesn't exist");
-		}
-		return welcomeTourTechnicalCode;
+		final WelcomeTourExport welcomeTourExport =
+				executorConfigManager.getConfig().getBot().getWelcomeTours().stream()
+						.filter(welcomeTour -> welcomeTour.getLabel().equals(welcomeTourLabel)).findFirst()
+						.orElseThrow(() -> new VSystemException("Welcome tour with label " + welcomeTourLabel + " doesn't exist"));
+
+		return welcomeTourExport.getTechnicalCode();
 	}
 
 	public String getBotEmailAddress() {
@@ -227,6 +230,10 @@ public class ExecutorManager implements Manager, Activeable {
 
 	public VFile getAttachment(final String label) {
 		return executorConfigManager.getAttachment(label);
+	}
+
+	public Optional<VFile> getWelcomeToursFile() {
+		return executorConfigManager.getWelcomeToursFile();
 	}
 
 }

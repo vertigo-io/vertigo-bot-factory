@@ -44,5 +44,9 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_05_20.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal" id="alter welcome tour add config and steps">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_05_24.sql" />
+    </changeSet>
+
 
 </databaseChangeLog>

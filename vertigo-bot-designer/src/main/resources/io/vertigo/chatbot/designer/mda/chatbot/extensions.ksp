@@ -4,6 +4,16 @@ create DtDefinition DtWelcomeTour {
 	id welId 		            {domain: DoId		label: "Welcome tour id"                                    }
 	field label 		        {domain: DoLabel 	label: "Label" 			                cardinality : "1"	}
 	field technicalCode 		{domain: DoLabel 	label: "Technical code" 			    cardinality : "1"	}
+	field config			    {domain: DoText		label: "Shepherd config"	 			    cardinality : "1"   }
+}
+
+create DtDefinition DtWelcomeTourStep {
+    id welStepId 		                {domain: DoId		label: "Welcome tour step id"                                   }
+    field internalStepId 		        {domain: DoLabel 	label: "Internal step id" 			                    cardinality : "1"	}
+    field text 		                    {domain: DoText 	label: "Text" 			                                cardinality : "1"	}
+    field title                         {domain: DoLabel 	label: "Title" 			                                cardinality : "1"	}
+    field sequence                      {domain: DoNumber 	label: "Sequence" 			                            cardinality : "1"	}
+    field enabled                       {domain: DoYesNo 	label: "Enabled" 			                            cardinality : "1"	}
 }
 
 create Association AWelcomeTourChatbot {
@@ -14,6 +24,16 @@ create Association AWelcomeTourChatbot {
 	dtDefinitionB : DtChatbot
 
 	labelB : "Chatbot"
+}
+
+create Association AWelcomeTourWelcomeTourSteps {
+	fkFieldName : "tourId"
+
+ 	dtDefinitionA : DtWelcomeTourStep
+	type : "*>?"
+	dtDefinitionB : DtWelcomeTour
+
+	labelB : "Tour"
 }
 
 create DtDefinition DtConfluenceSetting {

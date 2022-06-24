@@ -26,15 +26,22 @@ public class FileServices implements Component {
 		return fileStoreManager.read(fileInfoURI).getVFile();
 	}
 
-	public FileInfoURI saveAttachment(final VFile file) {
+	public FileInfoURI saveFile(final VFile file) {
 		//apply security check
 		final FileInfo fileInfo = fileStoreManager.create(new AttachmentInfo(file));
 		return fileInfo.getURI();
 	}
 
-	public void deleteAttachment(final FileInfoURI attachmentUri) {
+	public void deleteFile(final FileInfoURI attachmentUri) {
 		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class);
 		Assertion.check().isTrue(tmpFileInfoDefinition.equals(attachmentUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
 		fileStoreManager.delete(attachmentUri);
+	}
+
+	public void deleteFile(final String urn) {
+		final FileInfoURI fileInfoURI = FileInfoURI.fromURN(urn);
+		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class);
+		Assertion.check().isTrue(tmpFileInfoDefinition.equals(fileInfoURI.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
+		fileStoreManager.delete(fileInfoURI);
 	}
 }
