@@ -253,6 +253,14 @@ public enum DtResources implements MessageKey {
 	fldTopIntentCriteria$labels,
 
 	/***********************************************************
+	/** TypeExportAnalyticList.
+	/***********************************************************
+	/**
+	 * Type export analytic code.
+	 */
+	fldTypeExportAnalyticList$teaCd,
+
+	/***********************************************************
 	/** TypeExportAnalytics.
 	/***********************************************************
 	/**
