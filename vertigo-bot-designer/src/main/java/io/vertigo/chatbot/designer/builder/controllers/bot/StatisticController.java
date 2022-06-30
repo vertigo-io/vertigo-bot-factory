@@ -19,6 +19,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.commons.ihm.enums.TimeEnum;
 import io.vertigo.chatbot.designer.commons.services.EnumIHMManager;
+import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.domain.analytics.CategoryStat;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationDetail;
@@ -30,11 +31,13 @@ import io.vertigo.chatbot.designer.domain.analytics.SessionExport;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntentCriteria;
+import io.vertigo.chatbot.designer.domain.analytics.TypeExportAnalyticList;
 import io.vertigo.chatbot.designer.domain.analytics.TypeExportAnalytics;
 import io.vertigo.chatbot.designer.domain.analytics.UnknownSentenseExport;
 import io.vertigo.chatbot.designer.domain.commons.SelectionOption;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
@@ -51,7 +54,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
@@ -64,7 +72,7 @@ public class StatisticController extends AbstractBotController {
 	private static final ViewContextKey<StatCriteria> criteriaKey = ViewContextKey.of("criteria");
 	private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
 	private static final ViewContextKey<TypeExportAnalytics> typeExportAnalyticsListKey = ViewContextKey.of("typeExportAnalyticsList");
-	private static final ViewContextKey<TypeExportAnalytics> selectTypeExportAnalyticsKey = ViewContextKey.of("selectTypeExportAnalytics");
+	private static final ViewContextKey<TypeExportAnalyticList> selectTypeExportAnalyticListKey = ViewContextKey.of("selectTypeExportAnalyticList");
 	private static final ViewContextKey<SelectionOption> timeOptionsList = ViewContextKey.of("timeOptions");
 	private static final ViewContextKey<String> localeKey = ViewContextKey.of("locale");
 	private static final ViewContextKey<TimedDatas> sessionStatsKey = ViewContextKey.of("sessionStats");
@@ -120,6 +128,9 @@ public class StatisticController extends AbstractBotController {
 	@Inject
 	private TimeSerieServices timeSerieServices;
 
+	@Inject
+	private FileServices fileServices;
+
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
@@ -147,7 +158,7 @@ public class StatisticController extends AbstractBotController {
 		viewContext.publishDto(conversationCriteriaKey, new ConversationCriteria());
 		viewContext.publishDto(topIntentCriteriaKey, new TopIntentCriteria());
 
-		viewContext.publishDto(selectTypeExportAnalyticsKey, new TypeExportAnalytics());
+		viewContext.publishDto(selectTypeExportAnalyticListKey, new TypeExportAnalyticList());
 
 		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
 
@@ -233,34 +244,49 @@ public class StatisticController extends AbstractBotController {
 									   @ViewAttribute("criteria") final StatCriteria criteria,
 									   @ViewAttribute("conversationCriteria") final ConversationCriteria conversationCriteria,
 									   @ViewAttribute("bot") final Chatbot bot,
-									   @ViewAttribute("selectTypeExportAnalytics") final TypeExportAnalytics selectTypeExportAnalytics) {
+									   @ViewAttribute("selectTypeExportAnalyticList") final TypeExportAnalyticList typeExportAnalyticList) {
 
-		if (selectTypeExportAnalytics.getTeaCd() == null) {
+		if (typeExportAnalyticList.getTeaCd().isEmpty()) {
 			throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
 		}
-		switch (selectTypeExportAnalytics.getTeaCd()) {
-			case "USER_ACTIONS_CONVERSATIONS":
-				final DtList<SessionExport> listSessionExport = analyticsExportServices.getSessionExport(criteria);
-				return analyticsExportServices.exportSessions(listSessionExport);
-			case "UNKNOWN_MESSAGES":
-				final DtList<UnknownSentenseExport> listUnknownSentenseExport = analyticsExportServices.getUnknownSentenseExport(criteria);
-				return analyticsExportServices.exportUnknownMessages(listUnknownSentenseExport);
-			case "CONVERSATIONS":
-				final DtList<ConversationStat> conversationStats = analyticsServices.getConversationsStats(criteria, conversationCriteria);
-				return analyticsExportServices.exportConversations(conversationStats);
-			case "CATEGORIES":
-				final DtList<CategoryStat> categoryStats = analyticsServices.buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()),
-						analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria));
-				return analyticsExportServices.exportCategories(categoryStats);
-			case "RATING":
-				final DtList<RatingDetail> ratingDetails = analyticsServices.getRatingDetails(criteria);
-				return analyticsExportServices.exportRatingDetails(ratingDetails);
-			case "TOPIC_USAGE":
-				final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
-				return analyticsExportServices.exportTopIntents(topIntents);
-			default:
-				throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
+		final List<VFile> fileList = new ArrayList<>();
+		typeExportAnalyticList.getTeaCd().forEach(typeExportAnalytic -> {
+			switch (typeExportAnalytic) {
+				case "USER_ACTIONS_CONVERSATIONS":
+					final DtList<SessionExport> listSessionExport = analyticsExportServices.getSessionExport(criteria);
+					fileList.add(analyticsExportServices.exportSessions(listSessionExport));
+					break;
+				case "UNKNOWN_MESSAGES":
+					final DtList<UnknownSentenseExport> listUnknownSentenseExport = analyticsExportServices.getUnknownSentenseExport(criteria);
+					fileList.add(analyticsExportServices.exportUnknownMessages(listUnknownSentenseExport));
+					break;
+				case "CONVERSATIONS":
+					final DtList<ConversationStat> conversationStats = analyticsServices.getConversationsStats(criteria, conversationCriteria);
+					fileList.add(analyticsExportServices.exportConversations(conversationStats));
+					break;
+				case "CATEGORIES":
+					final DtList<CategoryStat> categoryStats = analyticsServices.buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()),
+							analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria));
+					fileList.add(analyticsExportServices.exportCategories(categoryStats));
+					break;
+				case "RATING":
+					final DtList<RatingDetail> ratingDetails = analyticsServices.getRatingDetails(criteria);
+					fileList.add(analyticsExportServices.exportRatingDetails(ratingDetails));
+					break;
+				case "TOPIC_USAGE":
+					final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
+					fileList.add(analyticsExportServices.exportTopIntents(topIntents));
+					break;
+				default:
+					throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
+			}
+		});
+		if (fileList.size() == 1) {
+			return fileList.get(0);
+		} else {
+			final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			return fileServices.zipMultipleFiles(fileList,
+					MessageText.of(AnalyticsMultilingualResources.ZIP_EXPORT_FILENAME).getDisplay() + dateFormat.format(new Date()));
 		}
-
 	}
 }

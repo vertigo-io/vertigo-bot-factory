@@ -31,6 +31,7 @@ import io.vertigo.chatbot.commons.domain.MediaFileInfo;
 import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.component.Component;
@@ -40,15 +41,21 @@ import io.vertigo.datastore.filestore.model.FileInfo;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.filestore.util.VFileUtil;
+import io.vertigo.datastore.impl.filestore.model.StreamFile;
 
 import javax.inject.Inject;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static io.vertigo.chatbot.designer.utils.StringUtils.lineError;
 
@@ -180,5 +187,29 @@ public class FileServices implements Component {
 
 	private MediaFileInfo getMediaFileInfoById(final Long id) {
 		return mediaFileInfoDAO.get(id);
+	}
+
+	public VFile zipMultipleFiles(final List<VFile> files, final String zipFileName) {
+		try(final ByteArrayOutputStream fos = new ByteArrayOutputStream()) {
+			final ZipOutputStream zipOut = new ZipOutputStream(fos);
+			files.forEach(file -> {
+				try(final InputStream fis = file.createInputStream()) {
+					final byte[] bytes = fis.readAllBytes();
+					final ZipEntry zipEntry = new ZipEntry(file.getFileName());
+					zipEntry.setSize(bytes.length);
+					zipOut.putNextEntry(zipEntry);
+					zipOut.write(bytes);
+					zipOut.closeEntry();
+				} catch (final IOException e) {
+					throw new VSystemException(e, "Couldn't zip file with name {0}", file.getFileName());
+				}
+			});
+			zipOut.close();
+			final byte[] bytes = fos.toByteArray();
+			return StreamFile.of(zipFileName + ".zip", "application/zip", Instant.now(), bytes.length,
+					() -> new ByteArrayInputStream(bytes));
+		} catch (final IOException e) {
+			throw new VSystemException(e, "Couldn't build zip file");
+		}
 	}
 }

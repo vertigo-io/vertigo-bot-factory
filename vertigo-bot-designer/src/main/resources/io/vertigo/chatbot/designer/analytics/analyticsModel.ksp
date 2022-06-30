@@ -174,3 +174,7 @@ create DtDefinition DtSessionExport {
 	field conversationCount	{domain: DoNumber 				label: "Conversation count" 		}
 	field userActionsCount	{domain: DoNumber 				label: "User actions count" 		}
 }
+
+create DtDefinition DtTypeExportAnalyticList {
+    field teaCd 		{domain: DoCode		label: "Type export analytic code"	 		cardinality:"*"}
+}

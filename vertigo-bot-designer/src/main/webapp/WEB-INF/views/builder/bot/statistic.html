@@ -400,6 +400,12 @@
                 element.style.setProperty('--chat-message-font-family', VertigoUi.vueData.chatbotCustomConfig.fontFamily);
             });
         }
+
+        function checkAll() {
+            VertigoUi.vueData.selectTypeExportAnalyticList.teaCd =
+                VertigoUi.vueData.typeExportAnalyticsList.map(typeExport => typeExport.teaCd);
+
+        }
     </script>
     <style>
         .q-message-text--sent {
@@ -772,20 +778,28 @@
                     <div class="text-h6" th:text="#{popup.export.title}"></div>
                 </q-card-section>
                 <q-card-section style="width: 400px;">
-                    <vu:include-data object="selectTypeExportAnalytics" field="teaCd" modifiable="true"/>
+                    <vu:include-data object="selectTypeExportAnalyticList" field="teaCd" modifiable="true"/>
                     <vu:include-data object="typeExportAnalyticsList" field="'*'"/>
                     <q-select
                             clearable
                             filled
                             map-options
                             emit-value
-                            v-model="vueData.selectTypeExportAnalytics.teaCd"
+                            multiple
+                            v-model="vueData.selectTypeExportAnalyticList.teaCd"
                             :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeExportAnalyticsList', 'teaCd', 'labelFr') : transformListForSelection('typeExportAnalyticsList', 'teaCd', 'label')"
                             th:label="Type"
                             stack-label>
+                        <template #before-options>
+                            <q-item clickable>
+                                <q-item-section @click="checkAll">
+                                    <q-item-label th:text="#{popup.export.all}"></q-item-label>
+                                </q-item-section>
+                            </q-item>
+                        </template>
                     </q-select>
                 </q-card-section>
-                <input type="hidden" name="vContext[selectTypeExportAnalytics][teaCd]" :value="vueData.selectTypeExportAnalytics.teaCd" />
+                <input v-for="id in vueData.selectTypeExportAnalyticList.teaCd" type="hidden" name="vContext[selectTypeExportAnalyticList][teaCd]" :value="id" />
 
                 <q-card-actions align="around">
                     <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
