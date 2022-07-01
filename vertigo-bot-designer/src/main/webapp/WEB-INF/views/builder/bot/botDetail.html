@@ -93,18 +93,13 @@
 		<section layout:fragment="content">
 			<div class="text-primary text-h6 text-weight-bold" th:text="#{layout.information}"></div>
 			<vu:block id="identity" th:title="#{bot.identity}">
-				<vu:text-field object="bot" field="name" th:if="${viewMode=='edit'}"/>
+				<vu:text-field object="bot" field="name" />
+				<vu:text-area object="bot" field="description"/>
 				
 				<vu:label-edit object="bot" field="filIdAvatar" th:if="${viewMode=='edit'}">
 					<vu:fileupload th:url="'@{/commons/upload}'" key="botTmpPictureUri" multiple="false"/>
 				</vu:label-edit>
-				<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
-				<vu:label-edit object="chatbotCustomConfig" field="displayAvatar">
-					<q-toggle left-label v-model="vueData.chatbotCustomConfig.displayAvatar" th::disable="${model.modeReadOnly}"></q-toggle>
-					<input type="hidden" name="vContext[chatbotCustomConfig][displayAvatar]" :value="vueData.chatbotCustomConfig.displayAvatar"/>
-				</vu:label-edit>
-				
-				<vu:text-area object="bot" field="description"/>
+
 			</vu:block>
 			
 			<vu:include-data-primitive key="locale"/>
@@ -116,20 +111,22 @@
 			<vu:include-data object="chatbotCustomConfig" field="fontColor" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="fontFamily" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
-			<vu:block id="botEmail" th:title="#{bot.email.address}">
-				<q-input v-model="vueData.chatbotCustomConfig.botEmailAddress" :error="hasFieldsError('chatbotCustomConfig', 'botEmailAddress')"
-						 :error-message="getErrorMessage('chatbotCustomConfig', 'botEmailAddress')"  name="vContext[chatbotCustomConfig][botEmailAddress]"
-						 th:label="#{bot.email.address}" th::disable="${model.modeReadOnly}" />
-			</vu:block>
+
 			<vu:block id="botWindowCustomization" th:title="#{bot.window.customization}">
-				<div>
-					<q-toggle left-label th:label="#{bot.reinitialization.active}" v-model="vueData.chatbotCustomConfig.reinitializationButton" th::disable="${model.modeReadOnly}"></q-toggle>
+
+				<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
+				<vu:label-edit object="chatbotCustomConfig" field="displayAvatar">
+					<q-toggle left-label v-model="vueData.chatbotCustomConfig.displayAvatar" th::disable="${model.modeReadOnly}"></q-toggle>
+					<input type="hidden" name="vContext[chatbotCustomConfig][displayAvatar]" :value="vueData.chatbotCustomConfig.displayAvatar"/>
+				</vu:label-edit>
+				<vu:label-edit object="chatbotCustomConfig" field="reinitializationButton">
+					<q-toggle v-model="vueData.chatbotCustomConfig.reinitializationButton" th::disable="${model.modeReadOnly}"></q-toggle>
 					<input type="hidden" name="vContext[chatbotCustomConfig][reinitializationButton]" :value="vueData.chatbotCustomConfig.reinitializationButton"/>
-				</div>
-				<div>
-					<q-toggle left-label th:label="#{bot.disable.nlu}" v-model="vueData.chatbotCustomConfig.disableNlu" th::disable="${model.modeReadOnly}"></q-toggle>
+				</vu:label-edit>
+				<vu:label-edit object="chatbotCustomConfig" field="disableNlu">
+					<q-toggle v-model="vueData.chatbotCustomConfig.disableNlu" th::disable="${model.modeReadOnly}"></q-toggle>
 					<input type="hidden" name="vContext[chatbotCustomConfig][disableNlu]" :value="vueData.chatbotCustomConfig.disableNlu"/>
-				</div>
+				</vu:label-edit>
 
 				<div style="width:300px; margin-bottom: 20px; margin-top: 20px" class="q-px-md">
 					<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
@@ -138,23 +135,28 @@
 				</div>
 
 				<q-select style="margin-bottom: 20px;"
-						v-model="vueData.chatbotCustomConfig.fontFamily" name="vContext[chatbotCustomConfig][fontFamily]" th:label="#{bot.styling.font.family}"
-						@input="changeChatMessageFontFamily()"
-					  	th::disable="${model.modeReadOnly}"
-						:options="['Arial, sans-serif', 'Verdana, sans-serif', 'Helvetica, sans-serif', 'Tahoma, sans-serif',
+						  v-model="vueData.chatbotCustomConfig.fontFamily" name="vContext[chatbotCustomConfig][fontFamily]" th:label="#{bot.styling.font.family}"
+						  @input="changeChatMessageFontFamily()"
+						  th::disable="${model.modeReadOnly}"
+						  :options="['Arial, sans-serif', 'Verdana, sans-serif', 'Helvetica, sans-serif', 'Tahoma, sans-serif',
 						'Trebuchet MS, sans-serif', 'Times New Roman, serif', 'Georgia, serif', 'Garamond, serif', 'Courier New, monospace', 'Brush Script MT, cursive']">
 
 				</q-select>
 				<div class="row">
 					<vu:label-edit object="chatbotCustomConfig" field="backgroundColor" class="col-3">
-						<q-color class="q-mt-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.backgroundColor" @change="function (event) { changeChatMessageBgColor() }" default-value="#cdcdcd" name="vContext[chatbotCustomConfig][backgroundColor]"/>
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.backgroundColor" @change="function (event) { changeChatMessageBgColor() }" default-value="#cdcdcd" name="vContext[chatbotCustomConfig][backgroundColor]"/>
 					</vu:label-edit>
 
 					<vu:label-edit object="chatbotCustomConfig" field="fontColor" class="col-3">
-						<q-color class="q-mt-md" style="width: 100%; height: 100%" label="Font color"  th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.fontColor" @change="function (event) { changeChatMessageFontColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][fontColor]"/>
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" label="Font color"  th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.fontColor" @change="function (event) { changeChatMessageFontColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][fontColor]"/>
 					</vu:label-edit>
 				</div>
 
+			</vu:block>
+			<vu:block id="botEmail" th:title="#{bot.email.address}">
+				<q-input v-model="vueData.chatbotCustomConfig.botEmailAddress" :error="hasFieldsError('chatbotCustomConfig', 'botEmailAddress')"
+						 :error-message="getErrorMessage('chatbotCustomConfig', 'botEmailAddress')"  name="vContext[chatbotCustomConfig][botEmailAddress]"
+						 th:label="#{bot.email.address}" th::disable="${model.modeReadOnly}" />
 			</vu:block>
 			<vu:block id="attachments" th:title="#{bot.attachments}">
 				<vu:include-data object="chatbotCustomConfig" field="totalMaxAttachmentSize" modifiable="true" />
@@ -162,6 +164,7 @@
 						 :error-message="getErrorMessage('chatbotCustomConfig', 'totalMaxAttachmentSize')" name="vContext[chatbotCustomConfig][totalMaxAttachmentSize]"
 						 th:label="#{bot.attachments.maxsize.label}" th::disable="${model.modeReadOnly}" />
 			</vu:block>
+
 
 			<q-page-sticky position="bottom-right">
 				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" /> 
