@@ -66,6 +66,7 @@
 			<div class="col-12">
 				<vu:include-data object="technicalTopicIhm" field="topId"/>
 				<vu:table list="technicalTopicIhm" th:title="#{topic.default.title}"  componentId="technicalTopicIhm" sortBy="ktoCd" :binary-state-sort="true" tr_style="cursor : pointer;"  tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|">
+					<vu:column field="title" />
 					<vu:column field="catLabel" />
 					<vu:column field="type" />
 					<vu:column field="code" />
