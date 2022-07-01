@@ -83,7 +83,9 @@
 				<vu:include-data object="criteria" field="catId"/>
 				<vu:include-data object="nonTechnicalCategoryList" field="topCatId"/>
 				<vu:include-data object="nonTechnicalCategoryList" field="label"/>
-				<div style="background-color:white;display:flex;justify-content:flex-end">
+				<div style="background-color:white;display:flex;justify-content:flex-end; align-items: center; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;"
+					 class="q-table__card">
+					<div class="text-h6 q-table__top" style="flex-grow: 2;" th:text="#{topic.other.title}"></div>
 					<q-select style="width: 250px;"
 						  	clearable
 							filled
