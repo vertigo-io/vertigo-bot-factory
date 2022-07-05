@@ -87,7 +87,11 @@
     <body>
         <section layout:fragment="content">
 
-            <div class="text-primary text-h6 text-weight-bold" th:text="#{layout.followup}"></div>
+            <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+                <span class="text-primary" style="flex-grow: 2">[[#{layout.followup}]]</span>
+                <q-icon name="help_outlined" size="2rem"/>
+                <q-tooltip>[[#{unknownSentence.tooltip}]]</q-tooltip>
+            </div>
 
             <vu:table list="unknownSentenceFilteredList"selectable="true" componentId="unknownSentenceList" sortBy="date" descending :binary-state-sort="true">
                 <vu:slot name="top_right_slot">

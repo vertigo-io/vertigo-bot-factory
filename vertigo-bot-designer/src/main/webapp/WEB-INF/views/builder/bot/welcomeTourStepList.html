@@ -27,7 +27,11 @@
 
 <section layout:fragment="content">
 
-    <div class="text-primary text-h6 text-weight-bold" th:text="#{layout.welcometours}"></div>
+    <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+        <span class="text-primary" style="flex-grow: 2">[[#{layout.welcometours}]]</span>
+        <q-icon name="help_outlined" size="2rem"/>
+        <q-tooltip>[[#{welcometours.tooltip}]]</q-tooltip>
+    </div>
 
     <vu:include-data-primitive key="locale"/>
     <vu:include-data object="bot" field="botId" />

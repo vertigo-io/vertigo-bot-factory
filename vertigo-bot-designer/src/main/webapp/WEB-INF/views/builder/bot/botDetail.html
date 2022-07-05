@@ -91,7 +91,11 @@
 		</section>
 		
 		<section layout:fragment="content">
-			<div class="text-primary text-h6 text-weight-bold" th:text="#{layout.information}"></div>
+			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+				<span class="text-primary" style="flex-grow: 2">[[#{layout.information}]]</span>
+				<q-icon name="help_outlined" size="2rem"/>
+				<q-tooltip>[[#{bot.tooltip}]]</q-tooltip>
+			</div>
 			<vu:block id="identity" th:title="#{bot.identity}">
 				<vu:text-field object="bot" field="name" />
 				<vu:text-area object="bot" field="description"/>

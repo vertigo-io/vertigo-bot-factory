@@ -187,7 +187,11 @@
 		
 		<section layout:fragment="content">
 
-			<div class="text-primary text-h6 text-weight-bold" th:text="#{layout.model}"></div>
+			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+				<span class="text-primary" style="flex-grow: 2">[[#{layout.model}]]</span>
+				<q-icon name="help_outlined" size="2rem"/>
+				<q-tooltip>[[#{model.tooltip}]]</q-tooltip>
+			</div>
 
 			<vu:include-data object="bot" field="botId" />
 			<vu:table list="trainingList" th:title="#{model.history}" :dense="|$q.screen.lt.lg|" componentId="trainingList"

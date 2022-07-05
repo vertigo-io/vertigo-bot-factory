@@ -17,7 +17,11 @@
 		</section>
 		
 		<section layout:fragment="content">
-			<div class="text-primary text-h6 text-weight-bold" th:text="#{layout.category}"></div>
+			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+				<span class="text-primary" style="flex-grow: 2">[[#{layout.category}]]</span>
+				<q-icon name="help_outlined" size="2rem"/>
+				<q-tooltip>[[#{topicCategory.tooltip}]]</q-tooltip>
+			</div>
 			<vu:table list="topicCategories" componentId="topicCategoriesList" tr_@click.native="|goTo('@{/bot/{id}/category/(id=${model.bot.botId})}'+props.row.topCatId)|" tr_style="cursor : pointer;"
 					  sortBy="label" :binary-state-sort="true">
 					<vu:include-data object="topicCategories" field="topCatId" />

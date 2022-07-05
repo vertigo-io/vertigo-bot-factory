@@ -41,7 +41,11 @@
     <body>
         <section layout:fragment="content">
 
-            <div class="text-primary text-h6 text-weight-bold" th:text="#{layout.attachment}"></div>
+            <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+                <span class="text-primary" style="flex-grow: 2">[[#{layout.attachment}]]</span>
+                <q-icon name="help_outlined" size="2rem"/>
+                <q-tooltip>[[#{attachment.tooltip}]]</q-tooltip>
+            </div>
 
             <vu:include-data object="bot" field="botId" />
             <vu:popup-ajax action="_deleteAttachment" vModel="showDeleteAttachmentPopup" th:message="#{attachment.delete.message}"
