@@ -38,5 +38,7 @@ public enum BotMultilingualResources implements MessageKey {
 
 	CHATBOTNODE_LIST,
 
-	STATISTIC
+	STATISTIC,
+
+	EXPORT_ZIP_FILENAME
 }

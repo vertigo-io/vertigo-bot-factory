@@ -9,14 +9,27 @@ import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
 import io.vertigo.chatbot.commons.domain.UnknownSentenceStatusEnum;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
+import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TopicFileExport;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
+import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
+import io.vertigo.chatbot.designer.analytics.services.TypeBotExportServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.TrainerInfoServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.UnknownSentencesServices;
+import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
+import io.vertigo.chatbot.designer.builder.services.topic.export.file.TopicFileExportServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
+import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
+import io.vertigo.chatbot.designer.domain.topic.export.TypeBotExport;
+import io.vertigo.chatbot.designer.domain.topic.export.TypeBotExportList;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -30,7 +43,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.inject.Inject;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public abstract class AbstractBotController extends AbstractDesignerController {
 
@@ -52,6 +71,24 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	@Inject
 	protected UnknownSentencesServices unknownSentencesServices;
 
+	@Inject
+	private TypeBotExportServices typeBotExportServices;
+
+	@Inject
+	protected TopicFileExportServices topicFileExportServices;
+
+	@Inject
+	protected TopicCategoryServices categoryServices;
+
+	@Inject
+	protected DictionaryEntityServices dictionaryEntityServices;
+
+	@Inject
+	protected TopicCategoryServices topicCategoryServices;
+
+	@Inject
+	protected FileServices fileServices;
+
 	private static final ViewContextKey<Chatbot> botKey = ViewContextKey.of("bot");
 	private static final ViewContextKey<String> localeKey = ViewContextKey.of("locale");
 	private static final ViewContextKey<Long> enabledTopicsKey = ViewContextKey.of("enabledTopics");
@@ -61,10 +98,14 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	protected static final ViewContextKey<ChatbotNode> devNodeKey = ViewContextKey.of("devNode");
 	protected static final ViewContextKey<String> breadCrumsKey = ViewContextKey.of("breadCrums");
 	private static final ViewContextKey<TrainerInfo> trainerStateKey = ViewContextKey.of("trainerState");
+	private static final ViewContextKey<TypeBotExport> typeBotExportKey = ViewContextKey.of("typeBotExport");
+	private static final ViewContextKey<TypeBotExportList> selectTypeBotExportListKey = ViewContextKey.of("selectTypeBotExportList");
 
 	protected Chatbot initCommonContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, final Long botId) {
 		final Chatbot chatbot = chatbotServices.getChatbotById(botId);
 		final DtList<Topic> topics = topicServices.getAllTopicByBot(chatbot);
+		viewContext.publishDtList(typeBotExportKey, typeBotExportServices.getAllTypeBotExport());
+		viewContext.publishDto(selectTypeBotExportListKey, new TypeBotExportList());
 		viewContext.publishDto(trainingKey, trainingServices.getDeployedTraining(chatbot).orElse(new Training()));
 		viewContext.publishDto(trainerStateKey, trainerInfoServices.createTrainingState(chatbot));
 		viewContext.publishRef(enabledTopicsKey, topics.stream().filter(Topic::getIsEnabled).count());
@@ -147,6 +188,43 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
 		chatbotServices.deleteChatbot(bot);
 		return "redirect:/bots/";
+	}
+
+	@PostMapping("/_exportBot")
+	public VFile exportBot(final ViewContext viewContext,
+						   @ViewAttribute("bot") final Chatbot bot,
+						   @ViewAttribute("selectTypeBotExportList") final TypeBotExportList typeBotExportList) {
+		if (typeBotExportList.getTbeCd().isEmpty()) {
+			throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
+		}
+		final List<VFile> fileList = new ArrayList<>();
+		typeBotExportList.getTbeCd().forEach(typeBotExport -> {
+			switch (typeBotExport) {
+				case "CATEGORIES":
+					final DtList<TopicCategory> topicCategories = topicCategoryServices.getAllNonTechnicalCategoriesByBot(bot);
+					fileList.add(topicCategoryServices.exportCategories(bot, topicCategories));
+					break;
+				case "TOPICS":
+					final DtList<TopicFileExport> listTopics = topicFileExportServices.getTopicFileExport(bot.getBotId(),
+							categoryServices.getAllCategoriesByBot(bot).stream().map(TopicCategory::getTopCatId).collect(Collectors.toList()));
+					fileList.add(topicFileExportServices.exportTopicFile(bot, listTopics));
+					break;
+				case "DICTIONARY":
+					final DtList<DictionaryEntityWrapper> listDictionaryEntitiesToExport = dictionaryEntityServices.getDictionaryExportByBotId(bot.getBotId(), "|");
+					fileList.add(dictionaryEntityServices.exportDictionary(bot, listDictionaryEntitiesToExport));
+					break;
+				default:
+					throw new VUserException(ExportMultilingualResources.MANDATORY_TYPE_BOT_EXPORT);
+			}
+		});
+		if (fileList.size() == 1) {
+			return fileList.get(0);
+		} else {
+			final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			return fileServices.zipMultipleFiles(fileList,
+					MessageText.of(BotMultilingualResources.EXPORT_ZIP_FILENAME, bot.getName(), dateFormat.format(new Date())).getDisplay());
+		}
+
 	}
 
 	protected Long getBotId(final ViewContext viewContext) {

@@ -67,6 +67,7 @@ drop sequence IF EXISTS SEQ_TOPIC_LABEL;
 drop table IF EXISTS TRAINING cascade;
 drop sequence IF EXISTS SEQ_TRAINING;
 drop table IF EXISTS TRAINING_STATUS cascade;
+drop table IF EXISTS TYPE_BOT_EXPORT cascade;
 drop table IF EXISTS TYPE_EXPORT_ANALYTICS cascade;
 drop table IF EXISTS TYPE_TOPIC cascade;
 drop table IF EXISTS UNKNOWN_SENTENCE_DETAIL cascade;
@@ -171,6 +172,7 @@ create sequence SEQ_TOPIC_LABEL
 
 create sequence SEQ_TRAINING
 	start with 1000 cache 20; 
+
 
 
 
@@ -1168,6 +1170,26 @@ comment on column TRAINING_STATUS.LABEL is
 
 comment on column TRAINING_STATUS.LABEL_FR is
 'LabelFr';
+
+-- ============================================================
+--   Table : TYPE_BOT_EXPORT                                        
+-- ============================================================
+create table TYPE_BOT_EXPORT
+(
+    TBE_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_TYPE_BOT_EXPORT primary key (TBE_CD)
+);
+
+comment on column TYPE_BOT_EXPORT.TBE_CD is
+'Code';
+
+comment on column TYPE_BOT_EXPORT.LABEL is
+'Title';
+
+comment on column TYPE_BOT_EXPORT.LABEL_FR is
+'Titre';
 
 -- ============================================================
 --   Table : TYPE_EXPORT_ANALYTICS                                        

@@ -65,6 +65,30 @@ public enum DtResources implements MessageKey {
 	fldScriptIntentionExport$bt,
 
 	/***********************************************************
+	/** TypeBotExport.
+	/***********************************************************
+	/**
+	 * Code.
+	 */
+	fldTypeBotExport$tbeCd,
+	/**
+	 * Title.
+	 */
+	fldTypeBotExport$label,
+	/**
+	 * Titre.
+	 */
+	fldTypeBotExport$labelFr,
+
+	/***********************************************************
+	/** TypeBotExportList.
+	/***********************************************************
+	/**
+	 * Type bot export code.
+	 */
+	fldTypeBotExportList$tbeCd,
+
+	/***********************************************************
 	/** UtterTextExport.
 	/***********************************************************
 	/**

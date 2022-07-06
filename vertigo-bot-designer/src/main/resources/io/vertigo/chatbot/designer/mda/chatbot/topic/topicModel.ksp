@@ -303,6 +303,13 @@ create DtDefinition DtTopicCategory{
 	field isTechnical	{domain: DoYesNo	label: "Technical" 				cardinality:"1"	}
 }
 
+create DtDefinition DtTopicCategoryExport {
+    field code			{domain: DoLabel	label: "Code" 					cardinality:"1"	}
+	field label			{domain: DoLabel	label: "Topic category label" 	cardinality:"1"	}
+	field isEnabled		{domain: DoLabel	label: "Enabled" 				cardinality:"1"	}
+	field isTechnical	{domain: DoLabel	label: "Technical" 				cardinality:"1"	}
+}
+
 create Association ATopicCategoryChatbot{
 	fkFieldName : "botId"
     

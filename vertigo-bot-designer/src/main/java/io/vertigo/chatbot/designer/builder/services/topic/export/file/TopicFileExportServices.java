@@ -85,7 +85,8 @@ public class TopicFileExportServices implements Component {
 	 */
 	public VFile exportTopicFile(@SecuredOperation("SuperAdm") final Chatbot bot, final DtList<TopicFileExport> dtc) {
 
-		final Export export = new ExportBuilder(ExportFormat.CSV, "export " + bot.getName())
+		final Export export = new ExportBuilder(ExportFormat.CSV,
+				MessageText.of(TopicFileExportMultilingualResources.EXPORT_FILENAME, bot.getName()).getDisplay())
 				.beginSheet(dtc, null)
 				.addField(TopicFileExportFields.code)
 				.addField(TopicFileExportFields.typeTopic)

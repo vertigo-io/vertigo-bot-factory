@@ -141,6 +141,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Topic(io.vertigo.chatbot.commons.domain.topic.Topic.class),
 		/** Objet de données TopicCategory. */
 		TopicCategory(io.vertigo.chatbot.commons.domain.topic.TopicCategory.class),
+		/** Objet de données TopicCategoryExport. */
+		TopicCategoryExport(io.vertigo.chatbot.commons.domain.topic.TopicCategoryExport.class),
 		/** Objet de données TopicCriteria. */
 		TopicCriteria(io.vertigo.chatbot.commons.domain.topic.TopicCriteria.class),
 		/** Objet de données TopicExport. */
@@ -159,6 +161,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TrainingStatus(io.vertigo.chatbot.commons.domain.TrainingStatus.class),
 		/** Objet de données TupleSynonymIhm. */
 		TupleSynonymIhm(io.vertigo.chatbot.designer.domain.TupleSynonymIhm.class),
+		/** Objet de données TypeBotExport. */
+		TypeBotExport(io.vertigo.chatbot.designer.domain.topic.export.TypeBotExport.class),
+		/** Objet de données TypeBotExportList. */
+		TypeBotExportList(io.vertigo.chatbot.designer.domain.topic.export.TypeBotExportList.class),
 		/** Objet de données TypeExportAnalyticList. */
 		TypeExportAnalyticList(io.vertigo.chatbot.designer.domain.analytics.TypeExportAnalyticList.class),
 		/** Objet de données TypeExportAnalytics. */
@@ -1098,6 +1104,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botId	}
 
 	/**
+	 * Enumération des champs de TopicCategoryExport.
+	 */
+	public enum TopicCategoryExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.TopicCategoryExport> {
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Topic category label'. */
+		label,
+		/** Propriété 'Enabled'. */
+		isEnabled,
+		/** Propriété 'Technical'. */
+		isTechnical	}
+
+	/**
 	 * Enumération des champs de TopicCriteria.
 	 */
 	public enum TopicCriteriaFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.TopicCriteria> {
@@ -1265,6 +1284,24 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		word,
 		/** Propriété 'Synonym label'. */
 		synonymLabel	}
+
+	/**
+	 * Enumération des champs de TypeBotExport.
+	 */
+	public enum TypeBotExportFields implements DtFieldName<io.vertigo.chatbot.designer.domain.topic.export.TypeBotExport> {
+		/** Propriété 'Code'. */
+		tbeCd,
+		/** Propriété 'Title'. */
+		label,
+		/** Propriété 'Titre'. */
+		labelFr	}
+
+	/**
+	 * Enumération des champs de TypeBotExportList.
+	 */
+	public enum TypeBotExportListFields implements DtFieldName<io.vertigo.chatbot.designer.domain.topic.export.TypeBotExportList> {
+		/** Propriété 'Type bot export code'. */
+		tbeCd	}
 
 	/**
 	 * Enumération des champs de TypeExportAnalyticList.
