@@ -28,3 +28,33 @@ create DtDefinition DtScriptIntentionExport {
 	field topId 			{domain: DoId 					label: "Topic id" 					}
 	field bt				{domain: DoText 				label: "Bt"					 		}
 }
+
+create DtDefinition DtTypeBotExport {
+stereotype : "StaticMasterData"
+	id    tbeCd 		{domain: DoCode 	label: "Code"}
+	field label 		{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "Titre" 			cardinality : "1"	}
+	values : `{
+	    "CATEGORIES" : {
+            "tbeCd" 	    : "CATEGORIES",
+            "label" 	    : "Categories",
+            "labelFr" 	    : "Catégories"
+        },
+        "TOPICS" : {
+            "tbeCd" 	    : "TOPICS",
+            "label" 	    : "Topics",
+            "labelFr" 	    : "Intentions"
+        },
+        "DICTIONARY" : {
+            "tbeCd" 	    : "DICTIONARY",
+            "label" 	    : "Dictionary",
+            "labelFr" 	    : "Dictionnaire"
+        }
+     }`
+    sortField : "tbeCd"
+ 	displayField : "label"
+}
+
+create DtDefinition DtTypeBotExportList {
+    field tbeCd 		{domain: DoCode		label: "Type bot export code"	 		cardinality:"*"}
+}

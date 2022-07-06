@@ -4,7 +4,6 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.inject.Inject;
-
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
@@ -28,8 +25,6 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
 	private static final ViewContextKey<TopicCategory> topicCategoryKey = ViewContextKey.of("topicCategory");
 	private static final ViewContextKey<Topic> topicsKey = ViewContextKey.of("topics");
 
-	@Inject
-	private TopicCategoryServices topicCategoryServices;
 
 	@GetMapping("/{topCatId}")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,

@@ -51,6 +51,11 @@
 					})
 				}
 			});
+			function checkAll() {
+				VertigoUi.vueData.selectTypeBotExportList.tbeCd =
+						VertigoUi.vueData.typeBotExport.map(typeExport => typeExport.tbeCd);
+
+			}
 		</script>
 	</div>
 	<div layout:fragment="content-header-left" id="baseImg" class="row items-center header-bot-img">
@@ -92,9 +97,48 @@
 		<q-btn color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train"></q-btn>
 		<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="dataX.loadingTraining"></q-spinner-gears>
 		<q-fab class="q-mr-xl" outline flat color="primary" icon="more_vert" direction="down">
-			<q-fab-action disable color="primary" th:label="#{bot.export}" icon="file_upload"></q-fab-action>
+			<q-fab-action color="primary" th:label="#{bot.export}" icon="file_upload" @click="$refs.exportBot.show()"></q-fab-action>
 			<q-fab-action color="primary" th:label="#{bot.delete.label}" @click="componentStates.showPopup = true" icon="delete"></q-fab-action>
 		</q-fab>
+
+		<q-dialog ref="exportBot" th:with="viewMode='edit'" >
+			<q-card>
+				<q-form method="post" action="_exportBot">
+					<q-card-section>
+						<div class="text-h6" th:text="#{popup.export.title}"></div>
+					</q-card-section>
+					<q-card-section style="width: 400px;">
+						<vu:include-data object="selectTypeBotExportList" field="tbeCd" modifiable="true"/>
+						<vu:include-data object="typeBotExport" field="'*'"/>
+						<q-select
+								clearable
+								filled
+								map-options
+								emit-value
+								multiple
+								v-model="vueData.selectTypeBotExportList.tbeCd"
+								:options="vueData.locale == 'fr_FR' ? transformListForSelection('typeBotExport', 'tbeCd', 'labelFr') : transformListForSelection('typeBotExport', 'tbeCd', 'label')"
+								th:label="Type"
+								stack-label>
+							<template #before-options>
+								<q-item clickable>
+									<q-item-section @click="checkAll">
+										<q-item-label th:text="#{popup.export.all}"></q-item-label>
+									</q-item-section>
+								</q-item>
+							</template>
+						</q-select>
+					</q-card-section>
+					<input v-for="id in vueData.selectTypeBotExportList.tbeCd" type="hidden" name="vContext[selectTypeBotExportList][tbeCd]" :value="id" />
+
+					<q-card-actions align="around">
+						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<q-btn flat th:label="#{popup.export.cancel}" color="primary" v-close-popup ></q-btn>
+						<q-btn type="submit" th:title="#{popup.export.export}" th:label="#{popup.export.export}" th:aria-label="#{popup.export.export}" color="primary" v-close-popup></q-btn>
+					</q-card-actions>
+				</q-form>
+			</q-card>
+		</q-dialog>
 	</div>
 	<section layout:fragment="content-nav">
 		<vu:include-data-primitive key="unknownSentencesToTreat" />

@@ -28,10 +28,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
-import io.vertigo.chatbot.designer.builder.services.topic.export.file.TopicFileExportServices;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicIhmFields;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -40,7 +37,6 @@ import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
-import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,13 +69,6 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 
 	@Inject
 	private TypeTopicServices typeTopicServices;
-	@Inject
-	private FileServices fileServices;
-	@Inject
-	private TopicCategoryServices categoryServices;
-
-	@Inject
-	private TopicFileExportServices topicFileExportServices;
 
 	@GetMapping("/")
 	@Secured("BotUser")
@@ -133,7 +122,7 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 	@Secured("SuperAdm")
 	public String doImportTopic(final ViewContext viewContext,
 			@ViewAttribute("bot") final Chatbot bot,
-			@QueryParam("importTopicFileUri") final FileInfoURI importTopicFile) {
+			@ViewAttribute("importTopicFileUri") final FileInfoURI importTopicFile) {
 
 		topicFileExportServices.importTopicFromCSVFile(bot, importTopicFile);
 

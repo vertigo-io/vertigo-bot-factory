@@ -12,8 +12,16 @@
 	
 	<body>
 		<section layout:fragment="content-actions">
-			<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/category/new(id=${model.bot.botId})}" th:ariaLabel="#{action.add}" icon="add"
-							class="on-left" round size="md" color="primary" />
+			<q-form method="post" action="_exportCategories">
+				<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/category/new(id=${model.bot.botId})}" th:ariaLabel="#{action.add}" icon="add"
+								class="on-left" round size="md" color="primary" />
+				<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+				<q-btn type="submit" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md"
+					   icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}"></q-btn>
+				<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md"
+					   icon="file_download" th:aria-label="#{action.import}" th:title="#{action.import}"
+					   @click="$refs.importCategories.show()"></q-btn>
+			</q-form>
 		</section>
 		
 		<section layout:fragment="content">
@@ -39,6 +47,25 @@
 						<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>
 					</vu:column>
 			</vu:table>
+
+			<q-dialog ref="importCategories" th:with="viewMode='edit'" >
+				<q-card>
+					<q-form method="post" action="_importCategories">
+						<q-card-section>
+							<div class="text-h6" th:text="#{popup.import.title}"></div>
+						</q-card-section>
+
+						<vu:include-data-primitive key="locale" />
+						<vu:fileupload th:url="'@{/commons/upload}'" key="importCategoriesFileUri" multiple="false"/>
+
+						<q-card-actions align="around">
+							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
+							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn>
+						</q-card-actions>
+					</q-form>
+				</q-card>
+			</q-dialog>
 		</section>
 	</body>
 </html>

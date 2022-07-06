@@ -116,7 +116,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 			final DtList<Synonym> synonyms,
 			final DtList<Synonym> synonymsToDelete) {
 
-		boolean isNew = DtObjectUtil.getId(dictionaryEntity) == null;
+		final boolean isNew = DtObjectUtil.getId(dictionaryEntity) == null;
 		final DtList<Synonym> oldSynonyms = synonymServices.getAllSynonymByDictionaryEntity(findDictionaryEntityById(dictionaryEntity.getDicEntId()));
 		if (!synonymsToDelete.isEmpty() || !HashUtils.generateHashCodeForSynonyms(oldSynonyms).equals(HashUtils.generateHashCodeForSynonyms(synonyms))) {
 			nodeServices.updateNodes(chatbot);
@@ -137,7 +137,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @param dicEntId
 	 */
 	public void deleteDictionaryEntity(@SecuredOperation("botAdm") final Chatbot bot, final Long dicEntId) {
-		DictionaryEntity dictionaryEntity = dictionaryEntityDAO.get(dicEntId);
+		final DictionaryEntity dictionaryEntity = dictionaryEntityDAO.get(dicEntId);
 		dictionaryEntityDAO.delete(dicEntId);
 		record(bot, dictionaryEntity, HistoryActionEnum.DELETED);
 	}
@@ -276,7 +276,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * Return a File from a list of DictionaryExport
 	 */
 	public VFile exportDictionary(@SecuredOperation("SuperAdm") final Chatbot bot, final DtList<DictionaryEntityWrapper> dtc) {
-		final String exportName = "export " + MessageText.of(DictionaryEntityMultilingualResources.DICTIONARY).getDisplay() + " " + bot.getName();
+		final String exportName = "export_" + MessageText.of(DictionaryEntityMultilingualResources.DICTIONARY).getDisplay() + "_" + bot.getName();
 		final Export export = new ExportBuilder(ExportFormat.CSV, exportName)
 				.beginSheet(dtc, null)
 				.addField(DtDefinitions.DictionaryEntityWrapperFields.dictionaryEntityLabel)
@@ -325,7 +325,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 			// if the dictionaryEntity is not already in database, it is saved
 			dictionaryEntity.setBotId(chatbot.getBotId());
 			dictionaryEntity.setLabel(dex.getDictionaryEntityLabel());
-			dictionaryEntitySaved = this.save(chatbot, dictionaryEntity);
+			dictionaryEntitySaved = save(chatbot, dictionaryEntity);
 		}
 		final DtList<Synonym> listSynonyms = synonymServices.extractSynonymsFromDictionaryExport(dex, dictionaryEntitySaved);
 		for (final Synonym synonym : listSynonyms) {
@@ -339,7 +339,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	}
 
 	@Override
-	public History record(Chatbot bot, DictionaryEntity dictionaryEntity, HistoryActionEnum action) {
+	public History record(final Chatbot bot, final DictionaryEntity dictionaryEntity, final HistoryActionEnum action) {
 		return historyServices.record(bot, action, dictionaryEntity.getClass().getSimpleName(), dictionaryEntity.getLabel());
 	}
 }
