@@ -41,7 +41,7 @@ public class HistoryListController extends AbstractBotListEntityController<Histo
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		initCommonContext(viewContext, uiMessageStack, botId);
 		final HistoryCriteria criteria = new HistoryCriteria();
-		criteria.setToDate(LocalDate.now());
+		criteria.setToDate(LocalDate.now().plusDays(1));
 		viewContext.publishDto(historyCriteriaKey, criteria);
 		final DtList<History> historyDtList = historyServices.findByCriteria(botId, criteria);
 		viewContext.publishDtList(historyListKey, historyDtList);
@@ -52,6 +52,9 @@ public class HistoryListController extends AbstractBotListEntityController<Histo
 
 	@PostMapping("/_filterHistory")
 	public ViewContext filterHistory(final ViewContext viewContext, final UiMessageStack uiMessageStack, @ViewAttribute("criteria") final HistoryCriteria criteria) {
+		if (criteria.getToDate() != null) {
+			criteria.setToDate(criteria.getToDate().plusDays(1));
+		}
 		viewContext.publishDtList(historyListKey, historyServices.findByCriteria(getBotId(viewContext), criteria));
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;

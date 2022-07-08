@@ -53,9 +53,6 @@ public class HistoryServices implements Component {
 	}
 
 	public DtList<History> findByCriteria(final Long botId, final HistoryCriteria criteria) {
-		if (criteria.getToDate() != null) {
-			criteria.setToDate(criteria.getToDate().plusDays(1));
-		}
 		return historyDAO.searchHistory(botId, criteria);
 	}
 }
