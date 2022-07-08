@@ -42,14 +42,19 @@ public class AnalyticsSenderServices implements Component {
 		}
 		sendPastTopics(sessionId, topicsPast, executorConfiguration);
 
-		sendBotInputEvent(sessionId, input, executorConfiguration);
+		sendBotInputEvent(sessionId, input, executorConfiguration, botResponse);
 
 		sendConversationEvent(sessionId, String.join("\0", botResponse.getHtmlTexts()), false, executorConfiguration);
 	}
 
-	private void sendBotInputEvent(final UUID sessionId, final BotInput input, final ExecutorConfiguration executorConfiguration) {
+	private void sendBotInputEvent(final UUID sessionId, final BotInput input, final ExecutorConfiguration executorConfiguration, final BotResponse botResponse) {
 		if (input.getMessage() != null) {
-			sendConversationEvent(sessionId, input.getMessage(), true, executorConfiguration);
+			if (botResponse.getRating()) {
+				final IncomeRating incomeRating = new IncomeRating();
+				incomeRating.setComment(input.getMessage());
+				rateComment(sessionId, incomeRating, executorConfiguration);
+			}
+			sendConversationEvent(sessionId, input.getMessage(), true,  executorConfiguration);
 		} else if (input.getMetadatas().get("rating") != null) {
 			final String rating = (String) input.getMetadatas().get("rating");
 			final IncomeRating incomeRating = new IncomeRating();
@@ -131,7 +136,7 @@ public class AnalyticsSenderServices implements Component {
 
 		sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 		sendPastTopics(sessionId, topicsPast, executorConfiguration);
-		sendBotInputEvent(sessionId, input, executorConfiguration);
+		sendBotInputEvent(sessionId, input, executorConfiguration, botResponse);
 		sendConversationEvent(sessionId, String.join("\0", botResponse.getHtmlTexts()), false, executorConfiguration);
 	}
 
@@ -142,6 +147,10 @@ public class AnalyticsSenderServices implements Component {
 
 	public void rate(final UUID sessionId, final IncomeRating rating, final ExecutorConfiguration executorConfiguration) {
 		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareRatingProcess(rating), executorConfiguration);
+	}
+
+	public void rateComment(final UUID sessionId, final IncomeRating rating, final ExecutorConfiguration executorConfiguration) {
+		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareRatingCommentProcess(rating), executorConfiguration);
 	}
 
 	public void sendConversationEvent(final UUID sessionId, final String text, final boolean userMessage, final ExecutorConfiguration executorConfiguration) {

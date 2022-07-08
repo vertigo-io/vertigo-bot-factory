@@ -293,34 +293,60 @@ public class TimeSerieServices implements Component, Activeable {
 				AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
-	public TimedDatas getRatingDetailsStats(final StatCriteria criteria) {
+	public TabularDatas getRatingDetailsStats(final StatCriteria criteria) {
 		final StringBuilder query = new StringBuilder();
 		query.append("lastTopic = ").append(new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.append("|> filter(fn: (r) => r._measurement == \"chatbotmessages\" and r._field == \"isTechnical\" and r._value == 0)")
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_value", "name", "sessionId"))
-				.append("|> rename(columns: {name: \"lastTopic\"})")
+				.keep(List.of("_time", "_field", "name", "sessionId"))
+				.append("|> rename(columns: {name: \"_value\"})")
+				.append("|> set(key: \"_field\", value: \"lastTopic\")")
 				.group(List.of("sessionId"))
-				.append("|> sort(columns: [\"_time\"], desc:false)|> limit(n:5000)")
+				.append("|> sort(columns: [\"_time\"], desc:false)")
 				.append("|> last()").buildRaw());
 
 		query.append("\n\n");
 
-		query.append("rate = ").append(new InfluxRequestBuilder(influxDbName)
+
+		query.append("time = ").append(new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.RATING_MSRMT, List.of("rating", "sessionId"))
+				.append("|> filter(fn: (r) => r._measurement == \"rating\" and r._field==\"rating\" and not exists r.ratingComment)")
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "_field", "_value", "sessionId"))
-				.pivot()
+				.keep(List.of("_time", "_field", "sessionId"))
+				.append("|> map(fn: (r) => ({r with time: string(v: r._time)}))")
+				.append("|> rename(columns: {time: \"_value\"})")
+				.append("|> set(key: \"_field\", value: \"time\")")
 				.group(List.of("sessionId"))
-				.append("|> sort(columns: [\"_time\"], desc:false)|> limit(n:5000)").buildRaw());
+				.append("|> sort(columns: [\"_time\"], desc:false)")
+				.append("|> last()").buildRaw());
 
 		query.append("\n\n");
 
-		query.append("join(tables: {key1: lastTopic, key2: rate}, on: [\"sessionId\"], method: \"inner\") \n");
-		query.append("|> group()");
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), query.toString());
+		query.append("rating = ").append(new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.append("|> filter(fn: (r) => r._measurement == \"rating\" and r._field==\"rating\" and not exists r.ratingComment)")
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "_field", "_value", "sessionId"))
+				.buildRaw());
+
+		query.append("\n\n");
+
+		query.append("ratingComment = ").append(new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.append("|> filter(fn: (r) => r._measurement == \"rating\" and r._field==\"rating\" and exists r.ratingComment)")
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "_field", "sessionId", "ratingComment"))
+				.append("|> set(key: \"_field\", value: \"ratingComment\")")
+				.append("|> rename(columns: {ratingComment: \"_value\"})")
+				.buildRaw());
+
+		query.append("union(tables: [rating, time, ratingComment, lastTopic]) \n");
+		query.append("|> pivot(rowKey:[\"sessionId\"], columnKey: [\"_field\"], valueColumn: \"_value\") \n");
+		query.append("|> group() \n");
+		query.append("|> limit(n:5000)");
+
+		return InfluxRequestUtil.executeTabularQuery(influxDbConnector.getClient(), query.toString());
 	}
 
 	/**

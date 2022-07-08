@@ -41,6 +41,7 @@ import io.vertigo.datamodel.structure.util.VCollectors;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -201,14 +202,15 @@ public class AnalyticsServices implements Component {
 	}
 
 	public DtList<RatingDetail> getRatingDetails(final StatCriteria criteria) {
-		final TimedDatas ratings = timeSerieServices.getRatingDetailsStats(criteria);
+		final TabularDatas ratings = timeSerieServices.getRatingDetailsStats(criteria);
 		final DtList<RatingDetail> retour = new DtList<>(RatingDetail.class);
-		ratings.getTimedDataSeries().forEach(timedDataSerie -> {
-			final Map<String, Object> values = timedDataSerie.getValues();
+		ratings.getTabularDataSeries().forEach(tabularDataSerie -> {
+			final Map<String, Object> values = tabularDataSerie.getValues();
 			final RatingDetail ratingDetail = new RatingDetail();
 			ratingDetail.setSessionId((String) values.get("sessionId"));
-			ratingDetail.setDate(timedDataSerie.getTime());
+			ratingDetail.setDate(Instant.parse((String)values.get("time")));
 			ratingDetail.setRating(((Double) values.get("rating")).longValue());
+			ratingDetail.setComment((String) values.get("ratingComment"));
 			ratingDetail.setLastTopic((String) values.get("lastTopic"));
 			retour.add(ratingDetail);
 		});
