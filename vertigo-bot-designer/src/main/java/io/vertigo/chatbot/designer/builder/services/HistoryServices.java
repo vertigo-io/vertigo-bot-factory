@@ -1,11 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services;
 
-import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
-
-import java.time.Instant;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.dao.HistoryDAO;
 import io.vertigo.chatbot.designer.domain.History;
@@ -19,6 +13,11 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 
+import javax.inject.Inject;
+import java.time.Instant;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 @Transactional
 public class HistoryServices implements Component {
 
@@ -30,7 +29,8 @@ public class HistoryServices implements Component {
 	}
 
 	public DtList<History> findAllByBotId(final Long botId) {
-		return historyDAO.findAll(Criterions.isEqualTo(DtDefinitions.HistoryFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+		return historyDAO.findAll(Criterions.isEqualTo(DtDefinitions.HistoryFields.botId, botId),
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE, 0, DtDefinitions.HistoryFields.date.name(), true));
 	}
 
 	public History save(final History history) {

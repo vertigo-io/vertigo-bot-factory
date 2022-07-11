@@ -72,7 +72,8 @@ public class UnknownSentencesServices implements Component {
 	}
 
 	public DtList<UnknownSentenceDetail> findAllByBotId(final Long botId) {
-		return unknownSentenceDetailDAO.findAll(Criterions.isEqualTo(DtDefinitions.UnknownSentenceDetailFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+		return unknownSentenceDetailDAO.findAll(Criterions.isEqualTo(DtDefinitions.UnknownSentenceDetailFields.botId, botId),
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE, 0, DtDefinitions.UnknownSentenceDetailFields.date.name(), true));
 	}
 
 	public void deleteAllByBotId(final long botId) {

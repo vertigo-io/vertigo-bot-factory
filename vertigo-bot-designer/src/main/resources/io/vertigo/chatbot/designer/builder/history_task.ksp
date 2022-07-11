@@ -24,6 +24,7 @@ create Task TkSearchHistory {
  				translate(lower(hist.user_name),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') like '%' || translate(lower(#criteria.text#),'áàâãäåāăąćčçèéêёëēĕėęěğıìíîïìĩīĭłŁńňñòóôõöōŏőøřšşșùúûüũūŭůýÿžżź','aaaaaaaaaccceeeeeeeeeegiiiiiiiiillnnnooooooooorsssuuuuuuuuyyzzz') || '%'
 			)
  			<% } %>
+ 			order by hist.date desc
  			"
 	in botId				{domain : DoId,							cardinality:"1"} 
 	in criteria				{domain : DoDtHistoryCriteria,			cardinality:"1"} 

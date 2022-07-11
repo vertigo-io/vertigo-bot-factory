@@ -33,7 +33,7 @@
                 <q-tooltip>[[#{history.tooltip}]]</q-tooltip>
             </div>
 
-            <vu:table th:title="#{history.table.title}" list="historyList" componentId="historyList" sortBy="date" descending :binary-state-sort="true">
+            <vu:table th:title="#{history.table.title}" list="historyList" componentId="historyList">
                 <vu:slot name="top_right_slot">
                     <vu:select-edit object="criteria" field="hacCd"
                     				list="historyActions" labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"
@@ -72,7 +72,6 @@
         <section layout:fragment="javascript-footer" >
             <script type="text/javascript">
                 VUiPage.$data.componentStates.historyList.columns[0].sort = VertigoUi.methods.sortDatesAsString("DD/MM/YYYY HH:mm");
-
                 VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
                 	VUiPage.httpPostAjax('_filterHistory', VUiPage.vueDataParams(['criteria']));
                 }, { deep: true });
