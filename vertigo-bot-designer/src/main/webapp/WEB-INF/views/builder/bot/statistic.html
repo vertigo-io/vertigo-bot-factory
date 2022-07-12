@@ -678,7 +678,7 @@
         </div>
 
         <div class="col-12">
-            <vu:table componentId="ratingDetails"  list="ratingDetails"  rowsPerPage="5" sortBy="rating" descending>
+            <vu:table componentId="ratingDetails"  list="ratingDetails"  rowsPerPage="5">
                 <vu:column field="date"/>
                 <vu:column field="rating"/>
                 <vu:column field="comment"/>
@@ -813,6 +813,7 @@
 </section>
 <section layout:fragment="javascript-footer" >
     <script type="text/javascript">
+        VUiPage.$data.componentStates.ratingDetails.columns[0].sort = VertigoUi.methods.sortDatesAsString("DD/MM/YYYY HH:mm");
         VUiExtensions.dataX.apexCharts.categories.options = {
             chart: {
                 type: 'pie',
