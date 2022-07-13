@@ -1,5 +1,19 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.authorization.SecuredEntities;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -38,18 +52,6 @@ import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-
-import javax.inject.Inject;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public abstract class AbstractBotController extends AbstractDesignerController {
 
@@ -133,6 +135,8 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 		viewContext.publishRef(unknownSentencesToTreatKey, 0L);
 		viewContext.publishRef(totalTopicsKey, 0);
 		viewContext.publishDto(devNodeKey, new ChatbotNode());
+		viewContext.publishDtList(typeBotExportKey, typeBotExportServices.getAllTypeBotExport());
+		viewContext.publishDto(selectTypeBotExportListKey, new TypeBotExportList());
 	}
 
 	@GetMapping("/{botId}/avatar")

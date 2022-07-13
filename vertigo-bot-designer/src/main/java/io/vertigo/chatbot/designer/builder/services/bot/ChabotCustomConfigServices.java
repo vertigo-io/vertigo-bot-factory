@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.ChatbotCustomConfigDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -9,8 +11,6 @@ import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
-
-import javax.inject.Inject;
 
 @Transactional
 public class ChabotCustomConfigServices implements Component {
@@ -69,10 +69,13 @@ public class ChabotCustomConfigServices implements Component {
 
 	public ChatbotCustomConfig getDefaultChatbotCustomConfig() {
 		final ChatbotCustomConfig chatbotCustomConfig = new ChatbotCustomConfig();
-		chatbotCustomConfig.setReinitializationButton(false);
+		chatbotCustomConfig.setReinitializationButton(true);
+		chatbotCustomConfig.setDisplayAvatar(true);
+		chatbotCustomConfig.setDisableNlu(false);
 		chatbotCustomConfig.setBackgroundColor("#cdcdcd");
 		chatbotCustomConfig.setFontColor("#000000");
 		chatbotCustomConfig.setFontFamily("Arial, sans-serif");
+		chatbotCustomConfig.setTotalMaxAttachmentSize(-1L);
 		return chatbotCustomConfig;
 	}
 }

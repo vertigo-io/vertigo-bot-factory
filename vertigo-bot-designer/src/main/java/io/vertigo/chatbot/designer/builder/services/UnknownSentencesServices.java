@@ -1,5 +1,9 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.dao.UnknownSentenceDetailDAO;
 import io.vertigo.chatbot.commons.domain.UnknownSentenceDetail;
 import io.vertigo.chatbot.commons.domain.UnknownSentenceStatusEnum;
@@ -13,9 +17,6 @@ import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
-
-import javax.inject.Inject;
-import java.util.Map;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -76,8 +77,13 @@ public class UnknownSentencesServices implements Component {
 				DtListState.of(MAX_ELEMENTS_PLUS_ONE, 0, DtDefinitions.UnknownSentenceDetailFields.date.name(), true));
 	}
 
+	public DtList<UnknownSentenceDetail> findAllByBotIdWithoutLimit(final Long botId) {
+		return unknownSentenceDetailDAO.findAll(Criterions.isEqualTo(DtDefinitions.UnknownSentenceDetailFields.botId, botId),
+				DtListState.of(null));
+	}
+
 	public void deleteAllByBotId(final long botId) {
-		findAllByBotId(botId).forEach(unknownSentenceDetail -> delete(unknownSentenceDetail.getUnkSeId()));
+		findAllByBotIdWithoutLimit(botId).forEach(unknownSentenceDetail -> delete(unknownSentenceDetail.getUnkSeId()));
 	}
 
 }
