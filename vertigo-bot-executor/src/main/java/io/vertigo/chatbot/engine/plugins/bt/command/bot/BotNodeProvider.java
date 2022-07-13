@@ -129,7 +129,6 @@ public final class BotNodeProvider {
 
 	private static BTNode queryInteger(final BlackBoard bb, final String keyTemplate, final String question, final Predicate<String> validator) {
 		return sequence(
-				set(bb, BotEngine.BOT_RATING_KEY.key(), "true"),
 				say(bb, question),
 				() -> {
 					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/integer/key"), keyTemplate);

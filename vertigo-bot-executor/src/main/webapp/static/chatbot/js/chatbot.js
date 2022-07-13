@@ -311,7 +311,7 @@ const chatbot = new Vue({
                         chatbot._displayMessages();
                     });
                 } else {
-                    chatbot.inputConfig.showRating = chatbot.rating;
+                    chatbot.inputConfig.showRating = chatbot.rating && chatbot.inputConfig.rating === 0;
                     chatbot.processing = false;
                     if (chatbot.keepAction) {
                         chatbot.inputConfig = chatbot.prevInputConfig;

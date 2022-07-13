@@ -17,6 +17,14 @@
  */
 package io.vertigo.chatbot.designer.analytics.services;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
@@ -38,13 +46,6 @@ import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.util.VCollectors;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Transactional
 public class AnalyticsServices implements Component {
@@ -209,6 +210,7 @@ public class AnalyticsServices implements Component {
 			ratingDetail.setSessionId((String) values.get("sessionId"));
 			ratingDetail.setDate(timedDataSerie.getTime());
 			ratingDetail.setRating(((Double) values.get("rating")).longValue());
+			ratingDetail.setComment((String) values.get("ratingComment"));
 			ratingDetail.setLastTopic((String) values.get("lastTopic"));
 			retour.add(ratingDetail);
 		});

@@ -1,5 +1,13 @@
 package io.vertigo.chatbot.commons.influxDb;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
 import io.vertigo.chatbot.designer.analytics.utils.InfluxRequestBuilder;
 import io.vertigo.chatbot.designer.analytics.utils.InfluxRequestUtil;
@@ -12,13 +20,6 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimedDatas;
-
-import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Use for search in influxdb
@@ -280,7 +281,8 @@ public class TimeSerieServices implements Component, Activeable {
 		if (conversationCriteria.getModelName() != null) {
 			query.append("|> filter(fn: (r) => strings.containsStr(v: r.modelName, substr: \"").append(conversationCriteria.getModelName()).append("\")) \n");
 		}
-		query.append("|> group()");
+		query.append("|> group()\n");
+		query.append("|> sort(columns: [\"_time\"], desc: true)");
 
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), query.toString());
 	}
@@ -299,27 +301,55 @@ public class TimeSerieServices implements Component, Activeable {
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.append("|> filter(fn: (r) => r._measurement == \"chatbotmessages\" and r._field == \"isTechnical\" and r._value == 0)")
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_value", "name", "sessionId"))
-				.append("|> rename(columns: {name: \"lastTopic\"})")
+				.keep(List.of("_time", "_field", "name", "sessionId"))
+				.append("|> rename(columns: {name: \"_value\"})")
+				.append("|> set(key: \"_field\", value: \"lastTopic\")")
 				.group(List.of("sessionId"))
-				.append("|> sort(columns: [\"_time\"], desc:false)|> limit(n:5000)")
+				.append("|> sort(columns: [\"_time\"], desc:false)")
 				.append("|> last()").buildRaw());
 
 		query.append("\n\n");
 
-		query.append("rate = ").append(new InfluxRequestBuilder(influxDbName)
+
+		query.append("time = ").append(new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.RATING_MSRMT, List.of("rating", "sessionId"))
+				.append("|> filter(fn: (r) => r._measurement == \"rating\" and r._field==\"rating\" and not exists r.ratingComment)")
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "_field", "_value", "sessionId"))
-				.pivot()
-				.group(List.of("sessionId"))
-				.append("|> sort(columns: [\"_time\"], desc:false)|> limit(n:5000)").buildRaw());
+				.keep(List.of("_time", "sessionId"))
+				.append("|> duplicate(column: \"_time\", as: \"_value\")")
+				.append("|> set(key: \"_field\", value: \"_time\")")
+				.group(List.of("sessionId", "_field"))
+				.append("|> sort(columns: [\"_time\"], desc:false)")
+				.append("|> last(column: \"_time\")").buildRaw());
 
 		query.append("\n\n");
 
-		query.append("join(tables: {key1: lastTopic, key2: rate}, on: [\"sessionId\"], method: \"inner\") \n");
-		query.append("|> group()");
+		query.append("rating = ").append(new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.append("|> filter(fn: (r) => r._measurement == \"rating\" and r._field==\"rating\" and not exists r.ratingComment)")
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "_field", "_value", "sessionId"))
+				.buildRaw());
+
+		query.append("\n\n");
+
+		query.append("ratingComment = ").append(new InfluxRequestBuilder(influxDbName)
+				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
+				.append("|> filter(fn: (r) => r._measurement == \"rating\" and r._field==\"rating\" and exists r.ratingComment)")
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "_field", "sessionId", "ratingComment"))
+				.append("|> set(key: \"_field\", value: \"ratingComment\")")
+				.append("|> rename(columns: {ratingComment: \"_value\"})")
+				.buildRaw());
+
+		query.append("\n\n");
+
+		query.append("union(tables: [rating, time, ratingComment, lastTopic]) \n");
+		query.append("|> pivot(rowKey:[\"sessionId\"], columnKey: [\"_field\"], valueColumn: \"_value\") \n");
+		query.append("|> group() \n");
+		query.append("|> sort(columns: [\"_time\"], desc:true)\n");
+		query.append("|> limit(n:5000)");
+
 		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), query.toString());
 	}
 

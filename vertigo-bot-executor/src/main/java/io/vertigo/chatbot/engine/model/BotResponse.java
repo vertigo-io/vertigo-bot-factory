@@ -90,4 +90,8 @@ public final class BotResponse {
 	public List<IBotChoice> getCards() {
 		return cards;
 	}
+
+	public Boolean getRating() {
+		return rating;
+	}
 }

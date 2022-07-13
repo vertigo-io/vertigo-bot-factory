@@ -64,7 +64,6 @@ public class BotEngine {
 
 	public static final BBKey BOT_RESPONSE_KEY = BBKey.of(BOT_OUT_PATH, "/responses");
 	public static final BBKey BOT_CHOICES_KEY = BBKey.of(BOT_OUT_PATH, "/choices");
-	public static final BBKey BOT_RATING_KEY = BBKey.of(BOT_OUT_PATH, "/rating");
 	public static final BBKey BOT_CHOICES_NUMBER_KEY = BBKey.of(BOT_OUT_PATH, "/choicesnumber");
 	public static final BBKey BOT_OUT_METADATA_PATH = BBKey.of(BOT_OUT_PATH, "/metadata");
 
@@ -144,7 +143,7 @@ public class BotEngine {
 
 		// build response
 		final Boolean expectNluOrText = bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/nlu/key")) || bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/text/key"));
-		final Boolean rating = bb.exists(BBKey.of(BOT_RATING_KEY.key()));
+		final Boolean rating = topic.getCode().equals(BotEngine.RATING_TOPIC_NAME);
 		final var botResponseBuilder = new BotResponseBuilder(status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking, expectNluOrText, rating);
 		for (int i = 0; i < bb.listSize(BOT_RESPONSE_KEY); i++) {
 			botResponseBuilder.addMessage(bb.listGet(BOT_RESPONSE_KEY, i));

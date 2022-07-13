@@ -67,6 +67,12 @@ public final class AnalyticsUtils {
 		return builder;
 	}
 
+	public static AProcessBuilder prepareRatingCommentProcess(final IncomeRating incomeRating) {
+		return AProcess.builder(RATING_KEY, RATING_KEY, Instant.now(), Instant.now())
+				.setMeasure(RATING_KEY, FALSE_BIGDECIMAL)
+				.addTag(RATING_COMMENT_KEY, incomeRating.getComment());
+	}
+
 	public static AProcessBuilder prepareConversationProcess(final String text, final boolean userMessage) {
 		return AProcess.builder(CONVERSATION_KEY, CONVERSATION_KEY, Instant.now(), Instant.now())
 				.addTag(TEXT_KEY, text)
