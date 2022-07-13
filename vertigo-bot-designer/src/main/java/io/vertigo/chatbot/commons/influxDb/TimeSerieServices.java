@@ -301,6 +301,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.append("|> filter(fn: (r) => r._measurement == \"chatbotmessages\" and r._field == \"isTechnical\" and r._value == 0)")
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.append("|> filter(fn: (r) => exists r.sessionId)")
 				.keep(List.of("_time", "_field", "name", "sessionId"))
 				.append("|> rename(columns: {name: \"_value\"})")
 				.append("|> set(key: \"_field\", value: \"lastTopic\")")
@@ -346,6 +347,7 @@ public class TimeSerieServices implements Component, Activeable {
 
 		query.append("union(tables: [rating, time, ratingComment, lastTopic]) \n");
 		query.append("|> pivot(rowKey:[\"sessionId\"], columnKey: [\"_field\"], valueColumn: \"_value\") \n");
+		query.append("|> filter(fn: (r) => exists r._time and exists r.rating) \n");
 		query.append("|> group() \n");
 		query.append("|> sort(columns: [\"_time\"], desc:true)\n");
 		query.append("|> limit(n:5000)");
