@@ -17,6 +17,23 @@
  */
 package io.vertigo.chatbot.executor.manager;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
@@ -34,21 +51,6 @@ import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
-import org.apache.commons.io.FileUtils;
-
-import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class ExecutorConfigManager implements Manager, Activeable {
 
@@ -156,10 +158,14 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	public void updateWelcomeTour(final DtList<WelcomeTourExport> welcomeTourExports) {
 		final StringBuilder jsString = new StringBuilder();
 		jsString.append("const welcomeTours = []; \n");
-		welcomeTourExports.forEach(welcomeTourExport -> jsString.append("welcomeTours[\"")
-				.append(welcomeTourExport.getTechnicalCode()).append("\"]")
-				.append(" = ").append(" new Shepherd.Tour(")
-				.append(welcomeTourExport.getConfig()).append("); \n\n"));
+		welcomeTourExports.forEach(welcomeTourExport -> {
+			if (welcomeTourExport.getConfig() != null) {
+				jsString.append("welcomeTours[\"")
+						.append(welcomeTourExport.getTechnicalCode()).append("\"]")
+						.append(" = ").append(" new Shepherd.Tour(")
+						.append(welcomeTourExport.getConfig()).append("); \n\n");
+			}
+		});
 		jsString.append("window.addEventListener(\n" +
 				"          'message',\n" +
 				"          function (event) {\n" +

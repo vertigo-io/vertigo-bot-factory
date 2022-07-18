@@ -1,5 +1,14 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.WelcomeTourDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -17,14 +26,6 @@ import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -86,7 +87,8 @@ public class WelcomeTourServices implements Component {
 			final WelcomeTourExport welcomeTourExport = new WelcomeTourExport();
 			welcomeTourExport.setTechnicalCode(welcomeTour.getTechnicalCode());
 			welcomeTourExport.setLabel(welcomeTour.getLabel());
-			welcomeTourExport.setConfig(welcomeTourStepServices.parseFile(welcomeTour.getConfig(), welcomeTour.getWelId()));
+			welcomeTourExport.setConfig(welcomeTour.getConfig() != null ?
+					welcomeTourStepServices.parseFile(welcomeTour.getConfig(), welcomeTour.getWelId()) : null);
 			return welcomeTourExport;
 		}).collect(VCollectors.toDtList(WelcomeTourExport.class));
 		LogsUtils.logOK(logs);
