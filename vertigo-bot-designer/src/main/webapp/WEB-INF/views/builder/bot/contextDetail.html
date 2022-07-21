@@ -16,13 +16,13 @@
 							class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
 							class="on-left" :round size="md" color="primary" />
-			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
+			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopupDeleteContextValue = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
 							class="on-left" round size="md" color="red" ></q-btn>
 		</section>
 				
 		<section layout:fragment="content">
 			
-			<vu:popup action="_delete" vModel="showPopup" message="#{contextValue.popup.message}" confirm="#{action.confirm}"></vu:popup>
+			<vu:popup action="_delete" vModel="showPopupDeleteContextValue" message="#{contextValue.popup.message}" confirm="#{action.confirm}"></vu:popup>
 			<vu:block id="detail" title="Informations">
 				<vu:grid cols="2">
 					<vu:text-field object="contextValue" field="label" />
