@@ -28,8 +28,8 @@ public class ChabotCustomConfigServices implements Component {
 	public ChatbotCustomConfig save(@SecuredOperation("botAdm") final Chatbot bot, final ChatbotCustomConfig chatbotCustomConfig) {
 		if (chatbotCustomConfig.getCccId() != null) {
 			final ChatbotCustomConfig oldChatbotCustomConfig = chatbotCustomConfigDAO.get(chatbotCustomConfig.getCccId());
-			if (!oldChatbotCustomConfig.getDisableNlu().equals(chatbotCustomConfig.getDisableNlu()) ||
-					!oldChatbotCustomConfig.getReinitializationButton().equals(chatbotCustomConfig.getReinitializationButton()) ||
+			if ((oldChatbotCustomConfig.getDisableNlu() != null && !oldChatbotCustomConfig.getDisableNlu().equals(chatbotCustomConfig.getDisableNlu())) ||
+					(oldChatbotCustomConfig.getReinitializationButton() != null && !oldChatbotCustomConfig.getReinitializationButton().equals(chatbotCustomConfig.getReinitializationButton())) ||
 					checkIfChatbotStyleChanged(oldChatbotCustomConfig, chatbotCustomConfig) ||
 					checkIfEmailOrAttachmentSettingsChanged(oldChatbotCustomConfig, chatbotCustomConfig)) {
 				nodeServices.updateNodes(bot);
@@ -42,14 +42,15 @@ public class ChabotCustomConfigServices implements Component {
 	}
 
 	private static boolean checkIfChatbotStyleChanged(final ChatbotCustomConfig oldChatbotCustomConfig, final ChatbotCustomConfig chatbotCustomConfig) {
-		return !oldChatbotCustomConfig.getDisplayAvatar().equals(chatbotCustomConfig.getDisplayAvatar()) ||
-				!oldChatbotCustomConfig.getBackgroundColor().equals(chatbotCustomConfig.getBackgroundColor()) ||
-				!oldChatbotCustomConfig.getFontFamily().equals(chatbotCustomConfig.getFontFamily());
+		return (oldChatbotCustomConfig.getDisplayAvatar() != null && !oldChatbotCustomConfig.getDisplayAvatar().equals(chatbotCustomConfig.getDisplayAvatar())) ||
+		(oldChatbotCustomConfig.getBackgroundColor() != null && !oldChatbotCustomConfig.getBackgroundColor().equals(chatbotCustomConfig.getBackgroundColor())) ||
+		(oldChatbotCustomConfig.getFontColor() != null && !oldChatbotCustomConfig.getFontColor().equals(chatbotCustomConfig.getFontColor())) ||
+		(oldChatbotCustomConfig.getFontFamily() != null && !oldChatbotCustomConfig.getFontFamily().equals(chatbotCustomConfig.getFontFamily()));
 	}
 
 	private static boolean checkIfEmailOrAttachmentSettingsChanged(final ChatbotCustomConfig oldChatbotCustomConfig, final ChatbotCustomConfig chatbotCustomConfig) {
-		return !oldChatbotCustomConfig.getBotEmailAddress().equals(chatbotCustomConfig.getBotEmailAddress()) ||
-				!oldChatbotCustomConfig.getTotalMaxAttachmentSize().equals(chatbotCustomConfig.getTotalMaxAttachmentSize());
+		return (oldChatbotCustomConfig.getBotEmailAddress() != null && !oldChatbotCustomConfig.getBotEmailAddress().equals(chatbotCustomConfig.getBotEmailAddress())) ||
+		(oldChatbotCustomConfig.getTotalMaxAttachmentSize() != null && !oldChatbotCustomConfig.getTotalMaxAttachmentSize().equals(chatbotCustomConfig.getTotalMaxAttachmentSize()));
 	}
 
 	public void deleteChatbotCustomConfig(@SecuredOperation("botAdm") final Chatbot bot) {
