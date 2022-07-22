@@ -316,6 +316,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.append("|> filter(fn: (r) => r._measurement == \"rating\" and r._field==\"rating\" and not exists r.ratingComment)")
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.append("|> filter(fn: (r) => exists r.sessionId)")
 				.keep(List.of("_time", "sessionId"))
 				.append("|> duplicate(column: \"_time\", as: \"_value\")")
 				.append("|> set(key: \"_field\", value: \"_time\")")
@@ -329,6 +330,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.append("|> filter(fn: (r) => r._measurement == \"rating\" and r._field==\"rating\" and not exists r.ratingComment)")
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.append("|> filter(fn: (r) => exists r.sessionId)")
 				.keep(List.of("_time", "_field", "_value", "sessionId"))
 				.buildRaw());
 
@@ -338,6 +340,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.append("|> filter(fn: (r) => r._measurement == \"rating\" and r._field==\"rating\" and exists r.ratingComment)")
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.append("|> filter(fn: (r) => exists r.sessionId)")
 				.keep(List.of("_time", "_field", "sessionId", "ratingComment"))
 				.append("|> set(key: \"_field\", value: \"ratingComment\")")
 				.append("|> rename(columns: {ratingComment: \"_value\"})")
