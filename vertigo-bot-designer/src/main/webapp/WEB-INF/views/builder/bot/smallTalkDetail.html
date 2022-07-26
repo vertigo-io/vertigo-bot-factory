@@ -14,7 +14,7 @@
 		
 	<section th:fragment="content-specific">
 		<vu:include-data object="topic" field="isTechnical" />
-		<vu:popup action="_delete" vModel="showPopup" th:message="#{smalltalk.popup.message}" th:confirm="#{action.delete}"></vu:popup>
+		<vu:popup action="_delete" vModel="showPopupDeleteTopic" th:message="#{smalltalk.popup.message}" th:confirm="#{action.delete}"></vu:popup>
 
 		<vu:block id="response" th:title="#{smallTalk.menu.responses}">
 			<vu:include-data object="utterTexts" field="text" modifiableAllLines="true" />

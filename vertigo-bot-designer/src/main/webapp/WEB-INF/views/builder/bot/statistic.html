@@ -401,7 +401,7 @@
             });
         }
 
-        function checkAll() {
+        function checkAllExportStats() {
             VertigoUi.vueData.selectTypeExportAnalyticList.teaCd =
                 VertigoUi.vueData.typeExportAnalyticsList.map(typeExport => typeExport.teaCd);
 
@@ -792,7 +792,7 @@
                             stack-label>
                         <template #before-options>
                             <q-item clickable>
-                                <q-item-section @click="checkAll">
+                                <q-item-section @click="checkAllExportStats">
                                     <q-item-label th:text="#{popup.export.all}"></q-item-label>
                                 </q-item-section>
                             </q-item>

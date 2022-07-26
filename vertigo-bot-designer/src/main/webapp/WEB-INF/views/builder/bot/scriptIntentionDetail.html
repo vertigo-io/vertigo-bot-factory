@@ -11,7 +11,7 @@
 	</section>
 
 	<section th:fragment="content-specific">
-		<vu:popup action="_delete" vModel="showPopup" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
+		<vu:popup action="_delete" vModel="showPopupDeleteTopic" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
 
 		<vu:block id="script" title="Script">
 			<vu:include-data-primitive key="locale"/>

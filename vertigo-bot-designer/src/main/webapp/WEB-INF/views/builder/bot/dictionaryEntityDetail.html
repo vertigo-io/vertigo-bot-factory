@@ -37,13 +37,13 @@
 							class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
 							class="on-left" :round size="md" color="primary" />
-			<q-btn th:if="|${model.modeReadOnly  && #lists.size(model.synonyms) == 0}|" @click="componentStates.showPopup = true" th:aria-label="#{action.delete}" th:title="#{action.delete}" icon="delete"
+			<q-btn th:if="|${model.modeReadOnly  && #lists.size(model.synonyms) == 0}|" @click="componentStates.showPopupDeleteDictionaryEntity = true" th:aria-label="#{action.delete}" th:title="#{action.delete}" icon="delete"
 							class="on-left" round size="md" color="red" ></q-btn>
 		</section>
 			
 		
 		<section layout:fragment="content">
-			<vu:popup action="_delete" vModel="showPopup" th:message=#{popup.message} th:confirm=#{action.delete}></vu:popup>	
+			<vu:popup action="_delete" vModel="showPopupDeleteDictionaryEntity" th:message=#{popup.message} th:confirm=#{action.delete}></vu:popup>
 			<vu:block id="dictionaryEntity" title="${model.dictionaryEntity.label}">
 				<vu:slot name="actions_slot">
 				 	<q-input v-model="componentStates.synonyms.pagination.search" 
