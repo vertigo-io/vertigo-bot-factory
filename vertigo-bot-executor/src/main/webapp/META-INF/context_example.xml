@@ -15,6 +15,7 @@
 	<Parameter name="API_KEY" value="MyNodeApiKey!" override="false"/>
 	<Parameter name="CONFIG_DATA_FILE" value="${user.home}/botExecutor/config.json" override="false"/>
 	<Parameter name="RASA_URL" value="http://localhost:5005" override="false"/>
+	<Parameter name="KEYCLOAK_CONFIG" value="keycloak.json" override="false"/>
 	
 	<!-- Use for confluence plugin -->
 	<Parameter name="CONFLUENCE_USER" value="" override="false"/>
@@ -27,19 +28,20 @@
 	<Parameter name="JIRA_PWD" value="" override="false"/>
 	<Parameter name="JIRA_URL" value="" override="false"/>
 	<Parameter name="JIRA_PROJECT" value="" override="false"/>
-	
-	
-	<!--  Use for confluence plugin -->
-   <Resources className="org.apache.catalina.webresources.StandardRoot">
-        <PostResources base="C:\Users\vbaillet\Documents\Projets\chatbot\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-confluence\target\classes"
-                 className="org.apache.catalina.webresources.DirResourceSet"
-                 webAppMount="/WEB-INF/classes"/>
-    </Resources>
-    <!--  Use for jira plugin -->
-   <Resources className="org.apache.catalina.webresources.StandardRoot">
-        <PostResources base="C:\Users\vbaillet\Documents\Projets\chatbot\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-jira\target\classes"
-                 className="org.apache.catalina.webresources.DirResourceSet"
-                 webAppMount="/WEB-INF/classes"/>
-    </Resources>
-	<!-- <Parameter name="HTTP_CORS" value="*" override="false"/> -->
+
+	<!-- Env for clamav antivirus -->
+	<Parameter name="CLAMAV_HOST" value="localhost" override="false"/>
+	<Parameter name="CLAMAV_PORT" value="3310" override="false"/>
+
+
+	<Resources className="org.apache.catalina.webresources.StandardRoot">
+		<!--  Use for confluence plugin -->
+		<PostResources base="C:\Users\cmarechal\projects\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-confluence\target\vertigo-bot-confluence-0.9.0-SNAPSHOT-jar-with-dependencies.jar"
+			className="org.apache.catalina.webresources.FileResourceSet"
+			webAppMount="/WEB-INF/lib/vertigo-bot-confluence-0.9.0-SNAPSHOT-jar-with-dependencies.jar"/>
+		<!--  Use for jira plugin -->
+		<PostResources base="C:\Users\cmarechal\projects\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-jira\target\vertigo-bot-jira-0.9.0-SNAPSHOT-jar-with-dependencies.jar"
+			className="org.apache.catalina.webresources.FileResourceSet"
+			webAppMount="/WEB-INF/lib/vertigo-bot-jira-0.9.0-SNAPSHOT-jar-with-dependencies.jar"/>
+	</Resources>
 </Context>
