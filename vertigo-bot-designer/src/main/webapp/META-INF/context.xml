@@ -11,7 +11,7 @@
 	<Parameter name="devMode" value="true" override="false"/>
 	<Parameter name="boot.ANALYTICA_HOST" value="localhost" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="4562" override="false"/>
-	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot-test/autogen" override="false"/>
+	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot/autogen" override="false"/>
 	<Parameter name="KEYCLOAK_CONFIG" value="keycloak.json" override="false"/>
 	<Parameter name="VERSION" value="1.3.2" override="false"/>
 	<Parameter name="FILE_STORE_PATH" value="C:\designer/attachments/" override="false"/>
