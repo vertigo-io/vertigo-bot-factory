@@ -124,7 +124,7 @@ public class TimeSerieServices implements Component, Activeable {
 	public TimedDatas getUnknowSentenceExport(final StatCriteria criteria) {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isSessionStart"))
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("confidence", "isFallback"))
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
 				.keep(List.of("_time", "text", "name", "confidence", "modelName", "botId", "nodId", "traId", "_field", "_value"))
 				.pivot()
