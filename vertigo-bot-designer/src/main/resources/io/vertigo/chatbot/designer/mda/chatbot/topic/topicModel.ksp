@@ -1,0 +1,435 @@
+package io.vertigo.chatbot.commons.domain.topic
+
+
+/************************/
+/* ****    Topic   **** */
+/************************/
+
+create DtDefinition DtTypeTopic {
+	stereotype : "StaticMasterData"
+	id    ttoCd 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "TitleFr" 		cardinality : "1"	}
+	values : `{
+        "SMALLTALK" : {
+            "ttoCd" : "SMALLTALK",
+            "label" : "Small talk",
+            "labelFr" : "Small talk"           
+        },
+        "SCRIPTINTENTION" : {
+            "ttoCd" : "SCRIPTINTENTION",
+            "label" : "Script intention",
+            "labelFr" : "Intention Scriptée"
+        }
+     }`
+    sortField : "ttoCd"
+ 	displayField : "label"
+}
+
+create DtDefinition DtKindTopic {
+	stereotype : "StaticMasterData"
+	id    ktoCd 				{domain: DoCode 	label: "ID"												}
+	field label 				{domain: DoLabel 	label: "Label" 						    cardinality : "1"	}
+	field labelFr 				{domain: DoLabel 	label: "Label FR" 						cardinality : "1"	}
+	field description			{domain: DoText 	label: "Description" 				    cardinality : "1"	}
+	field descriptionFr			{domain: DoText 	label: "Description FR" 				cardinality : "1"	}
+	field defaultText 			{domain: DoText 	label: "Default text" 				    cardinality : "1"	}
+	values : `{
+        "START" : {
+            "ktoCd" : "START",
+            "label" : "Start topic",
+            "labelFr": "Intention d''accueil",
+            "description" : "Start topic describes bot behavior when starting a new conversation.",
+            "descriptionFr": "L''intention d''accueil décrit le comportement du bot à l''ouverture de la conversation avec un utilisateur.",
+            "defaultText" : "Hello !"           
+        },
+        "END" : {
+            "ktoCd" : "END",
+            "label" : "End topic",
+            "labelFr": "Intention de clôture",
+            "description" : "End topic describes bot behavior when a conversation is ending. It can be followed by an evaluation question.",
+            "descriptionFr": "L''intention de clôture décrit le comportement du bot lorsque la conversation se termine. Cette intention peut être suivie ou non de la phase d''évaluation.",
+            "defaultText" : "Bye !"   
+        },
+        "FAILURE" : {
+            "ktoCd" : "FAILURE",
+            "label" : "Failure topic",
+            "labelFr": "Intention d''erreur",
+            "description" : "Failure topic describes bot behavior when user question was not understood.",
+            "descriptionFr": "L''intention d''erreur décrit le comportement du bot dans le cas où celui-ci n''a pas compris la question de l''utilisateur.",
+            "defaultText" : "Sorry, I don''t understand."
+        },
+         "NORMAL" : {
+            "ktoCd" : "NORMAL",
+            "label" : "Normal",
+            "labelFr": "Normal",
+            "description" : "Normal",
+            "descriptionFr": "Normal",
+            "defaultText" : "Text"
+        },
+        "UNREACHABLE" : {
+            "ktoCd" : "UNREACHABLE",
+            "label" : "Unreachable",
+            "labelFr": "Non atteignable",
+            "description" : "Unreachable",
+            "descriptionFr": "Non atteignable",
+            "defaultText" : "Text"
+        },
+         "IDLE" : {
+            "ktoCd" : "IDLE",
+            "label" : "Idle topic",
+            "labelFr": "Intention de reprise de conversation",
+            "description" : "When bot answers a question but conversation isn''t over, the bot offers to ask another question.",
+            "descriptionFr" : "Dans le cas où le bot répond à la question d''un utilisateur mais que la conversation n''est pas terminée, alors celui-ci relance la conversation en donnant à l''utilisateur l''opportunité de reposer une question ou en lui faisant une nouvelle proposition. C''est ce comportement qui est décrit dans l''intention de reprise de conversation",
+            "defaultText" : "Something else ?"
+        },
+        "RATING" : {
+            "ktoCd" : "RATING",
+            "label" : "Rating topic",
+            "labelFr": "Intention d''évaluation de la conversation",
+            "description" : "Ask the user for a conversation feedback",
+            "descriptionFr" : "Permet de proposer à l''utilisateur de laisser une appréciation sur la conversation",
+            "defaultText" : "How did it go ?"
+        }
+
+     }`
+    sortField : "ktoCd"
+ 	displayField : "label"
+}
+
+create Association ATopicKindTopic{
+
+	fkFieldName : "ktoCd"
+    
+ 	dtDefinitionA : DtTopic
+	type : "*>1"
+	dtDefinitionB : DtKindTopic
+	
+	labelB : "Kind of topic"
+
+}
+
+create DtDefinition DtTopic{
+	id		topId			{domain: DoId 		label: "ID"									}
+	field 	title 			{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field 	description		{domain: DoLabel 	label: "Description" 						}
+	field 	isEnabled 		{domain: DoYesNo 	label: "Enabled" 		cardinality : "1"	}
+	field 	code	 		{domain: DoLabel 	label: "Code" 			cardinality : "1"	}
+	computed isTechnical    {domain: DoYesNo 					        label: "Is technical"
+    								 expression:"return io.vertigo.chatbot.designer.builder.services.topic.TopicServices.isTechnical(this);" }
+}
+
+create DtDefinition DtSmallTalk {
+	id    	smtId 		{domain: DoId 		label: "ID"}
+	field 	isEnd 		{domain: DoYesNo 	label: "Is conversation over ?" 			cardinality : "1"}
+}
+
+create DtDefinition DtSmallTalkWrapper {
+	field 	smallTalk 		{domain: DoDtSmallTalk 	label: "SmallTalk" 			            cardinality : "1"}
+	field 	buttons 		{domain: DoDtResponseButton 	label: "Buttons" 			    cardinality : "*"}
+	field 	buttonsUrl 		{domain: DoDtResponseButtonUrl 	label: "Buttons url" 			cardinality : "*"}
+	field 	utterTexts 		{domain: DoDtUtterText 	label: "Utter texts" 			        cardinality : "*"}
+}
+
+
+
+
+create Association ASmallTalkTopic{
+
+	fkFieldName : "topId" /* NPE sans explication si ya pas */
+    
+ 	dtDefinitionA : DtSmallTalk
+	type : "*>1"
+	dtDefinitionB : DtTopic
+	
+	labelB : "Topic"
+
+}
+
+create DtDefinition DtScriptIntention {
+	id    sinId 		{domain: DoId 		label: "ID"}
+	field script 		{domain: DoText		label: "Script"}
+}
+
+create Association AScriptIntentionTopic{
+
+	fkFieldName : "topId" /* NPE sans explication si ya pas */
+    
+ 	dtDefinitionA : DtScriptIntention
+	type : "*>1"
+	dtDefinitionB : DtTopic
+	
+	labelB : "Topic"
+
+}
+
+create Association ATopicTypeTopic {
+	fkFieldName : "ttoCd" 
+    
+ 	dtDefinitionA : DtTopic
+	type : "*>1"
+	dtDefinitionB : DtTypeTopic
+	
+	labelB : "Type du topic"
+}
+
+
+create Association ATopicChatbot {
+	fkFieldName : "botId" /* NPE sans explication si ya pas */
+    
+ 	dtDefinitionA : DtTopic
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+}
+
+create DtDefinition DtResponseType {
+	stereotype : "StaticMasterData"
+	id    rtyId 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Title" 		cardinality : "1"}
+	field labelFr 		{domain: DoLabel 	label: "TitleFR"	cardinality : "1"}
+	field sortOrder 	{domain: DoNumber 	label: "Order" 		cardinality : "1"}
+	values : `{
+        "RICH_TEXT" : {
+            "rtyId" : "RICH_TEXT",
+            "label" : "Rich text",
+            "labelFr" : "Text unique",
+            "sortOrder" : 1
+        },
+        "RANDOM_TEXT" : {
+            "rtyId" : "RANDOM_TEXT",
+            "label" : "Random text",
+            "labelFr" : "Texte aléatoire",
+            "sortOrder" : 2
+        }
+
+    }`
+    sortField : "sortOrder"
+ 	displayField : "label"
+}
+
+create Association ASmallTalkResponseType {
+	fkFieldName : "rtyId"
+    
+ 	dtDefinitionA : DtSmallTalk
+	type : "*>1"
+	dtDefinitionB : DtResponseType
+	
+	labelB : "Response type"
+}
+
+create DtDefinition DtNluTrainingSentence {
+	id    ntsId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoLabel 	label: "Text" cardinality : "1"}
+}
+
+create Association ATopicNluTrainingSentence {
+	fkFieldName : "topId"
+    
+	dtDefinitionA : DtNluTrainingSentence
+	type : "*>1"
+ 	dtDefinitionB : DtTopic
+	
+	labelB : "SmallTalk"
+}
+
+create DtDefinition DtUtterText {
+	id    uttId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoText 	label: "Text" cardinality : "1"}
+}
+
+create Association ASmallTalkUtterText {
+	fkFieldName : "smtId"
+    
+ 	dtDefinitionA : DtUtterText
+	type : "*>?"
+	dtDefinitionB : DtSmallTalk
+	
+	labelB : "SmallTalk"
+}
+
+create DtDefinition DtResponseButton {
+	id    btnId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoText 	label: "Text" cardinality : "1"}
+}
+
+create DtDefinition DtResponseButtonUrl {
+	id    btnId 	{domain: DoId 		label: "ID"}
+	field text 		{domain: DoText 	label: "Text"       cardinality : "1"}
+	field url 		{domain: DoUrl 	    label: "URL"        cardinality : "1"}
+	field newTab 	{domain: DoYesNo 	label: "New tab"    cardinality : "1"}
+}
+
+create Association ASmallTalkResponseButtons {
+	fkFieldName : "smtId"
+    
+ 	dtDefinitionA : DtResponseButton
+	type : "*>?"
+	dtDefinitionB : DtSmallTalk
+	
+	labelB : "SmallTalk"
+}
+
+create Association ASmallTalkResponseButtonsUrl {
+	fkFieldName : "smtId"
+
+ 	dtDefinitionA : DtResponseButtonUrl
+	type : "*>?"
+	dtDefinitionB : DtSmallTalk
+
+	labelB : "SmallTalk"
+}
+
+create Association AResponseButtonTopicResponse {
+	fkFieldName : "topIdResponse"
+    
+ 	dtDefinitionA : DtResponseButton
+	type : "*>1"
+	dtDefinitionB : DtTopic
+	
+	labelB : "TopicResponse"
+	roleB : "TopicResponse"
+}
+
+/** Category **/
+
+create DtDefinition DtTopicCategory{
+	id topCatId 		{domain: DoId		label: "Topic category id"						}
+	field code			{domain: DoLabel	label: "Code" 					cardinality:"1"	}
+	field label			{domain: DoLabel	label: "Topic category label" 	cardinality:"1"	}
+	field level 		{domain: DoNumber	label: "Category level"						 	}
+	field isEnabled		{domain: DoYesNo	label: "Enabled" 				cardinality:"1"	}
+	field isTechnical	{domain: DoYesNo	label: "Technical" 				cardinality:"1"	}
+}
+
+create DtDefinition DtTopicCategoryExport {
+    field code			{domain: DoLabel	label: "Code" 					cardinality:"1"	}
+	field label			{domain: DoLabel	label: "Topic category label" 	cardinality:"1"	}
+	field isEnabled		{domain: DoLabel	label: "Enabled" 				cardinality:"1"	}
+	field isTechnical	{domain: DoLabel	label: "Technical" 				cardinality:"1"	}
+}
+
+create Association ATopicCategoryChatbot{
+	fkFieldName : "botId"
+    
+ 	dtDefinitionA : DtTopicCategory
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+	roleB : "Chatbot"
+	
+}
+
+create Association ATopicCategoryTopic{
+	fkFieldName : "topCatId"
+    
+ 	dtDefinitionA : DtTopic
+	type : "*>1"
+	dtDefinitionB : DtTopicCategory
+	
+	labelB : "Topic"
+	roleB : "Topic"
+	
+}
+
+
+/** Labels **/
+
+create DtDefinition DtTopicLabel{
+	id labelId	 		{domain: DoId		label: "Label id"								}
+	field label			{domain: DoLabel	label: "Label label" 			cardinality:"1"	}
+}
+
+create Association ATopicLabelChatbot{
+	fkFieldName : "botId"
+    
+ 	dtDefinitionA : DtTopicLabel
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+	roleB : "Chatbot"
+	
+}
+
+
+create AssociationNN AnnTopicLabel{
+	tableName : "TOPIC_TOPIC_LABEL"
+
+	dtDefinitionA : DtTopic
+	dtDefinitionB : DtTopicLabel
+	navigabilityA : "true"
+	navigabilityB : "true"
+	roleA : "Topic"
+	labelA : "Topic"
+	roleB : "Label"
+	labelB : "Label"
+}
+
+
+/********** IHM **********/
+
+create DtDefinition DtSmallTalkIhm {
+	field topId		{domain: DoId		label: "Topic id"		}
+	field title		{domain: DoLabel	label: "SmallTalk label"}
+	field smtId		{domain: DoId		label: "SmallTalk id"	}
+	field isEnabled	{domain: DoYesNo	label: "Enabled"		}
+	field catLabel	{domain: DoLabel	label: "Category"		}
+}
+
+create DtDefinition DtNluTrainingExport {
+	field topId		{domain: DoId 		label: "topId"}
+	field ntsId 	{domain: DoId 		label: "nlu ID"}
+	field text 		{domain: DoLabel 	label: "Text" cardinality : "1"}
+}
+
+create DtDefinition DtTopicIhm {
+	field topId		{domain: DoId		label: "Topic id"				cardinality:"1"	}
+	field ttoCd		{domain: DoCode		label: "Code Type"				cardinality:"?"	}
+	field type		{domain: DoLabel	label: "Type"					cardinality:"?"	}
+	field title		{domain: DoLabel	label: "Topic label"							}
+	field smtId		{domain: DoId		label: "SmallTalk id"			cardinality:"?"	}
+	field sinId		{domain: DoId		label: "Script intention id"	cardinality:"?"	}
+	field catLabel	{domain: DoLabel	label: "Category"				cardinality:"1"	}
+	field isEnabled	{domain: DoYesNo	label: "Enabled"								}
+	field ktoCd		{domain: DoCode		label: "Code Kind"				cardinality:"?"	}
+	field code		{domain: DoLabel	label: "Code"					cardinality:"1"	}
+	field labels	{domain: DoLabel	label: "Labels"					cardinality:"1"	}
+}
+
+create DtDefinition DtScriptIntentionIhm {
+	field topId		{domain: DoId		label: "Topic id"				}
+	field title		{domain: DoLabel	label: "Script Intention label"	}
+	field sinId		{domain: DoId		label: "Script Intention id"	}
+	field isEnabled	{domain: DoYesNo	label: "Enabled"				}
+}
+
+create DtDefinition DtTopicFileExport {
+	field code 				{domain: DoCode 						label: "Code" 					cardinality : "1"}
+	field title 			{domain: DoLabel 						label: "Title" 					cardinality : "1"}
+	field category			{domain: DoLabel	 					label: "Category" 				cardinality : "1"}
+	field description		{domain: DoLabel	 					label: "Description" 			cardinality : "?"}
+	field tag				{domain: DoLabel	 					label: "Tag" 					cardinality : "?"}
+	field dateStart			{domain: DoLabel	 					label: "Start date" 			cardinality : "?"}
+	field dateEnd 			{domain: DoLabel	 					label: "End date" 				cardinality : "?"}
+	field active			{domain: DoLabel	 					label: "Active" 				cardinality : "1"}
+	field trainingPhrases	{domain: DoText	 						label: "Training phrases" 		cardinality : "?"}
+	field typeTopic			{domain: DoLabel	 					label: "Topic type" 			cardinality : "1"}
+	field kindTopic			{domain: DoLabel	 					label: "Topic kind" 			cardinality : "1"}
+	field script			{domain: DoText	 						label: "Script" 				cardinality : "?"}
+	field response			{domain: DoText	 						label: "Response" 				cardinality : "?"}
+	field buttons			{domain: DoText	 						label: "Buttons" 				cardinality : "?"}
+	field buttonsUrl		{domain: DoText	 						label: "Buttons URL" 			cardinality : "?"}
+	field isEnd				{domain: DoLabel	 					label: "End of conversation" 	cardinality : "1"}
+	field labels			{domain: DoLabel	 					label: "labels"				 	cardinality : "1"}
+}
+
+create DtDefinition DtTopicCriteria {
+	field catId 		{domain: DoId 					label: "Category selection"     }
+}
+
+create DtDefinition DtSelectTopicCategory {
+	field topCatId 		{domain: DoId 						label: "Topic category id"	 		cardinality:"*"}
+}

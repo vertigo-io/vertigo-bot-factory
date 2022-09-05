@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSearchObject;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSearchOperator;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceVisitor;
 import io.vertigo.core.lang.VSystemException;
 
@@ -26,6 +27,8 @@ public final class ConfluenceHttpRequestHelper {
 	public static final String API_URL = "/rest/api";
 	public static final String SEARCH_URL = "/search";
 	public static final String SPACE_URL = "/space";
+
+	private static final String ONLY_PAGE = " type=page";
 
 	private ConfluenceHttpRequestHelper() {
 		//helper
@@ -75,10 +78,14 @@ public final class ConfluenceHttpRequestHelper {
 		return result;
 	}
 
-	public static String createSearchArgs(final ConfluenceSearchObject filter) {
+	public static String createSearchArgs(final ConfluenceSearchObject filter, final boolean onlyPage) {
 		final var builder = new StringBuilder();
 		final var visitor = new ConfluenceVisitor();
 		builder.append(filter.accept(visitor));
+		if (onlyPage) {
+			builder.append(ConfluenceSearchOperator.AND);
+			builder.append(ONLY_PAGE);
+		}
 		return ConfluenceHttpRequestHelper.encodeUrl(builder.toString());
 	}
 

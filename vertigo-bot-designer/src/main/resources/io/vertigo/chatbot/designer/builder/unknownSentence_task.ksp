@@ -1,0 +1,15 @@
+package io.vertigo.chatbot.designer.builder.followup
+
+create Task TkFindLatestUnknownSentence {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+            select
+                *
+            from unknown_sentence_detail usd
+            where usd.bot_id = #botId#
+            order by usd.date desc
+            limit 1
+             "
+    in botId  				            {domain : DoId         					            cardinality:"1"}
+	out unknownSentenceDetail 			{domain : DoDtUnknownSentenceDetail 				cardinality:"?"}
+}

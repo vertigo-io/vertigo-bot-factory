@@ -1,0 +1,187 @@
+package io.vertigo.chatbot.commons.domain
+
+create DtDefinition DtWelcomeTour {
+	id welId 		            {domain: DoId		label: "Welcome tour id"                                    }
+	field label 		        {domain: DoLabel 	label: "Label" 			                cardinality : "1"	}
+	field technicalCode 		{domain: DoLabel 	label: "Technical code" 			    cardinality : "1"	}
+	field config			    {domain: DoText		label: "Shepherd config"	 			    cardinality : "1"   }
+}
+
+create DtDefinition DtWelcomeTourStep {
+    id welStepId 		                {domain: DoId		label: "Welcome tour step id"                                   }
+    field internalStepId 		        {domain: DoLabel 	label: "Internal step id" 			                    cardinality : "1"	}
+    field text 		                    {domain: DoText 	label: "Text" 			                                cardinality : "1"	}
+    field title                         {domain: DoLabel 	label: "Title" 			                                cardinality : "1"	}
+    field sequence                      {domain: DoNumber 	label: "Sequence" 			                            cardinality : "1"	}
+    field enabled                       {domain: DoYesNo 	label: "Enabled" 			                            cardinality : "1"	}
+}
+
+create Association AWelcomeTourChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtWelcomeTour
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create Association AWelcomeTourWelcomeTourSteps {
+	fkFieldName : "tourId"
+
+ 	dtDefinitionA : DtWelcomeTourStep
+	type : "*>?"
+	dtDefinitionB : DtWelcomeTour
+
+	labelB : "Tour"
+}
+
+create DtDefinition DtConfluenceSetting {
+	id conSetId 		            {domain: DoId		    label: "Confluence setting id"                                                  }
+	field url    		            {domain: DoUrl 	        label: "Knowledge base URL" 			                    cardinality : "1"	}
+	field login 		            {domain: DoLabel 	    label: "Login" 			                                    cardinality : "1"	}
+	field password 		            {domain: DoPassword 	label: "Password" 			                                cardinality : "1"	}
+	field numberOfResults 		    {domain: DoNumber 	    label: "Number max of results" 			                    cardinality : "1"	}
+}
+
+create Association AConfluenceSettingChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtConfluenceSetting
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create Association AConfluenceSettingNode {
+	fkFieldName : "nodId"
+
+ 	dtDefinitionA : DtConfluenceSetting
+	type : "*>1"
+	dtDefinitionB : DtChatbotNode
+
+	labelB : "Node"
+}
+
+
+
+create DtDefinition DtJiraFieldSetting {
+	id jirFieldSetId 		        {domain: DoId		    label: "Jira field setting id"                                                  }
+	field enabled    		        {domain: DoYesNo 	    label: "Jira field enabled" 			                    cardinality : "1"	}
+	field mandatory 		        {domain: DoYesNo 	    label: "Jira field mandatory" 			                    cardinality : "1"	}
+}
+
+create Association AJiraFieldSettingChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtJiraFieldSetting
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create DtDefinition DtJiraSetting {
+	id jirSetId 		            {domain: DoId		    label: "Jira setting id"                                                        }
+	field url    		            {domain: DoUrl 	        label: "Jira URL" 			                                cardinality : "1"	}
+	field login 		            {domain: DoLabel 	    label: "Login" 			                                    cardinality : "1"	}
+	field password 		            {domain: DoPassword 	label: "Password" 			                                cardinality : "1"	}
+	field project 		            {domain: DoLabel 	    label: "Jira project" 			                            cardinality : "1"	}
+}
+
+create Association AJiraSettingChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtJiraSetting
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create Association AJiraSettingNode {
+	fkFieldName : "nodId"
+
+ 	dtDefinitionA : DtJiraSetting
+	type : "*>1"
+	dtDefinitionB : DtChatbotNode
+
+	labelB : "Node"
+}
+
+create DtDefinition DtJiraField {
+	stereotype : "StaticMasterData"
+	id    jirFieldCd 		{domain: DoCode 	label: "ID"}
+	field jiraId 		    {domain: DoLabel 	label: "Jira id" 		cardinality : "1"	}
+	field label 		    {domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field labelFr 		    {domain: DoLabel 	label: "TitleFr" 		cardinality : "1"	}
+	values : `{
+        "SUMMARY" : {
+            "jirFieldCd" : "SUMMARY",
+            "jiraId" : "summary",
+            "label" : "Summary",
+            "labelFr" : "Résumé"
+        },
+        "DESCRIPTION" : {
+            "jirFieldCd" : "DESCRIPTION",
+            "jiraId" : "description",
+            "label" : "Description",
+            "labelFr" : "Description"
+        },
+        "TYPE" : {
+            "jirFieldCd" : "TYPE",
+            "jiraId" : "issuetype",
+            "label" : "Issue Type",
+            "labelFr" : "Type de ticket"
+        },
+        "COMPONENT" : {
+            "jirFieldCd" : "COMPONENT",
+            "jiraId" : "components",
+            "label" : "Component",
+            "labelFr" : "Composant"
+        },
+       "AFFECTS_VERSION" : {
+           "jirFieldCd" : "AFFECTS_VERSION",
+           "jiraId" : "versions",
+           "label" : "Affected version",
+           "labelFr" : "Version impactée"
+       },
+       "FIX_VERSION" : {
+          "jirFieldCd" : "FIX_VERSION",
+          "jiraId" : "fixVersions",
+          "label" : "Fix version",
+          "labelFr" : "Version corrective"
+      },
+      "PRIORITY" : {
+          "jirFieldCd" : "PRIORITY",
+          "jiraId" : "priority",
+          "label" : "Priority",
+          "labelFr" : "Priorité"
+      },
+      "ASSIGNEE" : {
+        "jirFieldCd" : "ASSIGNEE",
+        "jiraId" : "assignee",
+        "label" : "Assignee",
+        "labelFr" : "Responsable"
+      },
+      "REPORTER" : {
+         "jirFieldCd" : "REPORTER",
+         "jiraId" : "reporter",
+         "label" : "Reporter",
+         "labelFr" : "Rapporteur"
+      }
+     }`
+    sortField : "jirFieldCd"
+ 	displayField : "label"
+}
+
+create Association AJiraFieldSettingJiraField {
+	fkFieldName : "jirFieldCd"
+
+ 	dtDefinitionA : DtJiraFieldSetting
+	type : "*>1"
+	dtDefinitionB : DtJiraField
+
+	labelB : "Field"
+}

@@ -1,21 +1,10 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export.file;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang3.StringUtils;
-
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
+import io.vertigo.chatbot.commons.domain.topic.ResponseButtonUrl;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
@@ -32,20 +21,34 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topicFileExport.TopicFileExportPAO;
+import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFileExportFields;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.quarto.exporter.ExporterManager;
 import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
-import liquibase.util.csv.CSVReader;
-import liquibase.util.csv.opencsv.bean.ColumnPositionMappingStrategy;
-import liquibase.util.csv.opencsv.bean.CsvToBean;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.inject.Inject;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static io.vertigo.chatbot.designer.builder.services.topic.TopicsUtils.DEFAULT_TOPIC_CAT_CODE;
+import static io.vertigo.chatbot.designer.utils.StringUtils.errorManagement;
 
 @Transactional
 public class TopicFileExportServices implements Component {
@@ -74,15 +77,20 @@ public class TopicFileExportServices implements Component {
 	@Inject
 	private ExporterManager exportManager;
 
+	@Inject
+	private FileServices fileServices;
+
 	/*
 	 * Return a File from a list of topicFileExport
 	 */
 	public VFile exportTopicFile(@SecuredOperation("SuperAdm") final Chatbot bot, final DtList<TopicFileExport> dtc) {
 
-		final Export export = new ExportBuilder(ExportFormat.CSV, "export " + bot.getName())
+		final Export export = new ExportBuilder(ExportFormat.CSV,
+				MessageText.of(TopicFileExportMultilingualResources.EXPORT_FILENAME, bot.getName()).getDisplay())
 				.beginSheet(dtc, null)
 				.addField(TopicFileExportFields.code)
 				.addField(TopicFileExportFields.typeTopic)
+				.addField(TopicFileExportFields.kindTopic)
 				.addField(TopicFileExportFields.title)
 				.addField(TopicFileExportFields.category)
 				.addField(TopicFileExportFields.description)
@@ -94,71 +102,58 @@ public class TopicFileExportServices implements Component {
 				.addField(TopicFileExportFields.trainingPhrases)
 				.addField(TopicFileExportFields.response)
 				.addField(TopicFileExportFields.buttons)
+				.addField(TopicFileExportFields.buttonsUrl)
 				.addField(TopicFileExportFields.isEnd)
 				.addField(TopicFileExportFields.labels)
 				.endSheet()
 				.build();
-		final VFile result = exportManager.createExportFile(export);
 
-		return result;
+		return exportManager.createExportFile(export);
 
 	}
 
 	/*
 	 * Return a list of TopicFileExport from a bot (and possibly a category)
 	 */
-	public DtList<TopicFileExport> getTopicFileExport(@SecuredOperation("SuperAdm") final Long botId, final Long topCatId) {
-		final Optional<Long> topCatIdOpt = topCatId != null ? Optional.of(topCatId) : Optional.empty();
-		return topicFileExportPAO.getTopicFileExport(botId, topCatIdOpt);
+	public DtList<TopicFileExport> getTopicFileExport(@SecuredOperation("SuperAdm") final Long botId, final List<Long> categories) {
+		return topicFileExportPAO.getTopicFileExport(botId, categories);
+	}
+
+	public void importTopicFromCSVFile(final Chatbot chatbot, final FileInfoURI importTopicFile) {
+		final List<TopicFileExport> list = transformFileToList(fileServices.getFileTmp(importTopicFile));
+		importTopicFromList(chatbot, list);
 	}
 
 	/*
 	 * Return a list of TopicFileExport from a CSV file
 	 */
-	public List<TopicFileExport> transformFileToList(@SecuredOperation("SuperAdm") final CSVReader csvReader) {
-		try {
-			// Check length of header, to make sure all columns are there
-			final String[] header = csvReader.readNext();
-			if (header.length != 15) {
-				throw new VUserException(TopicFileExportMultilingualResources.ERR_SIZE_FILE);
-			}
-			final CsvToBean<TopicFileExport> csvToBean = new CsvToBean<TopicFileExport>();
-			final ColumnPositionMappingStrategy<TopicFileExport> mappingStrategy = new ColumnPositionMappingStrategy<TopicFileExport>();
-			//Set mappingStrategy type to TopicFileExport Type
-			mappingStrategy.setType(TopicFileExport.class);
-			//Fields in TopicFileExport Bean (to avoid alphabetical order)
-			final String[] columns = new String[] {
-					TopicFileExportFields.code.name(),
-					TopicFileExportFields.typeTopic.name(),
-					TopicFileExportFields.title.name(),
-					TopicFileExportFields.category.name(),
-					TopicFileExportFields.description.name(),
-					TopicFileExportFields.tag.name(),
-					TopicFileExportFields.dateStart.name(),
-					TopicFileExportFields.dateEnd.name(),
-					TopicFileExportFields.active.name(),
-					TopicFileExportFields.script.name(),
-					TopicFileExportFields.trainingPhrases.name(),
-					TopicFileExportFields.response.name(),
-					TopicFileExportFields.buttons.name(),
-					TopicFileExportFields.isEnd.name(),
-					TopicFileExportFields.labels.name()
-			};
-			//Setting the colums for mappingStrategy
-			mappingStrategy.setColumnMapping(columns);
-			final List<TopicFileExport> list = csvToBean.parse(mappingStrategy, csvReader);
-			return list;
-		} catch (final Exception e) {
-			final StringBuilder errorMessage = new StringBuilder(MessageText.of(TopicFileExportMultilingualResources.ERR_MAPPING_FILE).getDisplay());
-			errorMessage.append(e);
-			throw new VUserException(errorMessage.toString());
-		}
+	private List<TopicFileExport> transformFileToList(@SecuredOperation("SuperAdm") final VFile file) {
+		final String[] columns = new String[] {
+				TopicFileExportFields.code.name(),
+				TopicFileExportFields.typeTopic.name(),
+				TopicFileExportFields.kindTopic.name(),
+				TopicFileExportFields.title.name(),
+				TopicFileExportFields.category.name(),
+				TopicFileExportFields.description.name(),
+				TopicFileExportFields.tag.name(),
+				TopicFileExportFields.dateStart.name(),
+				TopicFileExportFields.dateEnd.name(),
+				TopicFileExportFields.active.name(),
+				TopicFileExportFields.script.name(),
+				TopicFileExportFields.trainingPhrases.name(),
+				TopicFileExportFields.response.name(),
+				TopicFileExportFields.buttons.name(),
+				TopicFileExportFields.buttonsUrl.name(),
+				TopicFileExportFields.isEnd.name(),
+				TopicFileExportFields.labels.name()
+		};
+		return fileServices.readCsvFile(TopicFileExport.class, file, columns);
 	}
 
 	/*
 	 * Use a list of TopicFileExport to create/modify topics
 	 */
-	public void importTopicFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<TopicFileExport> list) throws IOException {
+	private void importTopicFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<TopicFileExport> list) {
 
 		codeCheck(list);
 
@@ -202,7 +197,7 @@ public class TopicFileExportServices implements Component {
 	 */
 	private void codeCheck(final List<TopicFileExport> list) {
 		// Unicity check
-		final HashSet<String> codeSet = new HashSet<String>();
+		final HashSet<String> codeSet = new HashSet<>();
 		int i = 1;
 		for (final TopicFileExport tfe : list) {
 			i++;
@@ -239,12 +234,16 @@ public class TopicFileExportServices implements Component {
 			final boolean isEnabled = "ACTIVE".equals(tfe.getActive());
 
 			// The list of nluTS to deleted can be modified if the topic already exists
-			DtList<NluTrainingSentence> nluTSToDelete = new DtList<NluTrainingSentence>(NluTrainingSentence.class);
+			DtList<NluTrainingSentence> nluTSToDelete = new DtList<>(NluTrainingSentence.class);
 
 			Topic topic = new Topic();
 
 			//Try to find the topic in database
 			final Optional<Topic> topicBase = topicServices.getTopicByCode(tfe.getCode(), chatbot.getBotId());
+
+			if (topicBase.isEmpty() && tfe.getCategory().equals(DEFAULT_TOPIC_CAT_CODE)) {
+				throw new VSystemException(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC_CATEGORY).getDisplay());
+			}
 
 			if (topicBase.isPresent()) {
 				// If it already exists, then modification
@@ -257,8 +256,9 @@ public class TopicFileExportServices implements Component {
 			// populate topic with infos from the TopicFileExport
 			topic = populateTopic(topic, chatbot, tfe, isEnabled, topCatId, nluTSToDelete, creation);
 
-			final Topic topicSaved = topicServices.save(topic, topic.getIsEnabled(), new DtList<NluTrainingSentence>(NluTrainingSentence.class),
-					nluTSToDelete);
+			final DtList<NluTrainingSentence> nluTrainingSentences = new DtList<NluTrainingSentence>(NluTrainingSentence.class);
+
+			final Topic topicSaved = topicServices.save(topic, chatbot, topic.getIsEnabled(), nluTrainingSentences, nluTSToDelete);
 
 			// At this point, topicSaved isEnabled is false, because the topic has no nluTrainingSentences.
 			// So isEnabled is resetted anyway. it will be calculated again in the next loop
@@ -319,7 +319,7 @@ public class TopicFileExportServices implements Component {
 		topic.setTitle(tfe.getTitle());
 		topic.setDescription(tfe.getDescription());
 		topic.setTopCatId(topCatId);
-		topic.setKtoCd(KindTopicEnum.NORMAL.name());
+		topic.setKtoCd(tfe.getKindTopic());
 		topic.setTtoCd(tfe.getTypeTopic());
 		topic.setCode(tfe.getCode());
 		topic.setIsEnabled(isEnabled);
@@ -363,9 +363,17 @@ public class TopicFileExportServices implements Component {
 	 * Generate a ScriptIntention from TopicFileExport
 	 */
 	private void gestionScriptIntention(final Chatbot chatbot, final Topic topic, final TopicFileExport tfe, final boolean creation, final DtList<NluTrainingSentence> nluTrainingSentences) {
-		ScriptIntention sin = new ScriptIntention();
-		if (!creation) {
-			sin = scriptIntentionServices.findByTopId(topic.getTopId());
+		final ScriptIntention sin;
+		if (creation) {
+			sin = new ScriptIntention();
+		} else {
+			final Optional<ScriptIntention> optSin = scriptIntentionServices.findByTopId(topic.getTopId());
+			if (optSin.isEmpty()) {
+				smallTalkServices.deleteIfExists(chatbot, topic);
+				sin = new ScriptIntention();
+			} else {
+				sin = optSin.get();
+			}
 		}
 		sin.setScript(tfe.getScript());
 		sin.setTopId(topic.getTopId());
@@ -373,7 +381,7 @@ public class TopicFileExportServices implements Component {
 		final DtList<NluTrainingSentence> nluTrainingSentencesToDelete = topicServices.getNluTrainingSentenceByTopic(chatbot, topic);
 
 		scriptIntentionServices.save(chatbot, sin, topic);
-		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
+		topicServices.save(topic, chatbot, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 
 	}
 
@@ -386,22 +394,32 @@ public class TopicFileExportServices implements Component {
 
 		final DtList<ResponseButton> listButtons = extractButtonsFromTfe(chatbot.getBotId(), tfe);
 
-		final SmallTalk smt = populateSmallTalkFromTopicFileExport(topic, creation, tfe, listResponse);
+		final DtList<ResponseButtonUrl> listButtonsUrl = extractButtonsUrlFromTfe(tfe);
+
+		final SmallTalk smt = populateSmallTalkFromTopicFileExport(chatbot, topic, creation, tfe, listResponse);
 
 		final DtList<NluTrainingSentence> nluTrainingSentencesToDelete = topicServices.getNluTrainingSentenceByTopic(chatbot, topic);
 
-		topicServices.saveTtoCd(topic, TypeTopicEnum.SMALLTALK.name());
-		smallTalkServices.saveSmallTalk(chatbot, smt, listResponse, listButtons, topic);
-		topicServices.save(topic, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
+		topicServices.saveTtoCd(topic, TypeTopicEnum.SMALLTALK.name(), chatbot);
+		smallTalkServices.saveSmallTalk(chatbot, smt, listResponse, listButtons, listButtonsUrl, topic);
+		topicServices.save(topic, chatbot, topic.getIsEnabled(), nluTrainingSentences, nluTrainingSentencesToDelete);
 	}
 
 	/*
 	 * Return a smallTalk with infos from the TopicFileExport
 	 */
-	private SmallTalk populateSmallTalkFromTopicFileExport(final Topic topic, final boolean creation, final TopicFileExport tfe, final DtList<UtterText> listResponse) {
-		SmallTalk smt = new SmallTalk();
-		if (!creation) {
-			smt = smallTalkServices.findByTopId(topic.getTopId());
+	private SmallTalk populateSmallTalkFromTopicFileExport(final Chatbot chatbot, final Topic topic, final boolean creation, final TopicFileExport tfe, final DtList<UtterText> listResponse) {
+		final SmallTalk smt;
+		if (creation) {
+			smt = new SmallTalk();
+		} else {
+			final Optional<SmallTalk> optSmt = smallTalkServices.findByTopId(topic.getTopId());
+			if (optSmt.isEmpty()) {
+				scriptIntentionServices.deleteIfExists(chatbot, topic);
+				smt = new SmallTalk();
+			} else {
+				smt = optSmt.get();
+			}
 		}
 		smt.setIsEnd("TRUE".equals(tfe.getIsEnd()));
 
@@ -420,7 +438,7 @@ public class TopicFileExportServices implements Component {
 
 		final String[] listResponses = tfe.getResponse().split("\\|");
 
-		final DtList<UtterText> responses = new DtList<UtterText>(UtterText.class);
+		final DtList<UtterText> responses = new DtList<>(UtterText.class);
 		//When a sentence is added to the list, first the unicity is checked
 		for (final String newResponse : listResponses) {
 			final UtterText response = new UtterText();
@@ -435,7 +453,7 @@ public class TopicFileExportServices implements Component {
 	 */
 	public DtList<ResponseButton> extractButtonsFromTfe(final Long botId, final TopicFileExport tfe) {
 
-		final DtList<ResponseButton> listButtons = new DtList<ResponseButton>(ResponseButton.class);
+		final DtList<ResponseButton> listButtons = new DtList<>(ResponseButton.class);
 		// if there are buttons, they must have the following shape : [name¤topicCode] and be separated by |
 		if (!tfe.getButtons().isEmpty()) {
 			final String[] listDoublons = tfe.getButtons().split("\\|");
@@ -460,16 +478,36 @@ public class TopicFileExportServices implements Component {
 	}
 
 	/*
-	 * Return an error message with the line concerned
+	 * Return a list of ResponseButtonsUrl from TopicFileExport
 	 */
-	public String lineError(final int i) {
-		return "[Line " + i + "] ";
+	public DtList<ResponseButtonUrl> extractButtonsUrlFromTfe(final TopicFileExport tfe) {
+
+		final DtList<ResponseButtonUrl> listButtons = new DtList<>(ResponseButtonUrl.class);
+		// if there are buttons, they must have the following shape : [name¤url¤newTab] and be separated by |
+		if (!tfe.getButtonsUrl().isEmpty()) {
+			final String[] listDoublons = tfe.getButtonsUrl().split("\\|");
+			for (final String doublon : listDoublons) {
+				final ResponseButtonUrl button = new ResponseButtonUrl();
+				final String[] args = doublon.split("¤");
+				button.setText(args[0].substring(1));
+				final String url = args[1];
+				try {
+					isValidURL(url);
+					button.setUrl(url);
+				} catch (final URISyntaxException | MalformedURLException e) {
+					throw new VUserException(TopicFileExportMultilingualResources.BUTTON_URL_NOT_VALID);
+				}
+				button.setNewTab(Boolean.parseBoolean(args[2].substring(0, args[2].length() -1 )));
+
+				listButtons.add(button);
+			}
+		}
+		return listButtons;
 	}
 
-	public void errorManagement(final int i, final String erreur) {
-		final StringBuilder errorMessage = new StringBuilder(lineError(i));
-		errorMessage.append(erreur);
-		throw new VUserException(errorMessage.toString());
+	private void isValidURL(final String url) throws URISyntaxException, MalformedURLException {
+		final URL validUrl = new URL(url);
+		validUrl.toURI();
 	}
 
 }

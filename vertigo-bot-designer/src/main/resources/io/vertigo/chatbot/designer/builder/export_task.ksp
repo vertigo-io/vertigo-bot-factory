@@ -31,9 +31,30 @@ create Task TkExportResponseButtonByBotId{
  			join topic top_response on (top_response.top_id = rbu.top_id_response)  
  			where top.bot_id = #botId#  
  			and top.is_enabled = true
+ 			order by rbu.btn_id asc
  			"
 	in botId				{domain : DoId,							cardinality:"1"} 
 	out rbes 				{domain : DoDtResponseButtonExport		cardinality:"*"}
+}
+
+create Task TkExportResponseButtonUrlByBotId{
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				select
+             	top.top_id,
+             	top.code as top_code,
+             	rbu.text,
+             	rbu.url,
+             	rbu.new_tab
+ 			from response_button_url rbu
+ 			join small_talk smt on (smt.smt_id = rbu.smt_id)
+ 			join topic top on (top.top_id = smt.top_id)
+ 			where top.bot_id = #botId#
+ 			and top.is_enabled = true
+ 			order by rbu.btn_id asc
+ 			"
+	in botId				{domain : DoId,							    cardinality:"1"}
+	out rbes 				{domain : DoDtResponseButtonUrlExport		cardinality:"*"}
 }
 
 create Task TkExportUtterTextByBotId{  

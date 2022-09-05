@@ -1,18 +1,16 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence.command.bot;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.impl.command.BtCommandParserDefinition;
-import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleDefinitionProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static io.vertigo.chatbot.engine.util.BlackBoardUtils.getBB;
 
 public class BotBtConfluenceCommandParserDefinitionProvider implements SimpleDefinitionProvider, Component {
 
@@ -26,15 +24,9 @@ public class BotBtConfluenceCommandParserDefinitionProvider implements SimpleDef
 		LOGGER.info("loading confluence plugin");
 		return List.of(
 				BtCommandParserDefinition.basicCommand("confluence:search",
-						(c, p) -> botConfluenceNodeProvider.confluenceSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getStringParam(2))));
-	}
-
-	private static BlackBoard getBB(final List<Object> params) {
-		return params.stream()
-				.filter(o -> o instanceof BlackBoard)
-				.map(o -> (BlackBoard) o)
-				.findFirst()
-				.orElseThrow(() -> new VSystemException("No BlackBoard found"));
+						(c, p) -> botConfluenceNodeProvider.confluenceSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getStringParam(2), c.getStringParam(3))),
+				BtCommandParserDefinition.basicCommand("confluence:search:auto",
+						(c, p) -> botConfluenceNodeProvider.confluenceAutomaticSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getRemainingStringParam(2))));
 	}
 
 }

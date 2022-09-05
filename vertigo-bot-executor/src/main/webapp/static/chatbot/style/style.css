@@ -1,0 +1,136 @@
+:root {
+    --background-color: #1aab8d;
+    --font-color: #000000;
+    --font-family: Arial, Helvetica, sans-serif;
+}
+.text-primary {
+    color: var(--background-color) !important;
+    font-family: var(--font-family) !important;
+}
+
+.bg-primary {
+    background: var(--background-color) !important;
+    font-family: var(--font-family) !important;
+}
+
+body {
+    color: black;
+}
+
+main, footer {
+    padding: 8px;
+}
+
+#page {
+    visibility: hidden;
+    z-index: 1;
+}
+
+.title {
+    color: var(--font-color) !important;
+}
+
+.q-loading-bar.top {
+    top: 42px;
+    height: 4px !important;
+}
+
+.message-processing {
+    width: 80px;
+}
+
+.docs-btn .q-btn {
+    margin: 5px;
+}
+
+.sys-chat .q-message-received .q-message-text {
+    border-radius: 5px;
+}
+
+.q-message-text-content {
+    font-family: var(--font-family);
+    color: var(--font-color) !important;
+}
+
+.q-btn {
+    font-family: var(--font-family);
+    color: var(--font-color) !important;
+}
+
+.q-caption {
+    font-family: var(--font-family);
+    color: var(--font-color) !important;
+}
+
+.q-message-received .q-message-text, .q-message-sent .q-message-text {
+    border-radius: 10px 10px 10px 10px;
+}
+
+.q-message-avatar {
+    background-color: #ccccc6;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    pointer-events: none !important;
+    border-radius: 25% 0%;
+}
+
+div.q-message-container > div {
+    /* overflow-wrap: break-word; */
+    /* overflow: hidden; */
+}
+
+.text-grey-grdf {
+    color: #ccccc6 !important;
+}
+
+.bg-grey-grdf {
+    background: #ccccc6 !important;
+}
+
+.q-btn-round {
+    border-radius: 15px 0px 0px 0px;
+}
+
+img {
+    /* needed, else there is a bottom-margin like for text */
+    display: block;
+    max-width: 100%;
+}
+
+.imgClass {
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.imgClass:hover {opacity: 0.7; !important;}
+
+/*btn send msg*/
+
+.message-response {
+    background: white !important;
+}
+.btn-send {
+    border-radius: 50%;
+    background: #027BE3 !important;
+}
+
+/*block msg*/
+
+.q-message-text:last-child {
+    border-radius: 10px;
+    position: relative;
+    padding: 15px;
+}
+
+.q-message-text:last-child:before {
+    left: 0% !important;
+    bottom: -4px;
+    display: inline-block;
+    transform: rotate(305deg);
+    border-top: 15px solid;
+    border-right: 10px solid transparent !important;
+    border-left: 15px solid transparent !important;
+    border-bottom: 0 !important;
+}

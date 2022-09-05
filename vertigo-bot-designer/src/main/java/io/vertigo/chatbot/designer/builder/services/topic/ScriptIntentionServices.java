@@ -1,29 +1,39 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.ScriptIntentionDAO;
+import io.vertigo.chatbot.commons.dao.topic.TopicDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
+import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.UtterText;
+import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.scriptIntention.ScriptIntentionPAO;
+import io.vertigo.chatbot.designer.builder.services.HistoryServices;
+import io.vertigo.chatbot.designer.builder.services.IRecordable;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.domain.History;
+import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
 import io.vertigo.chatbot.domain.DtDefinitions.ScriptIntentionFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtObject;
+
+import javax.inject.Inject;
+import java.util.Optional;
 
 @Transactional
 @Secured("BotUser")
-public class ScriptIntentionServices implements Component, TopicInterfaceServices<ScriptIntention> {
+public class ScriptIntentionServices implements Component, ITopicService<ScriptIntention>, IRecordable<ScriptIntention> {
 
 	@Inject
 	private ScriptIntentionDAO scriptIntentionDAO;
@@ -31,13 +41,22 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 	@Inject
 	private ScriptIntentionPAO scriptIntentionPAO;
 
+	@Inject
+	private NodeServices nodeServices;
+
+	@Inject
+	private TopicDAO topicDAO;
+
+	@Inject
+	private HistoryServices historyServices;
+
 	public ScriptIntention getScriptIntentionById(@SecuredOperation("botVisitor") final Chatbot bot, final Long sinId) {
 		Assertion.check().isNotNull(sinId);
 		// ---
 		return scriptIntentionDAO.get(sinId);
 	}
 
-	public ScriptIntention getNewScriptIntention(@SecuredOperation("botAdm") final Chatbot bot) {
+	public ScriptIntention getNewScriptIntention(@SecuredOperation("botVisitor") final Chatbot bot) {
 		final ScriptIntention scriptIntention = new ScriptIntention();
 		return scriptIntention;
 	}
@@ -45,18 +64,26 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 	public ScriptIntention save(@SecuredOperation("botAdm") final Chatbot chatbot,
 			final ScriptIntention scriptIntention,
 			final Topic topic) {
-
+		final boolean isNew = scriptIntention.getSinId() == null;
+		final ScriptIntention oldScriptIntention = findByTopId(topic.getTopId()).orElse(null);
 		scriptIntention.setTopId(topic.getTopId());
-		final ScriptIntention savedSI = this.save(scriptIntention);
+		final ScriptIntention savedScriptIntention = save(scriptIntention);
+		if (oldScriptIntention == null || (oldScriptIntention.getScript() != null && !oldScriptIntention.getScript().equals(scriptIntention.getScript()))) {
+			nodeServices.updateNodes(chatbot);
+			record(chatbot, savedScriptIntention, isNew ? HistoryActionEnum.ADDED : HistoryActionEnum.UPDATED);
+		}
+		return savedScriptIntention;
 
-		return savedSI;
 	}
 
 	@Override
-	public void delete(@SecuredOperation("botAdm") final Chatbot chatbot, final ScriptIntention scriptIntention, final Topic topic) {
-
+	public void deleteIfExists(@SecuredOperation("botContributor") final Chatbot chatbot, final Topic topic) {
 		// delete scriptIntention
-		delete(scriptIntention);
+		findByTopId(topic.getTopId())
+				.ifPresent(scriptIntention -> {
+					delete(scriptIntention);
+					record(chatbot, scriptIntention, HistoryActionEnum.DELETED);
+				});
 
 	}
 
@@ -88,37 +115,41 @@ public class ScriptIntentionServices implements Component, TopicInterfaceService
 	}
 
 	@Override
-	public ScriptIntention findByTopId(final Long topId) {
-		if (topId != null) {
-			final Optional<ScriptIntention> result = scriptIntentionDAO.findOptional(Criterions.isEqualTo(ScriptIntentionFields.topId, topId));
-			return result.isPresent() ? result.get() : null;
-		}
-		return null;
+	public Optional<ScriptIntention> findByTopId(final Long topId) {
+		Assertion.check().isNotNull(topId);
+
+		return scriptIntentionDAO.findOptional(Criterions.isEqualTo(ScriptIntentionFields.topId, topId));
 	}
 
 	@Override
-	public void initializeBasic(final Chatbot chatbot, final Topic topic, final String text) {
-		final ScriptIntention sin = new ScriptIntention();
+	public void createOrUpdateFromTopic(final Chatbot chatbot, final Topic topic, final String text) {
+		final ScriptIntention sin = findByTopId(topic.getTopId()).orElse(new ScriptIntention());
 		sin.setTopId(topic.getTopId());
 		sin.setScript(text);
 		save(chatbot, sin, topic);
 	}
 
 	@Override
-	public boolean isEnabled(final ScriptIntention object, final boolean isEnabled, final Chatbot bot) {
-		return object.getScript() != null ? !object.getScript().isBlank() && isEnabled : false;
+	public boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DtObject object, final Chatbot bot) {
+		final ScriptIntention scriptIntention = (ScriptIntention) object;
+		return (!KindTopicEnum.UNREACHABLE.name().equals(topic.getKtoCd()) && sentences.isEmpty()) || StringUtil.isBlank(scriptIntention.getScript());
 	}
 
 	@Override
-	public UtterText getBasicUtterTextByTopId(final Long topId) {
-		Assertion.check()
-				.isNotNull(topId);
-		// ---
-		final UtterText utt = new UtterText();
-		final ScriptIntention sin = findByTopId(topId);
-		utt.setText(sin != null ? sin.getScript() : null);
-		return utt;
-
+	public String getDeactivateMessage() {
+		return MessageText.of(TopicsMultilingualResources.DEACTIVATE_TOPIC_SCRIPT_INTENTION).getDisplay();
 	}
 
+	@Override
+	public void saveTopic(final Topic topic, final Chatbot chatbot, final DtObject dtObject) {
+		save(chatbot, (ScriptIntention) dtObject, topic);
+	}
+
+	@Override
+	public History record(final Chatbot bot, final ScriptIntention scriptIntention, final HistoryActionEnum action) {
+		scriptIntention.topic().load();
+		final Topic topic = scriptIntention.topic().get();
+		final String message = topic.getKtoCd() + " - " + topic.getTitle();
+		return historyServices.record(bot, action, scriptIntention.getClass().getSimpleName(), message);
+	}
 }

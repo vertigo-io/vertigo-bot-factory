@@ -23,18 +23,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import io.vertigo.chatbot.commons.LogsUtils;
+import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.executor.manager.ExecutorManager;
-import io.vertigo.chatbot.vega.webservice.stereotype.RequireApiKey;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.GET;
 import io.vertigo.vega.webservice.stereotype.InnerBodyParam;
 import io.vertigo.vega.webservice.stereotype.PUT;
 import io.vertigo.vega.webservice.stereotype.PathPrefix;
+import io.vertigo.vega.webservice.stereotype.RequireApiKey;
 
 @RequireApiKey
 @PathPrefix("/chatbot/admin")
@@ -52,6 +54,7 @@ public class AdminWebService implements WebServices {
 
 	@PUT("/model")
 	public String loadModel(@InnerBodyParam("botExport") final BotExport bot,
+			@InnerBodyParam("attachmentsExport") final DtList<AttachmentExport> attachmentExports,
 			@InnerBodyParam("executorConfig") final ExecutorConfiguration executorConfig) throws Exception {
 		final StringBuilder logs = new StringBuilder();
 		LogsUtils.breakLine(logs);
@@ -60,6 +63,7 @@ public class AdminWebService implements WebServices {
 		LogsUtils.breakLine(logs);
 		try {
 			executorManager.loadModel(bot, executorConfig, logs);
+			executorManager.updateAttachments(attachmentExports);
 		} catch (final Exception e) {
 			LogsUtils.logKO(logs);
 			LogsUtils.addLogs(logs, e);

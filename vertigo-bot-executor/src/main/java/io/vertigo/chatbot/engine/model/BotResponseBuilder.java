@@ -17,30 +17,42 @@
  */
 package io.vertigo.chatbot.engine.model;
 
+import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
+import io.vertigo.chatbot.engine.model.choice.BotButton;
+import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
+import io.vertigo.chatbot.engine.model.choice.BotCard;
+import io.vertigo.chatbot.engine.model.choice.BotFileButton;
+import io.vertigo.chatbot.engine.model.choice.IBotChoice;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.Builder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
-import io.vertigo.chatbot.engine.model.choice.IBotChoice;
-import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.lang.Builder;
-
 public final class BotResponseBuilder implements Builder<BotResponse> {
 	private final List<String> htmlTexts;
 	private final List<IBotChoice> botChoices;
+	private final List<IBotChoice> botFiles;
+	private final List<IBotChoice> botCards;
 	private final Map<String, Object> metadatas;
 	private final BotStatus status;
+	private final Boolean acceptNlu;
+	private final Boolean rating;
 
-	public BotResponseBuilder(final BotStatus status) {
+	public BotResponseBuilder(final BotStatus status, final Boolean acceptNlu, final Boolean rating) {
 		Assertion.check()
 				.isNotNull(status);
 		//--
 		htmlTexts = new ArrayList<>();
 		botChoices = new ArrayList<>();
+		botFiles = new ArrayList<>();
+		botCards = new ArrayList<>();
 		metadatas = new HashMap<>();
+		this.acceptNlu = acceptNlu;
 		this.status = status;
+		this.rating = rating;
 	}
 
 	public BotResponseBuilder addMessage(final String message) {
@@ -63,7 +75,15 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 		Assertion.check()
 				.isNotNull(choice);
 		//-----
-		botChoices.add(choice);
+
+		if (choice instanceof BotButton || choice instanceof BotButtonUrl) {
+			botChoices.add(choice);
+		} else if (choice instanceof BotCard) {
+			botCards.add(choice);
+		} else if (choice instanceof BotFileButton) {
+			botFiles.add(choice);
+		}
+
 		return this;
 	}
 
@@ -95,7 +115,7 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 
 	@Override
 	public BotResponse build() {
-		return new BotResponse(htmlTexts, botChoices, metadatas, status);
+		return new BotResponse(htmlTexts, botChoices, botCards, botFiles, metadatas, status, acceptNlu, rating);
 	}
 
 }

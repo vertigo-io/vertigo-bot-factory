@@ -20,9 +20,17 @@ public enum DtResources implements MessageKey {
 	 */
 	fldKindTopic$label,
 	/**
+	 * Label FR.
+	 */
+	fldKindTopic$labelFr,
+	/**
 	 * Description.
 	 */
 	fldKindTopic$description,
+	/**
+	 * Description FR.
+	 */
+	fldKindTopic$descriptionFr,
 	/**
 	 * Default text.
 	 */
@@ -81,6 +89,30 @@ public enum DtResources implements MessageKey {
 	fldResponseButton$topIdResponse,
 
 	/***********************************************************
+	/** ResponseButtonUrl.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldResponseButtonUrl$btnId,
+	/**
+	 * Text.
+	 */
+	fldResponseButtonUrl$text,
+	/**
+	 * URL.
+	 */
+	fldResponseButtonUrl$url,
+	/**
+	 * New tab.
+	 */
+	fldResponseButtonUrl$newTab,
+	/**
+	 * SmallTalk.
+	 */
+	fldResponseButtonUrl$smtId,
+
+	/***********************************************************
 	/** ResponseType.
 	/***********************************************************
 	/**
@@ -137,6 +169,14 @@ public enum DtResources implements MessageKey {
 	fldScriptIntentionIhm$isEnabled,
 
 	/***********************************************************
+	/** SelectTopicCategory.
+	/***********************************************************
+	/**
+	 * Topic category id.
+	 */
+	fldSelectTopicCategory$topCatId,
+
+	/***********************************************************
 	/** SmallTalk.
 	/***********************************************************
 	/**
@@ -181,6 +221,26 @@ public enum DtResources implements MessageKey {
 	fldSmallTalkIhm$catLabel,
 
 	/***********************************************************
+	/** SmallTalkWrapper.
+	/***********************************************************
+	/**
+	 * SmallTalk.
+	 */
+	fldSmallTalkWrapper$smallTalk,
+	/**
+	 * Buttons.
+	 */
+	fldSmallTalkWrapper$buttons,
+	/**
+	 * Buttons url.
+	 */
+	fldSmallTalkWrapper$buttonsUrl,
+	/**
+	 * Utter texts.
+	 */
+	fldSmallTalkWrapper$utterTexts,
+
+	/***********************************************************
 	/** Topic.
 	/***********************************************************
 	/**
@@ -203,6 +263,10 @@ public enum DtResources implements MessageKey {
 	 * Code.
 	 */
 	fldTopic$code,
+	/**
+	 * Is technical.
+	 */
+	fldTopic$isTechnical,
 	/**
 	 * Type du topic.
 	 */
@@ -253,6 +317,34 @@ public enum DtResources implements MessageKey {
 	fldTopicCategory$botId,
 
 	/***********************************************************
+	/** TopicCategoryExport.
+	/***********************************************************
+	/**
+	 * Code.
+	 */
+	fldTopicCategoryExport$code,
+	/**
+	 * Topic category label.
+	 */
+	fldTopicCategoryExport$label,
+	/**
+	 * Enabled.
+	 */
+	fldTopicCategoryExport$isEnabled,
+	/**
+	 * Technical.
+	 */
+	fldTopicCategoryExport$isTechnical,
+
+	/***********************************************************
+	/** TopicCriteria.
+	/***********************************************************
+	/**
+	 * Category selection.
+	 */
+	fldTopicCriteria$catId,
+
+	/***********************************************************
 	/** TopicFileExport.
 	/***********************************************************
 	/**
@@ -296,6 +388,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTopicFileExport$typeTopic,
 	/**
+	 * Topic kind.
+	 */
+	fldTopicFileExport$kindTopic,
+	/**
 	 * Script.
 	 */
 	fldTopicFileExport$script,
@@ -307,6 +403,10 @@ public enum DtResources implements MessageKey {
 	 * Buttons.
 	 */
 	fldTopicFileExport$buttons,
+	/**
+	 * Buttons URL.
+	 */
+	fldTopicFileExport$buttonsUrl,
 	/**
 	 * End of conversation.
 	 */

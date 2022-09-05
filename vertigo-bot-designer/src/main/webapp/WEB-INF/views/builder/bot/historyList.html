@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{templates/botDetailLayout}" th:with="tab=history"
+>
+
+    <head>
+        <title th:text="#{history.title}"></title>
+        <script th:src="@{/static/utils/moment.min.js}"></script>
+        <script th:inline="javascript">
+
+            function getHistoryActionLabel(action) {
+                let historyAction = VertigoUi.vueData.historyActions.find(currentAction => currentAction.hacCd === action);
+                if (historyAction !== undefined) {
+                    return VertigoUi.vueData.locale === 'fr_FR' ? historyAction.labelFr : historyAction.label;
+                } else {
+                    return action;
+                }
+            }
+
+        </script>
+    </head>
+
+    <body>
+
+        <section layout:fragment="content">
+
+            <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+                <span class="text-primary" style="flex-grow: 2">[[#{layout.history}]]</span>
+                <q-icon name="help_outlined" size="2rem"/>
+                <q-tooltip>[[#{history.tooltip}]]</q-tooltip>
+            </div>
+
+            <vu:table th:title="#{history.table.title}" list="historyList" componentId="historyList">
+                <vu:slot name="top_right_slot">
+                    <vu:select-edit object="criteria" field="hacCd"
+                    				list="historyActions" labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"
+                    				label="#{history.selection.action}" clearable style="width: 250px; margin-right: 10px"/>
+
+                    <vu:date-edit object="criteria" field="fromDate" label="#{history.date.from}" clearable @clear="vueData.criteria.fromDate=null" style="width:210px; margin-right: 10px"/>
+                    <vu:date-edit object="criteria" field="toDate" label="#{history.date.to}" clearable @clear="vueData.criteria.toDate=null" style="width:210px; margin-right: 10px"/>
+
+                    <vu:text-field-edit object="criteria" field="text" label="#{history.search}" clearable debounce="300" style="width:210px"/>
+                    <q-icon name="search" class="q-field__marginal" ></q-icon>
+
+                </vu:slot>
+                <vu:include-data object="historyList" field="'*'" />
+                <vu:include-data-primitive key="locale"/>
+                <vu:column field="date"/>
+                <vu:column field="hacCd">
+                    <vu:content>
+                        <span v-html="getHistoryActionLabel(props.row.hacCd)"></span>
+                    </vu:content>
+                </vu:column>
+                <vu:column field="className">
+                    <vu:content>
+                        <span th:text="#{history.training}" v-if="props.row.className == 'Training'"></span>
+                        <span th:text="#{history.scriptIntention}" v-else-if="props.row.className == 'ScriptIntention'"></span>
+                        <span th:text="#{history.smalltalk}" v-else-if="props.row.className == 'SmallTalk'"></span>
+                        <span th:text="#{history.dictionaryEntity}" v-else-if="props.row.className == 'DictionaryEntity'"></span>
+                        <span th:text="#{history.contextValue}" v-else-if="props.row.className == 'ContextValue'"></span>
+                        <span th:text="#{history.profile}" v-else-if="props.row.className == 'ProfilPerChatbot'"></span>
+                        <span v-else>{{props.row.className}}</span>
+                    </vu:content>
+                </vu:column>
+                <vu:column field="message"/>
+                <vu:column field="userName"/>
+            </vu:table>
+        </section>
+        <section layout:fragment="javascript-footer" >
+            <script type="text/javascript">
+                VUiPage.$data.componentStates.historyList.columns[0].sort = VertigoUi.methods.sortDatesAsString("DD/MM/YYYY HH:mm");
+                VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
+                	VUiPage.httpPostAjax('_filterHistory', VUiPage.vueDataParams(['criteria']));
+                }, { deep: true });
+            </script>
+        </section>
+    </body>
+</html>

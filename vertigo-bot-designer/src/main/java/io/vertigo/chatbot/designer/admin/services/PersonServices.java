@@ -17,8 +17,6 @@
  */
 package io.vertigo.chatbot.designer.admin.services;
 
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.designer.admin.person.PersonPAO;
 import io.vertigo.chatbot.designer.dao.commons.PersonDAO;
@@ -29,6 +27,11 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
+
+import javax.inject.Inject;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 
 @Transactional
 @Secured("SuperAdm")
@@ -41,7 +44,7 @@ public class PersonServices implements Component {
 	private PersonDAO personDAO;
 
 	public DtList<Person> getAllPersons() {
-		return personDAO.findAll(Criterions.alwaysTrue(), DtListState.of(100));
+		return personDAO.findAll(Criterions.alwaysTrue(), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public Long getAdminPerNumber() {

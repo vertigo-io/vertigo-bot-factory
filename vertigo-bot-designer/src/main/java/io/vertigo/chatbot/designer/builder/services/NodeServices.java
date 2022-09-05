@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -44,7 +46,7 @@ public class NodeServices implements Component {
 	}
 
 	public DtList<ChatbotNode> getAllNodesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, bot.getBotId()), DtListState.of(100));
+		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
 	public Optional<ChatbotNode> getDevNodeByBotId(final Long botId) {
@@ -56,11 +58,18 @@ public class NodeServices implements Component {
 	@Secured("SuperAdm")
 	public void saveNode(final ChatbotNode node) {
 		if (node.getNodId() != null) {
-			// enforce previous values
 			final ChatbotNode previousValues = chatbotNodeDAO.get(node.getNodId());
 
+			// enforce previous values
 			node.setBotId(previousValues.getBotId());
 			node.setTraId(previousValues.getTraId());
+
+			//if the node has modification, it is flagged as not uptodate
+			if (!previousValues.getApiKey().equals(node.getApiKey()) || !previousValues.getUrl().equals(node.getUrl())) {
+				node.setIsUpToDate(false);
+			}
+		} else {
+			node.setIsUpToDate(false); // a new node is not uptodate
 		}
 
 		if (Boolean.TRUE.equals(node.getIsDev())) {
@@ -101,5 +110,13 @@ public class NodeServices implements Component {
 				.filter(ChatbotNode::getIsDev)
 				.findFirst()
 				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
+	}
+
+	public void updateNodes(final Chatbot bot) {
+		final DtList<ChatbotNode> listNode = getNodesByBot(bot);
+		for (final ChatbotNode node : listNode) {
+			node.setIsUpToDate(false);
+			saveNode(node);
+		}
 	}
 }

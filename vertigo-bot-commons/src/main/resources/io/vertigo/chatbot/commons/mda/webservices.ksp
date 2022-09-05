@@ -6,13 +6,55 @@ create DtDefinition DtBotExport {
 	field welcomeBT					{domain: DoText 						label: "welcome BT" 				cardinality : "1"}
 	field endBT						{domain: DoText 						label: "end BT" 					cardinality : "1"}
 	field fallbackBT				{domain: DoText 						label: "fallback BT" 				cardinality : "1"}
-	field topics					{domain: DoDtTopicExport 				label: "fallback BT" 				cardinality : "*"}
+	field idleBT				    {domain: DoText 						label: "idle BT" 				    cardinality : "1"}
+	field ratingBT				    {domain: DoText 						label: "rating BT" 				    cardinality : "1"}
+	field topics					{domain: DoDtTopicExport 				label: "topics export" 				cardinality : "*"}
+	field welcomeTours				{domain: DoDtWelcomeTourExport 			label: "Welcome tours" 	            cardinality : "*"}
+	field confluenceSetting			{domain: DoDtConfluenceSettingExport 	label: "Confluence setting" 	    cardinality : "?"}
+	field jiraSetting			    {domain: DoDtJiraSettingExport 	        label: "Jira setting" 	            cardinality : "?"}
+	field jiraFieldSetting			{domain: DoDtJiraFieldSettingExport 	label: "Jira fields setting" 	    cardinality : "*"}
+	field mapContext				{domain: DoText 						label: "map Context" 				cardinality : "1"}
 }
 
 create DtDefinition DtTopicExport {
 	field name 						{domain: DoLabel 						label: "Topic name" 				cardinality : "1"}
 	field nluTrainingSentences 		{domain: DoLabel 						label: "nluTrainingSentences" 		cardinality : "*"}
 	field topicBT			 		{domain: DoText	 						label: "Topic BT" 					cardinality : "1"}
+    field unreachable			 	{domain: DoYesNo	 					label: "Unreachable" 				cardinality : "1"}
+}
+
+create DtDefinition DtWelcomeTourExport {
+	field label 		        {domain: DoLabel 	label: "Label" 			                    cardinality : "1"	}
+	field technicalCode 		{domain: DoLabel 	label: "Technical code" 			        cardinality : "1"	}
+	field config			    {domain: DoJson		label: "Shepherd config"	 			    cardinality : "1"   }
+}
+
+create DtDefinition DtConfluenceSettingExport {
+	field url 						{domain: DoUrl 						    label: "Knowledge base URL" 		cardinality : "1"}
+	field login 		            {domain: DoLabel 						label: "Login" 		                cardinality : "1"}
+	field password			 		{domain: DoPassword	 					label: "Password" 					cardinality : "1"}
+    field numberOfResults			{domain: DoNumber	 					label: "Number max of results" 	    cardinality : "1"}
+}
+
+create DtDefinition DtJiraSettingExport {
+	field url 						{domain: DoUrl 						    label: "Jira URL" 		            cardinality : "1"}
+	field login 		            {domain: DoLabel 						label: "Login" 		                cardinality : "1"}
+	field password			 		{domain: DoPassword	 					label: "Password" 					cardinality : "1"}
+    field project			        {domain: DoLabel	 					label: "Project" 	                cardinality : "1"}
+}
+
+create DtDefinition DtJiraFieldSettingExport {
+	field fieldKey 					{domain: DoLabel 						label: "Jira field key" 		    cardinality : "1"}
+	field enabled 		            {domain: DoYesNo 						label: "Enabled" 		            cardinality : "1"}
+	field mandatory			 		{domain: DoYesNo	 					label: "Mandatory" 					cardinality : "1"}
+}
+
+create DtDefinition DtAttachmentExport {
+	field label 					{domain: DoLabel 						label: "Label" 		                cardinality : "1"}
+	field fileName 	                {domain : DoLabel 		                label : "Name" 				        cardinality : "1" }
+    field mimeType		            {domain : DoLabel 		                label : "MimeType" 			        cardinality : "1" }
+    field length 		            {domain : DoSize 		                label : "Size" 			            cardinality : "1" }
+	field fileData			 		{domain: DoText	 					    label: "Data" 					    cardinality : "1"}
 }
 
 create DtDefinition DtRunnerInfo {
@@ -41,5 +83,28 @@ create DtDefinition DtExecutorConfiguration {
 	field traId					{domain: DoId 						label: "Model ID" 						cardinality : "1"}
 	field modelName				{domain: DoLabel 					label: "Model name" 					cardinality : "1"}
 	field nluThreshold			{domain: DoPercentage 				label: "NLU Threshold" 					cardinality : "1"}
+	field avatar                {domain: DoText                     label: "Avatar"                         cardinality:  "?"}
 	field customConfig			{domain: DoText 					label: "Additional config for executor" cardinality : "1"}
+}
+
+create DtDefinition DtChatbotCustomConfig {
+	id cccId 		                {domain: DoId		    label: "Context value id"                                  }
+	field botEmailAddress           {domain: DoLabel        label: "Bot email address"                  cardinality:"?"}
+	field reinitializationButton    {domain: DoYesNo        label: "Reinitialization button"            cardinality:"?"}
+	field backgroundColor           {domain: DoLabel        label: "Bot background color"               cardinality:"?"}
+	field fontColor                 {domain: DoLabel        label: "Bot font color"                     cardinality:"?"}
+	field fontFamily                {domain: DoLabel        label: "Bot font family"                    cardinality:"?"}
+	field displayAvatar             {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
+	field totalMaxAttachmentSize    {domain: DoNumber       label: "Total maximum attachment size"      cardinality:"?"}
+	field disableNlu                {domain: DoYesNo        label: "Disable NlU"                        cardinality:"?"}
+}
+
+create Association AChatbotCustomConfigChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtChatbotCustomConfig
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
 }

@@ -1,8 +1,14 @@
 mda/person.ksp
-mda/chatbot/chatbotModel.ksp
+
 mda/commonModel.ksp
 mda/chatbot/exportModel.ksp
-mda/chatbot/meaningModel.ksp
+mda/chatbot/dictionaryEntityModel.ksp
+mda/chatbot/profileModel.ksp
+mda/chatbot/trainingModel.ksp
+mda/chatbot/unknownSentences.ksp
+mda/chatbot/topic/topicModel.ksp
+mda/chatbot/history.ksp
+mda/chatbot/extensions.ksp
 
 admin/person.ksp
 

@@ -202,7 +202,7 @@ public final class Topic implements Entity {
 	 * Récupère la valeur de la propriété 'Type du topic'.
 	 * @return String ttoCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Type du topic", fkDefinition = "DtTypeTopic" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Type du topic", fkDefinition = "DtTypeTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getTtoCd() {
 		return (String) ttoCdAccessor.getId();
 	}
@@ -221,7 +221,7 @@ public final class Topic implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -240,7 +240,7 @@ public final class Topic implements Entity {
 	 * Récupère la valeur de la propriété 'Topic'.
 	 * @return Long topCatId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Topic", fkDefinition = "DtTopicCategory" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Topic", fkDefinition = "DtTopicCategory", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getTopCatId() {
 		return (Long) topCatIdAccessor.getId();
 	}
@@ -259,7 +259,7 @@ public final class Topic implements Entity {
 	 * Récupère la valeur de la propriété 'Kind of topic'.
 	 * @return String ktoCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Kind of topic", fkDefinition = "DtKindTopic" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Kind of topic", fkDefinition = "DtKindTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getKtoCd() {
 		return (String) ktoCdAccessor.getId();
 	}
@@ -271,6 +271,16 @@ public final class Topic implements Entity {
 	 */
 	public void setKtoCd(final String ktoCd) {
 		ktoCdAccessor.setId(ktoCd);
+	}
+	
+	/**
+	 * Champ : COMPUTED.
+	 * Récupère la valeur de la propriété calculée 'Is technical'.
+	 * @return Boolean isTechnical
+	 */
+	@Field(smartType = "STyYesNo", type = "COMPUTED", persistent = false, label = "Is technical")
+	public Boolean getIsTechnical() {
+		return io.vertigo.chatbot.designer.builder.services.topic.TopicServices.isTechnical(this);
 	}
 
  	/**

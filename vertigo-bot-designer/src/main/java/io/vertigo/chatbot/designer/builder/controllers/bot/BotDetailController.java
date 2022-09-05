@@ -17,50 +17,44 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
+import io.vertigo.account.authorization.annotations.Secured;
+import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
+import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
+import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
+import io.vertigo.chatbot.designer.utils.StringUtils;
+import io.vertigo.chatbot.domain.DtDefinitions;
+import io.vertigo.core.locale.MessageText;
+import io.vertigo.datamodel.structure.definitions.DtField;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.ui.core.ViewContext;
+import io.vertigo.ui.core.ViewContextKey;
+import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.vega.webservice.stereotype.Validate;
+import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
+import io.vertigo.vega.webservice.validation.DtObjectErrors;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import io.vertigo.account.authorization.annotations.Secured;
-import io.vertigo.chatbot.authorization.SecuredEntities.ChatbotOperations;
-import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ChatbotNode;
-import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
-import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
-import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
-import io.vertigo.chatbot.commons.domain.topic.UtterText;
-import io.vertigo.chatbot.designer.builder.services.NodeServices;
-import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
-import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicInterfaceServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
-import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
-import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datastore.filestore.model.FileInfoURI;
-import io.vertigo.ui.core.ViewContext;
-import io.vertigo.ui.core.ViewContextKey;
-import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
-import io.vertigo.vega.webservice.stereotype.QueryParam;
-import io.vertigo.vega.webservice.validation.UiMessageStack;
+import javax.inject.Inject;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot")
-public class BotDetailController extends AbstractBotController {
-
-	@Inject
-	private UtterTextServices utterTextServices;
+public class BotDetailController extends AbstractBotCreationController<Chatbot> {
 
 	@Inject
 	private TopicServices topicServices;
@@ -72,103 +66,41 @@ public class BotDetailController extends AbstractBotController {
 	private ChatbotServices chatbotServices;
 
 	@Inject
-	private TopicCategoryServices topicCategoryServices;
-
-	@Inject
 	private TypeTopicServices typeTopicServices;
 
 	@Inject
-	private List<TopicInterfaceServices> topicInterfaceServices;
-
-	private static final ViewContextKey<UtterText> utterTextFailureKey = ViewContextKey.of("utterTextFailure");
-	private static final ViewContextKey<UtterText> utterTextStartKey = ViewContextKey.of("utterTextStart");
-	private static final ViewContextKey<UtterText> utterTextEndKey = ViewContextKey.of("utterTextEnd");
+	private ChabotCustomConfigServices chabotCustomConfigServices;
 
 	private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
-	private static final ViewContextKey<String> ttoCdFailureKey = ViewContextKey.of("ttoCdFailure");
-	private static final ViewContextKey<String> ttoCdStartKey = ViewContextKey.of("ttoCdStart");
-	private static final ViewContextKey<String> ttoCdEndKey = ViewContextKey.of("ttoCdEnd");
-
-	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
-	private static final ViewContextKey<ChatbotNode> nodeEditKey = ViewContextKey.of("nodeEdit");
-	private static final ViewContextKey<ChatbotNode> nodeNewKey = ViewContextKey.of("nodeNew"); // template for creation
+	// template for creation
 	private static final ViewContextKey<Boolean> deletePopinKey = ViewContextKey.of("deletePopin");
-
-	private static final ViewContextKey<TopicCategory> topicCategoryKey = ViewContextKey.of("topicCategory");
-	private static final ViewContextKey<Topic> topicFailureKey = ViewContextKey.of("topicFailure");
-	private static final ViewContextKey<Topic> topicStartKey = ViewContextKey.of("topicStart");
-	private static final ViewContextKey<Topic> topicEndKey = ViewContextKey.of("topicEnd");
+	private static final ViewContextKey<FileInfoURI> botTmpPictureUriKey = ViewContextKey.of("botTmpPictureUri");
+	private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
 
 	@GetMapping("/{botId}")
-	public void initContext(final ViewContext viewContext, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = initCommonContext(viewContext, botId);
-
-		if (AuthorizationUtils.isAuthorized(bot, ChatbotOperations.botAdm)) {
-			viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
-		}
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
+		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 
 		viewContext.publishRef(deletePopinKey, false);
-		initNodeEdit(viewContext);
+		viewContext.publishFileInfoURI(botTmpPictureUriKey, null);
 
-		initBasicTopic(bot, viewContext, KindTopicEnum.FAILURE.name(), topicFailureKey, utterTextFailureKey, ttoCdFailureKey);
-		initBasicTopic(bot, viewContext, KindTopicEnum.START.name(), topicStartKey, utterTextStartKey, ttoCdStartKey);
-		initBasicTopic(bot, viewContext, KindTopicEnum.END.name(), topicEndKey, utterTextEndKey, ttoCdEndKey);
-
-		final TopicCategory topicCategory = topicCategoryServices.getTechnicalCategoryByBot(bot);
-		viewContext.publishDto(topicCategoryKey, topicCategory);
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
+		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
+		super.initBreadCrums(viewContext, bot);
 		toModeReadOnly();
-	}
-
-	private void initNodeEdit(final ViewContext viewContext) {
-		viewContext.publishDto(nodeEditKey, new ChatbotNode());
-
-		final ChatbotNode templateCreation = new ChatbotNode();
-		templateCreation.setColor("#00838f");
-		templateCreation.setIsDev(false);
-		viewContext.publishDto(nodeNewKey, templateCreation);
+		listLimitReached(viewContext, uiMessageStack);
 	}
 
 	@GetMapping("/new")
-	public void initContext(final ViewContext viewContext) {
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack) {
 		initEmptyCommonContext(viewContext);
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
-		//Init topic failure
 
-		initNewBasicTopic(viewContext, KindTopicEnum.FAILURE.name(), topicFailureKey, utterTextFailureKey);
-		initNewBasicTopic(viewContext, KindTopicEnum.START.name(), topicStartKey, utterTextStartKey);
-		initNewBasicTopic(viewContext, KindTopicEnum.END.name(), topicEndKey, utterTextEndKey);
-		final TopicCategory topicCategory = topicCategoryServices.initializeBasicCategory();
-		viewContext.publishDto(topicCategoryKey, topicCategory);
-		viewContext.publishDtList(nodeListKey, new DtList<>(ChatbotNode.class));
-		viewContext.publishRef(ttoCdStartKey, TypeTopicEnum.SMALLTALK.name());
-		viewContext.publishRef(ttoCdEndKey, TypeTopicEnum.SMALLTALK.name());
-		viewContext.publishRef(ttoCdFailureKey, TypeTopicEnum.SMALLTALK.name());
-		initNodeEdit(viewContext);
-
+		viewContext.publishFileInfoURI(botTmpPictureUriKey, null);
+		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
+		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
-	}
-
-	private void initNewBasicTopic(final ViewContext viewContext, final String ktoCd, final ViewContextKey<Topic> topicBasicKey,
-			final ViewContextKey<UtterText> uttertextkey) {
-		viewContext.publishDto(topicBasicKey, topicServices.initNewBasicTopic(ktoCd));
-		viewContext.publishDto(uttertextkey, utterTextServices.initNewBasicUttText(ktoCd));
-	}
-
-	private void initBasicTopic(final Chatbot bot, final ViewContext viewContext, final String ktoCd, final ViewContextKey<Topic> topicBasicKey,
-			final ViewContextKey<UtterText> uttertextkey, final ViewContextKey<String> ttoCdkey) {
-		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
-		UtterText utterText = new UtterText();
-
-		for (final TopicInterfaceServices services : topicInterfaceServices) {
-			if (services.handleObject(topic)) {
-				utterText = services.getBasicUtterTextByTopId(topic.getTopId());
-			}
-		}
-
-		viewContext.publishDto(uttertextkey, utterText);
-		viewContext.publishDto(topicBasicKey, topic);
-		viewContext.publishRef(ttoCdkey, topic.getTtoCd());
+		listLimitReached(viewContext, uiMessageStack);
 	}
 
 	@PostMapping("/_edit")
@@ -176,64 +108,42 @@ public class BotDetailController extends AbstractBotController {
 		toModeEdit();
 	}
 
-	@PostMapping("/_delete")
-	@Secured("BotUser")
-	public String doDelete(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		chatbotServices.deleteChatbot(bot);
-		return "redirect:/bots/";
-	}
-
 	@PostMapping("/_save")
 	@Secured("BotUser")
 	public String doSave(final ViewContext viewContext, final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
-			@QueryParam("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile,
-			@ViewAttribute("utterTextFailure") final UtterText utterTextFailure,
-			@ViewAttribute("utterTextStart") final UtterText utterTextStart,
-			@ViewAttribute("utterTextEnd") final UtterText utterTextEnd,
-			@ViewAttribute("topicFailure") final Topic topicFailure,
-			@ViewAttribute("topicStart") final Topic topicStart,
-			@ViewAttribute("topicEnd") final Topic topicEnd,
-			@ViewAttribute("ttoCdFailure") final String ttoCdFailure,
-			@ViewAttribute("ttoCdStart") final String ttoCdStart,
-			@ViewAttribute("ttoCdEnd") final String ttoCdEnd,
-			@ViewAttribute("topicCategory") final TopicCategory topicCategory) {
+			@ViewAttribute("botTmpPictureUri") final Optional<FileInfoURI> personPictureFile,
+		 	@ViewAttribute("chatbotCustomConfig")  @Validate(ChatbotCustomConfigValidator.class) final ChatbotCustomConfig chatbotCustomConfig) {
 
-		topicStart.setTtoCd(ttoCdStart);
-		topicFailure.setTtoCd(ttoCdFailure);
-		topicEnd.setTtoCd(ttoCdEnd);
-		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, utterTextFailure,
-				utterTextStart, utterTextEnd, topicFailure, topicStart, topicEnd, topicCategory);
+		final Chatbot savedChatbot = chatbotServices.saveChatbot(bot, personPictureFile, chatbotCustomConfig);
 
 		return "redirect:/bot/" + savedChatbot.getBotId();
 	}
 
-	@PostMapping("/_saveNode")
-	@Secured("SuperAdm")
-	public ViewContext doSaveNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
-			@ViewAttribute("nodeEdit") final ChatbotNode nodeEdit) {
-
-		nodeEdit.setBotId(bot.getBotId());
-
-		nodeServices.saveNode(nodeEdit);
-
-		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
-		viewContext.publishDto(nodeEditKey, new ChatbotNode()); // reset nodeEdit so previous values are not used for
-																// subsequent requests
-
-		return viewContext;
+	@Override
+	protected String getBreadCrums(final Chatbot object) {
+		return MessageText.of(BotMultilingualResources.BOT_DETAIL).getDisplay();
 	}
 
-	@PostMapping("/_deleteNode")
-	@Secured("SuperAdm")
-	public ViewContext doDeleteNode(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
-			@RequestParam("nodId") final Long nodId) {
+	/**
+	 * Check if value field is not empty or meaningless html.
+	 */
+	public static final class ChatbotCustomConfigValidator extends AbstractDtObjectValidator<ChatbotCustomConfig> {
 
-		nodeServices.deleteNode(nodId);
+		private static final Pattern emailPattern = Pattern.compile("^[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*(\\.[a-zA-Z0-9-]{2,3})+$");
 
-		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
-
-		return viewContext;
+		/** {@inheritDoc} */
+		@Override
+		protected void checkMonoFieldConstraints(final ChatbotCustomConfig chatbotCustomConfig, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+			if (DtDefinitions.ChatbotCustomConfigFields.botEmailAddress.name().equals(dtField.getName())) {
+				final String value = (String) dtField.getDataAccessor().getValue(chatbotCustomConfig);
+				if (!StringUtils.isHtmlEmpty(value)) {
+					final Matcher matcher = emailPattern.matcher(value);
+					if (!matcher.matches()) {
+						dtObjectErrors.addError(dtField.getName(), MessageText.of("L'email n'est pas valide"));
+					}
+				}
+			}
+		}
 	}
-
 }

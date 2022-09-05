@@ -137,7 +137,7 @@ public final class Person implements Entity {
 	 * Récupère la valeur de la propriété 'Role'.
 	 * @return String rolCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Role", fkDefinition = "DtPersonRole" )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Role", fkDefinition = "DtPersonRole", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getRolCd() {
 		return (String) rolCdAccessor.getId();
 	}

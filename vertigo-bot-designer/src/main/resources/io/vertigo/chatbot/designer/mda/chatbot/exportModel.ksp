@@ -8,6 +8,14 @@ create DtDefinition DtResponseButtonExport {
 	field text				{domain: DoText					label: "Button text" 				}
 }
 
+create DtDefinition DtResponseButtonUrlExport {
+	field topId 			{domain: DoId 					label: "Topic id" 					}
+	field topCode			{domain: DoText 				label: "Topic code"				 	}
+	field text				{domain: DoText					label: "Button text" 				}
+	field url				{domain: DoUrl					label: "Button url" 				}
+	field newTab			{domain: DoYesNo				label: "New tab" 				    }
+}
+
 create DtDefinition DtUtterTextExport {
 	field topId 			{domain: DoId 					label: "Topic id" 					}
 	field utterTexts		{domain: DoText 				label: "Utters"				 		}
@@ -19,4 +27,34 @@ create DtDefinition DtUtterTextExport {
 create DtDefinition DtScriptIntentionExport {
 	field topId 			{domain: DoId 					label: "Topic id" 					}
 	field bt				{domain: DoText 				label: "Bt"					 		}
+}
+
+create DtDefinition DtTypeBotExport {
+stereotype : "StaticMasterData"
+	id    tbeCd 		{domain: DoCode 	label: "Code"}
+	field label 		{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "Titre" 			cardinality : "1"	}
+	values : `{
+	    "CATEGORIES" : {
+            "tbeCd" 	    : "CATEGORIES",
+            "label" 	    : "Categories",
+            "labelFr" 	    : "Catégories"
+        },
+        "TOPICS" : {
+            "tbeCd" 	    : "TOPICS",
+            "label" 	    : "Topics",
+            "labelFr" 	    : "Intentions"
+        },
+        "DICTIONARY" : {
+            "tbeCd" 	    : "DICTIONARY",
+            "label" 	    : "Dictionary",
+            "labelFr" 	    : "Dictionnaire"
+        }
+     }`
+    sortField : "tbeCd"
+ 	displayField : "label"
+}
+
+create DtDefinition DtTypeBotExportList {
+    field tbeCd 		{domain: DoCode		label: "Type bot export code"	 		cardinality:"*"}
 }

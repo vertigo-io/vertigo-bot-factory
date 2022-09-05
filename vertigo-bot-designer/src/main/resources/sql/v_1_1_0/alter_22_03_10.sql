@@ -1,0 +1,1 @@
+UPDATE JIRA_FIELD_SETTING SET enabled = true, mandatory = true WHERE jir_field_cd = 'TYPE';

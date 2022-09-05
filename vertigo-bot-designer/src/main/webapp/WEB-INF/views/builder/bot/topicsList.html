@@ -9,18 +9,36 @@
 	<head>
 		<title th:text="#{topic.title.page}"></title>
 		<script th:inline="javascript">
-			function redirectDetail(row) {
-			// voir https://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf.html#script-inlining-javascript-and-dart
-				var url;
-				if (row.ttoCd === 'SMALLTALK'){
-					var smallTalkUrl = /*[[@{/bot/{id}/smallTalk/(id=${model.bot.botId})}]]*/ '';
-					url = smallTalkUrl + row.smtId					
+			
+			function normalizeString(str) {
+				if (str)
+					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+				else
+					return '';
+			}
+			
+			
+			function filter() {
+				let filteredTopics = VertigoUi.vueData.topicsIhm
+				if (VertigoUi.vueData.criteria.catId !== null) {
+					let category = VertigoUi.vueData.categoryList.find(cat => cat.topCatId === VertigoUi.vueData.criteria.catId)
+					if (category !== undefined) {
+						filteredTopics = filteredTopics
+							// copy and reverse
+							.slice().reverse()
+							// search
+							.filter(topic => topic.catLabel === category.label)
+					}
 				}
-				else if (row.ttoCd === 'SCRIPTINTENTION'){
-					var scriptInscriptionUrl = /*[[@{/bot/{id}/scriptIntention/(id=${model.bot.botId})}]]*/ '';
-					url = scriptInscriptionUrl +row.sinId;
+				let searchNormarlized = normalizeString(VertigoUi.componentStates.topics.pagination.search);
+				if (searchNormarlized !==''){
+					filteredTopics =  filteredTopics
+						// copy and reverse
+						.slice().reverse()
+						// search
+						.filter(topic => normalizeString(topic.title).includes(searchNormarlized) || normalizeString(topic.code).includes(searchNormarlized))
 				}
-				return url;
+				return filteredTopics
 			}
 			
 		</script>
@@ -29,80 +47,90 @@
 	</head>
 	
 	<body>
-		<section layout:fragment="content-header-actions">
-			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" 
-					       @click="vueData.newTopic = Vue.util.extend({}, vueData.newTopic); $refs.newTopic.show()"></q-btn>	
+		<section layout:fragment="content-actions">
+			<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/topics/detail/new(id=${model.bot.botId})}" class="fab-block" round color="primary" size="md" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" />
 					      
-			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="file_download" th:aria-label="#{action.export}" th:title="#{action.export}" 
+			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md" icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}"
 					       @click="$refs.exportTopic.show()"></q-btn>	
 					       		       		
-			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="lg" icon="file_upload" th:aria-label="#{action.import}" th:title="#{action.import}" 
+			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md" icon="file_download" th:aria-label="#{action.import}" th:title="#{action.import}"
 					       @click="$refs.importTopic.show()"></q-btn>	
 							
 					
 		</section>
 		
-		<section layout:fragment="page-content">
-			<vu:messages/>
-			<vu:table list="topicsIhm" componentId="topicsList" tr_@click.native="goTo(redirectDetail(props.row))" tr_style="cursor : pointer;"
-					  sortBy="title" :binary-state-sort="true" >
-					  <vu:include-data object="topicsIhm" field="smtId" />
-					  <vu:include-data object="topicsIhm" field="sinId" />
-					  <vu:include-data object="topicsIhm" field="ttoCd" />
-					  <vu:include-data object="topicsIhm" field="catLabel" />
-					  <vu:include-data object="topicsIhm" field="labels" />
-					<vu:include-data object="topicsIhm" field="topId" />
-					<vu:column field="isEnabled" th:label="#{topic.isEnabled}" style="width:100px;">
-						<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
-						<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>
-					</vu:column>
-					<vu:column field="title" th:label="#{topic.title}">
-						<a :href="redirectDetail(props.row)"
-						   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
-						   >
-						   <span style="height:100%" class="row items-center">{{props.row.title}}</span>
-						</a>
-					</vu:column>
-					<vu:column field="labels" th:label="#{topic.category}">
-					   <span style="height:100%" class="row items-center">{{props.row.catLabel}}</span>
-					</vu:column>
-					<vu:column field="labels" th:label="#{topic.labels}">
-					   <span style="height:100%" class="row items-center">{{props.row.labels}}</span>
-					</vu:column>
-					<vu:column field="type" th:label="#{topic.type}" sortable="true" />
-			</vu:table>
+		<section layout:fragment="content">
+
+			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+				<span class="text-primary" style="flex-grow: 2">[[#{layout.topics}]]</span>
+				<q-icon name="help_outlined" size="2rem"/>
+				<q-tooltip>[[#{topic.tooltip}]]</q-tooltip>
+			</div>
+
+			<div class="col-12">
+				<vu:include-data object="technicalTopicIhm" field="topId"/>
+				<vu:table list="technicalTopicIhm" th:title="#{topic.default.title}"  componentId="technicalTopicIhm" sortBy="ktoCd" :binary-state-sort="true" tr_style="cursor : pointer;"  tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|">
+					<vu:column field="title" />
+					<vu:column field="catLabel" />
+					<vu:column field="type" />
+					<vu:column field="code" />
+				</vu:table>
+			</div>
+
+			<div class="col-12">
 			
-			<q-dialog ref="newTopic" th:with="viewMode='edit'" >
-				<q-card>
-					<q-form method="post" action="createTopic">
-					<q-card-section>
-						<div class="text-h6" th:text="#{topic.title.popup}"></div>
-						
-					</q-card-section>
-					
-					<vu:include-data-primitive key="locale" />
-					<q-card-section style="width: 400px;">
-						<vu:include-data object="typeTopicList" field="'*'"/>
-						<q-select
+			<!-- Use for the redirections -->
+				<vu:include-data object="topicsIhm" field="ttoCd"/>
+				<vu:include-data object="topicsIhm" field="topId"/>
+				<vu:include-data object="topicsIhm" field="smtId"/>
+				<vu:include-data object="topicsIhm" field="sinId"/>
+				<vu:include-data object="criteria" field="catId"/>
+				<vu:include-data object="nonTechnicalCategoryList" field="topCatId"/>
+				<vu:include-data object="nonTechnicalCategoryList" field="label"/>
+				<div style="background-color:white;display:flex;justify-content:flex-end; align-items: center; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;"
+					 class="q-table__card">
+					<div class="text-h6 q-table__top" style="flex-grow: 2;" th:text="#{topic.other.title}"></div>
+					<q-select style="width: 250px;"
+						  	clearable
 							filled
 							map-options
 							emit-value
-							v-model="vueData.selectionList"
-							:options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
-							th:label="#{topic.type}"
+							v-model="vueData.criteria.catId"
+							:options="transformListForSelection('nonTechnicalCategoryList', 'topCatId', 'label')"
+							th:label="#{topic.selection.category}"
+						  	@input="filter();"
 							stack-label>
-						</q-select>
-					</q-card-section>
-					<input type="hidden" name="vContext[selectionList]" :value="vueData.selectionList" />
-					
-					<q-card-actions align="around">
-							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
-							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
-							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn> 
-					</q-card-actions>
-					</q-form>
-				</q-card>
-			</q-dialog>
+					</q-select>
+					<q-input style="margin-left:10px" borderless dense debounce="300" th:v-model="VertigoUi.componentStates.topics.pagination.search" th:placeholder="#{topic.selection.search}">
+						<template v-slot:append>
+							<q-icon name="search" />
+						</template>
+					</q-input>
+				</div>
+				<vu:search-table
+					data='filter()'
+					rowKey='topId'
+					componentId='topics'
+					sortBy='title'
+					tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|"
+					tr_style="cursor : pointer;">
+						<vu:column-sample list=topicsIhm field=title >
+							<a th::href="|'@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId|"
+							   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
+						   	>
+						   		<span style="height:100%" class="row items-center">{{props.row.title}}</span>
+							</a>
+						</vu:column-sample>
+						<vu:column-sample list=topicsIhm field=catLabel/>
+						<vu:column-sample list=topicsIhm field=labels />
+						<vu:column-sample list=topicsIhm field=type  />
+						<vu:column-sample list=topicsIhm field=code  />
+						<vu:column-sample list=topicsIhm field=isEnabled classes='col_STyYesNo'>
+							<q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
+							<q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>
+						</vu:column-sample>
+				</vu:search-table>
+			</div>
 			
 			<q-dialog ref="importTopic" th:with="viewMode='edit'" >
 				<q-card>
@@ -134,18 +162,20 @@
 									
 					<q-card-section style="width: 400px;">
 						<vu:include-data object="categoryList" field="'*'"/>
+						<vu:include-data object="selectionCatList" field="topCatId" modifiable="true" />
 						<q-select
 							clearable
 							filled
 							map-options
 							emit-value
-							v-model="vueData.selectionCatList"
+							multiple
+							v-model="vueData.selectionCatList.topCatId"
 							:options="transformListForSelection('categoryList', 'topCatId', 'label')"
-							th:label="category"
+							th:label="#{popup.export.category}"
 							stack-label>
 						</q-select>
 					</q-card-section>
-					<input type="hidden" name="vContext[selectionCatList]" :value="vueData.selectionCatList" />
+					<input v-for="id in vueData.selectionCatList.topCatId" type="hidden" name="vContext[selectionCatList][topCatId]" :value="id" />
 					<q-card-actions align="around">
 							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
 							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>

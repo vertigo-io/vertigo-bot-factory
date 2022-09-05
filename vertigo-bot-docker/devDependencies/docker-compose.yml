@@ -8,6 +8,13 @@ version: '3.5'
 
 
 services:
+  # apache:
+    # image: httpd:latest
+    # volumes:
+      # - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
+    # ports:
+      # - "127.0.0.1:8000:80"     
+      
   postgres:
     image: postgres:12.1
     environment:
@@ -16,8 +23,16 @@ services:
     volumes:
       - cf_postgres_data:/var/lib/postgresql/data/pgdata
       - ./initSql/:/docker-entrypoint-initdb.d/
+      - ./restore/:/restore/
     ports:
       - "127.0.0.1:5433:5432" 
+    networks:
+      - cb_factory
+
+  clamav:
+    image: clamav/clamav
+    ports:
+      - "127.0.0.1:3310:3310"
     networks:
       - cb_factory
 
@@ -54,16 +69,26 @@ services:
       - cb_factory
   
   influxdb:
-    image: influxdb:1.7.8
+    image: influxdb:2.1.1
     volumes:
-      - cf_influxdb_data:/var/lib/influxdb
+      #- cf_influxdb_data:/var/lib/influxdb
+      - cf_influxdb2_data:/var/lib/influxdb2
+      - cf_influxdb2_config:/etc/influxdb2
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      #DOCKER_INFLUXDB_INIT_MODE: upgrade
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: changeme
+      DOCKER_INFLUXDB_INIT_ORG: chatbot
+      DOCKER_INFLUXDB_INIT_BUCKET: admin
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: influxDevToken
     ports: 
       - "127.0.0.1:8086:8086"
     networks:
       - cb_factory
 
   chronograph: # IHM de consultation influxDB
-    image: chronograf:1.6.2-alpine
+    image: chronograf:1.9.4-alpine
     volumes:
       - cf_chronograph_data:/var/lib/chronograf
     ports: 
@@ -72,9 +97,11 @@ services:
       - cb_factory
 
   analytica:
-    image: vertigoio/analytics-server:0.6
+    image: vertigoio/vertigo-analytics-server:0.7
     environment:
-      - INFLUXDB_URL=http://influxdb:8086
+      INFLUXDB_URL: http://influxdb:8086
+      INFLUXDB_ORG: chatbot
+      INFLUXDB_TOKEN: influxDevToken
     depends_on:
       - influxdb
     ports:
@@ -86,8 +113,6 @@ services:
     image: rasa/rasa:2.4.0-full
     ports:
       - 5005:5005
-    volumes:
-      - ./:/app
     command:
       - run
       - --enable-api
@@ -99,6 +124,8 @@ volumes:
   cf_postgres_data:
   cf_postgresKC_data:
   cf_influxdb_data:
+  cf_influxdb2_data:
+  cf_influxdb2_config:
   cf_rabbitmq_data:
   cf_chronograph_data:
     

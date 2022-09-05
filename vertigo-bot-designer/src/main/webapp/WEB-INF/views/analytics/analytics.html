@@ -115,9 +115,9 @@
 					{
 						name : /*[[#{analytics.message.understanding}]]*/ '',
 						data : serieToApex("isFallback:sum", VertigoUi.vueData.requestsStats, {fill: 0})
-					} 
+					}
 				];
-		} 
+		}
 	};
 	
 	VUiExtensions.dataX.apexCharts.chartTopics = {
@@ -174,73 +174,12 @@
 			series : function() {
 				return [ {
 							name : /*[[#{analytics.message.useractions}]]*/ '',
-							data : serieToApex("name:count", VertigoUi.vueData.requestsStats, {fill: 0})
+							data : serieToApex("name:count", VertigoUi.vueData.userInteractionsStats, {fill: 0})
 						},
 					];
 			} 
 		};
-	
-	VUiExtensions.dataX.apexCharts.rating = {
-			options : {
-				chart : {
-					id : 'vuechart-example-4',
-					stacked : true,
-					zoom: {
-						enabled: false
-					},
-					toolbar: {
-						show: false
-					},
-				},
-				dataLabels: {
-	                enabled: false
-	            },
-				xaxis : {
-					type: 'datetime'
-				},
-				tooltip: {
-					x : {
-						formatter: timeFormatter
-					}
-				},
 
-				stroke: {
-					curve: 'smooth'
-				},
-				plotOptions: {
-					bar : {
-						rangeBarOverlap: false,
-					}
-					
-				}, 
-		        legend: {
-		            position: 'right',
-		            horizontalAlign: 'left',
-		            offsetY: 40
-		          },
-		         colors : ['#785dd0', '#ff4560','#feb019','#00e396', '#008ffb', ]
-			},
-			series : function() {
-				return [ {
-							name : /*[[#{analytics.message.oneStar}]]*/ '',
-							data : serieToApex("rating1:count", VertigoUi.vueData.ratingStats, {fill: 0})
-						},{
-							name : /*[[#{analytics.message.twoStar}]]*/ '',
-							data : serieToApex("rating2:count", VertigoUi.vueData.ratingStats, {fill: 0})
-						},{
-							name : /*[[#{analytics.message.threeStar}]]*/ '',
-							data : serieToApex("rating3:count", VertigoUi.vueData.ratingStats, {fill: 0})
-						},{
-							name : /*[[#{analytics.message.fourStar}]]*/ '',
-							data : serieToApex("rating4:count", VertigoUi.vueData.ratingStats, {fill: 0})
-						},{
-							name : /*[[#{analytics.message.fiveStar}]]*/ '',
-							data : serieToApex("rating5:count", VertigoUi.vueData.ratingStats, {fill: 0})
-						},
-					];
-			} 
-		};
-	
 	function serieToApex(serieName, dataIn, options) {
 		let ret = [];
 		dataIn.timedDataSeries.forEach(e => {
@@ -261,55 +200,36 @@
 			}
 		});
 		return ret;
-	};
+	}
 	// "statsRequests" : {"seriesNames":["name:count","isFallback:mean"],"timedDataSeries":[{"time":{"epochSecond":1574726400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574812800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574899200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1574985600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575072000,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575158400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575244800,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575331200,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575417600,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}},{"time":{"epochSecond":1575504000,"nano":0},"values":{"isFallback:mean":0.16666666666666666,"name:count":7.0}},{"time":{"epochSecond":1575590400,"nano":0},"values":{"isFallback:mean":null,"name:count":0.0}}]}
 
-	function getTopicTitleByTopicId(topId) {
-		if (topId == null) return null;
-		
-		let result = VertigoUi.vueData.topics.filter(t => t.topId === topId);
-		return result.length === 0 ? null : result[0].title;
-	}
-	
-	VUiExtensions.dataX.popinDetailLabel = '';
-	function displayIntentDetail(intent) {
-		VUiExtensions.dataX.popinDetailLabel = getTopicTitleByTopicId(intent.topId);
-		
-		VertigoUi.vueData.intentDetails = [];
-		VUiPage.componentStates.intentDetailList.loading = true;
-		
-		let params = VUiPage.vueDataParams(['criteria']);
-		params.append('intentRasa', intent.code)
-		VUiPage.httpPostAjax('_intentDetails', params, {
-				onSuccess: function() {
-					VUiPage.componentStates.intentDetailList.loading = false;
-				}
-			}
-		);
-		
-		VUiPage.$refs.intentDetailsDialog.show();		
-	}
-	
 	function closeDialog() {
 		VUiPage.$refs.popupFromDate.hide();
 		VUiPage.$refs.popupToDate.hide();
 	}
+
+	function redirectToBotStatPage(botId) {
+		window.location.href = '../bot/' +  botId + '/statistic/';
+	}
+
 	</script>
 </head>
 
 <body>
 	
-		<section layout:fragment="content">
+	<section layout:fragment="content">
 		<vu:include-data object="bots" field="botId" />
 		<vu:include-data object="bots" field="name" />
-		
-		<vu:include-data object="nodes" field="nodId" />
-		<vu:include-data object="nodes" field="name" />
-		
-		<vu:include-data object="criteria" field="'*'" />
-		
+
+		<vu:include-data object="criteria" field="botId" modifiable="true" />
+		<vu:include-data object="criteria" field="nodId" modifiable="true" />
+		<vu:include-data object="criteria" field="fromDate" modifiable="true" />
+		<vu:include-data object="criteria" field="toDate" modifiable="true" />
+		<vu:include-data object="criteria" field="timeOption" modifiable="true" />
+
 		<vu:include-data-primitive key="sessionStats" />
 		<vu:include-data-primitive key="requestsStats" />
+		<vu:include-data-primitive key="userInteractionsStats" />
 		
 		<vu:include-data-primitive key="locale" />
 		
@@ -321,7 +241,7 @@
 		
 			<div class="col-xl-4 col-md-6 col-xs-12"> 
 				<q-card>
-					<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.session}"></q-card-section>
+					<q-card-section class="text-h6 bg-secondary" th:text="#{analytics.session}"></q-card-section>
 					<q-card-section class="row justify-center items-center">
 						<apexchart width="100%" height="250" type="bar"
 							:options="dataX.apexCharts.chartSession.options"
@@ -329,10 +249,21 @@
 					</q-card-section>
 				</q-card>
 			</div>
-			
+
+			<div class="col-xl-4 col-md-6 col-xs-12">
+				<q-card>
+					<q-card-section class="text-h6 bg-secondary" th:text="#{analytics.nlu}"></q-card-section>
+					<q-card-section class="row justify-center items-center">
+						<apexchart width="100%" height="250" type="bar"
+								   :options="dataX.apexCharts.chartMessages.options"
+								   :series="dataX.apexCharts.chartMessages.series()"></apexchart>
+					</q-card-section>
+				</q-card>
+			</div>
+
 			<div class="col-xl-4 col-md-6 col-xs-12"> 
 				<q-card>
-					<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.message}"></q-card-section>
+					<q-card-section class="text-h6 bg-secondary" th:text="#{analytics.message}"></q-card-section>
 					<q-card-section class="row justify-center items-center">
 						<apexchart width="100%" height="250" type="bar"
 							:options="dataX.apexCharts.nluMessageChart.options"
@@ -340,81 +271,6 @@
 					</q-card-section>
 				</q-card>
 			</div>
-			
-			<div class="col-xl-4 col-md-6 col-xs-12"> 
-				<q-card>
-					<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.nlu}"></q-card-section>
-					<q-card-section class="row justify-center items-center">
-						<apexchart width="100%" height="250" type="bar"
-							:options="dataX.apexCharts.chartMessages.options"
-							:series="dataX.apexCharts.chartMessages.series()"></apexchart>
-					</q-card-section>
-				</q-card>
-			</div>
-
-			<template v-if="vueData.criteria.botId">
-			
-			<vu:include-data-primitive key="ratingStats" />
-				
-				<div class="col-12"> 
-					<q-card>
-						<q-card-section class="text-h6 bg-secondary text-white" th:text="#{analytics.rating}"></q-card-section>
-							<apexchart width="100%" height="250" type="bar"
-								:options="dataX.apexCharts.rating.options"
-								:series="dataX.apexCharts.rating.series()"></apexchart>
-					</q-card>
-				</div>
-				
-				<div class="col-12"> 
-					<vu:table componentId="messageList" list="unknownSentenses" th:title="#{analytics.message.understanding}" rowsPerPage="10" autoColClass >
-						<vu:column field="date"/>
-						<vu:column field="text"/>
-						<vu:column field="modelName"/>
-					</vu:table>
-				</div>
-				
-				<vu:include-data object="topics" field="topId" />
-				<vu:include-data object="topics" field="title" />
-				
-				<vu:include-data object="intentDetails" field="'*'" />
-				<vu:include-data object="topIntents" field="code"/>
-
-				<div class="col-12"> 
-					<vu:table componentId="intentList"  list="topIntents" th:title="#{analytics.intents.usage}"  rowsPerPage="10" sortBy="count" descending>
-							  
-						<vu:column field="intentRasa" label="Intent"/>
-						<vu:column field="count"/>
-						<vu:column field="intentRasa" label="detail" >
-							<q-btn class="fab-block" round color="primary" icon="search" th:aria-label="#{analytics.message}"  th:title="#{analytics.message}"
-							 	@click="displayIntentDetail(props.row)"></q-btn>
-						</vu:column>
-					</vu:table>
-					
-					<q-dialog ref="intentDetailsDialog">
-						<q-card style="width: 600px; height: 500px;">
-							<q-card-section>
-								<vu:table componentId="intentDetailList"
-										  list="intentDetails" title="|#{analytics.messages} '{{dataX.popinDetailLabel}}'|" rowsPerPage="10" autoColClass>
-									<vu:column field="date"/>
-									<vu:column field="text"/>
-								</vu:table>
-							</q-card-section>
-						</q-card>
-					</q-dialog>
-
-										
-				</div>
-				
-				<div class="col-12">
-					<vu:include-data object="topicsNotUsed" field="'*'" />
-					
-					<vu:table componentId="notUsedTopics"
-							  list="topicsNotUsed" th:title="#{analytics.message.notUsed}"  rowsPerPage="10" autoColClass>							  
-							<vu:column field="title"/>
-						</vu:column>
-					</vu:table>
-				</div>
-			</template>
 		</div>
 		
 		
@@ -431,90 +287,33 @@
 					 v-model="vueData.criteria.botId"
 			         :options='transformListForSelection("bots", "botId", "name")'
 			         th:label="#{analytics.selection.chatbot}"
-			         @input="delete vueData.criteria.nodId; httpPostAjax('_updateStats', vueDataParams(['criteria']));"
+			         @input="redirectToBotStatPage(vueData.criteria.botId)"
 		         ></q-select>
-		         
-		         <q-space></q-space>
-		        
-		         <q-select
-		         	 v-if="vueData.criteria.botId && vueData.nodes.length > 0"
-					 style="width: 250px; background-color: white"
-					 dense
-					 clearable
-			         map-options
-			         emit-value
-					 v-model="vueData.criteria.nodId"
-			         :options='transformListForSelection("nodes", "nodId", "name")'
-			         th:label="#{analytics.selection.node}"
-			         @input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
-		         ></q-select>
-		         
-		          <q-space></q-space>
-		         
-		        <q-input 
-					v-bind:value="decodeDate('criteria', 'fromDate', 'DD/MM/YYYY')" 
-					dense clearable 
-					class="q-pa-none"
-					style="width: 200px;background-color: white"
-					@change="function (event) { encodeDate('criteria','fromDate', event.target.value, 'DD/MM/YYYY') }"
-					th:label="#{analytics.date.from}"
-					:error="hasFieldsError('criteria', 'fromDate')"
-					:error-message="getErrorMessage('criteria', 'fromDate')" 
-					@clear="vueData.criteria.fromDate=null;httpPostAjax('_updateStats', vueDataParams(['criteria']));"
-				>
-					<template v-slot:prepend>
-						<q-icon name="event" class="cursor-pointer">
-							<q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupFromDate">
-					             <q-date 
-					             	v-model="vueData.criteria.fromDate"
-					             	landscape
-					             	mask="DD/MM/YYYY"
-					             	@input="closeDialog();httpPostAjax('_updateStats', vueDataParams(['criteria']));"></q-date> 
-				       		</q-popup-proxy>
-				       	</q-icon>
-			       	</template>
-			    </q-input>
-				<input type="hidden" name="vContext[criteria][fromDate]" v-bind:value="vueData.criteria.fromDate" />
-		        
+
 		        <q-space></q-space>
-		        
-		        <q-input 
-					v-bind:value="decodeDate('criteria', 'toDate', 'DD/MM/YYYY')" 
-					dense clearable 
-					class="q-pa-none"
-					style="width: 200px;background-color: white"
-					@change="function (event) { encodeDate('criteria','toDate', event.target.value, 'DD/MM/YYYY') }"
-					th:label="#{analytics.date.to}"
-					:error="hasFieldsError('criteria', 'toDate')"
-					:error-message="getErrorMessage('criteria', 'toDate')" 
-					@clear="vueData.criteria.toDate=null;httpPostAjax('_updateStats', vueDataParams(['criteria']));"
-				>
-					<template v-slot:prepend>
-						<q-icon name="event" class="cursor-pointer">
-							<q-popup-proxy :breakpoint="600" transition-show="scale" transition-hide="scale" ref="popupToDate">
-					             <q-date 
-					             	v-model="vueData.criteria.toDate"
-					             	landscape
-					             	mask="DD/MM/YYYY"
-					             	@input="closeDialog();httpPostAjax('_updateStats', vueDataParams(['criteria']));"></q-date> 
-				       		</q-popup-proxy>
-				       	</q-icon>
-			       	</template>
-			    </q-input>
-				<input type="hidden" name="vContext[criteria][toDate]" v-bind:value="vueData.criteria.toDate" />
-		     
+
+				<vu:date-edit object="criteria" field="fromDate" label="#{analytics.date.from}"
+					 dense clearable @clear="vueData.criteria.fromDate=null"
+					 class="q-pa-none" style="width:210px; background-color: white; margin-right: 10px"/>
+
+				<q-space></q-space>
+
+				<vu:date-edit object="criteria" field="toDate" label="#{analytics.date.to}"
+					 dense clearable @clear="vueData.criteria.toDate=null"
+					 class="q-pa-none" style="width:210px; background-color: white; margin-right: 10px"/>
+
 		  
 				<q-space></q-space>
 				<vu:include-data object="timeOptions" field="'*'" />
 						
 				<q-btn-toggle
+					text-color="dark"
 					v-model="vueData.criteria.timeOption"
 					toggle-color="primary"
 					:options='transformListForSelection("timeOptions", "value", "label")'
-					@input="httpPostAjax('_updateStats', vueDataParams(['criteria']))"
 				></q-btn-toggle>
 				<q-space></q-space>
-				<q-btn  class="fab-block" round color="primary" size="lg" icon="file_download" th:aria-label="export" th:title="export" 
+				<q-btn  class="fab-block" round color="primary" size="md" icon="file_upload" th:aria-label="export" th:title="export"
 					       @click="$refs.exportStatistic.show()"></q-btn>	
 			</q-toolbar>
 			
@@ -525,36 +324,45 @@
 		
 		
 		<q-dialog ref="exportStatistic" th:with="viewMode='edit'" >
-				<q-card>
-					<q-form method="post" action="_exportStatisticFile">
-					<q-card-section>
-						<div class="text-h6" th:text="#{popup.export.title}"></div>						
-					</q-card-section>
-					<q-card-section style="width: 400px;">
-						<vu:include-data object="typeExportAnalyticsList" field="'*'"/>
-						<q-select
-							clearable
-							filled
-							map-options
-							emit-value
-							v-model="vueData.selectTypeExportAnalytics"
-							:options="vueData.locale == 'fr_FR' ? transformListForSelection('typeExportAnalyticsList', 'teaCd', 'labelFr') : transformListForSelection('typeExportAnalyticsList', 'teaCd', 'label')"
-							th:label="Type"
-							stack-label>
-						</q-select>
-					</q-card-section>
-					<input type="hidden" name="vContext[selectTypeExportAnalytics]" :value="vueData.selectTypeExportAnalytics" />				
-					
-					<q-card-actions align="around">
-							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
-							<q-btn flat th:label="#{popup.export.cancel}" color="primary" v-close-popup ></q-btn>
-							<q-btn type="submit" th:title="#{popup.export.export}" th:label="#{popup.export.export}" th:aria-label="#{popup.export.export}" color="primary" v-close-popup></q-btn> 
-					</q-card-actions>
-					</q-form>
-				</q-card>
-			</q-dialog>
-		
-		</section>
+			<q-card>
+				<q-form method="post" action="_exportStatisticFile">
+				<q-card-section>
+					<div class="text-h6" th:text="#{popup.export.title}"></div>
+				</q-card-section>
+				<q-card-section style="width: 400px;">
+					<vu:include-data object="selectTypeExportAnalytics" field="teaCd" modifiable="true"/>
+					<vu:include-data object="typeExportAnalyticsList" field="'*'"/>
+					<q-select
+						clearable
+						filled
+						map-options
+						emit-value
+						v-model="vueData.selectTypeExportAnalytics.teaCd"
+						:options="vueData.locale == 'fr_FR' ? transformListForSelection('typeExportAnalyticsList', 'teaCd', 'labelFr') : transformListForSelection('typeExportAnalyticsList', 'teaCd', 'label')"
+						th:label="Type"
+						stack-label>
+					</q-select>
+				</q-card-section>
+				<input type="hidden" name="vContext[selectTypeExportAnalytics][teaCd]" :value="vueData.selectTypeExportAnalytics.teaCd" />
+
+				<q-card-actions align="around">
+						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<q-btn flat th:label="#{popup.export.cancel}" color="primary" v-close-popup ></q-btn>
+						<q-btn type="submit" th:title="#{popup.export.export}" th:label="#{popup.export.export}" th:aria-label="#{popup.export.export}" color="primary" v-close-popup></q-btn>
+				</q-card-actions>
+				</q-form>
+			</q-card>
+		</q-dialog>
+
+	</section>
+
+	<section layout:fragment="javascript-footer" >
+		<script type="text/javascript">
+			VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
+				VUiPage.httpPostAjax('_updateStats', VUiPage.vueDataParams(['criteria']));
+			}, { deep: true });
+		</script>
+	</section>
 		
 </body>
 </html>

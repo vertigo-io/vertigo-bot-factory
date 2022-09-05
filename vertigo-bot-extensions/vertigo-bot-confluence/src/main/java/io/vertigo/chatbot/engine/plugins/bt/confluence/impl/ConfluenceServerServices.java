@@ -1,8 +1,18 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence.impl;
 
-import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.API_URL;
-import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.SEARCH_URL;
-import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.SPACE_URL;
+import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceSearchHelper;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.JsonHelper;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResponse;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResult;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpace;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpaceResponse;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSearchObject;
+import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
+import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.node.component.Component;
 
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
@@ -13,49 +23,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper;
-import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceSearchHelper;
-import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.JsonHelper;
-import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResponse;
-import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResult;
-import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpace;
-import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpaceResponse;
-import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSearchObject;
-import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.node.Node;
-import io.vertigo.core.node.component.Activeable;
-import io.vertigo.core.node.component.Component;
-import io.vertigo.core.param.ParamManager;
+import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.API_URL;
+import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.SEARCH_URL;
+import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.SPACE_URL;
 
 @Transactional
-public class ConfluenceServerServices implements IConfluenceService, Component, Activeable {
-
-	private ParamManager paramManager;
+public class ConfluenceServerServices implements IConfluenceService, Component {
 
 	private String baseUrl;
 	private String user;
 	private String password;
 	private String limit;
 
-	@Override
-	public void start() {
-		paramManager = Node.getNode().getComponentSpace().resolve(ParamManager.class);
-
-		baseUrl = paramManager.getParam("CONFLUENCE_URL").getValueAsString();
-		user = paramManager.getParam("CONFLUENCE_USER").getValueAsString();
-		password = paramManager.getParam("CONFLUENCE_PWD").getValueAsString();
-		limit = paramManager.getParam("CONFLUENCE_LIMIT").getValueAsString();
-
-	}
-
-	@Override
-	public void stop() {
-		//nothing
+	public void refreshConfig(ExecutorGlobalConfig config) throws VSystemException {
+		ConfluenceSettingExport confluenceSettingExport = config.getBot().getConfluenceSetting();
+		if (confluenceSettingExport == null) {
+			throw new VSystemException("Confluence setting must be set for confluence plugin to work...");
+		} else {
+			baseUrl = confluenceSettingExport.getUrl();
+			user = confluenceSettingExport.getLogin();
+			password = confluenceSettingExport.getPassword();
+			limit = confluenceSettingExport.getNumberOfResults().toString();
+		}
 	}
 
 	@Override
 	public ConfluenceSearchResponse searchOnConfluence(final Map<String, String> params, final Map<String, String> headers, final ConfluenceSearchObject filter) {
-		final String searchArgs = ConfluenceHttpRequestHelper.createSearchArgs(filter);
+		final String searchArgs = ConfluenceHttpRequestHelper.createSearchArgs(filter, true);
 		params.put("cql", searchArgs);
 		params.put("limit", limit);
 		final HttpResponse<String> response = sendRequestToConfluence(params, headers, SEARCH_URL, 200, BodyHandlers.ofString());
@@ -107,7 +101,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component, 
 		final var builder = new StringBuilder();
 		builder.append("<a href=\"");
 		builder.append(url);
-		builder.append("\">");
+		builder.append("\" target=\"_blank\" rel=\"noopener noreferrer\">");
 		builder.append(name);
 		builder.append("</a>");
 		return builder.toString();

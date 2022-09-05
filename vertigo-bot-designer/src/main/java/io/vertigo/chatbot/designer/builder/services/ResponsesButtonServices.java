@@ -1,11 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.ResponseButtonDAO;
@@ -22,6 +16,14 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
 
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
+
 @Transactional
 @Secured("BotUser")
 public class ResponsesButtonServices implements Component {
@@ -32,13 +34,13 @@ public class ResponsesButtonServices implements Component {
 	@Inject
 	private ResponsesButtonPAO responsesButtonPAO;
 
-	public DtList<ResponseButton> getResponsesButtonList(@SecuredOperation("botContributor") final Chatbot bot, final SmallTalk smallTalk) {
+	public DtList<ResponseButton> getResponsesButtonList(@SecuredOperation("botVisitor") final Chatbot bot, final SmallTalk smallTalk) {
 		Assertion.check()
 				.isNotNull(smallTalk)
 				.isNotNull(smallTalk.getSmtId());
 		return responseButtonDAO.findAll(
 				Criterions.isEqualTo(ResponseButtonFields.smtId, smallTalk.getSmtId()),
-				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
 	public DtList<ResponseButton> getButtonsBySmalltalk(@SecuredOperation("botVisitor") final Chatbot bot, final Long smtId) {
@@ -48,7 +50,7 @@ public class ResponsesButtonServices implements Component {
 
 		return responseButtonDAO.findAll(
 				Criterions.isEqualTo(ResponseButtonFields.smtId, smtId),
-				DtListState.of(1000, 0, ResponseButtonFields.btnId.name(), false));
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE, 0, ResponseButtonFields.btnId.name(), false));
 	}
 
 	public void removeAllButtonsBySmtId(@SecuredOperation("botContributor") final Chatbot bot, final SmallTalk smt) {

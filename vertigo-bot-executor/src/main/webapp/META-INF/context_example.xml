@@ -2,13 +2,20 @@
 <Context debug="0" reloadable="false" allowCasualMultipartParsing="true">
 	<Parameter name="boot.ANALYTICA_HOST" value="localhost" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="4562" override="false"/>
-	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot-test" override="false"/>
+	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot-test/autogen" override="false"/>
+
+	<Parameter name="boot.MAIL_NAME" value="KleeMail" override="false"/>
+	<Parameter name="boot.MAIL_PROTOCOL" value="smtp" override="false"/>
+	<Parameter name="boot.MAIL_HOST" value="localdelivery.klee.lan.net" override="false"/>
+	<Parameter name="boot.MAIL_PORT" value="25" override="false"/>
+	<Parameter name="FILE_STORE_PATH" value="C:\executor/attachments/" override="false"/>
 	
 	<!-- Env variable in production -->
 	<Parameter name="DESIGNER_URL" value="http://localhost:8080/vertigo-bot-designer" override="false"/>
 	<Parameter name="API_KEY" value="MyNodeApiKey!" override="false"/>
 	<Parameter name="CONFIG_DATA_FILE" value="${user.home}/botExecutor/config.json" override="false"/>
 	<Parameter name="RASA_URL" value="http://localhost:5005" override="false"/>
+	<Parameter name="KEYCLOAK_CONFIG" value="keycloak.json" override="false"/>
 	
 	<!-- Use for confluence plugin -->
 	<Parameter name="CONFLUENCE_USER" value="" override="false"/>
@@ -16,11 +23,25 @@
 	<Parameter name="CONFLUENCE_URL" value="" override="false"/>
 	<Parameter name="CONFLUENCE_LIMIT" value="3" override="false"/>
 	
-	<!--  Use for confluence plugin -->
-   <Resources className="org.apache.catalina.webresources.StandardRoot">
-        <PostResources base="C:\Users\vbaillet\Documents\Projets\chatbot\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-confluence\target\classes"
-                 className="org.apache.catalina.webresources.DirResourceSet"
-                 webAppMount="/WEB-INF/classes"/>
-    </Resources>
-	<!-- <Parameter name="HTTP_CORS" value="*" override="false"/> -->
+	<!-- Use for jira plugin -->
+	<Parameter name="JIRA_USER" value="" override="false"/>
+	<Parameter name="JIRA_PWD" value="" override="false"/>
+	<Parameter name="JIRA_URL" value="" override="false"/>
+	<Parameter name="JIRA_PROJECT" value="" override="false"/>
+
+	<!-- Env for clamav antivirus -->
+	<Parameter name="CLAMAV_HOST" value="localhost" override="false"/>
+	<Parameter name="CLAMAV_PORT" value="3310" override="false"/>
+
+
+	<Resources className="org.apache.catalina.webresources.StandardRoot">
+		<!--  Use for confluence plugin -->
+		<PostResources base="C:\Users\cmarechal\projects\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-confluence\target\vertigo-bot-confluence-0.9.0-SNAPSHOT-jar-with-dependencies.jar"
+			className="org.apache.catalina.webresources.FileResourceSet"
+			webAppMount="/WEB-INF/lib/vertigo-bot-confluence-0.9.0-SNAPSHOT-jar-with-dependencies.jar"/>
+		<!--  Use for jira plugin -->
+		<PostResources base="C:\Users\cmarechal\projects\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-jira\target\vertigo-bot-jira-0.9.0-SNAPSHOT-jar-with-dependencies.jar"
+			className="org.apache.catalina.webresources.FileResourceSet"
+			webAppMount="/WEB-INF/lib/vertigo-bot-jira-0.9.0-SNAPSHOT-jar-with-dependencies.jar"/>
+	</Resources>
 </Context>

@@ -1,0 +1,54 @@
+package io.vertigo.chatbot.designer.builder.dictionaryEntity
+
+create Task TkGetDictionaryEntityBySynonymLabelAndBotId {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				SELECT 	ent.*
+				from dictionary_entity ent
+				join synonym syn on syn.dic_ent_id = ent.dic_ent_id
+				where ent.bot_id = #botId#
+				and syn.label = #label#
+				LIMIT 1
+             "
+	in botId  			            {domain : DoId         		        cardinality : "1"  }
+	in label			            {domain : DoLabel			        cardinality : "1"  }
+	out dictionaryEntity			{domain : DoDtDictionaryEntity		cardinality : "?"  }
+}
+
+
+create Task TkGetDictionaryEntityWrapperByBotId {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				select
+				ent.dic_ent_id as dic_ent_id,
+             	ent.label as dictionary_entity_label,
+             	STRING_AGG (syn.label, #separator#) as synonyms_list
+ 				from dictionary_entity ent
+ 				left join synonym syn on syn.dic_ent_id = ent.dic_ent_id
+ 			
+ 				where ent.bot_id = #botId#
+ 				group by ent.dic_ent_id
+ 			
+ 			"
+	in botId				    {domain : DoId,							            cardinality:"1"}
+    in separator				{domain : DoLabel,							        cardinality:"1"}
+	out res 				    {domain : DoDtDictionaryEntityWrapper		        cardinality:"*"}
+}
+
+
+create Task TkGetTuplesSynonym {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+				SELECT word.label as word, syn.label as synonym_label
+				from dictionary_entity ent
+				join synonym word on word.dic_ent_id = ent.dic_ent_id
+				join synonym syn on syn.dic_ent_id = ent.dic_ent_id
+				where 1=1
+				and syn.syn_id != word.syn_id
+				and word.label in (#words.rownum#)
+				and ent.bot_id = #botId#
+             "
+	in botId  			{domain : DoId         				cardinality : "1"  }
+	in words			{domain : DoLabel					cardinality : "*"  }
+	out tupleSynonymIhm	{domain : DoDtTupleSynonymIhm		cardinality : "*"  } 
+}

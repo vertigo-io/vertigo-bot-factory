@@ -1,0 +1,61 @@
+package io.vertigo.chatbot.commons.domain
+
+create DtDefinition DtUnknownSentenceDetail {
+    id unkSeId 		    {domain: DoId		            label: "Unknown sentence id"    }
+	field date 			{domain: DoInstant 				label: "Date" 					}
+	field text			{domain: DoText 				label: "User text" 				}
+	field modelName		{domain: DoLabel 				label: "Model Name" 			}
+}
+
+create DtDefinition DtUnknownSentenceToUpdateIhm {
+    field unkSeId		{domain: DoId 				label: "Unknown sentence Id" 	}
+    field text			{domain: DoLabel 				label: "User text" 				}
+}
+
+
+create DtDefinition DtUnknownSentenceStatus {
+	stereotype : "StaticMasterData"
+	id    strCd 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Label" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "LabelFr" 		cardinality : "1"	}
+	values : `{
+        "TO_TREAT" : {
+            "strCd" : "TO_TREAT",
+            "label" : "To treat",
+            "labelFr" : "A traiter"
+        },
+        "TREATED" : {
+            "strCd" : "TREATED",
+            "label" : "Treated",
+            "labelFr" : "Traité"
+        },
+        "REJECTED" : {
+            "strCd" : "REJECTED",
+            "label" : "Rejected",
+            "labelFr" : "Rejetée"
+        }
+     }`
+    sortField : "strCd"
+ 	displayField : "label"
+}
+
+create Association AUnknownSentenceUnknownSentenceStatus{
+	fkFieldName : "status"
+
+ 	dtDefinitionA : DtUnknownSentenceDetail
+	type : "*>1"
+	dtDefinitionB : DtUnknownSentenceStatus
+
+	labelB : "Status"
+}
+
+create Association AUnknownSentenceChatbot{
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtUnknownSentenceDetail
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Bot"
+}
+

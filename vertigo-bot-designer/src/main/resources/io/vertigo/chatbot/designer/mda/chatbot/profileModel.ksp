@@ -1,0 +1,83 @@
+package io.vertigo.chatbot.designer.domain.admin
+
+create DtDefinition DtChatbotProfiles {
+	stereotype : "StaticMasterData"
+	id    chpCd 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Title" 		cardinality : "1"}
+	field sortOrder 	{domain: DoNumber 	label: "Order" 		cardinality : "1"}
+	values : `{
+        "ADMINISTRATEUR" : {
+            "chpCd" : "ADMINISTRATEUR",
+            "label" : "Administrateur Fonctionnel",
+            "sortOrder" : 1
+        },
+        "CONTRIBUTEUR" : {
+            "chpCd" : "CONTRIBUTEUR",
+            "label" : "Contributeur",
+            "sortOrder" : 2
+        },
+        "VISITEUR" : {
+            "chpCd" : "VISITEUR",
+            "label" : "Visiteur",
+            "sortOrder" : 3
+        }
+
+    }`
+    sortField : "sortOrder"
+ 	displayField : "label"
+}
+
+
+
+create DtDefinition DtProfilPerChatbot {
+	id chpId 		{domain: DoId 					label: "ID" 		}
+}
+
+
+create Association APRrofilChatboToChatbot {
+	fkFieldName : "botId" 
+    
+ 	dtDefinitionA : DtProfilPerChatbot
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+	
+	labelB : "Chatbot"
+}
+
+create Association APRrofilChatbotToPerson {
+	fkFieldName : "perId" 
+    
+ 	dtDefinitionA : DtProfilPerChatbot
+	type : "*>1"
+	dtDefinitionB : DtPerson
+	
+	labelB : "Person"
+}
+
+create Association APRrofilChatbotToCodeProfil {
+	fkFieldName : "chpCd" 
+    
+ 	dtDefinitionA : DtProfilPerChatbot
+	type : "*>1"
+	dtDefinitionB : DtChatbotProfiles
+	
+	labelB : "Profil pour un chatbot"
+}
+
+
+/*************************/
+/* ******** IHM ******** */
+/*************************/
+
+create DtDefinition DtPersonChatbotProfil {
+	field botId 		{domain: DoId 					label: "Chatbot selection" 			}
+	field perId 		{domain: DoId 					label: "Person id" 			        }
+	field chpId 		{domain: DoId 					label: "ProfilPerPerson id"	 		}
+	field name			{domain: DoLabel 				label: "Person name" 				}
+	field profilLabel	{domain: DoLabel				label: "Profil label" 			    }
+}
+
+create DtDefinition DtSelectProfilChatbotPerson {
+	field perId 		{domain: DoId 						label: "Person id"	 		cardinality:"*"}
+	field prfId 		{domain: DoCode 					label: "Profil cd"	 		cardinality:"1"}
+}

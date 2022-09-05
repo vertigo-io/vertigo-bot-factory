@@ -1,0 +1,28 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Page 2</title>
+    <script src="chatbot/chatbot.js"></script>
+    <script src="chatbot/shepherd.min.js"></script>
+    <link rel="stylesheet" href="chatbot/shepherd.css"/>
+    <link href="chatbot/chatbot.css" rel="stylesheet">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Chatbot.init({
+                runnerUrl: "RUNNER_URL",
+                botIHMBaseUrl: "BOT_IHM_BASE_URL",
+                botName: "Chatbot demo",
+                useRating: false,
+                avatarUrl: '/chatbot/images/avatar/avatar.png'
+            })
+        });
+    </script>
+</head>
+<body style="background-image: url('background/background-2.png')">
+    <a href="index.html">Lien vers accueil</a>
+    <input type="hidden" id="role" name="role" value="visitor">
+    <input type="hidden" id="permission" name="permission" value="view">
+    <script src="RUNNER_URL/api/chatbot/getWelcomeToursFile"></script>
+</body>
+
+</html>

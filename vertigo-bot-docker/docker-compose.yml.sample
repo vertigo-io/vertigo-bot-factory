@@ -21,21 +21,34 @@ services:
       - cb_factory
     restart: unless-stopped
   
+
   influxdb:
-    image: influxdb:1.7.8
+    image: influxdb:2.1.1
     volumes:
       - cf_influxdb_data:/var/lib/influxdb
-      - ./backup/influxdb:/opt/backup
+      - cf_influxdb2_data:/var/lib/influxdb2
+      - cf_influxdb2_config:/etc/influxdb2
+	  - ./backup/influxdb:/opt/backup
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: upgrade
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: changeme
+      DOCKER_INFLUXDB_INIT_ORG: chatbot
+      DOCKER_INFLUXDB_INIT_BUCKET: admin
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: influxDevToken
     ports: 
       - "8086:8086"
     networks:
       - cb_factory
     restart: unless-stopped
 
+
   analytica:
-    image: vertigoio/analytics-server:0.6
+    image: vertigoio/vertigo-analytics-server:0.7
     environment:
-      - INFLUXDB_URL=http://influxdb:8086
+      INFLUXDB_URL: http://influxdb:8086
+      INFLUXDB_ORG: chatbot
+      INFLUXDB_TOKEN: influxDevToken
     depends_on:
       - influxdb
 #    ports:
@@ -54,6 +67,9 @@ services:
       - INFLUXDB_URL=http://influxdb:8086
       - ANALYTICA_DBNAME=chatbot
       - DEPLOY_PATH=designer
+	  - INFLUXDB_TOKEN=influxDevToken
+    volumes:
+      - ./keycloak.json:/opt/keycloak/keycloak.json:ro
     depends_on:
       - postgres
       - influxdb
@@ -106,6 +122,8 @@ services:
 volumes:
   cf_postgres_data:
   cf_influxdb_data:
+  cf_influxdb2_data:
+  cf_influxdb2_config:
   cf_runner_1_data:
   cf_runner_2_data:
     

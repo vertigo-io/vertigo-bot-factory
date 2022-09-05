@@ -17,19 +17,47 @@
  */
 package io.vertigo.chatbot.designer.commons.services;
 
-import javax.inject.Inject;
-
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.exceptions.CsvValidationException;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
+import io.vertigo.chatbot.commons.AttachmentInfo;
 import io.vertigo.chatbot.commons.dao.MediaFileInfoDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.MediaFileInfo;
+import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.lang.VUserException;
+import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datastore.filestore.FileStoreManager;
 import io.vertigo.datastore.filestore.definitions.FileInfoDefinition;
 import io.vertigo.datastore.filestore.model.FileInfo;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.datastore.filestore.util.VFileUtil;
+import io.vertigo.datastore.impl.filestore.model.StreamFile;
+
+import javax.inject.Inject;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.time.Instant;
+import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static io.vertigo.chatbot.designer.utils.StringUtils.lineError;
 
 @Transactional
 public class FileServices implements Component {
@@ -40,10 +68,25 @@ public class FileServices implements Component {
 	@Inject
 	private MediaFileInfoDAO mediaFileInfoDAO;
 
+	@Inject
+	protected LocaleManager localeManager;
+
 	public FileInfoURI saveFileTmp(final VFile file) {
-		//apply security check
 		final FileInfo fileInfo = fileStoreManager.create(new FileInfoTmp(file));
 		return fileInfo.getURI();
+	}
+
+	public FileInfoURI saveAttachment(final VFile file) {
+		final FileInfo fileInfo = fileStoreManager.create(new AttachmentInfo(file));
+		return fileInfo.getURI();
+	}
+
+	public VFile getAttachment(final Long attFiId) {
+		return fileStoreManager.read(toAttachmentFileInfoUri(attFiId)).getVFile();
+	}
+
+	public void deleteAttachment(final Long attFiId) {
+		fileStoreManager.delete(toAttachmentFileInfoUri(attFiId));
 	}
 
 	public VFile getFileTmp(final FileInfoURI fileTmpUri) {
@@ -56,6 +99,10 @@ public class FileServices implements Component {
 		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoTmp.class);
 		Assertion.check().isTrue(tmpFileInfoDefinition.equals(fileTmpUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
 		fileStoreManager.delete(fileTmpUri);
+	}
+
+	private static FileInfoURI toAttachmentFileInfoUri(final Long attFiId) {
+		return new FileInfoURI(FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class), attFiId);
 	}
 
 	public FileInfoURI toStdFileInfoUri(final Long fileId) {
@@ -92,4 +139,77 @@ public class FileServices implements Component {
 		mediaFileInfoDAO.delete(filId);
 	}
 
+	public boolean isCSVFile(final VFile file) {
+		return file.getFileName().toLowerCase().endsWith(".csv");
+	}
+
+	public <G> List<G> readCsvFile(final Class<G> clazz, final VFile file, final String[] columns) {
+		if (!isCSVFile(file)) {
+			throw new VUserException(ExportMultilingualResources.ERR_CSV_FILE);
+		}
+		try (final CSVReader csvReader = new CSVReaderBuilder(new FileReader(VFileUtil.obtainReadOnlyPath(file).toString(), Charset.forName("cp1252")))
+				.withErrorLocale(localeManager.getCurrentLocale())
+				.withCSVParser(new CSVParserBuilder().withSeparator(';').build()).build()) {
+
+			final String[] header = csvReader.readNext();
+			if (header.length != columns.length) {
+				throw new VUserException(ExportMultilingualResources.ERR_SIZE_FILE, columns.length);
+			}
+			final CsvToBean<G> csvToBean = new CsvToBean<>();
+			final ColumnPositionMappingStrategy<G> mappingStrategy = new ColumnPositionMappingStrategy<>();
+			mappingStrategy.setType(clazz);
+			mappingStrategy.setColumnMapping(columns);
+			csvToBean.setMappingStrategy(mappingStrategy);
+			csvToBean.setCsvReader(csvReader);
+			csvToBean.setThrowExceptions(false);
+			final List<G> list = csvToBean.parse();
+			if (!csvToBean.getCapturedExceptions().isEmpty()) {
+				final String errorMessage = csvToBean.getCapturedExceptions().stream().map(exception -> lineError(exception.getLine()[0], exception.getMessage())).collect(Collectors.joining(","));
+				throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, errorMessage);
+			}
+			return list;
+
+		} catch (final IOException | RuntimeException e) {
+			throw new VUserException(ExportMultilingualResources.ERR_UNEXPECTED, e.getMessage());
+		} catch (final CsvValidationException csvValidationException) {
+			throw new VUserException(ExportMultilingualResources.ERR_MAPPING_FILE, csvValidationException.getMessage());
+		}
+	}
+
+	public String getFileAsBase64(final Long id) {
+		try (final InputStream fileInputStream = getMediaFileInfoById(id).getFileData().createInputStream()) {
+			return Base64.getEncoder().encodeToString(fileInputStream.readAllBytes());
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private MediaFileInfo getMediaFileInfoById(final Long id) {
+		return mediaFileInfoDAO.get(id);
+	}
+
+	public VFile zipMultipleFiles(final List<VFile> files, final String zipFileName) {
+		try(final ByteArrayOutputStream fos = new ByteArrayOutputStream()) {
+			final ZipOutputStream zipOut = new ZipOutputStream(fos);
+			files.forEach(file -> {
+				try(final InputStream fis = file.createInputStream()) {
+					final byte[] bytes = fis.readAllBytes();
+					final ZipEntry zipEntry = new ZipEntry(file.getFileName());
+					zipEntry.setSize(bytes.length);
+					zipOut.putNextEntry(zipEntry);
+					zipOut.write(bytes);
+					zipOut.closeEntry();
+				} catch (final IOException e) {
+					throw new VSystemException(e, "Couldn't zip file with name {0}", file.getFileName());
+				}
+			});
+			zipOut.close();
+			final byte[] bytes = fos.toByteArray();
+			return StreamFile.of(zipFileName + ".zip", "application/zip", Instant.now(), bytes.length,
+					() -> new ByteArrayInputStream(bytes));
+		} catch (final IOException e) {
+			throw new VSystemException(e, "Couldn't build zip file");
+		}
+	}
 }

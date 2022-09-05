@@ -1,14 +1,5 @@
 package io.vertigo.chatbot.engine;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.bb.BlackBoard;
@@ -28,6 +19,15 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.lang.VSystemException;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * Bot engine that handle user interactions through a Vertigo BlackBoard.
  * <br>
@@ -46,6 +46,8 @@ public class BotEngine {
 	public static final String START_TOPIC_NAME = "!START";
 	public static final String END_TOPIC_NAME = "!END";
 	public static final String FALLBACK_TOPIC_NAME = "!FALLBACK";
+	public static final String IDLE_TOPIC_NAME = "!IDLE";
+	public static final String RATING_TOPIC_NAME = "!RATING";
 	public static final String ANALYTICS_KEY = "analytics";
 	public static final String CONTEXT_KEY = "context";
 
@@ -62,6 +64,7 @@ public class BotEngine {
 
 	public static final BBKey BOT_RESPONSE_KEY = BBKey.of(BOT_OUT_PATH, "/responses");
 	public static final BBKey BOT_CHOICES_KEY = BBKey.of(BOT_OUT_PATH, "/choices");
+	public static final BBKey BOT_CHOICES_NUMBER_KEY = BBKey.of(BOT_OUT_PATH, "/choicesnumber");
 	public static final BBKey BOT_OUT_METADATA_PATH = BBKey.of(BOT_OUT_PATH, "/metadata");
 
 	public static final BBKey BOT_TOPIC_KEY = BBKey.of(BOT_STATUS_PATH, "/topic");
@@ -80,7 +83,8 @@ public class BotEngine {
 				.isNotNull(topicDefinitionMap)
 				.isNotNull(behaviorTreeManager)
 				.isNotNull(nluManager)
-				.isTrue(topicDefinitionMap.containsKey(START_TOPIC_NAME), "You need to provide a starting topic with key BotEngine.START_TOPIC_NAME");
+				.isTrue(topicDefinitionMap.containsKey(START_TOPIC_NAME), "You need to provide a starting topic with key BotEngine.START_TOPIC_NAME")
+				.isTrue(topicDefinitionMap.containsKey(IDLE_TOPIC_NAME), "You need to provide an idle topic with key BotEngine.IDLE_TOPIC_NAME");
 		// ---
 		bb = blackBoard;
 		this.topicDefinitionMap = topicDefinitionMap;
@@ -117,6 +121,9 @@ public class BotEngine {
 
 			// exec
 			status = behaviorTreeManager.run(topic.getBtRoot(List.of(bb)));
+			if (!bb.exists(BOT_NEXT_TOPIC_KEY) && !checkIfExpectingInput() && checkTopicIsNotStartEndOrIdleOrRating(topic)) {
+				bb.putString(BOT_NEXT_TOPIC_KEY, IDLE_TOPIC_NAME);
+			}
 
 			if (bb.exists(BOT_NEXT_TOPIC_KEY)) {
 				final var nextTopicName = bb.getString(BOT_NEXT_TOPIC_KEY);
@@ -135,7 +142,9 @@ public class BotEngine {
 		}
 
 		// build response
-		final var botResponseBuilder = new BotResponseBuilder(status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking);
+		final Boolean expectNluOrText = bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/nlu/key")) || bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/text/key"));
+		final Boolean rating = topic.getCode().equals(BotEngine.RATING_TOPIC_NAME);
+		final var botResponseBuilder = new BotResponseBuilder(status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking, expectNluOrText, rating);
 		for (int i = 0; i < bb.listSize(BOT_RESPONSE_KEY); i++) {
 			botResponseBuilder.addMessage(bb.listGet(BOT_RESPONSE_KEY, i));
 		}
@@ -148,6 +157,20 @@ public class BotEngine {
 
 		botResponseBuilder.addMetadata(ANALYTICS_KEY, analyticsToSend);
 		return botResponseBuilder.build();
+	}
+
+	private boolean checkIfExpectingInput() {
+		return bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/text/key")) || bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/button/key"))
+				|| bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/integer/key"))
+				|| bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/filebutton/key"))
+				|| bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/nlu/key"));
+	}
+
+	private boolean checkTopicIsNotStartEndOrIdleOrRating(final TopicDefinition topic) {
+		return !topic.getCode().equals(IDLE_TOPIC_NAME)
+				&& !topic.getCode().equals(START_TOPIC_NAME)
+				&& !topic.getCode().equals(END_TOPIC_NAME)
+				&& !topic.getCode().equals(RATING_TOPIC_NAME);
 	}
 
 	private static String getKeyName(final BBKey key) {
@@ -175,18 +198,25 @@ public class BotEngine {
 	private Tuple<Double, String> handleExpected(final BotInput input) {
 		final String textMessage = input.getMessage();
 		final String buttonPayload = (String) input.getMetadatas().get("payload");
+		final String fileContent = (String) input.getMetadatas().get("filecontent");
+		final String fileName = (String) input.getMetadatas().get("filename");
+		final String rating = (String) input.getMetadatas().get("rating");
 		Tuple<Double, String> eventLog = Tuple.of(null, null);
 
-		doHandleExpected("text", textMessage);
-		eventLog = doHandleExpected("nlu", textMessage);
-		doHandleExpected("button", buttonPayload);
+		doHandleExpected("text", textMessage, fileContent, fileName);
+		if (rating != null) {
+			doHandleExpected("integer", rating.toString(), fileContent, fileName);
+		}
+		eventLog = doHandleExpected("nlu", textMessage, fileContent, fileName);
+		doHandleExpected("button", buttonPayload, fileContent, fileName);
+		doHandleExpected("filebutton", buttonPayload, fileContent, fileName);
 
 		bb.delete(BBKeyPattern.ofRoot(BOT_EXPECT_INPUT_PATH));
 
 		return eventLog;
 	}
 
-	private Tuple<Double, String> doHandleExpected(final String prefix, final String value) {
+	private Tuple<Double, String> doHandleExpected(final String prefix, final String value, final String fileContent, final String fileName) {
 		Tuple<Double, String> response = Tuple.of(null, null);
 		if (value != null && bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/key"))) { // if value and expected
 			final var key = bb.getString(BBKey.of(BOT_EXPECT_INPUT_PATH, "/" + prefix + "/key"));
@@ -197,6 +227,11 @@ public class BotEngine {
 					break;
 				case "string":
 					bb.putString(BBKey.of(key), value);
+					break;
+				case "file":
+					bb.putString(BBKey.of(key), value);
+					bb.putString(BBKey.of(key + "/filecontent"), fileContent);
+					bb.putString(BBKey.of(key + "/filename"), fileName);
 					break;
 				case "nlu":
 					response = getTopicFromNlu(value);
@@ -260,12 +295,6 @@ public class BotEngine {
 	}
 
 	private List<IBotChoice> buildChoices() {
-		if (!bb.exists(BBKey.of(BOT_CHOICES_KEY, "/class"))) {
-			return Collections.emptyList();
-		}
-
-		final Method method = resolveChoiceConstructMethod();
-
 		final List<IBotChoice> choices = new ArrayList<>();
 		int choiceNumber = 0;
 		while (bb.listSize(BBKey.of(BOT_CHOICES_KEY, "/" + choiceNumber)) > 0) {
@@ -277,9 +306,10 @@ public class BotEngine {
 			}
 
 			try {
-				final Object[] invokeParams = { params };
+				final Object[] invokeParams = {params};
+				final Method method = resolveChoiceConstructMethod(choiceNumber);
 				choices.add((IBotChoice) method.invoke(null, invokeParams));
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			} catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				throw new VSystemException(e, "Error while calling choice construct method");
 			}
 			choiceNumber++;
@@ -288,8 +318,8 @@ public class BotEngine {
 		return choices;
 	}
 
-	private Method resolveChoiceConstructMethod() {
-		final var className = bb.getString(BBKey.of(BOT_CHOICES_KEY, "/class"));
+	private Method resolveChoiceConstructMethod(final int choiceNumber) {
+		final var className = bb.getString(BBKey.of(BOT_CHOICES_KEY, "/" + choiceNumber + "/class"));
 		try {
 			final Class<?> choiceClazz = Class.forName(className);
 			final var method = choiceClazz.getMethod("of", String[].class);
@@ -301,16 +331,23 @@ public class BotEngine {
 			return method;
 		} catch (final ClassNotFoundException e) {
 			throw new VSystemException(e, "Choice class '{0}' not found", className);
-		} catch (NoSuchMethodException | SecurityException e) {
+		} catch (final NoSuchMethodException | SecurityException e) {
 			throw new VSystemException(e, "Choice class '{0}' do not implements constructing method 'of'", className);
 		}
 	}
 
-	public void saveContext(final BotInput input) {
-		final Map<String, String> context = (Map<String, String>) input.getMetadatas().get(CONTEXT_KEY);
-		for (Entry<String, String> entry : context.entrySet()) {
-			BBKey key = BBKey.of(BOT_CONTEXT_KEY, "/" + entry.getKey());
-			bb.putString(key, entry.getValue());
+	public void saveContext(final BotInput input, final HashMap<String, String> contextMap) {
+		if (input.getMetadatas() != null && !input.getMetadatas().isEmpty()) {
+			final Map<String, String> context = (Map<String, String>) input.getMetadatas().get(CONTEXT_KEY);
+			if (context != null) {
+				bb.delete(BBKeyPattern.ofRoot(BOT_CONTEXT_KEY));
+				for (final Entry<String, String> entry : context.entrySet()) {
+					if (contextMap.containsKey(entry.getKey())) {
+						final BBKey key = BBKey.of(BOT_CONTEXT_KEY, "/" + entry.getKey());
+						bb.putString(key, entry.getValue());
+					}
+				}
+			}
 		}
 	}
 

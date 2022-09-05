@@ -17,11 +17,11 @@
  */
 package io.vertigo.chatbot.engine.model;
 
+import io.vertigo.chatbot.engine.model.choice.IBotChoice;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 
 public final class BotResponse {
 	public enum BotStatus {
@@ -30,14 +30,23 @@ public final class BotResponse {
 
 	private final List<String> htmlTexts;
 	private final List<IBotChoice> choices;
+	private final List<IBotChoice> cards;
+	private final List<IBotChoice> files;
 	private final Map<String, Object> metadatas;
 	private final BotStatus status;
+	private final Boolean acceptNlu;
+	private final Boolean rating;
 
-	BotResponse(final List<String> htmlTexts, final List<IBotChoice> choices, final Map<String, Object> metadatas, final BotStatus status) {
+	BotResponse(final List<String> htmlTexts, final List<IBotChoice> choices, final List<IBotChoice> cards,
+				final List<IBotChoice> files, final Map<String, Object> metadatas, final BotStatus status, final Boolean acceptNlu, final Boolean rating) {
 		this.htmlTexts = Collections.unmodifiableList(htmlTexts);
 		this.choices = Collections.unmodifiableList(choices);
+		this.cards = Collections.unmodifiableList(cards);
+		this.files = Collections.unmodifiableList(files);
 		this.metadatas = metadatas;
 		this.status = status;
+		this.acceptNlu = acceptNlu;
+		this.rating = rating;
 	}
 
 	/**
@@ -68,4 +77,21 @@ public final class BotResponse {
 		return status;
 	}
 
+	/**
+	 * @return acceptNlu
+	 */
+	public Boolean getAcceptNlu() {
+		return acceptNlu;
+	}
+
+	/**
+	 * @return cards
+	 */
+	public List<IBotChoice> getCards() {
+		return cards;
+	}
+
+	public Boolean getRating() {
+		return rating;
+	}
 }

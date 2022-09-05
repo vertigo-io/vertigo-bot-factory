@@ -10,53 +10,72 @@
 </head>
 	<body>
 		<section layout:fragment="content">
+
+			<div class="text-primary text-h6 text-weight-bold" th:text="#{layout.profil}"></div>
 			<!-- Add users -->
 			<vu:include-data object="personList" field="perId"/>
 			<vu:include-data object="personList" field="name"/>
 			<vu:include-data object="chatbotProfilesList" field="chpCd"/>
 			<vu:include-data object="chatbotProfilesList" field="label"/>
-			<vu:include-data object="selectionList" field="prfId"/>
-			<vu:include-data object="selectionList" field="perId"/>
-			<vu:block id="add users" th:title="#{personChatbot.addProfil}" >
-				<q-select 
-					filled
-					v-model="vueData.selectionList.perId"
-					multiple
-					map-options
-					emit-value
-					:options="transformListForSelection('personList', 'perId', 'name')"
-					use-chips
-					th:label="#{personChatbot.users}"
-					stack-label>
-				</q-select>
-				</br>
-				<q-select
-					filled
-					map-options
-					emit-value
-					v-model="vueData.selectionList.prfId"
-					:options="transformListForSelection('chatbotProfilesList', 'chpCd', 'label')"
-					use-chips
-					th:label="#{personChatbot.profil}"
-					stack-label>
-				</q-select>
-				
-				<input type="hidden" name="vContext[selectionList][prfId]" :value="vueData.selectionList.prfId" />
-				<input v-for="id in vueData.selectionList.perId" type="hidden" name="vContext[selectionList][perId]" :value="id" />
-				
-				<q-card-actions align="right">
-					<vu:button-submit th:title="#{action.add}" th:label="#{action.add}" th:aria-label="#{action.add}" action="@{_addUsers}" class="on-left" color="primary"/>
-				</q-card-actions>
-			</vu:block>
+			<vu:include-data object="selectionList" field="prfId" modifiable="true" />
+			<vu:include-data object="selectionList" field="perId" modifiable="true" />
+			<q-dialog ref="addUserDialog" >
+				<q-card style="min-width: 400px">
+					<q-card-section>
+						<div class="text-h6">
+							<span v-if="vueData.selectionList.perId == null" th:text="#{personChatbot.addProfil}"></span>
+							<span v-else th:text="#{personChatbot.updateProfil}"></span>
+						</div>
+					</q-card-section>
+					<q-card-section>
+						<div v-if="!componentStates.edit" class="row items-center">
+							<span class="q-ma-lg" th:text="#{personChatbot.chooseUser.intro}"></span>
+							<q-select
+									  style="flex-grow: 2"
+									  filled
+									  v-model="vueData.selectionList.perId"
+									  multiple
+									  map-options
+									  emit-value
+									  :options="transformListForSelection('personList', 'perId', 'name')"
+									  use-chips
+									  th:label="#{personChatbot.users}"
+									  stack-label>
+							</q-select>
+						</div>
+						<div class="row q-ma-lg">
+							<span th:text="#{personChatbot.chooseRight.intro}"></span>
+						</div>
+						<div class="q-ma-lg">
+							<q-radio style="display: flex" v-for="profile in vueData.chatbotProfilesList" v-model="vueData.selectionList.prfId" :val="profile.chpCd" :label="profile.label" />
+						</div>
+						<input type="hidden" name="vContext[selectionList][prfId]" :value="vueData.selectionList.prfId" />
+						<input v-for="id in vueData.selectionList.perId" type="hidden" name="vContext[selectionList][perId]" :value="id" />
+					</q-card-section>
+					<q-card-actions align="right">
+						<q-btn th:title="#{action.add}" th:label="#{action.add}" th:aria-label="#{action.add}"
+							   @click="httpPostAjax('_addUsers', vueDataParams(['selectionList']))"
+							   color="primary" v-close-popup></q-btn>
+					</q-card-actions>
+				</q-card>
+			</q-dialog>
 			<!--  users list -->
 			
-			<vu:popup-ajax action="_delete" vModel="showPopup" th:message="#{personChatbot.popup.message}" th:confirm=#{action.delete} dataName="rowId"></vu:popup-ajax>
+			<vu:popup-ajax action="_delete" vModel="showDeleteRightPopup" th:message="#{personChatbot.popup.message}" th:confirm=#{action.delete} dataName="rowId"></vu:popup-ajax>
 			<vu:include-data object="personProfilList" field="chpId"/>
+			<vu:include-data object="personProfilList" field="perId"/>
 			<vu:table list="personProfilList" th:title="#{personChatbot.profilList}" rowKey="chpId" componentId="personsProfilList" tr_style="cursor : pointer;"
 					  sortBy="name" :binary-state-sort="true" >
-	  				<vu:slot name="actions_slot">
+					<vu:slot name="top_right_slot">
+						<q-btn color="primary" round icon="add" th:aria-label="#{action.add}"  th:title="#{action.add}"
+							   @click="componentStates.edit = false; vueData.selectionList.prfId = null; vueData.selectionList.perId = null; $refs.addUserDialog.show()"></q-btn>
+					</vu:slot>
+					<vu:slot name="actions_slot">
+						<q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}"
+							   th:title="#{action.update}"
+							   @click="componentStates.edit = true; vueData.selectionList.prfId = props.row.profilLabel; vueData.selectionList.perId = [props.row.perId]; $refs.addUserDialog.show()"></q-btn>
 						<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{personChatbot.profil.delete}" th:title="#{personChatbot.profil.delete}"
-								 @click="componentStates.rowId = props.row.chpId; componentStates.showPopup = true"></q-btn>
+								 @click="componentStates.rowId = props.row.chpId; componentStates.showDeleteRightPopup = true"></q-btn>
 					</vu:slot>
 					<vu:column field="name" th:label="#{personChatbot.name}">
 						<span style="height:100%" class="row items-center">{{props.row.name}}</span>

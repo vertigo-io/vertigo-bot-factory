@@ -1,12 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.UtterTextDAO;
@@ -28,6 +21,15 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.VCollectors;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 
 @Transactional
 @Secured("BotUser")
@@ -54,7 +56,7 @@ public class UtterTextServices implements Component {
 		// ---
 		return utterTextDAO.findAll(
 				Criterions.isEqualTo(UtterTextFields.smtId, smallTalk.getSmtId()),
-				DtListState.of(1000, 0, UtterTextFields.uttId.name(), false));
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE, 0, UtterTextFields.uttId.name(), false));
 	}
 
 	public void removeAllUtterTextBySmtId(@SecuredOperation("botContributor") final Chatbot bot, final Long smtId) {
@@ -107,13 +109,7 @@ public class UtterTextServices implements Component {
 		utterTextPAO.removeAllUtterTextByBotId(bot.getBotId());
 	}
 
-	public UtterText initNewBasicUttText(final String ktoCd) {
-		final UtterText utterText = new UtterText();
-		utterText.setText(initializeDefaultText(ktoCd));
-		return utterText;
-	}
-
-	private static String initializeDefaultText(final String ktoCd) {
+	public static String initializeDefaultText(final String ktoCd) {
 		switch (ktoCd) {
 			case "START":
 				return MessageText.of(KindTopicMultilingualResources.DEFAULT_START).getDisplay();
@@ -123,6 +119,12 @@ public class UtterTextServices implements Component {
 
 			case "END":
 				return MessageText.of(KindTopicMultilingualResources.DEFAULT_END).getDisplay();
+
+			case "IDLE":
+				return MessageText.of(KindTopicMultilingualResources.DEFAULT_IDLE).getDisplay();
+
+			case "RATING":
+				return MessageText.of(KindTopicMultilingualResources.DEFAULT_RATING).getDisplay();
 
 			default:
 				return "";

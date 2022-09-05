@@ -5,20 +5,83 @@ stereotype : "StaticMasterData"
 	id    teaCd 		{domain: DoCode 	label: "Code"}
 	field label 		{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
 	field labelFr 		{domain: DoLabel 	label: "Titre" 			cardinality : "1"	}
+    field botRelated 	{domain: DoYesNo 	label: "Bot related"    cardinality : "1"	}
 	values : `{
         "UNKNOWN_MESSAGES" : {
-            "teaCd" 	: "UNKNOWN_MESSAGES",
-            "label" 	: "Unknown messages",
-            "labelFr" 	: "Messages inconnus"
+            "teaCd" 	    : "UNKNOWN_MESSAGES",
+            "label" 	    : "Unknown messages",
+            "labelFr" 	    : "Intentions non reconnues",
+            "botRelated"    : "true"
            
         },
-        "SESSIONS" : {
-            "teaCd" 	: "SESSIONS",
-            "label" 	: "Sessions",
-            "labelFr" 	: "Sessions"      
+        "USER_ACTIONS_CONVERSATIONS" : {
+            "teaCd" 	    : "USER_ACTIONS_CONVERSATIONS",
+            "label" 	    : "User actions and conversations",
+            "labelFr" 	    : "Actions utilisateur et conversations",
+            "botRelated"    : "false"
+        },
+        "CONVERSATIONS" : {
+            "teaCd" 	    : "CONVERSATIONS",
+            "label" 	    : "Conversations",
+            "labelFr" 	    : "Conversations",
+            "botRelated"    : "true"
+        },
+        "CATEGORIES" : {
+            "teaCd" 	    : "CATEGORIES",
+            "label" 	    : "Categories",
+            "labelFr" 	    : "Catégories",
+            "botRelated"    : "true"
+        },
+        "RATING" : {
+            "teaCd" 	    : "RATING",
+            "label" 	    : "Rating",
+            "labelFr" 	    : "Evaluation",
+            "botRelated"    : "true"
+        },
+        "TOPIC_USAGE" : {
+            "teaCd" 	    : "TOPIC_USAGE",
+            "label" 	    : "Topic usage",
+            "labelFr" 	    : "Utilisation des intentions",
+            "botRelated"    : "true"
         }
      }`
     sortField : "teaCd"
+ 	displayField : "label"
+}
+
+create DtDefinition DtRatingOption {
+stereotype : "StaticMasterData"
+	id    raOptCd 		{domain: DoNumber 	label: "Code"}
+	field label 		{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "Titre" 			cardinality : "1"	}
+	values : `{
+        "ONE_STAR" : {
+            "raOptCd" 	    : 1,
+            "label" 	    : "One star",
+            "labelFr" 	    : "Une étoile"
+        },
+        "TWO_STARS" : {
+            "raOptCd" 	    : 2,
+            "label" 	    : "Two stars",
+            "labelFr" 	    : "Deux étoiles"
+        },
+        "THREE_STARS" : {
+            "raOptCd" 	    : 3,
+            "label" 	    : "Three stars",
+            "labelFr" 	    : "Trois étoiles"
+        },
+        "FOUR_STARS" : {
+            "raOptCd" 	    : 4,
+            "label" 	    : "Four stars",
+            "labelFr" 	    : "Quatre étoiles"
+        },
+        "FIVE_STARS" : {
+            "raOptCd" 	    : 5,
+            "label" 	    : "Five stars",
+            "labelFr" 	    : "Cinq étoiles"
+        }
+     }`
+    sortField : "raOptCd"
  	displayField : "label"
 }
 
@@ -26,8 +89,10 @@ create DtDefinition DtStatCriteria {
 	field botId 		{domain: DoId 					label: "Chatbot selection" 		}
 	field timeOption	{domain: DoCode 				label: "Time option" 			}
 	field nodId			{domain: DoId 					label: "Node selection" 		}
-	field fromDate		{domain: DoLocaldate 				label: "From"		 		}
-	field toDate		{domain: DoLocaldate				label: "To" 				}
+	field fromDate		{domain: DoLocaldate 			label: "From"			 		}
+	field toDate		{domain: DoLocaldate			label: "To" 					}
+	field fromInstant	{domain: DoInstant				label: "From"		 			}
+	field toInstant		{domain: DoInstant				label: "To" 					}
 }
 
 create DtDefinition DtSentenseDetail {
@@ -40,27 +105,76 @@ create DtDefinition DtSentenseDetail {
 	field modelName		{domain: DoLabel 				label: "Model Name" 			}
 }
 
-create DtDefinition DtUnknownSentenseExport {	
+create DtDefinition DtConversationStat {
+	field sessionId 	            {domain: DoIdStr 				label: "sessionId" 		                }
+	field date 			            {domain: DoInstant 				label: "Date" 					        }
+	field modelName		            {domain: DoLabel 				label: "Model Name" 			        }
+	field interactions			    {domain: DoNumber 				label: "Interactions" 				    }
+	field ended			            {domain: DoYesNo 				label: "Ended" 				            }
+	field rate			            {domain: DoNumber 				label: "Rate" 				            }
+}
+
+create DtDefinition DtCategoryStat {
+	field label 	                {domain: DoLabel 				label: "Label" 		                    }
+	field code 			            {domain: DoLabel 				label: "Code" 					        }
+	field percentage		        {domain: DoPercentage 			label: "Percentage" 			        }
+	field usage			            {domain: DoNumber 				label: "Usage" 				            }
+}
+
+
+create DtDefinition DtConversationDetail {
+	field sessionId 	            {domain: DoIdStr 				label: "sessionId" 		                }
+	field date 			            {domain: DoInstant 				label: "Date" 					        }
+	field text			            {domain: DoLabel 				label: "Text" 				            }
+	field isUserMessage 			{domain: DoYesNo 				label: "IsUserMessage" 				    }
+	field isBotMessage 			    {domain: DoYesNo 				label: "IsBotMessage" 				    }
+}
+
+create DtDefinition DtConversationCriteria {
+	field modelName 			    {domain: DoLabel 				label: "Model Name" 					                }
+	field ratings 			        {domain: DoNumber		        label: "Ratings" 			cardinality:"*"		        }
+}
+
+create DtDefinition DtTopIntentCriteria {
+	field catIds 			    {domain: DoId 				label: "Category Ids" 		cardinality:"*"		        }
+	field labels 			    {domain: DoId 			label: "Labels" 			cardinality:"*"		        }
+}
+
+
+create DtDefinition DtRatingDetail {
+    field sessionId 	{domain: DoIdStr 				label: "Session ID" 		    }
+	field date 			{domain: DoInstant 				label: "Date" 					}
+	field rating		{domain: DoNumber 				label: "Rating" 				}
+	field comment	    {domain: DoLabel 				label: "Comment" 			    }
+	field lastTopic	    {domain: DoLabel 			    label: "Last topic" 			}
+}
+
+create DtDefinition DtUnknownSentenseExport {
 	field date 			{domain: DoInstant 				label: "Date" 					}
 	field text			{domain: DoLabel 				label: "User text" 				}	
 	field modelName		{domain: DoLabel 				label: "Model Name" 			}
 	field dateTraining	{domain: DoInstant 				label: "Date training"	 		}
 	field confidence	{domain: DoPercentage 			label: "Confidence" 			}
 	field botName		{domain: DoLabel 				label: "Bot name" 				}
+	field node		    {domain: DoLabel 				label: "Node name" 				}
 	field creationBot	{domain: DoLabel 				label: "Date bot creation" 		}
 }
 
 create DtDefinition DtTopIntent {
-	field topId			{domain: DoId 					label: "Topic ID" 				}
-	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			}
-	field code			{domain: DoLabel				label: "Topic code"				}
-	field count			{domain: DoNumber 				label: "Count" 					}
+	field topId			{domain: DoId 					label: "Topic ID" 				                    }
+	field catLabel		{domain: DoLabel 			    label: "Category label" 	                        }
+	field labels		{domain: DoLabel 			    label: "Labels" 	                                }
+	field intentRasa	{domain: DoLabel 				label: "Rasa intent" 			                    }
+	field code			{domain: DoLabel				label: "Topic code"				                    }
+	field count			{domain: DoNumber 				label: "Count" 					                    }
 }
 
 create DtDefinition DtSessionExport {	
-	field date 			{domain: DoInstant 				label: "Date" 					}
-	field modelName		{domain: DoLabel 				label: "Model Name" 			}
-	field dateTraining	{domain: DoInstant 				label: "Date training"	 		}
-	field botName		{domain: DoLabel 				label: "Bot name" 				}
-	field creationBot	{domain: DoLabel 				label: "Date bot creation" 		}
+	field date 			    {domain: DoInstant 				label: "Date" 					    }
+	field conversationCount	{domain: DoNumber 				label: "Conversation count" 		}
+	field userActionsCount	{domain: DoNumber 				label: "User actions count" 		}
+}
+
+create DtDefinition DtTypeExportAnalyticList {
+    field teaCd 		{domain: DoCode		label: "Type export analytic code"	 		cardinality:"*"}
 }

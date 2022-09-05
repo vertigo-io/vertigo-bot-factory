@@ -1,0 +1,44 @@
+package io.vertigo.chatbot.commons.multilingual.bot;
+
+import io.vertigo.core.locale.MessageKey;
+
+public enum BotMultilingualResources implements MessageKey {
+
+	BOT_DETAIL,
+
+	DICTIONARYENTITY_LIST,
+
+	TRAINING_LIST,
+
+	PERSON_LIST,
+
+	TOPICCATEGORY_LIST,
+
+	TOPIC_LIST,
+
+	NODE_NOT_UP_TO_DATE,
+
+	CONTEXTVALUE_LIST,
+
+	UNKNOWNSENTENCEDETAIL_LIST,
+
+	HISTORY_LIST,
+
+	EXTENSION,
+
+	ATTACHMENT_LIST,
+
+	WELCOMETOUR_LIST,
+
+	WELCOMETOURSTEP_LIST,
+
+	TRAINING_STATE_MESSAGE_OK,
+
+	TRAINING_STATE_MESSAGE_KO,
+
+	CHATBOTNODE_LIST,
+
+	STATISTIC,
+
+	EXPORT_ZIP_FILENAME
+}

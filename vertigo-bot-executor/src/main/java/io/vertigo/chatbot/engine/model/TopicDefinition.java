@@ -17,24 +17,25 @@
  */
 package io.vertigo.chatbot.engine.model;
 
+import io.vertigo.ai.bt.BTNode;
+import io.vertigo.core.lang.Assertion;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-
-import io.vertigo.ai.bt.BTNode;
-import io.vertigo.core.lang.Assertion;
 
 /**
  * @author skerdudou
  */
 public final class TopicDefinition {
 	private final String code;
+	private final Boolean unreachable;
 	private final Function<List<Object>, BTNode> btRootProvider;
 
 	private final List<String> trainingPhrases;
 	private final Double nluThreshold;
 
-	private TopicDefinition(final String code, final Function<List<Object>, BTNode> btRootProvider, final List<String> trainingPhrases, final Double nluThreshold) {
+	private TopicDefinition(final String code, final Function<List<Object>, BTNode> btRootProvider, final List<String> trainingPhrases, final Double nluThreshold, final Boolean unreachable) {
 		Assertion.check()
 				.isNotBlank(code)
 				.isNotNull(btRootProvider)
@@ -42,17 +43,18 @@ public final class TopicDefinition {
 				.isNotNull(nluThreshold);
 		//--
 		this.code = code;
+		this.unreachable = unreachable;
 		this.btRootProvider = btRootProvider;
 		this.trainingPhrases = trainingPhrases;
 		this.nluThreshold = nluThreshold;
 	}
 
-	public static TopicDefinition of(final String code, final Function<List<Object>, BTNode> btRootProvider, final List<String> trainingPhrases, final Double nluThreshold) {
-		return new TopicDefinition(code, btRootProvider, trainingPhrases, nluThreshold);
+	public static TopicDefinition of(final String code, final Function<List<Object>, BTNode> btRootProvider, final List<String> trainingPhrases, final Double nluThreshold, final Boolean unreachable) {
+		return new TopicDefinition(code, btRootProvider, trainingPhrases, nluThreshold, unreachable);
 	}
 
 	public static TopicDefinition of(final String code, final Function<List<Object>, BTNode> btRootProvider) {
-		return of(code, btRootProvider, Collections.emptyList(), 0.0);
+		return of(code, btRootProvider, Collections.emptyList(), 0.0, false);
 	}
 
 	/**
@@ -82,5 +84,10 @@ public final class TopicDefinition {
 	public Double getNluThreshold() {
 		return nluThreshold;
 	}
+
+	/**
+	 * @return unreachable
+	 */
+	public Boolean getUnreachable() { return unreachable; }
 
 }

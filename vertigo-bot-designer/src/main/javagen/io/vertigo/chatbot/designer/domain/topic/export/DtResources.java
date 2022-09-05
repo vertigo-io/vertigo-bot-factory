@@ -29,6 +29,30 @@ public enum DtResources implements MessageKey {
 	fldResponseButtonExport$text,
 
 	/***********************************************************
+	/** ResponseButtonUrlExport.
+	/***********************************************************
+	/**
+	 * Topic id.
+	 */
+	fldResponseButtonUrlExport$topId,
+	/**
+	 * Topic code.
+	 */
+	fldResponseButtonUrlExport$topCode,
+	/**
+	 * Button text.
+	 */
+	fldResponseButtonUrlExport$text,
+	/**
+	 * Button url.
+	 */
+	fldResponseButtonUrlExport$url,
+	/**
+	 * New tab.
+	 */
+	fldResponseButtonUrlExport$newTab,
+
+	/***********************************************************
 	/** ScriptIntentionExport.
 	/***********************************************************
 	/**
@@ -39,6 +63,30 @@ public enum DtResources implements MessageKey {
 	 * Bt.
 	 */
 	fldScriptIntentionExport$bt,
+
+	/***********************************************************
+	/** TypeBotExport.
+	/***********************************************************
+	/**
+	 * Code.
+	 */
+	fldTypeBotExport$tbeCd,
+	/**
+	 * Title.
+	 */
+	fldTypeBotExport$label,
+	/**
+	 * Titre.
+	 */
+	fldTypeBotExport$labelFr,
+
+	/***********************************************************
+	/** TypeBotExportList.
+	/***********************************************************
+	/**
+	 * Type bot export code.
+	 */
+	fldTypeBotExportList$tbeCd,
 
 	/***********************************************************
 	/** UtterTextExport.

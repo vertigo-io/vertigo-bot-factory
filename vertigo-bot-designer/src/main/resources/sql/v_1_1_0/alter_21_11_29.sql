@@ -1,0 +1,1 @@
+insert into KIND_TOPIC(KTO_CD, LABEL, DESCRIPTION, DEFAULT_TEXT) values ('UNREACHABLE', 'Unreachable', 'Unreachable', 'Text');

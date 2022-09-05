@@ -16,7 +16,9 @@ public final class KindTopic implements DtStaticMasterData {
 
 	private String ktoCd;
 	private String label;
+	private String labelFr;
 	private String description;
+	private String descriptionFr;
 	private String defaultText;
 
 	/** {@inheritDoc} */
@@ -67,10 +69,29 @@ public final class KindTopic implements DtStaticMasterData {
 	
 	/**
 	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Label FR'.
+	 * @return String labelFr <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Label FR")
+	public String getLabelFr() {
+		return labelFr;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Label FR'.
+	 * @param labelFr String <b>Obligatoire</b>
+	 */
+	public void setLabelFr(final String labelFr) {
+		this.labelFr = labelFr;
+	}
+	
+	/**
+	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Description'.
 	 * @return String description <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Description")
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Description")
 	public String getDescription() {
 		return description;
 	}
@@ -82,6 +103,25 @@ public final class KindTopic implements DtStaticMasterData {
 	 */
 	public void setDescription(final String description) {
 		this.description = description;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Description FR'.
+	 * @return String descriptionFr <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Description FR")
+	public String getDescriptionFr() {
+		return descriptionFr;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Description FR'.
+	 * @param descriptionFr String <b>Obligatoire</b>
+	 */
+	public void setDescriptionFr(final String descriptionFr) {
+		this.descriptionFr = descriptionFr;
 	}
 	
 	/**

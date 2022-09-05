@@ -17,7 +17,14 @@ public final class BotExport implements DtObject {
 	private String welcomeBT;
 	private String endBT;
 	private String fallbackBT;
+	private String idleBT;
+	private String ratingBT;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.TopicExport.class);
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.WelcomeTourExport> welcomeTours =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.WelcomeTourExport.class);
+	private io.vertigo.chatbot.commons.domain.ConfluenceSettingExport confluenceSetting;
+	private io.vertigo.chatbot.commons.domain.JiraSettingExport jiraSetting;
+	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> jiraFieldSetting =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class);
+	private String mapContext;
 	
 	/**
 	 * Champ : DATA.
@@ -97,23 +104,160 @@ public final class BotExport implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'fallback BT'.
+	 * Récupère la valeur de la propriété 'idle BT'.
+	 * @return String idleBT <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "idle BT")
+	public String getIdleBT() {
+		return idleBT;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'idle BT'.
+	 * @param idleBT String <b>Obligatoire</b>
+	 */
+	public void setIdleBT(final String idleBT) {
+		this.idleBT = idleBT;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'rating BT'.
+	 * @return String ratingBT <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "rating BT")
+	public String getRatingBT() {
+		return ratingBT;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'rating BT'.
+	 * @param ratingBT String <b>Obligatoire</b>
+	 */
+	public void setRatingBT(final String ratingBT) {
+		this.ratingBT = ratingBT;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'topics export'.
 	 * @return DtList de TopicExport topics
 	 */
-	@Field(smartType = "STyDtTopicExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "fallback BT")
+	@Field(smartType = "STyDtTopicExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "topics export")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> getTopics() {
 		return topics;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'fallback BT'.
+	 * Définit la valeur de la propriété 'topics export'.
 	 * @param topics DtList de TopicExport
 	 */
 	public void setTopics(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.TopicExport> topics) {
 		io.vertigo.core.lang.Assertion.check().isNotNull(topics);
 		//---
 		this.topics = topics;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Welcome tours'.
+	 * @return DtList de WelcomeTourExport welcomeTours
+	 */
+	@Field(smartType = "STyDtWelcomeTourExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Welcome tours")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.WelcomeTourExport> getWelcomeTours() {
+		return welcomeTours;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Welcome tours'.
+	 * @param welcomeTours DtList de WelcomeTourExport
+	 */
+	public void setWelcomeTours(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.WelcomeTourExport> welcomeTours) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(welcomeTours);
+		//---
+		this.welcomeTours = welcomeTours;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Confluence setting'.
+	 * @return ConfluenceSettingExport confluenceSetting
+	 */
+	@Field(smartType = "STyDtConfluenceSettingExport", label = "Confluence setting")
+	public io.vertigo.chatbot.commons.domain.ConfluenceSettingExport getConfluenceSetting() {
+		return confluenceSetting;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Confluence setting'.
+	 * @param confluenceSetting ConfluenceSettingExport
+	 */
+	public void setConfluenceSetting(final io.vertigo.chatbot.commons.domain.ConfluenceSettingExport confluenceSetting) {
+		this.confluenceSetting = confluenceSetting;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Jira setting'.
+	 * @return JiraSettingExport jiraSetting
+	 */
+	@Field(smartType = "STyDtJiraSettingExport", label = "Jira setting")
+	public io.vertigo.chatbot.commons.domain.JiraSettingExport getJiraSetting() {
+		return jiraSetting;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Jira setting'.
+	 * @param jiraSetting JiraSettingExport
+	 */
+	public void setJiraSetting(final io.vertigo.chatbot.commons.domain.JiraSettingExport jiraSetting) {
+		this.jiraSetting = jiraSetting;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Jira fields setting'.
+	 * @return DtList de JiraFieldSettingExport jiraFieldSetting
+	 */
+	@Field(smartType = "STyDtJiraFieldSettingExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Jira fields setting")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> getJiraFieldSetting() {
+		return jiraFieldSetting;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Jira fields setting'.
+	 * @param jiraFieldSetting DtList de JiraFieldSettingExport
+	 */
+	public void setJiraFieldSetting(final io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> jiraFieldSetting) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(jiraFieldSetting);
+		//---
+		this.jiraFieldSetting = jiraFieldSetting;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'map Context'.
+	 * @return String mapContext <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "map Context")
+	public String getMapContext() {
+		return mapContext;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'map Context'.
+	 * @param mapContext String <b>Obligatoire</b>
+	 */
+	public void setMapContext(final String mapContext) {
+		this.mapContext = mapContext;
 	}
 	
 	/** {@inheritDoc} */

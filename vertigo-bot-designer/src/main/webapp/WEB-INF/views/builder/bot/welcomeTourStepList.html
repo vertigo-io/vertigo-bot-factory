@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=welcometours"
+>
+
+<head>
+    <title th:text="#{welcometour.steps.title}"></title>
+    <script th:inline="javascript">
+        function saveWelcomeTourStep() {
+            VUiPage.httpPostAjax(VertigoUi.vueData.newStep.tourId.toString() + "/_saveWelcomeTourStep", {
+                'welStepId': VertigoUi.vueData.newStep.welStepId,
+                'title': VertigoUi.vueData.newStep.title,
+                'text': VertigoUi.vueData.newStep.text,
+                'enabled': VertigoUi.vueData.newStep.enabled
+            });
+        }
+    </script>
+</head>
+
+<body>
+<section layout:fragment="content-actions">
+
+</section>
+
+<section layout:fragment="content">
+
+    <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+        <span class="text-primary" style="flex-grow: 2">[[#{layout.welcometours}]]</span>
+        <q-icon name="help_outlined" size="2rem"/>
+        <q-tooltip>[[#{welcometours.tooltip}]]</q-tooltip>
+    </div>
+
+    <vu:include-data-primitive key="locale"/>
+    <vu:include-data object="bot" field="botId" />
+
+    <vu:table th:title="#{welcometour.steps.title}" list="steps" componentId="steps" sortBy="id" :binary-state-sort="true">
+        <vu:slot name="actions_slot">
+            <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:title="#{action.update}"
+                   @click="vueData.newStep.welStepId = props.row.welStepId;
+                       vueData.newStep.tourId = props.row.tourId;
+                       vueData.newStep.internalStepId = props.row.internalStepId;
+                       vueData.newStep.title = props.row.title;
+                       vueData.newStep.text = props.row.text;
+                       vueData.newStep.sequence = props.row.sequence;
+                       vueData.newStep.enabled = props.row.enabled;
+                       $refs.welcomeTourStepDialog.show()"></q-btn>
+        </vu:slot>
+        <vu:include-data object="steps" field="welStepId" />
+        <vu:include-data object="steps" field="tourId" />
+        <vu:column field="internalStepId"/>
+        <vu:column field="title"/>
+        <vu:column field="text"/>
+        <vu:column field="sequence"/>
+        <vu:column field="enabled" style="width:100px;">
+            <q-icon name="check" color="green" size="2rem" v-if="props.row.enabled"></q-icon>
+            <q-icon name="block" color="red" size="2rem" v-if="!props.row.enabled"></q-icon>
+        </vu:column>
+    </vu:table>
+    <th:bloc th:with="viewMode='edit'">
+        <q-dialog ref="welcomeTourStepDialog" >
+            <vu:include-data object="newStep" field="welStepId" modifiable="true" />
+            <vu:include-data object="newStep" field="tourId" modifiable="true" />
+            <vu:include-data object="newStep" field="internalStepId" modifiable="true" />
+            <vu:include-data object="newStep" field="sequence" modifiable="true" />
+            <vu:include-data object="newStep" field="enabled" modifiable="true" />
+            <q-card>
+                <q-card-section style="width: 700px; max-width: 80vw;">
+                    <div class="text-h6">
+                        <span th:text="#{welcometour.step.update}"></span>
+                    </div>
+                </q-card-section>
+                <q-card-section>
+                    <vu:text-field object="newStep" field="title"/>
+                </q-card-section>
+                <q-card-section>
+                    <vu:text-field object="newStep" field="text"/>
+                </q-card-section>
+                <q-card-section>
+                    <vu:label-edit object="newStep" field="enabled">
+                        <q-toggle left-label v-model="vueData.newStep.enabled"></q-toggle>
+                    </vu:label-edit>
+                </q-card-section>
+
+                <q-card-actions align="around">
+                    <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                    <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                           @click="httpPostAjax(vueData.newStep.tourId + '/_saveWelcomeTourStep', vueDataParams(['newStep']), {onSuccess: $refs.welcomeTourStepDialog.hide})"
+                           color="primary" v-close-popup></q-btn>
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
+    </th:bloc>
+</section>
+</body>
+</html>

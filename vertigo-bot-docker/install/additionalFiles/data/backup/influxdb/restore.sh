@@ -24,8 +24,8 @@ then
   
   tar -xzf $fullFileName
   
-  influx -execute 'DROP DATABASE chatbot' > ./restore.log
-  influxd restore -portable ./backup >> ./restore.log 2>&1
+  influx bucket delete -n chatbot > ./restore.log
+  influx restore ./backup/ --bucket chatbot >> ./restore.log 2>&1
   
   rm -rf ./backup
 else

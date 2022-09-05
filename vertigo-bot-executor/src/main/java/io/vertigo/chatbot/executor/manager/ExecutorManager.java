@@ -17,21 +17,16 @@
  */
 package io.vertigo.chatbot.executor.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import javax.inject.Inject;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import com.google.gson.JsonElement;
 import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.chatbot.analytics.AnalyticsSenderServices;
 import io.vertigo.chatbot.commons.LogsUtils;
+import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
+import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.BotManager;
 import io.vertigo.chatbot.engine.model.BotInput;
@@ -40,9 +35,22 @@ import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.chatbot.executor.model.IncomeRating;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Manager;
 import io.vertigo.core.util.StringUtil;
+import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.vega.engines.webservice.json.JsonEngine;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 public class ExecutorManager implements Manager, Activeable {
 
@@ -52,7 +60,9 @@ public class ExecutorManager implements Manager, Activeable {
 	private final BotManager botManager;
 	private final BtCommandManager btCommandManager;
 	private final AnalyticsSenderServices analyticsSenderServices;
-	private ExecutorConfiguration executorConfiguration;
+
+	@Inject
+	private JsonEngine jsonEngine;
 
 	@Inject
 	public ExecutorManager(
@@ -75,15 +85,12 @@ public class ExecutorManager implements Manager, Activeable {
 
 	@Override
 	public void start() {
-		executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
 		final var botExport = executorConfigManager.getConfig().getBot();
 		if (botExport == null) {
 			// nothing to load
 			LOGGER.info("New runner, load a bot to start using it.");
 		} else {
-
 			doLoadModel(botExport, new StringBuilder());
-
 		}
 	}
 
@@ -98,12 +105,21 @@ public class ExecutorManager implements Manager, Activeable {
 		globalConfig.setExecutorConfiguration(executorConfig);
 
 		executorConfigManager.saveConfig(globalConfig);
+		executorConfigManager.updateWelcomeTour(bot.getWelcomeTours());
 
 		doLoadModel(bot, logs);
 
 	}
 
+
 	private void doLoadModel(final BotExport botExport, final StringBuilder logs) {
+
+		//TODO remove this. Created only for migration of old models without the unreachable tag
+		botExport.getTopics().forEach(topicExport -> {
+			if (topicExport.getUnreachable() == null) {
+				topicExport.setUnreachable(false);
+			}
+		});
 
 		LogsUtils.addLogs(logs, "Node recovery...");
 		final var nluThreshold = executorConfigManager.getConfig().getExecutorConfiguration().getNluThreshold().doubleValue();
@@ -125,14 +141,31 @@ public class ExecutorManager implements Manager, Activeable {
 			LogsUtils.logOK(logs);
 		}
 
-		for (final TopicExport topic : botExport.getTopics()) {
-			LogsUtils.addLogs(logs, topic.getName(), " topic addition...");
-			topics.add(TopicDefinition.of(topic.getName(), btCommandManager.parse(topic.getTopicBT()), topic.getNluTrainingSentences(), nluThreshold));
+		if (!StringUtil.isBlank(botExport.getIdleBT())) {
+			LogsUtils.addLogs(logs, "IDLE topic addition...");
+			topics.add(TopicDefinition.of(BotEngine.IDLE_TOPIC_NAME, btCommandManager.parse(botExport.getIdleBT())));
 			LogsUtils.logOK(logs);
 		}
 
+		if (!StringUtil.isBlank(botExport.getRatingBT())) {
+			LogsUtils.addLogs(logs, "RATING topic addition...");
+			topics.add(TopicDefinition.of(BotEngine.RATING_TOPIC_NAME, btCommandManager.parse(botExport.getRatingBT())));
+			LogsUtils.logOK(logs);
+		}
+
+		for (final TopicExport topic : botExport.getTopics()) {
+			LogsUtils.addLogs(logs, topic.getName(), " topic addition...");
+			topics.add(TopicDefinition.of(topic.getName(), btCommandManager.parse(topic.getTopicBT()), topic.getNluTrainingSentences(), nluThreshold, topic.getUnreachable()));
+			LogsUtils.logOK(logs);
+		}
+
+		executorConfigManager.updateMapContext(botExport);
 		botManager.updateConfig(topics, logs);
 
+	}
+
+	public void updateAttachments(final DtList<AttachmentExport> attachmentExports) {
+		executorConfigManager.updateAttachments(attachmentExports);
 	}
 
 	public BotResponse startNewConversation(final BotInput input) {
@@ -142,10 +175,15 @@ public class ExecutorManager implements Manager, Activeable {
 		final var newUUID = UUID.randomUUID();
 
 		final var botEngine = botManager.createBotEngine(newUUID);
-		botEngine.saveContext(input);
+		botEngine.saveContext(input, executorConfigManager.getContextMap());
 		final var botResponse = botEngine.runTick(input);
-		analyticsSenderServices.sendEventStartToDb(executorConfigManager.getConfig().getExecutorConfiguration());
+		final ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
+		analyticsSenderServices.sendEventStartToDb(newUUID, botResponse, executorConfiguration, input);
 		botResponse.getMetadatas().put("sessionId", newUUID);
+		if (executorConfiguration.getAvatar() != null) {
+			botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
+		}
+		botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfiguration.getCustomConfig(), JsonElement.class));
 		return botResponse;
 	}
 
@@ -155,14 +193,47 @@ public class ExecutorManager implements Manager, Activeable {
 		//--
 		final var botEngine = botManager.createBotEngine(sessionId);
 
+		botEngine.saveContext(input, executorConfigManager.getContextMap());
 		final var botResponse = botEngine.runTick(input);
-
-		analyticsSenderServices.sendEventToDb(botResponse.getMetadatas(), executorConfigManager.getConfig().getExecutorConfiguration(), input);
+		final ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
+		if (executorConfiguration.getAvatar() != null) {
+			botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
+		}
+		botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class));
+		analyticsSenderServices.sendEventToDb(sessionId, botResponse, executorConfigManager.getConfig().getExecutorConfiguration(), input);
 
 		return botResponse;
 	}
 
-	public void rate(final IncomeRating rating) {
-		analyticsSenderServices.rate(rating, executorConfigManager.getConfig().getExecutorConfiguration());
+	public void rate(final UUID sessionId, final IncomeRating rating) {
+		analyticsSenderServices.rate(sessionId, rating, executorConfigManager.getConfig().getExecutorConfiguration());
 	}
+
+	public Map<String, String> getContext() {
+		return executorConfigManager.getContextMap();
+	}
+
+	public String getWelcomeTourTechnicalCode(final String welcomeTourLabel) {
+		final WelcomeTourExport welcomeTourExport =
+				executorConfigManager.getConfig().getBot().getWelcomeTours().stream()
+						.filter(welcomeTour -> welcomeTour.getLabel().equals(welcomeTourLabel)).findFirst()
+						.orElseThrow(() -> new VSystemException("Welcome tour with label " + welcomeTourLabel + " doesn't exist"));
+
+		return welcomeTourExport.getTechnicalCode();
+	}
+
+	public String getBotEmailAddress() {
+		final ChatbotCustomConfig chatbotCustomConfig = jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(),
+				ChatbotCustomConfig.class);
+		return chatbotCustomConfig.getBotEmailAddress();
+	}
+
+	public VFile getAttachment(final String label) {
+		return executorConfigManager.getAttachment(label);
+	}
+
+	public Optional<VFile> getWelcomeToursFile() {
+		return executorConfigManager.getWelcomeToursFile();
+	}
+
 }

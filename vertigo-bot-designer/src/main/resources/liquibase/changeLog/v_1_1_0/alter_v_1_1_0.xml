@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+	<include file="alter_meaning.xml" relativeToChangelogFile="true"/>
+	<include file="alter_kind_topic.xml" relativeToChangelogFile="true"/>
+
+	<changeSet author="skerdudou" id="correct unknown_sentence_detail 'text' column">
+        <sqlFile encoding="utf8" path="/sql/v_1_1_0/alter_22_04_25.sql" />
+    </changeSet>
+	
+</databaseChangeLog>

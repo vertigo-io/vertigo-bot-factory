@@ -6,6 +6,7 @@
 
 
 	 <include file="alter_export.xml" relativeToChangelogFile="true"/>
-	
+	 <include file="alter_node.xml" relativeToChangelogFile="true"/>
+	 <include file="alter_context_value.xml" relativeToChangelogFile="true"/>
 	
 </databaseChangeLog>

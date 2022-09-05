@@ -4,9 +4,10 @@ boot:
     locales: en_US,fr_FR
   plugins:
     - io.vertigo.core.plugins.resource.classpath.ClassPathResourceResolverPlugin: {}
+    - io.vertigo.core.plugins.resource.local.LocalResourceResolverPlugin: {}
     - io.vertigo.core.plugins.param.env.EnvParamPlugin: {}
     - io.vertigo.vega.plugins.webservice.servlet.WebAppContextParamPlugin: {}
-    - io.vertigo.core.plugins.analytics.log.SocketLoggerAnalyticsConnectorPlugin:
+    - io.vertigo.core.plugins.analytics.log.ChatbotSocketLoggerAnalyticsConnectorPlugin:
         appName: ${boot.ANALYTICA_DBNAME}
         hostName: ${boot.ANALYTICA_HOST}
         port: ${boot.ANALYTICA_PORT}
@@ -18,8 +19,8 @@ modules:
     features: 
       - influxdb:
           host: ${INFLUXDB_URL}
-          user: anonymous
-          password: anonymous
+          org: chatbot
+          token: ${INFLUXDB_TOKEN}
   io.vertigo.commons.CommonsFeatures: # utilisation du module vertigo-commons
     features:
       - script:
@@ -57,6 +58,11 @@ modules:
           fileInfoClass: io.vertigo.chatbot.designer.commons.services.FileInfoTmp
           path: ${java.io.tmpdir}/chatbotUploadedFiles/
           purgeDelayMinutes: 30
+      - filestore.filesystem:
+          name: attachment
+          storeDtName: DtAttachmentFileInfo
+          fileInfoClass: io.vertigo.chatbot.commons.AttachmentInfo
+          path: ${FILE_STORE_PATH}
       - kvStore.delayedMemory:
           collections: protected-value
           timeToLiveSeconds: 3600
@@ -67,6 +73,7 @@ modules:
   io.vertigo.connectors.keycloak.KeycloakFeatures:
     features:
       - deployment:
+          configUrl: ${KEYCLOAK_CONFIG}
   io.vertigo.account.AccountFeatures:
     features:
       - security:
@@ -97,7 +104,8 @@ modules:
     features:      
       - export : # export
     featuresConfig:
-      - exporter.csv: # export csv 
+      - exporter.csv: # export csv
+         charset: cp1252 
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
 
 # utilisation de nos modules métier  

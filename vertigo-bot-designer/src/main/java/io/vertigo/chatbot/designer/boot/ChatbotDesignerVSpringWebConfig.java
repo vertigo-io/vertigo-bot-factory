@@ -39,7 +39,7 @@ public class ChatbotDesignerVSpringWebConfig extends VSpringWebConfig {
 	// nothing basic config is enough
 
 	private static final String[] CUSTOM_UI_COMPONENTS_NAME = {
-			"chatbotDesigner/popup","chatbotDesigner/popup-ajax"
+			"chatbotDesigner/popup", "chatbotDesigner/popup-ajax", "chatbotDesigner/column-sample", "chatbotDesigner/search-table"
 	};
 
 	@Override

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=welcometours"
+>
+
+<head>
+    <title th:text="#{extensions.welcometour}"></title>
+    <script th:inline="javascript">
+        VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+
+        function addWelcomeTour() {
+            VUiPage.httpPostAjax("_saveWelcomeTour", {
+                'welId': VertigoUi.vueData.newWelcomeTour.welId,
+                'label': VertigoUi.vueData.newWelcomeTour.label,
+                'technicalCode': VertigoUi.vueData.newWelcomeTour.technicalCode,
+                'importShepherdConfigFileUri': VertigoUi.vueData.importShepherdConfigFileUri.toString()
+            });
+        }
+
+        function onRejected (rejectedEntries) {
+            let message = VertigoUi.vueData.locale === 'fr_FR' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
+                : 'File ' + rejectedEntries[0].file.name + ' was rejected.';
+            if (rejectedEntries[0].failedPropValidation === 'accept') {
+                message += VertigoUi.vueData.locale === 'fr_FR' ? ' Le format du fichier n\'est pas accepté' : ' File format isn\'t accepted';
+            }
+            VUiExtensions.dataX.attachmentError = {'show': true, 'message': message};
+        }
+
+        function onStart() {
+            VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+        }
+
+    </script>
+</head>
+
+<body>
+<section layout:fragment="content-actions">
+    <q-btn color="primary" round icon="add" th:aria-label="#{action.add}" th:title="#{action.add}"
+           @click="vueData.newWelcomeTour.welId = null;
+                       vueData.newWelcomeTour.botId = vueData.bot.botId;
+                       vueData.newWelcomeTour.label = null;
+                       vueData.newWelcomeTour.technicalCode = null ;
+                       vueData.importShepherdConfigFileUri = [];
+                       $refs.welcomeTourDialog.show()">
+
+    </q-btn>
+</section>
+
+<section layout:fragment="content">
+
+    <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+        <span class="text-primary" style="flex-grow: 2">[[#{layout.welcometours}]]</span>
+        <q-icon name="help_outlined" size="2rem"/>
+        <q-tooltip>[[#{welcometours.tooltip}]]</q-tooltip>
+    </div>
+
+    <vu:include-data-primitive key="locale"/>
+    <vu:include-data object="bot" field="botId" />
+    <vu:popup-ajax action="_deleteWelcomeTour" vModel="showDeleteWelcomeTourPopup" th:message="#{extension.welcometour.delete.popup.message}"
+                   th:confirm="#{action.delete}" dataName="welId" ></vu:popup-ajax>
+    <vu:table id="WELCOMETOUR" list="welcomeTours" componentId="welcomeTours" sortBy="label" :binary-state-sort="true">
+
+        <vu:slot name="actions_slot">
+            <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:title="#{action.update}"
+                   @click="vueData.newWelcomeTour.botId = props.row.botId; vueData.newWelcomeTour.welId = props.row.welId; vueData.newWelcomeTour.label = props.row.label;
+                       vueData.newWelcomeTour.technicalCode = props.row.technicalCode; vueData.importShepherdConfigFileUri = []; $refs.welcomeTourDialog.show()"></q-btn>
+            <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
+                   @click="componentStates.welId = props.row.welId; componentStates.showDeleteWelcomeTourPopup = true"></q-btn>
+        </vu:slot>
+        <vu:include-data object="welcomeTours" field="label" />
+        <vu:include-data object="welcomeTours" field="welId" />
+        <vu:include-data object="welcomeTours" field="botId" />
+        <vu:include-data object="welcomeTours" field="technicalCode" />
+        <vu:column style="cursor : pointer;" field="label">
+            <a style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
+               th::href="|'@{/bot/{id}/welcomeToursSteps/(id=${model.bot.botId})}'+props.row.welId|">
+                <span style="height:100%" class="row items-center">{{props.row.label}}</span>
+            </a>
+        </vu:column>
+        <vu:column style="cursor : pointer;" field="technicalCode">
+            <a style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
+               th::href="|'@{/bot/{id}/welcomeToursSteps/(id=${model.bot.botId})}'+props.row.welId|">
+                <span style="height:100%" class="row items-center">{{props.row.technicalCode}}</span>
+            </a>
+        </vu:column>
+    </vu:table>
+    <th:bloc th:with="viewMode='edit'">
+        <q-dialog ref="welcomeTourDialog">
+            <vu:include-data object="newWelcomeTour" field="botId" modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="welId" modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="label" modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="technicalCode"  modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="config" modifiable="true" />
+            <q-card>
+                <q-card-section>
+                    <div class="text-h6">
+                        <span v-if="vueData.newWelcomeTour.welId !== null" th:text="#{extensions.welcometour.update.popup.title}"></span>
+                        <span v-else th:text="#{extensions.welcometour.add.popup.title}"></span>
+                    </div>
+                </q-card-section>
+                <q-card-section>
+                    <input type="hidden" v-model="vueData.newWelcomeTour.welId" name="vContext[newWelcomeTour][welId]">
+                    <input type="hidden" v-model="vueData.newWelcomeTour.botId" name="vContext[newWelcomeTour][botId]">
+                    <vu:text-field object="newWelcomeTour" field="label"/>
+                </q-card-section>
+                <q-card-section>
+                    <vu:text-field object="newWelcomeTour" field="technicalCode"/>
+                </q-card-section>
+                <q-card-section>
+                    <vu:label-edit object="newWelcomeTour" field="config">
+                        <vu:fileupload th:url="'@{/commons/upload}'" key="importShepherdConfigFileUri" multiple="false" accept="'.js'"
+                                   @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
+                    </vu:label-edit>
+                    <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
+                </q-card-section>
+
+                <q-card-actions align="around">
+                    <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                    <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                           @click="addWelcomeTour()"
+                           color="primary" v-close-popup></q-btn>
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
+    </th:bloc>
+</section>
+</body>
+</html>

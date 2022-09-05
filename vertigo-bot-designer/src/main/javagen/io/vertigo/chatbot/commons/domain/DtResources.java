@@ -9,6 +9,86 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
+	/** Attachment.
+	/***********************************************************
+	/**
+	 * Attachment id.
+	 */
+	fldAttachment$attId,
+	/**
+	 * Label.
+	 */
+	fldAttachment$label,
+	/**
+	 * MimeType.
+	 */
+	fldAttachment$type,
+	/**
+	 * Size.
+	 */
+	fldAttachment$length,
+	/**
+	 * AttachmentFileInfo.
+	 */
+	fldAttachment$attFiId,
+	/**
+	 * Chatbot.
+	 */
+	fldAttachment$botId,
+
+	/***********************************************************
+	/** AttachmentExport.
+	/***********************************************************
+	/**
+	 * Label.
+	 */
+	fldAttachmentExport$label,
+	/**
+	 * Name.
+	 */
+	fldAttachmentExport$fileName,
+	/**
+	 * MimeType.
+	 */
+	fldAttachmentExport$mimeType,
+	/**
+	 * Size.
+	 */
+	fldAttachmentExport$length,
+	/**
+	 * Data.
+	 */
+	fldAttachmentExport$fileData,
+
+	/***********************************************************
+	/** AttachmentFileInfo.
+	/***********************************************************
+	/**
+	 * Id.
+	 */
+	fldAttachmentFileInfo$attFiId,
+	/**
+	 * Name.
+	 */
+	fldAttachmentFileInfo$fileName,
+	/**
+	 * MimeType.
+	 */
+	fldAttachmentFileInfo$mimeType,
+	/**
+	 * Size.
+	 */
+	fldAttachmentFileInfo$length,
+	/**
+	 * Modification Date.
+	 */
+	fldAttachmentFileInfo$lastModified,
+	/**
+	 * path.
+	 */
+	fldAttachmentFileInfo$filePath,
+
+	/***********************************************************
 	/** BotExport.
 	/***********************************************************
 	/**
@@ -28,9 +108,37 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$fallbackBT,
 	/**
-	 * fallback BT.
+	 * idle BT.
+	 */
+	fldBotExport$idleBT,
+	/**
+	 * rating BT.
+	 */
+	fldBotExport$ratingBT,
+	/**
+	 * topics export.
 	 */
 	fldBotExport$topics,
+	/**
+	 * Welcome tours.
+	 */
+	fldBotExport$welcomeTours,
+	/**
+	 * Confluence setting.
+	 */
+	fldBotExport$confluenceSetting,
+	/**
+	 * Jira setting.
+	 */
+	fldBotExport$jiraSetting,
+	/**
+	 * Jira fields setting.
+	 */
+	fldBotExport$jiraFieldSetting,
+	/**
+	 * map Context.
+	 */
+	fldBotExport$mapContext,
 
 	/***********************************************************
 	/** Chatbot.
@@ -61,6 +169,50 @@ public enum DtResources implements MessageKey {
 	fldChatbot$filIdAvatar,
 
 	/***********************************************************
+	/** ChatbotCustomConfig.
+	/***********************************************************
+	/**
+	 * Context value id.
+	 */
+	fldChatbotCustomConfig$cccId,
+	/**
+	 * Bot email address.
+	 */
+	fldChatbotCustomConfig$botEmailAddress,
+	/**
+	 * Reinitialization button.
+	 */
+	fldChatbotCustomConfig$reinitializationButton,
+	/**
+	 * Bot background color.
+	 */
+	fldChatbotCustomConfig$backgroundColor,
+	/**
+	 * Bot font color.
+	 */
+	fldChatbotCustomConfig$fontColor,
+	/**
+	 * Bot font family.
+	 */
+	fldChatbotCustomConfig$fontFamily,
+	/**
+	 * Display avatar.
+	 */
+	fldChatbotCustomConfig$displayAvatar,
+	/**
+	 * Total maximum attachment size.
+	 */
+	fldChatbotCustomConfig$totalMaxAttachmentSize,
+	/**
+	 * Disable NlU.
+	 */
+	fldChatbotCustomConfig$disableNlu,
+	/**
+	 * Chatbot.
+	 */
+	fldChatbotCustomConfig$botId,
+
+	/***********************************************************
 	/** ChatbotNode.
 	/***********************************************************
 	/**
@@ -88,6 +240,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotNode$apiKey,
 	/**
+	 * Is up to date.
+	 */
+	fldChatbotNode$isUpToDate,
+	/**
 	 * Chatbot.
 	 */
 	fldChatbotNode$botId,
@@ -95,6 +251,78 @@ public enum DtResources implements MessageKey {
 	 * Loaded model.
 	 */
 	fldChatbotNode$traId,
+
+	/***********************************************************
+	/** ConfluenceSetting.
+	/***********************************************************
+	/**
+	 * Confluence setting id.
+	 */
+	fldConfluenceSetting$conSetId,
+	/**
+	 * Knowledge base URL.
+	 */
+	fldConfluenceSetting$url,
+	/**
+	 * Login.
+	 */
+	fldConfluenceSetting$login,
+	/**
+	 * Password.
+	 */
+	fldConfluenceSetting$password,
+	/**
+	 * Number max of results.
+	 */
+	fldConfluenceSetting$numberOfResults,
+	/**
+	 * Chatbot.
+	 */
+	fldConfluenceSetting$botId,
+	/**
+	 * Node.
+	 */
+	fldConfluenceSetting$nodId,
+
+	/***********************************************************
+	/** ConfluenceSettingExport.
+	/***********************************************************
+	/**
+	 * Knowledge base URL.
+	 */
+	fldConfluenceSettingExport$url,
+	/**
+	 * Login.
+	 */
+	fldConfluenceSettingExport$login,
+	/**
+	 * Password.
+	 */
+	fldConfluenceSettingExport$password,
+	/**
+	 * Number max of results.
+	 */
+	fldConfluenceSettingExport$numberOfResults,
+
+	/***********************************************************
+	/** ContextValue.
+	/***********************************************************
+	/**
+	 * Context value id.
+	 */
+	fldContextValue$cvaId,
+	/**
+	 * Label.
+	 */
+	fldContextValue$label,
+	/**
+	 * Xpath.
+	 */
+	fldContextValue$xpath,
+	/**
+	 * Chatbot.
+	 */
+	fldContextValue$botId,
 
 	/***********************************************************
 	/** ExecutorConfiguration.
@@ -120,9 +348,125 @@ public enum DtResources implements MessageKey {
 	 */
 	fldExecutorConfiguration$nluThreshold,
 	/**
+	 * Avatar.
+	 */
+	fldExecutorConfiguration$avatar,
+	/**
 	 * Additional config for executor.
 	 */
 	fldExecutorConfiguration$customConfig,
+
+	/***********************************************************
+	/** JiraField.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldJiraField$jirFieldCd,
+	/**
+	 * Jira id.
+	 */
+	fldJiraField$jiraId,
+	/**
+	 * Title.
+	 */
+	fldJiraField$label,
+	/**
+	 * TitleFr.
+	 */
+	fldJiraField$labelFr,
+
+	/***********************************************************
+	/** JiraFieldSetting.
+	/***********************************************************
+	/**
+	 * Jira field setting id.
+	 */
+	fldJiraFieldSetting$jirFieldSetId,
+	/**
+	 * Jira field enabled.
+	 */
+	fldJiraFieldSetting$enabled,
+	/**
+	 * Jira field mandatory.
+	 */
+	fldJiraFieldSetting$mandatory,
+	/**
+	 * Chatbot.
+	 */
+	fldJiraFieldSetting$botId,
+	/**
+	 * Field.
+	 */
+	fldJiraFieldSetting$jirFieldCd,
+
+	/***********************************************************
+	/** JiraFieldSettingExport.
+	/***********************************************************
+	/**
+	 * Jira field key.
+	 */
+	fldJiraFieldSettingExport$fieldKey,
+	/**
+	 * Enabled.
+	 */
+	fldJiraFieldSettingExport$enabled,
+	/**
+	 * Mandatory.
+	 */
+	fldJiraFieldSettingExport$mandatory,
+
+	/***********************************************************
+	/** JiraSetting.
+	/***********************************************************
+	/**
+	 * Jira setting id.
+	 */
+	fldJiraSetting$jirSetId,
+	/**
+	 * Jira URL.
+	 */
+	fldJiraSetting$url,
+	/**
+	 * Login.
+	 */
+	fldJiraSetting$login,
+	/**
+	 * Password.
+	 */
+	fldJiraSetting$password,
+	/**
+	 * Jira project.
+	 */
+	fldJiraSetting$project,
+	/**
+	 * Chatbot.
+	 */
+	fldJiraSetting$botId,
+	/**
+	 * Node.
+	 */
+	fldJiraSetting$nodId,
+
+	/***********************************************************
+	/** JiraSettingExport.
+	/***********************************************************
+	/**
+	 * Jira URL.
+	 */
+	fldJiraSettingExport$url,
+	/**
+	 * Login.
+	 */
+	fldJiraSettingExport$login,
+	/**
+	 * Password.
+	 */
+	fldJiraSettingExport$password,
+	/**
+	 * Project.
+	 */
+	fldJiraSettingExport$project,
 
 	/***********************************************************
 	/** MediaFileInfo.
@@ -177,6 +521,54 @@ public enum DtResources implements MessageKey {
 	fldRunnerInfo$loadedModelVersion,
 
 	/***********************************************************
+	/** SavedTraining.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldSavedTraining$savedTraId,
+	/**
+	 * Name.
+	 */
+	fldSavedTraining$name,
+	/**
+	 * Creation time.
+	 */
+	fldSavedTraining$creationTime,
+	/**
+	 * Description.
+	 */
+	fldSavedTraining$description,
+	/**
+	 * Bot Export.
+	 */
+	fldSavedTraining$botExport,
+	/**
+	 * Training.
+	 */
+	fldSavedTraining$traId,
+	/**
+	 * Bot.
+	 */
+	fldSavedTraining$botId,
+
+	/***********************************************************
+	/** SavedTrainingCriteria.
+	/***********************************************************
+	/**
+	 * Search text.
+	 */
+	fldSavedTrainingCriteria$text,
+	/**
+	 * From.
+	 */
+	fldSavedTrainingCriteria$fromDate,
+	/**
+	 * To.
+	 */
+	fldSavedTrainingCriteria$toDate,
+
+	/***********************************************************
 	/** TopicExport.
 	/***********************************************************
 	/**
@@ -191,6 +583,10 @@ public enum DtResources implements MessageKey {
 	 * Topic BT.
 	 */
 	fldTopicExport$topicBT,
+	/**
+	 * Unreachable.
+	 */
+	fldTopicExport$unreachable,
 
 	/***********************************************************
 	/** TrainerInfo.
@@ -276,13 +672,13 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTraining$botId,
 	/**
-	 * Status.
-	 */
-	fldTraining$strCd,
-	/**
 	 * Model.
 	 */
 	fldTraining$filIdModel,
+	/**
+	 * Status.
+	 */
+	fldTraining$strCd,
 
 	/***********************************************************
 	/** TrainingStatus.
@@ -299,4 +695,132 @@ public enum DtResources implements MessageKey {
 	 * LabelFr.
 	 */
 	fldTrainingStatus$labelFr,
+
+	/***********************************************************
+	/** UnknownSentenceDetail.
+	/***********************************************************
+	/**
+	 * Unknown sentence id.
+	 */
+	fldUnknownSentenceDetail$unkSeId,
+	/**
+	 * Date.
+	 */
+	fldUnknownSentenceDetail$date,
+	/**
+	 * User text.
+	 */
+	fldUnknownSentenceDetail$text,
+	/**
+	 * Model Name.
+	 */
+	fldUnknownSentenceDetail$modelName,
+	/**
+	 * Status.
+	 */
+	fldUnknownSentenceDetail$status,
+	/**
+	 * Bot.
+	 */
+	fldUnknownSentenceDetail$botId,
+
+	/***********************************************************
+	/** UnknownSentenceStatus.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldUnknownSentenceStatus$strCd,
+	/**
+	 * Label.
+	 */
+	fldUnknownSentenceStatus$label,
+	/**
+	 * LabelFr.
+	 */
+	fldUnknownSentenceStatus$labelFr,
+
+	/***********************************************************
+	/** UnknownSentenceToUpdateIhm.
+	/***********************************************************
+	/**
+	 * Unknown sentence Id.
+	 */
+	fldUnknownSentenceToUpdateIhm$unkSeId,
+	/**
+	 * User text.
+	 */
+	fldUnknownSentenceToUpdateIhm$text,
+
+	/***********************************************************
+	/** WelcomeTour.
+	/***********************************************************
+	/**
+	 * Welcome tour id.
+	 */
+	fldWelcomeTour$welId,
+	/**
+	 * Label.
+	 */
+	fldWelcomeTour$label,
+	/**
+	 * Technical code.
+	 */
+	fldWelcomeTour$technicalCode,
+	/**
+	 * Shepherd config.
+	 */
+	fldWelcomeTour$config,
+	/**
+	 * Chatbot.
+	 */
+	fldWelcomeTour$botId,
+
+	/***********************************************************
+	/** WelcomeTourExport.
+	/***********************************************************
+	/**
+	 * Label.
+	 */
+	fldWelcomeTourExport$label,
+	/**
+	 * Technical code.
+	 */
+	fldWelcomeTourExport$technicalCode,
+	/**
+	 * Shepherd config.
+	 */
+	fldWelcomeTourExport$config,
+
+	/***********************************************************
+	/** WelcomeTourStep.
+	/***********************************************************
+	/**
+	 * Welcome tour step id.
+	 */
+	fldWelcomeTourStep$welStepId,
+	/**
+	 * Internal step id.
+	 */
+	fldWelcomeTourStep$internalStepId,
+	/**
+	 * Text.
+	 */
+	fldWelcomeTourStep$text,
+	/**
+	 * Title.
+	 */
+	fldWelcomeTourStep$title,
+	/**
+	 * Sequence.
+	 */
+	fldWelcomeTourStep$sequence,
+	/**
+	 * Enabled.
+	 */
+	fldWelcomeTourStep$enabled,
+	/**
+	 * Tour.
+	 */
+	fldWelcomeTourStep$tourId,
 }

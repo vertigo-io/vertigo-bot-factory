@@ -1,0 +1,68 @@
+package io.vertigo.chatbot.designer.domain
+
+/************************/
+/* **** History  **** */
+/************************/
+
+create DtDefinition DtHistory {
+	id histId 		                {domain: DoId		    label: "History id"                             }
+	field date		                {domain: DoInstant 		label: "Date"			    cardinality : "1"   }
+	field className		            {domain: DoLabel 		label: "Class name"			cardinality : "1"   }
+	field message		            {domain: DoLabel	    label: "Label" 	            cardinality:  "1"   }
+	field userName		            {domain: DoLabel	    label: "User" 	            cardinality:  "1"   }
+}
+
+create DtDefinition DtHistoryCriteria {
+    field fromDate		    {domain: DoLocaldate 				label: "From"		 		            }
+	field toDate		    {domain: DoLocaldate				label: "To" 				            }
+	field hacCd				{domain: DoCode                     label: "Action"				            }
+	field text				{domain: DoLabel                    label: "Search"				            }
+}
+
+create DtDefinition DtHistoryAction {
+	stereotype : "StaticMasterData"
+	id    hacCd 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "TitleFr" 		cardinality : "1"	}
+	values : `{
+        "ADDED" : {
+            "hacCd" : "ADDED",
+            "label" : "Added",
+            "labelFr" : "Ajouté"
+        },
+        "DELETED" : {
+            "hacCd" : "DELETED",
+            "label" : "Deleted",
+            "labelFr" : "Supprimé"
+        },
+        "UPDATED" : {
+           "hacCd" : "UPDATED",
+           "label" : "Updated",
+           "labelFr" : "Modifié"
+       }
+     }`
+    sortField : "hacCd"
+ 	displayField : "label"
+}
+
+create Association AHistoryHistoryAction{
+
+	fkFieldName : "hacCd"
+
+ 	dtDefinitionA : DtHistory
+	type : "*>1"
+	dtDefinitionB : DtHistoryAction
+
+	labelB : "Action"
+
+}
+
+create Association AHistoryChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtHistory
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}

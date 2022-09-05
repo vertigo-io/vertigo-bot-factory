@@ -14,10 +14,8 @@ public final class SessionExport implements DtObject {
 	private static final long serialVersionUID = 1L;
 
 	private java.time.Instant date;
-	private String modelName;
-	private java.time.Instant dateTraining;
-	private String botName;
-	private String creationBot;
+	private Long conversationCount;
+	private Long userActionsCount;
 	
 	/**
 	 * Champ : DATA.
@@ -40,78 +38,40 @@ public final class SessionExport implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Model Name'.
-	 * @return String modelName
+	 * Récupère la valeur de la propriété 'Conversation count'.
+	 * @return Long conversationCount
 	 */
-	@Field(smartType = "STyLabel", label = "Model Name")
-	public String getModelName() {
-		return modelName;
+	@Field(smartType = "STyNumber", label = "Conversation count")
+	public Long getConversationCount() {
+		return conversationCount;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Model Name'.
-	 * @param modelName String
+	 * Définit la valeur de la propriété 'Conversation count'.
+	 * @param conversationCount Long
 	 */
-	public void setModelName(final String modelName) {
-		this.modelName = modelName;
+	public void setConversationCount(final Long conversationCount) {
+		this.conversationCount = conversationCount;
 	}
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Date training'.
-	 * @return Instant dateTraining
+	 * Récupère la valeur de la propriété 'User actions count'.
+	 * @return Long userActionsCount
 	 */
-	@Field(smartType = "STyInstant", label = "Date training")
-	public java.time.Instant getDateTraining() {
-		return dateTraining;
+	@Field(smartType = "STyNumber", label = "User actions count")
+	public Long getUserActionsCount() {
+		return userActionsCount;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Date training'.
-	 * @param dateTraining Instant
+	 * Définit la valeur de la propriété 'User actions count'.
+	 * @param userActionsCount Long
 	 */
-	public void setDateTraining(final java.time.Instant dateTraining) {
-		this.dateTraining = dateTraining;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Bot name'.
-	 * @return String botName
-	 */
-	@Field(smartType = "STyLabel", label = "Bot name")
-	public String getBotName() {
-		return botName;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Bot name'.
-	 * @param botName String
-	 */
-	public void setBotName(final String botName) {
-		this.botName = botName;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Date bot creation'.
-	 * @return String creationBot
-	 */
-	@Field(smartType = "STyLabel", label = "Date bot creation")
-	public String getCreationBot() {
-		return creationBot;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Date bot creation'.
-	 * @param creationBot String
-	 */
-	public void setCreationBot(final String creationBot) {
-		this.creationBot = creationBot;
+	public void setUserActionsCount(final Long userActionsCount) {
+		this.userActionsCount = userActionsCount;
 	}
 	
 	/** {@inheritDoc} */

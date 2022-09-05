@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/detailLayout}" th:with="tab=informations, noNavigation=${model.modeCreate}"
+	layout:decorate="~{templates/detailLayout}" th:with="tab=users, noNavigation=${model.modeCreate}"
 	>
 	
 	<head>
@@ -24,7 +24,7 @@
 			<span class="text-bigger">{{vueData.person.name}}</span> <br />
 		</div>
 
-		<section layout:fragment="content-header-actions">
+		<section layout:fragment="content-actions">
 			<vu:button-link th:if="${model.modeEdit}" url="@{/person/{id}(id=${model.person.perId})}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"

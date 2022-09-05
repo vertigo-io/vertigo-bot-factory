@@ -1,6 +1,7 @@
 chatbot_task.ksp
 chatbotNode_task.ksp
 responsesButton_task.ksp
+responsesButtonUrl_task.ksp
 smallTalk_task.ksp
 scriptIntention_task.ksp
 utterText_task.ksp
@@ -10,6 +11,8 @@ topic_task.ksp
 topicCategory_task.ksp
 export_task.ksp
 topicFileExport_task.ksp
-meaning_task.ksp
+dictionaryEntity_task.ksp
 synonym_task.ksp
 topicLabel_task.ksp
+unknownSentence_task.ksp
+history_task.ksp

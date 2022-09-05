@@ -1,5 +1,6 @@
 mda/domain.ksp
-mda/modele.ksp
 mda/webservices.ksp
 mda/file.ksp
-mda/topicModel.ksp
+mda/contextModel.ksp
+mda/chatbotModel.ksp
+mda/attachmentModel.ksp

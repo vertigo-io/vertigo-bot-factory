@@ -17,36 +17,40 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des DtDefinitions.
 	 */
 	public enum Definitions {
+		/** Objet de données Attachment. */
+		Attachment(io.vertigo.chatbot.commons.domain.Attachment.class),
+		/** Objet de données AttachmentExport. */
+		AttachmentExport(io.vertigo.chatbot.commons.domain.AttachmentExport.class),
+		/** Objet de données AttachmentFileInfo. */
+		AttachmentFileInfo(io.vertigo.chatbot.commons.domain.AttachmentFileInfo.class),
 		/** Objet de données BotExport. */
 		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
 		/** Objet de données Chatbot. */
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
-		/** Objet de données ChatbotNode. */
-		ChatbotNode(io.vertigo.chatbot.commons.domain.ChatbotNode.class),
+		/** Objet de données ChatbotCustomConfig. */
+		ChatbotCustomConfig(io.vertigo.chatbot.commons.domain.ChatbotCustomConfig.class),
+		/** Objet de données ConfluenceSettingExport. */
+		ConfluenceSettingExport(io.vertigo.chatbot.commons.domain.ConfluenceSettingExport.class),
+		/** Objet de données ContextValue. */
+		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
+		/** Objet de données JiraFieldSettingExport. */
+		JiraFieldSettingExport(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class),
+		/** Objet de données JiraSettingExport. */
+		JiraSettingExport(io.vertigo.chatbot.commons.domain.JiraSettingExport.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
-		/** Objet de données NluTrainingSentence. */
-		NluTrainingSentence(io.vertigo.chatbot.commons.domain.NluTrainingSentence.class),
 		/** Objet de données RasaConfig. */
 		RasaConfig(io.vertigo.chatbot.executor.domain.RasaConfig.class),
-		/** Objet de données ResponseButton. */
-		ResponseButton(io.vertigo.chatbot.commons.domain.ResponseButton.class),
-		/** Objet de données ResponseType. */
-		ResponseType(io.vertigo.chatbot.commons.domain.ResponseType.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
-		/** Objet de données SmallTalk. */
-		SmallTalk(io.vertigo.chatbot.commons.domain.SmallTalk.class),
 		/** Objet de données TopicExport. */
 		TopicExport(io.vertigo.chatbot.commons.domain.TopicExport.class),
 		/** Objet de données TrainerInfo. */
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
-		/** Objet de données Training. */
-		Training(io.vertigo.chatbot.commons.domain.Training.class),
-		/** Objet de données UtterText. */
-		UtterText(io.vertigo.chatbot.commons.domain.UtterText.class);
+		/** Objet de données WelcomeTourExport. */
+		WelcomeTourExport(io.vertigo.chatbot.commons.domain.WelcomeTourExport.class)		;
 
 		private final Class<?> clazz;
 
@@ -54,15 +58,63 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 			this.clazz = clazz;
 		}
 
-		/**
+		/** 
 		 * Classe associée.
-		 *
-		 * @return Class d'implémentation de l'objet
+		 * @return Class d'implémentation de l'objet 
 		 */
 		public Class<?> getDtClass() {
 			return clazz;
 		}
 	}
+
+	/**
+	 * Enumération des champs de Attachment.
+	 */
+	public enum AttachmentFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Attachment> {
+		/** Propriété 'Attachment id'. */
+		attId,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'MimeType'. */
+		type,
+		/** Propriété 'Size'. */
+		length,
+		/** Propriété 'AttachmentFileInfo'. */
+		attFiId,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de AttachmentExport.
+	 */
+	public enum AttachmentExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.AttachmentExport> {
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Name'. */
+		fileName,
+		/** Propriété 'MimeType'. */
+		mimeType,
+		/** Propriété 'Size'. */
+		length,
+		/** Propriété 'Data'. */
+		fileData	}
+
+	/**
+	 * Enumération des champs de AttachmentFileInfo.
+	 */
+	public enum AttachmentFileInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.AttachmentFileInfo> {
+		/** Propriété 'Id'. */
+		attFiId,
+		/** Propriété 'Name'. */
+		fileName,
+		/** Propriété 'MimeType'. */
+		mimeType,
+		/** Propriété 'Size'. */
+		length,
+		/** Propriété 'Modification Date'. */
+		lastModified,
+		/** Propriété 'path'. */
+		filePath	}
 
 	/**
 	 * Enumération des champs de BotExport.
@@ -76,9 +128,22 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		endBT,
 		/** Propriété 'fallback BT'. */
 		fallbackBT,
-		/** Propriété 'fallback BT'. */
-		topics
-	}
+		/** Propriété 'idle BT'. */
+		idleBT,
+		/** Propriété 'rating BT'. */
+		ratingBT,
+		/** Propriété 'topics export'. */
+		topics,
+		/** Propriété 'Welcome tours'. */
+		welcomeTours,
+		/** Propriété 'Confluence setting'. */
+		confluenceSetting,
+		/** Propriété 'Jira setting'. */
+		jiraSetting,
+		/** Propriété 'Jira fields setting'. */
+		jiraFieldSetting,
+		/** Propriété 'map Context'. */
+		mapContext	}
 
 	/**
 	 * Enumération des champs de Chatbot.
@@ -95,34 +160,56 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Status'. */
 		status,
 		/** Propriété 'Avatar'. */
-		filIdAvatar,
-		/** Propriété 'Welcome text'. */
-		uttIdWelcome,
-		/** Propriété 'Default text'. */
-		uttIdDefault
-	}
+		filIdAvatar	}
 
 	/**
-	 * Enumération des champs de ChatbotNode.
+	 * Enumération des champs de ChatbotCustomConfig.
 	 */
-	public enum ChatbotNodeFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotNode> {
-		/** Propriété 'ID'. */
-		nodId,
-		/** Propriété 'Name'. */
-		name,
-		/** Propriété 'URL'. */
-		url,
-		/** Propriété 'Dev node'. */
-		isDev,
-		/** Propriété 'Color'. */
-		color,
-		/** Propriété 'ApiKey'. */
-		apiKey,
+	public enum ChatbotCustomConfigFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotCustomConfig> {
+		/** Propriété 'Context value id'. */
+		cccId,
+		/** Propriété 'Bot email address'. */
+		botEmailAddress,
+		/** Propriété 'Reinitialization button'. */
+		reinitializationButton,
+		/** Propriété 'Bot background color'. */
+		backgroundColor,
+		/** Propriété 'Bot font family'. */
+		fontFamily,
+		/** Propriété 'Display avatar'. */
+		displayAvatar,
+		/** Propriété 'Total maximum attachment size'. */
+		totalMaxAttachmentSize,
+		/** Propriété 'Disable NlU'. */
+		disableNlu,
 		/** Propriété 'Chatbot'. */
-		botId,
-		/** Propriété 'Loaded model'. */
-		traId
-	}
+		botId	}
+
+	/**
+	 * Enumération des champs de ConfluenceSettingExport.
+	 */
+	public enum ConfluenceSettingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ConfluenceSettingExport> {
+		/** Propriété 'Knowledge base URL'. */
+		url,
+		/** Propriété 'Login'. */
+		login,
+		/** Propriété 'Password'. */
+		password,
+		/** Propriété 'Number max of results'. */
+		numberOfResults	}
+
+	/**
+	 * Enumération des champs de ContextValue.
+	 */
+	public enum ContextValueFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ContextValue> {
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Xpath'. */
+		xpath,
+		/** Propriété 'Chatbot'. */
+		botId	}
 
 	/**
 	 * Enumération des champs de ExecutorConfiguration.
@@ -138,9 +225,34 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		modelName,
 		/** Propriété 'NLU Threshold'. */
 		nluThreshold,
+		/** Propriété 'Avatar'. */
+		avatar,
 		/** Propriété 'Additional config for executor'. */
-		customConfig
-	}
+		customConfig	}
+
+	/**
+	 * Enumération des champs de JiraFieldSettingExport.
+	 */
+	public enum JiraFieldSettingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> {
+		/** Propriété 'Jira field key'. */
+		fieldKey,
+		/** Propriété 'Enabled'. */
+		enabled,
+		/** Propriété 'Mandatory'. */
+		mandatory	}
+
+	/**
+	 * Enumération des champs de JiraSettingExport.
+	 */
+	public enum JiraSettingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.JiraSettingExport> {
+		/** Propriété 'Jira URL'. */
+		url,
+		/** Propriété 'Login'. */
+		login,
+		/** Propriété 'Password'. */
+		password,
+		/** Propriété 'Project'. */
+		project	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.
@@ -159,20 +271,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'path'. */
 		filePath,
 		/** Propriété 'data'. */
-		fileData
-	}
-
-	/**
-	 * Enumération des champs de NluTrainingSentence.
-	 */
-	public enum NluTrainingSentenceFields implements DtFieldName<io.vertigo.chatbot.commons.domain.NluTrainingSentence> {
-		/** Propriété 'ID'. */
-		ntsId,
-		/** Propriété 'Text'. */
-		text,
-		/** Propriété 'SmallTalk'. */
-		smtId
-	}
+		fileData	}
 
 	/**
 	 * Enumération des champs de RasaConfig.
@@ -185,38 +284,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'nlu'. */
 		nlu,
 		/** Propriété 'config'. */
-		config
-	}
-
-	/**
-	 * Enumération des champs de ResponseButton.
-	 */
-	public enum ResponseButtonFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ResponseButton> {
-		/** Propriété 'ID'. */
-		btnId,
-		/** Propriété 'Text'. */
-		text,
-		/** Propriété 'SmallTalk'. */
-		smtId,
-		/** Propriété 'SmallTalkResponse'. */
-		smtIdResponse,
-		/** Propriété 'welcome buttons'. */
-		botIdWelcome,
-		/** Propriété 'Default buttons'. */
-		botIdDefault
-	}
-
-	/**
-	 * Enumération des champs de ResponseType.
-	 */
-	public enum ResponseTypeFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ResponseType> {
-		/** Propriété 'ID'. */
-		rtyId,
-		/** Propriété 'Title'. */
-		label,
-		/** Propriété 'Order'. */
-		sortOrder
-	}
+		config	}
 
 	/**
 	 * Enumération des champs de RunnerInfo.
@@ -229,26 +297,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Component version'. */
 		agentVersion,
 		/** Propriété 'Model version'. */
-		loadedModelVersion
-	}
-
-	/**
-	 * Enumération des champs de SmallTalk.
-	 */
-	public enum SmallTalkFields implements DtFieldName<io.vertigo.chatbot.commons.domain.SmallTalk> {
-		/** Propriété 'ID'. */
-		smtId,
-		/** Propriété 'Title'. */
-		title,
-		/** Propriété 'Description'. */
-		description,
-		/** Propriété 'Enabled'. */
-		isEnabled,
-		/** Propriété 'Chatbot'. */
-		botId,
-		/** Propriété 'Response type'. */
-		rtyId
-	}
+		loadedModelVersion	}
 
 	/**
 	 * Enumération des champs de TopicExport.
@@ -259,13 +308,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'nluTrainingSentences'. */
 		nluTrainingSentences,
 		/** Propriété 'Topic BT'. */
-		topicBT
-	}
+		topicBT,
+		/** Propriété 'Unreachable'. */
+		unreachable	}
 
 	/**
 	 * Enumération des champs de TrainerInfo.
 	 */
 	public enum TrainerInfoFields implements DtFieldName<io.vertigo.chatbot.commons.domain.TrainerInfo> {
+		/** Propriété 'Training id'. */
+		traId,
 		/** Propriété 'Name'. */
 		name,
 		/** Propriété 'Training in progress'. */
@@ -281,56 +333,24 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Training percentage'. */
 		trainingPercent,
 		/** Propriété 'Duration'. */
-		duration
-	}
+		duration	}
 
 	/**
-	 * Enumération des champs de Training.
+	 * Enumération des champs de WelcomeTourExport.
 	 */
-	public enum TrainingFields implements DtFieldName<io.vertigo.chatbot.commons.domain.Training> {
-		/** Propriété 'ID'. */
-		traId,
-		/** Propriété 'Start time'. */
-		startTime,
-		/** Propriété 'End time'. */
-		endTime,
-		/** Propriété 'Version'. */
-		versionNumber,
-		/** Propriété 'Status'. */
-		status,
-		/** Propriété 'Log'. */
-		log,
-		/** Propriété 'Informations'. */
-		infos,
-		/** Propriété 'Warnings'. */
-		warnings,
-		/** Propriété 'NLU Threshold'. */
-		nluThreshold,
-		/** Propriété 'Duration'. */
-		duration,
-		/** Propriété 'Chatbot'. */
-		botId,
-		/** Propriété 'Model'. */
-		filIdModel
-	}
-
-	/**
-	 * Enumération des champs de UtterText.
-	 */
-	public enum UtterTextFields implements DtFieldName<io.vertigo.chatbot.commons.domain.UtterText> {
-		/** Propriété 'ID'. */
-		uttId,
-		/** Propriété 'Text'. */
-		text,
-		/** Propriété 'SmallTalk'. */
-		smtId
-	}
+	public enum WelcomeTourExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.WelcomeTourExport> {
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Technical code'. */
+		technicalCode,
+		/** Propriété 'Shepherd config'. */
+		config	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Iterator<Class<?>> iterator() {
 		return new Iterator<>() {
-			private final Iterator<Definitions> it = Arrays.asList(Definitions.values()).iterator();
+			private Iterator<Definitions> it = Arrays.asList(Definitions.values()).iterator();
 
 			/** {@inheritDoc} */
 			@Override

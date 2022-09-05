@@ -28,7 +28,7 @@ import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.datastore.filestore.model.VFile;
 
 @Controller
-@RequestMapping("/botHeader/")
+@RequestMapping("/botHeader")
 public class CommonBotHeaderController {
 
 	@Inject

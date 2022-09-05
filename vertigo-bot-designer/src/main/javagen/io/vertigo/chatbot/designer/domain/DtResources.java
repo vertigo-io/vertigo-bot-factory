@@ -9,20 +9,104 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
-	/** Meaning.
+	/** DictionaryEntity.
 	/***********************************************************
 	/**
-	 * Meaning id.
+	 * Dictionary entity id.
 	 */
-	fldMeaning$meaId,
+	fldDictionaryEntity$dicEntId,
 	/**
 	 * Label.
 	 */
-	fldMeaning$label,
+	fldDictionaryEntity$label,
 	/**
 	 * Chatbot.
 	 */
-	fldMeaning$botId,
+	fldDictionaryEntity$botId,
+
+	/***********************************************************
+	/** DictionaryEntityWrapper.
+	/***********************************************************
+	/**
+	 * Dictionary Entity id.
+	 */
+	fldDictionaryEntityWrapper$dicEntId,
+	/**
+	 * Dictionary Entity Label.
+	 */
+	fldDictionaryEntityWrapper$dictionaryEntityLabel,
+	/**
+	 * Synonyms list.
+	 */
+	fldDictionaryEntityWrapper$synonymsList,
+
+	/***********************************************************
+	/** History.
+	/***********************************************************
+	/**
+	 * History id.
+	 */
+	fldHistory$histId,
+	/**
+	 * Date.
+	 */
+	fldHistory$date,
+	/**
+	 * Class name.
+	 */
+	fldHistory$className,
+	/**
+	 * Label.
+	 */
+	fldHistory$message,
+	/**
+	 * User.
+	 */
+	fldHistory$userName,
+	/**
+	 * Action.
+	 */
+	fldHistory$hacCd,
+	/**
+	 * Chatbot.
+	 */
+	fldHistory$botId,
+
+	/***********************************************************
+	/** HistoryAction.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldHistoryAction$hacCd,
+	/**
+	 * Title.
+	 */
+	fldHistoryAction$label,
+	/**
+	 * TitleFr.
+	 */
+	fldHistoryAction$labelFr,
+
+	/***********************************************************
+	/** HistoryCriteria.
+	/***********************************************************
+	/**
+	 * From.
+	 */
+	fldHistoryCriteria$fromDate,
+	/**
+	 * To.
+	 */
+	fldHistoryCriteria$toDate,
+	/**
+	 * Action.
+	 */
+	fldHistoryCriteria$hacCd,
+	/**
+	 * Search.
+	 */
+	fldHistoryCriteria$text,
 
 	/***********************************************************
 	/** Synonym.
@@ -40,9 +124,9 @@ public enum DtResources implements MessageKey {
 	 */
 	fldSynonym$botId,
 	/**
-	 * Meaning.
+	 * DictionaryEntity.
 	 */
-	fldSynonym$meaId,
+	fldSynonym$dicEntId,
 
 	/***********************************************************
 	/** TupleSynonymIhm.

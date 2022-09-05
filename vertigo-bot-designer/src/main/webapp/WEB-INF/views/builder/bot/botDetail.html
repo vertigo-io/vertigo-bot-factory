@@ -3,12 +3,13 @@
 	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{templates/botDetailLayout}" th:with="tab=informations, noNavigation=${model.modeCreate}"
+	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=informations, noNavigation=${model.modeCreate}"
 	>
 	
 	<head>
 		<title th:text="#{bot.detail.title}"></title>
-		
+
+		<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 		<script th:src="@{/static/js/c-richtext.js}"></script>
 		<script th:src="@{/static/js/c-buttonList.js}"></script>
 		
@@ -16,212 +17,159 @@
 		<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
 		<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
-		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js" integrity="sha512-hGVnilhYD74EGnPbzyvje74/Urjrg5LSNGx0ARG1Ucqyiaz+lFvtsXk/1jCwT9/giXP0qoXSlVDjxNxjLvmqAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue-codemirror@4.0.6/dist/vue-codemirror.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/mode/simple.min.js" integrity="sha512-9YoNYsegWvbA5aiSshQ2BNW2FAq3CQVLqpg2r6urw9Tfl1GklM9PNgrMRVz8fhEtjM+uZfO/1X3RURkMcil8wg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.js" integrity="sha512-kCn9g92k3GM90eTPGMNwvpCAtLmvyqbpvrdnhm0NMt6UEHYs+DjRO4me8VcwInLWQ9azmamS1U1lbQV627/TBQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/selection/active-line.min.js" integrity="sha512-UNVAZmixdjeBtJVQcH5eSKXuVdzbSV6rzfTfNVyYWUIIDCdI9/G8/Z/nWplnSHXXxz9U8TA1BiJ1trK7abL/dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.js" integrity="sha512-uVoZbG/kkAWc+ceMzfYqsyI2ONb5qMV0nc1UZ8gOvuDuc0EWt8VcXg3fWR7z1EIpn4yyWSEeK9lmrR30VSpYLQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.css" integrity="sha512-OmcLQEy8iGiD7PSm85s06dnR7G7C9C0VqahIPAj/KHk5RpOCmnC6R2ob1oK4/uwYhWa9BF1GC6tzxsC8TIx7Jg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.css" integrity="sha512-jP1+o6s94WQS9boYeDP3Azh8ihI5BxGgBZNjkABhx05MqH5WuDzfzSnoPxGxVzWi/gxxVHZHvWkdRM6SMy5B0Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css" integrity="sha512-6sALqOPMrNSc+1p5xOhPwGIzs6kIlST+9oGWlI4Wwcbj1saaX9J3uzO3Vub016dmHV7hM+bMi/rfXLiF5DNIZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+		<script th:src="@{/static/chatbot/chatbotMode.js}"></script>
+		<script th:src="@{/static/js/c-codemirror.js}"></script>
+		<script th:inline="javascript">
+		 	Vue.use(window.VueCodemirror)
+			function getChatPreview() {
+				return [VertigoUi.vueData.chatbotCustomConfig.fontFamily];
+			}
+			function changeChatMessageBgColor() {
+				 if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
+					 VertigoUi.vueData.chatbotCustomConfig.backgroundColor = '#cdcdcd';
+				 }
+				 Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
+					 element.style.setProperty('--chat-message-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
+				 });
+			}
+
+			function changeChatMessageFontColor() {
+				 if (VertigoUi.vueData.chatbotCustomConfig.fontColor == null) {
+					 VertigoUi.vueData.chatbotCustomConfig.fontColor = '#000000';
+				 }
+				Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+				});
+			}
+
+			function changeChatMessageFontFamily() {
+				 if (VertigoUi.vueData.chatbotCustomConfig.fontFamily == null) {
+					 VertigoUi.vueData.chatbotCustomConfig.fontFamily = 'Arial, sans-serif';
+				 }
+				Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-family', VertigoUi.vueData.chatbotCustomConfig.fontFamily);
+				});
+			}
+
+			document.addEventListener('DOMContentLoaded', function () {
+				changeChatMessageBgColor();
+				changeChatMessageFontFamily();
+				changeChatMessageFontColor();
+			});
+		</script>
+		<style>
+			.q-message-text--received {
+				color: var(--chat-message-bg-color) !important;
+				font-family: var(--chat-message-font-family) !important;
+			}
+			.q-message-text-content--received {
+				color: var(--chat-message-font-color) !important;
+			}
+		</style>
 	</head>
 	
 	<body>
-		<div layout:fragment="content-header-left" id="baseImg">
-	 		<img v-if="componentStates.uploaderbotTmpPictureUri && componentStates.uploaderbotTmpPictureUri.fileUris.length > 0" th::src="|'@{/commons/upload}?file=' + componentStates.uploaderbotTmpPictureUri.fileUris[0]|" class="detailImg" />
-	 		<img v-if="!componentStates.uploaderbotTmpPictureUri || componentStates.uploaderbotTmpPictureUri.fileUris.length == 0" th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" class="detailImg" />
+		<div layout:fragment="content-header-left" id="baseImg"  class="row items-center header-bot-img">
+	 		<img v-if="vueData.botTmpPictureUri && vueData.botTmpPictureUri.length > 0" th::src="|'@{/commons/upload}?file=' + vueData.botTmpPictureUri[0]|"/>
+	 		<img v-if="!vueData.botTmpPictureUri || vueData.botTmpPictureUri.length == 0" th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" />
 		</div>
 	
-		<section layout:fragment="content-header-actions">
+		<section layout:fragment="content-actions">
 			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}(id=${model.bot.botId})}" th:ariaLabel="#{bot.cancel}" icon="fas fa-ban"
-							class="on-left text-accent-inverted" :round size="lg" color="primary" :flat />
+							class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" th:ariaLabel="#{bot.edit}" icon="edit"
-							class="on-left" :round size="lg" color="primary" />
-			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" @click="componentStates.showPopup = true" th:ariaLabel="#{bot.delete}" icon="delete"
-							class="on-left" round size="lg" color="red" > </q-btn>
+							class="on-left" :round size="md" color="primary" />
 		</section>
 		
-		
-		
 		<section layout:fragment="content">
-			
-			<vu:popup action="_delete" vModel="showPopup" th:message=#{bot.popup.message} th:confirm=#{bot.delete}></vu:popup>
-			<vu:popup-ajax action="_deleteNode" vModel="showPopupNode" th:message="#{bot.popup.node.message}" th:confirm=#{bot.delete} dataName="nodId" successAction="'VUiPage.$refs.nodeEdit.hide'"></vu:popup-ajax>
-			
+			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+				<span class="text-primary" style="flex-grow: 2">[[#{layout.information}]]</span>
+				<q-icon name="help_outlined" size="2rem"/>
+				<q-tooltip>[[#{bot.tooltip}]]</q-tooltip>
+			</div>
 			<vu:block id="identity" th:title="#{bot.identity}">
-				<vu:text-field object="bot" field="name" th:if="${viewMode=='edit'}"/>
+				<vu:text-field object="bot" field="name" />
+				<vu:text-area object="bot" field="description"/>
 				
 				<vu:label-edit object="bot" field="filIdAvatar" th:if="${viewMode=='edit'}">
 					<vu:fileupload th:url="'@{/commons/upload}'" key="botTmpPictureUri" multiple="false"/>
 				</vu:label-edit>
-				
-				<vu:text-area object="bot" field="description"/>
-			</vu:block>
-			
-			<vu:block id="custom" th:title="#{bot.customization}">
-				<vu:include-data object="utterTextFailure" field="text" />
-				<vu:include-data object="utterTextStart" field="text" />
-				<vu:include-data object="utterTextEnd" field="text" />
-				<vu:include-data object="typeTopicList" field="'*'"/>
-				<vu:include-data object="ttoCdFailure" field="'*'" />
-				<vu:include-data object="ttoCdStart" field="'*'" />
-				<vu:include-data object="ttoCdEnd" field="'*'" />
-				<div class="text-subtitle1" th:text=#{bot.welcome}></div>
-					<div>				
-					   <q-btn-toggle
-					      th:if="${!model.modeReadOnly}"
-					        v-model="vueData.ttoCdStart"
-					        toggle-color="primary"
-					        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
-					     	th::mode-edit="${!model.modeReadOnly}"
-					      />
-				    </div>
-				    <input type="hidden" name="vContext[ttoCdStart]" :value="vueData.ttoCdStart" />
-				    <div v-if="vueData.ttoCdStart == 'SMALLTALK'">
-						<c-richtext 
-							
-							class="q-pb-sm"
-							v-model="vueData.utterTextStart.text"
-							name="vContext[utterTextStart][text]"
-							th::mode-edit="${!model.modeReadOnly}">
-						</c-richtext>
-					</div>
-					<div v-else>
-						<vu:text-area 
-							
-							style="width: calc(100% - 300px);"
-							label="script"
-							object="utterTextStart"		
-							field="text"					
-							th::mode-edit="${!model.modeReadOnly}">
-						</vu:text-area>
-					</div>
-				<div class="text-subtitle1" th:text=#{bot.fallback}></div>
-					<div>				
-						<q-btn-toggle
-					      	th:if="${!model.modeReadOnly}"
-					        v-model="vueData.ttoCdFailure"
-					        toggle-color="primary"
-					        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
-					      	th::mode-edit="${!model.modeReadOnly}"
-					     />
-				    </div>
-				    <input type="hidden" name="vContext[ttoCdFailure]" :value="vueData.ttoCdFailure" />
-				    <div v-if="vueData.ttoCdFailure == 'SMALLTALK'">
-						<c-richtext							
-							class="q-pb-sm"
-							v-model="vueData.utterTextFailure.text"
-							name="vContext[utterTextFailure][text]"
-							th::mode-edit="${!model.modeReadOnly}">
-						</c-richtext>
-					</div>
-					<div v-else>
-						<vu:text-area 							
-							style="width: calc(100% - 300px);"
-							label="script"
-							object="utterTextFailure"		
-							field="text"					
-							th::mode-edit="${!model.modeReadOnly}">
-						</vu:text-area>
-					</div>
-				<div class="text-subtitle1" th:text=#{bot.end}></div>
-					<div>				
-						<q-btn-toggle
-					      	th:if="${!model.modeReadOnly}"
-					        v-model="vueData.ttoCdEnd"
-					        toggle-color="primary"
-					        :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
-					      	th::mode-edit="${!model.modeReadOnly}"
-						/>
-				    </div>
-				    <input type="hidden" name="vContext[ttoCdEnd]" :value="vueData.ttoCdEnd" />
-				    <div v-if="vueData.ttoCdEnd == 'SMALLTALK'">
-						<c-richtext						
-							class="q-pb-sm"
-							v-model="vueData.utterTextEnd.text"
-							name="vContext[utterTextEnd][text]"
-							th::mode-edit="${!model.modeReadOnly}">
-						</c-richtext>
-					</div>
-					<div v-else>
-						<vu:text-area 						
-							style="width: calc(100% - 300px);"
-							label="script"
-							object="utterTextEnd"		
-							field="text"					
-							th::mode-edit="${!model.modeReadOnly}">
-						</vu:text-area>
-					</div>
-			</vu:block>
-			
-			
-			<vu:include-data object="nodeNew" field="name" />
-			<vu:include-data object="nodeNew" field="url" />
-			<vu:include-data object="nodeNew" field="color" />
-			<vu:include-data object="nodeNew" field="isDev" />
-			
-			<vu:table th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" id="nodes" list="nodeList" th:title="#{bot.nodes}" componentId="nodeList" rowsPerPage="10" autoColClass
-					  tr_@click.native="|vueData.nodeEdit = Vue.util.extend({},props.row); $refs.nodeEdit.show()|" tr_class="nav">
-				<vu:slot name="top_right_slot">
-					<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" 
-					       @click="vueData.nodeEdit = Vue.util.extend({}, vueData.nodeNew); $refs.nodeEdit.show()"></q-btn>
-				</vu:slot>
-				
-				<vu:include-data object="nodeList" field="nodId" />
-				<vu:include-data object="nodeList" field="color" />
-				<vu:include-data object="nodeList" field="apiKey" />
-				
-				<vu:column field="isDev" label="" class="col_Small">
-					<q-icon name="build" size="2rem" v-if="props.row.isDev"></q-icon>
-				</vu:column>
-				<vu:column field="name" th:label="#{bot.node}">
-					<q-chip :style="'background: '+ props.row.color" text-color="white">
-						{{props.row.name}}
-					</q-chip>
-				</vu:column>
-				<vu:column field="url"/>
-				<vu:column name="stat" th:label="#{bot.node.statistic}" class="col_Small">
-					<vu:button-link dense url="@{/analytics/(botId=${model.bot.botId})} + '&nodId=\'+props.row.nodId+\'' " label="" icon="insert_chart_outlined"
-							class="bg-secondary" @click.stop="null"/>
 
-				</vu:column>
-			</vu:table>
+			</vu:block>
 			
-			<q-dialog ref="nodeEdit" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.nodeEdit">
-				<q-card>
-					<q-card-section>
-						<div class="text-h6" th:text="#{bot.node.edition}"></div>
-					</q-card-section>
-					
-					<q-card-section style="height: 350px; width: 400px;">
-						<vu:text-field object="nodeEdit" field="name"/>
-						
-						<vu:text-field object="nodeEdit" field="url"/>
-						
-						<vu:text-field object="nodeEdit" field="apiKey"/>
-						
-						<q-btn push :style="'background: '+ vueData.nodeEdit.color" class="q-my-sm" text-color="white" th:label="#{bot.node.color}">
-							<q-popup-proxy ref="colorPopup" width="1000">
-								<q-color
-									v-model="vueData.nodeEdit.color"
-									no-header
-									no-footer
-									default-view="palette"
-									@change="$refs.colorPopup.hide()"
-									:palette="[
-											'#7e57c2', '#ab47bc', '#b2028a', '#6a1b9a', '#283593',
-											'#1565c0', '#00838f', '#00695c', '#2e7d32', '#9e9d24',
-											'#9ccc65', '#f9a825', '#ef6c00', '#d84315', '#ef5350',
-											'#c62828', '#795548', '#5d4037', '#546e7a', '#424242'
-										]"></q-color>
-							</q-popup-proxy>
-						</q-btn>
-						
-						<p>
-							<q-toggle th:label="#{bot.node.training}" v-model="vueData.nodeEdit.isDev" ></q-toggle>
-						</p>
-					</q-card-section>
-				
-					<q-card-actions align="around">
-						<q-btn v-if="vueData.nodeEdit.nodId" th:label="#{bot.delete}" color="red" @click="componentStates.nodId = vueData.nodeEdit.nodId; componentStates.showPopupNode = true " ></q-btn>
-						<q-btn th:label="#{action.save}" color="primary" @click="httpPostAjax('_saveNode', vueDataParams(['nodeEdit']), {onSuccess: $refs.nodeEdit.hide})" ></q-btn>
-					</q-card-actions>
-				</q-card>
-			</q-dialog>
-			
+			<vu:include-data-primitive key="locale"/>
+			<vu:include-data object="typeTopicList" field="'*'" />
+			<vu:include-data object="chatbotCustomConfig" field="botEmailAddress" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="reinitializationButton" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="disableNlu" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="backgroundColor" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="fontColor" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="fontFamily" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
+
+			<vu:block id="botWindowCustomization" th:title="#{bot.window.customization}">
+
+				<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
+				<vu:label-edit object="chatbotCustomConfig" field="displayAvatar">
+					<q-toggle left-label v-model="vueData.chatbotCustomConfig.displayAvatar" th::disable="${model.modeReadOnly}"></q-toggle>
+					<input type="hidden" name="vContext[chatbotCustomConfig][displayAvatar]" :value="vueData.chatbotCustomConfig.displayAvatar"/>
+				</vu:label-edit>
+				<vu:label-edit object="chatbotCustomConfig" field="reinitializationButton">
+					<q-toggle v-model="vueData.chatbotCustomConfig.reinitializationButton" th::disable="${model.modeReadOnly}"></q-toggle>
+					<input type="hidden" name="vContext[chatbotCustomConfig][reinitializationButton]" :value="vueData.chatbotCustomConfig.reinitializationButton"/>
+				</vu:label-edit>
+				<vu:label-edit object="chatbotCustomConfig" field="disableNlu">
+					<q-toggle v-model="vueData.chatbotCustomConfig.disableNlu" th::disable="${model.modeReadOnly}"></q-toggle>
+					<input type="hidden" name="vContext[chatbotCustomConfig][disableNlu]" :value="vueData.chatbotCustomConfig.disableNlu"/>
+				</vu:label-edit>
+
+				<div style="width:300px; margin-bottom: 20px; margin-top: 20px" class="q-px-md">
+					<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
+
+					</q-chat-message>
+				</div>
+
+				<q-select style="margin-bottom: 20px;"
+						  v-model="vueData.chatbotCustomConfig.fontFamily" name="vContext[chatbotCustomConfig][fontFamily]" th:label="#{bot.styling.font.family}"
+						  @input="changeChatMessageFontFamily()"
+						  th::disable="${model.modeReadOnly}"
+						  :options="['Arial, sans-serif', 'Verdana, sans-serif', 'Helvetica, sans-serif', 'Tahoma, sans-serif',
+						'Trebuchet MS, sans-serif', 'Times New Roman, serif', 'Georgia, serif', 'Garamond, serif', 'Courier New, monospace', 'Brush Script MT, cursive']">
+
+				</q-select>
+				<div class="row">
+					<vu:label-edit object="chatbotCustomConfig" field="backgroundColor" class="col-3">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.backgroundColor" @change="function (event) { changeChatMessageBgColor() }" default-value="#cdcdcd" name="vContext[chatbotCustomConfig][backgroundColor]"/>
+					</vu:label-edit>
+
+					<vu:label-edit object="chatbotCustomConfig" field="fontColor" class="col-3">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" label="Font color"  th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.fontColor" @change="function (event) { changeChatMessageFontColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][fontColor]"/>
+					</vu:label-edit>
+				</div>
+
+			</vu:block>
+			<vu:block id="botEmail" th:title="#{bot.email.address}">
+				<q-input v-model="vueData.chatbotCustomConfig.botEmailAddress" :error="hasFieldsError('chatbotCustomConfig', 'botEmailAddress')"
+						 :error-message="getErrorMessage('chatbotCustomConfig', 'botEmailAddress')"  name="vContext[chatbotCustomConfig][botEmailAddress]"
+						 th:label="#{bot.email.address}" th::disable="${model.modeReadOnly}" />
+			</vu:block>
+			<vu:block id="attachments" th:title="#{bot.attachments}">
+				<vu:include-data object="chatbotCustomConfig" field="totalMaxAttachmentSize" modifiable="true" />
+				<q-input type="number" v-model="vueData.chatbotCustomConfig.totalMaxAttachmentSize"  :error="hasFieldsError('chatbotCustomConfig', 'totalMaxAttachmentSize')"
+						 :error-message="getErrorMessage('chatbotCustomConfig', 'totalMaxAttachmentSize')" name="vContext[chatbotCustomConfig][totalMaxAttachmentSize]"
+						 th:label="#{bot.attachments.maxsize.label}" th::disable="${model.modeReadOnly}" />
+			</vu:block>
+
+
 			<q-page-sticky position="bottom-right">
 				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" /> 
 			</q-page-sticky>

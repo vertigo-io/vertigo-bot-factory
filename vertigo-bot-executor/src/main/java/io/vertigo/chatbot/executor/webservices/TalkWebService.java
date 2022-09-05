@@ -17,18 +17,22 @@
  */
 package io.vertigo.chatbot.executor.webservices;
 
-import java.util.UUID;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.executor.manager.ExecutorManager;
 import io.vertigo.chatbot.executor.model.IncomeRating;
+import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.webservice.WebServices;
+import io.vertigo.vega.webservice.stereotype.GET;
 import io.vertigo.vega.webservice.stereotype.POST;
 import io.vertigo.vega.webservice.stereotype.PathParam;
 import io.vertigo.vega.webservice.stereotype.PathPrefix;
+import io.vertigo.vega.webservice.stereotype.QueryParam;
+
+import javax.inject.Inject;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @PathPrefix("/chatbot")
 public class TalkWebService implements WebServices {
@@ -41,14 +45,30 @@ public class TalkWebService implements WebServices {
 		return executorManager.startNewConversation(input);
 	}
 
+	@POST("/context")
+	public Map<String, String> getContext() {
+		return executorManager.getContext();
+	}
+
 	@POST("/talk/{sessionId}")
 	public BotResponse talk(@PathParam("sessionId") final UUID sessionId, final BotInput input) {
 		return executorManager.handleUserMessage(sessionId, input);
 	}
 
-	@POST("/rating")
-	public void rate(final IncomeRating rating) {
-		executorManager.rate(rating);
+	@POST("/rating/{sessionId}")
+	public void rate(@PathParam("sessionId") final UUID sessionId, final IncomeRating rating) {
+		executorManager.rate(sessionId, rating);
+	}
+
+	@GET("/getAttachment")
+	public VFile getAttachment(@QueryParam("label") final String label) {
+		return  executorManager.getAttachment(label);
+	}
+
+	@GET("/getWelcomeToursFile")
+	public VFile getWelcomeToursFile() {
+		final Optional<VFile> optWelcomeToursFile = executorManager.getWelcomeToursFile();
+		return optWelcomeToursFile.orElse(null);
 	}
 
 }

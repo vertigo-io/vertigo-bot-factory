@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-bot-factory</artifactId>
-		<version>0.8.0-SNAPSHOT</version>
+		<version>0.9.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>vertigo-bot-designer</artifactId>
@@ -15,6 +15,7 @@
 	<properties>
 		<sonar.javascript.globals>Vue,VertigoUi,VUiPage</sonar.javascript.globals>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<openCSV.version>5.5.2</openCSV.version>
 	</properties>
 
 	<dependencies>
@@ -87,7 +88,7 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>4.2.2</version>
+			<version>${liquibase.version}</version>
 		</dependency>
 
 
@@ -108,7 +109,7 @@
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-lang3</artifactId>
-		    <version>3.12.0</version>
+		    <version>${apache.common.version}</version>
 		</dependency>
 		
 		<dependency>
@@ -116,8 +117,18 @@
 		    <artifactId>jsoup</artifactId>
 		    <version>1.10.2</version>
 		</dependency>
-		
 
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>${openCSV.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xyz.capybara</groupId>
+			<artifactId>clamav-client</artifactId>
+			<version>${clamav-client.version}</version>
+		</dependency>
 
 	</dependencies>
 
@@ -140,6 +151,39 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/main/javagen</directory>
+									<filtering>false</filtering>
+									<excludes>
+										<exclude>**/*.java</exclude>
+									</excludes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <!-- Exclusion du packaging, la conf est externalisee par environnement -->
+                    <packagingExcludes>META-INF/context.xml</packagingExcludes>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

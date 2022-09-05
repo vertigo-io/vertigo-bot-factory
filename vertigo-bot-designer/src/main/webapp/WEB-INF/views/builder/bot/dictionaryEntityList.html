@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/botDetailLayout}" th:with="tab=dictionary"
+	>
+	
+	<head>
+		<script th:inline="javascript">
+			function normalizeString(str) {
+				if (str)
+					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+				else
+					return '';
+			}
+			
+			function getDisplayedDictionaryEntities() {
+				let searchNormarlized = normalizeString(VertigoUi.componentStates.dictionaryEntityWrappers.pagination.search);
+				
+				return VertigoUi.vueData.dictionaryEntityWrappers
+						// copy and reverse
+						.slice().reverse()
+						// search
+						.filter(ent => normalizeString(ent.dictionaryEntityLabel).includes(searchNormarlized))
+						
+			}
+		</script>
+		<title th:text="#{dictionary.title}"></title>
+	</head>
+	
+	<body>
+		<section layout:fragment="content-actions">
+			<q-form method="post" action="_exportDictionary">	
+				<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" size="md"
+						       @click="vueData.dictionaryEntityEdit = Vue.util.extend({}, vueData.nodeNew); $refs.dictionaryEntityEdit.show()"></q-btn>
+				<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">	
+				<q-btn type="submit" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md"
+				icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}"></q-btn> 
+				
+				<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md"
+				icon="file_download" th:aria-label="#{action.import}" th:title="#{action.import}" 
+						       @click="$refs.importDictionary.show()"></q-btn>	
+						
+										       
+				</q-form>
+		</section>
+		
+		<section layout:fragment="content">
+
+			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+				<span class="text-primary" style="flex-grow: 2">[[#{layout.dictionary}]]</span>
+				<q-icon name="help_outlined" size="2rem"/>
+				<q-tooltip>[[#{dictionary.tooltip}]]</q-tooltip>
+			</div>
+
+			<vu:block id="dictionaryEntityWrappers" th:title="#{dictionary.list}">
+				<vu:slot name="actions_slot">
+				 	<q-input v-model="componentStates.dictionaryEntityWrappers.pagination.search" dense clearable
+	      				type="search" 
+	      				placeholder= Filter
+	      				@keydown.esc="componentStates.dictionaryEntityWrappers.pagination.search = '';"
+	      				style="width:300px">
+						<template v-slot:prepend>
+				        	<q-icon name="search" ></q-icon>
+				        </template>	
+        			</q-input> 				
+				</vu:slot>
+				
+				
+				<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('dictionaryEntityWrappers').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
+				<vu:include-data object="dictionaryEntityWrappers" field="'*'" />
+				<vu:search-table
+						data='getDisplayedDictionaryEntities()'
+						rowKey='dictionaryEntityLabel'
+						componentId='dictionaryEntityWrappers'
+						sortBy='dictionaryEntityLabel'
+						tr_@click.native='goTo("../dictionaryEntity/"+props.row.dicEntId)'
+						tr_style="cursor : pointer;">
+					<vu:column-sample list=dictionaryEntityWrappers field=dictionaryEntityLabel/>
+					<vu:column-sample list=dictionaryEntityWrappers field=synonymsList />
+				</vu:search-table>
+			</vu:block>
+			
+			 				
+			<vu:popup-ajax action="_deleteDictionaryEntity" vModel="showPopupDictionaryEntity" th:message="supprimer"  dataName="dicEntId" successAction="'VUiPage.$refs.dictionaryEntityEdit.hide'"></vu:popup-ajax>
+			
+			
+			
+			
+			<q-dialog ref="dictionaryEntityEdit" th:with="viewMode='edit'" @hide="delete uiMessageStack.objectFieldErrors.dictionaryEntityEdit">
+				<q-card>
+					<q-form method="post" action="saveDictionaryEntity">
+						<q-card-section>
+							<div class="text-h6" th:text="#{dictionary.new}"></div>
+						</q-card-section>
+						
+						<q-card-section >
+							<vu:text-field object="dictionaryEntityEdit" field="label"/>
+						</q-card-section>
+						
+					<input type="hidden" name="dictionaryEntityEdit" :value="vueData.dictionaryEntityEdit" />
+					
+						<q-card-actions align="around">
+							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<q-btn v-if="vueData.dictionaryEntityEdit.dicEntId" th:label="#{bot.delete}" color="red" @click="componentStates.meaId = vueData.dictionaryEntityEdit.dicEntId; componentStates.showPopupDictionaryEntity = true " ></q-btn>
+							<q-btn type="submit" th:title="#{dictionary.create}" th:label="#{dictionary.create}" th:aria-label="#{dictionary.create}" color="primary" ></q-btn> 
+						</q-card-actions>
+					</q-form>
+				</q-card>
+			</q-dialog>
+			
+			<q-dialog ref="importDictionary" th:with="viewMode='edit'" >
+				<q-card>
+					<q-form method="post" action="_importDictionary">
+					<q-card-section>
+						<div class="text-h6" th:text="#{popup.import.title}"></div>						
+					</q-card-section>
+					
+					<vu:include-data-primitive key="locale" />
+					<vu:fileupload th:url="'@{/commons/upload}'" key="importDictionaryFileUri" multiple="false"/>
+				
+					
+					
+					<q-card-actions align="around">
+							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
+							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn> 
+					</q-card-actions>
+					</q-form>
+				</q-card>
+			</q-dialog>
+			
+		</section>
+	</body>
+</html>

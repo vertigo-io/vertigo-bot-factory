@@ -1,21 +1,11 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingExport;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.designer.builder.services.topic.MeaningServices;
+import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
 import io.vertigo.chatbot.designer.domain.TupleSynonymIhm;
@@ -23,6 +13,15 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Transactional
 public class TopicExportServices implements Component, Activeable {
@@ -39,7 +38,7 @@ public class TopicExportServices implements Component, Activeable {
 	private ScriptIntentionExportServices scriptIntentionExportServices;
 
 	@Inject
-	private MeaningServices meaningServices;
+	private DictionaryEntityServices dictionaryEntityServices;
 
 	@Inject
 	private ExportPAO exportPAO;
@@ -57,7 +56,7 @@ public class TopicExportServices implements Component, Activeable {
 
 	public String getBasicBt(final Chatbot bot, final String ktoCd, final StringBuilder logs) {
 		LogsUtils.addLogs(logs, ktoCd, " topic export...");
-		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd);
+		final Topic topic = topicServices.getBasicTopicByBotIdKtoCd(bot.getBotId(), ktoCd).orElseThrow();
 		String basicBt = null;
 		for (final TopicExportInterfaceServices services : topicExportInterfaceServices) {
 			if (services.handleObject(topic)) {
@@ -104,14 +103,14 @@ public class TopicExportServices implements Component, Activeable {
 				.collect(Collectors.toList());
 
 		// get a list of Tuple <word, synonym> from the original sentence
-		final DtList<TupleSynonymIhm> listTupleSynonymIhm = meaningServices.getTuplesSynonym(listWord, botId);
+		final DtList<TupleSynonymIhm> listTupleSynonymIhm = dictionaryEntityServices.getTuplesSynonym(listWord, botId);
 
 		// group the result by original word
 		final Map<String, List<TupleSynonymIhm>> tupleSynonymIhmPerWord = listTupleSynonymIhm.stream()
 				.collect(Collectors.groupingBy(TupleSynonymIhm::getWord));
 
 		//Generation of all possible combinaison from the original sentences and the synonyms found
-		return meaningServices.combine(tupleSynonymIhmPerWord, nluOriginal.getText());
+		return dictionaryEntityServices.combine(tupleSynonymIhmPerWord, nluOriginal.getText());
 	}
 
 	/**

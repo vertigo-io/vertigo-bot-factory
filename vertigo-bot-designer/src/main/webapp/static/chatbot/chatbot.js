@@ -1,171 +1,189 @@
-function _chatbotWrapper() {
-	var _botBaseUrl = "./";
-	
-	var _initParam = null;
-	var _urlType;
-	var _button = null;
-	var _iframe = null;
-	
-	function _isUrlActive() {
-		return _urlType !== "DISABLE";
-	}
-	
-	function _resetIfNeeded() {
-		if (_button) {
-			document.body.removeChild(_button);
-			_button = null;
-			
-			if (_iframe) {
-				document.body.removeChild(_iframe);
-				_iframe = null;
-			}
-		}
-	}
-	
-	function _createFlottingButton() {		
-		_button = document.createElement('div');
-		
-		_button.style.cssText = '\
-			position: fixed;\
-			display: flex;\
-			align-items: center;\
-			bottom: 50vh;\
-			right: -100px;\
-			width: 145px;\
-			height: 45px;\
-			transition: right 0.3s ease 0s;\
-			background-color: #027be3;\
-			color: white;\
-			border: solid 1px black;\
-			border-radius: 10px 0 0 10px;\
-			cursor: pointer;\
-			overflow: hidden;\
-			-webkit-user-select: none;\
-			-ms-user-select: none;\
-			-moz-user-select: none;\
-			user-select: none;\
-			font-family: Verdana, Arial, Helvetica, sans-serif;\
-		';
-		
-		_button.addEventListener("click", Chatbot.show);
-		_button.addEventListener("mouseover", _buttonOver);
-		_button.addEventListener("mouseout", _buttonOut);
-		
-		var img = document.createElement('img');
-		img.style.cssText = '\
-			width: 45px;\
-			height: 45px;\
-			background-color: white;\
-			color: black;\
-		';
-		img.src = _botBaseUrl + "images/avatar/avatar_bar.png";
-		img.alt = "Command Center Bot";
-		_button.appendChild(img);
-		
-		var text = document.createElement('div');
-		text.style.cssText = '\
-			flex-grow: 1;\
-			text-align: center;\
-		';
-		text.textContent = "Command Center Bot";
-		_button.appendChild(text);
-		
-		document.body.appendChild(_button);
-	}
-	
-	function _buttonOver() {
-		_button.style.right = "0px";
-	}
-	
-	function _buttonOut() {
-		_button.style.right = "-100px";
-	}
-	
-	function _createIframe() {
-		_iframe = document.createElement('iframe');
-		
-		_iframe.style.cssText = '\
-			position: fixed;\
-			bottom: 0px;\
-			right: 5px;\
-			max-width: 450px;\
-			min-width: 300px;\
-			width: 80%;\
-			max-height: 600px;\
-			min-height: 400px;\
-			height: 95%;\
-			box-shadow: 0px 0px 15px 5px grey;\
-			background-color: white;\
-			border: solid 1px black;\
-			border-radius: 10px 10px 0 0;\
-		';
-		
-		_iframe.src = _botBaseUrl + "index.html?url_type=" + _urlType;
-		if (_initParam.siret) _iframe.src += "&siret=" + _initParam.siret + "&siret_confirm=true";
+let Chatbot = {};
+document.addEventListener('DOMContentLoaded', function () {
+    if (!String.prototype.startsWith) {
+      String.prototype.startsWith = function (searchString, position) {
+        position = position || 0;
+        return this.substr(position, searchString.length) === searchString;
+      };
+    }
 
-		document.body.appendChild(_iframe);
-	}
-	
-	function _getUrlType(url) {
-		var mapping = {
-			"ALL": ["."]
-		}
+    function _chatbotWrapper() {
 
-		for (var prop in mapping) {
-			var urlList = mapping[prop];
-			for (var i = 0; i < urlList.length; i++) {
-				var curUrl = urlList[i];
-				if (url.indexOf(curUrl) !== -1) {
-					return prop;
-				}
-			}
-		}
-		
-		// return "GROUND"; // valeur par défaut
-		return "DISABLE";
-	}
-	
-	function _initIframeListener() {
-		window.addEventListener("message", function(event) {
-			if (event.data === "Chatbot.minimize") Chatbot.minimize();
-			else if (event.data === "Chatbot.close") Chatbot.close();
-		}, false);
-	}
+      let _initParam = null;
+      let _button = null;
+      let _iframe = null;
 
-	this.Chatbot = {
-		init : function(param) {
-			_urlType = _getUrlType(param.url);
-			if (param.botBaseUrl) {
-				_botBaseUrl = param.botBaseUrl;
-			}
-			
-			_resetIfNeeded();
-			
-			if (_isUrlActive()) {
-				_initParam = param;
-				_createFlottingButton();
-				
-				_initIframeListener();
-			}
-		},
-		
-		show : function() {
-			if (_iframe === null) {
-				_createIframe();
-			} else {
-				_iframe.style.visibility = "visible";
-			}
-		},
-		
-		minimize : function() {
-			_iframe.style.visibility = "hidden";
-		},
-		
-		close : function() {
-			document.body.removeChild(_iframe);
-			_iframe = null;
-		}
-	}
-}
+      function _createFlottingButton() {
+        _button = document.createElement('div');
 
-_chatbotWrapper();
+        _button.className = 'floating-button';
+
+        _button.addEventListener('click', Chatbot.show);
+        _button.addEventListener('mouseover', _buttonOver);
+        _button.addEventListener('mouseout', _buttonOut);
+
+        const img = document.createElement('img');
+        img.className = 'avatar-img';
+        img.src = _initParam.avatarUrl;
+        img.alt = _initParam.botName;
+        _button.appendChild(img);
+
+        const text = document.createElement('div');
+        text.className = 'avatar-text';
+        text.textContent = _initParam.botName;
+        _button.appendChild(text);
+
+        document.body.appendChild(_button);
+      }
+
+      function addImageViewerModal() {
+        const modal = document.createElement('div');
+        modal.id = 'imageViewerModal';
+        modal.className = 'modalChatbot';
+
+        const spanClose = document.createElement('span');
+        spanClose.id = 'close';
+        spanClose.className = 'close';
+        spanClose.innerHTML = '&times;';
+        spanClose.addEventListener('click', hidePictureModal);
+
+        const img = document.createElement('img');
+        img.id = 'imgToView';
+        img.className = 'modal-content-chatbot';
+        modal.appendChild(spanClose);
+        modal.appendChild(img);
+
+        document.body.prepend(modal);
+      }
+
+      function hidePictureModal() {
+        document.getElementById('imageViewerModal').style.display = 'none';
+      }
+
+      function _buttonOver() {
+        _button.style.right = '0px';
+      }
+
+      function _buttonOut() {
+        _button.style.right = '-90px';
+      }
+
+      function _createIframe() {
+        _iframe = document.createElement('iframe');
+
+        _iframe.className = 'iframe';
+        _iframe.src = `${_initParam.botIHMBaseUrl}?runnerUrl=${_initParam.runnerUrl}&botName=${_initParam.botName}&useRating=${_initParam.useRating}`;
+
+        if (_initParam.optionalParameters) {
+          _initParam.optionalParameters.forEach(function (optionalParam) {
+            _iframe.src += '&' + optionalParam.key + '=' + optionalParam.value;
+          });
+        }
+        _iframe.style.visibility = 'visible';
+
+        document.getElementById('botDrawerContent').appendChild(_iframe);
+      }
+
+      function checkIfConversationAlreadyExists() {
+        _iframe.contentWindow.postMessage('conversationExist', '*');
+      }
+
+      function _initIframeListener() {
+        window.addEventListener(
+          'message',
+          function (event) {
+            if (event.data === 'Chatbot.minimize') {
+              Chatbot.minimize();
+            }
+            else if (event.data.conversationExist !== undefined) {
+              if (event.data.conversationExist) {
+                Chatbot.show();
+              }
+            }
+            else if (event.data.context) {
+              const map = {};
+              event.data.context.forEach(function (value, key) {
+                  if ( key === 'url' && value === '' ) {
+                    map[key] = window.location.href;
+                  } else {
+                    const element = document.evaluate(value, document, null, XPathResult.ANY_TYPE, null);
+                    const node = element.iterateNext();
+                    if (node !== null) {
+                      let elementValue;
+                      if (node.attributes['value']) {
+                        elementValue = node.attributes['value'].value;
+                      } else {
+                        elementValue = node.innerHTML;
+                      }
+                      map[key] = elementValue;
+                    }
+                  }
+              });
+              event.ports[0].postMessage({result : map});
+            }
+            else if (event.data.pictureModal) {
+              Chatbot.showPictureModal(event.data.pictureModal);
+            }
+            else if (event.data.jsevent) {
+              Chatbot.startJsEvent(event.data.jsevent);
+            }
+          },
+          false
+        );
+      }
+
+      Chatbot = {
+        init(param) {
+          _initParam = param;
+          addImageViewerModal();
+          _initIframeListener();
+          _createIframe();
+          _iframe.addEventListener('load', function() {
+            if (sessionStorage.showChatbot !== undefined) {
+              if (sessionStorage.showChatbot === 'true') {
+                document.getElementById('botDrawerButton').click();
+              }
+            } else {
+              checkIfConversationAlreadyExists();
+            }
+          });
+        },
+
+        show() {
+          sessionStorage.showChatbot = true;
+          _iframe.contentWindow.postMessage('start', '*');
+        },
+
+        showPictureModal(src) {
+          const modal = document.getElementById('imageViewerModal');
+          const modalImg = parent.document.getElementById('imgToView');
+          modalImg.src = src;
+          modal.style.display = 'block';
+        },
+
+        minimize() {
+          sessionStorage.showChatbot = false;
+          document.getElementById('botDrawerButton').click();
+        },
+
+        hideDrawer() {
+          sessionStorage.showChatbot = false;
+        },
+
+        clearSessionStorage() {
+          sessionStorage.clear();
+          _iframe.contentWindow.postMessage('clearSessionStorage', '*');
+        },
+
+        startJsEvent(eventName) {
+          if (eventName === 'welcomeTour1') {
+            tour.start();
+          } else if (eventName === 'welcomeTour2') {
+            tour.start();
+          }
+        }
+      };
+    }
+
+    _chatbotWrapper();
+});

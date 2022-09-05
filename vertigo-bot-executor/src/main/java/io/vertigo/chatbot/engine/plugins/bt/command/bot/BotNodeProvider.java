@@ -1,20 +1,5 @@
 package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
-import static io.vertigo.ai.bt.BTNodes.condition;
-import static io.vertigo.ai.bt.BTNodes.running;
-import static io.vertigo.ai.bt.BTNodes.selector;
-import static io.vertigo.ai.bt.BTNodes.sequence;
-import static io.vertigo.ai.bt.BTNodes.succeed;
-
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
-
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.bb.BBKeyTemplate;
@@ -24,9 +9,29 @@ import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
+import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
+import io.vertigo.chatbot.engine.model.choice.BotCard;
+import io.vertigo.chatbot.engine.model.choice.BotFileButton;
 import io.vertigo.chatbot.engine.model.choice.IBotChoice;
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.util.StringUtil;
+
+import java.math.BigInteger;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
+
+import static io.vertigo.ai.bt.BTNodes.condition;
+import static io.vertigo.ai.bt.BTNodes.running;
+import static io.vertigo.ai.bt.BTNodes.selector;
+import static io.vertigo.ai.bt.BTNodes.sequence;
+import static io.vertigo.ai.bt.BTNodes.succeed;
 
 public final class BotNodeProvider {
 
@@ -126,8 +131,8 @@ public final class BotNodeProvider {
 		return sequence(
 				say(bb, question),
 				() -> {
-					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/key"), keyTemplate);
-					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/text/type"), "integer");
+					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/integer/key"), keyTemplate);
+					bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/integer/type"), "integer");
 					bb.putInteger(BBKey.of(BotEngine.BOT_OUT_METADATA_PATH, "/accepttext"), 1);
 					return BTStatus.Running;
 				});
@@ -190,8 +195,13 @@ public final class BotNodeProvider {
 		return doSayOnce(bb, msg, BotEngine.USER_LOCAL_PATH);
 	}
 
+	public static BTNode rating(final BlackBoard bb, final String keyTemplate, final String msg) {
+		return inputInteger(bb, keyTemplate, msg);
+	}
+
+
 	private static BTNode doSayOnce(final BlackBoard bb, final String msg, final BBKey storeTree) {
-		MessageDigest md;
+		final MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("MD5");
 		} catch (final NoSuchAlgorithmException e) {
@@ -205,6 +215,23 @@ public final class BotNodeProvider {
 				sequence(
 						say(bb, msg),
 						set(bb, storeTree.key() + "/displayedmessages/" + digest, "1")));
+	}
+
+	public static BTNode doNodeOncePerTree(final BlackBoard bb, final BTNode node, final String msg) {
+		final MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (final NoSuchAlgorithmException e) {
+			throw new VSystemException(e, "Error calculating message hash");
+		}
+		md.update(msg.getBytes(StandardCharsets.UTF_8));
+		final var digest = new BigInteger(1, md.digest()).toString(16);
+
+		return selector(
+				fulfilled(bb, BotEngine.USER_LOCAL_PATH.key() + "/displayedmessages/" + digest),
+				sequence(
+						node,
+						set(bb, BotEngine.USER_LOCAL_PATH.key() + "/displayedmessages/" + digest, "1")));
 	}
 
 	// Integer
@@ -242,6 +269,10 @@ public final class BotNodeProvider {
 		return condition(() -> bb.eq(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
 	}
 
+	public static BTCondition contains(final BlackBoard bb, final String keyTemplate, final String compare) {
+		return condition(() -> bb.contains(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
+	}
+
 	public static BTCondition eqCaseInsensitive(final BlackBoard bb, final String keyTemplate, final String compare) {
 		return condition(() -> bb.eqCaseInsensitive(bb.eval(BBKeyTemplate.of(keyTemplate)), compare));
 	}
@@ -261,6 +292,62 @@ public final class BotNodeProvider {
 		};
 	}
 
+	public static BTNode launchJsEvent(final BlackBoard bb, final String eventName) {
+		return () -> {
+			bb.putString(BBKey.of(BotEngine.BOT_OUT_METADATA_PATH, "/jsevent"), eventName);
+			return BTStatus.Succeeded;
+		};
+	}
+
+	public static BTNode launchWelcomeTour(final BlackBoard bb, final String welcomeTourTechnicalCode) {
+		return () -> {
+			bb.putString(BBKey.of(BotEngine.BOT_OUT_METADATA_PATH, "/welcometour"), welcomeTourTechnicalCode);
+			return BTStatus.Succeeded;
+		};
+	}
+
+
+	public static BTNode link(final BlackBoard bb, final String url, final Boolean newTab) {
+		return () -> {
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, formatLink(url, newTab));
+			return BTStatus.Succeeded;
+		};
+	}
+
+	public static BTNode image(final BlackBoard bb, final String url) {
+		return () -> {
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, formatImageUrl(url));
+			return BTStatus.Succeeded;
+		};
+	}
+
+	public static String formatImageUrl(final String url) {
+		Assertion.check().isNotNull(url);
+		Assertion.check().isTrue(isValidURL(url), "Not a valid URL");
+		return "<img src='" + url + "' class='imgClass' />";
+	}
+
+	public static String formatLink(final String url, final Boolean newTab) {
+		Assertion.check().isNotNull(url);
+		Assertion.check().isTrue(isValidURL(url), "Not a valid URL");
+		String target = "_top";
+		if (newTab) {
+			target = "_blank";
+		}
+		return "<a href='" + url + "' target='"+target+"' >" + url + "</a>";
+	}
+
+	public static boolean isValidURL(final String url) {
+		try {
+			final URL validUrl = new URL(url);
+			validUrl.toURI();
+			return true;
+		} catch (final Exception e) {
+			return false;
+		}
+	}
+
+
 	public static BTNode switchTopicStart(final BlackBoard bb) {
 		return switchTopic(bb, BotEngine.START_TOPIC_NAME);
 	}
@@ -273,12 +360,37 @@ public final class BotNodeProvider {
 		return switchTopic(bb, BotEngine.END_TOPIC_NAME);
 	}
 
-	public static BTNode chooseButton(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<BotButton> buttons) {
+	public static BTNode switchTopicIdle(final BlackBoard bb) {
+		return switchTopic(bb, BotEngine.IDLE_TOPIC_NAME);
+	}
+
+	public static BTNode chooseButton(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<? extends IBotChoice > buttons) {
 		return selector(
 				fulfilled(bb, keyTemplate),
 				sequence(
 						say(bb, question),
-						storeButtons(bb, buttons, BotButton.class),
+						storeButtons(bb, buttons, List.of(BotButton.class, BotButtonUrl.class)),
+						queryButton(bb, keyTemplate),
+						running()));
+	}
+
+	public static BTNode chooseFileButton(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<? extends IBotChoice > buttons) {
+		return selector(
+				fulfilled(bb, keyTemplate),
+				sequence(
+						say(bb, question),
+						storeButtons(bb, buttons, List.of(BotFileButton.class, BotButton.class)),
+						queryFileButton(bb, keyTemplate),
+						running())
+				);
+	}
+
+	public static BTNode chooseCard(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<BotCard> cards) {
+		return selector(
+				fulfilled(bb, keyTemplate),
+				sequence(
+						say(bb, question),
+						storeButtons(bb, cards, List.of(BotCard.class)),
 						queryButton(bb, keyTemplate),
 						running()));
 	}
@@ -290,21 +402,29 @@ public final class BotNodeProvider {
 				running());
 	}
 
-	public static BTNode chooseButtonOrNlu(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<BotButton> buttons) {
+	public static BTNode chooseButtonOrNlu(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<? extends IBotChoice > buttons) {
 		return selector(
 				fulfilled(bb, keyTemplate),
 				sequence(
 						say(bb, question),
-						storeButtons(bb, buttons, BotButton.class),
+						storeButtons(bb, buttons, List.of(BotButton.class, BotButtonUrl.class)),
 						queryButton(bb, keyTemplate),
 						queryNlu(bb, BotEngine.BOT_NEXT_TOPIC_KEY.key()),
 						running()));
 	}
 
-	private static BTNode queryButton(final BlackBoard bb, final String keyTemplate) {
+	public static BTNode queryButton(final BlackBoard bb, final String keyTemplate) {
 		return () -> {
 			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/button/key"), keyTemplate);
 			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/button/type"), "string");
+			return BTStatus.Succeeded;
+		};
+	}
+
+	public static BTNode queryFileButton(final BlackBoard bb, final String keyTemplate) {
+		return () -> {
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/filebutton/key"), keyTemplate);
+			bb.putString(BBKey.of(BotEngine.BOT_EXPECT_INPUT_PATH, "/filebutton/type"), "file");
 			return BTStatus.Succeeded;
 		};
 	}
@@ -319,16 +439,17 @@ public final class BotNodeProvider {
 	}
 
 	// store all buttons in the BB, engine will reconstruct button back when constructing response object
-	private static <T extends IBotChoice> BTNode storeButtons(final BlackBoard bb, final Iterable<T> buttons, final Class<T> clazz) {
+	public static <T extends IBotChoice> BTNode storeButtons(final BlackBoard bb, final Iterable<? extends IBotChoice> buttons, final List<Class<? extends IBotChoice>> clazzs) {
 		final List<BTNode> sequence = new ArrayList<>();
 
-		sequence.add(set(bb, BotEngine.BOT_CHOICES_KEY.key() + "/class", clazz.getName()));
-		sequence.add(set(bb, BotEngine.BOT_OUT_METADATA_PATH.key() + "/buttontype", clazz.getSimpleName()));
-
 		int choiceNumber = 0;
-		for (final T button : buttons) {
+		for (final IBotChoice button : buttons) {
+			final String className = clazzs.stream().filter(clazz -> clazz.isAssignableFrom(button.getClass()))
+					.findFirst().orElseThrow().getName();
+
+			sequence.add(set(bb, BotEngine.BOT_CHOICES_KEY.key() + "/" + choiceNumber +  "/class", className));
 			for (final String param : button.exportParams()) {
-				sequence.add(listPush(bb, BotEngine.BOT_CHOICES_KEY.key() + "/" + choiceNumber, param));
+				sequence.add(listPush(bb, BotEngine.BOT_CHOICES_KEY.key() +  "/" + choiceNumber, param));
 			}
 
 			choiceNumber++;
@@ -336,7 +457,7 @@ public final class BotNodeProvider {
 		return sequence(sequence);
 	}
 
-	private static BTNode listPush(final BlackBoard bb, final String keyTemplate, final String value) {
+	public static BTNode listPush(final BlackBoard bb, final String keyTemplate, final String value) {
 		return () -> {
 			bb.listPush(bb.eval(BBKeyTemplate.of(keyTemplate)), value);
 			return BTStatus.Succeeded;

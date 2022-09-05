@@ -1,10 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services;
 
-import java.time.Instant;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
@@ -13,6 +8,10 @@ import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
+
+import javax.inject.Inject;
+import java.time.Instant;
+import java.util.Optional;
 
 @Transactional
 public class TrainerInfoServices implements Component {
@@ -24,32 +23,27 @@ public class TrainerInfoServices implements Component {
 	private NodeServices nodeServices;
 
 	public TrainerInfo createTrainingState(final Chatbot bot) {
-		String error = null;
-		Training training = null;
 		final Optional<Training> currentTrainingOpt = trainingServices.getCurrentTraining(bot);
-
+		TrainerInfo trainerInfo = new TrainerInfo();
 		if (currentTrainingOpt.isPresent()) {
-			training = currentTrainingOpt.get();
-		} else {
-			error = "No current training";
+			final Training training = currentTrainingOpt.get();
+			trainerInfo = createTrainerInfo(training.getTraId(), true, training.getStartTime(), "Training" + training.getVersionNumber(), TrainingStatusEnum.TRAINING.name(), null);
 		}
+		return trainerInfo;
+	}
 
-		if (error != null) {
-			final TrainerInfo trainerInfo = new TrainerInfo();
-			trainerInfo.setName("Node unavailable");
-			trainerInfo.setTrainingState(error);
-			return trainerInfo;
-		}
-
-		return createTrainerInfo(training.getTraId(), true, Instant.now(), "Training" + training.getVersionNumber(), TrainingStatusEnum.TRAINING.name(), null);
-
+	public TrainerInfo createTrainingState(final Training training) {
+		return createTrainerInfo(training.getTraId(),
+				training.trainingStatus().getEnumValue() == TrainingStatusEnum.TRAINING,
+				training.getStartTime(), "Training" + training.getVersionNumber(),
+				training.trainingStatus().getEnumValue().name(), null);
 	}
 
 	public TrainerInfo createTrainerInfo(final Long traId, final boolean isTraining, final Instant startTime, final String name, final String strCd, final Instant endTime) {
 		final TrainerInfo retour = new TrainerInfo();
 		retour.setTraId(traId);
 		retour.setTrainingInProgress(isTraining);
-		retour.setStartTime(Instant.now());
+		retour.setStartTime(startTime);
 		retour.setName(name);
 		retour.setTrainingState(strCd);
 		retour.setEndTime(endTime);

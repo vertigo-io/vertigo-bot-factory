@@ -17,17 +17,19 @@
  */
 package io.vertigo.chatbot.designer.admin.controllers;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import io.vertigo.chatbot.designer.admin.services.PersonServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
+import io.vertigo.vega.webservice.validation.UiMessageStack;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.inject.Inject;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/persons")
@@ -39,8 +41,9 @@ public class PersonListController extends AbstractDesignerController {
 	private PersonServices personServices;
 
 	@GetMapping("/")
-	public void initContext(final ViewContext viewContext) {
+	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack) {
 		viewContext.publishDtList(personsKey, personServices.getAllPersons());
+		listLimitReached(viewContext, uiMessageStack);
 		toModeReadOnly();
 	}
 

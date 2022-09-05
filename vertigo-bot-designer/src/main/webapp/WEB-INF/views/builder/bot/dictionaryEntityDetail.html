@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=dictionary"
+	>
+	
+	<head>
+		<script th:inline="javascript">
+		function normalizeString(str) {
+			if (str)
+				return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+			else
+				return '';
+		}
+		
+		function getDisplayedSynonyms() {
+			let searchNormarlized = normalizeString(VertigoUi.componentStates.synonyms.pagination.search);
+			
+			return VertigoUi.vueData.synonyms
+					// copy and reverse
+					.slice().reverse()
+					// search
+					.filter(syn => normalizeString(syn.label).includes(searchNormarlized))
+					// pagination
+					.slice((VertigoUi.componentStates.synonyms.pagination.page - 1) * VertigoUi.componentStates.synonyms.pagination.rowsPerPage,
+							VertigoUi.componentStates.synonyms.pagination.page * VertigoUi.componentStates.synonyms.pagination.rowsPerPage);
+		}
+		</script>
+		<title th:text="#{dictionaryEntity.title}"></title>
+	</head>
+	
+	<body>
+		<section layout:fragment="content-actions">
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/dictionaryEntity/(id=${model.bot.botId})} + ${model.dictionaryEntity.dicEntId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
+							class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
+			<vu:button-submit th:if="${model.modeReadOnly}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
+							class="on-left" :round size="md" color="primary" />
+			<q-btn th:if="|${model.modeReadOnly  && #lists.size(model.synonyms) == 0}|" @click="componentStates.showPopupDeleteDictionaryEntity = true" th:aria-label="#{action.delete}" th:title="#{action.delete}" icon="delete"
+							class="on-left" round size="md" color="red" ></q-btn>
+		</section>
+			
+		
+		<section layout:fragment="content">
+			<vu:popup action="_delete" vModel="showPopupDeleteDictionaryEntity" th:message=#{popup.message} th:confirm=#{action.delete}></vu:popup>
+			<vu:block id="dictionaryEntity" title="${model.dictionaryEntity.label}">
+				<vu:slot name="actions_slot">
+				 	<q-input v-model="componentStates.synonyms.pagination.search" 
+				 		dense 
+				 		clearable 
+	      				type="search" 
+	      				placeholder="Filter"
+	      				@keydown.esc="componentStates.synonyms.pagination.search = '';"
+	      			>
+						<template v-slot:prepend>
+				        	<q-icon name="search" ></q-icon>
+				    	</template>
+        			</q-input> 
+					
+				</vu:slot>
+				
+				<vu:include-data-primitive key="newSynonym" modifiable="true" />
+				<vu:include-data object="synonyms" field="label" />
+				
+				<div th:if="${!model.modeReadOnly}">
+					<q-input v-model="vueData.newSynonym" 
+						dense class="q-pb-sm"
+					    @keydown.enter.prevent="if (vueData.newSynonym.trim().length > 0) {httpPostAjax('_addSynonym', {'vContext[newSynonym]':vueData.newSynonym}); componentStates.synonyms.pagination.page = 1; componentStates.synonyms.pagination.search = '';}"
+						th:placeholder="#{dictionaryEntity.placeholder}"
+						name="vContext[newSynonym]"						
+					>
+					</q-input>
+				</div>
+				
+				<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('synonyms').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
+					<q-list dense>
+						<q-item th::clickable="${!model.modeReadOnly}" v-for="(synonym, index) in getDisplayedSynonyms()">
+						
+							<q-item-section side left th:if="${!model.modeReadOnly}">
+								<q-btn @click="httpPostAjax('_removeSynonym', {'index':vueData.synonyms.length - 1 - index})"
+									color="primary" dense size="sm" icon="delete" class="bg-grey" th:aria-label="#{action.delete}" th:title="#{action.delete}"></q-btn>
+							</q-item-section>
+							<q-item-section>
+								{{synonym.label}}
+								<q-popup-edit th:if="${!model.modeReadOnly}"
+										  buttons label-set="Save" label-cancel="Cancel"
+										  v-model="synonym.label"
+										  @save="function(value, initialValue) {
+													httpPostAjax('_editSynonym',
+														 {'vContext[newSynonym]':value, 'index':vueData.synonyms.length - 1 - index}
+													).then(function() {
+													 	if (uiMessageStack.globalErrors.length > 0) {
+													 		synonym.label = initialValue;
+													 	}
+													 });
+													}"
+							>
+								<q-input v-model="synonym.label" dense autofocus />
+							</q-popup-edit>
+						</q-item-section>
+					</q-item>
+				</q-list>
+				<div class="q-pa-lg flex flex-center">
+					<q-pagination
+					      v-model="componentStates.synonyms.pagination.page"
+					      v-if="Math.ceil(vueData.synonyms.length / componentStates.synonyms.pagination.rowsPerPage) > 1"
+					      :max="Math.ceil(vueData.synonyms.length / componentStates.synonyms.pagination.rowsPerPage)"
+					      :max-pages="6"
+	      				  :boundary-numbers="true"
+	      				  :direction-links="true" ></q-pagination>
+    			</div>
+			</vu:block>
+			
+			<q-page-sticky position="bottom-right">
+				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
+			</q-page-sticky>
+		</section>
+	</body>
+</html>

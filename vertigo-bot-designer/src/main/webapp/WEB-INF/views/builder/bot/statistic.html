@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=statistic">
+
+<head>
+    <title th:text="#{analytics.title}"></title>
+
+    <script
+            src="https://cdn.jsdelivr.net/npm/apexcharts@3.27.1/dist/apexcharts.min.js"></script>
+    <script
+            src="https://cdn.jsdelivr.net/npm/vue-apexcharts@1.6.1/dist/vue-apexcharts.min.js"></script>
+
+    <script th:src="@{/static/utils/moment.min.js}"></script>
+
+    <script th:inline="javascript">
+        Vue.use(VueApexCharts);
+        Vue.component('apexchart', VueApexCharts);
+
+        let timeFormatter = function(value) {
+            if (VertigoUi.vueData.criteria.timeOption === 'DAY') {
+                return new Date(value).toLocaleDateString('en-EN', {
+                    month: 'short',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute:'2-digit',
+                    hour12: false
+                });
+            } else if (VertigoUi.vueData.criteria.timeOption === 'WEEK') {
+                let myDate = new Date(value);
+                let dateStr = myDate.toLocaleDateString('en-EN', {
+                    month: 'short',
+                    day: '2-digit'
+                });
+
+                if (myDate.getHours() < 11) {
+                    dateStr += " AM";
+                } else {
+                    dateStr += " PM";
+                }
+
+                return dateStr;
+            } else {
+                return new Date(value).toLocaleDateString('en-EN', {
+                    month: 'short',
+                    day: '2-digit'
+                });
+            }
+        }
+        VUiExtensions.dataX.disableTimeOption = false;
+        VUiExtensions.dataX.apexCharts = {};
+
+        VUiExtensions.dataX.apexCharts.chartSession = {
+            options : {
+                chart : {
+                    id : 'vuechart-example',
+                    zoom: {
+                        enabled: false
+                    },
+                    toolbar: {
+                        show: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                xaxis : {
+                    type: 'datetime'
+                },
+                tooltip: {
+                    x : {
+                        formatter: timeFormatter
+                    }
+                }
+            },
+            series : function() {
+                return [ {
+                    name : 'User sessions',
+                    data : serieToApex("isSessionStart:sum", VertigoUi.vueData.sessionStats, {fill: 0})
+                }
+                ];
+            }
+        };
+
+        VUiExtensions.dataX.apexCharts.chartMessages = {
+            options : {
+                chart : {
+                    id : 'vuechart-example-3',
+                    zoom: {
+                        enabled: false
+                    },
+                    toolbar: {
+                        show: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                xaxis : {
+                    type: 'datetime'
+                },
+                tooltip: {
+                    x : {
+                        formatter: timeFormatter
+                    }
+                },
+                colors : ['#2E93fA', '#FF2200'],
+                stroke: {
+                    curve: 'smooth'
+                },
+            },
+            series : function() {
+                return [ {
+                    name : /*[[#{analytics.message.useractions}]]*/ '',
+                    data : serieToApex("name:count", VertigoUi.vueData.userInteractionsStats, {fill: 0})
+                },
+                ];
+            }
+        };
+
+        VUiExtensions.dataX.apexCharts.nluMessageChart = {
+            options : {
+                chart : {
+                    id : 'vuechart-example-2',
+                    zoom: {
+                        enabled: false
+                    },
+                    toolbar: {
+                        show: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                xaxis : {
+                    type: 'datetime'
+                },
+                tooltip: {
+                    x : {
+                        formatter: timeFormatter
+                    }
+                },
+                colors : ['#2E93fA', '#FF2200'],
+                stroke: {
+                    curve: 'smooth'
+                },
+            },
+            series : function() {
+                return [ {
+                    name : /*[[#{analytics.message.nluMessages}]]*/ '',
+                    data : serieToApex("isNlu:sum", VertigoUi.vueData.requestsStats, {fill: 0})
+                },
+                    {
+                        name : /*[[#{analytics.message.understanding}]]*/ '',
+                        data : serieToApex("isFallback:sum", VertigoUi.vueData.requestsStats, {fill: 0})
+                    }
+                ];
+            }
+        };
+
+        VUiExtensions.dataX.apexCharts.chartTopics = {
+            options : {
+                chart : {
+                    id : 'vuechart-example-3',
+                    zoom: {
+                        enabled: false
+                    },
+                    toolbar: {
+                        show: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+            },
+            series : function() {
+                return [ {
+                    name : /*[[#{analytics.message.useractions}]]*/ '',
+                    data : serieToApex("test", VertigoUi.vueData.topicStats, {fill: 0})
+                },
+                ];
+            }
+        };
+
+
+        VUiExtensions.dataX.apexCharts.rating = {
+            options : {
+                chart: {
+                    type: 'pie',
+                },
+                colors : [
+                    '#FF2200',
+                    '#ff6a00',
+                    '#ffd801',
+                    '#77a819',
+                    '#09a802'
+                ],
+                labels: [
+                    /*[[#{analytics.message.oneStar}]]*/ '',
+                    /*[[#{analytics.message.twoStar}]]*/ '',
+                    /*[[#{analytics.message.threeStar}]]*/ '',
+                    /*[[#{analytics.message.fourStar}]]*/ '',
+                    /*[[#{analytics.message.fiveStar}]]*/ ''
+                ]
+            },
+            series : function() {
+                return serieToApexPie(["rating1:count", "rating2:count", "rating3:count", "rating4:count", "rating5:count"], VertigoUi.vueData.ratingStats, {fill: 0})
+            }
+        };
+
+        VUiExtensions.dataX.apexCharts.categories = {
+            options : {
+                chart: {
+                    type: 'pie',
+                },
+                labels: []
+            },
+            series :  function() {
+                return getCategorySerie();
+            }
+        };
+
+
+        function getCategorySerie() {
+            let values = [];
+            VertigoUi.vueData.categoryStat.forEach(categoryStat => {
+                values.push(categoryStat.usage);
+            });
+            return values;
+        }
+
+        function getCategoryLabels() {
+            let values = [];
+            VertigoUi.vueData.categoryStat.forEach(categoryStat => {
+                values.push(categoryStat.label);
+            });
+            return values;
+        }
+
+        function percentageOfRating() {
+            return Math.round((VUiExtensions.dataX.apexCharts.rating.series().reduce((a,b) => a + b, 0 ) /
+                VertigoUi.vueData.totalOfConversations) * 100);
+        }
+
+        function conversationsMean() {
+            let days = 1;
+            if (VertigoUi.vueData.criteria.timeOption === 'WEEK') {
+                days = 7;
+            } else if (VertigoUi.vueData.criteria.timeOption === 'MONTH') {
+                days = 30;
+            } else if (VertigoUi.vueData.criteria.timeOption === 'YEAR') {
+                days = 365;
+            } else if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
+                && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
+                const a = moment(VertigoUi.vueData.criteria.fromDate ,'DD/MM/YYYY');
+                const b = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
+                days = b.diff(a, 'days');
+            }
+            return Math.round(VertigoUi.vueData.totalOfConversations / days);
+        }
+
+        function interactionPerConversationMean() {
+            return Math.round(VertigoUi.vueData.totalOfUserActions/VertigoUi.vueData.totalOfConversations);
+        }
+
+        function recognizedMessageRatio() {
+            return Math.round((VertigoUi.vueData.totalOfRecognizedMessage / (VertigoUi.vueData.totalOfRecognizedMessage + VertigoUi.vueData.totalOfUnrecognizedMessage)) *100);
+        }
+
+        function serieToApex(serieName, dataIn, options) {
+            let ret = [];
+            dataIn.timedDataSeries.forEach(e => {
+                let value = e.values[serieName];
+                let valueResolved;
+                if (options !== undefined && options.fill !== undefined && (value === null || value === undefined)) {
+                    valueResolved = options.fill;
+                } else if (options !== undefined && options.transform !== undefined) {
+                    valueResolved = options.transform(value);
+                } else {
+                    valueResolved = value;
+                }
+
+                // null value = hole
+                // undefined value = stroke between existing values
+                if (valueResolved !== undefined) {
+                    ret.push([new Date(e.time).getTime() , valueResolved]);
+                }
+            });
+            return ret;
+        }
+
+        function serieToApexPie(serieNames, dataIn, options) {
+            let ret = [];
+            serieNames.forEach(serieName => {
+                let serieCount = 0;
+                dataIn.timedDataSeries.forEach(e => {
+                    let value = e.values[serieName];
+                    let valueResolved;
+                    if (options !== undefined && options.fill !== undefined && (value === null || value === undefined)) {
+                        valueResolved = options.fill;
+                    } else if (options !== undefined && options.transform !== undefined) {
+                        valueResolved = options.transform(value);
+                    } else {
+                        valueResolved = value;
+                    }
+
+                    // null value = hole
+                    // undefined value = stroke between existing values
+                    if (valueResolved !== undefined) {
+                        serieCount += valueResolved;
+                    }
+                });
+                ret.push(serieCount);
+            })
+            return ret;
+        }
+
+        function getTopicTitleByTopicId(topId) {
+            if (topId == null) return null;
+
+            let result = VertigoUi.vueData.topics.filter(t => t.topId === topId);
+            return result.length === 0 ? null : result[0].title;
+        }
+
+        VUiExtensions.dataX.popinDetailLabel = '';
+        function displayIntentDetail(intent) {
+            VUiExtensions.dataX.popinDetailLabel = getTopicTitleByTopicId(intent.topId);
+
+            VertigoUi.vueData.intentDetails = [];
+            VUiPage.componentStates.intentDetailList.loading = true;
+
+            let params = VUiPage.vueDataParams(['criteria']);
+            params.append('intentRasa', intent.code)
+            VUiPage.httpPostAjax('_intentDetails', params, {
+                    onSuccess: function() {
+                        VUiPage.componentStates.intentDetailList.loading = false;
+                    }
+                }
+            );
+
+            VUiPage.$refs.intentDetailsDialog.show();
+        }
+
+        function displayConversationDetail(sessionId) {
+
+            VertigoUi.vueData.conversationDetails = [];
+
+            let params = VUiPage.vueDataParams(['criteria']);
+            params.append('sessionId', sessionId)
+            VUiPage.httpPostAjax('_conversationDetails', params, {
+                    onSuccess: function() {
+                    }
+                }
+            );
+
+            VUiPage.$refs.conversationDetailsDialog.show();
+        }
+
+        function changeChatMessageStyle() {
+            changeChatMessageBgColor();
+            changeChatMessageFontFamily();
+            changeChatMessageFontColor();
+        }
+
+        function closeDialog() {
+            VUiPage.$refs.popupFromDate.hide();
+            VUiPage.$refs.popupToDate.hide();
+        }
+
+        function changeChatMessageBgColor() {
+            if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
+                VertigoUi.vueData.chatbotCustomConfig.backgroundColor = '#cdcdcd';
+            }
+            Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
+                element.style.setProperty('--chat-message-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
+            });
+        }
+
+        function changeChatMessageFontColor() {
+            if (VertigoUi.vueData.chatbotCustomConfig.fontColor == null) {
+                VertigoUi.vueData.chatbotCustomConfig.fontColor = '#000000';
+            }
+            Array.from(document.getElementsByClassName('q-message-text-content--sent')).forEach(function (element, index, array) {
+                element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+            });
+            Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
+                element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+            });
+        }
+
+        function changeChatMessageFontFamily() {
+            if (VertigoUi.vueData.chatbotCustomConfig.fontFamily == null) {
+                VertigoUi.vueData.chatbotCustomConfig.fontFamily = 'Arial, sans-serif';
+            }
+            Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
+                element.style.setProperty('--chat-message-font-family', VertigoUi.vueData.chatbotCustomConfig.fontFamily);
+            });
+            Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
+                element.style.setProperty('--chat-message-font-family', VertigoUi.vueData.chatbotCustomConfig.fontFamily);
+            });
+        }
+
+        function checkAllExportStats() {
+            VertigoUi.vueData.selectTypeExportAnalyticList.teaCd =
+                VertigoUi.vueData.typeExportAnalyticsList.map(typeExport => typeExport.teaCd);
+
+        }
+    </script>
+    <style>
+        .q-message-text--sent {
+            color: var(--chat-message-bg-color) !important;
+            font-family: var(--chat-message-font-family) !important;
+        }
+        .q-message-text-content--sent {
+            color: var(--chat-message-font-color) !important;
+        }
+        .q-message-text-content--received {
+            color: var(--chat-message-font-color) !important;
+        }
+        .q-message-text--received {
+            font-family: var(--chat-message-font-family) !important;
+            color: #cdcdcd !important;
+        }
+    </style>
+</head>
+
+<body>
+
+<section layout:fragment="content">
+
+    <div class="text-primary text-h6 text-weight-bold" th:text="#{layout.stats}"></div>
+
+    <vu:include-data object="bots" field="botId" />
+    <vu:include-data object="bots" field="name" />
+
+    <vu:include-data object="nodes" field="nodId" />
+    <vu:include-data object="nodes" field="name" />
+
+    <vu:include-data object="criteria" field="botId" modifiable="true" />
+    <vu:include-data object="criteria" field="nodId" modifiable="true" />
+    <vu:include-data object="criteria" field="fromDate" modifiable="true" />
+    <vu:include-data object="criteria" field="toDate" modifiable="true" />
+    <vu:include-data object="criteria" field="timeOption" modifiable="true" />
+
+    <vu:include-data object="categoryStat" field="label" />
+    <vu:include-data object="categoryStat" field="usage" />
+
+    <vu:include-data-primitive key="ratingStats" />
+    <vu:include-data-primitive key="requestsStats" />
+    <vu:include-data-primitive key="sessionStats" />
+    <vu:include-data-primitive key="userInteractionsStats" />
+    <vu:include-data-primitive key="totalOfUserActions" />
+    <vu:include-data-primitive key="totalOfUnrecognizedMessage" />
+    <vu:include-data-primitive key="totalOfRecognizedMessage" />
+    <vu:include-data-primitive key="totalOfConversations" />
+
+    <vu:include-data-primitive key="locale" />
+
+    <vu:include-data object="chatbotCustomConfig" field="backgroundColor" />
+    <vu:include-data object="chatbotCustomConfig" field="fontColor" />
+    <vu:include-data object="chatbotCustomConfig" field="fontFamily" />
+
+    <div class="row">
+        <q-toolbar class="bg-secondary text-white shadow-2 items-center q-pa-md">
+
+            <q-select
+                    v-if="vueData.nodes.length > 0"
+                    style="width: 250px; background-color: white"
+                    dense
+                    clearable
+                    map-options
+                    emit-value
+                    v-model="vueData.criteria.nodId"
+                    :options='transformListForSelection("nodes", "nodId", "name")'
+                    th:label="#{analytics.selection.node}"
+            ></q-select>
+
+            <q-space></q-space>
+
+
+            <vu:date-edit object="criteria" field="fromDate" label="#{analytics.date.from}"
+                          dense clearable @clear="vueData.criteria.fromDate=null"
+                          class="q-pa-none" style="width:210px; background-color: white; margin-right: 10px"/>
+
+            <q-space></q-space>
+
+            <vu:date-edit object="criteria" field="toDate" label="#{analytics.date.to}"
+                          dense clearable @clear="vueData.criteria.toDate=null"
+                          class="q-pa-none" style="width:210px; background-color: white; margin-right: 10px"/>
+
+
+            <q-space></q-space>
+
+
+            <q-space></q-space>
+            <vu:include-data object="timeOptions" field="'*'" />
+
+            <q-btn-toggle
+                    text-color="dark"
+                    :disable="dataX.disableTimeOption"
+                    v-model="vueData.criteria.timeOption"
+                    toggle-color="primary"
+                    :options='transformListForSelection("timeOptions", "value", "label")'
+            ></q-btn-toggle>
+            <q-space></q-space>
+            <q-btn  class="fab-block" round color="primary" size="md" icon="file_upload" th:aria-label="export" th:title="export"
+                    @click="$refs.exportStatistic.show()"></q-btn>
+        </q-toolbar>
+    </div>
+    <div class="row">
+        <q-card class="col-12">
+            <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.summary}"></q-card-section>
+            <q-card-section>
+                <div class="row wrap justify-start q-col-gutter-md q-mt-md" >
+                    <div class="col-xl-4 col-md-6 col-xs-12">
+                        <q-card>
+                            <q-card-section class="row justify-center">
+                                <div>
+                                    <div style="font-weight: bold; font-size: x-large">
+                                        <span v-html="conversationsMean()"></span>
+                                    </div>
+                                    <div>
+                                        <span>[[#{analytics.conversation.mean}]]</span>
+                                    </div>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                    <vu:include-data object="chatbotCustomConfig" field="disableNlu" />
+                    <div class="col-xl-4 col-md-6 col-xs-12" v-if="!vueData.chatbotCustomConfig.disableNlu">
+                        <q-card>
+                            <q-card-section class="row justify-center">
+                                <div>
+                                    <div style="font-weight: bold; font-size: x-large">
+                                        <span v-html="recognizedMessageRatio()"></span><span> %</span>
+                                    </div>
+                                    <div>
+                                        <span>[[#{analytics.messages.recognized.ratio}]]</span>
+                                    </div>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                    <div class="col-xl-4 col-md-6 col-xs-12">
+                        <q-card>
+                            <q-card-section class="row justify-center">
+                                <div>
+                                    <div style="font-weight: bold; font-size: x-large">
+                                        <span v-html="interactionPerConversationMean()"></span>
+                                    </div>
+                                    <div>
+                                        <span>[[#{analytics.interactions.means}]]</span>
+                                    </div>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                </div>
+            </q-card-section>
+        </q-card>
+    </div>
+
+    <div class="row wrap justify-start q-col-gutter-md q-mt-md" >
+
+        <div class="col-xl-4 col-md-6 col-xs-12">
+            <q-card>
+                <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.session}"></q-card-section>
+                <q-card-section class="row justify-center items-center">
+                    <apexchart width="100%" height="250" type="bar"
+                               :options="dataX.apexCharts.chartSession.options"
+                               :series="dataX.apexCharts.chartSession.series()"></apexchart>
+                </q-card-section>
+                <q-card-section class="row justify-end">
+                    <div>
+                        <div style="font-weight: bold; font-size: x-large">
+                            <span>{{vueData.totalOfConversations}}</span>
+                        </div>
+                        <div>
+                            <span>[[#{analytics.conversation.total}]]</span>
+                        </div>
+                    </div>
+                </q-card-section>
+            </q-card>
+        </div>
+
+        <div class="col-xl-4 col-md-6 col-xs-12">
+            <q-card>
+                <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.nlu}"></q-card-section>
+                <q-card-section class="row justify-center items-center">
+                    <apexchart width="100%" height="250" type="bar"
+                               :options="dataX.apexCharts.chartMessages.options"
+                               :series="dataX.apexCharts.chartMessages.series()"></apexchart>
+                </q-card-section>
+                <q-card-section class="row justify-end">
+                    <div>
+                        <div style="font-weight: bold; font-size: x-large">
+                            <span>{{vueData.totalOfUserActions}}</span>
+                        </div>
+                        <div>
+                            <span>[[#{analytics.useractions.total}]]</span>
+                        </div>
+                    </div>
+                </q-card-section>
+            </q-card>
+        </div>
+
+        <div class="col-xl-4 col-md-6 col-xs-12">
+            <q-card>
+                <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.message}"></q-card-section>
+                <q-card-section class="row justify-center items-center">
+                    <apexchart width="100%" height="250" type="bar"
+                               :options="dataX.apexCharts.nluMessageChart.options"
+                               :series="dataX.apexCharts.nluMessageChart.series()"></apexchart>
+                </q-card-section>
+                <q-card-section class="row justify-end">
+                    <div class="q-mr-md">
+                        <div style="font-weight: bold; font-size: x-large">
+                            <span>{{vueData.totalOfRecognizedMessage}}</span>
+                        </div>
+                        <div>
+                            <span>[[#{analytics.messages.recognized.total}]]</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-weight: bold; font-size: x-large">
+                            <span>{{vueData.totalOfUnrecognizedMessage}}</span>
+                        </div>
+                        <div>
+                            <span>[[#{analytics.messages.unrecognized.total}]]</span>
+                        </div>
+                    </div>
+                </q-card-section>
+            </q-card>
+        </div>
+
+        <div class="col-12">
+            <vu:include-data-primitive key="locale"/>
+            <vu:include-data object="conversationDetails" field="text" />
+            <vu:include-data object="conversationDetails" field="isUserMessage" />
+            <vu:include-data object="conversationDetails" field="isBotMessage" />
+            <vu:include-data object="conversationStat" field="sessionId" />
+            <vu:include-data object="conversationStat" field="ended" />
+            <vu:table componentId="conversationStat" list="conversationStat" th:title="#{analytics.conversations}" tr_@click.native="displayConversationDetail(props.row.sessionId)" tr_style="cursor : pointer;" rowsPerPage="10" autoColClass >
+                <vu:slot name="top_right_slot">
+                    <vu:select-edit object="conversationCriteria" field="ratings"
+                                    multiple
+                                    list="ratingOptions" labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"
+                                    label="#{analytics.conversation.rating}" clearable style="width: 250px; margin-right: 10px"/>
+
+                    <vu:text-field-edit object="conversationCriteria" field="modelName" label="#{analytics.conversation.search}" clearable debounce="300" style="width:210px"/>
+                    <q-icon name="search" class="q-field__marginal" ></q-icon>
+                </vu:slot>
+
+                <vu:column field="date"/>
+                <vu:column field="modelName"/>
+                <vu:column field="interactions"/>
+                <vu:column field="rate"/>
+                <vu:column name="ended" th:label="#{analytics.conversation.ended}" class="col_Small">
+                    <q-icon name="check" color="green" size="2rem"v-if="props.row.ended" ></q-icon>
+                    <q-icon name="close" color="red" size="2rem" v-else ></q-icon>
+                </vu:column>
+            </vu:table>
+
+            <q-dialog ref="conversationDetailsDialog"  @show="function (event) { changeChatMessageStyle() }">
+                <q-card style="width: 600px; height: 500px;">
+                    <q-card-section>
+                        <div class="text-h6 q-ma-md" th:text="#{analytics.conversation.detail}">
+                        </div>
+                        <div v-for="conversationDetail in vueData.conversationDetails">
+                            <q-chat-message :sent="conversationDetail.isUserMessage" >
+                                <span v-html="conversationDetail.text"></span>
+                            </q-chat-message>
+                        </div>
+                    </q-card-section>
+                </q-card>
+            </q-dialog>
+        </div>
+
+        <div class="col-12">
+            <vu:table componentId="ratingDetails"  list="ratingDetails"  rowsPerPage="5">
+                <vu:column field="date"/>
+                <vu:column field="rating"/>
+                <vu:column field="comment"/>
+                <vu:column field="lastTopic"/>
+            </vu:table>
+        </div>
+
+        <div class="col-xl-6 col-md-6 col-xs-12">
+            <q-card>
+                <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.rating}"></q-card-section>
+                <q-card-section class="row justify-center items-center">
+                    <apexchart width="100%" height="250"
+                               :options="dataX.apexCharts.rating.options"
+                               :series="dataX.apexCharts.rating.series()"></apexchart>
+                </q-card-section>
+               <q-card-section class="row justify-end">
+                    <div>
+                        <div style="font-weight: bold; font-size: x-large">
+                            <span v-html="percentageOfRating()"></span> <span>%</span>
+                        </div>
+                        <div>
+                            <span>[[#{analytics.rating.percentage}]]</span>
+                        </div>
+                    </div>
+               </q-card-section>
+
+            </q-card>
+        </div>
+        <div class="col-xl-6 col-md-6 col-xs-12" >
+            <q-card>
+                <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.categories}"></q-card-section>
+                <apexchart width="100%" height="250"
+                           :options="dataX.apexCharts.categories.options"
+                           :series="dataX.apexCharts.categories.series()"></apexchart>
+            </q-card>
+        </div>
+        <div class="col-12">
+            <vu:include-data object="topics" field="topId" />
+            <vu:include-data object="topics" field="title" />
+
+            <vu:include-data object="intentDetails" field="'*'" />
+            <vu:include-data object="topIntents" field="'*'"/>
+
+            <vu:table componentId="intentList"  list="topIntentsFiltered"  rowsPerPage="5" sortBy="count" descending>
+
+                <vu:slot name="top_right_slot">
+                    <vu:select-edit object="topIntentCriteria" field="catIds"
+                                    multiple
+                                    list="topicCategories" labelField="label"
+                                    label="#{analytics.intent.category}" clearable style="width: 250px; margin-right: 10px"/>
+                    <vu:select-edit object="topIntentCriteria" field="labels"
+                                    multiple
+                                    list="topicLabels" labelField="label"
+                                    label="#{analytics.intent.label}" clearable style="width: 250px; margin-right: 10px"/>
+                    <q-icon name="search" class="q-field__marginal" ></q-icon>
+
+                </vu:slot>
+                <vu:column field="intentRasa" th:label="#{analytics.intent.intent}"/>
+                <vu:column field="catLabel"/>
+                <vu:column field="labels"/>
+                <vu:column field="count"/>
+                <vu:column field="intentRasa" th:label="#{analytics.intent.detail}" >
+                    <q-btn v-if="props.row.count > 0" class="fab-block" round color="primary" icon="search" th:aria-label="#{analytics.message}"  th:title="#{analytics.message}"
+                           @click="displayIntentDetail(props.row)"></q-btn>
+                </vu:column>
+            </vu:table>
+
+            <q-dialog ref="intentDetailsDialog">
+                <q-card style="width: 600px; height: 500px;">
+                    <q-card-section>
+                        <div class="text-h6 q-ma-md" th:text="|#{analytics.messages} '{{dataX.popinDetailLabel}}'|">
+                        </div>
+                        <vu:table componentId="intentDetailList"
+                                  list="intentDetails" rowsPerPage="10" autoColClass>
+                            <vu:column field="date"/>
+                            <vu:column field="text"/>
+                        </vu:table>
+                    </q-card-section>
+                </q-card>
+            </q-dialog>
+        </div>
+
+        <div class="col-12">
+            <vu:table componentId="messageList" list="unknownSentenses" th:title="#{analytics.message.understanding}" rowsPerPage="10" autoColClass >
+                <vu:column field="date"/>
+                <vu:column field="text"/>
+                <vu:column field="modelName"/>
+            </vu:table>
+        </div>
+
+    </div>
+
+    <q-dialog ref="exportStatistic" th:with="viewMode='edit'" >
+        <q-card>
+            <q-form method="post" action="_exportStatisticFile">
+                <q-card-section>
+                    <div class="text-h6" th:text="#{popup.export.title}"></div>
+                </q-card-section>
+                <q-card-section style="width: 400px;">
+                    <vu:include-data object="selectTypeExportAnalyticList" field="teaCd" modifiable="true"/>
+                    <vu:include-data object="typeExportAnalyticsList" field="'*'"/>
+                    <q-select
+                            clearable
+                            filled
+                            map-options
+                            emit-value
+                            multiple
+                            v-model="vueData.selectTypeExportAnalyticList.teaCd"
+                            :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeExportAnalyticsList', 'teaCd', 'labelFr') : transformListForSelection('typeExportAnalyticsList', 'teaCd', 'label')"
+                            th:label="Type"
+                            stack-label>
+                        <template #before-options>
+                            <q-item clickable>
+                                <q-item-section @click="checkAllExportStats">
+                                    <q-item-label th:text="#{popup.export.all}"></q-item-label>
+                                </q-item-section>
+                            </q-item>
+                        </template>
+                    </q-select>
+                </q-card-section>
+                <input v-for="id in vueData.selectTypeExportAnalyticList.teaCd" type="hidden" name="vContext[selectTypeExportAnalyticList][teaCd]" :value="id" />
+
+                <q-card-actions align="around">
+                    <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                    <q-btn flat th:label="#{popup.export.cancel}" color="primary" v-close-popup ></q-btn>
+                    <q-btn type="submit" th:title="#{popup.export.export}" th:label="#{popup.export.export}" th:aria-label="#{popup.export.export}" color="primary" v-close-popup></q-btn>
+                </q-card-actions>
+            </q-form>
+        </q-card>
+    </q-dialog>
+
+</section>
+<section layout:fragment="javascript-footer" >
+    <script type="text/javascript">
+        VUiPage.$data.componentStates.ratingDetails.columns[0].sort = VertigoUi.methods.sortDatesAsString("DD/MM/YYYY HH:mm");
+        VUiExtensions.dataX.apexCharts.categories.options = {
+            chart: {
+                type: 'pie',
+            },
+            labels: getCategoryLabels()
+        }
+
+        VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
+            if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
+                && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
+                VUiExtensions.dataX.disableTimeOption = true;
+                VertigoUi.vueData.criteria.timeOption = 'DAY';
+            } else {
+                VUiExtensions.dataX.disableTimeOption = false;
+            }
+            VUiPage.httpPostAjax('_updateStats', VUiPage.vueDataParams(['criteria']));
+        }, { deep: true });
+
+        VUiPage.$watch('vueData.conversationCriteria', (newValue, oldValue) => {
+            VUiPage.httpPostAjax('_filterConversation', VUiPage.vueDataParams(['conversationCriteria']));
+        }, { deep: true });
+
+        VUiPage.$watch('vueData.topIntentCriteria', (newValue, oldValue) => {
+            VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntents
+            if (VertigoUi.vueData.topIntentCriteria.catIds !== null && VertigoUi.vueData.topIntentCriteria.catIds.length > 0) {
+                const catLabels = VertigoUi.vueData.topicCategories.filter(topicCategory => VertigoUi.vueData.topIntentCriteria.catIds.includes(topicCategory.topCatId))
+                    .map(topicCategory => topicCategory.label);
+                VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntentsFiltered.filter(topIntent => catLabels.includes(topIntent.catLabel));
+            }
+            if (VertigoUi.vueData.topIntentCriteria.labels !== null && VertigoUi.vueData.topIntentCriteria.labels.length > 0) {
+                const labels = VertigoUi.vueData.topicLabels.filter(topicLabel => VertigoUi.vueData.topIntentCriteria.labels.includes(topicLabel.labelId))
+                    .map(topicLabel => topicLabel.label);
+
+                VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntentsFiltered.filter(topIntent =>
+                    topIntent.labels != null && labels.some(label => topIntent.labels.includes(label)));
+            }
+        }, { deep: true });
+    </script>
+</section>
+
+</body>
+</html>

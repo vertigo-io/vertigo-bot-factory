@@ -1,37 +1,114 @@
-.bot.chatbot-container {
-	height:100%;
+:root {
+    --background-color: #1aab8d;
 }
 
-.bot .message-processing {
-	width: 80px;
+.floating-button {
+    width: 160px;
+    height: 63px;
+    transition: right 0.3s ease 0s;
+    background-color: var(--background-color);
+    color: white;
+    border: solid 1px black;
+    border-radius: 10px 0 0 10px;
+    cursor: pointer;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
-.bot .docs-btn .q-btn {
-	margin: 5px;
+.avatar-img {
+    width: 63px;
+    height: 63px;
+    background-color: white;
+    color: black;
 }
 
-.bot .scroll.fit {
-	height: auto !important;
-	align-self: stretch;
+.avatar-text {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 16px;
+    color: white;
 }
 
-.bot .sys-chat .q-message-received .q-message-text {
-	border-radius: 10px;
+.iframe {
+    position: fixed;
+    bottom: 0px;
+    z-index: 10000;
+    width: 100%;
+    height: 100%;
+    color: white;
 }
 
-.bot .q-message-received .q-message-text {
-	border-radius: 10px 10px 10px 0px;
+/* The Modal (background) */
+.modalChatbot {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 100000; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
 }
 
-.bot .q-message-sent .q-message-text {
-	border-radius: 10px 10px 0px 10px;
+/* Modal Content (Image) */
+.modal-content-chatbot {
+    margin: auto;
+    display: block;
+    max-width: 80%;
+    max-height: 80%;
 }
 
-.bot .q-message-avatar {
-	background-color: #e0e0e0;
-	-moz-user-select: none !important;
-	-ms-user-select: none !important;
-	-webkit-user-select: none !important;
-	user-select: none !important;
-	pointer-events: none !important;
+/* Caption of Modal Image (Image Text) - Same Width as the Image */
+#caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+    height: 150px;
+}
+
+/* Add Animation - Zoom in the Modal */
+.modal-content-chatbot, #caption {
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+@keyframes zoom {
+    from {transform:scale(0)}
+    to {transform:scale(1)}
+}
+
+/* The Close Button */
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px){
+    .modal-content-chatbot {
+        width: 100%;
+    }
 }

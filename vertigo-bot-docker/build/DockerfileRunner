@@ -1,31 +1,40 @@
 FROM adoptopenjdk:11.0.8_10-jre-hotspot
+ARG VERSION
  
  
 ##############
 # Add Tomcat #
 ##############
 # Add tomcat user
-RUN useradd -m tomcat \ 
+RUN useradd -m tomcat \
  && mkdir /opt/tomcat \
  && mkdir /opt/tomcat/logs \
  && mkdir /opt/plugins \
  && chown -R tomcat. /opt/tomcat \
- && chown -R tomcat. /opt/plugins 
+ && chown -R tomcat. /opt/plugins \
+ && mkdir /opt/attachments \
+ && chown -R tomcat. /opt/attachments
  
 # Add binaries
 COPY --chown=tomcat apache-tomcat-* /opt/tomcat/
-COPY --chown=tomcat Runner/vertigo-bot-executor-*.war /opt/tomcat/war/runner.war
+COPY --chown=tomcat Runner/vertigo-bot-executor-$VERSION.war /opt/tomcat/war/runner.war
 COPY --chown=tomcat Runner/ROOT.xml /opt/tomcat/conf/Catalina/localhost/ROOT.xml
 COPY --chown=tomcat Runner/setenv.sh /opt/tomcat/bin/
 
 # Environment parameters
 ENV JAVA_OPTS -Xmx256m
 ENV CATALINA_PID /opt/tomcat/tomcat.pid
+ENV FRAME_ANCESTORS *
 ENV DESIGNER_URL http://host.docker.internal:8080/vertigo-bot-designer
 ENV API_KEY MyNodeApiKey!
 ENV ANALYTICA_HOST analytica
 ENV ANALYTICA_PORT 4562
 ENV ANALYTICA_DBNAME chatbot
+ENV MAIL_NAME MyEmailServer
+ENV MAIL_PROTOCOL smtp
+ENV MAIL_HOST mailHost
+ENV MAIL_PORT 25
+ENV FILE_STORE_PATH /opt/attachments/
 
 # Expose tomcat port
 EXPOSE 8080

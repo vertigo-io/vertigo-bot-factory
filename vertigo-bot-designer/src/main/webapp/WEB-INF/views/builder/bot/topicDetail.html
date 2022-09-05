@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=topics"
+	>
+  <head>
+
+	  	<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+		<script th:src="@{/static/js/c-richtext.js}"></script>
+		<script th:src="@{/static/js/c-buttonList.js}"></script>
+
+		<!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+		<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+		<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+		<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
+		  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js" integrity="sha512-hGVnilhYD74EGnPbzyvje74/Urjrg5LSNGx0ARG1Ucqyiaz+lFvtsXk/1jCwT9/giXP0qoXSlVDjxNxjLvmqAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		  <script src="https://cdn.jsdelivr.net/npm/vue-codemirror@4.0.6/dist/vue-codemirror.min.js"></script>
+		  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/mode/simple.min.js" integrity="sha512-9YoNYsegWvbA5aiSshQ2BNW2FAq3CQVLqpg2r6urw9Tfl1GklM9PNgrMRVz8fhEtjM+uZfO/1X3RURkMcil8wg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.js" integrity="sha512-kCn9g92k3GM90eTPGMNwvpCAtLmvyqbpvrdnhm0NMt6UEHYs+DjRO4me8VcwInLWQ9azmamS1U1lbQV627/TBQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/selection/active-line.min.js" integrity="sha512-UNVAZmixdjeBtJVQcH5eSKXuVdzbSV6rzfTfNVyYWUIIDCdI9/G8/Z/nWplnSHXXxz9U8TA1BiJ1trK7abL/dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.js" integrity="sha512-uVoZbG/kkAWc+ceMzfYqsyI2ONb5qMV0nc1UZ8gOvuDuc0EWt8VcXg3fWR7z1EIpn4yyWSEeK9lmrR30VSpYLQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+		  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.css" integrity="sha512-OmcLQEy8iGiD7PSm85s06dnR7G7C9C0VqahIPAj/KHk5RpOCmnC6R2ob1oK4/uwYhWa9BF1GC6tzxsC8TIx7Jg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.css" integrity="sha512-jP1+o6s94WQS9boYeDP3Azh8ihI5BxGgBZNjkABhx05MqH5WuDzfzSnoPxGxVzWi/gxxVHZHvWkdRM6SMy5B0Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css" integrity="sha512-6sALqOPMrNSc+1p5xOhPwGIzs6kIlST+9oGWlI4Wwcbj1saaX9J3uzO3Vub016dmHV7hM+bMi/rfXLiF5DNIZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+		  <script th:src="@{/static/chatbot/chatbotMode.js}"></script>
+		  <script th:src="@{/static/js/c-codemirror.js}"></script>
+		
+		<script th:inline="javascript">
+			Vue.use(window.VueCodemirror)
+			function normalizeString(str) {
+				if (str)
+					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+				else
+					return '';
+			}
+			
+			function getDisplayedTrainingSentenses() {
+				let searchNormailized = normalizeString(VertigoUi.componentStates.nluTrainingSentences.pagination.search);
+				
+				return VertigoUi.vueData.nluTrainingSentences
+						// copy and reverse
+						.slice().reverse()
+						// search
+						.filter(nts => normalizeString(nts.text).includes(searchNormailized))
+						// pagination
+						.slice((VertigoUi.componentStates.nluTrainingSentences.pagination.page - 1) * VertigoUi.componentStates.nluTrainingSentences.pagination.rowsPerPage,
+								VertigoUi.componentStates.nluTrainingSentences.pagination.page * VertigoUi.componentStates.nluTrainingSentences.pagination.rowsPerPage);
+			}
+			
+			function getUtterTextResolvedList() {
+				utterTextlist = VertigoUi.vueData.utterTexts;
+				
+				// if only 1 element display it
+				if (VertigoUi.vueData.utterTexts.length < 2) {
+					return VertigoUi.vueData.utterTexts;
+				}
+				
+				let lastIndex = VertigoUi.vueData.utterTexts.length - 1;
+				for (; lastIndex > 0; lastIndex--) {
+					if (VertigoUi.vueData.utterTexts[lastIndex - 1].text || VertigoUi.vueData.utterTexts[lastIndex].text) {
+						break; // stop if not emty or next is not empty
+					}
+				}
+				
+				return VertigoUi.vueData.utterTexts.slice(0, lastIndex + 1);
+			}
+			
+			function addMoreUtterTextIfNeeded() {
+				if (VertigoUi.vueData.utterTexts[VertigoUi.vueData.utterTexts.length - 1].text) {
+					VertigoUi.vueData.utterTexts.push({});
+				}
+			}
+			
+			function createValue (val, done) {
+		        if (val.length > 0 && !val.includes(',')) {
+		        	let find = VertigoUi.componentStates.labels.filterOptions.find(element => element.label === val);
+		        	val = find != null ? find : {label:val}
+		          	done(val, 'add-unique')
+		       	 } 
+		     }
+			
+			
+			
+			function filterFn (val, update) {
+		        update(() => {
+		            if (val === '') {
+		            	VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.allTopicLabelList
+		            }
+		            else {
+		              const needle = normalizeString(val.toLowerCase())
+		              VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.allTopicLabelList.filter(
+		                v => normalizeString(v.label.toLowerCase()).indexOf(needle) > -1
+		              )
+		            }
+		          })
+		        }
+			
+		</script>
+		</head>
+
+		<body>
+			<section layout:fragment="content-actions">
+				<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/topics/detail/(id=${model.bot.botId})} + ${model.topic.topId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
+								class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
+				<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
+								  class="on-left" :round size="md" color="primary" />
+				<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopupDeleteTopic = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
+					   class="on-left" round size="md" color="red" ></q-btn>
+
+			</section>
+
+			<section layout:fragment="content">
+				<vu:include-data object="topic" field="isTechnical" />
+				<vu:include-data-primitive key="unreachable" modifiable="true"/>
+				<q-input v-model="vueData.unreachable" name="vContext[unreachable]" class="hidden" ></q-input>
+				<vu:block id="detail" title="Informations">
+					<vu:grid cols="2">
+						<vu:text-field object="topic" field="title" :disable="vueData.topic.isTechnical == true"/>
+						<vu:text-field object="topic" field="code" :disable="vueData.topic.isTechnical== true"/>
+						<vu:label object="topic" field="isEnabled" v-if="!vueData.topic.isTechnical == true" >
+							<vu:include-data object="topic" field="isEnabled" modifiable="true" />
+
+							<q-input v-model="vueData.topic.isEnabled" name="vContext[topic][isEnabled]" class="hidden" ></q-input>
+
+							<q-toggle v-model="vueData.topic.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
+						</vu:label>
+						<vu:grid-cell></vu:grid-cell>
+						<vu:select-edit object="topic" field="topCatId" list="topicCategoryList" label="#{topic.category}" v-if="vueData.topic.isTechnical == false"  th:readonly="${model.modeReadOnly}" labelField="label"/>
+						<vu:include-data object="topic" field="description" modifiable="true"/>
+						<vu:text-area object="topic" field="description" th:readonly="${model.modeReadOnly}" :disable="vueData.topic.isTechnical == true"/>
+						<vu:grid-cell></vu:grid-cell>
+					</vu:grid>
+
+					<vu:include-data object="initialTopicLabelList" field="'*'" />
+					<vu:include-data object="topicLabelList" field="label" modifiableAllLines="true" />
+					<vu:include-data object="allTopicLabelList" field="'*'" />
+					<th:block th:attr="objectKey=${model.vContext[componentStates].addComponentState('labels').addObject('filterOptions', {label:null})}" th:remove="all" />
+
+					<q-select
+						v-if="vueData.topic.isTechnical == false"
+						th:label="#{topic.label}"
+						v-model="vueData.initialTopicLabelList"
+						multiple
+						use-chips
+						th::readonly="${model.modeReadOnly}"
+						use-input
+						:options="componentStates.labels.filterOptions"
+						@filter="filterFn"
+						reactive-rules
+						input-debounce="0"
+						@new-value="createValue"
+						stack-label>
+					</q-select>
+					<div v-for="(topic, index) in vueData.initialTopicLabelList">
+						<input  type="hidden" :name="'vContext[topicLabelList][' + index + '][label]'" :value="topic.label" />
+					</div>
+				</vu:block>
+
+				<vu:block id="training" th:title="#{topic.menu.training}" v-if="vueData.topic.isTechnical == false">
+
+					<vu:slot name="actions_slot">
+						<q-input v-model="componentStates.nluTrainingSentences.pagination.search" v-if="vueData.unreachable == false" dense clearable
+							type="search" placeholder="Filter"
+							@keydown.esc="componentStates.nluTrainingSentences.pagination.search = '';"
+							style="width:300px">
+							<template v-slot:prepend>
+								<q-icon name="search" ></q-icon>
+							</template>
+						</q-input>
+					</vu:slot>
+
+					<q-toggle checked-icon="clear" color="red" left-label size="lg" th:label="#{topic.unreachable}" v-model="vueData.unreachable" th::disable="${model.modeReadOnly}"></q-toggle>
+
+					<vu:include-data-primitive key="newNluTrainingSentence" modifiable="true" />
+					<vu:include-data object="nluTrainingSentences" field="text" />
+
+					<div v-if="vueData.unreachable == false">
+						<div th:if="${!model.modeReadOnly}">
+							<q-input v-model="vueData.newNluTrainingSentence" dense class="q-pb-sm"
+								@keydown.enter.prevent="if (vueData.newNluTrainingSentence.trim().length > 0) {httpPostAjax('_addTrainingSentence', {'vContext[newNluTrainingSentence]':vueData.newNluTrainingSentence}); componentStates.nluTrainingSentences.pagination.page = 1; componentStates.nluTrainingSentences.pagination.search = '';}"
+								th:placeholder="#{topic.training.add }"
+								name="vContext[newNluTrainingSentence]"
+								:before="[{icon: 'format_quote'}]"
+								>
+							</q-input>
+						</div>
+						<th:block th:attr="objectKey=${model.vContext[componentStates].addComponentState('nluTrainingSentences').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
+						<q-list dense>
+							<q-item th::clickable="${!model.modeReadOnly}" v-for="(nluTrainingSentence, index) in getDisplayedTrainingSentenses()">
+								<q-item-section avatar th:if="${model.modeReadOnly}">
+									<q-icon color="black" name="format_quote"></q-icon>
+								</q-item-section>
+								<q-item-section side left th:if="${!model.modeReadOnly}">
+									<q-btn @click="httpPostAjax('_removeTrainingSentence', {'index':vueData.nluTrainingSentences.length - 1 - index})"
+										color="primary" dense size="sm" icon="delete" class="bg-grey" th:aria-label="#{action.remove}" th:title="#{action.remove}"></q-btn>
+								</q-item-section>
+								<q-item-section>
+									{{nluTrainingSentence.text}}
+									<q-popup-edit th:if="${!model.modeReadOnly}"
+												  buttons label-set="Save" label-cancel="Cancel"
+												  v-model="nluTrainingSentence.text"
+												  @save="function(value, initialValue) {
+															httpPostAjax('_editTrainingSentence',
+																 {'vContext[newNluTrainingSentence]':value, 'index':vueData.nluTrainingSentences.length - 1 - index}
+															).then(function() {
+																if (uiMessageStack.globalErrors.length > 0) {
+																	nluTrainingSentence.text = initialValue;
+																}
+															 });
+														}">
+										<q-input v-model="nluTrainingSentence.text" dense autofocus />
+									</q-popup-edit>
+								</q-item-section>
+							</q-item>
+						</q-list>
+						<div class="q-pa-lg flex flex-center">
+							<q-pagination
+								  v-model="componentStates.nluTrainingSentences.pagination.page"
+								  v-if="Math.ceil(vueData.nluTrainingSentences.length / componentStates.nluTrainingSentences.pagination.rowsPerPage) > 1"
+								  :max="Math.ceil(vueData.nluTrainingSentences.length / componentStates.nluTrainingSentences.pagination.rowsPerPage)"
+								  :max-pages="6"
+								  :boundary-numbers="true"
+								  :direction-links="true" ></q-pagination>
+						</div>
+					</div>
+				</vu:block>
+
+				<div>
+					<q-btn-toggle
+							th:if="${!model.modeReadOnly}"
+							v-model="vueData.topic.ttoCd"
+							toggle-color="primary"
+							:options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
+							th::mode-edit="${!model.modeReadOnly}"
+					/>
+					<input type="hidden" name="vContext[topic][ttoCd]" :value="vueData.topic.ttoCd" />
+				</div>
+				<section layout:fragment="content-specific" class="q-col-gutter-md"></section>
+				<vu:include-data object="topic" field="ttoCd" modifiable="true" />
+				<vu:include-data object="typeTopicList" field="'*'" />
+
+				<div v-if="vueData.topic.ttoCd === 'SMALLTALK'" th:insert="builder/bot/smallTalkDetail.html :: content-specific"></div>
+				<div v-else th:insert="builder/bot/scriptIntentionDetail.html ::content-specific"></div>
+
+				<q-page-sticky position="bottom-right">
+					<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
+				</q-page-sticky>
+			</section>
+		</body>
+		
+
+</html>
