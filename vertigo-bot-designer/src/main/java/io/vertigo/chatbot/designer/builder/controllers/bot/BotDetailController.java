@@ -17,13 +17,27 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.commons.domain.FontFamily;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.FontFamilyServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
-import io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
@@ -39,16 +53,6 @@ import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.inject.Inject;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
@@ -69,13 +73,18 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	private TypeTopicServices typeTopicServices;
 
 	@Inject
-	private ChabotCustomConfigServices chabotCustomConfigServices;
+	private ChatbotCustomConfigServices chatbotCustomConfigServices;
+
+	@Inject
+	private FontFamilyServices fontFamilyServices;
 
 	private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
 	// template for creation
 	private static final ViewContextKey<Boolean> deletePopinKey = ViewContextKey.of("deletePopin");
 	private static final ViewContextKey<FileInfoURI> botTmpPictureUriKey = ViewContextKey.of("botTmpPictureUri");
 	private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
+
+	private static final ViewContextKey<FontFamily> fontFamiliesKey = ViewContextKey.of("fontFamilies");
 
 	@GetMapping("/{botId}")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
@@ -85,7 +94,8 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		viewContext.publishFileInfoURI(botTmpPictureUriKey, null);
 
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
-		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
+		viewContext.publishDtList(fontFamiliesKey, fontFamilyServices.findAll());
+		viewContext.publishDto(chatbotCustomConfigKey, chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
 		super.initBreadCrums(viewContext, bot);
 		toModeReadOnly();
 		listLimitReached(viewContext, uiMessageStack);
@@ -95,9 +105,9 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack) {
 		initEmptyCommonContext(viewContext);
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
-
+		viewContext.publishDtList(fontFamiliesKey, fontFamilyServices.findAll());
 		viewContext.publishFileInfoURI(botTmpPictureUriKey, null);
-		viewContext.publishDto(chatbotCustomConfigKey, chabotCustomConfigServices.getDefaultChatbotCustomConfig());
+		viewContext.publishDto(chatbotCustomConfigKey, chatbotCustomConfigServices.getDefaultChatbotCustomConfig());
 		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
 		listLimitReached(viewContext, uiMessageStack);

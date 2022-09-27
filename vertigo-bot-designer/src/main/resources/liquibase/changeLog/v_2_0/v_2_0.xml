@@ -56,5 +56,9 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/create_22_07_06.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal" id="add font family enum">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_22_09_23.sql" />
+    </changeSet>
+
 
 </databaseChangeLog>

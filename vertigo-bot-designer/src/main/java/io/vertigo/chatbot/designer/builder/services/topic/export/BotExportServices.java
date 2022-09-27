@@ -1,24 +1,30 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
 import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
+import io.vertigo.chatbot.commons.domain.FontFamily;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
+import io.vertigo.chatbot.designer.builder.services.FontFamilyServices;
 import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
 import io.vertigo.chatbot.designer.builder.services.JiraSettingServices;
 import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
 import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
-
-import javax.inject.Inject;
-import java.util.Optional;
 
 @Transactional
 public class BotExportServices implements Component {
@@ -43,6 +49,12 @@ public class BotExportServices implements Component {
 
 	@Inject
 	private AttachmentServices attachmentServices;
+
+	@Inject
+	private ChatbotCustomConfigServices chatbotCustomConfigServices;
+
+	@Inject
+	private FontFamilyServices fontFamilyServices;
 
 	public BotExport exportBot(final Chatbot bot, final StringBuilder logs) {
 		final BotExport export = new BotExport();
@@ -71,6 +83,21 @@ public class BotExportServices implements Component {
 
 	public Optional<JiraSettingExport> exportJiraSetting(final long botId, final long nodId) {
 		return jiraSettingServices.exportJiraSetting(botId, nodId);
+	}
+
+	public ChatbotCustomConfigExport exportChatbotCustomSettings(final long botId) {
+		final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
+		final FontFamily fontFamily = fontFamilyServices.findByFofCd(chatbotCustomConfig.getFofCd());
+		final ChatbotCustomConfigExport chatbotCustomConfigExport = new ChatbotCustomConfigExport();
+		chatbotCustomConfigExport.setBotEmailAddress(chatbotCustomConfig.getBotEmailAddress());
+		chatbotCustomConfigExport.setTotalMaxAttachmentSize(chatbotCustomConfig.getTotalMaxAttachmentSize());
+		chatbotCustomConfigExport.setBackgroundColor(chatbotCustomConfig.getBackgroundColor());
+		chatbotCustomConfigExport.setDisableNlu(chatbotCustomConfig.getDisableNlu());
+		chatbotCustomConfigExport.setFontColor(chatbotCustomConfig.getFontColor());
+		chatbotCustomConfigExport.setDisplayAvatar(chatbotCustomConfig.getDisplayAvatar());
+		chatbotCustomConfigExport.setReinitializationButton(chatbotCustomConfig.getReinitializationButton());
+		chatbotCustomConfigExport.setFontFamily(fontFamily.getLabel());
+		return chatbotCustomConfigExport;
 	}
 
 }

@@ -87,9 +87,8 @@ create DtDefinition DtExecutorConfiguration {
 	field customConfig			{domain: DoText 					label: "Additional config for executor" cardinality : "1"}
 }
 
-create DtDefinition DtChatbotCustomConfig {
-	id cccId 		                {domain: DoId		    label: "Context value id"                                  }
-	field botEmailAddress           {domain: DoLabel        label: "Bot email address"                  cardinality:"?"}
+create DtDefinition DtChatbotCustomConfigExport {
+    field botEmailAddress           {domain: DoLabel        label: "Bot email address"                  cardinality:"?"}
 	field reinitializationButton    {domain: DoYesNo        label: "Reinitialization button"            cardinality:"?"}
 	field backgroundColor           {domain: DoLabel        label: "Bot background color"               cardinality:"?"}
 	field fontColor                 {domain: DoLabel        label: "Bot font color"                     cardinality:"?"}
@@ -97,14 +96,4 @@ create DtDefinition DtChatbotCustomConfig {
 	field displayAvatar             {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
 	field totalMaxAttachmentSize    {domain: DoNumber       label: "Total maximum attachment size"      cardinality:"?"}
 	field disableNlu                {domain: DoYesNo        label: "Disable NlU"                        cardinality:"?"}
-}
-
-create Association AChatbotCustomConfigChatbot {
-	fkFieldName : "botId"
-
- 	dtDefinitionA : DtChatbotCustomConfig
-	type : "*>1"
-	dtDefinitionB : DtChatbot
-
-	labelB : "Chatbot"
 }

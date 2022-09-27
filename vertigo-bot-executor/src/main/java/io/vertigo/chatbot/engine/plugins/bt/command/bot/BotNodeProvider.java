@@ -1,22 +1,5 @@
 package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
-import io.vertigo.ai.bb.BBKey;
-import io.vertigo.ai.bb.BBKeyPattern;
-import io.vertigo.ai.bb.BBKeyTemplate;
-import io.vertigo.ai.bb.BlackBoard;
-import io.vertigo.ai.bt.BTCondition;
-import io.vertigo.ai.bt.BTNode;
-import io.vertigo.ai.bt.BTStatus;
-import io.vertigo.chatbot.engine.BotEngine;
-import io.vertigo.chatbot.engine.model.choice.BotButton;
-import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
-import io.vertigo.chatbot.engine.model.choice.BotCard;
-import io.vertigo.chatbot.engine.model.choice.BotFileButton;
-import io.vertigo.chatbot.engine.model.choice.IBotChoice;
-import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.lang.VSystemException;
-import io.vertigo.core.util.StringUtil;
-
 import java.math.BigInteger;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +9,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
+
+import io.vertigo.ai.bb.BBKey;
+import io.vertigo.ai.bb.BBKeyPattern;
+import io.vertigo.ai.bb.BBKeyTemplate;
+import io.vertigo.ai.bb.BlackBoard;
+import io.vertigo.ai.bt.BTCondition;
+import io.vertigo.ai.bt.BTNode;
+import io.vertigo.ai.bt.BTStatus;
+import io.vertigo.chatbot.commons.HtmlInputUtils;
+import io.vertigo.chatbot.engine.BotEngine;
+import io.vertigo.chatbot.engine.model.choice.BotButton;
+import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
+import io.vertigo.chatbot.engine.model.choice.BotCard;
+import io.vertigo.chatbot.engine.model.choice.BotFileButton;
+import io.vertigo.chatbot.engine.model.choice.IBotChoice;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.util.StringUtil;
 
 import static io.vertigo.ai.bt.BTNodes.condition;
 import static io.vertigo.ai.bt.BTNodes.running;
@@ -182,7 +183,7 @@ public final class BotNodeProvider {
 			return succeed();
 		}
 		return () -> {
-			bb.listPush(BotEngine.BOT_RESPONSE_KEY, bb.format(msg));
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, bb.format(HtmlInputUtils.sanitizeHtml(msg)));
 			return BTStatus.Succeeded;
 		};
 	}

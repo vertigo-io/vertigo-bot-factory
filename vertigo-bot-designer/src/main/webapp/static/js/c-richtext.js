@@ -196,7 +196,7 @@ Vue.component('c-richtext', {
 			
 			getChatPreview: function() {
 				return !this.value ? [''] :
-						this.value
+						DOMPurify.sanitize(this.value)
 						.replace("<a ", "<a target='_blank' rel='nofollow noopener noreferrer' ")
 						.split(/<hr>|<hr \/>/);
 			},
