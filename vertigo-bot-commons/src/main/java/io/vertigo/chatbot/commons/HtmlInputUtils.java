@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.utils;
+package io.vertigo.chatbot.commons;
 
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
@@ -10,7 +10,7 @@ public class HtmlInputUtils {
 		//utils class
 	}
 
-	public static String sanatizeHtml(final String in) {
+	public static String sanitizeHtml(final String in) {
 		final PolicyFactory sanitizer = Sanitizers.FORMATTING
 				.and(Sanitizers.BLOCKS)
 				.and(Sanitizers.LINKS)

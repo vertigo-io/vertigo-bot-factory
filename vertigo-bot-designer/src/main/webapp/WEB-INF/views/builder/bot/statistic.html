@@ -7,6 +7,7 @@
 <head>
     <title th:text="#{analytics.title}"></title>
 
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
     <script
             src="https://cdn.jsdelivr.net/npm/apexcharts@3.27.1/dist/apexcharts.min.js"></script>
     <script
@@ -390,14 +391,17 @@
         }
 
         function changeChatMessageFontFamily() {
-            if (VertigoUi.vueData.chatbotCustomConfig.fontFamily == null) {
-                VertigoUi.vueData.chatbotCustomConfig.fontFamily = 'Arial, sans-serif';
+            if (VertigoUi.vueData.chatbotCustomConfig.fofCd == null) {
+                VertigoUi.vueData.chatbotCustomConfig.fofCd = 'ARIAL';
             }
+            const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
+                return fontFamily.fofCd === VertigoUi.vueData.chatbotCustomConfig.fofCd
+            });
             Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-message-font-family', VertigoUi.vueData.chatbotCustomConfig.fontFamily);
+                element.style.setProperty('--chat-message-font-family', fontFamily.label);
             });
             Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-message-font-family', VertigoUi.vueData.chatbotCustomConfig.fontFamily);
+                element.style.setProperty('--chat-message-font-family', fontFamily.label);
             });
         }
 
@@ -405,6 +409,10 @@
             VertigoUi.vueData.selectTypeExportAnalyticList.teaCd =
                 VertigoUi.vueData.typeExportAnalyticsList.map(typeExport => typeExport.teaCd);
 
+        }
+
+        function sanitizeText(text) {
+            return DOMPurify.sanitize(text);
         }
     </script>
     <style>
@@ -459,7 +467,8 @@
 
     <vu:include-data object="chatbotCustomConfig" field="backgroundColor" />
     <vu:include-data object="chatbotCustomConfig" field="fontColor" />
-    <vu:include-data object="chatbotCustomConfig" field="fontFamily" />
+    <vu:include-data object="chatbotCustomConfig" field="fofCd" />
+    <vu:include-data object="fontFamilies" field="'*'" />
 
     <div class="row">
         <q-toolbar class="bg-secondary text-white shadow-2 items-center q-pa-md">
@@ -669,7 +678,7 @@
                         </div>
                         <div v-for="conversationDetail in vueData.conversationDetails">
                             <q-chat-message :sent="conversationDetail.isUserMessage" >
-                                <span v-html="conversationDetail.text"></span>
+                                <span v-html="sanitizeText(conversationDetail.text)"></span>
                             </q-chat-message>
                         </div>
                     </q-card-section>
