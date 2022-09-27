@@ -6,6 +6,7 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.ChatbotCustomConfigDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.commons.domain.FontFamilyEnum;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
@@ -13,7 +14,7 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 
 @Transactional
-public class ChabotCustomConfigServices implements Component {
+public class ChatbotCustomConfigServices implements Component {
 
 	@Inject
 	private ChatbotCustomConfigDAO chatbotCustomConfigDAO;
@@ -45,7 +46,7 @@ public class ChabotCustomConfigServices implements Component {
 		return (oldChatbotCustomConfig.getDisplayAvatar() != null && !oldChatbotCustomConfig.getDisplayAvatar().equals(chatbotCustomConfig.getDisplayAvatar())) ||
 		(oldChatbotCustomConfig.getBackgroundColor() != null && !oldChatbotCustomConfig.getBackgroundColor().equals(chatbotCustomConfig.getBackgroundColor())) ||
 		(oldChatbotCustomConfig.getFontColor() != null && !oldChatbotCustomConfig.getFontColor().equals(chatbotCustomConfig.getFontColor())) ||
-		(oldChatbotCustomConfig.getFontFamily() != null && !oldChatbotCustomConfig.getFontFamily().equals(chatbotCustomConfig.getFontFamily()));
+		(oldChatbotCustomConfig.getFofCd()!= null && !oldChatbotCustomConfig.getFofCd().equals(chatbotCustomConfig.getFofCd()));
 	}
 
 	private static boolean checkIfEmailOrAttachmentSettingsChanged(final ChatbotCustomConfig oldChatbotCustomConfig, final ChatbotCustomConfig chatbotCustomConfig) {
@@ -75,7 +76,7 @@ public class ChabotCustomConfigServices implements Component {
 		chatbotCustomConfig.setDisableNlu(false);
 		chatbotCustomConfig.setBackgroundColor("#cdcdcd");
 		chatbotCustomConfig.setFontColor("#000000");
-		chatbotCustomConfig.setFontFamily("Arial, sans-serif");
+		chatbotCustomConfig.setFofCd(FontFamilyEnum.ARIAL.name());
 		chatbotCustomConfig.setTotalMaxAttachmentSize(-1L);
 		return chatbotCustomConfig;
 	}

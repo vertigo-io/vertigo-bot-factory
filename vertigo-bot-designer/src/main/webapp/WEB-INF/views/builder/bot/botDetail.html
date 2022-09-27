@@ -9,6 +9,7 @@
 	<head>
 		<title th:text="#{bot.detail.title}"></title>
 
+		<script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
 		<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 		<script th:src="@{/static/js/c-richtext.js}"></script>
 		<script th:src="@{/static/js/c-buttonList.js}"></script>
@@ -31,7 +32,7 @@
 		<script th:inline="javascript">
 		 	Vue.use(window.VueCodemirror)
 			function getChatPreview() {
-				return [VertigoUi.vueData.chatbotCustomConfig.fontFamily];
+				return [VertigoUi.vueData.chatbotCustomConfig.fofCd];
 			}
 			function changeChatMessageBgColor() {
 				 if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
@@ -52,11 +53,14 @@
 			}
 
 			function changeChatMessageFontFamily() {
-				 if (VertigoUi.vueData.chatbotCustomConfig.fontFamily == null) {
-					 VertigoUi.vueData.chatbotCustomConfig.fontFamily = 'Arial, sans-serif';
+				 if (VertigoUi.vueData.chatbotCustomConfig.fofCd == null) {
+					 VertigoUi.vueData.chatbotCustomConfig.fofCd = 'ARIAL';
 				 }
 				Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-					element.style.setProperty('--chat-message-font-family', VertigoUi.vueData.chatbotCustomConfig.fontFamily);
+					const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
+						return fontFamily.fofCd === VertigoUi.vueData.chatbotCustomConfig.fofCd
+					});
+					element.style.setProperty('--chat-message-font-family', fontFamily.label);
 				});
 			}
 
@@ -113,7 +117,7 @@
 			<vu:include-data object="chatbotCustomConfig" field="disableNlu" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="backgroundColor" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="fontColor" modifiable="true" />
-			<vu:include-data object="chatbotCustomConfig" field="fontFamily" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="fofCd" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
 
 			<vu:block id="botWindowCustomization" th:title="#{bot.window.customization}">
@@ -138,14 +142,13 @@
 					</q-chat-message>
 				</div>
 
-				<q-select style="margin-bottom: 20px;"
-						  v-model="vueData.chatbotCustomConfig.fontFamily" name="vContext[chatbotCustomConfig][fontFamily]" th:label="#{bot.styling.font.family}"
-						  @input="changeChatMessageFontFamily()"
-						  th::disable="${model.modeReadOnly}"
-						  :options="['Arial, sans-serif', 'Verdana, sans-serif', 'Helvetica, sans-serif', 'Tahoma, sans-serif',
-						'Trebuchet MS, sans-serif', 'Times New Roman, serif', 'Georgia, serif', 'Garamond, serif', 'Courier New, monospace', 'Brush Script MT, cursive']">
+				<vu:include-data object="fontFamilies" field="'*'" />
 
-				</q-select>
+				<vu:select-edit object="chatbotCustomConfig" field="fofCd"
+								th::disable="${model.modeReadOnly}"
+								@input="changeChatMessageFontFamily()"
+									list="fontFamilies"
+									label="#{bot.styling.font.family}" style="width: 250px; margin-right: 10px"/>
 				<div class="row">
 					<vu:label-edit object="chatbotCustomConfig" field="backgroundColor" class="col-3">
 						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.backgroundColor" @change="function (event) { changeChatMessageBgColor() }" default-value="#cdcdcd" name="vContext[chatbotCustomConfig][backgroundColor]"/>

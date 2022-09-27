@@ -23,6 +23,7 @@ drop table IF EXISTS CONTEXT_VALUE cascade;
 drop sequence IF EXISTS SEQ_CONTEXT_VALUE;
 drop table IF EXISTS DICTIONARY_ENTITY cascade;
 drop sequence IF EXISTS SEQ_DICTIONARY_ENTITY;
+drop table IF EXISTS FONT_FAMILY cascade;
 drop table IF EXISTS GROUPS cascade;
 drop sequence IF EXISTS SEQ_GROUPS;
 drop table IF EXISTS HISTORY cascade;
@@ -110,6 +111,7 @@ create sequence SEQ_CONTEXT_VALUE
 
 create sequence SEQ_DICTIONARY_ENTITY
 	start with 1000 cache 20; 
+
 
 create sequence SEQ_GROUPS
 	start with 1000 cache 20; 
@@ -297,11 +299,11 @@ create table CHATBOT_CUSTOM_CONFIG
     REINITIALIZATION_BUTTON	 bool        	,
     BACKGROUND_COLOR	 VARCHAR(100)	,
     FONT_COLOR  	 VARCHAR(100)	,
-    FONT_FAMILY 	 VARCHAR(100)	,
     DISPLAY_AVATAR	 bool        	,
     TOTAL_MAX_ATTACHMENT_SIZE	 NUMERIC     	,
     DISABLE_NLU 	 bool        	,
     BOT_ID      	 NUMERIC     	not null,
+    FOF_CD      	 VARCHAR(100)	,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
 );
 
@@ -320,9 +322,6 @@ comment on column CHATBOT_CUSTOM_CONFIG.BACKGROUND_COLOR is
 comment on column CHATBOT_CUSTOM_CONFIG.FONT_COLOR is
 'Bot font color';
 
-comment on column CHATBOT_CUSTOM_CONFIG.FONT_FAMILY is
-'Bot font family';
-
 comment on column CHATBOT_CUSTOM_CONFIG.DISPLAY_AVATAR is
 'Display avatar';
 
@@ -334,6 +333,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.DISABLE_NLU is
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';
+
+comment on column CHATBOT_CUSTOM_CONFIG.FOF_CD is
+'fontFamily';
 
 -- ============================================================
 --   Table : CHATBOT_NODE                                        
@@ -478,6 +480,26 @@ comment on column DICTIONARY_ENTITY.LABEL is
 
 comment on column DICTIONARY_ENTITY.BOT_ID is
 'Chatbot';
+
+-- ============================================================
+--   Table : FONT_FAMILY                                        
+-- ============================================================
+create table FONT_FAMILY
+(
+    FOF_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_FONT_FAMILY primary key (FOF_CD)
+);
+
+comment on column FONT_FAMILY.FOF_CD is
+'ID';
+
+comment on column FONT_FAMILY.LABEL is
+'Title';
+
+comment on column FONT_FAMILY.LABEL_FR is
+'TitleFr';
 
 -- ============================================================
 --   Table : GROUPS                                        
@@ -1383,6 +1405,12 @@ alter table ATTACHMENT
 	references CHATBOT (BOT_ID);
 
 create index A_ATTACHMENT_CHATBOT_CHATBOT_FK on ATTACHMENT (BOT_ID asc);
+
+alter table CHATBOT_CUSTOM_CONFIG
+	add constraint FK_A_CHABOT_CUSTOM_CONFIG_FONT_FAMILY_FONT_FAMILY foreign key (FOF_CD)
+	references FONT_FAMILY (FOF_CD);
+
+create index A_CHABOT_CUSTOM_CONFIG_FONT_FAMILY_FONT_FAMILY_FK on CHATBOT_CUSTOM_CONFIG (FOF_CD asc);
 
 alter table CHATBOT_CUSTOM_CONFIG
 	add constraint FK_A_CHATBOT_CUSTOM_CONFIG_CHATBOT_CHATBOT foreign key (BOT_ID)

@@ -31,6 +31,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
 		/** Objet de données ChatbotCustomConfig. */
 		ChatbotCustomConfig(io.vertigo.chatbot.commons.domain.ChatbotCustomConfig.class),
+		/** Objet de données ChatbotCustomConfigExport. */
+		ChatbotCustomConfigExport(io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport.class),
 		/** Objet de données ChatbotNode. */
 		ChatbotNode(io.vertigo.chatbot.commons.domain.ChatbotNode.class),
 		/** Objet de données ChatbotProfiles. */
@@ -53,6 +55,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		DictionaryEntityWrapper(io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
+		/** Objet de données FontFamily. */
+		FontFamily(io.vertigo.chatbot.commons.domain.FontFamily.class),
 		/** Objet de données Groups. */
 		Groups(io.vertigo.chatbot.designer.domain.commons.Groups.class),
 		/** Objet de données History. */
@@ -327,8 +331,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		backgroundColor,
 		/** Propriété 'Bot font color'. */
 		fontColor,
-		/** Propriété 'Bot font family'. */
-		fontFamily,
 		/** Propriété 'Display avatar'. */
 		displayAvatar,
 		/** Propriété 'Total maximum attachment size'. */
@@ -336,7 +338,30 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Disable NlU'. */
 		disableNlu,
 		/** Propriété 'Chatbot'. */
-		botId	}
+		botId,
+		/** Propriété 'fontFamily'. */
+		fofCd	}
+
+	/**
+	 * Enumération des champs de ChatbotCustomConfigExport.
+	 */
+	public enum ChatbotCustomConfigExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport> {
+		/** Propriété 'Bot email address'. */
+		botEmailAddress,
+		/** Propriété 'Reinitialization button'. */
+		reinitializationButton,
+		/** Propriété 'Bot background color'. */
+		backgroundColor,
+		/** Propriété 'Bot font color'. */
+		fontColor,
+		/** Propriété 'Bot font family'. */
+		fontFamily,
+		/** Propriété 'Display avatar'. */
+		displayAvatar,
+		/** Propriété 'Total maximum attachment size'. */
+		totalMaxAttachmentSize,
+		/** Propriété 'Disable NlU'. */
+		disableNlu	}
 
 	/**
 	 * Enumération des champs de ChatbotNode.
@@ -498,6 +523,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		avatar,
 		/** Propriété 'Additional config for executor'. */
 		customConfig	}
+
+	/**
+	 * Enumération des champs de FontFamily.
+	 */
+	public enum FontFamilyFields implements DtFieldName<io.vertigo.chatbot.commons.domain.FontFamily> {
+		/** Propriété 'ID'. */
+		fofCd,
+		/** Propriété 'Title'. */
+		label,
+		/** Propriété 'TitleFr'. */
+		labelFr	}
 
 	/**
 	 * Enumération des champs de Groups.

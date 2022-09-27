@@ -1,0 +1,95 @@
+package io.vertigo.chatbot.commons.domain
+
+create DtDefinition DtChatbotCustomConfig {
+	id cccId 		                {domain: DoId		    label: "Context value id"                                  }
+	field botEmailAddress           {domain: DoLabel        label: "Bot email address"                  cardinality:"?"}
+	field reinitializationButton    {domain: DoYesNo        label: "Reinitialization button"            cardinality:"?"}
+	field backgroundColor           {domain: DoLabel        label: "Bot background color"               cardinality:"?"}
+	field fontColor                 {domain: DoLabel        label: "Bot font color"                     cardinality:"?"}
+	field displayAvatar             {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
+	field totalMaxAttachmentSize    {domain: DoNumber       label: "Total maximum attachment size"      cardinality:"?"}
+	field disableNlu                {domain: DoYesNo        label: "Disable NlU"                        cardinality:"?"}
+}
+
+create Association AChatbotCustomConfigChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtChatbotCustomConfig
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create Association AChabotCustomConfigFontFamily{
+
+	fkFieldName : "fofCd"
+
+ 	dtDefinitionA : DtChatbotCustomConfig
+	type : "*>?"
+	dtDefinitionB : DtFontFamily
+
+	labelB : "fontFamily"
+
+}
+
+create DtDefinition DtFontFamily {
+	stereotype : "StaticMasterData"
+	id    fofCd 		{domain: DoLabel 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "TitleFr" 		cardinality : "1"	}
+	values : `{
+        "ARIAL" : {
+            "fofCd" : "ARIAL",
+            "label" : "Arial, sans-serif",
+            "labelFr" : "Arial, sans-serif"
+        },
+        "VERDANA" : {
+            "fofCd" : "VERDANA",
+            "label" : "Verdana, sans-serif",
+            "labelFr" : "Verdana, sans-serif"
+        },
+        "HELVETICA" : {
+           "fofCd" : "HELVETICA",
+           "label" : "Helvetica, sans-serif",
+           "labelFr" : "Helvetica, sans-serif"
+       },
+       "TAHOMA" : {
+          "fofCd" : "TAHOMA",
+          "label" : "Tahoma, sans-serif",
+          "labelFr" : "Tahoma, sans-serif"
+       },
+        "TREBUCHET" : {
+            "fofCd" : "TREBUCHET",
+            "label" : "Trebuchet MS, sans-serif",
+            "labelFr" : "Trebuchet MS, sans-serif"
+        },
+         "TIME_NEW_ROMAN" : {
+            "fofCd" : "TIME_NEW_ROMAN",
+            "label" : "Times New Roman, serif",
+            "labelFr" : "Times New Roman, serif"
+        },
+        "GEORGIA" : {
+            "fofCd" : "GEORGIA",
+            "label" : "Georgia, serif",
+            "labelFr" : "Georgia, serif"
+        },
+        "GARAMOND" : {
+            "fofCd" : "GARAMOND",
+            "label" : "Garamond, serif",
+            "labelFr" : "Garamond, serif"
+        },
+        "COURIER" : {
+            "fofCd" : "COURIER",
+            "label" : "Courier New, monospace",
+            "labelFr" : "Courier New, monospace"
+        },
+        "BRUSH" : {
+            "fofCd" : "BRUSH",
+            "label" : "Brush Script MT, cursive",
+            "labelFr" : "Brush Script MT, cursive"
+        }
+     }`
+    sortField : "fofCd"
+ 	displayField : "label"
+}

@@ -1,5 +1,10 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
@@ -40,10 +45,6 @@ import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
-
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.Optional;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -89,7 +90,7 @@ public class ChatbotServices implements Component {
 	private TopicLabelServices topicLabelServices;
 
 	@Inject
-	private ChabotCustomConfigServices chabotCustomConfigServices;
+	private ChatbotCustomConfigServices chatbotCustomConfigServices;
 
 	@Inject
 	private HistoryServices historyServices;
@@ -143,7 +144,7 @@ public class ChatbotServices implements Component {
 			topicServices.initTechnicalTopics(savedChatbot, topicCategory.getTopCatId(), localeManager.getCurrentLocale().toString());
 		}
 
-		chabotCustomConfigServices.save(savedChatbot, chatbotCustomConfig);
+		chatbotCustomConfigServices.save(savedChatbot, chatbotCustomConfig);
 
 		return savedChatbot;
 	}
@@ -166,7 +167,7 @@ public class ChatbotServices implements Component {
 		topicCategoryServices.removeAllCategoryByBot(bot);
 
 		chatbotProfilServices.deleteAllProfilByBot(bot);
-		chabotCustomConfigServices.deleteChatbotCustomConfig(bot);
+		chatbotCustomConfigServices.deleteChatbotCustomConfig(bot);
 		contextValueServices.deleteAllByBotId(bot.getBotId());
 		historyServices.deleteAllByBotId(bot.getBotId());
 		unknownSentencesServices.deleteAllByBotId(bot.getBotId());
