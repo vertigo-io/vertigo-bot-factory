@@ -168,7 +168,7 @@ const chatbot = new Vue({
             },
             postAnswerBtn(btn) {
                 chatbot.messages.push({
-                    text: [btn.label],
+                    text: [DOMPurify.sanitize(btn.label)],
                     sent: true,
                     bgColor: 'primary',
                     textColor: 'white'
@@ -214,7 +214,8 @@ const chatbot = new Vue({
                         textColor: 'white'
                     });
                 } else {
-                    sanitizedString = chatbot.inputConfig.responseText.trim().replace(/(?:\r\n|\r|\n)/g, '<br>');
+                    sanitizedString = DOMPurify.sanitize(chatbot.inputConfig.responseText.trim()
+                        .replace(/(?:\r\n|\r|\n)/g, '<br>'));
                     chatbot.messages.push({
                         text: sanitizedString !== '' ? [sanitizedString] : null,
                         rating: isRating,
