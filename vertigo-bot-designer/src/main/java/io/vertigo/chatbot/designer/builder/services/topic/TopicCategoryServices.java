@@ -1,5 +1,10 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.TopicCategoryDAO;
@@ -24,10 +29,6 @@ import io.vertigo.quarto.exporter.ExporterManager;
 import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Optional;
 
 import static io.vertigo.chatbot.designer.builder.services.topic.TopicsUtils.DEFAULT_TOPIC_CAT_CODE;
 
@@ -112,7 +113,7 @@ public class TopicCategoryServices implements Component {
 		return topicCategoryDAO.save(topicCategory);
 	}
 
-	public VFile exportCategories(final Chatbot bot, final DtList<TopicCategory> topicCategories) {
+	public VFile exportCategories(@SecuredOperation("botAdm") final Chatbot bot, final DtList<TopicCategory> topicCategories) {
 		final DtList<TopicCategoryExport> topicCategoryExports = topicCategories.stream().map(topicCategory -> {
 			final TopicCategoryExport topicCategoryExport = new TopicCategoryExport();
 			topicCategoryExport.setCode(topicCategory.getCode());
@@ -135,7 +136,7 @@ public class TopicCategoryServices implements Component {
 
 	}
 
-	public void importCategoriesFromCSVFile(final Chatbot chatbot, final FileInfoURI importCategoriesFileUri) {
+	public void importCategoriesFromCSVFile(@SecuredOperation("botAdm") final Chatbot chatbot, final FileInfoURI importCategoriesFileUri) {
 		transformFileToList(fileServices.getFileTmp(importCategoriesFileUri)).forEach(topicCategory -> generateCategoryFromCategoryExport(topicCategory, chatbot));
 	}
 
