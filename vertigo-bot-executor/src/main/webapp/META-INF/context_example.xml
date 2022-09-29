@@ -9,6 +9,10 @@
 	<Parameter name="boot.MAIL_HOST" value="localdelivery.klee.lan.net" override="false"/>
 	<Parameter name="boot.MAIL_PORT" value="25" override="false"/>
 	<Parameter name="FILE_STORE_PATH" value="C:\executor/attachments/" override="false"/>
+
+	<Parameter name="ENCRYPTION_SALT" value="ChatbotKlee2022!" override="false"/>
+	<Parameter name="ENCRYPTION_PASSWORD" value="ChatbotKlee2022!" override="false"/>
+	<Parameter name="ENCRYPTION_IV" value="ChatbotKlee2022!" override="false"/>
 	
 	<!-- Env variable in production -->
 	<Parameter name="DESIGNER_URL" value="http://localhost:8080/vertigo-bot-designer" override="false"/>
@@ -16,18 +20,6 @@
 	<Parameter name="CONFIG_DATA_FILE" value="${user.home}/botExecutor/config.json" override="false"/>
 	<Parameter name="RASA_URL" value="http://localhost:5005" override="false"/>
 	<Parameter name="KEYCLOAK_CONFIG" value="keycloak.json" override="false"/>
-	
-	<!-- Use for confluence plugin -->
-	<Parameter name="CONFLUENCE_USER" value="" override="false"/>
-	<Parameter name="CONFLUENCE_PWD" value="" override="false"/>
-	<Parameter name="CONFLUENCE_URL" value="" override="false"/>
-	<Parameter name="CONFLUENCE_LIMIT" value="3" override="false"/>
-	
-	<!-- Use for jira plugin -->
-	<Parameter name="JIRA_USER" value="" override="false"/>
-	<Parameter name="JIRA_PWD" value="" override="false"/>
-	<Parameter name="JIRA_URL" value="" override="false"/>
-	<Parameter name="JIRA_PROJECT" value="" override="false"/>
 
 	<!-- Env for clamav antivirus -->
 	<Parameter name="CLAMAV_HOST" value="localhost" override="false"/>

@@ -5,8 +5,3 @@ ARG VERSION
  
 # Add binaries
 COPY --chown=tomcat Runner/plugins/vertigo-bot-jira-$VERSION.jar /opt/plugins/vertigo-bot-jira-$VERSION.jar
-
-ENV JIRA_USER user
-ENV JIRA_PWD password
-ENV JIRA_URL https://example.com
-ENV JIRA_PROJECT PROJECT
