@@ -69,7 +69,7 @@ public class BotExportServices implements Component {
 		export.setIdleBT(topicExportServices.getBasicBt(bot, KindTopicEnum.IDLE.name(), logs));
 		export.setRatingBT(topicExportServices.getBasicBt(bot, KindTopicEnum.RATING.name(), logs));
 		export.setMapContext(contextValueServices.exportContextValuesToMapByBot(bot, logs));
-		export.setJiraFieldSetting(jiraFieldSettingServices.exportJiraSetting(bot.getBotId()));
+		export.setJiraFieldSetting(jiraFieldSettingServices.exportJiraSetting(bot));
 		return export;
 	}
 

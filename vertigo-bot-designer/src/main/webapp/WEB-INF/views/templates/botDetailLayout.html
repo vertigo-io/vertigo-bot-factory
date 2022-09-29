@@ -168,7 +168,7 @@
 			</q-item-section>
 			<q-item-section th:text="#{layout.extensions}"></q-item-section>
 		</q-item>
-		<q-item tag="a" th::active="${tab == 'extensions'}" active-class="active" th:href="@{/bot/{id}/extensions/(id=${model.bot.botId})}" th:text="#{layout.plugins}"></q-item>
+		<q-item tag="a" th::active="${tab == 'extensions'}" active-class="active" th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" th:href="@{/bot/{id}/extensions/(id=${model.bot.botId})}" th:text="#{layout.plugins}"></q-item>
 		<q-item tag="a" th::active="${tab == 'welcometours'}" active-class="active" th:href="@{/bot/{id}/welcomeTours/(id=${model.bot.botId})}" th:text="#{layout.welcometours}"></q-item>
 		<q-separator></q-separator>
 
