@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.engine.plugins.bt.jira;
 
-import io.vertigo.chatbot.commons.domain.JiraSettingExport;
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.engine.plugins.bt.jira.impl.JiraServerService;
 import io.vertigo.chatbot.engine.plugins.bt.jira.multilingual.JiraMultilingualResources;
 import io.vertigo.chatbot.executor.ExecutorPlugin;
@@ -11,8 +12,6 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.param.ParamManager;
-
-import javax.inject.Inject;
 
 public final class JiraPlugin implements ExecutorPlugin {
 
@@ -32,17 +31,8 @@ public final class JiraPlugin implements ExecutorPlugin {
 	}
 
 	@Override
-	public void refreshConfig(ExecutorGlobalConfig config) throws VSystemException {
-		//TODO This is only for migration purposes, remove this when done
-		if (config.getBot().getJiraSetting() == null) {
-			JiraSettingExport jiraSettingExport = new JiraSettingExport();
-			jiraSettingExport.setUrl(paramManager.getParam("JIRA_URL").getValueAsString());
-			jiraSettingExport.setLogin(paramManager.getParam("JIRA_USER").getValueAsString());
-			jiraSettingExport.setPassword(paramManager.getParam("JIRA_PWD").getValueAsString());
-			jiraSettingExport.setProject(paramManager.getParam("JIRA_PROJECT").getValueAsString());
-			config.getBot().setJiraSetting(jiraSettingExport);
-		}
-		jiraServerService.refreshConfig(config.getBot().getJiraSetting(), config.getBot().getJiraFieldSetting());
+	public void refreshConfig(final ExecutorGlobalConfig config) throws VSystemException {
+		jiraServerService.refreshConfig(config);
 	}
 
 	@Override

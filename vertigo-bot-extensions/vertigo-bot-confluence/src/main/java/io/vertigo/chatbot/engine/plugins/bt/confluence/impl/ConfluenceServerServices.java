@@ -1,5 +1,14 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence.impl;
 
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandler;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceSearchHelper;
@@ -10,39 +19,39 @@ import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSp
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpaceResponse;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSearchObject;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
+import io.vertigo.chatbot.executor.services.PasswordDecryptionServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.node.Node;
+import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
-
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandler;
-import java.net.http.HttpResponse.BodyHandlers;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.API_URL;
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.SEARCH_URL;
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.SPACE_URL;
 
 @Transactional
-public class ConfluenceServerServices implements IConfluenceService, Component {
+public class ConfluenceServerServices implements IConfluenceService, Component, Activeable {
 
 	private String baseUrl;
 	private String user;
 	private String password;
 	private String limit;
+	private PasswordDecryptionServices passwordDecryptionServices;
 
-	public void refreshConfig(ExecutorGlobalConfig config) throws VSystemException {
-		ConfluenceSettingExport confluenceSettingExport = config.getBot().getConfluenceSetting();
+	@Override
+	public void start() {
+		passwordDecryptionServices = Node.getNode().getComponentSpace().resolve(PasswordDecryptionServices.class);
+	}
+
+	public void refreshConfig(final ExecutorGlobalConfig config) throws VSystemException {
+		final ConfluenceSettingExport confluenceSettingExport = config.getBot().getConfluenceSetting();
 		if (confluenceSettingExport == null) {
 			throw new VSystemException("Confluence setting must be set for confluence plugin to work...");
 		} else {
 			baseUrl = confluenceSettingExport.getUrl();
 			user = confluenceSettingExport.getLogin();
-			password = confluenceSettingExport.getPassword();
+			password = passwordDecryptionServices.decryptPassword(confluenceSettingExport.getPassword());
 			limit = confluenceSettingExport.getNumberOfResults().toString();
 		}
 	}
@@ -107,4 +116,10 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		return builder.toString();
 	}
 
+
+
+	@Override
+	public void stop() {
+
+	}
 }

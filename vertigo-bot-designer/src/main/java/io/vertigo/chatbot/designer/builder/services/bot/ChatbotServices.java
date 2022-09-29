@@ -172,7 +172,7 @@ public class ChatbotServices implements Component {
 		historyServices.deleteAllByBotId(bot.getBotId());
 		unknownSentencesServices.deleteAllByBotId(bot.getBotId());
 		welcomeTourServices.deleteAllByBotId(bot.getBotId());
-		jiraFieldSettingServices.deleteAllByBotId(bot.getBotId());
+		jiraFieldSettingServices.deleteAllByBotId(bot);
 		chatbotDAO.delete(bot.getBotId());
 
 		// Delete avatar file reference in bot

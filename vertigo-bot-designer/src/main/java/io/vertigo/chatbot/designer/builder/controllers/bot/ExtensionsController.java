@@ -1,5 +1,14 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
@@ -26,18 +35,10 @@ import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.inject.Inject;
 
 @Controller
 @RequestMapping("/bot/{botId}/extensions")
-@Secured("Chatbot$botAdm")
+@Secured("BotUser")
 public class ExtensionsController extends AbstractBotController {
 
 	private static final ViewContextKey<ConfluenceSetting> confluenceSettingsKey = ViewContextKey.of("confluenceSettings");
@@ -81,15 +82,15 @@ public class ExtensionsController extends AbstractBotController {
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = super.initCommonContext(viewContext, uiMessageStack, botId);
-		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(botId);
+		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot);
 		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
 		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
 		viewContext.publishDto(newConfluenceSettingKey, new ConfluenceSetting());
-		final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(botId);
+		final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot);
 		viewContext.publishDtList(jiraFieldsKey, jiraFieldService.findAll());
 		viewContext.publishDtList(jiraSettingsKey, jiraSettings);
 		viewContext.publishDtList(jiraSettingsFilteredKey, jiraSettings);
-		viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(botId));
+		viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(bot));
 		viewContext.publishDto(newJiraSettingKey, new JiraSetting());
 		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
 		viewContext.publishDto(scriptIntentionKey, scriptIntentionServices.getNewScriptIntention(bot));
@@ -102,9 +103,9 @@ public class ExtensionsController extends AbstractBotController {
 			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("newConfluenceSetting") @Validate(ConfluenceSettingNotEmptyValidator.class) final ConfluenceSetting confluenceSetting) {
 
-		confluenceSettingServices.save(confluenceSetting);
+		confluenceSettingServices.save(bot, confluenceSetting);
 
-		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot.getBotId());
+		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot);
 		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
 		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
 		return viewContext;
@@ -115,8 +116,8 @@ public class ExtensionsController extends AbstractBotController {
 			final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
 			@RequestParam("conSetId") final Long conSetId) {
-		confluenceSettingServices.delete(conSetId);
-		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot.getBotId());
+		confluenceSettingServices.delete(bot, conSetId);
+		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot);
 		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
 		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
 		return viewContext;
@@ -128,9 +129,9 @@ public class ExtensionsController extends AbstractBotController {
 			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("newJiraSetting") @Validate(JiraSettingNotEmptyValidator.class) final JiraSetting jiraSetting) {
 
-		jiraSettingServices.save(jiraSetting);
+		jiraSettingServices.save(bot, jiraSetting);
 
-		final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot.getBotId());
+		final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot);
 		viewContext.publishDtList(jiraSettingsKey, jiraSettings);
 		viewContext.publishDtList(jiraSettingsFilteredKey, jiraSettings);
 		return viewContext;
@@ -141,8 +142,8 @@ public class ExtensionsController extends AbstractBotController {
 			final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
 			@RequestParam("jirSetId") final Long jirSetId) {
-		jiraSettingServices.delete(jirSetId);
-		final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot.getBotId());
+		jiraSettingServices.delete(bot, jirSetId);
+		final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot);
 		viewContext.publishDtList(jiraSettingsKey, jiraSettings);
 		viewContext.publishDtList(jiraSettingsFilteredKey, jiraSettings);
 		return viewContext;
@@ -155,16 +156,16 @@ public class ExtensionsController extends AbstractBotController {
 			@RequestParam("fieldKey") final String fieldKey,
 			@RequestParam("enabled") final String enabled) {
 
-		jiraFieldSettingServices.findByBotIdAndFieldName(bot.getBotId(), fieldKey).ifPresent(jiraFieldSetting -> {
+		jiraFieldSettingServices.findByBotIdAndFieldName(bot, fieldKey).ifPresent(jiraFieldSetting -> {
 			final boolean isEnabled = "true".equals(enabled);
 			jiraFieldSetting.setEnabled(isEnabled);
 			if (!isEnabled) {
 				jiraFieldSetting.setMandatory(false);
 			}
-			jiraFieldSettingServices.save(jiraFieldSetting);
+			jiraFieldSettingServices.save(bot, jiraFieldSetting);
 		});
 
-		viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(bot.getBotId()));
+		viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(bot));
 		return viewContext;
 	}
 
@@ -175,12 +176,12 @@ public class ExtensionsController extends AbstractBotController {
 			@RequestParam("fieldKey") final String fieldKey,
 			@RequestParam("mandatory") final String mandatory) {
 
-		jiraFieldSettingServices.findByBotIdAndFieldName(bot.getBotId(), fieldKey).ifPresent(jiraFieldSetting -> {
+		jiraFieldSettingServices.findByBotIdAndFieldName(bot, fieldKey).ifPresent(jiraFieldSetting -> {
 			jiraFieldSetting.setMandatory("true".equals(mandatory));
-			jiraFieldSettingServices.save(jiraFieldSetting);
+			jiraFieldSettingServices.save(bot, jiraFieldSetting);
 		});
 
-		viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(bot.getBotId()));
+		viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(bot));
 		return viewContext;
 	}
 

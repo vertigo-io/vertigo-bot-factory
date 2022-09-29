@@ -19,21 +19,27 @@ import com.atlassian.jira.rest.client.api.domain.Version;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
-import io.vertigo.ai.bb.BlackBoard;
-import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
-import io.vertigo.chatbot.commons.domain.JiraSettingExport;
-import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
-import io.vertigo.core.node.component.Component;
-import io.vertigo.datamodel.structure.model.DtList;
 
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import io.vertigo.ai.bb.BlackBoard;
+import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
+import io.vertigo.chatbot.commons.domain.JiraSettingExport;
+import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
+import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
+import io.vertigo.chatbot.executor.services.PasswordDecryptionServices;
+import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.node.Node;
+import io.vertigo.core.node.component.Activeable;
+import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.structure.model.DtList;
+
 import static io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider.formatLink;
 
-public class JiraServerService implements Component, IJiraService {
+public class JiraServerService implements Component, IJiraService, Activeable {
 
 	private String baseJira;
 	private String user;
@@ -42,13 +48,27 @@ public class JiraServerService implements Component, IJiraService {
 	private JiraRestClient jiraRestClient;
 	private DtList<JiraFieldSettingExport> jiraFieldSettingExports;
 
-	public void refreshConfig(final JiraSettingExport jiraSettingExport, final DtList<JiraFieldSettingExport> jiraFieldSettingExports) {
-		baseJira = jiraSettingExport.getUrl();
-		user = jiraSettingExport.getLogin();
-		password = jiraSettingExport.getPassword();
-		project = jiraSettingExport.getProject();
-		jiraRestClient = createJiraRestClient();
-		this.jiraFieldSettingExports = jiraFieldSettingExports;
+	private PasswordDecryptionServices passwordDecryptionServices;
+
+	@Override
+	public void start() {
+		passwordDecryptionServices = Node.getNode().getComponentSpace().resolve(PasswordDecryptionServices.class);
+	}
+
+
+	public void refreshConfig(final ExecutorGlobalConfig config) {
+		final JiraSettingExport jiraSettingExport = config.getBot().getJiraSetting();
+		final DtList<JiraFieldSettingExport> jiraFieldSettingExport = config.getBot().getJiraFieldSetting();
+		if (jiraSettingExport == null || jiraFieldSettingExport == null) {
+			throw new VSystemException("Jira setting and Jira fields settings must be set for jira plugin to work...");
+		} else {
+			baseJira = jiraSettingExport.getUrl();
+			user = jiraSettingExport.getLogin();
+			password = passwordDecryptionServices.decryptPassword(jiraSettingExport.getPassword());
+			project = jiraSettingExport.getProject();
+			jiraRestClient = createJiraRestClient();
+			jiraFieldSettingExports = jiraFieldSettingExport;
+		}
 	}
 
 	public DtList<JiraFieldSettingExport> getJiraFieldSettingExports() {
@@ -131,4 +151,8 @@ public class JiraServerService implements Component, IJiraService {
 		return getProject().getComponents();
 	}
 
+	@Override
+	public void stop() {
+
+	}
 }

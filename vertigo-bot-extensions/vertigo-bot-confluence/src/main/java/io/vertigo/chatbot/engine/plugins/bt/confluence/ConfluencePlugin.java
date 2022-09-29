@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence;
 
-import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.engine.plugins.bt.confluence.impl.ConfluenceServerServices;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.multilingual.ConfluenceMultilingualResources;
 import io.vertigo.chatbot.executor.ExecutorPlugin;
@@ -11,8 +12,6 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.param.ParamManager;
-
-import javax.inject.Inject;
 
 public final class ConfluencePlugin implements ExecutorPlugin {
 
@@ -35,16 +34,7 @@ public final class ConfluencePlugin implements ExecutorPlugin {
 	}
 
 	@Override
-	public void refreshConfig(ExecutorGlobalConfig config) throws VSystemException {
-		//TODO This is only for migration purposes, remove this when done
-		if (config.getBot().getConfluenceSetting() == null) {
-			ConfluenceSettingExport confluenceSettingExport = new ConfluenceSettingExport();
-			confluenceSettingExport.setUrl(paramManager.getParam("CONFLUENCE_URL").getValueAsString());
-			confluenceSettingExport.setLogin(paramManager.getParam("CONFLUENCE_USER").getValueAsString());
-			confluenceSettingExport.setPassword(paramManager.getParam("CONFLUENCE_PWD").getValueAsString());
-			confluenceSettingExport.setNumberOfResults(paramManager.getParam("CONFLUENCE_LIMIT").getValueAsLong());
-			config.getBot().setConfluenceSetting(confluenceSettingExport);
-		}
+	public void refreshConfig(final ExecutorGlobalConfig config) throws VSystemException {
 		confluenceServerServices.refreshConfig(config);
 	}
 

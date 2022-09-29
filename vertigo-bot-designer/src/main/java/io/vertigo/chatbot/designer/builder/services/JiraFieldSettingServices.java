@@ -1,6 +1,13 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import io.vertigo.account.authorization.annotations.Secured;
+import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.JiraFieldSettingDAO;
+import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.JiraFieldEnum;
 import io.vertigo.chatbot.commons.domain.JiraFieldSetting;
 import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
@@ -11,10 +18,8 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.util.VCollectors;
 
-import javax.inject.Inject;
-import java.util.Optional;
-
 @Transactional
+@Secured("BotUser")
 public class JiraFieldSettingServices implements Component {
 
 	@Inject
@@ -27,12 +32,12 @@ public class JiraFieldSettingServices implements Component {
 		return jiraFieldSettingDAO.get(id);
 	}
 
-	public JiraFieldSetting save (final JiraFieldSetting jiraFieldSetting) {
+	public JiraFieldSetting save (@SecuredOperation("botAdm") final Chatbot bot, final JiraFieldSetting jiraFieldSetting) {
 		return jiraFieldSettingDAO.save(jiraFieldSetting);
 	}
 
-	public Optional<JiraFieldSetting> findByBotIdAndFieldName(final long botId, final String fieldName) {
-		return jiraFieldSettingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.JiraFieldSettingFields.botId, botId)
+	public Optional<JiraFieldSetting> findByBotIdAndFieldName(@SecuredOperation("botContributor") final Chatbot bot, final String fieldName) {
+		return jiraFieldSettingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.JiraFieldSettingFields.botId, bot.getBotId())
 				.and(Criterions.isEqualTo(DtDefinitions.JiraFieldSettingFields.jirFieldCd, fieldName)));
 	}
 
@@ -40,14 +45,14 @@ public class JiraFieldSettingServices implements Component {
 		jiraFieldSettingDAO.delete(id);
 	}
 
-	public void deleteAllByBotId(final long botId) {
-		findAllByBotId(botId).forEach(jiraFieldSetting -> delete(jiraFieldSetting.getJirFieldSetId()));
+	public void deleteAllByBotId(@SecuredOperation("botAdm") final Chatbot bot) {
+		findAllByBotId(bot).forEach(jiraFieldSetting -> delete(jiraFieldSetting.getJirFieldSetId()));
 	}
 
-	public DtList<JiraFieldSetting> findAllByBotId(final long botId) {
-		return jiraFieldService.findAll().stream().map(value -> findByBotIdAndFieldName(botId, value.getJirFieldCd()).orElseGet(() -> {
-			JiraFieldSetting jiraFieldSetting = new JiraFieldSetting();
-			jiraFieldSetting.setBotId(botId);
+	public DtList<JiraFieldSetting> findAllByBotId(final Chatbot bot) {
+		return jiraFieldService.findAll().stream().map(value -> findByBotIdAndFieldName(bot, value.getJirFieldCd()).orElseGet(() -> {
+			final JiraFieldSetting jiraFieldSetting = new JiraFieldSetting();
+			jiraFieldSetting.setBotId(bot.getBotId());
 			jiraFieldSetting.setJirFieldCd(value.getJirFieldCd());
 			if (value.getJirFieldCd().equals(JiraFieldEnum.SUMMARY.name())
 					|| value.getJirFieldCd().equals(JiraFieldEnum.DESCRIPTION.name())
@@ -62,9 +67,9 @@ public class JiraFieldSettingServices implements Component {
 		})).collect(VCollectors.toDtList(JiraFieldSetting.class));
 	}
 
-	public DtList<JiraFieldSettingExport> exportJiraSetting(final long botId) {
-		return findAllByBotId(botId).stream().map(jiraFieldSetting -> {
-			JiraFieldSettingExport jiraFieldSettingExport = new JiraFieldSettingExport();
+	public DtList<JiraFieldSettingExport> exportJiraSetting(final Chatbot bot) {
+		return findAllByBotId(bot).stream().map(jiraFieldSetting -> {
+			final JiraFieldSettingExport jiraFieldSettingExport = new JiraFieldSettingExport();
 			jiraFieldSetting.jiraField().load();
 			jiraFieldSettingExport.setFieldKey(jiraFieldSetting.jiraField().get().getJiraId());
 			jiraFieldSettingExport.setEnabled(jiraFieldSetting.getEnabled());
