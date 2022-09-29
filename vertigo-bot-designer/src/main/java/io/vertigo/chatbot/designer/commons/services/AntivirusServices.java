@@ -1,4 +1,8 @@
-package io.vertigo.chatbot.designer.builder.services;
+package io.vertigo.chatbot.designer.commons.services;
+
+import java.io.InputStream;
+
+import javax.inject.Inject;
 
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
@@ -6,9 +10,6 @@ import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
 import xyz.capybara.clamav.ClamavClient;
 import xyz.capybara.clamav.commands.scan.result.ScanResult;
-
-import javax.inject.Inject;
-import java.io.InputStream;
 
 public class AntivirusServices implements Component, Activeable {
 
