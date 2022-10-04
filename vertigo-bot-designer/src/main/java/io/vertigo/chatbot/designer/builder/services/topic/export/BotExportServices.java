@@ -12,6 +12,7 @@ import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
 import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
 import io.vertigo.chatbot.commons.domain.FontFamily;
+import io.vertigo.chatbot.commons.domain.FontFamilyEnum;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
@@ -87,7 +88,8 @@ public class BotExportServices implements Component {
 
 	public ChatbotCustomConfigExport exportChatbotCustomSettings(final long botId) {
 		final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
-		final FontFamily fontFamily = fontFamilyServices.findByFofCd(chatbotCustomConfig.getFofCd());
+		final FontFamily fontFamily = fontFamilyServices.findByFofCd(chatbotCustomConfig.getFofCd() != null
+				? chatbotCustomConfig.getFofCd() : FontFamilyEnum.ARIAL.name());
 		final ChatbotCustomConfigExport chatbotCustomConfigExport = new ChatbotCustomConfigExport();
 		chatbotCustomConfigExport.setBotEmailAddress(chatbotCustomConfig.getBotEmailAddress());
 		chatbotCustomConfigExport.setTotalMaxAttachmentSize(chatbotCustomConfig.getTotalMaxAttachmentSize());
