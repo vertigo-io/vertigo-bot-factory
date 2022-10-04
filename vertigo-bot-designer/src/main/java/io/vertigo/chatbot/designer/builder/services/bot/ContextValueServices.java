@@ -1,5 +1,14 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.ContextValueDAO;
@@ -19,13 +28,6 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
-
-import javax.inject.Inject;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.util.HashMap;
-import java.util.Map;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -61,12 +63,13 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 	 * @param contextValue
 	 * @return contextValue
 	 */
+	@Secured("BotUser")
 	public ContextValue save(@SecuredOperation("botAdm") final Chatbot bot, final ContextValue contextValue) {
 		checkPatternKey(contextValue.getXpath());
-		HistoryActionEnum action;
+		final HistoryActionEnum action;
 		if (contextValue.getCvaId()!= null) {
 			action = HistoryActionEnum.UPDATED;
-			ContextValue oldContextValue = contextValueDAO.get(contextValue.getCvaId());
+			final ContextValue oldContextValue = contextValueDAO.get(contextValue.getCvaId());
 			if (!oldContextValue.getLabel().equals(contextValue.getLabel()) || !oldContextValue.getXpath().equals(contextValue.getXpath())) {
 				nodeServices.updateNodes(bot);
 			}
@@ -74,7 +77,7 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 			action = HistoryActionEnum.ADDED;
 			nodeServices.updateNodes(bot);
 		}
-		ContextValue savedContextValue = contextValueDAO.save(contextValue);
+		final ContextValue savedContextValue = contextValueDAO.save(contextValue);
 		record(bot, savedContextValue, action);
 		return savedContextValue;
 
@@ -86,8 +89,9 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 	 * @param bot
 	 * @param cvaId
 	 */
+	@Secured("BotUser")
 	public void deleteContextValue(@SecuredOperation("botAdm") final Chatbot bot, final Long cvaId) {
-		ContextValue contextValue = contextValueDAO.get(cvaId);
+		final ContextValue contextValue = contextValueDAO.get(cvaId);
 		contextValueDAO.delete(cvaId);
 		nodeServices.updateNodes(bot);
 		record(bot, contextValue, HistoryActionEnum.DELETED);
@@ -105,6 +109,8 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 		getAllContextValueByBotId(botId).forEach(contextValue -> delete(contextValue.getCvaId()));
 	}
 
+	@Secured("BotUser")
+
 	public ContextValue getNewContextValue(@SecuredOperation("botAdm") final Chatbot bot) {
 		final ContextValue contextValue = new ContextValue();
 		contextValue.setBotId(bot.getBotId());
@@ -117,16 +123,17 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 			throw new VUserException(ContextValueMultilingualResources.XPATH_PATTERN_NULL_ERROR);
 		}
 
-		XPathFactory factory = XPathFactory.newInstance();
-		XPath xPath = factory.newXPath();
+		final XPathFactory factory = XPathFactory.newInstance();
+		final XPath xPath = factory.newXPath();
 		try {
 			xPath.compile(key);
-		} catch (XPathExpressionException e) {
+		} catch (final XPathExpressionException e) {
 			throw new VUserException(ContextValueMultilingualResources.XPATH_PATTERN_DIGIT_ERROR);
 		}
 
 	}
 
+	@Secured("BotUser")
 	public String exportContextValuesToMapByBot(@SecuredOperation("botAdm") final Chatbot bot, final StringBuilder logs) {
 		LogsUtils.addLogs(logs, "Export Map Context : ");
 		try {
@@ -155,7 +162,7 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 	}
 
 	@Override
-	public History record(Chatbot bot, ContextValue contextValue, HistoryActionEnum action) {
+	public History record(final Chatbot bot, final ContextValue contextValue, final HistoryActionEnum action) {
 		return historyServices.record(bot, action, contextValue.getClass().getSimpleName(), contextValue.getLabel());
 	}
 }
