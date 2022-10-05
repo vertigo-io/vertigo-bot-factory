@@ -68,6 +68,8 @@ public class ChatbotUtils {
 	 */
 	public static final String ENCRYPTION_ALGO = "PBKDF2WithHmacSHA256";
 
+	public static final int MAX_UPLOAD_SIZE = 5 * 1024 * 1024;
+
 	private ChatbotUtils() {
 		// classe utilitaire
 	}
