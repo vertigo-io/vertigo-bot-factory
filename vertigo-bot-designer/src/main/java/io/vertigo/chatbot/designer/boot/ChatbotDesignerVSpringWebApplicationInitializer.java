@@ -17,9 +17,21 @@
  */
 package io.vertigo.chatbot.designer.boot;
 
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletRegistration;
+
 import io.vertigo.ui.impl.springmvc.config.AbstractVSpringMvcWebApplicationInitializer;
 
+import static io.vertigo.chatbot.commons.ChatbotUtils.MAX_UPLOAD_SIZE;
+
 public class ChatbotDesignerVSpringWebApplicationInitializer extends AbstractVSpringMvcWebApplicationInitializer {
+
+	@Override
+	protected void customizeRegistration(final ServletRegistration.Dynamic registration) {
+		final MultipartConfigElement multipartConfigElement = new MultipartConfigElement("",
+				MAX_UPLOAD_SIZE, MAX_UPLOAD_SIZE * 2, MAX_UPLOAD_SIZE / 2);
+		registration.setMultipartConfig(multipartConfigElement);
+	}
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {

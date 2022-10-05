@@ -69,6 +69,7 @@ import io.vertigo.datastore.filestore.util.VFileUtil;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
 import xyz.capybara.clamav.commands.scan.result.ScanResult;
 
+import static io.vertigo.chatbot.commons.ChatbotUtils.MAX_UPLOAD_SIZE;
 import static io.vertigo.chatbot.designer.utils.StringUtils.lineError;
 
 @Transactional
@@ -110,9 +111,12 @@ public class FileServices implements Component, Activeable {
 	public void checkFile (final VFile file) {
 		final String[] extensionsTab = file.getFileName().split(Pattern.quote("."));
 		final Stream<String> extensionsWhiteListStream = Arrays.stream(extensionsWhiteList);
-		if (extensionsTab.length != 2 || extensionsWhiteListStream.noneMatch(extensionsTab[1]::contains)) {
+		if (extensionsTab.length != 2 || extensionsWhiteListStream.noneMatch(extensionsTab[1].toLowerCase()::contains)) {
 			throw new VUserException(AttachmentMultilingualResources.EXTENSION_NOT_ALLOWED, extensionsTab[1],
 					String.join(",", extensionsWhiteList));
+		}
+		if (file.getLength() > MAX_UPLOAD_SIZE) {
+			throw new VUserException(AttachmentMultilingualResources.FILE_TOO_LARGE, MAX_UPLOAD_SIZE);
 		}
 		try {
 			final ScanResult result = antivirusServices.checkForViruses(file.createInputStream());
@@ -120,7 +124,7 @@ public class FileServices implements Component, Activeable {
 				final Map<String, Collection<String>> virusesMap = ((ScanResult.VirusFound) result).getFoundViruses();
 				final String viruses = virusesMap.values().stream()
 						.flatMap(Collection::stream).collect(Collectors.joining(","));
-				throw new VUserException(AttachmentMultilingualResources.VIRUSES_FOUND, viruses);
+				throw new VUserException(AttachmentMultilingualResources.VIRUSES_FOUND, viruses, file.getFileName());
 			}
 		} catch (final IOException ioException) {
 			throw new VUserException(AttachmentMultilingualResources.COULD_NOT_OPEN_FILE, file.getFileName(), ioException);
