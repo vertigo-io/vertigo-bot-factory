@@ -6,6 +6,7 @@ public enum AttachmentMultilingualResources implements MessageKey {
 
 	MUST_CONTAINS_A_FILE,
 	MAX_TOTAL_SIZE_EXCEEDED,
+	FILE_TOO_LARGE,
 	VIRUSES_FOUND,
 	COULD_NOT_OPEN_FILE,
 	EXTENSION_NOT_ALLOWED,
