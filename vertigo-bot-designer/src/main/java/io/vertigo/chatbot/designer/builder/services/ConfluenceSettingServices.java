@@ -17,6 +17,7 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.structure.util.VCollectors;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -54,13 +55,10 @@ public class ConfluenceSettingServices implements Component, Activeable {
 
 	@Secured("BotUser")
 	public ConfluenceSetting save (@SecuredOperation("botAdm") final Chatbot bot, final ConfluenceSetting confluenceSetting) {
-		if (confluenceSetting.getConSetId() == null) {
+		if (confluenceSetting.getPassword() != null && !confluenceSetting.getPassword().isEmpty()) {
 			confluenceSetting.setPassword(passwordEncryptionServices.encryptPassword(confluenceSetting.getPassword()));
-		} else {
-			final ConfluenceSetting oldConfluenceSetting = confluenceSettingDAO.get(confluenceSetting.getConSetId());
-			if (!oldConfluenceSetting.getPassword().equals(confluenceSetting.getPassword())) {
-				confluenceSetting.setPassword(passwordEncryptionServices.encryptPassword(confluenceSetting.getPassword()));
-			}
+		} else if (confluenceSetting.getConSetId() != null){
+			confluenceSetting.setPassword(confluenceSettingDAO.get(confluenceSetting.getConSetId()).getPassword());
 		}
 		return confluenceSettingDAO.save(confluenceSetting);
 	}
@@ -72,7 +70,8 @@ public class ConfluenceSettingServices implements Component, Activeable {
 
 	@Secured("BotUser")
 	public DtList<ConfluenceSetting> findAllByBotId(@SecuredOperation("botContributor") final Chatbot bot) {
-		return confluenceSettingDAO.findAll(Criterions.isEqualTo(DtDefinitions.ConfluenceSettingFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+		return confluenceSettingDAO.findAll(Criterions.isEqualTo(DtDefinitions.ConfluenceSettingFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE))
+				.stream().peek(confluenceSetting -> confluenceSetting.setPassword("")).collect(VCollectors.toDtList(ConfluenceSetting.class));
 	}
 
 	public Optional<ConfluenceSettingExport> exportConfluenceSetting(final long botId, final long nodId) {

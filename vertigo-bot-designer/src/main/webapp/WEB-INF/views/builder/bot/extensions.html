@@ -235,9 +235,10 @@
                 </q-card-section>
                 <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" >
                     <div style="display: flex; align-items: center">
-                        <q-input style="flex-grow: 1;" v-model="vueData.newConfluenceSetting.password" th:label="#{extensions.confluence.password}"
+                        <q-input style="flex-grow: 1;" v-if="dataX.isPwd"  th:label="#{extensions.confluence.password}" disable type="password" name="notYourPasswordConfluence" value="notYourPasswordConfluence"></q-input>
+                        <q-input style="flex-grow: 1;" v-if="!dataX.isPwd" v-model="vueData.newConfluenceSetting.password" th:label="#{extensions.confluence.password}"
                                  name="vContext[newConfluenceSetting][password]" :error="hasFieldsError('newConfluenceSetting', 'password')"
-                                 :error-message="getErrorMessage('newConfluenceSetting', 'password')" :disable="dataX.isPwd" :type="dataX.isPwd ? 'password' : 'text'">
+                                 :error-message="getErrorMessage('newConfluenceSetting', 'password')" type="text">
                         </q-input>
                         <q-icon
                                 name="clear"
@@ -392,9 +393,11 @@
                 </q-card-section>
                 <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" >
                     <div style="display: flex; align-items: center">
-                        <q-input style="flex-grow: 1;" v-model="vueData.newJiraSetting.password" th:label="#{extensions.jira.password}"
+                        <q-input style="flex-grow: 1;" v-if="dataX.isJiraPwd"  th:label="#{extensions.confluence.password}"
+                                 disable type="password" name="notYourPasswordJira" value="notYourPasswordJira"></q-input>
+                        <q-input style="flex-grow: 1;" v-if="!dataX.isJiraPwd" v-model="vueData.newJiraSetting.password" th:label="#{extensions.jira.password}"
                                  name="vContext[newJiraSetting][password]" :error="hasFieldsError('newJiraSetting', 'password')"
-                                 :error-message="getErrorMessage('newJiraSetting', 'password')" :disable="dataX.isJiraPwd" :type="dataX.isJiraPwd ? 'password' : 'text'">
+                                 :error-message="getErrorMessage('newJiraSetting', 'password')" type="text">
                         </q-input>
                         <q-icon
                                 name="clear"

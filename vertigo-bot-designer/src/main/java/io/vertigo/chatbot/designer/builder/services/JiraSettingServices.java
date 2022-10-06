@@ -17,6 +17,7 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.structure.util.VCollectors;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -49,13 +50,10 @@ public class JiraSettingServices implements Component, Activeable {
 
 	@Secured("BotUser")
 	public JiraSetting save (@SecuredOperation("botAdm") final Chatbot bot, final JiraSetting jiraSetting) {
-		if (jiraSetting.getJirSetId() == null) {
+		if (jiraSetting.getPassword() != null && !jiraSetting.getPassword().isEmpty()) {
 			jiraSetting.setPassword(passwordEncryptionServices.encryptPassword(jiraSetting.getPassword()));
-		} else {
-			final JiraSetting oldJiraSetting = jiraSettingDAO.get(jiraSetting.getJirSetId());
-			if (!oldJiraSetting.getPassword().equals(jiraSetting.getPassword())) {
-				jiraSetting.setPassword(passwordEncryptionServices.encryptPassword(jiraSetting.getPassword()));
-			}
+		} else if (jiraSetting.getJirSetId() != null){
+			jiraSetting.setPassword(jiraSettingDAO.get(jiraSetting.getJirSetId()).getPassword());
 		}
 		return jiraSettingDAO.save(jiraSetting);
 	}
@@ -66,7 +64,8 @@ public class JiraSettingServices implements Component, Activeable {
 	}
 
 	public DtList<JiraSetting> findAllByBotId(@SecuredOperation("botContributor") final Chatbot bot) {
-		return jiraSettingDAO.findAll(Criterions.isEqualTo(DtDefinitions.JiraSettingFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+		return jiraSettingDAO.findAll(Criterions.isEqualTo(DtDefinitions.JiraSettingFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE))
+				.stream().peek(jiraSetting -> jiraSetting.setPassword("")).collect(VCollectors.toDtList(JiraSetting.class));
 	}
 
 	public Optional<JiraSettingExport> exportJiraSetting(final long botId, final long nodId) {
