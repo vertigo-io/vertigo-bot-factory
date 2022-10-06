@@ -193,8 +193,13 @@ public class ExtensionsController extends AbstractBotController {
 		@Override
 		protected void checkMonoFieldConstraints(final ConfluenceSetting confluenceSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
 			if (DtDefinitions.ConfluenceSettingFields.url.name().equals(dtField.getName())
-					|| DtDefinitions.ConfluenceSettingFields.login.name().equals(dtField.getName())
-					|| DtDefinitions.ConfluenceSettingFields.password.name().equals(dtField.getName())) {
+					|| DtDefinitions.ConfluenceSettingFields.login.name().equals(dtField.getName())) {
+				final String value = (String) dtField.getDataAccessor().getValue(confluenceSetting);
+				if (value == null || value.trim().isEmpty()) {
+					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+				}
+			}
+			if (DtDefinitions.ConfluenceSettingFields.password.name().equals(dtField.getName()) && confluenceSetting.getConSetId() == null) {
 				final String value = (String) dtField.getDataAccessor().getValue(confluenceSetting);
 				if (value == null || value.trim().isEmpty()) {
 					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
@@ -222,8 +227,13 @@ public class ExtensionsController extends AbstractBotController {
 		protected void checkMonoFieldConstraints(final JiraSetting jiraSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
 			if (DtDefinitions.JiraSettingFields.url.name().equals(dtField.getName())
 					|| DtDefinitions.JiraSettingFields.login.name().equals(dtField.getName())
-					|| DtDefinitions.JiraSettingFields.password.name().equals(dtField.getName())
 					|| DtDefinitions.JiraSettingFields.project.name().equals(dtField.getName())) {
+				final String value = (String) dtField.getDataAccessor().getValue(jiraSetting);
+				if (value == null || value.trim().isEmpty()) {
+					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+				}
+			}
+			if (DtDefinitions.JiraSettingFields.password.name().equals(dtField.getName()) && jiraSetting.getJirSetId() == null) {
 				final String value = (String) dtField.getDataAccessor().getValue(jiraSetting);
 				if (value == null || value.trim().isEmpty()) {
 					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
