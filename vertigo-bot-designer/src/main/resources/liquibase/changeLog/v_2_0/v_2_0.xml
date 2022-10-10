@@ -60,5 +60,13 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/create_22_09_23.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal" id="Change length of password field of jira and confluence settings">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_10_06.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="Encrypt existing extensions password">
+        <customChange class="io.vertigo.chatbot.designer.boot.ExtensionPasswordEncryptionMigration" />
+    </changeSet>
+
 
 </databaseChangeLog>

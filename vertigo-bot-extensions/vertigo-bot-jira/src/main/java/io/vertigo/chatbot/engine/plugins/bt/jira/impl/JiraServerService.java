@@ -25,21 +25,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.inject.Inject;
+
 import io.vertigo.ai.bb.BlackBoard;
+import io.vertigo.chatbot.commons.PasswordEncryptionServices;
 import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
-import io.vertigo.chatbot.executor.services.PasswordDecryptionServices;
 import io.vertigo.core.lang.VSystemException;
-import io.vertigo.core.node.Node;
-import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
 
 import static io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider.formatLink;
 
-public class JiraServerService implements Component, IJiraService, Activeable {
+public class JiraServerService implements Component, IJiraService {
 
 	private String baseJira;
 	private String user;
@@ -48,12 +48,8 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 	private JiraRestClient jiraRestClient;
 	private DtList<JiraFieldSettingExport> jiraFieldSettingExports;
 
-	private PasswordDecryptionServices passwordDecryptionServices;
-
-	@Override
-	public void start() {
-		passwordDecryptionServices = Node.getNode().getComponentSpace().resolve(PasswordDecryptionServices.class);
-	}
+	@Inject
+	private PasswordEncryptionServices passwordEncryptionServices;
 
 
 	public void refreshConfig(final ExecutorGlobalConfig config) {
@@ -64,7 +60,7 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 		} else {
 			baseJira = jiraSettingExport.getUrl();
 			user = jiraSettingExport.getLogin();
-			password = passwordDecryptionServices.decryptPassword(jiraSettingExport.getPassword());
+			password = passwordEncryptionServices.decryptPassword(jiraSettingExport.getPassword());
 			project = jiraSettingExport.getProject();
 			jiraRestClient = createJiraRestClient();
 			jiraFieldSettingExports = jiraFieldSettingExport;
@@ -149,10 +145,5 @@ public class JiraServerService implements Component, IJiraService, Activeable {
 
 	public Iterable<BasicComponent> getComponents() {
 		return getProject().getComponents();
-	}
-
-	@Override
-	public void stop() {
-
 	}
 }

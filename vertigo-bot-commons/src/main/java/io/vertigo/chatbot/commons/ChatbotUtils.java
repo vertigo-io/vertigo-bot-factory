@@ -17,20 +17,9 @@
  */
 package io.vertigo.chatbot.commons;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.Collections;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -123,38 +112,6 @@ public class ChatbotUtils {
 					// rien
 				}), uiMessageStack))
 				.collect(VCollectors.toDtList(uiList.getDtDefinition()));
-	}
-
-	public static String encryptPassword(final String password, final SecretKey secretKey, final IvParameterSpec ivParameterSpec) {
-		try {
-			final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
-			final byte[] cipherText = cipher.doFinal(password.getBytes());
-			return Base64.getEncoder()
-					.encodeToString(cipherText);
-		} catch (final NoSuchAlgorithmException | IllegalBlockSizeException |
-					   NoSuchPaddingException |
-					   InvalidAlgorithmParameterException | BadPaddingException |
-					   InvalidKeyException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static String decryptPassword(final String encryptedPassword, final SecretKey secretKey, final IvParameterSpec ivParameterSpec) {
-
-		Cipher cipher = null;
-		try {
-			cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
-			final byte[] plainText = cipher.doFinal(Base64.getDecoder()
-					.decode(encryptedPassword));
-			return new String(plainText);
-		} catch (final NoSuchAlgorithmException | NoSuchPaddingException |
-					   InvalidAlgorithmParameterException | IllegalBlockSizeException |
-					   BadPaddingException | InvalidKeyException e) {
-			throw new RuntimeException(e);
-		}
-
 	}
 
 }

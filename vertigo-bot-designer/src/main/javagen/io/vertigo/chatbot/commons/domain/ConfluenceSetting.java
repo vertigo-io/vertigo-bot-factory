@@ -3,9 +3,9 @@ package io.vertigo.chatbot.commons.domain;
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.Entity;
 import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 import io.vertigo.datamodel.structure.stereotype.Field;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 
 /**
  * This class is automatically generated.
@@ -119,7 +119,7 @@ public final class ConfluenceSetting implements Entity {
 	 * Récupère la valeur de la propriété 'Password'.
 	 * @return String password <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyPassword", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Password")
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Password")
 	public String getPassword() {
 		return password;
 	}

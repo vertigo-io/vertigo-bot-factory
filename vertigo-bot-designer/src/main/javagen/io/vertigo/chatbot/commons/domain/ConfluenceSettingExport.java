@@ -61,7 +61,7 @@ public final class ConfluenceSettingExport implements DtObject {
 	 * Récupère la valeur de la propriété 'Password'.
 	 * @return String password <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyPassword", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Password")
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Password")
 	public String getPassword() {
 		return password;
 	}

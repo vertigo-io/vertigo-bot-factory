@@ -35,7 +35,7 @@ import io.vertigo.chatbot.analytics.AnalyticsSenderServices;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
-import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
@@ -226,8 +226,8 @@ public class ExecutorManager implements Manager, Activeable {
 	}
 
 	public String getBotEmailAddress() {
-		final ChatbotCustomConfig chatbotCustomConfig = jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(),
-				ChatbotCustomConfig.class);
+		final ChatbotCustomConfigExport chatbotCustomConfig = jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(),
+				ChatbotCustomConfigExport.class);
 		return chatbotCustomConfig.getBotEmailAddress();
 	}
 
