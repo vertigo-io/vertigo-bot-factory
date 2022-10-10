@@ -27,16 +27,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
 		/** Objet de données Chatbot. */
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
-		/** Objet de données ChatbotCustomConfig. */
-		ChatbotCustomConfig(io.vertigo.chatbot.commons.domain.ChatbotCustomConfig.class),
+		/** Objet de données ChatbotCustomConfigExport. */
+		ChatbotCustomConfigExport(io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport.class),
 		/** Objet de données ConfluenceSettingExport. */
 		ConfluenceSettingExport(io.vertigo.chatbot.commons.domain.ConfluenceSettingExport.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
-		/** Objet de données FontFamily. */
-		FontFamily(io.vertigo.chatbot.commons.domain.FontFamily.class),
 		/** Objet de données JiraFieldSettingExport. */
 		JiraFieldSettingExport(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class),
 		/** Objet de données JiraSettingExport. */
@@ -165,11 +163,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		filIdAvatar	}
 
 	/**
-	 * Enumération des champs de ChatbotCustomConfig.
+	 * Enumération des champs de ChatbotCustomConfigExport.
 	 */
-	public enum ChatbotCustomConfigFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotCustomConfig> {
-		/** Propriété 'Context value id'. */
-		cccId,
+	public enum ChatbotCustomConfigExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport> {
 		/** Propriété 'Bot email address'. */
 		botEmailAddress,
 		/** Propriété 'Reinitialization button'. */
@@ -178,16 +174,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		backgroundColor,
 		/** Propriété 'Bot font color'. */
 		fontColor,
+		/** Propriété 'Bot font family'. */
+		fontFamily,
 		/** Propriété 'Display avatar'. */
 		displayAvatar,
 		/** Propriété 'Total maximum attachment size'. */
 		totalMaxAttachmentSize,
 		/** Propriété 'Disable NlU'. */
-		disableNlu,
-		/** Propriété 'fontFamily'. */
-		fofCd,
-		/** Propriété 'Chatbot'. */
-		botId	}
+		disableNlu	}
 
 	/**
 	 * Enumération des champs de ConfluenceSettingExport.
@@ -233,17 +227,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		avatar,
 		/** Propriété 'Additional config for executor'. */
 		customConfig	}
-
-	/**
-	 * Enumération des champs de FontFamily.
-	 */
-	public enum FontFamilyFields implements DtFieldName<io.vertigo.chatbot.commons.domain.FontFamily> {
-		/** Propriété 'ID'. */
-		fofCd,
-		/** Propriété 'Title'. */
-		label,
-		/** Propriété 'TitleFr'. */
-		labelFr	}
 
 	/**
 	 * Enumération des champs de JiraFieldSettingExport.

@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
+import io.vertigo.chatbot.commons.PasswordEncryptionServices;
 import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceSearchHelper;
@@ -19,11 +22,8 @@ import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSp
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpaceResponse;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSearchObject;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
-import io.vertigo.chatbot.executor.services.PasswordDecryptionServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
-import io.vertigo.core.node.Node;
-import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.API_URL;
@@ -31,18 +31,15 @@ import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceH
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.SPACE_URL;
 
 @Transactional
-public class ConfluenceServerServices implements IConfluenceService, Component, Activeable {
+public class ConfluenceServerServices implements IConfluenceService, Component {
 
 	private String baseUrl;
 	private String user;
 	private String password;
 	private String limit;
-	private PasswordDecryptionServices passwordDecryptionServices;
 
-	@Override
-	public void start() {
-		passwordDecryptionServices = Node.getNode().getComponentSpace().resolve(PasswordDecryptionServices.class);
-	}
+	@Inject
+	private PasswordEncryptionServices passwordEncryptionServices;
 
 	public void refreshConfig(final ExecutorGlobalConfig config) throws VSystemException {
 		final ConfluenceSettingExport confluenceSettingExport = config.getBot().getConfluenceSetting();
@@ -51,7 +48,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component, 
 		} else {
 			baseUrl = confluenceSettingExport.getUrl();
 			user = confluenceSettingExport.getLogin();
-			password = passwordDecryptionServices.decryptPassword(confluenceSettingExport.getPassword());
+			password = passwordEncryptionServices.decryptPassword(confluenceSettingExport.getPassword());
 			limit = confluenceSettingExport.getNumberOfResults().toString();
 		}
 	}
@@ -114,12 +111,5 @@ public class ConfluenceServerServices implements IConfluenceService, Component, 
 		builder.append(name);
 		builder.append("</a>");
 		return builder.toString();
-	}
-
-
-
-	@Override
-	public void stop() {
-
 	}
 }
