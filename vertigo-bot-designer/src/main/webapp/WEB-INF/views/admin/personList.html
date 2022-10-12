@@ -12,8 +12,13 @@
 	
 	<body>
 		<section layout:fragment="content">
-			<vu:table list="persons" color="primary" componentId="personsTable" 
-				tr_@click.native="|goTo('@{/person/}'+props.row.perId)|" tr_class="nav">
+			<vu:include-data-primitive key="connectedPersonId" />
+			<vu:popup-ajax th:message="#{person.popup.message}" action="_delete" vModel="showPopup" th:confirm="#{action.delete}" dataName="perId"></vu:popup-ajax>
+			<vu:table list="persons" componentId="personsTable">
+				<vu:slot name="actions_slot">
+					<q-btn v-if="vueData.connectedPersonId !== props.row.perId" class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
+						   @click="componentStates.perId = props.row.perId; componentStates.showPopup = true"></q-btn>
+				</vu:slot>
 				<vu:include-data object="persons" field="perId" />
 				<vu:column field="login" sortable="true" />
 				<vu:column field="name" sortable="true" />

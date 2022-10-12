@@ -153,7 +153,7 @@ public class ChatbotServices implements Component {
 		// Delete node
 		nodeServices.deleteChatbotNodeByBot(bot);
 		// Delete training and all media file
-		savedTrainingServices.deleteAllByBotId(bot.getBotId());
+		savedTrainingServices.deleteAllByBotId(bot);
 		trainingServices.removeAllTraining(bot);
 		utterTextServices.removeAllUtterTextByBotId(bot);
 		responsesButtonServices.removeAllSMTButtonsByBot(bot);

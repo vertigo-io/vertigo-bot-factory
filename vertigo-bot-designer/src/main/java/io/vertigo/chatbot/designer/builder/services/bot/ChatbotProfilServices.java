@@ -1,5 +1,10 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -23,10 +28,6 @@ import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Optional;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -93,7 +94,15 @@ public class ChatbotProfilServices implements Component, IRecordable<ProfilPerCh
 
 	public DtList<ProfilPerChatbot> getProfilByPerId() {
 		final Long perId = UserSessionUtils.getLoggedPerson().getPerId();
+		return getProfilByPerId(perId);
+	}
+
+	private DtList<ProfilPerChatbot> getProfilByPerId(Long perId) {
 		return profilPerChatbotDAO.findAll(Criterions.isEqualTo(ProfilPerChatbotFields.perId, perId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+	}
+
+	public void deleteProfilByPerId(Long perId) {
+		getProfilByPerId(perId).forEach(profilPerChatbot -> profilPerChatbotDAO.delete(profilPerChatbot.getChpId()));
 	}
 
 	public void deleteAllProfilByBot(@SecuredOperation("botAdm") final Chatbot bot) {
