@@ -1,5 +1,10 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import java.time.LocalDate;
+
+import javax.inject.Inject;
+
+import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.SavedTrainingDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -14,9 +19,6 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
 
-import javax.inject.Inject;
-import java.time.LocalDate;
-
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 @Transactional
@@ -25,7 +27,8 @@ public class SavedTrainingServices implements Component {
 	@Inject
 	private SavedTrainingDAO savedTrainingDAO;
 
-	public SavedTraining save(@SecuredOperation("botAdm") SavedTraining savedTraining) {
+	@Secured("BotUser")
+	public SavedTraining save(@SecuredOperation("botAdm") final SavedTraining savedTraining) {
 		savedTrainingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.botId, savedTraining.getBotId())
 				.and(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.traId, savedTraining.getTraId())))
 				.ifPresent(it -> {
@@ -34,7 +37,8 @@ public class SavedTrainingServices implements Component {
 		return savedTrainingDAO.save(savedTraining);
 	}
 
-	public void delete(@SecuredOperation("botAdm") final Long id) {
+	@Secured("BotUser")
+	public void delete(@SecuredOperation("botAdm") final Chatbot bot, final Long id) {
 		savedTrainingDAO.delete(id);
 	}
 
@@ -42,8 +46,8 @@ public class SavedTrainingServices implements Component {
 		return savedTrainingDAO.findAll(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
-	public void deleteAllByBotId(final long botId) {
-		getAllSavedTrainingByBotId(botId).forEach(savedTraining -> delete(savedTraining.getSavedTraId()));
+	public void deleteAllByBotId(final Chatbot bot) {
+		getAllSavedTrainingByBotId(bot.getBotId()).forEach(savedTraining -> delete(bot, savedTraining.getSavedTraId()));
 	}
 
 	public SavedTraining getById(final Long savedTraId) {
