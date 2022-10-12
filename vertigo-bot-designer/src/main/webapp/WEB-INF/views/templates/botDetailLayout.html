@@ -98,7 +98,8 @@
 		<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="dataX.loadingTraining"></q-spinner-gears>
 		<q-fab class="q-mr-xl" outline flat color="primary" icon="more_vert" direction="down">
 			<q-fab-action color="primary" th:label="#{bot.export}" icon="file_upload" @click="$refs.exportBot.show()"></q-fab-action>
-			<q-fab-action color="primary" th:label="#{bot.delete.label}" @click="componentStates.showPopup = true" icon="delete"></q-fab-action>
+			<q-fab-action th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+						  color="primary" th:label="#{bot.delete.label}" @click="componentStates.showPopup = true" icon="delete"></q-fab-action>
 		</q-fab>
 
 		<q-dialog ref="exportBot" th:with="viewMode='edit'" >
