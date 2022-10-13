@@ -38,6 +38,7 @@ public class ExtensionPasswordEncryptionMigration implements CustomSqlChange, Co
     @Override
     public SqlStatement[] generateStatements(final Database database) throws CustomChangeException {
         DIInjector.injectMembers(this, Node.getNode().getComponentSpace());
+        passwordEncryptionServices.start();
         final List<SqlStatement> statements = new ArrayList<>();
         final JdbcConnection connection = (JdbcConnection) database.getConnection();
 
