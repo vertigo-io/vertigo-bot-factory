@@ -52,20 +52,10 @@ public class PasswordEncryptionServices implements Component, Activeable {
 
     @Override
     public void start() {
-       initEncryptionParam();
-    }
-
-    private void initEncryptionParam() {
-        if (encryptionPassword == null) {
-            encryptionPassword = paramManager.getParam("ENCRYPTION_PASSWORD").getValueAsString();
-        }
+        encryptionPassword = paramManager.getParam("ENCRYPTION_PASSWORD").getValueAsString();
         try {
-            if (secretKeyFactory == null) {
-                secretKeyFactory = SecretKeyFactory.getInstance(ENCRYPTION_ALGO);
-            }
-            if (cipher == null) {
-                cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            }
+            secretKeyFactory = SecretKeyFactory.getInstance(ENCRYPTION_ALGO);
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         } catch (final NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new RuntimeException(e);
         }
@@ -73,7 +63,6 @@ public class PasswordEncryptionServices implements Component, Activeable {
 
     public String encryptPassword(final String password) {
         try {
-            initEncryptionParam();
             final byte[] salt = generateRandom();
             final byte[] iv = generateRandom();
             final KeySpec spec = new PBEKeySpec(encryptionPassword.toCharArray(), salt, 65536, 256);
@@ -93,7 +82,6 @@ public class PasswordEncryptionServices implements Component, Activeable {
     }
 
     public String decryptPassword(final String encryptedPassword) {
-        initEncryptionParam();
         try {
 
             final byte[] ciphertext = base64Decoder.decode(encryptedPassword);
