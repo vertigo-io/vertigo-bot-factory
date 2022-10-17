@@ -32,7 +32,7 @@ public class AnalyticsFeatures extends ModuleDiscoveryFeatures<AnalyticsFeatures
 
 	@Override
 	protected String getPackageRoot() {
-		return this.getClass().getPackage().getName(); // nous utilisons la localisation de la classe de manisfeste comme racine du module
+		return getClass().getPackage().getName(); // nous utilisons la localisation de la classe de manisfeste comme racine du module
 	}
 
 }

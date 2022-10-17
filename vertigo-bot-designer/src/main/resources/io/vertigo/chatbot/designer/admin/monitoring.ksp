@@ -1,0 +1,75 @@
+package io.vertigo.chatbot.designer.domain.monitoring
+
+create DtDefinition DtAlertingEvent {
+    id          ageId 	            {domain: DoId 		                        label: "ID"                                             }
+    field       date		        {domain: DoInstant 		                    label: "Date"			        cardinality:  "1"       }
+    field       componentName       {domain: DoLabel                            label: "Component name"         cardinality:  "1"       }
+    field       alive               {domain: DoYesNo                            label: "Alive"                  cardinality:  "1"       }
+}
+
+create Association AAlertingEventChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtAlertingEvent
+	type : "*>?"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create Association AAlertingEventNode {
+	fkFieldName : "nodeId"
+
+ 	dtDefinitionA : DtAlertingEvent
+	type : "*>?"
+	dtDefinitionB : DtChatbotNode
+
+	labelB : "Node"
+}
+
+create DtDefinition DtMonitoringAlertingSubscription {
+    id    masID 	                {domain: DoId 		label: "ID"                                         }
+    field alertingGlobal            {domain: DoYesNo   label: "Alerting global enabled"  cardinality: "1"   }
+}
+
+create Association AMonitoringAlertingSubscriptionPerson {
+	fkFieldName : "perId"
+
+ 	dtDefinitionA : DtMonitoringAlertingSubscription
+	type : "*>?"
+	dtDefinitionB : DtPerson
+
+	labelB : "Person"
+}
+
+create AssociationNN AnnAlertingSubscriptionChatbot{
+	tableName : "ALERTING_SUBSCRIPTION_CHATBOT"
+
+	dtDefinitionA : DtMonitoringAlertingSubscription
+	dtDefinitionB : DtChatbot
+	navigabilityA : "true"
+	navigabilityB : "true"
+	roleA : "Alerte"
+	labelA : "Alerte"
+	roleB : "Chatbot"
+	labelB : "Chatbot"
+}
+
+create DtDefinition DtMonitoringDetailIHM {
+    field antivirusAlive 	            {domain: DoYesNo                            label: "Antivirus alive" 	          cardinality: "1" }
+    field globalAlertingEnabled         {domain: DoYesNo                            label: "Global Alerting enabled" 	  cardinality: "1" }
+    field bots                          {domain: DoDtMonitoringBotDetailIHM         label: "Bot monitoring details" 	  cardinality: "*" }
+}
+
+create DtDefinition DtMonitoringBotDetailIHM {
+    field name                      {domain: DoLabel                           label: "Bot name" 	            cardinality: "1" }
+    field botId                     {domain: DoId                              label: "Bot ID" 	                cardinality: "1" }
+    field alertingEnabled           {domain: DoYesNo                           label: "Alerting enabled" 	    cardinality: "1" }
+    field runners                   {domain: DoDtMonitoringRunnerDetailIHM     label: "Runners" 	            cardinality: "*" }
+}
+
+create DtDefinition DtMonitoringRunnerDetailIHM {
+     field name         {domain: DoLabel    label: "Runner name" 	  cardinality: "1" }
+     field alive        {domain: DoYesNo    label: "Runner status" 	  cardinality: "1" }
+     field rasaAlive    {domain: DoYesNo    label: "Rasa status" 	  cardinality: "1" }
+}

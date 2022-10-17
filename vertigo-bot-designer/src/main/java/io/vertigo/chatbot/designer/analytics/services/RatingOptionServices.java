@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.analytics.services;
 
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.designer.dao.analytics.RatingOptionDAO;
 import io.vertigo.chatbot.designer.domain.analytics.RatingOption;
@@ -8,8 +10,6 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
-
-import javax.inject.Inject;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 

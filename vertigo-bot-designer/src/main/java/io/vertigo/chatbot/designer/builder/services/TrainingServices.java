@@ -56,6 +56,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
+import io.vertigo.chatbot.commons.domain.RunnerHealthCheck;
 import io.vertigo.chatbot.commons.domain.SavedTraining;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
@@ -192,14 +193,13 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 			requestData.put("attachmentsExport", attachmentExports);
 			requestData.put("executorConfig", execConfig);
 
-			final Map<String, String> headers = Map.of(API_KEY, node.getApiKey(),
-					"Content-type", "application/json");
-
-			tryPing(node.getUrl(), headers, training, logs);
+			tryPing(node, training, logs);
 
 			LogsUtils.addLogs(logs, "Call executor training (", node.getUrl(), ") :");
 			LogsUtils.breakLine(logs);
 			final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
+			final Map<String, String> headers = Map.of(API_KEY, node.getApiKey(),
+					"Content-type", "application/json");
 			final HttpRequest request = HttpRequestUtils.createPutRequest(node.getUrl() + URL_MODEL, headers, publisher);
 			HttpRequestUtils.sendAsyncRequest(httpClient, request, BodyHandlers.ofString())
 					.thenApply(response -> {
@@ -241,18 +241,29 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		}
 	}
 
-	private void tryPing(final String url, final Map<String, String> headers, final Training training, final StringBuilder logs) {
-		final HttpRequest requestPing = HttpRequestUtils.createGetRequest(url + URL_PING, headers);
+	private void tryPing(final ChatbotNode node, final Training training, final StringBuilder logs) {
+		final RunnerHealthCheck runnerHealthCheck = tryPing(node);
+		if (!runnerHealthCheck.getAlive()) {
+			LogsUtils.logKO(logs);
+			LogsUtils.addLogs(logs, node.getUrl(), " cannot be used to train the model.");
+			training.setLog(logs.toString());
+			throw new VSystemException(node.getUrl() + " cannot be used to train the model.");
+		}
+	}
+
+	public RunnerHealthCheck tryPing (final ChatbotNode node) {
+		final Map<String, String> headers = Map.of(API_KEY, node.getApiKey(),
+				"Content-type", "application/json");
+		final HttpRequest requestPing = HttpRequestUtils.createGetRequest(node.getUrl() + URL_PING, headers);
 		try {
 			final HttpResponse<String> responsePing = HttpRequestUtils.sendRequest(httpClient, requestPing, BodyHandlers.ofString(), 200);
-			if (!responsePing.body().equals("true")) {
-				LogsUtils.logKO(logs);
-				LogsUtils.addLogs(logs, url, " cannot be used to train the model.");
-				training.setLog(logs.toString());
-				throw new VSystemException(url + " cannot be used to train the model.");
-			}
-		} catch (final Exception e) {
-			throw new VSystemException(url + " cannot be used to train the model.");
+			return jsonEngine.fromJson(responsePing.body(), RunnerHealthCheck.class);
+		}
+		catch (final Exception e) {
+			final RunnerHealthCheck runnerHealthCheck = new RunnerHealthCheck();
+			runnerHealthCheck.setAlive(false);
+			runnerHealthCheck.setNlpReady(false);
+			return runnerHealthCheck;
 		}
 	}
 

@@ -36,6 +36,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldPerson$name,
 	/**
+	 * email.
+	 */
+	fldPerson$email,
+	/**
 	 * Group.
 	 */
 	fldPerson$grpId,

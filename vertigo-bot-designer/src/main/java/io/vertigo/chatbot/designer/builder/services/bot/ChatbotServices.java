@@ -50,7 +50,6 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 
 @Transactional
-@Secured("BotUser")
 public class ChatbotServices implements Component {
 
 	@Inject
@@ -113,6 +112,7 @@ public class ChatbotServices implements Component {
 	@Inject
 	private LocaleManager localeManager;
 
+	@Secured("BotUser")
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 		   	final ChatbotCustomConfig chatbotCustomConfig) {
 
@@ -149,6 +149,7 @@ public class ChatbotServices implements Component {
 		return savedChatbot;
 	}
 
+	@Secured("BotUser")
 	public Boolean deleteChatbot(@SecuredOperation("botAdm") final Chatbot bot) {
 
 		// Delete node
@@ -194,6 +195,10 @@ public class ChatbotServices implements Component {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
+	public DtList<Chatbot> getAllChatbotsForMonitoring() {
+		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(null));
+	}
+
 	@Secured("SuperAdm")
 	public Chatbot getNewChatbot() {
 		final Chatbot newChatbot = new Chatbot();
@@ -210,6 +215,7 @@ public class ChatbotServices implements Component {
 		return chatbot;
 	}
 
+	@Secured("BotUser")
 	public VFile getAvatar(@SecuredOperation("botVisitor") final Chatbot bot) {
 		if (bot.getFilIdAvatar() == null) {
 			return getNoAvatar();

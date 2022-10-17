@@ -17,12 +17,12 @@
  */
 package io.vertigo.chatbot.designer.analytics.utils;
 
-import io.vertigo.core.lang.Assertion;
-import io.vertigo.database.timeseries.TimeFilter;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.database.timeseries.TimeFilter;
 
 /**
  * Light builder designed for flat tabular datas and to improve readability.

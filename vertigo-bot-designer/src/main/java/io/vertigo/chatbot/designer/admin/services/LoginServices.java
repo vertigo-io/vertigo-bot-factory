@@ -17,6 +17,9 @@
  */
 package io.vertigo.chatbot.designer.admin.services;
 
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.representations.IDToken;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -26,9 +29,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.representations.IDToken;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.account.authentication.AuthenticationManager;
@@ -102,10 +102,16 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 					// auto provisionning an account when using keycloak
 					final String name = keycloakPersonServices.getNameFromToken(token);
 					final String rol = keycloakPersonServices.getRoleFromToken(token);
+					final String email = keycloakPersonServices.getEmailFromToken(token);
 					keycloakPersonServices.initPerson(login, name, rol);
 					return authenticationManager.login(new UsernameAuthenticationToken(login)).get();
 				});
 		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(loggedAccount.getId()));
+		//For migration purpose only TODO remove when done
+		if (person.getEmail() == null && keycloakPersonServices.getEmailFromToken(token) != null) {
+			person.setEmail(keycloakPersonServices.getEmailFromToken(token));
+			keycloakPersonServices.updatePerson(person);
+		}
 		UserSessionUtils.getUserSession().setLoggedPerson(person);
 		UserSessionUtils.getUserSession().setLocale(Locale.FRANCE);
 		authorizationServices.addUserAuthorization(person);

@@ -17,6 +17,11 @@
  */
 package io.vertigo.chatbot.designer.analytics.utils;
 
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.query.FluxColumn;
+import com.influxdb.query.FluxRecord;
+import com.influxdb.query.FluxTable;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,11 +32,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import com.influxdb.client.InfluxDBClient;
-import com.influxdb.query.FluxColumn;
-import com.influxdb.query.FluxRecord;
-import com.influxdb.query.FluxTable;
 
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Tuple;

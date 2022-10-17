@@ -1,0 +1,4 @@
+ALTER TABLE PERSON ADD COLUMN EMAIL VARCHAR(100);
+
+comment on column PERSON.EMAIL is
+'email';

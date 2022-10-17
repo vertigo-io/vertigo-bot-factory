@@ -1,13 +1,5 @@
 package io.vertigo.chatbot.designer.analytics.utils;
 
-import io.vertigo.chatbot.designer.analytics.services.TimeOption;
-import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
-import io.vertigo.core.lang.Assertion;
-import io.vertigo.database.timeseries.DataFilter;
-import io.vertigo.database.timeseries.DataFilterBuilder;
-import io.vertigo.database.timeseries.TimeFilter;
-import io.vertigo.database.timeseries.TimeFilterBuilder;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -15,6 +7,14 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.vertigo.chatbot.designer.analytics.services.TimeOption;
+import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.database.timeseries.DataFilter;
+import io.vertigo.database.timeseries.DataFilterBuilder;
+import io.vertigo.database.timeseries.TimeFilter;
+import io.vertigo.database.timeseries.TimeFilterBuilder;
 
 public final class AnalyticsServicesUtils {
 

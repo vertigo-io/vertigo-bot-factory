@@ -9,6 +9,7 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
 import xyz.capybara.clamav.ClamavClient;
+import xyz.capybara.clamav.ClamavException;
 import xyz.capybara.clamav.commands.scan.result.ScanResult;
 
 public class AntivirusServices implements Component, Activeable {
@@ -29,6 +30,15 @@ public class AntivirusServices implements Component, Activeable {
 
 	public ScanResult checkForViruses(final InputStream inputStream) {
 		return clamavClient.scan(inputStream);
+	}
+
+	public boolean healthCheck() {
+		try {
+			clamavClient.ping();
+			return true;
+		} catch (final ClamavException clamavException) {
+			return false;
+		}
 	}
 
 	@Override
