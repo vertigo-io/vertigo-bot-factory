@@ -2,6 +2,7 @@ package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.KeyConcept;
+import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 import io.vertigo.datamodel.structure.stereotype.Field;
@@ -35,6 +36,19 @@ public final class Chatbot implements KeyConcept {
 			foreignLabel = "Chatbot",
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> filIdAvatarAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.MediaFileInfo.class, "MediaFileInfo");
+
+	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
+			name = "AnnAlertingSubscriptionChatbot",
+			tableName = "ALERTING_SUBSCRIPTION_CHATBOT",
+			dtDefinitionA = "DtMonitoringAlertingSubscription",
+			dtDefinitionB = "DtChatbot",
+			navigabilityA = true,
+			navigabilityB = true,
+			roleA = "Alerte",
+			roleB = "Chatbot",
+			labelA = "Alerte",
+			labelB = "Chatbot")
+	private final StoreListVAccessor<io.vertigo.chatbot.designer.domain.monitoring.MonitoringAlertingSubscription> alerteAccessor = new StoreListVAccessor<>(this, "AnnAlertingSubscriptionChatbot", "Alerte");
 
 	/** {@inheritDoc} */
 	@Override
@@ -162,6 +176,14 @@ public final class Chatbot implements KeyConcept {
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> mediaFileInfo() {
 		return filIdAvatarAccessor;
+	}
+
+	/**
+	 * Association : Alerte.
+	 * @return l'accesseur vers la propriété 'Alerte'
+	 */
+	public StoreListVAccessor<io.vertigo.chatbot.designer.domain.monitoring.MonitoringAlertingSubscription> alerte() {
+		return alerteAccessor;
 	}
 	
 	/** {@inheritDoc} */

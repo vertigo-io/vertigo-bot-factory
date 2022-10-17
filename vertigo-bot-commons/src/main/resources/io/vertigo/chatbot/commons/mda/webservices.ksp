@@ -64,6 +64,11 @@ create DtDefinition DtRunnerInfo {
 	field loadedModelVersion	{domain: DoNumber 					label: "Model version" 			cardinality : "1"}
 }
 
+create DtDefinition DtRunnerHealthCheck {
+    field alive         {domain: DoYesNo					label: "Alive" 					    cardinality : "1"}
+    field nlpReady      {domain: DoYesNo					label: "NlP Ready" 					cardinality : "1"}
+}
+
 create DtDefinition DtTrainerInfo {
 	field traId					{domain: DoId						label: "Training id"			cardinality : "1"}
 	field name 					{domain: DoLabel					label: "Name" 					cardinality : "1"}

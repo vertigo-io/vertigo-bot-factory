@@ -1,7 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services;
 
-import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
-
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -24,8 +22,9 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 @Transactional
-@Secured("BotUser")
 public class NodeServices implements Component {
 
 	@Inject
@@ -37,6 +36,7 @@ public class NodeServices implements Component {
 	@Inject
 	private AuthorizationManager authorizationManager;
 
+	@Secured("BotUser")
 	public ChatbotNode getNodeByNodeId(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
 		final ChatbotNode node = chatbotNodeDAO.get(nodId);
 		if (!node.getBotId().equals(bot.getBotId())) {
@@ -45,8 +45,13 @@ public class NodeServices implements Component {
 		return node;
 	}
 
+	@Secured("BotUser")
 	public DtList<ChatbotNode> getAllNodesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+	}
+
+	public DtList<ChatbotNode> getAllNodesByBotsForMonitoring(final Chatbot bot) {
+		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, bot.getBotId()), DtListState.of(null));
 	}
 
 	public Optional<ChatbotNode> getDevNodeByBotId(final Long botId) {
@@ -80,6 +85,7 @@ public class NodeServices implements Component {
 		chatbotNodeDAO.save(node);
 	}
 
+	@Secured("BotUser")
 	public void save(@SecuredOperation("botContributor") final Chatbot bot, final ChatbotNode node) {
 		chatbotNodeDAO.save(node);
 	}
@@ -101,6 +107,7 @@ public class NodeServices implements Component {
 		return nodes;
 	}
 
+	@Secured("BotUser")
 	public void deleteChatbotNodeByBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		chatbotNodePAO.removeChatbotNodeByBotId(bot.getBotId());
 	}

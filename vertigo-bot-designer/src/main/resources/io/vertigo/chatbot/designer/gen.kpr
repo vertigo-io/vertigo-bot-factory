@@ -12,5 +12,6 @@ mda/chatbot/history.ksp
 mda/chatbot/extensions.ksp
 
 admin/person.ksp
+admin/monitoring.ksp
 
 analytics/analyticsModel.ksp

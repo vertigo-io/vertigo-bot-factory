@@ -17,15 +17,17 @@
  */
 package io.vertigo.chatbot.executor.webservices;
 
-import javax.inject.Inject;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Inject;
+
+import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
+import io.vertigo.chatbot.commons.domain.RunnerHealthCheck;
 import io.vertigo.chatbot.commons.domain.RunnerInfo;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.executor.manager.ExecutorManager;
@@ -45,11 +47,17 @@ public class AdminWebService implements WebServices {
 	@Inject
 	private ExecutorManager executorManager;
 
+	@Inject
+	private NluManager nluManager;
+
 	private static final Logger LOGGER = LogManager.getLogger(AdminWebService.class);
 
 	@GET("/")
-	public Boolean checkAlive() {
-		return true;
+	public RunnerHealthCheck checkAlive() {
+		final RunnerHealthCheck runnerHealthCheck = new RunnerHealthCheck();
+		runnerHealthCheck.setAlive(true);
+		runnerHealthCheck.setNlpReady(nluManager.isAlive(NluManager.DEFAULT_ENGINE_NAME));
+		return runnerHealthCheck;
 	}
 
 	@PUT("/model")

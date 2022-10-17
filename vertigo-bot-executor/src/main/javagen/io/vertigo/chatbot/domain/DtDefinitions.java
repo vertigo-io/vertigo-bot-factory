@@ -43,6 +43,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données RasaConfig. */
 		RasaConfig(io.vertigo.chatbot.executor.domain.RasaConfig.class),
+		/** Objet de données RunnerHealthCheck. */
+		RunnerHealthCheck(io.vertigo.chatbot.commons.domain.RunnerHealthCheck.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
 		/** Objet de données TopicExport. */
@@ -283,6 +285,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		nlu,
 		/** Propriété 'config'. */
 		config	}
+
+	/**
+	 * Enumération des champs de RunnerHealthCheck.
+	 */
+	public enum RunnerHealthCheckFields implements DtFieldName<io.vertigo.chatbot.commons.domain.RunnerHealthCheck> {
+		/** Propriété 'Alive'. */
+		alive,
+		/** Propriété 'NlP Ready'. */
+		nlpReady	}
 
 	/**
 	 * Enumération des champs de RunnerInfo.

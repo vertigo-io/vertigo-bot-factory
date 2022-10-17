@@ -68,5 +68,12 @@
         <customChange class="io.vertigo.chatbot.designer.boot.ExtensionPasswordEncryptionMigration" />
     </changeSet>
 
+    <changeSet author="cmarechal" id="Create monitoring alerting subscriptions">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_22_10_13.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="Add email colum on person">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_10_14.sql" />
+    </changeSet>
 
 </databaseChangeLog>

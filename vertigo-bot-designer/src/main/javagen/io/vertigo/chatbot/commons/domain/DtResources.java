@@ -553,6 +553,18 @@ public enum DtResources implements MessageKey {
 	fldMediaFileInfo$fileData,
 
 	/***********************************************************
+	/** RunnerHealthCheck.
+	/***********************************************************
+	/**
+	 * Alive.
+	 */
+	fldRunnerHealthCheck$alive,
+	/**
+	 * NlP Ready.
+	 */
+	fldRunnerHealthCheck$nlpReady,
+
+	/***********************************************************
 	/** RunnerInfo.
 	/***********************************************************
 	/**

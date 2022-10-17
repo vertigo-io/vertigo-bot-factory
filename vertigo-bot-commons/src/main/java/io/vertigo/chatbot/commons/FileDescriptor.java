@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.executor.mail;
+package io.vertigo.chatbot.commons;
 
 public class FileDescriptor {
 
@@ -12,7 +12,7 @@ public class FileDescriptor {
 
 	}
 
-	public FileDescriptor(String fileName, String fileContent, String fileType) {
+	public FileDescriptor(final String fileName, final String fileContent, final String fileType) {
 		this.fileName = fileName;
 		this.fileContent = fileContent;
 		this.fileType = fileType;
@@ -22,7 +22,7 @@ public class FileDescriptor {
 		return fileName;
 	}
 
-	public void setFileName(String fileName) {
+	public void setFileName(final String fileName) {
 		this.fileName = fileName;
 	}
 
@@ -30,7 +30,7 @@ public class FileDescriptor {
 		return fileContent;
 	}
 
-	public void setFileContent(String fileContent) {
+	public void setFileContent(final String fileContent) {
 		this.fileContent = fileContent;
 	}
 
@@ -38,7 +38,7 @@ public class FileDescriptor {
 		return fileType;
 	}
 
-	public void setFileType(String fileType) {
+	public void setFileType(final String fileType) {
 		this.fileType = fileType;
 	}
 }

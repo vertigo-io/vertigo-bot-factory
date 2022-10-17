@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.boot;
 
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.domain.DtResources;
 import io.vertigo.chatbot.commons.multilingual.attachment.AttachmentMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
@@ -18,8 +20,6 @@ import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualR
 import io.vertigo.chatbot.designer.domain.commons.EnumResource;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.component.ComponentInitializer;
-
-import javax.inject.Inject;
 
 public class ChatbotLocaleInitializer implements ComponentInitializer {
 

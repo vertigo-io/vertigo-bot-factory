@@ -17,6 +17,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des DtDefinitions.
 	 */
 	public enum Definitions {
+		/** Objet de données AlertingEvent. */
+		AlertingEvent(io.vertigo.chatbot.designer.domain.monitoring.AlertingEvent.class),
 		/** Objet de données Attachment. */
 		Attachment(io.vertigo.chatbot.commons.domain.Attachment.class),
 		/** Objet de données AttachmentExport. */
@@ -79,6 +81,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		KindTopic(io.vertigo.chatbot.commons.domain.topic.KindTopic.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
+		/** Objet de données MonitoringAlertingSubscription. */
+		MonitoringAlertingSubscription(io.vertigo.chatbot.designer.domain.monitoring.MonitoringAlertingSubscription.class),
+		/** Objet de données MonitoringBotDetailIHM. */
+		MonitoringBotDetailIHM(io.vertigo.chatbot.designer.domain.monitoring.MonitoringBotDetailIHM.class),
+		/** Objet de données MonitoringDetailIHM. */
+		MonitoringDetailIHM(io.vertigo.chatbot.designer.domain.monitoring.MonitoringDetailIHM.class),
+		/** Objet de données MonitoringRunnerDetailIHM. */
+		MonitoringRunnerDetailIHM(io.vertigo.chatbot.designer.domain.monitoring.MonitoringRunnerDetailIHM.class),
 		/** Objet de données NluTrainingExport. */
 		NluTrainingExport(io.vertigo.chatbot.commons.domain.topic.NluTrainingExport.class),
 		/** Objet de données NluTrainingSentence. */
@@ -105,6 +115,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ResponseButtonUrlExport(io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonUrlExport.class),
 		/** Objet de données ResponseType. */
 		ResponseType(io.vertigo.chatbot.commons.domain.topic.ResponseType.class),
+		/** Objet de données RunnerHealthCheck. */
+		RunnerHealthCheck(io.vertigo.chatbot.commons.domain.RunnerHealthCheck.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
 		/** Objet de données SavedTraining. */
@@ -208,6 +220,23 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 			return clazz;
 		}
 	}
+
+	/**
+	 * Enumération des champs de AlertingEvent.
+	 */
+	public enum AlertingEventFields implements DtFieldName<io.vertigo.chatbot.designer.domain.monitoring.AlertingEvent> {
+		/** Propriété 'ID'. */
+		ageId,
+		/** Propriété 'Date'. */
+		date,
+		/** Propriété 'Component name'. */
+		componentName,
+		/** Propriété 'Alive'. */
+		alive,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Node'. */
+		nodeId	}
 
 	/**
 	 * Enumération des champs de Attachment.
@@ -695,6 +724,52 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fileData	}
 
 	/**
+	 * Enumération des champs de MonitoringAlertingSubscription.
+	 */
+	public enum MonitoringAlertingSubscriptionFields implements DtFieldName<io.vertigo.chatbot.designer.domain.monitoring.MonitoringAlertingSubscription> {
+		/** Propriété 'ID'. */
+		masID,
+		/** Propriété 'Alerting global enabled'. */
+		alertingGlobal,
+		/** Propriété 'Person'. */
+		perId	}
+
+	/**
+	 * Enumération des champs de MonitoringBotDetailIHM.
+	 */
+	public enum MonitoringBotDetailIHMFields implements DtFieldName<io.vertigo.chatbot.designer.domain.monitoring.MonitoringBotDetailIHM> {
+		/** Propriété 'Bot name'. */
+		name,
+		/** Propriété 'Bot ID'. */
+		botId,
+		/** Propriété 'Alerting enabled'. */
+		alertingEnabled,
+		/** Propriété 'Runners'. */
+		runners	}
+
+	/**
+	 * Enumération des champs de MonitoringDetailIHM.
+	 */
+	public enum MonitoringDetailIHMFields implements DtFieldName<io.vertigo.chatbot.designer.domain.monitoring.MonitoringDetailIHM> {
+		/** Propriété 'Antivirus alive'. */
+		antivirusAlive,
+		/** Propriété 'Global Alerting enabled'. */
+		globalAlertingEnabled,
+		/** Propriété 'Bot monitoring details'. */
+		bots	}
+
+	/**
+	 * Enumération des champs de MonitoringRunnerDetailIHM.
+	 */
+	public enum MonitoringRunnerDetailIHMFields implements DtFieldName<io.vertigo.chatbot.designer.domain.monitoring.MonitoringRunnerDetailIHM> {
+		/** Propriété 'Runner name'. */
+		name,
+		/** Propriété 'Runner status'. */
+		alive,
+		/** Propriété 'Rasa status'. */
+		rasaAlive	}
+
+	/**
 	 * Enumération des champs de NluTrainingExport.
 	 */
 	public enum NluTrainingExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.topic.NluTrainingExport> {
@@ -726,6 +801,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		login,
 		/** Propriété 'Name'. */
 		name,
+		/** Propriété 'email'. */
+		email,
 		/** Propriété 'Group'. */
 		grpId,
 		/** Propriété 'Role'. */
@@ -864,6 +941,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		labelFr,
 		/** Propriété 'Order'. */
 		sortOrder	}
+
+	/**
+	 * Enumération des champs de RunnerHealthCheck.
+	 */
+	public enum RunnerHealthCheckFields implements DtFieldName<io.vertigo.chatbot.commons.domain.RunnerHealthCheck> {
+		/** Propriété 'Alive'. */
+		alive,
+		/** Propriété 'NlP Ready'. */
+		nlpReady	}
 
 	/**
 	 * Enumération des champs de RunnerInfo.

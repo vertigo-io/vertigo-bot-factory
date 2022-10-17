@@ -5,7 +5,10 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
+drop table IF EXISTS A_L_E_R_T_I_N_G___S_U_B_S_C_R_I_P_T_I_O_N___C_H_A_T_B_O_T cascade;
 drop table IF EXISTS T_O_P_I_C___T_O_P_I_C___L_A_B_E_L cascade;
+drop table IF EXISTS ALERTING_EVENT cascade;
+drop sequence IF EXISTS SEQ_ALERTING_EVENT;
 drop table IF EXISTS ATTACHMENT cascade;
 drop sequence IF EXISTS SEQ_ATTACHMENT;
 drop table IF EXISTS ATTACHMENT_FILE_INFO cascade;
@@ -37,6 +40,8 @@ drop sequence IF EXISTS SEQ_JIRA_SETTING;
 drop table IF EXISTS KIND_TOPIC cascade;
 drop table IF EXISTS MEDIA_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_MEDIA_FILE_INFO;
+drop table IF EXISTS MONITORING_ALERTING_SUBSCRIPTION cascade;
+drop sequence IF EXISTS SEQ_MONITORING_ALERTING_SUBSCRIPTION;
 drop table IF EXISTS NLU_TRAINING_SENTENCE cascade;
 drop sequence IF EXISTS SEQ_NLU_TRAINING_SENTENCE;
 drop table IF EXISTS PERSON cascade;
@@ -87,6 +92,9 @@ drop sequence IF EXISTS SEQ_WELCOME_TOUR_STEP;
 -- ============================================================
 --   Sequences                                      
 -- ============================================================
+create sequence SEQ_ALERTING_EVENT
+	start with 1000 cache 20; 
+
 create sequence SEQ_ATTACHMENT
 	start with 1000 cache 20; 
 
@@ -129,6 +137,9 @@ create sequence SEQ_JIRA_SETTING
 
 
 create sequence SEQ_MEDIA_FILE_INFO
+	start with 1000 cache 20; 
+
+create sequence SEQ_MONITORING_ALERTING_SUBSCRIPTION
 	start with 1000 cache 20; 
 
 create sequence SEQ_NLU_TRAINING_SENTENCE
@@ -192,6 +203,38 @@ create sequence SEQ_WELCOME_TOUR
 create sequence SEQ_WELCOME_TOUR_STEP
 	start with 1000 cache 20; 
 
+
+-- ============================================================
+--   Table : ALERTING_EVENT                                        
+-- ============================================================
+create table ALERTING_EVENT
+(
+    AGE_ID      	 NUMERIC     	not null,
+    DATE        	 TIMESTAMP   	not null,
+    COMPONENT_NAME	 VARCHAR(100)	not null,
+    ALIVE       	 bool        	not null,
+    BOT_ID      	 NUMERIC     	,
+    NODE_ID     	 NUMERIC     	,
+    constraint PK_ALERTING_EVENT primary key (AGE_ID)
+);
+
+comment on column ALERTING_EVENT.AGE_ID is
+'ID';
+
+comment on column ALERTING_EVENT.DATE is
+'Date';
+
+comment on column ALERTING_EVENT.COMPONENT_NAME is
+'Component name';
+
+comment on column ALERTING_EVENT.ALIVE is
+'Alive';
+
+comment on column ALERTING_EVENT.BOT_ID is
+'Chatbot';
+
+comment on column ALERTING_EVENT.NODE_ID is
+'Node';
 
 -- ============================================================
 --   Table : ATTACHMENT                                        
@@ -730,6 +773,26 @@ comment on column MEDIA_FILE_INFO.FILE_DATA is
 'data';
 
 -- ============================================================
+--   Table : MONITORING_ALERTING_SUBSCRIPTION                                        
+-- ============================================================
+create table MONITORING_ALERTING_SUBSCRIPTION
+(
+    MAS_I_D     	 NUMERIC     	not null,
+    ALERTING_GLOBAL	 bool        	not null,
+    PER_ID      	 NUMERIC     	,
+    constraint PK_MONITORING_ALERTING_SUBSCRIPTION primary key (MAS_I_D)
+);
+
+comment on column MONITORING_ALERTING_SUBSCRIPTION.MAS_I_D is
+'ID';
+
+comment on column MONITORING_ALERTING_SUBSCRIPTION.ALERTING_GLOBAL is
+'Alerting global enabled';
+
+comment on column MONITORING_ALERTING_SUBSCRIPTION.PER_ID is
+'Person';
+
+-- ============================================================
 --   Table : NLU_TRAINING_SENTENCE                                        
 -- ============================================================
 create table NLU_TRAINING_SENTENCE
@@ -757,6 +820,7 @@ create table PERSON
     PER_ID      	 NUMERIC     	not null,
     LOGIN       	 VARCHAR(100)	not null,
     NAME        	 VARCHAR(100)	not null,
+    EMAIL       	 VARCHAR(100)	,
     GRP_ID      	 NUMERIC     	,
     ROL_CD      	 VARCHAR(100)	not null,
     constraint PK_PERSON primary key (PER_ID)
@@ -770,6 +834,9 @@ comment on column PERSON.LOGIN is
 
 comment on column PERSON.NAME is
 'Name';
+
+comment on column PERSON.EMAIL is
+'email';
 
 comment on column PERSON.GRP_ID is
 'Group';
@@ -1394,6 +1461,18 @@ comment on column WELCOME_TOUR_STEP.TOUR_ID is
 'Tour';
 
 
+alter table ALERTING_EVENT
+	add constraint FK_A_ALERTING_EVENT_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_ALERTING_EVENT_CHATBOT_CHATBOT_FK on ALERTING_EVENT (BOT_ID asc);
+
+alter table ALERTING_EVENT
+	add constraint FK_A_ALERTING_EVENT_NODE_CHATBOT_NODE foreign key (NODE_ID)
+	references CHATBOT_NODE (NOD_ID);
+
+create index A_ALERTING_EVENT_NODE_CHATBOT_NODE_FK on ALERTING_EVENT (NODE_ID asc);
+
 alter table ATTACHMENT
 	add constraint FK_A_ATTACHMENT_ATTACHMENT_FILE_INFO_ATTACHMENT_FILE_INFO foreign key (ATT_FI_ID)
 	references ATTACHMENT_FILE_INFO (ATT_FI_ID);
@@ -1483,6 +1562,12 @@ alter table JIRA_SETTING
 	references CHATBOT_NODE (NOD_ID);
 
 create index A_JIRA_SETTING_NODE_CHATBOT_NODE_FK on JIRA_SETTING (NOD_ID asc);
+
+alter table MONITORING_ALERTING_SUBSCRIPTION
+	add constraint FK_A_MONITORING_ALERTING_SUBSCRIPTION_PERSON_PERSON foreign key (PER_ID)
+	references PERSON (PER_ID);
+
+create index A_MONITORING_ALERTING_SUBSCRIPTION_PERSON_PERSON_FK on MONITORING_ALERTING_SUBSCRIPTION (PER_ID asc);
 
 alter table CHATBOT_NODE
 	add constraint FK_A_NODE_CHATBOT_CHATBOT foreign key (BOT_ID)
@@ -1676,6 +1761,23 @@ alter table WELCOME_TOUR_STEP
 
 create index A_WELCOME_TOUR_WELCOME_TOUR_STEPS_WELCOME_TOUR_FK on WELCOME_TOUR_STEP (TOUR_ID asc);
 
+
+create table A_L_E_R_T_I_N_G___S_U_B_S_C_R_I_P_T_I_O_N___C_H_A_T_B_O_T
+(
+	MAS_I_D     	 NUMERIC     	 not null,
+	BOT_ID      	 NUMERIC     	 not null,
+	constraint PK_A_L_E_R_T_I_N_G___S_U_B_S_C_R_I_P_T_I_O_N___C_H_A_T_B_O_T primary key (MAS_I_D, BOT_ID),
+	constraint FK_ANN_ALERTING_SUBSCRIPTION_CHATBOT_MONITORING_ALERTING_SUBSCRIPTION 
+		foreign key(MAS_I_D)
+		references MONITORING_ALERTING_SUBSCRIPTION (MAS_I_D),
+	constraint FK_ANN_ALERTING_SUBSCRIPTION_CHATBOT_CHATBOT 
+		foreign key(BOT_ID)
+		references CHATBOT (BOT_ID)
+);
+
+create index ANN_ALERTING_SUBSCRIPTION_CHATBOT_MONITORING_ALERTING_SUBSCRIPTION_FK on A_L_E_R_T_I_N_G___S_U_B_S_C_R_I_P_T_I_O_N___C_H_A_T_B_O_T (MAS_I_D asc);
+
+create index ANN_ALERTING_SUBSCRIPTION_CHATBOT_CHATBOT_FK on A_L_E_R_T_I_N_G___S_U_B_S_C_R_I_P_T_I_O_N___C_H_A_T_B_O_T (BOT_ID asc);
 
 create table T_O_P_I_C___T_O_P_I_C___L_A_B_E_L
 (
