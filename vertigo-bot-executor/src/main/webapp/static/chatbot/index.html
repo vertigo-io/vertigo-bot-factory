@@ -56,34 +56,44 @@
                  class="column col-grow no-wrap">
               <q-scroll-area class="row q-pa-sm col-grow"
                              ref="scroller">
-                <div class="q-pr-md">
+                <div class="q-pr-sm">
                   <div v-for="(msg, index) in messages">
+                    <div v-if="msg.text !== null && msg.sent && customConfig.botFormat === 'FAQ'"
+                         class="q-caption text-light text-right" :style="'--font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor">
+                      {{msg.text[0]}}
+                    </div>
                     <q-chat-message
-                      v-if="msg.text"
-                      class="animate-fade"
+                      v-if="(customConfig.botFormat !== 'FAQ' || (customConfig.botFormat === 'FAQ' && !msg.sent)) && msg.text"
+                      :class="computeClass"
                       :key="'msg-'+index"
                       :label="msg.label"
                       :text-sanitize="msg.sent"
                       :sent="msg.sent"
                       :text-color="msg.textColor"
-                      :bg-color="msg.bgColor"
                       :name="msg.name"
                       :avatar="msg.avatar"
                       :text="msg.text"
                       :stamp="msg.stamp"
                       :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor"
                     ></q-chat-message>
-                    <q-chat-message :style="'--background-color: ' + customConfig.backgroundColor + '; --font-color: ' + customConfig.fontColor" v-if="msg.rating" class="animate-fade" bg-color="primary" sent >
-                      <q-rating v-model="inputConfig.rating" style="font-size: 2rem;"
-                                icon="star_border"
-                                disable
-                                icon-selected="star"></q-rating>
+                    <q-chat-message :style="'--background-color: ' + customConfig.backgroundColor + '; --font-color: ' + customConfig.fontColor"
+                                    :class="computeClass"
+                                    v-if="msg.rating && customConfig.botFormat !== 'FAQ'" class="animate-fade" bg-color="primary" sent >
+                        <q-rating v-model="inputConfig.rating" style="font-size: 2rem;"
+                                  icon="star_border"
+                                  disable
+                                  class="q-caption text-light"
+                                  icon-selected="star"></q-rating>
                     </q-chat-message>
+                    <div class="row justify-end">
+                      <q-rating v-if="msg.rating && customConfig.botFormat === 'FAQ'" v-model="inputConfig.rating"
+                                icon="star_border" disable icon-selected="star"></q-rating>
+                    </div>
                   </div>
                   <div class="sys-chat">
                     <q-chat-message
                       v-if="error"
-                      class="animate-fade"
+                      :class="computeClass"
                       bg-color="orange-4"
                       text-color="black"
                       size="12"
@@ -101,11 +111,11 @@
                     </q-chat-message>
                   </div>
 
-                  <div class="message-processing sys-chat non-selectable">
+                  <div v-if="customConfig.botFormat === 'CLASSIC'" class="message-processing sys-chat non-selectable">
                     <q-chat-message
                       v-if="processing"
+                      :style="'--background-color: ' + customConfig.backgroundColor + '; --font-color: ' + customConfig.fontColor"
                       class="animate-fade"
-                      bg-color="grey-grdf"
                     >
                       <q-spinner-dots size="2em"></q-spinner-dots>
                     </q-chat-message>
@@ -121,8 +131,8 @@
                   </div>
                   <div v-if="inputConfig.cards.length > 0 || inputConfig.buttons.length > 0 || inputConfig.files.length > 0"
                        class="non-selectable animate-fade row reverse no-wrap">
-                    <div class="col-10">
-                      <div class="q-caption text-light text-right" :style="'--font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor">
+                    <div :class="customConfig.botFormat !== 'FAQ' ? 'col-10' : 'col q-ma-sm'">
+                      <div v-if="customConfig.botFormat !== 'FAQ'" class="q-caption text-light text-right" :style="'--font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor">
                         Réponses suggérées
                       </div>
                       <div class="row docs-btn" v-if="inputConfig.cards.length > 0" >
@@ -181,7 +191,8 @@
             </div>
           </q-page>
         </q-page-container>
-        <q-layout-footer class="bg-grey-3">
+        <q-layout-footer v-if="(customConfig.botFormat === 'CLASSIC' || customConfig.botFormat === 'INTERACTIVE_HELP')
+        || (currentTopic !== null && currentTopic === '!RATING' && acceptNlu)" class="bg-grey-3">
           <div class="message-response row docs-btn non-selectable">
             <div class="col-grow">
               <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
@@ -192,7 +203,7 @@
                        :max-height="100"
                        v-model="inputConfig.responseText"
                        placeholder="Répondre"
-                       :disable="processing || error || (!acceptNlu && !isEnded) || customConfig.disableNlu"
+                       :disable="processing || error || (!acceptNlu && !isEnded)"
                        :loading="processing"></q-input>
             </div>
 

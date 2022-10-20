@@ -20,7 +20,7 @@ public final class ChatbotCustomConfigExport implements DtObject {
 	private String fontFamily;
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
-	private Boolean disableNlu;
+	private String botFormat;
 	
 	/**
 	 * Champ : DATA.
@@ -157,21 +157,21 @@ public final class ChatbotCustomConfigExport implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Disable NlU'.
-	 * @return Boolean disableNlu
+	 * Récupère la valeur de la propriété 'Bot format'.
+	 * @return String botFormat
 	 */
-	@Field(smartType = "STyYesNo", label = "Disable NlU")
-	public Boolean getDisableNlu() {
-		return disableNlu;
+	@Field(smartType = "STyLabel", label = "Bot format")
+	public String getBotFormat() {
+		return botFormat;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Disable NlU'.
-	 * @param disableNlu Boolean
+	 * Définit la valeur de la propriété 'Bot format'.
+	 * @param botFormat String
 	 */
-	public void setDisableNlu(final Boolean disableNlu) {
-		this.disableNlu = disableNlu;
+	public void setBotFormat(final String botFormat) {
+		this.botFormat = botFormat;
 	}
 	
 	/** {@inheritDoc} */

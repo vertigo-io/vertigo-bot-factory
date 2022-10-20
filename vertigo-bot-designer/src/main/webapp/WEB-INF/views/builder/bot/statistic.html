@@ -373,7 +373,7 @@
             if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
                 VertigoUi.vueData.chatbotCustomConfig.backgroundColor = '#cdcdcd';
             }
-            Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
+            Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
                 element.style.setProperty('--chat-message-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
             });
         }
@@ -386,6 +386,9 @@
                 element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
             });
             Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
+                element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+            });
+            Array.from(document.getElementsByClassName('faq-user-message')).forEach(function (element, index, array) {
                 element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
             });
         }
@@ -403,6 +406,19 @@
             Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
                 element.style.setProperty('--chat-message-font-family', fontFamily.label);
             });
+            Array.from(document.getElementsByClassName('faq-user-message')).forEach(function (element, index, array) {
+                element.style.setProperty('--chat-message-font-family', fontFamily.label);
+            });
+        }
+
+        function computeClass() {
+            if (VertigoUi.vueData.chatbotCustomConfig.cftCd === 'FAQ') {
+                return 'animate-fade interactive-help dynamic-faq'
+            } else if (VertigoUi.vueData.chatbotCustomConfig.cftCd  === 'INTERACTIVE_HELP') {
+                return 'animate-fade interactive-help'
+            } else {
+                return 'animate-fade'
+            }
         }
 
         function checkAllExportStats() {
@@ -417,7 +433,7 @@
     </script>
     <style>
         .q-message-text--sent {
-            color: var(--chat-message-bg-color) !important;
+            color: #cdcdcd !important;
             font-family: var(--chat-message-font-family) !important;
         }
         .q-message-text-content--sent {
@@ -427,8 +443,21 @@
             color: var(--chat-message-font-color) !important;
         }
         .q-message-text--received {
+            color: var(--chat-message-bg-color) !important;
             font-family: var(--chat-message-font-family) !important;
-            color: #cdcdcd !important;
+        }
+        .interactive-help .q-message-text {
+            border-radius: 0 !important;
+        }
+        .interactive-help .q-message-text::before {
+            content: none;
+        }
+        .dynamic-faq .q-message-container div {
+            flex-grow: 2;
+        }
+        .faq-user-message {
+            color: var(--chat-message-font-color) !important;
+            font-family: var(--chat-message-font-family) !important;
         }
     </style>
 </head>
@@ -536,8 +565,8 @@
                             </q-card-section>
                         </q-card>
                     </div>
-                    <vu:include-data object="chatbotCustomConfig" field="disableNlu" />
-                    <div class="col-xl-4 col-md-6 col-xs-12" v-if="!vueData.chatbotCustomConfig.disableNlu">
+                    <vu:include-data object="chatbotCustomConfig" field="cftCd" />
+                    <div class="col-xl-4 col-md-6 col-xs-12" v-if="vueData.chatbotCustomConfig.cftCd !== 'FAQ'">
                         <q-card>
                             <q-card-section class="row justify-center">
                                 <div>
@@ -672,14 +701,23 @@
             </vu:table>
 
             <q-dialog ref="conversationDetailsDialog"  @show="function (event) { changeChatMessageStyle() }">
+                <vu:include-data object="chatbotCustomConfig" field="displayAvatar" />
                 <q-card style="width: 600px; height: 500px;">
                     <q-card-section>
                         <div class="text-h6 q-ma-md" th:text="#{analytics.conversation.detail}">
                         </div>
                         <div v-for="conversationDetail in vueData.conversationDetails">
-                            <q-chat-message :sent="conversationDetail.isUserMessage" >
-                                <span v-html="sanitizeText(conversationDetail.text)"></span>
-                            </q-chat-message>
+                            <div v-if="vueData.chatbotCustomConfig.cftCd === 'FAQ' && conversationDetail.isUserMessage" class="q-caption text-light text-right faq-user-message"
+                                 v-html="sanitizeText(conversationDetail.text)"></div>
+                            <span v-else>
+                                <q-chat-message v-if="vueData.chatbotCustomConfig.displayAvatar && !conversationDetail.isUserMessage"
+                                                th:avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}" :class="computeClass()" :sent="conversationDetail.isUserMessage" >
+                                    <span v-html="sanitizeText(conversationDetail.text)"></span>
+                                </q-chat-message>
+                                 <q-chat-message v-else :class="computeClass()" :sent="conversationDetail.isUserMessage" >
+                                    <span v-html="sanitizeText(conversationDetail.text)"></span>
+                                </q-chat-message>
+                            </span>
                         </div>
                     </q-card-section>
                 </q-card>

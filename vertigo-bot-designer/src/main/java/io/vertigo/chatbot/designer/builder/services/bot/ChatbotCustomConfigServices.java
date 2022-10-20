@@ -6,6 +6,7 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.ChatbotCustomConfigDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.commons.domain.ChatbotFormatEnum;
 import io.vertigo.chatbot.commons.domain.FontFamilyEnum;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
@@ -29,7 +30,7 @@ public class ChatbotCustomConfigServices implements Component {
 	public ChatbotCustomConfig save(@SecuredOperation("botAdm") final Chatbot bot, final ChatbotCustomConfig chatbotCustomConfig) {
 		if (chatbotCustomConfig.getCccId() != null) {
 			final ChatbotCustomConfig oldChatbotCustomConfig = chatbotCustomConfigDAO.get(chatbotCustomConfig.getCccId());
-			if ((oldChatbotCustomConfig.getDisableNlu() != null && !oldChatbotCustomConfig.getDisableNlu().equals(chatbotCustomConfig.getDisableNlu())) ||
+			if ((oldChatbotCustomConfig.getCftCd() != null && !oldChatbotCustomConfig.getCftCd().equals(chatbotCustomConfig.getCftCd())) ||
 					(oldChatbotCustomConfig.getReinitializationButton() != null && !oldChatbotCustomConfig.getReinitializationButton().equals(chatbotCustomConfig.getReinitializationButton())) ||
 					checkIfChatbotStyleChanged(oldChatbotCustomConfig, chatbotCustomConfig) ||
 					checkIfEmailOrAttachmentSettingsChanged(oldChatbotCustomConfig, chatbotCustomConfig)) {
@@ -73,7 +74,7 @@ public class ChatbotCustomConfigServices implements Component {
 		final ChatbotCustomConfig chatbotCustomConfig = new ChatbotCustomConfig();
 		chatbotCustomConfig.setReinitializationButton(true);
 		chatbotCustomConfig.setDisplayAvatar(true);
-		chatbotCustomConfig.setDisableNlu(false);
+		chatbotCustomConfig.setCftCd(ChatbotFormatEnum.CLASSIC.name());
 		chatbotCustomConfig.setBackgroundColor("#cdcdcd");
 		chatbotCustomConfig.setFontColor("#000000");
 		chatbotCustomConfig.setFofCd(FontFamilyEnum.ARIAL.name());

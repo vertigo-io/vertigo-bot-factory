@@ -35,6 +35,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ChatbotCustomConfig(io.vertigo.chatbot.commons.domain.ChatbotCustomConfig.class),
 		/** Objet de données ChatbotCustomConfigExport. */
 		ChatbotCustomConfigExport(io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport.class),
+		/** Objet de données ChatbotFormat. */
+		ChatbotFormat(io.vertigo.chatbot.commons.domain.ChatbotFormat.class),
 		/** Objet de données ChatbotNode. */
 		ChatbotNode(io.vertigo.chatbot.commons.domain.ChatbotNode.class),
 		/** Objet de données ChatbotProfiles. */
@@ -364,12 +366,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		displayAvatar,
 		/** Propriété 'Total maximum attachment size'. */
 		totalMaxAttachmentSize,
-		/** Propriété 'Disable NlU'. */
-		disableNlu,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'fontFamily'. */
-		fofCd	}
+		fofCd,
+		/** Propriété 'chatbotFormat'. */
+		cftCd	}
 
 	/**
 	 * Enumération des champs de ChatbotCustomConfigExport.
@@ -389,8 +391,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		displayAvatar,
 		/** Propriété 'Total maximum attachment size'. */
 		totalMaxAttachmentSize,
-		/** Propriété 'Disable NlU'. */
-		disableNlu	}
+		/** Propriété 'Bot format'. */
+		botFormat	}
+
+	/**
+	 * Enumération des champs de ChatbotFormat.
+	 */
+	public enum ChatbotFormatFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotFormat> {
+		/** Propriété 'ID'. */
+		cftCd,
+		/** Propriété 'Title'. */
+		label,
+		/** Propriété 'TitleFr'. */
+		labelFr,
+		/** Propriété 'Order'. */
+		sortOrder	}
 
 	/**
 	 * Enumération des champs de ChatbotNode.

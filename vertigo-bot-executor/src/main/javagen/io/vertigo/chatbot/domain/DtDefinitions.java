@@ -182,8 +182,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		displayAvatar,
 		/** Propriété 'Total maximum attachment size'. */
 		totalMaxAttachmentSize,
-		/** Propriété 'Disable NlU'. */
-		disableNlu	}
+		/** Propriété 'Bot format'. */
+		botFormat	}
 
 	/**
 	 * Enumération des champs de ConfluenceSettingExport.

@@ -200,10 +200,6 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$totalMaxAttachmentSize,
 	/**
-	 * Disable NlU.
-	 */
-	fldChatbotCustomConfig$disableNlu,
-	/**
 	 * Chatbot.
 	 */
 	fldChatbotCustomConfig$botId,
@@ -211,6 +207,10 @@ public enum DtResources implements MessageKey {
 	 * fontFamily.
 	 */
 	fldChatbotCustomConfig$fofCd,
+	/**
+	 * chatbotFormat.
+	 */
+	fldChatbotCustomConfig$cftCd,
 
 	/***********************************************************
 	/** ChatbotCustomConfigExport.
@@ -244,9 +244,29 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfigExport$totalMaxAttachmentSize,
 	/**
-	 * Disable NlU.
+	 * Bot format.
 	 */
-	fldChatbotCustomConfigExport$disableNlu,
+	fldChatbotCustomConfigExport$botFormat,
+
+	/***********************************************************
+	/** ChatbotFormat.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldChatbotFormat$cftCd,
+	/**
+	 * Title.
+	 */
+	fldChatbotFormat$label,
+	/**
+	 * TitleFr.
+	 */
+	fldChatbotFormat$labelFr,
+	/**
+	 * Order.
+	 */
+	fldChatbotFormat$sortOrder,
 
 	/***********************************************************
 	/** ChatbotNode.

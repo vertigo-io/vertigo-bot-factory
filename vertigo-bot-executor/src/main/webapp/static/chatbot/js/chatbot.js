@@ -82,7 +82,7 @@ const chatbot = new Vue({
                 fontColor: 'black',
                 fontFamily: 'Arial, Helvetica, sans-serif',
                 displayAvatar: true,
-                disableNlu: false
+                botFormat: 'CLASSIC'
             },
             isEnded: false,
 
@@ -99,7 +99,8 @@ const chatbot = new Vue({
             lastUserInteraction: 0,
             watingMessagesStack: [],
             context: {},
-            contextMap: {}
+            contextMap: {},
+            currentTopic: null
         },
         methods: {
 
@@ -149,12 +150,13 @@ const chatbot = new Vue({
                         this.$http.post(chatbot.botUrl + '/start', {message: null, metadatas: {'context': chatbot.context}})
                             .then(httpResponse => {
                                 chatbot.convId = httpResponse.data.metadatas.sessionId;
+                                chatbot.currentTopic = httpResponse.data.metadatas.analytics.topic.code;
                                 chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
                                 chatbot.customConfig.backgroundColor = httpResponse.data.metadatas.customConfig.backgroundColor;
                                 chatbot.customConfig.fontColor = httpResponse.data.metadatas.customConfig.fontColor;
                                 chatbot.customConfig.fontFamily = httpResponse.data.metadatas.customConfig.fontFamily;
                                 chatbot.customConfig.displayAvatar = httpResponse.data.metadatas.customConfig.displayAvatar;
-                                chatbot.customConfig.disableNlu = httpResponse.data.metadatas.customConfig.disableNlu;
+                                chatbot.customConfig.botFormat = httpResponse.data.metadatas.customConfig.botFormat;
                                 chatbot.updateSessionStorage();
                                 chatbot._handleResponse(httpResponse, false);
                             }).catch(() => {
@@ -196,6 +198,12 @@ const chatbot = new Vue({
                 const file = document.getElementById('file_' + index).files[0];
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
+                chatbot.messages.push({
+                    text: [DOMPurify.sanitize(file.name)],
+                    sent: true,
+                    bgColor: 'primary',
+                    textColor: 'white'
+                });
                 reader.onload = function (evt) {
                     chatbot.askBot(btn.payload, null,false, evt.target.result, file.name, false);
                 };
@@ -276,6 +284,7 @@ const chatbot = new Vue({
                 const files = httpResponse.data.files;
                 chatbot.acceptNlu = httpResponse.data.acceptNlu !== undefined ? httpResponse.data.acceptNlu : true;
                 chatbot.rating = httpResponse.data.rating;
+                chatbot.currentTopic = httpResponse.data.metadatas.analytics.topic.code;
                 chatbot.isEnded = httpResponse.data.status === 'Ended' && !isRating;
                 if (httpResponse.data.metadatas && httpResponse.data.metadatas.avatar) {
                     chatbot.botAvatar = 'data:image/png;base64,' + httpResponse.data.metadatas.avatar;
@@ -409,6 +418,18 @@ const chatbot = new Vue({
                 chatbot.rating = false;
                 chatbot.clearSessionStorage();
                 chatbot.initBot();
+            },
+
+        },
+        computed: {
+            computeClass() {
+                if (chatbot.customConfig.botFormat === 'FAQ') {
+                    return 'animate-fade interactive-help dynamic-faq'
+                } else if (chatbot.customConfig.botFormat === 'INTERACTIVE_HELP') {
+                    return 'animate-fade interactive-help'
+                } else {
+                    return 'animate-fade'
+                }
             }
         }
     })

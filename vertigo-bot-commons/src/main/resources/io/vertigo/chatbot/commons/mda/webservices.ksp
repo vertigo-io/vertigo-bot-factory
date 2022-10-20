@@ -100,5 +100,5 @@ create DtDefinition DtChatbotCustomConfigExport {
 	field fontFamily                {domain: DoLabel        label: "Bot font family"                    cardinality:"?"}
 	field displayAvatar             {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
 	field totalMaxAttachmentSize    {domain: DoNumber       label: "Total maximum attachment size"      cardinality:"?"}
-	field disableNlu                {domain: DoYesNo        label: "Disable NlU"                        cardinality:"?"}
+	field botFormat                 {domain: DoLabel        label: "Bot format"                         cardinality:"?"}
 }

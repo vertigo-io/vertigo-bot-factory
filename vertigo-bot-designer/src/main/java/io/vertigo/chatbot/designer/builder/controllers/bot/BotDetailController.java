@@ -32,9 +32,11 @@ import javax.inject.Inject;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.commons.domain.ChatbotFormat;
 import io.vertigo.chatbot.commons.domain.FontFamily;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.ChatbotFormatServices;
 import io.vertigo.chatbot.designer.builder.services.FontFamilyServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
@@ -78,6 +80,9 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	@Inject
 	private FontFamilyServices fontFamilyServices;
 
+	@Inject
+	private ChatbotFormatServices chatbotFormatServices;
+
 	private static final ViewContextKey<TypeTopic> typeTopicListKey = ViewContextKey.of("typeTopicList");
 	// template for creation
 	private static final ViewContextKey<Boolean> deletePopinKey = ViewContextKey.of("deletePopin");
@@ -85,6 +90,8 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
 
 	private static final ViewContextKey<FontFamily> fontFamiliesKey = ViewContextKey.of("fontFamilies");
+
+	private static final ViewContextKey<ChatbotFormat> chatbotFormatsKey = ViewContextKey.of("chatbotFormats");
 
 	@GetMapping("/{botId}")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
@@ -95,6 +102,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 		viewContext.publishDtList(fontFamiliesKey, fontFamilyServices.findAll());
+		viewContext.publishDtList(chatbotFormatsKey, chatbotFormatServices.findAll());
 		viewContext.publishDto(chatbotCustomConfigKey, chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
 		super.initBreadCrums(viewContext, bot);
 		toModeReadOnly();
@@ -106,6 +114,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		initEmptyCommonContext(viewContext);
 		viewContext.publishDtList(typeTopicListKey, typeTopicServices.getAllTypeTopic());
 		viewContext.publishDtList(fontFamiliesKey, fontFamilyServices.findAll());
+		viewContext.publishDtList(chatbotFormatsKey, chatbotFormatServices.findAll());
 		viewContext.publishFileInfoURI(botTmpPictureUriKey, null);
 		viewContext.publishDto(chatbotCustomConfigKey, chatbotCustomConfigServices.getDefaultChatbotCustomConfig());
 		super.initEmptyBreadcrums(viewContext);
