@@ -34,6 +34,7 @@ import io.vertigo.chatbot.designer.utils.DateUtils;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotFields;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.daemon.DaemonScheduled;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.locale.MessageText;
@@ -195,7 +196,7 @@ public class ChatbotServices implements Component {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
-	public DtList<Chatbot> getAllChatbotsForMonitoring() {
+	public DtList<Chatbot> getAllChatbotsForDaemons() {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(null));
 	}
 
@@ -248,4 +249,10 @@ public class ChatbotServices implements Component {
 		return bot.isPresent() ? DateUtils.toStringJJMMAAAA(bot.get().getCreationDate()) : null;
 	}
 
+	@DaemonScheduled(name = "DmnUnknownSentences", periodInSeconds = 600)
+	public void updateUnknownSentencesDaemon() {
+		getAllChatbotsForDaemons().forEach(chatbot -> {
+			unknownSentencesServices.saveLatestUnknownSentences(chatbot.getBotId());
+		});
+	}
 }

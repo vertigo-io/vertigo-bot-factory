@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -43,28 +45,6 @@ public class UnknownSentencesServices implements Component {
 	}
 
 	public DtList<UnknownSentenceDetail> findUnknownSentences(final Long botId) {
-
-		final StatCriteria unknownSentencesCriteria = new StatCriteria();
-		unknownSentencesCriteria.setBotId(botId);
-
-		unknownSentenceDetailDAO.findLatestUnknownSentence(botId)
-				.ifPresent(latestUnknownSentence -> unknownSentencesCriteria.setFromInstant(latestUnknownSentence.getDate().plusNanos(1)));
-
-		final TimedDatas tabularTimedData = timeSerieServices.getUnrecognizedSentences(unknownSentencesCriteria);
-
-		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
-			final Map<String, Object> values = timedData.getValues();
-
-			final UnknownSentenceDetail unknownSentenceDetail = new UnknownSentenceDetail();
-			unknownSentenceDetail.setUnkSeId(null);
-			unknownSentenceDetail.setBotId(botId);
-			unknownSentenceDetail.setDate(timedData.getTime());
-			unknownSentenceDetail.setText((String) values.get("text"));
-			unknownSentenceDetail.setModelName((String) values.get("modelName"));
-			unknownSentenceDetail.setStatus(UnknownSentenceStatusEnum.TO_TREAT.name());
-			save(unknownSentenceDetail);
-
-		}
 		return findAllByBotId(botId);
 	}
 
@@ -86,4 +66,28 @@ public class UnknownSentencesServices implements Component {
 		findAllByBotIdWithoutLimit(botId).forEach(unknownSentenceDetail -> delete(unknownSentenceDetail.getUnkSeId()));
 	}
 
+
+	public void saveLatestUnknownSentences(final long botId) {
+		final StatCriteria unknownSentencesCriteria = new StatCriteria();
+		unknownSentencesCriteria.setBotId(botId);
+		unknownSentencesCriteria.setFromInstant(Instant.now().minus(30, ChronoUnit.DAYS));
+
+		unknownSentenceDetailDAO.findLatestUnknownSentence(botId)
+				.ifPresent(latestUnknownSentence -> unknownSentencesCriteria.setFromInstant(latestUnknownSentence.getDate().plusNanos(1)));
+
+		final TimedDatas tabularTimedData = timeSerieServices.getUnrecognizedSentences(unknownSentencesCriteria);
+
+		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
+			final Map<String, Object> values = timedData.getValues();
+
+			final UnknownSentenceDetail unknownSentenceDetail = new UnknownSentenceDetail();
+			unknownSentenceDetail.setUnkSeId(null);
+			unknownSentenceDetail.setBotId(botId);
+			unknownSentenceDetail.setDate(timedData.getTime());
+			unknownSentenceDetail.setText((String) values.get("text"));
+			unknownSentenceDetail.setModelName((String) values.get("modelName"));
+			unknownSentenceDetail.setStatus(UnknownSentenceStatusEnum.TO_TREAT.name());
+			save(unknownSentenceDetail);
+		}
+	}
 }
