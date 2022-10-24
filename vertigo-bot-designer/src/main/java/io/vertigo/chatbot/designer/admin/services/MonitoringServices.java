@@ -131,7 +131,7 @@ public class MonitoringServices implements Component, Activeable {
         final DtList<MonitoringAlertingSubscription> monitoringAlertingSubscriptions = monitoringAlertingSubscriptionServices.getAll();
         final boolean antivirusHealth = antivirusServices.healthCheck();
         handleAlertingEventForGlobalComponent("Antivirus", antivirusHealth, monitoringAlertingSubscriptions);
-        chatbotServices.getAllChatbotsForMonitoring().forEach(chatbot -> {
+        chatbotServices.getAllChatbotsForDaemons().forEach(chatbot -> {
             nodeServices.getAllNodesByBotsForMonitoring(chatbot).forEach(node -> {
                 final RunnerHealthCheck runnerHealthCheck = trainingServices.tryPing(node);
                 handleAlertingEventForBotNodeComponent(chatbot, node, "Runner", runnerHealthCheck.getAlive(), monitoringAlertingSubscriptions);
