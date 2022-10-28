@@ -183,7 +183,7 @@ public final class BotNodeProvider {
 			return succeed();
 		}
 		return () -> {
-			bb.listPush(BotEngine.BOT_RESPONSE_KEY, bb.format(HtmlInputUtils.sanitizeHtml(msg)));
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, HtmlInputUtils.sanitizeHtml(bb.format(msg)));
 			return BTStatus.Succeeded;
 		};
 	}
