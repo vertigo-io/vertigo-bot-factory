@@ -57,7 +57,7 @@
 
 		<dependency>
 			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-mail-connector</artifactId>
+			<artifactId>vertigo-social</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
 

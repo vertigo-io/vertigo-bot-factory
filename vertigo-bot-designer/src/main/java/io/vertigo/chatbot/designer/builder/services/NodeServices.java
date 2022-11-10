@@ -54,6 +54,7 @@ public class NodeServices implements Component {
 		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, bot.getBotId()), DtListState.of(null));
 	}
 
+	@Secured("BotUser")
 	public Optional<ChatbotNode> getDevNodeByBotId(final Long botId) {
 		return chatbotNodeDAO.findOptional(
 				Criterions.isEqualTo(ChatbotNodeFields.botId, botId)
@@ -95,6 +96,7 @@ public class NodeServices implements Component {
 		chatbotNodeDAO.delete(nodId);
 	}
 
+	@Secured("BotUser")
 	public DtList<ChatbotNode> getNodesByBot(@SecuredOperation("botVisitor") final Chatbot chatbot) {
 		if (authorizationManager.isAuthorized(chatbot, ChatbotOperations.botAdm)) {
 			return getAllNodesByBot(chatbot);
@@ -112,6 +114,7 @@ public class NodeServices implements Component {
 		chatbotNodePAO.removeChatbotNodeByBotId(bot.getBotId());
 	}
 
+	@Secured("BotUser")
 	public ChatbotNode getDevNodeFromList(final DtList<ChatbotNode> nodeList) {
 		return nodeList.stream()
 				.filter(ChatbotNode::getIsDev)
@@ -119,6 +122,7 @@ public class NodeServices implements Component {
 				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
 	}
 
+	@Secured("BotUser")
 	public void updateNodes(final Chatbot bot) {
 		final DtList<ChatbotNode> listNode = getNodesByBot(bot);
 		for (final ChatbotNode node : listNode) {

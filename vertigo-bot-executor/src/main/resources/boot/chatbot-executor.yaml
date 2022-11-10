@@ -17,10 +17,19 @@ modules:
   io.vertigo.connectors.mail.MailFeatures:
     features:
       - javax.native:
-          name: ${boot.MAIL_NAME}
-          storeProtocol: ${boot.MAIL_PROTOCOL}
-          host: ${boot.MAIL_HOST}
-          port: ${boot.MAIL_PORT}
+          name: ${MAIL_NAME}
+          storeProtocol: ${MAIL_PROTOCOL}
+          host: ${MAIL_HOST}
+          port: ${MAIL_PORT}
+  io.vertigo.social.SocialFeatures:
+    features:
+      - mail:
+    featuresConfig:
+      - mail.javax:
+          charset: utf8
+          connectorName: ${MAIL_NAME}
+          developmentMode: ${MAIL_DEV_MODE}
+          developmentMailTo: ${MAIL_DEV_REPLACE_EMAIL_TO}
   io.vertigo.commons.CommonsFeatures: # utilisation du module vertigo-commons
     features:
       - script:
