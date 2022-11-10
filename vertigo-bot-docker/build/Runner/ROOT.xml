@@ -4,11 +4,6 @@
 	<Parameter name="boot.ANALYTICA_PORT" value="${ANALYTICA_PORT}" override="false"/>
 	<Parameter name="boot.ANALYTICA_DBNAME" value="${ANALYTICA_DBNAME}" override="false"/>
 
-	<Parameter name="boot.MAIL_NAME" value="${MAIL_NAME}" override="false"/>
-	<Parameter name="boot.MAIL_PROTOCOL" value="${MAIL_PROTOCOL}" override="false"/>
-	<Parameter name="boot.MAIL_HOST" value="${MAIL_HOST}" override="false"/>
-	<Parameter name="boot.MAIL_PORT" value="${MAIL_PORT}" override="false"/>
-
 	<!--  Use for confluence plugin -->
    	<Resources className="org.apache.catalina.webresources.StandardRoot">
        <JarResources className="org.apache.catalina.webresources.DirResourceSet"

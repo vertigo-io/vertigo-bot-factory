@@ -4,10 +4,12 @@
 	<Parameter name="boot.ANALYTICA_PORT" value="4562" override="false"/>
 	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot/autogen" override="false"/>
 
-	<Parameter name="boot.MAIL_NAME" value="KleeMail" override="false"/>
-	<Parameter name="boot.MAIL_PROTOCOL" value="smtp" override="false"/>
-	<Parameter name="boot.MAIL_HOST" value="localdelivery.klee.lan.net" override="false"/>
-	<Parameter name="boot.MAIL_PORT" value="25" override="false"/>
+	<Parameter name="MAIL_NAME" value="KleeMail" override="false"/>
+	<Parameter name="MAIL_PROTOCOL" value="smtp" override="false"/>
+	<Parameter name="MAIL_HOST" value="localdelivery.klee.lan.net" override="false"/>
+	<Parameter name="MAIL_PORT" value="25" override="false"/>
+	<Parameter name="MAIL_DEV_MODE" value="true" override="false"/>
+	<Parameter name="MAIL_DEV_REPLACE_EMAIL_TO" value="example.test@kleegroup.com" override="false"/>
 	<Parameter name="FILE_STORE_PATH" value="C:\executor/attachments/" override="false"/>
 
 	<Parameter name="ENCRYPTION_SALT" value="ChatbotKlee2022!" override="false"/>

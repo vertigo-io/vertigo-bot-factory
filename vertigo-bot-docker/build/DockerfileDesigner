@@ -45,6 +45,8 @@ ENV MAIL_NAME MyEmailServer
 ENV MAIL_PROTOCOL smtp
 ENV MAIL_HOST mailHost
 ENV MAIL_PORT 25
+ENV MAIL_DEV_MODE false
+ENV MAIL_DEV_REPLACE_EMAIL_TO text.example@test.com
 # Expose tomcat port
 EXPOSE 8080
 

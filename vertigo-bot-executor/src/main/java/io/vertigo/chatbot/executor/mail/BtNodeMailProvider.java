@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.URLConnection;
 import java.util.Optional;
-import java.util.StringJoiner;
 
 import javax.inject.Inject;
 import javax.mail.MessagingException;
@@ -34,9 +33,9 @@ public class BtNodeMailProvider implements Component {
 		return () -> {
 				Optional<FileDescriptor> optFileDescriptor = Optional.empty();
 				final int recipientsCount = bb.listSize(BBKey.of(destinationsKey));
-				final StringJoiner recipients = new StringJoiner(",");
+				final String[] recipients = new String[recipientsCount];
 				for (int i = 0; i < recipientsCount; i++) {
-					recipients.add(bb.listGet(BBKey.of(destinationsKey), i));
+					recipients[i] = bb.listGet(BBKey.of(destinationsKey), i);
 				}
 				if (attachmentKey.isPresent()) {
 					final FileDescriptor fileDescriptor = new FileDescriptor();
@@ -49,7 +48,7 @@ public class BtNodeMailProvider implements Component {
 					optFileDescriptor = Optional.of(fileDescriptor);
 				}
 				try {
-					mailService.sendMailFromBot(executorManager.getBotEmailAddress(), recipients.toString(), bb.getString(BBKey.of(subjectKey)), bb.getString(BBKey.of(messageBodyKey)), optFileDescriptor);
+					mailService.sendMailFromBot(executorManager.getBotEmailAddress(), recipients, bb.getString(BBKey.of(subjectKey)), bb.getString(BBKey.of(messageBodyKey)), optFileDescriptor);
 					return BTStatus.Succeeded;
 				} catch (final MessagingException messagingException) {
 					LOGGER.error("Error when sending mail to " + recipients + " with mail subject " + bb.getString(BBKey.of(subjectKey)), messagingException);
