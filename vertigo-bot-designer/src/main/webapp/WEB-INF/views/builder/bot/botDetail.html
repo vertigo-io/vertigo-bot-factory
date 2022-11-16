@@ -41,6 +41,10 @@
 				 Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
 					 element.style.setProperty('--chat-message-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
 				 });
+
+				Array.from(document.getElementsByClassName('chat-header')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
+				});
 			}
 
 			function changeChatMessageFontColor() {
@@ -50,18 +54,46 @@
 				Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
 					element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
 				});
+				Array.from(document.getElementsByClassName('q-message-text-content--sent')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+				});
+				Array.from(document.getElementsByClassName('chat-header')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+				});
+				Array.from(document.getElementsByClassName('chat-action-buttons')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+				});
+				Array.from(document.getElementsByClassName('faq-button')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+				});
 			}
 
 			function changeChatMessageFontFamily() {
 				 if (VertigoUi.vueData.chatbotCustomConfig.fofCd == null) {
 					 VertigoUi.vueData.chatbotCustomConfig.fofCd = 'ARIAL';
 				 }
+				const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
+					return fontFamily.fofCd === VertigoUi.vueData.chatbotCustomConfig.fofCd
+				});
 				Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-					const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
-						return fontFamily.fofCd === VertigoUi.vueData.chatbotCustomConfig.fofCd
-					});
 					element.style.setProperty('--chat-message-font-family', fontFamily.label);
 				});
+				Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-family', fontFamily.label);
+				});
+				Array.from(document.getElementsByClassName('chat-header')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-family', fontFamily.label);
+				});
+				Array.from(document.getElementsByClassName('chat-placeholder')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-family', fontFamily.label);
+				});
+				Array.from(document.getElementsByClassName('faq-button')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-family', fontFamily.label);
+				});
+			}
+
+			function changeBotFormat() {
+				VertigoUi.vueData.chatbotCustomConfig.displayAvatar = VertigoUi.vueData.chatbotCustomConfig.cftCd === 'CLASSIC';
 			}
 
 			document.addEventListener('DOMContentLoaded', function () {
@@ -71,12 +103,43 @@
 			});
 		</script>
 		<style>
+			.interactive-help .q-message-text {
+				border-radius: 0px !important;
+			}
+			.interactive-help .q-message-text::before {
+				content: none;
+			}
+			.dynamic-faq .q-message-container div {
+				flex-grow: 2;
+			}
 			.q-message-text--received {
 				color: var(--chat-message-bg-color) !important;
 				font-family: var(--chat-message-font-family) !important;
 			}
+			.q-message-text--sent {
+				font-family: var(--chat-message-font-family) !important;
+			}
 			.q-message-text-content--received {
 				color: var(--chat-message-font-color) !important;
+			}
+			.q-message-text-content--sent {
+				color: var(--chat-message-font-color) !important;
+			}
+			.chat-header {
+				background-color: var(--chat-message-bg-color) !important;
+				color: var(--chat-message-font-color) !important;
+				font-family: var(--chat-message-font-family) !important;
+			}
+			.chat-placeholder {
+				font-family: var(--chat-message-font-family) !important;
+			}
+			.chat-action-buttons {
+				color: var(--chat-message-font-color) !important;
+			}
+			.faq-button {
+				font-weight: normal !important;
+				color: var(--chat-message-font-color) !important;
+				font-family: var(--chat-message-font-family) !important;
 			}
 		</style>
 	</head>
@@ -114,11 +177,99 @@
 			<vu:include-data object="typeTopicList" field="'*'" />
 			<vu:include-data object="chatbotCustomConfig" field="botEmailAddress" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="reinitializationButton" modifiable="true" />
-			<vu:include-data object="chatbotCustomConfig" field="disableNlu" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="backgroundColor" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="fontColor" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="fofCd" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
+
+			<vu:block id="botFormat" th:title="#{bot.format}">
+				<div class="row justify-center">
+					<div v-for="format in vueData.chatbotFormats" class="col-xl-3 col-md-3 col-xs-3 q-mr-lg q-ml-lg">
+						<div style="display: flex; flex-direction: column; height: 100%">
+							<q-card v-if="format.cftCd == 'CLASSIC'" class="col-grow">
+								<q-card-section class="chat-header row items-center non-selectable">
+									<div class="title col-grow q-ml-sm">
+										{{vueData.bot.name}}
+									</div>
+									<q-btn round v-if="vueData.chatbotCustomConfig.reinitializationButton"
+										   flat color="white" text-color="white" size="sm" icon="refresh" class="chat-action-buttons"></q-btn>
+									<q-btn round flat color="white" text-color="white" size="sm" icon="close" class="chat-action-buttons"></q-btn>
+								</q-card-section>
+								<q-card-section>
+									<q-chat-message v-if="vueData.chatbotCustomConfig.cftCd === 'CLASSIC' && !vueData.chatbotCustomConfig.displayAvatar" :text="['Lorem ipsum']"></q-chat-message>
+									<q-chat-message v-else :text="['Lorem ipsum']" th:avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}"></q-chat-message>
+									<q-chat-message sent :text="['Lorem ipsum']"></q-chat-message>
+									<q-chat-message v-if="vueData.chatbotCustomConfig.cftCd === 'CLASSIC' && !vueData.chatbotCustomConfig.displayAvatar" :text="['Lorem ipsum']"></q-chat-message>
+									<q-chat-message v-else :text="['Lorem ipsum']" th:avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}"></q-chat-message>
+								</q-card-section>
+								<q-card-actions class="bg-grey-3">
+									<div class="col-grow row items-center docs-btn non-selectable" style="background: white !important;">
+										<div class="col-grow">
+											<q-input type="text" ref="input" style="margin-top: 0px;" class="chat-placeholder bg-white round-borders" max-height="100" placeholder="Répondre"></q-input>
+										</div>
+										<q-btn round color="primary" class="btn-send" icon="send"></q-btn>
+									</div>
+								</q-card-actions>
+							</q-card>
+							<q-card v-if="format.cftCd == 'INTERACTIVE_HELP'" class="col-grow">
+								<q-card-section class="chat-header row items-center non-selectable">
+									<div class="title col-grow q-ml-sm">
+										{{vueData.bot.name}}
+									</div>
+									<q-btn round v-if="vueData.chatbotCustomConfig.reinitializationButton"
+										   flat color="white" text-color="white" size="sm" icon="refresh" class="chat-action-buttons"></q-btn>
+									<q-btn round flat color="white" text-color="white" size="sm" icon="close" class="chat-action-buttons"></q-btn>
+								</q-card-section>
+								<q-card-section>
+									<q-chat-message v-if="vueData.chatbotCustomConfig.cftCd === 'INTERACTIVE_HELP' && vueData.chatbotCustomConfig.displayAvatar" class="interactive-help" :text="['Lorem ipsum']"
+													th:avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}"></q-chat-message>
+									<q-chat-message v-else class="interactive-help" :text="['Lorem ipsum']"></q-chat-message>
+									<q-chat-message class="interactive-help" sent :text="['Lorem ipsum']"></q-chat-message>
+									<q-chat-message v-if="vueData.chatbotCustomConfig.cftCd === 'INTERACTIVE_HELP' && vueData.chatbotCustomConfig.displayAvatar" class="interactive-help" :text="['Lorem ipsum']"
+													th:avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}"></q-chat-message>
+									<q-chat-message v-else class="interactive-help" :text="['Lorem ipsum']"></q-chat-message>
+								</q-card-section>
+								<q-card-actions class="bg-grey-3">
+									<div class="col-grow row items-center docs-btn non-selectable" style="background: white !important;">
+										<div class="col-grow">
+											<q-input type="text" ref="input" style="margin-top: 0px;" class="chat-placeholder bg-white round-borders" max-height="100" placeholder="Répondre"></q-input>
+										</div>
+										<q-btn round color="primary" class="btn-send" icon="send"></q-btn>
+									</div>
+								</q-card-actions>
+							</q-card>
+							<q-card v-if="format.cftCd == 'FAQ'" class="col-grow">
+								<q-card-section class="chat-header row items-center non-selectable">
+									<div class="title col-grow q-ml-sm">
+										{{vueData.bot.name}}
+									</div>
+									<q-btn round v-if="vueData.chatbotCustomConfig.reinitializationButton"
+										   flat color="white" text-color="white" size="sm" icon="refresh" class="chat-action-buttons"></q-btn>
+									<q-btn round flat color="white" text-color="white" size="sm" icon="close" class="chat-action-buttons"></q-btn>
+								</q-card-section>
+								<q-card-section>
+									<q-chat-message v-if="vueData.chatbotCustomConfig.cftCd === 'FAQ' && vueData.chatbotCustomConfig.displayAvatar"
+													class="interactive-help dynamic-faq" :text="['Lorem ipsum']" th:avatar="@{/bot/{id}/avatar(id=${model.bot.botId})}"></q-chat-message>
+									<q-chat-message v-else class="interactive-help dynamic-faq" :text="['Lorem ipsum']"></q-chat-message>
+									<div class="q-mt-lg row docs-btn">
+										<q-btn class="faq-button full-width q-mb-sm" label="Bouton 1" color="white" text-color="black"></q-btn>
+										<q-btn class="faq-button full-width" label="Bouton 2" color="white" text-color="black"></q-btn>
+									</div>
+								</q-card-section>
+							</q-card>
+							<vu:include-data object="chatbotFormats" field="'*'" />
+							<vu:include-data object="chatbotCustomConfig" field="cftCd" modifiable="true" />
+							<div class="row justify-center q-mt-md">
+								<label>{{format.labelFr}}</label>
+							</div>
+							<div class="row justify-center">
+								<q-radio th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.cftCd" @input="changeBotFormat()" :val="format.cftCd" />
+								<input type="hidden" name="vContext[chatbotCustomConfig][cftCd]" :value="vueData.chatbotCustomConfig.cftCd"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</vu:block>
 
 			<vu:block id="botWindowCustomization" th:title="#{bot.window.customization}">
 
@@ -130,10 +281,6 @@
 				<vu:label-edit object="chatbotCustomConfig" field="reinitializationButton">
 					<q-toggle v-model="vueData.chatbotCustomConfig.reinitializationButton" th::disable="${model.modeReadOnly}"></q-toggle>
 					<input type="hidden" name="vContext[chatbotCustomConfig][reinitializationButton]" :value="vueData.chatbotCustomConfig.reinitializationButton"/>
-				</vu:label-edit>
-				<vu:label-edit object="chatbotCustomConfig" field="disableNlu">
-					<q-toggle v-model="vueData.chatbotCustomConfig.disableNlu" th::disable="${model.modeReadOnly}"></q-toggle>
-					<input type="hidden" name="vContext[chatbotCustomConfig][disableNlu]" :value="vueData.chatbotCustomConfig.disableNlu"/>
 				</vu:label-edit>
 
 				<div style="width:300px; margin-bottom: 20px; margin-top: 20px" class="q-px-md">

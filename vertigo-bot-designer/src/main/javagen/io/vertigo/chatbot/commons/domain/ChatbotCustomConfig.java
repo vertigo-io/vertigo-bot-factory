@@ -23,7 +23,6 @@ public final class ChatbotCustomConfig implements Entity {
 	private String fontColor;
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
-	private Boolean disableNlu;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -54,6 +53,21 @@ public final class ChatbotCustomConfig implements Entity {
 			foreignLabel = "ChatbotCustomConfig",
 			foreignMultiplicity = "0..*")
 	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.FontFamily, io.vertigo.chatbot.commons.domain.FontFamilyEnum> fofCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.FontFamily.class, "FontFamily", io.vertigo.chatbot.commons.domain.FontFamilyEnum.class);
+
+	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "AChabotCustomConfigChatbotFormat",
+			fkFieldName = "cftCd",
+			primaryDtDefinitionName = "DtChatbotFormat",
+			primaryIsNavigable = true,
+			primaryRole = "ChatbotFormat",
+			primaryLabel = "chatbotFormat",
+			primaryMultiplicity = "0..1",
+			foreignDtDefinitionName = "DtChatbotCustomConfig",
+			foreignIsNavigable = false,
+			foreignRole = "ChatbotCustomConfig",
+			foreignLabel = "ChatbotCustomConfig",
+			foreignMultiplicity = "0..*")
+	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.ChatbotFormat, io.vertigo.chatbot.commons.domain.ChatbotFormatEnum> cftCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.ChatbotFormat.class, "ChatbotFormat", io.vertigo.chatbot.commons.domain.ChatbotFormatEnum.class);
 
 	/** {@inheritDoc} */
 	@Override
@@ -195,25 +209,6 @@ public final class ChatbotCustomConfig implements Entity {
 	}
 	
 	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Disable NlU'.
-	 * @return Boolean disableNlu
-	 */
-	@Field(smartType = "STyYesNo", label = "Disable NlU")
-	public Boolean getDisableNlu() {
-		return disableNlu;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Disable NlU'.
-	 * @param disableNlu Boolean
-	 */
-	public void setDisableNlu(final Boolean disableNlu) {
-		this.disableNlu = disableNlu;
-	}
-	
-	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
@@ -249,6 +244,33 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setFofCd(final String fofCd) {
 		fofCdAccessor.setId(fofCd);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'chatbotFormat'.
+	 * @return String cftCd
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "chatbotFormat", fkDefinition = "DtChatbotFormat" )
+	public String getCftCd() {
+		return (String) cftCdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'chatbotFormat'.
+	 * @param cftCd String
+	 */
+	public void setCftCd(final String cftCd) {
+		cftCdAccessor.setId(cftCd);
+	}
+
+ 	/**
+	 * Association : chatbotFormat.
+	 * @return l'accesseur vers la propriété 'chatbotFormat'
+	 */
+	public EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.ChatbotFormat, io.vertigo.chatbot.commons.domain.ChatbotFormatEnum> chatbotFormat() {
+		return cftCdAccessor;
 	}
 
  	/**

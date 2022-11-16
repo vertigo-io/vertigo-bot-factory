@@ -8,7 +8,6 @@ create DtDefinition DtChatbotCustomConfig {
 	field fontColor                 {domain: DoLabel        label: "Bot font color"                     cardinality:"?"}
 	field displayAvatar             {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
 	field totalMaxAttachmentSize    {domain: DoNumber       label: "Total maximum attachment size"      cardinality:"?"}
-	field disableNlu                {domain: DoYesNo        label: "Disable NlU"                        cardinality:"?"}
 }
 
 create Association AChatbotCustomConfigChatbot {
@@ -30,6 +29,18 @@ create Association AChabotCustomConfigFontFamily{
 	dtDefinitionB : DtFontFamily
 
 	labelB : "fontFamily"
+
+}
+
+create Association AChabotCustomConfigChatbotFormat{
+
+	fkFieldName : "cftCd"
+
+ 	dtDefinitionA : DtChatbotCustomConfig
+	type : "*>?"
+	dtDefinitionB : DtChatbotFormat
+
+	labelB : "chatbotFormat"
 
 }
 
@@ -91,5 +102,36 @@ create DtDefinition DtFontFamily {
         }
      }`
     sortField : "fofCd"
+ 	displayField : "label"
+}
+
+create DtDefinition DtChatbotFormat {
+	stereotype : "StaticMasterData"
+	id    cftCd 		{domain: DoCode 	label: "ID"                                 }
+	field label 		{domain: DoLabel 	label: "Title" 		    cardinality : "1"   }
+	field labelFr 		{domain: DoLabel 	label: "TitleFr" 		cardinality : "1"	}
+	field sortOrder 	{domain: DoNumber 	label: "Order" 		cardinality : "1"}
+	values : `{
+        "CLASSIC" : {
+            "cftCd" : "CLASSIC",
+            "label" : "Classic Chatbot",
+            "labelFr" : "Chatbot classique",
+            "sortOrder": 1
+        },
+        "INTERACTIVE_HELP" : {
+            "cftCd" : "INTERACTIVE_HELP",
+            "label" : "Interactive Help",
+            "labelFr" : "Aide intéractive",
+            "sortOrder": 2
+        },
+        "FAQ" : {
+            "cftCd" : "FAQ",
+            "label" : "Dynamic FAQ",
+            "labelFr" : "FAQ dynamique",
+            "sortOrder": 3
+        }
+
+    }`
+    sortField : "sortOrder"
  	displayField : "label"
 }

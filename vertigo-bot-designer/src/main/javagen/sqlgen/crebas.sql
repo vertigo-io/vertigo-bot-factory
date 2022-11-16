@@ -17,6 +17,7 @@ drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_CUSTOM_CONFIG cascade;
 drop sequence IF EXISTS SEQ_CHATBOT_CUSTOM_CONFIG;
+drop table IF EXISTS CHATBOT_FORMAT cascade;
 drop table IF EXISTS CHATBOT_NODE cascade;
 drop sequence IF EXISTS SEQ_CHATBOT_NODE;
 drop table IF EXISTS CHATBOT_PROFILES cascade;
@@ -106,6 +107,7 @@ create sequence SEQ_CHATBOT
 
 create sequence SEQ_CHATBOT_CUSTOM_CONFIG
 	start with 1000 cache 20; 
+
 
 create sequence SEQ_CHATBOT_NODE
 	start with 1000 cache 20; 
@@ -344,9 +346,9 @@ create table CHATBOT_CUSTOM_CONFIG
     FONT_COLOR  	 VARCHAR(100)	,
     DISPLAY_AVATAR	 bool        	,
     TOTAL_MAX_ATTACHMENT_SIZE	 NUMERIC     	,
-    DISABLE_NLU 	 bool        	,
     BOT_ID      	 NUMERIC     	not null,
     FOF_CD      	 VARCHAR(100)	,
+    CFT_CD      	 VARCHAR(100)	,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
 );
 
@@ -371,14 +373,38 @@ comment on column CHATBOT_CUSTOM_CONFIG.DISPLAY_AVATAR is
 comment on column CHATBOT_CUSTOM_CONFIG.TOTAL_MAX_ATTACHMENT_SIZE is
 'Total maximum attachment size';
 
-comment on column CHATBOT_CUSTOM_CONFIG.DISABLE_NLU is
-'Disable NlU';
-
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';
 
 comment on column CHATBOT_CUSTOM_CONFIG.FOF_CD is
 'fontFamily';
+
+comment on column CHATBOT_CUSTOM_CONFIG.CFT_CD is
+'chatbotFormat';
+
+-- ============================================================
+--   Table : CHATBOT_FORMAT                                        
+-- ============================================================
+create table CHATBOT_FORMAT
+(
+    CFT_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    SORT_ORDER  	 NUMERIC     	not null,
+    constraint PK_CHATBOT_FORMAT primary key (CFT_CD)
+);
+
+comment on column CHATBOT_FORMAT.CFT_CD is
+'ID';
+
+comment on column CHATBOT_FORMAT.LABEL is
+'Title';
+
+comment on column CHATBOT_FORMAT.LABEL_FR is
+'TitleFr';
+
+comment on column CHATBOT_FORMAT.SORT_ORDER is
+'Order';
 
 -- ============================================================
 --   Table : CHATBOT_NODE                                        
@@ -1484,6 +1510,12 @@ alter table ATTACHMENT
 	references CHATBOT (BOT_ID);
 
 create index A_ATTACHMENT_CHATBOT_CHATBOT_FK on ATTACHMENT (BOT_ID asc);
+
+alter table CHATBOT_CUSTOM_CONFIG
+	add constraint FK_A_CHABOT_CUSTOM_CONFIG_CHATBOT_FORMAT_CHATBOT_FORMAT foreign key (CFT_CD)
+	references CHATBOT_FORMAT (CFT_CD);
+
+create index A_CHABOT_CUSTOM_CONFIG_CHATBOT_FORMAT_CHATBOT_FORMAT_FK on CHATBOT_CUSTOM_CONFIG (CFT_CD asc);
 
 alter table CHATBOT_CUSTOM_CONFIG
 	add constraint FK_A_CHABOT_CUSTOM_CONFIG_FONT_FAMILY_FONT_FAMILY foreign key (FOF_CD)

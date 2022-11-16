@@ -47,6 +47,22 @@ main, footer {
     border-radius: 5px;
 }
 
+.interactive-help .q-message-text {
+    border-radius: 0 !important;
+}
+
+.interactive-help .q-message-text::before {
+    content: none;
+}
+
+.dynamic-faq .q-message-container div {
+    flex-grow: 2;
+}
+
+.q-carousel {
+    color: var(--font-color) !important;
+}
+
 .q-message-text-content {
     font-family: var(--font-family);
     color: var(--font-color) !important;
@@ -122,6 +138,9 @@ img {
     border-radius: 10px;
     position: relative;
     padding: 15px;
+}
+.q-message-received .q-message-text {
+    color: var(--background-color) !important;
 }
 
 .q-message-text:last-child:before {
