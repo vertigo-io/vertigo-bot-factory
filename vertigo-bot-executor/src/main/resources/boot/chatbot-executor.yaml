@@ -55,6 +55,7 @@ modules:
     featuresConfig:
       - nlu.rasa:
           rasaUrl: ${RASA_URL}
+          rasaRequestTimeout: ${RASA_REQUEST_TIMEOUT}
   
   io.vertigo.chatbot.commons.ChatbotCommonsFeatures: # utilisation de notre module commons
   io.vertigo.chatbot.analytics.AnalyticsFeatures:
