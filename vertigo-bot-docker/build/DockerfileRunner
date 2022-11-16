@@ -26,6 +26,8 @@ ENV JAVA_OPTS -Xmx256m
 ENV CATALINA_PID /opt/tomcat/tomcat.pid
 ENV FRAME_ANCESTORS *
 ENV DESIGNER_URL http://host.docker.internal:8080/vertigo-bot-designer
+ENV RASA_URL http://rasa:5005
+ENV RASA_REQUEST_TIMEOUT 120
 ENV API_KEY MyNodeApiKey!
 ENV ANALYTICA_HOST analytica
 ENV ANALYTICA_PORT 4562

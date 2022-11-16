@@ -53,4 +53,9 @@ public class MockNluEnginePlugin implements NluEnginePlugin {
 		return true;
 	}
 
+	@Override
+	public boolean isAlive() {
+		return true;
+	}
+
 }
