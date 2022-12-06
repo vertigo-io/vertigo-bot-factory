@@ -24,6 +24,9 @@ import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.exceptions.CsvValidationException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
@@ -92,6 +95,8 @@ public class FileServices implements Component, Activeable {
 
 	private String[] extensionsWhiteList;
 
+	private static final Logger LOGGER = LogManager.getLogger(FileServices.class);
+
 	@Override
 	public void start() {
 		extensionsWhiteList = paramManager.getOptionalParam("EXTENSIONS_WHITELIST")
@@ -109,17 +114,21 @@ public class FileServices implements Component, Activeable {
 	}
 
 	public void checkFile (final VFile file) {
-		final String[] extensionsTab = file.getFileName().split(Pattern.quote("."));
-		final Stream<String> extensionsWhiteListStream = Arrays.stream(extensionsWhiteList);
-		if (extensionsTab.length != 2 || extensionsWhiteListStream.noneMatch(extensionsTab[1].toLowerCase()::contains)) {
-			throw new VUserException(AttachmentMultilingualResources.EXTENSION_NOT_ALLOWED, extensionsTab[1],
-					String.join(",", extensionsWhiteList));
-		}
-		if (file.getLength() > MAX_UPLOAD_SIZE) {
-			throw new VUserException(AttachmentMultilingualResources.FILE_TOO_LARGE, MAX_UPLOAD_SIZE);
-		}
 		try {
+			LOGGER.warn("checking file " + file.getFileName());
+			final String[] extensionsTab = file.getFileName().split(Pattern.quote("."));
+			final Stream<String> extensionsWhiteListStream = Arrays.stream(extensionsWhiteList);
+			if (extensionsTab.length != 2 || extensionsWhiteListStream.noneMatch(extensionsTab[1].toLowerCase()::contains)) {
+				throw new VUserException(AttachmentMultilingualResources.EXTENSION_NOT_ALLOWED, extensionsTab[1],
+						String.join(",", extensionsWhiteList));
+			}
+			LOGGER.warn("Extension OK");
+			if (file.getLength() > MAX_UPLOAD_SIZE) {
+				throw new VUserException(AttachmentMultilingualResources.FILE_TOO_LARGE, MAX_UPLOAD_SIZE);
+			}
+			LOGGER.warn("File size OK");
 			final ScanResult result = antivirusServices.checkForViruses(file.createInputStream());
+			LOGGER.warn("Antivirus OK");
 			if (result instanceof ScanResult.VirusFound) {
 				final Map<String, Collection<String>> virusesMap = ((ScanResult.VirusFound) result).getFoundViruses();
 				final String viruses = virusesMap.values().stream()
@@ -128,6 +137,8 @@ public class FileServices implements Component, Activeable {
 			}
 		} catch (final IOException ioException) {
 			throw new VUserException(AttachmentMultilingualResources.COULD_NOT_OPEN_FILE, file.getFileName(), ioException);
+		} catch (final Exception e) {
+			LOGGER.error("Vuser exception " + e.getMessage());
 		}
 	}
 
