@@ -28,7 +28,7 @@ public class SavedTrainingServices implements Component {
 	private SavedTrainingDAO savedTrainingDAO;
 
 	@Secured("BotUser")
-	public SavedTraining save(@SecuredOperation("botAdm") final SavedTraining savedTraining) {
+	public SavedTraining save(@SecuredOperation("botAdm") final Chatbot bot,  final SavedTraining savedTraining) {
 		savedTrainingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.botId, savedTraining.getBotId())
 				.and(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.traId, savedTraining.getTraId())))
 				.ifPresent(it -> {

@@ -146,7 +146,7 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 		newSavedTraining.setCreationTime(Instant.now());
 		newSavedTraining.setTraId(deployedTraining.getTraId());
 		newSavedTraining.setBotExport(jsonEngine.toJson(trainingServices.exportBot(bot, new StringBuilder())));
-		savedTrainingServices.save(newSavedTraining);
+		savedTrainingServices.save(bot, newSavedTraining);
 		viewContext.publishDtList(savedTrainingListKey, savedTrainingServices.getAllSavedTrainingByBotId(bot.getBotId()));
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
