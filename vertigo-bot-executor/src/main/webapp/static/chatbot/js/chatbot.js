@@ -39,6 +39,12 @@ window.addEventListener(
         if (event.data === 'start') {
             chatbot.initBot();
         }
+        if (event.data.sendTopic) {
+            const button = chatbot.inputConfig.buttons.find((button) => button.payload === event.data.sendTopic.topic)
+            if (chatbot.convId !== undefined && button !== undefined) {
+                chatbot.postAnswerBtn(button)
+            }
+        }
         if (event.data === 'clearSessionStorage') {
             sessionStorage.clear();
         } else if (event.data === 'conversationExist') {
