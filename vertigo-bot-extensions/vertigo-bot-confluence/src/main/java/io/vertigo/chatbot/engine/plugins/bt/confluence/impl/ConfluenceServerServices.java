@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.PasswordEncryptionServices;
 import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper;
@@ -41,15 +42,18 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 	@Inject
 	private PasswordEncryptionServices passwordEncryptionServices;
 
-	public void refreshConfig(final ExecutorGlobalConfig config) throws VSystemException {
+	public void refreshConfig(final ExecutorGlobalConfig config, StringBuilder logs) throws VSystemException {
+		LogsUtils.addLogs(logs, "Refreshing Confluence settings ... ");
 		final ConfluenceSettingExport confluenceSettingExport = config.getBot().getConfluenceSetting();
 		if (confluenceSettingExport == null) {
+			LogsUtils.logKO(logs);
 			throw new VSystemException("Confluence setting must be set for confluence plugin to work...");
 		} else {
 			baseUrl = confluenceSettingExport.getUrl();
 			user = confluenceSettingExport.getLogin();
 			password = passwordEncryptionServices.decryptPassword(confluenceSettingExport.getPassword());
 			limit = confluenceSettingExport.getNumberOfResults().toString();
+			LogsUtils.logOK(logs);
 		}
 	}
 

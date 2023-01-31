@@ -20,7 +20,6 @@ public final class ConfluencePlugin implements ExecutorPlugin {
 
 	private ExecutorConfigManager executorConfigManager;
 
-	private ParamManager paramManager;
 
 	@Inject
 	public ConfluencePlugin(final LocaleManager localeManager, final ParamManager paramManager) {
@@ -34,13 +33,12 @@ public final class ConfluencePlugin implements ExecutorPlugin {
 	}
 
 	@Override
-	public void refreshConfig(final ExecutorGlobalConfig config) throws VSystemException {
-		confluenceServerServices.refreshConfig(config);
+	public void refreshConfig(final ExecutorGlobalConfig config, final StringBuilder logs) throws VSystemException {
+		confluenceServerServices.refreshConfig(config, logs);
 	}
 
 	@Override
 	public void start() {
-		paramManager = Node.getNode().getComponentSpace().resolve(ParamManager.class);
 		executorConfigManager = Node.getNode().getComponentSpace().resolve(ExecutorConfigManager.class);
 		executorConfigManager.addPlugin(this);
 	}

@@ -107,7 +107,7 @@ public class ExecutorManager implements Manager, Activeable {
 		globalConfig.setBot(bot);
 		globalConfig.setExecutorConfiguration(executorConfig);
 
-		executorConfigManager.saveConfig(globalConfig);
+		executorConfigManager.saveConfig(globalConfig, logs);
 		executorConfigManager.updateWelcomeTour(bot.getWelcomeTours());
 
 		doLoadModel(bot, logs);

@@ -210,6 +210,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 			LogsUtils.logKO(logs);
 			LogsUtils.addLogs(logs, e.getMessage());
 			LOGGER.error("error", e);
+			training.setWarnings(e.getMessage());
 			training.setEndTime(Instant.now());
 			training.setStrCd(TrainingStatusEnum.KO.name());
 		} finally {
@@ -281,7 +282,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		} else {
 			training.setStrCd(TrainingStatusEnum.KO.name());
 			LogsUtils.logKO(logs);
-			errorTreatment(response, logs);
+			errorTreatment(response, logs, training);
 
 		}
 		training.setLog(logs.toString());
@@ -289,21 +290,23 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		return "response handled";
 	}
 
-	private <T> void errorTreatment(final HttpResponse<T> response, final StringBuilder logs) {
+	private <T> void errorTreatment(final HttpResponse<T> response, final StringBuilder logs, Training training) {
 		if (!HttpRequestUtils.isResponseKo(response, 404, 405)) {
-			errorJsonTreatment(response, logs);
+			errorJsonTreatment(response, logs, training);
 		} else {
 			LogsUtils.addLogs(logs, response.body());
 		}
 	}
 
-	private <T> void errorJsonTreatment(final HttpResponse<T> response, final StringBuilder logs) {
+	private <T> void errorJsonTreatment(final HttpResponse<T> response, final StringBuilder logs, Training training) {
 		final ObjectMapper mapper = new ObjectMapper();
 		JsonNode root = null;
 		try {
 			root = mapper.readTree(response.body().toString());
 			final String responseString = root.get("globalErrors").get(0).toString();
-			LogsUtils.addLogs(logs, responseString.substring(1, responseString.length() - 1));
+			final String warningString =  responseString.substring(1, responseString.length() - 1);
+			training.setWarnings(warningString);
+			LogsUtils.addLogs(logs, warningString);
 
 		} catch (final JsonProcessingException e) {
 			LOGGER.info("error on deserialization");

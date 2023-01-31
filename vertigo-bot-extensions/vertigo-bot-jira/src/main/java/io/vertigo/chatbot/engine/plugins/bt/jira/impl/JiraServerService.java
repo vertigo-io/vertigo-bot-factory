@@ -28,6 +28,7 @@ import java.util.stream.StreamSupport;
 import javax.inject.Inject;
 
 import io.vertigo.ai.bb.BlackBoard;
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.PasswordEncryptionServices;
 import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
@@ -52,10 +53,12 @@ public class JiraServerService implements Component, IJiraService {
 	private PasswordEncryptionServices passwordEncryptionServices;
 
 
-	public void refreshConfig(final ExecutorGlobalConfig config) {
+	public void refreshConfig(final ExecutorGlobalConfig config, StringBuilder logs) {
+		LogsUtils.addLogs(logs, "Refreshing Jira settings ... ");
 		final JiraSettingExport jiraSettingExport = config.getBot().getJiraSetting();
 		final DtList<JiraFieldSettingExport> jiraFieldSettingExport = config.getBot().getJiraFieldSetting();
 		if (jiraSettingExport == null || jiraFieldSettingExport == null) {
+			LogsUtils.logKO(logs);
 			throw new VSystemException("Jira setting and Jira fields settings must be set for jira plugin to work...");
 		} else {
 			baseJira = jiraSettingExport.getUrl();
@@ -64,6 +67,7 @@ public class JiraServerService implements Component, IJiraService {
 			project = jiraSettingExport.getProject();
 			jiraRestClient = createJiraRestClient();
 			jiraFieldSettingExports = jiraFieldSettingExport;
+			LogsUtils.logOK(logs);
 		}
 	}
 

@@ -11,14 +11,11 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.Node;
-import io.vertigo.core.param.ParamManager;
 
 public final class JiraPlugin implements ExecutorPlugin {
 
 
 	private ExecutorConfigManager executorConfigManager;
-
-	private ParamManager paramManager;
 
 	@Inject
 	private JiraServerService jiraServerService;
@@ -31,13 +28,12 @@ public final class JiraPlugin implements ExecutorPlugin {
 	}
 
 	@Override
-	public void refreshConfig(final ExecutorGlobalConfig config) throws VSystemException {
-		jiraServerService.refreshConfig(config);
+	public void refreshConfig(final ExecutorGlobalConfig config, final StringBuilder logs) throws VSystemException {
+		jiraServerService.refreshConfig(config, logs);
 	}
 
 	@Override
 	public void start() {
-		paramManager = Node.getNode().getComponentSpace().resolve(ParamManager.class);
 		executorConfigManager = Node.getNode().getComponentSpace().resolve(ExecutorConfigManager.class);
 		executorConfigManager.addPlugin(this);
 	}
