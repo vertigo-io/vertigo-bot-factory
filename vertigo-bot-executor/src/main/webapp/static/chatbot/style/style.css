@@ -47,7 +47,7 @@ main, footer {
     border-radius: 5px;
 }
 
-.q-message-text-content {
+.q-message-received .q-message-text-content {
     font-family: var(--font-family);
     color: var(--font-color) !important;
 }
@@ -64,6 +64,24 @@ main, footer {
 
 .q-message-received .q-message-text, .q-message-sent .q-message-text {
     border-radius: 10px 10px 10px 10px;
+}
+
+.q-message-sent .q-message-text-content {
+    font-family: var(--font-family);
+    color: inherit !important;
+}
+
+.q-message-sent .q-message-text-content > div {
+    filter: invert(70%) !important;
+}
+
+.custom-header {
+    font-family: var(--font-family) !important;
+    background: var(--background-color) !important;
+}
+
+.custom-header .title, .custom-header .q-btn {
+    filter: invert(70%) !important;
 }
 
 .q-message-avatar {
@@ -91,6 +109,10 @@ div.q-message-container > div {
 
 .q-btn-round {
     border-radius: 15px 0px 0px 0px;
+}
+
+.q-btn-lowercase {
+    text-transform: none !important;
 }
 
 img {

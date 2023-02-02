@@ -24,7 +24,7 @@
   <body style="color:black">
     <div id="q-app">
       <q-layout view="hHh lpr fFf">
-        <q-layout-header :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily + '; --font-color: ' + customConfig.fontColor" class="bg-primary text-white row items-center non-selectable">
+        <q-layout-header :style="'--background-color: ' + customConfig.backgroundColor + '; --font-family: ' + customConfig.fontFamily + ';'" class="custom-header row items-center non-selectable">
           <div class="title col-grow q-ml-md">
             {{ botName }}
           </div>
@@ -150,7 +150,7 @@
                       <div class="row docs-btn" v-if="inputConfig.buttons.length > 0 ">
                         <q-btn
                                 v-for="(btn, index) in inputConfig.buttons"
-                                class="full-width"
+                                class="full-width q-btn-lowercase"
                                 :key="'repChatBtn-'+index"
                                 @click="postAnswerBtn(btn)"
                                 :label="btn.label"

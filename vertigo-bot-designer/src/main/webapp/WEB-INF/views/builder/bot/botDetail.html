@@ -38,7 +38,7 @@
 				 if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
 					 VertigoUi.vueData.chatbotCustomConfig.backgroundColor = '#cdcdcd';
 				 }
-				 Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
+				 Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
 					 element.style.setProperty('--chat-message-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
 				 });
 			}
@@ -56,10 +56,13 @@
 				 if (VertigoUi.vueData.chatbotCustomConfig.fofCd == null) {
 					 VertigoUi.vueData.chatbotCustomConfig.fofCd = 'ARIAL';
 				 }
+				const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
+					return fontFamily.fofCd === VertigoUi.vueData.chatbotCustomConfig.fofCd
+				});
 				Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-					const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
-						return fontFamily.fofCd === VertigoUi.vueData.chatbotCustomConfig.fofCd
-					});
+					element.style.setProperty('--chat-message-font-family', fontFamily.label);
+				});
+				Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
 					element.style.setProperty('--chat-message-font-family', fontFamily.label);
 				});
 			}
@@ -72,11 +75,21 @@
 		</script>
 		<style>
 			.q-message-text--received {
+				color: #ccccc6 !important;
+				font-family: var(--chat-message-font-family) !important;
+			}
+			.q-message-text--sent {
 				color: var(--chat-message-bg-color) !important;
 				font-family: var(--chat-message-font-family) !important;
 			}
 			.q-message-text-content--received {
 				color: var(--chat-message-font-color) !important;
+			}
+			.q-message-sent .q-message-text-content {
+				color: inherit !important;
+			}
+			.q-message-sent .q-message-text-content > div {
+				filter: invert(70%) !important;
 			}
 		</style>
 	</head>
@@ -138,6 +151,9 @@
 
 				<div style="width:300px; margin-bottom: 20px; margin-top: 20px" class="q-px-md">
 					<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
+
+					</q-chat-message>
+					<q-chat-message :sent="true" :text="getChatPreview()" text-color="black" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
 
 					</q-chat-message>
 				</div>
