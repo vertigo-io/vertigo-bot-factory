@@ -341,7 +341,9 @@ create table CHATBOT_CUSTOM_CONFIG
     BOT_EMAIL_ADDRESS	 VARCHAR(100)	,
     REINITIALIZATION_BUTTON	 bool        	,
     BACKGROUND_COLOR	 VARCHAR(100)	,
-    FONT_COLOR  	 VARCHAR(100)	,
+    BOT_MESSAGE_BACKGROUND_COLOR	 VARCHAR(100)	,
+    BOT_MESSAGE_FONT_COLOR	 VARCHAR(100)	,
+    USER_MESSAGE_FONT_COLOR	 VARCHAR(100)	,
     DISPLAY_AVATAR	 bool        	,
     TOTAL_MAX_ATTACHMENT_SIZE	 NUMERIC     	,
     DISABLE_NLU 	 bool        	,
@@ -362,8 +364,14 @@ comment on column CHATBOT_CUSTOM_CONFIG.REINITIALIZATION_BUTTON is
 comment on column CHATBOT_CUSTOM_CONFIG.BACKGROUND_COLOR is
 'Bot background color';
 
-comment on column CHATBOT_CUSTOM_CONFIG.FONT_COLOR is
-'Bot font color';
+comment on column CHATBOT_CUSTOM_CONFIG.BOT_MESSAGE_BACKGROUND_COLOR is
+'Bot message background color';
+
+comment on column CHATBOT_CUSTOM_CONFIG.BOT_MESSAGE_FONT_COLOR is
+'Bot message font color';
+
+comment on column CHATBOT_CUSTOM_CONFIG.USER_MESSAGE_FONT_COLOR is
+'User message font color';
 
 comment on column CHATBOT_CUSTOM_CONFIG.DISPLAY_AVATAR is
 'Display avatar';

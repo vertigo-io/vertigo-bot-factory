@@ -20,7 +20,9 @@ public final class ChatbotCustomConfig implements Entity {
 	private String botEmailAddress;
 	private Boolean reinitializationButton;
 	private String backgroundColor;
-	private String fontColor;
+	private String botMessageBackgroundColor;
+	private String botMessageFontColor;
+	private String userMessageFontColor;
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
 	private Boolean disableNlu;
@@ -139,21 +141,59 @@ public final class ChatbotCustomConfig implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Bot font color'.
-	 * @return String fontColor
+	 * Récupère la valeur de la propriété 'Bot message background color'.
+	 * @return String botMessageBackgroundColor
 	 */
-	@Field(smartType = "STyLabel", label = "Bot font color")
-	public String getFontColor() {
-		return fontColor;
+	@Field(smartType = "STyLabel", label = "Bot message background color")
+	public String getBotMessageBackgroundColor() {
+		return botMessageBackgroundColor;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Bot font color'.
-	 * @param fontColor String
+	 * Définit la valeur de la propriété 'Bot message background color'.
+	 * @param botMessageBackgroundColor String
 	 */
-	public void setFontColor(final String fontColor) {
-		this.fontColor = fontColor;
+	public void setBotMessageBackgroundColor(final String botMessageBackgroundColor) {
+		this.botMessageBackgroundColor = botMessageBackgroundColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot message font color'.
+	 * @return String botMessageFontColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot message font color")
+	public String getBotMessageFontColor() {
+		return botMessageFontColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot message font color'.
+	 * @param botMessageFontColor String
+	 */
+	public void setBotMessageFontColor(final String botMessageFontColor) {
+		this.botMessageFontColor = botMessageFontColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'User message font color'.
+	 * @return String userMessageFontColor
+	 */
+	@Field(smartType = "STyLabel", label = "User message font color")
+	public String getUserMessageFontColor() {
+		return userMessageFontColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'User message font color'.
+	 * @param userMessageFontColor String
+	 */
+	public void setUserMessageFontColor(final String userMessageFontColor) {
+		this.userMessageFontColor = userMessageFontColor;
 	}
 	
 	/**

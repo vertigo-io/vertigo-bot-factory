@@ -362,6 +362,8 @@
             changeChatMessageBgColor();
             changeChatMessageFontFamily();
             changeChatMessageFontColor();
+            changeUserMessageFontColor();
+            changeBotMessageBgColor();
         }
 
         function closeDialog() {
@@ -378,15 +380,30 @@
             });
         }
 
+        function changeBotMessageBgColor() {
+            if (VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor == null) {
+                VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor = '#cdcdcd';
+            }
+            Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
+                element.style.setProperty('--chat-bot-message-bg-color', VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor);
+            });
+        }
+
         function changeChatMessageFontColor() {
-            if (VertigoUi.vueData.chatbotCustomConfig.fontColor == null) {
-                VertigoUi.vueData.chatbotCustomConfig.fontColor = '#000000';
+            if (VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor == null) {
+                VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor = '#000000';
+            }
+            Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
+                element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor);
+            });
+        }
+
+        function changeUserMessageFontColor() {
+            if (VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor == null) {
+                VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor = '#000000';
             }
             Array.from(document.getElementsByClassName('q-message-text-content--sent')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
-            });
-            Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+                element.style.setProperty('--chat-user-message-font-color', VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor);
             });
         }
 
@@ -426,9 +443,12 @@
         .q-message-text-content--received {
             color: var(--chat-message-font-color) !important;
         }
+        .q-message-text-content--sent {
+            color: var(--chat-user-message-font-color) !important;
+        }
         .q-message-text--received {
             font-family: var(--chat-message-font-family) !important;
-            color: #cdcdcd !important;
+            color: var(--chat-bot-message-bg-color) !important;
         }
     </style>
 </head>
@@ -466,7 +486,9 @@
     <vu:include-data-primitive key="locale" />
 
     <vu:include-data object="chatbotCustomConfig" field="backgroundColor" />
-    <vu:include-data object="chatbotCustomConfig" field="fontColor" />
+    <vu:include-data object="chatbotCustomConfig" field="botMessageBackgroundColor" />
+    <vu:include-data object="chatbotCustomConfig" field="botMessageFontColor" />
+    <vu:include-data object="chatbotCustomConfig" field="userMessageFontColor" />
     <vu:include-data object="chatbotCustomConfig" field="fofCd" />
     <vu:include-data object="fontFamilies" field="'*'" />
 

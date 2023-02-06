@@ -45,7 +45,9 @@ public class ChatbotCustomConfigServices implements Component {
 	private static boolean checkIfChatbotStyleChanged(final ChatbotCustomConfig oldChatbotCustomConfig, final ChatbotCustomConfig chatbotCustomConfig) {
 		return (oldChatbotCustomConfig.getDisplayAvatar() != null && !oldChatbotCustomConfig.getDisplayAvatar().equals(chatbotCustomConfig.getDisplayAvatar())) ||
 		(oldChatbotCustomConfig.getBackgroundColor() != null && !oldChatbotCustomConfig.getBackgroundColor().equals(chatbotCustomConfig.getBackgroundColor())) ||
-		(oldChatbotCustomConfig.getFontColor() != null && !oldChatbotCustomConfig.getFontColor().equals(chatbotCustomConfig.getFontColor())) ||
+		(oldChatbotCustomConfig.getBotMessageBackgroundColor() != null && !oldChatbotCustomConfig.getBotMessageBackgroundColor().equals(chatbotCustomConfig.getBotMessageBackgroundColor())) ||
+		(oldChatbotCustomConfig.getBotMessageFontColor() != null && !oldChatbotCustomConfig.getBotMessageFontColor().equals(chatbotCustomConfig.getBotMessageFontColor())) ||
+		(oldChatbotCustomConfig.getUserMessageFontColor() != null && !oldChatbotCustomConfig.getUserMessageFontColor().equals(chatbotCustomConfig.getUserMessageFontColor())) ||
 		(oldChatbotCustomConfig.getFofCd()!= null && !oldChatbotCustomConfig.getFofCd().equals(chatbotCustomConfig.getFofCd()));
 	}
 
@@ -75,7 +77,9 @@ public class ChatbotCustomConfigServices implements Component {
 		chatbotCustomConfig.setDisplayAvatar(true);
 		chatbotCustomConfig.setDisableNlu(false);
 		chatbotCustomConfig.setBackgroundColor("#cdcdcd");
-		chatbotCustomConfig.setFontColor("#000000");
+		chatbotCustomConfig.setBotMessageBackgroundColor("#ccccc6");
+		chatbotCustomConfig.setBotMessageFontColor("#000000");
+		chatbotCustomConfig.setUserMessageFontColor("#000000");
 		chatbotCustomConfig.setFofCd(FontFamilyEnum.ARIAL.name());
 		chatbotCustomConfig.setTotalMaxAttachmentSize(-1L);
 		return chatbotCustomConfig;

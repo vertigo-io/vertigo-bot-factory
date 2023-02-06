@@ -76,4 +76,8 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_10_14.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal" id="Add custom background color and font color to bot custom config">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_23_02_03.sql" />
+    </changeSet>
+
 </databaseChangeLog>
