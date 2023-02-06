@@ -80,4 +80,8 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/alter_23_02_03.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal" id="Drop unused table cha_per_rights">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/drop_23_02_06.sql" />
+    </changeSet>
+
 </databaseChangeLog>
