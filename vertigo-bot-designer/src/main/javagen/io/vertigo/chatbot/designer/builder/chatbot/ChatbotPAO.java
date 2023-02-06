@@ -68,22 +68,6 @@ public final class ChatbotPAO implements StoreServices {
 	}
 
 	/**
-	 * Execute la tache TkRemoveAllChaPerRightByBotId.
-	 * @param botId Long
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkRemoveAllChaPerRightByBotId",
-			request = "delete from cha_per_rights\n" + 
- " 			where bot_id  = #botId#",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void removeAllChaPerRightByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
-		final Task task = createTaskBuilder("TkRemoveAllChaPerRightByBotId")
-				.addValue("botId", botId)
-				.build();
-		getTaskManager().execute(task);
-	}
-
-	/**
 	 * Execute la tache TkRemoveAllProfilByBotId.
 	 * @param botId Long
 	*/

@@ -1,14 +1,5 @@
 package io.vertigo.chatbot.designer.admin.person
 
-create Task TkRemoveAllChaPerRightByPerId {  
-    className : "io.vertigo.basics.task.TaskEngineProc"
-    request : "
-            delete from cha_per_rights
-			where per_id  = #perId#
-             "
-	in perId				{domain : DoId,							cardinality:"1"} 
-}
-
 
 create Task TkCountAllAdminPer {  
     className : "io.vertigo.basics.task.TaskEngineSelect"

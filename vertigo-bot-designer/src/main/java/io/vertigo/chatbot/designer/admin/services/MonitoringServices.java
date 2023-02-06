@@ -112,7 +112,10 @@ public class MonitoringServices implements Component, Activeable {
     }
 
     public void subscribeToBot(final long botId, final boolean enabled ) {
-        final MonitoringAlertingSubscription monitoringAlertingSubscription = monitoringAlertingSubscriptionServices.getCurrentUserSubscriptionOrDefault();
+        MonitoringAlertingSubscription monitoringAlertingSubscription = monitoringAlertingSubscriptionServices.getCurrentUserSubscriptionOrDefault();
+        if (monitoringAlertingSubscription.getMasID() == null) {
+            monitoringAlertingSubscription = monitoringAlertingSubscriptionServices.save(monitoringAlertingSubscription);
+        }
         if (enabled) {
             monitoringPAO.addInNNAlertingSubscriptionChatbot(monitoringAlertingSubscription.getMasID(), botId);
         } else {

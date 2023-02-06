@@ -82,7 +82,7 @@ public final class ResponsesButtonUrlPAO implements StoreServices {
 			request = "delete from response_button_url\n" + 
  " 			using small_talk smt\n" + 
  " 			join topic top on (top.top_id = smt.top_id)\n" + 
- " 			where smt.smt_id = response_button.smt_id\n" + 
+ " 			where smt.smt_id = response_button_url.smt_id\n" + 
  " 			and top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllSMTButtonsUrlByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {

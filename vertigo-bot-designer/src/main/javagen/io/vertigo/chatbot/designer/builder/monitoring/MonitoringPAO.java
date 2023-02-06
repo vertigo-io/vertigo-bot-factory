@@ -58,6 +58,23 @@ public final class MonitoringPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkRemoveAllFromNNAlertingSubscriptionChatbot.
+	 * @param botId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveAllFromNNAlertingSubscriptionChatbot",
+			request = "delete\n" + 
+ " 				from alerting_subscription_chatbot asch\n" + 
+ " 				where asch.bot_id = #botId#;",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeAllFromNNAlertingSubscriptionChatbot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkRemoveAllFromNNAlertingSubscriptionChatbot")
+				.addValue("botId", botId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
 	 * Execute la tache TkRemoveFromNNAlertingSubscriptionChatbot.
 	 * @param masId Long
 	 * @param botId Long

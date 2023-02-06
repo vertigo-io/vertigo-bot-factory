@@ -49,6 +49,17 @@ public class JiraSettingServices implements Component {
 		jiraSettingDAO.delete(id);
 	}
 
+	@Secured("BotUser")
+	public void deleteAllByNodeId(@SecuredOperation("botAdm") final Chatbot bot, final long nodeId) {
+		jiraSettingDAO.findAll(Criterions.isEqualTo(DtDefinitions.JiraSettingFields.nodId, nodeId),
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE)).forEach(jiraSetting -> this.delete(bot, jiraSetting.getJirSetId()));
+	}
+
+	@Secured("BotUser")
+	public void deleteAllByBotId(@SecuredOperation("botAdm") final Chatbot bot) {
+		findAllByBotId(bot).forEach(jiraSetting -> this.delete(bot, jiraSetting.getJirSetId()));
+	}
+
 	public DtList<JiraSetting> findAllByBotId(@SecuredOperation("botContributor") final Chatbot bot) {
 		return jiraSettingDAO.findAll(Criterions.isEqualTo(DtDefinitions.JiraSettingFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE))
 				.stream().peek(jiraSetting -> jiraSetting.setPassword("")).collect(VCollectors.toDtList(JiraSetting.class));

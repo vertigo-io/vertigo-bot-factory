@@ -59,22 +59,6 @@ public final class PersonPAO implements StoreServices {
 				.getResult();
 	}
 
-	/**
-	 * Execute la tache TkRemoveAllChaPerRightByPerId.
-	 * @param perId Long
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkRemoveAllChaPerRightByPerId",
-			request = "delete from cha_per_rights\n" + 
- " 			where per_id  = #perId#",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void removeAllChaPerRightByPerId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "perId", smartType = "STyId") final Long perId) {
-		final Task task = createTaskBuilder("TkRemoveAllChaPerRightByPerId")
-				.addValue("perId", perId)
-				.build();
-		getTaskManager().execute(task);
-	}
-
 	private TaskManager getTaskManager() {
 		return taskManager;
 	}

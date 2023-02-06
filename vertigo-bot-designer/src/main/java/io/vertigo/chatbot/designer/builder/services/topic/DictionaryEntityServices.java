@@ -1,5 +1,14 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources;
@@ -25,6 +34,7 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
@@ -34,12 +44,7 @@ import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 @Transactional
 public class DictionaryEntityServices implements Component, IRecordable<DictionaryEntity> {
@@ -140,6 +145,15 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 		final DictionaryEntity dictionaryEntity = dictionaryEntityDAO.get(dicEntId);
 		dictionaryEntityDAO.delete(dicEntId);
 		record(bot, dictionaryEntity, HistoryActionEnum.DELETED);
+	}
+
+	@Secured("BotUser")
+	public void deleteAllByBot(@SecuredOperation("botAdm") final Chatbot bot) {
+		dictionaryEntityDAO.findAll(Criterions.isEqualTo(DtDefinitions.DictionaryEntityFields.botId, bot.getBotId()),
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE)).forEach(dictionaryEntity ->  {
+					synonymServices.removeSynonym(synonymServices.getAllSynonymByDictionaryEntity(dictionaryEntity));
+					dictionaryEntityDAO.delete(dictionaryEntity.getDicEntId());
+		});
 	}
 
 	/**

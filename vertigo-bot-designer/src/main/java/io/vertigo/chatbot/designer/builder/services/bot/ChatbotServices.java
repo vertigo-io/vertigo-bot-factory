@@ -14,8 +14,11 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.monitoring.MonitoringPAO;
+import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
 import io.vertigo.chatbot.designer.builder.services.HistoryServices;
 import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
+import io.vertigo.chatbot.designer.builder.services.JiraSettingServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.SavedTrainingServices;
@@ -23,15 +26,18 @@ import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.UnknownSentencesServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
+import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.dao.monitoring.AlertingEventDAO;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.utils.DateUtils;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.daemon.DaemonScheduled;
@@ -111,6 +117,21 @@ public class ChatbotServices implements Component {
 	private ContextValueServices contextValueServices;
 
 	@Inject
+	private DictionaryEntityServices dictionaryEntityServices;
+
+	@Inject
+	private ConfluenceSettingServices confluenceSettingServices;
+
+	@Inject
+	private JiraSettingServices jiraSettingServices;
+
+	@Inject
+	private MonitoringPAO monitoringPAO;
+
+	@Inject
+	private AlertingEventDAO alertingEventDAO;
+
+	@Inject
 	private LocaleManager localeManager;
 
 	@Secured("BotUser")
@@ -154,12 +175,17 @@ public class ChatbotServices implements Component {
 	public Boolean deleteChatbot(@SecuredOperation("botAdm") final Chatbot bot) {
 
 		// Delete node
+		deleteMonitoringSubscriptions(bot);
+		confluenceSettingServices.deleteAllByBotId(bot);
+		jiraSettingServices.deleteAllByBotId(bot);
+		jiraFieldSettingServices.deleteAllByBotId(bot);
 		nodeServices.deleteChatbotNodeByBot(bot);
 		// Delete training and all media file
 		savedTrainingServices.deleteAllByBotId(bot);
 		trainingServices.removeAllTraining(bot);
 		utterTextServices.removeAllUtterTextByBotId(bot);
 		responsesButtonServices.removeAllSMTButtonsByBot(bot);
+		dictionaryEntityServices.deleteAllByBot(bot);
 		// Delete training, reponsetype and smallTalk
 		topicServices.removeAllNTSFromBot(bot);
 		topicLabelServices.cleanLabelFromBot(bot);
@@ -174,7 +200,6 @@ public class ChatbotServices implements Component {
 		historyServices.deleteAllByBotId(bot.getBotId());
 		unknownSentencesServices.deleteAllByBotId(bot.getBotId());
 		welcomeTourServices.deleteAllByBotId(bot.getBotId());
-		jiraFieldSettingServices.deleteAllByBotId(bot);
 		chatbotDAO.delete(bot.getBotId());
 
 		// Delete avatar file reference in bot
@@ -189,6 +214,12 @@ public class ChatbotServices implements Component {
 			return getAllChatbots();
 		}
 		return chatbotDAO.getChatbotByPerId(UserSessionUtils.getLoggedPerson().getPerId());
+	}
+
+	private void deleteMonitoringSubscriptions(Chatbot chatbot) {
+		alertingEventDAO.findAll(Criterions.isEqualTo(DtDefinitions.AlertingEventFields.botId, chatbot.getBotId()),
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE)).forEach(alertingEvent -> alertingEventDAO.delete(alertingEvent.getAgeId()));
+		monitoringPAO.removeAllFromNNAlertingSubscriptionChatbot(chatbot.getBotId());
 	}
 
 	@Secured("SuperAdm")

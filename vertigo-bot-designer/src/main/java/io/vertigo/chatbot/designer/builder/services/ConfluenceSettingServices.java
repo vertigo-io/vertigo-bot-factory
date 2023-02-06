@@ -55,6 +55,17 @@ public class ConfluenceSettingServices implements Component {
 				.stream().peek(confluenceSetting -> confluenceSetting.setPassword("")).collect(VCollectors.toDtList(ConfluenceSetting.class));
 	}
 
+	@Secured("BotUser")
+	public void deleteAllByNodeId(@SecuredOperation("botAdm") final Chatbot bot, final long nodeId) {
+		confluenceSettingDAO.findAll(Criterions.isEqualTo(DtDefinitions.ConfluenceSettingFields.nodId, nodeId),
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE)).forEach(confluenceSetting -> this.delete(bot, confluenceSetting.getConSetId()));
+	}
+
+	@Secured("BotUser")
+	public void deleteAllByBotId(@SecuredOperation("botAdm") final Chatbot bot) {
+		this.findAllByBotId(bot).forEach(confluenceSetting -> this.delete(bot, confluenceSetting.getConSetId()));
+	}
+
 	public Optional<ConfluenceSettingExport> exportConfluenceSetting(final long botId, final long nodId) {
 		return confluenceSettingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.ConfluenceSettingFields.botId, botId)
 				.and(Criterions.isEqualTo(DtDefinitions.ConfluenceSettingFields.nodId, nodId))).map(confluenceSetting -> {

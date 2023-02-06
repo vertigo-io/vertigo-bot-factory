@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.ResponseButtonUrlDAO;
@@ -14,8 +16,6 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
-
-import javax.inject.Inject;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -60,7 +60,7 @@ public class ResponsesButtonUrlServices implements Component {
 	 * @param bot
 	 */
 	public void removeAllSMTButtonsUrlByBot(@SecuredOperation("botAdm") final Chatbot bot) {
-		responsesButtonUrlPAO.removeAllButtonsUrlByBotId(bot.getBotId());
+		responsesButtonUrlPAO.removeAllSMTButtonsUrlByBotId(bot.getBotId());
 	}
 
 	public void saveAllButtonsUrlBySmtId(@SecuredOperation("botContributor") final Chatbot bot, final SmallTalk savedST, final DtList<ResponseButtonUrl> buttonUrlList) {

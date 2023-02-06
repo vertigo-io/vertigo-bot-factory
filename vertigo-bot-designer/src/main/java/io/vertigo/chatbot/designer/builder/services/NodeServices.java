@@ -13,6 +13,8 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.designer.builder.chatbotNode.ChatbotNodePAO;
+import io.vertigo.chatbot.designer.dao.monitoring.AlertingEventDAO;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
@@ -32,6 +34,15 @@ public class NodeServices implements Component {
 
 	@Inject
 	private ChatbotNodeDAO chatbotNodeDAO;
+
+	@Inject
+	private ConfluenceSettingServices confluenceSettingServices;
+
+	@Inject
+	private JiraSettingServices jiraSettingServices;
+
+	@Inject
+	private AlertingEventDAO alertingEventDAO;
 
 	@Inject
 	private AuthorizationManager authorizationManager;
@@ -92,7 +103,11 @@ public class NodeServices implements Component {
 	}
 
 	@Secured("SuperAdm")
-	public void deleteNode(final Long nodId) {
+	public void deleteNode(@SecuredOperation("botAdm") final Chatbot bot, final Long nodId) {
+		confluenceSettingServices.deleteAllByNodeId(bot, nodId);
+		jiraSettingServices.deleteAllByNodeId(bot, nodId);
+		alertingEventDAO.findAll(Criterions.isEqualTo(DtDefinitions.AlertingEventFields.nodeId, nodId),
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE)).forEach(alertingEvent -> alertingEventDAO.delete(alertingEvent.getAgeId()));
 		chatbotNodeDAO.delete(nodId);
 	}
 
