@@ -1,5 +1,5 @@
 ARG VERSION
-FROM vertigoio/bot-factory-runner:$VERSION
+FROM registry.kleegroup.com/chatbot-factory/bot-factory-runner:$VERSION
 ARG VERSION
 
  
