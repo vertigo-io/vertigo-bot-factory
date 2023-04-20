@@ -1,5 +1,9 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import com.influxdb.exceptions.InfluxException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,6 +76,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 @RequestMapping("/bot/{botId}/statistic")
 public class StatisticController extends AbstractBotController {
 
+	private static final Logger LOGGER = LogManager.getLogger(StatisticController.class);
 	private static final ViewContextKey<ChatbotNode> nodesKey = ViewContextKey.of("nodes");
 	private static final ViewContextKey<StatCriteria> criteriaKey = ViewContextKey.of("criteria");
 	private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
@@ -197,8 +202,6 @@ public class StatisticController extends AbstractBotController {
 
 		viewContext.publishDtList(ratingDetailsKey, analyticsServices.getRatingDetails(criteria));
 		viewContext.publishDtList(unknownSentensesKey, DtDefinitions.SentenseDetailFields.topId, analyticsServices.getSentenseDetails(criteria));
-		viewContext.publishDtList(conversationStatKey, DtDefinitions.ConversationStatFields.sessionId,
-				analyticsServices.getConversationsStats(criteria, viewContext.readDto(conversationCriteriaKey, AbstractVSpringMvcController.getUiMessageStack())));
 		final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
 		viewContext.publishDtList(topIntentsKey, DtDefinitions.TopIntentFields.topId, topIntents);
 		viewContext.publishDtList(topIntentsFilteredKey, DtDefinitions.TopIntentFields.topId, topIntents);
@@ -206,14 +209,19 @@ public class StatisticController extends AbstractBotController {
 		viewContext.publishRef(ratingStatsKey, timeSerieServices.getRatingStats(criteria));
 		viewContext.publishDtList(intentDetailsKey, DtDefinitions.SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
 		viewContext.publishDtList(conversationDetailsKey, DtDefinitions.ConversationDetailFields.sessionId, new DtList<ConversationDetail>(ConversationDetail.class));
+		viewContext.publishDtList(conversationStatKey, DtDefinitions.ConversationStatFields.sessionId,
+				analyticsServices.getConversationsStats(criteria, viewContext.readDto(conversationCriteriaKey, AbstractVSpringMvcController.getUiMessageStack())));
 	}
 
 	@PostMapping("/_updateStats")
 	public ViewContext doUpdateStats(final ViewContext viewContext,
 									 @ViewAttribute("bot") final Chatbot bot,
 									 @ViewAttribute("criteria") final StatCriteria criteria, final UiMessageStack uiMessageStack) {
-
-		updateGraph(viewContext, criteria, bot, uiMessageStack);
+		try {
+			updateGraph(viewContext, criteria, bot, uiMessageStack);
+		} catch (InfluxException influxException) {
+			LOGGER.error("Error when trying to update statistic graph, ignoring it for now...", influxException);
+		}
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
