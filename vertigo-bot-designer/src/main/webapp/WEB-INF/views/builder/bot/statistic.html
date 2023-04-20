@@ -18,6 +18,7 @@
     <script th:inline="javascript">
         Vue.use(VueApexCharts);
         Vue.component('apexchart', VueApexCharts);
+        VUiExtensions.dataX.loadingGraphs = false;
 
         let timeFormatter = function(value) {
             if (VertigoUi.vueData.criteria.timeOption === 'DAY') {
@@ -535,6 +536,8 @@
                     :options='transformListForSelection("timeOptions", "value", "label")'
             ></q-btn-toggle>
             <q-space></q-space>
+            <q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="dataX.loadingGraphs"></q-spinner-gears>
+            <q-space></q-space>
             <q-btn  class="fab-block" round color="primary" size="md" icon="file_upload" th:aria-label="export" th:title="export"
                     @click="$refs.exportStatistic.show()"></q-btn>
         </q-toolbar>
@@ -860,8 +863,13 @@
             } else {
                 VUiExtensions.dataX.disableTimeOption = false;
             }
-            VUiPage.httpPostAjax('_updateStats', VUiPage.vueDataParams(['criteria']));
-        }, { deep: true });
+            VUiExtensions.dataX.loadingGraphs = true;
+            VUiPage.httpPostAjax('_updateStats', VUiPage.vueDataParams(['criteria']),  {
+                onSuccess: function() {
+                    VUiExtensions.dataX.loadingGraphs = false;
+                }
+            })
+        }, { deep: true })
 
         VUiPage.$watch('vueData.conversationCriteria', (newValue, oldValue) => {
             VUiPage.httpPostAjax('_filterConversation', VUiPage.vueDataParams(['conversationCriteria']));

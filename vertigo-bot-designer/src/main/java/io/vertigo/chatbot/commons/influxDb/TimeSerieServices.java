@@ -1,9 +1,15 @@
 package io.vertigo.chatbot.commons.influxDb;
 
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.InfluxDBClientFactory;
+import com.influxdb.client.InfluxDBClientOptions;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -17,9 +23,11 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.connectors.influxdb.InfluxDbConnector;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimedDatas;
+import okhttp3.OkHttpClient;
 
 /**
  * Use for search in influxdb
@@ -32,15 +40,30 @@ public class TimeSerieServices implements Component, Activeable {
 
 	private String influxDbName;
 
-	@Inject
-	private InfluxDbConnector influxDbConnector;
+	private InfluxDBClient influxDBClient;
 
 	@Inject
 	private ParamManager paramManager;
 
 	@Override
 	public void start() {
+		String influxDbUrl = paramManager.getParam("INFLUXDB_URL").getValueAsString();
+		String influxDbToken  = paramManager.getParam("INFLUXDB_TOKEN").getValueAsString();
+		String influxDbOrg = paramManager.getOptionalParam("INFLUXDB_ORG")
+				.map(Param::getValueAsString).orElse("chatbot");
+		final int influxDbReadTimeout = paramManager.getOptionalParam("INFLUXDB_READ_TIMEOUT")
+				.map(Param::getValueAsInt).orElse(30);
 		influxDbName = paramManager.getParam("boot.ANALYTICA_DBNAME").getValueAsString();
+		OkHttpClient.Builder builder = new OkHttpClient.Builder().readTimeout(influxDbReadTimeout, TimeUnit.SECONDS);
+
+		InfluxDBClientOptions options = InfluxDBClientOptions.builder()
+				.url(influxDbUrl)
+				.authenticateToken(influxDbToken.toCharArray())
+				.org(influxDbOrg)
+				.okHttpClient(builder)
+				.build();
+
+		influxDBClient = InfluxDBClientFactory.create(options);
 	}
 
 	@Override
@@ -56,7 +79,7 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return sum of sessions
 	 */
 	public TimedDatas getSessionsStats(final StatCriteria criteria) {
-		return InfluxRequestUtil.getTimeSeries(influxDbConnector.getClient(), influxDbName, Arrays.asList("isSessionStart:sum"),
+		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName, Arrays.asList("isSessionStart:sum"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
 				Map.of(),
 				AnalyticsServicesUtils.getTimeFilter(criteria));
@@ -69,7 +92,7 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return timeDatas with messages sum and fallbacksum
 	 */
 	public TimedDatas getRequestStats(final StatCriteria criteria) {
-		return InfluxRequestUtil.getTimeSeries(influxDbConnector.getClient(), influxDbName, Arrays.asList("name:count", "isFallback:sum", "isNlu:sum"),
+		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName, Arrays.asList("name:count", "isFallback:sum", "isNlu:sum"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
 						.build(),
 				Map.of("isUserMessage", "1"),
@@ -77,7 +100,7 @@ public class TimeSerieServices implements Component, Activeable {
 	}
 
 	public TimedDatas getUserInteractions(final StatCriteria criteria) {
-		return InfluxRequestUtil.getTimeSeries(influxDbConnector.getClient(), influxDbName, Arrays.asList("name:count"),
+		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName, Arrays.asList("name:count"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
 				Map.of(),
 				AnalyticsServicesUtils.getTimeFilter(criteria));
@@ -99,7 +122,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.filterByColumn(Map.of("isFallback", "1"))
 				.build(true);
 
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
 	}
 
 	/**
@@ -109,7 +132,7 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getSessionsExport(final StatCriteria criteria) {
-		return InfluxRequestUtil.getTimeSeries(influxDbConnector.getClient(), influxDbName, Arrays.asList("name:count", "isSessionStart:sum"),
+		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName, Arrays.asList("name:count", "isSessionStart:sum"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
 				Map.of(),
 				AnalyticsServicesUtils.getTimeFilter(criteria));
@@ -131,7 +154,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.filterByColumn(Map.of("isFallback", "1"))
 				.build(true);
 
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
 	}
 
 	/**
@@ -154,7 +177,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.append("|> count(column: \"name:count\")")
 				.build(true);
 
-		return InfluxRequestUtil.executeTabularQuery(influxDbConnector.getClient(), q);
+		return InfluxRequestUtil.executeTabularQuery(influxDBClient, q);
 	}
 
 	public TimedDatas getAllIntents(final StatCriteria criteria) {
@@ -165,7 +188,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.keep(List.of("_time", "name", "_field", "_value", "sessionId", "modelName"))
 				.pivot()
 				.build(true);
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
 	}
 
 	/**
@@ -187,7 +210,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.keep(List.of("_time", "text", "confidence"))
 				.build(5_000L, true);
 
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
 	}
 
 	public TimedDatas getConversationDetails(final StatCriteria criteria, final String sessionId) {
@@ -202,7 +225,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.keep(List.of("_time", "text", "isUserMessage", "isBotMessage"))
 				.build(5_000L, true, "isBotMessage");
 
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
 	}
 
 	public TimedDatas getConversationStats(final StatCriteria criteria, final ConversationCriteria conversationCriteria) {
@@ -284,11 +307,11 @@ public class TimeSerieServices implements Component, Activeable {
 		query.append("|> group()\n");
 		query.append("|> sort(columns: [\"_time\"], desc: true)");
 
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), query.toString());
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, query.toString());
 	}
 
 	public TimedDatas getRatingStats(final StatCriteria criteria) {
-		return InfluxRequestUtil.getTimeSeries(influxDbConnector.getClient(), influxDbName,
+		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName,
 				Arrays.asList("rating1:count", "rating2:count", "rating3:count", "rating4:count", "rating5:count"),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.RATING_MSRMT).build(),
 				Map.of(),
@@ -355,7 +378,7 @@ public class TimeSerieServices implements Component, Activeable {
 		query.append("|> sort(columns: [\"_time\"], desc:true)\n");
 		query.append("|> limit(n:5000)");
 
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), query.toString());
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, query.toString());
 	}
 
 	/**
@@ -375,7 +398,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.keep(List.of("_time", "text", "name", "confidence", "modelName"))
 				.build(true);
 
-		return InfluxRequestUtil.executeTimedQuery(influxDbConnector.getClient(), q);
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
 	}
 
 }
