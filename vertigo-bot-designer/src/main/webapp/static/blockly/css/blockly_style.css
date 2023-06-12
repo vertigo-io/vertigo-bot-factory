@@ -1,0 +1,13 @@
+#blocklyDiv{
+    /*border: red solid 10px;*/
+}
+#blocklyArea{
+
+}
+#blocklyTool{
+    text-align: center;
+}
+
+.q-btn{
+    margin: 5px 20px;
+}

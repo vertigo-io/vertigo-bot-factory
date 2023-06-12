@@ -1,4 +1,3 @@
-#!/bin/bash
 filename=${filename:-dump.dump}
 user=${user:-chatbot}
 database=${database:-chatbot}
