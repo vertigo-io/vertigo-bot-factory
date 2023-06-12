@@ -23,4 +23,23 @@
 
 	</section>
 
+
+	<section th:fragment="content-specific" style="margin: 20px 0px">
+		<vu:block id="diagram" title="Diagram">
+			<vu:include-data-primitive key="locale"/>
+			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
+			<q-btn label="Exporter diagramme en PNG" color="primary" @click="exportToPng()" ></q-btn>
+			<div id="blocklyArea" style="
+				margin: 10px;
+				height: 500px;">
+				<div id="blocklyDiv"></div>
+			</div>
+			<div id="blocklyTool">
+				<p>Le code apparait pour l'instant dans la console</p>
+<!--				<textarea id="txt" rows="10" cols="100"></textarea><div id="error_blockly"></div><br>-->
+				<q-btn th:if="${!model.modeReadOnly}" th:class="q-btn-blockly"  class="code" id="to-code" @click="diagramToCode()">Génération du code depuis diagramme</q-btn>
+				<q-btn th:if="${!model.modeReadOnly}" th:class="q-btn-blockly" class="code" id="from-code" @click="codeToDiagram()">Génération diagramme depuis script</q-btn>
+			</div>
+		</vu:block>
+	</section>
 </html>
