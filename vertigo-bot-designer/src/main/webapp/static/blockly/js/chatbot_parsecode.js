@@ -1,13 +1,12 @@
-function fromCode() {
+function fromCode(text) {
 	let workspace = Blockly.mainWorkspace;
 	workspace.clear();
 	workspace.clearUndo();
 	setTimeout(() => Blockly.mainWorkspace.trashcan.emptyContents(), 0); // not working if not asynch
 
-	let text = document.getElementById("txt").value;
 	let parsed = parseText(text);
 	if (parsed.error) {
-		// document.getElementById('error_blockly').innerHTML = parsed.error; //TODO
+
 	} else {
 		doBuildBlocks(parsed);
 	}
