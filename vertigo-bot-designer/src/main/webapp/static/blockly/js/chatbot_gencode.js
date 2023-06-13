@@ -92,8 +92,26 @@ function toCode(event) {
 		}
 		code = 'begin sequence\n' + code + 'end sequence';
 	}
-	console.log("code:\r\n------------------------------\r\n" + code+"\r\n------------------------------")
-	// document.getElementById('txt').value = code;
+	VertigoUi.vueData.scriptIntention.script = code;
+}
+
+function getCodeDiagram(event) {
+	//console.log(event.type);
+	let topBlocks = Blockly.mainWorkspace.getTopBlocks().filter(b => b.rendered === true && b.disabled === false);
+	let topBlocksCount = topBlocks.length;
+	let startCount = topBlocks.filter(b => b.type === "cb_start").length;
+	let isOnlySequence = topBlocksCount === 1 && topBlocks[0].type === "cb_sequence";
+
+	// document.getElementById('error_blockly').innerHTML = '';
+	var code = Blockly.BotScript.workspaceToCode(Blockly.mainWorkspace );
+
+	if (startCount === 0 && !isOnlySequence) {
+		if (code) {
+			code = Blockly.BotScript.prefixLines(code, Blockly.BotScript.INDENT);
+		}
+		code = 'begin sequence\n' + code + 'end sequence';
+	}
+	return code
 }
 
 

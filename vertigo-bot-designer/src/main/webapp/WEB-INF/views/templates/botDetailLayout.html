@@ -235,5 +235,7 @@
 		<script th:src="@{/static/blockly/lang/fr.js}"></script>
 		<script th:src="@{/static/blockly/lang/blockly_fr.js}"></script>
 		<script th:src="@{/static/blockly/js/blockly_injection.js}"></script>
+		<script th:if="${!model.modeReadOnly}" th:src="@{/static/blockly/js/blockly_injection_editable.js}"></script>
+		<script th:if="${model.modeReadOnly}" th:src="@{/static/blockly/js/blockly_injection_readonly.js}"></script>
 	</section>
 </html>

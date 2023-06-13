@@ -31,14 +31,12 @@
 			<q-btn label="Exporter diagramme en PNG" color="primary" @click="exportToPng()" ></q-btn>
 			<div id="blocklyArea" style="
 				margin: 10px;
-				height: 500px;">
+				height: 650px;">
 				<div id="blocklyDiv"></div>
 			</div>
 			<div id="blocklyTool">
-				<p>Le code apparait pour l'instant dans la console</p>
-<!--				<textarea id="txt" rows="10" cols="100"></textarea><div id="error_blockly"></div><br>-->
-				<q-btn th:if="${!model.modeReadOnly}" th:class="q-btn-blockly"  class="code" id="to-code" @click="diagramToCode()">Génération du code depuis diagramme</q-btn>
-				<q-btn th:if="${!model.modeReadOnly}" th:class="q-btn-blockly" class="code" id="from-code" @click="codeToDiagram()">Génération diagramme depuis script</q-btn>
+				<q-btn th:if="${!model.modeReadOnly}" th:class="q-btn-blockly"  class="code" id="to-code" @click="diagramToCode()" th:text="#{script.diagram.tocode}"></q-btn>
+				<q-btn th:if="${!model.modeReadOnly}" th:class="q-btn-blockly" class="code" id="from-code" @click="codeToDiagram()" th:text="#{script.diagram.fromcode}"></q-btn>
 			</div>
 		</vu:block>
 	</section>

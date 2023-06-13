@@ -199,7 +199,7 @@ function getToolBox(){
                     }
                 ]
             },
-// Catégorie 9: TOPIC
+            // Catégorie 9: TOPIC
             {
                 "kind": "category",
                 "name": "%{BKY_CAT_TOPIC}",
@@ -254,51 +254,8 @@ var onresize = function(e) {
     Blockly.svgResize(workspace);
 };
 
-// function injection(mode){
-//     console.log("injection-mode-readonly: "+mode);
-    // ****** WORKSPACE ******
-    var blocklyArea = document.getElementById('blocklyArea');
-    var blocklyDiv = document.getElementById('blocklyDiv');
-    var workspace = Blockly.inject(blocklyDiv,
-// Blocky.Options : dictionnaire de paires nom/valeur utilisés pour la configuration
-        {
-            collapse: false,
-            // comments: ,
-            // css: ,
-            // disable: ,
-            // grid: ,
-            // horizontalLayout: ,
-            maxBlocks: 500,
-            maxInstances: {},
-            media: '/vertigo-bot-designer/static/blockly/media/',
-            // move: ,
-            // oneBasedIndex: ,
-            // readOnly: false,
-            // TODO: faire un renderer personnalisé
-            renderer: 'zelos',
-            // renderer: 'custom_renderer',
-            // rtl: ,
-            scrollbars: true,
-            sounds: false,
-            theme: getThemeDev(),
-            toolbox: getToolBox(),
-            toolboxPosition: "end",
-            // trashcan: ,
-            // maxTrashcanContents: ,
-            // plugins: ,
-            // zoom: ,
-            zoom:
-                {controls: true,
-                    wheel: false,
-                    startScale: 1.0,
-                    maxScale: 3,
-                    minScale: 0.3,
-                    scaleSpeed: 1.2,
-                    pinch: true}
-        });
-
-
-
-    window.addEventListener('resize', onresize, false);
-    onresize();
-    workspace.addChangeListener(toCode);
+var blocklyArea = document.getElementById('blocklyArea');
+var blocklyDiv = document.getElementById('blocklyDiv');
+window.addEventListener('resize', onresize, false);
+onresize();
+fromCode(VertigoUi.vueData.scriptIntention.script)
