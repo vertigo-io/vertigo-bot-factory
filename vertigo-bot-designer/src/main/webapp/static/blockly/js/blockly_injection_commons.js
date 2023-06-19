@@ -148,6 +148,10 @@ function getToolBox(){
                         "kind": "block",
                         "type": "cb_inputString"
                     },
+                    {
+                        "kind": "block",
+                        "type": "cb_rating"
+                    }
                 ]
             },
             // 	Catégorie 5: BUTTON
@@ -227,6 +231,10 @@ function getToolBox(){
                     {
                         "kind": "block",
                         "type": "cb_topicend"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_choose"
                     }
                 ]
             },

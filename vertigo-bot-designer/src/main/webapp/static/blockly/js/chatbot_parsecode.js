@@ -162,6 +162,9 @@ function resolveCbBlockType(type) {
 			return {type: "cb_say", qualifier: "once"};
 		case 'say:always':
 			return {type: "cb_say", qualifier: "always"};
+		case 'choose:nlu':
+			return {type: "cb_choose"};
+			break;
 		case 'choose:button':
 			return {type: "cb_buttons"};
 			break;
@@ -303,6 +306,12 @@ function createBlock(type, isComposite, params = []) {
 		params[0] = lienParams[0]
 		params.push(lienParams[1])
 	}else if(resolvedType.type==='cb_append'){
+		let lienParams = paramsFormatVariable(params[0])
+		let valueTemp = params[1]
+		params[0] = lienParams[0]
+		params[1] = lienParams[1]
+		params.push(valueTemp)
+	}else if(resolvedType.type==='cb_rating'){
 		let lienParams = paramsFormatVariable(params[0])
 		let valueTemp = params[1]
 		params[0] = lienParams[0]
