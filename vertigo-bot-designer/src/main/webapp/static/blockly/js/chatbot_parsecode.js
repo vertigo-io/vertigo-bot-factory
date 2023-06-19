@@ -171,6 +171,9 @@ function resolveCbBlockType(type) {
 		case 'choose:button:nlu':
 			return {type: "cb_buttons", qualifier: "nlu"};
 			break;
+		case 'choose:button:file':
+			return {type: "cb_buttonsfile"};
+			break;
 		case 'eq':
 			return {type: "cb_condition", qualifier: "eq"};
 			break;
@@ -199,6 +202,8 @@ function resolveCbBlockType(type) {
 			return {type: "cb_mail"}
 		case "mail:attachment":
 			return {type: "cb_mail",  qualifier: "attachment"}
+		case "button:file":
+			return {type: "cb_buttonfile"}
 		default:
 			break;
 	}
@@ -323,7 +328,8 @@ function createBlock(type, isComposite, params = []) {
 		params[1] = lienParams[0]
 		params.push(lienParams[1])
 	}else if(resolvedType.type==='cb_mail'){
-		console.log(params);
+		// console.log(params);
+		if(params.length==5)params.pop() //todo multi dest
 		let lienParamsObject = paramsFormatVariable(params[0])
 		let lienParamsMessage = paramsFormatVariable(params[1])
 		let lienParamsPJ
@@ -352,6 +358,11 @@ function createBlock(type, isComposite, params = []) {
 		}
 		params.push(lienParamsDest[0]) //7
 		params.push(lienParamsDest[1]) //8
+	}else if(resolvedType.type==='cb_buttonsfile'){
+		let lienParams = paramsFormatVariable(params[0])
+		params[0] = params[1]
+		params[1] = lienParams[0]
+		params.push(lienParams[1])
 	}
 
 	for (let i = 0; i < params.length; i++) {
