@@ -10,32 +10,31 @@
 		<q-item tag="a" href="#script" th:text="#{script.menu.script}"></q-item>
 	</section>
 
-	<section th:fragment="content-specific">
-		<vu:popup action="_delete" vModel="showPopupDeleteTopic" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
-
-		<vu:block id="script" title="Script">
-			<vu:include-data-primitive key="locale"/>
-			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
-
-			<c-codemirror object="scriptIntention" field="script" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale"></c-codemirror>
-
-		</vu:block>
-
-	</section>
 
 
 	<section th:fragment="content-specific" style="margin: 20px 0px">
-		<vu:block id="diagram" title="Diagram">
+		<vu:block id="diagram" title="Diagramme">
 			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
 			<q-btn label="Exporter diagramme en PNG" color="primary" @click="exportToPng()" ></q-btn>
 			<div id="blocklyArea" style="
 				margin: 10px;
-				height: 650px;">
+				height: 400px;">
 				<div id="blocklyDiv"></div>
 			</div>
+		</vu:block>
+	</section>
+	<section th:fragment="content-specific">
+		<q-toggle left-label size="lg" th:label="#{script.view}" v-model="VUiExtensions.dataX.viewScript"></q-toggle>
+
+		<vu:popup action="_delete" vModel="showPopupDeleteTopic" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
+
+		<vu:block id="script" title="Script" v-if="VUiExtensions.dataX.viewScript">
+			<vu:include-data-primitive key="locale"/>
+			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
+
+			<c-codemirror object="scriptIntention" field="script" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale"></c-codemirror>
 			<div id="blocklyTool">
-				<q-btn th:if="${!model.modeReadOnly}" th:class="q-btn-blockly"  class="code" id="to-code" @click="diagramToCode()" th:text="#{script.diagram.tocode}"></q-btn>
 				<q-btn th:if="${!model.modeReadOnly}" th:class="q-btn-blockly" class="code" id="from-code" @click="codeToDiagram()" th:text="#{script.diagram.fromcode}"></q-btn>
 			</div>
 		</vu:block>

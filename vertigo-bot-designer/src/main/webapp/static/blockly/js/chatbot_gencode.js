@@ -16,6 +16,17 @@ function formatString(nomVar){
 	return ' "' + nomVar+ '" ';
 }
 
+function formatString(nomVar, state){
+	state = isNaN(nomVar)
+	if(state===true) return ' "' + nomVar+ '" ';
+	else return ' '+nomVar+' ';
+}
+
+function formatStringOrNumber(nomVar, state){
+	if(state===true) return ' "' + nomVar+ '" ';
+	else return ' '+nomVar+' ';
+}
+
 function extractParams(block) {
 	let params = "";
 	block.inputList.forEach(input => {
@@ -47,22 +58,6 @@ function getBlockName(block) {
 	return name;
 }
 
-
-// function codeSpecBlock(block) {
-// 	let sentence;
-// 	console.log(name);
-// 	switch (name){
-// 		case 'switch':
-// 			break;
-// 		case 'case':
-// 			break;
-// 		default:
-// 			break;
-// 	}
-//
-// 	return sentence;
-// }
-
 function buildBlock(block) {
 	let name = getBlockName(block);
 	let params = extractParams(block);
@@ -77,7 +72,6 @@ function buildBlock(block) {
 }
 
 function toCode(event) {
-	//console.log(event.type);
 	let topBlocks = Blockly.mainWorkspace.getTopBlocks().filter(b => b.rendered === true && b.disabled === false);
 	let topBlocksCount = topBlocks.length;
 	let startCount = topBlocks.filter(b => b.type === "cb_start").length;
@@ -96,7 +90,6 @@ function toCode(event) {
 }
 
 function getCodeDiagram(event) {
-	//console.log(event.type);
 	let topBlocks = Blockly.mainWorkspace.getTopBlocks().filter(b => b.rendered === true && b.disabled === false);
 	let topBlocksCount = topBlocks.length;
 	let startCount = topBlocks.filter(b => b.type === "cb_start").length;
@@ -152,7 +145,6 @@ Blockly.BotScript['cb_condition'] = function(block) {
 	let isAStringCondition;
 	if(condition=="eq"||condition=="contains")isAStringCondition=true;
 	else isAStringCondition =false;
-	// console.log("string:"+isAStringCondition+"|fulfilled:"+isAFulfilledCondition);
 	if(isAFulfilledCondition){
 		return condition + formatVariable(params[1].getValue(),params[2].getValue())+'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 	}
@@ -174,7 +166,9 @@ Blockly.BotScript['cb_condition'] = function(block) {
 Blockly.BotScript['cb_buttons'] = function(block) {
 	let params = getBlockParams(block);
 	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
-	return "begin choose:button" +params[3].getValue()+' /user/'+ params[1].getValue() +'/'+ params[2].getValue().toLowerCase() + ' "'+ params[0].getValue()+'"' +"\n" + subBlocks + 'end ' + "choose:button"+params[3].getValue()  +'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+	let isOption = false;
+	if(params[3].getValue()==='nlu') isOption = true;
+	return "begin choose:button" +  (isOption ? ':' +params[3].getValue()  : '') + formatVariable(params[1].getValue(),params[2].getValue()) + ' "'+ params[0].getValue()+'"' +"\n" + subBlocks + 'end ' + "choose:button"+(isOption ? ':' +params[3].getValue()  : '')  +'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 Blockly.BotScript['cb_button'] = function(block) {
 	let params = getBlockParams(block);
@@ -189,13 +183,18 @@ Blockly.BotScript['cb_button'] = function(block) {
 // *****************************
 // cb_topic_start
 // topic:start
-Blockly.BotScript['cb_topic_start'] = function(block) {
+Blockly.BotScript['cb_topicstart'] = function(block) {
 	return "topic:start\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 // cb_topic_start
 // topic:fallback
-Blockly.BotScript['cb_topic_fallback'] = function(block) {
+Blockly.BotScript['cb_topicfallback'] = function(block) {
 	return "topic:fallback\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
+}
+// cb_topic_idle
+// topic:idle
+Blockly.BotScript['cb_topicidle'] = function(block) {
+	return "topic:idle\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 
 // *****************************
@@ -208,7 +207,7 @@ Blockly.BotScript['cb_switch'] = function(block) {
 	let params = getBlockParams(block);
 	let name = getBlockName(block);
 	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
-	return 'begin ' + name + ' /user/'+ params[0].getValue() +'/'+ params[1].getValue().toLowerCase() + '\n' + subBlocks + 'end ' + name + '\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+	return 'begin ' + name + formatVariable(params[0].getValue(), params[1].getValue()) + '\n' + subBlocks + 'end ' + name + '\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 
 // cb_case
@@ -217,21 +216,33 @@ Blockly.BotScript['cb_case'] = function(block) {
 	let params = getBlockParams(block);
 	let name = getBlockName(block);
 	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
-	return 'begin ' + name +' "'+ params[0].getValue()  +'"\n' + subBlocks + 'end ' + name + '\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+	return 'begin ' + name + formatString(params[0].getValue(), true) +'\n' + subBlocks + 'end ' + name + '\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 
 // *****************************
 // ******CATEGORIE MESSAGE******
 // *****************************
-Blockly.BotScript['cb_message'] = function(block) {
+Blockly.BotScript['cb_say'] = function(block) {
 	let params = getBlockParams(block);
-	return "say" + params[1].getValue()+ ' "' +params[0].getValue() + '"' +'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+	let isOption = true;
+	if(params[1].getValue()=="") isOption = false;
+
+	return "say" + (isOption ? ':' +params[1].getValue()  : '')+' "' +params[0].getValue() + '"' +'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 Blockly.BotScript['cb_link'] = function(block) {
 	let params = getBlockParams(block);
 	return "link" + ' "' +params[0].getValue() + '"' +'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
-
+Blockly.BotScript['cb_mail'] = function(block) {
+	let params = getBlockParams(block);
+	// console.log(params) //todo correction des mails multi destinataires
+	let isPJMail = params[4].getValue()==='yespj'
+	return "mail" +  (!isPJMail ? "" : ":attachment") +
+		formatVariable(params[0].getValue(), params[1].getValue()) +
+		formatVariable(params[2].getValue(), params[3].getValue())+
+		(!isPJMail ? "" : formatVariable(params[5].getValue(), params[6].getValue()))+
+		formatVariable(params[7].getValue(), params[8].getValue())+ '\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
 
 
 // *****************************
@@ -240,13 +251,8 @@ Blockly.BotScript['cb_link'] = function(block) {
 Blockly.BotScript['cb_set'] = function(block) {
 	let params = getBlockParams(block);
 	let name = getBlockName(block);
-	return name + formatVariable(params[0].getValue(), params[1].getValue()) + formatString(params[2].getValue())+'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
-}
-Blockly.BotScript['cb_setInt'] = function(block) {
-	let params = getBlockParams(block);
-	let name = getBlockName(block);
-	return name +formatVariable(params[0].getValue(), params[1].getValue()) + params[2].getValue() +'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
-
+	let isNumber = params[2].getValue()==='number'
+	return name+ (!isNumber ? "" : "Int") + formatVariable(params[0].getValue(), params[1].getValue()) + formatStringOrNumber(params[3].getValue(), !isNumber)+'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 Blockly.BotScript['cb_copy'] = function(block) {
 	let params = getBlockParams(block);
@@ -256,12 +262,8 @@ Blockly.BotScript['cb_copy'] = function(block) {
 Blockly.BotScript['cb_incrBy'] = function(block) {
 	let params = getBlockParams(block);
 	let name = getBlockName(block);
-	return name +formatVariable(params[0].getValue(), params[1].getValue()) + params[2].getValue() +'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
-}
-Blockly.BotScript['cb_decr'] = function(block) {
-	let params = getBlockParams(block);
-	let name = getBlockName(block);
-	return name +formatVariable(params[0].getValue(), params[1].getValue()) + params[2].getValue() +'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+	let isIncr = params[0].getValue()==='incrBy'
+	return (isIncr ? 'incrBy' : 'decr') +formatVariable(params[1].getValue(), params[2].getValue()) + params[3].getValue() +'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 Blockly.BotScript['cb_remove'] = function(block) {
 	let params = getBlockParams(block);
@@ -276,4 +278,14 @@ Blockly.BotScript['cb_remove'] = function(block) {
 // 	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
 // 	return 'begin random\n' + subBlocks + 'end random\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 // }
+Blockly.BotScript['cb_append'] = function(block) {
+	let params = getBlockParams(block);
+	let name = getBlockName(block);
+	return name +formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
+Blockly.BotScript['cb_inputString'] = function(block) {
+	let params = getBlockParams(block);
+	let name = getBlockName(block);
+	return name +formatVariable(params[1].getValue(), params[2].getValue()) +  formatString(params[0].getValue())+'\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
 

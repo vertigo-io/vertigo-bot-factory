@@ -104,6 +104,11 @@
 		function makeBlocklyEditable(){
 			console.log("makeBlocklyEditable()");
 		}
+		function injectBlockly(test){
+			if(VertigoUi.vueData.topic.ttoCd==='SCRIPTINTENTION'){
+				setTimeout(injectionBlockly_editable, 1)
+			}
+		}
 		function exportToPng(){
 			console.log("exportToPng()")
 		}
@@ -115,11 +120,15 @@
 
 		function codeToDiagram(){
 			console.log("codeToDiagram()")
-			fromCode(VertigoUi.vueData.scriptIntention.script);
+			fromCode();
 		}
-
-
+		var stateView = false;
 	  </script>
+
+	  <script th:inline="javascript">
+		  VUiExtensions.dataX.viewScript = false;
+	  </script>
+
 		</head>
 
 		<body>
@@ -251,6 +260,7 @@
 
 				<div>
 					<q-btn-toggle
+							@click="injectBlockly(vueData.topic.ttoCd)"
 							th:if="${!model.modeReadOnly}"
 							v-model="vueData.topic.ttoCd"
 							toggle-color="primary"
@@ -265,12 +275,11 @@
 
 				<div v-if="vueData.topic.ttoCd === 'SMALLTALK'" th:insert="builder/bot/smallTalkDetail.html :: content-specific"></div>
 				<div v-else th:insert="builder/bot/scriptIntentionDetail.html ::content-specific"></div>
-
 				<q-page-sticky position="bottom-right">
 					<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
 				</q-page-sticky>
 			</section>
 		</body>
-		
+
 
 </html>
