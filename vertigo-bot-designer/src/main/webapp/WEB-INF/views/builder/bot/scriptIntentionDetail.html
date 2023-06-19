@@ -13,10 +13,10 @@
 
 
 	<section th:fragment="content-specific" style="margin: 20px 0px">
-		<vu:block id="diagram" title="Diagramme">
+		<vu:block id="diagram" th:title="#{script.menu.diagram}">
 			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
-			<q-btn label="Exporter diagramme en PNG" color="primary" @click="exportToPng()" ></q-btn>
+			<q-btn th:label="#{script.diagram.export}" color="primary" @click="exportToPng()" ></q-btn>
 			<div id="blocklyArea" style="
 				margin: 10px;
 				height: 400px;">
