@@ -479,12 +479,12 @@ Blockly.Blocks['cb_topic'] = {
             {
                 "type": "topic",
                 "lastDummyAlign0": "CENTRE",
-                "message0": "Redirection vers %1",
+                "message0": "Redirection vers intention code %1",
                 "args0": [
                     {
                         "type": "field_input",
                         "name": "NAME",
-                        "text": "IDLE"
+                        "text": "CODE"
                     }
                 ],
                 "inputsInline": true,
@@ -552,6 +552,32 @@ Blockly.Blocks['cb_topicend'] = {
                 "lastDummyAlign0": "CENTRE",
                 "message0": "Redirection fin",
                 "inputsInline": true,
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 50,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+Blockly.Blocks['cb_choose'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "topic",
+                "lastDummyAlign0": "CENTRE",
+                "message0": "Recherche d'intention %1 Question: %2",
+                "args0":[
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "question",
+                        "text": "En quoi d'autre puis-je vous aider ?"
+                    }
+                ],
                 "previousStatement": null,
                 "nextStatement": null,
                 "colour": 50,
@@ -1043,6 +1069,61 @@ Blockly.Blocks['cb_append'] = {
                     }
                 ],
                 "colour": 260,
+                "previousStatement": null,
+                "nextStatement": null,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+Blockly.Blocks['cb_rating'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "block_type",
+                "message0": "Evaluation/Note %1 Variable stockage note: %2 %3 %4 Question: %5",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "type",
+                        "options": [
+                            [
+                                "type local",
+                                "local"
+                            ],
+                            [
+                                "type global",
+                                "global"
+                            ],
+                            [
+                                "type context",
+                                "global/context"
+                            ],
+                            [
+                                "type url",
+                                "global/context/url"
+                            ]
+                        ]
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "variable",
+                        "text": "note"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "value",
+                        "text": "Vous pouvez nous laisser une note de satisfaction"
+                    }
+                ],
+                "colour": 180,
                 "previousStatement": null,
                 "nextStatement": null,
                 "tooltip": "",

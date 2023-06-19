@@ -201,6 +201,12 @@ Blockly.BotScript['cb_topicidle'] = function(block) {
 Blockly.BotScript['cb_topicend'] = function(block) {
 	return "topic:end\r\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
 }
+// cb_choose
+// choose:nlu
+Blockly.BotScript['cb_choose'] = function(block) {
+	let params = getBlockParams(block);
+	return "choose:nlu" + formatString(params[0].getValue())+"\r\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
+}
 // *****************************
 // *****CATEGORIE SWITCHCASE****
 // *****************************
@@ -291,5 +297,10 @@ Blockly.BotScript['cb_inputString'] = function(block) {
 	let params = getBlockParams(block);
 	let name = getBlockName(block);
 	return name +formatVariable(params[1].getValue(), params[2].getValue()) +  formatString(params[0].getValue())+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
+Blockly.BotScript['cb_rating'] = function(block) {
+	let params = getBlockParams(block);
+	let name = getBlockName(block);
+	return name +formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 
