@@ -166,7 +166,15 @@ function getToolBox(){
                     },
                     {
                         "kind": "block",
+                        "type": "cb_buttonsfile"
+                    },
+                    {
+                        "kind": "block",
                         "type": "cb_button"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_buttonfile"
                     }
                 ]
             },
@@ -283,6 +291,8 @@ var onresize = function(e) {
 // *********************
 
 function injectionBlockly(mode=false){
+    // DEBUG CODE
+    // console.log(VertigoUi.vueData.scriptIntention.script)
     let blocklyDivName = 'blocklyDiv'
     // **** OPTIONS ****
     var options = {

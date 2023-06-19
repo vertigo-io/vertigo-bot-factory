@@ -215,7 +215,69 @@ Blockly.Blocks['cb_buttons'] = {
                 ],
                 "previousStatement": null,
                 "nextStatement": null,
-                "colour": 220,
+                "colour": 230,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+Blockly.Blocks['cb_buttonsfile'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "choose:button",
+                "message0": "Liste boutons avec fichiers/PJ %1 question associée: %2 %3 variable: %4 %5 %6  %7",
+                "args0": [
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "question",
+                        "text": "?"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "typeVar",
+                        "options": [
+                            [
+                                "type local",
+                                "local"
+                            ],
+                            [
+                                "type global",
+                                "global"
+                            ],
+                            [
+                                "type context",
+                                "global/context"
+                            ],
+                            [
+                                "type url",
+                                "global/context/url"
+                            ]
+                        ]
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "variable",
+                        "text": "",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "input_statement",
+                        "name": "SUB_BLOCKS"
+                    }
+                ],
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 230,
                 "tooltip": "",
                 "helpUrl": ""
             });
@@ -234,7 +296,7 @@ Blockly.Blocks['cb_button'] = {
                     },
                     {
                         "type": "field_input",
-                        "name": "value2",
+                        "name": "value1",
                         "text": ""
                     },
                     {
@@ -248,7 +310,40 @@ Blockly.Blocks['cb_button'] = {
                 ],
                 "previousStatement": null,
                 "nextStatement": "button",
-                "colour": 230,
+                "colour": 210,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+Blockly.Blocks['cb_buttonfile'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "buttonfile",
+                "message0": "Bouton avec fichier/PJ %1 phrase associée: %2 %3 valeur de la variable si clique: %4",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "question",
+                        "text": "Quel est la PJ"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "value2",
+                        "text": "PJ"
+                    }
+                ],
+                "previousStatement": null,
+                "nextStatement": "button",
+                "colour": 210,
                 "tooltip": "",
                 "helpUrl": ""
             });

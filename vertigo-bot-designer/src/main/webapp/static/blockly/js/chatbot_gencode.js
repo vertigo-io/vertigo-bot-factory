@@ -86,6 +86,8 @@ function toCode(event) {
 		}
 		code = 'begin sequence\r\n' + code + 'end sequence';
 	}
+	// DEBUG CODE
+	// console.log(code)
 	VertigoUi.vueData.scriptIntention.script = code;
 }
 
@@ -170,12 +172,23 @@ Blockly.BotScript['cb_buttons'] = function(block) {
 	if(params[3].getValue()==='nlu') isOption = true;
 	return "begin choose:button" +  (isOption ? ':' +params[3].getValue()  : '') + formatVariable(params[1].getValue(),params[2].getValue()) + ' "'+ params[0].getValue()+'"' +"\r\n" + subBlocks + 'end ' + "choose:button"+(isOption ? ':' +params[3].getValue()  : '')  +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
+Blockly.BotScript['cb_buttonsfile'] = function(block) {
+	let params = getBlockParams(block);
+	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
+	let isOption = false;
+	// console.log(params)
+	return "begin choose:button:file" + formatVariable(params[1].getValue(),params[2].getValue()) + formatString(params[0].getValue()) +"\r\n" + subBlocks + 'end ' + "choose:button:file"+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
 Blockly.BotScript['cb_button'] = function(block) {
 	let params = getBlockParams(block);
 	let name = getBlockName(block);
 	return name +' "'+ params[0].getValue() +'" ' + params[1].getValue() +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
-
+Blockly.BotScript['cb_buttonfile'] = function(block) {
+	let params = getBlockParams(block);
+	// console.log(params)
+	return "button:file" +formatString(params[0].getValue()) + params[1].getValue() +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
 
 
 // *****************************
