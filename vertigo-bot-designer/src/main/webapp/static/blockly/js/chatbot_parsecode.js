@@ -155,6 +155,9 @@ function resolveCbBlockType(type) {
 		case 'topic:idle':
 			return {type: "cb_topicidle"};
 			break;
+		case 'topic:end':
+			return {type: "cb_topicend"};
+			break;
 		case 'say:once':
 			return {type: "cb_say", qualifier: "once"};
 		case 'say:always':

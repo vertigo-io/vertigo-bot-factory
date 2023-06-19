@@ -223,6 +223,10 @@ function getToolBox(){
                     {
                         "kind": "block",
                         "type": "cb_topicidle"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_topicend"
                     }
                 ]
             },

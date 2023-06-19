@@ -544,6 +544,22 @@ Blockly.Blocks['cb_topicidle'] = {
             });
     }
 };
+Blockly.Blocks['cb_topicend'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "topic",
+                "lastDummyAlign0": "CENTRE",
+                "message0": "Redirection fin",
+                "inputsInline": true,
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 50,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
 // *****************************
 // *****CATEGORIE SWITCHCASE****
 // *****************************

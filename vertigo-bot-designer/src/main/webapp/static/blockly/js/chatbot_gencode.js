@@ -196,7 +196,11 @@ Blockly.BotScript['cb_topicfallback'] = function(block) {
 Blockly.BotScript['cb_topicidle'] = function(block) {
 	return "topic:idle\r\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
 }
-
+// cb_topic_end
+// topic:end
+Blockly.BotScript['cb_topicend'] = function(block) {
+	return "topic:end\r\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
+}
 // *****************************
 // *****CATEGORIE SWITCHCASE****
 // *****************************
