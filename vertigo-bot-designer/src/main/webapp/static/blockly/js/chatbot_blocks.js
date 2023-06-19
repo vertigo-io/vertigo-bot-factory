@@ -97,7 +97,7 @@ Blockly.Blocks['cb_condition'] = {
                     },
                     {
                         "type": "field_dropdown",
-                        "name": "NAME",
+                        "name": "typeVar",
                         "options": [
                             [
                                 "type local",
@@ -147,7 +147,7 @@ Blockly.Blocks['cb_buttons'] = {
         this.jsonInit(
             {
                 "type": "choose:button",
-                "message0": "Liste boutons %1 question: %2 %3 variable: %4 %5 %6 option: %7 %8 %9",
+                "message0": "Liste boutons %1 question associée: %2 %3 variable: %4 %5 %6 option: %7 %8 %9",
                 "args0": [
                     {
                         "type": "input_dummy"
@@ -162,7 +162,7 @@ Blockly.Blocks['cb_buttons'] = {
                     },
                     {
                         "type": "field_dropdown",
-                        "name": "",
+                        "name": "typeVar",
                         "options": [
                             [
                                 "type local",
@@ -185,14 +185,15 @@ Blockly.Blocks['cb_buttons'] = {
                     {
                         "type": "field_input",
                         "name": "variable",
-                        "text": ""
+                        "text": "",
+                        "check": "String"
                     },
                     {
                         "type": "input_dummy"
                     },
                     {
                         "type": "field_dropdown",
-                        "name": "",
+                        "name": "optionNlu",
                         "options": [
                             [
                                 "Désactivé chat",
@@ -200,7 +201,7 @@ Blockly.Blocks['cb_buttons'] = {
                             ],
                             [
                                 "Activé chat",
-                                ":nlu"
+                                "nlu"
                             ]
                         ]
                     },
@@ -256,7 +257,7 @@ Blockly.Blocks['cb_button'] = {
 // *****************************
 // ******CATEGORIE MESSAGE******
 // *****************************
-Blockly.Blocks['cb_message'] = {
+Blockly.Blocks['cb_say'] = {
     init: function() {
         this.jsonInit(
             {
@@ -266,11 +267,12 @@ Blockly.Blocks['cb_message'] = {
                     {
                         "type": "field_input",
                         "name": "say",
-                        "text": ""
+                        "text": "",
+                        "check": "String"
                     },
                     {
                         "type": "field_dropdown",
-                        "name": "NAME",
+                        "name": "optionSay",
                         "options": [
                             [
                                 "aucune",
@@ -278,11 +280,11 @@ Blockly.Blocks['cb_message'] = {
                             ],
                             [
                                 "toujours",
-                                ":always"
+                                "always"
                             ],
                             [
                                 "une fois",
-                                ":once"
+                                "once"
                             ]
                         ]
                     }
@@ -305,7 +307,159 @@ Blockly.Blocks['cb_link'] = {
                     {
                         "type": "field_input",
                         "name": "url",
-                        "text": "url"
+                        "text": "url",
+                        "check": "String"
+                    }
+                ],
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 120,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+Blockly.Blocks['cb_mail'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "mail",
+                "message0": "Mail %1 Objet:  %2 %3 %4 Message:  %5 %6 %7 Pièce jointe: %8, si oui: %9 %10 %11 Destinataire:  %12 %13",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "mailobject",
+                        "options": [
+                            [
+                                "type local",
+                                "local"
+                            ],
+                            [
+                                "type global",
+                                "global"
+                            ],
+                            [
+                                "type context",
+                                "global/context"
+                            ],
+                            [
+                                "type url",
+                                "global/context/url"
+                            ]
+                        ]
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "NAME",
+                        "text": "objet"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "mailmessage",
+                        "options": [
+                            [
+                                "type local",
+                                "local"
+                            ],
+                            [
+                                "type global",
+                                "global"
+                            ],
+                            [
+                                "type context",
+                                "global/context"
+                            ],
+                            [
+                                "type url",
+                                "global/context/url"
+                            ]
+                        ]
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "NAME",
+                        "text": "message"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "optionPj",
+                        "options": [
+                            [
+                                "oui",
+                                "yespj"
+                            ],
+                            [
+                                "non",
+                                "nopj"
+                            ]
+                        ]
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "mailpj",
+                        "options": [
+                            [
+                                "type local",
+                                "local"
+                            ],
+                            [
+                                "type global",
+                                "global"
+                            ],
+                            [
+                                "type context",
+                                "global/context"
+                            ],
+                            [
+                                "type url",
+                                "global/context/url"
+                            ]
+                        ]
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "NAME",
+                        "text": "pj"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "maildest",
+                        "options": [
+                            [
+                                "type local",
+                                "local"
+                            ],
+                            [
+                                "type global",
+                                "global"
+                            ],
+                            [
+                                "type context",
+                                "global/context"
+                            ],
+                            [
+                                "type url",
+                                "global/context/url"
+                            ]
+                        ]
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "NAME",
+                        "text": "mail"
                     }
                 ],
                 "previousStatement": null,
@@ -342,11 +496,11 @@ Blockly.Blocks['cb_topic'] = {
             });
     }
 };
-Blockly.Blocks['cb_topic_start'] = {
+Blockly.Blocks['cb_topicstart'] = {
     init: function() {
         this.jsonInit(
             {
-                "type": "topic",
+                "type": "topicstart",
                 "lastDummyAlign0": "CENTRE",
                 "message0": "Redirection intention départ",
                 "inputsInline": true,
@@ -358,13 +512,29 @@ Blockly.Blocks['cb_topic_start'] = {
             });
     }
 };
-Blockly.Blocks['cb_topic_fallback'] = {
+Blockly.Blocks['cb_topicfallback'] = {
     init: function() {
         this.jsonInit(
             {
                 "type": "topic",
                 "lastDummyAlign0": "CENTRE",
                 "message0": "Redirection intention fin discussion",
+                "inputsInline": true,
+                "previousStatement": null,
+                "nextStatement": null,
+                "colour": 50,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+Blockly.Blocks['cb_topicidle'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "topic",
+                "lastDummyAlign0": "CENTRE",
+                "message0": "Redirection intention reprise discussion",
                 "inputsInline": true,
                 "previousStatement": null,
                 "nextStatement": null,
@@ -390,7 +560,7 @@ Blockly.Blocks['cb_switch'] = {
                     },
                     {
                         "type": "field_dropdown",
-                        "name": "option-variable",
+                        "name": "typeVar",
                         "options": [
                             [
                                 "type local",
@@ -436,7 +606,7 @@ Blockly.Blocks['cb_case'] = {
         this.jsonInit(
             {
                 "type": "case",
-                "message0": "cas  %1 %2 %3",
+                "message0": "cas  %1 %2 %3 ",
                 "args0": [
                     {
                         "type": "field_input",
@@ -467,7 +637,7 @@ Blockly.Blocks['cb_set'] = {
         this.jsonInit(
             {
                 "type": "block_type",
-                "message0": "Définir variable avec chaine caractères %1 variable: %2 %3 %4 Chaine caractères: %5",
+                "message0": "Définir variable  %1 variable: %2 %3 %4 Valeur: %5 %6",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -475,22 +645,22 @@ Blockly.Blocks['cb_set'] = {
                     },
                     {
                         "type": "field_dropdown",
-                        "name": "type",
+                        "name": "type-variable",
                         "options": [
                             [
-                                "type local",
+                                "local",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "global",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "context",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "url",
                                 "global/context/url"
                             ]
                         ]
@@ -504,63 +674,22 @@ Blockly.Blocks['cb_set'] = {
                         "type": "input_dummy"
                     },
                     {
-                        "type": "field_input",
-                        "name": "value",
-                        "text": ""
-                    }
-                ],
-                "colour": 260,
-                "previousStatement": null,
-                "nextStatement": null,
-                "tooltip": "",
-                "helpUrl": ""
-            });
-    }
-};
-Blockly.Blocks['cb_setInt'] = {
-    init: function() {
-        this.jsonInit(
-            {
-                "type": "block_type",
-                "message0": "Définir variable avec nombre %1 variable: %2 %3 %4 Nombre: %5",
-                "args0": [
-                    {
-                        "type": "input_dummy",
-                        "align": "CENTRE"
-                    },
-                    {
                         "type": "field_dropdown",
-                        "name": "type",
+                        "name": "type-valeur",
                         "options": [
                             [
-                                "type local",
-                                "local"
+                                "nombre",
+                                "number"
                             ],
                             [
-                                "type global",
-                                "global"
-                            ],
-                            [
-                                "type context",
-                                "global/context"
-                            ],
-                            [
-                                "type url",
-                                "global/context/url"
+                                "caractères",
+                                "string"
                             ]
                         ]
                     },
                     {
                         "type": "field_input",
-                        "name": "variable",
-                        "text": "nomvar"
-                    },
-                    {
-                        "type": "input_dummy"
-                    },
-                    {
-                        "type": "field_input",
-                        "name": "value",
+                        "name": "set-value",
                         "text": ""
                     }
                 ],
@@ -585,7 +714,7 @@ Blockly.Blocks['cb_copy'] = {
                     },
                     {
                         "type": "field_dropdown",
-                        "name": "type",
+                        "name": "type-var-src",
                         "options": [
                             [
                                 "type local",
@@ -608,14 +737,14 @@ Blockly.Blocks['cb_copy'] = {
                     {
                         "type": "field_input",
                         "name": "variable",
-                        "text": "nomvar"
+                        "text": "nom-var-src"
                     },
                     {
                         "type": "input_dummy"
                     },
                     {
                         "type": "field_dropdown",
-                        "name": "type",
+                        "name": "type-var-dest",
                         "options": [
                             [
                                 "type local",
@@ -637,7 +766,7 @@ Blockly.Blocks['cb_copy'] = {
                     },
                     {
                         "type": "field_input",
-                        "name": "variable",
+                        "name": "type-var-dest",
                         "text": "nomvar"
                     }
                 ],
@@ -654,63 +783,22 @@ Blockly.Blocks['cb_incrBy'] = {
         this.jsonInit(
             {
                 "type": "block_type",
-                "message0": "Incrementation %1 variable: %2 %3 %4 du nombre: %5",
+                "message0": "%1crémentation %2 variable: %3 %4 %5 du nombre: %6",
                 "args0": [
                     {
-                        "type": "input_dummy",
-                        "align": "CENTRE"
-                    },
-                    {
                         "type": "field_dropdown",
-                        "name": "type",
+                        "name": "type-incr",
                         "options": [
                             [
-                                "type local",
-                                "local"
+                                "In",
+                                "incrBy"
                             ],
                             [
-                                "type global",
-                                "global"
-                            ],
-                            [
-                                "type context",
-                                "global/context"
-                            ],
-                            [
-                                "type url",
-                                "global/context/url"
+                                "Dé",
+                                "decr"
                             ]
                         ]
                     },
-                    {
-                        "type": "field_input",
-                        "name": "variable",
-                        "text": "nomvar"
-                    },
-                    {
-                        "type": "input_dummy"
-                    },
-                    {
-                        "type": "field_input",
-                        "name": "value",
-                        "text": "1"
-                    }
-                ],
-                "colour": 280,
-                "previousStatement": null,
-                "nextStatement": null,
-                "tooltip": "",
-                "helpUrl": ""
-            });
-    }
-};
-Blockly.Blocks['cb_decr'] = {
-    init: function() {
-        this.jsonInit(
-            {
-                "type": "block_type",
-                "message0": "Décrémentation %1 variable: %2 %3 %4 du nombre: %5",
-                "args0": [
                     {
                         "type": "input_dummy",
                         "align": "CENTRE"
@@ -841,15 +929,23 @@ Blockly.Blocks['cb_inputString'] = {
         this.jsonInit(
             {
                 "type": "block_type",
-                "message0": "Récupérer réponse dans variable %1 variable: %2 %3 %4 Question: %5",
+                "message0": "Récupérer réponse dans variable %1 question: %2 %3 variable: %4 %5 ",
                 "args0": [
                     {
                         "type": "input_dummy",
                         "align": "CENTRE"
                     },
                     {
+                        "type": "field_input",
+                        "name": "question",
+                        "text": ""
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
                         "type": "field_dropdown",
-                        "name": "type",
+                        "name": "type-var",
                         "options": [
                             [
                                 "type local",
@@ -871,16 +967,8 @@ Blockly.Blocks['cb_inputString'] = {
                     },
                     {
                         "type": "field_input",
-                        "name": "variable",
+                        "name": "nom-var",
                         "text": "nomvar"
-                    },
-                    {
-                        "type": "input_dummy"
-                    },
-                    {
-                        "type": "field_input",
-                        "name": "value",
-                        "text": ""
                     }
                 ],
                 "colour": 180,
