@@ -166,11 +166,11 @@ function getToolBox(){
                     },
                     {
                         "kind": "block",
-                        "type": "cb_buttonsfile"
+                        "type": "cb_button"
                     },
                     {
                         "kind": "block",
-                        "type": "cb_button"
+                        "type": "cb_buttonsfile"
                     },
                     {
                         "kind": "block",
