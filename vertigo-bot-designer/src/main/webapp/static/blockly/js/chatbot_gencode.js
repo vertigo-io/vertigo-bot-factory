@@ -8,7 +8,7 @@ function formatVariable(type, nomVar){
 		return ' /user/'+ type + ' ';
 	}
 	else{
-		return ' /user/'+ type + '/' + nomVar.toLowerCase() + ' ';
+		return ' /user/'+ type + '/' + nomVar.replace(/ /g,'').toLowerCase() + ' ';
 	}
 }
 
