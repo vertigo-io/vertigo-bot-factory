@@ -215,6 +215,7 @@
 	</section>
 	<section layout:fragment="javascript-footer">
 		<vu:include-data object="trainerState" field="'*'"/>
+		<vu:include-data-primitive key="locale" />
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 				const script = document.createElement('script');
@@ -231,8 +232,9 @@
 		<script v-if="VertigoUi.vueData.topic.ttoCd=='SCRIPTINTENTION'" th:src="@{/static/blockly/js/chatbot_gencode.js}"></script>
 		<script v-if="VertigoUi.vueData.topic.ttoCd=='SCRIPTINTENTION'" th:src="@{/static/blockly/js/chatbot_parsecode.js}"></script>
 		<script v-if="VertigoUi.vueData.topic.ttoCd=='SCRIPTINTENTION'" th:src="@{/static/blockly/js/chatbot_custom_renderer.js}"></script>
-		<script v-if="VertigoUi.vueData.topic.ttoCd=='SCRIPTINTENTION'" th:src="@{/static/blockly/lang/fr.js}"></script>
-		<script v-if="VertigoUi.vueData.topic.ttoCd=='SCRIPTINTENTION'" th:src="@{/static/blockly/lang/blockly_fr.js}"></script>
+		<script v-if="VertigoUi.vueData.topic.ttoCd=='SCRIPTINTENTION'" th:if="${model.locale=='fr_FR'}" th:src="@{/static/blockly/lang/fr.js}"></script>
+		<script v-if="VertigoUi.vueData.topic.ttoCd=='SCRIPTINTENTION'" th:if="${model.locale=='fr_FR'}" th:src="@{/static/blockly/lang/blockly_fr.js}"></script>
+		<script v-if="VertigoUi.vueData.topic.ttoCd=='SCRIPTINTENTION'" th:if="${model.locale!='fr_FR'}" th:src="@{/static/blockly/lang/blockly_en.js}"></script>
 		<script th:src="@{/static/blockly/js/blockly_injection_commons.js}"></script>
 		<script  th:if="${!model.modeReadOnly}">
 			injectionBlockly(false)

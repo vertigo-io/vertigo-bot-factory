@@ -6,7 +6,7 @@ Blockly.Blocks['cb_sequence'] = {
         this.jsonInit(
             {
                 "type": "sequence",
-                "message0": "Suite d'actions ordonnées %1 %2",
+                "message0": "%{BKY_SEQ_SEQ_TITLE} %1 %2",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -33,7 +33,7 @@ Blockly.Blocks['cb_selector'] = {
     init: function() {
         this.jsonInit(
             {
-                "message0": 'Actions selon conditions %1 %2',
+                "message0": '%{BKY_SELEC_SELEC_TITLE} %1 %2',
                 "args0": [
                     {
                         "type": "input_dummy"
@@ -56,7 +56,7 @@ Blockly.Blocks['cb_condition'] = {
         this.jsonInit(
             {
                 "type": "condition",
-                "message0": "Condition %1 type %2 %3 variable: %4 %5 %6 valeur de comparaison %7",
+                "message0": "%{BKY_SELEC_COND_TITLE} %1 %{BKY_SELEC_COND_TYPEOFCOND} %2 %3 %{BKY_COMMONS_VARIABLE_TITLE} %4 %5 %6 %{BKY_SELEC_COND_VALUECOMP} %7",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -67,27 +67,27 @@ Blockly.Blocks['cb_condition'] = {
                         "name": "condition-type",
                         "options": [
                             [
-                                "egalite (mots)",
+                                "%{BKY_SELEC_COND_EQ_TITLE}",
                                 "eq"
                             ],
                             [
-                                "egalite (nombre)",
+                                "%{BKY_SELEC_COND_EQINT_TITLE}",
                                 "eqInt"
                             ],
                             [
-                                "contient",
+                                "%{BKY_SELEC_COND_CONTAINS_TITLE}",
                                 "contains"
                             ],
                             [
-                                "plus grand que",
+                                "%{BKY_SELEC_COND_GT_TITLE}",
                                 "gt"
                             ],
                             [
-                                "plus petit que",
+                                "%{BKY_SELEC_COND_LT_TITLE}",
                                 "lt"
                             ],
                             [
-                                "champ vide ou non",
+                                "%{BKY_SELEC_COND_FULFILLED_TITLE}",
                                 "fulfilled"
                             ]
                         ]
@@ -100,19 +100,19 @@ Blockly.Blocks['cb_condition'] = {
                         "name": "typeVar",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -120,14 +120,14 @@ Blockly.Blocks['cb_condition'] = {
                     {
                         "type": "field_input",
                         "name": "condition-variable",
-                        "text": "nomvar"
+                        "text": "%{BKY_COMMONS_VARIABLE_NAMEVAR}"
                     },
                     {
                         "type": "input_dummy"
                     },
                     {
                         "type": "field_input",
-                        "name": "valeur-variable",
+                        "name": "value-variable",
                         "text": ""
                     }
                 ],
@@ -147,15 +147,16 @@ Blockly.Blocks['cb_buttons'] = {
         this.jsonInit(
             {
                 "type": "choose:button",
-                "message0": "Liste boutons %1 question associée: %2 %3 variable: %4 %5 %6 option: %7 %8 %9",
+                "message0": "%{BKY_BUT_LISTBUT_TITLE} %1 %{BKY_COMMONS_QUEST_ASSOCIATED} %2 %3 %{BKY_COMMONS_VARIABLE_TITLE} %4 %5 %6 %{BKY_COMMONS_OPTION_TITLE} %7 %8 %9",
                 "args0": [
                     {
-                        "type": "input_dummy"
+                        "type": "input_dummy",
+                        "align": "CENTRE"
                     },
                     {
                         "type": "field_input",
                         "name": "question",
-                        "text": "?"
+                        "text": "%{BKY_COMMONS_SAMPLE_LISTBUT_SENTENCE}"
                     },
                     {
                         "type": "input_dummy"
@@ -165,27 +166,27 @@ Blockly.Blocks['cb_buttons'] = {
                         "name": "typeVar",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
                     },
                     {
                         "type": "field_input",
-                        "name": "variable",
-                        "text": "",
+                        "name": "condition-variable",
+                        "text": "%{BKY_COMMONS_VARIABLE_NAMEVAR}",
                         "check": "String"
                     },
                     {
@@ -196,11 +197,11 @@ Blockly.Blocks['cb_buttons'] = {
                         "name": "optionNlu",
                         "options": [
                             [
-                                "Désactivé chat",
+                                "%{BKY_COMMONS_NLU_CHAT_DISABLED}",
                                 ""
                             ],
                             [
-                                "Activé chat",
+                                "%{BKY_COMMONS_NLU_CHAT_ENABLED}",
                                 "nlu"
                             ]
                         ]
@@ -210,7 +211,11 @@ Blockly.Blocks['cb_buttons'] = {
                     },
                     {
                         "type": "input_statement",
-                        "name": "SUB_BLOCKS"
+                        "name": "SUB_BLOCKS",
+                        "check": [
+                            "cb_button",
+                            "cb_buttonfile"
+                        ]
                     }
                 ],
                 "previousStatement": null,
@@ -226,15 +231,16 @@ Blockly.Blocks['cb_buttonsfile'] = {
         this.jsonInit(
             {
                 "type": "choose:button",
-                "message0": "Liste boutons avec fichiers/PJ %1 question associée: %2 %3 variable: %4 %5 %6  %7",
+                "message0": "%{BKY_BUT_LISTBUTFILE_TITLE} %1 %{BKY_COMMONS_QUEST_ASSOCIATED} %2 %3 %{BKY_COMMONS_VARIABLE_TITLE} %4 %5 %6  %7",
                 "args0": [
                     {
-                        "type": "input_dummy"
+                        "type": "input_dummy",
+                        "align": "CENTRE"
                     },
                     {
                         "type": "field_input",
                         "name": "question",
-                        "text": "?"
+                        "text": "%{BKY_COMMONS_SAMPLE_LISTBUTFILE_SENTENCE}"
                     },
                     {
                         "type": "input_dummy"
@@ -244,19 +250,19 @@ Blockly.Blocks['cb_buttonsfile'] = {
                         "name": "typeVar",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -264,7 +270,7 @@ Blockly.Blocks['cb_buttonsfile'] = {
                     {
                         "type": "field_input",
                         "name": "variable",
-                        "text": "",
+                        "text": "%{BKY_COMMONS_VARIABLE_NAMEVAR}",
                         "check": "String"
                     },
                     {
@@ -288,7 +294,7 @@ Blockly.Blocks['cb_button'] = {
         this.jsonInit(
             {
                 "type": "button",
-                "message0": "Bouton %1 phrase associée: %2 %3 valeur de la variable si clique: %4",
+                "message0": "%{BKY_BUT_BUT_TITLE} %1 %{BKY_COMMONS_SENT_ASSOCIATED} %2 %3 %{BKY_BUT_BUT_VALUEIFCLICK} %4",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -297,7 +303,7 @@ Blockly.Blocks['cb_button'] = {
                     {
                         "type": "field_input",
                         "name": "value1",
-                        "text": ""
+                        "text": "%{BKY_COMMONS_SAMPLE_BUT_SENTENCE}"
                     },
                     {
                         "type": "input_dummy"
@@ -305,11 +311,11 @@ Blockly.Blocks['cb_button'] = {
                     {
                         "type": "field_input",
                         "name": "value2",
-                        "text": ""
+                        "text": "%{BKY_COMMONS_SAMPLE_BUT_VALUEIFCLICK}"
                     }
                 ],
                 "previousStatement": null,
-                "nextStatement": "button",
+                "nextStatement": null,
                 "colour": 210,
                 "tooltip": "",
                 "helpUrl": ""
@@ -321,7 +327,7 @@ Blockly.Blocks['cb_buttonfile'] = {
         this.jsonInit(
             {
                 "type": "buttonfile",
-                "message0": "Bouton avec fichier/PJ %1 phrase associée: %2 %3 valeur de la variable si clique: %4",
+                "message0": "%{BKY_BUT_BUTFILE_TITLE} %1 %{BKY_COMMONS_SENT_ASSOCIATED} %2 %3 %{BKY_BUT_BUT_VALUEIFCLICK} %4",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -330,7 +336,7 @@ Blockly.Blocks['cb_buttonfile'] = {
                     {
                         "type": "field_input",
                         "name": "question",
-                        "text": "Quel est la PJ"
+                        "text": "%{BKY_COMMONS_SAMPLE_BUTFILE_SENTENCE}"
                     },
                     {
                         "type": "input_dummy"
@@ -338,7 +344,7 @@ Blockly.Blocks['cb_buttonfile'] = {
                     {
                         "type": "field_input",
                         "name": "value2",
-                        "text": "PJ"
+                        "text": "%{BKY_COMMONS_SAMPLE_BUTFILE_VALUEIFCLICK}"
                     }
                 ],
                 "previousStatement": null,
@@ -357,7 +363,7 @@ Blockly.Blocks['cb_say'] = {
         this.jsonInit(
             {
                 "type": "say",
-                "message0": "Message %1 option: %2",
+                "message0": "%{BKY_MES_SAY_TITLE} %1 %{BKY_COMMONS_OPTION_TITLE} %2",
                 "args0": [
                     {
                         "type": "field_input",
@@ -370,15 +376,15 @@ Blockly.Blocks['cb_say'] = {
                         "name": "optionSay",
                         "options": [
                             [
-                                "aucune",
+                                "%{BKY_COMMONS_SAY_OPTION_NONE}",
                                 ""
                             ],
                             [
-                                "toujours",
+                                "%{BKY_COMMONS_SAY_OPTION_ALWAYS}",
                                 "always"
                             ],
                             [
-                                "une fois",
+                                "%{BKY_COMMONS_SAY_OPTION_ONCE}",
                                 "once"
                             ]
                         ]
@@ -397,12 +403,12 @@ Blockly.Blocks['cb_link'] = {
         this.jsonInit(
             {
                 "type": "link",
-                "message0": "lien:  %1",
+                "message0": "%{BKY_MES_LINK_TITLE}  %1",
                 "args0": [
                     {
                         "type": "field_input",
                         "name": "url",
-                        "text": "url",
+                        "text": "%{BKY_COMMONS_SAMPLE_LINK}",
                         "check": "String"
                     }
                 ],
@@ -419,7 +425,7 @@ Blockly.Blocks['cb_mail'] = {
         this.jsonInit(
             {
                 "type": "mail",
-                "message0": "Mail %1 Objet:  %2 %3 %4 Message:  %5 %6 %7 Pièce jointe: %8, si oui: %9 %10 %11 Destinataire:  %12 %13",
+                "message0": "%{BKY_MES_MAIL_TITLE} %1 %{BKY_MES_MAIL_SUBJECT_TITLE} %2 %3 %4 %{BKY_MES_MAIL_MESSAGE_TITLE} %5 %6 %7 %{BKY_MES_MAIL_PJ_TITLE} %8 %{BKY_MES_MAIL_PJ_IFACTIVE} %9 %10 %11 %{BKY_MES_MAIL_RECIPIENT_TITLE} %12 %13",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -430,19 +436,19 @@ Blockly.Blocks['cb_mail'] = {
                         "name": "mailobject",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -450,7 +456,7 @@ Blockly.Blocks['cb_mail'] = {
                     {
                         "type": "field_input",
                         "name": "NAME",
-                        "text": "objet"
+                        "text":  "%{BKY_COMMONS_SAMPLE_MAIL_SUBJECT}"
                     },
                     {
                         "type": "input_dummy"
@@ -460,19 +466,19 @@ Blockly.Blocks['cb_mail'] = {
                         "name": "mailmessage",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -480,7 +486,7 @@ Blockly.Blocks['cb_mail'] = {
                     {
                         "type": "field_input",
                         "name": "NAME",
-                        "text": "message"
+                        "text": "%{BKY_COMMONS_SAMPLE_MESSAGE}",
                     },
                     {
                         "type": "input_dummy"
@@ -490,11 +496,11 @@ Blockly.Blocks['cb_mail'] = {
                         "name": "optionPj",
                         "options": [
                             [
-                                "oui",
+                                "%{BKY_COMMONS_OPTION_YES}",
                                 "yespj"
                             ],
                             [
-                                "non",
+                                "%{BKY_COMMONS_OPTION_NO}",
                                 "nopj"
                             ]
                         ]
@@ -504,19 +510,19 @@ Blockly.Blocks['cb_mail'] = {
                         "name": "mailpj",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -524,7 +530,7 @@ Blockly.Blocks['cb_mail'] = {
                     {
                         "type": "field_input",
                         "name": "NAME",
-                        "text": "pj"
+                        "text": "%{BKY_COMMONS_SAMPLE_MAIL_PJ}"
                     },
                     {
                         "type": "input_dummy"
@@ -534,19 +540,19 @@ Blockly.Blocks['cb_mail'] = {
                         "name": "maildest",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -554,7 +560,7 @@ Blockly.Blocks['cb_mail'] = {
                     {
                         "type": "field_input",
                         "name": "NAME",
-                        "text": "mail"
+                        "text": "%{BKY_COMMONS_SAMPLE_MAIL_RECIPIENT}"
                     }
                 ],
                 "previousStatement": null,
@@ -574,12 +580,12 @@ Blockly.Blocks['cb_topic'] = {
             {
                 "type": "topic",
                 "lastDummyAlign0": "CENTRE",
-                "message0": "Redirection vers intention code %1",
+                "message0": "%{BKY_TOP_TOP_TITLE} %1",
                 "args0": [
                     {
                         "type": "field_input",
                         "name": "NAME",
-                        "text": "CODE"
+                        "text": "%{BKY_COMMONS_SAMPLE_TOPIC_CODE}"
                     }
                 ],
                 "inputsInline": true,
@@ -597,7 +603,7 @@ Blockly.Blocks['cb_topicstart'] = {
             {
                 "type": "topicstart",
                 "lastDummyAlign0": "CENTRE",
-                "message0": "Redirection intention départ",
+                "message0": "%{BKY_TOP_TOPSTART_TITLE}",
                 "inputsInline": true,
                 "previousStatement": null,
                 "nextStatement": null,
@@ -613,7 +619,7 @@ Blockly.Blocks['cb_topicfallback'] = {
             {
                 "type": "topic",
                 "lastDummyAlign0": "CENTRE",
-                "message0": "Redirection intention fin discussion",
+                "message0": "%{BKY_TOP_TOPFALLBACK_TITLE}",
                 "inputsInline": true,
                 "previousStatement": null,
                 "nextStatement": null,
@@ -629,7 +635,7 @@ Blockly.Blocks['cb_topicidle'] = {
             {
                 "type": "topic",
                 "lastDummyAlign0": "CENTRE",
-                "message0": "Redirection intention reprise discussion",
+                "message0": "%{BKY_TOP_TOPIDLE_TITLE}",
                 "inputsInline": true,
                 "previousStatement": null,
                 "nextStatement": null,
@@ -645,7 +651,7 @@ Blockly.Blocks['cb_topicend'] = {
             {
                 "type": "topic",
                 "lastDummyAlign0": "CENTRE",
-                "message0": "Redirection fin",
+                "message0": "%{BKY_TOP_TOPEND_TITLE}",
                 "inputsInline": true,
                 "previousStatement": null,
                 "nextStatement": null,
@@ -661,7 +667,7 @@ Blockly.Blocks['cb_choose'] = {
             {
                 "type": "topic",
                 "lastDummyAlign0": "CENTRE",
-                "message0": "Recherche d'intention %1 Question: %2",
+                "message0": "%{BKY_TOP_CHOOSE_TITLE} %1 %{BKY_COMMONS_QUEST_ASSOCIATED} %2",
                 "args0":[
                     {
                         "type": "input_dummy",
@@ -670,7 +676,7 @@ Blockly.Blocks['cb_choose'] = {
                     {
                         "type": "field_input",
                         "name": "question",
-                        "text": "En quoi d'autre puis-je vous aider ?"
+                        "text": "%{BKY_COMMONS_SAMPLE_TOPIC_QUEST}"
                     }
                 ],
                 "previousStatement": null,
@@ -689,7 +695,7 @@ Blockly.Blocks['cb_switch'] = {
         this.jsonInit(
             {
                 "type": "switch",
-                "message0": "Actions selon  %1 variable:  %2 %3 %4 %5",
+                "message0": "%{BKY_SWITCHCASE_SWITCH_TITLE} %1 %{BKY_COMMONS_VARIABLE_TITLE} %2 %3 %4 %5",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -700,19 +706,19 @@ Blockly.Blocks['cb_switch'] = {
                         "name": "typeVar",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -720,7 +726,7 @@ Blockly.Blocks['cb_switch'] = {
                     {
                         "type": "field_input",
                         "name": "nameVar",
-                        "text": "nomVariable"
+                        "text": "%{BKY_COMMONS_VARIABLE_NAMEVAR}"
                     },
                     {
                         "type": "input_dummy"
@@ -743,12 +749,12 @@ Blockly.Blocks['cb_case'] = {
         this.jsonInit(
             {
                 "type": "case",
-                "message0": "cas  %1 %2 %3 ",
+                "message0": "%{BKY_SWITCHCASE_CASE_TITLE} %1 %2 %3 ",
                 "args0": [
                     {
                         "type": "field_input",
                         "name": "valueCase",
-                        "text": "valeur"
+                        "text": "%{BKY_COMMONS_VALUE_NAMEVAR}"
                     },
                     {
                         "type": "input_dummy"
@@ -774,7 +780,7 @@ Blockly.Blocks['cb_set'] = {
         this.jsonInit(
             {
                 "type": "block_type",
-                "message0": "Définir variable  %1 variable: %2 %3 %4 Valeur: %5 %6",
+                "message0": "%{BKY_KEY_SET_TITLE}  %1 %{BKY_COMMONS_VARIABLE_TITLE} %2 %3 %4 %{BKY_COMMONS_VALUE_TITLE} %5 %6",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -785,19 +791,19 @@ Blockly.Blocks['cb_set'] = {
                         "name": "type-variable",
                         "options": [
                             [
-                                "local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -805,7 +811,7 @@ Blockly.Blocks['cb_set'] = {
                     {
                         "type": "field_input",
                         "name": "variable",
-                        "text": "nomvar"
+                        "text": "%{BKY_COMMONS_VARIABLE_NAMEVAR}"
                     },
                     {
                         "type": "input_dummy"
@@ -815,11 +821,11 @@ Blockly.Blocks['cb_set'] = {
                         "name": "type-valeur",
                         "options": [
                             [
-                                "nombre",
+                                "%{BKY_COMMONS_TYPE_NUMBER}",
                                 "number"
                             ],
                             [
-                                "caractères",
+                                "%{BKY_COMMONS_TYPE_STRING}",
                                 "string"
                             ]
                         ]
@@ -843,7 +849,7 @@ Blockly.Blocks['cb_copy'] = {
         this.jsonInit(
             {
                 "type": "block_type",
-                "message0": "Copie variable %1 variable source: %2 %3 %4 variable cible: %5 %6",
+                "message0": "%{BKY_KEY_COPY_TITLE} %1 %{BKY_KEY_COPY_VAR_SRC} %2 %3 %4 %{BKY_KEY_COPY_VAR_TARGET} %5 %6",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -854,19 +860,19 @@ Blockly.Blocks['cb_copy'] = {
                         "name": "type-var-src",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -874,7 +880,7 @@ Blockly.Blocks['cb_copy'] = {
                     {
                         "type": "field_input",
                         "name": "variable",
-                        "text": "nom-var-src"
+                        "text": "%{BKY_COMMONS_SAMPLE_COPY_SRC}"
                     },
                     {
                         "type": "input_dummy"
@@ -884,19 +890,19 @@ Blockly.Blocks['cb_copy'] = {
                         "name": "type-var-dest",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -904,7 +910,7 @@ Blockly.Blocks['cb_copy'] = {
                     {
                         "type": "field_input",
                         "name": "type-var-dest",
-                        "text": "nomvar"
+                        "text": "%{BKY_COMMONS_SAMPLE_COPY_TARGET}"
                     }
                 ],
                 "colour": 260,
@@ -920,18 +926,18 @@ Blockly.Blocks['cb_incrBy'] = {
         this.jsonInit(
             {
                 "type": "block_type",
-                "message0": "%1crémentation %2 variable: %3 %4 %5 du nombre: %6",
+                "message0": "%1%{BKY_KEY_INCRBY_TITLE} %2 %{BKY_COMMONS_VARIABLE_TITLE} %3 %4 %5 du nombre: %6",
                 "args0": [
                     {
                         "type": "field_dropdown",
                         "name": "type-incr",
                         "options": [
                             [
-                                "In",
+                                "%{BKY_KEY_INCRBY_MOD_INCR}",
                                 "incrBy"
                             ],
                             [
-                                "Dé",
+                                "%{BKY_KEY_INCRBY_MOD_DECR}",
                                 "decr"
                             ]
                         ]
@@ -945,19 +951,19 @@ Blockly.Blocks['cb_incrBy'] = {
                         "name": "type",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -965,7 +971,7 @@ Blockly.Blocks['cb_incrBy'] = {
                     {
                         "type": "field_input",
                         "name": "variable",
-                        "text": "nomvar"
+                        "text": "%{BKY_COMMONS_VARIABLE_NAMEVAR}"
                     },
                     {
                         "type": "input_dummy"
@@ -973,7 +979,7 @@ Blockly.Blocks['cb_incrBy'] = {
                     {
                         "type": "field_input",
                         "name": "value",
-                        "text": "1"
+                        "text": "%{BKY_KEY_INCRBY_VALUE}"
                     }
                 ],
                 "colour": 280,
@@ -989,7 +995,7 @@ Blockly.Blocks['cb_remove'] = {
         this.jsonInit(
             {
                 "type": "block_type",
-                "message0": "Suppression variable %1 variable: %2 %3 %4",
+                "message0": "%{BKY_KEY_REMOVE_TITLE} %1 %{BKY_COMMONS_VARIABLE_TITLE} %2 %3 %4",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -1000,19 +1006,19 @@ Blockly.Blocks['cb_remove'] = {
                         "name": "type",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -1020,7 +1026,7 @@ Blockly.Blocks['cb_remove'] = {
                     {
                         "type": "field_input",
                         "name": "variable",
-                        "text": "nomvar"
+                        "text": "%{BKY_COMMONS_VARIABLE_NAMEVAR}"
                     },
                     {
                         "type": "input_dummy"
@@ -1042,7 +1048,7 @@ Blockly.Blocks['cb_random'] = {
         this.jsonInit(
             {
                 "type": "random",
-                "message0": "Aléatoire parmi %1 %2",
+                "message0": "%{BKY_OTHER_RANDOM_TITLE} %1 %2",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -1066,7 +1072,7 @@ Blockly.Blocks['cb_inputString'] = {
         this.jsonInit(
             {
                 "type": "block_type",
-                "message0": "Récupérer réponse dans variable %1 question: %2 %3 variable: %4 %5 ",
+                "message0": "%{BKY_OTHER_INPUTSTRING_TITLE} %1 %{BKY_COMMONS_QUEST_ASSOCIATED} %2 %3 %{BKY_COMMONS_VARIABLE_TITLE} %4 %5 ",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -1075,7 +1081,7 @@ Blockly.Blocks['cb_inputString'] = {
                     {
                         "type": "field_input",
                         "name": "question",
-                        "text": ""
+                        "text": "%{BKY_COMMONS_SAMPLE_INPUTSTRING_QUEST}"
                     },
                     {
                         "type": "input_dummy"
@@ -1085,19 +1091,19 @@ Blockly.Blocks['cb_inputString'] = {
                         "name": "type-var",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -1105,7 +1111,7 @@ Blockly.Blocks['cb_inputString'] = {
                     {
                         "type": "field_input",
                         "name": "nom-var",
-                        "text": "nomvar"
+                        "text": "%{BKY_COMMONS_SAMPLE_INPUTSTRING_VAR}"
                     }
                 ],
                 "colour": 180,
@@ -1121,7 +1127,7 @@ Blockly.Blocks['cb_append'] = {
         this.jsonInit(
             {
                 "type": "block_type",
-                "message0": "Ajout chaine caractères fin variable %1 variable: %2 %3 %4 Valeur: %5",
+                "message0": "%{BKY_OTHER_APPEND_TITLE} %1 %{BKY_COMMONS_VARIABLE_TITLE} %2 %3 %4 %{BKY_COMMONS_STRING_TITLE} %5",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -1132,19 +1138,19 @@ Blockly.Blocks['cb_append'] = {
                         "name": "type",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -1152,7 +1158,7 @@ Blockly.Blocks['cb_append'] = {
                     {
                         "type": "field_input",
                         "name": "variable",
-                        "text": "nomvar"
+                        "text": "%{BKY_COMMONS_VARIABLE_NAMEVAR}"
                     },
                     {
                         "type": "input_dummy"
@@ -1176,7 +1182,7 @@ Blockly.Blocks['cb_rating'] = {
         this.jsonInit(
             {
                 "type": "block_type",
-                "message0": "Evaluation/Note %1 Variable stockage note: %2 %3 %4 Question: %5",
+                "message0": "%{BKY_OTHER_RATING_TITLE} %1 %{BKY_OTHER_RATING_VAR_TITLE} %2 %3 %4 %{BKY_COMMONS_QUEST_ASSOCIATED} %5",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -1187,19 +1193,19 @@ Blockly.Blocks['cb_rating'] = {
                         "name": "type",
                         "options": [
                             [
-                                "type local",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
                                 "local"
                             ],
                             [
-                                "type global",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
                                 "global"
                             ],
                             [
-                                "type context",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
                                 "global/context"
                             ],
                             [
-                                "type url",
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
                                 "global/context/url"
                             ]
                         ]
@@ -1207,7 +1213,7 @@ Blockly.Blocks['cb_rating'] = {
                     {
                         "type": "field_input",
                         "name": "variable",
-                        "text": "note"
+                        "text": "%{BKY_COMMONS_SAMPLE_RATING_VAR}"
                     },
                     {
                         "type": "input_dummy"
@@ -1215,7 +1221,7 @@ Blockly.Blocks['cb_rating'] = {
                     {
                         "type": "field_input",
                         "name": "value",
-                        "text": "Vous pouvez nous laisser une note de satisfaction"
+                        "text": "%{BKY_COMMONS_SAMPLE_RATING_QUEST}"
                     }
                 ],
                 "colour": 180,
@@ -1249,30 +1255,6 @@ Blockly.Blocks['cb_jira'] = {
                 ],
                 "style": "jira-block",
                 "tooltip": "Execute each node untill error",
-                "previousStatement": null,
-                "nextStatement": null
-            });
-    }
-};
-Blockly.Blocks['cb_ask'] = {
-    init: function() {
-        this.jsonInit(
-            {
-                "message0": "Ask user. Field :  %1  Message : \" %2 \"",
-                "args0": [
-                    {
-                        "type": "field_input",
-                        "name": "arg0",
-                        "text": "/user/msg"
-                    },
-                    {
-                        "type": "field_multilinetext",
-                        "name": "arg1",
-                        "text": "Message"
-                    }
-                ],
-                "colour": "%{BKY_VARIABLES_HUE}",
-                "tooltip": "ask /user/msg \"Message\"",
                 "previousStatement": null,
                 "nextStatement": null
             });
