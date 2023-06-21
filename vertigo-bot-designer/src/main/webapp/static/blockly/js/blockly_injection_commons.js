@@ -1,70 +1,36 @@
 // *********************
 // ******* THEME *******
 // *********************
-// const themeDev =
-// function getThemeDev(){
-    // <!-- *****THEME****** -->
-    const themeDev = Blockly.Theme.defineTheme('themeDev', {
+const custom_theme = Blockly.Theme.defineTheme('custom_theme', {
         'base': Blockly.Themes.Classic,
         'blockStyles': {
-// selector
-            'selector-block': {
+            'ifelse_block':{
+                'colourPrimary': '#ce8364',
+            },
+            'if_block':{
+                'colourPrimary': '#d37e5d',
+            },
+            'else_block':{
+                'colourPrimary': '#d37e5d',
+            },
+            'selector_block': {
                 'colourPrimary': '#eab59d',
             },
-            'condition-block': {
-                'colourPrimary': '#b7b7b7',
+            'switch_block':{
+                'colourPrimary': '#a48173',
             },
-// button
-            'buttons-block': {
-                'colourPrimary': '#9EBAC6',
-            },
-            'button-block': {
-                'colourPrimary': '#BAE1F2',
-            },
-// topic
-            'topic-block': {
-                'colourPrimary': '#e3e06f',
-            },
-// sequence
-            'sequence-block':{
-                'colourPrimary': '#cba6c7',
-            },
-
-// message
-            'message-block':{
-                'colourPrimary': '#b775ae',
+            'case_block':{
+                'colourPrimary': '#b99283',
             }
         },
         'categoryStyles': {
-// selector category
+            // selector category
             'selector-category': {
                 'colour': '#eab59d',
             },
         },
-        'componentStyles': {
-// workspaceBackgroundColour:"#FF0000",
-// toolboxBackgroundColour:"#FF0000",
-// toolboxForegroundColour:"#FF0000",
-// flyoutBackgroundColour:"#FF0000",
-// flyoutForegroundColour:"#FF0000",
-// flyoutOpacity:"#FF0000",
-// scrollbarColour:"#FF0000",
-// scrollbarOpacity:"#FF0000",
-// insertionMarkerColour:"#FF0000",
-// insertionMarkerOpacity:"#FF0000",
-// markerColour:"#FF0000",
-// cursorColour:"#FF0000",
-// 'toolboxForegroundColour': "#FF0000",
-        },
-        'fontStyle': {
-// 'family': 'Georgia, serif',
-// 'weight': 'bold',
-// 'size': 24
-        },
         'startHats': true
     });
-//     return themeDev
-// }
 
 // *********************
 // ****** TOOLBOX ******
@@ -321,12 +287,12 @@ function injectionBlockly(mode=false){
         // oneBasedIndex: ,
         readOnly: mode,
         // TODO: faire un renderer personnalisé
-        renderer: 'zelos',
-        // renderer: 'custom_renderer',
+        // renderer: 'zelos', // default rendering well adapted for the plateform
+        renderer: 'custom_renderer',
         // rtl: ,
         scrollbars: true,
         sounds: false,
-        theme: themeDev,
+        theme: custom_theme,
         toolbox: getToolBox(),
         toolboxPosition: "end",
         // trashcan: ,

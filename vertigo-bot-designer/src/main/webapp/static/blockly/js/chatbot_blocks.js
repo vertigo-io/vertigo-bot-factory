@@ -49,7 +49,7 @@ Blockly.Blocks['cb_selector'] = {
                         ]
                     }
                 ],
-                "style": "selector-block",
+                "style": "selector_block",
                 // "colour": 0,
                 "tooltip": "Execute each node untill success",
                 "previousStatement": "all",
@@ -166,7 +166,7 @@ Blockly.Blocks['cb_ifelse'] = {
                 ],
                 "previousStatement": "all",
                 "nextStatement": "all",
-                "style": "selector-block",
+                "style": "ifelse_block",
                 "tooltip": "",
                 "helpUrl": ""
             });
@@ -196,7 +196,7 @@ Blockly.Blocks['cb_if'] = {
                 "if_type",
                 "else_type"
             ],
-            "style": "selector-block",
+            "style": "if_block",
             "tooltip": "",
             "helpUrl": ""
         });
@@ -222,7 +222,7 @@ Blockly.Blocks['cb_else'] = {
                     "if_type",
                 ],
                 "nextStatement": "none",
-                "style": "selector-block",
+                "style": "else_block",
                 "tooltip": "",
                 "helpUrl": ""
             });
@@ -840,7 +840,7 @@ Blockly.Blocks['cb_switch'] = {
                 ],
                 "previousStatement": "all",
                 "nextStatement": "all",
-                "colour": 20,
+                "style": "switch_block",
                 "tooltip": "",
                 "helpUrl": ""
             });
@@ -869,7 +869,7 @@ Blockly.Blocks['cb_case'] = {
                         ]
                     }
                 ],
-                "colour": 25,
+                "style": "case_block",
                 "tooltip": "",
                 "helpUrl": "",
                 "previousStatement": "case_type",
@@ -1087,7 +1087,7 @@ Blockly.Blocks['cb_incrBy'] = {
                         "text": "%{BKY_KEY_INCRBY_VALUE}"
                     }
                 ],
-                "colour": 280,
+                "colour": 260,
                 "previousStatement": "all",
                 "nextStatement": "all",
                 "tooltip": "",
