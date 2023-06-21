@@ -127,6 +127,18 @@ function getToolBox(){
                     {
                         "kind": "block",
                         "type": "cb_condition"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_ifelse"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_if"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_else"
                     }
                 ]
             },

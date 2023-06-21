@@ -145,6 +145,89 @@ Blockly.Blocks['cb_condition'] = {
             });
     }
 };
+Blockly.Blocks['cb_ifelse'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "ifelse",
+                "message0": "%{BKY_SELEC_IFELSE_TITLE} %1 %2",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "input_statement",
+                        "name": "SUB_BLOCKS",
+                        "check": [
+                            "firstif_type"
+                        ]
+                    }
+                ],
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "style": "selector-block",
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+Blockly.Blocks['cb_if'] = {
+    init: function() {
+        this.jsonInit(
+        {
+            "type": "if",
+            "message0": "%{BKY_SELEC_IF_TITLE} %1 %2",
+            "args0": [
+                {
+                    "type": "input_dummy"
+                },
+                {
+                    "type": "input_statement",
+                    "name": "SUB_BLOCKS",
+                    "check": "all"
+                }
+            ],
+            "previousStatement": [
+                "firstif_type",
+                "if_type"
+            ],
+            "nextStatement": [
+                "if_type",
+                "else_type"
+            ],
+            "style": "selector-block",
+            "tooltip": "",
+            "helpUrl": ""
+        });
+    }
+};
+Blockly.Blocks['cb_else'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "if",
+                "message0": "%{BKY_SELEC_ELSE_TITLE} %1 %2",
+                "args0": [
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "input_statement",
+                        "name": "SUB_BLOCKS",
+                        "check": "all"
+                    }
+                ],
+                "previousStatement": [
+                    "if_type",
+                ],
+                "nextStatement": "none",
+                "style": "selector-block",
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
 // *****************************
 // ******CATEGORIE BUTTON*****
 // *****************************
