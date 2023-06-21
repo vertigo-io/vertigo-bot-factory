@@ -14,12 +14,15 @@ Blockly.Blocks['cb_sequence'] = {
                     },
                     {
                         "type": "input_statement",
-                        "name": "SUB_BLOCKS"
+                        "name": "SUB_BLOCKS",
+                        "check": [
+                            "all"
+                        ]
                     }
                 ],
                 "inputsInline": true,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 330,
                 "tooltip": "",
                 "helpUrl": ""
@@ -40,14 +43,17 @@ Blockly.Blocks['cb_selector'] = {
                     },
                     {
                         "type": "input_statement",
-                        "name": "SUB_BLOCKS"
+                        "name": "SUB_BLOCKS",
+                        "check": [
+                            "all"
+                        ]
                     }
                 ],
                 "style": "selector-block",
                 // "colour": 0,
                 "tooltip": "Execute each node untill success",
-                "previousStatement": null,
-                "nextStatement": null
+                "previousStatement": "all",
+                "nextStatement": "all",
             });
     }
 };
@@ -131,8 +137,8 @@ Blockly.Blocks['cb_condition'] = {
                         "text": ""
                     }
                 ],
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 359,
                 "tooltip": "",
                 "helpUrl": ""
@@ -213,13 +219,12 @@ Blockly.Blocks['cb_buttons'] = {
                         "type": "input_statement",
                         "name": "SUB_BLOCKS",
                         "check": [
-                            "cb_button",
-                            "cb_buttonfile"
+                            "button_type"
                         ]
                     }
                 ],
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 230,
                 "tooltip": "",
                 "helpUrl": ""
@@ -278,11 +283,14 @@ Blockly.Blocks['cb_buttonsfile'] = {
                     },
                     {
                         "type": "input_statement",
-                        "name": "SUB_BLOCKS"
+                        "name": "SUB_BLOCKS",
+                        "check":[
+                            "button_type",
+                        ]
                     }
                 ],
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 230,
                 "tooltip": "",
                 "helpUrl": ""
@@ -314,8 +322,12 @@ Blockly.Blocks['cb_button'] = {
                         "text": "%{BKY_COMMONS_SAMPLE_BUT_VALUEIFCLICK}"
                     }
                 ],
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": [
+                    "button_type",
+                ],
+                "nextStatement":[
+                    "button_type"
+                ],
                 "colour": 210,
                 "tooltip": "",
                 "helpUrl": ""
@@ -347,8 +359,12 @@ Blockly.Blocks['cb_buttonfile'] = {
                         "text": "%{BKY_COMMONS_SAMPLE_BUTFILE_VALUEIFCLICK}"
                     }
                 ],
-                "previousStatement": null,
-                "nextStatement": "button",
+                "previousStatement": [
+                    "button_type",
+                ],
+                "nextStatement": [
+                    "button_type"
+                ],
                 "colour": 210,
                 "tooltip": "",
                 "helpUrl": ""
@@ -390,8 +406,8 @@ Blockly.Blocks['cb_say'] = {
                         ]
                     }
                 ],
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 120,
                 "tooltip": "",
                 "helpUrl": ""
@@ -412,8 +428,8 @@ Blockly.Blocks['cb_link'] = {
                         "check": "String"
                     }
                 ],
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 120,
                 "tooltip": "",
                 "helpUrl": ""
@@ -563,8 +579,8 @@ Blockly.Blocks['cb_mail'] = {
                         "text": "%{BKY_COMMONS_SAMPLE_MAIL_RECIPIENT}"
                     }
                 ],
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 120,
                 "tooltip": "",
                 "helpUrl": ""
@@ -589,8 +605,8 @@ Blockly.Blocks['cb_topic'] = {
                     }
                 ],
                 "inputsInline": true,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 50,
                 "tooltip": "",
                 "helpUrl": ""
@@ -605,8 +621,8 @@ Blockly.Blocks['cb_topicstart'] = {
                 "lastDummyAlign0": "CENTRE",
                 "message0": "%{BKY_TOP_TOPSTART_TITLE}",
                 "inputsInline": true,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 50,
                 "tooltip": "",
                 "helpUrl": ""
@@ -621,8 +637,8 @@ Blockly.Blocks['cb_topicfallback'] = {
                 "lastDummyAlign0": "CENTRE",
                 "message0": "%{BKY_TOP_TOPFALLBACK_TITLE}",
                 "inputsInline": true,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 50,
                 "tooltip": "",
                 "helpUrl": ""
@@ -637,8 +653,8 @@ Blockly.Blocks['cb_topicidle'] = {
                 "lastDummyAlign0": "CENTRE",
                 "message0": "%{BKY_TOP_TOPIDLE_TITLE}",
                 "inputsInline": true,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 50,
                 "tooltip": "",
                 "helpUrl": ""
@@ -653,8 +669,8 @@ Blockly.Blocks['cb_topicend'] = {
                 "lastDummyAlign0": "CENTRE",
                 "message0": "%{BKY_TOP_TOPEND_TITLE}",
                 "inputsInline": true,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 50,
                 "tooltip": "",
                 "helpUrl": ""
@@ -679,8 +695,8 @@ Blockly.Blocks['cb_choose'] = {
                         "text": "%{BKY_COMMONS_SAMPLE_TOPIC_QUEST}"
                     }
                 ],
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 50,
                 "tooltip": "",
                 "helpUrl": ""
@@ -733,11 +749,14 @@ Blockly.Blocks['cb_switch'] = {
                     },
                     {
                         "type": "input_statement",
-                        "name": "SUB_BLOCKS"
+                        "name": "SUB_BLOCKS",
+                        "check": [
+                            "case_type"
+                        ]
                     }
                 ],
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "colour": 20,
                 "tooltip": "",
                 "helpUrl": ""
@@ -761,14 +780,17 @@ Blockly.Blocks['cb_case'] = {
                     },
                     {
                         "type": "input_statement",
-                        "name": "SUB_BLOCKS"
+                        "name": "SUB_BLOCKS",
+                        "check": [
+                            "all"
+                        ]
                     }
                 ],
                 "colour": 25,
                 "tooltip": "",
                 "helpUrl": "",
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "case_type",
+                "nextStatement": "case_type",
             });
     }
 };
@@ -837,8 +859,8 @@ Blockly.Blocks['cb_set'] = {
                     }
                 ],
                 "colour": 260,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "tooltip": "",
                 "helpUrl": ""
             });
@@ -914,8 +936,8 @@ Blockly.Blocks['cb_copy'] = {
                     }
                 ],
                 "colour": 260,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "tooltip": "",
                 "helpUrl": ""
             });
@@ -983,8 +1005,8 @@ Blockly.Blocks['cb_incrBy'] = {
                     }
                 ],
                 "colour": 280,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "tooltip": "",
                 "helpUrl": ""
             });
@@ -1033,8 +1055,8 @@ Blockly.Blocks['cb_remove'] = {
                     }
                 ],
                 "colour": 260,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "tooltip": "",
                 "helpUrl": ""
             });
@@ -1056,14 +1078,17 @@ Blockly.Blocks['cb_random'] = {
                     },
                     {
                         "type": "input_statement",
-                        "name": "SUB_BLOCKS"
+                        "name": "SUB_BLOCKS",
+                        "check": [
+                            "all"
+                        ]
                     }
                 ],
                 "colour": 180,
                 "tooltip": "",
                 "helpUrl": "",
-                "previousStatement": null,
-                "nextStatement": null
+                "previousStatement": "all",
+                "nextStatement": "all",
             });
     }
 };
@@ -1116,8 +1141,8 @@ Blockly.Blocks['cb_inputString'] = {
                 ],
                 "colour": 180,
                 "tooltip": "",
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "helpUrl": ""
             });
     }
@@ -1170,8 +1195,8 @@ Blockly.Blocks['cb_append'] = {
                     }
                 ],
                 "colour": 260,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "tooltip": "",
                 "helpUrl": ""
             });
@@ -1225,8 +1250,8 @@ Blockly.Blocks['cb_rating'] = {
                     }
                 ],
                 "colour": 180,
-                "previousStatement": null,
-                "nextStatement": null,
+                "previousStatement": "all",
+                "nextStatement": "all",
                 "tooltip": "",
                 "helpUrl": ""
             });
@@ -1239,27 +1264,6 @@ Blockly.Blocks['cb_rating'] = {
 // *****************************
 // ******CATEGORIE JIRA*****
 // *****************************
-Blockly.Blocks['cb_jira'] = {
-    init: function() {
-        this.jsonInit(
-            {
-                "message0": 'Jira1 %1 %2',
-                "args0": [
-                    {
-                        "type": "input_dummy"
-                    },
-                    {
-                        "type": "input_statement",
-                        "name": "SUB_BLOCKS"
-                    }
-                ],
-                "style": "jira-block",
-                "tooltip": "Execute each node untill error",
-                "previousStatement": null,
-                "nextStatement": null
-            });
-    }
-};
 
 // ********************
 // ** Generic blocks **
