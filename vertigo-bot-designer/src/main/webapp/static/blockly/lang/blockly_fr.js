@@ -89,6 +89,9 @@ Blockly.Msg["SELEC_COND_CONTAINS_TITLE"] = "contient";
 Blockly.Msg["SELEC_COND_GT_TITLE"] = "plus grand que";
 Blockly.Msg["SELEC_COND_LT_TITLE"] = "plus petit que";
 Blockly.Msg["SELEC_COND_FULFILLED_TITLE"] = "champ vide";
+Blockly.Msg["SELEC_IFELSE_TITLE"] = "Suites d'actions si et sinon";
+Blockly.Msg["SELEC_IF_TITLE"] = "Si condition(s) suivante(s) verifiée(s), faire:";
+Blockly.Msg["SELEC_ELSE_TITLE"] = "Sinon par défaut faire:";
 
 // *****************************
 // ***** CATEGORIE BUTTON ******

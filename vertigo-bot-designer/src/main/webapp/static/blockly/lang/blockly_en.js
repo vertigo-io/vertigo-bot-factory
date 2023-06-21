@@ -98,6 +98,9 @@ Blockly.Msg["BUT_LISTBUTFILE_TITLE"] = "Button list with files/PJ";
 Blockly.Msg["BUT_BUT_TITLE"] = "Button";
 Blockly.Msg["BUT_BUT_VALUEIFCLICK"] = "Variable value if clicked:";
 Blockly.Msg["BUT_BUTFILE_TITLE"] = "Button with file/PJ";
+Blockly.Msg["SELEC_IFELSE_TITLE"] = "Action sequence if and else";
+Blockly.Msg["SELEC_IF_TITLE"] = "If the following condition(s) verified, do:";
+Blockly.Msg["SELEC_ELSE_TITLE"] = "Else by default do:";
 
 // *****************************
 // ***** CATEGORIE MESSAGE *****
