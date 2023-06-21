@@ -258,7 +258,7 @@ function createBlock(type, isComposite, params = []) {
 
 
 	if(resolvedType.type==='cb_say'){
-		blockParams[1].setValue(resolvedType.qualifier)
+		if(resolvedType.qualifier)blockParams[1].setValue(resolvedType.qualifier)
 	}
 	else if(resolvedType.type==='cb_buttons'){
 		let temp = params[0]
