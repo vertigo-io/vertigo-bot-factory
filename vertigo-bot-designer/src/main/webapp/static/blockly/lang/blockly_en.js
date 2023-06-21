@@ -79,7 +79,7 @@ Blockly.Msg["SEQ_SEQ_TITLE"] = "Ordered sequence of actions";
 // *****************************
 // **** CATEGORIE SELECTOR *****
 // *****************************
-Blockly.Msg["SELEC_SELEC_TITLE"] = "Actions accodring to conditions";
+Blockly.Msg["SELEC_SELEC_TITLE"] = "If condition verified, skip this node";
 Blockly.Msg["SELEC_COND_TITLE"] = "Condition";
 Blockly.Msg["SELEC_COND_TYPEOFCOND"] = "of type";
 Blockly.Msg["SELEC_COND_VALUECOMP"] = "Comparison value:";
