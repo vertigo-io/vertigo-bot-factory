@@ -328,7 +328,6 @@ function createBlock(type, isComposite, params = []) {
 		params[1] = lienParams[0]
 		params.push(lienParams[1])
 	}else if(resolvedType.type==='cb_mail'){
-		// console.log(params);
 		if(params.length==5)params.pop() //todo multi dest
 		let lienParamsObject = paramsFormatVariable(params[0])
 		let lienParamsMessage = paramsFormatVariable(params[1])
@@ -411,10 +410,8 @@ function checkQualifyOption(block, qualifier) {
 	let found = false;
 	block.inputList.forEach(input => {
 		input.fieldRow.forEach(param => {
-			// console.log(param.name+"|"+param.getValue())
 			// list of all parameters name of qualifiers accepted
 			if(param.name==='optionSay' || param.name ==="optionNlu" || param.name==="condition-type" || param.name==="type-valeur" || param.name==="type-incr" || param.name==="optionPj"){
-				// console.log("checkQualifyOption true" + getBlockName(block))
 				found = true;
 			}
 			if (param.name === ":QUALIFY" && param.EDITABLE && param.getOptions) {

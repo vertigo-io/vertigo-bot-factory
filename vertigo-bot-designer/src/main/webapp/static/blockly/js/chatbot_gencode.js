@@ -86,8 +86,6 @@ function toCode(event) {
 		}
 		code = 'begin sequence\r\n' + code + 'end sequence';
 	}
-	// DEBUG CODE
-	// console.log(code)
 	VertigoUi.vueData.scriptIntention.script = code;
 }
 
@@ -116,12 +114,6 @@ for (name in Blockly.Blocks) { // same rendering function for all CB blocks
 	if (name.startsWith('cb_')) Blockly.BotScript[name] = buildBlock;
 }
 
-// exceptions
-// - start block
-// Blockly.BotScript['cb_start'] = function(block) {
-// 	return 'begin sequence\r\n' + Blockly.BotScript.prefixLines(Blockly.BotScript.blockToCode(block.getNextBlock()), Blockly.BotScript.INDENT) + 'end sequence\r\n';
-// }
-
 // - generic arguments
 Blockly.BotScript['cb_:generic_arg'] = function(block) {
 	return null;
@@ -134,9 +126,6 @@ Blockly.BotScript['cb_:generic_arg'] = function(block) {
 // *****************************
 // *****CATEGORIE SELECTOR******
 // *****************************
-// cb_condition
-// <typeCondition> <key> <value> // si n'est pas condition fulfilled
-// fulfilled <key> // si est condition fulfilled
 Blockly.BotScript['cb_condition'] = function(block) {
 	let params = getBlockParams(block);
 	let condition = params[0].getValue();
@@ -163,8 +152,6 @@ Blockly.BotScript['cb_condition'] = function(block) {
 // *****************************
 // ******CATEGORIE BUTTON*******
 // *****************************
-// begin choose:button<:nlu|| > <key> <"question"> ___ end choose:button<:nlu|| >
-// variable en miniscule
 Blockly.BotScript['cb_buttons'] = function(block) {
 	let params = getBlockParams(block);
 	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
@@ -176,7 +163,6 @@ Blockly.BotScript['cb_buttonsfile'] = function(block) {
 	let params = getBlockParams(block);
 	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
 	let isOption = false;
-	// console.log(params)
 	return "begin choose:button:file" + formatVariable(params[1].getValue(),params[2].getValue()) + formatString(params[0].getValue()) +"\r\n" + subBlocks + 'end ' + "choose:button:file"+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 Blockly.BotScript['cb_button'] = function(block) {
@@ -186,7 +172,6 @@ Blockly.BotScript['cb_button'] = function(block) {
 }
 Blockly.BotScript['cb_buttonfile'] = function(block) {
 	let params = getBlockParams(block);
-	// console.log(params)
 	return "button:file" +formatString(params[0].getValue()) + params[1].getValue() +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 
@@ -194,28 +179,18 @@ Blockly.BotScript['cb_buttonfile'] = function(block) {
 // *****************************
 // ******CATEGORIE TOPIC********
 // *****************************
-// cb_topic_start
-// topic:start
 Blockly.BotScript['cb_topicstart'] = function(block) {
 	return "topic:start\r\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
 }
-// cb_topic_start
-// topic:fallback
 Blockly.BotScript['cb_topicfallback'] = function(block) {
 	return "topic:fallback\r\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
 }
-// cb_topic_idle
-// topic:idle
 Blockly.BotScript['cb_topicidle'] = function(block) {
 	return "topic:idle\r\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
 }
-// cb_topic_end
-// topic:end
 Blockly.BotScript['cb_topicend'] = function(block) {
 	return "topic:end\r\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
 }
-// cb_choose
-// choose:nlu
 Blockly.BotScript['cb_choose'] = function(block) {
 	let params = getBlockParams(block);
 	return "choose:nlu" + formatString(params[0].getValue())+"\r\n"+ Blockly.BotScript.blockToCode(block.getNextBlock());
@@ -223,18 +198,12 @@ Blockly.BotScript['cb_choose'] = function(block) {
 // *****************************
 // *****CATEGORIE SWITCHCASE****
 // *****************************
-// cb_switch
-// begin switch /user/<'local'||'global'>/<nomVariable> ___ end switch
-// variable en minuscule
 Blockly.BotScript['cb_switch'] = function(block) {
 	let params = getBlockParams(block);
 	let name = getBlockName(block);
 	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
 	return 'begin ' + name + formatVariable(params[0].getValue(), params[1].getValue()) + '\r\n' + subBlocks + 'end ' + name + '\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
-
-// cb_case
-// begin case <"valeur"> ___ case switch
 Blockly.BotScript['cb_case'] = function(block) {
 	let params = getBlockParams(block);
 	let name = getBlockName(block);
@@ -258,7 +227,6 @@ Blockly.BotScript['cb_link'] = function(block) {
 }
 Blockly.BotScript['cb_mail'] = function(block) {
 	let params = getBlockParams(block);
-	// console.log(params) //todo correction des mails multi destinataires
 	let isPJMail = params[4].getValue()==='yespj'
 	return "mail" +  (!isPJMail ? "" : ":attachment") +
 		formatVariable(params[0].getValue(), params[1].getValue()) +
@@ -297,10 +265,6 @@ Blockly.BotScript['cb_remove'] = function(block) {
 // *****************************
 // ******CATEGORIE OTHER*******
 // *****************************
-// Blockly.BotScript['cb_random'] = function(block) {
-// 	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
-// 	return 'begin random\r\n' + subBlocks + 'end random\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
-// }
 Blockly.BotScript['cb_append'] = function(block) {
 	let params = getBlockParams(block);
 	let name = getBlockName(block);
