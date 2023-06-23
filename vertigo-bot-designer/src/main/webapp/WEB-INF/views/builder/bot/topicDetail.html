@@ -99,19 +99,6 @@
 			
 		</script>
 
-	  <script>
-		function injectBlockly(test){
-			if(VertigoUi.vueData.topic.ttoCd==='SCRIPTINTENTION'){
-				setTimeout(injectionBlockly, 1)
-
-			}
-		}
-
-		function codeToDiagram(){
-			fromCode();
-		}
-	  </script>
-
 	  <script th:inline="javascript">
 		  VUiExtensions.dataX.viewScript = false;
 	  </script>
@@ -247,7 +234,6 @@
 
 				<div>
 					<q-btn-toggle
-							@click="injectBlockly(vueData.topic.ttoCd)"
 							th:if="${!model.modeReadOnly}"
 							v-model="vueData.topic.ttoCd"
 							toggle-color="primary"
@@ -261,12 +247,29 @@
 				<vu:include-data object="typeTopicList" field="'*'" />
 
 				<div v-if="vueData.topic.ttoCd === 'SMALLTALK'" th:insert="builder/bot/smallTalkDetail.html :: content-specific"></div>
-				<div v-else th:insert="builder/bot/scriptIntentionDetail.html ::content-specific"></div>
+				<div v-else th:replace="builder/bot/scriptIntentionDetail.html ::content-specific">
+					<div id="blocklyDiv"></div>
+				</div>
 				<q-page-sticky position="bottom-right">
 					<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
 				</q-page-sticky>
 			</section>
 		</body>
+  <section layout:fragment="javascript-footer">
+	  <vu:include-data object="trainerState" field="'*'"/>
+	  <vu:include-data-primitive key="locale" />
+	  <script>
+		  document.addEventListener('DOMContentLoaded', function () {
+			  const script = document.createElement('script');
+			  script.type = 'text/javascript';
+			  script.src = VertigoUi.vueData.devNode.url + '/api/chatbot/getWelcomeToursFile';
+			  document.head.appendChild(script);
+			  if (VertigoUi.vueData.trainerState.trainingInProgress) {
+				  postTrain();
+			  }
+		  });
+	  </script>
+	  <div v-if="vueData.topic.ttoCd === 'SCRIPTINTENTION'" th:insert="builder/bot/scriptIntentionDetail.html :: blockly"></div>
 
-
+  </section>
 </html>

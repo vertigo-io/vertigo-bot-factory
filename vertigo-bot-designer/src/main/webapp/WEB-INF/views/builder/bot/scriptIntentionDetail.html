@@ -38,4 +38,26 @@
 			</div>
 		</vu:block>
 	</section>
+	<section th:fragment="blockly">
+		<script th:src="@{/static/utils/blockly.min.js}"></script>
+		<script th:src="@{/static/blockly/js/chatbot_blocks.js}"></script>
+		<script th:src="@{/static/blockly/js/chatbot_gencode.js}"></script>
+		<script th:src="@{/static/blockly/js/chatbot_parsecode.js}"></script>
+		<script th:src="@{/static/blockly/js/chatbot_custom_renderer.js}"></script>
+		<script th:if="${model.locale=='fr_FR'}" th:src="@{/static/blockly/lang/fr.js}"></script>
+		<script th:if="${model.locale=='fr_FR'}" th:src="@{/static/blockly/lang/blockly_fr.js}"></script>
+		<script th:if="${model.locale!='fr_FR'}" th:src="@{/static/blockly/lang/blockly_en.js}"></script>
+		<script th:src="@{/static/blockly/js/blockly_injection_commons.js}"></script>
+		<script  th:if="${!model.modeReadOnly}">
+			injectionBlockly(false)
+		</script>
+		<script th:if="${model.modeReadOnly}">
+			injectionBlockly(true)
+		</script>
+		<script>
+			function codeToDiagram(){
+				fromCode();
+			}
+		</script>
+	</section>
 </html>
