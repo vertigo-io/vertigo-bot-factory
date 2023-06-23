@@ -12,11 +12,11 @@
 
 
 
-	<section th:fragment="content-specific" style="margin: 20px 0px">
+	<section th:fragment="content-specific">
 		<vu:block id="diagram" th:title="#{script.menu.diagram}">
 			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
-			<q-btn th:label="#{script.diagram.export}" color="primary" @click="exportToPng()" ></q-btn>
+			<q-btn th:label="#{script.diagram.export}" color="primary"></q-btn>
 			<div id="blocklyArea" style="
 				margin: 10px;
 				height: 400px;">
@@ -24,8 +24,6 @@
 				<input type="hidden" name="vContext[scriptIntention][script]" :value="vueData.scriptIntention.script" />
 			</div>
 		</vu:block>
-	</section>
-	<section th:fragment="content-specific">
 		<q-toggle left-label size="lg" th:label="#{script.view}" v-model="VUiExtensions.dataX.viewScript"></q-toggle>
 
 		<vu:popup action="_delete" vModel="showPopupDeleteTopic" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>

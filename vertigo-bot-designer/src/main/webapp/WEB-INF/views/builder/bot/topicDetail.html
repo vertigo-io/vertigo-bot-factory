@@ -99,30 +99,17 @@
 			
 		</script>
 
-<!--	  Fonctions pour la partie Diagramme-->
 	  <script>
-		function makeBlocklyEditable(){
-			console.log("makeBlocklyEditable()");
-		}
 		function injectBlockly(test){
 			if(VertigoUi.vueData.topic.ttoCd==='SCRIPTINTENTION'){
 				setTimeout(injectionBlockly, 1)
-			}
-		}
-		function exportToPng(){
-			console.log("exportToPng()")
-		}
 
-		function diagramToCode(){
-			console.log("diagramToCode()")
-			toCode();
+			}
 		}
 
 		function codeToDiagram(){
-			console.log("codeToDiagram()")
 			fromCode();
 		}
-		var stateView = false;
 	  </script>
 
 	  <script th:inline="javascript">

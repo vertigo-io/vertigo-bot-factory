@@ -269,36 +269,20 @@ var onresize = function(e) {
 // *********************
 
 function injectionBlockly(mode=false){
-    // DEBUG CODE
-    // console.log(VertigoUi.vueData.scriptIntention.script)
     let blocklyDivName = 'blocklyDiv'
     // **** OPTIONS ****
     var options = {
         collapse: false,
-        // comments: ,
-        // css: ,
-        // disable: ,
-        // grid: ,
-        // horizontalLayout: ,
         maxBlocks: 500,
         maxInstances: {},
         media: '/vertigo-bot-designer/static/blockly/media/',
-        // move: ,
-        // oneBasedIndex: ,
         readOnly: mode,
-        // TODO: faire un renderer personnalisé
-        // renderer: 'zelos', // default rendering well adapted for the plateform
         renderer: 'custom_renderer',
-        // rtl: ,
         scrollbars: true,
         sounds: false,
         theme: custom_theme,
         toolbox: getToolBox(),
         toolboxPosition: "end",
-        // trashcan: ,
-        // maxTrashcanContents: ,
-        // plugins: ,
-        // zoom: ,
         zoom:
             {controls: true,
                 wheel: false,
@@ -309,11 +293,7 @@ function injectionBlockly(mode=false){
                 pinch: true}
     }
     if(document.contains(document.getElementById(blocklyDivName))){
-        // blocklyArea = document.getElementById('blocklyArea');
         blocklyDiv = document.getElementById(blocklyDivName);
-        // console.log("injectionBlockly_editable() from blockly_injection_editable")
-        // console.log(workspace)
-        // blocklyDiv = null;
         document.getElementById(blocklyDivName).innerHTML = null
         workspace = Blockly.inject(blocklyDiv,options);
         window.addEventListener('resize', onresize, false);
