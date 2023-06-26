@@ -519,6 +519,28 @@ Blockly.Blocks['cb_link'] = {
             });
     }
 };
+Blockly.Blocks['cb_image'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "image",
+                "message0": "%{BKY_MES_IMAGE_TITLE}  %1",
+                "args0": [
+                    {
+                        "type": "field_input",
+                        "name": "url",
+                        "text": "%{BKY_COMMONS_SAMPLE_IMAGE}",
+                        "check": "String"
+                    }
+                ],
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "colour": 120,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
 Blockly.Blocks['cb_mail'] = {
     init: function() {
         this.jsonInit(
