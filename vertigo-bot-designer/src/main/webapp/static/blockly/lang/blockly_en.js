@@ -58,6 +58,7 @@ Blockly.Msg["COMMONS_SAMPLE_BUT_VALUEIFCLICK"] = "YES";
 Blockly.Msg["COMMONS_SAMPLE_BUTFILE_SENTENCE"] = "The form is ready to be sent";
 Blockly.Msg["COMMONS_SAMPLE_BUTFILE_VALUEIFCLICK"] = "PJ";
 Blockly.Msg["COMMONS_SAMPLE_LINK"] = "https://www.kleegroup.com/fr";
+Blockly.Msg["COMMONS_SAMPLE_IMAGE"] = "https://www.documation.fr/logo/97ccfc1f8843356logo_kleegroup_noir.png";
 Blockly.Msg["COMMONS_SAMPLE_MAIL_SUBJECT"] = "var_subject";
 Blockly.Msg["COMMONS_SAMPLE_MESSAGE"] = "var_message";
 Blockly.Msg["COMMONS_SAMPLE_MAIL_PJ"] = "pj";
@@ -107,6 +108,7 @@ Blockly.Msg["SELEC_ELSE_TITLE"] = "Else by default do:";
 // *****************************
 Blockly.Msg["MES_SAY_TITLE"] = "Message:";
 Blockly.Msg["MES_LINK_TITLE"] = "Link:";
+Blockly.Msg["MES_IMAGE_TITLE"] = "Image:";
 Blockly.Msg["MES_MAIL_TITLE"] = "Mail";
 Blockly.Msg["MES_MAIL_SUBJECT_TITLE"] = "Subject:";
 Blockly.Msg["MES_MAIL_MESSAGE_TITLE"] = "Message:";

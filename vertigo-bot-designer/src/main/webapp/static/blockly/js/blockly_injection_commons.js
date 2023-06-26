@@ -189,6 +189,10 @@ function getToolBox(){
                     {
                         "kind": "block",
                         "type": "cb_mail"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_image"
                     }
                 ]
             },
