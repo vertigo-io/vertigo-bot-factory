@@ -1362,6 +1362,29 @@ Blockly.Blocks['cb_rating'] = {
             });
     }
 };
+Blockly.Blocks['cb_welcometour'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "welcometour",
+                "lastDummyAlign0": "CENTRE",
+                "message0": "%{BKY_OTHER_WT_TITLE} %1",
+                "args0": [
+                    {
+                        "type": "field_input",
+                        "name": "welcometourCode",
+                        "text": "%{BKY_COMMONS_SAMPLE_WT_CODE}"
+                    }
+                ],
+                "inputsInline": true,
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "style": "case_conflu_welcometour",
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
 // *****************************
 // ******CATEGORIE CONFLUENCE*****
 // *****************************
@@ -1428,7 +1451,7 @@ Blockly.Blocks['cb_confluencesearch'] = {
                         "text": "%{BKY_COMMONS_SAMPLE_CONFLUENCE_CODE}"
                     }
                 ],
-                "colour": -1,
+                "style": "case_conflu_welcometour",
                 "previousStatement": "all",
                 "nextStatement": "all",
                 "tooltip": "",
