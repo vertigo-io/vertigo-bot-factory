@@ -281,3 +281,10 @@ Blockly.BotScript['cb_rating'] = function(block) {
 	return name +formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 
+// *****************************
+// ******CATEGORIE CONFLUENCE*****
+// *****************************
+Blockly.BotScript['cb_confluencesearch'] = function(block) {
+	let params = getBlockParams(block);
+	return 'confluence:search' + formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+ formatString(params[3].getValue())+ params[4].getValue()+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}

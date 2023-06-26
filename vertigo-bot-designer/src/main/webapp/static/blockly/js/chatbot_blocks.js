@@ -1365,7 +1365,77 @@ Blockly.Blocks['cb_rating'] = {
 // *****************************
 // ******CATEGORIE CONFLUENCE*****
 // *****************************
-
+Blockly.Blocks['cb_confluencesearch'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "confluence",
+                "message0": "%{BKY_CONFLUENCE_SEARCH_TITLE} %1 %{BKY_CONFLUENCE_VAR_TITLE} %2 %3 %4 %{BKY_CONFLUENCE_QUEST1_ASSOCIATED} %5 %6 %{BKY_CONFLUENCE_QUEST2_ASSOCIATED} %7 %8 %{BKY_COMMONS_CODE_ASSOCIATED} %9",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "type",
+                        "options": [
+                            [
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
+                                "local"
+                            ],
+                            [
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
+                                "global"
+                            ],
+                            [
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
+                                "global/context"
+                            ],
+                            [
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
+                                "global/context/url"
+                            ]
+                        ]
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "variable",
+                        "text": "%{BKY_COMMONS_SAMPLE_CONFLUENCE_VAR}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "intro",
+                        "text": "%{BKY_COMMONS_SAMPLE_CONFLUENCE_QUEST1}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "results",
+                        "text": "%{BKY_COMMONS_SAMPLE_CONFLUENCE_QUEST2}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "CODE",
+                        "text": "%{BKY_COMMONS_SAMPLE_CONFLUENCE_CODE}"
+                    }
+                ],
+                "colour": -1,
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
 // *****************************
 // ******CATEGORIE JIRA*****
 // *****************************
