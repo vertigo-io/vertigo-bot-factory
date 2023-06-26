@@ -21,6 +21,9 @@ const custom_theme = Blockly.Theme.defineTheme('custom_theme', {
             },
             'case_block':{
                 'colourPrimary': '#b99283',
+            },
+            'case_conflu_welcometour':{
+                'colourPrimary': '#9f9f9f',
             }
         },
         'categoryStyles': {
@@ -129,6 +132,10 @@ function getToolBox(){
                     {
                         "kind": "block",
                         "type": "cb_rating"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_welcometour"
                     }
                 ]
             },

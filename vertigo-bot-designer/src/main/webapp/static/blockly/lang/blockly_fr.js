@@ -76,6 +76,7 @@ Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_VAR"] = "search/confluence";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST1"] = "Je vais rechercher dans base documentaire, quelle est votre question ?";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST2"] = "Résultats consultation :";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_CODE"] = "CONFLU";
+Blockly.Msg["COMMONS_SAMPLE_WT_CODE"] = "GACode";
 
 // *****************************
 // **** CATEGORIE SEQUENCE *****
@@ -158,6 +159,7 @@ Blockly.Msg["OTHER_INPUTSTRING_TITLE"] = "Récupérer réponse dans variable";
 Blockly.Msg["OTHER_APPEND_TITLE"] = "Ajout caractères en fin variable";
 Blockly.Msg["OTHER_RATING_TITLE"] = "Evaluation/Note";
 Blockly.Msg["OTHER_RATING_VAR_TITLE"] = "Variable stockage note:";
+Blockly.Msg["OTHER_WT_TITLE"] = "Guide applicatif, code:";
 
 // *****************************
 // ****** CATEGORIE OTHER ******
