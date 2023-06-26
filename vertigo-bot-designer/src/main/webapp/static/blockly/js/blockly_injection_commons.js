@@ -161,7 +161,10 @@ function getToolBox(){
                 "kind": "category",
                 "name": "%{BKY_CAT_CONFLUENCE}",
                 "contents": [
-
+                    {
+                        "kind": "block",
+                        "type": "cb_confluencesearch"
+                    }
                 ]
             },
             // Catégorie 7: Jira

@@ -204,6 +204,8 @@ function resolveCbBlockType(type) {
 			return {type: "cb_mail",  qualifier: "attachment"}
 		case "button:file":
 			return {type: "cb_buttonfile"}
+		case "confluence:search":
+			return {type: "cb_confluencesearch"}
 		default:
 			break;
 	}
@@ -362,6 +364,15 @@ function createBlock(type, isComposite, params = []) {
 		params[0] = params[1]
 		params[1] = lienParams[0]
 		params.push(lienParams[1])
+	}else if(resolvedType.type==='cb_confluencesearch'){
+		let lienParams = paramsFormatVariable(params[0])
+		let questions = [params[1], params[2]]
+		let code = params[3]
+		params[0] = lienParams[0]
+		params[1] = lienParams[1]
+		params[2]=questions[0]
+		params[3]=questions[1]
+		params.push(code)
 	}
 
 	for (let i = 0; i < params.length; i++) {

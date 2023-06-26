@@ -33,6 +33,7 @@ Blockly.Msg["COMMONS_SENT_ASSOCIATED"] = "Phrase associée:";
 Blockly.Msg["COMMONS_VALUE_TITLE"] = "Valeur:";
 Blockly.Msg["COMMONS_VALUE_NAMEVAR"] = "valeur";
 Blockly.Msg["COMMONS_STRING_TITLE"] = "Caractères:";
+Blockly.Msg["COMMONS_CODE_ASSOCIATED"] = "Code associé:";
 
 //       *** option ***
 Blockly.Msg["COMMONS_OPTION_TITLE"] = "Option:";
@@ -71,6 +72,10 @@ Blockly.Msg["COMMONS_SAMPLE_INPUTSTRING_QUEST"] = "Combien en avez-vous ?";
 Blockly.Msg["COMMONS_SAMPLE_INPUTSTRING_VAR"] = "quantite";
 Blockly.Msg["COMMONS_SAMPLE_RATING_VAR"] = "note";
 Blockly.Msg["COMMONS_SAMPLE_RATING_QUEST"] = "Laissez une note de satisfaction";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_VAR"] = "search/confluence";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST1"] = "Je vais rechercher dans base documentaire, quelle est votre question ?";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST2"] = "Résultats consultation :";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_CODE"] = "CONFLU";
 
 // *****************************
 // **** CATEGORIE SEQUENCE *****
@@ -153,3 +158,11 @@ Blockly.Msg["OTHER_INPUTSTRING_TITLE"] = "Récupérer réponse dans variable";
 Blockly.Msg["OTHER_APPEND_TITLE"] = "Ajout caractères en fin variable";
 Blockly.Msg["OTHER_RATING_TITLE"] = "Evaluation/Note";
 Blockly.Msg["OTHER_RATING_VAR_TITLE"] = "Variable stockage note:";
+
+// *****************************
+// ****** CATEGORIE OTHER ******
+// *****************************
+Blockly.Msg["CONFLUENCE_SEARCH_TITLE"] = "Module recherche Confluence:";
+Blockly.Msg["CONFLUENCE_VAR_TITLE"] = "Variable recherche confluence:";
+Blockly.Msg["CONFLUENCE_QUEST1_ASSOCIATED"] = "Introduction:";
+Blockly.Msg["CONFLUENCE_QUEST2_ASSOCIATED"] = "Réponse:";
