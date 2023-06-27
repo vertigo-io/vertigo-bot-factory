@@ -77,6 +77,9 @@ Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST1"] = "I'm going to search in the do
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST2"] = "Consultation results: ";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_CODE"] = "CONFLU";
 Blockly.Msg["COMMONS_SAMPLE_WT_CODE"] = "WTCode";
+Blockly.Msg["COMMONS_SAMPLE_JIRA_ISSUE_SENTENCE"] = "Your ticket can be viewed:";
+Blockly.Msg["COMMONS_SAMPLE_JIRA_FIELD_QUEST"] = "What is the reference ?";
+Blockly.Msg["COMMONS_SAMPLE_JIRA_FIELD_VAR"] = "reference";
 
 // *****************************
 // **** CATEGORIE SEQUENCE *****
@@ -162,9 +165,16 @@ Blockly.Msg["OTHER_RATING_VAR_TITLE"] = "Variable storage note:";
 Blockly.Msg["OTHER_WT_TITLE"] = "WelcomeTour, code:";
 
 // *****************************
-// ****** CATEGORIE OTHER ******
+// *** CATEGORIE CONFLUENCE ****
 // *****************************
 Blockly.Msg["CONFLUENCE_SEARCH_TITLE"] = "Confluence search module:";
 Blockly.Msg["CONFLUENCE_VAR_TITLE"] = "Confluence search variable:";
 Blockly.Msg["CONFLUENCE_QUEST1_ASSOCIATED"] = "Introduction:";
 Blockly.Msg["CONFLUENCE_QUEST2_ASSOCIATED"] = "Reply:";
+
+// *****************************
+// ****** CATEGORIE JIRA *******
+// *****************************
+Blockly.Msg["JIRA_FIELD_TITLE"] = "Label Jira ticket";
+Blockly.Msg["JIRA_VARIABLE_TITLE"] = "Save variable:";
+Blockly.Msg["JIRA_ISSUE_TITLE"] = "Create Jira ticket";

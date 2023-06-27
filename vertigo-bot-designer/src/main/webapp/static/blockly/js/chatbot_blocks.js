@@ -1379,7 +1379,7 @@ Blockly.Blocks['cb_welcometour'] = {
                 "inputsInline": true,
                 "previousStatement": "all",
                 "nextStatement": "all",
-                "style": "case_conflu_welcometour",
+                "style": "conflu_welcometour_block",
                 "tooltip": "",
                 "helpUrl": ""
             });
@@ -1451,7 +1451,7 @@ Blockly.Blocks['cb_confluencesearch'] = {
                         "text": "%{BKY_COMMONS_SAMPLE_CONFLUENCE_CODE}"
                     }
                 ],
-                "style": "case_conflu_welcometour",
+                "style": "conflu_welcometour_block",
                 "previousStatement": "all",
                 "nextStatement": "all",
                 "tooltip": "",
@@ -1462,7 +1462,96 @@ Blockly.Blocks['cb_confluencesearch'] = {
 // *****************************
 // ******CATEGORIE JIRA*****
 // *****************************
-
+Blockly.Blocks['cb_jirafield'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "jirafield",
+                "message0": "%{BKY_JIRA_FIELD_TITLE}  %1 %{BKY_JIRA_VARIABLE_TITLE} %2 %3 %4 %{BKY_COMMONS_QUEST_ASSOCIATED} %5",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "type-variable",
+                        "options": [
+                            [
+                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
+                                "local"
+                            ],
+                            [
+                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
+                                "global"
+                            ],
+                            [
+                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
+                                "global/context"
+                            ],
+                            [
+                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
+                                "global/context/url"
+                            ]
+                        ]
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "variable",
+                        "text": "%{BKY_COMMONS_SAMPLE_JIRA_FIELD_VAR}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "question",
+                        "text": "%{BKY_COMMONS_SAMPLE_JIRA_FIELD_QUEST}"
+                    }
+                ],
+                "style": "jirafield_block",
+                "previousStatement": "jira_type",
+                "nextStatement": "jira_type",
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+Blockly.Blocks['cb_jiraissue'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "choose:button",
+                "message0": "%{BKY_JIRA_ISSUE_TITLE} %1 %{BKY_COMMONS_SENT_ASSOCIATED} %2 %3 %4",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "question",
+                        "text": "%{BKY_COMMONS_SAMPLE_JIRA_ISSUE_SENTENCE}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "input_statement",
+                        "name": "SUB_BLOCKS",
+                        "check": [
+                            "jira_type"
+                        ]
+                    }
+                ],
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "style": "jiraissue_block",
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
 // ********************
 // ** Generic blocks **
 // ********************
