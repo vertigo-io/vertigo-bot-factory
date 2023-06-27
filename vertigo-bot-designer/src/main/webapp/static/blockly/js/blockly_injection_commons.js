@@ -45,6 +45,9 @@ const custom_theme = Blockly.Theme.defineTheme('custom_theme', {
             'jira_category':{
                 'colour': '#b49926',
             },
+            'template-category':{
+                'colour': '#41b998',
+            }
         },
         'startHats': true
     });
@@ -272,6 +275,18 @@ function getToolBox(){
                     }
                 ]
             },
+            // 	Categorie 11: TEMPLATE
+            {
+                "kind": "category",
+                "name": "%{BKY_CAT_TEMPLATE}",
+                "categoryStyle": "template-category",
+                "contents": [
+                    {
+                        "kind": "block",
+                        "type": "cb_template_listOfButtons"
+                    }
+                ]
+            },
         ]
     };
     return toolbox;
@@ -336,5 +351,97 @@ function injectionBlockly(mode=false){
         onresize();
         if(VertigoUi.vueData.scriptIntention.script!=null)fromCode();
         workspace.addChangeListener(toCode);
+        workspace.addChangeListener(importBlocklyTemplate)
     // }
+}
+
+function importBlocklyTemplate(event){
+    if(event.type == Blockly.Events.CREATE && event.json.type.startsWith('cb_template')){
+        let locale = VertigoUi.vueData.locale
+        let templateBlock = workspace.getBlockById(event.blockId);
+        switch (templateBlock.type) {
+            case 'cb_template_listOfButtons':
+                let listBlocks = []
+                let firstMessage = workspace.newBlock('cb_say')
+                firstMessage.setFieldValue((locale==='fr_FR' ? "Voici une liste de boutons" : "List of buttons"),"label")
+
+                let listButtons = workspace.newBlock('cb_buttons')
+                listButtons.setFieldValue((locale==='fr_FR' ? "Quelle est votre couleur préférée" : "What is your favorite colour"),"question")
+                listButtons.setFieldValue("color","nameVar")
+                let firstButton = workspace.newBlock('cb_button')
+                firstButton.setFieldValue((locale==='fr_FR' ? "Rouge" : "Red"),"label")
+                firstButton.setFieldValue("RED","code")
+                firstButton.initSvg()
+                firstButton.render()
+                let secondButton = workspace.newBlock('cb_button')
+                secondButton.setFieldValue((locale==='fr_FR' ? "Bleu" : "Blue"),"label")
+                secondButton.setFieldValue("BLUE","code")
+                secondButton.initSvg()
+                secondButton.render()
+                let thirdButton = workspace.newBlock('cb_button')
+                thirdButton.setFieldValue((locale==='fr_FR' ? "Autre" : "Other"),"label")
+                thirdButton.setFieldValue("OTHER","code")
+                thirdButton.initSvg()
+                thirdButton.render()
+                secondButton.previousConnection.connect(firstButton.nextConnection)
+                thirdButton.previousConnection.connect(secondButton.nextConnection)
+                listButtons.getInput('SUB_BLOCKS').connection.connect(firstButton.previousConnection)
+
+
+                let switchBlock = workspace.newBlock('cb_switch')
+                switchBlock.setFieldValue("color","nameVar")
+                let firstCase = workspace.newBlock('cb_case')
+                firstCase.setFieldValue(firstButton.getFieldValue("code"),"value")
+                let messageFirstCase = workspace.newBlock('cb_say')
+                messageFirstCase.setFieldValue((locale==='fr_FR' ? "Moi aussi ma couleur préféré est le "+firstButton.getFieldValue("label").toLowerCase()+" !" : "My favorite color is "+firstButton.getFieldValue("label")+" too!").toLowerCase(),"label")
+                messageFirstCase.initSvg()
+                messageFirstCase.render()
+                firstCase.getInput('SUB_BLOCKS').connection.connect(messageFirstCase.previousConnection)
+                firstCase.initSvg()
+                firstCase.render()
+                let secondCase = workspace.newBlock('cb_case')
+                secondCase.setFieldValue(secondButton.getFieldValue("code"),"value")
+                let messageSecondCase = workspace.newBlock('cb_say')
+                messageSecondCase.setFieldValue((locale==='fr_FR' ? "Moi aussi ma couleur préféré est le "+secondButton.getFieldValue("label").toLowerCase()+" !" : "My favorite color is "+secondButton.getFieldValue("label")+" too!").toLowerCase(),"label")
+                messageSecondCase.initSvg()
+                messageSecondCase.render()
+                secondCase.getInput('SUB_BLOCKS').connection.connect(messageSecondCase.previousConnection)
+                secondCase.initSvg()
+                secondCase.render()
+                let thirdCase = workspace.newBlock('cb_case')
+                thirdCase.setFieldValue(thirdButton.getFieldValue("code"),"value")
+                let messageThirdCase = workspace.newBlock('cb_say')
+                messageThirdCase.setFieldValue((locale==='fr_FR' ? "Moi ma coleur préféré est le orange !" : "My favorite color is orange !").toLowerCase(),"label")
+                messageThirdCase.initSvg()
+                messageThirdCase.render()
+                thirdCase.getInput('SUB_BLOCKS').connection.connect(messageThirdCase.previousConnection)
+                thirdCase.initSvg()
+                thirdCase.render()
+                secondCase.previousConnection.connect(firstCase.nextConnection)
+                thirdCase.previousConnection.connect(secondCase.nextConnection)
+                switchBlock.getInput('SUB_BLOCKS').connection.connect(firstCase.previousConnection)
+
+                let lastMessage = workspace.newBlock('cb_say')
+                lastMessage.setFieldValue((locale==='fr_FR' ? "Tout ceci était un modèle utilisant une liste de boutons" : "All of this was a template using list of buttons"),"label")
+
+                listBlocks.push(firstMessage)
+                listBlocks.push(listButtons)
+                listBlocks.push(switchBlock)
+                listBlocks.push(lastMessage)
+
+
+                listBlocks[0].initSvg()
+                listBlocks[0].render()
+                for(let i=1; i<listBlocks.length; i++){
+                    listBlocks[i].initSvg()
+                    listBlocks[i].render()
+                    listBlocks[i].previousConnection.connect(listBlocks[i-1].nextConnection)
+                }
+                templateBlock.dispose()
+                break;
+            default:
+                templateBlock.dispose()
+                return;
+        }
+    }
 }

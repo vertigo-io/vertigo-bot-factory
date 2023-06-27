@@ -11,6 +11,7 @@ Blockly.Msg["CAT_JIRA"] = "Jira";
 Blockly.Msg["CAT_MESSAGE"] = "Messages, link, mail";
 Blockly.Msg["CAT_TOPIC"] = "Redirection";
 Blockly.Msg["CAT_SEQUENCE"] = "Actions sequences";
+Blockly.Msg["CAT_TEMPLATE"] = "Blocks templates";
 
 // *****************************
 // ********* COMMONS ***********
@@ -179,3 +180,8 @@ Blockly.Msg["CONFLUENCE_QUEST2_ASSOCIATED"] = "Reply:";
 Blockly.Msg["JIRA_FIELD_TITLE"] = "Label Jira ticket";
 Blockly.Msg["JIRA_VARIABLE_TITLE"] = "Save variable:";
 Blockly.Msg["JIRA_ISSUE_TITLE"] = "Create Jira ticket";
+
+// *****************************
+// **** CATEGORIE TEMPLATE *****
+// *****************************
+Blockly.Msg["TEMPLATE_1_TITLE"] = "Usage list of buttons";

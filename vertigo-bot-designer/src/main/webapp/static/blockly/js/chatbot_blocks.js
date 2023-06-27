@@ -125,7 +125,7 @@ Blockly.Blocks['cb_condition'] = {
                     },
                     {
                         "type": "field_input",
-                        "name": "condition-variable",
+                        "name": "nameVar",
                         "text": "%{BKY_COMMONS_VARIABLE_NAMEVAR}"
                     },
                     {
@@ -274,7 +274,7 @@ Blockly.Blocks['cb_buttons'] = {
                     },
                     {
                         "type": "field_input",
-                        "name": "condition-variable",
+                        "name": "nameVar",
                         "text": "%{BKY_COMMONS_VARIABLE_NAMEVAR}",
                         "check": "String"
                     },
@@ -393,7 +393,7 @@ Blockly.Blocks['cb_button'] = {
                     },
                     {
                         "type": "field_input",
-                        "name": "value1",
+                        "name": "label",
                         "text": "%{BKY_COMMONS_SAMPLE_BUT_SENTENCE}"
                     },
                     {
@@ -401,7 +401,7 @@ Blockly.Blocks['cb_button'] = {
                     },
                     {
                         "type": "field_input",
-                        "name": "value2",
+                        "name": "code",
                         "text": "%{BKY_COMMONS_SAMPLE_BUT_VALUEIFCLICK}"
                     }
                 ],
@@ -466,7 +466,7 @@ Blockly.Blocks['cb_say'] = {
                 "args0": [
                     {
                         "type": "field_input",
-                        "name": "say",
+                        "name": "label",
                         "text": "",
                         "check": "String"
                     },
@@ -894,7 +894,7 @@ Blockly.Blocks['cb_case'] = {
                 "args0": [
                     {
                         "type": "field_input",
-                        "name": "valueCase",
+                        "name": "value",
                         "text": "%{BKY_COMMONS_VALUE_NAMEVAR}"
                     },
                     {
@@ -1569,6 +1569,30 @@ Blockly.Blocks['cb_jiraissue'] = {
             });
     }
 };
+// *****************************
+// ******CATEGORIE TEMPLATE*****
+// *****************************
+Blockly.Blocks['cb_template_listOfButtons'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "template",
+                "message0": "%{BKY_TEMPLATE_1_TITLE} %1 ",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    }
+                ],
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "colour": 230,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+
 // ********************
 // ** Generic blocks **
 // ********************
