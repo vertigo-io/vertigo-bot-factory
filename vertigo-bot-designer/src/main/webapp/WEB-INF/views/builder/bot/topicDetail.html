@@ -235,6 +235,7 @@
 				<div>
 					<q-btn-toggle
 							th:if="${!model.modeReadOnly}"
+							@click="updateDiagramSwitchType()"
 							v-model="vueData.topic.ttoCd"
 							toggle-color="primary"
 							:options="vueData.locale == 'fr_FR' ? transformListForSelection('typeTopicList', 'ttoCd', 'labelFr') : transformListForSelection('typeTopicList', 'ttoCd', 'label')"
@@ -247,7 +248,7 @@
 				<vu:include-data object="typeTopicList" field="'*'" />
 
 				<div v-if="vueData.topic.ttoCd === 'SMALLTALK'" th:insert="builder/bot/smallTalkDetail.html :: content-specific"></div>
-				<div v-else th:replace="builder/bot/scriptIntentionDetail.html ::content-specific">
+				<div v-else th:insert="builder/bot/scriptIntentionDetail.html ::content-specific">
 					<div id="blocklyDiv"></div>
 				</div>
 				<q-page-sticky position="bottom-right">
@@ -270,6 +271,11 @@
 		  });
 	  </script>
 	  <div v-if="vueData.topic.ttoCd === 'SCRIPTINTENTION'" th:insert="builder/bot/scriptIntentionDetail.html :: blockly"></div>
-
+	  <script th:inline="javascript">
+		  function updateDiagramSwitchType(){
+			  // if the script does not have loaded after the 150ms, it's possible to refresh the diagram using the button in scriptIntentionDetail.html
+			  if(VertigoUi.vueData.topic.ttoCd==='SCRIPTINTENTION')setTimeout(injectionBlockly,150)
+		  }
+	  </script>
   </section>
 </html>
