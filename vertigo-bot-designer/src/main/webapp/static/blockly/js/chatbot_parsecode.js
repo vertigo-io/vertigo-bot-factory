@@ -206,6 +206,10 @@ function resolveCbBlockType(type) {
 			return {type: "cb_buttonfile"}
 		case "confluence:search":
 			return {type: "cb_confluencesearch"}
+		case "jira:issue:create":
+			return {type: "cb_jiraissue"}
+		case "jira:field":
+			return {type: "cb_jirafield"}
 		default:
 			break;
 	}
@@ -373,6 +377,12 @@ function createBlock(type, isComposite, params = []) {
 		params[2]=questions[0]
 		params[3]=questions[1]
 		params.push(code)
+	}else if(resolvedType.type==='cb_jirafield'){
+		let lienParams = paramsFormatVariable(params[0])
+		let question = params[1]
+		params[0] = lienParams[0]
+		params[1] = lienParams[1]
+		params.push(question)
 	}
 
 	for (let i = 0; i < params.length; i++) {

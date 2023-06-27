@@ -22,14 +22,28 @@ const custom_theme = Blockly.Theme.defineTheme('custom_theme', {
             'case_block':{
                 'colourPrimary': '#b99283',
             },
-            'case_conflu_welcometour':{
+            'conflu_welcometour_block':{
                 'colourPrimary': '#9f9f9f',
+            },
+            'jirafield_block':{
+                'colourPrimary': '#beb419',
+                'hat':'cap'
+            },
+            'jiraissue_block':{
+                'colourPrimary': '#b49926',
+                'hat':'cap'
             }
         },
         'categoryStyles': {
             // selector category
             'selector-category': {
                 'colour': '#eab59d',
+            },
+            'confluence_category':{
+                'colour': '#9f9f9f',
+            },
+            'jira_category':{
+                'colour': '#b49926',
             },
         },
         'startHats': true
@@ -167,6 +181,7 @@ function getToolBox(){
             {
                 "kind": "category",
                 "name": "%{BKY_CAT_CONFLUENCE}",
+                "categoryStyle": "confluence_category",
                 "contents": [
                     {
                         "kind": "block",
@@ -178,8 +193,15 @@ function getToolBox(){
             {
                 "kind": "category",
                 "name": "%{BKY_CAT_JIRA}",
+                "categoryStyle": "jira_category",
                 "contents": [
-
+                    {
+                        "kind": "block",
+                        "type": "cb_jiraissue"
+                    },{
+                        "kind": "block",
+                        "type": "cb_jirafield"
+                    }
                 ]
             },
             // Catégorie 8: MESSAGE
@@ -306,7 +328,7 @@ function injectionBlockly(mode=false){
                 scaleSpeed: 1.2,
                 pinch: true}
     }
-    if(document.contains(document.getElementById(blocklyDivName))){
+    // if(document.contains(document.getElementById(blocklyDivName))){
         blocklyDiv = document.getElementById(blocklyDivName);
         document.getElementById(blocklyDivName).innerHTML = null
         workspace = Blockly.inject(blocklyDiv,options);
@@ -314,5 +336,5 @@ function injectionBlockly(mode=false){
         onresize();
         if(VertigoUi.vueData.scriptIntention.script!=null)fromCode();
         workspace.addChangeListener(toCode);
-    }
+    // }
 }

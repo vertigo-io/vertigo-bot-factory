@@ -282,9 +282,22 @@ Blockly.BotScript['cb_rating'] = function(block) {
 }
 
 // *****************************
-// ******CATEGORIE CONFLUENCE*****
+// *****CATEGORIE CONFLUENCE****
 // *****************************
 Blockly.BotScript['cb_confluencesearch'] = function(block) {
 	let params = getBlockParams(block);
 	return 'confluence:search' + formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+ formatString(params[3].getValue())+ params[4].getValue()+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
+
+// *****************************
+// ********CATEGORIE JIRA*******
+// *****************************
+Blockly.BotScript['cb_jiraissue'] = function(block) {
+	let params = getBlockParams(block);
+	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
+	return "begin jira:issue:create" +  formatString(params[0].getValue())+"\r\n" + subBlocks + 'end ' + "jira:issue:create"+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
+Blockly.BotScript['cb_jirafield'] = function(block) {
+	let params = getBlockParams(block);
+	return 'jira:field' + formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
