@@ -117,6 +117,7 @@ Blockly.Msg["BUT_BUTFILE_TITLE"] = "Bouton avec fichier/PJ";
 // *****************************
 Blockly.Msg["MES_SAY_TITLE"] = "Message:";
 Blockly.Msg["MES_LINK_TITLE"] = "Lien:";
+Blockly.Msg["MES_LINK_OPTION_TARGET"] = "Ouvrir nouvelle fenêtre:";
 Blockly.Msg["MES_IMAGE_TITLE"] = "Image:";
 Blockly.Msg["MES_MAIL_TITLE"] = "Mail";
 Blockly.Msg["MES_MAIL_SUBJECT_TITLE"] = "Objet:";

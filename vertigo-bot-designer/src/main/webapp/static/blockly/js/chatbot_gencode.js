@@ -223,7 +223,7 @@ Blockly.BotScript['cb_say'] = function(block) {
 }
 Blockly.BotScript['cb_link'] = function(block) {
 	let params = getBlockParams(block);
-	return "link" + ' "' +params[0].getValue() + '"' +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+	return "link" + formatString(params[0].getValue()) + (params[1].getValue()==='false' ? 'false': '') +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 Blockly.BotScript['cb_mail'] = function(block) {
 	let params = getBlockParams(block);
