@@ -4,7 +4,6 @@ function isComposite(block) {
 
 function formatVariable(type, nomVar){
 	if(type=="global/context/url"){
-		// this.getParameter("condition-variable").setText("E");
 		return ' /user/'+ type + ' ';
 	}
 	else{
