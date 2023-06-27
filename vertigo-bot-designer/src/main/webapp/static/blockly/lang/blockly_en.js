@@ -117,6 +117,7 @@ Blockly.Msg["SELEC_ELSE_TITLE"] = "Else by default do:";
 // *****************************
 Blockly.Msg["MES_SAY_TITLE"] = "Message:";
 Blockly.Msg["MES_LINK_TITLE"] = "Link:";
+Blockly.Msg["MES_LINK_OPTION_TARGET"] = "Open new page:";
 Blockly.Msg["MES_IMAGE_TITLE"] = "Image:";
 Blockly.Msg["MES_MAIL_TITLE"] = "Mail";
 Blockly.Msg["MES_MAIL_SUBJECT_TITLE"] = "Subject:";

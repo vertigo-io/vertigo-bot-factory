@@ -502,14 +502,31 @@ Blockly.Blocks['cb_link'] = {
         this.jsonInit(
             {
                 "type": "link",
-                "message0": "%{BKY_MES_LINK_TITLE}  %1",
+                "message0": "%{BKY_MES_LINK_TITLE}  %1 %2 %{BKY_MES_LINK_OPTION_TARGET} %3",
                 "args0": [
                     {
                         "type": "field_input",
                         "name": "url",
                         "text": "%{BKY_COMMONS_SAMPLE_LINK}",
                         "check": "String"
-                    }
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "optionTarget",
+                        "options": [
+                            [
+                                "%{BKY_COMMONS_OPTION_YES}",
+                                "true"
+                            ],
+                            [
+                                "%{BKY_COMMONS_OPTION_NO}",
+                                "false"
+                            ]
+                        ]
+                    },
                 ],
                 "previousStatement": "all",
                 "nextStatement": "all",
