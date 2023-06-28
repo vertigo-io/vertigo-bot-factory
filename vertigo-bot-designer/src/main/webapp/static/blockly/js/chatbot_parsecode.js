@@ -432,7 +432,7 @@ function checkQualifyOption(block, qualifier) {
 	block.inputList.forEach(input => {
 		input.fieldRow.forEach(param => {
 			// list of all parameters name of qualifiers accepted
-			if(param.name==='optionSay' || param.name ==="optionNlu" || param.name==="condition-type" || param.name==="type-valeur" || param.name==="type-incr" || param.name==="optionPj"){
+			if(param.name==='optionSay' || param.name ==="optionNlu" || param.name==="condition-type" || param.name==="type-value" || param.name==="type-incr" || param.name==="optionPj"){
 				found = true;
 			}
 			if (param.name === ":QUALIFY" && param.EDITABLE && param.getOptions) {

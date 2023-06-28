@@ -284,6 +284,10 @@ function getToolBox(){
                     {
                         "kind": "block",
                         "type": "cb_template_listOfButtons"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_template_ifelse"
                     }
                 ]
             },
@@ -359,84 +363,122 @@ function importBlocklyTemplate(event){
     if(event.type == Blockly.Events.CREATE && event.json.type.startsWith('cb_template')){
         let locale = VertigoUi.vueData.locale
         let templateBlock = workspace.getBlockById(event.blockId);
+        // the order of adding blocks connection is important (call to function addConnectionSubBlock and addConnectionNext)
         switch (templateBlock.type) {
             case 'cb_template_listOfButtons':
-                let listBlocks = []
-                let firstMessage = workspace.newBlock('cb_say')
+
+                var sequence = workspace.newBlock('cb_sequence')
+
+                var firstMessage = workspace.newBlock('cb_say')
                 firstMessage.setFieldValue((locale==='fr_FR' ? "Voici une liste de boutons" : "List of buttons"),"label")
 
-                let listButtons = workspace.newBlock('cb_buttons')
+                var listButtons = workspace.newBlock('cb_buttons')
                 listButtons.setFieldValue((locale==='fr_FR' ? "Quelle est votre couleur préférée" : "What is your favorite colour"),"question")
                 listButtons.setFieldValue("color","nameVar")
-                let firstButton = workspace.newBlock('cb_button')
+
+                var firstButton = workspace.newBlock('cb_button')
                 firstButton.setFieldValue((locale==='fr_FR' ? "Rouge" : "Red"),"label")
                 firstButton.setFieldValue("RED","code")
-                firstButton.initSvg()
-                firstButton.render()
-                let secondButton = workspace.newBlock('cb_button')
+
+                var secondButton = workspace.newBlock('cb_button')
                 secondButton.setFieldValue((locale==='fr_FR' ? "Bleu" : "Blue"),"label")
                 secondButton.setFieldValue("BLUE","code")
-                secondButton.initSvg()
-                secondButton.render()
-                let thirdButton = workspace.newBlock('cb_button')
+
+                var thirdButton = workspace.newBlock('cb_button')
                 thirdButton.setFieldValue((locale==='fr_FR' ? "Autre" : "Other"),"label")
                 thirdButton.setFieldValue("OTHER","code")
-                thirdButton.initSvg()
-                thirdButton.render()
-                secondButton.previousConnection.connect(firstButton.nextConnection)
-                thirdButton.previousConnection.connect(secondButton.nextConnection)
-                listButtons.getInput('SUB_BLOCKS').connection.connect(firstButton.previousConnection)
+
+                addAllConnectionSubBlock(listButtons, [firstButton, secondButton, thirdButton])
 
 
-                let switchBlock = workspace.newBlock('cb_switch')
+                var switchBlock = workspace.newBlock('cb_switch')
                 switchBlock.setFieldValue("color","nameVar")
-                let firstCase = workspace.newBlock('cb_case')
-                firstCase.setFieldValue(firstButton.getFieldValue("code"),"value")
-                let messageFirstCase = workspace.newBlock('cb_say')
-                messageFirstCase.setFieldValue((locale==='fr_FR' ? "Moi aussi ma couleur préféré est le "+firstButton.getFieldValue("label").toLowerCase()+" !" : "My favorite color is "+firstButton.getFieldValue("label")+" too!").toLowerCase(),"label")
-                messageFirstCase.initSvg()
-                messageFirstCase.render()
-                firstCase.getInput('SUB_BLOCKS').connection.connect(messageFirstCase.previousConnection)
-                firstCase.initSvg()
-                firstCase.render()
-                let secondCase = workspace.newBlock('cb_case')
-                secondCase.setFieldValue(secondButton.getFieldValue("code"),"value")
-                let messageSecondCase = workspace.newBlock('cb_say')
-                messageSecondCase.setFieldValue((locale==='fr_FR' ? "Moi aussi ma couleur préféré est le "+secondButton.getFieldValue("label").toLowerCase()+" !" : "My favorite color is "+secondButton.getFieldValue("label")+" too!").toLowerCase(),"label")
-                messageSecondCase.initSvg()
-                messageSecondCase.render()
-                secondCase.getInput('SUB_BLOCKS').connection.connect(messageSecondCase.previousConnection)
-                secondCase.initSvg()
-                secondCase.render()
-                let thirdCase = workspace.newBlock('cb_case')
-                thirdCase.setFieldValue(thirdButton.getFieldValue("code"),"value")
-                let messageThirdCase = workspace.newBlock('cb_say')
-                messageThirdCase.setFieldValue((locale==='fr_FR' ? "Moi ma coleur préféré est le orange !" : "My favorite color is orange !").toLowerCase(),"label")
-                messageThirdCase.initSvg()
-                messageThirdCase.render()
-                thirdCase.getInput('SUB_BLOCKS').connection.connect(messageThirdCase.previousConnection)
-                thirdCase.initSvg()
-                thirdCase.render()
-                secondCase.previousConnection.connect(firstCase.nextConnection)
-                thirdCase.previousConnection.connect(secondCase.nextConnection)
-                switchBlock.getInput('SUB_BLOCKS').connection.connect(firstCase.previousConnection)
 
-                let lastMessage = workspace.newBlock('cb_say')
+                var firstCase = workspace.newBlock('cb_case')
+                firstCase.setFieldValue(firstButton.getFieldValue("code"),"value")
+
+                var messageFirstCase = workspace.newBlock('cb_say')
+                messageFirstCase.setFieldValue((locale==='fr_FR' ? "Moi aussi ma couleur préféré est le "+firstButton.getFieldValue("label").toLowerCase()+" !" : "My favorite color is "+firstButton.getFieldValue("label")+" too!").toLowerCase(),"label")
+
+                var secondCase = workspace.newBlock('cb_case')
+                secondCase.setFieldValue(secondButton.getFieldValue("code"),"value")
+
+                var messageSecondCase = workspace.newBlock('cb_say')
+                messageSecondCase.setFieldValue((locale==='fr_FR' ? "Moi aussi ma couleur préféré est le "+secondButton.getFieldValue("label").toLowerCase()+" !" : "My favorite color is "+secondButton.getFieldValue("label")+" too!").toLowerCase(),"label")
+
+                var thirdCase = workspace.newBlock('cb_case')
+                thirdCase.setFieldValue(thirdButton.getFieldValue("code"),"value")
+
+                var messageThirdCase = workspace.newBlock('cb_say')
+                messageThirdCase.setFieldValue((locale==='fr_FR' ? "Moi ma coleur préféré est le orange !" : "My favorite color is orange !").toLowerCase(),"label")
+
+                addConnectionSubBlock(firstCase, messageFirstCase)
+                addConnectionSubBlock(secondCase, messageSecondCase)
+                addConnectionSubBlock(thirdCase, messageThirdCase)
+                addAllConnectionSubBlock(switchBlock, [firstCase, secondCase, thirdCase])
+
+                var lastMessage = workspace.newBlock('cb_say')
                 lastMessage.setFieldValue((locale==='fr_FR' ? "Tout ceci était un modèle utilisant une liste de boutons" : "All of this was a template using list of buttons"),"label")
 
-                listBlocks.push(firstMessage)
-                listBlocks.push(listButtons)
-                listBlocks.push(switchBlock)
-                listBlocks.push(lastMessage)
+                sequence.initSvg();
+                sequence.render();
+                addAllConnectionSubBlock(sequence, [firstMessage, listButtons, switchBlock, lastMessage])
 
+                templateBlock.dispose()
+                break;
+            case 'cb_template_ifelse':
+                var sequence = workspace.newBlock('cb_sequence')
 
-                listBlocks[0].initSvg()
-                listBlocks[0].render()
-                for(let i=1; i<listBlocks.length; i++){
-                    listBlocks[i].initSvg()
-                    listBlocks[i].render()
-                    listBlocks[i].previousConnection.connect(listBlocks[i-1].nextConnection)
-                }
+                var firstMessage = workspace.newBlock('cb_say')
+                firstMessage.setFieldValue((locale==='fr_FR' ? "Vous souhaitez consulter la fiche d'information de votre ville" : "You want to consult data of your city"),"label")
+
+                var inputStringBlock = workspace.newBlock('cb_inputString')
+                inputStringBlock.setFieldValue((locale==='fr_FR' ? "Combien y a t il d'habitants dans la ville ?" : "How many people live in the town ?"),"question")
+                inputStringBlock.setFieldValue("city","nameVar")
+
+                var ifelseBlock = workspace.newBlock('cb_ifelse')
+
+                var firstIfBlock = workspace.newBlock('cb_if')
+                var secondIfBlock = workspace.newBlock('cb_if')
+                var elseBlock = workspace.newBlock('cb_else')
+
+                var conditionFirstBlock = workspace.newBlock('cb_condition')
+                conditionFirstBlock.setFieldValue("gt","condition-type")
+                conditionFirstBlock.setFieldValue("20000","value")
+                conditionFirstBlock.setFieldValue("city","nameVar")
+
+                var messageFirstBlock = workspace.newBlock('cb_say')
+                var topicFirstBlock = workspace.newBlock('cb_topic')
+                messageFirstBlock.setFieldValue((locale==='fr_FR' ? "Ok il s'agit d'une grande ville" : "Ok, it's a big city"), "label")
+                topicFirstBlock.setFieldValue("CITY1","code")
+
+                var conditionSecondBlock = workspace.newBlock('cb_condition')
+                conditionSecondBlock.setFieldValue("lt","condition-type")
+                conditionSecondBlock.setFieldValue("20000","value")
+                conditionSecondBlock.setFieldValue("city","nameVar")
+
+                addAllConnectionSubBlock(firstIfBlock,[conditionFirstBlock, messageFirstBlock, topicFirstBlock])
+
+                var messageSecondBlock = workspace.newBlock('cb_say')
+                var topicSecondBlock = workspace.newBlock('cb_topic')
+                messageSecondBlock.setFieldValue((locale==='fr_FR' ? "Ok il s'agit d'une petite ville" : "Ok, it's a small city"), "label")
+                topicSecondBlock.setFieldValue("CITY2","code")
+
+                addAllConnectionSubBlock(secondIfBlock,[conditionSecondBlock, messageSecondBlock, topicSecondBlock])
+
+                var messageElseBlock = workspace.newBlock('cb_say')
+                messageElseBlock.setFieldValue((locale==='fr_FR' ? "Le nombre d'habitants n'a pas été reconnu" : "The number of inhabitants has not been recognized"), "label")
+
+                var chooseBlock =  workspace.newBlock('cb_choose')
+
+                addAllConnectionSubBlock(elseBlock, [messageElseBlock, chooseBlock])
+
+                addAllConnectionSubBlock(ifelseBlock, [firstIfBlock, secondIfBlock, elseBlock])
+
+                sequence.initSvg();
+                sequence.render();
+                addAllConnectionSubBlock(sequence, [firstMessage, inputStringBlock, ifelseBlock])
+
                 templateBlock.dispose()
                 break;
             default:
@@ -444,4 +486,24 @@ function importBlocklyTemplate(event){
                 return;
         }
     }
+}
+
+function addConnectionSubBlock(blockParent, blockChildren) {
+    blockChildren.initSvg()
+    blockChildren.render()
+    blockParent.getInput('SUB_BLOCKS').connection.connect(blockChildren.previousConnection)
+}
+
+function addConnectionNext(blockParent, blockChildren){
+    blockChildren.initSvg()
+    blockChildren.render()
+    blockChildren.previousConnection.connect(blockParent.nextConnection)
+}
+// add all blocks of blocksChildren in the input statement ('subblock' of the blockParent
+function addAllConnectionSubBlock(blockParent,blocksChildren){
+    for(let i=blocksChildren.length-1; i>0; i--){
+        console.log("test")
+        addConnectionNext(blocksChildren[i-1], blocksChildren[i])
+    }
+    addConnectionSubBlock(blockParent,blocksChildren[0])
 }

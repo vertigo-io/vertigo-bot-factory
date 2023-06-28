@@ -184,4 +184,5 @@ Blockly.Msg["JIRA_ISSUE_TITLE"] = "Create Jira ticket";
 // *****************************
 // **** CATEGORIE TEMPLATE *****
 // *****************************
-Blockly.Msg["TEMPLATE_1_TITLE"] = "Usage list of buttons";
+Blockly.Msg["TEMPLATE_LISTBUTTONS_TITLE"] = "Usage list of buttons";
+Blockly.Msg["TEMPLATE_IFELSE_TITLE"] = "Usage conditions in if/else nodes";
