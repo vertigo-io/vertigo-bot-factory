@@ -292,6 +292,10 @@ function getToolBox(){
                     {
                         "kind": "block",
                         "type": "cb_template_jira"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_template_FAQdynamique"
                     }
                 ]
             },
@@ -516,6 +520,98 @@ function importBlocklyTemplate(event){
 
                 templateBlock.dispose()
                 break;
+            case 'cb_template_FAQdynamique':
+                var sequence = workspace.newBlock('cb_sequence')
+
+                var firstMessage = workspace.newBlock('cb_say')
+                firstMessage.setFieldValue((locale==='fr_FR' ? "Vous êtes sur la FAQ générale" : "You are on the global FAQs page"),"label")
+
+                var buttonsFAQ = workspace.newBlock('cb_buttons') // question
+                buttonsFAQ.setFieldValue((locale==='fr_FR' ? "Que souhaitez-vous faire ?" : "What do you want to do ?"), "question")
+                buttonsFAQ.setFieldValue("faq", "nameVar")
+                let buttons = []
+                buttons.push([(locale==='fr_FR' ? "Créer un compte" : "Create an account"), "COMPTE"])
+                buttons.push([(locale==='fr_FR' ? "Faire une demande de bourse" : "Apply for a grant"), "BOURSE"])
+                buttons.push([(locale==='fr_FR' ? "Consulter un assistant" : "Consult an assistant"), "ASSISTANT"])
+                let buttonsBlocks = []
+                for(let i=0; i<buttons.length; i++){
+                    let buttonBlock = workspace.newBlock('cb_button')
+                    buttonBlock.setFieldValue(buttons[i][0],"label")
+                    buttonBlock.setFieldValue(buttons[i][1],"code")
+                    buttonsBlocks.push(buttonBlock)
+                }
+
+                addAllConnectionSubBlock(buttonsFAQ,buttonsBlocks)
+
+                var switchFAQ = workspace.newBlock('cb_switch')
+                switchFAQ.setFieldValue(buttonsFAQ.getFieldValue("nameVar"),"nameVar")
+                let casesBlocks = []
+                for(let i= 0; i<buttons.length; i++){
+                    let caseBlock = workspace.newBlock('cb_case')
+                    caseBlock.setFieldValue(buttons[i][1], "value")
+                    casesBlocks.push(caseBlock)
+                }
+
+                var buttonsFAQAccount = workspace.newBlock('cb_buttons')
+                buttonsFAQAccount.setFieldValue((locale==='fr_FR' ? "Quel type de compte ?" : "What type of account ?"), "question")
+                buttonsFAQAccount.setFieldValue("account", "nameVar")
+                let buttonsAccount = []
+                buttonsAccount.push([(locale==='fr_FR' ? "Compte Acheteur" : "Buyer account"), "ACHETEUR"])
+                buttonsAccount.push([(locale==='fr_FR' ? "Compte Vendeur" : "Sales account"), "VENDEUR"])
+                let buttonsBlocksAccount = []
+                for(let i=0; i<buttonsAccount.length; i++) {
+                        let buttonBlock = workspace.newBlock('cb_button')
+                        buttonBlock.setFieldValue(buttonsAccount[i][0],"label")
+                        buttonBlock.setFieldValue(buttonsAccount[i][1],"code")
+                        buttonsBlocksAccount.push(buttonBlock)
+                }
+                addAllConnectionSubBlock(buttonsFAQAccount,buttonsBlocksAccount)
+
+                var switchFAQAccount = workspace.newBlock('cb_switch')
+                switchFAQAccount.setFieldValue(buttonsFAQAccount.getFieldValue("nameVar"),"nameVar")
+                let casesBlocksAccount = []
+                for(let i= 0; i<buttonsAccount.length; i++){
+                    let caseBlock = workspace.newBlock('cb_case')
+                    caseBlock.setFieldValue(buttonsAccount[i][1], "value")
+                    casesBlocksAccount.push(caseBlock)
+                }
+
+                casesBlocksAccount.forEach(caseAccount => {
+                    let topic = workspace.newBlock('cb_topic')
+                    topic.setFieldValue(caseAccount.getFieldValue("value").toString().substr(0,3).concat("_COMPTE"),"code")
+                    addConnectionSubBlock(caseAccount, topic)
+                });
+
+                addAllConnectionSubBlock(switchFAQAccount,casesBlocksAccount)
+
+                // first major case: COMPTE
+                addAllConnectionSubBlock(casesBlocks[0], [buttonsFAQAccount, switchFAQAccount])
+
+
+                // second major case: BOURSE
+                var linkBourseBlock = workspace.newBlock('cb_link')
+                linkBourseBlock.setFieldValue("https://bourseexample.kleegroup.com","url")
+                addConnectionSubBlock(casesBlocks[1], linkBourseBlock)
+
+                // third major case: ASSISTANT
+                var linkAssistantBlock = workspace.newBlock('cb_link')
+                linkAssistantBlock.setFieldValue("https://assistantexample.kleegroup.com","url")
+                addConnectionSubBlock(casesBlocks[2], linkAssistantBlock)
+
+                addAllConnectionSubBlock(switchFAQ,casesBlocks)
+
+                var lastMessage = workspace.newBlock('cb_say')
+                lastMessage.setFieldValue((locale==='fr_FR' ? "Vous allez être redirigé vers la FAQ général..." : "You will be redirected to the general FAQ..."),"label")
+
+                var topicIdle = workspace.newBlock('cb_topic')
+                topicIdle.setFieldValue("TEMPFAQ","code")
+
+                sequence.initSvg();
+                sequence.render();
+                addAllConnectionSubBlock(sequence, [firstMessage, buttonsFAQ, switchFAQ, lastMessage, topicIdle])
+
+                templateBlock.dispose()
+                break;
             default:
                 templateBlock.dispose()
                 return;
@@ -537,7 +633,6 @@ function addConnectionNext(blockParent, blockChildren){
 // add all blocks of blocksChildren in the input statement ('subblock' of the blockParent
 function addAllConnectionSubBlock(blockParent,blocksChildren){
     for(let i=blocksChildren.length-1; i>0; i--){
-        console.log("test")
         addConnectionNext(blocksChildren[i-1], blocksChildren[i])
     }
     addConnectionSubBlock(blockParent,blocksChildren[0])
