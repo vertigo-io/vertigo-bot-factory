@@ -288,6 +288,10 @@ function getToolBox(){
                     {
                         "kind": "block",
                         "type": "cb_template_ifelse"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_template_jira"
                     }
                 ]
             },
@@ -385,8 +389,8 @@ function importBlocklyTemplate(event){
                 secondButton.setFieldValue("BLUE","code")
 
                 var thirdButton = workspace.newBlock('cb_button')
-                thirdButton.setFieldValue((locale==='fr_FR' ? "Autre" : "Other"),"label")
-                thirdButton.setFieldValue("OTHER","code")
+                thirdButton.setFieldValue((locale==='fr_FR' ? "Vert" : "Green"),"label")
+                thirdButton.setFieldValue("GREEN","code")
 
                 addAllConnectionSubBlock(listButtons, [firstButton, secondButton, thirdButton])
 
@@ -398,19 +402,19 @@ function importBlocklyTemplate(event){
                 firstCase.setFieldValue(firstButton.getFieldValue("code"),"value")
 
                 var messageFirstCase = workspace.newBlock('cb_say')
-                messageFirstCase.setFieldValue((locale==='fr_FR' ? "Moi aussi ma couleur préféré est le "+firstButton.getFieldValue("label").toLowerCase()+" !" : "My favorite color is "+firstButton.getFieldValue("label")+" too!").toLowerCase(),"label")
+                messageFirstCase.setFieldValue((locale==='fr_FR' ? "Moi aussi ma couleur préférée est le "+firstButton.getFieldValue("label").toLowerCase()+" !" : "My favorite color is "+firstButton.getFieldValue("label").toLowerCase()+" too!"),"label")
 
                 var secondCase = workspace.newBlock('cb_case')
                 secondCase.setFieldValue(secondButton.getFieldValue("code"),"value")
 
                 var messageSecondCase = workspace.newBlock('cb_say')
-                messageSecondCase.setFieldValue((locale==='fr_FR' ? "Moi aussi ma couleur préféré est le "+secondButton.getFieldValue("label").toLowerCase()+" !" : "My favorite color is "+secondButton.getFieldValue("label")+" too!").toLowerCase(),"label")
+                messageSecondCase.setFieldValue((locale==='fr_FR' ? "Moi aussi ma couleur préférée est le "+secondButton.getFieldValue("label").toLowerCase()+" !" : "My favorite color is "+secondButton.getFieldValue("label").toLowerCase()+" too!"),"label")
 
                 var thirdCase = workspace.newBlock('cb_case')
                 thirdCase.setFieldValue(thirdButton.getFieldValue("code"),"value")
 
                 var messageThirdCase = workspace.newBlock('cb_say')
-                messageThirdCase.setFieldValue((locale==='fr_FR' ? "Moi ma coleur préféré est le orange !" : "My favorite color is orange !").toLowerCase(),"label")
+                messageThirdCase.setFieldValue((locale==='fr_FR' ? "Moi ma couleur préférée est le " + thirdButton.getFieldValue("label").toLowerCase()+" !" : "My favorite color is"+thirdButton.getFieldValue("label").toLowerCase()+" too!"),"label")
 
                 addConnectionSubBlock(firstCase, messageFirstCase)
                 addConnectionSubBlock(secondCase, messageSecondCase)
@@ -478,6 +482,37 @@ function importBlocklyTemplate(event){
                 sequence.initSvg();
                 sequence.render();
                 addAllConnectionSubBlock(sequence, [firstMessage, inputStringBlock, ifelseBlock])
+
+                templateBlock.dispose()
+                break;
+            case 'cb_template_jira':
+                var sequence = workspace.newBlock('cb_sequence')
+
+                var firstMessage = workspace.newBlock('cb_say')
+                firstMessage.setFieldValue((locale==='fr_FR' ? "Ceci est un exemple de création de ticket Jira suite à une anomalie" : "This is a example of a creation of a jira ticket"),"label")
+
+                var jiraIssueBlock = workspace.newBlock('cb_jiraissue') //reference, scenario, attendu, obtenu, reproductibilite, criticite
+
+                var fieldJira =[]
+                fieldJira.push(['reference', (locale==='fr_FR' ? "Bien sûr, quelle est la référence du client impacté par cette anomalie ?" : "Of course, what is the reference number of the customer affected by this anomaly ?")])
+                fieldJira.push(['scenario', (locale==='fr_FR' ? "Quel est le scénario de test ?" : "What is the test scenario ?")])
+                fieldJira.push(['attendu', (locale==='fr_FR' ? "Quel est le résultat attendu ?" : "What is the expected result ?")])
+                fieldJira.push(['obtenu', (locale==='fr_FR' ? "Quel est le résultat obtenu ?" : "What is the real result ?")])
+                fieldJira.push(['reproductibilite', (locale==='fr_FR' ? "Quelle est la reproductibilité ?" : "How reproducible is it ?")])
+                fieldJira.push(['criticite', (locale==='fr_FR' ? "Quelle est la criticité ?" : "What is the criticality?")])
+                var fieldJiraBlocks = []
+                for(let i=0; i< fieldJira.length; i++){
+                    let fieldJiraBlock = workspace.newBlock('cb_jirafield')
+                    fieldJiraBlock.setFieldValue(fieldJira[i][0],"nameVar")
+                    fieldJiraBlock.setFieldValue(fieldJira[i][1],"question")
+                    fieldJiraBlocks.push(fieldJiraBlock)
+                }
+                addAllConnectionSubBlock(jiraIssueBlock, fieldJiraBlocks)
+
+
+                sequence.initSvg();
+                sequence.render();
+                addAllConnectionSubBlock(sequence, [firstMessage, jiraIssueBlock])
 
                 templateBlock.dispose()
                 break;

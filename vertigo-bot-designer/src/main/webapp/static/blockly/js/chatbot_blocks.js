@@ -1612,6 +1612,26 @@ Blockly.Blocks['cb_template_ifelse'] = {
             });
     }
 };
+Blockly.Blocks['cb_template_jira'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "template",
+                "message0": "%{BKY_TEMPLATE_JIRA_TITLE} %1 ",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    }
+                ],
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "style": "jirafield_block",
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
 // ********************
 // ** Generic blocks **
 // ********************

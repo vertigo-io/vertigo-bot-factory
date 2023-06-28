@@ -186,3 +186,4 @@ Blockly.Msg["JIRA_ISSUE_TITLE"] = "Créer ticket Jira";
 // *****************************
 Blockly.Msg["TEMPLATE_LISTBUTTONS_TITLE"] = "Modèle listes de boutons";
 Blockly.Msg["TEMPLATE_IFELSE_TITLE"] = "Modèle avec conditions si/sinon";
+Blockly.Msg["TEMPLATE_JIRA_TITLE"] = "Modèle création ticket Jira";
