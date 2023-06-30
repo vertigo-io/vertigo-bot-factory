@@ -83,5 +83,13 @@
     <changeSet author="cmarechal" id="Drop unused table cha_per_rights">
         <sqlFile encoding="utf8" path="/sql/v_2_0/drop_23_02_06.sql" />
     </changeSet>
+    
+    
+    <changeSet author="skerdudou" id="Update influxDb data structure to use tags instead of measures for booleans">
+        <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileMigration" >
+        	<param name="file" value="/liquibase/changeLog/v_2_0/updateInfluxSwitchToTags.flux" />
+        	<param name="replaceMeasurement" value="chatbotmessages" />
+        </customChange>
+    </changeSet>
 
 </databaseChangeLog>

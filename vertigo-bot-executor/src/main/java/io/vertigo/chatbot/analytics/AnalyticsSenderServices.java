@@ -1,5 +1,10 @@
 package io.vertigo.chatbot.analytics;
 
+import java.util.List;
+import java.util.UUID;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.model.BotInput;
@@ -10,10 +15,6 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.analytics.AnalyticsManager;
 import io.vertigo.core.analytics.process.AProcessBuilder;
 import io.vertigo.core.node.component.Component;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.UUID;
 
 @Transactional
 public class AnalyticsSenderServices implements Component {
@@ -54,7 +55,7 @@ public class AnalyticsSenderServices implements Component {
 				incomeRating.setComment(input.getMessage());
 				rateComment(sessionId, incomeRating, executorConfiguration);
 			}
-			sendConversationEvent(sessionId, input.getMessage(), true,  executorConfiguration);
+			sendConversationEvent(sessionId, input.getMessage(), true, executorConfiguration);
 		} else if (input.getMetadatas().get("rating") != null) {
 			final String rating = (String) input.getMetadatas().get("rating");
 			final IncomeRating incomeRating = new IncomeRating();
@@ -72,8 +73,8 @@ public class AnalyticsSenderServices implements Component {
 	//Send also all the topics passed with topic {} instruction
 	private void sendNluEvent(final UUID sessionId, final BotInput input, final String codeTopic, final Double accuracy, final ExecutorConfiguration executorConfiguration) {
 		final AProcessBuilder processBuilder = AnalyticsUtils.prepareMessageProcess(codeTopic, input.getMessage(), AnalyticsUtils.TEXT_KEY)
-				.setMeasure(AnalyticsUtils.NLU_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
-				.setMeasure(AnalyticsUtils.USER_MESSAGE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
+				.addTag(AnalyticsUtils.NLU_KEY, AnalyticsUtils.TRUE)
+				.addTag(AnalyticsUtils.USER_MESSAGE_KEY, AnalyticsUtils.TRUE)
 				.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, accuracy);
 		//test if topic is a fallback topic
 		if (codeTopic.equals(BotEngine.FALLBACK_TOPIC_NAME)) {
@@ -81,22 +82,22 @@ public class AnalyticsSenderServices implements Component {
 		} else if (codeTopic.equals(BotEngine.RATING_TOPIC_NAME)) {
 			prepareRatingEvent(processBuilder);
 		} else {
-			processBuilder.setMeasure(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.FALSE_BIGDECIMAL);
+			processBuilder.addTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.FALSE);
 		}
 		sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 	}
 
 	private static void prepareFallBackEvent(final AProcessBuilder builder) {
 		builder
-				.setMeasure(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
-				.setMeasure(AnalyticsUtils.FALLBACK_KEY, AnalyticsUtils.TRUE_BIGDECIMAL);
+				.addTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE)
+				.addTag(AnalyticsUtils.FALLBACK_KEY, AnalyticsUtils.TRUE);
 
 	}
 
 	private static void prepareRatingEvent(final AProcessBuilder builder) {
 		builder
-				.setMeasure(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
-				.setMeasure(AnalyticsUtils.RATING_KEY, AnalyticsUtils.TRUE_BIGDECIMAL);
+				.addTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE)
+				.addTag(AnalyticsUtils.RATING_KEY, AnalyticsUtils.TRUE);
 
 	}
 
@@ -111,9 +112,9 @@ public class AnalyticsSenderServices implements Component {
 			final String type = isFirst ? AnalyticsUtils.BUTTONS_INPUT_KEY : AnalyticsUtils.SWITCH_INPUT_KEY;
 			final AProcessBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(codeTopic, type)
 					.addTag(AnalyticsUtils.TYPE_KEY, isFirst ? AnalyticsUtils.BUTTONS_INPUT_KEY : AnalyticsUtils.SWITCH_INPUT_KEY)
-					.setMeasure(AnalyticsUtils.TECHNICAL_KEY, isTechnical ? AnalyticsUtils.TRUE_BIGDECIMAL : AnalyticsUtils.FALSE_BIGDECIMAL)
+					.addTag(AnalyticsUtils.TECHNICAL_KEY, isTechnical ? AnalyticsUtils.TRUE : AnalyticsUtils.FALSE)
 					.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
-					.setMeasure(AnalyticsUtils.NLU_KEY, AnalyticsUtils.FALSE_BIGDECIMAL);
+					.addTag(AnalyticsUtils.NLU_KEY, AnalyticsUtils.FALSE);
 			sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 			isFirst = false;
 		}
@@ -130,9 +131,9 @@ public class AnalyticsSenderServices implements Component {
 		final AnalyticsObjectSend analytics = (AnalyticsObjectSend) botResponse.getMetadatas().get(BotEngine.ANALYTICS_KEY);
 		final List<TopicDefinition> topicsPast = analytics.getTopicsPast();
 		final AProcessBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(BotEngine.START_TOPIC_NAME, AnalyticsUtils.TECHNICAL_INPUT_KEY)
-				.setMeasure(AnalyticsUtils.SESSION_START_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
+				.addTag(AnalyticsUtils.SESSION_START_KEY, AnalyticsUtils.TRUE)
 				.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
-				.setMeasure(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE_BIGDECIMAL);
+				.addTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE);
 
 		sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 		sendPastTopics(sessionId, topicsPast, executorConfiguration);

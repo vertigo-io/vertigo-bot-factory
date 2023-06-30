@@ -17,24 +17,19 @@
  */
 package io.vertigo.chatbot.designer.analytics.utils;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.query.FluxColumn;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.lang.Tuple;
 import io.vertigo.database.timeseries.DataFilter;
 import io.vertigo.database.timeseries.TabularDataSerie;
 import io.vertigo.database.timeseries.TabularDatas;
@@ -96,144 +91,65 @@ public final class InfluxRequestUtil {
 		return new TimedDatas(Collections.emptyList(), Collections.emptyList());
 	}
 
-	private static String buildGlobalDataVariable(final String appName, final List<String> measures, final DataFilter dataFilter, final Map<String, String> fieldFilters, final TimeFilter timeFilter,
-			final String... groupBy) {
-		final StringBuilder dataVariableBuilder = new StringBuilder("data = from(bucket:\"" + appName + "\") \n")
-				.append("|> range(start: " + timeFilter.getFrom() + ", stop: " + timeFilter.getTo() + ") \n")
-				.append("|> filter(fn: (r) => \n")
-				.append("r._measurement == \"" + dataFilter.getMeasurement() + "\" \n");
-
-		final Set<String> fields = getMeasureFields(measures);
-		// add the global data with all the fields we need
-		if (!fields.isEmpty()) {
-			dataVariableBuilder.append("and (");
-			dataVariableBuilder.append(
-					Stream.concat(fields.stream(), fieldFilters.keySet().stream())
-							.distinct()
-							.map(field -> "r._field ==\"" + field + "\"")
-							.collect(Collectors.joining(" or ")));
-
-			dataVariableBuilder.append(") \n");
-		}
-		if (!dataFilter.getFilters().isEmpty()) {
-			// filter tags values
-			dataVariableBuilder
-					.append(
-							dataFilter.getFilters().entrySet().stream()
-									.filter(e -> e.getValue() != null && !"*".equals(e.getValue()))
-									.map(e -> " and (not exists r." + e.getKey() + " or r." + e.getKey() + "==\"" + e.getValue() + "\")")
-									.collect(Collectors.joining()))
-					.append(" \n");
-		}
-		dataVariableBuilder.append(")\n");// end filter
-
-		final String groupByFields = Stream.of(groupBy).collect(Collectors.joining("\", \"", "\"", "\""));
-		dataVariableBuilder
-				.append("|> keep(columns: [\"_time\",\"_field\", \"_value\"" + (groupBy.length > 0 ? ", " + groupByFields : "") + "]) \n")
-				.append("|> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\") \n");
-
-		// filter fields values
-		if (!fieldFilters.isEmpty()) {
-			dataVariableBuilder.append("|> filter(fn: (r) => (1==1 and ") // 1==1 in case of empty stream after filter
-					.append(
-							fieldFilters.entrySet().stream()
-									.filter(e -> e.getValue() != null && !"*".equals(e.getValue()))
-									.map(e -> "exists r." + e.getKey() + " and r." + e.getKey() + "==" + e.getValue())
-									.collect(Collectors.joining(" and ")))
-					.append(")) \n");
-		}
-
-		dataVariableBuilder.append('\n'); // end data variable declaration
-		return dataVariableBuilder.toString();
-	}
-
-	public static TimedDatas getTimeSeries(final InfluxDBClient influxDBClient, final String appName, final List<String> measures, final DataFilter dataFilter, final Map<String, String> fieldFilters,
-			final TimeFilter timeFilter) {
+	public static TimedDatas getTimeSeries(final InfluxDBClient influxDBClient, final String appName, final List<DataRequest> dataRequests, final DataFilter dataFilter, final TimeFilter timeFilter) {
 		Assertion.check()
-				.isNotNull(measures)
+				.isNotNull(dataRequests)
 				.isNotNull(dataFilter)
 				.isNotNull(timeFilter.getDim());// we check dim is not null because we need it
 		//---
-		final String q = buildTimedQuery(appName, measures, dataFilter, fieldFilters, timeFilter)
+		final String q = buildTimedQuery(appName, dataRequests, dataFilter, timeFilter)
 				.toString();
 
 		return executeTimedQuery(influxDBClient, q);
 
 	}
 
-	private static StringBuilder buildTimedQuery(final String appName, final List<String> measures, final DataFilter dataFilter, final Map<String, String> fieldFilters, final TimeFilter timeFilter) {
-		final String globalDataVariable = buildGlobalDataVariable(appName, measures, dataFilter, fieldFilters, timeFilter, new String[] {});
-		final StringBuilder queryBuilder = new StringBuilder(globalDataVariable);
+	private static StringBuilder buildTimedQuery(final String appName, final List<DataRequest> dataRequests, final DataFilter dataFilter, final TimeFilter timeFilter) {
+		final StringBuilder queryBuilder = buildGlobalDataVariable(appName, dataFilter, timeFilter);
 
-		for (int i = 0; i < measures.size(); i++) {
-			final var measure = measures.get(i);
-			final String[] measureDetails = measure.split(":");
-			final String measureField = measureDetails[0];
-			final String measureFunction = buildMeasureFunction(measureDetails[1]);
-
-			queryBuilder.append("aggData").append(i).append(" = data \n")
-					.append("|> filter(fn: (r) => exists r.").append(measureField).append(") \n")
-					.append("|> rename(columns: {").append(measureField).append(": \"_value\"}) \n")
-					.append("|> window(every: ").append(timeFilter.getDim()).append(", createEmpty:true ) \n")
-					.append("|> ").append(measureFunction).append(" \n")
-					.append("|> set(key: \"_field\", value:\"").append(measure).append("\" ) \n")
-					.append("|> toFloat() \n")
-					.append("|> rename(columns: {_start: \"_time\"}) \n")
-					.append("|> drop(columns: [ \"_stop\"]) \n\n");
+		for (int i = 0; i < dataRequests.size(); i++) {
+			queryBuilder.append("aggData").append(i).append(" = data \n");
+			dataRequests.get(i).addFluxProcessing(queryBuilder, timeFilter);
 		}
 
-		if (measures.size() == 1) {
+		if (dataRequests.size() == 1) {
 			queryBuilder.append("aggData0 \n");
 		} else {
 			// union works with 2 tables minimum
 			queryBuilder.append("union(tables: [")
-					.append(IntStream.range(0, measures.size()).mapToObj(i -> "aggData" + i).collect(Collectors.joining(", ")))
+					.append(IntStream.range(0, dataRequests.size()).mapToObj(i -> "aggData" + i).collect(Collectors.joining(", ")))
 					.append("]) \n");
 		}
 		queryBuilder.append("|> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\") \n")
 				// add default values
 				.append("|> map(fn: (r) => ({ r with ")
-				.append(measures.stream().map(m -> "\"" + m + "\": if exists r[\"" + m + "\"] then r[\"" + m + "\"] else 0.0").collect(Collectors.joining(", ")))
+				.append(dataRequests.stream().map(DataRequest::getOutputName).map(m -> "\"" + m + "\": if exists r[\"" + m + "\"] then r[\"" + m + "\"] else 0.0").collect(Collectors.joining(", ")))
 				.append("}))\n")
 				.append("|> group()");
 
 		return queryBuilder;
 	}
 
-	private static Set<String> getMeasureFields(final List<String> measures) {
-		final Set<String> fields = new HashSet<>();
-		for (final String measure : measures) {
-			final String[] measureDetails = measure.split(":");
-			fields.add(measureDetails[0]);
-		}
-		return fields;
-	}
+	private static StringBuilder buildGlobalDataVariable(final String appName, final DataFilter dataFilter, final TimeFilter timeFilter) {
+		final StringBuilder dataVariableBuilder = new StringBuilder("data = from(bucket:\"" + appName + "\") \n")
+				.append("|> range(start: " + timeFilter.getFrom() + ", stop: " + timeFilter.getTo() + ") \n")
+				.append("|> filter(fn: (r) => \n")
+				.append("r._measurement == \"" + dataFilter.getMeasurement() + "\" \n");
 
-	private static String buildMeasureFunction(final String function) {
-		final Tuple<String, List<String>> aggregateFunction = parseAggregateFunction(function);
-		// append function name
-		final StringBuilder measureQueryBuilder = new java.lang.StringBuilder(aggregateFunction.getVal1()).append("(");
-		// append parameters
-		if (!aggregateFunction.getVal2().isEmpty()) {
-
-			measureQueryBuilder.append(aggregateFunction.getVal2()
-					.stream()
-					.map(param -> param.split("_"))
-					.map(paramAsArray -> paramAsArray[0] + ": " + paramAsArray[1])
-					.collect(Collectors.joining(", ")));
+		if (!dataFilter.getFilters().isEmpty()) {
+			// filter tags values
+			dataVariableBuilder
+					.append(
+							dataFilter.getFilters().entrySet().stream()
+									.filter(e -> e.getValue() != null && !"*".equals(e.getValue()))
+									.map(e -> " and r." + e.getKey() + " == \"" + e.getValue() + "\"")
+									.collect(Collectors.joining()))
+					.append(" \n");
 		}
-		measureQueryBuilder.append(')');
-		return measureQueryBuilder.toString();
-	}
-
-	private static Tuple<String, List<String>> parseAggregateFunction(final String aggregateFunction) {
-		final int firstSeparatorIndex = aggregateFunction.indexOf("__");
-		if (firstSeparatorIndex > -1) {
-			return Tuple.of(
-					aggregateFunction.substring(0, firstSeparatorIndex),
-					Arrays.asList(aggregateFunction.substring(firstSeparatorIndex + 2).split("__")));
-		}
-		return Tuple.of(aggregateFunction, Collections.emptyList());
+		dataVariableBuilder.append(")\n")// end filter
+				.append("|> group()\n")
+				.append('\n'); // end data variable declaration
+		return dataVariableBuilder;
 	}
 
 	private static Map<String, Object> buildMapValue(final FluxRecord record) {

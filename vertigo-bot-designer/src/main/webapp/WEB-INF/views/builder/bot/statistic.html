@@ -79,7 +79,7 @@
             series : function() {
                 return [ {
                     name : 'User sessions',
-                    data : serieToApex("isSessionStart:sum", VertigoUi.vueData.sessionStats, {fill: 0})
+                    data : serieToApex("isSessionStart:count", VertigoUi.vueData.sessionStats, {fill: 0})
                 }
                 ];
             }
@@ -151,11 +151,11 @@
             series : function() {
                 return [ {
                     name : /*[[#{analytics.message.nluMessages}]]*/ '',
-                    data : serieToApex("isNlu:sum", VertigoUi.vueData.requestsStats, {fill: 0})
+                    data : serieToApex("isNlu:count", VertigoUi.vueData.requestsStats, {fill: 0})
                 },
                     {
                         name : /*[[#{analytics.message.understanding}]]*/ '',
-                        data : serieToApex("isFallback:sum", VertigoUi.vueData.requestsStats, {fill: 0})
+                        data : serieToApex("isFallback:count", VertigoUi.vueData.requestsStats, {fill: 0})
                     }
                 ];
             }
@@ -755,6 +755,7 @@
 
             <vu:include-data object="intentDetails" field="'*'" />
             <vu:include-data object="topIntents" field="'*'"/>
+            <vu:include-data object="topIntentsFiltered" field="'*'"/>
 
             <vu:table componentId="intentList"  list="topIntentsFiltered"  rowsPerPage="5" sortBy="count" descending>
 
@@ -876,7 +877,7 @@
         }, { deep: true });
 
         VUiPage.$watch('vueData.topIntentCriteria', (newValue, oldValue) => {
-            VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntents
+            VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntents;
             if (VertigoUi.vueData.topIntentCriteria.catIds !== null && VertigoUi.vueData.topIntentCriteria.catIds.length > 0) {
                 const catLabels = VertigoUi.vueData.topicCategories.filter(topicCategory => VertigoUi.vueData.topIntentCriteria.catIds.includes(topicCategory.topCatId))
                     .map(topicCategory => topicCategory.label);

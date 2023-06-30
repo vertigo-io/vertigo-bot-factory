@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.analytics;
 
+import java.time.Instant;
+import java.util.UUID;
+
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.executor.model.IncomeRating;
 import io.vertigo.core.analytics.process.AProcess;
 import io.vertigo.core.analytics.process.AProcessBuilder;
-
-import java.time.Instant;
-import java.util.UUID;
 
 public final class AnalyticsUtils {
 
@@ -39,6 +39,8 @@ public final class AnalyticsUtils {
 	public static final String TRAINING_KEY = "traId";
 	public static final String MODEL_KEY = "modelName";
 
+	public static final String TRUE = "1";
+	public static final String FALSE = "0";
 	public static final Double TRUE_BIGDECIMAL = 1D;
 	public static final Double FALSE_BIGDECIMAL = 0D;
 
@@ -57,7 +59,7 @@ public final class AnalyticsUtils {
 	}
 
 	public static AProcessBuilder prepareRatingProcess(final IncomeRating incomeRating) {
-		final AProcessBuilder builder =  AProcess.builder(RATING_KEY, RATING_KEY, Instant.now(), Instant.now())
+		final AProcessBuilder builder = AProcess.builder(RATING_KEY, RATING_KEY, Instant.now(), Instant.now())
 				.addTag(RATING_INPUT_KEY, incomeRating.getNote().toString())// timestamp of emitted event
 				.setMeasure(RATING_KEY + incomeRating.getNote().toString(), TRUE_BIGDECIMAL)
 				.setMeasure(RATING_KEY, incomeRating.getNote());
@@ -76,8 +78,8 @@ public final class AnalyticsUtils {
 	public static AProcessBuilder prepareConversationProcess(final String text, final boolean userMessage) {
 		return AProcess.builder(CONVERSATION_KEY, CONVERSATION_KEY, Instant.now(), Instant.now())
 				.addTag(TEXT_KEY, text)
-				.setMeasure(USER_MESSAGE_KEY, userMessage ? TRUE_BIGDECIMAL : FALSE_BIGDECIMAL)
-				.setMeasure(BOT_MESSAGE_KEY, !userMessage ? TRUE_BIGDECIMAL : FALSE_BIGDECIMAL);
+				.addTag(USER_MESSAGE_KEY, userMessage ? TRUE : FALSE)
+				.addTag(BOT_MESSAGE_KEY, !userMessage ? TRUE : FALSE);
 	}
 
 	public static void setConfiguration(final UUID sessionId, final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {

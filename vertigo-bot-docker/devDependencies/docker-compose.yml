@@ -69,7 +69,7 @@ services:
       - cb_factory
   
   influxdb:
-    image: influxdb:2.1.1
+    image: influxdb:2.7.1
     volumes:
       #- cf_influxdb_data:/var/lib/influxdb
       - cf_influxdb2_data:/var/lib/influxdb2
@@ -88,7 +88,7 @@ services:
       - cb_factory
 
   chronograph: # IHM de consultation influxDB
-    image: chronograf:1.9.4-alpine
+    image: chronograf:1.10-alpine
     volumes:
       - cf_chronograph_data:/var/lib/chronograf
     ports: 
