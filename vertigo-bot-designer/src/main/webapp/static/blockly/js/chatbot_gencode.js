@@ -12,17 +12,17 @@ function formatVariable(type, nomVar){
 }
 
 function formatString(nomVar){
-	return ' "' + nomVar+ '" ';
+	return ' "' + nomVar.replace(/"/g, "'") + '" ';
 }
 
 function formatString(nomVar, state){
 	state = isNaN(nomVar)
-	if(state===true) return ' "' + nomVar+ '" ';
+	if(state===true) return ' "' + nomVar.replace(/"/g, "'") + '" ';
 	else return ' '+nomVar+' ';
 }
 
 function formatStringOrNumber(nomVar, state){
-	if(state===true) return ' "' + nomVar+ '" ';
+	if(state===true) return ' "' + nomVar.replace(/"/g, "'")+ '" ';
 	else return ' '+nomVar+' ';
 }
 
@@ -139,7 +139,7 @@ Blockly.BotScript['cb_condition'] = function(block) {
 		return condition + formatVariable(params[1].getValue(),params[2].getValue())+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 	}
 	else if(isAStringCondition){
-		return condition + formatVariable(params[1].getValue(),params[2].getValue()) + ' "' + params[3].getValue()+'"'+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+		return condition + formatVariable(params[1].getValue(),params[2].getValue()) + formatString(params[3].getValue())+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 	}
 	else{
 		return condition + formatVariable(params[1].getValue(),params[2].getValue()) + ' ' + params[3].getValue()+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
@@ -156,7 +156,7 @@ Blockly.BotScript['cb_buttons'] = function(block) {
 	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
 	let isOption = false;
 	if(params[3].getValue()==='nlu') isOption = true;
-	return "begin choose:button" +  (isOption ? ':' +params[3].getValue()  : '') + formatVariable(params[1].getValue(),params[2].getValue()) + ' "'+ params[0].getValue()+'"' +"\r\n" + subBlocks + 'end ' + "choose:button"+(isOption ? ':' +params[3].getValue()  : '')  +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+	return "begin choose:button" +  (isOption ? ':' +params[3].getValue()  : '') + formatVariable(params[1].getValue(),params[2].getValue()) + formatString(params[0].getValue())+"\r\n" + subBlocks + 'end ' + "choose:button"+(isOption ? ':' +params[3].getValue()  : '')  +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 Blockly.BotScript['cb_buttonsfile'] = function(block) {
 	let params = getBlockParams(block);
@@ -218,7 +218,7 @@ Blockly.BotScript['cb_say'] = function(block) {
 	let isOption = true;
 	if(params[1].getValue()=="") isOption = false;
 
-	return "say" + (isOption ? ':' +params[1].getValue()  : '')+' "' +params[0].getValue() + '"' +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+	return "say" + (isOption ? ':' +params[1].getValue()  : '')+formatString(params[0].getValue()) +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 Blockly.BotScript['cb_link'] = function(block) {
 	let params = getBlockParams(block);
