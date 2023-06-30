@@ -1,3 +1,4 @@
+var workspace;
 // *********************
 // ******* THEME *******
 // *********************
@@ -355,7 +356,7 @@ function injectionBlockly(mode=false){
                 scaleSpeed: 1.2,
                 pinch: true}
     }
-    // if(document.contains(document.getElementById(blocklyDivName))){
+    if(document.contains(document.getElementById(blocklyDivName))){
         blocklyDiv = document.getElementById(blocklyDivName);
         document.getElementById(blocklyDivName).innerHTML = null
         workspace = Blockly.inject(blocklyDiv,options);
@@ -364,7 +365,7 @@ function injectionBlockly(mode=false){
         if(VertigoUi.vueData.scriptIntention.script!=null)fromCode();
         workspace.addChangeListener(toCode);
         workspace.addChangeListener(importBlocklyTemplate)
-    // }
+    }
 }
 
 function importBlocklyTemplate(event){
