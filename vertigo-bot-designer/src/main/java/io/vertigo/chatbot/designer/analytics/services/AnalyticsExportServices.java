@@ -1,5 +1,15 @@
 package io.vertigo.chatbot.designer.analytics.services;
 
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.influxDb.TimeSerieServices;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
@@ -25,15 +35,6 @@ import io.vertigo.quarto.exporter.ExporterManager;
 import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
 
 public class AnalyticsExportServices implements Component {
 
@@ -66,7 +67,7 @@ public class AnalyticsExportServices implements Component {
 			final SessionExport newSessionExport = new SessionExport();
 			newSessionExport.setDate(timedData.getTime());
 			newSessionExport.setUserActionsCount(((Double) values.get("name:count")).longValue());
-			newSessionExport.setConversationCount(((Double) values.get("isSessionStart:sum")).longValue());
+			newSessionExport.setConversationCount(((Double) values.get("isSessionStart:count")).longValue());
 			retour.add(newSessionExport);
 		}
 

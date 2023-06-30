@@ -77,7 +77,7 @@ public class AnalyticsServices implements Component {
 			final SentenseDetail newSentenseDetail = new SentenseDetail();
 			newSentenseDetail.setDate(timedData.getTime());
 			newSentenseDetail.setText((String) values.get("text"));
-			newSentenseDetail.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
+			newSentenseDetail.setConfidence(new BigDecimal((Double) values.get("confidence")));
 			newSentenseDetail.setModelName((String) values.get("modelName"));
 			retour.add(newSentenseDetail);
 		}
@@ -144,7 +144,7 @@ public class AnalyticsServices implements Component {
 			final long count = categoriesCount.getOrDefault(topicCategory.getLabel(), 0L);
 			categoryStat.setUsage(count);
 			if (totalCount != 0) {
-				categoryStat.setPercentage(BigDecimal.valueOf(((double) count/totalCount) * 100));
+				categoryStat.setPercentage(BigDecimal.valueOf(((double) count / totalCount) * 100));
 			} else {
 				categoryStat.setPercentage(BigDecimal.ZERO);
 			}

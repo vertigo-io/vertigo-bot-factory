@@ -1,15 +1,6 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import com.influxdb.exceptions.InfluxException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,6 +11,17 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.influxdb.exceptions.InfluxException;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
@@ -69,8 +71,6 @@ import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-
-import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/statistic")
@@ -144,12 +144,10 @@ public class StatisticController extends AbstractBotController {
 	@Inject
 	private FileServices fileServices;
 
-
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
-							@RequestParam("nodId") final Optional<Long> nodId,
-							@RequestParam("time") final Optional
-									<TimeOption> timeOption) {
+			@RequestParam("nodId") final Optional<Long> nodId,
+			@RequestParam("time") final Optional<TimeOption> timeOption) {
 		final Chatbot bot = super.initCommonContext(viewContext, uiMessageStack, botId);
 		final StatCriteria statCriteria = new StatCriteria();
 		viewContext.publishDtList(ratingOptionsKey, ratingOptionServices.getAllRatingOptions());
@@ -186,14 +184,14 @@ public class StatisticController extends AbstractBotController {
 		final TimedDatas sessionStat = timeSerieServices.getSessionsStats(criteria);
 		viewContext.publishRef(sessionStatsKey, sessionStat);
 		viewContext.publishRef(totalOfConversationsKey, sessionStat.getTimedDataSeries().stream()
-				.mapToDouble(it -> (Double) it.getValues().get("isSessionStart:sum")).sum());
+				.mapToDouble(it -> (Double) it.getValues().get("isSessionStart:count")).sum());
 
 		final TimedDatas requestsStat = timeSerieServices.getRequestStats(criteria);
 		viewContext.publishRef(requestsStatsKey, requestsStat);
 		viewContext.publishRef(totalOfUnrecognizedMessageKey, requestsStat.getTimedDataSeries().stream()
-				.mapToDouble(it -> (Double) it.getValues().get("isFallback:sum")).sum());
+				.mapToDouble(it -> (Double) it.getValues().get("isFallback:count")).sum());
 		viewContext.publishRef(totalOfRecognizedMessageKey, requestsStat.getTimedDataSeries().stream()
-				.mapToDouble(it -> (Double) it.getValues().get("isNlu:sum")).sum());
+				.mapToDouble(it -> (Double) it.getValues().get("isNlu:count")).sum());
 
 		final TimedDatas userInteractions = timeSerieServices.getUserInteractions(criteria);
 		viewContext.publishRef(userInteractionsStatsKey, userInteractions);
@@ -205,7 +203,7 @@ public class StatisticController extends AbstractBotController {
 		final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
 		viewContext.publishDtList(topIntentsKey, DtDefinitions.TopIntentFields.topId, topIntents);
 		viewContext.publishDtList(topIntentsFilteredKey, DtDefinitions.TopIntentFields.topId, topIntents);
-		viewContext.publishDtList(categoryStatKey,analyticsServices.buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()), topIntents));
+		viewContext.publishDtList(categoryStatKey, analyticsServices.buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()), topIntents));
 		viewContext.publishRef(ratingStatsKey, timeSerieServices.getRatingStats(criteria));
 		viewContext.publishDtList(intentDetailsKey, DtDefinitions.SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
 		viewContext.publishDtList(conversationDetailsKey, DtDefinitions.ConversationDetailFields.sessionId, new DtList<ConversationDetail>(ConversationDetail.class));
@@ -215,11 +213,11 @@ public class StatisticController extends AbstractBotController {
 
 	@PostMapping("/_updateStats")
 	public ViewContext doUpdateStats(final ViewContext viewContext,
-									 @ViewAttribute("bot") final Chatbot bot,
-									 @ViewAttribute("criteria") final StatCriteria criteria, final UiMessageStack uiMessageStack) {
+			@ViewAttribute("bot") final Chatbot bot,
+			@ViewAttribute("criteria") final StatCriteria criteria, final UiMessageStack uiMessageStack) {
 		try {
 			updateGraph(viewContext, criteria, bot, uiMessageStack);
-		} catch (InfluxException influxException) {
+		} catch (final InfluxException influxException) {
 			LOGGER.error("Error when trying to update statistic graph, ignoring it for now...", influxException);
 		}
 		listLimitReached(viewContext, uiMessageStack);
@@ -228,8 +226,8 @@ public class StatisticController extends AbstractBotController {
 
 	@PostMapping("/_intentDetails")
 	public ViewContext doGetIntentDetails(final ViewContext viewContext,
-										  @ViewAttribute("criteria") final StatCriteria criteria,
-										  @RequestParam("intentRasa") final String intentRasa, final UiMessageStack uiMessageStack) {
+			@ViewAttribute("criteria") final StatCriteria criteria,
+			@RequestParam("intentRasa") final String intentRasa, final UiMessageStack uiMessageStack) {
 
 		viewContext.publishDtList(intentDetailsKey, DtDefinitions.SentenseDetailFields.text, analyticsServices.getKnownSentensesDetail(criteria, intentRasa));
 		listLimitReached(viewContext, uiMessageStack);
@@ -238,8 +236,8 @@ public class StatisticController extends AbstractBotController {
 
 	@PostMapping("/_conversationDetails")
 	public ViewContext doGetConversationDetails(final ViewContext viewContext,
-										  @ViewAttribute("criteria") final StatCriteria criteria,
-										  @RequestParam("sessionId") final String sessionId, final UiMessageStack uiMessageStack) {
+			@ViewAttribute("criteria") final StatCriteria criteria,
+			@RequestParam("sessionId") final String sessionId, final UiMessageStack uiMessageStack) {
 
 		viewContext.publishDtList(conversationDetailsKey, DtDefinitions.ConversationDetailFields.sessionId, analyticsServices.getConversationDetails(criteria, sessionId));
 		listLimitReached(viewContext, uiMessageStack);
@@ -248,20 +246,20 @@ public class StatisticController extends AbstractBotController {
 
 	@PostMapping("/_filterConversation")
 	public ViewContext filterConversation(final ViewContext viewContext, final UiMessageStack uiMessageStack,
-										  @ViewAttribute("criteria") final StatCriteria criteria,
-										  @ViewAttribute("conversationCriteria") final ConversationCriteria conversationCriteria) {
+			@ViewAttribute("criteria") final StatCriteria criteria,
+			@ViewAttribute("conversationCriteria") final ConversationCriteria conversationCriteria) {
 
-		viewContext.publishDtList(conversationStatKey, analyticsServices.getConversationsStats(criteria,conversationCriteria));
+		viewContext.publishDtList(conversationStatKey, analyticsServices.getConversationsStats(criteria, conversationCriteria));
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
 
 	@PostMapping("/_exportStatisticFile")
 	public VFile doExportStatisticFile(final ViewContext viewContext,
-									   @ViewAttribute("criteria") final StatCriteria criteria,
-									   @ViewAttribute("conversationCriteria") final ConversationCriteria conversationCriteria,
-									   @ViewAttribute("bot") final Chatbot bot,
-									   @ViewAttribute("selectTypeExportAnalyticList") final TypeExportAnalyticList typeExportAnalyticList) {
+			@ViewAttribute("criteria") final StatCriteria criteria,
+			@ViewAttribute("conversationCriteria") final ConversationCriteria conversationCriteria,
+			@ViewAttribute("bot") final Chatbot bot,
+			@ViewAttribute("selectTypeExportAnalyticList") final TypeExportAnalyticList typeExportAnalyticList) {
 
 		if (typeExportAnalyticList.getTeaCd().isEmpty()) {
 			throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);

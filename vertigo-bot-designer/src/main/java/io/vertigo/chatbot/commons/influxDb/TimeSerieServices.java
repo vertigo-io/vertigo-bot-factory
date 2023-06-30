@@ -1,26 +1,24 @@
 package io.vertigo.chatbot.commons.influxDb;
 
-import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.InfluxDBClientFactory;
-import com.influxdb.client.InfluxDBClientOptions;
-
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.InfluxDBClientFactory;
+import com.influxdb.client.InfluxDBClientOptions;
+
 import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
+import io.vertigo.chatbot.designer.analytics.utils.DataRequestBuilder;
 import io.vertigo.chatbot.designer.analytics.utils.InfluxRequestBuilder;
 import io.vertigo.chatbot.designer.analytics.utils.InfluxRequestUtil;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.connectors.influxdb.InfluxDbConnector;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.Param;
@@ -47,16 +45,16 @@ public class TimeSerieServices implements Component, Activeable {
 
 	@Override
 	public void start() {
-		String influxDbUrl = paramManager.getParam("INFLUXDB_URL").getValueAsString();
-		String influxDbToken  = paramManager.getParam("INFLUXDB_TOKEN").getValueAsString();
-		String influxDbOrg = paramManager.getOptionalParam("INFLUXDB_ORG")
+		final String influxDbUrl = paramManager.getParam("INFLUXDB_URL").getValueAsString();
+		final String influxDbToken = paramManager.getParam("INFLUXDB_TOKEN").getValueAsString();
+		final String influxDbOrg = paramManager.getOptionalParam("INFLUXDB_ORG")
 				.map(Param::getValueAsString).orElse("chatbot");
 		final int influxDbReadTimeout = paramManager.getOptionalParam("INFLUXDB_READ_TIMEOUT")
 				.map(Param::getValueAsInt).orElse(30);
 		influxDbName = paramManager.getParam("boot.ANALYTICA_DBNAME").getValueAsString();
-		OkHttpClient.Builder builder = new OkHttpClient.Builder().readTimeout(influxDbReadTimeout, TimeUnit.SECONDS);
+		final OkHttpClient.Builder builder = new OkHttpClient.Builder().readTimeout(influxDbReadTimeout, TimeUnit.SECONDS);
 
-		InfluxDBClientOptions options = InfluxDBClientOptions.builder()
+		final InfluxDBClientOptions options = InfluxDBClientOptions.builder()
 				.url(influxDbUrl)
 				.authenticateToken(influxDbToken.toCharArray())
 				.org(influxDbOrg)
@@ -79,9 +77,12 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return sum of sessions
 	 */
 	public TimedDatas getSessionsStats(final StatCriteria criteria) {
-		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName, Arrays.asList("isSessionStart:sum"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
-				Map.of(),
+		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName,
+				Arrays.asList(DataRequestBuilder.ofTag("isSessionStart", "count").build()),
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
+						.addFilter("isSessionStart", "1")
+						.addFilter("_field", "name")
+						.build(),
 				AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
@@ -92,18 +93,39 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return timeDatas with messages sum and fallbacksum
 	 */
 	public TimedDatas getRequestStats(final StatCriteria criteria) {
-		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName, Arrays.asList("name:count", "isFallback:sum", "isNlu:sum"),
+		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName,
+				Arrays.asList(
+						DataRequestBuilder.ofTag("isFallback", "count").addFilter("==", "1").build(),
+						DataRequestBuilder.ofTag("isNlu", "count").addFilter("==", "1").build()),
 				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
+						.addFilter("isUserMessage", "1")
+						.addFilter("_field", "name")
 						.build(),
-				Map.of("isUserMessage", "1"),
 				AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
 	public TimedDatas getUserInteractions(final StatCriteria criteria) {
-		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName, Arrays.asList("name:count"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
-				Map.of(),
-				AnalyticsServicesUtils.getTimeFilter(criteria));
+
+		final var timeFilter = AnalyticsServicesUtils.getTimeFilter(criteria);
+		final var columnCriteria = AnalyticsServicesUtils.getBotNodFilter(criteria);
+
+		final String q = new InfluxRequestBuilder(influxDbName)
+				.range(timeFilter)
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("name"))
+				.filterByColumn(columnCriteria)
+				.keep(List.of("_time", "_field", "_value", "sessionId"))
+				.pivot()
+				.keep(List.of("_time", "name"))
+				.append("|> rename(columns: {name: \"_value\"}) ")
+				.append("|> window(every: " + timeFilter.getDim() + ", createEmpty:true )")
+				.count("_value")
+				.append("|> toFloat()")
+				.append("|> rename(columns: {_value: \"name:count\"})")
+				.append("|> rename(columns: {_start: \"_time\"})")
+				.append("|> drop(columns: [ \"_stop\"])")
+				.build(false);
+
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
 	}
 
 	/**
@@ -113,13 +135,15 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getSentenceDetails(final StatCriteria criteria) {
+		final var columnCriteria = AnalyticsServicesUtils.getBotNodFilter(criteria);
+		columnCriteria.put("isFallback", "\"1\"");
+
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("confidence", "isFallback"))
-				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "text", "name", "modelName", "_field", "_value"))
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("confidence"))
+				.filterByColumn(columnCriteria)
 				.pivot()
-				.filterByColumn(Map.of("isFallback", "1"))
+				.keep(List.of("_time", "text", "name", "modelName", "confidence"))
 				.build(true);
 
 		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
@@ -132,9 +156,13 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getSessionsExport(final StatCriteria criteria) {
-		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName, Arrays.asList("name:count", "isSessionStart:sum"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT).build(),
-				Map.of(),
+		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName,
+				Arrays.asList(
+						DataRequestBuilder.ofTag("name", "count").build(),
+						DataRequestBuilder.ofTag("isSessionStart", "count").addFilter("==", "1").build()),
+				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.MESSAGES_MSRMT)
+						.addFilter("_field", "name")
+						.build(),
 				AnalyticsServicesUtils.getTimeFilter(criteria));
 	}
 
@@ -145,13 +173,14 @@ public class TimeSerieServices implements Component, Activeable {
 	 * @return all the messages unrecognized
 	 */
 	public TimedDatas getUnknowSentenceExport(final StatCriteria criteria) {
+		final var filter = AnalyticsServicesUtils.getBotNodFilter(criteria);
+		filter.put("isFallback", "\"1\"");
+
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("confidence", "isFallback"))
-				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "text", "name", "confidence", "modelName", "botId", "nodId", "traId", "_field", "_value"))
-				.pivot()
-				.filterByColumn(Map.of("isFallback", "1"))
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("name"))
+				.filterByColumn(filter)
+				.keep(List.of("_time", "text", "name", "confidence", "modelName", "botId", "nodId", "traId", "isFallback"))
 				.build(true);
 
 		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
@@ -167,28 +196,15 @@ public class TimeSerieServices implements Component, Activeable {
 	public TabularDatas getAllTopIntents(final StatCriteria criteria) {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isTechnical"))
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("name"))
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "name", "_field", "_value"))
-				.pivot()
-				.filterByColumn(Map.of( "isTechnical", "0"))
+				.filterByColumn(Map.of("isTechnical", "\"0\""))
 				.keep(List.of("name"))
 				.append("|> duplicate(column: \"name\", as: \"name:count\")")
 				.append("|> count(column: \"name:count\")")
-				.build(true);
+				.build(false);
 
 		return InfluxRequestUtil.executeTabularQuery(influxDBClient, q);
-	}
-
-	public TimedDatas getAllIntents(final StatCriteria criteria) {
-		final String q = new InfluxRequestBuilder(influxDbName)
-				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isTechnical"))
-				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "name", "_field", "_value", "sessionId", "modelName"))
-				.pivot()
-				.build(true);
-		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
 	}
 
 	/**
@@ -201,12 +217,12 @@ public class TimeSerieServices implements Component, Activeable {
 	public TimedDatas getKnowSentence(final StatCriteria criteria, final String intentRasa) {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isNlu", "confidence"))
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("confidence"))
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.filterByColumn(Map.of("name", '"' + intentRasa + '"'))
-				.keep(List.of("_time", "text", "_field", "_value"))
-				.pivot()
-				.filterByColumn(Map.of("isNlu", "1"))
+				.filterByColumn(Map.of(
+						"name", '"' + intentRasa + '"',
+						"isNlu", "\"1\""))
+				.append("|> rename(columns: {_value: \"confidence\"})")
 				.keep(List.of("_time", "text", "confidence"))
 				.build(5_000L, true);
 
@@ -231,11 +247,10 @@ public class TimeSerieServices implements Component, Activeable {
 	public TimedDatas getConversationStats(final StatCriteria criteria, final ConversationCriteria conversationCriteria) {
 		final Map<String, String> botNodeFilterMap = AnalyticsServicesUtils.getBotNodFilter(criteria);
 		final StringBuilder query = new StringBuilder();
-		query.append("import \"strings\"\n\n");
 		query.append("conv =  ").append(new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.append("|> filter(fn: (r) => r._measurement == \"conversation\" and r._field == \"isUserMessage\" and r._value == 1)")
-				.append("|> filter(fn: (r) => exists r.sessionId)")
+				.append("|> filter(fn: (r) => r._measurement == \"" + AnalyticsServicesUtils.CONVERSATION_MSRMT + "\" and r._field == \"isUserMessage\" and r._value == 1)")
+				.filter("exists r.sessionId")
 				.filterByColumn(botNodeFilterMap)
 				.keep(List.of("_time", "_field", "_value", "isUserMessage", "sessionId", "modelName"))
 				.group(List.of("sessionId")).buildRaw());
@@ -245,57 +260,49 @@ public class TimeSerieServices implements Component, Activeable {
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.filterFields(AnalyticsServicesUtils.RATING_MSRMT, List.of("rating"))
 				.filterByColumn(botNodeFilterMap)
-				.append("|> filter(fn: (r) => exists r.sessionId)")
+				.filter("exists r.sessionId")
 				.keep(List.of("_field", "_value", "sessionId", "rating"))
-				.group(List.of("sessionId")).buildRaw());
+				.group(List.of("_field")).buildRaw());
 
 		query.append("\n\n");
 
-		final Map<String, String> endMsgBotNodeFilterMap = new HashMap<>(botNodeFilterMap);
-		endMsgBotNodeFilterMap.put("name", "\"!END\"");
 		query.append("chatbotMessages = ").append(new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
 				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("name"))
-				.filterByColumn(endMsgBotNodeFilterMap )
-				.append("|> filter(fn: (r) => exists r.sessionId)")
+				.filterByColumn(botNodeFilterMap)
+				.filterByColumn(Map.of("name", "\"!END\""))
+				.filter("exists r.sessionId")
 				.keep(List.of("sessionId"))
 				.append("|> set(key: \"_field\", value: \"isEnded\")")
 				.append("|> set(key: \"_value\", value: \"1\")")
 				.append("|> toFloat()")
-				.group(List.of("sessionId")).buildRaw());
+				.group(List.of("_field")).buildRaw());
 		query.append("\n\n");
 
 		query.append("msgCount = conv \n")
 				.append("|> count() \n")
 				.append("|> set(key: \"_field\", value: \"interactions\") \n")
-				.append("|> toFloat() \n\n");
+				.append("|> toFloat() \n")
+				.append("|> group(columns: [\"_field\"]) \n\n");
 
 		query.append("modelName = conv \n")
-				.append("|> keep(columns: [\"_value\", \"modelName\", \"sessionId\"]) \n")
-				.append("|> first()");
-
-		query.append("\n\n");
+				.append("|> keep(columns: [\"modelName\", \"sessionId\"]) \n")
+				.append("|> first(column: \"modelName\") \n")
+				.append("|> group(columns: [\"_field\"]) \n")
+				.append("|> rename(columns: {modelName: \"_value\"}) \n")
+				.append("|> set(key: \"_field\", value: \"modelName\") \n\n");
 
 		query.append("sessionTime = conv").append("\n")
 				.append("|> keep(columns: [\"_time\", \"sessionId\"]) \n")
 				.append("|> rename(columns: {_time: \"_value\"}) \n")
-				.append("|> min()").append("\n")
-				.append("|> rename(columns: {_value: \"_time\"})");
+				.append("|> min() \n")
+				.append("|> set(key: \"_field\", value: \"_time\") \n")
+				.append("|> group(columns: [\"_field\"]) \n\n");
 
-		query.append("\n\n");
-
-		query.append("unionCountRate = union(tables: [msgCount, rate, chatbotMessages]) \n")
+		query.append("union(tables: [msgCount, rate, chatbotMessages, sessionTime, modelName]) \n")
 				.append("|> pivot(rowKey:[\"sessionId\"], columnKey: [\"_field\"], valueColumn: \"_value\") \n")
-				.append("|> group()");
-
-		query.append("\n\n");
-
-		query.append("joinTable = join(tables: {key1: unionCountRate, key2: sessionTime}, on: [\"sessionId\"], method: \"inner\") \n")
-				.append("|> group()");
-
-		query.append("\n\n");
-
-		query.append("join(tables: {key1: joinTable, key2: modelName}, on: [\"sessionId\"], method: \"inner\") \n");
+				.append("|> group() \n")
+				.append("|> filter(fn: (r) => exists r._time)\n");
 		if (!conversationCriteria.getRatings().isEmpty()) {
 			query.append("|> filter(fn: (r) => ");
 			query.append(conversationCriteria.getRatings().stream().map(r -> "r.rating ==  " + r).collect(Collectors.joining(" or ")));
@@ -304,28 +311,38 @@ public class TimeSerieServices implements Component, Activeable {
 		if (conversationCriteria.getModelName() != null) {
 			query.append("|> filter(fn: (r) => strings.containsStr(v: r.modelName, substr: \"").append(conversationCriteria.getModelName()).append("\")) \n");
 		}
-		query.append("|> group()\n");
 		query.append("|> sort(columns: [\"_time\"], desc: true)");
 
 		return InfluxRequestUtil.executeTimedQuery(influxDBClient, query.toString());
 	}
 
 	public TimedDatas getRatingStats(final StatCriteria criteria) {
-		return InfluxRequestUtil.getTimeSeries(influxDBClient, influxDbName,
-				Arrays.asList("rating1:count", "rating2:count", "rating3:count", "rating4:count", "rating5:count"),
-				AnalyticsServicesUtils.getDataFilter(criteria, AnalyticsServicesUtils.RATING_MSRMT).build(),
-				Map.of(),
-				AnalyticsServicesUtils.getTimeFilter(criteria));
+		final var timeFilter = AnalyticsServicesUtils.getTimeFilter(criteria);
+		final String q = new InfluxRequestBuilder(influxDbName)
+				.range(timeFilter)
+				.filterFields(AnalyticsServicesUtils.RATING_MSRMT, List.of("rating"))
+				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
+				.keep(List.of("_time", "_value"))
+				.append("|> map(fn: (r) => ({ r with _field: \"rating\" + string(v: r._value) + \":count\"}))")
+				.group(List.of("_field"))
+				.append("|> window(every: " + timeFilter.getDim() + ", createEmpty:true ) ")
+				.count("_value")
+				.append("|> rename(columns: {_start: \"_time\"}) ")
+				.append("|> drop(columns: [ \"_stop\"]) ")
+				.pivot()
+				.build(false);
+
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
 	}
 
 	public TimedDatas getRatingDetailsStats(final StatCriteria criteria) {
 		final StringBuilder query = new StringBuilder();
 		query.append("lastTopic = ").append(new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.append("|> filter(fn: (r) => r._measurement == \"chatbotmessages\" and r._field == \"isTechnical\" and r._value == 0)")
+				.append("|> filter(fn: (r) => r._measurement == \"" + AnalyticsServicesUtils.MESSAGES_MSRMT + "\" and r._field == \"name\" and r.isTechnical == \"0\")")
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
 				.append("|> filter(fn: (r) => exists r.sessionId)")
-				.keep(List.of("_time", "_field", "name", "sessionId"))
+				.keep(List.of("_time", "name", "sessionId"))
 				.append("|> rename(columns: {name: \"_value\"})")
 				.append("|> set(key: \"_field\", value: \"lastTopic\")")
 				.group(List.of("sessionId"))
@@ -333,7 +350,6 @@ public class TimeSerieServices implements Component, Activeable {
 				.append("|> last()").buildRaw());
 
 		query.append("\n\n");
-
 
 		query.append("time = ").append(new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
@@ -372,6 +388,7 @@ public class TimeSerieServices implements Component, Activeable {
 		query.append("\n\n");
 
 		query.append("union(tables: [rating, time, ratingComment, lastTopic]) \n");
+		//query.append("union(tables: [rating, time, ratingComment]) \n"); // lastTopic désactivé pour les perfs => migrer dans le measurement des ratings
 		query.append("|> pivot(rowKey:[\"sessionId\"], columnKey: [\"_field\"], valueColumn: \"_value\") \n");
 		query.append("|> filter(fn: (r) => exists r._time and exists r.rating) \n");
 		query.append("|> group() \n");
@@ -390,11 +407,10 @@ public class TimeSerieServices implements Component, Activeable {
 	public TimedDatas getUnrecognizedSentences(final StatCriteria criteria) {
 		final String q = new InfluxRequestBuilder(influxDbName)
 				.range(AnalyticsServicesUtils.getTimeFilter(criteria))
-				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("isFallback", "confidence"))
+				.filterFields(AnalyticsServicesUtils.MESSAGES_MSRMT, List.of("confidence"))
 				.filterByColumn(AnalyticsServicesUtils.getBotNodFilter(criteria))
-				.keep(List.of("_time", "text", "name", "modelName", "_field", "_value"))
+				.filterByColumn(Map.of("isFallback", "\"1\""))
 				.pivot()
-				.filterByColumn(Map.of("isFallback", "1"))
 				.keep(List.of("_time", "text", "name", "confidence", "modelName"))
 				.build(true);
 
