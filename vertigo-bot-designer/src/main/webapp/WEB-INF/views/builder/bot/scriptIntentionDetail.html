@@ -16,8 +16,15 @@
 		<vu:block id="diagram" th:title="#{script.menu.diagram}">
 			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
-			<q-btn th:label="#{script.diagram.export}" color="primary"></q-btn>
-			<q-btn th:if="${!model.modeReadOnly}" round icon="refresh" color="secondary" @click="updateDiagram()" style="float: right;margin-right: 20px"></q-btn>
+			<div id="scriptintention-buttons">
+				<div id="scriptintention-buttons-export-emoji">
+					<q-btn class="q-btn-buttons" th:label="#{script.diagram.export}" color="primary"></q-btn>
+					<c-emojipicker class="q-btn-buttons" @emojipicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-emojipicker>
+				</div>
+				<div id="scriptintention-buttons-refresh">
+					<q-btn id="q-btn-buttons-refresh" th:if="${!model.modeReadOnly}" round icon="refresh" color="secondary" @click="updateDiagram()"></q-btn>
+				</div>
+			</div>
 			<div id="blocklyArea" style="
 				margin: 10px;
 				height: 700px;">
@@ -61,6 +68,10 @@
 			}
 			function updateDiagram(){
 				injectionBlockly(false)
+			}
+			function updateBlocksBlockly(){
+				toCode()
+				fromCode()
 			}
 		</script>
 	</section>
