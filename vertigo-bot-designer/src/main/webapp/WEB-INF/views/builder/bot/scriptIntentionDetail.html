@@ -20,6 +20,7 @@
 				<div id="scriptintention-buttons-export-emoji">
 					<q-btn class="q-btn-buttons" th:label="#{script.diagram.export}" color="primary"></q-btn>
 					<c-emojipicker class="q-btn-buttons" @emojipicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-emojipicker>
+					<c-variablepicker class="q-btn-buttons" @variablepicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-variablepicker>
 				</div>
 				<div id="scriptintention-buttons-refresh">
 					<q-btn id="q-btn-buttons-refresh" th:if="${!model.modeReadOnly}" round icon="refresh" color="secondary" @click="updateDiagram()"></q-btn>
