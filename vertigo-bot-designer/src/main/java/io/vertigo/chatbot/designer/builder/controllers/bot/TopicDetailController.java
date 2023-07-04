@@ -3,6 +3,7 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ContextValue;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
@@ -21,6 +22,7 @@ import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResource
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonUrlServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
@@ -114,6 +116,8 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     private static final ViewContextKey<Boolean> unreachableKey = ViewContextKey.of("unreachable");
 
+    private static final ViewContextKey<ContextValue> contextValuesKey = ViewContextKey.of("contextValues");
+
     @Inject
     private UtterTextServices utterTextServices;
 
@@ -125,6 +129,9 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     @Inject
     private TypeTopicServices typeTopicServices;
+
+    @Inject
+    private ContextValueServices contextValueServices;
 
     @GetMapping("/{topId}")
     public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
@@ -199,6 +206,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
         viewContext.publishDto(topicCategoryKey, topicCategoryServices.getTopicCategoryById(bot, topic.getTopCatId()));
         viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
+        viewContext.publishDtList(contextValuesKey, contextValueServices.getAllContextValueByBotId(bot.getBotId()));
 
         //Label
         final DtList<TopicLabel> initialList = topicLabelServices.getTopicLabelByBotIdAndTopId(bot, topic.getTopId());
@@ -220,6 +228,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
         viewContext.publishDto(topicCategoryKey, new TopicCategory());
         viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
+        viewContext.publishDtList(contextValuesKey, contextValueServices.getAllContextValueByBotId(bot.getBotId()));
 
         //Labels
         viewContext.publishDtList(initialTopicLabelListKey, new DtList<>(TopicLabel.class));

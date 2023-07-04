@@ -81,6 +81,7 @@ Blockly.Msg["COMMONS_SAMPLE_WT_CODE"] = "GACode";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_ISSUE_SENTENCE"] = "Votre ticket est consultable:";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_FIELD_QUEST"] = "Quelle est la référence ?";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_FIELD_VAR"] = "reference";
+Blockly.Msg["COMMONS_SAMPLE_SAY"] = "message";
 
 // *****************************
 // **** CATEGORIE SEQUENCE *****

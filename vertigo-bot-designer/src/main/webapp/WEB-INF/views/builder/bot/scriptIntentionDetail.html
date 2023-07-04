@@ -17,11 +17,12 @@
 			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
 			<vu:include-data object="topic" field="title"/>
+			<vu:include-data object="contextValues" field="label" />
 			<div id="scriptintention-buttons">
 				<div id="scriptintention-buttons-export-emoji">
 					<q-btn class="q-btn-buttons" th:label="#{script.diagram.export}" color="primary" @click="exportDiagramToPng()"></q-btn>
 					<c-emojipicker class="q-btn-buttons" @emojipicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-emojipicker>
-					<c-variablepicker class="q-btn-buttons" @variablepicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-variablepicker>
+					<c-variablepicker object="contextValues" field="label" class="q-btn-buttons" @variablepicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-variablepicker>
 				</div>
 				<div id="scriptintention-buttons-refresh">
 					<q-btn id="q-btn-buttons-refresh" th:if="${!model.modeReadOnly}" round icon="refresh" color="secondary" @click="updateDiagram()"></q-btn>
@@ -115,7 +116,6 @@
 
 					var link = document.createElement("a");
 					link.href = pngDataUrl;
-					console.log(VertigoUi.vueData)
 				 	if(VertigoUi.vueData.topic.title)link.download = VertigoUi.vueData.topic.title.replace(/ /g,'_').toLowerCase().concat(VertigoUi.vueData.locale ==='fr_FR' ? '_intention' : '_topic') + ".png";
 					else link.download = 'diagram.png'
 					link.click();
