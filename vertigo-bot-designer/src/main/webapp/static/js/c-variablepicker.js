@@ -32,6 +32,11 @@ Vue.component('c-variablepicker', {
                                                    <q-item-label>{{contextValue.label}}</q-item-label>
                                             </q-item-section>
                                         </q-item>
+                                        <q-item clickable v-close-popup @click="setTypeVar('/user/global/context/url', 'q-btn-type-context')">
+                                            <q-item-section>
+                                                   <q-item-label>url</q-item-label>
+                                            </q-item-section>
+                                        </q-item>
                                     </q-list>
                                 </q-btn-dropdown>
                             </q-btn-group>
