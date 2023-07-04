@@ -467,7 +467,7 @@ Blockly.Blocks['cb_say'] = {
                     {
                         "type": "field_input",
                         "name": "label",
-                        "text": "",
+                        "text": "%{BKY_COMMONS_SAMPLE_SAY}",
                         "check": "String"
                     },
                     {

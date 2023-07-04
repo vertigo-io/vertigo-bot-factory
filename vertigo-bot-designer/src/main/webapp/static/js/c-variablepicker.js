@@ -4,8 +4,7 @@ Vue.component('c-variablepicker', {
         nameVarVariable:    { type: String,  'default':null},
         idBlock:			{ type: String,  'default':null },
         locale:   		    { type: String, 'default': 'en_US' },
-        // listTypeVar is an array of types of variable. Each variable contains [0] the id of the type (that's also the label name), [1] the french label, [2] the path variable
-        listTypeVar:   { type: Array, 'default': [['local', 'locale', '/user/local/'],['global', 'globale','/user/global/'],['context','contexte','/user/global/context/'],['url', 'url','/user/global/context/url']]}
+        object:			    { type: String,  required: true },
     },
     data: function () {
         return {
@@ -24,7 +23,17 @@ Vue.component('c-variablepicker', {
 						</q-card-section>
 						<q-card-section style="display: flex;">
                             <q-btn-group>
-                                <q-btn v-for="type in listTypeVar" size="md" :id="'q-btn-type-'+type[0]" @click="setTypeVar(type[0])" :label="(locale == 'fr_FR' ? type[1]:type[0])"></q-btn>
+                                <q-btn id="q-btn-type-local" :label="(locale == 'fr_FR' ? 'Locale':'Local')" @click="setTypeVar('/user/local/', 'q-btn-type-local')"></q-btn>
+                                <q-btn id="q-btn-type-global" :label="(locale == 'fr_FR' ? 'Globale':'Global')" @click="setTypeVar('/user/global/', 'q-btn-type-global')"></q-btn>
+                                <q-btn-dropdown id="q-btn-type-context" :label="(locale == 'fr_FR' ? 'Contexte':'Context')">
+                                    <q-list>
+                                        <q-item v-for="contextValue in VertigoUi.vueData[object]" clickable v-close-popup @click="setTypeVar('/user/global/context/'+contextValue.label, 'q-btn-type-context')">
+                                            <q-item-section>
+                                                   <q-item-label>{{contextValue.label}}</q-item-label>
+                                            </q-item-section>
+                                        </q-item>
+                                    </q-list>
+                                </q-btn-dropdown>
                             </q-btn-group>
 						    <div  id="variablepicker">
 						        <label for="input_variableNamePicker">{{locale == 'fr_FR' ? "Nom variable":"Variable name"}}:</label>
@@ -44,18 +53,21 @@ Vue.component('c-variablepicker', {
 		`
     ,
     methods: {
-        setTypeVar(type){
+        setTypeVar(type, id){
             this.typeVar = type
-            if(this.typeVar==='url'){
+            if(this.typeVar.startsWith('/user/global/context/')){
                 document.getElementById('input_variableNamePicker').setAttribute("placeholder", (this.locale == 'fr_FR' ? "Pas de nom de variable":"Not name variable"))
+                document.getElementById('input_variableNamePicker').disabled = true;
             }else{
+                document.getElementById('input_variableNamePicker').disabled = false;
                 document.getElementById('input_variableNamePicker').setAttribute("placeholder", '')
             }
             // reinitialize the style of each button type variable
-            for (let i = 0; i < this.listTypeVar.length; i++) {
-                document.getElementById('q-btn-type-'.concat(this.listTypeVar[i][0])).setAttribute("style", "color: black; background-color: white;")
-            }
-            document.getElementById('q-btn-type-'.concat(this.typeVar)).setAttribute("style", "color: white; background-color: #027be3;")
+            document.getElementById('q-btn-type-local').setAttribute("style", "color: black; background-color: white;")
+            document.getElementById('q-btn-type-global').setAttribute("style", "color: black; background-color: white;")
+            document.getElementById('q-btn-type-context').setAttribute("style", "color: black; background-color: white;")
+
+            document.getElementById(id).setAttribute("style", "color: white; background-color: #027be3;")
         },
         doGetCaretPosition (oField) {
             var iCaretPos = oField.value.length;
@@ -107,13 +119,8 @@ Vue.component('c-variablepicker', {
         handleVariablevalue() {
             let pos = this.doGetCaretPosition(document.getElementById('input_variableValuePicker'))
             let stringToAdd;
-            for (let i = 0; i < this.listTypeVar.length; i++) {
-                if(this.listTypeVar[i][0]===this.typeVar){
-                    if(this.listTypeVar[i][2].substr(-1)==='/') stringToAdd = '{{' +this.listTypeVar[i][2]+this.nameVar.replace(/ /g,'').toLowerCase()+'}}'
-                    else stringToAdd = '{{' +this.listTypeVar[i][2]+'}}'
-                    break;
-                }
-            }
+            if(this.typeVar.substr(-1)==='/')stringToAdd = '{{' + this.typeVar + this.nameVar.replace(/ /g,'').toLowerCase() +'}}'
+            else stringToAdd = '{{' + this.typeVar + '}}'
             this.inputValue = this.addCharacterAtPosition(this.inputValue, stringToAdd, pos)
         },
         validateVariableValue(){

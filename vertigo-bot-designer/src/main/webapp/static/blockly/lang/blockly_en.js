@@ -81,6 +81,7 @@ Blockly.Msg["COMMONS_SAMPLE_WT_CODE"] = "WTCode";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_ISSUE_SENTENCE"] = "Your ticket can be viewed:";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_FIELD_QUEST"] = "What is the reference ?";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_FIELD_VAR"] = "reference";
+Blockly.Msg["COMMONS_SAMPLE_SAY"] = "message";
 
 // *****************************
 // **** CATEGORIE SEQUENCE *****
