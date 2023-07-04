@@ -16,9 +16,10 @@
 		<vu:block id="diagram" th:title="#{script.menu.diagram}">
 			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
+			<vu:include-data object="topic" field="title"/>
 			<div id="scriptintention-buttons">
 				<div id="scriptintention-buttons-export-emoji">
-					<q-btn class="q-btn-buttons" th:label="#{script.diagram.export}" color="primary"></q-btn>
+					<q-btn class="q-btn-buttons" th:label="#{script.diagram.export}" color="primary" @click="exportDiagramToPng()"></q-btn>
 					<c-emojipicker class="q-btn-buttons" @emojipicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-emojipicker>
 					<c-variablepicker class="q-btn-buttons" @variablepicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-variablepicker>
 				</div>
@@ -73,6 +74,93 @@
 			function updateBlocksBlockly(){
 				toCode()
 				fromCode()
+			}
+			function exportDiagramToPng() {
+				var coeffDiagramToPng = 1/workspace.getScale()
+				var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				svgElement.innerHTML = workspace.getCanvas().innerHTML;
+
+				// Stylized the svg element to fit with Blockly zelos constants
+				svgElement.querySelectorAll('.blocklyText').forEach(textElement => {
+					textElement.setAttribute("style", "fill: white; font-family: 'Helvetica Neue';")
+				})
+				svgElement.querySelectorAll('rect').forEach(textElement => {
+					textElement.setAttribute("style", "fill: white;")
+				})
+				svgElement.querySelectorAll("g.blocklyEditableText, g.blocklyNonEditableText").forEach(element => {
+					element.querySelectorAll('.blocklyText').forEach(textElement =>{
+						textElement.setAttribute("style", "fill: black; font-family: 'Helvetica Neue';")
+					})
+				})
+
+				// Creation of the canvas with the context 2d (image png)
+				var canvas = document.createElement("canvas");
+				canvas.width = document.getElementsByClassName('blocklyBlockCanvas')[0].getBoundingClientRect().width * coeffDiagramToPng
+				canvas.height = document.getElementsByClassName('blocklyBlockCanvas')[0].getBoundingClientRect().height * coeffDiagramToPng
+				var context = canvas.getContext("2d");
+				context.fillStyle = "#FFFFFF";
+				context.fillRect(0, 0, canvas.width, canvas.height);
+
+				var svgString = new XMLSerializer().serializeToString(svgElement);
+				var utf8Bytes = new TextEncoder().encode(svgString);
+				var base64Svg = base64ArrayBuffer(utf8Bytes.buffer);
+				var svgDataUrl = "data:image/svg+xml;base64," + base64Svg;
+
+				var image = new Image();
+				image.src = svgDataUrl;
+				// Draw the image onto the canvas
+				image.onload = function() {
+					context.drawImage(image, 0, 0);
+					var pngDataUrl = canvas.toDataURL("image/png");
+
+					var link = document.createElement("a");
+					link.href = pngDataUrl;
+					console.log(VertigoUi.vueData)
+				 	if(VertigoUi.vueData.topic.title)link.download = VertigoUi.vueData.topic.title.replace(/ /g,'_').toLowerCase().concat(VertigoUi.vueData.locale ==='fr_FR' ? '_intention' : '_topic') + ".png";
+					else link.download = 'diagram.png'
+					link.click();
+				};
+
+			}
+
+			// The correct base64 for the SVG model
+			function base64ArrayBuffer(arrayBuffer) {
+				var base64 = "";
+				var encodings =
+						"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+				var bytes = new Uint8Array(arrayBuffer);
+				var byteLength = bytes.byteLength;
+				var byteRemainder = byteLength % 3;
+				var mainLength = byteLength - byteRemainder;
+				var a, b, c, d;
+				var chunk;
+				// Main loop deals with bytes in chunks of 3 -> Find bytes correction on Stackoverflow
+				for (var i = 0; i < mainLength; i = i + 3) {
+					chunk =
+							(bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
+
+					a = (chunk & 16515072) >> 18; // 16515072 = (2^6 - 1) << 18
+					b = (chunk & 258048) >> 12; // 258048   = (2^6 - 1) << 12
+					c = (chunk & 4032) >> 6; // 4032     = (2^6 - 1) << 6
+					d = chunk & 63; // 63       = 2^6 - 1
+
+					// Convert the raw binary segments to the appropriate ASCII encoding
+					base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d];
+				}
+				// Deal with the remaining bytes and padding if necessary
+				if (byteRemainder === 1) {
+					chunk = bytes[mainLength];
+					a = (chunk & 252) >> 2; // 252 = (2^6 - 1) << 2
+					b = (chunk & 3) << 4; // 3   = 2^2 - 1
+					base64 += encodings[a] + encodings[b] + "==";
+				} else if (byteRemainder === 2) {
+					chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1];
+					a = (chunk & 64512) >> 10; // 64512 = (2^6 - 1) << 10
+					b = (chunk & 1008) >> 4; // 1008  = (2^6 - 1) << 4
+					c = (chunk & 15) << 2; // 15    = 2^4 - 1
+					base64 += encodings[a] + encodings[b] + encodings[c] + "=";
+				}
+				return base64;
 			}
 		</script>
 	</section>
