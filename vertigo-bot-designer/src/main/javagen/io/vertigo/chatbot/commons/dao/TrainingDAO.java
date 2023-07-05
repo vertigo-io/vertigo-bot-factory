@@ -47,22 +47,22 @@ public final class TrainingDAO extends DAO<Training, java.lang.Long> implements 
 	/**
 	 * Execute la tache TkGetCurrentTrainingByBotId.
 	 * @param botId Long
-	 * @return Option de Training tra
+	 * @return DtList de Training tra
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetCurrentTrainingByBotId",
 			request = "select tra.*\n" + 
  "             from training tra\n" + 
- "             where tra.bot_id = #botId# and tra.str_cd = 'TRAINING'",
+ "             where tra.bot_id = #botId# and tra.str_cd = 'TRAINING' order by tra.start_time desc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTraining")
-	public Optional<io.vertigo.chatbot.commons.domain.Training> getCurrentTrainingByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.Training> getCurrentTrainingByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetCurrentTrainingByBotId")
 				.addValue("botId", botId)
 				.build();
-		return Optional.ofNullable((io.vertigo.chatbot.commons.domain.Training) getTaskManager()
+		return getTaskManager()
 				.execute(task)
-				.getResult());
+				.getResult();
 	}
 
 	/**
