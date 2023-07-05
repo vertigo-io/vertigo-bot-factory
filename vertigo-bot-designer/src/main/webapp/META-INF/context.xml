@@ -31,4 +31,5 @@
 	<Parameter name="USE_SSL" value="true" override="false"/>
 	<Parameter name="CLAMAV_HOST" value="localhost" override="false"/>
 	<Parameter name="CLAMAV_PORT" value="3310" override="false"/>
+	<Parameter name="RUNNER_REQUEST_TIMEOUT" value="20" override="false"/>
 </Context>

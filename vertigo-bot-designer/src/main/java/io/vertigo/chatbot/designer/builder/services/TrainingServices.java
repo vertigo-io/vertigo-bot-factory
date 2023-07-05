@@ -137,10 +137,14 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 
 	private HttpClient httpClient;
 
+	private int runnerRequestTimeOut;
+
 	@Override
 	public void start() {
 		final boolean useSSL = paramManager.getOptionalParam("USE_SSL")
 				.orElse(Param.of("USE_SSL", "true")).getValueAsBoolean();
+		runnerRequestTimeOut = paramManager.getOptionalParam("RUNNER_REQUEST_TIMEOUT")
+				.orElse(Param.of("RUNNER_REQUEST_TIMEOUT", "120")).getValueAsInt();
 		if (!useSSL) {
 			httpClient = HttpRequestUtils.createHttpClientWithoutSSL();
 		}
@@ -200,7 +204,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 			final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
 			final Map<String, String> headers = Map.of(API_KEY, node.getApiKey(),
 					"Content-type", "application/json");
-			final HttpRequest request = HttpRequestUtils.createPutRequest(node.getUrl() + URL_MODEL, headers, publisher);
+			final HttpRequest request = HttpRequestUtils.createPutRequest(node.getUrl() + URL_MODEL, runnerRequestTimeOut, headers, publisher);
 			HttpRequestUtils.sendAsyncRequest(httpClient, request, BodyHandlers.ofString())
 					.thenApply(response -> {
 						return handleResponse(response, training, node, bot, logs);
