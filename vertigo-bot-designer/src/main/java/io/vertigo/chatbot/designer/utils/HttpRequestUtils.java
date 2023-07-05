@@ -47,8 +47,8 @@ public final class HttpRequestUtils {
 		return createRequestBuilder(url, headers).POST(publisher).build();
 	}
 
-	public static HttpRequest createPutRequest(final String url, final Map<String, String> headers, final BodyPublisher publisher) {
-		return createRequestBuilder(url, headers).timeout(Duration.ofMinutes(5)).PUT(publisher).build();
+	public static HttpRequest createPutRequest(final String url, int timeOut, final Map<String, String> headers, final BodyPublisher publisher) {
+		return createRequestBuilder(url, headers).timeout(Duration.ofSeconds(timeOut)).PUT(publisher).build();
 	}
 
 	public static <T extends Object> HttpResponse<T> sendRequest(HttpClient client, final HttpRequest request, final BodyHandler<T> handler, final int successStatutCode) {
