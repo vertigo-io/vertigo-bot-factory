@@ -351,7 +351,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 	}
 
 	public Optional<Training> getCurrentTraining(final Chatbot bot) {
-		return trainingDAO.getCurrentTrainingByBotId(bot.getBotId());
+		return trainingDAO.getCurrentTrainingByBotId(bot.getBotId()).stream().findFirst();
 	}
 
 	public Optional<Training> getDeployedTraining(final Chatbot bot) {
