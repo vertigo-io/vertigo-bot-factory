@@ -22,7 +22,7 @@ Blockly.Msg["COMMONS_VARIABLE_NAMEVAR"] = "nom_var";
 Blockly.Msg["COMMONS_VARIABLE_TYPE_LOCAL"] = "type locale";
 Blockly.Msg["COMMONS_VARIABLE_TYPE_GLOBAL"] = "type globale";
 Blockly.Msg["COMMONS_VARIABLE_TYPE_CONTEXT"] = "type contexte";
-Blockly.Msg["COMMONS_VARIABLE_TYPE_URL"] = "type url";
+Blockly.Msg["COMMONS_VARIABLE_TYPE_URL"] = "contexte url";
 
 //        *** types ***
 Blockly.Msg["COMMONS_TYPE_NUMBER"] = "nombre";

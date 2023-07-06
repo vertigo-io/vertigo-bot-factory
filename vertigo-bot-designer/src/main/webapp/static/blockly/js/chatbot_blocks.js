@@ -104,24 +104,7 @@ Blockly.Blocks['cb_condition'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -253,24 +236,7 @@ Blockly.Blocks['cb_buttons'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -336,24 +302,7 @@ Blockly.Blocks['cb_buttonsfile'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -572,24 +521,7 @@ Blockly.Blocks['cb_mail'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVarObject",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -602,24 +534,7 @@ Blockly.Blocks['cb_mail'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVarMessage",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -646,24 +561,7 @@ Blockly.Blocks['cb_mail'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVarPj",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -676,24 +574,7 @@ Blockly.Blocks['cb_mail'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVarDest",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -842,24 +723,7 @@ Blockly.Blocks['cb_switch'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -933,24 +797,7 @@ Blockly.Blocks['cb_set'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -1002,24 +849,7 @@ Blockly.Blocks['cb_copy'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVarSrc",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -1032,24 +862,7 @@ Blockly.Blocks['cb_copy'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVarDest",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -1093,24 +906,7 @@ Blockly.Blocks['cb_incrBy'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -1148,24 +944,7 @@ Blockly.Blocks['cb_remove'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -1236,24 +1015,7 @@ Blockly.Blocks['cb_inputString'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -1283,24 +1045,7 @@ Blockly.Blocks['cb_append'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -1338,24 +1083,7 @@ Blockly.Blocks['cb_rating'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -1419,24 +1147,7 @@ Blockly.Blocks['cb_confluencesearch'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",
@@ -1493,24 +1204,7 @@ Blockly.Blocks['cb_jirafield'] = {
                     {
                         "type": "field_dropdown",
                         "name": "typeVar",
-                        "options": [
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}",
-                                "local"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}",
-                                "global"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_CONTEXT}",
-                                "global/context"
-                            ],
-                            [
-                                "%{BKY_COMMONS_VARIABLE_TYPE_URL}",
-                                "global/context/url"
-                            ]
-                        ]
+                        "options": varTypeDropdownOptions
                     },
                     {
                         "type": "field_input",

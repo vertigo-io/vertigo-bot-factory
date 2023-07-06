@@ -54,16 +54,17 @@ Vue.component('c-emojipicker', {
         },
         addEmoji() {
             try{
-                // recover the string concerned
-                var stringEmoji = document.getElementsByClassName('blocklyEditableText editing')[0].getElementsByClassName('blocklyText')[0].innerHTML.replace(/&nbsp;/g,' ');
+                // recover the string concerned reduce to max length of a input text blockly to avoid side effects
+                var stringEmoji = document.getElementsByClassName('blocklyEditableText editing')[0].getElementsByClassName('blocklyText')[0].innerHTML.replace(/&nbsp;/g,' ').substring(0,40);
                 this.idBlock = document.getElementsByClassName('blocklyEditableText editing')[0].parentNode.getAttribute("data-id").toString();
                 if(this.idBlock!=null){
                     var block = workspace.getBlockById(this.idBlock)
                     // find the name of the field of the input of the block to change
                     block.inputList.forEach(input =>{
                         input.fieldRow.forEach(field =>{
-                            if(field.getValue()==stringEmoji){
+                            if(field.getValue().startsWith(stringEmoji)){
                                 this.nameVarEmoji = field.name
+                                stringEmoji = field.getValue()
                             }
                         })
                     })

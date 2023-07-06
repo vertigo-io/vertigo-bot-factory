@@ -3,7 +3,7 @@ function isComposite(block) {
 }
 
 function formatVariable(type, nomVar){
-	if(type=="global/context/url"){
+	if(type.includes("global/context")){
 		return ' /user/'+ type + ' ';
 	}
 	else{
