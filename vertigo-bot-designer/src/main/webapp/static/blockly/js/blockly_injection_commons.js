@@ -1,4 +1,16 @@
 var workspace;
+var varTypeDropdownOptions =[];
+
+// Default values of varTypes (local, global and all contexts)
+varTypeDropdownOptions.push(["%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}", "local"])
+varTypeDropdownOptions.push(["%{BKY_COMMONS_VARIABLE_TYPE_GLOBAL}", "global"])
+varTypeDropdownOptions.push(["%{BKY_COMMONS_VARIABLE_TYPE_URL}", "global/context/url"])
+VertigoUi.vueData.contextValues.forEach(contextValue =>{
+    let dropdownOption = []
+    dropdownOption.push('context '.concat(contextValue.label))
+    dropdownOption.push('global/context/'.concat(contextValue.label))
+    varTypeDropdownOptions.push(dropdownOption)
+})
 // *********************
 // ******* THEME *******
 // *********************

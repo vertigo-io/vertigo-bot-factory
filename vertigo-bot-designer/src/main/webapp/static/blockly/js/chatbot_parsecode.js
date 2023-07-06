@@ -228,11 +228,8 @@ function resolveCbBlockType(type) {
 
 function paramsFormatVariable(lien) {
 	let lienParams = ['','']
-	if(lien.includes('/user/global/context/url')){
-		lienParams[0] = 'global/context/url'
-	}else if(lien.includes('/user/global/context')){
-		lienParams[0] = 'global/context'
-		lienParams[1] = lien.substring(21);
+	if(lien.includes('/user/global/context')){
+		lienParams[0] = lien.substring(6)
 	}else if(lien.includes('/user/global')){
 		lienParams[0] = 'global'
 		lienParams[1] = lien.substring(13);
