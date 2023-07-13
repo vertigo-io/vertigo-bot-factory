@@ -15,11 +15,14 @@ import io.vertigo.database.timeseries.DataFilter;
 import io.vertigo.database.timeseries.DataFilterBuilder;
 import io.vertigo.database.timeseries.TimeFilter;
 import io.vertigo.database.timeseries.TimeFilterBuilder;
+import io.vertigo.database.timeseries.TimedDataSerie;
 
 public final class AnalyticsServicesUtils {
 
 	public static final String MESSAGES_MSRMT = "chatbotmessages";
+	public static final String MESSAGES_STAT_MSRMT = "chatbotmessages_stat";
 	public static final String CONVERSATION_MSRMT = "conversation";
+	public static final String CONVERSATION_STAT_MSRMT = "conversation_stat";
 	public static final String RATING_MSRMT = "rating";
 
 	private AnalyticsServicesUtils() {
@@ -87,6 +90,17 @@ public final class AnalyticsServicesUtils {
 
 	private static LocalDateTime atEndOfDay(final LocalDate date) {
 		return date.plus(1, ChronoUnit.DAYS).atStartOfDay();
+	}
+
+	public static Long getLongValue(final TimedDataSerie it, final String name, final Long orElse) {
+		final var val = it.getValues().get(name);
+		if (val == null) {
+			return orElse;
+		}
+		if (val instanceof String) {
+			return Long.parseLong((String) val);
+		}
+		return (Long) val;
 	}
 
 }

@@ -17,7 +17,6 @@ public final class TypeExportAnalytics implements DtStaticMasterData {
 	private String teaCd;
 	private String label;
 	private String labelFr;
-	private Boolean botRelated;
 
 	/** {@inheritDoc} */
 	@Override
@@ -82,25 +81,6 @@ public final class TypeExportAnalytics implements DtStaticMasterData {
 	 */
 	public void setLabelFr(final String labelFr) {
 		this.labelFr = labelFr;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Bot related'.
-	 * @return Boolean botRelated <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Bot related")
-	public Boolean getBotRelated() {
-		return botRelated;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Bot related'.
-	 * @param botRelated Boolean <b>Obligatoire</b>
-	 */
-	public void setBotRelated(final Boolean botRelated) {
-		this.botRelated = botRelated;
 	}
 	
 	/** {@inheritDoc} */

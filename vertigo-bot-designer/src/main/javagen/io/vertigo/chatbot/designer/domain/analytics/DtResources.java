@@ -88,33 +88,17 @@ public enum DtResources implements MessageKey {
 	 */
 	fldConversationStat$ended,
 	/**
-	 * Rate.
-	 */
-	fldConversationStat$rate,
-
-	/***********************************************************
-	/** RatingDetail.
-	/***********************************************************
-	/**
-	 * Session ID.
-	 */
-	fldRatingDetail$sessionId,
-	/**
-	 * Date.
-	 */
-	fldRatingDetail$date,
-	/**
 	 * Rating.
 	 */
-	fldRatingDetail$rating,
+	fldConversationStat$rating,
 	/**
 	 * Comment.
 	 */
-	fldRatingDetail$comment,
+	fldConversationStat$ratingComment,
 	/**
 	 * Last topic.
 	 */
-	fldRatingDetail$lastTopic,
+	fldConversationStat$lastTopic,
 
 	/***********************************************************
 	/** RatingOption.
@@ -275,10 +259,6 @@ public enum DtResources implements MessageKey {
 	 * Titre.
 	 */
 	fldTypeExportAnalytics$labelFr,
-	/**
-	 * Bot related.
-	 */
-	fldTypeExportAnalytics$botRelated,
 
 	/***********************************************************
 	/** UnknownSentenseExport.

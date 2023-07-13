@@ -101,8 +101,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		PersonRole(io.vertigo.chatbot.designer.domain.commons.PersonRole.class),
 		/** Objet de données ProfilPerChatbot. */
 		ProfilPerChatbot(io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot.class),
-		/** Objet de données RatingDetail. */
-		RatingDetail(io.vertigo.chatbot.designer.domain.analytics.RatingDetail.class),
 		/** Objet de données RatingOption. */
 		RatingOption(io.vertigo.chatbot.designer.domain.analytics.RatingOption.class),
 		/** Objet de données ResponseButton. */
@@ -517,8 +515,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		interactions,
 		/** Propriété 'Ended'. */
 		ended,
-		/** Propriété 'Rate'. */
-		rate	}
+		/** Propriété 'Rating'. */
+		rating,
+		/** Propriété 'Comment'. */
+		ratingComment,
+		/** Propriété 'Last topic'. */
+		lastTopic	}
 
 	/**
 	 * Enumération des champs de DictionaryEntity.
@@ -854,21 +856,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		perId,
 		/** Propriété 'Profil pour un chatbot'. */
 		chpCd	}
-
-	/**
-	 * Enumération des champs de RatingDetail.
-	 */
-	public enum RatingDetailFields implements DtFieldName<io.vertigo.chatbot.designer.domain.analytics.RatingDetail> {
-		/** Propriété 'Session ID'. */
-		sessionId,
-		/** Propriété 'Date'. */
-		date,
-		/** Propriété 'Rating'. */
-		rating,
-		/** Propriété 'Comment'. */
-		comment,
-		/** Propriété 'Last topic'. */
-		lastTopic	}
 
 	/**
 	 * Enumération des champs de RatingOption.
@@ -1449,9 +1436,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Title'. */
 		label,
 		/** Propriété 'Titre'. */
-		labelFr,
-		/** Propriété 'Bot related'. */
-		botRelated	}
+		labelFr	}
 
 	/**
 	 * Enumération des champs de TypeTopic.
