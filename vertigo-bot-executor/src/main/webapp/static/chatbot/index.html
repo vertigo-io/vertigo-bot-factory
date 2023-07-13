@@ -33,6 +33,7 @@
             {{ botName }}
           </div>
           <q-btn round
+                 class="btn-rotate"
                  flat
                  v-if="customConfig.reinitializationButton"
                  color="white"
@@ -41,6 +42,7 @@
                  @click="refresh()"
                  icon="refresh"></q-btn>
           <q-btn round
+                 class="btn-rotate"
                  flat
                  color="white"
                  text-color="white"
@@ -182,22 +184,21 @@
           </q-page>
         </q-page-container>
         <q-layout-footer class="bg-grey-3">
-          <div class="message-response row docs-btn non-selectable">
+          <div class="row docs-btn non-selectable">
             <div class="col-grow">
               <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
                        ref="input"
                        :style="'margin-top: 0px;'"
-                       class="bg-white q-px-sm round-borders custom-input"
+                       class="q-px-sm round-borders custom-input"
                        @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
                        :max-height="100"
                        v-model="inputConfig.responseText"
-                       placeholder="Répondre"
+                       placeholder="Ecrire un message..."
                        :disable="processing || error || (!acceptNlu && !isEnded) || customConfig.disableNlu"
                        :loading="processing"></q-input>
             </div>
 
-            <q-btn round
-                   color="primary"
+            <q-btn
                    :style="'margin-top: 0px;'"
                    style="margin-top: 0px;"
                    class="btn-send"
