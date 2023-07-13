@@ -30,12 +30,12 @@ import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.influxDb.TimeSerieServices;
+import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.domain.analytics.CategoryStat;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationDetail;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationStat;
-import io.vertigo.chatbot.designer.domain.analytics.RatingDetail;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
@@ -51,7 +51,9 @@ import io.vertigo.datamodel.structure.util.VCollectors;
 public class AnalyticsServices implements Component {
 
 	public static final Double TRUE_BIGDECIMAL = 1D;
+	public static final String TRUE_STRING = "1";
 	public static final Double FALSE_BIGDECIMAL = 0D;
+	public static final String FALSE_STRING = "0";
 
 	@Inject
 	private TopicServices topicServices;
@@ -100,8 +102,8 @@ public class AnalyticsServices implements Component {
 					conversationDetail.setDate(timedData.getTime());
 					conversationDetail.setSessionId((String) values.get("sessionId"));
 					conversationDetail.setText(bubble);
-					conversationDetail.setIsUserMessage(values.get("isUserMessage").equals(TRUE_BIGDECIMAL));
-					conversationDetail.setIsBotMessage(values.get("isBotMessage").equals(TRUE_BIGDECIMAL));
+					conversationDetail.setIsUserMessage(TRUE_STRING.equals(values.get("isUserMessage")));
+					conversationDetail.setIsBotMessage(TRUE_STRING.equals(values.get("isBotMessage")));
 					retour.add(conversationDetail);
 				});
 			}
@@ -120,11 +122,13 @@ public class AnalyticsServices implements Component {
 
 			final ConversationStat conversationStat = new ConversationStat();
 			conversationStat.setDate(timedDataSerie.getTime());
-			conversationStat.setEnded(values.get("isEnded") != null && values.get("isEnded").equals(TRUE_BIGDECIMAL));
+			conversationStat.setEnded(TRUE_STRING.equals(values.get("isEnded")));
 			conversationStat.setSessionId((String) values.get("sessionId"));
-			conversationStat.setInteractions(values.get("interactions") != null ? ((Double) values.get("interactions")).longValue() : null);
-			conversationStat.setRate(values.get("rating") != null ? ((Double) values.get("rating")).longValue() : null);
+			conversationStat.setInteractions(AnalyticsServicesUtils.getLongValue(timedDataSerie, "interactions", null));
+			conversationStat.setRating(AnalyticsServicesUtils.getLongValue(timedDataSerie, "rating", null));
+			conversationStat.setRatingComment((String) values.get("ratingComment"));
 			conversationStat.setModelName((String) values.get("modelName"));
+			conversationStat.setLastTopic((String) values.get("lastTopic"));
 			retour.add(conversationStat);
 		}
 
@@ -201,19 +205,4 @@ public class AnalyticsServices implements Component {
 		return retour;
 	}
 
-	public DtList<RatingDetail> getRatingDetails(final StatCriteria criteria) {
-		final TimedDatas ratings = timeSerieServices.getRatingDetailsStats(criteria);
-		final DtList<RatingDetail> retour = new DtList<>(RatingDetail.class);
-		ratings.getTimedDataSeries().forEach(timedDataSerie -> {
-			final Map<String, Object> values = timedDataSerie.getValues();
-			final RatingDetail ratingDetail = new RatingDetail();
-			ratingDetail.setSessionId((String) values.get("sessionId"));
-			ratingDetail.setDate(timedDataSerie.getTime());
-			ratingDetail.setRating(((Double) values.get("rating")).longValue());
-			ratingDetail.setComment((String) values.get("ratingComment"));
-			ratingDetail.setLastTopic((String) values.get("lastTopic"));
-			retour.add(ratingDetail);
-		});
-		return retour;
-	}
 }

@@ -5,44 +5,31 @@ stereotype : "StaticMasterData"
 	id    teaCd 		{domain: DoCode 	label: "Code"}
 	field label 		{domain: DoLabel 	label: "Title" 			cardinality : "1"	}
 	field labelFr 		{domain: DoLabel 	label: "Titre" 			cardinality : "1"	}
-    field botRelated 	{domain: DoYesNo 	label: "Bot related"    cardinality : "1"	}
 	values : `{
         "UNKNOWN_MESSAGES" : {
             "teaCd" 	    : "UNKNOWN_MESSAGES",
             "label" 	    : "Unknown messages",
-            "labelFr" 	    : "Intentions non reconnues",
-            "botRelated"    : "true"
-           
+            "labelFr" 	    : "Intentions non reconnues"
         },
         "USER_ACTIONS_CONVERSATIONS" : {
             "teaCd" 	    : "USER_ACTIONS_CONVERSATIONS",
             "label" 	    : "User actions and conversations",
-            "labelFr" 	    : "Actions utilisateur et conversations",
-            "botRelated"    : "false"
+            "labelFr" 	    : "Actions utilisateur et conversations"
         },
         "CONVERSATIONS" : {
             "teaCd" 	    : "CONVERSATIONS",
             "label" 	    : "Conversations",
-            "labelFr" 	    : "Conversations",
-            "botRelated"    : "true"
+            "labelFr" 	    : "Conversations"
         },
         "CATEGORIES" : {
             "teaCd" 	    : "CATEGORIES",
             "label" 	    : "Categories",
-            "labelFr" 	    : "Catégories",
-            "botRelated"    : "true"
-        },
-        "RATING" : {
-            "teaCd" 	    : "RATING",
-            "label" 	    : "Rating",
-            "labelFr" 	    : "Evaluation",
-            "botRelated"    : "true"
+            "labelFr" 	    : "Catégories"
         },
         "TOPIC_USAGE" : {
             "teaCd" 	    : "TOPIC_USAGE",
             "label" 	    : "Topic usage",
-            "labelFr" 	    : "Utilisation des intentions",
-            "botRelated"    : "true"
+            "labelFr" 	    : "Utilisation des intentions"
         }
      }`
     sortField : "teaCd"
@@ -111,7 +98,9 @@ create DtDefinition DtConversationStat {
 	field modelName		            {domain: DoLabel 				label: "Model Name" 			        }
 	field interactions			    {domain: DoNumber 				label: "Interactions" 				    }
 	field ended			            {domain: DoYesNo 				label: "Ended" 				            }
-	field rate			            {domain: DoNumber 				label: "Rate" 				            }
+	field rating		            {domain: DoNumber 				label: "Rating" 			            }
+	field ratingComment		        {domain: DoText 				label: "Comment" 		     		    }
+	field lastTopic	    			{domain: DoLabel 			    label: "Last topic" 					}
 }
 
 create DtDefinition DtCategoryStat {
@@ -138,15 +127,6 @@ create DtDefinition DtConversationCriteria {
 create DtDefinition DtTopIntentCriteria {
 	field catIds 			    {domain: DoId 				label: "Category Ids" 		cardinality:"*"		        }
 	field labels 			    {domain: DoId 			label: "Labels" 			cardinality:"*"		        }
-}
-
-
-create DtDefinition DtRatingDetail {
-    field sessionId 	{domain: DoIdStr 				label: "Session ID" 		    }
-	field date 			{domain: DoInstant 				label: "Date" 					}
-	field rating		{domain: DoNumber 				label: "Rating" 				}
-	field comment	    {domain: DoLabel 				label: "Comment" 			    }
-	field lastTopic	    {domain: DoLabel 			    label: "Last topic" 			}
 }
 
 create DtDefinition DtUnknownSentenseExport {

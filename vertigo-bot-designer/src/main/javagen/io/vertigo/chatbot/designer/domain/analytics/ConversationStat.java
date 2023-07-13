@@ -18,7 +18,9 @@ public final class ConversationStat implements DtObject {
 	private String modelName;
 	private Long interactions;
 	private Boolean ended;
-	private Long rate;
+	private Long rating;
+	private String ratingComment;
+	private String lastTopic;
 	
 	/**
 	 * Champ : DATA.
@@ -117,21 +119,59 @@ public final class ConversationStat implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Rate'.
-	 * @return Long rate
+	 * Récupère la valeur de la propriété 'Rating'.
+	 * @return Long rating
 	 */
-	@Field(smartType = "STyNumber", label = "Rate")
-	public Long getRate() {
-		return rate;
+	@Field(smartType = "STyNumber", label = "Rating")
+	public Long getRating() {
+		return rating;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Rate'.
-	 * @param rate Long
+	 * Définit la valeur de la propriété 'Rating'.
+	 * @param rating Long
 	 */
-	public void setRate(final Long rate) {
-		this.rate = rate;
+	public void setRating(final Long rating) {
+		this.rating = rating;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Comment'.
+	 * @return String ratingComment
+	 */
+	@Field(smartType = "STyText", label = "Comment")
+	public String getRatingComment() {
+		return ratingComment;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Comment'.
+	 * @param ratingComment String
+	 */
+	public void setRatingComment(final String ratingComment) {
+		this.ratingComment = ratingComment;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Last topic'.
+	 * @return String lastTopic
+	 */
+	@Field(smartType = "STyLabel", label = "Last topic")
+	public String getLastTopic() {
+		return lastTopic;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Last topic'.
+	 * @param lastTopic String
+	 */
+	public void setLastTopic(final String lastTopic) {
+		this.lastTopic = lastTopic;
 	}
 	
 	/** {@inheritDoc} */

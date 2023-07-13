@@ -13,11 +13,11 @@ import javax.inject.Inject;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.influxDb.TimeSerieServices;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
+import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.domain.analytics.CategoryStat;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationStat;
-import io.vertigo.chatbot.designer.domain.analytics.RatingDetail;
 import io.vertigo.chatbot.designer.domain.analytics.SessionExport;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
@@ -58,16 +58,15 @@ public class AnalyticsExportServices implements Component {
 	 */
 	public DtList<SessionExport> getSessionExport(final StatCriteria criteria) {
 		// get data from influxdb
-		final TimedDatas tabularTimedData = timeSerieServices.getSessionsExport(criteria);
+		final TimedDatas tabularTimedData = timeSerieServices.getRequestStats(criteria);
 
 		// build DtList from InfluxDb data
 		final DtList<SessionExport> retour = new DtList<>(SessionExport.class);
 		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
-			final Map<String, Object> values = timedData.getValues();
 			final SessionExport newSessionExport = new SessionExport();
 			newSessionExport.setDate(timedData.getTime());
-			newSessionExport.setUserActionsCount(((Double) values.get("name:count")).longValue());
-			newSessionExport.setConversationCount(((Double) values.get("isSessionStart:count")).longValue());
+			newSessionExport.setUserActionsCount(AnalyticsServicesUtils.getLongValue(timedData, "userAction:count", 0L));
+			newSessionExport.setConversationCount(AnalyticsServicesUtils.getLongValue(timedData, "isSessionStart:count", 0L));
 			retour.add(newSessionExport);
 		}
 
@@ -168,8 +167,10 @@ public class AnalyticsExportServices implements Component {
 				.addField(DtDefinitions.ConversationStatFields.date)
 				.addField(DtDefinitions.ConversationStatFields.modelName)
 				.addField(DtDefinitions.ConversationStatFields.interactions)
+				.addField(DtDefinitions.ConversationStatFields.rating)
+				.addField(DtDefinitions.ConversationStatFields.ratingComment)
+				.addField(DtDefinitions.ConversationStatFields.lastTopic)
 				.addField(DtDefinitions.ConversationStatFields.ended)
-				.addField(DtDefinitions.ConversationStatFields.rate)
 				.endSheet()
 				.build();
 		return exportManager.createExportFile(export);
@@ -184,20 +185,6 @@ public class AnalyticsExportServices implements Component {
 				.addField(DtDefinitions.CategoryStatFields.code)
 				.addField(DtDefinitions.CategoryStatFields.percentage)
 				.addField(DtDefinitions.CategoryStatFields.usage)
-				.endSheet()
-				.build();
-		return exportManager.createExportFile(export);
-	}
-
-	public VFile exportRatingDetails(final DtList<RatingDetail> ratingDetails) {
-		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		final Date date = new Date();
-		final Export export = new ExportBuilder(ExportFormat.CSV, MessageText.of(AnalyticsMultilingualResources.RATING_DETAILS_FILENAME).getDisplay() + dateFormat.format(date))
-				.beginSheet(ratingDetails, null)
-				.addField(DtDefinitions.RatingDetailFields.date)
-				.addField(DtDefinitions.RatingDetailFields.rating)
-				.addField(DtDefinitions.RatingDetailFields.comment)
-				.addField(DtDefinitions.RatingDetailFields.lastTopic)
 				.endSheet()
 				.build();
 		return exportManager.createExportFile(export);

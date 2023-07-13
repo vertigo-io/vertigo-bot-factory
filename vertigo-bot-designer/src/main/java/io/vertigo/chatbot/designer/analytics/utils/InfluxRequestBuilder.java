@@ -34,7 +34,17 @@ public final class InfluxRequestBuilder {
 	private final StringBuilder request;
 
 	public InfluxRequestBuilder(final String appName) {
-		request = new StringBuilder("from(bucket:\"")
+		this(appName, List.of());
+	}
+
+	public InfluxRequestBuilder(final String appName, final List<String> imports) {
+		request = new StringBuilder();
+		for (final var imp : imports) {
+			request.append("import \"")
+					.append(imp)
+					.append("\"\n");
+		}
+		request.append("from(bucket:\"")
 				.append(appName)
 				.append("\") \n");
 	}
@@ -122,7 +132,7 @@ public final class InfluxRequestBuilder {
 		return request.toString();
 	}
 
-	public String build(final long limit, final boolean sortByTime, final String ... additionalColumns) {
+	public String build(final long limit, final boolean sortByTime, final String... additionalColumns) {
 		request.append("|> group() \n");// merge all tables
 		if (sortByTime) {
 			request.append("|> sort(columns: [\"_time\"");

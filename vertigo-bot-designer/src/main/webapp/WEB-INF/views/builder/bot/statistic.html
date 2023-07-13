@@ -29,20 +29,6 @@
                     minute:'2-digit',
                     hour12: false
                 });
-            } else if (VertigoUi.vueData.criteria.timeOption === 'WEEK') {
-                let myDate = new Date(value);
-                let dateStr = myDate.toLocaleDateString('en-EN', {
-                    month: 'short',
-                    day: '2-digit'
-                });
-
-                if (myDate.getHours() < 11) {
-                    dateStr += " AM";
-                } else {
-                    dateStr += " PM";
-                }
-
-                return dateStr;
             } else {
                 return new Date(value).toLocaleDateString('en-EN', {
                     month: 'short',
@@ -79,7 +65,7 @@
             series : function() {
                 return [ {
                     name : 'User sessions',
-                    data : serieToApex("isSessionStart:count", VertigoUi.vueData.sessionStats, {fill: 0})
+                    data : serieToApex("isSessionStart:count", VertigoUi.vueData.requestsStats, {fill: 0})
                 }
                 ];
             }
@@ -115,7 +101,7 @@
             series : function() {
                 return [ {
                     name : /*[[#{analytics.message.useractions}]]*/ '',
-                    data : serieToApex("name:count", VertigoUi.vueData.userInteractionsStats, {fill: 0})
+                    data : serieToApex("userAction:count", VertigoUi.vueData.requestsStats, {fill: 0})
                 },
                 ];
             }
@@ -241,33 +227,38 @@
         }
 
         function percentageOfRating() {
-            return Math.round((VUiExtensions.dataX.apexCharts.rating.series().reduce((a,b) => a + b, 0 ) /
+            return VertigoUi.vueData.totalOfConversations === 0 ? '-' :
+                Math.round((VUiExtensions.dataX.apexCharts.rating.series().reduce((a,b) => a + b, 0 ) /
                 VertigoUi.vueData.totalOfConversations) * 100);
         }
 
         function conversationsMean() {
-            let days = 1;
-            if (VertigoUi.vueData.criteria.timeOption === 'WEEK') {
+            let days;
+            if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
+                && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
+                const a = moment(VertigoUi.vueData.criteria.fromDate ,'DD/MM/YYYY');
+                const b = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
+                days = b.diff(a, 'days') + 1;
+            }
+            else if (VertigoUi.vueData.criteria.timeOption === 'WEEK') {
                 days = 7;
             } else if (VertigoUi.vueData.criteria.timeOption === 'MONTH') {
                 days = 30;
             } else if (VertigoUi.vueData.criteria.timeOption === 'YEAR') {
                 days = 365;
-            } else if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
-                && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
-                const a = moment(VertigoUi.vueData.criteria.fromDate ,'DD/MM/YYYY');
-                const b = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
-                days = b.diff(a, 'days');
+            } else { // === 'DAY'
+                days = 1
             }
             return Math.round(VertigoUi.vueData.totalOfConversations / days);
         }
 
         function interactionPerConversationMean() {
-            return Math.round(VertigoUi.vueData.totalOfUserActions/VertigoUi.vueData.totalOfConversations);
+            return VertigoUi.vueData.totalOfConversations === 0 ? '-' : Math.round(VertigoUi.vueData.totalOfUserActions / VertigoUi.vueData.totalOfConversations);
         }
 
         function recognizedMessageRatio() {
-            return Math.round((VertigoUi.vueData.totalOfRecognizedMessage / (VertigoUi.vueData.totalOfRecognizedMessage + VertigoUi.vueData.totalOfUnrecognizedMessage)) *100);
+            let total = VertigoUi.vueData.totalOfRecognizedMessage + VertigoUi.vueData.totalOfUnrecognizedMessage;
+            return total === 0 ? '-' : Math.round((VertigoUi.vueData.totalOfRecognizedMessage / total) *100);
         }
 
         function serieToApex(serieName, dataIn, options) {
@@ -359,68 +350,9 @@
             VUiPage.$refs.conversationDetailsDialog.show();
         }
 
-        function changeChatMessageStyle() {
-            changeChatMessageBgColor();
-            changeChatMessageFontFamily();
-            changeChatMessageFontColor();
-            changeUserMessageFontColor();
-            changeBotMessageBgColor();
-        }
-
         function closeDialog() {
             VUiPage.$refs.popupFromDate.hide();
             VUiPage.$refs.popupToDate.hide();
-        }
-
-        function changeChatMessageBgColor() {
-            if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
-                VertigoUi.vueData.chatbotCustomConfig.backgroundColor = '#cdcdcd';
-            }
-            Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-message-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
-            });
-        }
-
-        function changeBotMessageBgColor() {
-            if (VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor == null) {
-                VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor = '#cdcdcd';
-            }
-            Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-bot-message-bg-color', VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor);
-            });
-        }
-
-        function changeChatMessageFontColor() {
-            if (VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor == null) {
-                VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor = '#000000';
-            }
-            Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor);
-            });
-        }
-
-        function changeUserMessageFontColor() {
-            if (VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor == null) {
-                VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor = '#000000';
-            }
-            Array.from(document.getElementsByClassName('q-message-text-content--sent')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-user-message-font-color', VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor);
-            });
-        }
-
-        function changeChatMessageFontFamily() {
-            if (VertigoUi.vueData.chatbotCustomConfig.fofCd == null) {
-                VertigoUi.vueData.chatbotCustomConfig.fofCd = 'ARIAL';
-            }
-            const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
-                return fontFamily.fofCd === VertigoUi.vueData.chatbotCustomConfig.fofCd
-            });
-            Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-message-font-family', fontFamily.label);
-            });
-            Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-message-font-family', fontFamily.label);
-            });
         }
 
         function checkAllExportStats() {
@@ -431,6 +363,15 @@
 
         function sanitizeText(text) {
             return DOMPurify.sanitize(text);
+        }
+        
+        function limitFromInput(date) {
+            if (VertigoUi.vueData.criteria.toDate == null || VertigoUi.vueData.criteria.toDate == '') return true;
+            
+            const from = moment(date,'YYYY/MM/DD');
+            const to = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
+            
+            return from <= to;
         }
     </script>
     <style>
@@ -477,8 +418,6 @@
 
     <vu:include-data-primitive key="ratingStats" />
     <vu:include-data-primitive key="requestsStats" />
-    <vu:include-data-primitive key="sessionStats" />
-    <vu:include-data-primitive key="userInteractionsStats" />
     <vu:include-data-primitive key="totalOfUserActions" />
     <vu:include-data-primitive key="totalOfUnrecognizedMessage" />
     <vu:include-data-primitive key="totalOfRecognizedMessage" />
@@ -513,7 +452,8 @@
 
             <vu:date-edit object="criteria" field="fromDate" label="#{analytics.date.from}"
                           dense clearable @clear="vueData.criteria.fromDate=null"
-                          class="q-pa-none" style="width:210px; background-color: white; margin-right: 10px"/>
+                          class="q-pa-none" style="width:210px; background-color: white; margin-right: 10px"
+                          date_:options="limitFromInput"/> 
 
             <q-space></q-space>
 
@@ -552,7 +492,7 @@
                             <q-card-section class="row justify-center">
                                 <div>
                                     <div style="font-weight: bold; font-size: x-large">
-                                        <span v-html="conversationsMean()"></span>
+                                        <span v-text="conversationsMean()"></span>
                                     </div>
                                     <div>
                                         <span>[[#{analytics.conversation.mean}]]</span>
@@ -567,7 +507,7 @@
                             <q-card-section class="row justify-center">
                                 <div>
                                     <div style="font-weight: bold; font-size: x-large">
-                                        <span v-html="recognizedMessageRatio()"></span><span> %</span>
+                                        <span v-text="recognizedMessageRatio()"></span><span> %</span>
                                     </div>
                                     <div>
                                         <span>[[#{analytics.messages.recognized.ratio}]]</span>
@@ -581,7 +521,7 @@
                             <q-card-section class="row justify-center">
                                 <div>
                                     <div style="font-weight: bold; font-size: x-large">
-                                        <span v-html="interactionPerConversationMean()"></span>
+                                        <span v-text="interactionPerConversationMean()"></span>
                                     </div>
                                     <div>
                                         <span>[[#{analytics.interactions.means}]]</span>
@@ -675,7 +615,11 @@
             <vu:include-data object="conversationDetails" field="isBotMessage" />
             <vu:include-data object="conversationStat" field="sessionId" />
             <vu:include-data object="conversationStat" field="ended" />
-            <vu:table componentId="conversationStat" list="conversationStat" th:title="#{analytics.conversations}" tr_@click.native="displayConversationDetail(props.row.sessionId)" tr_style="cursor : pointer;" rowsPerPage="10" autoColClass >
+            <vu:table componentId="conversationStat" list="conversationStat" 
+                      th:title="#{analytics.conversations}"
+                      tr_@click.native="displayConversationDetail(props.row.sessionId)" tr_style="cursor : pointer;"
+                      sortBy="date" descending="true"
+                      rowsPerPage="10" autoColClass >
                 <vu:slot name="top_right_slot">
                     <vu:select-edit object="conversationCriteria" field="ratings"
                                     multiple
@@ -689,7 +633,9 @@
                 <vu:column field="date"/>
                 <vu:column field="modelName"/>
                 <vu:column field="interactions"/>
-                <vu:column field="rate"/>
+                <vu:column field="rating"/>
+                <vu:column field="ratingComment"/>
+                <vu:column field="lastTopic"/>
                 <vu:column name="ended" th:label="#{analytics.conversation.ended}" class="col_Small">
                     <q-icon name="check" color="green" size="2rem"v-if="props.row.ended" ></q-icon>
                     <q-icon name="close" color="red" size="2rem" v-else ></q-icon>
@@ -709,15 +655,6 @@
                     </q-card-section>
                 </q-card>
             </q-dialog>
-        </div>
-
-        <div class="col-12">
-            <vu:table componentId="ratingDetails"  list="ratingDetails"  rowsPerPage="5">
-                <vu:column field="date"/>
-                <vu:column field="rating"/>
-                <vu:column field="comment"/>
-                <vu:column field="lastTopic"/>
-            </vu:table>
         </div>
 
         <div class="col-xl-6 col-md-6 col-xs-12">
@@ -848,7 +785,33 @@
 </section>
 <section layout:fragment="javascript-footer" >
     <script type="text/javascript">
-        VUiPage.$data.componentStates.ratingDetails.columns[0].sort = VertigoUi.methods.sortDatesAsString("DD/MM/YYYY HH:mm");
+        function orElse(value, orElse) {
+            return value == null ? orElse : value;
+        }
+        
+        function loadChatMessageStyle() {
+            const backgroundColor = orElse(VertigoUi.vueData.chatbotCustomConfig.backgroundColor, '#cdcdcd');
+            const botMessageBackgroundColor = orElse(VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor, '#cdcdcd');
+            const botMessageFontColor = orElse(VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor, '#000');
+            const userMessageFontColor = orElse(VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor, '#000');
+            const fofCd = orElse(VertigoUi.vueData.chatbotCustomConfig.fofCd, 'ARIAL');
+            const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
+                return fontFamily.fofCd === fofCd
+            });
+            
+            // Get the root element
+            var r = document.querySelector(':root');
+            
+            r.style.setProperty('--chat-message-bg-color', backgroundColor);
+            r.style.setProperty('--chat-bot-message-bg-color', botMessageBackgroundColor);
+            r.style.setProperty('--chat-message-font-color', botMessageFontColor);
+            r.style.setProperty('--chat-user-message-font-color', userMessageFontColor);
+            r.style.setProperty('--chat-message-font-family', fontFamily.label);
+        }
+        
+        loadChatMessageStyle();
+    
+    
         VUiExtensions.dataX.apexCharts.categories.options = {
             chart: {
                 type: 'pie',
@@ -860,7 +823,26 @@
             if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
                 && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
                 VUiExtensions.dataX.disableTimeOption = true;
-                VertigoUi.vueData.criteria.timeOption = 'DAY';
+                
+                const from = moment(VertigoUi.vueData.criteria.fromDate ,'DD/MM/YYYY');
+                const to = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
+                
+                let days = to.diff(from, 'days') + 1;
+                
+                if (days < 1) {
+                    VertigoUi.vueData.criteria.fromDate = VertigoUi.vueData.criteria.toDate;
+                    days = 1;
+                }
+                
+                if (isNaN(days) || days > 70) {
+                    VertigoUi.vueData.criteria.timeOption = 'YEAR';
+                } else if (days > 30) {
+                    VertigoUi.vueData.criteria.timeOption = 'MONTH';
+                } else if (days > 3) {
+                    VertigoUi.vueData.criteria.timeOption = 'WEEK';
+                } else {
+                    VertigoUi.vueData.criteria.timeOption = 'DAY';
+                }
             } else {
                 VUiExtensions.dataX.disableTimeOption = false;
             }
