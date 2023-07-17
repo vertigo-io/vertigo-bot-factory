@@ -113,9 +113,6 @@ Vue.component('c-variablepicker', {
                     this.$refs.newVariableDialog.show();
                     document.getElementsByClassName('blocklyWidgetDiv')[0].style.display = "none";
                 }
-                else{
-                    console.log((this.locale == 'fr_FR' ? 'Block non trouvé' : 'Block not found'))
-                }
             }catch (e) {
                 alert((this.locale == 'fr_FR' ? 'Aucun champ de texte du diagramme n\'est selectionné' : 'No diagram text field is selected'))
             } finally {
