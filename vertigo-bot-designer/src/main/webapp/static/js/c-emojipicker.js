@@ -75,9 +75,6 @@ Vue.component('c-emojipicker', {
                         document.querySelector('emoji-picker').addEventListener('emoji-click', event => this.handleEmoji(event.detail.unicode));
                     });
                 }
-                else{
-                    console.log((this.locale == 'fr_FR' ? 'Block non trouvé' : 'Block not found'))
-                }
             }catch (e) {
                 alert((this.locale == 'fr_FR' ? 'Aucun champ de texte du diagramme n\'est selectionné' : 'No diagram text field is selected'))
             }
