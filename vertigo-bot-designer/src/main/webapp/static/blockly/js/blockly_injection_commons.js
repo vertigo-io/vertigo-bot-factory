@@ -454,7 +454,7 @@ function importBlocklyTemplate(event){
                 firstMessage.setFieldValue((locale==='fr_FR' ? "Vous souhaitez consulter la fiche d'information de votre ville" : "You want to consult data of your city"),"label")
 
                 var inputStringBlock = workspace.newBlock('cb_inputString')
-                inputStringBlock.setFieldValue((locale==='fr_FR' ? "Combien y a t il d'habitants dans la ville ?" : "How many people live in the town ?"),"question")
+                inputStringBlock.setFieldValue((locale==='fr_FR' ? "Ecris le nom de ta ville" : "Give me the name of your city ?"),"question")
                 inputStringBlock.setFieldValue("city","nameVar")
 
                 var ifelseBlock = workspace.newBlock('cb_ifelse')
@@ -464,31 +464,31 @@ function importBlocklyTemplate(event){
                 var elseBlock = workspace.newBlock('cb_else')
 
                 var conditionFirstBlock = workspace.newBlock('cb_condition')
-                conditionFirstBlock.setFieldValue("gt","condition-type")
-                conditionFirstBlock.setFieldValue("20000","value")
+                conditionFirstBlock.setFieldValue("eq","condition-type")
+                conditionFirstBlock.setFieldValue("Paris","value")
                 conditionFirstBlock.setFieldValue("city","nameVar")
 
                 var messageFirstBlock = workspace.newBlock('cb_say')
                 var topicFirstBlock = workspace.newBlock('cb_topic')
-                messageFirstBlock.setFieldValue((locale==='fr_FR' ? "Ok il s'agit d'une grande ville" : "Ok, it's a big city"), "label")
+                messageFirstBlock.setFieldValue((locale==='fr_FR' ? "Ok il s'agit de Paris" : "Ok, it's Paris"), "label")
                 topicFirstBlock.setFieldValue("CITY1","code")
 
                 var conditionSecondBlock = workspace.newBlock('cb_condition')
-                conditionSecondBlock.setFieldValue("lt","condition-type")
-                conditionSecondBlock.setFieldValue("20000","value")
+                conditionSecondBlock.setFieldValue("eq","condition-type")
+                conditionSecondBlock.setFieldValue("Lyon","value")
                 conditionSecondBlock.setFieldValue("city","nameVar")
 
                 addAllConnectionSubBlock(firstIfBlock,[conditionFirstBlock, messageFirstBlock, topicFirstBlock])
 
                 var messageSecondBlock = workspace.newBlock('cb_say')
                 var topicSecondBlock = workspace.newBlock('cb_topic')
-                messageSecondBlock.setFieldValue((locale==='fr_FR' ? "Ok il s'agit d'une petite ville" : "Ok, it's a small city"), "label")
+                messageSecondBlock.setFieldValue((locale==='fr_FR' ? "Ok il s'agit de Lyon" : "Ok, it's Lyon"), "label")
                 topicSecondBlock.setFieldValue("CITY2","code")
 
                 addAllConnectionSubBlock(secondIfBlock,[conditionSecondBlock, messageSecondBlock, topicSecondBlock])
 
                 var messageElseBlock = workspace.newBlock('cb_say')
-                messageElseBlock.setFieldValue((locale==='fr_FR' ? "Le nombre d'habitants n'a pas été reconnu" : "The number of inhabitants has not been recognized"), "label")
+                messageElseBlock.setFieldValue((locale==='fr_FR' ? "Ok tu habites à {{/user/local/city}}" : "Ok you live in {{/user/local/city}}"), "label")
 
                 var chooseBlock =  workspace.newBlock('cb_choose')
 
