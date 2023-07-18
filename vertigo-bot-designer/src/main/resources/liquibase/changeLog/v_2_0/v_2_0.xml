@@ -127,4 +127,9 @@
     <changeSet author="skerdudou" id="Drop old statistic export type and old column">
         <sqlFile encoding="utf8" path="/sql/v_2_0/drop_23_07_19.sql" />
     </changeSet>
+    
+    <changeSet author="cflandre" id="Add custom user background color and title font color and change default values">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_07_17.sql" />
+    </changeSet>
+
 </databaseChangeLog>

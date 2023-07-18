@@ -1,8 +1,10 @@
 :root {
-    --background-color: #1aab8d;
+    --background-color: #000091;
+    --font-color: #ffffff;
     --bot-message-bg-color: #ccccc6;
-    --font-color: #000000;
     --bot-message-font-color: #000000;
+    --user-message-bg-color: #e0e0e0;
+    --user-message-font-color: #000000;
     --font-family: Arial, Helvetica, sans-serif;
 }
 .text-primary {
@@ -84,7 +86,7 @@ main, footer {
 
 .q-message-sent .q-message-text-content {
     font-family: var(--font-family) !important;
-    color: var(--font-color) !important;
+    color: var(--user-message-font-color) !important;
     line-height: 24px;
     font-size: 14px;
 }
@@ -104,7 +106,8 @@ main, footer {
 }
 
 .q-message-sent .q-message-text {
-    background-color: var(--background-color) !important;
+    box-shadow: 3px 4px 2px 0px rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--user-message-bg-color) !important;
 }
 
 .custom-header {

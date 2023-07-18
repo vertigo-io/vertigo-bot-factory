@@ -23,10 +23,12 @@
   </head>
   <body style="color:black">
     <div id="q-app" :style="'--background-color: ' + customConfig.backgroundColor
+                      + '; --font-color: ' + customConfig.fontColor
                       + '; --bot-message-bg-color: ' + customConfig.botMessageBackgroundColor
                       + '; --font-family: ' + customConfig.fontFamily
                       + '; --bot-message-font-color: ' + customConfig.botMessageFontColor
-                      + '; --font-color: ' + customConfig.userMessageFontColor + ';'">
+                      + '; --user-message-bg-color: ' + customConfig.userMessageBackgroundColor
+                      + '; --user-message-font-color: ' + customConfig.userMessageFontColor + ';'">
       <q-layout view="hHh lpr fFf">
         <q-layout-header class="custom-header row items-center non-selectable">
           <div class="title col-grow q-ml-md">
