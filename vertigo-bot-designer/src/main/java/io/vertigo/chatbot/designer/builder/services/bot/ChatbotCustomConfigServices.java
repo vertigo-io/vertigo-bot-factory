@@ -48,7 +48,9 @@ public class ChatbotCustomConfigServices implements Component {
 		(oldChatbotCustomConfig.getBotMessageBackgroundColor() != null && !oldChatbotCustomConfig.getBotMessageBackgroundColor().equals(chatbotCustomConfig.getBotMessageBackgroundColor())) ||
 		(oldChatbotCustomConfig.getBotMessageFontColor() != null && !oldChatbotCustomConfig.getBotMessageFontColor().equals(chatbotCustomConfig.getBotMessageFontColor())) ||
 		(oldChatbotCustomConfig.getUserMessageFontColor() != null && !oldChatbotCustomConfig.getUserMessageFontColor().equals(chatbotCustomConfig.getUserMessageFontColor())) ||
-		(oldChatbotCustomConfig.getFofCd()!= null && !oldChatbotCustomConfig.getFofCd().equals(chatbotCustomConfig.getFofCd()));
+		(oldChatbotCustomConfig.getFofCd()!= null && !oldChatbotCustomConfig.getFofCd().equals(chatbotCustomConfig.getFofCd())) ||
+		(oldChatbotCustomConfig.getFontColor() != null && !oldChatbotCustomConfig.getFontColor().equals(chatbotCustomConfig.getFontColor())) ||
+		(oldChatbotCustomConfig.getUserMessageBackgroundColor() != null && !oldChatbotCustomConfig.getUserMessageBackgroundColor().equals(chatbotCustomConfig.getUserMessageBackgroundColor()));
 	}
 
 	private static boolean checkIfEmailOrAttachmentSettingsChanged(final ChatbotCustomConfig oldChatbotCustomConfig, final ChatbotCustomConfig chatbotCustomConfig) {
@@ -76,9 +78,11 @@ public class ChatbotCustomConfigServices implements Component {
 		chatbotCustomConfig.setReinitializationButton(true);
 		chatbotCustomConfig.setDisplayAvatar(true);
 		chatbotCustomConfig.setDisableNlu(false);
-		chatbotCustomConfig.setBackgroundColor("#cdcdcd");
-		chatbotCustomConfig.setBotMessageBackgroundColor("#ccccc6");
+		chatbotCustomConfig.setBackgroundColor("#000091");
+		chatbotCustomConfig.setFontColor("#ffffff");
+		chatbotCustomConfig.setBotMessageBackgroundColor("#ffffff");
 		chatbotCustomConfig.setBotMessageFontColor("#000000");
+		chatbotCustomConfig.setUserMessageBackgroundColor("#E0E0E0");
 		chatbotCustomConfig.setUserMessageFontColor("#000000");
 		chatbotCustomConfig.setFofCd(FontFamilyEnum.ARIAL.name());
 		chatbotCustomConfig.setTotalMaxAttachmentSize(-1L);

@@ -34,9 +34,27 @@
 			function getChatPreview() {
 				return [VertigoUi.vueData.chatbotCustomConfig.fofCd];
 			}
+			function changeBgColor() {
+				if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
+					VertigoUi.vueData.chatbotCustomConfig.backgroundColor = '#000091';
+				}
+				Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
+					element.style.setProperty('--bot-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
+				});
+			}
+
+			function changeFontColor() {
+				if (VertigoUi.vueData.chatbotCustomConfig.fontColor == null) {
+					VertigoUi.vueData.chatbotCustomConfig.fontColor = '#ffffff';
+				}
+				Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
+					element.style.setProperty('--bot-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+				});
+			}
+
 			function changeBotMessageBgColor() {
 				 if (VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor == null) {
-					 VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor = '#cdcdcd';
+					 VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor = '#ffffff';
 				 }
 				 Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
 					 element.style.setProperty('--chat-bot-bg-color', VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor);
@@ -44,11 +62,11 @@
 			}
 
 			function changeUserMessageBgColor() {
-				if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
-					VertigoUi.vueData.chatbotCustomConfig.backgroundColor = '#cdcdcd';
+				if (VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor == null) {
+					VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor = '#e0e0e0';
 				}
 				Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
-					element.style.setProperty('--chat-user-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
+					element.style.setProperty('--chat-user-bg-color', VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor);
 				});
 			}
 
@@ -83,9 +101,14 @@
 				Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
 					element.style.setProperty('--chat-message-font-family', fontFamily.label);
 				});
+				Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-family', fontFamily.label);
+				});
 			}
 
 			document.addEventListener('DOMContentLoaded', function () {
+				changeBgColor();
+				changeFontColor();
 				changeBotMessageBgColor();
 				changeUserMessageBgColor();
 				changeUserMessageFontColor();
@@ -95,10 +118,16 @@
 		</script>
 		<style>
 			.q-message-text--received {
+				margin-left: 12px;
+				border: solid 1px rgba(224, 224, 224, 1);
+				box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.1);
 				color: var(--chat-bot-bg-color) !important;
 				font-family: var(--chat-message-font-family) !important;
 			}
 			.q-message-text--sent {
+				margin-right: 12px;
+				margin-bottom: 12px;
+				box-shadow: 3px 4px 2px 0px rgba(0, 0, 0, 0.1) !important;
 				color: var(--chat-user-bg-color) !important;
 				font-family: var(--chat-message-font-family) !important;
 			}
@@ -107,6 +136,21 @@
 			}
 			.q-message-text-content--sent {
 				color: var(--chat-user-message-font-color) !important;
+			}
+			.q-header-presentation{
+				font-size: 16px;
+				border-bottom-left-radius: 6px;
+				border-bottom-right-radius: 6px;
+				padding: 16px 0px 16px 20px;
+				font-family: var(--chat-message-font-family) !important;
+				color: var(--bot-font-color) !important;
+				background-color: var(--bot-bg-color) !important;
+			}
+			.q-message-text--sent:before, .q-message-text--received:before{
+				display: none !important;
+			}
+			.executor-preview{
+				width:300px; margin-bottom: 20px; margin-top: 20px; border: 2px rgba(0,0,0,0.3) solid; box-shadow: 0px 0px 10px rgba(0,0,0,0.2); padding: 0px; border-radius: 5px;
 			}
 		</style>
 	</head>
@@ -146,8 +190,10 @@
 			<vu:include-data object="chatbotCustomConfig" field="reinitializationButton" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="disableNlu" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="backgroundColor" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="fontColor" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="botMessageBackgroundColor" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="botMessageFontColor"  modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="userMessageBackgroundColor" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="userMessageFontColor"  modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="fofCd" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
@@ -168,7 +214,9 @@
 					<input type="hidden" name="vContext[chatbotCustomConfig][disableNlu]" :value="vueData.chatbotCustomConfig.disableNlu"/>
 				</vu:label-edit>
 
-				<div style="width:300px; margin-bottom: 20px; margin-top: 20px" class="q-px-md">
+				<div class="executor-preview q-px-md">
+					<vu:include-data object="bot" field="name" modifiable="true" />
+					<p class="q-header-presentation">{{vueData.bot.name}}</p>
 					<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
 
 					</q-chat-message>
@@ -185,20 +233,29 @@
 									list="fontFamilies"
 									label="#{bot.styling.font.family}" style="width: 250px; margin-right: 10px"/>
 				<div class="row">
-					<vu:label-edit object="chatbotCustomConfig" field="backgroundColor" class="col-3">
-						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.backgroundColor" @change="function (event) { changeUserMessageBgColor() }" default-value="#cdcdcd" name="vContext[chatbotCustomConfig][backgroundColor]"/>
+					<vu:label-edit object="chatbotCustomConfig" field="backgroundColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.backgroundColor" @change="function (event) { changeBgColor() }" default-value="#000091" name="vContext[chatbotCustomConfig][backgroundColor]"/>
 					</vu:label-edit>
 
-					<vu:label-edit object="chatbotCustomConfig" field="botMessageBackgroundColor" class="col-3">
-						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.botMessageBackgroundColor" @change="function (event) { changeBotMessageBgColor() }" default-value="#cdcdcd" name="vContext[chatbotCustomConfig][botMessageBackgroundColor]"/>
+					<vu:label-edit object="chatbotCustomConfig" field="fontColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.fontColor" @change="function (event) { changeFontColor() }" default-value="#ffffff" name="vContext[chatbotCustomConfig][fontColor]"/>
 					</vu:label-edit>
 
-					<vu:label-edit object="chatbotCustomConfig" field="botMessageFontColor" class="col-3">
-						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" label="Font color"  th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.botMessageFontColor" @change="function (event) { changeBotMessageFontColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][botMessageFontColor]"/>
+					<vu:label-edit object="chatbotCustomConfig" field="botMessageBackgroundColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.botMessageBackgroundColor" @change="function (event) { changeBotMessageBgColor() }" default-value="#ffffff" name="vContext[chatbotCustomConfig][botMessageBackgroundColor]"/>
+					</vu:label-edit>
+				</div>
+				<div class="row">
+					<vu:label-edit object="chatbotCustomConfig" field="botMessageFontColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.botMessageFontColor" @change="function (event) { changeBotMessageFontColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][botMessageFontColor]"/>
 					</vu:label-edit>
 
-					<vu:label-edit object="chatbotCustomConfig" field="userMessageFontColor" class="col-3">
-						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" label="Font color"  th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.userMessageFontColor" @change="function (event) { changeUserMessageFontColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][userMessageFontColor]"/>
+					<vu:label-edit object="chatbotCustomConfig" field="userMessageBackgroundColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.userMessageBackgroundColor" @change="function (event) { changeUserMessageBgColor() }" default-value="#e0e0e0" name="vContext[chatbotCustomConfig][userMessageBackgroundColor]"/>
+					</vu:label-edit>
+
+					<vu:label-edit object="chatbotCustomConfig" field="userMessageFontColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.userMessageFontColor" @change="function (event) { changeUserMessageFontColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][userMessageFontColor]"/>
 					</vu:label-edit>
 				</div>
 

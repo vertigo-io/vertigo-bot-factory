@@ -188,6 +188,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$backgroundColor,
 	/**
+	 * Bot font color.
+	 */
+	fldChatbotCustomConfig$fontColor,
+	/**
 	 * Bot message background color.
 	 */
 	fldChatbotCustomConfig$botMessageBackgroundColor,
@@ -195,6 +199,10 @@ public enum DtResources implements MessageKey {
 	 * Bot message font color.
 	 */
 	fldChatbotCustomConfig$botMessageFontColor,
+	/**
+	 * User message background color.
+	 */
+	fldChatbotCustomConfig$userMessageBackgroundColor,
 	/**
 	 * User message font color.
 	 */
@@ -236,6 +244,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfigExport$backgroundColor,
 	/**
+	 * Bot font color.
+	 */
+	fldChatbotCustomConfigExport$fontColor,
+	/**
 	 * Bot message background color.
 	 */
 	fldChatbotCustomConfigExport$botMessageBackgroundColor,
@@ -243,6 +255,10 @@ public enum DtResources implements MessageKey {
 	 * Bot message font color.
 	 */
 	fldChatbotCustomConfigExport$botMessageFontColor,
+	/**
+	 * User message background color.
+	 */
+	fldChatbotCustomConfigExport$userMessageBackgroundColor,
 	/**
 	 * User message font color.
 	 */

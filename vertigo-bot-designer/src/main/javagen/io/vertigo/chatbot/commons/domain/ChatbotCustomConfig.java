@@ -20,8 +20,10 @@ public final class ChatbotCustomConfig implements Entity {
 	private String botEmailAddress;
 	private Boolean reinitializationButton;
 	private String backgroundColor;
+	private String fontColor;
 	private String botMessageBackgroundColor;
 	private String botMessageFontColor;
+	private String userMessageBackgroundColor;
 	private String userMessageFontColor;
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
@@ -141,6 +143,25 @@ public final class ChatbotCustomConfig implements Entity {
 	
 	/**
 	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot font color'.
+	 * @return String fontColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot font color")
+	public String getFontColor() {
+		return fontColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot font color'.
+	 * @param fontColor String
+	 */
+	public void setFontColor(final String fontColor) {
+		this.fontColor = fontColor;
+	}
+	
+	/**
+	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Bot message background color'.
 	 * @return String botMessageBackgroundColor
 	 */
@@ -175,6 +196,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setBotMessageFontColor(final String botMessageFontColor) {
 		this.botMessageFontColor = botMessageFontColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'User message background color'.
+	 * @return String userMessageBackgroundColor
+	 */
+	@Field(smartType = "STyLabel", label = "User message background color")
+	public String getUserMessageBackgroundColor() {
+		return userMessageBackgroundColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'User message background color'.
+	 * @param userMessageBackgroundColor String
+	 */
+	public void setUserMessageBackgroundColor(final String userMessageBackgroundColor) {
+		this.userMessageBackgroundColor = userMessageBackgroundColor;
 	}
 	
 	/**

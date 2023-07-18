@@ -358,10 +358,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		reinitializationButton,
 		/** Propriété 'Bot background color'. */
 		backgroundColor,
+		/** Propriété 'Bot font color'. */
+		fontColor,
 		/** Propriété 'Bot message background color'. */
 		botMessageBackgroundColor,
 		/** Propriété 'Bot message font color'. */
 		botMessageFontColor,
+		/** Propriété 'User message background color'. */
+		userMessageBackgroundColor,
 		/** Propriété 'User message font color'. */
 		userMessageFontColor,
 		/** Propriété 'Display avatar'. */
@@ -385,10 +389,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		reinitializationButton,
 		/** Propriété 'Bot background color'. */
 		backgroundColor,
+		/** Propriété 'Bot font color'. */
+		fontColor,
 		/** Propriété 'Bot message background color'. */
 		botMessageBackgroundColor,
 		/** Propriété 'Bot message font color'. */
 		botMessageFontColor,
+		/** Propriété 'User message background color'. */
+		userMessageBackgroundColor,
 		/** Propriété 'User message font color'. */
 		userMessageFontColor,
 		/** Propriété 'Bot font family'. */

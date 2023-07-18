@@ -96,8 +96,10 @@ create DtDefinition DtChatbotCustomConfigExport {
     field botEmailAddress                   {domain: DoLabel        label: "Bot email address"                  cardinality:"?"}
 	field reinitializationButton            {domain: DoYesNo        label: "Reinitialization button"            cardinality:"?"}
 	field backgroundColor                   {domain: DoLabel        label: "Bot background color"               cardinality:"?"}
+	field fontColor                         {domain: DoLabel        label: "Bot font color"                     cardinality:"?"}
 	field botMessageBackgroundColor         {domain: DoLabel        label: "Bot message background color"       cardinality:"?"}
 	field botMessageFontColor               {domain: DoLabel        label: "Bot message font color"             cardinality:"?"}
+	field userMessageBackgroundColor        {domain: DoLabel        label: "User message background color"      cardinality:"?"}
 	field userMessageFontColor              {domain: DoLabel        label: "User message font color"            cardinality:"?"}
 	field fontFamily                        {domain: DoLabel        label: "Bot font family"                    cardinality:"?"}
 	field displayAvatar                     {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
