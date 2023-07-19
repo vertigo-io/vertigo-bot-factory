@@ -28,6 +28,7 @@
 
 			<div th:if="${!model.modeReadOnly}">
 				<q-btn-toggle
+					@click="updateDiagramSwitchType()"
 					class="q-mb-md"
 					v-model="vueData.smallTalk.rtyId"
 					toggle-color="primary"
@@ -42,6 +43,8 @@
 			</div>
 
 			<div v-if="vueData.smallTalk.rtyId === 'RICH_TEXT'" >
+				<vu:include-data object="chatbotCustomConfig" field="botMessageBackgroundColor" />
+				<vu:include-data object="chatbotCustomConfig" field="botMessageFontColor" />
 				<c-richtext
 					v-model="vueData.utterTexts[0].text"
 					name="vContext[utterTexts][0][text]"
