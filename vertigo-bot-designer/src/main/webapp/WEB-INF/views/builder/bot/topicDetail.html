@@ -277,7 +277,19 @@
 		  function updateDiagramSwitchType(){
 			  // if the script does not have loaded after the 150ms, it's possible to refresh the diagram using the button in scriptIntentionDetail.html
 			  if(VertigoUi.vueData.topic.ttoCd==='SCRIPTINTENTION')setTimeout(injectionBlockly,150)
+			  else setTimeout(updateSmallTalkRendererSwitchType, 0)
 		  }
+		  function updateSmallTalkRendererSwitchType(){
+			  const bgColor = VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor ? VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor : '#ffffff'
+			  const fontColor = VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor ? VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor : '#000000'
+			  Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
+				  element.style.setProperty('--chat-bot-bg-color', bgColor);
+			  });
+			  Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
+				  element.style.setProperty('--chat-bot-message-font-color', fontColor);
+			  });
+		  }
+		  updateSmallTalkRendererSwitchType()
 	  </script>
   </section>
 </html>
