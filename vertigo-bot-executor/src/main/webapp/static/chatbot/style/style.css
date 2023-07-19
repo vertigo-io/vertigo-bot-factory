@@ -76,7 +76,8 @@ main, footer {
 .text-light{
     color: black !important;
     margin-top: 15px !important;
-    margin-right: 25px !important;
+    text-align: center;
+    margin-bottom: 5px !important;
 }
 
 .q-message-received .q-message-text, .q-message-sent .q-message-text {
@@ -169,6 +170,9 @@ img {
 .btn-send:hover{
     color: var(--font-color) !important;
     background-color: var(--background-color) !important;
+}
+.btn-send:before, .btn-send:after{
+    display: none !important;
 }
 .q-btn.disabled{
     color: rgba(0, 0, 0, 0.5) !important;
