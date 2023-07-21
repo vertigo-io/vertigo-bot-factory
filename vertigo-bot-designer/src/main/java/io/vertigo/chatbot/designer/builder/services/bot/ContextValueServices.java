@@ -2,6 +2,7 @@ package io.vertigo.chatbot.designer.builder.services.bot;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.xml.xpath.XPath;
@@ -14,16 +15,19 @@ import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.ContextValueDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ContextValue;
+import io.vertigo.chatbot.commons.domain.WelcomeTourStep;
 import io.vertigo.chatbot.commons.multilingual.context.ContextValueMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.HistoryServices;
 import io.vertigo.chatbot.designer.builder.services.IRecordable;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.domain.History;
 import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.chatbot.domain.DtDefinitions.ContextValueFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
@@ -46,6 +50,8 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 	private HistoryServices historyServices;
 
 	private static final String URL = "url";
+
+	private static final String XPATHURL = "//input[@id='url']";
 
 	/**
 	 * get ContextValue by id
@@ -70,10 +76,17 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 		if (contextValue.getCvaId()!= null) {
 			action = HistoryActionEnum.UPDATED;
 			final ContextValue oldContextValue = contextValueDAO.get(contextValue.getCvaId());
-			if (!oldContextValue.getLabel().equals(contextValue.getLabel()) || !oldContextValue.getXpath().equals(contextValue.getXpath())) {
+			if(oldContextValue.getLabel().equals(URL)){
+				throw new VUserException(ContextValueMultilingualResources.CONTEXT_VALUE_URL_EDIT_ERROR);
+			}
+			else if (!oldContextValue.getLabel().equals(contextValue.getLabel()) || !oldContextValue.getXpath().equals(contextValue.getXpath())) {
 				nodeServices.updateNodes(bot);
 			}
 		} else {
+			if(contextValue.getLabel().equals(URL)){
+				int nbURL = contextValueDAO.findAll(Criterions.isEqualTo(DtDefinitions.ContextValueFields.botId,bot.getBotId()).and(Criterions.isEqualTo(DtDefinitions.ContextValueFields.label, URL)), DtListState.of(MAX_ELEMENTS_PLUS_ONE)).size();
+				if(nbURL!=0)throw new VUserException(ContextValueMultilingualResources.CONTEXT_VALUE_URL_NEW_ERROR);
+			}
 			action = HistoryActionEnum.ADDED;
 			nodeServices.updateNodes(bot);
 		}
@@ -92,7 +105,12 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 	@Secured("BotUser")
 	public void deleteContextValue(@SecuredOperation("botAdm") final Chatbot bot, final Long cvaId) {
 		final ContextValue contextValue = contextValueDAO.get(cvaId);
-		contextValueDAO.delete(cvaId);
+		if(!contextValue.getLabel().equals(URL)) {
+			contextValueDAO.delete(cvaId);
+		}
+		else{
+			throw new VUserException(ContextValueMultilingualResources.CONTEXT_VALUE_URL_DELETE_ERROR);
+		}
 		nodeServices.updateNodes(bot);
 		record(bot, contextValue, HistoryActionEnum.DELETED);
 	}
@@ -164,5 +182,14 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 	@Override
 	public History record(final Chatbot bot, final ContextValue contextValue, final HistoryActionEnum action) {
 		return historyServices.record(bot, action, contextValue.getClass().getSimpleName(), contextValue.getLabel());
+	}
+
+	@Secured("BotUser")
+	public ContextValue initContextValueURL(@SecuredOperation("botAdm") final Chatbot bot) {
+		final ContextValue contextValue = new ContextValue();
+		contextValue.setBotId(bot.getBotId());
+		contextValue.setLabel(URL);
+		contextValue.setXpath(XPATHURL);
+		return save(bot, contextValue);
 	}
 }
