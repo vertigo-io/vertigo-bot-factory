@@ -163,6 +163,7 @@ public class ChatbotServices implements Component {
 
 		if (newBot) {
 			final TopicCategory topicCategory = topicCategoryServices.initializeBasicCategory(savedChatbot);
+			contextValueServices.initContextValueURL(chatbot);
 			topicServices.initTechnicalTopics(savedChatbot, topicCategory.getTopCatId(), localeManager.getCurrentLocale().toString());
 		}
 
