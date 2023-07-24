@@ -776,7 +776,7 @@ Blockly.Blocks['cb_case'] = {
                 "tooltip": "",
                 "helpUrl": "",
                 "previousStatement": "case_type",
-                "nextStatement": "case_type",
+                "nextStatement": ["case_type", "all"],
             });
     }
 };
