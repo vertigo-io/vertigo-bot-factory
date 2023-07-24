@@ -105,7 +105,6 @@ function extractTxtParams(paramsTxt) {
 		out.push(curentArg);
 	}
 
-	out = out.map(s => s.replace(/<br\s*\/?>/,'\n'));
 	return out;
 }
 
