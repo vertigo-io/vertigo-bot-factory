@@ -376,8 +376,23 @@ function injectionBlockly(mode=false){
         if(VertigoUi.vueData.scriptIntention.script!=null)fromCode();
         workspace.addChangeListener(toCode);
         workspace.addChangeListener(importBlocklyTemplate)
+        workspace.addChangeListener(nameVarValidator)
     }
 }
+
+function  nameVarValidator(event) {
+    if (event.type == 'change' && event.name.startsWith("typeVar")) {
+        let varName = "nameVar" + event.name.substring(7)
+        if (event.newValue.startsWith("global/context/")) {
+            workspace.getBlockById(event.blockId).setFieldValue("     ", varName)
+            workspace.getBlockById(event.blockId).getField(varName).setEnabled(false)
+        } else if (event.oldValue.startsWith("global/context/")) {
+            workspace.getBlockById(event.blockId).setFieldValue("name_var", varName)
+            workspace.getBlockById(event.blockId).getField(varName).setEnabled(true)
+        }
+    }
+}
+
 
 function importBlocklyTemplate(event){
     if(event.type == Blockly.Events.CREATE && event.json.type.startsWith('cb_template')){
