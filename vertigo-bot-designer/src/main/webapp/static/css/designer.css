@@ -103,6 +103,10 @@ img {
 	width: 80px;
 }
 
+#conversationOver{
+	margin-top: 16px;
+}
+
 .detailTypeIcon {
 	height: 120px;
     width: 120px;
