@@ -127,12 +127,14 @@ const chatbot = new Vue({
                     });
                 }
 
+                this.displayOrNotFooterExecutor();
             },
             updateSessionStorage() {
                 sessionStorage.convId = chatbot.convId;
                 sessionStorage.setItem('inputConfig', JSON.stringify(chatbot.inputConfig));
                 sessionStorage.setItem('messages', JSON.stringify(chatbot.messages));
                 sessionStorage.setItem('customConfig', JSON.stringify(chatbot.customConfig));
+                this.displayOrNotFooterExecutor();
             },
             restoreFromSessionStorage() {
                 chatbot.convId = sessionStorage.convId;
@@ -142,6 +144,14 @@ const chatbot = new Vue({
             },
             clearSessionStorage() {
                 sessionStorage.clear();
+            },
+            displayOrNotFooterExecutor(){
+                if(JSON.parse(sessionStorage.getItem("customConfig"))!=null && JSON.parse(sessionStorage.getItem("customConfig")).disableNlu){
+                    document.getElementById('executor-footer').style.visibility = 'hidden';
+                }
+                else{
+                    document.getElementById('executor-footer').style.visibility = 'visible';
+                }
             },
             startConversation() {
                 chatbot.lastUserInteraction = Date.now();
