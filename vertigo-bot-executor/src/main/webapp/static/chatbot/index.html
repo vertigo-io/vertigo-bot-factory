@@ -185,7 +185,7 @@
             </div>
           </q-page>
         </q-page-container>
-        <q-layout-footer id="executor-footer" class="bg-grey-3">
+        <q-layout-footer v-if="!customConfig.disableNlu" id="executor-footer" class="bg-grey-3">
           <div class="row docs-btn non-selectable">
             <div class="col-grow">
               <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
