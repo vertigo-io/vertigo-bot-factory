@@ -175,6 +175,8 @@
 				<vu:label-edit object="chatbotCustomConfig" field="disableNlu">
 					<q-toggle v-model="vueData.chatbotCustomConfig.disableNlu" th::disable="${model.modeReadOnly}"></q-toggle>
 					<input type="hidden" name="vContext[chatbotCustomConfig][disableNlu]" :value="vueData.chatbotCustomConfig.disableNlu"/>
+					<q-icon style="margin: 8px; color: black" name="help_outlined" size="1.5rem"/>
+					<q-tooltip>[[#{bot.disableNlu}]]</q-tooltip>
 				</vu:label-edit>
 
 				<div class="executor-preview q-px-md">

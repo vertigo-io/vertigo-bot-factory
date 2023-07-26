@@ -18,6 +18,7 @@
 			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
 			<vu:include-data object="topic" field="title"/>
 			<vu:include-data object="contextValues" field="label" />
+			<vu:include-data object="chatbotCustomConfig" field="disableNlu" />
 			<div id="scriptintention-buttons">
 				<div id="scriptintention-buttons-export-emoji">
 					<q-btn class="q-btn-buttons" th:label="#{script.diagram.export}" color="primary" @click="exportDiagramToPng()"></q-btn>

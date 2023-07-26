@@ -142,6 +142,7 @@ function getToolBox(){
             },
             // Catégorie 4: OTHER
             {
+                "id": "category-other",
                 "kind": "category",
                 "name": "%{BKY_CAT_OTHER}",
                 "colour": 180,
@@ -313,6 +314,18 @@ function getToolBox(){
             },
         ]
     };
+    // if disableNlu, remove the block corresponding to grammar cb_inputString
+    if(VertigoUi.vueData.chatbotCustomConfig.disableNlu){
+        let indexOfBlockInputString;
+        let indexOfCatInputString;
+        toolbox.contents.forEach(cat =>{
+            if(cat.id==='category-other') indexOfCatInputString = toolbox.contents.indexOf(cat)
+        })
+        toolbox.contents[indexOfCatInputString].contents.forEach(block =>{
+            if(block.type==='cb_inputString') indexOfBlockInputString = toolbox.contents[indexOfCatInputString].contents.indexOf(block)
+        })
+        toolbox.contents[indexOfCatInputString].contents.splice(indexOfBlockInputString,1)
+    }
     return toolbox;
 }
 
