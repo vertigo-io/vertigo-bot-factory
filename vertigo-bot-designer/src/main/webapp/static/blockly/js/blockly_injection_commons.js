@@ -394,7 +394,7 @@ function injectionBlockly(mode=false){
 }
 
 function  nameVarValidator(event) {
-    if (event.type == 'change' && event.name.startsWith("typeVar")) {
+    if (event.type == 'change' && event.name!=null && event.name.startsWith("typeVar")) {
         let varName = "nameVar" + event.name.substring(7)
         if (event.newValue.startsWith("global/context/")) {
             workspace.getBlockById(event.blockId).setFieldValue("     ", varName)
