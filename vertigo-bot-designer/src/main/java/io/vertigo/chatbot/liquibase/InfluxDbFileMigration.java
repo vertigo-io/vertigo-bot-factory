@@ -45,7 +45,7 @@ public class InfluxDbFileMigration extends InfluxDbMigration {
 				.replace("#TO#", "|> to(bucket:\"" + destBucket + "\")");
 
 		LOGGER.info("Compute new data.");
-		executeRequestChunked(request, Period.ofMonths(1));
+		executeRequestChunked(request, Period.ofDays(1));
 
 		if (toTmpBucket) {
 			replaceWithDelete(destBucket);
@@ -60,14 +60,14 @@ public class InfluxDbFileMigration extends InfluxDbMigration {
 					(from, to) -> {
 						influxDBClient.getDeleteApi().delete(from, to, "_measurement=\"" + measurement + "\"", influxDbName, influxDbOrg);
 					},
-					Period.ofMonths(1));
+					Period.ofDays(7));
 		}
 
 		LOGGER.info("Persist new data.");
 		final var copyRequest = "from(bucket:\"" + destBucket + "\")\n" +
 				"#RANGE#\n" +
 				"|> to(bucket:\"" + influxDbName + "\")";
-		executeRequestChunked(copyRequest, Period.ofMonths(1));
+		executeRequestChunked(copyRequest, Period.ofDays(1));
 
 		LOGGER.info("Finalizing.");
 		deleteBucket(destBucket);
