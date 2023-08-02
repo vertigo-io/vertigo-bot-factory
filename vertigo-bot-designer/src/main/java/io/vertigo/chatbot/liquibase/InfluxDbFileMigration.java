@@ -60,7 +60,7 @@ public class InfluxDbFileMigration extends InfluxDbMigration {
 					(from, to) -> {
 						influxDBClient.getDeleteApi().delete(from, to, "_measurement=\"" + measurement + "\"", influxDbName, influxDbOrg);
 					},
-					Period.ofDays(7));
+					Period.ofDays(1));
 		}
 
 		LOGGER.info("Persist new data.");

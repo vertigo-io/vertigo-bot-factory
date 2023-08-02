@@ -34,7 +34,7 @@ public abstract class InfluxDbMigration implements CustomTaskChange {
 
 	private static final Logger LOGGER = LogManager.getLogger(InfluxDbMigration.class);
 
-	private static final int INFLUX_READ_TIMEOUT_MINUTE = 20;
+	private static final int INFLUX_READ_TIMEOUT_MINUTE = 60;
 
 	protected ParamManager paramManager;
 
