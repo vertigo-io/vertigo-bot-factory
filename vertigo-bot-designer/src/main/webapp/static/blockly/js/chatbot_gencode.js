@@ -173,6 +173,10 @@ Blockly.BotScript['cb_buttonfile'] = function(block) {
 	let params = getBlockParams(block);
 	return "button:file" +formatString(params[0].getValue()) + params[1].getValue() +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
+Blockly.BotScript['cb_buttonurl'] = function(block) {
+	let params = getBlockParams(block);
+	return "button:url" +formatString(params[0].getValue()) + ' ' + params[1].getValue() + ' ' + params[2].getValue() + ' ' + (params[3].getValue()==='true' ? 'true': '') +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
 
 
 // *****************************
@@ -278,6 +282,15 @@ Blockly.BotScript['cb_rating'] = function(block) {
 	let params = getBlockParams(block);
 	let name = getBlockName(block);
 	return name +formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
+Blockly.BotScript['cb_cards'] = function(block) {
+	let params = getBlockParams(block);
+	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')
+	return "begin choose:card" + formatVariable(params[1].getValue(),params[2].getValue()) + formatString(params[0].getValue()) +"\r\n" + subBlocks + 'end ' + "choose:card"+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
+Blockly.BotScript['cb_card'] = function(block) {
+	let params = getBlockParams(block);
+	return "card " + params[2].getValue() + ' ' + params[1].getValue() + formatString(params[0].getValue()) + params[3].getValue() +'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 
 // *****************************

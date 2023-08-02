@@ -1,5 +1,6 @@
 var workspace;
 var varTypeDropdownOptions =[];
+var pathMediaBlockly;
 
 // Default values of varTypes (local, global and all contexts)
 varTypeDropdownOptions.push(["%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}", "local"])
@@ -166,6 +167,18 @@ function getToolBox(){
                     {
                         "kind": "block",
                         "type": "cb_welcometour"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_jsevent"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_cards"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_card"
                     }
                 ]
             },
@@ -182,6 +195,10 @@ function getToolBox(){
                     {
                         "kind": "block",
                         "type": "cb_button"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_buttonurl"
                     },
                     {
                         "kind": "block",
@@ -309,6 +326,10 @@ function getToolBox(){
                     {
                         "kind": "block",
                         "type": "cb_template_FAQdynamique"
+                    },
+                    {
+                        "kind": "block",
+                        "type": "cb_template_listOfCards"
                     }
                 ]
             },
@@ -363,7 +384,7 @@ function injectionBlockly(mode=false){
         collapse: false,
         maxBlocks: 500,
         maxInstances: {},
-        media: '/vertigo-bot-designer/static/blockly/media/',
+        media: pathMediaBlockly,
         readOnly: mode,
         renderer: 'custom_renderer',
         scrollbars: true,
@@ -649,6 +670,37 @@ function importBlocklyTemplate(event){
                 sequence.initSvg();
                 sequence.render();
                 addAllConnectionSubBlock(sequence, [firstMessage, buttonsFAQ, switchFAQ, lastMessage, topicIdle])
+
+                templateBlock.dispose()
+                break;
+            case 'cb_template_listOfCards':
+                var sequence = workspace.newBlock('cb_sequence')
+
+                var firstMessage = workspace.newBlock('cb_say')
+                firstMessage.setFieldValue((locale==='fr_FR' ? "Ceci est une démonstration d'une liste de cartes imagées" : "This is demonstration of a list of cards"),"label")
+
+                var listCard = workspace.newBlock('cb_cards')
+                listCard.setFieldValue((locale==='fr_FR' ? "Que souhaitez-vous faire ?" : "What do you want to do ?"), "question")
+                listCard.setFieldValue("faq", "nameVar")
+                let cards = []
+                cards.push([(locale==='fr_FR' ? "Deuxième ville la plus peuplée" : "The second most populated city"), "LYON" , "Lyon" , "https://www.larousse.fr/encyclopedie/data/images/1314872-Lyon.jpg"])
+                cards.push([(locale==='fr_FR' ? "La capitale" : "The capital"), "PARIS", "Paris", "https://www.larousse.fr/encyclopedie/data/images/1313802-La_tour_Eiffel.jpg"])
+                cards.push([(locale==='fr_FR' ? "Autre ville" : "Other city"), "CITY" , (locale==='fr_FR' ? "Ville" : "City") , "url_exemple"])
+                let cardsBlocks = []
+                for(let i=0; i<cards.length; i++){
+                    let cardBlock = workspace.newBlock('cb_card')
+                    cardBlock.setFieldValue(cards[i][0],"label")
+                    cardBlock.setFieldValue(cards[i][1],"code")
+                    cardBlock.setFieldValue(cards[i][2],"title")
+                    cardBlock.setFieldValue(cards[i][3],"url")
+                    cardsBlocks.push(cardBlock)
+                }
+
+                addAllConnectionSubBlock(listCard,cardsBlocks)
+
+                sequence.initSvg();
+                sequence.render();
+                addAllConnectionSubBlock(sequence, [firstMessage, listCard])
 
                 templateBlock.dispose()
                 break;
