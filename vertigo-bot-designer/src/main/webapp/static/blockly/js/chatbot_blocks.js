@@ -403,6 +403,70 @@ Blockly.Blocks['cb_buttonfile'] = {
             });
     }
 };
+Blockly.Blocks['cb_buttonurl'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "buttonurl",
+                "message0": "%{BKY_BUT_BUTURL_TITLE} %1 %{BKY_COMMONS_SENT_ASSOCIATED} %2 %3 %{BKY_MES_LINK_TITLE} %4 %5 %{BKY_BUT_BUT_VALUEIFCLICK} %6 %7 %{BKY_MES_LINK_OPTION_TARGET} %8",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "question",
+                        "text": "%{BKY_COMMONS_SAMPLE_BUTFILE_SENTENCE}"
+                    },
+
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "code",
+                        "text": "%{BKY_COMMONS_SAMPLE_BUTURL_VALUEIFCLICK}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "url",
+                        "text": "%{BKY_COMMONS_SAMPLE_LINK}",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "optionTarget",
+                        "options": [
+                            [
+                                "%{BKY_COMMONS_OPTION_YES}",
+                                "true"
+                            ],
+                            [
+                                "%{BKY_COMMONS_OPTION_NO}",
+                                "false"
+                            ]
+                        ]
+                    },
+                ],
+                "previousStatement": [
+                    "button_type",
+                ],
+                "nextStatement": [
+                    "button_type"
+                ],
+                "colour": 210,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
 // *****************************
 // ******CATEGORIE MESSAGE******
 // *****************************
@@ -1130,6 +1194,134 @@ Blockly.Blocks['cb_welcometour'] = {
             });
     }
 };
+Blockly.Blocks['cb_jsevent'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "jsevent",
+                "lastDummyAlign0": "CENTRE",
+                "message0": "%{BKY_OTHER_JSE_TITLE} %1",
+                "args0": [
+                    {
+                        "type": "field_input",
+                        "name": "code",
+                        "text": "%{BKY_COMMONS_SAMPLE_WT_CODE}"
+                    }
+                ],
+                "inputsInline": true,
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "style": "conflu_welcometour_block",
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+Blockly.Blocks['cb_cards'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "choose:card",
+                "message0": "%{BKY_OTHER_CARDS_TITLE} %1 %{BKY_COMMONS_QUEST_ASSOCIATED} %2 %3 %{BKY_COMMONS_VARIABLE_TITLE} %4 %5 %6  %7",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "question",
+                        "text": "%{BKY_COMMONS_SAMPLE_LISTCARD_SENTENCE}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "typeVar",
+                        "options": varTypeDropdownOptions
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "nameVar",
+                        "text": "%{BKY_COMMONS_LIST_CARD_VARIABLE_NAMEVAR}",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "input_statement",
+                        "name": "SUB_BLOCKS",
+                        "check":[
+                            "card_type",
+                        ]
+                    }
+                ],
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "colour": 160,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+Blockly.Blocks['cb_card'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "card",
+                "message0": "%{BKY_OTHER_CARD_TITLE} %1 %{BKY_COMMONS_SENT_ASSOCIATED} %2 %3 %{BKY_OTHER_CARD_CODE} %4 %5 %{BKY_OTHER_CARD_MESS_TITLE} %6 %7 %{BKY_OTHER_CARD_LINK_TITLE} %8",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "label",
+                        "text": "%{BKY_COMMONS_SAMPLE_CARD_SENTENCE}"
+                    },
+
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "code",
+                        "text": "%{BKY_COMMONS_SAMPLE_CARD_CODE}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "title",
+                        "text": "%{BKY_COMMONS_SAMPLE_CARD_MESS_TITLE}",
+                        "check": "String"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "url",
+                        "text": "%{BKY_COMMONS_SAMPLE_LINK_CITY}",
+                        "check": "String"
+                    },
+                ],
+                "previousStatement": [
+                    "card_type",
+                ],
+                "nextStatement": [
+                    "card_type"
+                ],
+                "colour": 150,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
 // *****************************
 // ******CATEGORIE CONFLUENCE*****
 // *****************************
@@ -1341,6 +1533,26 @@ Blockly.Blocks['cb_template_FAQdynamique'] = {
                 "previousStatement": "all",
                 "nextStatement": "all",
                 "style": "switch_block",
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
+Blockly.Blocks['cb_template_listOfCards'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "template",
+                "message0": "%{BKY_TEMPLATE_CARDS_TITLE} %1 ",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    }
+                ],
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "colour": 160,
                 "tooltip": "",
                 "helpUrl": ""
             });

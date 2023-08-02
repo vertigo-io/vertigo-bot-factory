@@ -173,6 +173,9 @@ function resolveCbBlockType(type) {
 		case 'choose:button:file':
 			return {type: "cb_buttonsfile"};
 			break;
+		case 'choose:card':
+			return {type: "cb_cards"};
+			break;
 		case 'eq':
 			return {type: "cb_condition", qualifier: "eq"};
 			break;
@@ -203,6 +206,10 @@ function resolveCbBlockType(type) {
 			return {type: "cb_mail",  qualifier: "attachment"}
 		case "button:file":
 			return {type: "cb_buttonfile"}
+		case "button:url":
+			return {type: "cb_buttonurl"}
+		case "card":
+			return {type: "cb_card"}
 		case "confluence:search":
 			return {type: "cb_confluencesearch"}
 		case "jira:issue:create":
@@ -364,6 +371,17 @@ function createBlock(type, isComposite, params = []) {
 		params[0] = params[1]
 		params[1] = lienParams[0]
 		params.push(lienParams[1])
+	}else if(resolvedType.type==='cb_cards'){
+		let lienParams = paramsFormatVariable(params[0])
+		params[0] = params[1]
+		params[1] = lienParams[0]
+		params.push(lienParams[1])
+	}else if(resolvedType.type==='cb_buttonurl'){
+		if(params[3]!='true') params[3]='false'
+	}else if(resolvedType.type==='cb_card'){
+		let valueTemp = params[2]
+		params[2] = params[0]
+		params[0] = valueTemp
 	}else if(resolvedType.type==='cb_confluencesearch'){
 		let lienParams = paramsFormatVariable(params[0])
 		let questions = [params[1], params[2]]

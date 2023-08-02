@@ -59,6 +59,7 @@ Blockly.Msg["COMMONS_SAMPLE_BUT_SENTENCE"] = "Oui je veux";
 Blockly.Msg["COMMONS_SAMPLE_BUT_VALUEIFCLICK"] = "OUI";
 Blockly.Msg["COMMONS_SAMPLE_BUTFILE_SENTENCE"] = "Le formulaire est prêt à être envoyer";
 Blockly.Msg["COMMONS_SAMPLE_BUTFILE_VALUEIFCLICK"] = "PJ";
+Blockly.Msg["COMMONS_SAMPLE_BUTURL_VALUEIFCLICK"] = "URL";
 Blockly.Msg["COMMONS_SAMPLE_LINK"] = "https://www.kleegroup.com/fr";
 Blockly.Msg["COMMONS_SAMPLE_IMAGE"] = "https://www.documation.fr/logo/97ccfc1f8843356logo_kleegroup_noir.png";
 Blockly.Msg["COMMONS_SAMPLE_MAIL_SUBJECT"] = "var_objet";
@@ -82,6 +83,12 @@ Blockly.Msg["COMMONS_SAMPLE_JIRA_ISSUE_SENTENCE"] = "Votre ticket est consultabl
 Blockly.Msg["COMMONS_SAMPLE_JIRA_FIELD_QUEST"] = "Quelle est la référence ?";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_FIELD_VAR"] = "reference";
 Blockly.Msg["COMMONS_SAMPLE_SAY"] = "message";
+Blockly.Msg["COMMONS_SAMPLE_LISTCARD_SENTENCE"] = "Quelle est votre ville préférée ?";
+Blockly.Msg["COMMONS_LIST_CARD_VARIABLE_NAMEVAR"] = "ville";
+Blockly.Msg["COMMONS_SAMPLE_CARD_SENTENCE"] = "La deuxième ville plus peuplé";
+Blockly.Msg["COMMONS_SAMPLE_CARD_CODE"] = "LYON";
+Blockly.Msg["COMMONS_SAMPLE_CARD_MESS_TITLE"] = "Lyon";
+Blockly.Msg["COMMONS_SAMPLE_LINK_CITY"] = "https://www.larousse.fr/encyclopedie/data/images/1314872-Lyon.jpg";
 
 // *****************************
 // **** CATEGORIE SEQUENCE *****
@@ -113,6 +120,7 @@ Blockly.Msg["BUT_LISTBUTFILE_TITLE"] = "Liste boutons avec fichiers/PJ";
 Blockly.Msg["BUT_BUT_TITLE"] = "Bouton";
 Blockly.Msg["BUT_BUT_VALUEIFCLICK"] = "Valeur variable si clique:";
 Blockly.Msg["BUT_BUTFILE_TITLE"] = "Bouton avec fichier/PJ";
+Blockly.Msg["BUT_BUTURL_TITLE"] = "Bouton avec lien URL";
 
 // *****************************
 // ***** CATEGORIE MESSAGE *****
@@ -166,6 +174,12 @@ Blockly.Msg["OTHER_APPEND_TITLE"] = "Ajout caractères en fin variable";
 Blockly.Msg["OTHER_RATING_TITLE"] = "Evaluation/Note";
 Blockly.Msg["OTHER_RATING_VAR_TITLE"] = "Variable stockage note:";
 Blockly.Msg["OTHER_WT_TITLE"] = "Guide applicatif, code:";
+Blockly.Msg["OTHER_JSE_TITLE"] = "JS Event, code:";
+Blockly.Msg["OTHER_CARDS_TITLE"] = "Listes de cartes avec images";
+Blockly.Msg["OTHER_CARD_TITLE"] = "Carte";
+Blockly.Msg["OTHER_CARD_CODE"] = "Code carte:";
+Blockly.Msg["OTHER_CARD_MESS_TITLE"] = "Titre carte:";
+Blockly.Msg["OTHER_CARD_LINK_TITLE"] = "Lien image:";
 
 // *****************************
 // *** CATEGORIE CONFLUENCE ****
@@ -189,3 +203,4 @@ Blockly.Msg["TEMPLATE_LISTBUTTONS_TITLE"] = "Modèle listes de boutons";
 Blockly.Msg["TEMPLATE_IFELSE_TITLE"] = "Modèle avec conditions si/sinon";
 Blockly.Msg["TEMPLATE_JIRA_TITLE"] = "Modèle création ticket Jira";
 Blockly.Msg["TEMPLATE_FAQ_TITLE"] = "Modèle FAQ dynamique";
+Blockly.Msg["TEMPLATE_CARDS_TITLE"] = "Modèle liste cartes imagées";
