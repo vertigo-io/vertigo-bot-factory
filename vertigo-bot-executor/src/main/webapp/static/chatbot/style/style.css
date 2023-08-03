@@ -121,6 +121,17 @@ main, footer {
     color: var(--font-color) !important;
 }
 
+.container-custom-localize{
+    max-height: 42px;
+    line-height: 1em;
+}
+
+.btn-custom-localize{
+    font-size: 0.5rem;
+    height: 21px !important;
+    padding: 0 10px !important;
+}
+
 .q-message-avatar {
     background-color: transparent;
     -moz-user-select: none !important;

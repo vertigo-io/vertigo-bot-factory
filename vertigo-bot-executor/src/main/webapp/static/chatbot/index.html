@@ -34,6 +34,10 @@
           <div class="title col-grow q-ml-md">
             {{ botName }}
           </div>
+          <div class="column" style="max-height: 42px">
+            <q-btn class="btn-custom-localize" @click="changeLocal('fr_FR')">fr</q-btn>
+            <q-btn class="btn-custom-localize" @click="changeLocal('en_US')">en</q-btn>
+          </div>
           <q-btn round
                  class="btn-rotate"
                  flat

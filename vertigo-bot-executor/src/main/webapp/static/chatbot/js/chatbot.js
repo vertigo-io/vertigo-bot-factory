@@ -423,6 +423,11 @@ const chatbot = new Vue({
                 chatbot.rating = false;
                 chatbot.clearSessionStorage();
                 chatbot.initBot();
+            },
+            // Function to complete to switch to another bot
+            changeLocal(locale){
+                alert((locale==='fr_FR' ? "Êtes-vous sûr de vouloir passer au bot en français ? La discussion actuelle va être terminé" : "Are you sure you want to switch to the French bot? The current discussion is about to deleted"))
+
             }
         }
     })
