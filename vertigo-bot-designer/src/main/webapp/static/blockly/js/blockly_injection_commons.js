@@ -684,7 +684,7 @@ function importBlocklyTemplate(event){
                 listCard.setFieldValue("faq", "nameVar")
                 let cards = []
                 cards.push([(locale==='fr_FR' ? "Deuxième ville la plus peuplée" : "The second most populated city"), "LYON" , "Lyon" , "https://www.larousse.fr/encyclopedie/data/images/1314872-Lyon.jpg"])
-                cards.push([(locale==='fr_FR' ? "La capitale" : "The capital"), "PARIS", "Paris", "https://www.larousse.fr/encyclopedie/data/images/1313802-La_tour_Eiffel.jpg"])
+                cards.push([(locale==='fr_FR' ? "La capitale" : "The capital"), "PARIS", "Paris", "https://www.larousse.fr/encyclopedie/data/cartes/1300285-Paris.jpg"])
                 cards.push([(locale==='fr_FR' ? "Autre ville" : "Other city"), "CITY" , (locale==='fr_FR' ? "Ville" : "City") , "url_exemple"])
                 let cardsBlocks = []
                 for(let i=0; i<cards.length; i++){

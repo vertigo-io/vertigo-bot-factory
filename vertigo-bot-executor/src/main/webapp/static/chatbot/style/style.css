@@ -192,8 +192,15 @@ img {
     border-bottom: 0px solid !important;
 }
 
+/* carousel customization */
 .custom-carousel {
+    border-radius: 5px !important;
     background-color: var(--background-color) !important;
+}
+.q-carousel-right-arrow, .q-carousel-left-arrow{
+    transition: transform 1s ease-in-out !important;
+    background-color: var(--user-message-bg-color) !important;
+    color: var(--user-message-font-color) !important;
 }
 
 .q-layout-footer{
