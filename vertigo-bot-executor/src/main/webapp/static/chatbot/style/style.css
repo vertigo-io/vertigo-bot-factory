@@ -212,6 +212,7 @@ img {
     transition: transform 1s ease-in-out !important;
     background-color: var(--user-message-bg-color) !important;
     color: var(--user-message-font-color) !important;
+    border: 2px var(--user-message-font-color) solid !important;
 }
 
 .q-layout-footer{
