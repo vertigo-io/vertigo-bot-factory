@@ -31,6 +31,24 @@
 							</a>
 						</div>
 					</div>
+					<div class="q-pa-md">
+						<q-btn-dropdown color="primary" icon="language" th:label="#{parent.language}">
+							<q-list>
+								<!-- one item by language -->
+								<q-item clickable v-close-popup @click="changeLocale('fr_FR')">
+									<q-item-section>
+										<q-item-label th:text="#{parent.language.french}"></q-item-label>
+									</q-item-section>
+								</q-item>
+
+								<q-item clickable v-close-popup @click="changeLocale('en_US')">
+									<q-item-section>
+										<q-item-label th:text="#{parent.language.english}"></q-item-label>
+									</q-item-section>
+								</q-item>
+							</q-list>
+						</q-btn-dropdown>
+					</div>
 					<div>
 						<vu:include-data-primitive key="personName" />
 						<q-btn-dropdown color="primary" icon="mdi-account" th:label="${model.personName}">

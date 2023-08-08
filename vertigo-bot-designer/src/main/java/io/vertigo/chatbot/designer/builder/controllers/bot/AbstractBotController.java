@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -52,6 +53,8 @@ import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
+import org.springframework.web.bind.annotation.RequestParam;
+import static io.vertigo.chatbot.designer.utils.UserSessionUtils.getUserSession;
 
 public abstract class AbstractBotController extends AbstractDesignerController {
 
@@ -233,6 +236,16 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 
 	protected Long getBotId(final ViewContext viewContext) {
 		return viewContext.getUiObject(botKey).getLong("botId");
+	}
+
+	@PostMapping("/_changeLocale")
+	public ViewContext changeLocal(final ViewContext viewContext,
+										   @RequestParam("locale") final String locale) {
+		if(locale.equals(Locale.FRANCE.toString()))
+			getUserSession().setLocale(Locale.FRANCE);
+		else getUserSession().setLocale(Locale.US);
+		viewContext.publishRef(localeKey, locale);
+		return viewContext;
 	}
 
 }
