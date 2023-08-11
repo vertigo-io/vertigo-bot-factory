@@ -241,11 +241,15 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	@PostMapping("/_changeLocale")
 	public ViewContext changeLocal(final ViewContext viewContext,
 										   @RequestParam("locale") final String locale) {
-		if(locale.equals(Locale.FRANCE.toString()))
-			getUserSession().setLocale(Locale.FRANCE);
-		else getUserSession().setLocale(Locale.US);
-		viewContext.publishRef(localeKey, locale);
-		return viewContext;
+
+        if(localeManager.getCurrentLocale().toString().equals(locale)) throw new VUserException(BotMultilingualResources.MULTILINGUAL_RESSOURCES_KO);
+		else{
+			if(locale.equals(Locale.FRANCE.toString()))
+				getUserSession().setLocale(Locale.FRANCE);
+			else getUserSession().setLocale(Locale.US);
+            viewContext.publishRef(localeKey, locale);
+            return viewContext;
+        }
 	}
 
 }

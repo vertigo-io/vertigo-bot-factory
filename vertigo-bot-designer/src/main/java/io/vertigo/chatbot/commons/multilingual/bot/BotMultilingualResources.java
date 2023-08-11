@@ -40,5 +40,8 @@ public enum BotMultilingualResources implements MessageKey {
 
 	STATISTIC,
 
-	EXPORT_ZIP_FILENAME
+	EXPORT_ZIP_FILENAME,
+
+	MULTILINGUAL_RESSOURCES_KO
+
 }

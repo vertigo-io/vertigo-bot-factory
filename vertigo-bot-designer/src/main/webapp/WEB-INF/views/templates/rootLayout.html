@@ -79,20 +79,15 @@
 	</vu:page>
 
 	<script>
-		function changeLocale(locale) {
-			if (VertigoUi.vueData.locale) {
-				if (VertigoUi.vueData.locale != locale || typeof VertigoUi.vueData.locale=='undefined') {
-					postChangeLocal(locale);
-					location.reload();
-				} else alert(VertigoUi.vueData.locale == 'fr_FR' ? "La langue selectionné est déjà celle appliquée" : "The selected language is already the current language")
-			}else{
-				alert("Veuillez sélectionner un bot avant de pouvoir changer la langue de la plateforme d'accompagnement pour ce bot")
-			}
-		}
 		function postChangeLocal(locale) {
 			VUiPage.httpPostAjax("_changeLocale", {
 				'locale': locale,
-			})
+			},
+			{
+			  onSuccess: function() {
+				  location.reload();
+		    	}
+			});
 		}
 	</script>
 

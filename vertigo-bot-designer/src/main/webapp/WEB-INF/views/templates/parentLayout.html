@@ -32,16 +32,16 @@
 						</div>
 					</div>
 					<div class="q-pa-md">
-						<q-btn-dropdown color="primary" icon="language" th:label="#{parent.language}">
+						<q-btn-dropdown v-if="VertigoUi.vueData.locale" color="primary" icon="language" th:label="#{parent.language}">
 							<q-list>
 								<!-- one item by language -->
-								<q-item clickable v-close-popup @click="changeLocale('fr_FR')">
+								<q-item clickable v-close-popup @click="postChangeLocal('fr_FR')">
 									<q-item-section>
 										<q-item-label th:text="#{parent.language.french}"></q-item-label>
 									</q-item-section>
 								</q-item>
 
-								<q-item clickable v-close-popup @click="changeLocale('en_US')">
+								<q-item clickable v-close-popup @click="postChangeLocal('en_US')">
 									<q-item-section>
 										<q-item-label th:text="#{parent.language.english}"></q-item-label>
 									</q-item-section>
