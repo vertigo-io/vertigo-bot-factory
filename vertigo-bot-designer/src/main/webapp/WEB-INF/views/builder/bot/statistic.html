@@ -374,62 +374,34 @@
             return from <= to;
         }
 
-        function changeChatMessageStyle(){
-            changeBotMessageBgColor()
-            changeBotMessageFontColor()
-            changeUserMessageBgColor()
-            changeUserMessageFontColor()
-        }
-
-        function changeBotMessageBgColor() {
-            if (VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor == null) {
-                VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor = '#ffffff';
-            }
-            Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-bot-bg-color', VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor);
-            });
-        }
-
-        function changeUserMessageBgColor() {
-            if (VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor == null) {
-                VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor = '#e0e0e0';
-            }
-            Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-user-bg-color', VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor);
-            });
-        }
-
-        function changeBotMessageFontColor() {
-            if (VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor == null) {
-                VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor = '#000000';
-            }
-            Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-bot-message-font-color', VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor);
-            });
-        }
-
-        function changeUserMessageFontColor() {
-            if (VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor == null) {
-                VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor = '#000000';
-            }
-            Array.from(document.getElementsByClassName('q-message-text-content--sent')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-user-message-font-color', VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor);
-            });
-        }
     </script>
     <style>
-        .q-message-text--received {
-            margin-left: 12px;
-            border: solid 1px rgba(224, 224, 224, 1);
-            box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.1);
+        .q-message-text--sent:before,
+        .q-message-text--received:before{
+            display: none !important;
         }
+        
         .q-message-text--sent {
             margin-right: 12px;
             margin-bottom: 12px;
             box-shadow: 3px 4px 2px 0px rgba(0, 0, 0, 0.2) !important;
+            color: var(--chat-user-message-bg-color) !important;
+            font-family: var(--chat-message-font-family) !important;
         }
-        .q-message-text--sent:before, .q-message-text--received:before{
-            display: none !important;
+        .q-message-text-content--sent {
+            color: var(--chat-user-message-font-color) !important;
+        }
+        
+        
+        .q-message-text--received {
+            margin-left: 12px;
+            border: solid 1px rgba(224, 224, 224, 1);
+            box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.1);
+            color: var(--chat-message-bg-color) !important;
+            font-family: var(--chat-message-font-family) !important;
+        }
+        .q-message-text-content--received {
+            color: var(--chat-message-font-color) !important;
         }
     </style>
 </head>
@@ -683,7 +655,7 @@
                 </vu:column>
             </vu:table>
 
-            <q-dialog ref="conversationDetailsDialog"  @show="function (event) { changeChatMessageStyle() }">
+            <q-dialog ref="conversationDetailsDialog">
                 <q-card style="width: 600px; height: 500px;">
                     <q-card-section>
                         <div class="text-h6 q-ma-md" th:text="#{analytics.conversation.detail}">
@@ -831,10 +803,27 @@
         }
         
         function loadChatMessageStyle() {
+            const botMessageBackgroundColor = orElse(VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor, '#cdcdcd');
+            const botMessageFontColor = orElse(VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor, '#000');
+            
+            const userMessageBackgroundColor = orElse(VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor, '#cdcdcd');
+            const userMessageFontColor = orElse(VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor, '#000');
+            
             const fofCd = orElse(VertigoUi.vueData.chatbotCustomConfig.fofCd, 'ARIAL');
             const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
                 return fontFamily.fofCd === fofCd
             });
+            
+            // Get the root element
+            var r = document.querySelector(':root');
+            
+            r.style.setProperty('--chat-message-bg-color', botMessageBackgroundColor);
+            r.style.setProperty('--chat-message-font-color', botMessageFontColor);
+            
+            r.style.setProperty('--chat-user-message-bg-color', userMessageBackgroundColor);
+            r.style.setProperty('--chat-user-message-font-color', userMessageFontColor);
+            
+            r.style.setProperty('--chat-message-font-family', fontFamily.label);
         }
         
         loadChatMessageStyle();
