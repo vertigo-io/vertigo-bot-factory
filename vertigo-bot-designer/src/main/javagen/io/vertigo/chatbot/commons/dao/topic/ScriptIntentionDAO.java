@@ -56,7 +56,7 @@ public final class ScriptIntentionDAO extends DAO<ScriptIntention, java.lang.Lon
  " 				where top.bot_id = #botId#\n" + 
  " 				AND top.is_enabled = true",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtScriptIntention")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtScriptIntention", name = "sins")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.ScriptIntention> getAllActiveScriptIntentionByBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetAllActiveScriptIntentionByBot")
 				.addValue("botId", botId)

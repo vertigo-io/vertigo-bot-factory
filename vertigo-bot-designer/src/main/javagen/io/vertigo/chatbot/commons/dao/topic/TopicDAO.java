@@ -56,7 +56,7 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
  " 			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)\n" + 
  " 			where tpc.top_cat_id = #topCatId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic", name = "tpcs")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getAllTopicFromCategory(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topCatId", smartType = "STyId") final Long topCatId) {
 		final Task task = createTaskBuilder("TkGetAllTopicFromCategory")
 				.addValue("topCatId", topCatId)
@@ -79,7 +79,7 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
  " 			join topic_category tca on tca.top_cat_id = top.top_cat_id\n" + 
  " 			where top.bot_id = #botId# and top.is_enabled = true and tca.is_technical = false",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic", name = "tpcs")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getAllTopicRelativeScriptIntentByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetAllTopicRelativeScriptIntentByBotId")
 				.addValue("botId", botId)
@@ -102,7 +102,7 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
  " 			join topic_category tca on tca.top_cat_id = top.top_cat_id\n" + 
  " 			where top.bot_id = #botId# and top.is_enabled = true and tca.is_technical = false",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic", name = "tpcs")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getAllTopicRelativeSmallTalkByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetAllTopicRelativeSmallTalkByBotId")
 				.addValue("botId", botId)
@@ -125,7 +125,7 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
  " 			where top.bot_id = #botId#\n" + 
  " 			and top.kto_cd = #ktoCd#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic", name = "topic")
 	public Optional<io.vertigo.chatbot.commons.domain.topic.Topic> getBasicTopicByBotIdKtoCd(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCd", smartType = "STyCode") final String ktoCd) {
 		final Task task = createTaskBuilder("TkGetBasicTopicByBotIdKtoCd")
 				.addValue("botId", botId)
@@ -149,7 +149,7 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
  " 			where top.bot_id = #botId#\n" + 
  " 			and top.code = #code#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic", name = "topic")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getTopicByCodeBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "code", smartType = "STyCode") final String code) {
 		final Task task = createTaskBuilder("TkGetTopicByCodeBotId")
 				.addValue("botId", botId)
@@ -172,7 +172,7 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
  " 			from topic top\n" + 
  " 			where top.code = #code# and top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic", name = "topic")
 	public Optional<io.vertigo.chatbot.commons.domain.topic.Topic> getTopicFromCode(@io.vertigo.datamodel.task.proxy.TaskInput(name = "code", smartType = "STyLabel") final String code, @io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetTopicFromCode")
 				.addValue("code", code)
@@ -196,7 +196,7 @@ public final class TopicDAO extends DAO<Topic, java.lang.Long> implements StoreS
  " 			inner join response_button rbu on smt.smt_id = rbu.smt_id\n" + 
  " 			where rbu.top_id_response = #topId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopic", name = "topic")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.Topic> getTopicReferencingTopId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
 		final Task task = createTaskBuilder("TkGetTopicReferencingTopId")
 				.addValue("topId", topId)

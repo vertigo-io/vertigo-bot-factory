@@ -50,7 +50,7 @@ public final class PersonPAO implements StoreServices {
  " 			from person per \n" + 
  " 			where per.rol_cd = 'RAdmin'",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber", name = "perNumber")
 	public Long countAllAdminPer() {
 		final Task task = createTaskBuilder("TkCountAllAdminPer")
 				.build();

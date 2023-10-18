@@ -5,8 +5,8 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
-drop table IF EXISTS A_L_E_R_T_I_N_G___S_U_B_S_C_R_I_P_T_I_O_N___C_H_A_T_B_O_T cascade;
-drop table IF EXISTS T_O_P_I_C___T_O_P_I_C___L_A_B_E_L cascade;
+drop table IF EXISTS ALERTING_SUBSCRIPTION_CHATBOT cascade;
+drop table IF EXISTS TOPIC_TOPIC_LABEL cascade;
 drop table IF EXISTS ALERTING_EVENT cascade;
 drop sequence IF EXISTS SEQ_ALERTING_EVENT;
 drop table IF EXISTS ATTACHMENT cascade;
@@ -93,115 +93,115 @@ drop sequence IF EXISTS SEQ_WELCOME_TOUR_STEP;
 --   Sequences                                      
 -- ============================================================
 create sequence SEQ_ALERTING_EVENT
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_ATTACHMENT
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_ATTACHMENT_FILE_INFO
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_CHATBOT
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_CHATBOT_CUSTOM_CONFIG
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_CHATBOT_NODE
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 create sequence SEQ_CONFLUENCE_SETTING
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_CONTEXT_VALUE
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_DICTIONARY_ENTITY
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 create sequence SEQ_GROUPS
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_HISTORY
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 
 create sequence SEQ_JIRA_FIELD_SETTING
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_JIRA_SETTING
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 create sequence SEQ_MEDIA_FILE_INFO
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_MONITORING_ALERTING_SUBSCRIPTION
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_NLU_TRAINING_SENTENCE
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_PERSON
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 create sequence SEQ_PROFIL_PER_CHATBOT
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_RATING_OPTION
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_RESPONSE_BUTTON
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_RESPONSE_BUTTON_URL
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 create sequence SEQ_SAVED_TRAINING
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_SCRIPT_INTENTION
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_SMALL_TALK
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_SYNONYM
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_TOPIC
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_TOPIC_CATEGORY
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_TOPIC_LABEL
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_TRAINING
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 
 
 
 create sequence SEQ_UNKNOWN_SENTENCE_DETAIL
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 create sequence SEQ_UTTER_TEXT
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_WELCOME_TOUR
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_WELCOME_TOUR_STEP
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 -- ============================================================
@@ -1774,11 +1774,11 @@ alter table WELCOME_TOUR_STEP
 create index A_WELCOME_TOUR_WELCOME_TOUR_STEPS_WELCOME_TOUR_FK on WELCOME_TOUR_STEP (TOUR_ID asc);
 
 
-create table A_L_E_R_T_I_N_G___S_U_B_S_C_R_I_P_T_I_O_N___C_H_A_T_B_O_T
+create table ALERTING_SUBSCRIPTION_CHATBOT
 (
 	MAS_I_D     	 NUMERIC     	 not null,
 	BOT_ID      	 NUMERIC     	 not null,
-	constraint PK_A_L_E_R_T_I_N_G___S_U_B_S_C_R_I_P_T_I_O_N___C_H_A_T_B_O_T primary key (MAS_I_D, BOT_ID),
+	constraint PK_ALERTING_SUBSCRIPTION_CHATBOT primary key (MAS_I_D, BOT_ID),
 	constraint FK_ANN_ALERTING_SUBSCRIPTION_CHATBOT_MONITORING_ALERTING_SUBSCRIPTION 
 		foreign key(MAS_I_D)
 		references MONITORING_ALERTING_SUBSCRIPTION (MAS_I_D),
@@ -1787,15 +1787,15 @@ create table A_L_E_R_T_I_N_G___S_U_B_S_C_R_I_P_T_I_O_N___C_H_A_T_B_O_T
 		references CHATBOT (BOT_ID)
 );
 
-create index ANN_ALERTING_SUBSCRIPTION_CHATBOT_MONITORING_ALERTING_SUBSCRIPTION_FK on A_L_E_R_T_I_N_G___S_U_B_S_C_R_I_P_T_I_O_N___C_H_A_T_B_O_T (MAS_I_D asc);
+create index ANN_ALERTING_SUBSCRIPTION_CHATBOT_MONITORING_ALERTING_SUBSCRIPTION_FK on ALERTING_SUBSCRIPTION_CHATBOT (MAS_I_D asc);
 
-create index ANN_ALERTING_SUBSCRIPTION_CHATBOT_CHATBOT_FK on A_L_E_R_T_I_N_G___S_U_B_S_C_R_I_P_T_I_O_N___C_H_A_T_B_O_T (BOT_ID asc);
+create index ANN_ALERTING_SUBSCRIPTION_CHATBOT_CHATBOT_FK on ALERTING_SUBSCRIPTION_CHATBOT (BOT_ID asc);
 
-create table T_O_P_I_C___T_O_P_I_C___L_A_B_E_L
+create table TOPIC_TOPIC_LABEL
 (
 	TOP_ID      	 NUMERIC     	 not null,
 	LABEL_ID    	 NUMERIC     	 not null,
-	constraint PK_T_O_P_I_C___T_O_P_I_C___L_A_B_E_L primary key (TOP_ID, LABEL_ID),
+	constraint PK_TOPIC_TOPIC_LABEL primary key (TOP_ID, LABEL_ID),
 	constraint FK_ANN_TOPIC_LABEL_TOPIC 
 		foreign key(TOP_ID)
 		references TOPIC (TOP_ID),
@@ -1804,7 +1804,7 @@ create table T_O_P_I_C___T_O_P_I_C___L_A_B_E_L
 		references TOPIC_LABEL (LABEL_ID)
 );
 
-create index ANN_TOPIC_LABEL_TOPIC_FK on T_O_P_I_C___T_O_P_I_C___L_A_B_E_L (TOP_ID asc);
+create index ANN_TOPIC_LABEL_TOPIC_FK on TOPIC_TOPIC_LABEL (TOP_ID asc);
 
-create index ANN_TOPIC_LABEL_TOPIC_LABEL_FK on T_O_P_I_C___T_O_P_I_C___L_A_B_E_L (LABEL_ID asc);
+create index ANN_TOPIC_LABEL_TOPIC_LABEL_FK on TOPIC_TOPIC_LABEL (LABEL_ID asc);
 
