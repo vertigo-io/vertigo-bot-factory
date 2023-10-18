@@ -58,7 +58,7 @@ public final class UnknownSentenceDetailDAO extends DAO<UnknownSentenceDetail, j
  "             order by usd.date desc\n" + 
  "             limit 1",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtUnknownSentenceDetail")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtUnknownSentenceDetail", name = "unknownSentenceDetail")
 	public Optional<io.vertigo.chatbot.commons.domain.UnknownSentenceDetail> findLatestUnknownSentence(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkFindLatestUnknownSentence")
 				.addValue("botId", botId)

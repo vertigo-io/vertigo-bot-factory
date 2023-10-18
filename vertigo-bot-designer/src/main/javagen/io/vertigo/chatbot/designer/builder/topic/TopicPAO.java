@@ -59,7 +59,7 @@ public final class TopicPAO implements StoreServices {
  " 					<% } %>\n" + 
  " 				)",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyYesNo")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyYesNo", name = "exist")
 	public Boolean checkUnicityTopicCode(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "code", smartType = "STyLabel") final String code, @io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Optional<Long> topId) {
 		final Task task = createTaskBuilder("TkCheckUnicityTopicCode")
 				.addValue("botId", botId)
@@ -115,7 +115,7 @@ public final class TopicPAO implements StoreServices {
  " 					top.tto_cd,\n" + 
  " 					tpc.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm", name = "topicIHM")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicIhm> getAllTopicsIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "ktoCds", smartType = "STyCode") final java.util.List<String> ktoCds, @io.vertigo.datamodel.task.proxy.TaskInput(name = "locale", smartType = "STyCode") final String locale) {
 		final Task task = createTaskBuilder("TkGetAllTopicsIhmFromBot")
 				.addValue("botId", botId)
@@ -164,7 +164,7 @@ public final class TopicPAO implements StoreServices {
  " 			\n" + 
  " 			LIMIT 1",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm", name = "topicIHM")
 	public io.vertigo.chatbot.commons.domain.topic.TopicIhm getTopicIhmById(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
 		final Task task = createTaskBuilder("TkGetTopicIhmById")
 				.addValue("topId", topId)

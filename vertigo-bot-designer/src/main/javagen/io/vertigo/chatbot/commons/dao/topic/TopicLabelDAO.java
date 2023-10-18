@@ -56,7 +56,7 @@ public final class TopicLabelDAO extends DAO<TopicLabel, java.lang.Long> impleme
  " 			join topic_topic_label ttl on (ttl.label_id = tpl.label_id)\n" + 
  " 			where tpl.bot_id = #botId# and ttl.top_id = #topId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicLabel")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicLabel", name = "tpls")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicLabel> getAllLabelsByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
 		final Task task = createTaskBuilder("TkGetAllLabelsByBotId")
 				.addValue("botId", botId)
@@ -79,7 +79,7 @@ public final class TopicLabelDAO extends DAO<TopicLabel, java.lang.Long> impleme
  " 			left join topic_topic_label ttl on (ttl.label_id = tpl.label_id)\n" + 
  " 			where tpl.bot_id = #botId# and ttl.label_id is null;",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicLabel")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicLabel", name = "tpls")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicLabel> getAllUnusedLabelByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetAllUnusedLabelByBotId")
 				.addValue("botId", botId)

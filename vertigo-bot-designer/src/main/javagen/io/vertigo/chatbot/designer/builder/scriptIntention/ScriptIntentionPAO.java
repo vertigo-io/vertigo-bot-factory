@@ -55,7 +55,7 @@ public final class ScriptIntentionPAO implements StoreServices {
  " 				join script_intention sin on (sin.top_id = top.top_id)\n" + 
  " 				where top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtScriptIntentionIhm")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtScriptIntentionIhm", name = "sins")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm> getScriptIntentionIHMByBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetScriptIntentionIHMByBot")
 				.addValue("botId", botId)

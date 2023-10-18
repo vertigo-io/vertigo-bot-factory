@@ -89,7 +89,7 @@
 			Authentifié = isAuthentified true dans la UserSession.
 		</description>
 		<filter-name>Security Filter</filter-name>
-		<filter-class>io.vertigo.vega.impl.servlet.filter.SecurityFilter</filter-class>
+		<filter-class>io.vertigo.vega.impl.servlet.filter.LegacySecurityFilter</filter-class>
 		<init-param>
 			<param-name>url-no-authentification</param-name>
 			<param-value>/login;/login/*</param-value>

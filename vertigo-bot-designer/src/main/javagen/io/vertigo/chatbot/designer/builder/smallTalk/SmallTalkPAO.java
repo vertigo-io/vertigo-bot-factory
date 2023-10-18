@@ -57,7 +57,7 @@ public final class SmallTalkPAO implements StoreServices {
  " 			join topic_category tpc on (tpc.top_cat_id = top.top_cat_id)\n" + 
  " 			where top.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtSmallTalkIhm")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtSmallTalkIhm", name = "smts")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.SmallTalkIhm> getSmallTalkIHMByBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetSmallTalkIHMByBot")
 				.addValue("botId", botId)
