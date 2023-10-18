@@ -128,7 +128,7 @@ public final class TopicFileExportPAO implements StoreServices {
  " 				is_end\n" + 
  " 			order by top.code",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicFileExport")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicFileExport", name = "topic")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.TopicFileExport> getTopicFileExport(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "tcaIds", smartType = "STyId") final java.util.List<Long> tcaIds) {
 		final Task task = createTaskBuilder("TkGetTopicFileExport")
 				.addValue("botId", botId)

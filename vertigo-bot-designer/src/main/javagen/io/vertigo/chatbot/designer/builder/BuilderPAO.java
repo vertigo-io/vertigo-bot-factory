@@ -52,7 +52,7 @@ public final class BuilderPAO implements StoreServices {
  " 			join small_talk smt on (smt.rty_id = rty.rty_id)\n" + 
  " 			where smt.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyId")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyId", name = "filIds")
 	public java.util.List<Long> getAllReponseTypeIdsByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetAllReponseTypeIdsByBotId")
 				.addValue("botId", botId)

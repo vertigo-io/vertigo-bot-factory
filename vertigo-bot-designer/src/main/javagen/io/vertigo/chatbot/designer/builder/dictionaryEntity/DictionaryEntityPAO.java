@@ -58,7 +58,7 @@ public final class DictionaryEntityPAO implements StoreServices {
  "  				where ent.bot_id = #botId#\n" + 
  "  				group by ent.dic_ent_id",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtDictionaryEntityWrapper")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtDictionaryEntityWrapper", name = "res")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper> getDictionaryEntityWrapperByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "separator", smartType = "STyLabel") final String separator) {
 		final Task task = createTaskBuilder("TkGetDictionaryEntityWrapperByBotId")
 				.addValue("botId", botId)
@@ -86,7 +86,7 @@ public final class DictionaryEntityPAO implements StoreServices {
  " 				and word.label in (#words.rownum#)\n" + 
  " 				and ent.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTupleSynonymIhm")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTupleSynonymIhm", name = "tupleSynonymIhm")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.TupleSynonymIhm> getTuplesSynonym(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "words", smartType = "STyLabel") final java.util.List<String> words) {
 		final Task task = createTaskBuilder("TkGetTuplesSynonym")
 				.addValue("botId", botId)

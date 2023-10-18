@@ -4,7 +4,7 @@
 		auth="SERVLET"
 		type="javax.sql.DataSource"
 		driverClassName="org.postgresql.Driver"
-		url="jdbc:postgresql://localhost:5433/chatbot?stringtype=unspecified"
+		url="jdbc:postgresql://localhost:5433/chatbot?stringtype=unspecified&amp;quoteReturningIdentifiers=false"
 		username="chatbot"
 		password="chatbot" />
 		
@@ -31,5 +31,5 @@
 	<Parameter name="USE_SSL" value="true" override="false"/>
 	<Parameter name="CLAMAV_HOST" value="localhost" override="false"/>
 	<Parameter name="CLAMAV_PORT" value="3310" override="false"/>
-	<Parameter name="RUNNER_REQUEST_TIMEOUT" value="20" override="false"/>
+	<Parameter name="RUNNER_REQUEST_TIMEOUT" value="1800" override="false"/>
 </Context>
