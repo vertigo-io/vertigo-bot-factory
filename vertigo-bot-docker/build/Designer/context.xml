@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
-<Context debug="0" reloadable="false" allowCasualMultipartParsing="true" docBase="/opt/tomcat/war/designer.war">
+<Context debug="0" reloadable="false" allowCasualMultipartParsing="true" docBase="/usr/local/tomcat/war/designer.war">
 	<Resource name="jdbc/DataSource"
 		auth="SERVLET"
 		type="javax.sql.DataSource"
 		driverClassName="org.postgresql.Driver"
-		url="jdbc:postgresql:${DB_URL}?stringtype=unspecified"
+		url="jdbc:postgresql:${DB_URL}?chatbot?stringtype=unspecified&amp;quoteReturningIdentifiers=false"
 		username="${DB_USER}"
 		password="${DB_PWD}" />
 	<Parameter name="boot.ANALYTICA_HOST" value="${ANALYTICA_HOST}" override="false"/>

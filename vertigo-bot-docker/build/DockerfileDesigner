@@ -1,27 +1,20 @@
-FROM adoptopenjdk:11.0.8_10-jre-hotspot
+FROM tomcat:9-jdk17-temurin
 ARG VERSION
- 
-##############
-# Add Tomcat #
-##############
-# user home is used for berkeley database
+
 RUN useradd -m tomcat \
- && mkdir /opt/tomcat \
- && mkdir /opt/tomcat/logs \
- && chown -R tomcat. /opt/tomcat \
+ && chown -R tomcat. /usr/local/tomcat \
  && mkdir /opt/attachments \
  && chown -R tomcat. /opt/attachments
 
 # Add binaries
-COPY --chown=tomcat apache-tomcat-* /opt/tomcat/
-COPY --chown=tomcat Designer/setenv.sh /opt/tomcat/bin/
+COPY --chown=tomcat Designer/setenv.sh /usr/local/tomcat/bin/
 COPY --chown=tomcat Designer/keycloak.json /opt/keycloak/keycloak.json
-COPY --chown=tomcat Designer/context.xml /opt/tomcat/conf/Catalina/localhost/designer.xml.ref
-COPY --chown=tomcat Designer/vertigo-bot-designer-$VERSION.war /opt/tomcat/war/designer.war
+COPY --chown=tomcat Designer/context.xml /usr/local/tomcat/conf/Catalina/localhost/designer.xml.ref
+COPY --chown=tomcat Designer/vertigo-bot-designer-$VERSION.war /usr/local/tomcat/war/designer.war
 
 # Environment parameters
 ENV JAVA_OPTS -Xmx512m -Xms512m
-ENV CATALINA_PID /opt/tomcat/tomcat.pid
+ENV CATALINA_PID /usr/local/tomcat/tomcat.pid
 
 # War configuration through env variables
 ENV DB_URL //host.docker.internal:5432/chatbot
@@ -51,8 +44,6 @@ ENV MAIL_HOST mailHost
 ENV MAIL_PORT 25
 ENV MAIL_DEV_MODE false
 ENV MAIL_DEV_REPLACE_EMAIL_TO text.example@test.com
-# Expose tomcat port
-EXPOSE 8080
 
 #######################
 # start configuration #

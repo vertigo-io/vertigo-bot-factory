@@ -1,29 +1,22 @@
-FROM adoptopenjdk:11.0.8_10-jre-hotspot
+FROM tomcat:9-jdk17-temurin
 ARG VERSION
- 
- 
-##############
-# Add Tomcat #
-##############
+
 # Add tomcat user
 RUN useradd -m tomcat \
- && mkdir /opt/tomcat \
- && mkdir /opt/tomcat/logs \
  && mkdir /opt/plugins \
- && chown -R tomcat. /opt/tomcat \
+ && chown -R tomcat. /usr/local/tomcat \
  && chown -R tomcat. /opt/plugins \
  && mkdir /opt/attachments \
  && chown -R tomcat. /opt/attachments
  
 # Add binaries
-COPY --chown=tomcat apache-tomcat-* /opt/tomcat/
-COPY --chown=tomcat Runner/vertigo-bot-executor-$VERSION.war /opt/tomcat/war/runner.war
-COPY --chown=tomcat Runner/ROOT.xml /opt/tomcat/conf/Catalina/localhost/ROOT.xml
-COPY --chown=tomcat Runner/setenv.sh /opt/tomcat/bin/
+COPY --chown=tomcat Runner/vertigo-bot-executor-$VERSION.war /usr/local/tomcat/war/runner.war
+COPY --chown=tomcat Runner/ROOT.xml /usr/local/tomcat/conf/Catalina/localhost/ROOT.xml
+COPY --chown=tomcat Runner/setenv.sh /usr/local/tomcat/bin/
 
 # Environment parameters
 ENV JAVA_OPTS -Xmx256m
-ENV CATALINA_PID /opt/tomcat/tomcat.pid
+ENV CATALINA_PID /usr/local/tomcat/tomcat.pid
 ENV FRAME_ANCESTORS *
 ENV DESIGNER_URL http://host.docker.internal:8080/vertigo-bot-designer
 ENV RASA_URL http://rasa:5005
@@ -40,15 +33,3 @@ ENV MAIL_DEV_MODE false
 ENV MAIL_DEV_REPLACE_EMAIL_TO text.example@test.com
 ENV FILE_STORE_PATH /opt/attachments/
 ENV ENCRYPTION_PASSWORD testchatbot12345
-
-# Expose tomcat port
-EXPOSE 8080
-
-#######################
-# start configuration #
-#######################
-COPY Runner/start.sh /
-RUN chmod +x /start.sh
-
-ENTRYPOINT [] # clear entrypoint from base image
-CMD ["/start.sh"] # override CMD from base image
