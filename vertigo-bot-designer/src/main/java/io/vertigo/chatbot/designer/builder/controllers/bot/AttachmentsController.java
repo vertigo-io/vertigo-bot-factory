@@ -51,7 +51,8 @@ public class AttachmentsController extends AbstractBotListEntityController<Attac
 		final DtList<Attachment> attachments = attachmentServices.findAllByBotId(botId);
 		viewContext.publishDtList(attachmentsKey, attachments);
 		viewContext.publishDto(newAttachmentKey, new Attachment());
-		viewContext.publishRef(maxSizeKey, chatbotCustomConfig.getTotalMaxAttachmentSize());
+		viewContext.publishRef(maxSizeKey, chatbotCustomConfig.getTotalMaxAttachmentSize() != null ?
+				chatbotCustomConfig.getTotalMaxAttachmentSize() : -1L);
 		viewContext.publishRef(attachmentTotalSizeKey, computeAttachmentTotalSize(attachments));
 		viewContext.publishFileInfoURI(importTopicFileUri, null);
 		super.initBreadCrums(viewContext, Attachment.class);
