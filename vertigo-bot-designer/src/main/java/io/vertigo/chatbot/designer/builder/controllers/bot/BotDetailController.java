@@ -34,6 +34,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.FontFamily;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
+import io.vertigo.chatbot.commons.multilingual.ConstraintResources;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.FontFamilyServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
@@ -41,6 +42,7 @@ import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServi
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
+import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.designer.utils.StringUtils;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.locale.MessageText;
@@ -50,7 +52,6 @@ import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.Validate;
-import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
@@ -138,19 +139,19 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 	/**
 	 * Check if value field is not empty or meaningless html.
 	 */
-	public static final class ChatbotCustomConfigValidator extends AbstractDtObjectValidator<ChatbotCustomConfig> {
-
+	public static final class ChatbotCustomConfigValidator extends AbstractChatbotDtObjectValidator<ChatbotCustomConfig> {
 		private static final Pattern emailPattern = Pattern.compile("^[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*(\\.[a-zA-Z0-9-]{2,3})+$");
 
 		/** {@inheritDoc} */
 		@Override
 		protected void checkMonoFieldConstraints(final ChatbotCustomConfig chatbotCustomConfig, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+			super.checkMonoFieldConstraints(chatbotCustomConfig, dtField, dtObjectErrors);
 			if (DtDefinitions.ChatbotCustomConfigFields.botEmailAddress.name().equals(dtField.getName())) {
 				final String value = (String) dtField.getDataAccessor().getValue(chatbotCustomConfig);
 				if (!StringUtils.isHtmlEmpty(value)) {
 					final Matcher matcher = emailPattern.matcher(value);
 					if (!matcher.matches()) {
-						dtObjectErrors.addError(dtField.getName(), MessageText.of("L'email n'est pas valide"));
+						dtObjectErrors.addError(dtField.getName(), MessageText.of(ConstraintResources.INVALID_EMAIL));
 					}
 				}
 			}
