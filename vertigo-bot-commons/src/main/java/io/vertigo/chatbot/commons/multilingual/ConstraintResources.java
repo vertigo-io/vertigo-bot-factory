@@ -6,4 +6,6 @@ public enum ConstraintResources implements MessageKey {
 
 	CODE_PATTERN_DIGIT_ERROR,
 
+	INVALID_EMAIL
+
 }

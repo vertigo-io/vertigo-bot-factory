@@ -32,20 +32,18 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
-import io.vertigo.chatbot.domain.DtDefinitions;
+import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
+import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.structure.definitions.DtField;
+import io.vertigo.datamodel.structure.definitions.DtFieldName;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.Validate;
-import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
-import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,6 +53,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
@@ -315,17 +315,11 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         return "redirect:/bot/" + botId + "/topics/detail/" + topic.getTopId();
     }
 
-    public static final class TopicCategoryNotEmptyValidator extends AbstractDtObjectValidator<Topic> {
+    public static final class TopicCategoryNotEmptyValidator extends AbstractChatbotDtObjectValidator<Topic> {
 
-        /** {@inheritDoc} */
         @Override
-        protected void checkMonoFieldConstraints(final Topic topic, final DtField dtField, final DtObjectErrors dtObjectErrors) {
-            if (DtDefinitions.TopicFields.topCatId.name().equals(dtField.getName())) {
-                final Long value = (Long) dtField.getDataAccessor().getValue(topic);
-                if (value == null) {
-                    dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné")); // TODO: use same i18n resource when avaiable in DefaultDtObjectValidator
-                }
-            }
+        protected List<DtFieldName<Topic>> getFieldsToNullCheck() {
+            return List.of(TopicFields.topCatId);
         }
     }
 

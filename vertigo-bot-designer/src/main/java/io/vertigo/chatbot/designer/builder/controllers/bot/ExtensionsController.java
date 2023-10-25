@@ -24,6 +24,7 @@ import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
 import io.vertigo.chatbot.designer.builder.services.JiraSettingServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
+import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.datamodel.structure.definitions.DtField;
@@ -32,7 +33,6 @@ import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.Validate;
-import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
@@ -187,11 +187,12 @@ public class ExtensionsController extends AbstractBotController {
 
 
 
-	public static final class ConfluenceSettingNotEmptyValidator extends AbstractDtObjectValidator<ConfluenceSetting> {
+	public static final class ConfluenceSettingNotEmptyValidator extends AbstractChatbotDtObjectValidator<ConfluenceSetting> {
 
 		/** {@inheritDoc} */
 		@Override
 		protected void checkMonoFieldConstraints(final ConfluenceSetting confluenceSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+			super.checkMonoFieldConstraints(confluenceSetting, dtField, dtObjectErrors);
 			if (DtDefinitions.ConfluenceSettingFields.url.name().equals(dtField.getName())
 					|| DtDefinitions.ConfluenceSettingFields.login.name().equals(dtField.getName())) {
 				final String value = (String) dtField.getDataAccessor().getValue(confluenceSetting);
@@ -220,11 +221,12 @@ public class ExtensionsController extends AbstractBotController {
 		}
 	}
 
-	public static final class JiraSettingNotEmptyValidator extends AbstractDtObjectValidator<JiraSetting> {
+	public static final class JiraSettingNotEmptyValidator extends AbstractChatbotDtObjectValidator<JiraSetting> {
 
 		/** {@inheritDoc} */
 		@Override
 		protected void checkMonoFieldConstraints(final JiraSetting jiraSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+			super.checkMonoFieldConstraints(jiraSetting, dtField, dtObjectErrors);
 			if (DtDefinitions.JiraSettingFields.url.name().equals(dtField.getName())
 					|| DtDefinitions.JiraSettingFields.login.name().equals(dtField.getName())
 					|| DtDefinitions.JiraSettingFields.project.name().equals(dtField.getName())) {
