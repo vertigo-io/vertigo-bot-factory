@@ -47,6 +47,8 @@ window.addEventListener(
         }
         if (event.data === 'clearSessionStorage') {
             sessionStorage.clear();
+        } else if (event.data === 'refresh') {
+            chatbot.refresh()
         } else if (event.data === 'conversationExist') {
             parent.postMessage({conversationExist : sessionStorage.convId !== undefined }, '*');
         }

@@ -132,4 +132,8 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_07_17.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal" id="Add custom context environment values">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_23_10_26.sql" />
+    </changeSet>
+
 </databaseChangeLog>

@@ -9,6 +9,78 @@ import io.vertigo.core.locale.MessageKey;
 public enum DtResources implements MessageKey {
 
 	/***********************************************************
+	/** ContextEnvironment.
+	/***********************************************************
+	/**
+	 * Context environment id.
+	 */
+	fldContextEnvironment$cenvId,
+	/**
+	 * Label.
+	 */
+	fldContextEnvironment$label,
+	/**
+	 * Chatbot.
+	 */
+	fldContextEnvironment$botId,
+
+	/***********************************************************
+	/** ContextEnvironmentIhm.
+	/***********************************************************
+	/**
+	 * Context environment id.
+	 */
+	fldContextEnvironmentIhm$cenvId,
+	/**
+	 * Label.
+	 */
+	fldContextEnvironmentIhm$label,
+	/**
+	 * Context environment values.
+	 */
+	fldContextEnvironmentIhm$contextEnvironmentValues,
+
+	/***********************************************************
+	/** ContextEnvironmentValue.
+	/***********************************************************
+	/**
+	 * Context environment value id.
+	 */
+	fldContextEnvironmentValue$cenvalId,
+	/**
+	 * Value.
+	 */
+	fldContextEnvironmentValue$value,
+	/**
+	 * Context.
+	 */
+	fldContextEnvironmentValue$cvaId,
+	/**
+	 * Environment.
+	 */
+	fldContextEnvironmentValue$cenvId,
+
+	/***********************************************************
+	/** ContextEnvironmentValueIhm.
+	/***********************************************************
+	/**
+	 * Context environment value id.
+	 */
+	fldContextEnvironmentValueIhm$cenvalId,
+	/**
+	 * Value.
+	 */
+	fldContextEnvironmentValueIhm$value,
+	/**
+	 * Context value id.
+	 */
+	fldContextEnvironmentValueIhm$cvaId,
+	/**
+	 * Context value label.
+	 */
+	fldContextEnvironmentValueIhm$label,
+
+	/***********************************************************
 	/** DictionaryEntity.
 	/***********************************************************
 	/**
