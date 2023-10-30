@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
       let _initParam = null;
       let _button = null;
       let _iframe = null;
+      let contextMap = {}
 
       function _createFlottingButton() {
         _button = document.createElement('div');
@@ -101,25 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
               }
             }
             else if (event.data.context) {
-              const map = {};
-              event.data.context.forEach(function (value, key) {
-                  if ( key === 'url' && value === '' ) {
-                    map[key] = window.location.href;
-                  } else {
-                    const element = document.evaluate(value, document, null, XPathResult.ANY_TYPE, null);
-                    const node = element.iterateNext();
-                    if (node !== null) {
-                      let elementValue;
-                      if (node.attributes['value']) {
-                        elementValue = node.attributes['value'].value;
-                      } else {
-                        elementValue = node.innerHTML;
-                      }
-                      map[key] = elementValue;
-                    }
-                  }
-              });
-              event.ports[0].postMessage({result : map});
+              event.ports[0].postMessage({result : contextMap});
             }
             else if (event.data.pictureModal) {
               Chatbot.showPictureModal(event.data.pictureModal);
@@ -154,6 +137,11 @@ document.addEventListener('DOMContentLoaded', function () {
           _iframe.contentWindow.postMessage('start', '*');
         },
 
+        refresh() {
+          sessionStorage.showChatbot = true;
+          _iframe.contentWindow.postMessage('refresh', '*');
+        },
+
         showPictureModal(src) {
           const modal = document.getElementById('imageViewerModal');
           const modalImg = parent.document.getElementById('imgToView');
@@ -173,6 +161,11 @@ document.addEventListener('DOMContentLoaded', function () {
         clearSessionStorage() {
           sessionStorage.clear();
           _iframe.contentWindow.postMessage('clearSessionStorage', '*');
+        },
+
+        updateContextMap(map) {
+          contextMap = map;
+          Chatbot.refresh()
         },
 
         startJsEvent(eventName) {

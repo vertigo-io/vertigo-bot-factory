@@ -31,7 +31,7 @@ public abstract class AbstractChatbotDtObjectValidator<O extends DtObject> exten
             .collect(Collectors.toUnmodifiableList());
 
     protected boolean checkDefaultValidator() {
-        return true;
+        return false;
     }
 
     protected List<DtFieldName<O>> getFieldsToNullCheck() {

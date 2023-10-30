@@ -34,12 +34,20 @@
 }
 
 .iframe {
-    position: fixed;
-    bottom: 0px;
     z-index: 10000;
     width: 100%;
     height: 100%;
     color: white;
+}
+
+.q-drawer__content {
+    display: flex;
+    flex-direction: column;
+}
+
+#botDrawerContent {
+    display: flex;
+    flex-grow: 1;
 }
 
 /* The Modal (background) */

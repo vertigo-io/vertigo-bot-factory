@@ -2,6 +2,7 @@ mda/person.ksp
 
 mda/commonModel.ksp
 mda/chatbot/chatbotCustomConfig.ksp
+mda/chatbot/contextModel.ksp
 mda/chatbot/exportModel.ksp
 mda/chatbot/dictionaryEntityModel.ksp
 mda/chatbot/profileModel.ksp

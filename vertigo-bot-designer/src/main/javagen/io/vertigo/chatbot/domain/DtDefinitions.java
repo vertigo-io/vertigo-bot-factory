@@ -43,6 +43,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ConfluenceSetting(io.vertigo.chatbot.commons.domain.ConfluenceSetting.class),
 		/** Objet de données ConfluenceSettingExport. */
 		ConfluenceSettingExport(io.vertigo.chatbot.commons.domain.ConfluenceSettingExport.class),
+		/** Objet de données ContextEnvironment. */
+		ContextEnvironment(io.vertigo.chatbot.designer.domain.ContextEnvironment.class),
+		/** Objet de données ContextEnvironmentIhm. */
+		ContextEnvironmentIhm(io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm.class),
+		/** Objet de données ContextEnvironmentValue. */
+		ContextEnvironmentValue(io.vertigo.chatbot.designer.domain.ContextEnvironmentValue.class),
+		/** Objet de données ContextEnvironmentValueIhm. */
+		ContextEnvironmentValueIhm(io.vertigo.chatbot.designer.domain.ContextEnvironmentValueIhm.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
 		/** Objet de données ConversationCriteria. */
@@ -471,6 +479,54 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		password,
 		/** Propriété 'Number max of results'. */
 		numberOfResults	}
+
+	/**
+	 * Enumération des champs de ContextEnvironment.
+	 */
+	public enum ContextEnvironmentFields implements DtFieldName<io.vertigo.chatbot.designer.domain.ContextEnvironment> {
+		/** Propriété 'Context environment id'. */
+		cenvId,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de ContextEnvironmentIhm.
+	 */
+	public enum ContextEnvironmentIhmFields implements DtFieldName<io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm> {
+		/** Propriété 'Context environment id'. */
+		cenvId,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Context environment values'. */
+		contextEnvironmentValues	}
+
+	/**
+	 * Enumération des champs de ContextEnvironmentValue.
+	 */
+	public enum ContextEnvironmentValueFields implements DtFieldName<io.vertigo.chatbot.designer.domain.ContextEnvironmentValue> {
+		/** Propriété 'Context environment value id'. */
+		cenvalId,
+		/** Propriété 'Value'. */
+		value,
+		/** Propriété 'Context'. */
+		cvaId,
+		/** Propriété 'Environment'. */
+		cenvId	}
+
+	/**
+	 * Enumération des champs de ContextEnvironmentValueIhm.
+	 */
+	public enum ContextEnvironmentValueIhmFields implements DtFieldName<io.vertigo.chatbot.designer.domain.ContextEnvironmentValueIhm> {
+		/** Propriété 'Context environment value id'. */
+		cenvalId,
+		/** Propriété 'Value'. */
+		value,
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Context value label'. */
+		label	}
 
 	/**
 	 * Enumération des champs de ContextValue.

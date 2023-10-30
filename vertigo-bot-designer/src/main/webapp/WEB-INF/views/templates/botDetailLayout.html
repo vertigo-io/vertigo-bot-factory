@@ -56,6 +56,23 @@
 						VertigoUi.vueData.typeBotExport.map(typeExport => typeExport.tbeCd);
 
 			}
+
+			function selectEnvironment() {
+				if (VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId !== null) {
+					const selectedContexEnvironment = VertigoUi.vueData.contextEnvironments.find(contextEnvironment =>
+						contextEnvironment.cenvId === VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId
+					);
+					if (selectedContexEnvironment) {
+						const map = {};
+						selectedContexEnvironment.contextEnvironmentValues.forEach(contextEnvironmentValue => {
+							map[contextEnvironmentValue.label] = contextEnvironmentValue.value
+						})
+						Chatbot.updateContextMap(map)
+					}
+				} else {
+					Chatbot.updateContextMap({})
+				}
+			}
 		</script>
 	</div>
 	<div layout:fragment="content-header-left" id="baseImg" class="row items-center header-bot-img">
@@ -204,13 +221,28 @@
 	</section>
 	<section layout:fragment="informations"></section>
 	<section layout:fragment="content-bot-drawer"  th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}">
+		<vu:include-data object="contextEnvironments" field="'*'"/>
 		<q-page-sticky position="bottom-right" :offset="[0,36]">
 			<q-btn round size="lg" id="botDrawerButton" @click="componentStates.botDrawer.open = !componentStates.botDrawer.open; if (componentStates.botDrawer.open) { Chatbot.show() } else { Chatbot.hideDrawer() }">
 				<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" class="bot-img" alt="avatar chatbot"/>
 			</q-btn>
 		</q-page-sticky>
 		<q-drawer :value="componentStates.botDrawer.open" id="botDrawer" ref="botDrawer" :width="400" elevated side="right" >
-			<div id="botDrawerContent" ></div>
+			<q-select
+					v-if="vueData.contextEnvironments.length > 0"
+					th:attr="dataObject=${model.vContext['componentStates'].addComponentState('contextEnvironments').addObject('selectedEnvironment', {cenvId: null})}"
+					dense
+					filled
+					clearable
+					map-options
+					emit-value
+					stack-label
+					v-model="componentStates.contextEnvironments.selectedEnvironment.cenvId"
+					:options='transformListForSelection("contextEnvironments", "cenvId", "label")'
+					@input="selectEnvironment();"
+					th:label="#{context.environment.dropdown.label}"
+			></q-select>
+			<div id="botDrawerContent"></div>
 		</q-drawer>
 	</section>
 	<section layout:fragment="javascript-footer">

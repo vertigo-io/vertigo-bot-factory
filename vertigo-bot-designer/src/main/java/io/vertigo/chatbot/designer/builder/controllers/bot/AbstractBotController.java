@@ -34,12 +34,14 @@ import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.TrainerInfoServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.UnknownSentencesServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentServices;
 import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.export.file.TopicFileExportServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm;
 import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
 import io.vertigo.chatbot.designer.domain.topic.export.TypeBotExport;
 import io.vertigo.chatbot.designer.domain.topic.export.TypeBotExportList;
@@ -94,6 +96,9 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	@Inject
 	protected FileServices fileServices;
 
+	@Inject
+	protected ContextEnvironmentServices contextEnvironmentServices;
+
 	private static final ViewContextKey<Chatbot> botKey = ViewContextKey.of("bot");
 	private static final ViewContextKey<String> localeKey = ViewContextKey.of("locale");
 	private static final ViewContextKey<Long> enabledTopicsKey = ViewContextKey.of("enabledTopics");
@@ -105,6 +110,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	private static final ViewContextKey<TrainerInfo> trainerStateKey = ViewContextKey.of("trainerState");
 	private static final ViewContextKey<TypeBotExport> typeBotExportKey = ViewContextKey.of("typeBotExport");
 	private static final ViewContextKey<TypeBotExportList> selectTypeBotExportListKey = ViewContextKey.of("selectTypeBotExportList");
+	private static final ViewContextKey<ContextEnvironmentIhm> contextEnvironmentsKey = ViewContextKey.of("contextEnvironments");
 
 	protected Chatbot initCommonContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, final Long botId) {
 		final Chatbot chatbot = chatbotServices.getChatbotById(botId);
@@ -120,6 +126,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 		viewContext.publishDto(botKey, chatbot);
 		viewContext.publishDto(devNodeKey, nodeServices.getDevNodeByBotId(botId).orElse(new ChatbotNode()));
 		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
+		viewContext.publishDtList(contextEnvironmentsKey, contextEnvironmentServices.getContextEnvironmentIhmByBot(botId));
 		addKeyConceptSecurityToContext(chatbot, SecuredEntities.ChatbotAuthorizations.values());
 		nodeMessageDisplay(chatbot, uiMessageStack);
 		return chatbot;
