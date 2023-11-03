@@ -75,6 +75,7 @@
                     VertigoUi.vueData.unknownSentenceFilteredList =  VertigoUi.vueData.unknownSentenceFilteredList
                         .filter(sentence => normalizeString(sentence.text).includes(searchNormarlized))
                 }
+                VertigoUi.componentStates.unknownSentenceList.selected = [];
             }
 
             document.addEventListener('DOMContentLoaded', function () {
