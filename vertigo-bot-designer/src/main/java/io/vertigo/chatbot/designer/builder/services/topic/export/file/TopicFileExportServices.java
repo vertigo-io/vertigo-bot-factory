@@ -245,6 +245,10 @@ public class TopicFileExportServices implements Component {
 				throw new VSystemException(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC_CATEGORY).getDisplay());
 			}
 
+			if (TopicServices.getTechnicalKindTopics().contains(tfe.getCode()) && !tfe.getCategory().equals(DEFAULT_TOPIC_CAT_CODE)) {
+				throw new VSystemException(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC_DEFAULT_CATEGORY).getDisplay());
+			}
+
 			if (topicBase.isPresent()) {
 				// If it already exists, then modification
 				topic = topicBase.get();

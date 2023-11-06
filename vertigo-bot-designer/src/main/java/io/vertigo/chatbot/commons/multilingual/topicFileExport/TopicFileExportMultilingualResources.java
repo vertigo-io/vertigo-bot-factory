@@ -14,6 +14,7 @@ public enum TopicFileExportMultilingualResources implements MessageKey {
 	BUTTON_CODE_NOT_FOUND,
 	BUTTON_URL_NOT_VALID,
 	ERR_TOPIC_CATEGORY,
+	ERR_TOPIC_DEFAULT_CATEGORY,
 	EXPORT_FILENAME
 
 }
