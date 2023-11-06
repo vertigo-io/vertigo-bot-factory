@@ -63,6 +63,9 @@ const chatbot = new Vue({
                     parent.postMessage({pictureModal: this.src}, '*');
                 },false);
             }
+            if (!chatbot.$refs.input.disable) {
+                this.focusInput()
+            }
         },
         data: {
             // config
