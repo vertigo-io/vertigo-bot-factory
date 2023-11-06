@@ -83,7 +83,7 @@ public class TopicFileExportServices implements Component {
 	/*
 	 * Return a File from a list of topicFileExport
 	 */
-	public VFile exportTopicFile(@SecuredOperation("SuperAdm") final Chatbot bot, final DtList<TopicFileExport> dtc) {
+	public VFile exportTopicFile(@SecuredOperation("botVisitor") final Chatbot bot, final DtList<TopicFileExport> dtc) {
 
 		final Export export = new ExportBuilder(ExportFormat.CSV,
 				MessageText.of(TopicFileExportMultilingualResources.EXPORT_FILENAME, bot.getName()).getDisplay())
@@ -115,7 +115,7 @@ public class TopicFileExportServices implements Component {
 	/*
 	 * Return a list of TopicFileExport from a bot (and possibly a category)
 	 */
-	public DtList<TopicFileExport> getTopicFileExport(@SecuredOperation("SuperAdm") final Long botId, final List<Long> categories) {
+	public DtList<TopicFileExport> getTopicFileExport(@SecuredOperation("botVisitor") final Long botId, final List<Long> categories) {
 		return topicFileExportPAO.getTopicFileExport(botId, categories);
 	}
 

@@ -113,7 +113,7 @@ public class TopicCategoryServices implements Component {
 		return topicCategoryDAO.save(topicCategory);
 	}
 
-	public VFile exportCategories(@SecuredOperation("botAdm") final Chatbot bot, final DtList<TopicCategory> topicCategories) {
+	public VFile exportCategories(@SecuredOperation("botVisitor") final Chatbot bot, final DtList<TopicCategory> topicCategories) {
 		final DtList<TopicCategoryExport> topicCategoryExports = topicCategories.stream().map(topicCategory -> {
 			final TopicCategoryExport topicCategoryExport = new TopicCategoryExport();
 			topicCategoryExport.setCode(topicCategory.getCode());

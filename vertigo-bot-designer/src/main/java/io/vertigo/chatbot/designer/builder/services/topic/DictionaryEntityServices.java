@@ -289,7 +289,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	/*
 	 * Return a File from a list of DictionaryExport
 	 */
-	public VFile exportDictionary(@SecuredOperation("SuperAdm") final Chatbot bot, final DtList<DictionaryEntityWrapper> dtc) {
+	public VFile exportDictionary(@SecuredOperation("botVisitor") final Chatbot bot, final DtList<DictionaryEntityWrapper> dtc) {
 		final String exportName = "export_" + MessageText.of(DictionaryEntityMultilingualResources.DICTIONARY).getDisplay() + "_" + bot.getName();
 		final Export export = new ExportBuilder(ExportFormat.CSV, exportName)
 				.beginSheet(dtc, null)
