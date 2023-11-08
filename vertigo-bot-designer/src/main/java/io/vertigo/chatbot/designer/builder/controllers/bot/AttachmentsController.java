@@ -72,7 +72,7 @@ public class AttachmentsController extends AbstractBotListEntityController<Attac
 		final Attachment attachment = attId.isEmpty() ? new Attachment() : attachmentServices.findById(attId.get());
 		attachment.setLabel(label);
 		attachment.setBotId(bot.getBotId());
-		attachmentServices.save(attachment, attachmentFile, maxSize, attachmentTotalSize);
+		attachmentServices.save(bot, attachment, attachmentFile, maxSize, attachmentTotalSize);
 		final DtList<Attachment> attachments = attachmentServices.findAllByBotId(bot.getBotId());
 		viewContext.publishDtList(attachmentsKey, attachments);
 		viewContext.publishRef(attachmentTotalSizeKey, computeAttachmentTotalSize(attachments));
@@ -85,7 +85,7 @@ public class AttachmentsController extends AbstractBotListEntityController<Attac
 			@ViewAttribute("bot") final Chatbot bot,
 			@RequestParam("attId") final Long attId) {
 
-		attachmentServices.delete(attId);
+		attachmentServices.delete(bot, attId);
 		final DtList<Attachment> attachments = attachmentServices.findAllByBotId(bot.getBotId());
 		viewContext.publishDtList(attachmentsKey, attachments);
 		viewContext.publishRef(attachmentTotalSizeKey, computeAttachmentTotalSize(attachments));

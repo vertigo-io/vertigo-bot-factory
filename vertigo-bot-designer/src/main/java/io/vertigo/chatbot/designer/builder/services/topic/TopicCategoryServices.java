@@ -51,7 +51,7 @@ public class TopicCategoryServices implements Component {
 	@Inject
 	private FileServices fileServices;
 
-	public TopicCategory saveCategory(@SecuredOperation("botContributor") final Chatbot bot, final TopicCategory category) {
+	public TopicCategory saveCategory(@SecuredOperation("botAdm") final Chatbot bot, final TopicCategory category) {
 		return topicCategoryDAO.save(category);
 	}
 

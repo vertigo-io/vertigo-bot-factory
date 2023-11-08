@@ -60,7 +60,7 @@
                        vueData.importAttachmentFileUri = [];
                        $refs.attachmentDialog.show()"></q-btn>
                 </vu:slot>
-                <vu:slot name="actions_slot">
+                <vu:slot name="actions_slot" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}">
                     <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{attachment.update}" th:title="#{attachment.update}"
                            @click="vueData.newAttachment.botId = props.row.botId; vueData.newAttachment.attId = props.row.attId;
                            vueData.newAttachment.label = props.row.label; vueData.importAttachmentFileUri = []; $refs.attachmentDialog.show()"></q-btn>

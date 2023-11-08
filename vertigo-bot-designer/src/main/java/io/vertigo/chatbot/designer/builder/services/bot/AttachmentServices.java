@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.AttachmentDAO;
@@ -42,7 +43,8 @@ public class AttachmentServices implements Component {
 		return attachmentDAO.get(attachmentId);
 	}
 
-	public Attachment save(final Attachment attachment, final Optional<FileInfoURI> optFileInfoURI, final Long maxSize, final Long attachmentTotalSize) {
+	@Secured("BotUser")
+	public Attachment save(@SecuredOperation("botAdm") final Chatbot bot, final Attachment attachment, final Optional<FileInfoURI> optFileInfoURI, final Long maxSize, final Long attachmentTotalSize) {
 
 		if (attachment.getAttId() == null && optFileInfoURI.isEmpty()) {
 			throw new VUserException(AttachmentMultilingualResources.MUST_CONTAINS_A_FILE);
@@ -82,7 +84,8 @@ public class AttachmentServices implements Component {
 		return attachmentDAO.findAll(Criterions.isEqualTo(DtDefinitions.AttachmentFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
-	public void delete (final long attachmentId) {
+	@Secured("BotUser")
+	public void delete (@SecuredOperation("botAdm") final Chatbot bot, final long attachmentId) {
 		final Attachment attachment = findById(attachmentId);
 		attachmentDAO.delete(attachmentId);
 		fileServices.deleteAttachment(attachment.getAttFiId());
