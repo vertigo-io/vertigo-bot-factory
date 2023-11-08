@@ -146,6 +146,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 		viewContext.publishRef(totalTopicsKey, 0);
 		viewContext.publishDto(devNodeKey, new ChatbotNode());
 		viewContext.publishDtList(typeBotExportKey, typeBotExportServices.getAllTypeBotExport());
+		viewContext.publishDtList(contextEnvironmentsKey, new DtList<>(ContextEnvironmentIhm.class));
 		viewContext.publishDto(selectTypeBotExportListKey, new TypeBotExportList());
 	}
 
