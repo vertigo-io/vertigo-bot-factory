@@ -110,7 +110,7 @@ public class AnalyticsExportServices implements Component {
 			final UnknownSentenseExport newUnknownSentenseExport = new UnknownSentenseExport();
 			newUnknownSentenseExport.setDate(timedData.getTime());
 			newUnknownSentenseExport.setText((String) values.get("text"));
-			newUnknownSentenseExport.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
+			newUnknownSentenseExport.setConfidence(BigDecimal.valueOf((Double) values.getOrDefault("confidence", (double) 0)));
 			newUnknownSentenseExport.setModelName((String) values.get("modelName"));
 			final Long botId = Long.valueOf((String) values.get("botId"));
 			final Long nodId = Long.valueOf((String) values.get("nodId"));
