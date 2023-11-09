@@ -111,7 +111,7 @@
 	<div layout:fragment="content-header-actions" id="headerActions" class="items-center">
 		<vu:popup action="delete" vModel="showPopup" th:message="#{bot.popup.message}" th:confirm="#{bot.delete}"></vu:popup>
 		<vu:include-data object="trainerState" field="'*'"/>
-		<q-btn color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train"></q-btn>
+		<q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train"></q-btn>
 		<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="dataX.loadingTraining"></q-spinner-gears>
 		<q-fab class="q-mr-xl" outline flat color="primary" icon="more_vert" direction="down">
 			<q-fab-action color="primary" th:label="#{bot.export}" icon="file_upload" @click="$refs.exportBot.show()"></q-fab-action>

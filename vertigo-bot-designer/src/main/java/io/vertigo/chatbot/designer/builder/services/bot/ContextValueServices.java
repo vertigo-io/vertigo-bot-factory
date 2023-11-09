@@ -152,7 +152,7 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 	}
 
 	@Secured("BotUser")
-	public String exportContextValuesToMapByBot(@SecuredOperation("botAdm") final Chatbot bot, final StringBuilder logs) {
+	public String exportContextValuesToMapByBot(@SecuredOperation("botContributor") final Chatbot bot, final StringBuilder logs) {
 		LogsUtils.addLogs(logs, "Export Map Context : ");
 		try {
 			final DtList<ContextValue> list = getAllContextValueByBotId(bot.getBotId());
