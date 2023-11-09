@@ -35,6 +35,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.structure.definitions.DtFieldName;
@@ -388,6 +389,9 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     @PostMapping("/_delete")
     String doDelete(@ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("topic") final Topic topic) {
+        if (topic.getIsTechnical()) {
+            throw new VUserException(TopicsMultilingualResources.DELETE_TECHNICAL_ERROR);
+        }
         final DtList<Topic> listTopicRef = topicServices.getTopicReferencingTopId(topic.getTopId());
         if (!listTopicRef.isEmpty()) {
             final String topicErrorList = listTopicRef.stream()

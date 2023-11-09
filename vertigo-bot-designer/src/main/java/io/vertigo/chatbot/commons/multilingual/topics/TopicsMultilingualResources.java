@@ -14,6 +14,8 @@ public enum TopicsMultilingualResources implements MessageKey {
 
 	DELETION_REF_ERROR,
 
+	DELETE_TECHNICAL_ERROR,
+
 	CODE_SPECIAL_CHAR_ERROR,
 
 	DEACTIVATE_TOPIC_SMALL_TALK,
