@@ -47,7 +47,6 @@ public class DictionaryEntityListController extends AbstractBotListEntityControl
 	}
 
 	@PostMapping("/saveDictionaryEntity")
-	@Secured("Chatbot$botAdm")
 	public String doSaveDictionaryEntity(final ViewContext viewContext,
 										 @ViewAttribute("bot") final Chatbot bot,
 										 @ViewAttribute("dictionaryEntityEdit") final DictionaryEntity dictionaryEntityEdit) {
@@ -59,7 +58,6 @@ public class DictionaryEntityListController extends AbstractBotListEntityControl
 	}
 
 	@PostMapping("/_deleteDictionaryEntity")
-	@Secured("Chatbot$botAdm")
 	public ViewContext doDeleteDictionaryEntity(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 												@RequestParam("dicEntId") final Long dicEntId, final UiMessageStack uiMessageStack) {
 

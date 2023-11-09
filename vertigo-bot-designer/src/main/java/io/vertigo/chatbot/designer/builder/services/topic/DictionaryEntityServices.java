@@ -89,23 +89,24 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @param dictionaryEntity
 	 * @return dictionaryEntity
 	 */
-	public DictionaryEntity save(@SecuredOperation("botAdm") final Chatbot chatbot, final DictionaryEntity dictionaryEntity) {
-		dictionaryEntity.setBotId(chatbot.getBotId());
+	@Secured("BotUser")
+	public DictionaryEntity save(@SecuredOperation("botAdm") final Chatbot bot, final DictionaryEntity dictionaryEntity) {
+		dictionaryEntity.setBotId(bot.getBotId());
 		final boolean creation = dictionaryEntity.getDicEntId() == null;
 		dictionaryEntity.setLabel(dictionaryEntity.getLabel().toLowerCase());
 
 		final DictionaryEntity dictionaryEntitySaved = dictionaryEntityDAO.save(dictionaryEntity);
 		if (creation) {
 			final Synonym synonym = new Synonym();
-			synonym.setBotId(chatbot.getBotId());
+			synonym.setBotId(bot.getBotId());
 			synonym.setDicEntId(dictionaryEntitySaved.getDicEntId());
 			synonym.setLabel(dictionaryEntitySaved.getLabel());
-			if (findDictionaryEntityBySynonymLabelAndBotId(dictionaryEntitySaved.getLabel(), chatbot.getBotId()) != null) {
+			if (findDictionaryEntityBySynonymLabelAndBotId(dictionaryEntitySaved.getLabel(), bot.getBotId()) != null) {
 				throw new VUserException(DictionaryEntityMultilingualResources.ERR_UNIQUE_SYNONYM);
 			}
 			synonymServices.save(synonym);
 		}
-		record(chatbot, dictionaryEntitySaved, creation ? HistoryActionEnum.ADDED : HistoryActionEnum.UPDATED);
+		record(bot, dictionaryEntitySaved, creation ? HistoryActionEnum.ADDED : HistoryActionEnum.UPDATED);
 		return dictionaryEntitySaved;
 	}
 
@@ -117,20 +118,21 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @param synonymsToDelete
 	 * @return dictionaryEntity
 	 */
-	public DictionaryEntity save(@SecuredOperation("botAdm") final Chatbot chatbot, final DictionaryEntity dictionaryEntity,
+	@Secured("BotUser")
+	public DictionaryEntity save(@SecuredOperation("botAdm") final Chatbot bot, final DictionaryEntity dictionaryEntity,
 			final DtList<Synonym> synonyms,
 			final DtList<Synonym> synonymsToDelete) {
 
 		final boolean isNew = DtObjectUtil.getId(dictionaryEntity) == null;
 		final DtList<Synonym> oldSynonyms = synonymServices.getAllSynonymByDictionaryEntity(findDictionaryEntityById(dictionaryEntity.getDicEntId()));
 		if (!synonymsToDelete.isEmpty() || !HashUtils.generateHashCodeForSynonyms(oldSynonyms).equals(HashUtils.generateHashCodeForSynonyms(synonyms))) {
-			nodeServices.updateNodes(chatbot);
+			nodeServices.updateNodes(bot);
 		}
 		saveAllNotBlankSynonym(dictionaryEntity, synonyms);
 		synonymServices.removeSynonym(synonymsToDelete);
 
 		final DictionaryEntity dictionaryEntitySaved = dictionaryEntityDAO.save(dictionaryEntity);
-		record(chatbot, dictionaryEntitySaved, isNew ? HistoryActionEnum.ADDED : HistoryActionEnum.UPDATED);
+		record(bot, dictionaryEntitySaved, isNew ? HistoryActionEnum.ADDED : HistoryActionEnum.UPDATED);
 
 		return dictionaryEntitySaved;
 	}
@@ -141,6 +143,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @param bot
 	 * @param dicEntId
 	 */
+	@Secured("BotUser")
 	public void deleteDictionaryEntity(@SecuredOperation("botAdm") final Chatbot bot, final Long dicEntId) {
 		final DictionaryEntity dictionaryEntity = dictionaryEntityDAO.get(dicEntId);
 		dictionaryEntityDAO.delete(dicEntId);
@@ -154,6 +157,39 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 					synonymServices.removeSynonym(synonymServices.getAllSynonymByDictionaryEntity(dictionaryEntity));
 					dictionaryEntityDAO.delete(dictionaryEntity.getDicEntId());
 		});
+	}
+
+	/**
+	 * Add a synonym and modify table
+	 *
+	 * @param newSynonymIn
+	 * @param synonyms
+	 */
+	@Secured("BotUser")
+	public void addSynonym(@SecuredOperation("botAdm") final Chatbot bot, final String newSynonymIn,
+						   final DtList<Synonym> synonyms) {
+		if (StringUtil.isBlank(newSynonymIn)) {
+			return;
+		}
+
+		final String newSynonym = newSynonymIn.trim();
+
+		final boolean exists = synonyms.stream()
+				.anyMatch(its -> its.getLabel().equalsIgnoreCase(newSynonym));
+		if (exists) {
+			throw new VUserException(DictionaryEntityMultilingualResources.ERR_UNIQUE_SYNONYM);
+		}
+
+		final Synonym newText = new Synonym();
+		newText.setLabel(newSynonym);
+
+		synonyms.add(newText);
+	}
+
+	@Secured("BotUser")
+	public Synonym removeSynonym(@SecuredOperation("botAdm") final Chatbot bot, final int index,
+							  final DtList<Synonym> synonyms) {
+		return synonyms.remove(index);
 	}
 
 	/**
