@@ -200,8 +200,8 @@
 		<q-item tag="a" th::active="${tab == 'models'}" active-class="active" th:href="@{/bot/{id}/models/(id=${model.bot.botId})}" th:text="#{layout.model}"></q-item>
 		<q-item tag="a" th::active="${tab == 'environment'}"  th:if="${model.userAuthorizations[AtzSuperAdm]}" active-class="active"
 				th:href="@{/bot/{id}/environments/(id=${model.bot.botId})}" th:text="#{layout.environment}"></q-item>
-		<q-separator></q-separator>
-		<q-item class="icon-item-clickable" tag="a" th::active="${tab == 'users'}" active-class="active" th:href="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}">
+		<q-separator th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"></q-separator>
+		<q-item th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="icon-item-clickable" tag="a" th::active="${tab == 'users'}" active-class="active" th:href="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}">
 			<q-item-section avatar>
 				<q-icon color="primary" name="group" />
 			</q-item-section>
