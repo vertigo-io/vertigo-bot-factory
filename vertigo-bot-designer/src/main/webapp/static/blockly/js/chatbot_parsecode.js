@@ -394,9 +394,11 @@ function createBlock(type, isComposite, params = []) {
 	}else if(resolvedType.type==='cb_jirafield'){
 		let lienParams = paramsFormatVariable(params[0])
 		let question = params[1]
+		let fieldType = params[2]
 		params[0] = lienParams[0]
 		params[1] = lienParams[1]
-		params.push(question)
+		params[2] = question
+		params[3] = fieldType
 	}
 
 	for (let i = 0; i < params.length; i++) {

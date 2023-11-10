@@ -1,6 +1,16 @@
 var workspace;
 var varTypeDropdownOptions =[];
 var pathMediaBlockly;
+var varTypeDropdownJiraFieldTypeOptions = []
+varTypeDropdownJiraFieldTypeOptions.push(["%{BKY_JIRA_FIELD_TYPE_ASSIGNEE}", "assignee"])
+varTypeDropdownJiraFieldTypeOptions.push(["%{BKY_JIRA_FIELD_TYPE_COMPONENT}", "components"])
+varTypeDropdownJiraFieldTypeOptions.push(["%{BKY_JIRA_FIELD_TYPE_DESCRIPTION}", "description"])
+varTypeDropdownJiraFieldTypeOptions.push(["%{BKY_JIRA_FIELD_TYPE_FIX_VERSIONS}", "fixVersions"])
+varTypeDropdownJiraFieldTypeOptions.push(["%{BKY_JIRA_FIELD_TYPE_ISSUE_TYPE}", "issuetype"])
+varTypeDropdownJiraFieldTypeOptions.push(["%{BKY_JIRA_FIELD_TYPE_PRIORITY}", "priority"])
+varTypeDropdownJiraFieldTypeOptions.push(["%{BKY_JIRA_FIELD_TYPE_REPORTER}", "reporter"])
+varTypeDropdownJiraFieldTypeOptions.push(["%{BKY_JIRA_FIELD_TYPE_SUMMARY}", "summary"])
+varTypeDropdownJiraFieldTypeOptions.push(["%{BKY_JIRA_FIELD_TYPE_VERSIONS}", "versions"])
 
 // Default values of varTypes (local, global and all contexts)
 varTypeDropdownOptions.push(["%{BKY_COMMONS_VARIABLE_TYPE_LOCAL}", "local"])
@@ -559,17 +569,21 @@ function importBlocklyTemplate(event){
                 var jiraIssueBlock = workspace.newBlock('cb_jiraissue') //reference, scenario, attendu, obtenu, reproductibilite, criticite
 
                 var fieldJira =[]
-                fieldJira.push(['reference', (locale==='fr_FR' ? "Bien sûr, quelle est la référence du client impacté par cette anomalie ?" : "Of course, what is the reference number of the customer affected by this anomaly ?")])
-                fieldJira.push(['scenario', (locale==='fr_FR' ? "Quel est le scénario de test ?" : "What is the test scenario ?")])
-                fieldJira.push(['attendu', (locale==='fr_FR' ? "Quel est le résultat attendu ?" : "What is the expected result ?")])
-                fieldJira.push(['obtenu', (locale==='fr_FR' ? "Quel est le résultat obtenu ?" : "What is the real result ?")])
-                fieldJira.push(['reproductibilite', (locale==='fr_FR' ? "Quelle est la reproductibilité ?" : "How reproducible is it ?")])
-                fieldJira.push(['criticite', (locale==='fr_FR' ? "Quelle est la criticité ?" : "What is the criticality?")])
+                fieldJira.push(['versions', (locale==='fr_FR' ? "Quelles sont les versions impactées par ce ticket ?" : "What versions are impacted by this ticket ?"), "versions"])
+                fieldJira.push(['assignee', (locale==='fr_FR' ? "Qui est le responsable de ce ticket ?" : "Who is the assignee for this ticket ?"), "assignee"])
+                fieldJira.push(['components', (locale==='fr_FR' ? "Quels sont les composants impactés par ce ticket ?" : "What components are impacted by this ticket ?"), "components"])
+                fieldJira.push(['description', (locale==='fr_FR' ? "Quel est la description de ce ticket ?" : "What's the description of this ticket ?"), "description"])
+                fieldJira.push(['fixversions', (locale==='fr_FR' ? "Quelles sont les versions correctives de ce ticket ?" : "What are the fix versions for this ticket ?"), "fixVersions"])
+                fieldJira.push(['priority', (locale==='fr_FR' ? "Quelle est la priorité ?" : "What is the priority ?"), "priority"])
+                fieldJira.push(['reporter', (locale==='fr_FR' ? "Qui est le rapporteur ?" : "Who is the reporter ?"), "reporter"])
+                fieldJira.push(['summary', (locale==='fr_FR' ? "Quel est le titre ?" : "What's the summary ?"), "summary"])
+                fieldJira.push(['issuetype', (locale==='fr_FR' ? "Quel est le type de ticket ?" : "What's the issue type ?"), "issuetype"])
                 var fieldJiraBlocks = []
                 for(let i=0; i< fieldJira.length; i++){
                     let fieldJiraBlock = workspace.newBlock('cb_jirafield')
                     fieldJiraBlock.setFieldValue(fieldJira[i][0],"nameVar")
                     fieldJiraBlock.setFieldValue(fieldJira[i][1],"question")
+                    fieldJiraBlock.setFieldValue(fieldJira[i][2],"fieldType")
                     fieldJiraBlocks.push(fieldJiraBlock)
                 }
                 addAllConnectionSubBlock(jiraIssueBlock, fieldJiraBlocks)

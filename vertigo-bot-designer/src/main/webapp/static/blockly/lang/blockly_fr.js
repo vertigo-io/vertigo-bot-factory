@@ -82,6 +82,7 @@ Blockly.Msg["COMMONS_SAMPLE_WT_CODE"] = "GACode";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_ISSUE_SENTENCE"] = "Votre ticket est consultable:";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_FIELD_QUEST"] = "Quelle est la référence ?";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_FIELD_VAR"] = "reference";
+Blockly.Msg["COMMONS_SAMPLE_JIRA_TYPE_FIELD"] = "description";
 Blockly.Msg["COMMONS_SAMPLE_SAY"] = "message";
 Blockly.Msg["COMMONS_SAMPLE_LISTCARD_SENTENCE"] = "Quelle est votre ville préférée ?";
 Blockly.Msg["COMMONS_LIST_CARD_VARIABLE_NAMEVAR"] = "ville";
@@ -195,6 +196,16 @@ Blockly.Msg["CONFLUENCE_QUEST2_ASSOCIATED"] = "Réponse:";
 Blockly.Msg["JIRA_FIELD_TITLE"] = "Champ ticket Jira";
 Blockly.Msg["JIRA_VARIABLE_TITLE"] = "Variable sauvegarde:";
 Blockly.Msg["JIRA_ISSUE_TITLE"] = "Créer ticket Jira";
+Blockly.Msg["JIRA_TYPE_FIELD"] = "Type de champs:";
+Blockly.Msg["JIRA_FIELD_TYPE_ASSIGNEE"] = "Responsable";
+Blockly.Msg["JIRA_FIELD_TYPE_COMPONENT"] = "Composant";
+Blockly.Msg["JIRA_FIELD_TYPE_DESCRIPTION"] = "Description";
+Blockly.Msg["JIRA_FIELD_TYPE_FIX_VERSIONS"] = "Versions corrigées";
+Blockly.Msg["JIRA_FIELD_TYPE_ISSUE_TYPE"] = "Type de ticket";
+Blockly.Msg["JIRA_FIELD_TYPE_PRIORITY"] = "Priorité";
+Blockly.Msg["JIRA_FIELD_TYPE_REPORTER"] = "Rapporteur";
+Blockly.Msg["JIRA_FIELD_TYPE_SUMMARY"] = "Titre";
+Blockly.Msg["JIRA_FIELD_TYPE_VERSIONS"] = "Versions affectées";
 
 // *****************************
 // **** CATEGORIE TEMPLATE *****

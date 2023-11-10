@@ -311,5 +311,5 @@ Blockly.BotScript['cb_jiraissue'] = function(block) {
 }
 Blockly.BotScript['cb_jirafield'] = function(block) {
 	let params = getBlockParams(block);
-	return 'jira:field' + formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+	return 'jira:field' + formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue()) + formatString(params[3].getValue())+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
