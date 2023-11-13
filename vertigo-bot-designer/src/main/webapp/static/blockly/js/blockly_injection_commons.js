@@ -176,6 +176,10 @@ function getToolBox(){
                     },
                     {
                         "kind": "block",
+                        "type": "cb_binaryrating"
+                    },
+                    {
+                        "kind": "block",
                         "type": "cb_welcometour"
                     },
                     {

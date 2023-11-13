@@ -50,7 +50,7 @@ public class AnalyticsSenderServices implements Component {
 
 	private void sendBotInputEvent(final UUID sessionId, final BotInput input, final ExecutorConfiguration executorConfiguration, final BotResponse botResponse) {
 		if (input.getMessage() != null) {
-			if (botResponse.getRating()) {
+			if (botResponse.getRating().isEnabled()) {
 				final IncomeRating incomeRating = new IncomeRating();
 				incomeRating.setComment(input.getMessage());
 				rateComment(sessionId, incomeRating, executorConfiguration);

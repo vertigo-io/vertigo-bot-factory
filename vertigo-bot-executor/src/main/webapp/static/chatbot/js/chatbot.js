@@ -107,6 +107,7 @@ const chatbot = new Vue({
             processing: false,
             acceptNlu: true,
             rating: false,
+            ratingType: 'SIMPLE',
             error: false,
             messages: [],
             keepAction: false,
@@ -209,7 +210,7 @@ const chatbot = new Vue({
                     link.click();
                     document.body.removeChild(link);
                 }
-                chatbot.askBot(btn.payload, btn.label, true, null,null, false);
+                chatbot.askBot(btn.payload, btn.label, true, null,null, chatbot.rating);
             },
             fileUpload(btn, index) {
                 const file = document.getElementById('file_' + index).files[0];
@@ -268,10 +269,14 @@ const chatbot = new Vue({
                     botInput = { message: null, metadatas: { context: chatbot.context, payload: value, filecontent: fileContent, filename: fileName } };
                 } else if (isButton) {
                     botInput = { message: null, metadatas: { context: chatbot.context, payload: value, text: label } };
-                } else if (rating) {
-                    botInput = { message: null, metadatas: { context: chatbot.context, rating: value, text: value } };
                 } else {
                     botInput = { message: value, metadatas: { context: chatbot.context } };
+                }
+                if (rating) {
+                    botInput.metadatas.rating = value
+                    if (chatbot.ratingType === 'SIMPLE') {
+                        botInput.message = null
+                    }
                 }
                 return Vue.http.post(chatbot.botUrl + '/talk/' + chatbot.convId, botInput)
                     .then(httpResponse => {
@@ -294,7 +299,8 @@ const chatbot = new Vue({
                 const cards = httpResponse.data.cards;
                 const files = httpResponse.data.files;
                 chatbot.acceptNlu = httpResponse.data.acceptNlu !== undefined ? httpResponse.data.acceptNlu : true;
-                chatbot.rating = httpResponse.data.rating;
+                chatbot.rating = httpResponse.data.rating.enabled;
+                chatbot.ratingType = httpResponse.data.rating.type;
                 chatbot.isEnded = httpResponse.data.status === 'Ended' && !isRating;
                 if (httpResponse.data.metadatas && httpResponse.data.metadatas.avatar) {
                     chatbot.botAvatar = 'data:image/png;base64,' + httpResponse.data.metadatas.avatar;
@@ -331,7 +337,7 @@ const chatbot = new Vue({
                         chatbot._displayMessages();
                     });
                 } else {
-                    chatbot.inputConfig.showRating = chatbot.rating && chatbot.inputConfig.rating === 0;
+                    chatbot.inputConfig.showRating = chatbot.rating && chatbot.ratingType === 'SIMPLE' && chatbot.inputConfig.rating === 0;
                     chatbot.processing = false;
                     if (chatbot.keepAction) {
                         chatbot.inputConfig = chatbot.prevInputConfig;

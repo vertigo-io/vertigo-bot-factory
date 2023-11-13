@@ -283,6 +283,12 @@ Blockly.BotScript['cb_rating'] = function(block) {
 	let name = getBlockName(block);
 	return name +formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
+
+Blockly.BotScript['cb_binaryrating'] = function(block) {
+	let params = getBlockParams(block);
+	return "rating:binary" + formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+
+		formatString(params[3].getValue()) + formatString(params[4].getValue()) + '\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
 Blockly.BotScript['cb_cards'] = function(block) {
 	let params = getBlockParams(block);
 	let subBlocks = Blockly.BotScript.statementToCode(block, 'SUB_BLOCKS')

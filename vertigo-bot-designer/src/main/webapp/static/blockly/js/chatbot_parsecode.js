@@ -216,6 +216,8 @@ function resolveCbBlockType(type) {
 			return {type: "cb_jiraissue"}
 		case "jira:field":
 			return {type: "cb_jirafield"}
+		case "rating:binary":
+			return {type: "cb_binaryrating"}
 		default:
 			break;
 	}
@@ -331,7 +333,17 @@ function createBlock(type, isComposite, params = []) {
 		params[0] = lienParams[0]
 		params[1] = lienParams[1]
 		params.push(valueTemp)
-	}else if(resolvedType.type==='cb_inputString'){
+	}else if(resolvedType.type==='cb_binaryrating') {
+		let lienParams = paramsFormatVariable(params[0])
+		let yesLabel = params[1]
+		let noLabel = params[2]
+		let valueTemp = params[3]
+		params[0] = lienParams[0]
+		params[1] = lienParams[1]
+		params[2] = yesLabel
+		params[3] = noLabel
+		params.push(valueTemp)
+	} else if(resolvedType.type==='cb_inputString'){
 		let lienParams = paramsFormatVariable(params[0])
 		params[0]= params[1]
 		params[1] = lienParams[0]

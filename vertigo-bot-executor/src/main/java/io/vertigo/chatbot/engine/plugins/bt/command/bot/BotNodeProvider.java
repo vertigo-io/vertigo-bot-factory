@@ -19,6 +19,7 @@ import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.commons.HtmlInputUtils;
 import io.vertigo.chatbot.engine.BotEngine;
+import io.vertigo.chatbot.engine.model.BotRatingType;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
 import io.vertigo.chatbot.engine.model.choice.BotCard;
@@ -33,6 +34,7 @@ import static io.vertigo.ai.bt.BTNodes.running;
 import static io.vertigo.ai.bt.BTNodes.selector;
 import static io.vertigo.ai.bt.BTNodes.sequence;
 import static io.vertigo.ai.bt.BTNodes.succeed;
+import static io.vertigo.chatbot.engine.util.BlackBoardUtils.getBB;
 
 public final class BotNodeProvider {
 
@@ -197,7 +199,18 @@ public final class BotNodeProvider {
 	}
 
 	public static BTNode rating(final BlackBoard bb, final String keyTemplate, final String msg) {
-		return inputInteger(bb, keyTemplate, msg);
+		return sequence(
+				set(bb, BotEngine.BOT_OUT_METADATA_RATING_TYPE_PATH.key(), BotRatingType.SIMPLE.name()),
+				inputInteger(bb, keyTemplate, msg));
+	}
+
+	public static BTNode binaryRating(final BlackBoard bb, final String keyTemplate, final String msg, final String yesLabel, final String noLabel) {
+		List<BotButton> buttons = new ArrayList<>();
+		buttons.add(new BotButton(yesLabel, "5"));
+		buttons.add(new BotButton(noLabel, "1"));
+		return sequence(
+				set(bb, BotEngine.BOT_OUT_METADATA_RATING_TYPE_PATH.key(), BotRatingType.BINARY.name()),
+				BotNodeProvider.chooseButton(bb, keyTemplate, msg, buttons));
 	}
 
 

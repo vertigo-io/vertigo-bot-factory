@@ -1171,6 +1171,60 @@ Blockly.Blocks['cb_rating'] = {
             });
     }
 };
+Blockly.Blocks['cb_binaryrating'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "block_type",
+                "message0": `%{BKY_OTHER_RATING_BINARY_TITLE} %1 %{BKY_OTHER_RATING_VAR_TITLE} %2 %3 %4 %{BKY_COMMONS_QUEST_ASSOCIATED} %5 %6 %{BKY_OTHER_RATING_YES_LABEL_TITLE} %7 %8 %{BKY_OTHER_RATING_NO_LABEL_TITLE} %9`,
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "typeVar",
+                        "options": varTypeDropdownOptions
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "nameVar",
+                        "text": "%{BKY_COMMONS_SAMPLE_RATING_VAR}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "value",
+                        "text": "%{BKY_COMMONS_SAMPLE_RATING_BINARY_QUEST}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "yesLabel",
+                        "text": "%{BKY_COMMONS_SAMPLE_RATING_YES_LABEL}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "noLabel",
+                        "text": "%{BKY_COMMONS_SAMPLE_RATING_NO_LABEL}"
+                    }
+                ],
+                "colour": 180,
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
 Blockly.Blocks['cb_welcometour'] = {
     init: function() {
         this.jsonInit(
