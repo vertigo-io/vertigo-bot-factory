@@ -107,7 +107,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 	}
 
 	private String createLinkUrl(final String link, final String name) {
-		final String url = getBaseUrl() + "/" + link;
+		final String url = getBaseUrl() + link;
 		final var builder = new StringBuilder();
 		builder.append("<a href=\"");
 		builder.append(url);
