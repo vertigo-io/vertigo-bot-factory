@@ -15,7 +15,7 @@
 	<properties>
 		<sonar.javascript.globals>Vue,VertigoUi,VUiPage</sonar.javascript.globals>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<openCSV.version>5.7.1</openCSV.version>
+		<openCSV.version>5.9</openCSV.version>
 	</properties>
 
 	<dependencies>
