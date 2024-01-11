@@ -1,14 +1,12 @@
 function fromCode() {
-	let workspace = Blockly.mainWorkspace;
-	workspace.clear();
-	workspace.clearUndo();
-	setTimeout(() => Blockly.mainWorkspace.trashcan.emptyContents(), 0); // not working if not asynch
-
 	var text = VertigoUi.vueData.scriptIntention.script
 	let parsed = parseText(text);
 	if (parsed.error) {
-
 	} else {
+		let workspace = Blockly.mainWorkspace;
+		workspace.clear();
+		workspace.clearUndo();
+		setTimeout(() => Blockly.mainWorkspace.trashcan.emptyContents(), 0); // not working if not asynch
 		doBuildBlocks(parsed);
 	}
 }
