@@ -78,14 +78,15 @@ function toCode(event) {
 
 	// document.getElementById('error_blockly').innerHTML = '';
 	var code = Blockly.BotScript.workspaceToCode(Blockly.mainWorkspace );
-
-	if (startCount === 0 && !isOnlySequence) {
-		if (code) {
-			code = Blockly.BotScript.prefixLines(code, Blockly.BotScript.INDENT);
+	if (code !== undefined && code !== null && code !== '') {
+		if (startCount === 0 && !isOnlySequence) {
+			if (code) {
+				code = Blockly.BotScript.prefixLines(code, Blockly.BotScript.INDENT);
+			}
+			code = 'begin sequence\r\n' + code + 'end sequence';
 		}
-		code = 'begin sequence\r\n' + code + 'end sequence';
+		VertigoUi.vueData.scriptIntention.script = code;
 	}
-	VertigoUi.vueData.scriptIntention.script = code;
 }
 
 function getCodeDiagram(event) {
