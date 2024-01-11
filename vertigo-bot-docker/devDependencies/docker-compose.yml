@@ -110,7 +110,7 @@ services:
       - cb_factory
   
   rasa:
-    image: rasa/rasa:2.4.0-full
+    image: rasa/rasa:3.1.0-full
     ports:
       - 5005:5005
     command:
