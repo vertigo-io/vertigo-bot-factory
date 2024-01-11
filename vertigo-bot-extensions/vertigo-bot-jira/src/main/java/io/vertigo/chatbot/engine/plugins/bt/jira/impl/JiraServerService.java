@@ -18,7 +18,10 @@ import com.atlassian.jira.rest.client.api.domain.User;
 import com.atlassian.jira.rest.client.api.domain.Version;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
+import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
+import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 
 import java.net.URI;
 import java.util.List;
@@ -32,6 +35,8 @@ import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.PasswordEncryptionServices;
 import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
+import io.vertigo.chatbot.engine.plugins.bt.jira.helper.CustomAsynchronousJiraRestClient;
+import io.vertigo.chatbot.engine.plugins.bt.jira.helper.CustomServerInfo;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.core.lang.VSystemException;
@@ -46,9 +51,10 @@ public class JiraServerService implements Component, IJiraService {
 	private String user;
 	private String password;
 	private String project;
+	private Boolean isCloud;
 	private JiraRestClient jiraRestClient;
 	private DtList<JiraFieldSettingExport> jiraFieldSettingExports;
-
+	private CustomAsynchronousJiraRestClient customAsynchronousUserRestClient;
 	@Inject
 	private PasswordEncryptionServices passwordEncryptionServices;
 
@@ -57,6 +63,7 @@ public class JiraServerService implements Component, IJiraService {
 		LogsUtils.addLogs(logs, "Refreshing Jira settings ... ");
 		final JiraSettingExport jiraSettingExport = config.getBot().getJiraSetting();
 		final DtList<JiraFieldSettingExport> jiraFieldSettingExport = config.getBot().getJiraFieldSetting();
+		isCloud = true;
 		if (jiraSettingExport == null || jiraFieldSettingExport == null) {
 			LogsUtils.logKO(logs);
 			throw new VSystemException("Jira setting and Jira fields settings must be set for jira plugin to work...");
@@ -66,9 +73,15 @@ public class JiraServerService implements Component, IJiraService {
 			password = passwordEncryptionServices.decryptPassword(jiraSettingExport.getPassword());
 			project = jiraSettingExport.getProject();
 			jiraRestClient = createJiraRestClient();
+			customAsynchronousUserRestClient = createCustomUserRestClient();
+			isCloud = checkIfIsCloud();
 			jiraFieldSettingExports = jiraFieldSettingExport;
 			LogsUtils.logOK(logs);
 		}
+	}
+
+	public Boolean isCloud() {
+		return isCloud;
 	}
 
 	public DtList<JiraFieldSettingExport> getJiraFieldSettingExports() {
@@ -80,19 +93,37 @@ public class JiraServerService implements Component, IJiraService {
 				.createWithBasicHttpAuthentication(URI.create(baseJira), user, password);
 	}
 
+	private CustomAsynchronousJiraRestClient createCustomUserRestClient() {
+		DisposableHttpClient httpClient = new AsynchronousHttpClientFactory()
+				.createClient(URI.create(baseJira), new BasicHttpAuthenticationHandler(user, password));
+		return new CustomAsynchronousJiraRestClient(URI.create(baseJira), httpClient);
+	}
+
 	public BasicIssue createIssue(final BlackBoard bb, final List<JiraField> jfFields, final List<IJiraFieldService> fieldServices) {
 		final IssueRestClient issueClient = jiraRestClient.getIssueClient();
 		final IssueInputBuilder iib = new IssueInputBuilder();
 		iib.setProjectKey(project);
-		jfFields.forEach(jiraField -> fieldServices.forEach(fieldService -> {
-			if (fieldService.supports(jiraField.getFieldType())) {
-				fieldService.processTicket(bb, iib, jiraField);
+		jfFields.forEach(jiraField -> {
+			if (jiraField.getValue() != null) {
+				fieldServices.forEach(fieldService -> {
+					if (fieldService.supports(jiraField.getFieldType())) {
+						fieldService.processTicket(bb, iib, jiraField);
+					}
+				});
 			}
-		}));
+		});
 		final IssueInput issue = iib.build();
 		return issueClient.createIssue(issue).claim();
 	}
 
+	private boolean checkIfIsCloud() {
+		CustomServerInfo customServerInfo = customAsynchronousUserRestClient.getServerInfo().claim();
+		if (customServerInfo != null && customServerInfo.getDeploymentType() != null) {
+			return customServerInfo.getDeploymentType().equalsIgnoreCase("cloud");
+		} else {
+			return false;
+		}
+	}
 
 	public List<String> getIssues(final String jqlSearch) {
 		final SearchRestClient searchClient = jiraRestClient.getSearchClient();
@@ -127,7 +158,11 @@ public class JiraServerService implements Component, IJiraService {
 	}
 
 	public List<User> findUserByUsername(final String username) {
-		return (List<User>) jiraRestClient.getUserClient().findUsers(username).claim();
+		if (isCloud) {
+			return (List<User>) customAsynchronousUserRestClient.findUsers(username, project).claim();
+		} else {
+			return (List<User>) jiraRestClient.getUserClient().findUsers(username).claim();
+		}
 	}
 
 	public List<Priority> getPriorities() {

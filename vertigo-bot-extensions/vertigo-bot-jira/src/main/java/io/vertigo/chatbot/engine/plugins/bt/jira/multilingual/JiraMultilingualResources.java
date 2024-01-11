@@ -8,5 +8,10 @@ public enum JiraMultilingualResources implements MessageKey {
 	ASK_CONTINUE,
 	YES,
 	NO,
-	NO_USER_FOUND
+	NO_USER_FOUND,
+	NO_ISSUE_TYPE_FOUND,
+	NO_COMPONENT_FOUND,
+	NO_VERSION_FOUND,
+
+	NO_PRIORITY_FOUND
 }
