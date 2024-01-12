@@ -136,4 +136,8 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/create_23_10_26.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal" id="Update or create context value 'url' for each bot">
+        <createProcedure encoding="utf8" path="/sql/v_2_0/update_24_01_12.sql" />
+    </changeSet>
+
 </databaseChangeLog>
