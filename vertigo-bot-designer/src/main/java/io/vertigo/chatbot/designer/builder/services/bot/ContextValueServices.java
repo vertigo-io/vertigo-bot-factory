@@ -51,8 +51,6 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 
 	private static final String URL = "url";
 
-	private static final String XPATHURL = "//input[@id='url']";
-
 	/**
 	 * get ContextValue by id
 	 *
@@ -71,7 +69,9 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 	 */
 	@Secured("BotUser")
 	public ContextValue save(@SecuredOperation("botAdm") final Chatbot bot, final ContextValue contextValue) {
-		checkPatternKey(contextValue.getXpath());
+		if (!contextValue.getLabel().equals(URL)) {
+			checkPatternKey(contextValue.getXpath());
+		}
 		final HistoryActionEnum action;
 		if (contextValue.getCvaId()!= null) {
 			action = HistoryActionEnum.UPDATED;
@@ -189,7 +189,7 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 		final ContextValue contextValue = new ContextValue();
 		contextValue.setBotId(bot.getBotId());
 		contextValue.setLabel(URL);
-		contextValue.setXpath(XPATHURL);
+		contextValue.setXpath("");
 		return save(bot, contextValue);
 	}
 }
