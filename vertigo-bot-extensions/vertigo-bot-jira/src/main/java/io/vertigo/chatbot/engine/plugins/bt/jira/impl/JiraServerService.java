@@ -117,10 +117,14 @@ public class JiraServerService implements Component, IJiraService {
 	}
 
 	private boolean checkIfIsCloud() {
-		CustomServerInfo customServerInfo = customAsynchronousUserRestClient.getServerInfo().claim();
-		if (customServerInfo != null && customServerInfo.getDeploymentType() != null) {
-			return customServerInfo.getDeploymentType().equalsIgnoreCase("cloud");
-		} else {
+		try {
+			CustomServerInfo customServerInfo = customAsynchronousUserRestClient.getServerInfo().claim();
+			if (customServerInfo != null && customServerInfo.getDeploymentType() != null) {
+				return customServerInfo.getDeploymentType().equalsIgnoreCase("cloud");
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
 			return false;
 		}
 	}
