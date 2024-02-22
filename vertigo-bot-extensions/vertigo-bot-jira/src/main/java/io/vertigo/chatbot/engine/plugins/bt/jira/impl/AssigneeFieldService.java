@@ -56,7 +56,7 @@ public class AssigneeFieldService implements IJiraFieldService, Component {
 				bb.delete(BBKeyPattern.of(jiraField.getKey()));
 				return BotNodeProvider.say(bb, MessageText.of(JiraMultilingualResources.NO_USER_FOUND).getDisplay()).eval();
 			} else if (users.size() == 1) {
-				bb.putString(BBKey.of(jiraField.getKey()), users.get(0).getName());
+				bb.putString(BBKey.of(jiraField.getKey()), jiraServerService.isCloud() ? users.get(0).getAccountId() : users.get(0).getName());
 			} else {
 				return getUserButtons(bb, users, jiraField).eval();
 			}
