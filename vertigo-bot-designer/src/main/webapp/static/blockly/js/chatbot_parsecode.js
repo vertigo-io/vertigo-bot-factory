@@ -1,14 +1,16 @@
 function fromCode() {
 	var text = VertigoUi.vueData.scriptIntention.script
 	let parsed = parseText(text);
-	if (parsed.error) {
-	} else {
-		let workspace = Blockly.mainWorkspace;
+	let workspace = Blockly.mainWorkspace;
+	if (workspace) {
 		workspace.clear();
 		workspace.clearUndo();
+	}
+	if (!parsed.error) {
 		setTimeout(() => Blockly.mainWorkspace.trashcan.emptyContents(), 0); // not working if not asynch
 		doBuildBlocks(parsed);
 	}
+	return parsed
 }
 
 function parseText(txt) {
@@ -29,6 +31,7 @@ function parseText(txt) {
 	let compositeStack = [];
 	let commandsStack = [];
 	let currentCommands = [];
+	let locale = VertigoUi.vueData.locale
 	for (let i = 0; i < commands.length; i++) {
 		let command = commands[i];
 		if (command.isComposite) {
@@ -38,8 +41,10 @@ function parseText(txt) {
 				compositeStack.push(command);
 			} else {
 				let lastComposite = compositeStack.pop();
-				if (!lastComposite) return {error: "End command '" + command.type + "' without begin."};
-				if (lastComposite.type !== command.type) return {error: "Command '" + lastComposite.type + "' not ended properly (end '" + command.type + "' found)"};
+				if (!lastComposite) return locale ==='fr_FR' ? {error: "Noeud de type 'end' " + command.type + "' sans noeud de type 'begin'."}
+				: {error: "End command '" + command.type + "' without begin."};
+				if (lastComposite.type !== command.type) return locale ==='fr_FR' ? {error: "Le noeud '" + lastComposite.type + "' n'a pas été fermé proprement (end '" + command.type + "' trouvé)"}
+				: {error: "Command '" + lastComposite.type + "' not ended properly (end '" + command.type + "' found)"};
 
 				lastComposite.commands = currentCommands;
 				currentCommands = commandsStack.pop();
@@ -50,7 +55,8 @@ function parseText(txt) {
 		}
 	}
 
-	if (compositeStack.length > 0) return {error: "Command '" + compositeStack.pop().type + "' not ended."};
+	if (compositeStack.length > 0) return locale ==='fr_FR' ? {error: "Noeud '" + compositeStack.pop().type + "' n'a pas été fermé."}
+	: {error: "Command '" + compositeStack.pop().type + "' not ended."};
 
 	return currentCommands;
 }

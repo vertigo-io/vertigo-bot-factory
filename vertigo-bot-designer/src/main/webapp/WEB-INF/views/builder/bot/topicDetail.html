@@ -105,6 +105,8 @@
 
 	  <script th:inline="javascript">
 		  VUiExtensions.dataX.viewScript = false;
+		  VUiExtensions.dataX.diagramHasErrors = false;
+		  VUiExtensions.dataX.diagramErrorMessage = "";
 	  </script>
 
 		</head>
@@ -278,7 +280,9 @@
 	  <script th:inline="javascript">
 		  function updateDiagramSwitchType(){
 			  // if the script does not have loaded after the 150ms, it's possible to refresh the diagram using the button in scriptIntentionDetail.html
-			  if(VertigoUi.vueData.topic.ttoCd==='SCRIPTINTENTION')setTimeout(injectionBlockly,150)
+			  if(VertigoUi.vueData.topic.ttoCd==='SCRIPTINTENTION') {
+				  setTimeout(checkErrors(injectionBlockly),150)
+			  }
 			  else setTimeout(updateSmallTalkRendererSwitchType, 0)
 		  }
 		  function updateSmallTalkRendererSwitchType(){

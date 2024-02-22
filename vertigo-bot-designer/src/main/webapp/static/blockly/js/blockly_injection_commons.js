@@ -421,10 +421,14 @@ function injectionBlockly(mode=false){
         workspace = Blockly.inject(blocklyDiv,options);
         window.addEventListener('resize', onresize, false);
         onresize();
-        if(VertigoUi.vueData.scriptIntention.script!=null)fromCode();
+        let parsed = null
+        if (VertigoUi.vueData.scriptIntention.script!=null) {
+            parsed = fromCode();
+        }
         workspace.addChangeListener(toCode);
         workspace.addChangeListener(importBlocklyTemplate)
         workspace.addChangeListener(nameVarValidator)
+        return parsed
     }
 }
 

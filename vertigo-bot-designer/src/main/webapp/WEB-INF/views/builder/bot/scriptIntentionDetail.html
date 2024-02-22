@@ -11,7 +11,6 @@
 	</section>
 
 
-
 	<section th:fragment="content-specific">
 		<vu:block id="diagram" th:title="#{script.menu.diagram}">
 			<vu:include-data-primitive key="locale"/>
@@ -29,6 +28,7 @@
 					<q-btn id="q-btn-buttons-refresh" th:if="${!model.modeReadOnly}" round icon="refresh" color="secondary" @click="updateDiagram()"></q-btn>
 				</div>
 			</div>
+			<div v-if="dataX.diagramHasErrors" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.diagramErrorMessage}}</div>
 			<div id="blocklyArea" style="
 				margin: 10px;
 				height: 700px; position: inherit; z-index: 0">
@@ -61,22 +61,34 @@
 		<script th:if="${model.locale!='fr_FR'}" th:src="@{/static/blockly/lang/blockly_en.js}"></script>
 		<script type="text/javascript" th:inline="javascript">pathMediaBlockly=[[@{/static/blockly/media/}]]</script>
 		<script th:src="@{/static/blockly/js/blockly_injection_commons.js}"></script>
+		<script type="text/javascript">
+			function checkErrors(parsed) {
+				if (parsed && parsed.error) {
+					VUiExtensions.dataX.diagramHasErrors = true;
+					VUiExtensions.dataX.diagramErrorMessage = (VertigoUi.vueData.locale === 'fr_FR'
+							? "Le script n'est pas valide, son diagramme ne peut pas être affiché. " : "Script is invalid, diagram couldn't be loaded. ") + parsed.error;
+				} else {
+					VUiExtensions.dataX.diagramHasErrors = false;
+				}
+			}
+		</script>
 		<script  th:if="${!model.modeReadOnly}">
-			injectionBlockly(false)
+			checkErrors(injectionBlockly(false))
 		</script>
 		<script th:if="${model.modeReadOnly}">
-			injectionBlockly(true)
+			checkErrors(injectionBlockly(true))
 		</script>
 		<script type="text/javascript">
 			function codeToDiagram(){
-				fromCode();
+				checkErrors(fromCode());
 			}
 			function updateDiagram(){
-				injectionBlockly(false)
+				checkErrors(injectionBlockly(false))
 			}
-			function updateBlocksBlockly(){
+			function updateBlocksBlockly() {
 				toCode()
-				fromCode()
+				checkErrors(fromCode())
+
 			}
 		</script>
 	</section>
