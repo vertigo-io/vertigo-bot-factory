@@ -32,7 +32,7 @@
 	<body>
 		<section layout:fragment="content-actions">
 			<q-form method="post" action="_exportDictionary">	
-				<q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" size="md"
+				<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" size="md"
 						       @click="vueData.dictionaryEntityEdit = Vue.util.extend({}, vueData.nodeNew); $refs.dictionaryEntityEdit.show()"></q-btn>
 				<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">	
 				<q-btn type="submit" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md"

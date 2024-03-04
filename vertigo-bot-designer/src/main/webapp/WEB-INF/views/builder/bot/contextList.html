@@ -8,6 +8,20 @@
 	
 	<head>		
 		<title th:text="#{context.title}"></title>
+		<script th:inline="javascript">
+			function saveContextEnvironment() {
+				VUiPage.httpPostAjax("_saveContextEnvironment", {
+					'cenvIdOpt': VertigoUi.vueData.newContextEnvironment.cenvId,
+					'label': VertigoUi.vueData.newContextEnvironment.label
+				});
+			}
+			function saveContextEnvironmentValue() {
+				VUiPage.httpPostAjax("_saveContextEnvironmentValue", {
+					'cenvalId': VertigoUi.vueData.newContextEnvironmentValue.cenvalId,
+					'value': VertigoUi.vueData.newContextEnvironmentValue.value
+				});
+			}
+		</script>
 	</head>
 	
 	<body>
@@ -18,6 +32,10 @@
 		</section>
 		
 		<section layout:fragment="content">
+			<vu:include-data-primitive key="locale"/>
+
+			<vu:popup-ajax action="_deleteContextEnvironment" vModel="showDeleteContextEnvironmentPopup" th:message="#{context.environment.delete.popup}"
+						   th:confirm="#{action.delete}" dataName="cenvId" ></vu:popup-ajax>
 
 			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
 				<span class="text-primary" style="flex-grow: 2">[[#{layout.context}]]</span>
@@ -39,6 +57,119 @@
 					</vu:column>
 					<vu:column field="xpath"/>
 			</vu:table>
+			<vu:include-data object="contextEnvironments" field="'*'"/>
+			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center; margin-top: 2rem;" >
+				<span class="text-primary" style="flex-grow: 2">[[#{context.environment.title}]]</span>
+				<q-btn color="primary" round icon="add" th:aria-label="#{context.environment.add}" th:title="#{context.environment.add}"
+					   @click="vueData.newContextEnvironment.cenvId = null;
+                       vueData.newContextEnvironment.botId = vueData.bot.botId;
+                       vueData.newContextEnvironment.label = null;
+     					$refs.environmentDialog.show()">
+				</q-btn>
+			</div>
+			<div class="col-12" v-if="vueData.contextEnvironments.length > 0">
+				<q-list bordered class="rounded-borders">
+					<q-expansion-item v-for="(contextEnvironment, index) in vueData.contextEnvironments"
+									  expand-separator icon="source">
+						<template v-slot:header>
+							<q-item-section avatar>
+								<q-avatar icon="source" color="primary" text-color="white" />
+							</q-item-section>
+
+							<q-item-section>
+								{{contextEnvironment.label}}
+							</q-item-section>
+
+							<q-item-section side>
+								<div class="flex">
+									<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}"
+										   th:ariaLabel="#{action.save}" th:title="#{action.save}" icon="edit"
+										   class="on-left" round size="md" color="primary"
+										   @click="vueData.newContextEnvironment.cenvId = contextEnvironment.cenvId;
+													vueData.newContextEnvironment.botId = contextEnvironment.botId;
+													vueData.newContextEnvironment.label = contextEnvironment.label;
+													$refs.environmentDialog.show()"></q-btn>
+									<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}"
+										   th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
+										   class="on-left" round size="md" color="red"
+										   @click="componentStates.cenvId = contextEnvironment.cenvId; componentStates.showDeleteContextEnvironmentPopup = true"></q-btn>
+								</div>
+							</q-item-section>
+						</template>
+						<q-card>
+							<q-card-section>
+								<div class="q-pa-md">
+									<q-list bordered separator>
+										<q-item v-for="contextEnvironmentValue in contextEnvironment.contextEnvironmentValues"
+												@click="vueData.newContextEnvironmentValue.cenvalId = contextEnvironmentValue.cenvalId;
+						   vueData.newContextEnvironmentValue.cvaId = contextEnvironmentValue.cvaId;
+						   vueData.newContextEnvironmentValue.label = contextEnvironmentValue.label;
+						   vueData.newContextEnvironmentValue.value = contextEnvironmentValue.value;
+							$refs.environmentContextValueDialog.show()"
+												clickable v-ripple>
+											<q-item-section>
+												<q-item-label>{{contextEnvironmentValue.label}}</q-item-label>
+												<q-item-label caption>{{contextEnvironmentValue.value}}</q-item-label>
+											</q-item-section>
+										</q-item>
+									</q-list>
+								</div>
+							</q-card-section>
+						</q-card>
+					</q-expansion-item>
+				</q-list>
+			</div>
+			<th:bloc th:with="viewMode='edit'">
+				<q-dialog ref="environmentDialog">
+					<vu:include-data object="newContextEnvironment" field="cenvId" modifiable="true" />
+					<vu:include-data object="newContextEnvironment" field="botId" modifiable="true" />
+					<vu:include-data object="newContextEnvironment" field="label" modifiable="true" />
+					<q-card>
+						<q-card-section>
+							<div class="text-h6">
+								<span v-if="vueData.newContextEnvironment.cenvId !== null" th:text="#{context.environment.update}"></span>
+								<span v-else th:text="#{context.environment.add}"></span>
+							</div>
+						</q-card-section>
+						<q-card-section>
+							<input type="hidden" v-model="vueData.newContextEnvironment.cenvId" name="vContext[newContextEnvironment][cenvId]">
+							<input type="hidden" v-model="vueData.newContextEnvironment.botId" name="vContext[newContextEnvironment][botId]">
+							<vu:text-field object="newContextEnvironment" field="label"/>
+						</q-card-section>
+						<q-card-actions align="around">
+							<q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+							<q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+								   @click="saveContextEnvironment()"
+								   color="primary" v-close-popup></q-btn>
+						</q-card-actions>
+					</q-card>
+				</q-dialog>
+				<q-dialog ref="environmentContextValueDialog">
+					<vu:include-data object="newContextEnvironmentValue" field="cenvalId" modifiable="true" />
+					<vu:include-data object="newContextEnvironmentValue" field="cvaId" modifiable="true" />
+					<vu:include-data object="newContextEnvironmentValue" field="value" modifiable="true" />
+					<vu:include-data object="newContextEnvironmentValue" field="label" modifiable="true" />
+					<q-card>
+						<q-card-section>
+							<div class="text-h6">
+								<span th:text="#{context.environment.value.update}"></span>
+							</div>
+						</q-card-section>
+						<q-card-section>
+							<input type="hidden" v-model="vueData.newContextEnvironmentValue.cenvalId" name="vContext[newContextEnvironmentValue][cenvalId]">
+							<input type="hidden" v-model="vueData.newContextEnvironmentValue.cvaId" name="vContext[newContextEnvironmentValue][cvaId]">
+							<input type="hidden" v-model="vueData.newContextEnvironmentValue.label" name="vContext[newContextEnvironmentValue][label]">
+							<vu:text-field object="newContextEnvironmentValue" field="value"/>
+						</q-card-section>
+						<q-card-actions align="around">
+							<q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+							<q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+								   @click="saveContextEnvironmentValue()"
+								   color="primary" v-close-popup></q-btn>
+						</q-card-actions>
+					</q-card>
+				</q-dialog>
+			</th:bloc>
 		</section>
 	</body>
 </html>

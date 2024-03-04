@@ -10,17 +10,74 @@
 		<q-item tag="a" href="#script" th:text="#{script.menu.script}"></q-item>
 	</section>
 
+
+
 	<section th:fragment="content-specific">
+		<vu:block id="diagram" th:title="#{script.menu.diagram}">
+			<vu:include-data-primitive key="locale"/>
+			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
+			<vu:include-data object="topic" field="title"/>
+			<vu:include-data object="contextValues" field="label" />
+			<vu:include-data object="chatbotCustomConfig" field="disableNlu" />
+			<div id="scriptintention-buttons">
+				<div id="scriptintention-buttons-export-emoji">
+					<q-btn class="q-btn-buttons" th:label="#{script.diagram.export}" color="primary" @click="exportDiagramToPng()"></q-btn>
+					<c-emojipicker class="q-btn-buttons" @emojipicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-emojipicker>
+					<c-variablepicker object="contextValues" field="label" class="q-btn-buttons" @variablepicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-variablepicker>
+				</div>
+				<div id="scriptintention-buttons-refresh">
+					<q-btn id="q-btn-buttons-refresh" th:if="${!model.modeReadOnly}" round icon="refresh" color="secondary" @click="updateDiagram()"></q-btn>
+				</div>
+			</div>
+			<div id="blocklyArea" style="
+				margin: 10px;
+				height: 700px; position: inherit; z-index: 0">
+				<div id="blocklyDiv"></div>
+				<input type="hidden" name="vContext[scriptIntention][script]" :value="vueData.scriptIntention.script" />
+			</div>
+		</vu:block>
+		<q-toggle left-label size="lg" th:label="#{script.view}" v-model="VUiExtensions.dataX.viewScript"></q-toggle>
+
 		<vu:popup action="_delete" vModel="showPopupDeleteTopic" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
 
-		<vu:block id="script" title="Script">
+		<vu:block id="script" title="Script" v-if="VUiExtensions.dataX.viewScript">
 			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
 
 			<c-codemirror object="scriptIntention" field="script" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale"></c-codemirror>
-
+			<div id="blocklyTool">
+				<q-btn th:if="${!model.modeReadOnly}" th:class="q-btn-blockly" class="code" id="from-code" @click="codeToDiagram()" th:text="#{script.diagram.fromcode}"></q-btn>
+			</div>
 		</vu:block>
-
 	</section>
-
+	<section th:fragment="blockly">
+		<script th:src="@{/static/utils/blockly.min.js}"></script>
+		<script th:src="@{/static/blockly/js/chatbot_blocks.js}"></script>
+		<script th:src="@{/static/blockly/js/chatbot_gencode.js}"></script>
+		<script th:src="@{/static/blockly/js/chatbot_parsecode.js}"></script>
+		<script th:src="@{/static/blockly/js/chatbot_custom_renderer.js}"></script>
+		<script th:if="${model.locale=='fr_FR'}" th:src="@{/static/blockly/lang/fr.js}"></script>
+		<script th:if="${model.locale=='fr_FR'}" th:src="@{/static/blockly/lang/blockly_fr.js}"></script>
+		<script th:if="${model.locale!='fr_FR'}" th:src="@{/static/blockly/lang/blockly_en.js}"></script>
+		<script type="text/javascript" th:inline="javascript">pathMediaBlockly=[[@{/static/blockly/media/}]]</script>
+		<script th:src="@{/static/blockly/js/blockly_injection_commons.js}"></script>
+		<script  th:if="${!model.modeReadOnly}">
+			injectionBlockly(false)
+		</script>
+		<script th:if="${model.modeReadOnly}">
+			injectionBlockly(true)
+		</script>
+		<script type="text/javascript">
+			function codeToDiagram(){
+				fromCode();
+			}
+			function updateDiagram(){
+				injectionBlockly(false)
+			}
+			function updateBlocksBlockly(){
+				toCode()
+				fromCode()
+			}
+		</script>
+	</section>
 </html>

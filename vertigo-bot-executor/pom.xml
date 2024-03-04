@@ -43,16 +43,10 @@
 			<artifactId>vertigo-vega</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
-		
-		<dependency>
-			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-redis-connector</artifactId>
-			<version>${vertigo.version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-mail-connector</artifactId>
+			<artifactId>vertigo-redis-connector</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
 
@@ -65,7 +59,7 @@
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
 		    <artifactId>jackson-databind</artifactId>
-		    <version>2.12.1</version>
+		    <version>${jackson-databind.version}</version>
 		</dependency>
 
 		<dependency>

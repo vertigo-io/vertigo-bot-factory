@@ -23,7 +23,7 @@ public enum ChatbotSmartTypes {
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "100", msg = "")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "100")
 	@SmartTypeProperty(property = "storeType", value = "VARCHAR(100)")
 	IdStr,
 
@@ -39,27 +39,34 @@ public enum ChatbotSmartTypes {
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "100", msg = "")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "100")
 	@SmartTypeProperty(property = "storeType", value = "VARCHAR(100)")
 	Label,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "100", msg = "")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "100")
 	@SmartTypeProperty(property = "storeType", value = "VARCHAR(100)")
 	Password,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "20", msg = "")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "20")
 	@SmartTypeProperty(property = "storeType", value = "VARCHAR(20)")
 	Color,
 
 	@SmartTypeDefinition(String.class)
 	@Formatter(clazz = FormatterDefault.class)
-	@Constraint(clazz = ConstraintStringLength.class, arg = "100", msg = "")
+	@Constraint(clazz = ConstraintStringLength.class, arg = "100")
 	@SmartTypeProperty(property = "storeType", value = "VARCHAR(100)")
 	Code,
+
+	@SmartTypeDefinition(String.class)
+	@Formatter(clazz = FormatterDefault.class)
+	@Constraint(clazz = ConstraintStringLength.class, arg = "10")
+	@Constraint(clazz = ConstraintRegex.class, arg = "^[a-zA-Z0-9_.-]*$", resourceMsg = "CODE_PATTERN_DIGIT_ERROR")
+	@SmartTypeProperty(property = "storeType", value = "VARCHAR(10)")
+	TopicCode,
 
 	@SmartTypeDefinition(Boolean.class)
 	@Formatter(clazz = FormatterDefault.class)

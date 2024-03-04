@@ -1,11 +1,20 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
 import io.vertigo.chatbot.designer.domain.DictionaryEntity;
 import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
 import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.chatbot.domain.DtDefinitions;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
@@ -13,12 +22,6 @@ import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
@@ -44,7 +47,6 @@ public class DictionaryEntityListController extends AbstractBotListEntityControl
 	}
 
 	@PostMapping("/saveDictionaryEntity")
-	@Secured("Chatbot$botAdm")
 	public String doSaveDictionaryEntity(final ViewContext viewContext,
 										 @ViewAttribute("bot") final Chatbot bot,
 										 @ViewAttribute("dictionaryEntityEdit") final DictionaryEntity dictionaryEntityEdit) {
@@ -56,7 +58,6 @@ public class DictionaryEntityListController extends AbstractBotListEntityControl
 	}
 
 	@PostMapping("/_deleteDictionaryEntity")
-	@Secured("Chatbot$botAdm")
 	public ViewContext doDeleteDictionaryEntity(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 												@RequestParam("dicEntId") final Long dicEntId, final UiMessageStack uiMessageStack) {
 
@@ -84,6 +85,9 @@ public class DictionaryEntityListController extends AbstractBotListEntityControl
 			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("importDictionaryFileUri") final FileInfoURI importDictionaryFile) {
 
+		if (importDictionaryFile == null) {
+			throw new VUserException(UtilsMultilingualResources.IMPORT_FILE_MUST_NOT_BE_EMPTY);
+		}
 		dictionaryEntityServices.importDictionaryFromCSVFile(bot, importDictionaryFile);
 
 		return "redirect:/bot/" + bot.getBotId() + "/dictionary/";

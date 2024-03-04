@@ -1,0 +1,1 @@
+DROP TABLE cha_per_rights;

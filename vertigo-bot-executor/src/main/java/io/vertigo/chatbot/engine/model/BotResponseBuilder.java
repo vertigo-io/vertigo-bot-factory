@@ -39,9 +39,9 @@ public final class BotResponseBuilder implements Builder<BotResponse> {
 	private final Map<String, Object> metadatas;
 	private final BotStatus status;
 	private final Boolean acceptNlu;
-	private final Boolean rating;
+	private final BotRating rating;
 
-	public BotResponseBuilder(final BotStatus status, final Boolean acceptNlu, final Boolean rating) {
+	public BotResponseBuilder(final BotStatus status, final Boolean acceptNlu, final BotRating rating) {
 		Assertion.check()
 				.isNotNull(status);
 		//--

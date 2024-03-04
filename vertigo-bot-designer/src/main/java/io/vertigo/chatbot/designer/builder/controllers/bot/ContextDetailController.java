@@ -21,6 +21,8 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ContextValue;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentValueServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -48,6 +50,12 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 
 	@Inject
 	private ContextValueServices contextValueServices;
+
+	@Inject
+	private ContextEnvironmentServices contextEnvironmentServices;
+
+	@Inject
+	private ContextEnvironmentValueServices contextEnvironmentValueServices;
 
 	@GetMapping("/{cvaId}")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
@@ -83,7 +91,11 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 			final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("contextValue") final ContextValue contextValue) {
+		boolean creation = contextValue.getCvaId() == null;
 		final ContextValue contextValueSaved = contextValueServices.save(bot, contextValue);
+		if (creation) {
+			contextEnvironmentServices.addContextToAllContextEnvironmentForBot(bot.getBotId(), contextValueSaved.getCvaId());
+		}
 		return "redirect:/bot/" + contextValue.getBotId() + "/contextValue/" + contextValueSaved.getCvaId();
 	}
 
@@ -91,6 +103,7 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 	public String deleteContextValue(final ViewContext viewContext,
 			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("contextValue") final ContextValue contextValue) {
+		contextEnvironmentValueServices.deleteContextEnvironmentValue(contextValue.getCvaId());
 		contextValueServices.deleteContextValue(bot, contextValue.getCvaId());
 		return "redirect:/bot/" + bot.getBotId() + "/contextList/";
 	}

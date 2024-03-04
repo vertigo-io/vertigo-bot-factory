@@ -1,7 +1,15 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
+import io.vertigo.chatbot.commons.HtmlInputUtils;
 import io.vertigo.chatbot.commons.dao.topic.UtterTextDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.ResponseTypeEnum;
@@ -9,7 +17,6 @@ import io.vertigo.chatbot.commons.domain.topic.SmallTalk;
 import io.vertigo.chatbot.commons.domain.topic.UtterText;
 import io.vertigo.chatbot.commons.multilingual.kindTopic.KindTopicMultilingualResources;
 import io.vertigo.chatbot.designer.builder.utterText.UtterTextPAO;
-import io.vertigo.chatbot.designer.utils.HtmlInputUtils;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
@@ -21,12 +28,6 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datamodel.structure.util.VCollectors;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -85,7 +86,7 @@ public class UtterTextServices implements Component {
 		for (final UtterText utt : uttToSave) {
 			utt.setUttId(null); // force creation
 			utt.setSmtId(smt.getSmtId());
-			utt.setText(HtmlInputUtils.sanatizeHtml(utt.getText()));
+			utt.setText(HtmlInputUtils.sanitizeHtml(utt.getText()));
 			utterTextDAO.save(utt);
 		}
 

@@ -136,7 +136,7 @@ Vue.component('c-richtext', {
 			<q-dialog ref="newEmoji" id="newEmoji" >
 			 	<q-card>
 					<q-card-section>
-						<div class="text-h6" >{{locale == 'fr_FR' ? 'Ajouter une emoji' : 'Add emoji'}}</div>
+						<div class="text-h6" >{{locale == 'fr_FR' ? 'Ajouter un emoji' : 'Add emoji'}}</div>
 					</q-card-section>
 					<q-card-section>
 						<emoji-picker></emoji-picker>
@@ -196,7 +196,7 @@ Vue.component('c-richtext', {
 			
 			getChatPreview: function() {
 				return !this.value ? [''] :
-						this.value
+						DOMPurify.sanitize(this.value)
 						.replace("<a ", "<a target='_blank' rel='nofollow noopener noreferrer' ")
 						.split(/<hr>|<hr \/>/);
 			},

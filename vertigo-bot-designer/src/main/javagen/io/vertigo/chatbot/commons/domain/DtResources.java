@@ -192,9 +192,21 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$fontColor,
 	/**
-	 * Bot font family.
+	 * Bot message background color.
 	 */
-	fldChatbotCustomConfig$fontFamily,
+	fldChatbotCustomConfig$botMessageBackgroundColor,
+	/**
+	 * Bot message font color.
+	 */
+	fldChatbotCustomConfig$botMessageFontColor,
+	/**
+	 * User message background color.
+	 */
+	fldChatbotCustomConfig$userMessageBackgroundColor,
+	/**
+	 * User message font color.
+	 */
+	fldChatbotCustomConfig$userMessageFontColor,
 	/**
 	 * Display avatar.
 	 */
@@ -211,6 +223,62 @@ public enum DtResources implements MessageKey {
 	 * Chatbot.
 	 */
 	fldChatbotCustomConfig$botId,
+	/**
+	 * fontFamily.
+	 */
+	fldChatbotCustomConfig$fofCd,
+
+	/***********************************************************
+	/** ChatbotCustomConfigExport.
+	/***********************************************************
+	/**
+	 * Bot email address.
+	 */
+	fldChatbotCustomConfigExport$botEmailAddress,
+	/**
+	 * Reinitialization button.
+	 */
+	fldChatbotCustomConfigExport$reinitializationButton,
+	/**
+	 * Bot background color.
+	 */
+	fldChatbotCustomConfigExport$backgroundColor,
+	/**
+	 * Bot font color.
+	 */
+	fldChatbotCustomConfigExport$fontColor,
+	/**
+	 * Bot message background color.
+	 */
+	fldChatbotCustomConfigExport$botMessageBackgroundColor,
+	/**
+	 * Bot message font color.
+	 */
+	fldChatbotCustomConfigExport$botMessageFontColor,
+	/**
+	 * User message background color.
+	 */
+	fldChatbotCustomConfigExport$userMessageBackgroundColor,
+	/**
+	 * User message font color.
+	 */
+	fldChatbotCustomConfigExport$userMessageFontColor,
+	/**
+	 * Bot font family.
+	 */
+	fldChatbotCustomConfigExport$fontFamily,
+	/**
+	 * Display avatar.
+	 */
+	fldChatbotCustomConfigExport$displayAvatar,
+	/**
+	 * Total maximum attachment size.
+	 */
+	fldChatbotCustomConfigExport$totalMaxAttachmentSize,
+	/**
+	 * Disable NlU.
+	 */
+	fldChatbotCustomConfigExport$disableNlu,
 
 	/***********************************************************
 	/** ChatbotNode.
@@ -357,6 +425,22 @@ public enum DtResources implements MessageKey {
 	fldExecutorConfiguration$customConfig,
 
 	/***********************************************************
+	/** FontFamily.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldFontFamily$fofCd,
+	/**
+	 * Title.
+	 */
+	fldFontFamily$label,
+	/**
+	 * TitleFr.
+	 */
+	fldFontFamily$labelFr,
+
+	/***********************************************************
 	/** JiraField.
 	/***********************************************************
 	/**
@@ -499,6 +583,18 @@ public enum DtResources implements MessageKey {
 	 * data.
 	 */
 	fldMediaFileInfo$fileData,
+
+	/***********************************************************
+	/** RunnerHealthCheck.
+	/***********************************************************
+	/**
+	 * Alive.
+	 */
+	fldRunnerHealthCheck$alive,
+	/**
+	 * NlP Ready.
+	 */
+	fldRunnerHealthCheck$nlpReady,
 
 	/***********************************************************
 	/** RunnerInfo.

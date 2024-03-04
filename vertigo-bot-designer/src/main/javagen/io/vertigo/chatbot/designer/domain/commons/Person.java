@@ -19,6 +19,7 @@ public final class Person implements Entity {
 	private Long perId;
 	private String login;
 	private String name;
+	private String email;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "APersonGroups",
@@ -111,6 +112,25 @@ public final class Person implements Entity {
 	 */
 	public void setName(final String name) {
 		this.name = name;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'email'.
+	 * @return String email
+	 */
+	@Field(smartType = "STyLabel", label = "email")
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'email'.
+	 * @param email String
+	 */
+	public void setEmail(final String email) {
+		this.email = email;
 	}
 	
 	/**

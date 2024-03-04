@@ -1,22 +1,5 @@
 package io.vertigo.chatbot.engine.plugins.bt.command.bot;
 
-import io.vertigo.ai.bb.BBKey;
-import io.vertigo.ai.bb.BBKeyPattern;
-import io.vertigo.ai.bb.BBKeyTemplate;
-import io.vertigo.ai.bb.BlackBoard;
-import io.vertigo.ai.bt.BTCondition;
-import io.vertigo.ai.bt.BTNode;
-import io.vertigo.ai.bt.BTStatus;
-import io.vertigo.chatbot.engine.BotEngine;
-import io.vertigo.chatbot.engine.model.choice.BotButton;
-import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
-import io.vertigo.chatbot.engine.model.choice.BotCard;
-import io.vertigo.chatbot.engine.model.choice.BotFileButton;
-import io.vertigo.chatbot.engine.model.choice.IBotChoice;
-import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.lang.VSystemException;
-import io.vertigo.core.util.StringUtil;
-
 import java.math.BigInteger;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -27,11 +10,31 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
+import io.vertigo.ai.bb.BBKey;
+import io.vertigo.ai.bb.BBKeyPattern;
+import io.vertigo.ai.bb.BBKeyTemplate;
+import io.vertigo.ai.bb.BlackBoard;
+import io.vertigo.ai.bt.BTCondition;
+import io.vertigo.ai.bt.BTNode;
+import io.vertigo.ai.bt.BTStatus;
+import io.vertigo.chatbot.commons.HtmlInputUtils;
+import io.vertigo.chatbot.engine.BotEngine;
+import io.vertigo.chatbot.engine.model.BotRatingType;
+import io.vertigo.chatbot.engine.model.choice.BotButton;
+import io.vertigo.chatbot.engine.model.choice.BotButtonUrl;
+import io.vertigo.chatbot.engine.model.choice.BotCard;
+import io.vertigo.chatbot.engine.model.choice.BotFileButton;
+import io.vertigo.chatbot.engine.model.choice.IBotChoice;
+import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.util.StringUtil;
+
 import static io.vertigo.ai.bt.BTNodes.condition;
 import static io.vertigo.ai.bt.BTNodes.running;
 import static io.vertigo.ai.bt.BTNodes.selector;
 import static io.vertigo.ai.bt.BTNodes.sequence;
 import static io.vertigo.ai.bt.BTNodes.succeed;
+import static io.vertigo.chatbot.engine.util.BlackBoardUtils.getBB;
 
 public final class BotNodeProvider {
 
@@ -182,7 +185,7 @@ public final class BotNodeProvider {
 			return succeed();
 		}
 		return () -> {
-			bb.listPush(BotEngine.BOT_RESPONSE_KEY, bb.format(msg));
+			bb.listPush(BotEngine.BOT_RESPONSE_KEY, HtmlInputUtils.sanitizeHtml(bb.format(msg)));
 			return BTStatus.Succeeded;
 		};
 	}
@@ -196,7 +199,18 @@ public final class BotNodeProvider {
 	}
 
 	public static BTNode rating(final BlackBoard bb, final String keyTemplate, final String msg) {
-		return inputInteger(bb, keyTemplate, msg);
+		return sequence(
+				set(bb, BotEngine.BOT_OUT_METADATA_RATING_TYPE_PATH.key(), BotRatingType.SIMPLE.name()),
+				inputInteger(bb, keyTemplate, msg));
+	}
+
+	public static BTNode binaryRating(final BlackBoard bb, final String keyTemplate, final String msg, final String yesLabel, final String noLabel) {
+		List<BotButton> buttons = new ArrayList<>();
+		buttons.add(new BotButton(yesLabel, "5"));
+		buttons.add(new BotButton(noLabel, "1"));
+		return sequence(
+				set(bb, BotEngine.BOT_OUT_METADATA_RATING_TYPE_PATH.key(), BotRatingType.BINARY.name()),
+				BotNodeProvider.chooseButton(bb, keyTemplate, msg, buttons));
 	}
 
 

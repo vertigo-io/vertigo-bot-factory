@@ -8,7 +8,6 @@
 	<section th:fragment="content-nav">
 		<vu:include-data object="topic" field="isTechnical" />
 		<q-item tag="a" href="#response" th:text="#{smallTalk.menu.responses}"></q-item>
-		<q-item tag="a" href="#buttons" th:text="#{smallTalk.menu.buttons}" v-if="vueData.topic.isTechnical == false"></q-item>
 		<q-item tag="a" href="#conversationOver" th:text="#{smallTalk.menu.isEndMini}" v-if="vueData.topic.isTechnical == false"></q-item>
 	</section>
 		
@@ -28,6 +27,7 @@
 
 			<div th:if="${!model.modeReadOnly}">
 				<q-btn-toggle
+					@click="updateDiagramSwitchType()"
 					class="q-mb-md"
 					v-model="vueData.smallTalk.rtyId"
 					toggle-color="primary"
@@ -42,6 +42,8 @@
 			</div>
 
 			<div v-if="vueData.smallTalk.rtyId === 'RICH_TEXT'" >
+				<vu:include-data object="chatbotCustomConfig" field="botMessageBackgroundColor" />
+				<vu:include-data object="chatbotCustomConfig" field="botMessageFontColor" />
 				<c-richtext
 					v-model="vueData.utterTexts[0].text"
 					name="vContext[utterTexts][0][text]"
@@ -108,27 +110,6 @@
 			</div>
 
 
-		</vu:block>
-
-		<vu:block id="buttons" th:title="#{smallTalk.menu.buttons}" v-if="vueData.topic.isTechnical == false">
-			<vu:include-data object="buttons" field="text" modifiableAllLines="true" />
-			<vu:include-data object="buttons" field="topIdResponse" modifiableAllLines="true" />
-			<vu:include-data object="buttonsUrl" field="text" />
-			<vu:include-data object="buttonsUrl" field="url" />
-			<vu:include-data object="buttonsUrl" field="newTab" />
-			<vu:include-data object="topicList" field="topId" />
-			<vu:include-data object="topicList" field="title" />
-
-			<c-buttonlist
-				class="q-pb-sm"
-				button-list="buttons"
-				button-url-list="buttonsUrl"
-				choice-list="topicList"
-				:locale="vueData.locale"
-				th::mode-edit="${!model.modeReadOnly}">
-			</c-buttonlist>
-
-			<div th:if="${model.modeReadOnly && model.vContext.buttons.isEmpty()}" th:text="#{smalltalk.noButton}"></div>
 		</vu:block>
 
 		<vu:block id="conversationOver" title="#{smallTalk.menu.isEnd}" v-if="vueData.topic.isTechnical == false">

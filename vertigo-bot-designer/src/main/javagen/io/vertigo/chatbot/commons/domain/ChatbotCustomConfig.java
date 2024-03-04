@@ -2,6 +2,7 @@ package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 import io.vertigo.datamodel.structure.stereotype.Field;
@@ -20,7 +21,10 @@ public final class ChatbotCustomConfig implements Entity {
 	private Boolean reinitializationButton;
 	private String backgroundColor;
 	private String fontColor;
-	private String fontFamily;
+	private String botMessageBackgroundColor;
+	private String botMessageFontColor;
+	private String userMessageBackgroundColor;
+	private String userMessageFontColor;
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
 	private Boolean disableNlu;
@@ -39,6 +43,21 @@ public final class ChatbotCustomConfig implements Entity {
 			foreignLabel = "ChatbotCustomConfig",
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
+
+	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "AChabotCustomConfigFontFamily",
+			fkFieldName = "fofCd",
+			primaryDtDefinitionName = "DtFontFamily",
+			primaryIsNavigable = true,
+			primaryRole = "FontFamily",
+			primaryLabel = "fontFamily",
+			primaryMultiplicity = "0..1",
+			foreignDtDefinitionName = "DtChatbotCustomConfig",
+			foreignIsNavigable = false,
+			foreignRole = "ChatbotCustomConfig",
+			foreignLabel = "ChatbotCustomConfig",
+			foreignMultiplicity = "0..*")
+	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.FontFamily, io.vertigo.chatbot.commons.domain.FontFamilyEnum> fofCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.FontFamily.class, "FontFamily", io.vertigo.chatbot.commons.domain.FontFamilyEnum.class);
 
 	/** {@inheritDoc} */
 	@Override
@@ -143,21 +162,78 @@ public final class ChatbotCustomConfig implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Bot font family'.
-	 * @return String fontFamily
+	 * Récupère la valeur de la propriété 'Bot message background color'.
+	 * @return String botMessageBackgroundColor
 	 */
-	@Field(smartType = "STyLabel", label = "Bot font family")
-	public String getFontFamily() {
-		return fontFamily;
+	@Field(smartType = "STyLabel", label = "Bot message background color")
+	public String getBotMessageBackgroundColor() {
+		return botMessageBackgroundColor;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Bot font family'.
-	 * @param fontFamily String
+	 * Définit la valeur de la propriété 'Bot message background color'.
+	 * @param botMessageBackgroundColor String
 	 */
-	public void setFontFamily(final String fontFamily) {
-		this.fontFamily = fontFamily;
+	public void setBotMessageBackgroundColor(final String botMessageBackgroundColor) {
+		this.botMessageBackgroundColor = botMessageBackgroundColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot message font color'.
+	 * @return String botMessageFontColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot message font color")
+	public String getBotMessageFontColor() {
+		return botMessageFontColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot message font color'.
+	 * @param botMessageFontColor String
+	 */
+	public void setBotMessageFontColor(final String botMessageFontColor) {
+		this.botMessageFontColor = botMessageFontColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'User message background color'.
+	 * @return String userMessageBackgroundColor
+	 */
+	@Field(smartType = "STyLabel", label = "User message background color")
+	public String getUserMessageBackgroundColor() {
+		return userMessageBackgroundColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'User message background color'.
+	 * @param userMessageBackgroundColor String
+	 */
+	public void setUserMessageBackgroundColor(final String userMessageBackgroundColor) {
+		this.userMessageBackgroundColor = userMessageBackgroundColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'User message font color'.
+	 * @return String userMessageFontColor
+	 */
+	@Field(smartType = "STyLabel", label = "User message font color")
+	public String getUserMessageFontColor() {
+		return userMessageFontColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'User message font color'.
+	 * @param userMessageFontColor String
+	 */
+	public void setUserMessageFontColor(final String userMessageFontColor) {
+		this.userMessageFontColor = userMessageFontColor;
 	}
 	
 	/**
@@ -234,6 +310,33 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setBotId(final Long botId) {
 		botIdAccessor.setId(botId);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'fontFamily'.
+	 * @return String fofCd
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyLabel", label = "fontFamily", fkDefinition = "DtFontFamily" )
+	public String getFofCd() {
+		return (String) fofCdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'fontFamily'.
+	 * @param fofCd String
+	 */
+	public void setFofCd(final String fofCd) {
+		fofCdAccessor.setId(fofCd);
+	}
+
+ 	/**
+	 * Association : fontFamily.
+	 * @return l'accesseur vers la propriété 'fontFamily'
+	 */
+	public EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.FontFamily, io.vertigo.chatbot.commons.domain.FontFamilyEnum> fontFamily() {
+		return fofCdAccessor;
 	}
 
  	/**

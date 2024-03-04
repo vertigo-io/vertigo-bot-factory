@@ -17,18 +17,17 @@
  */
 package io.vertigo.chatbot.designer.admin.services;
 
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
-import io.vertigo.chatbot.designer.admin.person.PersonPAO;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotProfilServices;
 import io.vertigo.chatbot.designer.dao.commons.PersonDAO;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
-
-import javax.inject.Inject;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -38,41 +37,17 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 public class PersonServices implements Component {
 
 	@Inject
-	private PersonPAO personPAO;
+	private PersonDAO personDAO;
 
 	@Inject
-	private PersonDAO personDAO;
+	private ChatbotProfilServices chatbotProfilServices;
 
 	public DtList<Person> getAllPersons() {
 		return personDAO.findAll(Criterions.alwaysTrue(), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
-	public Long getAdminPerNumber() {
-		return personPAO.countAllAdminPer();
-	}
-
-	public Person getPersonById(final Long perId) {
-		Assertion.check().isNotNull(perId);
-		// ---
-		final Person person = personDAO.get(perId);
-		return person;
-	}
-
-	/**
-	 * Save the person
-	 *
-	 * @param person person to save
-	 * @return the person updated
-	 */
-	public Person savePerson(final Person person) {
-		Assertion.check().isNotNull(person);
-		final Person savedPerson = personDAO.save(person);
-		return savedPerson;
-	}
-
-	public void deletePerson(final Person person) {
-		final Long perId = person.getPerId();
-		personPAO.removeAllChaPerRightByPerId(perId);
+	public void deletePerson(final Long perId) {
+		chatbotProfilServices.deleteProfilByPerId(perId);
 		personDAO.delete(perId);
 	}
 }

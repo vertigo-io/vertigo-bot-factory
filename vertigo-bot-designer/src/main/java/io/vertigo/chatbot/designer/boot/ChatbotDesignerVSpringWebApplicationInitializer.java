@@ -17,9 +17,19 @@
  */
 package io.vertigo.chatbot.designer.boot;
 
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletRegistration;
+
 import io.vertigo.ui.impl.springmvc.config.AbstractVSpringMvcWebApplicationInitializer;
 
 public class ChatbotDesignerVSpringWebApplicationInitializer extends AbstractVSpringMvcWebApplicationInitializer {
+
+	@Override
+	protected void customizeRegistration(final ServletRegistration.Dynamic registration) {
+		final MultipartConfigElement multipartConfigElement = new MultipartConfigElement("",
+				50 * 1024 * 1024, 50 * 1024 * 1024,  1024 * 1024);
+		registration.setMultipartConfig(multipartConfigElement);
+	}
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {

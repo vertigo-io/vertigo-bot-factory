@@ -17,6 +17,14 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.SelectTopicCategory;
@@ -28,6 +36,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicIhmFields;
 import io.vertigo.core.lang.VUserException;
@@ -38,13 +47,6 @@ import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.inject.Inject;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
@@ -124,6 +126,9 @@ public class TopicsListController extends AbstractBotListEntityController<Topic>
 			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("importTopicFileUri") final FileInfoURI importTopicFile) {
 
+		if (importTopicFile == null) {
+			throw new VUserException(UtilsMultilingualResources.IMPORT_FILE_MUST_NOT_BE_EMPTY);
+		}
 		topicFileExportServices.importTopicFromCSVFile(bot, importTopicFile);
 
 		return "redirect:/bot/" + bot.getBotId() + "/topics/";

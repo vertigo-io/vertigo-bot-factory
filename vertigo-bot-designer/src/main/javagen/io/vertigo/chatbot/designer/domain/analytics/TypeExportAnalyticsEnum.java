@@ -11,7 +11,6 @@ public enum TypeExportAnalyticsEnum implements MasterDataEnum<io.vertigo.chatbot
 	USER_ACTIONS_CONVERSATIONS("USER_ACTIONS_CONVERSATIONS"), //
 	CONVERSATIONS("CONVERSATIONS"), //
 	CATEGORIES("CATEGORIES"), //
-	RATING("RATING"), //
 	TOPIC_USAGE("TOPIC_USAGE")
 	;
 

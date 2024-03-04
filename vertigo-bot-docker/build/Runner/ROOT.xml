@@ -1,13 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<Context debug="0" reloadable="false" allowCasualMultipartParsing="true" docBase="/opt/tomcat/war/runner.war">
+<Context debug="0" reloadable="false" allowCasualMultipartParsing="true" docBase="/usr/local/tomcat/war/runner.war">
 	<Parameter name="boot.ANALYTICA_HOST" value="${ANALYTICA_HOST}" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="${ANALYTICA_PORT}" override="false"/>
 	<Parameter name="boot.ANALYTICA_DBNAME" value="${ANALYTICA_DBNAME}" override="false"/>
-
-	<Parameter name="boot.MAIL_NAME" value="${MAIL_NAME}" override="false"/>
-	<Parameter name="boot.MAIL_PROTOCOL" value="${MAIL_PROTOCOL}" override="false"/>
-	<Parameter name="boot.MAIL_HOST" value="${MAIL_HOST}" override="false"/>
-	<Parameter name="boot.MAIL_PORT" value="${MAIL_PORT}" override="false"/>
 
 	<!--  Use for confluence plugin -->
    	<Resources className="org.apache.catalina.webresources.StandardRoot">

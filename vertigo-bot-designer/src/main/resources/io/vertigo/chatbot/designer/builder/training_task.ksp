@@ -69,10 +69,10 @@ create Task TkGetCurrentTrainingByBotId {
     request : "
             select tra.*
             from training tra
-            where tra.bot_id = #botId# and tra.str_cd = 'TRAINING'
+            where tra.bot_id = #botId# and tra.str_cd = 'TRAINING' order by tra.start_time desc
              "
 	in botId				{domain : DoId,				cardinality:"1"} 
-	out tra 				{domain : DoDtTraining	 	cardinality:"?"}
+	out tra 				{domain : DoDtTraining	 	cardinality:"*"}
 } 
 
 create Task TkGetDeployedTrainingByBotId {  

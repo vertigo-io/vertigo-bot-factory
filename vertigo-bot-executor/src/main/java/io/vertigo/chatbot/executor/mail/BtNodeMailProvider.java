@@ -1,24 +1,31 @@
 package io.vertigo.chatbot.executor.mail;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.net.URLConnection;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.mail.MessagingException;
+
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
+import io.vertigo.chatbot.commons.FileDescriptor;
+import io.vertigo.chatbot.commons.MailService;
+import io.vertigo.chatbot.executor.manager.ExecutorManager;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.inject.Inject;
-import javax.mail.MessagingException;
-import java.net.URLConnection;
-import java.util.Optional;
-import java.util.StringJoiner;
 
 public class BtNodeMailProvider implements Component {
 
 	@Inject
 	private MailService mailService;
+
+	@Inject
+	private ExecutorManager executorManager;
 
 	private static final Logger LOGGER = LogManager.getLogger(BtNodeMailProvider.class);
 
@@ -26,9 +33,9 @@ public class BtNodeMailProvider implements Component {
 		return () -> {
 				Optional<FileDescriptor> optFileDescriptor = Optional.empty();
 				final int recipientsCount = bb.listSize(BBKey.of(destinationsKey));
-				final StringJoiner recipients = new StringJoiner(",");
+				final String[] recipients = new String[recipientsCount];
 				for (int i = 0; i < recipientsCount; i++) {
-					recipients.add(bb.listGet(BBKey.of(destinationsKey), i));
+					recipients[i] = bb.listGet(BBKey.of(destinationsKey), i);
 				}
 				if (attachmentKey.isPresent()) {
 					final FileDescriptor fileDescriptor = new FileDescriptor();
@@ -41,7 +48,7 @@ public class BtNodeMailProvider implements Component {
 					optFileDescriptor = Optional.of(fileDescriptor);
 				}
 				try {
-					mailService.sendMail(recipients.toString(), bb.getString(BBKey.of(subjectKey)), bb.getString(BBKey.of(messageBodyKey)), optFileDescriptor);
+					mailService.sendMailFromBot(executorManager.getBotEmailAddress(), recipients, bb.getString(BBKey.of(subjectKey)), bb.getString(BBKey.of(messageBodyKey)), optFileDescriptor);
 					return BTStatus.Succeeded;
 				} catch (final MessagingException messagingException) {
 					LOGGER.error("Error when sending mail to " + recipients + " with mail subject " + bb.getString(BBKey.of(subjectKey)), messagingException);

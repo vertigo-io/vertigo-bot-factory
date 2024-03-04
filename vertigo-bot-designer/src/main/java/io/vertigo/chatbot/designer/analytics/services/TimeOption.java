@@ -23,7 +23,7 @@ import java.time.temporal.Temporal;
 import java.time.temporal.TemporalUnit;
 
 public enum TimeOption {
-	DAY(1, ChronoUnit.DAYS, "1d"), WEEK(7, ChronoUnit.DAYS, "12h"), MONTH(30, ChronoUnit.DAYS, "1d"), YEAR(52, ChronoUnit.WEEKS, "1w");
+	DAY(1, ChronoUnit.DAYS, "1h"), WEEK(7, ChronoUnit.DAYS, "1d"), MONTH(1, ChronoUnit.MONTHS, "1d"), YEAR(1, ChronoUnit.YEARS, "1mo");
 
 	private final long range;
 	private final TemporalUnit rangeUnit;

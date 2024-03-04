@@ -1,11 +1,11 @@
 package io.vertigo.chatbot.designer.admin.services;
 
+import org.keycloak.representations.IDToken;
+
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-
-import org.keycloak.representations.IDToken;
 
 import io.vertigo.chatbot.designer.dao.commons.PersonDAO;
 import io.vertigo.chatbot.designer.domain.commons.Person;
@@ -78,10 +78,18 @@ public class KeycloakPersonServices implements Component {
 		return name;
 	}
 
+	public String getEmailFromToken(final IDToken token) {
+		return token.getEmail();
+	}
+
 	public Person getPersonToConnect(final Long perId) {
 		Assertion.check().isNotNull(perId);
 		// ---
 		final Person person = personDAO.get(perId);
 		return person;
+	}
+
+	public Person updatePerson(final Person person) {
+		return personDAO.save(person);
 	}
 }

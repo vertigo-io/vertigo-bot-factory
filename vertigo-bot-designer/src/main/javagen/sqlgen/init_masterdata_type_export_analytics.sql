@@ -1,9 +1,8 @@
 -- ============================================================
 --   Insert MasterData values : TYPE_EXPORT_ANALYTICS                                        
 -- ============================================================
-insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR, BOT_RELATED) values ('UNKNOWN_MESSAGES', 'Unknown messages', 'Intentions non reconnues', 'true');
-insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR, BOT_RELATED) values ('USER_ACTIONS_CONVERSATIONS', 'User actions and conversations', 'Actions utilisateur et conversations', 'false');
-insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR, BOT_RELATED) values ('CONVERSATIONS', 'Conversations', 'Conversations', 'true');
-insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR, BOT_RELATED) values ('CATEGORIES', 'Categories', 'Catégories', 'true');
-insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR, BOT_RELATED) values ('RATING', 'Rating', 'Evaluation', 'true');
-insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR, BOT_RELATED) values ('TOPIC_USAGE', 'Topic usage', 'Utilisation des intentions', 'true');
+insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR) values ('UNKNOWN_MESSAGES', 'Unknown messages', 'Intentions non reconnues');
+insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR) values ('USER_ACTIONS_CONVERSATIONS', 'User actions and conversations', 'Actions utilisateur et conversations');
+insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR) values ('CONVERSATIONS', 'Conversations', 'Conversations');
+insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR) values ('CATEGORIES', 'Categories', 'Catégories');
+insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR) values ('TOPIC_USAGE', 'Topic usage', 'Utilisation des intentions');

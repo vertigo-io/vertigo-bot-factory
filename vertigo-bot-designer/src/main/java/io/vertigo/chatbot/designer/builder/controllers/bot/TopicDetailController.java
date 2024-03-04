@@ -3,6 +3,8 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.ChatbotUtils;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.commons.domain.ContextValue;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.ResponseButton;
@@ -21,6 +23,8 @@ import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResource
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonUrlServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.chatbot.designer.builder.services.topic.NluTrainingSentenceServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
@@ -28,20 +32,19 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
-import io.vertigo.chatbot.domain.DtDefinitions;
+import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
+import io.vertigo.chatbot.domain.DtDefinitions.TopicFields;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.structure.definitions.DtField;
+import io.vertigo.datamodel.structure.definitions.DtFieldName;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.Validate;
-import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
-import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +54,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
@@ -114,6 +119,10 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     private static final ViewContextKey<Boolean> unreachableKey = ViewContextKey.of("unreachable");
 
+    private static final ViewContextKey<ContextValue> contextValuesKey = ViewContextKey.of("contextValues");
+
+    private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
+
     @Inject
     private UtterTextServices utterTextServices;
 
@@ -125,6 +134,12 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     @Inject
     private TypeTopicServices typeTopicServices;
+
+    @Inject
+    private ContextValueServices contextValueServices;
+
+    @Inject
+    private ChatbotCustomConfigServices chatbotCustomConfigServices;
 
     @GetMapping("/{topId}")
     public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
@@ -199,6 +214,8 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
         viewContext.publishDto(topicCategoryKey, topicCategoryServices.getTopicCategoryById(bot, topic.getTopCatId()));
         viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
+        viewContext.publishDtList(contextValuesKey, contextValueServices.getAllContextValueByBotId(bot.getBotId()));
+        viewContext.publishDto(chatbotCustomConfigKey, chatbotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId()));
 
         //Label
         final DtList<TopicLabel> initialList = topicLabelServices.getTopicLabelByBotIdAndTopId(bot, topic.getTopId());
@@ -220,6 +237,8 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
         viewContext.publishDto(topicCategoryKey, new TopicCategory());
         viewContext.publishDtList(topicCategoryListKey, topicCategoryServices.getAllActiveCategoriesByBot(bot));
+        viewContext.publishDtList(contextValuesKey, contextValueServices.getAllContextValueByBotId(bot.getBotId()));
+        viewContext.publishDto(chatbotCustomConfigKey, chatbotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId()));
 
         //Labels
         viewContext.publishDtList(initialTopicLabelListKey, new DtList<>(TopicLabel.class));
@@ -297,17 +316,11 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
         return "redirect:/bot/" + botId + "/topics/detail/" + topic.getTopId();
     }
 
-    public static final class TopicCategoryNotEmptyValidator extends AbstractDtObjectValidator<Topic> {
+    public static final class TopicCategoryNotEmptyValidator extends AbstractChatbotDtObjectValidator<Topic> {
 
-        /** {@inheritDoc} */
         @Override
-        protected void checkMonoFieldConstraints(final Topic topic, final DtField dtField, final DtObjectErrors dtObjectErrors) {
-            if (DtDefinitions.TopicFields.topCatId.name().equals(dtField.getName())) {
-                final Long value = (Long) dtField.getDataAccessor().getValue(topic);
-                if (value == null) {
-                    dtObjectErrors.addError(dtField.getName(), MessageText.of("Le champ doit être renseigné")); // TODO: use same i18n resource when avaiable in DefaultDtObjectValidator
-                }
-            }
+        protected List<DtFieldName<Topic>> getFieldsToNullCheck() {
+            return List.of(TopicFields.topCatId);
         }
     }
 
@@ -376,6 +389,9 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
 
     @PostMapping("/_delete")
     String doDelete(@ViewAttribute("bot") final Chatbot chatbot, @ViewAttribute("topic") final Topic topic) {
+        if (topic.getIsTechnical()) {
+            throw new VUserException(TopicsMultilingualResources.DELETE_TECHNICAL_ERROR);
+        }
         final DtList<Topic> listTopicRef = topicServices.getTopicReferencingTopId(topic.getTopId());
         if (!listTopicRef.isEmpty()) {
             final String topicErrorList = listTopicRef.stream()

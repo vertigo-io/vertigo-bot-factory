@@ -17,12 +17,6 @@
  */
 package io.vertigo.chatbot.designer.commons.controllers;
 
-import io.vertigo.account.security.VSecurityManager;
-import io.vertigo.chatbot.designer.commons.DesignerUserSession;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
-import io.vertigo.datastore.filestore.model.FileInfoURI;
-import io.vertigo.datastore.filestore.model.VFile;
-import io.vertigo.vega.webservice.stereotype.QueryParam;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +24,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.inject.Inject;
+
+import io.vertigo.account.security.VSecurityManager;
+import io.vertigo.chatbot.designer.commons.DesignerUserSession;
+import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.vega.webservice.stereotype.QueryParam;
 
 @Controller
 @RequestMapping("/commons/")
@@ -56,6 +57,7 @@ public class FileUploadController {
 
 	@PostMapping("/upload")
 	public FileInfoURI uploadFile(@QueryParam("file") final VFile file) {
+		fileServices.checkFile(file);
 		final FileInfoURI tmpUri = fileServices.saveFileTmp(file);
 		getUserSession().getTmpFiles().add(tmpUri);
 		return tmpUri;

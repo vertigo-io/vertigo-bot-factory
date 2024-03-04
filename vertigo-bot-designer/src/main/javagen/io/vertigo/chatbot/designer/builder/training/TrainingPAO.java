@@ -71,7 +71,7 @@ public final class TrainingPAO implements StoreServices {
  "             join training tr on (mdi.fil_id = tr.fil_id_model)\n" + 
  "             where tr.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyId")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyId", name = "filIds")
 	public java.util.List<Long> getAllTrainingFilIdsByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetAllTrainingFilIdsByBotId")
 				.addValue("botId", botId)
@@ -92,7 +92,7 @@ public final class TrainingPAO implements StoreServices {
  " 			from training tra\n" + 
  " 			where bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber", name = "nextModelNumber")
 	public Long getNextModelNumber(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetNextModelNumber")
 				.addValue("botId", botId)

@@ -186,6 +186,7 @@
 	<body>
 		
 		<section layout:fragment="content">
+			<vu:include-data-primitive key="locale"/>
 
 			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
 				<span class="text-primary" style="flex-grow: 2">[[#{layout.model}]]</span>
@@ -201,8 +202,9 @@
 						   @click="refreshModels" :loading="dataX.loadingModels"></q-btn>
 				</vu:slot>
 
-				<vu:slot name="actions_slot">
-					<q-btn class="on-right" v-if="vueData.training.versionNumber == props.row.versionNumber" round color="primary" icon="save" th:aria-label="#{action.build.save}" th:title="#{action.build.save}"
+				<vu:slot name="actions_slot" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}">
+					<q-btn class="on-right" v-if="vueData.training.versionNumber == props.row.versionNumber"
+						   round color="primary" icon="save" th:aria-label="#{action.build.save}" th:title="#{action.build.save}"
 						   @click="$refs.saveTrainingModal.show()"></q-btn>
 				</vu:slot>
 
@@ -250,7 +252,7 @@
                     <q-icon name="search" class="q-field__marginal" ></q-icon>
 
 				</vu:slot>
-				<vu:slot name="actions_slot">
+				<vu:slot name="actions_slot" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}">
 					<q-btn class="on-right" round color="blue" icon="cloud_upload" th:aria-label="#{savedTraining.deploy}" th:title="#{savedTraining.deploy}"
 						   @click="componentStates.savedTraId = props.row.savedTraId;  ;$refs.deployTraining.show()"></q-btn>
 					<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{model.savedTraining.delete}" th:title="#{model.savedTraining.delete}"

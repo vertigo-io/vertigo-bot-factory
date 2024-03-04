@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{templates/basicLayout}">
+
+	<head>
+		<title th:text="#{monitoring.title}"></title>
+		<script>
+			function refresh() {
+				interval = setInterval(function() {
+					VUiPage.httpPostAjax("refresh", {});
+				}, 5000);
+			}
+			function enabledDisabledAlerting() {
+				VUiPage.httpPostAjax('subscribeGlobalAlerting', VUiPage.vueDataParams(['monitoringDetailIHM']));
+			}
+
+			function enabledDisabledAlertingBot(botId, enabled) {
+				VUiPage.httpPostAjax("subscribeBotAlerting", {
+					'botId': botId,
+					'enabled': enabled
+				});
+			}
+		</script>
+	</head>
+
+	<body>
+		<q-page-sticky expand position="relative-top" >
+			<vu:messages />
+		</q-page-sticky>
+		<section layout:fragment="content">
+			<vu:include-data object="monitoringDetailIHM" field="antivirusAlive" modifiable="true" />
+			<vu:include-data object="monitoringDetailIHM" field="globalAlertingEnabled" modifiable="true" />
+			<vu:include-data object="monitoringDetailIHM" field="bots" modifiableAllLines="true" />
+			<div class="row">
+				<q-card class="col-12">
+					<q-card-section class="text-h6 bg-secondary" th:text="#{monitoring.general}"></q-card-section>
+					<q-toggle v-model="vueData.monitoringDetailIHM.globalAlertingEnabled"
+							  @input="enabledDisabledAlerting()" ></q-toggle>
+					<q-card-section>
+						<div class="row wrap justify-start q-col-gutter-md q-mt-md" >
+							<div class="col-xl-4 col-md-6 col-xs-12">
+								<q-card>
+									<q-card-section class="row justify-center">
+										<div>
+											<div class="text-bold text-bigger">
+												<span>Antivirus </span>
+												<span v-if="vueData.monitoringDetailIHM.antivirusAlive" class="text-green">OK</span>
+												<span v-else class="text-red">KO</span>
+											</div>
+										</div>
+									</q-card-section>
+								</q-card>
+							</div>
+						</div>
+					</q-card-section>
+				</q-card>
+			</div>
+
+			<div class="row q-mt-lg">
+				<q-card v-for="(bot, index) in vueData.monitoringDetailIHM.bots" class="q-mr-md">
+					<q-card-section class="text-h6 bg-secondary">{{bot.name}}</q-card-section>
+					<q-toggle v-model="bot.alertingEnabled" @input="enabledDisabledAlertingBot(bot.botId, bot.alertingEnabled)" ></q-toggle>
+					<q-card-section>
+						<div class="text-bold q-mb-lg">Runners</div>
+						<div v-for="(runner, indexRunner) in bot.runners" class="q-mr-lg q-mb-lg">
+							<input  type="hidden" :name="'vContext[monitoringDetailIHM][bots][' + index + '][name][runners][' + indexRunner + '][name]'" :value="runner.name" />
+							<input  type="hidden" :name="'vContext[monitoringDetailIHM][bots][' + index + '][name][runners][' + indexRunner + '][status]'" :value="runner.alive" />
+							<input  type="hidden" :name="'vContext[monitoringDetailIHM][bots][' + index + '][name][runners][' + indexRunner + '][rasaStatus]'" :value="runner.rasaAlive" />
+							<span>{{runner.name}} </span>
+							<span v-if="runner.alive" class="text-bold text-green">OK</span>
+							<span v-else class="text-bold text-red">KO</span>
+							- <span>Rasa </span>
+							<span v-if="runner.rasaAlive" class="text-bold text-green">OK</span>
+							<span v-else class="text-bold text-red">KO</span>
+						</div>
+					</q-card-section>
+				</q-card>
+			</div>
+
+		</section>
+
+	</body>
+
+	<section layout:fragment="javascript-footer">
+		<script>
+			refresh();
+		</script>
+	</section>
+</html>

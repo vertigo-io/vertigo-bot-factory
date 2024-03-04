@@ -87,7 +87,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		final String configDataFilePath = paramManager.getOptionalParam("CONFIG_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/runnerConfig");
 
 		configDataFile = new File(configDataFilePath);
-
+		StringBuilder logs = new StringBuilder();
 		if (configDataFile.exists() && configDataFile.canRead()) {
 			try {
 				final String json = FileUtils.readFileToString(configDataFile, StandardCharsets.UTF_8);
@@ -95,7 +95,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", configDataFilePath);
 			}
-			plugins.forEach(executorPlugin -> executorPlugin.refreshConfig(executorGlobalConfig));
+			plugins.forEach(executorPlugin -> executorPlugin.refreshConfig(executorGlobalConfig, logs));
 
 			// Migration purpose as 18/02/2020
 			if (executorGlobalConfig.getExecutorConfiguration() != null && executorGlobalConfig.getExecutorConfiguration().getNluThreshold() == null) {
@@ -140,9 +140,9 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		// Nothing
 	}
 
-	public synchronized void saveConfig(final ExecutorGlobalConfig executorGlobalConfig) {
+	public synchronized void saveConfig(final ExecutorGlobalConfig executorGlobalConfig, StringBuilder logs) {
 		this.executorGlobalConfig = executorGlobalConfig;
-		plugins.forEach(executorPlugin -> executorPlugin.refreshConfig(executorGlobalConfig));
+		plugins.forEach(executorPlugin -> executorPlugin.refreshConfig(executorGlobalConfig, logs));
 		updateGlobalConfig();
 	}
 

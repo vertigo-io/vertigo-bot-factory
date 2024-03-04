@@ -47,6 +47,11 @@ create Domain DoCode {
 	storeType : "VARCHAR(100)"
 }
 
+create Domain DoTopicCode {
+	dataType : String
+	storeType : "VARCHAR(10)"
+}
+
 create Domain DoYesNo {
 	dataType : Boolean
 	storeType: "bool"

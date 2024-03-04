@@ -50,29 +50,13 @@ public final class PersonPAO implements StoreServices {
  " 			from person per \n" + 
  " 			where per.rol_cd = 'RAdmin'",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber", name = "perNumber")
 	public Long countAllAdminPer() {
 		final Task task = createTaskBuilder("TkCountAllAdminPer")
 				.build();
 		return getTaskManager()
 				.execute(task)
 				.getResult();
-	}
-
-	/**
-	 * Execute la tache TkRemoveAllChaPerRightByPerId.
-	 * @param perId Long
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkRemoveAllChaPerRightByPerId",
-			request = "delete from cha_per_rights\n" + 
- " 			where per_id  = #perId#",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void removeAllChaPerRightByPerId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "perId", smartType = "STyId") final Long perId) {
-		final Task task = createTaskBuilder("TkRemoveAllChaPerRightByPerId")
-				.addValue("perId", perId)
-				.build();
-		getTaskManager().execute(task);
 	}
 
 	private TaskManager getTaskManager() {

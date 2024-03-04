@@ -19,7 +19,11 @@
 	--q-color-positive:	#21BA45;
 	--q-color-negative:	#DB2828;
 	--q-color-info:		#31CCEC;	
-	--q-color-warning:	#F2C037;  
+	--q-color-warning:	#F2C037;
+
+	/* Default color for bot messages (if not overloaded) */
+	--bot-message-bg-color: #ccccc6;
+	--bot-message-font-color: #000000;
 }
 
 body {
@@ -97,6 +101,10 @@ img {
 #baseImg {
 	height: 80px;
 	width: 80px;
+}
+
+#conversationOver{
+	margin-top: 16px;
 }
 
 .detailTypeIcon {
@@ -464,4 +472,45 @@ table .col_DoInstant {
 	width: 50px !important;
 	height: 50px !important;
 	border-radius: 50px;
+}
+.q-message-text--received {
+	margin-left: 12px;
+	border: solid 1px rgba(224, 224, 224, 1);
+	box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.1);
+	color: var(--chat-bot-bg-color) !important;
+	font-family: var(--chat-message-font-family) !important;
+}
+.q-message-text--sent {
+	margin-right: 12px;
+	margin-bottom: 12px;
+	box-shadow: 3px 4px 2px 0px rgba(0, 0, 0, 0.2) !important;
+	color: var(--chat-user-bg-color) !important;
+	font-family: var(--chat-message-font-family) !important;
+}
+.q-message-text-content--received {
+	color: var(--chat-bot-message-font-color) !important;
+}
+.q-message-text-content--sent {
+	color: var(--chat-user-message-font-color) !important;
+}
+.q-header-presentation{
+	font-size: 16px;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	padding: 16px 0px 16px 20px;
+	font-family: var(--chat-message-font-family) !important;
+	color: var(--bot-font-color) !important;
+	background-color: var(--bot-bg-color) !important;
+}
+.q-message-text--sent:before, .q-message-text--received:before{
+	display: none !important;
+}
+.executor-preview{
+	width:300px;
+	margin-bottom: 20px;
+	margin-top: 20px;
+	border: 2px rgba(0,0,0,0.3) solid;
+	box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+	padding: 0px;
+	border-radius: 5px;
 }

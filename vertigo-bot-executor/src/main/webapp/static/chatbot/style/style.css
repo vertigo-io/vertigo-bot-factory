@@ -1,15 +1,17 @@
 :root {
-    --background-color: #1aab8d;
-    --font-color: #000000;
+    --background-color: #000091;
+    --font-color: #ffffff;
+    --bot-message-bg-color: #ccccc6;
+    --bot-message-font-color: #000000;
+    --user-message-bg-color: #e0e0e0;
+    --user-message-font-color: #000000;
     --font-family: Arial, Helvetica, sans-serif;
 }
 .text-primary {
-    color: var(--background-color) !important;
     font-family: var(--font-family) !important;
 }
 
 .bg-primary {
-    background: var(--background-color) !important;
     font-family: var(--font-family) !important;
 }
 
@@ -31,7 +33,7 @@ main, footer {
 }
 
 .q-loading-bar.top {
-    top: 42px;
+    top: 58px;
     height: 4px !important;
 }
 
@@ -47,50 +49,101 @@ main, footer {
     border-radius: 5px;
 }
 
-.q-message-text-content {
+.q-message-text{
+    padding: 10px 15px;
+}
+.q-message-received .q-message-text-content {
     font-family: var(--font-family);
-    color: var(--font-color) !important;
+    color: var(--bot-message-font-color) !important;
 }
 
 .q-btn {
+    padding: 8px 16px !important;
     font-family: var(--font-family);
     color: var(--font-color) !important;
+    background-color: var(--background-color) !important;
+}
+.btn-rotate{
+    transition: transform .4s ease-in-out !important;
+}
+.btn-rotate:hover{
+    transform: rotate(180deg) !important;
 }
 
 .q-caption {
     font-family: var(--font-family);
-    color: var(--font-color) !important;
+}
+.text-light{
+    color: black !important;
+    margin-top: 15px !important;
+    text-align: center;
+    margin-bottom: 5px !important;
 }
 
 .q-message-received .q-message-text, .q-message-sent .q-message-text {
-    border-radius: 10px 10px 10px 10px;
+    border-radius: 5px;
+    margin-top: 12px;
+}
+
+.q-message-sent .q-message-text-content {
+    font-family: var(--font-family) !important;
+    color: var(--user-message-font-color) !important;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.q-message-received .q-message-text-content {
+    font-family: var(--font-family) !important;
+    color: var(--bot-message-font-color) !important;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.q-message-received .q-message-text {
+    background-color: var(--bot-message-bg-color) !important;
+/*    received message*/
+    border: solid 1px rgba(224, 224, 224, 1);
+    box-shadow: 10px 10px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.q-message-sent .q-message-text {
+    box-shadow: 3px 4px 2px 0px rgba(0, 0, 0, 0.1) !important;
+    background-color: var(--user-message-bg-color) !important;
+}
+
+.custom-header {
+    padding: 8px 0px;
+    font-family: var(--font-family) !important;
+    background: var(--background-color) !important;
+}
+
+.custom-header .title, .custom-header .q-btn {
+    color: var(--font-color) !important;
+}
+
+.btn-custom-localize{
+    font-size: 0.8rem !important;
+    background-color: whitesmoke !important;
+    color: black !important;
+    width: 100% !important;
+    padding: 0 !important;
 }
 
 .q-message-avatar {
-    background-color: #ccccc6;
+    background-color: transparent;
     -moz-user-select: none !important;
     -ms-user-select: none !important;
     -webkit-user-select: none !important;
     user-select: none !important;
     pointer-events: none !important;
-    border-radius: 25% 0%;
+    border-radius: 50px !important;
+    max-height: 42px !important;
+    max-width: 42px !important;
+    margin-right: 12px !important;
 }
 
-div.q-message-container > div {
-    /* overflow-wrap: break-word; */
-    /* overflow: hidden; */
-}
-
-.text-grey-grdf {
-    color: #ccccc6 !important;
-}
-
-.bg-grey-grdf {
-    background: #ccccc6 !important;
-}
-
-.q-btn-round {
-    border-radius: 15px 0px 0px 0px;
+.q-btn-lowercase {
+    text-transform: none !important;
 }
 
 img {
@@ -106,31 +159,70 @@ img {
 
 .imgClass:hover {opacity: 0.7; !important;}
 
+.q-layout-header{
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.q-layout-page-container{
+    filter: drop-shadow(0px 10px 5px rgba(0, 0, 0, 0.1));
+}
+
 /*btn send msg*/
 
-.message-response {
-    background: white !important;
-}
 .btn-send {
-    border-radius: 50%;
-    background: #027BE3 !important;
+    color: black !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+.btn-send:hover{
+    color: var(--font-color) !important;
+    background-color: var(--background-color) !important;
+}
+.btn-send:before, .btn-send:after{
+    display: none !important;
+}
+.q-btn.disabled{
+    color: rgba(0, 0, 0, 0.5) !important;
+}
+.q-btn.disabled:hover {
+    color: rgba(0, 0, 0, 0.5) !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.custom-input {
+    border-bottom: 0px solid !important;
+}
+
+/* quasar style for q-input without bottom border*/
+.q-if:after, .q-if:before{
+    border-bottom: 0px solid !important;
+}
+
+/* carousel customization */
+.custom-carousel {
+    border-radius: 5px !important;
+    background-color: var(--background-color) !important;
+}
+.q-carousel-right-arrow, .q-carousel-left-arrow{
+    transition: transform 1s ease-in-out !important;
+    background-color: var(--user-message-bg-color) !important;
+    color: var(--user-message-font-color) !important;
+    border: 2px var(--user-message-font-color) solid !important;
+}
+
+.q-layout-footer{
+    webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    padding-top: 12px;
 }
 
 /*block msg*/
 
-.q-message-text:last-child {
-    border-radius: 10px;
-    position: relative;
-    padding: 15px;
-}
 
-.q-message-text:last-child:before {
-    left: 0% !important;
-    bottom: -4px;
-    display: inline-block;
-    transform: rotate(305deg);
-    border-top: 15px solid;
-    border-right: 10px solid transparent !important;
-    border-left: 15px solid transparent !important;
-    border-bottom: 0 !important;
+.q-message-text:last-child:before{
+    border: 0px !important;
 }

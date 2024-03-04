@@ -39,8 +39,16 @@ window.addEventListener(
         if (event.data === 'start') {
             chatbot.initBot();
         }
+        if (event.data.sendTopic) {
+            const button = chatbot.inputConfig.buttons.find((button) => button.payload === event.data.sendTopic.topic)
+            if (chatbot.convId !== undefined && button !== undefined) {
+                chatbot.postAnswerBtn(button)
+            }
+        }
         if (event.data === 'clearSessionStorage') {
             sessionStorage.clear();
+        } else if (event.data === 'refresh') {
+            chatbot.refresh()
         } else if (event.data === 'conversationExist') {
             parent.postMessage({conversationExist : sessionStorage.convId !== undefined }, '*');
         }
@@ -54,6 +62,9 @@ const chatbot = new Vue({
                 images[i].addEventListener('click', function(e){
                     parent.postMessage({pictureModal: this.src}, '*');
                 },false);
+            }
+            if (!chatbot.$refs.input.disable) {
+                this.focusInput()
             }
         },
         data: {
@@ -80,6 +91,10 @@ const chatbot = new Vue({
                 reinitializationButton: false,
                 backgroundColor: 'grey',
                 fontColor: 'black',
+                botMessageBackgroundColor: 'grey',
+                botMessageFontColor: 'black',
+                userMessageBackgroundColor: 'grey',
+                userMessageFontColor: 'black',
                 fontFamily: 'Arial, Helvetica, sans-serif',
                 displayAvatar: true,
                 disableNlu: false
@@ -92,6 +107,7 @@ const chatbot = new Vue({
             processing: false,
             acceptNlu: true,
             rating: false,
+            ratingType: 'SIMPLE',
             error: false,
             messages: [],
             keepAction: false,
@@ -152,6 +168,10 @@ const chatbot = new Vue({
                                 chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
                                 chatbot.customConfig.backgroundColor = httpResponse.data.metadatas.customConfig.backgroundColor;
                                 chatbot.customConfig.fontColor = httpResponse.data.metadatas.customConfig.fontColor;
+                                chatbot.customConfig.botMessageBackgroundColor = httpResponse.data.metadatas.customConfig.botMessageBackgroundColor;
+                                chatbot.customConfig.botMessageFontColor = httpResponse.data.metadatas.customConfig.botMessageFontColor;
+                                chatbot.customConfig.userMessageBackgroundColor = httpResponse.data.metadatas.customConfig.userMessageBackgroundColor;
+                                chatbot.customConfig.userMessageFontColor = httpResponse.data.metadatas.customConfig.userMessageFontColor;
                                 chatbot.customConfig.fontFamily = httpResponse.data.metadatas.customConfig.fontFamily;
                                 chatbot.customConfig.displayAvatar = httpResponse.data.metadatas.customConfig.displayAvatar;
                                 chatbot.customConfig.disableNlu = httpResponse.data.metadatas.customConfig.disableNlu;
@@ -168,7 +188,7 @@ const chatbot = new Vue({
             },
             postAnswerBtn(btn) {
                 chatbot.messages.push({
-                    text: [btn.label],
+                    text: [DOMPurify.sanitize(btn.label)],
                     sent: true,
                     bgColor: 'primary',
                     textColor: 'white'
@@ -190,7 +210,7 @@ const chatbot = new Vue({
                     link.click();
                     document.body.removeChild(link);
                 }
-                chatbot.askBot(btn.payload, btn.label, true, null,null, false);
+                chatbot.askBot(btn.payload, btn.label, true, null,null, chatbot.rating);
             },
             fileUpload(btn, index) {
                 const file = document.getElementById('file_' + index).files[0];
@@ -214,7 +234,8 @@ const chatbot = new Vue({
                         textColor: 'white'
                     });
                 } else {
-                    sanitizedString = chatbot.inputConfig.responseText.trim().replace(/(?:\r\n|\r|\n)/g, '<br>');
+                    sanitizedString = DOMPurify.sanitize(chatbot.inputConfig.responseText.trim()
+                        .replace(/(?:\r\n|\r|\n)/g, '<br>'));
                     chatbot.messages.push({
                         text: sanitizedString !== '' ? [sanitizedString] : null,
                         rating: isRating,
@@ -248,10 +269,14 @@ const chatbot = new Vue({
                     botInput = { message: null, metadatas: { context: chatbot.context, payload: value, filecontent: fileContent, filename: fileName } };
                 } else if (isButton) {
                     botInput = { message: null, metadatas: { context: chatbot.context, payload: value, text: label } };
-                } else if (rating) {
-                    botInput = { message: null, metadatas: { context: chatbot.context, rating: value, text: value } };
                 } else {
                     botInput = { message: value, metadatas: { context: chatbot.context } };
+                }
+                if (rating) {
+                    botInput.metadatas.rating = value
+                    if (chatbot.ratingType === 'SIMPLE') {
+                        botInput.message = null
+                    }
                 }
                 return Vue.http.post(chatbot.botUrl + '/talk/' + chatbot.convId, botInput)
                     .then(httpResponse => {
@@ -274,7 +299,8 @@ const chatbot = new Vue({
                 const cards = httpResponse.data.cards;
                 const files = httpResponse.data.files;
                 chatbot.acceptNlu = httpResponse.data.acceptNlu !== undefined ? httpResponse.data.acceptNlu : true;
-                chatbot.rating = httpResponse.data.rating;
+                chatbot.rating = httpResponse.data.rating.enabled;
+                chatbot.ratingType = httpResponse.data.rating.type;
                 chatbot.isEnded = httpResponse.data.status === 'Ended' && !isRating;
                 if (httpResponse.data.metadatas && httpResponse.data.metadatas.avatar) {
                     chatbot.botAvatar = 'data:image/png;base64,' + httpResponse.data.metadatas.avatar;
@@ -311,7 +337,7 @@ const chatbot = new Vue({
                         chatbot._displayMessages();
                     });
                 } else {
-                    chatbot.inputConfig.showRating = chatbot.rating && chatbot.inputConfig.rating === 0;
+                    chatbot.inputConfig.showRating = chatbot.rating && chatbot.ratingType === 'SIMPLE' && chatbot.inputConfig.rating === 0;
                     chatbot.processing = false;
                     if (chatbot.keepAction) {
                         chatbot.inputConfig = chatbot.prevInputConfig;
@@ -408,6 +434,10 @@ const chatbot = new Vue({
                 chatbot.rating = false;
                 chatbot.clearSessionStorage();
                 chatbot.initBot();
+            },
+            // Function to complete to switch to another bot
+            changeLocal(locale){
+                //todo : change url bot to simulate language change
             }
         }
     })

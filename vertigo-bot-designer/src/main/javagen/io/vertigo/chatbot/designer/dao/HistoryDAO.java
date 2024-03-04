@@ -74,7 +74,7 @@ public final class HistoryDAO extends DAO<History, java.lang.Long> implements St
  "  			<% } %>\n" + 
  "  			order by hist.date desc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtHistory")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtHistory", name = "history")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.History> searchHistory(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "criteria", smartType = "STyDtHistoryCriteria") final io.vertigo.chatbot.designer.domain.HistoryCriteria criteria) {
 		final Task task = createTaskBuilder("TkSearchHistory")
 				.addValue("botId", botId)

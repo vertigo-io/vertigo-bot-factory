@@ -56,5 +56,84 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/create_22_07_06.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal" id="add font family enum">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_22_09_23.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="Change length of password field of jira and confluence settings">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_10_06.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="Encrypt existing extensions password">
+        <customChange class="io.vertigo.chatbot.designer.boot.ExtensionPasswordEncryptionMigration" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="Create monitoring alerting subscriptions">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_22_10_13.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="Add email colum on person">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_10_14.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="Add custom background color and font color to bot custom config">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_23_02_03.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="Drop unused table cha_per_rights">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/drop_23_02_06.sql" />
+    </changeSet>
+    
+    
+    <changeSet author="skerdudou" id="Update influxDb data structure to use tags instead of measures for booleans - chatbotmessages measurement">
+        <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileMigration" >
+        	<param name="file" value="/liquibase/changeLog/v_2_0/updateInfluxSwitchToTagsMessage.flux" />
+        	<param name="replaceMeasurement" value="chatbotmessages" />
+        </customChange>
+    </changeSet>
+    <changeSet author="skerdudou" id="Update influxDb data structure to use tags instead of measures for booleans - conversation measurement">
+        <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileMigration" >
+        	<param name="file" value="/liquibase/changeLog/v_2_0/updateInfluxSwitchToTagsConv.flux" />
+        	<param name="replaceMeasurement" value="conversation" />
+        </customChange>
+    </changeSet>
+    <changeSet author="skerdudou" id="Compute aggregated stats for past data for chatbotmessages">
+        <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileMigration" >
+        	<param name="file" value="/liquibase/changeLog/v_2_0/computeInfluxTaskStatsMessage.flux" />
+        </customChange>
+    </changeSet>
+    <changeSet author="skerdudou" id="Compute aggregated stats for past data on conversations">
+        <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileMigration" >
+        	<param name="file" value="/liquibase/changeLog/v_2_0/computeInfluxTaskStatsConv.flux" />
+        </customChange>
+    </changeSet>
+    
+    <changeSet author="skerdudou" id="Add task to keep up to date aggregated stats for chatbotmessages">
+        <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileTask" >
+        	<param name="file" value="/liquibase/changeLog/v_2_0/addInfluxTaskStatsMessage.flux" />
+        	<param name="name" value="aggregStats" />
+        	<param name="every" value="30s" />
+        </customChange>
+    </changeSet>
+    <changeSet author="skerdudou" id="Add task to keep up to date aggregated stats on conversations">
+        <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileTask" >
+        	<param name="file" value="/liquibase/changeLog/v_2_0/addInfluxTaskStatsConv.flux" />
+        	<param name="name" value="aggregStatsConv" />
+        	<param name="every" value="30s" />
+        	<param name="offset" value="-15s" />
+        </customChange>
+    </changeSet>
+
+    <changeSet author="skerdudou" id="Drop old statistic export type and old column">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/drop_23_07_19.sql" />
+    </changeSet>
+    
+    <changeSet author="cflandre" id="Add custom user background color and title font color and change default values">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_22_07_17.sql" />
+    </changeSet>
+
+    <changeSet author="cmarechal" id="Add custom context environment values">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_23_10_26.sql" />
+    </changeSet>
 
 </databaseChangeLog>

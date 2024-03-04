@@ -18,12 +18,24 @@
 package io.vertigo.chatbot.executor.manager;
 
 import com.google.gson.JsonElement;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.inject.Inject;
+
 import io.vertigo.ai.command.BtCommandManager;
 import io.vertigo.chatbot.analytics.AnalyticsSenderServices;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
-import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.commons.domain.TopicExport;
 import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
@@ -42,15 +54,6 @@ import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 public class ExecutorManager implements Manager, Activeable {
 
@@ -104,7 +107,7 @@ public class ExecutorManager implements Manager, Activeable {
 		globalConfig.setBot(bot);
 		globalConfig.setExecutorConfiguration(executorConfig);
 
-		executorConfigManager.saveConfig(globalConfig);
+		executorConfigManager.saveConfig(globalConfig, logs);
 		executorConfigManager.updateWelcomeTour(bot.getWelcomeTours());
 
 		doLoadModel(bot, logs);
@@ -223,8 +226,8 @@ public class ExecutorManager implements Manager, Activeable {
 	}
 
 	public String getBotEmailAddress() {
-		final ChatbotCustomConfig chatbotCustomConfig = jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(),
-				ChatbotCustomConfig.class);
+		final ChatbotCustomConfigExport chatbotCustomConfig = jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(),
+				ChatbotCustomConfigExport.class);
 		return chatbotCustomConfig.getBotEmailAddress();
 	}
 

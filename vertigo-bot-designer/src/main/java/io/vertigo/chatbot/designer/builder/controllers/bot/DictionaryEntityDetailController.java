@@ -101,7 +101,7 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 			@ViewAttribute("synonyms") final DtList<Synonym> synonyms,
 			@ViewAttribute("synonymsToDelete") final DtList<Synonym> synonymsToDelete) {
 
-		addSynonym(newSynonym, synonyms);
+		dictionaryEntityServices.addSynonym(bot, newSynonym, synonyms);
 		dictionaryEntityServices.save(bot, dictionaryEntity, synonyms, synonymsToDelete);
 
 		return "redirect:/bot/" + dictionaryEntity.getBotId() + "/dictionaryEntity/" + dictionaryEntity.getDicEntId();
@@ -116,11 +116,11 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 	}
 
 	@PostMapping("/_addSynonym")
-	public ViewContext doAddSynonym(final ViewContext viewContext,
+	public ViewContext doAddSynonym(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("newSynonym") final String newSynonymIn,
 			@ViewAttribute("synonyms") final DtList<Synonym> synonyms, final UiMessageStack uiMessageStack) {
 
-		addSynonym(newSynonymIn, synonyms);
+		dictionaryEntityServices.addSynonym(bot, newSynonymIn, synonyms);
 
 		viewContext.publishDtListModifiable(synonymsKey, synonyms);
 		viewContext.publishRef(newSynonymKey, "");
@@ -158,12 +158,12 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 	}
 
 	@PostMapping("/_removeSynonym")
-	public ViewContext doRemoveSynonym(final ViewContext viewContext, @RequestParam("index") final int index,
+	public ViewContext doRemoveSynonym(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot, @RequestParam("index") final int index,
 			@ViewAttribute("synonymsToDelete") final DtList<Synonym> synonymsToDelete,
 			@ViewAttribute("synonyms") final DtList<Synonym> synonyms, final UiMessageStack uiMessageStack) {
 
 		// remove from list
-		final Synonym removed = synonyms.remove(index);
+		final Synonym removed = dictionaryEntityServices.removeSynonym(bot, index, synonyms);
 		viewContext.publishDtListModifiable(synonymsKey, synonyms);
 
 		// keep track of deleted persisted synonym
@@ -176,31 +176,6 @@ public class DictionaryEntityDetailController extends AbstractBotCreationControl
 		return viewContext;
 	}
 
-	/**
-	 * Add a synonym and modify table
-	 *
-	 * @param newSynonymIn
-	 * @param synonyms
-	 */
-	public void addSynonym(final String newSynonymIn,
-			final DtList<Synonym> synonyms) {
-		if (StringUtil.isBlank(newSynonymIn)) {
-			return;
-		}
-
-		final String newSynonym = newSynonymIn.trim();
-
-		final boolean exists = synonyms.stream()
-				.anyMatch(its -> its.getLabel().equalsIgnoreCase(newSynonym));
-		if (exists) {
-			throw new VUserException(DictionaryEntityMultilingualResources.ERR_UNIQUE_SYNONYM);
-		}
-
-		final Synonym newText = new Synonym();
-		newText.setLabel(newSynonym);
-
-		synonyms.add(newText);
-	}
 
 	@Override
 	protected String getBreadCrums(final DictionaryEntity object) {

@@ -57,7 +57,7 @@ public final class ChatbotPAO implements StoreServices {
  " 			join chatbot_profiles cp on (cp.chp_cd = ppc.chp_cd)\n" + 
  " 			where ppc.bot_id = #botId#",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtPersonChatbotProfil")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtPersonChatbotProfil", name = "perIHM")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil> getPersonProfilIHM(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetPersonProfilIHM")
 				.addValue("botId", botId)
@@ -65,22 +65,6 @@ public final class ChatbotPAO implements StoreServices {
 		return getTaskManager()
 				.execute(task)
 				.getResult();
-	}
-
-	/**
-	 * Execute la tache TkRemoveAllChaPerRightByBotId.
-	 * @param botId Long
-	*/
-	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
-			name = "TkRemoveAllChaPerRightByBotId",
-			request = "delete from cha_per_rights\n" + 
- " 			where bot_id  = #botId#",
-			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
-	public void removeAllChaPerRightByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
-		final Task task = createTaskBuilder("TkRemoveAllChaPerRightByBotId")
-				.addValue("botId", botId)
-				.build();
-		getTaskManager().execute(task);
 	}
 
 	/**

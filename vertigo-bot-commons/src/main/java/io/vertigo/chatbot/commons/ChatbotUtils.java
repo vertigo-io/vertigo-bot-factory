@@ -52,6 +52,13 @@ public class ChatbotUtils {
 	 */
 	private static final int SECONDS_PER_DAY = SECONDS_PER_HOUR * HOURS_PER_DAY;
 
+	/**
+	 * Encryption algo
+	 */
+	public static final String ENCRYPTION_ALGO = "PBKDF2WithHmacSHA256";
+
+	public static final int MAX_UPLOAD_SIZE = 5 * 1024 * 1024;
+
 	private ChatbotUtils() {
 		// classe utilitaire
 	}

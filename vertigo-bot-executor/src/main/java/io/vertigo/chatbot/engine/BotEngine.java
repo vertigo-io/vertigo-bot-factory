@@ -10,6 +10,8 @@ import io.vertigo.ai.nlu.NluResult;
 import io.vertigo.ai.nlu.ScoredIntent;
 import io.vertigo.chatbot.analytics.AnalyticsObjectSend;
 import io.vertigo.chatbot.engine.model.BotInput;
+import io.vertigo.chatbot.engine.model.BotRating;
+import io.vertigo.chatbot.engine.model.BotRatingType;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.engine.model.BotResponse.BotStatus;
 import io.vertigo.chatbot.engine.model.BotResponseBuilder;
@@ -66,6 +68,7 @@ public class BotEngine {
 	public static final BBKey BOT_CHOICES_KEY = BBKey.of(BOT_OUT_PATH, "/choices");
 	public static final BBKey BOT_CHOICES_NUMBER_KEY = BBKey.of(BOT_OUT_PATH, "/choicesnumber");
 	public static final BBKey BOT_OUT_METADATA_PATH = BBKey.of(BOT_OUT_PATH, "/metadata");
+	public static final BBKey BOT_OUT_METADATA_RATING_TYPE_PATH = BBKey.of(BOT_OUT_METADATA_PATH, "/ratingtype");
 
 	public static final BBKey BOT_TOPIC_KEY = BBKey.of(BOT_STATUS_PATH, "/topic");
 	public static final BBKey BOT_EXPECT_INPUT_PATH = BBKey.of(BOT_STATUS_PATH, "/expect");
@@ -143,8 +146,12 @@ public class BotEngine {
 
 		// build response
 		final Boolean expectNluOrText = bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/nlu/key")) || bb.exists(BBKey.of(BOT_EXPECT_INPUT_PATH, "/text/key"));
-		final Boolean rating = topic.getCode().equals(BotEngine.RATING_TOPIC_NAME);
-		final var botResponseBuilder = new BotResponseBuilder(status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking, expectNluOrText, rating);
+		BotRating botRating = new BotRating();
+		botRating.setEnabled(topic.getCode().equals(BotEngine.RATING_TOPIC_NAME));
+		if (botRating.isEnabled()) {
+			botRating.setType(BotRatingType.valueOf(bb.getString(BBKey.of(BOT_OUT_METADATA_RATING_TYPE_PATH.key()))));
+		}
+		final var botResponseBuilder = new BotResponseBuilder(status.isSucceeded() ? BotStatus.Ended : BotStatus.Talking, expectNluOrText, botRating);
 		for (int i = 0; i < bb.listSize(BOT_RESPONSE_KEY); i++) {
 			botResponseBuilder.addMessage(bb.listGet(BOT_RESPONSE_KEY, i));
 		}

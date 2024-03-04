@@ -27,8 +27,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
 		/** Objet de données Chatbot. */
 		Chatbot(io.vertigo.chatbot.commons.domain.Chatbot.class),
-		/** Objet de données ChatbotCustomConfig. */
-		ChatbotCustomConfig(io.vertigo.chatbot.commons.domain.ChatbotCustomConfig.class),
+		/** Objet de données ChatbotCustomConfigExport. */
+		ChatbotCustomConfigExport(io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport.class),
 		/** Objet de données ConfluenceSettingExport. */
 		ConfluenceSettingExport(io.vertigo.chatbot.commons.domain.ConfluenceSettingExport.class),
 		/** Objet de données ContextValue. */
@@ -43,6 +43,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données RasaConfig. */
 		RasaConfig(io.vertigo.chatbot.executor.domain.RasaConfig.class),
+		/** Objet de données RunnerHealthCheck. */
+		RunnerHealthCheck(io.vertigo.chatbot.commons.domain.RunnerHealthCheck.class),
 		/** Objet de données RunnerInfo. */
 		RunnerInfo(io.vertigo.chatbot.commons.domain.RunnerInfo.class),
 		/** Objet de données TopicExport. */
@@ -163,17 +165,25 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		filIdAvatar	}
 
 	/**
-	 * Enumération des champs de ChatbotCustomConfig.
+	 * Enumération des champs de ChatbotCustomConfigExport.
 	 */
-	public enum ChatbotCustomConfigFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotCustomConfig> {
-		/** Propriété 'Context value id'. */
-		cccId,
+	public enum ChatbotCustomConfigExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport> {
 		/** Propriété 'Bot email address'. */
 		botEmailAddress,
 		/** Propriété 'Reinitialization button'. */
 		reinitializationButton,
 		/** Propriété 'Bot background color'. */
 		backgroundColor,
+		/** Propriété 'Bot font color'. */
+		fontColor,
+		/** Propriété 'Bot message background color'. */
+		botMessageBackgroundColor,
+		/** Propriété 'Bot message font color'. */
+		botMessageFontColor,
+		/** Propriété 'User message background color'. */
+		userMessageBackgroundColor,
+		/** Propriété 'User message font color'. */
+		userMessageFontColor,
 		/** Propriété 'Bot font family'. */
 		fontFamily,
 		/** Propriété 'Display avatar'. */
@@ -181,9 +191,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Total maximum attachment size'. */
 		totalMaxAttachmentSize,
 		/** Propriété 'Disable NlU'. */
-		disableNlu,
-		/** Propriété 'Chatbot'. */
-		botId	}
+		disableNlu	}
 
 	/**
 	 * Enumération des champs de ConfluenceSettingExport.
@@ -285,6 +293,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		nlu,
 		/** Propriété 'config'. */
 		config	}
+
+	/**
+	 * Enumération des champs de RunnerHealthCheck.
+	 */
+	public enum RunnerHealthCheckFields implements DtFieldName<io.vertigo.chatbot.commons.domain.RunnerHealthCheck> {
+		/** Propriété 'Alive'. */
+		alive,
+		/** Propriété 'NlP Ready'. */
+		nlpReady	}
 
 	/**
 	 * Enumération des champs de RunnerInfo.

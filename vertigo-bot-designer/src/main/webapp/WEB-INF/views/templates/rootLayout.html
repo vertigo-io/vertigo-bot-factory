@@ -79,6 +79,19 @@
 	</vu:page>
 
 	<script>
+		function postChangeLocal(locale) {
+			VUiPage.httpPostAjax("_changeLocale", {
+				'locale': locale,
+			},
+			{
+			  onSuccess: function() {
+				  location.reload();
+		    	}
+			});
+		}
+	</script>
+
+	<script>
 		let oldHttpPostAjax = VUiPage.httpPostAjax;
 		VUiPage.httpPostAjax = function (url, params, options) {
 			let paramsResolved;

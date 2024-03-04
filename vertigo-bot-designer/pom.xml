@@ -15,7 +15,7 @@
 	<properties>
 		<sonar.javascript.globals>Vue,VertigoUi,VUiPage</sonar.javascript.globals>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<openCSV.version>5.5.2</openCSV.version>
+		<openCSV.version>5.7.1</openCSV.version>
 	</properties>
 
 	<dependencies>
@@ -47,12 +47,12 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.5</version>
+			<version>${postgresql.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>1.4.199</version>
+			<version>${h2.version}</version>
 		</dependency>
 
 		<dependency>
@@ -90,13 +90,6 @@
 			<artifactId>liquibase-core</artifactId>
 			<version>${liquibase.version}</version>
 		</dependency>
-
-
-		<dependency>
-			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
-			<artifactId>owasp-java-html-sanitizer</artifactId>
-			<version>20191001.1</version>
-		</dependency>
 	
 		<!-- https://mvnrepository.com/artifact/io.vertigo/vertigo-quarto-impl -->
 		<dependency>
@@ -115,7 +108,7 @@
 		<dependency>
 		    <groupId>org.jsoup</groupId>
 		    <artifactId>jsoup</artifactId>
-		    <version>1.10.2</version>
+		    <version>${jsoup.version}</version>
 		</dependency>
 
 		<dependency>
@@ -128,6 +121,12 @@
 			<groupId>xyz.capybara</groupId>
 			<artifactId>clamav-client</artifactId>
 			<version>${clamav-client.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>jakarta.ws.rs</groupId>
+			<artifactId>jakarta.ws.rs-api</artifactId>
+			<version>2.1.6</version>
 		</dependency>
 
 	</dependencies>

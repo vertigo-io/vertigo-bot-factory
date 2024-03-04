@@ -1,5 +1,18 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence.impl;
 
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandler;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import io.vertigo.chatbot.commons.LogsUtils;
+import io.vertigo.chatbot.commons.PasswordEncryptionServices;
 import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceSearchHelper;
@@ -14,15 +27,6 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandler;
-import java.net.http.HttpResponse.BodyHandlers;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.API_URL;
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.SEARCH_URL;
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.SPACE_URL;
@@ -35,15 +39,21 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 	private String password;
 	private String limit;
 
-	public void refreshConfig(ExecutorGlobalConfig config) throws VSystemException {
-		ConfluenceSettingExport confluenceSettingExport = config.getBot().getConfluenceSetting();
+	@Inject
+	private PasswordEncryptionServices passwordEncryptionServices;
+
+	public void refreshConfig(final ExecutorGlobalConfig config, StringBuilder logs) throws VSystemException {
+		LogsUtils.addLogs(logs, "Refreshing Confluence settings ... ");
+		final ConfluenceSettingExport confluenceSettingExport = config.getBot().getConfluenceSetting();
 		if (confluenceSettingExport == null) {
+			LogsUtils.logKO(logs);
 			throw new VSystemException("Confluence setting must be set for confluence plugin to work...");
 		} else {
 			baseUrl = confluenceSettingExport.getUrl();
 			user = confluenceSettingExport.getLogin();
-			password = confluenceSettingExport.getPassword();
+			password = passwordEncryptionServices.decryptPassword(confluenceSettingExport.getPassword());
 			limit = confluenceSettingExport.getNumberOfResults().toString();
+			LogsUtils.logOK(logs);
 		}
 	}
 
@@ -97,7 +107,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 	}
 
 	private String createLinkUrl(final String link, final String name) {
-		final String url = getBaseUrl() + "/" + link;
+		final String url = getBaseUrl() + link;
 		final var builder = new StringBuilder();
 		builder.append("<a href=\"");
 		builder.append(url);
@@ -106,5 +116,4 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		builder.append("</a>");
 		return builder.toString();
 	}
-
 }

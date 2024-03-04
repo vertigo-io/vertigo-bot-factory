@@ -4,22 +4,32 @@
 		auth="SERVLET"
 		type="javax.sql.DataSource"
 		driverClassName="org.postgresql.Driver"
-		url="jdbc:postgresql://localhost:5433/chatbot?stringtype=unspecified"
+		url="jdbc:postgresql://localhost:5433/chatbot?stringtype=unspecified&amp;quoteReturningIdentifiers=false"
 		username="chatbot"
 		password="chatbot" />
 		
 	<Parameter name="devMode" value="true" override="false"/>
 	<Parameter name="boot.ANALYTICA_HOST" value="localhost" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="4562" override="false"/>
-	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot-test/autogen" override="false"/>
+	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot/autogen" override="false"/>
+	<Parameter name="MAIL_NAME" value="KleeMail" override="false"/>
+	<Parameter name="MAIL_PROTOCOL" value="smtp" override="false"/>
+	<Parameter name="MAIL_HOST" value="localdelivery.klee.lan.net" override="false"/>
+	<Parameter name="MAIL_PORT" value="25" override="false"/>
+	<Parameter name="MAIL_DEV_MODE" value="true" override="false"/>
+	<Parameter name="MAIL_DEV_REPLACE_EMAIL_TO" value="cedric.marechal@kleegroup.com" override="false"/>
 	<Parameter name="KEYCLOAK_CONFIG" value="keycloak.json" override="false"/>
 	<Parameter name="VERSION" value="1.3.2" override="false"/>
 	<Parameter name="FILE_STORE_PATH" value="C:\designer/attachments/" override="false"/>
+	<Parameter name="ENCRYPTION_PASSWORD" value="ChatbotKlee2022!" override="false"/>
 	
 	<!-- Env variable in production -->
 	<Parameter name="INFLUXDB_URL" value="http://localhost:8086" override="false"/>
 	<Parameter name="INFLUXDB_TOKEN" value="influxDevToken" override="false"/>
+	<Parameter name="INFLUXDB_ORG" value="chatbot" override="false"/>
+	<Parameter name="INFLUXDB_READ_TIMEOUT" value="30" override="false"/>
 	<Parameter name="USE_SSL" value="true" override="false"/>
 	<Parameter name="CLAMAV_HOST" value="localhost" override="false"/>
 	<Parameter name="CLAMAV_PORT" value="3310" override="false"/>
+	<Parameter name="RUNNER_REQUEST_TIMEOUT" value="1800" override="false"/>
 </Context>

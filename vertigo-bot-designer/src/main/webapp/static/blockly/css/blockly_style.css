@@ -1,0 +1,25 @@
+#blocklyTool{
+    text-align: center;
+}
+
+.q-btn-blockly{
+    text-align: center;
+    margin: 15px 20px 0px;
+}
+#scriptintention-buttons{
+    display: flex;
+}
+#scriptintention-buttons-export-emoji{
+    width:85%;
+}
+#scriptintention-buttons-refresh{
+    width:15%;
+}
+.q-btn-buttons{
+    float: left;
+    margin:0 5px;
+}
+#q-btn-buttons-refresh{
+    float: right;
+    margin-right: 20px
+}

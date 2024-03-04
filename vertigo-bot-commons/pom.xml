@@ -14,7 +14,7 @@
 
 
 	<properties>
-		<jersey.version>2.27</jersey.version>
+		<jersey.version>2.34</jersey.version>
 	</properties>
 	
 	<dependencies>
@@ -56,9 +56,15 @@
 		</dependency>
 
 		<dependency>
+			<groupId>io.vertigo</groupId>
+			<artifactId>vertigo-social</artifactId>
+			<version>${vertigo.version}</version>
+		</dependency>
+
+		<dependency>
 		    <groupId>commons-io</groupId>
 		    <artifactId>commons-io</artifactId>
-		    <version>2.6</version>
+		    <version>${commons-io.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -74,6 +80,12 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>${log4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+			<artifactId>owasp-java-html-sanitizer</artifactId>
+			<version>${owasp-html-sanitizer.version}</version>
 		</dependency>
 
 	</dependencies>

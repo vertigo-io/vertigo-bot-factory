@@ -163,7 +163,7 @@
                         stack-label>
                 </q-select>
                 <q-btn color="primary" round icon="add" th:aria-label="#{action.add}" th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" th:title="#{action.add}"
-                       @click="componentStates.isPwd = true; vueData.newConfluenceSetting.conSetId = null;
+                       @click="VUiExtensions.dataX.isPwd = false; vueData.newConfluenceSetting.conSetId = null;
                        vueData.newConfluenceSetting.botId = vueData.bot.botId;
                        vueData.newConfluenceSetting.nodId = null;
                        vueData.newConfluenceSetting.url = null;
@@ -175,7 +175,7 @@
             <vu:slot name="actions_slot">
                 <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
                        th:title="#{action.update}"
-                       @click="componentStates.isPwd = true;
+                       @click="VUiExtensions.dataX.isPwd = true;
                        vueData.newConfluenceSetting.botId = props.row.botId;
                        vueData.newConfluenceSetting.conSetId = props.row.conSetId;
                        vueData.newConfluenceSetting.nodId = props.row.nodId;
@@ -234,17 +234,20 @@
                              :error-message="getErrorMessage('newConfluenceSetting', 'login')" />
                 </q-card-section>
                 <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" >
-                    <q-input v-model="vueData.newConfluenceSetting.password" th:label="#{extensions.confluence.password}"
-                             name="vContext[newConfluenceSetting][password]" :error="hasFieldsError('newConfluenceSetting', 'password')"
-                             :error-message="getErrorMessage('newConfluenceSetting', 'password')" :type="dataX.isPwd ? 'password' : 'text'">
-                        <template v-slot:append>
-                            <q-icon
-                                    :name="dataX.isPwd  ? 'visibility_off' : 'visibility'"
-                                    class="cursor-pointer"
-                                    @click="VUiExtensions.dataX.isPwd = !VUiExtensions.dataX.isPwd;"
-                            />
-                        </template>
-                    </q-input>
+                    <div style="display: flex; align-items: center">
+                        <q-input style="flex-grow: 1;" v-if="dataX.isPwd"  th:label="#{extensions.confluence.password}" disable type="password" name="notYourPasswordConfluence" value="notYourPasswordConfluence"></q-input>
+                        <q-input style="flex-grow: 1;" v-if="!dataX.isPwd" v-model="vueData.newConfluenceSetting.password" th:label="#{extensions.confluence.password}"
+                                 name="vContext[newConfluenceSetting][password]" :error="hasFieldsError('newConfluenceSetting', 'password')"
+                                 :error-message="getErrorMessage('newConfluenceSetting', 'password')" type="text">
+                        </q-input>
+                        <q-icon
+                                name="clear"
+                                size="sm"
+                                class="cursor-pointer"
+                                enable
+                                @click="VUiExtensions.dataX.isPwd = !VUiExtensions.dataX.isPwd; vueData.newConfluenceSetting.password = null;"
+                        />
+                    </div>
                 </q-card-section>
                 <q-card-section>
                     <q-input v-model="vueData.newConfluenceSetting.numberOfResults" th:label="#{extensions.confluence.numberOfResults}"
@@ -264,7 +267,7 @@
                     <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
                     <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
                     <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-                           @click="httpPostAjax('_saveConfluenceSetting', vueDataParams(['newConfluenceSetting']))"
+                           @click="httpPostAjax('_saveConfluenceSetting', vueDataParams(['newConfluenceSetting'])); VUiExtensions.dataX.isPwd = true"
                            color="primary" v-close-popup></q-btn>
                 </q-card-actions>
             </q-card>
@@ -288,12 +291,16 @@
                     </vu:content>
                 </vu:column>
                 <vu:column name="enabled" th:label="#{extension.jira.field.setting.enabled}">
-                    <q-toggle v-model="props.row.enabled"
+                    <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
                               :disable="props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"
                               @input="enabledDisabledJiraField(props.row.jirFieldCd, props.row.enabled)" ></q-toggle>
+                    <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled" disable></q-toggle>
                 </vu:column>
                 <vu:column name="mandatory" th:label="#{extension.jira.field.setting.mandatory}" >
-                    <q-toggle v-model="props.row.mandatory" :disable="!props.row.enabled || props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"  @input="mandatoryJiraField(props.row.jirFieldCd, props.row.mandatory)"></q-toggle>
+                    <q-toggle  th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                               v-model="props.row.mandatory"
+                               :disable="!props.row.enabled || props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"  @input="mandatoryJiraField(props.row.jirFieldCd, props.row.mandatory)"></q-toggle>
+                    <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.mandatory" disable></q-toggle>
                 </vu:column>
             </vu:table>
             <vu:include-data object="scriptIntention" field="script" />
@@ -313,7 +320,7 @@
                             stack-label>
                     </q-select>
                     <q-btn color="primary" round icon="add" th:aria-label="#{action.add}" th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" th:title="#{action.add}"
-                           @click="componentStates.isPwd = true; vueData.newJiraSetting.jirSetId = null;
+                           @click="VUiExtensions.dataX.isJiraPwd = false; vueData.newJiraSetting.jirSetId = null;
                        vueData.newJiraSetting.botId = vueData.bot.botId;
                        vueData.newJiraSetting.nodId = null;
                        vueData.newJiraSetting.url = null;
@@ -325,7 +332,7 @@
                 <vu:slot name="actions_slot">
                     <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
                            th:title="#{action.update}"
-                           @click="componentStates.isPwd = true;
+                           @click="VUiExtensions.dataX.isJiraPwd = true;
                        vueData.newJiraSetting.botId = props.row.botId;
                        vueData.newJiraSetting.jirSetId = props.row.jirSetId;
                        vueData.newJiraSetting.nodId = props.row.nodId;
@@ -385,17 +392,21 @@
                              :error-message="getErrorMessage('newJiraSetting', 'login')" />
                 </q-card-section>
                 <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" >
-                    <q-input v-model="vueData.newJiraSetting.password" th:label="#{extensions.jira.password}"
-                             name="vContext[newJiraSetting][password]" :error="hasFieldsError('newJiraSetting', 'password')"
-                             :error-message="getErrorMessage('newJiraSetting', 'password')" :type="dataX.isJiraPwd ? 'password' : 'text'">
-                        <template v-slot:append>
-                            <q-icon
-                                    :name="dataX.isJiraPwd  ? 'visibility_off' : 'visibility'"
-                                    class="cursor-pointer"
-                                    @click="VUiExtensions.dataX.isJiraPwd = !VUiExtensions.dataX.isJiraPwd;"
-                            />
-                        </template>
-                    </q-input>
+                    <div style="display: flex; align-items: center">
+                        <q-input style="flex-grow: 1;" v-if="dataX.isJiraPwd"  th:label="#{extensions.confluence.password}"
+                                 disable type="password" name="notYourPasswordJira" value="notYourPasswordJira"></q-input>
+                        <q-input style="flex-grow: 1;" v-if="!dataX.isJiraPwd" v-model="vueData.newJiraSetting.password" th:label="#{extensions.jira.password}"
+                                 name="vContext[newJiraSetting][password]" :error="hasFieldsError('newJiraSetting', 'password')"
+                                 :error-message="getErrorMessage('newJiraSetting', 'password')" type="text">
+                        </q-input>
+                        <q-icon
+                                name="clear"
+                                size="sm"
+                                class="cursor-pointer"
+                                enable
+                                @click="VUiExtensions.dataX.isJiraPwd = !VUiExtensions.dataX.isJiraPwd; vueData.newJiraSetting.password = null;"
+                        />
+                    </div>
                 </q-card-section>
                 <q-card-section>
                     <q-input v-model="vueData.newJiraSetting.project" th:label="#{extensions.jira.project}"
@@ -415,7 +426,7 @@
                     <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
                     <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
                     <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-                           @click="httpPostAjax('_saveJiraSetting', vueDataParams(['newJiraSetting']))"
+                           @click="httpPostAjax('_saveJiraSetting', vueDataParams(['newJiraSetting'])); VUiExtensions.dataX.isJiraPwd = true"
                            color="primary" v-close-popup></q-btn>
                 </q-card-actions>
             </q-card>

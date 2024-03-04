@@ -1,5 +1,9 @@
 package io.vertigo.chatbot.designer.builder.services.topic;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.topic.SmallTalkDAO;
@@ -36,9 +40,6 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
-
-import javax.inject.Inject;
-import java.util.Optional;
 
 @Transactional
 @Secured("BotUser")
@@ -158,6 +159,8 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 	}
 
 	public void removeAllSmallTalkFromBot(@SecuredOperation("botAdm") final Chatbot bot) {
+		responsesButtonServices.removeAllSMTButtonsByBot(bot);
+		responsesButtonUrlServices.removeAllSMTButtonsUrlByBot(bot);
 		smallTalkPAO.removeAllSmallTalkByBotId(bot.getBotId());
 	}
 

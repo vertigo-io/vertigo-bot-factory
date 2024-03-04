@@ -1,11 +1,5 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
-
-import java.util.Optional;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,12 +7,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Attachment;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
-import io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
@@ -26,6 +24,8 @@ import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
+
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/attachments")
@@ -36,7 +36,7 @@ public class AttachmentsController extends AbstractBotListEntityController<Attac
 	private AttachmentServices attachmentServices;
 
 	@Inject
-	private ChabotCustomConfigServices chabotCustomConfigServices;
+	private ChatbotCustomConfigServices chatbotCustomConfigServices;
 
 	private static final ViewContextKey<Attachment> attachmentsKey = ViewContextKey.of("attachments");
 	private static final ViewContextKey<Attachment> newAttachmentKey = ViewContextKey.of("newAttachment");
@@ -47,11 +47,12 @@ public class AttachmentsController extends AbstractBotListEntityController<Attac
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
-		final ChatbotCustomConfig chatbotCustomConfig = chabotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
+		final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
 		final DtList<Attachment> attachments = attachmentServices.findAllByBotId(botId);
 		viewContext.publishDtList(attachmentsKey, attachments);
 		viewContext.publishDto(newAttachmentKey, new Attachment());
-		viewContext.publishRef(maxSizeKey, chatbotCustomConfig.getTotalMaxAttachmentSize());
+		viewContext.publishRef(maxSizeKey, chatbotCustomConfig.getTotalMaxAttachmentSize() != null ?
+				chatbotCustomConfig.getTotalMaxAttachmentSize() : -1L);
 		viewContext.publishRef(attachmentTotalSizeKey, computeAttachmentTotalSize(attachments));
 		viewContext.publishFileInfoURI(importTopicFileUri, null);
 		super.initBreadCrums(viewContext, Attachment.class);
@@ -71,7 +72,7 @@ public class AttachmentsController extends AbstractBotListEntityController<Attac
 		final Attachment attachment = attId.isEmpty() ? new Attachment() : attachmentServices.findById(attId.get());
 		attachment.setLabel(label);
 		attachment.setBotId(bot.getBotId());
-		attachmentServices.save(attachment, attachmentFile, maxSize, attachmentTotalSize);
+		attachmentServices.save(bot, attachment, attachmentFile, maxSize, attachmentTotalSize);
 		final DtList<Attachment> attachments = attachmentServices.findAllByBotId(bot.getBotId());
 		viewContext.publishDtList(attachmentsKey, attachments);
 		viewContext.publishRef(attachmentTotalSizeKey, computeAttachmentTotalSize(attachments));
@@ -84,7 +85,7 @@ public class AttachmentsController extends AbstractBotListEntityController<Attac
 			@ViewAttribute("bot") final Chatbot bot,
 			@RequestParam("attId") final Long attId) {
 
-		attachmentServices.delete(attId);
+		attachmentServices.delete(bot, attId);
 		final DtList<Attachment> attachments = attachmentServices.findAllByBotId(bot.getBotId());
 		viewContext.publishDtList(attachmentsKey, attachments);
 		viewContext.publishRef(attachmentTotalSizeKey, computeAttachmentTotalSize(attachments));

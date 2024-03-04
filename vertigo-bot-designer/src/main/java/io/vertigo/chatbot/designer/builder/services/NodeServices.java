@@ -1,7 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services;
 
-import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
-
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -15,6 +13,8 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.designer.builder.chatbotNode.ChatbotNodePAO;
+import io.vertigo.chatbot.designer.dao.monitoring.AlertingEventDAO;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotNodeFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
@@ -24,8 +24,9 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 @Transactional
-@Secured("BotUser")
 public class NodeServices implements Component {
 
 	@Inject
@@ -35,8 +36,18 @@ public class NodeServices implements Component {
 	private ChatbotNodeDAO chatbotNodeDAO;
 
 	@Inject
+	private ConfluenceSettingServices confluenceSettingServices;
+
+	@Inject
+	private JiraSettingServices jiraSettingServices;
+
+	@Inject
+	private AlertingEventDAO alertingEventDAO;
+
+	@Inject
 	private AuthorizationManager authorizationManager;
 
+	@Secured("BotUser")
 	public ChatbotNode getNodeByNodeId(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
 		final ChatbotNode node = chatbotNodeDAO.get(nodId);
 		if (!node.getBotId().equals(bot.getBotId())) {
@@ -45,10 +56,16 @@ public class NodeServices implements Component {
 		return node;
 	}
 
+	@Secured("BotUser")
 	public DtList<ChatbotNode> getAllNodesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
+	public DtList<ChatbotNode> getAllNodesByBotsForMonitoring(final Chatbot bot) {
+		return chatbotNodeDAO.findAll(Criterions.isEqualTo(ChatbotNodeFields.botId, bot.getBotId()), DtListState.of(null));
+	}
+
+	@Secured("BotUser")
 	public Optional<ChatbotNode> getDevNodeByBotId(final Long botId) {
 		return chatbotNodeDAO.findOptional(
 				Criterions.isEqualTo(ChatbotNodeFields.botId, botId)
@@ -80,15 +97,21 @@ public class NodeServices implements Component {
 		chatbotNodeDAO.save(node);
 	}
 
+	@Secured("BotUser")
 	public void save(@SecuredOperation("botContributor") final Chatbot bot, final ChatbotNode node) {
 		chatbotNodeDAO.save(node);
 	}
 
 	@Secured("SuperAdm")
-	public void deleteNode(final Long nodId) {
+	public void deleteNode(@SecuredOperation("botAdm") final Chatbot bot, final Long nodId) {
+		confluenceSettingServices.deleteAllByNodeId(bot, nodId);
+		jiraSettingServices.deleteAllByNodeId(bot, nodId);
+		alertingEventDAO.findAll(Criterions.isEqualTo(DtDefinitions.AlertingEventFields.nodeId, nodId),
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE)).forEach(alertingEvent -> alertingEventDAO.delete(alertingEvent.getAgeId()));
 		chatbotNodeDAO.delete(nodId);
 	}
 
+	@Secured("BotUser")
 	public DtList<ChatbotNode> getNodesByBot(@SecuredOperation("botVisitor") final Chatbot chatbot) {
 		if (authorizationManager.isAuthorized(chatbot, ChatbotOperations.botAdm)) {
 			return getAllNodesByBot(chatbot);
@@ -101,10 +124,12 @@ public class NodeServices implements Component {
 		return nodes;
 	}
 
+	@Secured("BotUser")
 	public void deleteChatbotNodeByBot(@SecuredOperation("botAdm") final Chatbot bot) {
 		chatbotNodePAO.removeChatbotNodeByBotId(bot.getBotId());
 	}
 
+	@Secured("BotUser")
 	public ChatbotNode getDevNodeFromList(final DtList<ChatbotNode> nodeList) {
 		return nodeList.stream()
 				.filter(ChatbotNode::getIsDev)
@@ -112,6 +137,7 @@ public class NodeServices implements Component {
 				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
 	}
 
+	@Secured("BotUser")
 	public void updateNodes(final Chatbot bot) {
 		final DtList<ChatbotNode> listNode = getNodesByBot(bot);
 		for (final ChatbotNode node : listNode) {

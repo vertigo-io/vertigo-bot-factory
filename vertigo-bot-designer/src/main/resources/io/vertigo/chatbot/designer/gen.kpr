@@ -1,6 +1,8 @@
 mda/person.ksp
 
 mda/commonModel.ksp
+mda/chatbot/chatbotCustomConfig.ksp
+mda/chatbot/contextModel.ksp
 mda/chatbot/exportModel.ksp
 mda/chatbot/dictionaryEntityModel.ksp
 mda/chatbot/profileModel.ksp
@@ -11,5 +13,6 @@ mda/chatbot/history.ksp
 mda/chatbot/extensions.ksp
 
 admin/person.ksp
+admin/monitoring.ksp
 
 analytics/analyticsModel.ksp

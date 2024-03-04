@@ -13,7 +13,7 @@
 
         function addWelcomeTour() {
             VUiPage.httpPostAjax("_saveWelcomeTour", {
-                'welId': VertigoUi.vueData.newWelcomeTour.welId,
+                'welIdOpt': VertigoUi.vueData.newWelcomeTour.welId,
                 'label': VertigoUi.vueData.newWelcomeTour.label,
                 'technicalCode': VertigoUi.vueData.newWelcomeTour.technicalCode,
                 'importShepherdConfigFileUri': VertigoUi.vueData.importShepherdConfigFileUri.toString()

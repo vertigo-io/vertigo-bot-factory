@@ -59,7 +59,7 @@ public final class DictionaryEntityDAO extends DAO<DictionaryEntity, java.lang.L
  " 				and syn.label = #label#\n" + 
  " 				LIMIT 1",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
-	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtDictionaryEntity")
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtDictionaryEntity", name = "dictionaryEntity")
 	public Optional<io.vertigo.chatbot.designer.domain.DictionaryEntity> getDictionaryEntityBySynonymLabelAndBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "label", smartType = "STyLabel") final String label) {
 		final Task task = createTaskBuilder("TkGetDictionaryEntityBySynonymLabelAndBotId")
 				.addValue("botId", botId)

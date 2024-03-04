@@ -1,5 +1,10 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.authorization.GlobalAuthorizations;
@@ -9,8 +14,11 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
+import io.vertigo.chatbot.designer.builder.monitoring.MonitoringPAO;
+import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
 import io.vertigo.chatbot.designer.builder.services.HistoryServices;
 import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
+import io.vertigo.chatbot.designer.builder.services.JiraSettingServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
 import io.vertigo.chatbot.designer.builder.services.SavedTrainingServices;
@@ -18,17 +26,21 @@ import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.UnknownSentencesServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
+import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.dao.monitoring.AlertingEventDAO;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.utils.DateUtils;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.chatbot.domain.DtDefinitions.ChatbotFields;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.daemon.DaemonScheduled;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.locale.MessageText;
@@ -41,15 +53,10 @@ import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
 
-import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.Optional;
-
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 
 @Transactional
-@Secured("BotUser")
 public class ChatbotServices implements Component {
 
 	@Inject
@@ -89,7 +96,7 @@ public class ChatbotServices implements Component {
 	private TopicLabelServices topicLabelServices;
 
 	@Inject
-	private ChabotCustomConfigServices chabotCustomConfigServices;
+	private ChatbotCustomConfigServices chatbotCustomConfigServices;
 
 	@Inject
 	private HistoryServices historyServices;
@@ -110,8 +117,24 @@ public class ChatbotServices implements Component {
 	private ContextValueServices contextValueServices;
 
 	@Inject
+	private DictionaryEntityServices dictionaryEntityServices;
+
+	@Inject
+	private ConfluenceSettingServices confluenceSettingServices;
+
+	@Inject
+	private JiraSettingServices jiraSettingServices;
+
+	@Inject
+	private MonitoringPAO monitoringPAO;
+
+	@Inject
+	private AlertingEventDAO alertingEventDAO;
+
+	@Inject
 	private LocaleManager localeManager;
 
+	@Secured("BotUser")
 	public Chatbot saveChatbot(@SecuredOperation("botAdm") final Chatbot chatbot, final Optional<FileInfoURI> personPictureFile,
 		   	final ChatbotCustomConfig chatbotCustomConfig) {
 
@@ -140,23 +163,30 @@ public class ChatbotServices implements Component {
 
 		if (newBot) {
 			final TopicCategory topicCategory = topicCategoryServices.initializeBasicCategory(savedChatbot);
+			contextValueServices.initContextValueURL(chatbot);
 			topicServices.initTechnicalTopics(savedChatbot, topicCategory.getTopCatId(), localeManager.getCurrentLocale().toString());
 		}
 
-		chabotCustomConfigServices.save(savedChatbot, chatbotCustomConfig);
+		chatbotCustomConfigServices.save(savedChatbot, chatbotCustomConfig);
 
 		return savedChatbot;
 	}
 
+	@Secured("BotUser")
 	public Boolean deleteChatbot(@SecuredOperation("botAdm") final Chatbot bot) {
 
 		// Delete node
+		deleteMonitoringSubscriptions(bot);
+		confluenceSettingServices.deleteAllByBotId(bot);
+		jiraSettingServices.deleteAllByBotId(bot);
+		jiraFieldSettingServices.deleteAllByBotId(bot);
 		nodeServices.deleteChatbotNodeByBot(bot);
 		// Delete training and all media file
-		savedTrainingServices.deleteAllByBotId(bot.getBotId());
+		savedTrainingServices.deleteAllByBotId(bot);
 		trainingServices.removeAllTraining(bot);
 		utterTextServices.removeAllUtterTextByBotId(bot);
 		responsesButtonServices.removeAllSMTButtonsByBot(bot);
+		dictionaryEntityServices.deleteAllByBot(bot);
 		// Delete training, reponsetype and smallTalk
 		topicServices.removeAllNTSFromBot(bot);
 		topicLabelServices.cleanLabelFromBot(bot);
@@ -166,12 +196,11 @@ public class ChatbotServices implements Component {
 		topicCategoryServices.removeAllCategoryByBot(bot);
 
 		chatbotProfilServices.deleteAllProfilByBot(bot);
-		chabotCustomConfigServices.deleteChatbotCustomConfig(bot);
+		chatbotCustomConfigServices.deleteChatbotCustomConfig(bot);
 		contextValueServices.deleteAllByBotId(bot.getBotId());
 		historyServices.deleteAllByBotId(bot.getBotId());
 		unknownSentencesServices.deleteAllByBotId(bot.getBotId());
 		welcomeTourServices.deleteAllByBotId(bot.getBotId());
-		jiraFieldSettingServices.deleteAllByBotId(bot.getBotId());
 		chatbotDAO.delete(bot.getBotId());
 
 		// Delete avatar file reference in bot
@@ -188,9 +217,19 @@ public class ChatbotServices implements Component {
 		return chatbotDAO.getChatbotByPerId(UserSessionUtils.getLoggedPerson().getPerId());
 	}
 
+	private void deleteMonitoringSubscriptions(Chatbot chatbot) {
+		alertingEventDAO.findAll(Criterions.isEqualTo(DtDefinitions.AlertingEventFields.botId, chatbot.getBotId()),
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE)).forEach(alertingEvent -> alertingEventDAO.delete(alertingEvent.getAgeId()));
+		monitoringPAO.removeAllFromNNAlertingSubscriptionChatbot(chatbot.getBotId());
+	}
+
 	@Secured("SuperAdm")
 	public DtList<Chatbot> getAllChatbots() {
 		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+	}
+
+	public DtList<Chatbot> getAllChatbotsForDaemons() {
+		return chatbotDAO.findAll(Criterions.alwaysTrue(), DtListState.of(null));
 	}
 
 	@Secured("SuperAdm")
@@ -209,6 +248,7 @@ public class ChatbotServices implements Component {
 		return chatbot;
 	}
 
+	@Secured("BotUser")
 	public VFile getAvatar(@SecuredOperation("botVisitor") final Chatbot bot) {
 		if (bot.getFilIdAvatar() == null) {
 			return getNoAvatar();
@@ -241,4 +281,10 @@ public class ChatbotServices implements Component {
 		return bot.isPresent() ? DateUtils.toStringJJMMAAAA(bot.get().getCreationDate()) : null;
 	}
 
+	@DaemonScheduled(name = "DmnUnknownSentences", periodInSeconds = 600)
+	public void updateUnknownSentencesDaemon() {
+		getAllChatbotsForDaemons().forEach(chatbot -> {
+			unknownSentencesServices.saveLatestUnknownSentences(chatbot.getBotId());
+		});
+	}
 }

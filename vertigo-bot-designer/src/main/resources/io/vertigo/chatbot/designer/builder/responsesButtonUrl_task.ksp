@@ -18,7 +18,7 @@ create Task TkRemoveAllSMTButtonsUrlByBotId {
             delete from response_button_url
 			using small_talk smt
 			join topic top on (top.top_id = smt.top_id)
-			where smt.smt_id = response_button.smt_id
+			where smt.smt_id = response_button_url.smt_id
 			and top.bot_id = #botId#
              "
 	in botId  				{domain : DoId         		cardinality : "1"  }

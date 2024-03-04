@@ -32,14 +32,14 @@ create DtDefinition DtWelcomeTourExport {
 create DtDefinition DtConfluenceSettingExport {
 	field url 						{domain: DoUrl 						    label: "Knowledge base URL" 		cardinality : "1"}
 	field login 		            {domain: DoLabel 						label: "Login" 		                cardinality : "1"}
-	field password			 		{domain: DoPassword	 					label: "Password" 					cardinality : "1"}
+	field password			 		{domain: DoText	 					    label: "Password" 					cardinality : "1"}
     field numberOfResults			{domain: DoNumber	 					label: "Number max of results" 	    cardinality : "1"}
 }
 
 create DtDefinition DtJiraSettingExport {
 	field url 						{domain: DoUrl 						    label: "Jira URL" 		            cardinality : "1"}
 	field login 		            {domain: DoLabel 						label: "Login" 		                cardinality : "1"}
-	field password			 		{domain: DoPassword	 					label: "Password" 					cardinality : "1"}
+	field password			 		{domain: DoText	 					    label: "Password" 					cardinality : "1"}
     field project			        {domain: DoLabel	 					label: "Project" 	                cardinality : "1"}
 }
 
@@ -62,6 +62,11 @@ create DtDefinition DtRunnerInfo {
 	field state					{domain: DoLabel 					label: "Node state" 			cardinality : "1"}
 	field agentVersion			{domain: DoLabel 					label: "Component version" 		cardinality : "1"}
 	field loadedModelVersion	{domain: DoNumber 					label: "Model version" 			cardinality : "1"}
+}
+
+create DtDefinition DtRunnerHealthCheck {
+    field alive         {domain: DoYesNo					label: "Alive" 					    cardinality : "1"}
+    field nlpReady      {domain: DoYesNo					label: "NlP Ready" 					cardinality : "1"}
 }
 
 create DtDefinition DtTrainerInfo {
@@ -87,24 +92,17 @@ create DtDefinition DtExecutorConfiguration {
 	field customConfig			{domain: DoText 					label: "Additional config for executor" cardinality : "1"}
 }
 
-create DtDefinition DtChatbotCustomConfig {
-	id cccId 		                {domain: DoId		    label: "Context value id"                                  }
-	field botEmailAddress           {domain: DoLabel        label: "Bot email address"                  cardinality:"?"}
-	field reinitializationButton    {domain: DoYesNo        label: "Reinitialization button"            cardinality:"?"}
-	field backgroundColor           {domain: DoLabel        label: "Bot background color"               cardinality:"?"}
-	field fontColor                 {domain: DoLabel        label: "Bot font color"                     cardinality:"?"}
-	field fontFamily                {domain: DoLabel        label: "Bot font family"                    cardinality:"?"}
-	field displayAvatar             {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
-	field totalMaxAttachmentSize    {domain: DoNumber       label: "Total maximum attachment size"      cardinality:"?"}
-	field disableNlu                {domain: DoYesNo        label: "Disable NlU"                        cardinality:"?"}
-}
-
-create Association AChatbotCustomConfigChatbot {
-	fkFieldName : "botId"
-
- 	dtDefinitionA : DtChatbotCustomConfig
-	type : "*>1"
-	dtDefinitionB : DtChatbot
-
-	labelB : "Chatbot"
+create DtDefinition DtChatbotCustomConfigExport {
+    field botEmailAddress                   {domain: DoLabel        label: "Bot email address"                  cardinality:"?"}
+	field reinitializationButton            {domain: DoYesNo        label: "Reinitialization button"            cardinality:"?"}
+	field backgroundColor                   {domain: DoLabel        label: "Bot background color"               cardinality:"?"}
+	field fontColor                         {domain: DoLabel        label: "Bot font color"                     cardinality:"?"}
+	field botMessageBackgroundColor         {domain: DoLabel        label: "Bot message background color"       cardinality:"?"}
+	field botMessageFontColor               {domain: DoLabel        label: "Bot message font color"             cardinality:"?"}
+	field userMessageBackgroundColor        {domain: DoLabel        label: "User message background color"      cardinality:"?"}
+	field userMessageFontColor              {domain: DoLabel        label: "User message font color"            cardinality:"?"}
+	field fontFamily                        {domain: DoLabel        label: "Bot font family"                    cardinality:"?"}
+	field displayAvatar                     {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
+	field totalMaxAttachmentSize            {domain: DoNumber       label: "Total maximum attachment size"      cardinality:"?"}
+	field disableNlu                        {domain: DoYesNo        label: "Disable NlU"                        cardinality:"?"}
 }

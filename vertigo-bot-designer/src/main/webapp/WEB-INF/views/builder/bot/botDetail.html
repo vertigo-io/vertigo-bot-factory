@@ -9,6 +9,7 @@
 	<head>
 		<title th:text="#{bot.detail.title}"></title>
 
+		<script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
 		<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 		<script th:src="@{/static/js/c-richtext.js}"></script>
 		<script th:src="@{/static/js/c-buttonList.js}"></script>
@@ -31,50 +32,90 @@
 		<script th:inline="javascript">
 		 	Vue.use(window.VueCodemirror)
 			function getChatPreview() {
-				return [VertigoUi.vueData.chatbotCustomConfig.fontFamily];
+				return [VertigoUi.vueData.chatbotCustomConfig.fofCd];
 			}
-			function changeChatMessageBgColor() {
-				 if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
-					 VertigoUi.vueData.chatbotCustomConfig.backgroundColor = '#cdcdcd';
+			function changeBgColor() {
+				if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
+					VertigoUi.vueData.chatbotCustomConfig.backgroundColor = '#000091';
+				}
+				Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
+					element.style.setProperty('--bot-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
+				});
+			}
+
+			function changeFontColor() {
+				if (VertigoUi.vueData.chatbotCustomConfig.fontColor == null) {
+					VertigoUi.vueData.chatbotCustomConfig.fontColor = '#ffffff';
+				}
+				Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
+					element.style.setProperty('--bot-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+				});
+			}
+
+			function changeBotMessageBgColor() {
+				 if (VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor == null) {
+					 VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor = '#ffffff';
 				 }
 				 Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-					 element.style.setProperty('--chat-message-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
+					 element.style.setProperty('--chat-bot-bg-color', VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor);
 				 });
 			}
 
-			function changeChatMessageFontColor() {
-				 if (VertigoUi.vueData.chatbotCustomConfig.fontColor == null) {
-					 VertigoUi.vueData.chatbotCustomConfig.fontColor = '#000000';
+			function changeUserMessageBgColor() {
+				if (VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor == null) {
+					VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor = '#e0e0e0';
+				}
+				Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-user-bg-color', VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor);
+				});
+			}
+
+			function changeBotMessageFontColor() {
+				 if (VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor == null) {
+					 VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor = '#000000';
 				 }
 				Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
-					element.style.setProperty('--chat-message-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+					element.style.setProperty('--chat-bot-message-font-color', VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor);
+				});
+			}
+
+			function changeUserMessageFontColor() {
+				if (VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor == null) {
+					VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor = '#000000';
+				}
+				Array.from(document.getElementsByClassName('q-message-text-content--sent')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-user-message-font-color', VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor);
 				});
 			}
 
 			function changeChatMessageFontFamily() {
-				 if (VertigoUi.vueData.chatbotCustomConfig.fontFamily == null) {
-					 VertigoUi.vueData.chatbotCustomConfig.fontFamily = 'Arial, sans-serif';
+				 if (VertigoUi.vueData.chatbotCustomConfig.fofCd == null) {
+					 VertigoUi.vueData.chatbotCustomConfig.fofCd = 'ARIAL';
 				 }
+				const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
+					return fontFamily.fofCd === VertigoUi.vueData.chatbotCustomConfig.fofCd
+				});
 				Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-					element.style.setProperty('--chat-message-font-family', VertigoUi.vueData.chatbotCustomConfig.fontFamily);
+					element.style.setProperty('--chat-message-font-family', fontFamily.label);
+				});
+				Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-family', fontFamily.label);
+				});
+				Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
+					element.style.setProperty('--chat-message-font-family', fontFamily.label);
 				});
 			}
 
 			document.addEventListener('DOMContentLoaded', function () {
-				changeChatMessageBgColor();
+				changeBgColor();
+				changeFontColor();
+				changeBotMessageBgColor();
+				changeUserMessageBgColor();
+				changeUserMessageFontColor();
+				changeBotMessageFontColor()
 				changeChatMessageFontFamily();
-				changeChatMessageFontColor();
 			});
 		</script>
-		<style>
-			.q-message-text--received {
-				color: var(--chat-message-bg-color) !important;
-				font-family: var(--chat-message-font-family) !important;
-			}
-			.q-message-text-content--received {
-				color: var(--chat-message-font-color) !important;
-			}
-		</style>
 	</head>
 	
 	<body>
@@ -113,7 +154,11 @@
 			<vu:include-data object="chatbotCustomConfig" field="disableNlu" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="backgroundColor" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="fontColor" modifiable="true" />
-			<vu:include-data object="chatbotCustomConfig" field="fontFamily" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="botMessageBackgroundColor" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="botMessageFontColor"  modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="userMessageBackgroundColor" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="userMessageFontColor"  modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="fofCd" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
 
 			<vu:block id="botWindowCustomization" th:title="#{bot.window.customization}">
@@ -130,29 +175,52 @@
 				<vu:label-edit object="chatbotCustomConfig" field="disableNlu">
 					<q-toggle v-model="vueData.chatbotCustomConfig.disableNlu" th::disable="${model.modeReadOnly}"></q-toggle>
 					<input type="hidden" name="vContext[chatbotCustomConfig][disableNlu]" :value="vueData.chatbotCustomConfig.disableNlu"/>
+					<q-icon style="margin: 8px; color: black" name="help_outlined" size="1.5rem"/>
+					<q-tooltip>[[#{bot.disableNlu}]]</q-tooltip>
 				</vu:label-edit>
 
-				<div style="width:300px; margin-bottom: 20px; margin-top: 20px" class="q-px-md">
+				<div class="executor-preview q-px-md">
+					<vu:include-data object="bot" field="name" modifiable="true" />
+					<p class="q-header-presentation">{{vueData.bot.name}}</p>
 					<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
+
+					</q-chat-message>
+					<q-chat-message :sent="true" :text="getChatPreview()" text-color="black" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
 
 					</q-chat-message>
 				</div>
 
-				<q-select style="margin-bottom: 20px;"
-						  v-model="vueData.chatbotCustomConfig.fontFamily" name="vContext[chatbotCustomConfig][fontFamily]" th:label="#{bot.styling.font.family}"
-						  @input="changeChatMessageFontFamily()"
-						  th::disable="${model.modeReadOnly}"
-						  :options="['Arial, sans-serif', 'Verdana, sans-serif', 'Helvetica, sans-serif', 'Tahoma, sans-serif',
-						'Trebuchet MS, sans-serif', 'Times New Roman, serif', 'Georgia, serif', 'Garamond, serif', 'Courier New, monospace', 'Brush Script MT, cursive']">
+				<vu:include-data object="fontFamilies" field="'*'" />
 
-				</q-select>
+				<vu:select-edit object="chatbotCustomConfig" field="fofCd"
+								th::disable="${model.modeReadOnly}"
+								@input="changeChatMessageFontFamily()"
+									list="fontFamilies"
+									label="#{bot.styling.font.family}" style="width: 250px; margin-right: 10px"/>
 				<div class="row">
-					<vu:label-edit object="chatbotCustomConfig" field="backgroundColor" class="col-3">
-						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.backgroundColor" @change="function (event) { changeChatMessageBgColor() }" default-value="#cdcdcd" name="vContext[chatbotCustomConfig][backgroundColor]"/>
+					<vu:label-edit object="chatbotCustomConfig" field="backgroundColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.backgroundColor" @change="function (event) { changeBgColor() }" default-value="#000091" name="vContext[chatbotCustomConfig][backgroundColor]"/>
 					</vu:label-edit>
 
-					<vu:label-edit object="chatbotCustomConfig" field="fontColor" class="col-3">
-						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" label="Font color"  th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.fontColor" @change="function (event) { changeChatMessageFontColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][fontColor]"/>
+					<vu:label-edit object="chatbotCustomConfig" field="fontColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.fontColor" @change="function (event) { changeFontColor() }" default-value="#ffffff" name="vContext[chatbotCustomConfig][fontColor]"/>
+					</vu:label-edit>
+
+					<vu:label-edit object="chatbotCustomConfig" field="botMessageBackgroundColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.botMessageBackgroundColor" @change="function (event) { changeBotMessageBgColor() }" default-value="#ffffff" name="vContext[chatbotCustomConfig][botMessageBackgroundColor]"/>
+					</vu:label-edit>
+				</div>
+				<div class="row">
+					<vu:label-edit object="chatbotCustomConfig" field="botMessageFontColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.botMessageFontColor" @change="function (event) { changeBotMessageFontColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][botMessageFontColor]"/>
+					</vu:label-edit>
+
+					<vu:label-edit object="chatbotCustomConfig" field="userMessageBackgroundColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.userMessageBackgroundColor" @change="function (event) { changeUserMessageBgColor() }" default-value="#e0e0e0" name="vContext[chatbotCustomConfig][userMessageBackgroundColor]"/>
+					</vu:label-edit>
+
+					<vu:label-edit object="chatbotCustomConfig" field="userMessageFontColor" class="col-4">
+						<q-color class="q-mt-md q-mr-md" style="width: 100%; height: 100%" th::disable="${model.modeReadOnly}" v-model="vueData.chatbotCustomConfig.userMessageFontColor" @change="function (event) { changeUserMessageFontColor() }" default-value="#000000" name="vContext[chatbotCustomConfig][userMessageFontColor]"/>
 					</vu:label-edit>
 				</div>
 

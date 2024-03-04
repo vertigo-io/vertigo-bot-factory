@@ -1,0 +1,54 @@
+package io.vertigo.chatbot.designer.domain
+
+create DtDefinition DtContextEnvironment {
+	id cenvId 		{domain: DoId		label: "Context environment id"}
+	field label		{domain: DoLabel	label: "Label" 		cardinality:"1"}
+}
+
+create DtDefinition DtContextEnvironmentValue {
+	id cenvalId     {domain: DoId		        label: "Context environment value id"                 }
+	field value		{domain: DoLabel	        label: "Value" 		                    cardinality:"?"}
+}
+
+create Association AContextEnvironmentValueContext {
+	fkFieldName : "cvaId"
+
+ 	dtDefinitionA : DtContextEnvironmentValue
+	type : "*>1"
+	dtDefinitionB : DtContextValue
+
+	labelB : "Context"
+}
+
+create Association AContextEnvironmentChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtContextEnvironment
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create Association AContextEnvironmentValue {
+	fkFieldName : "cenvId"
+
+ 	dtDefinitionA : DtContextEnvironmentValue
+	type : "*>1"
+	dtDefinitionB : DtContextEnvironment
+
+	labelB : "Environment"
+}
+
+create DtDefinition DtContextEnvironmentIhm {
+    field cenvId 	                            {domain: DoId		                                label: "Context environment id"         cardinality : "1"}
+	field label		                            {domain: DoLabel	                                label: "Label" 		cardinality:"1"     cardinality : "1"}
+	field contextEnvironmentValues				{domain: DoDtContextEnvironmentValueIhm 			label: "Context environment values" 	cardinality : "*"}
+}
+
+create DtDefinition DtContextEnvironmentValueIhm {
+    field cenvalId      {domain: DoId		        label: "Context environment value id"       cardinality:"1"     }
+	field value		    {domain: DoLabel	        label: "Value" 		                        cardinality:"?"     }
+	field cvaId 		{domain: DoId		        label: "Context value id"                   cardinality:"1"     }
+    field label		    {domain: DoLabel	        label: "Context value label" 		        cardinality:"1"     }
+}

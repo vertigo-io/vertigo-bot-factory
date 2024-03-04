@@ -26,10 +26,28 @@
 							<a class="q-mr-lg q-my-sm q-link q-layout__section--marginal text-uppercase" th:href="@{/persons/}" th:if="${model.userAuthorizations[AtzSuperAdm]}">
 								<span th:text="#{parent.users}"></span>
 							</a>
-							<a class="q-mr-lg q-my-sm q-link q-layout__section--marginal text-uppercase" th:href="@{/analytics/}">
-								<span th:text="#{parent.statistics}"></span>
+							<a class="q-mr-lg q-my-sm q-link q-layout__section--marginal text-uppercase" th:href="@{/monitoring/}">
+								<span th:text="#{parent.monitoring}"></span>
 							</a>
 						</div>
+					</div>
+					<div class="q-pa-md">
+						<q-btn-dropdown v-if="VertigoUi.vueData.locale" color="primary" icon="language" th:label="#{parent.language}">
+							<q-list>
+								<!-- one item by language -->
+								<q-item clickable v-close-popup @click="postChangeLocal('fr_FR')">
+									<q-item-section>
+										<q-item-label th:text="#{parent.language.french}"></q-item-label>
+									</q-item-section>
+								</q-item>
+
+								<q-item clickable v-close-popup @click="postChangeLocal('en_US')">
+									<q-item-section>
+										<q-item-label th:text="#{parent.language.english}"></q-item-label>
+									</q-item-section>
+								</q-item>
+							</q-list>
+						</q-btn-dropdown>
 					</div>
 					<div>
 						<vu:include-data-primitive key="personName" />

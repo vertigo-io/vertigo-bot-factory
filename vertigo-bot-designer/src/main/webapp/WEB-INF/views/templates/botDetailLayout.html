@@ -56,6 +56,23 @@
 						VertigoUi.vueData.typeBotExport.map(typeExport => typeExport.tbeCd);
 
 			}
+
+			function selectEnvironment() {
+				if (VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId !== null) {
+					const selectedContexEnvironment = VertigoUi.vueData.contextEnvironments.find(contextEnvironment =>
+						contextEnvironment.cenvId === VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId
+					);
+					if (selectedContexEnvironment) {
+						const map = {};
+						selectedContexEnvironment.contextEnvironmentValues.forEach(contextEnvironmentValue => {
+							map[contextEnvironmentValue.label] = contextEnvironmentValue.value
+						})
+						Chatbot.updateContextMap(map)
+					}
+				} else {
+					Chatbot.updateContextMap({})
+				}
+			}
 		</script>
 	</div>
 	<div layout:fragment="content-header-left" id="baseImg" class="row items-center header-bot-img">
@@ -94,11 +111,12 @@
 	<div layout:fragment="content-header-actions" id="headerActions" class="items-center">
 		<vu:popup action="delete" vModel="showPopup" th:message="#{bot.popup.message}" th:confirm="#{bot.delete}"></vu:popup>
 		<vu:include-data object="trainerState" field="'*'"/>
-		<q-btn color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train"></q-btn>
+		<q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train"></q-btn>
 		<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="dataX.loadingTraining"></q-spinner-gears>
 		<q-fab class="q-mr-xl" outline flat color="primary" icon="more_vert" direction="down">
 			<q-fab-action color="primary" th:label="#{bot.export}" icon="file_upload" @click="$refs.exportBot.show()"></q-fab-action>
-			<q-fab-action color="primary" th:label="#{bot.delete.label}" @click="componentStates.showPopup = true" icon="delete"></q-fab-action>
+			<q-fab-action th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+						  color="primary" th:label="#{bot.delete.label}" @click="componentStates.showPopup = true" icon="delete"></q-fab-action>
 		</q-fab>
 
 		<q-dialog ref="exportBot" th:with="viewMode='edit'" >
@@ -168,7 +186,7 @@
 			</q-item-section>
 			<q-item-section th:text="#{layout.extensions}"></q-item-section>
 		</q-item>
-		<q-item tag="a" th::active="${tab == 'extensions'}" active-class="active" th:href="@{/bot/{id}/extensions/(id=${model.bot.botId})}" th:text="#{layout.plugins}"></q-item>
+		<q-item tag="a" th::active="${tab == 'extensions'}" active-class="active" th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" th:href="@{/bot/{id}/extensions/(id=${model.bot.botId})}" th:text="#{layout.plugins}"></q-item>
 		<q-item tag="a" th::active="${tab == 'welcometours'}" active-class="active" th:href="@{/bot/{id}/welcomeTours/(id=${model.bot.botId})}" th:text="#{layout.welcometours}"></q-item>
 		<q-separator></q-separator>
 
@@ -182,8 +200,8 @@
 		<q-item tag="a" th::active="${tab == 'models'}" active-class="active" th:href="@{/bot/{id}/models/(id=${model.bot.botId})}" th:text="#{layout.model}"></q-item>
 		<q-item tag="a" th::active="${tab == 'environment'}"  th:if="${model.userAuthorizations[AtzSuperAdm]}" active-class="active"
 				th:href="@{/bot/{id}/environments/(id=${model.bot.botId})}" th:text="#{layout.environment}"></q-item>
-		<q-separator></q-separator>
-		<q-item class="icon-item-clickable" tag="a" th::active="${tab == 'users'}" active-class="active" th:href="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}">
+		<q-separator th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"></q-separator>
+		<q-item th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="icon-item-clickable" tag="a" th::active="${tab == 'users'}" active-class="active" th:href="@{/bot/{id}/personChatbot/(id=${model.bot.botId})}">
 			<q-item-section avatar>
 				<q-icon color="primary" name="group" />
 			</q-item-section>
@@ -203,17 +221,33 @@
 	</section>
 	<section layout:fragment="informations"></section>
 	<section layout:fragment="content-bot-drawer"  th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}">
+		<vu:include-data object="contextEnvironments" field="'*'"/>
 		<q-page-sticky position="bottom-right" :offset="[0,36]">
 			<q-btn round size="lg" id="botDrawerButton" @click="componentStates.botDrawer.open = !componentStates.botDrawer.open; if (componentStates.botDrawer.open) { Chatbot.show() } else { Chatbot.hideDrawer() }">
 				<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" class="bot-img" alt="avatar chatbot"/>
 			</q-btn>
 		</q-page-sticky>
 		<q-drawer :value="componentStates.botDrawer.open" id="botDrawer" ref="botDrawer" :width="400" elevated side="right" >
-			<div id="botDrawerContent" ></div>
+			<q-select
+					v-if="vueData.contextEnvironments.length > 0"
+					th:attr="dataObject=${model.vContext['componentStates'].addComponentState('contextEnvironments').addObject('selectedEnvironment', {cenvId: null})}"
+					dense
+					filled
+					clearable
+					map-options
+					emit-value
+					stack-label
+					v-model="componentStates.contextEnvironments.selectedEnvironment.cenvId"
+					:options='transformListForSelection("contextEnvironments", "cenvId", "label")'
+					@input="selectEnvironment();"
+					th:label="#{context.environment.dropdown.label}"
+			></q-select>
+			<div id="botDrawerContent"></div>
 		</q-drawer>
 	</section>
 	<section layout:fragment="javascript-footer">
 		<vu:include-data object="trainerState" field="'*'"/>
+		<vu:include-data-primitive key="locale" />
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 				const script = document.createElement('script');

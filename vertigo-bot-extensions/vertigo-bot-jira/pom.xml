@@ -10,14 +10,16 @@
   <description>Confluence plugin for bot</description>
   <packaging>jar</packaging>
   
-  
+
   	<repositories>
 		<repository>
 		    <id>atlassian-public</id>
 		    <url>https://packages.atlassian.com/maven/repository/public</url>
 		</repository>
 	</repositories>
-  
+  <properties>
+	  <jira-rest.version>5.2.6</jira-rest.version>
+  </properties>
   
   <dependencies>
 	<dependency>
@@ -31,7 +33,7 @@
 	<dependency>
     	<groupId>com.atlassian.jira</groupId>
     	<artifactId>jira-rest-java-client-core</artifactId>
-    	<version>5.2.2</version>
+    	<version>${jira-rest.version}</version>
 	</dependency>
 	
 	<dependency>
@@ -43,7 +45,7 @@
 	<dependency>
         <groupId>com.atlassian.jira</groupId>
         <artifactId>jira-rest-java-client-api</artifactId>
-        <version>5.2.2</version>
+        <version>${jira-rest.version}</version>
 	</dependency>
 	
   </dependencies>

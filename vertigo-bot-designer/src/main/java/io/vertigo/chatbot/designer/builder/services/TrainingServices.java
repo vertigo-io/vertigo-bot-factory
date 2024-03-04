@@ -20,6 +20,32 @@ package io.vertigo.chatbot.designer.builder.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublisher;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.LogsUtils;
@@ -27,14 +53,14 @@ import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
+import io.vertigo.chatbot.commons.domain.RunnerHealthCheck;
 import io.vertigo.chatbot.commons.domain.SavedTraining;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
-import io.vertigo.chatbot.designer.builder.services.bot.ChabotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.topic.export.BotExportServices;
 import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
 import io.vertigo.chatbot.designer.commons.services.FileServices;
@@ -61,28 +87,6 @@ import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
-
-import javax.inject.Inject;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublisher;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -114,9 +118,6 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 	private FileServices fileServices;
 
 	@Inject
-	private ChabotCustomConfigServices chatbotCustomConfigServices;
-
-	@Inject
 	private SavedTrainingServices savedTrainingServices;
 
 	@Inject
@@ -136,10 +137,14 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 
 	private HttpClient httpClient;
 
+	private int runnerRequestTimeOut;
+
 	@Override
 	public void start() {
 		final boolean useSSL = paramManager.getOptionalParam("USE_SSL")
 				.orElse(Param.of("USE_SSL", "true")).getValueAsBoolean();
+		runnerRequestTimeOut = paramManager.getOptionalParam("RUNNER_REQUEST_TIMEOUT")
+				.orElse(Param.of("RUNNER_REQUEST_TIMEOUT", "120")).getValueAsInt();
 		if (!useSSL) {
 			httpClient = HttpRequestUtils.createHttpClientWithoutSSL();
 		}
@@ -192,15 +197,14 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 			requestData.put("attachmentsExport", attachmentExports);
 			requestData.put("executorConfig", execConfig);
 
-			final Map<String, String> headers = Map.of(API_KEY, node.getApiKey(),
-					"Content-type", "application/json");
-
-			tryPing(node.getUrl(), headers, training, logs);
+			tryPing(node, training, logs);
 
 			LogsUtils.addLogs(logs, "Call executor training (", node.getUrl(), ") :");
 			LogsUtils.breakLine(logs);
 			final BodyPublisher publisher = BodyPublishers.ofString(ObjectConvertionUtils.objectToJson(requestData));
-			final HttpRequest request = HttpRequestUtils.createPutRequest(node.getUrl() + URL_MODEL, headers, publisher);
+			final Map<String, String> headers = Map.of(API_KEY, node.getApiKey(),
+					"Content-type", "application/json");
+			final HttpRequest request = HttpRequestUtils.createPutRequest(node.getUrl() + URL_MODEL, runnerRequestTimeOut, headers, publisher);
 			HttpRequestUtils.sendAsyncRequest(httpClient, request, BodyHandlers.ofString())
 					.thenApply(response -> {
 						return handleResponse(response, training, node, bot, logs);
@@ -210,6 +214,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 			LogsUtils.logKO(logs);
 			LogsUtils.addLogs(logs, e.getMessage());
 			LOGGER.error("error", e);
+			training.setWarnings(e.getMessage());
 			training.setEndTime(Instant.now());
 			training.setStrCd(TrainingStatusEnum.KO.name());
 		} finally {
@@ -219,7 +224,8 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		record(bot, training, HistoryActionEnum.ADDED);
 	}
 
-	public void deployTraining(final Chatbot bot, final Long savedTrainingId, final Long nodeId) {
+	@Secured("BotUser")
+	public void deployTraining(@SecuredOperation("botAdm") final Chatbot bot, final Long savedTrainingId, final Long nodeId) {
 		final SavedTraining savedTraining = savedTrainingServices.getById(savedTrainingId);
 		final Training training = getTraining(bot, savedTraining.getTraId());
 		final ChatbotNode node = nodeServices.getNodeByNodeId(bot, nodeId);
@@ -240,18 +246,29 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		}
 	}
 
-	private void tryPing(final String url, final Map<String, String> headers, final Training training, final StringBuilder logs) {
-		final HttpRequest requestPing = HttpRequestUtils.createGetRequest(url + URL_PING, headers);
+	private void tryPing(final ChatbotNode node, final Training training, final StringBuilder logs) {
+		final RunnerHealthCheck runnerHealthCheck = tryPing(node);
+		if (!runnerHealthCheck.getAlive()) {
+			LogsUtils.logKO(logs);
+			LogsUtils.addLogs(logs, node.getUrl(), " cannot be used to train the model.");
+			training.setLog(logs.toString());
+			throw new VSystemException(node.getUrl() + " cannot be used to train the model.");
+		}
+	}
+
+	public RunnerHealthCheck tryPing (final ChatbotNode node) {
+		final Map<String, String> headers = Map.of(API_KEY, node.getApiKey(),
+				"Content-type", "application/json");
+		final HttpRequest requestPing = HttpRequestUtils.createGetRequest(node.getUrl() + URL_PING, headers);
 		try {
 			final HttpResponse<String> responsePing = HttpRequestUtils.sendRequest(httpClient, requestPing, BodyHandlers.ofString(), 200);
-			if (!responsePing.body().equals("true")) {
-				LogsUtils.logKO(logs);
-				LogsUtils.addLogs(logs, url, " cannot be used to train the model.");
-				training.setLog(logs.toString());
-				throw new VSystemException(url + " cannot be used to train the model.");
-			}
-		} catch (final Exception e) {
-			throw new VSystemException(url + " cannot be used to train the model.");
+			return jsonEngine.fromJson(responsePing.body(), RunnerHealthCheck.class);
+		}
+		catch (final Exception e) {
+			final RunnerHealthCheck runnerHealthCheck = new RunnerHealthCheck();
+			runnerHealthCheck.setAlive(false);
+			runnerHealthCheck.setNlpReady(false);
+			return runnerHealthCheck;
 		}
 	}
 
@@ -269,7 +286,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		} else {
 			training.setStrCd(TrainingStatusEnum.KO.name());
 			LogsUtils.logKO(logs);
-			errorTreatment(response, logs);
+			errorTreatment(response, logs, training);
 
 		}
 		training.setLog(logs.toString());
@@ -277,21 +294,23 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		return "response handled";
 	}
 
-	private <T> void errorTreatment(final HttpResponse<T> response, final StringBuilder logs) {
+	private <T> void errorTreatment(final HttpResponse<T> response, final StringBuilder logs, Training training) {
 		if (!HttpRequestUtils.isResponseKo(response, 404, 405)) {
-			errorJsonTreatment(response, logs);
+			errorJsonTreatment(response, logs, training);
 		} else {
 			LogsUtils.addLogs(logs, response.body());
 		}
 	}
 
-	private <T> void errorJsonTreatment(final HttpResponse<T> response, final StringBuilder logs) {
+	private <T> void errorJsonTreatment(final HttpResponse<T> response, final StringBuilder logs, Training training) {
 		final ObjectMapper mapper = new ObjectMapper();
 		JsonNode root = null;
 		try {
 			root = mapper.readTree(response.body().toString());
 			final String responseString = root.get("globalErrors").get(0).toString();
-			LogsUtils.addLogs(logs, responseString.substring(1, responseString.length() - 1));
+			final String warningString =  responseString.substring(1, responseString.length() - 1);
+			training.setWarnings(warningString);
+			LogsUtils.addLogs(logs, warningString);
 
 		} catch (final JsonProcessingException e) {
 			LOGGER.info("error on deserialization");
@@ -330,13 +349,13 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		if (bot.getFilIdAvatar() != null) {
 			result.setAvatar(fileServices.getFileAsBase64(bot.getFilIdAvatar()));
 		}
-		final ChatbotCustomConfig chatbotCustomConfig =  chatbotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId());
-		result.setCustomConfig(jsonEngine.toJson(chatbotCustomConfig));
+		final ChatbotCustomConfigExport chatbotCustomConfigExport = botExportServices.exportChatbotCustomSettings(botId);
+		result.setCustomConfig(jsonEngine.toJson(chatbotCustomConfigExport));
 		return result;
 	}
 
 	public Optional<Training> getCurrentTraining(final Chatbot bot) {
-		return trainingDAO.getCurrentTrainingByBotId(bot.getBotId());
+		return trainingDAO.getCurrentTrainingByBotId(bot.getBotId()).stream().findFirst();
 	}
 
 	public Optional<Training> getDeployedTraining(final Chatbot bot) {

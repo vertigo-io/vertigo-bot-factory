@@ -11,7 +11,6 @@
 	<include file="changeLog/v_1_0/alter_profil_chatbot.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_0/alter_topic.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_0/alter_v_1_0.xml" relativeToChangelogFile="true"/>
-	<include file="changeLog/v_1_1_0/alter_v_1_1_0.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/create_custom_config.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_custom_config.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/create_saved_training.xml" relativeToChangelogFile="true"/>
@@ -37,5 +36,6 @@
 	<include file="changeLog/v_1_1_0/alter_type_export_analytics_bot_related.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_custom_config_comment.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_1_1_0/alter_custom_config_disable_nlu.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_1_1_0/alter_v_1_1_0.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_2_0/v_2_0.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

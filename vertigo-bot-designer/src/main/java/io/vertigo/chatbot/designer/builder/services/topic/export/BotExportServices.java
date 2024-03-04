@@ -1,24 +1,31 @@
 package io.vertigo.chatbot.designer.builder.services.topic.export;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
 import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
+import io.vertigo.chatbot.commons.domain.FontFamily;
+import io.vertigo.chatbot.commons.domain.FontFamilyEnum;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
+import io.vertigo.chatbot.designer.builder.services.FontFamilyServices;
 import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
 import io.vertigo.chatbot.designer.builder.services.JiraSettingServices;
 import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
 import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
-
-import javax.inject.Inject;
-import java.util.Optional;
 
 @Transactional
 public class BotExportServices implements Component {
@@ -44,6 +51,12 @@ public class BotExportServices implements Component {
 	@Inject
 	private AttachmentServices attachmentServices;
 
+	@Inject
+	private ChatbotCustomConfigServices chatbotCustomConfigServices;
+
+	@Inject
+	private FontFamilyServices fontFamilyServices;
+
 	public BotExport exportBot(final Chatbot bot, final StringBuilder logs) {
 		final BotExport export = new BotExport();
 		export.setBot(bot);
@@ -57,7 +70,7 @@ public class BotExportServices implements Component {
 		export.setIdleBT(topicExportServices.getBasicBt(bot, KindTopicEnum.IDLE.name(), logs));
 		export.setRatingBT(topicExportServices.getBasicBt(bot, KindTopicEnum.RATING.name(), logs));
 		export.setMapContext(contextValueServices.exportContextValuesToMapByBot(bot, logs));
-		export.setJiraFieldSetting(jiraFieldSettingServices.exportJiraSetting(bot.getBotId()));
+		export.setJiraFieldSetting(jiraFieldSettingServices.exportJiraSetting(bot));
 		return export;
 	}
 
@@ -71,6 +84,26 @@ public class BotExportServices implements Component {
 
 	public Optional<JiraSettingExport> exportJiraSetting(final long botId, final long nodId) {
 		return jiraSettingServices.exportJiraSetting(botId, nodId);
+	}
+
+	public ChatbotCustomConfigExport exportChatbotCustomSettings(final long botId) {
+		final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
+		final FontFamily fontFamily = fontFamilyServices.findByFofCd(chatbotCustomConfig.getFofCd() != null
+				? chatbotCustomConfig.getFofCd() : FontFamilyEnum.ARIAL.name());
+		final ChatbotCustomConfigExport chatbotCustomConfigExport = new ChatbotCustomConfigExport();
+		chatbotCustomConfigExport.setBotEmailAddress(chatbotCustomConfig.getBotEmailAddress());
+		chatbotCustomConfigExport.setTotalMaxAttachmentSize(chatbotCustomConfig.getTotalMaxAttachmentSize());
+		chatbotCustomConfigExport.setBackgroundColor(chatbotCustomConfig.getBackgroundColor());
+		chatbotCustomConfigExport.setFontColor(chatbotCustomConfig.getFontColor());
+		chatbotCustomConfigExport.setBotMessageBackgroundColor(chatbotCustomConfig.getBotMessageBackgroundColor());
+		chatbotCustomConfigExport.setDisableNlu(chatbotCustomConfig.getDisableNlu());
+		chatbotCustomConfigExport.setBotMessageFontColor(chatbotCustomConfig.getBotMessageFontColor());
+		chatbotCustomConfigExport.setUserMessageBackgroundColor(chatbotCustomConfig.getUserMessageBackgroundColor());
+		chatbotCustomConfigExport.setUserMessageFontColor(chatbotCustomConfig.getUserMessageFontColor());
+		chatbotCustomConfigExport.setDisplayAvatar(chatbotCustomConfig.getDisplayAvatar());
+		chatbotCustomConfigExport.setReinitializationButton(chatbotCustomConfig.getReinitializationButton());
+		chatbotCustomConfigExport.setFontFamily(fontFamily.getLabel());
+		return chatbotCustomConfigExport;
 	}
 
 }

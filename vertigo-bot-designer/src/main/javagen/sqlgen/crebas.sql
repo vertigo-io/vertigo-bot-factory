@@ -5,7 +5,10 @@
 -- ============================================================
 --   Drop                                       
 -- ============================================================
-drop table IF EXISTS T_O_P_I_C___T_O_P_I_C___L_A_B_E_L cascade;
+drop table IF EXISTS ALERTING_SUBSCRIPTION_CHATBOT cascade;
+drop table IF EXISTS TOPIC_TOPIC_LABEL cascade;
+drop table IF EXISTS ALERTING_EVENT cascade;
+drop sequence IF EXISTS SEQ_ALERTING_EVENT;
 drop table IF EXISTS ATTACHMENT cascade;
 drop sequence IF EXISTS SEQ_ATTACHMENT;
 drop table IF EXISTS ATTACHMENT_FILE_INFO cascade;
@@ -19,10 +22,15 @@ drop sequence IF EXISTS SEQ_CHATBOT_NODE;
 drop table IF EXISTS CHATBOT_PROFILES cascade;
 drop table IF EXISTS CONFLUENCE_SETTING cascade;
 drop sequence IF EXISTS SEQ_CONFLUENCE_SETTING;
+drop table IF EXISTS CONTEXT_ENVIRONMENT cascade;
+drop sequence IF EXISTS SEQ_CONTEXT_ENVIRONMENT;
+drop table IF EXISTS CONTEXT_ENVIRONMENT_VALUE cascade;
+drop sequence IF EXISTS SEQ_CONTEXT_ENVIRONMENT_VALUE;
 drop table IF EXISTS CONTEXT_VALUE cascade;
 drop sequence IF EXISTS SEQ_CONTEXT_VALUE;
 drop table IF EXISTS DICTIONARY_ENTITY cascade;
 drop sequence IF EXISTS SEQ_DICTIONARY_ENTITY;
+drop table IF EXISTS FONT_FAMILY cascade;
 drop table IF EXISTS GROUPS cascade;
 drop sequence IF EXISTS SEQ_GROUPS;
 drop table IF EXISTS HISTORY cascade;
@@ -36,6 +44,8 @@ drop sequence IF EXISTS SEQ_JIRA_SETTING;
 drop table IF EXISTS KIND_TOPIC cascade;
 drop table IF EXISTS MEDIA_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_MEDIA_FILE_INFO;
+drop table IF EXISTS MONITORING_ALERTING_SUBSCRIPTION cascade;
+drop sequence IF EXISTS SEQ_MONITORING_ALERTING_SUBSCRIPTION;
 drop table IF EXISTS NLU_TRAINING_SENTENCE cascade;
 drop sequence IF EXISTS SEQ_NLU_TRAINING_SENTENCE;
 drop table IF EXISTS PERSON cascade;
@@ -86,110 +96,155 @@ drop sequence IF EXISTS SEQ_WELCOME_TOUR_STEP;
 -- ============================================================
 --   Sequences                                      
 -- ============================================================
+create sequence SEQ_ALERTING_EVENT
+	start with 1000 cache 1; 
+
 create sequence SEQ_ATTACHMENT
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_ATTACHMENT_FILE_INFO
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_CHATBOT
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_CHATBOT_CUSTOM_CONFIG
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_CHATBOT_NODE
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 create sequence SEQ_CONFLUENCE_SETTING
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
+
+create sequence SEQ_CONTEXT_ENVIRONMENT
+	start with 1000 cache 1; 
+
+create sequence SEQ_CONTEXT_ENVIRONMENT_VALUE
+	start with 1000 cache 1; 
 
 create sequence SEQ_CONTEXT_VALUE
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_DICTIONARY_ENTITY
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
+
 
 create sequence SEQ_GROUPS
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_HISTORY
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 
 create sequence SEQ_JIRA_FIELD_SETTING
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_JIRA_SETTING
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 create sequence SEQ_MEDIA_FILE_INFO
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
+
+create sequence SEQ_MONITORING_ALERTING_SUBSCRIPTION
+	start with 1000 cache 1; 
 
 create sequence SEQ_NLU_TRAINING_SENTENCE
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_PERSON
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 create sequence SEQ_PROFIL_PER_CHATBOT
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_RATING_OPTION
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_RESPONSE_BUTTON
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_RESPONSE_BUTTON_URL
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 create sequence SEQ_SAVED_TRAINING
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_SCRIPT_INTENTION
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_SMALL_TALK
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_SYNONYM
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_TOPIC
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_TOPIC_CATEGORY
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_TOPIC_LABEL
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_TRAINING
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 
 
 
 create sequence SEQ_UNKNOWN_SENTENCE_DETAIL
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 
 create sequence SEQ_UTTER_TEXT
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_WELCOME_TOUR
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
 create sequence SEQ_WELCOME_TOUR_STEP
-	start with 1000 cache 20; 
+	start with 1000 cache 1; 
 
+
+-- ============================================================
+--   Table : ALERTING_EVENT                                        
+-- ============================================================
+create table ALERTING_EVENT
+(
+    AGE_ID      	 NUMERIC     	not null,
+    DATE        	 TIMESTAMP   	not null,
+    COMPONENT_NAME	 VARCHAR(100)	not null,
+    ALIVE       	 bool        	not null,
+    BOT_ID      	 NUMERIC     	,
+    NODE_ID     	 NUMERIC     	,
+    constraint PK_ALERTING_EVENT primary key (AGE_ID)
+);
+
+comment on column ALERTING_EVENT.AGE_ID is
+'ID';
+
+comment on column ALERTING_EVENT.DATE is
+'Date';
+
+comment on column ALERTING_EVENT.COMPONENT_NAME is
+'Component name';
+
+comment on column ALERTING_EVENT.ALIVE is
+'Alive';
+
+comment on column ALERTING_EVENT.BOT_ID is
+'Chatbot';
+
+comment on column ALERTING_EVENT.NODE_ID is
+'Node';
 
 -- ============================================================
 --   Table : ATTACHMENT                                        
@@ -297,11 +352,15 @@ create table CHATBOT_CUSTOM_CONFIG
     REINITIALIZATION_BUTTON	 bool        	,
     BACKGROUND_COLOR	 VARCHAR(100)	,
     FONT_COLOR  	 VARCHAR(100)	,
-    FONT_FAMILY 	 VARCHAR(100)	,
+    BOT_MESSAGE_BACKGROUND_COLOR	 VARCHAR(100)	,
+    BOT_MESSAGE_FONT_COLOR	 VARCHAR(100)	,
+    USER_MESSAGE_BACKGROUND_COLOR	 VARCHAR(100)	,
+    USER_MESSAGE_FONT_COLOR	 VARCHAR(100)	,
     DISPLAY_AVATAR	 bool        	,
     TOTAL_MAX_ATTACHMENT_SIZE	 NUMERIC     	,
     DISABLE_NLU 	 bool        	,
     BOT_ID      	 NUMERIC     	not null,
+    FOF_CD      	 VARCHAR(100)	,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
 );
 
@@ -320,8 +379,17 @@ comment on column CHATBOT_CUSTOM_CONFIG.BACKGROUND_COLOR is
 comment on column CHATBOT_CUSTOM_CONFIG.FONT_COLOR is
 'Bot font color';
 
-comment on column CHATBOT_CUSTOM_CONFIG.FONT_FAMILY is
-'Bot font family';
+comment on column CHATBOT_CUSTOM_CONFIG.BOT_MESSAGE_BACKGROUND_COLOR is
+'Bot message background color';
+
+comment on column CHATBOT_CUSTOM_CONFIG.BOT_MESSAGE_FONT_COLOR is
+'Bot message font color';
+
+comment on column CHATBOT_CUSTOM_CONFIG.USER_MESSAGE_BACKGROUND_COLOR is
+'User message background color';
+
+comment on column CHATBOT_CUSTOM_CONFIG.USER_MESSAGE_FONT_COLOR is
+'User message font color';
 
 comment on column CHATBOT_CUSTOM_CONFIG.DISPLAY_AVATAR is
 'Display avatar';
@@ -334,6 +402,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.DISABLE_NLU is
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';
+
+comment on column CHATBOT_CUSTOM_CONFIG.FOF_CD is
+'fontFamily';
 
 -- ============================================================
 --   Table : CHATBOT_NODE                                        
@@ -407,7 +478,7 @@ create table CONFLUENCE_SETTING
     CON_SET_ID  	 NUMERIC     	not null,
     URL         	 TEXT        	not null,
     LOGIN       	 VARCHAR(100)	not null,
-    PASSWORD    	 VARCHAR(100)	not null,
+    PASSWORD    	 TEXT        	not null,
     NUMBER_OF_RESULTS	 NUMERIC     	not null,
     BOT_ID      	 NUMERIC     	not null,
     NOD_ID      	 NUMERIC     	not null,
@@ -434,6 +505,50 @@ comment on column CONFLUENCE_SETTING.BOT_ID is
 
 comment on column CONFLUENCE_SETTING.NOD_ID is
 'Node';
+
+-- ============================================================
+--   Table : CONTEXT_ENVIRONMENT                                        
+-- ============================================================
+create table CONTEXT_ENVIRONMENT
+(
+    CENV_ID     	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_CONTEXT_ENVIRONMENT primary key (CENV_ID)
+);
+
+comment on column CONTEXT_ENVIRONMENT.CENV_ID is
+'Context environment id';
+
+comment on column CONTEXT_ENVIRONMENT.LABEL is
+'Label';
+
+comment on column CONTEXT_ENVIRONMENT.BOT_ID is
+'Chatbot';
+
+-- ============================================================
+--   Table : CONTEXT_ENVIRONMENT_VALUE                                        
+-- ============================================================
+create table CONTEXT_ENVIRONMENT_VALUE
+(
+    CENVAL_ID   	 NUMERIC     	not null,
+    VALUE       	 VARCHAR(100)	,
+    CVA_ID      	 NUMERIC     	not null,
+    CENV_ID     	 NUMERIC     	not null,
+    constraint PK_CONTEXT_ENVIRONMENT_VALUE primary key (CENVAL_ID)
+);
+
+comment on column CONTEXT_ENVIRONMENT_VALUE.CENVAL_ID is
+'Context environment value id';
+
+comment on column CONTEXT_ENVIRONMENT_VALUE.VALUE is
+'Value';
+
+comment on column CONTEXT_ENVIRONMENT_VALUE.CVA_ID is
+'Context';
+
+comment on column CONTEXT_ENVIRONMENT_VALUE.CENV_ID is
+'Environment';
 
 -- ============================================================
 --   Table : CONTEXT_VALUE                                        
@@ -478,6 +593,26 @@ comment on column DICTIONARY_ENTITY.LABEL is
 
 comment on column DICTIONARY_ENTITY.BOT_ID is
 'Chatbot';
+
+-- ============================================================
+--   Table : FONT_FAMILY                                        
+-- ============================================================
+create table FONT_FAMILY
+(
+    FOF_CD      	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_FONT_FAMILY primary key (FOF_CD)
+);
+
+comment on column FONT_FAMILY.FOF_CD is
+'ID';
+
+comment on column FONT_FAMILY.LABEL is
+'Title';
+
+comment on column FONT_FAMILY.LABEL_FR is
+'TitleFr';
 
 -- ============================================================
 --   Table : GROUPS                                        
@@ -611,7 +746,7 @@ create table JIRA_SETTING
     JIR_SET_ID  	 NUMERIC     	not null,
     URL         	 TEXT        	not null,
     LOGIN       	 VARCHAR(100)	not null,
-    PASSWORD    	 VARCHAR(100)	not null,
+    PASSWORD    	 TEXT        	not null,
     PROJECT     	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     NOD_ID      	 NUMERIC     	not null,
@@ -708,6 +843,26 @@ comment on column MEDIA_FILE_INFO.FILE_DATA is
 'data';
 
 -- ============================================================
+--   Table : MONITORING_ALERTING_SUBSCRIPTION                                        
+-- ============================================================
+create table MONITORING_ALERTING_SUBSCRIPTION
+(
+    MAS_I_D     	 NUMERIC     	not null,
+    ALERTING_GLOBAL	 bool        	not null,
+    PER_ID      	 NUMERIC     	,
+    constraint PK_MONITORING_ALERTING_SUBSCRIPTION primary key (MAS_I_D)
+);
+
+comment on column MONITORING_ALERTING_SUBSCRIPTION.MAS_I_D is
+'ID';
+
+comment on column MONITORING_ALERTING_SUBSCRIPTION.ALERTING_GLOBAL is
+'Alerting global enabled';
+
+comment on column MONITORING_ALERTING_SUBSCRIPTION.PER_ID is
+'Person';
+
+-- ============================================================
 --   Table : NLU_TRAINING_SENTENCE                                        
 -- ============================================================
 create table NLU_TRAINING_SENTENCE
@@ -735,6 +890,7 @@ create table PERSON
     PER_ID      	 NUMERIC     	not null,
     LOGIN       	 VARCHAR(100)	not null,
     NAME        	 VARCHAR(100)	not null,
+    EMAIL       	 VARCHAR(100)	,
     GRP_ID      	 NUMERIC     	,
     ROL_CD      	 VARCHAR(100)	not null,
     constraint PK_PERSON primary key (PER_ID)
@@ -748,6 +904,9 @@ comment on column PERSON.LOGIN is
 
 comment on column PERSON.NAME is
 'Name';
+
+comment on column PERSON.EMAIL is
+'email';
 
 comment on column PERSON.GRP_ID is
 'Group';
@@ -1008,7 +1167,7 @@ create table TOPIC
     TITLE       	 VARCHAR(100)	not null,
     DESCRIPTION 	 VARCHAR(100)	,
     IS_ENABLED  	 bool        	not null,
-    CODE        	 VARCHAR(100)	not null,
+    CODE        	 VARCHAR(10) 	not null,
     TTO_CD      	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     TOP_CAT_ID  	 NUMERIC     	not null,
@@ -1199,7 +1358,6 @@ create table TYPE_EXPORT_ANALYTICS
     TEA_CD      	 VARCHAR(100)	not null,
     LABEL       	 VARCHAR(100)	not null,
     LABEL_FR    	 VARCHAR(100)	not null,
-    BOT_RELATED 	 bool        	not null,
     constraint PK_TYPE_EXPORT_ANALYTICS primary key (TEA_CD)
 );
 
@@ -1211,9 +1369,6 @@ comment on column TYPE_EXPORT_ANALYTICS.LABEL is
 
 comment on column TYPE_EXPORT_ANALYTICS.LABEL_FR is
 'Titre';
-
-comment on column TYPE_EXPORT_ANALYTICS.BOT_RELATED is
-'Bot related';
 
 -- ============================================================
 --   Table : TYPE_TOPIC                                        
@@ -1372,6 +1527,18 @@ comment on column WELCOME_TOUR_STEP.TOUR_ID is
 'Tour';
 
 
+alter table ALERTING_EVENT
+	add constraint FK_A_ALERTING_EVENT_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_ALERTING_EVENT_CHATBOT_CHATBOT_FK on ALERTING_EVENT (BOT_ID asc);
+
+alter table ALERTING_EVENT
+	add constraint FK_A_ALERTING_EVENT_NODE_CHATBOT_NODE foreign key (NODE_ID)
+	references CHATBOT_NODE (NOD_ID);
+
+create index A_ALERTING_EVENT_NODE_CHATBOT_NODE_FK on ALERTING_EVENT (NODE_ID asc);
+
 alter table ATTACHMENT
 	add constraint FK_A_ATTACHMENT_ATTACHMENT_FILE_INFO_ATTACHMENT_FILE_INFO foreign key (ATT_FI_ID)
 	references ATTACHMENT_FILE_INFO (ATT_FI_ID);
@@ -1383,6 +1550,12 @@ alter table ATTACHMENT
 	references CHATBOT (BOT_ID);
 
 create index A_ATTACHMENT_CHATBOT_CHATBOT_FK on ATTACHMENT (BOT_ID asc);
+
+alter table CHATBOT_CUSTOM_CONFIG
+	add constraint FK_A_CHABOT_CUSTOM_CONFIG_FONT_FAMILY_FONT_FAMILY foreign key (FOF_CD)
+	references FONT_FAMILY (FOF_CD);
+
+create index A_CHABOT_CUSTOM_CONFIG_FONT_FAMILY_FONT_FAMILY_FK on CHATBOT_CUSTOM_CONFIG (FOF_CD asc);
 
 alter table CHATBOT_CUSTOM_CONFIG
 	add constraint FK_A_CHATBOT_CUSTOM_CONFIG_CHATBOT_CHATBOT foreign key (BOT_ID)
@@ -1407,6 +1580,24 @@ alter table CONFLUENCE_SETTING
 	references CHATBOT_NODE (NOD_ID);
 
 create index A_CONFLUENCE_SETTING_NODE_CHATBOT_NODE_FK on CONFLUENCE_SETTING (NOD_ID asc);
+
+alter table CONTEXT_ENVIRONMENT
+	add constraint FK_A_CONTEXT_ENVIRONMENT_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_CONTEXT_ENVIRONMENT_CHATBOT_CHATBOT_FK on CONTEXT_ENVIRONMENT (BOT_ID asc);
+
+alter table CONTEXT_ENVIRONMENT_VALUE
+	add constraint FK_A_CONTEXT_ENVIRONMENT_VALUE_CONTEXT_ENVIRONMENT foreign key (CENV_ID)
+	references CONTEXT_ENVIRONMENT (CENV_ID);
+
+create index A_CONTEXT_ENVIRONMENT_VALUE_CONTEXT_ENVIRONMENT_FK on CONTEXT_ENVIRONMENT_VALUE (CENV_ID asc);
+
+alter table CONTEXT_ENVIRONMENT_VALUE
+	add constraint FK_A_CONTEXT_ENVIRONMENT_VALUE_CONTEXT_CONTEXT_VALUE foreign key (CVA_ID)
+	references CONTEXT_VALUE (CVA_ID);
+
+create index A_CONTEXT_ENVIRONMENT_VALUE_CONTEXT_CONTEXT_VALUE_FK on CONTEXT_ENVIRONMENT_VALUE (CVA_ID asc);
 
 alter table CONTEXT_VALUE
 	add constraint FK_A_CONTEXT_VALUE_CHATBOT_CHATBOT foreign key (BOT_ID)
@@ -1455,6 +1646,12 @@ alter table JIRA_SETTING
 	references CHATBOT_NODE (NOD_ID);
 
 create index A_JIRA_SETTING_NODE_CHATBOT_NODE_FK on JIRA_SETTING (NOD_ID asc);
+
+alter table MONITORING_ALERTING_SUBSCRIPTION
+	add constraint FK_A_MONITORING_ALERTING_SUBSCRIPTION_PERSON_PERSON foreign key (PER_ID)
+	references PERSON (PER_ID);
+
+create index A_MONITORING_ALERTING_SUBSCRIPTION_PERSON_PERSON_FK on MONITORING_ALERTING_SUBSCRIPTION (PER_ID asc);
 
 alter table CHATBOT_NODE
 	add constraint FK_A_NODE_CHATBOT_CHATBOT foreign key (BOT_ID)
@@ -1649,11 +1846,28 @@ alter table WELCOME_TOUR_STEP
 create index A_WELCOME_TOUR_WELCOME_TOUR_STEPS_WELCOME_TOUR_FK on WELCOME_TOUR_STEP (TOUR_ID asc);
 
 
-create table T_O_P_I_C___T_O_P_I_C___L_A_B_E_L
+create table ALERTING_SUBSCRIPTION_CHATBOT
+(
+	MAS_I_D     	 NUMERIC     	 not null,
+	BOT_ID      	 NUMERIC     	 not null,
+	constraint PK_ALERTING_SUBSCRIPTION_CHATBOT primary key (MAS_I_D, BOT_ID),
+	constraint FK_ANN_ALERTING_SUBSCRIPTION_CHATBOT_MONITORING_ALERTING_SUBSCRIPTION 
+		foreign key(MAS_I_D)
+		references MONITORING_ALERTING_SUBSCRIPTION (MAS_I_D),
+	constraint FK_ANN_ALERTING_SUBSCRIPTION_CHATBOT_CHATBOT 
+		foreign key(BOT_ID)
+		references CHATBOT (BOT_ID)
+);
+
+create index ANN_ALERTING_SUBSCRIPTION_CHATBOT_MONITORING_ALERTING_SUBSCRIPTION_FK on ALERTING_SUBSCRIPTION_CHATBOT (MAS_I_D asc);
+
+create index ANN_ALERTING_SUBSCRIPTION_CHATBOT_CHATBOT_FK on ALERTING_SUBSCRIPTION_CHATBOT (BOT_ID asc);
+
+create table TOPIC_TOPIC_LABEL
 (
 	TOP_ID      	 NUMERIC     	 not null,
 	LABEL_ID    	 NUMERIC     	 not null,
-	constraint PK_T_O_P_I_C___T_O_P_I_C___L_A_B_E_L primary key (TOP_ID, LABEL_ID),
+	constraint PK_TOPIC_TOPIC_LABEL primary key (TOP_ID, LABEL_ID),
 	constraint FK_ANN_TOPIC_LABEL_TOPIC 
 		foreign key(TOP_ID)
 		references TOPIC (TOP_ID),
@@ -1662,7 +1876,7 @@ create table T_O_P_I_C___T_O_P_I_C___L_A_B_E_L
 		references TOPIC_LABEL (LABEL_ID)
 );
 
-create index ANN_TOPIC_LABEL_TOPIC_FK on T_O_P_I_C___T_O_P_I_C___L_A_B_E_L (TOP_ID asc);
+create index ANN_TOPIC_LABEL_TOPIC_FK on TOPIC_TOPIC_LABEL (TOP_ID asc);
 
-create index ANN_TOPIC_LABEL_TOPIC_LABEL_FK on T_O_P_I_C___T_O_P_I_C___L_A_B_E_L (LABEL_ID asc);
+create index ANN_TOPIC_LABEL_TOPIC_LABEL_FK on TOPIC_TOPIC_LABEL (LABEL_ID asc);
 

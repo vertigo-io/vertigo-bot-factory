@@ -7,7 +7,7 @@ import io.vertigo.core.node.component.Plugin;
 
 public interface ExecutorPlugin extends Plugin, Activeable {
 
-	void refreshConfig(ExecutorGlobalConfig config) throws VSystemException;
+	void refreshConfig(ExecutorGlobalConfig config, final StringBuilder logs) throws VSystemException;
 
 	void start();
 
