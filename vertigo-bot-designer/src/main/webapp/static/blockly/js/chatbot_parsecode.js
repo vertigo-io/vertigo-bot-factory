@@ -360,13 +360,13 @@ function createBlock(type, isComposite, params = []) {
 		let lienParamsDest
 		// isAPJMail = (resolvedType.qualifier && resolvedType.qualifier==='attachment' ? true : false)
 		// let nbDest = params.length - (isAPJMail ? 3 : 2)
-
+		const paramPj = params[2]
 		params[0] = lienParamsObject[0]; //0
 		params[1] = lienParamsObject[1]; //1
 		params[2] = lienParamsMessage[0]; //2
 
 		if(resolvedType.qualifier && resolvedType.qualifier==='attachment') {
-			lienParamsPJ = paramsFormatVariable(params[2])
+			lienParamsPJ = paramsFormatVariable(paramPj)
 			lienParamsDest = paramsFormatVariable(params[3])
 			params[3] = lienParamsMessage[1]; //3
 			params.push('yespj') //4
