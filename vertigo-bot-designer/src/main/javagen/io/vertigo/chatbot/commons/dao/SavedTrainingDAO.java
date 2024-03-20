@@ -53,7 +53,7 @@ public final class SavedTrainingDAO extends DAO<SavedTraining, java.lang.Long> i
 			name = "TkGetSavedTrainingByBotIdAndWithDateAfter",
 			request = "select savtra.*\n" + 
  "             from saved_training savtra\n" + 
- "             where savtra.bot_id = #botId# and savtra.creation_time >= #fromDate#",
+ "             where savtra.bot_id = #botId# and savtra.creation_time >= #fromDate# order by savtra.creation_time desc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtSavedTraining", name = "tra")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.SavedTraining> getSavedTrainingByBotIdAndWithDateAfter(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "fromDate", smartType = "STyLocaldate") final java.time.LocalDate fromDate) {
@@ -76,7 +76,7 @@ public final class SavedTrainingDAO extends DAO<SavedTraining, java.lang.Long> i
 			name = "TkGetSavedTrainingByBotIdAndWithDateBefore",
 			request = "select savtra.*\n" + 
  "             from saved_training savtra\n" + 
- "             where savtra.bot_id = #botId# and savtra.creation_time <= #toDate#",
+ "             where savtra.bot_id = #botId# and savtra.creation_time <= #toDate# order by savtra.creation_time desc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtSavedTraining", name = "tra")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.SavedTraining> getSavedTrainingByBotIdAndWithDateBefore(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "toDate", smartType = "STyLocaldate") final java.time.LocalDate toDate) {
@@ -100,7 +100,7 @@ public final class SavedTrainingDAO extends DAO<SavedTraining, java.lang.Long> i
 			name = "TkGetSavedTrainingByBotIdAndWithDateBetween",
 			request = "select savtra.*\n" + 
  "             from saved_training savtra\n" + 
- "             where savtra.bot_id = #botId# and savtra.creation_time between #fromDate# and #toDate#",
+ "             where savtra.bot_id = #botId# and savtra.creation_time between #fromDate# and #toDate# order by savtra.creation_time desc",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtSavedTraining", name = "tra")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.SavedTraining> getSavedTrainingByBotIdAndWithDateBetween(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "fromDate", smartType = "STyLocaldate") final java.time.LocalDate fromDate, @io.vertigo.datamodel.task.proxy.TaskInput(name = "toDate", smartType = "STyLocaldate") final java.time.LocalDate toDate) {
