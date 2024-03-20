@@ -19,6 +19,7 @@ import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
 
+import static io.vertigo.chatbot.designer.builder.services.TrainingServices.MAX_TRAINING_ELEMENTS;
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 @Transactional
@@ -43,7 +44,8 @@ public class SavedTrainingServices implements Component {
 	}
 
 	public DtList<SavedTraining> getAllSavedTrainingByBotId(final Long botId) {
-		return savedTrainingDAO.findAll(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+		return savedTrainingDAO.findAll(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.botId, botId),
+				DtListState.of(MAX_TRAINING_ELEMENTS, 0, DtDefinitions.SavedTrainingFields.creationTime.name(), true));
 	}
 
 	public void deleteAllByBotId(final Chatbot bot) {

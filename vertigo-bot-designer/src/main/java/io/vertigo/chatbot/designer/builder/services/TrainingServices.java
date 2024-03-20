@@ -96,6 +96,8 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 
 	private static final String API_KEY = "apiKey";
 
+	public static final int MAX_TRAINING_ELEMENTS = 50;
+
 	@Inject
 	private AsynchronousServices asynchronousServices;
 
@@ -432,7 +434,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 	public DtList<Training> getAllTrainings(@SecuredOperation("botVisitor") final Chatbot bot) {
 		return trainingDAO.findAll(
 				Criterions.isEqualTo(TrainingFields.botId, bot.getBotId()),
-				DtListState.of(MAX_ELEMENTS_PLUS_ONE, 0, TrainingFields.versionNumber.name(), true));
+				DtListState.of(MAX_TRAINING_ELEMENTS, 0, TrainingFields.versionNumber.name(), true));
 	}
 
 	public Training getTraining(@SecuredOperation("botVisitor") final Chatbot bot, final Long traId) {
