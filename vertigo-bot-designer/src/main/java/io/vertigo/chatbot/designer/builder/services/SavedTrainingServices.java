@@ -10,9 +10,10 @@ import io.vertigo.chatbot.commons.dao.SavedTrainingDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.SavedTraining;
 import io.vertigo.chatbot.commons.domain.SavedTrainingCriteria;
+import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -20,7 +21,6 @@ import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
 
 import static io.vertigo.chatbot.designer.builder.services.TrainingServices.MAX_TRAINING_ELEMENTS;
-import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 @Transactional
 public class SavedTrainingServices implements Component {
@@ -33,7 +33,7 @@ public class SavedTrainingServices implements Component {
 		savedTrainingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.botId, savedTraining.getBotId())
 				.and(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.traId, savedTraining.getTraId())))
 				.ifPresent(it -> {
-					throw new VSystemException("A saved training already exist on this bot for the same version");
+					throw new VUserException(ModelMultilingualResources.SAVED_TRAINING_ALREADY_EXISTS);
 				});
 		return savedTrainingDAO.save(savedTraining);
 	}
