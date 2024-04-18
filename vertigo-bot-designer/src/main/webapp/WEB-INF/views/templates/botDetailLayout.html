@@ -108,7 +108,7 @@
 			<span class="text-weight-bold">{{vueData.training.endTime}}</span>
 		</span>
 	</div>
-	<div layout:fragment="content-header-actions" id="headerActions" class="items-center">
+	<div th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" layout:fragment="content-header-actions" id="headerActions" class="items-center">
 		<vu:popup action="delete" vModel="showPopup" th:message="#{bot.popup.message}" th:confirm="#{bot.delete}"></vu:popup>
 		<vu:include-data object="trainerState" field="'*'"/>
 		<q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train"></q-btn>

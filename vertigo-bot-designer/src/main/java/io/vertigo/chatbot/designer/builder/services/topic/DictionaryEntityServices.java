@@ -90,7 +90,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @return dictionaryEntity
 	 */
 	@Secured("BotUser")
-	public DictionaryEntity save(@SecuredOperation("botAdm") final Chatbot bot, final DictionaryEntity dictionaryEntity) {
+	public DictionaryEntity save(@SecuredOperation("botContributor") final Chatbot bot, final DictionaryEntity dictionaryEntity) {
 		dictionaryEntity.setBotId(bot.getBotId());
 		final boolean creation = dictionaryEntity.getDicEntId() == null;
 		dictionaryEntity.setLabel(dictionaryEntity.getLabel().toLowerCase());
@@ -119,7 +119,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @return dictionaryEntity
 	 */
 	@Secured("BotUser")
-	public DictionaryEntity save(@SecuredOperation("botAdm") final Chatbot bot, final DictionaryEntity dictionaryEntity,
+	public DictionaryEntity save(@SecuredOperation("botContributor") final Chatbot bot, final DictionaryEntity dictionaryEntity,
 			final DtList<Synonym> synonyms,
 			final DtList<Synonym> synonymsToDelete) {
 
@@ -166,7 +166,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @param synonyms
 	 */
 	@Secured("BotUser")
-	public void addSynonym(@SecuredOperation("botAdm") final Chatbot bot, final String newSynonymIn,
+	public void addSynonym(@SecuredOperation("botContributor") final Chatbot bot, final String newSynonymIn,
 						   final DtList<Synonym> synonyms) {
 		if (StringUtil.isBlank(newSynonymIn)) {
 			return;
