@@ -37,7 +37,7 @@
     <vu:include-data object="bot" field="botId" />
 
     <vu:table th:title="#{welcometour.steps.title}" list="steps" componentId="steps" sortBy="id" :binary-state-sort="true">
-        <vu:slot name="actions_slot">
+        <vu:slot th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" name="actions_slot">
             <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:title="#{action.update}"
                    @click="vueData.newStep.welStepId = props.row.welStepId;
                        vueData.newStep.tourId = props.row.tourId;

@@ -96,8 +96,8 @@
                 <q-tooltip>[[#{unknownSentence.tooltip}]]</q-tooltip>
             </div>
 
-            <vu:table list="unknownSentenceFilteredList"selectable="true" componentId="unknownSentenceList">
-                <vu:slot name="top_right_slot">
+            <vu:table list="unknownSentenceFilteredList" th:attr="selectable=${model.userAuthorizations[AtzChatbot$botContributor] ? 'true' : 'false'} ? 'true' : 'false'" componentId="unknownSentenceList">
+            <vu:slot name="top_right_slot">
                     <vu:include-data object="statuses" field="'*'"/>
                     <vu:include-data-primitive key="locale"/>
                     <q-select
@@ -121,11 +121,11 @@
                     </q-input>
                     <q-btn round color="primary" icon="refresh" th:aria-label="#{action.refresh}" th:title="#{action.refresh}"
                            @click="refreshUnknownSentences()" :loading="dataX.loadingUnknownSentences"></q-btn>
-                </vu:slot>
-                <vu:slot name="actions_slot">
-                    <q-btn v-if="props.row.status != 'TREATED'" class="on-right" round color="blue" icon="check_circle" th:aria-label="#{unknownSentence.treat}" th:title="#{unknownSentence.treat}"
+                </vu:slot >
+                <vu:slot name="actions_slot"  >
+                    <q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}"v-if="props.row.status != 'TREATED'" class="on-right" round color="blue" icon="check_circle" th:aria-label="#{unknownSentence.treat}" th:title="#{unknownSentence.treat}"
                            @click="componentStates.treatUnknownSentence.unknownSentence.text = props.row.text; componentStates.treatUnknownSentence.unknownSentence.unknownSentenceId = props.row.unkSeId; $refs.treatDialog.show()"></q-btn>
-                    <q-btn v-if="props.row.status != 'TREATED' && props.row.status != 'REJECTED' " class="on-right" round color="red" icon="cancel" th:aria-label="#{unknownSentence.reject}" th:title="#{unknownSentence.reject}"
+                    <q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}"v-if="props.row.status != 'TREATED' && props.row.status != 'REJECTED' " class="on-right" round color="red" icon="cancel" th:aria-label="#{unknownSentence.reject}" th:title="#{unknownSentence.reject}"
                            @click="rejectUnknownSentence(props.row.unkSeId)"></q-btn>
 
                 </vu:slot>
@@ -144,7 +144,7 @@
                     <span th:text="#{unknownSentence.to.treat}" v-if="props.row.status == 'TO_TREAT'" ></span>
                 </vu:column>
             </vu:table>
-            <div class="col-12">
+            <div class="col-12" th:if="${model.userAuthorizations[AtzChatbot$botContributor]}">
                 <div style="display:flex;justify-content:flex-end">
                     <q-btn th:label="#{action.treat.multiple}" color="primary" :disable="componentStates.unknownSentenceList.selected.length === 0"
                            @click="componentStates.treatUnknownSentence.unknownSentence.sentences = componentStates.unknownSentenceList.selected; $refs.treatDialog.show()"></q-btn>
