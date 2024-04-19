@@ -96,7 +96,7 @@
                 <q-tooltip>[[#{unknownSentence.tooltip}]]</q-tooltip>
             </div>
 
-            <vu:table list="unknownSentenceFilteredList" th:attr="selectable=${model.userAuthorizations[AtzChatbot$botContributor] ? 'true' : 'false'} ? 'true' : 'false'" componentId="unknownSentenceList">
+            <vu:table list="unknownSentenceFilteredList" th:attr="selectable=${model.userAuthorizations[AtzChatbot$botContributor]}" componentId="unknownSentenceList">
             <vu:slot name="top_right_slot">
                     <vu:include-data object="statuses" field="'*'"/>
                     <vu:include-data-primitive key="locale"/>
