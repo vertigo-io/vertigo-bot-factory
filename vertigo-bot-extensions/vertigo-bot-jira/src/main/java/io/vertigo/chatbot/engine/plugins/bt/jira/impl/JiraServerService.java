@@ -51,6 +51,7 @@ public class JiraServerService implements Component, IJiraService {
 	private String user;
 	private String password;
 	private String project;
+	private Long numberOfResults;
 	private Boolean isCloud;
 	private JiraRestClient jiraRestClient;
 	private DtList<JiraFieldSettingExport> jiraFieldSettingExports;
@@ -76,6 +77,7 @@ public class JiraServerService implements Component, IJiraService {
 			customAsynchronousUserRestClient = createCustomUserRestClient();
 			isCloud = checkIfIsCloud();
 			jiraFieldSettingExports = jiraFieldSettingExport;
+			numberOfResults = jiraSettingExport.getNumberOfResults();
 			LogsUtils.logOK(logs);
 		}
 	}
@@ -189,4 +191,6 @@ public class JiraServerService implements Component, IJiraService {
 	public Iterable<BasicComponent> getComponents() {
 		return getProject().getComponents();
 	}
+
+	public long getNumberOfResults() {return numberOfResults; };
 }

@@ -17,6 +17,7 @@ public final class JiraSettingExport implements DtObject {
 	private String login;
 	private String password;
 	private String project;
+	private Long numberOfResults;
 	
 	/**
 	 * Champ : DATA.
@@ -92,6 +93,25 @@ public final class JiraSettingExport implements DtObject {
 	 */
 	public void setProject(final String project) {
 		this.project = project;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Number max of results'.
+	 * @return Long numberOfResults <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyNumber", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Number max of results")
+	public Long getNumberOfResults() {
+		return numberOfResults;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Number max of results'.
+	 * @param numberOfResults Long <b>Obligatoire</b>
+	 */
+	public void setNumberOfResults(final Long numberOfResults) {
+		this.numberOfResults = numberOfResults;
 	}
 	
 	/** {@inheritDoc} */

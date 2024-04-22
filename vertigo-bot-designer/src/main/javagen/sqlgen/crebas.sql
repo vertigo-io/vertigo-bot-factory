@@ -748,6 +748,7 @@ create table JIRA_SETTING
     LOGIN       	 VARCHAR(100)	not null,
     PASSWORD    	 TEXT        	not null,
     PROJECT     	 VARCHAR(100)	not null,
+    NUMBER_OF_RESULTS	 NUMERIC     	not null,
     BOT_ID      	 NUMERIC     	not null,
     NOD_ID      	 NUMERIC     	not null,
     constraint PK_JIRA_SETTING primary key (JIR_SET_ID)
@@ -767,6 +768,9 @@ comment on column JIRA_SETTING.PASSWORD is
 
 comment on column JIRA_SETTING.PROJECT is
 'Jira project';
+
+comment on column JIRA_SETTING.NUMBER_OF_RESULTS is
+'Number max of results';
 
 comment on column JIRA_SETTING.BOT_ID is
 'Chatbot';

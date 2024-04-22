@@ -743,6 +743,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		password,
 		/** Propriété 'Jira project'. */
 		project,
+		/** Propriété 'Number max of results'. */
+		numberOfResults,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Node'. */
@@ -759,7 +761,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Password'. */
 		password,
 		/** Propriété 'Project'. */
-		project	}
+		project,
+		/** Propriété 'Number max of results'. */
+		numberOfResults	}
 
 	/**
 	 * Enumération des champs de KindTopic.

@@ -73,6 +73,7 @@ public class JiraSettingServices implements Component {
 			jiraSettingExport.setLogin(jiraSetting.getLogin());
 			jiraSettingExport.setPassword(jiraSetting.getPassword());
 			jiraSettingExport.setProject(jiraSetting.getProject());
+			jiraSettingExport.setNumberOfResults(jiraSetting.getNumberOfResults());
 			return Optional.of(jiraSettingExport);
 		}).orElseGet(Optional::empty);
 	}
