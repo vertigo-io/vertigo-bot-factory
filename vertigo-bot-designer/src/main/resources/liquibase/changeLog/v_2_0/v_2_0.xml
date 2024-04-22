@@ -140,4 +140,9 @@
         <createProcedure encoding="utf8" path="/sql/v_2_0/update_24_01_12.sql" />
     </changeSet>
 
+    <changeSet author="rsaintpaul" id="Add custom number of jira tickets than can be listed by the bot">
+        <sqlFile encoding="utf-8" path="/sql/v_2_0/alter_24_04_19.sql" />
+    </changeSet>
+
+
 </databaseChangeLog>

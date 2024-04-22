@@ -327,6 +327,7 @@
                        vueData.newJiraSetting.login = null ;
                        vueData.newJiraSetting.password = null ;
                        vueData.newJiraSetting.project = null ;
+                       vueData.newJiraSetting.numberOfResults = null ;
                        $refs.jiraSettingDialog.show()"></q-btn>
                 </vu:slot>
                 <vu:slot name="actions_slot">
@@ -339,6 +340,7 @@
                        vueData.newJiraSetting.url = props.row.url;
                        vueData.newJiraSetting.login = props.row.login;
                        vueData.newJiraSetting.password = props.row.password;
+                       vueData.newJiraSetting.numberOfResults = props.row.numberOfResults;
                        vueData.newJiraSetting.project = props.row.project; $refs.jiraSettingDialog.show()"></q-btn>
                     <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
                            th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
@@ -352,6 +354,7 @@
                 <vu:include-data object="jiraSettingsFiltered" field="login" />
                 <vu:include-data object="jiraSettingsFiltered" field="password" />
                 <vu:include-data object="jiraSettingsFiltered" field="project" />
+                <vu:include-data object="jiraSettingsFiltered" field="numberOfResults" />
                 <vu:column name="node" th:label="#{extension.jira.filter.node}">
                     <q-chip v-for="node in vueData.nodeList" v-if="node.nodId === props.row.nodId" :style="'background: '+ node.color" text-color="white">
                         {{node.name}}
@@ -360,6 +363,7 @@
                 <vu:column field="url"/>
                 <vu:column field="login"/>
                 <vu:column field="project"/>
+                <vu:column field="numberOfResults"/>
             </vu:table>
         </vu:block>
 
@@ -372,6 +376,7 @@
             <vu:include-data object="newJiraSetting" field="login" modifiable="true" />
             <vu:include-data object="newJiraSetting" field="password" modifiable="true" />
             <vu:include-data object="newJiraSetting" field="project" modifiable="true" />
+            <vu:include-data object="newJiraSetting" field="numberOfResults" modifiable="true" />
             <q-card>
                 <q-card-section>
                     <div class="text-h6">
@@ -412,6 +417,12 @@
                     <q-input v-model="vueData.newJiraSetting.project" th:label="#{extensions.jira.project}"
                              name="vContext[newJiraSetting][project]" :error="hasFieldsError('newJiraSetting', 'project')"
                              :error-message="getErrorMessage('newJiraSetting', 'project')" />
+                </q-card-section>
+
+                <q-card-section>
+                    <q-input v-model="vueData.newJiraSetting.numberOfResults" th:label="#{extensions.jira.numberOfResults}"
+                             name="vContext[newJiraSetting][numberOfResults]" :error="hasFieldsError('newJiraSetting', 'numberOfResults')"
+                             :error-message="getErrorMessage('newJiraSetting', 'numberOfResults')" />
                 </q-card-section>
 
                 <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" >

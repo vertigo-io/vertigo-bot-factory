@@ -47,7 +47,7 @@
         <artifactId>jira-rest-java-client-api</artifactId>
         <version>${jira-rest.version}</version>
 	</dependency>
-	
+
   </dependencies>
 	<build>
 		<plugins>

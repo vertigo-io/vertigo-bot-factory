@@ -260,7 +260,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Password'. */
 		password,
 		/** Propriété 'Project'. */
-		project	}
+		project,
+		/** Propriété 'Number max of results'. */
+		numberOfResults	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.

@@ -524,6 +524,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldJiraSetting$project,
 	/**
+	 * Number max of results.
+	 */
+	fldJiraSetting$numberOfResults,
+	/**
 	 * Chatbot.
 	 */
 	fldJiraSetting$botId,
@@ -551,6 +555,10 @@ public enum DtResources implements MessageKey {
 	 * Project.
 	 */
 	fldJiraSettingExport$project,
+	/**
+	 * Number max of results.
+	 */
+	fldJiraSettingExport$numberOfResults,
 
 	/***********************************************************
 	/** MediaFileInfo.
