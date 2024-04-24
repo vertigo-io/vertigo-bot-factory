@@ -17,15 +17,19 @@
  */
 package io.vertigo.chatbot.designer.admin.services;
 
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.representations.IDToken;
+import com.nimbusds.oauth2.sdk.AuthorizationSuccessResponse;
+import com.nimbusds.openid.connect.sdk.OIDCClaimsRequest;
+import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -34,84 +38,56 @@ import io.vertigo.account.account.Account;
 import io.vertigo.account.authentication.AuthenticationManager;
 import io.vertigo.account.impl.authentication.UsernameAuthenticationToken;
 import io.vertigo.account.impl.authentication.UsernamePasswordAuthenticationToken;
+import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.connectors.keycloak.KeycloakDeploymentConnector;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.lang.WrappedException;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.vega.impl.servlet.filter.AbstactKeycloakDelegateAuthenticationHandler;
+import io.vertigo.vega.plugins.authentication.oidc.OIDCAppLoginHandler;
 
 @Transactional
-public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler implements Component, Activeable {
+public class LoginServices implements Component, OIDCAppLoginHandler {
 
 	@Inject
 	private AuthenticationManager authenticationManager;
 	@Inject
 	private AuthorizationServices authorizationServices;
-	@Inject
-	private List<KeycloakDeploymentConnector> keycloakDeploymentConnectors;
+
 	@Inject
 	private KeycloakPersonServices keycloakPersonServices;
 
-	//don't use anymore
-	public void login(final String login, final String password) {
-		final Optional<Account> loggedAccount = authenticationManager.login(new UsernamePasswordAuthenticationToken(login, password));
-		if (!loggedAccount.isPresent()) {
-			throw new VUserException("Login or Password invalid");
-		}
-		final Account account = loggedAccount.get();
-		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(account.getId()));
-		UserSessionUtils.getUserSession().setLoggedPerson(person);
-
-		authorizationServices.addUserAuthorization(person);
-	}
-
-	public void logout(final HttpSession httpSession) {
-		authenticationManager.logout();
-		httpSession.invalidate();
+	@Override
+	public String doLogin(HttpServletRequest request, Map<String, Object> claims, AuthorizationSuccessResponse rawResult, Optional<String> requestedUrl) {
+		loginWithPrincipal(claims);
+		return requestedUrl.orElse("/bots/");
 	}
 
 	@Override
-	public boolean doLogin(final HttpServletRequest request, final HttpServletResponse response) {
-		if (!UserSessionUtils.isAuthenticated()) {
-			// we should have a Principal
-			final KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) request.getUserPrincipal();
-
-			loginWithPrincipal(keycloakPrincipal);
-			try {
-				response.sendRedirect(request.getContextPath() + "/bots/");
-			} catch (final IOException e) {
-				throw WrappedException.wrap(e);
-			}
-			//consumed by redirect
-			return true;
-		}
-		//not consumed
-		return false;
+	public String doLogout(HttpServletRequest request) {
+		return "/";
 	}
 
-	private void loginWithPrincipal(final KeycloakPrincipal principal) {
-		final IDToken token = principal.getKeycloakSecurityContext().getIdToken();
-		final String login = token.getPreferredUsername();
+	public String logout() {
+		return "redirect:/OIDC/logout";
+	}
+
+
+	private void loginWithPrincipal(final Map<String, Object> claims) {
+		final String login = (String) claims.get("preferred_username");
+		final String name = (String) claims.get("name");
+		final String email = (String) claims.get("email");
+		final String role = keycloakPersonServices.getRoleFromClaims(claims);
 		final Account loggedAccount = authenticationManager.login(new UsernameAuthenticationToken(login)).orElseGet(
 				() -> {
-					// auto provisionning an account when using keycloak
-					final String name = keycloakPersonServices.getNameFromToken(token);
-					final String rol = keycloakPersonServices.getRoleFromToken(token);
-					final String email = keycloakPersonServices.getEmailFromToken(token);
-					keycloakPersonServices.initPerson(login, name, rol);
+					keycloakPersonServices.initPerson(login, name, email, role);
 					return authenticationManager.login(new UsernameAuthenticationToken(login)).get();
 				});
 		final Person person = keycloakPersonServices.getPersonToConnect(Long.valueOf(loggedAccount.getId()));
-		//For migration purpose only TODO remove when done
-		if (person.getEmail() == null && keycloakPersonServices.getEmailFromToken(token) != null) {
-			person.setEmail(keycloakPersonServices.getEmailFromToken(token));
-			keycloakPersonServices.updatePerson(person);
-		}
 		UserSessionUtils.getUserSession().setLoggedPerson(person);
 		UserSessionUtils.getUserSession().setLocale(Locale.FRANCE);
 		authorizationServices.addUserAuthorization(person);
@@ -119,20 +95,5 @@ public class LoginServices extends AbstactKeycloakDelegateAuthenticationHandler 
 
 	public void reloadAuthorizations() {
 		authorizationServices.reloadUserAuthorization(UserSessionUtils.getLoggedPerson());
-	}
-
-	@Override
-	public void start() {
-		Assertion.check().isNotNull(keycloakDeploymentConnectors);
-		//---
-		final Optional<KeycloakDeploymentConnector> keycloakDeploymentConnectorOpt = keycloakDeploymentConnectors.stream().filter(connector -> "main".equals(connector.getName())).findFirst();
-		init(keycloakDeploymentConnectorOpt.get());
-
-	}
-
-	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-		// do nothing
 	}
 }

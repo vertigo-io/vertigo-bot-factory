@@ -1,8 +1,0 @@
-{
-  "realm": "chatbot",
-  "auth-server-url": "http://localhost:8200/auth/",
-  "ssl-required": "external",
-  "resource": "chatbot",
-  "public-client": true,
-  "confidential-port": 0
-}
