@@ -51,16 +51,16 @@ services:
       - cb_factory
 
   keycloak:
-    image: registry.kleegroup.com/chatbot-factory/keycloak:12.0.2
+    image: bitnami/keycloak:24
     environment:
-      DB_VENDOR: postgres
-      DB_ADDR: postgresKC
-      DB_DATABASE: keycloak
-      DB_USER: keycloak
-      DB_SCHEMA: public
-      DB_PASSWORD: keycloak
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: changeme
+      KEYCLOAK_ADMIN_USER: admin
+      KEYCLOAK_ADMIN_PASSWORD: changeme
+      KEYCLOAK_DATABASE_HOST: postgresKC
+      KEYCLOAK_DATABASE_PORT: 5432
+      KEYCLOAK_DATABASE_NAME: keycloak
+      KEYCLOAK_DATABASE_USER: keycloak
+      KEYCLOAK_DATABASE_SCHEMA: public
+      KEYCLOAK_DATABASE_PASSWORD: keycloak
     ports:
       - 8200:8080
     depends_on:
