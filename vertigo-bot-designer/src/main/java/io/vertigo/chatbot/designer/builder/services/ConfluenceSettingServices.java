@@ -47,10 +47,7 @@ public class ConfluenceSettingServices implements Component {
 			confluenceSetting.setPassword(confluenceSettingDAO.get(confluenceSetting.getConSetId()).getPassword());
 		}
 		ConfluenceSetting newConfluenceSetting = confluenceSettingDAO.save(confluenceSetting);
-
-		if (confluenceSettingSpaces != null){
-			spaceServices.saveAllFromConSetId(bot, confluenceSettingSpaces, newConfluenceSetting.getConSetId());
-		}
+		spaceServices.saveAllFromConSetId(bot, confluenceSettingSpaces, newConfluenceSetting.getConSetId());
 	}
 
 	@Secured("BotUser")
@@ -83,8 +80,12 @@ public class ConfluenceSettingServices implements Component {
 			confluenceSettingIhm.setNodId(x.getNodId());
 
 			StringBuilder spaces = new StringBuilder();
-			spaceServices.getConSetSpaceByConSetId(x.getConSetId()).forEach(conSetSpace -> spaces.append(conSetSpace.getSpace()).append(","));
-			confluenceSettingIhm.setSpaces(spaces.substring(0, spaces.length() - 1));
+
+			DtList<ConfluenceSettingSpace> fetchedSpaces = spaceServices.getConSetSpaceByConSetId(x.getConSetId());
+			if (fetchedSpaces != null && !fetchedSpaces.isEmpty()) {
+				fetchedSpaces.forEach(conSetSpace -> spaces.append(conSetSpace.getSpace()).append(","));
+				confluenceSettingIhm.setSpaces(spaces.substring(0, spaces.length() - 1));
+			}else confluenceSettingIhm.setSpaces(null);
 
 			newConfluenceSettingIhms.add(confluenceSettingIhm);
 		});
@@ -109,10 +110,11 @@ public class ConfluenceSettingServices implements Component {
 
 	@Secured("BotUser")
 	public DtList<ConfluenceSettingSpace> findSpacesFromIhm(@SecuredOperation("botContributor") Chatbot bot, final ConfluenceSettingIhm confluenceSettingIhm) {;
-		if(confluenceSettingIhm!= null) {
+		if(confluenceSettingIhm.getSpaces()!= null) {
 			DtList<ConfluenceSettingSpace> newConfluenceSettingSpaces = new DtList<>(ConfluenceSettingSpace.class);
 			List<String> ihmSpaces = Arrays.stream(confluenceSettingIhm.getSpaces().split(","))
-					.filter(s -> s != null && !s.isEmpty())
+					.map(String::trim)
+					.filter(s -> !s.isEmpty())
 					.collect(Collectors.toList());
 
 			ihmSpaces.forEach(space -> {

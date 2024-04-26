@@ -32,12 +32,14 @@ public class ConfluenceSettingSpaceServices implements Component {
     @Secured("BotUser")
     public void saveAllFromConSetId(@SecuredOperation("botContributor") Chatbot bot, final DtList<ConfluenceSettingSpace> confluenceSettingSpaces, final long id) {
         deleteAllFromConSetId(bot, id);
-        confluenceSettingSpaces.forEach(x -> {
-            if (x.getConfluencesettingId() == null){
-                x.setConfluencesettingId(id);
-            }
-            confluenceSettingSpaceDAO.save(x);
-        });
+        if(confluenceSettingSpaces != null) {
+            confluenceSettingSpaces.forEach(x -> {
+                if (x.getConfluencesettingId() == null) {
+                    x.setConfluencesettingId(id);
+                }
+                confluenceSettingSpaceDAO.save(x);
+            });
+        }
     }
 
     @Secured("BotUser")
