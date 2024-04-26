@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import io.vertigo.chatbot.commons.PasswordEncryptionServices;
+import io.vertigo.chatbot.commons.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,12 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
-import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ChatbotNode;
-import io.vertigo.chatbot.commons.domain.ConfluenceSetting;
-import io.vertigo.chatbot.commons.domain.JiraField;
-import io.vertigo.chatbot.commons.domain.JiraFieldSetting;
-import io.vertigo.chatbot.commons.domain.JiraSetting;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
@@ -41,11 +37,11 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 @Secured("BotUser")
 public class ExtensionsController extends AbstractBotController {
 
-	private static final ViewContextKey<ConfluenceSetting> confluenceSettingsKey = ViewContextKey.of("confluenceSettings");
+	private static final ViewContextKey<ConfluenceSettingIhm> confluenceSettingsIhmKey = ViewContextKey.of("confluenceSettingsIhm");
 
-	private static final ViewContextKey<ConfluenceSetting> confluenceSettingsFilteredKey = ViewContextKey.of("confluenceSettingsFiltered");
+	private static final ViewContextKey<ConfluenceSettingIhm> confluenceSettingsIhmFilteredKey = ViewContextKey.of("confluenceSettingsIhmFiltered");
 
-	private static final ViewContextKey<ConfluenceSetting> newConfluenceSettingKey = ViewContextKey.of("newConfluenceSetting");
+	private static final ViewContextKey<ConfluenceSettingIhm> newConfluenceSettingIhmKey = ViewContextKey.of("newConfluenceSettingIhm");
 
 	private static final ViewContextKey<JiraSetting> jiraSettingsKey = ViewContextKey.of("jiraSettings");
 
@@ -79,13 +75,14 @@ public class ExtensionsController extends AbstractBotController {
 	@Inject
 	private ScriptIntentionServices scriptIntentionServices;
 
+
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = super.initCommonContext(viewContext, uiMessageStack, botId);
-		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot);
-		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
-		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
-		viewContext.publishDto(newConfluenceSettingKey, new ConfluenceSetting());
+		final DtList<ConfluenceSettingIhm> confluenceSettingsIhm = confluenceSettingServices.findAllWithSpaces(bot);
+		viewContext.publishDtList(confluenceSettingsIhmKey, confluenceSettingsIhm);
+		viewContext.publishDtList(confluenceSettingsIhmFilteredKey, confluenceSettingsIhm);
+		viewContext.publishDto(newConfluenceSettingIhmKey, new ConfluenceSettingIhm());
 		final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot);
 		viewContext.publishDtList(jiraFieldsKey, jiraFieldService.findAll());
 		viewContext.publishDtList(jiraSettingsKey, jiraSettings);
@@ -97,17 +94,18 @@ public class ExtensionsController extends AbstractBotController {
 		super.initBreadCrums(viewContext, "EXTENSION");
 	}
 
+
 	@PostMapping("/_saveConfluenceSetting")
 	public ViewContext saveConfluenceSetting(final ViewContext viewContext,
 			final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
-			@ViewAttribute("newConfluenceSetting") @Validate(ConfluenceSettingNotEmptyValidator.class) final ConfluenceSetting confluenceSetting) {
+			@ViewAttribute("newConfluenceSettingIhm") @Validate(ConfluenceSettingIhmNotEmptyValidator.class) final ConfluenceSettingIhm confluenceSettingIhm) {
 
-		confluenceSettingServices.save(bot, confluenceSetting);
+		confluenceSettingServices.save(bot, confluenceSettingServices.findSetFromIhm(bot, confluenceSettingIhm), confluenceSettingServices.findSpacesFromIhm(bot, confluenceSettingIhm));
 
-		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot);
-		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
-		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
+		final DtList<ConfluenceSettingIhm> confluenceSettingIhms = confluenceSettingServices.findAllWithSpaces(bot);
+		viewContext.publishDtList(confluenceSettingsIhmKey, confluenceSettingIhms);
+		viewContext.publishDtList(confluenceSettingsIhmFilteredKey, confluenceSettingIhms);
 		return viewContext;
 	}
 
@@ -116,10 +114,12 @@ public class ExtensionsController extends AbstractBotController {
 			final UiMessageStack uiMessageStack,
 			@ViewAttribute("bot") final Chatbot bot,
 			@RequestParam("conSetId") final Long conSetId) {
-		confluenceSettingServices.delete(bot, conSetId);
-		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot);
-		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
-		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
+
+		confluenceSettingServices.deleteWithSpaces(bot, conSetId);
+
+		final DtList<ConfluenceSettingIhm> confluenceSettingIhms = confluenceSettingServices.findAllWithSpaces(bot);
+		viewContext.publishDtList(confluenceSettingsIhmKey, confluenceSettingIhms);
+		viewContext.publishDtList(confluenceSettingsIhmFilteredKey, confluenceSettingIhms);
 		return viewContext;
 	}
 
@@ -187,33 +187,33 @@ public class ExtensionsController extends AbstractBotController {
 
 
 
-	public static final class ConfluenceSettingNotEmptyValidator extends AbstractChatbotDtObjectValidator<ConfluenceSetting> {
+	public static final class ConfluenceSettingIhmNotEmptyValidator extends AbstractChatbotDtObjectValidator<ConfluenceSettingIhm> {
 
 		/** {@inheritDoc} */
 		@Override
-		protected void checkMonoFieldConstraints(final ConfluenceSetting confluenceSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
-			super.checkMonoFieldConstraints(confluenceSetting, dtField, dtObjectErrors);
-			if (DtDefinitions.ConfluenceSettingFields.url.name().equals(dtField.getName())
-					|| DtDefinitions.ConfluenceSettingFields.login.name().equals(dtField.getName())) {
-				final String value = (String) dtField.getDataAccessor().getValue(confluenceSetting);
+		protected void checkMonoFieldConstraints(final ConfluenceSettingIhm confluenceSettingIhm, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+			super.checkMonoFieldConstraints(confluenceSettingIhm, dtField, dtObjectErrors);
+			if (DtDefinitions.ConfluenceSettingIhmFields.url.name().equals(dtField.getName())
+					|| DtDefinitions.ConfluenceSettingIhmFields.login.name().equals(dtField.getName())) {
+				final String value = (String) dtField.getDataAccessor().getValue(confluenceSettingIhm);
 				if (value == null || value.trim().isEmpty()) {
 					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
 				}
 			}
-			if (DtDefinitions.ConfluenceSettingFields.password.name().equals(dtField.getName()) && confluenceSetting.getConSetId() == null) {
-				final String value = (String) dtField.getDataAccessor().getValue(confluenceSetting);
+			if (DtDefinitions.ConfluenceSettingIhmFields.password.name().equals(dtField.getName()) && confluenceSettingIhm.getConSetId() == null) {
+				final String value = (String) dtField.getDataAccessor().getValue(confluenceSettingIhm);
 				if (value == null || value.trim().isEmpty()) {
 					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
 				}
 			}
-			if (DtDefinitions.ConfluenceSettingFields.numberOfResults.name().equals(dtField.getName())) {
-				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSetting);
+			if (DtDefinitions.ConfluenceSettingIhmFields.numberOfResults.name().equals(dtField.getName())) {
+				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSettingIhm);
 				if (value == null || value <= 0) {
 					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.VALUE_SHOULD_BE_GREATER_THAN_ZERO));
 				}
 			}
-			if (DtDefinitions.ConfluenceSettingFields.nodId.name().equals(dtField.getName())) {
-				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSetting);
+			if (DtDefinitions.ConfluenceSettingIhmFields.nodId.name().equals(dtField.getName())) {
+				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSettingIhm);
 				if (value == null) {
 					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
 				}

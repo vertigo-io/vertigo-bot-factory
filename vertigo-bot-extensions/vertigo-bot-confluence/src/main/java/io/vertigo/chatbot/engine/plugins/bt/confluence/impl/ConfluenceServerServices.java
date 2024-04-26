@@ -38,6 +38,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 	private String user;
 	private String password;
 	private String limit;
+	private List<String> spaces;
 
 	@Inject
 	private PasswordEncryptionServices passwordEncryptionServices;
@@ -53,13 +54,14 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 			user = confluenceSettingExport.getLogin();
 			password = passwordEncryptionServices.decryptPassword(confluenceSettingExport.getPassword());
 			limit = confluenceSettingExport.getNumberOfResults().toString();
+			spaces = confluenceSettingExport.getSpaces();
 			LogsUtils.logOK(logs);
 		}
 	}
 
 	@Override
 	public ConfluenceSearchResponse searchOnConfluence(final Map<String, String> params, final Map<String, String> headers, final ConfluenceSearchObject filter) {
-		final String searchArgs = ConfluenceHttpRequestHelper.createSearchArgs(filter, true);
+		final String searchArgs = ConfluenceHttpRequestHelper.createSearchArgs(filter, true, spaces);
 		params.put("cql", searchArgs);
 		params.put("limit", limit);
 		final HttpResponse<String> response = sendRequestToConfluence(params, headers, SEARCH_URL, 200, BodyHandlers.ofString());

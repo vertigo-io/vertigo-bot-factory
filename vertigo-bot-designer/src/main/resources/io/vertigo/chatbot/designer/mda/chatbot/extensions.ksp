@@ -44,6 +44,33 @@ create DtDefinition DtConfluenceSetting {
 	field numberOfResults 		    {domain: DoNumber 	    label: "Number max of results" 			                    cardinality : "1"	}
 }
 
+create DtDefinition DtConfluenceSettingSpace {
+    id conSetSpaceId 		        {domain: DoId		    label: "Confluence setting space id"                                            }
+	field space   		            {domain: DoLabel        label: "Space" 			                                    cardinality : "1"	}
+}
+
+
+create Association AConfluenceSettingSpace {
+	fkFieldName : "confluencesettingId"
+
+ 	dtDefinitionA : DtConfluenceSettingSpace
+	type : "*>1"
+	dtDefinitionB : DtConfluenceSetting
+
+	labelB : "ConfluenceSetting"
+}
+
+create DtDefinition DtConfluenceSettingIhm {
+    field conSetId 		            {domain: DoId		    label: "Confluence setting id"                              cardinality : "1"	}
+    field botId                     {domain: DoId           label: "Bot id"                                             cardinality : "1"   }
+    field nodId                     {domain: DoId           label: "Node id"                                            cardinality : "1"   }
+	field url    		            {domain: DoUrl 	        label: "Knowledge base URL" 			                    cardinality : "1"	}
+	field login 		            {domain: DoLabel 	    label: "Login" 			                                    cardinality : "1"	}
+	field password 		            {domain: DoText 	    label: "Password" 			                                cardinality : "1"	}
+	field numberOfResults 		    {domain: DoNumber 	    label: "Number max of results" 			                    cardinality : "1"	}
+	field spaces   		            {domain: DoLabel        label: "Spaces" 			                                cardinality : "1"	}
+}
+
 create Association AConfluenceSettingChatbot {
 	fkFieldName : "botId"
 

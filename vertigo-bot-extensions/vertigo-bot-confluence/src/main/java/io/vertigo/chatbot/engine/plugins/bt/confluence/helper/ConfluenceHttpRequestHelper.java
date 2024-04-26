@@ -14,6 +14,7 @@ import java.net.http.HttpResponse.BodyHandler;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -29,6 +30,7 @@ public final class ConfluenceHttpRequestHelper {
 	public static final String SPACE_URL = "/space";
 
 	private static final String ONLY_PAGE = " type=page";
+	private static final String SPACE = "space=";
 
 	private ConfluenceHttpRequestHelper() {
 		//helper
@@ -78,10 +80,22 @@ public final class ConfluenceHttpRequestHelper {
 		return result;
 	}
 
-	public static String createSearchArgs(final ConfluenceSearchObject filter, final boolean onlyPage) {
+	public static String createSearchArgs(final ConfluenceSearchObject filter, final boolean onlyPage, List<String> spaces) {
 		final var builder = new StringBuilder();
 		final var visitor = new ConfluenceVisitor();
 		builder.append(filter.accept(visitor));
+
+		if(spaces != null && !spaces.isEmpty()){
+			builder.append(ConfluenceSearchOperator.AND);
+			builder.append(" (");
+			spaces.forEach(space -> {
+				builder.append(SPACE).append(space);
+				builder.append(" ").append(ConfluenceSearchOperator.OR).append(" ");
+			});
+			builder.setLength(builder.length() - 4);
+			builder.append(") ");
+		}
+
 		if (onlyPage) {
 			builder.append(ConfluenceSearchOperator.AND);
 			builder.append(ONLY_PAGE);
