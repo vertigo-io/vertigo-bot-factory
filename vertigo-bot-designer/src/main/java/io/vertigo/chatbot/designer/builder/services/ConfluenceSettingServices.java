@@ -1,6 +1,10 @@
 package io.vertigo.chatbot.designer.builder.services;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -8,9 +12,7 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.PasswordEncryptionServices;
 import io.vertigo.chatbot.commons.dao.ConfluenceSettingDAO;
-import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ConfluenceSetting;
-import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
+import io.vertigo.chatbot.commons.domain.*;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
@@ -30,22 +32,30 @@ public class ConfluenceSettingServices implements Component {
 	@Inject
 	private PasswordEncryptionServices passwordEncryptionServices;
 
+	@Inject
+	private ConfluenceSettingSpaceServices spaceServices;
+
 	public ConfluenceSetting findById(final long id) {
 		return confluenceSettingDAO.get(id);
 	}
 
 	@Secured("BotUser")
-	public ConfluenceSetting save (@SecuredOperation("botAdm") final Chatbot bot, final ConfluenceSetting confluenceSetting) {
+	public void save (@SecuredOperation("botAdm") final Chatbot bot, final ConfluenceSetting confluenceSetting, final DtList<ConfluenceSettingSpace> confluenceSettingSpaces) {
 		if (confluenceSetting.getPassword() != null && !confluenceSetting.getPassword().isEmpty()) {
 			confluenceSetting.setPassword(passwordEncryptionServices.encryptPassword(confluenceSetting.getPassword()));
 		} else if (confluenceSetting.getConSetId() != null){
 			confluenceSetting.setPassword(confluenceSettingDAO.get(confluenceSetting.getConSetId()).getPassword());
 		}
-		return confluenceSettingDAO.save(confluenceSetting);
+		ConfluenceSetting newConfluenceSetting = confluenceSettingDAO.save(confluenceSetting);
+
+		if (confluenceSettingSpaces != null){
+			spaceServices.saveAllFromConSetId(bot, confluenceSettingSpaces, newConfluenceSetting.getConSetId());
+		}
 	}
 
 	@Secured("BotUser")
-	public void delete (@SecuredOperation("botAdm") final Chatbot bot, final long id) {
+	public void deleteWithSpaces (@SecuredOperation("botAdm") final Chatbot bot, final long id) {
+		spaceServices.deleteAllFromConSetId(bot, id);
 		confluenceSettingDAO.delete(id);
 	}
 
@@ -56,14 +66,75 @@ public class ConfluenceSettingServices implements Component {
 	}
 
 	@Secured("BotUser")
+	public DtList<ConfluenceSettingIhm> findAllWithSpaces(@SecuredOperation("botContributor") final Chatbot bot) {
+		DtList<ConfluenceSetting> confluenceSetting = findAllByBotId(bot);
+
+		DtList<ConfluenceSettingIhm> newConfluenceSettingIhms = new DtList<>(ConfluenceSettingIhm.class);
+
+		confluenceSetting.forEach(x ->{
+			ConfluenceSettingIhm confluenceSettingIhm = new ConfluenceSettingIhm();
+
+			confluenceSettingIhm.setConSetId(x.getConSetId());
+			confluenceSettingIhm.setUrl(x.getUrl());
+			confluenceSettingIhm.setLogin(x.getLogin());
+			confluenceSettingIhm.setPassword(x.getPassword());
+			confluenceSettingIhm.setNumberOfResults(x.getNumberOfResults());
+			confluenceSettingIhm.setBotId(x.getBotId());
+			confluenceSettingIhm.setNodId(x.getNodId());
+
+			StringBuilder spaces = new StringBuilder();
+			spaceServices.getConSetSpaceByConSetId(x.getConSetId()).forEach(conSetSpace -> spaces.append(conSetSpace.getSpace()).append(","));
+			confluenceSettingIhm.setSpaces(spaces.substring(0, spaces.length() - 1));
+
+			newConfluenceSettingIhms.add(confluenceSettingIhm);
+		});
+		return newConfluenceSettingIhms;
+	}
+
+	@Secured("BotUser")
+	public ConfluenceSetting findSetFromIhm(@SecuredOperation("botContributor") Chatbot bot, final ConfluenceSettingIhm confluenceSettingIhm) {;
+
+		ConfluenceSetting newConfluenceSetting = new ConfluenceSetting();
+
+		newConfluenceSetting.setConSetId(confluenceSettingIhm.getConSetId());
+		newConfluenceSetting.setUrl(confluenceSettingIhm.getUrl());
+		newConfluenceSetting.setLogin(confluenceSettingIhm.getLogin());
+		newConfluenceSetting.setPassword(confluenceSettingIhm.getPassword());
+		newConfluenceSetting.setNumberOfResults(confluenceSettingIhm.getNumberOfResults());
+		newConfluenceSetting.setBotId(confluenceSettingIhm.getBotId());
+		newConfluenceSetting.setNodId(confluenceSettingIhm.getNodId());
+
+		return newConfluenceSetting;
+	}
+
+	@Secured("BotUser")
+	public DtList<ConfluenceSettingSpace> findSpacesFromIhm(@SecuredOperation("botContributor") Chatbot bot, final ConfluenceSettingIhm confluenceSettingIhm) {;
+		if(confluenceSettingIhm!= null) {
+			DtList<ConfluenceSettingSpace> newConfluenceSettingSpaces = new DtList<>(ConfluenceSettingSpace.class);
+			List<String> ihmSpaces = Arrays.stream(confluenceSettingIhm.getSpaces().split(","))
+					.filter(s -> s != null && !s.isEmpty())
+					.collect(Collectors.toList());
+
+			ihmSpaces.forEach(space -> {
+				ConfluenceSettingSpace confluenceSettingSpace = new ConfluenceSettingSpace();
+				confluenceSettingSpace.setSpace(space);
+				confluenceSettingSpace.setConfluencesettingId(confluenceSettingIhm.getConSetId());
+				newConfluenceSettingSpaces.add(confluenceSettingSpace);
+			});
+			return newConfluenceSettingSpaces;
+		}else return null;
+	}
+
+
+	@Secured("BotUser")
 	public void deleteAllByNodeId(@SecuredOperation("botAdm") final Chatbot bot, final long nodeId) {
 		confluenceSettingDAO.findAll(Criterions.isEqualTo(DtDefinitions.ConfluenceSettingFields.nodId, nodeId),
-				DtListState.of(MAX_ELEMENTS_PLUS_ONE)).forEach(confluenceSetting -> this.delete(bot, confluenceSetting.getConSetId()));
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE)).forEach(confluenceSetting -> this.deleteWithSpaces(bot, confluenceSetting.getConSetId()));
 	}
 
 	@Secured("BotUser")
 	public void deleteAllByBotId(@SecuredOperation("botAdm") final Chatbot bot) {
-		this.findAllByBotId(bot).forEach(confluenceSetting -> this.delete(bot, confluenceSetting.getConSetId()));
+		this.findAllByBotId(bot).forEach(confluenceSetting -> this.deleteWithSpaces(bot, confluenceSetting.getConSetId()));
 	}
 
 	public Optional<ConfluenceSettingExport> exportConfluenceSetting(final long botId, final long nodId) {
@@ -74,6 +145,11 @@ public class ConfluenceSettingServices implements Component {
 			confluenceSettingExport.setLogin(confluenceSetting.getLogin());
 			confluenceSettingExport.setPassword(confluenceSetting.getPassword());
 			confluenceSettingExport.setNumberOfResults(confluenceSetting.getNumberOfResults());
+
+			List<String> spaces = new ArrayList<>();
+			spaceServices.getConSetSpaceByConSetId(confluenceSetting.getConSetId()).forEach(space -> spaces.add(space.getSpace()));
+			confluenceSettingExport.setSpaces(spaces);
+
 			return Optional.of(confluenceSettingExport);
 		}).orElseGet(Optional::empty);
 	}

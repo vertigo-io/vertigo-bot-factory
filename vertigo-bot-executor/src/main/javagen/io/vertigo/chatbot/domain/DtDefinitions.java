@@ -204,7 +204,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Password'. */
 		password,
 		/** Propriété 'Number max of results'. */
-		numberOfResults	}
+		numberOfResults,
+		/** Propriété 'Spaces'. */
+		spaces	}
 
 	/**
 	 * Enumération des champs de ContextValue.

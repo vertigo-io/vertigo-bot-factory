@@ -145,4 +145,8 @@
     </changeSet>
 
 
+    <changeSet author="rsaintpaul" id="Add spaces setting for confluence settings">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_04_24.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -17,6 +17,7 @@ public final class ConfluenceSettingExport implements DtObject {
 	private String login;
 	private String password;
 	private Long numberOfResults;
+	private java.util.List<String> spaces = new java.util.ArrayList<>();
 	
 	/**
 	 * Champ : DATA.
@@ -92,6 +93,27 @@ public final class ConfluenceSettingExport implements DtObject {
 	 */
 	public void setNumberOfResults(final Long numberOfResults) {
 		this.numberOfResults = numberOfResults;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Spaces'.
+	 * @return List de String spaces
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Spaces")
+	public java.util.List<String> getSpaces() {
+		return spaces;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Spaces'.
+	 * @param spaces List de String
+	 */
+	public void setSpaces(final java.util.List<String> spaces) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(spaces);
+		//---
+		this.spaces = spaces;
 	}
 	
 	/** {@inheritDoc} */

@@ -22,6 +22,8 @@ drop sequence IF EXISTS SEQ_CHATBOT_NODE;
 drop table IF EXISTS CHATBOT_PROFILES cascade;
 drop table IF EXISTS CONFLUENCE_SETTING cascade;
 drop sequence IF EXISTS SEQ_CONFLUENCE_SETTING;
+drop table IF EXISTS CONFLUENCE_SETTING_SPACE cascade;
+drop sequence IF EXISTS SEQ_CONFLUENCE_SETTING_SPACE;
 drop table IF EXISTS CONTEXT_ENVIRONMENT cascade;
 drop sequence IF EXISTS SEQ_CONTEXT_ENVIRONMENT;
 drop table IF EXISTS CONTEXT_ENVIRONMENT_VALUE cascade;
@@ -116,6 +118,9 @@ create sequence SEQ_CHATBOT_NODE
 
 
 create sequence SEQ_CONFLUENCE_SETTING
+	start with 1000 cache 1; 
+
+create sequence SEQ_CONFLUENCE_SETTING_SPACE
 	start with 1000 cache 1; 
 
 create sequence SEQ_CONTEXT_ENVIRONMENT
@@ -505,6 +510,26 @@ comment on column CONFLUENCE_SETTING.BOT_ID is
 
 comment on column CONFLUENCE_SETTING.NOD_ID is
 'Node';
+
+-- ============================================================
+--   Table : CONFLUENCE_SETTING_SPACE                                        
+-- ============================================================
+create table CONFLUENCE_SETTING_SPACE
+(
+    CON_SET_SPACE_ID	 NUMERIC     	not null,
+    SPACE       	 VARCHAR(100)	not null,
+    CONFLUENCESETTING_ID	 NUMERIC     	not null,
+    constraint PK_CONFLUENCE_SETTING_SPACE primary key (CON_SET_SPACE_ID)
+);
+
+comment on column CONFLUENCE_SETTING_SPACE.CON_SET_SPACE_ID is
+'Confluence setting space id';
+
+comment on column CONFLUENCE_SETTING_SPACE.SPACE is
+'Space';
+
+comment on column CONFLUENCE_SETTING_SPACE.CONFLUENCESETTING_ID is
+'ConfluenceSetting';
 
 -- ============================================================
 --   Table : CONTEXT_ENVIRONMENT                                        
@@ -1584,6 +1609,12 @@ alter table CONFLUENCE_SETTING
 	references CHATBOT_NODE (NOD_ID);
 
 create index A_CONFLUENCE_SETTING_NODE_CHATBOT_NODE_FK on CONFLUENCE_SETTING (NOD_ID asc);
+
+alter table CONFLUENCE_SETTING_SPACE
+	add constraint FK_A_CONFLUENCE_SETTING_SPACE_CONFLUENCE_SETTING foreign key (CONFLUENCESETTING_ID)
+	references CONFLUENCE_SETTING (CON_SET_ID);
+
+create index A_CONFLUENCE_SETTING_SPACE_CONFLUENCE_SETTING_FK on CONFLUENCE_SETTING_SPACE (CONFLUENCESETTING_ID asc);
 
 alter table CONTEXT_ENVIRONMENT
 	add constraint FK_A_CONTEXT_ENVIRONMENT_CHATBOT_CHATBOT foreign key (BOT_ID)

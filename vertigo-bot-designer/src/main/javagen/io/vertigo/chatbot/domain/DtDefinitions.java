@@ -43,6 +43,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ConfluenceSetting(io.vertigo.chatbot.commons.domain.ConfluenceSetting.class),
 		/** Objet de données ConfluenceSettingExport. */
 		ConfluenceSettingExport(io.vertigo.chatbot.commons.domain.ConfluenceSettingExport.class),
+		/** Objet de données ConfluenceSettingIhm. */
+		ConfluenceSettingIhm(io.vertigo.chatbot.commons.domain.ConfluenceSettingIhm.class),
+		/** Objet de données ConfluenceSettingSpace. */
+		ConfluenceSettingSpace(io.vertigo.chatbot.commons.domain.ConfluenceSettingSpace.class),
 		/** Objet de données ContextEnvironment. */
 		ContextEnvironment(io.vertigo.chatbot.designer.domain.ContextEnvironment.class),
 		/** Objet de données ContextEnvironmentIhm. */
@@ -478,7 +482,41 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Password'. */
 		password,
 		/** Propriété 'Number max of results'. */
-		numberOfResults	}
+		numberOfResults,
+		/** Propriété 'Spaces'. */
+		spaces	}
+
+	/**
+	 * Enumération des champs de ConfluenceSettingIhm.
+	 */
+	public enum ConfluenceSettingIhmFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ConfluenceSettingIhm> {
+		/** Propriété 'Confluence setting id'. */
+		conSetId,
+		/** Propriété 'Bot id'. */
+		botId,
+		/** Propriété 'Node id'. */
+		nodId,
+		/** Propriété 'Knowledge base URL'. */
+		url,
+		/** Propriété 'Login'. */
+		login,
+		/** Propriété 'Password'. */
+		password,
+		/** Propriété 'Number max of results'. */
+		numberOfResults,
+		/** Propriété 'Spaces'. */
+		spaces	}
+
+	/**
+	 * Enumération des champs de ConfluenceSettingSpace.
+	 */
+	public enum ConfluenceSettingSpaceFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ConfluenceSettingSpace> {
+		/** Propriété 'Confluence setting space id'. */
+		conSetSpaceId,
+		/** Propriété 'Space'. */
+		space,
+		/** Propriété 'ConfluenceSetting'. */
+		confluencesettingId	}
 
 	/**
 	 * Enumération des champs de ContextEnvironment.

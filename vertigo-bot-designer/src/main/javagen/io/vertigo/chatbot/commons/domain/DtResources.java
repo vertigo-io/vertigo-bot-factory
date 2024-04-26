@@ -371,6 +371,62 @@ public enum DtResources implements MessageKey {
 	 * Number max of results.
 	 */
 	fldConfluenceSettingExport$numberOfResults,
+	/**
+	 * Spaces.
+	 */
+	fldConfluenceSettingExport$spaces,
+
+	/***********************************************************
+	/** ConfluenceSettingIhm.
+	/***********************************************************
+	/**
+	 * Confluence setting id.
+	 */
+	fldConfluenceSettingIhm$conSetId,
+	/**
+	 * Bot id.
+	 */
+	fldConfluenceSettingIhm$botId,
+	/**
+	 * Node id.
+	 */
+	fldConfluenceSettingIhm$nodId,
+	/**
+	 * Knowledge base URL.
+	 */
+	fldConfluenceSettingIhm$url,
+	/**
+	 * Login.
+	 */
+	fldConfluenceSettingIhm$login,
+	/**
+	 * Password.
+	 */
+	fldConfluenceSettingIhm$password,
+	/**
+	 * Number max of results.
+	 */
+	fldConfluenceSettingIhm$numberOfResults,
+	/**
+	 * Spaces.
+	 */
+	fldConfluenceSettingIhm$spaces,
+
+	/***********************************************************
+	/** ConfluenceSettingSpace.
+	/***********************************************************
+	/**
+	 * Confluence setting space id.
+	 */
+	fldConfluenceSettingSpace$conSetSpaceId,
+	/**
+	 * Space.
+	 */
+	fldConfluenceSettingSpace$space,
+	/**
+	 * ConfluenceSetting.
+	 */
+	fldConfluenceSettingSpace$confluencesettingId,
 
 	/***********************************************************
 	/** ContextValue.
