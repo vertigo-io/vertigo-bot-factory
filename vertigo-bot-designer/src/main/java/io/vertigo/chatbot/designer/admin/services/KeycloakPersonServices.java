@@ -50,7 +50,7 @@ public class KeycloakPersonServices implements Component {
 
 	public String getRoleFromClaims(final Map<String, Object> claims) {
 		final List<?> groups = (List<?>) claims.get("groups");
-		if (claims.isEmpty() || groups.isEmpty()) {
+		if (claims.isEmpty() || groups == null || groups.isEmpty()) {
 			return PersonRoleEnum.RUser.name();
 		}
 		return (String) groups.get(0);
