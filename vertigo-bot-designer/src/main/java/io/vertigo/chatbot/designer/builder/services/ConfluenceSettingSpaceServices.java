@@ -2,10 +2,8 @@ package io.vertigo.chatbot.designer.builder.services;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
-import io.vertigo.chatbot.commons.PasswordEncryptionServices;
 import io.vertigo.chatbot.commons.dao.ConfluenceSettingSpaceDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ConfluenceSetting;
 import io.vertigo.chatbot.commons.domain.ConfluenceSettingSpace;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
@@ -17,9 +15,7 @@ import io.vertigo.datamodel.structure.model.DtListState;
 
 import javax.inject.Inject;
 
-
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
-
 
 
 @Transactional
@@ -32,14 +28,7 @@ public class ConfluenceSettingSpaceServices implements Component {
     @Secured("BotUser")
     public void saveAllFromConSetId(@SecuredOperation("botContributor") Chatbot bot, final DtList<ConfluenceSettingSpace> confluenceSettingSpaces, final long id) {
         deleteAllFromConSetId(bot, id);
-        if(confluenceSettingSpaces != null) {
-            confluenceSettingSpaces.forEach(x -> {
-                if (x.getConfluencesettingId() == null) {
-                    x.setConfluencesettingId(id);
-                }
-                confluenceSettingSpaceDAO.save(x);
-            });
-        }
+        confluenceSettingSpaces.forEach(space -> confluenceSettingSpaceDAO.save(space));
     }
 
     @Secured("BotUser")
