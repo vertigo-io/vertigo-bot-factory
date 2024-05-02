@@ -24,14 +24,13 @@ public class ConfluenceSettingSpaceServices implements Component {
 
     @Inject
     private ConfluenceSettingSpaceDAO confluenceSettingSpaceDAO;
+    
 
     @Secured("BotUser")
-    public void saveAllFromConSetId(@SecuredOperation("botContributor") Chatbot bot, final DtList<ConfluenceSettingSpace> confluenceSettingSpaces, final long id) {
-        deleteAllFromConSetId(bot, id);
+    public void saveAllFromConSetId(@SecuredOperation("botContributor") Chatbot bot, final DtList<ConfluenceSettingSpace> confluenceSettingSpaces, final long confluenceSettingid) {
+        deleteAllFromConSetId(bot, confluenceSettingid);
         confluenceSettingSpaces.forEach(space -> {
-            if (space.getConfluencesettingId() == null) {
-                space.setConfluencesettingId(id);
-            }
+            space.setConfluencesettingId(confluenceSettingid);
             confluenceSettingSpaceDAO.save(space);
         });
     }
@@ -43,11 +42,13 @@ public class ConfluenceSettingSpaceServices implements Component {
         });
     }
 
-    public DtList<ConfluenceSettingSpace> getConSetSpaceByConSetId(final long id) {
-        return confluenceSettingSpaceDAO.findAll(getConfluenceSettingCriteria(id), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+
+    public DtList<ConfluenceSettingSpace> getConSetSpaceByConSetId(final long confluenceSettingId) {
+        return confluenceSettingSpaceDAO.findAll(getConfluenceSettingCriteria(confluenceSettingId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
     }
 
-    private static Criteria<ConfluenceSettingSpace> getConfluenceSettingCriteria(final long id) {
-        return Criterions.isEqualTo(DtDefinitions.ConfluenceSettingSpaceFields.confluencesettingId, id);
+    private static Criteria<ConfluenceSettingSpace> getConfluenceSettingCriteria(final long confluenceSettingId) {
+        return Criterions.isEqualTo(DtDefinitions.ConfluenceSettingSpaceFields.confluencesettingId, confluenceSettingId);
     }
+
 }
