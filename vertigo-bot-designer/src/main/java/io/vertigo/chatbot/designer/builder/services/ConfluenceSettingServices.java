@@ -15,10 +15,8 @@ import io.vertigo.datamodel.structure.util.VCollectors;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -78,13 +76,10 @@ public class ConfluenceSettingServices implements Component {
             confluenceSettingIhm.setBotId(confluenceSetting.getBotId());
             confluenceSettingIhm.setNodId(confluenceSetting.getNodId());
 
-            StringBuilder spaces = new StringBuilder();
-
+            List<String> spaces = new ArrayList<>();
             DtList<ConfluenceSettingSpace> fetchedSpaces = spaceServices.getConSetSpaceByConSetId(confluenceSetting.getConSetId());
-            if (fetchedSpaces != null && !fetchedSpaces.isEmpty()) {
-                fetchedSpaces.forEach(conSetSpace -> spaces.append(conSetSpace.getSpace()).append(","));
-                confluenceSettingIhm.setSpaces(spaces.substring(0, spaces.length() - 1));
-            } else confluenceSettingIhm.setSpaces(null);
+            fetchedSpaces.forEach(conSetSpace -> spaces.add(conSetSpace.getSpace()));
+            confluenceSettingIhm.setSpaces(spaces);
 
             newConfluenceSettingIhms.add(confluenceSettingIhm);
         });
@@ -93,8 +88,6 @@ public class ConfluenceSettingServices implements Component {
 
     @Secured("BotUser")
     public ConfluenceSetting findSetFromIhm(@SecuredOperation("botContributor") Chatbot bot, final ConfluenceSettingIhm confluenceSettingIhm) {
-        ;
-
         ConfluenceSetting newConfluenceSetting = new ConfluenceSetting();
 
         newConfluenceSetting.setConSetId(confluenceSettingIhm.getConSetId());
@@ -111,19 +104,12 @@ public class ConfluenceSettingServices implements Component {
     @Secured("BotUser")
     public DtList<ConfluenceSettingSpace> findSpacesFromIhm(@SecuredOperation("botContributor") Chatbot bot, final ConfluenceSettingIhm confluenceSettingIhm) {
         DtList<ConfluenceSettingSpace> newConfluenceSettingSpaces = new DtList<>(ConfluenceSettingSpace.class);
-        if (confluenceSettingIhm.getSpaces() != null) {
-            List<String> ihmSpaces = Arrays.stream(confluenceSettingIhm.getSpaces().split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .collect(Collectors.toList());
-
-            ihmSpaces.forEach(space -> {
-                ConfluenceSettingSpace confluenceSettingSpace = new ConfluenceSettingSpace();
-                confluenceSettingSpace.setSpace(space);
-                confluenceSettingSpace.setConfluencesettingId(confluenceSettingIhm.getConSetId());
-                newConfluenceSettingSpaces.add(confluenceSettingSpace);
-            });
-        }
+        confluenceSettingIhm.getSpaces().forEach(space -> {
+            ConfluenceSettingSpace confluenceSettingSpace = new ConfluenceSettingSpace();
+            confluenceSettingSpace.setSpace(space);
+            confluenceSettingSpace.setConfluencesettingId(confluenceSettingIhm.getConSetId());
+            newConfluenceSettingSpaces.add(confluenceSettingSpace);
+        });
         return newConfluenceSettingSpaces;
     }
 

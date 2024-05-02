@@ -20,7 +20,7 @@ public final class ConfluenceSettingIhm implements DtObject {
 	private String login;
 	private String password;
 	private Long numberOfResults;
-	private String spaces;
+	private java.util.List<String> spaces = new java.util.ArrayList<>();
 	
 	/**
 	 * Champ : DATA.
@@ -158,19 +158,21 @@ public final class ConfluenceSettingIhm implements DtObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Spaces'.
-	 * @return String spaces <b>Obligatoire</b>
+	 * @return List de String spaces
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Spaces")
-	public String getSpaces() {
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Spaces")
+	public java.util.List<String> getSpaces() {
 		return spaces;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Spaces'.
-	 * @param spaces String <b>Obligatoire</b>
+	 * @param spaces List de String
 	 */
-	public void setSpaces(final String spaces) {
+	public void setSpaces(final java.util.List<String> spaces) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(spaces);
+		//---
 		this.spaces = spaces;
 	}
 	
