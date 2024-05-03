@@ -47,20 +47,8 @@ public class ExtensionsController extends AbstractBotController {
 
     private static final ViewContextKey<ScriptIntention> scriptIntentionKey = ViewContextKey.of("scriptIntention");
 
-    //space
-    protected static final ViewContextKey<ConfluenceSettingSpace> conSetSpaceListKey = ViewContextKey
-            .of("conSetSpaceList");
-    protected static final ViewContextKey<ConfluenceSettingSpace> initialConSetSpaceListKey = ViewContextKey
-            .of("initialConSetSpaceList");
-    protected static final ViewContextKey<ConfluenceSettingSpace> allConSetSpaceListKey = ViewContextKey
-            .of("allConSetSpaceList");
-
-
     @Inject
     private ConfluenceSettingServices confluenceSettingServices;
-
-    @Inject
-    private ConfluenceSettingSpaceServices confluenceSettingSpaceServices;
 
     @Inject
     private JiraSettingServices jiraSettingServices;

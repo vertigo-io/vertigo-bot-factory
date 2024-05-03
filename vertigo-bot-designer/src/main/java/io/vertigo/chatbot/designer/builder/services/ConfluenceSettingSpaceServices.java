@@ -47,7 +47,7 @@ public class ConfluenceSettingSpaceServices implements Component {
         return confluenceSettingSpaceDAO.findAll(getConfluenceSettingCriteria(confluenceSettingId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
     }
 
-    private static Criteria<ConfluenceSettingSpace> getConfluenceSettingCriteria(final long confluenceSettingId) {
+    private Criteria<ConfluenceSettingSpace> getConfluenceSettingCriteria(final long confluenceSettingId) {
         return Criterions.isEqualTo(DtDefinitions.ConfluenceSettingSpaceFields.confluencesettingId, confluenceSettingId);
     }
 
