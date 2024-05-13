@@ -8,6 +8,14 @@
 	
 	<head>
 		<title th:text="#{topicCategory.title}"></title>
+
+		<script th:inline="javascript">
+			function filteredOptions() {
+				return VertigoUi.vueData.allTopicCategories.filter(topCat =>
+						topCat.topCatId !== VertigoUi.vueData.topicCategory.topCatId);
+			}
+		</script>
+
 	</head>
 	
 	<body>
@@ -82,19 +90,16 @@
 						</div>
 					</q-card-section>
 					<q-card-section>
-						<q-list padding class="overflow-auto">
-							<q-item  v-for="(item, index) in vueData.allTopicCategories"
-									 :style="{ backgroundColor: vueData.newTopCatId === item.topCatId ? 'lightgray' : '' }"
-									 v-if="item.topCatId !== vueData.topicCategory.topCatId"
-									 :key="index"
-									 clickable
-									 v-ripple
-									 @click="vueData.newTopCatId = item.topCatId">
-								<q-item-section >
-									{{ item.label }}
-								</q-item-section>
-							</q-item>
-						</q-list>
+						<q-select
+								outlined
+								v-model="vueData.newTopCatId"
+								:options="filteredOptions()"
+								option-value="topCatId"
+								option-label="label"
+								th:label="#{topic.categoryChange.popup.category}"
+								emit-value
+								map-options
+						/>
 					</q-card-section>
 					<q-card-actions align="around">
 						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
