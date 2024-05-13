@@ -91,6 +91,7 @@ public class TopicServices implements Component, Activeable {
         return topicDAO.save(topic);
     }
 
+
     public void saveCategoryChange(final Long topicId, final Long topicCategoryId, Chatbot bot) {
         Topic topic = topicDAO.get(topicId);
         topic.setTopCatId(topicCategoryId);
