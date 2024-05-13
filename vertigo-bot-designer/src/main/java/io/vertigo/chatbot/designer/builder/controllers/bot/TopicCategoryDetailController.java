@@ -23,8 +23,8 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 public class TopicCategoryDetailController extends AbstractBotCreationController<TopicCategory> {
 
     private static final ViewContextKey<TopicCategory> topicCategoryKey = ViewContextKey.of("topicCategory");
-    private static final ViewContextKey<Topic> topicsKey = ViewContextKey.of("topics");
     private static final ViewContextKey<TopicCategory> allTopicCategoriesKey = ViewContextKey.of("allTopicCategories");
+    private static final ViewContextKey<Topic> topicsKey = ViewContextKey.of("topics");
     private static final ViewContextKey<Long> topicIdKey = ViewContextKey.of("topicId");
     private static final ViewContextKey<Long> newTopCatIdKey = ViewContextKey.of("newTopCatId");
     private static final ViewContextKey<Topic> otherCategoriesTopicsKey = ViewContextKey.of("otherCategoriesTopics");
