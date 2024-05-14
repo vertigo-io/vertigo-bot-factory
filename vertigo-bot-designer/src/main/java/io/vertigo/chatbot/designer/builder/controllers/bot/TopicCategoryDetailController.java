@@ -4,6 +4,8 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
+import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+import static java.lang.Long.parseLong;
 
 @Controller
 @RequestMapping("/bot/{botId}/category")
@@ -25,9 +28,11 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
     private static final ViewContextKey<TopicCategory> topicCategoryKey = ViewContextKey.of("topicCategory");
     private static final ViewContextKey<TopicCategory> allTopicCategoriesKey = ViewContextKey.of("allTopicCategories");
     private static final ViewContextKey<Topic> topicsKey = ViewContextKey.of("topics");
-    private static final ViewContextKey<Long> topicIdKey = ViewContextKey.of("topicId");
-    private static final ViewContextKey<Long> newTopCatIdKey = ViewContextKey.of("newTopCatId");
+    private static final ViewContextKey<String> topicIdKey = ViewContextKey.of("topicId");
+    private static final ViewContextKey<String> newTopCatIdKey = ViewContextKey.of("newTopCatId");
     private static final ViewContextKey<Topic> otherCategoriesTopicsKey = ViewContextKey.of("otherCategoriesTopics");
+    private static final ViewContextKey<TopicIhm> topicIhmListKey = ViewContextKey.of("topicIhmList");
+    private static final ViewContextKey<TopicIhm> topicCategoryChangeListKey = ViewContextKey.of("topicCategoryChangeList");
 
 
     @GetMapping("/{topCatId}")
@@ -39,12 +44,15 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
         final DtList<TopicCategory> topicCategories = topicCategoryServices.getAllCategoriesByBot(bot);
         final DtList<Topic> otherCategoriesTopics = topicServices.getAllTopicByBotIdExceptACategory(bot, topCatId);
 
+        viewContext.publishDtList(topicIhmListKey, DtDefinitions.TopicIhmFields.topId, topicServices.getAllNonTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString()));
         viewContext.publishDto(topicCategoryKey, topicCategory);
         viewContext.publishDtList(topicsKey, topics);
         viewContext.publishDtList(otherCategoriesTopicsKey, otherCategoriesTopics);
         viewContext.publishDtList(allTopicCategoriesKey, topicCategories);
-        viewContext.publishRef(topicIdKey, 0L);
-        viewContext.publishRef(newTopCatIdKey, 0L);
+        viewContext.publishRef(topicIdKey, "");
+        viewContext.publishRef(newTopCatIdKey, "");
+        viewContext.publishDtList(topicCategoryChangeListKey, new DtList<>(TopicIhm.class));
+
 
         super.initBreadCrums(viewContext, topicCategory);
         listLimitReached(viewContext, uiMessageStack);
@@ -55,7 +63,7 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
     public void getNewCategory(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
         final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
         viewContext.publishDto(topicCategoryKey, topicCategoryServices.getNewTopicCategory(bot));
-        viewContext.publishDtList(topicsKey, new DtList<Topic>(Topic.class));
+        viewContext.publishDtList(topicsKey, new DtList<>(Topic.class));
         super.initEmptyBreadcrums(viewContext);
         listLimitReached(viewContext, uiMessageStack);
         toModeCreate();
@@ -66,16 +74,16 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
                                                final UiMessageStack uiMessageStack,
                                                @ViewAttribute("bot") final Chatbot bot,
                                                @ViewAttribute("topicCategory") final TopicCategory topicCategory,
-                                               @ViewAttribute("topicId") final Long topicId,
-                                               @ViewAttribute("newTopCatId") final Long newTopicCategoryId) {
+                                               @ViewAttribute("topicId") final String topicId,
+                                               @ViewAttribute("newTopCatId") final String newTopicCategoryId) {
 
-        topicServices.saveCategoryChange(topicId, newTopicCategoryId, bot);
+        topicServices.saveCategoryChange(parseLong(topicId), parseLong(newTopicCategoryId), bot);
 
         final DtList<Topic> topics = topicCategoryServices.getAllTopicFromCategory(bot, topicCategory);
 
         viewContext.publishDtList(topicsKey, topics);
-        viewContext.publishRef(topicIdKey, 0L);
-        viewContext.publishRef(newTopCatIdKey, 0L);
+        viewContext.publishRef(topicIdKey, "");
+        viewContext.publishRef(newTopCatIdKey, "");
 
         return viewContext;
     }
@@ -85,8 +93,10 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
                                         final UiMessageStack uiMessageStack,
                                         @ViewAttribute("bot") final Chatbot bot,
                                         @ViewAttribute("topicCategory") final TopicCategory topicCategory,
-                                        @ViewAttribute("topicId") final Long topicId) {
+                                        @ViewAttribute("topicCategoryChangeList") final DtList<TopicIhm> topicCategoryChangeList) {
 
+
+        topicServices.saveTopicsCategoryChange(topicCategoryChangeList, topicCategory.getTopCatId(), bot);
 
         final DtList<Topic> topics = topicCategoryServices.getAllTopicFromCategory(bot, topicCategory);
 
