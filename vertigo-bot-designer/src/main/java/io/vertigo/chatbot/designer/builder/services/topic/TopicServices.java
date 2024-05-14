@@ -98,6 +98,10 @@ public class TopicServices implements Component, Activeable {
         topicDAO.update(topic);
     }
 
+    public void saveTopicsCategoryChange(final DtList<TopicIhm> topicIhms, final Long topicCategoryId, Chatbot bot) {
+        topicIhms.forEach(topicIhm -> saveCategoryChange(topicIhm.getTopId(), topicCategoryId, bot));
+    }
+
     public Topic save(@SecuredOperation("botContributor") final Topic topic, final Chatbot bot, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences,
                       DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
 
