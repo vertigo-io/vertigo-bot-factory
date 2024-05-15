@@ -444,6 +444,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldTopicIhm$sinId,
 	/**
+	 * Category id.
+	 */
+	fldTopicIhm$catId,
+	/**
 	 * Category.
 	 */
 	fldTopicIhm$catLabel,

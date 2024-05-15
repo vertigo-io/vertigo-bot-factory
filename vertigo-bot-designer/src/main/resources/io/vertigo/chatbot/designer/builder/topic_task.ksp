@@ -73,6 +73,7 @@ create Task TkGetAllTopicsIhmFromBot {
 						ELSE tto.label
 					END as type,
 					top.tto_cd,
+					tpc.top_cat_id as cat_id,
 					tpc.label as cat_label,
 					string_agg(tpl.label, ',') as labels
 			from topic top 
@@ -95,7 +96,9 @@ create Task TkGetAllTopicsIhmFromBot {
 					tto.label,
 					tto.label_fr,
 					top.tto_cd,
+					tpc.top_cat_id,
 					tpc.label
+
 			
              "
 	in botId  				{domain : DoId         		cardinality : "1"  }	
