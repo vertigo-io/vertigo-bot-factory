@@ -93,20 +93,20 @@ public class TopicServices implements Component, Activeable {
     }
 
 
-    public void saveCategoryChange(final Long topicId, final Long topicCategoryId, Chatbot bot) {
+    public void saveCategoryChange(@SecuredOperation("botContributor") final Long topicId, final Long topicCategoryId, Chatbot bot) {
         Topic topic = topicDAO.get(topicId);
         topic.setTopCatId(topicCategoryId);
         topicDAO.update(topic);
     }
 
-    public void saveTopicsCategoryChangeFromTopIdsString(final String topicIdsString, final Long topicCategoryId, Chatbot bot) {
+    public void saveTopicsCategoryChangeFromTopIdsString(@SecuredOperation("botContributor") final String topicIdsString, final Long topicCategoryId, Chatbot bot) {
         List<String> topicIdList = Arrays.asList(topicIdsString.split(","));
         topicIdList.forEach(topicId -> saveCategoryChange(parseLong(topicId), topicCategoryId, bot));
     }
 
     public DtList<TopicIhm> filterTopicsRemovingACategory(final DtList<TopicIhm> topicIhmList, final Long topicCategoryId, final Chatbot bot) {
         return topicIhmList.stream()
-                .filter(topic -> !Objects.equals(topicDAO.get(topic.getTopId()).getTopCatId(), topicCategoryId))
+                .filter(topicIhm -> !Objects.equals(topicIhm.getCatId(), topicCategoryId))
                 .collect(VCollectors.toDtList(TopicIhm.class));
     }
 
