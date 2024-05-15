@@ -54,7 +54,7 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
         viewContext.publishRef(topicIdKey, "");
         viewContext.publishRef(newTopCatIdKey, "");
         viewContext.publishRef(topicsToUpdateKey, "");
-        viewContext.publishDtListModifiable(selectedTopicIhmListKey, new DtList<>(TopicIhm.class));
+        viewContext.publishDtList(selectedTopicIhmListKey, new DtList<>(TopicIhm.class));
 
 
         super.initBreadCrums(viewContext, topicCategory);
@@ -65,8 +65,20 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
     @GetMapping("/new")
     public void getNewCategory(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
         final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
-        viewContext.publishDto(topicCategoryKey, topicCategoryServices.getNewTopicCategory(bot));
+        final TopicCategory topicCategory = topicCategoryServices.getNewTopicCategory(bot);
+        final DtList<TopicCategory> topicCategories = topicCategoryServices.getAllCategoriesByBot(bot);
+        final DtList<Topic> allTopics = topicServices.getAllTopicByBotId(botId);
+        final DtList<TopicIhm> nonTechnicalTopicIhms = topicServices.getAllNonTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString());
+
+        viewContext.publishDtList(topicIhmListKey, DtDefinitions.TopicIhmFields.topId, nonTechnicalTopicIhms);
+        viewContext.publishDto(topicCategoryKey, topicCategory);
         viewContext.publishDtList(topicsKey, new DtList<>(Topic.class));
+        viewContext.publishDtList(otherCategoriesTopicsKey, allTopics);
+        viewContext.publishDtList(allTopicCategoriesKey, topicCategories);
+        viewContext.publishRef(topicIdKey, "");
+        viewContext.publishRef(newTopCatIdKey, "");
+        viewContext.publishRef(topicsToUpdateKey, "");
+        viewContext.publishDtList(selectedTopicIhmListKey, new DtList<>(TopicIhm.class));
         super.initEmptyBreadcrums(viewContext);
         listLimitReached(viewContext, uiMessageStack);
         toModeCreate();

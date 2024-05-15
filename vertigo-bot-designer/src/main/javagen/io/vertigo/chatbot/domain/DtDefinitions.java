@@ -1414,6 +1414,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		smtId,
 		/** Propriété 'Script intention id'. */
 		sinId,
+		/** Propriété 'Category id'. */
+		catId,
 		/** Propriété 'Category'. */
 		catLabel,
 		/** Propriété 'Enabled'. */
