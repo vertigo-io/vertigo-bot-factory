@@ -30,9 +30,10 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
     private static final ViewContextKey<Topic> topicsKey = ViewContextKey.of("topics");
     private static final ViewContextKey<String> topicIdKey = ViewContextKey.of("topicId");
     private static final ViewContextKey<String> newTopCatIdKey = ViewContextKey.of("newTopCatId");
+    private static final ViewContextKey<String> topicsToUpdateKey = ViewContextKey.of("topicsToUpdate");
     private static final ViewContextKey<Topic> otherCategoriesTopicsKey = ViewContextKey.of("otherCategoriesTopics");
     private static final ViewContextKey<TopicIhm> topicIhmListKey = ViewContextKey.of("topicIhmList");
-    private static final ViewContextKey<TopicIhm> topicCategoryChangeListKey = ViewContextKey.of("topicCategoryChangeList");
+    private static final ViewContextKey<TopicIhm> selectedTopicIhmListKey = ViewContextKey.of("selectedTopicIhmList");
 
 
     @GetMapping("/{topCatId}")
@@ -43,15 +44,17 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
         final DtList<Topic> topics = topicCategoryServices.getAllTopicFromCategory(bot, topicCategory);
         final DtList<TopicCategory> topicCategories = topicCategoryServices.getAllCategoriesByBot(bot);
         final DtList<Topic> otherCategoriesTopics = topicServices.getAllTopicByBotIdExceptACategory(bot, topCatId);
+        final DtList<TopicIhm> otherCategoriesNonTechnicalTopicIhms = topicServices.filterTopicsRemovingACategory(topicServices.getAllNonTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString()), topCatId, bot);
 
-        viewContext.publishDtList(topicIhmListKey, DtDefinitions.TopicIhmFields.topId, topicServices.getAllNonTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString()));
+        viewContext.publishDtList(topicIhmListKey, DtDefinitions.TopicIhmFields.topId, otherCategoriesNonTechnicalTopicIhms);
         viewContext.publishDto(topicCategoryKey, topicCategory);
         viewContext.publishDtList(topicsKey, topics);
         viewContext.publishDtList(otherCategoriesTopicsKey, otherCategoriesTopics);
         viewContext.publishDtList(allTopicCategoriesKey, topicCategories);
         viewContext.publishRef(topicIdKey, "");
         viewContext.publishRef(newTopCatIdKey, "");
-        viewContext.publishDtList(topicCategoryChangeListKey, new DtList<>(TopicIhm.class));
+        viewContext.publishRef(topicsToUpdateKey, "");
+        viewContext.publishDtListModifiable(selectedTopicIhmListKey, new DtList<>(TopicIhm.class));
 
 
         super.initBreadCrums(viewContext, topicCategory);
@@ -80,7 +83,9 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
         topicServices.saveCategoryChange(parseLong(topicId), parseLong(newTopicCategoryId), bot);
 
         final DtList<Topic> topics = topicCategoryServices.getAllTopicFromCategory(bot, topicCategory);
+        final DtList<TopicIhm> otherCategoriesNonTechnicalTopicIhms = topicServices.filterTopicsRemovingACategory(topicServices.getAllNonTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString()), topicCategory.getTopCatId(), bot);
 
+        viewContext.publishDtList(topicIhmListKey, otherCategoriesNonTechnicalTopicIhms);
         viewContext.publishDtList(topicsKey, topics);
         viewContext.publishRef(topicIdKey, "");
         viewContext.publishRef(newTopCatIdKey, "");
@@ -93,15 +98,14 @@ public class TopicCategoryDetailController extends AbstractBotCreationController
                                         final UiMessageStack uiMessageStack,
                                         @ViewAttribute("bot") final Chatbot bot,
                                         @ViewAttribute("topicCategory") final TopicCategory topicCategory,
-                                        @ViewAttribute("topicCategoryChangeList") final DtList<TopicIhm> topicCategoryChangeList) {
-
-
-        topicServices.saveTopicsCategoryChange(topicCategoryChangeList, topicCategory.getTopCatId(), bot);
+                                        @ViewAttribute("topicsToUpdate") final String topicsToUpdate) {
+        topicServices.saveTopicsCategoryChangeFromTopIdsString(topicsToUpdate, topicCategory.getTopCatId(), bot);
 
         final DtList<Topic> topics = topicCategoryServices.getAllTopicFromCategory(bot, topicCategory);
+        final DtList<TopicIhm> otherCategoriesNonTechnicalTopicIhms = topicServices.filterTopicsRemovingACategory(topicServices.getAllNonTechnicalTopicIhmByBot(bot, localeManager.getCurrentLocale().toString()), topicCategory.getTopCatId(), bot);
 
         viewContext.publishDtList(topicsKey, topics);
-
+        viewContext.publishDtList(topicIhmListKey, DtDefinitions.TopicIhmFields.topId, otherCategoriesNonTechnicalTopicIhms);
         return viewContext;
     }
 

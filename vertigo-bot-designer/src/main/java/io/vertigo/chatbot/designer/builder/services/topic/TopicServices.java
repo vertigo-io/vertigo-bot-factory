@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+import static java.lang.Long.parseLong;
 
 
 @Transactional
@@ -98,9 +99,17 @@ public class TopicServices implements Component, Activeable {
         topicDAO.update(topic);
     }
 
-    public void saveTopicsCategoryChange(final DtList<TopicIhm> topicIhms, final Long topicCategoryId, Chatbot bot) {
-        topicIhms.forEach(topicIhm -> saveCategoryChange(topicIhm.getTopId(), topicCategoryId, bot));
+    public void saveTopicsCategoryChangeFromTopIdsString(final String topicIdsString, final Long topicCategoryId, Chatbot bot) {
+        List<String> topicIdList = Arrays.asList(topicIdsString.split(","));
+        topicIdList.forEach(topicId -> saveCategoryChange(parseLong(topicId), topicCategoryId, bot));
     }
+
+    public DtList<TopicIhm> filterTopicsRemovingACategory(final DtList<TopicIhm> topicIhmList, final Long topicCategoryId, final Chatbot bot) {
+        return topicIhmList.stream()
+                .filter(topic -> !Objects.equals(topicDAO.get(topic.getTopId()).getTopCatId(), topicCategoryId))
+                .collect(VCollectors.toDtList(TopicIhm.class));
+    }
+
 
     public Topic save(@SecuredOperation("botContributor") final Topic topic, final Chatbot bot, final Boolean isEnabled, final DtList<NluTrainingSentence> nluTrainingSentences,
                       DtList<NluTrainingSentence> nluTrainingSentencesToDelete) {
