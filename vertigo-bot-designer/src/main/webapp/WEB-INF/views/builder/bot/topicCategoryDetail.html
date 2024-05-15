@@ -129,7 +129,7 @@
 				<q-card>
 					<q-card-section>
 						<div class="text-h6" style="text-align: center">
-							<span th:text="#{topic.categoryChange.popup.title}"></span>
+							<span th:text="#{topic.categoryAdd.popup.title}"></span>
 						</div>
 					</q-card-section>
 					<q-card-section>
@@ -140,10 +140,9 @@
 								:options="vueData.topicIhmList"
 								option-value="topId"
 								:option-label="topicIhm => `${vueData.locale == 'fr_FR' ? 'NOM' : 'NAME'} : ${topicIhm.title} | ${vueData.locale == 'fr_FR' ? 'CATEGORIE' : 'CATEGORY'} : ${topicIhm.catLabel}`"
-								th:label="#{topic.categoryChange.popup.category}"
+								th:label="#{topic.categoryAdd.popup.topic}"
 								map-options
 								emit-value
-								hide-selected
 								@input="updateSelectedTopics"
 						/>
 					</q-card-section>
