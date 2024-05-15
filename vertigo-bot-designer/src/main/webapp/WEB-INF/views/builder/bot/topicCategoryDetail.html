@@ -15,10 +15,9 @@
 						topCat.topCatId !== VertigoUi.vueData.topicCategory.topCatId);
 			}
 
-			function updateSelectedItems(selectedTopicIhm) {
+			function updateSelectedTopics(selectedTopicIhm) {
 				console.log("premier",selectedTopicIhm)
-				console.log(VertigoUi.vueData.topicCategoryChangeList)
-				VertigoUi.vueData.topicCategoryChangeList = selectedTopicIhm
+				VertigoUi.vueData.topicsToUpdate = selectedTopicIhm.map(topic => topic).join(',');
 			}
 
 		</script>
@@ -53,13 +52,15 @@
 			</vu:block>
 
 			<div style="display:flex; justify-content: flex-end">
-				<vu:include-data object="topicCategoryChangeList" field="'*'" modifiable="true"  />
+				<vu:include-data object="selectedTopicIhmList" field="*" />
+				<vu:include-data-primitive key="topicsToUpdate" modifiable="true" />
 				<q-btn color="primary" round icon="add"
 					   th:aria-label="#{action.add}"
 					   th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
 					   th:title="#{action.add}"
 					   @click.stop="$refs.otherTopicsDialog.show();
-					   vueData.topicCategoryChangeList=null"
+					   vueData.selectedTopicIhmList=null;
+					   vueData.topicsToUpdate=null"
 				></q-btn>
 			</div>
 
@@ -125,7 +126,7 @@
 			<q-dialog ref="otherTopicsDialog">
 				<vu:include-data object="topicCategory" field="'*'" />
 				<vu:include-data object="topicIhmList" field="'*'" />
-				<vu:include-data object="topicCatagoryChangeList" field="topId" modifiable="true" />
+				<vu:include-data-primitive key="locale"/>
 				<q-card>
 					<q-card-section>
 						<div class="text-h6" style="text-align: center">
@@ -136,21 +137,25 @@
 						<q-select
 								outlined
 								multiple
-								v-model="vueData.topicCategoryChangeList"
+								v-model="vueData.selectedTopicIhmList"
 								:options="vueData.topicIhmList"
-								:option-label="topicIhm => 'NAME : ' + topicIhm.title + ' | CATEGORY : ' + topicIhm.catLabel"
+								option-value="topId"
+								:option-label="topicIhm => `${vueData.locale == 'fr_FR' ? 'NOM' : 'NAME'} : ${topicIhm.title} | ${vueData.locale == 'fr_FR' ? 'CATEGORIE' : 'CATEGORY'} : ${topicIhm.catLabel}`"
 								th:label="#{topic.categoryChange.popup.category}"
+								map-options
 								emit-value
+								hide-selected
+								@input="updateSelectedTopics"
 						/>
 					</q-card-section>
 					<q-card-actions align="around">
 						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
 						<q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
 						<q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-							   @click="httpPostAjax('_saveAddingTopics', vueDataParams(['topicCategoryChangeList']));"
+							   @click="httpPostAjax('_saveAddingTopics', vueDataParams(['topicsToUpdate']));"
 							   color="primary"
 							   v-close-popup
-							   :disabled="vueData.topicCategoryChangeList === null"></q-btn>
+							   :disabled="vueData.selectedTopicIhmList === null || vueData.selectedTopicIhmList.length === 0"></q-btn>
 					</q-card-actions>
 				</q-card>
 			</q-dialog>
