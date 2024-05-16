@@ -139,7 +139,7 @@
 								v-model="vueData.selectedTopicIhmList"
 								:options="vueData.topicIhmList"
 								option-value="topId"
-								:option-label="topicIhm => `${vueData.locale == 'fr_FR' ? 'NOM' : 'NAME'} : ${topicIhm.title} | ${vueData.locale == 'fr_FR' ? 'CATEGORIE' : 'CATEGORY'} : ${topicIhm.catLabel}`"
+								:option-label="topicIhm => `${topicIhm.title} | ${vueData.locale == 'fr_FR' ? 'CATEGORIE' : 'CATEGORY'} : ${topicIhm.catLabel}`"
 								th:label="#{topic.categoryAdd.popup.topic}"
 								map-options
 								emit-value
