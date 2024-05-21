@@ -15,7 +15,8 @@ public enum JiraFieldEnum implements MasterDataEnum<io.vertigo.chatbot.commons.d
 	FIX_VERSION("FIX_VERSION"), //
 	PRIORITY("PRIORITY"), //
 	ASSIGNEE("ASSIGNEE"), //
-	REPORTER("REPORTER")
+	REPORTER("REPORTER"), //
+	ATTACHMENT("ATTACHMENT")
 	;
 
 	private final Serializable entityId;

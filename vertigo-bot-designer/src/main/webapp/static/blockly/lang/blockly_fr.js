@@ -212,6 +212,7 @@ Blockly.Msg["JIRA_FIELD_TYPE_PRIORITY"] = "Priorité";
 Blockly.Msg["JIRA_FIELD_TYPE_REPORTER"] = "Rapporteur";
 Blockly.Msg["JIRA_FIELD_TYPE_SUMMARY"] = "Titre";
 Blockly.Msg["JIRA_FIELD_TYPE_VERSIONS"] = "Versions affectées";
+Blockly.Msg["JIRA_FIELD_TYPE_ATTACHMENT"] = "Pièce jointe";
 
 // *****************************
 // **** CATEGORIE TEMPLATE *****

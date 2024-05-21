@@ -198,6 +198,12 @@ create DtDefinition DtJiraField {
          "jiraId" : "reporter",
          "label" : "Reporter",
          "labelFr" : "Rapporteur"
+      },
+      "ATTACHMENT" : {
+         "jirFieldCd" : "ATTACHMENT",
+         "jiraId" : "attachment",
+         "label" : "Attachment",
+         "labelFr" : "Pièce jointe"
       }
      }`
     sortField : "jirFieldCd"
