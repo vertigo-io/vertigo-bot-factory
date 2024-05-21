@@ -10,3 +10,4 @@ insert into JIRA_FIELD(JIR_FIELD_CD, JIRA_ID, LABEL, LABEL_FR) values ('FIX_VERS
 insert into JIRA_FIELD(JIR_FIELD_CD, JIRA_ID, LABEL, LABEL_FR) values ('PRIORITY', 'priority', 'Priority', 'Priorité');
 insert into JIRA_FIELD(JIR_FIELD_CD, JIRA_ID, LABEL, LABEL_FR) values ('ASSIGNEE', 'assignee', 'Assignee', 'Responsable');
 insert into JIRA_FIELD(JIR_FIELD_CD, JIRA_ID, LABEL, LABEL_FR) values ('REPORTER', 'reporter', 'Reporter', 'Rapporteur');
+insert into JIRA_FIELD(JIR_FIELD_CD, JIRA_ID, LABEL, LABEL_FR) values ('ATTACHMENT', 'attachment', 'Attachment', 'Pièce jointe');
