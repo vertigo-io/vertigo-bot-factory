@@ -21,7 +21,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.topicFileExport.TopicFileExportPAO;
-import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
+import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicFileExportFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
@@ -78,7 +78,7 @@ public class TopicFileExportServices implements Component {
 	private ExporterManager exportManager;
 
 	@Inject
-	private DesignerFileServices designerFileServices;
+	private FileServices fileServices;
 
 	/*
 	 * Return a File from a list of topicFileExport
@@ -120,8 +120,8 @@ public class TopicFileExportServices implements Component {
 	}
 
 	public void importTopicFromCSVFile(final Chatbot chatbot, final FileInfoURI importTopicFile) {
-		final List<TopicFileExport> list = transformFileToList(designerFileServices.getFileTmp(importTopicFile));
-		importTopicFromList(chatbot, list);
+        final List<TopicFileExport> list = transformFileToList(fileServices.getFileTmp(importTopicFile));
+        importTopicFromList(chatbot, list, false);
 	}
 
 	/*
@@ -147,7 +147,7 @@ public class TopicFileExportServices implements Component {
 				TopicFileExportFields.isEnd.name(),
 				TopicFileExportFields.labels.name()
 		};
-		return designerFileServices.readCsvFile(TopicFileExport.class, file, columns);
+		return fileServices.readCsvFile(TopicFileExport.class, file, columns);
 	}
 
 	/*

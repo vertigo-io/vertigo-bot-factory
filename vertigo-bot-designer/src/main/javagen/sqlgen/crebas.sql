@@ -1093,6 +1093,7 @@ create table SAVED_TRAINING
     CREATION_TIME	 TIMESTAMP   	not null,
     DESCRIPTION 	 TEXT        	,
     BOT_EXPORT  	 JSONB       	not null,
+    ATT_FILE_INFO_ID	 NUMERIC     	not null,
     TRA_ID      	 NUMERIC     	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_SAVED_TRAINING primary key (SAVED_TRA_ID)
@@ -1112,6 +1113,9 @@ comment on column SAVED_TRAINING.DESCRIPTION is
 
 comment on column SAVED_TRAINING.BOT_EXPORT is
 'Bot Export';
+
+comment on column SAVED_TRAINING.ATT_FILE_INFO_ID is
+'Attachment File Info';
 
 comment on column SAVED_TRAINING.TRA_ID is
 'Training';
@@ -1735,6 +1739,12 @@ alter table RESPONSE_BUTTON
 	references TOPIC (TOP_ID);
 
 create index A_RESPONSE_BUTTON_TOPIC_RESPONSE_TOPIC_FK on RESPONSE_BUTTON (TOP_ID_RESPONSE asc);
+
+alter table SAVED_TRAINING
+	add constraint FK_A_SAVED_TRAINING_ATTACHMENT_FILE_INFO foreign key (ATT_FILE_INFO_ID)
+	references ATTACHMENT_FILE_INFO (ATT_FI_ID);
+
+create index A_SAVED_TRAINING_ATTACHMENT_FILE_INFO_FK on SAVED_TRAINING (ATT_FILE_INFO_ID asc);
 
 alter table SAVED_TRAINING
 	add constraint FK_A_SAVED_TRAINING_CHATBOT_CHATBOT foreign key (BOT_ID)

@@ -22,6 +22,21 @@ public final class SavedTraining implements Entity {
 	private String botExport;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "ASavedTraining",
+			fkFieldName = "attFileInfoId",
+			primaryDtDefinitionName = "DtAttachmentFileInfo",
+			primaryIsNavigable = true,
+			primaryRole = "AttachmentFileInfo",
+			primaryLabel = "Attachment File Info",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtSavedTraining",
+			foreignIsNavigable = false,
+			foreignRole = "SavedTraining",
+			foreignLabel = "SavedTraining",
+			foreignMultiplicity = "0..*")
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentFileInfo> attFileInfoIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.AttachmentFileInfo.class, "AttachmentFileInfo");
+
+	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ASavedTrainingTraining",
 			fkFieldName = "traId",
 			primaryDtDefinitionName = "DtTraining",
@@ -154,6 +169,25 @@ public final class SavedTraining implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Attachment File Info'.
+	 * @return Long attFileInfoId <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Attachment File Info", fkDefinition = "DtAttachmentFileInfo", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	public Long getAttFileInfoId() {
+		return (Long) attFileInfoIdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Attachment File Info'.
+	 * @param attFileInfoId Long <b>Obligatoire</b>
+	 */
+	public void setAttFileInfoId(final Long attFileInfoId) {
+		attFileInfoIdAccessor.setId(attFileInfoId);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Training'.
 	 * @return Long traId <b>Obligatoire</b>
 	 */
@@ -188,6 +222,14 @@ public final class SavedTraining implements Entity {
 	 */
 	public void setBotId(final Long botId) {
 		botIdAccessor.setId(botId);
+	}
+
+ 	/**
+	 * Association : Attachment File Info.
+	 * @return l'accesseur vers la propriété 'Attachment File Info'
+	 */
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentFileInfo> attachmentFileInfo() {
+		return attFileInfoIdAccessor;
 	}
 
  	/**

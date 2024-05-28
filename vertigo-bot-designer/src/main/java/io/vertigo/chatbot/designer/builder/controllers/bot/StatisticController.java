@@ -45,7 +45,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.commons.ihm.enums.TimeEnum;
 import io.vertigo.chatbot.designer.commons.services.EnumIHMManager;
-import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
+import io.vertigo.chatbot.designer.commons.services.FileServices;
 import io.vertigo.chatbot.designer.domain.analytics.CategoryStat;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationDetail;
@@ -138,8 +138,8 @@ public class StatisticController extends AbstractBotController {
 	@Inject
 	private TimeSerieServices timeSerieServices;
 
-	@Inject
-	private DesignerFileServices designerFileServices;
+    @Inject
+    private FileServices fileServices;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
@@ -251,43 +251,43 @@ public class StatisticController extends AbstractBotController {
 			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("selectTypeExportAnalyticList") final TypeExportAnalyticList typeExportAnalyticList) {
 
-		if (typeExportAnalyticList.getTeaCd().isEmpty()) {
-			throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
-		}
-		final List<VFile> fileList = new ArrayList<>();
-		typeExportAnalyticList.getTeaCd().forEach(typeExportAnalytic -> {
-			switch (typeExportAnalytic) {
-				case "USER_ACTIONS_CONVERSATIONS":
-					final DtList<SessionExport> listSessionExport = analyticsExportServices.getSessionExport(criteria);
-					fileList.add(analyticsExportServices.exportSessions(listSessionExport));
-					break;
-				case "UNKNOWN_MESSAGES":
-					final DtList<UnknownSentenseExport> listUnknownSentenseExport = analyticsExportServices.getUnknownSentenseExport(criteria);
-					fileList.add(analyticsExportServices.exportUnknownMessages(listUnknownSentenseExport));
-					break;
-				case "CONVERSATIONS":
-					final DtList<ConversationStat> conversationStats = analyticsServices.getConversationsStats(criteria, conversationCriteria);
-					fileList.add(analyticsExportServices.exportConversations(conversationStats));
-					break;
-				case "CATEGORIES":
-					final DtList<CategoryStat> categoryStats = analyticsServices.buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()),
-							analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria));
-					fileList.add(analyticsExportServices.exportCategories(categoryStats));
-					break;
-				case "TOPIC_USAGE":
-					final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
-					fileList.add(analyticsExportServices.exportTopIntents(topIntents));
-					break;
-				default:
-					throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
-			}
-		});
-		if (fileList.size() == 1) {
-			return fileList.get(0);
-		} else {
-			final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			return designerFileServices.zipMultipleFiles(fileList,
-					MessageText.of(AnalyticsMultilingualResources.ZIP_EXPORT_FILENAME).getDisplay() + dateFormat.format(new Date()));
-		}
-	}
+        if (typeExportAnalyticList.getTeaCd().isEmpty()) {
+            throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
+        }
+        final Map<String, VFile> fileMap = new HashMap<>();
+        typeExportAnalyticList.getTeaCd().forEach(typeExportAnalytic -> {
+            switch (typeExportAnalytic) {
+                case "USER_ACTIONS_CONVERSATIONS":
+                    final DtList<SessionExport> listSessionExport = analyticsExportServices.getSessionExport(criteria);
+                    fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_USER_ACTIONS_CONVERSATIONS).getDisplay(), analyticsExportServices.exportSessions(listSessionExport));
+                    break;
+                case "UNKNOWN_MESSAGES":
+                    final DtList<UnknownSentenseExport> listUnknownSentenseExport = analyticsExportServices.getUnknownSentenseExport(criteria);
+                    fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_UNKNOWN_MESSAGES).getDisplay(), analyticsExportServices.exportUnknownMessages(listUnknownSentenseExport));
+                    break;
+                case "CONVERSATIONS":
+                    final DtList<ConversationStat> conversationStats = analyticsServices.getConversationsStats(criteria, conversationCriteria);
+                    fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_CONVERSATION_STATS).getDisplay(), analyticsExportServices.exportConversations(conversationStats));
+                    break;
+                case "CATEGORIES":
+                    final DtList<CategoryStat> categoryStats = analyticsServices.buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()),
+                            analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria));
+                    fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_CATEGORIES).getDisplay(), analyticsExportServices.exportCategories(categoryStats));
+                    break;
+                case "TOPIC_USAGE":
+                    final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
+                    fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_TOPIC_USAGE).getDisplay(), analyticsExportServices.exportTopIntents(topIntents));
+                    break;
+                default:
+                    throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
+            }
+        });
+        if (fileMap.size() == 1) {
+            return fileMap.values().iterator().next();
+        } else {
+            final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            return fileServices.zipMultipleFiles(fileMap,
+                    MessageText.of(AnalyticsMultilingualResources.ZIP_EXPORT_FILENAME).getDisplay() + dateFormat.format(new Date()));
+        }
+    }
 }
