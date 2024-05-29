@@ -256,6 +256,11 @@
                    th:message="#{model.savedTraining.deletePopup.message}" th:confirm="#{action.delete}"
                    dataName="savedTraId"></vu:popup-ajax>
 
+    <vu:popup-ajax action="_rollbackSavedTraining" vModel="showRollbackSavedTrainingPopup"
+                   th:message="#{model.savedTraining.deletePopup.message}" th:confirm="#{action.delete}"
+                   dataName="savedTraId"
+    ></vu:popup-ajax>
+
     <vu:table list="savedTrainingList" th:title="#{model.savedTraining}" :dense="|$q.screen.lt.lg|"
               componentId="savedTrainingList"
               rowsPerPage="10" autoColClass>
@@ -278,7 +283,7 @@
                    th:aria-label="#{model.savedTraining.rollback}"
                    th:title="#{model.savedTraining.rollback}"
                    :loading="dataX.loadingRollback"
-                   @click="rollbackSavedTraining(props.row.savedTraId)"></q-btn>
+                   @click="componentStates.savedTraId = props.row.savedTraId; $refs.rollbackSavedTraining.show()"></q-btn>
             <q-btn class="on-right" round color="blue" icon="cloud_upload" th:aria-label="#{savedTraining.deploy}"
                    th:title="#{savedTraining.deploy}"
                    @click="componentStates.savedTraId = props.row.savedTraId;  ;$refs.deployTraining.show()"></q-btn>
@@ -426,6 +431,24 @@
                 <q-btn th:label="#{action.deploy.cancel}" color="red" v-close-popup></q-btn>
                 <q-btn th:label="#{action.deploy}" color="positive"
                        @click="deploySavedTraining(componentStates.nodeToDeploy.node.noId, componentStates.savedTraId);"
+                       v-close-popup></q-btn>
+            </q-card-actions>
+
+        </q-card>
+    </q-dialog>
+
+    <q-dialog ref="rollbackSavedTraining"
+              th:attr="dataObject=${model.vContext['componentStates'].addComponentState('savedTraId')}">
+        <q-card>
+            <q-card-section>
+                <div class="text-h6"><span th:text="#{model.savedTraining.rollback.message}"></span></div>
+            </q-card-section>
+
+            <q-card-actions align="around">
+                <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                <q-btn th:label="#{action.rollback.cancel}" color="red" v-close-popup></q-btn>
+                <q-btn th:label="#{action.rollback.rollback}" color="blue"
+                       @click="rollbackSavedTraining(componentStates.savedTraId);"
                        v-close-popup></q-btn>
             </q-card-actions>
 
