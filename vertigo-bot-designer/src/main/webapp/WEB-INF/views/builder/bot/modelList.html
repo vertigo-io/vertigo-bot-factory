@@ -17,6 +17,8 @@
         VUiExtensions.dataX.loadingRunner = false;
         VUiExtensions.dataX.loadingModels = false;
         VUiExtensions.dataX.loadingTraining = false;
+        VUiExtensions.dataX.loadingRollback = false;
+
         VUiExtensions.dataX.modalLog = {"show": false, "col": "", "row": {}};
 
         function normalizeString(str) {
@@ -60,9 +62,14 @@
             })
         }
 
-        function deploySavedTrainingSettings(savedTraId) {
-            VUiPage.httpPostAjax("_deploySavedTrainingSettings", {
+        function rollbackSavedTraining(savedTraId) {
+            VUiExtensions.dataX.loadingRollback = true;
+            VUiPage.httpPostAjax("_rollbackSavedTraining", {
                 'savedTrainingIdToDeploy': savedTraId,
+            }, {
+                onSuccess: function () {
+                    VUiExtensions.dataX.loadingRollback = false;
+                }
             })
         }
 
@@ -270,7 +277,8 @@
             <q-btn class="on-right" round color="blue" icon="settings_backup_restore"
                    th:aria-label="#{model.savedTraining.rollback}"
                    th:title="#{model.savedTraining.rollback}"
-                   @click="deploySavedTrainingSettings(props.row.savedTraId)"></q-btn>
+                   :loading="dataX.loadingRollback"
+                   @click="rollbackSavedTraining(props.row.savedTraId)"></q-btn>
             <q-btn class="on-right" round color="blue" icon="cloud_upload" th:aria-label="#{savedTraining.deploy}"
                    th:title="#{savedTraining.deploy}"
                    @click="componentStates.savedTraId = props.row.savedTraId;  ;$refs.deployTraining.show()"></q-btn>

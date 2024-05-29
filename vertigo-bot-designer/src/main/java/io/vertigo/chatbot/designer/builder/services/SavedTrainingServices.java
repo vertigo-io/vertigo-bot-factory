@@ -3,8 +3,8 @@ package io.vertigo.chatbot.designer.builder.services;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.AttachmentInfo;
+import io.vertigo.chatbot.commons.dao.AttachmentFileInfoDAO;
 import io.vertigo.chatbot.commons.dao.SavedTrainingDAO;
-import io.vertigo.chatbot.commons.domain.AttachmentFileInfo;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.SavedTraining;
 import io.vertigo.chatbot.commons.domain.SavedTrainingCriteria;
@@ -29,7 +29,6 @@ import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.FileStoreManager;
 import io.vertigo.datastore.filestore.model.FileInfo;
 import io.vertigo.datastore.filestore.model.VFile;
-import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 
 import javax.inject.Inject;
 import java.text.DateFormat;
@@ -48,6 +47,9 @@ public class SavedTrainingServices implements Component {
 
     @Inject
     private SavedTrainingDAO savedTrainingDAO;
+
+    @Inject
+    private AttachmentFileInfoDAO attachmentFileInfoDAO;
 
     @Inject
     private TopicCategoryServices topicCategoryServices;
@@ -78,6 +80,7 @@ public class SavedTrainingServices implements Component {
 
     @Inject
     private FileStoreManager fileStoreManager;
+
 
     @Secured("BotUser")
     public SavedTraining save(@SecuredOperation("botAdm") final Chatbot bot, final SavedTraining savedTraining) {
@@ -114,13 +117,13 @@ public class SavedTrainingServices implements Component {
     }
 
 
-    public void importConfig(@SecuredOperation("botAdm") final Chatbot bot, final long savedTrainingId) {
+    public void rollbackConfig(@SecuredOperation("botAdm") final Chatbot bot, final long savedTrainingId) {
 
-        StoreVAccessor<AttachmentFileInfo> attachmentFileInfo = getById(savedTrainingId).attachmentFileInfo();
-        attachmentFileInfo.load();
-        long fileInfoId = attachmentFileInfo.get().getAttFiId();
-        VFile savedTraining = fileServices.getAttachment(fileInfoId);
-        Map<String, VFile> csvMap = fileServices.unzipMultipleFiles(savedTraining);
+        SavedTraining savedTraining = getById(savedTrainingId);
+        savedTraining.attachmentFileInfo().load();
+        long fileInfoId = savedTraining.attachmentFileInfo().get().getAttFiId();
+        VFile savedTrainingZip = fileServices.getAttachment(fileInfoId);
+        Map<String, VFile> csvMap = fileServices.unzipMultipleFiles(savedTrainingZip);
 
         VFile categoriesCSV = csvMap.get(MessageText.of(ExportMultilingualResources.FILE_TYPE_CATEGORIES).getDisplay());
         VFile topicsCSV = csvMap.get(MessageText.of(ExportMultilingualResources.FILE_TYPE_TOPICS).getDisplay());
@@ -146,7 +149,9 @@ public class SavedTrainingServices implements Component {
 
     @Secured("BotUser")
     public void delete(@SecuredOperation("botAdm") final Chatbot bot, final Long id) {
+        SavedTraining savedTraining = getById(id);
         savedTrainingDAO.delete(id);
+        fileServices.deleteAttachment(savedTraining.getAttFileInfoId());
     }
 
     public DtList<SavedTraining> getAllSavedTrainingByBotId(final Long botId) {

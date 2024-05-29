@@ -167,10 +167,10 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
         return viewContext;
     }
 
-    @PostMapping("/_deploySavedTrainingSettings")
+    @PostMapping("/_rollbackSavedTraining")
     public ViewContext deploySavedTrainingSettings(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
                                                    @RequestParam("savedTrainingIdToDeploy") final Long savedTrainingIdToDeploy) {
-        savedTrainingServices.importConfig(bot, savedTrainingIdToDeploy);
+        savedTrainingServices.rollbackConfig(bot, savedTrainingIdToDeploy);
         return viewContext;
     }
 
