@@ -67,11 +67,11 @@ modules:
       - cache.memory:
       - entitystore.sql: # nous utilisons un store de type SQL (avec notre base H2)
       - filestore.db:
-          fileInfoClass: io.vertigo.chatbot.designer.commons.services.FileInfoStd
+          fileInfoClass: io.vertigo.chatbot.commons.FileInfoStd
           storeDtName: DtMediaFileInfo
       - filestore.fullFilesystem:
           name: temp
-          fileInfoClass: io.vertigo.chatbot.designer.commons.services.FileInfoTmp
+          fileInfoClass: io.vertigo.chatbot.commons.FileInfoTmp
           path: ${java.io.tmpdir}/chatbotUploadedFiles/
           purgeDelayMinutes: 30
       - filestore.filesystem:

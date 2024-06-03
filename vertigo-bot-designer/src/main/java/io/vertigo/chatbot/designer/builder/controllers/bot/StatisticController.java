@@ -45,7 +45,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.commons.ihm.enums.TimeEnum;
 import io.vertigo.chatbot.designer.commons.services.EnumIHMManager;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.domain.analytics.CategoryStat;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.ConversationDetail;
@@ -139,7 +139,7 @@ public class StatisticController extends AbstractBotController {
 	private TimeSerieServices timeSerieServices;
 
 	@Inject
-	private FileServices fileServices;
+	private DesignerFileServices designerFileServices;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
@@ -286,7 +286,7 @@ public class StatisticController extends AbstractBotController {
 			return fileList.get(0);
 		} else {
 			final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			return fileServices.zipMultipleFiles(fileList,
+			return designerFileServices.zipMultipleFiles(fileList,
 					MessageText.of(AnalyticsMultilingualResources.ZIP_EXPORT_FILENAME).getDisplay() + dateFormat.format(new Date()));
 		}
 	}

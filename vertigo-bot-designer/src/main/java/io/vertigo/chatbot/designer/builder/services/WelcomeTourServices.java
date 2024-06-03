@@ -15,7 +15,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.WelcomeTour;
 import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
 import io.vertigo.chatbot.commons.domain.WelcomeTourStep;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
@@ -36,7 +36,7 @@ public class WelcomeTourServices implements Component {
 	private WelcomeTourDAO welcomeTourDAO;
 
 	@Inject
-	private FileServices fileServices;
+	private DesignerFileServices designerFileServices;
 
 	@Inject
 	private WelcomeTourStepServices welcomeTourStepServices;
@@ -51,7 +51,7 @@ public class WelcomeTourServices implements Component {
 			if (welcomeTour.getWelId() != null) {
 				welcomeTourStepServices.deleteAllByTourId(welcomeTour.getWelId());
 			}
-			final VFile configFile = fileServices.getFileTmp(configFileUri.get());
+			final VFile configFile = designerFileServices.getFileTmp(configFileUri.get());
 			try (final InputStream inputStream = configFile.createInputStream()) {
 				final String configString = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 				welcomeTour.setConfig(configString);

@@ -14,6 +14,7 @@ import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.commons.FileDescriptor;
+import io.vertigo.chatbot.commons.FileUtils;
 import io.vertigo.chatbot.commons.MailService;
 import io.vertigo.chatbot.executor.manager.ExecutorManager;
 import io.vertigo.core.lang.Assertion;
@@ -41,9 +42,8 @@ public class BtNodeMailProvider implements Component {
 					final FileDescriptor fileDescriptor = new FileDescriptor();
 					final BBKey rootFileKey = BBKey.of(attachmentKey.get());
 					fileDescriptor.setFileName(bb.getString(BBKey.of(rootFileKey, "/filename")));
-					final String[] fileData = bb.getString(BBKey.of(rootFileKey, "/filecontent")).split(",");
-					Assertion.check().isTrue(fileData.length == 2, "Attachment " + fileDescriptor.getFileName() + " is not Base64 encoded");
-					fileDescriptor.setFileContent(fileData[1]);
+					fileDescriptor.setFileContent(FileUtils.fileContentFromBase64String(bb.getString(BBKey.of(rootFileKey, "/filecontent")),
+							fileDescriptor.getFileName()));
 					fileDescriptor.setFileType(URLConnection.getFileNameMap().getContentTypeFor(fileDescriptor.getFileName()));
 					optFileDescriptor = Optional.of(fileDescriptor);
 				}

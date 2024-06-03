@@ -88,6 +88,18 @@
 			<version>${owasp-html-sanitizer.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>xyz.capybara</groupId>
+			<artifactId>clamav-client</artifactId>
+			<version>${clamav-client.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>${openCSV.version}</version>
+		</dependency>
+
 	</dependencies>
 
 
