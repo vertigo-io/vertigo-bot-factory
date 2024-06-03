@@ -151,7 +151,9 @@ public class SavedTrainingServices implements Component {
     public void delete(@SecuredOperation("botAdm") final Chatbot bot, final Long id) {
         SavedTraining savedTraining = getById(id);
         savedTrainingDAO.delete(id);
-        fileServices.deleteAttachment(savedTraining.getAttFileInfoId());
+        if (savedTraining.getAttFileInfoId() != null) {
+            fileServices.deleteAttachment(savedTraining.getAttFileInfoId());
+        }
     }
 
     public DtList<SavedTraining> getAllSavedTrainingByBotId(final Long botId) {
