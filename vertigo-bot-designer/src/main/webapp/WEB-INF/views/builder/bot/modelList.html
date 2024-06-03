@@ -279,7 +279,9 @@
 
         </vu:slot>
         <vu:slot name="actions_slot" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}">
+            <vu:include-data object="savedTrainingList" field="attFileInfoId"/>
             <q-btn class="on-right" round color="blue" icon="settings_backup_restore"
+                   v-if="props.row.attFileInfoId !== null"
                    th:aria-label="#{model.savedTraining.rollback}"
                    th:title="#{model.savedTraining.rollback}"
                    :loading="dataX.loadingRollback"
