@@ -10,7 +10,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicCategoryExport;
 import io.vertigo.chatbot.commons.multilingual.categories.CategoriesMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.topicCategory.TopicCategoryPAO;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.locale.MessageText;
@@ -48,7 +48,7 @@ public class TopicCategoryServices implements Component {
     private ExporterManager exportManager;
 
     @Inject
-    private FileServices fileServices;
+    private DesignerFileServices designerFileServices;
 
     public TopicCategory saveCategory(@SecuredOperation("botAdm") final Chatbot bot, final TopicCategory category) {
         return topicCategoryDAO.save(category);
@@ -136,7 +136,7 @@ public class TopicCategoryServices implements Component {
     }
 
     public void importCategoriesFromCSVFile(@SecuredOperation("botAdm") final Chatbot chatbot, final FileInfoURI importCategoriesFileUri) {
-        transformFileToList(fileServices.getFileTmp(importCategoriesFileUri)).forEach(topicCategory -> generateCategoryFromCategoryExport(topicCategory, chatbot));
+        transformFileToList(designerFileServices.getFileTmp(importCategoriesFileUri)).forEach(topicCategory -> generateCategoryFromCategoryExport(topicCategory, chatbot));
     }
 
     private List<TopicCategoryExport> transformFileToList(final VFile file) {
@@ -146,7 +146,7 @@ public class TopicCategoryServices implements Component {
                 DtDefinitions.TopicCategoryExportFields.isEnabled.name(),
                 DtDefinitions.TopicCategoryExportFields.isTechnical.name(),
         };
-        return fileServices.readCsvFile(TopicCategoryExport.class, file, columns);
+        return designerFileServices.readCsvFile(TopicCategoryExport.class, file, columns);
     }
 
     private void generateCategoryFromCategoryExport(final TopicCategoryExport topicCategoryExport, final Chatbot chatbot) {

@@ -40,7 +40,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.export.file.TopicFileExportServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm;
 import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
 import io.vertigo.chatbot.designer.domain.topic.export.TypeBotExport;
@@ -94,7 +94,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	protected TopicCategoryServices topicCategoryServices;
 
 	@Inject
-	protected FileServices fileServices;
+	protected DesignerFileServices designerFileServices;
 
 	@Inject
 	protected ContextEnvironmentServices contextEnvironmentServices;
@@ -236,7 +236,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 			return fileList.get(0);
 		} else {
 			final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			return fileServices.zipMultipleFiles(fileList,
+			return designerFileServices.zipMultipleFiles(fileList,
 					MessageText.of(BotMultilingualResources.EXPORT_ZIP_FILENAME, bot.getName(), dateFormat.format(new Date())).getDisplay());
 		}
 

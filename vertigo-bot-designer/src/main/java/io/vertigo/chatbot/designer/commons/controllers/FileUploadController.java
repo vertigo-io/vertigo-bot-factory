@@ -27,7 +27,7 @@ import javax.inject.Inject;
 
 import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.chatbot.designer.commons.DesignerUserSession;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
@@ -37,7 +37,7 @@ import io.vertigo.vega.webservice.stereotype.QueryParam;
 public class FileUploadController {
 
 	@Inject
-	private FileServices fileServices;
+	private DesignerFileServices designerFileServices;
 
 	@Inject
 	private VSecurityManager securityManager;
@@ -47,18 +47,18 @@ public class FileUploadController {
 		if (!getUserSession().getTmpFiles().contains(file)) {
 			return null;
 		}
-		return fileServices.getFileTmp(file);
+		return designerFileServices.getFileTmp(file);
 	}
 
 	@GetMapping("/getAttachment")
 	public VFile getAttachment(@QueryParam("attFiId") final Long attFiId) {
-		return  fileServices.getAttachment(attFiId);
+		return  designerFileServices.getAttachment(attFiId);
 	}
 
 	@PostMapping("/upload")
 	public FileInfoURI uploadFile(@QueryParam("file") final VFile file) {
-		fileServices.checkFile(file);
-		final FileInfoURI tmpUri = fileServices.saveFileTmp(file);
+		designerFileServices.checkFile(file);
+		final FileInfoURI tmpUri = designerFileServices.saveFileTmp(file);
 		getUserSession().getTmpFiles().add(tmpUri);
 		return tmpUri;
 	}
@@ -68,7 +68,7 @@ public class FileUploadController {
 		if (!getUserSession().getTmpFiles().contains(file)) {
 			return null;
 		}
-		fileServices.deleteFileTmp(file);
+		designerFileServices.deleteFileTmp(file);
 		return file; //if no return, you must get the response. Prefer to return old uri.
 	}
 

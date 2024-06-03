@@ -9,6 +9,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
 
+import io.vertigo.chatbot.commons.AntivirusServices;
 import io.vertigo.chatbot.commons.MailService;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotNode;
@@ -17,7 +18,6 @@ import io.vertigo.chatbot.designer.builder.monitoring.MonitoringPAO;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
-import io.vertigo.chatbot.designer.commons.services.AntivirusServices;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.chatbot.designer.domain.monitoring.AlertingEvent;
 import io.vertigo.chatbot.designer.domain.monitoring.MonitoringAlertingSubscription;

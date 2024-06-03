@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.commons.services;
+package io.vertigo.chatbot.commons;
 
 import io.vertigo.datastore.filestore.definitions.FileInfoDefinition;
 import io.vertigo.datastore.filestore.model.VFile;

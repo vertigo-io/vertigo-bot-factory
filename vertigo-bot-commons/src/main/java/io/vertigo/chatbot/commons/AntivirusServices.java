@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.commons.services;
+package io.vertigo.chatbot.commons;
 
 import java.io.InputStream;
 

@@ -5,6 +5,7 @@ import io.vertigo.ai.bb.BlackBoardManager;
 import io.vertigo.ai.bt.BehaviorTreeManager;
 import io.vertigo.ai.nlu.NluIntent;
 import io.vertigo.ai.nlu.NluManager;
+import io.vertigo.chatbot.commons.FileServices;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.commons.codec.CodecManager;
@@ -12,6 +13,8 @@ import io.vertigo.core.lang.Assertion;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.inject.Inject;
+
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,6 +27,7 @@ public final class BotManagerImpl implements BotManager {
 	private final BehaviorTreeManager behaviorTreeManager;
 	private final NluManager nluManager;
 	private final CodecManager codecManager;
+	private final FileServices fileServices;
 
 	private Map<String, TopicDefinition> topicDefinitionMap; // immutable map of topics
 
@@ -32,7 +36,8 @@ public final class BotManagerImpl implements BotManager {
 			final CodecManager codecManager,
 			final BlackBoardManager blackBoardManager,
 			final BehaviorTreeManager behaviorTreeManager,
-			final NluManager nluManager) {
+			final NluManager nluManager,
+			final FileServices fileServices) {
 		Assertion.check()
 				.isNotNull(codecManager)
 				.isNotNull(blackBoardManager)
@@ -43,6 +48,7 @@ public final class BotManagerImpl implements BotManager {
 		this.behaviorTreeManager = behaviorTreeManager;
 		this.nluManager = nluManager;
 		this.codecManager = codecManager;
+		this.fileServices = fileServices;
 
 		topicDefinitionMap = Collections.emptyMap();
 	}
@@ -65,7 +71,7 @@ public final class BotManagerImpl implements BotManager {
 	@Override
 	public BotEngine createBotEngine(final UUID convId, final String storeName) {
 		final var bb = blackBoardManager.connect(storeName, BBKey.of("/" + codecManager.getHexEncoder().encode(convId.toString().getBytes(StandardCharsets.UTF_8))));
-		return new BotEngine(bb, topicDefinitionMap, behaviorTreeManager, nluManager);
+		return new BotEngine(bb, topicDefinitionMap, behaviorTreeManager, nluManager, fileServices);
 	}
 
 	@Override

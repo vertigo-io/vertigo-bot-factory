@@ -32,7 +32,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.dao.monitoring.AlertingEventDAO;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.chatbot.designer.utils.DateUtils;
@@ -78,7 +78,7 @@ public class ChatbotServices implements Component {
 	private TopicServices topicServices;
 
 	@Inject
-	private FileServices fileServices;
+	private DesignerFileServices designerFileServices;
 
 	@Inject
 	private ChatbotProfilServices chatbotProfilServices;
@@ -147,8 +147,8 @@ public class ChatbotServices implements Component {
 		Long oldAvatar = null;
 		if (personPictureFile.isPresent()) {
 			oldAvatar = chatbot.getFilIdAvatar();
-			final VFile fileTmp = fileServices.getFileTmp(personPictureFile.get());
-			final FileInfoURI fileInfoUri = fileServices.saveFile(fileTmp);
+			final VFile fileTmp = designerFileServices.getFileTmp(personPictureFile.get());
+			final FileInfoURI fileInfoUri = designerFileServices.saveFile(fileTmp);
 			chatbot.setFilIdAvatar((Long) fileInfoUri.getKey());
 		}
 
@@ -158,7 +158,7 @@ public class ChatbotServices implements Component {
 
 		// clean old avatar
 		if (oldAvatar != null) {
-			fileServices.deleteFile(oldAvatar);
+			designerFileServices.deleteFile(oldAvatar);
 		}
 
 		if (newBot) {
@@ -205,7 +205,7 @@ public class ChatbotServices implements Component {
 
 		// Delete avatar file reference in bot
 		if (bot.getFilIdAvatar() != null) {
-			fileServices.deleteChatbotFile(bot, bot.getFilIdAvatar());
+			designerFileServices.deleteChatbotFile(bot, bot.getFilIdAvatar());
 		}
 		return true;
 	}
@@ -253,7 +253,7 @@ public class ChatbotServices implements Component {
 		if (bot.getFilIdAvatar() == null) {
 			return getNoAvatar();
 		}
-		return fileServices.getFile(bot.getFilIdAvatar());
+		return designerFileServices.getFile(bot.getFilIdAvatar());
 	}
 
 	public VFile getNoAvatar() {

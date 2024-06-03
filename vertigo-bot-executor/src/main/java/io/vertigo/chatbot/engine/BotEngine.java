@@ -9,6 +9,8 @@ import io.vertigo.ai.nlu.NluManager;
 import io.vertigo.ai.nlu.NluResult;
 import io.vertigo.ai.nlu.ScoredIntent;
 import io.vertigo.chatbot.analytics.AnalyticsObjectSend;
+import io.vertigo.chatbot.commons.FileServices;
+import io.vertigo.chatbot.commons.FileUtils;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotRating;
 import io.vertigo.chatbot.engine.model.BotRatingType;
@@ -21,9 +23,11 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.lang.VSystemException;
 
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -76,16 +80,18 @@ public class BotEngine {
 	private final BlackBoard bb;
 	private final BehaviorTreeManager behaviorTreeManager;
 	private final NluManager nluManager;
+	private final FileServices fileServices;
 
 	private final Map<String, TopicDefinition> topicDefinitionMap;
 
 	public BotEngine(final BlackBoard blackBoard, final Map<String, TopicDefinition> topicDefinitionMap,
-			final BehaviorTreeManager behaviorTreeManager, final NluManager nluManager) {
+			final BehaviorTreeManager behaviorTreeManager, final NluManager nluManager, final FileServices fileServices) {
 		Assertion.check()
 				.isNotNull(blackBoard)
 				.isNotNull(topicDefinitionMap)
 				.isNotNull(behaviorTreeManager)
 				.isNotNull(nluManager)
+				.isNotNull(fileServices)
 				.isTrue(topicDefinitionMap.containsKey(START_TOPIC_NAME), "You need to provide a starting topic with key BotEngine.START_TOPIC_NAME")
 				.isTrue(topicDefinitionMap.containsKey(IDLE_TOPIC_NAME), "You need to provide an idle topic with key BotEngine.IDLE_TOPIC_NAME");
 		// ---
@@ -94,6 +100,7 @@ public class BotEngine {
 
 		this.behaviorTreeManager = behaviorTreeManager;
 		this.nluManager = nluManager;
+		this.fileServices = fileServices;
 
 	}
 
@@ -207,6 +214,12 @@ public class BotEngine {
 		final String buttonPayload = (String) input.getMetadatas().get("payload");
 		final String fileContent = (String) input.getMetadatas().get("filecontent");
 		final String fileName = (String) input.getMetadatas().get("filename");
+
+		if (fileContent != null) {
+			this.fileServices.checkFile(fileName, FileUtils.fileSizeFromBase64String(fileContent, fileName),
+					FileUtils.base64StringToByteArrayInputStream(fileContent, fileName));
+		}
+
 		final String rating = (String) input.getMetadatas().get("rating");
 		Tuple<Double, String> eventLog = Tuple.of(null, null);
 

@@ -45,11 +45,15 @@ import java.util.zip.ZipOutputStream;
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
+import io.vertigo.chatbot.commons.AntivirusServices;
 import io.vertigo.chatbot.commons.AttachmentInfo;
+import io.vertigo.chatbot.commons.FileInfoStd;
+import io.vertigo.chatbot.commons.FileInfoTmp;
+import io.vertigo.chatbot.commons.FileServices;
 import io.vertigo.chatbot.commons.dao.MediaFileInfoDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.MediaFileInfo;
-import io.vertigo.chatbot.commons.multilingual.attachment.AttachmentMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.AttachmentMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
@@ -73,7 +77,10 @@ import static io.vertigo.chatbot.commons.ChatbotUtils.MAX_UPLOAD_SIZE;
 import static io.vertigo.chatbot.designer.utils.StringUtils.lineError;
 
 @Transactional
-public class FileServices implements Component, Activeable {
+public class DesignerFileServices implements Component, Activeable {
+
+	@Inject
+	private FileServices fileServices;
 
 	@Inject
 	private FileStoreManager fileStoreManager;
@@ -109,27 +116,12 @@ public class FileServices implements Component, Activeable {
 	}
 
 	public void checkFile (final VFile file) {
-		final String[] extensionsTab = file.getFileName().split(Pattern.quote("."));
-		final Stream<String> extensionsWhiteListStream = Arrays.stream(extensionsWhiteList);
-		if (extensionsTab.length != 2 || extensionsWhiteListStream.noneMatch(extensionsTab[1].toLowerCase()::contains)) {
-			throw new VUserException(AttachmentMultilingualResources.EXTENSION_NOT_ALLOWED, extensionsTab[1],
-					String.join(",", extensionsWhiteList));
-		}
-		if (file.getLength() > MAX_UPLOAD_SIZE) {
-			throw new VUserException(AttachmentMultilingualResources.FILE_TOO_LARGE, MAX_UPLOAD_SIZE);
-		}
-		try {
-			final ScanResult result = antivirusServices.checkForViruses(file.createInputStream());
-			if (result instanceof ScanResult.VirusFound) {
-				final Map<String, Collection<String>> virusesMap = ((ScanResult.VirusFound) result).getFoundViruses();
-				final String viruses = virusesMap.values().stream()
-						.flatMap(Collection::stream).collect(Collectors.joining(","));
-				throw new VUserException(AttachmentMultilingualResources.VIRUSES_FOUND, viruses, file.getFileName());
-			}
-		} catch (final IOException ioException) {
+        try {
+            fileServices.checkFile(file.getFileName(), file.getLength(), file.createInputStream());
+        } catch (final IOException ioException) {
 			throw new VUserException(AttachmentMultilingualResources.COULD_NOT_OPEN_FILE, file.getFileName(), ioException);
 		}
-	}
+    }
 
 	public FileInfoURI saveAttachment(final VFile file) {
 		final FileInfo fileInfo = fileStoreManager.create(new AttachmentInfo(file));

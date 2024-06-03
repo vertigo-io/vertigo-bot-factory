@@ -13,7 +13,7 @@ import io.vertigo.datastore.filestore.model.VFile;
 import javax.inject.Inject;
 
 @Transactional
-public class FileServices implements Component {
+public class ExecutorFileServices implements Component {
 
 	@Inject
 	private FileStoreManager fileStoreManager;

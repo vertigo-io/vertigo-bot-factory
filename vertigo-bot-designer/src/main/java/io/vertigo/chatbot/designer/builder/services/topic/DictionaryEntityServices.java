@@ -16,7 +16,7 @@ import io.vertigo.chatbot.designer.builder.dictionaryEntity.DictionaryEntityPAO;
 import io.vertigo.chatbot.designer.builder.services.HistoryServices;
 import io.vertigo.chatbot.designer.builder.services.IRecordable;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.dao.DictionaryEntityDAO;
 import io.vertigo.chatbot.designer.domain.DictionaryEntity;
 import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
@@ -65,7 +65,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	private ExporterManager exportManager;
 
 	@Inject
-	private FileServices fileServices;
+	private DesignerFileServices designerFileServices;
 
 	@Inject
 	private HistoryServices historyServices;
@@ -346,7 +346,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 				DtDefinitions.DictionaryEntityWrapperFields.dictionaryEntityLabel.name(),
 				DtDefinitions.DictionaryEntityWrapperFields.synonymsList.name(),
 		};
-		return fileServices.readCsvFile(DictionaryEntityWrapper.class, file, columns);
+		return designerFileServices.readCsvFile(DictionaryEntityWrapper.class, file, columns);
 	}
 
 	/**
@@ -356,7 +356,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @param importDictionaryFile
 	 */
 	public void importDictionaryFromCSVFile(final Chatbot chatbot, final FileInfoURI importDictionaryFile) {
-		transformFileToList(fileServices.getFileTmp(importDictionaryFile)).forEach(dex -> generateDictionaryFromDictionaryExport(dex, chatbot));
+		transformFileToList(designerFileServices.getFileTmp(importDictionaryFile)).forEach(dex -> generateDictionaryFromDictionaryExport(dex, chatbot));
 	}
 
 	/*

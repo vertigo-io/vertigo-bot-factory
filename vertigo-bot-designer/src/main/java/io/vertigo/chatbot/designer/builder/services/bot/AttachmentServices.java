@@ -16,7 +16,7 @@ import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.AttachmentFileInfo;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.multilingual.attachment.AttachmentMultilingualResources;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
@@ -37,7 +37,7 @@ public class AttachmentServices implements Component {
 	private AttachmentDAO attachmentDAO;
 
 	@Inject
-	private FileServices fileServices;
+	private DesignerFileServices designerFileServices;
 
 	public Attachment findById(final long attachmentId) {
 		return attachmentDAO.get(attachmentId);
@@ -58,18 +58,18 @@ public class AttachmentServices implements Component {
 				oldAttachmentSize = oldAttachment.getLength();
 				oldAttachmentFileId = oldAttachment.getAttFiId();
 			}
-			final VFile newAttachmentFile = fileServices.getFileTmp(optFileInfoURI.get());
+			final VFile newAttachmentFile = designerFileServices.getFileTmp(optFileInfoURI.get());
 
 			if (isMaxSizeExceeded(maxSize, attachmentTotalSize, oldAttachmentSize, newAttachmentFile.getLength())) {
 				throw new VUserException(AttachmentMultilingualResources.MAX_TOTAL_SIZE_EXCEEDED, maxSize);
 			}
-			final FileInfoURI fileInfoUri = fileServices.saveAttachment(newAttachmentFile);
+			final FileInfoURI fileInfoUri = designerFileServices.saveAttachment(newAttachmentFile);
 			attachment.setAttFiId((Long) fileInfoUri.getKey());
 			attachment.setType(newAttachmentFile.getMimeType());
 			attachment.setLength(newAttachmentFile.getLength());
 			final Attachment savedAttachment = attachmentDAO.save(attachment);
 			if (oldAttachmentFileId != null) {
-				fileServices.deleteAttachment(oldAttachmentFileId);
+				designerFileServices.deleteAttachment(oldAttachmentFileId);
 			}
 			return savedAttachment;
 		}
@@ -88,7 +88,7 @@ public class AttachmentServices implements Component {
 	public void delete (@SecuredOperation("botAdm") final Chatbot bot, final long attachmentId) {
 		final Attachment attachment = findById(attachmentId);
 		attachmentDAO.delete(attachmentId);
-		fileServices.deleteAttachment(attachment.getAttFiId());
+		designerFileServices.deleteAttachment(attachment.getAttFiId());
 	}
 
 	public DtList<AttachmentExport> exportAttachmentByBot(@SecuredOperation("botAdm") final Chatbot bot, final StringBuilder logs) {
@@ -102,7 +102,7 @@ public class AttachmentServices implements Component {
 				attachmentExport.setFileName(attachmentFileInfo.getFileName());
 				attachmentExport.setMimeType(attachmentFileInfo.getMimeType());
 				attachmentExport.setLength(attachmentFileInfo.getLength());
-				final VFile file = fileServices.getAttachment(attachment.getAttFiId());
+				final VFile file = designerFileServices.getAttachment(attachment.getAttFiId());
 				try (final InputStream inputStream = file.createInputStream()) {
 					attachmentExport.setFileData(Base64.getEncoder().encodeToString(inputStream.readAllBytes()));
 				} catch (final IOException e) {

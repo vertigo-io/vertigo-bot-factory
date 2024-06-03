@@ -63,7 +63,7 @@ import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.export.BotExportServices;
 import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.domain.History;
 import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
 import io.vertigo.chatbot.designer.utils.HttpRequestUtils;
@@ -87,8 +87,6 @@ import io.vertigo.datamodel.structure.model.DtObject;
 import io.vertigo.datamodel.structure.util.DtObjectUtil;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
-
-import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
 
 @Transactional
@@ -117,7 +115,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 	private NodeServices nodeServices;
 
 	@Inject
-	private FileServices fileServices;
+	private DesignerFileServices designerFileServices;
 
 	@Inject
 	private SavedTrainingServices savedTrainingServices;
@@ -349,7 +347,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		result.setModelName("model " + training.getVersionNumber());
 		result.setNluThreshold(training.getNluThreshold());
 		if (bot.getFilIdAvatar() != null) {
-			result.setAvatar(fileServices.getFileAsBase64(bot.getFilIdAvatar()));
+			result.setAvatar(designerFileServices.getFileAsBase64(bot.getFilIdAvatar()));
 		}
 		final ChatbotCustomConfigExport chatbotCustomConfigExport = botExportServices.exportChatbotCustomSettings(botId);
 		result.setCustomConfig(jsonEngine.toJson(chatbotCustomConfigExport));
@@ -378,7 +376,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 
 		Assertion.check().isTrue(training.getBotId().equals(node.getBotId()), "Incoherent parameters");
 
-		final VFile model = fileServices.getFile(training.getFilIdModel());
+		final VFile model = designerFileServices.getFile(training.getFilIdModel());
 
 		doLoadModel(training, model, node);
 
