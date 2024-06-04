@@ -18,7 +18,7 @@
       <emptyLine />
       <package name="java" withSubpackages="true" static="false" />
       <emptyLine />
-      <package name="javax" withSubpackages="true" static="false" />
+      <package name="jakarta" withSubpackages="true" static="false" />
       <emptyLine />
       <package name="" withSubpackages="true" static="false" />
       <emptyLine />
@@ -50,7 +50,7 @@
         <emptyLine />
         <package name="java" withSubpackages="true" static="false" />
         <emptyLine />
-        <package name="javax" withSubpackages="true" static="false" />
+        <package name="jakarta" withSubpackages="true" static="false" />
         <emptyLine />
         <package name="" withSubpackages="true" static="false" />
         <emptyLine />

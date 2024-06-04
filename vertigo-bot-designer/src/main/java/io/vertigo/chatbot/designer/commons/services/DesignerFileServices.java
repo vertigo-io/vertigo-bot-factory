@@ -114,6 +114,12 @@ public class DesignerFileServices implements Component {
 		return fileStoreManager.read(fileTmpUri).getVFile();
 	}
 
+	public FileInfo getFileInfoTmp(final FileInfoURI fileTmpUri) {
+		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoTmp.class);
+		Assertion.check().isTrue(tmpFileInfoDefinition.equals(fileTmpUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
+		return fileStoreManager.read(fileTmpUri);
+	}
+
 	public void deleteFileTmp(final FileInfoURI fileTmpUri) {
 		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoTmp.class);
 		Assertion.check().isTrue(tmpFileInfoDefinition.equals(fileTmpUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose

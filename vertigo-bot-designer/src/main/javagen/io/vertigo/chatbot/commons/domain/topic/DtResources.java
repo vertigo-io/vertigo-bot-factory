@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.commons.domain.topic;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Resources du module io.vertigo.chatbot.commons.domain.topic
  */
-public enum DtResources implements MessageKey {
+public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
 	/** KindTopic.

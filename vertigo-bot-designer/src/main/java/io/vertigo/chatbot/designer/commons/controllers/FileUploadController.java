@@ -23,6 +23,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
 import io.vertigo.account.security.VSecurityManager;
@@ -30,6 +34,7 @@ import io.vertigo.chatbot.designer.commons.DesignerUserSession;
 import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
+import io.vertigo.ui.core.UiFileInfo;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
 
 @Controller
@@ -48,6 +53,20 @@ public class FileUploadController {
 			return null;
 		}
 		return designerFileServices.getFileTmp(file);
+	}
+
+	@GetMapping("/upload/fileInfos")
+	public List<UiFileInfo> loadUiFileInfos(@QueryParam("file") final List<FileInfoURI> fileInfoUris) {
+		return fileInfoUris
+				.stream()
+				.map(fileInfoUri -> {
+					if (!getUserSession().getTmpFiles().contains(fileInfoUri)) {
+						return null;
+					} else {
+						return new UiFileInfo<>(designerFileServices.getFileInfoTmp(fileInfoUri));
+					}
+				}).filter(Objects::nonNull)
+				.collect(Collectors.toList());
 	}
 
 	@GetMapping("/getAttachment")

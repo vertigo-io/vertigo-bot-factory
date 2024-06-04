@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.commons.multilingual.topics;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum TopicsMultilingualResources implements MessageKey {
+public enum TopicsMultilingualResources implements LocaleMessageKey {
 
 	ERROR_CATEGORY,
 

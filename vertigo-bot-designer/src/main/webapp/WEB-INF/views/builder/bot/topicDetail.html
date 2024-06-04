@@ -32,7 +32,6 @@
 	  <link th:href="@{/static/blockly/css/blockly_style.css}"  rel="stylesheet"/>
 
 		<script th:inline="javascript">
-			Vue.use(window.VueCodemirror)
 			function normalizeString(str) {
 				if (str)
 					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();

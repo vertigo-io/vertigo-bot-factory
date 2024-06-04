@@ -15,6 +15,7 @@ modules:
   io.vertigo.connectors.javalin.JavalinFeatures:
     features: 
       - standalone:
+          maxRequestSize: 10240000
   io.vertigo.connectors.mail.MailFeatures:
     features:
       - javax.native:
@@ -82,6 +83,9 @@ modules:
       - kvStore.delayedMemory:
           collections: protected-value
           timeToLiveSeconds: 3600
+      - kvStore.delayedMemory:
+          collections: uiFileInfos
+          timeToLiveSeconds: 300
       - kvStore.berkeley:  # nous utilisons un stockage clé valeur avec la base de donnée BerkeleyDB
           collections: VViewContext;TTL=43200
           dbFilePath: ${java.io.tmpdir}/vertigo-ui/VViewContext
@@ -123,7 +127,7 @@ modules:
       - authentication.oidc:
   io.vertigo.quarto.QuartoFeatures:
     features:      
-      - export : # export
+      - exporter : # export
     featuresConfig:
       - exporter.csv: # export csv
          charset: cp1252 

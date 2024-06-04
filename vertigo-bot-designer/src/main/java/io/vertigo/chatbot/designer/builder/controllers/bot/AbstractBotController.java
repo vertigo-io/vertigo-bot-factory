@@ -50,7 +50,7 @@ import io.vertigo.chatbot.designer.domain.topic.export.TypeBotExportList;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleManager;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
@@ -135,7 +135,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	}
 
 	protected void initBreadCrums(final ViewContext viewContext, final String keyMessage) {
-		viewContext.publishRef(breadCrumsKey, MessageText.of(BotMultilingualResources.valueOf(keyMessage)).getDisplay());
+		viewContext.publishRef(breadCrumsKey, LocaleMessageText.of(BotMultilingualResources.valueOf(keyMessage)).getDisplay());
 	}
 
 	protected void initEmptyCommonContext(final ViewContext viewContext) {
@@ -152,21 +152,11 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 		viewContext.publishDto(selectTypeBotExportListKey, new TypeBotExportList());
 	}
 
-	@GetMapping("/{botId}/avatar")
-	public VFile getAvatar(@PathVariable("botId") final Long botId) {
-		return chatbotServices.getAvatar(chatbotServices.getChatbotById(botId));
-	}
-
-	@GetMapping("/avatar")
-	public VFile getAvatar() {
-		return chatbotServices.getNoAvatar();
-	}
-
 	public void nodeMessageDisplay(final Chatbot chatbot, final UiMessageStack uiMessageStack) {
 		if (AuthorizationUtils.isAuthorized(chatbot, SecuredEntities.ChatbotOperations.botAdm)) {
 			final Optional<ChatbotNode> devNode = nodeServices.getDevNodeByBotId(chatbot.getBotId());
 			if (devNode.isEmpty() || !devNode.get().getIsUpToDate()) {
-				uiMessageStack.info(MessageText.of(BotMultilingualResources.NODE_NOT_UP_TO_DATE).getDisplay());
+				uiMessageStack.info(LocaleMessageText.of(BotMultilingualResources.NODE_NOT_UP_TO_DATE).getDisplay());
 			}
 		}
 	}
@@ -189,9 +179,9 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 			final Training training = trainingServices.getTrainingByTraIdAndBotId(bot.getBotId(), state.getTraId()).orElseThrow();
 			viewContext.publishDto(trainingKey, training);
 			if (TrainingStatusEnum.OK == training.trainingStatus().getEnumValue()) {
-				uiMessageStack.success(MessageText.of(BotMultilingualResources.TRAINING_STATE_MESSAGE_OK, training.getVersionNumber()).getDisplay());
+				uiMessageStack.success(LocaleMessageText.of(BotMultilingualResources.TRAINING_STATE_MESSAGE_OK, training.getVersionNumber()).getDisplay());
 			} else {
-				uiMessageStack.error(MessageText.of(BotMultilingualResources.TRAINING_STATE_MESSAGE_KO, training.getVersionNumber(), training.getWarnings()).getDisplay());
+				uiMessageStack.error(LocaleMessageText.of(BotMultilingualResources.TRAINING_STATE_MESSAGE_KO, training.getVersionNumber(), training.getWarnings()).getDisplay());
 			}
 
 		}
@@ -219,16 +209,16 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 			switch (typeBotExport) {
 				case "CATEGORIES":
 					final DtList<TopicCategory> topicCategories = topicCategoryServices.getAllNonTechnicalCategoriesByBot(bot);
-					fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_CATEGORIES).getDisplay(), topicCategoryServices.exportCategories(bot, topicCategories));
+					fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_CATEGORIES).getDisplay(), topicCategoryServices.exportCategories(bot, topicCategories));
 					break;
 				case "TOPICS":
 					final DtList<TopicFileExport> listTopics = topicFileExportServices.getTopicFileExport(bot.getBotId(),
 							categoryServices.getAllCategoriesByBot(bot).stream().map(TopicCategory::getTopCatId).collect(Collectors.toList()));
-					fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_TOPICS).getDisplay(), topicFileExportServices.exportTopicFile(bot, listTopics));
+					fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_TOPICS).getDisplay(), topicFileExportServices.exportTopicFile(bot, listTopics));
 					break;
 				case "DICTIONARY":
 					final DtList<DictionaryEntityWrapper> listDictionaryEntitiesToExport = dictionaryEntityServices.getDictionaryExportByBotId(bot.getBotId(), "|");
-					fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_DICTIONARY).getDisplay(), dictionaryEntityServices.exportDictionary(bot, listDictionaryEntitiesToExport));
+					fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_DICTIONARY).getDisplay(), dictionaryEntityServices.exportDictionary(bot, listDictionaryEntitiesToExport));
 					break;
 				default:
 					throw new VUserException(ExportMultilingualResources.MANDATORY_TYPE_BOT_EXPORT);
@@ -239,7 +229,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 		} else {
 			final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			return designerFileServices.zipMultipleFiles(fileMap,
-					MessageText.of(BotMultilingualResources.EXPORT_ZIP_FILENAME, bot.getName(), dateFormat.format(new Date())).getDisplay());
+                    LocaleMessageText.of(BotMultilingualResources.EXPORT_ZIP_FILENAME, bot.getName(), dateFormat.format(new Date())).getDisplay());
 		}
 
 	}

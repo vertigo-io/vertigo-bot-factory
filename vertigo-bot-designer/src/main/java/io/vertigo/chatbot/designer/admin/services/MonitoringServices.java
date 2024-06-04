@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import io.vertigo.chatbot.commons.AntivirusServices;
 import io.vertigo.chatbot.commons.MailService;

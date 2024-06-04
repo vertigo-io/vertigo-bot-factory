@@ -118,7 +118,7 @@
 					</q-card-section>
 					
 					<vu:include-data-primitive key="locale" />
-					<vu:fileupload th:url="'@{/commons/upload}'" key="importDictionaryFileUri" multiple="false"/>
+					<vu:fileupload th:url="'@{/commons/upload}'" key="importDictionaryFileUri" multiple="false" th:with="object=null, field=null"/>
 				
 					
 					

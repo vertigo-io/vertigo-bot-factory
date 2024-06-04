@@ -35,7 +35,7 @@ import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -114,7 +114,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 		if (!HashUtils.generateHashCodeForResponseButtons(oldResponseButtons).equals(HashUtils.generateHashCodeForResponseButtons(buttonList))) {
 			for (final ResponseButton button : buttonList) {
 				if (TopicsUtils.checkSpecialCharacters(button.getText())) {
-					throw new VUserException(MessageText.of(TopicsMultilingualResources.CODE_SPECIAL_CHAR_ERROR));
+					throw new VUserException(LocaleMessageText.of(TopicsMultilingualResources.CODE_SPECIAL_CHAR_ERROR));
 				}
 			}
 			responsesButtonServices.removeAllButtonsBySmtId(chatbot, savedST);
@@ -127,7 +127,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 		if (!HashUtils.generateHashCodeForResponseButtonsUrl(oldResponseUrlButtons).equals(HashUtils.generateHashCodeForResponseButtonsUrl(buttonUrlList))) {
 			for (final ResponseButtonUrl button : buttonUrlList) {
 				if (TopicsUtils.checkSpecialCharacters(button.getText())) {
-					throw new VUserException(MessageText.of(TopicsMultilingualResources.CODE_SPECIAL_CHAR_ERROR));
+					throw new VUserException(LocaleMessageText.of(TopicsMultilingualResources.CODE_SPECIAL_CHAR_ERROR));
 				}
 			}
 			responsesButtonUrlServices.removeAllButtonsUrlBySmtId(chatbot, savedST);
@@ -220,7 +220,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 
 	@Override
 	public String getDeactivateMessage() {
-		return MessageText.of(TopicsMultilingualResources.DEACTIVATE_TOPIC_SMALL_TALK).getDisplay();
+		return LocaleMessageText.of(TopicsMultilingualResources.DEACTIVATE_TOPIC_SMALL_TALK).getDisplay();
 	}
 
 	@Override

@@ -3,6 +3,8 @@ package io.vertigo.chatbot.analytics;
 import java.util.List;
 import java.util.UUID;
 
+import io.vertigo.core.analytics.trace.TraceSpan;
+import io.vertigo.core.analytics.trace.TraceSpanBuilder;
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
@@ -13,7 +15,6 @@ import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.chatbot.executor.model.IncomeRating;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.analytics.AnalyticsManager;
-import io.vertigo.core.analytics.process.AProcessBuilder;
 import io.vertigo.core.node.component.Component;
 
 @Transactional
@@ -72,32 +73,32 @@ public class AnalyticsSenderServices implements Component {
 	//Send an event with the nlu topics
 	//Send also all the topics passed with topic {} instruction
 	private void sendNluEvent(final UUID sessionId, final BotInput input, final String codeTopic, final Double accuracy, final ExecutorConfiguration executorConfiguration) {
-		final AProcessBuilder processBuilder = AnalyticsUtils.prepareMessageProcess(codeTopic, input.getMessage(), AnalyticsUtils.TEXT_KEY)
-				.addTag(AnalyticsUtils.NLU_KEY, AnalyticsUtils.TRUE)
-				.addTag(AnalyticsUtils.USER_MESSAGE_KEY, AnalyticsUtils.TRUE)
-				.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, accuracy);
+		final TraceSpanBuilder processBuilder = AnalyticsUtils.prepareMessageProcess(codeTopic, input.getMessage(), AnalyticsUtils.TEXT_KEY)
+				.withTag(AnalyticsUtils.NLU_KEY, AnalyticsUtils.TRUE)
+				.withTag(AnalyticsUtils.USER_MESSAGE_KEY, AnalyticsUtils.TRUE)
+				.withMeasure(AnalyticsUtils.CONFIDENCE_KEY, accuracy);
 		//test if topic is a fallback topic
 		if (codeTopic.equals(BotEngine.FALLBACK_TOPIC_NAME)) {
 			prepareFallBackEvent(processBuilder);
 		} else if (codeTopic.equals(BotEngine.RATING_TOPIC_NAME)) {
 			prepareRatingEvent(processBuilder);
 		} else {
-			processBuilder.addTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.FALSE);
+			processBuilder.withTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.FALSE);
 		}
 		sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 	}
 
-	private static void prepareFallBackEvent(final AProcessBuilder builder) {
+	private static void prepareFallBackEvent(final TraceSpanBuilder builder) {
 		builder
-				.addTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE)
-				.addTag(AnalyticsUtils.FALLBACK_KEY, AnalyticsUtils.TRUE);
+				.withTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE)
+				.withTag(AnalyticsUtils.FALLBACK_KEY, AnalyticsUtils.TRUE);
 
 	}
 
-	private static void prepareRatingEvent(final AProcessBuilder builder) {
+	private static void prepareRatingEvent(final TraceSpanBuilder builder) {
 		builder
-				.addTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE)
-				.addTag(AnalyticsUtils.RATING_KEY, AnalyticsUtils.TRUE);
+				.withTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE)
+				.withTag(AnalyticsUtils.RATING_KEY, AnalyticsUtils.TRUE);
 
 	}
 
@@ -110,11 +111,11 @@ public class AnalyticsSenderServices implements Component {
 			final String codeTopic = topic.getCode();
 			final boolean isTechnical = codeTopic.equals(BotEngine.END_TOPIC_NAME) || codeTopic.equals(BotEngine.RATING_TOPIC_NAME);
 			final String type = isFirst ? AnalyticsUtils.BUTTONS_INPUT_KEY : AnalyticsUtils.SWITCH_INPUT_KEY;
-			final AProcessBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(codeTopic, type)
-					.addTag(AnalyticsUtils.TYPE_KEY, isFirst ? AnalyticsUtils.BUTTONS_INPUT_KEY : AnalyticsUtils.SWITCH_INPUT_KEY)
-					.addTag(AnalyticsUtils.TECHNICAL_KEY, isTechnical ? AnalyticsUtils.TRUE : AnalyticsUtils.FALSE)
-					.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
-					.addTag(AnalyticsUtils.NLU_KEY, AnalyticsUtils.FALSE);
+			final TraceSpanBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(codeTopic, type)
+					.withTag(AnalyticsUtils.TYPE_KEY, isFirst ? AnalyticsUtils.BUTTONS_INPUT_KEY : AnalyticsUtils.SWITCH_INPUT_KEY)
+					.withTag(AnalyticsUtils.TECHNICAL_KEY, isTechnical ? AnalyticsUtils.TRUE : AnalyticsUtils.FALSE)
+					.withMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
+					.withTag(AnalyticsUtils.NLU_KEY, AnalyticsUtils.FALSE);
 			sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 			isFirst = false;
 		}
@@ -130,10 +131,10 @@ public class AnalyticsSenderServices implements Component {
 		//Create the process
 		final AnalyticsObjectSend analytics = (AnalyticsObjectSend) botResponse.getMetadatas().get(BotEngine.ANALYTICS_KEY);
 		final List<TopicDefinition> topicsPast = analytics.getTopicsPast();
-		final AProcessBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(BotEngine.START_TOPIC_NAME, AnalyticsUtils.TECHNICAL_INPUT_KEY)
-				.addTag(AnalyticsUtils.SESSION_START_KEY, AnalyticsUtils.TRUE)
-				.setMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
-				.addTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE);
+		final TraceSpanBuilder processBuilder = AnalyticsUtils.prepareEmptyMessageProcess(BotEngine.START_TOPIC_NAME, AnalyticsUtils.TECHNICAL_INPUT_KEY)
+				.withTag(AnalyticsUtils.SESSION_START_KEY, AnalyticsUtils.TRUE)
+				.withMeasure(AnalyticsUtils.CONFIDENCE_KEY, AnalyticsUtils.TRUE_BIGDECIMAL)
+				.withTag(AnalyticsUtils.TECHNICAL_KEY, AnalyticsUtils.TRUE);
 
 		sendProcessWithConfiguration(sessionId, processBuilder, executorConfiguration);
 		sendPastTopics(sessionId, topicsPast, executorConfiguration);
@@ -141,9 +142,9 @@ public class AnalyticsSenderServices implements Component {
 		sendConversationEvent(sessionId, String.join("\0", botResponse.getHtmlTexts()), false, executorConfiguration);
 	}
 
-	private void sendProcessWithConfiguration(final UUID sessionId, final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {
+	private void sendProcessWithConfiguration(final UUID sessionId, final TraceSpanBuilder builder, final ExecutorConfiguration executorConfiguration) {
 		AnalyticsUtils.setConfiguration(sessionId, builder, executorConfiguration);
-		analyticsManager.addProcess(builder.build());
+		analyticsManager.addSpan(builder.build());
 	}
 
 	public void rate(final UUID sessionId, final IncomeRating rating, final ExecutorConfiguration executorConfiguration) {

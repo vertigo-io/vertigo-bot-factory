@@ -119,7 +119,7 @@ public class BotEngine {
 		TopicDefinition topic = topicDefinitionMap.get(getTopic());
 
 		//Object use for the analytics sender services
-		final AnalyticsObjectSend analyticsToSend = new AnalyticsObjectSend(topic, eventLog.getVal1());
+		final AnalyticsObjectSend analyticsToSend = new AnalyticsObjectSend(topic, eventLog.val1());
 
 		BTStatus status;
 		TopicDefinition nextTopic = null;
@@ -255,7 +255,7 @@ public class BotEngine {
 					break;
 				case "nlu":
 					response = getTopicFromNlu(value);
-					bb.putString(BBKey.of(key), response.getVal2());
+					bb.putString(BBKey.of(key), response.val2());
 					break;
 				default:
 					throw new VSystemException("Unknown expected type '{0}'", type);
