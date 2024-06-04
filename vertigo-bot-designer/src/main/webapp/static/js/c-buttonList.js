@@ -1,19 +1,20 @@
-Vue.component('c-buttonlist', {
-	props : {
-		buttonList:    { type: String,  required: true },
-		buttonUrlList:    { type: String,  required: true },
-		choiceList:    { type: String,  required: true },
-		modeEdit:      { type: Boolean, 'default': true },
-		locale:   		{ type: String, 'default': 'en_US' }
-	},
-	data: function () {
-		return {
-			popupContent: {},
-			editIndex: -1,
-			type: 'BUTTON'
-		}
-	},
-	template : `
+window.addEventListener('vui-before-plugins', function (event) {
+	let vuiButtonList = Vue.defineComponent({
+		props: {
+			buttonList: {type: String, required: true},
+			buttonUrlList: {type: String, required: true},
+			choiceList: {type: String, required: true},
+			modeEdit: {type: Boolean, 'default': true},
+			locale: {type: String, 'default': 'en_US'}
+		},
+		data: function () {
+			return {
+				popupContent: {},
+				editIndex: -1,
+				type: 'BUTTON'
+			}
+		},
+		template: `
 		<div class="row wrap items-center">
 			<draggable class="row wrap" :disabled="!modeEdit"
         			v-model="VertigoUi.vueData[buttonList]">
@@ -124,16 +125,18 @@ Vue.component('c-buttonlist', {
 	`
 		,
 		methods: {
-			getChoiceTitleById: function(id) {
+			getChoiceTitleById: function (id) {
 				if (id == null) return null;
-				
+
 				let result = VertigoUi.vueData[this.choiceList].filter(t => t.topId === id);
 				return result.length === 0 ? null : result[0].title;
 			},
 			transformListForSelection: function (list, valueField, labelField) {
 				return VertigoUi.vueData[list].map(function (object) {
-					return { value: object[valueField], label: object[labelField].toString()} // a label is always a string
+					return {value: object[valueField], label: object[labelField].toString()} // a label is always a string
 				});
 			},
 		}
+	});
+	event.detail.vuiAppInstance.component('c-buttonlist', vuiButtonList);
 });

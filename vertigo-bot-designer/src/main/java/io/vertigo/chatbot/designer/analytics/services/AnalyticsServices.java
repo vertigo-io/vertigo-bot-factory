@@ -73,7 +73,7 @@ public class AnalyticsServices implements Component {
 
 		// build DtList from InfluxDb data
 		final DtList<SentenseDetail> retour = new DtList<>(SentenseDetail.class);
-		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
+		for (final TimedDataSerie timedData : tabularTimedData.timedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 
 			final SentenseDetail newSentenseDetail = new SentenseDetail();
@@ -93,7 +93,7 @@ public class AnalyticsServices implements Component {
 
 		// build DtList from InfluxDb data
 		final DtList<ConversationDetail> retour = new DtList<>(ConversationDetail.class);
-		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
+		for (final TimedDataSerie timedData : tabularTimedData.timedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 			final String text = (String) values.get("text");
 			if (text != null) {
@@ -117,7 +117,7 @@ public class AnalyticsServices implements Component {
 		final TimedDatas timedDatas = timeSerieServices.getConversationStats(criteria, conversationCriteria);
 		// build DtList from InfluxDb data
 		final DtList<ConversationStat> retour = new DtList<>(ConversationStat.class);
-		for (final TimedDataSerie timedDataSerie : timedDatas.getTimedDataSeries()) {
+		for (final TimedDataSerie timedDataSerie : timedDatas.timedDataSeries()) {
 			final Map<String, Object> values = timedDataSerie.getValues();
 
 			final ConversationStat conversationStat = new ConversationStat();
@@ -163,7 +163,7 @@ public class AnalyticsServices implements Component {
 		// build DtList from InfluxDb data
 		final DtList<TopicIhm> topics = topicServices.getAllNonTechnicalTopicIhmByBot(bot, locale);
 		final Map<String, Long> topicCountMap = new HashMap<>();
-		tabularDatas.getTabularDataSeries().forEach(x -> topicCountMap.put(x.getValues().get("name").toString(), ((Long) x.getValues().get("name:count"))));
+		tabularDatas.tabularDataSeries().forEach(x -> topicCountMap.put(x.getValues().get("name").toString(), ((Long) x.getValues().get("name:count"))));
 
 		return topics.stream().map(topic -> {
 			final TopIntent topIntent = new TopIntent();
@@ -189,7 +189,7 @@ public class AnalyticsServices implements Component {
 		final TimedDatas tabularTimedData = timeSerieServices.getKnowSentence(criteria, intentRasa);
 		final DtList<SentenseDetail> retour = new DtList<>(SentenseDetail.class);
 		final Optional<Topic> topic = topicServices.getTopicByCode(intentRasa, criteria.getBotId());
-		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
+		for (final TimedDataSerie timedData : tabularTimedData.timedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 
 			final SentenseDetail newSentenseDetail = new SentenseDetail();

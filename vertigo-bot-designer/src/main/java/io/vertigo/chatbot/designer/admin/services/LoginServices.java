@@ -29,10 +29,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.account.authentication.AuthenticationManager;
@@ -42,12 +42,7 @@ import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.lang.WrappedException;
-import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.vega.impl.servlet.filter.AbstactKeycloakDelegateAuthenticationHandler;
 import io.vertigo.vega.plugins.authentication.oidc.OIDCAppLoginHandler;
 
 @Transactional

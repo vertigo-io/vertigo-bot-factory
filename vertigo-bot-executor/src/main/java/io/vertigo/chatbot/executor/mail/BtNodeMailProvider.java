@@ -7,7 +7,7 @@ import java.net.URLConnection;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;

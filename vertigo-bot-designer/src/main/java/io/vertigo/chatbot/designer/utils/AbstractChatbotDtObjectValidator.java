@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import io.vertigo.chatbot.commons.multilingual.ConstraintResources;
 import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datamodel.structure.definitions.DtFieldName;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -52,8 +52,8 @@ public abstract class AbstractChatbotDtObjectValidator<O extends DtObject> exten
         super.checkMonoFieldConstraints(dtObject, dtField, dtObjectErrors);
         final Object value = dtField.getDataAccessor().getValue(dtObject);
 
-        if (value == null && fieldsNameToNullCheck.contains(dtField.getName())) {
-            dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+        if (value == null && fieldsNameToNullCheck.contains(dtField.name())) {
+            dtObjectErrors.addError(dtField.name(), LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
         }
     }
 

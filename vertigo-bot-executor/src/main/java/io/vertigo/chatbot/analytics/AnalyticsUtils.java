@@ -5,8 +5,8 @@ import java.util.UUID;
 
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.executor.model.IncomeRating;
-import io.vertigo.core.analytics.process.AProcess;
-import io.vertigo.core.analytics.process.AProcessBuilder;
+import io.vertigo.core.analytics.trace.TraceSpan;
+import io.vertigo.core.analytics.trace.TraceSpanBuilder;
 
 public final class AnalyticsUtils {
 
@@ -48,47 +48,47 @@ public final class AnalyticsUtils {
 		//utils class
 	}
 
-	public static AProcessBuilder prepareMessageProcess(final String codeTopic, final String text, final String type) {
-		return AProcess.builder(DB_KEY, codeTopic, Instant.now(), Instant.now()) // timestamp of emitted event
-				.addTag(TEXT_KEY, text)
-				.addTag(TYPE_KEY, type);
+	public static TraceSpanBuilder prepareMessageProcess(final String codeTopic, final String text, final String type) {
+		return TraceSpan.builder(DB_KEY, codeTopic, Instant.now(), Instant.now()) // timestamp of emitted event
+				.withTag(TEXT_KEY, text)
+				.withTag(TYPE_KEY, type);
 	}
 
-	public static AProcessBuilder prepareEmptyMessageProcess(final String codeTopic, final String type) {
+	public static TraceSpanBuilder prepareEmptyMessageProcess(final String codeTopic, final String type) {
 		return prepareMessageProcess(codeTopic, "", type);
 	}
 
-	public static AProcessBuilder prepareRatingProcess(final IncomeRating incomeRating) {
-		final AProcessBuilder builder = AProcess.builder(RATING_KEY, RATING_KEY, Instant.now(), Instant.now())
-				.addTag(RATING_INPUT_KEY, incomeRating.getNote().toString())// timestamp of emitted event
-				.setMeasure(RATING_KEY + incomeRating.getNote().toString(), TRUE_BIGDECIMAL)
-				.setMeasure(RATING_KEY, incomeRating.getNote());
+	public static TraceSpanBuilder prepareRatingProcess(final IncomeRating incomeRating) {
+		final TraceSpanBuilder builder = TraceSpan.builder(RATING_KEY, RATING_KEY, Instant.now(), Instant.now())
+				.withTag(RATING_INPUT_KEY, incomeRating.getNote().toString())// timestamp of emitted event
+				.withMeasure(RATING_KEY + incomeRating.getNote().toString(), TRUE_BIGDECIMAL)
+				.withMeasure(RATING_KEY, incomeRating.getNote());
 		if (incomeRating.getComment() != null) {
-			builder.addTag(RATING_COMMENT_KEY, incomeRating.getComment());
+			builder.withTag(RATING_COMMENT_KEY, incomeRating.getComment());
 		}
 		return builder;
 	}
 
-	public static AProcessBuilder prepareRatingCommentProcess(final IncomeRating incomeRating) {
-		return AProcess.builder(RATING_KEY, RATING_KEY, Instant.now(), Instant.now())
-				.setMeasure(RATING_KEY, FALSE_BIGDECIMAL)
-				.addTag(RATING_COMMENT_KEY, incomeRating.getComment());
+	public static TraceSpanBuilder prepareRatingCommentProcess(final IncomeRating incomeRating) {
+		return TraceSpan.builder(RATING_KEY, RATING_KEY, Instant.now(), Instant.now())
+				.withMeasure(RATING_KEY, FALSE_BIGDECIMAL)
+				.withTag(RATING_COMMENT_KEY, incomeRating.getComment());
 	}
 
-	public static AProcessBuilder prepareConversationProcess(final String text, final boolean userMessage) {
-		return AProcess.builder(CONVERSATION_KEY, CONVERSATION_KEY, Instant.now(), Instant.now())
-				.addTag(TEXT_KEY, text)
-				.addTag(USER_MESSAGE_KEY, userMessage ? TRUE : FALSE)
-				.addTag(BOT_MESSAGE_KEY, !userMessage ? TRUE : FALSE);
+	public static TraceSpanBuilder prepareConversationProcess(final String text, final boolean userMessage) {
+		return TraceSpan.builder(CONVERSATION_KEY, CONVERSATION_KEY, Instant.now(), Instant.now())
+				.withTag(TEXT_KEY, text)
+				.withTag(USER_MESSAGE_KEY, userMessage ? TRUE : FALSE)
+				.withTag(BOT_MESSAGE_KEY, !userMessage ? TRUE : FALSE);
 	}
 
-	public static void setConfiguration(final UUID sessionId, final AProcessBuilder builder, final ExecutorConfiguration executorConfiguration) {
+	public static void setConfiguration(final UUID sessionId, final TraceSpanBuilder builder, final ExecutorConfiguration executorConfiguration) {
 		builder
-				.addTag(SESSION_ID_KEY, sessionId.toString())
-				.addTag(BOT_KEY, String.valueOf(executorConfiguration.getBotId()))
-				.addTag(NODE_KEY, String.valueOf(executorConfiguration.getNodId()))
-				.addTag(TRAINING_KEY, String.valueOf(executorConfiguration.getTraId()))
-				.addTag(MODEL_KEY, String.valueOf(executorConfiguration.getModelName()));
+				.withTag(SESSION_ID_KEY, sessionId.toString())
+				.withTag(BOT_KEY, String.valueOf(executorConfiguration.getBotId()))
+				.withTag(NODE_KEY, String.valueOf(executorConfiguration.getNodId()))
+				.withTag(TRAINING_KEY, String.valueOf(executorConfiguration.getTraId()))
+				.withTag(MODEL_KEY, String.valueOf(executorConfiguration.getModelName()));
 	}
 
 }

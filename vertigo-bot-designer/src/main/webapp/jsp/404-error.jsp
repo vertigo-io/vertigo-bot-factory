@@ -1,4 +1,4 @@
-<%@ page session="false" import="java.util.*, javax.servlet.*" %>
+<%@ page session="false" import="java.util.*, jakarta.servlet.*" %>
 <!-- Icons purchased via Iconfinder under Basic License -->
 
 <html xmlns="http://www.w3.org/1999/xhtml">

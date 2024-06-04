@@ -21,7 +21,7 @@ import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
 import io.vertigo.chatbot.domain.DtDefinitions.ScriptIntentionFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
@@ -137,7 +137,7 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 
 	@Override
 	public String getDeactivateMessage() {
-		return MessageText.of(TopicsMultilingualResources.DEACTIVATE_TOPIC_SCRIPT_INTENTION).getDisplay();
+		return LocaleMessageText.of(TopicsMultilingualResources.DEACTIVATE_TOPIC_SCRIPT_INTENTION).getDisplay();
 	}
 
 	@Override

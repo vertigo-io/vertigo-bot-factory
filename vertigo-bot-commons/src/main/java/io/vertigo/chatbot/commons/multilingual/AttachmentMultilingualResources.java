@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.commons.multilingual;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum AttachmentMultilingualResources implements MessageKey {
+public enum AttachmentMultilingualResources implements LocaleMessageKey {
 
 	MUST_CONTAINS_A_FILE,
 	MAX_TOTAL_SIZE_EXCEEDED,

@@ -25,6 +25,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.glassfish.jersey.media.multipart.internal.MultiPartReaderServerSide;
+import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -40,10 +42,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
+import io.vertigo.chatbot.commons.GsonProvider;
 import javax.inject.Inject;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
@@ -400,7 +405,11 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 
 			addObjectToMultipart(fdmp, "config", config);
 
-			response = jaxrsProvider.getWebTarget(node.getUrl()).path(URL_MODEL)
+			response = ClientBuilder.newClient()
+					.target(node.getUrl())
+					.register(GsonProvider.class)
+					.register(MultiPartReaderServerSide.class)
+					.register(MultiPartWriter.class).path(URL_MODEL)
 					.request(MediaType.APPLICATION_JSON)
 					.header(API_KEY, node.getApiKey())
 					.put(Entity.entity(fdmp, fdmp.getMediaType()));
@@ -424,7 +433,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 
 			if (value != null) {
 				// TODO: date handling ?
-				fdmp.field(name + '.' + field.getName(), value.toString());
+				fdmp.field(name + '.' + field.name(), value.toString());
 			}
 		}
 	}

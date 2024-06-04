@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.commons.multilingual.kindTopic;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum KindTopicMultilingualResources implements MessageKey {
+public enum KindTopicMultilingualResources implements LocaleMessageKey {
 
 	DEFAULT_START,
 	DEFAULT_FALLBACK,

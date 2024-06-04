@@ -14,7 +14,7 @@ import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.chatbot.engine.plugins.bt.jira.multilingual.JiraMultilingualResources;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 
 import javax.inject.Inject;
@@ -54,7 +54,7 @@ public class AssigneeFieldService implements IJiraFieldService, Component {
 			List<User> users = jiraServerService.findUserByUsername(bb.getString(BBKey.of(jiraField.getKey())));
 			if (users.isEmpty()) {
 				bb.delete(BBKeyPattern.of(jiraField.getKey()));
-				return BotNodeProvider.say(bb, MessageText.of(JiraMultilingualResources.NO_USER_FOUND).getDisplay()).eval();
+				return BotNodeProvider.say(bb, LocaleMessageText.of(JiraMultilingualResources.NO_USER_FOUND).getDisplay()).eval();
 			} else if (users.size() == 1) {
 				bb.putString(BBKey.of(jiraField.getKey()), jiraServerService.isCloud() ? users.get(0).getAccountId() : users.get(0).getName());
 			} else {

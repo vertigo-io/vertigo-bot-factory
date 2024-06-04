@@ -19,6 +19,7 @@
 	</repositories>
   <properties>
 	  <jira-rest.version>5.2.6</jira-rest.version>
+	  <jersey.version>2.34</jersey.version>
   </properties>
   
   <dependencies>
@@ -47,6 +48,28 @@
         <artifactId>jira-rest-java-client-api</artifactId>
         <version>${jira-rest.version}</version>
 	</dependency>
+	  <dependency>
+		  <groupId>javax.ws.rs</groupId>
+		  <artifactId>javax.ws.rs-api</artifactId>
+		  <version>2.1.1</version>
+	  </dependency>
+	  <!-- Jersey HTTP client -->
+	  <dependency>
+		  <groupId>org.glassfish.jersey.core</groupId>
+		  <artifactId>jersey-client</artifactId>
+		  <version>${jersey.version}</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>org.glassfish.jersey.inject</groupId>
+		  <artifactId>jersey-hk2</artifactId>
+		  <version>${jersey.version}</version>
+	  </dependency>
+
+	  <dependency>
+		  <groupId>org.glassfish.jersey.media</groupId>
+		  <artifactId>jersey-media-multipart</artifactId>
+		  <version>${jersey.version}</version>
+	  </dependency>
 
   </dependencies>
 	<build>

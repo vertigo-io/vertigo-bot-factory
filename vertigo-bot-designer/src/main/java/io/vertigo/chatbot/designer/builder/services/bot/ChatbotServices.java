@@ -43,7 +43,7 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.daemon.DaemonScheduled;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.locale.LocaleManager;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
@@ -269,12 +269,12 @@ public class ChatbotServices implements Component {
 	}
 
 	public String getBotNameDisplay(final Optional<Chatbot> bot) {
-		return bot.isPresent() ? bot.get().getName() : MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
+		return bot.isPresent() ? bot.get().getName() : LocaleMessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
 	}
 
 	public String getNodeName(final Optional<Chatbot> bot, final Long nodId) {
 		return bot.isPresent() ? nodeServices.getNodeByNodeId(bot.get(), nodId).getName()
-				: MessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
+				: LocaleMessageText.of(AnalyticsMultilingualResources.DELETED_BOT).getDisplay();
 	}
 
 	public String getBotDateDisplay(final Optional<Chatbot> bot) {

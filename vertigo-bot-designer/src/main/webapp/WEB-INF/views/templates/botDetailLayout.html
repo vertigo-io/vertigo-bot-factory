@@ -9,39 +9,61 @@
 		<link th:href="@{/static/chatbot/shepherd.css}" rel="stylesheet" />
 		<link th:href="@{/static/chatbot/chatbot.css}" rel="stylesheet">
 		<script>
-			VUiExtensions.dataX.loadingTraining = false;
-			function train() {
-				VUiPage.httpPostAjax("train", {}, {
-					onSuccess: function() {
-						postTrain();
-					}
-				});
-			}
-			function postTrain() {
-				interval = setInterval(function() {
-					refreshTraining();
-				}, 1000);
-			}
+			VUiExtensions = {
+				dataX: {},
+				methods: { ... VUiExtensions.methods,
+					train: function () {
+						VUiPage.httpPostAjax("train", {}, {
+							onSuccess: function () {
+								postTrain();
+							}
+						});
+					},
+					postTrain: function () {
+						interval = setInterval(function () {
+							refreshTraining();
+						}, 1000);
+					},
+					refreshTraining: function () {
+						VUiExtensions.dataX.loadingTraining = true;
 
-			function refreshTraining () {
-				VUiExtensions.dataX.loadingTraining = true;
-
-				VUiPage.httpPostAjax("refreshTrainer", {}, {
-					onSuccess: function() {
-						if (!VertigoUi.vueData.trainerState.trainingInProgress && interval != null) {
-							VUiExtensions.dataX.loadingTraining = false;
-							clearInterval(interval);
-							interval = null;
+						VUiPage.httpPostAjax("refreshTrainer", {}, {
+							onSuccess: function () {
+								if (!VertigoUi.vueData.trainerState.trainingInProgress && interval != null) {
+									VUiExtensions.dataX.loadingTraining = false;
+									clearInterval(interval);
+									interval = null;
+								}
+							}
+						});
+					},
+					canTalkToBot: function () {
+						return VertigoUi.vueData.devNode !== null && VertigoUi.vueData.devNode.traId !== null;
+					},
+					checkAll: function () {
+						VertigoUi.vueData.selectTypeBotExportList.tbeCd =
+								VertigoUi.vueData.typeBotExport.map(typeExport => typeExport.tbeCd);
+					},
+					selectEnvironment: function () {
+						if (VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId !== null) {
+							const selectedContexEnvironment = VertigoUi.vueData.contextEnvironments.find(contextEnvironment =>
+									contextEnvironment.cenvId === VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId
+							);
+							if (selectedContexEnvironment) {
+								const map = {};
+								selectedContexEnvironment.contextEnvironmentValues.forEach(contextEnvironmentValue => {
+									map[contextEnvironmentValue.label] = contextEnvironmentValue.value
+								})
+								Chatbot.updateContextMap(map)
+							}
+						} else {
+							Chatbot.updateContextMap({})
 						}
 					}
-				});
+				}
 			}
-			function canTalkToBot() {
-				return VertigoUi.vueData.devNode !== null && VertigoUi.vueData.devNode.traId !==null;
-			}
-
 			document.addEventListener('DOMContentLoaded', function () {
-				if (canTalkToBot()) {
+				if (VUiExtensions.methods.canTalkToBot()) {
 					Chatbot.init({
 						runnerUrl: VertigoUi.vueData.devNode.url,
 						botIHMBaseUrl: VertigoUi.vueData.devNode.url + '/static/chatbot/index.html',
@@ -50,29 +72,14 @@
 						avatarUrl: VertigoUi.vueData.bot.botId + '/avatar'
 					})
 				}
-			});
-			function checkAll() {
-				VertigoUi.vueData.selectTypeBotExportList.tbeCd =
-						VertigoUi.vueData.typeBotExport.map(typeExport => typeExport.tbeCd);
-
-			}
-
-			function selectEnvironment() {
-				if (VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId !== null) {
-					const selectedContexEnvironment = VertigoUi.vueData.contextEnvironments.find(contextEnvironment =>
-						contextEnvironment.cenvId === VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId
-					);
-					if (selectedContexEnvironment) {
-						const map = {};
-						selectedContexEnvironment.contextEnvironmentValues.forEach(contextEnvironmentValue => {
-							map[contextEnvironmentValue.label] = contextEnvironmentValue.value
-						})
-						Chatbot.updateContextMap(map)
-					}
-				} else {
-					Chatbot.updateContextMap({})
+				const script = document.createElement('script');
+				script.type = 'text/javascript';
+				script.src = VertigoUi.vueData.devNode.url + '/api/chatbot/getWelcomeToursFile';
+				document.head.appendChild(script);
+				if (VertigoUi.vueData.trainerState.trainingInProgress) {
+					postTrain();
 				}
-			}
+			});
 		</script>
 	</div>
 	<div layout:fragment="content-header-left" id="baseImg" class="row items-center header-bot-img">
@@ -111,7 +118,7 @@
 	<div th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" layout:fragment="content-header-actions" id="headerActions" class="items-center">
 		<vu:popup action="delete" vModel="showPopup" th:message="#{bot.popup.message}" th:confirm="#{bot.delete}"></vu:popup>
 		<vu:include-data object="trainerState" field="'*'"/>
-		<q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train"></q-btn>
+		<q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train()"></q-btn>
 		<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="dataX.loadingTraining"></q-spinner-gears>
 		<q-fab class="q-mr-xl" outline flat color="primary" icon="more_vert" direction="down">
 			<q-fab-action color="primary" th:label="#{bot.export}" icon="file_upload" @click="$refs.exportBot.show()"></q-fab-action>
@@ -257,16 +264,5 @@
 	<section layout:fragment="javascript-footer">
 		<vu:include-data object="trainerState" field="'*'"/>
 		<vu:include-data-primitive key="locale" />
-		<script>
-			document.addEventListener('DOMContentLoaded', function () {
-				const script = document.createElement('script');
-				script.type = 'text/javascript';
-				script.src = VertigoUi.vueData.devNode.url + '/api/chatbot/getWelcomeToursFile';
-				document.head.appendChild(script);
-				if (VertigoUi.vueData.trainerState.trainingInProgress) {
-					postTrain();
-				}
-			});
-		</script>
 	</section>
 </html>

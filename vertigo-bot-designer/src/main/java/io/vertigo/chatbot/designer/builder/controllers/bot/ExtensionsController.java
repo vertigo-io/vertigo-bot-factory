@@ -8,7 +8,7 @@ import io.vertigo.chatbot.designer.builder.services.*;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.domain.DtDefinitions;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
@@ -186,29 +186,29 @@ public class ExtensionsController extends AbstractBotController {
         @Override
         protected void checkMonoFieldConstraints(final ConfluenceSettingIhm confluenceSettingIhm, final DtField dtField, final DtObjectErrors dtObjectErrors) {
             super.checkMonoFieldConstraints(confluenceSettingIhm, dtField, dtObjectErrors);
-            if (DtDefinitions.ConfluenceSettingIhmFields.url.name().equals(dtField.getName())
-                    || DtDefinitions.ConfluenceSettingIhmFields.login.name().equals(dtField.getName())) {
+            if (DtDefinitions.ConfluenceSettingIhmFields.url.name().equals(dtField.name())
+                    || DtDefinitions.ConfluenceSettingIhmFields.login.name().equals(dtField.name())) {
                 final String value = (String) dtField.getDataAccessor().getValue(confluenceSettingIhm);
                 if (value == null || value.trim().isEmpty()) {
-                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                    dtObjectErrors.addError(dtField.name(), LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
                 }
             }
-            if (DtDefinitions.ConfluenceSettingIhmFields.password.name().equals(dtField.getName()) && confluenceSettingIhm.getConSetId() == null) {
+            if (DtDefinitions.ConfluenceSettingIhmFields.password.name().equals(dtField.name()) && confluenceSettingIhm.getConSetId() == null) {
                 final String value = (String) dtField.getDataAccessor().getValue(confluenceSettingIhm);
                 if (value == null || value.trim().isEmpty()) {
-                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                    dtObjectErrors.addError(dtField.name(), LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
                 }
             }
-            if (DtDefinitions.ConfluenceSettingIhmFields.numberOfResults.name().equals(dtField.getName())) {
+            if (DtDefinitions.ConfluenceSettingIhmFields.numberOfResults.name().equals(dtField.name())) {
                 final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSettingIhm);
                 if (value == null || value <= 0) {
-                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.VALUE_SHOULD_BE_GREATER_THAN_ZERO));
+                    dtObjectErrors.addError(dtField.name(), LocaleMessageText.of(ExtensionsMultilingualResources.VALUE_SHOULD_BE_GREATER_THAN_ZERO));
                 }
             }
-            if (DtDefinitions.ConfluenceSettingIhmFields.nodId.name().equals(dtField.getName())) {
+            if (DtDefinitions.ConfluenceSettingIhmFields.nodId.name().equals(dtField.name())) {
                 final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSettingIhm);
                 if (value == null) {
-                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                    dtObjectErrors.addError(dtField.name(), LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
                 }
             }
         }
@@ -222,24 +222,24 @@ public class ExtensionsController extends AbstractBotController {
         @Override
         protected void checkMonoFieldConstraints(final JiraSetting jiraSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
             super.checkMonoFieldConstraints(jiraSetting, dtField, dtObjectErrors);
-            if (DtDefinitions.JiraSettingFields.url.name().equals(dtField.getName())
-                    || DtDefinitions.JiraSettingFields.login.name().equals(dtField.getName())
-                    || DtDefinitions.JiraSettingFields.project.name().equals(dtField.getName())) {
+            if (DtDefinitions.JiraSettingFields.url.name().equals(dtField.name())
+                    || DtDefinitions.JiraSettingFields.login.name().equals(dtField.name())
+                    || DtDefinitions.JiraSettingFields.project.name().equals(dtField.name())) {
                 final String value = (String) dtField.getDataAccessor().getValue(jiraSetting);
                 if (value == null || value.trim().isEmpty()) {
-                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                    dtObjectErrors.addError(dtField.name(), LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
                 }
             }
-            if (DtDefinitions.JiraSettingFields.password.name().equals(dtField.getName()) && jiraSetting.getJirSetId() == null) {
+            if (DtDefinitions.JiraSettingFields.password.name().equals(dtField.name()) && jiraSetting.getJirSetId() == null) {
                 final String value = (String) dtField.getDataAccessor().getValue(jiraSetting);
                 if (value == null || value.trim().isEmpty()) {
-                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                    dtObjectErrors.addError(dtField.name(), LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
                 }
             }
-            if (DtDefinitions.JiraSettingFields.nodId.name().equals(dtField.getName())) {
+            if (DtDefinitions.JiraSettingFields.nodId.name().equals(dtField.name())) {
                 final Long value = (Long) dtField.getDataAccessor().getValue(jiraSetting);
                 if (value == null) {
-                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                    dtObjectErrors.addError(dtField.name(), LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
                 }
             }
         }

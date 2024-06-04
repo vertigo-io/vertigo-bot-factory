@@ -123,7 +123,7 @@ modules:
       - authentication.oidc:
   io.vertigo.quarto.QuartoFeatures:
     features:      
-      - export : # export
+      - exporter : # export
     featuresConfig:
       - exporter.csv: # export csv
          charset: cp1252 

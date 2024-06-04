@@ -17,8 +17,8 @@
  */
 package io.vertigo.chatbot.designer.boot;
 
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.ServletRegistration;
 
 import io.vertigo.ui.impl.springmvc.config.AbstractVSpringMvcWebApplicationInitializer;
 

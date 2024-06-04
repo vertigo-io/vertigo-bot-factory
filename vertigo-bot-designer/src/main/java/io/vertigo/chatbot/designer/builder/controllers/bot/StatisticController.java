@@ -62,7 +62,7 @@ import io.vertigo.chatbot.designer.domain.analytics.UnknownSentenseExport;
 import io.vertigo.chatbot.designer.domain.commons.SelectionOption;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
@@ -100,8 +100,8 @@ public class StatisticController extends AbstractBotController {
 	private static final ViewContextKey<TopicLabel> topicLabelsKey = ViewContextKey.of("topicLabels");
 	private static final ViewContextKey<CategoryStat> categoryStatKey = ViewContextKey.of("categoryStat");
 	private static final ViewContextKey<Double> totalOfUserActionsKey = ViewContextKey.of("totalOfUserActions");
-	private static final ViewContextKey<Double> totalOfUnrecognizedMessageKey = ViewContextKey.of("totalOfUnrecognizedMessage");
-	private static final ViewContextKey<Double> totalOfRecognizedMessageKey = ViewContextKey.of("totalOfRecognizedMessage");
+	private static final ViewContextKey<Double> totalOfUnrecognizedLocaleMessageKey = ViewContextKey.of("totalOfUnrecognizedMessage");
+	private static final ViewContextKey<Double> totalOfRecognizedLocaleMessageKey = ViewContextKey.of("totalOfRecognizedMessage");
 	private static final ViewContextKey<Double> totalOfConversationsKey = ViewContextKey.of("totalOfConversations");
 	private static final ViewContextKey<FontFamily> fontFamiliesKey = ViewContextKey.of("fontFamilies");
 
@@ -179,13 +179,13 @@ public class StatisticController extends AbstractBotController {
 	private void updateGraph(final ViewContext viewContext, final StatCriteria criteria, final Chatbot bot, final UiMessageStack uiMessageStack) {
 		final TimedDatas requestsStat = timeSerieServices.getRequestStats(criteria);
 		viewContext.publishRef(requestsStatsKey, requestsStat);
-		viewContext.publishRef(totalOfConversationsKey, requestsStat.getTimedDataSeries().stream()
+		viewContext.publishRef(totalOfConversationsKey, requestsStat.timedDataSeries().stream()
 				.mapToDouble(it -> AnalyticsServicesUtils.getLongValue(it, "isSessionStart:count", 0L)).sum());
-		viewContext.publishRef(totalOfUnrecognizedMessageKey, requestsStat.getTimedDataSeries().stream()
+		viewContext.publishRef(totalOfUnrecognizedLocaleMessageKey, requestsStat.timedDataSeries().stream()
 				.mapToDouble(it -> AnalyticsServicesUtils.getLongValue(it, "isFallback:count", 0L)).sum());
-		viewContext.publishRef(totalOfRecognizedMessageKey, requestsStat.getTimedDataSeries().stream()
+		viewContext.publishRef(totalOfRecognizedLocaleMessageKey, requestsStat.timedDataSeries().stream()
 				.mapToDouble(it -> AnalyticsServicesUtils.getLongValue(it, "isNlu:count", 0L)).sum());
-		viewContext.publishRef(totalOfUserActionsKey, requestsStat.getTimedDataSeries().stream()
+		viewContext.publishRef(totalOfUserActionsKey, requestsStat.timedDataSeries().stream()
 				.mapToDouble(it -> AnalyticsServicesUtils.getLongValue(it, "userAction:count", 0L)).sum());
 
 		viewContext.publishDtList(unknownSentensesKey, DtDefinitions.SentenseDetailFields.topId, analyticsServices.getSentenseDetails(criteria));
@@ -287,7 +287,7 @@ public class StatisticController extends AbstractBotController {
 		} else {
 			final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			return designerFileServices.zipMultipleFiles(fileList,
-					MessageText.of(AnalyticsMultilingualResources.ZIP_EXPORT_FILENAME).getDisplay() + dateFormat.format(new Date()));
+					LocaleMessageText.of(AnalyticsMultilingualResources.ZIP_EXPORT_FILENAME).getDisplay() + dateFormat.format(new Date()));
 		}
 	}
 }

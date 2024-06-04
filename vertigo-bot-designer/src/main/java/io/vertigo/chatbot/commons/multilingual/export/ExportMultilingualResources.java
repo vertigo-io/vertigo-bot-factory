@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.commons.multilingual.export;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum ExportMultilingualResources implements MessageKey {
+public enum ExportMultilingualResources implements LocaleMessageKey {
 
 	ERR_CSV_FILE,
 	ERR_SIZE_FILE,

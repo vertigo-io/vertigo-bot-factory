@@ -70,8 +70,8 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Sma
 		//Create map topId and bt associated
 		for (final Entry<UtterTextExport, Tuple<List<ResponseButtonExport>, List<ResponseButtonUrlExport>>> entry : map.entrySet()) {
 			final UtterTextExport utter = entry.getKey();
-			final List<ResponseButtonExport> responses = entry.getValue().getVal1();
-			final List<ResponseButtonUrlExport> responsesUrl = entry.getValue().getVal2();
+			final List<ResponseButtonExport> responses = entry.getValue().val1();
+			final List<ResponseButtonUrlExport> responsesUrl = entry.getValue().val2();
 			result.put(utter.getTopId(), createBt(utter, responses, responsesUrl, false));
 		}
 		return result;
