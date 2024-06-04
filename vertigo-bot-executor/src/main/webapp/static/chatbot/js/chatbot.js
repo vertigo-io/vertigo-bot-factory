@@ -175,7 +175,6 @@ const chatbot = new Vue({
                         chatbot.context['url'] = urlPage;
                     }
                     if (sessionStorage.convId) {
-                        console.log("sessionStorage.convId :" + sessionStorage.convId)
                         chatbot.restoreFromSessionStorage();
                         chatbot._scrollToBottom();
                     } else {
@@ -190,7 +189,7 @@ const chatbot = new Vue({
                     }
                 });
             },
-            
+
             postAnswerBtn(btn) {
                 chatbot.messages.push({
                     text: [DOMPurify.sanitize(btn.label)],
@@ -357,10 +356,6 @@ const chatbot = new Vue({
                         chatbot._displayMessages();
                     });
                 } else {
-                    console.log("InputConfig.rating :" + chatbot.inputConfig.rating)
-                    console.log("ratingType :" + chatbot.ratingType)
-                    console.log("rating :" + chatbot.rating)
-
                     chatbot.inputConfig.showRating = chatbot.rating && chatbot.ratingType === 'SIMPLE' && chatbot.inputConfig.rating === 0;
                     chatbot.processing = false;
                     if (chatbot.keepAction) {
