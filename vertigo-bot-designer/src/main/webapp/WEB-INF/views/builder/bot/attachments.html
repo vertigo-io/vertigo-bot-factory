@@ -95,7 +95,7 @@
 	                        <vu:text-field object="newAttachment" field="label"/>
 	                    </q-card-section>
 	                    <q-card-section>
-	                        <vu:fileupload th:url="'@{/commons/upload}'" key="importAttachmentFileUri" multiple="false" accept="'.png,.jpg,.jpeg,.pdf'"
+	                        <vu:fileupload th:url="'@{/commons/upload}'" key="importAttachmentFileUri" multiple="false" th:with="object=null, field=null" accept="'.png,.jpg,.jpeg,.pdf'"
 	                                       @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
 	                        <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
 	                    </q-card-section>

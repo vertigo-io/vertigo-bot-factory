@@ -77,7 +77,7 @@ public class UnknownSentencesServices implements Component {
 
 		final TimedDatas tabularTimedData = timeSerieServices.getUnrecognizedSentences(unknownSentencesCriteria);
 
-		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
+		for (final TimedDataSerie timedData : tabularTimedData.timedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 
 			final UnknownSentenceDetail unknownSentenceDetail = new UnknownSentenceDetail();

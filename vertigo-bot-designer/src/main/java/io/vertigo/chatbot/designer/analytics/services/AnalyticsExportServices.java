@@ -25,7 +25,7 @@ import io.vertigo.chatbot.designer.domain.analytics.UnknownSentenseExport;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.chatbot.domain.DtDefinitions.SessionExportFields;
 import io.vertigo.chatbot.domain.DtDefinitions.UnknownSentenseExportFields;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
@@ -62,7 +62,7 @@ public class AnalyticsExportServices implements Component {
 
 		// build DtList from InfluxDb data
 		final DtList<SessionExport> retour = new DtList<>(SessionExport.class);
-		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
+		for (final TimedDataSerie timedData : tabularTimedData.timedDataSeries()) {
 			final SessionExport newSessionExport = new SessionExport();
 			newSessionExport.setDate(timedData.getTime());
 			newSessionExport.setUserActionsCount(AnalyticsServicesUtils.getLongValue(timedData, "userAction:count", 0L));
@@ -79,7 +79,7 @@ public class AnalyticsExportServices implements Component {
 	public VFile exportSessions(final DtList<SessionExport> dtc) {
 		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		final Date date = new Date();
-		final Export export = new ExportBuilder(ExportFormat.CSV, MessageText.of(AnalyticsMultilingualResources.SESSIONS_FILENAME).getDisplay() + dateFormat.format(date))
+		final Export export = new ExportBuilder(ExportFormat.CSV, LocaleMessageText.of(AnalyticsMultilingualResources.SESSIONS_FILENAME).getDisplay() + dateFormat.format(date))
 				.beginSheet(dtc, null)
 				.addField(SessionExportFields.date)
 				.addField(SessionExportFields.conversationCount)
@@ -104,7 +104,7 @@ public class AnalyticsExportServices implements Component {
 
 		// build DtList from InfluxDb data
 		final DtList<UnknownSentenseExport> retour = new DtList<>(UnknownSentenseExport.class);
-		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
+		for (final TimedDataSerie timedData : tabularTimedData.timedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 
 			final UnknownSentenseExport newUnknownSentenseExport = new UnknownSentenseExport();
@@ -141,7 +141,7 @@ public class AnalyticsExportServices implements Component {
 	public VFile exportUnknownMessages(final DtList<UnknownSentenseExport> dtc) {
 		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		final Date date = new Date();
-		final Export export = new ExportBuilder(ExportFormat.CSV, MessageText.of(AnalyticsMultilingualResources.UNKNOWN_MESSAGES_FILENAME).getDisplay() + dateFormat.format(date))
+		final Export export = new ExportBuilder(ExportFormat.CSV, LocaleMessageText.of(AnalyticsMultilingualResources.UNKNOWN_MESSAGES_FILENAME).getDisplay() + dateFormat.format(date))
 				.beginSheet(dtc, null)
 				.addField(UnknownSentenseExportFields.date)
 				.addField(UnknownSentenseExportFields.text)
@@ -162,7 +162,7 @@ public class AnalyticsExportServices implements Component {
 	public VFile exportConversations(final DtList<ConversationStat> dtc) {
 		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		final Date date = new Date();
-		final Export export = new ExportBuilder(ExportFormat.CSV, MessageText.of(AnalyticsMultilingualResources.CONVERSATION_FILENAME).getDisplay() + dateFormat.format(date))
+		final Export export = new ExportBuilder(ExportFormat.CSV, LocaleMessageText.of(AnalyticsMultilingualResources.CONVERSATION_FILENAME).getDisplay() + dateFormat.format(date))
 				.beginSheet(dtc, null)
 				.addField(DtDefinitions.ConversationStatFields.date)
 				.addField(DtDefinitions.ConversationStatFields.modelName)
@@ -179,7 +179,7 @@ public class AnalyticsExportServices implements Component {
 	public VFile exportCategories(final DtList<CategoryStat> categoryStats) {
 		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		final Date date = new Date();
-		final Export export = new ExportBuilder(ExportFormat.CSV, MessageText.of(AnalyticsMultilingualResources.CATEGORIES_FILENAME).getDisplay() + dateFormat.format(date))
+		final Export export = new ExportBuilder(ExportFormat.CSV, LocaleMessageText.of(AnalyticsMultilingualResources.CATEGORIES_FILENAME).getDisplay() + dateFormat.format(date))
 				.beginSheet(categoryStats, null)
 				.addField(DtDefinitions.CategoryStatFields.label)
 				.addField(DtDefinitions.CategoryStatFields.code)
@@ -193,7 +193,7 @@ public class AnalyticsExportServices implements Component {
 	public VFile exportTopIntents(final DtList<TopIntent> topIntents) {
 		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		final Date date = new Date();
-		final Export export = new ExportBuilder(ExportFormat.CSV, MessageText.of(AnalyticsMultilingualResources.TOP_INTENTS_FILENAME).getDisplay() + dateFormat.format(date))
+		final Export export = new ExportBuilder(ExportFormat.CSV, LocaleMessageText.of(AnalyticsMultilingualResources.TOP_INTENTS_FILENAME).getDisplay() + dateFormat.format(date))
 				.beginSheet(topIntents, null)
 				.addField(DtDefinitions.TopIntentFields.intentRasa)
 				.addField(DtDefinitions.TopIntentFields.code)

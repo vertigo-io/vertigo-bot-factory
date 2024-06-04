@@ -45,9 +45,10 @@ import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.designer.utils.StringUtils;
 import io.vertigo.chatbot.domain.DtDefinitions;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -102,6 +103,16 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		listLimitReached(viewContext, uiMessageStack);
 	}
 
+	@GetMapping("/{botId}/avatar")
+	public VFile getAvatar(@PathVariable("botId") final Long botId) {
+		return chatbotServices.getAvatar(chatbotServices.getChatbotById(botId));
+	}
+
+	@GetMapping("/avatar")
+	public VFile getAvatar() {
+		return chatbotServices.getNoAvatar();
+	}
+
 	@GetMapping("/new")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack) {
 		initEmptyCommonContext(viewContext);
@@ -133,7 +144,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 
 	@Override
 	protected String getBreadCrums(final Chatbot object) {
-		return MessageText.of(BotMultilingualResources.BOT_DETAIL).getDisplay();
+		return LocaleMessageText.of(BotMultilingualResources.BOT_DETAIL).getDisplay();
 	}
 
 	/**
@@ -146,12 +157,12 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 		@Override
 		protected void checkMonoFieldConstraints(final ChatbotCustomConfig chatbotCustomConfig, final DtField dtField, final DtObjectErrors dtObjectErrors) {
 			super.checkMonoFieldConstraints(chatbotCustomConfig, dtField, dtObjectErrors);
-			if (DtDefinitions.ChatbotCustomConfigFields.botEmailAddress.name().equals(dtField.getName())) {
+			if (DtDefinitions.ChatbotCustomConfigFields.botEmailAddress.name().equals(dtField.name())) {
 				final String value = (String) dtField.getDataAccessor().getValue(chatbotCustomConfig);
 				if (!StringUtils.isHtmlEmpty(value)) {
 					final Matcher matcher = emailPattern.matcher(value);
 					if (!matcher.matches()) {
-						dtObjectErrors.addError(dtField.getName(), MessageText.of(ConstraintResources.INVALID_EMAIL));
+						dtObjectErrors.addError(dtField.name(), LocaleMessageText.of(ConstraintResources.INVALID_EMAIL));
 					}
 				}
 			}

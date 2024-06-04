@@ -26,7 +26,7 @@ import io.vertigo.chatbot.domain.DtDefinitions.TopicFileExportFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
@@ -86,7 +86,7 @@ public class TopicFileExportServices implements Component {
 	public VFile exportTopicFile(@SecuredOperation("botVisitor") final Chatbot bot, final DtList<TopicFileExport> dtc) {
 
 		final Export export = new ExportBuilder(ExportFormat.CSV,
-				MessageText.of(TopicFileExportMultilingualResources.EXPORT_FILENAME, bot.getName()).getDisplay())
+				LocaleMessageText.of(TopicFileExportMultilingualResources.EXPORT_FILENAME, bot.getName()).getDisplay())
 				.beginSheet(dtc, null)
 				.addField(TopicFileExportFields.code)
 				.addField(TopicFileExportFields.typeTopic)
@@ -202,10 +202,10 @@ public class TopicFileExportServices implements Component {
 		for (final TopicFileExport tfe : list) {
 			i++;
 			if (tfe.getCode().isEmpty() || tfe.getCode().isBlank()) {
-				errorManagement(i, MessageText.of(TopicFileExportMultilingualResources.ERR_CODE_EMPTY).getDisplay());
+				errorManagement(i, LocaleMessageText.of(TopicFileExportMultilingualResources.ERR_CODE_EMPTY).getDisplay());
 			}
 			if (!codeSet.add(tfe.getCode())) {
-				final StringBuilder erreur = new StringBuilder(MessageText.of(TopicFileExportMultilingualResources.ERR_CODE_DUPLICATED, tfe.getCode()).getDisplay());
+				final StringBuilder erreur = new StringBuilder(LocaleMessageText.of(TopicFileExportMultilingualResources.ERR_CODE_DUPLICATED, tfe.getCode()).getDisplay());
 				errorManagement(i, erreur.toString());
 			}
 		}
@@ -242,11 +242,11 @@ public class TopicFileExportServices implements Component {
 			final Optional<Topic> topicBase = topicServices.getTopicByCode(tfe.getCode(), chatbot.getBotId());
 
 			if (topicBase.isEmpty() && tfe.getCategory().equals(DEFAULT_TOPIC_CAT_CODE)  && !isRollback) {
-				throw new VSystemException(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC_CATEGORY).getDisplay());
+				throw new VSystemException(LocaleMessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC_CATEGORY).getDisplay());
 			}
 
 			if (TopicServices.getTechnicalKindTopics().contains(tfe.getCode()) && !tfe.getCategory().equals(DEFAULT_TOPIC_CAT_CODE)) {
-				throw new VSystemException(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC_DEFAULT_CATEGORY).getDisplay());
+				throw new VSystemException(LocaleMessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC_DEFAULT_CATEGORY).getDisplay());
 			}
 
 			if (topicBase.isPresent()) {
@@ -273,7 +273,7 @@ public class TopicFileExportServices implements Component {
 			mapCreation.put(tfe.getCode(), creation);
 
 		} catch (final Exception e) {
-			final StringBuilder erreur = new StringBuilder(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC, tfe.getCode()).getDisplay());
+			final StringBuilder erreur = new StringBuilder(LocaleMessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC, tfe.getCode()).getDisplay());
 			erreur.append(e.getMessage());
 			errorManagement(line, erreur.toString());
 		}
@@ -357,7 +357,7 @@ public class TopicFileExportServices implements Component {
 			topicLabelServices.replaceLabel(tfe, topicSaved);
 
 		} catch (final Exception e) {
-			final StringBuilder erreur = new StringBuilder(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC, tfe.getCode()).getDisplay());
+			final StringBuilder erreur = new StringBuilder(LocaleMessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC, tfe.getCode()).getDisplay());
 			erreur.append(e.getMessage());
 			errorManagement(line, erreur.toString());
 		}

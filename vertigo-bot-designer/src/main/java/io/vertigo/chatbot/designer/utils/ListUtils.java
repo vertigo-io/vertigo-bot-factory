@@ -1,7 +1,7 @@
 package io.vertigo.chatbot.designer.utils;
 
 import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.structure.definitions.DtFieldName;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtObject;
@@ -36,7 +36,7 @@ public final class ListUtils {
 					viewContext.publishDtList(ViewContextKey.of(key), dtList.stream().limit(MAX_ELEMENTS)
 							.collect(VCollectors.toDtList(dtList.getDefinition())));
 				}
-				uiMessageStack.info(MessageText.of(UtilsMultilingualResources.LIST_TOO_BIG, MAX_ELEMENTS).getDisplay());
+				uiMessageStack.info(LocaleMessageText.of(UtilsMultilingualResources.LIST_TOO_BIG, MAX_ELEMENTS).getDisplay());
 			}
 		});
 	}

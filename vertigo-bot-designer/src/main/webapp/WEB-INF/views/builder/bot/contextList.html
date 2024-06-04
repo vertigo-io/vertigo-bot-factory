@@ -8,26 +8,12 @@
 
 <head>
     <title th:text="#{context.title}"></title>
-    <script th:inline="javascript">
-        function saveContextEnvironment() {
-            VUiPage.httpPostAjax("_saveContextEnvironment", {
-                'cenvIdOpt': VertigoUi.vueData.newContextEnvironment.cenvId,
-                'label': VertigoUi.vueData.newContextEnvironment.label
-            });
-        }
-
-        function saveContextEnvironmentValue() {
-            VUiPage.httpPostAjax("_saveContextEnvironmentValue", {
-                'cenvalId': VertigoUi.vueData.newContextEnvironmentValue.cenvalId,
-                'value': VertigoUi.vueData.newContextEnvironmentValue.value
-            });
-        }
-    </script>
 </head>
 
 <body>
 <section layout:fragment="content-actions">
     <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                    th:title="#{context.add}"
                     url="@{/bot/{id}/contextValue/new(id=${model.bot.botId})}" th:ariaLabel="#{context.add}" icon="add"
                     class="on-left" round size="md" color="primary"/>
 

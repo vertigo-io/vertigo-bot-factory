@@ -111,7 +111,7 @@
                 </q-card-section>
                 <q-card-section>
                     <vu:label-edit object="newWelcomeTour" field="config">
-                        <vu:fileupload th:url="'@{/commons/upload}'" key="importShepherdConfigFileUri" multiple="false" accept="'.js'"
+                        <vu:fileupload th:url="'@{/commons/upload}'" key="importShepherdConfigFileUri" multiple="false" accept="'.js'" th:with="object=null, field=null"
                                    @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
                     </vu:label-edit>
                     <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
