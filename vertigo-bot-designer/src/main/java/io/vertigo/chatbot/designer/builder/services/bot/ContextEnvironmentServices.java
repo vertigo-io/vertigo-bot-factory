@@ -1,7 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -17,6 +15,8 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
+
+import javax.inject.Inject;
 
 /**
  * @author cmarechal
@@ -36,7 +36,7 @@ public class ContextEnvironmentServices implements Component {
     private ContextValueServices contextValueServices;
 
     @Secured("BotUser")
-    public ContextEnvironment save(@SecuredOperation("botAdm") final Chatbot bot, final ContextEnvironment contextEnvironment, boolean creation) {
+    public ContextEnvironment save(@SecuredOperation("botContributor") final Chatbot bot, final ContextEnvironment contextEnvironment, boolean creation) {
         ContextEnvironment savedContextEnvironment = contextEnvironmentDAO.save(contextEnvironment);
         if (creation) {
             contextValueServices.getAllContextValueByBotId(bot.getBotId()).stream().map(contextValue -> {
@@ -63,7 +63,7 @@ public class ContextEnvironmentServices implements Component {
     }
 
     @Secured("BotUser")
-    public void deleteContextEnvironment(@SecuredOperation("botAdm") final Chatbot bot, final Long cenvId) {
+    public void deleteContextEnvironment(@SecuredOperation("botContributor") final Chatbot bot, final Long cenvId) {
         contextEnvironmentValueServices.deleteAllValueByContextEnvironment(cenvId);
         contextEnvironmentDAO.delete(cenvId);
     }
@@ -77,14 +77,14 @@ public class ContextEnvironmentServices implements Component {
                     contextEnvironmentIhm.setLabel(contextEnvironment.getLabel());
                     contextEnvironmentIhm.setContextEnvironmentValues(contextEnvironmentValueServices.findAllContextEnvironmentValuesByEnv(contextEnvironment.getCenvId()).stream()
                             .map(contextEnvironmentValue -> {
-                        contextEnvironmentValue.contextValue().load();
-                        ContextEnvironmentValueIhm contextEnvironmentValueIhm = new ContextEnvironmentValueIhm();
-                        contextEnvironmentValueIhm.setCenvalId(contextEnvironmentValue.getCenvalId());
-                        contextEnvironmentValueIhm.setValue(contextEnvironmentValue.getValue());
-                        contextEnvironmentValueIhm.setCvaId(contextEnvironmentValue.getCvaId());
-                        contextEnvironmentValueIhm.setLabel(contextEnvironmentValue.contextValue().get().getLabel());
-                        return contextEnvironmentValueIhm;
-                    }).collect(VCollectors.toDtList(ContextEnvironmentValueIhm.class)));
+                                contextEnvironmentValue.contextValue().load();
+                                ContextEnvironmentValueIhm contextEnvironmentValueIhm = new ContextEnvironmentValueIhm();
+                                contextEnvironmentValueIhm.setCenvalId(contextEnvironmentValue.getCenvalId());
+                                contextEnvironmentValueIhm.setValue(contextEnvironmentValue.getValue());
+                                contextEnvironmentValueIhm.setCvaId(contextEnvironmentValue.getCvaId());
+                                contextEnvironmentValueIhm.setLabel(contextEnvironmentValue.contextValue().get().getLabel());
+                                return contextEnvironmentValueIhm;
+                            }).collect(VCollectors.toDtList(ContextEnvironmentValueIhm.class)));
                     contextEnvironments.add(contextEnvironmentIhm);
                 });
         return contextEnvironments;
@@ -98,7 +98,7 @@ public class ContextEnvironmentServices implements Component {
         return contextEnvironmentValueServices.findById(cenvalId);
     }
 
-    public ContextEnvironmentValue saveContextEnvironmentValue(@SecuredOperation("botAdm") final Chatbot bot,final ContextEnvironmentValue contextEnvironmentValue) {
+    public ContextEnvironmentValue saveContextEnvironmentValue(@SecuredOperation("botContributor") final Chatbot bot, final ContextEnvironmentValue contextEnvironmentValue) {
         return contextEnvironmentValueServices.save(contextEnvironmentValue);
     }
 }
