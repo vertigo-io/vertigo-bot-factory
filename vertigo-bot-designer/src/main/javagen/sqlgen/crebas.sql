@@ -364,6 +364,7 @@ create table CHATBOT_CUSTOM_CONFIG
     DISPLAY_AVATAR	 bool        	,
     TOTAL_MAX_ATTACHMENT_SIZE	 NUMERIC     	,
     DISABLE_NLU 	 bool        	,
+    MAX_SAVED_TRAINING	 NUMERIC     	,
     BOT_ID      	 NUMERIC     	not null,
     FOF_CD      	 VARCHAR(100)	,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
@@ -404,6 +405,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.TOTAL_MAX_ATTACHMENT_SIZE is
 
 comment on column CHATBOT_CUSTOM_CONFIG.DISABLE_NLU is
 'Disable NlU';
+
+comment on column CHATBOT_CUSTOM_CONFIG.MAX_SAVED_TRAINING is
+'Maximum of saved trainings';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';

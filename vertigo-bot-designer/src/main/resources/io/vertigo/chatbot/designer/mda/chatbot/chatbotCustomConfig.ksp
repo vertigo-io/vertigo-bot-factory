@@ -13,6 +13,7 @@ create DtDefinition DtChatbotCustomConfig {
 	field displayAvatar                     {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
 	field totalMaxAttachmentSize            {domain: DoNumber       label: "Total maximum attachment size"      cardinality:"?"}
 	field disableNlu                        {domain: DoYesNo        label: "Disable NlU"                        cardinality:"?"}
+	field maxSavedTraining                  {domain: DoNumber       label: "Maximum of saved trainings"         cardinality:"?"}
 }
 
 create Association AChatbotCustomConfigChatbot {

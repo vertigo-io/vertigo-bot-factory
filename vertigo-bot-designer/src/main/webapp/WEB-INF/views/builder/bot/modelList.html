@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html
-	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:th="http://www.thymeleaf.org"
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=models"
 	>
-	
+
 	<head>
 		<title th:text="#{model.title}"></title>
 
 		<vu:include-data object="training" field="versionNumber" />
 		<script th:inline="javascript">
 			// ## training ##
-			
+
 			var interval;
 			VUiExtensions.dataX.loadingRunner = false;
 			VUiExtensions.dataX.loadingModels = false;
 			VUiExtensions.dataX.loadingTraining = false;
 			VUiExtensions.dataX.loadingRollback = false;
 			VUiExtensions.dataX.modalLog = {"show": false, "col": "", "row": {}};
+
+        VUiExtensions.dataX.maxSavedTrainingsOptions = [3, 5, 10]
 
 			function normalizeString(str) {
 				if (str)
@@ -37,7 +39,7 @@
 
 			function refreshModels() {
 				VUiExtensions.dataX.loadingModels = true;
-				
+
 				VUiPage.httpPostAjax("_refreshTrainings", {}, {
 					onSuccess: function() {
 						VUiExtensions.dataX.loadingModels = false;
@@ -53,7 +55,7 @@
 			function deploySavedTraining(noId, savedTraId) {
 				VUiPage.httpPostAjax("_deploySavedTraining", {
 					'savedTrainingIdToDeploy': savedTraId,
-					'nodeId': noId
+                'nodeId': noId,
 				}, {
 					onSuccess: function() {
 						postTrain();
@@ -76,15 +78,22 @@
 				VUiPage.httpPostAjax("_saveTraining", {
 					'name': VertigoUi.vueData.newSavedTraining.name,
 					'description': VertigoUi.vueData.newSavedTraining.description,
+                'maxSavedTrainings': VertigoUi.vueData.maxSavedTrainings,
+            })
+        }
+
+        function saveMaxSavedTrainings() {
+            VUiPage.httpPostAjax("_saveMaxSavedTrainings", {
+                'maxSavedTrainings': VertigoUi.vueData.maxSavedTrainings,
 				})
 			}
 			// ## model management ##
-			
+
 			VUiExtensions.dataX.loadModel = {
 				currentTraining: null,
 				selectedNode: null
 			};
-			
+
 			function showTrainingPopin(training) {
 				VUiExtensions.dataX.loadModel = {
 					currentTraining: training,
@@ -93,8 +102,8 @@
 				};
 				VUiPage.$refs.loadModelDialog.show();
 			}
-			
-						
+
+
 			function trainSelectedNode() {
 				VUiExtensions.dataX.loadModel.processing = true;
 				VUiPage.httpPostAjax('_train',
@@ -104,28 +113,28 @@
 						{
 							onSuccess: function() {
 								postTrain();
-								
+
 							}
 						}
 					);
 			}
-			
+
 			function getTrainingById(id) {
 				if (id == null) return null;
-				
+
 				let result = VertigoUi.vueData.trainingList.filter(t => t.traId === id);
 				return result.length === 0 ? null : result[0];
 			}
-			
+
 			function getVersionNumberByTrainingId(id) {
 				let training = getTrainingById(id);
 				return training === null ? null : training.versionNumber;
 			}
-			
+
 			function isSelected(node) {
 				return VUiExtensions.dataX.loadModel.selectedNode && VUiExtensions.dataX.loadModel.selectedNode.nodId === node.nodId;
 			}
-			
+
 			function selectNode(node, state) {
 				if (state) {
 					VUiExtensions.dataX.loadModel.selectedNode = node;
@@ -133,7 +142,7 @@
 					VUiExtensions.dataX.loadModel.selectedNode = null;
 				}
 			}
-			
+
 			function getCurrentTrainingVersionNumber() {
 				return VertigoUi.vueData.training.versionNumber;
 			}
@@ -164,7 +173,7 @@
 					return "<span class='text-orange'>" + /*[[#{node.deployment.same}]]*/ + "</span>";
 				}
 			}
-			
+
 			function displayTrainingLog(training) {
 
 
@@ -194,9 +203,9 @@
 
 		</script>
 	</head>
-	
+
 	<body>
-		
+
 		<section layout:fragment="content">
 			<vu:include-data-primitive key="locale"/>
 
@@ -302,6 +311,16 @@
 				</vu:column>
 			</vu:table>
 
+    <vu:block id="botMaxSavedTrainings" th:title="#{savedTraining.maxSavedTrainings}">
+        <vu:include-data-primitive key="maxSavedTrainings" modifiable="true"/>
+        <q-select
+                v-model="vueData.maxSavedTrainings"
+                :options="VUiExtensions.dataX.maxSavedTrainingsOptions"
+                @input="saveMaxSavedTrainings()"
+        >
+        </q-select>
+    </vu:block>
+
 			<q-dialog v-model="dataX.modalLog.show">
 				<q-card style="max-width: 90vw; width: 1200px;">
 					<q-card-section class="row items-center">
@@ -309,21 +328,21 @@
 						<q-space></q-space>
 						<q-btn icon="close" flat round dense v-close-popup></q-btn>
 					</q-card-section>
-					
+
 					<q-separator></q-separator>
-					
+
    					<q-card-section style="max-height: calc(90vh - 90px)" class="scroll">
     					<pre>{{dataX.modalLog.row[dataX.modalLog.col]}}</pre>
     				</q-card-section>
-      			</q-card>	
+      			</q-card>
 			</q-dialog>
-			
+
 			<q-dialog ref="loadModelDialog">
 				<q-card style="max-width: 50vw;">
 					<q-card-section>
 						<div class="text-h6"><span th:text="#{node.deployment.popuptitle}"></span> {{getCurrentTrainingVersionNumber()}}</div>
 					</q-card-section>
-					
+
 					<q-card-section>
 						<p th:text="#{node.deployment.title}"></p>
 
@@ -333,12 +352,12 @@
 							{{node.name}}
 						</q-chip>
 					</q-card-section>
-					
+
 					<q-card-section>
 						<div v-if="!dataX.loadModel.selectedNode" class="text-italic" th:text=#{node.deployment.phrase}></div>
 						<div v-if="dataX.loadModel.selectedNode"><span th:text="#{node.deployment.action} + ' '"></span><span v-html="getMigrationAdjective()"></span><span th:text="' ' + #{node.deployment.modelnode} + ' '"></span><span class="text-italic" :style="'color: '+ dataX.loadModel.selectedNode.color">"{{dataX.loadModel.selectedNode.name}}"</span></div>
 					</q-card-section>
-					
+
 					<q-card-actions align="around">
 						<q-btn th:label="#{action.node.cancel}" color="red" v-close-popup></q-btn>
 						<q-btn th:label="#{action.node.load}" color="green" :disable="!dataX.loadModel.selectedNode" :loading="dataX.loadModel.processing" @click="trainSelectedNode()" ></q-btn>
@@ -436,7 +455,7 @@
 		    </q-dialog>
 
 		</section>
-		
+
 		<section layout:fragment="javascript-footer">
 			<script>
                 VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {

@@ -220,6 +220,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$disableNlu,
 	/**
+	 * Maximum of saved trainings.
+	 */
+	fldChatbotCustomConfig$maxSavedTraining,
+	/**
 	 * Chatbot.
 	 */
 	fldChatbotCustomConfig$botId,

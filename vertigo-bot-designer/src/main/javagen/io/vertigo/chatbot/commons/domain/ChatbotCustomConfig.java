@@ -28,6 +28,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
 	private Boolean disableNlu;
+	private Long maxSavedTraining;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -291,6 +292,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setDisableNlu(final Boolean disableNlu) {
 		this.disableNlu = disableNlu;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Maximum of saved trainings'.
+	 * @return Long maxSavedTraining
+	 */
+	@Field(smartType = "STyNumber", label = "Maximum of saved trainings")
+	public Long getMaxSavedTraining() {
+		return maxSavedTraining;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Maximum of saved trainings'.
+	 * @param maxSavedTraining Long
+	 */
+	public void setMaxSavedTraining(final Long maxSavedTraining) {
+		this.maxSavedTraining = maxSavedTraining;
 	}
 	
 	/**

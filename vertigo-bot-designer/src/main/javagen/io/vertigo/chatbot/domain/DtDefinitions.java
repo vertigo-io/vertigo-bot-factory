@@ -384,6 +384,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		totalMaxAttachmentSize,
 		/** Propriété 'Disable NlU'. */
 		disableNlu,
+		/** Propriété 'Maximum of saved trainings'. */
+		maxSavedTraining,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'fontFamily'. */

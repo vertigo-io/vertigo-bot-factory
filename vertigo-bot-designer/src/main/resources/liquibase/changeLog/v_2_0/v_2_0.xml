@@ -157,4 +157,8 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_06_10.sql"/>
     </changeSet>
 
+    <changeSet author="rsaintpaul" id="Add max_saved_trainings column to chatbot_custom_config table">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_06_03.sql"/>
+    </changeSet>
+
 </databaseChangeLog>
