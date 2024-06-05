@@ -44,6 +44,16 @@ import io.vertigo.datastore.filestore.FileStoreManager;
 import io.vertigo.datastore.filestore.model.FileInfo;
 import io.vertigo.datastore.filestore.model.VFile;
 
+import javax.inject.Inject;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import static io.vertigo.chatbot.designer.builder.services.TrainingServices.MAX_TRAINING_ELEMENTS;
 import static java.lang.Long.parseLong;
 
@@ -85,7 +95,7 @@ public class SavedTrainingServices implements Component {
 
 
 	@Secured("BotUser")
-	public SavedTraining save(@SecuredOperation("botAdm") final Chatbot bot,  final SavedTraining savedTraining) {
+    public SavedTraining save(@SecuredOperation("botAdm") final Chatbot bot, final SavedTraining savedTraining, final Long maxSavedTrainings) {
 		savedTrainingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.botId, savedTraining.getBotId())
 				.and(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.traId, savedTraining.getTraId())))
 				.ifPresent(it -> {
@@ -93,6 +103,21 @@ public class SavedTrainingServices implements Component {
 				});
 		FileInfo newSavedTrainingInfo = saveConfig(bot);
 		savedTraining.setAttFileInfoId(parseLong(newSavedTrainingInfo.getURI().getKey().toString()));
+
+        DtList<SavedTraining> allSavedTrainings = getAllSavedTrainingByBotId(bot.getBotId());
+        long numberOfSavedTrainings = allSavedTrainings.size();
+
+        if (numberOfSavedTrainings + 1 > maxSavedTrainings) {
+            DtList<SavedTraining> sortedSavedTrainings = allSavedTrainings.stream()
+                    .sorted(Comparator.comparing(SavedTraining::getCreationTime))
+                    .collect(VCollectors.toDtList(SavedTraining.class));
+
+            int trainingsToDelete = (int) (numberOfSavedTrainings - maxSavedTrainings + 1);
+            sortedSavedTrainings.stream()
+                    .limit(trainingsToDelete)
+                    .forEach(training -> delete(bot, training.getSavedTraId()));
+        }
+
 		return savedTrainingDAO.save(savedTraining);
 	}
 
