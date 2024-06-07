@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html
-	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:th="http://www.thymeleaf.org"
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=categories"
 	>
-	
+
 	<head>
 		<title th:text="#{topicCategory.title}"></title>
 
@@ -19,10 +19,32 @@
 				VertigoUi.vueData.topicsToUpdate = selectedTopicIhm.map(topic => topic).join(',');
 			}
 
+			function normalizeString(str) {
+				if (str)
+					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+				else
+					return '';
+			}
+
+			function filterFn (val, update) {
+				update(() => {
+					if (val === '') {
+						VertigoUi.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList
+					}
+					else {
+						const needle = normalizeString(val.toLowerCase())
+						VertigoUi.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList.filter(
+								v => normalizeString((v.title+v.catLabel).toLowerCase()).indexOf(needle) > -1
+						)
+					}
+				})
+			}
+
+
 		</script>
 
 	</head>
-	
+
 	<body>
 		<section layout:fragment="content-actions">
 			<vu:include-data object="topicCategory" field="code" />
@@ -33,7 +55,7 @@
 			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm] && model.topicCategory.code != 'DEFAULT'}" @click="componentStates.showPopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
 							class="on-left" round size="md" color="red" ></q-btn>
 		</section>
-				
+
 		<section layout:fragment="content">
 			<vu:popup action="_delete" vModel="showPopup" message="#{topicCategory.popup.message}" confirm="#{action.confirm}"></vu:popup>
 
@@ -44,7 +66,7 @@
 					<vu:label object="topicCategory" field="isEnabled">
 						<vu:include-data object="topicCategory" field="isEnabled" modifiable="true" />
 						<q-input v-model="vueData.topicCategory.isEnabled" name="vContext[topicCategory][isEnabled]" class="hidden" ></q-input>
-					
+
 						<q-toggle v-model="vueData.topicCategory.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
 					</vu:label>
 				</vu:grid>
@@ -124,7 +146,7 @@
 
 			<q-dialog ref="otherTopicsDialog">
 				<vu:include-data object="topicCategory" field="'*'" />
-				<vu:include-data object="topicIhmList" field="'*'" />
+				<vu:include-data object="topicIhmList" field="'*'" modifiableAllLines="true"/>
 				<vu:include-data-primitive key="locale"/>
 				<q-card>
 					<q-card-section>
@@ -133,16 +155,19 @@
 						</div>
 					</q-card-section>
 					<q-card-section>
+						<th:block th:attr="dataObject=${model.vContext[componentStates].addComponentState('titles').addObject('filterOptions')}" th:remove="all" />
 						<q-select
-								outlined
 								multiple
 								v-model="vueData.selectedTopicIhmList"
-								:options="vueData.topicIhmList"
+								:options="componentStates.titles.filterOptions"
 								option-value="topId"
-								:option-label="topicIhm => `${topicIhm.title} | ${vueData.locale == 'fr_FR' ? 'CATEGORIE' : 'CATEGORY'} : ${topicIhm.catLabel}`"
-								th:label="#{topic.categoryAdd.popup.topic}"
-								map-options
+								:option-label="topicIhm => `[${topicIhm.catLabel}] ${topicIhm.title}`"
 								emit-value
+								use-input
+								hide-selected
+								input-debounce="0"
+								autofocus
+								@filter="filterFn"
 								@input="updateSelectedTopics"
 						/>
 					</q-card-section>

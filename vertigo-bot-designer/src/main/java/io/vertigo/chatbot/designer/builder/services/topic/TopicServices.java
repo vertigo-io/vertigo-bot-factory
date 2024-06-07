@@ -107,7 +107,8 @@ public class TopicServices implements Component, Activeable {
     public DtList<TopicIhm> filterTopicsRemovingACategory(final DtList<TopicIhm> topicIhmList, final Long topicCategoryId, final Chatbot bot) {
         return topicIhmList.stream()
                 .filter(topicIhm -> !Objects.equals(topicIhm.getCatId(), topicCategoryId))
-                .sorted(Comparator.comparing(TopicIhm::getTitle))
+                .sorted(Comparator.comparing(TopicIhm::getCatId)
+                        .thenComparing(TopicIhm::getTitle))
                 .collect(VCollectors.toDtList(TopicIhm.class));
     }
 
