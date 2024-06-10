@@ -17,6 +17,7 @@
 			VUiExtensions.dataX.loadingRunner = false;
 			VUiExtensions.dataX.loadingModels = false;
 			VUiExtensions.dataX.loadingTraining = false;
+			VUiExtensions.dataX.loadingRollback = false;
 			VUiExtensions.dataX.modalLog = {"show": false, "col": "", "row": {}};
 
 			function normalizeString(str) {
@@ -56,6 +57,17 @@
 				}, {
 					onSuccess: function() {
 						postTrain();
+					}
+				})
+			}
+
+			function rollbackSavedTraining(savedTraId) {
+				VUiExtensions.dataX.loadingRollback = true;
+				VUiPage.httpPostAjax("_rollbackSavedTraining", {
+					'savedTrainingIdToDeploy': savedTraId,
+				}, {
+					onSuccess: function () {
+						VUiExtensions.dataX.loadingRollback = false;
 					}
 				})
 			}
@@ -253,6 +265,13 @@
 
 				</vu:slot>
 				<vu:slot name="actions_slot" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}">
+					<vu:include-data object="savedTrainingList" field="attFileInfoId"/>
+					<q-btn class="on-right" round color="blue" icon="settings_backup_restore"
+						   v-if="props.row.attFileInfoId !== null"
+						   th:aria-label="#{model.savedTraining.rollback}"
+						   th:title="#{model.savedTraining.rollback}"
+						   :loading="dataX.loadingRollback"
+						   @click="componentStates.savedTraId = props.row.savedTraId; $refs.rollbackSavedTraining.show()"></q-btn>
 					<q-btn class="on-right" round color="blue" icon="cloud_upload" th:aria-label="#{savedTraining.deploy}" th:title="#{savedTraining.deploy}"
 						   @click="componentStates.savedTraId = props.row.savedTraId;  ;$refs.deployTraining.show()"></q-btn>
 					<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{model.savedTraining.delete}" th:title="#{model.savedTraining.delete}"
@@ -382,7 +401,23 @@
 				</q-card>
 			</q-dialog>
 
+			<q-dialog ref="rollbackSavedTraining"
+					  th:attr="dataObject=${model.vContext['componentStates'].addComponentState('savedTraId')}">
+				<q-card>
+					<q-card-section>
+						<div class="text-h6"><span th:text="#{model.savedTraining.rollback.message}"></span></div>
+					</q-card-section>
 
+					<q-card-actions align="around">
+						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<q-btn th:label="#{action.rollback.cancel}" color="red" v-close-popup></q-btn>
+						<q-btn th:label="#{action.rollback.rollback}" color="blue"
+							   @click="rollbackSavedTraining(componentStates.savedTraId);"
+							   v-close-popup></q-btn>
+					</q-card-actions>
+
+				</q-card>
+			</q-dialog>
 
 			<q-dialog  ref="trainingDisplayedDialog"  full-width >
 				<vu:include-data object="trainingDisplayed" field="log" />
