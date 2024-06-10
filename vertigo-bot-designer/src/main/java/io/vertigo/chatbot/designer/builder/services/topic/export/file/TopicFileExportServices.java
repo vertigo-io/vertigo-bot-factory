@@ -121,13 +121,13 @@ public class TopicFileExportServices implements Component {
 
 	public void importTopicFromCSVFile(final Chatbot chatbot, final FileInfoURI importTopicFile) {
 		final List<TopicFileExport> list = transformFileToList(designerFileServices.getFileTmp(importTopicFile));
-		importTopicFromList(chatbot, list);
+		importTopicFromList(chatbot, list, false);
 	}
 
 	/*
 	 * Return a list of TopicFileExport from a CSV file
 	 */
-	private List<TopicFileExport> transformFileToList(@SecuredOperation("SuperAdm") final VFile file) {
+	public List<TopicFileExport> transformFileToList(@SecuredOperation("SuperAdm") final VFile file) {
 		final String[] columns = new String[] {
 				TopicFileExportFields.code.name(),
 				TopicFileExportFields.typeTopic.name(),
@@ -153,7 +153,7 @@ public class TopicFileExportServices implements Component {
 	/*
 	 * Use a list of TopicFileExport to create/modify topics
 	 */
-	private void importTopicFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<TopicFileExport> list) {
+	public void importTopicFromList(@SecuredOperation("SuperAdm") final Chatbot chatbot, final List<TopicFileExport> list, Boolean isRollback) {
 
 		codeCheck(list);
 
@@ -167,7 +167,7 @@ public class TopicFileExportServices implements Component {
 		int line = 1;
 		for (final TopicFileExport tfe : list) {
 			line++;
-			generateTopicShellFromTopicFileExport(tfe, mapCategory, chatbot, line, mapTopic, mapCreation);
+			generateTopicShellFromTopicFileExport(tfe, mapCategory, chatbot, line, mapTopic, mapCreation, isRollback);
 		}
 
 		//Then, create/modify smallTalk/ScriptIntention (topics just created may be referenced in the response button)
@@ -220,7 +220,7 @@ public class TopicFileExportServices implements Component {
 			final Chatbot chatbot,
 			final int line,
 			final Map<String, Topic> mapTopic,
-			final Map<String, Boolean> mapCreation) {
+			final Map<String, Boolean> mapCreation, final Boolean isRollback) {
 
 		try {
 			boolean creation = true;
@@ -241,7 +241,7 @@ public class TopicFileExportServices implements Component {
 			//Try to find the topic in database
 			final Optional<Topic> topicBase = topicServices.getTopicByCode(tfe.getCode(), chatbot.getBotId());
 
-			if (topicBase.isEmpty() && tfe.getCategory().equals(DEFAULT_TOPIC_CAT_CODE)) {
+			if (topicBase.isEmpty() && tfe.getCategory().equals(DEFAULT_TOPIC_CAT_CODE)  && !isRollback) {
 				throw new VSystemException(MessageText.of(TopicFileExportMultilingualResources.ERR_TOPIC_CATEGORY).getDisplay());
 			}
 

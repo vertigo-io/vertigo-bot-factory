@@ -31,15 +31,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import javax.inject.Inject;
@@ -236,13 +239,13 @@ public class DesignerFileServices implements Component, Activeable {
 		return mediaFileInfoDAO.get(id);
 	}
 
-	public VFile zipMultipleFiles(final List<VFile> files, final String zipFileName) {
+	public VFile zipMultipleFiles(final Map<String, VFile> fileMap, final String zipFileName) {
 		try(final ByteArrayOutputStream fos = new ByteArrayOutputStream()) {
 			final ZipOutputStream zipOut = new ZipOutputStream(fos);
-			files.forEach(file -> {
+			fileMap.forEach((fileType, file) -> {
 				try(final InputStream fis = file.createInputStream()) {
 					final byte[] bytes = fis.readAllBytes();
-					final ZipEntry zipEntry = new ZipEntry(file.getFileName());
+					final ZipEntry zipEntry = new ZipEntry(fileType + "/" + file.getFileName());
 					zipEntry.setSize(bytes.length);
 					zipOut.putNextEntry(zipEntry);
 					zipOut.write(bytes);
@@ -257,6 +260,40 @@ public class DesignerFileServices implements Component, Activeable {
 					() -> new ByteArrayInputStream(bytes));
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Couldn't build zip file");
+		}
+	}
+
+	public Map<String, VFile> unzipMultipleFiles(VFile zipFile) {
+		try (InputStream is = zipFile.createInputStream();
+			 ZipInputStream zis = new ZipInputStream(is)) {
+
+			Map<String, VFile> fileMap = new HashMap<>();
+			ZipEntry zipEntry;
+			while ((zipEntry = zis.getNextEntry()) != null) {
+
+				String [] fileTypeAndName = zipEntry.getName().split("/");
+				String fileType = fileTypeAndName[0];
+				String fileName = fileTypeAndName[1];
+				long size = zipEntry.getSize();
+				Instant lastModified = Instant.ofEpochMilli(zipEntry.getTime());
+				String mimeType = "application/octet-stream"; // You may need to adjust this based on your use case
+
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				byte[] buffer = new byte[1024];
+				int len;
+				while ((len = zis.read(buffer)) > 0) {
+					baos.write(buffer, 0, len);
+				}
+				byte[] content = baos.toByteArray();
+
+				VFile vFile = new StreamFile(fileName, mimeType, lastModified, size, () -> new ByteArrayInputStream(content));
+				fileMap.put(fileType, vFile);
+
+				zis.closeEntry();
+			}
+			return fileMap;
+		} catch (IOException e) {
+			throw new VSystemException(e, "Couldn't unzip files");
 		}
 	}
 }

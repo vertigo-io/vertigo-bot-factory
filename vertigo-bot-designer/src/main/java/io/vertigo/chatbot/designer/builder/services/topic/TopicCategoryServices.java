@@ -139,7 +139,7 @@ public class TopicCategoryServices implements Component {
         transformFileToList(designerFileServices.getFileTmp(importCategoriesFileUri)).forEach(topicCategory -> generateCategoryFromCategoryExport(topicCategory, chatbot));
     }
 
-    private List<TopicCategoryExport> transformFileToList(final VFile file) {
+    public List<TopicCategoryExport> transformFileToList(final VFile file) {
         final String[] columns = new String[]{
                 DtDefinitions.TopicCategoryExportFields.code.name(),
                 DtDefinitions.TopicCategoryExportFields.label.name(),
@@ -149,7 +149,7 @@ public class TopicCategoryServices implements Component {
         return designerFileServices.readCsvFile(TopicCategoryExport.class, file, columns);
     }
 
-    private void generateCategoryFromCategoryExport(final TopicCategoryExport topicCategoryExport, final Chatbot chatbot) {
+    public void generateCategoryFromCategoryExport(final TopicCategoryExport topicCategoryExport, final Chatbot chatbot) {
         final Optional<TopicCategory> topicCategoryEntityBase = getTopicCategoryByBotIdAndCode(chatbot, topicCategoryExport.getCode());
         if (topicCategoryEntityBase.isEmpty()) {
             final TopicCategory topicCategory = new TopicCategory();

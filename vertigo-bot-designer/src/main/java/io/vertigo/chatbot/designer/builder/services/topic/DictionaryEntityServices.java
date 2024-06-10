@@ -341,7 +341,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	/*
 	 * Return a list of DictionaryExport from a CSV file
 	 */
-	private List<DictionaryEntityWrapper> transformFileToList(@SecuredOperation("SuperAdm") final VFile file) {
+	public List<DictionaryEntityWrapper> transformFileToList(@SecuredOperation("SuperAdm") final VFile file) {
 		final String[] columns = new String[] {
 				DtDefinitions.DictionaryEntityWrapperFields.dictionaryEntityLabel.name(),
 				DtDefinitions.DictionaryEntityWrapperFields.synonymsList.name(),
@@ -362,7 +362,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	/*
 	 * Generate dictionary entity and synonyms from a DictionaryExport
 	 */
-	private void generateDictionaryFromDictionaryExport(final DictionaryEntityWrapper dex, final Chatbot chatbot) {
+	public void generateDictionaryFromDictionaryExport(final DictionaryEntityWrapper dex, final Chatbot chatbot) {
 
 		final DictionaryEntity dictionaryEntity = new DictionaryEntity();
 
