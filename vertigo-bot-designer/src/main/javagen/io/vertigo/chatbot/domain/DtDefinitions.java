@@ -1079,6 +1079,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		description,
 		/** Propriété 'Bot Export'. */
 		botExport,
+		/** Propriété 'Attachment File Info'. */
+		attFileInfoId,
 		/** Propriété 'Training'. */
 		traId,
 		/** Propriété 'Bot'. */
