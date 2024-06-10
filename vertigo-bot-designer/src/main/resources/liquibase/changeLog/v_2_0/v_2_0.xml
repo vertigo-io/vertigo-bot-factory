@@ -154,4 +154,8 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_05_16.sql"/>
     </changeSet>
 
+    <changeSet author="rsaintpaul" id="Add attachment file info column for saved training">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_06_10.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -704,6 +704,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldSavedTraining$botExport,
 	/**
+	 * Attachment File Info.
+	 */
+	fldSavedTraining$attFileInfoId,
+	/**
 	 * Training.
 	 */
 	fldSavedTraining$traId,
