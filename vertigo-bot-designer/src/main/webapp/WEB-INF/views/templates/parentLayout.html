@@ -20,7 +20,7 @@
 					<div class="col q-mx-xl" style="display: flex; justify-content: center">
 						<div class="row">
 							<div class="q-mr-lg q-my-sm q-link q-layout__section--marginal cursor-pointer text-uppercase" @click="hideOrShowBotToolbar()">
-								<span th:text="#{parent.bot}"></span>
+								<span th:text="#{parent.platform}"></span>
 								<q-icon name="expand_more"></q-icon>
 							</div>
 							<a class="q-mr-lg q-my-sm q-link q-layout__section--marginal text-uppercase" th:href="@{/persons/}" th:if="${model.userAuthorizations[AtzSuperAdm]}">
