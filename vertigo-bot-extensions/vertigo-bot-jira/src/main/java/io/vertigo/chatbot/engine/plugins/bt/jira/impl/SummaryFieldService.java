@@ -67,7 +67,7 @@ public class SummaryFieldService implements IJiraFieldService, Component {
 			bb.putString(wsBBPath, wsValue);
 			result.add(MessageText.of(JiraMultilingualResources.TICKET_FOUND).getDisplay());
 			result.add(MessageText.of(JiraMultilingualResources.TICKET_CHECK_ALREADY_EXISTS).getDisplay());
-			final String jqlSearch = "summary ~ \"" + bb.getString(BBKey.of(string)) + "\" OR description ~ \"" + bb.getString(BBKey.of(string)) + "\"";
+			final String jqlSearch = "project = \"" + jiraServerService.getProjectName() + "\" AND (summary ~ \"" + bb.getString(BBKey.of(string)) + "\" OR description ~ \"" + bb.getString(BBKey.of(string)) + "\")";
 			final List<String> jiraIssues = jiraServerService.getIssues(jqlSearch);
 			final long numberOfResults = jiraServerService.getNumberOfResults();
 
