@@ -156,6 +156,10 @@ public class JiraServerService implements Component, IJiraService {
         return jiraRestClient.getProjectClient().getProject(project).claim();
     }
 
+    public String getProjectName() {
+        return project;
+    }
+
     public OptionalIterable<IssueType> getIssueTypes() {
         return getProject().getIssueTypes();
     }
