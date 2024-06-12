@@ -8,6 +8,8 @@ import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.impl.ConfluenceServerServices;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.multilingual.ConfluenceMultilingualResources;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 
 import javax.inject.Inject;
@@ -37,6 +39,7 @@ public final class BotConfluenceNodeProvider implements Component {
 						bb.delete(BBKeyPattern.of(keyTemplate));
 						return BTStatus.Succeeded;
 					}
+					bb.listPush(BotEngine.BOT_RESPONSE_KEY, MessageText.of(ConfluenceMultilingualResources.CONFLUENCE_SEARCH_NOT_FOUND).getDisplay());
 					return BotNodeProvider.switchTopic(bb, topicFallbackConfluence).eval();
 				});
 
