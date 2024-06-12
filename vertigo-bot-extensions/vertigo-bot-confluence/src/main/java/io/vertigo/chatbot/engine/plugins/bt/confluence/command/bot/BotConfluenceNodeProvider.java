@@ -24,7 +24,7 @@ public final class BotConfluenceNodeProvider implements Component {
 	@Inject
 	private ConfluenceServerServices confluenceServerService;
 
-	public BTNode confluenceSearch(final BlackBoard bb, final String keyTemplate, final String question, final String listPresentation, final String topicFallbackConfluence) {
+	public BTNode confluenceSearch(final BlackBoard bb, final String keyTemplate, final String question, final String listPresentation, final String emptySearchResult, final String topicFallbackConfluence) {
 		return sequence(
 				inputString(bb, keyTemplate, question),
 				() -> {
@@ -39,7 +39,7 @@ public final class BotConfluenceNodeProvider implements Component {
 						bb.delete(BBKeyPattern.of(keyTemplate));
 						return BTStatus.Succeeded;
 					}
-					bb.listPush(BotEngine.BOT_RESPONSE_KEY, MessageText.of(ConfluenceMultilingualResources.CONFLUENCE_SEARCH_NOT_FOUND).getDisplay());
+					bb.listPush(BotEngine.BOT_RESPONSE_KEY, emptySearchResult);
 					return BotNodeProvider.switchTopic(bb, topicFallbackConfluence).eval();
 				});
 
