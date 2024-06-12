@@ -1384,7 +1384,7 @@ Blockly.Blocks['cb_confluencesearch'] = {
         this.jsonInit(
             {
                 "type": "confluence",
-                "message0": "%{BKY_CONFLUENCE_SEARCH_TITLE} %1 %{BKY_CONFLUENCE_VAR_TITLE} %2 %3 %4 %{BKY_CONFLUENCE_QUEST1_ASSOCIATED} %5 %6 %{BKY_CONFLUENCE_QUEST2_ASSOCIATED} %7 %8 %{BKY_COMMONS_CODE_ASSOCIATED} %9",
+                "message0": "%{BKY_CONFLUENCE_SEARCH_TITLE} %1 %{BKY_CONFLUENCE_VAR_TITLE} %2 %3 %4 %{BKY_CONFLUENCE_QUEST1_ASSOCIATED} %5 %6 %{BKY_CONFLUENCE_QUEST2_ASSOCIATED} %7 %8 %{BKY_CONFLUENCE_QUEST2_BIS_ASSOCIATED} %9 %10 %{BKY_COMMONS_CODE_ASSOCIATED} %11",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -1421,9 +1421,17 @@ Blockly.Blocks['cb_confluencesearch'] = {
                     },
                     {
                         "type": "field_input",
+                        "name": "emptyResults",
+                        "text": "%{BKY_COMMONS_SAMPLE_CONFLUENCE_QUEST2_BIS}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
                         "name": "code",
                         "text": "%{BKY_COMMONS_SAMPLE_CONFLUENCE_CODE}"
-                    }
+                    },
                 ],
                 "style": "conflu_welcometour_block",
                 "previousStatement": "all",

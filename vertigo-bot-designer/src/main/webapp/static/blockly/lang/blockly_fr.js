@@ -80,6 +80,7 @@ Blockly.Msg["COMMONS_SAMPLE_RATING_BINARY_QUEST"] = "Est-ce que j'ai répondu à
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_VAR"] = "search/confluence";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST1"] = "Je vais rechercher dans base documentaire, quelle est votre question ?";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST2"] = "Résultats consultation :";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST2_BIS"] = "Il n'y pas de résultats";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_CODE"] = "CONFLU";
 Blockly.Msg["COMMONS_SAMPLE_WT_CODE"] = "GACode";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_ISSUE_SENTENCE"] = "Votre ticket est consultable:";
@@ -195,6 +196,8 @@ Blockly.Msg["CONFLUENCE_SEARCH_TITLE"] = "Module recherche Confluence:";
 Blockly.Msg["CONFLUENCE_VAR_TITLE"] = "Variable recherche confluence:";
 Blockly.Msg["CONFLUENCE_QUEST1_ASSOCIATED"] = "Introduction:";
 Blockly.Msg["CONFLUENCE_QUEST2_ASSOCIATED"] = "Réponse:";
+Blockly.Msg["CONFLUENCE_QUEST2_BIS_ASSOCIATED"] = "Absence de réponse:";
+
 
 // *****************************
 // ****** CATEGORIE JIRA *******

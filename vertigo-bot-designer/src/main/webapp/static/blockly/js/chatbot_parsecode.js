@@ -400,12 +400,13 @@ function createBlock(type, isComposite, params = []) {
 		params[0] = valueTemp
 	}else if(resolvedType.type==='cb_confluencesearch'){
 		let lienParams = paramsFormatVariable(params[0])
-		let questions = [params[1], params[2]]
-		let code = params[3]
+		let questions = [params[1], params[2], params[3]]
+		let code = params[4]
 		params[0] = lienParams[0]
 		params[1] = lienParams[1]
 		params[2]=questions[0]
 		params[3]=questions[1]
+		params[4]=questions[2]
 		params.push(code)
 	}else if(resolvedType.type==='cb_jirafield'){
 		let lienParams = paramsFormatVariable(params[0])
