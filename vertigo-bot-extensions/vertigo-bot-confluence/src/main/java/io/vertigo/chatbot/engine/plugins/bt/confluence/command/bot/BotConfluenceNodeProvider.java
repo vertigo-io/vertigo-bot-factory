@@ -45,7 +45,7 @@ public final class BotConfluenceNodeProvider implements Component {
 
 	}
 
-	public BTNode confluenceAutomaticSearch(final BlackBoard bb, final String introductionSentence, final String topicFallbackConfluence, final String[] keyWords) {
+	public BTNode confluenceAutomaticSearch(final BlackBoard bb, final String introductionSentence, final String emptySearchResult, final String topicFallbackConfluence, final String[] keyWords) {
 		return sequence(
 				say(bb, introductionSentence),
 				() -> {
@@ -56,6 +56,7 @@ public final class BotConfluenceNodeProvider implements Component {
 						}
 						return BTStatus.Succeeded;
 					}
+					bb.listPush(BotEngine.BOT_RESPONSE_KEY, emptySearchResult);
 					return BotNodeProvider.switchTopic(bb, topicFallbackConfluence).eval();
 				});
 

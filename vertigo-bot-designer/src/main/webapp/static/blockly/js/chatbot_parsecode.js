@@ -216,6 +216,8 @@ function resolveCbBlockType(type) {
 			return {type: "cb_card"}
 		case "confluence:search":
 			return {type: "cb_confluencesearch"}
+		case "confluence:search:auto":
+			return {type:  "cb_confluencesearchauto"}
 		case "jira:issue:create":
 			return {type: "cb_jiraissue"}
 		case "jira:field":

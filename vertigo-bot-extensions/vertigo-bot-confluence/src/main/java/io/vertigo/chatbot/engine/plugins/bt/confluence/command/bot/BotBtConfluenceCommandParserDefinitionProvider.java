@@ -28,7 +28,7 @@ public class BotBtConfluenceCommandParserDefinitionProvider implements SimpleDef
 				BtCommandParserDefinition.basicCommand("confluence:search",
 						(c, p) -> botConfluenceNodeProvider.confluenceSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getStringParam(2), c.getStringParam(3), c.getStringParam(4))),
 				BtCommandParserDefinition.basicCommand("confluence:search:auto",
-						(c, p) -> botConfluenceNodeProvider.confluenceAutomaticSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getRemainingStringParam(2))));
+						(c, p) -> botConfluenceNodeProvider.confluenceAutomaticSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getStringParam(2),c.getRemainingStringParam(3))));
 	}
 
 }
