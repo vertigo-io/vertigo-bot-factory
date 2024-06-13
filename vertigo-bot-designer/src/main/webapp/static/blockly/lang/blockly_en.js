@@ -80,7 +80,9 @@ Blockly.Msg["COMMONS_SAMPLE_RATING_BINARY_QUEST"] = "Did I get that right for yo
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_VAR"] = "search/confluence";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST1"] = "I'm going to search in the document database. What is your question ?";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST2"] = "Consultation results: ";
-Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST2_BIS"] = "There are no results";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_NO_SEARCH_RESULT"] = "There are no results";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_AUTO_SEARCH_INTRO"] = "I'm doing an automatic search in the document database";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_DEFAULT_SEARCH"] = "Test";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_CODE"] = "CONFLU";
 Blockly.Msg["COMMONS_SAMPLE_WT_CODE"] = "WTCode";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_ISSUE_SENTENCE"] = "Your ticket can be viewed:";
@@ -193,11 +195,12 @@ Blockly.Msg["OTHER_CARD_LINK_TITLE"] = "Image link:";
 // *** CATEGORIE CONFLUENCE ****
 // *****************************
 Blockly.Msg["CONFLUENCE_SEARCH_TITLE"] = "Confluence search module:";
+Blockly.Msg["CONFLUENCE_AUTO_SEARCH_TITLE"] = "Confluence automatic search module:";
 Blockly.Msg["CONFLUENCE_VAR_TITLE"] = "Confluence search variable:";
 Blockly.Msg["CONFLUENCE_QUEST1_ASSOCIATED"] = "Introduction:";
 Blockly.Msg["CONFLUENCE_QUEST2_ASSOCIATED"] = "Reply:";
-Blockly.Msg["CONFLUENCE_QUEST2_BIS_ASSOCIATED"] = "No response:";
-
+Blockly.Msg["CONFLUENCE_NO_SEARCH_RESULT"] = "No response:";
+Blockly.Msg["CONFLUENCE_DEFAULT_SEARCH"] = "Confluence search:";
 
 // *****************************
 // ****** CATEGORIE JIRA *******

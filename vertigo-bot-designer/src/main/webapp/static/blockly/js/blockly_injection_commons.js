@@ -234,7 +234,11 @@ function getToolBox() {
                     {
                         "kind": "block",
                         "type": "cb_confluencesearch"
+                    }, {
+                        "kind": "block",
+                        "type": "cb_confluencesearchauto"
                     }
+
                 ]
             },
             // Catégorie 7: Jira
