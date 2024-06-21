@@ -65,7 +65,8 @@
     <vu:include-data object="contextEnvironments" field="'*'"/>
     <div class="text-h6 text-weight-bold" style="display: flex; align-items: center; margin-top: 2rem;">
         <span class="text-primary" style="flex-grow: 2">[[#{context.environment.title}]]</span>
-        <q-btn color="primary" round icon="add" th:aria-label="#{context.environment.add}"
+        <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}"
+               color="primary" round icon="add" th:aria-label="#{context.environment.add}"
                th:title="#{context.environment.add}"
                @click="vueData.newContextEnvironment.cenvId = null;
                        vueData.newContextEnvironment.botId = vueData.bot.botId;
