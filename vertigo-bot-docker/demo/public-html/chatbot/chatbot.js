@@ -56,8 +56,32 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.prepend(modal);
       }
 
+      function addHtmlViewerModal() {
+        const modal = document.createElement('div');
+        modal.id = 'htmlViewerModal';
+        modal.className = 'modalChatbot';
+
+        const spanClose = document.createElement('span');
+        spanClose.id = 'close';
+        spanClose.className = 'close';
+        spanClose.innerHTML = '&times;';
+        spanClose.addEventListener('click', hideHtmlModal);
+
+        const contentDiv = document.createElement('div');
+        contentDiv.id = 'htmlContent';
+        contentDiv.className = 'modal-page-content-chatbot';
+        modal.appendChild(spanClose);
+        modal.appendChild(contentDiv);
+
+        document.body.prepend(modal);
+      }
+
       function hidePictureModal() {
         document.getElementById('imageViewerModal').style.display = 'none';
+      }
+
+      function hideHtmlModal() {
+        document.getElementById('htmlViewerModal').style.display = 'none';
       }
 
       function _buttonOver() {
@@ -125,6 +149,9 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (event.data.pictureModal) {
               Chatbot.showPictureModal(event.data.pictureModal);
             }
+            else if (event.data.htmlModal) {
+              Chatbot.showHtmlModal(event.data.htmlModal)
+            }
             else if (event.data.jsevent) {
               Chatbot.startJsEvent(event.data.jsevent);
             }
@@ -137,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
         init(param) {
           _initParam = param;
           addImageViewerModal();
+          addHtmlViewerModal();
           _initIframeListener();
           _createIframe();
           _iframe.addEventListener('load', function() {
@@ -161,6 +189,13 @@ document.addEventListener('DOMContentLoaded', function () {
           const modal = document.getElementById('imageViewerModal');
           const modalImg = parent.document.getElementById('imgToView');
           modalImg.src = src;
+          modal.style.display = 'block';
+        },
+
+        showHtmlModal(innerHTML) {
+          const modal = document.getElementById('htmlViewerModal');
+          const modalHtml = parent.document.getElementById('htmlContent');
+          modalHtml.innerHTML = innerHTML;
           modal.style.display = 'block';
         },
 
