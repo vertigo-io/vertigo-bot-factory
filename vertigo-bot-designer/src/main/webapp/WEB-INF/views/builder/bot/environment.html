@@ -18,7 +18,7 @@
             <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
                 <span class="text-primary" style="flex-grow: 2">[[#{layout.environment}]]</span>
                 <q-icon name="help_outlined" size="2rem"/>
-                <q-tooltip>[[#{environment.tooltip}]]</q-tooltip>
+                <q-tooltip content-style="font-size: 14px">[[#{environment.tooltip}]]</q-tooltip>
             </div>
 
             <vu:popup-ajax action="_deleteNode" vModel="showPopupNode" th:message="#{environment.node.popup.message}" th:confirm="#{action.delete}" dataName="nodId" successAction="'VUiPage.$refs.nodeEdit.hide'"></vu:popup-ajax>
