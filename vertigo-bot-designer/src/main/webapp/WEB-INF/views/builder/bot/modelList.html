@@ -424,7 +424,7 @@
 					  th:attr="dataObject=${model.vContext['componentStates'].addComponentState('savedTraId')}">
 				<q-card>
 					<q-card-section>
-						<div class="text-h6"><span th:text="#{model.savedTraining.rollback.message}"></span></div>
+						<div class="text-h6"><span th:utext="#{model.savedTraining.rollback.message}"></span></div>
 					</q-card-section>
 
 					<q-card-actions align="around">
