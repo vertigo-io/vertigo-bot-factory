@@ -30,7 +30,7 @@ Vue.component('c-buttonlist', {
 							:removable="modeEdit" @remove="VertigoUi.vueData[buttonList].splice(index, 1);"
 							>
 						</q-chip>
-						<q-tooltip>{{getChoiceTitleById(button.topIdResponse)}}</q-tooltip>
+						<q-tooltip content-style="font-size: 14px">{{getChoiceTitleById(button.topIdResponse)}}</q-tooltip>
 					</div>
 				</div>
 			</draggable>
