@@ -27,10 +27,12 @@ import io.vertigo.datamodel.structure.model.DtList;
 import javax.inject.Inject;
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider.formatLink;
+import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.noPayload;
 
 public class JiraServerService implements Component, IJiraService {
 
@@ -112,7 +114,7 @@ public class JiraServerService implements Component, IJiraService {
                 .findFirst()
                 .orElse(null);
 
-        if (attachmentField != null) {
+        if (attachmentField != null && !Objects.equals(attachmentField.getValue(), noPayload)) {
             URI attachmentsUri = URI.create(newBasicIssue.getSelf().toString() + "/attachments");
             attachmentFieldService.addingAttachmentToIssue(bb, attachmentField, attachmentsUri, issueClient);
         }
