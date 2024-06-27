@@ -7,7 +7,9 @@ import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.chatbot.commons.FileUtils;
+import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.model.choice.BotFileButton;
+import io.vertigo.chatbot.engine.model.choice.IBotChoice;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.core.lang.Assertion;
@@ -18,6 +20,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+
+import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.noPayload;
 
 
 public class AttachmentFieldService implements IJiraFieldService, Component {
@@ -34,8 +38,9 @@ public class AttachmentFieldService implements IJiraFieldService, Component {
     }
 
     private BTNode getAttachmentButtons(final BlackBoard bb, JiraField attachmentField) {
-        final List<BotFileButton> buttons = new ArrayList<>();
+        final List<IBotChoice> buttons = new ArrayList<>();
         buttons.add(new BotFileButton("Uploader", "", "", ""));
+        buttons.add(new BotButton("Passer", noPayload));
         return BotNodeProvider.chooseFileButton(bb, attachmentField.getKey(), attachmentField.getQuestion(), buttons);
     }
 
