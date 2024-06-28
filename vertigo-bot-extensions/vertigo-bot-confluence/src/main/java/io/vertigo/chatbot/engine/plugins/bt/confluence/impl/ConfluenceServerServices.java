@@ -1,8 +1,12 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -11,25 +15,33 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.analytics.AnalyticsObjectSend;
+import io.vertigo.chatbot.commons.HtmlInputUtils;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.PasswordEncryptionServices;
 import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceSearchHelper;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.JsonHelper;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchLinks;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResponse;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResult;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpace;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpaceResponse;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceView;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSearchObject;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.API_URL;
+import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.CONTENT_URL;
+import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.PAGE_BODY;
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.SEARCH_URL;
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.SPACE_URL;
+import static io.vertigo.chatbot.engine.plugins.bt.confluence.multilingual.ConfluenceMultilingualResources.LINK_TO_PAGE;
 
 @Transactional
 public class ConfluenceServerServices implements IConfluenceService, Component {
@@ -105,7 +117,45 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		final var searchObject = ConfluenceSearchHelper.createConfluenceSearchObject(search);
 		final ConfluenceSearchResponse searchResult = searchOnConfluence(params, headers, searchObject);
 		final List<ConfluenceSearchResult> results = Arrays.asList(searchResult.getResults());
-		return results.stream().map(x -> createLinkUrl(x.getUrl(), x.getDetail().getTitle())).collect(Collectors.toList());
+
+		// map of pageId (List(pageName,url) -> pageId)
+		Map<List<String>, String> pageIds = results.stream()
+				.collect(Collectors.toMap(
+						result -> Arrays.asList(result.getDetail().getTitle(), result.getUrl()),
+						result -> result.getDetail().getId()));
+		// map of pageBody (List(pageName,url) -> pageBody)
+		Map<List<String>, HttpResponse<String>> responses = pageIds.entrySet().stream()
+				.collect(Collectors.toMap(
+                        Map.Entry::getKey,
+						entry -> sendRequestToConfluence(null, headers, CONTENT_URL + entry.getValue() + PAGE_BODY, 200, BodyHandlers.ofString())
+				));
+		// map of html (List(pageName,url) -> html)
+		Map<List<String>, String> responsesHtml = getHtmlFromPageHttpResponse(responses);
+
+		return responsesHtml.entrySet().stream()
+				.map(entry -> formatHtml(entry.getKey().get(0), getBaseUrl() + entry.getKey().get(1), entry.getValue()))
+				.collect(Collectors.toList());
+
+		//Option to create clickable links instead of documents (to keep)
+		//return results.stream().map(x -> createLinkUrl(x.getUrl(), x.getDetail().getTitle())).collect(Collectors.toList());
+	}
+
+	Map<List<String>, String> getHtmlFromPageHttpResponse (Map <List<String>, HttpResponse<String>> responses) {
+        return responses.entrySet().stream().collect(Collectors.toMap(
+				Map.Entry::getKey,
+				entry -> {
+					HttpResponse<String> response = entry.getValue();
+					try {
+						ObjectMapper objectMapper = new ObjectMapper();
+						JsonNode jsonNode = objectMapper.readTree(response.body());
+						JsonNode body = jsonNode.get("body");
+						ConfluenceView view = objectMapper.readValue(body.get("view").toString(), ConfluenceView.class);
+						return view.getValue();
+					} catch (Exception e) {
+						return "Erreur lors de la lecture du JSON pour la page " + entry.getKey() + " : " + e.getMessage();
+					}
+				}
+		));
 	}
 
 	private String createLinkUrl(final String link, final String name) {
@@ -116,6 +166,30 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		builder.append("\" target=\"_blank\" rel=\"noopener noreferrer\">");
 		builder.append(name);
 		builder.append("</a>");
+		return builder.toString();
+	}
+
+	private String formatHtml(final String name, final String url, final String html) {
+		final var builder = new StringBuilder();
+
+		String cleanHtml = HtmlInputUtils.sanitizeHtmlWithTargetBlank(html, baseUrl);
+		String escapedHtml = cleanHtml.replace("\"", "&quot;");
+		builder.append("<div class='htmlClass' style='color:blue; text-decoration:underline; cursor:pointer;'");
+		builder.append("data-html=\"");
+		builder.append("<div>");
+		builder.append("<h1 style='text-align: center; font-weight: bold;'>");
+		builder.append(name);
+		builder.append("</h1>");
+		builder.append("<div style='text-align: center; padding-bottom:3%;'><a target='_blank' href='");
+		builder.append(url);
+		builder.append("'>");
+		builder.append(MessageText.of(LINK_TO_PAGE).getDisplay());
+		builder.append("</a></div>");
+		builder.append(escapedHtml);
+		builder.append("</div>");
+		builder.append("\">");
+		builder.append(name);
+		builder.append("</div>");
 		return builder.toString();
 	}
 }
