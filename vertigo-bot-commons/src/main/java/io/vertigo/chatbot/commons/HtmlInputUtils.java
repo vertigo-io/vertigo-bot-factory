@@ -26,7 +26,7 @@ public class HtmlInputUtils {
 		return sanitizer.sanitize(in);
 	}
 
-	public static String sanitizeHtmlWithTargetBlank(final String in) {
+	public static String sanitizeHtmlWithTargetBlank(final String in, final String baseUrl) {
 		final PolicyFactory sanitizer = Sanitizers.FORMATTING
 				.and(Sanitizers.BLOCKS)
 				.and(Sanitizers.LINKS)
@@ -45,9 +45,16 @@ public class HtmlInputUtils {
 											attrs.set(targetIndex + 1, "_blank");
 										}
 									}
+									if ("img".equals(elementName)) {
+										int srcIndex = attrs.indexOf("src");
+										if (srcIndex >= 0) {
+											String srcValue = attrs.get(srcIndex + 1);
+											attrs.set(srcIndex + 1, "https://confluence.rct01.kleegroup.com" + srcValue);
+										}
+									}
 									return elementName;
 								},
-								"a"
+								"a", "img"
 						)
 						.allowElements("font", "hr")
 						.allowAttributes("size").onElements("font")

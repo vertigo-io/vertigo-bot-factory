@@ -172,7 +172,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 	private String formatHtml(final String name, final String url, final String html) {
 		final var builder = new StringBuilder();
 
-		String cleanHtml = HtmlInputUtils.sanitizeHtmlWithTargetBlank(html);
+		String cleanHtml = HtmlInputUtils.sanitizeHtmlWithTargetBlank(html, baseUrl);
 		String escapedHtml = cleanHtml.replace("\"", "&quot;");
 		builder.append("<div class='htmlClass' style='color:blue; text-decoration:underline; cursor:pointer;'");
 		builder.append("data-html=\"");
