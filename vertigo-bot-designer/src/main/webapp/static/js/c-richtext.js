@@ -5,6 +5,7 @@ Vue.component('c-richtext', {
 		name:     { type: String,  required: true },
 		modeEdit: { type: Boolean, 'default': true },
 		locale:   { type: String, 'default': 'en_US' },
+		showExample: 	  { type: Boolean, 'default': false },
 		error : false
 	},
 	data: function () {
@@ -15,13 +16,12 @@ Vue.component('c-richtext', {
 		}
 	},
 	template : `
-	<div>
-		<div class="row wrap">
+	<div style="flex-grow:1" v-if="modeEdit">
+		<div>
 			<input v-if="name" class="hidden" type="text" :name="name" :value="value" />
 			
 			<q-editor v-bind:value="value" @input="val => $emit('input', val)"
 				v-model="value"
-				v-if="modeEdit"
 				:style="error ? 'border: 2px solid;border-color: #C10015;border-radius:5px;':''"
 				@keyup.enter.stop
 				class="col-grow"
@@ -76,9 +76,6 @@ Vue.component('c-richtext', {
 			     
 			</q-editor>
 			
-			<div style="width:300px" class="q-px-md">
-				<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" bg-color="grey-4" ></q-chat-message>
-			</div>
 			 <q-dialog ref="newImage"  >
 			 	<q-card style="width: 600px;">
 					 <q-form @submit="handleCustomImage" class="q-gutter-md">

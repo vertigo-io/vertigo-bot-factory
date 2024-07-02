@@ -41,7 +41,7 @@
 				</q-icon>
 			</div>
 
-			<div v-if="vueData.smallTalk.rtyId === 'RICH_TEXT'" >
+			<div v-if="vueData.smallTalk.rtyId === 'RICH_TEXT'" class="row wrap">
 				<vu:include-data object="chatbotCustomConfig" field="botMessageBackgroundColor" />
 				<vu:include-data object="chatbotCustomConfig" field="botMessageFontColor" />
 				<c-richtext
@@ -51,6 +51,9 @@
 					:locale="vueData.locale"
 					class="q-pb-sm">
 				</c-richtext>
+				<c-chatbottextexample
+					v-model="vueData.utterTexts[0].text">
+				</c-chatbottextexample>
 			</div>
 
 			<div v-if="vueData.smallTalk.rtyId === 'RANDOM_TEXT'">
@@ -70,10 +73,15 @@
 											  buttons label-set="Save" label-cancel="Cancel"
 											  @save="addMoreUtterTextIfNeeded"
 											  anchor="top left">
-									<c-richtext
-										v-model="utterText.text"
-										class="q-pb-sm">
-									</c-richtext>
+									<div class="row wrap">
+										<c-richtext
+												v-model="utterText.text"
+												class="q-pb-sm">
+										</c-richtext>
+										<c-chatbottextexample
+												v-model="utterText.text">
+										</c-chatbottextexample>
+									</div>
 								</q-popup-edit>
 							</q-btn>
 						</q-item-section>
@@ -97,11 +105,14 @@
 							<q-item-section avatar>
 								<q-icon color="black" name="fas fa-dice"></q-icon>
 							</q-item-section>
-							<q-item-section>
+							<q-item-section class="row wrap">
 								<c-richtext
 									v-model="utterText.text"
 									:mode-edit="false">
 								</c-richtext>
+								<c-chatbottextexample
+										v-model="utterText.text">
+								</c-chatbottextexample>
 							</q-item-section>
 						</q-item>
 					</q-list>

@@ -161,4 +161,7 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_06_03.sql"/>
     </changeSet>
 
+    <changeSet author="rsaintpaul" id="Create question_answer and question_answer_category tables">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_01.sql"/>
+    </changeSet>
 </databaseChangeLog>

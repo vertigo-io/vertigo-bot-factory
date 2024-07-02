@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{templates/botDetailLayout}" th:with="tab=questionsanswers"
+>
+<head>
+    <title th:text="questionanswer"></title>
+
+    <script th:inline="javascript">
+
+        VUiExtensions.dataX.criteria = null;
+        VUiExtensions.dataX.search = null;
+
+        function normalizeString(str) {
+            if (str)
+                return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            else
+                return '';
+        }
+
+
+        function filter() {
+            let filteredQuestionAnswers = VertigoUi.vueData.questionAnswerIhmList
+            if (VUiExtensions.dataX.criteria !== null) {
+                let category = VertigoUi.vueData.categoryList.find(cat => cat.qaCatId === VUiExtensions.dataX.criteria)
+                if (category !== undefined) {
+                    filteredQuestionAnswers = filteredQuestionAnswers
+                        // copy and reverse
+                        .slice().reverse()
+                        // search
+                        .filter(questionAnswer => questionAnswer.catLabel === category.label)
+                }
+            }
+            let searchNormarlized = normalizeString(VUiExtensions.dataX.search);
+            if (searchNormarlized !==''){
+                filteredQuestionAnswers =  filteredQuestionAnswers
+                    // copy and reverse
+                    .slice().reverse()
+                    // search
+                    .filter(questionAnswer => normalizeString(questionAnswer.question).includes(searchNormarlized))
+            }
+
+            return filteredQuestionAnswers
+        }
+
+    </script>
+</head>
+<body>
+
+<section layout:fragment="content-actions">
+    <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/questionsanswers/detail/new(id=${model.bot.botId})}" class="fab-block" round color="primary" size="md" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" />
+
+    <q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md" icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}"
+           @click="$refs.exportTopic.show()"></q-btn>
+
+    <q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md" icon="file_download" th:aria-label="#{action.import}" th:title="#{action.import}"
+           @click="$refs.importQuestionAnswer.show()"></q-btn>
+
+</section>
+
+<section layout:fragment="content">
+
+    <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+        <span class="text-primary" style="flex-grow: 2">[[#{layout.topics}]]</span>
+        <q-icon name="help_outlined" size="2rem"/>
+        <q-tooltip content-style="font-size: 14px">[[#{questionAnswer.tooltip}]]</q-tooltip>
+    </div>
+
+    <div class="col-12">
+        <vu:include-data object="categoryList" field="qaCatId"/>
+        <vu:include-data object="categoryList" field="label"/>
+        <div style="background-color:white;display:flex;justify-content:flex-end; align-items: center; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;"
+             class="q-table__card">
+            <div class="text-h6 q-table__top" style="flex-grow: 2;" th:text="#{questionAnswer.title}"></div>
+            <q-select style="width: 250px;"
+                      clearable
+                      filled
+                      map-options
+                      emit-value
+                      v-model="VUiExtensions.dataX.criteria"
+                      :options="VertigoUi.vueData.categoryList"
+                      option-value="qaCatId"
+                      th:label="#{questionAnswer.selection.category}"
+                      @input="filter();"
+                      stack-label>
+            </q-select>
+            <q-input style="margin-left:10px" borderless dense debounce="300" th:v-model="VUiExtensions.dataX.search" th:placeholder="#{questionAnswer.selection.search}">
+                <template v-slot:append>
+                    <q-icon name="search" />
+                </template>
+            </q-input>
+        </div>
+        <vu:include-data object="questionAnswerIhmList" field="qaId"/>
+        <vu:include-data object="questionAnswerIhmList" field="question"/>
+        <vu:include-data object="questionAnswerIhmList" field="answer"/>
+        <vu:include-data object="questionAnswerIhmList" field="catLabel"/>
+        <vu:include-data object="questionAnswerIhmList" field="catId"/>
+
+        <vu:search-table
+                data="filter()"
+                rowKey="qaId"
+                componentId="questionsAnswers"
+                sortBy='catLabel'
+                tr_@click.native="|goTo('@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})}'+props.row.qaId)|"
+                tr_style="cursor : pointer;">
+            <vu:column-sample list=questionAnswerIhmList field=question />
+            <vu:column-sample list=questionAnswerIhmList field=answer  />
+            <vu:column-sample list=questionAnswerIhmList field=catLabel  />
+            <vu:column-sample list=questionAnswerIhmList field=isEnabled classes='colSTyYesNo'>
+                <q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
+                <q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>
+            </vu:column-sample>
+        </vu:search-table>
+    </div>
+
+    <q-dialog ref="importQuestionAnswer" th:with="viewMode='edit'" >
+        <q-card>
+            <q-form method="post" action="_importQuestionAnswer">
+                <q-card-section>
+                    <div class="text-h6" th:text="#{popup.import.title}"></div>
+                </q-card-section>
+
+                <vu:include-data-primitive key="locale" />
+                <vu:fileupload th:url="'@{/commons/upload}'" key="importQuestionAnswerFileUri" multiple="false" style="width:100%"/>
+
+                <q-card-actions align="around">
+                    <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                    <q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
+                    <q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn>
+                </q-card-actions>
+            </q-form>
+        </q-card>
+    </q-dialog>
+
+</section>
+
+</body>
+</html>

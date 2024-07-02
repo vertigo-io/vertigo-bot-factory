@@ -9,6 +9,7 @@
 	  	<script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
 	  	<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 		<script th:src="@{/static/js/c-richtext.js}"></script>
+		<script th:src="@{/static/js/c-chatbotTextExample.js}"></script>
 		<script th:src="@{/static/js/c-buttonList.js}"></script>
 	    <script th:src="@{/static/utils/base64.min.js}"></script>
 	    <script th:src="@{/static/blockly/js/blockly_utils.js}"></script>
@@ -130,7 +131,7 @@
 					<vu:grid cols="2">
 						<vu:text-field object="topic" field="title" :disable="vueData.topic.isTechnical == true"/>
 						<vu:text-field object="topic" field="code" :disable="vueData.topic.isTechnical== true"/>
-						<vu:label object="topic" field="isEnabled" v-if="!vueData.topic.isTechnical == true" >
+						<vu:label object="topic" field="isEnabled" v-if="!vueData.topic.isTechnicacl == true" >
 							<vu:include-data object="topic" field="isEnabled" modifiable="true" />
 
 							<q-input v-model="vueData.topic.isEnabled" name="vContext[topic][isEnabled]" class="hidden" ></q-input>

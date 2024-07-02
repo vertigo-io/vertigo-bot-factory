@@ -1,0 +1,49 @@
+package io.vertigo.chatbot.designer.builder.questionAnswer
+
+create Task TkGetAllQuestionAnswerIhmFromBot {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	qa.qa_id,
+					qa.question,
+					qa.answer,
+					qa.is_enabled,
+					qac.qa_cat_id as cat_id,
+					qac.label as cat_label
+			from question_answer qa
+			join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)
+			where qa.bot_id = #botId#
+			group by qa.qa_id,
+                    qa.question,
+                    qa.answer,
+                    qa.is_enabled,
+                    qac.qa_cat_id,
+                    qac.label
+             "
+
+	in botId  				{domain : DoId         		        cardinality : "1"  }
+	out questionanswerIHM   {domain : DoDtQuestionAnswerIhm 	cardinality : "*"  }
+}
+create Task TkGetQuestionAnswerIhmById {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	qa.qa_id,
+                    qa.question,
+                    qa.answer,
+                    qa.is_enabled,
+                    qac.qa_cat_id as cat_id,
+                    qac.label as cat_label
+			from question_answer qa
+            join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)
+			where qa.qa_id = #qaId#
+			group by qa.qa_id,
+                    qa.question,
+                    qa.answer,
+                    qa.is_enabled,
+                    qac.qa_cat_id,
+                    qac.label
+
+			LIMIT 1
+             "
+	in qaId  				{domain : DoId         		        cardinality : "1"  }
+	out questionAnswerIHM   {domain : DoDtQuestionAnswerIhm		cardinality : "1"  }
+}

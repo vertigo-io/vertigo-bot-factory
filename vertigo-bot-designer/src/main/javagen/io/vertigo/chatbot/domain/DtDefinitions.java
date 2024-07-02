@@ -113,6 +113,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		PersonRole(io.vertigo.chatbot.designer.domain.commons.PersonRole.class),
 		/** Objet de données ProfilPerChatbot. */
 		ProfilPerChatbot(io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot.class),
+		/** Objet de données QuestionAnswer. */
+		QuestionAnswer(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer.class),
+		/** Objet de données QuestionAnswerCategory. */
+		QuestionAnswerCategory(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory.class),
+		/** Objet de données QuestionAnswerIhm. */
+		QuestionAnswerIhm(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm.class),
 		/** Objet de données RatingOption. */
 		RatingOption(io.vertigo.chatbot.designer.domain.analytics.RatingOption.class),
 		/** Objet de données ResponseButton. */
@@ -964,6 +970,53 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		perId,
 		/** Propriété 'Profil pour un chatbot'. */
 		chpCd	}
+
+	/**
+	 * Enumération des champs de QuestionAnswer.
+	 */
+	public enum QuestionAnswerFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer> {
+		/** Propriété 'Question-Answer id'. */
+		qaId,
+		/** Propriété 'Question'. */
+		question,
+		/** Propriété 'Answer'. */
+		answer,
+		/** Propriété 'Enabled'. */
+		isEnabled,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Category'. */
+		qaCatId	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerCategory.
+	 */
+	public enum QuestionAnswerCategoryFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory> {
+		/** Propriété 'Question-Answer category id'. */
+		qaCatId,
+		/** Propriété 'Question-Answer category label'. */
+		label,
+		/** Propriété 'Enabled'. */
+		isEnabled,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerIhm.
+	 */
+	public enum QuestionAnswerIhmFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm> {
+		/** Propriété 'Question-Answer id'. */
+		qaId,
+		/** Propriété 'Question'. */
+		question,
+		/** Propriété 'Answer'. */
+		answer,
+		/** Propriété 'Enabled'. */
+		isEnabled,
+		/** Propriété 'Category id'. */
+		catId,
+		/** Propriété 'Category label'. */
+		catLabel	}
 
 	/**
 	 * Enumération des champs de RatingOption.
