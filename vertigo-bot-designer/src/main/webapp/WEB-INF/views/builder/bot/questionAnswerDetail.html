@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=questionsanswers">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    <script th:src="@{/static/js/c-richtext.js}"></script>
+    <script th:src="@{/static/js/c-queAnsTextExample.js}"></script>
+    <script th:src="@{/static/utils/base64.min.js}"></script>
+    <script th:src="@{/static/js/c-emojipicker.js}"></script>
+</head>
+<body>
+<section layout:fragment="content-actions">
+    <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})} + ${model.questionAnswerIhm.qaId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
+                    class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
+    <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
+                      class="on-left" :round size="md" color="primary" />
+    <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopupDelete = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
+           class="on-left" round size="md" color="red" ></q-btn>
+
+</section>
+
+<section layout:fragment="content">
+    <vu:popup action="_delete" vModel="showPopupDelete" message="#{questionAnswer.deletePopup.message}" confirm="#{action.confirm}"></vu:popup>
+
+    <vu:block id="detail" th:title="#{questionAnswer.information}">
+        <vu:grid cols="2">
+            <vu:label object="questionAnswerIhm" field="isEnabled">
+                <vu:include-data object="questionAnswerIhm" field="isEnabled" modifiable="true" />
+                <q-input v-model="vueData.questionAnswerIhm.isEnabled" name="vContext[questionAnswerIhm][isEnabled]" class="hidden" ></q-input>
+                <q-toggle v-model="vueData.questionAnswerIhm.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
+            </vu:label>
+            <vu:select-edit object="questionAnswerIhm" field="catId" list="categoryList" label="#{questionAnswer.category}" th:readonly="${model.modeReadOnly}" labelField="label"/>
+        </vu:grid>
+    </vu:block>
+    <vu:block id="question" th:title="#{questionAnswer.question}">
+        <div class="row wrap">
+            <vu:include-data object="questionAnswerIhm" field="question" modifiable="true" />
+            <vu:include-data object="questionAnswerIhm" field="answer" modifiable="true" />
+            <vu:include-data object="chatbotCustomConfig" field="botMessageBackgroundColor" />
+            <vu:include-data object="chatbotCustomConfig" field="botMessageFontColor" />
+            <c-richtext
+                    v-model="vueData.questionAnswerIhm.question"
+                    th::mode-edit="${!model.modeReadOnly}"
+                    name="vContext[questionAnswerIhm][question]"
+                    :locale="vueData.locale"
+                    class="q-pb-sm">
+            </c-richtext>
+            <c-queanstextexample
+                    v-model="vueData.questionAnswerIhm.question">
+            </c-queanstextexample>
+        </div>
+    </vu:block>
+    <vu:block id="answer" th:title="#{questionAnswer.answer}">
+        <div class="row wrap">
+            <c-richtext
+                    v-model="vueData.questionAnswerIhm.answer"
+                    name="vContext[questionAnswerIhm][answer]"
+                    th::mode-edit="${!model.modeReadOnly}"
+                    :locale="vueData.locale"
+                    class="q-pb-sm">
+            </c-richtext>
+            <c-queanstextexample
+                    v-model="vueData.questionAnswerIhm.answer">
+            </c-queanstextexample>
+        </div>
+    </vu:block>
+
+
+    <q-page-sticky position="bottom-right">
+        <vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
+    </q-page-sticky>
+</body>
+<section layout:fragment="javascript-footer">
+    <script th:inline="javascript">
+        function updateSmallTalkRendererSwitchType(){
+            const bgColor = VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor ? VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor : '#ffffff'
+            const fontColor = VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor ? VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor : '#000000'
+            Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
+                element.style.setProperty('--chat-bot-bg-color', bgColor);
+            });
+            Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
+                element.style.setProperty('--chat-bot-message-font-color', fontColor);
+            });
+        }
+        updateSmallTalkRendererSwitchType()
+    </script>
+</section>
+</html>
