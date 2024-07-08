@@ -75,7 +75,7 @@
 			<div style="display:flex; justify-content: flex-end">
 				<vu:include-data object="selectedTopicIhmList" field="*" />
 				<vu:include-data-primitive key="topicsToUpdate" modifiable="true" />
-				<q-btn color="primary" round icon="add"
+				<q-btn color="primary" round icon="add" v-if="vueData.topicCategory.topCatId !== null"
 					   th:aria-label="#{action.add}"
 					   th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
 					   th:title="#{action.add}"
