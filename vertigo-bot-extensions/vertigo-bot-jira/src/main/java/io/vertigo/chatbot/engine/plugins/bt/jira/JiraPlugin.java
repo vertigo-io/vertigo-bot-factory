@@ -1,6 +1,6 @@
 package io.vertigo.chatbot.engine.plugins.bt.jira;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import io.vertigo.chatbot.engine.plugins.bt.jira.impl.JiraServerService;
 import io.vertigo.chatbot.engine.plugins.bt.jira.multilingual.JiraMultilingualResources;
