@@ -212,7 +212,7 @@
 			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
 				<span class="text-primary" style="flex-grow: 2">[[#{layout.model}]]</span>
 				<q-icon name="help_outlined" size="2rem"/>
-				<q-tooltip content-style="font-size: 14px">[[#{model.tooltip}]]</q-tooltip>
+				<q-tooltip content-class="q-tooltip-text">[[#{model.tooltip}]]</q-tooltip>
 			</div>
 
 			<vu:include-data object="bot" field="botId" />
@@ -239,7 +239,7 @@
 				<vu:column field="duration" class="col_Small" th:label="#{node.deployment.time}" >
 					<vu:content v-if="props.row.endTime">
 							<span class="q-ma-md" style="display: inline-block; min-width: 20px">{{ props.row.duration }}</span>
-							<q-tooltip content-style="font-size: 13px"
+							<q-tooltip content-class="q-tooltip-text"
 									   anchor="center right" self="center left"
 									   transition-show="jump-right" transition-hide="jump-left">
 								End time : {{ props.row.endTime }}
