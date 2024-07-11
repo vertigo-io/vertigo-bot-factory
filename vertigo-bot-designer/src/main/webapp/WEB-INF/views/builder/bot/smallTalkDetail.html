@@ -36,7 +36,7 @@
 				<q-icon
 					v-if="vueData.smallTalk.rtyId === 'RICH_TEXT' && getUtterTextResolvedList().length > 2"
 					name="warning" class="vertical-top q-ma-xs text-orange" style="font-size: 2rem;">
-					<q-tooltip content-style="font-size: 14px" th:text="#{action.save.errorMessage}">
+					<q-tooltip content-class="q-tooltip-text" th:text="#{action.save.errorMessage}">
 					</q-tooltip>
 				</q-icon>
 			</div>

@@ -135,7 +135,7 @@
 			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
 				<span class="text-primary" style="flex-grow: 2">[[#{layout.information}]]</span>
 				<q-icon name="help_outlined" size="2rem"/>
-				<q-tooltip content-style="font-size: 14px">[[#{bot.tooltip}]]</q-tooltip>
+				<q-tooltip content-class="q-tooltip-text">[[#{bot.tooltip}]]</q-tooltip>
 			</div>
 			<vu:block id="identity" th:title="#{bot.identity}">
 				<vu:text-field object="bot" field="name" />
@@ -176,7 +176,7 @@
 					<q-toggle v-model="vueData.chatbotCustomConfig.disableNlu" th::disable="${model.modeReadOnly}"></q-toggle>
 					<input type="hidden" name="vContext[chatbotCustomConfig][disableNlu]" :value="vueData.chatbotCustomConfig.disableNlu"/>
 					<q-icon style="margin: 8px; color: black" name="help_outlined" size="1.5rem"/>
-					<q-tooltip content-style="font-size: 14px">[[#{bot.disableNlu}]]</q-tooltip>
+					<q-tooltip content-class="q-tooltip-text">[[#{bot.disableNlu}]]</q-tooltip>
 				</vu:label-edit>
 
 				<div class="executor-preview q-px-md">

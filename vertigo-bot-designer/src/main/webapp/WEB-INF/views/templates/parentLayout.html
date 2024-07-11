@@ -55,12 +55,12 @@
 							<q-list>
 								<q-item clickable v-close-popup >
 									<q-btn  type="a" color="grey" icon="mdi-reload" round th:aria-label="#{action.reload}" th:href="@{/login/_reloadAuthorizations}" >
-										<q-tooltip content-style="font-size: 14px" th:text="#{parent.auth}"></q-tooltip>
+										<q-tooltip content-class="q-tooltip-text" th:text="#{parent.auth}"></q-tooltip>
 									</q-btn>
 								</q-item>
 								<q-item clickable v-close-popup>
 									<q-btn type="a" color="grey" icon="mdi-lan-disconnect" round th:aria-label="#{action.disconnect}" th:href="@{/OIDC/logout}" >
-										<q-tooltip content-style="font-size: 14px" th:text="#{action.logout}"></q-tooltip>
+										<q-tooltip content-class="q-tooltip-text" th:text="#{action.logout}"></q-tooltip>
 									</q-btn>
 								</q-item>
 							</q-list>

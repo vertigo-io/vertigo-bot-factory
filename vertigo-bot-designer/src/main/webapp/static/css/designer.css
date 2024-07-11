@@ -514,3 +514,6 @@ table .col_DoInstant {
 	padding: 0px;
 	border-radius: 5px;
 }
+.q-tooltip-text{
+	font-size: 0.9rem;
+}
