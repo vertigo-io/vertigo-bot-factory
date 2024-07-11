@@ -19,7 +19,7 @@ package com.atlassian.jira.rest.client.api.domain;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * Represents single item in Issue change history.

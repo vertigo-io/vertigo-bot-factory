@@ -24,7 +24,7 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
 
-import jakarta.inject.Inject;
+import javax.inject.Inject;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -21,7 +21,7 @@ import com.atlassian.jira.rest.client.api.domain.util.UriUtil;
 import com.google.common.base.MoreObjects;
 
 import org.joda.time.DateTime;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import java.net.URI;
 import java.util.Collection;

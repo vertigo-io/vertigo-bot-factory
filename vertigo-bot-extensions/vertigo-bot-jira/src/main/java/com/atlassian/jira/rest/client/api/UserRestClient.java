@@ -21,7 +21,7 @@ import java.net.URI;
 import com.atlassian.jira.rest.client.api.domain.User;
 import com.atlassian.jira.rest.client.api.domain.input.UserInput;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import io.atlassian.util.concurrent.Promise;
 

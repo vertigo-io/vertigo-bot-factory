@@ -10,7 +10,7 @@ import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 
-import jakarta.inject.Inject;
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 

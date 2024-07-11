@@ -24,7 +24,7 @@ import com.atlassian.jira.rest.client.api.domain.Version;
 import com.atlassian.jira.rest.client.api.domain.VersionRelatedIssuesCount;
 import com.atlassian.jira.rest.client.api.domain.input.VersionPosition;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import io.atlassian.util.concurrent.Promise;
 

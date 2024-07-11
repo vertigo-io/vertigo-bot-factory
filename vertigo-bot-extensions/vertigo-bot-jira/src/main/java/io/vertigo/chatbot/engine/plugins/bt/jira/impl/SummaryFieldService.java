@@ -16,7 +16,7 @@ import io.vertigo.chatbot.engine.plugins.bt.jira.multilingual.JiraMultilingualRe
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 
-import jakarta.inject.Inject;
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -19,7 +19,7 @@ package com.atlassian.jira.rest.client.api;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 

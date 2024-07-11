@@ -19,7 +19,7 @@ package com.atlassian.jira.rest.client.api;
 import com.atlassian.jira.rest.client.api.domain.Component;
 import com.atlassian.jira.rest.client.api.domain.input.ComponentInput;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import java.net.URI;
 

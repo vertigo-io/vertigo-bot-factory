@@ -40,7 +40,7 @@ import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.input.AttachmentInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInput;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import javax.annotation.Nonnull;
 

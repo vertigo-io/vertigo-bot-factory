@@ -19,7 +19,7 @@ import com.atlassian.jira.rest.client.api.domain.Permissions;
 
 import com.atlassian.jira.rest.client.api.domain.input.MyPermissionsInput;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import io.atlassian.util.concurrent.Promise;
 
