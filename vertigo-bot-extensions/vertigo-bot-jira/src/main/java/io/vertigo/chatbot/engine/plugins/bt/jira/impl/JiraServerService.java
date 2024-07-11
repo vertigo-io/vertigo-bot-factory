@@ -114,7 +114,7 @@ public class JiraServerService implements Component, IJiraService {
                 .findFirst()
                 .orElse(null);
 
-        if (attachmentField != null && !Objects.equals(attachmentField.getValue(), noPayload)) {
+        if (attachmentField != null && !noPayload.equals(attachmentField.getValue())) {
             URI attachmentsUri = URI.create(newBasicIssue.getSelf().toString() + "/attachments");
             attachmentFieldService.addingAttachmentToIssue(bb, attachmentField, attachmentsUri, issueClient);
         }
