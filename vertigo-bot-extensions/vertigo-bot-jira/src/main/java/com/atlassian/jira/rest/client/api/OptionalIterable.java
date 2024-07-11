@@ -1,6 +1,6 @@
 package com.atlassian.jira.rest.client.api;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import java.util.Collections;
 import java.util.Iterator;

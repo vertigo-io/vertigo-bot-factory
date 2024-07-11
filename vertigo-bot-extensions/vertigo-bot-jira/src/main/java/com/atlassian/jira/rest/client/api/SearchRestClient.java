@@ -22,7 +22,7 @@ import java.util.Set;
 import com.atlassian.jira.rest.client.api.domain.Filter;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import io.atlassian.util.concurrent.Promise;
 

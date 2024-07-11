@@ -27,7 +27,7 @@ import com.atlassian.jira.rest.client.api.GetCreateIssueMetadataOptions;
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.NamedEntity;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * Contains information about field in IssueType.

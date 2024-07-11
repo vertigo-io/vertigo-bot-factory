@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import org.joda.time.DateTime;
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import com.atlassian.jira.rest.client.api.OptionalIterable;
 

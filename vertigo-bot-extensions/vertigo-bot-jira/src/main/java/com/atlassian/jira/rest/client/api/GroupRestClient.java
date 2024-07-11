@@ -18,7 +18,7 @@ package com.atlassian.jira.rest.client.api;
 
 import com.atlassian.jira.rest.client.api.domain.Group;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 import io.atlassian.util.concurrent.Promise;
 

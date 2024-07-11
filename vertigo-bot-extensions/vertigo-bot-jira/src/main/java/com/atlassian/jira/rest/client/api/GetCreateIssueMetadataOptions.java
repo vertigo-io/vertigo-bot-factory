@@ -16,7 +16,7 @@
 
 package com.atlassian.jira.rest.client.api;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * Set of optional parameters for {@link IssueRestClient#getCreateIssueMetadata(GetCreateIssueMetadataOptions)}.

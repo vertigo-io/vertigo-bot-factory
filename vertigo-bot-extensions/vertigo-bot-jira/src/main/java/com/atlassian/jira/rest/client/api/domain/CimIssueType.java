@@ -25,7 +25,7 @@ import java.util.Map;
 import com.atlassian.jira.rest.client.api.GetCreateIssueMetadataOptions;
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * Describes issue type with fields info map.

@@ -9,7 +9,7 @@
   <name>vertigo-bot-jira</name>
   <description>Confluence plugin for bot</description>
   <packaging>jar</packaging>
-  
+
 
   	<repositories>
 		<repository>
@@ -18,12 +18,24 @@
 		</repository>
 	</repositories>
   <properties>
-	  <jira-rest.version>5.2.6</jira-rest.version>
-	  <jersey.version>2.34</jersey.version>
-	  <atlassian.httpclient.version>2.15</atlassian.httpclient.version>
+	  <jersey.version>3.1.7</jersey.version>
+	  <atlassian.httpclient.version>4.1.0</atlassian.httpclient.version>
+	  <atlassian.fugue.version>5.0.1</atlassian.fugue.version>
+	  <atlassian.concurrent.version>4.0.1</atlassian.concurrent.version>
+	  <atlassian.event.version>6.0.0</atlassian.event.version>
+	  <jakarta.version>4.0.0</jakarta.version>
+	  <guava.version>33.2.1-jre</guava.version>
+	  <jettinson.verison>1.5.4</jettinson.verison>
+	  <atlassian.sal.version>6.0.2</atlassian.sal.version>
+	  <joda-time.verison>2.12.7</joda-time.verison>
   </properties>
   
   <dependencies>
+	  <dependency>
+		  <groupId>com.atlassian.httpclient</groupId>
+		  <artifactId>atlassian-httpclient-library</artifactId>
+		  <version>${atlassian.httpclient.version}</version>
+	  </dependency>
 	<dependency>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-bot-executor</artifactId>
@@ -31,26 +43,19 @@
 		<classifier>classes</classifier>
 		<scope>provided</scope>
 	</dependency>
-	  
 	<dependency>
 	    <groupId>io.atlassian.fugue</groupId>
 	    <artifactId>fugue</artifactId>
-	    <version>4.7.2</version>
+	    <version>${atlassian.fugue.version}</version>
 	</dependency>
 	  <dependency>
 		  <groupId>jakarta.ws.rs</groupId>
 		  <artifactId>jakarta.ws.rs-api</artifactId>
-		  <version>4.0.0</version>
+		  <version>${jakarta.version}</version>
 	  </dependency>
-	  <!-- Jersey HTTP client -->
 	  <dependency>
 		  <groupId>org.glassfish.jersey.core</groupId>
 		  <artifactId>jersey-client</artifactId>
-		  <version>${jersey.version}</version>
-	  </dependency>
-	  <dependency>
-		  <groupId>org.glassfish.jersey.inject</groupId>
-		  <artifactId>jersey-hk2</artifactId>
 		  <version>${jersey.version}</version>
 	  </dependency>
 
@@ -61,14 +66,36 @@
 	  </dependency>
 
 	  <dependency>
-		  <groupId>com.atlassian.jira</groupId>
-		  <artifactId>jira-rest-java-client-core</artifactId>
-		  <version>${jira-rest.version}</version>
+		  <groupId>com.google.guava</groupId>
+		  <artifactId>guava</artifactId>
+		  <version>${guava.version}</version>
 	  </dependency>
 	  <dependency>
-		  <groupId>com.atlassian.jira</groupId>
-		  <artifactId>jira-rest-java-client-api</artifactId>
-		  <version>${jira-rest.version}</version>
+		  <groupId>io.atlassian.util.concurrent</groupId>
+		  <artifactId>atlassian-util-concurrent</artifactId>
+		  <version>${atlassian.concurrent.version}</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>org.codehaus.jettison</groupId>
+		  <artifactId>jettison</artifactId>
+		  <version>${jettinson.verison}</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>com.atlassian.sal</groupId>
+		  <artifactId>sal-api</artifactId>
+		  <version>${atlassian.sal.version}</version>
+	  </dependency>
+
+	  <dependency>
+		  <groupId>com.atlassian.event</groupId>
+		  <artifactId>atlassian-event</artifactId>
+		  <version>${atlassian.event.version}</version>
+	  </dependency>
+
+	  <dependency>
+		  <groupId>joda-time</groupId>
+		  <artifactId>joda-time</artifactId>
+		  <version>${joda-time.verison}</version>
 	  </dependency>
 
   </dependencies>

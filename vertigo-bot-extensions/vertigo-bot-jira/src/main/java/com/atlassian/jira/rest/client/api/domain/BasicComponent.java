@@ -24,7 +24,7 @@ import java.net.URI;
 import com.atlassian.jira.rest.client.api.AddressableEntity;
 import com.atlassian.jira.rest.client.api.NamedEntity;
 
-import org.springframework.lang.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * Basic information about a project component

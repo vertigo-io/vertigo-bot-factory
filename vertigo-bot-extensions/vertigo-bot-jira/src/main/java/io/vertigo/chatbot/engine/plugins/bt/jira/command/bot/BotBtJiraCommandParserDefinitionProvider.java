@@ -14,7 +14,7 @@ import io.vertigo.core.node.definition.SimpleDefinitionProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jakarta.inject.Inject;
+import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
 
