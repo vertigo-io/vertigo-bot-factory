@@ -31,16 +31,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -48,7 +43,6 @@ import java.util.zip.ZipOutputStream;
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
-import io.vertigo.chatbot.commons.AntivirusServices;
 import io.vertigo.chatbot.commons.AttachmentInfo;
 import io.vertigo.chatbot.commons.FileInfoStd;
 import io.vertigo.chatbot.commons.FileInfoTmp;
@@ -63,10 +57,7 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleManager;
-import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.core.param.Param;
-import io.vertigo.core.param.ParamManager;
 import io.vertigo.datastore.filestore.FileStoreManager;
 import io.vertigo.datastore.filestore.definitions.FileInfoDefinition;
 import io.vertigo.datastore.filestore.model.FileInfo;
@@ -74,13 +65,10 @@ import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.filestore.util.VFileUtil;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
-import xyz.capybara.clamav.commands.scan.result.ScanResult;
-
-import static io.vertigo.chatbot.commons.ChatbotUtils.MAX_UPLOAD_SIZE;
 import static io.vertigo.chatbot.designer.utils.StringUtils.lineError;
 
 @Transactional
-public class DesignerFileServices implements Component, Activeable {
+public class DesignerFileServices implements Component {
 
 	@Inject
 	private FileServices fileServices;
@@ -93,25 +81,6 @@ public class DesignerFileServices implements Component, Activeable {
 
 	@Inject
 	protected LocaleManager localeManager;
-
-	@Inject
-	private ParamManager paramManager;
-
-	@Inject
-	private AntivirusServices antivirusServices;
-
-	private String[] extensionsWhiteList;
-
-	@Override
-	public void start() {
-		extensionsWhiteList = paramManager.getOptionalParam("EXTENSIONS_WHITELIST")
-				.map(Param::getValueAsString).orElse("png,jpg,jpeg,pdf,csv,js").split(",");
-	}
-
-	@Override
-	public void stop() {
-
-	}
 
 	public FileInfoURI saveFileTmp(final VFile file) {
 		final FileInfo fileInfo = fileStoreManager.create(new FileInfoTmp(file));

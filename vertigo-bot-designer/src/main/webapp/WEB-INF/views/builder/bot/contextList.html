@@ -29,7 +29,7 @@
 <section layout:fragment="content-actions">
     <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
                     url="@{/bot/{id}/contextValue/new(id=${model.bot.botId})}" th:ariaLabel="#{context.add}" icon="add"
-                    ="on-left" round size="md" color="primary"/>
+                    class="on-left" round size="md" color="primary"/>
 
 </section>
 
