@@ -28,6 +28,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldQuestionAnswer$isEnabled,
 	/**
+	 * Code.
+	 */
+	fldQuestionAnswer$code,
+	/**
 	 * Chatbot.
 	 */
 	fldQuestionAnswer$botId,
@@ -57,6 +61,42 @@ public enum DtResources implements MessageKey {
 	fldQuestionAnswerCategory$botId,
 
 	/***********************************************************
+	/** QuestionAnswerCategoryExport.
+	/***********************************************************
+	/**
+	 * Question-Answer category label.
+	 */
+	fldQuestionAnswerCategoryExport$label,
+	/**
+	 * Enabled.
+	 */
+	fldQuestionAnswerCategoryExport$isEnabled,
+
+	/***********************************************************
+	/** QuestionAnswerExport.
+	/***********************************************************
+	/**
+	 * Question.
+	 */
+	fldQuestionAnswerExport$question,
+	/**
+	 * Answer.
+	 */
+	fldQuestionAnswerExport$answer,
+	/**
+	 * Enabled.
+	 */
+	fldQuestionAnswerExport$isEnabled,
+	/**
+	 * Category.
+	 */
+	fldQuestionAnswerExport$category,
+	/**
+	 * Code.
+	 */
+	fldQuestionAnswerExport$code,
+
+	/***********************************************************
 	/** QuestionAnswerIhm.
 	/***********************************************************
 	/**
@@ -83,4 +123,16 @@ public enum DtResources implements MessageKey {
 	 * Category label.
 	 */
 	fldQuestionAnswerIhm$catLabel,
+	/**
+	 * Code.
+	 */
+	fldQuestionAnswerIhm$code,
+
+	/***********************************************************
+	/** SelectQueAnsCategory.
+	/***********************************************************
+	/**
+	 * Question-Answer category id.
+	 */
+	fldSelectQueAnsCategory$qaCatId,
 }

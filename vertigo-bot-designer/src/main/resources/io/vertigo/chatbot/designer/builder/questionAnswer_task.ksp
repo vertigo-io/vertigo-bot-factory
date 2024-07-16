@@ -7,6 +7,7 @@ create Task TkGetAllQuestionAnswerIhmFromBot {
 					qa.question,
 					qa.answer,
 					qa.is_enabled,
+					qa.code,
 					qac.qa_cat_id as cat_id,
 					qac.label as cat_label
 			from question_answer qa
@@ -16,6 +17,7 @@ create Task TkGetAllQuestionAnswerIhmFromBot {
                     qa.question,
                     qa.answer,
                     qa.is_enabled,
+                    qa.code,
                     qac.qa_cat_id,
                     qac.label
              "
@@ -30,6 +32,7 @@ create Task TkGetQuestionAnswerIhmById {
                     qa.question,
                     qa.answer,
                     qa.is_enabled,
+                    qa.code,
                     qac.qa_cat_id as cat_id,
                     qac.label as cat_label
 			from question_answer qa
@@ -39,6 +42,7 @@ create Task TkGetQuestionAnswerIhmById {
                     qa.question,
                     qa.answer,
                     qa.is_enabled,
+                    qa.code,
                     qac.qa_cat_id,
                     qac.label
 

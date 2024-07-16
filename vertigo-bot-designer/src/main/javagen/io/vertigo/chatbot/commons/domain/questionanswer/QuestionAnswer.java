@@ -19,6 +19,7 @@ public final class QuestionAnswer implements Entity {
 	private String question;
 	private String answer;
 	private Boolean isEnabled;
+	private String code;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AQuestionAnswerChatbot",
@@ -130,6 +131,25 @@ public final class QuestionAnswer implements Entity {
 	 */
 	public void setIsEnabled(final Boolean isEnabled) {
 		this.isEnabled = isEnabled;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Code'.
+	 * @return String code <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Code")
+	public String getCode() {
+		return code;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Code'.
+	 * @param code String <b>Obligatoire</b>
+	 */
+	public void setCode(final String code) {
+		this.code = code;
 	}
 	
 	/**

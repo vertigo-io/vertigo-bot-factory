@@ -51,6 +51,7 @@ public final class QuestionAnswerPAO implements StoreServices {
  " 					qa.question,\n" + 
  " 					qa.answer,\n" + 
  " 					qa.is_enabled,\n" + 
+ " 					qa.code,\n" + 
  " 					qac.qa_cat_id as cat_id,\n" + 
  " 					qac.label as cat_label\n" + 
  " 			from question_answer qa\n" + 
@@ -60,6 +61,7 @@ public final class QuestionAnswerPAO implements StoreServices {
  "                     qa.question,\n" + 
  "                     qa.answer,\n" + 
  "                     qa.is_enabled,\n" + 
+ "                     qa.code,\n" + 
  "                     qac.qa_cat_id,\n" + 
  "                     qac.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
@@ -84,6 +86,7 @@ public final class QuestionAnswerPAO implements StoreServices {
  "                     qa.question,\n" + 
  "                     qa.answer,\n" + 
  "                     qa.is_enabled,\n" + 
+ "                     qa.code,\n" + 
  "                     qac.qa_cat_id as cat_id,\n" + 
  "                     qac.label as cat_label\n" + 
  " 			from question_answer qa\n" + 
@@ -93,6 +96,7 @@ public final class QuestionAnswerPAO implements StoreServices {
  "                     qa.question,\n" + 
  "                     qa.answer,\n" + 
  "                     qa.is_enabled,\n" + 
+ "                     qa.code,\n" + 
  "                     qac.qa_cat_id,\n" + 
  "                     qac.label\n" + 
  " \n" + 

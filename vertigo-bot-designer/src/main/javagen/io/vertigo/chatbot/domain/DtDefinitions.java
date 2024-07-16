@@ -117,6 +117,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		QuestionAnswer(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer.class),
 		/** Objet de données QuestionAnswerCategory. */
 		QuestionAnswerCategory(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory.class),
+		/** Objet de données QuestionAnswerCategoryExport. */
+		QuestionAnswerCategoryExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategoryExport.class),
+		/** Objet de données QuestionAnswerExport. */
+		QuestionAnswerExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerExport.class),
 		/** Objet de données QuestionAnswerIhm. */
 		QuestionAnswerIhm(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm.class),
 		/** Objet de données RatingOption. */
@@ -147,6 +151,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ScriptIntentionIhm(io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm.class),
 		/** Objet de données SelectProfilChatbotPerson. */
 		SelectProfilChatbotPerson(io.vertigo.chatbot.designer.domain.admin.SelectProfilChatbotPerson.class),
+		/** Objet de données SelectQueAnsCategory. */
+		SelectQueAnsCategory(io.vertigo.chatbot.commons.domain.questionanswer.SelectQueAnsCategory.class),
 		/** Objet de données SelectTopicCategory. */
 		SelectTopicCategory(io.vertigo.chatbot.commons.domain.topic.SelectTopicCategory.class),
 		/** Objet de données SelectionOption. */
@@ -983,6 +989,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		answer,
 		/** Propriété 'Enabled'. */
 		isEnabled,
+		/** Propriété 'Code'. */
+		code,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Category'. */
@@ -1002,6 +1010,30 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botId	}
 
 	/**
+	 * Enumération des champs de QuestionAnswerCategoryExport.
+	 */
+	public enum QuestionAnswerCategoryExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategoryExport> {
+		/** Propriété 'Question-Answer category label'. */
+		label,
+		/** Propriété 'Enabled'. */
+		isEnabled	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerExport.
+	 */
+	public enum QuestionAnswerExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerExport> {
+		/** Propriété 'Question'. */
+		question,
+		/** Propriété 'Answer'. */
+		answer,
+		/** Propriété 'Enabled'. */
+		isEnabled,
+		/** Propriété 'Category'. */
+		category,
+		/** Propriété 'Code'. */
+		code	}
+
+	/**
 	 * Enumération des champs de QuestionAnswerIhm.
 	 */
 	public enum QuestionAnswerIhmFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm> {
@@ -1016,7 +1048,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Category id'. */
 		catId,
 		/** Propriété 'Category label'. */
-		catLabel	}
+		catLabel,
+		/** Propriété 'Code'. */
+		code	}
 
 	/**
 	 * Enumération des champs de RatingOption.
@@ -1193,6 +1227,13 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		perId,
 		/** Propriété 'Profil cd'. */
 		prfId	}
+
+	/**
+	 * Enumération des champs de SelectQueAnsCategory.
+	 */
+	public enum SelectQueAnsCategoryFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.SelectQueAnsCategory> {
+		/** Propriété 'Question-Answer category id'. */
+		qaCatId	}
 
 	/**
 	 * Enumération des champs de SelectTopicCategory.
