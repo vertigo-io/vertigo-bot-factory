@@ -1010,6 +1010,7 @@ create table QUESTION_ANSWER
     QUESTION    	 TEXT        	not null,
     ANSWER      	 TEXT        	not null,
     IS_ENABLED  	 bool        	not null,
+    CODE        	 TEXT        	not null,
     BOT_ID      	 NUMERIC     	not null,
     QA_CAT_ID   	 NUMERIC     	not null,
     constraint PK_QUESTION_ANSWER primary key (QA_ID)
@@ -1026,6 +1027,9 @@ comment on column QUESTION_ANSWER.ANSWER is
 
 comment on column QUESTION_ANSWER.IS_ENABLED is
 'Enabled';
+
+comment on column QUESTION_ANSWER.CODE is
+'Code';
 
 comment on column QUESTION_ANSWER.BOT_ID is
 'Chatbot';

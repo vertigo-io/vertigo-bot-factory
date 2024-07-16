@@ -13,11 +13,15 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm;
+import io.vertigo.chatbot.commons.domain.questionanswer.SelectQueAnsCategory;
 import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerFileExportServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerServices;
 import io.vertigo.core.lang.VUserException;
+import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -33,9 +37,13 @@ public class QuestionAnswerListController extends AbstractBotListEntityControlle
     private static final ViewContextKey<QuestionAnswerIhm> questionAnswerIhmListKey = ViewContextKey.of("questionAnswerIhmList");
     private static final ViewContextKey<QuestionAnswerCategory> categoryListKey = ViewContextKey.of("categoryList");
     private static final ViewContextKey<FileInfoURI> importQuestionAnswerFileUri = ViewContextKey.of("importQuestionAnswerFileUri");
+    private static final ViewContextKey<SelectQueAnsCategory> selectionCatListKey = ViewContextKey.of("selectionCatList");
 
     @Inject
     private QuestionAnswerServices questionAnswerServices;
+
+    @Inject
+    private QuestionAnswerFileExportServices questionAnswerFileExportServices;
 
     @Inject
     private QuestionAnswerCategoryServices queAnsCategoryServices;
@@ -47,10 +55,21 @@ public class QuestionAnswerListController extends AbstractBotListEntityControlle
         viewContext.publishDtList(questionAnswerIhmListKey, questionAnswerServices.getAllParsedQueAnsIhmByBot(bot));
         viewContext.publishDtList(categoryListKey, queAnsCategoryServices.getAllQueAnsCatByBot(bot));
         viewContext.publishFileInfoURI(importQuestionAnswerFileUri, null);
+        viewContext.publishDto(selectionCatListKey, new SelectQueAnsCategory());
 
         super.initBreadCrums(viewContext, QuestionAnswer.class);
         listLimitReached(viewContext, uiMessageStack);
         toModeReadOnly();
+    }
+
+    @PostMapping("/_exportQuestionAnswer")
+    @Secured("SuperAdm")
+    public VFile doExportTopicFile(final ViewContext viewContext,
+                                   @ViewAttribute("bot") final Chatbot bot,
+                                   @ViewAttribute("selectionCatList") final SelectQueAnsCategory selectQueAnsCategory) {
+
+        DtList<QuestionAnswerIhm> questionAnwserIhmList = questionAnswerServices.getAllQueAnsIhmByCatIdList(bot, selectQueAnsCategory.getQaCatId());
+        return questionAnswerFileExportServices.exportQuestionAnswers(bot, questionAnwserIhmList);
     }
 
     @PostMapping("/_importQuestionAnswer")
@@ -62,7 +81,7 @@ public class QuestionAnswerListController extends AbstractBotListEntityControlle
         if (importQuestionAnswerFile == null) {
             throw new VUserException(UtilsMultilingualResources.IMPORT_FILE_MUST_NOT_BE_EMPTY);
         }
-        //topicFileExportServices.importTopicFromCSVFile(bot, importTopicFile);
+        questionAnswerFileExportServices.importQueAnsFromCSVFile(bot, importQuestionAnswerFile);
 
         return "redirect:/bot/" + bot.getBotId() + "/questionsanswers/";
     }

@@ -47,8 +47,7 @@ public class QuestionAnswerCategoryListController extends AbstractBotListEntityC
 
     @PostMapping("/_exportCategories")
     public VFile exportCategories(final ViewContext viewContext, final UiMessageStack uiMessageStack, @ViewAttribute("bot") final Chatbot bot) {
-        //return questionAnswerCategoryServices.exportCategories(bot, questionAnswerCategoryServices.getAllQueAnsCatBot(bot));
-        return null;
+        return questionAnswerCategoryServices.exportQueAnsCategories(bot, questionAnswerCategoryServices.getAllQueAnsCatByBot(bot));
     }
 
     @PostMapping("/_importCategories")
@@ -59,9 +58,9 @@ public class QuestionAnswerCategoryListController extends AbstractBotListEntityC
         if (importCategoriesFileUri == null) {
             throw new VUserException(UtilsMultilingualResources.IMPORT_FILE_MUST_NOT_BE_EMPTY);
         }
-        //questionAnswerCategoryServices.importCategoriesFromCSVFile(bot, importCategoriesFileUri);
+        questionAnswerCategoryServices.importQueAnsCategoriesFromCSVFile(bot, importCategoriesFileUri);
 
-        return "redirect:/bot/" + bot.getBotId() + "/categories/";
+        return "redirect:/bot/" + bot.getBotId() + "/qacategories/";
     }
 }
 

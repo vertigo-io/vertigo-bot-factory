@@ -6,7 +6,7 @@
         layout:decorate="~{templates/botDetailLayout}" th:with="tab=questionsanswers"
 >
 <head>
-    <title th:text="questionanswer"></title>
+    <title th:text="#{questionAnswer.title.page}"></title>
 
     <script th:inline="javascript">
 
@@ -53,7 +53,7 @@
     <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/questionsanswers/detail/new(id=${model.bot.botId})}" class="fab-block" round color="primary" size="md" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" />
 
     <q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md" icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}"
-           @click="$refs.exportTopic.show()"></q-btn>
+           @click="$refs.exportQuestionAnswer.show()"></q-btn>
 
     <q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md" icon="file_download" th:aria-label="#{action.import}" th:title="#{action.import}"
            @click="$refs.importQuestionAnswer.show()"></q-btn>
@@ -63,7 +63,7 @@
 <section layout:fragment="content">
 
     <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
-        <span class="text-primary" style="flex-grow: 2">[[#{layout.topics}]]</span>
+        <span class="text-primary" style="flex-grow: 2">[[#{questionAnswer.title}]]</span>
         <q-icon name="help_outlined" size="2rem"/>
         <q-tooltip content-style="font-size: 14px">[[#{questionAnswer.tooltip}]]</q-tooltip>
     </div>
@@ -73,7 +73,7 @@
         <vu:include-data object="categoryList" field="label"/>
         <div style="background-color:white;display:flex;justify-content:flex-end; align-items: center; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;"
              class="q-table__card">
-            <div class="text-h6 q-table__top" style="flex-grow: 2;" th:text="#{questionAnswer.title}"></div>
+            <div class="text-h6 q-table__top" style="flex-grow: 2;" th:text="#{questionAnswer.list.title}"></div>
             <q-select style="width: 250px;"
                       clearable
                       filled
@@ -129,6 +129,38 @@
                     <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
                     <q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
                     <q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn>
+                </q-card-actions>
+            </q-form>
+        </q-card>
+    </q-dialog>
+
+    <q-dialog ref="exportQuestionAnswer" th:with="viewMode='edit'" >
+        <q-card>
+            <q-form method="post" action="_exportQuestionAnswer">
+                <q-card-section>
+                    <div class="text-h6" th:text="#{popup.export.title}"></div>
+                </q-card-section>
+
+                <q-card-section style="width: 400px;">
+                    <vu:include-data object="categoryList" field="'*'"/>
+                    <vu:include-data object="selectionCatList" field="qaCatId" modifiable="true" />
+                    <q-select
+                            clearable
+                            filled
+                            map-options
+                            emit-value
+                            multiple
+                            v-model="vueData.selectionCatList.qaCatId"
+                            :options="transformListForSelection('categoryList', 'qaCatId', 'label')"
+                            th:label="#{popup.export.category}"
+                            stack-label>
+                    </q-select>
+                </q-card-section>
+                <input v-for="id in vueData.selectionCatList.qaCatId" type="hidden" name="vContext[selectionCatList][qaCatId]" :value="id" />
+                <q-card-actions align="around">
+                    <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                    <q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
+                    <q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" v-close-popup></q-btn>
                 </q-card-actions>
             </q-form>
         </q-card>
