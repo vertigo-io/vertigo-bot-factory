@@ -57,6 +57,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ContextEnvironmentValue(io.vertigo.chatbot.designer.domain.ContextEnvironmentValue.class),
 		/** Objet de données ContextEnvironmentValueIhm. */
 		ContextEnvironmentValueIhm(io.vertigo.chatbot.designer.domain.ContextEnvironmentValueIhm.class),
+		/** Objet de données ContextPossibleValue. */
+		ContextPossibleValue(io.vertigo.chatbot.commons.domain.ContextPossibleValue.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
 		/** Objet de données ConversationCriteria. */
@@ -602,6 +604,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cvaId,
 		/** Propriété 'Context value label'. */
 		label	}
+
+	/**
+	 * Enumération des champs de ContextPossibleValue.
+	 */
+	public enum ContextPossibleValueFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ContextPossibleValue> {
+		/** Propriété 'Context possible value id'. */
+		cpvId,
+		/** Propriété 'Value'. */
+		value,
+		/** Propriété 'Context value'. */
+		cvId	}
 
 	/**
 	 * Enumération des champs de ContextValue.
