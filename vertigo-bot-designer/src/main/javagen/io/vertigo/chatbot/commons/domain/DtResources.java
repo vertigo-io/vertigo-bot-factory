@@ -457,6 +457,22 @@ public enum DtResources implements MessageKey {
 	fldConfluenceSettingSpace$confluencesettingId,
 
 	/***********************************************************
+	/** ContextPossibleValue.
+	/***********************************************************
+	/**
+	 * Context possible value id.
+	 */
+	fldContextPossibleValue$cpvId,
+	/**
+	 * Value.
+	 */
+	fldContextPossibleValue$value,
+	/**
+	 * Context value.
+	 */
+	fldContextPossibleValue$cvId,
+
+	/***********************************************************
 	/** ContextValue.
 	/***********************************************************
 	/**

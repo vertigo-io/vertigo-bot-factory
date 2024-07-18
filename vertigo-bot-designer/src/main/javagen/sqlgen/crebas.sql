@@ -29,6 +29,8 @@ drop table IF EXISTS CONTEXT_ENVIRONMENT cascade;
 drop sequence IF EXISTS SEQ_CONTEXT_ENVIRONMENT;
 drop table IF EXISTS CONTEXT_ENVIRONMENT_VALUE cascade;
 drop sequence IF EXISTS SEQ_CONTEXT_ENVIRONMENT_VALUE;
+drop table IF EXISTS CONTEXT_POSSIBLE_VALUE cascade;
+drop sequence IF EXISTS SEQ_CONTEXT_POSSIBLE_VALUE;
 drop table IF EXISTS CONTEXT_VALUE cascade;
 drop sequence IF EXISTS SEQ_CONTEXT_VALUE;
 drop table IF EXISTS DICTIONARY_ENTITY cascade;
@@ -136,6 +138,9 @@ create sequence SEQ_CONTEXT_ENVIRONMENT
 	start with 1000 cache 1; 
 
 create sequence SEQ_CONTEXT_ENVIRONMENT_VALUE
+	start with 1000 cache 1; 
+
+create sequence SEQ_CONTEXT_POSSIBLE_VALUE
 	start with 1000 cache 1; 
 
 create sequence SEQ_CONTEXT_VALUE
@@ -621,6 +626,26 @@ comment on column CONTEXT_ENVIRONMENT_VALUE.CVA_ID is
 
 comment on column CONTEXT_ENVIRONMENT_VALUE.CENV_ID is
 'Environment';
+
+-- ============================================================
+--   Table : CONTEXT_POSSIBLE_VALUE                                        
+-- ============================================================
+create table CONTEXT_POSSIBLE_VALUE
+(
+    CPV_ID      	 NUMERIC     	not null,
+    VALUE       	 VARCHAR(100)	not null,
+    CV_ID       	 NUMERIC     	not null,
+    constraint PK_CONTEXT_POSSIBLE_VALUE primary key (CPV_ID)
+);
+
+comment on column CONTEXT_POSSIBLE_VALUE.CPV_ID is
+'Context possible value id';
+
+comment on column CONTEXT_POSSIBLE_VALUE.VALUE is
+'Value';
+
+comment on column CONTEXT_POSSIBLE_VALUE.CV_ID is
+'Context value';
 
 -- ============================================================
 --   Table : CONTEXT_VALUE                                        
@@ -1810,6 +1835,12 @@ alter table CONTEXT_ENVIRONMENT_VALUE
 	references CONTEXT_VALUE (CVA_ID);
 
 create index A_CONTEXT_ENVIRONMENT_VALUE_CONTEXT_CONTEXT_VALUE_FK on CONTEXT_ENVIRONMENT_VALUE (CVA_ID asc);
+
+alter table CONTEXT_POSSIBLE_VALUE
+	add constraint FK_A_CONTEXT_POSSIBLE_VALUE_CONTEXT_VALUE_CONTEXT_VALUE foreign key (CV_ID)
+	references CONTEXT_VALUE (CVA_ID);
+
+create index A_CONTEXT_POSSIBLE_VALUE_CONTEXT_VALUE_CONTEXT_VALUE_FK on CONTEXT_POSSIBLE_VALUE (CV_ID asc);
 
 alter table CONTEXT_VALUE
 	add constraint FK_A_CONTEXT_VALUE_CHATBOT_CHATBOT foreign key (BOT_ID)

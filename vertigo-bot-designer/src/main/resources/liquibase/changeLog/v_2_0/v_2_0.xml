@@ -173,4 +173,8 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_08_06.sql"/>
     </changeSet>
 
+    <changeSet author="rsaintpaul" id="create context_possible_value table">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_17.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

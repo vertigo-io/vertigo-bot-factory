@@ -9,6 +9,11 @@ create DtDefinition DtContextValue {
 	field label		{domain: DoLabel	label: "Label" 		cardinality:"1"}
 	field xpath     {domain: DoLabel	label: "Xpath" 	    cardinality:"1"}
 }
+
+create DtDefinition DtContextPossibleValue {
+	id cpvId 		{domain: DoId		   label: "Context possible value id"          }
+	field value		{domain: DoLabel	   label: "Value" 		        cardinality:"1"}
+}
 	
 create Association AContextValueChatbot {
 	fkFieldName : "botId" 
@@ -18,5 +23,15 @@ create Association AContextValueChatbot {
 	dtDefinitionB : DtChatbot
 	
 	labelB : "Chatbot"
-}	
+}
+
+create Association AContextPossibleValueContextValue {
+	fkFieldName : "cvId"
+
+ 	dtDefinitionA : DtContextPossibleValue
+	type : "*>1"
+	dtDefinitionB : DtContextValue
+
+	labelB : "Context value"
+}
 
