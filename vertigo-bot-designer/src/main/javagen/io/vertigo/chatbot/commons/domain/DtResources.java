@@ -468,9 +468,13 @@ public enum DtResources implements MessageKey {
 	 */
 	fldContextPossibleValue$value,
 	/**
-	 * Context value.
+	 * Operator.
 	 */
-	fldContextPossibleValue$cvId,
+	fldContextPossibleValue$operator,
+	/**
+	 * Context value id.
+	 */
+	fldContextPossibleValue$cvaId,
 
 	/***********************************************************
 	/** ContextValue.

@@ -17,6 +17,7 @@ public final class ContextEnvironmentValue implements Entity {
 
 	private Long cenvalId;
 	private String value;
+	private String operator;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AContextEnvironmentValueContext",
@@ -90,6 +91,25 @@ public final class ContextEnvironmentValue implements Entity {
 	 */
 	public void setValue(final String value) {
 		this.value = value;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Operator'.
+	 * @return String operator
+	 */
+	@Field(smartType = "STyLabel", label = "Operator")
+	public String getOperator() {
+		return operator;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Operator'.
+	 * @param operator String
+	 */
+	public void setOperator(final String operator) {
+		this.operator = operator;
 	}
 	
 	/**

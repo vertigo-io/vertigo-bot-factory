@@ -17,21 +17,22 @@ public final class ContextPossibleValue implements Entity {
 
 	private Long cpvId;
 	private String value;
+	private String operator;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AContextPossibleValueContextValue",
-			fkFieldName = "cvId",
+			fkFieldName = "cvaId",
 			primaryDtDefinitionName = "DtContextValue",
 			primaryIsNavigable = true,
 			primaryRole = "ContextValue",
-			primaryLabel = "Context value",
+			primaryLabel = "Context value id",
 			primaryMultiplicity = "1..1",
 			foreignDtDefinitionName = "DtContextPossibleValue",
 			foreignIsNavigable = false,
 			foreignRole = "ContextPossibleValue",
 			foreignLabel = "ContextPossibleValue",
 			foreignMultiplicity = "0..*")
-	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> cvIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.ContextValue.class, "ContextValue");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> cvaIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.ContextValue.class, "ContextValue");
 
 	/** {@inheritDoc} */
 	@Override
@@ -78,30 +79,49 @@ public final class ContextPossibleValue implements Entity {
 	}
 	
 	/**
-	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Context value'.
-	 * @return Long cvId <b>Obligatoire</b>
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Operator'.
+	 * @return String operator <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Context value", fkDefinition = "DtContextValue", cardinality = io.vertigo.core.lang.Cardinality.ONE )
-	public Long getCvId() {
-		return (Long) cvIdAccessor.getId();
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Operator")
+	public String getOperator() {
+		return operator;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Operator'.
+	 * @param operator String <b>Obligatoire</b>
+	 */
+	public void setOperator(final String operator) {
+		this.operator = operator;
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Context value id'.
+	 * @return Long cvaId <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Context value id", fkDefinition = "DtContextValue", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	public Long getCvaId() {
+		return (Long) cvaIdAccessor.getId();
 	}
 
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Context value'.
-	 * @param cvId Long <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Context value id'.
+	 * @param cvaId Long <b>Obligatoire</b>
 	 */
-	public void setCvId(final Long cvId) {
-		cvIdAccessor.setId(cvId);
+	public void setCvaId(final Long cvaId) {
+		cvaIdAccessor.setId(cvaId);
 	}
 
  	/**
-	 * Association : Context value.
-	 * @return l'accesseur vers la propriété 'Context value'
+	 * Association : Context value id.
+	 * @return l'accesseur vers la propriété 'Context value id'
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> contextValue() {
-		return cvIdAccessor;
+		return cvaIdAccessor;
 	}
 	
 	/** {@inheritDoc} */

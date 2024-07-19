@@ -8,6 +8,7 @@ create DtDefinition DtContextEnvironment {
 create DtDefinition DtContextEnvironmentValue {
 	id cenvalId     {domain: DoId		        label: "Context environment value id"                 }
 	field value		{domain: DoLabel	        label: "Value" 		                    cardinality:"?"}
+	field operator	{domain: DoLabel	        label: "Operator" 		                cardinality:"?"}
 }
 
 create Association AContextEnvironmentValueContext {
