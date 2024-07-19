@@ -587,6 +587,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cenvalId,
 		/** Propriété 'Value'. */
 		value,
+		/** Propriété 'Operator'. */
+		operator,
 		/** Propriété 'Context'. */
 		cvaId,
 		/** Propriété 'Environment'. */
@@ -613,8 +615,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cpvId,
 		/** Propriété 'Value'. */
 		value,
-		/** Propriété 'Context value'. */
-		cvId	}
+		/** Propriété 'Operator'. */
+		operator,
+		/** Propriété 'Context value id'. */
+		cvaId	}
 
 	/**
 	 * Enumération des champs de ContextValue.

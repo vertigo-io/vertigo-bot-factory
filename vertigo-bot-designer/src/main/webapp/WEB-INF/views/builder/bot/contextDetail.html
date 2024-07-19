@@ -5,9 +5,15 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=context"
 	>
+
 	
 	<head>
-		<title th:text="#{contextvalue.title}"></title>
+		<script th:inline="javascript">
+			VUiExtensions.dataX.operatorList = ["=","<>"];
+		</script>
+
+			<title th:text="#{contextvalue.title}"></title>
+
 	</head>
 	
 	<body>
@@ -21,19 +27,87 @@
 		</section>
 				
 		<section layout:fragment="content">
-			
-			<vu:popup action="_delete" vModel="showPopupDeleteContextValue" message="#{contextValue.popup.message}" confirm="#{action.confirm}"></vu:popup>
+			<vu:popup action="_deleteContextValue" vModel="showPopupDeleteContextValue" message="#{contextValue.popup.delete.message}" confirm="#{action.confirm}"></vu:popup>
+			<vu:popup-ajax action="_deleteContextPossibleValue" vModel="showPopupDeleteContextPossibleValue" dataName="cpvId"
+						   message="#{possibleValue.popup.delete.message}" confirm="#{action.confirm}"></vu:popup-ajax>
 			<vu:block id="detail" title="Informations">
 				<vu:grid cols="2">
 					<vu:text-field object="contextValue" field="label" />
 					<vu:text-field object="contextValue" field="xpath" />
 				</vu:grid>
 			</vu:block>
-			
-			
-			
+			<div class="text-h6 text-weight-bold" style="display: flex; align-items: center; margin-top: 2rem;">
+				<span class="text-primary" style="flex-grow: 2">[[#{possibleValue.list.title}]]</span>
+				<q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" v-if="vueData.contextValue.cvaId !== null"
+					   color="primary" round icon="add" th:aria-label="#{action.add}" th:title="#{action.add}"
+					   @click="vueData.newContextPossibleValue.value = null ;
+						   vueData.newContextPossibleValue.operator = null ;
+						   vueData.newContextPossibleValue.cvaId = vueData.contextValue.cvaId;
+						   vueData.newContextPossibleValue.cpvId = null ;
+						   $refs.possibleValueDialog.show()">
+				</q-btn>
+			</div>
+			<vu:include-data object="contextValue" field="cvaId"/>
+			<vu:include-data object="contextPossibleValueList" field="*"/>
+			<vu:include-data object="newContextPossibleValue" field="value" modifiable="true"/>
+			<vu:include-data object="newContextPossibleValue" field="operator" modifiable="true"/>
+			<vu:include-data object="newContextPossibleValue" field="cpvId" modifiable="true"/>
+			<vu:include-data object="newContextPossibleValue" field="cvaId" modifiable="true"/>
+			<vu:table list="contextPossibleValueList" componentId="possibleValueList"
+					  rowsPerPage="10" autoColClass >
+				<vu:slot name="actions_slot" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}">
+					<q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.edit}" th:title="#{action.edit}"
+						   @click="vueData.newContextPossibleValue.value = props.row.value;
+						   vueData.newContextPossibleValue.operator = props.row.operator;
+						   vueData.newContextPossibleValue.cvaId = vueData.contextValue.cvaId;
+						   vueData.newContextPossibleValue.cpvId = props.row.cpvId;
+						   $refs.possibleValueDialog.show()"></q-btn>
+					<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
+						   @click="componentStates.cpvId = props.row.cpvId; componentStates.showPopupDeleteContextPossibleValue = true"></q-btn>
+				</vu:slot>
+				<vu:column field="value"/>
+				<vu:column field="operator"/>
+			</vu:table>
+
+			<q-dialog ref="possibleValueDialog">
+				<q-card>
+					<q-card-section>
+						<div class="text-h6">
+							<span v-if="vueData.newContextPossibleValue.cpvId !== null" th:text="#{possibleValue.update.popup.title}"></span>
+							<span v-else th:text="#{possibleValue.add.popup.title}"></span>
+						</div>
+					</q-card-section>
+					<q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
+						<input type="hidden" v-model="vueData.newContextPossibleValue.cpvId"
+							   name="vContext[newContextPossibleValue][cpvId]">
+					</q-card-section>
+					<q-card-section>
+						<q-input v-model="vueData.newContextPossibleValue.value" th:label="#{possibleValue.popup.value}"
+								 name="vContext[newContextPossibleValue][value]" :error="hasFieldsError('newContextPossibleValue', 'value')"
+								 :error-message="getErrorMessage('newContextPossibleValue', 'project')"/>
+					</q-card-section>
+					<q-card-section>
+						<q-select
+								v-model="vueData.newContextPossibleValue.operator"
+								:options="VUiExtensions.dataX.operatorList"
+								th:label="#{possibleValue.popup.operator}"
+								name="vContext[newContextPossibleValue][operator]">
+						</q-select>
+					</q-card-section>
+					<q-card-actions align="around">
+						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+						<q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+							   @click="httpPostAjax('_saveContextPossibleValue', vueDataParams(['newContextPossibleValue']));"
+							   color="primary" v-close-popup></q-btn>
+					</q-card-actions>
+				</q-card>
+			</q-dialog>
+
+
 			<q-page-sticky position="bottom-right">
 				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="#{action.save}" action="@{_save}" size="lg" color="primary" /> 
 			</q-page-sticky>
+			<section>
 	</body>
 </html>
