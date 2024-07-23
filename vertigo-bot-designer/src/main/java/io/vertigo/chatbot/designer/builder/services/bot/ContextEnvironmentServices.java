@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
+import java.util.Comparator;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -85,7 +87,9 @@ public class ContextEnvironmentServices implements Component {
                                 contextEnvironmentValueIhm.setCvaId(contextEnvironmentValue.getCvaId());
                                 contextEnvironmentValueIhm.setLabel(contextEnvironmentValue.contextValue().get().getLabel());
                                 return contextEnvironmentValueIhm;
-                            }).collect(VCollectors.toDtList(ContextEnvironmentValueIhm.class)));
+                            })
+                            .sorted(Comparator.comparing(ContextEnvironmentValueIhm::getLabel))
+                            .collect(VCollectors.toDtList(ContextEnvironmentValueIhm.class)));
                     contextEnvironments.add(contextEnvironmentIhm);
                 });
         return contextEnvironments;
