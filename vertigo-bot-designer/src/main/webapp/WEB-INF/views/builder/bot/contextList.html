@@ -31,7 +31,6 @@
         }
 
         VUiExtensions.dataX.selectedOption = null;
-        VUiExtensions.dataX.operatorList = ["=","<>"];
 
     </script>
 </head>
@@ -45,8 +44,6 @@
 </section>
 
 <section layout:fragment="content">
-    <vu:include-data-primitive key="locale"/>
-
     <vu:popup-ajax action="_deleteContextEnvironment" vModel="showDeleteContextEnvironmentPopup"
                    th:message="#{context.environment.delete.popup}"
                    th:confirm="#{action.delete}" dataName="cenvId"></vu:popup-ajax>
@@ -200,7 +197,7 @@
                                  th:label="#{context.environmentValue.popup.value}"
                                  name="vContext[newContextEnvironmentValue][value]"/>
                         <q-select v-model="vueData.newContextEnvironmentValue.operator"
-                                  :options="VUiExtensions.dataX.operatorList"
+                                  :options="vueData.locale == 'fr_FR' ? ['Égal','Contient'] : ['Equal','Contain']"
                                   th:label="#{context.environmentValue.popup.operator}">
                         </q-select>
                     </vu:grid>

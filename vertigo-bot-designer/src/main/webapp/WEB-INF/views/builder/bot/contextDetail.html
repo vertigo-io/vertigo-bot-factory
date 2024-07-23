@@ -8,12 +8,7 @@
 
 	
 	<head>
-		<script th:inline="javascript">
-			VUiExtensions.dataX.operatorList = ["=","<>"];
-		</script>
-
-			<title th:text="#{contextvalue.title}"></title>
-
+		<title th:text="#{contextvalue.title}"></title>
 	</head>
 	
 	<body>
@@ -53,6 +48,7 @@
 			<vu:include-data object="newContextPossibleValue" field="operator" modifiable="true"/>
 			<vu:include-data object="newContextPossibleValue" field="cpvId" modifiable="true"/>
 			<vu:include-data object="newContextPossibleValue" field="cvaId" modifiable="true"/>
+			<vu:include-data-primitive key="locale"/>
 			<vu:table list="contextPossibleValueList" componentId="possibleValueList"
 					  rowsPerPage="10" autoColClass >
 				<vu:slot name="actions_slot" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}">
@@ -89,7 +85,7 @@
 					<q-card-section>
 						<q-select
 								v-model="vueData.newContextPossibleValue.operator"
-								:options="VUiExtensions.dataX.operatorList"
+								:options="vueData.locale == 'fr_FR' ? ['Égal','Contient'] : ['Equal','Contain']"
 								th:label="#{possibleValue.popup.operator}"
 								name="vContext[newContextPossibleValue][operator]">
 						</q-select>
