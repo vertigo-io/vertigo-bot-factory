@@ -17,11 +17,22 @@
         }
 
         function saveContextEnvironmentValue() {
-            VUiPage.httpPostAjax("_saveContextEnvironmentValue", {
-                'cenvalId': VertigoUi.vueData.newContextEnvironmentValue.cenvalId,
-                'value': VertigoUi.vueData.newContextEnvironmentValue.value
-            });
+            VUiPage.httpPostAjax("_saveContextEnvironmentValue", VUiPage.vueDataParams(['newContextEnvironmentValue']));
         }
+
+        function filteredOptions() {
+            return VertigoUi.vueData.contextPossibleValues.filter(possibleValue =>
+                possibleValue.cvaId === VertigoUi.vueData.newContextEnvironmentValue.cvaId);
+        }
+
+        function updateEnvironmentValue(possibleValue) {
+            VertigoUi.vueData.newContextEnvironmentValue.value = possibleValue.value
+            VertigoUi.vueData.newContextEnvironmentValue.operator = possibleValue.operator
+        }
+
+        VUiExtensions.dataX.selectedOption = null;
+        VUiExtensions.dataX.operatorList = ["=","<>"];
+
     </script>
 </head>
 
@@ -53,6 +64,7 @@
         <vu:include-data object="contextValues" field="cvaId"/>
         <vu:include-data object="contextValues" field="label"/>
         <vu:include-data object="contextValues" field="xpath"/>
+        <vu:include-data-primitive key="locale"/>
         <vu:column field="label">
             <a th::href="|'@{/bot/{id}/contextValue/(id=${model.bot.botId})}'+props.row.cvaId|"
                style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
@@ -106,17 +118,24 @@
                 <q-card>
                     <q-card-section>
                         <div class="q-pa-md">
-                            <q-list bordered separator>
+                            <q-list bordered separator >
                                 <q-item th::clickable="${model.userAuthorizations[AtzChatbot$botContributor]}"
                                         v-for="contextEnvironmentValue in contextEnvironment.contextEnvironmentValues"
                                         @click="vueData.newContextEnvironmentValue.cenvalId = contextEnvironmentValue.cenvalId;
 						   vueData.newContextEnvironmentValue.cvaId = contextEnvironmentValue.cvaId;
-						   vueData.newContextEnvironmentValue.label = contextEnvironmentValue.label;
 						   vueData.newContextEnvironmentValue.value = contextEnvironmentValue.value;
+						   vueData.newContextEnvironmentValue.operator = contextEnvironmentValue.operator;
+						   vueData.newContextEnvironmentValue.cenvId = contextEnvironment.cenvId
+						   VUiExtensions.dataX.selectedOption = null;
 							$refs.environmentContextValueDialog.show()">
                                     <q-item-section>
-                                        <q-item-label>{{contextEnvironmentValue.label}}</q-item-label>
-                                        <q-item-label caption>{{contextEnvironmentValue.value}}</q-item-label>
+                                        <q-item-label><strong>{{contextEnvironmentValue.label}}</strong></q-item-label>
+                                    </q-item-section>
+                                    <q-item-section v-if="contextEnvironmentValue.value !== null && contextEnvironmentValue.operator !== null">
+                                        <q-item-label>{{vueData.locale == "fr_FR" ? 'Valeur' : 'Value'}} : <strong>{{contextEnvironmentValue.value}}</strong></q-item-label>
+                                    </q-item-section>
+                                    <q-item-section v-if="contextEnvironmentValue.value !== null && contextEnvironmentValue.operator !== null">
+                                        <q-item-label>{{vueData.locale == "fr_FR" ? 'Opérateur' : 'Operator'}} : <strong>{{contextEnvironmentValue.operator}}</strong></q-item-label>
                                     </q-item-section>
                                 </q-item>
                             </q-list>
@@ -158,21 +177,33 @@
             <vu:include-data object="newContextEnvironmentValue" field="cenvalId" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="cvaId" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="value" modifiable="true"/>
-            <vu:include-data object="newContextEnvironmentValue" field="label" modifiable="true"/>
+            <vu:include-data object="newContextEnvironmentValue" field="operator" modifiable="true"/>
+            <vu:include-data object="newContextEnvironmentValue" field="cenvId" modifiable="true"/>
+            <vu:include-data object="contextPossibleValues" field="*" modifiable="true"/>
             <q-card>
                 <q-card-section>
                     <div class="text-h6">
                         <span th:text="#{context.environment.value.update}"></span>
                     </div>
                 </q-card-section>
-                <q-card-section>
-                    <input type="hidden" v-model="vueData.newContextEnvironmentValue.cenvalId"
-                           name="vContext[newContextEnvironmentValue][cenvalId]">
-                    <input type="hidden" v-model="vueData.newContextEnvironmentValue.cvaId"
-                           name="vContext[newContextEnvironmentValue][cvaId]">
-                    <input type="hidden" v-model="vueData.newContextEnvironmentValue.label"
-                           name="vContext[newContextEnvironmentValue][label]">
-                    <vu:text-field object="newContextEnvironmentValue" field="value"/>
+                <q-card-section v-if="filteredOptions().length !== 0">
+                    <q-select v-model="VUiExtensions.dataX.selectedOption"
+                              th:label="#{context.environmentValue.popup.valueOperator}"
+                              :options="filteredOptions()"
+                              :option-label="possibleValue => `${possibleValue.value} [${possibleValue.operator}]`"
+                              @input="updateEnvironmentValue">
+                    </q-select>
+                </q-card-section>
+                <q-card-section v-else>
+                    <vu:grid cols="2">
+                        <q-input v-model="vueData.newContextEnvironmentValue.value"
+                                 th:label="#{context.environmentValue.popup.value}"
+                                 name="vContext[newContextEnvironmentValue][value]"/>
+                        <q-select v-model="vueData.newContextEnvironmentValue.operator"
+                                  :options="VUiExtensions.dataX.operatorList"
+                                  th:label="#{context.environmentValue.popup.operator}">
+                        </q-select>
+                    </vu:grid>
                 </q-card-section>
                 <q-card-actions align="around">
                     <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>

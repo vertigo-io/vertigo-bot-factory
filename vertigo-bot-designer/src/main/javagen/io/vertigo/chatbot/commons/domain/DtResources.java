@@ -475,6 +475,10 @@ public enum DtResources implements MessageKey {
 	 * Context value id.
 	 */
 	fldContextPossibleValue$cvaId,
+	/**
+	 * Chatbot.
+	 */
+	fldContextPossibleValue$botId,
 
 	/***********************************************************
 	/** ContextValue.

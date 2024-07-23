@@ -34,6 +34,21 @@ public final class ContextPossibleValue implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> cvaIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.ContextValue.class, "ContextValue");
 
+	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "AContextPossibleValueChatbot",
+			fkFieldName = "botId",
+			primaryDtDefinitionName = "DtChatbot",
+			primaryIsNavigable = true,
+			primaryRole = "Chatbot",
+			primaryLabel = "Chatbot",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtContextPossibleValue",
+			foreignIsNavigable = false,
+			foreignRole = "ContextPossibleValue",
+			foreignLabel = "ContextPossibleValue",
+			foreignMultiplicity = "0..*")
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
+
 	/** {@inheritDoc} */
 	@Override
 	public UID<ContextPossibleValue> getUID() {
@@ -114,6 +129,33 @@ public final class ContextPossibleValue implements Entity {
 	 */
 	public void setCvaId(final Long cvaId) {
 		cvaIdAccessor.setId(cvaId);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Chatbot'.
+	 * @return Long botId <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	public Long getBotId() {
+		return (Long) botIdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Chatbot'.
+	 * @param botId Long <b>Obligatoire</b>
+	 */
+	public void setBotId(final Long botId) {
+		botIdAccessor.setId(botId);
+	}
+
+ 	/**
+	 * Association : Chatbot.
+	 * @return l'accesseur vers la propriété 'Chatbot'
+	 */
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbot() {
+		return botIdAccessor;
 	}
 
  	/**

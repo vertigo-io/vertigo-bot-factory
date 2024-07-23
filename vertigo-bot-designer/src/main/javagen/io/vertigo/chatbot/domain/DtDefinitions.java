@@ -602,6 +602,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cenvalId,
 		/** Propriété 'Value'. */
 		value,
+		/** Propriété 'Operator'. */
+		operator,
 		/** Propriété 'Context value id'. */
 		cvaId,
 		/** Propriété 'Context value label'. */
@@ -618,7 +620,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Operator'. */
 		operator,
 		/** Propriété 'Context value id'. */
-		cvaId	}
+		cvaId,
+		/** Propriété 'Chatbot'. */
+		botId	}
 
 	/**
 	 * Enumération des champs de ContextValue.
