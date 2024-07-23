@@ -81,6 +81,7 @@ public class ContextEnvironmentServices implements Component {
                                 ContextEnvironmentValueIhm contextEnvironmentValueIhm = new ContextEnvironmentValueIhm();
                                 contextEnvironmentValueIhm.setCenvalId(contextEnvironmentValue.getCenvalId());
                                 contextEnvironmentValueIhm.setValue(contextEnvironmentValue.getValue());
+                                contextEnvironmentValueIhm.setOperator(contextEnvironmentValue.getOperator());
                                 contextEnvironmentValueIhm.setCvaId(contextEnvironmentValue.getCvaId());
                                 contextEnvironmentValueIhm.setLabel(contextEnvironmentValue.contextValue().get().getLabel());
                                 return contextEnvironmentValueIhm;

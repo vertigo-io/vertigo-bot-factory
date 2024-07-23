@@ -36,4 +36,14 @@ create Association AContextPossibleValueContextValue {
 	labelB : "Context value id"
 }
 
+create Association AContextPossibleValueChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtContextPossibleValue
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
 

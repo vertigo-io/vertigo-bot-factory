@@ -14,6 +14,8 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
+
 @Transactional
 @Secured("BotUser")
 public class ContextPossibleValueServices implements Component {
@@ -23,7 +25,11 @@ public class ContextPossibleValueServices implements Component {
 
 
     public DtList<ContextPossibleValue> getAllContextPossibleValuesByCvaId(@SecuredOperation("botVisitor") final Chatbot bot,  final Long cvaId) {
-        return contextPossibleValueDAO.findAll(Criterions.isEqualTo(DtDefinitions.ContextPossibleValueFields.cvaId, cvaId), DtListState.of(null));
+        return contextPossibleValueDAO.findAll(Criterions.isEqualTo(DtDefinitions.ContextPossibleValueFields.cvaId, cvaId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+    }
+
+    public DtList<ContextPossibleValue> getAllContextPossibleValuesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+        return contextPossibleValueDAO.findAll(Criterions.isEqualTo(DtDefinitions.ContextPossibleValueFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
     }
 
     public void deleteContextPossibleValue(@SecuredOperation("botContributor") final Chatbot bot, final Long cpvId) {
