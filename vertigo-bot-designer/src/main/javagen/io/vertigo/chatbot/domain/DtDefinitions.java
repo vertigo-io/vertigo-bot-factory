@@ -217,6 +217,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TypeExportAnalyticList(io.vertigo.chatbot.designer.domain.analytics.TypeExportAnalyticList.class),
 		/** Objet de données TypeExportAnalytics. */
 		TypeExportAnalytics(io.vertigo.chatbot.designer.domain.analytics.TypeExportAnalytics.class),
+		/** Objet de données TypeOperator. */
+		TypeOperator(io.vertigo.chatbot.designer.domain.TypeOperator.class),
 		/** Objet de données TypeTopic. */
 		TypeTopic(io.vertigo.chatbot.commons.domain.topic.TypeTopic.class),
 		/** Objet de données UnknownSentenceDetail. */
@@ -587,12 +589,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cenvalId,
 		/** Propriété 'Value'. */
 		value,
-		/** Propriété 'Operator'. */
-		operator,
 		/** Propriété 'Context'. */
 		cvaId,
 		/** Propriété 'Environment'. */
-		cenvId	}
+		cenvId,
+		/** Propriété 'Value operator'. */
+		tyopCd	}
 
 	/**
 	 * Enumération des champs de ContextEnvironmentValueIhm.
@@ -602,8 +604,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cenvalId,
 		/** Propriété 'Value'. */
 		value,
-		/** Propriété 'Operator'. */
-		operator,
 		/** Propriété 'Context value id'. */
 		cvaId,
 		/** Propriété 'Context value label'. */
@@ -621,6 +621,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		operator,
 		/** Propriété 'Context value id'. */
 		cvaId,
+		/** Propriété 'Value operator'. */
+		tyopCd,
 		/** Propriété 'Chatbot'. */
 		botId	}
 
@@ -1729,6 +1731,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Title'. */
 		label,
 		/** Propriété 'Titre'. */
+		labelFr	}
+
+	/**
+	 * Enumération des champs de TypeOperator.
+	 */
+	public enum TypeOperatorFields implements DtFieldName<io.vertigo.chatbot.designer.domain.TypeOperator> {
+		/** Propriété 'ID'. */
+		tyopCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'LabelFr'. */
 		labelFr	}
 
 	/**

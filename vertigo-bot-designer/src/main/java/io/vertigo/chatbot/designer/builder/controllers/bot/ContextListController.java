@@ -4,14 +4,17 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ContextPossibleValue;
 import io.vertigo.chatbot.commons.domain.ContextValue;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentValueServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextPossibleValueServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ContextTypeOperatorServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.chatbot.designer.domain.ContextEnvironment;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentValue;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentValueIhm;
+import io.vertigo.chatbot.designer.domain.TypeOperator;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -39,17 +42,21 @@ public class ContextListController extends AbstractBotListEntityController<Conte
 	private static final ViewContextKey<ContextValue> contextValuesKey = ViewContextKey.of("contextValues");
 	private static final ViewContextKey<ContextEnvironmentIhm> contextEnvironmentsKey = ViewContextKey.of("contextEnvironments");
 	private	static final ViewContextKey<ContextPossibleValue> contextPossibleValueskey = ViewContextKey.of("contextPossibleValues");
-
 	private static final ViewContextKey<ContextEnvironment> newContextEnvironmentKey = ViewContextKey.of("newContextEnvironment");
 	private static final ViewContextKey<ContextEnvironmentValue> newContextEnvironmentValueKey = ViewContextKey.of("newContextEnvironmentValue");
+	private static final ViewContextKey<TypeOperator> typeOperators = ViewContextKey.of("typeOperators");
 
 	private static final ViewContextKey<String> localeKey = ViewContextKey.of("locale");
+
 
 	@Inject
 	private ContextValueServices contextValueServices;
 
 	@Inject
 	private ContextPossibleValueServices contextPossibleValueServices;
+
+	@Inject
+	private ContextTypeOperatorServices contextTypeOperatorServices;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
@@ -58,6 +65,7 @@ public class ContextListController extends AbstractBotListEntityController<Conte
 		viewContext.publishDtList(contextPossibleValueskey, contextPossibleValueServices.getAllContextPossibleValuesByBot(bot));
 		viewContext.publishDto(newContextEnvironmentKey, new ContextEnvironment());
 		viewContext.publishDto(newContextEnvironmentValueKey, new ContextEnvironmentValue());
+		viewContext.publishDtList(typeOperators, contextTypeOperatorServices.getAllTypeOperators(bot));
 		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
 
 		super.initBreadCrums(viewContext, ContextValue.class);

@@ -15,7 +15,6 @@ public final class ContextEnvironmentValueIhm implements DtObject {
 
 	private Long cenvalId;
 	private String value;
-	private String operator;
 	private Long cvaId;
 	private String label;
 	
@@ -55,25 +54,6 @@ public final class ContextEnvironmentValueIhm implements DtObject {
 	 */
 	public void setValue(final String value) {
 		this.value = value;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Operator'.
-	 * @return String operator
-	 */
-	@Field(smartType = "STyLabel", label = "Operator")
-	public String getOperator() {
-		return operator;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Operator'.
-	 * @param operator String
-	 */
-	public void setOperator(final String operator) {
-		this.operator = operator;
 	}
 	
 	/**

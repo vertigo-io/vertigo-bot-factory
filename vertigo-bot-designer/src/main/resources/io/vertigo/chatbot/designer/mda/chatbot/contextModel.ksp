@@ -8,7 +8,6 @@ create DtDefinition DtContextEnvironment {
 create DtDefinition DtContextEnvironmentValue {
 	id cenvalId     {domain: DoId		        label: "Context environment value id"                 }
 	field value		{domain: DoLabel	        label: "Value" 		                    cardinality:"?"}
-	field operator	{domain: DoLabel	        label: "Operator" 		                cardinality:"?"}
 }
 
 create Association AContextEnvironmentValueContext {
@@ -50,7 +49,48 @@ create DtDefinition DtContextEnvironmentIhm {
 create DtDefinition DtContextEnvironmentValueIhm {
     field cenvalId      {domain: DoId		        label: "Context environment value id"       cardinality:"1"     }
 	field value		    {domain: DoLabel	        label: "Value" 		                        cardinality:"?"     }
-	field operator      {domain: DoLabel            label: "Operator"                           cardinality:"?"     }
 	field cvaId 		{domain: DoId		        label: "Context value id"                   cardinality:"1"     }
     field label		    {domain: DoLabel	        label: "Context value label" 		        cardinality:"1"     }
 }
+
+create DtDefinition DtTypeOperator {
+	stereotype : "StaticMasterData"
+	id    tyopCd 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Label" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "LabelFr" 		cardinality : "1"	}
+	values : `{
+        "EQUAL" : {
+            "tyopCd" : "EQUAL",
+            "label" : "Equal",
+            "labelFr" : "Égal"
+        },
+        "CONTAIN" : {
+            "tyopCd" : "CONTAIN",
+            "label" : "Contain",
+            "labelFr" : "Contient"
+        }
+     }`
+    sortField : "tyopCd"
+ 	displayField : "label"
+}
+
+create Association AContextPossibleValueTypeOperator {
+	fkFieldName : "tyopCd"
+
+ 	dtDefinitionA : DtContextPossibleValue
+	type : "*>1"
+	dtDefinitionB : DtTypeOperator
+
+	labelB : "Value operator"
+}
+
+create Association AContextEnvironmentValueTypeOperator {
+	fkFieldName : "tyopCd"
+
+ 	dtDefinitionA : DtContextEnvironmentValue
+	type : "*>1"
+	dtDefinitionB : DtTypeOperator
+
+	labelB : "Value operator"
+}
+
