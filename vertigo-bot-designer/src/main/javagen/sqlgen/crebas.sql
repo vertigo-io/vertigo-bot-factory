@@ -640,7 +640,6 @@ create table CONTEXT_POSSIBLE_VALUE
 (
     CPV_ID      	 NUMERIC     	not null,
     VALUE       	 VARCHAR(100)	not null,
-    OPERATOR    	 VARCHAR(100)	not null,
     CVA_ID      	 NUMERIC     	not null,
     TYOP_CD     	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
@@ -652,9 +651,6 @@ comment on column CONTEXT_POSSIBLE_VALUE.CPV_ID is
 
 comment on column CONTEXT_POSSIBLE_VALUE.VALUE is
 'Value';
-
-comment on column CONTEXT_POSSIBLE_VALUE.OPERATOR is
-'Operator';
 
 comment on column CONTEXT_POSSIBLE_VALUE.CVA_ID is
 'Context value id';

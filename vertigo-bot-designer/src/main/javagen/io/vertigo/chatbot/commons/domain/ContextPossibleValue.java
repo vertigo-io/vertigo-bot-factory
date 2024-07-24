@@ -18,7 +18,6 @@ public final class ContextPossibleValue implements Entity {
 
 	private Long cpvId;
 	private String value;
-	private String operator;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AContextPossibleValueContextValue",
@@ -107,25 +106,6 @@ public final class ContextPossibleValue implements Entity {
 	 */
 	public void setValue(final String value) {
 		this.value = value;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Operator'.
-	 * @return String operator <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Operator")
-	public String getOperator() {
-		return operator;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Operator'.
-	 * @param operator String <b>Obligatoire</b>
-	 */
-	public void setOperator(final String operator) {
-		this.operator = operator;
 	}
 	
 	/**
