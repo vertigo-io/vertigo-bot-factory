@@ -27,7 +27,7 @@
 
         function updateEnvironmentValue(possibleValue) {
             VertigoUi.vueData.newContextEnvironmentValue.value = possibleValue.value
-            VertigoUi.vueData.newContextEnvironmentValue.operator = possibleValue.operator
+            VertigoUi.vueData.newContextEnvironmentValue.tyopCd = possibleValue.tyopCd
         }
 
         VUiExtensions.dataX.selectedOption = null;
@@ -121,18 +121,15 @@
                                         @click="vueData.newContextEnvironmentValue.cenvalId = contextEnvironmentValue.cenvalId;
 						   vueData.newContextEnvironmentValue.cvaId = contextEnvironmentValue.cvaId;
 						   vueData.newContextEnvironmentValue.value = contextEnvironmentValue.value;
-						   vueData.newContextEnvironmentValue.operator = contextEnvironmentValue.operator;
+						   vueData.newContextEnvironmentValue.tyopCd = contextEnvironmentValue.tyopCd;
 						   vueData.newContextEnvironmentValue.cenvId = contextEnvironment.cenvId
 						   VUiExtensions.dataX.selectedOption = null;
 							$refs.environmentContextValueDialog.show()">
                                     <q-item-section>
                                         <q-item-label><strong>{{contextEnvironmentValue.label}}</strong></q-item-label>
                                     </q-item-section>
-                                    <q-item-section v-if="contextEnvironmentValue.value !== null && contextEnvironmentValue.operator !== null">
+                                    <q-item-section v-if="contextEnvironmentValue.value !== null && contextEnvironmentValue.tyopCd !== null">
                                         <q-item-label>{{vueData.locale == "fr_FR" ? 'Valeur' : 'Value'}} : <strong>{{contextEnvironmentValue.value}}</strong></q-item-label>
-                                    </q-item-section>
-                                    <q-item-section v-if="contextEnvironmentValue.value !== null && contextEnvironmentValue.operator !== null">
-                                        <q-item-label>{{vueData.locale == "fr_FR" ? 'Opérateur' : 'Operator'}} : <strong>{{contextEnvironmentValue.operator}}</strong></q-item-label>
                                     </q-item-section>
                                 </q-item>
                             </q-list>
@@ -174,9 +171,10 @@
             <vu:include-data object="newContextEnvironmentValue" field="cenvalId" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="cvaId" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="value" modifiable="true"/>
-            <vu:include-data object="newContextEnvironmentValue" field="operator" modifiable="true"/>
+            <vu:include-data object="newContextEnvironmentValue" field="tyopCd" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="cenvId" modifiable="true"/>
-            <vu:include-data object="contextPossibleValues" field="*" modifiable="true"/>
+            <vu:include-data object="contextPossibleValues" field="*"/>
+            <vu:include-data object="typeOperators" field="*"/>
             <q-card>
                 <q-card-section>
                     <div class="text-h6">
@@ -185,20 +183,22 @@
                 </q-card-section>
                 <q-card-section v-if="filteredOptions().length !== 0">
                     <q-select v-model="VUiExtensions.dataX.selectedOption"
-                              th:label="#{context.environmentValue.popup.valueOperator}"
+                              th:label="#{OPERATOR_EQUAL}"
                               :options="filteredOptions()"
-                              :option-label="possibleValue => `${possibleValue.value} [${possibleValue.operator}]`"
+                              :option-label="possibleValue => `${possibleValue.value} [${possibleValue.tyopCd}]`"
                               @input="updateEnvironmentValue">
                     </q-select>
                 </q-card-section>
                 <q-card-section v-else>
                     <vu:grid cols="2">
-                        <q-input v-model="vueData.newContextEnvironmentValue.value"
-                                 th:label="#{context.environmentValue.popup.value}"
+                        <q-input th:label="#{context.environmentValue.popup.value}"
+                                 v-model="vueData.newContextEnvironmentValue.value"
                                  name="vContext[newContextEnvironmentValue][value]"/>
-                        <q-select v-model="vueData.newContextEnvironmentValue.operator"
-                                  :options="vueData.locale == 'fr_FR' ? ['Égal','Contient'] : ['Equal','Contain']"
-                                  th:label="#{context.environmentValue.popup.operator}">
+                        <q-select th:label="#{context.environmentValue.popup.operator}"
+                                  v-model="vueData.newContextEnvironmentValue.tyopCd"
+                                  :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeOperators', 'tyopCd', 'labelFr') : transformListForSelection('typeOperators', 'tyopCd', 'label')"
+                                  map-options
+                                  emit-value>
                         </q-select>
                     </vu:grid>
                 </q-card-section>

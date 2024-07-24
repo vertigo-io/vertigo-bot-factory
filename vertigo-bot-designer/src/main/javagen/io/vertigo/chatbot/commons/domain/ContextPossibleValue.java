@@ -2,6 +2,7 @@ package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 import io.vertigo.datamodel.structure.stereotype.Field;
@@ -33,6 +34,21 @@ public final class ContextPossibleValue implements Entity {
 			foreignLabel = "ContextPossibleValue",
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> cvaIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.ContextValue.class, "ContextValue");
+
+	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "AContextPossibleValueTypeOperator",
+			fkFieldName = "tyopCd",
+			primaryDtDefinitionName = "DtTypeOperator",
+			primaryIsNavigable = true,
+			primaryRole = "TypeOperator",
+			primaryLabel = "Value operator",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtContextPossibleValue",
+			foreignIsNavigable = false,
+			foreignRole = "ContextPossibleValue",
+			foreignLabel = "ContextPossibleValue",
+			foreignMultiplicity = "0..*")
+	private final EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.TypeOperator, io.vertigo.chatbot.designer.domain.TypeOperatorEnum> tyopCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.designer.domain.TypeOperator.class, "TypeOperator", io.vertigo.chatbot.designer.domain.TypeOperatorEnum.class);
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AContextPossibleValueChatbot",
@@ -133,6 +149,25 @@ public final class ContextPossibleValue implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Value operator'.
+	 * @return String tyopCd <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Value operator", fkDefinition = "DtTypeOperator", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	public String getTyopCd() {
+		return (String) tyopCdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Value operator'.
+	 * @param tyopCd String <b>Obligatoire</b>
+	 */
+	public void setTyopCd(final String tyopCd) {
+		tyopCdAccessor.setId(tyopCd);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
@@ -164,6 +199,14 @@ public final class ContextPossibleValue implements Entity {
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> contextValue() {
 		return cvaIdAccessor;
+	}
+
+ 	/**
+	 * Association : Value operator.
+	 * @return l'accesseur vers la propriété 'Value operator'
+	 */
+	public EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.TypeOperator, io.vertigo.chatbot.designer.domain.TypeOperatorEnum> typeOperator() {
+		return tyopCdAccessor;
 	}
 	
 	/** {@inheritDoc} */

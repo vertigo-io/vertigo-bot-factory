@@ -91,6 +91,7 @@ drop sequence IF EXISTS SEQ_TRAINING;
 drop table IF EXISTS TRAINING_STATUS cascade;
 drop table IF EXISTS TYPE_BOT_EXPORT cascade;
 drop table IF EXISTS TYPE_EXPORT_ANALYTICS cascade;
+drop table IF EXISTS TYPE_OPERATOR cascade;
 drop table IF EXISTS TYPE_TOPIC cascade;
 drop table IF EXISTS UNKNOWN_SENTENCE_DETAIL cascade;
 drop sequence IF EXISTS SEQ_UNKNOWN_SENTENCE_DETAIL;
@@ -224,6 +225,7 @@ create sequence SEQ_TOPIC_LABEL
 
 create sequence SEQ_TRAINING
 	start with 1000 cache 1; 
+
 
 
 
@@ -610,9 +612,9 @@ create table CONTEXT_ENVIRONMENT_VALUE
 (
     CENVAL_ID   	 NUMERIC     	not null,
     VALUE       	 VARCHAR(100)	,
-    OPERATOR    	 VARCHAR(100)	,
     CVA_ID      	 NUMERIC     	not null,
     CENV_ID     	 NUMERIC     	not null,
+    TYOP_CD     	 VARCHAR(100)	not null,
     constraint PK_CONTEXT_ENVIRONMENT_VALUE primary key (CENVAL_ID)
 );
 
@@ -622,14 +624,14 @@ comment on column CONTEXT_ENVIRONMENT_VALUE.CENVAL_ID is
 comment on column CONTEXT_ENVIRONMENT_VALUE.VALUE is
 'Value';
 
-comment on column CONTEXT_ENVIRONMENT_VALUE.OPERATOR is
-'Operator';
-
 comment on column CONTEXT_ENVIRONMENT_VALUE.CVA_ID is
 'Context';
 
 comment on column CONTEXT_ENVIRONMENT_VALUE.CENV_ID is
 'Environment';
+
+comment on column CONTEXT_ENVIRONMENT_VALUE.TYOP_CD is
+'Value operator';
 
 -- ============================================================
 --   Table : CONTEXT_POSSIBLE_VALUE                                        
@@ -640,6 +642,7 @@ create table CONTEXT_POSSIBLE_VALUE
     VALUE       	 VARCHAR(100)	not null,
     OPERATOR    	 VARCHAR(100)	not null,
     CVA_ID      	 NUMERIC     	not null,
+    TYOP_CD     	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_CONTEXT_POSSIBLE_VALUE primary key (CPV_ID)
 );
@@ -655,6 +658,9 @@ comment on column CONTEXT_POSSIBLE_VALUE.OPERATOR is
 
 comment on column CONTEXT_POSSIBLE_VALUE.CVA_ID is
 'Context value id';
+
+comment on column CONTEXT_POSSIBLE_VALUE.TYOP_CD is
+'Value operator';
 
 comment on column CONTEXT_POSSIBLE_VALUE.BOT_ID is
 'Chatbot';
@@ -1608,6 +1614,26 @@ comment on column TYPE_EXPORT_ANALYTICS.LABEL_FR is
 'Titre';
 
 -- ============================================================
+--   Table : TYPE_OPERATOR                                        
+-- ============================================================
+create table TYPE_OPERATOR
+(
+    TYOP_CD     	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_TYPE_OPERATOR primary key (TYOP_CD)
+);
+
+comment on column TYPE_OPERATOR.TYOP_CD is
+'ID';
+
+comment on column TYPE_OPERATOR.LABEL is
+'Label';
+
+comment on column TYPE_OPERATOR.LABEL_FR is
+'LabelFr';
+
+-- ============================================================
 --   Table : TYPE_TOPIC                                        
 -- ============================================================
 create table TYPE_TOPIC
@@ -1848,6 +1874,12 @@ alter table CONTEXT_ENVIRONMENT_VALUE
 
 create index A_CONTEXT_ENVIRONMENT_VALUE_CONTEXT_CONTEXT_VALUE_FK on CONTEXT_ENVIRONMENT_VALUE (CVA_ID asc);
 
+alter table CONTEXT_ENVIRONMENT_VALUE
+	add constraint FK_A_CONTEXT_ENVIRONMENT_VALUE_TYPE_OPERATOR_TYPE_OPERATOR foreign key (TYOP_CD)
+	references TYPE_OPERATOR (TYOP_CD);
+
+create index A_CONTEXT_ENVIRONMENT_VALUE_TYPE_OPERATOR_TYPE_OPERATOR_FK on CONTEXT_ENVIRONMENT_VALUE (TYOP_CD asc);
+
 alter table CONTEXT_POSSIBLE_VALUE
 	add constraint FK_A_CONTEXT_POSSIBLE_VALUE_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
@@ -1859,6 +1891,12 @@ alter table CONTEXT_POSSIBLE_VALUE
 	references CONTEXT_VALUE (CVA_ID);
 
 create index A_CONTEXT_POSSIBLE_VALUE_CONTEXT_VALUE_CONTEXT_VALUE_FK on CONTEXT_POSSIBLE_VALUE (CVA_ID asc);
+
+alter table CONTEXT_POSSIBLE_VALUE
+	add constraint FK_A_CONTEXT_POSSIBLE_VALUE_TYPE_OPERATOR_TYPE_OPERATOR foreign key (TYOP_CD)
+	references TYPE_OPERATOR (TYOP_CD);
+
+create index A_CONTEXT_POSSIBLE_VALUE_TYPE_OPERATOR_TYPE_OPERATOR_FK on CONTEXT_POSSIBLE_VALUE (TYOP_CD asc);
 
 alter table CONTEXT_VALUE
 	add constraint FK_A_CONTEXT_VALUE_CHATBOT_CHATBOT foreign key (BOT_ID)

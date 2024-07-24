@@ -177,8 +177,8 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_17.sql"/>
     </changeSet>
 
-    <changeSet author="rsaintpaul" id="Add operator column to context_environment_value table">
-        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_07_19.sql"/>
+    <changeSet author="rsaintpaul" id="Create type_operator table and add tyop column to context_possible_value and context_environment_value tables">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_24.sql"/>
     </changeSet>
 
 </databaseChangeLog>

@@ -52,10 +52,6 @@ public enum DtResources implements MessageKey {
 	 */
 	fldContextEnvironmentValue$value,
 	/**
-	 * Operator.
-	 */
-	fldContextEnvironmentValue$operator,
-	/**
 	 * Context.
 	 */
 	fldContextEnvironmentValue$cvaId,
@@ -63,6 +59,10 @@ public enum DtResources implements MessageKey {
 	 * Environment.
 	 */
 	fldContextEnvironmentValue$cenvId,
+	/**
+	 * Value operator.
+	 */
+	fldContextEnvironmentValue$tyopCd,
 
 	/***********************************************************
 	/** ContextEnvironmentValueIhm.
@@ -75,10 +75,6 @@ public enum DtResources implements MessageKey {
 	 * Value.
 	 */
 	fldContextEnvironmentValueIhm$value,
-	/**
-	 * Operator.
-	 */
-	fldContextEnvironmentValueIhm$operator,
 	/**
 	 * Context value id.
 	 */
@@ -271,4 +267,20 @@ public enum DtResources implements MessageKey {
 	 * Synonym label.
 	 */
 	fldTupleSynonymIhm$synonymLabel,
+
+	/***********************************************************
+	/** TypeOperator.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldTypeOperator$tyopCd,
+	/**
+	 * Label.
+	 */
+	fldTypeOperator$label,
+	/**
+	 * LabelFr.
+	 */
+	fldTypeOperator$labelFr,
 }
