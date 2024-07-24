@@ -13,7 +13,6 @@ create DtDefinition DtContextValue {
 create DtDefinition DtContextPossibleValue {
 	id cpvId 		{domain: DoId		   label: "Context possible value id"          }
 	field value		{domain: DoLabel	   label: "Value" 		        cardinality:"1"}
-	field operator  {domain: DoLabel       label: "Operator"            cardinality:"1"}
 }
 	
 create Association AContextValueChatbot {

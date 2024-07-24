@@ -617,8 +617,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cpvId,
 		/** Propriété 'Value'. */
 		value,
-		/** Propriété 'Operator'. */
-		operator,
 		/** Propriété 'Context value id'. */
 		cvaId,
 		/** Propriété 'Value operator'. */

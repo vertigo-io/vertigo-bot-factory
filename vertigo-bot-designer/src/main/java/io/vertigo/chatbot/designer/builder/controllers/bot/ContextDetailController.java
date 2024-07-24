@@ -25,7 +25,9 @@ import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentValueServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextPossibleValueServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ContextTypeOperatorServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
+import io.vertigo.chatbot.designer.domain.TypeOperator;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -55,6 +57,8 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 
 	private static final ViewContextKey<ContextPossibleValue> newContextPossibleValueKey = ViewContextKey.of("newContextPossibleValue");
 
+	private static final ViewContextKey<TypeOperator> typeOperators = ViewContextKey.of("typeOperators");
+
 	private static final ViewContextKey<String> localeKey = ViewContextKey.of("locale");
 
 	@Inject
@@ -72,6 +76,9 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 	@Inject
 	private ContextPossibleValueServices contextPossibleValueServices;
 
+	@Inject
+	private ContextTypeOperatorServices contextTypeOperatorServices;
+
 	@GetMapping("/{cvaId}")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
 			@PathVariable("cvaId") final Long cvaId) {
@@ -84,7 +91,9 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 		viewContext.publishDto(botKey, chatbot);
 		viewContext.publishDto(contextValueKey, contextValue);
 		viewContext.publishDtList(contextPossibleValueListKey, contextPossibleValueList);
+		viewContext.publishDtList(typeOperators, contextTypeOperatorServices.getAllTypeOperators(chatbot));
 		viewContext.publishDto(newContextPossibleValueKey, new ContextPossibleValue());
+
 		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
 
 		super.initBreadCrums(viewContext, contextValue);
