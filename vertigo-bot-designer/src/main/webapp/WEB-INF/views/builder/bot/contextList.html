@@ -30,6 +30,15 @@
             VertigoUi.vueData.newContextEnvironmentValue.tyopCd = possibleValue.tyopCd
         }
 
+        function getOperatorLabel(tyopCd) {
+            let operator = VertigoUi.vueData.typeOperators.find(operator => operator.tyopCd === tyopCd);
+            if (operator !== undefined) {
+                return VertigoUi.vueData.locale === 'fr_FR' ? operator.labelFr : operator.label;
+            } else {
+                return operator;
+            }
+        }
+
         VUiExtensions.dataX.selectedOption = null;
 
     </script>
@@ -126,10 +135,10 @@
 						   VUiExtensions.dataX.selectedOption = null;
 							$refs.environmentContextValueDialog.show()">
                                     <q-item-section>
-                                        <q-item-label><strong>{{contextEnvironmentValue.label}}</strong></q-item-label>
+                                        <q-item-label>{{contextEnvironmentValue.label}}</q-item-label>
                                     </q-item-section>
                                     <q-item-section v-if="contextEnvironmentValue.value !== null && contextEnvironmentValue.tyopCd !== null">
-                                        <q-item-label>{{vueData.locale == "fr_FR" ? 'Valeur' : 'Value'}} : <strong>{{contextEnvironmentValue.value}}</strong></q-item-label>
+                                        <span v-html="getOperatorLabel(contextEnvironmentValue.tyopCd) + ' : ' + contextEnvironmentValue.value"></span>
                                     </q-item-section>
                                 </q-item>
                             </q-list>
@@ -183,9 +192,9 @@
                 </q-card-section>
                 <q-card-section v-if="filteredOptions().length !== 0">
                     <q-select v-model="VUiExtensions.dataX.selectedOption"
-                              th:label="#{OPERATOR_EQUAL}"
+                              th:label="#{context.environmentValue.popup.valueOperator}"
                               :options="filteredOptions()"
-                              :option-label="possibleValue => `${possibleValue.value} [${possibleValue.tyopCd}]`"
+                              :option-label="possibleValue => `${getOperatorLabel(possibleValue.tyopCd)} : ${possibleValue.value}`"
                               @input="updateEnvironmentValue">
                     </q-select>
                 </q-card-section>
