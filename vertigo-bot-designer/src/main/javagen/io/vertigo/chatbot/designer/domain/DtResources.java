@@ -83,6 +83,10 @@ public enum DtResources implements MessageKey {
 	 * Context value label.
 	 */
 	fldContextEnvironmentValueIhm$label,
+	/**
+	 * Operator.
+	 */
+	fldContextEnvironmentValueIhm$tyopCd,
 
 	/***********************************************************
 	/** DictionaryEntity.

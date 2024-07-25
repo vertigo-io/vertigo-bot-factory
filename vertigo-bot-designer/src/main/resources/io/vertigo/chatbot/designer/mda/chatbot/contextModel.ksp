@@ -51,6 +51,7 @@ create DtDefinition DtContextEnvironmentValueIhm {
 	field value		    {domain: DoLabel	        label: "Value" 		                        cardinality:"?"     }
 	field cvaId 		{domain: DoId		        label: "Context value id"                   cardinality:"1"     }
     field label		    {domain: DoLabel	        label: "Context value label" 		        cardinality:"1"     }
+    field tyopCd	    {domain: DoLabel	        label: "Operator" 		                    cardinality:"1"     }
 }
 
 create DtDefinition DtTypeOperator {
