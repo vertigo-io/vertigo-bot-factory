@@ -9,13 +9,23 @@
 	
 	<head>
 		<title th:text="#{contextvalue.title}"></title>
+		<script>
+			function getOperatorLabel(tyopCd) {
+				let operator = VertigoUi.vueData.typeOperators.find(operator => operator.tyopCd === tyopCd);
+				if (operator !== undefined) {
+					return VertigoUi.vueData.locale === 'fr_FR' ? operator.labelFr : operator.label;
+				} else {
+					return operator;
+				}
+			}
+		</script>
 	</head>
 	
 	<body>
 		<section layout:fragment="content-actions">
 			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/contextValue/(id=${model.bot.botId})} + ${model.contextValue.cvaId}" ariaLabel="Cancel" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
-			<vu:button-submit th:if="${model.modeReadOnly && model.contextValue.label != 'url' && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+			<vu:button-submit th:if="${model.modeReadOnly && model.contextValue.label != 'url' && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
 							class="on-left" :round size="md" color="primary" />
 			<q-btn th:if="${model.modeReadOnly && model.contextValue.label != 'url' && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopupDeleteContextValue = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
 							class="on-left" round size="md" color="red" ></q-btn>
@@ -35,34 +45,43 @@
 				<span class="text-primary" style="flex-grow: 2">[[#{possibleValue.list.title}]]</span>
 				<q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" v-if="vueData.contextValue.cvaId !== null"
 					   color="primary" round icon="add" th:aria-label="#{action.add}" th:title="#{action.add}"
-					   @click="vueData.newContextPossibleValue.value = null ;
-						   vueData.newContextPossibleValue.operator = null ;
+					   @click="vueData.newContextPossibleValue.value = null;
+						   vueData.newContextPossibleValue.tyopCd = null;
 						   vueData.newContextPossibleValue.cvaId = vueData.contextValue.cvaId;
-						   vueData.newContextPossibleValue.cpvId = null ;
+						   vueData.newContextPossibleValue.botId = vueData.contextValue.botId;
+						   vueData.newContextPossibleValue.cpvId = null;
 						   $refs.possibleValueDialog.show()">
 				</q-btn>
 			</div>
-			<vu:include-data object="contextValue" field="cvaId"/>
+			<vu:include-data object="contextValue" field="cvaId" modifiable="true"/>
+			<vu:include-data object="contextValue" field="botId" modifiable="true"/>
 			<vu:include-data object="contextPossibleValueList" field="*"/>
+			<vu:include-data object="typeOperators" field="*"/>
 			<vu:include-data object="newContextPossibleValue" field="value" modifiable="true"/>
-			<vu:include-data object="newContextPossibleValue" field="operator" modifiable="true"/>
+			<vu:include-data object="newContextPossibleValue" field="tyopCd" modifiable="true"/>
 			<vu:include-data object="newContextPossibleValue" field="cpvId" modifiable="true"/>
 			<vu:include-data object="newContextPossibleValue" field="cvaId" modifiable="true"/>
+			<vu:include-data object="newContextPossibleValue" field="botId" modifiable="true"/>
 			<vu:include-data-primitive key="locale"/>
 			<vu:table list="contextPossibleValueList" componentId="possibleValueList"
 					  rowsPerPage="10" autoColClass >
 				<vu:slot name="actions_slot" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}">
 					<q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.edit}" th:title="#{action.edit}"
 						   @click="vueData.newContextPossibleValue.value = props.row.value;
-						   vueData.newContextPossibleValue.operator = props.row.operator;
-						   vueData.newContextPossibleValue.cvaId = vueData.contextValue.cvaId;
+						   vueData.newContextPossibleValue.tyopCd = props.row.tyopCd;
+						   vueData.newContextPossibleValue.cvaId = props.row.cvaId;
 						   vueData.newContextPossibleValue.cpvId = props.row.cpvId;
+						   vueData.newContextPossibleValue.botId = props.row.botId;
 						   $refs.possibleValueDialog.show()"></q-btn>
 					<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
 						   @click="componentStates.cpvId = props.row.cpvId; componentStates.showPopupDeleteContextPossibleValue = true"></q-btn>
 				</vu:slot>
 				<vu:column field="value"/>
-				<vu:column field="operator"/>
+				<vu:column field="tyopCd">
+					<vu:content>
+						<span v-html="getOperatorLabel(props.row.tyopCd)"></span>
+					</vu:content>
+				</vu:column>
 			</vu:table>
 
 			<q-dialog ref="possibleValueDialog">
@@ -73,21 +92,17 @@
 							<span v-else th:text="#{possibleValue.add.popup.title}"></span>
 						</div>
 					</q-card-section>
-					<q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
-						<input type="hidden" v-model="vueData.newContextPossibleValue.cpvId"
-							   name="vContext[newContextPossibleValue][cpvId]">
-					</q-card-section>
 					<q-card-section>
 						<q-input v-model="vueData.newContextPossibleValue.value" th:label="#{possibleValue.popup.value}"
 								 name="vContext[newContextPossibleValue][value]" :error="hasFieldsError('newContextPossibleValue', 'value')"
 								 :error-message="getErrorMessage('newContextPossibleValue', 'project')"/>
 					</q-card-section>
 					<q-card-section>
-						<q-select
-								v-model="vueData.newContextPossibleValue.operator"
-								:options="vueData.locale == 'fr_FR' ? ['Égal','Contient'] : ['Equal','Contain']"
-								th:label="#{possibleValue.popup.operator}"
-								name="vContext[newContextPossibleValue][operator]">
+						<q-select th:label="#{possibleValue.popup.operator}"
+								  v-model="vueData.newContextPossibleValue.tyopCd"
+								  :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeOperators', 'tyopCd', 'labelFr') : transformListForSelection('typeOperators', 'tyopCd', 'label')"
+								  map-options
+								  emit-value>
 						</q-select>
 					</q-card-section>
 					<q-card-actions align="around">
