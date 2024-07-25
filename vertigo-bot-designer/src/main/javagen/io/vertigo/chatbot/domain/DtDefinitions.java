@@ -607,7 +607,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Context value id'. */
 		cvaId,
 		/** Propriété 'Context value label'. */
-		label	}
+		label,
+		/** Propriété 'Operator'. */
+		tyopCd	}
 
 	/**
 	 * Enumération des champs de ContextPossibleValue.
