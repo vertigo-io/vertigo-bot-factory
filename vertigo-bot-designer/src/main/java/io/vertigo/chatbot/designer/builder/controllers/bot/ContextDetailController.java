@@ -85,9 +85,7 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 	@GetMapping("/{cvaId}")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
 			@PathVariable("cvaId") final Long cvaId) {
-
-		super.initCommonContext(viewContext, uiMessageStack, botId);
-		final Chatbot chatbot = chatbotServices.getChatbotById(botId);
+		final Chatbot chatbot = initCommonContext(viewContext, uiMessageStack, botId);
 		final ContextValue contextValue = contextValueServices.findContextValueById(cvaId);
 		final DtList<ContextPossibleValue> contextPossibleValueList = contextPossibleValueServices.getAllContextPossibleValuesByCvaId(chatbot, cvaId);
 
@@ -106,9 +104,15 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 	@GetMapping("/new")
 	public void getNewContextValue(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
+
+		viewContext.publishDto(botKey, bot);
 		viewContext.publishDto(contextValueKey, contextValueServices.getNewContextValue(bot));
 		viewContext.publishDtList(contextPossibleValueListKey, new DtList<>(ContextPossibleValue.class));
 		viewContext.publishDto(newContextPossibleValueKey, new ContextPossibleValue());
+		viewContext.publishDtList(typeOperators, contextTypeOperatorServices.getAllTypeOperators(bot));
+
+		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
+
 		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
 	}
