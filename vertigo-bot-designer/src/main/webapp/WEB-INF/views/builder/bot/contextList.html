@@ -21,13 +21,20 @@
         }
 
         function filteredOptions() {
-            return VertigoUi.vueData.contextPossibleValues.filter(possibleValue =>
+            var options =  VertigoUi.vueData.contextPossibleValues.filter(possibleValue =>
                 possibleValue.cvaId === VertigoUi.vueData.newContextEnvironmentValue.cvaId);
+            other = VertigoUi.vueData.locale === 'fr_FR' ? 'Autre' : 'Other';
+            options.push({ tyopCd: other, value: ''});
+            return options
         }
 
         function updateEnvironmentValue(possibleValue) {
-            VertigoUi.vueData.newContextEnvironmentValue.value = possibleValue.value
-            VertigoUi.vueData.newContextEnvironmentValue.tyopCd = possibleValue.tyopCd
+            if (possibleValue.tyopCd === "Autre" || possibleValue.tyopCd === "Other"){
+                VUiExtensions.dataX.isOther = true;
+            }else {
+                VertigoUi.vueData.newContextEnvironmentValue.value = possibleValue.value;
+                VertigoUi.vueData.newContextEnvironmentValue.tyopCd = possibleValue.tyopCd;
+            }
         }
 
         function getOperatorLabel(tyopCd) {
@@ -35,11 +42,12 @@
             if (operator !== undefined) {
                 return VertigoUi.vueData.locale === 'fr_FR' ? operator.labelFr : operator.label;
             } else {
-                return operator;
+                return tyopCd;
             }
         }
 
         VUiExtensions.dataX.selectedOption = null;
+        VUiExtensions.dataX.isOther = false;
 
     </script>
 </head>
@@ -133,6 +141,7 @@
 						   vueData.newContextEnvironmentValue.tyopCd = contextEnvironmentValue.tyopCd;
 						   vueData.newContextEnvironmentValue.cenvId = contextEnvironment.cenvId
 						   VUiExtensions.dataX.selectedOption = null;
+						   VUiExtensions.dataX.isOther = false;
 							$refs.environmentContextValueDialog.show()">
                                     <q-item-section>
                                         <q-item-label>{{contextEnvironmentValue.label}}</q-item-label>
@@ -190,7 +199,7 @@
                         <span th:text="#{context.environment.value.update}"></span>
                     </div>
                 </q-card-section>
-                <q-card-section v-if="filteredOptions().length !== 0">
+                <q-card-section v-if="filteredOptions().length > 1 && VUiExtensions.dataX.isOther === false" >
                     <q-select v-model="VUiExtensions.dataX.selectedOption"
                               th:label="#{context.environmentValue.popup.valueOperator}"
                               :options="filteredOptions()"
@@ -200,15 +209,15 @@
                 </q-card-section>
                 <q-card-section v-else>
                     <vu:grid cols="2">
-                        <q-input th:label="#{context.environmentValue.popup.value}"
-                                 v-model="vueData.newContextEnvironmentValue.value"
-                                 name="vContext[newContextEnvironmentValue][value]"/>
                         <q-select th:label="#{context.environmentValue.popup.operator}"
                                   v-model="vueData.newContextEnvironmentValue.tyopCd"
                                   :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeOperators', 'tyopCd', 'labelFr') : transformListForSelection('typeOperators', 'tyopCd', 'label')"
                                   map-options
                                   emit-value>
                         </q-select>
+                        <q-input th:label="#{context.environmentValue.popup.value}"
+                                 v-model="vueData.newContextEnvironmentValue.value"
+                                 name="vContext[newContextEnvironmentValue][value]"/>
                     </vu:grid>
                 </q-card-section>
                 <q-card-actions align="around">
