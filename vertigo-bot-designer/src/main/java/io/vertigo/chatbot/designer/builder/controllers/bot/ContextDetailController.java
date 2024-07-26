@@ -152,6 +152,7 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 	public String deleteContextValue(final ViewContext viewContext,
 			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("contextValue") final ContextValue contextValue) {
+		contextPossibleValueServices.deleteContextPossibleValuesByCvaId(bot, contextValue.getCvaId());
 		contextEnvironmentValueServices.deleteContextEnvironmentValue(contextValue.getCvaId());
 		contextValueServices.deleteContextValue(bot, contextValue.getCvaId());
 		return "redirect:/bot/" + bot.getBotId() + "/contextList/";
