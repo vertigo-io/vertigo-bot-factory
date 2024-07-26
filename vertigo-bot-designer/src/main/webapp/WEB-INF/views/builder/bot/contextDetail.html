@@ -85,7 +85,7 @@
 			</vu:table>
 
 			<q-dialog ref="possibleValueDialog">
-				<q-card>
+				<q-card style="width: 400px;">
 					<q-card-section>
 						<div class="text-h6">
 							<span v-if="vueData.newContextPossibleValue.cpvId !== null" th:text="#{possibleValue.update.popup.title}"></span>
@@ -93,17 +93,17 @@
 						</div>
 					</q-card-section>
 					<q-card-section>
-						<q-input v-model="vueData.newContextPossibleValue.value" th:label="#{possibleValue.popup.value}"
-								 name="vContext[newContextPossibleValue][value]" :error="hasFieldsError('newContextPossibleValue', 'value')"
-								 :error-message="getErrorMessage('newContextPossibleValue', 'project')"/>
-					</q-card-section>
-					<q-card-section>
+					<vu:grid cols="2">
 						<q-select th:label="#{possibleValue.popup.operator}"
 								  v-model="vueData.newContextPossibleValue.tyopCd"
 								  :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeOperators', 'tyopCd', 'labelFr') : transformListForSelection('typeOperators', 'tyopCd', 'label')"
 								  map-options
 								  emit-value>
 						</q-select>
+						<q-input v-model="vueData.newContextPossibleValue.value" th:label="#{possibleValue.popup.value}"
+								 name="vContext[newContextPossibleValue][value]" :error="hasFieldsError('newContextPossibleValue', 'value')"
+								 :error-message="getErrorMessage('newContextPossibleValue', 'project')"/>
+					</vu:grid>
 					</q-card-section>
 					<q-card-actions align="around">
 						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
