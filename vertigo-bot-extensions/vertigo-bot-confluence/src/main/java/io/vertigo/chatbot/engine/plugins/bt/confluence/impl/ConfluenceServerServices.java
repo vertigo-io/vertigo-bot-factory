@@ -3,10 +3,16 @@ package io.vertigo.chatbot.engine.plugins.bt.confluence.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +21,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import io.vertigo.chatbot.analytics.AnalyticsObjectSend;
 import io.vertigo.chatbot.commons.HtmlInputUtils;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.PasswordEncryptionServices;
@@ -23,7 +28,6 @@ import io.vertigo.chatbot.commons.domain.ConfluenceSettingExport;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceSearchHelper;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.helper.JsonHelper;
-import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchLinks;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResponse;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSearchResult;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.model.result.ConfluenceSpace;
@@ -36,6 +40,7 @@ import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 
+import static io.vertigo.chatbot.commons.FileUtils.formatImageToBase64String;
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.API_URL;
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.CONTENT_URL;
 import static io.vertigo.chatbot.engine.plugins.bt.confluence.helper.ConfluenceHttpRequestHelper.PAGE_BODY;
@@ -78,6 +83,11 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		params.put("limit", limit);
 		final HttpResponse<String> response = sendRequestToConfluence(params, headers, SEARCH_URL, 200, BodyHandlers.ofString());
 		return JsonHelper.getObjectFromJson(response.body(), ConfluenceSearchResponse.class);
+	}
+
+	public HttpResponse<InputStream> searchImageOnConfluence(final String url, final Map<String, String> headers) {
+		final var request = ConfluenceHttpRequestHelper.createGetRequest(url, headers, null);
+		return ConfluenceHttpRequestHelper.sendRequest(null, request, BodyHandlers.ofInputStream(), 200);
 	}
 
 	@Override
@@ -132,7 +142,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		// map of html (List(pageName,url) -> html)
 		Map<List<String>, String> responsesHtml = getHtmlFromPageHttpResponse(responses);
 
-		return responsesHtml.entrySet().stream()
+        return responsesHtml.entrySet().stream()
 				.map(entry -> formatHtml(entry.getKey().get(0), getBaseUrl() + entry.getKey().get(1), entry.getValue()))
 				.collect(Collectors.toList());
 
@@ -169,11 +179,26 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		return builder.toString();
 	}
 
-	private String formatHtml(final String name, final String url, final String html) {
-		final var builder = new StringBuilder();
 
-		String cleanHtml = HtmlInputUtils.sanitizeHtmlWithTargetBlank(html, baseUrl);
-		String escapedHtml = cleanHtml.replace("\"", "&quot;");
+	private String getHtmlWithImages(String html) {
+		Map<String, String> headers = getHeadersWithAuthorization();
+
+		Document document = Jsoup.parse(html);
+		Elements imgElements = document.select("img");
+		for (Element imgElement : imgElements) {
+			String src = imgElement.attr("src");
+			String imageBase64 = formatImageToBase64String(searchImageOnConfluence(baseUrl + src, headers));
+			imgElement.attr("src", imageBase64);
+		}
+		return document.html();
+	}
+
+	private String formatHtml(final String name, final String url, final String html){
+		final var builder = new StringBuilder();
+		String cleanHtml = HtmlInputUtils.sanitizeHtmlWithTargetBlank(html);
+		String htmlWithImages = getHtmlWithImages(cleanHtml);
+		String escapedHtml = htmlWithImages.replace("\"", "&quot;");
+
 		builder.append("<div class='htmlClass' style='color:blue; text-decoration:underline; cursor:pointer;'");
 		builder.append("data-html=\"");
 		builder.append("<div>");

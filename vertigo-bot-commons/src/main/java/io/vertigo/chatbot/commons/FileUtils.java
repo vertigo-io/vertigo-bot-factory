@@ -1,6 +1,12 @@
 package io.vertigo.chatbot.commons;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.http.HttpResponse;
 import java.util.Base64;
 
 import io.vertigo.core.lang.Assertion;
@@ -27,5 +33,17 @@ public class FileUtils {
         final String[] fileDataTable = base64File.split(",");
         Assertion.check().isTrue(fileDataTable.length == 2, "Attachment " + fileName + " is not Base64 encoded");
         return fileDataTable[1];
+    }
+
+    public static String formatImageToBase64String(final HttpResponse<InputStream> response) {
+        String imageB64;
+        String extension = response.headers().map().get("content-type").get(0);
+        try {
+            byte[] bytes = IOUtils.toByteArray(response.body());
+            imageB64 = Base64.getEncoder().encodeToString(bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return "data:" + extension + ";base64," + imageB64;
     }
 }
