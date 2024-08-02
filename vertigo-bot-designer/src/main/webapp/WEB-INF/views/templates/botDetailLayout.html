@@ -173,6 +173,16 @@
 
 		<q-item header class="item-icon">
 			<q-item-section avatar>
+				<q-icon color="primary" name="description"/>
+			</q-item-section>
+			<q-item-section th:text="#{layout.documentaryResources}"></q-item-section>
+		</q-item>
+		<q-item tag="a" th::active="${tab == 'documents'}" active-class="active" th:href="@{/bot/{id}/documents/(id=${model.bot.botId})}" th:text="#{layout.document}"></q-item>
+
+		<q-separator></q-separator>
+
+		<q-item header class="item-icon">
+			<q-item-section avatar>
 				<q-icon color="primary" name="question_answer"/>
 			</q-item-section>
 			<q-item-section th:text="#{layout.qa.settings}"></q-item-section>
@@ -181,7 +191,7 @@
 		<q-item tag="a" th::active="${tab == 'questionsanswers'}" active-class="active" th:href="@{/bot/{id}/questionsanswers/(id=${model.bot.botId})}" th:text="#{layout.questionsAnswers}"></q-item>
 
 		<q-separator></q-separator>
-		
+
 		<q-item header class="item-icon">
 			<q-item-section avatar>
 				<q-icon color="primary" name="smart_toy"/>
