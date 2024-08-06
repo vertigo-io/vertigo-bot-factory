@@ -128,6 +128,18 @@ public enum DtResources implements MessageKey {
 	 */
 	fldDocumentaryResource$description,
 	/**
+	 * Text.
+	 */
+	fldDocumentaryResource$text,
+	/**
+	 * Url.
+	 */
+	fldDocumentaryResource$url,
+	/**
+	 * Attachment file info  id.
+	 */
+	fldDocumentaryResource$attFiId,
+	/**
 	 * Documentary resource type.
 	 */
 	fldDocumentaryResource$dreTypeCd,
@@ -135,38 +147,6 @@ public enum DtResources implements MessageKey {
 	 * Chatbot.
 	 */
 	fldDocumentaryResource$botId,
-
-	/***********************************************************
-	/** DocumentaryResourceFile.
-	/***********************************************************
-	/**
-	 * ID.
-	 */
-	fldDocumentaryResourceFile$fileId,
-	/**
-	 * Documentary resource id.
-	 */
-	fldDocumentaryResourceFile$dreId,
-	/**
-	 * Attachment file info  id.
-	 */
-	fldDocumentaryResourceFile$attFiId,
-
-	/***********************************************************
-	/** DocumentaryResourceText.
-	/***********************************************************
-	/**
-	 * ID.
-	 */
-	fldDocumentaryResourceText$textId,
-	/**
-	 * Text.
-	 */
-	fldDocumentaryResourceText$text,
-	/**
-	 * Documentary resource id.
-	 */
-	fldDocumentaryResourceText$dreId,
 
 	/***********************************************************
 	/** DocumentaryResourceType.
@@ -183,22 +163,6 @@ public enum DtResources implements MessageKey {
 	 * LabelFr.
 	 */
 	fldDocumentaryResourceType$labelFr,
-
-	/***********************************************************
-	/** DocumentaryResourceUrl.
-	/***********************************************************
-	/**
-	 * ID.
-	 */
-	fldDocumentaryResourceUrl$urlId,
-	/**
-	 * url.
-	 */
-	fldDocumentaryResourceUrl$url,
-	/**
-	 * Documentary resource id.
-	 */
-	fldDocumentaryResourceUrl$dreId,
 
 	/***********************************************************
 	/** History.

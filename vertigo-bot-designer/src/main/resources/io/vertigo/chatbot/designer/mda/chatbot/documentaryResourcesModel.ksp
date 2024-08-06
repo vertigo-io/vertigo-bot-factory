@@ -4,6 +4,8 @@ create DtDefinition DtDocumentaryResource{
 	id		dreId			{domain: DoId 		label: "ID"					    				}
 	field 	title 			{domain: DoLabel 	label: "Title" 			    cardinality : "1"	}
 	field 	description		{domain: DoText 	label: "Description" 		    				}
+	field 	text    		{domain: DoText 	label: "Text" 		    	        			}
+	field 	url     		{domain: DoText   	label: "Url" 		             				}
 }
 
 create DtDefinition DtDocumentaryResourceType {
@@ -31,19 +33,14 @@ create DtDefinition DtDocumentaryResourceType {
     sortField : "dreTypeCd"
  	displayField : "label"
 }
+create Association ADocumentaryResourceFileAttachmentFileInfo {
+	fkFieldName : "attFiId"
 
-create DtDefinition DtDocumentaryResourceUrl{
-	id		urlId			{domain: DoId 		label: "ID"					    				}
-	field 	url 			{domain: DoText 	label: "url" 			    cardinality : "1"	}
-}
+ 	dtDefinitionA : DtDocumentaryResource
+	type : "*>1"
+	dtDefinitionB : DtAttachmentFileInfo
 
-create DtDefinition DtDocumentaryResourceText{
-	id		textId			{domain: DoId 		label: "ID"					    				}
-	field 	text			{domain: DoText 	label: "Text" 			    cardinality : "1"	}
-}
-
-create DtDefinition DtDocumentaryResourceFile{
-	id		fileId			{domain: DoId 		label: "ID"					    				}
+	labelB : "Attachment file info  id"
 }
 
 create Association ADocumentaryResourceDocumentaryResourceType {
@@ -64,44 +61,4 @@ create Association ADocumentaryResourceChatbot {
 	dtDefinitionB : DtChatbot
 
 	labelB : "Chatbot"
-}
-
-create Association ADocumentaryResourceUrlDocumentaryResource {
-	fkFieldName : "dreId"
-
- 	dtDefinitionA : DtDocumentaryResourceUrl
-	type : "*>1"
-	dtDefinitionB : DtDocumentaryResource
-
-	labelB : "Documentary resource id"
-}
-
-create Association ADocumentaryResourceTextDocumentaryResource {
-	fkFieldName : "dreId"
-
- 	dtDefinitionA : DtDocumentaryResourceText
-	type : "*>1"
-	dtDefinitionB : DtDocumentaryResource
-
-	labelB : "Documentary resource id"
-}
-
-create Association ADocumentaryResourceFileDocumentaryResource {
-	fkFieldName : "dreId"
-
- 	dtDefinitionA : DtDocumentaryResourceFile
-	type : "*>1"
-	dtDefinitionB : DtDocumentaryResource
-
-	labelB : "Documentary resource id"
-}
-
-create Association ADocumentaryResourceFileAttachmentFileInfo {
-	fkFieldName : "attFiId"
-
- 	dtDefinitionA : DtDocumentaryResourceFile
-	type : "*>1"
-	dtDefinitionB : DtAttachmentFileInfo
-
-	labelB : "Attachment file info  id"
 }

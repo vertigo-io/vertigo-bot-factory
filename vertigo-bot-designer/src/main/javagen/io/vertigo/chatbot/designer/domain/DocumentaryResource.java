@@ -19,6 +19,23 @@ public final class DocumentaryResource implements Entity {
 	private Long dreId;
 	private String title;
 	private String description;
+	private String text;
+	private String url;
+
+	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "ADocumentaryResourceFileAttachmentFileInfo",
+			fkFieldName = "attFiId",
+			primaryDtDefinitionName = "DtAttachmentFileInfo",
+			primaryIsNavigable = true,
+			primaryRole = "AttachmentFileInfo",
+			primaryLabel = "Attachment file info  id",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtDocumentaryResource",
+			foreignIsNavigable = false,
+			foreignRole = "DocumentaryResource",
+			foreignLabel = "DocumentaryResource",
+			foreignMultiplicity = "0..*")
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentFileInfo> attFiIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.AttachmentFileInfo.class, "AttachmentFileInfo");
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ADocumentaryResourceDocumentaryResourceType",
@@ -114,6 +131,63 @@ public final class DocumentaryResource implements Entity {
 	}
 	
 	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Text'.
+	 * @return String text
+	 */
+	@Field(smartType = "STyText", label = "Text")
+	public String getText() {
+		return text;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Text'.
+	 * @param text String
+	 */
+	public void setText(final String text) {
+		this.text = text;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Url'.
+	 * @return String url
+	 */
+	@Field(smartType = "STyText", label = "Url")
+	public String getUrl() {
+		return url;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Url'.
+	 * @param url String
+	 */
+	public void setUrl(final String url) {
+		this.url = url;
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Attachment file info  id'.
+	 * @return Long attFiId <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Attachment file info  id", fkDefinition = "DtAttachmentFileInfo", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	public Long getAttFiId() {
+		return (Long) attFiIdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Attachment file info  id'.
+	 * @param attFiId Long <b>Obligatoire</b>
+	 */
+	public void setAttFiId(final Long attFiId) {
+		attFiIdAccessor.setId(attFiId);
+	}
+	
+	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Documentary resource type'.
 	 * @return String dreTypeCd <b>Obligatoire</b>
@@ -165,6 +239,14 @@ public final class DocumentaryResource implements Entity {
 	 */
 	public EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.DocumentaryResourceType, io.vertigo.chatbot.designer.domain.DocumentaryResourceTypeEnum> documentaryResourceType() {
 		return dreTypeCdAccessor;
+	}
+
+ 	/**
+	 * Association : Attachment file info  id.
+	 * @return l'accesseur vers la propriété 'Attachment file info  id'
+	 */
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentFileInfo> attachmentFileInfo() {
+		return attFiIdAccessor;
 	}
 	
 	/** {@inheritDoc} */
