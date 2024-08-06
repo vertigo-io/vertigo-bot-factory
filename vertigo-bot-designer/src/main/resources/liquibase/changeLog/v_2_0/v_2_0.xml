@@ -164,4 +164,9 @@
     <changeSet author="rsaintpaul" id="Create question_answer and question_answer_category tables">
         <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_01.sql"/>
     </changeSet>
+    <changeSet author="rsaintpaul" id="Create documentary_resource table and type, url, text and document associated tables">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_08_01.sql"/>
+    </changeSet>
+
+
 </databaseChangeLog>

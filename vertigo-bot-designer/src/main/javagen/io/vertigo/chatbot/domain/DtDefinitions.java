@@ -67,6 +67,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		DictionaryEntity(io.vertigo.chatbot.designer.domain.DictionaryEntity.class),
 		/** Objet de données DictionaryEntityWrapper. */
 		DictionaryEntityWrapper(io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper.class),
+		/** Objet de données DocumentaryResource. */
+		DocumentaryResource(io.vertigo.chatbot.designer.domain.DocumentaryResource.class),
+		/** Objet de données DocumentaryResourceFile. */
+		DocumentaryResourceFile(io.vertigo.chatbot.designer.domain.DocumentaryResourceFile.class),
+		/** Objet de données DocumentaryResourceText. */
+		DocumentaryResourceText(io.vertigo.chatbot.designer.domain.DocumentaryResourceText.class),
+		/** Objet de données DocumentaryResourceType. */
+		DocumentaryResourceType(io.vertigo.chatbot.designer.domain.DocumentaryResourceType.class),
+		/** Objet de données DocumentaryResourceUrl. */
+		DocumentaryResourceUrl(io.vertigo.chatbot.designer.domain.DocumentaryResourceUrl.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données FontFamily. */
@@ -659,6 +669,65 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		dictionaryEntityLabel,
 		/** Propriété 'Synonyms list'. */
 		synonymsList	}
+
+	/**
+	 * Enumération des champs de DocumentaryResource.
+	 */
+	public enum DocumentaryResourceFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DocumentaryResource> {
+		/** Propriété 'ID'. */
+		dreId,
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Description'. */
+		description,
+		/** Propriété 'Documentary resource type'. */
+		dreTypeCd,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceFile.
+	 */
+	public enum DocumentaryResourceFileFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DocumentaryResourceFile> {
+		/** Propriété 'ID'. */
+		fileId,
+		/** Propriété 'Documentary resource id'. */
+		dreId,
+		/** Propriété 'Attachment file info  id'. */
+		attFiId	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceText.
+	 */
+	public enum DocumentaryResourceTextFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DocumentaryResourceText> {
+		/** Propriété 'ID'. */
+		textId,
+		/** Propriété 'Text'. */
+		text,
+		/** Propriété 'Documentary resource id'. */
+		dreId	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceType.
+	 */
+	public enum DocumentaryResourceTypeFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DocumentaryResourceType> {
+		/** Propriété 'Code'. */
+		dreTypeCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'LabelFr'. */
+		labelFr	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceUrl.
+	 */
+	public enum DocumentaryResourceUrlFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DocumentaryResourceUrl> {
+		/** Propriété 'ID'. */
+		urlId,
+		/** Propriété 'url'. */
+		url,
+		/** Propriété 'Documentary resource id'. */
+		dreId	}
 
 	/**
 	 * Enumération des champs de ExecutorConfiguration.

@@ -1,0 +1,107 @@
+package io.vertigo.chatbot.designer.domain
+
+create DtDefinition DtDocumentaryResource{
+	id		dreId			{domain: DoId 		label: "ID"					    				}
+	field 	title 			{domain: DoLabel 	label: "Title" 			    cardinality : "1"	}
+	field 	description		{domain: DoText 	label: "Description" 		    				}
+}
+
+create DtDefinition DtDocumentaryResourceType {
+	stereotype : "StaticMasterData"
+	id    dreTypeCd 		{domain: DoCode 	label: "Code"}
+	field label 		    {domain: DoLabel 	label: "Label" 			                cardinality : "1"	}
+	field labelFr 		    {domain: DoLabel 	label: "LabelFr" 		                cardinality : "1"	}
+	values : `{
+        "URL" : {
+            "dreTypeCd" : "URL",
+            "label" : "URL",
+            "labelFr" : "URL"
+        },
+        "DOCUMENT" : {
+            "dreTypeCd" : "FILE",
+            "label" : "File",
+            "labelFr" : "Document"
+        },
+        "TEXT" : {
+            "dreTypeCd" : "TEXT",
+            "label" : "Text",
+            "labelFr" : "Texte"
+        }
+     }`
+    sortField : "dreTypeCd"
+ 	displayField : "label"
+}
+
+create DtDefinition DtDocumentaryResourceUrl{
+	id		urlId			{domain: DoId 		label: "ID"					    				}
+	field 	url 			{domain: DoText 	label: "url" 			    cardinality : "1"	}
+}
+
+create DtDefinition DtDocumentaryResourceText{
+	id		textId			{domain: DoId 		label: "ID"					    				}
+	field 	text			{domain: DoText 	label: "Text" 			    cardinality : "1"	}
+}
+
+create DtDefinition DtDocumentaryResourceFile{
+	id		fileId			{domain: DoId 		label: "ID"					    				}
+}
+
+create Association ADocumentaryResourceDocumentaryResourceType {
+	fkFieldName : "dreTypeCd"
+
+ 	dtDefinitionA : DtDocumentaryResource
+	type : "*>1"
+	dtDefinitionB : DtDocumentaryResourceType
+
+	labelB : "Documentary resource type"
+}
+
+create Association ADocumentaryResourceChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtDocumentaryResource
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create Association ADocumentaryResourceUrlDocumentaryResource {
+	fkFieldName : "dreId"
+
+ 	dtDefinitionA : DtDocumentaryResourceUrl
+	type : "*>1"
+	dtDefinitionB : DtDocumentaryResource
+
+	labelB : "Documentary resource id"
+}
+
+create Association ADocumentaryResourceTextDocumentaryResource {
+	fkFieldName : "dreId"
+
+ 	dtDefinitionA : DtDocumentaryResourceText
+	type : "*>1"
+	dtDefinitionB : DtDocumentaryResource
+
+	labelB : "Documentary resource id"
+}
+
+create Association ADocumentaryResourceFileDocumentaryResource {
+	fkFieldName : "dreId"
+
+ 	dtDefinitionA : DtDocumentaryResourceFile
+	type : "*>1"
+	dtDefinitionB : DtDocumentaryResource
+
+	labelB : "Documentary resource id"
+}
+
+create Association ADocumentaryResourceFileAttachmentFileInfo {
+	fkFieldName : "attFiId"
+
+ 	dtDefinitionA : DtDocumentaryResourceFile
+	type : "*>1"
+	dtDefinitionB : DtAttachmentFileInfo
+
+	labelB : "Attachment file info  id"
+}

@@ -113,6 +113,94 @@ public enum DtResources implements MessageKey {
 	fldDictionaryEntityWrapper$synonymsList,
 
 	/***********************************************************
+	/** DocumentaryResource.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResource$dreId,
+	/**
+	 * Title.
+	 */
+	fldDocumentaryResource$title,
+	/**
+	 * Description.
+	 */
+	fldDocumentaryResource$description,
+	/**
+	 * Documentary resource type.
+	 */
+	fldDocumentaryResource$dreTypeCd,
+	/**
+	 * Chatbot.
+	 */
+	fldDocumentaryResource$botId,
+
+	/***********************************************************
+	/** DocumentaryResourceFile.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResourceFile$fileId,
+	/**
+	 * Documentary resource id.
+	 */
+	fldDocumentaryResourceFile$dreId,
+	/**
+	 * Attachment file info  id.
+	 */
+	fldDocumentaryResourceFile$attFiId,
+
+	/***********************************************************
+	/** DocumentaryResourceText.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResourceText$textId,
+	/**
+	 * Text.
+	 */
+	fldDocumentaryResourceText$text,
+	/**
+	 * Documentary resource id.
+	 */
+	fldDocumentaryResourceText$dreId,
+
+	/***********************************************************
+	/** DocumentaryResourceType.
+	/***********************************************************
+	/**
+	 * Code.
+	 */
+	fldDocumentaryResourceType$dreTypeCd,
+	/**
+	 * Label.
+	 */
+	fldDocumentaryResourceType$label,
+	/**
+	 * LabelFr.
+	 */
+	fldDocumentaryResourceType$labelFr,
+
+	/***********************************************************
+	/** DocumentaryResourceUrl.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResourceUrl$urlId,
+	/**
+	 * url.
+	 */
+	fldDocumentaryResourceUrl$url,
+	/**
+	 * Documentary resource id.
+	 */
+	fldDocumentaryResourceUrl$dreId,
+
+	/***********************************************************
 	/** History.
 	/***********************************************************
 	/**
