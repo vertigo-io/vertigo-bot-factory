@@ -47,4 +47,6 @@ public enum BotMultilingualResources implements MessageKey {
 	QUESTIONANSWER_LIST,
 
 	QUESTIONANSWERCATEGORY_LIST,
+
+	DOCUMENTARYRESOURCE_LIST
 }
