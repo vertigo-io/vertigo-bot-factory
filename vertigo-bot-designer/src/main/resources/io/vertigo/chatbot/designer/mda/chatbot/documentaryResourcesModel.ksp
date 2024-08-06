@@ -37,7 +37,7 @@ create Association ADocumentaryResourceFileAttachmentFileInfo {
 	fkFieldName : "attFiId"
 
  	dtDefinitionA : DtDocumentaryResource
-	type : "*>1"
+	type : "*>?"
 	dtDefinitionB : DtAttachmentFileInfo
 
 	labelB : "Attachment file info  id"
