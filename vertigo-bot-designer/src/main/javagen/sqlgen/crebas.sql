@@ -650,7 +650,7 @@ create table DOCUMENTARY_RESOURCE
     DESCRIPTION 	 TEXT        	,
     TEXT        	 TEXT        	,
     URL         	 TEXT        	,
-    ATT_FI_ID   	 NUMERIC     	not null,
+    ATT_FI_ID   	 NUMERIC     	,
     DRE_TYPE_CD 	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_DOCUMENTARY_RESOURCE primary key (DRE_ID)

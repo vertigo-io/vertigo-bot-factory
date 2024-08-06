@@ -29,7 +29,7 @@ public final class DocumentaryResource implements Entity {
 			primaryIsNavigable = true,
 			primaryRole = "AttachmentFileInfo",
 			primaryLabel = "Attachment file info  id",
-			primaryMultiplicity = "1..1",
+			primaryMultiplicity = "0..1",
 			foreignDtDefinitionName = "DtDocumentaryResource",
 			foreignIsNavigable = false,
 			foreignRole = "DocumentaryResource",
@@ -171,9 +171,9 @@ public final class DocumentaryResource implements Entity {
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Attachment file info  id'.
-	 * @return Long attFiId <b>Obligatoire</b>
+	 * @return Long attFiId
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Attachment file info  id", fkDefinition = "DtAttachmentFileInfo", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Attachment file info  id", fkDefinition = "DtAttachmentFileInfo" )
 	public Long getAttFiId() {
 		return (Long) attFiIdAccessor.getId();
 	}
@@ -181,7 +181,7 @@ public final class DocumentaryResource implements Entity {
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Définit la valeur de la propriété 'Attachment file info  id'.
-	 * @param attFiId Long <b>Obligatoire</b>
+	 * @param attFiId Long
 	 */
 	public void setAttFiId(final Long attFiId) {
 		attFiIdAccessor.setId(attFiId);
