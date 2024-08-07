@@ -676,7 +676,7 @@ create table DOCUMENTARY_RESOURCE
     DESCRIPTION 	 TEXT        	,
     TEXT        	 TEXT        	,
     URL         	 TEXT        	,
-    ATT_FI_ID   	 NUMERIC     	,
+    ATT_ID      	 NUMERIC     	,
     DRE_TYPE_CD 	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_DOCUMENTARY_RESOURCE primary key (DRE_ID)
@@ -697,8 +697,8 @@ comment on column DOCUMENTARY_RESOURCE.TEXT is
 comment on column DOCUMENTARY_RESOURCE.URL is
 'Url';
 
-comment on column DOCUMENTARY_RESOURCE.ATT_FI_ID is
-'Attachment file info  id';
+comment on column DOCUMENTARY_RESOURCE.ATT_ID is
+'Attachment id';
 
 comment on column DOCUMENTARY_RESOURCE.DRE_TYPE_CD is
 'Documentary resource type';
@@ -1836,10 +1836,10 @@ alter table DOCUMENTARY_RESOURCE
 create index A_DOCUMENTARY_RESOURCE_DOCUMENTARY_RESOURCE_TYPE_DOCUMENTARY_RESOURCE_TYPE_FK on DOCUMENTARY_RESOURCE (DRE_TYPE_CD asc);
 
 alter table DOCUMENTARY_RESOURCE
-	add constraint FK_A_DOCUMENTARY_RESOURCE_FILE_ATTACHMENT_FILE_INFO_ATTACHMENT_FILE_INFO foreign key (ATT_FI_ID)
-	references ATTACHMENT_FILE_INFO (ATT_FI_ID);
+	add constraint FK_A_DOCUMENTARY_RESOURCE_FILE_ATTACHMENT_FILE_INFO_ATTACHMENT foreign key (ATT_ID)
+	references ATTACHMENT (ATT_ID);
 
-create index A_DOCUMENTARY_RESOURCE_FILE_ATTACHMENT_FILE_INFO_ATTACHMENT_FILE_INFO_FK on DOCUMENTARY_RESOURCE (ATT_FI_ID asc);
+create index A_DOCUMENTARY_RESOURCE_FILE_ATTACHMENT_FILE_INFO_ATTACHMENT_FK on DOCUMENTARY_RESOURCE (ATT_ID asc);
 
 alter table HISTORY
 	add constraint FK_A_HISTORY_CHATBOT_CHATBOT foreign key (BOT_ID)

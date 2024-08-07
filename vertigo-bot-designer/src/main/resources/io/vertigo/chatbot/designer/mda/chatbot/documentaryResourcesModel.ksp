@@ -34,13 +34,13 @@ create DtDefinition DtDocumentaryResourceType {
  	displayField : "label"
 }
 create Association ADocumentaryResourceFileAttachmentFileInfo {
-	fkFieldName : "attFiId"
+	fkFieldName : "attId"
 
  	dtDefinitionA : DtDocumentaryResource
 	type : "*>?"
-	dtDefinitionB : DtAttachmentFileInfo
+	dtDefinitionB : DtAttachment
 
-	labelB : "Attachment file info  id"
+	labelB : "Attachment id"
 }
 
 create Association ADocumentaryResourceDocumentaryResourceType {

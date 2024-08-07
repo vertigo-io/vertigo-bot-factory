@@ -136,9 +136,9 @@ public enum DtResources implements MessageKey {
 	 */
 	fldDocumentaryResource$url,
 	/**
-	 * Attachment file info  id.
+	 * Attachment id.
 	 */
-	fldDocumentaryResource$attFiId,
+	fldDocumentaryResource$attId,
 	/**
 	 * Documentary resource type.
 	 */

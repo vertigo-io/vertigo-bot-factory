@@ -24,18 +24,18 @@ public final class DocumentaryResource implements Entity {
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ADocumentaryResourceFileAttachmentFileInfo",
-			fkFieldName = "attFiId",
-			primaryDtDefinitionName = "DtAttachmentFileInfo",
+			fkFieldName = "attId",
+			primaryDtDefinitionName = "DtAttachment",
 			primaryIsNavigable = true,
-			primaryRole = "AttachmentFileInfo",
-			primaryLabel = "Attachment file info  id",
+			primaryRole = "Attachment",
+			primaryLabel = "Attachment id",
 			primaryMultiplicity = "0..1",
 			foreignDtDefinitionName = "DtDocumentaryResource",
 			foreignIsNavigable = false,
 			foreignRole = "DocumentaryResource",
 			foreignLabel = "DocumentaryResource",
 			foreignMultiplicity = "0..*")
-	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentFileInfo> attFiIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.AttachmentFileInfo.class, "AttachmentFileInfo");
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Attachment> attIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Attachment.class, "Attachment");
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "ADocumentaryResourceDocumentaryResourceType",
@@ -170,21 +170,21 @@ public final class DocumentaryResource implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Récupère la valeur de la propriété 'Attachment file info  id'.
-	 * @return Long attFiId
+	 * Récupère la valeur de la propriété 'Attachment id'.
+	 * @return Long attId
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Attachment file info  id", fkDefinition = "DtAttachmentFileInfo" )
-	public Long getAttFiId() {
-		return (Long) attFiIdAccessor.getId();
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Attachment id", fkDefinition = "DtAttachment" )
+	public Long getAttId() {
+		return (Long) attIdAccessor.getId();
 	}
 
 	/**
 	 * Champ : FOREIGN_KEY.
-	 * Définit la valeur de la propriété 'Attachment file info  id'.
-	 * @param attFiId Long
+	 * Définit la valeur de la propriété 'Attachment id'.
+	 * @param attId Long
 	 */
-	public void setAttFiId(final Long attFiId) {
-		attFiIdAccessor.setId(attFiId);
+	public void setAttId(final Long attId) {
+		attIdAccessor.setId(attId);
 	}
 	
 	/**
@@ -242,11 +242,11 @@ public final class DocumentaryResource implements Entity {
 	}
 
  	/**
-	 * Association : Attachment file info  id.
-	 * @return l'accesseur vers la propriété 'Attachment file info  id'
+	 * Association : Attachment id.
+	 * @return l'accesseur vers la propriété 'Attachment id'
 	 */
-	public StoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentFileInfo> attachmentFileInfo() {
-		return attFiIdAccessor;
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Attachment> attachment() {
+		return attIdAccessor;
 	}
 	
 	/** {@inheritDoc} */
