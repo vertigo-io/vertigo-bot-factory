@@ -25,6 +25,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		AttachmentExport(io.vertigo.chatbot.commons.domain.AttachmentExport.class),
 		/** Objet de données AttachmentFileInfo. */
 		AttachmentFileInfo(io.vertigo.chatbot.commons.domain.AttachmentFileInfo.class),
+		/** Objet de données AttachmentType. */
+		AttachmentType(io.vertigo.chatbot.commons.domain.AttachmentType.class),
 		/** Objet de données BotExport. */
 		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
 		/** Objet de données CategoryStat. */
@@ -276,6 +278,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		type,
 		/** Propriété 'Size'. */
 		length,
+		/** Propriété 'Attachment type'. */
+		attTypeCd,
 		/** Propriété 'AttachmentFileInfo'. */
 		attFiId,
 		/** Propriété 'Chatbot'. */
@@ -312,6 +316,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		lastModified,
 		/** Propriété 'path'. */
 		filePath	}
+
+	/**
+	 * Enumération des champs de AttachmentType.
+	 */
+	public enum AttachmentTypeFields implements DtFieldName<io.vertigo.chatbot.commons.domain.AttachmentType> {
+		/** Propriété 'Code'. */
+		attTypeCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'LabelFr'. */
+		labelFr	}
 
 	/**
 	 * Enumération des champs de BotExport.

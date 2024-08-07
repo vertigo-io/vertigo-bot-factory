@@ -28,6 +28,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldAttachment$length,
 	/**
+	 * Attachment type.
+	 */
+	fldAttachment$attTypeCd,
+	/**
 	 * AttachmentFileInfo.
 	 */
 	fldAttachment$attFiId,
@@ -87,6 +91,22 @@ public enum DtResources implements MessageKey {
 	 * path.
 	 */
 	fldAttachmentFileInfo$filePath,
+
+	/***********************************************************
+	/** AttachmentType.
+	/***********************************************************
+	/**
+	 * Code.
+	 */
+	fldAttachmentType$attTypeCd,
+	/**
+	 * Label.
+	 */
+	fldAttachmentType$label,
+	/**
+	 * LabelFr.
+	 */
+	fldAttachmentType$labelFr,
 
 	/***********************************************************
 	/** BotExport.

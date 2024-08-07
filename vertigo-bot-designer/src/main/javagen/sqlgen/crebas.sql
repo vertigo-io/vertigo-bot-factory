@@ -13,6 +13,7 @@ drop table IF EXISTS ATTACHMENT cascade;
 drop sequence IF EXISTS SEQ_ATTACHMENT;
 drop table IF EXISTS ATTACHMENT_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_ATTACHMENT_FILE_INFO;
+drop table IF EXISTS ATTACHMENT_TYPE cascade;
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_CUSTOM_CONFIG cascade;
@@ -113,6 +114,7 @@ create sequence SEQ_ATTACHMENT
 
 create sequence SEQ_ATTACHMENT_FILE_INFO
 	start with 1000 cache 1; 
+
 
 create sequence SEQ_CHATBOT
 	start with 1000 cache 1; 
@@ -277,6 +279,7 @@ create table ATTACHMENT
     LABEL       	 VARCHAR(100)	not null,
     TYPE        	 VARCHAR(100)	not null,
     LENGTH      	 NUMERIC     	not null,
+    ATT_TYPE_CD 	 VARCHAR(100)	not null,
     ATT_FI_ID   	 NUMERIC     	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_ATTACHMENT primary key (ATT_ID)
@@ -293,6 +296,9 @@ comment on column ATTACHMENT.TYPE is
 
 comment on column ATTACHMENT.LENGTH is
 'Size';
+
+comment on column ATTACHMENT.ATT_TYPE_CD is
+'Attachment type';
 
 comment on column ATTACHMENT.ATT_FI_ID is
 'AttachmentFileInfo';
@@ -331,6 +337,26 @@ comment on column ATTACHMENT_FILE_INFO.LAST_MODIFIED is
 
 comment on column ATTACHMENT_FILE_INFO.FILE_PATH is
 'path';
+
+-- ============================================================
+--   Table : ATTACHMENT_TYPE                                        
+-- ============================================================
+create table ATTACHMENT_TYPE
+(
+    ATT_TYPE_CD 	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_ATTACHMENT_TYPE primary key (ATT_TYPE_CD)
+);
+
+comment on column ATTACHMENT_TYPE.ATT_TYPE_CD is
+'Code';
+
+comment on column ATTACHMENT_TYPE.LABEL is
+'Label';
+
+comment on column ATTACHMENT_TYPE.LABEL_FR is
+'LabelFr';
 
 -- ============================================================
 --   Table : CHATBOT                                        
@@ -1718,6 +1744,12 @@ alter table ATTACHMENT
 	references ATTACHMENT_FILE_INFO (ATT_FI_ID);
 
 create index A_ATTACHMENT_ATTACHMENT_FILE_INFO_ATTACHMENT_FILE_INFO_FK on ATTACHMENT (ATT_FI_ID asc);
+
+alter table ATTACHMENT
+	add constraint FK_A_ATTACHMENT_ATTACHMENT_TYPE_ATTACHMENT_TYPE foreign key (ATT_TYPE_CD)
+	references ATTACHMENT_TYPE (ATT_TYPE_CD);
+
+create index A_ATTACHMENT_ATTACHMENT_TYPE_ATTACHMENT_TYPE_FK on ATTACHMENT (ATT_TYPE_CD asc);
 
 alter table ATTACHMENT
 	add constraint FK_A_ATTACHMENT_CHATBOT_CHATBOT foreign key (BOT_ID)
