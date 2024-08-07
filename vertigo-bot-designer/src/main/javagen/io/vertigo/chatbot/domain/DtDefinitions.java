@@ -693,8 +693,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		text,
 		/** Propriété 'Url'. */
 		url,
-		/** Propriété 'Attachment file info  id'. */
-		attFiId,
+		/** Propriété 'Attachment id'. */
+		attId,
 		/** Propriété 'Documentary resource type'. */
 		dreTypeCd,
 		/** Propriété 'Chatbot'. */
