@@ -8,7 +8,7 @@ import io.vertigo.datamodel.structure.model.UID;
 public enum DocumentaryResourceTypeEnum implements MasterDataEnum<io.vertigo.chatbot.designer.domain.DocumentaryResourceType> {
 
 	URL("URL"), //
-	DOCUMENT("FILE"), //
+	FILE("FILE"), //
 	TEXT("TEXT")
 	;
 

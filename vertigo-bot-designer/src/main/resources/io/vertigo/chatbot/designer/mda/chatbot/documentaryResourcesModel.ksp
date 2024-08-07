@@ -19,7 +19,7 @@ create DtDefinition DtDocumentaryResourceType {
             "label" : "URL",
             "labelFr" : "URL"
         },
-        "DOCUMENT" : {
+        "FILE" : {
             "dreTypeCd" : "FILE",
             "label" : "File",
             "labelFr" : "Document"
