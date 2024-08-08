@@ -128,44 +128,24 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		final ConfluenceSearchResponse searchResult = searchOnConfluence(params, headers, searchObject);
 		final List<ConfluenceSearchResult> results = Arrays.asList(searchResult.getResults());
 
-		// map of pageId (List(pageName,url) -> pageId)
-		Map<List<String>, String> pageIds = results.stream()
-				.collect(Collectors.toMap(
-						result -> Arrays.asList(result.getDetail().getTitle(), result.getUrl()),
-						result -> result.getDetail().getId()));
-		// map of pageBody (List(pageName,url) -> pageBody)
-		Map<List<String>, HttpResponse<String>> responses = pageIds.entrySet().stream()
-				.collect(Collectors.toMap(
-                        Map.Entry::getKey,
-						entry -> sendRequestToConfluence(null, headers, CONTENT_URL + entry.getValue() + PAGE_BODY, 200, BodyHandlers.ofString())
-				));
-		// map of html (List(pageName,url) -> html)
-		Map<List<String>, String> responsesHtml = getHtmlFromPageHttpResponse(responses);
-
-        return responsesHtml.entrySet().stream()
-				.map(entry -> formatHtml(entry.getKey().get(0), getBaseUrl() + entry.getKey().get(1), entry.getValue()))
+        return results.stream().map(result -> formatHtml(result.getDetail().getTitle(),
+                getBaseUrl() + result.getUrl(),
+                getHtmlFromPageHttpResponse(result.getDetail().getTitle(),
+                        sendRequestToConfluence(null, headers, CONTENT_URL + result.getDetail().getId() + PAGE_BODY, 200, BodyHandlers.ofString()))))
 				.collect(Collectors.toList());
 
-		//Option to create clickable links instead of documents (to keep)
-		//return results.stream().map(x -> createLinkUrl(x.getUrl(), x.getDetail().getTitle())).collect(Collectors.toList());
 	}
 
-	Map<List<String>, String> getHtmlFromPageHttpResponse (Map <List<String>, HttpResponse<String>> responses) {
-        return responses.entrySet().stream().collect(Collectors.toMap(
-				Map.Entry::getKey,
-				entry -> {
-					HttpResponse<String> response = entry.getValue();
-					try {
-						ObjectMapper objectMapper = new ObjectMapper();
-						JsonNode jsonNode = objectMapper.readTree(response.body());
-						JsonNode body = jsonNode.get("body");
-						ConfluenceView view = objectMapper.readValue(body.get("view").toString(), ConfluenceView.class);
-						return view.getValue();
-					} catch (Exception e) {
-						return "Erreur lors de la lecture du JSON pour la page " + entry.getKey() + " : " + e.getMessage();
-					}
-				}
-		));
+	public String getHtmlFromPageHttpResponse (String pageTitle, HttpResponse<String> response) {
+       try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonNode = objectMapper.readTree(response.body());
+			JsonNode body = jsonNode.get("body");
+			ConfluenceView view = objectMapper.readValue(body.get("view").toString(), ConfluenceView.class);
+			return view.getValue();
+	   } catch (Exception e) {
+			return "Erreur lors de la lecture du JSON pour la page " + pageTitle + " : " + e.getMessage();
+	   }
 	}
 
 	private String createLinkUrl(final String link, final String name) {
