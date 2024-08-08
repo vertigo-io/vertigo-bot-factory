@@ -14,6 +14,7 @@ import io.vertigo.chatbot.commons.dao.AttachmentDAO;
 import io.vertigo.chatbot.commons.domain.Attachment;
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.AttachmentFileInfo;
+import io.vertigo.chatbot.commons.domain.AttachmentTypeEnum;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.multilingual.attachment.AttachmentMultilingualResources;
 import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
@@ -82,6 +83,10 @@ public class AttachmentServices implements Component {
 
 	public DtList<Attachment> findAllByBotId(final long botId) {
 		return attachmentDAO.findAll(Criterions.isEqualTo(DtDefinitions.AttachmentFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+	}
+
+	public DtList<Attachment> findAllByBotIdAndType(final Chatbot bot) {
+		return attachmentDAO.findAll(Criterions.isEqualTo(DtDefinitions.AttachmentFields.botId, bot.getBotId()).and(Criterions.isEqualTo(DtDefinitions.AttachmentFields.attTypeCd, AttachmentTypeEnum.ATTACHMENT.name())), DtListState.of(null));
 	}
 
 	@Secured("BotUser")
