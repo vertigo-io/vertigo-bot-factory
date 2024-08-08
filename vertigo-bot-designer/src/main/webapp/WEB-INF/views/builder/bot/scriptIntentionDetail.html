@@ -40,56 +40,62 @@
 
 		<vu:popup action="_delete" vModel="showPopupDeleteTopic" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
 
-		<vu:block id="script" title="Script" v-if="VUiExtensions.dataX.viewScript">
+		<vu:block id="script" title="Script">
 			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
-
-			<c-codemirror object="scriptIntention" field="script" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale"></c-codemirror>
+			<div class="editor"></div>
+			<c-codemirror-6 th:v-model="${model.util.vueDataKey('scriptIntention', 'script', null)}"></c-codemirror-6>
 			<div id="blocklyTool">
 				<q-btn th:if="${!model.modeReadOnly}" th:class="q-btn-blockly" class="code" id="from-code" @click="codeToDiagram()" th:text="#{script.diagram.fromcode}"></q-btn>
 			</div>
 		</vu:block>
 	</section>
 	<section th:fragment="blockly">
-		<script th:src="@{/static/utils/blockly.min.js}"></script>
-		<script th:src="@{/static/blockly/js/chatbot_blocks.js}"></script>
-		<script th:src="@{/static/blockly/js/chatbot_gencode.js}"></script>
-		<script th:src="@{/static/blockly/js/chatbot_parsecode.js}"></script>
-		<script th:src="@{/static/blockly/js/chatbot_custom_renderer.js}"></script>
-		<script th:if="${model.locale=='fr_FR'}" th:src="@{/static/blockly/lang/fr.js}"></script>
-		<script th:if="${model.locale=='fr_FR'}" th:src="@{/static/blockly/lang/blockly_fr.js}"></script>
-		<script th:if="${model.locale!='fr_FR'}" th:src="@{/static/blockly/lang/blockly_en.js}"></script>
-		<script type="text/javascript" th:inline="javascript">pathMediaBlockly=[[@{/static/blockly/media/}]]</script>
-		<script th:src="@{/static/blockly/js/blockly_injection_commons.js}"></script>
-		<script type="text/javascript">
-			function checkErrors(parsed) {
-				if (parsed && parsed.error) {
-					VUiExtensions.dataX.diagramHasErrors = true;
-					VUiExtensions.dataX.diagramErrorMessage = (VertigoUi.vueData.locale === 'fr_FR'
-							? "Le script n'est pas valide, son diagramme ne peut pas être affiché. " : "Script is invalid, diagram couldn't be loaded. ") + parsed.error;
-				} else {
-					VUiExtensions.dataX.diagramHasErrors = false;
+		<section layout:fragment="javascript-functions">
+			<script th:src="@{/static/utils/blockly.min.js}"></script>
+			<script type="text/javascript" th:inline="javascript">pathMediaBlockly=[[@{/static/blockly/media/}]]</script>
+			<script th:src="@{/static/blockly/js/blockly_injection_commons.js}"></script>
+			<script th:src="@{/static/blockly/js/chatbot_blocks.js}"></script>
+			<script th:src="@{/static/blockly/js/chatbot_gencode.js}"></script>
+			<script th:src="@{/static/blockly/js/chatbot_parsecode.js}"></script>
+			<script th:src="@{/static/blockly/js/chatbot_custom_renderer.js}"></script>
+			<script th:if="${model.locale=='fr_FR'}" th:src="@{/static/blockly/lang/fr.js}"></script>
+			<script th:if="${model.locale=='fr_FR'}" th:src="@{/static/blockly/lang/blockly_fr.js}"></script>
+			<script th:if="${model.locale!='fr_FR'}" th:src="@{/static/blockly/lang/blockly_en.js}"></script>
+			<script type="text/javascript">
+				function checkErrors(parsed) {
+					if (parsed && parsed.error) {
+						VUiExtensions.dataX.diagramHasErrors = true;
+						VUiExtensions.dataX.diagramErrorMessage = (VertigoUi.vueData.locale === 'fr_FR'
+								? "Le script n'est pas valide, son diagramme ne peut pas être affiché. " : "Script is invalid, diagram couldn't be loaded. ") + parsed.error;
+					} else {
+						VUiExtensions.dataX.diagramHasErrors = false;
+					}
 				}
-			}
-		</script>
-		<script  th:if="${!model.modeReadOnly}">
-			checkErrors(injectionBlockly(false))
-		</script>
-		<script th:if="${model.modeReadOnly}">
-			checkErrors(injectionBlockly(true))
-		</script>
-		<script type="text/javascript">
-			function codeToDiagram(){
-				checkErrors(fromCode());
-			}
-			function updateDiagram(){
-				checkErrors(injectionBlockly(false))
-			}
-			function updateBlocksBlockly() {
-				toCode()
-				checkErrors(fromCode())
+			</script>
+			<script  th:if="${!model.modeReadOnly}">
+				window.addEventListener('vui-after-page-mounted', function () {
+					checkErrors(VUiExtensions.methods.injectionBlockly(false))
+				});
+			</script>
+			<script th:if="${model.modeReadOnly}">
+				window.addEventListener('vui-after-page-mounted', function () {
+					checkErrors(VUiExtensions.methods.injectionBlockly(true))
+				});
+			</script>
+			<script type="text/javascript">
+				function codeToDiagram(){
+					checkErrors(VUiExtensions.methods.fromCode());
+				}
+				function updateDiagram(){
+					checkErrors(VUiExtensions.methods.injectionBlockly(false))
+				}
+				function updateBlocksBlockly() {
+					VUiExtensions.methods.toCode()
+					checkErrors(VUiExtensions.methods.fromCode())
 
-			}
-		</script>
+				}
+			</script>
+		</section>
 	</section>
 </html>

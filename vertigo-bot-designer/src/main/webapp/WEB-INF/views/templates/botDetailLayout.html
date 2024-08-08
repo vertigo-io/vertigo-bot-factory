@@ -9,59 +9,58 @@
 		<link th:href="@{/static/chatbot/shepherd.css}" rel="stylesheet" />
 		<link th:href="@{/static/chatbot/chatbot.css}" rel="stylesheet">
 		<script>
-			VUiExtensions = {
-				dataX: {},
-				methods: { ... VUiExtensions.methods,
-					train: function () {
-						VUiPage.httpPostAjax("train", {}, {
-							onSuccess: function () {
-								postTrain();
-							}
-						});
-					},
-					postTrain: function () {
-						interval = setInterval(function () {
-							refreshTraining();
-						}, 1000);
-					},
-					refreshTraining: function () {
-						VUiExtensions.dataX.loadingTraining = true;
-
-						VUiPage.httpPostAjax("refreshTrainer", {}, {
-							onSuccess: function () {
-								if (!VertigoUi.vueData.trainerState.trainingInProgress && interval != null) {
-									VUiExtensions.dataX.loadingTraining = false;
-									clearInterval(interval);
-									interval = null;
-								}
-							}
-						});
-					},
-					canTalkToBot: function () {
-						return VertigoUi.vueData.devNode !== null && VertigoUi.vueData.devNode.traId !== null;
-					},
-					checkAll: function () {
-						VertigoUi.vueData.selectTypeBotExportList.tbeCd =
-								VertigoUi.vueData.typeBotExport.map(typeExport => typeExport.tbeCd);
-					},
-					selectEnvironment: function () {
-						if (VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId !== null) {
-							const selectedContexEnvironment = VertigoUi.vueData.contextEnvironments.find(contextEnvironment =>
-									contextEnvironment.cenvId === VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId
-							);
-							if (selectedContexEnvironment) {
-								const map = {};
-								selectedContexEnvironment.contextEnvironmentValues.forEach(contextEnvironmentValue => {
-									map[contextEnvironmentValue.label] = contextEnvironmentValue.value
-								})
-								Chatbot.updateContextMap(map)
-							}
-						} else {
-							Chatbot.updateContextMap({})
+			VUiExtensions.methods=  {
+				... VUiExtensions.methods,
+				train: function () {
+					VUiPage.httpPostAjax("train", {}, {
+						onSuccess: function () {
+							postTrain();
 						}
+					});
+				},
+				postTrain: function () {
+					interval = setInterval(function () {
+						refreshTraining();
+					}, 1000);
+				},
+				refreshTraining: function () {
+					VUiExtensions.dataX.loadingTraining = true;
+
+					VUiPage.httpPostAjax("refreshTrainer", {}, {
+						onSuccess: function () {
+							if (!VertigoUi.vueData.trainerState.trainingInProgress && interval != null) {
+								VUiExtensions.dataX.loadingTraining = false;
+								clearInterval(interval);
+								interval = null;
+							}
+						}
+					});
+				},
+				canTalkToBot: function () {
+					return VertigoUi.vueData.devNode !== null && VertigoUi.vueData.devNode.traId !== null;
+				},
+				checkAll: function () {
+					VertigoUi.vueData.selectTypeBotExportList.tbeCd =
+							VertigoUi.vueData.typeBotExport.map(typeExport => typeExport.tbeCd);
+				},
+				selectEnvironment: function () {
+					if (VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId !== null) {
+						const selectedContexEnvironment = VertigoUi.vueData.contextEnvironments.find(contextEnvironment =>
+								contextEnvironment.cenvId === VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId
+						);
+						if (selectedContexEnvironment) {
+							const map = {};
+							selectedContexEnvironment.contextEnvironmentValues.forEach(contextEnvironmentValue => {
+								map[contextEnvironmentValue.label] = contextEnvironmentValue.value
+							})
+							Chatbot.updateContextMap(map)
+						}
+					} else {
+						Chatbot.updateContextMap({})
 					}
 				}
 			}
+
 			document.addEventListener('DOMContentLoaded', function () {
 				if (VUiExtensions.methods.canTalkToBot()) {
 					Chatbot.init({

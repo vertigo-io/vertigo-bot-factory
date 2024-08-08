@@ -16,31 +16,33 @@
 				else
 					return '';
 			}
-			
-			
-			function filter() {
-				let filteredTopics = VertigoUi.vueData.topicsIhm
-				if (VertigoUi.vueData.criteria.catId !== null) {
-					let category = VertigoUi.vueData.categoryList.find(cat => cat.topCatId === VertigoUi.vueData.criteria.catId)
-					if (category !== undefined) {
-						filteredTopics = filteredTopics
-							// copy and reverse
-							.slice().reverse()
-							// search
-							.filter(topic => topic.catLabel === category.label)
+
+			VUiExtensions.methods = {
+				...VUiExtensions.methods,
+				filter: function () {
+					let filteredTopics = VertigoUi.vueData.topicsIhm
+					if (VertigoUi.vueData.criteria.catId !== null) {
+						let category = VertigoUi.vueData.categoryList.find(cat => cat.topCatId === VertigoUi.vueData.criteria.catId)
+						if (category !== undefined) {
+							filteredTopics = filteredTopics
+									// copy and reverse
+									.slice().reverse()
+									// search
+									.filter(topic => topic.catLabel === category.label)
+						}
 					}
+					let searchNormarlized = normalizeString(VertigoUi.componentStates.topics.pagination.search);
+					if (searchNormarlized !== '') {
+						filteredTopics = filteredTopics
+								// copy and reverse
+								.slice().reverse()
+								// search
+								.filter(topic => normalizeString(topic.title).includes(searchNormarlized) || normalizeString(topic.code).includes(searchNormarlized))
+					}
+					return filteredTopics
 				}
-				let searchNormarlized = normalizeString(VertigoUi.componentStates.topics.pagination.search);
-				if (searchNormarlized !==''){
-					filteredTopics =  filteredTopics
-						// copy and reverse
-						.slice().reverse()
-						// search
-						.filter(topic => normalizeString(topic.title).includes(searchNormarlized) || normalizeString(topic.code).includes(searchNormarlized))
-				}
-				return filteredTopics
 			}
-			
+
 		</script>
 		
 		
@@ -101,7 +103,7 @@
 						  	@input="filter();"
 							stack-label>
 					</q-select>
-					<q-input style="margin-left:10px" borderless dense debounce="300" th:v-model="VertigoUi.componentStates.topics.pagination.search" th:placeholder="#{topic.selection.search}">
+					<q-input style="margin-left:10px" borderless dense debounce="300" th:v-model="componentStates.topics.pagination.search" th:placeholder="#{topic.selection.search}">
 						<template v-slot:append>
 							<q-icon name="search" />
 						</template>
