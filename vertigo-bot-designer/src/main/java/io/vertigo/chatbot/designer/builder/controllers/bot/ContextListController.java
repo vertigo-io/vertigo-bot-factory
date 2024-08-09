@@ -46,9 +46,6 @@ public class ContextListController extends AbstractBotListEntityController<Conte
 	private static final ViewContextKey<ContextEnvironmentValue> newContextEnvironmentValueKey = ViewContextKey.of("newContextEnvironmentValue");
 	private static final ViewContextKey<TypeOperator> typeOperators = ViewContextKey.of("typeOperators");
 
-	private static final ViewContextKey<String> localeKey = ViewContextKey.of("locale");
-
-
 	@Inject
 	private ContextValueServices contextValueServices;
 
@@ -66,7 +63,6 @@ public class ContextListController extends AbstractBotListEntityController<Conte
 		viewContext.publishDto(newContextEnvironmentKey, new ContextEnvironment());
 		viewContext.publishDto(newContextEnvironmentValueKey, new ContextEnvironmentValue());
 		viewContext.publishDtList(typeOperators, contextTypeOperatorServices.getAllTypeOperators(bot));
-		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
 
 		super.initBreadCrums(viewContext, ContextValue.class);
 		listLimitReached(viewContext, uiMessageStack);

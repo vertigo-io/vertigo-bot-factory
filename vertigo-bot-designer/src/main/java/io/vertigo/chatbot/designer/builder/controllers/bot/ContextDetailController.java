@@ -62,11 +62,6 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 
 	private static final ViewContextKey<TypeOperator> typeOperators = ViewContextKey.of("typeOperators");
 
-	private static final ViewContextKey<String> localeKey = ViewContextKey.of("locale");
-
-	@Inject
-	private ChatbotServices chatbotServices;
-
 	@Inject
 	private ContextValueServices contextValueServices;
 
@@ -95,8 +90,6 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 		viewContext.publishDtList(typeOperators, contextTypeOperatorServices.getAllTypeOperators(chatbot));
 		viewContext.publishDto(newContextPossibleValueKey, new ContextPossibleValue());
 
-		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
-
 		super.initBreadCrums(viewContext, contextValue);
 		toModeReadOnly();
 	}
@@ -110,8 +103,6 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 		viewContext.publishDtList(contextPossibleValueListKey, new DtList<>(ContextPossibleValue.class));
 		viewContext.publishDto(newContextPossibleValueKey, new ContextPossibleValue());
 		viewContext.publishDtList(typeOperators, contextTypeOperatorServices.getAllTypeOperators(bot));
-
-		viewContext.publishRef(localeKey, localeManager.getCurrentLocale().toString());
 
 		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
