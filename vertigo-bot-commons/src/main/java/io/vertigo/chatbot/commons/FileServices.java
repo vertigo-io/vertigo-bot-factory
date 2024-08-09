@@ -52,7 +52,7 @@ public class FileServices implements Component, Activeable {
 	@Override
 	public void start() {
 		extensionsWhiteList = paramManager.getOptionalParam("EXTENSIONS_WHITELIST")
-				.map(Param::getValueAsString).orElse("png,jpg,jpeg,pdf,csv,js,docx,xlsx").split(",");
+				.map(Param::getValueAsString).orElse("png,jpg,jpeg,pdf,csv,js,pptx,docx,xlsx").split(",");
 	}
 
 	@Override
