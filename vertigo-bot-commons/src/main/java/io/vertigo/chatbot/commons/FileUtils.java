@@ -10,6 +10,7 @@ import java.net.http.HttpResponse;
 import java.util.Base64;
 
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.VSystemException;
 
 /**
  * @author cmarechal
@@ -38,11 +39,14 @@ public class FileUtils {
     public static String formatImageToBase64String(final HttpResponse<InputStream> response) {
         String imageB64;
         String extension = response.headers().map().get("content-type").get(0);
+        if (extension == null){
+            throw new VSystemException("File extension cannot be null");
+        }
         try {
             byte[] bytes = IOUtils.toByteArray(response.body());
             imageB64 = Base64.getEncoder().encodeToString(bytes);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error during Base64 file encoding");
         }
         return "data:" + extension + ";base64," + imageB64;
     }

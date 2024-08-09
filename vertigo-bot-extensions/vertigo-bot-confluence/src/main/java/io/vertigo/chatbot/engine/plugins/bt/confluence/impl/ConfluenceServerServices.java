@@ -8,7 +8,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
@@ -163,7 +162,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 
 	private String formatHtml(final String name, final String url, final String html){
 		final var builder = new StringBuilder();
-		String cleanHtml = HtmlInputUtils.sanitizeHtmlWithTargetBlank(html);
+		String cleanHtml = HtmlInputUtils.sanitizeHtml(html, true);
 		String htmlWithImages = getHtmlWithImages(cleanHtml);
 		String escapedHtml = htmlWithImages.replace("\"", "&quot;");
 
