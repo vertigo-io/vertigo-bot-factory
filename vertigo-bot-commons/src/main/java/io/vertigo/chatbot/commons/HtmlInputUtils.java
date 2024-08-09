@@ -12,7 +12,7 @@ public class HtmlInputUtils {
 		//utils class
 	}
 
-	public static String sanitizeHtml(final String in, final Boolean isTargetBlank) {
+	public static String sanitizeHtml(final String in, final Boolean targetBlankLinks) {
 		final PolicyFactory sanitizer = Sanitizers.FORMATTING
 				.and(Sanitizers.BLOCKS)
 				.and(Sanitizers.LINKS)
@@ -24,7 +24,7 @@ public class HtmlInputUtils {
 						.allowAttributes("class").onElements("img").allowElements("img")
 						.allowAttributes("target").onElements("a").allowElements("a")
 						.toFactory());
-		if (isTargetBlank) {
+		if (targetBlankLinks) {
 			sanitizer.and(new HtmlPolicyBuilder()
 					.allowElements(
 							(elementName, attrs) -> {
