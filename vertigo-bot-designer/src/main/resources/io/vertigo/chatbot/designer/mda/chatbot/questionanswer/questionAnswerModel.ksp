@@ -8,7 +8,7 @@ create DtDefinition DtQuestionAnswer {
     field  code             {domain: DoText    label: "Code"                         cardinality : "1"  }
 }
 
-create DtDefinition DtQuestionAnswerExport {
+create DtDefinition DtQuestionAnswerFileExport {
     field  question         {domain: DoText    label: "Question"                     cardinality : "1"  }
     field  answer           {domain: DoText    label: "Answer"                       cardinality : "1"  }
     field  isEnabled        {domain: DoLabel   label: "Enabled"                      cardinality : "1"  }
