@@ -11,9 +11,8 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory;
-import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerExport;
+import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerFileExport;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm;
-import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.multilingual.questionAnswer.QuestionAnswerMultilingualResources;
 import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
@@ -46,23 +45,23 @@ public class QuestionAnswerFileExportServices implements Component {
 
 
     public VFile exportQuestionAnswers(@SecuredOperation("botVisitor") final Chatbot bot, final DtList<QuestionAnswerIhm> questionAnswerIhms) {
-        final DtList<QuestionAnswerExport> questionAnswerExports = questionAnswerIhms.stream().map(questionAnswer -> {
-            final QuestionAnswerExport questionAnswerExport = new QuestionAnswerExport();
-            questionAnswerExport.setQuestion(questionAnswer.getQuestion());
-            questionAnswerExport.setAnswer(questionAnswer.getAnswer());
-            questionAnswerExport.setIsEnabled(questionAnswer.getIsEnabled() ? "TRUE" : "FALSE");
-            questionAnswerExport.setCategory(questionAnswer.getCatLabel());
-            questionAnswerExport.setCode(questionAnswer.getCode());
-            return questionAnswerExport;
-        }).collect(VCollectors.toDtList(QuestionAnswerExport.class));
+        final DtList<QuestionAnswerFileExport> QuestionAnswerFileExports = questionAnswerIhms.stream().map(questionAnswer -> {
+            final QuestionAnswerFileExport QuestionAnswerFileExport = new QuestionAnswerFileExport();
+            QuestionAnswerFileExport.setQuestion(questionAnswer.getQuestion());
+            QuestionAnswerFileExport.setAnswer(questionAnswer.getAnswer());
+            QuestionAnswerFileExport.setIsEnabled(questionAnswer.getIsEnabled() ? "TRUE" : "FALSE");
+            QuestionAnswerFileExport.setCategory(questionAnswer.getCatLabel());
+            QuestionAnswerFileExport.setCode(questionAnswer.getCode());
+            return QuestionAnswerFileExport;
+        }).collect(VCollectors.toDtList(QuestionAnswerFileExport.class));
         final String exportName = MessageText.of(QuestionAnswerMultilingualResources.EXPORT_QUESTIONS_ANSWERS_FILENAME, bot.getName()).getDisplay();
         final Export export = new ExportBuilder(ExportFormat.CSV, exportName)
-                .beginSheet(questionAnswerExports, null)
-                .addField(DtDefinitions.QuestionAnswerExportFields.question)
-                .addField(DtDefinitions.QuestionAnswerExportFields.answer)
-                .addField(DtDefinitions.QuestionAnswerExportFields.isEnabled)
-                .addField(DtDefinitions.QuestionAnswerExportFields.category)
-                .addField(DtDefinitions.QuestionAnswerExportFields.code)
+                .beginSheet(QuestionAnswerFileExports, null)
+                .addField(DtDefinitions.QuestionAnswerFileExportFields.question)
+                .addField(DtDefinitions.QuestionAnswerFileExportFields.answer)
+                .addField(DtDefinitions.QuestionAnswerFileExportFields.isEnabled)
+                .addField(DtDefinitions.QuestionAnswerFileExportFields.category)
+                .addField(DtDefinitions.QuestionAnswerFileExportFields.code)
                 .endSheet()
                 .build();
         return exportManager.createExportFile(export);
@@ -73,15 +72,15 @@ public class QuestionAnswerFileExportServices implements Component {
         transformFileToList(designerFileServices.getFileTmp(importQuestionAnswerFile)).forEach(questionAnswerCategory -> generateQueAnsFromQueAnsExport(bot, questionAnswerCategory, queAnsLabelIdMap));
     }
 
-    public List<QuestionAnswerExport> transformFileToList(@SecuredOperation("SuperAdm") final VFile file) {
+    public List<QuestionAnswerFileExport> transformFileToList(@SecuredOperation("SuperAdm") final VFile file) {
         final String[] columns = new String[] {
-                DtDefinitions.QuestionAnswerExportFields.question.name(),
-                DtDefinitions.QuestionAnswerExportFields.answer.name(),
-                DtDefinitions.QuestionAnswerExportFields.isEnabled.name(),
-                DtDefinitions.QuestionAnswerExportFields.category.name(),
-                DtDefinitions.QuestionAnswerExportFields.code.name(),
+                DtDefinitions.QuestionAnswerFileExportFields.question.name(),
+                DtDefinitions.QuestionAnswerFileExportFields.answer.name(),
+                DtDefinitions.QuestionAnswerFileExportFields.isEnabled.name(),
+                DtDefinitions.QuestionAnswerFileExportFields.category.name(),
+                DtDefinitions.QuestionAnswerFileExportFields.code.name(),
         };
-        return designerFileServices.readCsvFile(QuestionAnswerExport.class, file, columns);
+        return designerFileServices.readCsvFile(QuestionAnswerFileExport.class, file, columns);
     }
 
     private Map<String, Long> mapCategoryInitialization(final Chatbot bot) {
@@ -93,20 +92,20 @@ public class QuestionAnswerFileExportServices implements Component {
         return mapCategory;
     }
 
-    public void generateQueAnsFromQueAnsExport(final Chatbot bot, final QuestionAnswerExport questionAnswerExport, Map<String, Long> queAnsLabelIdMap) {
+    public void generateQueAnsFromQueAnsExport(final Chatbot bot, final QuestionAnswerFileExport QuestionAnswerFileExport, Map<String, Long> queAnsLabelIdMap) {
         final QuestionAnswer questionAnswer = new QuestionAnswer();
-        final Optional<QuestionAnswer> questionAnswerBase = questionAnswerServices.getQueAnsByCode(questionAnswerExport.getCode(), bot);
+        final Optional<QuestionAnswer> questionAnswerBase = questionAnswerServices.getQueAnsByCode(QuestionAnswerFileExport.getCode(), bot);
 
-        if (queAnsLabelIdMap.containsKey(questionAnswerExport.getCategory())) {
+        if (queAnsLabelIdMap.containsKey(QuestionAnswerFileExport.getCategory())) {
             //if questionAnswer already exists, we use its id to update it
             questionAnswerBase.ifPresent(queAnsBase -> questionAnswer.setQaId(queAnsBase.getQaId()));
 
             questionAnswer.setBotId(bot.getBotId());
-            questionAnswer.setQuestion(questionAnswerExport.getQuestion());
-            questionAnswer.setAnswer(questionAnswerExport.getAnswer());
-            questionAnswer.setIsEnabled("TRUE".equals(questionAnswerExport.getIsEnabled()));
-            questionAnswer.setQaCatId(queAnsLabelIdMap.get(questionAnswerExport.getCategory()));
-            questionAnswer.setCode(questionAnswerExport.getCode());
+            questionAnswer.setQuestion(QuestionAnswerFileExport.getQuestion());
+            questionAnswer.setAnswer(QuestionAnswerFileExport.getAnswer());
+            questionAnswer.setIsEnabled("TRUE".equals(QuestionAnswerFileExport.getIsEnabled()));
+            questionAnswer.setQaCatId(queAnsLabelIdMap.get(QuestionAnswerFileExport.getCategory()));
+            questionAnswer.setCode(QuestionAnswerFileExport.getCode());
             questionAnswerServices.saveQuestionAnswer(bot, questionAnswer);
         }
     }

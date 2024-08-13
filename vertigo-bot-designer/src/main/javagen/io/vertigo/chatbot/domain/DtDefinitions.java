@@ -125,8 +125,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		QuestionAnswerCategory(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory.class),
 		/** Objet de données QuestionAnswerCategoryExport. */
 		QuestionAnswerCategoryExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategoryExport.class),
-		/** Objet de données QuestionAnswerExport. */
-		QuestionAnswerExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerExport.class),
+		/** Objet de données QuestionAnswerFileExport. */
+		QuestionAnswerFileExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerFileExport.class),
 		/** Objet de données QuestionAnswerIhm. */
 		QuestionAnswerIhm(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm.class),
 		/** Objet de données RatingOption. */
@@ -1070,9 +1070,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isEnabled	}
 
 	/**
-	 * Enumération des champs de QuestionAnswerExport.
+	 * Enumération des champs de QuestionAnswerFileExport.
 	 */
-	public enum QuestionAnswerExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerExport> {
+	public enum QuestionAnswerFileExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerFileExport> {
 		/** Propriété 'Question'. */
 		question,
 		/** Propriété 'Answer'. */
