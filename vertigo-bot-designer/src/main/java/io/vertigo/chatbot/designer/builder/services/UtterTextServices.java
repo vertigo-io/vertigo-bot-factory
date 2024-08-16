@@ -86,7 +86,7 @@ public class UtterTextServices implements Component {
 		for (final UtterText utt : uttToSave) {
 			utt.setUttId(null); // force creation
 			utt.setSmtId(smt.getSmtId());
-			utt.setText(HtmlInputUtils.sanitizeHtml(utt.getText()));
+			utt.setText(HtmlInputUtils.sanitizeHtml(utt.getText(), false));
 			utterTextDAO.save(utt);
 		}
 

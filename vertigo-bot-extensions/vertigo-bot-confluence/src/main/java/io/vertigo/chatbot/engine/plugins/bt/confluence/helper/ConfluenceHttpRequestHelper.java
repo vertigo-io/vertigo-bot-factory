@@ -28,9 +28,12 @@ public final class ConfluenceHttpRequestHelper {
     public static final String API_URL = "/rest/api";
     public static final String SEARCH_URL = "/search";
     public static final String SPACE_URL = "/space";
+    public static final String CONTENT_URL = "/content/";
 
+    public static final String PAGE_BODY = "?expand=body.view";
     private static final String ONLY_PAGE = " type=page";
     private static final String SPACE = "space=";
+
 
     private ConfluenceHttpRequestHelper() {
         //helper

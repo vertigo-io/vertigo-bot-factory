@@ -58,9 +58,15 @@ const chatbot = new Vue({
         el: '#q-app',
         updated() {
             const images = document.getElementsByClassName('imgClass');
+            const htmls = document.getElementsByClassName('htmlClass');
             for (let i = 0; i < images.length; i++) {
                 images[i].addEventListener('click', function (e) {
                     parent.postMessage({pictureModal: this.src}, '*');
+                }, false);
+            }
+            for (let j = 0; j < htmls.length; j++) {
+                htmls[j].addEventListener('click', function (e) {
+                    parent.postMessage({htmlModal: this.getAttribute('data-html')}, '*');
                 }, false);
             }
             if (!chatbot.$refs.input.disable) {
