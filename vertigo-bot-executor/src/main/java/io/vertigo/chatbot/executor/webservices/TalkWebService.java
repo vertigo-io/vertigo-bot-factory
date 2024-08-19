@@ -17,10 +17,12 @@
  */
 package io.vertigo.chatbot.executor.webservices;
 
+import io.vertigo.chatbot.commons.domain.QuestionAnswerExport;
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.executor.manager.ExecutorManager;
 import io.vertigo.chatbot.executor.model.IncomeRating;
+import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.GET;
@@ -70,5 +72,4 @@ public class TalkWebService implements WebServices {
 		final Optional<VFile> optWelcomeToursFile = executorManager.getWelcomeToursFile();
 		return optWelcomeToursFile.orElse(null);
 	}
-
 }

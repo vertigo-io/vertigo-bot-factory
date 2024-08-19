@@ -17,6 +17,9 @@
  */
 package io.vertigo.chatbot.executor.manager;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.ByteArrayInputStream;
@@ -36,6 +39,7 @@ import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.commons.domain.QuestionAnswerExport;
 import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
 import io.vertigo.chatbot.executor.ExecutorPlugin;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
@@ -47,6 +51,7 @@ import io.vertigo.core.node.component.Manager;
 import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
@@ -59,8 +64,10 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 	private File configDataFile;
 	private File contextDataFile;
+	private File questionAnswerListDataFile;
 	private ExecutorGlobalConfig executorGlobalConfig;
 	private HashMap<String, String> contextMap;
+	private DtList<QuestionAnswerExport> questionAnswerList;
 	private final List<ExecutorPlugin> plugins = new ArrayList<>();
 	private Map<String, String> mapAttachments;
 	private File attachmentDataFile;
@@ -117,6 +124,22 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 		} else {
 			contextMap = new HashMap<String, String>();
+		}
+
+		final String questionAnswerListDataFilePath = paramManager.getOptionalParam("QUESTION_ANSWER_DATA_FILE").map(Param::getValueAsString).orElse("/tmp/questionAnswerConfig");
+		questionAnswerListDataFile = new File(questionAnswerListDataFilePath);
+		if (questionAnswerListDataFile.exists() && questionAnswerListDataFile.canRead()) {
+			try {
+				final String json = FileUtils.readFileToString(questionAnswerListDataFile, StandardCharsets.UTF_8);
+				ObjectMapper mapper = new ObjectMapper();
+				List<QuestionAnswerExport> questionAnswerExports = mapper.readValue(json, new TypeReference<List<QuestionAnswerExport>>(){});
+				questionAnswerList = questionAnswerExports.stream().collect(VCollectors.toDtList(QuestionAnswerExport.class));
+			} catch (final Exception e) {
+				throw new VSystemException(e, "Error reading parameter file {0}", questionAnswerListDataFilePath);
+			}
+
+		} else {
+			questionAnswerList = new DtList<>(QuestionAnswerExport.class);
 		}
 
 		final String attachmentDataFilePath = paramManager.getOptionalParam("ATTACHMENT_DATA_FILE")
@@ -197,6 +220,10 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		return contextMap;
 	}
 
+	public DtList<QuestionAnswerExport> getQuestionAnswerList() {
+		return questionAnswerList;
+	}
+
 	public synchronized void updateMapContext(final BotExport botExport) {
 
 		try {
@@ -204,6 +231,18 @@ public class ExecutorConfigManager implements Manager, Activeable {
 			contextMap = jsonEngine.fromJson(botExport.getMapContext(), HashMap.class);
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", contextDataFile.getPath());
+		}
+	}
+
+	public synchronized void updateQuestionAnswerList(final BotExport botExport) {
+
+		try {
+			FileUtils.writeStringToFile(questionAnswerListDataFile, botExport.getQuestionAnswerList(), StandardCharsets.UTF_8);
+			ObjectMapper mapper = new ObjectMapper();
+			List<QuestionAnswerExport> questionAnswerExports = mapper.readValue(botExport.getQuestionAnswerList(), new TypeReference<List<QuestionAnswerExport>>(){});
+			questionAnswerList = questionAnswerExports.stream().collect(VCollectors.toDtList(QuestionAnswerExport.class));
+		} catch (final IOException e) {
+			throw new VSystemException(e, "Error writing parameter file {0}", questionAnswerListDataFile.getPath());
 		}
 	}
 
