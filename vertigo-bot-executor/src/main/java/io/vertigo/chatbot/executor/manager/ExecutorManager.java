@@ -154,6 +154,7 @@ public class ExecutorManager implements Manager, Activeable {
         }
 
         executorConfigManager.updateMapContext(botExport);
+        executorConfigManager.updateQuestionAnswerList(botExport);
         botManager.updateConfig(topics, logs);
 
     }
@@ -212,6 +213,10 @@ public class ExecutorManager implements Manager, Activeable {
 
     public Map<String, String> getContext() {
         return executorConfigManager.getContextMap();
+    }
+
+    public DtList<QuestionAnswerExport> getQuestionAnswerList() {
+        return executorConfigManager.getQuestionAnswerList();
     }
 
     public String getWelcomeTourTechnicalCode(final String welcomeTourLabel) {
