@@ -41,6 +41,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		JiraSettingExport(io.vertigo.chatbot.commons.domain.JiraSettingExport.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
+		/** Objet de données QuestionAnswerExport. */
+		QuestionAnswerExport(io.vertigo.chatbot.commons.domain.QuestionAnswerExport.class),
 		/** Objet de données RasaConfig. */
 		RasaConfig(io.vertigo.chatbot.executor.domain.RasaConfig.class),
 		/** Objet de données RunnerHealthCheck. */
@@ -144,6 +146,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jiraSetting,
 		/** Propriété 'Jira fields setting'. */
 		jiraFieldSetting,
+		/** Propriété 'Questions answers List'. */
+		questionAnswerList,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -284,6 +288,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		filePath,
 		/** Propriété 'data'. */
 		fileData	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerExport.
+	 */
+	public enum QuestionAnswerExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.QuestionAnswerExport> {
+		/** Propriété 'Question'. */
+		question,
+		/** Propriété 'Answer'. */
+		answer,
+		/** Propriété 'Category'. */
+		catLabel	}
 
 	/**
 	 * Enumération des champs de RasaConfig.

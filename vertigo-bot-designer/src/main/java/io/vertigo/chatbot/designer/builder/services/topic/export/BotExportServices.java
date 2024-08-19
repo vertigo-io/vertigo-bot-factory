@@ -23,6 +23,7 @@ import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
 import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
+import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -55,6 +56,9 @@ public class BotExportServices implements Component {
 	private ChatbotCustomConfigServices chatbotCustomConfigServices;
 
 	@Inject
+	private QuestionAnswerServices questionAnswerServices;
+
+	@Inject
 	private FontFamilyServices fontFamilyServices;
 
 	public BotExport exportBot(final Chatbot bot, final StringBuilder logs) {
@@ -71,6 +75,7 @@ public class BotExportServices implements Component {
 		export.setRatingBT(topicExportServices.getBasicBt(bot, KindTopicEnum.RATING.name(), logs));
 		export.setMapContext(contextValueServices.exportContextValuesToMapByBot(bot, logs));
 		export.setJiraFieldSetting(jiraFieldSettingServices.exportJiraSetting(bot));
+		export.setQuestionAnswerList(questionAnswerServices.exportActiveQuestionsAnswers(bot, logs));
 		return export;
 	}
 
