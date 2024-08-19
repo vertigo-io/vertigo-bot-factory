@@ -24,6 +24,7 @@ public final class BotExport implements DtObject {
 	private io.vertigo.chatbot.commons.domain.ConfluenceSettingExport confluenceSetting;
 	private io.vertigo.chatbot.commons.domain.JiraSettingExport jiraSetting;
 	private io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> jiraFieldSetting =  new io.vertigo.datamodel.structure.model.DtList<>(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class);
+	private String questionAnswerList;
 	private String mapContext;
 	
 	/**
@@ -239,6 +240,25 @@ public final class BotExport implements DtObject {
 		io.vertigo.core.lang.Assertion.check().isNotNull(jiraFieldSetting);
 		//---
 		this.jiraFieldSetting = jiraFieldSetting;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Questions answers List'.
+	 * @return String questionAnswerList <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Questions answers List")
+	public String getQuestionAnswerList() {
+		return questionAnswerList;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Questions answers List'.
+	 * @param questionAnswerList String <b>Obligatoire</b>
+	 */
+	public void setQuestionAnswerList(final String questionAnswerList) {
+		this.questionAnswerList = questionAnswerList;
 	}
 	
 	/**
