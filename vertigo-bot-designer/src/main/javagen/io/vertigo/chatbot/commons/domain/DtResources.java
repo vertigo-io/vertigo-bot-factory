@@ -136,6 +136,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$jiraFieldSetting,
 	/**
+	 * Questions answers List.
+	 */
+	fldBotExport$questionAnswerList,
+	/**
 	 * map Context.
 	 */
 	fldBotExport$mapContext,
@@ -651,6 +655,22 @@ public enum DtResources implements MessageKey {
 	 * data.
 	 */
 	fldMediaFileInfo$fileData,
+
+	/***********************************************************
+	/** QuestionAnswerExport.
+	/***********************************************************
+	/**
+	 * Question.
+	 */
+	fldQuestionAnswerExport$question,
+	/**
+	 * Answer.
+	 */
+	fldQuestionAnswerExport$answer,
+	/**
+	 * Category.
+	 */
+	fldQuestionAnswerExport$catLabel,
 
 	/***********************************************************
 	/** RunnerHealthCheck.

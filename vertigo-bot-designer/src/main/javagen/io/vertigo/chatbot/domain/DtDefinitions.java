@@ -119,6 +119,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		QuestionAnswerCategory(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory.class),
 		/** Objet de données QuestionAnswerCategoryExport. */
 		QuestionAnswerCategoryExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategoryExport.class),
+		/** Objet de données QuestionAnswerExport. */
+		QuestionAnswerExport(io.vertigo.chatbot.commons.domain.QuestionAnswerExport.class),
 		/** Objet de données QuestionAnswerFileExport. */
 		QuestionAnswerFileExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerFileExport.class),
 		/** Objet de données QuestionAnswerIhm. */
@@ -335,6 +337,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jiraSetting,
 		/** Propriété 'Jira fields setting'. */
 		jiraFieldSetting,
+		/** Propriété 'Questions answers List'. */
+		questionAnswerList,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -1017,6 +1021,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Enabled'. */
 		isEnabled	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerExport.
+	 */
+	public enum QuestionAnswerExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.QuestionAnswerExport> {
+		/** Propriété 'Question'. */
+		question,
+		/** Propriété 'Answer'. */
+		answer,
+		/** Propriété 'Category'. */
+		catLabel	}
 
 	/**
 	 * Enumération des champs de QuestionAnswerFileExport.

@@ -13,6 +13,7 @@ create DtDefinition DtBotExport {
 	field confluenceSetting			{domain: DoDtConfluenceSettingExport 	label: "Confluence setting" 	    cardinality : "?"}
 	field jiraSetting			    {domain: DoDtJiraSettingExport 	        label: "Jira setting" 	            cardinality : "?"}
 	field jiraFieldSetting			{domain: DoDtJiraFieldSettingExport 	label: "Jira fields setting" 	    cardinality : "*"}
+	field questionAnswerList		{domain: DoText                       	label: "Questions answers List" 	cardinality : "1"}
 	field mapContext				{domain: DoText 						label: "map Context" 				cardinality : "1"}
 }
 
@@ -107,4 +108,10 @@ create DtDefinition DtChatbotCustomConfigExport {
 	field displayAvatar                     {domain: DoYesNo        label: "Display avatar"                     cardinality:"?"}
 	field totalMaxAttachmentSize            {domain: DoNumber       label: "Total maximum attachment size"      cardinality:"?"}
 	field disableNlu                        {domain: DoYesNo        label: "Disable NlU"                        cardinality:"?"}
+}
+
+create DtDefinition DtQuestionAnswerExport {
+	field question 					{domain: DoText 		        label: "Question" 		cardinality : "1"}
+	field answer		            {domain: DoText					label: "Answer" 		cardinality : "1"}
+    field catLabel			        {domain: DoLabel 				label: "Category" 	    cardinality : "1"}
 }

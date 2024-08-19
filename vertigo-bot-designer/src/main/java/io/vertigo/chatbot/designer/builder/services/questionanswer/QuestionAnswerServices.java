@@ -4,9 +4,7 @@ import org.jsoup.Jsoup;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,31 +12,23 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
+import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.questionanswer.QuestionAnswerDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.QuestionAnswerExport;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer;
-import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory;
-import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerExport;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm;
-import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.chatbot.commons.multilingual.questionAnswer.QuestionAnswerMultilingualResources;
 import io.vertigo.chatbot.designer.builder.questionAnswer.QuestionAnswerPAO;
-import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
+import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
-import io.vertigo.datastore.filestore.model.FileInfoURI;
-import io.vertigo.datastore.filestore.model.VFile;
-import io.vertigo.quarto.exporter.ExporterManager;
-import io.vertigo.quarto.exporter.model.Export;
-import io.vertigo.quarto.exporter.model.ExportBuilder;
-import io.vertigo.quarto.exporter.model.ExportFormat;
+import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 import static java.lang.Long.parseLong;
@@ -52,6 +42,13 @@ public class QuestionAnswerServices implements Component {
 
     @Inject
     private QuestionAnswerPAO questionAnswerPAO;
+
+    @Inject
+    private ExportPAO exportPAO;
+
+    @Inject
+    JsonEngine jsonEngine;
+
 
 
     public DtList<QuestionAnswer> getAllQueAnsByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
@@ -160,5 +157,12 @@ public class QuestionAnswerServices implements Component {
         questionAnswer.setBotId(bot.getBotId());
         questionAnswer.setCode(questionAnswerIhm.getCode());
         return questionAnswerDAO.save(questionAnswer);
+    }
+
+    public String exportActiveQuestionsAnswers( final Chatbot bot, final StringBuilder logs) {
+        LogsUtils.addLogs(logs, " Questions/Answers export...");
+        DtList<QuestionAnswerExport> questionAnswerExports = exportPAO.getAllActiveQuestionAnswerExportByBotId(bot.getBotId());
+        LogsUtils.logOK(logs);
+        return jsonEngine.toJson(questionAnswerExports);
     }
 }
