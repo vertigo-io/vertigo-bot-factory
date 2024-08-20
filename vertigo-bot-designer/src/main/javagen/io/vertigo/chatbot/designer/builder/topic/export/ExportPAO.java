@@ -165,6 +165,7 @@ public final class ExportPAO implements StoreServices {
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetAllActiveQuestionAnswerExportByBotId",
 			request = "SELECT  qa.question,\n" + 
+ " 			        qa.answer,\n" + 
  "                     qac.label as cat_label\n" + 
  " 			from question_answer qa\n" + 
  "             join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)\n" + 
