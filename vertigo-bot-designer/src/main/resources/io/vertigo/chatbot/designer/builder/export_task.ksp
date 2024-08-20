@@ -97,6 +97,7 @@ create Task TkGetAllActiveQuestionAnswerExportByBotId {
     className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
 			SELECT  qa.question,
+			        qa.answer,
                     qac.label as cat_label
 			from question_answer qa
             join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)
