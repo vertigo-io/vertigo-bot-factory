@@ -132,7 +132,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 			try {
 				final String json = FileUtils.readFileToString(questionAnswerListDataFile, StandardCharsets.UTF_8);
 				ObjectMapper mapper = new ObjectMapper();
-				List<QuestionAnswerExport> questionAnswerExports = mapper.readValue(json, new TypeReference<List<QuestionAnswerExport>>(){});
+				List<QuestionAnswerExport> questionAnswerExports = mapper.readValue(json, new TypeReference<>(){});
 				questionAnswerList = questionAnswerExports.stream().collect(VCollectors.toDtList(QuestionAnswerExport.class));
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", questionAnswerListDataFilePath);
