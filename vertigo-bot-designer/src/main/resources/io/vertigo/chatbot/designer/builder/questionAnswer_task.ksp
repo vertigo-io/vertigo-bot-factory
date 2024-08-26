@@ -13,13 +13,8 @@ create Task TkGetAllQuestionAnswerIhmFromBot {
 			from question_answer qa
 			join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)
 			where qa.bot_id = #botId#
-			group by qa.qa_id,
-                    qa.question,
-                    qa.answer,
-                    qa.is_enabled,
-                    qa.code,
-                    qac.qa_cat_id,
-                    qac.label
+			order by qac.label,
+                    qa.question
              "
 
 	in botId  				{domain : DoId         		        cardinality : "1"  }
@@ -38,13 +33,6 @@ create Task TkGetQuestionAnswerIhmById {
 			from question_answer qa
             join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)
 			where qa.qa_id = #qaId#
-			group by qa.qa_id,
-                    qa.question,
-                    qa.answer,
-                    qa.is_enabled,
-                    qa.code,
-                    qac.qa_cat_id,
-                    qac.label
 
 			LIMIT 1
              "
