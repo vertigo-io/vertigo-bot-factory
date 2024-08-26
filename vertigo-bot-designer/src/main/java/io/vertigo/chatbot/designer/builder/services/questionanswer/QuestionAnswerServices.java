@@ -75,19 +75,19 @@ public class QuestionAnswerServices implements Component {
     }
 
     public DtList<QuestionAnswerIhm> getAllQueAnsIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-        return sortQueAnsIhmByCat(bot,questionAnswerPAO.getAllQuestionAnswerIhmFromBot(bot.getBotId()));
+        return questionAnswerPAO.getAllQuestionAnswerIhmFromBot(bot.getBotId());
     }
 
 
     public DtList<QuestionAnswerIhm> getAllParsedQueAnsIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-        DtList<QuestionAnswerIhm> questionAnswerIhmList = sortQueAnsIhmByCat(bot,questionAnswerPAO.getAllQuestionAnswerIhmFromBot(bot.getBotId()));
+        DtList<QuestionAnswerIhm> questionAnswerIhmList = questionAnswerPAO.getAllQuestionAnswerIhmFromBot(bot.getBotId());
         return parseQuestionAnswer(bot, questionAnswerIhmList);
     }
 
     public DtList<QuestionAnswerIhm> getAllQueAnsIhmByBotIdExceptACategory(final Chatbot bot, final Long categoryId) {
         DtList<QuestionAnswerIhm> allQueAnsIhm = getAllQueAnsIhmByBot(bot);
         DtList<QuestionAnswerIhm> filteredQueAnsIhmList = allQueAnsIhm.stream().filter(queAnsIhm -> !queAnsIhm.getCatId().equals(categoryId)).collect(VCollectors.toDtList(QuestionAnswerIhm.class));
-        return sortQueAnsIhmByCat(bot,parseQuestionAnswer(bot, filteredQueAnsIhmList));
+        return parseQuestionAnswer(bot, filteredQueAnsIhmList);
     }
 
     public QuestionAnswer getQueAnsById(@SecuredOperation("botVisitor") final Chatbot bot , final Long questionAnswerId) {
@@ -134,13 +134,6 @@ public class QuestionAnswerServices implements Component {
     public void saveQueAnsCategoryChangesFromTopIdsString(@SecuredOperation("botContributor") final Chatbot bot, String queAnsIdsString, final Long queAnsCategoryId) {
         List<String> queAnsIdList = Arrays.asList(queAnsIdsString.split(","));
         queAnsIdList.forEach(queAnsId -> saveCategoryChange(bot, parseLong(queAnsId), queAnsCategoryId));
-    }
-
-    public DtList<QuestionAnswerIhm> sortQueAnsIhmByCat(@SecuredOperation("botVisitor") final Chatbot bot, final DtList<QuestionAnswerIhm> questionAnswerIhmList) {
-        return questionAnswerIhmList.stream()
-                .sorted(Comparator.comparing(QuestionAnswerIhm::getCatId)
-                        .thenComparing(QuestionAnswerIhm::getQuestion))
-                .collect(VCollectors.toDtList(QuestionAnswerIhm.class));
     }
 
     public QuestionAnswerIhm getNewQueAns(@SecuredOperation("botContributor") final Chatbot bot) {

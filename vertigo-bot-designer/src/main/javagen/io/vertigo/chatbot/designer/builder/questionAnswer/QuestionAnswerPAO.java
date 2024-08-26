@@ -57,13 +57,8 @@ public final class QuestionAnswerPAO implements StoreServices {
  " 			from question_answer qa\n" + 
  " 			join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)\n" + 
  " 			where qa.bot_id = #botId#\n" + 
- " 			group by qa.qa_id,\n" + 
- "                     qa.question,\n" + 
- "                     qa.answer,\n" + 
- "                     qa.is_enabled,\n" + 
- "                     qa.code,\n" + 
- "                     qac.qa_cat_id,\n" + 
- "                     qac.label",
+ " 			order by qac.label,\n" + 
+ "                     qa.question",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtQuestionAnswerIhm", name = "questionanswerIHM")
 	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm> getAllQuestionAnswerIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
@@ -92,13 +87,6 @@ public final class QuestionAnswerPAO implements StoreServices {
  " 			from question_answer qa\n" + 
  "             join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)\n" + 
  " 			where qa.qa_id = #qaId#\n" + 
- " 			group by qa.qa_id,\n" + 
- "                     qa.question,\n" + 
- "                     qa.answer,\n" + 
- "                     qa.is_enabled,\n" + 
- "                     qa.code,\n" + 
- "                     qac.qa_cat_id,\n" + 
- "                     qac.label\n" + 
  " \n" + 
  " 			LIMIT 1",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
