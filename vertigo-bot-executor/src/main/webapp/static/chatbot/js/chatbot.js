@@ -12,12 +12,14 @@ const getUrlVars = function () {
     return vars;
 };
 
+
 const urlVars = getUrlVars();
 const _botRunnerUrl = urlVars['runnerUrl'];
 const _botName = decodeURI(urlVars['botName']);
 const _avatar = _botRunnerUrl + '/static/chatbot/images/avatar/avatar.png';
 
 const _botBaseUrl = _botRunnerUrl + '/api/chatbot';
+const _qAndABaseUrl = _botRunnerUrl + '/api/qanda';
 
 const scanContextKeys = (context) => new Promise((res, rej) => {
     const channel = new MessageChannel();
@@ -38,6 +40,7 @@ window.addEventListener(
     function (event) {
         if (event.data === 'start') {
             chatbot.initBot();
+            chatbot.initQAndA()
         }
         if (event.data.sendTopic) {
             const button = chatbot.inputConfig.buttons.find((button) => button.payload === event.data.sendTopic.topic)
@@ -48,7 +51,7 @@ window.addEventListener(
         if (event.data === 'clearSessionStorage') {
             sessionStorage.clear();
         } else if (event.data === 'refresh') {
-            chatbot.refresh()
+            chatbot.refreshBot()
         } else if (event.data === 'conversationExist') {
             parent.postMessage({conversationExist: sessionStorage.convId !== undefined}, '*');
         }
@@ -101,7 +104,7 @@ const chatbot = new Vue({
             },
             isEnded: false,
 
-
+            tab: 'bot',
             prevInputConfig: {},
             lastPayload: null,
             processing: false,
@@ -115,7 +118,14 @@ const chatbot = new Vue({
             lastUserInteraction: 0,
             watingMessagesStack: [],
             context: {},
-            contextMap: {}
+            contextMap: {},
+
+            qAndAConfig: {
+                qAndAUrl : _qAndABaseUrl,
+                questionAnswerList: [],
+                filteredQuestionAnswerList:[],
+                filterInput : ''
+            }
         },
         methods: {
 
@@ -303,7 +313,7 @@ const chatbot = new Vue({
             _handleResponse(httpResponse, isRating) {
                 // success
                 if (httpResponse.data.metadatas.sessionId && chatbot.convId !== httpResponse.data.metadatas.sessionId) {
-                    chatbot.refresh(true);
+                    chatbot.refreshBot(true);
                     chatbot.setParametersFromHttpResponse(httpResponse);
 
                 } else {
@@ -432,7 +442,7 @@ const chatbot = new Vue({
             minimize() {
                 parent.postMessage('Chatbot.minimize', '*');
             },
-            refresh(isAnotherConversation) {
+            refreshBot(isAnotherConversation) {
                 chatbot.inputConfig = {
                     modeTextarea: false,
                     responseText: '',
@@ -456,9 +466,34 @@ const chatbot = new Vue({
                     chatbot.initBot();
                 }
             },
+
+            refresh(){
+                if(chatbot.tab === 'qAndA'){
+                    chatbot.initQAndA()
+                }else{
+                    chatbot.refreshBot()
+
+                }
+            },
             // Function to complete to switch to another bot
             changeLocal(locale) {
                 //todo : change url bot to simulate language change
+            },
+
+            initQAndA(){
+                this.$http.get(chatbot.qAndAConfig.qAndAUrl + '/getQuestionsAnswers').then(questionAnswerResponse => {
+                    chatbot.qAndAConfig.questionAnswerList = questionAnswerResponse.data;
+                    chatbot.qAndAConfig.filteredQuestionAnswerList = questionAnswerResponse.data;
+                    chatbot.qAndAConfig.filterInput = '';
+                });
+            },
+
+            filterQuestionsAnswers(){
+                if (chatbot.qAndAConfig.filterInput !== ''){
+                    chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList.filter(questionAnswer => questionAnswer.question.toLowerCase().includes(chatbot.qAndAConfig.filterInput) || questionAnswer.answer.toLowerCase().includes(chatbot.qAndAConfig.filterInput))
+                }else{
+                    chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList
+                }
             }
         }
     })

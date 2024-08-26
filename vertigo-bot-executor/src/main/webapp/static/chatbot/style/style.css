@@ -13,14 +13,20 @@
 
 .bg-primary {
     font-family: var(--font-family) !important;
+    background-color: var(--background-color) !important;
+    color: var(--font-color) !important;
 }
 
 body {
     color: black;
 }
 
-main, footer {
+main {
     padding: 8px;
+}
+
+footer {
+    padding: 0;
 }
 
 #page {
@@ -174,6 +180,7 @@ img {
     color: black !important;
     background-color: transparent !important;
     box-shadow: none !important;
+    border-radius: 20px;
 }
 .btn-send:hover{
     color: var(--font-color) !important;
@@ -193,6 +200,13 @@ img {
 
 .custom-input {
     border-bottom: 0px solid !important;
+}
+
+.custom-input-container {
+    padding-left: 12px;
+    margin : 10px 18px 18px 18px;
+    border-radius: 20px;
+    box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.25);
 }
 
 /* quasar style for q-input without bottom border*/
@@ -215,9 +229,6 @@ img {
 .q-layout-footer{
     webkit-box-shadow: none !important;
     box-shadow: none !important;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    padding-top: 12px;
 }
 
 /*block msg*/
@@ -225,4 +236,27 @@ img {
 
 .q-message-text:last-child:before{
     border: 0px !important;
+}
+
+/* Q&A */
+
+.q-collapsible-question, .q-collapsible-answer{
+    padding: 6px 15px;
+    border-radius: 5px;
+    box-shadow: 10px 10px 10px 0 rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+}
+.q-collapsible-question {
+    background-color: var(--bot-message-bg-color) !important;
+    color: var(--bot-message-font-color) !important;
+    margin-top: 12px;
+}
+
+.q-collapsible-answer {
+    background-color: white !important;
+    border: solid 2px var(--bot-message-bg-color);
+}
+
+.q-collapsible-sub-item {
+    padding : 0 !important;
 }
