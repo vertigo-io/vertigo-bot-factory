@@ -121,6 +121,8 @@ footer {
     padding: 8px 0px;
     font-family: var(--font-family) !important;
     background: var(--background-color) !important;
+    box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+
 }
 
 .custom-header .title, .custom-header .q-btn {
@@ -168,6 +170,7 @@ img {
 .q-layout-header{
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
+    box-shadow: none;
 }
 
 .q-layout-page-container{
@@ -202,13 +205,19 @@ img {
     border-bottom: 0px solid !important;
 }
 
-.custom-input-container {
+.custom-input-footer-container, .custom-input-header-container{
     position: relative;
     z-index: 1;
     padding-left: 12px;
-    margin : 0 18px 12px 18px;
     border-radius: 20px;
     box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.25);
+}
+.custom-input-footer-container {
+    margin : 0 18px 12px 18px;
+}
+
+.custom-input-header-container {
+    margin : 16px 18px -15px 18px;
 }
 
 /* quasar style for q-input without bottom border*/
@@ -263,10 +272,10 @@ img {
     padding : 6px 0 6px 0 !important;
 }
 
-.q-tabs-footer {
+.q-tabs {
     box-shadow: 0 -1px 3px 1px rgba(0, 0, 0, 0.15);
 }
 
 .q-tabs-container {
-    box-shadow: 0 -40px 30px 10px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 -20px 30px 10px rgba(0, 0, 0, 0.20);
 }
