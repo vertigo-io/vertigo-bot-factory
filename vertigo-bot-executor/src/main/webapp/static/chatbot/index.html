@@ -30,34 +30,47 @@
                       + '; --user-message-bg-color: ' + customConfig.userMessageBackgroundColor
                       + '; --user-message-font-color: ' + customConfig.userMessageFontColor + ';'">
       <q-layout view="hHh lpr fFf">
-        <q-layout-header class="custom-header row items-center non-selectable">
-
-          <div class="title col-grow q-ml-md">
-            {{ botName }}
+        <q-layout-header class="bg-white">
+          <div class="custom-header row items-center non-selectable">
+            <div class="title col-grow q-ml-md">
+              {{ botName }}
+            </div>
+            <!--<q-btn-dropdown color="primary" icon="language">
+              <q-list style="text-align: center; padding: 0">
+                <q-btn class="btn-custom-localize" @click="changeLocal('fr_FR')" v-text="'FR'"></q-btn>
+                <q-btn class="btn-custom-localize" @click="changeLocal('en_US')" v-text="'EN'"></q-btn>
+              </q-list>
+            </q-btn-dropdown>-->
+            <q-btn round
+                   class="btn-rotate"
+                   flat
+                   v-if="customConfig.reinitializationButton"
+                   color="white"
+                   text-color="white"
+                   size="md"
+                   @click="refresh()"
+                   icon="refresh"></q-btn>
+            <q-btn round
+                   class="btn-rotate"
+                   flat
+                   color="white"
+                   text-color="white"
+                   size="md"
+                   @click="minimize()"
+                   icon="close"></q-btn>
           </div>
-          <!--<q-btn-dropdown color="primary" icon="language">
-            <q-list style="text-align: center; padding: 0">
-              <q-btn class="btn-custom-localize" @click="changeLocal('fr_FR')" v-text="'FR'"></q-btn>
-              <q-btn class="btn-custom-localize" @click="changeLocal('en_US')" v-text="'EN'"></q-btn>
-            </q-list>
-          </q-btn-dropdown>-->
-          <q-btn round
-                 class="btn-rotate"
-                 flat
-                 v-if="customConfig.reinitializationButton"
-                 color="white"
-                 text-color="white"
-                 size="md"
-                 @click="refresh()"
-                 icon="refresh"></q-btn>
-          <q-btn round
-                 class="btn-rotate"
-                 flat
-                 color="white"
-                 text-color="white"
-                 size="md"
-                 @click="minimize()"
-                 icon="close"></q-btn>
+
+          <div class="row non-selectable custom-input-header-container bg-grey-3" v-if="tab === 'qAndA'">
+            <div class="col-grow">
+              <q-input v-model="qAndAConfig.filterInput"
+                       ref="input"
+                       class="q-px-sm round-borders custom-input"
+                       :max-height="100"
+                       placeholder="Rechercher..."
+                       :loading="processing"
+                       @input="filterQuestionsAnswers()"></q-input>
+            </div>
+          </div>
         </q-layout-header>
         <q-page-container>
           <div id="loading"
@@ -189,18 +202,9 @@
                 </div>
               </q-scroll-area>
             </div>
-            <div v-if="tab === 'qAndA'" class="q-mx-md q-mt-md">
-              <div class="row non-selectable custom-input-container bg-grey-3">
-                <div class="col-grow">
-                  <q-input v-model="qAndAConfig.filterInput"
-                           ref="input"
-                           class="q-px-sm round-borders custom-input"
-                           :max-height="100"
-                           placeholder="Rechercher..."
-                           :loading="processing"
-                           @input="filterQuestionsAnswers()"></q-input>
-                </div>
-              </div>
+
+
+            <div v-if="tab === 'qAndA'" class="q-mx-md q-mt-sm">
               <div class="q-pt-sm">
                   <q-collapsible v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
                                  :label="questionAnswer.question"
@@ -214,7 +218,7 @@
           </q-page>
         </q-page-container>
         <q-layout-footer v-if="!customConfig.disableNlu" >
-          <div v-if="tab==='bot'" class="row non-selectable custom-input-container bg-grey-3">
+          <div v-if="tab==='bot'" class="row non-selectable custom-input-footer-container bg-grey-3">
             <div class="col-grow">
               <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
                        ref="input"
@@ -241,11 +245,12 @@
                    v-if="devMode === true && false"
                    icon="refresh"></q-btn>
           </div>
-          <div class="q-tabs-container">
+          <div :class="{'q-tabs-container' : tab==='bot'}">
           <q-tabs v-model="tab"
                   align="justify"
                   text-color="black"
-                  class="q-tabs-footer"
+                  class="q-tabs"
+                  @input="tabChange()"
           >
             <q-tab name="bot" slot="title" icon="smart_toy"></q-tab>
             <q-tab name="qAndA" slot="title" icon="question_answer"></q-tab>
