@@ -210,6 +210,7 @@
               </div>
             </div>
 
+
           </q-page>
         </q-page-container>
         <q-layout-footer v-if="!customConfig.disableNlu" >
@@ -240,15 +241,16 @@
                    v-if="devMode === true && false"
                    icon="refresh"></q-btn>
           </div>
-
+          <div class="q-tabs-container">
           <q-tabs v-model="tab"
                   align="justify"
                   text-color="black"
+                  class="q-tabs-footer"
           >
             <q-tab name="bot" slot="title" icon="smart_toy"></q-tab>
             <q-tab name="qAndA" slot="title" icon="question_answer"></q-tab>
           </q-tabs>
-
+          </div>
         </q-layout-footer>
       </q-layout>
     </div>
