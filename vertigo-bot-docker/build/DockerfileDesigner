@@ -8,7 +8,6 @@ RUN useradd -m tomcat \
 
 # Add binaries
 COPY --chown=tomcat Designer/setenv.sh /usr/local/tomcat/bin/
-COPY --chown=tomcat Designer/keycloak.json /opt/keycloak/keycloak.json
 COPY --chown=tomcat Designer/context.xml /usr/local/tomcat/conf/Catalina/localhost/designer.xml.ref
 COPY --chown=tomcat Designer/vertigo-bot-designer-$VERSION.war /usr/local/tomcat/war/designer.war
 
@@ -30,13 +29,14 @@ ENV INFLUXDB_READ_TIMEOUT 30
 ENV RUNNER_REQUEST_TIMEOUT 120
 ENV ANALYTICA_DBNAME chatbot
 ENV DEPLOY_PATH ROOT
-ENV KEYCLOAK_CONFIG /opt/keycloak/keycloak.json
+ENV KEYCLOAK_URL http://localhost:8200
+ENV KEYCLOAK_CLIENT_NAME chatbot
 ENV VERSION $VERSION
 ENV USE_SSL true
 ENV FILE_STORE_PATH /opt/attachments/
 ENV CLAMAV_HOST localhost
 ENV CLAMAV_PORT 3310
-ENV EXTENSIONS_WHITELIST png,jpg,jpeg,pdf
+ENV EXTENSIONS_WHITELIST png,jpg,jpeg,pdf,docx,xlsx
 ENV ENCRYPTION_PASSWORD testchatbot12345
 ENV MAIL_NAME MyEmailServer
 ENV MAIL_PROTOCOL smtp

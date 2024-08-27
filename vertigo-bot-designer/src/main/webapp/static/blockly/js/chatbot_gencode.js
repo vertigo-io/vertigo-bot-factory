@@ -305,7 +305,11 @@ Blockly.BotScript['cb_card'] = function(block) {
 // *****************************
 Blockly.BotScript['cb_confluencesearch'] = function(block) {
 	let params = getBlockParams(block);
-	return 'confluence:search' + formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+ formatString(params[3].getValue())+ params[4].getValue()+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+	return 'confluence:search' + formatVariable(params[0].getValue(), params[1].getValue()) +  formatString(params[2].getValue())+ formatString(params[3].getValue())+ formatString(params[4].getValue())+ params[5].getValue()+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
+}
+Blockly.BotScript['cb_confluencesearchauto'] = function(block) {
+	let params = getBlockParams(block);
+	return 'confluence:search:auto' + formatString(params[0].getValue())+ formatString(params[1].getValue())+ params[2].getValue()+ formatString(params[3].getValue())+'\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 }
 
 // *****************************

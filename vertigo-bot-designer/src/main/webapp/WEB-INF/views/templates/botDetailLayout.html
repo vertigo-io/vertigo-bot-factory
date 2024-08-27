@@ -108,7 +108,7 @@
 			<span class="text-weight-bold">{{vueData.training.endTime}}</span>
 		</span>
 	</div>
-	<div layout:fragment="content-header-actions" id="headerActions" class="items-center">
+	<div th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" layout:fragment="content-header-actions" id="headerActions" class="items-center">
 		<vu:popup action="delete" vModel="showPopup" th:message="#{bot.popup.message}" th:confirm="#{bot.delete}"></vu:popup>
 		<vu:include-data object="trainerState" field="'*'"/>
 		<q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train"></q-btn>
@@ -164,13 +164,22 @@
 			<q-item-section avatar>
 				<q-icon color="primary" name="settings"/>
 			</q-item-section>
-			<q-item-section th:text="#{layout.configuration}"></q-item-section>
+			<q-item-section th:text="#{layout.general.settings}"></q-item-section>
 		</q-item>
 		<q-item tag="a" th::active="${tab == 'informations'}" active-class="active" th:href="@{/bot/{id}(id=${model.bot.botId})}" th:text="#{layout.information}"></q-item>
+		<q-item tag="a" th::active="${tab == 'context'}" active-class="active" th:href="@{/bot/{id}/contextList/(id=${model.bot.botId})}" th:text="#{layout.context}"></q-item>
+
+		<q-separator></q-separator>
+
+		<q-item header class="item-icon">
+			<q-item-section avatar>
+				<q-icon color="primary" name="smart_toy"/>
+			</q-item-section>
+			<q-item-section th:text="#{layout.bot.settings}"></q-item-section>
+		</q-item>
 		<q-item tag="a" th::active="${tab == 'categories'}" active-class="active" th:href="@{/bot/{id}/categories/(id=${model.bot.botId})}" th:text="#{layout.category}"></q-item>
 		<q-item tag="a" th::active="${tab == 'topics'}" active-class="active" th:href="@{/bot/{id}/topics/(id=${model.bot.botId})}" th:text="#{layout.topics}"></q-item>
 		<q-item tag="a" th::active="${tab == 'dictionary'}" active-class="active" th:href="@{/bot/{id}/dictionary/(id=${model.bot.botId})}" th:text="#{layout.dictionary}"></q-item>
-		<q-item tag="a" th::active="${tab == 'context'}" active-class="active" th:href="@{/bot/{id}/contextList/(id=${model.bot.botId})}" th:text="#{layout.context}"></q-item>
 		<q-item tag="a" th::active="${tab == 'attachments'}" active-class="active" th:href="@{/bot/{id}/attachments/(id=${model.bot.botId})}" th:text="#{layout.attachment}"></q-item>
 		<q-item tag="a" th::active="${tab == 'followup'}" active-class="active" th:href="@{/bot/{id}/followup/(id=${model.bot.botId})}" >
 			<div th:text="#{layout.followup}" class="q-mr-md">
@@ -206,7 +215,7 @@
 				<q-icon color="primary" name="group" />
 			</q-item-section>
 			<q-item-section>
-				<span th:text="#{layout.profil}" class="text-dark"></span>
+				<span th:text="#{layout.usersAndRoles}" class="text-dark"></span>
 			</q-item-section>
 		</q-item>
 		<q-separator></q-separator>

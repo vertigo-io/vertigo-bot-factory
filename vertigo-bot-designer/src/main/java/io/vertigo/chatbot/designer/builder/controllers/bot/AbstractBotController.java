@@ -8,7 +8,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -40,7 +42,7 @@ import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.export.file.TopicFileExportServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm;
 import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
 import io.vertigo.chatbot.designer.domain.topic.export.TypeBotExport;
@@ -94,7 +96,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	protected TopicCategoryServices topicCategoryServices;
 
 	@Inject
-	protected FileServices fileServices;
+	protected DesignerFileServices designerFileServices;
 
 	@Inject
 	protected ContextEnvironmentServices contextEnvironmentServices;
@@ -212,31 +214,31 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 		if (typeBotExportList.getTbeCd().isEmpty()) {
 			throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
 		}
-		final List<VFile> fileList = new ArrayList<>();
+		final Map<String, VFile> fileMap = new HashMap<>();
 		typeBotExportList.getTbeCd().forEach(typeBotExport -> {
 			switch (typeBotExport) {
 				case "CATEGORIES":
 					final DtList<TopicCategory> topicCategories = topicCategoryServices.getAllNonTechnicalCategoriesByBot(bot);
-					fileList.add(topicCategoryServices.exportCategories(bot, topicCategories));
+					fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_CATEGORIES).getDisplay(), topicCategoryServices.exportCategories(bot, topicCategories));
 					break;
 				case "TOPICS":
 					final DtList<TopicFileExport> listTopics = topicFileExportServices.getTopicFileExport(bot.getBotId(),
 							categoryServices.getAllCategoriesByBot(bot).stream().map(TopicCategory::getTopCatId).collect(Collectors.toList()));
-					fileList.add(topicFileExportServices.exportTopicFile(bot, listTopics));
+					fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_TOPICS).getDisplay(), topicFileExportServices.exportTopicFile(bot, listTopics));
 					break;
 				case "DICTIONARY":
 					final DtList<DictionaryEntityWrapper> listDictionaryEntitiesToExport = dictionaryEntityServices.getDictionaryExportByBotId(bot.getBotId(), "|");
-					fileList.add(dictionaryEntityServices.exportDictionary(bot, listDictionaryEntitiesToExport));
+					fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_DICTIONARY).getDisplay(), dictionaryEntityServices.exportDictionary(bot, listDictionaryEntitiesToExport));
 					break;
 				default:
 					throw new VUserException(ExportMultilingualResources.MANDATORY_TYPE_BOT_EXPORT);
 			}
 		});
-		if (fileList.size() == 1) {
-			return fileList.get(0);
+		if (fileMap.size() == 1) {
+			return fileMap.values().iterator().next();
 		} else {
 			final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			return fileServices.zipMultipleFiles(fileList,
+			return designerFileServices.zipMultipleFiles(fileMap,
 					MessageText.of(BotMultilingualResources.EXPORT_ZIP_FILENAME, bot.getName(), dateFormat.format(new Date())).getDisplay());
 		}
 

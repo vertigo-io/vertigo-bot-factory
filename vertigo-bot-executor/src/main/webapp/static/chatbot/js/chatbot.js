@@ -25,7 +25,7 @@ const scanContextKeys = (context) => new Promise((res, rej) => {
         channel.port1.close();
         if (data.error) {
             rej(data.error);
-        }else {
+        } else {
             res(data.result);
         }
     };
@@ -50,18 +50,18 @@ window.addEventListener(
         } else if (event.data === 'refresh') {
             chatbot.refresh()
         } else if (event.data === 'conversationExist') {
-            parent.postMessage({conversationExist : sessionStorage.convId !== undefined }, '*');
+            parent.postMessage({conversationExist: sessionStorage.convId !== undefined}, '*');
         }
-});
+    });
 
 const chatbot = new Vue({
         el: '#q-app',
         updated() {
             const images = document.getElementsByClassName('imgClass');
-            for(let i=0; i<images.length; i++){
-                images[i].addEventListener('click', function(e){
+            for (let i = 0; i < images.length; i++) {
+                images[i].addEventListener('click', function (e) {
                     parent.postMessage({pictureModal: this.src}, '*');
-                },false);
+                }, false);
             }
             if (!chatbot.$refs.input.disable) {
                 this.focusInput()
@@ -119,7 +119,7 @@ const chatbot = new Vue({
         },
         methods: {
 
-            initBot: function() {
+            initBot: function () {
                 document.getElementById('page').style.visibility = 'visible';
                 document.getElementById('loading').style.display = 'none';
                 if (sessionStorage.contextMap) {
@@ -149,43 +149,47 @@ const chatbot = new Vue({
             clearSessionStorage() {
                 sessionStorage.clear();
             },
+
+            setParametersFromHttpResponse(httpResponse) {
+                chatbot.convId = httpResponse.data.metadatas.sessionId;
+                chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
+                chatbot.customConfig.backgroundColor = httpResponse.data.metadatas.customConfig.backgroundColor;
+                chatbot.customConfig.fontColor = httpResponse.data.metadatas.customConfig.fontColor;
+                chatbot.customConfig.botMessageBackgroundColor = httpResponse.data.metadatas.customConfig.botMessageBackgroundColor;
+                chatbot.customConfig.botMessageFontColor = httpResponse.data.metadatas.customConfig.botMessageFontColor;
+                chatbot.customConfig.userMessageBackgroundColor = httpResponse.data.metadatas.customConfig.userMessageBackgroundColor;
+                chatbot.customConfig.userMessageFontColor = httpResponse.data.metadatas.customConfig.userMessageFontColor;
+                chatbot.customConfig.fontFamily = httpResponse.data.metadatas.customConfig.fontFamily;
+                chatbot.customConfig.displayAvatar = httpResponse.data.metadatas.customConfig.displayAvatar;
+                chatbot.customConfig.disableNlu = httpResponse.data.metadatas.customConfig.disableNlu;
+                chatbot.updateSessionStorage();
+                chatbot._handleResponse(httpResponse, false);
+            },
+
             startConversation() {
                 chatbot.lastUserInteraction = Date.now();
-                const urlPage =  window.location.href;
+                const urlPage = window.location.href;
                 scanContextKeys(new Map(Object.entries(chatbot.contextMap))).then(value => {
                     chatbot.context = value;
-                    if(chatbot.context['url'] === undefined) {
-                        chatbot.context['url'] =  urlPage;
+                    if (chatbot.context['url'] === undefined) {
+                        chatbot.context['url'] = urlPage;
                     }
                     if (sessionStorage.convId) {
                         chatbot.restoreFromSessionStorage();
                         chatbot._scrollToBottom();
                     } else {
-
                         this.$http.post(chatbot.botUrl + '/start', {message: null, metadatas: {'context': chatbot.context}})
-                            .then(httpResponse => {
-                                chatbot.convId = httpResponse.data.metadatas.sessionId;
-                                chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
-                                chatbot.customConfig.backgroundColor = httpResponse.data.metadatas.customConfig.backgroundColor;
-                                chatbot.customConfig.fontColor = httpResponse.data.metadatas.customConfig.fontColor;
-                                chatbot.customConfig.botMessageBackgroundColor = httpResponse.data.metadatas.customConfig.botMessageBackgroundColor;
-                                chatbot.customConfig.botMessageFontColor = httpResponse.data.metadatas.customConfig.botMessageFontColor;
-                                chatbot.customConfig.userMessageBackgroundColor = httpResponse.data.metadatas.customConfig.userMessageBackgroundColor;
-                                chatbot.customConfig.userMessageFontColor = httpResponse.data.metadatas.customConfig.userMessageFontColor;
-                                chatbot.customConfig.fontFamily = httpResponse.data.metadatas.customConfig.fontFamily;
-                                chatbot.customConfig.displayAvatar = httpResponse.data.metadatas.customConfig.displayAvatar;
-                                chatbot.customConfig.disableNlu = httpResponse.data.metadatas.customConfig.disableNlu;
-                                chatbot.updateSessionStorage();
-                                chatbot._handleResponse(httpResponse, false);
-                            }).catch(() => {
-                            // error
-                            chatbot.error = true;
-                            chatbot.processing = false;
-                            chatbot._scrollToBottom();
-                        });
+                            .then(chatbot.setParametersFromHttpResponse)
+                            .catch(() => {
+                                // error
+                                chatbot.error = true;
+                                chatbot.processing = false;
+                                chatbot._scrollToBottom();
+                            });
                     }
                 });
             },
+
             postAnswerBtn(btn) {
                 chatbot.messages.push({
                     text: [DOMPurify.sanitize(btn.label)],
@@ -210,14 +214,14 @@ const chatbot = new Vue({
                     link.click();
                     document.body.removeChild(link);
                 }
-                chatbot.askBot(btn.payload, btn.label, true, null,null, chatbot.rating);
+                chatbot.askBot(btn.payload, btn.label, true, null, null, chatbot.rating);
             },
             fileUpload(btn, index) {
                 const file = document.getElementById('file_' + index).files[0];
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = function (evt) {
-                    chatbot.askBot(btn.payload, null,false, evt.target.result, file.name, false);
+                    chatbot.askBot(btn.payload, null, false, evt.target.result, file.name, false);
                 };
             }
             ,
@@ -233,6 +237,7 @@ const chatbot = new Vue({
                         bgColor: 'primary',
                         textColor: 'white'
                     });
+
                 } else {
                     sanitizedString = DOMPurify.sanitize(chatbot.inputConfig.responseText.trim()
                         .replace(/(?:\r\n|\r|\n)/g, '<br>'));
@@ -266,11 +271,14 @@ const chatbot = new Vue({
                 chatbot.lastUserInteraction = Date.now();
                 let botInput;
                 if (fileContent) {
-                    botInput = { message: null, metadatas: { context: chatbot.context, payload: value, filecontent: fileContent, filename: fileName } };
+                    botInput = {
+                        message: null,
+                        metadatas: {context: chatbot.context, payload: value, filecontent: fileContent, filename: fileName}
+                    };
                 } else if (isButton) {
-                    botInput = { message: null, metadatas: { context: chatbot.context, payload: value, text: label } };
+                    botInput = {message: null, metadatas: {context: chatbot.context, payload: value, text: label}};
                 } else {
-                    botInput = { message: value, metadatas: { context: chatbot.context } };
+                    botInput = {message: value, metadatas: {context: chatbot.context}};
                 }
                 if (rating) {
                     botInput.metadatas.rating = value
@@ -294,32 +302,43 @@ const chatbot = new Vue({
             ,
             _handleResponse(httpResponse, isRating) {
                 // success
-                const responses = httpResponse.data.htmlTexts;
-                const buttons = httpResponse.data.choices;
-                const cards = httpResponse.data.cards;
-                const files = httpResponse.data.files;
-                chatbot.acceptNlu = httpResponse.data.acceptNlu !== undefined ? httpResponse.data.acceptNlu : true;
-                chatbot.rating = httpResponse.data.rating.enabled;
-                chatbot.ratingType = httpResponse.data.rating.type;
-                chatbot.isEnded = httpResponse.data.status === 'Ended' && !isRating;
-                if (httpResponse.data.metadatas && httpResponse.data.metadatas.avatar) {
-                    chatbot.botAvatar = 'data:image/png;base64,' + httpResponse.data.metadatas.avatar;
-                }
+                if (httpResponse.data.metadatas.sessionId && chatbot.convId !== httpResponse.data.metadatas.sessionId) {
+                    chatbot.refresh(true);
+                    chatbot.setParametersFromHttpResponse(httpResponse);
 
-                if (httpResponse.data.metadatas && httpResponse.data.metadatas.jsevent) {
-                    parent.postMessage({jsevent: httpResponse.data.metadatas.jsevent}, '*');
-                }
+                } else {
+                    const responses = httpResponse.data.htmlTexts;
+                    const buttons = httpResponse.data.choices;
+                    const cards = httpResponse.data.cards;
+                    const files = httpResponse.data.files;
+                    chatbot.acceptNlu = httpResponse.data.acceptNlu !== undefined ? httpResponse.data.acceptNlu : true;
+                    chatbot.rating = httpResponse.data.rating.enabled;
+                    chatbot.ratingType = httpResponse.data.rating.type;
+                    chatbot.isEnded = httpResponse.data.status === 'Ended' && !isRating;
+                    if (httpResponse.data.metadatas && httpResponse.data.metadatas.avatar) {
+                        chatbot.botAvatar = 'data:image/png;base64,' + httpResponse.data.metadatas.avatar;
+                    }
 
-                if (httpResponse.data.metadatas && httpResponse.data.metadatas.welcometour) {
-                    parent.postMessage({welcomeTour: httpResponse.data.metadatas.welcometour}, '*');
-                }
+                    if (httpResponse.data.metadatas && httpResponse.data.metadatas.jsevent) {
+                        parent.postMessage({jsevent: httpResponse.data.metadatas.jsevent}, '*');
+                    }
 
-                for (let i = 0; i < responses.length - 1; i++) {
-                    chatbot.watingMessagesStack.push({ text: responses[i] });
-                }
-                chatbot.watingMessagesStack.push({ text: responses[responses.length - 1], buttons: buttons, cards: cards, files: files });
+                    if (httpResponse.data.metadatas && httpResponse.data.metadatas.welcometour) {
+                        parent.postMessage({welcomeTour: httpResponse.data.metadatas.welcometour}, '*');
+                    }
 
-                chatbot._displayMessages();
+                    for (let i = 0; i < responses.length - 1; i++) {
+                        chatbot.watingMessagesStack.push({text: responses[i]});
+                    }
+                    chatbot.watingMessagesStack.push({
+                        text: responses[responses.length - 1],
+                        buttons: buttons,
+                        cards: cards,
+                        files: files
+                    });
+
+                    chatbot._displayMessages();
+                }
             }
             ,
             _displayMessages() {
@@ -331,7 +350,7 @@ const chatbot = new Vue({
                         watingTime = 0;
                     }
 
-                    sleep(watingTime).then(function() {
+                    sleep(watingTime).then(function () {
                         chatbot._processResponse(currentMessage);
                         chatbot.lastUserInteraction = Date.now();
                         chatbot._displayMessages();
@@ -345,7 +364,6 @@ const chatbot = new Vue({
                         chatbot.keepAction = false;
                         chatbot.updateSessionStorage();
                     }
-
                 }
             }
             ,
@@ -379,21 +397,21 @@ const chatbot = new Vue({
                 }
 
                 if (response.buttons) {
-                    response.buttons.forEach(function(value, key) {
+                    response.buttons.forEach(function (value, key) {
                         chatbot.inputConfig.buttons.push(value);
                         chatbot.updateSessionStorage();
                     }, chatbot);
                 }
 
                 if (response.cards) {
-                    response.cards.forEach(function(value, key) {
+                    response.cards.forEach(function (value, key) {
                         chatbot.inputConfig.cards.push(value);
                         chatbot.updateSessionStorage();
                     }, chatbot);
                 }
 
                 if (response.files) {
-                    response.files.forEach(function(value, key) {
+                    response.files.forEach(function (value, key) {
                         chatbot.inputConfig.files.push(value);
                         chatbot.updateSessionStorage();
                     }, chatbot);
@@ -414,8 +432,8 @@ const chatbot = new Vue({
             minimize() {
                 parent.postMessage('Chatbot.minimize', '*');
             },
-            refresh(){
-                chatbot.inputConfig =  {
+            refresh(isAnotherConversation) {
+                chatbot.inputConfig = {
                     modeTextarea: false,
                     responseText: '',
                     responsePattern: '',
@@ -425,18 +443,21 @@ const chatbot = new Vue({
                     files: [],
                     cards: []
                 };
-                chatbot.customConfig = {
-                };
+                chatbot.customConfig = {};
                 chatbot.error = false;
                 chatbot.convId = null;
                 chatbot.contextMap = {};
                 chatbot.messages = [];
                 chatbot.rating = false;
+
                 chatbot.clearSessionStorage();
-                chatbot.initBot();
+
+                if (!isAnotherConversation) {
+                    chatbot.initBot();
+                }
             },
             // Function to complete to switch to another bot
-            changeLocal(locale){
+            changeLocal(locale) {
                 //todo : change url bot to simulate language change
             }
         }

@@ -27,7 +27,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
 @RequestMapping("/bot/{botId}/dictionary")
-@Secured("Chatbot$botAdm")
+@Secured("Chatbot$botContributor")
 public class DictionaryEntityListController extends AbstractBotListEntityController<DictionaryEntity> {
 
 	private static final ViewContextKey<Synonym> synonymEditKey = ViewContextKey.of("synonymEdit");

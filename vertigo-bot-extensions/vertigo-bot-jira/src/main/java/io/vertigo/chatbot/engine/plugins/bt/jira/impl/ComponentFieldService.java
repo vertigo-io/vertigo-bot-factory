@@ -8,6 +8,8 @@ import io.vertigo.ai.bt.BTNode;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
+import io.vertigo.chatbot.engine.plugins.bt.jira.multilingual.JiraMultilingualResources;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 
 import javax.inject.Inject;
@@ -29,6 +31,8 @@ public class ComponentFieldService implements IJiraFieldService, Component {
 		List<BasicComponent> components = (List<BasicComponent>) jiraServerService.getComponents();
 		if (!components.isEmpty()) {
 			sequence.add(getComponentIssue(bb, jiraField.getKey(), jiraField.getQuestion(), components));
+		} else {
+			sequence.add(() -> BotNodeProvider.sayOnce(bb, MessageText.of(JiraMultilingualResources.NO_COMPONENT_FOUND).getDisplay()).eval());
 		}
 	}
 

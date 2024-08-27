@@ -1,7 +1,5 @@
 package io.vertigo.chatbot.designer.admin.services;
 
-import org.keycloak.representations.IDToken;
-
 import java.util.List;
 import java.util.Map;
 
@@ -25,18 +23,18 @@ public class KeycloakPersonServices implements Component {
 	 * Empty collections is the default value for chatbot
 	 *
 	 * @param login of the user
-	 * @param rol
 	 * @param name
+	 * @param email
+	 * @param role
 	 * @return the person created
 	 */
-	public Person initPerson(final String login, final String name, final String rol) {
+	public void initPerson(final String login, final String name, final String email, final String role) {
 		Person newPerson = new Person();
 		newPerson.setLogin(login.toLowerCase());
 		newPerson.setName(name);
-		newPerson.setRolCd(rol);
-		newPerson = createPerson(newPerson);
-		//By default user has no profil
-		return newPerson;
+		newPerson.setRolCd(role);
+		newPerson.setEmail(email);
+		createPerson(newPerson);
 	}
 
 	/**
@@ -50,46 +48,16 @@ public class KeycloakPersonServices implements Component {
 
 	}
 
-	/**
-	 * Get the role from keycloak groups
-	 * By default the groups RUser is used
-	 *
-	 * @param token
-	 * @return the role
-	 */
-	public String getRoleFromToken(final IDToken token) {
-
-		final Map<String, Object> claim = token.getOtherClaims();
-		final List<?> groups = (List<?>) claim.get("groups");
-		if (claim.isEmpty() || groups.isEmpty()) {
+	public String getRoleFromClaims(final Map<String, Object> claims) {
+		final List<?> groups = (List<?>) claims.get("groups");
+		if (claims.isEmpty() || groups == null || groups.isEmpty()) {
 			return PersonRoleEnum.RUser.name();
 		}
 		return (String) groups.get(0);
 	}
 
-	/**
-	 * Get the username from the auth token
-	 *
-	 * @param token
-	 * @return the name of connected user
-	 */
-	public String getNameFromToken(final IDToken token) {
-		final String name = token.getName() != null ? token.getName() : "";
-		return name;
-	}
-
-	public String getEmailFromToken(final IDToken token) {
-		return token.getEmail();
-	}
-
 	public Person getPersonToConnect(final Long perId) {
 		Assertion.check().isNotNull(perId);
-		// ---
-		final Person person = personDAO.get(perId);
-		return person;
-	}
-
-	public Person updatePerson(final Person person) {
-		return personDAO.save(person);
+		return personDAO.get(perId);
 	}
 }

@@ -8,7 +8,6 @@ import io.vertigo.chatbot.commons.dao.topic.NluTrainingSentenceDAO;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.TopicFileExport;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -38,7 +37,7 @@ public class NluTrainingSentenceServices implements Component {
 		final boolean exists = nluTrainingSentences.stream()
 				.anyMatch(its -> its.getText().equalsIgnoreCase(newNluTrainingSentence));
 		if (exists) {
-			throw new VUserException("This sentense already exists");
+			return;
 		}
 
 		final NluTrainingSentence newText = new NluTrainingSentence();

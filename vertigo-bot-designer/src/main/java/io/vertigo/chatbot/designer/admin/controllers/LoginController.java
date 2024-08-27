@@ -42,56 +42,14 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
 @RequestMapping("/login")
 public class LoginController extends AbstractVSpringMvcController {
 
-	private static final String REDIRECT_HOME = "redirect:/";
-	private static final String REDIRECT_LOGIN = "redirect:/login/";
-
-	private static final ViewContextKey<String> loginKey = ViewContextKey.of("login");
-	private static final ViewContextKey<String> passwordKey = ViewContextKey.of("password");
-
 	@Inject
 	private LoginServices loginServices;
 
-	@GetMapping("/")
-	public String initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @RequestParam(name = "code", required = false) final Integer code) {
-		if (!UserSessionUtils.isAuthenticated()) {
-			if (code != null && code.equals(401)) {
-				uiMessageStack.warning("You have been disconnected");
-				return REDIRECT_LOGIN;
-			} else if (code != null && code.equals(400)) {
-				uiMessageStack.warning("You have been inactive for too long, your login has expired");
-				return REDIRECT_LOGIN;
-			}
-			viewContext.publishRef(loginKey, "");
-			viewContext.publishRef(passwordKey, "");
-			return null;
-		}
-		return REDIRECT_HOME;
-	}
-
-	@PostMapping("/_login")
-	public String doLogin(@RequestParam("login") final String login, @RequestParam("password") final String password) {
-		if (StringUtil.isBlank(login) || StringUtil.isBlank(password)) {
-			throw new VUserException("Login and Password are mandatory");
-		}
-		loginServices.login(login, password);
-		return REDIRECT_HOME;
-	}
-
-	@GetMapping("/_logout")
-	public String logout(final HttpServletRequest request, final HttpSession httpSession) {
-		try {
-			request.logout();
-		} catch (final ServletException e) {
-			throw WrappedException.wrap(e);
-		}
-		loginServices.logout(httpSession);
-		return REDIRECT_LOGIN;
-	}
 
 	@GetMapping("/_reloadAuthorizations")
 	public String reloadAuthorizations() {
 		loginServices.reloadAuthorizations();
-		return REDIRECT_HOME;
+		return "redirect:/";
 	}
 
 }

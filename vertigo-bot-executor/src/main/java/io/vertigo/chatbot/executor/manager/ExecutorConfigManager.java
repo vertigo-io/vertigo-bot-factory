@@ -39,7 +39,7 @@ import io.vertigo.chatbot.commons.domain.BotExport;
 import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
 import io.vertigo.chatbot.executor.ExecutorPlugin;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
-import io.vertigo.chatbot.executor.services.FileServices;
+import io.vertigo.chatbot.executor.services.ExecutorFileServices;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Activeable;
@@ -66,7 +66,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private File attachmentDataFile;
 
 	@Inject
-	private FileServices fileServices;
+	private ExecutorFileServices executorFileServices;
 
 	@Inject
 	public ExecutorConfigManager(
@@ -175,14 +175,14 @@ public class ExecutorConfigManager implements Manager, Activeable {
 				"		}); \n");
 
 		if (executorGlobalConfig.getWelcomeToursFileURN() != null) {
-			fileServices.deleteFile(executorGlobalConfig.getWelcomeToursFileURN());
+			executorFileServices.deleteFile(executorGlobalConfig.getWelcomeToursFileURN());
 		}
 		final byte[] jsBytes = jsString.toString().getBytes(StandardCharsets.UTF_8);
 		final StreamFile streamFile = StreamFile.of("welcomeTours.js", "text/javascript",
 				Instant.now(), jsBytes.length,
 				() -> new ByteArrayInputStream(jsBytes));
 
-		executorGlobalConfig.setWelcomeToursFileURN(fileServices.saveFile(streamFile).toURN());
+		executorGlobalConfig.setWelcomeToursFileURN(executorFileServices.saveFile(streamFile).toURN());
 		updateGlobalConfig();
 	}
 
@@ -209,14 +209,14 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 	public void updateAttachments(final DtList<AttachmentExport> attachmentExports) {
 		try {
-			mapAttachments.forEach((key, value) -> fileServices.deleteFile(FileInfoURI.fromURN(value)));
+			mapAttachments.forEach((key, value) -> executorFileServices.deleteFile(FileInfoURI.fromURN(value)));
 			final HashMap<String, String> attachmentsMap = new HashMap<>();
 			attachmentExports.forEach(attachmentExport -> {
 				final StreamFile streamFile = StreamFile.of(attachmentExport.getFileName(), attachmentExport.getMimeType(),
 						Instant.now(), attachmentExport.getLength(),
 						() -> new ByteArrayInputStream((Base64.getDecoder().decode(attachmentExport.getFileData()))));
 
-				final FileInfoURI fileInfoURI = fileServices.saveFile(streamFile);
+				final FileInfoURI fileInfoURI = executorFileServices.saveFile(streamFile);
 				attachmentsMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
 			});
 			FileUtils.writeStringToFile(attachmentDataFile, jsonEngine.toJson(attachmentsMap), StandardCharsets.UTF_8);
@@ -231,12 +231,12 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		if (urn == null) {
 			throw new VSystemException("Attachment with label " + label + " doesn't exist...");
 		}
-		return fileServices.getFile(urn);
+		return executorFileServices.getFile(urn);
 	}
 
 	public Optional<VFile> getWelcomeToursFile() {
 		final String welcomeToursFileURN = executorGlobalConfig.getWelcomeToursFileURN();
-		return welcomeToursFileURN != null ? Optional.of(fileServices.getFile(welcomeToursFileURN)) : Optional.empty();
+		return welcomeToursFileURN != null ? Optional.of(executorFileServices.getFile(welcomeToursFileURN)) : Optional.empty();
 	}
 
 	public void addPlugin(final ExecutorPlugin executorPlugin) {

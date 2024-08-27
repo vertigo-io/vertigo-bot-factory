@@ -140,4 +140,24 @@
         <createProcedure encoding="utf8" path="/sql/v_2_0/update_24_01_12.sql" />
     </changeSet>
 
+    <changeSet author="rsaintpaul" id="Add custom number of jira tickets than can be listed by the bot">
+        <sqlFile encoding="utf-8" path="/sql/v_2_0/alter_24_04_19.sql" />
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Add spaces setting for confluence settings">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_04_24.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Add attachment to jira field table">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_05_16.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Add attachment file info column for saved training">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_06_10.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Add max_saved_trainings column to chatbot_custom_config table">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_06_03.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

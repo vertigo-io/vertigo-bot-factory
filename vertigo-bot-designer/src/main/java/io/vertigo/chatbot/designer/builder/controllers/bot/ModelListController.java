@@ -40,6 +40,7 @@ import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.SavedTrainingServices;
 import io.vertigo.chatbot.designer.builder.services.TrainerInfoServices;
 import io.vertigo.chatbot.designer.builder.services.TrainingServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -67,7 +68,10 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 
 	private static final ViewContextKey<SavedTraining> savedTrainingListKey = ViewContextKey.of("savedTrainingList");
 
+    private static final ViewContextKey<Long> maxSavedTrainingsKey = ViewContextKey.of("maxSavedTrainings");
+
 	private static final ViewContextKey<SavedTrainingCriteria> criteriaKey = ViewContextKey.of("criteria");
+
 
 	@Inject
 	private TrainingServices trainingServices;
@@ -83,6 +87,9 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 
 	@Inject
 	private JsonEngine jsonEngine;
+
+    @Inject
+    private ChatbotCustomConfigServices chatbotCustomConfigServices;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
@@ -100,6 +107,7 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 		final SavedTrainingCriteria savedTrainingCriteria = new SavedTrainingCriteria();
 		savedTrainingCriteria.setToDate(LocalDate.now());
 		viewContext.publishDto(criteriaKey, savedTrainingCriteria);
+        viewContext.publishRef(maxSavedTrainingsKey, chatbotCustomConfigServices.getChatbotMaxSavedTraining(botId));
 
 		super.initBreadCrums(viewContext, Training.class);
 		listLimitReached(viewContext, uiMessageStack);
@@ -138,7 +146,9 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("training") final Training deployedTraining,
 			@RequestParam("name") final String name,
-			@RequestParam("description") final String description) {
+                                    @RequestParam("description") final String description,
+                                    @RequestParam("maxSavedTrainings") final Long maxSavedTrainings) {
+
 		final SavedTraining newSavedTraining = new SavedTraining();
 		newSavedTraining.setName(name);
 		newSavedTraining.setDescription(description);
@@ -146,7 +156,7 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 		newSavedTraining.setCreationTime(Instant.now());
 		newSavedTraining.setTraId(deployedTraining.getTraId());
 		newSavedTraining.setBotExport(jsonEngine.toJson(trainingServices.exportBot(bot, new StringBuilder())));
-		savedTrainingServices.save(bot, newSavedTraining);
+        savedTrainingServices.save(bot, newSavedTraining, maxSavedTrainings);
 		viewContext.publishDtList(savedTrainingListKey, savedTrainingServices.getAllSavedTrainingByBotId(bot.getBotId()));
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
@@ -178,6 +188,13 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 		return viewContext;
 	}
 
+	@PostMapping("/_rollbackSavedTraining")
+	public ViewContext rollbackSavedTraining(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
+											 @RequestParam("savedTrainingIdToDeploy") final Long savedTrainingIdToDeploy) {
+		savedTrainingServices.rollbackConfig(bot, savedTrainingIdToDeploy);
+		return viewContext;
+	}
+
 	@PostMapping("/_filterSavedTraining")
 	public ViewContext filterSavedTraining(
 			final ViewContext viewContext, final UiMessageStack uiMessageStack,
@@ -188,5 +205,15 @@ public class ModelListController extends AbstractBotListEntityController<Trainin
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
+
+    @PostMapping("/_saveMaxSavedTrainings")
+    public ViewContext saveMaxSavedTrainings(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot,
+                                             @RequestParam("maxSavedTrainings") final Long maxSavedTrainings) {
+
+        chatbotCustomConfigServices.setChatbotMaxSavedTraining(bot, maxSavedTrainings);
+        viewContext.publishRef(maxSavedTrainingsKey, maxSavedTrainings);
+        return viewContext;
+    }
+
 
 }

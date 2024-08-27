@@ -67,11 +67,11 @@ modules:
       - cache.memory:
       - entitystore.sql: # nous utilisons un store de type SQL (avec notre base H2)
       - filestore.db:
-          fileInfoClass: io.vertigo.chatbot.designer.commons.services.FileInfoStd
+          fileInfoClass: io.vertigo.chatbot.commons.FileInfoStd
           storeDtName: DtMediaFileInfo
       - filestore.fullFilesystem:
           name: temp
-          fileInfoClass: io.vertigo.chatbot.designer.commons.services.FileInfoTmp
+          fileInfoClass: io.vertigo.chatbot.commons.FileInfoTmp
           path: ${java.io.tmpdir}/chatbotUploadedFiles/
           purgeDelayMinutes: 30
       - filestore.filesystem:
@@ -86,10 +86,12 @@ modules:
           collections: VViewContext;TTL=43200
           dbFilePath: ${java.io.tmpdir}/vertigo-ui/VViewContext
   io.vertigo.datafactory.DataFactoryFeatures:
-  io.vertigo.connectors.keycloak.KeycloakFeatures:
+  io.vertigo.connectors.oidc.OIDCFeatures:
     features:
-      - deployment:
-          configUrl: ${KEYCLOAK_CONFIG}
+      - oidc:
+          clientName: ${KEYCLOAK_CLIENT_NAME}
+          url: ${KEYCLOAK_URL}
+          scopes: openid
   io.vertigo.account.AccountFeatures:
     features:
       - security:
@@ -113,9 +115,12 @@ modules:
   io.vertigo.vega.VegaFeatures:
     features:
       - webservices:
+      - authentication:
+          appLoginHandler: loginServices
     featuresConfig:
       - webservices.javalin: 
           apiPrefix: /api
+      - authentication.oidc:
   io.vertigo.quarto.QuartoFeatures:
     features:      
       - export : # export

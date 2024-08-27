@@ -16,7 +16,7 @@ import io.vertigo.chatbot.designer.builder.dictionaryEntity.DictionaryEntityPAO;
 import io.vertigo.chatbot.designer.builder.services.HistoryServices;
 import io.vertigo.chatbot.designer.builder.services.IRecordable;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
-import io.vertigo.chatbot.designer.commons.services.FileServices;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.dao.DictionaryEntityDAO;
 import io.vertigo.chatbot.designer.domain.DictionaryEntity;
 import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
@@ -65,7 +65,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	private ExporterManager exportManager;
 
 	@Inject
-	private FileServices fileServices;
+	private DesignerFileServices designerFileServices;
 
 	@Inject
 	private HistoryServices historyServices;
@@ -90,7 +90,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @return dictionaryEntity
 	 */
 	@Secured("BotUser")
-	public DictionaryEntity save(@SecuredOperation("botAdm") final Chatbot bot, final DictionaryEntity dictionaryEntity) {
+	public DictionaryEntity save(@SecuredOperation("botContributor") final Chatbot bot, final DictionaryEntity dictionaryEntity) {
 		dictionaryEntity.setBotId(bot.getBotId());
 		final boolean creation = dictionaryEntity.getDicEntId() == null;
 		dictionaryEntity.setLabel(dictionaryEntity.getLabel().toLowerCase());
@@ -119,7 +119,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @return dictionaryEntity
 	 */
 	@Secured("BotUser")
-	public DictionaryEntity save(@SecuredOperation("botAdm") final Chatbot bot, final DictionaryEntity dictionaryEntity,
+	public DictionaryEntity save(@SecuredOperation("botContributor") final Chatbot bot, final DictionaryEntity dictionaryEntity,
 			final DtList<Synonym> synonyms,
 			final DtList<Synonym> synonymsToDelete) {
 
@@ -166,7 +166,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @param synonyms
 	 */
 	@Secured("BotUser")
-	public void addSynonym(@SecuredOperation("botAdm") final Chatbot bot, final String newSynonymIn,
+	public void addSynonym(@SecuredOperation("botContributor") final Chatbot bot, final String newSynonymIn,
 						   final DtList<Synonym> synonyms) {
 		if (StringUtil.isBlank(newSynonymIn)) {
 			return;
@@ -341,12 +341,12 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	/*
 	 * Return a list of DictionaryExport from a CSV file
 	 */
-	private List<DictionaryEntityWrapper> transformFileToList(@SecuredOperation("SuperAdm") final VFile file) {
+	public List<DictionaryEntityWrapper> transformFileToList(@SecuredOperation("SuperAdm") final VFile file) {
 		final String[] columns = new String[] {
 				DtDefinitions.DictionaryEntityWrapperFields.dictionaryEntityLabel.name(),
 				DtDefinitions.DictionaryEntityWrapperFields.synonymsList.name(),
 		};
-		return fileServices.readCsvFile(DictionaryEntityWrapper.class, file, columns);
+		return designerFileServices.readCsvFile(DictionaryEntityWrapper.class, file, columns);
 	}
 
 	/**
@@ -356,13 +356,13 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * @param importDictionaryFile
 	 */
 	public void importDictionaryFromCSVFile(final Chatbot chatbot, final FileInfoURI importDictionaryFile) {
-		transformFileToList(fileServices.getFileTmp(importDictionaryFile)).forEach(dex -> generateDictionaryFromDictionaryExport(dex, chatbot));
+		transformFileToList(designerFileServices.getFileTmp(importDictionaryFile)).forEach(dex -> generateDictionaryFromDictionaryExport(dex, chatbot));
 	}
 
 	/*
 	 * Generate dictionary entity and synonyms from a DictionaryExport
 	 */
-	private void generateDictionaryFromDictionaryExport(final DictionaryEntityWrapper dex, final Chatbot chatbot) {
+	public void generateDictionaryFromDictionaryExport(final DictionaryEntityWrapper dex, final Chatbot chatbot) {
 
 		final DictionaryEntity dictionaryEntity = new DictionaryEntity();
 

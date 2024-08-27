@@ -78,8 +78,11 @@ Blockly.Msg["COMMONS_SAMPLE_RATING_NO_LABEL"] = "Non";
 Blockly.Msg["COMMONS_SAMPLE_RATING_QUEST"] = "Laissez une note de satisfaction";
 Blockly.Msg["COMMONS_SAMPLE_RATING_BINARY_QUEST"] = "Est-ce que j'ai répondu à votre question ?";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_VAR"] = "search/confluence";
-Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST1"] = "Je vais rechercher dans base documentaire, quelle est votre question ?";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST1"] = "Je vais rechercher dans la base documentaire, quelle est votre question ?";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_QUEST2"] = "Résultats consultation :";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_NO_SEARCH_RESULT"] = "Il n'y pas de résultats";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_AUTO_SEARCH_INTRO"] = "J'effectue une recherche automatique dans la base documentaire";
+Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_DEFAULT_SEARCH"] = "Test";
 Blockly.Msg["COMMONS_SAMPLE_CONFLUENCE_CODE"] = "CONFLU";
 Blockly.Msg["COMMONS_SAMPLE_WT_CODE"] = "GACode";
 Blockly.Msg["COMMONS_SAMPLE_JIRA_ISSUE_SENTENCE"] = "Votre ticket est consultable:";
@@ -192,9 +195,13 @@ Blockly.Msg["OTHER_CARD_LINK_TITLE"] = "Lien image:";
 // *** CATEGORIE CONFLUENCE ****
 // *****************************
 Blockly.Msg["CONFLUENCE_SEARCH_TITLE"] = "Module recherche Confluence:";
+Blockly.Msg["CONFLUENCE_AUTO_SEARCH_TITLE"] = "Module recherche Confluence automatique:";
 Blockly.Msg["CONFLUENCE_VAR_TITLE"] = "Variable recherche confluence:";
 Blockly.Msg["CONFLUENCE_QUEST1_ASSOCIATED"] = "Introduction:";
 Blockly.Msg["CONFLUENCE_QUEST2_ASSOCIATED"] = "Réponse:";
+Blockly.Msg["CONFLUENCE_NO_SEARCH_RESULT"] = "Absence de réponse:";
+Blockly.Msg["CONFLUENCE_DEFAULT_SEARCH"] = "Recherche confluence:";
+
 
 // *****************************
 // ****** CATEGORIE JIRA *******
@@ -212,6 +219,7 @@ Blockly.Msg["JIRA_FIELD_TYPE_PRIORITY"] = "Priorité";
 Blockly.Msg["JIRA_FIELD_TYPE_REPORTER"] = "Rapporteur";
 Blockly.Msg["JIRA_FIELD_TYPE_SUMMARY"] = "Titre";
 Blockly.Msg["JIRA_FIELD_TYPE_VERSIONS"] = "Versions affectées";
+Blockly.Msg["JIRA_FIELD_TYPE_ATTACHMENT"] = "Pièce jointe";
 
 // *****************************
 // **** CATEGORIE TEMPLATE *****

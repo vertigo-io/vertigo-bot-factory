@@ -9,6 +9,8 @@ import io.vertigo.ai.bt.BTNode;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
+import io.vertigo.chatbot.engine.plugins.bt.jira.multilingual.JiraMultilingualResources;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 
 import javax.inject.Inject;
@@ -29,7 +31,11 @@ public class IssueTypeFieldService implements IJiraFieldService, Component {
 	@Override
 	public void processConversation(BlackBoard bb, JiraField jiraField, List<BTNode> sequence) {
 		OptionalIterable<IssueType> issueTypes = jiraServerService.getIssueTypes();
-		sequence.add(getIssueTypesButtons(bb, issueTypes.iterator(), jiraField));
+		if (issueTypes.iterator().hasNext()) {
+			sequence.add(getIssueTypesButtons(bb, issueTypes.iterator(), jiraField));
+		} else {
+			sequence.add(() -> BotNodeProvider.sayOnce(bb, MessageText.of(JiraMultilingualResources.NO_ISSUE_TYPE_FOUND).getDisplay()).eval());
+		}
 	}
 
 	@Override

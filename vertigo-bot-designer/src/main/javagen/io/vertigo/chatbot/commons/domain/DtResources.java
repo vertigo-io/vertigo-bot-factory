@@ -220,6 +220,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$disableNlu,
 	/**
+	 * Maximum of saved trainings.
+	 */
+	fldChatbotCustomConfig$maxSavedTraining,
+	/**
 	 * Chatbot.
 	 */
 	fldChatbotCustomConfig$botId,
@@ -371,6 +375,62 @@ public enum DtResources implements MessageKey {
 	 * Number max of results.
 	 */
 	fldConfluenceSettingExport$numberOfResults,
+	/**
+	 * Spaces.
+	 */
+	fldConfluenceSettingExport$spaces,
+
+	/***********************************************************
+	/** ConfluenceSettingIhm.
+	/***********************************************************
+	/**
+	 * Confluence setting id.
+	 */
+	fldConfluenceSettingIhm$conSetId,
+	/**
+	 * Bot id.
+	 */
+	fldConfluenceSettingIhm$botId,
+	/**
+	 * Node id.
+	 */
+	fldConfluenceSettingIhm$nodId,
+	/**
+	 * Knowledge base URL.
+	 */
+	fldConfluenceSettingIhm$url,
+	/**
+	 * Login.
+	 */
+	fldConfluenceSettingIhm$login,
+	/**
+	 * Password.
+	 */
+	fldConfluenceSettingIhm$password,
+	/**
+	 * Number max of results.
+	 */
+	fldConfluenceSettingIhm$numberOfResults,
+	/**
+	 * Spaces.
+	 */
+	fldConfluenceSettingIhm$spaces,
+
+	/***********************************************************
+	/** ConfluenceSettingSpace.
+	/***********************************************************
+	/**
+	 * Confluence setting space id.
+	 */
+	fldConfluenceSettingSpace$conSetSpaceId,
+	/**
+	 * Space.
+	 */
+	fldConfluenceSettingSpace$space,
+	/**
+	 * ConfluenceSetting.
+	 */
+	fldConfluenceSettingSpace$confluencesettingId,
 
 	/***********************************************************
 	/** ContextValue.
@@ -524,6 +584,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldJiraSetting$project,
 	/**
+	 * Number max of results.
+	 */
+	fldJiraSetting$numberOfResults,
+	/**
 	 * Chatbot.
 	 */
 	fldJiraSetting$botId,
@@ -551,6 +615,10 @@ public enum DtResources implements MessageKey {
 	 * Project.
 	 */
 	fldJiraSettingExport$project,
+	/**
+	 * Number max of results.
+	 */
+	fldJiraSettingExport$numberOfResults,
 
 	/***********************************************************
 	/** MediaFileInfo.
@@ -639,6 +707,10 @@ public enum DtResources implements MessageKey {
 	 * Bot Export.
 	 */
 	fldSavedTraining$botExport,
+	/**
+	 * Attachment File Info.
+	 */
+	fldSavedTraining$attFileInfoId,
 	/**
 	 * Training.
 	 */

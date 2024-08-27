@@ -91,6 +91,7 @@ public final class TopicPAO implements StoreServices {
  " 						ELSE tto.label\n" + 
  " 					END as type,\n" + 
  " 					top.tto_cd,\n" + 
+ " 					tpc.top_cat_id as cat_id,\n" + 
  " 					tpc.label as cat_label,\n" + 
  " 					string_agg(tpl.label, ',') as labels\n" + 
  " 			from topic top \n" + 
@@ -113,6 +114,7 @@ public final class TopicPAO implements StoreServices {
  " 					tto.label,\n" + 
  " 					tto.label_fr,\n" + 
  " 					top.tto_cd,\n" + 
+ " 					tpc.top_cat_id,\n" + 
  " 					tpc.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtTopicIhm", name = "topicIHM")

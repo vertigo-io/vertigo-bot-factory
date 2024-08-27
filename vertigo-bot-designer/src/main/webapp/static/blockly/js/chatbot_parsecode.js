@@ -1,14 +1,16 @@
 function fromCode() {
 	var text = VertigoUi.vueData.scriptIntention.script
 	let parsed = parseText(text);
-	if (parsed.error) {
-	} else {
-		let workspace = Blockly.mainWorkspace;
+	let workspace = Blockly.mainWorkspace;
+	if (workspace) {
 		workspace.clear();
 		workspace.clearUndo();
+	}
+	if (!parsed.error) {
 		setTimeout(() => Blockly.mainWorkspace.trashcan.emptyContents(), 0); // not working if not asynch
 		doBuildBlocks(parsed);
 	}
+	return parsed
 }
 
 function parseText(txt) {
@@ -29,6 +31,7 @@ function parseText(txt) {
 	let compositeStack = [];
 	let commandsStack = [];
 	let currentCommands = [];
+	let locale = VertigoUi.vueData.locale
 	for (let i = 0; i < commands.length; i++) {
 		let command = commands[i];
 		if (command.isComposite) {
@@ -38,8 +41,10 @@ function parseText(txt) {
 				compositeStack.push(command);
 			} else {
 				let lastComposite = compositeStack.pop();
-				if (!lastComposite) return {error: "End command '" + command.type + "' without begin."};
-				if (lastComposite.type !== command.type) return {error: "Command '" + lastComposite.type + "' not ended properly (end '" + command.type + "' found)"};
+				if (!lastComposite) return locale ==='fr_FR' ? {error: "Noeud de type 'end' " + command.type + "' sans noeud de type 'begin'."}
+				: {error: "End command '" + command.type + "' without begin."};
+				if (lastComposite.type !== command.type) return locale ==='fr_FR' ? {error: "Le noeud '" + lastComposite.type + "' n'a pas été fermé proprement (end '" + command.type + "' trouvé)"}
+				: {error: "Command '" + lastComposite.type + "' not ended properly (end '" + command.type + "' found)"};
 
 				lastComposite.commands = currentCommands;
 				currentCommands = commandsStack.pop();
@@ -50,7 +55,8 @@ function parseText(txt) {
 		}
 	}
 
-	if (compositeStack.length > 0) return {error: "Command '" + compositeStack.pop().type + "' not ended."};
+	if (compositeStack.length > 0) return locale ==='fr_FR' ? {error: "Noeud '" + compositeStack.pop().type + "' n'a pas été fermé."}
+	: {error: "Command '" + compositeStack.pop().type + "' not ended."};
 
 	return currentCommands;
 }
@@ -210,6 +216,8 @@ function resolveCbBlockType(type) {
 			return {type: "cb_card"}
 		case "confluence:search":
 			return {type: "cb_confluencesearch"}
+		case "confluence:search:auto":
+			return {type:  "cb_confluencesearchauto"}
 		case "jira:issue:create":
 			return {type: "cb_jiraissue"}
 		case "jira:field":
@@ -354,13 +362,13 @@ function createBlock(type, isComposite, params = []) {
 		let lienParamsDest
 		// isAPJMail = (resolvedType.qualifier && resolvedType.qualifier==='attachment' ? true : false)
 		// let nbDest = params.length - (isAPJMail ? 3 : 2)
-
+		const paramPj = params[2]
 		params[0] = lienParamsObject[0]; //0
 		params[1] = lienParamsObject[1]; //1
 		params[2] = lienParamsMessage[0]; //2
 
 		if(resolvedType.qualifier && resolvedType.qualifier==='attachment') {
-			lienParamsPJ = paramsFormatVariable(params[2])
+			lienParamsPJ = paramsFormatVariable(paramPj)
 			lienParamsDest = paramsFormatVariable(params[3])
 			params[3] = lienParamsMessage[1]; //3
 			params.push('yespj') //4
@@ -394,12 +402,13 @@ function createBlock(type, isComposite, params = []) {
 		params[0] = valueTemp
 	}else if(resolvedType.type==='cb_confluencesearch'){
 		let lienParams = paramsFormatVariable(params[0])
-		let questions = [params[1], params[2]]
-		let code = params[3]
+		let questions = [params[1], params[2], params[3]]
+		let code = params[4]
 		params[0] = lienParams[0]
 		params[1] = lienParams[1]
 		params[2]=questions[0]
 		params[3]=questions[1]
+		params[4]=questions[2]
 		params.push(code)
 	}else if(resolvedType.type==='cb_jirafield'){
 		let lienParams = paramsFormatVariable(params[0])

@@ -19,6 +19,7 @@ public final class TopicIhm implements DtObject {
 	private String title;
 	private Long smtId;
 	private Long sinId;
+	private Long catId;
 	private String catLabel;
 	private Boolean isEnabled;
 	private String ktoCd;
@@ -137,6 +138,25 @@ public final class TopicIhm implements DtObject {
 	 */
 	public void setSinId(final Long sinId) {
 		this.sinId = sinId;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Category id'.
+	 * @return Long catId <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Category id")
+	public Long getCatId() {
+		return catId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Category id'.
+	 * @param catId Long <b>Obligatoire</b>
+	 */
+	public void setCatId(final Long catId) {
+		this.catId = catId;
 	}
 	
 	/**

@@ -8,4 +8,6 @@ public enum ModelMultilingualResources implements MessageKey {
 
 	LOAD_MODEL_ERROR,
 
+	SAVED_TRAINING_ALREADY_EXISTS
+
 }

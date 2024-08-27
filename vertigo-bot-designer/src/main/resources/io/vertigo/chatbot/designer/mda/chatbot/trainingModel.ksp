@@ -26,6 +26,16 @@ create DtDefinition DtSavedTraining {
     field botExport			        {domain: DoJson			label: "Bot Export"	 			cardinality : "1"           }
 }
 
+create Association ASavedTraining {
+	fkFieldName : "attFileInfoId"
+
+ 	dtDefinitionA : DtSavedTraining
+	type : "*>1"
+	dtDefinitionB : DtAttachmentFileInfo
+
+	labelB : "Attachment File Info"
+}
+
 create DtDefinition DtSavedTrainingCriteria {
 	field text   		    {domain: DoLabel 					label: "Search text" 		            }
 	field fromDate		    {domain: DoLocaldate 				label: "From"		 		            }

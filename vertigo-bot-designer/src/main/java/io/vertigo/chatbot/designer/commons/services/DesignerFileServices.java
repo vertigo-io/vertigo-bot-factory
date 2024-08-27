@@ -31,35 +31,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.AttachmentInfo;
+import io.vertigo.chatbot.commons.FileInfoStd;
+import io.vertigo.chatbot.commons.FileInfoTmp;
+import io.vertigo.chatbot.commons.FileServices;
 import io.vertigo.chatbot.commons.dao.MediaFileInfoDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.MediaFileInfo;
-import io.vertigo.chatbot.commons.multilingual.attachment.AttachmentMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.AttachmentMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleManager;
-import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.core.param.Param;
-import io.vertigo.core.param.ParamManager;
 import io.vertigo.datastore.filestore.FileStoreManager;
 import io.vertigo.datastore.filestore.definitions.FileInfoDefinition;
 import io.vertigo.datastore.filestore.model.FileInfo;
@@ -67,13 +65,13 @@ import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.datastore.filestore.util.VFileUtil;
 import io.vertigo.datastore.impl.filestore.model.StreamFile;
-import xyz.capybara.clamav.commands.scan.result.ScanResult;
-
-import static io.vertigo.chatbot.commons.ChatbotUtils.MAX_UPLOAD_SIZE;
 import static io.vertigo.chatbot.designer.utils.StringUtils.lineError;
 
 @Transactional
-public class FileServices implements Component, Activeable {
+public class DesignerFileServices implements Component {
+
+	@Inject
+	private FileServices fileServices;
 
 	@Inject
 	private FileStoreManager fileStoreManager;
@@ -84,52 +82,18 @@ public class FileServices implements Component, Activeable {
 	@Inject
 	protected LocaleManager localeManager;
 
-	@Inject
-	private ParamManager paramManager;
-
-	@Inject
-	private AntivirusServices antivirusServices;
-
-	private String[] extensionsWhiteList;
-
-	@Override
-	public void start() {
-		extensionsWhiteList = paramManager.getOptionalParam("EXTENSIONS_WHITELIST")
-				.map(Param::getValueAsString).orElse("png,jpg,jpeg,pdf,csv,js").split(",");
-	}
-
-	@Override
-	public void stop() {
-
-	}
-
 	public FileInfoURI saveFileTmp(final VFile file) {
 		final FileInfo fileInfo = fileStoreManager.create(new FileInfoTmp(file));
 		return fileInfo.getURI();
 	}
 
 	public void checkFile (final VFile file) {
-		final String[] extensionsTab = file.getFileName().split(Pattern.quote("."));
-		final Stream<String> extensionsWhiteListStream = Arrays.stream(extensionsWhiteList);
-		if (extensionsTab.length != 2 || extensionsWhiteListStream.noneMatch(extensionsTab[1].toLowerCase()::contains)) {
-			throw new VUserException(AttachmentMultilingualResources.EXTENSION_NOT_ALLOWED, extensionsTab[1],
-					String.join(",", extensionsWhiteList));
-		}
-		if (file.getLength() > MAX_UPLOAD_SIZE) {
-			throw new VUserException(AttachmentMultilingualResources.FILE_TOO_LARGE, MAX_UPLOAD_SIZE);
-		}
-		try {
-			final ScanResult result = antivirusServices.checkForViruses(file.createInputStream());
-			if (result instanceof ScanResult.VirusFound) {
-				final Map<String, Collection<String>> virusesMap = ((ScanResult.VirusFound) result).getFoundViruses();
-				final String viruses = virusesMap.values().stream()
-						.flatMap(Collection::stream).collect(Collectors.joining(","));
-				throw new VUserException(AttachmentMultilingualResources.VIRUSES_FOUND, viruses, file.getFileName());
-			}
-		} catch (final IOException ioException) {
+        try {
+            fileServices.checkFile(file.getFileName(), file.getLength(), file.createInputStream());
+        } catch (final IOException ioException) {
 			throw new VUserException(AttachmentMultilingualResources.COULD_NOT_OPEN_FILE, file.getFileName(), ioException);
 		}
-	}
+    }
 
 	public FileInfoURI saveAttachment(final VFile file) {
 		final FileInfo fileInfo = fileStoreManager.create(new AttachmentInfo(file));
@@ -244,13 +208,13 @@ public class FileServices implements Component, Activeable {
 		return mediaFileInfoDAO.get(id);
 	}
 
-	public VFile zipMultipleFiles(final List<VFile> files, final String zipFileName) {
+	public VFile zipMultipleFiles(final Map<String, VFile> fileMap, final String zipFileName) {
 		try(final ByteArrayOutputStream fos = new ByteArrayOutputStream()) {
 			final ZipOutputStream zipOut = new ZipOutputStream(fos);
-			files.forEach(file -> {
+			fileMap.forEach((fileType, file) -> {
 				try(final InputStream fis = file.createInputStream()) {
 					final byte[] bytes = fis.readAllBytes();
-					final ZipEntry zipEntry = new ZipEntry(file.getFileName());
+					final ZipEntry zipEntry = new ZipEntry(fileType + "/" + file.getFileName());
 					zipEntry.setSize(bytes.length);
 					zipOut.putNextEntry(zipEntry);
 					zipOut.write(bytes);
@@ -265,6 +229,40 @@ public class FileServices implements Component, Activeable {
 					() -> new ByteArrayInputStream(bytes));
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Couldn't build zip file");
+		}
+	}
+
+	public Map<String, VFile> unzipMultipleFiles(VFile zipFile) {
+		try (InputStream is = zipFile.createInputStream();
+			 ZipInputStream zis = new ZipInputStream(is)) {
+
+			Map<String, VFile> fileMap = new HashMap<>();
+			ZipEntry zipEntry;
+			while ((zipEntry = zis.getNextEntry()) != null) {
+
+				String [] fileTypeAndName = zipEntry.getName().split("/");
+				String fileType = fileTypeAndName[0];
+				String fileName = fileTypeAndName[1];
+				long size = zipEntry.getSize();
+				Instant lastModified = Instant.ofEpochMilli(zipEntry.getTime());
+				String mimeType = "application/octet-stream"; // You may need to adjust this based on your use case
+
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				byte[] buffer = new byte[1024];
+				int len;
+				while ((len = zis.read(buffer)) > 0) {
+					baos.write(buffer, 0, len);
+				}
+				byte[] content = baos.toByteArray();
+
+				VFile vFile = new StreamFile(fileName, mimeType, lastModified, size, () -> new ByteArrayInputStream(content));
+				fileMap.put(fileType, vFile);
+
+				zis.closeEntry();
+			}
+			return fileMap;
+		} catch (IOException e) {
+			throw new VSystemException(e, "Couldn't unzip files");
 		}
 	}
 }

@@ -1,28 +1,10 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.inject.Inject;
-
 import io.vertigo.account.authorization.annotations.Secured;
-import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.ChatbotNode;
-import io.vertigo.chatbot.commons.domain.ConfluenceSetting;
-import io.vertigo.chatbot.commons.domain.JiraField;
-import io.vertigo.chatbot.commons.domain.JiraFieldSetting;
-import io.vertigo.chatbot.commons.domain.JiraSetting;
+import io.vertigo.chatbot.commons.domain.*;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
-import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
-import io.vertigo.chatbot.designer.builder.services.JiraFieldService;
-import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
-import io.vertigo.chatbot.designer.builder.services.JiraSettingServices;
-import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.builder.services.*;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.domain.DtDefinitions;
@@ -35,219 +17,232 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.inject.Inject;
 
 @Controller
 @RequestMapping("/bot/{botId}/extensions")
 @Secured("BotUser")
 public class ExtensionsController extends AbstractBotController {
 
-	private static final ViewContextKey<ConfluenceSetting> confluenceSettingsKey = ViewContextKey.of("confluenceSettings");
+    private static final ViewContextKey<ConfluenceSettingIhm> confluenceSettingsIhmKey = ViewContextKey.of("confluenceSettingsIhm");
 
-	private static final ViewContextKey<ConfluenceSetting> confluenceSettingsFilteredKey = ViewContextKey.of("confluenceSettingsFiltered");
+    private static final ViewContextKey<ConfluenceSettingIhm> confluenceSettingsIhmFilteredKey = ViewContextKey.of("confluenceSettingsIhmFiltered");
 
-	private static final ViewContextKey<ConfluenceSetting> newConfluenceSettingKey = ViewContextKey.of("newConfluenceSetting");
+    private static final ViewContextKey<ConfluenceSettingIhm> newConfluenceSettingIhmKey = ViewContextKey.of("newConfluenceSettingIhm");
 
-	private static final ViewContextKey<JiraSetting> jiraSettingsKey = ViewContextKey.of("jiraSettings");
+    private static final ViewContextKey<JiraSetting> jiraSettingsKey = ViewContextKey.of("jiraSettings");
 
-	private static final ViewContextKey<JiraSetting> jiraSettingsFilteredKey = ViewContextKey.of("jiraSettingsFiltered");
+    private static final ViewContextKey<JiraSetting> jiraSettingsFilteredKey = ViewContextKey.of("jiraSettingsFiltered");
 
-	private static final ViewContextKey<JiraSetting> newJiraSettingKey = ViewContextKey.of("newJiraSetting");
+    private static final ViewContextKey<JiraSetting> newJiraSettingKey = ViewContextKey.of("newJiraSetting");
 
-	private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
+    private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
 
-	private static final ViewContextKey<JiraFieldSetting> jiraFieldSettingsKey = ViewContextKey.of("jiraFieldSettings");
+    private static final ViewContextKey<JiraFieldSetting> jiraFieldSettingsKey = ViewContextKey.of("jiraFieldSettings");
 
-	private static final ViewContextKey<JiraField> jiraFieldsKey = ViewContextKey.of("jiraFields");
+    private static final ViewContextKey<JiraField> jiraFieldsKey = ViewContextKey.of("jiraFields");
 
-	private static final ViewContextKey<ScriptIntention> scriptIntentionKey = ViewContextKey.of("scriptIntention");
+    private static final ViewContextKey<ScriptIntention> scriptIntentionKey = ViewContextKey.of("scriptIntention");
 
-	@Inject
-	private ConfluenceSettingServices confluenceSettingServices;
+    @Inject
+    private ConfluenceSettingServices confluenceSettingServices;
 
-	@Inject
-	private JiraSettingServices jiraSettingServices;
+    @Inject
+    private JiraSettingServices jiraSettingServices;
 
-	@Inject
-	private JiraFieldSettingServices jiraFieldSettingServices;
+    @Inject
+    private JiraFieldSettingServices jiraFieldSettingServices;
 
-	@Inject
-	private JiraFieldService jiraFieldService;
+    @Inject
+    private JiraFieldService jiraFieldService;
 
-	@Inject
-	private NodeServices nodeServices;
+    @Inject
+    private NodeServices nodeServices;
 
-	@Inject
-	private ScriptIntentionServices scriptIntentionServices;
-
-	@GetMapping("/")
-	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
-		final Chatbot bot = super.initCommonContext(viewContext, uiMessageStack, botId);
-		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot);
-		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
-		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
-		viewContext.publishDto(newConfluenceSettingKey, new ConfluenceSetting());
-		final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot);
-		viewContext.publishDtList(jiraFieldsKey, jiraFieldService.findAll());
-		viewContext.publishDtList(jiraSettingsKey, jiraSettings);
-		viewContext.publishDtList(jiraSettingsFilteredKey, jiraSettings);
-		viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(bot));
-		viewContext.publishDto(newJiraSettingKey, new JiraSetting());
-		viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
-		viewContext.publishDto(scriptIntentionKey, scriptIntentionServices.getNewScriptIntention(bot));
-		super.initBreadCrums(viewContext, "EXTENSION");
-	}
-
-	@PostMapping("/_saveConfluenceSetting")
-	public ViewContext saveConfluenceSetting(final ViewContext viewContext,
-			final UiMessageStack uiMessageStack,
-			@ViewAttribute("bot") final Chatbot bot,
-			@ViewAttribute("newConfluenceSetting") @Validate(ConfluenceSettingNotEmptyValidator.class) final ConfluenceSetting confluenceSetting) {
-
-		confluenceSettingServices.save(bot, confluenceSetting);
-
-		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot);
-		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
-		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
-		return viewContext;
-	}
-
-	@PostMapping("/_deleteConfluenceSetting")
-	public ViewContext deleteConfluenceSetting(final ViewContext viewContext,
-			final UiMessageStack uiMessageStack,
-			@ViewAttribute("bot") final Chatbot bot,
-			@RequestParam("conSetId") final Long conSetId) {
-		confluenceSettingServices.delete(bot, conSetId);
-		final DtList<ConfluenceSetting> confluenceSettings = confluenceSettingServices.findAllByBotId(bot);
-		viewContext.publishDtList(confluenceSettingsKey, confluenceSettings);
-		viewContext.publishDtList(confluenceSettingsFilteredKey, confluenceSettings);
-		return viewContext;
-	}
-
-	@PostMapping("/_saveJiraSetting")
-	public ViewContext saveJiraSetting(final ViewContext viewContext,
-			final UiMessageStack uiMessageStack,
-			@ViewAttribute("bot") final Chatbot bot,
-			@ViewAttribute("newJiraSetting") @Validate(JiraSettingNotEmptyValidator.class) final JiraSetting jiraSetting) {
-
-		jiraSettingServices.save(bot, jiraSetting);
-
-		final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot);
-		viewContext.publishDtList(jiraSettingsKey, jiraSettings);
-		viewContext.publishDtList(jiraSettingsFilteredKey, jiraSettings);
-		return viewContext;
-	}
-
-	@PostMapping("/_deleteJiraSetting")
-	public ViewContext deleteJiraSetting(final ViewContext viewContext,
-			final UiMessageStack uiMessageStack,
-			@ViewAttribute("bot") final Chatbot bot,
-			@RequestParam("jirSetId") final Long jirSetId) {
-		jiraSettingServices.delete(bot, jirSetId);
-		final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot);
-		viewContext.publishDtList(jiraSettingsKey, jiraSettings);
-		viewContext.publishDtList(jiraSettingsFilteredKey, jiraSettings);
-		return viewContext;
-	}
-
-	@PostMapping("_enableDisableJiraField")
-	public ViewContext enabledDisableJiraField(final ViewContext viewContext,
-			final UiMessageStack uiMessageStack,
-			@ViewAttribute("bot") final Chatbot bot,
-			@RequestParam("fieldKey") final String fieldKey,
-			@RequestParam("enabled") final String enabled) {
-
-		jiraFieldSettingServices.findByBotIdAndFieldName(bot, fieldKey).ifPresent(jiraFieldSetting -> {
-			final boolean isEnabled = "true".equals(enabled);
-			jiraFieldSetting.setEnabled(isEnabled);
-			if (!isEnabled) {
-				jiraFieldSetting.setMandatory(false);
-			}
-			jiraFieldSettingServices.save(bot, jiraFieldSetting);
-		});
-
-		viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(bot));
-		return viewContext;
-	}
-
-	@PostMapping("_mandatoryJiraField")
-	public ViewContext mandatoryJiraField(final ViewContext viewContext,
-			final UiMessageStack uiMessageStack,
-			@ViewAttribute("bot") final Chatbot bot,
-			@RequestParam("fieldKey") final String fieldKey,
-			@RequestParam("mandatory") final String mandatory) {
-
-		jiraFieldSettingServices.findByBotIdAndFieldName(bot, fieldKey).ifPresent(jiraFieldSetting -> {
-			jiraFieldSetting.setMandatory("true".equals(mandatory));
-			jiraFieldSettingServices.save(bot, jiraFieldSetting);
-		});
-
-		viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(bot));
-		return viewContext;
-	}
+    @Inject
+    private ScriptIntentionServices scriptIntentionServices;
 
 
+    @GetMapping("/")
+    public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
+        final Chatbot bot = super.initCommonContext(viewContext, uiMessageStack, botId);
+        final DtList<ConfluenceSettingIhm> confluenceSettingsIhm = confluenceSettingServices.findAllWithSpaces(bot);
+        viewContext.publishDtList(confluenceSettingsIhmKey, confluenceSettingsIhm);
+        viewContext.publishDtList(confluenceSettingsIhmFilteredKey, confluenceSettingsIhm);
+        viewContext.publishDto(newConfluenceSettingIhmKey, new ConfluenceSettingIhm());
+        final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot);
+        viewContext.publishDtList(jiraFieldsKey, jiraFieldService.findAll());
+        viewContext.publishDtList(jiraSettingsKey, jiraSettings);
+        viewContext.publishDtList(jiraSettingsFilteredKey, jiraSettings);
+        viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(bot));
+        viewContext.publishDto(newJiraSettingKey, new JiraSetting());
+        viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
+        viewContext.publishDto(scriptIntentionKey, scriptIntentionServices.getNewScriptIntention(bot));
 
-	public static final class ConfluenceSettingNotEmptyValidator extends AbstractChatbotDtObjectValidator<ConfluenceSetting> {
+        super.initBreadCrums(viewContext, "EXTENSION");
+    }
 
-		/** {@inheritDoc} */
-		@Override
-		protected void checkMonoFieldConstraints(final ConfluenceSetting confluenceSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
-			super.checkMonoFieldConstraints(confluenceSetting, dtField, dtObjectErrors);
-			if (DtDefinitions.ConfluenceSettingFields.url.name().equals(dtField.getName())
-					|| DtDefinitions.ConfluenceSettingFields.login.name().equals(dtField.getName())) {
-				final String value = (String) dtField.getDataAccessor().getValue(confluenceSetting);
-				if (value == null || value.trim().isEmpty()) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
-				}
-			}
-			if (DtDefinitions.ConfluenceSettingFields.password.name().equals(dtField.getName()) && confluenceSetting.getConSetId() == null) {
-				final String value = (String) dtField.getDataAccessor().getValue(confluenceSetting);
-				if (value == null || value.trim().isEmpty()) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
-				}
-			}
-			if (DtDefinitions.ConfluenceSettingFields.numberOfResults.name().equals(dtField.getName())) {
-				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSetting);
-				if (value == null || value <= 0) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.VALUE_SHOULD_BE_GREATER_THAN_ZERO));
-				}
-			}
-			if (DtDefinitions.ConfluenceSettingFields.nodId.name().equals(dtField.getName())) {
-				final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSetting);
-				if (value == null) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
-				}
-			}
-		}
-	}
 
-	public static final class JiraSettingNotEmptyValidator extends AbstractChatbotDtObjectValidator<JiraSetting> {
+    @PostMapping("/_saveConfluenceSetting")
+    public ViewContext saveConfluenceSetting(final ViewContext viewContext,
+                                             final UiMessageStack uiMessageStack,
+                                             @ViewAttribute("bot") final Chatbot bot,
+                                             @ViewAttribute("newConfluenceSettingIhm") @Validate(ConfluenceSettingIhmNotEmptyValidator.class) final ConfluenceSettingIhm confluenceSettingIhm) {
 
-		/** {@inheritDoc} */
-		@Override
-		protected void checkMonoFieldConstraints(final JiraSetting jiraSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
-			super.checkMonoFieldConstraints(jiraSetting, dtField, dtObjectErrors);
-			if (DtDefinitions.JiraSettingFields.url.name().equals(dtField.getName())
-					|| DtDefinitions.JiraSettingFields.login.name().equals(dtField.getName())
-					|| DtDefinitions.JiraSettingFields.project.name().equals(dtField.getName())) {
-				final String value = (String) dtField.getDataAccessor().getValue(jiraSetting);
-				if (value == null || value.trim().isEmpty()) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
-				}
-			}
-			if (DtDefinitions.JiraSettingFields.password.name().equals(dtField.getName()) && jiraSetting.getJirSetId() == null) {
-				final String value = (String) dtField.getDataAccessor().getValue(jiraSetting);
-				if (value == null || value.trim().isEmpty()) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
-				}
-			}
-			if (DtDefinitions.JiraSettingFields.nodId.name().equals(dtField.getName())) {
-				final Long value = (Long) dtField.getDataAccessor().getValue(jiraSetting);
-				if (value == null) {
-					dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
-				}
-			}
-		}
-	}
+        confluenceSettingServices.save(bot, confluenceSettingServices.findSetFromIhm(bot, confluenceSettingIhm), confluenceSettingServices.findSpacesFromIhm(bot, confluenceSettingIhm));
+
+        final DtList<ConfluenceSettingIhm> confluenceSettingIhms = confluenceSettingServices.findAllWithSpaces(bot);
+        viewContext.publishDtList(confluenceSettingsIhmKey, confluenceSettingIhms);
+        viewContext.publishDto(newConfluenceSettingIhmKey, new ConfluenceSettingIhm());
+        viewContext.publishDtList(confluenceSettingsIhmFilteredKey, confluenceSettingIhms);
+        return viewContext;
+    }
+
+    @PostMapping("/_deleteConfluenceSetting")
+    public ViewContext deleteConfluenceSetting(final ViewContext viewContext,
+                                               final UiMessageStack uiMessageStack,
+                                               @ViewAttribute("bot") final Chatbot bot,
+                                               @RequestParam("conSetId") final Long conSetId) {
+
+        confluenceSettingServices.deleteWithSpaces(bot, conSetId);
+
+        final DtList<ConfluenceSettingIhm> confluenceSettingIhms = confluenceSettingServices.findAllWithSpaces(bot);
+        viewContext.publishDtList(confluenceSettingsIhmKey, confluenceSettingIhms);
+        viewContext.publishDtList(confluenceSettingsIhmFilteredKey, confluenceSettingIhms);
+        return viewContext;
+    }
+
+    @PostMapping("/_saveJiraSetting")
+    public ViewContext saveJiraSetting(final ViewContext viewContext,
+                                       final UiMessageStack uiMessageStack,
+                                       @ViewAttribute("bot") final Chatbot bot,
+                                       @ViewAttribute("newJiraSetting") @Validate(JiraSettingNotEmptyValidator.class) final JiraSetting jiraSetting) {
+
+        jiraSettingServices.save(bot, jiraSetting);
+
+        final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot);
+        viewContext.publishDtList(jiraSettingsKey, jiraSettings);
+        viewContext.publishDtList(jiraSettingsFilteredKey, jiraSettings);
+        return viewContext;
+    }
+
+    @PostMapping("/_deleteJiraSetting")
+    public ViewContext deleteJiraSetting(final ViewContext viewContext,
+                                         final UiMessageStack uiMessageStack,
+                                         @ViewAttribute("bot") final Chatbot bot,
+                                         @RequestParam("jirSetId") final Long jirSetId) {
+        jiraSettingServices.delete(bot, jirSetId);
+        final DtList<JiraSetting> jiraSettings = jiraSettingServices.findAllByBotId(bot);
+        viewContext.publishDtList(jiraSettingsKey, jiraSettings);
+        viewContext.publishDtList(jiraSettingsFilteredKey, jiraSettings);
+        return viewContext;
+    }
+
+    @PostMapping("_enableDisableJiraField")
+    public ViewContext enabledDisableJiraField(final ViewContext viewContext,
+                                               final UiMessageStack uiMessageStack,
+                                               @ViewAttribute("bot") final Chatbot bot,
+                                               @RequestParam("fieldKey") final String fieldKey,
+                                               @RequestParam("enabled") final String enabled) {
+
+        jiraFieldSettingServices.findByBotIdAndFieldName(bot, fieldKey).ifPresent(jiraFieldSetting -> {
+            final boolean isEnabled = "true".equals(enabled);
+            jiraFieldSetting.setEnabled(isEnabled);
+            if (!isEnabled) {
+                jiraFieldSetting.setMandatory(false);
+            }
+            jiraFieldSettingServices.save(bot, jiraFieldSetting);
+        });
+
+        viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(bot));
+        return viewContext;
+    }
+
+    @PostMapping("_mandatoryJiraField")
+    public ViewContext mandatoryJiraField(final ViewContext viewContext,
+                                          final UiMessageStack uiMessageStack,
+                                          @ViewAttribute("bot") final Chatbot bot,
+                                          @RequestParam("fieldKey") final String fieldKey,
+                                          @RequestParam("mandatory") final String mandatory) {
+
+        jiraFieldSettingServices.findByBotIdAndFieldName(bot, fieldKey).ifPresent(jiraFieldSetting -> {
+            jiraFieldSetting.setMandatory("true".equals(mandatory));
+            jiraFieldSettingServices.save(bot, jiraFieldSetting);
+        });
+
+        viewContext.publishDtList(jiraFieldSettingsKey, jiraFieldSettingServices.findAllByBotId(bot));
+        return viewContext;
+    }
+
+
+    public static final class ConfluenceSettingIhmNotEmptyValidator extends AbstractChatbotDtObjectValidator<ConfluenceSettingIhm> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void checkMonoFieldConstraints(final ConfluenceSettingIhm confluenceSettingIhm, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+            super.checkMonoFieldConstraints(confluenceSettingIhm, dtField, dtObjectErrors);
+            if (DtDefinitions.ConfluenceSettingIhmFields.url.name().equals(dtField.getName())
+                    || DtDefinitions.ConfluenceSettingIhmFields.login.name().equals(dtField.getName())) {
+                final String value = (String) dtField.getDataAccessor().getValue(confluenceSettingIhm);
+                if (value == null || value.trim().isEmpty()) {
+                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                }
+            }
+            if (DtDefinitions.ConfluenceSettingIhmFields.password.name().equals(dtField.getName()) && confluenceSettingIhm.getConSetId() == null) {
+                final String value = (String) dtField.getDataAccessor().getValue(confluenceSettingIhm);
+                if (value == null || value.trim().isEmpty()) {
+                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                }
+            }
+            if (DtDefinitions.ConfluenceSettingIhmFields.numberOfResults.name().equals(dtField.getName())) {
+                final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSettingIhm);
+                if (value == null || value <= 0) {
+                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.VALUE_SHOULD_BE_GREATER_THAN_ZERO));
+                }
+            }
+            if (DtDefinitions.ConfluenceSettingIhmFields.nodId.name().equals(dtField.getName())) {
+                final Long value = (Long) dtField.getDataAccessor().getValue(confluenceSettingIhm);
+                if (value == null) {
+                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                }
+            }
+        }
+    }
+
+    public static final class JiraSettingNotEmptyValidator extends AbstractChatbotDtObjectValidator<JiraSetting> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void checkMonoFieldConstraints(final JiraSetting jiraSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+            super.checkMonoFieldConstraints(jiraSetting, dtField, dtObjectErrors);
+            if (DtDefinitions.JiraSettingFields.url.name().equals(dtField.getName())
+                    || DtDefinitions.JiraSettingFields.login.name().equals(dtField.getName())
+                    || DtDefinitions.JiraSettingFields.project.name().equals(dtField.getName())) {
+                final String value = (String) dtField.getDataAccessor().getValue(jiraSetting);
+                if (value == null || value.trim().isEmpty()) {
+                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                }
+            }
+            if (DtDefinitions.JiraSettingFields.password.name().equals(dtField.getName()) && jiraSetting.getJirSetId() == null) {
+                final String value = (String) dtField.getDataAccessor().getValue(jiraSetting);
+                if (value == null || value.trim().isEmpty()) {
+                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                }
+            }
+            if (DtDefinitions.JiraSettingFields.nodId.name().equals(dtField.getName())) {
+                final Long value = (Long) dtField.getDataAccessor().getValue(jiraSetting);
+                if (value == null) {
+                    dtObjectErrors.addError(dtField.getName(), MessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                }
+            }
+        }
+    }
 
 }

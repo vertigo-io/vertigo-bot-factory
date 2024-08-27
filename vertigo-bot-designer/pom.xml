@@ -15,7 +15,6 @@
 	<properties>
 		<sonar.javascript.globals>Vue,VertigoUi,VUiPage</sonar.javascript.globals>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<openCSV.version>5.7.1</openCSV.version>
 	</properties>
 
 	<dependencies>
@@ -60,10 +59,10 @@
 			<artifactId>vertigo-influxdb-connector</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>io.vertigo</groupId>
-			<artifactId>vertigo-keycloak-connector</artifactId>
+			<artifactId>vertigo-oidc-connector</artifactId>
 			<version>${vertigo.version}</version>
 		</dependency>
 		
@@ -116,17 +115,16 @@
 			<artifactId>opencsv</artifactId>
 			<version>${openCSV.version}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>xyz.capybara</groupId>
-			<artifactId>clamav-client</artifactId>
-			<version>${clamav-client.version}</version>
-		</dependency>
 		
 		<dependency>
 			<groupId>jakarta.ws.rs</groupId>
 			<artifactId>jakarta.ws.rs-api</artifactId>
 			<version>2.1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson-databind.version}</version>
 		</dependency>
 
 	</dependencies>

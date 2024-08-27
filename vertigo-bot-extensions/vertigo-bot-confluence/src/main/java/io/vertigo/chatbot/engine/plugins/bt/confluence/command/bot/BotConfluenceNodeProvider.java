@@ -8,6 +8,8 @@ import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.confluence.impl.ConfluenceServerServices;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.multilingual.ConfluenceMultilingualResources;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 
 import javax.inject.Inject;
@@ -22,7 +24,7 @@ public final class BotConfluenceNodeProvider implements Component {
 	@Inject
 	private ConfluenceServerServices confluenceServerService;
 
-	public BTNode confluenceSearch(final BlackBoard bb, final String keyTemplate, final String question, final String listPresentation, final String topicFallbackConfluence) {
+	public BTNode confluenceSearch(final BlackBoard bb, final String keyTemplate, final String question, final String listPresentation, final String emptySearchResult, final String topicFallbackConfluence) {
 		return sequence(
 				inputString(bb, keyTemplate, question),
 				() -> {
@@ -37,12 +39,13 @@ public final class BotConfluenceNodeProvider implements Component {
 						bb.delete(BBKeyPattern.of(keyTemplate));
 						return BTStatus.Succeeded;
 					}
+					bb.listPush(BotEngine.BOT_RESPONSE_KEY, emptySearchResult);
 					return BotNodeProvider.switchTopic(bb, topicFallbackConfluence).eval();
 				});
 
 	}
 
-	public BTNode confluenceAutomaticSearch(final BlackBoard bb, final String introductionSentence, final String topicFallbackConfluence, final String[] keyWords) {
+	public BTNode confluenceAutomaticSearch(final BlackBoard bb, final String introductionSentence, final String emptySearchResult, final String topicFallbackConfluence, final String[] keyWords) {
 		return sequence(
 				say(bb, introductionSentence),
 				() -> {
@@ -53,6 +56,7 @@ public final class BotConfluenceNodeProvider implements Component {
 						}
 						return BTStatus.Succeeded;
 					}
+					bb.listPush(BotEngine.BOT_RESPONSE_KEY, emptySearchResult);
 					return BotNodeProvider.switchTopic(bb, topicFallbackConfluence).eval();
 				});
 

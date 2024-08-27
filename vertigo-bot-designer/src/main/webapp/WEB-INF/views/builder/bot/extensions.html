@@ -9,15 +9,32 @@
 <head>
     <title th:text="#{extensions.title}"></title>
     <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js" integrity="sha512-hGVnilhYD74EGnPbzyvje74/Urjrg5LSNGx0ARG1Ucqyiaz+lFvtsXk/1jCwT9/giXP0qoXSlVDjxNxjLvmqAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js"
+            integrity="sha512-hGVnilhYD74EGnPbzyvje74/Urjrg5LSNGx0ARG1Ucqyiaz+lFvtsXk/1jCwT9/giXP0qoXSlVDjxNxjLvmqAw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-codemirror@4.0.6/dist/vue-codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/mode/simple.min.js" integrity="sha512-9YoNYsegWvbA5aiSshQ2BNW2FAq3CQVLqpg2r6urw9Tfl1GklM9PNgrMRVz8fhEtjM+uZfO/1X3RURkMcil8wg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.js" integrity="sha512-kCn9g92k3GM90eTPGMNwvpCAtLmvyqbpvrdnhm0NMt6UEHYs+DjRO4me8VcwInLWQ9azmamS1U1lbQV627/TBQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/selection/active-line.min.js" integrity="sha512-UNVAZmixdjeBtJVQcH5eSKXuVdzbSV6rzfTfNVyYWUIIDCdI9/G8/Z/nWplnSHXXxz9U8TA1BiJ1trK7abL/dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.js" integrity="sha512-uVoZbG/kkAWc+ceMzfYqsyI2ONb5qMV0nc1UZ8gOvuDuc0EWt8VcXg3fWR7z1EIpn4yyWSEeK9lmrR30VSpYLQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/mode/simple.min.js"
+            integrity="sha512-9YoNYsegWvbA5aiSshQ2BNW2FAq3CQVLqpg2r6urw9Tfl1GklM9PNgrMRVz8fhEtjM+uZfO/1X3RURkMcil8wg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.js"
+            integrity="sha512-kCn9g92k3GM90eTPGMNwvpCAtLmvyqbpvrdnhm0NMt6UEHYs+DjRO4me8VcwInLWQ9azmamS1U1lbQV627/TBQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/selection/active-line.min.js"
+            integrity="sha512-UNVAZmixdjeBtJVQcH5eSKXuVdzbSV6rzfTfNVyYWUIIDCdI9/G8/Z/nWplnSHXXxz9U8TA1BiJ1trK7abL/dg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.js"
+            integrity="sha512-uVoZbG/kkAWc+ceMzfYqsyI2ONb5qMV0nc1UZ8gOvuDuc0EWt8VcXg3fWR7z1EIpn4yyWSEeK9lmrR30VSpYLQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.css" integrity="sha512-OmcLQEy8iGiD7PSm85s06dnR7G7C9C0VqahIPAj/KHk5RpOCmnC6R2ob1oK4/uwYhWa9BF1GC6tzxsC8TIx7Jg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.css" integrity="sha512-jP1+o6s94WQS9boYeDP3Azh8ihI5BxGgBZNjkABhx05MqH5WuDzfzSnoPxGxVzWi/gxxVHZHvWkdRM6SMy5B0Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css" integrity="sha512-6sALqOPMrNSc+1p5xOhPwGIzs6kIlST+9oGWlI4Wwcbj1saaX9J3uzO3Vub016dmHV7hM+bMi/rfXLiF5DNIZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.css"
+          integrity="sha512-OmcLQEy8iGiD7PSm85s06dnR7G7C9C0VqahIPAj/KHk5RpOCmnC6R2ob1oK4/uwYhWa9BF1GC6tzxsC8TIx7Jg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.css"
+          integrity="sha512-jP1+o6s94WQS9boYeDP3Azh8ihI5BxGgBZNjkABhx05MqH5WuDzfzSnoPxGxVzWi/gxxVHZHvWkdRM6SMy5B0Q=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css"
+          integrity="sha512-6sALqOPMrNSc+1p5xOhPwGIzs6kIlST+9oGWlI4Wwcbj1saaX9J3uzO3Vub016dmHV7hM+bMi/rfXLiF5DNIZg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
     <script th:src="@{/static/chatbot/chatbotMode.js}"></script>
     <script th:src="@{/static/js/c-codemirror.js}"></script>
@@ -25,8 +42,9 @@
         Vue.use(window.VueCodemirror)
         VUiExtensions.dataX.isPwd = true;
         VUiExtensions.dataX.isJiraPwd = true;
+
         function isSelected(node) {
-            return VertigoUi.vueData.newConfluenceSetting.nodId && VertigoUi.vueData.newConfluenceSetting.nodId === node.nodId;
+            return VertigoUi.vueData.newConfluenceSettingIhm.nodId && VertigoUi.vueData.newConfluenceSettingIhm.nodId === node.nodId;
         }
 
         function isSelectedJira(node) {
@@ -35,9 +53,9 @@
 
         function selectNode(node, state) {
             if (state) {
-                VertigoUi.vueData.newConfluenceSetting.nodId = node.nodId;
+                VertigoUi.vueData.newConfluenceSettingIhm.nodId = node.nodId;
             } else {
-                VertigoUi.vueData.newConfluenceSetting.nodId = null;
+                VertigoUi.vueData.newConfluenceSettingIhm.nodId = null;
             }
         }
 
@@ -50,14 +68,21 @@
         }
 
         function filterConfluenceSettings() {
-            VertigoUi.vueData.confluenceSettingsFiltered = VertigoUi.vueData.confluenceSettings;
+            VertigoUi.vueData.confluenceSettingsIhmFiltered = VertigoUi.vueData.confluenceSettingsIhm;
 
             if (VertigoUi.componentStates.nodes.selectedNode.nodId !== null) {
-                VertigoUi.vueData.confluenceSettingsFiltered = VertigoUi.vueData.confluenceSettingsFiltered.slice().reverse().filter(confluenceSetting =>
-                    confluenceSetting.nodId === VertigoUi.componentStates.nodes.selectedNode.nodId
+                VertigoUi.vueData.confluenceSettingsIhmFiltered = VertigoUi.vueData.confluenceSettingsIhmFiltered.slice().reverse().filter(confluenceSettingIhm =>
+                    confluenceSettingIhm.nodId === VertigoUi.componentStates.nodes.selectedNode.nodId
                 );
             }
         }
+
+        function createValue(val, done) {
+            if (val.length > 0 && !val.includes(',')) {
+                done(val, 'add-unique')
+            }
+        }
+
 
         function filterJiraSettings() {
             VertigoUi.vueData.jiraSettingsFiltered = VertigoUi.vueData.jiraSettings;
@@ -81,8 +106,8 @@
                 'fieldKey': fieldKey,
                 'mandatory': mandatory
             }, {
-                onSuccess: function() {
-                   refreshCodeMirrorJiraField()
+                onSuccess: function () {
+                    refreshCodeMirrorJiraField()
                 }
             });
         }
@@ -125,29 +150,238 @@
 </head>
 
 <body>
-    <section layout:fragment="content-actions">
+<section layout:fragment="content-actions">
 
-    </section>
+</section>
 
-    <section layout:fragment="content">
+<section layout:fragment="content">
 
-        <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
-            <span class="text-primary" style="flex-grow: 2">[[#{layout.plugins}]]</span>
-            <q-icon name="help_outlined" size="2rem"/>
-            <q-tooltip>[[#{extensions.tooltip}]]</q-tooltip>
-        </div>
+    <div class="text-h6 text-weight-bold" style="display: flex; align-items: center">
+        <span class="text-primary" style="flex-grow: 2">[[#{layout.plugins}]]</span>
+        <q-icon name="help_outlined" size="2rem"/>
+        <q-tooltip content-class="q-tooltip-text">[[#{extensions.tooltip}]]</q-tooltip>
+    </div>
 
-        <vu:include-data-primitive key="locale"/>
-        <vu:include-data object="bot" field="botId" />
-        <vu:include-data object="nodeList" field="nodId" />
-        <vu:include-data object="nodeList" field="name" />
-        <vu:include-data object="nodeList" field="color" />
-        <vu:popup-ajax action="_deleteConfluenceSetting" vModel="showDeleteConfluenceSettingPopup" th:message="#{extension.confluence.delete.popup.message}"
-                       th:confirm="#{action.delete}" dataName="conSetId" ></vu:popup-ajax>
-        <vu:popup-ajax action="_deleteJiraSetting" vModel="showDeleteJiraSettingPopup" th:message="#{extension.jira.delete.popup.message}"
-                       th:confirm="#{action.delete}" dataName="jirSetId" ></vu:popup-ajax>
+    <vu:include-data-primitive key="locale"/>
+    <vu:include-data object="bot" field="botId"/>
+    <vu:include-data object="nodeList" field="nodId"/>
+    <vu:include-data object="nodeList" field="name"/>
+    <vu:include-data object="nodeList" field="color"/>
+    <vu:popup-ajax action="_deleteConfluenceSetting" vModel="showDeleteConfluenceSettingPopup"
+                   th:message="#{extension.confluence.delete.popup.message}"
+                   th:confirm="#{action.delete}" dataName="conSetId"></vu:popup-ajax>
+    <vu:popup-ajax action="_deleteJiraSetting" vModel="showDeleteJiraSettingPopup"
+                   th:message="#{extension.jira.delete.popup.message}"
+                   th:confirm="#{action.delete}" dataName="jirSetId"></vu:popup-ajax>
 
-        <vu:table id="CONFLUENCE" th:title="#{extensions.confluence}" list="confluenceSettingsFiltered" componentId="confluenceSettingsFiltered" sortBy="url" :binary-state-sort="true">
+    <vu:table id="CONFLUENCE" th:title="#{extensions.confluence}" list="confluenceSettingsIhmFiltered"
+              componentId="confluenceSettingsFiltered" sortBy="url" :binary-state-sort="true">
+        <vu:slot name="top_right_slot">
+            <q-select
+                    th:attr="dataObject=${model.vContext['componentStates'].addComponentState('nodes').addObject('selectedNode', {nodId: null})}"
+                    style="width: 250px; margin-right: 10px"
+                    clearable
+                    filled
+                    map-options
+                    emit-value
+                    v-model="componentStates.nodes.selectedNode.nodId"
+                    :options="transformListForSelection('nodeList', 'nodId', 'name')"
+                    th:label="#{extension.confluence.filter.node}"
+                    @input="filterConfluenceSettings();"
+                    stack-label>
+            </q-select>
+            <q-btn color="primary" round icon="add" th:aria-label="#{action.add}"
+                   th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" th:title="#{action.add}"
+                   @click="VUiExtensions.dataX.isPwd = false; vueData.newConfluenceSettingIhm.conSetId = null;
+                       vueData.newConfluenceSettingIhm.botId = vueData.bot.botId;
+                       vueData.newConfluenceSettingIhm.nodId = null;
+                       vueData.newConfluenceSettingIhm.url = null;
+                       vueData.newConfluenceSettingIhm.login = null ;
+                       vueData.newConfluenceSettingIhm.password = null ;
+                       vueData.newConfluenceSettingIhm.numberOfResults = null ;
+                       vueData.newConfluenceSettingIhm.spaces = null ;
+                       $refs.confluenceSettingDialog.show()"></q-btn>
+        </vu:slot>
+        <vu:slot name="actions_slot">
+            <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}"
+                   th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                   th:title="#{action.update}"
+                   @click="VUiExtensions.dataX.isPwd = true;
+                       vueData.newConfluenceSettingIhm.botId = props.row.botId;
+                       vueData.newConfluenceSettingIhm.conSetId = props.row.conSetId;
+                       vueData.newConfluenceSettingIhm.nodId = props.row.nodId;
+                       vueData.newConfluenceSettingIhm.url = props.row.url;
+                       vueData.newConfluenceSettingIhm.login = props.row.login;
+                       vueData.newConfluenceSettingIhm.password = props.row.password;
+                       vueData.newConfluenceSettingIhm.numberOfResults = props.row.numberOfResults;
+                       vueData.newConfluenceSettingIhm.spaces = props.row.spaces;
+                       $refs.confluenceSettingDialog.show()"></q-btn>
+            <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}"
+                   th:title="#{action.delete}"
+                   th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
+                   @click="componentStates.conSetId = props.row.conSetId; componentStates.showDeleteConfluenceSettingPopup = true"></q-btn>
+        </vu:slot>
+        <vu:include-data object="confluenceSettingsIhm" field="'*'"/>
+        <vu:include-data object="confluenceSettingsIhmFiltered" field="conSetId"/>
+        <vu:include-data object="confluenceSettingsIhmFiltered" field="botId"/>
+        <vu:include-data object="confluenceSettingsIhmFiltered" field="nodId"/>
+        <vu:include-data object="confluenceSettingsIhmFiltered" field="url"/>
+        <vu:include-data object="confluenceSettingsIhmFiltered" field="login"/>
+        <vu:include-data object="confluenceSettingsIhmFiltered" field="password"/>
+        <vu:include-data object="confluenceSettingsIhmFiltered" field="numberOfResults"/>
+        <vu:include-data object="confluenceSettingsIhmFiltered" field="spaces"/>
+        <vu:column name="node" th:label="#{extension.confluence.noeud}">
+            <q-chip v-for="node in vueData.nodeList" v-if="node.nodId === props.row.nodId"
+                    :style="'background: '+ node.color" text-color="white">
+                {{node.name}}
+            </q-chip>
+        </vu:column>
+        <vu:column field="url"/>
+        <vu:column field="login"/>
+        <vu:column field="spaces">
+            {{ props.row.spaces.join(', ') }}
+        </vu:column>
+        <vu:column field="numberOfResults"/>
+    </vu:table>
+
+
+    <q-dialog ref="confluenceSettingDialog">
+        <vu:include-data object="newConfluenceSettingIhm" field="conSetId" modifiable="true"/>
+        <vu:include-data object="newConfluenceSettingIhm" field="botId" modifiable="true"/>
+        <vu:include-data object="newConfluenceSettingIhm" field="nodId" modifiable="true"/>
+        <vu:include-data object="newConfluenceSettingIhm" field="url" modifiable="true"/>
+        <vu:include-data object="newConfluenceSettingIhm" field="login" modifiable="true"/>
+        <vu:include-data object="newConfluenceSettingIhm" field="password" modifiable="true"/>
+        <vu:include-data object="newConfluenceSettingIhm" field="numberOfResults" modifiable="true"/>
+        <vu:include-data object="newConfluenceSettingIhm" field="spaces" modifiable="true"/>
+        <q-card>
+            <q-card-section>
+                <div class="text-h6">
+                    <span v-if="vueData.newConfluenceSettingIhm.conSetId !== null"
+                          th:text="#{extensions.confluence.update.popup.title}"></span>
+                    <span v-else th:text="#{extensions.confluence.add.popup.title}"></span>
+                </div>
+            </q-card-section>
+            <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
+                <input type="hidden" v-model="vueData.newConfluenceSettingIhm.conSetId"
+                       name="vContext[newConfluenceSettingIhm][conSetId]">
+                <input type="hidden" v-model="vueData.newConfluenceSettingIhm.botId"
+                       name="vContext[newConfluenceSettingIhm][botId]">
+                <q-input v-model="vueData.newConfluenceSettingIhm.url" th:label="#{extensions.confluence.url}"
+                         name="vContext[newConfluenceSettingIhm][url]"
+                         :error="hasFieldsError('newConfluenceSettingIhm', 'url')"
+                         :error-message="getErrorMessage('newConfluenceSettingIhm', 'url')"/>
+            </q-card-section>
+            <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
+                <q-input v-model="vueData.newConfluenceSettingIhm.login" th:label="#{extensions.confluence.login}"
+                         name="vContext[newConfluenceSettingIhm][login]"
+                         :error="hasFieldsError('newConfluenceSettingIhm', 'login')"
+                         :error-message="getErrorMessage('newConfluenceSettingIhm', 'login')"/>
+            </q-card-section>
+            <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
+                <div style="display: flex; align-items: center">
+                    <q-input style="flex-grow: 1;" v-if="dataX.isPwd" th:label="#{extensions.confluence.password}"
+                             disable type="password" name="notYourPasswordConfluence"
+                             value="notYourPasswordConfluence"></q-input>
+                    <q-input style="flex-grow: 1;" v-if="!dataX.isPwd"
+                             v-model="vueData.newConfluenceSettingIhm.password"
+                             th:label="#{extensions.confluence.password}"
+                             name="vContext[newConfluenceSettingIhm][password]"
+                             :error="hasFieldsError('newConfluenceSettingIhm', 'password')"
+                             :error-message="getErrorMessage('newConfluenceSettingIhm', 'password')" type="text">
+                    </q-input>
+                    <q-icon
+                            name="clear"
+                            size="sm"
+                            class="cursor-pointer"
+                            enable
+                            @click="VUiExtensions.dataX.isPwd = !VUiExtensions.dataX.isPwd; vueData.newConfluenceSettingIhm.password = null;"
+                    />
+                </div>
+            </q-card-section>
+            <q-card-section>
+                <q-input v-model="vueData.newConfluenceSettingIhm.numberOfResults"
+                         th:label="#{extensions.confluence.numberOfResults}"
+                         name="vContext[newConfluenceSettingIhm][numberOfResults]"
+                         :error="hasFieldsError('newConfluenceSettingIhm', 'numberOfResults')"
+                         :error-message="getErrorMessage('newConfluenceSettingIhm', 'numberOfResults')"/>
+            </q-card-section>
+
+            <q-card-section>
+                <q-select
+                        th:label="#{extensions.confluence.spaces}"
+                        v-model="vueData.newConfluenceSettingIhm.spaces"
+                        name="vContext[newConfluenceSettingIhm][spaces]"
+                        multiple
+                        use-chips
+                        use-input
+                        clearable
+                        input-debounce="0"
+                        @new-value="createValue"
+                        stack-label>
+                </q-select>
+            </q-card-section>
+
+
+            <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
+                <q-chip v-for="node in vueData.nodeList" clickable :selected="isSelected(node)"
+                        @update:selected="state => selectNode(node, state)"
+                        icon="panorama_fish_eye" :style="'background: '+ node.color" text-color="white">
+                    {{node.name}}
+                </q-chip>
+                <div v-if="hasFieldsError('newConfluenceSettingIhm', 'nodId')" class="text-red">
+                    {{getErrorMessage('newConfluenceSettingIhm', 'nodId')}}
+                </div>
+            </q-card-section>
+
+            <q-card-actions align="around">
+                <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                       @click="httpPostAjax('_saveConfluenceSetting', vueDataParams(['newConfluenceSettingIhm'])); VUiExtensions.dataX.isPwd = true"
+                       color="primary" v-close-popup></q-btn>
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+    <vu:block id="JIRA" th:title="#{extensions.jira}">
+        <vu:block id="JIRA_SYNTAX" th:title="#{extensions.jira.syntax}" style="margin-bottom:20px">
+            <c-codemirror ref="jiraCodeMirror" object="scriptIntention" field="script" :mode-edit="false"
+                          :locale="vueData.locale"></c-codemirror>
+        </vu:block>
+        <vu:table id="JIRA_GENERAL_SETTINGS" th:title="#{extensions.jira.generalSettings}" list="jiraFieldSettings"
+                  componentId="jiraFieldSettings" sortBy="enabled" :binary-state-sort="true"
+                  style="margin-bottom:20px;">
+            <vu:include-data object="jiraFields" field="'*'"/>
+            <vu:include-data object="jiraFieldSettings" field="'*'"/>
+            <vu:column field="jirFieldCd">
+                <vu:content>
+                    <span v-html="getJiraFieldLabel(props.row.jirFieldCd)"></span>
+                </vu:content>
+            </vu:column>
+            <vu:column name="jiraId" th:label="#{extension.jira.field.setting.jiraId}">
+                <vu:content>
+                    <span v-html="getJiraFieldId(props.row.jirFieldCd)"></span>
+                </vu:content>
+            </vu:column>
+            <vu:column name="enabled" th:label="#{extension.jira.field.setting.enabled}">
+                <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
+                          :disable="props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"
+                          @input="enabledDisabledJiraField(props.row.jirFieldCd, props.row.enabled)"></q-toggle>
+                <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
+                          disable></q-toggle>
+            </vu:column>
+            <vu:column name="mandatory" th:label="#{extension.jira.field.setting.mandatory}">
+                <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                          v-model="props.row.mandatory"
+                          :disable="!props.row.enabled || props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"
+                          @input="mandatoryJiraField(props.row.jirFieldCd, props.row.mandatory)"></q-toggle>
+                <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.mandatory"
+                          disable></q-toggle>
+            </vu:column>
+        </vu:table>
+        <vu:include-data object="scriptIntention" field="script"/>
+        <vu:table id="JIRA_NODE_SETTINGS" th:title="#{extensions.jira.nodeSettings}" list="jiraSettingsFiltered"
+                  componentId="jiraSettingsFiltered" sortBy="url" :binary-state-sort="true">
             <vu:slot name="top_right_slot">
                 <q-select
                         th:attr="dataObject=${model.vContext['componentStates'].addComponentState('nodes').addObject('selectedNode', {nodId: null})}"
@@ -158,279 +392,145 @@
                         emit-value
                         v-model="componentStates.nodes.selectedNode.nodId"
                         :options="transformListForSelection('nodeList', 'nodId', 'name')"
-                        th:label="#{extension.confluence.filter.node}"
-                        @input="filterConfluenceSettings();"
+                        th:label="#{extension.jira.filter.node}"
+                        @input="filterJiraSettings();"
                         stack-label>
                 </q-select>
-                <q-btn color="primary" round icon="add" th:aria-label="#{action.add}" th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" th:title="#{action.add}"
-                       @click="VUiExtensions.dataX.isPwd = false; vueData.newConfluenceSetting.conSetId = null;
-                       vueData.newConfluenceSetting.botId = vueData.bot.botId;
-                       vueData.newConfluenceSetting.nodId = null;
-                       vueData.newConfluenceSetting.url = null;
-                       vueData.newConfluenceSetting.login = null ;
-                       vueData.newConfluenceSetting.password = null ;
-                       vueData.newConfluenceSetting.numberOfResults = null ;
-                       $refs.confluenceSettingDialog.show()"></q-btn>
-            </vu:slot>
-            <vu:slot name="actions_slot">
-                <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
-                       th:title="#{action.update}"
-                       @click="VUiExtensions.dataX.isPwd = true;
-                       vueData.newConfluenceSetting.botId = props.row.botId;
-                       vueData.newConfluenceSetting.conSetId = props.row.conSetId;
-                       vueData.newConfluenceSetting.nodId = props.row.nodId;
-                       vueData.newConfluenceSetting.url = props.row.url;
-                       vueData.newConfluenceSetting.login = props.row.login;
-                       vueData.newConfluenceSetting.password = props.row.password;
-                       vueData.newConfluenceSetting.numberOfResults = props.row.numberOfResults; $refs.confluenceSettingDialog.show()"></q-btn>
-                <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
-                       th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
-                       @click="componentStates.conSetId = props.row.conSetId; componentStates.showDeleteConfluenceSettingPopup = true"></q-btn>
-            </vu:slot>
-            <vu:include-data object="confluenceSettings" field="'*'" />
-            <vu:include-data object="confluenceSettingsFiltered" field="conSetId" />
-            <vu:include-data object="confluenceSettingsFiltered" field="botId" />
-            <vu:include-data object="confluenceSettingsFiltered" field="nodId" />
-            <vu:include-data object="confluenceSettingsFiltered" field="url" />
-            <vu:include-data object="confluenceSettingsFiltered" field="login" />
-            <vu:include-data object="confluenceSettingsFiltered" field="password" />
-            <vu:include-data object="confluenceSettingsFiltered" field="numberOfResults" />
-            <vu:column name="node" th:label="#{extension.confluence.noeud}">
-                <q-chip v-for="node in vueData.nodeList" v-if="node.nodId === props.row.nodId" :style="'background: '+ node.color" text-color="white">
-                    {{node.name}}
-                </q-chip>
-            </vu:column>
-            <vu:column field="url"/>
-            <vu:column field="login"/>
-            <vu:column field="numberOfResults"/>
-        </vu:table>
-
-
-        <q-dialog ref="confluenceSettingDialog">
-            <vu:include-data object="newConfluenceSetting" field="conSetId" modifiable="true" />
-            <vu:include-data object="newConfluenceSetting" field="botId" modifiable="true" />
-            <vu:include-data object="newConfluenceSetting" field="nodId" modifiable="true" />
-            <vu:include-data object="newConfluenceSetting" field="url" modifiable="true" />
-            <vu:include-data object="newConfluenceSetting" field="login" modifiable="true" />
-            <vu:include-data object="newConfluenceSetting" field="password" modifiable="true" />
-            <vu:include-data object="newConfluenceSetting" field="numberOfResults" modifiable="true" />
-            <q-card>
-                <q-card-section>
-                    <div class="text-h6">
-                        <span v-if="vueData.newConfluenceSetting.conSetId !== null" th:text="#{extensions.confluence.update.popup.title}"></span>
-                        <span v-else th:text="#{extensions.confluence.add.popup.title}"></span>
-                    </div>
-                </q-card-section>
-                <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
-                    <input type="hidden" v-model="vueData.newConfluenceSetting.conSetId" name="vContext[newConfluenceSetting][conSetId]">
-                    <input type="hidden" v-model="vueData.newConfluenceSetting.botId" name="vContext[newConfluenceSetting][botId]">
-                    <q-input v-model="vueData.newConfluenceSetting.url" th:label="#{extensions.confluence.url}"
-                             name="vContext[newConfluenceSetting][url]" :error="hasFieldsError('newConfluenceSetting', 'url')"
-                             :error-message="getErrorMessage('newConfluenceSetting', 'url')"  />
-                </q-card-section>
-                <q-card-section  th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
-                    <q-input v-model="vueData.newConfluenceSetting.login" th:label="#{extensions.confluence.login}"
-                             name="vContext[newConfluenceSetting][login]" :error="hasFieldsError('newConfluenceSetting', 'login')"
-                             :error-message="getErrorMessage('newConfluenceSetting', 'login')" />
-                </q-card-section>
-                <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" >
-                    <div style="display: flex; align-items: center">
-                        <q-input style="flex-grow: 1;" v-if="dataX.isPwd"  th:label="#{extensions.confluence.password}" disable type="password" name="notYourPasswordConfluence" value="notYourPasswordConfluence"></q-input>
-                        <q-input style="flex-grow: 1;" v-if="!dataX.isPwd" v-model="vueData.newConfluenceSetting.password" th:label="#{extensions.confluence.password}"
-                                 name="vContext[newConfluenceSetting][password]" :error="hasFieldsError('newConfluenceSetting', 'password')"
-                                 :error-message="getErrorMessage('newConfluenceSetting', 'password')" type="text">
-                        </q-input>
-                        <q-icon
-                                name="clear"
-                                size="sm"
-                                class="cursor-pointer"
-                                enable
-                                @click="VUiExtensions.dataX.isPwd = !VUiExtensions.dataX.isPwd; vueData.newConfluenceSetting.password = null;"
-                        />
-                    </div>
-                </q-card-section>
-                <q-card-section>
-                    <q-input v-model="vueData.newConfluenceSetting.numberOfResults" th:label="#{extensions.confluence.numberOfResults}"
-                             name="vContext[newConfluenceSetting][numberOfResults]" :error="hasFieldsError('newConfluenceSetting', 'numberOfResults')"
-                             :error-message="getErrorMessage('newConfluenceSetting', 'numberOfResults')" />
-                </q-card-section>
-
-                <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" >
-                    <q-chip v-for="node in vueData.nodeList" clickable :selected="isSelected(node)" @update:selected="state => selectNode(node, state)"
-                            icon="panorama_fish_eye" :style="'background: '+ node.color" text-color="white">
-                        {{node.name}}
-                    </q-chip>
-                    <div v-if="hasFieldsError('newConfluenceSetting', 'nodId')" class="text-red">{{getErrorMessage('newConfluenceSetting', 'nodId')}}</div>
-                </q-card-section>
-
-                <q-card-actions align="around">
-                    <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
-                    <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
-                    <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-                           @click="httpPostAjax('_saveConfluenceSetting', vueDataParams(['newConfluenceSetting'])); VUiExtensions.dataX.isPwd = true"
-                           color="primary" v-close-popup></q-btn>
-                </q-card-actions>
-            </q-card>
-        </q-dialog>
-        <vu:block id="JIRA" th:title="#{extensions.jira}">
-            <vu:block id="JIRA_SYNTAX" th:title="#{extensions.jira.syntax}" style="margin-bottom:20px">
-                <c-codemirror ref="jiraCodeMirror" object="scriptIntention" field="script" :mode-edit="false" :locale="vueData.locale"></c-codemirror>
-            </vu:block>
-            <vu:table id="JIRA_GENERAL_SETTINGS" th:title="#{extensions.jira.generalSettings}" list="jiraFieldSettings" componentId="jiraFieldSettings" sortBy="enabled" :binary-state-sort="true"
-                      style="margin-bottom:20px;">
-                <vu:include-data object="jiraFields" field="'*'" />
-                <vu:include-data object="jiraFieldSettings" field="'*'" />
-                <vu:column field="jirFieldCd">
-                    <vu:content>
-                        <span v-html="getJiraFieldLabel(props.row.jirFieldCd)"></span>
-                    </vu:content>
-                </vu:column>
-                <vu:column name="jiraId" th:label="#{extension.jira.field.setting.jiraId}">
-                    <vu:content>
-                        <span v-html="getJiraFieldId(props.row.jirFieldCd)"></span>
-                    </vu:content>
-                </vu:column>
-                <vu:column name="enabled" th:label="#{extension.jira.field.setting.enabled}">
-                    <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
-                              :disable="props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"
-                              @input="enabledDisabledJiraField(props.row.jirFieldCd, props.row.enabled)" ></q-toggle>
-                    <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled" disable></q-toggle>
-                </vu:column>
-                <vu:column name="mandatory" th:label="#{extension.jira.field.setting.mandatory}" >
-                    <q-toggle  th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
-                               v-model="props.row.mandatory"
-                               :disable="!props.row.enabled || props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"  @input="mandatoryJiraField(props.row.jirFieldCd, props.row.mandatory)"></q-toggle>
-                    <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.mandatory" disable></q-toggle>
-                </vu:column>
-            </vu:table>
-            <vu:include-data object="scriptIntention" field="script" />
-            <vu:table id="JIRA_NODE_SETTINGS" th:title="#{extensions.jira.nodeSettings}" list="jiraSettingsFiltered" componentId="jiraSettingsFiltered" sortBy="url" :binary-state-sort="true">
-                <vu:slot name="top_right_slot">
-                    <q-select
-                            th:attr="dataObject=${model.vContext['componentStates'].addComponentState('nodes').addObject('selectedNode', {nodId: null})}"
-                            style="width: 250px; margin-right: 10px"
-                            clearable
-                            filled
-                            map-options
-                            emit-value
-                            v-model="componentStates.nodes.selectedNode.nodId"
-                            :options="transformListForSelection('nodeList', 'nodId', 'name')"
-                            th:label="#{extension.jira.filter.node}"
-                            @input="filterJiraSettings();"
-                            stack-label>
-                    </q-select>
-                    <q-btn color="primary" round icon="add" th:aria-label="#{action.add}" th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" th:title="#{action.add}"
-                           @click="VUiExtensions.dataX.isJiraPwd = false; vueData.newJiraSetting.jirSetId = null;
+                <q-btn color="primary" round icon="add" th:aria-label="#{action.add}"
+                       th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" th:title="#{action.add}"
+                       @click="VUiExtensions.dataX.isJiraPwd = false; vueData.newJiraSetting.jirSetId = null;
                        vueData.newJiraSetting.botId = vueData.bot.botId;
                        vueData.newJiraSetting.nodId = null;
                        vueData.newJiraSetting.url = null;
                        vueData.newJiraSetting.login = null ;
                        vueData.newJiraSetting.password = null ;
                        vueData.newJiraSetting.project = null ;
+                       vueData.newJiraSetting.numberOfResults = null ;
                        $refs.jiraSettingDialog.show()"></q-btn>
-                </vu:slot>
-                <vu:slot name="actions_slot">
-                    <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
-                           th:title="#{action.update}"
-                           @click="VUiExtensions.dataX.isJiraPwd = true;
+            </vu:slot>
+            <vu:slot name="actions_slot">
+                <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}"
+                       th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                       th:title="#{action.update}"
+                       @click="VUiExtensions.dataX.isJiraPwd = true;
                        vueData.newJiraSetting.botId = props.row.botId;
                        vueData.newJiraSetting.jirSetId = props.row.jirSetId;
                        vueData.newJiraSetting.nodId = props.row.nodId;
                        vueData.newJiraSetting.url = props.row.url;
                        vueData.newJiraSetting.login = props.row.login;
                        vueData.newJiraSetting.password = props.row.password;
+                       vueData.newJiraSetting.numberOfResults = props.row.numberOfResults;
                        vueData.newJiraSetting.project = props.row.project; $refs.jiraSettingDialog.show()"></q-btn>
-                    <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
-                           th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
-                           @click="componentStates.jirSetId = props.row.jirSetId; componentStates.showDeleteJiraSettingPopup = true"></q-btn>
-                </vu:slot>
-                <vu:include-data object="jiraSettings" field="'*'" />
-                <vu:include-data object="jiraSettingsFiltered" field="jirSetId" />
-                <vu:include-data object="jiraSettingsFiltered" field="botId" />
-                <vu:include-data object="jiraSettingsFiltered" field="nodId" />
-                <vu:include-data object="jiraSettingsFiltered" field="url" />
-                <vu:include-data object="jiraSettingsFiltered" field="login" />
-                <vu:include-data object="jiraSettingsFiltered" field="password" />
-                <vu:include-data object="jiraSettingsFiltered" field="project" />
-                <vu:column name="node" th:label="#{extension.jira.filter.node}">
-                    <q-chip v-for="node in vueData.nodeList" v-if="node.nodId === props.row.nodId" :style="'background: '+ node.color" text-color="white">
-                        {{node.name}}
-                    </q-chip>
-                </vu:column>
-                <vu:column field="url"/>
-                <vu:column field="login"/>
-                <vu:column field="project"/>
-            </vu:table>
-        </vu:block>
+                <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}"
+                       th:title="#{action.delete}"
+                       th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
+                       @click="componentStates.jirSetId = props.row.jirSetId; componentStates.showDeleteJiraSettingPopup = true"></q-btn>
+            </vu:slot>
+            <vu:include-data object="jiraSettings" field="'*'"/>
+            <vu:include-data object="jiraSettingsFiltered" field="jirSetId"/>
+            <vu:include-data object="jiraSettingsFiltered" field="botId"/>
+            <vu:include-data object="jiraSettingsFiltered" field="nodId"/>
+            <vu:include-data object="jiraSettingsFiltered" field="url"/>
+            <vu:include-data object="jiraSettingsFiltered" field="login"/>
+            <vu:include-data object="jiraSettingsFiltered" field="password"/>
+            <vu:include-data object="jiraSettingsFiltered" field="project"/>
+            <vu:include-data object="jiraSettingsFiltered" field="numberOfResults"/>
+            <vu:column name="node" th:label="#{extension.jira.filter.node}">
+                <q-chip v-for="node in vueData.nodeList" v-if="node.nodId === props.row.nodId"
+                        :style="'background: '+ node.color" text-color="white">
+                    {{node.name}}
+                </q-chip>
+            </vu:column>
+            <vu:column field="url"/>
+            <vu:column field="login"/>
+            <vu:column field="project"/>
+            <vu:column field="numberOfResults"/>
+        </vu:table>
+    </vu:block>
 
 
-        <q-dialog ref="jiraSettingDialog">
-            <vu:include-data object="newJiraSetting" field="jirSetId" modifiable="true" />
-            <vu:include-data object="newJiraSetting" field="botId" modifiable="true" />
-            <vu:include-data object="newJiraSetting" field="nodId" modifiable="true" />
-            <vu:include-data object="newJiraSetting" field="url" modifiable="true" />
-            <vu:include-data object="newJiraSetting" field="login" modifiable="true" />
-            <vu:include-data object="newJiraSetting" field="password" modifiable="true" />
-            <vu:include-data object="newJiraSetting" field="project" modifiable="true" />
-            <q-card>
-                <q-card-section>
-                    <div class="text-h6">
-                        <span v-if="vueData.newJiraSetting.jirSetId !== null" th:text="#{extensions.jira.update.popup.title}"></span>
-                        <span v-else th:text="#{extensions.jira.add.popup.title}"></span>
-                    </div>
-                </q-card-section>
-                <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
-                    <input type="hidden" v-model="vueData.newJiraSetting.jirSetId" name="vContext[newJiraSetting][jirSetId]">
-                    <input type="hidden" v-model="vueData.newJiraSetting.botId" name="vContext[newJiraSetting][botId]">
-                    <q-input v-model="vueData.newJiraSetting.url" th:label="#{extensions.jira.url}"
-                             name="vContext[newJiraSetting][url]" :error="hasFieldsError('newJiraSetting', 'url')"
-                             :error-message="getErrorMessage('newJiraSetting', 'url')"  />
-                </q-card-section>
-                <q-card-section  th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
-                    <q-input v-model="vueData.newJiraSetting.login" th:label="#{extensions.jira.login}"
-                             name="vContext[newJiraSetting][login]" :error="hasFieldsError('newJiraSetting', 'login')"
-                             :error-message="getErrorMessage('newJiraSetting', 'login')" />
-                </q-card-section>
-                <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" >
-                    <div style="display: flex; align-items: center">
-                        <q-input style="flex-grow: 1;" v-if="dataX.isJiraPwd"  th:label="#{extensions.confluence.password}"
-                                 disable type="password" name="notYourPasswordJira" value="notYourPasswordJira"></q-input>
-                        <q-input style="flex-grow: 1;" v-if="!dataX.isJiraPwd" v-model="vueData.newJiraSetting.password" th:label="#{extensions.jira.password}"
-                                 name="vContext[newJiraSetting][password]" :error="hasFieldsError('newJiraSetting', 'password')"
-                                 :error-message="getErrorMessage('newJiraSetting', 'password')" type="text">
-                        </q-input>
-                        <q-icon
-                                name="clear"
-                                size="sm"
-                                class="cursor-pointer"
-                                enable
-                                @click="VUiExtensions.dataX.isJiraPwd = !VUiExtensions.dataX.isJiraPwd; vueData.newJiraSetting.password = null;"
-                        />
-                    </div>
-                </q-card-section>
-                <q-card-section>
-                    <q-input v-model="vueData.newJiraSetting.project" th:label="#{extensions.jira.project}"
-                             name="vContext[newJiraSetting][project]" :error="hasFieldsError('newJiraSetting', 'project')"
-                             :error-message="getErrorMessage('newJiraSetting', 'project')" />
-                </q-card-section>
+    <q-dialog ref="jiraSettingDialog">
+        <vu:include-data object="newJiraSetting" field="jirSetId" modifiable="true"/>
+        <vu:include-data object="newJiraSetting" field="botId" modifiable="true"/>
+        <vu:include-data object="newJiraSetting" field="nodId" modifiable="true"/>
+        <vu:include-data object="newJiraSetting" field="url" modifiable="true"/>
+        <vu:include-data object="newJiraSetting" field="login" modifiable="true"/>
+        <vu:include-data object="newJiraSetting" field="password" modifiable="true"/>
+        <vu:include-data object="newJiraSetting" field="project" modifiable="true"/>
+        <vu:include-data object="newJiraSetting" field="numberOfResults" modifiable="true"/>
+        <q-card>
+            <q-card-section>
+                <div class="text-h6">
+                    <span v-if="vueData.newJiraSetting.jirSetId !== null"
+                          th:text="#{extensions.jira.update.popup.title}"></span>
+                    <span v-else th:text="#{extensions.jira.add.popup.title}"></span>
+                </div>
+            </q-card-section>
+            <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
+                <input type="hidden" v-model="vueData.newJiraSetting.jirSetId"
+                       name="vContext[newJiraSetting][jirSetId]">
+                <input type="hidden" v-model="vueData.newJiraSetting.botId" name="vContext[newJiraSetting][botId]">
+                <q-input v-model="vueData.newJiraSetting.url" th:label="#{extensions.jira.url}"
+                         name="vContext[newJiraSetting][url]" :error="hasFieldsError('newJiraSetting', 'url')"
+                         :error-message="getErrorMessage('newJiraSetting', 'url')"/>
+            </q-card-section>
+            <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
+                <q-input v-model="vueData.newJiraSetting.login" th:label="#{extensions.jira.login}"
+                         name="vContext[newJiraSetting][login]" :error="hasFieldsError('newJiraSetting', 'login')"
+                         :error-message="getErrorMessage('newJiraSetting', 'login')"/>
+            </q-card-section>
+            <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
+                <div style="display: flex; align-items: center">
+                    <q-input style="flex-grow: 1;" v-if="dataX.isJiraPwd" th:label="#{extensions.confluence.password}"
+                             disable type="password" name="notYourPasswordJira" value="notYourPasswordJira"></q-input>
+                    <q-input style="flex-grow: 1;" v-if="!dataX.isJiraPwd" v-model="vueData.newJiraSetting.password"
+                             th:label="#{extensions.jira.password}"
+                             name="vContext[newJiraSetting][password]"
+                             :error="hasFieldsError('newJiraSetting', 'password')"
+                             :error-message="getErrorMessage('newJiraSetting', 'password')" type="text">
+                    </q-input>
+                    <q-icon
+                            name="clear"
+                            size="sm"
+                            class="cursor-pointer"
+                            enable
+                            @click="VUiExtensions.dataX.isJiraPwd = !VUiExtensions.dataX.isJiraPwd; vueData.newJiraSetting.password = null;"
+                    />
+                </div>
+            </q-card-section>
+            <q-card-section>
+                <q-input v-model="vueData.newJiraSetting.project" th:label="#{extensions.jira.project}"
+                         name="vContext[newJiraSetting][project]" :error="hasFieldsError('newJiraSetting', 'project')"
+                         :error-message="getErrorMessage('newJiraSetting', 'project')"/>
+            </q-card-section>
 
-                <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" >
-                    <q-chip v-for="node in vueData.nodeList" clickable :selected="isSelectedJira(node)" @update:selected="state => selectNodeJira(node, state)"
-                            icon="panorama_fish_eye" :style="'background: '+ node.color" text-color="white">
-                        {{node.name}}
-                    </q-chip>
-                    <div v-if="hasFieldsError('newJiraSetting', 'nodId')" class="text-red">{{getErrorMessage('newJiraSetting', 'nodId')}}</div>
-                </q-card-section>
+            <q-card-section>
+                <q-input v-model="vueData.newJiraSetting.numberOfResults" th:label="#{extensions.jira.numberOfResults}"
+                         name="vContext[newJiraSetting][numberOfResults]"
+                         :error="hasFieldsError('newJiraSetting', 'numberOfResults')"
+                         :error-message="getErrorMessage('newJiraSetting', 'numberOfResults')"/>
+            </q-card-section>
 
-                <q-card-actions align="around">
-                    <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
-                    <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
-                    <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-                           @click="httpPostAjax('_saveJiraSetting', vueDataParams(['newJiraSetting'])); VUiExtensions.dataX.isJiraPwd = true"
-                           color="primary" v-close-popup></q-btn>
-                </q-card-actions>
-            </q-card>
-        </q-dialog>
-    </section>
+            <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
+                <q-chip v-for="node in vueData.nodeList" clickable :selected="isSelectedJira(node)"
+                        @update:selected="state => selectNodeJira(node, state)"
+                        icon="panorama_fish_eye" :style="'background: '+ node.color" text-color="white">
+                    {{node.name}}
+                </q-chip>
+                <div v-if="hasFieldsError('newJiraSetting', 'nodId')" class="text-red">
+                    {{getErrorMessage('newJiraSetting', 'nodId')}}
+                </div>
+            </q-card-section>
+
+            <q-card-actions align="around">
+                <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                       @click="httpPostAjax('_saveJiraSetting', vueDataParams(['newJiraSetting'])); VUiExtensions.dataX.isJiraPwd = true"
+                       color="primary" v-close-popup></q-btn>
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+</section>
 </body>
 </html>

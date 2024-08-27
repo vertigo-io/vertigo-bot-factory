@@ -2,6 +2,8 @@ package io.vertigo.chatbot.engine.plugins.bt.jira.impl;
 
 import com.atlassian.jira.rest.client.api.domain.IssueFieldId;
 import com.atlassian.jira.rest.client.api.domain.User;
+import com.atlassian.jira.rest.client.api.domain.input.ComplexIssueInputFieldValue;
+import com.atlassian.jira.rest.client.api.domain.input.FieldInput;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BBKeyPattern;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.vertigo.ai.bt.BTNodes.selector;
+import static io.vertigo.ai.bt.BTNodes.sequence;
 import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.assigneeWsBBPath;
 import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.wsValue;
 
@@ -34,8 +37,9 @@ public class AssigneeFieldService implements IJiraFieldService, Component {
 	}
 
 	public void processConversation(BlackBoard bb, JiraField jiraField, List<BTNode> sequence) {
-		sequence.add(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()));
-		sequence.add(getUserFromInput(bb, jiraField));
+		sequence.add(BotNodeProvider.doNodeOncePerTree(bb,
+				sequence(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()),
+						getUserFromInput(bb, jiraField)), jiraField.getKey()));
 	}
 
 	private BTNode getUserFromInput(final BlackBoard bb, JiraField jiraField) {
@@ -49,9 +53,10 @@ public class AssigneeFieldService implements IJiraFieldService, Component {
 			bb.putString(assigneeWsBBPath, wsValue);
 			List<User> users = jiraServerService.findUserByUsername(bb.getString(BBKey.of(jiraField.getKey())));
 			if (users.isEmpty()) {
+				bb.delete(BBKeyPattern.of(jiraField.getKey()));
 				return BotNodeProvider.say(bb, MessageText.of(JiraMultilingualResources.NO_USER_FOUND).getDisplay()).eval();
 			} else if (users.size() == 1) {
-				bb.putString(BBKey.of(jiraField.getKey()), users.get(0).getName());
+				bb.putString(BBKey.of(jiraField.getKey()), jiraServerService.isCloud() ? users.get(0).getAccountId() : users.get(0).getName());
 			} else {
 				return getUserButtons(bb, users, jiraField).eval();
 			}
@@ -59,15 +64,21 @@ public class AssigneeFieldService implements IJiraFieldService, Component {
 		};
 	}
 
-	public static BTNode getUserButtons(final BlackBoard bb, List<User> users, JiraField issueTypeField) {
+	public BTNode getUserButtons(final BlackBoard bb, List<User> users, JiraField issueTypeField) {
 		final List<BotButton> buttons = new ArrayList<>();
-		users.forEach(user -> buttons.add(new BotButton(user.getDisplayName(), user.getName())));
+		users.forEach(user -> buttons.add(new BotButton(user.getDisplayName(), jiraServerService.isCloud()
+				? user.getAccountId() : user.getName())));
 		bb.delete(BBKeyPattern.of(issueTypeField.getKey()));
 		return BotNodeProvider.chooseButton(bb, issueTypeField.getKey(), issueTypeField.getQuestion(), buttons);
 	}
 
 	@Override
 	public void processTicket(BlackBoard bb, IssueInputBuilder iib, JiraField jiraField) {
-		iib.setAssigneeName(jiraField.getValue());
+		if (jiraServerService.isCloud()) {
+			iib.setFieldInput(new FieldInput(IssueFieldId.ASSIGNEE_FIELD,
+					ComplexIssueInputFieldValue.with("accountId", jiraField.getValue())));
+		} else {
+			iib.setAssigneeName(jiraField.getValue());
+		}
 	}
 }

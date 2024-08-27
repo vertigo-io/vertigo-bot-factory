@@ -1,15 +1,50 @@
 <!DOCTYPE html>
 <html
-	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:th="http://www.thymeleaf.org"
 	xmlns:vu="http://www.morphbit.com/thymeleaf/component"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=categories"
 	>
-	
+
 	<head>
 		<title th:text="#{topicCategory.title}"></title>
+
+		<script th:inline="javascript">
+			function filteredOptions() {
+				return VertigoUi.vueData.allTopicCategories.filter(topCat =>
+						topCat.topCatId !== VertigoUi.vueData.topicCategory.topCatId);
+			}
+
+			function updateSelectedTopics(selectedTopicIhm) {
+				VertigoUi.vueData.topicsToUpdate = selectedTopicIhm.map(topic => topic).join(',');
+			}
+
+			function normalizeString(str) {
+				if (str)
+					return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+				else
+					return '';
+			}
+
+			function filterFn (val, update) {
+				update(() => {
+					if (val === '') {
+						VertigoUi.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList
+					}
+					else {
+						const needle = normalizeString(val.toLowerCase())
+						VertigoUi.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList.filter(
+								v => normalizeString((v.title+v.catLabel).toLowerCase()).indexOf(needle) > -1
+						)
+					}
+				})
+			}
+
+
+		</script>
+
 	</head>
-	
+
 	<body>
 		<section layout:fragment="content-actions">
 			<vu:include-data object="topicCategory" field="code" />
@@ -20,9 +55,8 @@
 			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm] && model.topicCategory.code != 'DEFAULT'}" @click="componentStates.showPopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
 							class="on-left" round size="md" color="red" ></q-btn>
 		</section>
-				
+
 		<section layout:fragment="content">
-			
 			<vu:popup action="_delete" vModel="showPopup" message="#{topicCategory.popup.message}" confirm="#{action.confirm}"></vu:popup>
 
 			<vu:block id="detail" title="Informations">
@@ -32,26 +66,123 @@
 					<vu:label object="topicCategory" field="isEnabled">
 						<vu:include-data object="topicCategory" field="isEnabled" modifiable="true" />
 						<q-input v-model="vueData.topicCategory.isEnabled" name="vContext[topicCategory][isEnabled]" class="hidden" ></q-input>
-					
+
 						<q-toggle v-model="vueData.topicCategory.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
 					</vu:label>
 				</vu:grid>
 			</vu:block>
-			
+
+			<div style="display:flex; justify-content: flex-end">
+				<vu:include-data object="selectedTopicIhmList" field="*" />
+				<vu:include-data-primitive key="topicsToUpdate" modifiable="true" />
+				<q-btn color="primary" round icon="add" v-if="vueData.topicCategory.topCatId !== null"
+					   th:aria-label="#{action.add}"
+					   th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
+					   th:title="#{action.add}"
+					   @click.stop="$refs.otherTopicsDialog.show();
+					   vueData.selectedTopicIhmList=null;
+					   vueData.topicsToUpdate=null"
+				></q-btn>
+			</div>
+
 			<vu:table list="topics" componentId="topicsList" sortBy="title" :binary-state-sort="true"
 					  tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|" tr_style="cursor : pointer;">
-					<vu:include-data object="topics" field="topId" />
-					<vu:include-data object="topics" field="code" />
-					<vu:column field="title">
-						<a th::href="|'@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId|"
-						   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
-						>
-							<span style="height:100%" class="row items-center">{{props.row.title}}</span>
-						</a>
-					</vu:column>
-					<vu:column field="code" />
+				<vu:slot name="actions_slot">
+					<q-btn class="on-right" round color="red" icon="playlist_remove"
+						   th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+						   @click.stop="vueData.topicId = props.row.topId;
+						   vueData.newTopCatId = null;
+						   $refs.topicCategoriesDialog.show()">
+					</q-btn>
+				</vu:slot>
+				<vu:include-data object="topics" field="topId" />
+				<vu:include-data object="topics" field="code" />
+
+				<vu:column field="title">
+					<a th::href="|'@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId|"
+					   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
+					>
+						<span style="height:100%" class="row items-center">{{props.row.title}}</span>
+					</a>
+				</vu:column>
+				<vu:column field="code" />
 			</vu:table>
-			
+
+			<q-dialog ref="topicCategoriesDialog">
+				<vu:include-data object="allTopicCategories" field="label" />
+				<vu:include-data object="allTopicCategories" field="topCatId" />
+				<vu:include-data object="topicCategory" field="*" />
+				<vu:include-data-primitive key="topicId" modifiable="true" />
+				<vu:include-data-primitive key="newTopCatId" modifiable="true"/>
+				<q-card>
+					<q-card-section>
+						<div class="text-h6" style="text-align: center">
+                    		<span th:text="#{topic.categoryChange.popup.title}"></span>
+						</div>
+					</q-card-section>
+					<q-card-section>
+						<q-select
+								outlined
+								v-model="vueData.newTopCatId"
+								:options="filteredOptions()"
+								option-value="topCatId"
+								option-label="label"
+								th:label="#{topic.categoryChange.popup.category}"
+								emit-value
+								map-options
+						/>
+					</q-card-section>
+					<q-card-actions align="around">
+						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+						<q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+							   @click="httpPostAjax('_saveTopicCategoryChange', vueDataParams(['topicId','newTopCatId']));"
+							   color="primary"
+							   v-close-popup
+							   :disabled="vueData.newTopCatId === null"></q-btn>
+					</q-card-actions>
+				</q-card>
+			</q-dialog>
+
+			<q-dialog ref="otherTopicsDialog">
+				<vu:include-data object="topicCategory" field="'*'" />
+				<vu:include-data object="topicIhmList" field="'*'" modifiableAllLines="true"/>
+				<vu:include-data-primitive key="locale"/>
+				<q-card>
+					<q-card-section>
+						<div class="text-h6" style="text-align: center">
+							<span th:text="#{topic.categoryAdd.popup.title}"></span>
+						</div>
+					</q-card-section>
+					<q-card-section>
+						<th:block th:attr="dataObject=${model.vContext[componentStates].addComponentState('titles').addObject('filterOptions')}" th:remove="all" />
+						<q-select
+								multiple
+								v-model="vueData.selectedTopicIhmList"
+								:options="componentStates.titles.filterOptions"
+								option-value="topId"
+								:option-label="topicIhm => `[${topicIhm.catLabel}] ${topicIhm.title}`"
+								emit-value
+								use-input
+								hide-selected
+								input-debounce="0"
+								autofocus
+								@filter="filterFn"
+								@input="updateSelectedTopics"
+						/>
+					</q-card-section>
+					<q-card-actions align="around">
+						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+						<q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+							   @click="httpPostAjax('_saveAddingTopics', vueDataParams(['topicsToUpdate']));"
+							   color="primary"
+							   v-close-popup
+							   :disabled="vueData.selectedTopicIhmList === null || vueData.selectedTopicIhmList.length === 0"></q-btn>
+					</q-card-actions>
+				</q-card>
+			</q-dialog>
+
 			<q-page-sticky position="bottom-right">
 				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
 			</q-page-sticky>

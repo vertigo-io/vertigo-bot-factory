@@ -1,6 +1,8 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence.command.bot;
 
 import io.vertigo.ai.impl.command.BtCommandParserDefinition;
+import io.vertigo.chatbot.engine.plugins.bt.confluence.multilingual.ConfluenceMultilingualResources;
+import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleDefinitionProvider;
@@ -24,9 +26,9 @@ public class BotBtConfluenceCommandParserDefinitionProvider implements SimpleDef
 		LOGGER.info("loading confluence plugin");
 		return List.of(
 				BtCommandParserDefinition.basicCommand("confluence:search",
-						(c, p) -> botConfluenceNodeProvider.confluenceSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getStringParam(2), c.getStringParam(3))),
+						(c, p) -> botConfluenceNodeProvider.confluenceSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getStringParam(2), c.getStringParam(3), c.getStringParam(4))),
 				BtCommandParserDefinition.basicCommand("confluence:search:auto",
-						(c, p) -> botConfluenceNodeProvider.confluenceAutomaticSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getRemainingStringParam(2))));
+						(c, p) -> botConfluenceNodeProvider.confluenceAutomaticSearch(getBB(p), c.getStringParam(0), c.getStringParam(1), c.getStringParam(2),c.getRemainingStringParam(3))));
 	}
 
 }

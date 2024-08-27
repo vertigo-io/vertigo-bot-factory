@@ -13,14 +13,14 @@
 					<div class="row items-center">
 						<a class="q-link text-weight-bold q-layout__section--marginal" th:href="@{/bots/}">
 							<q-toolbar-title>
-							<div>Chatbot Factory</div>
+							<div th:text="#{parent.title}"></div>
 						</q-toolbar-title>
 						</a>
 					</div>
 					<div class="col q-mx-xl" style="display: flex; justify-content: center">
 						<div class="row">
 							<div class="q-mr-lg q-my-sm q-link q-layout__section--marginal cursor-pointer text-uppercase" @click="hideOrShowBotToolbar()">
-								<span th:text="#{parent.bot}"></span>
+								<span th:text="#{parent.platform}"></span>
 								<q-icon name="expand_more"></q-icon>
 							</div>
 							<a class="q-mr-lg q-my-sm q-link q-layout__section--marginal text-uppercase" th:href="@{/persons/}" th:if="${model.userAuthorizations[AtzSuperAdm]}">
@@ -55,12 +55,12 @@
 							<q-list>
 								<q-item clickable v-close-popup >
 									<q-btn  type="a" color="grey" icon="mdi-reload" round th:aria-label="#{action.reload}" th:href="@{/login/_reloadAuthorizations}" >
-										<q-tooltip th:text="#{parent.auth}"></q-tooltip>
+										<q-tooltip content-class="q-tooltip-text" th:text="#{parent.auth}"></q-tooltip>
 									</q-btn>
 								</q-item>
 								<q-item clickable v-close-popup>
-									<q-btn type="a" color="grey" icon="mdi-lan-disconnect" round th:aria-label="#{action.disconnect}" th:href="@{/login/_reloadAuthorizations}" >
-										<q-tooltip th:text="#{action.logout}"></q-tooltip>
+									<q-btn type="a" color="grey" icon="mdi-lan-disconnect" round th:aria-label="#{action.disconnect}" th:href="@{/OIDC/logout}" >
+										<q-tooltip content-class="q-tooltip-text" th:text="#{action.logout}"></q-tooltip>
 									</q-btn>
 								</q-item>
 							</q-list>
