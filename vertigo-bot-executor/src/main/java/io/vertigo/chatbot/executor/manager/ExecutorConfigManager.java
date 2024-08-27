@@ -17,8 +17,7 @@
  */
 package io.vertigo.chatbot.executor.manager;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.io.FileUtils;
 
@@ -131,9 +130,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		if (questionAnswerListDataFile.exists() && questionAnswerListDataFile.canRead()) {
 			try {
 				final String json = FileUtils.readFileToString(questionAnswerListDataFile, StandardCharsets.UTF_8);
-				ObjectMapper mapper = new ObjectMapper();
-				List<QuestionAnswerExport> questionAnswerExports = mapper.readValue(json, new TypeReference<>(){});
-				questionAnswerList = questionAnswerExports.stream().collect(VCollectors.toDtList(QuestionAnswerExport.class));
+				questionAnswerList = jsonEngine.fromJson(json, new TypeToken<DtList<QuestionAnswerExport>>(){}.getType());
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", questionAnswerListDataFilePath);
 			}
@@ -238,9 +235,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 		try {
 			FileUtils.writeStringToFile(questionAnswerListDataFile, botExport.getQuestionAnswerList(), StandardCharsets.UTF_8);
-			ObjectMapper mapper = new ObjectMapper();
-			List<QuestionAnswerExport> questionAnswerExports = mapper.readValue(botExport.getQuestionAnswerList(), new TypeReference<List<QuestionAnswerExport>>(){});
-			questionAnswerList = questionAnswerExports.stream().collect(VCollectors.toDtList(QuestionAnswerExport.class));
+			questionAnswerList = jsonEngine.fromJson(botExport.getQuestionAnswerList(), new TypeToken<DtList<QuestionAnswerExport>>(){}.getType());
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", questionAnswerListDataFile.getPath());
 		}
