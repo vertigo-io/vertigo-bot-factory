@@ -7,7 +7,7 @@ version: '3.5'
 
 services:
   postgres:
-    image: postgres:12.1
+    image: postgres:16
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_PASSWORD: changeit
@@ -20,17 +20,60 @@ services:
     networks:
       - cb_factory
     restart: unless-stopped
-  
+
+  postgresKC:
+      image: postgres:16
+      environment:
+        PGDATA: /var/lib/postgresql/data/pgdata
+        POSTGRES_PASSWORD: changeit
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+      volumes:
+        - cf_postgresKC_data:/var/lib/postgresql/data/pgdata
+      ports:
+        - "5434:5432"
+      networks:
+        - cb_factory
+
+    clamav:
+      image: clamav/clamav
+      ports:
+        - "3310:3310"
+      networks:
+        - cb_factory
+
+    keycloak:
+      image: bitnami/keycloak:24
+      environment:
+        KEYCLOAK_ADMIN_USER: admin
+        KEYCLOAK_ADMIN_PASSWORD: changeme
+        KEYCLOAK_DATABASE_HOST: postgresKC
+        KEYCLOAK_DATABASE_PORT: 5432
+        KEYCLOAK_DATABASE_NAME: keycloak
+        KEYCLOAK_DATABASE_USER: keycloak
+        KEYCLOAK_DATABASE_SCHEMA: public
+        KEYCLOAK_DATABASE_PASSWORD: changeme
+        KC_PROXY_HEADERS: forwarded
+        KC_HOSTNAME_PATH: /sso
+        KC_HOSTNAME_STRICT: "false"
+        KC_HOSTNAME_URL: https://keycloak:8200/sso
+        KC_HOSTNAME_ADMIN_URL: https://keycloak:8200/sso
+        KC_HOSTNAME_STRICT_BACKCHANNEL: "true"
+      ports:
+        - 8200:8080
+      depends_on:
+        - postgresKC
+      networks:
+        - cb_factory
 
   influxdb:
-    image: influxdb:2.1.1
+    image: influxdb:2.7.1
     volumes:
-      - cf_influxdb_data:/var/lib/influxdb
       - cf_influxdb2_data:/var/lib/influxdb2
       - cf_influxdb2_config:/etc/influxdb2
 	  - ./backup/influxdb:/opt/backup
     environment:
-      DOCKER_INFLUXDB_INIT_MODE: upgrade
+      DOCKER_INFLUXDB_INIT_MODE: setup
       DOCKER_INFLUXDB_INIT_USERNAME: admin
       DOCKER_INFLUXDB_INIT_PASSWORD: changeme
       DOCKER_INFLUXDB_INIT_ORG: chatbot
@@ -58,7 +101,7 @@ services:
     restart: unless-stopped
   
   designer:
-    image: vertigoio/bot-factory-designer:0.4.0
+    image: registry.kleegroup.com/chatbot-factory/bot-factory-designer:2.4
     environment:
       - JAVA_OPTS=-Xmx512m -Xms512m
       - DB_URL=//postgres:5432/chatbot
@@ -68,26 +111,45 @@ services:
       - ANALYTICA_DBNAME=chatbot
       - DEPLOY_PATH=designer
 	  - INFLUXDB_TOKEN=influxDevToken
-    volumes:
-      - ./keycloak.json:/opt/keycloak/keycloak.json:ro
+	  - CLAMAV_HOST=clamav
+      - ENCRYPTION_PASSWORD=changeme
+      - EXTENSIONS_WHITELIST=png,jpg,jpeg,pdf,csv,js
+      - RUNNER_REQUEST_TIMEOUT=1801
+      - MAIL_NAME=name
+      - MAIL_PROTOCOL=smtp
+      - MAIL_HOST=mail.host.net
+      - MAIL_PORT=25
+      - KEYCLOAK_URL=https://keycloak:8200/sso/realms/chatbot
     depends_on:
       - postgres
       - influxdb
       - analytica
+      - clamav
     ports:
       - '127.0.0.1:8080:8080'
     networks:
       - cb_factory
     restart: unless-stopped
-      
+
   runner_1:
-    image: vertigoio/bot-factory-runner:0.4.0
+    image: registry.kleegroup.com/chatbot-factory/bot-runner-all-included:2.4
     environment:
       - DESIGNER_URL=http://designer:8080/designer/
       - ANALYTICA_HOST=analytica
       - ANALYTICA_PORT=4562
       - ANALYTICA_DBNAME=chatbot
       - API_KEY=changeit
+      - RASA_URL=http://rasa_1:5005
+      - RASA_REQUEST_TIMEOUT=1800
+      - MAIL_NAME=name
+      - MAIL_PROTOCOL=smtp
+      - MAIL_HOST=mail.host.net
+      - MAIL_PORT=25
+      - FRAME_ANCESTORS=*
+      - ENCRYPTION_PASSWORD=changme
+      - CONFIG_DATA_FILE=/opt/data/runnerConfig
+      - JAVA_OPTS=-Xmx512m -Xms512m
+      - CLAMAV_HOST=clamav
     depends_on:
       - influxdb
       - analytica
@@ -99,14 +161,37 @@ services:
       - cb_factory
     restart: unless-stopped
 
+  rasa_1:
+    image: rasa/rasa:3.6.20-full
+    ports:
+      - 5007:5005
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+    networks:
+      - cb_factory
+
   runner_2:
-    image: vertigoio/bot-factory-runner:0.4.0
+    image: registry.kleegroup.com/chatbot-factory/bot-runner-all-included
     environment:
       - DESIGNER_URL=http://designer:8080/designer/
       - ANALYTICA_HOST=analytica
       - ANALYTICA_PORT=4562
       - ANALYTICA_DBNAME=chatbot
       - API_KEY=changeit
+      - RASA_URL=http://rasa_2:5005
+      - RASA_REQUEST_TIMEOUT=1800
+      - MAIL_NAME=name
+      - MAIL_PROTOCOL=smtp
+      - MAIL_HOST=mail.host.net
+      - MAIL_PORT=25
+      - FRAME_ANCESTORS=*
+      - ENCRYPTION_PASSWORD=changme
+      - CONFIG_DATA_FILE=/opt/data/runnerConfig
+      - JAVA_OPTS=-Xmx512m -Xms512m
+      - CLAMAV_HOST=clamav
     depends_on:
       - influxdb
       - analytica
@@ -118,10 +203,21 @@ services:
       - cb_factory
     restart: unless-stopped
 
+  rasa_2:
+    image: rasa/rasa:3.6.20-full
+    ports:
+      - 5007:5005
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+    networks:
+      - cb_factory
 
 volumes:
   cf_postgres_data:
-  cf_influxdb_data:
+  cf_postgresKC_data
   cf_influxdb2_data:
   cf_influxdb2_config:
   cf_runner_1_data:
