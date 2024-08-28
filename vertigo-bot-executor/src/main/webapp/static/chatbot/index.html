@@ -78,11 +78,11 @@
           </div>
           <q-page id="page"
                   class="column animate-fade"
-                  style="height: calc(110vh - 115px)"> <!-- style pour IE uniquement -->
+                  style="height: 0">
             <div v-if="!menu && tab ==='bot'"
                  id="main"
                  class="column col-grow no-wrap">
-              <q-scroll-area class="row q-pa-sm col-grow"
+              <q-scroll-area class="row q-px-sm col-grow"
                              ref="scroller">
                 <div class="q-pr-md">
                   <div v-for="(msg, index) in messages">
@@ -200,6 +200,7 @@
                     </div>
                   </div>
                 </div>
+                <div style="height: 30px"></div>
               </q-scroll-area>
             </div>
 
