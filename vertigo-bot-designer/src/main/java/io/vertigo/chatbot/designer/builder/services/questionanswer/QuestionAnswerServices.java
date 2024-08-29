@@ -68,7 +68,7 @@ public class QuestionAnswerServices implements Component {
     }
 
     public DtList<QuestionAnswerIhm> getAllQueAnsIhmByCatIdList(@SecuredOperation("botVisitor") final Chatbot bot, final List<Long> categoryIds) {
-        DtList<QuestionAnswerIhm> questionAnswerIhmList = getAllQueAnsIhmByBot(bot);//.stream().filter(queAns -> Objects.equals(queAns.getQaCatId(), categoryId)).collect(VCollectors.toDtList(QuestionAnswer.class));
+        DtList<QuestionAnswerIhm> questionAnswerIhmList = getAllQueAnsIhmByBot(bot);
         DtList<QuestionAnswerIhm> queAnsFromCategoryList = new DtList<>(QuestionAnswerIhm.class);
         categoryIds.forEach(catId -> queAnsFromCategoryList.addAll(questionAnswerIhmList.stream().filter(queAns -> queAns.getCatId().equals(catId)).collect(VCollectors.toDtList(QuestionAnswerIhm.class))));
         return queAnsFromCategoryList;

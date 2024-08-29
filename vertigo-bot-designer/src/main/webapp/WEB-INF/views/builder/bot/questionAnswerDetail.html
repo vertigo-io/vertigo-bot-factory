@@ -50,7 +50,9 @@
                     class="q-pb-sm">
             </c-richtext>
             <c-queanstextexample
-                    v-model="vueData.questionAnswerIhm.question">
+                    v-model="vueData.questionAnswerIhm.question"
+                    :style="'color: ' + vueData.chatbotCustomConfig.botMessageBackgroundColor"
+                    :textColor="vueData.chatbotCustomConfig.botMessageFontColor">
             </c-queanstextexample>
         </div>
     </vu:block>
@@ -64,7 +66,9 @@
                     class="q-pb-sm">
             </c-richtext>
             <c-queanstextexample
-                    v-model="vueData.questionAnswerIhm.answer">
+                    v-model="vueData.questionAnswerIhm.answer"
+                    :style="'color: ' + vueData.chatbotCustomConfig.botMessageBackgroundColor"
+                    :textColor="vueData.chatbotCustomConfig.botMessageFontColor">
             </c-queanstextexample>
         </div>
     </vu:block>
@@ -74,19 +78,4 @@
         <vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
     </q-page-sticky>
 </body>
-<section layout:fragment="javascript-footer">
-    <script th:inline="javascript">
-        function updateSmallTalkRendererSwitchType(){
-            const bgColor = VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor ? VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor : '#ffffff'
-            const fontColor = VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor ? VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor : '#000000'
-            Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-bot-bg-color', bgColor);
-            });
-            Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
-                element.style.setProperty('--chat-bot-message-font-color', fontColor);
-            });
-        }
-        updateSmallTalkRendererSwitchType()
-    </script>
-</section>
 </html>

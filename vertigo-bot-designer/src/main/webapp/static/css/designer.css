@@ -487,9 +487,7 @@ table .col_DoInstant {
 	color: var(--chat-user-bg-color) !important;
 	font-family: var(--chat-message-font-family) !important;
 }
-.q-message-text-content--received {
-	color: var(--chat-bot-message-font-color) !important;
-}
+
 .q-message-text-content--sent {
 	color: var(--chat-user-message-font-color) !important;
 }

@@ -131,7 +131,7 @@
 					<vu:grid cols="2">
 						<vu:text-field object="topic" field="title" :disable="vueData.topic.isTechnical == true"/>
 						<vu:text-field object="topic" field="code" :disable="vueData.topic.isTechnical== true"/>
-						<vu:label object="topic" field="isEnabled" v-if="!vueData.topic.isTechnicacl == true" >
+						<vu:label object="topic" field="isEnabled" v-if="!vueData.topic.isTechnical == true" >
 							<vu:include-data object="topic" field="isEnabled" modifiable="true" />
 
 							<q-input v-model="vueData.topic.isEnabled" name="vContext[topic][isEnabled]" class="hidden" ></q-input>
