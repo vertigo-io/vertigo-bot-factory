@@ -60,7 +60,7 @@
                    icon="close"></q-btn>
           </div>
 
-          <div class="row non-selectable custom-input-header-container bg-grey-3" v-if="tab === 'qAndA'">
+          <div class="row non-selectable custom-input-header-container" v-if="tab === 'qAndA'">
             <div class="col-grow">
               <q-input v-model="qAndAConfig.filterInput"
                        ref="input"
@@ -78,12 +78,13 @@
           </div>
           <q-page id="page"
                   class="column animate-fade"
-                  style="height: 0">
+                  style="padding-top: 0;">
             <div v-if="!menu && tab ==='bot'"
                  id="main"
                  class="column col-grow no-wrap">
-              <q-scroll-area class="row q-px-sm col-grow"
-                             ref="scroller">
+              <q-scroll-area class="row q-px-sm col-grow q-h-100"
+                             ref="scroller"
+                             style="height: 0">
                 <div class="q-pr-md">
                   <div v-for="(msg, index) in messages">
                     <q-chat-message
@@ -219,7 +220,7 @@
           </q-page>
         </q-page-container>
         <q-layout-footer v-if="!customConfig.disableNlu" >
-          <div v-if="tab==='bot'" class="row non-selectable custom-input-footer-container bg-grey-3">
+          <div v-if="tab==='bot'" class="row non-selectable custom-input-footer-container">
             <div class="col-grow">
               <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
                        ref="input"
