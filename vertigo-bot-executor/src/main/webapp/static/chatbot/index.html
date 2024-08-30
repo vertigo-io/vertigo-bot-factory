@@ -59,33 +59,22 @@
                    @click="minimize()"
                    icon="close"></q-btn>
           </div>
-
-          <div class="row non-selectable custom-input-header-container" v-if="tab === 'qAndA'">
-            <div class="col-grow">
-              <q-input v-model="qAndAConfig.filterInput"
-                       ref="input"
-                       class="q-px-sm round-borders custom-input"
-                       :max-height="100"
-                       placeholder="Rechercher..."
-                       :loading="processing"
-                       @input="filterQuestionsAnswers()"></q-input>
-            </div>
-          </div>
         </q-layout-header>
+
         <q-page-container>
           <div id="loading"
                class="column items-center q-pt-xl">Chargement ...
           </div>
           <q-page id="page"
                   class="column animate-fade"
-                  style="padding-top: 0;">
+                  style="padding-top: 0; padding-bottom: 0;">
             <div v-if="!menu && tab ==='bot'"
                  id="main"
                  class="column col-grow no-wrap">
-              <q-scroll-area class="row q-px-sm col-grow q-h-100"
+              <q-scroll-area class="row q-px-sm col-grow"
                              ref="scroller"
                              style="height: 0">
-                <div class="q-pr-md">
+                <div class="q-pr-md q-pt-md">
                   <div v-for="(msg, index) in messages">
                     <q-chat-message
                       v-if="msg.text"
@@ -204,59 +193,68 @@
                 <div style="height: 30px"></div>
               </q-scroll-area>
             </div>
-
-
-            <div v-if="tab === 'qAndA'" class="q-mx-md q-mt-sm">
-              <div class="q-pt-sm">
-                  <q-collapsible v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
-                                 :label="questionAnswer.question"
-                                 header-class="q-collapsible-question">
-                    <div class="q-collapsible-answer" v-html="questionAnswer.answer"></div>
-                  </q-collapsible>
+            <div v-if="tab==='bot'" class="row non-selectable custom-input-bottom">
+              <div class="col-grow">
+                <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
+                         ref="input"
+                         :style="'margin-top: 0px;'"
+                         class="q-px-sm round-borders custom-input"
+                         @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
+                         :max-height="100"
+                         v-model="inputConfig.responseText"
+                         placeholder="Ecrire un message..."
+                         :disable="processing || error || (!acceptNlu && !isEnded) || customConfig.disableNlu"
+                         :loading="processing"></q-input>
               </div>
+              <q-btn
+                      :style="'margin-top: 0px;'"
+                      style="margin-top: 0px;"
+                      class="btn-send"
+                      icon="send"
+                      @click="postAnswerText(false)"
+                      :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
+              <q-btn round
+                     color="red"
+                     @click="restart"
+                     v-if="devMode === true && false"
+                     icon="refresh"></q-btn>
             </div>
 
-
+            <div v-if="tab === 'qAndA'" class="custom-input-top">
+              <q-input v-model="qAndAConfig.filterInput"
+                       ref="input"
+                       class="q-px-sm"
+                       placeholder="Rechercher..."
+                       :loading="processing"
+                       @input="filterQuestionsAnswers()"></q-input>
+            </div>
+            <q-scroll-area class="q-px-sm col-grow"
+                           ref="scroller"
+                           style="height: 0"
+                           v-if="tab === 'qAndA'"
+            >
+              <div class="q-mx-md q-mt-xl">
+                    <q-collapsible v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
+                                   :label="questionAnswer.question"
+                                   header-class="q-collapsible-question">
+                      <div class="q-collapsible-answer" v-html="questionAnswer.answer"></div>
+                    </q-collapsible>
+              </div>
+              <div style="height: 30px"></div>
+            </q-scroll-area>
           </q-page>
         </q-page-container>
-        <q-layout-footer v-if="!customConfig.disableNlu" >
-          <div v-if="tab==='bot'" class="row non-selectable custom-input-footer-container">
-            <div class="col-grow">
-              <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
-                       ref="input"
-                       :style="'margin-top: 0px;'"
-                       class="q-px-sm round-borders custom-input"
-                       @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
-                       :max-height="100"
-                       v-model="inputConfig.responseText"
-                       placeholder="Ecrire un message..."
-                       :disable="processing || error || (!acceptNlu && !isEnded) || customConfig.disableNlu"
-                       :loading="processing"></q-input>
-            </div>
 
-            <q-btn
-                   :style="'margin-top: 0px;'"
-                   style="margin-top: 0px;"
-                   class="btn-send"
-                   icon="send"
-                   @click="postAnswerText(false)"
-                   :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
-            <q-btn round
-                   color="red"
-                   @click="restart"
-                   v-if="devMode === true && false"
-                   icon="refresh"></q-btn>
-          </div>
+        <q-layout-footer v-if="!customConfig.disableNlu" >
           <div :class="{'q-tabs-container' : tab==='bot'}">
-          <q-tabs v-model="tab"
-                  align="justify"
-                  text-color="black"
-                  class="q-tabs"
-                  @input="tabChange()"
-          >
-            <q-tab name="bot" slot="title" icon="smart_toy"></q-tab>
-            <q-tab name="qAndA" slot="title" icon="question_answer"></q-tab>
-          </q-tabs>
+            <q-tabs v-model="tab"
+                    align="justify"
+                    text-color="black"
+                    class="q-tabs"
+            >
+              <q-tab name="bot" slot="title" icon="smart_toy"></q-tab>
+              <q-tab name="qAndA" slot="title" icon="question_answer"></q-tab>
+            </q-tabs>
           </div>
         </q-layout-footer>
       </q-layout>
