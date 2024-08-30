@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 
@@ -16,7 +15,6 @@ import io.vertigo.chatbot.commons.domain.Attachment;
 import io.vertigo.chatbot.commons.domain.AttachmentTypeEnum;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
-import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceServices;
 import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceTypeServices;
 import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
@@ -24,16 +22,11 @@ import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServi
 import io.vertigo.chatbot.designer.domain.DocumentaryResource;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceType;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceTypeEnum;
-import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
-import io.vertigo.datamodel.structure.definitions.DtField;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
-import io.vertigo.vega.webservice.stereotype.QueryParam;
-import io.vertigo.vega.webservice.stereotype.Validate;
-import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
