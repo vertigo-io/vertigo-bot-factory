@@ -96,9 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (event.data === 'Chatbot.minimize') {
               Chatbot.minimize();
             }
-            else if (event.data === 'scrollToTop') {
-              Chatbot.scrollToTop();
-            }
             else if (event.data.conversationExist !== undefined) {
               if (event.data.conversationExist) {
                 Chatbot.show();
@@ -170,11 +167,6 @@ document.addEventListener('DOMContentLoaded', function () {
         minimize() {
           sessionStorage.showChatbot = false;
           _iframe.style.visibility = 'hidden';
-        },
-
-        scrollToTop(){
-          const iframe = document.getElementById('chatbotIframe');
-          iframe.contentWindow.document.documentElement.scrollTop = 0;
         },
 
         clearSessionStorage() {
