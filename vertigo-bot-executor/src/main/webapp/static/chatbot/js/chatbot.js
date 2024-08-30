@@ -448,9 +448,6 @@ const chatbot = new Vue({
             minimize() {
                 parent.postMessage('Chatbot.minimize', '*');
             },
-            tabChange(){
-                parent.postMessage('scrollToTop', '*');
-            },
             refreshBot(isAnotherConversation) {
                 chatbot.inputConfig = {
                     modeTextarea: false,
