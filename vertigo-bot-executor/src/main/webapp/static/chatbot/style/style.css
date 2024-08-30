@@ -211,7 +211,7 @@ img {
     border-bottom: 0px solid !important;
 }
 
-.custom-input-footer-container, .custom-input-header-container{
+.custom-input-top, .custom-input-bottom{
     position: relative;
     z-index: 1;
     padding-left: 12px;
@@ -219,11 +219,11 @@ img {
     background: linear-gradient(to bottom, #e6e6e6, #ffffff);
     box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.4);
 }
-.custom-input-footer-container {
-    margin : -20px 18px 12px 18px;
+.custom-input-bottom {
+    margin : -18px 12px 16px 10px;
 }
 
-.custom-input-header-container {
+.custom-input-top {
     margin : 16px 18px -15px 18px;
 }
 
