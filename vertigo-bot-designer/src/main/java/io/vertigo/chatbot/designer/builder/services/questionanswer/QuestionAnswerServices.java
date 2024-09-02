@@ -47,7 +47,7 @@ public class QuestionAnswerServices implements Component {
     private ExportPAO exportPAO;
 
     @Inject
-    JsonEngine jsonEngine;
+    private JsonEngine jsonEngine;
 
 
 

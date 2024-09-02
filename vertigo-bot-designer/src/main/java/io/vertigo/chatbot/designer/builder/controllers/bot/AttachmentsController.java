@@ -49,7 +49,7 @@ public class AttachmentsController extends AbstractBotListEntityController<Attac
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
-		final DtList<Attachment> attachments = attachmentServices.findAllByBotIdAndType(bot);
+		final DtList<Attachment> attachments = attachmentServices.findAllByBotIdAndType(botId, AttachmentTypeEnum.ATTACHMENT.name());
 		viewContext.publishDtList(attachmentsKey, attachments);
 		viewContext.publishDto(newAttachmentKey, new Attachment());
 		viewContext.publishRef(maxSizeKey, chatbotCustomConfig.getTotalMaxAttachmentSize() != null ?
@@ -75,7 +75,7 @@ public class AttachmentsController extends AbstractBotListEntityController<Attac
 		attachment.setBotId(bot.getBotId());
 		attachment.setAttTypeCd(AttachmentTypeEnum.ATTACHMENT.name());
 		attachmentServices.save(bot, attachment, attachmentFile, maxSize, attachmentTotalSize);
-		final DtList<Attachment> attachments = attachmentServices.findAllByBotIdAndType(bot);
+		final DtList<Attachment> attachments = attachmentServices.findAllByBotIdAndType(bot.getBotId(), AttachmentTypeEnum.ATTACHMENT.name());
 		viewContext.publishDtList(attachmentsKey, attachments);
 		viewContext.publishRef(attachmentTotalSizeKey, computeAttachmentTotalSize(attachments));
 		return viewContext;
@@ -88,7 +88,7 @@ public class AttachmentsController extends AbstractBotListEntityController<Attac
 			@RequestParam("attId") final Long attId) {
 
 		attachmentServices.delete(bot, attId);
-		final DtList<Attachment> attachments = attachmentServices.findAllByBotIdAndType(bot);
+		final DtList<Attachment> attachments = attachmentServices.findAllByBotIdAndType(bot.getBotId(), AttachmentTypeEnum.ATTACHMENT.name());
 		viewContext.publishDtList(attachmentsKey, attachments);
 		viewContext.publishRef(attachmentTotalSizeKey, computeAttachmentTotalSize(attachments));
 		return viewContext;
