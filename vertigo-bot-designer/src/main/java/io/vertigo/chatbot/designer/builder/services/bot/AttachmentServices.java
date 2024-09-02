@@ -85,8 +85,8 @@ public class AttachmentServices implements Component {
 		return attachmentDAO.findAll(Criterions.isEqualTo(DtDefinitions.AttachmentFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
-	public DtList<Attachment> findAllByBotIdAndType(final Chatbot bot) {
-		return attachmentDAO.findAll(Criterions.isEqualTo(DtDefinitions.AttachmentFields.botId, bot.getBotId()).and(Criterions.isEqualTo(DtDefinitions.AttachmentFields.attTypeCd, AttachmentTypeEnum.ATTACHMENT.name())), DtListState.of(null));
+	public DtList<Attachment> findAllByBotIdAndType(final Long botId, final String attachmentTypeName) {
+		return attachmentDAO.findAll(Criterions.isEqualTo(DtDefinitions.AttachmentFields.botId, botId).and(Criterions.isEqualTo(DtDefinitions.AttachmentFields.attTypeCd, attachmentTypeName)), DtListState.of(null));
 	}
 
 	@Secured("BotUser")

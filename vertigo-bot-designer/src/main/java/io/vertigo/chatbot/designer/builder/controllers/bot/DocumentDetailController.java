@@ -103,31 +103,27 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
                                           @ViewAttribute("importAttachmentFileUri") final Optional<FileInfoURI> attachmentFile,
                                           @ViewAttribute("attachment") final Attachment attachment) {
 
+
         if(documentaryResource.getDreTypeCd().equals(DocumentaryResourceTypeEnum.TEXT.name())){
             documentaryResource.setUrl(null);
             documentaryResource.setAttId(null);
-            documentaryResourceServices.saveDocumentaryResource(bot,documentaryResource);
-            if(attachment.getAttId() != null) {
-                attachmentServices.delete(bot, attachment.getAttId());
-            }
         }
         if(documentaryResource.getDreTypeCd().equals(DocumentaryResourceTypeEnum.URL.name())){
             documentaryResource.setText(null);
             documentaryResource.setAttId(null);
-            documentaryResourceServices.saveDocumentaryResource(bot,documentaryResource);
-            if(attachment.getAttId() != null) {
-                attachmentServices.delete(bot, attachment.getAttId());
-            }
         }
         if(documentaryResource.getDreTypeCd().equals(DocumentaryResourceTypeEnum.FILE.name())) {
             attachment.setBotId(bot.getBotId());
             attachment.setAttTypeCd(AttachmentTypeEnum.DOCUMENT.name());
             Attachment savedAttachment = attachmentServices.save(bot, attachment, attachmentFile, maxSize, attachmentTotalSize);
-
             documentaryResource.setAttId(savedAttachment.getAttId());
             documentaryResource.setText(null);
             documentaryResource.setUrl(null);
-            documentaryResourceServices.saveDocumentaryResource(bot,documentaryResource);
+        }
+        documentaryResourceServices.saveDocumentaryResource(bot,documentaryResource);
+
+        if (attachment.getAttId() != null && !documentaryResource.getDreTypeCd().equals(DocumentaryResourceTypeEnum.FILE.name())) {
+            attachmentServices.delete(bot, attachment.getAttId());
         }
         return "redirect:/bot/" + bot.getBotId() + "/document/" + documentaryResource.getDreId();
     }
