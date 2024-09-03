@@ -123,9 +123,5 @@ create DtDefinition DtDocumentaryResourceExport {
     field   dreTypeCd           {domain: DoLabel        label: "Resource Type"        cardinality : "1" }
 	field 	text    		    {domain: DoText 	    label: "Text" 		    	        			}
 	field 	url     		    {domain: DoText   	    label: "Url"                                    }
-	field   fileData            {domain: DoText         label: "File data"                              }
 	field   fileName            {domain: DoLabel        label: "File name"                              }
-	field   fileMimeType		{domain: DoLabel 		label: "File mime type" 	                    }
-    field   fileLength 		    {domain: DoSize 		label: "File size" 			                    }
-    field   fileUrn             {domain: DoText         label: "File urn"                               }
 }

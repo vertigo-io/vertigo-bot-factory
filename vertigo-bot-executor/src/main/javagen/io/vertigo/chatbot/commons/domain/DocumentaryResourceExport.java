@@ -17,11 +17,7 @@ public final class DocumentaryResourceExport implements DtObject {
 	private String dreTypeCd;
 	private String text;
 	private String url;
-	private String fileData;
 	private String fileName;
-	private String fileMimeType;
-	private Long fileLength;
-	private String fileUrn;
 	
 	/**
 	 * Champ : DATA.
@@ -101,25 +97,6 @@ public final class DocumentaryResourceExport implements DtObject {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'File data'.
-	 * @return String fileData
-	 */
-	@Field(smartType = "STyText", label = "File data")
-	public String getFileData() {
-		return fileData;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'File data'.
-	 * @param fileData String
-	 */
-	public void setFileData(final String fileData) {
-		this.fileData = fileData;
-	}
-	
-	/**
-	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'File name'.
 	 * @return String fileName
 	 */
@@ -135,63 +112,6 @@ public final class DocumentaryResourceExport implements DtObject {
 	 */
 	public void setFileName(final String fileName) {
 		this.fileName = fileName;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'File mime type'.
-	 * @return String fileMimeType
-	 */
-	@Field(smartType = "STyLabel", label = "File mime type")
-	public String getFileMimeType() {
-		return fileMimeType;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'File mime type'.
-	 * @param fileMimeType String
-	 */
-	public void setFileMimeType(final String fileMimeType) {
-		this.fileMimeType = fileMimeType;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'File size'.
-	 * @return Long fileLength
-	 */
-	@Field(smartType = "STySize", label = "File size")
-	public Long getFileLength() {
-		return fileLength;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'File size'.
-	 * @param fileLength Long
-	 */
-	public void setFileLength(final Long fileLength) {
-		this.fileLength = fileLength;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'File urn'.
-	 * @return String fileUrn
-	 */
-	@Field(smartType = "STyText", label = "File urn")
-	public String getFileUrn() {
-		return fileUrn;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'File urn'.
-	 * @param fileUrn String
-	 */
-	public void setFileUrn(final String fileUrn) {
-		this.fileUrn = fileUrn;
 	}
 	
 	/** {@inheritDoc} */
