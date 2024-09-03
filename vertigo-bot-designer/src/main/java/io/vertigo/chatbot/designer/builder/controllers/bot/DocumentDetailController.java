@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Attachment;
-import io.vertigo.chatbot.commons.domain.AttachmentTypeEnum;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceServices;
@@ -21,7 +20,6 @@ import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.domain.DocumentaryResource;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceType;
-import io.vertigo.chatbot.designer.domain.DocumentaryResourceTypeEnum;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
@@ -44,16 +42,16 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
     private static final ViewContextKey<FileInfoURI> importAttachmentFileUri = ViewContextKey.of("importAttachmentFileUri");
 
     @Inject
-    DocumentaryResourceServices documentaryResourceServices;
+    private DocumentaryResourceServices documentaryResourceServices;
 
     @Inject
-    DocumentaryResourceTypeServices documentaryResourceTypeServices;
+    private DocumentaryResourceTypeServices documentaryResourceTypeServices;
 
     @Inject
-    AttachmentServices attachmentServices;
+    private AttachmentServices attachmentServices;
 
     @Inject
-    ChatbotCustomConfigServices chatbotCustomConfigServices;
+    private ChatbotCustomConfigServices chatbotCustomConfigServices;
 
     @GetMapping("/{dreId}")
     public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId, @PathVariable("dreId") final Long dreId) {
@@ -103,28 +101,8 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
                                           @ViewAttribute("importAttachmentFileUri") final Optional<FileInfoURI> attachmentFile,
                                           @ViewAttribute("attachment") final Attachment attachment) {
 
+        documentaryResourceServices.saveDocumentaryResource(bot, documentaryResource, attachment, attachmentFile, maxSize, attachmentTotalSize);
 
-        if(documentaryResource.getDreTypeCd().equals(DocumentaryResourceTypeEnum.TEXT.name())){
-            documentaryResource.setUrl(null);
-            documentaryResource.setAttId(null);
-        }
-        if(documentaryResource.getDreTypeCd().equals(DocumentaryResourceTypeEnum.URL.name())){
-            documentaryResource.setText(null);
-            documentaryResource.setAttId(null);
-        }
-        if(documentaryResource.getDreTypeCd().equals(DocumentaryResourceTypeEnum.FILE.name())) {
-            attachment.setBotId(bot.getBotId());
-            attachment.setAttTypeCd(AttachmentTypeEnum.DOCUMENT.name());
-            Attachment savedAttachment = attachmentServices.save(bot, attachment, attachmentFile, maxSize, attachmentTotalSize);
-            documentaryResource.setAttId(savedAttachment.getAttId());
-            documentaryResource.setText(null);
-            documentaryResource.setUrl(null);
-        }
-        documentaryResourceServices.saveDocumentaryResource(bot,documentaryResource);
-
-        if (attachment.getAttId() != null && !documentaryResource.getDreTypeCd().equals(DocumentaryResourceTypeEnum.FILE.name())) {
-            attachmentServices.delete(bot, attachment.getAttId());
-        }
         return "redirect:/bot/" + bot.getBotId() + "/document/" + documentaryResource.getDreId();
     }
 

@@ -28,10 +28,10 @@ public class DocumentListController extends AbstractBotListEntityController<Docu
     public static final ViewContextKey<DocumentaryResourceType> documentaryResourceTypeListKey = ViewContextKey.of("documentaryResourceTypeList");
 
     @Inject
-    DocumentaryResourceServices documentaryResourceServices;
+    private DocumentaryResourceServices documentaryResourceServices;
 
     @Inject
-    DocumentaryResourceTypeServices documentaryResourceTypeServices;
+    private DocumentaryResourceTypeServices documentaryResourceTypeServices;
 
     @GetMapping("/")
     public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
