@@ -160,6 +160,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$questionAnswerList,
 	/**
+	 * Documentary resources.
+	 */
+	fldBotExport$documentaryResources,
+	/**
 	 * map Context.
 	 */
 	fldBotExport$mapContext,
@@ -499,6 +503,46 @@ public enum DtResources implements MessageKey {
 	 * Chatbot.
 	 */
 	fldContextValue$botId,
+
+	/***********************************************************
+	/** DocumentaryResourceExport.
+	/***********************************************************
+	/**
+	 * Title.
+	 */
+	fldDocumentaryResourceExport$title,
+	/**
+	 * Resource Type.
+	 */
+	fldDocumentaryResourceExport$dreTypeCd,
+	/**
+	 * Text.
+	 */
+	fldDocumentaryResourceExport$text,
+	/**
+	 * Url.
+	 */
+	fldDocumentaryResourceExport$url,
+	/**
+	 * File data.
+	 */
+	fldDocumentaryResourceExport$fileData,
+	/**
+	 * File name.
+	 */
+	fldDocumentaryResourceExport$fileName,
+	/**
+	 * File mime type.
+	 */
+	fldDocumentaryResourceExport$fileMimeType,
+	/**
+	 * File size.
+	 */
+	fldDocumentaryResourceExport$fileLength,
+	/**
+	 * File urn.
+	 */
+	fldDocumentaryResourceExport$fileUrn,
 
 	/***********************************************************
 	/** ExecutorConfiguration.

@@ -155,6 +155,7 @@ public class ExecutorManager implements Manager, Activeable {
 
         executorConfigManager.updateMapContext(botExport);
         executorConfigManager.updateQuestionAnswerList(botExport);
+        executorConfigManager.updateDocumentaryResourceList(botExport);
         botManager.updateConfig(topics, logs);
 
     }

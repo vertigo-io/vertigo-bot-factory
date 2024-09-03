@@ -13,8 +13,9 @@ create DtDefinition DtBotExport {
 	field confluenceSetting			{domain: DoDtConfluenceSettingExport 	label: "Confluence setting" 	    cardinality : "?"}
 	field jiraSetting			    {domain: DoDtJiraSettingExport 	        label: "Jira setting" 	            cardinality : "?"}
 	field jiraFieldSetting			{domain: DoDtJiraFieldSettingExport 	label: "Jira fields setting" 	    cardinality : "*"}
-	field questionAnswerList		{domain: DoText                       	label: "Questions answers List" 	cardinality : "1"}
-	field mapContext				{domain: DoText 						label: "map Context" 				cardinality : "1"}
+	field questionAnswerList 		{domain: DoText                       	label: "Questions answers List" 	cardinality : "1"}
+	field documentaryResources      {domain: DoText                         label: "Documentary resources"      cardinality : "1"}
+   	field mapContext				{domain: DoText 						label: "map Context" 				cardinality : "1"}
 }
 
 create DtDefinition DtTopicExport {
@@ -114,4 +115,16 @@ create DtDefinition DtQuestionAnswerExport {
 	field question 					{domain: DoText 		        label: "Question" 		cardinality : "1"}
 	field answer		            {domain: DoText					label: "Answer" 		cardinality : "1"}
     field catLabel			        {domain: DoLabel 				label: "Category" 	    cardinality : "1"}
+}
+
+create DtDefinition DtDocumentaryResourceExport {
+    field 	title 			    {domain: DoLabel 	    label: "Title" 			      cardinality : "1" }
+    field   dreTypeCd           {domain: DoLabel        label: "Resource Type"        cardinality : "1" }
+	field 	text    		    {domain: DoText 	    label: "Text" 		    	        			}
+	field 	url     		    {domain: DoText   	    label: "Url"                                    }
+	field   fileData            {domain: DoText         label: "File data"                              }
+	field   fileName            {domain: DoLabel        label: "File name"                              }
+	field   fileMimeType		{domain: DoLabel 		label: "File mime type" 	                    }
+    field   fileLength 		    {domain: DoSize 		label: "File size" 			                    }
+    field   fileUrn             {domain: DoText         label: "File urn"                               }
 }

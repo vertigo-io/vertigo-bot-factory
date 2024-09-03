@@ -73,6 +73,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		DictionaryEntityWrapper(io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper.class),
 		/** Objet de données DocumentaryResource. */
 		DocumentaryResource(io.vertigo.chatbot.designer.domain.DocumentaryResource.class),
+		/** Objet de données DocumentaryResourceExport. */
+		DocumentaryResourceExport(io.vertigo.chatbot.commons.domain.DocumentaryResourceExport.class),
 		/** Objet de données DocumentaryResourceType. */
 		DocumentaryResourceType(io.vertigo.chatbot.designer.domain.DocumentaryResourceType.class),
 		/** Objet de données ExecutorConfiguration. */
@@ -362,6 +364,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jiraFieldSetting,
 		/** Propriété 'Questions answers List'. */
 		questionAnswerList,
+		/** Propriété 'Documentary resources'. */
+		documentaryResources,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -726,6 +730,29 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		dreTypeCd,
 		/** Propriété 'Chatbot'. */
 		botId	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceExport.
+	 */
+	public enum DocumentaryResourceExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.DocumentaryResourceExport> {
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Resource Type'. */
+		dreTypeCd,
+		/** Propriété 'Text'. */
+		text,
+		/** Propriété 'Url'. */
+		url,
+		/** Propriété 'File data'. */
+		fileData,
+		/** Propriété 'File name'. */
+		fileName,
+		/** Propriété 'File mime type'. */
+		fileMimeType,
+		/** Propriété 'File size'. */
+		fileLength,
+		/** Propriété 'File urn'. */
+		fileUrn	}
 
 	/**
 	 * Enumération des champs de DocumentaryResourceType.
