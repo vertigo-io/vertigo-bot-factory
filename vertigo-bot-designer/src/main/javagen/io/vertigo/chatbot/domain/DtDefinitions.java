@@ -745,16 +745,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		text,
 		/** Propriété 'Url'. */
 		url,
-		/** Propriété 'File data'. */
-		fileData,
 		/** Propriété 'File name'. */
-		fileName,
-		/** Propriété 'File mime type'. */
-		fileMimeType,
-		/** Propriété 'File size'. */
-		fileLength,
-		/** Propriété 'File urn'. */
-		fileUrn	}
+		fileName	}
 
 	/**
 	 * Enumération des champs de DocumentaryResourceType.

@@ -528,25 +528,9 @@ public enum DtResources implements MessageKey {
 	 */
 	fldDocumentaryResourceExport$url,
 	/**
-	 * File data.
-	 */
-	fldDocumentaryResourceExport$fileData,
-	/**
 	 * File name.
 	 */
 	fldDocumentaryResourceExport$fileName,
-	/**
-	 * File mime type.
-	 */
-	fldDocumentaryResourceExport$fileMimeType,
-	/**
-	 * File size.
-	 */
-	fldDocumentaryResourceExport$fileLength,
-	/**
-	 * File urn.
-	 */
-	fldDocumentaryResourceExport$fileUrn,
 
 	/***********************************************************
 	/** ExecutorConfiguration.
