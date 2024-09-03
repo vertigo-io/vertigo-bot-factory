@@ -38,6 +38,7 @@ import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.commons.domain.DocumentaryResourceExport;
 import io.vertigo.chatbot.commons.domain.QuestionAnswerExport;
 import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
 import io.vertigo.chatbot.executor.ExecutorPlugin;
@@ -69,7 +70,9 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private DtList<QuestionAnswerExport> questionAnswerList;
 	private final List<ExecutorPlugin> plugins = new ArrayList<>();
 	private Map<String, String> mapAttachments;
+	private DtList<DocumentaryResourceExport> documentaryResourceList;
 	private File attachmentDataFile;
+	private File documentaryResourceDataFile;
 
 	@Inject
 	private ExecutorFileServices executorFileServices;
@@ -152,6 +155,19 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 		} else {
 			mapAttachments = new HashMap<>();
+		}
+
+		final String documentaryResourceDataFilePath = paramManager.getOptionalParam("DOCUMENTARY_RESOURCE_DATA_FILE")
+				.map(Param::getValueAsString).orElse("/tmp/documentaryResourceConfig");
+		documentaryResourceDataFile = new File(documentaryResourceDataFilePath);
+		if (documentaryResourceDataFile.exists() && documentaryResourceDataFile.canRead()) {
+			try {
+				final String json = FileUtils.readFileToString(documentaryResourceDataFile, StandardCharsets.UTF_8);
+				documentaryResourceList = jsonEngine.fromJson(json, new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType());
+			} catch (final Exception e) {
+				throw new VSystemException(e, "Error reading parameter file {0}", documentaryResourceDataFilePath);			}
+		} else {
+			documentaryResourceList = new DtList<>(DocumentaryResourceExport.class);
 		}
 	}
 
@@ -255,6 +271,29 @@ public class ExecutorConfigManager implements Manager, Activeable {
 			});
 			FileUtils.writeStringToFile(attachmentDataFile, jsonEngine.toJson(attachmentsMap), StandardCharsets.UTF_8);
 			mapAttachments = attachmentsMap;
+		} catch (final IOException e) {
+			throw new VSystemException(e, "Error writing parameter file {0}", attachmentDataFile.getPath());
+		}
+	}
+
+	public void updateDocumentaryResourceList(final BotExport botExport) {
+		try {
+			documentaryResourceList.forEach(documentaryResource -> {
+				if(documentaryResource.getFileUrn() != null){
+					executorFileServices.deleteFile(FileInfoURI.fromURN(documentaryResource.getFileUrn()));
+				}});
+			documentaryResourceList = jsonEngine.fromJson(botExport.getDocumentaryResources(), new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType());
+			documentaryResourceList.forEach(documentaryResource -> {
+				if(documentaryResource.getFileData() != null) {
+					final StreamFile streamFile = StreamFile.of(documentaryResource.getFileName(), documentaryResource.getFileMimeType(),
+							Instant.now(), documentaryResource.getFileLength(),
+							() -> new ByteArrayInputStream((Base64.getDecoder().decode(documentaryResource.getFileData()))));
+
+					final FileInfoURI fileInfoURI = executorFileServices.saveFile(streamFile);
+					documentaryResource.setFileUrn(fileInfoURI.toURN());
+				}
+			});
+			FileUtils.writeStringToFile(documentaryResourceDataFile, jsonEngine.toJson(documentaryResourceList), StandardCharsets.UTF_8);
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", attachmentDataFile.getPath());
 		}
