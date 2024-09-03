@@ -63,6 +63,10 @@ public enum DtResources implements MessageKey {
 	 * Data.
 	 */
 	fldAttachmentExport$fileData,
+	/**
+	 * Type.
+	 */
+	fldAttachmentExport$type,
 
 	/***********************************************************
 	/** AttachmentFileInfo.

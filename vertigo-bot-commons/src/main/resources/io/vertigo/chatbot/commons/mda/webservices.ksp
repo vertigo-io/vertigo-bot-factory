@@ -59,6 +59,7 @@ create DtDefinition DtAttachmentExport {
     field mimeType		            {domain : DoLabel 		                label : "MimeType" 			        cardinality : "1" }
     field length 		            {domain : DoSize 		                label : "Size" 			            cardinality : "1" }
 	field fileData			 		{domain: DoText	 					    label: "Data" 					    cardinality : "1"}
+	field type                      {domain: DoLabel                        label: "Type"                       cardinality : "1"}
 }
 
 create DtDefinition DtRunnerInfo {
