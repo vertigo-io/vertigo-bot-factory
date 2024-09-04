@@ -65,14 +65,17 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private File configDataFile;
 	private File contextDataFile;
 	private File questionAnswerListDataFile;
+	private File attachmentDataFile;
+	private File documentaryResourceDataFile;
+	private File documentaryResourceFileDataFile;
 	private ExecutorGlobalConfig executorGlobalConfig;
 	private HashMap<String, String> contextMap;
 	private DtList<QuestionAnswerExport> questionAnswerList;
 	private final List<ExecutorPlugin> plugins = new ArrayList<>();
 	private Map<String, String> mapAttachments;
-	private DtList<DocumentaryResourceExport> documentaryResourceList;
-	private File attachmentDataFile;
-	private File documentaryResourceDataFile;
+	private Map<String, String> mapDocumentaryResourceFiles;
+	private DtList<DocumentaryResourceExport> documentaryResources;
+
 
 	@Inject
 	private ExecutorFileServices executorFileServices;
@@ -163,11 +166,26 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		if (documentaryResourceDataFile.exists() && documentaryResourceDataFile.canRead()) {
 			try {
 				final String json = FileUtils.readFileToString(documentaryResourceDataFile, StandardCharsets.UTF_8);
-				documentaryResourceList = jsonEngine.fromJson(json, new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType());
+				documentaryResources = jsonEngine.fromJson(json, new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType());
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", documentaryResourceDataFilePath);			}
 		} else {
-			documentaryResourceList = new DtList<>(DocumentaryResourceExport.class);
+			documentaryResources = new DtList<>(DocumentaryResourceExport.class);
+		}
+
+		final String documentaryResourceFileDataFilePath = paramManager.getOptionalParam("DOCUMENTARY_RESOURCE_FILE_DATA_FILE")
+				.map(Param::getValueAsString).orElse("/tmp/documentaryResourceFileConfig");
+		documentaryResourceFileDataFile = new File(documentaryResourceFileDataFilePath);
+		if (documentaryResourceFileDataFile.exists() && documentaryResourceFileDataFile.canRead()) {
+			try {
+				final String json = FileUtils.readFileToString(documentaryResourceFileDataFile, StandardCharsets.UTF_8);
+				mapDocumentaryResourceFiles = jsonEngine.fromJson(json, HashMap.class);
+			} catch (final Exception e) {
+				throw new VSystemException(e, "Error reading parameter file {0}", documentaryResourceFileDataFilePath);
+			}
+
+		} else {
+			mapDocumentaryResourceFiles = new HashMap<>();
 		}
 	}
 
@@ -237,6 +255,11 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		return questionAnswerList;
 	}
 
+	public DtList<DocumentaryResourceExport> getDocumentaryResourceList() {
+		return documentaryResources;
+	}
+
+
 	public synchronized void updateMapContext(final BotExport botExport) {
 
 		try {
@@ -260,40 +283,35 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	public void updateAttachments(final DtList<AttachmentExport> attachmentExports) {
 		try {
 			mapAttachments.forEach((key, value) -> executorFileServices.deleteFile(FileInfoURI.fromURN(value)));
+			mapDocumentaryResourceFiles.forEach((key, value) -> executorFileServices.deleteFile(FileInfoURI.fromURN(value)));
 			final HashMap<String, String> attachmentsMap = new HashMap<>();
+			final HashMap<String, String> documentaryResourceFilesMap = new HashMap<>();
 			attachmentExports.forEach(attachmentExport -> {
 				final StreamFile streamFile = StreamFile.of(attachmentExport.getFileName(), attachmentExport.getMimeType(),
 						Instant.now(), attachmentExport.getLength(),
 						() -> new ByteArrayInputStream((Base64.getDecoder().decode(attachmentExport.getFileData()))));
 
 				final FileInfoURI fileInfoURI = executorFileServices.saveFile(streamFile);
-				attachmentsMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
+
+				if(attachmentExport.getType().equals("ATTACHMENT")){
+					attachmentsMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
+				}else if(attachmentExport.getType().equals("DOCUMENT")){
+					documentaryResourceFilesMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
+				}
 			});
 			FileUtils.writeStringToFile(attachmentDataFile, jsonEngine.toJson(attachmentsMap), StandardCharsets.UTF_8);
+			FileUtils.writeStringToFile(documentaryResourceFileDataFile, jsonEngine.toJson(documentaryResourceFilesMap), StandardCharsets.UTF_8);
 			mapAttachments = attachmentsMap;
+			mapDocumentaryResourceFiles = documentaryResourceFilesMap;
 		} catch (final IOException e) {
-			throw new VSystemException(e, "Error writing parameter file {0}", attachmentDataFile.getPath());
+			throw new VSystemException("Could not retrieve attachments and documentary resource files at startup...", e);
 		}
 	}
 
 	public void updateDocumentaryResourceList(final BotExport botExport) {
 		try {
-			documentaryResourceList.forEach(documentaryResource -> {
-				if(documentaryResource.getFileUrn() != null){
-					executorFileServices.deleteFile(FileInfoURI.fromURN(documentaryResource.getFileUrn()));
-				}});
-			documentaryResourceList = jsonEngine.fromJson(botExport.getDocumentaryResources(), new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType());
-			documentaryResourceList.forEach(documentaryResource -> {
-				if(documentaryResource.getFileData() != null) {
-					final StreamFile streamFile = StreamFile.of(documentaryResource.getFileName(), documentaryResource.getFileMimeType(),
-							Instant.now(), documentaryResource.getFileLength(),
-							() -> new ByteArrayInputStream((Base64.getDecoder().decode(documentaryResource.getFileData()))));
-
-					final FileInfoURI fileInfoURI = executorFileServices.saveFile(streamFile);
-					documentaryResource.setFileUrn(fileInfoURI.toURN());
-				}
-			});
-			FileUtils.writeStringToFile(documentaryResourceDataFile, jsonEngine.toJson(documentaryResourceList), StandardCharsets.UTF_8);
+			FileUtils.writeStringToFile(documentaryResourceDataFile, botExport.getDocumentaryResources(), StandardCharsets.UTF_8);
+			documentaryResources = jsonEngine.fromJson(botExport.getDocumentaryResources(), new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType());
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", attachmentDataFile.getPath());
 		}
@@ -303,6 +321,14 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		final String urn = mapAttachments.get(label);
 		if (urn == null) {
 			throw new VSystemException("Attachment with label " + label + " doesn't exist...");
+		}
+		return executorFileServices.getFile(urn);
+	}
+
+	public VFile getDocumentaryResourceFile(final String label) {
+		final String urn = mapDocumentaryResourceFiles.get(label);
+		if (urn == null) {
+			throw new VSystemException("Documentary resource file with label " + label + " doesn't exist...");
 		}
 		return executorFileServices.getFile(urn);
 	}

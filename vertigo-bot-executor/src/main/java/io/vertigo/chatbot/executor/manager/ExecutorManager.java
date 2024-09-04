@@ -239,8 +239,16 @@ public class ExecutorManager implements Manager, Activeable {
         return executorConfigManager.getAttachment(label);
     }
 
+    public VFile getDocumentaryResourceFile(final String label) {
+        return executorConfigManager.getDocumentaryResourceFile(label);
+    }
+
     public Optional<VFile> getWelcomeToursFile() {
         return executorConfigManager.getWelcomeToursFile();
+    }
+
+    public DtList<DocumentaryResourceExport> getDocumentaryResourceList() {
+        return executorConfigManager.getDocumentaryResourceList();
     }
 
 }

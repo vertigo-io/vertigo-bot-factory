@@ -1,9 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Base64;
-
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -12,7 +8,6 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.domain.Attachment;
-import io.vertigo.chatbot.commons.domain.AttachmentFileInfo;
 import io.vertigo.chatbot.commons.domain.AttachmentTypeEnum;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.DocumentaryResourceExport;
@@ -30,7 +25,6 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
 import io.vertigo.datamodel.structure.util.VCollectors;
-import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 
@@ -113,20 +107,8 @@ public class DocumentaryResourceServices implements Component {
                 documentaryResourceExport.setDreTypeCd(documentaryResource.getDreTypeCd());
                 documentaryResourceExport.setText(documentaryResource.getText());
                 documentaryResourceExport.setUrl(documentaryResource.getUrl());
-                if (documentaryResource.getAttId() != null) {
-                    Attachment attachment = documentaryResource.attachment().get();
-                    attachment.attachmentFileInfo().load();
-                    AttachmentFileInfo attachmentFileInfo = attachment.attachmentFileInfo().get();
-                    documentaryResourceExport.setFileName(attachmentFileInfo.getFileName());
-                    documentaryResourceExport.setFileMimeType(attachmentFileInfo.getMimeType());
-                    documentaryResourceExport.setFileLength(attachmentFileInfo.getLength());
-                    final VFile file = designerFileServices.getAttachment(attachment.getAttFiId());
-                    try (final InputStream inputStream = file.createInputStream()) {
-                        documentaryResourceExport.setFileData(Base64.getEncoder().encodeToString(inputStream.readAllBytes()));
-                    } catch (final IOException e) {
-                        LogsUtils.logKO(logs);
-                        LogsUtils.addLogs(logs, e);
-                    }
+                if(documentaryResource.getAttId() != null) {
+                    documentaryResourceExport.setFileName(documentaryResource.attachment().get().getLabel());
                 }
                 return documentaryResourceExport;
             }).collect(VCollectors.toDtList(DocumentaryResourceExport.class)));

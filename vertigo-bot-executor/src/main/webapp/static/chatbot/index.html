@@ -73,7 +73,7 @@
                  class="column col-grow no-wrap">
               <q-scroll-area class="row q-px-sm col-grow"
                              ref="scroller"
-                             style="height: 0">
+                             style="height: 500px">
                 <div class="q-pr-md q-pt-md">
                   <div v-for="(msg, index) in messages">
                     <q-chat-message
@@ -239,6 +239,30 @@
                                    header-class="q-collapsible-question">
                       <div class="q-collapsible-answer" v-html="questionAnswer.answer"></div>
                     </q-collapsible>
+              </div>
+              <div style="height: 30px"></div>
+            </q-scroll-area>
+
+            <q-scroll-area class="q-px-sm col-grow"
+                           ref="scroller"
+                           style="height: 100px"
+            >
+              <div class="q-mx-md">
+                <div v-for="(documentaryResource, index) in documentaryResourceConfig.documentaryResourceList"
+                     class="documentary-resource-container">
+                  <a v-if="documentaryResource.dreTypeCd === 'URL'"
+                     :href="documentaryResource.url"
+                     target="_blank">
+                    {{documentaryResource.title}}
+                  </a>
+                  <a v-else-if="documentaryResource.dreTypeCd === 'FILE'"
+                    :href="documentaryResourceConfig.documentaryResourceFileBaseUrl + documentaryResource.fileName">
+                    {{documentaryResource.title}}
+                  </a>
+                  <div v-else>
+                    {{documentaryResource.title}}
+                  </div>
+                </div>
               </div>
               <div style="height: 30px"></div>
             </q-scroll-area>
