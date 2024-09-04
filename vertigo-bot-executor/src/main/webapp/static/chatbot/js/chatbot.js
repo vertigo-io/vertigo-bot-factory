@@ -20,6 +20,7 @@ const _avatar = _botRunnerUrl + '/static/chatbot/images/avatar/avatar.png';
 
 const _botBaseUrl = _botRunnerUrl + '/api/chatbot';
 const _qAndABaseUrl = _botRunnerUrl + '/api/qanda';
+const _documentaryResourceBaseUrl = _botRunnerUrl + '/api/docres';
 
 const scanContextKeys = (context) => new Promise((res, rej) => {
     const channel = new MessageChannel();
@@ -40,7 +41,8 @@ window.addEventListener(
     function (event) {
         if (event.data === 'start') {
             chatbot.initBot();
-            chatbot.initQAndA()
+            chatbot.initQAndA();
+            chatbot.initDocumentaryResources();
         }
         if (event.data.sendTopic) {
             const button = chatbot.inputConfig.buttons.find((button) => button.payload === event.data.sendTopic.topic)
@@ -127,10 +129,15 @@ const chatbot = new Vue({
             contextMap: {},
 
             qAndAConfig: {
-                qAndAUrl : _qAndABaseUrl,
+                qAndAUrl: _qAndABaseUrl,
                 questionAnswerList: [],
-                filteredQuestionAnswerList:[],
-                filterInput : ''
+                filteredQuestionAnswerList: [],
+                filterInput: ''
+            },
+            documentaryResourceConfig: {
+                documentaryResourceUrl: _documentaryResourceBaseUrl,
+                documentaryResourceList: [],
+                documentaryResourceFileBaseUrl: _documentaryResourceBaseUrl + '/getDocumentaryResourceFile?label='
             }
         },
         methods: {
@@ -486,6 +493,9 @@ const chatbot = new Vue({
                 //todo : change url bot to simulate language change
             },
 
+
+            /* Q&A */
+
             initQAndA(){
                 this.$http.get(chatbot.qAndAConfig.qAndAUrl + '/getQuestionsAnswers').then(questionAnswerResponse => {
                     chatbot.qAndAConfig.questionAnswerList = questionAnswerResponse.data;
@@ -500,7 +510,17 @@ const chatbot = new Vue({
                 }else{
                     chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList
                 }
-            }
+            },
+
+
+            /* Documentary resources */
+
+            initDocumentaryResources() {
+                this.$http.get(chatbot.documentaryResourceConfig.documentaryResourceUrl + '/getDocumentaryResources').then(documentaryResourceResponse => {
+                    chatbot.documentaryResourceConfig.documentaryResourceList = documentaryResourceResponse.data;
+                    console.log(chatbot.documentaryResourceConfig.documentaryResourceList);
+                });
+            },
         }
     })
 ;

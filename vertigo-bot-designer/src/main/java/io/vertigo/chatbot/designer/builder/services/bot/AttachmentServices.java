@@ -99,7 +99,7 @@ public class AttachmentServices implements Component {
 	public DtList<AttachmentExport> exportAttachmentByBot(@SecuredOperation("botAdm") final Chatbot bot, final StringBuilder logs) {
 		LogsUtils.addLogs(logs, "Export attachments : ");
 		try {
-			return findAllByBotIdAndType(bot.getBotId(), AttachmentTypeEnum.ATTACHMENT.name()).stream().map(attachment -> {
+			return findAllByBotId(bot.getBotId()).stream().map(attachment -> {
 				attachment.attachmentFileInfo().load();
 				final AttachmentFileInfo attachmentFileInfo = attachment.attachmentFileInfo().get();
 				final AttachmentExport attachmentExport = new AttachmentExport();
@@ -107,6 +107,7 @@ public class AttachmentServices implements Component {
 				attachmentExport.setFileName(attachmentFileInfo.getFileName());
 				attachmentExport.setMimeType(attachmentFileInfo.getMimeType());
 				attachmentExport.setLength(attachmentFileInfo.getLength());
+				attachmentExport.setType(attachment.getAttTypeCd());
 				final VFile file = designerFileServices.getAttachment(attachment.getAttFiId());
 				try (final InputStream inputStream = file.createInputStream()) {
 					attachmentExport.setFileData(Base64.getEncoder().encodeToString(inputStream.readAllBytes()));

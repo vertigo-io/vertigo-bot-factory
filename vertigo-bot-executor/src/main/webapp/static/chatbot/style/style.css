@@ -277,3 +277,15 @@ img {
 .q-tabs {
     box-shadow: 0 -1px 2px 1px rgba(0, 0, 0, 0.2);
 }
+
+/* Documentary resources */
+
+.documentary-resource-container{
+    background-color: var(--bot-message-bg-color) !important;
+    color: var(--bot-message-font-color) !important;
+    margin-top: 12px;
+    padding: 6px 15px;
+    border-radius: 5px;
+    box-shadow: 3px 4px 2px 0 rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+}
