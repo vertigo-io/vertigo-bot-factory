@@ -115,6 +115,16 @@
 				changeBotMessageFontColor()
 				changeChatMessageFontFamily();
 			});
+			function onChatbotDisplayChange() {
+				if (!VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay && !VertigoUi.vueData.chatbotCustomConfig.qandaDisplay) {
+					VertigoUi.vueData.chatbotCustomConfig.qandaDisplay = true;
+				}
+			}
+			function onQandaDisplayChange() {
+				if (!VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay && !VertigoUi.vueData.chatbotCustomConfig.qandaDisplay) {
+					VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay = true;
+				}
+			}
 		</script>
 	</head>
 	
@@ -160,9 +170,30 @@
 			<vu:include-data object="chatbotCustomConfig" field="userMessageFontColor"  modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="fofCd" modifiable="true" />
 			<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="chatbotDisplay" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="qandaDisplay" modifiable="true" />
+			<vu:include-data object="chatbotCustomConfig" field="documentaryResourceDisplay" modifiable="true" />
 
 			<vu:block id="botWindowCustomization" th:title="#{bot.window.customization}">
 
+				<div class="row">
+					<div class="col">
+						<vu:label-edit object="chatbotCustomConfig" field="chatbotDisplay">
+							<q-toggle v-model="vueData.chatbotCustomConfig.chatbotDisplay" th::disable="${model.modeReadOnly}" @input="onChatbotDisplayChange()"></q-toggle>
+							<input type="hidden" name="vContext[chatbotCustomConfig][chatbotDisplay]" :value="vueData.chatbotCustomConfig.chatbotDisplay"/>
+						</vu:label-edit>
+					</div>
+					<div class="col">
+						<vu:label-edit object="chatbotCustomConfig" field="qandaDisplay">
+							<q-toggle v-model="vueData.chatbotCustomConfig.qandaDisplay" th::disable="${model.modeReadOnly}" @input="onQandaDisplayChange()"></q-toggle>
+							<input type="hidden" name="vContext[chatbotCustomConfig][qandaDisplay]" :value="vueData.chatbotCustomConfig.qandDisplay"/>
+						</vu:label-edit>
+					</div>
+				</div>
+				<vu:label-edit object="chatbotCustomConfig" field="documentaryResourceDisplay">
+					<q-toggle v-model="vueData.chatbotCustomConfig.documentaryResourceDisplay" th::disable="${model.modeReadOnly}"></q-toggle>
+					<input type="hidden" name="vContext[chatbotCustomConfig][documentaryResourceDisplay]" :value="vueData.chatbotCustomConfig.documentaryResourceDisplay"/>
+				</vu:label-edit>
 				<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
 				<vu:label-edit object="chatbotCustomConfig" field="displayAvatar">
 					<q-toggle left-label v-model="vueData.chatbotCustomConfig.displayAvatar" th::disable="${model.modeReadOnly}"></q-toggle>

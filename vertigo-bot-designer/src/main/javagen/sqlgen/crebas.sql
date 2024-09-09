@@ -415,6 +415,9 @@ create table CHATBOT_CUSTOM_CONFIG
     TOTAL_MAX_ATTACHMENT_SIZE	 NUMERIC     	,
     DISABLE_NLU 	 bool        	,
     MAX_SAVED_TRAINING	 NUMERIC     	,
+    CHATBOT_DISPLAY	 bool        	,
+    QANDA_DISPLAY	 bool        	,
+    DOCUMENTARY_RESOURCE_DISPLAY	 bool        	,
     BOT_ID      	 NUMERIC     	not null,
     FOF_CD      	 VARCHAR(100)	,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
@@ -458,6 +461,15 @@ comment on column CHATBOT_CUSTOM_CONFIG.DISABLE_NLU is
 
 comment on column CHATBOT_CUSTOM_CONFIG.MAX_SAVED_TRAINING is
 'Maximum of saved trainings';
+
+comment on column CHATBOT_CUSTOM_CONFIG.CHATBOT_DISPLAY is
+'Display chatbot';
+
+comment on column CHATBOT_CUSTOM_CONFIG.QANDA_DISPLAY is
+'Display Q&A';
+
+comment on column CHATBOT_CUSTOM_CONFIG.DOCUMENTARY_RESOURCE_DISPLAY is
+'Display documentary resources';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';

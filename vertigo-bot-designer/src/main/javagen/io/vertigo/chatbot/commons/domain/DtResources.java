@@ -256,6 +256,18 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$maxSavedTraining,
 	/**
+	 * Display chatbot.
+	 */
+	fldChatbotCustomConfig$chatbotDisplay,
+	/**
+	 * Display Q&A.
+	 */
+	fldChatbotCustomConfig$qandaDisplay,
+	/**
+	 * Display documentary resources.
+	 */
+	fldChatbotCustomConfig$documentaryResourceDisplay,
+	/**
 	 * Chatbot.
 	 */
 	fldChatbotCustomConfig$botId,

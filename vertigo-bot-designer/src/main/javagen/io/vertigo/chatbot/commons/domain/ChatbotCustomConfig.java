@@ -29,6 +29,9 @@ public final class ChatbotCustomConfig implements Entity {
 	private Long totalMaxAttachmentSize;
 	private Boolean disableNlu;
 	private Long maxSavedTraining;
+	private Boolean chatbotDisplay;
+	private Boolean qandaDisplay;
+	private Boolean documentaryResourceDisplay;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
@@ -311,6 +314,63 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setMaxSavedTraining(final Long maxSavedTraining) {
 		this.maxSavedTraining = maxSavedTraining;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Display chatbot'.
+	 * @return Boolean chatbotDisplay
+	 */
+	@Field(smartType = "STyYesNo", label = "Display chatbot")
+	public Boolean getChatbotDisplay() {
+		return chatbotDisplay;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Display chatbot'.
+	 * @param chatbotDisplay Boolean
+	 */
+	public void setChatbotDisplay(final Boolean chatbotDisplay) {
+		this.chatbotDisplay = chatbotDisplay;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Display Q&A'.
+	 * @return Boolean qandaDisplay
+	 */
+	@Field(smartType = "STyYesNo", label = "Display Q&A")
+	public Boolean getQandaDisplay() {
+		return qandaDisplay;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Display Q&A'.
+	 * @param qandaDisplay Boolean
+	 */
+	public void setQandaDisplay(final Boolean qandaDisplay) {
+		this.qandaDisplay = qandaDisplay;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Display documentary resources'.
+	 * @return Boolean documentaryResourceDisplay
+	 */
+	@Field(smartType = "STyYesNo", label = "Display documentary resources")
+	public Boolean getDocumentaryResourceDisplay() {
+		return documentaryResourceDisplay;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Display documentary resources'.
+	 * @param documentaryResourceDisplay Boolean
+	 */
+	public void setDocumentaryResourceDisplay(final Boolean documentaryResourceDisplay) {
+		this.documentaryResourceDisplay = documentaryResourceDisplay;
 	}
 	
 	/**

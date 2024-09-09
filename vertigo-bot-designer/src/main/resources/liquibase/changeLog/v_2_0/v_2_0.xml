@@ -181,4 +181,8 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_24.sql"/>
     </changeSet>
 
+    <changeSet author="rsaintpaul" id="Add chatbot_display, qanda_display and documentary_resource_display columns to chatbot_custom_config table">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_09_09.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

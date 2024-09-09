@@ -86,6 +86,9 @@ public class ChatbotCustomConfigServices implements Component {
         chatbotCustomConfig.setUserMessageFontColor("#000000");
         chatbotCustomConfig.setFofCd(FontFamilyEnum.ARIAL.name());
         chatbotCustomConfig.setTotalMaxAttachmentSize(-1L);
+        chatbotCustomConfig.setChatbotDisplay(true);
+        chatbotCustomConfig.setQandaDisplay(true);
+        chatbotCustomConfig.setDocumentaryResourceDisplay(true);
         return chatbotCustomConfig;
     }
 
