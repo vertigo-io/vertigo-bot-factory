@@ -431,6 +431,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		disableNlu,
 		/** Propriété 'Maximum of saved trainings'. */
 		maxSavedTraining,
+		/** Propriété 'Display chatbot'. */
+		chatbotDisplay,
+		/** Propriété 'Display Q&A'. */
+		qandaDisplay,
+		/** Propriété 'Display documentary resources'. */
+		documentaryResourceDisplay,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'fontFamily'. */
