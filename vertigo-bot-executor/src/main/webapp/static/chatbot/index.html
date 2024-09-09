@@ -66,14 +66,17 @@
                class="column items-center q-pt-xl">Chargement ...
           </div>
           <q-page id="page"
-                  class="column animate-fade"
-                  style="padding-top: 0; padding-bottom: 0;">
+                  class="column animate-fade">
             <div v-if="!menu && tab ==='bot'"
                  id="main"
-                 class="column col-grow no-wrap">
-              <q-scroll-area class="row q-px-sm col-grow"
+                 class="column col-grow no-wrap chatbot-qanda-container"
+            >
+              <div class="containers-title">
+                Chatbot
+              </div>
+              <q-scroll-area class="col column no-wrap q-px-sm col-grow"
                              ref="scroller"
-                             style="height: 500px">
+                             style="height: 320px">
                 <div class="q-pr-md q-pt-md">
                   <div v-for="(msg, index) in messages">
                     <q-chat-message
@@ -150,9 +153,8 @@
                                 animated
                                 control-color="primary"
                                 navigation
-                                padding
                                 arrows
-                                class="custom-carousel bg-primary text-white shadow-1 rounded-borders"
+                                class="custom-carousel bg-primary text-white shadow-1"
                         >
                           <q-carousel-slide  v-for="(card, index) in inputConfig.cards" name="style" class="column no-wrap flex-center" >
                             <div class="q-mt-md text-center cursor-pointer" @click="postAnswerBtn(card)">
@@ -192,85 +194,86 @@
                 </div>
                 <div style="height: 30px"></div>
               </q-scroll-area>
-            </div>
-            <div v-if="tab==='bot'" class="row non-selectable custom-input-bottom">
-              <div class="col-grow">
-                <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
-                         ref="input"
-                         :style="'margin-top: 0px;'"
-                         class="q-px-sm round-borders custom-input"
-                         @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
-                         :max-height="100"
-                         v-model="inputConfig.responseText"
-                         placeholder="Ecrire un message..."
-                         :disable="processing || error || (!acceptNlu && !isEnded) || customConfig.disableNlu"
-                         :loading="processing"></q-input>
-              </div>
-              <q-btn
-                      :style="'margin-top: 0px;'"
-                      style="margin-top: 0px;"
-                      class="btn-send"
-                      icon="send"
-                      @click="postAnswerText(false)"
-                      :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
-              <q-btn round
-                     color="red"
-                     @click="restart"
-                     v-if="devMode === true && false"
-                     icon="refresh"></q-btn>
-            </div>
-
-            <div v-if="tab === 'qAndA'" class="custom-input-top">
-              <q-input v-model="qAndAConfig.filterInput"
-                       ref="input"
-                       class="q-px-sm"
-                       placeholder="Rechercher..."
-                       :loading="processing"
-                       @input="filterQuestionsAnswers()"></q-input>
-            </div>
-            <q-scroll-area class="q-px-sm col-grow"
-                           ref="scroller"
-                           style="height: 0"
-                           v-if="tab === 'qAndA'"
-            >
-              <div class="q-mx-md q-mt-xl">
-                    <q-collapsible v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
-                                   :label="questionAnswer.question"
-                                   header-class="q-collapsible-question">
-                      <div class="q-collapsible-answer" v-html="questionAnswer.answer"></div>
-                    </q-collapsible>
-              </div>
-              <div style="height: 30px"></div>
-            </q-scroll-area>
-
-            <q-scroll-area class="q-px-sm col-grow"
-                           ref="scroller"
-                           style="height: 100px"
-            >
-              <div class="q-mx-md">
-                <div v-for="(documentaryResource, index) in documentaryResourceConfig.documentaryResourceList"
-                     class="documentary-resource-container">
-                  <a v-if="documentaryResource.dreTypeCd === 'URL'"
-                     :href="documentaryResource.url"
-                     target="_blank">
-                    {{documentaryResource.title}}
-                  </a>
-                  <a v-else-if="documentaryResource.dreTypeCd === 'FILE'"
-                    :href="documentaryResourceConfig.documentaryResourceFileBaseUrl + documentaryResource.fileName">
-                    {{documentaryResource.title}}
-                  </a>
-                  <div v-else>
-                    {{documentaryResource.title}}
-                  </div>
+              <div v-if="tab==='bot'" class="row non-selectable custom-input-chatbot">
+                <div class="col-grow">
+                  <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
+                           ref="input"
+                           @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
+                           v-model="inputConfig.responseText"
+                           placeholder="Ecrire un message..."
+                           :disable="processing || error || (!acceptNlu && !isEnded) || customConfig.disableNlu"
+                           :loading="processing"></q-input>
                 </div>
+                <q-btn
+                        :style="'margin-top: 0px;'"
+                        style="margin-top: 0px;"
+                        class="btn-send"
+                        icon="send"
+                        @click="postAnswerText(false)"
+                        :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
+                <q-btn round
+                       color="red"
+                       @click="restart"
+                       v-if="devMode === true && false"
+                       icon="refresh"></q-btn>
               </div>
-              <div style="height: 30px"></div>
-            </q-scroll-area>
+            </div>
+
+            <div v-if="tab === 'qAndA'" class="column col-grow no-wrap chatbot-qanda-container">
+              <div class="containers-title">
+                FAQ
+              </div>
+              <div class="custom-input-qanda">
+                <q-input v-model="qAndAConfig.filterInput"
+                         ref="input"
+                         placeholder="Rechercher..."
+                         :loading="processing"
+                         @input="filterQuestionsAnswers()"></q-input>
+              </div>
+              <q-scroll-area class="row q-px-sm col-grow"
+                             style="height: 320px"
+              >
+                <div class="q-mx-md">
+                      <q-collapsible v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
+                                     :label="questionAnswer.question"
+                                     header-class="q-collapsible-question">
+                        <div class="q-collapsible-answer" v-html="questionAnswer.answer"></div>
+                      </q-collapsible>
+                </div>
+                <div style="height: 30px"></div>
+              </q-scroll-area>
+            </div>
+
+            <div class="column col-grow no-wrap docres-container" >
+              <div class="containers-title">
+                Ressources documentaires
+              </div>
+              <q-scroll-area class="q-px-sm col-grow"
+                             style="height: 100px"
+              >
+                <ul>
+                  <li v-for="(documentaryResource, index) in documentaryResourceConfig.documentaryResourceList"
+                       class="documentary-resource-container">
+                    <a v-if="documentaryResource.dreTypeCd === 'URL'"
+                       :href="documentaryResource.url"
+                       target="_blank">
+                      {{documentaryResource.title}}
+                    </a>
+                    <a v-else-if="documentaryResource.dreTypeCd === 'FILE'"
+                      :href="documentaryResourceConfig.documentaryResourceFileBaseUrl + documentaryResource.fileName">
+                      {{documentaryResource.title}}
+                    </a>
+                    <div v-else>
+                      {{documentaryResource.title}}
+                    </div>
+                  </li>
+                </ul>
+              </q-scroll-area>
+            </div>
           </q-page>
         </q-page-container>
 
         <q-layout-footer v-if="!customConfig.disableNlu" >
-          <div :class="{'q-tabs-container' : tab==='bot'}">
             <q-tabs v-model="tab"
                     align="justify"
                     text-color="black"
@@ -279,7 +282,6 @@
               <q-tab name="bot" slot="title" icon="smart_toy"></q-tab>
               <q-tab name="qAndA" slot="title" icon="question_answer"></q-tab>
             </q-tabs>
-          </div>
         </q-layout-footer>
       </q-layout>
     </div>

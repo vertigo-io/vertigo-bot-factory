@@ -482,10 +482,11 @@ const chatbot = new Vue({
 
             refresh(){
                 if(chatbot.tab === 'qAndA'){
-                    chatbot.initQAndA()
-                }else{
-                    chatbot.refreshBot()
-
+                    chatbot.initQAndA();
+                    chatbot.initDocumentaryResources();
+                }else if(chatbot.tab === 'bot') {
+                    chatbot.refreshBot();
+                    chatbot.initDocumentaryResources();
                 }
             },
             // Function to complete to switch to another bot
