@@ -71,12 +71,9 @@
                  id="main"
                  class="column col-grow no-wrap chatbot-qanda-container"
             >
-              <div class="containers-title">
-                Chatbot
-              </div>
               <q-scroll-area class="col column no-wrap q-px-sm col-grow"
                              ref="scroller"
-                             style="height: 320px">
+                             style="height: 400px">
                 <div class="q-pr-md q-pt-md">
                   <div v-for="(msg, index) in messages">
                     <q-chat-message
@@ -194,7 +191,7 @@
                 </div>
                 <div style="height: 30px"></div>
               </q-scroll-area>
-              <div v-if="tab==='bot'" class="row non-selectable custom-input-chatbot">
+              <div class="row non-selectable custom-input-chatbot">
                 <div class="col-grow">
                   <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
                            ref="input"
@@ -220,9 +217,6 @@
             </div>
 
             <div v-if="tab === 'qAndA'" class="column col-grow no-wrap chatbot-qanda-container">
-              <div class="containers-title">
-                FAQ
-              </div>
               <div class="custom-input-qanda">
                 <q-input v-model="qAndAConfig.filterInput"
                          ref="input"
@@ -231,7 +225,7 @@
                          @input="filterQuestionsAnswers()"></q-input>
               </div>
               <q-scroll-area class="row q-px-sm col-grow"
-                             style="height: 320px"
+                             style="height: 400px"
               >
                 <div class="q-mx-md">
                       <q-collapsible v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
@@ -244,36 +238,34 @@
               </q-scroll-area>
             </div>
 
-            <div class="column col-grow no-wrap docres-container" >
-              <div class="containers-title">
-                Ressources documentaires
-              </div>
-              <q-scroll-area class="q-px-sm col-grow"
-                             style="height: 100px"
-              >
-                <ul>
-                  <li v-for="(documentaryResource, index) in documentaryResourceConfig.documentaryResourceList"
-                       class="documentary-resource-container">
+            <div v-if="documentaryResourceDisplay" class="column col-grow no-wrap docres-container" >
+              <q-scroll-area class="col-grow q-px-md" style="height: 100px;">
+                <div style="height: 10px"></div>
+                  <div v-for="(documentaryResource, index) in documentaryResourceConfig.documentaryResourceList"
+                       class="docres-item-container">
                     <a v-if="documentaryResource.dreTypeCd === 'URL'"
                        :href="documentaryResource.url"
-                       target="_blank">
-                      {{documentaryResource.title}}
+                       target="_blank"
+                       class="docres-a">
+                      <q-icon name="public" class="docres-type-icon"></q-icon>
+                      <span style="flex-grow: 1">{{documentaryResource.title}}</span>
+                      <q-icon name="launch" ></q-icon>
                     </a>
                     <a v-else-if="documentaryResource.dreTypeCd === 'FILE'"
-                      :href="documentaryResourceConfig.documentaryResourceFileBaseUrl + documentaryResource.fileName">
-                      {{documentaryResource.title}}
+                       :href="documentaryResourceConfig.documentaryResourceFileBaseUrl + documentaryResource.fileName"
+                       class="docres-a">
+                      <q-icon name="article" class="docres-type-icon"></q-icon>
+                      <span style="flex-grow: 1">{{documentaryResource.title}}</span>
+                      <q-icon name="launch"></q-icon>
                     </a>
-                    <div v-else>
-                      {{documentaryResource.title}}
-                    </div>
-                  </li>
-                </ul>
+                  </div>
+                <div style="height:8px" ></div>
               </q-scroll-area>
             </div>
           </q-page>
         </q-page-container>
 
-        <q-layout-footer v-if="!customConfig.disableNlu" >
+        <q-layout-footer v-if="chatbotDisplay && qAndADisplay && !customConfig.disableNlu" >
             <q-tabs v-model="tab"
                     align="justify"
                     text-color="black"
