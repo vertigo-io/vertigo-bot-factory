@@ -41,6 +41,7 @@ window.addEventListener(
     function (event) {
         if (event.data === 'start') {
             chatbot.initBot();
+            chatbot.initLayout();
             chatbot.initQAndA();
             chatbot.initDocumentaryResources();
         }
@@ -112,7 +113,10 @@ const chatbot = new Vue({
             },
             isEnded: false,
 
-            tab: 'bot',
+            tab: '',
+            chatbotDisplay: true,
+            qAndADisplay: true,
+            documentaryResourceDisplay: true,
             prevInputConfig: {},
             lastPayload: null,
             processing: false,
@@ -494,6 +498,13 @@ const chatbot = new Vue({
                 //todo : change url bot to simulate language change
             },
 
+            initLayout(){
+                if (chatbot.qAndADisplay && !chatbot.chatbotDisplay){
+                    chatbot.tab = 'qAndA'
+                } else {
+                    chatbot.tab = 'bot'
+                }
+            },
 
             /* Q&A */
 
