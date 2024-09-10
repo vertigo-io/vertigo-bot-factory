@@ -179,14 +179,18 @@
 				<div class="row">
 					<div class="col">
 						<vu:label-edit object="chatbotCustomConfig" field="chatbotDisplay">
-							<q-toggle v-model="vueData.chatbotCustomConfig.chatbotDisplay" th::disable="${model.modeReadOnly}" @input="onChatbotDisplayChange()"></q-toggle>
+							<q-toggle v-model="vueData.chatbotCustomConfig.chatbotDisplay"
+									  th::disable="${model.modeReadOnly}"
+									  @input="onChatbotDisplayChange()"></q-toggle>
 							<input type="hidden" name="vContext[chatbotCustomConfig][chatbotDisplay]" :value="vueData.chatbotCustomConfig.chatbotDisplay"/>
 						</vu:label-edit>
 					</div>
 					<div class="col">
 						<vu:label-edit object="chatbotCustomConfig" field="qandaDisplay">
-							<q-toggle v-model="vueData.chatbotCustomConfig.qandaDisplay" th::disable="${model.modeReadOnly}" @input="onQandaDisplayChange()"></q-toggle>
-							<input type="hidden" name="vContext[chatbotCustomConfig][qandaDisplay]" :value="vueData.chatbotCustomConfig.qandDisplay"/>
+							<q-toggle v-model="vueData.chatbotCustomConfig.qandaDisplay"
+									  th::disable="${model.modeReadOnly}"
+									  @input="onQandaDisplayChange()"></q-toggle>
+							<input type="hidden" name="vContext[chatbotCustomConfig][qandaDisplay]" :value="vueData.chatbotCustomConfig.qandaDisplay"/>
 						</vu:label-edit>
 					</div>
 				</div>
