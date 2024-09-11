@@ -318,3 +318,11 @@ img {
     align-items: center;
     width: 100%;
 }
+
+.docres-text {
+    flex-grow: 1;
+    padding-right: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
