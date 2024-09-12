@@ -269,24 +269,26 @@ img {
 
 /* Q&A */
 
-.q-collapsible-question, .q-collapsible-answer{
+.q-btn-question {
+    text-transform: none;
+    text-align: start;
+    width: 100%;
     padding: 8px 12px;
     border-radius: 10px;
-    font-size: 14px;
-}
-.q-collapsible-question {
+    font-size: 15px;
     background-color: var(--bot-message-bg-color) !important;
     color: var(--bot-message-font-color) !important;
     margin-top: 10px;
 }
 
-.q-collapsible-answer {
-    background-color: white !important;
-    border: solid 2px var(--bot-message-bg-color);
+.question-title {
+    color: black;
+    font-size: 22px;
+    font-weight: bold;
 }
 
-.q-collapsible-sub-item {
-    padding : 6px 0 6px 0 !important;
+.answer-text {
+    font-size: 14px;
 }
 
 .q-tabs {
@@ -325,4 +327,14 @@ img {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.q-page-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }

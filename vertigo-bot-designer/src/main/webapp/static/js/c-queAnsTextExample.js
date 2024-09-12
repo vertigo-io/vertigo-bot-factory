@@ -9,8 +9,8 @@ Vue.component('c-queanstextexample', {
     },
 
     template : `
-	<div style="width:300px;" class="q-px-md">
-		<q-chat-message :sent="false" :text="getChatPreview()" :text-color="textColor" bg-color="grey-4" ></q-chat-message>
+	<div style="width:340px;" class="q-px-md">
+		<q-chat-message :sent="false" :text="getChatPreview()" :text-color="textColor" ></q-chat-message>
 	</div>
 	`
     ,
