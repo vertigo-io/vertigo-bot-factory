@@ -136,7 +136,8 @@ const chatbot = new Vue({
                 qAndAUrl: _qAndABaseUrl,
                 questionAnswerList: [],
                 filteredQuestionAnswerList: [],
-                filterInput: ''
+                filterInput: '',
+                selectedQuestion: null
             },
             documentaryResourceConfig: {
                 documentaryResourceUrl: _documentaryResourceBaseUrl,
@@ -518,10 +519,14 @@ const chatbot = new Vue({
 
             filterQuestionsAnswers(){
                 if (chatbot.qAndAConfig.filterInput !== ''){
-                    chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList.filter(questionAnswer => questionAnswer.question.toLowerCase().includes(chatbot.qAndAConfig.filterInput) || questionAnswer.answer.toLowerCase().includes(chatbot.qAndAConfig.filterInput))
+                    chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList.filter(questionAnswer => questionAnswer.question.toLowerCase().includes(chatbot.qAndAConfig.filterInput.toLowerCase()))
                 }else{
                     chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList
                 }
+            },
+
+            selectQuestion(selected){
+                chatbot.qAndAConfig.selectedQuestion = selected;
             },
 
 
@@ -530,7 +535,6 @@ const chatbot = new Vue({
             initDocumentaryResources() {
                 this.$http.get(chatbot.documentaryResourceConfig.documentaryResourceUrl + '/getDocumentaryResources').then(documentaryResourceResponse => {
                     chatbot.documentaryResourceConfig.documentaryResourceList = documentaryResourceResponse.data;
-                    console.log(chatbot.documentaryResourceConfig.documentaryResourceList);
                 });
             },
         }

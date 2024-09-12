@@ -66,14 +66,14 @@
                class="column items-center q-pt-xl">Chargement ...
           </div>
           <q-page id="page"
-                  class="column animate-fade">
+                  class="column animate-fade" style="min-height: unset; height: calc(-98px + 100vh)">
             <div v-if="!menu && tab ==='bot'"
                  id="main"
-                 class="column col-grow no-wrap chatbot-qanda-container"
+                 class="column no-wrap chatbot-qanda-container"
+                 style="height: 80%"
             >
               <q-scroll-area class="col column no-wrap q-px-sm col-grow"
-                             ref="scroller"
-                             style="height: 400px">
+                             ref="scroller">
                 <div class="q-pr-md q-pt-md">
                   <div v-for="(msg, index) in messages">
                     <q-chat-message
@@ -216,30 +216,44 @@
               </div>
             </div>
 
-            <div v-if="tab === 'qAndA'" class="column col-grow no-wrap chatbot-qanda-container">
-              <div class="custom-input-qanda">
-                <q-input v-model="qAndAConfig.filterInput"
-                         ref="input"
-                         placeholder="Rechercher..."
-                         :loading="processing"
-                         @input="filterQuestionsAnswers()"></q-input>
-              </div>
-              <q-scroll-area class="row q-px-sm col-grow"
-                             style="height: 400px"
-              >
-                <div class="q-mx-md">
-                      <q-collapsible v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
-                                     :label="questionAnswer.question"
-                                     header-class="q-collapsible-question">
-                        <div class="q-collapsible-answer" v-html="questionAnswer.answer"></div>
-                      </q-collapsible>
+            <div v-if="tab === 'qAndA'" class="column no-wrap chatbot-qanda-container" style="height: 80%">
+              <div class="column col-grow" v-if="!qAndAConfig.selectedQuestion">
+                <div class="custom-input-qanda">
+                  <q-input v-model="qAndAConfig.filterInput"
+                           ref="input"
+                           placeholder="Rechercher..."
+                           :loading="processing"
+                           @input="filterQuestionsAnswers()"></q-input>
                 </div>
-                <div style="height: 30px"></div>
+                <q-scroll-area class="row q-px-sm col-grow">
+                  <div class="q-mx-md">
+                        <q-btn v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
+                               class="q-btn-question"
+                               v-html="questionAnswer.question"
+                               @click="selectQuestion(questionAnswer)"
+                        >
+                        </q-btn>
+                  </div>
+                  <div style="height: 30px"></div>
+                </q-scroll-area>
+              </div>
+
+              <q-scroll-area v-if="qAndAConfig.selectedQuestion"
+                   class="col-grow q-px-md">
+                <div style="height: 12px"></div>
+                <q-btn icon="arrow_back" style="font-size: 12px; text-transform: unset; padding: 0 10px" @click="qAndAConfig.selectedQuestion = null">
+                  <span style="padding-left: 2px; font-size: 13px">Retour</span>
+                </q-btn>
+                <div class="q-px-sm  q-mt-md">
+                  <div class="question-title" v-html="qAndAConfig.selectedQuestion.question"></div>
+                  <div class="answer-text q-mt-md" v-html="qAndAConfig.selectedQuestion.answer"></div>
+                </div>
+                <div style="height: 20px"></div>
               </q-scroll-area>
             </div>
 
             <div v-if="documentaryResourceDisplay" class="column col-grow no-wrap docres-container" >
-              <q-scroll-area class="col-grow q-px-md" style="height: 100px;">
+              <q-scroll-area class="col-grow q-px-md">
                 <div style="height: 10px"></div>
                   <div v-for="(documentaryResource, index) in documentaryResourceConfig.documentaryResourceList"
                        class="docres-item-container">
