@@ -40,10 +40,7 @@ window.addEventListener(
     'message',
     function (event) {
         if (event.data === 'start') {
-            chatbot.initBot();
-            chatbot.initLayout();
-            chatbot.initQAndA();
-            chatbot.initDocumentaryResources();
+            chatbot.initPlatform();
         }
         if (event.data.sendTopic) {
             const button = chatbot.inputConfig.buttons.find((button) => button.payload === event.data.sendTopic.topic)
@@ -54,7 +51,7 @@ window.addEventListener(
         if (event.data === 'clearSessionStorage') {
             sessionStorage.clear();
         } else if (event.data === 'refresh') {
-            chatbot.refreshBot()
+            chatbot.refreshPlatform()
         } else if (event.data === 'conversationExist') {
             parent.postMessage({conversationExist: sessionStorage.convId !== undefined}, '*');
         }
@@ -146,6 +143,13 @@ const chatbot = new Vue({
             }
         },
         methods: {
+
+            initPlatform(){
+                if(chatbot.chatbotDisplay) {chatbot.initBot()}
+                if(chatbot.qAndADisplay) {chatbot.initQAndA()}
+                if(chatbot.documentaryResourceDisplay) {chatbot.initDocumentaryResources()}
+                chatbot.initLayout();
+            },
 
             initBot: function () {
                 document.getElementById('page').style.visibility = 'visible';
@@ -485,12 +489,14 @@ const chatbot = new Vue({
                 }
             },
 
-            refresh(){
-                if(chatbot.tab === 'qAndA'){
+            refreshPlatform(){
+                if (chatbot.tab === 'bot') {
+                    chatbot.refreshBot()
+                } else if (chatbot.tab === 'qAndA') {
                     chatbot.initQAndA();
-                    chatbot.initDocumentaryResources();
-                }else if(chatbot.tab === 'bot') {
-                    chatbot.refreshBot();
+                }
+
+                if (chatbot.documentaryResourceDisplay) {
                     chatbot.initDocumentaryResources();
                 }
             },
