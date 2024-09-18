@@ -525,7 +525,7 @@ const chatbot = new Vue({
 
             filterQuestionsAnswers(){
                 if (chatbot.qAndAConfig.filterInput !== ''){
-                    chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList.filter(questionAnswer => questionAnswer.question.toLowerCase().includes(chatbot.qAndAConfig.filterInput.toLowerCase()))
+                    chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList.filter(questionAnswer => questionAnswer.question.toLowerCase().includes(chatbot.qAndAConfig.filterInput.toLowerCase()) || questionAnswer.answer.toLowerCase().includes(chatbot.qAndAConfig.filterInput.toLowerCase()))
                 }else{
                     chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList
                 }

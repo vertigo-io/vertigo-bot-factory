@@ -69,8 +69,7 @@
                   class="column animate-fade" style="min-height: unset; height: calc(-98px + 100vh)">
             <div v-if="!menu && tab ==='bot'"
                  id="main"
-                 class="column no-wrap chatbot-qanda-container"
-                 style="height: 80%"
+                 class="column col-grow no-wrap chatbot-qanda-container"
             >
               <q-scroll-area class="col column no-wrap q-px-sm col-grow"
                              ref="scroller">
@@ -216,7 +215,7 @@
               </div>
             </div>
 
-            <div v-if="tab === 'qAndA'" class="column no-wrap chatbot-qanda-container" style="height: 80%">
+            <div v-if="tab === 'qAndA'" class="column col-grow no-wrap chatbot-qanda-container">
               <div class="column col-grow" v-if="!qAndAConfig.selectedQuestion">
                 <div class="custom-input-qanda">
                   <q-input v-model="qAndAConfig.filterInput"
@@ -252,7 +251,7 @@
               </q-scroll-area>
             </div>
 
-            <div v-if="documentaryResourceDisplay" class="column col-grow no-wrap docres-container" >
+            <div v-if="documentaryResourceDisplay && !qAndAConfig.selectedQuestion" class="column no-wrap docres-container" style="height: 20%">
               <q-scroll-area class="col-grow q-px-md">
                 <div style="height: 10px"></div>
                   <div v-for="(documentaryResource, index) in documentaryResourceConfig.documentaryResourceList"
@@ -270,7 +269,7 @@
                        class="docres-a">
                       <q-icon name="article" class="docres-type-icon"></q-icon>
                       <span class="docres-text">{{documentaryResource.title}}</span>
-                      <q-icon name="launch"></q-icon>
+                      <q-icon name="download" style="font-size: 16px"></q-icon>
                     </a>
                   </div>
                 <div style="height:8px" ></div>
@@ -279,7 +278,7 @@
           </q-page>
         </q-page-container>
 
-        <q-layout-footer v-if="chatbotDisplay && qAndADisplay && !customConfig.disableNlu" >
+        <q-layout-footer v-if="chatbotDisplay && qAndADisplay">
             <q-tabs v-model="tab"
                     align="justify"
                     text-color="black"
