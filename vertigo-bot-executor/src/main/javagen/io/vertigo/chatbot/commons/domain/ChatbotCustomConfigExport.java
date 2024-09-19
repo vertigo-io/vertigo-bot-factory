@@ -26,7 +26,7 @@ public final class ChatbotCustomConfigExport implements DtObject {
 	private Long totalMaxAttachmentSize;
 	private Boolean disableNlu;
 	private Boolean chatbotDisplay;
-	private Boolean qandaDisplay;
+	private Boolean qAndADisplay;
 	private Boolean documentaryResourceDisplay;
 	
 	/**
@@ -279,20 +279,20 @@ public final class ChatbotCustomConfigExport implements DtObject {
 	/**
 	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Display Q&A'.
-	 * @return Boolean qandaDisplay
+	 * @return Boolean qAndADisplay
 	 */
 	@Field(smartType = "STyYesNo", label = "Display Q&A")
-	public Boolean getQandaDisplay() {
-		return qandaDisplay;
+	public Boolean getQAndADisplay() {
+		return qAndADisplay;
 	}
 
 	/**
 	 * Champ : DATA.
 	 * Définit la valeur de la propriété 'Display Q&A'.
-	 * @param qandaDisplay Boolean
+	 * @param qAndADisplay Boolean
 	 */
-	public void setQandaDisplay(final Boolean qandaDisplay) {
-		this.qandaDisplay = qandaDisplay;
+	public void setQAndADisplay(final Boolean qAndADisplay) {
+		this.qAndADisplay = qAndADisplay;
 	}
 	
 	/**
