@@ -220,7 +220,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Display chatbot'. */
 		chatbotDisplay,
 		/** Propriété 'Display Q&A'. */
-		qandaDisplay,
+		qAndADisplay,
 		/** Propriété 'Display documentary resources'. */
 		documentaryResourceDisplay	}
 
