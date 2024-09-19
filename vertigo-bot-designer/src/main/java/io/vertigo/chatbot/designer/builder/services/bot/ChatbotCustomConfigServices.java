@@ -50,7 +50,10 @@ public class ChatbotCustomConfigServices implements Component {
                 (oldChatbotCustomConfig.getUserMessageFontColor() != null && !oldChatbotCustomConfig.getUserMessageFontColor().equals(chatbotCustomConfig.getUserMessageFontColor())) ||
                 (oldChatbotCustomConfig.getFofCd() != null && !oldChatbotCustomConfig.getFofCd().equals(chatbotCustomConfig.getFofCd())) ||
                 (oldChatbotCustomConfig.getFontColor() != null && !oldChatbotCustomConfig.getFontColor().equals(chatbotCustomConfig.getFontColor())) ||
-                (oldChatbotCustomConfig.getUserMessageBackgroundColor() != null && !oldChatbotCustomConfig.getUserMessageBackgroundColor().equals(chatbotCustomConfig.getUserMessageBackgroundColor()));
+                (oldChatbotCustomConfig.getUserMessageBackgroundColor() != null && !oldChatbotCustomConfig.getUserMessageBackgroundColor().equals(chatbotCustomConfig.getUserMessageBackgroundColor())) ||
+                (oldChatbotCustomConfig.getChatbotDisplay() != null && !oldChatbotCustomConfig.getChatbotDisplay().equals(chatbotCustomConfig.getChatbotDisplay())) ||
+                (oldChatbotCustomConfig.getQandaDisplay() != null && !oldChatbotCustomConfig.getQandaDisplay().equals(chatbotCustomConfig.getQandaDisplay())) ||
+                (oldChatbotCustomConfig.getDocumentaryResourceDisplay() != null && !oldChatbotCustomConfig.getDocumentaryResourceDisplay().equals(chatbotCustomConfig.getDocumentaryResourceDisplay()));
     }
 
     private static boolean checkIfEmailOrAttachmentSettingsChanged(final ChatbotCustomConfig oldChatbotCustomConfig, final ChatbotCustomConfig chatbotCustomConfig) {

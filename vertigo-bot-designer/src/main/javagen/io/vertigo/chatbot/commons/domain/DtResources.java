@@ -327,6 +327,18 @@ public enum DtResources implements MessageKey {
 	 * Disable NlU.
 	 */
 	fldChatbotCustomConfigExport$disableNlu,
+	/**
+	 * Display chatbot.
+	 */
+	fldChatbotCustomConfigExport$chatbotDisplay,
+	/**
+	 * Display Q&A.
+	 */
+	fldChatbotCustomConfigExport$qandaDisplay,
+	/**
+	 * Display documentary resources.
+	 */
+	fldChatbotCustomConfigExport$documentaryResourceDisplay,
 
 	/***********************************************************
 	/** ChatbotNode.
