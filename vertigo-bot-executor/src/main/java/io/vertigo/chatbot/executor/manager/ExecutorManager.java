@@ -179,7 +179,6 @@ public class ExecutorManager implements Manager, Activeable {
         if (executorConfiguration.getAvatar() != null) {
             botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
         }
-        botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfiguration.getCustomConfig(), JsonElement.class));
         return botResponse;
     }
 
@@ -249,6 +248,10 @@ public class ExecutorManager implements Manager, Activeable {
 
     public DtList<DocumentaryResourceExport> getDocumentaryResourceList() {
         return executorConfigManager.getDocumentaryResourceList();
+    }
+
+    public JsonElement getCustomConfig() {
+        return executorConfigManager.getCustomConfig();
     }
 
 }

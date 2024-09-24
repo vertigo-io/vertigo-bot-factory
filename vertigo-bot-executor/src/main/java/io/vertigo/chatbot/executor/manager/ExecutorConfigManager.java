@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.executor.manager;
 
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.io.FileUtils;
@@ -38,6 +39,7 @@ import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
 import io.vertigo.chatbot.commons.domain.DocumentaryResourceExport;
 import io.vertigo.chatbot.commons.domain.QuestionAnswerExport;
 import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
@@ -336,6 +338,10 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	public Optional<VFile> getWelcomeToursFile() {
 		final String welcomeToursFileURN = executorGlobalConfig.getWelcomeToursFileURN();
 		return welcomeToursFileURN != null ? Optional.of(executorFileServices.getFile(welcomeToursFileURN)) : Optional.empty();
+	}
+
+	public JsonElement getCustomConfig(){
+		return jsonEngine.fromJson(getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class);
 	}
 
 	public void addPlugin(final ExecutorPlugin executorPlugin) {

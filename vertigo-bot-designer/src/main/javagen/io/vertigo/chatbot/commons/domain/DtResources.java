@@ -334,7 +334,7 @@ public enum DtResources implements MessageKey {
 	/**
 	 * Display Q&A.
 	 */
-	fldChatbotCustomConfigExport$qAndADisplay,
+	fldChatbotCustomConfigExport$qandaDisplay,
 	/**
 	 * Display documentary resources.
 	 */
