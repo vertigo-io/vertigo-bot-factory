@@ -18,6 +18,7 @@ const _botRunnerUrl = urlVars['runnerUrl'];
 const _botName = decodeURI(urlVars['botName']);
 const _avatar = _botRunnerUrl + '/static/chatbot/images/avatar/avatar.png';
 
+const _platformBaseUrl = _botRunnerUrl + '/api/platform-config';
 const _botBaseUrl = _botRunnerUrl + '/api/chatbot';
 const _qAndABaseUrl = _botRunnerUrl + '/api/qanda';
 const _documentaryResourceBaseUrl = _botRunnerUrl + '/api/docres';
@@ -38,9 +39,9 @@ const scanContextKeys = (context) => new Promise((res, rej) => {
 
 window.addEventListener(
     'message',
-    function (event) {
+    async function (event) {
         if (event.data === 'start') {
-            chatbot.initPlatform();
+            await chatbot.initPlatform();
         }
         if (event.data.sendTopic) {
             const button = chatbot.inputConfig.buttons.find((button) => button.payload === event.data.sendTopic.topic)
@@ -78,6 +79,7 @@ const chatbot = new Vue({
         },
         data: {
             // config
+
             convId: null,
             botName: _botName,
             botUrl: _botBaseUrl,
@@ -106,14 +108,15 @@ const chatbot = new Vue({
                 userMessageFontColor: 'black',
                 fontFamily: 'Arial, Helvetica, sans-serif',
                 displayAvatar: true,
-                disableNlu: false
+                disableNlu: false,
+                chatbotDisplay: false,
+                qandaDisplay: false,
+                documentaryResourceDisplay: false
             },
             isEnded: false,
 
             tab: '',
-            chatbotDisplay: true,
-            qAndADisplay: true,
-            documentaryResourceDisplay: true,
+            platformUrl: _platformBaseUrl,
             prevInputConfig: {},
             lastPayload: null,
             processing: false,
@@ -144,39 +147,57 @@ const chatbot = new Vue({
         },
         methods: {
 
-            initPlatform(){
-                if(chatbot.chatbotDisplay) {chatbot.initBot()}
-                if(chatbot.qAndADisplay) {chatbot.initQAndA()}
-                if(chatbot.documentaryResourceDisplay) {chatbot.initDocumentaryResources()}
-                chatbot.initLayout();
+            async initPlatform(){
+                await chatbot.initPlatformConfig()
+                if(chatbot.customConfig.chatbotDisplay) {chatbot.startConversation()}
+                if(chatbot.customConfig.qandaDisplay) {chatbot.initQAndA()}
+                if(chatbot.customConfig.documentaryResourceDisplay) {chatbot.initDocumentaryResources()}
+                chatbot.initLayout()
             },
 
-            initBot: function () {
+            async initPlatformConfig() {
                 document.getElementById('page').style.visibility = 'visible';
                 document.getElementById('loading').style.display = 'none';
+
+                try {
+                    await this.$http.get(chatbot.platformUrl + '/getCustomConfig').then(httpResponse => {
+                        chatbot.customConfig.reinitializationButton = httpResponse.body.reinitializationButton;
+                        chatbot.customConfig.backgroundColor = httpResponse.body.backgroundColor;
+                        chatbot.customConfig.fontColor = httpResponse.body.fontColor;
+                        chatbot.customConfig.botMessageBackgroundColor = httpResponse.body.botMessageBackgroundColor;
+                        chatbot.customConfig.botMessageFontColor = httpResponse.body.botMessageFontColor;
+                        chatbot.customConfig.userMessageBackgroundColor = httpResponse.body.userMessageBackgroundColor;
+                        chatbot.customConfig.userMessageFontColor = httpResponse.body.userMessageFontColor;
+                        chatbot.customConfig.fontFamily = httpResponse.body.fontFamily;
+                        chatbot.customConfig.displayAvatar = httpResponse.body.displayAvatar;
+                        chatbot.customConfig.disableNlu = httpResponse.body.disableNlu;
+                        chatbot.customConfig.chatbotDisplay = httpResponse.body.chatbotDisplay;
+                        chatbot.customConfig.qandaDisplay = httpResponse.body.qandaDisplay;
+                        chatbot.customConfig.documentaryResourceDisplay = httpResponse.body.documentaryResourceDisplay;
+                        sessionStorage.setItem('customConfig', JSON.stringify(chatbot.customConfig));
+                    });
+                } catch (error) {
+                console.error('Erreur lors de la récupération de la configuration du chatbot', error);
+            }
                 if (sessionStorage.contextMap) {
                     chatbot.contextMap = JSON.parse(sessionStorage.contextMap);
-                    this.startConversation();
                 } else {
                     this.$http.post(chatbot.botUrl + '/context').then(contextResponse => {
                         chatbot.contextMap = contextResponse.data;
                         sessionStorage.setItem('contextMap', JSON.stringify(chatbot.contextMap));
-                        chatbot.startConversation();
                     });
                 }
-
             },
+
             updateSessionStorage() {
                 sessionStorage.convId = chatbot.convId;
                 sessionStorage.setItem('inputConfig', JSON.stringify(chatbot.inputConfig));
                 sessionStorage.setItem('messages', JSON.stringify(chatbot.messages));
-                sessionStorage.setItem('customConfig', JSON.stringify(chatbot.customConfig));
             },
             restoreFromSessionStorage() {
                 chatbot.convId = sessionStorage.convId;
                 chatbot.inputConfig = JSON.parse(sessionStorage.inputConfig);
                 chatbot.messages = JSON.parse(sessionStorage.messages);
-                chatbot.customConfig = JSON.parse(sessionStorage.customConfig);
             },
             clearSessionStorage() {
                 sessionStorage.clear();
@@ -184,16 +205,6 @@ const chatbot = new Vue({
 
             setParametersFromHttpResponse(httpResponse) {
                 chatbot.convId = httpResponse.data.metadatas.sessionId;
-                chatbot.customConfig.reinitializationButton = httpResponse.data.metadatas.customConfig.reinitializationButton;
-                chatbot.customConfig.backgroundColor = httpResponse.data.metadatas.customConfig.backgroundColor;
-                chatbot.customConfig.fontColor = httpResponse.data.metadatas.customConfig.fontColor;
-                chatbot.customConfig.botMessageBackgroundColor = httpResponse.data.metadatas.customConfig.botMessageBackgroundColor;
-                chatbot.customConfig.botMessageFontColor = httpResponse.data.metadatas.customConfig.botMessageFontColor;
-                chatbot.customConfig.userMessageBackgroundColor = httpResponse.data.metadatas.customConfig.userMessageBackgroundColor;
-                chatbot.customConfig.userMessageFontColor = httpResponse.data.metadatas.customConfig.userMessageFontColor;
-                chatbot.customConfig.fontFamily = httpResponse.data.metadatas.customConfig.fontFamily;
-                chatbot.customConfig.displayAvatar = httpResponse.data.metadatas.customConfig.displayAvatar;
-                chatbot.customConfig.disableNlu = httpResponse.data.metadatas.customConfig.disableNlu;
                 chatbot.updateSessionStorage();
                 chatbot._handleResponse(httpResponse, false);
             },
@@ -485,18 +496,18 @@ const chatbot = new Vue({
                 chatbot.clearSessionStorage();
 
                 if (!isAnotherConversation) {
-                    chatbot.initBot();
+                    chatbot.startConversation();
                 }
             },
 
             refreshPlatform(){
+                chatbot.initPlatformConfig()
                 if (chatbot.tab === 'bot') {
                     chatbot.refreshBot()
                 } else if (chatbot.tab === 'qAndA') {
                     chatbot.initQAndA();
                 }
-
-                if (chatbot.documentaryResourceDisplay) {
+                if (chatbot.customConfig.documentaryResourceDisplay) {
                     chatbot.initDocumentaryResources();
                 }
             },
@@ -506,7 +517,7 @@ const chatbot = new Vue({
             },
 
             initLayout(){
-                if (chatbot.qAndADisplay && !chatbot.chatbotDisplay){
+                if (chatbot.customConfig.qandaDisplay && !chatbot.customConfig.chatbotDisplay){
                     chatbot.tab = 'qAndA'
                 } else {
                     chatbot.tab = 'bot'
