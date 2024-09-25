@@ -303,8 +303,8 @@ const chatbot = new Vue({
             _scrollToBottom() {
                 const scrollHeight = this.$refs.scroller.$el.children[0].children[0].scrollHeight; // workaround
                 this.$refs.scroller.setScrollPosition(scrollHeight, 400);
-            }
-            ,
+            },
+
             askBot(value, label, isButton, fileContent, fileName, rating) {
                 chatbot.prevInputConfig = JSON.parse(JSON.stringify(chatbot.inputConfig));
                 chatbot.reinitInput();
@@ -347,6 +347,7 @@ const chatbot = new Vue({
                 // success
                 if (httpResponse.data.metadatas.sessionId && chatbot.convId !== httpResponse.data.metadatas.sessionId) {
                     chatbot.refreshBot(true);
+                    console.log('le bug')
                     chatbot.setParametersFromHttpResponse(httpResponse);
 
                 } else {
@@ -521,6 +522,16 @@ const chatbot = new Vue({
                     chatbot.tab = 'qAndA'
                 } else {
                     chatbot.tab = 'bot'
+                }
+            },
+
+            tabChange(tab) {
+                chatbot.tab = tab
+                if(tab === 'bot'){
+                    this.$nextTick(() => {
+                        chatbot._scrollToBottom();
+                        chatbot.qAndAConfig.selectedQuestion = null;
+                    });
                 }
             },
 

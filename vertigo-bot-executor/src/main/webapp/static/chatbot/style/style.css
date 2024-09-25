@@ -193,8 +193,7 @@ img {
 }
 
 .q-layout-footer{
-    webkit-box-shadow: none !important;
-    box-shadow: none;
+    box-shadow: 0 -1px 2px 1px rgba(0, 0, 0, 0.2);
     background: white;
 }
 
@@ -287,8 +286,16 @@ img {
     font-size: 14px;
 }
 
-.q-tabs {
-    box-shadow: 0 -1px 2px 1px rgba(0, 0, 0, 0.2);
+.q-btn-footer {
+    flex:1;
+    height: 48px;
+    border-radius: unset;
+    font-size: 18px;
+    color: var(--font-color) !important;
+}
+
+.q-btn-footer-selected {
+    opacity: 80%;
 }
 
 /* Documentary resources */
