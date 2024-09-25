@@ -29,9 +29,9 @@
                       + '; --bot-message-font-color: ' + customConfig.botMessageFontColor
                       + '; --user-message-bg-color: ' + customConfig.userMessageBackgroundColor
                       + '; --user-message-font-color: ' + customConfig.userMessageFontColor + ';'">
-      <q-layout view="hHh lpr fFf">
+      <q-layout view="hHh lpr fFf" class="row col">
         <q-layout-header class="bg-white">
-          <div class="custom-header row items-center non-selectable">
+          <div class="custom-header row items-center non-selectable" >
             <div class="title col-grow q-ml-md">
               {{ botName }}
             </div>
@@ -61,18 +61,18 @@
           </div>
         </q-layout-header>
 
-        <q-page-container>
+        <q-page-container class="row col">
           <div id="loading"
                class="column items-center q-pt-xl">Chargement ...
           </div>
           <q-page id="page"
-                  class="column animate-fade" style="min-height: unset; height: calc(-98px + 100vh)">
+                  class="row col column animate-fade">
             <div v-if="!menu && tab ==='bot'"
                  id="main"
                  class="column col-grow no-wrap chatbot-qanda-container"
             >
-              <q-scroll-area class="col column no-wrap q-px-sm col-grow"
-                             ref="scroller" v-if="">
+              <q-scroll-area class="col row no-wrap q-px-sm"
+                             ref="scroller">
                 <div class="q-pr-md q-pt-md">
                   <div v-for="(msg, index) in messages">
                     <q-chat-message
@@ -221,7 +221,6 @@
                   <q-input v-model="qAndAConfig.filterInput"
                            ref="input"
                            placeholder="Rechercher..."
-                           :loading="processing"
                            @input="filterQuestionsAnswers()"></q-input>
                 </div>
                 <q-scroll-area class="row q-px-sm col-grow">
@@ -278,15 +277,9 @@
           </q-page>
         </q-page-container>
 
-        <q-layout-footer v-if="customConfig.chatbotDisplay && customConfig.qandaDisplay">
-            <q-tabs v-model="tab"
-                    align="justify"
-                    text-color="black"
-                    class="q-tabs"
-            >
-              <q-tab name="bot" slot="title" icon="smart_toy"></q-tab>
-              <q-tab name="qAndA" slot="title" icon="question_answer"></q-tab>
-            </q-tabs>
+        <q-layout-footer v-if="customConfig.chatbotDisplay && customConfig.qandaDisplay" style="display: flex">
+          <q-btn icon="smart_toy" class="q-btn-footer" :class="{'q-btn-footer-selected': tab==='bot'}" @Click="tabChange('bot')"></q-btn>
+          <q-btn icon="question_answer" class="q-btn-footer" :class="{'q-btn-footer-selected': tab==='qAndA'}" @Click="tabChange('qAndA')"></q-btn>
         </q-layout-footer>
       </q-layout>
     </div>
