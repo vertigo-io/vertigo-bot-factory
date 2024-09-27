@@ -19,7 +19,6 @@ public final class DocumentaryResource implements Entity {
 	private Long dreId;
 	private String title;
 	private String description;
-	private String text;
 	private String url;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
@@ -128,25 +127,6 @@ public final class DocumentaryResource implements Entity {
 	 */
 	public void setDescription(final String description) {
 		this.description = description;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Text'.
-	 * @return String text
-	 */
-	@Field(smartType = "STyText", label = "Text")
-	public String getText() {
-		return text;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Text'.
-	 * @param text String
-	 */
-	public void setText(final String text) {
-		this.text = text;
 	}
 	
 	/**

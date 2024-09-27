@@ -40,9 +40,6 @@ public class DocumentaryResourceServices implements Component {
     private AttachmentServices attachmentServices;
 
     @Inject
-    private DesignerFileServices designerFileServices;
-
-    @Inject
     private JsonEngine jsonEngine;
 
     public DocumentaryResource getDocResById(final Long dreId) {
@@ -58,12 +55,7 @@ public class DocumentaryResourceServices implements Component {
         DocumentaryResourceTypeEnum documentaryResourceTypeEnum = DocumentaryResourceTypeEnum.valueOf(documentaryResource.getDreTypeCd());
 
         switch (documentaryResourceTypeEnum) {
-            case TEXT:
-                documentaryResource.setUrl(null);
-                documentaryResource.setAttId(null);
-                break;
             case URL:
-                documentaryResource.setText(null);
                 documentaryResource.setAttId(null);
                 break;
             case FILE:
@@ -71,7 +63,6 @@ public class DocumentaryResourceServices implements Component {
                 attachment.setAttTypeCd(AttachmentTypeEnum.DOCUMENT.name());
                 Attachment savedAttachment = attachmentServices.save(bot, attachment, attachmentFile, maxSize, attachmentTotalSize);
                 documentaryResource.setAttId(savedAttachment.getAttId());
-                documentaryResource.setText(null);
                 documentaryResource.setUrl(null);
                 break;
         }
@@ -105,7 +96,6 @@ public class DocumentaryResourceServices implements Component {
                 final DocumentaryResourceExport documentaryResourceExport = new DocumentaryResourceExport();
                 documentaryResourceExport.setTitle(documentaryResource.getTitle());
                 documentaryResourceExport.setDreTypeCd(documentaryResource.getDreTypeCd());
-                documentaryResourceExport.setText(documentaryResource.getText());
                 documentaryResourceExport.setUrl(documentaryResource.getUrl());
                 if(documentaryResource.getAttId() != null) {
                     documentaryResourceExport.setFileName(documentaryResource.attachment().get().getLabel());

@@ -136,10 +136,6 @@ public enum DtResources implements MessageKey {
 	 */
 	fldDocumentaryResource$description,
 	/**
-	 * Text.
-	 */
-	fldDocumentaryResource$text,
-	/**
 	 * Url.
 	 */
 	fldDocumentaryResource$url,

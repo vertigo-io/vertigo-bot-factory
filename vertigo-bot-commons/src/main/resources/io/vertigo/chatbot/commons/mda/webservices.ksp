@@ -124,7 +124,6 @@ create DtDefinition DtQuestionAnswerExport {
 create DtDefinition DtDocumentaryResourceExport {
     field 	title 			    {domain: DoLabel 	    label: "Title" 			      cardinality : "1" }
     field   dreTypeCd           {domain: DoLabel        label: "Resource Type"        cardinality : "1" }
-	field 	text    		    {domain: DoText 	    label: "Text" 		    	        			}
 	field 	url     		    {domain: DoText   	    label: "Url"                                    }
 	field   fileName            {domain: DoLabel        label: "File name"                              }
 }
