@@ -32,8 +32,8 @@
       <q-layout view="hHh lpr fFf" class="row col">
         <q-layout-header class="bg-white">
           <div class="custom-header row items-center non-selectable" >
-            <div class="title col-grow q-ml-md">
-              {{ botName }}
+            <div class="title col-grow q-ml-sm">
+              {{ platformName }}
             </div>
             <!--<q-btn-dropdown color="primary" icon="language">
               <q-list style="text-align: center; padding: 0">
@@ -67,14 +67,14 @@
           </div>
           <q-page id="page"
                   class="row col column animate-fade">
-            <div v-if="!menu && tab ==='bot'"
+            <div v-if="footerMenu ==='bot'"
                  id="main"
                  class="column col-grow no-wrap chatbot-qanda-container"
             >
               <q-scroll-area class="col row no-wrap q-px-sm"
                              ref="scroller">
                 <div class="q-pr-md q-pt-md">
-                  <div v-for="(msg, index) in messages">
+                  <div v-for="(msg, index) in botConfig.messages">
                     <q-chat-message
                       v-if="msg.text"
                       class="animate-fade"
@@ -98,7 +98,7 @@
                   </div>
                   <div class="sys-chat">
                     <q-chat-message
-                      v-if="error"
+                      v-if="botConfig.error"
                       class="animate-fade"
                       bg-color="orange-4"
                       text-color="black"
@@ -119,7 +119,7 @@
 
                   <div class="message-processing sys-chat non-selectable">
                     <q-chat-message
-                      v-if="processing"
+                      v-if="botConfig.processing"
                       class="animate-fade"
                       bg-color="grey-grdf"
                     >
@@ -197,8 +197,8 @@
                            @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
                            v-model="inputConfig.responseText"
                            placeholder="Ecrire un message..."
-                           :disable="processing || error || (!acceptNlu && !isEnded) || customConfig.disableNlu"
-                           :loading="processing"></q-input>
+                           :disable="botConfig.processing || botConfig.error || (!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu"
+                           :loading="botConfig.processing"></q-input>
                 </div>
                 <q-btn
                         :style="'margin-top: 0px;'"
@@ -206,16 +206,16 @@
                         class="btn-send"
                         icon="send"
                         @click="postAnswerText(false)"
-                        :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
+                        :disable="botConfig.processing || inputConfig.responseText.trim() === ''"></q-btn>
                 <q-btn round
                        color="red"
                        @click="restart"
-                       v-if="devMode === true && false"
+                       v-if="botConfig.devMode === true && false"
                        icon="refresh"></q-btn>
               </div>
             </div>
 
-            <div v-if="tab === 'qAndA'" class="column col-grow no-wrap chatbot-qanda-container">
+            <div v-if="footerMenu === 'qAndA'" class="column col-grow no-wrap chatbot-qanda-container">
               <div class="column col-grow" v-if="!qAndAConfig.selectedQuestion">
                 <div class="custom-input-qanda">
                   <q-input v-model="qAndAConfig.filterInput"
@@ -234,6 +234,7 @@
                   </div>
                   <div style="height: 30px"></div>
                 </q-scroll-area>
+
               </div>
 
               <q-scroll-area v-if="qAndAConfig.selectedQuestion"
@@ -278,8 +279,8 @@
         </q-page-container>
 
         <q-layout-footer v-if="customConfig.chatbotDisplay && customConfig.qandaDisplay" style="display: flex">
-          <q-btn icon="smart_toy" class="q-btn-footer" :class="{'q-btn-footer-selected': tab==='bot'}" @Click="tabChange('bot')"></q-btn>
-          <q-btn icon="question_answer" class="q-btn-footer" :class="{'q-btn-footer-selected': tab==='qAndA'}" @Click="tabChange('qAndA')"></q-btn>
+          <q-btn icon="smart_toy" class="q-btn-footer" :class="{'q-btn-footer-selected': footerMenu === 'bot'}" @Click="footerMenuChange('bot')"></q-btn>
+          <q-btn icon="question_answer" class="q-btn-footer" :class="{'q-btn-footer-selected': footerMenu === 'qAndA'}" @Click="footerMenuChange('qAndA')"></q-btn>
         </q-layout-footer>
       </q-layout>
     </div>
@@ -292,5 +293,8 @@
             integrity="sha512-QpQT1tpnIGTHF8DZQmL2Xp9QhAYp7Kfl8yJwlyjoYNe1YDWgE1kd9NfnzPVo2GPDpHtLyixEKaSNL/CNe6ZzYg=="
             crossorigin="anonymous"></script>
     <script src="js/chatbot.js"></script>
+    <script src="js/botService.js"></script>
+    <script src="js/documentaryResourceService.js"></script>
+    <script src="js/qAndAService.js"></script>
   </body>
 </html>

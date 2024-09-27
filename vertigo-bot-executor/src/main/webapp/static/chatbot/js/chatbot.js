@@ -14,14 +14,14 @@ const getUrlVars = function () {
 
 
 const urlVars = getUrlVars();
-const _botRunnerUrl = urlVars['runnerUrl'];
-const _botName = decodeURI(urlVars['botName']);
-const _avatar = _botRunnerUrl + '/static/chatbot/images/avatar/avatar.png';
+const _platformRunnerUrl = urlVars['runnerUrl'];
+const _platformName = decodeURI(urlVars['botName']);
+const _avatar = _platformRunnerUrl + '/static/chatbot/images/avatar/avatar.png';
 
-const _platformBaseUrl = _botRunnerUrl + '/api/platform-config';
-const _botBaseUrl = _botRunnerUrl + '/api/chatbot';
-const _qAndABaseUrl = _botRunnerUrl + '/api/qanda';
-const _documentaryResourceBaseUrl = _botRunnerUrl + '/api/docres';
+const _platformBaseUrl = _platformRunnerUrl + '/api/platform-config';
+const _botBaseUrl = _platformRunnerUrl + '/api/chatbot';
+const _qAndABaseUrl = _platformRunnerUrl + '/api/qanda';
+const _documentaryResourceBaseUrl = _platformRunnerUrl + '/api/docres';
 
 const scanContextKeys = (context) => new Promise((res, rej) => {
     const channel = new MessageChannel();
@@ -45,14 +45,15 @@ window.addEventListener(
         }
         if (event.data.sendTopic) {
             const button = chatbot.inputConfig.buttons.find((button) => button.payload === event.data.sendTopic.topic)
-            if (chatbot.convId !== undefined && button !== undefined) {
-                chatbot.postAnswerBtn(button)
+            if (chatbot.botConfig.convId !== undefined && button !== undefined) {
+                postAnswerBtn(button)
             }
         }
         if (event.data === 'clearSessionStorage') {
             sessionStorage.clear();
         } else if (event.data === 'refresh') {
             chatbot.refreshPlatform()
+            console.log('refresh event')
         } else if (event.data === 'conversationExist') {
             parent.postMessage({conversationExist: sessionStorage.convId !== undefined}, '*');
         }
@@ -73,31 +74,19 @@ const chatbot = new Vue({
                     parent.postMessage({htmlModal: this.getAttribute('data-html')}, '*');
                 }, false);
             }
-            if (!chatbot.$refs.input.disable) {
+            if (chatbot.$refs.input && !chatbot.$refs.input.disable) {
                 this.focusInput()
             }
         },
         data: {
             // config
 
-            convId: null,
-            botName: _botName,
-            botUrl: _botBaseUrl,
-            devMode: false, // ##param.devMode##
-            minTimeBetweenMessages: 1000,
-            botAvatar: _avatar,
-            // technique
-            inputConfig: {
-                // TODO, il exste d'autres modes, par ex email
-                modeTextarea: false,
-                responseText: '',
-                responsePattern: '',
-                showRating: false,
-                rating: 0,
-                buttons: [],
-                cards: [],
-                files: []
-            },
+            footerMenu: '',
+            platformUrl: _platformBaseUrl,
+            context: {},
+            contextMap: {},
+            platformName: _platformName,
+
             customConfig: {
                 reinitializationButton: false,
                 backgroundColor: 'grey',
@@ -113,24 +102,37 @@ const chatbot = new Vue({
                 qandaDisplay: false,
                 documentaryResourceDisplay: false
             },
-            isEnded: false,
-
-            tab: '',
-            platformUrl: _platformBaseUrl,
-            prevInputConfig: {},
-            lastPayload: null,
-            processing: false,
-            acceptNlu: true,
-            rating: false,
-            ratingType: 'SIMPLE',
-            error: false,
-            messages: [],
-            keepAction: false,
-            menu: false,
-            lastUserInteraction: 0,
-            watingMessagesStack: [],
-            context: {},
-            contextMap: {},
+            botConfig: {
+                convId: null,
+                botUrl: _botBaseUrl,
+                devMode: false, // ##param.devMode##
+                minTimeBetweenMessages: 1000,
+                botAvatar: _avatar,
+                isEnded: false,
+                prevInputConfig: {},
+                lastPayload: null,
+                processing: false,
+                acceptNlu: true,
+                rating: false,
+                ratingType: 'SIMPLE',
+                error: false,
+                messages: [],
+                keepAction: false,
+                lastUserInteraction: 0,
+                watingMessagesStack: [],
+            },
+            // technique
+            inputConfig: {
+                // TODO, il exste d'autres modes, par ex email
+                modeTextarea: false,
+                responseText: '',
+                responsePattern: '',
+                showRating: false,
+                rating: 0,
+                buttons: [],
+                cards: [],
+                files: []
+            },
 
             qAndAConfig: {
                 qAndAUrl: _qAndABaseUrl,
@@ -148,10 +150,11 @@ const chatbot = new Vue({
         methods: {
 
             async initPlatform(){
+                // waiting for the custom config to set the display params
                 await chatbot.initPlatformConfig()
-                if(chatbot.customConfig.chatbotDisplay) {chatbot.startConversation()}
-                if(chatbot.customConfig.qandaDisplay) {chatbot.initQAndA()}
-                if(chatbot.customConfig.documentaryResourceDisplay) {chatbot.initDocumentaryResources()}
+                if(chatbot.customConfig.chatbotDisplay) {startConversation()}
+                if(chatbot.customConfig.qandaDisplay) {initQAndA()}
+                if(chatbot.customConfig.documentaryResourceDisplay) {initDocumentaryResources()}
                 chatbot.initLayout()
             },
 
@@ -182,334 +185,25 @@ const chatbot = new Vue({
                 if (sessionStorage.contextMap) {
                     chatbot.contextMap = JSON.parse(sessionStorage.contextMap);
                 } else {
-                    this.$http.post(chatbot.botUrl + '/context').then(contextResponse => {
+                    this.$http.post(chatbot.botConfig.botUrl + '/context').then(contextResponse => {
                         chatbot.contextMap = contextResponse.data;
                         sessionStorage.setItem('contextMap', JSON.stringify(chatbot.contextMap));
                     });
                 }
             },
-
-            updateSessionStorage() {
-                sessionStorage.convId = chatbot.convId;
-                sessionStorage.setItem('inputConfig', JSON.stringify(chatbot.inputConfig));
-                sessionStorage.setItem('messages', JSON.stringify(chatbot.messages));
-            },
-            restoreFromSessionStorage() {
-                chatbot.convId = sessionStorage.convId;
-                chatbot.inputConfig = JSON.parse(sessionStorage.inputConfig);
-                chatbot.messages = JSON.parse(sessionStorage.messages);
-            },
-            clearSessionStorage() {
-                sessionStorage.clear();
-            },
-
-            setParametersFromHttpResponse(httpResponse) {
-                chatbot.convId = httpResponse.data.metadatas.sessionId;
-                chatbot.updateSessionStorage();
-                chatbot._handleResponse(httpResponse, false);
-            },
-
-            startConversation() {
-                chatbot.lastUserInteraction = Date.now();
-                const urlPage = window.location.href;
-                scanContextKeys(new Map(Object.entries(chatbot.contextMap))).then(value => {
-                    chatbot.context = value;
-                    if (chatbot.context['url'] === undefined) {
-                        chatbot.context['url'] = urlPage;
-                    }
-                    if (sessionStorage.convId) {
-                        chatbot.restoreFromSessionStorage();
-                        chatbot._scrollToBottom();
-                    } else {
-                        this.$http.post(chatbot.botUrl + '/start', {message: null, metadatas: {'context': chatbot.context}})
-                            .then(chatbot.setParametersFromHttpResponse)
-                            .catch(() => {
-                                // error
-                                chatbot.error = true;
-                                chatbot.processing = false;
-                                chatbot._scrollToBottom();
-                            });
-                    }
-                });
-            },
-
-            postAnswerBtn(btn) {
-                chatbot.messages.push({
-                    text: [DOMPurify.sanitize(btn.label)],
-                    sent: true,
-                    bgColor: 'primary',
-                    textColor: 'white'
-                });
-
-                chatbot.updateSessionStorage();
-
-                chatbot._scrollToBottom();
-
-                if (btn.url !== undefined) {
-                    const link = document.createElement('a');
-                    link.href = btn.url;
-                    if (btn.newTab) {
-                        link.target = '_blank';
-                    } else {
-                        link.target = '_top';
-                    }
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }
-                chatbot.askBot(btn.payload, btn.label, true, null, null, chatbot.rating);
-            },
-            fileUpload(btn, index) {
-                const file = document.getElementById('file_' + index).files[0];
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function (evt) {
-                    chatbot.askBot(btn.payload, null, false, evt.target.result, file.name, false);
-                };
-            }
-            ,
-            postAnswerText(isRating) {
-                let sanitizedString = '';
-                if (isRating) {
-                    sanitizedString = chatbot.inputConfig.rating.toString();
-                    chatbot.inputConfig.showRating = false;
-                    chatbot.messages.push({
-                        text: null,
-                        rating: true,
-                        sent: true,
-                        bgColor: 'primary',
-                        textColor: 'white'
-                    });
-
-                } else {
-                    sanitizedString = DOMPurify.sanitize(chatbot.inputConfig.responseText.trim()
-                        .replace(/(?:\r\n|\r|\n)/g, '<br>'));
-                    chatbot.messages.push({
-                        text: sanitizedString !== '' ? [sanitizedString] : null,
-                        rating: isRating,
-                        sent: true,
-                        bgColor: 'primary',
-                        textColor: 'white'
-                    });
-                }
-                chatbot.updateSessionStorage();
-
-                chatbot._scrollToBottom();
-
-                const response = chatbot.inputConfig.responsePattern === '' ? sanitizedString.replace(/(")/g, '"')
-                    : chatbot.inputConfig.responsePattern.replace('#', sanitizedString.replace(/(")/g, '\\"'));
-                chatbot.askBot(response, null, false, null, null, isRating);
-            },
-            _scrollToBottom() {
-                const scrollHeight = this.$refs.scroller.$el.children[0].children[0].scrollHeight; // workaround
-                this.$refs.scroller.setScrollPosition(scrollHeight, 400);
-            },
-
-            askBot(value, label, isButton, fileContent, fileName, rating) {
-                chatbot.prevInputConfig = JSON.parse(JSON.stringify(chatbot.inputConfig));
-                chatbot.reinitInput();
-                chatbot.lastPayload = value;
-                chatbot.processing = true;
-
-                chatbot.lastUserInteraction = Date.now();
-                let botInput;
-                if (fileContent) {
-                    botInput = {
-                        message: null,
-                        metadatas: {context: chatbot.context, payload: value, filecontent: fileContent, filename: fileName}
-                    };
-                } else if (isButton) {
-                    botInput = {message: null, metadatas: {context: chatbot.context, payload: value, text: label}};
-                } else {
-                    botInput = {message: value, metadatas: {context: chatbot.context}};
-                }
-                if (rating) {
-                    botInput.metadatas.rating = value
-                    if (chatbot.ratingType === 'SIMPLE') {
-                        botInput.message = null
-                    }
-                }
-                return Vue.http.post(chatbot.botUrl + '/talk/' + chatbot.convId, botInput)
-                    .then(httpResponse => {
-                        chatbot._handleResponse(httpResponse, false);
-                    }).catch(
-                        () => {
-                            // error
-                            chatbot.error = true;
-
-                            chatbot.processing = false;
-                            chatbot._scrollToBottom();
-                        });
-
-            }
-            ,
-            _handleResponse(httpResponse, isRating) {
-                // success
-                if (httpResponse.data.metadatas.sessionId && chatbot.convId !== httpResponse.data.metadatas.sessionId) {
-                    chatbot.refreshBot(true);
-                    console.log('le bug')
-                    chatbot.setParametersFromHttpResponse(httpResponse);
-
-                } else {
-                    const responses = httpResponse.data.htmlTexts;
-                    const buttons = httpResponse.data.choices;
-                    const cards = httpResponse.data.cards;
-                    const files = httpResponse.data.files;
-                    chatbot.acceptNlu = httpResponse.data.acceptNlu !== undefined ? httpResponse.data.acceptNlu : true;
-                    chatbot.rating = httpResponse.data.rating.enabled;
-                    chatbot.ratingType = httpResponse.data.rating.type;
-                    chatbot.isEnded = httpResponse.data.status === 'Ended' && !isRating;
-                    if (httpResponse.data.metadatas && httpResponse.data.metadatas.avatar) {
-                        chatbot.botAvatar = 'data:image/png;base64,' + httpResponse.data.metadatas.avatar;
-                    }
-
-                    if (httpResponse.data.metadatas && httpResponse.data.metadatas.jsevent) {
-                        parent.postMessage({jsevent: httpResponse.data.metadatas.jsevent}, '*');
-                    }
-
-                    if (httpResponse.data.metadatas && httpResponse.data.metadatas.welcometour) {
-                        parent.postMessage({welcomeTour: httpResponse.data.metadatas.welcometour}, '*');
-                    }
-
-                    for (let i = 0; i < responses.length - 1; i++) {
-                        chatbot.watingMessagesStack.push({text: responses[i]});
-                    }
-                    chatbot.watingMessagesStack.push({
-                        text: responses[responses.length - 1],
-                        buttons: buttons,
-                        cards: cards,
-                        files: files
-                    });
-
-                    chatbot._displayMessages();
-                }
-            }
-            ,
-            _displayMessages() {
-                if (chatbot.watingMessagesStack.length > 0) {
-                    const currentMessage = chatbot.watingMessagesStack.shift();
-                    let watingTime = chatbot.lastUserInteraction - Date.now() + chatbot.minTimeBetweenMessages;
-
-                    if (chatbot.devMode === true) {
-                        watingTime = 0;
-                    }
-
-                    sleep(watingTime).then(function () {
-                        chatbot._processResponse(currentMessage);
-                        chatbot.lastUserInteraction = Date.now();
-                        chatbot._displayMessages();
-                    });
-                } else {
-                    chatbot.inputConfig.showRating = chatbot.rating && chatbot.ratingType === 'SIMPLE' && chatbot.inputConfig.rating === 0;
-                    chatbot.processing = false;
-                    if (chatbot.keepAction) {
-                        chatbot.inputConfig = chatbot.prevInputConfig;
-                        chatbot.inputConfig.responseText = '';
-                        chatbot.keepAction = false;
-                        chatbot.updateSessionStorage();
-                    }
-                }
-            }
-            ,
-            focusInput() {
-                chatbot.$refs.input.focus();
-            }
-            ,
-            _processResponse(response) {
-                const lastMsg = chatbot.messages[chatbot.messages.length - 1];
-                if (response.text !== undefined && response.text !== '') {
-                    if (lastMsg && !lastMsg.sent) {
-                        // ajoute un message à un précédent message du bot
-                        lastMsg.text.push(response.text);
-                    } else {
-                        // première réponse du bot
-                        if (chatbot.customConfig.displayAvatar) {
-                            chatbot.messages.push({
-                                avatar: chatbot.botAvatar,
-                                text: [response.text],
-                                bgColor: 'grey-grdf'
-                            });
-                        } else {
-                            chatbot.messages.push({
-                                text: [response.text],
-                                bgColor: 'grey-grdf'
-                            });
-                        }
-                    }
-                    chatbot.updateSessionStorage();
-
-                }
-
-                if (response.buttons) {
-                    response.buttons.forEach(function (value, key) {
-                        chatbot.inputConfig.buttons.push(value);
-                        chatbot.updateSessionStorage();
-                    }, chatbot);
-                }
-
-                if (response.cards) {
-                    response.cards.forEach(function (value, key) {
-                        chatbot.inputConfig.cards.push(value);
-                        chatbot.updateSessionStorage();
-                    }, chatbot);
-                }
-
-                if (response.files) {
-                    response.files.forEach(function (value, key) {
-                        chatbot.inputConfig.files.push(value);
-                        chatbot.updateSessionStorage();
-                    }, chatbot);
-                }
-
-                chatbot._scrollToBottom();
-            },
-            reinitInput() {
-                chatbot.inputConfig.modeTextarea = false;
-                chatbot.inputConfig.responsePattern = '';
-                chatbot.inputConfig.responseText = '';
-                chatbot.inputConfig.buttons = [];
-                chatbot.inputConfig.cards = [];
-                chatbot.inputConfig.files = [];
-                chatbot.error = false;
-                chatbot.updateSessionStorage();
-            },
             minimize() {
                 parent.postMessage('Chatbot.minimize', '*');
-            },
-            refreshBot(isAnotherConversation) {
-                chatbot.inputConfig = {
-                    modeTextarea: false,
-                    responseText: '',
-                    responsePattern: '',
-                    showRating: false,
-                    rating: 0,
-                    buttons: [],
-                    files: [],
-                    cards: []
-                };
-                chatbot.customConfig = {};
-                chatbot.error = false;
-                chatbot.convId = null;
-                chatbot.contextMap = {};
-                chatbot.messages = [];
-                chatbot.rating = false;
-
-                chatbot.clearSessionStorage();
-
-                if (!isAnotherConversation) {
-                    chatbot.startConversation();
-                }
             },
 
             refreshPlatform(){
                 chatbot.initPlatformConfig()
-                if (chatbot.tab === 'bot') {
-                    chatbot.refreshBot()
-                } else if (chatbot.tab === 'qAndA') {
-                    chatbot.initQAndA();
+                if (chatbot.footerMenu === 'bot') {
+                    refreshBot()
+                } else if (chatbot.footerMenu === 'qAndA') {
+                    initQAndA();
                 }
                 if (chatbot.customConfig.documentaryResourceDisplay) {
-                    chatbot.initDocumentaryResources();
+                    initDocumentaryResources();
                 }
             },
             // Function to complete to switch to another bot
@@ -518,53 +212,31 @@ const chatbot = new Vue({
             },
 
             initLayout(){
+                // On start, if there is only the Q&A on, we show it. Otherwise, we open on the chatbot by default
                 if (chatbot.customConfig.qandaDisplay && !chatbot.customConfig.chatbotDisplay){
-                    chatbot.tab = 'qAndA'
+                    chatbot.footerMenu = 'qAndA'
                 } else {
-                    chatbot.tab = 'bot'
+                    chatbot.footerMenu = 'bot'
                 }
             },
 
-            tabChange(tab) {
-                chatbot.tab = tab
-                if(tab === 'bot'){
+
+            footerMenuChange(menuValue) {
+                chatbot.footerMenu = menuValue
+                if(menuValue === 'bot'){
                     this.$nextTick(() => {
-                        chatbot._scrollToBottom();
+                        // instant scroll to bottom of the bot layout when clicking on 'bot' menu
+                        const scrollHeight = chatbot.$refs.scroller.$el.children[0].children[0].scrollHeight; // workaround
+                        chatbot.$refs.scroller.setScrollPosition(scrollHeight);
+                        // if a question/answer is open when clicking on 'bot' menu, it closes it
                         chatbot.qAndAConfig.selectedQuestion = null;
                     });
                 }
             },
 
-            /* Q&A */
-
-            initQAndA(){
-                this.$http.get(chatbot.qAndAConfig.qAndAUrl + '/getQuestionsAnswers').then(questionAnswerResponse => {
-                    chatbot.qAndAConfig.questionAnswerList = questionAnswerResponse.data;
-                    chatbot.qAndAConfig.filteredQuestionAnswerList = questionAnswerResponse.data;
-                    chatbot.qAndAConfig.filterInput = '';
-                });
-            },
-
-            filterQuestionsAnswers(){
-                if (chatbot.qAndAConfig.filterInput !== ''){
-                    chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList.filter(questionAnswer => questionAnswer.question.toLowerCase().includes(chatbot.qAndAConfig.filterInput.toLowerCase()) || questionAnswer.answer.toLowerCase().includes(chatbot.qAndAConfig.filterInput.toLowerCase()))
-                }else{
-                    chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList
-                }
-            },
-
-            selectQuestion(selected){
-                chatbot.qAndAConfig.selectedQuestion = selected;
-            },
-
-
-            /* Documentary resources */
-
-            initDocumentaryResources() {
-                this.$http.get(chatbot.documentaryResourceConfig.documentaryResourceUrl + '/getDocumentaryResources').then(documentaryResourceResponse => {
-                    chatbot.documentaryResourceConfig.documentaryResourceList = documentaryResourceResponse.data;
-                });
-            },
+            focusInput() {
+                chatbot.$refs.input.focus();
+            }
         }
     })
 ;
