@@ -4,7 +4,6 @@ create DtDefinition DtDocumentaryResource{
 	id		dreId			{domain: DoId 		label: "ID"					    				}
 	field 	title 			{domain: DoLabel 	label: "Title" 			    cardinality : "1"	}
 	field 	description		{domain: DoText 	label: "Description" 		    				}
-	field 	text    		{domain: DoText 	label: "Text" 		    	        			}
 	field 	url     		{domain: DoText   	label: "Url" 		             				}
 }
 
@@ -23,11 +22,6 @@ create DtDefinition DtDocumentaryResourceType {
             "dreTypeCd" : "FILE",
             "label" : "File",
             "labelFr" : "Document"
-        },
-        "TEXT" : {
-            "dreTypeCd" : "TEXT",
-            "label" : "Text",
-            "labelFr" : "Texte"
         }
      }`
     sortField : "dreTypeCd"

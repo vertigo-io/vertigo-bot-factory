@@ -15,7 +15,6 @@ public final class DocumentaryResourceExport implements DtObject {
 
 	private String title;
 	private String dreTypeCd;
-	private String text;
 	private String url;
 	private String fileName;
 	
@@ -55,25 +54,6 @@ public final class DocumentaryResourceExport implements DtObject {
 	 */
 	public void setDreTypeCd(final String dreTypeCd) {
 		this.dreTypeCd = dreTypeCd;
-	}
-	
-	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Text'.
-	 * @return String text
-	 */
-	@Field(smartType = "STyText", label = "Text")
-	public String getText() {
-		return text;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Text'.
-	 * @param text String
-	 */
-	public void setText(final String text) {
-		this.text = text;
 	}
 	
 	/**

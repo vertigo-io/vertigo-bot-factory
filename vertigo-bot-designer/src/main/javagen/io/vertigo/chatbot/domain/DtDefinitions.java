@@ -734,8 +734,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		title,
 		/** Propriété 'Description'. */
 		description,
-		/** Propriété 'Text'. */
-		text,
 		/** Propriété 'Url'. */
 		url,
 		/** Propriété 'Attachment id'. */
@@ -753,8 +751,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		title,
 		/** Propriété 'Resource Type'. */
 		dreTypeCd,
-		/** Propriété 'Text'. */
-		text,
 		/** Propriété 'Url'. */
 		url,
 		/** Propriété 'File name'. */

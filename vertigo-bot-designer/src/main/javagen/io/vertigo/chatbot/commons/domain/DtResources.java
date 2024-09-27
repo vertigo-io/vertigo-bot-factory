@@ -544,10 +544,6 @@ public enum DtResources implements MessageKey {
 	 */
 	fldDocumentaryResourceExport$dreTypeCd,
 	/**
-	 * Text.
-	 */
-	fldDocumentaryResourceExport$text,
-	/**
 	 * Url.
 	 */
 	fldDocumentaryResourceExport$url,

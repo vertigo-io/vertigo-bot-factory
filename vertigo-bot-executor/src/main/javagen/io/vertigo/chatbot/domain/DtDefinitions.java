@@ -33,6 +33,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ChatbotCustomConfigExport(io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport.class),
 		/** Objet de données ConfluenceSettingExport. */
 		ConfluenceSettingExport(io.vertigo.chatbot.commons.domain.ConfluenceSettingExport.class),
+		/** Objet de données ContextPossibleValue. */
+		ContextPossibleValue(io.vertigo.chatbot.commons.domain.ContextPossibleValue.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
 		/** Objet de données DocumentaryResourceExport. */
@@ -240,6 +242,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		spaces	}
 
 	/**
+	 * Enumération des champs de ContextPossibleValue.
+	 */
+	public enum ContextPossibleValueFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ContextPossibleValue> {
+		/** Propriété 'Context possible value id'. */
+		cpvId,
+		/** Propriété 'Value'. */
+		value,
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
 	 * Enumération des champs de ContextValue.
 	 */
 	public enum ContextValueFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ContextValue> {
@@ -260,8 +275,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		title,
 		/** Propriété 'Resource Type'. */
 		dreTypeCd,
-		/** Propriété 'Text'. */
-		text,
 		/** Propriété 'Url'. */
 		url,
 		/** Propriété 'File name'. */
