@@ -38,8 +38,7 @@ footer {
     color: var(--font-color) !important;
 }
 
-.q-loading-bar.top {
-    top: 58px;
+.q-loading-bar {
     height: 4px !important;
 }
 

@@ -11,7 +11,9 @@ function restoreFromSessionStorage() {
 }
 
 function clearSessionStorage() {
-    sessionStorage.clear();
+    sessionStorage.removeItem('convId');
+    sessionStorage.removeItem('inputConfig');
+    sessionStorage.removeItem('messages');
 }
 
 function setParametersFromHttpResponse(httpResponse) {

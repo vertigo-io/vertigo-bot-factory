@@ -62,11 +62,11 @@
         </q-layout-header>
 
         <q-page-container class="row col">
-          <div id="loading"
-               class="column items-center q-pt-xl">Chargement ...
-          </div>
           <q-page id="page"
                   class="row col column animate-fade">
+            <div id="loading"
+                 class="items-center">Chargement ...
+            </div>
             <div v-if="footerMenu ==='bot'"
                  id="main"
                  class="column col-grow no-wrap chatbot-qanda-container"
