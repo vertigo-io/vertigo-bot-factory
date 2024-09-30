@@ -726,6 +726,8 @@ create table DOCUMENTARY_RESOURCE
     TITLE       	 VARCHAR(100)	not null,
     DESCRIPTION 	 TEXT        	,
     URL         	 TEXT        	,
+    CVA_ID      	 NUMERIC     	not null,
+    CPV_ID      	 NUMERIC     	not null,
     ATT_ID      	 NUMERIC     	,
     DRE_TYPE_CD 	 VARCHAR(100)	not null,
     BOT_ID      	 NUMERIC     	not null,
@@ -743,6 +745,12 @@ comment on column DOCUMENTARY_RESOURCE.DESCRIPTION is
 
 comment on column DOCUMENTARY_RESOURCE.URL is
 'Url';
+
+comment on column DOCUMENTARY_RESOURCE.CVA_ID is
+'Context value id';
+
+comment on column DOCUMENTARY_RESOURCE.CPV_ID is
+'Context possible value id';
 
 comment on column DOCUMENTARY_RESOURCE.ATT_ID is
 'Attachment id';
@@ -1151,6 +1159,8 @@ create table QUESTION_ANSWER
     ANSWER      	 TEXT        	not null,
     IS_ENABLED  	 bool        	not null,
     CODE        	 TEXT        	not null,
+    CVA_ID      	 NUMERIC     	not null,
+    CPV_ID      	 NUMERIC     	not null,
     BOT_ID      	 NUMERIC     	not null,
     QA_CAT_ID   	 NUMERIC     	not null,
     constraint PK_QUESTION_ANSWER primary key (QA_ID)
@@ -1170,6 +1180,12 @@ comment on column QUESTION_ANSWER.IS_ENABLED is
 
 comment on column QUESTION_ANSWER.CODE is
 'Code';
+
+comment on column QUESTION_ANSWER.CVA_ID is
+'Context value id';
+
+comment on column QUESTION_ANSWER.CPV_ID is
+'Context possible value id';
 
 comment on column QUESTION_ANSWER.BOT_ID is
 'Chatbot';
@@ -1915,22 +1931,34 @@ alter table DICTIONARY_ENTITY
 create index A_DICTIONARY_ENTITY_CHATBOT_CHATBOT_FK on DICTIONARY_ENTITY (BOT_ID asc);
 
 alter table DOCUMENTARY_RESOURCE
+	add constraint FK_A_DOCUMENTARY_RESOURCE_ATTACHMENT_FILE_INFO_ATTACHMENT foreign key (ATT_ID)
+	references ATTACHMENT (ATT_ID);
+
+create index A_DOCUMENTARY_RESOURCE_ATTACHMENT_FILE_INFO_ATTACHMENT_FK on DOCUMENTARY_RESOURCE (ATT_ID asc);
+
+alter table DOCUMENTARY_RESOURCE
 	add constraint FK_A_DOCUMENTARY_RESOURCE_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
 
 create index A_DOCUMENTARY_RESOURCE_CHATBOT_CHATBOT_FK on DOCUMENTARY_RESOURCE (BOT_ID asc);
 
 alter table DOCUMENTARY_RESOURCE
+	add constraint FK_A_DOCUMENTARY_RESOURCE_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE foreign key (CPV_ID)
+	references CONTEXT_POSSIBLE_VALUE (CPV_ID);
+
+create index A_DOCUMENTARY_RESOURCE_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE_FK on DOCUMENTARY_RESOURCE (CPV_ID asc);
+
+alter table DOCUMENTARY_RESOURCE
+	add constraint FK_A_DOCUMENTARY_RESOURCE_CONTEXT_VALUE_CONTEXT_VALUE foreign key (CVA_ID)
+	references CONTEXT_VALUE (CVA_ID);
+
+create index A_DOCUMENTARY_RESOURCE_CONTEXT_VALUE_CONTEXT_VALUE_FK on DOCUMENTARY_RESOURCE (CVA_ID asc);
+
+alter table DOCUMENTARY_RESOURCE
 	add constraint FK_A_DOCUMENTARY_RESOURCE_DOCUMENTARY_RESOURCE_TYPE_DOCUMENTARY_RESOURCE_TYPE foreign key (DRE_TYPE_CD)
 	references DOCUMENTARY_RESOURCE_TYPE (DRE_TYPE_CD);
 
 create index A_DOCUMENTARY_RESOURCE_DOCUMENTARY_RESOURCE_TYPE_DOCUMENTARY_RESOURCE_TYPE_FK on DOCUMENTARY_RESOURCE (DRE_TYPE_CD asc);
-
-alter table DOCUMENTARY_RESOURCE
-	add constraint FK_A_DOCUMENTARY_RESOURCE_FILE_ATTACHMENT_FILE_INFO_ATTACHMENT foreign key (ATT_ID)
-	references ATTACHMENT (ATT_ID);
-
-create index A_DOCUMENTARY_RESOURCE_FILE_ATTACHMENT_FILE_INFO_ATTACHMENT_FK on DOCUMENTARY_RESOURCE (ATT_ID asc);
 
 alter table HISTORY
 	add constraint FK_A_HISTORY_CHATBOT_CHATBOT foreign key (BOT_ID)
@@ -2033,6 +2061,18 @@ alter table QUESTION_ANSWER
 	references CHATBOT (BOT_ID);
 
 create index A_QUESTION_ANSWER_CHATBOT_CHATBOT_FK on QUESTION_ANSWER (BOT_ID asc);
+
+alter table QUESTION_ANSWER
+	add constraint FK_A_QUESTION_ANSWER_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE foreign key (CPV_ID)
+	references CONTEXT_POSSIBLE_VALUE (CPV_ID);
+
+create index A_QUESTION_ANSWER_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE_FK on QUESTION_ANSWER (CPV_ID asc);
+
+alter table QUESTION_ANSWER
+	add constraint FK_A_QUESTION_ANSWER_CONTEXT_VALUE_CONTEXT_VALUE foreign key (CVA_ID)
+	references CONTEXT_VALUE (CVA_ID);
+
+create index A_QUESTION_ANSWER_CONTEXT_VALUE_CONTEXT_VALUE_FK on QUESTION_ANSWER (CVA_ID asc);
 
 alter table RESPONSE_BUTTON
 	add constraint FK_A_RESPONSE_BUTTON_TOPIC_RESPONSE_TOPIC foreign key (TOP_ID_RESPONSE)

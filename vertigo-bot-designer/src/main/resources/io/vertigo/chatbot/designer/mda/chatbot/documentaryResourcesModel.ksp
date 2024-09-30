@@ -7,6 +7,26 @@ create DtDefinition DtDocumentaryResource{
 	field 	url     		{domain: DoText   	label: "Url" 		             				}
 }
 
+create Association ADocumentaryResourceContextValue {
+	fkFieldName : "cvaId"
+
+ 	dtDefinitionA : DtDocumentaryResource
+	type : "*>1"
+	dtDefinitionB : DtContextValue
+
+	labelB : "Context value id"
+}
+
+create Association ADocumentaryResourceContextPossibleValue {
+	fkFieldName : "cpvId"
+
+ 	dtDefinitionA : DtDocumentaryResource
+	type : "*>1"
+	dtDefinitionB : DtContextPossibleValue
+
+	labelB : "Context possible value id"
+}
+
 create DtDefinition DtDocumentaryResourceType {
 	stereotype : "StaticMasterData"
 	id    dreTypeCd 		{domain: DoCode 	label: "Code"}
@@ -27,7 +47,7 @@ create DtDefinition DtDocumentaryResourceType {
     sortField : "dreTypeCd"
  	displayField : "label"
 }
-create Association ADocumentaryResourceFileAttachmentFileInfo {
+create Association ADocumentaryResourceAttachmentFileInfo {
 	fkFieldName : "attId"
 
  	dtDefinitionA : DtDocumentaryResource

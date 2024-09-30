@@ -738,6 +738,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		description,
 		/** Propriété 'Url'. */
 		url,
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Context possible value id'. */
+		cpvId,
 		/** Propriété 'Attachment id'. */
 		attId,
 		/** Propriété 'Documentary resource type'. */
@@ -1102,6 +1106,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isEnabled,
 		/** Propriété 'Code'. */
 		code,
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Context possible value id'. */
+		cpvId,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Category'. */
