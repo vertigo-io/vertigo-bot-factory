@@ -56,7 +56,6 @@
         <vu:include-data-primitive key="locale"/>
         <vu:include-data object="documentaryResource" field="dreTypeCd" modifiable="true"/>
         <vu:include-data object="documentaryResource" field="title" modifiable="true"/>
-        <vu:include-data object="documentaryResource" field="text" modifiable="true"/>
         <vu:include-data object="documentaryResource" field="url" modifiable="true"/>
         <vu:include-data object="documentaryResourceTypeList" field="dreTypeCd" />
         <vu:include-data object="documentaryResourceTypeList" field="label" />
@@ -69,15 +68,6 @@
                 th::disable="${model.modeReadOnly}"
         />
     </div>
-    <vu:block id="document" th:title="#{documentaryResource.text}" v-if="vueData.documentaryResource.dreTypeCd === 'TEXT'">
-        <c-richtext
-                v-model="vueData.documentaryResource.text"
-                name="vContext[documentaryResource][text]"
-                :locale="vueData.locale"
-                class="q-pb-sm">
-        </c-richtext>
-    </vu:block>
-
     <vu:block id="url" th:title="#{documentaryResource.url}" v-if="vueData.documentaryResource.dreTypeCd === 'URL'">
         <q-input
                 v-model="vueData.documentaryResource.url"
@@ -86,7 +76,7 @@
         </q-input>
     </vu:block>
 
-    <vu:block id="url" th:title="#{documentaryResource.file}" v-if="vueData.documentaryResource.dreTypeCd === 'FILE'">
+    <vu:block id="file" th:title="#{documentaryResource.file}" v-if="vueData.documentaryResource.dreTypeCd === 'FILE'">
         <vu:include-data-primitive key="importAttachmentFileUri" modifiable="true"/>
         <vu:include-data object="attachment" field="label" modifiable="true"/>
         <vu:include-data object="attachment" field="type" modifiable="true"/>

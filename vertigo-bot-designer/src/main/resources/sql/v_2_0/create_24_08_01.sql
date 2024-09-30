@@ -9,7 +9,6 @@ create table DOCUMENTARY_RESOURCE
     DRE_ID      	 NUMERIC     	not null,
     TITLE       	 VARCHAR(100)	not null,
     DESCRIPTION 	 TEXT        	,
-    TEXT        	 TEXT        	,
     URL         	 TEXT        	,
     ATT_ID   	     NUMERIC     	,
     DRE_TYPE_CD 	 VARCHAR(100)	not null,
@@ -25,9 +24,6 @@ comment on column DOCUMENTARY_RESOURCE.TITLE is
 
 comment on column DOCUMENTARY_RESOURCE.DESCRIPTION is
 'Description';
-
-comment on column DOCUMENTARY_RESOURCE.TEXT is
-'Text';
 
 comment on column DOCUMENTARY_RESOURCE.URL is
 'Url';
@@ -86,4 +82,3 @@ create index A_DOCUMENTARY_RESOURCE_FILE_ATTACHMENT_FILE_INFO_ATTACHMENT_FK on D
 -- ============================================================
 insert into DOCUMENTARY_RESOURCE_TYPE(DRE_TYPE_CD, LABEL, LABEL_FR) values ('URL', 'URL', 'URL');
 insert into DOCUMENTARY_RESOURCE_TYPE(DRE_TYPE_CD, LABEL, LABEL_FR) values ('FILE', 'File', 'Document');
-insert into DOCUMENTARY_RESOURCE_TYPE(DRE_TYPE_CD, LABEL, LABEL_FR) values ('TEXT', 'Text', 'Texte');

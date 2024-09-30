@@ -73,6 +73,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		DictionaryEntityWrapper(io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper.class),
 		/** Objet de données DocumentaryResource. */
 		DocumentaryResource(io.vertigo.chatbot.designer.domain.DocumentaryResource.class),
+		/** Objet de données DocumentaryResourceExport. */
+		DocumentaryResourceExport(io.vertigo.chatbot.commons.domain.DocumentaryResourceExport.class),
 		/** Objet de données DocumentaryResourceType. */
 		DocumentaryResourceType(io.vertigo.chatbot.designer.domain.DocumentaryResourceType.class),
 		/** Objet de données ExecutorConfiguration. */
@@ -304,7 +306,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Size'. */
 		length,
 		/** Propriété 'Data'. */
-		fileData	}
+		fileData,
+		/** Propriété 'Type'. */
+		type	}
 
 	/**
 	 * Enumération des champs de AttachmentFileInfo.
@@ -362,6 +366,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jiraFieldSetting,
 		/** Propriété 'Questions answers List'. */
 		questionAnswerList,
+		/** Propriété 'Documentary resources'. */
+		documentaryResources,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -425,6 +431,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		disableNlu,
 		/** Propriété 'Maximum of saved trainings'. */
 		maxSavedTraining,
+		/** Propriété 'Display chatbot'. */
+		chatbotDisplay,
+		/** Propriété 'Display Q&A'. */
+		qandaDisplay,
+		/** Propriété 'Display documentary resources'. */
+		documentaryResourceDisplay,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'fontFamily'. */
@@ -457,7 +469,13 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Total maximum attachment size'. */
 		totalMaxAttachmentSize,
 		/** Propriété 'Disable NlU'. */
-		disableNlu	}
+		disableNlu,
+		/** Propriété 'Display chatbot'. */
+		chatbotDisplay,
+		/** Propriété 'Display Q&A'. */
+		qandaDisplay,
+		/** Propriété 'Display documentary resources'. */
+		documentaryResourceDisplay	}
 
 	/**
 	 * Enumération des champs de ChatbotNode.
@@ -716,8 +734,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		title,
 		/** Propriété 'Description'. */
 		description,
-		/** Propriété 'Text'. */
-		text,
 		/** Propriété 'Url'. */
 		url,
 		/** Propriété 'Attachment id'. */
@@ -726,6 +742,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		dreTypeCd,
 		/** Propriété 'Chatbot'. */
 		botId	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceExport.
+	 */
+	public enum DocumentaryResourceExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.DocumentaryResourceExport> {
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Resource Type'. */
+		dreTypeCd,
+		/** Propriété 'Url'. */
+		url,
+		/** Propriété 'File name'. */
+		fileName	}
 
 	/**
 	 * Enumération des champs de DocumentaryResourceType.

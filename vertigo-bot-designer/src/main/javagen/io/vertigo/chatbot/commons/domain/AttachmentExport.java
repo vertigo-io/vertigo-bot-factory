@@ -18,6 +18,7 @@ public final class AttachmentExport implements DtObject {
 	private String mimeType;
 	private Long length;
 	private String fileData;
+	private String type;
 	
 	/**
 	 * Champ : DATA.
@@ -112,6 +113,25 @@ public final class AttachmentExport implements DtObject {
 	 */
 	public void setFileData(final String fileData) {
 		this.fileData = fileData;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Type'.
+	 * @return String type <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Type")
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Type'.
+	 * @param type String <b>Obligatoire</b>
+	 */
+	public void setType(final String type) {
+		this.type = type;
 	}
 	
 	/** {@inheritDoc} */
