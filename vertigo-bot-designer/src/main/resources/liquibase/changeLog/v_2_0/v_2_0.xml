@@ -185,4 +185,8 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_09_09.sql"/>
     </changeSet>
 
+    <changeSet author="rsaintpaul" id="Add context_value_id and context_possible_value_id columns to documentary_resource and question_answer tables">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_09_30.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

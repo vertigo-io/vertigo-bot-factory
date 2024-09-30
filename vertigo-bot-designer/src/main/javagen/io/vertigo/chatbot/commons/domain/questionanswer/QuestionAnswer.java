@@ -22,6 +22,36 @@ public final class QuestionAnswer implements Entity {
 	private String code;
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "AQuestionAnswerContextValue",
+			fkFieldName = "cvaId",
+			primaryDtDefinitionName = "DtContextValue",
+			primaryIsNavigable = true,
+			primaryRole = "ContextValue",
+			primaryLabel = "Context value id",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtQuestionAnswer",
+			foreignIsNavigable = false,
+			foreignRole = "QuestionAnswer",
+			foreignLabel = "QuestionAnswer",
+			foreignMultiplicity = "0..*")
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> cvaIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.ContextValue.class, "ContextValue");
+
+	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "AQuestionAnswerContextPossibleValue",
+			fkFieldName = "cpvId",
+			primaryDtDefinitionName = "DtContextPossibleValue",
+			primaryIsNavigable = true,
+			primaryRole = "ContextPossibleValue",
+			primaryLabel = "Context possible value id",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtQuestionAnswer",
+			foreignIsNavigable = false,
+			foreignRole = "QuestionAnswer",
+			foreignLabel = "QuestionAnswer",
+			foreignMultiplicity = "0..*")
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextPossibleValue> cpvIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.ContextPossibleValue.class, "ContextPossibleValue");
+
+	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AQuestionAnswerChatbot",
 			fkFieldName = "botId",
 			primaryDtDefinitionName = "DtChatbot",
@@ -154,6 +184,44 @@ public final class QuestionAnswer implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Context value id'.
+	 * @return Long cvaId <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Context value id", fkDefinition = "DtContextValue", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	public Long getCvaId() {
+		return (Long) cvaIdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Context value id'.
+	 * @param cvaId Long <b>Obligatoire</b>
+	 */
+	public void setCvaId(final Long cvaId) {
+		cvaIdAccessor.setId(cvaId);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Context possible value id'.
+	 * @return Long cpvId <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Context possible value id", fkDefinition = "DtContextPossibleValue", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	public Long getCpvId() {
+		return (Long) cpvIdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Context possible value id'.
+	 * @param cpvId Long <b>Obligatoire</b>
+	 */
+	public void setCpvId(final Long cpvId) {
+		cpvIdAccessor.setId(cpvId);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
@@ -204,6 +272,22 @@ public final class QuestionAnswer implements Entity {
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> chatbot() {
 		return botIdAccessor;
+	}
+
+ 	/**
+	 * Association : Context possible value id.
+	 * @return l'accesseur vers la propriété 'Context possible value id'
+	 */
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextPossibleValue> contextPossibleValue() {
+		return cpvIdAccessor;
+	}
+
+ 	/**
+	 * Association : Context value id.
+	 * @return l'accesseur vers la propriété 'Context value id'
+	 */
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> contextValue() {
+		return cvaIdAccessor;
 	}
 	
 	/** {@inheritDoc} */
