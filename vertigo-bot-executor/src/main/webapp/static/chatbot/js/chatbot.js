@@ -223,14 +223,21 @@ const chatbot = new Vue({
 
             footerMenuChange(menuValue) {
                 chatbot.footerMenu = menuValue
+                if(menuValue === 'qAndA'){
+                    initQAndA();
+                }
                 if(menuValue === 'bot'){
                     this.$nextTick(() => {
                         // instant scroll to bottom of the bot layout when clicking on 'bot' menu
-                        const scrollHeight = chatbot.$refs.scroller.$el.children[0].children[0].scrollHeight; // workaround
+                        const scrollHeight = chatbot.$refs.scroller.$el.children[0].children[0].scrollHeight;
                         chatbot.$refs.scroller.setScrollPosition(scrollHeight);
                         // if a question/answer is open when clicking on 'bot' menu, it closes it
                         chatbot.qAndAConfig.selectedQuestion = null;
                     });
+                }
+                // always refresh documentaryResources on tab change if visible
+                if (chatbot.customConfig.documentaryResourceDisplay) {
+                    initDocumentaryResources();
                 }
             },
 
