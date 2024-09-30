@@ -11,6 +11,7 @@
     <script th:src="@{/static/js/c-richtext.js}"></script>
     <script th:src="@{/static/js/c-emojipicker.js}"></script>
     <script th:inline="javascript">
+
         VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
 
         function onRejected (rejectedEntries) {
@@ -28,6 +29,15 @@
 
         function isImage(type) {
             return type.includes('image');
+        }
+
+        function onContextChange() {
+            const cvaId = VertigoUi.vueData.documentaryResource.cvaId;
+            if (cvaId) {
+                return VertigoUi.vueData.contextPossibleValueList.filter(contextPossibleValue => contextPossibleValue.cvaId === cvaId);
+            }else {
+                return VertigoUi.vueData.contextPossibleValueList;
+            }
         }
 
     </script>
@@ -49,6 +59,8 @@
         <vu:grid cols="2">
             <vu:text-field object="documentaryResource" field="title" />
             <vu:text-field object="documentaryResource" field="description"/>
+            <vu:select-edit object="documentaryResource" field="cvaId" list="contextValueList" label="#{documentaryResource.context}" th:readonly="${model.modeReadOnly}" labelField="label"/>
+            <vu:select-edit v-if="vueData.documentaryResource.cvaId !== null" object="documentaryResource" field="cpvId" list="contextPossibleValueList" label="#{documentaryResource.contextValue}" th:readonly="${model.modeReadOnly}" labelField="value"/>
         </vu:grid>
     </vu:block>
 
@@ -57,6 +69,8 @@
         <vu:include-data object="documentaryResource" field="dreTypeCd" modifiable="true"/>
         <vu:include-data object="documentaryResource" field="title" modifiable="true"/>
         <vu:include-data object="documentaryResource" field="url" modifiable="true"/>
+        <vu:include-data object="documentaryResource" field="cvaId" modifiable="true"/>
+        <vu:include-data object="documentaryResource" field="cpvId" modifiable="true"/>
         <vu:include-data object="documentaryResourceTypeList" field="dreTypeCd" />
         <vu:include-data object="documentaryResourceTypeList" field="label" />
         <vu:include-data object="documentaryResourceTypeList" field="labelFr" />
