@@ -73,6 +73,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		DictionaryEntityWrapper(io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper.class),
 		/** Objet de données DocumentaryResource. */
 		DocumentaryResource(io.vertigo.chatbot.designer.domain.DocumentaryResource.class),
+		/** Objet de données DocumentaryResourceContext. */
+		DocumentaryResourceContext(io.vertigo.chatbot.designer.domain.DocumentaryResourceContext.class),
 		/** Objet de données DocumentaryResourceExport. */
 		DocumentaryResourceExport(io.vertigo.chatbot.commons.domain.DocumentaryResourceExport.class),
 		/** Objet de données DocumentaryResourceType. */
@@ -129,6 +131,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		QuestionAnswerCategory(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory.class),
 		/** Objet de données QuestionAnswerCategoryExport. */
 		QuestionAnswerCategoryExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategoryExport.class),
+		/** Objet de données QuestionAnswerContext. */
+		QuestionAnswerContext(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContext.class),
 		/** Objet de données QuestionAnswerExport. */
 		QuestionAnswerExport(io.vertigo.chatbot.commons.domain.QuestionAnswerExport.class),
 		/** Objet de données QuestionAnswerFileExport. */
@@ -736,16 +740,25 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		description,
 		/** Propriété 'Url'. */
 		url,
-		/** Propriété 'Context value id'. */
-		cvaId,
-		/** Propriété 'Context possible value id'. */
-		cpvId,
 		/** Propriété 'Attachment id'. */
 		attId,
 		/** Propriété 'Documentary resource type'. */
 		dreTypeCd,
 		/** Propriété 'Chatbot'. */
 		botId	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceContext.
+	 */
+	public enum DocumentaryResourceContextFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DocumentaryResourceContext> {
+		/** Propriété 'ID'. */
+		drcId,
+		/** Propriété 'Documentary resource id'. */
+		dreId,
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Context possible value id'. */
+		cpvId	}
 
 	/**
 	 * Enumération des champs de DocumentaryResourceExport.
@@ -1132,6 +1145,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Enabled'. */
 		isEnabled	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerContext.
+	 */
+	public enum QuestionAnswerContextFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContext> {
+		/** Propriété 'ID'. */
+		qacId,
+		/** Propriété 'Question answer id'. */
+		qaId,
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Context possible value id'. */
+		cpvId	}
 
 	/**
 	 * Enumération des champs de QuestionAnswerExport.

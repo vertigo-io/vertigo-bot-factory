@@ -81,6 +81,40 @@ create Association AQuestionAnswerCategoryQuestionAnswer{
     roleB : "Category"
 }
 
+create DtDefinition DtQuestionAnswerContext{
+	id		qacId			{domain: DoId 		label: "ID"			                           }
+}
+
+create Association AQuestionAnswerContextQuestionAnswer {
+	fkFieldName : "qaId"
+
+ 	dtDefinitionA : DtQuestionAnswerContext
+	type : "*>1"
+	dtDefinitionB : DtQuestionAnswer
+
+	labelB : "Question answer id"
+}
+
+create Association AQuestionAnswerContextContextValue {
+	fkFieldName : "cvaId"
+
+ 	dtDefinitionA : DtQuestionAnswerContext
+	type : "*>1"
+	dtDefinitionB : DtContextValue
+
+	labelB : "Context value id"
+}
+
+create Association AQuestionAnswerContextContextPossibleValue {
+	fkFieldName : "cpvId"
+
+ 	dtDefinitionA : DtQuestionAnswerContext
+	type : "*>?"
+	dtDefinitionB : DtContextPossibleValue
+
+	labelB : "Context possible value id"
+}
+
 /********** IHM **********/
 
 create DtDefinition DtQuestionAnswerIhm {

@@ -16,6 +16,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.ContextPossibleValue;
 import io.vertigo.chatbot.commons.domain.ContextValue;
+import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceContextServices;
 import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceServices;
 import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceTypeServices;
 import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
@@ -23,6 +24,7 @@ import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServi
 import io.vertigo.chatbot.designer.builder.services.bot.ContextPossibleValueServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.chatbot.designer.domain.DocumentaryResource;
+import io.vertigo.chatbot.designer.domain.DocumentaryResourceContext;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceType;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
@@ -39,6 +41,7 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 public class DocumentDetailController extends AbstractBotCreationController<DocumentaryResource> {
 
     private static final ViewContextKey<DocumentaryResource> documentaryResourceKey = ViewContextKey.of("documentaryResource");
+    private static final ViewContextKey<DocumentaryResourceContext> documentaryResourceContextListKey = ViewContextKey.of("documentaryResourceContextList");
     private static final ViewContextKey<DocumentaryResourceType> documentaryResourceTypeListKey = ViewContextKey.of("documentaryResourceTypeList");
     private static final ViewContextKey<ContextValue> contextValueListKey = ViewContextKey.of("contextValueList");
     private static final ViewContextKey<ContextPossibleValue> contextPossibleValueListKey = ViewContextKey.of("contextPossibleValueList");
@@ -66,16 +69,21 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
     @Inject
     private ContextPossibleValueServices contextPossibleValueServices;
 
+    @Inject
+    private DocumentaryResourceContextServices documentaryResourceContextServices;
+
     @GetMapping("/{dreId}")
     public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId, @PathVariable("dreId") final Long dreId) {
         final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
         final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
         final DocumentaryResource documentaryResource = documentaryResourceServices.getDocResById(dreId);
+        final DtList<DocumentaryResourceContext> documentaryResourceContexts = documentaryResourceContextServices.getAllDocumentaryResourceContextBydDreId(bot, dreId);
         final DtList<ContextValue> contextValues = contextValueServices.getAllContextValueByBotId(botId);
         final DtList<ContextPossibleValue> contextPossibleValues = contextPossibleValueServices.getAllContextPossibleValuesByBot(bot);
         final Attachment attachment = documentaryResource.getAttId() != null? attachmentServices.findById(documentaryResource.getAttId()) : new Attachment();
 
         viewContext.publishDto(documentaryResourceKey, documentaryResource);
+        viewContext.publishDtList(documentaryResourceContextListKey, documentaryResourceContexts);
         viewContext.publishDtList(contextValueListKey, contextValues);
         viewContext.publishDtList(contextPossibleValueListKey, contextPossibleValues);
         viewContext.publishDtList(filteredContextPossibleValueListKey, new DtList<>(ContextPossibleValue.class));
@@ -95,8 +103,14 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
     public void getNewDocumentaryResource(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
         final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
         final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
+        final DtList<ContextValue> contextValues = contextValueServices.getAllContextValueByBotId(botId);
+        final DtList<ContextPossibleValue> contextPossibleValues = contextPossibleValueServices.getAllContextPossibleValuesByBot(bot);
 
         viewContext.publishDto(documentaryResourceKey, documentaryResourceServices.getNewdocumentaryResource(botId));
+        viewContext.publishDtList(documentaryResourceContextListKey, new DtList<>(DocumentaryResourceContext.class));
+        viewContext.publishDtList(contextValueListKey, contextValues);
+        viewContext.publishDtList(contextPossibleValueListKey, contextPossibleValues);
+        viewContext.publishDtList(filteredContextPossibleValueListKey, new DtList<>(ContextPossibleValue.class));
         viewContext.publishDto(attachmentKey, new Attachment());
         viewContext.publishDtList(documentaryResourceTypeListKey, documentaryResourceTypeServices.getAllDocResTypes());
         viewContext.publishRef(maxSizeKey, chatbotCustomConfig.getTotalMaxAttachmentSize() != null ?
