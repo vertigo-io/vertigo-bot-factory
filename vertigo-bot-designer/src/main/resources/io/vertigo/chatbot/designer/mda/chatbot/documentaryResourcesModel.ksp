@@ -7,26 +7,6 @@ create DtDefinition DtDocumentaryResource{
 	field 	url     		{domain: DoText   	label: "Url" 		             				}
 }
 
-create Association ADocumentaryResourceContextValue {
-	fkFieldName : "cvaId"
-
- 	dtDefinitionA : DtDocumentaryResource
-	type : "*>1"
-	dtDefinitionB : DtContextValue
-
-	labelB : "Context value id"
-}
-
-create Association ADocumentaryResourceContextPossibleValue {
-	fkFieldName : "cpvId"
-
- 	dtDefinitionA : DtDocumentaryResource
-	type : "*>1"
-	dtDefinitionB : DtContextPossibleValue
-
-	labelB : "Context possible value id"
-}
-
 create DtDefinition DtDocumentaryResourceType {
 	stereotype : "StaticMasterData"
 	id    dreTypeCd 		{domain: DoCode 	label: "Code"}
@@ -47,6 +27,41 @@ create DtDefinition DtDocumentaryResourceType {
     sortField : "dreTypeCd"
  	displayField : "label"
 }
+
+create DtDefinition DtDocumentaryResourceContext{
+	id		drcId			{domain: DoId 		label: "ID"			                           }
+}
+
+create Association ADocumentaryResourceContextDocumentaryResource {
+	fkFieldName : "dreId"
+
+ 	dtDefinitionA : DtDocumentaryResourceContext
+	type : "*>1"
+	dtDefinitionB : DtDocumentaryResource
+
+	labelB : "Documentary resource id"
+}
+
+create Association ADocumentaryResourceContextContextValue {
+	fkFieldName : "cvaId"
+
+ 	dtDefinitionA : DtDocumentaryResourceContext
+	type : "*>1"
+	dtDefinitionB : DtContextValue
+
+	labelB : "Context value id"
+}
+
+create Association ADocumentaryResourceContextContextPossibleValue {
+	fkFieldName : "cpvId"
+
+ 	dtDefinitionA : DtDocumentaryResourceContext
+	type : "*>?"
+	dtDefinitionB : DtContextPossibleValue
+
+	labelB : "Context possible value id"
+}
+
 create Association ADocumentaryResourceAttachmentFileInfo {
 	fkFieldName : "attId"
 

@@ -140,14 +140,6 @@ public enum DtResources implements MessageKey {
 	 */
 	fldDocumentaryResource$url,
 	/**
-	 * Context value id.
-	 */
-	fldDocumentaryResource$cvaId,
-	/**
-	 * Context possible value id.
-	 */
-	fldDocumentaryResource$cpvId,
-	/**
 	 * Attachment id.
 	 */
 	fldDocumentaryResource$attId,
@@ -159,6 +151,26 @@ public enum DtResources implements MessageKey {
 	 * Chatbot.
 	 */
 	fldDocumentaryResource$botId,
+
+	/***********************************************************
+	/** DocumentaryResourceContext.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResourceContext$drcId,
+	/**
+	 * Documentary resource id.
+	 */
+	fldDocumentaryResourceContext$dreId,
+	/**
+	 * Context value id.
+	 */
+	fldDocumentaryResourceContext$cvaId,
+	/**
+	 * Context possible value id.
+	 */
+	fldDocumentaryResourceContext$cpvId,
 
 	/***********************************************************
 	/** DocumentaryResourceType.
