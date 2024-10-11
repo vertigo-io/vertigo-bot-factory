@@ -1,0 +1,30 @@
+package io.vertigo.chatbot.designer.builder.questionAnswerContext
+
+create Task TkGetAllQuestionAnswerContextIhmByQaId {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	qac.qac_id,
+			        qac.qa_id,
+					cva.cva_id,
+					cpv.cpv_id,
+					cva.label as cva_label,
+					cpv.value as cpv_value
+			from question_answer_context qac
+			join context_value cva on (cva.cva_id = qac.cva_id)
+			left join context_possible_value cpv on (cpv.cpv_id = qac.cpv_id)
+			where qac.qa_id = #qaId#
+			order by cva.label
+             "
+
+	in qaId  				          {domain : DoId         		                    cardinality : "1"  }
+	out questionAnswerContexts        {domain : DoDtQuestionAnswerContextIhm	        cardinality : "*"  }
+}
+
+create Task TkRemoveAllQuestionAnswerContextByQaId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from question_answer_context
+			where qa_id = #qaId#
+             "
+	in qaId  				{domain : DoId         		cardinality : "1"  }
+}

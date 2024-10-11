@@ -173,6 +173,34 @@ public enum DtResources implements MessageKey {
 	fldDocumentaryResourceContext$cpvId,
 
 	/***********************************************************
+	/** DocumentaryResourceContextIhm.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResourceContextIhm$drcId,
+	/**
+	 * Documentary resource id.
+	 */
+	fldDocumentaryResourceContextIhm$dreId,
+	/**
+	 * Context value id.
+	 */
+	fldDocumentaryResourceContextIhm$cvaId,
+	/**
+	 * Context possible value id.
+	 */
+	fldDocumentaryResourceContextIhm$cpvId,
+	/**
+	 * Context.
+	 */
+	fldDocumentaryResourceContextIhm$cvaLabel,
+	/**
+	 * Value.
+	 */
+	fldDocumentaryResourceContextIhm$cpvValue,
+
+	/***********************************************************
 	/** DocumentaryResourceType.
 	/***********************************************************
 	/**
