@@ -101,6 +101,34 @@ public enum DtResources implements MessageKey {
 	fldQuestionAnswerContext$cpvId,
 
 	/***********************************************************
+	/** QuestionAnswerContextIhm.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldQuestionAnswerContextIhm$qacId,
+	/**
+	 * Question answer id.
+	 */
+	fldQuestionAnswerContextIhm$qaId,
+	/**
+	 * Context value id.
+	 */
+	fldQuestionAnswerContextIhm$cvaId,
+	/**
+	 * Context possible value id.
+	 */
+	fldQuestionAnswerContextIhm$cpvId,
+	/**
+	 * Context.
+	 */
+	fldQuestionAnswerContextIhm$cvaLabel,
+	/**
+	 * Value.
+	 */
+	fldQuestionAnswerContextIhm$cpvValue,
+
+	/***********************************************************
 	/** QuestionAnswerFileExport.
 	/***********************************************************
 	/**
