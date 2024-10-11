@@ -16,6 +16,7 @@ import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
 import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.dao.DocumentaryResourceDAO;
 import io.vertigo.chatbot.designer.domain.DocumentaryResource;
+import io.vertigo.chatbot.designer.domain.DocumentaryResourceContext;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceTypeEnum;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
@@ -35,6 +36,9 @@ public class DocumentaryResourceServices implements Component {
 
     @Inject
     private DocumentaryResourceDAO documentaryResourceDAO;
+
+    @Inject
+    private DocumentaryResourceContextServices documentaryResourceContextServices;
 
     @Inject
     private AttachmentServices attachmentServices;
@@ -75,6 +79,7 @@ public class DocumentaryResourceServices implements Component {
 
     @Secured("BotUser")
     public void deleteDocumentaryResource(@SecuredOperation("botAdm") final Chatbot bot, final DocumentaryResource documentaryResource) {
+        documentaryResourceContextServices.deleteAllDocumentaryResourceContextByDreId(bot, documentaryResource.getDreId());
         documentaryResourceDAO.delete(documentaryResource.getDreId());
         if (documentaryResource.getAttId() != null) {
             attachmentServices.delete(bot, documentaryResource.getAttId());

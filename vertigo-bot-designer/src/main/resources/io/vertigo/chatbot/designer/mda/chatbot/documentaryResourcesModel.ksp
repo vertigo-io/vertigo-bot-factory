@@ -91,3 +91,12 @@ create Association ADocumentaryResourceChatbot {
 
 	labelB : "Chatbot"
 }
+
+create DtDefinition DtDocumentaryResourceContextIhm{
+	field	drcId			{domain: DoId 		    label: "ID"			                           }
+	field   dreId           {domain: DoId           label: "Documentary resource id"               }
+    field	cvaId			{domain: DoId 		    label: "Context value id"			           }
+	field	cpvId			{domain: DoId 		    label: "Context possible value id"			   }
+	field	cvaLabel		{domain: DoLabel 		label: "Context"			                   }
+	field	cpvValue		{domain: DoLabel 		label: "Value"			                       }
+}
