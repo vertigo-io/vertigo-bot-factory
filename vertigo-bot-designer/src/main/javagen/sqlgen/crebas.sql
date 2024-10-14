@@ -1185,8 +1185,6 @@ create table QUESTION_ANSWER
     ANSWER      	 TEXT        	not null,
     IS_ENABLED  	 bool        	not null,
     CODE        	 TEXT        	not null,
-    CVA_ID      	 NUMERIC     	not null,
-    CPV_ID      	 NUMERIC     	not null,
     BOT_ID      	 NUMERIC     	not null,
     QA_CAT_ID   	 NUMERIC     	not null,
     constraint PK_QUESTION_ANSWER primary key (QA_ID)
@@ -1206,12 +1204,6 @@ comment on column QUESTION_ANSWER.IS_ENABLED is
 
 comment on column QUESTION_ANSWER.CODE is
 'Code';
-
-comment on column QUESTION_ANSWER.CVA_ID is
-'Context value id';
-
-comment on column QUESTION_ANSWER.CPV_ID is
-'Context possible value id';
 
 comment on column QUESTION_ANSWER.BOT_ID is
 'Chatbot';
@@ -2130,23 +2122,11 @@ alter table QUESTION_ANSWER_CONTEXT
 
 create index A_QUESTION_ANSWER_CONTEXT_CONTEXT_VALUE_CONTEXT_VALUE_FK on QUESTION_ANSWER_CONTEXT (CVA_ID asc);
 
-alter table QUESTION_ANSWER
-	add constraint FK_A_QUESTION_ANSWER_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE foreign key (CPV_ID)
-	references CONTEXT_POSSIBLE_VALUE (CPV_ID);
-
-create index A_QUESTION_ANSWER_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE_FK on QUESTION_ANSWER (CPV_ID asc);
-
 alter table QUESTION_ANSWER_CONTEXT
 	add constraint FK_A_QUESTION_ANSWER_CONTEXT_QUESTION_ANSWER_QUESTION_ANSWER foreign key (QA_ID)
 	references QUESTION_ANSWER (QA_ID);
 
 create index A_QUESTION_ANSWER_CONTEXT_QUESTION_ANSWER_QUESTION_ANSWER_FK on QUESTION_ANSWER_CONTEXT (QA_ID asc);
-
-alter table QUESTION_ANSWER
-	add constraint FK_A_QUESTION_ANSWER_CONTEXT_VALUE_CONTEXT_VALUE foreign key (CVA_ID)
-	references CONTEXT_VALUE (CVA_ID);
-
-create index A_QUESTION_ANSWER_CONTEXT_VALUE_CONTEXT_VALUE_FK on QUESTION_ANSWER (CVA_ID asc);
 
 alter table RESPONSE_BUTTON
 	add constraint FK_A_RESPONSE_BUTTON_TOPIC_RESPONSE_TOPIC foreign key (TOP_ID_RESPONSE)

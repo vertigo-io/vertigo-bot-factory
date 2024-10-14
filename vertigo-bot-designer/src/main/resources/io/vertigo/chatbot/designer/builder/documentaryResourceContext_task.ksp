@@ -28,3 +28,12 @@ create Task TkRemoveAllDocumentaryResourceContextByDreId {
              "
 	in dreId  				{domain : DoId         		cardinality : "1"  }
 }
+
+create Task TkRemoveAllDocumentaryResourceContextByCvaId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from documentary_resource_context
+			where cva_id = #cvaId#
+             "
+	in cvaId  				{domain : DoId         		cardinality : "1"  }
+}

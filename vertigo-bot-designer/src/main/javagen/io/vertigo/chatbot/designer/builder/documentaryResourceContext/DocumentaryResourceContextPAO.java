@@ -70,6 +70,22 @@ public final class DocumentaryResourceContextPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkRemoveAllDocumentaryResourceContextByCvaId.
+	 * @param cvaId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveAllDocumentaryResourceContextByCvaId",
+			request = "delete from documentary_resource_context\n" + 
+ " 			where cva_id = #cvaId#",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeAllDocumentaryResourceContextByCvaId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "cvaId", smartType = "STyId") final Long cvaId) {
+		final Task task = createTaskBuilder("TkRemoveAllDocumentaryResourceContextByCvaId")
+				.addValue("cvaId", cvaId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
 	 * Execute la tache TkRemoveAllDocumentaryResourceContextByDreId.
 	 * @param dreId Long
 	*/
