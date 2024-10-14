@@ -106,4 +106,8 @@ public class ContextEnvironmentServices implements Component {
     public ContextEnvironmentValue saveContextEnvironmentValue(@SecuredOperation("botContributor") final Chatbot bot, final ContextEnvironmentValue contextEnvironmentValue) {
         return contextEnvironmentValueServices.save(contextEnvironmentValue);
     }
+
+    public void deleteAllContextEnvironmentByBot(@SecuredOperation("botAdministrator") final Chatbot bot){
+        getAllContextEnvironmentsByBot(bot.getBotId()).forEach(contextEnvironment -> deleteContextEnvironment(bot, contextEnvironment.getCenvId()));
+    }
 }

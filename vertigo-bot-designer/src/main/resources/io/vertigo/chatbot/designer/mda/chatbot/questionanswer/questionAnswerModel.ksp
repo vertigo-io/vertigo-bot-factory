@@ -8,26 +8,6 @@ create DtDefinition DtQuestionAnswer {
     field  code             {domain: DoText    label: "Code"                         cardinality : "1"  }
 }
 
-create Association AQuestionAnswerContextValue {
-	fkFieldName : "cvaId"
-
- 	dtDefinitionA : DtQuestionAnswer
-	type : "*>1"
-	dtDefinitionB : DtContextValue
-
-	labelB : "Context value id"
-}
-
-create Association AQuestionAnswerContextPossibleValue {
-	fkFieldName : "cpvId"
-
- 	dtDefinitionA : DtQuestionAnswer
-	type : "*>1"
-	dtDefinitionB : DtContextPossibleValue
-
-	labelB : "Context possible value id"
-}
-
 create DtDefinition DtQuestionAnswerFileExport {
     field  question         {domain: DoText    label: "Question"                     cardinality : "1"  }
     field  answer           {domain: DoText    label: "Answer"                       cardinality : "1"  }

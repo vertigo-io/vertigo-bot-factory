@@ -9,9 +9,12 @@ import io.vertigo.chatbot.designer.builder.documentaryResourceContext.Documentar
 import io.vertigo.chatbot.designer.dao.DocumentaryResourceContextDAO;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceContext;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtListState;
 
 @Transactional
 @Secured("BotUser")
@@ -37,5 +40,17 @@ public class DocumentaryResourceContextServices implements Component {
 
     public void deleteAllDocumentaryResourceContextByDreId(@SecuredOperation("botContributor") final Chatbot bot, final long dreId) {
         documentaryResourceContextPAO.removeAllDocumentaryResourceContextByDreId(dreId);
+    }
+
+    public void deleteAllDocumentaryResourceContextByCvaId(@SecuredOperation("botContributor") final Chatbot bot, final long cvaId) {
+        documentaryResourceContextPAO.removeAllDocumentaryResourceContextByCvaId(cvaId);
+    }
+
+    public void setAllDocumentaryResourceContextCpvIdToNullByCpvId(@SecuredOperation("botContributor") final Chatbot bot, final long cpvId){
+        documentaryResourceContextDAO.findAll(Criterions.isEqualTo(DtDefinitions.DocumentaryResourceContextFields.cpvId, cpvId), DtListState.of(null))
+                .forEach(documentaryResourceContext -> {
+                    documentaryResourceContext.setCpvId(null);
+                    saveDocumentaryResourceContext(bot, documentaryResourceContext);
+                });
     }
 }

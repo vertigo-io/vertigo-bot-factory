@@ -86,6 +86,10 @@ public class DocumentaryResourceServices implements Component {
         }
     }
 
+    public void deleteAllDocumentaryResourceByBot(@SecuredOperation("botAdm") final Chatbot bot){
+        getAllDocResByBot(bot).forEach(documentaryResource -> deleteDocumentaryResource(bot, documentaryResource));
+    }
+
     public DocumentaryResource getNewdocumentaryResource(final Long botId) {
         DocumentaryResource documentaryResource = new DocumentaryResource();
         documentaryResource.setBotId(botId);
