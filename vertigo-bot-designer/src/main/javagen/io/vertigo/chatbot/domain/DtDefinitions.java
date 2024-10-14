@@ -1140,10 +1140,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isEnabled,
 		/** Propriété 'Code'. */
 		code,
-		/** Propriété 'Context value id'. */
-		cvaId,
-		/** Propriété 'Context possible value id'. */
-		cpvId,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Category'. */

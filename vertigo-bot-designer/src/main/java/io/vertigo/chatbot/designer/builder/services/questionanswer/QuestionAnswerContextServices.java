@@ -9,9 +9,12 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContext;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContextIhm;
 import io.vertigo.chatbot.designer.builder.questionAnswerContext.QuestionAnswerContextPAO;
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
+import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.structure.model.DtListState;
 
 @Transactional
 @Secured("BotUser")
@@ -37,5 +40,17 @@ public class QuestionAnswerContextServices implements Component {
 
     public void deleteAllQuestionAnswerContextByQaId(@SecuredOperation("botContributor") final Chatbot bot, final long qaId) {
         questionAnswerContextPAO.removeAllQuestionAnswerContextByQaId(qaId);
+    }
+
+    public void deleteAllQuestionAnswerContextByCvaId(@SecuredOperation("botContributor") final Chatbot bot, final long cvaId) {
+        questionAnswerContextPAO.removeAllQuestionAnswerContextByCvaId(cvaId);
+    }
+
+    public void setAllQuestionAnswerContextCpvIdToNullByCpvId(@SecuredOperation("botContributor") final Chatbot bot, final long cpvId){
+        questionAnswerContextDAO.findAll(Criterions.isEqualTo(DtDefinitions.QuestionAnswerContextFields.cpvId, cpvId), DtListState.of(null))
+                .forEach(questionAnswerContext -> {
+                    questionAnswerContext.setCpvId(null);
+                    saveQuestionAnswerContext(bot, questionAnswerContext);
+                });
     }
 }
