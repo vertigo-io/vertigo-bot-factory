@@ -155,6 +155,10 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		Elements imgElements = document.select("img");
 		for (Element imgElement : imgElements) {
 			String src = imgElement.attr("src");
+			// For icons, src attribute is relative.
+			if (src.startsWith("/wiki")) {
+				src = baseUrl + src.substring(5);
+			}
 			HttpResponse<InputStream> response = searchImageOnConfluence(src, headers);
 			String imageBase64 = formatImageToBase64String(response);
 			imgElement.attr("src", imageBase64);
