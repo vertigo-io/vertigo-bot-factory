@@ -39,8 +39,9 @@ public final class ConfluenceHttpRequestHelper {
         //helper
     }
 
-    private static HttpClient getBasicHttpClient() {
-        return HttpClient.newBuilder().version(Version.HTTP_1_1).build();
+    private static HttpClient getBasicHttpClient(HttpClient.Redirect redirectPolicy) {
+        HttpClient.Redirect redirect = redirectPolicy == null ? HttpClient.Redirect.NEVER : redirectPolicy;
+        return HttpClient.newBuilder().version(Version.HTTP_1_1).followRedirects(redirect).build();
     }
 
     public static HttpRequest createGetRequest(final String url, final Map<String, String> headers, final Map<String, String> params) {
@@ -55,9 +56,9 @@ public final class ConfluenceHttpRequestHelper {
         return createRequestBuilder(url, headers, null).PUT(publisher).build();
     }
 
-    public static <T extends Object> HttpResponse<T> sendRequest(HttpClient client, final HttpRequest request, final BodyHandler<T> handler, final int successStatutCode) {
+    public static <T extends Object> HttpResponse<T> sendRequest(HttpClient client, final HttpRequest request, HttpClient.Redirect redirectPolicy, final BodyHandler<T> handler, final int successStatutCode) {
         HttpResponse<T> response;
-        client = client != null ? client : getBasicHttpClient();
+        client = client != null ? client : getBasicHttpClient(redirectPolicy);
         try {
             response = client.send(request, handler);
             if (response.statusCode() != successStatutCode) {

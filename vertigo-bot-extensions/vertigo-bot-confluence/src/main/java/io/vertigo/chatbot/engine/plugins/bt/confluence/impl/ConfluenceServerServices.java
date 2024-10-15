@@ -9,6 +9,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.InputStream;
+import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
@@ -86,7 +87,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 
 	public HttpResponse<InputStream> searchImageOnConfluence(final String url, final Map<String, String> headers) {
 		final var request = ConfluenceHttpRequestHelper.createGetRequest(url, headers, null);
-		return ConfluenceHttpRequestHelper.sendRequest(null, request, BodyHandlers.ofInputStream(), 200);
+		return ConfluenceHttpRequestHelper.sendRequest(null, request, HttpClient.Redirect.NORMAL, BodyHandlers.ofInputStream(), 200);
 	}
 
 	@Override
@@ -104,7 +105,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 	private <T> HttpResponse<T> sendRequestToConfluence(final Map<String, String> params, final Map<String, String> headers, final String endUrl, final int successCode, final BodyHandler<T> handler) {
 		final var apiUrl = getApiUrl();
 		final var request = ConfluenceHttpRequestHelper.createGetRequest(apiUrl + endUrl, headers, params);
-		return ConfluenceHttpRequestHelper.sendRequest(null, request, handler, successCode);
+		return ConfluenceHttpRequestHelper.sendRequest(null, request, null, handler, successCode);
 	}
 
 	private String getBaseUrl() {
@@ -154,7 +155,8 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		Elements imgElements = document.select("img");
 		for (Element imgElement : imgElements) {
 			String src = imgElement.attr("src");
-			String imageBase64 = formatImageToBase64String(searchImageOnConfluence(baseUrl + src, headers));
+			HttpResponse<InputStream> response = searchImageOnConfluence(src, headers);
+			String imageBase64 = formatImageToBase64String(response);
 			imgElement.attr("src", imageBase64);
 		}
 		return document.html();
