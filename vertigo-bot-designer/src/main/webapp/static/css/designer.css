@@ -476,14 +476,14 @@ table .col_DoInstant {
 .q-message-text--received {
 	margin-left: 12px;
 	border: solid 1px rgba(224, 224, 224, 1);
-	box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 8px rgba(89, 89, 89, 0.1);
 	color: var(--chat-bot-bg-color) !important;
 	font-family: var(--chat-message-font-family) !important;
 }
 .q-message-text--sent {
 	margin-right: 12px;
 	margin-bottom: 12px;
-	box-shadow: 3px 4px 2px 0px rgba(0, 0, 0, 0.2) !important;
+	box-shadow: 0 0 8px rgba(89, 89, 89, 0.1);
 	color: var(--chat-user-bg-color) !important;
 	font-family: var(--chat-message-font-family) !important;
 }

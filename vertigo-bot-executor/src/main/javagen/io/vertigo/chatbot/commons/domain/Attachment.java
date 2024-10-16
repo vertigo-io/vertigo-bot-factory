@@ -2,6 +2,7 @@ package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
 import io.vertigo.datamodel.structure.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 import io.vertigo.datamodel.structure.stereotype.Field;
@@ -19,6 +20,21 @@ public final class Attachment implements Entity {
 	private String label;
 	private String type;
 	private Long length;
+
+	@io.vertigo.datamodel.structure.stereotype.Association(
+			name = "AAttachmentAttachmentType",
+			fkFieldName = "attTypeCd",
+			primaryDtDefinitionName = "DtAttachmentType",
+			primaryIsNavigable = true,
+			primaryRole = "AttachmentType",
+			primaryLabel = "Attachment type",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtAttachment",
+			foreignIsNavigable = false,
+			foreignRole = "Attachment",
+			foreignLabel = "Attachment",
+			foreignMultiplicity = "0..*")
+	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentType, io.vertigo.chatbot.commons.domain.AttachmentTypeEnum> attTypeCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.AttachmentType.class, "AttachmentType", io.vertigo.chatbot.commons.domain.AttachmentTypeEnum.class);
 
 	@io.vertigo.datamodel.structure.stereotype.Association(
 			name = "AAttachmentAttachmentFileInfo",
@@ -134,6 +150,25 @@ public final class Attachment implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Attachment type'.
+	 * @return String attTypeCd <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Attachment type", fkDefinition = "DtAttachmentType", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	public String getAttTypeCd() {
+		return (String) attTypeCdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Attachment type'.
+	 * @param attTypeCd String <b>Obligatoire</b>
+	 */
+	public void setAttTypeCd(final String attTypeCd) {
+		attTypeCdAccessor.setId(attTypeCd);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'AttachmentFileInfo'.
 	 * @return Long attFiId <b>Obligatoire</b>
 	 */
@@ -176,6 +211,14 @@ public final class Attachment implements Entity {
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentFileInfo> attachmentFileInfo() {
 		return attFiIdAccessor;
+	}
+
+ 	/**
+	 * Association : Attachment type.
+	 * @return l'accesseur vers la propriété 'Attachment type'
+	 */
+	public EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentType, io.vertigo.chatbot.commons.domain.AttachmentTypeEnum> attachmentType() {
+		return attTypeCdAccessor;
 	}
 
  	/**

@@ -73,6 +73,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		DictionaryEntityWrapper(io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper.class),
 		/** Objet de données DocumentaryResource. */
 		DocumentaryResource(io.vertigo.chatbot.designer.domain.DocumentaryResource.class),
+		/** Objet de données DocumentaryResourceContext. */
+		DocumentaryResourceContext(io.vertigo.chatbot.designer.domain.DocumentaryResourceContext.class),
+		/** Objet de données DocumentaryResourceContextIhm. */
+		DocumentaryResourceContextIhm(io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm.class),
+		/** Objet de données DocumentaryResourceExport. */
+		DocumentaryResourceExport(io.vertigo.chatbot.commons.domain.DocumentaryResourceExport.class),
 		/** Objet de données DocumentaryResourceType. */
 		DocumentaryResourceType(io.vertigo.chatbot.designer.domain.DocumentaryResourceType.class),
 		/** Objet de données ExecutorConfiguration. */
@@ -127,6 +133,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		QuestionAnswerCategory(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory.class),
 		/** Objet de données QuestionAnswerCategoryExport. */
 		QuestionAnswerCategoryExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategoryExport.class),
+		/** Objet de données QuestionAnswerContext. */
+		QuestionAnswerContext(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContext.class),
+		/** Objet de données QuestionAnswerContextIhm. */
+		QuestionAnswerContextIhm(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContextIhm.class),
 		/** Objet de données QuestionAnswerExport. */
 		QuestionAnswerExport(io.vertigo.chatbot.commons.domain.QuestionAnswerExport.class),
 		/** Objet de données QuestionAnswerFileExport. */
@@ -304,7 +314,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Size'. */
 		length,
 		/** Propriété 'Data'. */
-		fileData	}
+		fileData,
+		/** Propriété 'Type'. */
+		type	}
 
 	/**
 	 * Enumération des champs de AttachmentFileInfo.
@@ -362,6 +374,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jiraFieldSetting,
 		/** Propriété 'Questions answers List'. */
 		questionAnswerList,
+		/** Propriété 'Documentary resources'. */
+		documentaryResources,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -425,6 +439,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		disableNlu,
 		/** Propriété 'Maximum of saved trainings'. */
 		maxSavedTraining,
+		/** Propriété 'Display chatbot'. */
+		chatbotDisplay,
+		/** Propriété 'Display Q&A'. */
+		qandaDisplay,
+		/** Propriété 'Display documentary resources'. */
+		documentaryResourceDisplay,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'fontFamily'. */
@@ -457,7 +477,13 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Total maximum attachment size'. */
 		totalMaxAttachmentSize,
 		/** Propriété 'Disable NlU'. */
-		disableNlu	}
+		disableNlu,
+		/** Propriété 'Display chatbot'. */
+		chatbotDisplay,
+		/** Propriété 'Display Q&A'. */
+		qandaDisplay,
+		/** Propriété 'Display documentary resources'. */
+		documentaryResourceDisplay	}
 
 	/**
 	 * Enumération des champs de ChatbotNode.
@@ -716,8 +742,6 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		title,
 		/** Propriété 'Description'. */
 		description,
-		/** Propriété 'Text'. */
-		text,
 		/** Propriété 'Url'. */
 		url,
 		/** Propriété 'Attachment id'. */
@@ -726,6 +750,49 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		dreTypeCd,
 		/** Propriété 'Chatbot'. */
 		botId	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceContext.
+	 */
+	public enum DocumentaryResourceContextFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DocumentaryResourceContext> {
+		/** Propriété 'ID'. */
+		drcId,
+		/** Propriété 'Documentary resource id'. */
+		dreId,
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Context possible value id'. */
+		cpvId	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceContextIhm.
+	 */
+	public enum DocumentaryResourceContextIhmFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm> {
+		/** Propriété 'ID'. */
+		drcId,
+		/** Propriété 'Documentary resource id'. */
+		dreId,
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Context possible value id'. */
+		cpvId,
+		/** Propriété 'Context'. */
+		cvaLabel,
+		/** Propriété 'Value'. */
+		cpvValue	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceExport.
+	 */
+	public enum DocumentaryResourceExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.DocumentaryResourceExport> {
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Resource Type'. */
+		dreTypeCd,
+		/** Propriété 'Url'. */
+		url,
+		/** Propriété 'File name'. */
+		fileName	}
 
 	/**
 	 * Enumération des champs de DocumentaryResourceType.
@@ -1095,6 +1162,36 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Enabled'. */
 		isEnabled	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerContext.
+	 */
+	public enum QuestionAnswerContextFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContext> {
+		/** Propriété 'ID'. */
+		qacId,
+		/** Propriété 'Question answer id'. */
+		qaId,
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Context possible value id'. */
+		cpvId	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerContextIhm.
+	 */
+	public enum QuestionAnswerContextIhmFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContextIhm> {
+		/** Propriété 'ID'. */
+		qacId,
+		/** Propriété 'Question answer id'. */
+		qaId,
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Context possible value id'. */
+		cpvId,
+		/** Propriété 'Context'. */
+		cvaLabel,
+		/** Propriété 'Value'. */
+		cpvValue	}
 
 	/**
 	 * Enumération des champs de QuestionAnswerExport.

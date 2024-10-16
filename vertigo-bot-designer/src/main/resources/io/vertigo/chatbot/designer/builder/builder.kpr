@@ -18,3 +18,5 @@ topicLabel_task.ksp
 unknownSentence_task.ksp
 history_task.ksp
 monitoring_task.ksp
+documentaryResourceContext_task.ksp
+questionAnswerContext_task.ksp

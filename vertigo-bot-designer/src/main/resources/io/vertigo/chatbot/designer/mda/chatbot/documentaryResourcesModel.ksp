@@ -4,7 +4,6 @@ create DtDefinition DtDocumentaryResource{
 	id		dreId			{domain: DoId 		label: "ID"					    				}
 	field 	title 			{domain: DoLabel 	label: "Title" 			    cardinality : "1"	}
 	field 	description		{domain: DoText 	label: "Description" 		    				}
-	field 	text    		{domain: DoText 	label: "Text" 		    	        			}
 	field 	url     		{domain: DoText   	label: "Url" 		             				}
 }
 
@@ -23,17 +22,47 @@ create DtDefinition DtDocumentaryResourceType {
             "dreTypeCd" : "FILE",
             "label" : "File",
             "labelFr" : "Document"
-        },
-        "TEXT" : {
-            "dreTypeCd" : "TEXT",
-            "label" : "Text",
-            "labelFr" : "Texte"
         }
      }`
     sortField : "dreTypeCd"
  	displayField : "label"
 }
-create Association ADocumentaryResourceFileAttachmentFileInfo {
+
+create DtDefinition DtDocumentaryResourceContext{
+	id		drcId			{domain: DoId 		label: "ID"			                           }
+}
+
+create Association ADocumentaryResourceContextDocumentaryResource {
+	fkFieldName : "dreId"
+
+ 	dtDefinitionA : DtDocumentaryResourceContext
+	type : "*>1"
+	dtDefinitionB : DtDocumentaryResource
+
+	labelB : "Documentary resource id"
+}
+
+create Association ADocumentaryResourceContextContextValue {
+	fkFieldName : "cvaId"
+
+ 	dtDefinitionA : DtDocumentaryResourceContext
+	type : "*>1"
+	dtDefinitionB : DtContextValue
+
+	labelB : "Context value id"
+}
+
+create Association ADocumentaryResourceContextContextPossibleValue {
+	fkFieldName : "cpvId"
+
+ 	dtDefinitionA : DtDocumentaryResourceContext
+	type : "*>?"
+	dtDefinitionB : DtContextPossibleValue
+
+	labelB : "Context possible value id"
+}
+
+create Association ADocumentaryResourceAttachmentFileInfo {
 	fkFieldName : "attId"
 
  	dtDefinitionA : DtDocumentaryResource
@@ -61,4 +90,13 @@ create Association ADocumentaryResourceChatbot {
 	dtDefinitionB : DtChatbot
 
 	labelB : "Chatbot"
+}
+
+create DtDefinition DtDocumentaryResourceContextIhm{
+	field	drcId			{domain: DoId 		    label: "ID"			                           }
+	field   dreId           {domain: DoId           label: "Documentary resource id"               }
+    field	cvaId			{domain: DoId 		    label: "Context value id"			           }
+	field	cpvId			{domain: DoId 		    label: "Context possible value id"			   }
+	field	cvaLabel		{domain: DoLabel 		label: "Context"			                   }
+	field	cpvValue		{domain: DoLabel 		label: "Value"			                       }
 }

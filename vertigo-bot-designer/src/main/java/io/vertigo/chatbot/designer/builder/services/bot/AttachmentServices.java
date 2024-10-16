@@ -107,6 +107,7 @@ public class AttachmentServices implements Component {
 				attachmentExport.setFileName(attachmentFileInfo.getFileName());
 				attachmentExport.setMimeType(attachmentFileInfo.getMimeType());
 				attachmentExport.setLength(attachmentFileInfo.getLength());
+				attachmentExport.setType(attachment.getAttTypeCd());
 				final VFile file = designerFileServices.getAttachment(attachment.getAttFiId());
 				try (final InputStream inputStream = file.createInputStream()) {
 					attachmentExport.setFileData(Base64.getEncoder().encodeToString(inputStream.readAllBytes()));

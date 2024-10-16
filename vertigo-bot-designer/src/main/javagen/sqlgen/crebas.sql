@@ -37,6 +37,8 @@ drop table IF EXISTS DICTIONARY_ENTITY cascade;
 drop sequence IF EXISTS SEQ_DICTIONARY_ENTITY;
 drop table IF EXISTS DOCUMENTARY_RESOURCE cascade;
 drop sequence IF EXISTS SEQ_DOCUMENTARY_RESOURCE;
+drop table IF EXISTS DOCUMENTARY_RESOURCE_CONTEXT cascade;
+drop sequence IF EXISTS SEQ_DOCUMENTARY_RESOURCE_CONTEXT;
 drop table IF EXISTS DOCUMENTARY_RESOURCE_TYPE cascade;
 drop table IF EXISTS FONT_FAMILY cascade;
 drop table IF EXISTS GROUPS cascade;
@@ -65,6 +67,8 @@ drop table IF EXISTS QUESTION_ANSWER cascade;
 drop sequence IF EXISTS SEQ_QUESTION_ANSWER;
 drop table IF EXISTS QUESTION_ANSWER_CATEGORY cascade;
 drop sequence IF EXISTS SEQ_QUESTION_ANSWER_CATEGORY;
+drop table IF EXISTS QUESTION_ANSWER_CONTEXT cascade;
+drop sequence IF EXISTS SEQ_QUESTION_ANSWER_CONTEXT;
 drop table IF EXISTS RATING_OPTION cascade;
 drop sequence IF EXISTS SEQ_RATING_OPTION;
 drop table IF EXISTS RESPONSE_BUTTON cascade;
@@ -153,6 +157,9 @@ create sequence SEQ_DICTIONARY_ENTITY
 create sequence SEQ_DOCUMENTARY_RESOURCE
 	start with 1000 cache 1; 
 
+create sequence SEQ_DOCUMENTARY_RESOURCE_CONTEXT
+	start with 1000 cache 1; 
+
 
 
 create sequence SEQ_GROUPS
@@ -190,6 +197,9 @@ create sequence SEQ_QUESTION_ANSWER
 	start with 1000 cache 1; 
 
 create sequence SEQ_QUESTION_ANSWER_CATEGORY
+	start with 1000 cache 1; 
+
+create sequence SEQ_QUESTION_ANSWER_CONTEXT
 	start with 1000 cache 1; 
 
 create sequence SEQ_RATING_OPTION
@@ -415,6 +425,9 @@ create table CHATBOT_CUSTOM_CONFIG
     TOTAL_MAX_ATTACHMENT_SIZE	 NUMERIC     	,
     DISABLE_NLU 	 bool        	,
     MAX_SAVED_TRAINING	 NUMERIC     	,
+    CHATBOT_DISPLAY	 bool        	,
+    QANDA_DISPLAY	 bool        	,
+    DOCUMENTARY_RESOURCE_DISPLAY	 bool        	,
     BOT_ID      	 NUMERIC     	not null,
     FOF_CD      	 VARCHAR(100)	,
     constraint PK_CHATBOT_CUSTOM_CONFIG primary key (CCC_ID)
@@ -458,6 +471,15 @@ comment on column CHATBOT_CUSTOM_CONFIG.DISABLE_NLU is
 
 comment on column CHATBOT_CUSTOM_CONFIG.MAX_SAVED_TRAINING is
 'Maximum of saved trainings';
+
+comment on column CHATBOT_CUSTOM_CONFIG.CHATBOT_DISPLAY is
+'Display chatbot';
+
+comment on column CHATBOT_CUSTOM_CONFIG.QANDA_DISPLAY is
+'Display Q&A';
+
+comment on column CHATBOT_CUSTOM_CONFIG.DOCUMENTARY_RESOURCE_DISPLAY is
+'Display documentary resources';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_ID is
 'Chatbot';
@@ -713,7 +735,6 @@ create table DOCUMENTARY_RESOURCE
     DRE_ID      	 NUMERIC     	not null,
     TITLE       	 VARCHAR(100)	not null,
     DESCRIPTION 	 TEXT        	,
-    TEXT        	 TEXT        	,
     URL         	 TEXT        	,
     ATT_ID      	 NUMERIC     	,
     DRE_TYPE_CD 	 VARCHAR(100)	not null,
@@ -730,9 +751,6 @@ comment on column DOCUMENTARY_RESOURCE.TITLE is
 comment on column DOCUMENTARY_RESOURCE.DESCRIPTION is
 'Description';
 
-comment on column DOCUMENTARY_RESOURCE.TEXT is
-'Text';
-
 comment on column DOCUMENTARY_RESOURCE.URL is
 'Url';
 
@@ -744,6 +762,30 @@ comment on column DOCUMENTARY_RESOURCE.DRE_TYPE_CD is
 
 comment on column DOCUMENTARY_RESOURCE.BOT_ID is
 'Chatbot';
+
+-- ============================================================
+--   Table : DOCUMENTARY_RESOURCE_CONTEXT                                        
+-- ============================================================
+create table DOCUMENTARY_RESOURCE_CONTEXT
+(
+    DRC_ID      	 NUMERIC     	not null,
+    DRE_ID      	 NUMERIC     	not null,
+    CVA_ID      	 NUMERIC     	not null,
+    CPV_ID      	 NUMERIC     	,
+    constraint PK_DOCUMENTARY_RESOURCE_CONTEXT primary key (DRC_ID)
+);
+
+comment on column DOCUMENTARY_RESOURCE_CONTEXT.DRC_ID is
+'ID';
+
+comment on column DOCUMENTARY_RESOURCE_CONTEXT.DRE_ID is
+'Documentary resource id';
+
+comment on column DOCUMENTARY_RESOURCE_CONTEXT.CVA_ID is
+'Context value id';
+
+comment on column DOCUMENTARY_RESOURCE_CONTEXT.CPV_ID is
+'Context possible value id';
 
 -- ============================================================
 --   Table : DOCUMENTARY_RESOURCE_TYPE                                        
@@ -1192,6 +1234,30 @@ comment on column QUESTION_ANSWER_CATEGORY.IS_ENABLED is
 
 comment on column QUESTION_ANSWER_CATEGORY.BOT_ID is
 'Chatbot';
+
+-- ============================================================
+--   Table : QUESTION_ANSWER_CONTEXT                                        
+-- ============================================================
+create table QUESTION_ANSWER_CONTEXT
+(
+    QAC_ID      	 NUMERIC     	not null,
+    QA_ID       	 NUMERIC     	not null,
+    CVA_ID      	 NUMERIC     	not null,
+    CPV_ID      	 NUMERIC     	,
+    constraint PK_QUESTION_ANSWER_CONTEXT primary key (QAC_ID)
+);
+
+comment on column QUESTION_ANSWER_CONTEXT.QAC_ID is
+'ID';
+
+comment on column QUESTION_ANSWER_CONTEXT.QA_ID is
+'Question answer id';
+
+comment on column QUESTION_ANSWER_CONTEXT.CVA_ID is
+'Context value id';
+
+comment on column QUESTION_ANSWER_CONTEXT.CPV_ID is
+'Context possible value id';
 
 -- ============================================================
 --   Table : RATING_OPTION                                        
@@ -1907,22 +1973,40 @@ alter table DICTIONARY_ENTITY
 create index A_DICTIONARY_ENTITY_CHATBOT_CHATBOT_FK on DICTIONARY_ENTITY (BOT_ID asc);
 
 alter table DOCUMENTARY_RESOURCE
+	add constraint FK_A_DOCUMENTARY_RESOURCE_ATTACHMENT_FILE_INFO_ATTACHMENT foreign key (ATT_ID)
+	references ATTACHMENT (ATT_ID);
+
+create index A_DOCUMENTARY_RESOURCE_ATTACHMENT_FILE_INFO_ATTACHMENT_FK on DOCUMENTARY_RESOURCE (ATT_ID asc);
+
+alter table DOCUMENTARY_RESOURCE
 	add constraint FK_A_DOCUMENTARY_RESOURCE_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
 
 create index A_DOCUMENTARY_RESOURCE_CHATBOT_CHATBOT_FK on DOCUMENTARY_RESOURCE (BOT_ID asc);
+
+alter table DOCUMENTARY_RESOURCE_CONTEXT
+	add constraint FK_A_DOCUMENTARY_RESOURCE_CONTEXT_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE foreign key (CPV_ID)
+	references CONTEXT_POSSIBLE_VALUE (CPV_ID);
+
+create index A_DOCUMENTARY_RESOURCE_CONTEXT_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE_FK on DOCUMENTARY_RESOURCE_CONTEXT (CPV_ID asc);
+
+alter table DOCUMENTARY_RESOURCE_CONTEXT
+	add constraint FK_A_DOCUMENTARY_RESOURCE_CONTEXT_CONTEXT_VALUE_CONTEXT_VALUE foreign key (CVA_ID)
+	references CONTEXT_VALUE (CVA_ID);
+
+create index A_DOCUMENTARY_RESOURCE_CONTEXT_CONTEXT_VALUE_CONTEXT_VALUE_FK on DOCUMENTARY_RESOURCE_CONTEXT (CVA_ID asc);
+
+alter table DOCUMENTARY_RESOURCE_CONTEXT
+	add constraint FK_A_DOCUMENTARY_RESOURCE_CONTEXT_DOCUMENTARY_RESOURCE_DOCUMENTARY_RESOURCE foreign key (DRE_ID)
+	references DOCUMENTARY_RESOURCE (DRE_ID);
+
+create index A_DOCUMENTARY_RESOURCE_CONTEXT_DOCUMENTARY_RESOURCE_DOCUMENTARY_RESOURCE_FK on DOCUMENTARY_RESOURCE_CONTEXT (DRE_ID asc);
 
 alter table DOCUMENTARY_RESOURCE
 	add constraint FK_A_DOCUMENTARY_RESOURCE_DOCUMENTARY_RESOURCE_TYPE_DOCUMENTARY_RESOURCE_TYPE foreign key (DRE_TYPE_CD)
 	references DOCUMENTARY_RESOURCE_TYPE (DRE_TYPE_CD);
 
 create index A_DOCUMENTARY_RESOURCE_DOCUMENTARY_RESOURCE_TYPE_DOCUMENTARY_RESOURCE_TYPE_FK on DOCUMENTARY_RESOURCE (DRE_TYPE_CD asc);
-
-alter table DOCUMENTARY_RESOURCE
-	add constraint FK_A_DOCUMENTARY_RESOURCE_FILE_ATTACHMENT_FILE_INFO_ATTACHMENT foreign key (ATT_ID)
-	references ATTACHMENT (ATT_ID);
-
-create index A_DOCUMENTARY_RESOURCE_FILE_ATTACHMENT_FILE_INFO_ATTACHMENT_FK on DOCUMENTARY_RESOURCE (ATT_ID asc);
 
 alter table HISTORY
 	add constraint FK_A_HISTORY_CHATBOT_CHATBOT foreign key (BOT_ID)
@@ -2025,6 +2109,24 @@ alter table QUESTION_ANSWER
 	references CHATBOT (BOT_ID);
 
 create index A_QUESTION_ANSWER_CHATBOT_CHATBOT_FK on QUESTION_ANSWER (BOT_ID asc);
+
+alter table QUESTION_ANSWER_CONTEXT
+	add constraint FK_A_QUESTION_ANSWER_CONTEXT_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE foreign key (CPV_ID)
+	references CONTEXT_POSSIBLE_VALUE (CPV_ID);
+
+create index A_QUESTION_ANSWER_CONTEXT_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE_FK on QUESTION_ANSWER_CONTEXT (CPV_ID asc);
+
+alter table QUESTION_ANSWER_CONTEXT
+	add constraint FK_A_QUESTION_ANSWER_CONTEXT_CONTEXT_VALUE_CONTEXT_VALUE foreign key (CVA_ID)
+	references CONTEXT_VALUE (CVA_ID);
+
+create index A_QUESTION_ANSWER_CONTEXT_CONTEXT_VALUE_CONTEXT_VALUE_FK on QUESTION_ANSWER_CONTEXT (CVA_ID asc);
+
+alter table QUESTION_ANSWER_CONTEXT
+	add constraint FK_A_QUESTION_ANSWER_CONTEXT_QUESTION_ANSWER_QUESTION_ANSWER foreign key (QA_ID)
+	references QUESTION_ANSWER (QA_ID);
+
+create index A_QUESTION_ANSWER_CONTEXT_QUESTION_ANSWER_QUESTION_ANSWER_FK on QUESTION_ANSWER_CONTEXT (QA_ID asc);
 
 alter table RESPONSE_BUTTON
 	add constraint FK_A_RESPONSE_BUTTON_TOPIC_RESPONSE_TOPIC foreign key (TOP_ID_RESPONSE)

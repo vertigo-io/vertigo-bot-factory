@@ -63,6 +63,10 @@ public enum DtResources implements MessageKey {
 	 * Data.
 	 */
 	fldAttachmentExport$fileData,
+	/**
+	 * Type.
+	 */
+	fldAttachmentExport$type,
 
 	/***********************************************************
 	/** AttachmentFileInfo.
@@ -160,6 +164,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldBotExport$questionAnswerList,
 	/**
+	 * Documentary resources.
+	 */
+	fldBotExport$documentaryResources,
+	/**
 	 * map Context.
 	 */
 	fldBotExport$mapContext,
@@ -248,6 +256,18 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$maxSavedTraining,
 	/**
+	 * Display chatbot.
+	 */
+	fldChatbotCustomConfig$chatbotDisplay,
+	/**
+	 * Display Q&A.
+	 */
+	fldChatbotCustomConfig$qandaDisplay,
+	/**
+	 * Display documentary resources.
+	 */
+	fldChatbotCustomConfig$documentaryResourceDisplay,
+	/**
 	 * Chatbot.
 	 */
 	fldChatbotCustomConfig$botId,
@@ -307,6 +327,18 @@ public enum DtResources implements MessageKey {
 	 * Disable NlU.
 	 */
 	fldChatbotCustomConfigExport$disableNlu,
+	/**
+	 * Display chatbot.
+	 */
+	fldChatbotCustomConfigExport$chatbotDisplay,
+	/**
+	 * Display Q&A.
+	 */
+	fldChatbotCustomConfigExport$qandaDisplay,
+	/**
+	 * Display documentary resources.
+	 */
+	fldChatbotCustomConfigExport$documentaryResourceDisplay,
 
 	/***********************************************************
 	/** ChatbotNode.
@@ -499,6 +531,26 @@ public enum DtResources implements MessageKey {
 	 * Chatbot.
 	 */
 	fldContextValue$botId,
+
+	/***********************************************************
+	/** DocumentaryResourceExport.
+	/***********************************************************
+	/**
+	 * Title.
+	 */
+	fldDocumentaryResourceExport$title,
+	/**
+	 * Resource Type.
+	 */
+	fldDocumentaryResourceExport$dreTypeCd,
+	/**
+	 * Url.
+	 */
+	fldDocumentaryResourceExport$url,
+	/**
+	 * File name.
+	 */
+	fldDocumentaryResourceExport$fileName,
 
 	/***********************************************************
 	/** ExecutorConfiguration.
