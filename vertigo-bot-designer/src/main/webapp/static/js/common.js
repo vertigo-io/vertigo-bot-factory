@@ -1,5 +1,7 @@
 window.addEventListener('vui-after-page-mounted', function () {
     VUiExtensions.methods = {
+        ...VUiExtensions.methods,
+
         appendToFormData: function (formData, name, value) {
             if (value != null) {
                 formData.append(name, value)
@@ -48,17 +50,6 @@ window.addEventListener('vui-after-page-mounted', function () {
         }
     }
 
-    function postChangeLocal(locale) {
-        VUiPage.httpPostAjax("_changeLocale", {
-                'locale': locale,
-            },
-            {
-                onSuccess: function () {
-                    location.reload();
-                }
-            });
-    }
-
     function saveContextEnvironment() {
         VUiPage.httpPostAjax("_saveContextEnvironment", {
             'cenvIdOpt': VertigoUi.vueData.newContextEnvironment.cenvId,
@@ -79,16 +70,5 @@ window.addEventListener('vui-after-page-mounted', function () {
             paramsResolved = VUiPage.objectToFormData(params);
         }
         oldHttpPostAjax(url, paramsResolved, options);
-    }
-
-    function hideOrShowBotToolbar() {
-        const botToolbar = document.getElementById("toolBarBots");
-        if (botToolbar !== undefined) {
-            if (botToolbar.classList.contains("hidden")) {
-                botToolbar.classList.remove("hidden");
-            } else {
-                botToolbar.classList.add("hidden");
-            }
-        }
     }
 });

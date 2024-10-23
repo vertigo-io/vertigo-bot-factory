@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-  xmlns:vu="http://www.morphbit.com/thymeleaf/component"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-    <vu:head-meta vuejsDevMode="true" />
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="Vertigo chatbot designer"/>
-    <meta name="author" content="Klee Group"/>
-    
-    <link rel="stylesheet" th:href="@{/static/css/designer.css}"/>
-    
+	<vu:head-meta vuejsDevMode="true" />
+	<meta charset="utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta name="description" content="Vertigo chatbot designer"/>
+	<meta name="author" content="Klee Group"/>
+
+	<link rel="stylesheet" th:href="@{/static/css/designer.css}"/>
+
 	<link rel="icon" th:href="@{/static/img/favicon.ico}"/>
 	<script type="text/javascript" th:src="@{/vertigo-ui/static/js/vertigo-ui-extensions.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/designer.js}"></script>
@@ -23,15 +23,44 @@
 	<div layout:fragment="javascript-header">
 	</div>
 
+	<script defer type="text/javascript" th:src="@{/static/js/common.js}"></script>
+
 	<vu:page vuejsDevMode="true">
-     	<section class="col container-bottom-padding" layout:fragment="page">
-     	</section>
+		<section class="col container-bottom-padding" layout:fragment="page">
+		</section>
 	</vu:page>
+
+	<script>
+		VUiExtensions.methods = {
+			...VUiExtensions.methods,
+
+			hideOrShowBotToolbar: function() {
+				const botToolbar = document.getElementById("toolBarBots");
+				if (botToolbar !== undefined) {
+					if (botToolbar.classList.contains("hidden")) {
+						botToolbar.classList.remove("hidden");
+					} else {
+						botToolbar.classList.add("hidden");
+					}
+				}
+			},
+
+			postChangeLocal: function(locale) {
+				VUiPage.httpPostAjax("_changeLocale", {
+							'locale': locale,
+						},
+						{
+							onSuccess: function () {
+								location.reload();
+							}
+						});
+			}
+		};
+	</script>
 
 	<div layout:fragment="javascript-footer">
 	</div>
 
-	<script defer type="text/javascript" th:src="@{/static/js/common.js}"></script>
 	<div layout:fragment="javascript-functions">
 	</div>
 </body>
