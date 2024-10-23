@@ -17,6 +17,7 @@ public final class ContextEnvironmentValueIhm implements DtObject {
 	private String value;
 	private Long cvaId;
 	private String label;
+	private String tyopCd;
 	
 	/**
 	 * Champ : DATA.
@@ -92,6 +93,25 @@ public final class ContextEnvironmentValueIhm implements DtObject {
 	 */
 	public void setLabel(final String label) {
 		this.label = label;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Operator'.
+	 * @return String tyopCd <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Operator")
+	public String getTyopCd() {
+		return tyopCd;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Operator'.
+	 * @param tyopCd String <b>Obligatoire</b>
+	 */
+	public void setTyopCd(final String tyopCd) {
+		this.tyopCd = tyopCd;
 	}
 	
 	/** {@inheritDoc} */

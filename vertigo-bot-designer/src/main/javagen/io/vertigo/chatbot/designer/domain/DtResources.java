@@ -59,6 +59,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Environment.
 	 */
 	fldContextEnvironmentValue$cenvId,
+	/**
+	 * Value operator.
+	 */
+	fldContextEnvironmentValue$tyopCd,
 
 	/***********************************************************
 	/** ContextEnvironmentValueIhm.
@@ -79,6 +83,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Context value label.
 	 */
 	fldContextEnvironmentValueIhm$label,
+	/**
+	 * Operator.
+	 */
+	fldContextEnvironmentValueIhm$tyopCd,
 
 	/***********************************************************
 	/** DictionaryEntity.
@@ -111,6 +119,58 @@ public enum DtResources implements LocaleMessageKey {
 	 * Synonyms list.
 	 */
 	fldDictionaryEntityWrapper$synonymsList,
+
+	/***********************************************************
+	/** DocumentaryResource.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResource$dreId,
+	/**
+	 * Title.
+	 */
+	fldDocumentaryResource$title,
+	/**
+	 * Description.
+	 */
+	fldDocumentaryResource$description,
+	/**
+	 * Text.
+	 */
+	fldDocumentaryResource$text,
+	/**
+	 * Url.
+	 */
+	fldDocumentaryResource$url,
+	/**
+	 * Attachment id.
+	 */
+	fldDocumentaryResource$attId,
+	/**
+	 * Documentary resource type.
+	 */
+	fldDocumentaryResource$dreTypeCd,
+	/**
+	 * Chatbot.
+	 */
+	fldDocumentaryResource$botId,
+
+	/***********************************************************
+	/** DocumentaryResourceType.
+	/***********************************************************
+	/**
+	 * Code.
+	 */
+	fldDocumentaryResourceType$dreTypeCd,
+	/**
+	 * Label.
+	 */
+	fldDocumentaryResourceType$label,
+	/**
+	 * LabelFr.
+	 */
+	fldDocumentaryResourceType$labelFr,
 
 	/***********************************************************
 	/** History.
@@ -211,4 +271,20 @@ public enum DtResources implements LocaleMessageKey {
 	 * Synonym label.
 	 */
 	fldTupleSynonymIhm$synonymLabel,
+
+	/***********************************************************
+	/** TypeOperator.
+	/***********************************************************
+	/**
+	 * ID.
+	 */
+	fldTypeOperator$tyopCd,
+	/**
+	 * Label.
+	 */
+	fldTypeOperator$label,
+	/**
+	 * LabelFr.
+	 */
+	fldTypeOperator$labelFr,
 }

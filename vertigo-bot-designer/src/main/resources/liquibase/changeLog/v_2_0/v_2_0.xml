@@ -161,4 +161,24 @@
         <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_06_03.sql"/>
     </changeSet>
 
+    <changeSet author="rsaintpaul" id="Create question_answer and question_answer_category tables">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_01.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Create documentary_resource and documentary_resource_type tables">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_08_01.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Create attachment_type table">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_08_06.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="create context_possible_value table">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_17.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Create type_operator table and add tyop column to context_possible_value and context_environment_value tables">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_24.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

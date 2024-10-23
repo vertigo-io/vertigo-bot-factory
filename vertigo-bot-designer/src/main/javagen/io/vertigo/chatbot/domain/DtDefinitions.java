@@ -25,6 +25,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		AttachmentExport(io.vertigo.chatbot.commons.domain.AttachmentExport.class),
 		/** Objet de données AttachmentFileInfo. */
 		AttachmentFileInfo(io.vertigo.chatbot.commons.domain.AttachmentFileInfo.class),
+		/** Objet de données AttachmentType. */
+		AttachmentType(io.vertigo.chatbot.commons.domain.AttachmentType.class),
 		/** Objet de données BotExport. */
 		BotExport(io.vertigo.chatbot.commons.domain.BotExport.class),
 		/** Objet de données CategoryStat. */
@@ -55,6 +57,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ContextEnvironmentValue(io.vertigo.chatbot.designer.domain.ContextEnvironmentValue.class),
 		/** Objet de données ContextEnvironmentValueIhm. */
 		ContextEnvironmentValueIhm(io.vertigo.chatbot.designer.domain.ContextEnvironmentValueIhm.class),
+		/** Objet de données ContextPossibleValue. */
+		ContextPossibleValue(io.vertigo.chatbot.commons.domain.ContextPossibleValue.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
 		/** Objet de données ConversationCriteria. */
@@ -67,6 +71,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		DictionaryEntity(io.vertigo.chatbot.designer.domain.DictionaryEntity.class),
 		/** Objet de données DictionaryEntityWrapper. */
 		DictionaryEntityWrapper(io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper.class),
+		/** Objet de données DocumentaryResource. */
+		DocumentaryResource(io.vertigo.chatbot.designer.domain.DocumentaryResource.class),
+		/** Objet de données DocumentaryResourceType. */
+		DocumentaryResourceType(io.vertigo.chatbot.designer.domain.DocumentaryResourceType.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données FontFamily. */
@@ -113,6 +121,18 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		PersonRole(io.vertigo.chatbot.designer.domain.commons.PersonRole.class),
 		/** Objet de données ProfilPerChatbot. */
 		ProfilPerChatbot(io.vertigo.chatbot.designer.domain.admin.ProfilPerChatbot.class),
+		/** Objet de données QuestionAnswer. */
+		QuestionAnswer(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer.class),
+		/** Objet de données QuestionAnswerCategory. */
+		QuestionAnswerCategory(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory.class),
+		/** Objet de données QuestionAnswerCategoryExport. */
+		QuestionAnswerCategoryExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategoryExport.class),
+		/** Objet de données QuestionAnswerExport. */
+		QuestionAnswerExport(io.vertigo.chatbot.commons.domain.QuestionAnswerExport.class),
+		/** Objet de données QuestionAnswerFileExport. */
+		QuestionAnswerFileExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerFileExport.class),
+		/** Objet de données QuestionAnswerIhm. */
+		QuestionAnswerIhm(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm.class),
 		/** Objet de données RatingOption. */
 		RatingOption(io.vertigo.chatbot.designer.domain.analytics.RatingOption.class),
 		/** Objet de données ResponseButton. */
@@ -141,6 +161,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ScriptIntentionIhm(io.vertigo.chatbot.commons.domain.topic.ScriptIntentionIhm.class),
 		/** Objet de données SelectProfilChatbotPerson. */
 		SelectProfilChatbotPerson(io.vertigo.chatbot.designer.domain.admin.SelectProfilChatbotPerson.class),
+		/** Objet de données SelectQueAnsCategory. */
+		SelectQueAnsCategory(io.vertigo.chatbot.commons.domain.questionanswer.SelectQueAnsCategory.class),
 		/** Objet de données SelectTopicCategory. */
 		SelectTopicCategory(io.vertigo.chatbot.commons.domain.topic.SelectTopicCategory.class),
 		/** Objet de données SelectionOption. */
@@ -195,6 +217,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TypeExportAnalyticList(io.vertigo.chatbot.designer.domain.analytics.TypeExportAnalyticList.class),
 		/** Objet de données TypeExportAnalytics. */
 		TypeExportAnalytics(io.vertigo.chatbot.designer.domain.analytics.TypeExportAnalytics.class),
+		/** Objet de données TypeOperator. */
+		TypeOperator(io.vertigo.chatbot.designer.domain.TypeOperator.class),
 		/** Objet de données TypeTopic. */
 		TypeTopic(io.vertigo.chatbot.commons.domain.topic.TypeTopic.class),
 		/** Objet de données UnknownSentenceDetail. */
@@ -260,6 +284,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		type,
 		/** Propriété 'Size'. */
 		length,
+		/** Propriété 'Attachment type'. */
+		attTypeCd,
 		/** Propriété 'AttachmentFileInfo'. */
 		attFiId,
 		/** Propriété 'Chatbot'. */
@@ -298,6 +324,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		filePath	}
 
 	/**
+	 * Enumération des champs de AttachmentType.
+	 */
+	public enum AttachmentTypeFields implements DtFieldName<io.vertigo.chatbot.commons.domain.AttachmentType> {
+		/** Propriété 'Code'. */
+		attTypeCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'LabelFr'. */
+		labelFr	}
+
+	/**
 	 * Enumération des champs de BotExport.
 	 */
 	public enum BotExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.BotExport> {
@@ -323,6 +360,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jiraSetting,
 		/** Propriété 'Jira fields setting'. */
 		jiraFieldSetting,
+		/** Propriété 'Questions answers List'. */
+		questionAnswerList,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -553,7 +592,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Context'. */
 		cvaId,
 		/** Propriété 'Environment'. */
-		cenvId	}
+		cenvId,
+		/** Propriété 'Value operator'. */
+		tyopCd	}
 
 	/**
 	 * Enumération des champs de ContextEnvironmentValueIhm.
@@ -566,7 +607,24 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Context value id'. */
 		cvaId,
 		/** Propriété 'Context value label'. */
-		label	}
+		label,
+		/** Propriété 'Operator'. */
+		tyopCd	}
+
+	/**
+	 * Enumération des champs de ContextPossibleValue.
+	 */
+	public enum ContextPossibleValueFields implements DtFieldName<io.vertigo.chatbot.commons.domain.ContextPossibleValue> {
+		/** Propriété 'Context possible value id'. */
+		cpvId,
+		/** Propriété 'Value'. */
+		value,
+		/** Propriété 'Context value id'. */
+		cvaId,
+		/** Propriété 'Value operator'. */
+		tyopCd,
+		/** Propriété 'Chatbot'. */
+		botId	}
 
 	/**
 	 * Enumération des champs de ContextValue.
@@ -647,6 +705,38 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		dictionaryEntityLabel,
 		/** Propriété 'Synonyms list'. */
 		synonymsList	}
+
+	/**
+	 * Enumération des champs de DocumentaryResource.
+	 */
+	public enum DocumentaryResourceFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DocumentaryResource> {
+		/** Propriété 'ID'. */
+		dreId,
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Description'. */
+		description,
+		/** Propriété 'Text'. */
+		text,
+		/** Propriété 'Url'. */
+		url,
+		/** Propriété 'Attachment id'. */
+		attId,
+		/** Propriété 'Documentary resource type'. */
+		dreTypeCd,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceType.
+	 */
+	public enum DocumentaryResourceTypeFields implements DtFieldName<io.vertigo.chatbot.designer.domain.DocumentaryResourceType> {
+		/** Propriété 'Code'. */
+		dreTypeCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'LabelFr'. */
+		labelFr	}
 
 	/**
 	 * Enumération des champs de ExecutorConfiguration.
@@ -966,6 +1056,92 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		chpCd	}
 
 	/**
+	 * Enumération des champs de QuestionAnswer.
+	 */
+	public enum QuestionAnswerFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer> {
+		/** Propriété 'Question-Answer id'. */
+		qaId,
+		/** Propriété 'Question'. */
+		question,
+		/** Propriété 'Answer'. */
+		answer,
+		/** Propriété 'Enabled'. */
+		isEnabled,
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Category'. */
+		qaCatId	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerCategory.
+	 */
+	public enum QuestionAnswerCategoryFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory> {
+		/** Propriété 'Question-Answer category id'. */
+		qaCatId,
+		/** Propriété 'Question-Answer category label'. */
+		label,
+		/** Propriété 'Enabled'. */
+		isEnabled,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerCategoryExport.
+	 */
+	public enum QuestionAnswerCategoryExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategoryExport> {
+		/** Propriété 'Question-Answer category label'. */
+		label,
+		/** Propriété 'Enabled'. */
+		isEnabled	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerExport.
+	 */
+	public enum QuestionAnswerExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.QuestionAnswerExport> {
+		/** Propriété 'Question'. */
+		question,
+		/** Propriété 'Answer'. */
+		answer,
+		/** Propriété 'Category'. */
+		catLabel	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerFileExport.
+	 */
+	public enum QuestionAnswerFileExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerFileExport> {
+		/** Propriété 'Question'. */
+		question,
+		/** Propriété 'Answer'. */
+		answer,
+		/** Propriété 'Enabled'. */
+		isEnabled,
+		/** Propriété 'Category'. */
+		category,
+		/** Propriété 'Code'. */
+		code	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerIhm.
+	 */
+	public enum QuestionAnswerIhmFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm> {
+		/** Propriété 'Question-Answer id'. */
+		qaId,
+		/** Propriété 'Question'. */
+		question,
+		/** Propriété 'Answer'. */
+		answer,
+		/** Propriété 'Enabled'. */
+		isEnabled,
+		/** Propriété 'Category id'. */
+		catId,
+		/** Propriété 'Category label'. */
+		catLabel,
+		/** Propriété 'Code'. */
+		code	}
+
+	/**
 	 * Enumération des champs de RatingOption.
 	 */
 	public enum RatingOptionFields implements DtFieldName<io.vertigo.chatbot.designer.domain.analytics.RatingOption> {
@@ -1140,6 +1316,13 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		perId,
 		/** Propriété 'Profil cd'. */
 		prfId	}
+
+	/**
+	 * Enumération des champs de SelectQueAnsCategory.
+	 */
+	public enum SelectQueAnsCategoryFields implements DtFieldName<io.vertigo.chatbot.commons.domain.questionanswer.SelectQueAnsCategory> {
+		/** Propriété 'Question-Answer category id'. */
+		qaCatId	}
 
 	/**
 	 * Enumération des champs de SelectTopicCategory.
@@ -1548,6 +1731,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Title'. */
 		label,
 		/** Propriété 'Titre'. */
+		labelFr	}
+
+	/**
+	 * Enumération des champs de TypeOperator.
+	 */
+	public enum TypeOperatorFields implements DtFieldName<io.vertigo.chatbot.designer.domain.TypeOperator> {
+		/** Propriété 'ID'. */
+		tyopCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'LabelFr'. */
 		labelFr	}
 
 	/**

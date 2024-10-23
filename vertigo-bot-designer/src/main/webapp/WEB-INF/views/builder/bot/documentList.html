@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{templates/botDetailLayout}" th:with="tab=documents"
+>
+<head>
+    <title th:text="#{documentaryResource.title}"></title>
+    <script th:inline="javascript">
+        function getDocResTypeLabel(type) {
+            let docResType = VertigoUi.vueData.documentaryResourceTypeList.find(resourceType => resourceType.dreTypeCd === type);
+            if (docResType !== undefined) {
+                return VertigoUi.vueData.locale === 'fr_FR' ? docResType.labelFr : docResType.label;
+            } else {
+                return docResType;
+            }
+        }
+    </script>
+</head>
+<body>
+<section layout:fragment="content-actions">
+    <q-form method="post" action="_exportCategories">
+        <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/document/new(id=${model.bot.botId})}" th:ariaLabel="#{action.add}" icon="add"
+                        class="on-left" round size="md" color="primary" />
+        <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+    </q-form>
+</section>
+
+<section layout:fragment="content">
+    <vu:include-data-primitive key="locale"/>
+    <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+        <span class="text-primary" style="flex-grow: 2">[[#{documentaryResource.title}]]</span>
+        <q-icon name="help_outlined" size="2rem"/>
+        <q-tooltip content-class="q-tooltip-text">[[#{documentaryResource.tooltip}]]</q-tooltip>
+    </div>
+    <vu:include-data object="documentaryResourceTypeList" field="*" />
+    <vu:include-data object="documentaryResourceList" field="dreId" />
+    <vu:table list="documentaryResourceList" componentId="documentaryResources" tr_@click.native="|goTo('@{/bot/{id}/document/(id=${model.bot.botId})}'+props.row.dreId)|" tr_style="cursor : pointer;"
+              sortBy="title" :binary-state-sort="true">
+        <vu:column field="title">
+            <a th::href="|'@{/bot/{id}/document/(id=${model.bot.botId})}'+props.row.dreId|"
+               style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
+            >
+                <span style="height:100%" class="row items-center">{{props.row.title}}</span>
+            </a>
+        </vu:column>
+        <vu:column field="description"/>
+        <vu:column field="dreTypeCd">
+            <vu:content>
+                <span v-html="getDocResTypeLabel(props.row.dreTypeCd)"></span>
+            </vu:content>
+        </vu:column>
+    </vu:table>
+
+</section>
+
+</body>
+</html>

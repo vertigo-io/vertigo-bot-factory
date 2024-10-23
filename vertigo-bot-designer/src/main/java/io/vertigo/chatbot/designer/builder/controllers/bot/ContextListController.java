@@ -2,14 +2,19 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ContextPossibleValue;
 import io.vertigo.chatbot.commons.domain.ContextValue;
+import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentValueServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ContextPossibleValueServices;
+import io.vertigo.chatbot.designer.builder.services.bot.ContextTypeOperatorServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.chatbot.designer.domain.ContextEnvironment;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentValue;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentValueIhm;
+import io.vertigo.chatbot.designer.domain.TypeOperator;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -36,18 +41,28 @@ public class ContextListController extends AbstractBotListEntityController<Conte
 
 	private static final ViewContextKey<ContextValue> contextValuesKey = ViewContextKey.of("contextValues");
 	private static final ViewContextKey<ContextEnvironmentIhm> contextEnvironmentsKey = ViewContextKey.of("contextEnvironments");
-
+	private	static final ViewContextKey<ContextPossibleValue> contextPossibleValueskey = ViewContextKey.of("contextPossibleValues");
 	private static final ViewContextKey<ContextEnvironment> newContextEnvironmentKey = ViewContextKey.of("newContextEnvironment");
-	private static final ViewContextKey<ContextEnvironmentValueIhm> newContextEnvironmentValueKey = ViewContextKey.of("newContextEnvironmentValue");
+	private static final ViewContextKey<ContextEnvironmentValue> newContextEnvironmentValueKey = ViewContextKey.of("newContextEnvironmentValue");
+	private static final ViewContextKey<TypeOperator> typeOperators = ViewContextKey.of("typeOperators");
+
 	@Inject
 	private ContextValueServices contextValueServices;
+
+	@Inject
+	private ContextPossibleValueServices contextPossibleValueServices;
+
+	@Inject
+	private ContextTypeOperatorServices contextTypeOperatorServices;
 
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtList(contextValuesKey, contextValueServices.getAllContextValueByBotId(botId));
+		viewContext.publishDtList(contextPossibleValueskey, contextPossibleValueServices.getAllContextPossibleValuesByBot(bot));
 		viewContext.publishDto(newContextEnvironmentKey, new ContextEnvironment());
-		viewContext.publishDto(newContextEnvironmentValueKey, new ContextEnvironmentValueIhm());
+		viewContext.publishDto(newContextEnvironmentValueKey, new ContextEnvironmentValue());
+		viewContext.publishDtList(typeOperators, contextTypeOperatorServices.getAllTypeOperators(bot));
 
 		super.initBreadCrums(viewContext, ContextValue.class);
 		listLimitReached(viewContext, uiMessageStack);
@@ -90,11 +105,8 @@ public class ContextListController extends AbstractBotListEntityController<Conte
 	public ViewContext saveContextEnvironmentValue(final ViewContext viewContext,
 											  final UiMessageStack uiMessageStack,
 											  @ViewAttribute("bot") final Chatbot bot,
-											  @RequestParam("cenvalId") final Long cenvalId,
-											  @RequestParam("value") final String value) {
+											  @ViewAttribute("newContextEnvironmentValue") final ContextEnvironmentValue contextEnvironmentValue) {
 
-		final ContextEnvironmentValue contextEnvironmentValue = contextEnvironmentServices.findContextEnvironmentValueById(cenvalId);
-		contextEnvironmentValue.setValue(value);
 		contextEnvironmentServices.saveContextEnvironmentValue(bot, contextEnvironmentValue);
 		viewContext.publishDtList(contextEnvironmentsKey, contextEnvironmentServices.getContextEnvironmentIhmByBot(bot.getBotId()));
 		return viewContext;

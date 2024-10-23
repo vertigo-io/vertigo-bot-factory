@@ -1,0 +1,78 @@
+package io.vertigo.chatbot.commons.domain.questionanswer
+
+create DtDefinition DtQuestionAnswer {
+    id     qaId             {domain: DoId      label: "Question-Answer id"                              }
+    field  question         {domain: DoText    label: "Question"                     cardinality : "1"  }
+    field  answer           {domain: DoText    label: "Answer"                       cardinality : "1"  }
+    field  isEnabled        {domain: DoYesNo   label: "Enabled"                      cardinality : "1"  }
+    field  code             {domain: DoText    label: "Code"                         cardinality : "1"  }
+}
+
+create DtDefinition DtQuestionAnswerFileExport {
+    field  question         {domain: DoText    label: "Question"                     cardinality : "1"  }
+    field  answer           {domain: DoText    label: "Answer"                       cardinality : "1"  }
+    field  isEnabled        {domain: DoLabel   label: "Enabled"                      cardinality : "1"  }
+    field  category         {domain: DoLabel   label: "Category"                     cardinality : "1"  }
+    field  code             {domain: DoText    label: "Code"                         cardinality : "1"  }
+
+}
+
+create Association AQuestionAnswerChatbot {
+    fkFieldName : "botId"
+
+    dtDefinitionA : DtQuestionAnswer
+    type : "*>1"
+    dtDefinitionB : DtChatbot
+
+    labelB : "Chatbot"
+}
+
+
+create DtDefinition DtQuestionAnswerCategory {
+    id    qaCatId         {domain: DoId      label: "Question-Answer category id"                        }
+    field label           {domain: DoLabel   label: "Question-Answer category label"    cardinality:"1"  }
+    field isEnabled       {domain: DoYesNo   label: "Enabled"                           cardinality:"1"  }
+}
+
+create DtDefinition DtQuestionAnswerCategoryExport {
+    field label           {domain: DoLabel   label: "Question-Answer category label"    cardinality:"1"  }
+    field isEnabled       {domain: DoLabel   label: "Enabled"                           cardinality:"1"  }
+}
+
+create Association AQuestionAnswerCategoryChatbot{
+    fkFieldName : "botId"
+
+    dtDefinitionA : DtQuestionAnswerCategory
+    type : "*>1"
+    dtDefinitionB : DtChatbot
+
+    labelB : "Chatbot"
+    roleB : "Chatbot"
+}
+
+create Association AQuestionAnswerCategoryQuestionAnswer{
+    fkFieldName : "qaCatId"
+
+    dtDefinitionA : DtQuestionAnswer
+    type : "*>1"
+    dtDefinitionB : DtQuestionAnswerCategory
+
+    labelB : "Category"
+    roleB : "Category"
+}
+
+/********** IHM **********/
+
+create DtDefinition DtQuestionAnswerIhm {
+    field  qaId             {domain: DoId      label: "Question-Answer id"                              }
+    field  question         {domain: DoText    label: "Question"                     cardinality : "1"  }
+    field  answer           {domain: DoText    label: "Answer"                       cardinality : "1"  }
+    field  isEnabled        {domain: DoYesNo   label: "Enabled"                      cardinality : "1"  }
+    field  catId            {domain: DoId      label: "Category id"                  cardinality : "1"  }
+    field  catLabel         {domain: DoLabel   label: "Category label"               cardinality : "1"  }
+    field  code             {domain: DoText    label: "Code"                         cardinality : "1"  }
+}
+
+create DtDefinition DtSelectQueAnsCategory {
+	field qaCatId 		{domain: DoId 						label: "Question-Answer category id"	 		cardinality:"*"}
+}

@@ -13,14 +13,20 @@
 
 .bg-primary {
     font-family: var(--font-family) !important;
+    background-color: var(--background-color) !important;
+    color: var(--font-color) !important;
 }
 
 body {
     color: black;
 }
 
-main, footer {
+main {
     padding: 8px;
+}
+
+footer {
+    padding: 0;
 }
 
 #page {
@@ -115,6 +121,8 @@ main, footer {
     padding: 8px 0px;
     font-family: var(--font-family) !important;
     background: var(--background-color) !important;
+    box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+
 }
 
 .custom-header .title, .custom-header .q-btn {
@@ -162,6 +170,13 @@ img {
 .q-layout-header{
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
+    box-shadow: none;
+}
+
+.q-layout-footer{
+    webkit-box-shadow: none !important;
+    box-shadow: none;
+    background: white;
 }
 
 .q-layout-page-container{
@@ -174,6 +189,7 @@ img {
     color: black !important;
     background-color: transparent !important;
     box-shadow: none !important;
+    border-radius: 20px;
 }
 .btn-send:hover{
     color: var(--font-color) !important;
@@ -195,6 +211,22 @@ img {
     border-bottom: 0px solid !important;
 }
 
+.custom-input-top, .custom-input-bottom{
+    position: relative;
+    z-index: 1;
+    padding-left: 12px;
+    border-radius: 20px;
+    background: linear-gradient(to bottom, #e6e6e6, #ffffff);
+    box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.4);
+}
+.custom-input-bottom {
+    margin : -18px 12px 16px 10px;
+}
+
+.custom-input-top {
+    margin : 16px 18px -15px 18px;
+}
+
 /* quasar style for q-input without bottom border*/
 .q-if:after, .q-if:before{
     border-bottom: 0px solid !important;
@@ -212,17 +244,36 @@ img {
     border: 2px var(--user-message-font-color) solid !important;
 }
 
-.q-layout-footer{
-    webkit-box-shadow: none !important;
-    box-shadow: none !important;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    padding-top: 12px;
-}
-
 /*block msg*/
 
 
 .q-message-text:last-child:before{
     border: 0px !important;
+}
+
+/* Q&A */
+
+.q-collapsible-question, .q-collapsible-answer{
+    padding: 6px 15px;
+    border-radius: 5px;
+    box-shadow: 10px 10px 10px 0 rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+}
+.q-collapsible-question {
+    background-color: var(--bot-message-bg-color) !important;
+    color: var(--bot-message-font-color) !important;
+    margin-top: 12px;
+}
+
+.q-collapsible-answer {
+    background-color: white !important;
+    border: solid 2px var(--bot-message-bg-color);
+}
+
+.q-collapsible-sub-item {
+    padding : 6px 0 6px 0 !important;
+}
+
+.q-tabs {
+    box-shadow: 0 -1px 2px 1px rgba(0, 0, 0, 0.2);
 }

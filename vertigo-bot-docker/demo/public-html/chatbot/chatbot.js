@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
         _iframe = document.createElement('iframe');
 
         _iframe.className = 'iframe';
-        _iframe.id = 'chatbot'
+        _iframe.id = 'chatbotIframe'
         _iframe.src = `${_initParam.botIHMBaseUrl}?runnerUrl=${_initParam.runnerUrl}&botName=${_initParam.botName}&useRating=${_initParam.useRating}`;
 
         if (_initParam.optionalParameters) {

@@ -30,47 +30,51 @@
                       + '; --user-message-bg-color: ' + customConfig.userMessageBackgroundColor
                       + '; --user-message-font-color: ' + customConfig.userMessageFontColor + ';'">
       <q-layout view="hHh lpr fFf">
-        <q-layout-header class="custom-header row items-center non-selectable">
-          <div class="title col-grow q-ml-md">
-            {{ botName }}
+        <q-layout-header class="bg-white">
+          <div class="custom-header row items-center non-selectable">
+            <div class="title col-grow q-ml-md">
+              {{ botName }}
+            </div>
+            <!--<q-btn-dropdown color="primary" icon="language">
+              <q-list style="text-align: center; padding: 0">
+                <q-btn class="btn-custom-localize" @click="changeLocal('fr_FR')" v-text="'FR'"></q-btn>
+                <q-btn class="btn-custom-localize" @click="changeLocal('en_US')" v-text="'EN'"></q-btn>
+              </q-list>
+            </q-btn-dropdown>-->
+            <q-btn round
+                   class="btn-rotate"
+                   flat
+                   v-if="customConfig.reinitializationButton"
+                   color="white"
+                   text-color="white"
+                   size="md"
+                   @click="refresh()"
+                   icon="refresh"></q-btn>
+            <q-btn round
+                   class="btn-rotate"
+                   flat
+                   color="white"
+                   text-color="white"
+                   size="md"
+                   @click="minimize()"
+                   icon="close"></q-btn>
           </div>
-          <!--<q-btn-dropdown color="primary" icon="language">
-            <q-list style="text-align: center; padding: 0">
-              <q-btn class="btn-custom-localize" @click="changeLocal('fr_FR')" v-text="'FR'"></q-btn>
-              <q-btn class="btn-custom-localize" @click="changeLocal('en_US')" v-text="'EN'"></q-btn>
-            </q-list>
-          </q-btn-dropdown>-->
-          <q-btn round
-                 class="btn-rotate"
-                 flat
-                 v-if="customConfig.reinitializationButton"
-                 color="white"
-                 text-color="white"
-                 size="md"
-                 @click="refresh()"
-                 icon="refresh"></q-btn>
-          <q-btn round
-                 class="btn-rotate"
-                 flat
-                 color="white"
-                 text-color="white"
-                 size="md"
-                 @click="minimize()"
-                 icon="close"></q-btn>
         </q-layout-header>
+
         <q-page-container>
           <div id="loading"
                class="column items-center q-pt-xl">Chargement ...
           </div>
           <q-page id="page"
                   class="column animate-fade"
-                  style="height: calc(100vh - 115px)"> <!-- style pour IE uniquement -->
-            <div v-if="!menu"
+                  style="padding-top: 0; padding-bottom: 0;">
+            <div v-if="!menu && tab ==='bot'"
                  id="main"
                  class="column col-grow no-wrap">
-              <q-scroll-area class="row q-pa-sm col-grow"
-                             ref="scroller">
-                <div class="q-pr-md">
+              <q-scroll-area class="row q-px-sm col-grow"
+                             ref="scroller"
+                             style="height: 0">
+                <div class="q-pr-md q-pt-md">
                   <div v-for="(msg, index) in messages">
                     <q-chat-message
                       v-if="msg.text"
@@ -186,43 +190,74 @@
                     </div>
                   </div>
                 </div>
+                <div style="height: 30px"></div>
               </q-scroll-area>
-
             </div>
+            <div v-if="tab==='bot'" class="row non-selectable custom-input-bottom">
+              <div class="col-grow">
+                <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
+                         ref="input"
+                         :style="'margin-top: 0px;'"
+                         class="q-px-sm round-borders custom-input"
+                         @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
+                         :max-height="100"
+                         v-model="inputConfig.responseText"
+                         placeholder="Ecrire un message..."
+                         :disable="processing || error || (!acceptNlu && !isEnded) || customConfig.disableNlu"
+                         :loading="processing"></q-input>
+              </div>
+              <q-btn
+                      :style="'margin-top: 0px;'"
+                      style="margin-top: 0px;"
+                      class="btn-send"
+                      icon="send"
+                      @click="postAnswerText(false)"
+                      :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
+              <q-btn round
+                     color="red"
+                     @click="restart"
+                     v-if="devMode === true && false"
+                     icon="refresh"></q-btn>
+            </div>
+
+            <div v-if="tab === 'qAndA'" class="custom-input-top">
+              <q-input v-model="qAndAConfig.filterInput"
+                       ref="input"
+                       class="q-px-sm"
+                       placeholder="Rechercher..."
+                       :loading="processing"
+                       @input="filterQuestionsAnswers()"></q-input>
+            </div>
+            <q-scroll-area class="q-px-sm col-grow"
+                           ref="scroller"
+                           style="height: 0"
+                           v-if="tab === 'qAndA'"
+            >
+              <div class="q-mx-md q-mt-xl">
+                    <q-collapsible v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
+                                   :label="questionAnswer.question"
+                                   header-class="q-collapsible-question">
+                      <div class="q-collapsible-answer" v-html="questionAnswer.answer"></div>
+                    </q-collapsible>
+              </div>
+              <div style="height: 30px"></div>
+            </q-scroll-area>
           </q-page>
         </q-page-container>
-        <q-layout-footer v-if="!customConfig.disableNlu" id="executor-footer" class="bg-grey-3">
-          <div class="row docs-btn non-selectable">
-            <div class="col-grow">
-              <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
-                       ref="input"
-                       :style="'margin-top: 0px;'"
-                       class="q-px-sm round-borders custom-input"
-                       @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
-                       :max-height="100"
-                       v-model="inputConfig.responseText"
-                       placeholder="Ecrire un message..."
-                       :disable="processing || error || (!acceptNlu && !isEnded) || customConfig.disableNlu"
-                       :loading="processing"></q-input>
-            </div>
 
-            <q-btn
-                   :style="'margin-top: 0px;'"
-                   style="margin-top: 0px;"
-                   class="btn-send"
-                   icon="send"
-                   @click="postAnswerText(false)"
-                   :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
-            <q-btn round
-                   color="red"
-                   @click="restart"
-                   v-if="devMode === true && false"
-                   icon="refresh"></q-btn>
+        <q-layout-footer v-if="!customConfig.disableNlu" >
+          <div :class="{'q-tabs-container' : tab==='bot'}">
+            <q-tabs v-model="tab"
+                    align="justify"
+                    text-color="black"
+                    class="q-tabs"
+            >
+              <q-tab name="bot" slot="title" icon="smart_toy"></q-tab>
+              <q-tab name="qAndA" slot="title" icon="question_answer"></q-tab>
+            </q-tabs>
           </div>
         </q-layout-footer>
       </q-layout>
-
-
     </div>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.6/vue.min.js"></script>

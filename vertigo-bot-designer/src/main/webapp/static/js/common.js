@@ -67,10 +67,7 @@ window.addEventListener('vui-after-page-mounted', function () {
     }
 
     function saveContextEnvironmentValue() {
-        VUiPage.httpPostAjax("_saveContextEnvironmentValue", {
-            'cenvalId': VertigoUi.vueData.newContextEnvironmentValue.cenvalId,
-            'value': VertigoUi.vueData.newContextEnvironmentValue.value
-        });
+        VUiPage.httpPostAjax("_saveContextEnvironmentValue", VUiPage.vueDataParams(['newContextEnvironmentValue']));
     }
 
     let oldHttpPostAjax = VUiPage.httpPostAjax;

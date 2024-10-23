@@ -158,6 +158,30 @@ public final class ExportPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkGetAllActiveQuestionAnswerExportByBotId.
+	 * @param botId Long
+	 * @return DtList de QuestionAnswerExport questionAnswerExport
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetAllActiveQuestionAnswerExportByBotId",
+			request = "SELECT  qa.question,\n" + 
+ " 			        qa.answer,\n" + 
+ "                     qac.label as cat_label\n" + 
+ " 			from question_answer qa\n" + 
+ "             join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)\n" + 
+ " 			where qa.bot_id = #botId# and qa.is_enabled = true",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtQuestionAnswerExport", name = "questionAnswerExport")
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.QuestionAnswerExport> getAllActiveQuestionAnswerExportByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkGetAllActiveQuestionAnswerExportByBotId")
+				.addValue("botId", botId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
 	 * Execute la tache TkGetScriptIntentionExportByBotId.
 	 * @param botId Long
 	 * @return DtList de ScriptIntentionExport rbes

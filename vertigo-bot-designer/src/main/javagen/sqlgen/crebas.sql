@@ -13,6 +13,7 @@ drop table IF EXISTS ATTACHMENT cascade;
 drop sequence IF EXISTS SEQ_ATTACHMENT;
 drop table IF EXISTS ATTACHMENT_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_ATTACHMENT_FILE_INFO;
+drop table IF EXISTS ATTACHMENT_TYPE cascade;
 drop table IF EXISTS CHATBOT cascade;
 drop sequence IF EXISTS SEQ_CHATBOT;
 drop table IF EXISTS CHATBOT_CUSTOM_CONFIG cascade;
@@ -28,10 +29,15 @@ drop table IF EXISTS CONTEXT_ENVIRONMENT cascade;
 drop sequence IF EXISTS SEQ_CONTEXT_ENVIRONMENT;
 drop table IF EXISTS CONTEXT_ENVIRONMENT_VALUE cascade;
 drop sequence IF EXISTS SEQ_CONTEXT_ENVIRONMENT_VALUE;
+drop table IF EXISTS CONTEXT_POSSIBLE_VALUE cascade;
+drop sequence IF EXISTS SEQ_CONTEXT_POSSIBLE_VALUE;
 drop table IF EXISTS CONTEXT_VALUE cascade;
 drop sequence IF EXISTS SEQ_CONTEXT_VALUE;
 drop table IF EXISTS DICTIONARY_ENTITY cascade;
 drop sequence IF EXISTS SEQ_DICTIONARY_ENTITY;
+drop table IF EXISTS DOCUMENTARY_RESOURCE cascade;
+drop sequence IF EXISTS SEQ_DOCUMENTARY_RESOURCE;
+drop table IF EXISTS DOCUMENTARY_RESOURCE_TYPE cascade;
 drop table IF EXISTS FONT_FAMILY cascade;
 drop table IF EXISTS GROUPS cascade;
 drop sequence IF EXISTS SEQ_GROUPS;
@@ -55,6 +61,10 @@ drop sequence IF EXISTS SEQ_PERSON;
 drop table IF EXISTS PERSON_ROLE cascade;
 drop table IF EXISTS PROFIL_PER_CHATBOT cascade;
 drop sequence IF EXISTS SEQ_PROFIL_PER_CHATBOT;
+drop table IF EXISTS QUESTION_ANSWER cascade;
+drop sequence IF EXISTS SEQ_QUESTION_ANSWER;
+drop table IF EXISTS QUESTION_ANSWER_CATEGORY cascade;
+drop sequence IF EXISTS SEQ_QUESTION_ANSWER_CATEGORY;
 drop table IF EXISTS RATING_OPTION cascade;
 drop sequence IF EXISTS SEQ_RATING_OPTION;
 drop table IF EXISTS RESPONSE_BUTTON cascade;
@@ -81,6 +91,7 @@ drop sequence IF EXISTS SEQ_TRAINING;
 drop table IF EXISTS TRAINING_STATUS cascade;
 drop table IF EXISTS TYPE_BOT_EXPORT cascade;
 drop table IF EXISTS TYPE_EXPORT_ANALYTICS cascade;
+drop table IF EXISTS TYPE_OPERATOR cascade;
 drop table IF EXISTS TYPE_TOPIC cascade;
 drop table IF EXISTS UNKNOWN_SENTENCE_DETAIL cascade;
 drop sequence IF EXISTS SEQ_UNKNOWN_SENTENCE_DETAIL;
@@ -107,6 +118,7 @@ create sequence SEQ_ATTACHMENT
 create sequence SEQ_ATTACHMENT_FILE_INFO
 	start with 1000 cache 1; 
 
+
 create sequence SEQ_CHATBOT
 	start with 1000 cache 1; 
 
@@ -129,11 +141,18 @@ create sequence SEQ_CONTEXT_ENVIRONMENT
 create sequence SEQ_CONTEXT_ENVIRONMENT_VALUE
 	start with 1000 cache 1; 
 
+create sequence SEQ_CONTEXT_POSSIBLE_VALUE
+	start with 1000 cache 1; 
+
 create sequence SEQ_CONTEXT_VALUE
 	start with 1000 cache 1; 
 
 create sequence SEQ_DICTIONARY_ENTITY
 	start with 1000 cache 1; 
+
+create sequence SEQ_DOCUMENTARY_RESOURCE
+	start with 1000 cache 1; 
+
 
 
 create sequence SEQ_GROUPS
@@ -165,6 +184,12 @@ create sequence SEQ_PERSON
 
 
 create sequence SEQ_PROFIL_PER_CHATBOT
+	start with 1000 cache 1; 
+
+create sequence SEQ_QUESTION_ANSWER
+	start with 1000 cache 1; 
+
+create sequence SEQ_QUESTION_ANSWER_CATEGORY
 	start with 1000 cache 1; 
 
 create sequence SEQ_RATING_OPTION
@@ -200,6 +225,7 @@ create sequence SEQ_TOPIC_LABEL
 
 create sequence SEQ_TRAINING
 	start with 1000 cache 1; 
+
 
 
 
@@ -260,6 +286,7 @@ create table ATTACHMENT
     LABEL       	 VARCHAR(100)	not null,
     TYPE        	 VARCHAR(100)	not null,
     LENGTH      	 NUMERIC     	not null,
+    ATT_TYPE_CD 	 VARCHAR(100)	not null,
     ATT_FI_ID   	 NUMERIC     	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_ATTACHMENT primary key (ATT_ID)
@@ -276,6 +303,9 @@ comment on column ATTACHMENT.TYPE is
 
 comment on column ATTACHMENT.LENGTH is
 'Size';
+
+comment on column ATTACHMENT.ATT_TYPE_CD is
+'Attachment type';
 
 comment on column ATTACHMENT.ATT_FI_ID is
 'AttachmentFileInfo';
@@ -314,6 +344,26 @@ comment on column ATTACHMENT_FILE_INFO.LAST_MODIFIED is
 
 comment on column ATTACHMENT_FILE_INFO.FILE_PATH is
 'path';
+
+-- ============================================================
+--   Table : ATTACHMENT_TYPE                                        
+-- ============================================================
+create table ATTACHMENT_TYPE
+(
+    ATT_TYPE_CD 	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_ATTACHMENT_TYPE primary key (ATT_TYPE_CD)
+);
+
+comment on column ATTACHMENT_TYPE.ATT_TYPE_CD is
+'Code';
+
+comment on column ATTACHMENT_TYPE.LABEL is
+'Label';
+
+comment on column ATTACHMENT_TYPE.LABEL_FR is
+'LabelFr';
 
 -- ============================================================
 --   Table : CHATBOT                                        
@@ -564,6 +614,7 @@ create table CONTEXT_ENVIRONMENT_VALUE
     VALUE       	 VARCHAR(100)	,
     CVA_ID      	 NUMERIC     	not null,
     CENV_ID     	 NUMERIC     	not null,
+    TYOP_CD     	 VARCHAR(100)	not null,
     constraint PK_CONTEXT_ENVIRONMENT_VALUE primary key (CENVAL_ID)
 );
 
@@ -578,6 +629,37 @@ comment on column CONTEXT_ENVIRONMENT_VALUE.CVA_ID is
 
 comment on column CONTEXT_ENVIRONMENT_VALUE.CENV_ID is
 'Environment';
+
+comment on column CONTEXT_ENVIRONMENT_VALUE.TYOP_CD is
+'Value operator';
+
+-- ============================================================
+--   Table : CONTEXT_POSSIBLE_VALUE                                        
+-- ============================================================
+create table CONTEXT_POSSIBLE_VALUE
+(
+    CPV_ID      	 NUMERIC     	not null,
+    VALUE       	 VARCHAR(100)	not null,
+    CVA_ID      	 NUMERIC     	not null,
+    TYOP_CD     	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_CONTEXT_POSSIBLE_VALUE primary key (CPV_ID)
+);
+
+comment on column CONTEXT_POSSIBLE_VALUE.CPV_ID is
+'Context possible value id';
+
+comment on column CONTEXT_POSSIBLE_VALUE.VALUE is
+'Value';
+
+comment on column CONTEXT_POSSIBLE_VALUE.CVA_ID is
+'Context value id';
+
+comment on column CONTEXT_POSSIBLE_VALUE.TYOP_CD is
+'Value operator';
+
+comment on column CONTEXT_POSSIBLE_VALUE.BOT_ID is
+'Chatbot';
 
 -- ============================================================
 --   Table : CONTEXT_VALUE                                        
@@ -622,6 +704,66 @@ comment on column DICTIONARY_ENTITY.LABEL is
 
 comment on column DICTIONARY_ENTITY.BOT_ID is
 'Chatbot';
+
+-- ============================================================
+--   Table : DOCUMENTARY_RESOURCE                                        
+-- ============================================================
+create table DOCUMENTARY_RESOURCE
+(
+    DRE_ID      	 NUMERIC     	not null,
+    TITLE       	 VARCHAR(100)	not null,
+    DESCRIPTION 	 TEXT        	,
+    TEXT        	 TEXT        	,
+    URL         	 TEXT        	,
+    ATT_ID      	 NUMERIC     	,
+    DRE_TYPE_CD 	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_DOCUMENTARY_RESOURCE primary key (DRE_ID)
+);
+
+comment on column DOCUMENTARY_RESOURCE.DRE_ID is
+'ID';
+
+comment on column DOCUMENTARY_RESOURCE.TITLE is
+'Title';
+
+comment on column DOCUMENTARY_RESOURCE.DESCRIPTION is
+'Description';
+
+comment on column DOCUMENTARY_RESOURCE.TEXT is
+'Text';
+
+comment on column DOCUMENTARY_RESOURCE.URL is
+'Url';
+
+comment on column DOCUMENTARY_RESOURCE.ATT_ID is
+'Attachment id';
+
+comment on column DOCUMENTARY_RESOURCE.DRE_TYPE_CD is
+'Documentary resource type';
+
+comment on column DOCUMENTARY_RESOURCE.BOT_ID is
+'Chatbot';
+
+-- ============================================================
+--   Table : DOCUMENTARY_RESOURCE_TYPE                                        
+-- ============================================================
+create table DOCUMENTARY_RESOURCE_TYPE
+(
+    DRE_TYPE_CD 	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_DOCUMENTARY_RESOURCE_TYPE primary key (DRE_TYPE_CD)
+);
+
+comment on column DOCUMENTARY_RESOURCE_TYPE.DRE_TYPE_CD is
+'Code';
+
+comment on column DOCUMENTARY_RESOURCE_TYPE.LABEL is
+'Label';
+
+comment on column DOCUMENTARY_RESOURCE_TYPE.LABEL_FR is
+'LabelFr';
 
 -- ============================================================
 --   Table : FONT_FAMILY                                        
@@ -990,6 +1132,66 @@ comment on column PROFIL_PER_CHATBOT.PER_ID is
 
 comment on column PROFIL_PER_CHATBOT.CHP_CD is
 'Profil pour un chatbot';
+
+-- ============================================================
+--   Table : QUESTION_ANSWER                                        
+-- ============================================================
+create table QUESTION_ANSWER
+(
+    QA_ID       	 NUMERIC     	not null,
+    QUESTION    	 TEXT        	not null,
+    ANSWER      	 TEXT        	not null,
+    IS_ENABLED  	 bool        	not null,
+    CODE        	 TEXT        	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    QA_CAT_ID   	 NUMERIC     	not null,
+    constraint PK_QUESTION_ANSWER primary key (QA_ID)
+);
+
+comment on column QUESTION_ANSWER.QA_ID is
+'Question-Answer id';
+
+comment on column QUESTION_ANSWER.QUESTION is
+'Question';
+
+comment on column QUESTION_ANSWER.ANSWER is
+'Answer';
+
+comment on column QUESTION_ANSWER.IS_ENABLED is
+'Enabled';
+
+comment on column QUESTION_ANSWER.CODE is
+'Code';
+
+comment on column QUESTION_ANSWER.BOT_ID is
+'Chatbot';
+
+comment on column QUESTION_ANSWER.QA_CAT_ID is
+'Category';
+
+-- ============================================================
+--   Table : QUESTION_ANSWER_CATEGORY                                        
+-- ============================================================
+create table QUESTION_ANSWER_CATEGORY
+(
+    QA_CAT_ID   	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    IS_ENABLED  	 bool        	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_QUESTION_ANSWER_CATEGORY primary key (QA_CAT_ID)
+);
+
+comment on column QUESTION_ANSWER_CATEGORY.QA_CAT_ID is
+'Question-Answer category id';
+
+comment on column QUESTION_ANSWER_CATEGORY.LABEL is
+'Question-Answer category label';
+
+comment on column QUESTION_ANSWER_CATEGORY.IS_ENABLED is
+'Enabled';
+
+comment on column QUESTION_ANSWER_CATEGORY.BOT_ID is
+'Chatbot';
 
 -- ============================================================
 --   Table : RATING_OPTION                                        
@@ -1408,6 +1610,26 @@ comment on column TYPE_EXPORT_ANALYTICS.LABEL_FR is
 'Titre';
 
 -- ============================================================
+--   Table : TYPE_OPERATOR                                        
+-- ============================================================
+create table TYPE_OPERATOR
+(
+    TYOP_CD     	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_TYPE_OPERATOR primary key (TYOP_CD)
+);
+
+comment on column TYPE_OPERATOR.TYOP_CD is
+'ID';
+
+comment on column TYPE_OPERATOR.LABEL is
+'Label';
+
+comment on column TYPE_OPERATOR.LABEL_FR is
+'LabelFr';
+
+-- ============================================================
 --   Table : TYPE_TOPIC                                        
 -- ============================================================
 create table TYPE_TOPIC
@@ -1583,6 +1805,12 @@ alter table ATTACHMENT
 create index A_ATTACHMENT_ATTACHMENT_FILE_INFO_ATTACHMENT_FILE_INFO_FK on ATTACHMENT (ATT_FI_ID asc);
 
 alter table ATTACHMENT
+	add constraint FK_A_ATTACHMENT_ATTACHMENT_TYPE_ATTACHMENT_TYPE foreign key (ATT_TYPE_CD)
+	references ATTACHMENT_TYPE (ATT_TYPE_CD);
+
+create index A_ATTACHMENT_ATTACHMENT_TYPE_ATTACHMENT_TYPE_FK on ATTACHMENT (ATT_TYPE_CD asc);
+
+alter table ATTACHMENT
 	add constraint FK_A_ATTACHMENT_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
 
@@ -1642,6 +1870,30 @@ alter table CONTEXT_ENVIRONMENT_VALUE
 
 create index A_CONTEXT_ENVIRONMENT_VALUE_CONTEXT_CONTEXT_VALUE_FK on CONTEXT_ENVIRONMENT_VALUE (CVA_ID asc);
 
+alter table CONTEXT_ENVIRONMENT_VALUE
+	add constraint FK_A_CONTEXT_ENVIRONMENT_VALUE_TYPE_OPERATOR_TYPE_OPERATOR foreign key (TYOP_CD)
+	references TYPE_OPERATOR (TYOP_CD);
+
+create index A_CONTEXT_ENVIRONMENT_VALUE_TYPE_OPERATOR_TYPE_OPERATOR_FK on CONTEXT_ENVIRONMENT_VALUE (TYOP_CD asc);
+
+alter table CONTEXT_POSSIBLE_VALUE
+	add constraint FK_A_CONTEXT_POSSIBLE_VALUE_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_CONTEXT_POSSIBLE_VALUE_CHATBOT_CHATBOT_FK on CONTEXT_POSSIBLE_VALUE (BOT_ID asc);
+
+alter table CONTEXT_POSSIBLE_VALUE
+	add constraint FK_A_CONTEXT_POSSIBLE_VALUE_CONTEXT_VALUE_CONTEXT_VALUE foreign key (CVA_ID)
+	references CONTEXT_VALUE (CVA_ID);
+
+create index A_CONTEXT_POSSIBLE_VALUE_CONTEXT_VALUE_CONTEXT_VALUE_FK on CONTEXT_POSSIBLE_VALUE (CVA_ID asc);
+
+alter table CONTEXT_POSSIBLE_VALUE
+	add constraint FK_A_CONTEXT_POSSIBLE_VALUE_TYPE_OPERATOR_TYPE_OPERATOR foreign key (TYOP_CD)
+	references TYPE_OPERATOR (TYOP_CD);
+
+create index A_CONTEXT_POSSIBLE_VALUE_TYPE_OPERATOR_TYPE_OPERATOR_FK on CONTEXT_POSSIBLE_VALUE (TYOP_CD asc);
+
 alter table CONTEXT_VALUE
 	add constraint FK_A_CONTEXT_VALUE_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
@@ -1653,6 +1905,24 @@ alter table DICTIONARY_ENTITY
 	references CHATBOT (BOT_ID);
 
 create index A_DICTIONARY_ENTITY_CHATBOT_CHATBOT_FK on DICTIONARY_ENTITY (BOT_ID asc);
+
+alter table DOCUMENTARY_RESOURCE
+	add constraint FK_A_DOCUMENTARY_RESOURCE_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_DOCUMENTARY_RESOURCE_CHATBOT_CHATBOT_FK on DOCUMENTARY_RESOURCE (BOT_ID asc);
+
+alter table DOCUMENTARY_RESOURCE
+	add constraint FK_A_DOCUMENTARY_RESOURCE_DOCUMENTARY_RESOURCE_TYPE_DOCUMENTARY_RESOURCE_TYPE foreign key (DRE_TYPE_CD)
+	references DOCUMENTARY_RESOURCE_TYPE (DRE_TYPE_CD);
+
+create index A_DOCUMENTARY_RESOURCE_DOCUMENTARY_RESOURCE_TYPE_DOCUMENTARY_RESOURCE_TYPE_FK on DOCUMENTARY_RESOURCE (DRE_TYPE_CD asc);
+
+alter table DOCUMENTARY_RESOURCE
+	add constraint FK_A_DOCUMENTARY_RESOURCE_FILE_ATTACHMENT_FILE_INFO_ATTACHMENT foreign key (ATT_ID)
+	references ATTACHMENT (ATT_ID);
+
+create index A_DOCUMENTARY_RESOURCE_FILE_ATTACHMENT_FILE_INFO_ATTACHMENT_FK on DOCUMENTARY_RESOURCE (ATT_ID asc);
 
 alter table HISTORY
 	add constraint FK_A_HISTORY_CHATBOT_CHATBOT foreign key (BOT_ID)
@@ -1737,6 +2007,24 @@ alter table PERSON
 	references PERSON_ROLE (ROL_CD);
 
 create index A_PERSON_ROLE_PERSON_ROLE_FK on PERSON (ROL_CD asc);
+
+alter table QUESTION_ANSWER_CATEGORY
+	add constraint FK_A_QUESTION_ANSWER_CATEGORY_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_QUESTION_ANSWER_CATEGORY_CHATBOT_CHATBOT_FK on QUESTION_ANSWER_CATEGORY (BOT_ID asc);
+
+alter table QUESTION_ANSWER
+	add constraint FK_A_QUESTION_ANSWER_CATEGORY_QUESTION_ANSWER_QUESTION_ANSWER_CATEGORY foreign key (QA_CAT_ID)
+	references QUESTION_ANSWER_CATEGORY (QA_CAT_ID);
+
+create index A_QUESTION_ANSWER_CATEGORY_QUESTION_ANSWER_QUESTION_ANSWER_CATEGORY_FK on QUESTION_ANSWER (QA_CAT_ID asc);
+
+alter table QUESTION_ANSWER
+	add constraint FK_A_QUESTION_ANSWER_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_QUESTION_ANSWER_CHATBOT_CHATBOT_FK on QUESTION_ANSWER (BOT_ID asc);
 
 alter table RESPONSE_BUTTON
 	add constraint FK_A_RESPONSE_BUTTON_TOPIC_RESPONSE_TOPIC foreign key (TOP_ID_RESPONSE)

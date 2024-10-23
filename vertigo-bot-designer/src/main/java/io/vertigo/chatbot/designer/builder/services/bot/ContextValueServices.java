@@ -2,7 +2,6 @@ package io.vertigo.chatbot.designer.builder.services.bot;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.xml.xpath.XPath;
@@ -15,7 +14,6 @@ import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.ContextValueDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ContextValue;
-import io.vertigo.chatbot.commons.domain.WelcomeTourStep;
 import io.vertigo.chatbot.commons.multilingual.context.ContextValueMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.HistoryServices;
 import io.vertigo.chatbot.designer.builder.services.IRecordable;
@@ -27,7 +25,6 @@ import io.vertigo.chatbot.domain.DtDefinitions.ContextValueFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
 import io.vertigo.datamodel.structure.model.DtListState;
@@ -41,8 +38,10 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 
 	@Inject
 	private ContextValueDAO contextValueDAO;
+
 	@Inject
 	private JsonEngine jsonEngine;
+
 	@Inject
 	private NodeServices nodeServices;
 

@@ -28,6 +28,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldAttachment$length,
 	/**
+	 * Attachment type.
+	 */
+	fldAttachment$attTypeCd,
+	/**
 	 * AttachmentFileInfo.
 	 */
 	fldAttachment$attFiId,
@@ -89,6 +93,22 @@ public enum DtResources implements LocaleMessageKey {
 	fldAttachmentFileInfo$filePath,
 
 	/***********************************************************
+	/** AttachmentType.
+	/***********************************************************
+	/**
+	 * Code.
+	 */
+	fldAttachmentType$attTypeCd,
+	/**
+	 * Label.
+	 */
+	fldAttachmentType$label,
+	/**
+	 * LabelFr.
+	 */
+	fldAttachmentType$labelFr,
+
+	/***********************************************************
 	/** BotExport.
 	/***********************************************************
 	/**
@@ -135,6 +155,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Jira fields setting.
 	 */
 	fldBotExport$jiraFieldSetting,
+	/**
+	 * Questions answers List.
+	 */
+	fldBotExport$questionAnswerList,
 	/**
 	 * map Context.
 	 */
@@ -433,6 +457,30 @@ public enum DtResources implements LocaleMessageKey {
 	fldConfluenceSettingSpace$confluencesettingId,
 
 	/***********************************************************
+	/** ContextPossibleValue.
+	/***********************************************************
+	/**
+	 * Context possible value id.
+	 */
+	fldContextPossibleValue$cpvId,
+	/**
+	 * Value.
+	 */
+	fldContextPossibleValue$value,
+	/**
+	 * Context value id.
+	 */
+	fldContextPossibleValue$cvaId,
+	/**
+	 * Value operator.
+	 */
+	fldContextPossibleValue$tyopCd,
+	/**
+	 * Chatbot.
+	 */
+	fldContextPossibleValue$botId,
+
+	/***********************************************************
 	/** ContextValue.
 	/***********************************************************
 	/**
@@ -651,6 +699,22 @@ public enum DtResources implements LocaleMessageKey {
 	 * data.
 	 */
 	fldMediaFileInfo$fileData,
+
+	/***********************************************************
+	/** QuestionAnswerExport.
+	/***********************************************************
+	/**
+	 * Question.
+	 */
+	fldQuestionAnswerExport$question,
+	/**
+	 * Answer.
+	 */
+	fldQuestionAnswerExport$answer,
+	/**
+	 * Category.
+	 */
+	fldQuestionAnswerExport$catLabel,
 
 	/***********************************************************
 	/** RunnerHealthCheck.

@@ -50,7 +50,7 @@
 	
 	<body>
 		<section layout:fragment="content-actions">
-			<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/topics/detail/new(id=${model.bot.botId})}" class="fab-block" round color="primary" size="md" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" />
+			<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" url="@{/bot/{id}/topics/detail/new(id=${model.bot.botId})}" class="fab-block" round color="primary" size="md" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}" />
 					      
 			<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md" icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}"
 					       @click="$refs.exportTopic.show()"></q-btn>	

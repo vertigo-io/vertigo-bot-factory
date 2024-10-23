@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=documents"
+>
+<head>
+    <title th:text="#{documentaryResource.title}"></title>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    <script th:src="@{/static/js/c-richtext.js}"></script>
+    <script th:src="@{/static/js/c-emojipicker.js}"></script>
+    <script th:inline="javascript">
+        VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+
+        function onRejected (rejectedEntries) {
+            let message = VertigoUi.vueData.locale === 'fr_FR' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
+                : 'File ' + rejectedEntries[0].file.name + ' was rejected.';
+            if (rejectedEntries[0].failedPropValidation === 'accept') {
+                message += VertigoUi.vueData.locale === 'fr_FR' ? ' Le format du fichier n\'est pas accepté' : ' File format isn\'t accepted';
+            }
+            VUiExtensions.dataX.attachmentError = {'show': true, 'message': message};
+        }
+
+        function onStart() {
+            VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+        }
+
+        function isImage(type) {
+            return type.includes('image');
+        }
+
+    </script>
+</head>
+<body>
+<section layout:fragment="content-actions">
+    <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/document/(id=${model.bot.botId})} + ${model.documentaryResource.dreId}" ariaLabel="Cancel" icon="fas fa-ban"
+                    class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
+    <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+                      class="on-left" :round size="md" color="primary" />
+    <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" @click="componentStates.showDeleteDocumentaryResourcePopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
+           class="on-left" round size="md" color="red" ></q-btn>
+</section>
+
+<section layout:fragment="content">
+    <vu:popup action="_delete" vModel="showDeleteDocumentaryResourcePopup" message="#{documentaryResource.popup.message}" confirm="#{action.delete}"></vu:popup>
+
+    <vu:block id="detail" title="Informations">
+        <vu:grid cols="2">
+            <vu:text-field object="documentaryResource" field="title" />
+            <vu:text-field object="documentaryResource" field="description"/>
+        </vu:grid>
+    </vu:block>
+
+    <div>
+        <vu:include-data-primitive key="locale"/>
+        <vu:include-data object="documentaryResource" field="dreTypeCd" modifiable="true"/>
+        <vu:include-data object="documentaryResource" field="title" modifiable="true"/>
+        <vu:include-data object="documentaryResource" field="text" modifiable="true"/>
+        <vu:include-data object="documentaryResource" field="url" modifiable="true"/>
+        <vu:include-data object="documentaryResourceTypeList" field="dreTypeCd" />
+        <vu:include-data object="documentaryResourceTypeList" field="label" />
+        <vu:include-data object="documentaryResourceTypeList" field="labelFr" />
+        <q-btn-toggle
+                v-model="vueData.documentaryResource.dreTypeCd"
+                name="vContext[documentaryResource][dreTypeCd]"
+                toggle-color="primary"
+                :options="vueData.locale == 'fr_FR' ? transformListForSelection('documentaryResourceTypeList', 'dreTypeCd', 'labelFr') : transformListForSelection('documentaryResourceTypeList', 'dreTypeCd', 'label')"
+                th::disable="${model.modeReadOnly}"
+        />
+    </div>
+    <vu:block id="document" th:title="#{documentaryResource.text}" v-if="vueData.documentaryResource.dreTypeCd === 'TEXT'">
+        <c-richtext
+                v-model="vueData.documentaryResource.text"
+                name="vContext[documentaryResource][text]"
+                :locale="vueData.locale"
+                class="q-pb-sm">
+        </c-richtext>
+    </vu:block>
+
+    <vu:block id="url" th:title="#{documentaryResource.url}" v-if="vueData.documentaryResource.dreTypeCd === 'URL'">
+        <q-input
+                v-model="vueData.documentaryResource.url"
+                name="vContext[documentaryResource][url]"
+                th::disable="${model.modeReadOnly}">
+        </q-input>
+    </vu:block>
+
+    <vu:block id="url" th:title="#{documentaryResource.file}" v-if="vueData.documentaryResource.dreTypeCd === 'FILE'">
+        <vu:include-data-primitive key="importAttachmentFileUri" modifiable="true"/>
+        <vu:include-data object="attachment" field="label" modifiable="true"/>
+        <vu:include-data object="attachment" field="type" modifiable="true"/>
+        <vu:include-data object="attachment" field="attFiId" modifiable="true"/>
+
+        <vu:grid col="2s">
+            <vu:text-field object="attachment" field="label"/>
+            <div th:if="${model.modeReadOnly}" style="display: flex; flex-direction: column">
+                <label style="color:#959595" th:text="#{attachment.preview}"></label>
+                <img v-if="isImage(vueData.attachment.type)" th::src="|'@{/commons/getAttachment}?attFiId=' + vueData.attachment.attFiId|" class="detailImg" />
+                <a v-else th::href="|'@{/commons/getAttachment}?attFiId=' + vueData.attachment.attFiId|" target="_blank"><q-icon name="attachment" size="2.5rem"></q-icon></a>
+            </div>
+        </vu:grid>
+        <vu:fileupload th:url="'@{/commons/upload}'" key="importAttachmentFileUri" th:if="${!model.modeReadOnly}" multiple="false" accept="'.png,.jpg,.jpeg,.pdf,.pptx,.csv,.docx,.xlsx'"
+                       @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
+        <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
+    </vu:block>
+    <q-page-sticky position="bottom-right">
+        <vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
+    </q-page-sticky>
+</section>
+</body>
+</html>

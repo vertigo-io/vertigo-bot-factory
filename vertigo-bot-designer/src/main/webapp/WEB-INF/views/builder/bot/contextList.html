@@ -8,6 +8,40 @@
 
 <head>
     <title th:text="#{context.title}"></title>
+    <script th:inline="javascript">
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
+
+            getOperatorLabel: function(tyopCd) {
+            let operator = VertigoUi.vueData.typeOperators.find(operator => operator.tyopCd === tyopCd);
+            if (operator !== undefined) {
+                return VertigoUi.vueData.locale === 'fr_FR' ? operator.labelFr : operator.label;
+            } else {
+                return tyopCd;
+            }
+          }
+        };
+
+        function filteredOptions() {
+            var options =  VertigoUi.vueData.contextPossibleValues.filter(possibleValue =>
+                possibleValue.cvaId === VertigoUi.vueData.newContextEnvironmentValue.cvaId);
+            other = VertigoUi.vueData.locale === 'fr_FR' ? 'Autre' : 'Other';
+            options.push({ tyopCd: other, value: ''});
+            return options
+        }
+
+        function updateEnvironmentValue(possibleValue) {
+            if (possibleValue.tyopCd === "Autre" || possibleValue.tyopCd === "Other"){
+                VUiExtensions.dataX.isOther = true;
+            }else {
+                VertigoUi.vueData.newContextEnvironmentValue.value = possibleValue.value;
+                VertigoUi.vueData.newContextEnvironmentValue.tyopCd = possibleValue.tyopCd;
+            }
+        }
+
+        VUiExtensions.dataX.selectedOption = null;
+        VUiExtensions.dataX.isOther = false;
+    </script>
 </head>
 
 <body>
@@ -20,8 +54,6 @@
 </section>
 
 <section layout:fragment="content">
-    <vu:include-data-primitive key="locale"/>
-
     <vu:popup-ajax action="_deleteContextEnvironment" vModel="showDeleteContextEnvironmentPopup"
                    th:message="#{context.environment.delete.popup}"
                    th:confirm="#{action.delete}" dataName="cenvId"></vu:popup-ajax>
@@ -39,6 +71,7 @@
         <vu:include-data object="contextValues" field="cvaId"/>
         <vu:include-data object="contextValues" field="label"/>
         <vu:include-data object="contextValues" field="xpath"/>
+        <vu:include-data-primitive key="locale"/>
         <vu:column field="label">
             <a th::href="|'@{/bot/{id}/contextValue/(id=${model.bot.botId})}'+props.row.cvaId|"
                style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
@@ -92,17 +125,22 @@
                 <q-card>
                     <q-card-section>
                         <div class="q-pa-md">
-                            <q-list bordered separator>
+                            <q-list bordered separator >
                                 <q-item th::clickable="${model.userAuthorizations[AtzChatbot$botContributor]}"
                                         v-for="contextEnvironmentValue in contextEnvironment.contextEnvironmentValues"
                                         @click="vueData.newContextEnvironmentValue.cenvalId = contextEnvironmentValue.cenvalId;
 						   vueData.newContextEnvironmentValue.cvaId = contextEnvironmentValue.cvaId;
-						   vueData.newContextEnvironmentValue.label = contextEnvironmentValue.label;
 						   vueData.newContextEnvironmentValue.value = contextEnvironmentValue.value;
+						   vueData.newContextEnvironmentValue.tyopCd = contextEnvironmentValue.tyopCd;
+						   vueData.newContextEnvironmentValue.cenvId = contextEnvironment.cenvId
+						   VUiExtensions.dataX.selectedOption = null;
+						   VUiExtensions.dataX.isOther = false;
 							$refs.environmentContextValueDialog.show()">
                                     <q-item-section>
                                         <q-item-label>{{contextEnvironmentValue.label}}</q-item-label>
-                                        <q-item-label caption>{{contextEnvironmentValue.value}}</q-item-label>
+                                    </q-item-section>
+                                    <q-item-section v-if="contextEnvironmentValue.value !== null && contextEnvironmentValue.tyopCd !== null">
+                                        <span v-html="getOperatorLabel(contextEnvironmentValue.tyopCd) + ' : ' + contextEnvironmentValue.value"></span>
                                     </q-item-section>
                                 </q-item>
                             </q-list>
@@ -144,21 +182,36 @@
             <vu:include-data object="newContextEnvironmentValue" field="cenvalId" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="cvaId" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="value" modifiable="true"/>
-            <vu:include-data object="newContextEnvironmentValue" field="label" modifiable="true"/>
+            <vu:include-data object="newContextEnvironmentValue" field="tyopCd" modifiable="true"/>
+            <vu:include-data object="newContextEnvironmentValue" field="cenvId" modifiable="true"/>
+            <vu:include-data object="contextPossibleValues" field="*"/>
+            <vu:include-data object="typeOperators" field="*"/>
             <q-card>
                 <q-card-section>
                     <div class="text-h6">
                         <span th:text="#{context.environment.value.update}"></span>
                     </div>
                 </q-card-section>
-                <q-card-section>
-                    <input type="hidden" v-model="vueData.newContextEnvironmentValue.cenvalId"
-                           name="vContext[newContextEnvironmentValue][cenvalId]">
-                    <input type="hidden" v-model="vueData.newContextEnvironmentValue.cvaId"
-                           name="vContext[newContextEnvironmentValue][cvaId]">
-                    <input type="hidden" v-model="vueData.newContextEnvironmentValue.label"
-                           name="vContext[newContextEnvironmentValue][label]">
-                    <vu:text-field object="newContextEnvironmentValue" field="value"/>
+                <q-card-section v-if="filteredOptions().length > 1 && VUiExtensions.dataX.isOther === false" >
+                    <q-select v-model="VUiExtensions.dataX.selectedOption"
+                              th:label="#{context.environmentValue.popup.valueOperator}"
+                              :options="filteredOptions()"
+                              :option-label="possibleValue => `${getOperatorLabel(possibleValue.tyopCd)} : ${possibleValue.value}`"
+                              @input="updateEnvironmentValue">
+                    </q-select>
+                </q-card-section>
+                <q-card-section v-else>
+                    <vu:grid cols="2">
+                        <q-select th:label="#{context.environmentValue.popup.operator}"
+                                  v-model="vueData.newContextEnvironmentValue.tyopCd"
+                                  :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeOperators', 'tyopCd', 'labelFr') : transformListForSelection('typeOperators', 'tyopCd', 'label')"
+                                  map-options
+                                  emit-value>
+                        </q-select>
+                        <q-input th:label="#{context.environmentValue.popup.value}"
+                                 v-model="vueData.newContextEnvironmentValue.value"
+                                 name="vContext[newContextEnvironmentValue][value]"/>
+                    </vu:grid>
                 </q-card-section>
                 <q-card-actions align="around">
                     <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>

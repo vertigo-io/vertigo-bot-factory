@@ -1,0 +1,64 @@
+package io.vertigo.chatbot.designer.domain
+
+create DtDefinition DtDocumentaryResource{
+	id		dreId			{domain: DoId 		label: "ID"					    				}
+	field 	title 			{domain: DoLabel 	label: "Title" 			    cardinality : "1"	}
+	field 	description		{domain: DoText 	label: "Description" 		    				}
+	field 	text    		{domain: DoText 	label: "Text" 		    	        			}
+	field 	url     		{domain: DoText   	label: "Url" 		             				}
+}
+
+create DtDefinition DtDocumentaryResourceType {
+	stereotype : "StaticMasterData"
+	id    dreTypeCd 		{domain: DoCode 	label: "Code"}
+	field label 		    {domain: DoLabel 	label: "Label" 			                cardinality : "1"	}
+	field labelFr 		    {domain: DoLabel 	label: "LabelFr" 		                cardinality : "1"	}
+	values : `{
+        "URL" : {
+            "dreTypeCd" : "URL",
+            "label" : "URL",
+            "labelFr" : "URL"
+        },
+        "FILE" : {
+            "dreTypeCd" : "FILE",
+            "label" : "File",
+            "labelFr" : "Document"
+        },
+        "TEXT" : {
+            "dreTypeCd" : "TEXT",
+            "label" : "Text",
+            "labelFr" : "Texte"
+        }
+     }`
+    sortField : "dreTypeCd"
+ 	displayField : "label"
+}
+create Association ADocumentaryResourceFileAttachmentFileInfo {
+	fkFieldName : "attId"
+
+ 	dtDefinitionA : DtDocumentaryResource
+	type : "*>?"
+	dtDefinitionB : DtAttachment
+
+	labelB : "Attachment id"
+}
+
+create Association ADocumentaryResourceDocumentaryResourceType {
+	fkFieldName : "dreTypeCd"
+
+ 	dtDefinitionA : DtDocumentaryResource
+	type : "*>1"
+	dtDefinitionB : DtDocumentaryResourceType
+
+	labelB : "Documentary resource type"
+}
+
+create Association ADocumentaryResourceChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtDocumentaryResource
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
