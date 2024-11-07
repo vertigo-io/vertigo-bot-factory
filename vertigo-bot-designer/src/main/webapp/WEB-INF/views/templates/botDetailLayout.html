@@ -58,6 +58,10 @@
 					} else {
 						Chatbot.updateContextMap({})
 					}
+				},
+				
+				getContextValue: function() {
+					return VertigoUi.vueData['CTX'];
 				}
 			}
 
@@ -156,7 +160,7 @@
 					<input v-for="id in vueData.selectTypeBotExportList.tbeCd" type="hidden" name="vContext[selectTypeBotExportList][tbeCd]" :value="id" />
 
 					<q-card-actions align="around">
-						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<input type="hidden" name="CTX" :value="getContextValue()">
 						<q-btn flat th:label="#{popup.export.cancel}" color="primary" v-close-popup ></q-btn>
 						<q-btn type="submit" th:title="#{popup.export.export}" th:label="#{popup.export.export}" th:aria-label="#{popup.export.export}" color="primary" v-close-popup></q-btn>
 					</q-card-actions>

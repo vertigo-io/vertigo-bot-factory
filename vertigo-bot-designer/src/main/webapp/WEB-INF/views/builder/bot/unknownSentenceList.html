@@ -208,7 +208,7 @@
                     </q-card-section>
 
                     <q-card-actions align="around">
-                        <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                        <input type="hidden" name="CTX" :value="getContextValue()">
                         <q-btn th:label="#{action.treat.cancel}" color="red" @click="componentStates.treatUnknownSentence.unknownSentence.sentences = []; componentStates.topicSelection.selects.topicId = null; componentStates.topicSelection.selects.catId = null;" v-close-popup></q-btn>
                         <q-btn th:label="#{action.treat}" color="primary" @click="treatUnknownMessage(componentStates.treatUnknownSentence.unknownSentence.text, componentStates.topicSelection.selects.topicId, componentStates.treatUnknownSentence.unknownSentence.unknownSentenceId, componentStates.treatUnknownSentence.unknownSentence.sentences); componentStates.treatUnknownSentence.unknownSentence.sentences = []" v-close-popup></q-btn>
                     </q-card-actions>

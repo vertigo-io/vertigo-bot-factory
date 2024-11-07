@@ -15,7 +15,7 @@
 			<q-form method="post" action="_exportCategories">
 				<vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/category/new(id=${model.bot.botId})}" th:ariaLabel="#{action.add}" icon="add"
 								class="on-left" round size="md" color="primary" />
-				<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+				<input type="hidden" name="CTX" :value="getContextValue()">
 				<q-btn type="submit" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md"
 					   icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}"></q-btn>
 				<q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md"
@@ -59,7 +59,7 @@
 						<vu:fileupload th:url="'@{/commons/upload}'" key="importCategoriesFileUri" multiple="false"  th:with="object=null, field=null"/>
 
 						<q-card-actions align="around">
-							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<input type="hidden" name="CTX" :value="getContextValue()">
 							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
 							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn>
 						</q-card-actions>

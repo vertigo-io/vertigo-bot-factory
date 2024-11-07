@@ -147,7 +147,7 @@
 					
 					
 					<q-card-actions align="around">
-							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<input type="hidden" name="CTX" :value="getContextValue()">
 							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
 							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn> 
 					</q-card-actions>
@@ -179,7 +179,7 @@
 					</q-card-section>
 					<input v-for="id in vueData.selectionCatList.topCatId" type="hidden" name="vContext[selectionCatList][topCatId]" :value="id" />
 					<q-card-actions align="around">
-							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<input type="hidden" name="CTX" :value="getContextValue()">
 							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
 							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" v-close-popup></q-btn> 
 					</q-card-actions>

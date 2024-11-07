@@ -23,7 +23,7 @@
     <q-form method="post" action="_exportCategories">
         <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/document/new(id=${model.bot.botId})}" th:ariaLabel="#{action.add}" icon="add"
                         class="on-left" round size="md" color="primary" />
-        <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+        <input type="hidden" name="CTX" :value="getContextValue()">
     </q-form>
 </section>
 
