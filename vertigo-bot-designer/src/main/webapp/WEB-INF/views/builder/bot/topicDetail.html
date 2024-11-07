@@ -110,9 +110,9 @@
 
 		<body>
 			<section layout:fragment="content-actions">
-				<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/topics/detail/(id=${model.bot.botId})} + ${model.topic.topId}" th:title="#{action.cancel}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
+				<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/topics/detail/(id=${model.bot.botId})} + ${model.topic.topId}" th:title="#{action.cancel}" icon="fas fa-ban"
 								class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
-				<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
+				<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" icon="edit"
 								  class="on-left" :round size="md" color="primary" th:title="#{action.edit}" />
 				<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor] && !model.topic.isTechnical}" @click="componentStates.showPopupDeleteTopic = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
 					   class="on-left" round size="md" color="red" ></q-btn>

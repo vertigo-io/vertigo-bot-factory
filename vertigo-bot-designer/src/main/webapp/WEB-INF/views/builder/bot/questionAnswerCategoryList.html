@@ -11,7 +11,7 @@
 <body>
 <section layout:fragment="content-actions">
     <q-form method="post" action="_exportCategories">
-        <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/qacategory/new(id=${model.bot.botId})}" th:ariaLabel="#{action.add}" icon="add"
+        <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/qacategory/new(id=${model.bot.botId})}" th:title="#{action.add}" icon="add"
                         class="on-left" round size="md" color="primary" />
         <input type="hidden" name="CTX" :value="getContextValue()">
         <q-btn type="submit" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md"

@@ -34,9 +34,9 @@
 </head>
 <body>
 <section layout:fragment="content-actions">
-    <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/document/(id=${model.bot.botId})} + ${model.documentaryResource.dreId}" ariaLabel="Cancel" icon="fas fa-ban"
+    <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/document/(id=${model.bot.botId})} + ${model.documentaryResource.dreId}" title="Cancel" icon="fas fa-ban"
                     class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
-    <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+    <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" title="Edit" icon="edit"
                       class="on-left" :round size="md" color="primary" />
     <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" @click="componentStates.showDeleteDocumentaryResourcePopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
            class="on-left" round size="md" color="red" ></q-btn>

@@ -109,9 +109,9 @@
 		</div>
 	
 		<section layout:fragment="content-actions">
-			<vu:button-link th:if="${model.modeEdit}" th:title="#{bot.cancel}" url="@{/bot/{id}(id=${model.bot.botId})}" th:ariaLabel="#{bot.cancel}" icon="fas fa-ban"
+			<vu:button-link th:if="${model.modeEdit}" th:title="#{bot.cancel}" url="@{/bot/{id}(id=${model.bot.botId})}" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
-			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" title="edit" action="@{_edit}" th:ariaLabel="#{bot.edit}" icon="edit"
+			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" title="edit" action="@{_edit}" th:title="#{bot.edit}" icon="edit"
 							class="on-left" :round size="md" color="primary" />
 		</section>
 		
