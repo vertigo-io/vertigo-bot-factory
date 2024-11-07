@@ -197,7 +197,7 @@
                               th:label="#{context.environmentValue.popup.valueOperator}"
                               :options="filteredOptions()"
                               :option-label="possibleValue => `${getOperatorLabel(possibleValue.tyopCd)} : ${possibleValue.value}`"
-                              @input="updateEnvironmentValue">
+                              @update:model-value="updateEnvironmentValue">
                     </q-select>
                 </q-card-section>
                 <q-card-section v-else>

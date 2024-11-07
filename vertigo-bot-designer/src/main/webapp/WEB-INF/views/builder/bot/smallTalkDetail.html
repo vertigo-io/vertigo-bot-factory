@@ -91,7 +91,7 @@
 								:ref="'utter_input_'+index"
 								:name="'vContext[utterTexts]['+index+'][text]'"
 								placeholder="Enter text variant" dense
-								@input="addMoreUtterTextIfNeeded"
+								@update:model-value="addMoreUtterTextIfNeeded"
 								@keydown.enter.prevent="() => {
 									if (index < getUtterTextResolvedList().length - 1) {
 									 	$refs['utter_input_'+(index+1)][0].focus()

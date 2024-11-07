@@ -316,7 +316,7 @@
         <q-select
                 v-model="vueData.maxSavedTrainings"
                 :options="VUiExtensions.dataX.maxSavedTrainingsOptions"
-                @input="saveMaxSavedTrainings()"
+                @update:model-value="saveMaxSavedTrainings()"
         >
         </q-select>
     </vu:block>

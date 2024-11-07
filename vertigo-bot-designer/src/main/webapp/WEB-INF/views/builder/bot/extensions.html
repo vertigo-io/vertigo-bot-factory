@@ -186,7 +186,7 @@
                     v-model="componentStates.nodes.selectedNode.nodId"
                     :options="transformListForSelection('nodeList', 'nodId', 'name')"
                     th:label="#{extension.confluence.filter.node}"
-                    @input="filterConfluenceSettings();"
+                    @update:model-value="filterConfluenceSettings();"
                     stack-label>
             </q-select>
             <q-btn color="primary" round icon="add" th:aria-label="#{action.add}"
@@ -365,7 +365,7 @@
             <vu:column name="enabled" th:label="#{extension.jira.field.setting.enabled}">
                 <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
                           :disable="props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"
-                          @input="enabledDisabledJiraField(props.row.jirFieldCd, props.row.enabled)"></q-toggle>
+                          @update:model-value="enabledDisabledJiraField(props.row.jirFieldCd, props.row.enabled)"></q-toggle>
                 <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
                           disable></q-toggle>
             </vu:column>
@@ -373,7 +373,7 @@
                 <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
                           v-model="props.row.mandatory"
                           :disable="!props.row.enabled || props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"
-                          @input="mandatoryJiraField(props.row.jirFieldCd, props.row.mandatory)"></q-toggle>
+                          @update:model-value="mandatoryJiraField(props.row.jirFieldCd, props.row.mandatory)"></q-toggle>
                 <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.mandatory"
                           disable></q-toggle>
             </vu:column>
@@ -392,7 +392,7 @@
                         v-model="componentStates.nodes.selectedNode.nodId"
                         :options="transformListForSelection('nodeList', 'nodId', 'name')"
                         th:label="#{extension.jira.filter.node}"
-                        @input="filterJiraSettings();"
+                        @update:model-value="filterJiraSettings();"
                         stack-label>
                 </q-select>
                 <q-btn color="primary" round icon="add" th:aria-label="#{action.add}"

@@ -100,7 +100,7 @@
 							v-model="vueData.criteria.catId"
 							:options="transformListForSelection('nonTechnicalCategoryList', 'topCatId', 'label')"
 							th:label="#{topic.selection.category}"
-						  	@input="filter();"
+						  	@update:model-value="filter();"
 							stack-label>
 					</q-select>
 					<q-input style="margin-left:10px" borderless dense debounce="300" th:v-model="componentStates.topics.pagination.search" th:placeholder="#{topic.selection.search}">

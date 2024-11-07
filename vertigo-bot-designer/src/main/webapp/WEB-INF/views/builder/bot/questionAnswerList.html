@@ -83,7 +83,7 @@
                       :options="VertigoUi.vueData.categoryList"
                       option-value="qaCatId"
                       th:label="#{questionAnswer.selection.category}"
-                      @input="filter();"
+                      @update:model-value="filter();"
                       stack-label>
             </q-select>
             <q-input style="margin-left:10px" borderless dense debounce="300" th:v-model="VUiExtensions.dataX.search" th:placeholder="#{questionAnswer.selection.search}">

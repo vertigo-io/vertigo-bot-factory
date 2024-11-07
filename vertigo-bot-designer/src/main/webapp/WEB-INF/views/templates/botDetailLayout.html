@@ -279,7 +279,7 @@
 					stack-label
 					v-model="componentStates.contextEnvironments.selectedEnvironment.cenvId"
 					:options='transformListForSelection("contextEnvironments", "cenvId", "label")'
-					@input="selectEnvironment();"
+					@update:model-value="selectEnvironment();"
 					th:label="#{context.environment.dropdown.label}"
 			></q-select>
 			<div id="botDrawerContent"></div>

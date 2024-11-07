@@ -133,7 +133,7 @@
                                 icon="star_border"
                                 icon-selected="star"
                                 icon-half="star_half"
-                                @input="postAnswerText(true)"></q-rating>
+                                @update:model-value="postAnswerText(true)"></q-rating>
                     </q-chat-message>
                   </div>
                   <div v-if="inputConfig.cards.length > 0 || inputConfig.buttons.length > 0 || inputConfig.files.length > 0"
@@ -226,7 +226,7 @@
                        class="q-px-sm"
                        placeholder="Rechercher..."
                        :loading="processing"
-                       @input="filterQuestionsAnswers()"></q-input>
+                       @update:model-value="filterQuestionsAnswers()"></q-input>
             </div>
             <q-scroll-area class="q-px-sm col-grow"
                            ref="scroller"

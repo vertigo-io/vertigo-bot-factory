@@ -111,10 +111,10 @@
                             v-model="componentStates.statuses.selectedStatus.strCd"
                             :options="vueData.locale == 'fr_FR' ? transformListForSelection('statuses', 'strCd', 'labelFr') : transformListForSelection('statuses', 'strCd', 'label') "
                             th:label="#{unknownSentence.selection.status}"
-                            @input="filterSentences();"
+                            @update:model-value="filterSentences();"
                             stack-label>
                     </q-select>
-                    <q-input style="margin-right:10px" borderless dense debounce="300" v- @input="filterSentences();" th:v-model="VertigoUi.componentStates.search.searchText.value" th:attr="dataObject=${model.vContext['componentStates'].addComponentState('search').addObject('searchText', {value: ''})}" th:placeholder="#{unknownSentence.selection.search}">
+                    <q-input style="margin-right:10px" borderless dense debounce="300" v- @update:model-value="filterSentences();" th:v-model="VertigoUi.componentStates.search.searchText.value" th:attr="dataObject=${model.vContext['componentStates'].addComponentState('search').addObject('searchText', {value: ''})}" th:placeholder="#{unknownSentence.selection.search}">
                         <template v-slot:append>
                             <q-icon name="search" />
                         </template>
@@ -191,7 +191,7 @@
                                       v-model="componentStates.topicSelection.selects.catId"
                                       :options="transformListForSelection('topicCategories', 'topCatId', 'label')"
                                       th:label="#{unknownSentence.selection.category}"
-                                      @input="filter();"
+                                      @update:model-value="filter();"
                                       stack-label>
                             </q-select>
                             <q-select style="width: 250px;"
