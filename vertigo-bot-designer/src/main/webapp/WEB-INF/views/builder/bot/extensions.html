@@ -218,7 +218,7 @@
             <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}"
                    th:title="#{action.delete}"
                    th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
-                   @click="componentStates.conSetId = props.row.conSetId; componentStates.showDeleteConfluenceSettingPopup = true"></q-btn>
+                   @click="componentStates.conSetId = props.row.conSetId; componentStates.showDeleteConfluenceSettingPopup.shown = true"></q-btn>
         </vu:slot>
         <vu:include-data object="confluenceSettingsIhm" field="'*'"/>
         <vu:include-data object="confluenceSettingsIhmFiltered" field="conSetId"/>
@@ -423,7 +423,7 @@
                 <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}"
                        th:title="#{action.delete}"
                        th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
-                       @click="componentStates.jirSetId = props.row.jirSetId; componentStates.showDeleteJiraSettingPopup = true"></q-btn>
+                       @click="componentStates.jirSetId = props.row.jirSetId; componentStates.showDeleteJiraSettingPopup.shown = true"></q-btn>
             </vu:slot>
             <vu:include-data object="jiraSettings" field="'*'"/>
             <vu:include-data object="jiraSettingsFiltered" field="jirSetId"/>

@@ -37,7 +37,7 @@
 							class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:title="#{action.edit}" icon="edit"
 							class="on-left" :round size="md" color="primary" />
-			<q-btn th:if="|${model.userAuthorizations[AtzChatbot$botAdm] && model.modeReadOnly  && #lists.size(model.synonyms) == 0}|" @click="componentStates.showPopupDeleteDictionaryEntity = true" th:aria-label="#{action.delete}" th:title="#{action.delete}" icon="delete"
+			<q-btn th:if="|${model.userAuthorizations[AtzChatbot$botAdm] && model.modeReadOnly  && #lists.size(model.synonyms) == 0}|" @click="componentStates.showPopupDeleteDictionaryEntity.shown = true" th:aria-label="#{action.delete}" th:title="#{action.delete}" icon="delete"
 							class="on-left" round size="md" color="red" ></q-btn>
 		</section>
 			

@@ -114,7 +114,7 @@
 								class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
 				<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" icon="edit"
 								  class="on-left" :round size="md" color="primary" th:title="#{action.edit}" />
-				<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor] && !model.topic.isTechnical}" @click="componentStates.showPopupDeleteTopic = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
+				<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor] && !model.topic.isTechnical}" @click="componentStates.showPopupDeleteTopic.shown = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
 					   class="on-left" round size="md" color="red" ></q-btn>
 
 			</section>

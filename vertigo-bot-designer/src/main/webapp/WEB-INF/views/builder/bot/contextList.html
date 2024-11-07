@@ -118,7 +118,7 @@
                             <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}"
                                    th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
                                    class="on-left" round size="md" color="red"
-                                   @click="componentStates.cenvId = contextEnvironment.cenvId; componentStates.showDeleteContextEnvironmentPopup = true"></q-btn>
+                                   @click="componentStates.cenvId = contextEnvironment.cenvId; componentStates.showDeleteContextEnvironmentPopup.shown = true"></q-btn>
                         </div>
                     </q-item-section>
                 </template>

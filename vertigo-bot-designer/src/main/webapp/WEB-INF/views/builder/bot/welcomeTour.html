@@ -68,7 +68,7 @@
                    @click="vueData.newWelcomeTour.botId = props.row.botId; vueData.newWelcomeTour.welId = props.row.welId; vueData.newWelcomeTour.label = props.row.label;
                        vueData.newWelcomeTour.technicalCode = props.row.technicalCode; vueData.importShepherdConfigFileUri = []; $refs.welcomeTourDialog.show()"></q-btn>
             <q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
-                   @click="componentStates.welId = props.row.welId; componentStates.showDeleteWelcomeTourPopup = true"></q-btn>
+                   @click="componentStates.welId = props.row.welId; componentStates.showDeleteWelcomeTourPopup.shown = true"></q-btn>
         </vu:slot>
         <vu:include-data object="welcomeTours" field="label" />
         <vu:include-data object="welcomeTours" field="welId" />

@@ -103,7 +103,7 @@
 					
 						<q-card-actions align="around">
 							<input type="hidden" name="CTX" :value="getContextValue()">
-							<q-btn v-if="vueData.dictionaryEntityEdit.dicEntId" th:label="#{bot.delete}" color="red" @click="componentStates.meaId = vueData.dictionaryEntityEdit.dicEntId; componentStates.showPopupDictionaryEntity = true " ></q-btn>
+							<q-btn v-if="vueData.dictionaryEntityEdit.dicEntId" th:label="#{bot.delete}" color="red" @click="componentStates.meaId = vueData.dictionaryEntityEdit.dicEntId; componentStates.showPopupDictionaryEntity.shown = true " ></q-btn>
 							<q-btn type="submit" th:title="#{dictionary.create}" th:label="#{dictionary.create}" th:aria-label="#{dictionary.create}" color="primary" ></q-btn> 
 						</q-card-actions>
 					</q-form>

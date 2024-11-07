@@ -65,7 +65,7 @@
                            @click="vueData.newAttachment.botId = props.row.botId; vueData.newAttachment.attId = props.row.attId;
                            vueData.newAttachment.label = props.row.label; vueData.importAttachmentFileUri = []; $refs.attachmentDialog.show()"></q-btn>
                     <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{attachment.delete}" th:title="#{attachment.delete}"
-                           @click="componentStates.attId = props.row.attId; componentStates.showDeleteAttachmentPopup = true"></q-btn>
+                           @click="componentStates.attId = props.row.attId; componentStates.showDeleteAttachmentPopup.shown = true"></q-btn>
                 </vu:slot>
                 <vu:include-data object="attachments" field="attId" />
                 <vu:include-data object="attachments" field="attFiId" />

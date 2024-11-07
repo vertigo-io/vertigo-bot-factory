@@ -27,7 +27,7 @@
 							class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
 			<vu:button-submit th:if="${model.modeReadOnly && model.contextValue.label != 'url' && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:title="#{action.edit}" icon="edit"
 							class="on-left" :round size="md" color="primary" />
-			<q-btn th:if="${model.modeReadOnly && model.contextValue.label != 'url' && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopupDeleteContextValue = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
+			<q-btn th:if="${model.modeReadOnly && model.contextValue.label != 'url' && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopupDeleteContextValue.shown = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
 							class="on-left" round size="md" color="red" ></q-btn>
 		</section>
 				
@@ -74,7 +74,7 @@
 						   vueData.newContextPossibleValue.botId = props.row.botId;
 						   $refs.possibleValueDialog.show()"></q-btn>
 					<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
-						   @click="componentStates.cpvId = props.row.cpvId; componentStates.showPopupDeleteContextPossibleValue = true"></q-btn>
+						   @click="componentStates.cpvId = props.row.cpvId; componentStates.showPopupDeleteContextPossibleValue.shown = true"></q-btn>
 				</vu:slot>
 				<vu:column field="value"/>
 				<vu:column field="tyopCd">
