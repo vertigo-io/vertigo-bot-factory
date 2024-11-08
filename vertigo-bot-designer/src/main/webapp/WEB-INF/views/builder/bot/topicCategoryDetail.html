@@ -10,13 +10,31 @@
 		<title th:text="#{topicCategory.title}"></title>
 
 		<script th:inline="javascript">
-			function filteredOptions() {
-				return VertigoUi.vueData.allTopicCategories.filter(topCat =>
-						topCat.topCatId !== VertigoUi.vueData.topicCategory.topCatId);
-			}
+			VUiExtensions.methods = {
+				...VUiExtensions.methods,
 
-			function updateSelectedTopics(selectedTopicIhm) {
-				VertigoUi.vueData.topicsToUpdate = selectedTopicIhm.map(topic => topic).join(',');
+				updateSelectedTopics: function(selectedTopicIhm) {
+					VertigoUi.vueData.topicsToUpdate = selectedTopicIhm.map(topic => topic).join(',');
+				},
+
+				filterFn: function(val, update) {
+					update(() => {
+						if (val === '') {
+							this.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList
+						}
+						else {
+							const needle = normalizeString(val.toLowerCase())
+							this.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList.filter(
+									v => normalizeString((v.title+v.catLabel).toLowerCase()).indexOf(needle) > -1
+							)
+						}
+					})
+				},
+
+				filteredOptions: function() {
+					return VertigoUi.vueData.allTopicCategories.filter(topCat =>
+							topCat.topCatId !== VertigoUi.vueData.topicCategory.topCatId);
+				}
 			}
 
 			function normalizeString(str) {
@@ -25,22 +43,6 @@
 				else
 					return '';
 			}
-
-			function filterFn (val, update) {
-				update(() => {
-					if (val === '') {
-						VertigoUi.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList
-					}
-					else {
-						const needle = normalizeString(val.toLowerCase())
-						VertigoUi.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList.filter(
-								v => normalizeString((v.title+v.catLabel).toLowerCase()).indexOf(needle) > -1
-						)
-					}
-				})
-			}
-
-
 		</script>
 
 	</head>
@@ -146,7 +148,7 @@
 
 			<q-dialog ref="otherTopicsDialog">
 				<vu:include-data object="topicCategory" field="'*'" />
-				<vu:include-data object="topicIhmList" field="'*'" modifiableAllLines="true"/>
+				<vu:include-data object="topicIhmList" field="'*'" />
 				<vu:include-data-primitive key="locale"/>
 				<q-card>
 					<q-card-section>
@@ -155,7 +157,7 @@
 						</div>
 					</q-card-section>
 					<q-card-section>
-						<th:block th:attr="dataObject=${model.vContext[componentStates].addComponentState('titles').addObject('filterOptions')}" th:remove="all" />
+						<th:block th:attr="dataObject=${model.vContext[componentStates].addComponentState('titles').addList('filterOptions')}" th:remove="all" />
 						<q-select
 								multiple
 								v-model="vueData.selectedTopicIhmList"
@@ -186,5 +188,6 @@
 			<q-page-sticky position="bottom-right">
 				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
 			</q-page-sticky>
+		</section>
 	</body>
 </html>

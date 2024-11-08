@@ -8,24 +8,28 @@
 	
 	<head>
 		<script th:inline="javascript">
+			VUiExtensions.methods = {
+				...VUiExtensions.methods,
+
+				getDisplayedSynonyms: function() {
+					let searchNormarlized = normalizeString(this.componentStates.synonyms.pagination.search);
+
+					return VertigoUi.vueData.synonyms
+							// copy and reverse
+							.slice().reverse()
+							// search
+							.filter(syn => normalizeString(syn.label).includes(searchNormarlized))
+							// pagination
+							.slice((VertigoUi.componentStates.synonyms.pagination.page - 1) * VertigoUi.componentStates.synonyms.pagination.rowsPerPage,
+									VertigoUi.componentStates.synonyms.pagination.page * VertigoUi.componentStates.synonyms.pagination.rowsPerPage);
+				}
+			}
+
 		function normalizeString(str) {
 			if (str)
 				return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
 			else
 				return '';
-		}
-		
-		function getDisplayedSynonyms() {
-			let searchNormarlized = normalizeString(VertigoUi.componentStates.synonyms.pagination.search);
-			
-			return VertigoUi.vueData.synonyms
-					// copy and reverse
-					.slice().reverse()
-					// search
-					.filter(syn => normalizeString(syn.label).includes(searchNormarlized))
-					// pagination
-					.slice((VertigoUi.componentStates.synonyms.pagination.page - 1) * VertigoUi.componentStates.synonyms.pagination.rowsPerPage,
-							VertigoUi.componentStates.synonyms.pagination.page * VertigoUi.componentStates.synonyms.pagination.rowsPerPage);
 		}
 		</script>
 		<title th:text="#{dictionaryEntity.title}"></title>
@@ -41,7 +45,7 @@
 							class="on-left" round size="md" color="red" ></q-btn>
 		</section>
 			
-		
+
 		<section layout:fragment="content">
 			<vu:popup action="_delete" vModel="showPopupDeleteDictionaryEntity" th:message=#{popup.message} th:confirm=#{action.delete}></vu:popup>
 			<vu:block id="dictionaryEntity" title="${model.dictionaryEntity.label}">
@@ -62,7 +66,7 @@
 				
 				<vu:include-data-primitive key="newSynonym" modifiable="true" />
 				<vu:include-data object="synonyms" field="label" />
-				
+
 				<div th:if="${!model.modeReadOnly}">
 					<q-input v-model="vueData.newSynonym" 
 						dense class="q-pb-sm"
@@ -72,11 +76,11 @@
 					>
 					</q-input>
 				</div>
-				
+
 				<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('synonyms').addObject('pagination', {page: 1 , rowsPerPage: 10, search:''})}" th:remove="all" />
 					<q-list dense>
 						<q-item th::clickable="${!model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" v-for="(synonym, index) in getDisplayedSynonyms()">
-						
+
 							<q-item-section side left th:if="${!model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}">
 								<q-btn @click="httpPostAjax('_removeSynonym', {'index':vueData.synonyms.length - 1 - index})"
 									color="primary" dense size="sm" icon="delete" class="bg-grey" th:aria-label="#{action.delete}" th:title="#{action.delete}"></q-btn>
@@ -86,7 +90,7 @@
 								<q-popup-edit th:if="${!model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}"
 										  buttons label-set="Save" label-cancel="Cancel"
 										  v-model="synonym.label"
-										  @save="function(value, initialValue) {
+										  @save="(value, initialValue) => {
 													httpPostAjax('_editSynonym',
 														 {'vContext[newSynonym]':value, 'index':vueData.synonyms.length - 1 - index}
 													).then(function() {
@@ -94,13 +98,13 @@
 													 		synonym.label = initialValue;
 													 	}
 													 });
-													}"
-							>
-								<q-input v-model="synonym.label" dense autofocus />
-							</q-popup-edit>
-						</q-item-section>
-					</q-item>
-				</q-list>
+													}">
+									<q-input v-model="synonym.label" dense autofocus />
+								</q-popup-edit>
+							</q-item-section>
+						</q-item>
+					</q-list>
+				</th:block>
 				<div class="q-pa-lg flex flex-center">
 					<q-pagination
 					      v-model="componentStates.synonyms.pagination.page"

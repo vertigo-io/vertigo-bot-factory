@@ -80,6 +80,7 @@ public class DocumentaryResourceServices implements Component {
     public DocumentaryResource getNewdocumentaryResource(final Long botId) {
         DocumentaryResource documentaryResource = new DocumentaryResource();
         documentaryResource.setBotId(botId);
+        documentaryResource.setDreTypeCd(DocumentaryResourceTypeEnum.FILE.name());
         return documentaryResource;
     }
 }

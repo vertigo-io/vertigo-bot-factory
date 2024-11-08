@@ -9,53 +9,61 @@
     <head>
         <title th:text="#{unknownSentence.title}"></title>
         <script th:inline="javascript">
-            function filter() {
-                VertigoUi.componentStates.topicSelection.selects.options = VertigoUi.vueData.topics.filter(topic => {
-                    return topic.topCatId === VertigoUi.componentStates.topicSelection.selects.catId
-                }).map(function (topic) {
-                    return { value: topic.topId, label: topic.title };
-                });
-            }
+            VUiExtensions.methods = {
+                ...VUiExtensions.methods,
 
-            function treatUnknownMessage(text, topId, unknownSentenceId, sentences) {
-                let sentencesToSend = [];
-                if (sentences && sentences.length > 0 ){
-                    sentences.forEach(sentence => {
-                       sentencesToSend.push({unkSeId: sentence.unkSeId, text: sentence.text})
+                refreshUnknownSentences: function() {
+                    VUiExtensions.dataX.loadingUnknownSentences = true;
+                    VUiPage.httpPostAjax("_refreshUnknownSentences", {}, {
+                        onSuccess: function() {
+                            VUiExtensions.dataX.loadingUnknownSentences = false;
+                            filterSentences()
+                        }
                     });
-                } else if (text !== null && unknownSentenceId !== null) {
-                    sentencesToSend.push({unkSeId: unknownSentenceId, text: text})
+                },
+
+                filterSentences: function() {
+                    filterSentences();
+                },
+
+                treatUnknownMessage: function(text, topId, unknownSentenceId, sentences) {
+                    let sentencesToSend = [];
+                    if (sentences && sentences.length > 0 ){
+                        sentences.forEach(sentence => {
+                            sentencesToSend.push({unkSeId: sentence.unkSeId, text: sentence.text})
+                        });
+                    } else if (text !== null && unknownSentenceId !== null) {
+                        sentencesToSend.push({unkSeId: unknownSentenceId, text: text})
+                    }
+                    const formData = new FormData();
+                    formData.append("unknownSentencesToUpdate", JSON.stringify(sentencesToSend));
+                    formData.append('topId', topId);
+                    VUiPage.httpPostAjax("_treatUnknownSentence", formData, {
+                        onSuccess: function () {
+                            VertigoUi.componentStates.topicSelection.selects.catId = null;
+                            VertigoUi.componentStates.topicSelection.selects.topicId = null;
+                            filterSentences()
+                        }
+                    });
+                },
+
+                filter: function() {
+                    VUiPage.componentStates.topicSelection.selects.options = VUiPage.vueData.topics.filter(topic => {
+                        return topic.topCatId === VUiPage.componentStates.topicSelection.selects.catId
+                    }).map(function (topic) {
+                        return { value: topic.topId, label: topic.title };
+                    });
+                },
+
+                rejectUnknownSentence: function(unknownSentenceId) {
+                    VUiPage.httpPostAjax("_rejectUnknownSentence", {
+                        'unknownSentenceId': unknownSentenceId
+                    }, {
+                        onSuccess: function() {
+                            filterSentences()
+                        }
+                    });
                 }
-                const formData = new FormData();
-                formData.append("unknownSentencesToUpdate", JSON.stringify(sentencesToSend));
-                formData.append('topId', topId);
-                VUiPage.httpPostAjax("_treatUnknownSentence", formData, {
-                    onSuccess: function () {
-                        VertigoUi.componentStates.topicSelection.selects.catId = null;
-                        VertigoUi.componentStates.topicSelection.selects.topicId = null;
-                        filterSentences()
-                    }
-                });
-            }
-
-            function rejectUnknownSentence(unknownSentenceId) {
-                VUiPage.httpPostAjax("_rejectUnknownSentence", {
-                    'unknownSentenceId': unknownSentenceId
-                }, {
-                    onSuccess: function() {
-                        filterSentences()
-                    }
-                });
-            }
-
-            function refreshUnknownSentences() {
-                VUiExtensions.dataX.loadingUnknownSentences = true;
-                VUiPage.httpPostAjax("_refreshUnknownSentences", {}, {
-                    onSuccess: function() {
-                        VUiExtensions.dataX.loadingUnknownSentences = false;
-                        filterSentences()
-                    }
-                });
             }
 
             function normalizeString(str) {
@@ -66,22 +74,22 @@
             }
 
             function filterSentences() {
-                VertigoUi.vueData.unknownSentenceFilteredList = VertigoUi.vueData.unknownSentenceList
-                if (VertigoUi.componentStates.statuses.selectedStatus.strCd !== null) {
-                    VertigoUi.vueData.unknownSentenceFilteredList = VertigoUi.vueData.unknownSentenceFilteredList
-                            .filter(sentence => VertigoUi.componentStates.statuses.selectedStatus.strCd.includes(sentence.status))
+                VUiPage.vueData.unknownSentenceFilteredList = VUiPage.vueData.unknownSentenceList
+                if (VertigoUi.componentStates.statuses.selectedStatus !== null) {
+                    VUiPage.vueData.unknownSentenceFilteredList = VUiPage.vueData.unknownSentenceFilteredList
+                            .filter(sentence => VertigoUi.componentStates.statuses.selectedStatus.includes(sentence.status))
                 }
 
-                let searchNormarlized = normalizeString(VertigoUi.componentStates.search.searchText.value);
+                let searchNormarlized = normalizeString(VUiPage.componentStates.search.searchText.value);
                 if (searchNormarlized !==''){
-                    VertigoUi.vueData.unknownSentenceFilteredList =  VertigoUi.vueData.unknownSentenceFilteredList
+                    VUiPage.vueData.unknownSentenceFilteredList =  VUiPage.vueData.unknownSentenceFilteredList
                         .filter(sentence => normalizeString(sentence.text).includes(searchNormarlized))
                 }
-                VertigoUi.componentStates.unknownSentenceList.selected = [];
+                VUiPage.componentStates.unknownSentenceList.selected = [];
             }
 
             document.addEventListener('DOMContentLoaded', function () {
-                VertigoUi.componentStates.statuses.selectedStatus.strCd = ['TO_TREAT'];
+                VertigoUi.componentStates.statuses.selectedStatus = ['TO_TREAT'];
                filterSentences();
             });
         </script>
@@ -97,24 +105,24 @@
             </div>
 
             <vu:table list="unknownSentenceFilteredList" th:attr="selectable=${model.userAuthorizations[AtzChatbot$botContributor]}" componentId="unknownSentenceList">
-            <vu:slot name="top_right_slot">
+                <vu:slot name="top_right_slot">
                     <vu:include-data object="statuses" field="'*'"/>
                     <vu:include-data-primitive key="locale"/>
                     <q-select
-                            th:attr="dataObject=${model.vContext['componentStates'].addComponentState('statuses').addObject('selectedStatus', {strCd: ['TO_TREAT']})}"
+                            th:attr="dataObject=${model.vContext['componentStates'].addComponentState('statuses').addList('selectedStatus').add('TO_TREAT')}"
                             style="width: 250px; margin-right: 10px"
                             clearable
                             filled
                             map-options
                             multiple
                             emit-value
-                            v-model="componentStates.statuses.selectedStatus.strCd"
+                            v-model="componentStates.statuses.selectedStatus"
                             :options="vueData.locale == 'fr_FR' ? transformListForSelection('statuses', 'strCd', 'labelFr') : transformListForSelection('statuses', 'strCd', 'label') "
                             th:label="#{unknownSentence.selection.status}"
                             @update:model-value="filterSentences();"
                             stack-label>
                     </q-select>
-                    <q-input style="margin-right:10px" borderless dense debounce="300" v- @update:model-value="filterSentences();" th:v-model="VertigoUi.componentStates.search.searchText.value" th:attr="dataObject=${model.vContext['componentStates'].addComponentState('search').addObject('searchText', {value: ''})}" th:placeholder="#{unknownSentence.selection.search}">
+                    <q-input style="margin-right:10px" borderless dense debounce="300" th:v-model="componentStates.search.searchText.value" @update:model-value="filterSentences();" th:attr="dataObject=${model.vContext['componentStates'].addComponentState('search').addObject('searchText', {value: ''})}" th:placeholder="#{unknownSentence.selection.search}">
                         <template v-slot:append>
                             <q-icon name="search" />
                         </template>
@@ -218,7 +226,9 @@
         </section>
         <section layout:fragment="javascript-footer" >
             <script type="text/javascript">
-                VUiPage.$data.componentStates.unknownSentenceList.columns[1].sort = VertigoUi.methods.sortDatesAsString("DD/MM/YYYY HH:mm");
+                window.addEventListener('vui-after-page-mounted', function () {
+                    VUiPage.$data.componentStates.unknownSentenceList.columns[1].sort = VertigoUi.methods.sortDatesAsString("DD/MM/YYYY HH:mm");
+                });
             </script>
         </section>
     </body>

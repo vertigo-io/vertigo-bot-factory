@@ -137,6 +137,8 @@ public class QuestionAnswerServices implements Component {
         final QuestionAnswerIhm questionAnswerIhm = new QuestionAnswerIhm();
         questionAnswerIhm.setIsEnabled(true);
         questionAnswerIhm.setCode(UUID.randomUUID().toString());
+        questionAnswerIhm.setQuestion("");
+        questionAnswerIhm.setAnswer("");
         return questionAnswerIhm;
     }
 

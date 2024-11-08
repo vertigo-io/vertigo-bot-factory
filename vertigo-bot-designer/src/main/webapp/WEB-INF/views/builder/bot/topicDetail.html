@@ -45,7 +45,7 @@
 				methods: {
 					...VUiExtensions.methods,
 					getDisplayedTrainingSentenses: function () {
-						let searchNormailized = normalizeString(VertigoUi.componentStates.nluTrainingSentences.pagination.search);
+						let searchNormailized = normalizeString(this.componentStates.nluTrainingSentences.pagination.search);
 
 						return VertigoUi.vueData.nluTrainingSentences
 								// copy and reverse
@@ -57,25 +57,25 @@
 										VertigoUi.componentStates.nluTrainingSentences.pagination.page * VertigoUi.componentStates.nluTrainingSentences.pagination.rowsPerPage);
 					},
 					getUtterTextResolvedList: function () {
-						utterTextlist = VertigoUi.vueData.utterTexts;
+						utterTextlist = this.vueData.utterTexts;
 
 						// if only 1 element display it
-						if (VertigoUi.vueData.utterTexts.length < 2) {
-							return VertigoUi.vueData.utterTexts;
+						if (utterTextlist.length < 2) {
+							return utterTextlist;
 						}
 
-						let lastIndex = VertigoUi.vueData.utterTexts.length - 1;
+						let lastIndex = utterTextlist.length - 1;
 						for (; lastIndex > 0; lastIndex--) {
-							if (VertigoUi.vueData.utterTexts[lastIndex - 1].text || VertigoUi.vueData.utterTexts[lastIndex].text) {
+							if (utterTextlist[lastIndex - 1].text || utterTextlist[lastIndex].text) {
 								break; // stop if not emty or next is not empty
 							}
 						}
 
-						return VertigoUi.vueData.utterTexts.slice(0, lastIndex + 1);
+						return utterTextlist.slice(0, lastIndex + 1);
 					},
 					addMoreUtterTextIfNeeded: function () {
 						if (VertigoUi.vueData.utterTexts[VertigoUi.vueData.utterTexts.length - 1].text) {
-							VertigoUi.vueData.utterTexts.push({});
+							this.vueData.utterTexts.push({});
 						}
 					},
 					createValue: function (val, done) {
@@ -88,11 +88,11 @@
 					filterFn: function (val, update) {
 						update(() => {
 							if (val === '') {
-								VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.allTopicLabelList
+								this.componentStates.labels.filterOptions = VertigoUi.vueData.allTopicLabelList
 							}
 							else {
 								const needle = normalizeString(val.toLowerCase())
-								VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.allTopicLabelList.filter(
+								this.componentStates.labels.filterOptions = VertigoUi.vueData.allTopicLabelList.filter(
 										v => normalizeString(v.label.toLowerCase()).indexOf(needle) > -1
 								)
 							}
@@ -144,7 +144,7 @@
 					<vu:include-data object="initialTopicLabelList" field="'*'" />
 					<vu:include-data object="topicLabelList" field="label" modifiableAllLines="true" />
 					<vu:include-data object="allTopicLabelList" field="'*'" />
-					<th:block th:attr="objectKey=${model.vContext[componentStates].addComponentState('labels').addObject('filterOptions', {label:null})}" th:remove="all" />
+					<th:block th:attr="objectKey=${model.vContext[componentStates].addComponentState('labels').addList('filterOptions')}" th:remove="all" />
 
 					<q-select
 						v-if="vueData.topic.isTechnical == false"

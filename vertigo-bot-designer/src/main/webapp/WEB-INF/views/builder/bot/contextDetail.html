@@ -10,12 +10,15 @@
 	<head>
 		<title th:text="#{contextvalue.title}"></title>
 		<script>
-			function getOperatorLabel(tyopCd) {
-				let operator = VertigoUi.vueData.typeOperators.find(operator => operator.tyopCd === tyopCd);
-				if (operator !== undefined) {
-					return VertigoUi.vueData.locale === 'fr_FR' ? operator.labelFr : operator.label;
-				} else {
-					return operator;
+			VUiExtensions.methods= {
+				...VUiExtensions.methods,
+				getOperatorLabel: function (tyopCd) {
+					let operator = VertigoUi.vueData.typeOperators.find(operator => operator.tyopCd === tyopCd);
+					if (operator !== undefined) {
+						return VertigoUi.vueData.locale === 'fr_FR' ? operator.labelFr : operator.label;
+					} else {
+						return operator;
+					}
 				}
 			}
 		</script>
@@ -30,7 +33,7 @@
 			<q-btn th:if="${model.modeReadOnly && model.contextValue.label != 'url' && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopupDeleteContextValue.shown = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
 							class="on-left" round size="md" color="red" ></q-btn>
 		</section>
-				
+
 		<section layout:fragment="content">
 			<vu:popup action="_deleteContextValue" vModel="showPopupDeleteContextValue" message="#{contextValue.popup.delete.message}" confirm="#{action.confirm}"></vu:popup>
 			<vu:popup-ajax action="_deleteContextPossibleValue" vModel="showPopupDeleteContextPossibleValue" dataName="cpvId"
@@ -119,6 +122,6 @@
 			<q-page-sticky position="bottom-right">
 				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" label="#{action.save}" action="@{_save}" size="lg" color="primary" /> 
 			</q-page-sticky>
-			<section>
+		</section>
 	</body>
 </html>

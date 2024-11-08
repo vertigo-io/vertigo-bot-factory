@@ -8,12 +8,15 @@
 <head>
     <title th:text="#{documentaryResource.title}"></title>
     <script th:inline="javascript">
-        function getDocResTypeLabel(type) {
-            let docResType = VertigoUi.vueData.documentaryResourceTypeList.find(resourceType => resourceType.dreTypeCd === type);
-            if (docResType !== undefined) {
-                return VertigoUi.vueData.locale === 'fr_FR' ? docResType.labelFr : docResType.label;
-            } else {
-                return docResType;
+        VUiExtensions.methods= {
+            ...VUiExtensions.methods,
+            getDocResTypeLabel: function(type) {
+                let docResType = VertigoUi.vueData.documentaryResourceTypeList.find(resourceType => resourceType.dreTypeCd === type);
+                if (docResType !== undefined) {
+                    return VertigoUi.vueData.locale === 'fr_FR' ? docResType.labelFr : docResType.label;
+                } else {
+                    return docResType;
+                }
             }
         }
     </script>

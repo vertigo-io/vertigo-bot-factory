@@ -50,17 +50,6 @@ window.addEventListener('vui-after-page-mounted', function () {
         }
     }
 
-    function saveContextEnvironment() {
-        VUiPage.httpPostAjax("_saveContextEnvironment", {
-            'cenvIdOpt': VertigoUi.vueData.newContextEnvironment.cenvId,
-            'label': VertigoUi.vueData.newContextEnvironment.label
-        });
-    }
-
-    function saveContextEnvironmentValue() {
-        VUiPage.httpPostAjax("_saveContextEnvironmentValue", VUiPage.vueDataParams(['newContextEnvironmentValue']));
-    }
-
     let oldHttpPostAjax = VUiPage.httpPostAjax;
     VUiPage.httpPostAjax = function (url, params, options) {
         let paramsResolved;

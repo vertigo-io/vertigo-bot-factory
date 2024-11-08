@@ -13,6 +13,14 @@
     <script th:inline="javascript">
         VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
 
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
+
+            onStart: function() {
+                VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+            }
+        }
+
         function onRejected (rejectedEntries) {
             let message = VertigoUi.vueData.locale === 'fr_FR' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
                 : 'File ' + rejectedEntries[0].file.name + ' was rejected.';
@@ -20,10 +28,6 @@
                 message += VertigoUi.vueData.locale === 'fr_FR' ? ' Le format du fichier n\'est pas accepté' : ' File format isn\'t accepted';
             }
             VUiExtensions.dataX.attachmentError = {'show': true, 'message': message};
-        }
-
-        function onStart() {
-            VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
         }
 
         function isImage(type) {
@@ -34,7 +38,7 @@
 </head>
 <body>
 <section layout:fragment="content-actions">
-    <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/document/(id=${model.bot.botId})} + ${model.documentaryResource.dreId}" title="Cancel" icon="fas fa-ban"
+   <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/document/(id=${model.bot.botId})} + ${model.documentaryResource.dreId}" title="Cancel" icon="fas fa-ban"
                     class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
     <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" title="Edit" icon="edit"
                       class="on-left" :round size="md" color="primary" />

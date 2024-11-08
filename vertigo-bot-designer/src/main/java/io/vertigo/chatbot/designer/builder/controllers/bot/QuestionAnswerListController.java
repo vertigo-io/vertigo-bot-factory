@@ -14,6 +14,7 @@ import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategory;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm;
 import io.vertigo.chatbot.commons.domain.questionanswer.SelectQueAnsCategory;
+import io.vertigo.chatbot.commons.domain.topic.TopicCriteria;
 import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerFileExportServices;
@@ -38,6 +39,7 @@ public class QuestionAnswerListController extends AbstractBotListEntityControlle
     private static final ViewContextKey<QuestionAnswerCategory> categoryListKey = ViewContextKey.of("categoryList");
     private static final ViewContextKey<FileInfoURI> importQuestionAnswerFileUri = ViewContextKey.of("importQuestionAnswerFileUri");
     private static final ViewContextKey<SelectQueAnsCategory> selectionCatListKey = ViewContextKey.of("selectionCatList");
+    private static final ViewContextKey<TopicCriteria> criteriaKey = ViewContextKey.of("criteria");
 
     @Inject
     private QuestionAnswerServices questionAnswerServices;
@@ -56,6 +58,7 @@ public class QuestionAnswerListController extends AbstractBotListEntityControlle
         viewContext.publishDtList(categoryListKey, queAnsCategoryServices.getAllQueAnsCatByBot(bot));
         viewContext.publishFileInfoURI(importQuestionAnswerFileUri, null);
         viewContext.publishDto(selectionCatListKey, new SelectQueAnsCategory());
+        viewContext.publishDto(criteriaKey, new TopicCriteria());
 
         super.initBreadCrums(viewContext, QuestionAnswer.class);
         listLimitReached(viewContext, uiMessageStack);

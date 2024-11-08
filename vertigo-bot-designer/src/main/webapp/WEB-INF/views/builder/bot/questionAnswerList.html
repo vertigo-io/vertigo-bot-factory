@@ -9,9 +9,33 @@
     <title th:text="#{questionAnswer.title.page}"></title>
 
     <script th:inline="javascript">
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
 
-        VUiExtensions.dataX.criteria = null;
-        VUiExtensions.dataX.search = null;
+            filter: function() {
+                let filteredQuestionAnswers = VertigoUi.vueData.questionAnswerIhmList
+                if (VertigoUi.vueData.criteria.catId !== null) {
+                    let category = VertigoUi.vueData.categoryList.find(cat => cat.qaCatId === VertigoUi.vueData.criteria.catId)
+                    if (category !== undefined) {
+                        filteredQuestionAnswers = filteredQuestionAnswers
+                            // copy and reverse
+                            .slice().reverse()
+                            // search
+                            .filter(questionAnswer => questionAnswer.catLabel === category.label)
+                    }
+                }
+                let searchNormarlized = normalizeString(VertigoUi.componentStates.questionsAnswers.pagination.search);
+                if (searchNormarlized !==''){
+                    filteredQuestionAnswers =  filteredQuestionAnswers
+                        // copy and reverse
+                        .slice().reverse()
+                        // search
+                        .filter(questionAnswer => normalizeString(questionAnswer.question).includes(searchNormarlized))
+                }
+
+                return filteredQuestionAnswers
+            }
+        }
 
         function normalizeString(str) {
             if (str)
@@ -19,32 +43,6 @@
             else
                 return '';
         }
-
-
-        function filter() {
-            let filteredQuestionAnswers = VertigoUi.vueData.questionAnswerIhmList
-            if (VUiExtensions.dataX.criteria !== null) {
-                let category = VertigoUi.vueData.categoryList.find(cat => cat.qaCatId === VUiExtensions.dataX.criteria)
-                if (category !== undefined) {
-                    filteredQuestionAnswers = filteredQuestionAnswers
-                        // copy and reverse
-                        .slice().reverse()
-                        // search
-                        .filter(questionAnswer => questionAnswer.catLabel === category.label)
-                }
-            }
-            let searchNormarlized = normalizeString(VUiExtensions.dataX.search);
-            if (searchNormarlized !==''){
-                filteredQuestionAnswers =  filteredQuestionAnswers
-                    // copy and reverse
-                    .slice().reverse()
-                    // search
-                    .filter(questionAnswer => normalizeString(questionAnswer.question).includes(searchNormarlized))
-            }
-
-            return filteredQuestionAnswers
-        }
-
     </script>
 </head>
 <body>
@@ -71,6 +69,7 @@
     <div class="col-12">
         <vu:include-data object="categoryList" field="qaCatId"/>
         <vu:include-data object="categoryList" field="label"/>
+        <vu:include-data object="criteria" field="catId"/>
         <div style="background-color:white;display:flex;justify-content:flex-end; align-items: center; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;"
              class="q-table__card">
             <div class="text-h6 q-table__top" style="flex-grow: 2;" th:text="#{questionAnswer.list.title}"></div>
@@ -79,14 +78,14 @@
                       filled
                       map-options
                       emit-value
-                      v-model="VUiExtensions.dataX.criteria"
-                      :options="VertigoUi.vueData.categoryList"
+                      v-model="vueData.criteria.catId"
+                      :options="vueData.categoryList"
                       option-value="qaCatId"
                       th:label="#{questionAnswer.selection.category}"
                       @update:model-value="filter();"
                       stack-label>
             </q-select>
-            <q-input style="margin-left:10px" borderless dense debounce="300" th:v-model="VUiExtensions.dataX.search" th:placeholder="#{questionAnswer.selection.search}">
+            <q-input style="margin-left:10px" borderless dense debounce="300" th:v-model="componentStates.questionsAnswers.pagination.search" th:placeholder="#{questionAnswer.selection.search}">
                 <template v-slot:append>
                     <q-icon name="search" />
                 </template>
