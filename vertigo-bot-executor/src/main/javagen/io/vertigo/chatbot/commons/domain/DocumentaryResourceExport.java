@@ -42,7 +42,7 @@ public final class DocumentaryResourceExport implements DtObject {
 	 * Récupère la valeur de la propriété 'Resource Type'.
 	 * @return String dreTypeCd <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Resource Type")
+	@Field(smartType = "STyCode", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Resource Type")
 	public String getDreTypeCd() {
 		return dreTypeCd;
 	}
