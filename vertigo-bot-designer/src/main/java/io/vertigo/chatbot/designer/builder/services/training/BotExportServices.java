@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.builder.services.topic.export;
+package io.vertigo.chatbot.designer.builder.services.training;
 
 import java.util.Optional;
 
@@ -25,6 +25,7 @@ import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerServices;
+import io.vertigo.chatbot.designer.builder.services.topic.export.TopicExportServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
