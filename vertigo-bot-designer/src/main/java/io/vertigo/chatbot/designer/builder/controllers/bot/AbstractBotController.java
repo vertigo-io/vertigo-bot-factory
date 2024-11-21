@@ -3,16 +3,15 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -33,14 +32,14 @@ import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResource
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.analytics.services.TypeBotExportServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
-import io.vertigo.chatbot.designer.builder.services.TrainerInfoServices;
-import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.UnknownSentencesServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentServices;
 import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
 import io.vertigo.chatbot.designer.builder.services.topic.export.file.TopicFileExportServices;
+import io.vertigo.chatbot.designer.builder.services.training.TrainerInfoServices;
+import io.vertigo.chatbot.designer.builder.services.training.TrainingServices;
 import io.vertigo.chatbot.designer.commons.controllers.AbstractDesignerController;
 import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm;
@@ -57,7 +56,7 @@ import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import static io.vertigo.chatbot.designer.utils.UserSessionUtils.getUserSession;
 
 public abstract class AbstractBotController extends AbstractDesignerController {
