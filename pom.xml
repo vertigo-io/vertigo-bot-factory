@@ -46,7 +46,7 @@
 		<postgresql.version>42.6.0</postgresql.version>
 		<jsoup.version>1.16.1</jsoup.version>
 		<jackson-databind.version>2.15.2</jackson-databind.version>
-		<commons-io.version>2.13.0</commons-io.version>
+		<commons-io.version>2.15.1</commons-io.version>
 		<owasp-html-sanitizer.version>20220608.1</owasp-html-sanitizer.version>
 		<openCSV.version>5.7.1</openCSV.version>
 	</properties>
