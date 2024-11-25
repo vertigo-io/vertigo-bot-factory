@@ -229,8 +229,7 @@ const chatbot = new Vue({
                 if(menuValue === 'bot'){
                     this.$nextTick(() => {
                         // instant scroll to bottom of the bot layout when clicking on 'bot' menu
-                        const scrollHeight = chatbot.$refs.scroller.$el.children[0].children[0].scrollHeight;
-                        chatbot.$refs.scroller.setScrollPosition(scrollHeight);
+                        _scrollToBottom();
                         // if a question/answer is open when clicking on 'bot' menu, it closes it
                         chatbot.qAndAConfig.selectedQuestion = null;
                     });
@@ -247,3 +246,8 @@ const chatbot = new Vue({
         }
     })
 ;
+
+function _scrollToBottom() {
+    const scrollHeight = chatbot.$refs.scroller.$el.children[0].children[0].scrollHeight; // workaround
+    chatbot.$refs.scroller.setScrollPosition(scrollHeight, 400);
+}

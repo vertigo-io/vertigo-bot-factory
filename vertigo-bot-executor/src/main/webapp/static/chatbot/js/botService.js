@@ -292,11 +292,6 @@ function refreshBot(isAnotherConversation) {
     }
 }
 
-function _scrollToBottom() {
-    const scrollHeight = chatbot.$refs.scroller.$el.children[0].children[0].scrollHeight; // workaround
-    chatbot.$refs.scroller.setScrollPosition(scrollHeight, 400);
-}
-
 function reinitInput() {
     chatbot.inputConfig.modeTextarea = false;
     chatbot.inputConfig.responsePattern = '';
