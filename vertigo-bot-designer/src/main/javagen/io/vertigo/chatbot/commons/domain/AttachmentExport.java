@@ -13,12 +13,32 @@ import io.vertigo.datamodel.structure.util.DtObjectUtil;
 public final class AttachmentExport implements DtObject {
 	private static final long serialVersionUID = 1L;
 
+	private Long attId;
 	private String label;
 	private String fileName;
 	private String mimeType;
 	private Long length;
 	private String fileData;
 	private String type;
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Attachment Id'.
+	 * @return Long attId <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Attachment Id")
+	public Long getAttId() {
+		return attId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Attachment Id'.
+	 * @param attId Long <b>Obligatoire</b>
+	 */
+	public void setAttId(final Long attId) {
+		this.attId = attId;
+	}
 	
 	/**
 	 * Champ : DATA.

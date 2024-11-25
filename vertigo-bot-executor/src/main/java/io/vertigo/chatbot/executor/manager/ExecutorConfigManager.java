@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -298,7 +299,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 				if(attachmentExport.getType().equals("ATTACHMENT")){
 					attachmentsMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
 				}else if(attachmentExport.getType().equals("DOCUMENT")){
-					documentaryResourceFilesMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
+					documentaryResourceFilesMap.put(attachmentExport.getAttId().toString(), fileInfoURI.toURN());
 				}
 			});
 			FileUtils.writeStringToFile(attachmentDataFile, jsonEngine.toJson(attachmentsMap), StandardCharsets.UTF_8);
@@ -327,10 +328,11 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		return executorFileServices.getFile(urn);
 	}
 
-	public VFile getDocumentaryResourceFile(final String label) {
-		final String urn = mapDocumentaryResourceFiles.get(label);
+	public VFile getDocumentaryResourceFilefromAttId(final Long attId) {
+		Assertion.check().isNotNull(attId, "An attachment id must be provided");
+		final String urn = mapDocumentaryResourceFiles.get(attId.toString());
 		if (urn == null) {
-			throw new VSystemException("Documentary resource file with label " + label + " doesn't exist...");
+			throw new VSystemException("Documentary resource file with attachment id " + attId + " doesn't exist...");
 		}
 		return executorFileServices.getFile(urn);
 	}

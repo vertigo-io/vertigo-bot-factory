@@ -23,7 +23,7 @@ public class DocumentaryResourceWebService implements WebServices {
     }
 
     @GET("/getDocumentaryResourceFile")
-    public VFile getDocumentaryResourceFile(@QueryParam("label") final String label) {
-        return executorManager.getDocumentaryResourceFile(label);
+    public VFile getDocumentaryResourceFileFromAttId(@QueryParam("attId") final Long attId) {
+        return executorManager.getDocumentaryResourceFileFromAttId(attId);
     }
 }

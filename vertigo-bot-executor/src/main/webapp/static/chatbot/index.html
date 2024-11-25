@@ -265,7 +265,7 @@
                       <q-icon name="launch" ></q-icon>
                     </a>
                     <a v-else-if="documentaryResource.dreTypeCd === 'FILE'"
-                       :href="documentaryResourceConfig.documentaryResourceFileBaseUrl + documentaryResource.fileName"
+                       :href="documentaryResourceConfig.documentaryResourceFileBaseUrl + documentaryResource.attId"
                        class="docres-a">
                       <q-icon name="article" class="docres-type-icon"></q-icon>
                       <span class="docres-text">{{documentaryResource.title}}</span>

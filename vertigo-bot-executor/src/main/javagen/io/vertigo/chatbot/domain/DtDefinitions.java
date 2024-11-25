@@ -100,6 +100,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de AttachmentExport.
 	 */
 	public enum AttachmentExportFields implements DtFieldName<io.vertigo.chatbot.commons.domain.AttachmentExport> {
+		/** Propriété 'Attachment Id'. */
+		attId,
 		/** Propriété 'Label'. */
 		label,
 		/** Propriété 'Name'. */
@@ -277,6 +279,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		dreTypeCd,
 		/** Propriété 'Url'. */
 		url,
+		/** Propriété 'Attachment Id'. */
+		attId,
 		/** Propriété 'File name'. */
 		fileName	}
 

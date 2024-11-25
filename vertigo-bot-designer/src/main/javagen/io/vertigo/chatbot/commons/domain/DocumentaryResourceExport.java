@@ -16,6 +16,7 @@ public final class DocumentaryResourceExport implements DtObject {
 	private String title;
 	private String dreTypeCd;
 	private String url;
+	private Long attId;
 	private String fileName;
 	
 	/**
@@ -73,6 +74,25 @@ public final class DocumentaryResourceExport implements DtObject {
 	 */
 	public void setUrl(final String url) {
 		this.url = url;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Attachment Id'.
+	 * @return Long attId <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Attachment Id")
+	public Long getAttId() {
+		return attId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Attachment Id'.
+	 * @param attId Long <b>Obligatoire</b>
+	 */
+	public void setAttId(final Long attId) {
+		this.attId = attId;
 	}
 	
 	/**
