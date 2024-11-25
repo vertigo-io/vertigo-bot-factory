@@ -44,6 +44,10 @@ public enum DtResources implements MessageKey {
 	/** AttachmentExport.
 	/***********************************************************
 	/**
+	 * Attachment Id.
+	 */
+	fldAttachmentExport$attId,
+	/**
 	 * Label.
 	 */
 	fldAttachmentExport$label,
@@ -547,6 +551,10 @@ public enum DtResources implements MessageKey {
 	 * Url.
 	 */
 	fldDocumentaryResourceExport$url,
+	/**
+	 * Attachment Id.
+	 */
+	fldDocumentaryResourceExport$attId,
 	/**
 	 * File name.
 	 */

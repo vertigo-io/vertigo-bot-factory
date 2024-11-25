@@ -54,10 +54,11 @@ create DtDefinition DtJiraFieldSettingExport {
 }
 
 create DtDefinition DtAttachmentExport {
+	field attId                     {domain: DoId                           label: "Attachment Id"              cardinality : "1" }
 	field label 					{domain: DoLabel 						label: "Label" 		                cardinality : "1"}
-	field fileName 	                {domain : DoLabel 		                label : "Name" 				        cardinality : "1" }
-    field mimeType		            {domain : DoLabel 		                label : "MimeType" 			        cardinality : "1" }
-    field length 		            {domain : DoSize 		                label : "Size" 			            cardinality : "1" }
+	field fileName 	                {domain: DoLabel 		                label: "Name" 				        cardinality : "1"}
+    field mimeType		            {domain: DoLabel 		                label: "MimeType" 			        cardinality : "1"}
+    field length 		            {domain: DoSize 		                label: "Size" 			            cardinality : "1"}
 	field fileData			 		{domain: DoText	 					    label: "Data" 					    cardinality : "1"}
 	field type                      {domain: DoLabel                        label: "Type"                       cardinality : "1"}
 }
@@ -125,5 +126,6 @@ create DtDefinition DtDocumentaryResourceExport {
     field 	title 			    {domain: DoLabel 	    label: "Title" 			      cardinality : "1" }
     field   dreTypeCd           {domain: DoCode         label: "Resource Type"        cardinality : "1" }
 	field 	url     		    {domain: DoText   	    label: "Url"                                    }
+	field   attId               {domain: DoId           label: "Attachment Id"        cardinality : "1" }
 	field   fileName            {domain: DoLabel        label: "File name"                              }
 }

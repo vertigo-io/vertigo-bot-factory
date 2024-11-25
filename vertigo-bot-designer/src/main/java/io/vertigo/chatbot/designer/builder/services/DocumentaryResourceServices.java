@@ -98,6 +98,7 @@ public class DocumentaryResourceServices implements Component {
                 documentaryResourceExport.setDreTypeCd(documentaryResource.getDreTypeCd());
                 documentaryResourceExport.setUrl(documentaryResource.getUrl());
                 if(documentaryResource.getAttId() != null) {
+                    documentaryResourceExport.setAttId(documentaryResource.getAttId());
                     documentaryResourceExport.setFileName(documentaryResource.attachment().get().getLabel());
                 }
                 return documentaryResourceExport;

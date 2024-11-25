@@ -144,7 +144,7 @@ const chatbot = new Vue({
             documentaryResourceConfig: {
                 documentaryResourceUrl: _documentaryResourceBaseUrl,
                 documentaryResourceList: [],
-                documentaryResourceFileBaseUrl: _documentaryResourceBaseUrl + '/getDocumentaryResourceFile?label='
+                documentaryResourceFileBaseUrl: _documentaryResourceBaseUrl + '/getDocumentaryResourceFile?attId='
             }
         },
         methods: {

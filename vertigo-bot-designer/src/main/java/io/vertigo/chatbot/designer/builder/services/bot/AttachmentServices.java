@@ -103,6 +103,7 @@ public class AttachmentServices implements Component {
 				attachment.attachmentFileInfo().load();
 				final AttachmentFileInfo attachmentFileInfo = attachment.attachmentFileInfo().get();
 				final AttachmentExport attachmentExport = new AttachmentExport();
+				attachmentExport.setAttId(attachment.getAttId());
 				attachmentExport.setLabel(attachment.getLabel());
 				attachmentExport.setFileName(attachmentFileInfo.getFileName());
 				attachmentExport.setMimeType(attachmentFileInfo.getMimeType());
