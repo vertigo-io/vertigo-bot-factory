@@ -220,7 +220,6 @@ public class ChatbotServices implements Component {
 
 		chatbotProfilServices.deleteAllProfilByBot(bot);
 		chatbotCustomConfigServices.deleteChatbotCustomConfig(bot);
-		contextPossibleValueServices.deleteAllContextPossibleValueByBot(bot);
 		contextEnvironmentServices.deleteAllContextEnvironmentByBot(bot);
 		contextValueServices.deleteAllByBotId(bot);
 		historyServices.deleteAllByBotId(bot.getBotId());

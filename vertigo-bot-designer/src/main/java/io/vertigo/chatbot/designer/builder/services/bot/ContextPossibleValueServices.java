@@ -53,8 +53,4 @@ public class ContextPossibleValueServices implements Component {
     public ContextPossibleValue save(@SecuredOperation("botContributor") final Chatbot bot, final ContextPossibleValue contextPossibleValue) {
         return contextPossibleValueDAO.save(contextPossibleValue);
     }
-
-    public void deleteAllContextPossibleValueByBot(@SecuredOperation("botAdm") Chatbot bot){
-        getAllContextPossibleValuesByBot(bot).forEach(contextPossibleValue -> deleteContextPossibleValue(bot, contextPossibleValue.getCpvId()));
-    }
 }
