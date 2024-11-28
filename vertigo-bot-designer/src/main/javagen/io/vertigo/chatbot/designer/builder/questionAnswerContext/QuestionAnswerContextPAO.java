@@ -43,6 +43,7 @@ public final class QuestionAnswerContextPAO implements StoreServices {
 	/**
 	 * Execute la tache TkGetAllQuestionAnswerContextIhmByQaId.
 	 * @param qaId Long
+	 * @param locale String
 	 * @return DtList de QuestionAnswerContextIhm questionAnswerContexts
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
@@ -52,17 +53,22 @@ public final class QuestionAnswerContextPAO implements StoreServices {
  " 					cva.cva_id,\n" + 
  " 					cpv.cpv_id,\n" + 
  " 					cva.label as cva_label,\n" + 
- " 					cpv.value as cpv_value\n" + 
+ " 					CASE #locale#\n" + 
+ " 						WHEN 'fr_FR' THEN tyop.label_fr || ' : ' || cpv.value\n" + 
+ " 						ELSE tyop.label || ' : ' || cpv.value\n" + 
+ " 					END as cpv_value\n" + 
  " 			from question_answer_context qac\n" + 
  " 			join context_value cva on (cva.cva_id = qac.cva_id)\n" + 
  " 			left join context_possible_value cpv on (cpv.cpv_id = qac.cpv_id)\n" + 
+ " 			left join type_operator tyop on (tyop.tyop_cd = cpv.tyop_cd)\n" + 
  " 			where qac.qa_id = #qaId#\n" + 
  " 			order by cva.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtQuestionAnswerContextIhm", name = "questionAnswerContexts")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContextIhm> getAllQuestionAnswerContextIhmByQaId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "qaId", smartType = "STyId") final Long qaId) {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContextIhm> getAllQuestionAnswerContextIhmByQaId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "qaId", smartType = "STyId") final Long qaId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "locale", smartType = "STyCode") final String locale) {
 		final Task task = createTaskBuilder("TkGetAllQuestionAnswerContextIhmByQaId")
 				.addValue("qaId", qaId)
+				.addValue("locale", locale)
 				.build();
 		return getTaskManager()
 				.execute(task)

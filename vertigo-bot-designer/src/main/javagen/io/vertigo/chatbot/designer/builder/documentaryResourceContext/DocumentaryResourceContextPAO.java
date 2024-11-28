@@ -43,6 +43,7 @@ public final class DocumentaryResourceContextPAO implements StoreServices {
 	/**
 	 * Execute la tache TkGetAllDocumentaryResourceContextIhmByDreId.
 	 * @param dreId Long
+	 * @param locale String
 	 * @return DtList de DocumentaryResourceContextIhm documentaryResourceContexts
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
@@ -52,17 +53,22 @@ public final class DocumentaryResourceContextPAO implements StoreServices {
  " 					cva.cva_id,\n" + 
  " 					cpv.cpv_id,\n" + 
  " 					cva.label as cva_label,\n" + 
- " 					cpv.value as cpv_value\n" + 
+ " 					CASE #locale#\n" + 
+ " 						WHEN 'fr_FR' THEN tyop.label_fr || ' : ' || cpv.value\n" + 
+ " 						ELSE tyop.label || ' : ' || cpv.value\n" + 
+ " 					END as cpv_value\n" + 
  " 			from documentary_resource_context drc\n" + 
  " 			join context_value cva on (cva.cva_id = drc.cva_id)\n" + 
  " 			left join context_possible_value cpv on (cpv.cpv_id = drc.cpv_id)\n" + 
+ " 			left join type_operator tyop on (tyop.tyop_cd = cpv.tyop_cd)\n" + 
  " 			where drc.dre_id = #dreId#\n" + 
  " 			order by cva.label",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtDocumentaryResourceContextIhm", name = "documentaryResourceContexts")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm> getAllDocumentaryResourceContextIhmByDreId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "dreId", smartType = "STyId") final Long dreId) {
+	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm> getAllDocumentaryResourceContextIhmByDreId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "dreId", smartType = "STyId") final Long dreId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "locale", smartType = "STyCode") final String locale) {
 		final Task task = createTaskBuilder("TkGetAllDocumentaryResourceContextIhmByDreId")
 				.addValue("dreId", dreId)
+				.addValue("locale", locale)
 				.build();
 		return getTaskManager()
 				.execute(task)
