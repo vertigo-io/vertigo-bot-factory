@@ -54,6 +54,7 @@
     </vu:block>
     <vu:block id="question" th:title="#{questionAnswer.question}">
         <div class="row wrap">
+            <vu:include-data-primitive key="locale"/>
             <vu:include-data object="questionAnswerIhm" field="question" modifiable="true" />
             <vu:include-data object="questionAnswerIhm" field="answer" modifiable="true" />
             <vu:include-data object="questionAnswerIhm" field="qaId" modifiable="true" />

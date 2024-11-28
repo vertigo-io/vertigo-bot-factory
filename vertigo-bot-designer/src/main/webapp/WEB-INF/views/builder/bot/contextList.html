@@ -203,7 +203,7 @@
                     <q-select v-model="VUiExtensions.dataX.selectedOption"
                               th:label="#{context.environmentValue.popup.valueOperator}"
                               :options="filteredOptions()"
-                              :option-label="possibleValue => `${getOperatorLabel(possibleValue.tyopCd)} : ${possibleValue.value}`"
+                              option-label="value"
                               @input="updateEnvironmentValue">
                     </q-select>
                 </q-card-section>

@@ -134,8 +134,8 @@ public class QuestionAnswerDetailController extends AbstractBotCreationControlle
 
     @PostMapping("/_saveQuestionAnswerContext")
     public ViewContext saveQuestionAnswerContext(final ViewContext viewContext,
-                                                      @ViewAttribute("bot") final Chatbot bot,
-                                                      @ViewAttribute("newQuestionAnswerContext")  @Validate(QuestionAnswerDetailController.QuestionAnswerContextNotEmptyValidator.class) final QuestionAnswerContext questionAnswerContext) {
+                                                 @ViewAttribute("bot") final Chatbot bot,
+                                                 @ViewAttribute("newQuestionAnswerContext")  @Validate(QuestionAnswerDetailController.QuestionAnswerContextNotEmptyValidator.class) final QuestionAnswerContext questionAnswerContext) {
 
         questionAnswerContextServices.saveQuestionAnswerContext(bot, questionAnswerContext);
         viewContext.publishDto(newQuestionAnswerContextKey, new QuestionAnswerContext());
@@ -151,9 +151,9 @@ public class QuestionAnswerDetailController extends AbstractBotCreationControlle
 
     @PostMapping("/_deleteQuestionAnswerContext")
     public ViewContext deleteQuestionAnswerContext(final ViewContext viewContext,
-                                                        @ViewAttribute("bot") final Chatbot bot,
-                                                        @ViewAttribute("questionAnswerIhm") final QuestionAnswerIhm questionAnswerIhm,
-                                                        @RequestParam("qacId") final Long qacId) {
+                                                   @ViewAttribute("bot") final Chatbot bot,
+                                                   @ViewAttribute("questionAnswerIhm") final QuestionAnswerIhm questionAnswerIhm,
+                                                   @RequestParam("qacId") final Long qacId) {
 
         questionAnswerContextServices.deleteQuestionAnswerContextById(bot, qacId);
 

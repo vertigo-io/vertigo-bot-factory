@@ -11,6 +11,7 @@ import io.vertigo.chatbot.designer.domain.DocumentaryResourceContext;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -26,8 +27,11 @@ public class DocumentaryResourceContextServices implements Component {
     @Inject
     private DocumentaryResourceContextPAO documentaryResourceContextPAO;
 
+    @Inject
+    private LocaleManager localeManager;
+
     public DtList<DocumentaryResourceContextIhm> getAllDocumentaryResourceContextIhmByDreId(@SecuredOperation("botVisitor") final Chatbot bot, final long dreId) {
-        return documentaryResourceContextPAO.getAllDocumentaryResourceContextIhmByDreId(dreId);
+        return documentaryResourceContextPAO.getAllDocumentaryResourceContextIhmByDreId(dreId, localeManager.getCurrentLocale().toString());
     }
 
     public void saveDocumentaryResourceContext(@SecuredOperation("botContributor") final Chatbot bot, final DocumentaryResourceContext documentaryResourceContext) {

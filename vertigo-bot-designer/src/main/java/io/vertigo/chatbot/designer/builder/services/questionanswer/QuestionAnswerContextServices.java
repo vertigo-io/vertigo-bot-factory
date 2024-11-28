@@ -11,6 +11,7 @@ import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContextIhm
 import io.vertigo.chatbot.designer.builder.questionAnswerContext.QuestionAnswerContextPAO;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.structure.model.DtList;
@@ -26,8 +27,11 @@ public class QuestionAnswerContextServices implements Component {
     @Inject
     private QuestionAnswerContextPAO questionAnswerContextPAO;
 
+    @Inject
+    private LocaleManager localeManager;
+
     public DtList<QuestionAnswerContextIhm> getAllQuestionAnswerContextIhmByQaId(@SecuredOperation("botVisitor") final Chatbot bot, final long qaId) {
-        return questionAnswerContextPAO.getAllQuestionAnswerContextIhmByQaId(qaId);
+        return questionAnswerContextPAO.getAllQuestionAnswerContextIhmByQaId(qaId, localeManager.getCurrentLocale().toString());
     }
 
     public void saveQuestionAnswerContext(@SecuredOperation("botContributor") final Chatbot bot, final QuestionAnswerContext questionAnswerContext) {

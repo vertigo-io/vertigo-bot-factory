@@ -7,8 +7,8 @@ import io.vertigo.datamodel.structure.model.UID;
 
 public enum TypeOperatorEnum implements MasterDataEnum<io.vertigo.chatbot.designer.domain.TypeOperator> {
 
-	EQUAL("EQUAL"), //
-	CONTAIN("CONTAIN")
+	EQUAL("EQUALS"), //
+	CONTAIN("CONTAINS")
 	;
 
 	private final Serializable entityId;

@@ -149,8 +149,8 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
 
     @PostMapping("/_saveDocumentaryResourceContext")
     public ViewContext saveDocumentaryResourceContext(final ViewContext viewContext,
-                                          @ViewAttribute("bot") final Chatbot bot,
-                                          @ViewAttribute("newDocumentaryResourceContext")  @Validate(DocumentDetailController.DocumentaryResourceContextNotEmptyValidator.class) final DocumentaryResourceContext documentaryResourceContext) {
+                                                      @ViewAttribute("bot") final Chatbot bot,
+                                                      @ViewAttribute("newDocumentaryResourceContext")  @Validate(DocumentDetailController.DocumentaryResourceContextNotEmptyValidator.class) final DocumentaryResourceContext documentaryResourceContext) {
 
         documentaryResourceContextServices.saveDocumentaryResourceContext(bot, documentaryResourceContext);
         viewContext.publishDto(newDocumentaryResourceContextKey, new DocumentaryResourceContext());
@@ -168,9 +168,9 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
 
     @PostMapping("/_deleteDocumentaryResourceContext")
     public ViewContext deleteDocumentaryResourceContext(final ViewContext viewContext,
-                                                  @ViewAttribute("bot") final Chatbot bot,
-                                                  @ViewAttribute("documentaryResource") final DocumentaryResource documentaryResource,
-                                                  @RequestParam("drcId") final Long drcId) {
+                                                        @ViewAttribute("bot") final Chatbot bot,
+                                                        @ViewAttribute("documentaryResource") final DocumentaryResource documentaryResource,
+                                                        @RequestParam("drcId") final Long drcId) {
 
         documentaryResourceContextServices.deleteDocumentaryResourceContextById(bot, drcId);
 
