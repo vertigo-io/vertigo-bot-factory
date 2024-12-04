@@ -122,6 +122,7 @@ services:
       - KEYCLOAK_URL=https://keycloak:8200/sso/realms/chatbot
     depends_on:
       - postgres
+      - keycloak
       - influxdb
       - analytica
       - clamav
