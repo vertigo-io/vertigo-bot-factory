@@ -11,3 +11,8 @@ comment on column CHATBOT_CUSTOM_CONFIG.QANDA_DISPLAY is
 
 comment on column CHATBOT_CUSTOM_CONFIG.DOCUMENTARY_RESOURCE_DISPLAY is
 'Display documentary resources';
+
+-- For existing platforms, Q&A and Documentary resources are disabled by default.
+UPDATE CHATBOT_CUSTOM_CONFIG
+   SET QANDA_DISPLAY = false,
+       DOCUMENTARY_RESOURCE_DISPLAY = false;
