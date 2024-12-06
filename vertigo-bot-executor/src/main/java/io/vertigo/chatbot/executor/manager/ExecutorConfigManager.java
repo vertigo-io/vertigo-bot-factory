@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.executor.manager;
 
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.io.FileUtils;
@@ -33,11 +34,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.BotExport;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
+import io.vertigo.chatbot.commons.domain.DocumentaryResourceExport;
 import io.vertigo.chatbot.commons.domain.QuestionAnswerExport;
 import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
 import io.vertigo.chatbot.executor.ExecutorPlugin;
@@ -64,12 +68,17 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private File configDataFile;
 	private File contextDataFile;
 	private File questionAnswerListDataFile;
+	private File attachmentDataFile;
+	private File documentaryResourceDataFile;
+	private File documentaryResourceFileDataFile;
 	private ExecutorGlobalConfig executorGlobalConfig;
 	private HashMap<String, String> contextMap;
 	private DtList<QuestionAnswerExport> questionAnswerList;
 	private final List<ExecutorPlugin> plugins = new ArrayList<>();
 	private Map<String, String> mapAttachments;
-	private File attachmentDataFile;
+	private Map<String, String> mapDocumentaryResourceFiles;
+	private DtList<DocumentaryResourceExport> documentaryResources;
+
 
 	@Inject
 	private ExecutorFileServices executorFileServices;
@@ -153,6 +162,34 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		} else {
 			mapAttachments = new HashMap<>();
 		}
+
+		final String documentaryResourceDataFilePath = paramManager.getOptionalParam("DOCUMENTARY_RESOURCE_DATA_FILE")
+				.map(Param::getValueAsString).orElse("/tmp/documentaryResourceConfig");
+		documentaryResourceDataFile = new File(documentaryResourceDataFilePath);
+		if (documentaryResourceDataFile.exists() && documentaryResourceDataFile.canRead()) {
+			try {
+				final String json = FileUtils.readFileToString(documentaryResourceDataFile, StandardCharsets.UTF_8);
+				documentaryResources = jsonEngine.fromJson(json, new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType());
+			} catch (final Exception e) {
+				throw new VSystemException(e, "Error reading parameter file {0}", documentaryResourceDataFilePath);			}
+		} else {
+			documentaryResources = new DtList<>(DocumentaryResourceExport.class);
+		}
+
+		final String documentaryResourceFileDataFilePath = paramManager.getOptionalParam("DOCUMENTARY_RESOURCE_FILE_DATA_FILE")
+				.map(Param::getValueAsString).orElse("/tmp/documentaryResourceFileConfig");
+		documentaryResourceFileDataFile = new File(documentaryResourceFileDataFilePath);
+		if (documentaryResourceFileDataFile.exists() && documentaryResourceFileDataFile.canRead()) {
+			try {
+				final String json = FileUtils.readFileToString(documentaryResourceFileDataFile, StandardCharsets.UTF_8);
+				mapDocumentaryResourceFiles = jsonEngine.fromJson(json, HashMap.class);
+			} catch (final Exception e) {
+				throw new VSystemException(e, "Error reading parameter file {0}", documentaryResourceFileDataFilePath);
+			}
+
+		} else {
+			mapDocumentaryResourceFiles = new HashMap<>();
+		}
 	}
 
 	@Override
@@ -221,6 +258,11 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		return questionAnswerList;
 	}
 
+	public DtList<DocumentaryResourceExport> getDocumentaryResourceList() {
+		return documentaryResources;
+	}
+
+
 	public synchronized void updateMapContext(final BotExport botExport) {
 
 		try {
@@ -244,17 +286,35 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	public void updateAttachments(final DtList<AttachmentExport> attachmentExports) {
 		try {
 			mapAttachments.forEach((key, value) -> executorFileServices.deleteFile(FileInfoURI.fromURN(value)));
+			mapDocumentaryResourceFiles.forEach((key, value) -> executorFileServices.deleteFile(FileInfoURI.fromURN(value)));
 			final HashMap<String, String> attachmentsMap = new HashMap<>();
+			final HashMap<String, String> documentaryResourceFilesMap = new HashMap<>();
 			attachmentExports.forEach(attachmentExport -> {
 				final StreamFile streamFile = StreamFile.of(attachmentExport.getFileName(), attachmentExport.getMimeType(),
 						Instant.now(), attachmentExport.getLength(),
 						() -> new ByteArrayInputStream((Base64.getDecoder().decode(attachmentExport.getFileData()))));
 
 				final FileInfoURI fileInfoURI = executorFileServices.saveFile(streamFile);
-				attachmentsMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
+
+				if(attachmentExport.getType().equals("ATTACHMENT")){
+					attachmentsMap.put(attachmentExport.getLabel(), fileInfoURI.toURN());
+				}else if(attachmentExport.getType().equals("DOCUMENT")){
+					documentaryResourceFilesMap.put(attachmentExport.getAttId().toString(), fileInfoURI.toURN());
+				}
 			});
 			FileUtils.writeStringToFile(attachmentDataFile, jsonEngine.toJson(attachmentsMap), StandardCharsets.UTF_8);
+			FileUtils.writeStringToFile(documentaryResourceFileDataFile, jsonEngine.toJson(documentaryResourceFilesMap), StandardCharsets.UTF_8);
 			mapAttachments = attachmentsMap;
+			mapDocumentaryResourceFiles = documentaryResourceFilesMap;
+		} catch (final IOException e) {
+			throw new VSystemException("Could not retrieve attachments and documentary resource files at startup...", e);
+		}
+	}
+
+	public void updateDocumentaryResourceList(final BotExport botExport) {
+		try {
+			FileUtils.writeStringToFile(documentaryResourceDataFile, botExport.getDocumentaryResources(), StandardCharsets.UTF_8);
+			documentaryResources = jsonEngine.fromJson(botExport.getDocumentaryResources(), new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType());
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", attachmentDataFile.getPath());
 		}
@@ -268,9 +328,22 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		return executorFileServices.getFile(urn);
 	}
 
+	public VFile getDocumentaryResourceFilefromAttId(final Long attId) {
+		Assertion.check().isNotNull(attId, "An attachment id must be provided");
+		final String urn = mapDocumentaryResourceFiles.get(attId.toString());
+		if (urn == null) {
+			throw new VSystemException("Documentary resource file with attachment id " + attId + " doesn't exist...");
+		}
+		return executorFileServices.getFile(urn);
+	}
+
 	public Optional<VFile> getWelcomeToursFile() {
 		final String welcomeToursFileURN = executorGlobalConfig.getWelcomeToursFileURN();
 		return welcomeToursFileURN != null ? Optional.of(executorFileServices.getFile(welcomeToursFileURN)) : Optional.empty();
+	}
+
+	public JsonElement getCustomConfig(){
+		return jsonEngine.fromJson(getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class);
 	}
 
 	public void addPlugin(final ExecutorPlugin executorPlugin) {

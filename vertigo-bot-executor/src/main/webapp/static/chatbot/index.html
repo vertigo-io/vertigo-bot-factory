@@ -29,11 +29,11 @@
                       + '; --bot-message-font-color: ' + customConfig.botMessageFontColor
                       + '; --user-message-bg-color: ' + customConfig.userMessageBackgroundColor
                       + '; --user-message-font-color: ' + customConfig.userMessageFontColor + ';'">
-      <q-layout view="hHh lpr fFf">
+      <q-layout view="hHh lpr fFf" class="row col">
         <q-layout-header class="bg-white">
-          <div class="custom-header row items-center non-selectable">
-            <div class="title col-grow q-ml-md">
-              {{ botName }}
+          <div class="custom-header row items-center non-selectable" >
+            <div class="title col-grow q-ml-sm">
+              {{ platformName }}
             </div>
             <!--<q-btn-dropdown color="primary" icon="language">
               <q-list style="text-align: center; padding: 0">
@@ -48,7 +48,7 @@
                    color="white"
                    text-color="white"
                    size="md"
-                   @click="refresh()"
+                   @click="refreshPlatform()"
                    icon="refresh"></q-btn>
             <q-btn round
                    class="btn-rotate"
@@ -61,21 +61,20 @@
           </div>
         </q-layout-header>
 
-        <q-page-container>
-          <div id="loading"
-               class="column items-center q-pt-xl">Chargement ...
-          </div>
+        <q-page-container class="row col">
           <q-page id="page"
-                  class="column animate-fade"
-                  style="padding-top: 0; padding-bottom: 0;">
-            <div v-if="!menu && tab ==='bot'"
+                  class="row col column animate-fade">
+            <div id="loading"
+                 class="items-center">Chargement ...
+            </div>
+            <div v-if="footerMenu ==='bot'"
                  id="main"
-                 class="column col-grow no-wrap">
-              <q-scroll-area class="row q-px-sm col-grow"
-                             ref="scroller"
-                             style="height: 0">
+                 class="column col-grow no-wrap chatbot-qanda-container"
+            >
+              <q-scroll-area class="col row no-wrap q-px-sm"
+                             ref="scroller">
                 <div class="q-pr-md q-pt-md">
-                  <div v-for="(msg, index) in messages">
+                  <div v-for="(msg, index) in botConfig.messages">
                     <q-chat-message
                       v-if="msg.text"
                       class="animate-fade"
@@ -99,7 +98,7 @@
                   </div>
                   <div class="sys-chat">
                     <q-chat-message
-                      v-if="error"
+                      v-if="botConfig.error"
                       class="animate-fade"
                       bg-color="orange-4"
                       text-color="black"
@@ -120,7 +119,7 @@
 
                   <div class="message-processing sys-chat non-selectable">
                     <q-chat-message
-                      v-if="processing"
+                      v-if="botConfig.processing"
                       class="animate-fade"
                       bg-color="grey-grdf"
                     >
@@ -150,9 +149,8 @@
                                 animated
                                 control-color="primary"
                                 navigation
-                                padding
                                 arrows
-                                class="custom-carousel bg-primary text-white shadow-1 rounded-borders"
+                                class="custom-carousel bg-primary text-white shadow-1"
                         >
                           <q-carousel-slide  v-for="(card, index) in inputConfig.cards" name="style" class="column no-wrap flex-center" >
                             <div class="q-mt-md text-center cursor-pointer" @click="postAnswerBtn(card)">
@@ -192,70 +190,97 @@
                 </div>
                 <div style="height: 30px"></div>
               </q-scroll-area>
-            </div>
-            <div v-if="tab==='bot'" class="row non-selectable custom-input-bottom">
-              <div class="col-grow">
-                <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
-                         ref="input"
-                         :style="'margin-top: 0px;'"
-                         class="q-px-sm round-borders custom-input"
-                         @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
-                         :max-height="100"
-                         v-model="inputConfig.responseText"
-                         placeholder="Ecrire un message..."
-                         :disable="processing || error || (!acceptNlu && !isEnded) || customConfig.disableNlu"
-                         :loading="processing"></q-input>
+              <div class="row non-selectable custom-input-chatbot">
+                <div class="col-grow">
+                  <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
+                           ref="input"
+                           @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
+                           v-model="inputConfig.responseText"
+                           placeholder="Ecrire un message..."
+                           :disable="botConfig.processing || botConfig.error || (!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu"
+                           :loading="botConfig.processing"></q-input>
+                </div>
+                <q-btn
+                        :style="'margin-top: 0px;'"
+                        style="margin-top: 0px;"
+                        class="btn-send"
+                        icon="send"
+                        @click="postAnswerText(false)"
+                        :disable="botConfig.processing || inputConfig.responseText.trim() === ''"></q-btn>
+                <q-btn round
+                       color="red"
+                       @click="restart"
+                       v-if="botConfig.devMode === true && false"
+                       icon="refresh"></q-btn>
               </div>
-              <q-btn
-                      :style="'margin-top: 0px;'"
-                      style="margin-top: 0px;"
-                      class="btn-send"
-                      icon="send"
-                      @click="postAnswerText(false)"
-                      :disable="processing || inputConfig.responseText.trim() === ''"></q-btn>
-              <q-btn round
-                     color="red"
-                     @click="restart"
-                     v-if="devMode === true && false"
-                     icon="refresh"></q-btn>
             </div>
 
-            <div v-if="tab === 'qAndA'" class="custom-input-top">
-              <q-input v-model="qAndAConfig.filterInput"
-                       ref="input"
-                       class="q-px-sm"
-                       placeholder="Rechercher..."
-                       :loading="processing"
-                       @update:model-value="filterQuestionsAnswers()"></q-input>
-            </div>
-            <q-scroll-area class="q-px-sm col-grow"
-                           ref="scroller"
-                           style="height: 0"
-                           v-if="tab === 'qAndA'"
-            >
-              <div class="q-mx-md q-mt-xl">
-                    <q-collapsible v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
-                                   :label="questionAnswer.question"
-                                   header-class="q-collapsible-question">
-                      <div class="q-collapsible-answer" v-html="questionAnswer.answer"></div>
-                    </q-collapsible>
+            <div v-if="footerMenu === 'qAndA'" class="column col-grow no-wrap chatbot-qanda-container">
+              <div class="column col-grow" v-if="!qAndAConfig.selectedQuestion">
+                <div class="custom-input-qanda">
+                  <q-input v-model="qAndAConfig.filterInput"
+                           ref="input"
+                           placeholder="Rechercher..."
+                           @input="filterQuestionsAnswers()"></q-input>
+                </div>
+                <q-scroll-area class="row q-px-sm col-grow">
+                  <div class="q-mx-md">
+                        <q-btn v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
+                               class="q-btn-question"
+                               v-html="questionAnswer.question"
+                               @click="selectQuestion(questionAnswer)"
+                        >
+                        </q-btn>
+                  </div>
+                  <div style="height: 30px"></div>
+                </q-scroll-area>
+
               </div>
-              <div style="height: 30px"></div>
-            </q-scroll-area>
+
+              <q-scroll-area v-if="qAndAConfig.selectedQuestion"
+                   class="col-grow q-px-md">
+                <div style="height: 12px"></div>
+                <q-btn icon="arrow_back" style="font-size: 12px; text-transform: unset; padding: 0 10px" @click="qAndAConfig.selectedQuestion = null">
+                  <span style="padding-left: 2px; font-size: 13px">Retour</span>
+                </q-btn>
+                <div class="q-px-sm  q-mt-md">
+                  <div class="question-title" v-html="qAndAConfig.selectedQuestion.question"></div>
+                  <div class="answer-text q-mt-md" v-html="qAndAConfig.selectedQuestion.answer"></div>
+                </div>
+                <div style="height: 20px"></div>
+              </q-scroll-area>
+            </div>
+
+                       @update:model-value="filterQuestionsAnswers()"></q-input>
+            <div v-if="customConfig.documentaryResourceDisplay && !qAndAConfig.selectedQuestion" class="column no-wrap docres-container" style="height: 20%">
+              <q-scroll-area class="col-grow q-px-md">
+                <div style="height: 10px"></div>
+                  <div v-for="(documentaryResource, index) in documentaryResourceConfig.documentaryResourceList"
+                       class="docres-item-container">
+                    <a v-if="documentaryResource.dreTypeCd === 'URL'"
+                       :href="documentaryResource.url"
+                       target="_blank"
+                       class="docres-a">
+                      <q-icon name="public" class="docres-type-icon"></q-icon>
+                      <span class="docres-text">{{documentaryResource.title}}</span>
+                      <q-icon name="launch" ></q-icon>
+                    </a>
+                    <a v-else-if="documentaryResource.dreTypeCd === 'FILE'"
+                       :href="documentaryResourceConfig.documentaryResourceFileBaseUrl + documentaryResource.attId"
+                       class="docres-a">
+                      <q-icon name="article" class="docres-type-icon"></q-icon>
+                      <span class="docres-text">{{documentaryResource.title}}</span>
+                      <q-icon name="download" style="font-size: 16px"></q-icon>
+                    </a>
+                  </div>
+                <div style="height:8px" ></div>
+              </q-scroll-area>            </div>
           </q-page>
         </q-page-container>
 
-        <q-layout-footer v-if="!customConfig.disableNlu" >
-          <div :class="{'q-tabs-container' : tab==='bot'}">
-            <q-tabs v-model="tab"
-                    align="justify"
-                    text-color="black"
-                    class="q-tabs"
-            >
-              <q-tab name="bot" slot="title" icon="smart_toy"></q-tab>
-              <q-tab name="qAndA" slot="title" icon="question_answer"></q-tab>
-            </q-tabs>
-          </div>
+        <q-layout-footer v-if="customConfig.chatbotDisplay && customConfig.qandaDisplay" style="display: flex">
+          <q-btn icon="smart_toy" class="q-btn-footer" :class="{'q-btn-footer-selected': footerMenu === 'bot'}" @Click="footerMenuChange('bot')"></q-btn>
+          <q-btn icon="question_answer" class="q-btn-footer" :class="{'q-btn-footer-selected': footerMenu === 'qAndA'}" @Click="footerMenuChange('qAndA')"></q-btn>
         </q-layout-footer>
       </q-layout>
     </div>
@@ -268,5 +293,8 @@
             integrity="sha512-QpQT1tpnIGTHF8DZQmL2Xp9QhAYp7Kfl8yJwlyjoYNe1YDWgE1kd9NfnzPVo2GPDpHtLyixEKaSNL/CNe6ZzYg=="
             crossorigin="anonymous"></script>
     <script src="js/chatbot.js"></script>
+    <script src="js/botService.js"></script>
+    <script src="js/documentaryResourceService.js"></script>
+    <script src="js/qAndAService.js"></script>
   </body>
 </html>

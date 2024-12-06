@@ -1,0 +1,44 @@
+package io.vertigo.chatbot.designer.builder.documentaryResourceContext
+
+create Task TkGetAllDocumentaryResourceContextIhmByDreId {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	drc.drc_id,
+			        drc.dre_id,
+					cva.cva_id,
+					cpv.cpv_id,
+					cva.label as cva_label,
+					CASE #locale#
+						WHEN 'fr_FR' THEN tyop.label_fr || ' : ' || cpv.value
+						ELSE tyop.label || ' : ' || cpv.value
+					END as cpv_value
+			from documentary_resource_context drc
+			join context_value cva on (cva.cva_id = drc.cva_id)
+			left join context_possible_value cpv on (cpv.cpv_id = drc.cpv_id)
+			left join type_operator tyop on (tyop.tyop_cd = cpv.tyop_cd)
+			where drc.dre_id = #dreId#
+			order by cva.label
+             "
+
+	in dreId  				          {domain : DoId         		                    cardinality : "1"  }
+	in locale  				          {domain : DoCode                               	cardinality : "1"  }
+	out documentaryResourceContexts   {domain : DoDtDocumentaryResourceContextIhm	    cardinality : "*"  }
+}
+
+create Task TkRemoveAllDocumentaryResourceContextByDreId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from documentary_resource_context
+			where dre_id = #dreId#
+             "
+	in dreId  				{domain : DoId         		cardinality : "1"  }
+}
+
+create Task TkRemoveAllDocumentaryResourceContextByCvaId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from documentary_resource_context
+			where cva_id = #cvaId#
+             "
+	in cvaId  				{domain : DoId         		cardinality : "1"  }
+}

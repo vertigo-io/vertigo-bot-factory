@@ -30,12 +30,13 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ContextPossibleValue;
 import io.vertigo.chatbot.commons.domain.ContextValue;
-import io.vertigo.chatbot.designer.builder.services.bot.ChatbotServices;
+import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceContextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentValueServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextPossibleValueServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextTypeOperatorServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
+import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerContextServices;
 import io.vertigo.chatbot.designer.domain.TypeOperator;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.datamodel.data.definitions.DataField;
@@ -67,9 +68,6 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 
 	@Inject
 	private ContextEnvironmentServices contextEnvironmentServices;
-
-	@Inject
-	private ContextEnvironmentValueServices contextEnvironmentValueServices;
 
 	@Inject
 	private ContextPossibleValueServices contextPossibleValueServices;
@@ -143,8 +141,6 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 	public String deleteContextValue(final ViewContext viewContext,
 			@ViewAttribute("bot") final Chatbot bot,
 			@ViewAttribute("contextValue") final ContextValue contextValue) {
-		contextPossibleValueServices.deleteContextPossibleValuesByCvaId(bot, contextValue.getCvaId());
-		contextEnvironmentValueServices.deleteContextEnvironmentValue(contextValue.getCvaId());
 		contextValueServices.deleteContextValue(bot, contextValue.getCvaId());
 		return "redirect:/bot/" + bot.getBotId() + "/contextList/";
 	}

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.vertigo.chatbot.designer.builder.services;
+package io.vertigo.chatbot.designer.builder.services.training;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -42,16 +42,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-
-import io.vertigo.chatbot.commons.GsonProvider;
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
+import io.vertigo.chatbot.commons.GsonProvider;
 import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
@@ -66,7 +61,9 @@ import io.vertigo.chatbot.commons.domain.SavedTraining;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
-import io.vertigo.chatbot.designer.builder.services.topic.export.BotExportServices;
+import io.vertigo.chatbot.designer.builder.services.HistoryServices;
+import io.vertigo.chatbot.designer.builder.services.IRecordable;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.training.TrainingPAO;
 import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.domain.History;
@@ -86,12 +83,16 @@ import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.definitions.DataDefinition;
 import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
-import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 
 @Transactional

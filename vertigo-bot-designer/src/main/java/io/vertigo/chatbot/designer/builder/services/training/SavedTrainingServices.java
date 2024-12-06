@@ -1,8 +1,9 @@
-package io.vertigo.chatbot.designer.builder.services;
+package io.vertigo.chatbot.designer.builder.services.training;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicFileExport;
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
@@ -44,9 +46,6 @@ import io.vertigo.datastore.filestore.FileStoreManager;
 import io.vertigo.datastore.filestore.model.FileInfo;
 import io.vertigo.datastore.filestore.model.VFile;
 
-import java.util.Comparator;
-
-import static io.vertigo.chatbot.designer.builder.services.TrainingServices.MAX_TRAINING_ELEMENTS;
 import static java.lang.Long.parseLong;
 
 @Transactional
@@ -175,7 +174,7 @@ public class SavedTrainingServices implements Component {
 
 	public DtList<SavedTraining> getAllSavedTrainingByBotId(final Long botId) {
 		return savedTrainingDAO.findAll(Criterions.isEqualTo(DtDefinitions.SavedTrainingFields.botId, botId),
-				DtListState.of(MAX_TRAINING_ELEMENTS, 0, DtDefinitions.SavedTrainingFields.creationTime.name(), true));
+				DtListState.of(TrainingServices.MAX_TRAINING_ELEMENTS, 0, DtDefinitions.SavedTrainingFields.creationTime.name(), true));
 	}
 
 	public void deleteAllByBotId(final Chatbot bot) {

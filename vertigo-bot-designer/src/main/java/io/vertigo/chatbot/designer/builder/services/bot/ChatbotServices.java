@@ -16,22 +16,25 @@ import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.monitoring.MonitoringPAO;
 import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
+import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceServices;
 import io.vertigo.chatbot.designer.builder.services.HistoryServices;
 import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
 import io.vertigo.chatbot.designer.builder.services.JiraSettingServices;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
-import io.vertigo.chatbot.designer.builder.services.SavedTrainingServices;
-import io.vertigo.chatbot.designer.builder.services.TrainingServices;
 import io.vertigo.chatbot.designer.builder.services.UnknownSentencesServices;
 import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
 import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
+import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerCategoryServices;
+import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerServices;
 import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.builder.services.topic.SmallTalkServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicLabelServices;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
+import io.vertigo.chatbot.designer.builder.services.training.SavedTrainingServices;
+import io.vertigo.chatbot.designer.builder.services.training.TrainingServices;
 import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.dao.monitoring.AlertingEventDAO;
 import io.vertigo.chatbot.designer.utils.AuthorizationUtils;
@@ -126,6 +129,21 @@ public class ChatbotServices implements Component {
 	private JiraSettingServices jiraSettingServices;
 
 	@Inject
+	private DocumentaryResourceServices documentaryResourceServices;
+
+	@Inject
+	private QuestionAnswerServices questionAnswerServices;
+
+	@Inject
+	private QuestionAnswerCategoryServices questionAnswerCategoryServices;
+
+	@Inject
+	private ContextPossibleValueServices contextPossibleValueServices;
+
+	@Inject
+	private ContextEnvironmentServices contextEnvironmentServices;
+
+	@Inject
 	private MonitoringPAO monitoringPAO;
 
 	@Inject
@@ -195,9 +213,15 @@ public class ChatbotServices implements Component {
 		topicServices.removeAllTopicsFromBot(bot);
 		topicCategoryServices.removeAllCategoryByBot(bot);
 
+		// Delete questions/answers and documentary resources
+		documentaryResourceServices.deleteAllDocumentaryResourceByBot(bot);
+		questionAnswerServices.deleteAllQueAnsByBot(bot);
+		questionAnswerCategoryServices.deleteAllQuestionAnswerCategoryByBot(bot);
+
 		chatbotProfilServices.deleteAllProfilByBot(bot);
 		chatbotCustomConfigServices.deleteChatbotCustomConfig(bot);
-		contextValueServices.deleteAllByBotId(bot.getBotId());
+		contextEnvironmentServices.deleteAllContextEnvironmentByBot(bot);
+		contextValueServices.deleteAllByBotId(bot);
 		historyServices.deleteAllByBotId(bot.getBotId());
 		unknownSentencesServices.deleteAllByBotId(bot.getBotId());
 		welcomeTourServices.deleteAllByBotId(bot.getBotId());

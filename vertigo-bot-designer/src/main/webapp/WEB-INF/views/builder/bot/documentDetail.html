@@ -11,6 +11,7 @@
     <script th:src="@{/static/js/c-richtext.js}"></script>
     <script th:src="@{/static/js/c-emojipicker.js}"></script>
     <script th:inline="javascript">
+
         VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
 
         VUiExtensions.methods = {
@@ -34,6 +35,17 @@
             return type.includes('image');
         }
 
+        function filterContextPossibleValues(cvaId) {
+            if (cvaId) {
+                VertigoUi.vueData.filteredContextPossibleValueList = VertigoUi.vueData.contextPossibleValueList.filter(contextPossibleValue => contextPossibleValue.cvaId === cvaId);
+            }
+        }
+
+        function onContextChange(cvaId) {
+            filterContextPossibleValues(cvaId);
+            VertigoUi.vueData.newDocumentaryResourceContext.cpvId = null;
+        }
+
     </script>
 </head>
 <body>
@@ -48,23 +60,30 @@
 
 <section layout:fragment="content">
     <vu:popup action="_delete" vModel="showDeleteDocumentaryResourcePopup" message="#{documentaryResource.popup.message}" confirm="#{action.delete}"></vu:popup>
-
+    <vu:popup-ajax action="_deleteDocumentaryResourceContext" vModel="showPopupDeleteDocumentaryResourceContext" dataName="drcId"
+                   message="#{context.delete.popup.title}" confirm="#{action.delete}">
+    </vu:popup-ajax>
     <vu:block id="detail" title="Informations">
         <vu:grid cols="2">
             <vu:text-field object="documentaryResource" field="title" />
             <vu:text-field object="documentaryResource" field="description"/>
         </vu:grid>
     </vu:block>
-
     <div>
         <vu:include-data-primitive key="locale"/>
         <vu:include-data object="documentaryResource" field="dreTypeCd" modifiable="true"/>
         <vu:include-data object="documentaryResource" field="title" modifiable="true"/>
-        <vu:include-data object="documentaryResource" field="text" modifiable="true"/>
         <vu:include-data object="documentaryResource" field="url" modifiable="true"/>
-        <vu:include-data object="documentaryResourceTypeList" field="dreTypeCd" />
-        <vu:include-data object="documentaryResourceTypeList" field="label" />
-        <vu:include-data object="documentaryResourceTypeList" field="labelFr" />
+        <vu:include-data object="documentaryResource" field="*" modifiable="true"/>
+        <vu:include-data object="documentaryResourceContextIhmList" field="*" modifiable="true"/>
+        <vu:include-data object="documentaryResourceTypeList" field="*" />
+        <vu:include-data object="filteredContextPossibleValueList" field="*" modifiable="true"/>
+        <vu:include-data object="contextPossibleValueList" field="*" modifiable="true"/>
+        <vu:include-data object="contextValueList" field="*" modifiable="true"/>
+        <vu:include-data object="newDocumentaryResourceContext" field="drcId" modifiable="true"/>
+        <vu:include-data object="newDocumentaryResourceContext" field="cvaId" modifiable="true"/>
+        <vu:include-data object="newDocumentaryResourceContext" field="cpvId" modifiable="true"/>
+        <vu:include-data object="newDocumentaryResourceContext" field="dreId" modifiable="true"/>
         <q-btn-toggle
                 v-model="vueData.documentaryResource.dreTypeCd"
                 name="vContext[documentaryResource][dreTypeCd]"
@@ -73,15 +92,6 @@
                 th::disable="${model.modeReadOnly}"
         />
     </div>
-    <vu:block id="document" th:title="#{documentaryResource.text}" v-if="vueData.documentaryResource.dreTypeCd === 'TEXT'">
-        <c-richtext
-                v-model="vueData.documentaryResource.text"
-                name="vContext[documentaryResource][text]"
-                :locale="vueData.locale"
-                class="q-pb-sm">
-        </c-richtext>
-    </vu:block>
-
     <vu:block id="url" th:title="#{documentaryResource.url}" v-if="vueData.documentaryResource.dreTypeCd === 'URL'">
         <q-input
                 v-model="vueData.documentaryResource.url"
@@ -90,7 +100,7 @@
         </q-input>
     </vu:block>
 
-    <vu:block id="url" th:title="#{documentaryResource.file}" v-if="vueData.documentaryResource.dreTypeCd === 'FILE'">
+    <vu:block id="file" th:title="#{documentaryResource.file}" v-if="vueData.documentaryResource.dreTypeCd === 'FILE'">
         <vu:include-data-primitive key="importAttachmentFileUri" modifiable="true"/>
         <vu:include-data object="attachment" field="label" modifiable="true"/>
         <vu:include-data object="attachment" field="type" modifiable="true"/>
@@ -108,6 +118,73 @@
                        @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
         <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
     </vu:block>
+    <div v-if="vueData.documentaryResource.dreId != null" class="text-h6 text-weight-bold" style="display: flex; align-items: center; margin-top: 2rem;">
+        <span class="text-primary" style="flex-grow: 2">[[#{documentaryResource.context.table.title}]]</span>
+        <q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}"
+               color="primary" round icon="add" th:aria-label="#{action.add}" th:title="#{action.add}"
+               @click="vueData.newDocumentaryResourceContext.drcId = null;
+               vueData.newDocumentaryResourceContext.dreId = vueData.documentaryResource.dreId;
+               vueData.newDocumentaryResourceContext.cvaId = null;
+               vueData.newDocumentaryResourceContext.cpvId = null;
+               $refs.newContextDialog.show()">
+        </q-btn>
+    </div>
+    <vu:table v-if="vueData.documentaryResource.dreId != null" list="documentaryResourceContextIhmList" componentId="contextTable">
+        <vu:slot name="actions_slot" th:if="${model.userAuthorizations[AtzChatbot$botContributor]}">
+            <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.edit}" th:title="#{action.edit}"
+                   @click="vueData.newDocumentaryResourceContext.drcId = props.row.drcId;
+                        vueData.newDocumentaryResourceContext.dreId = props.row.dreId;
+                        vueData.newDocumentaryResourceContext.cvaId = props.row.cvaId;
+                        vueData.newDocumentaryResourceContext.cpvId = props.row.cpvId;
+                        filterContextPossibleValues(props.row.cvaId);
+                        $refs.newContextDialog.show()"></q-btn>
+            <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
+                   @click="componentStates.drcId = props.row.drcId; componentStates.showPopupDeleteDocumentaryResourceContext = true"></q-btn>
+        </vu:slot>
+        <vu:column field="cvaLabel"/>
+        <vu:column field="cpvValue"/>
+    </vu:table>
+
+    <q-dialog ref="newContextDialog">
+        <q-card style="width: 400px;">
+            <q-card-section>
+                <div class="text-h6" style="text-align: center">
+                    <span v-if="vueData.newDocumentaryResourceContext.drcId != null" th:text="#{context.update.popup.title}"></span>
+                    <span v-else th:text="#{context.add.popup.title}"></span>
+                </div>
+            </q-card-section>
+            <q-card-section style="display: flex">
+                    <q-select th:label="#{documentaryResource.context}"
+                              v-model="vueData.newDocumentaryResourceContext.cvaId"
+                              :options="vueData.contextValueList"
+                              option-value="cvaId"
+                              option-label="label"
+                              map-options
+                              emit-value
+                              style="flex:1; margin-right:4px"
+                              @input="onContextChange">
+                    </q-select>
+                    <q-select
+                            v-if="vueData.newDocumentaryResourceContext.cvaId != null && vueData.filteredContextPossibleValueList.length > 0"
+                            th:label="#{documentaryResource.contextValue}"
+                            v-model="vueData.newDocumentaryResourceContext.cpvId"
+                            :options="[{ cpvId: null, value: '' }, ...vueData.filteredContextPossibleValueList]"
+                            option-value="cpvId"
+                            option-label="value"
+                            map-options
+                            style="flex:1; margin-left:4px"
+                            emit-value>
+                    </q-select>
+            </q-card-section>
+            <q-card-actions align="around">
+                <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                       @click="httpPostAjax('_saveDocumentaryResourceContext', vueDataParams(['newDocumentaryResourceContext']));"
+                       color="primary" v-close-popup></q-btn>
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
     <q-page-sticky position="bottom-right">
         <vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
     </q-page-sticky>

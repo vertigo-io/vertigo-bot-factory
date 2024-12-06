@@ -37,6 +37,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ContextPossibleValue(io.vertigo.chatbot.commons.domain.ContextPossibleValue.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
+		/** Objet de données DocumentaryResourceExport. */
+		DocumentaryResourceExport(io.vertigo.chatbot.commons.domain.DocumentaryResourceExport.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données JiraFieldSettingExport. */
@@ -98,6 +100,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de AttachmentExport.
 	 */
 	public enum AttachmentExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.AttachmentExport> {
+		/** Propriété 'Attachment Id'. */
+		attId,
 		/** Propriété 'Label'. */
 		label,
 		/** Propriété 'Name'. */
@@ -107,7 +111,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Size'. */
 		length,
 		/** Propriété 'Data'. */
-		fileData	}
+		fileData,
+		/** Propriété 'Type'. */
+		type	}
 
 	/**
 	 * Enumération des champs de AttachmentFileInfo.
@@ -165,6 +171,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jiraFieldSetting,
 		/** Propriété 'Questions answers List'. */
 		questionAnswerList,
+		/** Propriété 'Documentary resources'. */
+		documentaryResources,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -212,7 +220,13 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Total maximum attachment size'. */
 		totalMaxAttachmentSize,
 		/** Propriété 'Disable NlU'. */
-		disableNlu	}
+		disableNlu,
+		/** Propriété 'Display chatbot'. */
+		chatbotDisplay,
+		/** Propriété 'Display Q&A'. */
+		qandaDisplay,
+		/** Propriété 'Display documentary resources'. */
+		documentaryResourceDisplay	}
 
 	/**
 	 * Enumération des champs de ConfluenceSettingExport.
@@ -254,6 +268,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		xpath,
 		/** Propriété 'Chatbot'. */
 		botId	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceExport.
+	 */
+	public enum DocumentaryResourceExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.DocumentaryResourceExport> {
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Resource Type'. */
+		dreTypeCd,
+		/** Propriété 'Url'. */
+		url,
+		/** Propriété 'Attachment Id'. */
+		attId,
+		/** Propriété 'File name'. */
+		fileName	}
 
 	/**
 	 * Enumération des champs de ExecutorConfiguration.

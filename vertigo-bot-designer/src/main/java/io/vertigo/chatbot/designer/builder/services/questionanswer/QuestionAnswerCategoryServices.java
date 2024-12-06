@@ -70,6 +70,10 @@ public class QuestionAnswerCategoryServices implements Component {
         questionAnswerCategoryDAO.delete(categoryId);
     }
 
+    public void deleteAllQuestionAnswerCategoryByBot(@SecuredOperation("botAdm") final Chatbot bot){
+        getAllQueAnsCatByBot(bot).forEach(questionAnswerCategory -> questionAnswerCategoryDAO.delete(questionAnswerCategory.getQaCatId()));
+    }
+
     public QuestionAnswerCategory getNewQueAnsCategory(@SecuredOperation("botAdm") final Chatbot bot) {
         final QuestionAnswerCategory category = new QuestionAnswerCategory();
         category.setBotId(bot.getBotId());

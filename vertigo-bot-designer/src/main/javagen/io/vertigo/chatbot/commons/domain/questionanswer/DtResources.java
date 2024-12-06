@@ -73,6 +73,54 @@ public enum DtResources implements LocaleMessageKey {
 	fldQuestionAnswerCategoryExport$isEnabled,
 
 	/***********************************************************
+	 * QuestionAnswerContext.
+	 **********************************************************/
+	/**
+	 * ID.
+	 */
+	fldQuestionAnswerContext$qacId,
+	/**
+	 * Question answer id.
+	 */
+	fldQuestionAnswerContext$qaId,
+	/**
+	 * Context value id.
+	 */
+	fldQuestionAnswerContext$cvaId,
+	/**
+	 * Context possible value id.
+	 */
+	fldQuestionAnswerContext$cpvId,
+
+	/***********************************************************
+	 * QuestionAnswerContextIhm.
+	 **********************************************************/
+	/**
+	 * ID.
+	 */
+	fldQuestionAnswerContextIhm$qacId,
+	/**
+	 * Question answer id.
+	 */
+	fldQuestionAnswerContextIhm$qaId,
+	/**
+	 * Context value id.
+	 */
+	fldQuestionAnswerContextIhm$cvaId,
+	/**
+	 * Context possible value id.
+	 */
+	fldQuestionAnswerContextIhm$cpvId,
+	/**
+	 * Context.
+	 */
+	fldQuestionAnswerContextIhm$cvaLabel,
+	/**
+	 * Value.
+	 */
+	fldQuestionAnswerContextIhm$cpvValue,
+
+	/***********************************************************
 	 * QuestionAnswerFileExport.
 	 **********************************************************/
 	/**

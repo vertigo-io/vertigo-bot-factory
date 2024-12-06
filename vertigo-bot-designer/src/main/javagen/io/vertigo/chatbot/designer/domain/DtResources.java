@@ -136,10 +136,6 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldDocumentaryResource$description,
 	/**
-	 * Text.
-	 */
-	fldDocumentaryResource$text,
-	/**
 	 * Url.
 	 */
 	fldDocumentaryResource$url,
@@ -155,6 +151,54 @@ public enum DtResources implements LocaleMessageKey {
 	 * Chatbot.
 	 */
 	fldDocumentaryResource$botId,
+
+	/***********************************************************
+	 * DocumentaryResourceContext.
+	 **********************************************************/
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResourceContext$drcId,
+	/**
+	 * Documentary resource id.
+	 */
+	fldDocumentaryResourceContext$dreId,
+	/**
+	 * Context value id.
+	 */
+	fldDocumentaryResourceContext$cvaId,
+	/**
+	 * Context possible value id.
+	 */
+	fldDocumentaryResourceContext$cpvId,
+
+	/***********************************************************
+	 * DocumentaryResourceContextIhm.
+	 **********************************************************/
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResourceContextIhm$drcId,
+	/**
+	 * Documentary resource id.
+	 */
+	fldDocumentaryResourceContextIhm$dreId,
+	/**
+	 * Context value id.
+	 */
+	fldDocumentaryResourceContextIhm$cvaId,
+	/**
+	 * Context possible value id.
+	 */
+	fldDocumentaryResourceContextIhm$cpvId,
+	/**
+	 * Context.
+	 */
+	fldDocumentaryResourceContextIhm$cvaLabel,
+	/**
+	 * Value.
+	 */
+	fldDocumentaryResourceContextIhm$cpvValue,
 
 	/***********************************************************
 	 * DocumentaryResourceType.

@@ -19,11 +19,10 @@ public final class DocumentaryResource implements Entity {
 	private Long dreId;
 	private String title;
 	private String description;
-	private String text;
 	private String url;
 
 	@io.vertigo.datamodel.data.stereotype.Association(
-			name = "ADocumentaryResourceFileAttachmentFileInfo",
+			name = "ADocumentaryResourceAttachmentFileInfo",
 			fkFieldName = "attId",
 			primaryDtDefinitionName = "DtAttachment",
 			primaryIsNavigable = true,
@@ -132,25 +131,6 @@ public final class DocumentaryResource implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Text'.
-	 * @return String text
-	 */
-	@Field(smartType = "STyText", label = "Text")
-	public String getText() {
-		return text;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Text'.
-	 * @param text String
-	 */
-	public void setText(final String text) {
-		this.text = text;
-	}
-	
-	/**
-	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Url'.
 	 * @return String url
 	 */
@@ -226,6 +206,14 @@ public final class DocumentaryResource implements Entity {
 	}
 
  	/**
+	 * Association : Attachment id.
+	 * @return l'accesseur vers la propriété 'Attachment id'
+	 */
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Attachment> attachment() {
+		return attIdAccessor;
+	}
+
+ 	/**
 	 * Association : Chatbot.
 	 * @return l'accesseur vers la propriété 'Chatbot'
 	 */
@@ -239,14 +227,6 @@ public final class DocumentaryResource implements Entity {
 	 */
 	public EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.DocumentaryResourceType, io.vertigo.chatbot.designer.domain.DocumentaryResourceTypeEnum> documentaryResourceType() {
 		return dreTypeCdAccessor;
-	}
-
- 	/**
-	 * Association : Attachment id.
-	 * @return l'accesseur vers la propriété 'Attachment id'
-	 */
-	public StoreVAccessor<io.vertigo.chatbot.commons.domain.Attachment> attachment() {
-		return attIdAccessor;
 	}
 	
 	/** {@inheritDoc} */

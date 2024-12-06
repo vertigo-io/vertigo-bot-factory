@@ -44,6 +44,9 @@ public class QuestionAnswerServices implements Component {
     private QuestionAnswerPAO questionAnswerPAO;
 
     @Inject
+    private QuestionAnswerContextServices questionAnswerContextServices;
+
+    @Inject
     private ExportPAO exportPAO;
 
     @Inject
@@ -110,6 +113,7 @@ public class QuestionAnswerServices implements Component {
     }
 
     public void deleteQueAnsById(@SecuredOperation("botContributor") final Chatbot bot, final Long questionAnswerId) {
+        questionAnswerContextServices.deleteAllQuestionAnswerContextByQaId(bot, questionAnswerId);
         questionAnswerDAO.delete(questionAnswerId);
     }
 

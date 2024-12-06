@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.builder.services.topic.export;
+package io.vertigo.chatbot.designer.builder.services.training;
 
 import java.util.Optional;
 
@@ -16,6 +16,7 @@ import io.vertigo.chatbot.commons.domain.FontFamilyEnum;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
 import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
+import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceServices;
 import io.vertigo.chatbot.designer.builder.services.FontFamilyServices;
 import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
 import io.vertigo.chatbot.designer.builder.services.JiraSettingServices;
@@ -24,6 +25,7 @@ import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerServices;
+import io.vertigo.chatbot.designer.builder.services.topic.export.TopicExportServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.data.model.DtList;
@@ -59,6 +61,9 @@ public class BotExportServices implements Component {
 	private QuestionAnswerServices questionAnswerServices;
 
 	@Inject
+	private DocumentaryResourceServices documentaryResourceServices;
+
+	@Inject
 	private FontFamilyServices fontFamilyServices;
 
 	public BotExport exportBot(final Chatbot bot, final StringBuilder logs) {
@@ -76,6 +81,7 @@ public class BotExportServices implements Component {
 		export.setMapContext(contextValueServices.exportContextValuesToMapByBot(bot, logs));
 		export.setJiraFieldSetting(jiraFieldSettingServices.exportJiraSetting(bot));
 		export.setQuestionAnswerList(questionAnswerServices.exportActiveQuestionsAnswers(bot, logs));
+		export.setDocumentaryResources(documentaryResourceServices.exportDocumentaryResourceByBot(bot, logs));
 		return export;
 	}
 
@@ -108,6 +114,9 @@ public class BotExportServices implements Component {
 		chatbotCustomConfigExport.setDisplayAvatar(chatbotCustomConfig.getDisplayAvatar());
 		chatbotCustomConfigExport.setReinitializationButton(chatbotCustomConfig.getReinitializationButton());
 		chatbotCustomConfigExport.setFontFamily(fontFamily.getLabel());
+		chatbotCustomConfigExport.setChatbotDisplay(chatbotCustomConfig.getChatbotDisplay());
+		chatbotCustomConfigExport.setQandaDisplay(chatbotCustomConfig.getQandaDisplay());
+		chatbotCustomConfigExport.setDocumentaryResourceDisplay(chatbotCustomConfig.getDocumentaryResourceDisplay());
 		return chatbotCustomConfigExport;
 	}
 

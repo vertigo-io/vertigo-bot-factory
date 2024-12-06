@@ -25,6 +25,7 @@ public final class BotExport implements DataObject {
 	private io.vertigo.chatbot.commons.domain.JiraSettingExport jiraSetting;
 	private io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> jiraFieldSetting =  new io.vertigo.datamodel.data.model.DtList<>(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class);
 	private String questionAnswerList;
+	private String documentaryResources;
 	private String mapContext;
 	
 	/**
@@ -259,6 +260,25 @@ public final class BotExport implements DataObject {
 	 */
 	public void setQuestionAnswerList(final String questionAnswerList) {
 		this.questionAnswerList = questionAnswerList;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Documentary resources'.
+	 * @return String documentaryResources <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Documentary resources")
+	public String getDocumentaryResources() {
+		return documentaryResources;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Documentary resources'.
+	 * @param documentaryResources String <b>Obligatoire</b>
+	 */
+	public void setDocumentaryResources(final String documentaryResources) {
+		this.documentaryResources = documentaryResources;
 	}
 	
 	/**

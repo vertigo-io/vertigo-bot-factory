@@ -44,6 +44,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * AttachmentExport.
 	 **********************************************************/
 	/**
+	 * Attachment Id.
+	 */
+	fldAttachmentExport$attId,
+	/**
 	 * Label.
 	 */
 	fldAttachmentExport$label,
@@ -63,6 +67,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Data.
 	 */
 	fldAttachmentExport$fileData,
+	/**
+	 * Type.
+	 */
+	fldAttachmentExport$type,
 
 	/***********************************************************
 	 * AttachmentFileInfo.
@@ -160,6 +168,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldBotExport$questionAnswerList,
 	/**
+	 * Documentary resources.
+	 */
+	fldBotExport$documentaryResources,
+	/**
 	 * map Context.
 	 */
 	fldBotExport$mapContext,
@@ -248,6 +260,18 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldChatbotCustomConfig$maxSavedTraining,
 	/**
+	 * Display chatbot.
+	 */
+	fldChatbotCustomConfig$chatbotDisplay,
+	/**
+	 * Display Q&A.
+	 */
+	fldChatbotCustomConfig$qandaDisplay,
+	/**
+	 * Display documentary resources.
+	 */
+	fldChatbotCustomConfig$documentaryResourceDisplay,
+	/**
 	 * Chatbot.
 	 */
 	fldChatbotCustomConfig$botId,
@@ -307,6 +331,18 @@ public enum DtResources implements LocaleMessageKey {
 	 * Disable NlU.
 	 */
 	fldChatbotCustomConfigExport$disableNlu,
+	/**
+	 * Display chatbot.
+	 */
+	fldChatbotCustomConfigExport$chatbotDisplay,
+	/**
+	 * Display Q&A.
+	 */
+	fldChatbotCustomConfigExport$qandaDisplay,
+	/**
+	 * Display documentary resources.
+	 */
+	fldChatbotCustomConfigExport$documentaryResourceDisplay,
 
 	/***********************************************************
 	 * ChatbotNode.
@@ -499,6 +535,30 @@ public enum DtResources implements LocaleMessageKey {
 	 * Chatbot.
 	 */
 	fldContextValue$botId,
+
+	/***********************************************************
+	 * DocumentaryResourceExport.
+	 **********************************************************/
+	/**
+	 * Title.
+	 */
+	fldDocumentaryResourceExport$title,
+	/**
+	 * Resource Type.
+	 */
+	fldDocumentaryResourceExport$dreTypeCd,
+	/**
+	 * Url.
+	 */
+	fldDocumentaryResourceExport$url,
+	/**
+	 * Attachment Id.
+	 */
+	fldDocumentaryResourceExport$attId,
+	/**
+	 * File name.
+	 */
+	fldDocumentaryResourceExport$fileName,
 
 	/***********************************************************
 	 * ExecutorConfiguration.

@@ -155,6 +155,7 @@ public class ExecutorManager implements Manager, Activeable {
 
         executorConfigManager.updateMapContext(botExport);
         executorConfigManager.updateQuestionAnswerList(botExport);
+        executorConfigManager.updateDocumentaryResourceList(botExport);
         botManager.updateConfig(topics, logs);
 
     }
@@ -178,7 +179,6 @@ public class ExecutorManager implements Manager, Activeable {
         if (executorConfiguration.getAvatar() != null) {
             botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
         }
-        botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfiguration.getCustomConfig(), JsonElement.class));
         return botResponse;
     }
 
@@ -238,8 +238,20 @@ public class ExecutorManager implements Manager, Activeable {
         return executorConfigManager.getAttachment(label);
     }
 
+    public VFile getDocumentaryResourceFileFromAttId(final Long attId) {
+        return executorConfigManager.getDocumentaryResourceFilefromAttId(attId);
+    }
+
     public Optional<VFile> getWelcomeToursFile() {
         return executorConfigManager.getWelcomeToursFile();
+    }
+
+    public DtList<DocumentaryResourceExport> getDocumentaryResourceList() {
+        return executorConfigManager.getDocumentaryResourceList();
+    }
+
+    public JsonElement getCustomConfig() {
+        return executorConfigManager.getCustomConfig();
     }
 
 }

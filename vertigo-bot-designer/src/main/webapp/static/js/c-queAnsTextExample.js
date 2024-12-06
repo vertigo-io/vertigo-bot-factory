@@ -10,7 +10,7 @@ window.addEventListener('vui-before-plugins', function (event) {
         },
 
         template: `
-        <div style="width:300px;" class="q-px-md">
+        <div style="width:340px;" class="q-px-md">
             <q-chat-message :sent="false" :text="getChatPreview()" :text-color="textColor" bg-color="grey-4" ></q-chat-message>
         </div>
         `
@@ -25,5 +25,4 @@ window.addEventListener('vui-before-plugins', function (event) {
         }
     });
 
-    event.detail.vuiAppInstance.component('c-queanstextexample', vuiQueAnsTextExample);
-});
+    event.detail.vuiAppInstance.component('c-queanstextexample', vuiQueAnsTextExample);});

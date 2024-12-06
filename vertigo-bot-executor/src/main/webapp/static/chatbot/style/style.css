@@ -1,7 +1,7 @@
 :root {
     --background-color: #000091;
     --font-color: #ffffff;
-    --bot-message-bg-color: #ccccc6;
+    --bot-message-bg-color: #ebebeb;
     --bot-message-font-color: #000000;
     --user-message-bg-color: #e0e0e0;
     --user-message-font-color: #000000;
@@ -22,7 +22,7 @@ body {
 }
 
 main {
-    padding: 8px;
+    padding: 12px;
 }
 
 footer {
@@ -38,13 +38,25 @@ footer {
     color: var(--font-color) !important;
 }
 
-.q-loading-bar.top {
-    top: 58px;
+.q-loading-bar {
     height: 4px !important;
+}
+
+.chatbot-qanda-container, .docres-container {
+    border-radius: 16px;
+    background-color: #ffffff;
+    border: solid 1px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 8px rgba(58, 58, 58, 0.25);
+    overflow: hidden;
+}
+
+.docres-container {
+    margin-top: 12px;
 }
 
 .message-processing {
     width: 80px;
+    margin-left: 44px;
 }
 
 .docs-btn .q-btn {
@@ -55,8 +67,13 @@ footer {
     border-radius: 5px;
 }
 
+.q-message {
+    margin-bottom: 14px;
+}
+
 .q-message-text{
     padding: 10px 15px;
+    max-width: 230px;
 }
 .q-message-received .q-message-text-content {
     font-family: var(--font-family);
@@ -64,7 +81,7 @@ footer {
 }
 
 .q-btn {
-    padding: 8px 16px !important;
+    border-radius: 18px;
     font-family: var(--font-family);
     color: var(--font-color) !important;
     background-color: var(--background-color) !important;
@@ -87,21 +104,24 @@ footer {
 }
 
 .q-message-received .q-message-text, .q-message-sent .q-message-text {
-    border-radius: 5px;
-    margin-top: 12px;
+    border-radius: 18px;
+    margin-top: 5px;
+    min-height: unset;
+    padding: 8px 14px 8px 12px;
+    inline-size: fit-content;
 }
 
 .q-message-sent .q-message-text-content {
     font-family: var(--font-family) !important;
     color: var(--user-message-font-color) !important;
-    line-height: 1.7;
+    line-height: 1.4;
     font-size: 14px;
 }
 
 .q-message-received .q-message-text-content {
     font-family: var(--font-family) !important;
     color: var(--bot-message-font-color) !important;
-    line-height: 1.7;
+    line-height: 1.4;
     font-size: 14px;
 }
 
@@ -109,16 +129,14 @@ footer {
     background-color: var(--bot-message-bg-color) !important;
 /*    received message*/
     border: solid 1px rgba(224, 224, 224, 1);
-    box-shadow: 10px 10px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
 .q-message-sent .q-message-text {
-    box-shadow: 3px 4px 2px 0px rgba(0, 0, 0, 0.1) !important;
     background-color: var(--user-message-bg-color) !important;
 }
 
 .custom-header {
-    padding: 8px 0px;
+    padding: 4px 8px;
     font-family: var(--font-family) !important;
     background: var(--background-color) !important;
     box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.15);
@@ -145,9 +163,11 @@ footer {
     user-select: none !important;
     pointer-events: none !important;
     border-radius: 50px !important;
-    max-height: 42px !important;
-    max-width: 42px !important;
-    margin-right: 12px !important;
+    max-height: 32px !important;
+    max-width: 32px !important;
+    margin-right: 8px !important;
+    margin-left: 4px;
+
 }
 
 .q-btn-lowercase {
@@ -174,13 +194,8 @@ img {
 }
 
 .q-layout-footer{
-    webkit-box-shadow: none !important;
-    box-shadow: none;
+    box-shadow: 0 -1px 2px 1px rgba(0, 0, 0, 0.2);
     background: white;
-}
-
-.q-layout-page-container{
-    filter: drop-shadow(0px 10px 5px rgba(0, 0, 0, 0.1));
 }
 
 /*btn send msg*/
@@ -207,26 +222,24 @@ img {
     box-shadow: none !important;
 }
 
-.custom-input {
-    border-bottom: 0px solid !important;
-}
-
-.custom-input-top, .custom-input-bottom{
+.custom-input-chatbot, .custom-input-qanda {
     position: relative;
-    z-index: 1;
-    padding-left: 12px;
-    border-radius: 20px;
-    background: linear-gradient(to bottom, #e6e6e6, #ffffff);
-    box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.4);
-}
-.custom-input-bottom {
-    margin : -18px 12px 16px 10px;
+    padding-left: 16px;
+    background: #e8e8e8;
+    border-radius: 18px;
+    margin-left: 16px;
+    margin-right: 16px;
 }
 
-.custom-input-top {
-    margin : 16px 18px -15px 18px;
+.custom-input-chatbot {
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
+.custom-input-qanda {
+    margin-top: 14px;
+    margin-bottom: 8px;
+}
 /* quasar style for q-input without bottom border*/
 .q-if:after, .q-if:before{
     border-bottom: 0px solid !important;
@@ -234,7 +247,6 @@ img {
 
 /* carousel customization */
 .custom-carousel {
-    border-radius: 5px !important;
     background-color: var(--background-color) !important;
 }
 .q-carousel-right-arrow, .q-carousel-left-arrow{
@@ -248,32 +260,75 @@ img {
 
 
 .q-message-text:last-child:before{
-    border: 0px !important;
+    border: 0 !important;
 }
 
 /* Q&A */
 
-.q-collapsible-question, .q-collapsible-answer{
-    padding: 6px 15px;
-    border-radius: 5px;
-    box-shadow: 10px 10px 10px 0 rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-}
-.q-collapsible-question {
+.q-btn-question {
+    text-transform: none;
+    text-align: start;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 15px;
     background-color: var(--bot-message-bg-color) !important;
     color: var(--bot-message-font-color) !important;
-    margin-top: 12px;
+    margin-top: 10px;
 }
 
-.q-collapsible-answer {
-    background-color: white !important;
-    border: solid 2px var(--bot-message-bg-color);
+.question-title {
+    color: black;
+    font-size: 22px;
+    font-weight: bold;
 }
 
-.q-collapsible-sub-item {
-    padding : 6px 0 6px 0 !important;
+.answer-text {
+    font-size: 14px;
 }
 
-.q-tabs {
-    box-shadow: 0 -1px 2px 1px rgba(0, 0, 0, 0.2);
+.q-btn-footer {
+    flex:1;
+    height: 48px;
+    border-radius: unset;
+    font-size: 18px;
+    color: var(--font-color) !important;
+}
+
+.q-btn-footer-selected {
+    opacity: 80%;
+}
+
+/* Documentary resources */
+
+.docres-item-container {
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-top: 1px;
+    font-size: 16px;
+}
+
+.docres-item-container:hover {
+    background-color: #ececec;
+}
+
+.docres-type-icon {
+    padding-right: 8px;
+    font-size: 18px;
+}
+
+.docres-a {
+    color: black;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.docres-text {
+    flex-grow: 1;
+    padding-right: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

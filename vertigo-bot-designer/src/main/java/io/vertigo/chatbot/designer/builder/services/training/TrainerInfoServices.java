@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.builder.services;
+package io.vertigo.chatbot.designer.builder.services.training;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -6,6 +6,7 @@ import io.vertigo.chatbot.commons.domain.ChatbotNode;
 import io.vertigo.chatbot.commons.domain.TrainerInfo;
 import io.vertigo.chatbot.commons.domain.Training;
 import io.vertigo.chatbot.commons.domain.TrainingStatusEnum;
+import io.vertigo.chatbot.designer.builder.services.NodeServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 

@@ -13,11 +13,32 @@ import io.vertigo.datamodel.data.util.DataModelUtil;
 public final class AttachmentExport implements DataObject {
 	private static final long serialVersionUID = 1L;
 
+	private Long attId;
 	private String label;
 	private String fileName;
 	private String mimeType;
 	private Long length;
 	private String fileData;
+	private String type;
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Attachment Id'.
+	 * @return Long attId <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Attachment Id")
+	public Long getAttId() {
+		return attId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Attachment Id'.
+	 * @param attId Long <b>Obligatoire</b>
+	 */
+	public void setAttId(final Long attId) {
+		this.attId = attId;
+	}
 	
 	/**
 	 * Champ : DATA.
@@ -112,6 +133,25 @@ public final class AttachmentExport implements DataObject {
 	 */
 	public void setFileData(final String fileData) {
 		this.fileData = fileData;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Type'.
+	 * @return String type <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Type")
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Type'.
+	 * @param type String <b>Obligatoire</b>
+	 */
+	public void setType(final String type) {
+		this.type = type;
 	}
 	
 	/** {@inheritDoc} */

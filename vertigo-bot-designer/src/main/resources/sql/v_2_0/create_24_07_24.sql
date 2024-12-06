@@ -22,8 +22,8 @@ comment on column TYPE_OPERATOR.LABEL_FR is
 -- ============================================================
 --   Insert MasterData values : TYPE_OPERATOR
 -- ============================================================
-insert into TYPE_OPERATOR(TYOP_CD, LABEL, LABEL_FR) values ('EQUAL', 'Equal', 'Égal');
-insert into TYPE_OPERATOR(TYOP_CD, LABEL, LABEL_FR) values ('CONTAIN', 'Contain', 'Contient');
+insert into TYPE_OPERATOR(TYOP_CD, LABEL, LABEL_FR) values ('EQUALS', 'Equals', 'Égal');
+insert into TYPE_OPERATOR(TYOP_CD, LABEL, LABEL_FR) values ('CONTAINS', 'Contains', 'Contient');
 
 
 ALTER TABLE CONTEXT_POSSIBLE_VALUE
@@ -37,7 +37,7 @@ create index A_CONTEXT_POSSIBLE_VALUE_TYPE_OPERATOR_TYPE_OPERATOR_FK on CONTEXT_
 
 
 ALTER TABLE CONTEXT_ENVIRONMENT_VALUE
-    ADD COLUMN TYOP_CD VARCHAR(100) DEFAULT 'EQUAL';
+    ADD COLUMN TYOP_CD VARCHAR(100) DEFAULT 'EQUALS';
 
 alter table CONTEXT_ENVIRONMENT_VALUE
     add constraint FK_A_CONTEXT_ENVIRONMENT_VALUE_TYPE_OPERATOR_TYPE_OPERATOR foreign key (TYOP_CD)

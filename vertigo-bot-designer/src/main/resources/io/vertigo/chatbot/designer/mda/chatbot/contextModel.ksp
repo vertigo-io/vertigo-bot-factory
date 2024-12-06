@@ -61,13 +61,13 @@ create DtDefinition DtTypeOperator {
 	field labelFr 		{domain: DoLabel 	label: "LabelFr" 		cardinality : "1"	}
 	values : `{
         "EQUAL" : {
-            "tyopCd" : "EQUAL",
-            "label" : "Equal",
+            "tyopCd" : "EQUALS",
+            "label" : "Equals",
             "labelFr" : "Égal"
         },
         "CONTAIN" : {
-            "tyopCd" : "CONTAIN",
-            "label" : "Contain",
+            "tyopCd" : "CONTAINS",
+            "label" : "Contains",
             "labelFr" : "Contient"
         }
      }`
