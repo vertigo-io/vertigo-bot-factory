@@ -25,8 +25,8 @@ import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DataObject;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -130,7 +130,7 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 	}
 
 	@Override
-	public boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DtObject object, final Chatbot bot) {
+	public boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DataObject object, final Chatbot bot) {
 		final ScriptIntention scriptIntention = (ScriptIntention) object;
 		return (!KindTopicEnum.UNREACHABLE.name().equals(topic.getKtoCd()) && sentences.isEmpty()) || StringUtil.isBlank(scriptIntention.getScript());
 	}
@@ -141,7 +141,7 @@ public class ScriptIntentionServices implements Component, ITopicService<ScriptI
 	}
 
 	@Override
-	public void saveTopic(final Topic topic, final Chatbot chatbot, final DtObject dtObject) {
+	public void saveTopic(final Topic topic, final Chatbot chatbot, final DataObject dtObject) {
 		save(chatbot, (ScriptIntention) dtObject, topic);
 	}
 

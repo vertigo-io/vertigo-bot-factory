@@ -87,7 +87,7 @@ modules:
           collections: uiFileInfos
           timeToLiveSeconds: 300
       - kvStore.berkeley:  # nous utilisons un stockage clé valeur avec la base de donnée BerkeleyDB
-          collections: VViewContext;TTL=43200
+          collections: VViewContext;TTL=43200, VViewInitContext;TTL=43200
           dbFilePath: ${java.io.tmpdir}/vertigo-ui/VViewContext
   io.vertigo.datafactory.DataFactoryFeatures:
   io.vertigo.connectors.oidc.OIDCFeatures:

@@ -44,8 +44,8 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.database.timeseries.TabularDatas;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.util.VCollectors;
 
 @Transactional
 public class AnalyticsServices implements Component {

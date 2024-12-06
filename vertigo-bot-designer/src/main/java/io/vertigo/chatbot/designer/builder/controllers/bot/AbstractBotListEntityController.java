@@ -2,7 +2,7 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 
 import io.vertigo.chatbot.commons.multilingual.bot.BotMultilingualResources;
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.ui.core.ViewContext;
 
 public abstract class AbstractBotListEntityController<D extends Entity> extends AbstractBotEntityController<D> {

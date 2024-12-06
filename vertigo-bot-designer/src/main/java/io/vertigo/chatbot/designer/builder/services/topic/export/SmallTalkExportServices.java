@@ -16,7 +16,7 @@ import io.vertigo.chatbot.designer.domain.topic.export.UtterTextExport;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 
 import javax.inject.Inject;
 import java.util.ArrayList;

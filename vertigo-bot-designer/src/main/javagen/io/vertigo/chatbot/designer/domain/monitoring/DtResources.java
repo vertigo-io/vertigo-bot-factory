@@ -9,8 +9,8 @@ import io.vertigo.core.locale.LocaleMessageKey;
 public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** AlertingEvent.
-	/***********************************************************
+	 * AlertingEvent.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -37,8 +37,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldAlertingEvent$nodeId,
 
 	/***********************************************************
-	/** MonitoringAlertingSubscription.
-	/***********************************************************
+	 * MonitoringAlertingSubscription.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -53,8 +53,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldMonitoringAlertingSubscription$perId,
 
 	/***********************************************************
-	/** MonitoringBotDetailIHM.
-	/***********************************************************
+	 * MonitoringBotDetailIHM.
+	 **********************************************************/
 	/**
 	 * Bot name.
 	 */
@@ -73,8 +73,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldMonitoringBotDetailIHM$runners,
 
 	/***********************************************************
-	/** MonitoringDetailIHM.
-	/***********************************************************
+	 * MonitoringDetailIHM.
+	 **********************************************************/
 	/**
 	 * Antivirus alive.
 	 */
@@ -89,8 +89,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldMonitoringDetailIHM$bots,
 
 	/***********************************************************
-	/** MonitoringRunnerDetailIHM.
-	/***********************************************************
+	 * MonitoringRunnerDetailIHM.
+	 **********************************************************/
 	/**
 	 * Runner name.
 	 */

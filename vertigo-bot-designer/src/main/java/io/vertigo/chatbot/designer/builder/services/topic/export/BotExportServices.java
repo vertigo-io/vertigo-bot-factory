@@ -26,7 +26,7 @@ import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerServices;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 
 @Transactional
 public class BotExportServices implements Component {

@@ -9,8 +9,8 @@ import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionService
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -184,7 +184,7 @@ public class ExtensionsController extends AbstractBotController {
          * {@inheritDoc}
          */
         @Override
-        protected void checkMonoFieldConstraints(final ConfluenceSettingIhm confluenceSettingIhm, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+        protected void checkMonoFieldConstraints(final ConfluenceSettingIhm confluenceSettingIhm, final DataField dtField, final DtObjectErrors dtObjectErrors) {
             super.checkMonoFieldConstraints(confluenceSettingIhm, dtField, dtObjectErrors);
             if (DtDefinitions.ConfluenceSettingIhmFields.url.name().equals(dtField.name())
                     || DtDefinitions.ConfluenceSettingIhmFields.login.name().equals(dtField.name())) {
@@ -220,7 +220,7 @@ public class ExtensionsController extends AbstractBotController {
          * {@inheritDoc}
          */
         @Override
-        protected void checkMonoFieldConstraints(final JiraSetting jiraSetting, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+        protected void checkMonoFieldConstraints(final JiraSetting jiraSetting, final DataField dtField, final DtObjectErrors dtObjectErrors) {
             super.checkMonoFieldConstraints(jiraSetting, dtField, dtObjectErrors);
             if (DtDefinitions.JiraSettingFields.url.name().equals(dtField.name())
                     || DtDefinitions.JiraSettingFields.login.name().equals(dtField.name())

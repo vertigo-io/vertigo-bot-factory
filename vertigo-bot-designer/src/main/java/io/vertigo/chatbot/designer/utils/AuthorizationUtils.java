@@ -6,7 +6,7 @@ import io.vertigo.account.authorization.definitions.AuthorizationName;
 import io.vertigo.account.authorization.definitions.OperationName;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
-import io.vertigo.datamodel.structure.model.KeyConcept;
+import io.vertigo.datamodel.data.model.KeyConcept;
 
 public class AuthorizationUtils {
 

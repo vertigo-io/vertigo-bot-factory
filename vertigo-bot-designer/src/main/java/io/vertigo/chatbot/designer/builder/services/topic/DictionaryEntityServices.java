@@ -33,10 +33,10 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.util.DataModelUtil;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.quarto.exporter.ExporterManager;
@@ -123,7 +123,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 			final DtList<Synonym> synonyms,
 			final DtList<Synonym> synonymsToDelete) {
 
-		final boolean isNew = DtObjectUtil.getId(dictionaryEntity) == null;
+		final boolean isNew = DataModelUtil.getId(dictionaryEntity) == null;
 		final DtList<Synonym> oldSynonyms = synonymServices.getAllSynonymByDictionaryEntity(findDictionaryEntityById(dictionaryEntity.getDicEntId()));
 		if (!synonymsToDelete.isEmpty() || !HashUtils.generateHashCodeForSynonyms(oldSynonyms).equals(HashUtils.generateHashCodeForSynonyms(synonyms))) {
 			nodeServices.updateNodes(bot);

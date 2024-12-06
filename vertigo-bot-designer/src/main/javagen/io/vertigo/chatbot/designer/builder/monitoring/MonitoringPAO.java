@@ -47,7 +47,8 @@ public final class MonitoringPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkAddInNNAlertingSubscriptionChatbot",
-			request = "INSERT INTO alerting_subscription_chatbot values (#masId#, #botId#);",
+			request = """
+			INSERT INTO alerting_subscription_chatbot values (#masId#, #botId#);""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void addInNNAlertingSubscriptionChatbot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "masId", smartType = "STyId") final Long masId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkAddInNNAlertingSubscriptionChatbot")
@@ -63,9 +64,10 @@ public final class MonitoringPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllFromNNAlertingSubscriptionChatbot",
-			request = "delete\n" + 
- " 				from alerting_subscription_chatbot asch\n" + 
- " 				where asch.bot_id = #botId#;",
+			request = """
+			delete
+				from alerting_subscription_chatbot asch
+				where asch.bot_id = #botId#;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllFromNNAlertingSubscriptionChatbot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllFromNNAlertingSubscriptionChatbot")
@@ -81,9 +83,10 @@ public final class MonitoringPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveFromNNAlertingSubscriptionChatbot",
-			request = "delete\n" + 
- " 				from alerting_subscription_chatbot asch\n" + 
- " 				where asch.mas_i_d = #masId# and asch.bot_id = #botId#;",
+			request = """
+			delete
+				from alerting_subscription_chatbot asch
+				where asch.mas_i_d = #masId# and asch.bot_id = #botId#;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeFromNNAlertingSubscriptionChatbot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "masId", smartType = "STyId") final Long masId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveFromNNAlertingSubscriptionChatbot")

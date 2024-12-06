@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-studio</artifactId>
-			<version>${vertigo.version}</version>
+			<version>${vertigo.version}a</version>
 		</dependency>
 
 		<dependency>

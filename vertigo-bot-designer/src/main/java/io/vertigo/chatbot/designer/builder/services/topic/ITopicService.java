@@ -4,9 +4,9 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.NluTrainingSentence;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.Entity;
 
 import java.util.Optional;
 
@@ -22,7 +22,7 @@ public interface ITopicService<D extends Entity> {
 	 * @param dtObject High level object holding different types of topic (smalltalk, scriptIntention ...)
 	 */
 	void saveTopic(Topic topic, Chatbot chatbot,
-						  DtObject dtObject);
+						  DataObject dtObject);
 
 	void deleteIfExists(final Chatbot chatbot, final Topic topic);
 
@@ -34,11 +34,11 @@ public interface ITopicService<D extends Entity> {
 
 	void createOrUpdateFromTopic(final Chatbot chatbot, final Topic topic, final String text);
 
-	default boolean isEnabled(final Topic topic, final DtList<NluTrainingSentence> sentences, final DtObject object, final boolean isEnabled, final Chatbot bot) {
+	default boolean isEnabled(final Topic topic, final DtList<NluTrainingSentence> sentences, final DataObject object, final boolean isEnabled, final Chatbot bot) {
 		return !(hasToBeDeactivated(topic, sentences, object, bot)) && isEnabled;
 	}
 
-	boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DtObject object, final Chatbot bot);
+	boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DataObject object, final Chatbot bot);
 
 	String getDeactivateMessage();
 

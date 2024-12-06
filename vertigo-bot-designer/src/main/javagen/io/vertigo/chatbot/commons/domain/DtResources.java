@@ -9,8 +9,8 @@ import io.vertigo.core.locale.LocaleMessageKey;
 public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** Attachment.
-	/***********************************************************
+	 * Attachment.
+	 **********************************************************/
 	/**
 	 * Attachment id.
 	 */
@@ -41,8 +41,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldAttachment$botId,
 
 	/***********************************************************
-	/** AttachmentExport.
-	/***********************************************************
+	 * AttachmentExport.
+	 **********************************************************/
 	/**
 	 * Label.
 	 */
@@ -65,8 +65,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldAttachmentExport$fileData,
 
 	/***********************************************************
-	/** AttachmentFileInfo.
-	/***********************************************************
+	 * AttachmentFileInfo.
+	 **********************************************************/
 	/**
 	 * Id.
 	 */
@@ -93,8 +93,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldAttachmentFileInfo$filePath,
 
 	/***********************************************************
-	/** AttachmentType.
-	/***********************************************************
+	 * AttachmentType.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -109,8 +109,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldAttachmentType$labelFr,
 
 	/***********************************************************
-	/** BotExport.
-	/***********************************************************
+	 * BotExport.
+	 **********************************************************/
 	/**
 	 * chatbot.
 	 */
@@ -165,8 +165,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldBotExport$mapContext,
 
 	/***********************************************************
-	/** Chatbot.
-	/***********************************************************
+	 * Chatbot.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -193,8 +193,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldChatbot$filIdAvatar,
 
 	/***********************************************************
-	/** ChatbotCustomConfig.
-	/***********************************************************
+	 * ChatbotCustomConfig.
+	 **********************************************************/
 	/**
 	 * Context value id.
 	 */
@@ -257,8 +257,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldChatbotCustomConfig$fofCd,
 
 	/***********************************************************
-	/** ChatbotCustomConfigExport.
-	/***********************************************************
+	 * ChatbotCustomConfigExport.
+	 **********************************************************/
 	/**
 	 * Bot email address.
 	 */
@@ -309,8 +309,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldChatbotCustomConfigExport$disableNlu,
 
 	/***********************************************************
-	/** ChatbotNode.
-	/***********************************************************
+	 * ChatbotNode.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -349,8 +349,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldChatbotNode$traId,
 
 	/***********************************************************
-	/** ConfluenceSetting.
-	/***********************************************************
+	 * ConfluenceSetting.
+	 **********************************************************/
 	/**
 	 * Confluence setting id.
 	 */
@@ -381,8 +381,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldConfluenceSetting$nodId,
 
 	/***********************************************************
-	/** ConfluenceSettingExport.
-	/***********************************************************
+	 * ConfluenceSettingExport.
+	 **********************************************************/
 	/**
 	 * Knowledge base URL.
 	 */
@@ -405,8 +405,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldConfluenceSettingExport$spaces,
 
 	/***********************************************************
-	/** ConfluenceSettingIhm.
-	/***********************************************************
+	 * ConfluenceSettingIhm.
+	 **********************************************************/
 	/**
 	 * Confluence setting id.
 	 */
@@ -441,8 +441,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldConfluenceSettingIhm$spaces,
 
 	/***********************************************************
-	/** ConfluenceSettingSpace.
-	/***********************************************************
+	 * ConfluenceSettingSpace.
+	 **********************************************************/
 	/**
 	 * Confluence setting space id.
 	 */
@@ -457,8 +457,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldConfluenceSettingSpace$confluencesettingId,
 
 	/***********************************************************
-	/** ContextPossibleValue.
-	/***********************************************************
+	 * ContextPossibleValue.
+	 **********************************************************/
 	/**
 	 * Context possible value id.
 	 */
@@ -481,8 +481,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldContextPossibleValue$botId,
 
 	/***********************************************************
-	/** ContextValue.
-	/***********************************************************
+	 * ContextValue.
+	 **********************************************************/
 	/**
 	 * Context value id.
 	 */
@@ -501,8 +501,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldContextValue$botId,
 
 	/***********************************************************
-	/** ExecutorConfiguration.
-	/***********************************************************
+	 * ExecutorConfiguration.
+	 **********************************************************/
 	/**
 	 * Bot ID.
 	 */
@@ -533,8 +533,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldExecutorConfiguration$customConfig,
 
 	/***********************************************************
-	/** FontFamily.
-	/***********************************************************
+	 * FontFamily.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -549,8 +549,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldFontFamily$labelFr,
 
 	/***********************************************************
-	/** JiraField.
-	/***********************************************************
+	 * JiraField.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -569,8 +569,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldJiraField$labelFr,
 
 	/***********************************************************
-	/** JiraFieldSetting.
-	/***********************************************************
+	 * JiraFieldSetting.
+	 **********************************************************/
 	/**
 	 * Jira field setting id.
 	 */
@@ -593,8 +593,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldJiraFieldSetting$jirFieldCd,
 
 	/***********************************************************
-	/** JiraFieldSettingExport.
-	/***********************************************************
+	 * JiraFieldSettingExport.
+	 **********************************************************/
 	/**
 	 * Jira field key.
 	 */
@@ -609,8 +609,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldJiraFieldSettingExport$mandatory,
 
 	/***********************************************************
-	/** JiraSetting.
-	/***********************************************************
+	 * JiraSetting.
+	 **********************************************************/
 	/**
 	 * Jira setting id.
 	 */
@@ -645,8 +645,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldJiraSetting$nodId,
 
 	/***********************************************************
-	/** JiraSettingExport.
-	/***********************************************************
+	 * JiraSettingExport.
+	 **********************************************************/
 	/**
 	 * Jira URL.
 	 */
@@ -669,8 +669,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldJiraSettingExport$numberOfResults,
 
 	/***********************************************************
-	/** MediaFileInfo.
-	/***********************************************************
+	 * MediaFileInfo.
+	 **********************************************************/
 	/**
 	 * Id.
 	 */
@@ -701,8 +701,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldMediaFileInfo$fileData,
 
 	/***********************************************************
-	/** QuestionAnswerExport.
-	/***********************************************************
+	 * QuestionAnswerExport.
+	 **********************************************************/
 	/**
 	 * Question.
 	 */
@@ -717,8 +717,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldQuestionAnswerExport$catLabel,
 
 	/***********************************************************
-	/** RunnerHealthCheck.
-	/***********************************************************
+	 * RunnerHealthCheck.
+	 **********************************************************/
 	/**
 	 * Alive.
 	 */
@@ -729,8 +729,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldRunnerHealthCheck$nlpReady,
 
 	/***********************************************************
-	/** RunnerInfo.
-	/***********************************************************
+	 * RunnerInfo.
+	 **********************************************************/
 	/**
 	 * Name.
 	 */
@@ -749,8 +749,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldRunnerInfo$loadedModelVersion,
 
 	/***********************************************************
-	/** SavedTraining.
-	/***********************************************************
+	 * SavedTraining.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -785,8 +785,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldSavedTraining$botId,
 
 	/***********************************************************
-	/** SavedTrainingCriteria.
-	/***********************************************************
+	 * SavedTrainingCriteria.
+	 **********************************************************/
 	/**
 	 * Search text.
 	 */
@@ -801,8 +801,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldSavedTrainingCriteria$toDate,
 
 	/***********************************************************
-	/** TopicExport.
-	/***********************************************************
+	 * TopicExport.
+	 **********************************************************/
 	/**
 	 * Topic name.
 	 */
@@ -821,8 +821,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTopicExport$unreachable,
 
 	/***********************************************************
-	/** TrainerInfo.
-	/***********************************************************
+	 * TrainerInfo.
+	 **********************************************************/
 	/**
 	 * Training id.
 	 */
@@ -861,8 +861,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTrainerInfo$duration,
 
 	/***********************************************************
-	/** Training.
-	/***********************************************************
+	 * Training.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -913,8 +913,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTraining$strCd,
 
 	/***********************************************************
-	/** TrainingStatus.
-	/***********************************************************
+	 * TrainingStatus.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -929,8 +929,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTrainingStatus$labelFr,
 
 	/***********************************************************
-	/** UnknownSentenceDetail.
-	/***********************************************************
+	 * UnknownSentenceDetail.
+	 **********************************************************/
 	/**
 	 * Unknown sentence id.
 	 */
@@ -957,8 +957,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldUnknownSentenceDetail$botId,
 
 	/***********************************************************
-	/** UnknownSentenceStatus.
-	/***********************************************************
+	 * UnknownSentenceStatus.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -973,8 +973,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldUnknownSentenceStatus$labelFr,
 
 	/***********************************************************
-	/** UnknownSentenceToUpdateIhm.
-	/***********************************************************
+	 * UnknownSentenceToUpdateIhm.
+	 **********************************************************/
 	/**
 	 * Unknown sentence Id.
 	 */
@@ -985,8 +985,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldUnknownSentenceToUpdateIhm$text,
 
 	/***********************************************************
-	/** WelcomeTour.
-	/***********************************************************
+	 * WelcomeTour.
+	 **********************************************************/
 	/**
 	 * Welcome tour id.
 	 */
@@ -1009,8 +1009,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldWelcomeTour$botId,
 
 	/***********************************************************
-	/** WelcomeTourExport.
-	/***********************************************************
+	 * WelcomeTourExport.
+	 **********************************************************/
 	/**
 	 * Label.
 	 */
@@ -1025,8 +1025,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldWelcomeTourExport$config,
 
 	/***********************************************************
-	/** WelcomeTourStep.
-	/***********************************************************
+	 * WelcomeTourStep.
+	 **********************************************************/
 	/**
 	 * Welcome tour step id.
 	 */

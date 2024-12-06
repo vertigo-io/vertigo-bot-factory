@@ -21,9 +21,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.vega.engines.webservice.json.AbstractUiListModifiable;
 import io.vertigo.vega.webservice.model.UiObject;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
@@ -105,7 +105,7 @@ public class ChatbotUtils {
 		}
 	}
 
-	public static <D extends DtObject> DtList<D> getRawDtList(final AbstractUiListModifiable<D> uiList, final UiMessageStack uiMessageStack) {
+	public static <D extends DataObject> DtList<D> getRawDtList(final AbstractUiListModifiable<D> uiList, final UiMessageStack uiMessageStack) {
 		return uiList.stream()
 				.filter(UiObject::isModified)
 				.map(uiObject -> uiObject.mergeAndCheckInput(Collections.singletonList((a, b, c) -> {

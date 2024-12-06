@@ -1,11 +1,11 @@
 package io.vertigo.chatbot.commons.domain.topic;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -18,7 +18,7 @@ public final class ScriptIntention implements Entity {
 	private Long sinId;
 	private String script;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AScriptIntentionTopic",
 			fkFieldName = "topId",
 			primaryDtDefinitionName = "DtTopic",
@@ -82,7 +82,7 @@ public final class ScriptIntention implements Entity {
 	 * Récupère la valeur de la propriété 'Topic'.
 	 * @return Long topId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Topic", fkDefinition = "DtTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Topic", fkDefinition = "DtTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getTopId() {
 		return (Long) topIdAccessor.getId();
 	}
@@ -107,6 +107,6 @@ public final class ScriptIntention implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

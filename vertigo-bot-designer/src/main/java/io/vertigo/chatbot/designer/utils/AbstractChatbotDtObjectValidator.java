@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import io.vertigo.chatbot.commons.multilingual.ConstraintResources;
 import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.vega.webservice.validation.AbstractDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DefaultDtObjectValidator;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
@@ -21,20 +21,20 @@ import io.vertigo.vega.webservice.validation.DtObjectValidator;
  * @project vertigo-bot-factory
  */
 
-public abstract class AbstractChatbotDtObjectValidator<O extends DtObject> extends AbstractDtObjectValidator<O> {
+public abstract class AbstractChatbotDtObjectValidator<O extends DataObject> extends AbstractDtObjectValidator<O> {
 
-    private static final DtObjectValidator<DtObject> DEFAULT_VALIDATOR = new DefaultDtObjectValidator<>();
+    private static final DtObjectValidator<DataObject> DEFAULT_VALIDATOR = new DefaultDtObjectValidator<>();
 
     private final List<String> fieldsNameToNullCheck = getFieldsToNullCheck()
             .stream()
-            .map(DtFieldName::name)
+            .map(DataFieldName::name)
             .collect(Collectors.toUnmodifiableList());
 
     protected boolean checkDefaultValidator() {
         return false;
     }
 
-    protected List<DtFieldName<O>> getFieldsToNullCheck() {
+    protected List<DataFieldName<O>> getFieldsToNullCheck() {
         return List.of();
     }
 
@@ -48,7 +48,7 @@ public abstract class AbstractChatbotDtObjectValidator<O extends DtObject> exten
 
     @Override
     @SuppressWarnings("fb-contrib:DLC_DUBIOUS_LIST_COLLECTION")
-    protected void checkMonoFieldConstraints(final O dtObject, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+    protected void checkMonoFieldConstraints(final O dtObject, final DataField dtField, final DtObjectErrors dtObjectErrors) {
         super.checkMonoFieldConstraints(dtObject, dtField, dtObjectErrors);
         final Object value = dtField.getDataAccessor().getValue(dtObject);
 

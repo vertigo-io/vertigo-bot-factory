@@ -20,6 +20,7 @@ package io.vertigo.chatbot.designer.admin.services;
 import com.nimbusds.oauth2.sdk.AuthorizationSuccessResponse;
 import com.nimbusds.openid.connect.sdk.OIDCClaimsRequest;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
+import com.nimbusds.openid.connect.sdk.token.OIDCTokens;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -57,14 +58,14 @@ public class LoginServices implements Component, OIDCAppLoginHandler {
 	private KeycloakPersonServices keycloakPersonServices;
 
 	@Override
-	public String doLogin(HttpServletRequest request, Map<String, Object> claims, AuthorizationSuccessResponse rawResult, Optional<String> requestedUrl) {
+	public String doLogin(HttpServletRequest request, Map<String, Object> claims, OIDCTokens tokens, Optional<String> requestedUrl) {
 		loginWithPrincipal(claims);
 		return requestedUrl.orElse("/bots/");
 	}
 
 	@Override
-	public String doLogout(HttpServletRequest request) {
-		return "/";
+	public Optional<String> doLogout(HttpServletRequest request) {
+		return Optional.of("/");
 	}
 
 	public String logout() {

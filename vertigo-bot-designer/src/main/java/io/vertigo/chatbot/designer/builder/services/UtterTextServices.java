@@ -24,10 +24,10 @@ import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.util.VCollectors;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 

@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>io.vertigo</groupId>
 		<artifactId>vertigo-parent</artifactId>
-		<version>4.0.0</version>
+		<version>4.2.0</version>
 	</parent>
 
 	<artifactId>vertigo-bot-factory</artifactId>
@@ -35,7 +35,7 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<vertigo.version>4.0.0</vertigo.version>
+		<vertigo.version>4.2.0</vertigo.version>
 		
 		<sonar.exclusions>**/javagen/**</sonar.exclusions>
 		<log4j.version>2.21.0</log4j.version>
@@ -56,5 +56,15 @@
 		<module>vertigo-bot-commons</module>
 		<module>vertigo-bot-extensions</module>
 	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-stdlib</artifactId>
+				<version>1.9.23</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	
 </project>

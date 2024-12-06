@@ -22,7 +22,7 @@ import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 
 import javax.inject.Inject;
 import java.net.URI;

@@ -9,8 +9,8 @@ import io.vertigo.core.locale.LocaleMessageKey;
 public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** ContextEnvironment.
-	/***********************************************************
+	 * ContextEnvironment.
+	 **********************************************************/
 	/**
 	 * Context environment id.
 	 */
@@ -25,8 +25,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldContextEnvironment$botId,
 
 	/***********************************************************
-	/** ContextEnvironmentIhm.
-	/***********************************************************
+	 * ContextEnvironmentIhm.
+	 **********************************************************/
 	/**
 	 * Context environment id.
 	 */
@@ -41,8 +41,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldContextEnvironmentIhm$contextEnvironmentValues,
 
 	/***********************************************************
-	/** ContextEnvironmentValue.
-	/***********************************************************
+	 * ContextEnvironmentValue.
+	 **********************************************************/
 	/**
 	 * Context environment value id.
 	 */
@@ -65,8 +65,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldContextEnvironmentValue$tyopCd,
 
 	/***********************************************************
-	/** ContextEnvironmentValueIhm.
-	/***********************************************************
+	 * ContextEnvironmentValueIhm.
+	 **********************************************************/
 	/**
 	 * Context environment value id.
 	 */
@@ -89,8 +89,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldContextEnvironmentValueIhm$tyopCd,
 
 	/***********************************************************
-	/** DictionaryEntity.
-	/***********************************************************
+	 * DictionaryEntity.
+	 **********************************************************/
 	/**
 	 * Dictionary entity id.
 	 */
@@ -105,8 +105,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldDictionaryEntity$botId,
 
 	/***********************************************************
-	/** DictionaryEntityWrapper.
-	/***********************************************************
+	 * DictionaryEntityWrapper.
+	 **********************************************************/
 	/**
 	 * Dictionary Entity id.
 	 */
@@ -121,8 +121,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldDictionaryEntityWrapper$synonymsList,
 
 	/***********************************************************
-	/** DocumentaryResource.
-	/***********************************************************
+	 * DocumentaryResource.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -157,8 +157,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldDocumentaryResource$botId,
 
 	/***********************************************************
-	/** DocumentaryResourceType.
-	/***********************************************************
+	 * DocumentaryResourceType.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -173,8 +173,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldDocumentaryResourceType$labelFr,
 
 	/***********************************************************
-	/** History.
-	/***********************************************************
+	 * History.
+	 **********************************************************/
 	/**
 	 * History id.
 	 */
@@ -205,8 +205,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldHistory$botId,
 
 	/***********************************************************
-	/** HistoryAction.
-	/***********************************************************
+	 * HistoryAction.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -221,8 +221,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldHistoryAction$labelFr,
 
 	/***********************************************************
-	/** HistoryCriteria.
-	/***********************************************************
+	 * HistoryCriteria.
+	 **********************************************************/
 	/**
 	 * From.
 	 */
@@ -241,8 +241,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldHistoryCriteria$text,
 
 	/***********************************************************
-	/** Synonym.
-	/***********************************************************
+	 * Synonym.
+	 **********************************************************/
 	/**
 	 * Synonym id.
 	 */
@@ -261,8 +261,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldSynonym$dicEntId,
 
 	/***********************************************************
-	/** TupleSynonymIhm.
-	/***********************************************************
+	 * TupleSynonymIhm.
+	 **********************************************************/
 	/**
 	 * Word.
 	 */
@@ -273,8 +273,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTupleSynonymIhm$synonymLabel,
 
 	/***********************************************************
-	/** TypeOperator.
-	/***********************************************************
+	 * TypeOperator.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */

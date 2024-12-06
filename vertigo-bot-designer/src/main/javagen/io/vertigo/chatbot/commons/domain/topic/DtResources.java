@@ -9,8 +9,8 @@ import io.vertigo.core.locale.LocaleMessageKey;
 public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** KindTopic.
-	/***********************************************************
+	 * KindTopic.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -37,8 +37,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldKindTopic$defaultText,
 
 	/***********************************************************
-	/** NluTrainingExport.
-	/***********************************************************
+	 * NluTrainingExport.
+	 **********************************************************/
 	/**
 	 * topId.
 	 */
@@ -53,8 +53,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldNluTrainingExport$text,
 
 	/***********************************************************
-	/** NluTrainingSentence.
-	/***********************************************************
+	 * NluTrainingSentence.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -69,8 +69,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldNluTrainingSentence$topId,
 
 	/***********************************************************
-	/** ResponseButton.
-	/***********************************************************
+	 * ResponseButton.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -89,8 +89,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldResponseButton$topIdResponse,
 
 	/***********************************************************
-	/** ResponseButtonUrl.
-	/***********************************************************
+	 * ResponseButtonUrl.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -113,8 +113,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldResponseButtonUrl$smtId,
 
 	/***********************************************************
-	/** ResponseType.
-	/***********************************************************
+	 * ResponseType.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -133,8 +133,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldResponseType$sortOrder,
 
 	/***********************************************************
-	/** ScriptIntention.
-	/***********************************************************
+	 * ScriptIntention.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -149,8 +149,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldScriptIntention$topId,
 
 	/***********************************************************
-	/** ScriptIntentionIhm.
-	/***********************************************************
+	 * ScriptIntentionIhm.
+	 **********************************************************/
 	/**
 	 * Topic id.
 	 */
@@ -169,16 +169,16 @@ public enum DtResources implements LocaleMessageKey {
 	fldScriptIntentionIhm$isEnabled,
 
 	/***********************************************************
-	/** SelectTopicCategory.
-	/***********************************************************
+	 * SelectTopicCategory.
+	 **********************************************************/
 	/**
 	 * Topic category id.
 	 */
 	fldSelectTopicCategory$topCatId,
 
 	/***********************************************************
-	/** SmallTalk.
-	/***********************************************************
+	 * SmallTalk.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -197,8 +197,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldSmallTalk$rtyId,
 
 	/***********************************************************
-	/** SmallTalkIhm.
-	/***********************************************************
+	 * SmallTalkIhm.
+	 **********************************************************/
 	/**
 	 * Topic id.
 	 */
@@ -221,8 +221,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldSmallTalkIhm$catLabel,
 
 	/***********************************************************
-	/** SmallTalkWrapper.
-	/***********************************************************
+	 * SmallTalkWrapper.
+	 **********************************************************/
 	/**
 	 * SmallTalk.
 	 */
@@ -241,8 +241,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldSmallTalkWrapper$utterTexts,
 
 	/***********************************************************
-	/** Topic.
-	/***********************************************************
+	 * Topic.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -285,8 +285,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTopic$ktoCd,
 
 	/***********************************************************
-	/** TopicCategory.
-	/***********************************************************
+	 * TopicCategory.
+	 **********************************************************/
 	/**
 	 * Topic category id.
 	 */
@@ -317,8 +317,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTopicCategory$botId,
 
 	/***********************************************************
-	/** TopicCategoryExport.
-	/***********************************************************
+	 * TopicCategoryExport.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -337,16 +337,16 @@ public enum DtResources implements LocaleMessageKey {
 	fldTopicCategoryExport$isTechnical,
 
 	/***********************************************************
-	/** TopicCriteria.
-	/***********************************************************
+	 * TopicCriteria.
+	 **********************************************************/
 	/**
 	 * Category selection.
 	 */
 	fldTopicCriteria$catId,
 
 	/***********************************************************
-	/** TopicFileExport.
-	/***********************************************************
+	 * TopicFileExport.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -417,8 +417,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTopicFileExport$labels,
 
 	/***********************************************************
-	/** TopicIhm.
-	/***********************************************************
+	 * TopicIhm.
+	 **********************************************************/
 	/**
 	 * Topic id.
 	 */
@@ -469,8 +469,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTopicIhm$labels,
 
 	/***********************************************************
-	/** TopicLabel.
-	/***********************************************************
+	 * TopicLabel.
+	 **********************************************************/
 	/**
 	 * Label id.
 	 */
@@ -485,8 +485,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTopicLabel$botId,
 
 	/***********************************************************
-	/** TypeTopic.
-	/***********************************************************
+	 * TypeTopic.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -501,8 +501,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTypeTopic$labelFr,
 
 	/***********************************************************
-	/** UtterText.
-	/***********************************************************
+	 * UtterText.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */

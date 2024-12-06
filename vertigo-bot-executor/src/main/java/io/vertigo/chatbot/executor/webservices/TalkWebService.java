@@ -22,7 +22,7 @@ import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.executor.manager.ExecutorManager;
 import io.vertigo.chatbot.executor.model.IncomeRating;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.GET;

@@ -15,7 +15,7 @@ import io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentValue;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentValueIhm;
 import io.vertigo.chatbot.designer.domain.TypeOperator;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;

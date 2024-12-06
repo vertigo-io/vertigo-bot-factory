@@ -9,8 +9,8 @@ import io.vertigo.core.locale.LocaleMessageKey;
 public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** ChatbotProfiles.
-	/***********************************************************
+	 * ChatbotProfiles.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -25,8 +25,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldChatbotProfiles$sortOrder,
 
 	/***********************************************************
-	/** PersonChatbotProfil.
-	/***********************************************************
+	 * PersonChatbotProfil.
+	 **********************************************************/
 	/**
 	 * Chatbot selection.
 	 */
@@ -49,8 +49,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldPersonChatbotProfil$profilLabel,
 
 	/***********************************************************
-	/** ProfilPerChatbot.
-	/***********************************************************
+	 * ProfilPerChatbot.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -69,8 +69,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldProfilPerChatbot$chpCd,
 
 	/***********************************************************
-	/** SelectProfilChatbotPerson.
-	/***********************************************************
+	 * SelectProfilChatbotPerson.
+	 **********************************************************/
 	/**
 	 * Person id.
 	 */

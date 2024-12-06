@@ -27,7 +27,7 @@ import io.vertigo.chatbot.designer.domain.DictionaryEntity;
 import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;

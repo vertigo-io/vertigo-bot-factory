@@ -38,8 +38,8 @@ import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DataObject;
 
 @Transactional
 @Secured("BotUser")
@@ -211,7 +211,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 	}
 
 	@Override
-	public boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DtObject object, final Chatbot bot) {
+	public boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DataObject object, final Chatbot bot) {
 		final SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) object;
 		final DtList<UtterText> utt = utterTextServices.getUtterTextList(bot, smallTalkWrapper.getSmallTalk());
 		final DtList<ResponseButton> buttonList = responsesButtonServices.getResponsesButtonList(bot, smallTalkWrapper.getSmallTalk());
@@ -224,7 +224,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 	}
 
 	@Override
-	public void saveTopic(final Topic topic, final Chatbot chatbot, final DtObject dtObject) {
+	public void saveTopic(final Topic topic, final Chatbot chatbot, final DataObject dtObject) {
 		final SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) dtObject;
 		saveSmallTalk(chatbot, smallTalkWrapper.getSmallTalk(), smallTalkWrapper.getUtterTexts(), smallTalkWrapper.getButtons(), smallTalkWrapper.getButtonsUrl(), topic);
 	}

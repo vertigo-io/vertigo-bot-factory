@@ -10,7 +10,7 @@ import io.vertigo.chatbot.commons.domain.topic.TopicFileExport;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 
 @Transactional
 public class NluTrainingSentenceServices implements Component {

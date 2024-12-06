@@ -78,7 +78,7 @@
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-studio</artifactId>
-			<version>${vertigo.version}</version>
+			<version>${vertigo.version}a</version>
 		</dependency>
 		
 		<dependency>
@@ -130,6 +130,11 @@
 			<version>${jackson-databind.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.sleepycat</groupId>
+			<artifactId>je</artifactId>
+			<version>18.3.12</version>
+		</dependency>
 	</dependencies>
 
 	<build>

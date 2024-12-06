@@ -1,11 +1,11 @@
 package io.vertigo.chatbot.commons.domain.topic;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -20,7 +20,7 @@ public final class ResponseButtonUrl implements Entity {
 	private String url;
 	private Boolean newTab;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ASmallTalkResponseButtonsUrl",
 			fkFieldName = "smtId",
 			primaryDtDefinitionName = "DtSmallTalk",
@@ -122,7 +122,7 @@ public final class ResponseButtonUrl implements Entity {
 	 * Récupère la valeur de la propriété 'SmallTalk'.
 	 * @return Long smtId
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "SmallTalk", fkDefinition = "DtSmallTalk" )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "SmallTalk", fkDefinition = "DtSmallTalk" )
 	public Long getSmtId() {
 		return (Long) smtIdAccessor.getId();
 	}
@@ -147,6 +147,6 @@ public final class ResponseButtonUrl implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

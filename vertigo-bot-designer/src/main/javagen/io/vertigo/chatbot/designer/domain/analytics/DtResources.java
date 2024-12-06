@@ -9,8 +9,8 @@ import io.vertigo.core.locale.LocaleMessageKey;
 public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** CategoryStat.
-	/***********************************************************
+	 * CategoryStat.
+	 **********************************************************/
 	/**
 	 * Label.
 	 */
@@ -29,8 +29,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldCategoryStat$usage,
 
 	/***********************************************************
-	/** ConversationCriteria.
-	/***********************************************************
+	 * ConversationCriteria.
+	 **********************************************************/
 	/**
 	 * Model Name.
 	 */
@@ -41,8 +41,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldConversationCriteria$ratings,
 
 	/***********************************************************
-	/** ConversationDetail.
-	/***********************************************************
+	 * ConversationDetail.
+	 **********************************************************/
 	/**
 	 * sessionId.
 	 */
@@ -65,8 +65,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldConversationDetail$isBotMessage,
 
 	/***********************************************************
-	/** ConversationStat.
-	/***********************************************************
+	 * ConversationStat.
+	 **********************************************************/
 	/**
 	 * sessionId.
 	 */
@@ -101,8 +101,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldConversationStat$lastTopic,
 
 	/***********************************************************
-	/** RatingOption.
-	/***********************************************************
+	 * RatingOption.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -117,8 +117,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldRatingOption$labelFr,
 
 	/***********************************************************
-	/** SentenseDetail.
-	/***********************************************************
+	 * SentenseDetail.
+	 **********************************************************/
 	/**
 	 * Rasa message ID.
 	 */
@@ -149,8 +149,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldSentenseDetail$modelName,
 
 	/***********************************************************
-	/** SessionExport.
-	/***********************************************************
+	 * SessionExport.
+	 **********************************************************/
 	/**
 	 * Date.
 	 */
@@ -165,8 +165,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldSessionExport$userActionsCount,
 
 	/***********************************************************
-	/** StatCriteria.
-	/***********************************************************
+	 * StatCriteria.
+	 **********************************************************/
 	/**
 	 * Chatbot selection.
 	 */
@@ -197,8 +197,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldStatCriteria$toInstant,
 
 	/***********************************************************
-	/** TopIntent.
-	/***********************************************************
+	 * TopIntent.
+	 **********************************************************/
 	/**
 	 * Topic ID.
 	 */
@@ -225,8 +225,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTopIntent$count,
 
 	/***********************************************************
-	/** TopIntentCriteria.
-	/***********************************************************
+	 * TopIntentCriteria.
+	 **********************************************************/
 	/**
 	 * Category Ids.
 	 */
@@ -237,16 +237,16 @@ public enum DtResources implements LocaleMessageKey {
 	fldTopIntentCriteria$labels,
 
 	/***********************************************************
-	/** TypeExportAnalyticList.
-	/***********************************************************
+	 * TypeExportAnalyticList.
+	 **********************************************************/
 	/**
 	 * Type export analytic code.
 	 */
 	fldTypeExportAnalyticList$teaCd,
 
 	/***********************************************************
-	/** TypeExportAnalytics.
-	/***********************************************************
+	 * TypeExportAnalytics.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -261,8 +261,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldTypeExportAnalytics$labelFr,
 
 	/***********************************************************
-	/** UnknownSentenseExport.
-	/***********************************************************
+	 * UnknownSentenseExport.
+	 **********************************************************/
 	/**
 	 * Date.
 	 */

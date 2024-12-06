@@ -9,8 +9,8 @@ import io.vertigo.core.locale.LocaleMessageKey;
 public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** QuestionAnswer.
-	/***********************************************************
+	 * QuestionAnswer.
+	 **********************************************************/
 	/**
 	 * Question-Answer id.
 	 */
@@ -41,8 +41,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldQuestionAnswer$qaCatId,
 
 	/***********************************************************
-	/** QuestionAnswerCategory.
-	/***********************************************************
+	 * QuestionAnswerCategory.
+	 **********************************************************/
 	/**
 	 * Question-Answer category id.
 	 */
@@ -61,8 +61,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldQuestionAnswerCategory$botId,
 
 	/***********************************************************
-	/** QuestionAnswerCategoryExport.
-	/***********************************************************
+	 * QuestionAnswerCategoryExport.
+	 **********************************************************/
 	/**
 	 * Question-Answer category label.
 	 */
@@ -73,8 +73,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldQuestionAnswerCategoryExport$isEnabled,
 
 	/***********************************************************
-	/** QuestionAnswerFileExport.
-	/***********************************************************
+	 * QuestionAnswerFileExport.
+	 **********************************************************/
 	/**
 	 * Question.
 	 */
@@ -97,8 +97,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldQuestionAnswerFileExport$code,
 
 	/***********************************************************
-	/** QuestionAnswerIhm.
-	/***********************************************************
+	 * QuestionAnswerIhm.
+	 **********************************************************/
 	/**
 	 * Question-Answer id.
 	 */
@@ -129,8 +129,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldQuestionAnswerIhm$code,
 
 	/***********************************************************
-	/** SelectQueAnsCategory.
-	/***********************************************************
+	 * SelectQueAnsCategory.
+	 **********************************************************/
 	/**
 	 * Question-Answer category id.
 	 */

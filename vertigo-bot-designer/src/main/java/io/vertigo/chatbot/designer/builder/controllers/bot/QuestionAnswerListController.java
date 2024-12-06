@@ -20,7 +20,7 @@ import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswe
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerFileExportServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerServices;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;

@@ -47,18 +47,19 @@ public final class ChatbotPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetPersonProfilIHM",
-			request = "select ppc.bot_id,\n" + 
- " 					ppc.chp_id,\n" + 
- " 					per.name,\n" + 
- " 					per.per_id,\n" + 
- " 					cp.chp_cd as profil_Label\n" + 
- " 			from profil_per_chatbot ppc \n" + 
- " 			join person per on (per.per_id = ppc.per_id)\n" + 
- " 			join chatbot_profiles cp on (cp.chp_cd = ppc.chp_cd)\n" + 
- " 			where ppc.bot_id = #botId#",
+			request = """
+			select ppc.bot_id,
+					ppc.chp_id,
+					per.name,
+					per.per_id,
+					cp.chp_cd as profil_Label
+			from profil_per_chatbot ppc 
+			join person per on (per.per_id = ppc.per_id)
+			join chatbot_profiles cp on (cp.chp_cd = ppc.chp_cd)
+			where ppc.bot_id = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtPersonChatbotProfil", name = "perIHM")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil> getPersonProfilIHM(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.designer.domain.admin.PersonChatbotProfil> getPersonProfilIHM(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetPersonProfilIHM")
 				.addValue("botId", botId)
 				.build();
@@ -73,8 +74,9 @@ public final class ChatbotPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllProfilByBotId",
-			request = "delete from profil_per_chatbot \n" + 
- " 				where bot_id = #botId#",
+			request = """
+			delete from profil_per_chatbot 
+				where bot_id = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllProfilByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllProfilByBotId")

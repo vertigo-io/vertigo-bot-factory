@@ -84,12 +84,12 @@ import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.definitions.DtDefinition;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.definitions.DataDefinition;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
@@ -425,10 +425,10 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		}
 	}
 
-	private void addObjectToMultipart(final FormDataMultiPart fdmp, final String name, final DtObject dto) {
-		final DtDefinition def = DtObjectUtil.findDtDefinition(dto);
+	private void addObjectToMultipart(final FormDataMultiPart fdmp, final String name, final DataObject dto) {
+		final DataDefinition def = DataModelUtil.findDataDefinition(dto);
 
-		for (final DtField field : def.getFields()) {
+		for (final DataField field : def.getFields()) {
 			final Object value = field.getDataAccessor().getValue(dto);
 
 			if (value != null) {

@@ -4,8 +4,8 @@ import java.util.Map;
 
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.TopicExport;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.Entity;
 
 public interface TopicsExportInterfaceServices<D extends Entity> {
 

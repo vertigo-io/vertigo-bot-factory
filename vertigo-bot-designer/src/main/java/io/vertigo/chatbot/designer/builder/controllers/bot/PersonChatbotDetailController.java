@@ -10,7 +10,7 @@ import io.vertigo.chatbot.designer.domain.admin.SelectProfilChatbotPerson;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;

@@ -29,7 +29,7 @@ import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.quarto.exporter.ExporterManager;
 import io.vertigo.quarto.exporter.model.Export;

@@ -20,7 +20,7 @@ import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.domain.DocumentaryResource;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceType;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;

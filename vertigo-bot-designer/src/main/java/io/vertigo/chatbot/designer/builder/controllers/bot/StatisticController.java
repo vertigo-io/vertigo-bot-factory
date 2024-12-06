@@ -67,7 +67,7 @@ import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.database.timeseries.TimedDatas;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;

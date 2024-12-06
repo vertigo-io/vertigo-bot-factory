@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.designer.domain.monitoring;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -19,7 +19,7 @@ public final class MonitoringAlertingSubscription implements Entity {
 	private Long masID;
 	private Boolean alertingGlobal;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AMonitoringAlertingSubscriptionPerson",
 			fkFieldName = "perId",
 			primaryDtDefinitionName = "DtPerson",
@@ -34,11 +34,11 @@ public final class MonitoringAlertingSubscription implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.designer.domain.commons.Person> perIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.designer.domain.commons.Person.class, "Person");
 
-	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
+	@io.vertigo.datamodel.data.stereotype.AssociationNN(
 			name = "AnnAlertingSubscriptionChatbot",
 			tableName = "ALERTING_SUBSCRIPTION_CHATBOT",
-			dtDefinitionA = "DtMonitoringAlertingSubscription",
-			dtDefinitionB = "DtChatbot",
+			dataDefinitionA = "DtMonitoringAlertingSubscription",
+			dataDefinitionB = "DtChatbot",
 			navigabilityA = true,
 			navigabilityB = true,
 			roleA = "Alerte",
@@ -96,7 +96,7 @@ public final class MonitoringAlertingSubscription implements Entity {
 	 * Récupère la valeur de la propriété 'Person'.
 	 * @return Long perId
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Person", fkDefinition = "DtPerson" )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Person", fkDefinition = "DtPerson" )
 	public Long getPerId() {
 		return (Long) perIdAccessor.getId();
 	}
@@ -129,6 +129,6 @@ public final class MonitoringAlertingSubscription implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

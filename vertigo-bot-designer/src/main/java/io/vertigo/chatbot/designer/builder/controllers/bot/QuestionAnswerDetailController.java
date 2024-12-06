@@ -17,7 +17,7 @@ import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerServices;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;

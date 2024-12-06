@@ -46,7 +46,7 @@ import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.designer.utils.StringUtils;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.locale.LocaleMessageText;
-import io.vertigo.datamodel.structure.definitions.DtField;
+import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
@@ -155,7 +155,7 @@ public class BotDetailController extends AbstractBotCreationController<Chatbot> 
 
 		/** {@inheritDoc} */
 		@Override
-		protected void checkMonoFieldConstraints(final ChatbotCustomConfig chatbotCustomConfig, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+		protected void checkMonoFieldConstraints(final ChatbotCustomConfig chatbotCustomConfig, final DataField dtField, final DtObjectErrors dtObjectErrors) {
 			super.checkMonoFieldConstraints(chatbotCustomConfig, dtField, dtObjectErrors);
 			if (DtDefinitions.ChatbotCustomConfigFields.botEmailAddress.name().equals(dtField.name())) {
 				final String value = (String) dtField.getDataAccessor().getValue(chatbotCustomConfig);

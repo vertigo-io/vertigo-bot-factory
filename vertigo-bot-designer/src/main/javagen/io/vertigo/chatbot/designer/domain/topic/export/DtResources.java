@@ -9,8 +9,8 @@ import io.vertigo.core.locale.LocaleMessageKey;
 public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** ResponseButtonExport.
-	/***********************************************************
+	 * ResponseButtonExport.
+	 **********************************************************/
 	/**
 	 * Topic id.
 	 */
@@ -29,8 +29,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldResponseButtonExport$text,
 
 	/***********************************************************
-	/** ResponseButtonUrlExport.
-	/***********************************************************
+	 * ResponseButtonUrlExport.
+	 **********************************************************/
 	/**
 	 * Topic id.
 	 */
@@ -53,8 +53,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldResponseButtonUrlExport$newTab,
 
 	/***********************************************************
-	/** ScriptIntentionExport.
-	/***********************************************************
+	 * ScriptIntentionExport.
+	 **********************************************************/
 	/**
 	 * Topic id.
 	 */
@@ -65,8 +65,8 @@ public enum DtResources implements LocaleMessageKey {
 	fldScriptIntentionExport$bt,
 
 	/***********************************************************
-	/** TypeBotExport.
-	/***********************************************************
+	 * TypeBotExport.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -81,16 +81,16 @@ public enum DtResources implements LocaleMessageKey {
 	fldTypeBotExport$labelFr,
 
 	/***********************************************************
-	/** TypeBotExportList.
-	/***********************************************************
+	 * TypeBotExportList.
+	 **********************************************************/
 	/**
 	 * Type bot export code.
 	 */
 	fldTypeBotExportList$tbeCd,
 
 	/***********************************************************
-	/** UtterTextExport.
-	/***********************************************************
+	 * UtterTextExport.
+	 **********************************************************/
 	/**
 	 * Topic id.
 	 */
