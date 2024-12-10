@@ -71,7 +71,7 @@
 
 			<div class="col-12">
 				<vu:include-data object="technicalTopicIhm" field="topId"/>
-				<vu:table list="technicalTopicIhm" th:title="#{topic.default.title}"  componentId="technicalTopicIhm" sortBy="ktoCd" :binary-state-sort="true" tr_style="cursor : pointer;"  tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|">
+				<vu:table list="technicalTopicIhm" th:title="#{topic.default.title}"  componentId="technicalTopicIhm" sortBy="ktoCd" :binary-state-sort="true" tr_style="cursor : pointer;"  th:tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|">
 					<vu:column field="title" />
 					<vu:column field="catLabel" />
 					<vu:column field="type" />
@@ -114,7 +114,7 @@
 					rowKey='topId'
 					componentId='topics'
 					sortBy='title'
-					tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|"
+					th:tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|"
 					tr_style="cursor : pointer;">
 						<vu:column-sample list=topicsIhm field=title >
 							<a th::href="|'@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId|"

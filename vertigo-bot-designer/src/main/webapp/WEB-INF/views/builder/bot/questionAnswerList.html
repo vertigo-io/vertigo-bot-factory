@@ -102,7 +102,7 @@
                 rowKey="qaId"
                 componentId="questionsAnswers"
                 sortBy='catLabel'
-                tr_@click.native="|goTo('@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})}'+props.row.qaId)|"
+                th:tr_@click.native="|goTo('@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})}'+props.row.qaId)|"
                 tr_style="cursor : pointer;">
             <vu:column-sample list=questionAnswerIhmList field=question />
             <vu:column-sample list=questionAnswerIhmList field=answer  />

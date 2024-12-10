@@ -218,13 +218,13 @@
 												  @save="(value, initialValue) => {
 															httpPostAjax('_editTrainingSentence',
 																 {'vContext[newNluTrainingSentence]':value, 'index':vueData.nluTrainingSentences.length - 1 - index}
-															).then(function() {
-																if (uiMessageStack.globalErrors.length > 0) {
-																	nluTrainingSentence.text = initialValue;
-																}
-															 });
-														}">
-										<q-input v-model="nluTrainingSentence.text" dense autofocus />
+															);
+															if (uiMessageStack.globalErrors.length > 0) {
+																nluTrainingSentence.text = initialValue;
+															};
+														}"
+												  v-slot="scope">
+										<q-input v-model="scope.value" dense autofocus @keyup.enter="scope.set"/>
 									</q-popup-edit>
 								</q-item-section>
 							</q-item>

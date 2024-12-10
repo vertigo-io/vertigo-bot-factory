@@ -28,7 +28,7 @@
         <q-icon name="help_outlined" size="2rem"/>
         <q-tooltip content-style="font-size: 14px">[[#{questionAnswer.category.tooltip}]]</q-tooltip>
     </div>
-    <vu:table list="queAnsCategoryList" componentId="queAnsCategoryList" tr_@click.native="|goTo('@{/bot/{id}/qacategory/(id=${model.bot.botId})}'+props.row.qaCatId)|" tr_style="cursor : pointer;"
+    <vu:table list="queAnsCategoryList" componentId="queAnsCategoryList" th:tr_@click.native="|goTo('@{/bot/{id}/qacategory/(id=${model.bot.botId})}'+props.row.qaCatId)|" tr_style="cursor : pointer;"
               sortBy="label" :binary-state-sort="true">
         <vu:include-data object="queAnsCategoryList" field="qaCatId" />
         <vu:column field="label">

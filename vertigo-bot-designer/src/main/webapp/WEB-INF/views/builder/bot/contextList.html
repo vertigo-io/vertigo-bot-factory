@@ -76,7 +76,7 @@
     </div>
 
     <vu:table list="contextValues" componentId="contextValueList"
-              tr_@click.native="|goTo('@{/bot/{id}/contextValue/(id=${model.bot.botId})}'+props.row.cvaId)|"
+              th:tr_@click.native="|goTo('@{/bot/{id}/contextValue/(id=${model.bot.botId})}'+props.row.cvaId)|"
               tr_style="cursor : pointer;"
               sortBy="label" :binary-state-sort="true">
         <vu:include-data object="contextValues" field="cvaId"/>

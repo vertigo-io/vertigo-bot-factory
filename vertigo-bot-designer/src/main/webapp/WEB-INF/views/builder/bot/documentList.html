@@ -39,7 +39,7 @@
     </div>
     <vu:include-data object="documentaryResourceTypeList" field="*" />
     <vu:include-data object="documentaryResourceList" field="dreId" />
-    <vu:table list="documentaryResourceList" componentId="documentaryResources" tr_@click.native="|goTo('@{/bot/{id}/document/(id=${model.bot.botId})}'+props.row.dreId)|" tr_style="cursor : pointer;"
+    <vu:table list="documentaryResourceList" componentId="documentaryResources" th:tr_@click.native="|goTo('@{/bot/{id}/document/(id=${model.bot.botId})}'+props.row.dreId)|" tr_style="cursor : pointer;"
               sortBy="title" :binary-state-sort="true">
         <vu:column field="title">
             <a th::href="|'@{/bot/{id}/document/(id=${model.bot.botId})}'+props.row.dreId|"

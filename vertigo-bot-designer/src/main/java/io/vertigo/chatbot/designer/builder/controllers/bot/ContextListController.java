@@ -91,7 +91,7 @@ public class ContextListController extends AbstractBotListEntityController<Conte
 		return viewContext;
 	}
 
-	@PostMapping("/_deleteContextEnvironment")
+	@PostMapping("/	_deleteContextEnvironment")
 	public ViewContext deleteContextValue(final ViewContext viewContext,
 									 final UiMessageStack uiMessageStack,
 									 @ViewAttribute("bot") final Chatbot bot,

@@ -98,8 +98,9 @@
 													 		synonym.label = initialValue;
 													 	}
 													 });
-													}">
-									<q-input v-model="synonym.label" dense autofocus />
+													}"
+										  v-slot="scope">
+									<q-input v-model="scope.value" dense autofocus @keyup.enter="scope.set"/>
 								</q-popup-edit>
 							</q-item-section>
 						</q-item>

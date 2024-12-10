@@ -28,7 +28,7 @@
 					<q-btn id="q-btn-buttons-refresh" th:if="${!model.modeReadOnly}" round icon="refresh" color="secondary" @click="updateDiagram()"></q-btn>
 				</div>
 			</div>
-			<div v-if="dataX.diagramHasErrors" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.diagramErrorMessage}}</div>
+			<div th:v-if="dataX.diagramHasErrors" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.diagramErrorMessage}}</div>
 			<div id="blocklyArea" style="
 				margin: 10px;
 				height: 700px; position: inherit; z-index: 0">

@@ -88,7 +88,7 @@
 			</div>
 
 			<vu:table list="topics" componentId="topicsList" sortBy="title" :binary-state-sort="true"
-					  tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|" tr_style="cursor : pointer;">
+					  th:tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|" tr_style="cursor : pointer;">
 				<vu:slot name="actions_slot">
 					<q-btn class="on-right" round color="red" icon="playlist_remove"
 						   th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"

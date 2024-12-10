@@ -23,6 +23,9 @@
 						refreshTraining();
 					}, 1000);
 				},
+				getContextValue: function() {
+					return VertigoUi.vueData['CTX'];
+				},
 				refreshTraining: function () {
 					VUiExtensions.dataX.loadingTraining = true;
 
@@ -43,6 +46,7 @@
 					VertigoUi.vueData.selectTypeBotExportList.tbeCd =
 							VertigoUi.vueData.typeBotExport.map(typeExport => typeExport.tbeCd);
 				},
+				
 				selectEnvironment: function () {
 					if (VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId !== null) {
 						const selectedContexEnvironment = VertigoUi.vueData.contextEnvironments.find(contextEnvironment =>
@@ -58,10 +62,6 @@
 					} else {
 						Chatbot.updateContextMap({})
 					}
-				},
-				
-				getContextValue: function() {
-					return VertigoUi.vueData['CTX'];
 				}
 			}
 
