@@ -319,7 +319,7 @@ public class BotEngine {
 		int choiceNumber = 0;
 		while (bb.listSize(BBKey.of(BOT_CHOICES_KEY, "/" + choiceNumber)) > 0) {
 			final var choiceKey = BBKey.of(BOT_CHOICES_KEY, "/" + choiceNumber);
-			final int paramCount = bb.listSize(choiceKey);
+			final int paramCount = (int) bb.listSize(choiceKey);
 			final String[] params = new String[paramCount];
 			for (int i = 0; i < paramCount; i++) {
 				params[i] = bb.listGet(choiceKey, i);

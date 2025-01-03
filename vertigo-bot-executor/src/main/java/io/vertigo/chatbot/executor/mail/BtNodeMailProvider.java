@@ -33,7 +33,7 @@ public class BtNodeMailProvider implements Component {
 	public BTNode sendMail(final BlackBoard bb, final String subjectKey, final String messageBodyKey, final Optional<String> attachmentKey, final String destinationsKey) {
 		return () -> {
 				Optional<FileDescriptor> optFileDescriptor = Optional.empty();
-				final int recipientsCount = bb.listSize(BBKey.of(destinationsKey));
+				final int recipientsCount = (int) bb.listSize(BBKey.of(destinationsKey));
 				final String[] recipients = new String[recipientsCount];
 				for (int i = 0; i < recipientsCount; i++) {
 					recipients[i] = bb.listGet(BBKey.of(destinationsKey), i);
