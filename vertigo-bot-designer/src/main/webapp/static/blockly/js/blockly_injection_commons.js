@@ -343,60 +343,60 @@ window.addEventListener('vui-after-page-mounted', function () {
 // *********************
 // ***** INJECTION *****
 // *********************
+    const custom_theme = Blockly.Theme.defineTheme('custom_theme', {
+        'base': Blockly.Themes.Classic,
+        'blockStyles': {
+            'ifelse_block': {
+                'colourPrimary': '#ce8364',
+            },
+            'if_block': {
+                'colourPrimary': '#d37e5d',
+            },
+            'else_block': {
+                'colourPrimary': '#d37e5d',
+            },
+            'selector_block': {
+                'colourPrimary': '#eab59d',
+            },
+            'switch_block': {
+                'colourPrimary': '#a48173',
+            },
+            'case_block': {
+                'colourPrimary': '#b99283',
+            },
+            'conflu_welcometour_block': {
+                'colourPrimary': '#9f9f9f',
+            },
+            'jirafield_block': {
+                'colourPrimary': '#beb419',
+                'hat': 'cap'
+            },
+            'jiraissue_block': {
+                'colourPrimary': '#b49926',
+                'hat': 'cap'
+            }
+        },
+        'categoryStyles': {
+            // selector category
+            'selector-category': {
+                'colour': '#eab59d',
+            },
+            'confluence_category': {
+                'colour': '#9f9f9f',
+            },
+            'jira_category': {
+                'colour': '#b49926',
+            },
+            'template-category': {
+                'colour': '#41b998',
+            }
+        },
+        'startHats': true
+    });
+
     VUiExtensions.methods = {
         ...VUiExtensions.methods,
         injectionBlockly: function (mode = false) {
-            const custom_theme = Blockly.Theme.defineTheme('custom_theme', {
-                'base': Blockly.Themes.Classic,
-                'blockStyles': {
-                    'ifelse_block': {
-                        'colourPrimary': '#ce8364',
-                    },
-                    'if_block': {
-                        'colourPrimary': '#d37e5d',
-                    },
-                    'else_block': {
-                        'colourPrimary': '#d37e5d',
-                    },
-                    'selector_block': {
-                        'colourPrimary': '#eab59d',
-                    },
-                    'switch_block': {
-                        'colourPrimary': '#a48173',
-                    },
-                    'case_block': {
-                        'colourPrimary': '#b99283',
-                    },
-                    'conflu_welcometour_block': {
-                        'colourPrimary': '#9f9f9f',
-                    },
-                    'jirafield_block': {
-                        'colourPrimary': '#beb419',
-                        'hat': 'cap'
-                    },
-                    'jiraissue_block': {
-                        'colourPrimary': '#b49926',
-                        'hat': 'cap'
-                    }
-                },
-                'categoryStyles': {
-                    // selector category
-                    'selector-category': {
-                        'colour': '#eab59d',
-                    },
-                    'confluence_category': {
-                        'colour': '#9f9f9f',
-                    },
-                    'jira_category': {
-                        'colour': '#b49926',
-                    },
-                    'template-category': {
-                        'colour': '#41b998',
-                    }
-                },
-                'startHats': true
-            });
-
             let blocklyDivName = 'blocklyDiv'
             // **** OPTIONS ****
             var options = {

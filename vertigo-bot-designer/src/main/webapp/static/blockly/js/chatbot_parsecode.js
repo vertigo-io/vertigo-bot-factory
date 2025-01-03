@@ -10,7 +10,9 @@ window.addEventListener('vui-after-page-mounted', function () {
 				workspace.clearUndo();
 			}
 			if (!parsed.error) {
-				setTimeout(() => Blockly.mainWorkspace.trashcan.emptyContents(), 0); // not working if not asynch
+				if (Blockly.mainWorkspace.trashcan !== null) {
+					setTimeout(() => Blockly.mainWorkspace.trashcan.emptyContents(), 0); // not working if not asynch
+				}
 				doBuildBlocks(parsed);
 			}
 			return parsed

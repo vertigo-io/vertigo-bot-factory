@@ -136,7 +136,6 @@ function getDynamicParameters(editor) {
 // ** Errors / Warnings **
 // ***********************
 
-javascript.language.data.of({})
 CodeMirror.registerHelper("lint", "chatbot", function(text, options) {
 	return [...checkBeginEnd(text), ...checkQuotes(text)];
 });

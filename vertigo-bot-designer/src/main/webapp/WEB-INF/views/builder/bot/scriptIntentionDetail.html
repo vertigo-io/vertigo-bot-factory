@@ -20,7 +20,7 @@
 			<vu:include-data object="chatbotCustomConfig" field="disableNlu" />
 			<div id="scriptintention-buttons">
 				<div id="scriptintention-buttons-export-emoji">
-					<q-btn class="q-btn-buttons" th:label="#{script.diagram.export}" color="primary" @click="exportDiagramToPng()"></q-btn>
+					<q-btn class="q-btn-buttons" th:label="#{script.diagram.export}" color="primary" @click="VUiExtensions.methods.exportDiagramToPng()"></q-btn>
 					<c-emojipicker class="q-btn-buttons" @emojipicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-emojipicker>
 					<c-variablepicker object="contextValues" field="label" class="q-btn-buttons" @variablepicker-event="updateBlocksBlockly()" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale" ></c-variablepicker>
 				</div>
@@ -36,11 +36,12 @@
 				<input type="hidden" name="vContext[scriptIntention][script]" :value="vueData.scriptIntention.script" />
 			</div>
 		</vu:block>
-		<q-toggle left-label size="lg" th:label="#{script.view}" v-model="VUiExtensions.dataX.viewScript"></q-toggle>
+
+		<q-toggle left-label size="lg" th:label="#{script.view}" v-model="dataX.viewScript"></q-toggle>
 
 		<vu:popup action="_delete" vModel="showPopupDeleteTopic" th:message=#{script.popup.message} th:confirm="#{action.delete}"></vu:popup>
 
-		<vu:block id="script" title="Script">
+		<vu:block id="script" title="Script" v-if="dataX.viewScript">
 			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
 			<div class="editor"></div>
@@ -74,26 +75,31 @@
 				}
 			</script>
 			<script  th:if="${!model.modeReadOnly}">
-				window.addEventListener('vui-after-page-mounted', function () {
+				window.addEventListener('DOMContentLoaded', function () {
 					checkErrors(VUiExtensions.methods.injectionBlockly(false))
 				});
 			</script>
 			<script th:if="${model.modeReadOnly}">
-				window.addEventListener('vui-after-page-mounted', function () {
+				window.addEventListener('DOMContentLoaded', function () {
 					checkErrors(VUiExtensions.methods.injectionBlockly(true))
 				});
 			</script>
 			<script type="text/javascript">
-				function codeToDiagram(){
-					checkErrors(VUiExtensions.methods.fromCode());
-				}
-				function updateDiagram(){
-					checkErrors(VUiExtensions.methods.injectionBlockly(false))
-				}
-				function updateBlocksBlockly() {
-					VUiExtensions.methods.toCode()
-					checkErrors(VUiExtensions.methods.fromCode())
+				VUiExtensions.methods = {
+					...VUiExtensions.methods,
 
+					updateDiagram: function(){
+						checkErrors(VUiExtensions.methods.injectionBlockly(false))
+					},
+
+					updateBlocksBlockly: function() {
+						VUiExtensions.methods.toCode()
+						checkErrors(VUiExtensions.methods.fromCode())
+					},
+
+					codeToDiagram: function(){
+						checkErrors(VUiExtensions.methods.fromCode());
+					}
 				}
 			</script>
 		</section>

@@ -2,13 +2,13 @@ window.addEventListener('vui-before-plugins', function (event) {
     let vuiEmojiPicker = Vue.defineComponent({
         props: {
             modeEdit: {type: Boolean, 'default': true},
-            nameVarEmoji: {type: String, 'default': null},
-            idBlock: {type: String, 'default': null},
             locale: {type: String, 'default': 'en_US'},
         },
         data: function () {
             return {
-                inputValue: ''
+                inputValue: '',
+                idBlock: null,
+                nameVarEmoji: null
             }
         },
         template:

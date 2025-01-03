@@ -20,7 +20,7 @@
 				},
 				postTrain: function () {
 					interval = setInterval(function () {
-						refreshTraining();
+						VUiExtensions.methods.refreshTraining();
 					}, 1000);
 				},
 				getContextValue: function() {
@@ -62,6 +62,16 @@
 					} else {
 						Chatbot.updateContextMap({})
 					}
+				},
+
+				toggleBotDrawer: function() {
+					this.componentStates.botDrawer.open = !this.componentStates.botDrawer.open;
+					if (this.componentStates.botDrawer.open) {
+						Chatbot.show();
+					}
+					else {
+						Chatbot.hideDrawer();
+					}
 				}
 			}
 
@@ -80,7 +90,7 @@
 				script.src = VertigoUi.vueData.devNode.url + '/api/chatbot/getWelcomeToursFile';
 				document.head.appendChild(script);
 				if (VertigoUi.vueData.trainerState.trainingInProgress) {
-					postTrain();
+					VUiExtensions.methods.postTrain();
 				}
 			});
 		</script>
@@ -263,11 +273,11 @@
 	<section layout:fragment="content-bot-drawer"  th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}">
 		<vu:include-data object="contextEnvironments" field="'*'"/>
 		<q-page-sticky position="bottom-right" :offset="[0,36]">
-			<q-btn round size="lg" id="botDrawerButton" @click="componentStates.botDrawer.open = !componentStates.botDrawer.open; if (componentStates.botDrawer.open) { Chatbot.show() } else { Chatbot.hideDrawer() }">
+			<q-btn round size="lg" id="botDrawerButton" @click="toggleBotDrawer()">
 				<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" class="bot-img" alt="avatar chatbot"/>
 			</q-btn>
 		</q-page-sticky>
-		<q-drawer :value="componentStates.botDrawer.open" id="botDrawer" ref="botDrawer" :width="400" elevated side="right" >
+		<q-drawer :model-value="componentStates.botDrawer.open" id="botDrawer" ref="botDrawer" :width="400" elevated side="right" >
 			<q-select
 					v-if="vueData.contextEnvironments.length > 0"
 					th:attr="dataObject=${model.vContext['componentStates'].addComponentState('contextEnvironments').addObject('selectedEnvironment', {cenvId: null})}"

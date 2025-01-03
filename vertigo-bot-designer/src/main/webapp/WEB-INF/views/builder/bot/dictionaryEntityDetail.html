@@ -93,12 +93,11 @@
 										  @save="(value, initialValue) => {
 													httpPostAjax('_editSynonym',
 														 {'vContext[newSynonym]':value, 'index':vueData.synonyms.length - 1 - index}
-													).then(function() {
-													 	if (uiMessageStack.globalErrors.length > 0) {
-													 		synonym.label = initialValue;
-													 	}
-													 });
-													}"
+													);
+													if (uiMessageStack.globalErrors.length > 0) {
+														synonym.label = initialValue;
+													};
+												}"
 										  v-slot="scope">
 									<q-input v-model="scope.value" dense autofocus @keyup.enter="scope.set"/>
 								</q-popup-edit>

@@ -109,7 +109,7 @@
                       </div>
                       <q-btn
                         class="full-width"
-                        @click="askBot(lastPayload)"
+                        @click="askBot(chatbot.botConfig.lastPayload)"
                         label="Essayez de nouveau"
                         color="white"
                         text-color="black"
@@ -221,7 +221,7 @@
                   <q-input v-model="qAndAConfig.filterInput"
                            ref="input"
                            placeholder="Rechercher..."
-                           @input="filterQuestionsAnswers()"></q-input>
+                           @update:model-value="filterQuestionsAnswers()"></q-input>
                 </div>
                 <q-scroll-area class="row q-px-sm col-grow">
                   <div class="q-mx-md">
@@ -251,7 +251,6 @@
               </q-scroll-area>
             </div>
 
-                       @update:model-value="filterQuestionsAnswers()"></q-input>
             <div v-if="customConfig.documentaryResourceDisplay && !qAndAConfig.selectedQuestion" class="column no-wrap docres-container" style="height: 20%">
               <q-scroll-area class="col-grow q-px-md">
                 <div style="height: 10px"></div>

@@ -2,8 +2,6 @@ window.addEventListener('vui-before-plugins', function (event) {
     let vuiVariablePicker = Vue.defineComponent({
         props : {
             modeEdit:		    { type: Boolean, 'default': true },
-            nameVarVariable:    { type: String,  'default':null},
-            idBlock:			{ type: String,  'default':null },
             locale:   		    { type: String, 'default': 'en_US' },
             object:			    { type: String,  required: true },
         },
@@ -11,7 +9,9 @@ window.addEventListener('vui-before-plugins', function (event) {
             return {
                 inputValue: '',
                 typeVar: 'local',
-                nameVar: ''
+                nameVar: '',
+                idBlock: null,
+                nameVarVariable: null
             }
         },
         template :
@@ -28,7 +28,7 @@ window.addEventListener('vui-before-plugins', function (event) {
                                 <q-btn id="q-btn-type-global" :label="(locale == 'fr_FR' ? 'Globale':'Global')" @click="setTypeVar('/user/global/', 'q-btn-type-global')"></q-btn>
                                 <q-btn-dropdown id="q-btn-type-context" :label="(locale == 'fr_FR' ? 'Contexte':'Context')">
                                     <q-list>
-                                        <q-item v-for="contextValue in VertigoUi.vueData[object]" clickable v-close-popup @click="setTypeVar('/user/global/context/'+contextValue.label, 'q-btn-type-context')">
+                                        <q-item v-for="contextValue in getDropdownContent()" clickable v-close-popup @click="setTypeVar('/user/global/context/'+contextValue.label, 'q-btn-type-context')">
                                             <q-item-section>
                                                    <q-item-label>{{contextValue.label}}</q-item-label>
                                             </q-item-section>
@@ -54,6 +54,9 @@ window.addEventListener('vui-before-plugins', function (event) {
 		`
         ,
         methods: {
+            getDropdownContent() {
+              return VertigoUi.vueData[this.object];
+            },
             setTypeVar(type, id){
                 this.typeVar = type
                 if(this.typeVar.startsWith('/user/global/context/')){

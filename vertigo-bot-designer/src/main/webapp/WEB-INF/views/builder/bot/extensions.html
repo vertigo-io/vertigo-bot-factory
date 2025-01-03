@@ -8,7 +8,7 @@
 
 <head>
     <title th:text="#{extensions.title}"></title>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/4.0.1/vuedraggable.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js"
             integrity="sha512-hGVnilhYD74EGnPbzyvje74/Urjrg5LSNGx0ARG1Ucqyiaz+lFvtsXk/1jCwT9/giXP0qoXSlVDjxNxjLvmqAw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -42,92 +42,97 @@
         VUiExtensions.dataX.isPwd = true;
         VUiExtensions.dataX.isJiraPwd = true;
 
-        function isSelected(node) {
-            return VertigoUi.vueData.newConfluenceSettingIhm.nodId && VertigoUi.vueData.newConfluenceSettingIhm.nodId === node.nodId;
-        }
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
 
-        function isSelectedJira(node) {
-            return VertigoUi.vueData.newJiraSetting.nodId && VertigoUi.vueData.newJiraSetting.nodId === node.nodId;
-        }
-
-        function selectNode(node, state) {
-            if (state) {
-                VertigoUi.vueData.newConfluenceSettingIhm.nodId = node.nodId;
-            } else {
-                VertigoUi.vueData.newConfluenceSettingIhm.nodId = null;
-            }
-        }
-
-        function selectNodeJira(node, state) {
-            if (state) {
-                VertigoUi.vueData.newJiraSetting.nodId = node.nodId;
-            } else {
-                VertigoUi.vueData.newJiraSetting.nodId = null;
-            }
-        }
-
-        function filterConfluenceSettings() {
-            VertigoUi.vueData.confluenceSettingsIhmFiltered = VertigoUi.vueData.confluenceSettingsIhm;
-
-            if (VertigoUi.componentStates.nodes.selectedNode.nodId !== null) {
-                VertigoUi.vueData.confluenceSettingsIhmFiltered = VertigoUi.vueData.confluenceSettingsIhmFiltered.slice().reverse().filter(confluenceSettingIhm =>
-                    confluenceSettingIhm.nodId === VertigoUi.componentStates.nodes.selectedNode.nodId
-                );
-            }
-        }
-
-        function createValue(val, done) {
-            if (val.length > 0 && !val.includes(',')) {
-                done(val, 'add-unique')
-            }
-        }
-
-
-        function filterJiraSettings() {
-            VertigoUi.vueData.jiraSettingsFiltered = VertigoUi.vueData.jiraSettings;
-
-            if (VertigoUi.componentStates.nodes.selectedNode.nodId !== null) {
-                VertigoUi.vueData.jiraSettingsFiltered = VertigoUi.vueData.jiraSettingsFiltered.slice().reverse().filter(jiraSetting =>
-                    jiraSetting.nodId === VertigoUi.componentStates.nodes.selectedNode.nodId
-                );
-            }
-        }
-
-        function enabledDisabledJiraField(fieldKey, enabled) {
-            VUiPage.httpPostAjax("_enableDisableJiraField", {
-                'fieldKey': fieldKey,
-                'enabled': enabled
-            });
-        }
-
-        function mandatoryJiraField(fieldKey, mandatory) {
-            VUiPage.httpPostAjax("_mandatoryJiraField", {
-                'fieldKey': fieldKey,
-                'mandatory': mandatory
-            }, {
-                onSuccess: function () {
-                    refreshCodeMirrorJiraField()
+            getJiraFieldLabel: function(jirFieldCd) {
+                let jiraField = VertigoUi.vueData.jiraFields.find(currentField => currentField.jirFieldCd === jirFieldCd);
+                if (jiraField !== undefined) {
+                    return VertigoUi.vueData.locale === 'fr_FR' ? jiraField.labelFr : jiraField.label;
+                } else {
+                    return jirFieldCd;
                 }
-            });
-        }
+            },
 
-        function getJiraFieldLabel(jirFieldCd) {
-            let jiraField = VertigoUi.vueData.jiraFields.find(currentField => currentField.jirFieldCd === jirFieldCd);
-            if (jiraField !== undefined) {
-                return VertigoUi.vueData.locale === 'fr_FR' ? jiraField.labelFr : jiraField.label;
-            } else {
-                return jirFieldCd;
-            }
-        }
+            getJiraFieldId: function(jirFieldCd) {
+                let jiraField = VertigoUi.vueData.jiraFields.find(currentField => currentField.jirFieldCd === jirFieldCd);
+                if (jiraField !== undefined) {
+                    return jiraField.jiraId;
+                } else {
+                    return jirFieldCd;
+                }
+            },
 
-        function getJiraFieldId(jirFieldCd) {
-            let jiraField = VertigoUi.vueData.jiraFields.find(currentField => currentField.jirFieldCd === jirFieldCd);
-            if (jiraField !== undefined) {
-                return jiraField.jiraId;
-            } else {
-                return jirFieldCd;
+            createValue: function(val, done) {
+                if (val.length > 0 && !val.includes(',')) {
+                    done(val, 'add-unique')
+                }
+            },
+
+            // Bloc "Confluence"
+            isSelected: function(node) {
+                return this.vueData.newConfluenceSettingIhm.nodId !== null && this.vueData.newConfluenceSettingIhm.nodId === node.nodId;
+            },
+
+            selectNode: function(node, state) {
+                if (state) {
+                    this.vueData.newConfluenceSettingIhm.nodId = node.nodId;
+                } else {
+                    this.vueData.newConfluenceSettingIhm.nodId = null;
+                }
+            },
+
+            filterConfluenceSettings: function() {
+                this.vueData.confluenceSettingsIhmFiltered = this.vueData.confluenceSettingsIhm;
+
+                if (this.componentStates.nodes.selectedNode.nodId !== null) {
+                    this.vueData.confluenceSettingsIhmFiltered = this.vueData.confluenceSettingsIhmFiltered.slice().reverse().filter(confluenceSettingIhm =>
+                        confluenceSettingIhm.nodId === this.componentStates.nodes.selectedNode.nodId
+                    );
+                }
+            },
+
+            // Bloc "Jira"
+            enabledDisabledJiraField: function(fieldKey, enabled) {
+                VUiPage.httpPostAjax("_enableDisableJiraField", {
+                    'fieldKey': fieldKey,
+                    'enabled': enabled
+                });
+            },
+
+            mandatoryJiraField: function(fieldKey, mandatory) {
+                VUiPage.httpPostAjax("_mandatoryJiraField", {
+                    'fieldKey': fieldKey,
+                    'mandatory': mandatory
+                }, {
+                    onSuccess: function () {
+                        refreshCodeMirrorJiraField()
+                    }
+                });
+            },
+
+            isSelectedJira: function(node) {
+                return this.vueData.newJiraSetting.nodId && this.vueData.newJiraSetting.nodId === node.nodId;
+            },
+
+            selectNodeJira: function(node, state) {
+                if (state) {
+                    this.vueData.newJiraSetting.nodId = node.nodId;
+                } else {
+                    this.vueData.newJiraSetting.nodId = null;
+                }
+            },
+
+            filterJiraSettings: function() {
+                this.vueData.jiraSettingsFiltered = this.vueData.jiraSettings;
+
+                if (this.componentStates.nodes.selectedNode.nodId !== null) {
+                    this.vueData.jiraSettingsFiltered = this.vueData.jiraSettingsFiltered.slice().reverse().filter(jiraSetting =>
+                        jiraSetting.nodId === this.componentStates.nodes.selectedNode.nodId
+                    );
+                }
             }
-        }
+        };
 
         function refreshCodeMirrorJiraField() {
             VUiPage.$refs.jiraCodeMirror.clearContent();
@@ -230,10 +235,12 @@
         <vu:include-data object="confluenceSettingsIhmFiltered" field="numberOfResults"/>
         <vu:include-data object="confluenceSettingsIhmFiltered" field="spaces"/>
         <vu:column name="node" th:label="#{extension.confluence.noeud}">
-            <q-chip v-for="node in vueData.nodeList" v-if="node.nodId === props.row.nodId"
-                    :style="'background: '+ node.color" text-color="white">
-                {{node.name}}
-            </q-chip>
+            <template v-for="node in vueData.nodeList">
+                <q-chip v-if="node.nodId === props.row.nodId"
+                        :style="'background: '+ node.color" text-color="white">
+                    {{node.name}}
+                </q-chip>
+            </template>
         </vu:column>
         <vu:column field="url"/>
         <vu:column field="login"/>
@@ -242,7 +249,6 @@
         </vu:column>
         <vu:column field="numberOfResults"/>
     </vu:table>
-
 
     <q-dialog ref="confluenceSettingDialog">
         <vu:include-data object="newConfluenceSettingIhm" field="conSetId" modifiable="true"/>
@@ -281,7 +287,7 @@
                 <div style="display: flex; align-items: center">
                     <q-input style="flex-grow: 1;" v-if="dataX.isPwd" th:label="#{extensions.confluence.password}"
                              disable type="password" name="notYourPasswordConfluence"
-                             value="notYourPasswordConfluence"></q-input>
+                             model-value="notYourPasswordConfluence"></q-input>
                     <q-input style="flex-grow: 1;" v-if="!dataX.isPwd"
                              v-model="vueData.newConfluenceSettingIhm.password"
                              th:label="#{extensions.confluence.password}"
@@ -294,7 +300,7 @@
                             size="sm"
                             class="cursor-pointer"
                             enable
-                            @click="VUiExtensions.dataX.isPwd = !VUiExtensions.dataX.isPwd; vueData.newConfluenceSettingIhm.password = null;"
+                            @click="this.dataX.isPwd = !VUiExtensions.dataX.isPwd; vueData.newConfluenceSettingIhm.password = null;"
                     />
                 </div>
             </q-card-section>
@@ -382,7 +388,7 @@
         <vu:table id="JIRA_NODE_SETTINGS" th:title="#{extensions.jira.nodeSettings}" list="jiraSettingsFiltered"
                   componentId="jiraSettingsFiltered" sortBy="url" :binary-state-sort="true">
             <vu:slot name="top_right_slot">
-                <q-select
+               <q-select
                         th:attr="dataObject=${model.vContext['componentStates'].addComponentState('nodes').addObject('selectedNode', {nodId: null})}"
                         style="width: 250px; margin-right: 10px"
                         clearable
@@ -435,10 +441,12 @@
             <vu:include-data object="jiraSettingsFiltered" field="project"/>
             <vu:include-data object="jiraSettingsFiltered" field="numberOfResults"/>
             <vu:column name="node" th:label="#{extension.jira.filter.node}">
-                <q-chip v-for="node in vueData.nodeList" v-if="node.nodId === props.row.nodId"
-                        :style="'background: '+ node.color" text-color="white">
-                    {{node.name}}
-                </q-chip>
+                <template v-for="node in vueData.nodeList">
+                    <q-chip v-if="node.nodId === props.row.nodId"
+                            :style="'background: '+ node.color" text-color="white">
+                        {{node.name}}
+                    </q-chip>
+                </template>
             </vu:column>
             <vu:column field="url"/>
             <vu:column field="login"/>
@@ -481,7 +489,7 @@
             <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
                 <div style="display: flex; align-items: center">
                     <q-input style="flex-grow: 1;" v-if="dataX.isJiraPwd" th:label="#{extensions.confluence.password}"
-                             disable type="password" name="notYourPasswordJira" value="notYourPasswordJira"></q-input>
+                             disable type="password" name="notYourPasswordJira" model-value="notYourPasswordJira"></q-input>
                     <q-input style="flex-grow: 1;" v-if="!dataX.isJiraPwd" v-model="vueData.newJiraSetting.password"
                              th:label="#{extensions.jira.password}"
                              name="vContext[newJiraSetting][password]"
@@ -493,7 +501,7 @@
                             size="sm"
                             class="cursor-pointer"
                             enable
-                            @click="VUiExtensions.dataX.isJiraPwd = !VUiExtensions.dataX.isJiraPwd; vueData.newJiraSetting.password = null;"
+                            @click="this.dataX.isJiraPwd = !VUiExtensions.dataX.isJiraPwd; vueData.newJiraSetting.password = null;"
                     />
                 </div>
             </q-card-section>

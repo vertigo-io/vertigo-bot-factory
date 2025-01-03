@@ -7,20 +7,25 @@
 	<head>
 		<title th:text="#{monitoring.title}"></title>
 		<script>
+			VUiExtensions.methods = {
+				...VUiExtensions.methods,
+
+				enabledDisabledAlerting: function() {
+					VUiPage.httpPostAjax('subscribeGlobalAlerting', VUiPage.vueDataParams(['monitoringDetailIHM']));
+				},
+
+				enabledDisabledAlertingBot: function(botId, enabled) {
+					VUiPage.httpPostAjax("subscribeBotAlerting", {
+						'botId': botId,
+						'enabled': enabled
+					});
+				}
+			}
+
 			function refresh() {
 				interval = setInterval(function() {
 					VUiPage.httpPostAjax("refresh", {});
 				}, 5000);
-			}
-			function enabledDisabledAlerting() {
-				VUiPage.httpPostAjax('subscribeGlobalAlerting', VUiPage.vueDataParams(['monitoringDetailIHM']));
-			}
-
-			function enabledDisabledAlertingBot(botId, enabled) {
-				VUiPage.httpPostAjax("subscribeBotAlerting", {
-					'botId': botId,
-					'enabled': enabled
-				});
 			}
 		</script>
 	</head>
