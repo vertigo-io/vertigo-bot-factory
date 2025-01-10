@@ -109,7 +109,7 @@
 					</vu:grid>
 					</q-card-section>
 					<q-card-actions align="around">
-						<input type="hidden" name="CTX" :value="getContextValue()">
+						<input type="hidden" name="CTX" :value="vueData['CTX']">
 						<q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
 						<q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
 							   @click="httpPostAjax('_saveContextPossibleValue', vueDataParams(['newContextPossibleValue']));"

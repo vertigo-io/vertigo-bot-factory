@@ -23,9 +23,6 @@
 						VUiExtensions.methods.refreshTraining();
 					}, 1000);
 				},
-				getContextValue: function() {
-					return VertigoUi.vueData['CTX'];
-				},
 				refreshTraining: function () {
 					VUiExtensions.dataX.loadingTraining = true;
 
@@ -170,7 +167,7 @@
 					<input v-for="id in vueData.selectTypeBotExportList.tbeCd" type="hidden" name="vContext[selectTypeBotExportList][tbeCd]" :value="id" />
 
 					<q-card-actions align="around">
-						<input type="hidden" name="CTX" :value="getContextValue()">
+						<input type="hidden" name="CTX" :value="vueData['CTX']">
 						<q-btn flat th:label="#{popup.export.cancel}" color="primary" v-close-popup ></q-btn>
 						<q-btn type="submit" th:title="#{popup.export.export}" th:label="#{popup.export.export}" th:aria-label="#{popup.export.export}" color="primary" v-close-popup></q-btn>
 					</q-card-actions>

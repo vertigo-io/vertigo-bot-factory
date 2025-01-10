@@ -14,7 +14,7 @@
 			</q-card-section>
 			<q-card-actions align="right">
 				<q-form method="post" th:action="${action}">
-					<input type="hidden" name="CTX" :value="getContextValue()">
+					<input type="hidden" name="CTX" :value="vueData['CTX']">
 					<input th:if="${hasDataName}" type="hidden" th:name="${dataName}" th::value="|componentStates.${dataName}|">
 					<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
 					<q-btn type="submit" th:title="${confirm}" th:label="${confirm}" th:aria-label="${confirm}" th:color="${colorSet}" v-close-popup></q-btn>

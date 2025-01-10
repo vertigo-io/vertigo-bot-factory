@@ -26,7 +26,7 @@
     <q-form method="post" action="_exportCategories">
         <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/document/new(id=${model.bot.botId})}" th:title="#{action.add}" icon="add"
                         class="on-left" round size="md" color="primary" />
-        <input type="hidden" name="CTX" :value="getContextValue()">
+        <input type="hidden" name="CTX" :value="vueData['CTX']">
     </q-form>
 </section>
 

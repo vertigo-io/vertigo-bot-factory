@@ -36,7 +36,7 @@
 			<q-form method="post" action="_exportDictionary">
 				<q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add" size="md"
 						       @click="$refs.dictionaryEntityEdit.show()"></q-btn>
-				<input type="hidden" name="CTX" :value="getContextValue()">
+				<input type="hidden" name="CTX" :value="vueData['CTX']">
 				<q-btn type="submit" th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="fab-block" round color="primary" size="md"
 				icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}"></q-btn> 
 
@@ -104,7 +104,7 @@
 					<input type="hidden" name="dictionaryEntityEdit" :value="vueData.dictionaryEntityEdit" />
 
 						<q-card-actions align="around">
-							<input type="hidden" name="CTX" :value="getContextValue()">
+							<input type="hidden" name="CTX" :value="vueData['CTX']">
 							<q-btn v-if="vueData.dictionaryEntityEdit.dicEntId" th:label="#{bot.delete}" color="red" @click="componentStates.meaId = vueData.dictionaryEntityEdit.dicEntId; componentStates.showPopupDictionaryEntity.shown = true " ></q-btn>
 							<q-btn type="submit" th:title="#{dictionary.create}" th:label="#{dictionary.create}" th:aria-label="#{dictionary.create}" color="primary" ></q-btn> 
 						</q-card-actions>
@@ -125,7 +125,7 @@
 					
 					
 					<q-card-actions align="around">
-							<input type="hidden" name="CTX" :value="getContextValue()">
+							<input type="hidden" name="CTX" :value="vueData['CTX']">
 							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
 							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn> 
 					</q-card-actions>
