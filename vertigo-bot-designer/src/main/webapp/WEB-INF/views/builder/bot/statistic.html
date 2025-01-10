@@ -8,14 +8,7 @@
     <title th:text="#{analytics.title}"></title>
 
     <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts@4.2.0/dist/apexcharts.min.js"></script>
-    <script type="module">
-        import VueApexCharts from "https://cdn.jsdelivr.net/npm/vue3-apexcharts@1.8.0/+esm"
-
-        window.addEventListener('vui-before-plugins', function () {
-            VUiApp.use(VueApexCharts);
-        });
-    </script>
+    <script th:src="@{/static/js/c-apexchart.js}"></script>
 
     <script th:src="@{/static/utils/moment.min.js}"></script>
 
@@ -397,13 +390,13 @@
         function sanitizeText(text) {
             return DOMPurify.sanitize(text);
         }
-        
+
         function limitFromInput(date) {
             if (VertigoUi.vueData.criteria.toDate == null || VertigoUi.vueData.criteria.toDate == '') return true;
-            
+
             const from = moment(date,'YYYY/MM/DD');
             const to = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
-            
+
             return from <= to;
         }
 
@@ -587,9 +580,9 @@
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.session}"></q-card-section>
                 <q-card-section class="row justify-center items-center">
-                    <apexchart width="100%" height="250" type="bar"
+                    <c-apexchart width="100%" height="250" type="bar"
                                :options="dataX.apexCharts.chartSession.options"
-                               :series="dataX.apexCharts.chartSession.series()"></apexchart>
+                               :series="dataX.apexCharts.chartSession.series()"></c-apexchart>
                 </q-card-section>
                 <q-card-section class="row justify-end">
                     <div>
@@ -608,9 +601,9 @@
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.nlu}"></q-card-section>
                 <q-card-section class="row justify-center items-center">
-                    <apexchart width="100%" height="250" type="bar"
+                    <c-apexchart width="100%" height="250" type="bar"
                                :options="dataX.apexCharts.chartMessages.options"
-                               :series="dataX.apexCharts.chartMessages.series()"></apexchart>
+                               :series="dataX.apexCharts.chartMessages.series()"></c-apexchart>
                 </q-card-section>
                 <q-card-section class="row justify-end">
                     <div>
@@ -629,9 +622,9 @@
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.message}"></q-card-section>
                 <q-card-section class="row justify-center items-center">
-                    <apexchart width="100%" height="250" type="bar"
+                    <c-apexchart width="100%" height="250" type="bar"
                                :options="dataX.apexCharts.nluMessageChart.options"
-                               :series="dataX.apexCharts.nluMessageChart.series()"></apexchart>
+                               :series="dataX.apexCharts.nluMessageChart.series()"></c-apexchart>
                 </q-card-section>
                 <q-card-section class="row justify-end">
                     <div class="q-mr-md">
@@ -709,9 +702,9 @@
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.rating}"></q-card-section>
                 <q-card-section class="row justify-center items-center">
-                    <apexchart width="100%" height="250"
+                    <c-apexchart width="100%" height="250"
                                :options="dataX.apexCharts.rating.options"
-                               :series="dataX.apexCharts.rating.series()"></apexchart>
+                               :series="dataX.apexCharts.rating.series()"></c-apexchart>
                 </q-card-section>
                <q-card-section class="row justify-end">
                     <div>
@@ -729,9 +722,9 @@
         <div class="col-xl-6 col-md-6 col-xs-12" >
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.categories}"></q-card-section>
-                <apexchart width="100%" height="250"
+                <c-apexchart width="100%" height="250"
                            :options="dataX.apexCharts.categories.options"
-                           :series="dataX.apexCharts.categories.series()"></apexchart>
+                           :series="dataX.apexCharts.categories.series()"></c-apexchart>
             </q-card>
         </div>
         <div class="col-12">
