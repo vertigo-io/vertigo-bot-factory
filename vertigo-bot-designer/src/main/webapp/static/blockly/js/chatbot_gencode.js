@@ -86,7 +86,7 @@ window.addEventListener('vui-after-page-mounted', function () {
 					}
 					code = 'begin sequence\r\n' + code + 'end sequence';
 				}
-				VertigoUi.vueData.scriptIntention.script = code;
+				VUiPage.vueData.scriptIntention.script = code;
 			}
 		}
 	}

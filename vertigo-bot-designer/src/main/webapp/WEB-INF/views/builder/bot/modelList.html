@@ -463,7 +463,6 @@
 				window.addEventListener('vui-after-page-mounted', function (event) {
 					VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
 						VUiPage.httpPostAjax('_filterSavedTraining', VUiPage.vueDataParams(['criteria']));
-						;
 					}, {deep: true});
 				});
 			</script>
