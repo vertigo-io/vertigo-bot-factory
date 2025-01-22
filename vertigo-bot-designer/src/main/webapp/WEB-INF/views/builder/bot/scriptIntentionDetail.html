@@ -45,7 +45,7 @@
 			<vu:include-data-primitive key="locale"/>
 			<vu:include-data object="scriptIntention" field="script" modifiable="true" />
 			<div class="editor"></div>
-			<c-codemirror-6 th:v-model="${model.util.vueDataKey('scriptIntention', 'script', null)}"></c-codemirror-6>
+				<c-codemirror th:v-model="${model.util.vueDataKey('scriptIntention', 'script', null)}" th::mode-edit="${!model.modeReadOnly}" :locale="vueData.locale"></c-codemirror>
 			<div id="blocklyTool">
 				<q-btn th:if="${!model.modeReadOnly}" th:class="q-btn-blockly" class="code" id="from-code" @click="codeToDiagram()" th:text="#{script.diagram.fromcode}"></q-btn>
 			</div>

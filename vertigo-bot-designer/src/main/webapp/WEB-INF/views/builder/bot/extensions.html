@@ -37,8 +37,12 @@
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
     <script th:src="@{/static/chatbot/chatbotMode.js}"></script>
-    <script th:src="@{/static/js/c-codemirror.js}"></script>
+    <script th:src="@{/static/js/codemirror.umd.js}"></script>
     <script th:inline="javascript">
+        window.addEventListener('vui-before-plugins', function() {
+            VUiApp.use(chatbotCodemirror);
+        });
+
         VUiExtensions.dataX.isPwd = true;
         VUiExtensions.dataX.isJiraPwd = true;
 
@@ -137,7 +141,7 @@
         function refreshCodeMirrorJiraField() {
             VUiPage.$refs.jiraCodeMirror.clearContent();
             const fieldIds = VertigoUi.vueData.jiraFieldSettings.filter(jiraFieldSetting => jiraFieldSetting.mandatory)
-                .map(jiraFieldSetting => getJiraFieldId(jiraFieldSetting.jirFieldCd));
+                .map(jiraFieldSetting => VUiExtensions.methods.getJiraFieldId(jiraFieldSetting.jirFieldCd));
             let jiraSequence = 'begin sequence \n    begin jira:issue:create "Message du bot lorsque le ticket a été crée" \n';
             fieldIds.forEach(fieldId => {
                 jiraSequence += '        jira:field /user/local/jira/' + fieldId.toLowerCase() + ' "Question posée par le bot" "' + fieldId + '"\n';
@@ -350,7 +354,7 @@
     </q-dialog>
     <vu:block id="JIRA" th:title="#{extensions.jira}">
         <vu:block id="JIRA_SYNTAX" th:title="#{extensions.jira.syntax}" style="margin-bottom:20px">
-            <c-codemirror ref="jiraCodeMirror" object="scriptIntention" field="script" :mode-edit="false"
+            <c-codemirror ref="jiraCodeMirror" th:v-model="${model.util.vueDataKey('scriptIntention', 'script', null)}" :mode-edit="false"
                           :locale="vueData.locale"></c-codemirror>
         </vu:block>
         <vu:table id="JIRA_GENERAL_SETTINGS" th:title="#{extensions.jira.generalSettings}" list="jiraFieldSettings"
