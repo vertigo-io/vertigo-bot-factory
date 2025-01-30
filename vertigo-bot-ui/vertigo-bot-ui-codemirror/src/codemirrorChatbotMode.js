@@ -1,5 +1,5 @@
 import { simpleMode } from "@codemirror/legacy-modes/mode/simple-mode"
-import {StreamLanguage, LanguageSupport, HighlightStyle, syntaxHighlighting, defaultHighlightStyle} from "@codemirror/language"
+import {StreamLanguage, LanguageSupport, HighlightStyle, syntaxHighlighting, defaultHighlightStyle, foldService} from "@codemirror/language"
 import {Tag, tags} from '@lezer/highlight'
 import {linter} from "@codemirror/lint";
 
@@ -44,7 +44,7 @@ String.prototype.stripComments = function() {
 // ** Color **
 // ***********
 
-let chatbotSimpleMode = simpleMode({
+const chatbotSimpleMode = simpleMode({
 	start: [
 		{regex: /(\s*)(begin\b)(\s+[A-Za-z0-9:]+)?/, sol: true, token: [null, "keyword", "def strong"], indent: true},
 		{regex: /(\s*)(end\b)(\s+[A-Za-z0-9:]+)?/, sol: true, token: [null, "keyword", "def strong"], dedent: true},
@@ -57,26 +57,27 @@ let chatbotSimpleMode = simpleMode({
 		electricInput: /end/
 	},
 	languageData: {
-		name: "chatbot"
+		name: "chatbot",
+		indentOnInput: new RegExp("^\\s*end\\b$")
 	}
 });
 
-let chatbotModeLanguage = StreamLanguage.define(chatbotSimpleMode);
+const chatbotModeLanguage = StreamLanguage.define(chatbotSimpleMode);
 
 tags.def = Tag.define("def");
 
-let highlightStyles = HighlightStyle.define([
+const highlightStyles = HighlightStyle.define([
 	...defaultHighlightStyle.specs,
 	{ tag: tags.def,
 	  color: '#00f'}]);
-let chatbotHighlighter = syntaxHighlighting(highlightStyles);
+const chatbotHighlighter = syntaxHighlighting(highlightStyles);
 
 
 // ******************
 // ** Autocomplete **
 // ******************
 
-var autocomplete = new LanguageSupport(chatbotModeLanguage, [
+const autocomplete = new LanguageSupport(chatbotModeLanguage, [
 	chatbotModeLanguage.data.of({
 		autocomplete: getCompletions
 	})
@@ -156,9 +157,20 @@ function getCompletions(context) {
 };
 
 function getDynamicParameters(context) {
-	let doc = context.state.doc;
-	let curLine = doc.lineAt(context.pos);
+	const doc = context.state.doc;
+	const pos = context.pos
+	if (doc.children !== null) {
+		return doc.children.map(child => getDynamicParametersForDoc(child, pos));
+	}
+	return getDynamicParametersForDoc(doc, pos);
+};
+
+function getDynamicParametersForDoc(doc, pos) {
 	let result = [];
+	if (pos > doc.length) {
+		return result;
+	}
+	let curLine = doc.lineAt(pos);
 	for (let i = 0; i < doc.lines; i++) {
 		if (i != curLine.number) {
 			let textLine = doc.text[i];
@@ -176,9 +188,8 @@ function getDynamicParameters(context) {
 				.forEach(elem => result.push({label: elem, type: "variable"}));
 		}
 	}
-
 	return result;
-}
+};
 
 
 // ***********************

@@ -394,7 +394,7 @@ table .col_DoInstant {
 	overflow: hidden;
 }
 
-.CodeMirror {
+.cm-scroller {
 	resize: vertical;
 }
 

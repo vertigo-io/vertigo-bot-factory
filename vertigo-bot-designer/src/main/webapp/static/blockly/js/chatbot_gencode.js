@@ -111,6 +111,7 @@ window.addEventListener('vui-after-page-mounted', function () {
 
 
 	Blockly.BotScript = new Blockly.Generator('BotScript');
+	Blockly.BotScript.INDENT = "\t";
 
 	for (name in Blockly.Blocks) { // same rendering function for all CB blocks
 		if (name.startsWith('cb_')) Blockly.BotScript[name] = buildBlock;

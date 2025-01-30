@@ -12,7 +12,8 @@
 		<script th:src="@{/static/js/c-buttonList.js}"></script>
 	    <script th:src="@{/static/utils/base64.min.js}"></script>
 	    <script th:src="@{/static/blockly/js/blockly_utils.js}"></script>
-	    <script th:src="@{/static/js/codemirror.umd.js}"></script>
+	  	<!-- Component c-component is built with the project vertigo-bot-ui/vertigo-bot-ui-codemirror -->
+	    <script th:src="@{/static/js/c-codemirror.umd.js}"></script>
 	    <script th:src="@{/static/js/c-emojipicker.js}"></script>
 		<script th:src="@{/static/js/c-variablepicker.js}"></script>
 	    <link th:href="@{/static/blockly/css/blockly_style.css}"  rel="stylesheet"/>
@@ -93,10 +94,6 @@
 					}
 				}
 			}
-
-
-			console.log(VUiExtensions.dataX)
-
 		</script>
 
 		</head>

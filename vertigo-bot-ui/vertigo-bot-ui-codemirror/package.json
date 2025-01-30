@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build",
     "build-serve": "vite build && serve dist/",
-    "build-project": "vite build && cp dist/codemirror.umd.js ../../vertigo-bot-designer/src/main/webapp/static/js/"
+    "build-project": "vite build && cp dist/c-codemirror.umd.js ../../vertigo-bot-designer/src/main/webapp/static/js/"
   },
   "dependencies": {
     "serve": "14.2.4",
@@ -15,11 +15,8 @@
     "@codemirror/language" : "6.10.8",
     "@codemirror/legacy-modes" : "6.4.2",
     "@lezer/highlight" : "1.2.1",
-    "@codemirror/lang-vue" : "0.1.3",
-    "@codemirror/autocomplete" : "6.18.4",
     "@codemirror/lint" : "6.8.4",
     "emoji-picker-element" : "1.26.0"
-
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",

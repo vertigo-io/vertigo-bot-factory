@@ -126,10 +126,14 @@
 </template>
 
 <script>
-import { chatbotHighlighter, autocomplete, chatbotLinter } from "@/chatbotMode.js"
-import {lintGutter} from "@codemirror/lint";
+import {
+  chatbotHighlighter,
+  autocomplete,
+  chatbotLinter
+} from "@/codemirrorChatbotMode.js"
 import {EditorView} from "codemirror";
-import {EditorState} from "@codemirror/state";
+import {indentUnit} from "@codemirror/language";
+import "emoji-picker-element";
 
 export default {
   name: "chatbotCodemirror",
@@ -157,7 +161,7 @@ export default {
       disabled: !this.modeEdit,
       indentWithTab: true,
       tabSize: 4,
-      extensions: [chatbotHighlighter, autocomplete, chatbotLinter, lintGutter()]
+      extensions: [chatbotHighlighter, autocomplete, chatbotLinter, indentUnit.of("\t")]
     }
   },
   methods: {
@@ -184,7 +188,7 @@ export default {
       let editorState = editor.state;
       let currentLine = editorState.doc.lineAt(editorState.selection.main.head);
       let stringToAdd = this.createStringToAdd(addBeginString, addEndString, currentLine);
-      this.insert(EditorView.findFromDOM(document), stringToAdd);
+      this.insert(editor, stringToAdd);
     },
 
     addSequence: function () {
@@ -202,7 +206,6 @@ export default {
     addChooseButtonFile: function () {
       this.modifyValue('begin choose:button:file /user/local ""', 'end choose:button:file');
     },
-
 
     addSwitch: function () {
       this.modifyValue('begin switch /user/local ', 'end switch');
@@ -255,9 +258,15 @@ export default {
     addLink: function () {
       this.modifyValue('link "url" true');
     },
-    clearContent: function () {
+    replaceContent: function (text) {
       let editor = EditorView.findFromDOM(document);
-      editor.setState(EditorState.create());
+      editor.dispatch({
+        changes: {
+          from: 0,
+          to: editor.state.doc.length,
+          insert: `${text}`
+        }
+      });
     },
     addEmoji() {
       this.$refs.newEmoji.show();
