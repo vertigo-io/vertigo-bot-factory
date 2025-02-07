@@ -46,7 +46,7 @@ window.addEventListener(
         if (event.data.sendTopic) {
             const button = chatbot.inputConfig.buttons.find((button) => button.payload === event.data.sendTopic.topic)
             if (chatbot.botConfig.convId !== undefined && button !== undefined) {
-                postAnswerBtn(button)
+                chatbot.postAnswerBtn(button)
             }
         }
         if (event.data === 'clearSessionStorage') {
@@ -59,28 +59,28 @@ window.addEventListener(
         }
     });
 
-const chatbot = new Vue({
-        el: '#q-app',
-        updated() {
-            const images = document.getElementsByClassName('imgClass');
-            const htmls = document.getElementsByClassName('htmlClass');
-            for (let i = 0; i < images.length; i++) {
-                images[i].addEventListener('click', function (e) {
-                    parent.postMessage({pictureModal: this.src}, '*');
-                }, false);
-            }
-            for (let j = 0; j < htmls.length; j++) {
-                htmls[j].addEventListener('click', function (e) {
-                    parent.postMessage({htmlModal: this.getAttribute('data-html')}, '*');
-                }, false);
-            }
-            if (chatbot.$refs.input && !chatbot.$refs.input.disable) {
-                this.focusInput()
-            }
-        },
-        data: {
-            // config
 
+const chatbotComponent = {
+    updated() {
+        const images = document.getElementsByClassName('imgClass');
+        const htmls = document.getElementsByClassName('htmlClass');
+        for (let i = 0; i < images.length; i++) {
+            images[i].addEventListener('click', function (e) {
+                parent.postMessage({pictureModal: this.src}, '*');
+            }, false);
+        }
+        for (let j = 0; j < htmls.length; j++) {
+            htmls[j].addEventListener('click', function (e) {
+                parent.postMessage({htmlModal: this.getAttribute('data-html')}, '*');
+            }, false);
+        }
+        if (this.$refs.input && !this.$refs.input.disable) {
+            this.focusInput()
+        }
+    },
+    data() {
+        return {
+            // config
             footerMenu: '',
             platformUrl: _platformBaseUrl,
             context: {},
@@ -146,108 +146,233 @@ const chatbot = new Vue({
                 documentaryResourceList: [],
                 documentaryResourceFileBaseUrl: _documentaryResourceBaseUrl + '/getDocumentaryResourceFile?attId='
             }
+        }
+    },
+    methods: {
+        async initPlatform(){
+            // waiting for the custom config to set the display params
+            await this.initPlatformConfig()
+            if(this.customConfig.chatbotDisplay) {startConversation()}
+            if(this.customConfig.qandaDisplay) {initQAndA()}
+            if(this.customConfig.documentaryResourceDisplay) {initDocumentaryResources()}
+            this.initLayout()
         },
-        methods: {
 
-            async initPlatform(){
-                // waiting for the custom config to set the display params
-                await chatbot.initPlatformConfig()
-                if(chatbot.customConfig.chatbotDisplay) {startConversation()}
-                if(chatbot.customConfig.qandaDisplay) {initQAndA()}
-                if(chatbot.customConfig.documentaryResourceDisplay) {initDocumentaryResources()}
-                chatbot.initLayout()
-            },
+        async initPlatformConfig() {
+            document.getElementById('page').style.visibility = 'visible';
+            document.getElementById('loading').style.display = 'none';
 
-            async initPlatformConfig() {
-                document.getElementById('page').style.visibility = 'visible';
-                document.getElementById('loading').style.display = 'none';
-
-                try {
-                    await this.$http.get(chatbot.platformUrl + '/getCustomConfig').then(httpResponse => {
-                        chatbot.customConfig.reinitializationButton = httpResponse.body.reinitializationButton;
-                        chatbot.customConfig.backgroundColor = httpResponse.body.backgroundColor;
-                        chatbot.customConfig.fontColor = httpResponse.body.fontColor;
-                        chatbot.customConfig.botMessageBackgroundColor = httpResponse.body.botMessageBackgroundColor;
-                        chatbot.customConfig.botMessageFontColor = httpResponse.body.botMessageFontColor;
-                        chatbot.customConfig.userMessageBackgroundColor = httpResponse.body.userMessageBackgroundColor;
-                        chatbot.customConfig.userMessageFontColor = httpResponse.body.userMessageFontColor;
-                        chatbot.customConfig.fontFamily = httpResponse.body.fontFamily;
-                        chatbot.customConfig.displayAvatar = httpResponse.body.displayAvatar;
-                        chatbot.customConfig.disableNlu = httpResponse.body.disableNlu;
-                        chatbot.customConfig.chatbotDisplay = httpResponse.body.chatbotDisplay;
-                        chatbot.customConfig.qandaDisplay = httpResponse.body.qandaDisplay;
-                        chatbot.customConfig.documentaryResourceDisplay = httpResponse.body.documentaryResourceDisplay;
-                        sessionStorage.setItem('customConfig', JSON.stringify(chatbot.customConfig));
-                    });
-                } catch (error) {
+            try {
+                await axios.get(this.platformUrl + '/getCustomConfig').then(httpResponse => {
+                    this.customConfig.reinitializationButton = httpResponse.data.reinitializationButton;
+                    this.customConfig.backgroundColor = httpResponse.data.backgroundColor;
+                    this.customConfig.fontColor = httpResponse.data.fontColor;
+                    this.customConfig.botMessageBackgroundColor = httpResponse.data.botMessageBackgroundColor;
+                    this.customConfig.botMessageFontColor = httpResponse.data.botMessageFontColor;
+                    this.customConfig.userMessageBackgroundColor = httpResponse.data.userMessageBackgroundColor;
+                    this.customConfig.userMessageFontColor = httpResponse.data.userMessageFontColor;
+                    this.customConfig.fontFamily = httpResponse.data.fontFamily;
+                    this.customConfig.displayAvatar = httpResponse.data.displayAvatar;
+                    this.customConfig.disableNlu = httpResponse.data.disableNlu;
+                    this.customConfig.chatbotDisplay = httpResponse.data.chatbotDisplay;
+                    this.customConfig.qandaDisplay = httpResponse.data.qandaDisplay;
+                    this.customConfig.documentaryResourceDisplay = httpResponse.data.documentaryResourceDisplay;
+                    sessionStorage.setItem('customConfig', JSON.stringify(this.customConfig));
+                });
+            } catch (error) {
                 console.error('Erreur lors de la récupération de la configuration du chatbot', error);
             }
-                if (sessionStorage.contextMap) {
-                    chatbot.contextMap = JSON.parse(sessionStorage.contextMap);
-                } else {
-                    this.$http.post(chatbot.botConfig.botUrl + '/context').then(contextResponse => {
-                        chatbot.contextMap = contextResponse.data;
-                        sessionStorage.setItem('contextMap', JSON.stringify(chatbot.contextMap));
-                    });
-                }
-            },
-            minimize() {
-                parent.postMessage('Chatbot.minimize', '*');
-            },
-
-            refreshPlatform(){
-                chatbot.initPlatformConfig()
-                if (chatbot.footerMenu === 'bot') {
-                    refreshBot()
-                } else if (chatbot.footerMenu === 'qAndA') {
-                    initQAndA();
-                }
-                if (chatbot.customConfig.documentaryResourceDisplay) {
-                    initDocumentaryResources();
-                }
-            },
-            // Function to complete to switch to another bot
-            changeLocal(locale) {
-                //todo : change url bot to simulate language change
-            },
-
-            initLayout(){
-                // On start, if there is only the Q&A on, we show it. Otherwise, we open on the chatbot by default
-                if (chatbot.customConfig.qandaDisplay && !chatbot.customConfig.chatbotDisplay){
-                    chatbot.footerMenu = 'qAndA'
-                } else {
-                    chatbot.footerMenu = 'bot'
-                }
-            },
-
-
-            footerMenuChange(menuValue) {
-                chatbot.footerMenu = menuValue
-                if(menuValue === 'qAndA'){
-                    initQAndA();
-                }
-                if(menuValue === 'bot'){
-                    this.$nextTick(() => {
-                        // instant scroll to bottom of the bot layout when clicking on 'bot' menu
-                        _scrollToBottom();
-                        // if a question/answer is open when clicking on 'bot' menu, it closes it
-                        chatbot.qAndAConfig.selectedQuestion = null;
-                    });
-                }
-                // always refresh documentaryResources on tab change if visible
-                if (chatbot.customConfig.documentaryResourceDisplay) {
-                    initDocumentaryResources();
-                }
-            },
-
-            focusInput() {
-                chatbot.$refs.input.focus();
+            if (sessionStorage.contextMap) {
+                this.contextMap = JSON.parse(sessionStorage.contextMap);
+            } else {
+                axios.post(this.botConfig.botUrl + '/context').then(contextResponse => {
+                    this.contextMap = contextResponse.data;
+                    sessionStorage.setItem('contextMap', JSON.stringify(this.contextMap));
+                });
             }
+        },
+        minimize() {
+            parent.postMessage('Chatbot.minimize', '*');
+        },
+
+        refreshPlatform(){
+            this.initPlatformConfig()
+            if (this.footerMenu === 'bot') {
+                refreshBot()
+            } else if (this.footerMenu === 'qAndA') {
+                initQAndA();
+            }
+            if (this.customConfig.documentaryResourceDisplay) {
+                initDocumentaryResources();
+            }
+        },
+        // Function to complete to switch to another bot
+        changeLocal(locale) {
+            //todo : change url bot to simulate language change
+        },
+
+        initLayout(){
+            // On start, if there is only the Q&A on, we show it. Otherwise, we open on the chatbot by default
+            if (this.customConfig.qandaDisplay && !this.customConfig.chatbotDisplay){
+                this.footerMenu = 'qAndA'
+            } else {
+                this.footerMenu = 'bot'
+            }
+        },
+
+        footerMenuChange(menuValue) {
+            this.footerMenu = menuValue
+            if(menuValue === 'qAndA'){
+                initQAndA();
+            }
+            if(menuValue === 'bot'){
+                this.$nextTick(() => {
+                    // instant scroll to bottom of the bot layout when clicking on 'bot' menu
+                    _scrollToBottom();
+                    // if a question/answer is open when clicking on 'bot' menu, it closes it
+                    this.qAndAConfig.selectedQuestion = null;
+                });
+            }
+            // always refresh documentaryResources on tab change if visible
+            if (this.customConfig.documentaryResourceDisplay) {
+                initDocumentaryResources();
+            }
+        },
+
+        focusInput() {
+            this.$refs.input.focus();
+        },
+
+        askBot(value, label, isButton, fileContent, fileName, rating) {
+            chatbot.botConfig.prevInputConfig = JSON.parse(JSON.stringify(chatbot.inputConfig));
+            reinitInput();
+            chatbot.botConfig.lastPayload = value;
+            chatbot.botConfig.processing = true;
+
+            chatbot.botConfig.lastUserInteraction = Date.now();
+            let botInput;
+            if (fileContent) {
+                botInput = {
+                    message: null,
+                    metadatas: {context: chatbot.context, payload: value, filecontent: fileContent, filename: fileName}
+                };
+            } else if (isButton) {
+                botInput = {message: null, metadatas: {context: chatbot.context, payload: value, text: label}};
+            } else {
+                botInput = {message: value, metadatas: {context: chatbot.context}};
+            }
+            if (rating) {
+                botInput.metadatas.rating = value
+                if (chatbot.botConfig.ratingType === 'SIMPLE') {
+                    botInput.message = null
+                }
+            }
+            return axios.post(chatbot.botConfig.botUrl + '/talk/' + chatbot.botConfig.convId, botInput)
+                .then(httpResponse => {
+                    _handleResponse(httpResponse, false);
+                }).catch(
+                    () => {
+                        // error
+                        chatbot.botConfig.error = true;
+
+                        chatbot.botConfig.processing = false;
+                        _scrollToBottom();
+                    });
+
+        },
+
+        postAnswerText(isRating) {
+            let sanitizedString = '';
+            if (isRating) {
+                sanitizedString = chatbot.inputConfig.rating.toString();
+                chatbot.inputConfig.showRating = false;
+                chatbot.botConfig.messages.push({
+                    text: null,
+                    rating: true,
+                    sent: true,
+                    bgColor: 'primary',
+                    textColor: 'white'
+                });
+
+            } else {
+                sanitizedString = DOMPurify.sanitize(chatbot.inputConfig.responseText.trim()
+                    .replace(/(?:\r\n|\r|\n)/g, '<br>'));
+                chatbot.botConfig.messages.push({
+                    text: sanitizedString !== '' ? [sanitizedString] : null,
+                    rating: isRating,
+                    sent: true,
+                    bgColor: 'primary',
+                    textColor: 'white'
+                });
+            }
+            updateSessionStorage();
+
+            _scrollToBottom();
+
+            const response = chatbot.inputConfig.responsePattern === '' ? sanitizedString.replace(/(")/g, '"')
+                : chatbot.inputConfig.responsePattern.replace('#', sanitizedString.replace(/(")/g, '\\"'));
+            this.askBot(response, null, false, null, null, isRating);
+        },
+
+        postAnswerBtn(btn) {
+            chatbot.botConfig.messages.push({
+                text: [DOMPurify.sanitize(btn.label)],
+                sent: true,
+                bgColor: 'primary',
+                textColor: 'white'
+            });
+
+            updateSessionStorage();
+
+            _scrollToBottom();
+
+            if (btn.url !== undefined) {
+                const link = document.createElement('a');
+                link.href = btn.url;
+                if (btn.newTab) {
+                    link.target = '_blank';
+                } else {
+                    link.target = '_top';
+                }
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            this.askBot(btn.payload, btn.label, true, null, null, chatbot.botConfig.rating);
+        },
+
+        fileUpload(btn, index) {
+            const file = document.getElementById('file_' + index).files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (evt) {
+                this.askBot(btn.payload, null, false, evt.target.result, file.name, false);
+            };
+        },
+
+        filterQuestionsAnswers(){
+            if (chatbot.qAndAConfig.filterInput !== ''){
+                chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList.filter(questionAnswer => questionAnswer.question.toLowerCase().includes(chatbot.qAndAConfig.filterInput.toLowerCase()) || questionAnswer.answer.toLowerCase().includes(chatbot.qAndAConfig.filterInput.toLowerCase()))
+            }else{
+                chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList
+            }
+        },
+
+        selectQuestion(selected){
+            chatbot.qAndAConfig.selectedQuestion = selected;
         }
-    })
-;
+    }
+};
+
+const { createApp } = Vue;
+const chatbotApp = createApp(chatbotComponent);
+
+chatbotApp.use(Quasar);
+
+const chatbot = chatbotApp.mount("#q-app");
+
 
 function _scrollToBottom() {
     const scrollHeight = chatbot.$refs.scroller.$el.children[0].children[0].scrollHeight; // workaround
-    chatbot.$refs.scroller.setScrollPosition(scrollHeight, 400);
+    chatbot.$refs.scroller.setScrollPosition('vertical', scrollHeight, 400);
 }
