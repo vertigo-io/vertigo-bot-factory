@@ -120,6 +120,7 @@ services:
       - MAIL_HOST=mail.host.net
       - MAIL_PORT=25
       - KEYCLOAK_URL=https://keycloak:8200/sso/realms/chatbot
+      - FILE_STORE_PATH=/opt/attachments/
     depends_on:
       - postgres
       - keycloak
@@ -128,6 +129,8 @@ services:
       - clamav
     ports:
       - '127.0.0.1:8080:8080'
+    volumes:
+      - cf_designer_data:/opt/attachments
     networks:
       - cb_factory
     restart: unless-stopped
@@ -221,6 +224,7 @@ volumes:
   cf_postgresKC_data
   cf_influxdb2_data:
   cf_influxdb2_config:
+  cf_designer_data:
   cf_runner_1_data:
   cf_runner_2_data:
     
