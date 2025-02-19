@@ -11,7 +11,7 @@ window.addEventListener('vui-before-plugins', function (event) {
 
         template: `
         <div style="width:340px;" class="q-px-md">
-            <q-chat-message :sent="false" :text="getChatPreview()" :text-color="textColor" bg-color="grey-4" ></q-chat-message>
+            <q-chat-message :sent="false" :text="getChatPreview()" :text-color="textColor" bg-color="grey-4" :text-html="${true}"></q-chat-message>
         </div>
         `
         ,
