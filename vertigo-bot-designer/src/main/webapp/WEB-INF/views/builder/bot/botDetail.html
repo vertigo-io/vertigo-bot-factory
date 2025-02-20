@@ -86,7 +86,17 @@
 					Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
 						element.style.setProperty('--chat-message-font-family', fontFamily.label);
 					});
+				},
+				onChatbotDisplayChange: function() {
+					if (!VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay && !VertigoUi.vueData.chatbotCustomConfig.qandaDisplay) {
+						this.vueData.chatbotCustomConfig.qandaDisplay = true;
+					}
+				},
+				onQandaDisplayChange: function() {
+				if (!VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay && !VertigoUi.vueData.chatbotCustomConfig.qandaDisplay) {
+					this.vueData.chatbotCustomConfig.chatbotDisplay = true;
 				}
+			}
 			}
 			document.addEventListener('DOMContentLoaded', function () {
 				VUiExtensions.methods.changeBgColor();
@@ -97,16 +107,6 @@
 				VUiExtensions.methods.changeBotMessageFontColor()
 				VUiExtensions.methods.changeChatMessageFontFamily();
 			});
-			function onChatbotDisplayChange() {
-				if (!VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay && !VertigoUi.vueData.chatbotCustomConfig.qandaDisplay) {
-					VertigoUi.vueData.chatbotCustomConfig.qandaDisplay = true;
-				}
-			}
-			function onQandaDisplayChange() {
-				if (!VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay && !VertigoUi.vueData.chatbotCustomConfig.qandaDisplay) {
-					VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay = true;
-				}
-			}
 		</script>
 	</head>
 	

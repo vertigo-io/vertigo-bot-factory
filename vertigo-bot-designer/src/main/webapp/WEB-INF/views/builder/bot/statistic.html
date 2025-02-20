@@ -343,38 +343,6 @@
         }
 
         VUiExtensions.dataX.popinDetailLabel = '';
-        function displayIntentDetail(intent) {
-            VUiExtensions.dataX.popinDetailLabel = getTopicTitleByTopicId(intent.topId);
-
-            VertigoUi.vueData.intentDetails = [];
-            VUiPage.componentStates.intentDetailList.loading = true;
-
-            let params = VUiPage.vueDataParams(['criteria']);
-            params.append('intentRasa', intent.code)
-            VUiPage.httpPostAjax('_intentDetails', params, {
-                    onSuccess: function() {
-                        VUiPage.componentStates.intentDetailList.loading = false;
-                    }
-                }
-            );
-
-            VUiPage.$refs.intentDetailsDialog.show();
-        }
-
-        function displayConversationDetail(sessionId) {
-
-            VertigoUi.vueData.conversationDetails = [];
-
-            let params = VUiPage.vueDataParams(['criteria']);
-            params.append('sessionId', sessionId)
-            VUiPage.httpPostAjax('_conversationDetails', params, {
-                    onSuccess: function() {
-                    }
-                }
-            );
-
-            VUiPage.$refs.conversationDetailsDialog.show();
-        }
 
         function closeDialog() {
             VUiPage.$refs.popupFromDate.hide();
@@ -385,10 +353,6 @@
             VertigoUi.vueData.selectTypeExportAnalyticList.teaCd =
                 VertigoUi.vueData.typeExportAnalyticsList.map(typeExport => typeExport.teaCd);
 
-        }
-
-        function sanitizeText(text) {
-            return DOMPurify.sanitize(text);
         }
 
         function limitFromInput(date) {
@@ -864,7 +828,43 @@
             return VertigoUi.vueData.totalOfConversations === 0 ? '-' :
                 Math.round((VUiExtensions.dataX.apexCharts.rating.series().reduce((a,b) => a + b, 0 ) /
                     VertigoUi.vueData.totalOfConversations) * 100);
-        }
+        },
+
+            displayIntentDetail: function(intent) {
+                VUiExtensions.dataX.popinDetailLabel = getTopicTitleByTopicId(intent.topId);
+
+                VertigoUi.vueData.intentDetails = [];
+                VUiPage.componentStates.intentDetailList.loading = true;
+
+                let params = VUiPage.vueDataParams(['criteria']);
+                params.append('intentRasa', intent.code)
+                VUiPage.httpPostAjax('_intentDetails', params, {
+                        onSuccess: function () {
+                            VUiPage.componentStates.intentDetailList.loading = false;
+                        }
+                    }
+                );
+
+                VUiPage.$refs.intentDetailsDialog.show();
+            },
+
+            displayConversationDetail: function(sessionId) {
+                VertigoUi.vueData.conversationDetails = [];
+
+                let params = VUiPage.vueDataParams(['criteria']);
+                params.append('sessionId', sessionId)
+                VUiPage.httpPostAjax('_conversationDetails', params, {
+                        onSuccess: function() {
+                        }
+                    }
+                );
+
+                VUiPage.$refs.conversationDetailsDialog.show();
+            },
+
+            sanitizeText: function(text) {
+                return DOMPurify.sanitize(text);
+            }
         }
 
         function orElse(value, orElse) {
