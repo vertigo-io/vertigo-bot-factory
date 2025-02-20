@@ -171,7 +171,8 @@ function refreshBot(isAnotherConversation) {
         rating: 0,
         buttons: [],
         files: [],
-        cards: []
+        cards: [],
+        cardIndex: 0
     };
     chatbot.botConfig.error = false;
     chatbot.botConfig.convId = null;

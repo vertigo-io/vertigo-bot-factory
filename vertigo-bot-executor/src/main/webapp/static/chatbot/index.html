@@ -143,6 +143,7 @@
                         </div>
                         <div class="row docs-btn" v-if="inputConfig.cards.length > 0" >
                           <q-carousel
+                                  v-model="inputConfig.cardIndex"
                                   transition-prev="scale"
                                   transition-next="scale"
                                   swipeable
@@ -152,7 +153,7 @@
                                   arrows
                                   class="custom-carousel bg-primary text-white shadow-1"
                           >
-                            <q-carousel-slide  v-for="(card, index) in inputConfig.cards" name="style" class="column no-wrap flex-center" >
+                            <q-carousel-slide  v-for="(card, index) in inputConfig.cards" :name="index" class="column no-wrap flex-center" >
                               <div class="q-mt-md text-center cursor-pointer" @click="postAnswerBtn(card)">
                                 <img v-if= "card.imageUrl !== null" :src="card.imageUrl" :alt="card.label"/>
                                 <div class="text-h2">{{ card.label }}</div>

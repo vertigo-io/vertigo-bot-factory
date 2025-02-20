@@ -131,6 +131,7 @@ const chatbotComponent = {
                 rating: 0,
                 buttons: [],
                 cards: [],
+                cardIndex: 0,
                 files: []
             },
 
