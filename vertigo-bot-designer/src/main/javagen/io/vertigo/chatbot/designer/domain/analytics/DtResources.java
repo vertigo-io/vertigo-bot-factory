@@ -1,16 +1,16 @@
 package io.vertigo.chatbot.designer.domain.analytics;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Resources du module io.vertigo.chatbot.designer.domain.analytics
  */
-public enum DtResources implements MessageKey {
+public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** CategoryStat.
-	/***********************************************************
+	 * CategoryStat.
+	 **********************************************************/
 	/**
 	 * Label.
 	 */
@@ -29,8 +29,8 @@ public enum DtResources implements MessageKey {
 	fldCategoryStat$usage,
 
 	/***********************************************************
-	/** ConversationCriteria.
-	/***********************************************************
+	 * ConversationCriteria.
+	 **********************************************************/
 	/**
 	 * Model Name.
 	 */
@@ -41,8 +41,8 @@ public enum DtResources implements MessageKey {
 	fldConversationCriteria$ratings,
 
 	/***********************************************************
-	/** ConversationDetail.
-	/***********************************************************
+	 * ConversationDetail.
+	 **********************************************************/
 	/**
 	 * sessionId.
 	 */
@@ -65,8 +65,8 @@ public enum DtResources implements MessageKey {
 	fldConversationDetail$isBotMessage,
 
 	/***********************************************************
-	/** ConversationStat.
-	/***********************************************************
+	 * ConversationStat.
+	 **********************************************************/
 	/**
 	 * sessionId.
 	 */
@@ -101,8 +101,8 @@ public enum DtResources implements MessageKey {
 	fldConversationStat$lastTopic,
 
 	/***********************************************************
-	/** RatingOption.
-	/***********************************************************
+	 * RatingOption.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -117,8 +117,8 @@ public enum DtResources implements MessageKey {
 	fldRatingOption$labelFr,
 
 	/***********************************************************
-	/** SentenseDetail.
-	/***********************************************************
+	 * SentenseDetail.
+	 **********************************************************/
 	/**
 	 * Rasa message ID.
 	 */
@@ -149,8 +149,8 @@ public enum DtResources implements MessageKey {
 	fldSentenseDetail$modelName,
 
 	/***********************************************************
-	/** SessionExport.
-	/***********************************************************
+	 * SessionExport.
+	 **********************************************************/
 	/**
 	 * Date.
 	 */
@@ -165,8 +165,8 @@ public enum DtResources implements MessageKey {
 	fldSessionExport$userActionsCount,
 
 	/***********************************************************
-	/** StatCriteria.
-	/***********************************************************
+	 * StatCriteria.
+	 **********************************************************/
 	/**
 	 * Chatbot selection.
 	 */
@@ -197,8 +197,8 @@ public enum DtResources implements MessageKey {
 	fldStatCriteria$toInstant,
 
 	/***********************************************************
-	/** TopIntent.
-	/***********************************************************
+	 * TopIntent.
+	 **********************************************************/
 	/**
 	 * Topic ID.
 	 */
@@ -225,8 +225,8 @@ public enum DtResources implements MessageKey {
 	fldTopIntent$count,
 
 	/***********************************************************
-	/** TopIntentCriteria.
-	/***********************************************************
+	 * TopIntentCriteria.
+	 **********************************************************/
 	/**
 	 * Category Ids.
 	 */
@@ -237,16 +237,16 @@ public enum DtResources implements MessageKey {
 	fldTopIntentCriteria$labels,
 
 	/***********************************************************
-	/** TypeExportAnalyticList.
-	/***********************************************************
+	 * TypeExportAnalyticList.
+	 **********************************************************/
 	/**
 	 * Type export analytic code.
 	 */
 	fldTypeExportAnalyticList$teaCd,
 
 	/***********************************************************
-	/** TypeExportAnalytics.
-	/***********************************************************
+	 * TypeExportAnalytics.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -261,8 +261,8 @@ public enum DtResources implements MessageKey {
 	fldTypeExportAnalytics$labelFr,
 
 	/***********************************************************
-	/** UnknownSentenseExport.
-	/***********************************************************
+	 * UnknownSentenseExport.
+	 **********************************************************/
 	/**
 	 * Date.
 	 */

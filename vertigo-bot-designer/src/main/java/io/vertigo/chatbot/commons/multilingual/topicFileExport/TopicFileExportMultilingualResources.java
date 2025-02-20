@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.commons.multilingual.topicFileExport;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum TopicFileExportMultilingualResources implements MessageKey {
+public enum TopicFileExportMultilingualResources implements LocaleMessageKey {
 
 	ERR_CODE_EMPTY,
 	ERR_CODE_DUPLICATED,

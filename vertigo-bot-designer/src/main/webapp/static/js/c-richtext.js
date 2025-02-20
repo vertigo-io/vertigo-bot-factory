@@ -1,7 +1,8 @@
-Vue.component('c-richtext', {
+window.addEventListener('vui-before-plugins', function (event) {
+	let vuiRichText = Vue.defineComponent({
 	
 	props : {
-		value:    { type: String,  required: true },
+		modelValue:    { type: String,  required: true },
 		name:     { type: String,  required: true },
 		modeEdit: { type: Boolean, 'default': true },
 		locale:   { type: String, 'default': 'en_US' },
@@ -18,10 +19,10 @@ Vue.component('c-richtext', {
 	template : `
 	<div style="flex-grow:1" v-if="modeEdit">
 		<div>
-			<input v-if="name" class="hidden" type="text" :name="name" :value="value" />
+			<input v-if="name" class="hidden" type="text" :name="name" :value="modelValue" />
 			
-			<q-editor v-bind:value="value" @input="val => $emit('input', val)"
-				v-model="value"
+			<q-editor v-bind:value="modelValue" @update:modelValue="val => $emit('update:modelValue', val)"
+				v-model="modelValue"
 				:style="error ? 'border: 2px solid;border-color: #C10015;border-radius:5px;':''"
 				@keyup.enter.stop
 				class="col-grow"
@@ -93,14 +94,15 @@ Vue.component('c-richtext', {
 								autofocus
 								required
 	       					>
+	       					</q-input>
        					</q-card-section>
        					
 						<q-card-actions align="around">
 							<q-btn flat :label="locale == 'fr_FR' ? 'Annuler' : 'Cancel'" v-close-popup color="primary"/>
 							<q-btn :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>
 						</q-card-actions>
-					</div>
-				</q-card
+					</q-form>
+				</q-card>
 			</q-dialog>
 			<q-dialog ref="newLink"  >
 			 	<q-card style="width: 600px;">
@@ -119,6 +121,7 @@ Vue.component('c-richtext', {
 								autofocus
 								required
 	       					>
+	       					</q-input>
        					</q-card-section>
        					<q-card-section>
        						<q-toggle left-label :label="locale === 'fr_FR' ? 'Nouvel onglet' : 'New tab'" ref="linkNewTabRef" v-model="newTab"></q-toggle>
@@ -140,8 +143,9 @@ Vue.component('c-richtext', {
 					</q-card-section>
 				</q-card>
 			</q-dialog>
-			
+		
 		</div>
+	</div>
 		
 		
 		
@@ -161,7 +165,7 @@ Vue.component('c-richtext', {
 				if (this._isInToolbar(evt.target)) {
 					return;
 				}
-				
+
 				let text, onPasteStripFormattingIEPaste
 				evt.preventDefault()
 				if (evt.originalEvent && evt.originalEvent.clipboardData.getData) {
@@ -180,7 +184,7 @@ Vue.component('c-richtext', {
 					onPasteStripFormattingIEPaste = false
 				}
 			},
-			
+
 			_isInToolbar: function(domElem) {
 				if (domElem.className && domElem.className.match(/\bq-editor__toolbar\b/)) {
 					return true;
@@ -190,27 +194,27 @@ Vue.component('c-richtext', {
 				}
 				return this._isInToolbar(domElem.parentNode);
 			},
-			
+
 			getChatPreview: function() {
-				return !this.value ? [''] :
-						DOMPurify.sanitize(this.value)
+				return !this.modelValue ? [''] :
+					DOMPurify.sanitize(this.modelValue)
 						.replace("<a ", "<a target='_blank' rel='nofollow noopener noreferrer' ")
 						.split(/<hr>|<hr \/>/);
 			},
 			checkMessage() {
-		      if (this.value == "" || this.value == "<br />" || this.value == "<div><br></div>") {
-		        this.styleWYSIWYG = "border: 2px solid;border-color: #C10015;border-radius:5px;";
-		        this.showWarning = true;
-		      } else {
-		        this.styleWYSIWYG = "border: 1px solid;border-color: #D1CDC8;border-radius:5px;";
-				this.showWarning = false;
-			}
+				if (this.modelValue == "" || this.modelValue == "<br />" || this.modelValue == "<div><br></div>") {
+					this.styleWYSIWYG = "border: 2px solid;border-color: #C10015;border-radius:5px;";
+					this.showWarning = true;
+				} else {
+					this.styleWYSIWYG = "border: 1px solid;border-color: #D1CDC8;border-radius:5px;";
+					this.showWarning = false;
+				}
 			},
-			
+
 			addCustomImage () {
-		     this.$refs.newImage.show();
-     		 this.imageUrl = null;
-		    },
+				this.$refs.newImage.show();
+				this.imageUrl = null;
+			},
 
 			addCustomLink () {
 				this.$refs.newLink.show();
@@ -224,17 +228,17 @@ Vue.component('c-richtext', {
 					document.querySelector('emoji-picker').addEventListener('emoji-click', event => this.handleEmoji(event.detail.unicode));
 				});
 			},
-		    
-		    
+
+
 			handleCustomImage () {
-			  var url = this.$refs.imageUrlRef.value;
-	 		  this.$refs.newImage.hide();
-			  
-		      const edit = this.$refs.editor_ref;
-		      edit.caret.restore();
-		      edit.runCmd('insertHTML', `<img class="imgClass" src="${url}"/>`);
-		      edit.focus();
-		    },
+				var url = this.$refs.imageUrlRef.value;
+				this.$refs.newImage.hide();
+
+				const edit = this.$refs.editor_ref;
+				edit.caret.restore();
+				edit.runCmd('insertHTML', `<img class="imgClass" src="${url}"/>`);
+				edit.focus();
+			},
 
 			handleCustomLink() {
 				const url = this.$refs.linkUrlRef.value;
@@ -258,5 +262,6 @@ Vue.component('c-richtext', {
 				edit.focus();
 			}
 		}
-		
+	});
+	event.detail.vuiAppInstance.component('c-richtext', vuiRichText);
 });

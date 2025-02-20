@@ -7,17 +7,78 @@
 <head>
     <title th:text="#{analytics.title}"></title>
 
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
-    <script
-            src="https://cdn.jsdelivr.net/npm/apexcharts@3.27.1/dist/apexcharts.min.js"></script>
-    <script
-            src="https://cdn.jsdelivr.net/npm/vue-apexcharts@1.6.1/dist/vue-apexcharts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+    <script th:src="@{/static/js/c-apexchart.js}"></script>
 
     <script th:src="@{/static/utils/moment.min.js}"></script>
 
     <script th:inline="javascript">
-        Vue.use(VueApexCharts);
-        Vue.component('apexchart', VueApexCharts);
+        window.addEventListener('vui-after-page-mounted', function () {
+            loadChatMessageStyle();
+
+            VUiExtensions.dataX.apexCharts.categories.options = {
+                chart: {
+                    type: 'pie',
+                },
+                labels: getCategoryLabels()
+            };
+
+            VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
+                if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
+                    && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
+                    VUiExtensions.dataX.disableTimeOption = true;
+
+                    const from = moment(VertigoUi.vueData.criteria.fromDate ,'DD/MM/YYYY');
+                    const to = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
+
+                    let days = to.diff(from, 'days') + 1;
+
+                    if (days < 1) {
+                        VertigoUi.vueData.criteria.fromDate = VertigoUi.vueData.criteria.toDate;
+                        days = 1;
+                    }
+
+                    if (isNaN(days) || days > 70) {
+                        VertigoUi.vueData.criteria.timeOption = 'YEAR';
+                    } else if (days > 30) {
+                        VertigoUi.vueData.criteria.timeOption = 'MONTH';
+                    } else if (days > 3) {
+                        VertigoUi.vueData.criteria.timeOption = 'WEEK';
+                    } else {
+                        VertigoUi.vueData.criteria.timeOption = 'DAY';
+                    }
+                } else {
+                    VUiExtensions.dataX.disableTimeOption = false;
+                }
+                VUiExtensions.dataX.loadingGraphs = true;
+                VUiPage.httpPostAjax('_updateStats', VUiPage.vueDataParams(['criteria']),  {
+                    onSuccess: function() {
+                        VUiExtensions.dataX.loadingGraphs = false;
+                    }
+                })
+            }, { deep: true })
+
+            VUiPage.$watch('vueData.conversationCriteria', (newValue, oldValue) => {
+                VUiPage.httpPostAjax('_filterConversation', VUiPage.vueDataParams(['conversationCriteria']));
+            }, { deep: true });
+
+            VUiPage.$watch('vueData.topIntentCriteria', (newValue, oldValue) => {
+                VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntents;
+                if (VertigoUi.vueData.topIntentCriteria.catIds !== null && VertigoUi.vueData.topIntentCriteria.catIds.length > 0) {
+                    const catLabels = VertigoUi.vueData.topicCategories.filter(topicCategory => VertigoUi.vueData.topIntentCriteria.catIds.includes(topicCategory.topCatId))
+                        .map(topicCategory => topicCategory.label);
+                    VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntentsFiltered.filter(topIntent => catLabels.includes(topIntent.catLabel));
+                }
+                if (VertigoUi.vueData.topIntentCriteria.labels !== null && VertigoUi.vueData.topIntentCriteria.labels.length > 0) {
+                    const labels = VertigoUi.vueData.topicLabels.filter(topicLabel => VertigoUi.vueData.topIntentCriteria.labels.includes(topicLabel.labelId))
+                        .map(topicLabel => topicLabel.label);
+
+                    VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntentsFiltered.filter(topIntent =>
+                        topIntent.labels != null && labels.some(label => topIntent.labels.includes(label)));
+                }
+            }, { deep: true });
+        });
+
         VUiExtensions.dataX.loadingGraphs = false;
 
         let timeFormatter = function(value) {
@@ -226,41 +287,6 @@
             return values;
         }
 
-        function percentageOfRating() {
-            return VertigoUi.vueData.totalOfConversations === 0 ? '-' :
-                Math.round((VUiExtensions.dataX.apexCharts.rating.series().reduce((a,b) => a + b, 0 ) /
-                VertigoUi.vueData.totalOfConversations) * 100);
-        }
-
-        function conversationsMean() {
-            let days;
-            if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
-                && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
-                const a = moment(VertigoUi.vueData.criteria.fromDate ,'DD/MM/YYYY');
-                const b = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
-                days = b.diff(a, 'days') + 1;
-            }
-            else if (VertigoUi.vueData.criteria.timeOption === 'WEEK') {
-                days = 7;
-            } else if (VertigoUi.vueData.criteria.timeOption === 'MONTH') {
-                days = 30;
-            } else if (VertigoUi.vueData.criteria.timeOption === 'YEAR') {
-                days = 365;
-            } else { // === 'DAY'
-                days = 1
-            }
-            return Math.round(VertigoUi.vueData.totalOfConversations / days);
-        }
-
-        function interactionPerConversationMean() {
-            return VertigoUi.vueData.totalOfConversations === 0 ? '-' : Math.round(VertigoUi.vueData.totalOfUserActions / VertigoUi.vueData.totalOfConversations);
-        }
-
-        function recognizedMessageRatio() {
-            let total = VertigoUi.vueData.totalOfRecognizedMessage + VertigoUi.vueData.totalOfUnrecognizedMessage;
-            return total === 0 ? '-' : Math.round((VertigoUi.vueData.totalOfRecognizedMessage / total) *100);
-        }
-
         function serieToApex(serieName, dataIn, options) {
             let ret = [];
             dataIn.timedDataSeries.forEach(e => {
@@ -317,38 +343,6 @@
         }
 
         VUiExtensions.dataX.popinDetailLabel = '';
-        function displayIntentDetail(intent) {
-            VUiExtensions.dataX.popinDetailLabel = getTopicTitleByTopicId(intent.topId);
-
-            VertigoUi.vueData.intentDetails = [];
-            VUiPage.componentStates.intentDetailList.loading = true;
-
-            let params = VUiPage.vueDataParams(['criteria']);
-            params.append('intentRasa', intent.code)
-            VUiPage.httpPostAjax('_intentDetails', params, {
-                    onSuccess: function() {
-                        VUiPage.componentStates.intentDetailList.loading = false;
-                    }
-                }
-            );
-
-            VUiPage.$refs.intentDetailsDialog.show();
-        }
-
-        function displayConversationDetail(sessionId) {
-
-            VertigoUi.vueData.conversationDetails = [];
-
-            let params = VUiPage.vueDataParams(['criteria']);
-            params.append('sessionId', sessionId)
-            VUiPage.httpPostAjax('_conversationDetails', params, {
-                    onSuccess: function() {
-                    }
-                }
-            );
-
-            VUiPage.$refs.conversationDetailsDialog.show();
-        }
 
         function closeDialog() {
             VUiPage.$refs.popupFromDate.hide();
@@ -361,16 +355,12 @@
 
         }
 
-        function sanitizeText(text) {
-            return DOMPurify.sanitize(text);
-        }
-        
         function limitFromInput(date) {
             if (VertigoUi.vueData.criteria.toDate == null || VertigoUi.vueData.criteria.toDate == '') return true;
-            
+
             const from = moment(date,'YYYY/MM/DD');
             const to = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
-            
+
             return from <= to;
         }
 
@@ -466,7 +456,7 @@
             <vu:date-edit object="criteria" field="fromDate" label="#{analytics.date.from}"
                           dense clearable @clear="vueData.criteria.fromDate=null"
                           class="q-pa-none" style="width:210px; background-color: white; margin-right: 10px"
-                          date_:options="limitFromInput"/> 
+                          date_:options="limitFromInput"/>
 
             <q-space></q-space>
 
@@ -554,9 +544,9 @@
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.session}"></q-card-section>
                 <q-card-section class="row justify-center items-center">
-                    <apexchart width="100%" height="250" type="bar"
+                    <c-apexchart width="100%" height="250" type="bar"
                                :options="dataX.apexCharts.chartSession.options"
-                               :series="dataX.apexCharts.chartSession.series()"></apexchart>
+                               :series="dataX.apexCharts.chartSession.series()"></c-apexchart>
                 </q-card-section>
                 <q-card-section class="row justify-end">
                     <div>
@@ -575,9 +565,9 @@
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.nlu}"></q-card-section>
                 <q-card-section class="row justify-center items-center">
-                    <apexchart width="100%" height="250" type="bar"
+                    <c-apexchart width="100%" height="250" type="bar"
                                :options="dataX.apexCharts.chartMessages.options"
-                               :series="dataX.apexCharts.chartMessages.series()"></apexchart>
+                               :series="dataX.apexCharts.chartMessages.series()"></c-apexchart>
                 </q-card-section>
                 <q-card-section class="row justify-end">
                     <div>
@@ -596,9 +586,9 @@
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.message}"></q-card-section>
                 <q-card-section class="row justify-center items-center">
-                    <apexchart width="100%" height="250" type="bar"
+                    <c-apexchart width="100%" height="250" type="bar"
                                :options="dataX.apexCharts.nluMessageChart.options"
-                               :series="dataX.apexCharts.nluMessageChart.series()"></apexchart>
+                               :series="dataX.apexCharts.nluMessageChart.series()"></c-apexchart>
                 </q-card-section>
                 <q-card-section class="row justify-end">
                     <div class="q-mr-md">
@@ -628,7 +618,7 @@
             <vu:include-data object="conversationDetails" field="isBotMessage" />
             <vu:include-data object="conversationStat" field="sessionId" />
             <vu:include-data object="conversationStat" field="ended" />
-            <vu:table componentId="conversationStat" list="conversationStat" 
+            <vu:table componentId="conversationStat" list="conversationStat"
                       th:title="#{analytics.conversations}"
                       tr_@click.native="displayConversationDetail(props.row.sessionId)" tr_style="cursor : pointer;"
                       sortBy="date" descending="true"
@@ -637,9 +627,11 @@
                     <vu:select-edit object="conversationCriteria" field="ratings"
                                     multiple
                                     list="ratingOptions" labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"
-                                    label="#{analytics.conversation.rating}" clearable style="width: 250px; margin-right: 10px"/>
+                                    label="#{analytics.conversation.rating}" clearable style="width: 250px; margin-right: 10px"
+                                    rowIndex="${null}"/>
 
-                    <vu:text-field-edit object="conversationCriteria" field="modelName" label="#{analytics.conversation.search}" clearable debounce="300" style="width:210px"/>
+                    <vu:text-field-edit object="conversationCriteria" field="modelName" label="#{analytics.conversation.search}" clearable debounce="300" style="width:210px"
+                                        rowIndex="${null}"/>
                     <q-icon name="search" class="q-field__marginal" ></q-icon>
                 </vu:slot>
 
@@ -674,9 +666,9 @@
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.rating}"></q-card-section>
                 <q-card-section class="row justify-center items-center">
-                    <apexchart width="100%" height="250"
+                    <c-apexchart width="100%" height="250"
                                :options="dataX.apexCharts.rating.options"
-                               :series="dataX.apexCharts.rating.series()"></apexchart>
+                               :series="dataX.apexCharts.rating.series()"></c-apexchart>
                 </q-card-section>
                <q-card-section class="row justify-end">
                     <div>
@@ -694,9 +686,9 @@
         <div class="col-xl-6 col-md-6 col-xs-12" >
             <q-card>
                 <q-card-section class="text-h6 bg-secondary" th:text="#{analytics.categories}"></q-card-section>
-                <apexchart width="100%" height="250"
+                <c-apexchart width="100%" height="250"
                            :options="dataX.apexCharts.categories.options"
-                           :series="dataX.apexCharts.categories.series()"></apexchart>
+                           :series="dataX.apexCharts.categories.series()"></c-apexchart>
             </q-card>
         </div>
         <div class="col-12">
@@ -713,11 +705,13 @@
                     <vu:select-edit object="topIntentCriteria" field="catIds"
                                     multiple
                                     list="topicCategories" labelField="label"
-                                    label="#{analytics.intent.category}" clearable style="width: 250px; margin-right: 10px"/>
+                                    label="#{analytics.intent.category}" clearable style="width: 250px; margin-right: 10px"
+                                    rowIndex="${null}"/>
                     <vu:select-edit object="topIntentCriteria" field="labels"
                                     multiple
                                     list="topicLabels" labelField="label"
-                                    label="#{analytics.intent.label}" clearable style="width: 250px; margin-right: 10px"/>
+                                    label="#{analytics.intent.label}" clearable style="width: 250px; margin-right: 10px"
+                                    rowIndex="${null}"/>
                     <q-icon name="search" class="q-field__marginal" ></q-icon>
 
                 </vu:slot>
@@ -787,7 +781,7 @@
                 <input v-for="id in vueData.selectTypeExportAnalyticList.teaCd" type="hidden" name="vContext[selectTypeExportAnalyticList][teaCd]" :value="id" />
 
                 <q-card-actions align="around">
-                    <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                    <input type="hidden" name="CTX" :value="vueData['CTX']">
                     <q-btn flat th:label="#{popup.export.cancel}" color="primary" v-close-popup ></q-btn>
                     <q-btn type="submit" th:title="#{popup.export.export}" th:label="#{popup.export.export}" th:aria-label="#{popup.export.export}" color="primary" v-close-popup></q-btn>
                 </q-card-actions>
@@ -798,10 +792,85 @@
 </section>
 <section layout:fragment="javascript-footer" >
     <script type="text/javascript">
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
+
+            conversationsMean: function() {
+                let days;
+                if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
+                    && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
+                    const a = moment(VertigoUi.vueData.criteria.fromDate ,'DD/MM/YYYY');
+                    const b = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
+                    days = b.diff(a, 'days') + 1;
+                }
+                else if (VertigoUi.vueData.criteria.timeOption === 'WEEK') {
+                    days = 7;
+                } else if (VertigoUi.vueData.criteria.timeOption === 'MONTH') {
+                    days = 30;
+                } else if (VertigoUi.vueData.criteria.timeOption === 'YEAR') {
+                    days = 365;
+                } else { // === 'DAY'
+                    days = 1
+                }
+                return Math.round(VertigoUi.vueData.totalOfConversations / days);
+            },
+
+            recognizedMessageRatio: function() {
+                let total = VertigoUi.vueData.totalOfRecognizedMessage + VertigoUi.vueData.totalOfUnrecognizedMessage;
+                return total === 0 ? '-' : Math.round((VertigoUi.vueData.totalOfRecognizedMessage / total) *100);
+            },
+
+            interactionPerConversationMean: function() {
+                return VertigoUi.vueData.totalOfConversations === 0 ? '-' : Math.round(VertigoUi.vueData.totalOfUserActions / VertigoUi.vueData.totalOfConversations);
+            },
+
+            percentageOfRating: function() {
+            return VertigoUi.vueData.totalOfConversations === 0 ? '-' :
+                Math.round((VUiExtensions.dataX.apexCharts.rating.series().reduce((a,b) => a + b, 0 ) /
+                    VertigoUi.vueData.totalOfConversations) * 100);
+        },
+
+            displayIntentDetail: function(intent) {
+                VUiExtensions.dataX.popinDetailLabel = getTopicTitleByTopicId(intent.topId);
+
+                VertigoUi.vueData.intentDetails = [];
+                VUiPage.componentStates.intentDetailList.loading = true;
+
+                let params = VUiPage.vueDataParams(['criteria']);
+                params.append('intentRasa', intent.code)
+                VUiPage.httpPostAjax('_intentDetails', params, {
+                        onSuccess: function () {
+                            VUiPage.componentStates.intentDetailList.loading = false;
+                        }
+                    }
+                );
+
+                VUiPage.$refs.intentDetailsDialog.show();
+            },
+
+            displayConversationDetail: function(sessionId) {
+                VertigoUi.vueData.conversationDetails = [];
+
+                let params = VUiPage.vueDataParams(['criteria']);
+                params.append('sessionId', sessionId)
+                VUiPage.httpPostAjax('_conversationDetails', params, {
+                        onSuccess: function() {
+                        }
+                    }
+                );
+
+                VUiPage.$refs.conversationDetailsDialog.show();
+            },
+
+            sanitizeText: function(text) {
+                return DOMPurify.sanitize(text);
+            }
+        }
+
         function orElse(value, orElse) {
             return value == null ? orElse : value;
         }
-        
+
         function loadChatMessageStyle() {
             const botMessageBackgroundColor = orElse(VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor, '#cdcdcd');
             const botMessageFontColor = orElse(VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor, '#000');
@@ -813,10 +882,10 @@
             const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
                 return fontFamily.fofCd === fofCd
             });
-            
+
             // Get the root element
             var r = document.querySelector(':root');
-            
+
             r.style.setProperty('--chat-message-bg-color', botMessageBackgroundColor);
             r.style.setProperty('--chat-message-font-color', botMessageFontColor);
 
@@ -825,71 +894,6 @@
 
             r.style.setProperty('--chat-message-font-family', fontFamily.label);
         }
-        
-        loadChatMessageStyle();
-    
-    
-        VUiExtensions.dataX.apexCharts.categories.options = {
-            chart: {
-                type: 'pie',
-            },
-            labels: getCategoryLabels()
-        }
-
-        VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
-            if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
-                && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
-                VUiExtensions.dataX.disableTimeOption = true;
-                
-                const from = moment(VertigoUi.vueData.criteria.fromDate ,'DD/MM/YYYY');
-                const to = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
-                
-                let days = to.diff(from, 'days') + 1;
-                
-                if (days < 1) {
-                    VertigoUi.vueData.criteria.fromDate = VertigoUi.vueData.criteria.toDate;
-                    days = 1;
-                }
-                
-                if (isNaN(days) || days > 70) {
-                    VertigoUi.vueData.criteria.timeOption = 'YEAR';
-                } else if (days > 30) {
-                    VertigoUi.vueData.criteria.timeOption = 'MONTH';
-                } else if (days > 3) {
-                    VertigoUi.vueData.criteria.timeOption = 'WEEK';
-                } else {
-                    VertigoUi.vueData.criteria.timeOption = 'DAY';
-                }
-            } else {
-                VUiExtensions.dataX.disableTimeOption = false;
-            }
-            VUiExtensions.dataX.loadingGraphs = true;
-            VUiPage.httpPostAjax('_updateStats', VUiPage.vueDataParams(['criteria']),  {
-                onSuccess: function() {
-                    VUiExtensions.dataX.loadingGraphs = false;
-                }
-            })
-        }, { deep: true })
-
-        VUiPage.$watch('vueData.conversationCriteria', (newValue, oldValue) => {
-            VUiPage.httpPostAjax('_filterConversation', VUiPage.vueDataParams(['conversationCriteria']));
-        }, { deep: true });
-
-        VUiPage.$watch('vueData.topIntentCriteria', (newValue, oldValue) => {
-            VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntents;
-            if (VertigoUi.vueData.topIntentCriteria.catIds !== null && VertigoUi.vueData.topIntentCriteria.catIds.length > 0) {
-                const catLabels = VertigoUi.vueData.topicCategories.filter(topicCategory => VertigoUi.vueData.topIntentCriteria.catIds.includes(topicCategory.topCatId))
-                    .map(topicCategory => topicCategory.label);
-                VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntentsFiltered.filter(topIntent => catLabels.includes(topIntent.catLabel));
-            }
-            if (VertigoUi.vueData.topIntentCriteria.labels !== null && VertigoUi.vueData.topIntentCriteria.labels.length > 0) {
-                const labels = VertigoUi.vueData.topicLabels.filter(topicLabel => VertigoUi.vueData.topIntentCriteria.labels.includes(topicLabel.labelId))
-                    .map(topicLabel => topicLabel.label);
-
-                VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntentsFiltered.filter(topIntent =>
-                    topIntent.labels != null && labels.some(label => topIntent.labels.includes(label)));
-            }
-        }, { deep: true });
     </script>
 </section>
 

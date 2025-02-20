@@ -1,16 +1,16 @@
 package io.vertigo.chatbot.commons.domain;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Resources du module io.vertigo.chatbot.commons.domain
  */
-public enum DtResources implements MessageKey {
+public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** Attachment.
-	/***********************************************************
+	 * Attachment.
+	 **********************************************************/
 	/**
 	 * Attachment id.
 	 */
@@ -41,8 +41,8 @@ public enum DtResources implements MessageKey {
 	fldAttachment$botId,
 
 	/***********************************************************
-	/** AttachmentExport.
-	/***********************************************************
+	 * AttachmentExport.
+	 **********************************************************/
 	/**
 	 * Attachment Id.
 	 */
@@ -73,8 +73,8 @@ public enum DtResources implements MessageKey {
 	fldAttachmentExport$type,
 
 	/***********************************************************
-	/** AttachmentFileInfo.
-	/***********************************************************
+	 * AttachmentFileInfo.
+	 **********************************************************/
 	/**
 	 * Id.
 	 */
@@ -101,8 +101,8 @@ public enum DtResources implements MessageKey {
 	fldAttachmentFileInfo$filePath,
 
 	/***********************************************************
-	/** AttachmentType.
-	/***********************************************************
+	 * AttachmentType.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -117,8 +117,8 @@ public enum DtResources implements MessageKey {
 	fldAttachmentType$labelFr,
 
 	/***********************************************************
-	/** BotExport.
-	/***********************************************************
+	 * BotExport.
+	 **********************************************************/
 	/**
 	 * chatbot.
 	 */
@@ -177,8 +177,8 @@ public enum DtResources implements MessageKey {
 	fldBotExport$mapContext,
 
 	/***********************************************************
-	/** Chatbot.
-	/***********************************************************
+	 * Chatbot.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -205,8 +205,8 @@ public enum DtResources implements MessageKey {
 	fldChatbot$filIdAvatar,
 
 	/***********************************************************
-	/** ChatbotCustomConfig.
-	/***********************************************************
+	 * ChatbotCustomConfig.
+	 **********************************************************/
 	/**
 	 * Context value id.
 	 */
@@ -281,8 +281,8 @@ public enum DtResources implements MessageKey {
 	fldChatbotCustomConfig$fofCd,
 
 	/***********************************************************
-	/** ChatbotCustomConfigExport.
-	/***********************************************************
+	 * ChatbotCustomConfigExport.
+	 **********************************************************/
 	/**
 	 * Bot email address.
 	 */
@@ -345,8 +345,8 @@ public enum DtResources implements MessageKey {
 	fldChatbotCustomConfigExport$documentaryResourceDisplay,
 
 	/***********************************************************
-	/** ChatbotNode.
-	/***********************************************************
+	 * ChatbotNode.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -385,8 +385,8 @@ public enum DtResources implements MessageKey {
 	fldChatbotNode$traId,
 
 	/***********************************************************
-	/** ConfluenceSetting.
-	/***********************************************************
+	 * ConfluenceSetting.
+	 **********************************************************/
 	/**
 	 * Confluence setting id.
 	 */
@@ -417,8 +417,8 @@ public enum DtResources implements MessageKey {
 	fldConfluenceSetting$nodId,
 
 	/***********************************************************
-	/** ConfluenceSettingExport.
-	/***********************************************************
+	 * ConfluenceSettingExport.
+	 **********************************************************/
 	/**
 	 * Knowledge base URL.
 	 */
@@ -441,8 +441,8 @@ public enum DtResources implements MessageKey {
 	fldConfluenceSettingExport$spaces,
 
 	/***********************************************************
-	/** ConfluenceSettingIhm.
-	/***********************************************************
+	 * ConfluenceSettingIhm.
+	 **********************************************************/
 	/**
 	 * Confluence setting id.
 	 */
@@ -477,8 +477,8 @@ public enum DtResources implements MessageKey {
 	fldConfluenceSettingIhm$spaces,
 
 	/***********************************************************
-	/** ConfluenceSettingSpace.
-	/***********************************************************
+	 * ConfluenceSettingSpace.
+	 **********************************************************/
 	/**
 	 * Confluence setting space id.
 	 */
@@ -493,8 +493,8 @@ public enum DtResources implements MessageKey {
 	fldConfluenceSettingSpace$confluencesettingId,
 
 	/***********************************************************
-	/** ContextPossibleValue.
-	/***********************************************************
+	 * ContextPossibleValue.
+	 **********************************************************/
 	/**
 	 * Context possible value id.
 	 */
@@ -517,8 +517,8 @@ public enum DtResources implements MessageKey {
 	fldContextPossibleValue$botId,
 
 	/***********************************************************
-	/** ContextValue.
-	/***********************************************************
+	 * ContextValue.
+	 **********************************************************/
 	/**
 	 * Context value id.
 	 */
@@ -537,8 +537,8 @@ public enum DtResources implements MessageKey {
 	fldContextValue$botId,
 
 	/***********************************************************
-	/** DocumentaryResourceExport.
-	/***********************************************************
+	 * DocumentaryResourceExport.
+	 **********************************************************/
 	/**
 	 * Title.
 	 */
@@ -561,8 +561,8 @@ public enum DtResources implements MessageKey {
 	fldDocumentaryResourceExport$fileName,
 
 	/***********************************************************
-	/** ExecutorConfiguration.
-	/***********************************************************
+	 * ExecutorConfiguration.
+	 **********************************************************/
 	/**
 	 * Bot ID.
 	 */
@@ -593,8 +593,8 @@ public enum DtResources implements MessageKey {
 	fldExecutorConfiguration$customConfig,
 
 	/***********************************************************
-	/** FontFamily.
-	/***********************************************************
+	 * FontFamily.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -609,8 +609,8 @@ public enum DtResources implements MessageKey {
 	fldFontFamily$labelFr,
 
 	/***********************************************************
-	/** JiraField.
-	/***********************************************************
+	 * JiraField.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -629,8 +629,8 @@ public enum DtResources implements MessageKey {
 	fldJiraField$labelFr,
 
 	/***********************************************************
-	/** JiraFieldSetting.
-	/***********************************************************
+	 * JiraFieldSetting.
+	 **********************************************************/
 	/**
 	 * Jira field setting id.
 	 */
@@ -653,8 +653,8 @@ public enum DtResources implements MessageKey {
 	fldJiraFieldSetting$jirFieldCd,
 
 	/***********************************************************
-	/** JiraFieldSettingExport.
-	/***********************************************************
+	 * JiraFieldSettingExport.
+	 **********************************************************/
 	/**
 	 * Jira field key.
 	 */
@@ -669,8 +669,8 @@ public enum DtResources implements MessageKey {
 	fldJiraFieldSettingExport$mandatory,
 
 	/***********************************************************
-	/** JiraSetting.
-	/***********************************************************
+	 * JiraSetting.
+	 **********************************************************/
 	/**
 	 * Jira setting id.
 	 */
@@ -705,8 +705,8 @@ public enum DtResources implements MessageKey {
 	fldJiraSetting$nodId,
 
 	/***********************************************************
-	/** JiraSettingExport.
-	/***********************************************************
+	 * JiraSettingExport.
+	 **********************************************************/
 	/**
 	 * Jira URL.
 	 */
@@ -729,8 +729,8 @@ public enum DtResources implements MessageKey {
 	fldJiraSettingExport$numberOfResults,
 
 	/***********************************************************
-	/** MediaFileInfo.
-	/***********************************************************
+	 * MediaFileInfo.
+	 **********************************************************/
 	/**
 	 * Id.
 	 */
@@ -761,8 +761,8 @@ public enum DtResources implements MessageKey {
 	fldMediaFileInfo$fileData,
 
 	/***********************************************************
-	/** QuestionAnswerExport.
-	/***********************************************************
+	 * QuestionAnswerExport.
+	 **********************************************************/
 	/**
 	 * Question.
 	 */
@@ -777,8 +777,8 @@ public enum DtResources implements MessageKey {
 	fldQuestionAnswerExport$catLabel,
 
 	/***********************************************************
-	/** RunnerHealthCheck.
-	/***********************************************************
+	 * RunnerHealthCheck.
+	 **********************************************************/
 	/**
 	 * Alive.
 	 */
@@ -789,8 +789,8 @@ public enum DtResources implements MessageKey {
 	fldRunnerHealthCheck$nlpReady,
 
 	/***********************************************************
-	/** RunnerInfo.
-	/***********************************************************
+	 * RunnerInfo.
+	 **********************************************************/
 	/**
 	 * Name.
 	 */
@@ -809,8 +809,8 @@ public enum DtResources implements MessageKey {
 	fldRunnerInfo$loadedModelVersion,
 
 	/***********************************************************
-	/** SavedTraining.
-	/***********************************************************
+	 * SavedTraining.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -845,8 +845,8 @@ public enum DtResources implements MessageKey {
 	fldSavedTraining$botId,
 
 	/***********************************************************
-	/** SavedTrainingCriteria.
-	/***********************************************************
+	 * SavedTrainingCriteria.
+	 **********************************************************/
 	/**
 	 * Search text.
 	 */
@@ -861,8 +861,8 @@ public enum DtResources implements MessageKey {
 	fldSavedTrainingCriteria$toDate,
 
 	/***********************************************************
-	/** TopicExport.
-	/***********************************************************
+	 * TopicExport.
+	 **********************************************************/
 	/**
 	 * Topic name.
 	 */
@@ -881,8 +881,8 @@ public enum DtResources implements MessageKey {
 	fldTopicExport$unreachable,
 
 	/***********************************************************
-	/** TrainerInfo.
-	/***********************************************************
+	 * TrainerInfo.
+	 **********************************************************/
 	/**
 	 * Training id.
 	 */
@@ -921,8 +921,8 @@ public enum DtResources implements MessageKey {
 	fldTrainerInfo$duration,
 
 	/***********************************************************
-	/** Training.
-	/***********************************************************
+	 * Training.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -973,8 +973,8 @@ public enum DtResources implements MessageKey {
 	fldTraining$strCd,
 
 	/***********************************************************
-	/** TrainingStatus.
-	/***********************************************************
+	 * TrainingStatus.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -989,8 +989,8 @@ public enum DtResources implements MessageKey {
 	fldTrainingStatus$labelFr,
 
 	/***********************************************************
-	/** UnknownSentenceDetail.
-	/***********************************************************
+	 * UnknownSentenceDetail.
+	 **********************************************************/
 	/**
 	 * Unknown sentence id.
 	 */
@@ -1017,8 +1017,8 @@ public enum DtResources implements MessageKey {
 	fldUnknownSentenceDetail$botId,
 
 	/***********************************************************
-	/** UnknownSentenceStatus.
-	/***********************************************************
+	 * UnknownSentenceStatus.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -1033,8 +1033,8 @@ public enum DtResources implements MessageKey {
 	fldUnknownSentenceStatus$labelFr,
 
 	/***********************************************************
-	/** UnknownSentenceToUpdateIhm.
-	/***********************************************************
+	 * UnknownSentenceToUpdateIhm.
+	 **********************************************************/
 	/**
 	 * Unknown sentence Id.
 	 */
@@ -1045,8 +1045,8 @@ public enum DtResources implements MessageKey {
 	fldUnknownSentenceToUpdateIhm$text,
 
 	/***********************************************************
-	/** WelcomeTour.
-	/***********************************************************
+	 * WelcomeTour.
+	 **********************************************************/
 	/**
 	 * Welcome tour id.
 	 */
@@ -1069,8 +1069,8 @@ public enum DtResources implements MessageKey {
 	fldWelcomeTour$botId,
 
 	/***********************************************************
-	/** WelcomeTourExport.
-	/***********************************************************
+	 * WelcomeTourExport.
+	 **********************************************************/
 	/**
 	 * Label.
 	 */
@@ -1085,8 +1085,8 @@ public enum DtResources implements MessageKey {
 	fldWelcomeTourExport$config,
 
 	/***********************************************************
-	/** WelcomeTourStep.
-	/***********************************************************
+	 * WelcomeTourStep.
+	 **********************************************************/
 	/**
 	 * Welcome tour step id.
 	 */

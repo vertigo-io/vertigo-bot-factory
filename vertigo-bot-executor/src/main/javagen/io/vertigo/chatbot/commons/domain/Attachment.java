@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -21,7 +21,7 @@ public final class Attachment implements Entity {
 	private String type;
 	private Long length;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AAttachmentAttachmentType",
 			fkFieldName = "attTypeCd",
 			primaryDtDefinitionName = "DtAttachmentType",
@@ -36,7 +36,7 @@ public final class Attachment implements Entity {
 			foreignMultiplicity = "0..*")
 	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentType, io.vertigo.chatbot.commons.domain.AttachmentTypeEnum> attTypeCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.AttachmentType.class, "AttachmentType", io.vertigo.chatbot.commons.domain.AttachmentTypeEnum.class);
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AAttachmentAttachmentFileInfo",
 			fkFieldName = "attFiId",
 			primaryDtDefinitionName = "DtAttachmentFileInfo",
@@ -51,7 +51,7 @@ public final class Attachment implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentFileInfo> attFiIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.AttachmentFileInfo.class, "AttachmentFileInfo");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AAttachmentChatbot",
 			fkFieldName = "botId",
 			primaryDtDefinitionName = "DtChatbot",
@@ -153,7 +153,7 @@ public final class Attachment implements Entity {
 	 * Récupère la valeur de la propriété 'Attachment type'.
 	 * @return String attTypeCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Attachment type", fkDefinition = "DtAttachmentType", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyCode", label = "Attachment type", fkDefinition = "DtAttachmentType", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getAttTypeCd() {
 		return (String) attTypeCdAccessor.getId();
 	}
@@ -172,7 +172,7 @@ public final class Attachment implements Entity {
 	 * Récupère la valeur de la propriété 'AttachmentFileInfo'.
 	 * @return Long attFiId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "AttachmentFileInfo", fkDefinition = "DtAttachmentFileInfo", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "AttachmentFileInfo", fkDefinition = "DtAttachmentFileInfo", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getAttFiId() {
 		return (Long) attFiIdAccessor.getId();
 	}
@@ -191,7 +191,7 @@ public final class Attachment implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -232,6 +232,6 @@ public final class Attachment implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

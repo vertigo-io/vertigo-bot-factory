@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.designer.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -19,7 +19,7 @@ public final class ContextEnvironmentValue implements Entity {
 	private Long cenvalId;
 	private String value;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AContextEnvironmentValueContext",
 			fkFieldName = "cvaId",
 			primaryDtDefinitionName = "DtContextValue",
@@ -34,7 +34,7 @@ public final class ContextEnvironmentValue implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> cvaIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.ContextValue.class, "ContextValue");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AContextEnvironmentValue",
 			fkFieldName = "cenvId",
 			primaryDtDefinitionName = "DtContextEnvironment",
@@ -49,7 +49,7 @@ public final class ContextEnvironmentValue implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.designer.domain.ContextEnvironment> cenvIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.designer.domain.ContextEnvironment.class, "ContextEnvironment");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AContextEnvironmentValueTypeOperator",
 			fkFieldName = "tyopCd",
 			primaryDtDefinitionName = "DtTypeOperator",
@@ -113,7 +113,7 @@ public final class ContextEnvironmentValue implements Entity {
 	 * Récupère la valeur de la propriété 'Context'.
 	 * @return Long cvaId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Context", fkDefinition = "DtContextValue", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Context", fkDefinition = "DtContextValue", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getCvaId() {
 		return (Long) cvaIdAccessor.getId();
 	}
@@ -132,7 +132,7 @@ public final class ContextEnvironmentValue implements Entity {
 	 * Récupère la valeur de la propriété 'Environment'.
 	 * @return Long cenvId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Environment", fkDefinition = "DtContextEnvironment", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Environment", fkDefinition = "DtContextEnvironment", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getCenvId() {
 		return (Long) cenvIdAccessor.getId();
 	}
@@ -151,7 +151,7 @@ public final class ContextEnvironmentValue implements Entity {
 	 * Récupère la valeur de la propriété 'Value operator'.
 	 * @return String tyopCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Value operator", fkDefinition = "DtTypeOperator", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyCode", label = "Value operator", fkDefinition = "DtTypeOperator", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getTyopCd() {
 		return (String) tyopCdAccessor.getId();
 	}
@@ -192,6 +192,6 @@ public final class ContextEnvironmentValue implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.designer.analytics.multilingual;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum AnalyticsMultilingualResources implements MessageKey {
+public enum AnalyticsMultilingualResources implements LocaleMessageKey {
 
 	DELETED_BOT,
 	SESSIONS_FILENAME,

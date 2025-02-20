@@ -44,7 +44,7 @@ services:
 
 
   analytica:
-    image: vertigoio/vertigo-analytics-server:0.7
+    image: vertigoio/vertigo-analytics-server:0.12.0
     environment:
       INFLUXDB_URL: http://influxdb:8086
       INFLUXDB_ORG: chatbot

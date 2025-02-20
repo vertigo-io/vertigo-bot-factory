@@ -50,13 +50,14 @@ public final class UtterTextDAO extends DAO<UtterText, java.lang.Long> implement
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkExportSmallTalkRelativeUtter",
-			request = "select \n" + 
- "             	*\n" + 
- " 			from utter_text utt\n" + 
- " 			where utt.smt_id in (#stIds.rownum#)",
+			request = """
+			select 
+            	*
+			from utter_text utt
+			where utt.smt_id in (#stIds.rownum#)""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtUtterText", name = "utterTexts")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.UtterText> exportSmallTalkRelativeUtter(@io.vertigo.datamodel.task.proxy.TaskInput(name = "stIds", smartType = "STyNumber") final java.util.List<Long> stIds) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.topic.UtterText> exportSmallTalkRelativeUtter(@io.vertigo.datamodel.task.proxy.TaskInput(name = "stIds", smartType = "STyNumber") final java.util.List<Long> stIds) {
 		final Task task = createTaskBuilder("TkExportSmallTalkRelativeUtter")
 				.addValue("stIds", stIds)
 				.build();
@@ -72,14 +73,15 @@ public final class UtterTextDAO extends DAO<UtterText, java.lang.Long> implement
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetBasicUtterTextByTopId",
-			request = "SELECT 	utt.*\n" + 
- " 			from utter_text utt \n" + 
- " 			join small_talk smt on smt.smt_id = utt.smt_id\n" + 
- " 			where smt.top_id = #topId#\n" + 
- " 			LIMIT 1",
+			request = """
+			SELECT 	utt.*
+			from utter_text utt 
+			join small_talk smt on smt.smt_id = utt.smt_id
+			where smt.top_id = #topId#
+			LIMIT 1""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtUtterText", name = "utterTexts")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.UtterText> getBasicUtterTextByTopId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.topic.UtterText> getBasicUtterTextByTopId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
 		final Task task = createTaskBuilder("TkGetBasicUtterTextByTopId")
 				.addValue("topId", topId)
 				.build();

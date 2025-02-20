@@ -20,7 +20,7 @@
 	<Parameter name="MAIL_DEV_REPLACE_EMAIL_TO" value="cedric.marechal@kleegroup.com" override="false"/>
 	<Parameter name="KEYCLOAK_URL" value="http://localhost:8200/realms/chatbot" override="false"/>
 	<Parameter name="KEYCLOAK_CLIENT_NAME" value="chatbot" override="false"/>
-	<Parameter name="VERSION" value="1.3.2" override="false"/>
+	<Parameter name="VERSION" value="3.0.2" override="false"/>
 	<Parameter name="FILE_STORE_PATH" value="C:\designer/attachments/" override="false"/>
 	<Parameter name="ENCRYPTION_PASSWORD" value="ChatbotKlee2022!" override="false"/>
 	

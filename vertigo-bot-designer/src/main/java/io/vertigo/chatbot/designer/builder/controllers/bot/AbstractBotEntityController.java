@@ -1,6 +1,6 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 

@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.commons.domain.topic;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -19,7 +19,7 @@ public final class SmallTalk implements Entity {
 	private Long smtId;
 	private Boolean isEnd;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ASmallTalkTopic",
 			fkFieldName = "topId",
 			primaryDtDefinitionName = "DtTopic",
@@ -34,7 +34,7 @@ public final class SmallTalk implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.Topic> topIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.Topic.class, "Topic");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ASmallTalkResponseType",
 			fkFieldName = "rtyId",
 			primaryDtDefinitionName = "DtResponseType",
@@ -98,7 +98,7 @@ public final class SmallTalk implements Entity {
 	 * Récupère la valeur de la propriété 'Topic'.
 	 * @return Long topId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Topic", fkDefinition = "DtTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Topic", fkDefinition = "DtTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getTopId() {
 		return (Long) topIdAccessor.getId();
 	}
@@ -117,7 +117,7 @@ public final class SmallTalk implements Entity {
 	 * Récupère la valeur de la propriété 'Response type'.
 	 * @return String rtyId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Response type", fkDefinition = "DtResponseType", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyCode", label = "Response type", fkDefinition = "DtResponseType", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getRtyId() {
 		return (String) rtyIdAccessor.getId();
 	}
@@ -150,6 +150,6 @@ public final class SmallTalk implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

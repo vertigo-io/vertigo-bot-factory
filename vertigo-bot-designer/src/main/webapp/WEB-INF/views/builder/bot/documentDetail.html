@@ -6,13 +6,35 @@
 >
 <head>
     <title th:text="#{documentaryResource.title}"></title>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <script th:src="@{/static/js/c-richtext.js}"></script>
     <script th:src="@{/static/js/c-emojipicker.js}"></script>
     <script th:inline="javascript">
 
         VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
+
+            onStart: function() {
+                VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+            },
+
+            isImage: function(type) {
+                return type.includes('image');
+            },
+
+            onContextChange: function(cvaId) {
+                this.filterContextPossibleValues(cvaId);
+                VertigoUi.vueData.newDocumentaryResourceContext.cpvId = null;
+            },
+
+            filterContextPossibleValues: function(cvaId) {
+                if (cvaId) {
+                    VertigoUi.vueData.filteredContextPossibleValueList = VertigoUi.vueData.contextPossibleValueList.filter(contextPossibleValue => contextPossibleValue.cvaId === cvaId);
+                }
+            }
+        }
 
         function onRejected (rejectedEntries) {
             let message = VertigoUi.vueData.locale === 'fr_FR' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
@@ -23,34 +45,15 @@
             VUiExtensions.dataX.attachmentError = {'show': true, 'message': message};
         }
 
-        function onStart() {
-            VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
-        }
-
-        function isImage(type) {
-            return type.includes('image');
-        }
-
-        function filterContextPossibleValues(cvaId) {
-            if (cvaId) {
-                VertigoUi.vueData.filteredContextPossibleValueList = VertigoUi.vueData.contextPossibleValueList.filter(contextPossibleValue => contextPossibleValue.cvaId === cvaId);
-            }
-        }
-
-        function onContextChange(cvaId) {
-            filterContextPossibleValues(cvaId);
-            VertigoUi.vueData.newDocumentaryResourceContext.cpvId = null;
-        }
-
     </script>
 </head>
 <body>
 <section layout:fragment="content-actions">
-    <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/document/(id=${model.bot.botId})} + ${model.documentaryResource.dreId}" ariaLabel="Cancel" icon="fas fa-ban"
+   <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/document/(id=${model.bot.botId})} + ${model.documentaryResource.dreId}" title="Cancel" icon="fas fa-ban"
                     class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
-    <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+    <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" title="Edit" icon="edit"
                       class="on-left" :round size="md" color="primary" />
-    <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" @click="componentStates.showDeleteDocumentaryResourcePopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
+    <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" @click="componentStates.showDeleteDocumentaryResourcePopup.shown = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
            class="on-left" round size="md" color="red" ></q-btn>
 </section>
 
@@ -68,14 +71,13 @@
     <div>
         <vu:include-data-primitive key="locale"/>
         <vu:include-data object="documentaryResource" field="dreTypeCd" modifiable="true"/>
-        <vu:include-data object="documentaryResource" field="title" modifiable="true"/>
         <vu:include-data object="documentaryResource" field="url" modifiable="true"/>
-        <vu:include-data object="documentaryResource" field="*" modifiable="true"/>
-        <vu:include-data object="documentaryResourceContextIhmList" field="*" modifiable="true"/>
-        <vu:include-data object="documentaryResourceTypeList" field="*" />
-        <vu:include-data object="filteredContextPossibleValueList" field="*" modifiable="true"/>
-        <vu:include-data object="contextPossibleValueList" field="*" modifiable="true"/>
-        <vu:include-data object="contextValueList" field="*" modifiable="true"/>
+        <vu:include-data object="documentaryResource" field="*"/>
+        <vu:include-data object="documentaryResourceContextIhmList" field="*"/>
+        <vu:include-data object="documentaryResourceTypeList" field="*"/>
+        <vu:include-data object="filteredContextPossibleValueList" field="*"/>
+        <vu:include-data object="contextPossibleValueList" field="*"/>
+        <vu:include-data object="contextValueList" field="*"/>
         <vu:include-data object="newDocumentaryResourceContext" field="drcId" modifiable="true"/>
         <vu:include-data object="newDocumentaryResourceContext" field="cvaId" modifiable="true"/>
         <vu:include-data object="newDocumentaryResourceContext" field="cpvId" modifiable="true"/>
@@ -114,7 +116,7 @@
                        @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
         <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
     </vu:block>
-    <div v-if="vueData.documentaryResource.dreId != null" class="text-h6 text-weight-bold" style="display: flex; align-items: center; margin-top: 2rem;">
+    <div th:v-if="vueData.documentaryResource.dreId != null" class="text-h6 text-weight-bold" style="display: flex; align-items: center; margin-top: 2rem;">
         <span class="text-primary" style="flex-grow: 2">[[#{documentaryResource.context.table.title}]]</span>
         <q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}"
                color="primary" round icon="add" th:aria-label="#{action.add}" th:title="#{action.add}"
@@ -125,7 +127,7 @@
                $refs.newContextDialog.show()">
         </q-btn>
     </div>
-    <vu:table v-if="vueData.documentaryResource.dreId != null" list="documentaryResourceContextIhmList" componentId="contextTable">
+    <vu:table th:v-if="vueData.documentaryResource.dreId != null" list="documentaryResourceContextIhmList" componentId="contextTable">
         <vu:slot name="actions_slot" th:if="${model.userAuthorizations[AtzChatbot$botContributor]}">
             <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.edit}" th:title="#{action.edit}"
                    @click="vueData.newDocumentaryResourceContext.drcId = props.row.drcId;
@@ -135,7 +137,7 @@
                         filterContextPossibleValues(props.row.cvaId);
                         $refs.newContextDialog.show()"></q-btn>
             <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
-                   @click="componentStates.drcId = props.row.drcId; componentStates.showPopupDeleteDocumentaryResourceContext = true"></q-btn>
+                   @click="componentStates.drcId = props.row.drcId; componentStates.showPopupDeleteDocumentaryResourceContext.shown = true"></q-btn>
         </vu:slot>
         <vu:column field="cvaLabel"/>
         <vu:column field="cpvValue"/>
@@ -158,7 +160,7 @@
                               map-options
                               emit-value
                               style="flex:1; margin-right:4px"
-                              @input="onContextChange">
+                              @update:model-value="onContextChange">
                     </q-select>
                     <q-select
                             v-if="vueData.newDocumentaryResourceContext.cvaId != null && vueData.filteredContextPossibleValueList.length > 0"
@@ -173,7 +175,7 @@
                     </q-select>
             </q-card-section>
             <q-card-actions align="around">
-                <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                <input type="hidden" name="CTX" :value="vueData['CTX']">
                 <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
                 <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
                        @click="httpPostAjax('_saveDocumentaryResourceContext', vueDataParams(['newDocumentaryResourceContext']));"

@@ -38,9 +38,9 @@ import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.util.StringUtil;
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DataObject;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -295,7 +295,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
                 topicServices.saveBotTopic(chatbot, topic, scriptIntention.getScript());
             }
         } else {
-            DtObject topicTypeObject = scriptIntention;
+            DataObject topicTypeObject = scriptIntention;
             if ("true".equals(unreachable)) {
                 topic.setKtoCd(KindTopicEnum.UNREACHABLE.name());
             } else {
@@ -319,7 +319,7 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
     public static final class TopicCategoryNotEmptyValidator extends AbstractChatbotDtObjectValidator<Topic> {
 
         @Override
-        protected List<DtFieldName<Topic>> getFieldsToNullCheck() {
+        protected List<DataFieldName<Topic>> getFieldsToNullCheck() {
             return List.of(TopicFields.topCatId);
         }
     }

@@ -47,17 +47,18 @@ public final class ExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkExportRelativeTrainingSentence",
-			request = "select   \n" + 
- "              	nts.nts_id,  \n" + 
- "              	nts.text,  \n" + 
- "              	top.top_id\n" + 
- "  			from nlu_training_sentence nts  \n" + 
- "  			join topic top on (top.top_id = nts.top_id)  \n" + 
- "  			where top.bot_id = #botId#  \n" + 
- "  			and top.is_enabled = true",
+			request = """
+			select   
+             	nts.nts_id,  
+             	nts.text,  
+             	top.top_id
+ 			from nlu_training_sentence nts  
+ 			join topic top on (top.top_id = nts.top_id)  
+ 			where top.bot_id = #botId#  
+ 			and top.is_enabled = true""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtNluTrainingExport", name = "tpcs")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.NluTrainingExport> exportRelativeTrainingSentence(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.topic.NluTrainingExport> exportRelativeTrainingSentence(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkExportRelativeTrainingSentence")
 				.addValue("botId", botId)
 				.build();
@@ -73,21 +74,22 @@ public final class ExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkExportResponseButtonByBotId",
-			request = "select   \n" + 
- "              	top.top_id,\n" + 
- "              	top.code as top_code,\n" + 
- "              	top_response.code as top_code_response,  \n" + 
- "              	rbu.text  \n" + 
- "  			from response_button rbu\n" + 
- "  			join small_talk smt on (smt.smt_id = rbu.smt_id)  \n" + 
- "  			join topic top on (top.top_id = smt.top_id)\n" + 
- "  			join topic top_response on (top_response.top_id = rbu.top_id_response)  \n" + 
- "  			where top.bot_id = #botId#  \n" + 
- "  			and top.is_enabled = true\n" + 
- "  			order by rbu.btn_id asc",
+			request = """
+			select   
+             	top.top_id,
+             	top.code as top_code,
+             	top_response.code as top_code_response,  
+             	rbu.text  
+ 			from response_button rbu
+ 			join small_talk smt on (smt.smt_id = rbu.smt_id)  
+ 			join topic top on (top.top_id = smt.top_id)
+ 			join topic top_response on (top_response.top_id = rbu.top_id_response)  
+ 			where top.bot_id = #botId#  
+ 			and top.is_enabled = true
+ 			order by rbu.btn_id asc""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtResponseButtonExport", name = "rbes")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonExport> exportResponseButtonByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonExport> exportResponseButtonByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkExportResponseButtonByBotId")
 				.addValue("botId", botId)
 				.build();
@@ -103,21 +105,22 @@ public final class ExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkExportResponseButtonUrlByBotId",
-			request = "select\n" + 
- "              	top.top_id,\n" + 
- "              	top.code as top_code,\n" + 
- "              	rbu.text,\n" + 
- "              	rbu.url,\n" + 
- "              	rbu.new_tab\n" + 
- "  			from response_button_url rbu\n" + 
- "  			join small_talk smt on (smt.smt_id = rbu.smt_id)\n" + 
- "  			join topic top on (top.top_id = smt.top_id)\n" + 
- "  			where top.bot_id = #botId#\n" + 
- "  			and top.is_enabled = true\n" + 
- "  			order by rbu.btn_id asc",
+			request = """
+			select
+             	top.top_id,
+             	top.code as top_code,
+             	rbu.text,
+             	rbu.url,
+             	rbu.new_tab
+ 			from response_button_url rbu
+ 			join small_talk smt on (smt.smt_id = rbu.smt_id)
+ 			join topic top on (top.top_id = smt.top_id)
+ 			where top.bot_id = #botId#
+ 			and top.is_enabled = true
+ 			order by rbu.btn_id asc""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtResponseButtonUrlExport", name = "rbes")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonUrlExport> exportResponseButtonUrlByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ResponseButtonUrlExport> exportResponseButtonUrlByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkExportResponseButtonUrlByBotId")
 				.addValue("botId", botId)
 				.build();
@@ -133,22 +136,23 @@ public final class ExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkExportUtterTextByBotId",
-			request = "select   \n" + 
- "              	top.top_id,  \n" + 
- "              	STRING_AGG (ut.text, '|') as utter_texts,  \n" + 
- "              	rty.rty_id as response_type, \n" + 
- "              	coalesce (smt.is_end, false) as is_end,\n" + 
- "              	top.kto_cd\n" + 
- "  			from utter_text ut\n" + 
- "  			join small_talk smt on (smt.smt_id = ut.smt_id)  \n" + 
- "  			join response_type rty on (rty.rty_id = smt.rty_id)\n" + 
- "  			join topic top on (top.top_id = smt.top_id)  \n" + 
- "  			where top.bot_id = #botId# \n" + 
- "  			and top.is_enabled = true\n" + 
- "  			group by top.top_id, rty.rty_id, smt.is_end",
+			request = """
+			select   
+             	top.top_id,  
+             	STRING_AGG (ut.text, '|') as utter_texts,  
+             	rty.rty_id as response_type, 
+             	coalesce (smt.is_end, false) as is_end,
+             	top.kto_cd
+ 			from utter_text ut
+ 			join small_talk smt on (smt.smt_id = ut.smt_id)  
+ 			join response_type rty on (rty.rty_id = smt.rty_id)
+ 			join topic top on (top.top_id = smt.top_id)  
+ 			where top.bot_id = #botId# 
+ 			and top.is_enabled = true
+ 			group by top.top_id, rty.rty_id, smt.is_end""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtUtterTextExport", name = "rbes")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.UtterTextExport> exportUtterTextByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.UtterTextExport> exportUtterTextByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkExportUtterTextByBotId")
 				.addValue("botId", botId)
 				.build();
@@ -164,15 +168,16 @@ public final class ExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetAllActiveQuestionAnswerExportByBotId",
-			request = "SELECT  qa.question,\n" + 
- " 			        qa.answer,\n" + 
- "                     qac.label as cat_label\n" + 
- " 			from question_answer qa\n" + 
- "             join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)\n" + 
- " 			where qa.bot_id = #botId# and qa.is_enabled = true",
+			request = """
+			SELECT  qa.question,
+			        qa.answer,
+                    qac.label as cat_label
+			from question_answer qa
+            join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)
+			where qa.bot_id = #botId# and qa.is_enabled = true""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtQuestionAnswerExport", name = "questionAnswerExport")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.QuestionAnswerExport> getAllActiveQuestionAnswerExportByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.QuestionAnswerExport> getAllActiveQuestionAnswerExportByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetAllActiveQuestionAnswerExportByBotId")
 				.addValue("botId", botId)
 				.build();
@@ -188,16 +193,17 @@ public final class ExportPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetScriptIntentionExportByBotId",
-			request = "select   \n" + 
- "              	top.top_id,  \n" + 
- "              	sci.script as bt\n" + 
- "  			from topic top\n" + 
- "  			join script_intention sci on (sci.top_id = top.top_id)  \n" + 
- "  			where top.bot_id = #botId# \n" + 
- "  			and top.is_enabled = true",
+			request = """
+			select   
+             	top.top_id,  
+             	sci.script as bt
+ 			from topic top
+ 			join script_intention sci on (sci.top_id = top.top_id)  
+ 			where top.bot_id = #botId# 
+ 			and top.is_enabled = true""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtScriptIntentionExport", name = "rbes")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ScriptIntentionExport> getScriptIntentionExportByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.designer.domain.topic.export.ScriptIntentionExport> getScriptIntentionExportByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetScriptIntentionExportByBotId")
 				.addValue("botId", botId)
 				.build();

@@ -32,7 +32,7 @@
 						</div>
 					</div>
 					<div class="q-pa-md">
-						<q-btn-dropdown v-if="VertigoUi.vueData.locale" color="primary" icon="language" th:label="#{parent.language}">
+						<q-btn-dropdown v-if="vueData.locale" color="primary" icon="language" th:label="#{parent.language}">
 							<q-list>
 								<!-- one item by language -->
 								<q-item clickable v-close-popup @click="postChangeLocal('fr_FR')">

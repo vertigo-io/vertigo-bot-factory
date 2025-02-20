@@ -13,11 +13,11 @@ import io.vertigo.chatbot.designer.builder.topicCategory.TopicCategoryPAO;
 import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.quarto.exporter.ExporterManager;
@@ -104,7 +104,7 @@ public class TopicCategoryServices implements Component {
     public TopicCategory initializeBasicCategory(final Chatbot chatbot) {
         final TopicCategory topicCategory = new TopicCategory();
         topicCategory.setIsEnabled(true);
-        topicCategory.setLabel(MessageText.of(TopicsMultilingualResources.DEFAULT_TOPICS).getDisplay());
+        topicCategory.setLabel(LocaleMessageText.of(TopicsMultilingualResources.DEFAULT_TOPICS).getDisplay());
         topicCategory.setCode(DEFAULT_TOPIC_CAT_CODE);
         topicCategory.setIsTechnical(true);
         topicCategory.setLevel(1L);
@@ -121,7 +121,7 @@ public class TopicCategoryServices implements Component {
             topicCategoryExport.setIsTechnical(topicCategory.getIsTechnical() ? "TRUE" : "FALSE");
             return topicCategoryExport;
         }).collect(VCollectors.toDtList(TopicCategoryExport.class));
-        final String exportName = MessageText.of(CategoriesMultilingualResources.EXPORT_CATEGORIES_FILENAME, bot.getName()).getDisplay();
+        final String exportName = LocaleMessageText.of(CategoriesMultilingualResources.EXPORT_CATEGORIES_FILENAME, bot.getName()).getDisplay();
         final Export export = new ExportBuilder(ExportFormat.CSV, exportName)
                 .beginSheet(topicCategoryExports, null)
                 .addField(DtDefinitions.TopicCategoryExportFields.code)

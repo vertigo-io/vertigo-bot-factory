@@ -1,16 +1,16 @@
 package io.vertigo.chatbot.designer.domain.commons;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Resources du module io.vertigo.chatbot.designer.domain.commons
  */
-public enum DtResources implements MessageKey {
+public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** Groups.
-	/***********************************************************
+	 * Groups.
+	 **********************************************************/
 	/**
 	 * Id.
 	 */
@@ -21,8 +21,8 @@ public enum DtResources implements MessageKey {
 	fldGroups$name,
 
 	/***********************************************************
-	/** Person.
-	/***********************************************************
+	 * Person.
+	 **********************************************************/
 	/**
 	 * Id.
 	 */
@@ -49,8 +49,8 @@ public enum DtResources implements MessageKey {
 	fldPerson$rolCd,
 
 	/***********************************************************
-	/** PersonRole.
-	/***********************************************************
+	 * PersonRole.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -65,8 +65,8 @@ public enum DtResources implements MessageKey {
 	fldPersonRole$sortOrder,
 
 	/***********************************************************
-	/** SelectionOption.
-	/***********************************************************
+	 * SelectionOption.
+	 **********************************************************/
 	/**
 	 * Label.
 	 */

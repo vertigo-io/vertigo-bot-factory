@@ -48,24 +48,25 @@ public final class QuestionAnswerContextPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetAllQuestionAnswerContextIhmByQaId",
-			request = "SELECT 	qac.qac_id,\n" + 
- " 			        qac.qa_id,\n" + 
- " 					cva.cva_id,\n" + 
- " 					cpv.cpv_id,\n" + 
- " 					cva.label as cva_label,\n" + 
- " 					CASE #locale#\n" + 
- " 						WHEN 'fr_FR' THEN tyop.label_fr || ' : ' || cpv.value\n" + 
- " 						ELSE tyop.label || ' : ' || cpv.value\n" + 
- " 					END as cpv_value\n" + 
- " 			from question_answer_context qac\n" + 
- " 			join context_value cva on (cva.cva_id = qac.cva_id)\n" + 
- " 			left join context_possible_value cpv on (cpv.cpv_id = qac.cpv_id)\n" + 
- " 			left join type_operator tyop on (tyop.tyop_cd = cpv.tyop_cd)\n" + 
- " 			where qac.qa_id = #qaId#\n" + 
- " 			order by cva.label",
+			request = """
+			SELECT 	qac.qac_id,
+			        qac.qa_id,
+					cva.cva_id,
+					cpv.cpv_id,
+					cva.label as cva_label,
+					CASE #locale#
+						WHEN 'fr_FR' THEN tyop.label_fr || ' : ' || cpv.value
+						ELSE tyop.label || ' : ' || cpv.value
+					END as cpv_value
+			from question_answer_context qac
+			join context_value cva on (cva.cva_id = qac.cva_id)
+			left join context_possible_value cpv on (cpv.cpv_id = qac.cpv_id)
+			left join type_operator tyop on (tyop.tyop_cd = cpv.tyop_cd)
+			where qac.qa_id = #qaId#
+			order by cva.label""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtQuestionAnswerContextIhm", name = "questionAnswerContexts")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContextIhm> getAllQuestionAnswerContextIhmByQaId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "qaId", smartType = "STyId") final Long qaId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "locale", smartType = "STyCode") final String locale) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContextIhm> getAllQuestionAnswerContextIhmByQaId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "qaId", smartType = "STyId") final Long qaId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "locale", smartType = "STyCode") final String locale) {
 		final Task task = createTaskBuilder("TkGetAllQuestionAnswerContextIhmByQaId")
 				.addValue("qaId", qaId)
 				.addValue("locale", locale)
@@ -81,8 +82,9 @@ public final class QuestionAnswerContextPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllQuestionAnswerContextByCvaId",
-			request = "delete from question_answer_context\n" + 
- " 			where cva_id = #cvaId#",
+			request = """
+			delete from question_answer_context
+			where cva_id = #cvaId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllQuestionAnswerContextByCvaId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "cvaId", smartType = "STyId") final Long cvaId) {
 		final Task task = createTaskBuilder("TkRemoveAllQuestionAnswerContextByCvaId")
@@ -97,8 +99,9 @@ public final class QuestionAnswerContextPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllQuestionAnswerContextByQaId",
-			request = "delete from question_answer_context\n" + 
- " 			where qa_id = #qaId#",
+			request = """
+			delete from question_answer_context
+			where qa_id = #qaId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllQuestionAnswerContextByQaId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "qaId", smartType = "STyId") final Long qaId) {
 		final Task task = createTaskBuilder("TkRemoveAllQuestionAnswerContextByQaId")

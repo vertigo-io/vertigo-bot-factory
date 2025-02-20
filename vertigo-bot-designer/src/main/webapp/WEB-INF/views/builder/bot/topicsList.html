@@ -16,31 +16,33 @@
 				else
 					return '';
 			}
-			
-			
-			function filter() {
-				let filteredTopics = VertigoUi.vueData.topicsIhm
-				if (VertigoUi.vueData.criteria.catId !== null) {
-					let category = VertigoUi.vueData.categoryList.find(cat => cat.topCatId === VertigoUi.vueData.criteria.catId)
-					if (category !== undefined) {
-						filteredTopics = filteredTopics
-							// copy and reverse
-							.slice().reverse()
-							// search
-							.filter(topic => topic.catLabel === category.label)
+
+			VUiExtensions.methods = {
+				...VUiExtensions.methods,
+				filter: function () {
+					let filteredTopics = VertigoUi.vueData.topicsIhm
+					if (VertigoUi.vueData.criteria.catId !== null) {
+						let category = VertigoUi.vueData.categoryList.find(cat => cat.topCatId === VertigoUi.vueData.criteria.catId)
+						if (category !== undefined) {
+							filteredTopics = filteredTopics
+									// copy and reverse
+									.slice().reverse()
+									// search
+									.filter(topic => topic.catLabel === category.label)
+						}
 					}
+					let searchNormarlized = normalizeString(VertigoUi.componentStates.topics.pagination.search);
+					if (searchNormarlized !== '') {
+						filteredTopics = filteredTopics
+								// copy and reverse
+								.slice().reverse()
+								// search
+								.filter(topic => normalizeString(topic.title).includes(searchNormarlized) || normalizeString(topic.code).includes(searchNormarlized))
+					}
+					return filteredTopics
 				}
-				let searchNormarlized = normalizeString(VertigoUi.componentStates.topics.pagination.search);
-				if (searchNormarlized !==''){
-					filteredTopics =  filteredTopics
-						// copy and reverse
-						.slice().reverse()
-						// search
-						.filter(topic => normalizeString(topic.title).includes(searchNormarlized) || normalizeString(topic.code).includes(searchNormarlized))
-				}
-				return filteredTopics
 			}
-			
+
 		</script>
 		
 		
@@ -69,7 +71,7 @@
 
 			<div class="col-12">
 				<vu:include-data object="technicalTopicIhm" field="topId"/>
-				<vu:table list="technicalTopicIhm" th:title="#{topic.default.title}"  componentId="technicalTopicIhm" sortBy="ktoCd" :binary-state-sort="true" tr_style="cursor : pointer;"  tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|">
+				<vu:table list="technicalTopicIhm" th:title="#{topic.default.title}"  componentId="technicalTopicIhm" sortBy="ktoCd" :binary-state-sort="true" tr_style="cursor : pointer;"  th:tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|">
 					<vu:column field="title" />
 					<vu:column field="catLabel" />
 					<vu:column field="type" />
@@ -98,10 +100,10 @@
 							v-model="vueData.criteria.catId"
 							:options="transformListForSelection('nonTechnicalCategoryList', 'topCatId', 'label')"
 							th:label="#{topic.selection.category}"
-						  	@input="filter();"
+						  	@update:model-value="filter();"
 							stack-label>
 					</q-select>
-					<q-input style="margin-left:10px" borderless dense debounce="300" th:v-model="VertigoUi.componentStates.topics.pagination.search" th:placeholder="#{topic.selection.search}">
+					<q-input style="margin-left:10px" borderless dense debounce="300" th:v-model="componentStates.topics.pagination.search" th:placeholder="#{topic.selection.search}">
 						<template v-slot:append>
 							<q-icon name="search" />
 						</template>
@@ -112,7 +114,7 @@
 					rowKey='topId'
 					componentId='topics'
 					sortBy='title'
-					tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|"
+					th:tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|"
 					tr_style="cursor : pointer;">
 						<vu:column-sample list=topicsIhm field=title >
 							<a th::href="|'@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId|"
@@ -121,7 +123,7 @@
 						   		<span style="height:100%" class="row items-center">{{props.row.title}}</span>
 							</a>
 						</vu:column-sample>
-						<vu:column-sample list=topicsIhm field=catLabel/>
+						<vu:column-sample list=topicsIhm field=catLabel />
 						<vu:column-sample list=topicsIhm field=labels />
 						<vu:column-sample list=topicsIhm field=type  />
 						<vu:column-sample list=topicsIhm field=code  />
@@ -140,12 +142,12 @@
 					</q-card-section>
 					
 					<vu:include-data-primitive key="locale" />
-					<vu:fileupload th:url="'@{/commons/upload}'" key="importTopicFileUri" multiple="false"/>
+					<vu:fileupload th:url="'@{/commons/upload}'" key="importTopicFileUri" multiple="false" th:with="object=null, field=null"/>
 				
 					
 					
 					<q-card-actions align="around">
-							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<input type="hidden" name="CTX" :value="vueData['CTX']">
 							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
 							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn> 
 					</q-card-actions>
@@ -177,7 +179,7 @@
 					</q-card-section>
 					<input v-for="id in vueData.selectionCatList.topCatId" type="hidden" name="vContext[selectionCatList][topCatId]" :value="id" />
 					<q-card-actions align="around">
-							<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+							<input type="hidden" name="CTX" :value="vueData['CTX']">
 							<q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
 							<q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" v-close-popup></q-btn> 
 					</q-card-actions>

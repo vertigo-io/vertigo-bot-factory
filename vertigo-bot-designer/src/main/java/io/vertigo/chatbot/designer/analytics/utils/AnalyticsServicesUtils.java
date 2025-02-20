@@ -11,6 +11,7 @@ import java.util.Map;
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.util.StringUtil;
 import io.vertigo.database.timeseries.DataFilter;
 import io.vertigo.database.timeseries.DataFilterBuilder;
 import io.vertigo.database.timeseries.TimeFilter;
@@ -98,6 +99,9 @@ public final class AnalyticsServicesUtils {
 			return orElse;
 		}
 		if (val instanceof String) {
+			if (StringUtil.isBlank((String) val)) {
+				return null;
+			}
 			return Long.parseLong((String) val);
 		}
 		return (Long) val;

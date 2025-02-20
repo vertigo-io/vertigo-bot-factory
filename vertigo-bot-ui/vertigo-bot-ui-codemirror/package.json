@@ -1,0 +1,25 @@
+{
+  "name": "codemirror-umd",
+  "version": "6.1.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "build-serve": "vite build && serve dist/",
+    "build-project": "vite build && cp dist/c-codemirror.umd.js ../../vertigo-bot-designer/src/main/webapp/static/js/"
+  },
+  "dependencies": {
+    "serve": "14.2.4",
+    "vue-codemirror" : "6.1.1",
+    "codemirror" : "6.0.1",
+    "@codemirror/language" : "6.10.8",
+    "@codemirror/legacy-modes" : "6.4.2",
+    "@lezer/highlight" : "1.2.1",
+    "@codemirror/lint" : "6.8.4",
+    "emoji-picker-element" : "1.26.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.5",
+    "vite": "^5.3.1"
+  }
+}

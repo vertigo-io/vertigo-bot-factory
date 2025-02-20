@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.commons.multilingual.context;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum ContextValueMultilingualResources implements MessageKey {
+public enum ContextValueMultilingualResources implements LocaleMessageKey {
 
 	XPATH_PATTERN_NULL_ERROR,
 	XPATH_PATTERN_DIGIT_ERROR,

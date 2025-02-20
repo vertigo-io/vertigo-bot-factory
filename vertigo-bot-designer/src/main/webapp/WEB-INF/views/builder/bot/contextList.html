@@ -9,53 +9,57 @@
 <head>
     <title th:text="#{context.title}"></title>
     <script th:inline="javascript">
-        function saveContextEnvironment() {
-            VUiPage.httpPostAjax("_saveContextEnvironment", {
-                'cenvIdOpt': VertigoUi.vueData.newContextEnvironment.cenvId,
-                'label': VertigoUi.vueData.newContextEnvironment.label
-            });
-        }
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
 
-        function saveContextEnvironmentValue() {
-            VUiPage.httpPostAjax("_saveContextEnvironmentValue", VUiPage.vueDataParams(['newContextEnvironmentValue']));
-        }
+            getOperatorLabel: function(tyopCd) {
+                let operator = VertigoUi.vueData.typeOperators.find(operator => operator.tyopCd === tyopCd);
+                if (operator !== undefined) {
+                    return VertigoUi.vueData.locale === 'fr_FR' ? operator.labelFr : operator.label;
+                } else {
+                    return tyopCd;
+                }
+              },
 
-        function filteredOptions() {
-            var options =  VertigoUi.vueData.contextPossibleValues.filter(possibleValue =>
-                possibleValue.cvaId === VertigoUi.vueData.newContextEnvironmentValue.cvaId);
-            other = VertigoUi.vueData.locale === 'fr_FR' ? 'Autre' : 'Other';
-            options.push({ tyopCd: other, value: ''});
-            return options
-        }
+            saveContextEnvironment: function() {
+                VUiPage.httpPostAjax("_saveContextEnvironment", {
+                    'cenvIdOpt': VertigoUi.vueData.newContextEnvironment.cenvId,
+                    'label': VertigoUi.vueData.newContextEnvironment.label
+                });
+            },
 
-        function updateEnvironmentValue(possibleValue) {
-            if (possibleValue.tyopCd === "Autre" || possibleValue.tyopCd === "Other"){
-                VUiExtensions.dataX.isOther = true;
-            }else {
-                VertigoUi.vueData.newContextEnvironmentValue.value = possibleValue.value;
-                VertigoUi.vueData.newContextEnvironmentValue.tyopCd = possibleValue.tyopCd;
+            saveContextEnvironmentValue: function() {
+                VUiPage.httpPostAjax("_saveContextEnvironmentValue", VUiPage.vueDataParams(['newContextEnvironmentValue']));
+            },
+
+            filteredOptions: function() {
+                var options =  VertigoUi.vueData.contextPossibleValues.filter(possibleValue =>
+                    possibleValue.cvaId === VertigoUi.vueData.newContextEnvironmentValue.cvaId);
+                other = VertigoUi.vueData.locale === 'fr_FR' ? 'Autre' : 'Other';
+                options.push({ tyopCd: other, value: ''});
+                return options
+            },
+
+            updateEnvironmentValue: function(possibleValue) {
+                if (possibleValue.tyopCd === "Autre" || possibleValue.tyopCd === "Other"){
+                    this.dataX.isOther = true;
+                }else {
+                    VertigoUi.vueData.newContextEnvironmentValue.value = possibleValue.value;
+                    VertigoUi.vueData.newContextEnvironmentValue.tyopCd = possibleValue.tyopCd;
+                }
             }
-        }
-
-        function getOperatorLabel(tyopCd) {
-            let operator = VertigoUi.vueData.typeOperators.find(operator => operator.tyopCd === tyopCd);
-            if (operator !== undefined) {
-                return VertigoUi.vueData.locale === 'fr_FR' ? operator.labelFr : operator.label;
-            } else {
-                return tyopCd;
-            }
-        }
+        };
 
         VUiExtensions.dataX.selectedOption = null;
         VUiExtensions.dataX.isOther = false;
-
     </script>
 </head>
 
 <body>
 <section layout:fragment="content-actions">
     <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
-                    url="@{/bot/{id}/contextValue/new(id=${model.bot.botId})}" th:ariaLabel="#{context.add}" icon="add"
+                    th:title="#{context.add}"
+                    url="@{/bot/{id}/contextValue/new(id=${model.bot.botId})}" icon="add"
                     class="on-left" round size="md" color="primary"/>
 
 </section>
@@ -72,7 +76,7 @@
     </div>
 
     <vu:table list="contextValues" componentId="contextValueList"
-              tr_@click.native="|goTo('@{/bot/{id}/contextValue/(id=${model.bot.botId})}'+props.row.cvaId)|"
+              th:tr_@click.native="|goTo('@{/bot/{id}/contextValue/(id=${model.bot.botId})}'+props.row.cvaId)|"
               tr_style="cursor : pointer;"
               sortBy="label" :binary-state-sort="true">
         <vu:include-data object="contextValues" field="cvaId"/>
@@ -125,7 +129,7 @@
                             <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}"
                                    th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
                                    class="on-left" round size="md" color="red"
-                                   @click="componentStates.cenvId = contextEnvironment.cenvId; componentStates.showDeleteContextEnvironmentPopup = true"></q-btn>
+                                   @click="componentStates.cenvId = contextEnvironment.cenvId; componentStates.showDeleteContextEnvironmentPopup.shown = true"></q-btn>
                         </div>
                     </q-item-section>
                 </template>
@@ -140,8 +144,8 @@
 						   vueData.newContextEnvironmentValue.value = contextEnvironmentValue.value;
 						   vueData.newContextEnvironmentValue.tyopCd = contextEnvironmentValue.tyopCd;
 						   vueData.newContextEnvironmentValue.cenvId = contextEnvironment.cenvId
-						   VUiExtensions.dataX.selectedOption = null;
-						   VUiExtensions.dataX.isOther = false;
+						   this.dataX.selectedOption = null;
+						   this.dataX.isOther = false;
 							$refs.environmentContextValueDialog.show()">
                                     <q-item-section>
                                         <q-item-label>{{contextEnvironmentValue.label}}</q-item-label>
@@ -157,7 +161,7 @@
             </q-expansion-item>
         </q-list>
     </div>
-    <th:bloc th:with="viewMode='edit'">
+    <th:block th:with="viewMode='edit'">
         <q-dialog ref="environmentDialog">
             <vu:include-data object="newContextEnvironment" field="cenvId" modifiable="true"/>
             <vu:include-data object="newContextEnvironment" field="botId" modifiable="true"/>
@@ -199,12 +203,12 @@
                         <span th:text="#{context.environment.value.update}"></span>
                     </div>
                 </q-card-section>
-                <q-card-section v-if="filteredOptions().length > 1 && VUiExtensions.dataX.isOther === false" >
-                    <q-select v-model="VUiExtensions.dataX.selectedOption"
+                <q-card-section v-if="filteredOptions().length > 1 && this.dataX.isOther === false" >
+                    <q-select v-model="this.dataX.selectedOption"
                               th:label="#{context.environmentValue.popup.valueOperator}"
                               :options="filteredOptions()"
                               option-label="value"
-                              @input="updateEnvironmentValue">
+                              @update:model-value="updateEnvironmentValue">
                     </q-select>
                 </q-card-section>
                 <q-card-section v-else>
@@ -228,7 +232,7 @@
                 </q-card-actions>
             </q-card>
         </q-dialog>
-    </th:bloc>
+    </th:block>
 </section>
 </body>
 </html>

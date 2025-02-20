@@ -46,10 +46,11 @@ public final class UtterTextPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllUtterTextByBotId",
-			request = "delete from utter_text utx\n" + 
- " 			using small_talk smt\n" + 
- " 			join topic top on (top.top_id = smt.top_id)\n" + 
- " 			where smt.smt_id = utx.smt_id and top.bot_id = #botId#",
+			request = """
+			delete from utter_text utx
+			using small_talk smt
+			join topic top on (top.top_id = smt.top_id)
+			where smt.smt_id = utx.smt_id and top.bot_id = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllUtterTextByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllUtterTextByBotId")
@@ -64,8 +65,9 @@ public final class UtterTextPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllUtterTextBySmtId",
-			request = "delete from utter_text\n" + 
- " 			where smt_id = #smtId#",
+			request = """
+			delete from utter_text
+			where smt_id = #smtId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllUtterTextBySmtId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "smtId", smartType = "STyId") final Long smtId) {
 		final Task task = createTaskBuilder("TkRemoveAllUtterTextBySmtId")

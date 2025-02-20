@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.engine.plugins.bt.jira.multilingual;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum JiraMultilingualResources implements MessageKey {
+public enum JiraMultilingualResources implements LocaleMessageKey {
 	TICKET_FOUND,
 	TICKET_CHECK_ALREADY_EXISTS,
 	ASK_CONTINUE,

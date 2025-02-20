@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.commons.multilingual.bot;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum BotMultilingualResources implements MessageKey {
+public enum BotMultilingualResources implements LocaleMessageKey {
 
 	BOT_DETAIL,
 

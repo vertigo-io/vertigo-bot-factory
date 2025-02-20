@@ -4,11 +4,15 @@ import io.vertigo.basics.constraint.ConstraintRegex;
 import io.vertigo.basics.constraint.ConstraintStringLength;
 import io.vertigo.basics.formatter.FormatterDate;
 import io.vertigo.basics.formatter.FormatterDefault;
+import io.vertigo.core.lang.BasicType;
 import io.vertigo.core.lang.DataStream;
+import io.vertigo.datamodel.smarttype.annotations.Adapter;
 import io.vertigo.datamodel.smarttype.annotations.Constraint;
 import io.vertigo.datamodel.smarttype.annotations.Formatter;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeDefinition;
 import io.vertigo.datamodel.smarttype.annotations.SmartTypeProperty;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.ui.core.FileInfoURIAdapter;
 
 import java.math.BigDecimal;
 import java.time.Instant;

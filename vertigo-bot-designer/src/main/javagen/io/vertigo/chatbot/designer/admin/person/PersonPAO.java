@@ -46,9 +46,10 @@ public final class PersonPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkCountAllAdminPer",
-			request = "select count(per.per_id)\n" + 
- " 			from person per \n" + 
- " 			where per.rol_cd = 'RAdmin'",
+			request = """
+			select count(per.per_id)
+			from person per 
+			where per.rol_cd = 'RAdmin'""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber", name = "perNumber")
 	public Long countAllAdminPer() {

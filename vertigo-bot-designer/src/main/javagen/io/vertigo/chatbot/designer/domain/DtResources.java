@@ -1,16 +1,16 @@
 package io.vertigo.chatbot.designer.domain;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Resources du module io.vertigo.chatbot.designer.domain
  */
-public enum DtResources implements MessageKey {
+public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** ContextEnvironment.
-	/***********************************************************
+	 * ContextEnvironment.
+	 **********************************************************/
 	/**
 	 * Context environment id.
 	 */
@@ -25,8 +25,8 @@ public enum DtResources implements MessageKey {
 	fldContextEnvironment$botId,
 
 	/***********************************************************
-	/** ContextEnvironmentIhm.
-	/***********************************************************
+	 * ContextEnvironmentIhm.
+	 **********************************************************/
 	/**
 	 * Context environment id.
 	 */
@@ -41,8 +41,8 @@ public enum DtResources implements MessageKey {
 	fldContextEnvironmentIhm$contextEnvironmentValues,
 
 	/***********************************************************
-	/** ContextEnvironmentValue.
-	/***********************************************************
+	 * ContextEnvironmentValue.
+	 **********************************************************/
 	/**
 	 * Context environment value id.
 	 */
@@ -65,8 +65,8 @@ public enum DtResources implements MessageKey {
 	fldContextEnvironmentValue$tyopCd,
 
 	/***********************************************************
-	/** ContextEnvironmentValueIhm.
-	/***********************************************************
+	 * ContextEnvironmentValueIhm.
+	 **********************************************************/
 	/**
 	 * Context environment value id.
 	 */
@@ -89,8 +89,8 @@ public enum DtResources implements MessageKey {
 	fldContextEnvironmentValueIhm$tyopCd,
 
 	/***********************************************************
-	/** DictionaryEntity.
-	/***********************************************************
+	 * DictionaryEntity.
+	 **********************************************************/
 	/**
 	 * Dictionary entity id.
 	 */
@@ -105,8 +105,8 @@ public enum DtResources implements MessageKey {
 	fldDictionaryEntity$botId,
 
 	/***********************************************************
-	/** DictionaryEntityWrapper.
-	/***********************************************************
+	 * DictionaryEntityWrapper.
+	 **********************************************************/
 	/**
 	 * Dictionary Entity id.
 	 */
@@ -121,8 +121,8 @@ public enum DtResources implements MessageKey {
 	fldDictionaryEntityWrapper$synonymsList,
 
 	/***********************************************************
-	/** DocumentaryResource.
-	/***********************************************************
+	 * DocumentaryResource.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -153,8 +153,8 @@ public enum DtResources implements MessageKey {
 	fldDocumentaryResource$botId,
 
 	/***********************************************************
-	/** DocumentaryResourceContext.
-	/***********************************************************
+	 * DocumentaryResourceContext.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -173,8 +173,8 @@ public enum DtResources implements MessageKey {
 	fldDocumentaryResourceContext$cpvId,
 
 	/***********************************************************
-	/** DocumentaryResourceContextIhm.
-	/***********************************************************
+	 * DocumentaryResourceContextIhm.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -201,8 +201,8 @@ public enum DtResources implements MessageKey {
 	fldDocumentaryResourceContextIhm$cpvValue,
 
 	/***********************************************************
-	/** DocumentaryResourceType.
-	/***********************************************************
+	 * DocumentaryResourceType.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -217,8 +217,8 @@ public enum DtResources implements MessageKey {
 	fldDocumentaryResourceType$labelFr,
 
 	/***********************************************************
-	/** History.
-	/***********************************************************
+	 * History.
+	 **********************************************************/
 	/**
 	 * History id.
 	 */
@@ -249,8 +249,8 @@ public enum DtResources implements MessageKey {
 	fldHistory$botId,
 
 	/***********************************************************
-	/** HistoryAction.
-	/***********************************************************
+	 * HistoryAction.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -265,8 +265,8 @@ public enum DtResources implements MessageKey {
 	fldHistoryAction$labelFr,
 
 	/***********************************************************
-	/** HistoryCriteria.
-	/***********************************************************
+	 * HistoryCriteria.
+	 **********************************************************/
 	/**
 	 * From.
 	 */
@@ -285,8 +285,8 @@ public enum DtResources implements MessageKey {
 	fldHistoryCriteria$text,
 
 	/***********************************************************
-	/** Synonym.
-	/***********************************************************
+	 * Synonym.
+	 **********************************************************/
 	/**
 	 * Synonym id.
 	 */
@@ -305,8 +305,8 @@ public enum DtResources implements MessageKey {
 	fldSynonym$dicEntId,
 
 	/***********************************************************
-	/** TupleSynonymIhm.
-	/***********************************************************
+	 * TupleSynonymIhm.
+	 **********************************************************/
 	/**
 	 * Word.
 	 */
@@ -317,8 +317,8 @@ public enum DtResources implements MessageKey {
 	fldTupleSynonymIhm$synonymLabel,
 
 	/***********************************************************
-	/** TypeOperator.
-	/***********************************************************
+	 * TypeOperator.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */

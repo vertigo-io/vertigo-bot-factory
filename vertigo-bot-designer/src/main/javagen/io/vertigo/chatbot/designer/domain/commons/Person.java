@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.designer.domain.commons;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -21,7 +21,7 @@ public final class Person implements Entity {
 	private String name;
 	private String email;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "APersonGroups",
 			fkFieldName = "grpId",
 			primaryDtDefinitionName = "DtGroups",
@@ -36,7 +36,7 @@ public final class Person implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.designer.domain.commons.Groups> grpIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.designer.domain.commons.Groups.class, "Groups");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "APersonRole",
 			fkFieldName = "rolCd",
 			primaryDtDefinitionName = "DtPersonRole",
@@ -138,7 +138,7 @@ public final class Person implements Entity {
 	 * Récupère la valeur de la propriété 'Group'.
 	 * @return Long grpId
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Group", fkDefinition = "DtGroups" )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Group", fkDefinition = "DtGroups" )
 	public Long getGrpId() {
 		return (Long) grpIdAccessor.getId();
 	}
@@ -157,7 +157,7 @@ public final class Person implements Entity {
 	 * Récupère la valeur de la propriété 'Role'.
 	 * @return String rolCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Role", fkDefinition = "DtPersonRole", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyCode", label = "Role", fkDefinition = "DtPersonRole", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getRolCd() {
 		return (String) rolCdAccessor.getId();
 	}
@@ -190,6 +190,6 @@ public final class Person implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

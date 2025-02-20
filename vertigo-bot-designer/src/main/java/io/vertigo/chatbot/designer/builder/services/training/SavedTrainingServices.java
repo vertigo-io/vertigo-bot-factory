@@ -36,12 +36,12 @@ import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.datastore.filestore.FileStoreManager;
 import io.vertigo.datastore.filestore.model.FileInfo;
 import io.vertigo.datastore.filestore.model.VFile;
@@ -116,20 +116,20 @@ public class SavedTrainingServices implements Component {
 		final Map<String, VFile> fileMap = new HashMap<>();
 
 		final DtList<TopicCategory> topicCategories = topicCategoryServices.getAllCategoriesByBot(bot);
-		fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_CATEGORIES).getDisplay(), topicCategoryServices.exportCategories(bot, topicCategories));
+		fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_CATEGORIES).getDisplay(), topicCategoryServices.exportCategories(bot, topicCategories));
 
 		final DtList<TopicFileExport> listTopics = topicFileExportServices.getTopicFileExport(bot.getBotId(),
 				topicCategoryServices.getAllCategoriesByBot(bot).stream().map(TopicCategory::getTopCatId).collect(Collectors.toList()));
-		fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_TOPICS).getDisplay(), topicFileExportServices.exportTopicFile(bot, listTopics));
+		fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_TOPICS).getDisplay(), topicFileExportServices.exportTopicFile(bot, listTopics));
 
 		final DtList<DictionaryEntityWrapper> listDictionaryEntitiesToExport = dictionaryEntityServices.getDictionaryExportByBotId(bot.getBotId(), "|");
-		fileMap.put(MessageText.of(ExportMultilingualResources.FILE_TYPE_DICTIONARY).getDisplay(), dictionaryEntityServices.exportDictionary(bot, listDictionaryEntitiesToExport));
+		fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_DICTIONARY).getDisplay(), dictionaryEntityServices.exportDictionary(bot, listDictionaryEntitiesToExport));
 
 		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 
 		VFile zipFile = designerFileServices.zipMultipleFiles(fileMap,
-				MessageText.of(BotMultilingualResources.EXPORT_ZIP_FILENAME, bot.getName(), dateFormat.format(new Date())).getDisplay());
+				LocaleMessageText.of(BotMultilingualResources.EXPORT_ZIP_FILENAME, bot.getName(), dateFormat.format(new Date())).getDisplay());
 
 		return fileStoreManager.create(new AttachmentInfo(zipFile));
 	}
@@ -142,9 +142,9 @@ public class SavedTrainingServices implements Component {
 		VFile savedTrainingZip = designerFileServices.getAttachment(fileInfoId);
 		Map<String, VFile> csvMap = designerFileServices.unzipMultipleFiles(savedTrainingZip);
 
-		VFile categoriesCSV = csvMap.get(MessageText.of(ExportMultilingualResources.FILE_TYPE_CATEGORIES).getDisplay());
-		VFile topicsCSV = csvMap.get(MessageText.of(ExportMultilingualResources.FILE_TYPE_TOPICS).getDisplay());
-		VFile dictionaryCSV = csvMap.get(MessageText.of(ExportMultilingualResources.FILE_TYPE_DICTIONARY).getDisplay());
+		VFile categoriesCSV = csvMap.get(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_CATEGORIES).getDisplay());
+		VFile topicsCSV = csvMap.get(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_TOPICS).getDisplay());
+		VFile dictionaryCSV = csvMap.get(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_DICTIONARY).getDisplay());
 
 		utterTextServices.removeAllUtterTextByBotId(bot);
 		dictionaryEntityServices.deleteAllByBot(bot);

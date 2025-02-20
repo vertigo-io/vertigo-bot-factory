@@ -34,7 +34,7 @@ function startConversation() {
             restoreFromSessionStorage();
             _scrollToBottom();
         } else {
-            chatbot.$http.post(chatbot.botConfig.botUrl + '/start', {message: null, metadatas: {'context': chatbot.context}})
+            axios.post(chatbot.botConfig.botUrl + '/start', {message: null, metadatas: {'context': chatbot.ontext}})
                 .then(setParametersFromHttpResponse)
                 .catch(() => {
                     // error
@@ -44,113 +44,6 @@ function startConversation() {
                 });
         }
     });
-}
-
-function postAnswerBtn(btn) {
-    chatbot.botConfig.messages.push({
-        text: [DOMPurify.sanitize(btn.label)],
-        sent: true,
-        bgColor: 'primary',
-        textColor: 'white'
-    });
-
-    updateSessionStorage();
-
-    _scrollToBottom();
-
-    if (btn.url !== undefined) {
-        const link = document.createElement('a');
-        link.href = btn.url;
-        if (btn.newTab) {
-            link.target = '_blank';
-        } else {
-            link.target = '_top';
-        }
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-    askBot(btn.payload, btn.label, true, null, null, chatbot.botConfig.rating);
-}
-
-function fileUpload(btn, index) {
-    const file = document.getElementById('file_' + index).files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function (evt) {
-        askBot(btn.payload, null, false, evt.target.result, file.name, false);
-    };
-}
-
-function postAnswerText(isRating) {
-    let sanitizedString = '';
-    if (isRating) {
-        sanitizedString = chatbot.inputConfig.rating.toString();
-        chatbot.inputConfig.showRating = false;
-        chatbot.botConfig.messages.push({
-            text: null,
-            rating: true,
-            sent: true,
-            bgColor: 'primary',
-            textColor: 'white'
-        });
-
-    } else {
-        sanitizedString = DOMPurify.sanitize(chatbot.inputConfig.responseText.trim()
-            .replace(/(?:\r\n|\r|\n)/g, '<br>'));
-        chatbot.botConfig.messages.push({
-            text: sanitizedString !== '' ? [sanitizedString] : null,
-            rating: isRating,
-            sent: true,
-            bgColor: 'primary',
-            textColor: 'white'
-        });
-    }
-    updateSessionStorage();
-
-    _scrollToBottom();
-
-    const response = chatbot.inputConfig.responsePattern === '' ? sanitizedString.replace(/(")/g, '"')
-        : chatbot.inputConfig.responsePattern.replace('#', sanitizedString.replace(/(")/g, '\\"'));
-    askBot(response, null, false, null, null, isRating);
-}
-
-function askBot(value, label, isButton, fileContent, fileName, rating) {
-    chatbot.botConfig.prevInputConfig = JSON.parse(JSON.stringify(chatbot.inputConfig));
-    reinitInput();
-    chatbot.botConfig.lastPayload = value;
-    chatbot.botConfig.processing = true;
-
-    chatbot.botConfig.lastUserInteraction = Date.now();
-    let botInput;
-    if (fileContent) {
-        botInput = {
-            message: null,
-            metadatas: {context: chatbot.context, payload: value, filecontent: fileContent, filename: fileName}
-        };
-    } else if (isButton) {
-        botInput = {message: null, metadatas: {context: chatbot.context, payload: value, text: label}};
-    } else {
-        botInput = {message: value, metadatas: {context: chatbot.context}};
-    }
-    if (rating) {
-        botInput.metadatas.rating = value
-        if (chatbot.botConfig.ratingType === 'SIMPLE') {
-            botInput.message = null
-        }
-    }
-    return Vue.http.post(chatbot.botConfig.botUrl + '/talk/' + chatbot.botConfig.convId, botInput)
-        .then(httpResponse => {
-            _handleResponse(httpResponse, false);
-        }).catch(
-            () => {
-                // error
-                chatbot.botConfig.error = true;
-
-                chatbot.botConfig.processing = false;
-                _scrollToBottom();
-            });
-
 }
 
 function _handleResponse(httpResponse, isRating) {
@@ -278,7 +171,8 @@ function refreshBot(isAnotherConversation) {
         rating: 0,
         buttons: [],
         files: [],
-        cards: []
+        cards: [],
+        cardIndex: 0
     };
     chatbot.botConfig.error = false;
     chatbot.botConfig.convId = null;

@@ -15,12 +15,12 @@ import io.vertigo.chatbot.commons.multilingual.queAnsCategory.QueAnsCategoryMult
 import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.quarto.exporter.ExporterManager;
@@ -88,7 +88,7 @@ public class QuestionAnswerCategoryServices implements Component {
             questionAnswerCategoryExport.setIsEnabled(category.getIsEnabled() ? "TRUE" : "FALSE");
             return questionAnswerCategoryExport;
         }).collect(VCollectors.toDtList(QuestionAnswerCategoryExport.class));
-        final String exportName = MessageText.of(QueAnsCategoryMultilingualResources.EXPORT_QUEANS_CATEGORIES_FILENAME, bot.getName()).getDisplay();
+        final String exportName = LocaleMessageText.of(QueAnsCategoryMultilingualResources.EXPORT_QUEANS_CATEGORIES_FILENAME, bot.getName()).getDisplay();
         final Export export = new ExportBuilder(ExportFormat.CSV, exportName)
                 .beginSheet(questionAnswerCategoryExports, null)
                 .addField(DtDefinitions.QuestionAnswerCategoryExportFields.label)

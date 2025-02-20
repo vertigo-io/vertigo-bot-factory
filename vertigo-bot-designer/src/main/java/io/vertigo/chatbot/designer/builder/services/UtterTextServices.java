@@ -20,14 +20,14 @@ import io.vertigo.chatbot.designer.builder.utterText.UtterTextPAO;
 import io.vertigo.chatbot.domain.DtDefinitions.UtterTextFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.model.UID;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.model.UID;
+import io.vertigo.datamodel.data.util.VCollectors;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -113,19 +113,19 @@ public class UtterTextServices implements Component {
 	public static String initializeDefaultText(final String ktoCd) {
 		switch (ktoCd) {
 			case "START":
-				return MessageText.of(KindTopicMultilingualResources.DEFAULT_START).getDisplay();
+				return LocaleMessageText.of(KindTopicMultilingualResources.DEFAULT_START).getDisplay();
 
 			case "FAILURE":
-				return MessageText.of(KindTopicMultilingualResources.DEFAULT_FALLBACK).getDisplay();
+				return LocaleMessageText.of(KindTopicMultilingualResources.DEFAULT_FALLBACK).getDisplay();
 
 			case "END":
-				return MessageText.of(KindTopicMultilingualResources.DEFAULT_END).getDisplay();
+				return LocaleMessageText.of(KindTopicMultilingualResources.DEFAULT_END).getDisplay();
 
 			case "IDLE":
-				return MessageText.of(KindTopicMultilingualResources.DEFAULT_IDLE).getDisplay();
+				return LocaleMessageText.of(KindTopicMultilingualResources.DEFAULT_IDLE).getDisplay();
 
 			case "RATING":
-				return MessageText.of(KindTopicMultilingualResources.DEFAULT_RATING).getDisplay();
+				return LocaleMessageText.of(KindTopicMultilingualResources.DEFAULT_RATING).getDisplay();
 
 			default:
 				return "";

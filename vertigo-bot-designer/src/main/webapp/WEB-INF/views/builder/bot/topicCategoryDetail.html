@@ -10,13 +10,31 @@
 		<title th:text="#{topicCategory.title}"></title>
 
 		<script th:inline="javascript">
-			function filteredOptions() {
-				return VertigoUi.vueData.allTopicCategories.filter(topCat =>
-						topCat.topCatId !== VertigoUi.vueData.topicCategory.topCatId);
-			}
+			VUiExtensions.methods = {
+				...VUiExtensions.methods,
 
-			function updateSelectedTopics(selectedTopicIhm) {
-				VertigoUi.vueData.topicsToUpdate = selectedTopicIhm.map(topic => topic).join(',');
+				updateSelectedTopics: function(selectedTopicIhm) {
+					VertigoUi.vueData.topicsToUpdate = selectedTopicIhm.map(topic => topic).join(',');
+				},
+
+				filterFn: function(val, update) {
+					update(() => {
+						if (val === '') {
+							this.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList
+						}
+						else {
+							const needle = normalizeString(val.toLowerCase())
+							this.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList.filter(
+									v => normalizeString((v.title+v.catLabel).toLowerCase()).indexOf(needle) > -1
+							)
+						}
+					})
+				},
+
+				filteredOptions: function() {
+					return VertigoUi.vueData.allTopicCategories.filter(topCat =>
+							topCat.topCatId !== VertigoUi.vueData.topicCategory.topCatId);
+				}
 			}
 
 			function normalizeString(str) {
@@ -25,22 +43,6 @@
 				else
 					return '';
 			}
-
-			function filterFn (val, update) {
-				update(() => {
-					if (val === '') {
-						VertigoUi.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList
-					}
-					else {
-						const needle = normalizeString(val.toLowerCase())
-						VertigoUi.componentStates.titles.filterOptions = VertigoUi.vueData.topicIhmList.filter(
-								v => normalizeString((v.title+v.catLabel).toLowerCase()).indexOf(needle) > -1
-						)
-					}
-				})
-			}
-
-
 		</script>
 
 	</head>
@@ -48,11 +50,11 @@
 	<body>
 		<section layout:fragment="content-actions">
 			<vu:include-data object="topicCategory" field="code" />
-			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/category/(id=${model.bot.botId})} + ${model.topicCategory.topCatId}" ariaLabel="Cancel" icon="fas fa-ban"
+			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/category/(id=${model.bot.botId})} + ${model.topicCategory.topCatId}" title="Cancel" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
-			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm] && model.topicCategory.code != 'DEFAULT'}" action="@{_edit}" ariaLabel="Edit" icon="edit"
+			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm] && model.topicCategory.code != 'DEFAULT'}" action="@{_edit}" title="Edit" icon="edit"
 							class="on-left" :round size="md" color="primary" />
-			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm] && model.topicCategory.code != 'DEFAULT'}" @click="componentStates.showPopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
+			<q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm] && model.topicCategory.code != 'DEFAULT'}" @click="componentStates.showPopup.shown = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
 							class="on-left" round size="md" color="red" ></q-btn>
 		</section>
 
@@ -86,7 +88,7 @@
 			</div>
 
 			<vu:table list="topics" componentId="topicsList" sortBy="title" :binary-state-sort="true"
-					  tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|" tr_style="cursor : pointer;">
+					  th:tr_@click.native="|goTo('@{/bot/{id}/topics/detail/(id=${model.bot.botId})}'+props.row.topId)|" tr_style="cursor : pointer;">
 				<vu:slot name="actions_slot">
 					<q-btn class="on-right" round color="red" icon="playlist_remove"
 						   th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
@@ -133,7 +135,7 @@
 						/>
 					</q-card-section>
 					<q-card-actions align="around">
-						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<input type="hidden" name="CTX" :value="vueData['CTX']">
 						<q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
 						<q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
 							   @click="httpPostAjax('_saveTopicCategoryChange', vueDataParams(['topicId','newTopCatId']));"
@@ -146,7 +148,7 @@
 
 			<q-dialog ref="otherTopicsDialog">
 				<vu:include-data object="topicCategory" field="'*'" />
-				<vu:include-data object="topicIhmList" field="'*'" modifiableAllLines="true"/>
+				<vu:include-data object="topicIhmList" field="'*'" />
 				<vu:include-data-primitive key="locale"/>
 				<q-card>
 					<q-card-section>
@@ -155,7 +157,7 @@
 						</div>
 					</q-card-section>
 					<q-card-section>
-						<th:block th:attr="dataObject=${model.vContext[componentStates].addComponentState('titles').addObject('filterOptions')}" th:remove="all" />
+						<th:block th:attr="dataObject=${model.vContext[componentStates].addComponentState('titles').addList('filterOptions')}" th:remove="all" />
 						<q-select
 								multiple
 								v-model="vueData.selectedTopicIhmList"
@@ -168,11 +170,11 @@
 								input-debounce="0"
 								autofocus
 								@filter="filterFn"
-								@input="updateSelectedTopics"
+								@update:model-value="updateSelectedTopics"
 						/>
 					</q-card-section>
 					<q-card-actions align="around">
-						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<input type="hidden" name="CTX" :value="vueData['CTX']">
 						<q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
 						<q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
 							   @click="httpPostAjax('_saveAddingTopics', vueDataParams(['topicsToUpdate']));"
@@ -186,5 +188,6 @@
 			<q-page-sticky position="bottom-right">
 				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
 			</q-page-sticky>
+		</section>
 	</body>
 </html>

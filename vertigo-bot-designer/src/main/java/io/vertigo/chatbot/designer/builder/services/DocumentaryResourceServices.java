@@ -13,21 +13,19 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.DocumentaryResourceExport;
 import io.vertigo.chatbot.commons.multilingual.attachment.AttachmentMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
-import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.designer.dao.DocumentaryResourceDAO;
 import io.vertigo.chatbot.designer.domain.DocumentaryResource;
-import io.vertigo.chatbot.designer.domain.DocumentaryResourceContext;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceTypeEnum;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.util.VCollectors;
-import io.vertigo.vega.engines.webservice.json.JsonEngine;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
+import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -93,6 +91,7 @@ public class DocumentaryResourceServices implements Component {
     public DocumentaryResource getNewdocumentaryResource(final Long botId) {
         DocumentaryResource documentaryResource = new DocumentaryResource();
         documentaryResource.setBotId(botId);
+        documentaryResource.setDreTypeCd(DocumentaryResourceTypeEnum.FILE.name());
         return documentaryResource;
     }
 

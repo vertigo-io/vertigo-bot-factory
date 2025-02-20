@@ -16,7 +16,7 @@ import io.vertigo.chatbot.designer.domain.topic.export.UtterTextExport;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Tuple;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -70,8 +70,8 @@ public class SmallTalkExportServices implements TopicExportInterfaceServices<Sma
 		//Create map topId and bt associated
 		for (final Entry<UtterTextExport, Tuple<List<ResponseButtonExport>, List<ResponseButtonUrlExport>>> entry : map.entrySet()) {
 			final UtterTextExport utter = entry.getKey();
-			final List<ResponseButtonExport> responses = entry.getValue().getVal1();
-			final List<ResponseButtonUrlExport> responsesUrl = entry.getValue().getVal2();
+			final List<ResponseButtonExport> responses = entry.getValue().val1();
+			final List<ResponseButtonUrlExport> responsesUrl = entry.getValue().val2();
 			result.put(utter.getTopId(), createBt(utter, responses, responsesUrl, false));
 		}
 		return result;

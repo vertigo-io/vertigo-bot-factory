@@ -47,21 +47,22 @@ public final class QuestionAnswerPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetAllQuestionAnswerIhmFromBot",
-			request = "SELECT 	qa.qa_id,\n" + 
- " 					qa.question,\n" + 
- " 					qa.answer,\n" + 
- " 					qa.is_enabled,\n" + 
- " 					qa.code,\n" + 
- " 					qac.qa_cat_id as cat_id,\n" + 
- " 					qac.label as cat_label\n" + 
- " 			from question_answer qa\n" + 
- " 			join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)\n" + 
- " 			where qa.bot_id = #botId#\n" + 
- " 			order by qac.label,\n" + 
- "                     qa.question",
+			request = """
+			SELECT 	qa.qa_id,
+					qa.question,
+					qa.answer,
+					qa.is_enabled,
+					qa.code,
+					qac.qa_cat_id as cat_id,
+					qac.label as cat_label
+			from question_answer qa
+			join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)
+			where qa.bot_id = #botId#
+			order by qac.label,
+                    qa.question""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtQuestionAnswerIhm", name = "questionanswerIHM")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm> getAllQuestionAnswerIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm> getAllQuestionAnswerIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetAllQuestionAnswerIhmFromBot")
 				.addValue("botId", botId)
 				.build();
@@ -77,18 +78,19 @@ public final class QuestionAnswerPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetQuestionAnswerIhmById",
-			request = "SELECT 	qa.qa_id,\n" + 
- "                     qa.question,\n" + 
- "                     qa.answer,\n" + 
- "                     qa.is_enabled,\n" + 
- "                     qa.code,\n" + 
- "                     qac.qa_cat_id as cat_id,\n" + 
- "                     qac.label as cat_label\n" + 
- " 			from question_answer qa\n" + 
- "             join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)\n" + 
- " 			where qa.qa_id = #qaId#\n" + 
- " \n" + 
- " 			LIMIT 1",
+			request = """
+			SELECT 	qa.qa_id,
+                    qa.question,
+                    qa.answer,
+                    qa.is_enabled,
+                    qa.code,
+                    qac.qa_cat_id as cat_id,
+                    qac.label as cat_label
+			from question_answer qa
+            join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)
+			where qa.qa_id = #qaId#
+
+			LIMIT 1""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtQuestionAnswerIhm", name = "questionAnswerIHM")
 	public io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm getQuestionAnswerIhmById(@io.vertigo.datamodel.task.proxy.TaskInput(name = "qaId", smartType = "STyId") final Long qaId) {

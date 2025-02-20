@@ -1,16 +1,16 @@
 package io.vertigo.chatbot.designer.domain.monitoring;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Resources du module io.vertigo.chatbot.designer.domain.monitoring
  */
-public enum DtResources implements MessageKey {
+public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** AlertingEvent.
-	/***********************************************************
+	 * AlertingEvent.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -37,8 +37,8 @@ public enum DtResources implements MessageKey {
 	fldAlertingEvent$nodeId,
 
 	/***********************************************************
-	/** MonitoringAlertingSubscription.
-	/***********************************************************
+	 * MonitoringAlertingSubscription.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -53,8 +53,8 @@ public enum DtResources implements MessageKey {
 	fldMonitoringAlertingSubscription$perId,
 
 	/***********************************************************
-	/** MonitoringBotDetailIHM.
-	/***********************************************************
+	 * MonitoringBotDetailIHM.
+	 **********************************************************/
 	/**
 	 * Bot name.
 	 */
@@ -73,8 +73,8 @@ public enum DtResources implements MessageKey {
 	fldMonitoringBotDetailIHM$runners,
 
 	/***********************************************************
-	/** MonitoringDetailIHM.
-	/***********************************************************
+	 * MonitoringDetailIHM.
+	 **********************************************************/
 	/**
 	 * Antivirus alive.
 	 */
@@ -89,8 +89,8 @@ public enum DtResources implements MessageKey {
 	fldMonitoringDetailIHM$bots,
 
 	/***********************************************************
-	/** MonitoringRunnerDetailIHM.
-	/***********************************************************
+	 * MonitoringRunnerDetailIHM.
+	 **********************************************************/
 	/**
 	 * Runner name.
 	 */

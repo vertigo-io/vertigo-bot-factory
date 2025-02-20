@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.designer.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -21,7 +21,7 @@ public final class DocumentaryResource implements Entity {
 	private String description;
 	private String url;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ADocumentaryResourceAttachmentFileInfo",
 			fkFieldName = "attId",
 			primaryDtDefinitionName = "DtAttachment",
@@ -36,7 +36,7 @@ public final class DocumentaryResource implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Attachment> attIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Attachment.class, "Attachment");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ADocumentaryResourceDocumentaryResourceType",
 			fkFieldName = "dreTypeCd",
 			primaryDtDefinitionName = "DtDocumentaryResourceType",
@@ -51,7 +51,7 @@ public final class DocumentaryResource implements Entity {
 			foreignMultiplicity = "0..*")
 	private final EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.DocumentaryResourceType, io.vertigo.chatbot.designer.domain.DocumentaryResourceTypeEnum> dreTypeCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.designer.domain.DocumentaryResourceType.class, "DocumentaryResourceType", io.vertigo.chatbot.designer.domain.DocumentaryResourceTypeEnum.class);
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ADocumentaryResourceChatbot",
 			fkFieldName = "botId",
 			primaryDtDefinitionName = "DtChatbot",
@@ -153,7 +153,7 @@ public final class DocumentaryResource implements Entity {
 	 * Récupère la valeur de la propriété 'Attachment id'.
 	 * @return Long attId
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Attachment id", fkDefinition = "DtAttachment" )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Attachment id", fkDefinition = "DtAttachment" )
 	public Long getAttId() {
 		return (Long) attIdAccessor.getId();
 	}
@@ -172,7 +172,7 @@ public final class DocumentaryResource implements Entity {
 	 * Récupère la valeur de la propriété 'Documentary resource type'.
 	 * @return String dreTypeCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Documentary resource type", fkDefinition = "DtDocumentaryResourceType", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyCode", label = "Documentary resource type", fkDefinition = "DtDocumentaryResourceType", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getDreTypeCd() {
 		return (String) dreTypeCdAccessor.getId();
 	}
@@ -191,7 +191,7 @@ public final class DocumentaryResource implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -232,6 +232,6 @@ public final class DocumentaryResource implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

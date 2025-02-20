@@ -37,7 +37,7 @@ import io.vertigo.chatbot.engine.plugins.bt.confluence.model.search.ConfluenceSe
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VSystemException;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 
 import static io.vertigo.chatbot.commons.FileUtils.formatImageToBase64String;
@@ -181,7 +181,7 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		builder.append("<div style='text-align: center; padding-bottom:3%;'><a target='_blank' href='");
 		builder.append(url);
 		builder.append("'>");
-		builder.append(MessageText.of(LINK_TO_PAGE).getDisplay());
+		builder.append(LocaleMessageText.of(LINK_TO_PAGE).getDisplay());
 		builder.append("</a></div>");
 		builder.append(escapedHtml);
 		builder.append("</div>");

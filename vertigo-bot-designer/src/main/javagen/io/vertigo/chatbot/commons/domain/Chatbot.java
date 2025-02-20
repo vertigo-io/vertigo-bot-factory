@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.KeyConcept;
+import io.vertigo.datamodel.data.model.KeyConcept;
 import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -22,7 +22,7 @@ public final class Chatbot implements KeyConcept {
 	private java.time.LocalDate creationDate;
 	private String status;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AChatbotMediaFileInfo",
 			fkFieldName = "filIdAvatar",
 			primaryDtDefinitionName = "DtMediaFileInfo",
@@ -37,11 +37,11 @@ public final class Chatbot implements KeyConcept {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.MediaFileInfo> filIdAvatarAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.MediaFileInfo.class, "MediaFileInfo");
 
-	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
+	@io.vertigo.datamodel.data.stereotype.AssociationNN(
 			name = "AnnAlertingSubscriptionChatbot",
 			tableName = "ALERTING_SUBSCRIPTION_CHATBOT",
-			dtDefinitionA = "DtMonitoringAlertingSubscription",
-			dtDefinitionB = "DtChatbot",
+			dataDefinitionA = "DtMonitoringAlertingSubscription",
+			dataDefinitionB = "DtChatbot",
 			navigabilityA = true,
 			navigabilityB = true,
 			roleA = "Alerte",
@@ -156,7 +156,7 @@ public final class Chatbot implements KeyConcept {
 	 * Récupère la valeur de la propriété 'Avatar'.
 	 * @return Long filIdAvatar
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Avatar", fkDefinition = "DtMediaFileInfo" )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Avatar", fkDefinition = "DtMediaFileInfo" )
 	public Long getFilIdAvatar() {
 		return (Long) filIdAvatarAccessor.getId();
 	}
@@ -189,6 +189,6 @@ public final class Chatbot implements KeyConcept {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }
