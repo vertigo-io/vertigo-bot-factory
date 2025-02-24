@@ -9,135 +9,114 @@
 	<head>
 		<title th:text="#{bot.detail.title}"></title>
 
-		<script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
 		<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 		<script th:src="@{/static/js/c-richtext.js}"></script>
 		<script th:src="@{/static/js/c-buttonList.js}"></script>
-		
-		<!-- CDNJS :: Sortable (https://cdnjs.com/) -->
-		<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
-		<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
-		<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js" integrity="sha512-hGVnilhYD74EGnPbzyvje74/Urjrg5LSNGx0ARG1Ucqyiaz+lFvtsXk/1jCwT9/giXP0qoXSlVDjxNxjLvmqAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<script src="https://cdn.jsdelivr.net/npm/vue-codemirror@4.0.6/dist/vue-codemirror.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/mode/simple.min.js" integrity="sha512-9YoNYsegWvbA5aiSshQ2BNW2FAq3CQVLqpg2r6urw9Tfl1GklM9PNgrMRVz8fhEtjM+uZfO/1X3RURkMcil8wg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.js" integrity="sha512-kCn9g92k3GM90eTPGMNwvpCAtLmvyqbpvrdnhm0NMt6UEHYs+DjRO4me8VcwInLWQ9azmamS1U1lbQV627/TBQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/selection/active-line.min.js" integrity="sha512-UNVAZmixdjeBtJVQcH5eSKXuVdzbSV6rzfTfNVyYWUIIDCdI9/G8/Z/nWplnSHXXxz9U8TA1BiJ1trK7abL/dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.js" integrity="sha512-uVoZbG/kkAWc+ceMzfYqsyI2ONb5qMV0nc1UZ8gOvuDuc0EWt8VcXg3fWR7z1EIpn4yyWSEeK9lmrR30VSpYLQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/hint/show-hint.min.css" integrity="sha512-OmcLQEy8iGiD7PSm85s06dnR7G7C9C0VqahIPAj/KHk5RpOCmnC6R2ob1oK4/uwYhWa9BF1GC6tzxsC8TIx7Jg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/addon/lint/lint.min.css" integrity="sha512-jP1+o6s94WQS9boYeDP3Azh8ihI5BxGgBZNjkABhx05MqH5WuDzfzSnoPxGxVzWi/gxxVHZHvWkdRM6SMy5B0Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css" integrity="sha512-6sALqOPMrNSc+1p5xOhPwGIzs6kIlST+9oGWlI4Wwcbj1saaX9J3uzO3Vub016dmHV7hM+bMi/rfXLiF5DNIZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-		<script th:src="@{/static/chatbot/chatbotMode.js}"></script>
-		<script th:src="@{/static/js/c-codemirror.js}"></script>
-		<script th:inline="javascript">
-		 	Vue.use(window.VueCodemirror)
-			function getChatPreview() {
-				return [VertigoUi.vueData.chatbotCustomConfig.fofCd];
-			}
-			function changeBgColor() {
-				if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
-					VertigoUi.vueData.chatbotCustomConfig.backgroundColor = '#000091';
+		<script>
+			VUiExtensions.methods = {
+				...VUiExtensions.methods,
+				getChatPreview: function () {
+					return [VertigoUi.vueData.chatbotCustomConfig.fofCd];
+				},
+				changeBgColor: function () {
+					if (VertigoUi.vueData.chatbotCustomConfig.backgroundColor == null) {
+						VertigoUi.vueData.chatbotCustomConfig.backgroundColor = '#000091';
+					}
+					Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
+						element.style.setProperty('--bot-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
+					});
+				},
+				changeFontColor: function () {
+					if (VertigoUi.vueData.chatbotCustomConfig.fontColor == null) {
+						VertigoUi.vueData.chatbotCustomConfig.fontColor = '#ffffff';
+					}
+					Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
+						element.style.setProperty('--bot-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
+					});
+				},
+				changeBotMessageBgColor: function () {
+					if (VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor == null) {
+						VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor = '#ffffff';
+					}
+					Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
+						element.style.setProperty('--chat-bot-bg-color', VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor);
+					});
+				},
+				changeUserMessageBgColor: function () {
+					if (VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor == null) {
+						VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor = '#e0e0e0';
+					}
+					Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
+						element.style.setProperty('--chat-user-bg-color', VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor);
+					});
+				},
+				changeBotMessageFontColor: function () {
+					if (VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor == null) {
+						VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor = '#000000';
+					}
+					Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
+						element.style.setProperty('--chat-bot-message-font-color', VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor);
+					});
+				},
+				changeUserMessageFontColor: function () {
+					if (VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor == null) {
+						VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor = '#000000';
+					}
+					Array.from(document.getElementsByClassName('q-message-text-content--sent')).forEach(function (element, index, array) {
+						element.style.setProperty('--chat-user-message-font-color', VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor);
+					});
+				},
+				changeChatMessageFontFamily: function () {
+					if (VertigoUi.vueData.chatbotCustomConfig.fofCd == null) {
+						VertigoUi.vueData.chatbotCustomConfig.fofCd = 'ARIAL';
+					}
+					const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
+						return fontFamily.fofCd === VertigoUi.vueData.chatbotCustomConfig.fofCd
+					});
+					Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
+						element.style.setProperty('--chat-message-font-family', fontFamily.label);
+					});
+					Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
+						element.style.setProperty('--chat-message-font-family', fontFamily.label);
+					});
+					Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
+						element.style.setProperty('--chat-message-font-family', fontFamily.label);
+					});
+				},
+				onChatbotDisplayChange: function() {
+					if (!VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay && !VertigoUi.vueData.chatbotCustomConfig.qandaDisplay) {
+						this.vueData.chatbotCustomConfig.qandaDisplay = true;
+					}
+				},
+				onQandaDisplayChange: function() {
+				if (!VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay && !VertigoUi.vueData.chatbotCustomConfig.qandaDisplay) {
+					this.vueData.chatbotCustomConfig.chatbotDisplay = true;
 				}
-				Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
-					element.style.setProperty('--bot-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
-				});
 			}
-
-			function changeFontColor() {
-				if (VertigoUi.vueData.chatbotCustomConfig.fontColor == null) {
-					VertigoUi.vueData.chatbotCustomConfig.fontColor = '#ffffff';
-				}
-				Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
-					element.style.setProperty('--bot-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
-				});
 			}
-
-			function changeBotMessageBgColor() {
-				 if (VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor == null) {
-					 VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor = '#ffffff';
-				 }
-				 Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-					 element.style.setProperty('--chat-bot-bg-color', VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor);
-				 });
-			}
-
-			function changeUserMessageBgColor() {
-				if (VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor == null) {
-					VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor = '#e0e0e0';
-				}
-				Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
-					element.style.setProperty('--chat-user-bg-color', VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor);
-				});
-			}
-
-			function changeBotMessageFontColor() {
-				 if (VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor == null) {
-					 VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor = '#000000';
-				 }
-				Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
-					element.style.setProperty('--chat-bot-message-font-color', VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor);
-				});
-			}
-
-			function changeUserMessageFontColor() {
-				if (VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor == null) {
-					VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor = '#000000';
-				}
-				Array.from(document.getElementsByClassName('q-message-text-content--sent')).forEach(function (element, index, array) {
-					element.style.setProperty('--chat-user-message-font-color', VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor);
-				});
-			}
-
-			function changeChatMessageFontFamily() {
-				 if (VertigoUi.vueData.chatbotCustomConfig.fofCd == null) {
-					 VertigoUi.vueData.chatbotCustomConfig.fofCd = 'ARIAL';
-				 }
-				const fontFamily = VertigoUi.vueData.fontFamilies.find(fontFamily => {
-					return fontFamily.fofCd === VertigoUi.vueData.chatbotCustomConfig.fofCd
-				});
-				Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
-					element.style.setProperty('--chat-message-font-family', fontFamily.label);
-				});
-				Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
-					element.style.setProperty('--chat-message-font-family', fontFamily.label);
-				});
-				Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
-					element.style.setProperty('--chat-message-font-family', fontFamily.label);
-				});
-			}
-
 			document.addEventListener('DOMContentLoaded', function () {
-				changeBgColor();
-				changeFontColor();
-				changeBotMessageBgColor();
-				changeUserMessageBgColor();
-				changeUserMessageFontColor();
-				changeBotMessageFontColor()
-				changeChatMessageFontFamily();
+				VUiExtensions.methods.changeBgColor();
+				VUiExtensions.methods.changeFontColor();
+				VUiExtensions.methods.changeBotMessageBgColor();
+				VUiExtensions.methods.changeUserMessageBgColor();
+				VUiExtensions.methods.changeUserMessageFontColor();
+				VUiExtensions.methods.changeBotMessageFontColor()
+				VUiExtensions.methods.changeChatMessageFontFamily();
 			});
-			function onChatbotDisplayChange() {
-				if (!VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay && !VertigoUi.vueData.chatbotCustomConfig.qandaDisplay) {
-					VertigoUi.vueData.chatbotCustomConfig.qandaDisplay = true;
-				}
-			}
-			function onQandaDisplayChange() {
-				if (!VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay && !VertigoUi.vueData.chatbotCustomConfig.qandaDisplay) {
-					VertigoUi.vueData.chatbotCustomConfig.chatbotDisplay = true;
-				}
-			}
 		</script>
 	</head>
 	
 	<body>
 		<div layout:fragment="content-header-left" id="baseImg"  class="row items-center header-bot-img">
-	 		<img v-if="vueData.botTmpPictureUri && vueData.botTmpPictureUri.length > 0" th::src="|'@{/commons/upload}?file=' + vueData.botTmpPictureUri[0]|"/>
+	 		<img v-if="vueData.botTmpPictureUri && vueData.botTmpPictureUri.length > 0" th::src="|'@{/commons/upload}?file=' + vueData.botTmpPictureUri|"/>
 	 		<img v-if="!vueData.botTmpPictureUri || vueData.botTmpPictureUri.length == 0" th:src="@{/bot/{id}/avatar(id=${model.bot.botId})}" />
 		</div>
 	
 		<section layout:fragment="content-actions">
-			<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}(id=${model.bot.botId})}" th:ariaLabel="#{bot.cancel}" icon="fas fa-ban"
+			<vu:button-link th:if="${model.modeEdit}" th:title="#{bot.cancel}" url="@{/bot/{id}(id=${model.bot.botId})}" icon="fas fa-ban"
 							class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
-			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" th:ariaLabel="#{bot.edit}" icon="edit"
+			<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" title="edit" action="@{_edit}" th:title="#{bot.edit}" icon="edit"
 							class="on-left" :round size="md" color="primary" />
 		</section>
 		
@@ -152,7 +131,7 @@
 				<vu:text-area object="bot" field="description"/>
 				
 				<vu:label-edit object="bot" field="filIdAvatar" th:if="${viewMode=='edit'}">
-					<vu:fileupload th:url="'@{/commons/upload}'" key="botTmpPictureUri" multiple="false"/>
+					<vu:fileupload th:url="'@{/commons/upload}'" key="botTmpPictureUri" multiple="false" th:with="object=null, field=null"/>
 				</vu:label-edit>
 
 			</vu:block>
@@ -181,7 +160,7 @@
 						<vu:label-edit object="chatbotCustomConfig" field="chatbotDisplay">
 							<q-toggle v-model="vueData.chatbotCustomConfig.chatbotDisplay"
 									  th::disable="${model.modeReadOnly}"
-									  @input="onChatbotDisplayChange()"></q-toggle>
+									  @update:model-value="onChatbotDisplayChange()"></q-toggle>
 							<input type="hidden" name="vContext[chatbotCustomConfig][chatbotDisplay]" :value="vueData.chatbotCustomConfig.chatbotDisplay"/>
 						</vu:label-edit>
 					</div>
@@ -189,7 +168,7 @@
 						<vu:label-edit object="chatbotCustomConfig" field="qandaDisplay">
 							<q-toggle v-model="vueData.chatbotCustomConfig.qandaDisplay"
 									  th::disable="${model.modeReadOnly}"
-									  @input="onQandaDisplayChange()"></q-toggle>
+									  @update:model-value="onQandaDisplayChange()"></q-toggle>
 							<input type="hidden" name="vContext[chatbotCustomConfig][qandaDisplay]" :value="vueData.chatbotCustomConfig.qandaDisplay"/>
 						</vu:label-edit>
 					</div>
@@ -229,7 +208,7 @@
 
 				<vu:select-edit object="chatbotCustomConfig" field="fofCd"
 								th::disable="${model.modeReadOnly}"
-								@input="changeChatMessageFontFamily()"
+								@update:model-value="changeChatMessageFontFamily()"
 									list="fontFamilies"
 									label="#{bot.styling.font.family}" style="width: 250px; margin-right: 10px"/>
 				<div class="row">
@@ -274,9 +253,8 @@
 
 
 			<q-page-sticky position="bottom-right">
-				<vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" /> 
+				<vu:button-submit th:if="${!model.modeReadOnly}" title="save" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
 			</q-page-sticky>
 		</section>
-		
 	</body>
 </html>

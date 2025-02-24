@@ -9,39 +9,71 @@
 		<link th:href="@{/static/chatbot/shepherd.css}" rel="stylesheet" />
 		<link th:href="@{/static/chatbot/chatbot.css}" rel="stylesheet">
 		<script>
-			VUiExtensions.dataX.loadingTraining = false;
-			function train() {
-				VUiPage.httpPostAjax("train", {}, {
-					onSuccess: function() {
-						postTrain();
-					}
-				});
-			}
-			function postTrain() {
-				interval = setInterval(function() {
-					refreshTraining();
-				}, 1000);
-			}
-
-			function refreshTraining () {
-				VUiExtensions.dataX.loadingTraining = true;
-
-				VUiPage.httpPostAjax("refreshTrainer", {}, {
-					onSuccess: function() {
-						if (!VertigoUi.vueData.trainerState.trainingInProgress && interval != null) {
-							VUiExtensions.dataX.loadingTraining = false;
-							clearInterval(interval);
-							interval = null;
+			VUiExtensions.methods=  {
+				... VUiExtensions.methods,
+				train: function () {
+					VUiPage.httpPostAjax("train", {}, {
+						onSuccess: function () {
+							postTrain();
 						}
+					});
+				},
+				postTrain: function () {
+					interval = setInterval(function () {
+						VUiExtensions.methods.refreshTraining();
+					}, 1000);
+				},
+				refreshTraining: function () {
+					VUiExtensions.dataX.loadingTraining = true;
+
+					VUiPage.httpPostAjax("refreshTrainer", {}, {
+						onSuccess: function () {
+							if (!VertigoUi.vueData.trainerState.trainingInProgress && interval != null) {
+								VUiExtensions.dataX.loadingTraining = false;
+								clearInterval(interval);
+								interval = null;
+							}
+						}
+					});
+				},
+				canTalkToBot: function () {
+					return VertigoUi.vueData.devNode !== null && VertigoUi.vueData.devNode.traId !== null;
+				},
+				checkAll: function () {
+					VertigoUi.vueData.selectTypeBotExportList.tbeCd =
+							VertigoUi.vueData.typeBotExport.map(typeExport => typeExport.tbeCd);
+				},
+				
+				selectEnvironment: function () {
+					if (VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId !== null) {
+						const selectedContexEnvironment = VertigoUi.vueData.contextEnvironments.find(contextEnvironment =>
+								contextEnvironment.cenvId === VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId
+						);
+						if (selectedContexEnvironment) {
+							const map = {};
+							selectedContexEnvironment.contextEnvironmentValues.forEach(contextEnvironmentValue => {
+								map[contextEnvironmentValue.label] = contextEnvironmentValue.value
+							})
+							Chatbot.updateContextMap(map)
+						}
+					} else {
+						Chatbot.updateContextMap({})
 					}
-				});
-			}
-			function canTalkToBot() {
-				return VertigoUi.vueData.devNode !== null && VertigoUi.vueData.devNode.traId !==null;
+				},
+
+				toggleBotDrawer: function() {
+					this.componentStates.botDrawer.open = !this.componentStates.botDrawer.open;
+					if (this.componentStates.botDrawer.open) {
+						Chatbot.show();
+					}
+					else {
+						Chatbot.hideDrawer();
+					}
+				}
 			}
 
 			document.addEventListener('DOMContentLoaded', function () {
-				if (canTalkToBot()) {
+				if (VUiExtensions.methods.canTalkToBot()) {
 					Chatbot.init({
 						runnerUrl: VertigoUi.vueData.devNode.url,
 						botIHMBaseUrl: VertigoUi.vueData.devNode.url + '/static/chatbot/index.html',
@@ -50,29 +82,14 @@
 						avatarUrl: VertigoUi.vueData.bot.botId + '/avatar'
 					})
 				}
-			});
-			function checkAll() {
-				VertigoUi.vueData.selectTypeBotExportList.tbeCd =
-						VertigoUi.vueData.typeBotExport.map(typeExport => typeExport.tbeCd);
-
-			}
-
-			function selectEnvironment() {
-				if (VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId !== null) {
-					const selectedContexEnvironment = VertigoUi.vueData.contextEnvironments.find(contextEnvironment =>
-						contextEnvironment.cenvId === VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId
-					);
-					if (selectedContexEnvironment) {
-						const map = {};
-						selectedContexEnvironment.contextEnvironmentValues.forEach(contextEnvironmentValue => {
-							map[contextEnvironmentValue.label] = contextEnvironmentValue.value
-						})
-						Chatbot.updateContextMap(map)
-					}
-				} else {
-					Chatbot.updateContextMap({})
+				const script = document.createElement('script');
+				script.type = 'text/javascript';
+				script.src = VertigoUi.vueData.devNode.url + '/api/chatbot/getWelcomeToursFile';
+				document.head.appendChild(script);
+				if (VertigoUi.vueData.trainerState.trainingInProgress) {
+					VUiExtensions.methods.postTrain();
 				}
-			}
+			});
 		</script>
 	</div>
 	<div layout:fragment="content-header-left" id="baseImg" class="row items-center header-bot-img">
@@ -111,12 +128,12 @@
 	<div th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" layout:fragment="content-header-actions" id="headerActions" class="items-center">
 		<vu:popup action="delete" vModel="showPopup" th:message="#{bot.popup.message}" th:confirm="#{bot.delete}"></vu:popup>
 		<vu:include-data object="trainerState" field="'*'"/>
-		<q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train"></q-btn>
+		<q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" color="primary" icon="play_arrow" th:label="#{bot.train}" @click="train()"></q-btn>
 		<q-spinner-gears color="orange" class="q-pa-xs" size="2rem" v-if="dataX.loadingTraining"></q-spinner-gears>
 		<q-fab class="q-mr-xl" outline flat color="primary" icon="more_vert" direction="down">
 			<q-fab-action color="primary" th:label="#{bot.export}" icon="file_upload" @click="$refs.exportBot.show()"></q-fab-action>
 			<q-fab-action th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
-						  color="primary" th:label="#{bot.delete.label}" @click="componentStates.showPopup = true" icon="delete"></q-fab-action>
+						  color="primary" th:label="#{bot.delete.label}" @click="componentStates.showPopup.shown = true" icon="delete"></q-fab-action>
 		</q-fab>
 
 		<q-dialog ref="exportBot" th:with="viewMode='edit'" >
@@ -150,7 +167,7 @@
 					<input v-for="id in vueData.selectTypeBotExportList.tbeCd" type="hidden" name="vContext[selectTypeBotExportList][tbeCd]" :value="id" />
 
 					<q-card-actions align="around">
-						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<input type="hidden" name="CTX" :value="vueData['CTX']">
 						<q-btn flat th:label="#{popup.export.cancel}" color="primary" v-close-popup ></q-btn>
 						<q-btn type="submit" th:title="#{popup.export.export}" th:label="#{popup.export.export}" th:aria-label="#{popup.export.export}" color="primary" v-close-popup></q-btn>
 					</q-card-actions>
@@ -253,11 +270,11 @@
 	<section layout:fragment="content-bot-drawer"  th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}">
 		<vu:include-data object="contextEnvironments" field="'*'"/>
 		<q-page-sticky position="bottom-right" :offset="[0,36]">
-			<q-btn round size="lg" id="botDrawerButton" @click="componentStates.botDrawer.open = !componentStates.botDrawer.open; if (componentStates.botDrawer.open) { Chatbot.show() } else { Chatbot.hideDrawer() }">
+			<q-btn round size="lg" id="botDrawerButton" @click="toggleBotDrawer()">
 				<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" class="bot-img" alt="avatar chatbot"/>
 			</q-btn>
 		</q-page-sticky>
-		<q-drawer :value="componentStates.botDrawer.open" id="botDrawer" ref="botDrawer" :width="400" elevated side="right" >
+		<q-drawer :model-value="componentStates.botDrawer.open" id="botDrawer" ref="botDrawer" :width="400" elevated side="right" >
 			<q-select
 					v-if="vueData.contextEnvironments.length > 0"
 					th:attr="dataObject=${model.vContext['componentStates'].addComponentState('contextEnvironments').addObject('selectedEnvironment', {cenvId: null})}"
@@ -269,7 +286,7 @@
 					stack-label
 					v-model="componentStates.contextEnvironments.selectedEnvironment.cenvId"
 					:options='transformListForSelection("contextEnvironments", "cenvId", "label")'
-					@input="selectEnvironment();"
+					@update:model-value="selectEnvironment();"
 					th:label="#{context.environment.dropdown.label}"
 			></q-select>
 			<div id="botDrawerContent"></div>
@@ -278,16 +295,5 @@
 	<section layout:fragment="javascript-footer">
 		<vu:include-data object="trainerState" field="'*'"/>
 		<vu:include-data-primitive key="locale" />
-		<script>
-			document.addEventListener('DOMContentLoaded', function () {
-				const script = document.createElement('script');
-				script.type = 'text/javascript';
-				script.src = VertigoUi.vueData.devNode.url + '/api/chatbot/getWelcomeToursFile';
-				document.head.appendChild(script);
-				if (VertigoUi.vueData.trainerState.trainingInProgress) {
-					postTrain();
-				}
-			});
-		</script>
 	</section>
 </html>

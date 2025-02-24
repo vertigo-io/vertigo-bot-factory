@@ -11,13 +11,25 @@
         <script th:inline="javascript">
             VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
 
-            function addAttachment() {
-                VUiPage.httpPostAjax("_saveAttachment", {
-                    'attId': VertigoUi.vueData.newAttachment.attId,
-                    'label': VertigoUi.vueData.newAttachment.label,
-                    'importAttachmentFileUri': VertigoUi.vueData.importAttachmentFileUri.toString()
-                });
-            }
+            VUiExtensions.methods = {
+                ...VUiExtensions.methods,
+
+                onStart: function() {
+                    VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
+                },
+
+                addAttachment: function() {
+                    VUiPage.httpPostAjax("_saveAttachment", {
+                        'attId': VertigoUi.vueData.newAttachment.attId,
+                        'label': VertigoUi.vueData.newAttachment.label,
+                        'importAttachmentFileUri': VertigoUi.vueData.importAttachmentFileUri.toString()
+                    });
+                },
+
+                isImage: function(type) {
+                    return type.includes('image');
+                }
+            };
 
             function onRejected (rejectedEntries) {
                 let message = VertigoUi.vueData.locale === 'fr_FR' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
@@ -26,14 +38,6 @@
                     message += VertigoUi.vueData.locale === 'fr_FR' ? ' Le format du fichier n\'est pas accepté' : ' File format isn\'t accepted';
                 }
                 VUiExtensions.dataX.attachmentError = {'show': true, 'message': message};
-            }
-
-            function onStart() {
-                VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
-            }
-
-            function isImage(type) {
-                return type.includes('image');
             }
         </script>
     </head>
@@ -65,7 +69,7 @@
                            @click="vueData.newAttachment.botId = props.row.botId; vueData.newAttachment.attId = props.row.attId;
                            vueData.newAttachment.label = props.row.label; vueData.importAttachmentFileUri = []; $refs.attachmentDialog.show()"></q-btn>
                     <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{attachment.delete}" th:title="#{attachment.delete}"
-                           @click="componentStates.attId = props.row.attId; componentStates.showDeleteAttachmentPopup = true"></q-btn>
+                           @click="componentStates.attId = props.row.attId; componentStates.showDeleteAttachmentPopup.shown = true"></q-btn>
                 </vu:slot>
                 <vu:include-data object="attachments" field="attId" />
                 <vu:include-data object="attachments" field="attFiId" />
@@ -78,7 +82,7 @@
             </vu:table>
 
 
-			<th:bloc th:with="viewMode='edit'">
+			<th:block th:with="viewMode='edit'">
 	            <q-dialog ref="attachmentDialog">
 	                <vu:include-data object="newAttachment" field="attId" />
 	                <vu:include-data object="newAttachment" field="botId" />
@@ -95,7 +99,7 @@
 	                        <vu:text-field object="newAttachment" field="label"/>
 	                    </q-card-section>
 	                    <q-card-section>
-	                        <vu:fileupload th:url="'@{/commons/upload}'" key="importAttachmentFileUri" multiple="false" accept="'.png,.jpg,.jpeg,.pdf'"
+	                        <vu:fileupload th:url="'@{/commons/upload}'" key="importAttachmentFileUri" multiple="false" th:with="object=null, field=null" accept="'.png,.jpg,.jpeg,.pdf'"
 	                                       @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
 	                        <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
 	                    </q-card-section>
@@ -108,7 +112,7 @@
 	                    </q-card-actions>
 	                </q-card>
 	            </q-dialog>
-           </th:bloc>
+           </th:block>
 
 
         </section>

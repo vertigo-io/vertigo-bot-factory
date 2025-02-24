@@ -1,11 +1,11 @@
 package io.vertigo.chatbot.designer.domain.monitoring;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -20,7 +20,7 @@ public final class AlertingEvent implements Entity {
 	private String componentName;
 	private Boolean alive;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AAlertingEventChatbot",
 			fkFieldName = "botId",
 			primaryDtDefinitionName = "DtChatbot",
@@ -35,7 +35,7 @@ public final class AlertingEvent implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AAlertingEventNode",
 			fkFieldName = "nodeId",
 			primaryDtDefinitionName = "DtChatbotNode",
@@ -137,7 +137,7 @@ public final class AlertingEvent implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot" )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot" )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -156,7 +156,7 @@ public final class AlertingEvent implements Entity {
 	 * Récupère la valeur de la propriété 'Node'.
 	 * @return Long nodeId
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Node", fkDefinition = "DtChatbotNode" )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Node", fkDefinition = "DtChatbotNode" )
 	public Long getNodeId() {
 		return (Long) nodeIdAccessor.getId();
 	}
@@ -189,6 +189,6 @@ public final class AlertingEvent implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

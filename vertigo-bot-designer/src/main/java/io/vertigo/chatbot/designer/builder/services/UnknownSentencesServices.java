@@ -17,8 +17,8 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.database.timeseries.TimedDataSerie;
 import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -77,7 +77,7 @@ public class UnknownSentencesServices implements Component {
 
 		final TimedDatas tabularTimedData = timeSerieServices.getUnrecognizedSentences(unknownSentencesCriteria);
 
-		for (final TimedDataSerie timedData : tabularTimedData.getTimedDataSeries()) {
+		for (final TimedDataSerie timedData : tabularTimedData.timedDataSeries()) {
 			final Map<String, Object> values = timedData.getValues();
 
 			final UnknownSentenceDetail unknownSentenceDetail = new UnknownSentenceDetail();

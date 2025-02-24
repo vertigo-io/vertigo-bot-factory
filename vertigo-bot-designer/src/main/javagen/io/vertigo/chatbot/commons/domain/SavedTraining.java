@@ -1,11 +1,11 @@
 package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -21,7 +21,7 @@ public final class SavedTraining implements Entity {
 	private String description;
 	private String botExport;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ASavedTraining",
 			fkFieldName = "attFileInfoId",
 			primaryDtDefinitionName = "DtAttachmentFileInfo",
@@ -36,7 +36,7 @@ public final class SavedTraining implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.AttachmentFileInfo> attFileInfoIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.AttachmentFileInfo.class, "AttachmentFileInfo");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ASavedTrainingTraining",
 			fkFieldName = "traId",
 			primaryDtDefinitionName = "DtTraining",
@@ -51,7 +51,7 @@ public final class SavedTraining implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Training> traIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Training.class, "Training");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ASavedTrainingChatbot",
 			fkFieldName = "botId",
 			primaryDtDefinitionName = "DtChatbot",
@@ -172,7 +172,7 @@ public final class SavedTraining implements Entity {
 	 * Récupère la valeur de la propriété 'Attachment File Info'.
 	 * @return Long attFileInfoId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Attachment File Info", fkDefinition = "DtAttachmentFileInfo", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Attachment File Info", fkDefinition = "DtAttachmentFileInfo", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getAttFileInfoId() {
 		return (Long) attFileInfoIdAccessor.getId();
 	}
@@ -191,7 +191,7 @@ public final class SavedTraining implements Entity {
 	 * Récupère la valeur de la propriété 'Training'.
 	 * @return Long traId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Training", fkDefinition = "DtTraining", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Training", fkDefinition = "DtTraining", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getTraId() {
 		return (Long) traIdAccessor.getId();
 	}
@@ -210,7 +210,7 @@ public final class SavedTraining implements Entity {
 	 * Récupère la valeur de la propriété 'Bot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Bot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Bot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -251,6 +251,6 @@ public final class SavedTraining implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

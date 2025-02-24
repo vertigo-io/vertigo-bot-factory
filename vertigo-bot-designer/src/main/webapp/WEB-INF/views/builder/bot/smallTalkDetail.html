@@ -76,6 +76,7 @@
 									<div class="row wrap">
 										<c-richtext
 												v-model="utterText.text"
+												name="utterText.text"
 												class="q-pb-sm">
 										</c-richtext>
 										<c-chatbottextexample
@@ -91,8 +92,12 @@
 								:ref="'utter_input_'+index"
 								:name="'vContext[utterTexts]['+index+'][text]'"
 								placeholder="Enter text variant" dense
-								@input="addMoreUtterTextIfNeeded"
-								@keydown.enter.prevent="if (index < getUtterTextResolvedList().length - 1) $refs['utter_input_'+(index+1)][0].focus()"
+								@update:model-value="addMoreUtterTextIfNeeded"
+								@keydown.enter.prevent="() => {
+									if (index < getUtterTextResolvedList().length - 1) {
+									 	$refs['utter_input_'+(index+1)][0].focus()
+									}
+								}"
 								>
 								</q-input>
 						</q-item-section>
@@ -108,6 +113,7 @@
 							<q-item-section class="row wrap">
 								<c-richtext
 									v-model="utterText.text"
+									name="utterText.text"
 									:mode-edit="false">
 								</c-richtext>
 								<c-chatbottextexample

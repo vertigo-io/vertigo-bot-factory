@@ -1,4 +1,4 @@
-<%@ page session="false" import="java.util.*, javax.servlet.*" %>
+<%@ page session="false" import="java.util.*, jakarta.servlet.*" %>
 <%!
 	
 private String printException(Throwable t) throws Exception {
@@ -8,7 +8,7 @@ private String printException(Throwable t) throws Exception {
         sw.append(t.getClass().getName());
         sw.append(": <h4>").append(t.getMessage()).append("</h4>");
         for (i = 0; i < stack.length; i++) {
-            if (stack[i].getClassName().startsWith("javax.servlet.")) {
+            if (stack[i].getClassName().startsWith("jakarta.servlet.")) {
                 sw.append("...");
                 break;
             }
@@ -30,9 +30,9 @@ private String printException(Throwable t) throws Exception {
 <%
 		final String baseUrl = request.getContextPath()+"/";
 
-		Throwable e = (Throwable) request.getAttribute("javax.servlet.error.exception"), t;
-		String errorMessage = (String) request.getAttribute("javax.servlet.error.message");
-		Integer errorCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
+		Throwable e = (Throwable) request.getAttribute("jakarta.servlet.error.exception"), t;
+		String errorMessage = (String) request.getAttribute("jakarta.servlet.error.message");
+		Integer errorCode = (Integer) request.getAttribute("jakarta.servlet.error.status_code");
 		//Throwable e = (Throwable)pageContext.getAttribute("ex"), t;
         List list = new ArrayList();
         String message = null;

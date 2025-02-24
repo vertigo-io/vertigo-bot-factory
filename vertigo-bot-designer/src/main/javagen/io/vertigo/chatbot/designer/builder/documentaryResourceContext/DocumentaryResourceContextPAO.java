@@ -48,24 +48,25 @@ public final class DocumentaryResourceContextPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetAllDocumentaryResourceContextIhmByDreId",
-			request = "SELECT 	drc.drc_id,\n" + 
- " 			        drc.dre_id,\n" + 
- " 					cva.cva_id,\n" + 
- " 					cpv.cpv_id,\n" + 
- " 					cva.label as cva_label,\n" + 
- " 					CASE #locale#\n" + 
- " 						WHEN 'fr_FR' THEN tyop.label_fr || ' : ' || cpv.value\n" + 
- " 						ELSE tyop.label || ' : ' || cpv.value\n" + 
- " 					END as cpv_value\n" + 
- " 			from documentary_resource_context drc\n" + 
- " 			join context_value cva on (cva.cva_id = drc.cva_id)\n" + 
- " 			left join context_possible_value cpv on (cpv.cpv_id = drc.cpv_id)\n" + 
- " 			left join type_operator tyop on (tyop.tyop_cd = cpv.tyop_cd)\n" + 
- " 			where drc.dre_id = #dreId#\n" + 
- " 			order by cva.label",
+			request = """
+			SELECT 	drc.drc_id,
+			        drc.dre_id,
+					cva.cva_id,
+					cpv.cpv_id,
+					cva.label as cva_label,
+					CASE #locale#
+						WHEN 'fr_FR' THEN tyop.label_fr || ' : ' || cpv.value
+						ELSE tyop.label || ' : ' || cpv.value
+					END as cpv_value
+			from documentary_resource_context drc
+			join context_value cva on (cva.cva_id = drc.cva_id)
+			left join context_possible_value cpv on (cpv.cpv_id = drc.cpv_id)
+			left join type_operator tyop on (tyop.tyop_cd = cpv.tyop_cd)
+			where drc.dre_id = #dreId#
+			order by cva.label""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtDocumentaryResourceContextIhm", name = "documentaryResourceContexts")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm> getAllDocumentaryResourceContextIhmByDreId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "dreId", smartType = "STyId") final Long dreId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "locale", smartType = "STyCode") final String locale) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm> getAllDocumentaryResourceContextIhmByDreId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "dreId", smartType = "STyId") final Long dreId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "locale", smartType = "STyCode") final String locale) {
 		final Task task = createTaskBuilder("TkGetAllDocumentaryResourceContextIhmByDreId")
 				.addValue("dreId", dreId)
 				.addValue("locale", locale)
@@ -81,8 +82,9 @@ public final class DocumentaryResourceContextPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllDocumentaryResourceContextByCvaId",
-			request = "delete from documentary_resource_context\n" + 
- " 			where cva_id = #cvaId#",
+			request = """
+			delete from documentary_resource_context
+			where cva_id = #cvaId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllDocumentaryResourceContextByCvaId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "cvaId", smartType = "STyId") final Long cvaId) {
 		final Task task = createTaskBuilder("TkRemoveAllDocumentaryResourceContextByCvaId")
@@ -97,8 +99,9 @@ public final class DocumentaryResourceContextPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllDocumentaryResourceContextByDreId",
-			request = "delete from documentary_resource_context\n" + 
- " 			where dre_id = #dreId#",
+			request = """
+			delete from documentary_resource_context
+			where dre_id = #dreId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllDocumentaryResourceContextByDreId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "dreId", smartType = "STyId") final Long dreId) {
 		final Task task = createTaskBuilder("TkRemoveAllDocumentaryResourceContextByDreId")

@@ -1,11 +1,11 @@
 package io.vertigo.chatbot.commons.domain.questionanswer;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -17,7 +17,7 @@ public final class QuestionAnswerContext implements Entity {
 
 	private Long qacId;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AQuestionAnswerContextQuestionAnswer",
 			fkFieldName = "qaId",
 			primaryDtDefinitionName = "DtQuestionAnswer",
@@ -32,7 +32,7 @@ public final class QuestionAnswerContext implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer> qaIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer.class, "QuestionAnswer");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AQuestionAnswerContextContextValue",
 			fkFieldName = "cvaId",
 			primaryDtDefinitionName = "DtContextValue",
@@ -47,7 +47,7 @@ public final class QuestionAnswerContext implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> cvaIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.ContextValue.class, "ContextValue");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AQuestionAnswerContextContextPossibleValue",
 			fkFieldName = "cpvId",
 			primaryDtDefinitionName = "DtContextPossibleValue",
@@ -92,7 +92,7 @@ public final class QuestionAnswerContext implements Entity {
 	 * Récupère la valeur de la propriété 'Question answer id'.
 	 * @return Long qaId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Question answer id", fkDefinition = "DtQuestionAnswer", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Question answer id", fkDefinition = "DtQuestionAnswer", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getQaId() {
 		return (Long) qaIdAccessor.getId();
 	}
@@ -111,7 +111,7 @@ public final class QuestionAnswerContext implements Entity {
 	 * Récupère la valeur de la propriété 'Context value id'.
 	 * @return Long cvaId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Context value id", fkDefinition = "DtContextValue", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Context value id", fkDefinition = "DtContextValue", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getCvaId() {
 		return (Long) cvaIdAccessor.getId();
 	}
@@ -130,7 +130,7 @@ public final class QuestionAnswerContext implements Entity {
 	 * Récupère la valeur de la propriété 'Context possible value id'.
 	 * @return Long cpvId
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Context possible value id", fkDefinition = "DtContextPossibleValue" )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Context possible value id", fkDefinition = "DtContextPossibleValue" )
 	public Long getCpvId() {
 		return (Long) cpvIdAccessor.getId();
 	}
@@ -171,6 +171,6 @@ public final class QuestionAnswerContext implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

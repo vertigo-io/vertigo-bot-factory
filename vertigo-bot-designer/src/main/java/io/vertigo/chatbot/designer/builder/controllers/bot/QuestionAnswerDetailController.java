@@ -26,8 +26,8 @@ import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswe
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerContextServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerServices;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
@@ -171,7 +171,7 @@ public class QuestionAnswerDetailController extends AbstractBotCreationControlle
          * {@inheritDoc}
          */
         @Override
-        protected void checkMonoFieldConstraints(final QuestionAnswerContext questionAnswerContext, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+        protected void checkMonoFieldConstraints(final QuestionAnswerContext questionAnswerContext, final DataField dtField, final DtObjectErrors dtObjectErrors) {
             super.checkMonoFieldConstraints(questionAnswerContext, dtField, dtObjectErrors);
         }
     }

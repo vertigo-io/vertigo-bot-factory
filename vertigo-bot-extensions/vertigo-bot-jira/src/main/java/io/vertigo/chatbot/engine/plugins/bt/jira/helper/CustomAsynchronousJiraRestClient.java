@@ -7,7 +7,7 @@ import com.atlassian.jira.rest.client.internal.json.UsersJsonParser;
 
 import java.net.URI;
 
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriBuilder;
 
 import io.atlassian.util.concurrent.Promise;
 

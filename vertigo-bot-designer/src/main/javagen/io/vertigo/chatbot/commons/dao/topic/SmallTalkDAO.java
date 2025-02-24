@@ -50,14 +50,15 @@ public final class SmallTalkDAO extends DAO<SmallTalk, java.lang.Long> implement
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetAllActiveSmallTalkByBot",
-			request = "select smt.*\n" + 
- " 			from topic top\n" + 
- " 			join small_talk smt on (smt.top_id = top.top_id)\n" + 
- " 			where top.bot_id = #botId#\n" + 
- " 			AND top.is_enabled = true",
+			request = """
+			select smt.*
+			from topic top
+			join small_talk smt on (smt.top_id = top.top_id)
+			where top.bot_id = #botId#
+			AND top.is_enabled = true""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtSmallTalk", name = "smts")
-	public io.vertigo.datamodel.structure.model.DtList<io.vertigo.chatbot.commons.domain.topic.SmallTalk> getAllActiveSmallTalkByBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.topic.SmallTalk> getAllActiveSmallTalkByBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetAllActiveSmallTalkByBot")
 				.addValue("botId", botId)
 				.build();

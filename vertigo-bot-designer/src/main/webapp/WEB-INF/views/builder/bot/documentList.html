@@ -8,12 +8,15 @@
 <head>
     <title th:text="#{documentaryResource.title}"></title>
     <script th:inline="javascript">
-        function getDocResTypeLabel(type) {
-            let docResType = VertigoUi.vueData.documentaryResourceTypeList.find(resourceType => resourceType.dreTypeCd === type);
-            if (docResType !== undefined) {
-                return VertigoUi.vueData.locale === 'fr_FR' ? docResType.labelFr : docResType.label;
-            } else {
-                return docResType;
+        VUiExtensions.methods= {
+            ...VUiExtensions.methods,
+            getDocResTypeLabel: function(type) {
+                let docResType = VertigoUi.vueData.documentaryResourceTypeList.find(resourceType => resourceType.dreTypeCd === type);
+                if (docResType !== undefined) {
+                    return VertigoUi.vueData.locale === 'fr_FR' ? docResType.labelFr : docResType.label;
+                } else {
+                    return docResType;
+                }
             }
         }
     </script>
@@ -21,9 +24,9 @@
 <body>
 <section layout:fragment="content-actions">
     <q-form method="post" action="_exportCategories">
-        <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/document/new(id=${model.bot.botId})}" th:ariaLabel="#{action.add}" icon="add"
+        <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" url="@{/bot/{id}/document/new(id=${model.bot.botId})}" th:title="#{action.add}" icon="add"
                         class="on-left" round size="md" color="primary" />
-        <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+        <input type="hidden" name="CTX" :value="vueData['CTX']">
     </q-form>
 </section>
 
@@ -36,7 +39,7 @@
     </div>
     <vu:include-data object="documentaryResourceTypeList" field="*" />
     <vu:include-data object="documentaryResourceList" field="dreId" />
-    <vu:table list="documentaryResourceList" componentId="documentaryResources" tr_@click.native="|goTo('@{/bot/{id}/document/(id=${model.bot.botId})}'+props.row.dreId)|" tr_style="cursor : pointer;"
+    <vu:table list="documentaryResourceList" componentId="documentaryResources" th:tr_@click.native="|goTo('@{/bot/{id}/document/(id=${model.bot.botId})}'+props.row.dreId)|" tr_style="cursor : pointer;"
               sortBy="title" :binary-state-sort="true">
         <vu:column field="title">
             <a th::href="|'@{/bot/{id}/document/(id=${model.bot.botId})}'+props.row.dreId|"

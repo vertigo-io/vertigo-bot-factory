@@ -1,124 +1,67 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-  xmlns:vu="http://www.morphbit.com/thymeleaf/component"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-    <vu:head-meta/>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="Vertigo chatbot designer"/>
-    <meta name="author" content="Klee Group"/>
-    
-    <link rel="stylesheet" th:href="@{/static/css/designer.css}"/>
-    
+	<vu:head-meta vuejsDevMode="true" />
+	<meta charset="utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<meta name="description" content="Vertigo chatbot designer"/>
+	<meta name="author" content="Klee Group"/>
+
+	<link rel="stylesheet" th:href="@{/static/css/designer.css}"/>
+
 	<link rel="icon" th:href="@{/static/img/favicon.ico}"/>
-	<script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script>
 	<script type="text/javascript" th:src="@{/vertigo-ui/static/js/vertigo-ui-extensions.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/designer.js}"></script>
+
 </head>
 
 <body class="mat platform-mat">
 
-	<script>
-		VUiExtensions.methods = {
-		    appendToFormData : function (formData, name, value) {
-		        if (value != null) {
-		            formData.append(name, value)
-		        } else {
-		            formData.append(name, "")
-		        }
-		    },
-		    vueDataParams : function (keys) {
-		        var params = new FormData();
-		        for (var i = 0; i < keys.length; i++) {
-		            var contextKey = keys[i];
-		            var vueDataValue = this.$data.vueData[contextKey];
-		            if (vueDataValue && typeof vueDataValue === 'object' && Array.isArray(vueDataValue) === false) {
-		                // object
-		                Object.keys(vueDataValue).forEach(function (propertyKey) {
-		                    if (!propertyKey.startsWith("_")) {
-		                        // _ properties are private and don't belong to the serialized entity
-		                        if (Array.isArray(vueDataValue[propertyKey])) {
-		                            vueDataValue[propertyKey].forEach(function (value, index) {
-		                                if (vueDataValue[propertyKey][index] && typeof vueDataValue[propertyKey][index] === 'object') {
-		                                    this.appendToFormData(params, 'vContext[' + contextKey + '][' + propertyKey + ']', vueDataValue[propertyKey][index]['_v_inputValue']);
-		                                } else {
-		                                    this.appendToFormData(params, 'vContext[' + contextKey + '][' + propertyKey + ']', vueDataValue[propertyKey][index]);
-		                                }
-		                            }.bind(this));
-		                        } else {
-		                            if (vueDataValue[propertyKey] && typeof vueDataValue[propertyKey] === 'object') {
-		                                this.appendToFormData(params, 'vContext[' + contextKey + '][' + propertyKey + ']', vueDataValue[propertyKey]['_v_inputValue']);
-		                            } else {
-		                                this.appendToFormData(params, 'vContext[' + contextKey + '][' + propertyKey + ']', vueDataValue[propertyKey]);
-		                            }
-		                        }
-		                    }
-		                }.bind(this));
-		            } else {
-		                //primitive
-		                this.appendToFormData(params, 'vContext[' + contextKey + ']', vueDataValue);
-		            }
-		        }
-		        return params;
-		    }, 
-		    objectToFormData : function (object) {
-		        const formData = new FormData();
-		        Object.keys(object).forEach(key => this.appendToFormData(formData, key, object[key]));
-		        return formData;
-		    }
-		 }
-	</script>
 	<div layout:fragment="javascript-header">
 	</div>
 
-	<vu:page>
-     	<section class="col container-bottom-padding" layout:fragment="page">
-     	</section>
+	<script defer type="text/javascript" th:src="@{/static/js/common.js}"></script>
+
+	<vu:page vuejsDevMode="true">
+		<section class="col container-bottom-padding" layout:fragment="page">
+		</section>
 	</vu:page>
 
 	<script>
-		function postChangeLocal(locale) {
-			VUiPage.httpPostAjax("_changeLocale", {
-				'locale': locale,
+		VUiExtensions.methods = {
+			...VUiExtensions.methods,
+
+			hideOrShowBotToolbar: function() {
+				const botToolbar = document.getElementById("toolBarBots");
+				if (botToolbar !== undefined) {
+					if (botToolbar.classList.contains("hidden")) {
+						botToolbar.classList.remove("hidden");
+					} else {
+						botToolbar.classList.add("hidden");
+					}
+				}
 			},
-			{
-			  onSuccess: function() {
-				  location.reload();
-		    	}
-			});
-		}
+
+			postChangeLocal: function(locale) {
+				VUiPage.httpPostAjax("_changeLocale", {
+							'locale': locale,
+						},
+						{
+							onSuccess: function () {
+								location.reload();
+							}
+						});
+			}
+		};
 	</script>
 
-	<script>
-		let oldHttpPostAjax = VUiPage.httpPostAjax;
-		VUiPage.httpPostAjax = function (url, params, options) {
-			let paramsResolved;
-			if (params instanceof FormData) {
-				paramsResolved = params;
-			} else {
-				paramsResolved = VUiPage.objectToFormData(params);
-			}
-			oldHttpPostAjax(url, paramsResolved, options);
-		}
-	</script>
-	<script>
-		function hideOrShowBotToolbar() {
-			const botToolbar = document.getElementById("toolBarBots");
-			if (botToolbar !== undefined) {
-				if (botToolbar.classList.contains("hidden")) {
-					botToolbar.classList.remove("hidden");
-				} else {
-					botToolbar.classList.add("hidden");
-				}
-			}
-		}
-	</script>
-	
 	<div layout:fragment="javascript-footer">
 	</div>
-	
-			
+
+	<div layout:fragment="javascript-functions">
+	</div>
 </body>
 </html>

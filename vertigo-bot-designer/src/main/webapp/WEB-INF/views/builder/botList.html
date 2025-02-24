@@ -20,7 +20,7 @@
 			<vu:cards list="bots" componentId="botCards" cardClass="botCard col-xl-3 col-md-4 col-xs-6" 
 					  rowsPerPage="10" showMore="true" showMoreLabel="Show more" >
 				<a th::href="|'@{/bot/}'+item.botId|" class="nav">
-					<q-img th::src="|'@{/bot/}'+item.botId+'/avatar'|" class="q-mt-sm"></q-img>
+					<q-img th::src="|'@{/bot/}'+item.botId+'/avatar'|" class="q-mt-sm" fit="contain"></q-img>
 					<q-card-section class="row" >
 						<div class="col ellipsis text-center text-grey" >
 							<span class="text-primary small-caps text-bigger">{{item.name}}</span><br/>

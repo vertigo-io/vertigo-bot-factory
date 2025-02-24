@@ -1,7 +1,7 @@
 package io.vertigo.chatbot.commons.multilingual.categories;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum CategoriesMultilingualResources implements MessageKey {
+public enum CategoriesMultilingualResources implements LocaleMessageKey {
 	EXPORT_CATEGORIES_FILENAME
 }

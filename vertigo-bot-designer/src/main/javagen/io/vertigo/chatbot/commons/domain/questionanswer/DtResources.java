@@ -1,16 +1,16 @@
 package io.vertigo.chatbot.commons.domain.questionanswer;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Resources du module io.vertigo.chatbot.commons.domain.questionanswer
  */
-public enum DtResources implements MessageKey {
+public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** QuestionAnswer.
-	/***********************************************************
+	 * QuestionAnswer.
+	 **********************************************************/
 	/**
 	 * Question-Answer id.
 	 */
@@ -41,8 +41,8 @@ public enum DtResources implements MessageKey {
 	fldQuestionAnswer$qaCatId,
 
 	/***********************************************************
-	/** QuestionAnswerCategory.
-	/***********************************************************
+	 * QuestionAnswerCategory.
+	 **********************************************************/
 	/**
 	 * Question-Answer category id.
 	 */
@@ -61,8 +61,8 @@ public enum DtResources implements MessageKey {
 	fldQuestionAnswerCategory$botId,
 
 	/***********************************************************
-	/** QuestionAnswerCategoryExport.
-	/***********************************************************
+	 * QuestionAnswerCategoryExport.
+	 **********************************************************/
 	/**
 	 * Question-Answer category label.
 	 */
@@ -73,8 +73,8 @@ public enum DtResources implements MessageKey {
 	fldQuestionAnswerCategoryExport$isEnabled,
 
 	/***********************************************************
-	/** QuestionAnswerContext.
-	/***********************************************************
+	 * QuestionAnswerContext.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -93,8 +93,8 @@ public enum DtResources implements MessageKey {
 	fldQuestionAnswerContext$cpvId,
 
 	/***********************************************************
-	/** QuestionAnswerContextIhm.
-	/***********************************************************
+	 * QuestionAnswerContextIhm.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -121,8 +121,8 @@ public enum DtResources implements MessageKey {
 	fldQuestionAnswerContextIhm$cpvValue,
 
 	/***********************************************************
-	/** QuestionAnswerFileExport.
-	/***********************************************************
+	 * QuestionAnswerFileExport.
+	 **********************************************************/
 	/**
 	 * Question.
 	 */
@@ -145,8 +145,8 @@ public enum DtResources implements MessageKey {
 	fldQuestionAnswerFileExport$code,
 
 	/***********************************************************
-	/** QuestionAnswerIhm.
-	/***********************************************************
+	 * QuestionAnswerIhm.
+	 **********************************************************/
 	/**
 	 * Question-Answer id.
 	 */
@@ -177,8 +177,8 @@ public enum DtResources implements MessageKey {
 	fldQuestionAnswerIhm$code,
 
 	/***********************************************************
-	/** SelectQueAnsCategory.
-	/***********************************************************
+	 * SelectQueAnsCategory.
+	 **********************************************************/
 	/**
 	 * Question-Answer category id.
 	 */

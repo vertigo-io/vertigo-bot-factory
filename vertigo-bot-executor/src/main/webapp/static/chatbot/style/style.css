@@ -165,6 +165,7 @@ footer {
     border-radius: 50px !important;
     max-height: 32px !important;
     max-width: 32px !important;
+    min-width: 32px;
     margin-right: 8px !important;
     margin-left: 4px;
 

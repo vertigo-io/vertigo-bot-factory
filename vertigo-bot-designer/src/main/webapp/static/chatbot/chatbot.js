@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         _iframe.style.visibility = 'visible';
 
-        document.getElementById('botDrawerContent').appendChild(_iframe);
+        document.getElementById('botDrawerContent')?.appendChild(_iframe);
       }
 
       function checkIfConversationAlreadyExists() {

@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import io.vertigo.chatbot.commons.AntivirusServices;
 import io.vertigo.chatbot.commons.MailService;
@@ -31,7 +31,7 @@ import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.param.Param;
 import io.vertigo.core.param.ParamManager;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 
 /**
  * @author cmarechal

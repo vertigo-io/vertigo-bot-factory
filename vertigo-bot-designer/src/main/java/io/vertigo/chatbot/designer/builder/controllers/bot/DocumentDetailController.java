@@ -29,8 +29,8 @@ import io.vertigo.chatbot.designer.domain.DocumentaryResourceContext;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceType;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
-import io.vertigo.datamodel.structure.definitions.DtField;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -198,7 +198,7 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
          * {@inheritDoc}
          */
         @Override
-        protected void checkMonoFieldConstraints(final DocumentaryResourceContext documentaryResourceContext, final DtField dtField, final DtObjectErrors dtObjectErrors) {
+        protected void checkMonoFieldConstraints(final DocumentaryResourceContext documentaryResourceContext, final DataField dtField, final DtObjectErrors dtObjectErrors) {
             super.checkMonoFieldConstraints(documentaryResourceContext, dtField, dtObjectErrors);
         }
     }

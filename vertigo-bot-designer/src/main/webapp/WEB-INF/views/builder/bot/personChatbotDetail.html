@@ -76,7 +76,7 @@
 							   th:title="#{action.update}"
 							   @click="componentStates.edit = true; vueData.selectionList.prfId = props.row.profilLabel; vueData.selectionList.perId = [props.row.perId]; $refs.addUserDialog.show()"></q-btn>
 						<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{personChatbot.profil.delete}" th:title="#{personChatbot.profil.delete}"
-								 @click="componentStates.rowId = props.row.chpId; componentStates.showDeleteRightPopup = true"></q-btn>
+								 @click="componentStates.rowId = props.row.chpId; componentStates.showDeleteRightPopup.shown = true"></q-btn>
 					</vu:slot>
 					<vu:column field="name" th:label="#{personChatbot.name}">
 						<span style="height:100%" class="row items-center">{{props.row.name}}</span>

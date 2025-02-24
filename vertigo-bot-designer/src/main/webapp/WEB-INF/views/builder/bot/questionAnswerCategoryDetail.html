@@ -10,17 +10,34 @@
     <title th:text="#{queAnsCategory.title}"></title>
 
     <script th:inline="javascript">
+        VUiExtensions.dataX.queAnsFilteredOptions = [];
 
-        VUiExtensions.dataX.queAnsFilteredOptions = '';
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
 
-        function filteredOptions() {
-            return VertigoUi.vueData.categoryList.filter(cat =>
-                cat.qaCatId !== VertigoUi.vueData.category.qaCatId);
-        }
+            filterFn: function(val, update) {
+                update(() => {
+                    if (val === '') {
+                        this.dataX.queAnsFilteredOptions = VertigoUi.vueData.queAnsIhmExceptCategoryList
+                    }
+                    else {
+                        const needle = normalizeString(val.toLowerCase())
+                        this.dataX.queAnsFilteredOptions = VertigoUi.vueData.queAnsIhmExceptCategoryList.filter(
+                            queAns => normalizeString((queAns.question + queAns.catLabel).toLowerCase()).indexOf(needle) > -1
+                        )
+                    }
+                })
+            },
 
-        function updateSelectedQueAns(selectedQueAnsIhm) {
-            VertigoUi.vueData.queAnsListToUpdate = selectedQueAnsIhm.map(queAns => queAns).join(',');
-        }
+            updateSelectedQueAns: function(selectedQueAnsIhm) {
+                VertigoUi.vueData.queAnsListToUpdate = selectedQueAnsIhm.map(queAns => queAns).join(',');
+            },
+
+            filteredOptions: function() {
+                return VertigoUi.vueData.categoryList.filter(cat =>
+                    cat.qaCatId !== VertigoUi.vueData.category.qaCatId);
+            }
+        };
 
         function normalizeString(str) {
             if (str)
@@ -28,159 +45,146 @@
             else
                 return '';
         }
-
-        function filterFn (val, update) {
-            update(() => {
-                if (val === '') {
-                    VUiExtensions.dataX.queAnsFilteredOptions = VertigoUi.vueData.queAnsIhmExceptCategoryList
-                }
-                else {
-                    const needle = normalizeString(val.toLowerCase())
-                    VUiExtensions.dataX.queAnsFilteredOptions = VertigoUi.vueData.queAnsIhmExceptCategoryList.filter(
-                        queAns => normalizeString((queAns.question + queAns.catLabel).toLowerCase()).indexOf(needle) > -1
-                    )
-                }
-            })
-        }
     </script>
 
 </head>
 
 <body>
-<section layout:fragment="content-actions">
-    <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/qacategory/(id=${model.bot.botId})} + ${model.category.qaCatId}" ariaLabel="Cancel" icon="fas fa-ban"
-                    class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
-    <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" ariaLabel="Edit" icon="edit"
-                      class="on-left" :round size="md" color="primary" />
-    <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" @click="componentStates.showPopup = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
-           class="on-left" round size="md" color="red" ></q-btn>
-</section>
+    <section layout:fragment="content-actions">
+        <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/qacategory/(id=${model.bot.botId})} + ${model.category.qaCatId}" title="Cancel" icon="fas fa-ban"
+                        class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
+        <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" action="@{_edit}" title="Edit" icon="edit"
+                          class="on-left" :round size="md" color="primary" />
+        <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botAdm]}" @click="componentStates.showPopup.shown = true" th:ariaLabel="#{action.delete}" th:title="#{action.delete}" icon="delete"
+               class="on-left" round size="md" color="red" ></q-btn>
+    </section>
 
-<section layout:fragment="content">
-    <vu:popup action="_delete" vModel="showPopup" message="#{queAns.categoryDelete.popup.message}" confirm="#{action.confirm}"></vu:popup>
+    <section layout:fragment="content">
+        <vu:popup action="_delete" vModel="showPopup" message="#{queAns.categoryDelete.popup.message}" confirm="#{action.confirm}"></vu:popup>
 
-    <vu:block id="detail" title="Informations">
-        <vu:grid cols="2">
-            <vu:text-field object="category" field="label" />
-            <vu:label object="category" field="isEnabled">
-                <vu:include-data object="category" field="isEnabled" modifiable="true" />
-                <q-input v-model="vueData.category.isEnabled" name="vContext[category][isEnabled]" class="hidden" ></q-input>
+        <vu:block id="detail" title="Informations">
+            <vu:grid cols="2">
+                <vu:text-field object="category" field="label" />
+                <vu:label object="category" field="isEnabled">
+                    <vu:include-data object="category" field="isEnabled" modifiable="true" />
+                    <q-input v-model="vueData.category.isEnabled" name="vContext[category][isEnabled]" class="hidden" ></q-input>
 
-                <q-toggle v-model="vueData.category.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
-            </vu:label>
-        </vu:grid>
-    </vu:block>
+                    <q-toggle v-model="vueData.category.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
+                </vu:label>
+            </vu:grid>
+        </vu:block>
 
-    <div style="display:flex; justify-content: flex-end">
-        <vu:include-data object="selectedQueAnsIhmList" field="*" />
-        <vu:include-data-primitive key="queAnsListToUpdate" modifiable="true" />
-        <q-btn color="primary" round icon="add" v-if="vueData.category.qaCatId !== null"
-               th:aria-label="#{action.add}"
-               th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
-               th:title="#{action.add}"
-               @click.stop="$refs.addQueAnsDialog.show();
-					   vueData.selectedQueAnsIhmList=null;
-					   vueData.queAnsListToUpdate=null"
-        ></q-btn>
-    </div>
+        <div style="display:flex; justify-content: flex-end">
+            <vu:include-data object="selectedQueAnsIhmList" field="*" />
+            <vu:include-data-primitive key="queAnsListToUpdate" modifiable="true" />
+            <q-btn color="primary" round icon="add" v-if="vueData.category.qaCatId !== null"
+                   th:aria-label="#{action.add}"
+                   th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
+                   th:title="#{action.add}"
+                   @click.stop="$refs.addQueAnsDialog.show();
+                           vueData.selectedQueAnsIhmList=null;
+                           vueData.queAnsListToUpdate=null"
+            ></q-btn>
+        </div>
 
-    <vu:table list="queAnsIhmFromCategoryList" componentId="questionAnswerList" sortBy="question" :binary-state-sort="true"
-              tr_@click.native="|goTo('@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})}'+props.row.qaId)|" tr_style="cursor : pointer;">
-        <vu:slot name="actions_slot">
-            <q-btn class="on-right" round color="red" icon="playlist_remove"
-                   th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
-                   @click.stop="$refs.queAnsCategoriesDialog.show();
-                   vueData.newQueAnsCatId = null;
-                   vueData.queAnsId = props.row.qaId">
-            </q-btn>
-        </vu:slot>
-        <vu:include-data object="queAnsIhmFromCategoryList" field="qaId" />
-        <vu:column field="question">
-            <a th::href="|'@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})}'+props.row.qaId|"
-               style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
-            >
-                <span style="height:100%" class="row items-center">{{props.row.question}}</span>
-            </a>
-        </vu:column>
-        <vu:column field="answer"/>
-    </vu:table>
+        <vu:table list="queAnsIhmFromCategoryList" componentId="questionAnswerList" sortBy="question" :binary-state-sort="true"
+                  th:tr_@click.native="|goTo('@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})}'+props.row.qaId)|" tr_style="cursor : pointer;">
+            <vu:slot name="actions_slot">
+                <q-btn class="on-right" round color="red" icon="playlist_remove"
+                       th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                       @click.stop="$refs.queAnsCategoriesDialog.show();
+                       vueData.newQueAnsCatId = null;
+                       vueData.queAnsId = props.row.qaId">
+                </q-btn>
+            </vu:slot>
+            <vu:include-data object="queAnsIhmFromCategoryList" field="qaId" />
+            <vu:column field="question">
+                <a th::href="|'@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})}'+props.row.qaId|"
+                   style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
+                >
+                    <span style="height:100%" class="row items-center">{{props.row.question}}</span>
+                </a>
+            </vu:column>
+            <vu:column field="answer"/>
+        </vu:table>
 
-    <q-dialog ref="queAnsCategoriesDialog">
-        <vu:include-data object="categoryList" field="label" />
-        <vu:include-data object="categoryList" field="qaCatId" />
-        <vu:include-data object="category" field="*" />
-        <vu:include-data-primitive key="queAnsId" modifiable="true" />
-        <vu:include-data-primitive key="newQueAnsCatId" modifiable="true"/>
-        <q-card style="width:24rem">
-            <q-card-section>
-                <div class="text-h6" style="text-align: center">
-                    <span th:text="#{queAns.categoryChange.popup.title}"></span>
-                </div>
-            </q-card-section>
-            <q-card-section>
-                <q-select
-                        outlined
-                        v-model="vueData.newQueAnsCatId"
-                        :options="filteredOptions()"
-                        option-value="qaCatId"
-                        option-label="label"
-                        th:label="#{queAns.categoryChange.popup.category}"
-                        emit-value
-                        map-options
-                />
-            </q-card-section>
-            <q-card-actions align="around">
-                <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
-                <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
-                <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-                       @click="httpPostAjax('_saveQueAnsCategoryChange', vueDataParams(['queAnsId','newQueAnsCatId']));"
-                       color="primary"
-                       v-close-popup
-                       :disabled="vueData.newQueAnsCatId === null"></q-btn>
-            </q-card-actions>
-        </q-card>
-    </q-dialog>
+        <q-dialog ref="queAnsCategoriesDialog">
+            <vu:include-data object="categoryList" field="label" />
+            <vu:include-data object="categoryList" field="qaCatId" />
+            <vu:include-data object="category" field="*" />
+            <vu:include-data-primitive key="queAnsId" modifiable="true" />
+            <vu:include-data-primitive key="newQueAnsCatId" modifiable="true"/>
+            <q-card style="width:24rem">
+                <q-card-section>
+                    <div class="text-h6" style="text-align: center">
+                        <span th:text="#{queAns.categoryChange.popup.title}"></span>
+                    </div>
+                </q-card-section>
+                <q-card-section>
+                    <q-select
+                            outlined
+                            v-model="vueData.newQueAnsCatId"
+                            :options="filteredOptions()"
+                            option-value="qaCatId"
+                            option-label="label"
+                            th:label="#{queAns.categoryChange.popup.category}"
+                            emit-value
+                            map-options
+                    />
+                </q-card-section>
+                <q-card-actions align="around">
+                    <input type="hidden" name="CTX" :value="vueData['CTX']">
+                    <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                    <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                           @click="httpPostAjax('_saveQueAnsCategoryChange', vueDataParams(['queAnsId','newQueAnsCatId']));"
+                           color="primary"
+                           v-close-popup
+                           :disabled="vueData.newQueAnsCatId === null"></q-btn>
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
 
-    <q-dialog ref="addQueAnsDialog" >
-        <vu:include-data object="category" field="*" />
-        <vu:include-data object="queAnsIhmExceptCategoryList" field="*"/>
-        <vu:include-data-primitive key="locale"/>
-        <q-card style="width:24rem">
-            <q-card-section>
-                <div class="text-h6" style="text-align: center">
-                    <span th:text="#{queAns.categoryAdd.popup.title}"></span>
-                </div>
-            </q-card-section>
-            <q-card-section>
-                <q-select
-                        multiple
-                        v-model="vueData.selectedQueAnsIhmList"
-                        :options="VUiExtensions.dataX.queAnsFilteredOptions "
-                        option-value="qaId"
-                        :option-label="queAns => `[${queAns.catLabel}] ${queAns.question}`"
-                        emit-value
-                        use-input
-                        hide-selected
-                        input-debounce="0"
-                        autofocus
-                        @filter="filterFn"
-                        @input="updateSelectedQueAns"
-                />
-            </q-card-section>
-            <q-card-actions align="around">
-                <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
-                <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
-                <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-                       @click="httpPostAjax('_saveAddingQuestionsAnswers', vueDataParams(['queAnsListToUpdate']));"
-                       color="primary"
-                       v-close-popup
-                       :disabled="vueData.selectedQueAnsIhmList === null || vueData.selectedQueAnsIhmList.length === 0"></q-btn>
-            </q-card-actions>
-        </q-card>
-    </q-dialog>
+        <q-dialog ref="addQueAnsDialog" >
+            <vu:include-data object="category" field="*" />
+            <vu:include-data object="queAnsIhmExceptCategoryList" field="*"/>
+            <vu:include-data-primitive key="locale"/>
+            <q-card style="width:24rem">
+                <q-card-section>
+                    <div class="text-h6" style="text-align: center">
+                        <span th:text="#{queAns.categoryAdd.popup.title}"></span>
+                    </div>
+                </q-card-section>
+                <q-card-section>
+                    <q-select
+                            multiple
+                            v-model="vueData.selectedQueAnsIhmList"
+                            :options="dataX.queAnsFilteredOptions"
+                            option-value="qaId"
+                            :option-label="queAns => `[${queAns.catLabel}] ${queAns.question}`"
+                            emit-value
+                            use-input
+                            hide-selected
+                            input-debounce="0"
+                            autofocus
+                            @filter="filterFn"
+                            @update:model-value="updateSelectedQueAns"
+                    />
+                </q-card-section>
+                <q-card-actions align="around">
+                    <input type="hidden" name="CTX" :value="vueData['CTX']">
+                    <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                    <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                           @click="httpPostAjax('_saveAddingQuestionsAnswers', vueDataParams(['queAnsListToUpdate']));"
+                           color="primary"
+                           v-close-popup
+                           :disabled="vueData.selectedQueAnsIhmList === null || vueData.selectedQueAnsIhmList.length === 0"></q-btn>
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
 
-    <q-page-sticky position="bottom-right">
-        <vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
-    </q-page-sticky>
+        <q-page-sticky position="bottom-right">
+            <vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
+        </q-page-sticky>
+    </section>
 </body>
 </html>

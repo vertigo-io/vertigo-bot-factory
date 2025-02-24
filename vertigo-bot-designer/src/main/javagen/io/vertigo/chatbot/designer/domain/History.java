@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.designer.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -22,7 +22,7 @@ public final class History implements Entity {
 	private String message;
 	private String userName;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AHistoryHistoryAction",
 			fkFieldName = "hacCd",
 			primaryDtDefinitionName = "DtHistoryAction",
@@ -37,7 +37,7 @@ public final class History implements Entity {
 			foreignMultiplicity = "0..*")
 	private final EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.HistoryAction, io.vertigo.chatbot.designer.domain.HistoryActionEnum> hacCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.designer.domain.HistoryAction.class, "HistoryAction", io.vertigo.chatbot.designer.domain.HistoryActionEnum.class);
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AHistoryChatbot",
 			fkFieldName = "botId",
 			primaryDtDefinitionName = "DtChatbot",
@@ -158,7 +158,7 @@ public final class History implements Entity {
 	 * Récupère la valeur de la propriété 'Action'.
 	 * @return String hacCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Action", fkDefinition = "DtHistoryAction", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyCode", label = "Action", fkDefinition = "DtHistoryAction", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getHacCd() {
 		return (String) hacCdAccessor.getId();
 	}
@@ -177,7 +177,7 @@ public final class History implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -210,6 +210,6 @@ public final class History implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

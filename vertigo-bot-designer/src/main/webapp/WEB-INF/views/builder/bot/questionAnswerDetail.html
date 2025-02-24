@@ -5,34 +5,36 @@
         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
         layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=questionsanswers">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <script th:src="@{/static/js/c-richtext.js}"></script>
     <script th:src="@{/static/js/c-queAnsTextExample.js}"></script>
     <script th:src="@{/static/utils/base64.min.js}"></script>
     <script th:src="@{/static/js/c-emojipicker.js}"></script>
     <script th:inline="javascript">
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
 
-        function filterContextPossibleValues(cvaId) {
-            if (cvaId) {
-                VertigoUi.vueData.filteredContextPossibleValueList = VertigoUi.vueData.contextPossibleValueList.filter(contextPossibleValue => contextPossibleValue.cvaId === cvaId);
+            onContextChange: function(cvaId) {
+                this.filterContextPossibleValues(cvaId);
+                VertigoUi.vueData.newQuestionAnswerContext.cpvId = null;
+            },
+
+            filterContextPossibleValues: function(cvaId) {
+                if (cvaId) {
+                    VertigoUi.vueData.filteredContextPossibleValueList = VertigoUi.vueData.contextPossibleValueList.filter(contextPossibleValue => contextPossibleValue.cvaId === cvaId);
+                }
             }
         }
-
-        function onContextChange(cvaId) {
-            filterContextPossibleValues(cvaId);
-            VertigoUi.vueData.newQuestionAnswerContext.cpvId = null;
-        }
-
     </script>
 </head>
 <body>
 <section layout:fragment="content-actions">
-    <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})} + ${model.questionAnswerIhm.qaId}" th:ariaLabel="#{action.cancel}" icon="fas fa-ban"
+    <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})} + ${model.questionAnswerIhm.qaId}" th:title="#{action.cancel}" icon="fas fa-ban"
                     class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
-    <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:ariaLabel="#{action.edit}" icon="edit"
+    <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:title="#{action.edit}" icon="edit"
                       class="on-left" :round size="md" color="primary" />
-    <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopupDelete = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
+    <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopupDelete.shown = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
            class="on-left" round size="md" color="red" ></q-btn>
 
 </section>
@@ -60,10 +62,10 @@
             <vu:include-data object="questionAnswerIhm" field="qaId" modifiable="true" />
             <vu:include-data object="chatbotCustomConfig" field="botMessageBackgroundColor" />
             <vu:include-data object="chatbotCustomConfig" field="botMessageFontColor" />
-            <vu:include-data object="questionAnswerContextIhmList" field="*" modifiable="true"/>
-            <vu:include-data object="filteredContextPossibleValueList" field="*" modifiable="true"/>
-            <vu:include-data object="contextPossibleValueList" field="*" modifiable="true"/>
-            <vu:include-data object="contextValueList" field="*" modifiable="true"/>
+            <vu:include-data object="questionAnswerContextIhmList" field="*" />
+            <vu:include-data object="filteredContextPossibleValueList" field="*" />
+            <vu:include-data object="contextPossibleValueList" field="*" />
+            <vu:include-data object="contextValueList" field="*" />
             <vu:include-data object="newQuestionAnswerContext" field="qacId" modifiable="true"/>
             <vu:include-data object="newQuestionAnswerContext" field="cvaId" modifiable="true"/>
             <vu:include-data object="newQuestionAnswerContext" field="cpvId" modifiable="true"/>
@@ -120,7 +122,7 @@
                         filterContextPossibleValues(props.row.cvaId);
                         $refs.newContextDialog.show()"></q-btn>
             <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
-                   @click="componentStates.qacId = props.row.qacId; componentStates.showPopupDeleteQuestionAnswerContext = true"></q-btn>
+                   @click="componentStates.qacId = props.row.qacId; componentStates.showPopupDeleteQuestionAnswerContext.shown = true"></q-btn>
         </vu:slot>
         <vu:column field="cvaLabel"/>
         <vu:column field="cpvValue"/>
@@ -143,7 +145,7 @@
                           map-options
                           emit-value
                           style="flex:1; margin-right:4px"
-                          @input="onContextChange">
+                          @update:model-value="onContextChange">
                 </q-select>
                 <q-select
                         v-if="vueData.newQuestionAnswerContext.cvaId != null && vueData.filteredContextPossibleValueList.length > 0"
@@ -158,7 +160,7 @@
                 </q-select>
             </q-card-section>
             <q-card-actions align="around">
-                <input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+                <input type="hidden" name="CTX" :value="vueData['CTX']">
                 <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
                 <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
                        @click="httpPostAjax('_saveQuestionAnswerContext', vueDataParams(['newQuestionAnswerContext']));"
