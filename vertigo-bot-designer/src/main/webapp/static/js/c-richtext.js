@@ -231,7 +231,7 @@ window.addEventListener('vui-before-plugins', function (event) {
 
 
 			handleCustomImage () {
-				var url = this.$refs.imageUrlRef.value;
+				var url = this.$refs.imageUrlRef.modelValue;
 				this.$refs.newImage.hide();
 
 				const edit = this.$refs.editor_ref;
@@ -241,9 +241,9 @@ window.addEventListener('vui-before-plugins', function (event) {
 			},
 
 			handleCustomLink() {
-				const url = this.$refs.linkUrlRef.value;
+				const url = this.$refs.linkUrlRef.modelValue;
 				let target = '_top';
-				if (this.$refs.linkNewTabRef.value) {
+				if (this.$refs.linkNewTabRef.modelValue) {
 					target = '_blank';
 				}
 				this.$refs.newLink.hide();
