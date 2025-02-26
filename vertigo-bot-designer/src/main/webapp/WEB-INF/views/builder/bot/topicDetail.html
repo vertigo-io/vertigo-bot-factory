@@ -100,6 +100,7 @@
 
 		<body>
 			<section layout:fragment="content-actions">
+				<input type="hidden" name="CTX" :value="vueData['CTX']">
 				<vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/topics/detail/(id=${model.bot.botId})} + ${model.topic.topId}" th:title="#{action.cancel}" icon="fas fa-ban"
 								class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
 				<vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" icon="edit"

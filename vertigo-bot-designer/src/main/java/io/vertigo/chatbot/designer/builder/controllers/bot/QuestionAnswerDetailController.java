@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Locale;
+
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
@@ -36,6 +38,7 @@ import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+import static io.vertigo.chatbot.designer.utils.UserSessionUtils.getUserSession;
 
 @Controller
 @RequestMapping("/bot/{botId}/questionsanswers/detail")
@@ -162,8 +165,11 @@ public class QuestionAnswerDetailController extends AbstractBotCreationControlle
     }
 
     @PostMapping("/_edit")
-    public void doEdit() {
+    public void doEdit(final ViewContext viewContext) {
         toModeEdit();
+        // On locale change, a js reload is performed, and viewContext is reinitialized : locale value needs to be set again in viewContext.
+        Locale locale = getUserSession().getLocale();
+        viewContext.publishRef(localeKey, String.valueOf(locale));
     }
 
     public static final class QuestionAnswerContextNotEmptyValidator extends AbstractChatbotDtObjectValidator<QuestionAnswerContext> {
