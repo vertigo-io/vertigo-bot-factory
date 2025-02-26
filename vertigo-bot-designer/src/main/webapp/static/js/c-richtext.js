@@ -1,22 +1,23 @@
 window.addEventListener('vui-before-plugins', function (event) {
 	let vuiRichText = Vue.defineComponent({
-	
-	props : {
-		modelValue:    { type: String,  required: true },
-		name:     { type: String,  required: true },
-		modeEdit: { type: Boolean, 'default': true },
-		locale:   { type: String, 'default': 'en_US' },
-		showExample: 	  { type: Boolean, 'default': false },
-		error : false
-	},
-	data: function () {
-		return {
-			imageUrl: null,
-			linkUrl: null,
-			newTab: true
-		}
-	},
-	template : `
+
+		props : {
+			modelValue:    { type: String,  required: true },
+			name:     { type: String,  required: true },
+			modeEdit: { type: Boolean, 'default': true },
+			locale:   { type: String, 'default': 'en_US' },
+			showExample: 	  { type: Boolean, 'default': false },
+			error : false
+		},
+		data: function () {
+			return {
+				imageUrl: null,
+				linkUrlText: null,
+				linkUrl: null,
+				newTab: true
+			}
+		},
+		template : `
 	<div style="flex-grow:1" v-if="modeEdit">
 		<div>
 			<input v-if="name" class="hidden" type="text" :name="name" :value="modelValue" />
@@ -111,18 +112,27 @@ window.addEventListener('vui-before-plugins', function (event) {
 							<div class="text-h6" >{{locale == 'fr_FR' ? 'Ajouter un lien' : 'Add a link'}}</div>
 						</q-card-section>
 						
-						<q-card-section>
+	       				<q-card-section>
 							<q-input 
 								filled 
-								type="text"
+								type="url"
 								v-model="linkUrl"
-								label = "URL"	
+								label="URL"	
 								ref="linkUrlRef"
 								autofocus
 								required
 	       					>
 	       					</q-input>
        					</q-card-section>
+						<q-card-section>
+							<q-input 
+								filled 
+								type="text"
+								v-model="linkUrlText"
+								:label = "locale === 'fr_FR' ? 'Texte à afficher' : 'Text to display'"	
+								ref="linkUrlTextRef"
+	       					></q-input>
+	       				</q-card-section>
        					<q-card-section>
        						<q-toggle left-label :label="locale === 'fr_FR' ? 'Nouvel onglet' : 'New tab'" ref="linkNewTabRef" v-model="newTab"></q-toggle>
 						</q-card-section>
@@ -218,6 +228,7 @@ window.addEventListener('vui-before-plugins', function (event) {
 
 			addCustomLink () {
 				this.$refs.newLink.show();
+				this.linkUrlText = null;
 				this.linkUrl = null;
 				this.newTab = true;
 			},
@@ -242,6 +253,10 @@ window.addEventListener('vui-before-plugins', function (event) {
 
 			handleCustomLink() {
 				const url = this.$refs.linkUrlRef.modelValue;
+				let urlText = this.$refs.linkUrlTextRef.modelValue;
+				if (urlText === null) {
+					urlText = url;
+				}
 				let target = '_top';
 				if (this.$refs.linkNewTabRef.modelValue) {
 					target = '_blank';
@@ -249,7 +264,7 @@ window.addEventListener('vui-before-plugins', function (event) {
 				this.$refs.newLink.hide();
 				const edit = this.$refs.editor_ref;
 				edit.caret.restore();
-				edit.runCmd('insertHTML', `<a href="${url}" target="${target}"/>${url}</a>`);
+				edit.runCmd('insertHTML', `<a href="${url}" target="${target}"/>${urlText}</a>`);
 				edit.focus();
 			},
 
