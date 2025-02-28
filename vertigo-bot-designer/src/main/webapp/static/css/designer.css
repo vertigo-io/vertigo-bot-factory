@@ -400,10 +400,11 @@ table .col_DoInstant {
 
 /*block msg*/
 
-.q-message-text:last-child {
+.q-message-text {
 	border-radius: 10px;
 	position: relative;
 	padding: 10px;
+	max-width: 230px;
 }
 
 .q-message-text--received:last-child:before, .q-message-text--sent:last-child:before {
@@ -415,6 +416,13 @@ table .col_DoInstant {
 	border-right: 10px solid transparent;
 	border-left: 15px solid transparent;
 	border-bottom: 0;
+}
+
+.q-message-received .q-message-text-content {
+	font-family: var(--font-family) !important;
+	color: var(--bot-message-font-color) !important;
+	line-height: 1.4;
+	font-size: 14px;
 }
 
 /*warning msg*/

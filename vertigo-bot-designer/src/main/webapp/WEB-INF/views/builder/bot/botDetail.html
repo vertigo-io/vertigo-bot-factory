@@ -55,7 +55,7 @@
 						VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor = '#000000';
 					}
 					Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
-						element.style.setProperty('--chat-bot-message-font-color', VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor);
+						element.style.setProperty('--bot-message-font-color', VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor);
 					});
 				},
 				changeUserMessageFontColor: function () {
@@ -195,12 +195,8 @@
 				<div class="executor-preview q-px-md">
 					<vu:include-data object="bot" field="name" modifiable="true" />
 					<p class="q-header-presentation">{{vueData.bot.name}}</p>
-					<q-chat-message :sent="false" :text="getChatPreview()" text-color="black" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
-
-					</q-chat-message>
-					<q-chat-message :sent="true" :text="getChatPreview()" text-color="black" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
-
-					</q-chat-message>
+					<q-chat-message :sent="false" :text="getChatPreview()" :text-color="vueData.chatbotCustomConfig.fontColor" :bg-color="vueData.chatbotCustomConfig.backgroundColor" ></q-chat-message>
+					<q-chat-message :sent="true" :text="getChatPreview()" :text-color="vueData.chatbotCustomConfig.fontColor" :bg-color="vueData.chatbotCustomConfig.backgroundColor" ></q-chat-message>
 				</div>
 
 				<vu:include-data object="fontFamilies" field="'*'" />
