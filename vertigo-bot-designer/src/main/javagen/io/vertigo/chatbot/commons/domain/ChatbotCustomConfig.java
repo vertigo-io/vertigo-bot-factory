@@ -23,8 +23,10 @@ public final class ChatbotCustomConfig implements Entity {
 	private String fontColor;
 	private String botMessageBackgroundColor;
 	private String botMessageFontColor;
+	private String botMessageLinkColor;
 	private String userMessageBackgroundColor;
 	private String userMessageFontColor;
+	private String botRatingColor;
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
 	private Boolean disableNlu;
@@ -204,6 +206,25 @@ public final class ChatbotCustomConfig implements Entity {
 	
 	/**
 	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot message link color'.
+	 * @return String botMessageLinkColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot message link color")
+	public String getBotMessageLinkColor() {
+		return botMessageLinkColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot message link color'.
+	 * @param botMessageLinkColor String
+	 */
+	public void setBotMessageLinkColor(final String botMessageLinkColor) {
+		this.botMessageLinkColor = botMessageLinkColor;
+	}
+	
+	/**
+	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'User message background color'.
 	 * @return String userMessageBackgroundColor
 	 */
@@ -238,6 +259,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setUserMessageFontColor(final String userMessageFontColor) {
 		this.userMessageFontColor = userMessageFontColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot rating color'.
+	 * @return String botRatingColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot rating color")
+	public String getBotRatingColor() {
+		return botRatingColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot rating color'.
+	 * @param botRatingColor String
+	 */
+	public void setBotRatingColor(final String botRatingColor) {
+		this.botRatingColor = botRatingColor;
 	}
 	
 	/**

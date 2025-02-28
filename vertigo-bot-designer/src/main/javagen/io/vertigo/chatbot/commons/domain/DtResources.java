@@ -236,6 +236,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldChatbotCustomConfig$botMessageFontColor,
 	/**
+	 * Bot message link color.
+	 */
+	fldChatbotCustomConfig$botMessageLinkColor,
+	/**
 	 * User message background color.
 	 */
 	fldChatbotCustomConfig$userMessageBackgroundColor,
@@ -243,6 +247,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * User message font color.
 	 */
 	fldChatbotCustomConfig$userMessageFontColor,
+	/**
+	 * Bot rating color.
+	 */
+	fldChatbotCustomConfig$botRatingColor,
 	/**
 	 * Display avatar.
 	 */

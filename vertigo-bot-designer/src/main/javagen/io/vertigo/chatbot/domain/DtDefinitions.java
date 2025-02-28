@@ -429,10 +429,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botMessageBackgroundColor,
 		/** Propriété 'Bot message font color'. */
 		botMessageFontColor,
+		/** Propriété 'Bot message link color'. */
+		botMessageLinkColor,
 		/** Propriété 'User message background color'. */
 		userMessageBackgroundColor,
 		/** Propriété 'User message font color'. */
 		userMessageFontColor,
+		/** Propriété 'Bot rating color'. */
+		botRatingColor,
 		/** Propriété 'Display avatar'. */
 		displayAvatar,
 		/** Propriété 'Total maximum attachment size'. */
