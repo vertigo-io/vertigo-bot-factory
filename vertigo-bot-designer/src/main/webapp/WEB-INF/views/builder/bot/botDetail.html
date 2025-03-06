@@ -22,14 +22,28 @@
 						{name: 'fontColor', default: '#ffffff', label: /*[[${model.util.label('chatbotCustomConfig.fontColor')}]]*/ '', icon: 'format_color_text'},
 						{name: 'botMessageBackgroundColor', default: '#ffffff', label: /*[[${model.util.label('chatbotCustomConfig.botMessageBackgroundColor')}]]*/ '', icon: 'format_color_fill'},
 						{name: 'botMessageFontColor', default: '#000000', label: /*[[${model.util.label('chatbotCustomConfig.botMessageFontColor')}]]*/ '', icon: 'format_color_text'},
+						{name: 'botMessageLinkColor', default: '-webkit-link', label: /*[[${model.util.label('chatbotCustomConfig.botMessageLinkColor')}]]*/ '', icon: 'link'},
 						{name: 'userMessageBackgroundColor', default: '#E0E0E0', label: /*[[${model.util.label('chatbotCustomConfig.userMessageBackgroundColor')}]]*/ '', icon: 'format_color_fill'},
 						{name: 'userMessageFontColor', default: '#000000', label: /*[[${model.util.label('chatbotCustomConfig.userMessageFontColor')}]]*/ '', icon: 'format_color_text'},
+						{name: 'botRatingColor', default: '#ffeb3b', label: /*[[${model.util.label('chatbotCustomConfig.botRatingColor')}]]*/ '', icon: 'grade'}
 					]
 				},
 				methods: {
 					...VUiExtensions.methods,
-					getChatPreview: function () {
-						return [VertigoUi.vueData.chatbotCustomConfig.fofCd];
+					getChatPreview: function (userSide) {
+						const font = VertigoUi.vueData.chatbotCustomConfig.fofCd;
+						let text = 'Platform side text using ' + font + ' font';
+						let link = '<a href="?">URL link</a>';
+						const locale = this.vueData.locale;
+						if (userSide) {
+							text = locale === 'fr_FR' ? 'Texte côté utilisateur, avec la police ' + font : 'User side text using ' + font + ' font';
+							return [text];
+						}
+						if (locale === 'fr_FR') {
+							text = 'Texte côté plateforme, avec la police ' + font;
+							link = '<a href="?">Lien URL</a>'
+						}
+						return [text, link];
 					},
 					changeColor: function (colorName) {
 						switch (colorName) {
@@ -45,11 +59,17 @@
 							case "botMessageFontColor" :
 								this.changeBotMessageFontColor();
 								break;
+							case "botMessageLinkColor" :
+								this.changeBotMessageLinkColor();
+								break;
 							case "userMessageBackgroundColor" :
 								this.changeUserMessageBgColor();
 								break;
 							case "userMessageFontColor" :
 								this.changeUserMessageFontColor();
+								break;
+							case "botRatingColor" :
+								this.changeBotRatingColor();
 								break;
 						}
 					},
@@ -101,6 +121,22 @@
 							element.style.setProperty('--chat-user-message-font-color', VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor);
 						});
 					},
+					changeBotMessageLinkColor: function () {
+						if (VertigoUi.vueData.chatbotCustomConfig.botMessageLinkColor == null) {
+							VertigoUi.vueData.chatbotCustomConfig.botMessageLinkColor = '-webkit-link';
+						}
+						Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
+							element.style.setProperty('--bot-message-link-color', VertigoUi.vueData.chatbotCustomConfig.botMessageLinkColor);
+						});
+					},
+					changeBotRatingColor: function () {
+						if (VertigoUi.vueData.chatbotCustomConfig.botRatingColor == null) {
+							VertigoUi.vueData.chatbotCustomConfig.botRatingColor = '#ffeb3b';
+						}
+						Array.from(document.getElementsByClassName('q-message-text-content--sent')).forEach(function (element, index, array) {
+							element.style.setProperty('--bot-rating-color', VertigoUi.vueData.chatbotCustomConfig.botRatingColor);
+						});
+					},
 					changeChatMessageFontFamily: function () {
 						if (VertigoUi.vueData.chatbotCustomConfig.fofCd == null) {
 							VertigoUi.vueData.chatbotCustomConfig.fofCd = 'ARIAL';
@@ -138,6 +174,8 @@
 				VUiExtensions.methods.changeUserMessageBgColor();
 				VUiExtensions.methods.changeUserMessageFontColor();
 				VUiExtensions.methods.changeBotMessageFontColor();
+				VUiExtensions.methods.changeBotMessageLinkColor();
+				VUiExtensions.methods.changeBotRatingColor();
 				VUiExtensions.methods.changeChatMessageFontFamily();
 			});
 		</script>
@@ -181,8 +219,10 @@
 		<vu:include-data object="chatbotCustomConfig" field="fontColor" modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="botMessageBackgroundColor" modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="botMessageFontColor"  modifiable="true" />
+		<vu:include-data object="chatbotCustomConfig" field="botMessageLinkColor"  modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="userMessageBackgroundColor" modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="userMessageFontColor"  modifiable="true" />
+		<vu:include-data object="chatbotCustomConfig" field="botRatingColor"  modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="fofCd" modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="displayAvatar" modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="chatbotDisplay" modifiable="true" />
@@ -233,8 +273,15 @@
 				<div class="executor-preview q-px-md">
 					<vu:include-data object="bot" field="name" modifiable="true" />
 					<p class="q-header-presentation">{{vueData.bot.name}}</p>
-					<q-chat-message :sent="false" :text="getChatPreview()" :text-color="vueData.chatbotCustomConfig.fontColor" :bg-color="vueData.chatbotCustomConfig.backgroundColor" ></q-chat-message>
-					<q-chat-message :sent="true" :text="getChatPreview()" :text-color="vueData.chatbotCustomConfig.fontColor" :bg-color="vueData.chatbotCustomConfig.backgroundColor" ></q-chat-message>
+					<q-chat-message :sent="false" :text="getChatPreview(false)" :text-color="vueData.chatbotCustomConfig.fontColor" :bg-color="vueData.chatbotCustomConfig.backgroundColor" :text-html="true"></q-chat-message>
+					<q-chat-message :sent="true" :text="getChatPreview(true)" :text-color="vueData.chatbotCustomConfig.fontColor" :bg-color="vueData.chatbotCustomConfig.backgroundColor" :text-html="true"></q-chat-message>
+					<q-chat-message :sent="true" :bg-color="vueData.chatbotCustomConfig.backgroundColor" >
+						<q-rating :model-value="2"
+								  style="font-size: 2rem;"
+								  icon="star_border"
+								  icon-selected="star"
+								  no-dimming></q-rating>
+					</q-chat-message>
 				</div>
 
 				<div class="col bot-color-block">

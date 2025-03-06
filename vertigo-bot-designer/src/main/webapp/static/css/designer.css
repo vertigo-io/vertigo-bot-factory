@@ -426,6 +426,10 @@ table .col_DoInstant {
 	font-size: 14px;
 }
 
+.q-message-text-content--received a {
+	color: var(--bot-message-link-color) !important;
+}
+
 /*warning msg*/
 
 .bg-info {
@@ -500,6 +504,11 @@ table .col_DoInstant {
 .q-message-text-content--sent {
 	color: var(--chat-user-message-font-color) !important;
 }
+
+.q-message-text-content--sent .q-rating__icon {
+	color: var(--bot-rating-color) !important;
+}
+
 .q-header-presentation{
 	font-size: 16px;
 	border-bottom-left-radius: 6px;
