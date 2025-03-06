@@ -10,6 +10,7 @@
 		<title th:text="#{bot.detail.title}"></title>
 
 		<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/tinycolor2@1.6.0/cjs/tinycolor.min.js"></script>
 		<script th:src="@{/static/js/c-buttonList.js}"></script>
 
 		<script th:inline="javascript">
@@ -18,14 +19,14 @@
 					...VUiExtensions.dataX,
 					colorTab: 'backgroundColor',
 					colorList: [
-						{name: 'backgroundColor', default: '#000091', label: /*[[${model.util.label('chatbotCustomConfig.backgroundColor')}]]*/ '', icon: 'format_color_fill'},
-						{name: 'fontColor', default: '#ffffff', label: /*[[${model.util.label('chatbotCustomConfig.fontColor')}]]*/ '', icon: 'format_color_text'},
-						{name: 'botMessageBackgroundColor', default: '#ffffff', label: /*[[${model.util.label('chatbotCustomConfig.botMessageBackgroundColor')}]]*/ '', icon: 'format_color_fill'},
-						{name: 'botMessageFontColor', default: '#000000', label: /*[[${model.util.label('chatbotCustomConfig.botMessageFontColor')}]]*/ '', icon: 'format_color_text'},
-						{name: 'botMessageLinkColor', default: '-webkit-link', label: /*[[${model.util.label('chatbotCustomConfig.botMessageLinkColor')}]]*/ '', icon: 'link'},
-						{name: 'userMessageBackgroundColor', default: '#E0E0E0', label: /*[[${model.util.label('chatbotCustomConfig.userMessageBackgroundColor')}]]*/ '', icon: 'format_color_fill'},
-						{name: 'userMessageFontColor', default: '#000000', label: /*[[${model.util.label('chatbotCustomConfig.userMessageFontColor')}]]*/ '', icon: 'format_color_text'},
-						{name: 'botRatingColor', default: '#ffeb3b', label: /*[[${model.util.label('chatbotCustomConfig.botRatingColor')}]]*/ '', icon: 'grade'}
+						{name: 'backgroundColor', default: '#000091', label: /*[[${model.util.label('chatbotCustomConfig.backgroundColor')}]]*/ '', icon: 'format_color_fill', alert: false, background: true},
+						{name: 'fontColor', default: '#ffffff', label: /*[[${model.util.label('chatbotCustomConfig.fontColor')}]]*/ '', icon: 'format_color_text', alert: false, background: false},
+						{name: 'botMessageBackgroundColor', default: '#ffffff', label: /*[[${model.util.label('chatbotCustomConfig.botMessageBackgroundColor')}]]*/ '', icon: 'format_color_fill', alert: false, background: true},
+						{name: 'botMessageFontColor', default: '#000000', label: /*[[${model.util.label('chatbotCustomConfig.botMessageFontColor')}]]*/ '', icon: 'format_color_text', alert: false, background: false},
+						{name: 'botMessageLinkColor', default: '-webkit-link', label: /*[[${model.util.label('chatbotCustomConfig.botMessageLinkColor')}]]*/ '', icon: 'link', alert: false, background: false},
+						{name: 'userMessageBackgroundColor', default: '#E0E0E0', label: /*[[${model.util.label('chatbotCustomConfig.userMessageBackgroundColor')}]]*/ '', icon: 'format_color_fill', alert: false, background: true},
+						{name: 'userMessageFontColor', default: '#000000', label: /*[[${model.util.label('chatbotCustomConfig.userMessageFontColor')}]]*/ '', icon: 'format_color_text', alert: false, background: false},
+						{name: 'botRatingColor', default: '#ffeb3b', label: /*[[${model.util.label('chatbotCustomConfig.botRatingColor')}]]*/ '', icon: 'grade', alert: false, background: false}
 					]
 				},
 				methods: {
@@ -80,6 +81,7 @@
 						Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
 							element.style.setProperty('--bot-bg-color', VertigoUi.vueData.chatbotCustomConfig.backgroundColor);
 						});
+						checkContrast("backgroundColor", "fontColor");
 					},
 					changeFontColor: function () {
 						if (VertigoUi.vueData.chatbotCustomConfig.fontColor == null) {
@@ -88,6 +90,7 @@
 						Array.from(document.getElementsByClassName('q-header-presentation')).forEach(function (element, index, array) {
 							element.style.setProperty('--bot-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
 						});
+						checkContrast("backgroundColor", "fontColor");
 					},
 					changeBotMessageBgColor: function () {
 						if (VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor == null) {
@@ -96,6 +99,8 @@
 						Array.from(document.getElementsByClassName('q-message-text--received')).forEach(function (element, index, array) {
 							element.style.setProperty('--chat-bot-bg-color', VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor);
 						});
+						checkContrast("botMessageBackgroundColor", "botMessageFontColor");
+						checkContrast("botMessageBackgroundColor", "botMessageLinkColor");
 					},
 					changeUserMessageBgColor: function () {
 						if (VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor == null) {
@@ -104,6 +109,8 @@
 						Array.from(document.getElementsByClassName('q-message-text--sent')).forEach(function (element, index, array) {
 							element.style.setProperty('--chat-user-bg-color', VertigoUi.vueData.chatbotCustomConfig.userMessageBackgroundColor);
 						});
+						checkContrast("userMessageBackgroundColor", "userMessageFontColor");
+						checkContrast("userMessageBackgroundColor", "botRatingColor");
 					},
 					changeBotMessageFontColor: function () {
 						if (VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor == null) {
@@ -112,6 +119,7 @@
 						Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
 							element.style.setProperty('--bot-message-font-color', VertigoUi.vueData.chatbotCustomConfig.botMessageFontColor);
 						});
+						checkContrast("botMessageBackgroundColor", "botMessageFontColor");
 					},
 					changeUserMessageFontColor: function () {
 						if (VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor == null) {
@@ -120,6 +128,7 @@
 						Array.from(document.getElementsByClassName('q-message-text-content--sent')).forEach(function (element, index, array) {
 							element.style.setProperty('--chat-user-message-font-color', VertigoUi.vueData.chatbotCustomConfig.userMessageFontColor);
 						});
+						checkContrast("userMessageBackgroundColor", "userMessageFontColor");
 					},
 					changeBotMessageLinkColor: function () {
 						if (VertigoUi.vueData.chatbotCustomConfig.botMessageLinkColor == null) {
@@ -128,6 +137,7 @@
 						Array.from(document.getElementsByClassName('q-message-text-content--received')).forEach(function (element, index, array) {
 							element.style.setProperty('--bot-message-link-color', VertigoUi.vueData.chatbotCustomConfig.botMessageLinkColor);
 						});
+						checkContrast("botMessageBackgroundColor", "botMessageLinkColor");
 					},
 					changeBotRatingColor: function () {
 						if (VertigoUi.vueData.chatbotCustomConfig.botRatingColor == null) {
@@ -136,6 +146,7 @@
 						Array.from(document.getElementsByClassName('q-message-text-content--sent')).forEach(function (element, index, array) {
 							element.style.setProperty('--bot-rating-color', VertigoUi.vueData.chatbotCustomConfig.botRatingColor);
 						});
+						checkContrast("userMessageBackgroundColor", "botRatingColor");
 					},
 					changeChatMessageFontFamily: function () {
 						if (VertigoUi.vueData.chatbotCustomConfig.fofCd == null) {
@@ -166,6 +177,28 @@
 					}
 				}
 			}
+
+			/**
+			 * Check if contrast of 2 colors is compliant with AA accessibility level
+			 * @param backgroundColorName name of the background color
+			 * @param textColorName name of the text color
+			 */
+			function checkContrast(backgroundColorName, textColorName) {
+				const backgroundColor = VertigoUi.vueData.chatbotCustomConfig[backgroundColorName];
+				const textColor = VertigoUi.vueData.chatbotCustomConfig[textColorName];
+				const isReadable = tinycolor.isReadable(backgroundColor, textColor, {level:"AA",size:"large"});
+				VUiPage.dataX.colorList.forEach(color => {
+					if (color.name === textColorName) {
+						if (isReadable) {
+							color.alert = false;
+							color.alertIcon = '';
+						} else {
+							color.alert = "warning";
+							color.alertIcon = "warning";
+						}
+					}
+				});
+			};
 
 			document.addEventListener('DOMContentLoaded', function () {
 				VUiExtensions.methods.changeBgColor();
@@ -294,6 +327,8 @@
 									   :name="color.name"
 									   :label="color.label"
 									   :icon="color.icon"
+									   :alert="color.alert"
+									   :alert-icon="color.alertIcon"
 									   content-class="bot-color-tab">
 									<div class="bot-color-tab-indicator"
 										 :style="{background: vueData.chatbotCustomConfig[color.name] || color.default}"></div>
@@ -305,6 +340,13 @@
 							<q-tab-panels v-model="dataX.colorTab" animated vertical>
 								<q-tab-panel v-for="color in dataX.colorList"
 											 :name="color.name">
+									<div v-if="!color.background" class="color-accessibility q-field__label q-ml-md">
+										<span>[[#{bot.color.contrast}]] : </span>
+										<span v-if="color.alert">[[#{bot.color.contrast.ko}]]</span>
+										<q-icon v-if="color.alert" name="warning" color="warning" class="q-ml-sm" th:alt="#{bot.color.contrast.insufficient}" size="xs"></q-icon>
+										<span v-if="!color.alert">[[#{bot.color.contrast.ok}]]</span>
+										<q-icon v-if="!color.alert" name="check_circle" color="positive" class="q-ml-sm" th:alt="#{bot.color.contrast.sufficient}" size="xs"></q-icon>
+									</div>
 									<q-color class="q-ml-md"
 											 style="width: 100%; height: 100%;"
 											 th::disable="${model.modeReadOnly}"

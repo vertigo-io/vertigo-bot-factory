@@ -555,6 +555,19 @@ table .col_DoInstant {
 	margin-right: 10px;
 }
 
+.bot-color-tab .q-tab__alert-icon {
+	position: relative;
+	left: 4px;
+	top: -9px;
+	font-size: 16px;
+}
+
 .bot-color-block {
 	padding-left: 100px;
+}
+
+.color-accessibility {
+	text-align: center;
+	font-size: 12px;
+	max-width: 350px;
 }
