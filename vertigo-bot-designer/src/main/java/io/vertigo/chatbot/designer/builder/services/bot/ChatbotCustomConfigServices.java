@@ -47,7 +47,9 @@ public class ChatbotCustomConfigServices implements Component {
                 (oldChatbotCustomConfig.getBackgroundColor() != null && !oldChatbotCustomConfig.getBackgroundColor().equals(chatbotCustomConfig.getBackgroundColor())) ||
                 (oldChatbotCustomConfig.getBotMessageBackgroundColor() != null && !oldChatbotCustomConfig.getBotMessageBackgroundColor().equals(chatbotCustomConfig.getBotMessageBackgroundColor())) ||
                 (oldChatbotCustomConfig.getBotMessageFontColor() != null && !oldChatbotCustomConfig.getBotMessageFontColor().equals(chatbotCustomConfig.getBotMessageFontColor())) ||
+                (oldChatbotCustomConfig.getBotMessageLinkColor() != null && !oldChatbotCustomConfig.getBotMessageLinkColor().equals(chatbotCustomConfig.getBotMessageLinkColor())) ||
                 (oldChatbotCustomConfig.getUserMessageFontColor() != null && !oldChatbotCustomConfig.getUserMessageFontColor().equals(chatbotCustomConfig.getUserMessageFontColor())) ||
+                (oldChatbotCustomConfig.getBotRatingColor() != null && !oldChatbotCustomConfig.getBotRatingColor().equals(chatbotCustomConfig.getBotRatingColor())) ||
                 (oldChatbotCustomConfig.getFofCd() != null && !oldChatbotCustomConfig.getFofCd().equals(chatbotCustomConfig.getFofCd())) ||
                 (oldChatbotCustomConfig.getFontColor() != null && !oldChatbotCustomConfig.getFontColor().equals(chatbotCustomConfig.getFontColor())) ||
                 (oldChatbotCustomConfig.getUserMessageBackgroundColor() != null && !oldChatbotCustomConfig.getUserMessageBackgroundColor().equals(chatbotCustomConfig.getUserMessageBackgroundColor())) ||
