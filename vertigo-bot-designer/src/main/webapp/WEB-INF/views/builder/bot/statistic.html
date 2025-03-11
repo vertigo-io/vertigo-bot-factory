@@ -344,26 +344,6 @@
 
         VUiExtensions.dataX.popinDetailLabel = '';
 
-        function closeDialog() {
-            VUiPage.$refs.popupFromDate.hide();
-            VUiPage.$refs.popupToDate.hide();
-        }
-
-        function checkAllExportStats() {
-            VertigoUi.vueData.selectTypeExportAnalyticList.teaCd =
-                VertigoUi.vueData.typeExportAnalyticsList.map(typeExport => typeExport.teaCd);
-
-        }
-
-        function limitFromInput(date) {
-            if (VertigoUi.vueData.criteria.toDate == null || VertigoUi.vueData.criteria.toDate == '') return true;
-
-            const from = moment(date,'YYYY/MM/DD');
-            const to = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
-
-            return from <= to;
-        }
-
     </script>
     <style>
         .q-message-text--sent:before,
@@ -864,6 +844,20 @@
 
             sanitizeText: function(text) {
                 return DOMPurify.sanitize(text);
+            },
+
+            checkAllExportStats: function() {
+                this.vueData.selectTypeExportAnalyticList.teaCd =
+                    VertigoUi.vueData.typeExportAnalyticsList.map(typeExport => typeExport.teaCd);
+            },
+
+            limitFromInput: function(date) {
+                if (VertigoUi.vueData.criteria.toDate == null || VertigoUi.vueData.criteria.toDate == '') return true;
+
+                const from = moment(date,'YYYY/MM/DD');
+                const to = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
+
+                return from <= to;
             }
         }
 
