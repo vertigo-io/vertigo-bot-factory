@@ -56,9 +56,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.inject.Inject;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+import static io.vertigo.chatbot.designer.utils.UserSessionUtils.getUserSession;
 
 @Controller
 @RequestMapping("/bot/{botId}/topics/detail")
@@ -270,8 +272,11 @@ public class TopicDetailController extends AbstractBotCreationController<Topic> 
     }
 
     @PostMapping("/_edit")
-    public void doEdit() {
+    public void doEdit(final ViewContext viewContext) {
         toModeEdit();
+        // On locale change, a js reload is performed, and viewContext is reinitialized : locale value needs to be set again in viewContext.
+        Locale locale = getUserSession().getLocale();
+        viewContext.publishRef(localeKey, String.valueOf(locale));
     }
 
     @PostMapping("/_save")

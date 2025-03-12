@@ -27,8 +27,10 @@
                       + '; --bot-message-bg-color: ' + customConfig.botMessageBackgroundColor
                       + '; --font-family: ' + customConfig.fontFamily
                       + '; --bot-message-font-color: ' + customConfig.botMessageFontColor
+                      + '; --bot-message-link-color: ' + customConfig.botMessageLinkColor
                       + '; --user-message-bg-color: ' + customConfig.userMessageBackgroundColor
-                      + '; --user-message-font-color: ' + customConfig.userMessageFontColor + ';'">
+                      + '; --user-message-font-color: ' + customConfig.userMessageFontColor
+                      + '; --bot-rating-color: ' + customConfig.botRatingColor + ';'">
         <q-layout view="hHh lpr fFf" class="row col">
           <q-header class="bg-white">
             <div class="custom-header row items-center non-selectable" >
@@ -93,7 +95,8 @@
                         <q-rating v-model="inputConfig.rating" style="font-size: 2rem;"
                                   icon="star_border"
                                   disable
-                                  icon-selected="star"></q-rating>
+                                  icon-selected="star"
+                                  no-dimming></q-rating>
                       </q-chat-message>
                     </div>
                     <div class="sys-chat">
@@ -132,6 +135,7 @@
                                   icon="star_border"
                                   icon-selected="star"
                                   icon-half="star_half"
+                                  no-dimming
                                   @update:model-value="postAnswerText(true)"></q-rating>
                       </q-chat-message>
                     </div>

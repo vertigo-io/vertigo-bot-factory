@@ -371,7 +371,7 @@
             font-family: var(--chat-message-font-family) !important;
         }
         .q-message-text-content--received {
-            color: var(--chat-message-font-color) !important;
+            color: var(--bot-message-font-color) !important;
         }
     </style>
 </head>
@@ -881,7 +881,7 @@
             var r = document.querySelector(':root');
 
             r.style.setProperty('--chat-message-bg-color', botMessageBackgroundColor);
-            r.style.setProperty('--chat-message-font-color', botMessageFontColor);
+            r.style.setProperty('--bot-message-font-color', botMessageFontColor);
 
             r.style.setProperty('--chat-user-message-bg-color', userMessageBackgroundColor);
             r.style.setProperty('--chat-user-message-font-color', userMessageFontColor);

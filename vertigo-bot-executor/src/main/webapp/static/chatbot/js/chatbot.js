@@ -93,8 +93,10 @@ const chatbotComponent = {
                 fontColor: 'black',
                 botMessageBackgroundColor: 'grey',
                 botMessageFontColor: 'black',
+                botMessageLinkColor: '-webkit-link',
                 userMessageBackgroundColor: 'grey',
                 userMessageFontColor: 'black',
+                botRatingColor: '#ffeb3b',
                 fontFamily: 'Arial, Helvetica, sans-serif',
                 displayAvatar: true,
                 disableNlu: false,
@@ -170,8 +172,10 @@ const chatbotComponent = {
                     this.customConfig.fontColor = httpResponse.data.fontColor;
                     this.customConfig.botMessageBackgroundColor = httpResponse.data.botMessageBackgroundColor;
                     this.customConfig.botMessageFontColor = httpResponse.data.botMessageFontColor;
+                    this.customConfig.botMessageLinkColor = httpResponse.data.botMessageLinkColor,
                     this.customConfig.userMessageBackgroundColor = httpResponse.data.userMessageBackgroundColor;
                     this.customConfig.userMessageFontColor = httpResponse.data.userMessageFontColor;
+                    this.customConfig.botRatingColor = httpResponse.data.botRatingColor;
                     this.customConfig.fontFamily = httpResponse.data.fontFamily;
                     this.customConfig.displayAvatar = httpResponse.data.displayAvatar;
                     this.customConfig.disableNlu = httpResponse.data.disableNlu;

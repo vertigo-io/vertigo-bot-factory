@@ -101,7 +101,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 	protected ContextEnvironmentServices contextEnvironmentServices;
 
 	private static final ViewContextKey<Chatbot> botKey = ViewContextKey.of("bot");
-	private static final ViewContextKey<String> localeKey = ViewContextKey.of("locale");
+	protected static final ViewContextKey<String> localeKey = ViewContextKey.of("locale");
 	private static final ViewContextKey<Long> enabledTopicsKey = ViewContextKey.of("enabledTopics");
 	private static final ViewContextKey<Long> unknownSentencesToTreatKey = ViewContextKey.of("unknownSentencesToTreat");
 	private static final ViewContextKey<Integer> totalTopicsKey = ViewContextKey.of("totalTopics");

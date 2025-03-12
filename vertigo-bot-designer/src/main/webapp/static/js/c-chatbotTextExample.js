@@ -10,7 +10,7 @@ window.addEventListener('vui-before-plugins', function (event) {
 
         template: `
         <div style="width:300px" class="q-px-md">
-            <q-chat-message :sent="false" :text="getChatPreview()" text-color="black" bg-color="grey-4" ></q-chat-message>
+            <q-chat-message :sent="false" :text="getChatPreview()" text-color="black" bg-color="grey-4" :text-html="${true}"></q-chat-message>
         </div>
         `
         ,

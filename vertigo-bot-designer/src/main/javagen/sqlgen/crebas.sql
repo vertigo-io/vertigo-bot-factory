@@ -419,8 +419,10 @@ create table CHATBOT_CUSTOM_CONFIG
     FONT_COLOR  	 VARCHAR(100)	,
     BOT_MESSAGE_BACKGROUND_COLOR	 VARCHAR(100)	,
     BOT_MESSAGE_FONT_COLOR	 VARCHAR(100)	,
+    BOT_MESSAGE_LINK_COLOR	 VARCHAR(100)	,
     USER_MESSAGE_BACKGROUND_COLOR	 VARCHAR(100)	,
     USER_MESSAGE_FONT_COLOR	 VARCHAR(100)	,
+    BOT_RATING_COLOR	 VARCHAR(100)	,
     DISPLAY_AVATAR	 bool        	,
     TOTAL_MAX_ATTACHMENT_SIZE	 NUMERIC     	,
     DISABLE_NLU 	 bool        	,
@@ -454,11 +456,17 @@ comment on column CHATBOT_CUSTOM_CONFIG.BOT_MESSAGE_BACKGROUND_COLOR is
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_MESSAGE_FONT_COLOR is
 'Bot message font color';
 
+comment on column CHATBOT_CUSTOM_CONFIG.BOT_MESSAGE_LINK_COLOR is
+'Bot message link color';
+
 comment on column CHATBOT_CUSTOM_CONFIG.USER_MESSAGE_BACKGROUND_COLOR is
 'User message background color';
 
 comment on column CHATBOT_CUSTOM_CONFIG.USER_MESSAGE_FONT_COLOR is
 'User message font color';
+
+comment on column CHATBOT_CUSTOM_CONFIG.BOT_RATING_COLOR is
+'Bot rating color';
 
 comment on column CHATBOT_CUSTOM_CONFIG.DISPLAY_AVATAR is
 'Display avatar';

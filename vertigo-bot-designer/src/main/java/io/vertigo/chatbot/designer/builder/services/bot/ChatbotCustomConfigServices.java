@@ -47,7 +47,9 @@ public class ChatbotCustomConfigServices implements Component {
                 (oldChatbotCustomConfig.getBackgroundColor() != null && !oldChatbotCustomConfig.getBackgroundColor().equals(chatbotCustomConfig.getBackgroundColor())) ||
                 (oldChatbotCustomConfig.getBotMessageBackgroundColor() != null && !oldChatbotCustomConfig.getBotMessageBackgroundColor().equals(chatbotCustomConfig.getBotMessageBackgroundColor())) ||
                 (oldChatbotCustomConfig.getBotMessageFontColor() != null && !oldChatbotCustomConfig.getBotMessageFontColor().equals(chatbotCustomConfig.getBotMessageFontColor())) ||
+                (oldChatbotCustomConfig.getBotMessageLinkColor() != null && !oldChatbotCustomConfig.getBotMessageLinkColor().equals(chatbotCustomConfig.getBotMessageLinkColor())) ||
                 (oldChatbotCustomConfig.getUserMessageFontColor() != null && !oldChatbotCustomConfig.getUserMessageFontColor().equals(chatbotCustomConfig.getUserMessageFontColor())) ||
+                (oldChatbotCustomConfig.getBotRatingColor() != null && !oldChatbotCustomConfig.getBotRatingColor().equals(chatbotCustomConfig.getBotRatingColor())) ||
                 (oldChatbotCustomConfig.getFofCd() != null && !oldChatbotCustomConfig.getFofCd().equals(chatbotCustomConfig.getFofCd())) ||
                 (oldChatbotCustomConfig.getFontColor() != null && !oldChatbotCustomConfig.getFontColor().equals(chatbotCustomConfig.getFontColor())) ||
                 (oldChatbotCustomConfig.getUserMessageBackgroundColor() != null && !oldChatbotCustomConfig.getUserMessageBackgroundColor().equals(chatbotCustomConfig.getUserMessageBackgroundColor())) ||
@@ -85,8 +87,10 @@ public class ChatbotCustomConfigServices implements Component {
         chatbotCustomConfig.setFontColor("#ffffff");
         chatbotCustomConfig.setBotMessageBackgroundColor("#ffffff");
         chatbotCustomConfig.setBotMessageFontColor("#000000");
+        chatbotCustomConfig.setBotMessageLinkColor("-webkit-link");
         chatbotCustomConfig.setUserMessageBackgroundColor("#E0E0E0");
         chatbotCustomConfig.setUserMessageFontColor("#000000");
+        chatbotCustomConfig.setBotRatingColor("#ffeb3b");
         chatbotCustomConfig.setFofCd(FontFamilyEnum.ARIAL.name());
         chatbotCustomConfig.setTotalMaxAttachmentSize(-1L);
         chatbotCustomConfig.setChatbotDisplay(true);

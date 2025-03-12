@@ -3,8 +3,10 @@
     --font-color: #ffffff;
     --bot-message-bg-color: #ebebeb;
     --bot-message-font-color: #000000;
+    --bot-message-link-color: -webkit-link;
     --user-message-bg-color: #e0e0e0;
     --user-message-font-color: #000000;
+    --bot-rating-color: #ffeb3b;
     --font-family: Arial, Helvetica, sans-serif;
 }
 .text-primary {
@@ -80,6 +82,10 @@ footer {
     color: var(--bot-message-font-color) !important;
 }
 
+.q-message-received a {
+    color: var(--bot-message-link-color) !important;
+}
+
 .q-btn {
     border-radius: 18px;
     font-family: var(--font-family);
@@ -116,6 +122,10 @@ footer {
     color: var(--user-message-font-color) !important;
     line-height: 1.4;
     font-size: 14px;
+}
+
+.q-message-sent .q-icon {
+    color: var(--bot-rating-color) !important;
 }
 
 .q-message-received .q-message-text-content {
