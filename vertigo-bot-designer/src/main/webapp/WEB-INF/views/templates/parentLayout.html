@@ -12,9 +12,12 @@
 				<q-toolbar>
 					<div class="row items-center">
 						<a class="q-link text-weight-bold q-layout__section--marginal" th:href="@{/bots/}">
-							<q-toolbar-title>
-							<div th:text="#{parent.title}"></div>
-						</q-toolbar-title>
+							<q-avatar square>
+								<img th:src="@{/static/images/logo.png}"/>
+							</q-avatar>
+							<q-toolbar-title style="display: inline-flex">
+								<div th:text="#{parent.title}"></div>
+							</q-toolbar-title>
 						</a>
 					</div>
 					<div class="col q-mx-xl" style="display: flex; justify-content: center">
