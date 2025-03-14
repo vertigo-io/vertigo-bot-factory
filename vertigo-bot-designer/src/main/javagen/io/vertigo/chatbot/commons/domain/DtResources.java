@@ -224,6 +224,10 @@ public enum DtResources implements MessageKey {
 	 */
 	fldChatbotCustomConfig$maxSavedTraining,
 	/**
+	 * Check Jira fields before ticket creation.
+	 */
+	fldChatbotCustomConfig$jiraCheckBeforeCreate,
+	/**
 	 * Chatbot.
 	 */
 	fldChatbotCustomConfig$botId,

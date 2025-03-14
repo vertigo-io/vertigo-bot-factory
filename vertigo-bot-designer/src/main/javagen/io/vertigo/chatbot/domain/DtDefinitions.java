@@ -386,6 +386,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		disableNlu,
 		/** Propriété 'Maximum of saved trainings'. */
 		maxSavedTraining,
+		/** Propriété 'Check Jira fields before ticket creation'. */
+		jiraCheckBeforeCreate,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'fontFamily'. */

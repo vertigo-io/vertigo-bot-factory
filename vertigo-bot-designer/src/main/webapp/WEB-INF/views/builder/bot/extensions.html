@@ -142,6 +142,12 @@
             VUiPage.$refs.jiraCodeMirror.modifyValue(jiraSequence);
         }
 
+        function enableDisableJiraChecks() {
+            VUiPage.httpPostAjax("_saveChatbotCustomConfig", {
+                'vContext[chatbotCustomConfig][jiraCheckBeforeCreate]': VertigoUi.vueData.chatbotCustomConfig.jiraCheckBeforeCreate
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             refreshCodeMirrorJiraField();
         });
@@ -379,6 +385,11 @@
                           disable></q-toggle>
             </vu:column>
         </vu:table>
+        <vu:include-data object="chatbotCustomConfig" field="jiraCheckBeforeCreate" modifiable="true"/>
+        <vu:label-edit object="chatbotCustomConfig" field="jiraCheckBeforeCreate">
+            <q-toggle left-label v-model="vueData.chatbotCustomConfig.jiraCheckBeforeCreate"
+                      @input="enableDisableJiraChecks"></q-toggle>
+        </vu:label-edit>
         <vu:include-data object="scriptIntention" field="script"/>
         <vu:table id="JIRA_NODE_SETTINGS" th:title="#{extensions.jira.nodeSettings}" list="jiraSettingsFiltered"
                   componentId="jiraSettingsFiltered" sortBy="url" :binary-state-sort="true">
