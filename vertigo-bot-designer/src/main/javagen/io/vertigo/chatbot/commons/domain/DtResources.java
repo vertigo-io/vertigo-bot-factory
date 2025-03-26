@@ -287,6 +287,10 @@ public enum DtResources implements MessageKey {
 	 * Disable NlU.
 	 */
 	fldChatbotCustomConfigExport$disableNlu,
+	/**
+	 * Check Jira fields before ticket creation.
+	 */
+	fldChatbotCustomConfigExport$jiraCheckBeforeCreate,
 
 	/***********************************************************
 	/** ChatbotNode.

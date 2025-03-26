@@ -191,7 +191,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Total maximum attachment size'. */
 		totalMaxAttachmentSize,
 		/** Propriété 'Disable NlU'. */
-		disableNlu	}
+		disableNlu,
+		/** Propriété 'Check Jira fields before ticket creation'. */
+		jiraCheckBeforeCreate	}
 
 	/**
 	 * Enumération des champs de ConfluenceSettingExport.

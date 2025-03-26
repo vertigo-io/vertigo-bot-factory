@@ -25,6 +25,7 @@ public final class ChatbotCustomConfigExport implements DtObject {
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
 	private Boolean disableNlu;
+	private Boolean jiraCheckBeforeCreate;
 	
 	/**
 	 * Champ : DATA.
@@ -252,6 +253,25 @@ public final class ChatbotCustomConfigExport implements DtObject {
 	 */
 	public void setDisableNlu(final Boolean disableNlu) {
 		this.disableNlu = disableNlu;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Check Jira fields before ticket creation'.
+	 * @return Boolean jiraCheckBeforeCreate <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Check Jira fields before ticket creation")
+	public Boolean getJiraCheckBeforeCreate() {
+		return jiraCheckBeforeCreate;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Check Jira fields before ticket creation'.
+	 * @param jiraCheckBeforeCreate Boolean <b>Obligatoire</b>
+	 */
+	public void setJiraCheckBeforeCreate(final Boolean jiraCheckBeforeCreate) {
+		this.jiraCheckBeforeCreate = jiraCheckBeforeCreate;
 	}
 	
 	/** {@inheritDoc} */

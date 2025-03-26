@@ -103,6 +103,7 @@ public class BotExportServices implements Component {
 		chatbotCustomConfigExport.setDisplayAvatar(chatbotCustomConfig.getDisplayAvatar());
 		chatbotCustomConfigExport.setReinitializationButton(chatbotCustomConfig.getReinitializationButton());
 		chatbotCustomConfigExport.setFontFamily(fontFamily.getLabel());
+		chatbotCustomConfigExport.setJiraCheckBeforeCreate(chatbotCustomConfig.getJiraCheckBeforeCreate());
 		return chatbotCustomConfigExport;
 	}
 
