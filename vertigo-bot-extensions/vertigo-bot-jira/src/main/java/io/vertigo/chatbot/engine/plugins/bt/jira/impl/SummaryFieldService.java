@@ -13,7 +13,10 @@ import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.chatbot.engine.plugins.bt.jira.multilingual.JiraMultilingualResources;
+import io.vertigo.chatbot.executor.manager.ExecutorConfigManager;
 import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.node.Node;
+import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
 
 import javax.inject.Inject;
@@ -27,10 +30,11 @@ import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.wsBBPat
 import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.wsValue;
 import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.yesPayload;
 
-public class SummaryFieldService implements IJiraFieldService, Component {
+public class SummaryFieldService implements IJiraFieldService, Component, Activeable {
 
 	@Inject
 	private JiraServerService jiraServerService;
+	private ExecutorConfigManager executorConfigManager;
 
 
 	@Override
@@ -40,9 +44,9 @@ public class SummaryFieldService implements IJiraFieldService, Component {
 
 	@Override
 	public void processConversation(final BlackBoard bb, final JiraField jiraField, final List<BTNode> sequence) {
-
+		boolean checkJiraFields = jiraServerService.getJiraCheckFields(executorConfigManager.getConfig());
 		sequence.add(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()));
-		if (jiraServerService.getNumberOfResults()>0) {
+		if (jiraServerService.getNumberOfResults()>0 && checkJiraFields) {
 			sequence.add(getIssueFromReference(bb, jiraField.getKey()));
 			if (noPayload.equals(bb.getString(continueBBPath))) {
 				sequence.add(BotNodeProvider.switchTopicEnd(bb));
@@ -86,5 +90,15 @@ public class SummaryFieldService implements IJiraFieldService, Component {
 		buttons.add(new BotButton(MessageText.of(JiraMultilingualResources.YES).getDisplay(), yesPayload));
 		buttons.add(new BotButton(MessageText.of(JiraMultilingualResources.NO).getDisplay(), noPayload));
 		return BotNodeProvider.chooseButton(bb, keyTemplate, question, buttons);
+	}
+
+	@Override
+	public void start() {
+		executorConfigManager = Node.getNode().getComponentSpace().resolve(ExecutorConfigManager.class);
+	}
+
+	@Override
+	public void stop() {
+
 	}
 }

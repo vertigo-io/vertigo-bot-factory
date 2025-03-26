@@ -11,9 +11,11 @@ import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
+
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.PasswordEncryptionServices;
+import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
 import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
 import io.vertigo.chatbot.engine.plugins.bt.jira.helper.CustomAsynchronousJiraRestClient;
@@ -23,8 +25,10 @@ import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 import javax.inject.Inject;
+
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,9 +50,10 @@ public class JiraServerService implements Component, IJiraService {
     private CustomAsynchronousJiraRestClient customAsynchronousUserRestClient;
     @Inject
     private PasswordEncryptionServices passwordEncryptionServices;
-
     @Inject
     private AttachmentFieldService attachmentFieldService;
+    @Inject
+    private JsonEngine jsonEngine;
 
 
     public void refreshConfig(final ExecutorGlobalConfig config, StringBuilder logs) {
@@ -202,5 +207,10 @@ public class JiraServerService implements Component, IJiraService {
         return numberOfResults;
     }
 
-    ;
+    public boolean getJiraCheckFields(final ExecutorGlobalConfig config) {
+        final ChatbotCustomConfigExport chatbotCustomConfig =
+                jsonEngine.fromJson(config.getExecutorConfiguration().getCustomConfig(),
+                        ChatbotCustomConfigExport.class);
+        return chatbotCustomConfig.getJiraCheckBeforeCreate();
+    }
 }
