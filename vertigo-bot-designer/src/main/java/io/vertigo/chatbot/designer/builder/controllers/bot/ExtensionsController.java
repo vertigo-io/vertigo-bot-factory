@@ -5,6 +5,7 @@ import io.vertigo.chatbot.commons.domain.*;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.*;
+import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.domain.DtDefinitions;
@@ -28,42 +29,31 @@ import javax.inject.Inject;
 public class ExtensionsController extends AbstractBotController {
 
     private static final ViewContextKey<ConfluenceSettingIhm> confluenceSettingsIhmKey = ViewContextKey.of("confluenceSettingsIhm");
-
     private static final ViewContextKey<ConfluenceSettingIhm> confluenceSettingsIhmFilteredKey = ViewContextKey.of("confluenceSettingsIhmFiltered");
-
     private static final ViewContextKey<ConfluenceSettingIhm> newConfluenceSettingIhmKey = ViewContextKey.of("newConfluenceSettingIhm");
-
     private static final ViewContextKey<JiraSetting> jiraSettingsKey = ViewContextKey.of("jiraSettings");
-
     private static final ViewContextKey<JiraSetting> jiraSettingsFilteredKey = ViewContextKey.of("jiraSettingsFiltered");
-
     private static final ViewContextKey<JiraSetting> newJiraSettingKey = ViewContextKey.of("newJiraSetting");
-
     private static final ViewContextKey<ChatbotNode> nodeListKey = ViewContextKey.of("nodeList");
-
     private static final ViewContextKey<JiraFieldSetting> jiraFieldSettingsKey = ViewContextKey.of("jiraFieldSettings");
-
     private static final ViewContextKey<JiraField> jiraFieldsKey = ViewContextKey.of("jiraFields");
-
     private static final ViewContextKey<ScriptIntention> scriptIntentionKey = ViewContextKey.of("scriptIntention");
+    private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
 
     @Inject
     private ConfluenceSettingServices confluenceSettingServices;
-
     @Inject
     private JiraSettingServices jiraSettingServices;
-
     @Inject
     private JiraFieldSettingServices jiraFieldSettingServices;
-
     @Inject
     private JiraFieldService jiraFieldService;
-
     @Inject
     private NodeServices nodeServices;
-
     @Inject
     private ScriptIntentionServices scriptIntentionServices;
+    @Inject
+    private ChatbotCustomConfigServices chatbotCustomConfigServices;
 
 
     @GetMapping("/")
@@ -81,6 +71,7 @@ public class ExtensionsController extends AbstractBotController {
         viewContext.publishDto(newJiraSettingKey, new JiraSetting());
         viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
         viewContext.publishDto(scriptIntentionKey, scriptIntentionServices.getNewScriptIntention(bot));
+        viewContext.publishDto(chatbotCustomConfigKey, chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
 
         super.initBreadCrums(viewContext, "EXTENSION");
     }
@@ -177,6 +168,13 @@ public class ExtensionsController extends AbstractBotController {
         return viewContext;
     }
 
+    @PostMapping("_saveChatbotCustomConfig")
+    public void saveChatbotCustomConfig(final ViewContext viewContext,
+                                                      final UiMessageStack uiMessageStack,
+                                                      @ViewAttribute("bot") final Chatbot bot,
+                                                      @ViewAttribute("chatbotCustomConfig") final ChatbotCustomConfig chatbotCustomConfig) {
+        chatbotCustomConfigServices.save(bot, chatbotCustomConfig);
+    }
 
     public static final class ConfluenceSettingIhmNotEmptyValidator extends AbstractChatbotDtObjectValidator<ConfluenceSettingIhm> {
 

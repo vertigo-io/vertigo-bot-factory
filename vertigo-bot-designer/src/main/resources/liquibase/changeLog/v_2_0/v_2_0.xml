@@ -144,7 +144,6 @@
         <sqlFile encoding="utf-8" path="/sql/v_2_0/alter_24_04_19.sql" />
     </changeSet>
 
-
     <changeSet author="rsaintpaul" id="Add spaces setting for confluence settings">
         <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_04_24.sql"/>
     </changeSet>
@@ -159,6 +158,10 @@
 
     <changeSet author="rsaintpaul" id="Add max_saved_trainings column to chatbot_custom_config table">
         <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_06_03.sql"/>
+    </changeSet>
+    
+    <changeSet author="cmazereau" id="Add parameter do activate/deactivate Jira fields check before ticket creation">
+        <sqlFile path="/sql/v_2_0/alter_25_03_14_add_config_jira_check_before_create.sql"/>
     </changeSet>
 
     <changeSet author="rsaintpaul" id="Create question_answer and question_answer_category tables">

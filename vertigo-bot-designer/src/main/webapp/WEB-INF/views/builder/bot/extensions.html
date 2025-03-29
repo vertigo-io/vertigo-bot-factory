@@ -107,6 +107,12 @@
                         jiraSetting.nodId === this.componentStates.nodes.selectedNode.nodId
                     );
                 }
+            },
+
+            enableDisableJiraChecks: function() {
+                VUiPage.httpPostAjax("_saveChatbotCustomConfig", {
+                    'vContext[chatbotCustomConfig][jiraCheckBeforeCreate]': VertigoUi.vueData.chatbotCustomConfig.jiraCheckBeforeCreate
+                });
             }
         };
 
@@ -359,11 +365,16 @@
                           disable></q-toggle>
             </vu:column>
         </vu:table>
+        <vu:include-data object="chatbotCustomConfig" field="jiraCheckBeforeCreate" modifiable="true"/>
+        <vu:label-edit object="chatbotCustomConfig" field="jiraCheckBeforeCreate">
+            <q-toggle left-label v-model="vueData.chatbotCustomConfig.jiraCheckBeforeCreate"
+                      @update:model-value="enableDisableJiraChecks"></q-toggle>
+        </vu:label-edit>
         <vu:include-data object="scriptIntention" field="script"/>
         <vu:table id="JIRA_NODE_SETTINGS" th:title="#{extensions.jira.nodeSettings}" list="jiraSettingsFiltered"
                   componentId="jiraSettingsFiltered" sortBy="url" :binary-state-sort="true">
             <vu:slot name="top_right_slot">
-               <q-select
+                <q-select
                         th:attr="dataObject=${model.vContext['componentStates'].addComponentState('nodes').addObject('selectedNode', {nodId: null})}"
                         style="width: 250px; margin-right: 10px"
                         clearable

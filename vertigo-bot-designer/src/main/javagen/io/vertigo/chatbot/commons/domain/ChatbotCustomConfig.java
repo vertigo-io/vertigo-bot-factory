@@ -31,6 +31,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private Long totalMaxAttachmentSize;
 	private Boolean disableNlu;
 	private Long maxSavedTraining;
+	private Boolean jiraCheckBeforeCreate;
 	private Boolean chatbotDisplay;
 	private Boolean qandaDisplay;
 	private Boolean documentaryResourceDisplay;
@@ -354,6 +355,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setMaxSavedTraining(final Long maxSavedTraining) {
 		this.maxSavedTraining = maxSavedTraining;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Check Jira fields before ticket creation'.
+	 * @return Boolean jiraCheckBeforeCreate <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Check Jira fields before ticket creation")
+	public Boolean getJiraCheckBeforeCreate() {
+		return jiraCheckBeforeCreate;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Check Jira fields before ticket creation'.
+	 * @param jiraCheckBeforeCreate Boolean <b>Obligatoire</b>
+	 */
+	public void setJiraCheckBeforeCreate(final Boolean jiraCheckBeforeCreate) {
+		this.jiraCheckBeforeCreate = jiraCheckBeforeCreate;
 	}
 	
 	/**

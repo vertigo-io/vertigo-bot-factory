@@ -225,6 +225,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		totalMaxAttachmentSize,
 		/** Propriété 'Disable NlU'. */
 		disableNlu,
+		/** Propriété 'Check Jira fields before ticket creation'. */
+		jiraCheckBeforeCreate,
 		/** Propriété 'Display chatbot'. */
 		chatbotDisplay,
 		/** Propriété 'Display Q&A'. */

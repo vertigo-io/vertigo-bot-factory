@@ -268,6 +268,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldChatbotCustomConfig$maxSavedTraining,
 	/**
+	 * Check Jira fields before ticket creation.
+	 */
+	fldChatbotCustomConfig$jiraCheckBeforeCreate,
+	/**
 	 * Display chatbot.
 	 */
 	fldChatbotCustomConfig$chatbotDisplay,
@@ -347,6 +351,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Disable NlU.
 	 */
 	fldChatbotCustomConfigExport$disableNlu,
+	/**
+	 * Check Jira fields before ticket creation.
+	 */
+	fldChatbotCustomConfigExport$jiraCheckBeforeCreate,
 	/**
 	 * Display chatbot.
 	 */
