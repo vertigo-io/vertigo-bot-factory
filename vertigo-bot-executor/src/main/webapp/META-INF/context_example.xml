@@ -1,41 +1,46 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Context debug="0" reloadable="false" allowCasualMultipartParsing="true">
-	<Parameter name="boot.ANALYTICA_HOST" value="localhost" override="false"/>
-	<Parameter name="boot.ANALYTICA_PORT" value="4562" override="false"/>
-	<Parameter name="boot.ANALYTICA_DBNAME" value="chatbot/autogen" override="false"/>
+    <Parameter name="boot.ANALYTICA_HOST" value="localhost" override="false" />
+    <Parameter name="boot.ANALYTICA_PORT" value="4562" override="false" />
+    <Parameter name="boot.ANALYTICA_DBNAME" value="chatbot/autogen" override="false" />
 
-	<Parameter name="MAIL_NAME" value="KleeMail" override="false"/>
-	<Parameter name="MAIL_PROTOCOL" value="smtp" override="false"/>
-	<Parameter name="MAIL_HOST" value="localdelivery.klee.lan.net" override="false"/>
-	<Parameter name="MAIL_PORT" value="25" override="false"/>
-	<Parameter name="MAIL_DEV_MODE" value="true" override="false"/>
-	<Parameter name="MAIL_DEV_REPLACE_EMAIL_TO" value="example.test@kleegroup.com" override="false"/>
-	<Parameter name="FILE_STORE_PATH" value="C:\executor/attachments/" override="false"/>
+    <Parameter name="MAIL_NAME" value="KleeMail" override="false" />
+    <Parameter name="MAIL_PROTOCOL" value="smtp" override="false" />
+    <Parameter name="MAIL_HOST" value="localdelivery.klee.lan.net" override="false" />
+    <Parameter name="MAIL_PORT" value="25" override="false" />
+    <Parameter name="MAIL_DEV_MODE" value="true" override="false" />
+    <Parameter name="MAIL_DEV_REPLACE_EMAIL_TO" value="example.test@kleegroup.com"
+        override="false" />
+    <Parameter name="FILE_STORE_PATH" value="C:\executor/attachments/" override="false" />
 
-	<Parameter name="ENCRYPTION_SALT" value="ChatbotKlee2022!" override="false"/>
-	<Parameter name="ENCRYPTION_PASSWORD" value="ChatbotKlee2022!" override="false"/>
-	<Parameter name="ENCRYPTION_IV" value="ChatbotKlee2022!" override="false"/>
-	
-	<!-- Env variable in production -->
-	<Parameter name="DESIGNER_URL" value="http://localhost:8080/vertigo-bot-designer" override="false"/>
-	<Parameter name="API_KEY" value="MyNodeApiKey!" override="false"/>
-	<Parameter name="CONFIG_DATA_FILE" value="${user.home}/botExecutor/config.json" override="false"/>
-	<Parameter name="RASA_URL" value="http://localhost:5005" override="false"/>
-	<Parameter name="RASA_REQUEST_TIMEOUT" value="120" override="false"/>
+    <Parameter name="ENCRYPTION_SALT" value="ChatbotKlee2022!" override="false" />
+    <Parameter name="ENCRYPTION_PASSWORD" value="ChatbotKlee2022!" override="false" />
+    <Parameter name="ENCRYPTION_IV" value="ChatbotKlee2022!" override="false" />
 
-	<!-- Env for clamav antivirus -->
-	<Parameter name="CLAMAV_HOST" value="localhost" override="false"/>
-	<Parameter name="CLAMAV_PORT" value="3310" override="false"/>
+    <!-- Env variable in production -->
+    <Parameter name="DESIGNER_URL" value="http://localhost:8080/vertigo-bot-designer"
+        override="false" />
+    <Parameter name="API_KEY" value="MyNodeApiKey!" override="false" />
+    <Parameter name="CONFIG_DATA_FILE" value="${user.home}/botExecutor/config.json"
+        override="false" />
+    <Parameter name="RASA_URL" value="http://localhost:5005" override="false" />
+    <Parameter name="RASA_REQUEST_TIMEOUT" value="120" override="false" />
+
+    <!-- Env for clamav antivirus -->
+    <Parameter name="CLAMAV_HOST" value="localhost" override="false" />
+    <Parameter name="CLAMAV_PORT" value="3310" override="false" />
 
 
-	<Resources className="org.apache.catalina.webresources.StandardRoot">
-		<!--  Use for confluence plugin -->
-		<PostResources base="C:\Users\cmarechal\projects\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-confluence\target\vertigo-bot-confluence-0.9.0-SNAPSHOT-jar-with-dependencies.jar"
-			className="org.apache.catalina.webresources.FileResourceSet"
-			webAppMount="/WEB-INF/lib/vertigo-bot-confluence-0.9.0-SNAPSHOT-jar-with-dependencies.jar"/>
-		<!--  Use for jira plugin -->
-		<PostResources base="C:\Users\cmarechal\projects\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-jira\target\vertigo-bot-jira-0.9.0-SNAPSHOT-jar-with-dependencies.jar"
-			className="org.apache.catalina.webresources.FileResourceSet"
-			webAppMount="/WEB-INF/lib/vertigo-bot-jira-0.9.0-SNAPSHOT-jar-with-dependencies.jar"/>
-	</Resources>
+    <Resources className="org.apache.catalina.webresources.StandardRoot">
+        <!--  Use for confluence plugin -->
+        <PostResources
+            base="C:\Users\cmarechal\projects\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-confluence\target\vertigo-bot-confluence-0.9.0-SNAPSHOT-jar-with-dependencies.jar"
+            className="org.apache.catalina.webresources.FileResourceSet"
+            webAppMount="/WEB-INF/lib/vertigo-bot-confluence-2.4.3-jar-with-dependencies.jar" />
+        <!--  Use for jira plugin -->
+        <PostResources
+            base="C:\Users\cmarechal\projects\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-jira\target\vertigo-bot-jira-0.9.0-SNAPSHOT-jar-with-dependencies.jar"
+            className="org.apache.catalina.webresources.FileResourceSet"
+            webAppMount="/WEB-INF/lib/vertigo-bot-jira-2.4.3-jar-with-dependencies.jar" />
+    </Resources>
 </Context>
