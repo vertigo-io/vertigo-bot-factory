@@ -31,35 +31,33 @@ import static io.vertigo.ai.bt.BTNodes.sequence;
 import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.reporterWsBBPath;
 import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.wsValue;
 
-public class ReporterFieldService implements IJiraFieldService, Component, Activeable {
+public class ReporterFieldService implements IJiraFieldService, Component {
 
     @Inject
     private JiraServerService jiraServerService;
-    private ExecutorConfigManager executorConfigManager;
 
     @Override
     public boolean supports(String fieldKey) {
         return IssueFieldId.REPORTER_FIELD.id.equals(fieldKey);
     }
 
-	public void processConversation(BlackBoard bb, JiraField jiraField, List<BTNode> sequence) {
-		sequence.add(BotNodeProvider.doNodeOncePerTree(bb,
-				sequence(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()),
-						getUserFromInput(bb, jiraField)), jiraField.getKey()));
-	}
-
-    private BTNode getUserFromInput(final BlackBoard bb, JiraField jiraField) {
-        return selector(
-                BotNodeProvider.fulfilled(bb, reporterWsBBPath.key()),
-                getUser(bb, jiraField));
+    public void processConversation(BlackBoard bb, JiraField jiraField, List<BTNode> sequence, final boolean checkJiraFields) {
+        sequence.add(BotNodeProvider.doNodeOncePerTree(bb,
+                sequence(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()),
+                        getUserFromInput(bb, jiraField, checkJiraFields)), jiraField.getKey()));
     }
 
-    private BTNode getUser(final BlackBoard bb, JiraField jiraField) {
+    private BTNode getUserFromInput(final BlackBoard bb, JiraField jiraField, final boolean checkJiraFields) {
+        return selector(
+                BotNodeProvider.fulfilled(bb, reporterWsBBPath.key()),
+                getUser(bb, jiraField, checkJiraFields));
+    }
+
+    private BTNode getUser(final BlackBoard bb, JiraField jiraField, final boolean checkJiraFields) {
         return () -> {
             bb.putString(reporterWsBBPath, wsValue);
             List<User> users = jiraServerService.findUserByUsername(bb.getString(BBKey.of(jiraField.getKey())));
             if (users.isEmpty()) {
-                boolean checkJiraFields = jiraServerService.getJiraCheckFields(executorConfigManager.getConfig());
                 if (checkJiraFields) {
                     bb.delete(BBKeyPattern.of(jiraField.getKey()));
                     return BotNodeProvider.say(bb,
@@ -91,15 +89,5 @@ public class ReporterFieldService implements IJiraFieldService, Component, Activ
         } else {
             iib.setReporterName(jiraField.getValue());
         }
-    }
-
-    @Override
-    public void start() {
-        executorConfigManager = Node.getNode().getComponentSpace().resolve(ExecutorConfigManager.class);
-    }
-
-    @Override
-    public void stop() {
-
     }
 }
