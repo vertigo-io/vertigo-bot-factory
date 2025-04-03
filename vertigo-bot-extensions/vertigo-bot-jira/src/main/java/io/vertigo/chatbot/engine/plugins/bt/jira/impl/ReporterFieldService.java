@@ -16,6 +16,7 @@ import io.vertigo.ai.bb.BBKeyPattern;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
+import io.vertigo.chatbot.commons.utils.CommonsStringUtils;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
@@ -35,6 +36,7 @@ public class ReporterFieldService implements IJiraFieldService, Component {
 
     @Inject
     private JiraServerService jiraServerService;
+    private boolean isEmailAddressInvalid = false;
 
     @Override
     public boolean supports(String fieldKey) {
@@ -45,6 +47,15 @@ public class ReporterFieldService implements IJiraFieldService, Component {
         sequence.add(BotNodeProvider.doNodeOncePerTree(bb,
                 sequence(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()),
                         getUserFromInput(bb, jiraField, checkJiraFields)), jiraField.getKey()));
+        // If input reporter email address was invalid, the new input value must be checked
+        if (isEmailAddressInvalid) {
+            if (bb.exists(reporterWsBBPath)) {
+                sequence.add(getUser(bb, jiraField, checkJiraFields));
+            } else {
+                // Case of a new conversation
+                isEmailAddressInvalid = false;
+            }
+        }
     }
 
     private BTNode getUserFromInput(final BlackBoard bb, JiraField jiraField, final boolean checkJiraFields) {
@@ -55,13 +66,24 @@ public class ReporterFieldService implements IJiraFieldService, Component {
 
     private BTNode getUser(final BlackBoard bb, JiraField jiraField, final boolean checkJiraFields) {
         return () -> {
+            isEmailAddressInvalid = false;
             bb.putString(reporterWsBBPath, wsValue);
-            List<User> users = jiraServerService.findUserByUsername(bb.getString(BBKey.of(jiraField.getKey())));
+            String jiraReporterField = bb.getString(BBKey.of(jiraField.getKey()));
+            List<User> users = jiraServerService.findUserByUsername(jiraReporterField);
             if (users.isEmpty()) {
                 if (checkJiraFields) {
                     bb.delete(BBKeyPattern.of(jiraField.getKey()));
                     return BotNodeProvider.say(bb,
                             MessageText.of(JiraMultilingualResources.NO_USER_FOUND).getDisplay()).eval();
+                }
+                // If no Jira verification is required, check the validity of the email address format
+                if (!CommonsStringUtils.isValidEmailAdress(jiraReporterField)) {
+                    bb.delete(BBKeyPattern.of(jiraField.getKey()));
+                    isEmailAddressInvalid = true;
+                    String invalidAddressMsg =
+                            MessageText.of(JiraMultilingualResources.INVALID_EMAIL_ADDRESS, jiraReporterField).getDisplay();
+                    BotNodeProvider.say(bb, invalidAddressMsg).eval();
+                    return BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()).eval();
                 }
                 return BTStatus.Succeeded;
             } else if (users.size() == 1) {
