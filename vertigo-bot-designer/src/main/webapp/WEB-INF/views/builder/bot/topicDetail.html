@@ -111,7 +111,7 @@
             <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/topics/detail/(id=${model.bot.botId})} + ${model.topic.topId}" th:title="#{action.cancel}" icon="fas fa-ban"
                             class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
             <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" icon="edit"
-                    class="on-left" :round size="md" color="primary" th:title="#{action.edit}" />
+                              class="on-left" :round size="md" color="primary" th:title="#{action.edit}" />
             <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor] && !model.topic.isTechnical}" @click="componentStates.showPopupDeleteTopic.shown = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
                    class="on-left" round size="md" color="red" ></q-btn>
 
@@ -167,10 +167,10 @@
             <vu:block id="training" th:title="#{topic.menu.training}" v-if="vueData.topic.isTechnical == false">
 
                 <vu:slot name="actions_slot">
-                    <q-input v-model="componentStates.nluTrainingSentences.pagination.search" v-if="vueData.unreachable == false" dense clearable 
-							 type="search" placeholder="Filter"
-							 @keydown.esc="componentStates.nluTrainingSentences.pagination.search = '';"
-							 style="width:300px">
+                    <q-input v-model="componentStates.nluTrainingSentences.pagination.search" v-if="vueData.unreachable == false" dense clearable
+                             type="search" placeholder="Filter"
+                             @keydown.esc="componentStates.nluTrainingSentences.pagination.search = '';"
+                             style="width:300px">
                         <template v-slot:prepend>
                             <q-icon name="search" ></q-icon>
                         </template>
@@ -217,7 +217,7 @@
                                               v-model="nluTrainingSentence.text"
                                               @save="(value, initialValue) => {
                                                                 httpPostAjax('_editTrainingSentence',
-                                                                     {'vContext[newNluTrainingSentence]':value, 'index':vueData.nluTrainingSentences.length - 1 - index}
+                                                                     {'vContext[newNluTrainingSentence]':value, 'index':getTrainingSentenceIndexInOrderedList(index)}
                                                                 );
                                                                 if (uiMessageStack.globalErrors.length > 0) {
                                                                     nluTrainingSentence.text = initialValue;
