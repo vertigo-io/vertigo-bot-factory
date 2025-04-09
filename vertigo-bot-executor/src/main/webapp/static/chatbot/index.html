@@ -222,11 +222,14 @@
 
               <div v-if="footerMenu === 'qAndA'" class="column col-grow no-wrap chatbot-qanda-container">
                 <div class="column col-grow" v-if="!qAndAConfig.selectedQuestion">
-                  <div class="custom-input-qanda">
+                  <div v-if="qAndAConfig.questionAnswerList.length > 0" class="custom-input-qanda">
                     <q-input v-model="qAndAConfig.filterInput"
                              ref="input"
                              placeholder="Rechercher..."
                              @update:model-value="filterQuestionsAnswers()"></q-input>
+                  </div>
+                  <div v-if="qAndAConfig.questionAnswerList.length === 0" class="q-caption text-light text-right italic" :style="{ fontStyle: 'italic' }">
+                    Aucun élément de FAQ renseigné.
                   </div>
                   <q-scroll-area class="row q-px-sm col-grow">
                     <div class="q-mx-md">
@@ -258,6 +261,9 @@
 
               <div v-if="customConfig.documentaryResourceDisplay && !qAndAConfig.selectedQuestion" class="column no-wrap docres-container" style="height: 20%">
                 <q-scroll-area class="col-grow q-px-md">
+                  <div v-if="documentaryResourceConfig.documentaryResourceList.length === 0" class="q-caption text-light text-right" :style="{ fontStyle: 'italic' }">
+                    Aucune ressource documentaire renseignée.
+                  </div>
                   <div style="height: 10px"></div>
                     <div v-for="(documentaryResource, index) in documentaryResourceConfig.documentaryResourceList"
                          class="docres-item-container">
