@@ -78,18 +78,18 @@
                   <div class="q-pr-md q-pt-md">
                     <div v-for="(msg, index) in botConfig.messages">
                       <q-chat-message
-                        v-if="msg.text"
-                        class="animate-fade"
-                        :key="'msg-'+index"
-                        :label="msg.label"
-                        :text-html="!msg.sent"
-                        :sent="msg.sent"
-                        :text-color="msg.textColor"
-                        :bg-color="msg.bgColor"
-                        :name="msg.name"
-                        :avatar="msg.avatar"
-                        :text="msg.text"
-                        :stamp="msg.stamp"
+                              v-if="msg.text"
+                              class="animate-fade"
+                              :key="'msg-'+index"
+                              :label="msg.label"
+                              :text-html="!msg.sent"
+                              :sent="msg.sent"
+                              :text-color="msg.textColor"
+                              :bg-color="msg.bgColor"
+                              :name="msg.name"
+                              :avatar="msg.avatar"
+                              :text="msg.text"
+                              :stamp="msg.stamp"
                       ></q-chat-message>
                       <q-chat-message  v-if="msg.rating" class="animate-fade" bg-color="primary" sent >
                         <q-rating v-model="inputConfig.rating" style="font-size: 2rem;"
@@ -101,30 +101,30 @@
                     </div>
                     <div class="sys-chat">
                       <q-chat-message
-                        v-if="botConfig.error"
-                        class="animate-fade"
-                        bg-color="orange-4"
-                        text-color="black"
-                        size="12"
+                              v-if="botConfig.error"
+                              class="animate-fade"
+                              bg-color="orange-4"
+                              text-color="black"
+                              size="12"
                       >
                         <div class="q-pb-sm">
                           Une erreur est survenue lors de l'envoi du message
                         </div>
                         <q-btn
-                          class="full-width"
-                          @click="askBot(botConfig.lastPayload)"
-                          label="Essayez de nouveau"
-                          color="white"
-                          text-color="black"
+                                class="full-width"
+                                @click="askBot(botConfig.lastPayload)"
+                                label="Essayez de nouveau"
+                                color="white"
+                                text-color="black"
                         ></q-btn>
                       </q-chat-message>
                     </div>
 
                     <div class="message-processing sys-chat non-selectable">
                       <q-chat-message
-                        v-if="botConfig.processing"
-                        class="animate-fade"
-                        bg-color="grey-grdf"
+                              v-if="botConfig.processing"
+                              class="animate-fade"
+                              bg-color="grey-grdf"
                       >
                         <q-spinner-dots size="2em"></q-spinner-dots>
                       </q-chat-message>
@@ -176,7 +176,7 @@
                                   color="white"
                                   text-color="black">
                           </q-btn>
-                      </div>
+                        </div>
                         <div class="row docs-btn" v-if="inputConfig.files.length > 0">
                           <div v-for="(btn, index) in inputConfig.files">
                             <input  type="file" :id="'file_' + index"/>
@@ -222,20 +222,24 @@
 
               <div v-if="footerMenu === 'qAndA'" class="column col-grow no-wrap chatbot-qanda-container">
                 <div class="column col-grow" v-if="!qAndAConfig.selectedQuestion">
-                  <div class="custom-input-qanda">
+                  <div v-if="qAndAConfig.questionAnswerList.length > 0" class="custom-input-qanda">
                     <q-input v-model="qAndAConfig.filterInput"
                              ref="input"
                              placeholder="Rechercher..."
                              @update:model-value="filterQuestionsAnswers()"></q-input>
                   </div>
+                  <div v-if="qAndAConfig.questionAnswerList.length === 0"
+                       class="q-caption text-light text-right text-italic">
+                    Aucun élément de FAQ renseigné.
+                  </div>
                   <q-scroll-area class="row q-px-sm col-grow">
                     <div class="q-mx-md">
-                          <q-btn v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
-                                 class="q-btn-question"
-                                 v-html="questionAnswer.question"
-                                 @click="selectQuestion(questionAnswer)"
-                          >
-                          </q-btn>
+                      <q-btn v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
+                             class="q-btn-question"
+                             v-html="questionAnswer.question"
+                             @click="selectQuestion(questionAnswer)"
+                      >
+                      </q-btn>
                     </div>
                     <div style="height: 30px"></div>
                   </q-scroll-area>
@@ -243,7 +247,7 @@
                 </div>
 
                 <q-scroll-area v-if="qAndAConfig.selectedQuestion"
-                     class="col-grow q-px-md">
+                               class="col-grow q-px-md">
                   <div style="height: 12px"></div>
                   <q-btn icon="arrow_back" style="font-size: 12px; text-transform: unset; padding: 0 10px" @click="qAndAConfig.selectedQuestion = null">
                     <span style="padding-left: 2px; font-size: 13px">Retour</span>
@@ -258,25 +262,29 @@
 
               <div v-if="customConfig.documentaryResourceDisplay && !qAndAConfig.selectedQuestion" class="column no-wrap docres-container" style="height: 20%">
                 <q-scroll-area class="col-grow q-px-md">
+                  <div v-if="documentaryResourceConfig.documentaryResourceList.length === 0"
+                       class="q-caption text-light text-right text-italic">
+                    Aucune ressource documentaire renseignée.
+                  </div>
                   <div style="height: 10px"></div>
-                    <div v-for="(documentaryResource, index) in documentaryResourceConfig.documentaryResourceList"
-                         class="docres-item-container">
-                      <a v-if="documentaryResource.dreTypeCd === 'URL'"
-                         :href="documentaryResource.url"
-                         target="_blank"
-                         class="docres-a">
-                        <q-icon name="public" class="docres-type-icon"></q-icon>
-                        <span class="docres-text">{{documentaryResource.title}}</span>
-                        <q-icon name="launch" ></q-icon>
-                      </a>
-                      <a v-else-if="documentaryResource.dreTypeCd === 'FILE'"
-                         :href="documentaryResourceConfig.documentaryResourceFileBaseUrl + documentaryResource.attId"
-                         class="docres-a">
-                        <q-icon name="article" class="docres-type-icon"></q-icon>
-                        <span class="docres-text">{{documentaryResource.title}}</span>
-                        <q-icon name="download" style="font-size: 16px"></q-icon>
-                      </a>
-                    </div>
+                  <div v-for="(documentaryResource, index) in documentaryResourceConfig.documentaryResourceList"
+                       class="docres-item-container">
+                    <a v-if="documentaryResource.dreTypeCd === 'URL'"
+                       :href="documentaryResource.url"
+                       target="_blank"
+                       class="docres-a">
+                      <q-icon name="public" class="docres-type-icon"></q-icon>
+                      <span class="docres-text">{{documentaryResource.title}}</span>
+                      <q-icon name="launch"></q-icon>
+                    </a>
+                    <a v-else-if="documentaryResource.dreTypeCd === 'FILE'"
+                       :href="documentaryResourceConfig.documentaryResourceFileBaseUrl + documentaryResource.attId"
+                       class="docres-a">
+                      <q-icon name="article" class="docres-type-icon"></q-icon>
+                      <span class="docres-text">{{documentaryResource.title}}</span>
+                      <q-icon name="download" style="font-size: 16px"></q-icon>
+                    </a>
+                  </div>
                   <div style="height:8px" ></div>
                 </q-scroll-area>            </div>
             </q-page>
