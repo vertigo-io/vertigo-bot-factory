@@ -28,15 +28,15 @@ import io.vertigo.chatbot.designer.utils.HashUtils;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.util.DataModelUtil;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.quarto.exporter.ExporterManager;
@@ -123,7 +123,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 			final DtList<Synonym> synonyms,
 			final DtList<Synonym> synonymsToDelete) {
 
-		final boolean isNew = DtObjectUtil.getId(dictionaryEntity) == null;
+		final boolean isNew = DataModelUtil.getId(dictionaryEntity) == null;
 		final DtList<Synonym> oldSynonyms = synonymServices.getAllSynonymByDictionaryEntity(findDictionaryEntityById(dictionaryEntity.getDicEntId()));
 		if (!synonymsToDelete.isEmpty() || !HashUtils.generateHashCodeForSynonyms(oldSynonyms).equals(HashUtils.generateHashCodeForSynonyms(synonyms))) {
 			nodeServices.updateNodes(bot);
@@ -326,7 +326,7 @@ public class DictionaryEntityServices implements Component, IRecordable<Dictiona
 	 * Return a File from a list of DictionaryExport
 	 */
 	public VFile exportDictionary(@SecuredOperation("botVisitor") final Chatbot bot, final DtList<DictionaryEntityWrapper> dtc) {
-		final String exportName = "export_" + MessageText.of(DictionaryEntityMultilingualResources.DICTIONARY).getDisplay() + "_" + bot.getName();
+		final String exportName = "export_" + LocaleMessageText.of(DictionaryEntityMultilingualResources.DICTIONARY).getDisplay() + "_" + bot.getName();
 		final Export export = new ExportBuilder(ExportFormat.CSV, exportName)
 				.beginSheet(dtc, null)
 				.addField(DtDefinitions.DictionaryEntityWrapperFields.dictionaryEntityLabel)

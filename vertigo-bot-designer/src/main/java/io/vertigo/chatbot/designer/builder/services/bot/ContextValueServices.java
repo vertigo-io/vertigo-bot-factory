@@ -2,7 +2,6 @@ package io.vertigo.chatbot.designer.builder.services.bot;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.xml.xpath.XPath;
@@ -15,11 +14,12 @@ import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.ContextValueDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ContextValue;
-import io.vertigo.chatbot.commons.domain.WelcomeTourStep;
 import io.vertigo.chatbot.commons.multilingual.context.ContextValueMultilingualResources;
+import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceContextServices;
 import io.vertigo.chatbot.designer.builder.services.HistoryServices;
 import io.vertigo.chatbot.designer.builder.services.IRecordable;
 import io.vertigo.chatbot.designer.builder.services.NodeServices;
+import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerContextServices;
 import io.vertigo.chatbot.designer.domain.History;
 import io.vertigo.chatbot.designer.domain.HistoryActionEnum;
 import io.vertigo.chatbot.domain.DtDefinitions;
@@ -27,10 +27,9 @@ import io.vertigo.chatbot.domain.DtDefinitions.ContextValueFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
@@ -41,13 +40,27 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 
 	@Inject
 	private ContextValueDAO contextValueDAO;
+
 	@Inject
 	private JsonEngine jsonEngine;
+
 	@Inject
 	private NodeServices nodeServices;
 
 	@Inject
 	private HistoryServices historyServices;
+
+	@Inject
+	private DocumentaryResourceContextServices documentaryResourceContextServices;
+
+	@Inject
+	private QuestionAnswerContextServices questionAnswerContextServices;
+
+	@Inject
+	private ContextPossibleValueServices contextPossibleValueServices;
+
+	@Inject
+	private ContextEnvironmentValueServices contextEnvironmentValueServices;
 
 	private static final String URL = "url";
 
@@ -106,7 +119,7 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 	public void deleteContextValue(@SecuredOperation("botAdm") final Chatbot bot, final Long cvaId) {
 		final ContextValue contextValue = contextValueDAO.get(cvaId);
 		if(!contextValue.getLabel().equals(URL)) {
-			contextValueDAO.delete(cvaId);
+			delete(bot, cvaId);
 		}
 		else{
 			throw new VUserException(ContextValueMultilingualResources.CONTEXT_VALUE_URL_DELETE_ERROR);
@@ -115,7 +128,11 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 		record(bot, contextValue, HistoryActionEnum.DELETED);
 	}
 
-	public void delete(final long contextValueId) {
+	public void delete(final Chatbot bot, final long contextValueId) {
+		documentaryResourceContextServices.deleteAllDocumentaryResourceContextByCvaId(bot, contextValueId);
+		questionAnswerContextServices.deleteAllQuestionAnswerContextByCvaId(bot, contextValueId);
+		contextPossibleValueServices.deleteContextPossibleValuesByCvaId(bot, contextValueId);
+		contextEnvironmentValueServices.deleteContextEnvironmentValue(contextValueId);
 		contextValueDAO.delete(contextValueId);
 	}
 
@@ -123,8 +140,8 @@ public class ContextValueServices implements Component, IRecordable<ContextValue
 		return contextValueDAO.findAll(Criterions.isEqualTo(ContextValueFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
-	public void deleteAllByBotId(final long botId) {
-		getAllContextValueByBotId(botId).forEach(contextValue -> delete(contextValue.getCvaId()));
+	public void deleteAllByBotId(final Chatbot bot) {
+		getAllContextValueByBotId(bot.getBotId()).forEach(contextValue -> delete(bot, contextValue.getCvaId()));
 	}
 
 	@Secured("BotUser")

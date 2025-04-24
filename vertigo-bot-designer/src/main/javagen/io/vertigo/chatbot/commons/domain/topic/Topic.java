@@ -1,13 +1,13 @@
 package io.vertigo.chatbot.commons.domain.topic;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
 import io.vertigo.datastore.impl.entitystore.StoreListVAccessor;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -23,7 +23,7 @@ public final class Topic implements Entity {
 	private Boolean isEnabled;
 	private String code;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ATopicTypeTopic",
 			fkFieldName = "ttoCd",
 			primaryDtDefinitionName = "DtTypeTopic",
@@ -38,7 +38,7 @@ public final class Topic implements Entity {
 			foreignMultiplicity = "0..*")
 	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.topic.TypeTopic, io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum> ttoCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.TypeTopic.class, "TypeTopic", io.vertigo.chatbot.commons.domain.topic.TypeTopicEnum.class);
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ATopicChatbot",
 			fkFieldName = "botId",
 			primaryDtDefinitionName = "DtChatbot",
@@ -53,7 +53,7 @@ public final class Topic implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ATopicCategoryTopic",
 			fkFieldName = "topCatId",
 			primaryDtDefinitionName = "DtTopicCategory",
@@ -68,7 +68,7 @@ public final class Topic implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.topic.TopicCategory> topCatIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.TopicCategory.class, "Topic");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "ATopicKindTopic",
 			fkFieldName = "ktoCd",
 			primaryDtDefinitionName = "DtKindTopic",
@@ -83,11 +83,11 @@ public final class Topic implements Entity {
 			foreignMultiplicity = "0..*")
 	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.topic.KindTopic, io.vertigo.chatbot.commons.domain.topic.KindTopicEnum> ktoCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.topic.KindTopic.class, "KindTopic", io.vertigo.chatbot.commons.domain.topic.KindTopicEnum.class);
 
-	@io.vertigo.datamodel.structure.stereotype.AssociationNN(
+	@io.vertigo.datamodel.data.stereotype.AssociationNN(
 			name = "AnnTopicLabel",
 			tableName = "TOPIC_TOPIC_LABEL",
-			dtDefinitionA = "DtTopic",
-			dtDefinitionB = "DtTopicLabel",
+			dataDefinitionA = "DtTopic",
+			dataDefinitionB = "DtTopicLabel",
 			navigabilityA = true,
 			navigabilityB = true,
 			roleA = "Topic",
@@ -202,7 +202,7 @@ public final class Topic implements Entity {
 	 * Récupère la valeur de la propriété 'Type du topic'.
 	 * @return String ttoCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Type du topic", fkDefinition = "DtTypeTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyCode", label = "Type du topic", fkDefinition = "DtTypeTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getTtoCd() {
 		return (String) ttoCdAccessor.getId();
 	}
@@ -221,7 +221,7 @@ public final class Topic implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -240,7 +240,7 @@ public final class Topic implements Entity {
 	 * Récupère la valeur de la propriété 'Topic'.
 	 * @return Long topCatId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Topic", fkDefinition = "DtTopicCategory", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Topic", fkDefinition = "DtTopicCategory", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getTopCatId() {
 		return (Long) topCatIdAccessor.getId();
 	}
@@ -259,7 +259,7 @@ public final class Topic implements Entity {
 	 * Récupère la valeur de la propriété 'Kind of topic'.
 	 * @return String ktoCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Kind of topic", fkDefinition = "DtKindTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyCode", label = "Kind of topic", fkDefinition = "DtKindTopic", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getKtoCd() {
 		return (String) ktoCdAccessor.getId();
 	}
@@ -326,6 +326,6 @@ public final class Topic implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

@@ -1,16 +1,16 @@
 package io.vertigo.chatbot.designer.domain;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Resources du module io.vertigo.chatbot.designer.domain
  */
-public enum DtResources implements MessageKey {
+public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** ContextEnvironment.
-	/***********************************************************
+	 * ContextEnvironment.
+	 **********************************************************/
 	/**
 	 * Context environment id.
 	 */
@@ -25,8 +25,8 @@ public enum DtResources implements MessageKey {
 	fldContextEnvironment$botId,
 
 	/***********************************************************
-	/** ContextEnvironmentIhm.
-	/***********************************************************
+	 * ContextEnvironmentIhm.
+	 **********************************************************/
 	/**
 	 * Context environment id.
 	 */
@@ -41,8 +41,8 @@ public enum DtResources implements MessageKey {
 	fldContextEnvironmentIhm$contextEnvironmentValues,
 
 	/***********************************************************
-	/** ContextEnvironmentValue.
-	/***********************************************************
+	 * ContextEnvironmentValue.
+	 **********************************************************/
 	/**
 	 * Context environment value id.
 	 */
@@ -59,10 +59,14 @@ public enum DtResources implements MessageKey {
 	 * Environment.
 	 */
 	fldContextEnvironmentValue$cenvId,
+	/**
+	 * Value operator.
+	 */
+	fldContextEnvironmentValue$tyopCd,
 
 	/***********************************************************
-	/** ContextEnvironmentValueIhm.
-	/***********************************************************
+	 * ContextEnvironmentValueIhm.
+	 **********************************************************/
 	/**
 	 * Context environment value id.
 	 */
@@ -79,10 +83,14 @@ public enum DtResources implements MessageKey {
 	 * Context value label.
 	 */
 	fldContextEnvironmentValueIhm$label,
+	/**
+	 * Operator.
+	 */
+	fldContextEnvironmentValueIhm$tyopCd,
 
 	/***********************************************************
-	/** DictionaryEntity.
-	/***********************************************************
+	 * DictionaryEntity.
+	 **********************************************************/
 	/**
 	 * Dictionary entity id.
 	 */
@@ -97,8 +105,8 @@ public enum DtResources implements MessageKey {
 	fldDictionaryEntity$botId,
 
 	/***********************************************************
-	/** DictionaryEntityWrapper.
-	/***********************************************************
+	 * DictionaryEntityWrapper.
+	 **********************************************************/
 	/**
 	 * Dictionary Entity id.
 	 */
@@ -113,8 +121,104 @@ public enum DtResources implements MessageKey {
 	fldDictionaryEntityWrapper$synonymsList,
 
 	/***********************************************************
-	/** History.
+	 * DocumentaryResource.
+	 **********************************************************/
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResource$dreId,
+	/**
+	 * Title.
+	 */
+	fldDocumentaryResource$title,
+	/**
+	 * Description.
+	 */
+	fldDocumentaryResource$description,
+	/**
+	 * Url.
+	 */
+	fldDocumentaryResource$url,
+	/**
+	 * Attachment id.
+	 */
+	fldDocumentaryResource$attId,
+	/**
+	 * Documentary resource type.
+	 */
+	fldDocumentaryResource$dreTypeCd,
+	/**
+	 * Chatbot.
+	 */
+	fldDocumentaryResource$botId,
+
 	/***********************************************************
+	 * DocumentaryResourceContext.
+	 **********************************************************/
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResourceContext$drcId,
+	/**
+	 * Documentary resource id.
+	 */
+	fldDocumentaryResourceContext$dreId,
+	/**
+	 * Context value id.
+	 */
+	fldDocumentaryResourceContext$cvaId,
+	/**
+	 * Context possible value id.
+	 */
+	fldDocumentaryResourceContext$cpvId,
+
+	/***********************************************************
+	 * DocumentaryResourceContextIhm.
+	 **********************************************************/
+	/**
+	 * ID.
+	 */
+	fldDocumentaryResourceContextIhm$drcId,
+	/**
+	 * Documentary resource id.
+	 */
+	fldDocumentaryResourceContextIhm$dreId,
+	/**
+	 * Context value id.
+	 */
+	fldDocumentaryResourceContextIhm$cvaId,
+	/**
+	 * Context possible value id.
+	 */
+	fldDocumentaryResourceContextIhm$cpvId,
+	/**
+	 * Context.
+	 */
+	fldDocumentaryResourceContextIhm$cvaLabel,
+	/**
+	 * Value.
+	 */
+	fldDocumentaryResourceContextIhm$cpvValue,
+
+	/***********************************************************
+	 * DocumentaryResourceType.
+	 **********************************************************/
+	/**
+	 * Code.
+	 */
+	fldDocumentaryResourceType$dreTypeCd,
+	/**
+	 * Label.
+	 */
+	fldDocumentaryResourceType$label,
+	/**
+	 * LabelFr.
+	 */
+	fldDocumentaryResourceType$labelFr,
+
+	/***********************************************************
+	 * History.
+	 **********************************************************/
 	/**
 	 * History id.
 	 */
@@ -145,8 +249,8 @@ public enum DtResources implements MessageKey {
 	fldHistory$botId,
 
 	/***********************************************************
-	/** HistoryAction.
-	/***********************************************************
+	 * HistoryAction.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -161,8 +265,8 @@ public enum DtResources implements MessageKey {
 	fldHistoryAction$labelFr,
 
 	/***********************************************************
-	/** HistoryCriteria.
-	/***********************************************************
+	 * HistoryCriteria.
+	 **********************************************************/
 	/**
 	 * From.
 	 */
@@ -181,8 +285,8 @@ public enum DtResources implements MessageKey {
 	fldHistoryCriteria$text,
 
 	/***********************************************************
-	/** Synonym.
-	/***********************************************************
+	 * Synonym.
+	 **********************************************************/
 	/**
 	 * Synonym id.
 	 */
@@ -201,8 +305,8 @@ public enum DtResources implements MessageKey {
 	fldSynonym$dicEntId,
 
 	/***********************************************************
-	/** TupleSynonymIhm.
-	/***********************************************************
+	 * TupleSynonymIhm.
+	 **********************************************************/
 	/**
 	 * Word.
 	 */
@@ -211,4 +315,20 @@ public enum DtResources implements MessageKey {
 	 * Synonym label.
 	 */
 	fldTupleSynonymIhm$synonymLabel,
+
+	/***********************************************************
+	 * TypeOperator.
+	 **********************************************************/
+	/**
+	 * ID.
+	 */
+	fldTypeOperator$tyopCd,
+	/**
+	 * Label.
+	 */
+	fldTypeOperator$label,
+	/**
+	 * LabelFr.
+	 */
+	fldTypeOperator$labelFr,
 }

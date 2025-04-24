@@ -14,6 +14,7 @@ import io.vertigo.chatbot.commons.dao.AttachmentDAO;
 import io.vertigo.chatbot.commons.domain.Attachment;
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
 import io.vertigo.chatbot.commons.domain.AttachmentFileInfo;
+import io.vertigo.chatbot.commons.domain.AttachmentTypeEnum;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.multilingual.attachment.AttachmentMultilingualResources;
 import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
@@ -22,9 +23,9 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 
@@ -84,6 +85,10 @@ public class AttachmentServices implements Component {
 		return attachmentDAO.findAll(Criterions.isEqualTo(DtDefinitions.AttachmentFields.botId, botId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
+	public DtList<Attachment> findAllByBotIdAndType(final Long botId, final String attachmentTypeName) {
+		return attachmentDAO.findAll(Criterions.isEqualTo(DtDefinitions.AttachmentFields.botId, botId).and(Criterions.isEqualTo(DtDefinitions.AttachmentFields.attTypeCd, attachmentTypeName)), DtListState.of(null));
+	}
+
 	@Secured("BotUser")
 	public void delete (@SecuredOperation("botAdm") final Chatbot bot, final long attachmentId) {
 		final Attachment attachment = findById(attachmentId);
@@ -98,10 +103,12 @@ public class AttachmentServices implements Component {
 				attachment.attachmentFileInfo().load();
 				final AttachmentFileInfo attachmentFileInfo = attachment.attachmentFileInfo().get();
 				final AttachmentExport attachmentExport = new AttachmentExport();
+				attachmentExport.setAttId(attachment.getAttId());
 				attachmentExport.setLabel(attachment.getLabel());
 				attachmentExport.setFileName(attachmentFileInfo.getFileName());
 				attachmentExport.setMimeType(attachmentFileInfo.getMimeType());
 				attachmentExport.setLength(attachmentFileInfo.getLength());
+				attachmentExport.setType(attachment.getAttTypeCd());
 				final VFile file = designerFileServices.getAttachment(attachment.getAttFiId());
 				try (final InputStream inputStream = file.createInputStream()) {
 					attachmentExport.setFileData(Base64.getEncoder().encodeToString(inputStream.readAllBytes()));

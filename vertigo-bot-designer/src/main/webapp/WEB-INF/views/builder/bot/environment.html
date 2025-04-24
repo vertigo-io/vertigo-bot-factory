@@ -21,7 +21,7 @@
                 <q-tooltip content-class="q-tooltip-text">[[#{environment.tooltip}]]</q-tooltip>
             </div>
 
-            <vu:popup-ajax action="_deleteNode" vModel="showPopupNode" th:message="#{environment.node.popup.message}" th:confirm="#{action.delete}" dataName="nodId" successAction="'VUiPage.$refs.nodeEdit.hide'"></vu:popup-ajax>
+            <vu:popup-ajax action="_deleteNode" vModel="showPopupNode" th:message="#{environment.node.popup.message}" th:confirm="#{action.delete}" dataName="nodId" successAction="'$refs.nodeEdit.hide()'"></vu:popup-ajax>
             <vu:include-data object="nodeNew" field="name" modifiable="true" />
             <vu:include-data object="nodeNew" field="url" modifiable="true" />
             <vu:include-data object="nodeNew" field="color" modifiable="true" />
@@ -29,10 +29,10 @@
             <vu:include-data object="nodeNew" field="isUpToDate" modifiable="true" />
 
             <vu:table th:if="${model.modeReadOnly && model.userAuthorizations[AtzSuperAdm]}" id="nodes" list="nodeList" th:title="#{environment.nodes}" componentId="nodeList" rowsPerPage="10" autoColClass
-                      tr_@click.native="|vueData.nodeEdit = Vue.util.extend({},props.row); $refs.nodeEdit.show()|" tr_class="nav">
+                      th:tr_@click.native="|vueData.nodeEdit = props.row; $refs.nodeEdit.show()|" tr_class="nav">
                 <vu:slot name="top_right_slot">
                     <q-btn class="fab-block" round color="primary" icon="add" aria-label="Add" title="Add"
-                           @click="vueData.nodeEdit = Vue.util.extend({}, vueData.nodeNew); $refs.nodeEdit.show()"></q-btn>
+                           @click="vueData.nodeEdit = vueData.nodeNew; $refs.nodeEdit.show()"></q-btn>
                 </vu:slot>
 
                 <vu:include-data object="nodeList" field="nodId" />
@@ -50,7 +50,7 @@
                 <vu:column field="url"/>
                 <vu:column name="stat" th:label="#{environment.node.statistic}" class="col_Small">
                     <vu:button-link dense url="@{/bot/{id}/statistic/(id=${model.bot.botId})} + '?nodId=\'+props.row.nodId+\'' " label="" icon="insert_chart_outlined"
-                                    class="bg-secondary" @click.stop="null"/>
+                                    class="bg-secondary" @click.stop="'true'" textColor="--v-secondary-invert" />
 
                 </vu:column>
             </vu:table>
@@ -95,7 +95,7 @@
                     </q-card-section>
 
                     <q-card-actions align="around">
-                        <q-btn v-if="vueData.nodeEdit.nodId" th:label="#{action.delete}" color="red" @click="componentStates.nodId = vueData.nodeEdit.nodId; componentStates.showPopupNode = true " ></q-btn>
+                        <q-btn v-if="vueData.nodeEdit.nodId" th:label="#{action.delete}" color="red" @click="componentStates.nodId = vueData.nodeEdit.nodId; componentStates.showPopupNode.shown = true " ></q-btn>
                         <q-btn th:label="#{action.save}" color="primary" @click="httpPostAjax('_saveNode', vueDataParams(['nodeEdit']), {onSuccess: $refs.nodeEdit.hide})" ></q-btn>
                     </q-card-actions>
                 </q-card>

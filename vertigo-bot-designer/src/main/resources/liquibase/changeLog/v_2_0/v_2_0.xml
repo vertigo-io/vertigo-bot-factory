@@ -164,4 +164,32 @@
         <sqlFile path="/sql/v_2_0/alter_25_03_14_add_config_jira_check_before_create.sql"/>
     </changeSet>
 
+    <changeSet author="rsaintpaul" id="Create question_answer and question_answer_category tables">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_01.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Create documentary_resource and documentary_resource_type tables">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_08_01.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Create attachment_type table">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_08_06.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="create context_possible_value table">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_17.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Create type_operator table and add tyop column to context_possible_value and context_environment_value tables">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_07_24.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Add chatbot_display, qanda_display and documentary_resource_display columns to chatbot_custom_config table">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/alter_24_09_09.sql"/>
+    </changeSet>
+
+    <changeSet author="rsaintpaul" id="Create question_answer_context and documentary_resource_context tables">
+        <sqlFile encoding="utf8" path="/sql/v_2_0/create_24_09_30.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

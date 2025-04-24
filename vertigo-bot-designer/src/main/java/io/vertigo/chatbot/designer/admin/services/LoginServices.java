@@ -20,6 +20,7 @@ package io.vertigo.chatbot.designer.admin.services;
 import com.nimbusds.oauth2.sdk.AuthorizationSuccessResponse;
 import com.nimbusds.openid.connect.sdk.OIDCClaimsRequest;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
+import com.nimbusds.openid.connect.sdk.token.OIDCTokens;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -29,10 +30,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import io.vertigo.account.account.Account;
 import io.vertigo.account.authentication.AuthenticationManager;
@@ -42,12 +43,7 @@ import io.vertigo.account.security.VSecurityManager;
 import io.vertigo.chatbot.designer.domain.commons.Person;
 import io.vertigo.chatbot.designer.utils.UserSessionUtils;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.Assertion;
-import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.lang.WrappedException;
-import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
-import io.vertigo.vega.impl.servlet.filter.AbstactKeycloakDelegateAuthenticationHandler;
 import io.vertigo.vega.plugins.authentication.oidc.OIDCAppLoginHandler;
 
 @Transactional
@@ -62,14 +58,14 @@ public class LoginServices implements Component, OIDCAppLoginHandler {
 	private KeycloakPersonServices keycloakPersonServices;
 
 	@Override
-	public String doLogin(HttpServletRequest request, Map<String, Object> claims, AuthorizationSuccessResponse rawResult, Optional<String> requestedUrl) {
+	public String doLogin(HttpServletRequest request, Map<String, Object> claims, OIDCTokens tokens, Optional<String> requestedUrl) {
 		loginWithPrincipal(claims);
 		return requestedUrl.orElse("/bots/");
 	}
 
 	@Override
-	public String doLogout(HttpServletRequest request) {
-		return "/";
+	public Optional<String> doLogout(HttpServletRequest request) {
+		return Optional.of("/");
 	}
 
 	public String logout() {

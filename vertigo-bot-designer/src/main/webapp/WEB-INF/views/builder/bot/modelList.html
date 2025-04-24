@@ -20,7 +20,85 @@
 			VUiExtensions.dataX.loadingRollback = false;
 			VUiExtensions.dataX.modalLog = {"show": false, "col": "", "row": {}};
 
-        VUiExtensions.dataX.maxSavedTrainingsOptions = [3, 5, 10]
+       		VUiExtensions.dataX.maxSavedTrainingsOptions = [3, 5, 10];
+
+			VUiExtensions.methods = {
+				...VUiExtensions.methods,
+
+				refreshModels: function() {
+					VUiExtensions.dataX.loadingModels = true;
+
+					VUiPage.httpPostAjax("_refreshTrainings", {}, {
+						onSuccess: function() {
+							VUiExtensions.dataX.loadingModels = false;
+						}
+					});
+				},
+
+				getTrainingVersion: function(traId) {
+					let result = VertigoUi.vueData.trainingList.filter(t => t.traId === traId);
+					return result.length === 0 ? null : result[0].versionNumber;
+				},
+
+				saveTraining: function() {
+					VUiPage.httpPostAjax("_saveTraining", {
+						'name': VertigoUi.vueData.newSavedTraining.name,
+						'description': VertigoUi.vueData.newSavedTraining.description,
+						'maxSavedTrainings': VertigoUi.vueData.maxSavedTrainings,
+					})
+				},
+
+				rollbackSavedTraining: function(savedTraId) {
+					VUiExtensions.dataX.loadingRollback = true;
+					VUiPage.httpPostAjax("_rollbackSavedTraining", {
+						'savedTrainingIdToDeploy': savedTraId,
+					}, {
+						onSuccess: function () {
+							VUiExtensions.dataX.loadingRollback = false;
+						}
+					})
+				},
+
+				saveMaxSavedTrainings: function() {
+					VUiPage.httpPostAjax("_saveMaxSavedTrainings", {
+						'maxSavedTrainings': VertigoUi.vueData.maxSavedTrainings,
+					})
+				},
+
+				filterFn: function(val, update) {
+					update(() => {
+						if (val === '') {
+							this.componentStates.labels.filterOptions = VertigoUi.vueData.nodeList.map(function (node) {
+								return { value: node.nodId, label: node.name }
+							});
+						}
+						else {
+							const needle = normalizeString(val.toLowerCase())
+							this.componentStates.labels.filterOptions = VertigoUi.vueData.nodeList.filter(
+									node => (normalizeString(node.name.toLowerCase()).indexOf(needle) > -1)
+							).map(function (node) {
+								return { value: node.nodId, label: node.name }
+							});
+						}
+					})
+				},
+
+				deploySavedTraining: function(noId, savedTraId) {
+					VUiPage.httpPostAjax("_deploySavedTraining", {
+						'savedTrainingIdToDeploy': savedTraId,
+						'nodeId': noId,
+					}, {
+						onSuccess: function() {
+							postTrain();
+						}
+					})
+				},
+
+				displayTrainingLog: function(training) {
+					VertigoUi.vueData.trainingDisplayed = training;
+					VUiPage.$refs.trainingDisplayedDialog.show();
+				}
+			}
 
 			function normalizeString(str) {
 				if (str)
@@ -37,55 +115,9 @@
 				VUiPage.httpPostAjax("_refreshSavedTraining", {});
 			}
 
-			function refreshModels() {
-				VUiExtensions.dataX.loadingModels = true;
-
-				VUiPage.httpPostAjax("_refreshTrainings", {}, {
-					onSuccess: function() {
-						VUiExtensions.dataX.loadingModels = false;
-					}
-				});
-			}
-
 			function closeDialog() {
 				VUiPage.$refs.popupFromDate.hide();
 				VUiPage.$refs.popupToDate.hide();
-			}
-
-			function deploySavedTraining(noId, savedTraId) {
-				VUiPage.httpPostAjax("_deploySavedTraining", {
-					'savedTrainingIdToDeploy': savedTraId,
-                'nodeId': noId,
-				}, {
-					onSuccess: function() {
-						postTrain();
-					}
-				})
-			}
-
-			function rollbackSavedTraining(savedTraId) {
-				VUiExtensions.dataX.loadingRollback = true;
-				VUiPage.httpPostAjax("_rollbackSavedTraining", {
-					'savedTrainingIdToDeploy': savedTraId,
-				}, {
-					onSuccess: function () {
-						VUiExtensions.dataX.loadingRollback = false;
-					}
-				})
-			}
-
-			function saveTraining() {
-				VUiPage.httpPostAjax("_saveTraining", {
-					'name': VertigoUi.vueData.newSavedTraining.name,
-					'description': VertigoUi.vueData.newSavedTraining.description,
-                'maxSavedTrainings': VertigoUi.vueData.maxSavedTrainings,
-            })
-        }
-
-        function saveMaxSavedTrainings() {
-            VUiPage.httpPostAjax("_saveMaxSavedTrainings", {
-                'maxSavedTrainings': VertigoUi.vueData.maxSavedTrainings,
-				})
 			}
 			// ## model management ##
 
@@ -150,11 +182,6 @@
 				return VUiExtensions.dataX.loadModel.selectedNode && getVersionNumberByTrainingId(VUiExtensions.dataX.loadModel.selectedNode.traId)
 			}
 
-			function getTrainingVersion(traId) {
-				let result = VertigoUi.vueData.trainingList.filter(t => t.traId === traId);
-				return result.length === 0 ? null : result[0].versionNumber;
-			}
-
 			function getSavedTrainingName(traId) {
 				let result = VertigoUi.vueData.savedTrainingList.filter(t => t.traId === traId);
 				return result.length === 0 ? null : result[0].name;
@@ -174,33 +201,6 @@
 				}
 			}
 
-			function displayTrainingLog(training) {
-
-
-				VertigoUi.vueData.trainingDisplayed = training;
-
-
-				VUiPage.$refs.trainingDisplayedDialog.show();
-			}
-
-			function filterFn (val, update) {
-				update(() => {
-					if (val === '') {
-						VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.nodeList.map(function (node) {
-							return { value: node.nodId, label: node.name }
-						});
-					}
-					else {
-						const needle = normalizeString(val.toLowerCase())
-						VertigoUi.componentStates.labels.filterOptions = VertigoUi.vueData.nodeList.filter(
-								node => (normalizeString(node.name.toLowerCase()).indexOf(needle) > -1)
-						).map(function (node) {
-							return { value: node.nodId, label: node.name }
-						});
-					}
-				})
-			}
-
 		</script>
 	</head>
 
@@ -216,7 +216,7 @@
 			</div>
 
 			<vu:include-data object="bot" field="botId" />
-			<vu:table list="trainingList" th:title="#{model.history}" :dense="|$q.screen.lt.lg|" componentId="trainingList"
+			<vu:table list="trainingList" th:title="#{model.history}" th::dense="|$q.screen.lt.lg|" componentId="trainingList"
 					  rowsPerPage="10" autoColClass >
 				<vu:slot name="top_right_slot">
 					<q-btn class="fab-block" round color="primary" icon="refresh" th:aria-label="#{action.refresh}" th:title="#{action.refresh}"
@@ -257,19 +257,19 @@
 
 			<vu:popup-ajax action="_deleteSavedTraining" vModel="showDeleteSavedTrainingPopup" th:message="#{model.savedTraining.deletePopup.message}" th:confirm="#{action.delete}" dataName="savedTraId" ></vu:popup-ajax>
 
-			<vu:table list="savedTrainingList" th:title="#{model.savedTraining}" :dense="|$q.screen.lt.lg|" componentId="savedTrainingList"
+			<vu:table list="savedTrainingList" th:title="#{model.savedTraining}" th::dense="|$q.screen.lt.lg|" componentId="savedTrainingList"
 					  rowsPerPage="10" autoColClass >
 				<vu:slot name="top_right_slot">
 					<vu:date-edit object="criteria" field="fromDate" label="#{savedTraining.date.from}"
 								  clearable @clear="vueData.criteria.fromDate=null"
-								  style="width:210px; margin-right: 10px"/>
+								  style="width:210px; margin-right: 10px" th:with="rowIndex=${null}"/>
 
 					<vu:date-edit object="criteria" field="toDate" label="#{savedTraining.date.to}"
 								  clearable @clear="vueData.criteria.toDate=null"
-								  style="width:210px; margin-right: 10px"/>
+								  style="width:210px; margin-right: 10px" th:with="rowIndex=${null}"/>
 
 					<vu:text-field-edit object="criteria" field="text" label="#{savedTraining.search}"
-										clearable debounce="300" style="width:210px"/>
+										clearable debounce="300" style="width:210px" rowIndex="${null}"/>
                     <q-icon name="search" class="q-field__marginal" ></q-icon>
 
 				</vu:slot>
@@ -284,7 +284,7 @@
 					<q-btn class="on-right" round color="blue" icon="cloud_upload" th:aria-label="#{savedTraining.deploy}" th:title="#{savedTraining.deploy}"
 						   @click="componentStates.savedTraId = props.row.savedTraId;  ;$refs.deployTraining.show()"></q-btn>
 					<q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{model.savedTraining.delete}" th:title="#{model.savedTraining.delete}"
-						   @click="componentStates.savedTraId = props.row.savedTraId; componentStates.showDeleteSavedTrainingPopup = true"></q-btn>
+						   @click="componentStates.savedTraId = props.row.savedTraId; componentStates.showDeleteSavedTrainingPopup.shown = true"></q-btn>
 				</vu:slot>
 				<vu:include-data object="savedTrainingList" field="name" />
 				<vu:include-data object="savedTrainingList" field="description" />
@@ -305,21 +305,23 @@
 					<vu:include-data object="nodeList" field="color" />
 					<vu:include-data object="nodeList" field="isDev" />
 					<vu:include-data object="nodeList" field="url" />
-					<q-chip v-for="node in vueData.nodeList" v-if="node.traId === props.row.traId" :style="'background: '+ node.color" text-color="white" icon="cloud_done">
-						{{node.name}}
-					</q-chip>
+					<template v-for="node in vueData.nodeList">
+						<q-chip v-if="node.traId === props.row.traId" :style="'background: '+ node.color" text-color="white" icon="cloud_done">
+							{{node.name}}
+						</q-chip>
+					</template>
 				</vu:column>
 			</vu:table>
 
-    <vu:block id="botMaxSavedTrainings" th:title="#{savedTraining.maxSavedTrainings}">
-        <vu:include-data-primitive key="maxSavedTrainings" modifiable="true"/>
-        <q-select
-                v-model="vueData.maxSavedTrainings"
-                :options="VUiExtensions.dataX.maxSavedTrainingsOptions"
-                @input="saveMaxSavedTrainings()"
-        >
-        </q-select>
-    </vu:block>
+    		<vu:block id="botMaxSavedTrainings" th:title="#{savedTraining.maxSavedTrainings}">
+				<vu:include-data-primitive key="maxSavedTrainings" modifiable="true"/>
+				<q-select
+						v-model="vueData.maxSavedTrainings"
+						:options="VUiExtensions.dataX.maxSavedTrainingsOptions"
+						@update:model-value="saveMaxSavedTrainings()"
+				>
+				</q-select>
+			</vu:block>
 
 			<q-dialog v-model="dataX.modalLog.show">
 				<q-card style="max-width: 90vw; width: 1200px;">
@@ -381,7 +383,7 @@
 					</q-card-section>
 
 					<q-card-actions align="around">
-						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<input type="hidden" name="CTX" :value="vueData['CTX']">
 						<q-btn th:label="#{action.build.cancel}" color="red" v-close-popup></q-btn>
 						<q-btn th:title="#{action.build.save}" th:label="#{action.build.save}" th:aria-label="#{action.build.save}" @click="saveTraining()" color="primary" v-close-popup></q-btn>
 					</q-card-actions>
@@ -392,7 +394,7 @@
 			<q-dialog ref="deployTraining" th:attr="dataObject=${model.vContext['componentStates'].addComponentState('savedTraId')}">
 				<q-card>
 					<vu:include-data object="nodeList" field="'*'"/>
-					<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('labels').addObject('filterOptions', {label:null})}" th:remove="all" />
+					<th:block th:attr="objectKey=${model.vContext['componentStates'].addComponentState('labels').addList('filterOptions')}" th:remove="all" />
 					<q-card-section>
 						<div class="text-h6"><span th:text="#{savedTraining.deploy}"></span></div>
 					</q-card-section>
@@ -412,7 +414,7 @@
 					</q-card-section>
 
 					<q-card-actions align="around">
-						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<input type="hidden" name="CTX" :value="vueData['CTX']">
 						<q-btn th:label="#{action.deploy.cancel}" color="red" v-close-popup></q-btn>
 						<q-btn th:label="#{action.deploy}" color="positive" @click="deploySavedTraining(componentStates.nodeToDeploy.node.noId, componentStates.savedTraId);" v-close-popup></q-btn>
 					</q-card-actions>
@@ -428,7 +430,7 @@
 					</q-card-section>
 
 					<q-card-actions align="around">
-						<input type="hidden" name="CTX" :value="VertigoUi.vueData['CTX']">
+						<input type="hidden" name="CTX" :value="vueData['CTX']">
 						<q-btn th:label="#{action.rollback.cancel}" color="red" v-close-popup></q-btn>
 						<q-btn th:label="#{action.rollback.rollback}" color="blue"
 							   @click="rollbackSavedTraining(componentStates.savedTraId);"
@@ -458,9 +460,11 @@
 
 		<section layout:fragment="javascript-footer">
 			<script>
-                VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
-                	VUiPage.httpPostAjax('_filterSavedTraining', VUiPage.vueDataParams(['criteria']));;
-                }, { deep: true });
+				window.addEventListener('vui-after-page-mounted', function (event) {
+					VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
+						VUiPage.httpPostAjax('_filterSavedTraining', VUiPage.vueDataParams(['criteria']));
+					}, {deep: true});
+				});
 			</script>
 		</section>
 	</body>

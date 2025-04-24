@@ -22,7 +22,7 @@ import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.chatbot.engine.plugins.bt.jira.multilingual.JiraMultilingualResources;
 import io.vertigo.chatbot.executor.manager.ExecutorConfigManager;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
@@ -74,7 +74,7 @@ public class ReporterFieldService implements IJiraFieldService, Component {
                 if (checkJiraFields) {
                     bb.delete(BBKeyPattern.of(jiraField.getKey()));
                     return BotNodeProvider.say(bb,
-                            MessageText.of(JiraMultilingualResources.NO_USER_FOUND).getDisplay()).eval();
+                            LocaleMessageText.of(JiraMultilingualResources.NO_USER_FOUND).getDisplay()).eval();
                 }
                 // If no Jira verification is required, check the validity of the email address format
                 if (!CommonsStringUtils.isValidEmailAdress(jiraReporterField)) {
@@ -87,7 +87,8 @@ public class ReporterFieldService implements IJiraFieldService, Component {
                 }
                 return BTStatus.Succeeded;
             } else if (users.size() == 1) {
-                bb.putString(BBKey.of(jiraField.getKey()), jiraServerService.isCloud() ? users.get(0).getAccountId() : users.get(0).getName());
+                bb.putString(BBKey.of(jiraField.getKey()), jiraServerService.isCloud() ? users.get(0).getAccountId()
+                        : users.get(0).getName());
             } else {
                 return getUserButtons(bb, users, jiraField).eval();
             }

@@ -46,9 +46,10 @@ public final class ResponsesButtonPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllButtonsByBotId",
-			request = "delete from response_button\n" + 
- " 			where bot_id_welcome = #botId#\n" + 
- " 			or bot_id_default = #botId#",
+			request = """
+			delete from response_button
+			where bot_id_welcome = #botId#
+			or bot_id_default = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllButtonsByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllButtonsByBotId")
@@ -63,8 +64,9 @@ public final class ResponsesButtonPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllButtonsBySmtId",
-			request = "delete from response_button\n" + 
- " 			where smt_id = #smtId#",
+			request = """
+			delete from response_button
+			where smt_id = #smtId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllButtonsBySmtId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "smtId", smartType = "STyId") final Long smtId) {
 		final Task task = createTaskBuilder("TkRemoveAllButtonsBySmtId")
@@ -79,11 +81,12 @@ public final class ResponsesButtonPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllSMTButtonsByBotId",
-			request = "delete from response_button \n" + 
- " 			using small_talk smt\n" + 
- " 			join topic top on (top.top_id = smt.top_id)\n" + 
- " 			where smt.smt_id = response_button.smt_id\n" + 
- " 			and top.bot_id = #botId#",
+			request = """
+			delete from response_button 
+			using small_talk smt
+			join topic top on (top.top_id = smt.top_id)
+			where smt.smt_id = response_button.smt_id
+			and top.bot_id = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllSMTButtonsByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllSMTButtonsByBotId")

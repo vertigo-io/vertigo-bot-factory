@@ -9,6 +9,7 @@ designer_task.ksp
 training_task.ksp
 topic_task.ksp
 topicCategory_task.ksp
+questionAnswer_task.ksp
 export_task.ksp
 topicFileExport_task.ksp
 dictionaryEntity_task.ksp
@@ -17,3 +18,5 @@ topicLabel_task.ksp
 unknownSentence_task.ksp
 history_task.ksp
 monitoring_task.ksp
+documentaryResourceContext_task.ksp
+questionAnswerContext_task.ksp

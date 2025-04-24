@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{templates/botDetailLayout}" th:with="nav=true, tab=questionsanswers">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    <script th:src="@{/static/js/c-richtext.js}"></script>
+    <script th:src="@{/static/js/c-queAnsTextExample.js}"></script>
+    <script th:src="@{/static/utils/base64.min.js}"></script>
+    <script th:src="@{/static/js/c-emojipicker.js}"></script>
+    <script th:inline="javascript">
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
+
+            onContextChange: function(cvaId) {
+                this.filterContextPossibleValues(cvaId);
+                VertigoUi.vueData.newQuestionAnswerContext.cpvId = null;
+            },
+
+            filterContextPossibleValues: function(cvaId) {
+                if (cvaId) {
+                    VertigoUi.vueData.filteredContextPossibleValueList = VertigoUi.vueData.contextPossibleValueList.filter(contextPossibleValue => contextPossibleValue.cvaId === cvaId);
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<section layout:fragment="content-actions">
+    <input type="hidden" name="CTX" :value="vueData['CTX']">
+    <vu:button-link th:if="${model.modeEdit}" url="@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})} + ${model.questionAnswerIhm.qaId}" th:title="#{action.cancel}" icon="fas fa-ban"
+                    class="on-left text-accent-inverted" :round size="md" color="primary" :flat />
+    <vu:button-submit th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" action="@{_edit}" th:title="#{action.edit}" icon="edit"
+                      class="on-left" :round size="md" color="primary" />
+    <q-btn th:if="${model.modeReadOnly && model.userAuthorizations[AtzChatbot$botContributor]}" @click="componentStates.showPopupDelete.shown = true" th:aria-label="#{action.delete}" title="Delete" icon="delete"
+           class="on-left" round size="md" color="red" ></q-btn>
+
+</section>
+
+<section layout:fragment="content">
+    <vu:popup action="_delete" vModel="showPopupDelete" message="#{questionAnswer.deletePopup.message}" confirm="#{action.confirm}"></vu:popup>
+    <vu:popup-ajax action="_deleteQuestionAnswerContext" vModel="showPopupDeleteQuestionAnswerContext" dataName="qacId"
+                   message="#{context.delete.popup.title}" confirm="#{action.delete}">
+    </vu:popup-ajax>
+    <vu:block id="detail" th:title="#{questionAnswer.information}">
+        <vu:grid cols="2">
+            <vu:label object="questionAnswerIhm" field="isEnabled">
+                <vu:include-data object="questionAnswerIhm" field="isEnabled" modifiable="true" />
+                <q-input v-model="vueData.questionAnswerIhm.isEnabled" name="vContext[questionAnswerIhm][isEnabled]" class="hidden" ></q-input>
+                <q-toggle v-model="vueData.questionAnswerIhm.isEnabled" th::disable="${model.modeReadOnly}"></q-toggle>
+            </vu:label>
+            <vu:select-edit object="questionAnswerIhm" field="catId" list="categoryList" label="#{questionAnswer.category}" th:readonly="${model.modeReadOnly}" labelField="label"/>
+        </vu:grid>
+    </vu:block>
+    <vu:block id="question" th:title="#{questionAnswer.question}">
+        <div class="row wrap">
+            <vu:include-data-primitive key="locale"/>
+            <vu:include-data object="questionAnswerIhm" field="question" modifiable="true" />
+            <vu:include-data object="questionAnswerIhm" field="answer" modifiable="true" />
+            <vu:include-data object="questionAnswerIhm" field="qaId" modifiable="true" />
+            <vu:include-data object="chatbotCustomConfig" field="botMessageBackgroundColor" />
+            <vu:include-data object="chatbotCustomConfig" field="botMessageFontColor" />
+            <vu:include-data object="questionAnswerContextIhmList" field="*" />
+            <vu:include-data object="filteredContextPossibleValueList" field="*" />
+            <vu:include-data object="contextPossibleValueList" field="*" />
+            <vu:include-data object="contextValueList" field="*" />
+            <vu:include-data object="newQuestionAnswerContext" field="qacId" modifiable="true"/>
+            <vu:include-data object="newQuestionAnswerContext" field="cvaId" modifiable="true"/>
+            <vu:include-data object="newQuestionAnswerContext" field="cpvId" modifiable="true"/>
+            <vu:include-data object="newQuestionAnswerContext" field="qaId" modifiable="true"/>
+            <c-richtext
+                    v-model="vueData.questionAnswerIhm.question"
+                    th::mode-edit="${!model.modeReadOnly}"
+                    name="vContext[questionAnswerIhm][question]"
+                    :locale="vueData.locale"
+                    class="q-pb-sm">
+            </c-richtext>
+            <c-queanstextexample
+                    v-model="vueData.questionAnswerIhm.question"
+                    :style="'color: ' + vueData.chatbotCustomConfig.botMessageBackgroundColor"
+                    :textColor="vueData.chatbotCustomConfig.botMessageFontColor">
+            </c-queanstextexample>
+        </div>
+    </vu:block>
+    <vu:block id="answer" th:title="#{questionAnswer.answer}">
+        <div class="row wrap">
+            <c-richtext
+                    v-model="vueData.questionAnswerIhm.answer"
+                    name="vContext[questionAnswerIhm][answer]"
+                    th::mode-edit="${!model.modeReadOnly}"
+                    :locale="vueData.locale"
+                    class="q-pb-sm">
+            </c-richtext>
+            <c-queanstextexample
+                    v-model="vueData.questionAnswerIhm.answer"
+                    style="color: white; border: solid 1px rgba(236,236,236,0.1)"
+                    :textColor="vueData.chatbotCustomConfig.botMessageFontColor">
+            </c-queanstextexample>
+        </div>
+    </vu:block>
+
+    <div v-if="vueData.questionAnswerIhm.qaId != null" class="text-h6 text-weight-bold" style="display: flex; align-items: center; margin-top: 2rem;">
+        <span class="text-primary" style="flex-grow: 2">[[#{questionAnswer.context.table.title}]]</span>
+        <q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}"
+               color="primary" round icon="add" th:aria-label="#{action.add}" th:title="#{action.add}"
+               @click="vueData.newQuestionAnswerContext.qacId = null;
+               vueData.newQuestionAnswerContext.qaId = vueData.questionAnswerIhm.qaId;
+               vueData.newQuestionAnswerContext.cvaId = null;
+               vueData.newQuestionAnswerContext.cpvId = null;
+               $refs.newContextDialog.show()">
+        </q-btn>
+    </div>
+    <vu:table v-if="vueData.questionAnswerIhm.qaId != null" list="questionAnswerContextIhmList" componentId="contextTable">
+        <vu:slot name="actions_slot" th:if="${model.userAuthorizations[AtzChatbot$botContributor]}">
+            <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.edit}" th:title="#{action.edit}"
+                   @click="vueData.newQuestionAnswerContext.qacId = props.row.qacId;
+                        vueData.newQuestionAnswerContext.qaId = props.row.qaId;
+                        vueData.newQuestionAnswerContext.cvaId = props.row.cvaId;
+                        vueData.newQuestionAnswerContext.cpvId = props.row.cpvId;
+                        filterContextPossibleValues(props.row.cvaId);
+                        $refs.newContextDialog.show()"></q-btn>
+            <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
+                   @click="componentStates.qacId = props.row.qacId; componentStates.showPopupDeleteQuestionAnswerContext.shown = true"></q-btn>
+        </vu:slot>
+        <vu:column field="cvaLabel"/>
+        <vu:column field="cpvValue"/>
+    </vu:table>
+
+    <q-dialog ref="newContextDialog">
+        <q-card style="width: 400px;">
+            <q-card-section>
+                <div class="text-h6" style="text-align: center">
+                    <span v-if="vueData.newQuestionAnswerContext.qacId != null" th:text="#{context.update.popup.title}"></span>
+                    <span v-else th:text="#{context.add.popup.title}"></span>
+                </div>
+            </q-card-section>
+            <q-card-section style="display: flex">
+                <q-select th:label="#{questionAnswer.context}"
+                          v-model="vueData.newQuestionAnswerContext.cvaId"
+                          :options="vueData.contextValueList"
+                          option-value="cvaId"
+                          option-label="label"
+                          map-options
+                          emit-value
+                          style="flex:1; margin-right:4px"
+                          @update:model-value="onContextChange">
+                </q-select>
+                <q-select
+                        v-if="vueData.newQuestionAnswerContext.cvaId != null && vueData.filteredContextPossibleValueList.length > 0"
+                        th:label="#{questionAnswer.contextValue}"
+                        v-model="vueData.newQuestionAnswerContext.cpvId"
+                        :options="[{ cpvId: null, value: '' }, ...vueData.filteredContextPossibleValueList]"
+                        option-value="cpvId"
+                        option-label="value"
+                        map-options
+                        style="flex:1; margin-left:4px"
+                        emit-value>
+                </q-select>
+            </q-card-section>
+            <q-card-actions align="around">
+                <input type="hidden" name="CTX" :value="vueData['CTX']">
+                <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                       @click="httpPostAjax('_saveQuestionAnswerContext', vueDataParams(['newQuestionAnswerContext']));"
+                       color="primary" v-close-popup></q-btn>
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
+    <q-page-sticky position="bottom-right">
+        <vu:button-submit th:if="${!model.modeReadOnly}" icon="save" th:label="#{action.save}" action="@{_save}" size="lg" color="primary" />
+    </q-page-sticky>
+</body>
+</html>

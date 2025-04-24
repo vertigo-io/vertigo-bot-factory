@@ -14,6 +14,8 @@ import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingual
 import io.vertigo.chatbot.commons.multilingual.kindTopic.KindTopicMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.person.PersonMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.queAnsCategory.QueAnsCategoryMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.questionAnswer.QuestionAnswerMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
@@ -43,6 +45,7 @@ public class ChatbotLocaleInitializer implements ComponentInitializer {
 		localeManager.add("io.vertigo.chatbot.designer.domain.admin.DtResources", io.vertigo.chatbot.designer.domain.admin.DtResources.values());
 		localeManager.add("io.vertigo.chatbot.designer.domain.commons.DtResources", io.vertigo.chatbot.designer.domain.commons.DtResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.domain.topic.DtResources", io.vertigo.chatbot.commons.domain.topic.DtResources.values());
+		localeManager.add("io.vertigo.chatbot.commons.domain.questionanswer.DtResources", io.vertigo.chatbot.commons.domain.questionanswer.DtResources.values());
 		localeManager.add("io.vertigo.chatbot.designer.domain.commons.EnumResources", EnumResource.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.topics.TopicsMultilingualResources", TopicsMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.topicFileExport.TopicFileExportMultilingualResources", TopicFileExportMultilingualResources.values());
@@ -57,7 +60,7 @@ public class ChatbotLocaleInitializer implements ComponentInitializer {
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources", DictionaryEntityMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources", ExtensionsMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.attachment.AttachmentMultilingualResources", AttachmentMultilingualResources.values());
-
+		localeManager.add("io.vertigo.chatbot.commons.multilingual.queAnsCategory.QueAnsCategoryMultilingualResources", QueAnsCategoryMultilingualResources.values());
+		localeManager.add("io.vertigo.chatbot.commons.multilingual.questionAnswer.QuestionAnswerMultilingualResources", QuestionAnswerMultilingualResources.values());
 	}
-
 }

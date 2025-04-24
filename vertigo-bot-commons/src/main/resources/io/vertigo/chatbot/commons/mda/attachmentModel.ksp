@@ -16,6 +16,37 @@ create DtDefinition DtAttachment {
 	field length 		    {domain : DoSize 		label : "Size" 			    cardinality : "1" }
 }
 
+create DtDefinition DtAttachmentType {
+	stereotype : "StaticMasterData"
+	id    attTypeCd 	{domain: DoCode 	label: "Code"}
+	field label 		{domain: DoLabel 	label: "Label" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "LabelFr" 		cardinality : "1"	}
+	values : `{
+        "DOCUMENT" : {
+            "attTypeCd" : "DOCUMENT",
+            "label" : "Document",
+            "labelFr" : "Document"
+        },
+        "ATTACHMENT" : {
+            "attTypeCd" : "ATTACHMENT",
+            "label" : "Attachment",
+            "labelFr" : "Attachment"
+        }
+     }`
+    sortField : "attTypeCd"
+ 	displayField : "label"
+}
+
+create Association AAttachmentAttachmentType {
+	fkFieldName : "attTypeCd"
+
+ 	dtDefinitionA : DtAttachment
+	type : "*>1"
+	dtDefinitionB : DtAttachmentType
+
+	labelB : "Attachment type"
+}
+
 create Association AAttachmentAttachmentFileInfo {
 	fkFieldName : "attFiId"
 

@@ -17,7 +17,7 @@
 			<vu:table list="persons" componentId="personsTable">
 				<vu:slot name="actions_slot">
 					<q-btn v-if="vueData.connectedPersonId !== props.row.perId" class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
-						   @click="componentStates.perId = props.row.perId; componentStates.showPopup = true"></q-btn>
+						   @click="componentStates.perId = props.row.perId; componentStates.showPopup.shown = true"></q-btn>
 				</vu:slot>
 				<vu:include-data object="persons" field="perId" />
 				<vu:column field="login" sortable="true" />

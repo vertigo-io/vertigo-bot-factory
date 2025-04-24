@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
+import java.util.Comparator;
+
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
@@ -12,9 +14,9 @@ import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.util.VCollectors;
 
 import javax.inject.Inject;
 
@@ -82,9 +84,12 @@ public class ContextEnvironmentServices implements Component {
                                 contextEnvironmentValueIhm.setCenvalId(contextEnvironmentValue.getCenvalId());
                                 contextEnvironmentValueIhm.setValue(contextEnvironmentValue.getValue());
                                 contextEnvironmentValueIhm.setCvaId(contextEnvironmentValue.getCvaId());
+                                contextEnvironmentValueIhm.setTyopCd(contextEnvironmentValue.getTyopCd());
                                 contextEnvironmentValueIhm.setLabel(contextEnvironmentValue.contextValue().get().getLabel());
                                 return contextEnvironmentValueIhm;
-                            }).collect(VCollectors.toDtList(ContextEnvironmentValueIhm.class)));
+                            })
+                            .sorted(Comparator.comparing(ContextEnvironmentValueIhm::getLabel))
+                            .collect(VCollectors.toDtList(ContextEnvironmentValueIhm.class)));
                     contextEnvironments.add(contextEnvironmentIhm);
                 });
         return contextEnvironments;
@@ -100,5 +105,9 @@ public class ContextEnvironmentServices implements Component {
 
     public ContextEnvironmentValue saveContextEnvironmentValue(@SecuredOperation("botContributor") final Chatbot bot, final ContextEnvironmentValue contextEnvironmentValue) {
         return contextEnvironmentValueServices.save(contextEnvironmentValue);
+    }
+
+    public void deleteAllContextEnvironmentByBot(@SecuredOperation("botAdministrator") final Chatbot bot){
+        getAllContextEnvironmentsByBot(bot.getBotId()).forEach(contextEnvironment -> deleteContextEnvironment(bot, contextEnvironment.getCenvId()));
     }
 }

@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -23,15 +23,20 @@ public final class ChatbotCustomConfig implements Entity {
 	private String fontColor;
 	private String botMessageBackgroundColor;
 	private String botMessageFontColor;
+	private String botMessageLinkColor;
 	private String userMessageBackgroundColor;
 	private String userMessageFontColor;
+	private String botRatingColor;
 	private Boolean displayAvatar;
 	private Long totalMaxAttachmentSize;
 	private Boolean disableNlu;
 	private Long maxSavedTraining;
 	private Boolean jiraCheckBeforeCreate;
+	private Boolean chatbotDisplay;
+	private Boolean qandaDisplay;
+	private Boolean documentaryResourceDisplay;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AChatbotCustomConfigChatbot",
 			fkFieldName = "botId",
 			primaryDtDefinitionName = "DtChatbot",
@@ -46,7 +51,7 @@ public final class ChatbotCustomConfig implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AChabotCustomConfigFontFamily",
 			fkFieldName = "fofCd",
 			primaryDtDefinitionName = "DtFontFamily",
@@ -202,6 +207,25 @@ public final class ChatbotCustomConfig implements Entity {
 	
 	/**
 	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot message link color'.
+	 * @return String botMessageLinkColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot message link color")
+	public String getBotMessageLinkColor() {
+		return botMessageLinkColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot message link color'.
+	 * @param botMessageLinkColor String
+	 */
+	public void setBotMessageLinkColor(final String botMessageLinkColor) {
+		this.botMessageLinkColor = botMessageLinkColor;
+	}
+	
+	/**
+	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'User message background color'.
 	 * @return String userMessageBackgroundColor
 	 */
@@ -236,6 +260,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setUserMessageFontColor(final String userMessageFontColor) {
 		this.userMessageFontColor = userMessageFontColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot rating color'.
+	 * @return String botRatingColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot rating color")
+	public String getBotRatingColor() {
+		return botRatingColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot rating color'.
+	 * @param botRatingColor String
+	 */
+	public void setBotRatingColor(final String botRatingColor) {
+		this.botRatingColor = botRatingColor;
 	}
 	
 	/**
@@ -334,11 +377,68 @@ public final class ChatbotCustomConfig implements Entity {
 	}
 	
 	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Display chatbot'.
+	 * @return Boolean chatbotDisplay
+	 */
+	@Field(smartType = "STyYesNo", label = "Display chatbot")
+	public Boolean getChatbotDisplay() {
+		return chatbotDisplay;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Display chatbot'.
+	 * @param chatbotDisplay Boolean
+	 */
+	public void setChatbotDisplay(final Boolean chatbotDisplay) {
+		this.chatbotDisplay = chatbotDisplay;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Display Q&A'.
+	 * @return Boolean qandaDisplay
+	 */
+	@Field(smartType = "STyYesNo", label = "Display Q&A")
+	public Boolean getQandaDisplay() {
+		return qandaDisplay;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Display Q&A'.
+	 * @param qandaDisplay Boolean
+	 */
+	public void setQandaDisplay(final Boolean qandaDisplay) {
+		this.qandaDisplay = qandaDisplay;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Display documentary resources'.
+	 * @return Boolean documentaryResourceDisplay
+	 */
+	@Field(smartType = "STyYesNo", label = "Display documentary resources")
+	public Boolean getDocumentaryResourceDisplay() {
+		return documentaryResourceDisplay;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Display documentary resources'.
+	 * @param documentaryResourceDisplay Boolean
+	 */
+	public void setDocumentaryResourceDisplay(final Boolean documentaryResourceDisplay) {
+		this.documentaryResourceDisplay = documentaryResourceDisplay;
+	}
+	
+	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -357,7 +457,7 @@ public final class ChatbotCustomConfig implements Entity {
 	 * Récupère la valeur de la propriété 'fontFamily'.
 	 * @return String fofCd
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyLabel", label = "fontFamily", fkDefinition = "DtFontFamily" )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyLabel", label = "fontFamily", fkDefinition = "DtFontFamily" )
 	public String getFofCd() {
 		return (String) fofCdAccessor.getId();
 	}
@@ -390,6 +490,6 @@ public final class ChatbotCustomConfig implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

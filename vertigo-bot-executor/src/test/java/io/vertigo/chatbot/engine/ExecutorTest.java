@@ -33,7 +33,7 @@ import io.vertigo.core.node.config.NodeConfig;
 import io.vertigo.core.plugins.resource.classpath.ClassPathResourceResolverPlugin;
 import io.vertigo.core.plugins.resource.url.URLResourceResolverPlugin;
 import io.vertigo.datamodel.DataModelFeatures;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.vega.VegaFeatures;
 
 public class ExecutorTest {
@@ -304,9 +304,9 @@ public class ExecutorTest {
 		for (final Tuple<String, List<String>> topicDef : topics) {
 			final var topicExport = new TopicExport();
 			topicExport.setName("topic" + cpt);
-			topicExport.setTopicBT(topicDef.getVal1());
-			if (topicDef.getVal2() != null) {
-				topicExport.setNluTrainingSentences(topicDef.getVal2());
+			topicExport.setTopicBT(topicDef.val1());
+			if (topicDef.val2() != null) {
+				topicExport.setNluTrainingSentences(topicDef.val2());
 			}
 			topicsExport.add(topicExport);
 			cpt++;

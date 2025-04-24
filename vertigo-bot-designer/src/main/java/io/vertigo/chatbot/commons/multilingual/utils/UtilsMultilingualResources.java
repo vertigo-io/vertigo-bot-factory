@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.commons.multilingual.utils;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum UtilsMultilingualResources implements MessageKey {
+public enum UtilsMultilingualResources implements LocaleMessageKey {
 
 	SERIALIZATION_ERROR,
 

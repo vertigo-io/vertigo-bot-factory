@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.designer.domain.commons;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum EnumResource implements MessageKey {
+public enum EnumResource implements LocaleMessageKey {
 
 	TD_DAY,
 

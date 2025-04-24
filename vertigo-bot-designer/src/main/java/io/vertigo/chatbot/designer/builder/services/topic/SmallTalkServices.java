@@ -35,11 +35,11 @@ import io.vertigo.chatbot.domain.DtDefinitions.SmallTalkFields;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DataObject;
 
 @Transactional
 @Secured("BotUser")
@@ -114,7 +114,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 		if (!HashUtils.generateHashCodeForResponseButtons(oldResponseButtons).equals(HashUtils.generateHashCodeForResponseButtons(buttonList))) {
 			for (final ResponseButton button : buttonList) {
 				if (TopicsUtils.checkSpecialCharacters(button.getText())) {
-					throw new VUserException(MessageText.of(TopicsMultilingualResources.CODE_SPECIAL_CHAR_ERROR));
+					throw new VUserException(LocaleMessageText.of(TopicsMultilingualResources.CODE_SPECIAL_CHAR_ERROR));
 				}
 			}
 			responsesButtonServices.removeAllButtonsBySmtId(chatbot, savedST);
@@ -127,7 +127,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 		if (!HashUtils.generateHashCodeForResponseButtonsUrl(oldResponseUrlButtons).equals(HashUtils.generateHashCodeForResponseButtonsUrl(buttonUrlList))) {
 			for (final ResponseButtonUrl button : buttonUrlList) {
 				if (TopicsUtils.checkSpecialCharacters(button.getText())) {
-					throw new VUserException(MessageText.of(TopicsMultilingualResources.CODE_SPECIAL_CHAR_ERROR));
+					throw new VUserException(LocaleMessageText.of(TopicsMultilingualResources.CODE_SPECIAL_CHAR_ERROR));
 				}
 			}
 			responsesButtonUrlServices.removeAllButtonsUrlBySmtId(chatbot, savedST);
@@ -211,7 +211,7 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 	}
 
 	@Override
-	public boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DtObject object, final Chatbot bot) {
+	public boolean hasToBeDeactivated(final Topic topic, final DtList<NluTrainingSentence> sentences, final DataObject object, final Chatbot bot) {
 		final SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) object;
 		final DtList<UtterText> utt = utterTextServices.getUtterTextList(bot, smallTalkWrapper.getSmallTalk());
 		final DtList<ResponseButton> buttonList = responsesButtonServices.getResponsesButtonList(bot, smallTalkWrapper.getSmallTalk());
@@ -220,11 +220,11 @@ public class SmallTalkServices implements Component, ITopicService<SmallTalk>, I
 
 	@Override
 	public String getDeactivateMessage() {
-		return MessageText.of(TopicsMultilingualResources.DEACTIVATE_TOPIC_SMALL_TALK).getDisplay();
+		return LocaleMessageText.of(TopicsMultilingualResources.DEACTIVATE_TOPIC_SMALL_TALK).getDisplay();
 	}
 
 	@Override
-	public void saveTopic(final Topic topic, final Chatbot chatbot, final DtObject dtObject) {
+	public void saveTopic(final Topic topic, final Chatbot chatbot, final DataObject dtObject) {
 		final SmallTalkWrapper smallTalkWrapper = (SmallTalkWrapper) dtObject;
 		saveSmallTalk(chatbot, smallTalkWrapper.getSmallTalk(), smallTalkWrapper.getUtterTexts(), smallTalkWrapper.getButtons(), smallTalkWrapper.getButtonsUrl(), topic);
 	}

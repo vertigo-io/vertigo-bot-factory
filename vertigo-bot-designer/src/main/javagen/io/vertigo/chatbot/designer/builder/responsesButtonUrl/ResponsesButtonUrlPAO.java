@@ -46,9 +46,10 @@ public final class ResponsesButtonUrlPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllButtonsUrlByBotId",
-			request = "delete from response_button_url\n" + 
- " 			where bot_id_welcome = #botId#\n" + 
- " 			or bot_id_default = #botId#",
+			request = """
+			delete from response_button_url
+			where bot_id_welcome = #botId#
+			or bot_id_default = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllButtonsUrlByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllButtonsUrlByBotId")
@@ -63,8 +64,9 @@ public final class ResponsesButtonUrlPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllButtonsUrlBySmtId",
-			request = "delete from response_button_url\n" + 
- " 			where smt_id = #smtId#",
+			request = """
+			delete from response_button_url
+			where smt_id = #smtId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllButtonsUrlBySmtId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "smtId", smartType = "STyId") final Long smtId) {
 		final Task task = createTaskBuilder("TkRemoveAllButtonsUrlBySmtId")
@@ -79,11 +81,12 @@ public final class ResponsesButtonUrlPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllSMTButtonsUrlByBotId",
-			request = "delete from response_button_url\n" + 
- " 			using small_talk smt\n" + 
- " 			join topic top on (top.top_id = smt.top_id)\n" + 
- " 			where smt.smt_id = response_button_url.smt_id\n" + 
- " 			and top.bot_id = #botId#",
+			request = """
+			delete from response_button_url
+			using small_talk smt
+			join topic top on (top.top_id = smt.top_id)
+			where smt.smt_id = response_button_url.smt_id
+			and top.bot_id = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllSMTButtonsUrlByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllSMTButtonsUrlByBotId")

@@ -17,6 +17,12 @@
  */
 package io.vertigo.chatbot.executor.webservices;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.inject.Inject;
+
 import io.vertigo.chatbot.engine.model.BotInput;
 import io.vertigo.chatbot.engine.model.BotResponse;
 import io.vertigo.chatbot.executor.manager.ExecutorManager;
@@ -28,11 +34,6 @@ import io.vertigo.vega.webservice.stereotype.POST;
 import io.vertigo.vega.webservice.stereotype.PathParam;
 import io.vertigo.vega.webservice.stereotype.PathPrefix;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
-
-import javax.inject.Inject;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 @PathPrefix("/chatbot")
 public class TalkWebService implements WebServices {
@@ -70,5 +71,4 @@ public class TalkWebService implements WebServices {
 		final Optional<VFile> optWelcomeToursFile = executorManager.getWelcomeToursFile();
 		return optWelcomeToursFile.orElse(null);
 	}
-
 }

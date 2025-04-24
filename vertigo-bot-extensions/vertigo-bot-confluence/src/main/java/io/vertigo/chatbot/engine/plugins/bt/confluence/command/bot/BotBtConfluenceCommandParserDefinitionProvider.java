@@ -1,8 +1,6 @@
 package io.vertigo.chatbot.engine.plugins.bt.confluence.command.bot;
 
 import io.vertigo.ai.impl.command.BtCommandParserDefinition;
-import io.vertigo.chatbot.engine.plugins.bt.confluence.multilingual.ConfluenceMultilingualResources;
-import io.vertigo.core.locale.MessageText;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.core.node.definition.DefinitionSpace;
 import io.vertigo.core.node.definition.SimpleDefinitionProvider;

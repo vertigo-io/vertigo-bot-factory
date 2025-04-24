@@ -9,8 +9,10 @@ mda/chatbot/profileModel.ksp
 mda/chatbot/trainingModel.ksp
 mda/chatbot/unknownSentences.ksp
 mda/chatbot/topic/topicModel.ksp
+mda/chatbot/questionanswer/questionAnswerModel.ksp
 mda/chatbot/history.ksp
 mda/chatbot/extensions.ksp
+mda/chatbot/documentaryResourcesModel.ksp
 
 admin/person.ksp
 admin/monitoring.ksp

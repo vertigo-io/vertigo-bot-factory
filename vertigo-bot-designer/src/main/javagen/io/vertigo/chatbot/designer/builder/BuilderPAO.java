@@ -47,10 +47,11 @@ public final class BuilderPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkGetAllReponseTypeIdsByBotId",
-			request = "select rty.rty_id\n" + 
- " 			from response_type rty\n" + 
- " 			join small_talk smt on (smt.rty_id = rty.rty_id)\n" + 
- " 			where smt.bot_id = #botId#",
+			request = """
+			select rty.rty_id
+			from response_type rty
+			join small_talk smt on (smt.rty_id = rty.rty_id)
+			where smt.bot_id = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyId", name = "filIds")
 	public java.util.List<Long> getAllReponseTypeIdsByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
@@ -68,8 +69,9 @@ public final class BuilderPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllReponseTypeByRtyIds",
-			request = "delete from response_type rty\n" + 
- " 			where rty.rty_id in (#rtyIds.rownum#)",
+			request = """
+			delete from response_type rty
+			where rty.rty_id in (#rtyIds.rownum#)""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllReponseTypeByRtyIds(@io.vertigo.datamodel.task.proxy.TaskInput(name = "rtyIds", smartType = "STyId") final java.util.List<Long> rtyIds) {
 		final Task task = createTaskBuilder("TkRemoveAllReponseTypeByRtyIds")

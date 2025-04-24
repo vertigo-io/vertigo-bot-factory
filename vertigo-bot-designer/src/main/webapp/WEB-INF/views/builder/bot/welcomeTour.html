@@ -11,22 +11,26 @@
     <script th:inline="javascript">
         VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
 
-        function addWelcomeTour() {
-            VUiPage.httpPostAjax("_saveWelcomeTour", {
-                'welIdOpt': VertigoUi.vueData.newWelcomeTour.welId,
-                'label': VertigoUi.vueData.newWelcomeTour.label,
-                'technicalCode': VertigoUi.vueData.newWelcomeTour.technicalCode,
-                'importShepherdConfigFileUri': VertigoUi.vueData.importShepherdConfigFileUri.toString()
-            });
-        }
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
 
-        function onRejected (rejectedEntries) {
-            let message = VertigoUi.vueData.locale === 'fr_FR' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
-                : 'File ' + rejectedEntries[0].file.name + ' was rejected.';
-            if (rejectedEntries[0].failedPropValidation === 'accept') {
-                message += VertigoUi.vueData.locale === 'fr_FR' ? ' Le format du fichier n\'est pas accepté' : ' File format isn\'t accepted';
+            addWelcomeTour: function() {
+                VUiPage.httpPostAjax("_saveWelcomeTour", {
+                    'welIdOpt': VertigoUi.vueData.newWelcomeTour.welId,
+                    'label': VertigoUi.vueData.newWelcomeTour.label,
+                    'technicalCode': VertigoUi.vueData.newWelcomeTour.technicalCode,
+                    'importShepherdConfigFileUri': VertigoUi.vueData.importShepherdConfigFileUri.toString()
+                });
+            },
+
+            onRejected: function(rejectedEntries) {
+                let message = VertigoUi.vueData.locale === 'fr_FR' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
+                    : 'File ' + rejectedEntries[0].file.name + ' was rejected.';
+                if (rejectedEntries[0].failedPropValidation === 'accept') {
+                    message += VertigoUi.vueData.locale === 'fr_FR' ? ' Le format du fichier n\'est pas accepté' : ' File format isn\'t accepted';
+                }
+                this.dataX.attachmentError = {'show': true, 'message': message};
             }
-            VUiExtensions.dataX.attachmentError = {'show': true, 'message': message};
         }
 
         function onStart() {
@@ -68,7 +72,7 @@
                    @click="vueData.newWelcomeTour.botId = props.row.botId; vueData.newWelcomeTour.welId = props.row.welId; vueData.newWelcomeTour.label = props.row.label;
                        vueData.newWelcomeTour.technicalCode = props.row.technicalCode; vueData.importShepherdConfigFileUri = []; $refs.welcomeTourDialog.show()"></q-btn>
             <q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
-                   @click="componentStates.welId = props.row.welId; componentStates.showDeleteWelcomeTourPopup = true"></q-btn>
+                   @click="componentStates.welId = props.row.welId; componentStates.showDeleteWelcomeTourPopup.shown = true"></q-btn>
         </vu:slot>
         <vu:include-data object="welcomeTours" field="label" />
         <vu:include-data object="welcomeTours" field="welId" />
@@ -87,7 +91,7 @@
             </a>
         </vu:column>
     </vu:table>
-    <th:bloc th:with="viewMode='edit'">
+    <th:block th:with="viewMode='edit'">
         <q-dialog ref="welcomeTourDialog">
             <vu:include-data object="newWelcomeTour" field="botId" modifiable="true" />
             <vu:include-data object="newWelcomeTour" field="welId" modifiable="true" />
@@ -111,7 +115,7 @@
                 </q-card-section>
                 <q-card-section>
                     <vu:label-edit object="newWelcomeTour" field="config">
-                        <vu:fileupload th:url="'@{/commons/upload}'" key="importShepherdConfigFileUri" multiple="false" accept="'.js'"
+                        <vu:fileupload th:url="'@{/commons/upload}'" key="importShepherdConfigFileUri" multiple="false" accept=".js" th:with="object=null, field=null"
                                    @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
                     </vu:label-edit>
                     <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
@@ -125,7 +129,7 @@
                 </q-card-actions>
             </q-card>
         </q-dialog>
-    </th:bloc>
+    </th:block>
 </section>
 </body>
 </html>

@@ -1,0 +1,102 @@
+package io.vertigo.chatbot.designer.domain
+
+create DtDefinition DtDocumentaryResource{
+	id		dreId			{domain: DoId 		label: "ID"					    				}
+	field 	title 			{domain: DoLabel 	label: "Title" 			    cardinality : "1"	}
+	field 	description		{domain: DoText 	label: "Description" 		    				}
+	field 	url     		{domain: DoText   	label: "Url" 		             				}
+}
+
+create DtDefinition DtDocumentaryResourceType {
+	stereotype : "StaticMasterData"
+	id    dreTypeCd 		{domain: DoCode 	label: "Code"}
+	field label 		    {domain: DoLabel 	label: "Label" 			                cardinality : "1"	}
+	field labelFr 		    {domain: DoLabel 	label: "LabelFr" 		                cardinality : "1"	}
+	values : `{
+        "URL" : {
+            "dreTypeCd" : "URL",
+            "label" : "URL",
+            "labelFr" : "URL"
+        },
+        "FILE" : {
+            "dreTypeCd" : "FILE",
+            "label" : "File",
+            "labelFr" : "Document"
+        }
+     }`
+    sortField : "dreTypeCd"
+ 	displayField : "label"
+}
+
+create DtDefinition DtDocumentaryResourceContext{
+	id		drcId			{domain: DoId 		label: "ID"			                           }
+}
+
+create Association ADocumentaryResourceContextDocumentaryResource {
+	fkFieldName : "dreId"
+
+ 	dtDefinitionA : DtDocumentaryResourceContext
+	type : "*>1"
+	dtDefinitionB : DtDocumentaryResource
+
+	labelB : "Documentary resource id"
+}
+
+create Association ADocumentaryResourceContextContextValue {
+	fkFieldName : "cvaId"
+
+ 	dtDefinitionA : DtDocumentaryResourceContext
+	type : "*>1"
+	dtDefinitionB : DtContextValue
+
+	labelB : "Context value id"
+}
+
+create Association ADocumentaryResourceContextContextPossibleValue {
+	fkFieldName : "cpvId"
+
+ 	dtDefinitionA : DtDocumentaryResourceContext
+	type : "*>?"
+	dtDefinitionB : DtContextPossibleValue
+
+	labelB : "Context possible value id"
+}
+
+create Association ADocumentaryResourceAttachmentFileInfo {
+	fkFieldName : "attId"
+
+ 	dtDefinitionA : DtDocumentaryResource
+	type : "*>?"
+	dtDefinitionB : DtAttachment
+
+	labelB : "Attachment id"
+}
+
+create Association ADocumentaryResourceDocumentaryResourceType {
+	fkFieldName : "dreTypeCd"
+
+ 	dtDefinitionA : DtDocumentaryResource
+	type : "*>1"
+	dtDefinitionB : DtDocumentaryResourceType
+
+	labelB : "Documentary resource type"
+}
+
+create Association ADocumentaryResourceChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtDocumentaryResource
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create DtDefinition DtDocumentaryResourceContextIhm{
+	field	drcId			{domain: DoId 		    label: "ID"			                           }
+	field   dreId           {domain: DoId           label: "Documentary resource id"               }
+    field	cvaId			{domain: DoId 		    label: "Context value id"			           }
+	field	cpvId			{domain: DoId 		    label: "Context possible value id"			   }
+	field	cvaLabel		{domain: DoLabel 		label: "Context"			                   }
+	field	cpvValue		{domain: DoLabel 		label: "Value"			                       }
+}

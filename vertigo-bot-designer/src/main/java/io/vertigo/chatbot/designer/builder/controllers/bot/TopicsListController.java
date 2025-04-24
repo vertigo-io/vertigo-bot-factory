@@ -40,7 +40,7 @@ import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.topic.TypeTopicServices;
 import io.vertigo.chatbot.domain.DtDefinitions.TopicIhmFields;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;

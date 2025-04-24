@@ -6,7 +6,7 @@ import io.vertigo.chatbot.designer.builder.services.HistoryServices;
 import io.vertigo.chatbot.designer.domain.History;
 import io.vertigo.chatbot.designer.domain.HistoryAction;
 import io.vertigo.chatbot.designer.domain.HistoryCriteria;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;

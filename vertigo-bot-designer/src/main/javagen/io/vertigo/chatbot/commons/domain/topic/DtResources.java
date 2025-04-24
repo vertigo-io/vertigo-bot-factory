@@ -1,16 +1,16 @@
 package io.vertigo.chatbot.commons.domain.topic;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
 /**
  * Attention cette classe est générée automatiquement !
  * Resources du module io.vertigo.chatbot.commons.domain.topic
  */
-public enum DtResources implements MessageKey {
+public enum DtResources implements LocaleMessageKey {
 
 	/***********************************************************
-	/** KindTopic.
-	/***********************************************************
+	 * KindTopic.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -37,8 +37,8 @@ public enum DtResources implements MessageKey {
 	fldKindTopic$defaultText,
 
 	/***********************************************************
-	/** NluTrainingExport.
-	/***********************************************************
+	 * NluTrainingExport.
+	 **********************************************************/
 	/**
 	 * topId.
 	 */
@@ -53,8 +53,8 @@ public enum DtResources implements MessageKey {
 	fldNluTrainingExport$text,
 
 	/***********************************************************
-	/** NluTrainingSentence.
-	/***********************************************************
+	 * NluTrainingSentence.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -69,8 +69,8 @@ public enum DtResources implements MessageKey {
 	fldNluTrainingSentence$topId,
 
 	/***********************************************************
-	/** ResponseButton.
-	/***********************************************************
+	 * ResponseButton.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -89,8 +89,8 @@ public enum DtResources implements MessageKey {
 	fldResponseButton$topIdResponse,
 
 	/***********************************************************
-	/** ResponseButtonUrl.
-	/***********************************************************
+	 * ResponseButtonUrl.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -113,8 +113,8 @@ public enum DtResources implements MessageKey {
 	fldResponseButtonUrl$smtId,
 
 	/***********************************************************
-	/** ResponseType.
-	/***********************************************************
+	 * ResponseType.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -133,8 +133,8 @@ public enum DtResources implements MessageKey {
 	fldResponseType$sortOrder,
 
 	/***********************************************************
-	/** ScriptIntention.
-	/***********************************************************
+	 * ScriptIntention.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -149,8 +149,8 @@ public enum DtResources implements MessageKey {
 	fldScriptIntention$topId,
 
 	/***********************************************************
-	/** ScriptIntentionIhm.
-	/***********************************************************
+	 * ScriptIntentionIhm.
+	 **********************************************************/
 	/**
 	 * Topic id.
 	 */
@@ -169,16 +169,16 @@ public enum DtResources implements MessageKey {
 	fldScriptIntentionIhm$isEnabled,
 
 	/***********************************************************
-	/** SelectTopicCategory.
-	/***********************************************************
+	 * SelectTopicCategory.
+	 **********************************************************/
 	/**
 	 * Topic category id.
 	 */
 	fldSelectTopicCategory$topCatId,
 
 	/***********************************************************
-	/** SmallTalk.
-	/***********************************************************
+	 * SmallTalk.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -197,8 +197,8 @@ public enum DtResources implements MessageKey {
 	fldSmallTalk$rtyId,
 
 	/***********************************************************
-	/** SmallTalkIhm.
-	/***********************************************************
+	 * SmallTalkIhm.
+	 **********************************************************/
 	/**
 	 * Topic id.
 	 */
@@ -221,8 +221,8 @@ public enum DtResources implements MessageKey {
 	fldSmallTalkIhm$catLabel,
 
 	/***********************************************************
-	/** SmallTalkWrapper.
-	/***********************************************************
+	 * SmallTalkWrapper.
+	 **********************************************************/
 	/**
 	 * SmallTalk.
 	 */
@@ -241,8 +241,8 @@ public enum DtResources implements MessageKey {
 	fldSmallTalkWrapper$utterTexts,
 
 	/***********************************************************
-	/** Topic.
-	/***********************************************************
+	 * Topic.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -285,8 +285,8 @@ public enum DtResources implements MessageKey {
 	fldTopic$ktoCd,
 
 	/***********************************************************
-	/** TopicCategory.
-	/***********************************************************
+	 * TopicCategory.
+	 **********************************************************/
 	/**
 	 * Topic category id.
 	 */
@@ -317,8 +317,8 @@ public enum DtResources implements MessageKey {
 	fldTopicCategory$botId,
 
 	/***********************************************************
-	/** TopicCategoryExport.
-	/***********************************************************
+	 * TopicCategoryExport.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -337,16 +337,16 @@ public enum DtResources implements MessageKey {
 	fldTopicCategoryExport$isTechnical,
 
 	/***********************************************************
-	/** TopicCriteria.
-	/***********************************************************
+	 * TopicCriteria.
+	 **********************************************************/
 	/**
 	 * Category selection.
 	 */
 	fldTopicCriteria$catId,
 
 	/***********************************************************
-	/** TopicFileExport.
-	/***********************************************************
+	 * TopicFileExport.
+	 **********************************************************/
 	/**
 	 * Code.
 	 */
@@ -417,8 +417,8 @@ public enum DtResources implements MessageKey {
 	fldTopicFileExport$labels,
 
 	/***********************************************************
-	/** TopicIhm.
-	/***********************************************************
+	 * TopicIhm.
+	 **********************************************************/
 	/**
 	 * Topic id.
 	 */
@@ -469,8 +469,8 @@ public enum DtResources implements MessageKey {
 	fldTopicIhm$labels,
 
 	/***********************************************************
-	/** TopicLabel.
-	/***********************************************************
+	 * TopicLabel.
+	 **********************************************************/
 	/**
 	 * Label id.
 	 */
@@ -485,8 +485,8 @@ public enum DtResources implements MessageKey {
 	fldTopicLabel$botId,
 
 	/***********************************************************
-	/** TypeTopic.
-	/***********************************************************
+	 * TypeTopic.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */
@@ -501,8 +501,8 @@ public enum DtResources implements MessageKey {
 	fldTypeTopic$labelFr,
 
 	/***********************************************************
-	/** UtterText.
-	/***********************************************************
+	 * UtterText.
+	 **********************************************************/
 	/**
 	 * ID.
 	 */

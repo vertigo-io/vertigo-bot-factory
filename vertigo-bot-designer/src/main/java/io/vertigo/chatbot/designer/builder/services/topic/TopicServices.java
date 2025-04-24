@@ -24,11 +24,11 @@ import io.vertigo.core.node.component.Component;
 import io.vertigo.core.util.StringUtil;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtListState;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.model.Entity;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DtListState;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datamodel.data.util.VCollectors;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -325,7 +325,7 @@ public class TopicServices implements Component, Activeable {
      */
     public void saveTopic(final Topic topic, final Chatbot chatbot,
                           final String newNluTrainingSentence, final DtList<NluTrainingSentence> nluTrainingSentences, final DtList<NluTrainingSentence> nluTrainingSentencesToDelete,
-                          final DtObject dtObject,
+                          final DataObject dtObject,
                           final DtList<TopicLabel> labels,
                           final DtList<TopicLabel> initialLabels) {
 

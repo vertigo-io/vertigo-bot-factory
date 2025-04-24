@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.commons.multilingual;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum ConstraintResources implements MessageKey {
+public enum ConstraintResources implements LocaleMessageKey {
 
 	CODE_PATTERN_DIGIT_ERROR,
 

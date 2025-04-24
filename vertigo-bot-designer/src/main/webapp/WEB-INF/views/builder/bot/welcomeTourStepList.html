@@ -59,7 +59,7 @@
             <q-icon name="block" color="red" size="2rem" v-if="!props.row.enabled"></q-icon>
         </vu:column>
     </vu:table>
-    <th:bloc th:with="viewMode='edit'">
+    <th:block th:with="viewMode='edit'">
         <q-dialog ref="welcomeTourStepDialog" >
             <vu:include-data object="newStep" field="welStepId" modifiable="true" />
             <vu:include-data object="newStep" field="tourId" modifiable="true" />
@@ -92,7 +92,7 @@
                 </q-card-actions>
             </q-card>
         </q-dialog>
-    </th:bloc>
+    </th:block>
 </section>
 </body>
 </html>

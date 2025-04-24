@@ -15,7 +15,7 @@ import io.vertigo.chatbot.designer.domain.DictionaryEntityWrapper;
 import io.vertigo.chatbot.designer.domain.Synonym;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.lang.VUserException;
-import io.vertigo.datamodel.structure.model.DtList;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;

@@ -1,12 +1,12 @@
 package io.vertigo.chatbot.designer.domain.admin;
 
 import io.vertigo.core.lang.Generated;
-import io.vertigo.datamodel.structure.model.Entity;
+import io.vertigo.datamodel.data.model.Entity;
 import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
-import io.vertigo.datamodel.structure.model.UID;
+import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
-import io.vertigo.datamodel.structure.stereotype.Field;
-import io.vertigo.datamodel.structure.util.DtObjectUtil;
+import io.vertigo.datamodel.data.stereotype.Field;
+import io.vertigo.datamodel.data.util.DataModelUtil;
 
 /**
  * This class is automatically generated.
@@ -18,7 +18,7 @@ public final class ProfilPerChatbot implements Entity {
 
 	private Long chpId;
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "APRrofilChatboToChatbot",
 			fkFieldName = "botId",
 			primaryDtDefinitionName = "DtChatbot",
@@ -33,7 +33,7 @@ public final class ProfilPerChatbot implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.Chatbot> botIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.Chatbot.class, "Chatbot");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "APRrofilChatbotToPerson",
 			fkFieldName = "perId",
 			primaryDtDefinitionName = "DtPerson",
@@ -48,7 +48,7 @@ public final class ProfilPerChatbot implements Entity {
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.designer.domain.commons.Person> perIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.designer.domain.commons.Person.class, "Person");
 
-	@io.vertigo.datamodel.structure.stereotype.Association(
+	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "APRrofilChatbotToCodeProfil",
 			fkFieldName = "chpCd",
 			primaryDtDefinitionName = "DtChatbotProfiles",
@@ -93,7 +93,7 @@ public final class ProfilPerChatbot implements Entity {
 	 * Récupère la valeur de la propriété 'Chatbot'.
 	 * @return Long botId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Chatbot", fkDefinition = "DtChatbot", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getBotId() {
 		return (Long) botIdAccessor.getId();
 	}
@@ -112,7 +112,7 @@ public final class ProfilPerChatbot implements Entity {
 	 * Récupère la valeur de la propriété 'Person'.
 	 * @return Long perId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyId", label = "Person", fkDefinition = "DtPerson", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Person", fkDefinition = "DtPerson", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getPerId() {
 		return (Long) perIdAccessor.getId();
 	}
@@ -131,7 +131,7 @@ public final class ProfilPerChatbot implements Entity {
 	 * Récupère la valeur de la propriété 'Profil pour un chatbot'.
 	 * @return String chpCd <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.structure.stereotype.ForeignKey(smartType = "STyCode", label = "Profil pour un chatbot", fkDefinition = "DtChatbotProfiles", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyCode", label = "Profil pour un chatbot", fkDefinition = "DtChatbotProfiles", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public String getChpCd() {
 		return (String) chpCdAccessor.getId();
 	}
@@ -172,6 +172,6 @@ public final class ProfilPerChatbot implements Entity {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return DtObjectUtil.toString(this);
+		return DataModelUtil.toString(this);
 	}
 }

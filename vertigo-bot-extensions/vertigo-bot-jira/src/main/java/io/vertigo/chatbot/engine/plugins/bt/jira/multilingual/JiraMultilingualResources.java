@@ -1,6 +1,6 @@
 package io.vertigo.chatbot.engine.plugins.bt.jira.multilingual;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
 public enum JiraMultilingualResources implements MessageKey {
     TICKET_FOUND,

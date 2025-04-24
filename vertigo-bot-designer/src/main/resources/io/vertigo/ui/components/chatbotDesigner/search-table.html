@@ -6,20 +6,21 @@
 	<div class="col-12">
 		<q-table
 			  	th::ref="|'${componentId}'|"
-				th::data=${data}
+				th::rows=${data}
 				th::columns=|componentStates.${componentId}.columns|
 				th:row-key="${myRowKey}"
 			    th::pagination.sync="|componentStates.${componentId}.pagination|"
-		    	:sort-method="VertigoUi.methods.sortCiAi"
+		    	:sort-method="sortCiAi"
 				th::loading="|componentStates.${componentId}.loading|"
 				th:table-class="${tableClass?:'table-'+(color?:'secondary')}"
 				binary-state-sort
 				>
-			
-			<q-tr slot="body" slot-scope="props" :props="props" th:attr="__${tr_attrs}__">
-			
-			<vu:content></vu:content>
-		  </q-tr>
+			<template #body="props">
+				<q-tr :props="props" th:attr="__${tr_attrs}__">
+
+					<vu:content></vu:content>
+				</q-tr>
+			</template>
 		</q-table>
 	</div>
 </th:block>

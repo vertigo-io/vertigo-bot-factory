@@ -70,11 +70,20 @@
 }
 
 /* Modal Content (Image) */
-.modal-content-chatbot {
+.modal-image-content-chatbot {
     margin: auto;
     display: block;
     max-width: 80%;
     max-height: 80%;
+}
+
+.modal-page-content-chatbot {
+    margin: auto;
+    display: block;
+    max-width: 80%;
+    min-height: 100vh;
+    background: white;
+    padding: 4%;
 }
 
 /* Caption of Modal Image (Image Text) - Same Width as the Image */
@@ -90,7 +99,7 @@
 }
 
 /* Add Animation - Zoom in the Modal */
-.modal-content-chatbot, #caption {
+.modal-image-content-chatbot, .modal-page-content-chatbot, #caption {
     animation-name: zoom;
     animation-duration: 0.6s;
 }
@@ -120,7 +129,7 @@
 
 /* 100% Image Width on Smaller Screens */
 @media only screen and (max-width: 700px){
-    .modal-content-chatbot {
+    .modal-image-content-chatbot {
         width: 100%;
     }
 }

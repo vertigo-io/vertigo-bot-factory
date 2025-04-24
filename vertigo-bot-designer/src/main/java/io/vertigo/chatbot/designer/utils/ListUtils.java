@@ -1,11 +1,11 @@
 package io.vertigo.chatbot.designer.utils;
 
 import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
-import io.vertigo.core.locale.MessageText;
-import io.vertigo.datamodel.structure.definitions.DtFieldName;
-import io.vertigo.datamodel.structure.model.DtList;
-import io.vertigo.datamodel.structure.model.DtObject;
-import io.vertigo.datamodel.structure.util.VCollectors;
+import io.vertigo.core.locale.LocaleMessageText;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
+import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datamodel.data.model.DataObject;
+import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.ui.core.AbstractUiListUnmodifiable;
 import io.vertigo.ui.core.UiListUnmodifiable;
 import io.vertigo.ui.core.ViewContext;
@@ -27,16 +27,16 @@ public final class ListUtils {
 		viewContext.asMap().forEach((key, value ) -> {
 			if ((value instanceof AbstractUiListModifiable || value instanceof UiListUnmodifiable) &&  ((UiList<?>) value).size() >= MAX_ELEMENTS_PLUS_ONE) {
 				if (value instanceof AbstractUiListUnmodifiable) {
-					DtList<DtObject> dtList = viewContext.readDtList(ViewContextKey.of(key), uiMessageStack);
-					DtFieldName<DtObject> dtFieldName = ((AbstractUiListUnmodifiable<?>) value)::getIdFieldName;
+					DtList<DataObject> dtList = viewContext.readDtList(ViewContextKey.of(key), uiMessageStack);
+					DataFieldName<DataObject> dtFieldName = ((AbstractUiListUnmodifiable<?>) value)::getIdFieldName;
 					viewContext.publishDtList(ViewContextKey.of(key),dtFieldName, dtList.stream().limit(MAX_ELEMENTS)
 							.collect(VCollectors.toDtList(dtList.getDefinition())));
 				} else {
-					DtList<DtObject> dtList = viewContext.readDtListModifiable(ViewContextKey.of(key), uiMessageStack);
+					DtList<DataObject> dtList = viewContext.readDtListModifiable(ViewContextKey.of(key), uiMessageStack);
 					viewContext.publishDtList(ViewContextKey.of(key), dtList.stream().limit(MAX_ELEMENTS)
 							.collect(VCollectors.toDtList(dtList.getDefinition())));
 				}
-				uiMessageStack.info(MessageText.of(UtilsMultilingualResources.LIST_TOO_BIG, MAX_ELEMENTS).getDisplay());
+				uiMessageStack.info(LocaleMessageText.of(UtilsMultilingualResources.LIST_TOO_BIG, MAX_ELEMENTS).getDisplay());
 			}
 		});
 	}

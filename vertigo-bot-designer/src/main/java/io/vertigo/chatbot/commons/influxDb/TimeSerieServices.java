@@ -85,7 +85,7 @@ public class TimeSerieServices implements Component, Activeable {
 		if (criteria.getNodId() == null) {
 			q.append("|> drop(columns: [\"nodId\"])");
 		}
-		q.append("|> window(every: " + timeFilter.getDim() + ", createEmpty:true )")
+		q.append("|> window(every: " + timeFilter.dim() + ", createEmpty:true )")
 				.append("|> sum()")
 				.append("|> rename(columns: {_start: \"_time\"})")
 				.append("|> drop(columns: [\"_stop\"])")
@@ -107,7 +107,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.pivot()
 				.keep(List.of("_time", "name"))
 				.append("|> rename(columns: {name: \"_value\"}) ")
-				.append("|> window(every: " + timeFilter.getDim() + ", createEmpty:true )")
+				.append("|> window(every: " + timeFilter.dim() + ", createEmpty:true )")
 				.count("_value")
 				.append("|> toFloat()")
 				.append("|> rename(columns: {_value: \"name:count\"})")
@@ -244,7 +244,7 @@ public class TimeSerieServices implements Component, Activeable {
 				.keep(List.of("_time", "_value"))
 				.append("|> map(fn: (r) => ({ r with _field: \"rating\" + string(v: r._value) + \":count\"}))")
 				.group(List.of("_field"))
-				.append("|> window(every: " + timeFilter.getDim() + ", createEmpty:true ) ")
+				.append("|> window(every: " + timeFilter.dim() + ", createEmpty:true ) ")
 				.count("_value")
 				.append("|> rename(columns: {_start: \"_time\"}) ")
 				.append("|> drop(columns: [ \"_stop\"]) ")

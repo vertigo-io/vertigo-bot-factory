@@ -1,0 +1,44 @@
+package io.vertigo.chatbot.designer.builder.questionAnswerContext
+
+create Task TkGetAllQuestionAnswerContextIhmByQaId {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	qac.qac_id,
+			        qac.qa_id,
+					cva.cva_id,
+					cpv.cpv_id,
+					cva.label as cva_label,
+					CASE #locale#
+						WHEN 'fr_FR' THEN tyop.label_fr || ' : ' || cpv.value
+						ELSE tyop.label || ' : ' || cpv.value
+					END as cpv_value
+			from question_answer_context qac
+			join context_value cva on (cva.cva_id = qac.cva_id)
+			left join context_possible_value cpv on (cpv.cpv_id = qac.cpv_id)
+			left join type_operator tyop on (tyop.tyop_cd = cpv.tyop_cd)
+			where qac.qa_id = #qaId#
+			order by cva.label
+             "
+
+	in qaId  				          {domain : DoId         		                    cardinality : "1"  }
+	in locale  				          {domain : DoCode                               	cardinality : "1"  }
+	out questionAnswerContexts        {domain : DoDtQuestionAnswerContextIhm	        cardinality : "*"  }
+}
+
+create Task TkRemoveAllQuestionAnswerContextByQaId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from question_answer_context
+			where qa_id = #qaId#
+             "
+	in qaId  				{domain : DoId         		cardinality : "1"  }
+}
+
+create Task TkRemoveAllQuestionAnswerContextByCvaId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from question_answer_context
+			where cva_id = #cvaId#
+             "
+	in cvaId  				{domain : DoId         		cardinality : "1"  }
+}

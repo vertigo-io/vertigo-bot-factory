@@ -15,7 +15,7 @@ import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.chatbot.engine.plugins.bt.jira.multilingual.JiraMultilingualResources;
 import io.vertigo.chatbot.executor.manager.ExecutorConfigManager;
-import io.vertigo.core.locale.MessageText;
+import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.node.component.Component;
@@ -36,7 +36,6 @@ public class SummaryFieldService implements IJiraFieldService, Component {
 
     @Inject
     private JiraServerService jiraServerService;
-
 
     @Override
     public boolean supports(final String fieldKey) {
@@ -69,8 +68,8 @@ public class SummaryFieldService implements IJiraFieldService, Component {
         return () -> {
             final List<String> result = new ArrayList<>();
             bb.putString(wsBBPath, wsValue);
-            result.add(MessageText.of(JiraMultilingualResources.TICKET_FOUND).getDisplay());
-            result.add(MessageText.of(JiraMultilingualResources.TICKET_CHECK_ALREADY_EXISTS).getDisplay());
+            result.add(LocaleMessageText.of(JiraMultilingualResources.TICKET_FOUND).getDisplay());
+            result.add(LocaleMessageText.of(JiraMultilingualResources.TICKET_CHECK_ALREADY_EXISTS).getDisplay());
             final String jqlSearch = "project = \"" + jiraServerService.getProjectName() + "\" AND (summary ~ \"" + bb.getString(BBKey.of(string)) + "\" OR description ~ \"" + bb.getString(BBKey.of(string)) + "\")";
             final List<String> jiraIssues = jiraServerService.getIssues(jqlSearch);
             final long numberOfResults = jiraServerService.getNumberOfResults();
@@ -79,7 +78,7 @@ public class SummaryFieldService implements IJiraFieldService, Component {
 
             if (result.size() > 2) {
                 result.forEach(x -> bb.listPush(BotEngine.BOT_RESPONSE_KEY, x));
-                return getIssueButton(bb, continueBBPath.key(), MessageText.of(JiraMultilingualResources.ASK_CONTINUE).getDisplay()).eval();
+                return getIssueButton(bb, continueBBPath.key(), LocaleMessageText.of(JiraMultilingualResources.ASK_CONTINUE).getDisplay()).eval();
             }
             return BTStatus.Succeeded;
         };
@@ -87,8 +86,8 @@ public class SummaryFieldService implements IJiraFieldService, Component {
 
     private BTNode getIssueButton(final BlackBoard bb, final String keyTemplate, final String question) {
         final List<BotButton> buttons = new ArrayList<>();
-        buttons.add(new BotButton(MessageText.of(JiraMultilingualResources.YES).getDisplay(), yesPayload));
-        buttons.add(new BotButton(MessageText.of(JiraMultilingualResources.NO).getDisplay(), noPayload));
+        buttons.add(new BotButton(LocaleMessageText.of(JiraMultilingualResources.YES).getDisplay(), yesPayload));
+        buttons.add(new BotButton(LocaleMessageText.of(JiraMultilingualResources.NO).getDisplay(), noPayload));
         return BotNodeProvider.chooseButton(bb, keyTemplate, question, buttons);
     }
 }

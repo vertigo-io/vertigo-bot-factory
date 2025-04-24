@@ -46,8 +46,9 @@ public final class ChatbotNodePAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveChatbotNodeByBotId",
-			request = "delete from chatbot_node\n" + 
- " 			where bot_id = #botId#",
+			request = """
+			delete from chatbot_node
+			where bot_id = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeChatbotNodeByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyNumber") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveChatbotNodeByBotId")
@@ -62,9 +63,10 @@ public final class ChatbotNodePAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkResetDevNode",
-			request = "update chatbot_node\n" + 
- " 			set is_dev = false\n" + 
- " 			where bot_id = #botId#",
+			request = """
+			update chatbot_node
+			set is_dev = false
+			where bot_id = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void resetDevNode(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkResetDevNode")

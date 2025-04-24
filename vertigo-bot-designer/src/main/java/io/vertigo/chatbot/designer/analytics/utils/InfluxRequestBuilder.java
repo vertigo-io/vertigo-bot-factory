@@ -81,9 +81,9 @@ public final class InfluxRequestBuilder {
 
 	public InfluxRequestBuilder range(final TimeFilter timeFilter) {
 		request.append("|> range(start: ")
-				.append(timeFilter.getFrom())
+				.append(timeFilter.from())
 				.append(", stop: ")
-				.append(timeFilter.getTo())
+				.append(timeFilter.to())
 				.append(") \n");
 
 		return this;

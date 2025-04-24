@@ -1,8 +1,8 @@
 package io.vertigo.chatbot.commons.multilingual.model;
 
-import io.vertigo.core.locale.MessageKey;
+import io.vertigo.core.locale.LocaleMessageKey;
 
-public enum ModelMultilingualResources implements MessageKey {
+public enum ModelMultilingualResources implements LocaleMessageKey {
 
 	MISSING_NODE_ERROR,
 

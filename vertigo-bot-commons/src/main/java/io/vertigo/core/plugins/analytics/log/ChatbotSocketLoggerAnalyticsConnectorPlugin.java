@@ -23,7 +23,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -39,9 +38,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
+import javax.inject.Inject;
+
 import io.vertigo.core.analytics.health.HealthCheck;
 import io.vertigo.core.analytics.metric.Metric;
-import io.vertigo.core.analytics.process.AProcess;
+import io.vertigo.core.analytics.trace.TraceSpan;
 import io.vertigo.core.daemon.DaemonScheduled;
 import io.vertigo.core.impl.analytics.AnalyticsConnectorPlugin;
 import io.vertigo.core.lang.Assertion;
@@ -74,7 +75,7 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 	private final int bufferSize;
 	private final boolean devConfig;
 
-	private final ConcurrentLinkedQueue<AProcess> processQueue = new ConcurrentLinkedQueue<>();
+	private final ConcurrentLinkedQueue<TraceSpan> processQueue = new ConcurrentLinkedQueue<>();
 
 	/**
 	 * Constructor.
@@ -96,7 +97,7 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 				.isNotNull(portOpt)
 				.isNotNull(bufferSizeOpt);
 		// ---
-		appName = appNameOpt.orElseGet(() -> Node.getNode().getNodeConfig().getAppName());
+		appName = appNameOpt.orElseGet(() -> Node.getNode().getNodeConfig().appName());
 		hostName = hostNameOpt.orElse("analytica.part.klee.lan.net");
 		devConfig = hostNameOpt.isEmpty();
 		port = portOpt.orElse(DEFAULT_SERVER_PORT);
@@ -104,13 +105,13 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 		bufferSize = bufferSizeOpt.orElse(50);
 	}
 
-	/** {@inheritDoc} */
+
 	@Override
-	public void add(final AProcess process) {
+	public void add(TraceSpan span) {
 		Assertion.check()
-				.isNotNull(process);
+				.isNotNull(span);
 		//---
-		processQueue.add(process);
+		processQueue.add(span);
 	}
 
 	/** {@inheritDoc} */
@@ -147,20 +148,20 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 		final Builder appenderBuilder = AnalyticaSocketAppender.newAnalyticaBuilder()
 				.setName("socketAnalytics")
 				.setLayout(SerializedLayout.createLayout())
-				.withHost(hostName)
-				.withPort(port)
-				.withConnectTimeoutMillis(DEFAULT_CONNECT_TIMEOUT);
+				.setHost(hostName)
+				.setPort(port)
+				.setConnectTimeoutMillis(DEFAULT_CONNECT_TIMEOUT);
 
 		if (devConfig) {
 			appenderBuilder
-					.withImmediateFail(true)
-					.withReconnectDelayMillis(-1)// we make only one try (documentation is incorrect 0 => defaults to 30s)
+					.setImmediateFail(true)
+					.setReconnectDelayMillis(-1)// we make only one try (documentation is incorrect 0 => defaults to 30s)
 			;
 		} else {
 			appenderBuilder
-					.withImmediateFail(false)
-					.withReconnectDelayMillis(10000) // 10s
-					.withBufferSize(bufferSize * 1024 * 1024) // in Mo, used for keeping logs while disconnected
+					.setImmediateFail(false)
+					.setReconnectDelayMillis(10000) // 10s
+					.setBufferSize(bufferSize * 1024 * 1024) // in Mo, used for keeping logs while disconnected
 			;
 		}
 
@@ -199,7 +200,7 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 	@DaemonScheduled(name = "DmnRemoteLogger", periodInSeconds = 1, analytics = false)
 	public void pollQueue() {
 		while (!processQueue.isEmpty()) {
-			final AProcess head = processQueue.poll();
+			final TraceSpan head = processQueue.poll();
 			if (head != null) {
 				sendProcess(head);
 			}
@@ -207,7 +208,7 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 
 	}
 
-	private void sendProcess(final AProcess process) {
+	private void sendProcess(final TraceSpan process) {
 		if (socketProcessLogger == null) {
 			socketProcessLogger = createLogger("vertigo-analytics-process");
 		}

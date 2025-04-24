@@ -48,10 +48,11 @@ public final class TopicLabelPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkAddInNNTopicLabel",
-			request = "INSERT INTO topic_topic_label\n" + 
- " 				select #topId#, tpl.label_id\n" + 
- " 				from topic_label tpl\n" + 
- " 				where tpl.label in (#tpls.rownum#) and tpl.bot_id = #botId#",
+			request = """
+			INSERT INTO topic_topic_label
+				select #topId#, tpl.label_id
+				from topic_label tpl
+				where tpl.label in (#tpls.rownum#) and tpl.bot_id = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void addInNNTopicLabel(@io.vertigo.datamodel.task.proxy.TaskInput(name = "tpls", smartType = "STyLabel") final java.util.List<String> tpls, @io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkAddInNNTopicLabel")
@@ -68,9 +69,10 @@ public final class TopicLabelPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllLabelByBotId",
-			request = "delete \n" + 
- " 				from topic_label tpl\n" + 
- " 				where tpl.bot_id = #botId#",
+			request = """
+			delete 
+				from topic_label tpl
+				where tpl.bot_id = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllLabelByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllLabelByBotId")
@@ -85,9 +87,10 @@ public final class TopicLabelPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllLabelByTopicId",
-			request = "delete \n" + 
- " 				from topic_topic_label ttl\n" + 
- " 				where ttl.top_id = #topId#",
+			request = """
+			delete 
+				from topic_topic_label ttl
+				where ttl.top_id = #topId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllLabelByTopicId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
 		final Task task = createTaskBuilder("TkRemoveAllLabelByTopicId")
@@ -102,10 +105,11 @@ public final class TopicLabelPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveAllLabelFromBotId",
-			request = "delete \n" + 
- " 				from topic_topic_label ttl\n" + 
- " 				using topic top\n" + 
- " 				where top.top_id = ttl.top_id and top.bot_id = #botId#",
+			request = """
+			delete 
+				from topic_topic_label ttl
+				using topic top
+				where top.top_id = ttl.top_id and top.bot_id = #botId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeAllLabelFromBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveAllLabelFromBotId")
@@ -122,13 +126,14 @@ public final class TopicLabelPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkRemoveFromNNTopicLabel",
-			request = "delete \n" + 
- " 				from topic_topic_label ttl\n" + 
- " 				using topic_label tpl \n" + 
- " 				where ttl.label_id = tpl.label_id \n" + 
- " 				and tpl.label in (#tpls.rownum#) \n" + 
- " 				and tpl.bot_id = #botId# \n" + 
- " 				and ttl.top_id = #topId#;",
+			request = """
+			delete 
+				from topic_topic_label ttl
+				using topic_label tpl 
+				where ttl.label_id = tpl.label_id 
+				and tpl.label in (#tpls.rownum#) 
+				and tpl.bot_id = #botId# 
+				and ttl.top_id = #topId#;""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void removeFromNNTopicLabel(@io.vertigo.datamodel.task.proxy.TaskInput(name = "tpls", smartType = "STyLabel") final java.util.List<String> tpls, @io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkRemoveFromNNTopicLabel")
@@ -145,9 +150,10 @@ public final class TopicLabelPAO implements StoreServices {
 	*/
 	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
 			name = "TkResetNNTopicLabel",
-			request = "delete \n" + 
- " 				from topic_topic_label ttl\n" + 
- " 				where ttl.top_id = #topId#",
+			request = """
+			delete 
+				from topic_topic_label ttl
+				where ttl.top_id = #topId#""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
 	public void resetNNTopicLabel(@io.vertigo.datamodel.task.proxy.TaskInput(name = "topId", smartType = "STyId") final Long topId) {
 		final Task task = createTaskBuilder("TkResetNNTopicLabel")
