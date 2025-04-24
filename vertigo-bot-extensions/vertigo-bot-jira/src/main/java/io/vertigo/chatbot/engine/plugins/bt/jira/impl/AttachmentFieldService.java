@@ -3,6 +3,7 @@ package io.vertigo.chatbot.engine.plugins.bt.jira.impl;
 import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.domain.IssueFieldId;
 import com.atlassian.jira.rest.client.api.domain.input.IssueInputBuilder;
+
 import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
@@ -33,7 +34,7 @@ public class AttachmentFieldService implements IJiraFieldService, Component {
     }
 
     @Override
-    public void processConversation(BlackBoard bb, JiraField jiraField, List<BTNode> sequence) {
+    public void processConversation(BlackBoard bb, JiraField jiraField, List<BTNode> sequence, final boolean checkJiraFields) {
         sequence.add(getAttachmentButtons(bb, jiraField));
     }
 

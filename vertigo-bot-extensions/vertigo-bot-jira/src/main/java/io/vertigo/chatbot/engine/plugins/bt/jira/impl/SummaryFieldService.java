@@ -32,12 +32,10 @@ import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.wsBBPat
 import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.wsValue;
 import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.yesPayload;
 
-public class SummaryFieldService implements IJiraFieldService, Component, Activeable {
+public class SummaryFieldService implements IJiraFieldService, Component {
 
     @Inject
     private JiraServerService jiraServerService;
-    private ExecutorConfigManager executorConfigManager;
-
 
     @Override
     public boolean supports(final String fieldKey) {
@@ -45,8 +43,7 @@ public class SummaryFieldService implements IJiraFieldService, Component, Active
     }
 
     @Override
-    public void processConversation(final BlackBoard bb, final JiraField jiraField, final List<BTNode> sequence) {
-        boolean checkJiraFields = jiraServerService.getJiraCheckFields(executorConfigManager.getConfig());
+    public void processConversation(final BlackBoard bb, final JiraField jiraField, final List<BTNode> sequence, final boolean checkJiraFields) {
         sequence.add(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()));
         if (jiraServerService.getNumberOfResults() > 0 && checkJiraFields) {
             sequence.add(getIssueFromReference(bb, jiraField.getKey()));
@@ -73,8 +70,7 @@ public class SummaryFieldService implements IJiraFieldService, Component, Active
             bb.putString(wsBBPath, wsValue);
             result.add(LocaleMessageText.of(JiraMultilingualResources.TICKET_FOUND).getDisplay());
             result.add(LocaleMessageText.of(JiraMultilingualResources.TICKET_CHECK_ALREADY_EXISTS).getDisplay());
-            final String jqlSearch =
-					"project = \"" + jiraServerService.getProjectName() + "\" AND (summary ~ \"" + bb.getString(BBKey.of(string)) + "\" OR description ~ \"" + bb.getString(BBKey.of(string)) + "\")";
+            final String jqlSearch = "project = \"" + jiraServerService.getProjectName() + "\" AND (summary ~ \"" + bb.getString(BBKey.of(string)) + "\" OR description ~ \"" + bb.getString(BBKey.of(string)) + "\")";
             final List<String> jiraIssues = jiraServerService.getIssues(jqlSearch);
             final long numberOfResults = jiraServerService.getNumberOfResults();
 
@@ -82,8 +78,7 @@ public class SummaryFieldService implements IJiraFieldService, Component, Active
 
             if (result.size() > 2) {
                 result.forEach(x -> bb.listPush(BotEngine.BOT_RESPONSE_KEY, x));
-                return getIssueButton(bb, continueBBPath.key(),
-						LocaleMessageText.of(JiraMultilingualResources.ASK_CONTINUE).getDisplay()).eval();
+                return getIssueButton(bb, continueBBPath.key(), LocaleMessageText.of(JiraMultilingualResources.ASK_CONTINUE).getDisplay()).eval();
             }
             return BTStatus.Succeeded;
         };
@@ -94,15 +89,5 @@ public class SummaryFieldService implements IJiraFieldService, Component, Active
         buttons.add(new BotButton(LocaleMessageText.of(JiraMultilingualResources.YES).getDisplay(), yesPayload));
         buttons.add(new BotButton(LocaleMessageText.of(JiraMultilingualResources.NO).getDisplay(), noPayload));
         return BotNodeProvider.chooseButton(bb, keyTemplate, question, buttons);
-    }
-
-    @Override
-    public void start() {
-        executorConfigManager = Node.getNode().getComponentSpace().resolve(ExecutorConfigManager.class);
-    }
-
-    @Override
-    public void stop() {
-
     }
 }
