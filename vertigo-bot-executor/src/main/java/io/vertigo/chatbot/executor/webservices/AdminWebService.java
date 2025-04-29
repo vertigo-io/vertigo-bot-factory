@@ -75,6 +75,9 @@ public class AdminWebService implements WebServices {
 		} catch (final Exception e) {
 			LogsUtils.logKO(logs);
 			LogsUtils.addLogs(logs, e);
+			LogsUtils.breakLine(logs);
+			LogsUtils.addLogs(logs, "    Caused by: ");
+			LogsUtils.addLogs(logs, e.getCause());
 			LOGGER.error("error", e);
 			throw new VSystemException(logs.toString(), e);
 		}
