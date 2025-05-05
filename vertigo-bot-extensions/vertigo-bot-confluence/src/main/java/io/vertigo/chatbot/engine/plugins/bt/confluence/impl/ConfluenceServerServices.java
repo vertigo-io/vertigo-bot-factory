@@ -172,7 +172,8 @@ public class ConfluenceServerServices implements IConfluenceService, Component {
 		String htmlWithImages = getHtmlWithImages(cleanHtml);
 		String escapedHtml = htmlWithImages.replace("\"", "&quot;");
 
-		builder.append("<div class='htmlClass' style='color:blue; text-decoration:underline; cursor:pointer;'");
+		builder.append("<div class='htmlClass' style='color:var(--bot-message-link-color); " +
+				"text-decoration:underline; cursor:pointer;'");
 		builder.append("data-html=\"");
 		builder.append("<div>");
 		builder.append("<h1 style='text-align: center; font-weight: bold;'>");
