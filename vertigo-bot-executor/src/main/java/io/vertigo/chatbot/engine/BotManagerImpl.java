@@ -11,6 +11,8 @@ import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.commons.codec.CodecManager;
 import io.vertigo.core.lang.Assertion;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 
@@ -30,6 +32,8 @@ public final class BotManagerImpl implements BotManager {
 	private final FileServices fileServices;
 
 	private Map<String, TopicDefinition> topicDefinitionMap; // immutable map of topics
+
+	private static final Logger LOGGER = LogManager.getLogger(BotManagerImpl.class);
 
 	@Inject
 	public BotManagerImpl(
@@ -93,7 +97,9 @@ public final class BotManagerImpl implements BotManager {
 		}
 		LogsUtils.addLogs(logs, "Rasa training mapping ");
 		if (!generateTopicDefinitionMapHash(topicDefinitionMap).equals(generateTopicDefinitionMapHash(topicDefinitionTempMap))) {
+			LOGGER.info("Call to Rasa training (vertigo-ai)");
 			nluManager.train(nluTtrainingData, NluManager.DEFAULT_ENGINE_NAME); // the new NLU model is effectively running after this line
+			LOGGER.info("End of Rasa training (vertigo-ai)");
 			LogsUtils.logOK(logs);
 		} else {
 			LogsUtils.addLogs(logs, "Topic definition map is the same as before, no nlu training necessary.");

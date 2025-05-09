@@ -149,8 +149,13 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 	public void start() {
 		final boolean useSSL = paramManager.getOptionalParam("USE_SSL")
 				.orElse(Param.of("USE_SSL", "true")).getValueAsBoolean();
-		runnerRequestTimeOut = paramManager.getOptionalParam("RUNNER_REQUEST_TIMEOUT")
-				.orElse(Param.of("RUNNER_REQUEST_TIMEOUT", "120")).getValueAsInt();
+		Optional<Param> runnerRequestTimeoutParam = paramManager.getOptionalParam(
+				"RUNNER_REQUEST_TIMEOUT");
+		if (runnerRequestTimeoutParam.isEmpty()) {
+			LOGGER.info("No param RUNNER_REQUEST_TIMEOUT specified, value of 120s will be used.");
+		}
+		runnerRequestTimeOut = runnerRequestTimeoutParam.orElse(Param.of("RUNNER_REQUEST_TIMEOUT",
+				"120")).getValueAsInt();
 		if (!useSSL) {
 			httpClient = HttpRequestUtils.createHttpClientWithoutSSL();
 		}
@@ -211,23 +216,39 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 			final Map<String, String> headers = Map.of(API_KEY, node.getApiKey(),
 					"Content-type", "application/json");
 			final HttpRequest request = HttpRequestUtils.createPutRequest(node.getUrl() + URL_MODEL, runnerRequestTimeOut, headers, publisher);
+			LOGGER.info("Sending PUT request to url {}, with {}s timeout...", request.uri(),
+					runnerRequestTimeOut);
 			HttpRequestUtils.sendAsyncRequest(httpClient, request, BodyHandlers.ofString())
 					.thenApply(response -> {
 						return handleResponse(response, training, node, bot, logs);
+					}).exceptionally(ex -> {
+						handleError(training, logs,
+								"Error while handling PUT request (" + request.uri() + ")", ex);
+						training.setLog(logs.toString());
+						asynchronousServices.saveTrainingWithoutAuthorizations(training);
+						return null;
 					});
 			LogsUtils.addLogs(logs, "Call training OK, training in progress...");
 		}  catch (final Exception e) {
-			LogsUtils.logKO(logs);
-			LogsUtils.addLogs(logs, e.getMessage());
-			LOGGER.error("error", e);
-			training.setWarnings(e.getMessage());
-			training.setEndTime(Instant.now());
-			training.setStrCd(TrainingStatusEnum.KO.name());
+			handleError(training, logs, "error", e);
 		} finally {
 			training.setLog(logs.toString());
 			saveTraining(bot, training);
 		}
 		record(bot, training, HistoryActionEnum.ADDED);
+	}
+
+	private static void handleError(Training training, StringBuilder logs, String errorMessage,
+									Throwable e) {
+		LogsUtils.logKO(logs);
+		LogsUtils.addLogs(logs, e.getMessage());
+		LogsUtils.breakLine(logs);
+		LogsUtils.addLogs(logs, "    Caused by: ");
+		LogsUtils.addLogs(logs, e.getCause());
+		LOGGER.error(errorMessage, e);
+		training.setWarnings(e.getMessage());
+		training.setEndTime(Instant.now());
+		training.setStrCd(TrainingStatusEnum.KO.name());
 	}
 
 	@Secured("BotUser")
@@ -279,9 +300,10 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 	}
 
 	public <T> String handleResponse(final HttpResponse<T> response, final Training training, final ChatbotNode node, final Chatbot bot, final StringBuilder logs) {
+		LOGGER.info("Response from url {} received, with HTTP code {}", response.uri(),
+				response.statusCode());
 		training.setEndTime(Instant.now());
 		if (HttpRequestUtils.isResponseOk(response, 200)) {
-
 			training.setStrCd(TrainingStatusEnum.OK.name());
 			node.setTraId(training.getTraId());
 			node.setIsUpToDate(true);
