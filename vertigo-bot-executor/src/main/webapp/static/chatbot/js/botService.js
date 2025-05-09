@@ -101,6 +101,10 @@ function _displayMessages() {
             chatbot.botConfig.lastUserInteraction = Date.now();
             _displayMessages();
         });
+
+        Vue.nextTick(() => {
+            addPopins();
+        });
     } else {
         chatbot.inputConfig.showRating = chatbot.botConfig.rating && chatbot.botConfig.ratingType === 'SIMPLE' && chatbot.inputConfig.rating === 0;
         chatbot.botConfig.processing = false;
@@ -195,4 +199,30 @@ function reinitInput() {
     chatbot.inputConfig.files = [];
     chatbot.botConfig.error = false;
     updateSessionStorage();
+}
+
+function addPopins() {
+    const images = document.getElementsByClassName('imgClass');
+    const htmls = document.getElementsByClassName('htmlClass');
+    for (let i = 0; i < images.length; i++) {
+        const img = images[i];
+        if (!img.hasPopin) {
+            img.addEventListener('click', function(e) {
+                parent.postMessage({pictureModal: this.src}, '*');
+            }, false);
+            img.hasPopin = true;
+        }
+    }
+    for (let j = 0; j < htmls.length; j++) {
+        const html = htmls[j];
+        if (!html.hasPopin) {
+            html.addEventListener('click', function(e) {
+                parent.postMessage({htmlModal: this.getAttribute('data-html')}, '*');
+            }, false);
+            html.hasPopin = true;
+        }
+    }
+    if (chatbot.$refs.input && !chatbot.$refs.input.disable) {
+        chatbot.focusInput();
+    }
 }

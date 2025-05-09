@@ -61,23 +61,6 @@ window.addEventListener(
 
 
 const chatbotComponent = {
-    updated() {
-        const images = document.getElementsByClassName('imgClass');
-        const htmls = document.getElementsByClassName('htmlClass');
-        for (let i = 0; i < images.length; i++) {
-            images[i].addEventListener('click', function (e) {
-                parent.postMessage({pictureModal: this.src}, '*');
-            }, false);
-        }
-        for (let j = 0; j < htmls.length; j++) {
-            htmls[j].addEventListener('click', function (e) {
-                parent.postMessage({htmlModal: this.getAttribute('data-html')}, '*');
-            }, false);
-        }
-        if (this.$refs.input && !this.$refs.input.disable) {
-            this.focusInput()
-        }
-    },
     data() {
         return {
             // config
@@ -243,7 +226,7 @@ const chatbotComponent = {
                 initDocumentaryResources();
             }
         },
-
+        
         focusInput() {
             this.$refs.input.focus();
         },
