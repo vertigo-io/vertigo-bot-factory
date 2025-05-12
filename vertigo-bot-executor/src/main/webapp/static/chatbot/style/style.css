@@ -343,3 +343,7 @@ img {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.q-rating.disabled {
+    opacity: 1 !important;
+}
