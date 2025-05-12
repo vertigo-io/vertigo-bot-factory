@@ -14,7 +14,8 @@ window.addEventListener('vui-before-plugins', function (event) {
 				imageUrl: null,
 				linkUrlText: null,
 				linkUrl: null,
-				newTab: true
+				newTab: true,
+				caretAnchorElement: null
 			}
 		},
 		template : `
@@ -39,9 +40,9 @@ window.addEventListener('vui-before-plugins', function (event) {
 						handler: addCustomImage
 					},
 					customlink: {
-						tip: 'Insert link',
+						tip: 'Insert/Update link',
 						label: 'Link',
-						handler: addCustomLink
+						handler: addOrEditCustomLink
 					},
 					emoji: {
 						tip: 'Add Emoji',
@@ -105,11 +106,12 @@ window.addEventListener('vui-before-plugins', function (event) {
 					</q-form>
 				</q-card>
 			</q-dialog>
-			<q-dialog ref="newLink"  >
+			<q-dialog ref="editLink"  >
 			 	<q-card style="width: 600px;">
 					 <q-form @submit="handleCustomLink" class="q-gutter-md">
 						<q-card-section>
-							<div class="text-h6" >{{locale == 'fr_FR' ? 'Ajouter un lien' : 'Add a link'}}</div>
+							<div class="text-h6" v-if="caretAnchorElement">{{locale == 'fr_FR' ? 'Modifier un lien' : 'Edit a link'}}</div>	
+							<div class="text-h6" v-else>{{locale == 'fr_FR' ? 'Ajouter un lien' : 'Add a link'}}</div>
 						</q-card-section>
 						
 	       				<q-card-section>
@@ -138,7 +140,8 @@ window.addEventListener('vui-before-plugins', function (event) {
 						</q-card-section>
 						<q-card-actions align="around">
 							<q-btn flat :label="locale == 'fr_FR' ? 'Annuler' : 'Cancel'" v-close-popup color="primary"/>
-							<q-btn :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>
+							<q-btn v-if="caretAnchorElement" :label="locale == 'fr_FR' ? 'Modifier' : 'Edit'" type="submit" color="primary"/>
+							<q-btn v-else :label="locale == 'fr_FR' ? 'Ajouter' : 'Add'" type="submit" color="primary"/>
 						</q-card-actions>
 					</q-form>
 				</q-card>
@@ -226,11 +229,39 @@ window.addEventListener('vui-before-plugins', function (event) {
 				this.imageUrl = null;
 			},
 
-			addCustomLink () {
-				this.$refs.newLink.show();
-				this.linkUrlText = null;
-				this.linkUrl = null;
-				this.newTab = true;
+			addOrEditCustomLink() {
+				this.caretAnchorElement = this.getCaretAnchorElement();
+
+				if (this.caretAnchorElement) {
+					this.linkUrlText = this.caretAnchorElement.textContent;
+					this.linkUrl = this.caretAnchorElement.getAttribute('href');
+				} else {
+					this.linkUrlText = null;
+					this.linkUrl = null;
+					this.newTab = true;
+				}
+				this.$refs.editLink.show();
+			},
+
+			getCaretAnchorElement() {
+				const selection = window.getSelection();
+
+				if (!selection.rangeCount) {
+					return null;
+				}
+
+				const range = selection.getRangeAt(0);
+				let node = range.startContainer;
+
+				// If caret is in text node, get parent
+				while (node) {
+					if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'A') {
+						return node; // Caret is in an anchor element "<a>"
+					}
+					node = node.parentNode;
+				}
+
+				return null; // No anchor element found around caret
 			},
 
 			addEmoji() {
@@ -239,7 +270,6 @@ window.addEventListener('vui-before-plugins', function (event) {
 					document.querySelector('emoji-picker').addEventListener('emoji-click', event => this.handleEmoji(event.detail.unicode));
 				});
 			},
-
 
 			handleCustomImage () {
 				var url = this.$refs.imageUrlRef.modelValue;
@@ -261,10 +291,16 @@ window.addEventListener('vui-before-plugins', function (event) {
 				if (this.$refs.linkNewTabRef.modelValue) {
 					target = '_blank';
 				}
-				this.$refs.newLink.hide();
+				this.$refs.editLink.hide();
 				const edit = this.$refs.editor_ref;
+
 				edit.caret.restore();
-				edit.runCmd('insertHTML', `<a href="${url}" target="${target}"/>${urlText}</a>`);
+				if (this.caretAnchorElement) {
+					// If an existing link is being edited, set selection to whole link
+					edit.caret.range.selectNodeContents(this.caretAnchorElement);
+					edit.caret.save();
+				}
+				edit.runCmd('insertHTML', `<a href="${url}" target="${target}">${urlText}</a>`);
 				edit.focus();
 			},
 

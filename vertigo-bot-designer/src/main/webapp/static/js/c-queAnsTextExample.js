@@ -19,7 +19,7 @@ window.addEventListener('vui-before-plugins', function (event) {
             getChatPreview: function () {
                 return !this.modelValue ? [''] :
                     DOMPurify.sanitize(this.modelValue)
-                        .replace("<a ", "<a target='_blank' rel='nofollow noopener noreferrer' ")
+                        .replaceAll("<a ", "<a target='_blank' rel='nofollow noopener noreferrer' ")
                         .split(/<hr>|<hr \/>/);
             },
         }
