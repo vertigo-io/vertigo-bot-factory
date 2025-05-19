@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.designer.boot;
 
+import io.vertigo.chatbot.commons.ChatbotUtils;
 import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.ServletRegistration;
 
@@ -27,7 +28,7 @@ public class ChatbotDesignerVSpringWebApplicationInitializer extends AbstractVSp
 	@Override
 	protected void customizeRegistration(final ServletRegistration.Dynamic registration) {
 		final MultipartConfigElement multipartConfigElement = new MultipartConfigElement("",
-				50 * 1024 * 1024, 50 * 1024 * 1024,  1024 * 1024);
+				ChatbotUtils.MAX_UPLOAD_SIZE, 50 * 1024 * 1024, 1024 * 1024);
 		registration.setMultipartConfig(multipartConfigElement);
 	}
 

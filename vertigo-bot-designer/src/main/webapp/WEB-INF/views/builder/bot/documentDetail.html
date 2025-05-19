@@ -8,6 +8,7 @@
     <title th:text="#{documentaryResource.title}"></title>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <script th:src="@{/static/js/c-emojipicker.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/filesize@9.0.11/lib/filesize.min.js"></script>
     <script th:inline="javascript">
 
         VUiExtensions.dataX.attachmentError = {'show': false, 'message': ''};
@@ -32,16 +33,37 @@
                 if (cvaId) {
                     VertigoUi.vueData.filteredContextPossibleValueList = VertigoUi.vueData.contextPossibleValueList.filter(contextPossibleValue => contextPossibleValue.cvaId === cvaId);
                 }
-            }
-        }
+            },
 
-        function onRejected (rejectedEntries) {
-            let message = VertigoUi.vueData.locale === 'fr_FR' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
-                : 'File ' + rejectedEntries[0].file.name + ' was rejected.';
-            if (rejectedEntries[0].failedPropValidation === 'accept') {
-                message += VertigoUi.vueData.locale === 'fr_FR' ? ' Le format du fichier n\'est pas accepté' : ' File format isn\'t accepted';
+            onRejected: function(rejectedEntries) {
+                let message = this.vuiLang === 'fr' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
+                    : 'File ' + rejectedEntries[0].file.name + ' was rejected.';
+                if (rejectedEntries[0].failedPropValidation === 'accept') {
+                    message += this.vuiLang === 'fr' ? ' Le format du fichier n\'est pas accepté' : ' File format isn\'t accepted';
+                }
+                if (rejectedEntries[0].failedPropValidation === 'max-file-size') {
+                    const humanReadableMaxFileSize = VUiExtensions.methods.convertBytesToReadableFormat(this.vueData.maxUploadedFileSize);
+                    let maxFileSizeErrorMsgFr = ` La taille du fichier ne doit pas dépasser ${humanReadableMaxFileSize}.`;
+                    let maxFileSizeErrorMsgEn = ` File size should not be more than ${humanReadableMaxFileSize}.`;
+                    message += this.vuiLang === 'fr' ? maxFileSizeErrorMsgFr : maxFileSizeErrorMsgEn;
+                }
+                this.dataX.attachmentError = {'show': true, 'message': message};
+            },
+
+            convertBytesToReadableFormat: function(byteSize) {
+                var symbols;
+                if (VertigoUi.vuiLang === 'fr') {
+                    symbols = {B: 'o', kB: 'Ko', MB: 'Mo', GB: 'Go', TB: 'To'};
+                }
+
+                return filesize(byteSize, {
+                    locale: this.vuiLang === 'fr' ? 'fr' : 'en',
+                    base: 2,
+                    standard: 'jedec',
+                    round: 2,
+                    symbols: symbols
+                });
             }
-            VUiExtensions.dataX.attachmentError = {'show': true, 'message': message};
         }
 
     </script>
@@ -102,6 +124,7 @@
         <vu:include-data object="attachment" field="label" modifiable="true"/>
         <vu:include-data object="attachment" field="type" modifiable="true"/>
         <vu:include-data object="attachment" field="attFiId" modifiable="true"/>
+        <vu:include-data-primitive key="maxUploadedFileSize"/>
 
         <vu:grid col="2s">
             <vu:text-field object="attachment" field="label"/>
@@ -112,7 +135,8 @@
             </div>
         </vu:grid>
         <vu:fileupload th:url="'@{/commons/upload}'" key="importAttachmentFileUri" th:if="${!model.modeReadOnly}" multiple="false" accept="'.png,.jpg,.jpeg,.pdf,.pptx,.csv,.docx,.xlsx'"
-                       @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
+                       @rejected="function (event) { onRejected(event) }" @start="onStart()"
+                       :max-file-size="vueData.maxUploadedFileSize"/>
         <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
     </vu:block>
     <div th:v-if="vueData.documentaryResource.dreId != null" class="text-h6 text-weight-bold" style="display: flex; align-items: center; margin-top: 2rem;">

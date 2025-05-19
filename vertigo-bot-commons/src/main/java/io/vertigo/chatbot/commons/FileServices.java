@@ -17,6 +17,8 @@
  */
 package io.vertigo.chatbot.commons;
 
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,7 +70,8 @@ public class FileServices implements Component, Activeable {
 					String.join(",", extensionsWhiteList));
 		}
 		if (fileLength > MAX_UPLOAD_SIZE) {
-			throw new VUserException(AttachmentMultilingualResources.FILE_TOO_LARGE, MAX_UPLOAD_SIZE);
+			// Use of Spring exception rather than a Vertigo one, in order to return a 413 error
+			throw new MaxUploadSizeExceededException(MAX_UPLOAD_SIZE);
 		}
         final ScanResult result = antivirusServices.checkForViruses(inputStream);
         if (result instanceof ScanResult.VirusFound) {

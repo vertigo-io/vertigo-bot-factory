@@ -39,6 +39,7 @@ import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
+import static io.vertigo.chatbot.commons.ChatbotUtils.MAX_UPLOAD_SIZE;
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
 @Controller
@@ -57,6 +58,8 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
     private static final ViewContextKey<Long> maxSizeKey = ViewContextKey.of("maxSize");
     private static final ViewContextKey<Long> attachmentTotalSizeKey = ViewContextKey.of("attachmentTotalSize");
     private static final ViewContextKey<FileInfoURI> importAttachmentFileUri = ViewContextKey.of("importAttachmentFileUri");
+    private static final ViewContextKey<Integer> maxUploadedFileSizeKey = ViewContextKey.of(
+            "maxUploadedFileSize");
 
     @Inject
     private DocumentaryResourceServices documentaryResourceServices;
@@ -101,6 +104,7 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
                 chatbotCustomConfig.getTotalMaxAttachmentSize() : -1L);
         viewContext.publishRef(attachmentTotalSizeKey, computeAttachmentTotalSize(attachmentServices.findAllByBotId(botId)));
         viewContext.publishFileInfoURI(importAttachmentFileUri, null);
+        viewContext.publishRef(maxUploadedFileSizeKey, MAX_UPLOAD_SIZE);
 
         super.initBreadCrums(viewContext, documentaryResource);
         listLimitReached(viewContext, uiMessageStack);
@@ -126,6 +130,7 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
                 chatbotCustomConfig.getTotalMaxAttachmentSize() : -1L);
         viewContext.publishRef(attachmentTotalSizeKey, computeAttachmentTotalSize(attachmentServices.findAllByBotId(botId)));
         viewContext.publishFileInfoURI(importAttachmentFileUri, null);
+        viewContext.publishRef(maxUploadedFileSizeKey, MAX_UPLOAD_SIZE);
 
         super.initEmptyBreadcrums(viewContext);
         listLimitReached(viewContext, uiMessageStack);
