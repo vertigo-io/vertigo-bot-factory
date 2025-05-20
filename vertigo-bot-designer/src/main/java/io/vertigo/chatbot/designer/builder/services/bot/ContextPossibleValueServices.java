@@ -1,7 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
-import java.util.Locale;
-
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
@@ -11,7 +9,6 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ContextPossibleValue;
 import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceContextServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerContextServices;
-import io.vertigo.chatbot.designer.domain.TypeOperator;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.locale.LocaleManager;
@@ -43,21 +40,7 @@ public class ContextPossibleValueServices implements Component {
     }
 
     public DtList<ContextPossibleValue> getAllContextPossibleValuesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-        Locale currentLocale = localeManager.getCurrentLocale();
-        DtList<ContextPossibleValue> contextPossibleValueList = contextPossibleValueDAO.findAll(Criterions.isEqualTo(DtDefinitions.ContextPossibleValueFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
-        contextPossibleValueList.forEach(possibleValue -> setDisplayValueForIhm(possibleValue, currentLocale));
-        return contextPossibleValueList;
-    }
-
-    private void setDisplayValueForIhm(final ContextPossibleValue possibleValue, final Locale locale) {
-        possibleValue.typeOperator().load();
-        final TypeOperator typeOperator = possibleValue.typeOperator().get();
-        String operatorLabel = typeOperator.getLabel();
-        if(Locale.FRANCE.equals(locale)) {
-            operatorLabel = typeOperator.getLabelFr();
-        }
-
-        possibleValue.setValue(operatorLabel + " : " + possibleValue.getValue());
+        return contextPossibleValueDAO.findAll(Criterions.isEqualTo(DtDefinitions.ContextPossibleValueFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
     }
 
     public void deleteContextPossibleValue(@SecuredOperation("botContributor") final Chatbot bot, final Long cpvId) {
