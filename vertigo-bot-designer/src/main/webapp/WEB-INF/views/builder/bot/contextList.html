@@ -47,6 +47,17 @@
                     VertigoUi.vueData.newContextEnvironmentValue.value = possibleValue.value;
                     VertigoUi.vueData.newContextEnvironmentValue.tyopCd = possibleValue.tyopCd;
                 }
+            },
+
+            getContextPossibleValueDisplay: function(possibleValue) {
+                let operator = VertigoUi.vueData.typeOperators.find(operator => operator.tyopCd === possibleValue.tyopCd);
+                if (operator !== undefined) {
+                    if (VertigoUi.vueData.locale === 'fr_FR') {
+                        return operator.labelFr + ' : ' + possibleValue.value;
+                    }
+                    return operator.label + ': ' + possibleValue.value;
+                }
+                return operator;
             }
         };
 
@@ -207,7 +218,7 @@
                     <q-select v-model="this.dataX.selectedOption"
                               th:label="#{context.environmentValue.popup.valueOperator}"
                               :options="filteredOptions()"
-                              option-label="value"
+                              :option-label="getContextPossibleValueDisplay"
                               @update:model-value="updateEnvironmentValue">
                     </q-select>
                 </q-card-section>
