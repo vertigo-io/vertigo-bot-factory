@@ -29,7 +29,7 @@ window.addEventListener('vui-before-plugins', function (event) {
 				@keyup.enter.stop
 				class="col-grow"
 				ref="editor_ref"
-			    @paste.native="evt => pasteCapture(evt, 'editor_ref')" 
+			    @paste.stop="evt => pasteCapture(evt, 'editor_ref')" 
 				:definitions="{
 					hr: {
 						tip: 'Pause'
