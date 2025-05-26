@@ -19,6 +19,15 @@
 					} else {
 						return operator;
 					}
+                },
+
+                onPossibleValueSubmit: function() {
+                    this.httpPostAjax('_saveContextPossibleValue', this.vueDataParams(['newContextPossibleValue']),
+                        {
+                            onSuccess: function() {
+                                this.$refs.possibleValueDialog.hide();
+                            }
+                        });
 				}
 			}
 		</script>
@@ -87,34 +96,34 @@
 				</vu:column>
 			</vu:table>
 
-			<q-dialog ref="possibleValueDialog">
+            <q-dialog ref="possibleValueDialog"
+                      @hide="delete uiMessageStack.objectFieldErrors.newContextPossibleValue">
 				<q-card style="width: 400px;">
-					<q-card-section>
-						<div class="text-h6">
-							<span v-if="vueData.newContextPossibleValue.cpvId !== null" th:text="#{possibleValue.update.popup.title}"></span>
-							<span v-else th:text="#{possibleValue.add.popup.title}"></span>
-						</div>
-					</q-card-section>
-					<q-card-section>
-					<vu:grid cols="2">
-						<q-select th:label="#{possibleValue.popup.operator}"
-								  v-model="vueData.newContextPossibleValue.tyopCd"
-								  :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeOperators', 'tyopCd', 'labelFr') : transformListForSelection('typeOperators', 'tyopCd', 'label')"
-								  map-options
-								  emit-value>
-						</q-select>
-						<q-input v-model="vueData.newContextPossibleValue.value" th:label="#{possibleValue.popup.value}"
-								 name="vContext[newContextPossibleValue][value]" :error="hasFieldsError('newContextPossibleValue', 'value')"
-								 :error-message="getErrorMessage('newContextPossibleValue', 'project')"/>
-					</vu:grid>
-					</q-card-section>
-					<q-card-actions align="around">
-						<input type="hidden" name="CTX" :value="vueData['CTX']">
-						<q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
-						<q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-							   @click="httpPostAjax('_saveContextPossibleValue', vueDataParams(['newContextPossibleValue']));"
-							   color="primary" v-close-popup></q-btn>
-					</q-card-actions>
+                    <q-form @submit="onPossibleValueSubmit"
+                            class="q-gutter-md">
+                        <q-card-section>
+                            <div class="text-h6">
+								<span v-if="vueData.newContextPossibleValue.cpvId !== null"
+                                      th:text="#{possibleValue.update.popup.title}"></span>
+                                <span v-else th:text="#{possibleValue.add.popup.title}"></span>
+                            </div>
+                        </q-card-section>
+                        <q-card-section>
+                            <vu:grid cols="2">
+                                <vu:select-edit object="newContextPossibleValue" field="tyopCd"
+                                                list="typeOperators"
+                                                labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"/>
+                                <vu:text-field-edit object="newContextPossibleValue" field="value"/>
+                            </vu:grid>
+                        </q-card-section>
+                        <q-card-actions align="around">
+                            <input type="hidden" name="CTX" :value="vueData['CTX']">
+                            <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                            <q-btn th:title="#{action.save}" th:label="#{action.save}"
+                                   th:aria-label="#{action.save}"
+                                   color="primary" type="submit"></q-btn>
+                        </q-card-actions>
+                    </q-form>
 				</q-card>
 			</q-dialog>
 

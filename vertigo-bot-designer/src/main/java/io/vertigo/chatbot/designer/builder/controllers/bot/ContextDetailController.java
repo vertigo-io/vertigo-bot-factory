@@ -24,28 +24,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ContextPossibleValue;
 import io.vertigo.chatbot.commons.domain.ContextValue;
-import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceContextServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentServices;
-import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentValueServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextPossibleValueServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextTypeOperatorServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
-import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerContextServices;
 import io.vertigo.chatbot.designer.domain.TypeOperator;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
-import io.vertigo.datamodel.data.definitions.DataField;
+import io.vertigo.chatbot.domain.DtDefinitions;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.Validate;
-import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 @Controller
@@ -163,12 +162,14 @@ public class ContextDetailController extends AbstractBotCreationController<Conte
 	}
 
 	public static final class ContextPossibleValueNotEmptyValidator extends AbstractChatbotDtObjectValidator<ContextPossibleValue> {
+
 		/**
 		 * {@inheritDoc}
 		 */
 		@Override
-		protected void checkMonoFieldConstraints(final ContextPossibleValue contextPossibleValue, final DataField dtField, final DtObjectErrors dtObjectErrors) {
-			super.checkMonoFieldConstraints(contextPossibleValue, dtField, dtObjectErrors);
+		protected List<DataFieldName<ContextPossibleValue>> getFieldsToNullCheck() {
+			return List.of(DtDefinitions.ContextPossibleValueFields.tyopCd,
+					DtDefinitions.ContextPossibleValueFields.value);
 		}
 	}
 
