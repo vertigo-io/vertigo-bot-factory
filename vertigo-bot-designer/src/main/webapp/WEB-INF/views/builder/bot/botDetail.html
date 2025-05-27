@@ -378,7 +378,8 @@
 							<q-tab-panels v-model="dataX.colorTab" animated vertical>
 								<q-tab-panel v-for="color in dataX.colorList"
 											 :name="color.name">
-									<div v-if="color.backgroundName" class="color-accessibility q-field__label q-ml-md">
+									<div v-if="color.backgroundName"
+										 class="color-accessibility text-grey-9 q-ml-md">
 										<span>[[#{bot.color.contrast}]] : </span>
 										<span v-if="color.alert">[[#{bot.color.contrast.ko}]]</span>
 										<q-icon v-if="color.alert" name="warning" color="warning" class="q-ml-sm" th:alt="#{bot.color.contrast.insufficient}" size="xs"></q-icon>
@@ -386,13 +387,12 @@
 										<q-icon v-if="!color.alert" name="check_circle" color="positive" class="q-ml-sm" th:alt="#{bot.color.contrast.sufficient}" size="xs"></q-icon>
 									</div>
 									<div th:if="${model.modeEdit}" v-if="color.alert" class="color-accessibility">
-										<q-btn class="q-ml-md q-mb-sm text-grey-8"
+										<q-btn class="q-mb-sm text-grey-9 color-suggest-btn"
 											   icon="settings_suggest"
 											   th:label="#{bot.color.suggest}"
 											   no-caps
 											   color="warning"
 											   dense
-											   size="sm"
 											   @click="applySuggestedColor(color.backgroundName, color.name)"></q-btn>
 									</div>
 									<q-color class="q-ml-md"
