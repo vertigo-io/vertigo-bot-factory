@@ -43,21 +43,9 @@
             updateEnvironmentValue: function(possibleValue) {
                 if (possibleValue.tyopCd === "Autre" || possibleValue.tyopCd === "Other"){
                     this.dataX.isOther = true;
-                }else {
+                } else {
                     VertigoUi.vueData.newContextEnvironmentValue.value = possibleValue.value;
-                    VertigoUi.vueData.newContextEnvironmentValue.tyopCd = possibleValue.tyopCd;
                 }
-            },
-
-            getContextPossibleValueDisplay: function(possibleValue) {
-                let operator = VertigoUi.vueData.typeOperators.find(operator => operator.tyopCd === possibleValue.tyopCd);
-                if (operator !== undefined) {
-                    if (VertigoUi.vueData.locale === 'fr_FR') {
-                        return operator.labelFr + ' : ' + possibleValue.value;
-                    }
-                    return operator.label + ': ' + possibleValue.value;
-                }
-                return operator;
             }
         };
 
@@ -153,7 +141,6 @@
                                         @click="vueData.newContextEnvironmentValue.cenvalId = contextEnvironmentValue.cenvalId;
 						   vueData.newContextEnvironmentValue.cvaId = contextEnvironmentValue.cvaId;
 						   vueData.newContextEnvironmentValue.value = contextEnvironmentValue.value;
-						   vueData.newContextEnvironmentValue.tyopCd = contextEnvironmentValue.tyopCd;
 						   vueData.newContextEnvironmentValue.cenvId = contextEnvironment.cenvId
 						   this.dataX.selectedOption = null;
 						   this.dataX.isOther = false;
@@ -161,8 +148,8 @@
                                     <q-item-section>
                                         <q-item-label>{{contextEnvironmentValue.label}}</q-item-label>
                                     </q-item-section>
-                                    <q-item-section v-if="contextEnvironmentValue.value !== null && contextEnvironmentValue.tyopCd !== null">
-                                        <span v-html="getOperatorLabel(contextEnvironmentValue.tyopCd) + ' : ' + contextEnvironmentValue.value"></span>
+                                    <q-item-section v-if="contextEnvironmentValue.value !== null">
+                                        {{contextEnvironmentValue.value}}
                                     </q-item-section>
                                 </q-item>
                             </q-list>
@@ -204,7 +191,6 @@
             <vu:include-data object="newContextEnvironmentValue" field="cenvalId" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="cvaId" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="value" modifiable="true"/>
-            <vu:include-data object="newContextEnvironmentValue" field="tyopCd" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="cenvId" modifiable="true"/>
             <vu:include-data object="contextPossibleValues" field="*"/>
             <vu:include-data object="typeOperators" field="*"/>
@@ -216,24 +202,16 @@
                 </q-card-section>
                 <q-card-section v-if="filteredOptions().length > 1 && this.dataX.isOther === false" >
                     <q-select v-model="this.dataX.selectedOption"
-                              th:label="#{context.environmentValue.popup.valueOperator}"
+                              th:label="#{context.environmentValue.popup.value}"
                               :options="filteredOptions()"
-                              :option-label="getContextPossibleValueDisplay"
+                              option-label="value"
                               @update:model-value="updateEnvironmentValue">
                     </q-select>
                 </q-card-section>
                 <q-card-section v-else>
-                    <vu:grid cols="2">
-                        <q-select th:label="#{context.environmentValue.popup.operator}"
-                                  v-model="vueData.newContextEnvironmentValue.tyopCd"
-                                  :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeOperators', 'tyopCd', 'labelFr') : transformListForSelection('typeOperators', 'tyopCd', 'label')"
-                                  map-options
-                                  emit-value>
-                        </q-select>
-                        <q-input th:label="#{context.environmentValue.popup.value}"
+                    <q-input th:label="#{context.environmentValue.popup.value}"
                                  v-model="vueData.newContextEnvironmentValue.value"
                                  name="vContext[newContextEnvironmentValue][value]"/>
-                    </vu:grid>
                 </q-card-section>
                 <q-card-actions align="around">
                     <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>

@@ -648,7 +648,6 @@ create table CONTEXT_ENVIRONMENT_VALUE
     VALUE       	 VARCHAR(100)	,
     CVA_ID      	 NUMERIC     	not null,
     CENV_ID     	 NUMERIC     	not null,
-    TYOP_CD     	 VARCHAR(100)	not null,
     constraint PK_CONTEXT_ENVIRONMENT_VALUE primary key (CENVAL_ID)
 );
 
@@ -663,9 +662,6 @@ comment on column CONTEXT_ENVIRONMENT_VALUE.CVA_ID is
 
 comment on column CONTEXT_ENVIRONMENT_VALUE.CENV_ID is
 'Environment';
-
-comment on column CONTEXT_ENVIRONMENT_VALUE.TYOP_CD is
-'Value operator';
 
 -- ============================================================
 --   Table : CONTEXT_POSSIBLE_VALUE                                        
@@ -1947,12 +1943,6 @@ alter table CONTEXT_ENVIRONMENT_VALUE
 	references CONTEXT_VALUE (CVA_ID);
 
 create index A_CONTEXT_ENVIRONMENT_VALUE_CONTEXT_CONTEXT_VALUE_FK on CONTEXT_ENVIRONMENT_VALUE (CVA_ID asc);
-
-alter table CONTEXT_ENVIRONMENT_VALUE
-	add constraint FK_A_CONTEXT_ENVIRONMENT_VALUE_TYPE_OPERATOR_TYPE_OPERATOR foreign key (TYOP_CD)
-	references TYPE_OPERATOR (TYOP_CD);
-
-create index A_CONTEXT_ENVIRONMENT_VALUE_TYPE_OPERATOR_TYPE_OPERATOR_FK on CONTEXT_ENVIRONMENT_VALUE (TYOP_CD asc);
 
 alter table CONTEXT_POSSIBLE_VALUE
 	add constraint FK_A_CONTEXT_POSSIBLE_VALUE_CHATBOT_CHATBOT foreign key (BOT_ID)

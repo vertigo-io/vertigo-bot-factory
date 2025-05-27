@@ -632,9 +632,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Context'. */
 		cvaId,
 		/** Propriété 'Environment'. */
-		cenvId,
-		/** Propriété 'Value operator'. */
-		tyopCd	}
+		cenvId	}
 
 	/**
 	 * Enumération des champs de ContextEnvironmentValueIhm.
@@ -647,9 +645,7 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Context value id'. */
 		cvaId,
 		/** Propriété 'Context value label'. */
-		label,
-		/** Propriété 'Operator'. */
-		tyopCd	}
+		label	}
 
 	/**
 	 * Enumération des champs de ContextPossibleValue.

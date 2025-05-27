@@ -84,7 +84,6 @@ public class ContextEnvironmentServices implements Component {
                                 contextEnvironmentValueIhm.setCenvalId(contextEnvironmentValue.getCenvalId());
                                 contextEnvironmentValueIhm.setValue(contextEnvironmentValue.getValue());
                                 contextEnvironmentValueIhm.setCvaId(contextEnvironmentValue.getCvaId());
-                                contextEnvironmentValueIhm.setTyopCd(contextEnvironmentValue.getTyopCd());
                                 contextEnvironmentValueIhm.setLabel(contextEnvironmentValue.contextValue().get().getLabel());
                                 return contextEnvironmentValueIhm;
                             })
