@@ -98,8 +98,9 @@ public class AttachmentServices implements Component {
 
 	public DtList<AttachmentExport> exportAttachmentByBot(@SecuredOperation("botAdm") final Chatbot bot, final StringBuilder logs) {
 		LogsUtils.addLogs(logs, "Export attachments : ");
+		DtList<AttachmentExport> attachmentExports;
 		try {
-			return findAllByBotId(bot.getBotId()).stream().map(attachment -> {
+			attachmentExports = findAllByBotId(bot.getBotId()).stream().map(attachment -> {
 				attachment.attachmentFileInfo().load();
 				final AttachmentFileInfo attachmentFileInfo = attachment.attachmentFileInfo().get();
 				final AttachmentExport attachmentExport = new AttachmentExport();
@@ -124,6 +125,7 @@ public class AttachmentServices implements Component {
 			LogsUtils.addLogs(logs, e);
 			throw new VUserException(AttachmentMultilingualResources.EXPORT_UNEXPECTED_ERROR, e);
 		}
-
+		LogsUtils.logOK(logs);
+		return attachmentExports;
 	}
 }

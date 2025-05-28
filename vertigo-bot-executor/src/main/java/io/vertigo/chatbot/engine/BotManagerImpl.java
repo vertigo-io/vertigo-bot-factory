@@ -10,6 +10,8 @@ import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.engine.model.TopicDefinition;
 import io.vertigo.commons.codec.CodecManager;
 import io.vertigo.core.lang.Assertion;
+
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +20,7 @@ import javax.inject.Inject;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -80,23 +83,26 @@ public final class BotManagerImpl implements BotManager {
 
 	@Override
 	public synchronized void updateConfig(final Iterable<TopicDefinition> newTopics,
-										  final StringBuilder logs) {
+										  final StringBuilder logs,
+										  final StringBuilder trainingDataLogs) {
 		final var nluTtrainingData = new HashMap<NluIntent, List<String>>();
 		final Map<String, TopicDefinition> topicDefinitionTempMap = new HashMap<>();
 
 		for (final TopicDefinition t : newTopics) {
-			LogsUtils.addLogs(logs, t.getCode(), " mapping : ");
+			LogsUtils.addLogs(trainingDataLogs, t.getCode(), " mapping : ");
 			if (!t.getTrainingPhrases().isEmpty() && !t.getUnreachable()) {
-				LogsUtils.addLogs(logs, t.getTrainingPhrases());
-				LogsUtils.breakLine(logs);
+				LogsUtils.addLogs(trainingDataLogs, t.getTrainingPhrases());
+				LogsUtils.breakLine(trainingDataLogs);
 				nluTtrainingData.put(NluIntent.of(t.getCode()), t.getTrainingPhrases()); // build NLU training data
 			}
 			topicDefinitionTempMap.put(t.getCode(), t);
-			LogsUtils.addLogs(logs, t.getCode(), " mapping ");
-			LogsUtils.logOK(logs);
+			LogsUtils.addLogs(trainingDataLogs, t.getCode(), " mapping ");
+			LogsUtils.logOK(trainingDataLogs);
 		}
-		LogsUtils.addLogs(logs, "Rasa training mapping ");
+		
 		if (!generateTopicDefinitionMapHash(topicDefinitionMap).equals(generateTopicDefinitionMapHash(topicDefinitionTempMap))) {
+			LogsUtils.addLogs(logs,
+					"Rasa training mapping (" + ((Collection<?>) newTopics).size() + " topics) ");
 			LOGGER.info("Call to Rasa training (vertigo-ai)");
 			nluManager.train(nluTtrainingData, NluManager.DEFAULT_ENGINE_NAME); // the new NLU model is effectively running after this line
 			LOGGER.info("End of Rasa training (vertigo-ai)");

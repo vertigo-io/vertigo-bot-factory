@@ -6,15 +6,16 @@ package io.vertigo.chatbot.commons.domain
 /* **** Training **** */
 /**********************/
 create DtDefinition DtTraining {
-	id    traId 		{domain: DoId 			label: "ID"}
-	field startTime		{domain: DoInstant 		label: "Start time"			cardinality : "1"}
-	field endTime		{domain: DoInstant 		label: "End time" 			}
-	field versionNumber	{domain: DoNumber 		label: "Version" 			cardinality : "1"}
-	field log			{domain: DoText			label: "Log"	 			}
-	field infos			{domain: DoText			label: "Informations"	 	}
-	field warnings		{domain: DoText			label: "Warnings"	 		}
-	field nluThreshold	{domain: DoPercentage 	label: "NLU Threshold" 		cardinality : "1"}
-	computed duration 	{domain: DoLabel 		label: "Duration"
+	id    traId 		    {domain: DoId 			label: "ID"}
+	field startTime		    {domain: DoInstant 		label: "Start time"			cardinality : "1"}
+	field endTime		    {domain: DoInstant 		label: "End time" 			}
+	field versionNumber	    {domain: DoNumber 		label: "Version" 			cardinality : "1"}
+	field log			    {domain: DoText			label: "Log"	 			}
+	field trainingDataLog   {domain: DoText         label: "Training data log"  }
+	field infos			    {domain: DoText			label: "Informations"	 	}
+	field warnings		    {domain: DoText			label: "Warnings"	 		}
+	field nluThreshold	    {domain: DoPercentage 	label: "NLU Threshold" 		cardinality : "1"}
+	computed duration 	    {domain: DoLabel 		label: "Duration"
 						 expression:"return io.vertigo.chatbot.commons.ChatbotUtils.durationBetween(getStartTime(), getEndTime());" }
 }
 

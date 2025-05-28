@@ -20,6 +20,8 @@ package io.vertigo.chatbot.designer.builder.services.training;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,6 +39,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,6 +170,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 	}
 
 	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
+		final StringBuilder trainingDataLogs = new StringBuilder();
 		final StringBuilder logs = new StringBuilder("new Training");
 		LogsUtils.breakLine(logs);
 
@@ -183,25 +187,29 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		saveTraining(bot, training);
 		LogsUtils.addLogs(logs, "Bot export :");
 		LogsUtils.breakLine(logs);
-		final BotExport botExport = exportBot(bot, logs);
+		LogsUtils.addLogs(trainingDataLogs, "Designer logs - Bot export :");
+		LogsUtils.breakLine(trainingDataLogs);
+		final BotExport botExport = exportBot(bot, logs, trainingDataLogs);
 		botExportServices.exportConfluenceSetting(botId, devNode.getNodId()).ifPresent(botExport::setConfluenceSetting);
 		botExportServices.exportJiraSetting(botId, devNode.getNodId()).ifPresent(botExport::setJiraSetting);
 		final DtList<AttachmentExport> attachmentExports = botExportServices.exportBotAttachments(bot, logs);
 		LogsUtils.addLogs(logs, "Bot export ");
 		LogsUtils.logOK(logs);
 
-		trainNode(bot, training, devNode, logs, botExport, attachmentExports);
+		trainNode(bot, training, devNode, logs, trainingDataLogs, botExport, attachmentExports);
 
 		return training;
 	}
 
-	private void trainNode(final Chatbot bot, final Training training, final ChatbotNode node, final StringBuilder logs, final BotExport botExport, final DtList<AttachmentExport> attachmentExports) {
+	private void trainNode(final Chatbot bot, final Training training, final ChatbotNode node,
+						   final StringBuilder logs, final StringBuilder trainingDataLogs,
+						   final BotExport botExport,
+						   final DtList<AttachmentExport> attachmentExports) {
 		try {
 			LogsUtils.addLogs(logs, "Executor configuration... ");
 			final ExecutorConfiguration execConfig = getExecutorConfig(bot, training, node);
 			LogsUtils.logOK(logs);
 
-			LogsUtils.addLogs(logs, "Bot export :");
 			LogsUtils.breakLine(logs);
 			final Map<String, Object> requestData = new HashMap<String, Object>();
 			requestData.put("botExport", botExport);
@@ -220,11 +228,13 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 					runnerRequestTimeOut);
 			HttpRequestUtils.sendAsyncRequest(httpClient, request, BodyHandlers.ofString())
 					.thenApply(response -> {
-						return handleResponse(response, training, node, bot, logs);
+						return handleResponse(response, training, node, bot, logs,
+								trainingDataLogs);
 					}).exceptionally(ex -> {
 						handleError(training, logs,
 								"Error while handling PUT request (" + request.uri() + ")", ex);
 						training.setLog(logs.toString());
+						training.setTrainingDataLog(trainingDataLogs.toString());
 						asynchronousServices.saveTrainingWithoutAuthorizations(training);
 						return null;
 					});
@@ -260,12 +270,13 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		saveTraining(bot, training);
 		final StringBuilder logs = new StringBuilder("Starting deployment of training " + training.getTraId() + " on node " + node.getName() + " ...");
 		LogsUtils.breakLine(logs);
+		final StringBuilder trainingDataLogs = new StringBuilder();
 		try {
 			final BotExport botExport = jsonEngine.fromJson(savedTraining.getBotExport(), BotExport.class);
 			botExportServices.exportConfluenceSetting(bot.getBotId(), nodeId).ifPresent(botExport::setConfluenceSetting);
 			botExportServices.exportJiraSetting(bot.getBotId(), nodeId).ifPresent(botExport::setJiraSetting);
 			final DtList<AttachmentExport> attachmentExports = botExportServices.exportBotAttachments(bot, logs);
-			trainNode(bot, training, node, logs, botExport, attachmentExports);
+			trainNode(bot, training, node, logs, trainingDataLogs, botExport, attachmentExports);
 		} catch (final Exception e) {
 			LogsUtils.logKO(logs);
 			LogsUtils.addLogs(logs, e.getMessage());
@@ -299,7 +310,10 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		}
 	}
 
-	public <T> String handleResponse(final HttpResponse<T> response, final Training training, final ChatbotNode node, final Chatbot bot, final StringBuilder logs) {
+	public <T> String handleResponse(final HttpResponse<T> response, final Training training,
+									 final ChatbotNode node, final Chatbot bot,
+									 final StringBuilder logs,
+									 final StringBuilder trainingDataLogs) {
 		LOGGER.info("Response from url {} received, with HTTP code {}", response.uri(),
 				response.statusCode());
 		training.setEndTime(Instant.now());
@@ -308,8 +322,13 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 			node.setTraId(training.getTraId());
 			node.setIsUpToDate(true);
 			asynchronousServices.saveNodeWithoutAuthorizations(node);
+			Gson gson = new Gson();
+			String responseBody = (String) response.body();
+			List<String> logsList = gson.fromJson(responseBody, new TypeToken<List<String>>() {
+			}.getType());
 			LogsUtils.logOK(logs);
-			LogsUtils.addLogs(logs, response.body());
+			LogsUtils.addLogs(logs, logsList.get(0));
+			LogsUtils.addLogs(trainingDataLogs, logsList.get(1));
 
 		} else {
 			training.setStrCd(TrainingStatusEnum.KO.name());
@@ -318,6 +337,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 
 		}
 		training.setLog(logs.toString());
+		training.setTrainingDataLog(trainingDataLogs.toString());
 		asynchronousServices.saveTrainingWithoutAuthorizations(training);
 		return "response handled";
 	}
@@ -390,8 +410,9 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		return trainingDAO.getDeployedTrainingByBotId(bot.getBotId());
 	}
 
-	public BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot, final StringBuilder logs) {
-		return botExportServices.exportBot(bot, logs);
+	public BotExport exportBot(@SecuredOperation("botContributor") final Chatbot bot,
+							   final StringBuilder logs, final StringBuilder trainingDataLogs) {
+		return botExportServices.exportBot(bot, logs, trainingDataLogs);
 	}
 
 	public void loadModel(@SecuredOperation("botContributor") final Chatbot bot, final Long traId, final Long nodId) {

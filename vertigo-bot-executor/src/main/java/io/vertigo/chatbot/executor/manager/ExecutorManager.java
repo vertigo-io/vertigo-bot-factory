@@ -84,7 +84,7 @@ public class ExecutorManager implements Manager, Activeable {
             // nothing to load
             LOGGER.info("New runner, load a bot to start using it.");
         } else {
-            doLoadModel(botExport, new StringBuilder());
+            doLoadModel(botExport, new StringBuilder(), new StringBuilder());
         }
     }
 
@@ -93,7 +93,8 @@ public class ExecutorManager implements Manager, Activeable {
         // nothing
     }
 
-    public void loadModel(final BotExport bot, final ExecutorConfiguration executorConfig, final StringBuilder logs) {
+    public void loadModel(final BotExport bot, final ExecutorConfiguration executorConfig,
+                          final StringBuilder logs, final StringBuilder trainingDataLogs) {
         final var globalConfig = new ExecutorGlobalConfig();
         globalConfig.setBot(bot);
         globalConfig.setExecutorConfiguration(executorConfig);
@@ -101,12 +102,13 @@ public class ExecutorManager implements Manager, Activeable {
         executorConfigManager.saveConfig(globalConfig, logs);
         executorConfigManager.updateWelcomeTour(bot.getWelcomeTours());
 
-        doLoadModel(bot, logs);
+        doLoadModel(bot, logs, trainingDataLogs);
 
     }
 
 
-    private void doLoadModel(final BotExport botExport, final StringBuilder logs) {
+    private void doLoadModel(final BotExport botExport, final StringBuilder logs,
+                             final StringBuilder trainingDataLogs) {
 
         //TODO remove this. Created only for migration of old models without the unreachable tag
         botExport.getTopics().forEach(topicExport -> {
@@ -148,15 +150,17 @@ public class ExecutorManager implements Manager, Activeable {
         }
 
         for (final TopicExport topic : botExport.getTopics()) {
-            LogsUtils.addLogs(logs, topic.getName(), " topic addition...");
+            LogsUtils.addLogs(trainingDataLogs, topic.getName(), " topic addition...");
             topics.add(TopicDefinition.of(topic.getName(), btCommandManager.parse(topic.getTopicBT()), topic.getNluTrainingSentences(), nluThreshold, topic.getUnreachable()));
-            LogsUtils.logOK(logs);
+            LogsUtils.logOK(trainingDataLogs);
         }
+        LogsUtils.addLogs(logs, botExport.getTopics().size() + " topics added ");
+        LogsUtils.logOK(logs);
 
         executorConfigManager.updateMapContext(botExport);
         executorConfigManager.updateQuestionAnswerList(botExport);
         executorConfigManager.updateDocumentaryResourceList(botExport);
-        botManager.updateConfig(topics, logs);
+        botManager.updateConfig(topics, logs, trainingDataLogs);
 
     }
 

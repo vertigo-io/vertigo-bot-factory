@@ -159,7 +159,7 @@ public class QuestionAnswerServices implements Component {
     }
 
     public String exportActiveQuestionsAnswers( final Chatbot bot, final StringBuilder logs) {
-        LogsUtils.addLogs(logs, " Questions/Answers export...");
+        LogsUtils.addLogs(logs, "Questions/Answers export...");
         DtList<QuestionAnswerExport> questionAnswerExports = exportPAO.getAllActiveQuestionAnswerExportByBotId(bot.getBotId());
         LogsUtils.logOK(logs);
         return jsonEngine.toJson(questionAnswerExports);

@@ -21,6 +21,7 @@ public final class Training implements Entity {
 	private java.time.Instant endTime;
 	private Long versionNumber;
 	private String log;
+	private String trainingDataLog;
 	private String infos;
 	private String warnings;
 	private java.math.BigDecimal nluThreshold;
@@ -169,6 +170,25 @@ public final class Training implements Entity {
 	 */
 	public void setLog(final String log) {
 		this.log = log;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Training data log'.
+	 * @return String trainingDataLog
+	 */
+	@Field(smartType = "STyText", label = "Training data log")
+	public String getTrainingDataLog() {
+		return trainingDataLog;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Training data log'.
+	 * @param trainingDataLog String
+	 */
+	public void setTrainingDataLog(final String trainingDataLog) {
+		this.trainingDataLog = trainingDataLog;
 	}
 	
 	/**

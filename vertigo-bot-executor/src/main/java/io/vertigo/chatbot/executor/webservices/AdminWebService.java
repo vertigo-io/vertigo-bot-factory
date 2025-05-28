@@ -20,6 +20,9 @@ package io.vertigo.chatbot.executor.webservices;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import io.vertigo.ai.nlu.NluManager;
@@ -61,16 +64,18 @@ public class AdminWebService implements WebServices {
 	}
 
 	@PUT("/model")
-	public String loadModel(@InnerBodyParam("botExport") final BotExport bot,
-			@InnerBodyParam("attachmentsExport") final DtList<AttachmentExport> attachmentExports,
-			@InnerBodyParam("executorConfig") final ExecutorConfiguration executorConfig) throws Exception {
+	public List<String> loadModel(@InnerBodyParam("botExport") final BotExport bot,
+								  @InnerBodyParam("attachmentsExport") final DtList<AttachmentExport> attachmentExports, @InnerBodyParam("executorConfig") final ExecutorConfiguration executorConfig) throws Exception {
 		final StringBuilder logs = new StringBuilder();
+		final StringBuilder trainingDataLogs = new StringBuilder();
 		LogsUtils.breakLine(logs);
 		LogsUtils.breakLine(logs);
 		LogsUtils.addLogs(logs, "Executor logs");
 		LogsUtils.breakLine(logs);
+		LogsUtils.addLogs(trainingDataLogs, "Executor logs :");
+		LogsUtils.breakLine(trainingDataLogs);
 		try {
-			executorManager.loadModel(bot, executorConfig, logs);
+			executorManager.loadModel(bot, executorConfig, logs, trainingDataLogs);
 			executorManager.updateAttachments(attachmentExports);
 		} catch (final Exception e) {
 			LogsUtils.logKO(logs);
@@ -81,7 +86,10 @@ public class AdminWebService implements WebServices {
 			LOGGER.error("error", e);
 			throw new VSystemException(logs.toString(), e);
 		}
-		return logs.toString();
+		ArrayList<String> logsList = new ArrayList<>();
+		logsList.add(logs.toString());
+		logsList.add(trainingDataLogs.toString());
+		return logsList;
 
 	}
 

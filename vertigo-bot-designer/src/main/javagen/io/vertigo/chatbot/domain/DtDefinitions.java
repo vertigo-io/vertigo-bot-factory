@@ -1771,6 +1771,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		versionNumber,
 		/** Propriété 'Log'. */
 		log,
+		/** Propriété 'Training data log'. */
+		trainingDataLog,
 		/** Propriété 'Informations'. */
 		infos,
 		/** Propriété 'Warnings'. */

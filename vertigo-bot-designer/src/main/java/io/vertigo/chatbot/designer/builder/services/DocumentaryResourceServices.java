@@ -96,9 +96,11 @@ public class DocumentaryResourceServices implements Component {
     }
 
     public String exportDocumentaryResourceByBot(@SecuredOperation("botAdm") final Chatbot bot, final StringBuilder logs) {
-        LogsUtils.addLogs(logs, "Export documentary resources: ");
+        LogsUtils.addLogs(logs, "Export documentary resources : ");
+        String docResExportJson;
         try {
-            return jsonEngine.toJson(getAllDocResByBot(bot).stream().map(documentaryResource -> {
+            docResExportJson =
+                    jsonEngine.toJson(getAllDocResByBot(bot).stream().map(documentaryResource -> {
                 documentaryResource.attachment().load();
 
                 final DocumentaryResourceExport documentaryResourceExport = new DocumentaryResourceExport();
@@ -117,6 +119,8 @@ public class DocumentaryResourceServices implements Component {
             LogsUtils.addLogs(logs, e);
             throw new VUserException(AttachmentMultilingualResources.EXPORT_UNEXPECTED_ERROR, e);
         }
+        LogsUtils.logOK(logs);
+        return docResExportJson;
   }
 
 }
