@@ -82,7 +82,7 @@ public class WelcomeTourServices implements Component {
 	}
 
 	public DtList<WelcomeTourExport> exportBotWelcomeTours(final Chatbot bot, final StringBuilder logs) {
-		LogsUtils.addLogs(logs, " Welcome tours export...");
+		LogsUtils.addLogs(logs, "Welcome tours export...");
 		final DtList<WelcomeTourExport> welcomeTourExports = findAllByBotId(bot.getBotId()).stream().map(welcomeTour -> {
 			final WelcomeTourExport welcomeTourExport = new WelcomeTourExport();
 			welcomeTourExport.setTechnicalCode(welcomeTour.getTechnicalCode());

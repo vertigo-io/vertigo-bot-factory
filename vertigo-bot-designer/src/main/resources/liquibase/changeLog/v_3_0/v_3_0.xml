@@ -9,8 +9,8 @@
     </changeSet>
 
     <changeSet author="cmazereau"
-        id="Remove tyop_cd column on context_environment_value (CHATBOT-763)">
-        <sqlFile encoding="utf-8" path="/sql/v_3_0/alter_chatbot-763.sql" />
+        id="Remove and add columns for tickets CHATBOT-763 and CHATBOT-754">
+        <sqlFile encoding="utf-8" path="/sql/v_3_0/alter_chatbot-763-754.sql" />
     </changeSet>
 
 </databaseChangeLog>

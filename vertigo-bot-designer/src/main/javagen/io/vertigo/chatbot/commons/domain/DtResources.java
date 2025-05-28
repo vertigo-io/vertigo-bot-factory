@@ -968,6 +968,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldTraining$log,
 	/**
+	 * Training data log.
+	 */
+	fldTraining$trainingDataLog,
+	/**
 	 * Informations.
 	 */
 	fldTraining$infos,

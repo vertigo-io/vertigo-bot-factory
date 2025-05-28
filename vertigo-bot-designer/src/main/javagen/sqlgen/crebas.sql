@@ -1581,6 +1581,7 @@ create table TRAINING
     END_TIME    	 TIMESTAMP   	,
     VERSION_NUMBER	 NUMERIC     	not null,
     LOG         	 TEXT        	,
+    TRAINING_DATA_LOG	 TEXT        	,
     INFOS       	 TEXT        	,
     WARNINGS    	 TEXT        	,
     NLU_THRESHOLD	 NUMERIC(3,2)	not null,
@@ -1604,6 +1605,9 @@ comment on column TRAINING.VERSION_NUMBER is
 
 comment on column TRAINING.LOG is
 'Log';
+
+comment on column TRAINING.TRAINING_DATA_LOG is
+'Training data log';
 
 comment on column TRAINING.INFOS is
 'Informations';

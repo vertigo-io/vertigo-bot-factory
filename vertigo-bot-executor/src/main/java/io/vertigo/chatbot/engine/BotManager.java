@@ -43,7 +43,10 @@ public interface BotManager extends Manager {
 	 * Update bot configuration. Warning, this operation is relatively slow as it depends on NLU training.
 	 *
 	 * @param newTopics new topics to replace old ones
+	 * @param logs training logs
+	 * @param trainingDataLogs training data logs
 	 */
-	void updateConfig(Iterable<TopicDefinition> newTopics, StringBuilder logs);
+	void updateConfig(Iterable<TopicDefinition> newTopics, StringBuilder logs,
+					  StringBuilder trainingDataLogs);
 
 }

@@ -14,3 +14,8 @@ alter table CONTEXT_ENVIRONMENT_VALUE
 drop index A_CONTEXT_ENVIRONMENT_VALUE_TYPE_OPERATOR_TYPE_OPERATOR_FK;
 
 ALTER TABLE CONTEXT_ENVIRONMENT_VALUE DROP COLUMN TYOP_CD;
+
+
+--CHATBOT-754 : Add column on training to store training data logs
+alter table TRAINING add TRAINING_DATA_LOG TEXT;
+comment on column TRAINING.TRAINING_DATA_LOG is 'Training data log';

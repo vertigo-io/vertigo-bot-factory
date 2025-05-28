@@ -66,12 +66,13 @@ public class BotExportServices implements Component {
 	@Inject
 	private FontFamilyServices fontFamilyServices;
 
-	public BotExport exportBot(final Chatbot bot, final StringBuilder logs) {
+	public BotExport exportBot(final Chatbot bot, final StringBuilder logs,
+							   final StringBuilder trainingDataLogs) {
 		final BotExport export = new BotExport();
 		export.setBot(bot);
 		LogsUtils.addLogs(logs, "Active topics export");
 		LogsUtils.breakLine(logs);
-		export.setTopics(topicExportServices.exportActiveTopics(bot, logs));
+		export.setTopics(topicExportServices.exportActiveTopics(bot, logs, trainingDataLogs));
 		export.setWelcomeTours(welcomeTourServices.exportBotWelcomeTours(bot, logs));
 		export.setFallbackBT(topicExportServices.getBasicBt(bot, KindTopicEnum.FAILURE.name(), logs));
 		export.setEndBT(topicExportServices.getBasicBt(bot, KindTopicEnum.END.name(), logs));

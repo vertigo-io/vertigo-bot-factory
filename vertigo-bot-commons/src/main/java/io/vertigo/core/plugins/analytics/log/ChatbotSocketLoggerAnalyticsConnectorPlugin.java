@@ -221,7 +221,7 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 			final JsonObject log = new JsonObject();
 			log.addProperty("appName", appName);
 			log.addProperty("host", localHostName);
-			log.add("event", GSON.toJsonTree(object));
+			log.add("event", GSON.	toJsonTree(object));
 			logger.info(GSON.toJson(log));
 		}
 	}
