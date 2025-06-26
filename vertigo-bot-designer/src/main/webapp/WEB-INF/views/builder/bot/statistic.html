@@ -15,7 +15,7 @@
     <script th:inline="javascript">
         window.addEventListener('vui-after-page-mounted', function () {
             loadChatMessageStyle();
-
+            updateStats();
             VUiExtensions.dataX.apexCharts.categories.options = {
                 chart: {
                     type: 'pie',
@@ -50,12 +50,7 @@
                 } else {
                     VUiExtensions.dataX.disableTimeOption = false;
                 }
-                VUiExtensions.dataX.loadingGraphs = true;
-                VUiPage.httpPostAjax('_updateStats', VUiPage.vueDataParams(['criteria']),  {
-                    onSuccess: function() {
-                        VUiExtensions.dataX.loadingGraphs = false;
-                    }
-                })
+                updateStats()
             }, { deep: true })
 
             VUiPage.$watch('vueData.conversationCriteria', (newValue, oldValue) => {
@@ -887,6 +882,25 @@
             r.style.setProperty('--chat-user-message-font-color', userMessageFontColor);
 
             r.style.setProperty('--chat-message-font-family', fontFamily.label);
+        }
+        function updateStats() {
+            VUiExtensions.dataX.loadingGraphs = true;
+            VUiPage.httpPostAjax('_updateStats', VUiPage.vueDataParams(['criteria']),  {
+                onSuccess: function() {
+                    VUiExtensions.dataX.loadingGraphs = false;
+                    VUiExtensions.dataX.apexCharts.categories = {
+                        options : {
+                            chart: {
+                                type: 'pie',
+                            },
+                            labels: getCategoryLabels()
+                        },
+                        series :  function() {
+                            return getCategorySerie();
+                        }
+                    };
+                }
+            })
         }
     </script>
 </section>
