@@ -20,6 +20,7 @@ package io.vertigo.chatbot.executor.manager;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
+import io.vertigo.chatbot.commons.domain.*;
 import org.apache.commons.io.FileUtils;
 
 import java.io.ByteArrayInputStream;
@@ -37,13 +38,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.naming.Context;
 
-import io.vertigo.chatbot.commons.domain.AttachmentExport;
-import io.vertigo.chatbot.commons.domain.BotExport;
-import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
-import io.vertigo.chatbot.commons.domain.DocumentaryResourceExport;
-import io.vertigo.chatbot.commons.domain.QuestionAnswerExport;
-import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
 import io.vertigo.chatbot.executor.ExecutorPlugin;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.chatbot.executor.services.ExecutorFileServices;
@@ -254,12 +250,38 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		return contextMap;
 	}
 
-	public DtList<QuestionAnswerExport> getQuestionAnswerList() {
-		return questionAnswerList;
+	public DtList<QuestionAnswerExport> getQuestionAnswerList(final Map<String, String> context) {
+		return questionAnswerList.stream()
+				.filter(qa -> filterContextValue(qa.getContextValues(), context))
+				.collect(VCollectors.toDtList(QuestionAnswerExport.class));
 	}
 
-	public DtList<DocumentaryResourceExport> getDocumentaryResourceList() {
-		return documentaryResources;
+	private boolean filterContextValue(final DtList<ContextValueExport> contextValues, final Map<String, String> context) {
+		return contextValues.isEmpty() || contextValues.stream().anyMatch(contextValue -> context.containsKey(contextValue.getLabel())
+				&& isContextValueMatching(contextValue, context.get(contextValue.getLabel())));
+	}
+
+	private boolean isContextValueMatching(ContextValueExport contextValue, String value) {
+		if (value == null) {
+			return false;
+		}
+		switch (contextValue.typeOperator().getEnumValue()) {
+			case CONTAIN -> {
+				return contextValue.getValue().contains(value);
+			}
+			case EQUAL -> {
+				return contextValue.getValue().equals(value);
+			}
+			default -> {
+				return false;
+			}
+		}
+	}
+
+	public DtList<DocumentaryResourceExport> getDocumentaryResourceList(final Map<String, String> context) {
+		return documentaryResources.stream()
+				.filter(qa -> filterContextValue(qa.getContextValues(), context))
+				.collect(VCollectors.toDtList(DocumentaryResourceExport.class));
 	}
 
 

@@ -96,7 +96,8 @@ create Task TkGetScriptIntentionExportByBotId{
 create Task TkGetAllActiveQuestionAnswerExportByBotId {
     className : "io.vertigo.basics.task.TaskEngineSelect"
     request : "
-			SELECT  qa.question,
+			SELECT  qa.qa_id,
+			        qa.question,
 			        qa.answer,
                     qac.label as cat_label
 			from question_answer qa

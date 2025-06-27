@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.services.questionanswer;
 
+import io.vertigo.chatbot.commons.domain.ContextValueExport;
+import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
 import org.jsoup.Jsoup;
 
 import java.util.Arrays;
@@ -161,6 +163,16 @@ public class QuestionAnswerServices implements Component {
     public String exportActiveQuestionsAnswers( final Chatbot bot, final StringBuilder logs) {
         LogsUtils.addLogs(logs, "Questions/Answers export...");
         DtList<QuestionAnswerExport> questionAnswerExports = exportPAO.getAllActiveQuestionAnswerExportByBotId(bot.getBotId());
+        questionAnswerExports.forEach(questionAnswer -> questionAnswer.setContextValues(
+        questionAnswerContextServices.getAllQuestionAnswerContextByQaId(bot, questionAnswer.getQaId()).stream().map(questionAnswerContext -> {
+            questionAnswerContext.contextValue().load();
+            questionAnswerContext.contextPossibleValue().load();
+            ContextValueExport contextValueExport = new ContextValueExport();
+            contextValueExport.setLabel(questionAnswerContext.contextValue().get().getLabel());
+            contextValueExport.setValue(questionAnswerContext.contextPossibleValue().get().getValue());
+            contextValueExport.setTyopCd(questionAnswerContext.contextPossibleValue().get().getTyopCd());
+            return contextValueExport;
+        }).collect(VCollectors.toDtList(ContextValueExport.class))));
         LogsUtils.logOK(logs);
         return jsonEngine.toJson(questionAnswerExports);
     }

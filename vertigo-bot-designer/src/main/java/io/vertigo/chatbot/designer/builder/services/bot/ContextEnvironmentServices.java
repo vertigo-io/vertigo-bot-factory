@@ -80,10 +80,12 @@ public class ContextEnvironmentServices implements Component {
                     contextEnvironmentIhm.setContextEnvironmentValues(contextEnvironmentValueServices.findAllContextEnvironmentValuesByEnv(contextEnvironment.getCenvId()).stream()
                             .map(contextEnvironmentValue -> {
                                 contextEnvironmentValue.contextValue().load();
+                                contextEnvironmentValue.contextPossibleValue().load();
                                 ContextEnvironmentValueIhm contextEnvironmentValueIhm = new ContextEnvironmentValueIhm();
                                 contextEnvironmentValueIhm.setCenvalId(contextEnvironmentValue.getCenvalId());
-                                contextEnvironmentValueIhm.setValue(contextEnvironmentValue.getValue());
+                                contextEnvironmentValueIhm.setValue(contextEnvironmentValue.contextPossibleValue().isLoaded() ? contextEnvironmentValue.contextPossibleValue().get().getValue() : null);
                                 contextEnvironmentValueIhm.setCvaId(contextEnvironmentValue.getCvaId());
+                                contextEnvironmentValueIhm.setCpvId(contextEnvironmentValue.getCpvId());
                                 contextEnvironmentValueIhm.setLabel(contextEnvironmentValue.contextValue().get().getLabel());
                                 return contextEnvironmentValueIhm;
                             })

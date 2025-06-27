@@ -16,7 +16,6 @@ public final class ContextEnvironmentValue implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private Long cenvalId;
-	private String value;
 
 	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AContextEnvironmentValueContext",
@@ -32,6 +31,21 @@ public final class ContextEnvironmentValue implements Entity {
 			foreignLabel = "ContextEnvironmentValue",
 			foreignMultiplicity = "0..*")
 	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> cvaIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.ContextValue.class, "ContextValue");
+
+	@io.vertigo.datamodel.data.stereotype.Association(
+			name = "AContextEnvironmentValueContextPossibleValue",
+			fkFieldName = "cpvId",
+			primaryDtDefinitionName = "DtContextPossibleValue",
+			primaryIsNavigable = true,
+			primaryRole = "ContextPossibleValue",
+			primaryLabel = "ContextPossibleValue",
+			primaryMultiplicity = "0..1",
+			foreignDtDefinitionName = "DtContextEnvironmentValue",
+			foreignIsNavigable = false,
+			foreignRole = "ContextEnvironmentValue",
+			foreignLabel = "ContextEnvironmentValue",
+			foreignMultiplicity = "0..*")
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextPossibleValue> cpvIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.ContextPossibleValue.class, "ContextPossibleValue");
 
 	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AContextEnvironmentValue",
@@ -74,25 +88,6 @@ public final class ContextEnvironmentValue implements Entity {
 	}
 	
 	/**
-	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Value'.
-	 * @return String value
-	 */
-	@Field(smartType = "STyLabel", label = "Value")
-	public String getValue() {
-		return value;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Value'.
-	 * @param value String
-	 */
-	public void setValue(final String value) {
-		this.value = value;
-	}
-	
-	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Context'.
 	 * @return Long cvaId <b>Obligatoire</b>
@@ -109,6 +104,25 @@ public final class ContextEnvironmentValue implements Entity {
 	 */
 	public void setCvaId(final Long cvaId) {
 		cvaIdAccessor.setId(cvaId);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'ContextPossibleValue'.
+	 * @return Long cpvId
+	 */
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "ContextPossibleValue", fkDefinition = "DtContextPossibleValue" )
+	public Long getCpvId() {
+		return (Long) cpvIdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'ContextPossibleValue'.
+	 * @param cpvId Long
+	 */
+	public void setCpvId(final Long cpvId) {
+		cpvIdAccessor.setId(cpvId);
 	}
 	
 	/**
@@ -144,6 +158,14 @@ public final class ContextEnvironmentValue implements Entity {
 	 */
 	public StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextValue> contextValue() {
 		return cvaIdAccessor;
+	}
+
+ 	/**
+	 * Association : ContextPossibleValue.
+	 * @return l'accesseur vers la propriété 'ContextPossibleValue'
+	 */
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.ContextPossibleValue> contextPossibleValue() {
+		return cpvIdAccessor;
 	}
 	
 	/** {@inheritDoc} */

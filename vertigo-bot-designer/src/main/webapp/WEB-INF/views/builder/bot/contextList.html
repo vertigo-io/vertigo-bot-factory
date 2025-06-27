@@ -33,24 +33,16 @@
             },
 
             filteredOptions: function() {
-                var options =  VertigoUi.vueData.contextPossibleValues.filter(possibleValue =>
+                return VertigoUi.vueData.contextPossibleValues.filter(possibleValue =>
                     possibleValue.cvaId === VertigoUi.vueData.newContextEnvironmentValue.cvaId);
-                other = VertigoUi.vueData.locale === 'fr_FR' ? 'Autre' : 'Other';
-                options.push({ tyopCd: other, value: ''});
-                return options
             },
 
             updateEnvironmentValue: function(possibleValue) {
-                if (possibleValue.tyopCd === "Autre" || possibleValue.tyopCd === "Other"){
-                    this.dataX.isOther = true;
-                } else {
-                    VertigoUi.vueData.newContextEnvironmentValue.value = possibleValue.value;
-                }
+                VertigoUi.vueData.newContextEnvironmentValue.cpvId = possibleValue.cpvId;
             }
         };
 
         VUiExtensions.dataX.selectedOption = null;
-        VUiExtensions.dataX.isOther = false;
     </script>
 </head>
 
@@ -140,10 +132,9 @@
                                         v-for="contextEnvironmentValue in contextEnvironment.contextEnvironmentValues"
                                         @click="vueData.newContextEnvironmentValue.cenvalId = contextEnvironmentValue.cenvalId;
 						   vueData.newContextEnvironmentValue.cvaId = contextEnvironmentValue.cvaId;
-						   vueData.newContextEnvironmentValue.value = contextEnvironmentValue.value;
+						   vueData.newContextEnvironmentValue.cpvId = contextEnvironmentValue.cpvId;
 						   vueData.newContextEnvironmentValue.cenvId = contextEnvironment.cenvId
 						   this.dataX.selectedOption = null;
-						   this.dataX.isOther = false;
 							$refs.environmentContextValueDialog.show()">
                                     <q-item-section>
                                         <q-item-label>{{contextEnvironmentValue.label}}</q-item-label>
@@ -190,7 +181,7 @@
         <q-dialog ref="environmentContextValueDialog">
             <vu:include-data object="newContextEnvironmentValue" field="cenvalId" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="cvaId" modifiable="true"/>
-            <vu:include-data object="newContextEnvironmentValue" field="value" modifiable="true"/>
+            <vu:include-data object="newContextEnvironmentValue" field="cpvId" modifiable="true"/>
             <vu:include-data object="newContextEnvironmentValue" field="cenvId" modifiable="true"/>
             <vu:include-data object="contextPossibleValues" field="*"/>
             <vu:include-data object="typeOperators" field="*"/>
@@ -200,18 +191,15 @@
                         <span th:text="#{context.environment.value.update}"></span>
                     </div>
                 </q-card-section>
-                <q-card-section v-if="filteredOptions().length > 1 && this.dataX.isOther === false" >
-                    <q-select v-model="this.dataX.selectedOption"
-                              th:label="#{context.environmentValue.popup.value}"
+                <q-card-section>
+                    <q-select th:label="#{context.environmentValue.popup.value}"
+                              v-model="vueData.newContextEnvironmentValue.cpvId"
                               :options="filteredOptions()"
-                              option-label="value"
-                              @update:model-value="updateEnvironmentValue">
+                              map-options
+                              emit-value
+                              option-value="cpvId"
+                              option-label="value">
                     </q-select>
-                </q-card-section>
-                <q-card-section v-else>
-                    <q-input th:label="#{context.environmentValue.popup.value}"
-                                 v-model="vueData.newContextEnvironmentValue.value"
-                                 name="vContext[newContextEnvironmentValue][value]"/>
                 </q-card-section>
                 <q-card-actions align="around">
                     <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>

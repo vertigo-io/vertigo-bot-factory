@@ -48,13 +48,13 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldContextEnvironmentValue$cenvalId,
 	/**
-	 * Value.
-	 */
-	fldContextEnvironmentValue$value,
-	/**
 	 * Context.
 	 */
 	fldContextEnvironmentValue$cvaId,
+	/**
+	 * ContextPossibleValue.
+	 */
+	fldContextEnvironmentValue$cpvId,
 	/**
 	 * Environment.
 	 */
@@ -71,6 +71,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Value.
 	 */
 	fldContextEnvironmentValueIhm$value,
+	/**
+	 * Context possible value id.
+	 */
+	fldContextEnvironmentValueIhm$cpvId,
 	/**
 	 * Context value id.
 	 */
@@ -307,20 +311,4 @@ public enum DtResources implements LocaleMessageKey {
 	 * Synonym label.
 	 */
 	fldTupleSynonymIhm$synonymLabel,
-
-	/***********************************************************
-	 * TypeOperator.
-	 **********************************************************/
-	/**
-	 * ID.
-	 */
-	fldTypeOperator$tyopCd,
-	/**
-	 * Label.
-	 */
-	fldTypeOperator$label,
-	/**
-	 * LabelFr.
-	 */
-	fldTypeOperator$labelFr,
 }

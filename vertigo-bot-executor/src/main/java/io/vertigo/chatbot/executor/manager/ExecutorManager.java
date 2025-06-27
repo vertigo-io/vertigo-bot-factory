@@ -219,8 +219,8 @@ public class ExecutorManager implements Manager, Activeable {
         return executorConfigManager.getContextMap();
     }
 
-    public DtList<QuestionAnswerExport> getQuestionAnswerList() {
-        return executorConfigManager.getQuestionAnswerList();
+    public DtList<QuestionAnswerExport> getQuestionAnswerList(final Map<String, String> context) {
+        return executorConfigManager.getQuestionAnswerList(context);
     }
 
     public String getWelcomeTourTechnicalCode(final String welcomeTourLabel) {
@@ -250,8 +250,8 @@ public class ExecutorManager implements Manager, Activeable {
         return executorConfigManager.getWelcomeToursFile();
     }
 
-    public DtList<DocumentaryResourceExport> getDocumentaryResourceList() {
-        return executorConfigManager.getDocumentaryResourceList();
+    public DtList<DocumentaryResourceExport> getDocumentaryResourceList(final Map<String, String> context) {
+        return executorConfigManager.getDocumentaryResourceList(context);
     }
 
     public JsonElement getCustomConfig() {

@@ -15,6 +15,7 @@ public final class ContextEnvironmentValueIhm implements DataObject {
 
 	private Long cenvalId;
 	private String value;
+	private Long cpvId;
 	private Long cvaId;
 	private String label;
 	
@@ -54,6 +55,25 @@ public final class ContextEnvironmentValueIhm implements DataObject {
 	 */
 	public void setValue(final String value) {
 		this.value = value;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Context possible value id'.
+	 * @return Long cpvId <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Context possible value id")
+	public Long getCpvId() {
+		return cpvId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Context possible value id'.
+	 * @param cpvId Long <b>Obligatoire</b>
+	 */
+	public void setCpvId(final Long cpvId) {
+		this.cpvId = cpvId;
 	}
 	
 	/**

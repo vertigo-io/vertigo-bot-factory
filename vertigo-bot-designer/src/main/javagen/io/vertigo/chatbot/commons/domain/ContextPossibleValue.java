@@ -47,7 +47,7 @@ public final class ContextPossibleValue implements Entity {
 			foreignRole = "ContextPossibleValue",
 			foreignLabel = "ContextPossibleValue",
 			foreignMultiplicity = "0..*")
-	private final EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.TypeOperator, io.vertigo.chatbot.designer.domain.TypeOperatorEnum> tyopCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.designer.domain.TypeOperator.class, "TypeOperator", io.vertigo.chatbot.designer.domain.TypeOperatorEnum.class);
+	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.TypeOperator, io.vertigo.chatbot.commons.domain.TypeOperatorEnum> tyopCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.TypeOperator.class, "TypeOperator", io.vertigo.chatbot.commons.domain.TypeOperatorEnum.class);
 
 	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AContextPossibleValueChatbot",
@@ -185,7 +185,7 @@ public final class ContextPossibleValue implements Entity {
 	 * Association : Value operator.
 	 * @return l'accesseur vers la propriété 'Value operator'
 	 */
-	public EnumStoreVAccessor<io.vertigo.chatbot.designer.domain.TypeOperator, io.vertigo.chatbot.designer.domain.TypeOperatorEnum> typeOperator() {
+	public EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.TypeOperator, io.vertigo.chatbot.commons.domain.TypeOperatorEnum> typeOperator() {
 		return tyopCdAccessor;
 	}
 	

@@ -33,6 +33,9 @@ public class ContextPossibleValueServices implements Component {
     private QuestionAnswerContextServices questionAnswerContextServices;
 
     @Inject
+    private ContextEnvironmentValueServices contextEnvironmentValueServices;
+
+    @Inject
     private LocaleManager localeManager;
 
     public DtList<ContextPossibleValue> getAllContextPossibleValuesByCvaId(@SecuredOperation("botVisitor") final Chatbot bot,  final Long cvaId) {
@@ -46,6 +49,7 @@ public class ContextPossibleValueServices implements Component {
     public void deleteContextPossibleValue(@SecuredOperation("botContributor") final Chatbot bot, final Long cpvId) {
         documentaryResourceContextServices.deleteAllDocumentaryResourceContextByCpvId(bot, cpvId);
         questionAnswerContextServices.deleteAllQuestionAnswerContextByCpvId(bot, cpvId);
+        contextEnvironmentValueServices.setAllContextEnvironmentValueCpvIdToNullByCpvId(bot, cpvId);
         contextPossibleValueDAO.delete(cpvId);
     }
 

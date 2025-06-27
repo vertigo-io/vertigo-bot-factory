@@ -8,8 +8,11 @@ import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.webservice.WebServices;
 import io.vertigo.vega.webservice.stereotype.GET;
+import io.vertigo.vega.webservice.stereotype.POST;
 import io.vertigo.vega.webservice.stereotype.PathPrefix;
 import io.vertigo.vega.webservice.stereotype.QueryParam;
+
+import java.util.Map;
 
 @PathPrefix("/docres")
 public class DocumentaryResourceWebService implements WebServices {
@@ -17,9 +20,9 @@ public class DocumentaryResourceWebService implements WebServices {
     @Inject
     private ExecutorManager executorManager;
 
-    @GET("/getDocumentaryResources")
-    public DtList<DocumentaryResourceExport> getDocumentaryResourceList() {
-        return executorManager.getDocumentaryResourceList();
+    @POST("/getDocumentaryResources")
+    public DtList<DocumentaryResourceExport> getDocumentaryResourceList(final Map<String, String> context) {
+        return executorManager.getDocumentaryResourceList(context);
     }
 
     @GET("/getDocumentaryResourceFile")

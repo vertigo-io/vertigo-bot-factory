@@ -34,6 +34,10 @@ public class DocumentaryResourceContextServices implements Component {
         return documentaryResourceContextPAO.getAllDocumentaryResourceContextIhmByDreId(dreId, localeManager.getCurrentLocale().toString());
     }
 
+    public DtList<DocumentaryResourceContext> getAllDocumentaryResourceContextByDreId(@SecuredOperation("botVisitor") final Chatbot bot, final long dreId) {
+        return documentaryResourceContextDAO.findAll(Criterions.isEqualTo(DtDefinitions.DocumentaryResourceContextFields.dreId, dreId), DtListState.of(null));
+    }
+
     public void saveDocumentaryResourceContext(@SecuredOperation("botContributor") final Chatbot bot, final DocumentaryResourceContext documentaryResourceContext) {
         documentaryResourceContextDAO.save(documentaryResourceContext);
     }

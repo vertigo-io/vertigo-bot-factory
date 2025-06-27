@@ -7,7 +7,6 @@ create DtDefinition DtContextEnvironment {
 
 create DtDefinition DtContextEnvironmentValue {
 	id cenvalId     {domain: DoId		        label: "Context environment value id"                 }
-	field value		{domain: DoLabel	        label: "Value" 		                    cardinality:"?"}
 }
 
 create Association AContextEnvironmentValueContext {
@@ -18,6 +17,16 @@ create Association AContextEnvironmentValueContext {
 	dtDefinitionB : DtContextValue
 
 	labelB : "Context"
+}
+
+create Association AContextEnvironmentValueContextPossibleValue {
+	fkFieldName : "cpvId"
+
+ 	dtDefinitionA : DtContextEnvironmentValue
+	type : "*>?"
+	dtDefinitionB : DtContextPossibleValue
+
+	labelB : "ContextPossibleValue"
 }
 
 create Association AContextEnvironmentChatbot {
@@ -49,30 +58,11 @@ create DtDefinition DtContextEnvironmentIhm {
 create DtDefinition DtContextEnvironmentValueIhm {
     field cenvalId      {domain: DoId		        label: "Context environment value id"       cardinality:"1"     }
 	field value		    {domain: DoLabel	        label: "Value" 		                        cardinality:"?"     }
+	field cpvId 		{domain: DoId		        label: "Context possible value id"          cardinality:"1"     }
 	field cvaId 		{domain: DoId		        label: "Context value id"                   cardinality:"1"     }
     field label		    {domain: DoLabel	        label: "Context value label" 		        cardinality:"1"     }
 }
 
-create DtDefinition DtTypeOperator {
-	stereotype : "StaticMasterData"
-	id    tyopCd 		{domain: DoCode 	label: "ID"}
-	field label 		{domain: DoLabel 	label: "Label" 			cardinality : "1"	}
-	field labelFr 		{domain: DoLabel 	label: "LabelFr" 		cardinality : "1"	}
-	values : `{
-        "EQUAL" : {
-            "tyopCd" : "EQUALS",
-            "label" : "Equals",
-            "labelFr" : "Égal"
-        },
-        "CONTAIN" : {
-            "tyopCd" : "CONTAINS",
-            "label" : "Contains",
-            "labelFr" : "Contient"
-        }
-     }`
-    sortField : "tyopCd"
- 	displayField : "label"
-}
 
 create Association AContextPossibleValueTypeOperator {
 	fkFieldName : "tyopCd"

@@ -2,9 +2,9 @@ package io.vertigo.chatbot.designer.builder.services.bot;
 
 import javax.inject.Inject;
 
+import io.vertigo.chatbot.commons.dao.TypeOperatorDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.designer.dao.TypeOperatorDAO;
-import io.vertigo.chatbot.designer.domain.TypeOperator;
+import io.vertigo.chatbot.commons.domain.TypeOperator;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
