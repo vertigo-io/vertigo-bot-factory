@@ -645,8 +645,8 @@ comment on column CONTEXT_ENVIRONMENT.BOT_ID is
 create table CONTEXT_ENVIRONMENT_VALUE
 (
     CENVAL_ID   	 NUMERIC     	not null,
-    VALUE       	 VARCHAR(100)	,
     CVA_ID      	 NUMERIC     	not null,
+    CPV_ID      	 NUMERIC     	,
     CENV_ID     	 NUMERIC     	not null,
     constraint PK_CONTEXT_ENVIRONMENT_VALUE primary key (CENVAL_ID)
 );
@@ -654,11 +654,11 @@ create table CONTEXT_ENVIRONMENT_VALUE
 comment on column CONTEXT_ENVIRONMENT_VALUE.CENVAL_ID is
 'Context environment value id';
 
-comment on column CONTEXT_ENVIRONMENT_VALUE.VALUE is
-'Value';
-
 comment on column CONTEXT_ENVIRONMENT_VALUE.CVA_ID is
 'Context';
+
+comment on column CONTEXT_ENVIRONMENT_VALUE.CPV_ID is
+'ContextPossibleValue';
 
 comment on column CONTEXT_ENVIRONMENT_VALUE.CENV_ID is
 'Environment';
@@ -1947,6 +1947,12 @@ alter table CONTEXT_ENVIRONMENT_VALUE
 	references CONTEXT_VALUE (CVA_ID);
 
 create index A_CONTEXT_ENVIRONMENT_VALUE_CONTEXT_CONTEXT_VALUE_FK on CONTEXT_ENVIRONMENT_VALUE (CVA_ID asc);
+
+alter table CONTEXT_ENVIRONMENT_VALUE
+	add constraint FK_A_CONTEXT_ENVIRONMENT_VALUE_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE foreign key (CPV_ID)
+	references CONTEXT_POSSIBLE_VALUE (CPV_ID);
+
+create index A_CONTEXT_ENVIRONMENT_VALUE_CONTEXT_POSSIBLE_VALUE_CONTEXT_POSSIBLE_VALUE_FK on CONTEXT_ENVIRONMENT_VALUE (CPV_ID asc);
 
 alter table CONTEXT_POSSIBLE_VALUE
 	add constraint FK_A_CONTEXT_POSSIBLE_VALUE_CHATBOT_CHATBOT foreign key (BOT_ID)

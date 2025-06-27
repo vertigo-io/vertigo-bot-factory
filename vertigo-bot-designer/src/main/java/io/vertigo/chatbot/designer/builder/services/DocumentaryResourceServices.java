@@ -7,10 +7,7 @@ import javax.inject.Inject;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.LogsUtils;
-import io.vertigo.chatbot.commons.domain.Attachment;
-import io.vertigo.chatbot.commons.domain.AttachmentTypeEnum;
-import io.vertigo.chatbot.commons.domain.Chatbot;
-import io.vertigo.chatbot.commons.domain.DocumentaryResourceExport;
+import io.vertigo.chatbot.commons.domain.*;
 import io.vertigo.chatbot.commons.multilingual.attachment.AttachmentMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
 import io.vertigo.chatbot.designer.dao.DocumentaryResourceDAO;
@@ -111,6 +108,16 @@ public class DocumentaryResourceServices implements Component {
                     documentaryResourceExport.setAttId(documentaryResource.getAttId());
                     documentaryResourceExport.setFileName(documentaryResource.attachment().get().getLabel());
                 }
+                documentaryResourceExport.setContextValues(documentaryResourceContextServices.getAllDocumentaryResourceContextByDreId(bot, documentaryResource.getDreId())
+                        .stream().map(documentaryResourceContext -> {
+                    documentaryResourceContext.contextValue().load();
+                    documentaryResourceContext.contextPossibleValue().load();
+                    ContextValueExport contextValueExport = new ContextValueExport();
+                    contextValueExport.setLabel(documentaryResourceContext.contextValue().get().getLabel());
+                    contextValueExport.setValue(documentaryResourceContext.contextPossibleValue().get().getValue());
+                    contextValueExport.setTyopCd(documentaryResourceContext.contextPossibleValue().get().getTyopCd());
+                    return contextValueExport;
+                }).collect(VCollectors.toDtList(ContextValueExport.class)));
                 return documentaryResourceExport;
             }).collect(VCollectors.toDtList(DocumentaryResourceExport.class)));
 

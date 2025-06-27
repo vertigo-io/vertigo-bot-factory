@@ -561,6 +561,22 @@ public enum DtResources implements LocaleMessageKey {
 	fldContextValue$botId,
 
 	/***********************************************************
+	 * ContextValueExport.
+	 **********************************************************/
+	/**
+	 * Context label.
+	 */
+	fldContextValueExport$label,
+	/**
+	 * Context value.
+	 */
+	fldContextValueExport$value,
+	/**
+	 * Value operator.
+	 */
+	fldContextValueExport$tyopCd,
+
+	/***********************************************************
 	 * DocumentaryResourceExport.
 	 **********************************************************/
 	/**
@@ -583,6 +599,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * File name.
 	 */
 	fldDocumentaryResourceExport$fileName,
+	/**
+	 * Context values.
+	 */
+	fldDocumentaryResourceExport$contextValues,
 
 	/***********************************************************
 	 * ExecutorConfiguration.
@@ -788,6 +808,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * QuestionAnswerExport.
 	 **********************************************************/
 	/**
+	 * Id.
+	 */
+	fldQuestionAnswerExport$qaId,
+	/**
 	 * Question.
 	 */
 	fldQuestionAnswerExport$question,
@@ -799,6 +823,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Category.
 	 */
 	fldQuestionAnswerExport$catLabel,
+	/**
+	 * Context values.
+	 */
+	fldQuestionAnswerExport$contextValues,
 
 	/***********************************************************
 	 * RunnerHealthCheck.
@@ -1015,6 +1043,22 @@ public enum DtResources implements LocaleMessageKey {
 	 * LabelFr.
 	 */
 	fldTrainingStatus$labelFr,
+
+	/***********************************************************
+	 * TypeOperator.
+	 **********************************************************/
+	/**
+	 * ID.
+	 */
+	fldTypeOperator$tyopCd,
+	/**
+	 * Label.
+	 */
+	fldTypeOperator$label,
+	/**
+	 * LabelFr.
+	 */
+	fldTypeOperator$labelFr,
 
 	/***********************************************************
 	 * UnknownSentenceDetail.

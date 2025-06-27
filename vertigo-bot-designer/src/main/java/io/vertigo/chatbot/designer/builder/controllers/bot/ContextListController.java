@@ -4,6 +4,7 @@ import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ContextPossibleValue;
 import io.vertigo.chatbot.commons.domain.ContextValue;
+import io.vertigo.chatbot.commons.domain.TypeOperator;
 import io.vertigo.chatbot.commons.domain.topic.TypeTopic;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentValueServices;
@@ -14,7 +15,7 @@ import io.vertigo.chatbot.designer.domain.ContextEnvironment;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentValue;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentValueIhm;
-import io.vertigo.chatbot.designer.domain.TypeOperator;
+
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;

@@ -34,6 +34,10 @@ public class QuestionAnswerContextServices implements Component {
         return questionAnswerContextPAO.getAllQuestionAnswerContextIhmByQaId(qaId, localeManager.getCurrentLocale().toString());
     }
 
+    public DtList<QuestionAnswerContext> getAllQuestionAnswerContextByQaId(@SecuredOperation("botVisitor") final Chatbot bot, final long qaId) {
+        return questionAnswerContextDAO.findAll(Criterions.isEqualTo(DtDefinitions.QuestionAnswerContextFields.qaId, qaId), DtListState.of(null));
+    }
+
     public void saveQuestionAnswerContext(@SecuredOperation("botContributor") final Chatbot bot, final QuestionAnswerContext questionAnswerContext) {
         questionAnswerContextDAO.save(questionAnswerContext);
     }

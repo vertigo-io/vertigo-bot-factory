@@ -37,6 +37,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ContextPossibleValue(io.vertigo.chatbot.commons.domain.ContextPossibleValue.class),
 		/** Objet de données ContextValue. */
 		ContextValue(io.vertigo.chatbot.commons.domain.ContextValue.class),
+		/** Objet de données ContextValueExport. */
+		ContextValueExport(io.vertigo.chatbot.commons.domain.ContextValueExport.class),
 		/** Objet de données DocumentaryResourceExport. */
 		DocumentaryResourceExport(io.vertigo.chatbot.commons.domain.DocumentaryResourceExport.class),
 		/** Objet de données ExecutorConfiguration. */
@@ -59,6 +61,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		TopicExport(io.vertigo.chatbot.commons.domain.TopicExport.class),
 		/** Objet de données TrainerInfo. */
 		TrainerInfo(io.vertigo.chatbot.commons.domain.TrainerInfo.class),
+		/** Objet de données TypeOperator. */
+		TypeOperator(io.vertigo.chatbot.commons.domain.TypeOperator.class),
 		/** Objet de données WelcomeTourExport. */
 		WelcomeTourExport(io.vertigo.chatbot.commons.domain.WelcomeTourExport.class)		;
 
@@ -276,6 +280,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		botId	}
 
 	/**
+	 * Enumération des champs de ContextValueExport.
+	 */
+	public enum ContextValueExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.ContextValueExport> {
+		/** Propriété 'Context label'. */
+		label,
+		/** Propriété 'Context value'. */
+		value,
+		/** Propriété 'Value operator'. */
+		tyopCd	}
+
+	/**
 	 * Enumération des champs de DocumentaryResourceExport.
 	 */
 	public enum DocumentaryResourceExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.DocumentaryResourceExport> {
@@ -288,7 +303,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Attachment Id'. */
 		attId,
 		/** Propriété 'File name'. */
-		fileName	}
+		fileName,
+		/** Propriété 'Context values'. */
+		contextValues	}
 
 	/**
 	 * Enumération des champs de ExecutorConfiguration.
@@ -358,12 +375,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	 * Enumération des champs de QuestionAnswerExport.
 	 */
 	public enum QuestionAnswerExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.QuestionAnswerExport> {
+		/** Propriété 'Id'. */
+		qaId,
 		/** Propriété 'Question'. */
 		question,
 		/** Propriété 'Answer'. */
 		answer,
 		/** Propriété 'Category'. */
-		catLabel	}
+		catLabel,
+		/** Propriété 'Context values'. */
+		contextValues	}
 
 	/**
 	 * Enumération des champs de RasaConfig.
@@ -435,6 +456,17 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		trainingPercent,
 		/** Propriété 'Duration'. */
 		duration	}
+
+	/**
+	 * Enumération des champs de TypeOperator.
+	 */
+	public enum TypeOperatorFields implements DataFieldName<io.vertigo.chatbot.commons.domain.TypeOperator> {
+		/** Propriété 'ID'. */
+		tyopCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'LabelFr'. */
+		labelFr	}
 
 	/**
 	 * Enumération des champs de WelcomeTourExport.

@@ -2,6 +2,8 @@ package io.vertigo.chatbot.designer.builder.services.bot;
 
 import javax.inject.Inject;
 
+import io.vertigo.account.authorization.annotations.SecuredOperation;
+import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.designer.dao.ContextEnvironmentValueDAO;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentValue;
 import io.vertigo.chatbot.domain.DtDefinitions;
@@ -41,5 +43,13 @@ public class ContextEnvironmentValueServices implements Component {
 
     public DtList<ContextEnvironmentValue> findAllContextEnvironmentValuesByEnv(final Long cenvId) {
         return contextEnvironmentValueDAO.findAll(Criterions.isEqualTo(DtDefinitions.ContextEnvironmentValueFields.cenvId, cenvId), DtListState.of(null));
+    }
+
+    public void setAllContextEnvironmentValueCpvIdToNullByCpvId(@SecuredOperation("botContributor") final Chatbot bot, final long cpvId){
+        contextEnvironmentValueDAO.findAll(Criterions.isEqualTo(DtDefinitions.ContextEnvironmentValueFields.cpvId, cpvId), DtListState.of(null))
+                .forEach(contextEnvironmentValue -> {
+                    contextEnvironmentValue.setCpvId(null);
+                    save(contextEnvironmentValue);
+                });
     }
 }

@@ -18,6 +18,7 @@ public final class DocumentaryResourceExport implements DataObject {
 	private String url;
 	private Long attId;
 	private String fileName;
+	private io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.ContextValueExport> contextValues =  new io.vertigo.datamodel.data.model.DtList<>(io.vertigo.chatbot.commons.domain.ContextValueExport.class);
 	
 	/**
 	 * Champ : DATA.
@@ -112,6 +113,27 @@ public final class DocumentaryResourceExport implements DataObject {
 	 */
 	public void setFileName(final String fileName) {
 		this.fileName = fileName;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Context values'.
+	 * @return DtList de ContextValueExport contextValues
+	 */
+	@Field(smartType = "STyDtContextValueExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Context values")
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.ContextValueExport> getContextValues() {
+		return contextValues;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Context values'.
+	 * @param contextValues DtList de ContextValueExport
+	 */
+	public void setContextValues(final io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.ContextValueExport> contextValues) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(contextValues);
+		//---
+		this.contextValues = contextValues;
 	}
 	
 	/** {@inheritDoc} */

@@ -18,4 +18,9 @@
         <sqlFile encoding="utf-8" path="/sql/v_3_0/alter_chatbot-628.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal"
+               id="Remove and add columns on context environment table">
+        <sqlFile encoding="utf-8" path="/sql/v_3_0/alter_chatbot-context-environment-values.sql" />
+    </changeSet>
+
 </databaseChangeLog>

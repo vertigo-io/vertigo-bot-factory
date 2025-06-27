@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.domain;
+package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.data.model.DtStaticMasterData;

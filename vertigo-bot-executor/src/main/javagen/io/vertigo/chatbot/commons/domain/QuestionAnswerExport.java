@@ -13,9 +13,30 @@ import io.vertigo.datamodel.data.util.DataModelUtil;
 public final class QuestionAnswerExport implements DataObject {
 	private static final long serialVersionUID = 1L;
 
+	private Long qaId;
 	private String question;
 	private String answer;
 	private String catLabel;
+	private io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.ContextValueExport> contextValues =  new io.vertigo.datamodel.data.model.DtList<>(io.vertigo.chatbot.commons.domain.ContextValueExport.class);
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Id'.
+	 * @return Long qaId <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyId", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Id")
+	public Long getQaId() {
+		return qaId;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Id'.
+	 * @param qaId Long <b>Obligatoire</b>
+	 */
+	public void setQaId(final Long qaId) {
+		this.qaId = qaId;
+	}
 	
 	/**
 	 * Champ : DATA.
@@ -72,6 +93,27 @@ public final class QuestionAnswerExport implements DataObject {
 	 */
 	public void setCatLabel(final String catLabel) {
 		this.catLabel = catLabel;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Context values'.
+	 * @return DtList de ContextValueExport contextValues
+	 */
+	@Field(smartType = "STyDtContextValueExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Context values")
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.ContextValueExport> getContextValues() {
+		return contextValues;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Context values'.
+	 * @param contextValues DtList de ContextValueExport
+	 */
+	public void setContextValues(final io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.ContextValueExport> contextValues) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(contextValues);
+		//---
+		this.contextValues = contextValues;
 	}
 	
 	/** {@inheritDoc} */

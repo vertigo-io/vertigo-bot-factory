@@ -1,4 +1,4 @@
-package io.vertigo.chatbot.designer.dao;
+package io.vertigo.chatbot.commons.dao;
 
 import javax.inject.Inject;
 
@@ -8,7 +8,7 @@ import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
 import io.vertigo.datamodel.smarttype.SmartTypeManager;
 import io.vertigo.datamodel.task.TaskManager;
-import io.vertigo.chatbot.designer.domain.TypeOperator;
+import io.vertigo.chatbot.commons.domain.TypeOperator;
 
 /**
  * This class is automatically generated.

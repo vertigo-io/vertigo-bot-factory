@@ -13,3 +13,4 @@ done
 psql -d $database -U $user -c 'drop schema public cascade' -c 'create schema public'
 pg_restore $filename -d $database -U $user
 psql -d $database -U $user -a -f anonymize.sql
+

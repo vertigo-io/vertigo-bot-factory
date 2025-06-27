@@ -119,16 +119,55 @@ create DtDefinition DtChatbotCustomConfigExport {
     field documentaryResourceDisplay        {domain: DoYesNo        label: "Display documentary resources"      cardinality:"?"}
 }
 
+create DtDefinition DtTypeOperator {
+	stereotype : "StaticMasterData"
+	id    tyopCd 		{domain: DoCode 	label: "ID"}
+	field label 		{domain: DoLabel 	label: "Label" 			cardinality : "1"	}
+	field labelFr 		{domain: DoLabel 	label: "LabelFr" 		cardinality : "1"	}
+	values : `{
+        "EQUAL" : {
+            "tyopCd" : "EQUALS",
+            "label" : "Equals",
+            "labelFr" : "Égal"
+        },
+        "CONTAIN" : {
+            "tyopCd" : "CONTAINS",
+            "label" : "Contains",
+            "labelFr" : "Contient"
+        }
+     }`
+    sortField : "tyopCd"
+ 	displayField : "label"
+}
+
 create DtDefinition DtQuestionAnswerExport {
-	field question 					{domain: DoText 		        label: "Question" 		cardinality : "1"}
-	field answer		            {domain: DoText					label: "Answer" 		cardinality : "1"}
-    field catLabel			        {domain: DoLabel 				label: "Category" 	    cardinality : "1"}
+    field qaId 					    {domain: DoId		                    label: "Id" 		            cardinality : "1"}
+	field question 					{domain: DoText 		                label: "Question" 		        cardinality : "1"}
+    field answer		            {domain: DoText					        label: "Answer" 		        cardinality : "1"}
+    field catLabel			        {domain: DoLabel 				        label: "Category" 	            cardinality : "1"}
+    field contextValues			    {domain: DoDtContextValueExport         label: "Context values" 	    cardinality : "*"}
+}
+
+create DtDefinition DtContextValueExport {
+	field label 					{domain: DoText 		        label: "Context label" 		cardinality : "1"}
+	field value		                {domain: DoText					label: "Context value" 		cardinality : "1"}
+}
+
+create Association AContextValueExportTypeOperator {
+	fkFieldName : "tyopCd"
+
+ 	dtDefinitionA : DtContextValueExport
+	type : "*>1"
+	dtDefinitionB : DtTypeOperator
+
+	labelB : "Value operator"
 }
 
 create DtDefinition DtDocumentaryResourceExport {
-    field 	title 			    {domain: DoLabel 	    label: "Title" 			      cardinality : "1" }
-    field   dreTypeCd           {domain: DoCode         label: "Resource Type"        cardinality : "1" }
-	field 	url     		    {domain: DoText   	    label: "Url"                                    }
-	field   attId               {domain: DoId           label: "Attachment Id"        cardinality : "1" }
-	field   fileName            {domain: DoLabel        label: "File name"                              }
+    field 	title 			    {domain: DoLabel 	                    label: "Title" 			      cardinality : "1" }
+    field   dreTypeCd           {domain: DoCode                         label: "Resource Type"        cardinality : "1" }
+	field 	url     		    {domain: DoText   	                    label: "Url"                                    }
+	field   attId               {domain: DoId                           label: "Attachment Id"        cardinality : "1" }
+	field   fileName            {domain: DoLabel                        label: "File name"                              }
+	field contextValues			{domain: DoDtContextValueExport         label: "Context values" 	  cardinality : "*" }
 }

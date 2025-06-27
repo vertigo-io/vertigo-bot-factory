@@ -96,6 +96,8 @@ modules:
           clientName: ${KEYCLOAK_CLIENT_NAME}
           url: ${KEYCLOAK_URL}
           scopes: openid
+          httpConnectTimeout: 3000
+          httpReadTimeout: 3000
   io.vertigo.account.AccountFeatures:
     features:
       - security:

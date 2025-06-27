@@ -17,6 +17,7 @@
  */
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import io.vertigo.chatbot.commons.domain.TypeOperator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +37,6 @@ import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentServic
 import io.vertigo.chatbot.designer.builder.services.bot.ContextPossibleValueServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextTypeOperatorServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
-import io.vertigo.chatbot.designer.domain.TypeOperator;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
