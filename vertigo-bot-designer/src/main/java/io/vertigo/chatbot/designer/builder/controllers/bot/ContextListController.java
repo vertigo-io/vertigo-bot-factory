@@ -11,11 +11,9 @@ import io.vertigo.chatbot.designer.builder.services.bot.ContextEnvironmentValueS
 import io.vertigo.chatbot.designer.builder.services.bot.ContextPossibleValueServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextTypeOperatorServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
-import io.vertigo.chatbot.designer.domain.ContextEnvironment;
-import io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm;
-import io.vertigo.chatbot.designer.domain.ContextEnvironmentValue;
-import io.vertigo.chatbot.designer.domain.ContextEnvironmentValueIhm;
+import io.vertigo.chatbot.designer.domain.*;
 
+import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
@@ -42,7 +40,7 @@ public class ContextListController extends AbstractBotListEntityController<Conte
 
 	private static final ViewContextKey<ContextValue> contextValuesKey = ViewContextKey.of("contextValues");
 	private static final ViewContextKey<ContextEnvironmentIhm> contextEnvironmentsKey = ViewContextKey.of("contextEnvironments");
-	private	static final ViewContextKey<ContextPossibleValue> contextPossibleValueskey = ViewContextKey.of("contextPossibleValues");
+	private	static final ViewContextKey<ContextPossibleValueIhm> contextPossibleValueskey = ViewContextKey.of("contextPossibleValues");
 	private static final ViewContextKey<ContextEnvironment> newContextEnvironmentKey = ViewContextKey.of("newContextEnvironment");
 	private static final ViewContextKey<ContextEnvironmentValue> newContextEnvironmentValueKey = ViewContextKey.of("newContextEnvironmentValue");
 	private static final ViewContextKey<TypeOperator> typeOperators = ViewContextKey.of("typeOperators");
@@ -60,7 +58,7 @@ public class ContextListController extends AbstractBotListEntityController<Conte
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
 		final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
 		viewContext.publishDtList(contextValuesKey, contextValueServices.getAllContextValueByBotId(botId));
-		viewContext.publishDtList(contextPossibleValueskey, contextPossibleValueServices.getAllContextPossibleValuesByBot(bot));
+		viewContext.publishDtList(contextPossibleValueskey, DtDefinitions.ContextPossibleValueIhmFields.cpvId, contextPossibleValueServices.getAllContextPossibleValuesByBot(bot));
 		viewContext.publishDto(newContextEnvironmentKey, new ContextEnvironment());
 		viewContext.publishDto(newContextEnvironmentValueKey, new ContextEnvironmentValue());
 		viewContext.publishDtList(typeOperators, contextTypeOperatorServices.getAllTypeOperators(bot));

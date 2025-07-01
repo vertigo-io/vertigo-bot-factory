@@ -1,10 +1,12 @@
 package io.vertigo.chatbot.designer.builder.services.bot;
 
 import java.util.Comparator;
+import java.util.Locale;
 
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.TypeOperator;
 import io.vertigo.chatbot.designer.dao.ContextEnvironmentDAO;
 import io.vertigo.chatbot.designer.domain.ContextEnvironment;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentIhm;
@@ -12,11 +14,13 @@ import io.vertigo.chatbot.designer.domain.ContextEnvironmentValue;
 import io.vertigo.chatbot.designer.domain.ContextEnvironmentValueIhm;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.locale.LocaleManager;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.util.VCollectors;
+import org.glassfish.jersey.message.internal.LocaleProvider;
 
 import javax.inject.Inject;
 
@@ -36,6 +40,9 @@ public class ContextEnvironmentServices implements Component {
 
     @Inject
     private ContextValueServices contextValueServices;
+
+    @Inject
+    private LocaleManager localeManager;
 
     @Secured("BotUser")
     public ContextEnvironment save(@SecuredOperation("botContributor") final Chatbot bot, final ContextEnvironment contextEnvironment, boolean creation) {
@@ -83,7 +90,13 @@ public class ContextEnvironmentServices implements Component {
                                 contextEnvironmentValue.contextPossibleValue().load();
                                 ContextEnvironmentValueIhm contextEnvironmentValueIhm = new ContextEnvironmentValueIhm();
                                 contextEnvironmentValueIhm.setCenvalId(contextEnvironmentValue.getCenvalId());
-                                contextEnvironmentValueIhm.setValue(contextEnvironmentValue.contextPossibleValue().isLoaded() ? contextEnvironmentValue.contextPossibleValue().get().getValue() : null);
+                                if (contextEnvironmentValue.contextPossibleValue().isLoaded()) {
+                                    contextEnvironmentValue.contextPossibleValue().get().typeOperator().load();
+                                    TypeOperator typeOperator = contextEnvironmentValue.contextPossibleValue().get().typeOperator().get();
+                                    String value = contextEnvironmentValue.contextPossibleValue().get().getValue();
+                                    contextEnvironmentValueIhm.setValue(String.format("%s : %s", localeManager.getCurrentLocale().equals(Locale.FRANCE)
+                                            ? typeOperator.getLabelFr() : typeOperator.getLabel(), value));
+                                }
                                 contextEnvironmentValueIhm.setCvaId(contextEnvironmentValue.getCvaId());
                                 contextEnvironmentValueIhm.setCpvId(contextEnvironmentValue.getCpvId());
                                 contextEnvironmentValueIhm.setLabel(contextEnvironmentValue.contextValue().get().getLabel());

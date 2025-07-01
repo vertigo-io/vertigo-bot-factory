@@ -85,6 +85,22 @@ public enum DtResources implements LocaleMessageKey {
 	fldContextEnvironmentValueIhm$label,
 
 	/***********************************************************
+	 * ContextPossibleValueIhm.
+	 **********************************************************/
+	/**
+	 * Context possible value id.
+	 */
+	fldContextPossibleValueIhm$cpvId,
+	/**
+	 * Value.
+	 */
+	fldContextPossibleValueIhm$value,
+	/**
+	 * Context value id.
+	 */
+	fldContextPossibleValueIhm$cvaId,
+
+	/***********************************************************
 	 * DictionaryEntity.
 	 **********************************************************/
 	/**
