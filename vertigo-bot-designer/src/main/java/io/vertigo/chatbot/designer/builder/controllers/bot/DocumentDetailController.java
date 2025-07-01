@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import io.vertigo.chatbot.designer.domain.*;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
 import org.springframework.stereotype.Controller;
@@ -27,10 +28,6 @@ import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextPossibleValueServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
-import io.vertigo.chatbot.designer.domain.DocumentaryResource;
-import io.vertigo.chatbot.designer.domain.DocumentaryResourceContext;
-import io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm;
-import io.vertigo.chatbot.designer.domain.DocumentaryResourceType;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
@@ -53,8 +50,8 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
     private static final ViewContextKey<DocumentaryResourceContext> newDocumentaryResourceContextKey = ViewContextKey.of("newDocumentaryResourceContext");
     private static final ViewContextKey<DocumentaryResourceType> documentaryResourceTypeListKey = ViewContextKey.of("documentaryResourceTypeList");
     private static final ViewContextKey<ContextValue> contextValueListKey = ViewContextKey.of("contextValueList");
-    private static final ViewContextKey<ContextPossibleValue> contextPossibleValueListKey = ViewContextKey.of("contextPossibleValueList");
-    private static final ViewContextKey<ContextPossibleValue> filteredContextPossibleValueListKey = ViewContextKey.of("filteredContextPossibleValueList");
+    private static final ViewContextKey<ContextPossibleValueIhm> contextPossibleValueListKey = ViewContextKey.of("contextPossibleValueList");
+    private static final ViewContextKey<ContextPossibleValueIhm> filteredContextPossibleValueListKey = ViewContextKey.of("filteredContextPossibleValueList");
     private static final ViewContextKey<Attachment> attachmentKey = ViewContextKey.of("attachment");
     private static final ViewContextKey<Long> maxSizeKey = ViewContextKey.of("maxSize");
     private static final ViewContextKey<Long> attachmentTotalSizeKey = ViewContextKey.of("attachmentTotalSize");
@@ -90,15 +87,15 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
         final DocumentaryResource documentaryResource = documentaryResourceServices.getDocResById(dreId);
         final DtList<DocumentaryResourceContextIhm> documentaryResourceContexts = documentaryResourceContextServices.getAllDocumentaryResourceContextIhmByDreId(bot, dreId);
         final DtList<ContextValue> contextValues = contextValueServices.getAllContextValueByBotId(botId);
-        final DtList<ContextPossibleValue> contextPossibleValues = contextPossibleValueServices.getAllContextPossibleValuesByBot(bot);
+        final DtList<ContextPossibleValueIhm> contextPossibleValues = contextPossibleValueServices.getAllContextPossibleValuesByBot(bot);
         final Attachment attachment = documentaryResource.getAttId() != null? attachmentServices.findById(documentaryResource.getAttId()) : new Attachment();
 
         viewContext.publishDto(documentaryResourceKey, documentaryResource);
         viewContext.publishDtList(documentaryResourceContextIhmListKey, documentaryResourceContexts);
         viewContext.publishDto(newDocumentaryResourceContextKey, new DocumentaryResourceContext());
         viewContext.publishDtList(contextValueListKey, contextValues);
-        viewContext.publishDtList(contextPossibleValueListKey, contextPossibleValues);
-        viewContext.publishDtList(filteredContextPossibleValueListKey, new DtList<>(ContextPossibleValue.class));
+        viewContext.publishDtList(contextPossibleValueListKey, DtDefinitions.ContextPossibleValueIhmFields.cpvId, contextPossibleValues);
+        viewContext.publishDtList(filteredContextPossibleValueListKey, DtDefinitions.ContextPossibleValueIhmFields.cpvId, new DtList<>(ContextPossibleValueIhm.class));
         viewContext.publishDto(attachmentKey, attachment);
         viewContext.publishDtList(documentaryResourceTypeListKey, documentaryResourceTypeServices.getAllDocResTypes());
         viewContext.publishRef(maxSizeKey, chatbotCustomConfig.getTotalMaxAttachmentSize() != null ?
@@ -117,14 +114,14 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
         final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
         final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
         final DtList<ContextValue> contextValues = contextValueServices.getAllContextValueByBotId(botId);
-        final DtList<ContextPossibleValue> contextPossibleValues = contextPossibleValueServices.getAllContextPossibleValuesByBot(bot);
+        final DtList<ContextPossibleValueIhm> contextPossibleValues = contextPossibleValueServices.getAllContextPossibleValuesByBot(bot);
 
         viewContext.publishDto(documentaryResourceKey, documentaryResourceServices.getNewdocumentaryResource(botId));
         viewContext.publishDtList(documentaryResourceContextIhmListKey, new DtList<>(DocumentaryResourceContextIhm.class));
         viewContext.publishDto(newDocumentaryResourceContextKey, new DocumentaryResourceContext());
         viewContext.publishDtList(contextValueListKey, contextValues);
-        viewContext.publishDtList(contextPossibleValueListKey, contextPossibleValues);
-        viewContext.publishDtList(filteredContextPossibleValueListKey, new DtList<>(ContextPossibleValue.class));
+        viewContext.publishDtList(contextPossibleValueListKey, DtDefinitions.ContextPossibleValueIhmFields.cpvId, contextPossibleValues);
+        viewContext.publishDtList(filteredContextPossibleValueListKey, DtDefinitions.ContextPossibleValueIhmFields.cpvId, new DtList<>(ContextPossibleValueIhm.class));
         viewContext.publishDto(attachmentKey, new Attachment());
         viewContext.publishDtList(documentaryResourceTypeListKey, documentaryResourceTypeServices.getAllDocResTypes());
         viewContext.publishRef(maxSizeKey, chatbotCustomConfig.getTotalMaxAttachmentSize() != null ?

@@ -74,3 +74,8 @@ create Association AContextPossibleValueTypeOperator {
 	labelB : "Value operator"
 }
 
+create DtDefinition DtContextPossibleValueIhm {
+	field cpvId 		{domain: DoId		                label: "Context possible value id"        }
+	field value		    {domain: DoLabel	                label: "Value" 		                      }
+	field cvaId 		{domain: DoId		                label: "Context value id"                 }
+}

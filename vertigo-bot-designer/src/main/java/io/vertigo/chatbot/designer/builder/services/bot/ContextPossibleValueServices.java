@@ -7,8 +7,10 @@ import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.dao.ContextPossibleValueDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.ContextPossibleValue;
+import io.vertigo.chatbot.designer.builder.contextPossibleValue.ContextPossibleValuePAO;
 import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceContextServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerContextServices;
+import io.vertigo.chatbot.designer.domain.ContextPossibleValueIhm;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.locale.LocaleManager;
@@ -27,6 +29,9 @@ public class ContextPossibleValueServices implements Component {
     private ContextPossibleValueDAO contextPossibleValueDAO;
 
     @Inject
+    private ContextPossibleValuePAO contextPossibleValuePAO;
+
+    @Inject
     private DocumentaryResourceContextServices documentaryResourceContextServices;
 
     @Inject
@@ -42,8 +47,8 @@ public class ContextPossibleValueServices implements Component {
         return contextPossibleValueDAO.findAll(Criterions.isEqualTo(DtDefinitions.ContextPossibleValueFields.cvaId, cvaId), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
     }
 
-    public DtList<ContextPossibleValue> getAllContextPossibleValuesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-        return contextPossibleValueDAO.findAll(Criterions.isEqualTo(DtDefinitions.ContextPossibleValueFields.botId, bot.getBotId()), DtListState.of(MAX_ELEMENTS_PLUS_ONE));
+    public DtList<ContextPossibleValueIhm> getAllContextPossibleValuesByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
+        return contextPossibleValuePAO.getAllContextPossibleValueIhmByBotId(bot.getBotId(), localeManager.getCurrentLocale().toString());
     }
 
     public void deleteContextPossibleValue(@SecuredOperation("botContributor") final Chatbot bot, final Long cpvId) {

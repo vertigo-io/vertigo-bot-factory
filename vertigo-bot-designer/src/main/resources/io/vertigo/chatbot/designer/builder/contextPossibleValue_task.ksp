@@ -1,0 +1,21 @@
+package io.vertigo.chatbot.designer.builder.contextPossibleValue
+
+create Task TkGetAllContextPossibleValueIhmByBotId {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	cpv.cpv_id,
+					CASE #locale#
+						WHEN 'fr_FR' THEN tyop.label_fr || ' : ' || cpv.value
+						ELSE tyop.label || ' : ' || cpv.value
+					END as value,
+					cpv.cva_id
+			from context_possible_value cpv
+			left join type_operator tyop on (tyop.tyop_cd = cpv.tyop_cd)
+			where cpv.bot_id = #botId#
+			order by cpv.value
+             "
+
+	in botId  				          {domain : DoId         		                    cardinality : "1"  }
+	in locale  				          {domain : DoCode                               	cardinality : "1"  }
+	out contextPossibleValue          {domain : DoDtContextPossibleValueIhm	            cardinality : "*"  }
+}

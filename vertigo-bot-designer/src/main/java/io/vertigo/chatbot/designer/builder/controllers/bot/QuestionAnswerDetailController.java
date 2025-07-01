@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import io.vertigo.chatbot.designer.domain.ContextPossibleValueIhm;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
 import org.springframework.stereotype.Controller;
@@ -52,8 +53,8 @@ public class QuestionAnswerDetailController extends AbstractBotCreationControlle
     private static final ViewContextKey<QuestionAnswerContextIhm> questionAnswerContextIhmListKey = ViewContextKey.of("questionAnswerContextIhmList");
     private static final ViewContextKey<QuestionAnswerContext> newQuestionAnswerContextKey = ViewContextKey.of("newQuestionAnswerContext");
     private static final ViewContextKey<ContextValue> contextValueListKey = ViewContextKey.of("contextValueList");
-    private static final ViewContextKey<ContextPossibleValue> contextPossibleValueListKey = ViewContextKey.of("contextPossibleValueList");
-    private static final ViewContextKey<ContextPossibleValue> filteredContextPossibleValueListKey = ViewContextKey.of("filteredContextPossibleValueList");
+    private static final ViewContextKey<ContextPossibleValueIhm> contextPossibleValueListKey = ViewContextKey.of("contextPossibleValueList");
+    private static final ViewContextKey<ContextPossibleValueIhm> filteredContextPossibleValueListKey = ViewContextKey.of("filteredContextPossibleValueList");
 
     @Inject
     private QuestionAnswerServices questionAnswerServices;
@@ -84,7 +85,7 @@ public class QuestionAnswerDetailController extends AbstractBotCreationControlle
         final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId());
         final DtList<QuestionAnswerContextIhm> questionAnswerContexts = questionAnswerContextServices.getAllQuestionAnswerContextIhmByQaId(bot, questionAnswerId);
         final DtList<ContextValue> contextValues = contextValueServices.getAllContextValueByBotId(botId);
-        final DtList<ContextPossibleValue> contextPossibleValues = contextPossibleValueServices.getAllContextPossibleValuesByBot(bot);
+        final DtList<ContextPossibleValueIhm> contextPossibleValues = contextPossibleValueServices.getAllContextPossibleValuesByBot(bot);
 
         viewContext.publishDto(chatbotCustomConfigKey, chatbotCustomConfig);
         viewContext.publishDto(questionAnswerIhmKey, questionAnswerIhm);
@@ -92,8 +93,8 @@ public class QuestionAnswerDetailController extends AbstractBotCreationControlle
         viewContext.publishDtList(questionAnswerContextIhmListKey, questionAnswerContexts);
         viewContext.publishDto(newQuestionAnswerContextKey, new QuestionAnswerContext());
         viewContext.publishDtList(contextValueListKey, contextValues);
-        viewContext.publishDtList(contextPossibleValueListKey, contextPossibleValues);
-        viewContext.publishDtList(filteredContextPossibleValueListKey, new DtList<>(ContextPossibleValue.class));
+        viewContext.publishDtList(contextPossibleValueListKey, DtDefinitions.ContextPossibleValueIhmFields.cpvId, contextPossibleValues);
+        viewContext.publishDtList(filteredContextPossibleValueListKey, DtDefinitions.ContextPossibleValueIhmFields.cpvId, new DtList<>(ContextPossibleValueIhm.class));
 
         super.initBreadCrums(viewContext, questionAnswer);
         listLimitReached(viewContext, uiMessageStack);
@@ -107,7 +108,7 @@ public class QuestionAnswerDetailController extends AbstractBotCreationControlle
         final DtList<QuestionAnswerCategory> questionAnswerCategories = questionAnswerCategoryServices.getAllQueAnsCatByBot(bot);
         final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(bot.getBotId());
         final DtList<ContextValue> contextValues = contextValueServices.getAllContextValueByBotId(botId);
-        final DtList<ContextPossibleValue> contextPossibleValues = contextPossibleValueServices.getAllContextPossibleValuesByBot(bot);
+        final DtList<ContextPossibleValueIhm> contextPossibleValues = contextPossibleValueServices.getAllContextPossibleValuesByBot(bot);
 
         viewContext.publishDto(chatbotCustomConfigKey, chatbotCustomConfig);
         viewContext.publishDto(questionAnswerIhmKey, questionAnswerIhm);
@@ -115,8 +116,8 @@ public class QuestionAnswerDetailController extends AbstractBotCreationControlle
         viewContext.publishDtList(questionAnswerContextIhmListKey, new DtList<>(QuestionAnswerContextIhm.class));
         viewContext.publishDto(newQuestionAnswerContextKey, new QuestionAnswerContext());
         viewContext.publishDtList(contextValueListKey, contextValues);
-        viewContext.publishDtList(contextPossibleValueListKey, contextPossibleValues);
-        viewContext.publishDtList(filteredContextPossibleValueListKey, new DtList<>(ContextPossibleValue.class));
+        viewContext.publishDtList(contextPossibleValueListKey, DtDefinitions.ContextPossibleValueIhmFields.cpvId, contextPossibleValues);
+        viewContext.publishDtList(filteredContextPossibleValueListKey, DtDefinitions.ContextPossibleValueIhmFields.cpvId, new DtList<>(ContextPossibleValueIhm.class));
 
 
         super.initEmptyBreadcrums(viewContext);
