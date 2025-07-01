@@ -77,6 +77,23 @@ public final class QuestionAnswerContextPAO implements StoreServices {
 	}
 
 	/**
+	 * Execute la tache TkRemoveAllQuestionAnswerContextByCpvId.
+	 * @param cpvId Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkRemoveAllQuestionAnswerContextByCpvId",
+			request = """
+			delete from question_answer_context
+			where cpv_id = #cpvId#""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void removeAllQuestionAnswerContextByCpvId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "cpvId", smartType = "STyId") final Long cpvId) {
+		final Task task = createTaskBuilder("TkRemoveAllQuestionAnswerContextByCpvId")
+				.addValue("cpvId", cpvId)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
 	 * Execute la tache TkRemoveAllQuestionAnswerContextByCvaId.
 	 * @param cvaId Long
 	*/

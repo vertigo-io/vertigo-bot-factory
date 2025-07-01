@@ -56,7 +56,7 @@ create Association ADocumentaryResourceContextContextPossibleValue {
 	fkFieldName : "cpvId"
 
  	dtDefinitionA : DtDocumentaryResourceContext
-	type : "*>?"
+	type : "*>1"
 	dtDefinitionB : DtContextPossibleValue
 
 	labelB : "Context possible value id"

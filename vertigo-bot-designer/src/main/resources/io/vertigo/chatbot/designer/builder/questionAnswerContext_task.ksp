@@ -42,3 +42,12 @@ create Task TkRemoveAllQuestionAnswerContextByCvaId {
              "
 	in cvaId  				{domain : DoId         		cardinality : "1"  }
 }
+
+create Task TkRemoveAllQuestionAnswerContextByCpvId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from question_answer_context
+			where cpv_id = #cpvId#
+             "
+	in cpvId  				{domain : DoId         		cardinality : "1"  }
+}

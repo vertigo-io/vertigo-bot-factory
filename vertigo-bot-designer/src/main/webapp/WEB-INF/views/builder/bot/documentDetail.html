@@ -24,9 +24,18 @@
                 return type.includes('image');
             },
 
-            onContextChange: function(cvaId) {
-                this.filterContextPossibleValues(cvaId);
+            onContextChange: function() {
+                this.filterContextPossibleValues(VertigoUi.vueData.newDocumentaryResourceContext.cvaId);
                 VertigoUi.vueData.newDocumentaryResourceContext.cpvId = null;
+            },
+
+            saveDocumentaryResourceContext: function() {
+                this.httpPostAjax('_saveDocumentaryResourceContext', this.vueDataParams(['newDocumentaryResourceContext']),
+                    {
+                        onSuccess: function() {
+                            this.$refs.newContextDialog.hide();
+                        }
+                    });
             },
 
             filterContextPossibleValues: function(cvaId) {
@@ -166,44 +175,36 @@
         <vu:column field="cpvValue"/>
     </vu:table>
 
-    <q-dialog ref="newContextDialog">
+    <q-dialog ref="newContextDialog" @hide="delete uiMessageStack.objectFieldErrors.newDocumentaryResourceContext">
         <q-card style="width: 400px;">
-            <q-card-section>
-                <div class="text-h6" style="text-align: center">
-                    <span v-if="vueData.newDocumentaryResourceContext.drcId != null" th:text="#{context.update.popup.title}"></span>
-                    <span v-else th:text="#{context.add.popup.title}"></span>
-                </div>
-            </q-card-section>
-            <q-card-section style="display: flex">
-                    <q-select th:label="#{documentaryResource.context}"
-                              v-model="vueData.newDocumentaryResourceContext.cvaId"
-                              :options="vueData.contextValueList"
-                              option-value="cvaId"
-                              option-label="label"
-                              map-options
-                              emit-value
-                              style="flex:1; margin-right:4px"
-                              @update:model-value="onContextChange">
-                    </q-select>
-                    <q-select
-                            v-if="vueData.newDocumentaryResourceContext.cvaId != null && vueData.filteredContextPossibleValueList.length > 0"
-                            th:label="#{documentaryResource.contextValue}"
-                            v-model="vueData.newDocumentaryResourceContext.cpvId"
-                            :options="[{ cpvId: null, value: '' }, ...vueData.filteredContextPossibleValueList]"
-                            option-value="cpvId"
-                            option-label="value"
-                            map-options
-                            style="flex:1; margin-left:4px"
-                            emit-value>
-                    </q-select>
-            </q-card-section>
-            <q-card-actions align="around">
-                <input type="hidden" name="CTX" :value="vueData['CTX']">
-                <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
-                <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-                       @click="httpPostAjax('_saveDocumentaryResourceContext', vueDataParams(['newDocumentaryResourceContext']));"
-                       color="primary" v-close-popup></q-btn>
-            </q-card-actions>
+            <q-form @submit="saveDocumentaryResourceContext"
+                    class="q-gutter-md">
+                <q-card-section>
+                    <div class="text-h6" style="text-align: center">
+                        <span v-if="vueData.newDocumentaryResourceContext.drcId != null" th:text="#{context.update.popup.title}"></span>
+                        <span v-else th:text="#{context.add.popup.title}"></span>
+                    </div>
+                </q-card-section>
+                <q-card-section>
+                    <vu:grid cols="2">
+                        <vu:select-edit object="newDocumentaryResourceContext" field="cvaId"
+                                        list="contextValueList"
+                                        label="#{documentaryResource.context}"
+                                        @update:model-value="onContextChange()"
+                                        labelField="label"/>
+                        <vu:select-edit v-if="vueData.newDocumentaryResourceContext.cvaId != null && vueData.filteredContextPossibleValueList.length > 0" object="newDocumentaryResourceContext" field="cpvId"
+                                        list="filteredContextPossibleValueList"
+                                        label="#{documentaryResource.contextValue}"
+                                        labelField="value"/>
+                    </vu:grid>
+                </q-card-section>
+                <q-card-actions align="around">
+                    <input type="hidden" name="CTX" :value="vueData['CTX']">
+                    <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                    <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                           color="primary" type="submit"></q-btn>
+                </q-card-actions>
+            </q-form>
         </q-card>
     </q-dialog>
     <q-page-sticky position="bottom-right">

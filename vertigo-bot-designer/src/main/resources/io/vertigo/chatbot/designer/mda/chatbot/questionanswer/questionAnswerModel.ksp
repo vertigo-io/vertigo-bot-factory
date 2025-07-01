@@ -89,7 +89,7 @@ create Association AQuestionAnswerContextContextPossibleValue {
 	fkFieldName : "cpvId"
 
  	dtDefinitionA : DtQuestionAnswerContext
-	type : "*>?"
+	type : "*>1"
 	dtDefinitionB : DtContextPossibleValue
 
 	labelB : "Context possible value id"

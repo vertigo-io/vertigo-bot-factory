@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import io.vertigo.chatbot.domain.DtDefinitions;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -29,14 +32,12 @@ import io.vertigo.chatbot.designer.domain.DocumentaryResourceContext;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm;
 import io.vertigo.chatbot.designer.domain.DocumentaryResourceType;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
-import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.Validate;
-import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 import static io.vertigo.chatbot.commons.ChatbotUtils.MAX_UPLOAD_SIZE;
@@ -203,8 +204,9 @@ public class DocumentDetailController extends AbstractBotCreationController<Docu
          * {@inheritDoc}
          */
         @Override
-        protected void checkMonoFieldConstraints(final DocumentaryResourceContext documentaryResourceContext, final DataField dtField, final DtObjectErrors dtObjectErrors) {
-            super.checkMonoFieldConstraints(documentaryResourceContext, dtField, dtObjectErrors);
+        protected List<DataFieldName<DocumentaryResourceContext>> getFieldsToNullCheck() {
+            return List.of(DtDefinitions.DocumentaryResourceContextFields.cvaId,
+                    DtDefinitions.DocumentaryResourceContextFields.cpvId);
         }
     }
 }

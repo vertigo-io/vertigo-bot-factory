@@ -54,7 +54,7 @@ public final class QuestionAnswerContext implements Entity {
 			primaryIsNavigable = true,
 			primaryRole = "ContextPossibleValue",
 			primaryLabel = "Context possible value id",
-			primaryMultiplicity = "0..1",
+			primaryMultiplicity = "1..1",
 			foreignDtDefinitionName = "DtQuestionAnswerContext",
 			foreignIsNavigable = false,
 			foreignRole = "QuestionAnswerContext",
@@ -128,9 +128,9 @@ public final class QuestionAnswerContext implements Entity {
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Context possible value id'.
-	 * @return Long cpvId
+	 * @return Long cpvId <b>Obligatoire</b>
 	 */
-	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Context possible value id", fkDefinition = "DtContextPossibleValue" )
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Context possible value id", fkDefinition = "DtContextPossibleValue", cardinality = io.vertigo.core.lang.Cardinality.ONE )
 	public Long getCpvId() {
 		return (Long) cpvIdAccessor.getId();
 	}
@@ -138,7 +138,7 @@ public final class QuestionAnswerContext implements Entity {
 	/**
 	 * Champ : FOREIGN_KEY.
 	 * Définit la valeur de la propriété 'Context possible value id'.
-	 * @param cpvId Long
+	 * @param cpvId Long <b>Obligatoire</b>
 	 */
 	public void setCpvId(final Long cpvId) {
 		cpvIdAccessor.setId(cpvId);

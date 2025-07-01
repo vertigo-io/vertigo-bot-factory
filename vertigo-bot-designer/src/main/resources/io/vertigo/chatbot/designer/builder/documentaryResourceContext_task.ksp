@@ -42,3 +42,12 @@ create Task TkRemoveAllDocumentaryResourceContextByCvaId {
              "
 	in cvaId  				{domain : DoId         		cardinality : "1"  }
 }
+
+create Task TkRemoveAllDocumentaryResourceContextByCpvId {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+            delete from documentary_resource_context
+			where cpv_id = #cpvId#
+             "
+	in cpvId  				{domain : DoId         		cardinality : "1"  }
+}

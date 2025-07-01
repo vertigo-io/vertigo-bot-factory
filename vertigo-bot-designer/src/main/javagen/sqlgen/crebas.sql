@@ -779,7 +779,7 @@ create table DOCUMENTARY_RESOURCE_CONTEXT
     DRC_ID      	 NUMERIC     	not null,
     DRE_ID      	 NUMERIC     	not null,
     CVA_ID      	 NUMERIC     	not null,
-    CPV_ID      	 NUMERIC     	,
+    CPV_ID      	 NUMERIC     	not null,
     constraint PK_DOCUMENTARY_RESOURCE_CONTEXT primary key (DRC_ID)
 );
 
@@ -1251,7 +1251,7 @@ create table QUESTION_ANSWER_CONTEXT
     QAC_ID      	 NUMERIC     	not null,
     QA_ID       	 NUMERIC     	not null,
     CVA_ID      	 NUMERIC     	not null,
-    CPV_ID      	 NUMERIC     	,
+    CPV_ID      	 NUMERIC     	not null,
     constraint PK_QUESTION_ANSWER_CONTEXT primary key (QAC_ID)
 );
 

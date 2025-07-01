@@ -50,11 +50,7 @@ public class QuestionAnswerContextServices implements Component {
         questionAnswerContextPAO.removeAllQuestionAnswerContextByCvaId(cvaId);
     }
 
-    public void setAllQuestionAnswerContextCpvIdToNullByCpvId(@SecuredOperation("botContributor") final Chatbot bot, final long cpvId){
-        questionAnswerContextDAO.findAll(Criterions.isEqualTo(DtDefinitions.QuestionAnswerContextFields.cpvId, cpvId), DtListState.of(null))
-                .forEach(questionAnswerContext -> {
-                    questionAnswerContext.setCpvId(null);
-                    saveQuestionAnswerContext(bot, questionAnswerContext);
-                });
+    public void deleteAllQuestionAnswerContextByCpvId(@SecuredOperation("botContributor") final Chatbot bot, final long cpvId){
+        questionAnswerContextPAO.removeAllQuestionAnswerContextByCpvId(cpvId);
     }
 }

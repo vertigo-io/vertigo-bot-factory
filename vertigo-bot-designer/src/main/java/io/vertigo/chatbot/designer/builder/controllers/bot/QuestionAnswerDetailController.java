@@ -1,5 +1,7 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import io.vertigo.chatbot.domain.DtDefinitions;
+import io.vertigo.datamodel.data.definitions.DataFieldName;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -28,13 +31,11 @@ import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswe
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerContextServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerServices;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
-import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.webservice.stereotype.Validate;
-import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
@@ -177,8 +178,9 @@ public class QuestionAnswerDetailController extends AbstractBotCreationControlle
          * {@inheritDoc}
          */
         @Override
-        protected void checkMonoFieldConstraints(final QuestionAnswerContext questionAnswerContext, final DataField dtField, final DtObjectErrors dtObjectErrors) {
-            super.checkMonoFieldConstraints(questionAnswerContext, dtField, dtObjectErrors);
+        protected List<DataFieldName<QuestionAnswerContext>> getFieldsToNullCheck() {
+            return List.of(DtDefinitions.QuestionAnswerContextFields.cvaId,
+                    DtDefinitions.QuestionAnswerContextFields.cpvId);
         }
     }
 }

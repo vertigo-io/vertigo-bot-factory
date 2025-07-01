@@ -13,4 +13,9 @@
         <sqlFile encoding="utf-8" path="/sql/v_3_0/alter_chatbot-763-754.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal"
+               id="Mandatory fields for documentary and qa context CHATBOT-628">
+        <sqlFile encoding="utf-8" path="/sql/v_3_0/alter_chatbot-628.sql" />
+    </changeSet>
+
 </databaseChangeLog>

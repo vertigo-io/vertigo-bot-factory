@@ -50,11 +50,7 @@ public class DocumentaryResourceContextServices implements Component {
         documentaryResourceContextPAO.removeAllDocumentaryResourceContextByCvaId(cvaId);
     }
 
-    public void setAllDocumentaryResourceContextCpvIdToNullByCpvId(@SecuredOperation("botContributor") final Chatbot bot, final long cpvId){
-        documentaryResourceContextDAO.findAll(Criterions.isEqualTo(DtDefinitions.DocumentaryResourceContextFields.cpvId, cpvId), DtListState.of(null))
-                .forEach(documentaryResourceContext -> {
-                    documentaryResourceContext.setCpvId(null);
-                    saveDocumentaryResourceContext(bot, documentaryResourceContext);
-                });
+    public void deleteAllDocumentaryResourceContextByCpvId(@SecuredOperation("botContributor") final Chatbot bot, final long cpvId) {
+        documentaryResourceContextPAO.removeAllDocumentaryResourceContextByCpvId(cpvId);
     }
 }

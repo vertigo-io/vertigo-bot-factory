@@ -44,8 +44,8 @@ public class ContextPossibleValueServices implements Component {
     }
 
     public void deleteContextPossibleValue(@SecuredOperation("botContributor") final Chatbot bot, final Long cpvId) {
-        documentaryResourceContextServices.setAllDocumentaryResourceContextCpvIdToNullByCpvId(bot, cpvId);
-        questionAnswerContextServices.setAllQuestionAnswerContextCpvIdToNullByCpvId(bot, cpvId);
+        documentaryResourceContextServices.deleteAllDocumentaryResourceContextByCpvId(bot, cpvId);
+        questionAnswerContextServices.deleteAllQuestionAnswerContextByCpvId(bot, cpvId);
         contextPossibleValueDAO.delete(cpvId);
     }
 
