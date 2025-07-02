@@ -58,6 +58,7 @@ create DtDefinition DtContextEnvironmentIhm {
 create DtDefinition DtContextEnvironmentValueIhm {
     field cenvalId      {domain: DoId		        label: "Context environment value id"       cardinality:"1"     }
 	field value		    {domain: DoLabel	        label: "Value" 		                        cardinality:"?"     }
+	field displayValue	{domain: DoLabel	        label: "Value with operator" 		        cardinality:"1"     }
 	field cpvId 		{domain: DoId		        label: "Context possible value id"          cardinality:"1"     }
 	field cvaId 		{domain: DoId		        label: "Context value id"                   cardinality:"1"     }
     field label		    {domain: DoLabel	        label: "Context value label" 		        cardinality:"1"     }

@@ -15,6 +15,7 @@ public final class ContextEnvironmentValueIhm implements DataObject {
 
 	private Long cenvalId;
 	private String value;
+	private String displayValue;
 	private Long cpvId;
 	private Long cvaId;
 	private String label;
@@ -55,6 +56,25 @@ public final class ContextEnvironmentValueIhm implements DataObject {
 	 */
 	public void setValue(final String value) {
 		this.value = value;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Value with operator'.
+	 * @return String displayValue <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Value with operator")
+	public String getDisplayValue() {
+		return displayValue;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Value with operator'.
+	 * @param displayValue String <b>Obligatoire</b>
+	 */
+	public void setDisplayValue(final String displayValue) {
+		this.displayValue = displayValue;
 	}
 	
 	/**

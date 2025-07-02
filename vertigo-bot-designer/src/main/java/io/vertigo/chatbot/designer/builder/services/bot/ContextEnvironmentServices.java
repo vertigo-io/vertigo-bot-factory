@@ -94,8 +94,9 @@ public class ContextEnvironmentServices implements Component {
                                     contextEnvironmentValue.contextPossibleValue().get().typeOperator().load();
                                     TypeOperator typeOperator = contextEnvironmentValue.contextPossibleValue().get().typeOperator().get();
                                     String value = contextEnvironmentValue.contextPossibleValue().get().getValue();
-                                    contextEnvironmentValueIhm.setValue(String.format("%s : %s", localeManager.getCurrentLocale().equals(Locale.FRANCE)
+                                    contextEnvironmentValueIhm.setDisplayValue(String.format("%s : %s", localeManager.getCurrentLocale().equals(Locale.FRANCE)
                                             ? typeOperator.getLabelFr() : typeOperator.getLabel(), value));
+                                    contextEnvironmentValueIhm.setValue(value);
                                 }
                                 contextEnvironmentValueIhm.setCvaId(contextEnvironmentValue.getCvaId());
                                 contextEnvironmentValueIhm.setCpvId(contextEnvironmentValue.getCpvId());

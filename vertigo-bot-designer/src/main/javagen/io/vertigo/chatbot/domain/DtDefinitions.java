@@ -646,6 +646,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cenvalId,
 		/** Propriété 'Value'. */
 		value,
+		/** Propriété 'Value with operator'. */
+		displayValue,
 		/** Propriété 'Context possible value id'. */
 		cpvId,
 		/** Propriété 'Context value id'. */

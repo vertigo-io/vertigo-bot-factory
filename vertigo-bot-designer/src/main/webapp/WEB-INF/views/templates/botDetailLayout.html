@@ -45,7 +45,6 @@
 				},
 				
 				selectEnvironment: function () {
-					console.log('select env')
 					if (VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId !== null) {
 						const selectedContexEnvironment = VertigoUi.vueData.contextEnvironments.find(contextEnvironment =>
 								contextEnvironment.cenvId === VertigoUi.componentStates.contextEnvironments.selectedEnvironment.cenvId
@@ -55,7 +54,6 @@
 							selectedContexEnvironment.contextEnvironmentValues.forEach(contextEnvironmentValue => {
 								map[contextEnvironmentValue.label] = contextEnvironmentValue.value
 							})
-							console.log(map)
 							Chatbot.updateContextMap(map)
 						}
 					} else {
