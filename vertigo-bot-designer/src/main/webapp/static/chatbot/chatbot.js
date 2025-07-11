@@ -227,6 +227,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         startJsEvent(eventName) {
+          console.log(eventName)
           if (eventName === 'welcomeTour1') {
             tour.start();
           } else if (eventName === 'welcomeTour2') {

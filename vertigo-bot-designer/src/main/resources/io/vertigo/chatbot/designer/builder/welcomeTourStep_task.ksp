@@ -1,0 +1,49 @@
+package io.vertigo.chatbot.designer.builder.welcomeTourStep
+
+create Task TkFindWelcomeTourStepPreviousNeighbor {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	wts.*
+			from welcome_tour_step wts
+			where wts.tour_id = #tourId# and wts.sequence < #sequence#
+			order by wts.sequence desc
+			limit 1
+             "
+    in tourId  				          {domain : DoId         		                    cardinality : "1"  }
+	in sequence  				      {domain : DoNumber         		                cardinality : "1"  }
+	out step                          {domain : DoDtWelcomeTourStep                     cardinality : "1"  }
+}
+
+create Task TkFindWelcomeTourStepNextNeighbor {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			SELECT 	wts.*
+			from welcome_tour_step wts
+			where wts.tour_id = #tourId# and wts.sequence > #sequence#
+            limit 1 "
+    in tourId  				          {domain : DoId         		                    cardinality : "1"  }
+	in sequence  				      {domain : DoNumber         		                cardinality : "1"  }
+	out step                          {domain : DoDtWelcomeTourStep                     cardinality : "1"  }
+}
+
+create Task TkGetNextWelcomeTourStepSequence {
+    className : "io.vertigo.basics.task.TaskEngineSelect"
+    request : "
+			select coalesce(max(sequence) + 1, 1)
+			from welcome_tour_step wts
+			where wts.tour_id = #tourId#
+             "
+	in tourId  				          {domain : DoId         		         cardinality : "1"  }
+	out nextWelcomeTourStepSequence   {domain : DoNumber                     cardinality : "1"  }
+}
+
+create Task TkReorderWelcomeTourStepAfterStepDelete {
+    className : "io.vertigo.basics.task.TaskEngineProc"
+    request : "
+			update welcome_tour_step
+			set sequence = (sequence - 1)
+			where tour_id = #tourId# and sequence > #deletedSequence#
+             "
+	in tourId  				          {domain : DoId         		         cardinality : "1"  }
+	in deletedSequence  			  {domain : DoNumber         		     cardinality : "1"  }
+}

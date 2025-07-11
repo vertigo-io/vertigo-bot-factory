@@ -2,6 +2,7 @@ package io.vertigo.chatbot.commons.domain;
 
 import io.vertigo.core.lang.Generated;
 import io.vertigo.datamodel.data.model.Entity;
+import io.vertigo.datastore.impl.entitystore.EnumStoreVAccessor;
 import io.vertigo.datamodel.data.model.UID;
 import io.vertigo.datastore.impl.entitystore.StoreVAccessor;
 import io.vertigo.datamodel.data.stereotype.Field;
@@ -16,11 +17,44 @@ public final class WelcomeTourStep implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	private Long welStepId;
-	private String internalStepId;
 	private String text;
 	private String title;
+	private String elementAttachTo;
+	private String advanceOn;
+	private Boolean displayNextButton;
+	private Boolean displayPreviousButton;
 	private Long sequence;
 	private Boolean enabled;
+
+	@io.vertigo.datamodel.data.stereotype.Association(
+			name = "AWelcomeTourStepWelcomeTourStepPlacement",
+			fkFieldName = "elementAttachToPlacement",
+			primaryDtDefinitionName = "DtWelcomeTourStepPlacement",
+			primaryIsNavigable = true,
+			primaryRole = "WelcomeTourStepPlacement",
+			primaryLabel = "Placement",
+			primaryMultiplicity = "1..1",
+			foreignDtDefinitionName = "DtWelcomeTourStep",
+			foreignIsNavigable = false,
+			foreignRole = "WelcomeTourStep",
+			foreignLabel = "WelcomeTourStep",
+			foreignMultiplicity = "0..*")
+	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.WelcomeTourStepPlacement, io.vertigo.chatbot.commons.domain.WelcomeTourStepPlacementEnum> elementAttachToPlacementAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.WelcomeTourStepPlacement.class, "WelcomeTourStepPlacement", io.vertigo.chatbot.commons.domain.WelcomeTourStepPlacementEnum.class);
+
+	@io.vertigo.datamodel.data.stereotype.Association(
+			name = "AWelcomeTourStepWelcomeTourStepAdvanceEvent",
+			fkFieldName = "eventAdvanceOn",
+			primaryDtDefinitionName = "DtWelcomeTourStepAdvanceEvent",
+			primaryIsNavigable = true,
+			primaryRole = "WelcomeTourStepAdvanceEvent",
+			primaryLabel = "Event to advance on",
+			primaryMultiplicity = "0..1",
+			foreignDtDefinitionName = "DtWelcomeTourStep",
+			foreignIsNavigable = false,
+			foreignRole = "WelcomeTourStep",
+			foreignLabel = "WelcomeTourStep",
+			foreignMultiplicity = "0..*")
+	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.WelcomeTourStepAdvanceEvent, io.vertigo.chatbot.commons.domain.WelcomeTourStepAdvanceEventEnum> eventAdvanceOnAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.WelcomeTourStepAdvanceEvent.class, "WelcomeTourStepAdvanceEvent", io.vertigo.chatbot.commons.domain.WelcomeTourStepAdvanceEventEnum.class);
 
 	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AWelcomeTourWelcomeTourSteps",
@@ -64,25 +98,6 @@ public final class WelcomeTourStep implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Internal step id'.
-	 * @return String internalStepId <b>Obligatoire</b>
-	 */
-	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Internal step id")
-	public String getInternalStepId() {
-		return internalStepId;
-	}
-
-	/**
-	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Internal step id'.
-	 * @param internalStepId String <b>Obligatoire</b>
-	 */
-	public void setInternalStepId(final String internalStepId) {
-		this.internalStepId = internalStepId;
-	}
-	
-	/**
-	 * Champ : DATA.
 	 * Récupère la valeur de la propriété 'Text'.
 	 * @return String text <b>Obligatoire</b>
 	 */
@@ -117,6 +132,82 @@ public final class WelcomeTourStep implements Entity {
 	 */
 	public void setTitle(final String title) {
 		this.title = title;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Element attached to'.
+	 * @return String elementAttachTo <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Element attached to")
+	public String getElementAttachTo() {
+		return elementAttachTo;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Element attached to'.
+	 * @param elementAttachTo String <b>Obligatoire</b>
+	 */
+	public void setElementAttachTo(final String elementAttachTo) {
+		this.elementAttachTo = elementAttachTo;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Advance on'.
+	 * @return String advanceOn
+	 */
+	@Field(smartType = "STyLabel", label = "Advance on")
+	public String getAdvanceOn() {
+		return advanceOn;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Advance on'.
+	 * @param advanceOn String
+	 */
+	public void setAdvanceOn(final String advanceOn) {
+		this.advanceOn = advanceOn;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Display next button'.
+	 * @return Boolean displayNextButton <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Display next button")
+	public Boolean getDisplayNextButton() {
+		return displayNextButton;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Display next button'.
+	 * @param displayNextButton Boolean <b>Obligatoire</b>
+	 */
+	public void setDisplayNextButton(final Boolean displayNextButton) {
+		this.displayNextButton = displayNextButton;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Display previous button'.
+	 * @return Boolean displayPreviousButton <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Display previous button")
+	public Boolean getDisplayPreviousButton() {
+		return displayPreviousButton;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Display previous button'.
+	 * @param displayPreviousButton Boolean <b>Obligatoire</b>
+	 */
+	public void setDisplayPreviousButton(final Boolean displayPreviousButton) {
+		this.displayPreviousButton = displayPreviousButton;
 	}
 	
 	/**
@@ -159,6 +250,44 @@ public final class WelcomeTourStep implements Entity {
 	
 	/**
 	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Placement'.
+	 * @return String elementAttachToPlacement <b>Obligatoire</b>
+	 */
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyCode", label = "Placement", fkDefinition = "DtWelcomeTourStepPlacement", cardinality = io.vertigo.core.lang.Cardinality.ONE )
+	public String getElementAttachToPlacement() {
+		return (String) elementAttachToPlacementAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Placement'.
+	 * @param elementAttachToPlacement String <b>Obligatoire</b>
+	 */
+	public void setElementAttachToPlacement(final String elementAttachToPlacement) {
+		elementAttachToPlacementAccessor.setId(elementAttachToPlacement);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Event to advance on'.
+	 * @return String eventAdvanceOn
+	 */
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyCode", label = "Event to advance on", fkDefinition = "DtWelcomeTourStepAdvanceEvent" )
+	public String getEventAdvanceOn() {
+		return (String) eventAdvanceOnAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Event to advance on'.
+	 * @param eventAdvanceOn String
+	 */
+	public void setEventAdvanceOn(final String eventAdvanceOn) {
+		eventAdvanceOnAccessor.setId(eventAdvanceOn);
+	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
 	 * Récupère la valeur de la propriété 'Tour'.
 	 * @return Long tourId
 	 */
@@ -174,6 +303,22 @@ public final class WelcomeTourStep implements Entity {
 	 */
 	public void setTourId(final Long tourId) {
 		tourIdAccessor.setId(tourId);
+	}
+
+ 	/**
+	 * Association : Event to advance on.
+	 * @return l'accesseur vers la propriété 'Event to advance on'
+	 */
+	public EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.WelcomeTourStepAdvanceEvent, io.vertigo.chatbot.commons.domain.WelcomeTourStepAdvanceEventEnum> welcomeTourStepAdvanceEvent() {
+		return eventAdvanceOnAccessor;
+	}
+
+ 	/**
+	 * Association : Placement.
+	 * @return l'accesseur vers la propriété 'Placement'
+	 */
+	public EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.WelcomeTourStepPlacement, io.vertigo.chatbot.commons.domain.WelcomeTourStepPlacementEnum> welcomeTourStepPlacement() {
+		return elementAttachToPlacementAccessor;
 	}
 
  	/**

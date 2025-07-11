@@ -9,20 +9,44 @@
 <head>
     <title th:text="#{welcometour.steps.title}"></title>
     <script th:inline="javascript">
-        function saveWelcomeTourStep() {
-            VUiPage.httpPostAjax(VertigoUi.vueData.newStep.tourId.toString() + "/_saveWelcomeTourStep", {
-                'welStepId': VertigoUi.vueData.newStep.welStepId,
-                'title': VertigoUi.vueData.newStep.title,
-                'text': VertigoUi.vueData.newStep.text,
-                'enabled': VertigoUi.vueData.newStep.enabled
-            });
+
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
+
+            saveWelcomeTourStep: function() {
+                VUiPage.httpPostAjax("_saveWelcomeTourStep", this.vueDataParams(['newStep']), {
+                    onSuccess: function() {
+                        this.$refs.welcomeTourStepDialog.hide();
+                    }
+                });
+            },
+            moveStep: function(stepId, moveUp) {
+                VUiPage.httpPostAjax("_moveStep", {
+                    'stepId': stepId,
+                    'moveUp': moveUp
+                });
+            },
         }
     </script>
 </head>
 
 <body>
-<section layout:fragment="content-actions">
-
+<section th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" layout:fragment="content-actions">
+    <vu:include-data object="tour" field="welId" />
+    <q-btn color="primary" round icon="add" th:aria-label="#{action.add}" th:title="#{action.add}"
+           @click="vueData.newStep.welStepId = null;
+                   vueData.newStep.tourId = vueData.tour.welId;
+                   vueData.newStep.text = null;
+                   vueData.newStep.title = null;
+                   vueData.newStep.elementAttachTo = null;
+                   vueData.newStep.elementAttachToPlacement = null;
+                   vueData.newStep.advanceOn = null;
+                   vueData.newStep.eventAdvanceOn = null;
+                   vueData.newStep.displayNextButton = true;
+                   vueData.newStep.displayPreviousButton = true;
+                   vueData.newStep.enabled = null;
+                   $refs.welcomeTourStepDialog.show()">
+    </q-btn>
 </section>
 
 <section layout:fragment="content">
@@ -35,22 +59,36 @@
 
     <vu:include-data-primitive key="locale"/>
     <vu:include-data object="bot" field="botId" />
-
+    <vu:popup-ajax action="_deleteWelcomeTourStep" vModel="showDeleteWelcomeTourStepPopup" th:message="#{welcometour.step.delete.popup.message}"
+                   th:confirm="#{action.delete}" dataName="welStepId" ></vu:popup-ajax>
     <vu:table th:title="#{welcometour.steps.title}" list="steps" componentId="steps" sortBy="id" :binary-state-sort="true">
         <vu:slot th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" name="actions_slot">
+            <q-btn color="primary" v-if="props.row.sequence !== 1" round icon="arrow_upward" th:aria-label="#{action.move.up}" th:title="#{action.move.up}"
+                   @click="moveStep(props.row.welStepId, true)">
+            </q-btn>
+            <q-btn color="primary"  v-if="props.row.sequence < vueData.steps.length" round icon="arrow_downward" th:aria-label="#{action.move.down}" th:title="#{action.move.down}"
+                   @click="moveStep(props.row.welStepId, false)">
+            </q-btn>
             <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:title="#{action.update}"
                    @click="vueData.newStep.welStepId = props.row.welStepId;
                        vueData.newStep.tourId = props.row.tourId;
-                       vueData.newStep.internalStepId = props.row.internalStepId;
                        vueData.newStep.title = props.row.title;
                        vueData.newStep.text = props.row.text;
-                       vueData.newStep.sequence = props.row.sequence;
+                       vueData.newStep.elementAttachTo = props.row.elementAttachTo;
+                       vueData.newStep.elementAttachToPlacement = props.row.elementAttachToPlacement;
+                       vueData.newStep.advanceOn = props.row.advanceOn;
+                       vueData.newStep.eventAdvanceOn = props.row.eventAdvanceOn;
+                       vueData.newStep.displayNextButton = props.row.displayNextButton;
+                       vueData.newStep.displayPreviousButton = props.row.displayPreviousButton;
                        vueData.newStep.enabled = props.row.enabled;
+                       vueData.newStep.sequence = props.row.sequence;
                        $refs.welcomeTourStepDialog.show()"></q-btn>
+            <q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
+                   @click="componentStates.welStepId = props.row.welStepId;
+                           componentStates.showDeleteWelcomeTourStepPopup.shown = true">
+            </q-btn>
         </vu:slot>
-        <vu:include-data object="steps" field="welStepId" />
-        <vu:include-data object="steps" field="tourId" />
-        <vu:column field="internalStepId"/>
+        <vu:include-data object="steps" field="*" />
         <vu:column field="title"/>
         <vu:column field="text"/>
         <vu:column field="sequence"/>
@@ -60,36 +98,73 @@
         </vu:column>
     </vu:table>
     <th:block th:with="viewMode='edit'">
-        <q-dialog ref="welcomeTourStepDialog" >
+        <q-dialog ref="welcomeTourStepDialog" @hide="delete uiMessageStack.objectFieldErrors.newStep">
+            <vu:include-data object="welcomeTourStepPlacement" field="*" />
+            <vu:include-data object="welcomeTourStepAdvanceEvent" field="*" />
             <vu:include-data object="newStep" field="welStepId" modifiable="true" />
             <vu:include-data object="newStep" field="tourId" modifiable="true" />
-            <vu:include-data object="newStep" field="internalStepId" modifiable="true" />
-            <vu:include-data object="newStep" field="sequence" modifiable="true" />
+            <vu:include-data object="newStep" field="elementAttachTo" modifiable="true" />
+            <vu:include-data object="newStep" field="elementAttachToPlacement" modifiable="true" />
+            <vu:include-data object="newStep" field="advanceOn" modifiable="true" />
+            <vu:include-data object="newStep" field="eventAdvanceOn" modifiable="true" />
+            <vu:include-data object="newStep" field="displayNextButton" modifiable="true" />
+            <vu:include-data object="newStep" field="displayPreviousButton" modifiable="true" />
             <vu:include-data object="newStep" field="enabled" modifiable="true" />
-            <q-card>
-                <q-card-section style="width: 700px; max-width: 80vw;">
-                    <div class="text-h6">
-                        <span th:text="#{welcometour.step.update}"></span>
-                    </div>
-                </q-card-section>
-                <q-card-section>
-                    <vu:text-field object="newStep" field="title"/>
-                </q-card-section>
-                <q-card-section>
-                    <vu:text-field object="newStep" field="text"/>
-                </q-card-section>
-                <q-card-section>
-                    <vu:label-edit object="newStep" field="enabled">
-                        <q-toggle left-label v-model="vueData.newStep.enabled"></q-toggle>
-                    </vu:label-edit>
-                </q-card-section>
-
-                <q-card-actions align="around">
-                    <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
-                    <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-                           @click="httpPostAjax(vueData.newStep.tourId + '/_saveWelcomeTourStep', vueDataParams(['newStep']), {onSuccess: $refs.welcomeTourStepDialog.hide})"
-                           color="primary" v-close-popup></q-btn>
-                </q-card-actions>
+            <vu:include-data object="newStep" field="sequence" modifiable="true" />
+            <q-card style="width: 40rem; max-width: 40rem!important;">
+                <q-form @submit="saveWelcomeTourStep" class="q-gutter-md">
+                    <q-card-section>
+                        <div class="text-h6">
+                            <span v-if="vueData.newStep.welStepId !== null" th:text="#{welcometour.step.update}"></span>
+                            <span v-else th:text="#{welcometour.step.add}"></span>
+                        </div>
+                    </q-card-section>
+                    <q-card-section>
+                        <vu:label-edit object="newStep" field="enabled">
+                            <q-input v-model="vueData.newStep.enabled" name="vContext[newStep][enabled]" class="hidden" ></q-input>
+                            <q-toggle left-label v-model="vueData.newStep.enabled"></q-toggle>
+                        </vu:label-edit>
+                    </q-card-section>
+                    <q-card-section>
+                        <vu:grid cols="2">
+                            <vu:text-field object="newStep" field="title"/>
+                            <vu:text-field object="newStep" field="text"/>
+                        </vu:grid>
+                    </q-card-section>
+                    <q-card-section>
+                        <vu:grid cols="2">
+                            <vu:text-field object="newStep" field="elementAttachTo"/>
+                            <vu:select-edit object="newStep" field="elementAttachToPlacement"
+                                            list="welcomeTourStepPlacement"
+                                            labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"/>
+                        </vu:grid>
+                    </q-card-section>
+                    <q-card-section>
+                        <vu:grid cols="2">
+                            <vu:label object="newStep" field="displayPreviousButton">
+                                <q-input v-model="vueData.newStep.displayPreviousButton" name="vContext[newStep][displayPreviousButton]" class="hidden" ></q-input>
+                                <q-toggle v-model="vueData.newStep.displayPreviousButton"></q-toggle>
+                            </vu:label>
+                            <vu:label object="newStep" field="displayNextButton">
+                                <q-input v-model="vueData.newStep.displayNextButton" name="vContext[newStep][displayNextButton]" class="hidden" ></q-input>
+                                <q-toggle v-model="vueData.newStep.displayNextButton"></q-toggle>
+                            </vu:label>
+                        </vu:grid>
+                    </q-card-section>
+                    <q-card-section>
+                        <span class="text-subtitle2" th:text="#{welcometour.step.advance.complement}"></span>
+                        <vu:grid cols="2">
+                            <vu:text-field object="newStep" field="advanceOn"/>
+                            <vu:select-edit object="newStep" field="eventAdvanceOn"
+                                            list="welcomeTourStepAdvanceEvent"
+                                            labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"/>
+                        </vu:grid>
+                    </q-card-section>
+                    <q-card-actions align="around">
+                        <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                        <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}" color="primary" type="submit"></q-btn>
+                    </q-card-actions>
+                </q-form>
             </q-card>
         </q-dialog>
     </th:block>

@@ -258,7 +258,11 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Objet de données WelcomeTourExport. */
 		WelcomeTourExport(io.vertigo.chatbot.commons.domain.WelcomeTourExport.class),
 		/** Objet de données WelcomeTourStep. */
-		WelcomeTourStep(io.vertigo.chatbot.commons.domain.WelcomeTourStep.class)		;
+		WelcomeTourStep(io.vertigo.chatbot.commons.domain.WelcomeTourStep.class),
+		/** Objet de données WelcomeTourStepAdvanceEvent. */
+		WelcomeTourStepAdvanceEvent(io.vertigo.chatbot.commons.domain.WelcomeTourStepAdvanceEvent.class),
+		/** Objet de données WelcomeTourStepPlacement. */
+		WelcomeTourStepPlacement(io.vertigo.chatbot.commons.domain.WelcomeTourStepPlacement.class)		;
 
 		private final Class<?> clazz;
 
@@ -2055,8 +2059,18 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Technical code'. */
 		technicalCode,
-		/** Propriété 'Shepherd config'. */
-		config,
+		/** Propriété 'Highlight the target element'. */
+		useModalOverlay,
+		/** Propriété 'Display cancel button'. */
+		useCancelIcon,
+		/** Propriété 'Next button label'. */
+		nextButtonLabel,
+		/** Propriété 'Previous button label'. */
+		previousButtonLabel,
+		/** Propriété 'Complete button label'. */
+		completeButtonLabel,
+		/** Propriété 'Steps CSS classes'. */
+		stepsCssClasses,
 		/** Propriété 'Chatbot'. */
 		botId	}
 
@@ -2077,18 +2091,50 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 	public enum WelcomeTourStepFields implements DataFieldName<io.vertigo.chatbot.commons.domain.WelcomeTourStep> {
 		/** Propriété 'Welcome tour step id'. */
 		welStepId,
-		/** Propriété 'Internal step id'. */
-		internalStepId,
 		/** Propriété 'Text'. */
 		text,
 		/** Propriété 'Title'. */
 		title,
+		/** Propriété 'Element attached to'. */
+		elementAttachTo,
+		/** Propriété 'Advance on'. */
+		advanceOn,
+		/** Propriété 'Display next button'. */
+		displayNextButton,
+		/** Propriété 'Display previous button'. */
+		displayPreviousButton,
 		/** Propriété 'Sequence'. */
 		sequence,
 		/** Propriété 'Enabled'. */
 		enabled,
+		/** Propriété 'Placement'. */
+		elementAttachToPlacement,
+		/** Propriété 'Event to advance on'. */
+		eventAdvanceOn,
 		/** Propriété 'Tour'. */
 		tourId	}
+
+	/**
+	 * Enumération des champs de WelcomeTourStepAdvanceEvent.
+	 */
+	public enum WelcomeTourStepAdvanceEventFields implements DataFieldName<io.vertigo.chatbot.commons.domain.WelcomeTourStepAdvanceEvent> {
+		/** Propriété 'Code'. */
+		stepAdvCd,
+		/** Propriété 'Title'. */
+		label,
+		/** Propriété 'TitleFr'. */
+		labelFr	}
+
+	/**
+	 * Enumération des champs de WelcomeTourStepPlacement.
+	 */
+	public enum WelcomeTourStepPlacementFields implements DataFieldName<io.vertigo.chatbot.commons.domain.WelcomeTourStepPlacement> {
+		/** Propriété 'Code'. */
+		stepPlCd,
+		/** Propriété 'Title'. */
+		label,
+		/** Propriété 'TitleFr'. */
+		labelFr	}
 
 	/** {@inheritDoc} */
 	@Override
