@@ -28,4 +28,9 @@
         <sqlFile encoding="utf-8" path="/sql/v_3_0/create_chatbot-779-global-variables.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal"
+               id="Change welcome tour config">
+        <sqlFile encoding="utf-8" path="/sql/v_3_0/alter_chatbot-welcome-tour.sql" />
+    </changeSet>
+
 </databaseChangeLog>

@@ -1,11 +1,5 @@
 package io.vertigo.chatbot.designer.builder.services;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -15,17 +9,15 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.WelcomeTour;
 import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
 import io.vertigo.chatbot.commons.domain.WelcomeTourStep;
-import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
-import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.util.VCollectors;
-import io.vertigo.datastore.filestore.model.FileInfoURI;
-import io.vertigo.datastore.filestore.model.VFile;
+
+import java.util.stream.Collectors;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
@@ -36,36 +28,14 @@ public class WelcomeTourServices implements Component {
 	private WelcomeTourDAO welcomeTourDAO;
 
 	@Inject
-	private DesignerFileServices designerFileServices;
-
-	@Inject
 	private WelcomeTourStepServices welcomeTourStepServices;
 
 	public WelcomeTour findById(final long id)  {
 		return welcomeTourDAO.get(id);
 	}
 
-	public WelcomeTour save (final WelcomeTour welcomeTour, final Optional<FileInfoURI> configFileUri) {
-		List<WelcomeTourStep> steps = new ArrayList<>();
-		if (configFileUri.isPresent()) {
-			if (welcomeTour.getWelId() != null) {
-				welcomeTourStepServices.deleteAllByTourId(welcomeTour.getWelId());
-			}
-			final VFile configFile = designerFileServices.getFileTmp(configFileUri.get());
-			try (final InputStream inputStream = configFile.createInputStream()) {
-				final String configString = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-				welcomeTour.setConfig(configString);
-				steps = welcomeTourStepServices.readStepsFromConfigString(configString);
-			} catch (final IOException e) {
-				throw new VSystemException("Couldn't read welcome tour config file", e);
-			}
-		}
-		final WelcomeTour savedWelcomeTour = welcomeTourDAO.save(welcomeTour);
-		steps.forEach(step -> {
-			step.setTourId(savedWelcomeTour.getWelId());
-			welcomeTourStepServices.save(step);
-		});
-		return savedWelcomeTour;
+	public WelcomeTour save (final WelcomeTour welcomeTour) {
+		return welcomeTourDAO.save(welcomeTour);
 	}
 
 	public void delete (final long id) {
@@ -87,11 +57,93 @@ public class WelcomeTourServices implements Component {
 			final WelcomeTourExport welcomeTourExport = new WelcomeTourExport();
 			welcomeTourExport.setTechnicalCode(welcomeTour.getTechnicalCode());
 			welcomeTourExport.setLabel(welcomeTour.getLabel());
-			welcomeTourExport.setConfig(welcomeTour.getConfig() != null ?
-					welcomeTourStepServices.parseFile(welcomeTour.getConfig(), welcomeTour.getWelId()) : null);
+			String config = "{\n" +
+						"useModalOverlay: " + welcomeTour.getUseModalOverlay() + ",\n" +
+						"defaultStepOptions: {\n" +
+						"    cancelIcon: {\n" +
+						"       enabled: " + welcomeTour.getUseCancelIcon() + "\n" +
+						"    },\n" +
+						"    scrollTo: { \n" +
+						"		behavior: 'smooth', \n" +
+						"       block: 'center' \n" +
+						"    }\n" +
+						"},\n" +
+						"steps: [\n" +
+							buildStepsConfig(welcomeTour) + "\n" +
+						"]\n" +
+					"}";
+			welcomeTourExport.setConfig(config);
 			return welcomeTourExport;
 		}).collect(VCollectors.toDtList(WelcomeTourExport.class));
 		LogsUtils.logOK(logs);
 		return welcomeTourExports;
+	}
+
+	private String buildStepsConfig(WelcomeTour welcomeTour) {
+		DtList<WelcomeTourStep> steps = welcomeTourStepServices.findAllStepsByTourId(welcomeTour.getWelId());
+		int size = steps.size();
+		return steps.stream().map(step -> {
+			String stepId =  welcomeTour.getTechnicalCode().toLowerCase() + "_step_" + step.getSequence();
+			String stepConfig =  "{\n" +
+					"  	id: \"" + stepId + "\",\n" +
+					"	title: \"" + step.getTitle() + "\" ,\n" +
+					"	text: \"" + step.getText() + "\",\n" +
+					"	attachTo: {\n" +
+					"		element: document.evaluate('//*[text()=\"" + step.getElementAttachTo() + "\"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue,\n" +
+					"		on: \"" + step.getElementAttachToPlacement().toLowerCase() + "\"\n" +
+					"	},\n";
+					if (welcomeTour.getStepsCssClasses() != null) {
+						stepConfig = stepConfig +
+							"	classes: \"" + welcomeTour.getStepsCssClasses() + "\",\n";
+					}
+					if (step.getAdvanceOn() != null && step.getEventAdvanceOn() != null) {
+						stepConfig = stepConfig +
+							"	advanceOn: {\n" +
+							"		selector: document.evaluate('//*[text()=\"" + step.getAdvanceOn() + "\"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue,\n" +
+							"		event: \"" + step.getEventAdvanceOn().toLowerCase() + "\"\n" +
+							"	},";
+					}
+					if (step.getDisplayPreviousButton() || step.getDisplayNextButton()) {
+						stepConfig = stepConfig + getStepButtons(welcomeTour, step, size);
+					}
+					stepConfig = stepConfig +
+					"	showOn() {\n" +
+					"		return " + step.getEnabled() + "\n" +
+					"	},\n" +
+					"	when: {\n" +
+					"		show: function() {\n" +
+					"			sessionStorage.currentWelcomeTourStep = \"" + stepId + "\";\n" +
+					"		},\n" +
+					"		cancel: function () {\n" +
+					"			sessionStorage.removeItem(\"currentWelcomeTourStep\");\n" +
+					"		}\n" +
+					"	}\n" +
+					"}";
+			return stepConfig;
+		}).collect(Collectors.joining(","));
+	}
+
+
+	private String getStepButtons(WelcomeTour welcomeTour, WelcomeTourStep step, int size) {
+		String buttons = "buttons: [\n";
+		if (step.getDisplayPreviousButton() && step.getSequence() != 1) {
+			buttons = buttons + "{\n" +
+					"				action() {\n" +
+					"					return this.back();\n" +
+					"				},\n" +
+					"				text: \"" + welcomeTour.getPreviousButtonLabel() + "\"\n" +
+					"			},";
+		}
+		if (step.getDisplayNextButton()) {
+			boolean isLastStep = step.getSequence() == size;
+			buttons = buttons + "{\n" +
+					"				action() {\n" +
+					"					return " + (isLastStep ? "this.complete()" : "this.next()") + "\n" +
+					"				},\n" +
+					"				text: \"" + (isLastStep ? welcomeTour.getCompleteButtonLabel() : welcomeTour.getNextButtonLabel()) + "\"\n" +
+					"			}";
+		}
+		buttons = buttons + "],";
+		return buttons;
 	}
 }

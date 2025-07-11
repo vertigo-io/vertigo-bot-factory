@@ -1168,9 +1168,29 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldWelcomeTour$technicalCode,
 	/**
-	 * Shepherd config.
+	 * Highlight the target element.
 	 */
-	fldWelcomeTour$config,
+	fldWelcomeTour$useModalOverlay,
+	/**
+	 * Display cancel button.
+	 */
+	fldWelcomeTour$useCancelIcon,
+	/**
+	 * Next button label.
+	 */
+	fldWelcomeTour$nextButtonLabel,
+	/**
+	 * Previous button label.
+	 */
+	fldWelcomeTour$previousButtonLabel,
+	/**
+	 * Complete button label.
+	 */
+	fldWelcomeTour$completeButtonLabel,
+	/**
+	 * Steps CSS classes.
+	 */
+	fldWelcomeTour$stepsCssClasses,
 	/**
 	 * Chatbot.
 	 */
@@ -1200,10 +1220,6 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldWelcomeTourStep$welStepId,
 	/**
-	 * Internal step id.
-	 */
-	fldWelcomeTourStep$internalStepId,
-	/**
 	 * Text.
 	 */
 	fldWelcomeTourStep$text,
@@ -1211,6 +1227,22 @@ public enum DtResources implements LocaleMessageKey {
 	 * Title.
 	 */
 	fldWelcomeTourStep$title,
+	/**
+	 * Element attached to.
+	 */
+	fldWelcomeTourStep$elementAttachTo,
+	/**
+	 * Advance on.
+	 */
+	fldWelcomeTourStep$advanceOn,
+	/**
+	 * Display next button.
+	 */
+	fldWelcomeTourStep$displayNextButton,
+	/**
+	 * Display previous button.
+	 */
+	fldWelcomeTourStep$displayPreviousButton,
 	/**
 	 * Sequence.
 	 */
@@ -1220,7 +1252,47 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldWelcomeTourStep$enabled,
 	/**
+	 * Placement.
+	 */
+	fldWelcomeTourStep$elementAttachToPlacement,
+	/**
+	 * Event to advance on.
+	 */
+	fldWelcomeTourStep$eventAdvanceOn,
+	/**
 	 * Tour.
 	 */
 	fldWelcomeTourStep$tourId,
+
+	/***********************************************************
+	 * WelcomeTourStepAdvanceEvent.
+	 **********************************************************/
+	/**
+	 * Code.
+	 */
+	fldWelcomeTourStepAdvanceEvent$stepAdvCd,
+	/**
+	 * Title.
+	 */
+	fldWelcomeTourStepAdvanceEvent$label,
+	/**
+	 * TitleFr.
+	 */
+	fldWelcomeTourStepAdvanceEvent$labelFr,
+
+	/***********************************************************
+	 * WelcomeTourStepPlacement.
+	 **********************************************************/
+	/**
+	 * Code.
+	 */
+	fldWelcomeTourStepPlacement$stepPlCd,
+	/**
+	 * Title.
+	 */
+	fldWelcomeTourStepPlacement$label,
+	/**
+	 * TitleFr.
+	 */
+	fldWelcomeTourStepPlacement$labelFr,
 }

@@ -18,7 +18,12 @@ public final class WelcomeTour implements Entity {
 	private Long welId;
 	private String label;
 	private String technicalCode;
-	private String config;
+	private Boolean useModalOverlay;
+	private Boolean useCancelIcon;
+	private String nextButtonLabel;
+	private String previousButtonLabel;
+	private String completeButtonLabel;
+	private String stepsCssClasses;
 
 	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AWelcomeTourChatbot",
@@ -100,21 +105,116 @@ public final class WelcomeTour implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'Shepherd config'.
-	 * @return String config <b>Obligatoire</b>
+	 * Récupère la valeur de la propriété 'Highlight the target element'.
+	 * @return Boolean useModalOverlay <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyText", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Shepherd config")
-	public String getConfig() {
-		return config;
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Highlight the target element")
+	public Boolean getUseModalOverlay() {
+		return useModalOverlay;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'Shepherd config'.
-	 * @param config String <b>Obligatoire</b>
+	 * Définit la valeur de la propriété 'Highlight the target element'.
+	 * @param useModalOverlay Boolean <b>Obligatoire</b>
 	 */
-	public void setConfig(final String config) {
-		this.config = config;
+	public void setUseModalOverlay(final Boolean useModalOverlay) {
+		this.useModalOverlay = useModalOverlay;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Display cancel button'.
+	 * @return Boolean useCancelIcon <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Display cancel button")
+	public Boolean getUseCancelIcon() {
+		return useCancelIcon;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Display cancel button'.
+	 * @param useCancelIcon Boolean <b>Obligatoire</b>
+	 */
+	public void setUseCancelIcon(final Boolean useCancelIcon) {
+		this.useCancelIcon = useCancelIcon;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Next button label'.
+	 * @return String nextButtonLabel <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Next button label")
+	public String getNextButtonLabel() {
+		return nextButtonLabel;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Next button label'.
+	 * @param nextButtonLabel String <b>Obligatoire</b>
+	 */
+	public void setNextButtonLabel(final String nextButtonLabel) {
+		this.nextButtonLabel = nextButtonLabel;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Previous button label'.
+	 * @return String previousButtonLabel <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Previous button label")
+	public String getPreviousButtonLabel() {
+		return previousButtonLabel;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Previous button label'.
+	 * @param previousButtonLabel String <b>Obligatoire</b>
+	 */
+	public void setPreviousButtonLabel(final String previousButtonLabel) {
+		this.previousButtonLabel = previousButtonLabel;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Complete button label'.
+	 * @return String completeButtonLabel <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyLabel", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Complete button label")
+	public String getCompleteButtonLabel() {
+		return completeButtonLabel;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Complete button label'.
+	 * @param completeButtonLabel String <b>Obligatoire</b>
+	 */
+	public void setCompleteButtonLabel(final String completeButtonLabel) {
+		this.completeButtonLabel = completeButtonLabel;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Steps CSS classes'.
+	 * @return String stepsCssClasses
+	 */
+	@Field(smartType = "STyLabel", label = "Steps CSS classes")
+	public String getStepsCssClasses() {
+		return stepsCssClasses;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Steps CSS classes'.
+	 * @param stepsCssClasses String
+	 */
+	public void setStepsCssClasses(final String stepsCssClasses) {
+		this.stepsCssClasses = stepsCssClasses;
 	}
 	
 	/**

@@ -3,6 +3,10 @@ package io.vertigo.chatbot.commons.dao;
 import javax.inject.Inject;
 
 import io.vertigo.core.lang.Generated;
+import io.vertigo.core.node.Node;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
@@ -26,6 +30,68 @@ public final class WelcomeTourStepDAO extends DAO<WelcomeTourStep, java.lang.Lon
 	@Inject
 	public WelcomeTourStepDAO(final EntityStoreManager entityStoreManager, final TaskManager taskManager, final SmartTypeManager smartTypeManager) {
 		super(WelcomeTourStep.class, entityStoreManager, taskManager, smartTypeManager);
+	}
+
+
+	/**
+	 * Creates a taskBuilder.
+	 * @param name  the name of the task
+	 * @return the builder 
+	 */
+	private static TaskBuilder createTaskBuilder(final String name) {
+		final TaskDefinition taskDefinition = Node.getNode().getDefinitionSpace().resolve(name, TaskDefinition.class);
+		return Task.builder(taskDefinition);
+	}
+
+	/**
+	 * Execute la tache TkFindWelcomeTourStepNextNeighbor.
+	 * @param tourId Long
+	 * @param sequence Long
+	 * @return WelcomeTourStep step
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkFindWelcomeTourStepNextNeighbor",
+			request = """
+			SELECT 	wts.*
+			from welcome_tour_step wts
+			where wts.tour_id = #tourId# and wts.sequence > #sequence#
+            limit 1""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtWelcomeTourStep", name = "step")
+	public io.vertigo.chatbot.commons.domain.WelcomeTourStep findWelcomeTourStepNextNeighbor(@io.vertigo.datamodel.task.proxy.TaskInput(name = "tourId", smartType = "STyId") final Long tourId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "sequence", smartType = "STyNumber") final Long sequence) {
+		final Task task = createTaskBuilder("TkFindWelcomeTourStepNextNeighbor")
+				.addValue("tourId", tourId)
+				.addValue("sequence", sequence)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
+	 * Execute la tache TkFindWelcomeTourStepPreviousNeighbor.
+	 * @param tourId Long
+	 * @param sequence Long
+	 * @return WelcomeTourStep step
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkFindWelcomeTourStepPreviousNeighbor",
+			request = """
+			SELECT 	wts.*
+			from welcome_tour_step wts
+			where wts.tour_id = #tourId# and wts.sequence < #sequence#
+			order by wts.sequence desc
+			limit 1""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtWelcomeTourStep", name = "step")
+	public io.vertigo.chatbot.commons.domain.WelcomeTourStep findWelcomeTourStepPreviousNeighbor(@io.vertigo.datamodel.task.proxy.TaskInput(name = "tourId", smartType = "STyId") final Long tourId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "sequence", smartType = "STyNumber") final Long sequence) {
+		final Task task = createTaskBuilder("TkFindWelcomeTourStepPreviousNeighbor")
+				.addValue("tourId", tourId)
+				.addValue("sequence", sequence)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
 	}
 
 }

@@ -4,16 +4,111 @@ create DtDefinition DtWelcomeTour {
 	id welId 		            {domain: DoId		label: "Welcome tour id"                                    }
 	field label 		        {domain: DoLabel 	label: "Label" 			                cardinality : "1"	}
 	field technicalCode 		{domain: DoLabel 	label: "Technical code" 			    cardinality : "1"	}
-	field config			    {domain: DoText		label: "Shepherd config"	 			    cardinality : "1"   }
+	field useModalOverlay 		{domain: DoYesNo 	label: "Highlight the target element" 	cardinality : "1"	}
+	field useCancelIcon 		{domain: DoYesNo 	label: "Display cancel button" 			cardinality : "1"	}
+	field nextButtonLabel       {domain: DoLabel 	label: "Next button label" 			    cardinality : "1"	}
+	field previousButtonLabel   {domain: DoLabel 	label: "Previous button label" 			cardinality : "1"	}
+	field completeButtonLabel   {domain: DoLabel 	label: "Complete button label" 			cardinality : "1"	}
+	field stepsCssClasses       {domain: DoLabel 	label: "Steps CSS classes" 			    cardinality : "?"	}
+}
+
+create DtDefinition DtWelcomeTourStepPlacement {
+	stereotype : "StaticMasterData"
+	id    stepPlCd 		    {domain: DoCode 	label: "Code"}
+	field label 		    {domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field labelFr 		    {domain: DoLabel 	label: "TitleFr" 		cardinality : "1"	}
+	values : `{
+        "AUTO" : {
+            "stepPlCd" : "AUTO",
+            "label" : "Automatic",
+            "labelFr" : "Automatique"
+        },
+        "RIGHT" : {
+            "stepPlCd" : "RIGHT",
+            "label" : "Right",
+            "labelFr" : "A droite"
+        },
+        "LEFT" : {
+            "stepPlCd" : "LEFT",
+            "label" : "Left",
+            "labelFr" : "A gauche"
+        },
+         "TOP" : {
+            "stepPlCd" : "TOP",
+            "label" : "Top",
+            "labelFr" : "En haut"
+        },
+         "BOTTOM" : {
+            "stepPlCd" : "BOTTOM",
+            "label" : "Bottom",
+            "labelFr" : "En bas"
+        }
+    }`
+    sortField : "stepPlCd"
+ 	displayField : "label"
+}
+
+create DtDefinition DtWelcomeTourStepAdvanceEvent {
+	stereotype : "StaticMasterData"
+	id    stepAdvCd 		{domain: DoCode 	label: "Code"                               }
+	field label 		    {domain: DoLabel 	label: "Title" 			cardinality : "1"	}
+	field labelFr 		    {domain: DoLabel 	label: "TitleFr" 		cardinality : "1"	}
+	values : `{
+        "CLICK" : {
+            "stepAdvCd" : "CLICK",
+            "label" : "Click",
+            "labelFr" : "Click"
+        },
+        "FOCUS" : {
+            "stepAdvCd" : "FOCUS",
+            "label" : "Focus",
+            "labelFr" : "Focus"
+        },
+        "SUBMIT" : {
+            "stepAdvCd" : "SUBMIT",
+            "label" : "Submit",
+            "labelFr" : "Soumission formulaire"
+        },
+         "OVER" : {
+            "stepAdvCd" : "OVER",
+            "label" : "Mouse over",
+            "labelFr" : "Survol de la souris"
+        }
+    }`
+    sortField : "stepAdvCd"
+ 	displayField : "label"
 }
 
 create DtDefinition DtWelcomeTourStep {
     id welStepId 		                {domain: DoId		label: "Welcome tour step id"                                   }
-    field internalStepId 		        {domain: DoLabel 	label: "Internal step id" 			                    cardinality : "1"	}
     field text 		                    {domain: DoText 	label: "Text" 			                                cardinality : "1"	}
     field title                         {domain: DoLabel 	label: "Title" 			                                cardinality : "1"	}
+    field elementAttachTo               {domain: DoLabel 	label: "Element attached to" 			                cardinality : "1"	}
+    field advanceOn                     {domain: DoLabel 	label: "Advance on" 			                        cardinality : "?"	}
+    field displayNextButton             {domain: DoYesNo 	label: "Display next button" 			                cardinality : "1"	}
+    field displayPreviousButton         {domain: DoYesNo 	label: "Display previous button" 			            cardinality : "1"	}
     field sequence                      {domain: DoNumber 	label: "Sequence" 			                            cardinality : "1"	}
     field enabled                       {domain: DoYesNo 	label: "Enabled" 			                            cardinality : "1"	}
+}
+
+create Association AWelcomeTourStepWelcomeTourStepPlacement{
+	fkFieldName : "elementAttachToPlacement"
+
+ 	dtDefinitionA : DtWelcomeTourStep
+	type : "*>1"
+	dtDefinitionB : DtWelcomeTourStepPlacement
+
+	labelB : "Placement"
+}
+
+create Association AWelcomeTourStepWelcomeTourStepAdvanceEvent{
+	fkFieldName : "eventAdvanceOn"
+
+ 	dtDefinitionA : DtWelcomeTourStep
+	type : "*>?"
+	dtDefinitionB : DtWelcomeTourStepAdvanceEvent
+
+	labelB : "Event to advance on"
 }
 
 create Association AWelcomeTourChatbot {

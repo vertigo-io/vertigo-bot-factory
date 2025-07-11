@@ -15,22 +15,12 @@
             ...VUiExtensions.methods,
 
             addWelcomeTour: function() {
-                VUiPage.httpPostAjax("_saveWelcomeTour", {
-                    'welIdOpt': VertigoUi.vueData.newWelcomeTour.welId,
-                    'label': VertigoUi.vueData.newWelcomeTour.label,
-                    'technicalCode': VertigoUi.vueData.newWelcomeTour.technicalCode,
-                    'importShepherdConfigFileUri': VertigoUi.vueData.importShepherdConfigFileUri.toString()
+                VUiPage.httpPostAjax("_saveWelcomeTour", this.vueDataParams(['newWelcomeTour']), {
+                    onSuccess: function() {
+                        this.$refs.welcomeTourDialog.hide();
+                    }
                 });
             },
-
-            onRejected: function(rejectedEntries) {
-                let message = VertigoUi.vueData.locale === 'fr_FR' ? 'Le fichier ' + rejectedEntries[0].file.name + ' a été rejeté.'
-                    : 'File ' + rejectedEntries[0].file.name + ' was rejected.';
-                if (rejectedEntries[0].failedPropValidation === 'accept') {
-                    message += VertigoUi.vueData.locale === 'fr_FR' ? ' Le format du fichier n\'est pas accepté' : ' File format isn\'t accepted';
-                }
-                this.dataX.attachmentError = {'show': true, 'message': message};
-            }
         }
 
         function onStart() {
@@ -42,14 +32,19 @@
 
 <body>
 <section th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" layout:fragment="content-actions">
+    <vu:include-data-primitive key="locale"/>
     <q-btn color="primary" round icon="add" th:aria-label="#{action.add}" th:title="#{action.add}"
            @click="vueData.newWelcomeTour.welId = null;
                        vueData.newWelcomeTour.botId = vueData.bot.botId;
                        vueData.newWelcomeTour.label = null;
-                       vueData.newWelcomeTour.technicalCode = null ;
-                       vueData.importShepherdConfigFileUri = [];
+                       vueData.newWelcomeTour.technicalCode = null;
+                       vueData.newWelcomeTour.useModalOverlay = null;
+                       vueData.newWelcomeTour.useCancelIcon = null;
+                       vueData.newWelcomeTour.nextButtonLabel = vueData.locale == 'fr_FR' ? 'Suivant' : 'Next';
+                       vueData.newWelcomeTour.previousButtonLabel = vueData.locale == 'fr_FR' ? 'Précédent' : 'Previous';
+                       vueData.newWelcomeTour.completeButtonLabel = vueData.locale == 'fr_FR' ? 'Terminer' : 'Complete';
+                       vueData.newWelcomeTour.stepsCssClasses = 'sheperd-content'
                        $refs.welcomeTourDialog.show()">
-
     </q-btn>
 </section>
 
@@ -69,15 +64,24 @@
 
         <vu:slot name="actions_slot">
             <q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:title="#{action.update}"
-                   @click="vueData.newWelcomeTour.botId = props.row.botId; vueData.newWelcomeTour.welId = props.row.welId; vueData.newWelcomeTour.label = props.row.label;
-                       vueData.newWelcomeTour.technicalCode = props.row.technicalCode; vueData.importShepherdConfigFileUri = []; $refs.welcomeTourDialog.show()"></q-btn>
+                   @click="vueData.newWelcomeTour.botId = props.row.botId;
+                           vueData.newWelcomeTour.welId = props.row.welId;
+                           vueData.newWelcomeTour.label = props.row.label;
+                           vueData.newWelcomeTour.technicalCode = props.row.technicalCode;
+                           vueData.newWelcomeTour.useModalOverlay = props.row.useModalOverlay;
+                           vueData.newWelcomeTour.useCancelIcon = props.row.useCancelIcon;
+                           vueData.newWelcomeTour.nextButtonLabel = props.row.nextButtonLabel;
+                           vueData.newWelcomeTour.previousButtonLabel = props.row.previousButtonLabel;
+                           vueData.newWelcomeTour.completeButtonLabel = props.row.completeButtonLabel;
+                           vueData.newWelcomeTour.stepsCssClasses = props.row.stepsCssClasses;
+                           $refs.welcomeTourDialog.show()">
+            </q-btn>
             <q-btn th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}" th:title="#{action.delete}"
-                   @click="componentStates.welId = props.row.welId; componentStates.showDeleteWelcomeTourPopup.shown = true"></q-btn>
+                   @click="componentStates.welId = props.row.welId;
+                           componentStates.showDeleteWelcomeTourPopup.shown = true">
+            </q-btn>
         </vu:slot>
-        <vu:include-data object="welcomeTours" field="label" />
-        <vu:include-data object="welcomeTours" field="welId" />
-        <vu:include-data object="welcomeTours" field="botId" />
-        <vu:include-data object="welcomeTours" field="technicalCode" />
+        <vu:include-data object="welcomeTours" field="*" />
         <vu:column style="cursor : pointer;" field="label">
             <a style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
                th::href="|'@{/bot/{id}/welcomeToursSteps/(id=${model.bot.botId})}'+props.row.welId|">
@@ -92,13 +96,19 @@
         </vu:column>
     </vu:table>
     <th:block th:with="viewMode='edit'">
-        <q-dialog ref="welcomeTourDialog">
+        <q-dialog ref="welcomeTourDialog" @hide="delete uiMessageStack.objectFieldErrors.newWelcomeTour">
             <vu:include-data object="newWelcomeTour" field="botId" modifiable="true" />
             <vu:include-data object="newWelcomeTour" field="welId" modifiable="true" />
             <vu:include-data object="newWelcomeTour" field="label" modifiable="true" />
             <vu:include-data object="newWelcomeTour" field="technicalCode"  modifiable="true" />
-            <vu:include-data object="newWelcomeTour" field="config" modifiable="true" />
-            <q-card>
+            <vu:include-data object="newWelcomeTour" field="useModalOverlay"  modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="useCancelIcon"  modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="nextButtonLabel"  modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="previousButtonLabel"  modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="completeButtonLabel"  modifiable="true" />
+            <vu:include-data object="newWelcomeTour" field="stepsCssClasses"  modifiable="true" />
+            <q-card style="width: 45rem">
+                <q-form @submit="addWelcomeTour" class="q-gutter-md">
                 <q-card-section>
                     <div class="text-h6">
                         <span v-if="vueData.newWelcomeTour.welId !== null" th:text="#{extensions.welcometour.update.popup.title}"></span>
@@ -106,27 +116,42 @@
                     </div>
                 </q-card-section>
                 <q-card-section>
-                    <input type="hidden" v-model="vueData.newWelcomeTour.welId" name="vContext[newWelcomeTour][welId]">
-                    <input type="hidden" v-model="vueData.newWelcomeTour.botId" name="vContext[newWelcomeTour][botId]">
-                    <vu:text-field object="newWelcomeTour" field="label"/>
+                    <vu:grid cols="2">
+                        <vu:text-field object="newWelcomeTour" field="label"/>
+                        <vu:text-field object="newWelcomeTour" field="technicalCode"/>
+                    </vu:grid>
                 </q-card-section>
                 <q-card-section>
-                    <vu:text-field object="newWelcomeTour" field="technicalCode"/>
+                    <vu:grid cols="2">
+                        <vu:label object="newWelcomeTour" field="useModalOverlay">
+                            <q-input v-model="vueData.newWelcomeTour.useModalOverlay" name="vContext[newWelcomeTour][useModalOverlay]" class="hidden" ></q-input>
+                            <q-toggle v-model="vueData.newWelcomeTour.useModalOverlay"></q-toggle>
+                        </vu:label>
+                        <vu:label object="newWelcomeTour" field="useCancelIcon">
+                            <q-input v-model="vueData.newWelcomeTour.useCancelIcon" name="vContext[newWelcomeTour][useCancelIcon]" class="hidden" ></q-input>
+                            <q-toggle v-model="vueData.newWelcomeTour.useCancelIcon"></q-toggle>
+                        </vu:label>
+                    </vu:grid>
                 </q-card-section>
                 <q-card-section>
-                    <vu:label-edit object="newWelcomeTour" field="config">
-                        <vu:fileupload th:url="'@{/commons/upload}'" key="importShepherdConfigFileUri" multiple="false" accept=".js" th:with="object=null, field=null"
-                                   @rejected="function (event) { onRejected(event) }" @start="onStart()"/>
-                    </vu:label-edit>
-                    <div v-if="dataX.attachmentError.show" style="background-color: #db2828; margin: 10px; color: white; padding: 10px">{{dataX.attachmentError.message}}</div>
+                    <vu:grid cols="2">
+                        <vu:text-field object="newWelcomeTour" field="previousButtonLabel"/>
+                        <vu:text-field object="newWelcomeTour" field="nextButtonLabel"/>
+                    </vu:grid>
                 </q-card-section>
-
+                    <q-card-section>
+                        <vu:grid cols="2">
+                            <vu:text-field object="newWelcomeTour" field="completeButtonLabel"/>
+                            <vu:text-field object="newWelcomeTour" field="stepsCssClasses"/>
+                        </vu:grid>
+                    </q-card-section>
                 <q-card-actions align="around">
+                    <input type="hidden" name="CTX" :value="vueData['CTX']">
                     <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
                     <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
-                           @click="addWelcomeTour()"
-                           color="primary" v-close-popup></q-btn>
+                           type="submit" color="primary"></q-btn>
                 </q-card-actions>
+                </q-form>
             </q-card>
         </q-dialog>
     </th:block>

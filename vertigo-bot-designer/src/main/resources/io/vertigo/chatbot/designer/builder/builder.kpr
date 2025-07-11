@@ -21,3 +21,4 @@ monitoring_task.ksp
 documentaryResourceContext_task.ksp
 questionAnswerContext_task.ksp
 contextPossibleValue_task.ksp
+welcomeTourStep_task.ksp

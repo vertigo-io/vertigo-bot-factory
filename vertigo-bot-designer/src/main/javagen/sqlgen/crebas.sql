@@ -110,6 +110,8 @@ drop table IF EXISTS WELCOME_TOUR cascade;
 drop sequence IF EXISTS SEQ_WELCOME_TOUR;
 drop table IF EXISTS WELCOME_TOUR_STEP cascade;
 drop sequence IF EXISTS SEQ_WELCOME_TOUR_STEP;
+drop table IF EXISTS WELCOME_TOUR_STEP_ADVANCE_EVENT cascade;
+drop table IF EXISTS WELCOME_TOUR_STEP_PLACEMENT cascade;
 
 
 
@@ -263,6 +265,8 @@ create sequence SEQ_WELCOME_TOUR
 
 create sequence SEQ_WELCOME_TOUR_STEP
 	start with 1000 cache 1; 
+
+
 
 
 -- ============================================================
@@ -1877,7 +1881,12 @@ create table WELCOME_TOUR
     WEL_ID      	 NUMERIC     	not null,
     LABEL       	 VARCHAR(100)	not null,
     TECHNICAL_CODE	 VARCHAR(100)	not null,
-    CONFIG      	 TEXT        	not null,
+    USE_MODAL_OVERLAY	 bool        	not null,
+    USE_CANCEL_ICON	 bool        	not null,
+    NEXT_BUTTON_LABEL	 VARCHAR(100)	not null,
+    PREVIOUS_BUTTON_LABEL	 VARCHAR(100)	not null,
+    COMPLETE_BUTTON_LABEL	 VARCHAR(100)	not null,
+    STEPS_CSS_CLASSES	 VARCHAR(100)	,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_WELCOME_TOUR primary key (WEL_ID)
 );
@@ -1891,8 +1900,23 @@ comment on column WELCOME_TOUR.LABEL is
 comment on column WELCOME_TOUR.TECHNICAL_CODE is
 'Technical code';
 
-comment on column WELCOME_TOUR.CONFIG is
-'Shepherd config';
+comment on column WELCOME_TOUR.USE_MODAL_OVERLAY is
+'Highlight the target element';
+
+comment on column WELCOME_TOUR.USE_CANCEL_ICON is
+'Display cancel button';
+
+comment on column WELCOME_TOUR.NEXT_BUTTON_LABEL is
+'Next button label';
+
+comment on column WELCOME_TOUR.PREVIOUS_BUTTON_LABEL is
+'Previous button label';
+
+comment on column WELCOME_TOUR.COMPLETE_BUTTON_LABEL is
+'Complete button label';
+
+comment on column WELCOME_TOUR.STEPS_CSS_CLASSES is
+'Steps CSS classes';
 
 comment on column WELCOME_TOUR.BOT_ID is
 'Chatbot';
@@ -1903,11 +1927,16 @@ comment on column WELCOME_TOUR.BOT_ID is
 create table WELCOME_TOUR_STEP
 (
     WEL_STEP_ID 	 NUMERIC     	not null,
-    INTERNAL_STEP_ID	 VARCHAR(100)	not null,
     TEXT        	 TEXT        	not null,
     TITLE       	 VARCHAR(100)	not null,
+    ELEMENT_ATTACH_TO	 VARCHAR(100)	not null,
+    ADVANCE_ON  	 VARCHAR(100)	,
+    DISPLAY_NEXT_BUTTON	 bool        	not null,
+    DISPLAY_PREVIOUS_BUTTON	 bool        	not null,
     SEQUENCE    	 NUMERIC     	not null,
     ENABLED     	 bool        	not null,
+    ELEMENT_ATTACH_TO_PLACEMENT	 VARCHAR(100)	not null,
+    EVENT_ADVANCE_ON	 VARCHAR(100)	,
     TOUR_ID     	 NUMERIC     	,
     constraint PK_WELCOME_TOUR_STEP primary key (WEL_STEP_ID)
 );
@@ -1915,14 +1944,23 @@ create table WELCOME_TOUR_STEP
 comment on column WELCOME_TOUR_STEP.WEL_STEP_ID is
 'Welcome tour step id';
 
-comment on column WELCOME_TOUR_STEP.INTERNAL_STEP_ID is
-'Internal step id';
-
 comment on column WELCOME_TOUR_STEP.TEXT is
 'Text';
 
 comment on column WELCOME_TOUR_STEP.TITLE is
 'Title';
+
+comment on column WELCOME_TOUR_STEP.ELEMENT_ATTACH_TO is
+'Element attached to';
+
+comment on column WELCOME_TOUR_STEP.ADVANCE_ON is
+'Advance on';
+
+comment on column WELCOME_TOUR_STEP.DISPLAY_NEXT_BUTTON is
+'Display next button';
+
+comment on column WELCOME_TOUR_STEP.DISPLAY_PREVIOUS_BUTTON is
+'Display previous button';
 
 comment on column WELCOME_TOUR_STEP.SEQUENCE is
 'Sequence';
@@ -1930,8 +1968,54 @@ comment on column WELCOME_TOUR_STEP.SEQUENCE is
 comment on column WELCOME_TOUR_STEP.ENABLED is
 'Enabled';
 
+comment on column WELCOME_TOUR_STEP.ELEMENT_ATTACH_TO_PLACEMENT is
+'Placement';
+
+comment on column WELCOME_TOUR_STEP.EVENT_ADVANCE_ON is
+'Event to advance on';
+
 comment on column WELCOME_TOUR_STEP.TOUR_ID is
 'Tour';
+
+-- ============================================================
+--   Table : WELCOME_TOUR_STEP_ADVANCE_EVENT                                        
+-- ============================================================
+create table WELCOME_TOUR_STEP_ADVANCE_EVENT
+(
+    STEP_ADV_CD 	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_WELCOME_TOUR_STEP_ADVANCE_EVENT primary key (STEP_ADV_CD)
+);
+
+comment on column WELCOME_TOUR_STEP_ADVANCE_EVENT.STEP_ADV_CD is
+'Code';
+
+comment on column WELCOME_TOUR_STEP_ADVANCE_EVENT.LABEL is
+'Title';
+
+comment on column WELCOME_TOUR_STEP_ADVANCE_EVENT.LABEL_FR is
+'TitleFr';
+
+-- ============================================================
+--   Table : WELCOME_TOUR_STEP_PLACEMENT                                        
+-- ============================================================
+create table WELCOME_TOUR_STEP_PLACEMENT
+(
+    STEP_PL_CD  	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_WELCOME_TOUR_STEP_PLACEMENT primary key (STEP_PL_CD)
+);
+
+comment on column WELCOME_TOUR_STEP_PLACEMENT.STEP_PL_CD is
+'Code';
+
+comment on column WELCOME_TOUR_STEP_PLACEMENT.LABEL is
+'Title';
+
+comment on column WELCOME_TOUR_STEP_PLACEMENT.LABEL_FR is
+'TitleFr';
 
 
 alter table ALERTING_EVENT
@@ -2377,6 +2461,18 @@ alter table WELCOME_TOUR
 	references CHATBOT (BOT_ID);
 
 create index A_WELCOME_TOUR_CHATBOT_CHATBOT_FK on WELCOME_TOUR (BOT_ID asc);
+
+alter table WELCOME_TOUR_STEP
+	add constraint FK_A_WELCOME_TOUR_STEP_WELCOME_TOUR_STEP_ADVANCE_EVENT_WELCOME_TOUR_STEP_ADVANCE_EVENT foreign key (EVENT_ADVANCE_ON)
+	references WELCOME_TOUR_STEP_ADVANCE_EVENT (STEP_ADV_CD);
+
+create index A_WELCOME_TOUR_STEP_WELCOME_TOUR_STEP_ADVANCE_EVENT_WELCOME_TOUR_STEP_ADVANCE_EVENT_FK on WELCOME_TOUR_STEP (EVENT_ADVANCE_ON asc);
+
+alter table WELCOME_TOUR_STEP
+	add constraint FK_A_WELCOME_TOUR_STEP_WELCOME_TOUR_STEP_PLACEMENT_WELCOME_TOUR_STEP_PLACEMENT foreign key (ELEMENT_ATTACH_TO_PLACEMENT)
+	references WELCOME_TOUR_STEP_PLACEMENT (STEP_PL_CD);
+
+create index A_WELCOME_TOUR_STEP_WELCOME_TOUR_STEP_PLACEMENT_WELCOME_TOUR_STEP_PLACEMENT_FK on WELCOME_TOUR_STEP (ELEMENT_ATTACH_TO_PLACEMENT asc);
 
 alter table WELCOME_TOUR_STEP
 	add constraint FK_A_WELCOME_TOUR_WELCOME_TOUR_STEPS_WELCOME_TOUR foreign key (TOUR_ID)
