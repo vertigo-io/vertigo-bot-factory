@@ -15,16 +15,7 @@ import io.vertigo.chatbot.commons.domain.ChatbotCustomConfig;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.designer.analytics.multilingual.AnalyticsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.monitoring.MonitoringPAO;
-import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
-import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceServices;
-import io.vertigo.chatbot.designer.builder.services.HistoryServices;
-import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
-import io.vertigo.chatbot.designer.builder.services.JiraSettingServices;
-import io.vertigo.chatbot.designer.builder.services.NodeServices;
-import io.vertigo.chatbot.designer.builder.services.ResponsesButtonServices;
-import io.vertigo.chatbot.designer.builder.services.UnknownSentencesServices;
-import io.vertigo.chatbot.designer.builder.services.UtterTextServices;
-import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
+import io.vertigo.chatbot.designer.builder.services.*;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerCategoryServices;
 import io.vertigo.chatbot.designer.builder.services.questionanswer.QuestionAnswerServices;
 import io.vertigo.chatbot.designer.builder.services.topic.DictionaryEntityServices;
@@ -138,9 +129,6 @@ public class ChatbotServices implements Component {
 	private QuestionAnswerCategoryServices questionAnswerCategoryServices;
 
 	@Inject
-	private ContextPossibleValueServices contextPossibleValueServices;
-
-	@Inject
 	private ContextEnvironmentServices contextEnvironmentServices;
 
 	@Inject
@@ -148,6 +136,9 @@ public class ChatbotServices implements Component {
 
 	@Inject
 	private AlertingEventDAO alertingEventDAO;
+
+	@Inject
+	private GlobalVariablesTypeService globalVariablesTypeService;
 
 	@Inject
 	private LocaleManager localeManager;
@@ -225,6 +216,7 @@ public class ChatbotServices implements Component {
 		historyServices.deleteAllByBotId(bot.getBotId());
 		unknownSentencesServices.deleteAllByBotId(bot.getBotId());
 		welcomeTourServices.deleteAllByBotId(bot.getBotId());
+		globalVariablesTypeService.deleteGlobalVariableTypeByBot(bot);
 		chatbotDAO.delete(bot.getBotId());
 
 		// Delete avatar file reference in bot

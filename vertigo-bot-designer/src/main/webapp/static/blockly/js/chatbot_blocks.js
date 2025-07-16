@@ -1376,6 +1376,80 @@ Blockly.Blocks['cb_card'] = {
             });
     }
 };
+Blockly.Blocks['cb_globalvar'] = {
+    init: function() {
+        this.jsonInit(
+            {
+                "type": "setvar",
+                "message0": "%{BKY_OTHER_GLOBAL_VAR_TITLE} %1 %{BKY_COMMONS_VARIABLE_TITLE} %2 %3 %4 %{BKY_OTHER_GLOBAL_VAR_TYPE_TITLE} %5 %6 %{BKY_OTHER_GLOBAL_VAR_PARAM1_TITLE} %7 %8 %{BKY_OTHER_GLOBAL_VAR_PARAM2_TITLE} %9 %10 %{BKY_OTHER_GLOBAL_VAR_PARAM3_TITLE} %11 %12 %{BKY_OTHER_GLOBAL_VAR_PARAM4_TITLE} %13 %14",
+                "args0": [
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_dropdown",
+                        "name": "typeVar",
+                        "options": varTypeDropdownOptions
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "nameVar",
+                        "text": "%{BKY_COMMONS_SAMPLE_GLOBAL_VAR_VARNAME}",
+                    },
+                    {
+                        "type": "input_dummy",
+                        "align": "CENTRE"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "type",
+                        "text": "%{BKY_COMMONS_SAMPLE_GLOBAL_VAR_TYPE}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "param1",
+                        "text": "%{BKY_COMMONS_SAMPLE_GLOBAL_VAR_PARAM1}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "param2",
+                        "text": "%{BKY_COMMONS_SAMPLE_GLOBAL_VAR_PARAM2}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "param3",
+                        "text": "%{BKY_COMMONS_SAMPLE_GLOBAL_VAR_PARAM3}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "param4",
+                        "text": "%{BKY_COMMONS_SAMPLE_GLOBAL_VAR_PARAM4}"
+                    },
+                    {
+                        "type": "input_dummy"
+                    },
+                ],
+                "previousStatement": "all",
+                "nextStatement": "all",
+                "colour": 160,
+                "tooltip": "",
+                "helpUrl": ""
+            });
+    }
+};
 // *****************************
 // ******CATEGORIE CONFLUENCE*****
 // *****************************

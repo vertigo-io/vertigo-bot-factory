@@ -89,6 +89,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données FontFamily. */
 		FontFamily(io.vertigo.chatbot.commons.domain.FontFamily.class),
+		/** Objet de données GlobalVariable. */
+		GlobalVariable(io.vertigo.chatbot.designer.domain.GlobalVariable.class),
+		/** Objet de données GlobalVariableExport. */
+		GlobalVariableExport(io.vertigo.chatbot.commons.domain.GlobalVariableExport.class),
+		/** Objet de données GlobalVariableType. */
+		GlobalVariableType(io.vertigo.chatbot.designer.domain.GlobalVariableType.class),
 		/** Objet de données Groups. */
 		Groups(io.vertigo.chatbot.designer.domain.commons.Groups.class),
 		/** Objet de données History. */
@@ -382,6 +388,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		questionAnswerList,
 		/** Propriété 'Documentary resources'. */
 		documentaryResources,
+		/** Propriété 'Global variables'. */
+		globalVariables,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -878,6 +886,57 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'TitleFr'. */
 		labelFr	}
+
+	/**
+	 * Enumération des champs de GlobalVariable.
+	 */
+	public enum GlobalVariableFields implements DataFieldName<io.vertigo.chatbot.designer.domain.GlobalVariable> {
+		/** Propriété 'ID'. */
+		glvId,
+		/** Propriété 'Param 1 value'. */
+		param1,
+		/** Propriété 'Param 2 value'. */
+		param2,
+		/** Propriété 'Param 3 value'. */
+		param3,
+		/** Propriété 'Param 4 value'. */
+		param4,
+		/** Propriété 'Global variable value'. */
+		value,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Global variable type'. */
+		gvtId	}
+
+	/**
+	 * Enumération des champs de GlobalVariableExport.
+	 */
+	public enum GlobalVariableExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.GlobalVariableExport> {
+		/** Propriété 'Id'. */
+		id,
+		/** Propriété 'Type'. */
+		type,
+		/** Propriété 'Param 1 value'. */
+		param1,
+		/** Propriété 'Param 2 value'. */
+		param2,
+		/** Propriété 'Param 3 value'. */
+		param3,
+		/** Propriété 'Param 4 value'. */
+		param4,
+		/** Propriété 'Global variable value'. */
+		value	}
+
+	/**
+	 * Enumération des champs de GlobalVariableType.
+	 */
+	public enum GlobalVariableTypeFields implements DataFieldName<io.vertigo.chatbot.designer.domain.GlobalVariableType> {
+		/** Propriété 'ID'. */
+		gvtId,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Chatbot'. */
+		botId	}
 
 	/**
 	 * Enumération des champs de Groups.

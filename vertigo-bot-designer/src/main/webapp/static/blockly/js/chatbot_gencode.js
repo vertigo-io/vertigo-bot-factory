@@ -299,6 +299,17 @@ window.addEventListener('vui-after-page-mounted', function () {
 		let params = VUiExtensions.methods.getBlockParams(block);
 		return "card " + params[2].getValue() + ' ' + params[1].getValue() + formatString(params[0].getValue()) + params[3].getValue() + '\r\n' + Blockly.BotScript.blockToCode(block.getNextBlock());
 	}
+	Blockly.BotScript['cb_globalvar'] = function (block) {
+		let params = VUiExtensions.methods.getBlockParams(block);
+		return "setvar" + formatVariable(params[0].getValue(), params[1].getValue())
+						+ formatString(params[2].getValue())
+						+ formatString(params[3].getValue())
+						+ formatString(params[4].getValue())
+						+ formatString(params[5].getValue())
+						+ formatString(params[6].getValue())
+						+ '\r\n'
+						+ Blockly.BotScript.blockToCode(block.getNextBlock());
+	}
 
 // *****************************
 // *****CATEGORIE CONFLUENCE****

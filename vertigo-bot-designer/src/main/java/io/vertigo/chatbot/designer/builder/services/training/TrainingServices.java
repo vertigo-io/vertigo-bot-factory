@@ -39,7 +39,6 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +49,6 @@ import javax.inject.Inject;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.GsonProvider;
-import io.vertigo.chatbot.commons.JaxrsProvider;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.TrainingDAO;
 import io.vertigo.chatbot.commons.domain.AttachmentExport;
@@ -116,9 +114,6 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 
 	@Inject
 	private TrainingPAO trainingPAO;
-
-	@Inject
-	private JaxrsProvider jaxrsProvider;
 
 	@Inject
 	private NodeServices nodeServices;

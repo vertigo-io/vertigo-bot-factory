@@ -43,6 +43,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		DocumentaryResourceExport(io.vertigo.chatbot.commons.domain.DocumentaryResourceExport.class),
 		/** Objet de données ExecutorConfiguration. */
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
+		/** Objet de données GlobalVariableExport. */
+		GlobalVariableExport(io.vertigo.chatbot.commons.domain.GlobalVariableExport.class),
 		/** Objet de données JiraFieldSettingExport. */
 		JiraFieldSettingExport(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class),
 		/** Objet de données JiraSettingExport. */
@@ -177,6 +179,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		questionAnswerList,
 		/** Propriété 'Documentary resources'. */
 		documentaryResources,
+		/** Propriété 'Global variables'. */
+		globalVariables,
 		/** Propriété 'map Context'. */
 		mapContext	}
 
@@ -325,6 +329,25 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		avatar,
 		/** Propriété 'Additional config for executor'. */
 		customConfig	}
+
+	/**
+	 * Enumération des champs de GlobalVariableExport.
+	 */
+	public enum GlobalVariableExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.GlobalVariableExport> {
+		/** Propriété 'Id'. */
+		id,
+		/** Propriété 'Type'. */
+		type,
+		/** Propriété 'Param 1 value'. */
+		param1,
+		/** Propriété 'Param 2 value'. */
+		param2,
+		/** Propriété 'Param 3 value'. */
+		param3,
+		/** Propriété 'Param 4 value'. */
+		param4,
+		/** Propriété 'Global variable value'. */
+		value	}
 
 	/**
 	 * Enumération des champs de JiraFieldSettingExport.

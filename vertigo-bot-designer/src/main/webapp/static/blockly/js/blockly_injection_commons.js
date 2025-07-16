@@ -142,6 +142,10 @@ window.addEventListener('vui-after-page-mounted', function () {
                         {
                             "kind": "block",
                             "type": "cb_card"
+                        },
+                        {
+                            "kind": "block",
+                            "type": "cb_globalvar"
                         }
                     ]
                 },

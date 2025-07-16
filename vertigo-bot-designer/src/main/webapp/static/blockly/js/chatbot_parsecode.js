@@ -423,6 +423,21 @@ window.addEventListener('vui-after-page-mounted', function () {
 			params[2] = question
 			params[3] = fieldType
 		}
+		else if (resolvedType.type === 'cb_globalvar') {
+			let lienParams = paramsFormatVariable(params[0])
+			let type = params[1]
+			let param1 = params[2]
+			let param2 = params[3]
+			let param3 = params[4]
+			let param4 = params[5]
+			params[0] = lienParams[0]
+			params[1] = lienParams[1]
+			params[2] = type
+			params[3] = param1
+			params[4] = param2
+			params[5] = param3
+			params[6] = param4
+		}
 
 		for (let i = 0; i < params.length; i++) {
 			blockParams[i].setValue(params[i]);

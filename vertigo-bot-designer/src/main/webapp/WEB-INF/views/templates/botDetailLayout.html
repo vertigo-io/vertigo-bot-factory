@@ -185,7 +185,8 @@
 		</q-item>
 		<q-item tag="a" th::active="${tab == 'informations'}" active-class="active" th:href="@{/bot/{id}(id=${model.bot.botId})}" th:text="#{layout.information}"></q-item>
 		<q-item tag="a" th::active="${tab == 'context'}" active-class="active" th:href="@{/bot/{id}/contextList/(id=${model.bot.botId})}" th:text="#{layout.context}"></q-item>
-
+		<q-item tag="a" th::active="${tab == 'globalvariables'}" active-class="active" th:href="@{/bot/{id}/globalVariable/(id=${model.bot.botId})}" th:text="#{layout.globalVariables}"></q-item><q-separator></q-separator>
+		
 		<q-separator></q-separator>
 
 		<q-item header class="item-icon">
