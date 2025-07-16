@@ -11,6 +11,7 @@ import io.vertigo.chatbot.commons.multilingual.context.ContextValueMultilingualR
 import io.vertigo.chatbot.commons.multilingual.dictionaryEntities.DictionaryEntityMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.export.ExportMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.globalVariables.GlobalVariablesMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.kindTopic.KindTopicMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.model.ModelMultilingualResources;
 import io.vertigo.chatbot.commons.multilingual.person.PersonMultilingualResources;
@@ -62,5 +63,6 @@ public class ChatbotLocaleInitializer implements ComponentInitializer {
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.attachment.AttachmentMultilingualResources", AttachmentMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.queAnsCategory.QueAnsCategoryMultilingualResources", QueAnsCategoryMultilingualResources.values());
 		localeManager.add("io.vertigo.chatbot.commons.multilingual.questionAnswer.QuestionAnswerMultilingualResources", QuestionAnswerMultilingualResources.values());
+		localeManager.add("io.vertigo.chatbot.commons.multilingual.globalVariables.GlobalVariablesMultilingualResources", GlobalVariablesMultilingualResources.values());
 	}
 }

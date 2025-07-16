@@ -13,6 +13,7 @@ mda/chatbot/questionanswer/questionAnswerModel.ksp
 mda/chatbot/history.ksp
 mda/chatbot/extensions.ksp
 mda/chatbot/documentaryResourcesModel.ksp
+mda/chatbot/globalVariable.ksp
 
 admin/person.ksp
 admin/monitoring.ksp

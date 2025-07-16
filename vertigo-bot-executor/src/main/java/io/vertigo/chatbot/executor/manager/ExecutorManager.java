@@ -160,6 +160,7 @@ public class ExecutorManager implements Manager, Activeable {
         executorConfigManager.updateMapContext(botExport);
         executorConfigManager.updateQuestionAnswerList(botExport);
         executorConfigManager.updateDocumentaryResourceList(botExport);
+        executorConfigManager.updateGlobalVariables(botExport);
         botManager.updateConfig(topics, logs, trainingDataLogs);
 
     }
@@ -230,6 +231,25 @@ public class ExecutorManager implements Manager, Activeable {
                         .orElseThrow(() -> new VSystemException("Welcome tour with label " + welcomeTourLabel + " doesn't exist"));
 
         return welcomeTourExport.getTechnicalCode();
+    }
+
+    public String getGlobalVariableValue(final String type, String param1, String param2, String param3, String param4) {
+        if (executorConfigManager.getGlobalVariableMap().containsKey(type)) {
+            List<GlobalVariableExport> matchingRules = executorConfigManager.getGlobalVariableMap().get(type).stream()
+                    .filter(globalVariableExport ->
+                            param1 == null || globalVariableExport.getParam1() == null || globalVariableExport.getParam1().equals(param1))
+                    .filter(globalVariableExport ->
+                            param2 == null || globalVariableExport.getParam2() == null || globalVariableExport.getParam2().equals(param2))
+                    .filter(globalVariableExport ->
+                            param3 == null || globalVariableExport.getParam3() == null || globalVariableExport.getParam3().equals(param3))
+                    .filter(globalVariableExport ->
+                            param4 == null || globalVariableExport.getParam4() == null || globalVariableExport.getParam4().equals(param4))
+                    .sorted(Comparator.comparing(GlobalVariableExport::getId))
+                    .toList();
+            return matchingRules.isEmpty() ? null : matchingRules.get(0).getValue();
+        } else {
+            return null;
+        }
     }
 
     public String getBotEmailAddress() {

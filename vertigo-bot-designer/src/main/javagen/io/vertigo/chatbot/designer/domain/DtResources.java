@@ -233,6 +233,58 @@ public enum DtResources implements LocaleMessageKey {
 	fldDocumentaryResourceType$labelFr,
 
 	/***********************************************************
+	 * GlobalVariable.
+	 **********************************************************/
+	/**
+	 * ID.
+	 */
+	fldGlobalVariable$glvId,
+	/**
+	 * Param 1 value.
+	 */
+	fldGlobalVariable$param1,
+	/**
+	 * Param 2 value.
+	 */
+	fldGlobalVariable$param2,
+	/**
+	 * Param 3 value.
+	 */
+	fldGlobalVariable$param3,
+	/**
+	 * Param 4 value.
+	 */
+	fldGlobalVariable$param4,
+	/**
+	 * Global variable value.
+	 */
+	fldGlobalVariable$value,
+	/**
+	 * Chatbot.
+	 */
+	fldGlobalVariable$botId,
+	/**
+	 * Global variable type.
+	 */
+	fldGlobalVariable$gvtId,
+
+	/***********************************************************
+	 * GlobalVariableType.
+	 **********************************************************/
+	/**
+	 * ID.
+	 */
+	fldGlobalVariableType$gvtId,
+	/**
+	 * Label.
+	 */
+	fldGlobalVariableType$label,
+	/**
+	 * Chatbot.
+	 */
+	fldGlobalVariableType$botId,
+
+	/***********************************************************
 	 * History.
 	 **********************************************************/
 	/**

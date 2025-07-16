@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{templates/botDetailLayout}" th:with="tab=globalvariables"
+>
+<head>
+    <title th:text="#{globalVariable.title}"></title>
+    <script th:inline="javascript">
+        VUiExtensions.dataX = {
+            ...VUiExtensions.dataX,
+            gvtId: null
+        }
+        VUiExtensions.methods= {
+            ...VUiExtensions.methods,
+            getGlobalVariableTypeLabel: function(gvtId) {
+                let globalVariableType = VertigoUi.vueData.globalVariableTypes.find(globalType => globalType.gvtId === gvtId);
+                if (globalVariableType !== undefined) {
+                    return globalVariableType.label;
+                } else {
+                    return globalVariableType;
+                }
+            },
+            saveGlobalVariableType: function() {
+                this.httpPostAjax('_saveGlobalVariableType', this.vueDataParams(['newGlobalVariableType']),
+                    {
+                        onSuccess: function() {
+                            this.$refs.newGlobalVariableTypeDialog.hide();
+                        }
+                    });
+            },
+            saveGlobalVariable: function() {
+                this.httpPostAjax('_saveGlobalVariable', this.vueDataParams(['newGlobalVariable']),
+                    {
+                        onSuccess: function() {
+                            this.$refs.newGlobalVariableDialog.hide();
+                        }
+                    });
+            },
+            filter: function () {
+                VUiPage.vueData.filteredGlobalVariables = VUiPage.vueData.globalVariables
+                if (VUiPage.dataX.gvtId !== null) {
+                    VUiPage.vueData.filteredGlobalVariables = VUiPage.vueData.filteredGlobalVariables
+                        .filter(globalVariable => {
+                            return globalVariable.gvtId === VUiPage.dataX.gvtId
+                        })
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<section layout:fragment="content-actions">
+</section>
+
+<section layout:fragment="content">
+    <vu:include-data object="globalVariables" field="*" />
+    <vu:include-data object="filteredGlobalVariables" field="*" />
+    <vu:include-data object="globalVariableTypes" field="*" />
+    <vu:include-data object="bot" field="botId" />
+    <vu:include-data object="newGlobalVariableType" field="gvtId" modifiable="true"/>
+    <vu:include-data object="newGlobalVariableType" field="botId" modifiable="true"/>
+    <vu:include-data object="newGlobalVariableType" field="label" modifiable="true"/>
+    <vu:include-data object="newGlobalVariable" field="glvId" modifiable="true"/>
+    <vu:include-data object="newGlobalVariable" field="gvtId" modifiable="true"/>
+    <vu:include-data object="newGlobalVariable" field="botId" modifiable="true"/>
+    <vu:include-data object="newGlobalVariable" field="param1" modifiable="true"/>
+    <vu:include-data object="newGlobalVariable" field="param2" modifiable="true"/>
+    <vu:include-data object="newGlobalVariable" field="param3" modifiable="true"/>
+    <vu:include-data object="newGlobalVariable" field="param4" modifiable="true"/>
+    <vu:include-data object="newGlobalVariable" field="value" modifiable="true"/>
+    <vu:popup-ajax action="_deleteGlobalVariableType" vModel="showDeleteGlobalVariableTypePopup"
+                   th:message="#{globalVariableType.delete.popup.message}"
+                   th:confirm="#{action.delete}" dataName="gvtId"></vu:popup-ajax>
+    <vu:popup-ajax action="_deleteGlobalVariable" vModel="showDeleteGlobalVariablePopup"
+                   th:message="#{globalVariable.delete.popup.message}"
+                   th:confirm="#{action.delete}" dataName="glvId"></vu:popup-ajax>
+    <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
+        <span class="text-primary" style="flex-grow: 2">[[#{globalVariable.title}]]</span>
+        <q-icon name="help_outlined" size="2rem"/>
+        <q-tooltip content-class="q-tooltip-text">[[#{globalVariable.tooltip}]]</q-tooltip>
+    </div>
+    <vu:table th:title="#{globalVariableType.table.title}" list="globalVariableTypes" componentId="globalVariableTypes">
+        <vu:slot name="top_right_slot">
+            <q-btn class="fab-block" round color="primary" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}"
+                   @click="vueData.newGlobalVariableType.gvtId = null;
+                           vueData.newGlobalVariableType.label = null;
+                           vueData.newGlobalVariableType.botId = vueData.bot.botId;
+                            $refs.newGlobalVariableTypeDialog.show()"></q-btn>
+        </vu:slot>
+        <vu:slot name="actions_slot">
+            <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}"
+                   th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                   th:title="#{action.update}"
+                   @click="vueData.newGlobalVariableType.botId = props.row.botId;
+                       vueData.newGlobalVariableType.label = props.row.label;
+                       vueData.newGlobalVariableType.gvtId = props.row.gvtId;
+                       $refs.newGlobalVariableTypeDialog.show()"></q-btn>
+            <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}"
+                   th:title="#{action.delete}"
+                   th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                   @click="componentStates.gvtId = props.row.gvtId; componentStates.showDeleteGlobalVariableTypePopup.shown = true"></q-btn>
+        </vu:slot>
+        <vu:column field="label"/>
+    </vu:table>
+    <vu:table th:title="#{globalVariable.table.title}" list="filteredGlobalVariables" componentId="globalVariables">
+        <vu:slot name="top_right_slot">
+            <q-select style="width: 13rem; margin-right: 2rem;"
+                      clearable
+                      filled
+                      map-options
+                      emit-value
+                      v-model="dataX.gvtId"
+                      :options="vueData.globalVariableTypes"
+                      option-value="gvtId"
+                      th:label="#{globalVariable.selection.type}"
+                      @update:model-value="filter();"
+                      stack-label>
+            </q-select>
+            <q-btn class="fab-block" round color="primary" icon="add" th:aria-label="#{action.add}" th:title="#{action.add}"
+                   @click="vueData.newGlobalVariable.glvId = null;
+                           vueData.newGlobalVariable.gvtId = null;
+                           vueData.newGlobalVariable.param1 = null;
+                           vueData.newGlobalVariable.param2 = null;
+                           vueData.newGlobalVariable.param3 = null;
+                           vueData.newGlobalVariable.param4 = null;
+                           vueData.newGlobalVariable.value = null;
+                           vueData.newGlobalVariable.botId = vueData.bot.botId;
+                            $refs.newGlobalVariableDialog.show()"></q-btn>
+            <q-form method="post" action="_exportGlobalVariables">
+                <input type="hidden" name="CTX" :value="vueData['CTX']">
+                <q-btn class="fab-block" round color="primary" size="md" icon="file_upload" th:aria-label="#{action.export}" th:title="#{action.export}"
+                   type="submit"></q-btn>
+            </q-form>
+            <q-btn class="fab-block" round color="primary" size="md" icon="file_download" th:aria-label="#{action.import}" th:title="#{action.import}"
+                   @click="$refs.importGlobalVariables.show()"></q-btn>
+        </vu:slot>
+        <vu:slot name="actions_slot">
+            <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}"
+                   th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                   th:title="#{action.update}"
+                   @click="vueData.newGlobalVariable.botId = props.row.botId;
+                       vueData.newGlobalVariable.glvId = props.row.glvId;
+                       vueData.newGlobalVariable.gvtId = props.row.gvtId;
+                       vueData.newGlobalVariable.param1 = props.row.param1;
+                       vueData.newGlobalVariable.param2 = props.row.param2;
+                       vueData.newGlobalVariable.param3 = props.row.param3;
+                       vueData.newGlobalVariable.param4 = props.row.param4;
+                       vueData.newGlobalVariable.value = props.row.value;
+                       $refs.newGlobalVariableDialog.show()"></q-btn>
+            <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}"
+                   th:title="#{action.delete}"
+                   th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                   @click="componentStates.glvId = props.row.glvId; componentStates.showDeleteGlobalVariablePopup.shown = true"></q-btn>
+        </vu:slot>
+        <vu:column field="gvtId">
+            <vu:content>
+                <span v-html="getGlobalVariableTypeLabel(props.row.gvtId)"></span>
+            </vu:content>
+        </vu:column>
+        <vu:column field="param1"/>
+        <vu:column field="param2"/>
+        <vu:column field="param3"/>
+        <vu:column field="param4"/>
+        <vu:column field="value"/>
+    </vu:table>
+    <th:block th:with="viewMode='edit'">
+        <q-dialog ref="newGlobalVariableTypeDialog" @hide="delete uiMessageStack.objectFieldErrors.newGlobalVariableType">
+            <q-card style="width: 400px;">
+                <q-form @submit="saveGlobalVariableType"
+                        class="q-gutter-md">
+                    <q-card-section>
+                        <div class="text-h6" style="text-align: center">
+                            <span v-if="vueData.newGlobalVariableType.gvtId != null" th:text="#{globalVariableType.update.popup.title}"></span>
+                            <span v-else th:text="#{globalVariableType.add.popup.title}"></span>
+                        </div>
+                    </q-card-section>
+                    <q-card-section>
+                        <vu:text-field object="newGlobalVariableType" field="label"/>
+                    </q-card-section>
+                    <q-card-actions align="around">
+                        <input type="hidden" name="CTX" :value="vueData['CTX']">
+                        <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                        <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                               color="primary" type="submit"></q-btn>
+                    </q-card-actions>
+                </q-form>
+            </q-card>
+        </q-dialog>
+
+        <q-dialog ref="newGlobalVariableDialog" @hide="delete uiMessageStack.objectFieldErrors.newGlobalVariable">
+            <q-card style="width: 400px;">
+                <q-form @submit="saveGlobalVariable"
+                        class="q-gutter-md">
+                    <q-card-section>
+                        <div class="text-h6" style="text-align: center">
+                            <span v-if="vueData.newGlobalVariable.glvId != null" th:text="#{globalVariable.update.popup.title}"></span>
+                            <span v-else th:text="#{globalVariable.add.popup.title}"></span>
+                        </div>
+                    </q-card-section>
+                    <q-card-section>
+                        <vu:select-edit object="newGlobalVariable" field="gvtId"
+                                        list="globalVariableTypes"
+                                        labelField="label"/>
+                    </q-card-section>
+                    <q-card-section>
+                        <vu:grid cols="2">
+                            <vu:text-field object="newGlobalVariable" field="param1"/>
+                            <vu:text-field object="newGlobalVariable" field="param2"/>
+                        </vu:grid>
+                    </q-card-section>
+                    <q-card-section>
+                        <vu:grid cols="2">
+                            <vu:text-field object="newGlobalVariable" field="param3"/>
+                            <vu:text-field object="newGlobalVariable" field="param4"/>
+                        </vu:grid>
+                    </q-card-section>
+                    <q-card-section>
+                        <vu:text-field object="newGlobalVariable" field="value" />
+                    </q-card-section>
+                    <q-card-actions align="around">
+                        <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                        <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                               color="primary" type="submit"></q-btn>
+                    </q-card-actions>
+                </q-form>
+            </q-card>
+        </q-dialog>
+
+        <q-dialog ref="importGlobalVariables" th:with="viewMode='edit'" >
+            <q-card>
+                <q-form method="post" action="_importGlobalVariables">
+                    <q-card-section>
+                        <div class="text-h6" th:text="#{globalVariable.import.popup.title}"></div>
+                    </q-card-section>
+
+                    <vu:include-data-primitive key="locale" />
+                    <vu:fileupload th:url="'@{/commons/upload}'" key="importGlobalVariablesFileUri" multiple="false"/>
+
+                    <q-card-actions align="around">
+                        <input type="hidden" name="CTX" :value="vueData['CTX']">
+                        <q-btn flat th:label="#{action.cancel}" color="primary" v-close-popup ></q-btn>
+                        <q-btn type="submit" th:title="#{action.confirm}" th:label="#{action.confirm}" th:aria-label="#{action.confirm}" color="primary" ></q-btn>
+                    </q-card-actions>
+                </q-form>
+            </q-card>
+        </q-dialog>
+    </th:block>
+
+</section>
+
+</body>
+</html>

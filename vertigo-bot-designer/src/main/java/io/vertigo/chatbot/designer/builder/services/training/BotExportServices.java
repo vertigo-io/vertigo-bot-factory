@@ -15,12 +15,7 @@ import io.vertigo.chatbot.commons.domain.FontFamily;
 import io.vertigo.chatbot.commons.domain.FontFamilyEnum;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
 import io.vertigo.chatbot.commons.domain.topic.KindTopicEnum;
-import io.vertigo.chatbot.designer.builder.services.ConfluenceSettingServices;
-import io.vertigo.chatbot.designer.builder.services.DocumentaryResourceServices;
-import io.vertigo.chatbot.designer.builder.services.FontFamilyServices;
-import io.vertigo.chatbot.designer.builder.services.JiraFieldSettingServices;
-import io.vertigo.chatbot.designer.builder.services.JiraSettingServices;
-import io.vertigo.chatbot.designer.builder.services.WelcomeTourServices;
+import io.vertigo.chatbot.designer.builder.services.*;
 import io.vertigo.chatbot.designer.builder.services.bot.AttachmentServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.bot.ContextValueServices;
@@ -64,6 +59,9 @@ public class BotExportServices implements Component {
 	private DocumentaryResourceServices documentaryResourceServices;
 
 	@Inject
+	private GlobalVariableExportService globalVariableExportService;
+
+	@Inject
 	private FontFamilyServices fontFamilyServices;
 
 	public BotExport exportBot(final Chatbot bot, final StringBuilder logs,
@@ -83,6 +81,7 @@ public class BotExportServices implements Component {
 		export.setJiraFieldSetting(jiraFieldSettingServices.exportJiraSetting(bot));
 		export.setQuestionAnswerList(questionAnswerServices.exportActiveQuestionsAnswers(bot, logs));
 		export.setDocumentaryResources(documentaryResourceServices.exportDocumentaryResourceByBot(bot, logs));
+		export.setGlobalVariables(globalVariableExportService.exportGlobalVariables(bot, logs));
 		return export;
 	}
 

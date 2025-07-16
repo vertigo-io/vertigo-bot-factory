@@ -23,4 +23,9 @@
         <sqlFile encoding="utf-8" path="/sql/v_3_0/alter_chatbot-context-environment-values.sql" />
     </changeSet>
 
+    <changeSet author="cmarechal"
+               id="Add global variables for CHATBOT-779">
+        <sqlFile encoding="utf-8" path="/sql/v_3_0/create_chatbot-779-global-variables.sql" />
+    </changeSet>
+
 </databaseChangeLog>

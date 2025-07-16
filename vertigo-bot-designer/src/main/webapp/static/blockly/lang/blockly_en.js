@@ -96,6 +96,12 @@ Blockly.Msg["COMMONS_SAMPLE_CARD_SENTENCE"] = "The second most populated city";
 Blockly.Msg["COMMONS_SAMPLE_CARD_CODE"] = "LYON";
 Blockly.Msg["COMMONS_SAMPLE_CARD_MESS_TITLE"] = "Lyon";
 Blockly.Msg["COMMONS_SAMPLE_LINK_CITY"] = "https://www.larousse.fr/encyclopedie/data/images/1314872-Lyon.jpg";
+Blockly.Msg["COMMONS_SAMPLE_GLOBAL_VAR_VARNAME"] = "mail";
+Blockly.Msg["COMMONS_SAMPLE_GLOBAL_VAR_TYPE"] = "mail";
+Blockly.Msg["COMMONS_SAMPLE_GLOBAL_VAR_PARAM1"] = "param1";
+Blockly.Msg["COMMONS_SAMPLE_GLOBAL_VAR_PARAM2"] = "param2";
+Blockly.Msg["COMMONS_SAMPLE_GLOBAL_VAR_PARAM3"] = "param3";
+Blockly.Msg["COMMONS_SAMPLE_GLOBAL_VAR_PARAM4"] = "param4";
 
 // *****************************
 // **** CATEGORIE SEQUENCE *****
@@ -190,6 +196,12 @@ Blockly.Msg["OTHER_CARD_TITLE"] = "Card";
 Blockly.Msg["OTHER_CARD_CODE"] = "Card code:";
 Blockly.Msg["OTHER_CARD_MESS_TITLE"] = "Card title:";
 Blockly.Msg["OTHER_CARD_LINK_TITLE"] = "Image link:";
+Blockly.Msg["OTHER_GLOBAL_VAR_TITLE"] = "Global variable";
+Blockly.Msg["OTHER_GLOBAL_VAR_TYPE_TITLE"] = "Type";
+Blockly.Msg["OTHER_GLOBAL_VAR_PARAM1_TITLE"] = "Param 1";
+Blockly.Msg["OTHER_GLOBAL_VAR_PARAM2_TITLE"] = "Param 2";
+Blockly.Msg["OTHER_GLOBAL_VAR_PARAM3_TITLE"] = "Param 3";
+Blockly.Msg["OTHER_GLOBAL_VAR_PARAM4_TITLE"] = "Param 4";
 
 // *****************************
 // *** CATEGORIE CONFLUENCE ****

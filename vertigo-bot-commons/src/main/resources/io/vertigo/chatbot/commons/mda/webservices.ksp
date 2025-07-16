@@ -15,6 +15,7 @@ create DtDefinition DtBotExport {
 	field jiraFieldSetting			{domain: DoDtJiraFieldSettingExport 	label: "Jira fields setting" 	    cardinality : "*"}
 	field questionAnswerList 		{domain: DoText                       	label: "Questions answers List" 	cardinality : "1"}
 	field documentaryResources      {domain: DoText                         label: "Documentary resources"      cardinality : "1"}
+	field globalVariables           {domain: DoText                         label: "Global variables"           cardinality : "1"}
    	field mapContext				{domain: DoText 						label: "map Context" 				cardinality : "1"}
 }
 
@@ -170,4 +171,14 @@ create DtDefinition DtDocumentaryResourceExport {
 	field   attId               {domain: DoId                           label: "Attachment Id"        cardinality : "1" }
 	field   fileName            {domain: DoLabel                        label: "File name"                              }
 	field contextValues			{domain: DoDtContextValueExport         label: "Context values" 	  cardinality : "*" }
+}
+
+create DtDefinition DtGlobalVariableExport {
+    field 	id 			    {domain: DoId 	    label: "Id" 			                    cardinality: "1"	}
+    field 	type 			{domain: DoLabel 	label: "Type" 			                    cardinality: "1"	}
+	field 	param1 			{domain: DoLabel 	label: "Param 1 value" 			            cardinality: "1"	}
+	field 	param2		    {domain: DoText 	label: "Param 2 value" 		    		    cardinality: "?"    }
+	field 	param3     		{domain: DoText   	label: "Param 3 value" 		             	cardinality: "?" 	}
+	field 	param4     		{domain: DoText   	label: "Param 4 value" 		             	cardinality: "?" 	}
+	field 	value     		{domain: DoText   	label: "Global variable value" 		        cardinality: "1"	}
 }

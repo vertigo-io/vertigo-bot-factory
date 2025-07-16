@@ -1,0 +1,45 @@
+package io.vertigo.chatbot.designer.domain
+
+create DtDefinition DtGlobalVariableType {
+	id 	    gvtId			    {domain: DoId 		    label: "ID"					    				                }
+	field 	label 			    {domain: DoLabel 	    label: "Label" 			                    cardinality: "1"	}
+}
+
+create Association AGlobalVariableTypeChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtGlobalVariableType
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create DtDefinition DtGlobalVariable {
+	id		glvId			{domain: DoId 		label: "ID"					    				                }
+	field 	param1 			{domain: DoLabel 	label: "Param 1 value" 			            cardinality: "1"	}
+	field 	param2		    {domain: DoText 	label: "Param 2 value" 		    		    cardinality: "?"    }
+	field 	param3     		{domain: DoText   	label: "Param 3 value" 		             	cardinality: "?" 	}
+	field 	param4     		{domain: DoText   	label: "Param 4 value" 		             	cardinality: "?" 	}
+	field 	value     		{domain: DoText   	label: "Global variable value" 		        cardinality: "1"	}
+}
+
+create Association AGlobalVariableChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtGlobalVariable
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create Association AGlobalVariableGlobalVariableType {
+	fkFieldName : "gvtId"
+
+ 	dtDefinitionA : DtGlobalVariable
+	type : "*>1"
+	dtDefinitionB : DtGlobalVariableType
+
+	labelB : "Global variable type"
+}

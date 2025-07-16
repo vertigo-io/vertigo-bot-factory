@@ -29,12 +29,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -67,6 +62,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private File attachmentDataFile;
 	private File documentaryResourceDataFile;
 	private File documentaryResourceFileDataFile;
+	private File globalVariableDataFile;
 	private ExecutorGlobalConfig executorGlobalConfig;
 	private HashMap<String, String> contextMap;
 	private DtList<QuestionAnswerExport> questionAnswerList;
@@ -74,6 +70,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	private Map<String, String> mapAttachments;
 	private Map<String, String> mapDocumentaryResourceFiles;
 	private DtList<DocumentaryResourceExport> documentaryResources;
+	private Map<String, List<GlobalVariableExport>> globalVariables;
 
 
 	@Inject
@@ -186,6 +183,21 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		} else {
 			mapDocumentaryResourceFiles = new HashMap<>();
 		}
+
+		final String globalVariablesFileDataFilePath = paramManager.getOptionalParam("GLOBAL_VARIABLES_FILE_DATA_FILE")
+				.map(Param::getValueAsString).orElse("/tmp/globalVariablesFileConfig");
+		globalVariableDataFile = new File(globalVariablesFileDataFilePath);
+		if (globalVariableDataFile.exists() && globalVariableDataFile.canRead()) {
+			try {
+				final String json = FileUtils.readFileToString(globalVariableDataFile, StandardCharsets.UTF_8);
+				globalVariables = mapGlobalVariable(jsonEngine.fromJson(json, new TypeToken<DtList<GlobalVariableExport>>(){}.getType()));
+			} catch (final Exception e) {
+				throw new VSystemException(e, "Error reading parameter file {0}", documentaryResourceFileDataFilePath);
+			}
+
+		} else {
+			globalVariables = new HashMap<>();
+		}
 	}
 
 	@Override
@@ -248,6 +260,10 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 	public HashMap<String, String> getContextMap() {
 		return contextMap;
+	}
+
+	public Map<String, List<GlobalVariableExport>> getGlobalVariableMap() {
+		return globalVariables;
 	}
 
 	public DtList<QuestionAnswerExport> getQuestionAnswerList(final Map<String, String> context) {
@@ -340,6 +356,29 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", attachmentDataFile.getPath());
 		}
+	}
+
+	public void updateGlobalVariables(final BotExport botExport) {
+		try {
+			FileUtils.writeStringToFile(globalVariableDataFile, botExport.getGlobalVariables(), StandardCharsets.UTF_8);
+			globalVariables = mapGlobalVariable(jsonEngine.fromJson(botExport.getGlobalVariables(), new TypeToken<DtList<GlobalVariableExport>>(){}.getType()));
+		} catch (final IOException e) {
+			throw new VSystemException(e, "Error writing parameter file {0}", attachmentDataFile.getPath());
+		}
+	}
+
+	private Map<String, List<GlobalVariableExport>> mapGlobalVariable(DtList<GlobalVariableExport> globalVariableExportDtList) {
+		final Map<String, List<GlobalVariableExport>> map = new HashMap<>();
+		for (final GlobalVariableExport globalVariableExport : globalVariableExportDtList) {
+			if (!map.containsKey(globalVariableExport.getType())) {
+				map.put(globalVariableExport.getType(), new ArrayList<>(List.of(globalVariableExport)));
+			} else {
+				List<GlobalVariableExport> list = map.get(globalVariableExport.getType());
+				list.add(globalVariableExport);
+				map.put(globalVariableExport.getType(), list);
+			}
+		}
+		return map;
 	}
 
 	public VFile getAttachment(final String label) {

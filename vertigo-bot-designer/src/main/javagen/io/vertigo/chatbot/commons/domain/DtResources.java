@@ -172,6 +172,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldBotExport$documentaryResources,
 	/**
+	 * Global variables.
+	 */
+	fldBotExport$globalVariables,
+	/**
 	 * map Context.
 	 */
 	fldBotExport$mapContext,
@@ -651,6 +655,38 @@ public enum DtResources implements LocaleMessageKey {
 	 * TitleFr.
 	 */
 	fldFontFamily$labelFr,
+
+	/***********************************************************
+	 * GlobalVariableExport.
+	 **********************************************************/
+	/**
+	 * Id.
+	 */
+	fldGlobalVariableExport$id,
+	/**
+	 * Type.
+	 */
+	fldGlobalVariableExport$type,
+	/**
+	 * Param 1 value.
+	 */
+	fldGlobalVariableExport$param1,
+	/**
+	 * Param 2 value.
+	 */
+	fldGlobalVariableExport$param2,
+	/**
+	 * Param 3 value.
+	 */
+	fldGlobalVariableExport$param3,
+	/**
+	 * Param 4 value.
+	 */
+	fldGlobalVariableExport$param4,
+	/**
+	 * Global variable value.
+	 */
+	fldGlobalVariableExport$value,
 
 	/***********************************************************
 	 * JiraField.
