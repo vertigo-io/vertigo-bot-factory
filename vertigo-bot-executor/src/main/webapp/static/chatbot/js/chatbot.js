@@ -173,7 +173,7 @@ const chatbotComponent = {
             if (sessionStorage.contextMap) {
                 this.contextMap = JSON.parse(sessionStorage.contextMap);
             } else {
-                axios.post(this.botConfig.botUrl + '/context').then(contextResponse => {
+                await axios.post(this.botConfig.botUrl + '/context').then(contextResponse => {
                     this.contextMap = contextResponse.data;
                     sessionStorage.setItem('contextMap', JSON.stringify(this.contextMap));
                 });
