@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
       let _initParam = null;
       let _button = null;
       let _iframe = null;
-      let contextMap = {}
+      let contextMap = undefined;
 
       function _createFlottingButton() {
         _button = document.createElement('div');
@@ -127,7 +127,29 @@ document.addEventListener('DOMContentLoaded', function () {
               }
             }
             else if (event.data.context) {
-              event.ports[0].postMessage({result : contextMap});
+              if (contextMap) {
+                event.ports[0].postMessage({result: contextMap});
+              } else {
+                const map = {};
+                event.data.context.forEach(function (value, key) {
+                  if (key === 'url' && value === '') {
+                    map[key] = window.location.href;
+                  } else {
+                    const element = document.evaluate(value, document, null, XPathResult.ANY_TYPE, null);
+                    const node = element.iterateNext();
+                    if (node !== null) {
+                      let elementValue;
+                      if (node.attributes['value']) {
+                        elementValue = node.attributes['value'].value;
+                      } else {
+                        elementValue = node.innerHTML;
+                      }
+                      map[key] = elementValue;
+                    }
+                  }
+                });
+                event.ports[0].postMessage({result: map});
+              }
             }
             else if (event.data.pictureModal) {
               Chatbot.showPictureModal(event.data.pictureModal);

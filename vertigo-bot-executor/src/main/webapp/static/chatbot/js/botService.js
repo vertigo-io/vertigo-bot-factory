@@ -34,7 +34,7 @@ function startConversation() {
             restoreFromSessionStorage();
             _scrollToBottom();
         } else {
-            axios.post(chatbot.botConfig.botUrl + '/start', {message: null, metadatas: {'context': chatbot.ontext}})
+            axios.post(chatbot.botConfig.botUrl + '/start', {message: null, metadatas: {'context': chatbot.context}})
                 .then(setParametersFromHttpResponse)
                 .catch(() => {
                     // error
