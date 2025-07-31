@@ -369,13 +369,15 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 	private Map<String, List<GlobalVariableExport>> mapGlobalVariable(DtList<GlobalVariableExport> globalVariableExportDtList) {
 		final Map<String, List<GlobalVariableExport>> map = new HashMap<>();
-		for (final GlobalVariableExport globalVariableExport : globalVariableExportDtList) {
-			if (!map.containsKey(globalVariableExport.getType())) {
-				map.put(globalVariableExport.getType(), new ArrayList<>(List.of(globalVariableExport)));
-			} else {
-				List<GlobalVariableExport> list = map.get(globalVariableExport.getType());
-				list.add(globalVariableExport);
-				map.put(globalVariableExport.getType(), list);
+		if (globalVariableExportDtList != null) {
+			for (final GlobalVariableExport globalVariableExport : globalVariableExportDtList) {
+				if (!map.containsKey(globalVariableExport.getType())) {
+					map.put(globalVariableExport.getType(), new ArrayList<>(List.of(globalVariableExport)));
+				} else {
+					List<GlobalVariableExport> list = map.get(globalVariableExport.getType());
+					list.add(globalVariableExport);
+					map.put(globalVariableExport.getType(), list);
+				}
 			}
 		}
 		return map;
