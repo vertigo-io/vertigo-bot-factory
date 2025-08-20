@@ -151,15 +151,6 @@
                             </vu:label>
                         </vu:grid>
                     </q-card-section>
-                    <q-card-section>
-                        <span class="text-subtitle2" th:text="#{welcometour.step.advance.complement}"></span>
-                        <vu:grid cols="2">
-                            <vu:text-field object="newStep" field="advanceOn"/>
-                            <vu:select-edit object="newStep" field="eventAdvanceOn"
-                                            list="welcomeTourStepAdvanceEvent"
-                                            labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"/>
-                        </vu:grid>
-                    </q-card-section>
                     <q-card-actions align="around">
                         <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
                         <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}" color="primary" type="submit"></q-btn>
