@@ -10,12 +10,14 @@ import io.vertigo.chatbot.commons.domain.WelcomeTour;
 import io.vertigo.chatbot.commons.domain.WelcomeTourExport;
 import io.vertigo.chatbot.commons.domain.WelcomeTourStep;
 import io.vertigo.chatbot.domain.DtDefinitions;
+import io.vertigo.commons.impl.codec.html.HtmlCodec;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.util.VCollectors;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.util.stream.Collectors;
 
@@ -86,10 +88,10 @@ public class WelcomeTourServices implements Component {
 			String stepId =  welcomeTour.getTechnicalCode().toLowerCase() + "_step_" + step.getSequence();
 			String stepConfig =  "{\n" +
 					"  	id: \"" + stepId + "\",\n" +
-					"	title: \"" + step.getTitle() + "\" ,\n" +
-					"	text: \"" + step.getText() + "\",\n" +
+					"	title: \"" + StringEscapeUtils.escapeEcmaScript(step.getTitle()) + "\" ,\n" +
+					"	text: \"" + StringEscapeUtils.escapeEcmaScript(step.getText()) + "\",\n" +
 					"	attachTo: {\n" +
-					"		element: document.evaluate('//*[text()=\"" + step.getElementAttachTo() + "\"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue,\n" +
+					"		element: document.evaluate('//*[text()=\"" + StringEscapeUtils.escapeEcmaScript(step.getElementAttachTo()) + "\"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue,\n" +
 					"		on: \"" + step.getElementAttachToPlacement().toLowerCase() + "\"\n" +
 					"	},\n";
 					if (welcomeTour.getStepsCssClasses() != null) {
@@ -131,7 +133,7 @@ public class WelcomeTourServices implements Component {
 					"				action() {\n" +
 					"					return this.back();\n" +
 					"				},\n" +
-					"				text: \"" + welcomeTour.getPreviousButtonLabel() + "\"\n" +
+					"				text: \"" + StringEscapeUtils.escapeEcmaScript(welcomeTour.getPreviousButtonLabel()) + "\"\n" +
 					"			},";
 		}
 		if (step.getDisplayNextButton()) {
@@ -140,7 +142,7 @@ public class WelcomeTourServices implements Component {
 					"				action() {\n" +
 					"					return " + (isLastStep ? "this.complete()" : "this.next()") + "\n" +
 					"				},\n" +
-					"				text: \"" + (isLastStep ? welcomeTour.getCompleteButtonLabel() : welcomeTour.getNextButtonLabel()) + "\"\n" +
+					"				text: \"" + StringEscapeUtils.escapeEcmaScript(isLastStep ? welcomeTour.getCompleteButtonLabel() : welcomeTour.getNextButtonLabel()) + "\"\n" +
 					"			}";
 		}
 		buttons = buttons + "],";
