@@ -18,7 +18,7 @@ Blockly.Msg["CAT_TEMPLATE"] = "Blocks templates";
 // *****************************
 //       *** variable ***
 Blockly.Msg["COMMONS_VARIABLE_TITLE"] = "Variable:";
-Blockly.Msg["COMMONS_VARIABLE_NAMEVAR"] = "nom_var";
+Blockly.Msg["COMMONS_VARIABLE_NAMEVAR"] = "nomvar";
 Blockly.Msg["COMMONS_VARIABLE_TYPE_LOCAL"] = "type local";
 Blockly.Msg["COMMONS_VARIABLE_TYPE_GLOBAL"] = "type global";
 Blockly.Msg["COMMONS_VARIABLE_TYPE_CONTEXT"] = "type context";

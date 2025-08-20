@@ -18,7 +18,7 @@ Blockly.Msg["CAT_TEMPLATE"] = "Modèle de blocs";
 // *****************************
 //       *** variable ***
 Blockly.Msg["COMMONS_VARIABLE_TITLE"] = "Variable:";
-Blockly.Msg["COMMONS_VARIABLE_NAMEVAR"] = "nom_var";
+Blockly.Msg["COMMONS_VARIABLE_NAMEVAR"] = "nomvar";
 Blockly.Msg["COMMONS_VARIABLE_TYPE_LOCAL"] = "type locale";
 Blockly.Msg["COMMONS_VARIABLE_TYPE_GLOBAL"] = "type globale";
 Blockly.Msg["COMMONS_VARIABLE_TYPE_CONTEXT"] = "type contexte";
@@ -68,8 +68,8 @@ Blockly.Msg["COMMONS_SAMPLE_MAIL_PJ"] = "pj";
 Blockly.Msg["COMMONS_SAMPLE_MAIL_RECIPIENT"] = "var_destinataire";
 Blockly.Msg["COMMONS_SAMPLE_TOPIC_CODE"] = "CODE";
 Blockly.Msg["COMMONS_SAMPLE_TOPIC_QUEST"] = "En quoi d'autre puis-je vous aider ?";
-Blockly.Msg["COMMONS_SAMPLE_COPY_SRC"] = "nom_var_source";
-Blockly.Msg["COMMONS_SAMPLE_COPY_TARGET"] = "nom_var_cible";
+Blockly.Msg["COMMONS_SAMPLE_COPY_SRC"] = "nomvarsource";
+Blockly.Msg["COMMONS_SAMPLE_COPY_TARGET"] = "nomvarcible";
 Blockly.Msg["COMMONS_SAMPLE_INPUTSTRING_QUEST"] = "Combien en avez-vous ?";
 Blockly.Msg["COMMONS_SAMPLE_INPUTSTRING_VAR"] = "quantite";
 Blockly.Msg["COMMONS_SAMPLE_RATING_VAR"] = "note";
