@@ -22,7 +22,11 @@ public class BtNodeGlobalVariableProvider implements Component {
 
     public BTNode setGlobalVariableValue(final BlackBoard bb, final String keyTemplate, String type, String param1, String param2, String param3, String param4) {
         try {
-            return set(bb, keyTemplate, executorManager.getGlobalVariableValue(type, param1, param2, param3, param4));
+            return set(bb, keyTemplate, executorManager.getGlobalVariableValue(type,
+                    param1 != null ? bb.format(param1) : null,
+                    param2 != null ? bb.format(param2) : null,
+                    param3 != null ? bb.format(param3) : null,
+                    param4 != null ? bb.format(param4) : null));
         } catch (final VSystemException vSystemException) {
             LOGGER.error("Error when fetching value for global variable with type {}", type, vSystemException);
             return () -> BTStatus.Failed;
