@@ -91,7 +91,7 @@ public class WelcomeTourServices implements Component {
 					"	title: \"" + StringEscapeUtils.escapeEcmaScript(step.getTitle()) + "\" ,\n" +
 					"	text: \"" + StringEscapeUtils.escapeEcmaScript(step.getText()) + "\",\n" +
 					"	attachTo: {\n" +
-					"		element: document.evaluate('//*[text()=\"" + StringEscapeUtils.escapeEcmaScript(step.getElementAttachTo()) + "\"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue,\n" +
+					"		element: document.evaluate('//body//*[text()=\"" + StringEscapeUtils.escapeEcmaScript(step.getElementAttachTo()) + "\"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue,\n" +
 					"		on: \"" + step.getElementAttachToPlacement().toLowerCase() + "\"\n" +
 					"	},\n";
 					if (welcomeTour.getStepsCssClasses() != null) {
