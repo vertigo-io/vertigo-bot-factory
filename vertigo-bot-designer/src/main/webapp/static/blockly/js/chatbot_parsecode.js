@@ -367,20 +367,20 @@ window.addEventListener('vui-after-page-mounted', function () {
 			let lienParamsDest
 			// isAPJMail = (resolvedType.qualifier && resolvedType.qualifier==='attachment' ? true : false)
 			// let nbDest = params.length - (isAPJMail ? 3 : 2)
-			const paramPj = params[2]
+			const paramPjOrDestinataire = params[2]
 			params[0] = lienParamsObject[0]; //0
 			params[1] = lienParamsObject[1]; //1
 			params[2] = lienParamsMessage[0]; //2
 
 			if (resolvedType.qualifier && resolvedType.qualifier === 'attachment') {
-				lienParamsPJ = paramsFormatVariable(paramPj)
+				lienParamsPJ = paramsFormatVariable(paramPjOrDestinataire)
 				lienParamsDest = paramsFormatVariable(params[3])
 				params[3] = lienParamsMessage[1]; //3
 				params.push('yespj') //4
 				params.push(lienParamsPJ[0]) //5
 				params.push(lienParamsPJ[1]) //6
 			} else {
-				lienParamsDest = paramsFormatVariable(params[2])
+				lienParamsDest = paramsFormatVariable(paramPjOrDestinataire)
 				params.push(lienParamsMessage[1]); //4
 				params.push('nopj')//4
 				params.push('')//5

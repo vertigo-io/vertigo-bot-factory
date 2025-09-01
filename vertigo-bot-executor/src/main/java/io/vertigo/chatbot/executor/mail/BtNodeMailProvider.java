@@ -48,7 +48,7 @@ public class BtNodeMailProvider implements Component {
 					optFileDescriptor = Optional.of(fileDescriptor);
 				}
 				try {
-					mailService.sendMailFromBot(executorManager.getBotEmailAddress(), recipients, bb.getString(BBKey.of(subjectKey)), bb.getString(BBKey.of(messageBodyKey)), optFileDescriptor);
+					mailService.sendMailFromBot(executorManager.getBotEmailAddress(), recipients, bb.format(bb.getString(BBKey.of(subjectKey))), bb.format(bb.getString(BBKey.of(messageBodyKey))), optFileDescriptor);
 					return BTStatus.Succeeded;
 				} catch (final MessagingException messagingException) {
 					LOGGER.error("Error when sending mail to " + recipients + " with mail subject " + bb.getString(BBKey.of(subjectKey)), messagingException);
