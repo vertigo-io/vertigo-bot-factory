@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-ai</artifactId>
-			<version>4.2.0</version>
+			<version>${vertigo.version}</version>
 		</dependency>
 		
 		<dependency>
