@@ -10,6 +10,7 @@ import io.vertigo.ai.bt.BTNode;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
+import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmRequestType;
 import io.vertigo.chatbot.engine.plugins.bt.jira.multilingual.JiraMultilingualResources;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.core.node.component.Component;
@@ -32,16 +33,28 @@ public class IssueTypeFieldService implements IJiraFieldService, Component {
 
     @Override
     public void processConversation(BlackBoard bb, JiraField jiraField, List<BTNode> sequence, final boolean checkJiraFields) {
-        OptionalIterable<IssueType> issueTypes = jiraServerService.getIssueTypes();
-        if (issueTypes.iterator().hasNext()) {
-            sequence.add(getIssueTypesButtons(bb, issueTypes.iterator(), jiraField));
-        } else {
-            sequence.add(() -> BotNodeProvider.sayOnce(bb, LocaleMessageText.of(JiraMultilingualResources.NO_ISSUE_TYPE_FOUND).getDisplay()).eval());
+		if (jiraServerService.isJsmMode()) {
+			final List<JsmRequestType> requestTypes = jiraServerService.getRequestTypes();
+			if (!requestTypes.isEmpty()) {
+				sequence.add(getRequestTypesButtons(bb, requestTypes, jiraField));
+			} else {
+				sequence.add(() -> BotNodeProvider.sayOnce(bb, LocaleMessageText.of(JiraMultilingualResources.NO_ISSUE_TYPE_FOUND).getDisplay()).eval());
+			}
+		} else {
+			final OptionalIterable<IssueType> issueTypes = jiraServerService.getIssueTypes();
+			if (issueTypes.iterator().hasNext()) {
+				sequence.add(getIssueTypesButtons(bb, issueTypes.iterator(), jiraField));
+			} else {
+				sequence.add(() -> BotNodeProvider.sayOnce(bb, LocaleMessageText.of(JiraMultilingualResources.NO_ISSUE_TYPE_FOUND).getDisplay()).eval());
+			}
         }
     }
 
     @Override
     public void processTicket(BlackBoard bb, IssueInputBuilder iib, JiraField jiraField) {
+		if (jiraServerService.isJsmMode()) {
+			return;
+		}
         iib.setIssueTypeId(Long.parseLong(jiraField.getValue()));
     }
 
@@ -50,4 +63,10 @@ public class IssueTypeFieldService implements IJiraFieldService, Component {
         issueTypes.forEachRemaining(issueType -> buttons.add(new BotButton(issueType.getName(), issueType.getId().toString())));
         return BotNodeProvider.chooseButton(bb, issueTypeField.getKey(), issueTypeField.getQuestion(), buttons);
     }
+
+	private BTNode getRequestTypesButtons(final BlackBoard bb, List<JsmRequestType> requestTypes, JiraField issueTypeField) {
+		final List<BotButton> buttons = new ArrayList<>();
+		requestTypes.forEach(requestType -> buttons.add(new BotButton(requestType.getName(), requestType.getId())));
+		return BotNodeProvider.chooseButton(bb, issueTypeField.getKey(), issueTypeField.getQuestion(), buttons);
+	}
 }

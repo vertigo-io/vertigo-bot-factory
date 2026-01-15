@@ -21,6 +21,10 @@ import io.vertigo.chatbot.commons.domain.JiraSettingExport;
 import io.vertigo.chatbot.engine.plugins.bt.jira.helper.CustomAsynchronousJiraRestClient;
 import io.vertigo.chatbot.engine.plugins.bt.jira.helper.CustomServerInfo;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
+import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmRequestType;
+import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmRequestTypeSearchResult;
+import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmServiceDesk;
+import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmServiceDeskSearchResult;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
@@ -30,9 +34,19 @@ import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import javax.inject.Inject;
 
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import java.nio.charset.StandardCharsets;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Base64;
+import java.util.ArrayList;
 
 import static io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider.formatLink;
 import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.noPayload;
@@ -45,6 +59,11 @@ public class JiraServerService implements Component, IJiraService {
     private String project;
     private Long numberOfResults;
     private Boolean isCloud;
+	private boolean jsmMode;
+	private Long serviceDeskId;
+	private HttpClient httpClient;
+	private String jsmAuthHeader;
+	private static final String SERVICE_DESK_API_PREFIX = "/rest/servicedeskapi";
     private JiraRestClient jiraRestClient;
     private DtList<JiraFieldSettingExport> jiraFieldSettingExports;
     private CustomAsynchronousJiraRestClient customAsynchronousUserRestClient;
@@ -69,9 +88,17 @@ public class JiraServerService implements Component, IJiraService {
             user = jiraSettingExport.getLogin();
             password = passwordEncryptionServices.decryptPassword(jiraSettingExport.getPassword());
             project = jiraSettingExport.getProject();
+			jsmMode = Boolean.TRUE.equals(jiraSettingExport.getJsmMode());
+			httpClient = HttpClient.newHttpClient();
+			jsmAuthHeader = buildAuthHeader();
             jiraRestClient = createJiraRestClient();
             customAsynchronousUserRestClient = createCustomUserRestClient();
             isCloud = checkIfIsCloud();
+			if (jsmMode) {
+				serviceDeskId = resolveServiceDeskId(logs);
+			} else {
+				serviceDeskId = null;
+			}
             jiraFieldSettingExports = jiraFieldSettingExport;
             numberOfResults = jiraSettingExport.getNumberOfResults();
             LogsUtils.logOK(logs);
@@ -148,15 +175,104 @@ public class JiraServerService implements Component, IJiraService {
 
     @Override
     public String createIssueJiraCommand(final BlackBoard bb, final List<JiraField> jiraFields, final List<IJiraFieldService> fieldServices) {
-        final var createdIssue = createIssue(bb, jiraFields, fieldServices);
-        return createLinkUrl(createdIssue.getKey());
+		if (jsmMode) {
+			return createJsmRequest(jiraFields);
+		}
+		final var createdIssue = createIssue(bb, jiraFields, fieldServices);
+		return createLinkUrl(createdIssue.getKey());
 
     }
+
+	private String createJsmRequest(final List<JiraField> jiraFields) {
+		final Long currentServiceDeskId = ensureServiceDeskId();
+		final String requestTypeId = getFieldValue(jiraFields, IssueFieldId.ISSUE_TYPE_FIELD.id);
+		final String summary = getFieldValue(jiraFields, IssueFieldId.SUMMARY_FIELD.id);
+		final String description = getFieldValue(jiraFields, IssueFieldId.DESCRIPTION_FIELD.id);
+
+		if (requestTypeId == null || requestTypeId.isBlank()) {
+			throw new VSystemException("Request type id is mandatory to create JSM request.");
+		}
+		if (summary == null || summary.isBlank()) {
+			throw new VSystemException("Summary is mandatory to create JSM request.");
+		}
+
+		final Map<String, Object> payload = new java.util.HashMap<>();
+		final Map<String, Object> requestFieldValues = new java.util.HashMap<>();
+		requestFieldValues.put("summary", summary);
+		if (description != null) {
+			requestFieldValues.put("description", description);
+		}
+		payload.put("requestFieldValues", requestFieldValues);
+		payload.put("requestTypeId", requestTypeId);
+		payload.put("serviceDeskId", currentServiceDeskId.toString());
+
+		final HttpRequest request = HttpRequest.newBuilder()
+				.uri(buildJsmUri(SERVICE_DESK_API_PREFIX + "/request"))
+				.header("Authorization", jsmAuthHeader)
+				.header("Accept", "application/json")
+				.header("Content-Type", "application/json")
+				.POST(BodyPublishers.ofString(jsonEngine.toJson(payload)))
+				.build();
+		try {
+			final HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
+			if (response.statusCode() >= 200 && response.statusCode() < 300) {
+				final Map<?, ?> responseMap = jsonEngine.fromJson(response.body(), Map.class);
+				final String issueKey = responseMap != null ? (String) responseMap.get("issueKey") : null;
+				final String issueUrl = issueKey != null ? createLinkUrl(issueKey) : extractWebLink(responseMap);
+				if (issueUrl != null) {
+					return issueUrl;
+				}
+				throw new VSystemException("JSM request created but response had no issue link.");
+			}
+			throw new VSystemException("Failed to create JSM request. Status code " + response.statusCode() + " : " + response.body());
+		} catch (final Exception e) {
+			throw new VSystemException("Failed to create JSM request : " + e.getMessage(), e);
+		}
+	}
+
+	private String extractWebLink(final Map<?, ?> responseMap) {
+		if (responseMap != null && responseMap.get("_links") instanceof Map<?, ?> links) {
+			final Object web = links.get("web");
+			if (web instanceof String) {
+				return formatLink((String) web, true);
+			}
+		}
+		return null;
+	}
+
+	private String getFieldValue(final List<JiraField> jiraFields, final String fieldType) {
+		return jiraFields.stream()
+				.filter(field -> fieldType.equals(field.getFieldType()))
+				.map(JiraField::getValue)
+				.filter(Objects::nonNull)
+				.findFirst()
+				.orElse(null);
+	}
 
     private String createLinkUrl(final String key) {
         final String url = baseJira + "/browse/" + key;
         return formatLink(url, true);
     }
+
+	public List<JsmRequestType> getRequestTypes() {
+		final Long currentServiceDeskId = ensureServiceDeskId();
+		final HttpRequest request = HttpRequest.newBuilder()
+				.uri(buildJsmUri(SERVICE_DESK_API_PREFIX + "/servicedesk/" + currentServiceDeskId + "/requesttype"))
+				.header("Authorization", jsmAuthHeader)
+				.header("Accept", "application/json")
+				.GET()
+				.build();
+		try {
+			final HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
+			if (response.statusCode() >= 200 && response.statusCode() < 300) {
+				final JsmRequestTypeSearchResult requestTypeSearchResult = jsonEngine.fromJson(response.body(), JsmRequestTypeSearchResult.class);
+				return new ArrayList<>(requestTypeSearchResult.getValues());
+			}
+			throw new VSystemException("Failed to retrieve JSM request types. Status code " + response.statusCode() + " : " + response.body());
+		} catch (final Exception e) {
+			throw new VSystemException("Failed to retrieve JSM request types : " + e.getMessage(), e);
+		}
+	}
 
     public Project getProject() {
         return jiraRestClient.getProjectClient().getProject(project).claim();
@@ -213,4 +329,60 @@ public class JiraServerService implements Component, IJiraService {
                         ChatbotCustomConfigExport.class);
         return chatbotCustomConfig.getJiraCheckBeforeCreate();
     }
+
+	public boolean isJsmMode() {
+		return jsmMode;
+	}
+
+	private String buildAuthHeader() {
+		final String credentials = user + ":" + password;
+		return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
+	}
+
+	private URI buildJsmUri(final String path) {
+		if (path.startsWith("/")) {
+			return URI.create(baseJira + path);
+		}
+		return URI.create(baseJira + "/" + path);
+	}
+
+	private Long ensureServiceDeskId() {
+		if (!jsmMode) {
+			throw new VSystemException("JSM mode is disabled.");
+		}
+		if (serviceDeskId == null) {
+			serviceDeskId = resolveServiceDeskId(new StringBuilder());
+		}
+		return serviceDeskId;
+	}
+
+	private Long resolveServiceDeskId(final StringBuilder logs) {
+		final HttpRequest request = HttpRequest.newBuilder()
+				.uri(buildJsmUri(SERVICE_DESK_API_PREFIX + "/servicedesk"))
+				.header("Authorization", jsmAuthHeader)
+				.header("Accept", "application/json")
+				.GET()
+				.build();
+		try {
+			final HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
+			if (response.statusCode() >= 200 && response.statusCode() < 300) {
+				final JsmServiceDeskSearchResult result = jsonEngine.fromJson(response.body(), JsmServiceDeskSearchResult.class);
+				return result.getValues().stream()
+						.filter(serviceDesk -> project.equalsIgnoreCase(serviceDesk.getProjectKey()))
+						.findFirst()
+						.map(JsmServiceDesk::getId)
+						.map(Long::valueOf)
+						.orElseThrow(() -> new VSystemException("No service desk found for projectKey " + project));
+			}
+			if (logs != null) {
+				LogsUtils.logKO(logs);
+			}
+			throw new VSystemException("Failed to retrieve service desks. Status code " + response.statusCode() + " : " + response.body());
+		} catch (final Exception e) {
+			if (logs != null) {
+				LogsUtils.logKO(logs);
+			}
+			throw new VSystemException("Failed to retrieve service desks : " + e.getMessage(), e);
+		}
+	}
 }

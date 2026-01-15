@@ -176,6 +176,13 @@ public class ExtensionsController extends AbstractBotController {
         chatbotCustomConfigServices.save(bot, chatbotCustomConfig);
     }
 
+    @PostMapping("_saveJsmMode")
+    public void saveJsmMode(final ViewContext viewContext,
+                            @ViewAttribute("bot") final Chatbot bot,
+                            @ViewAttribute("chatbotCustomConfig") final ChatbotCustomConfig chatbotCustomConfig) {
+        chatbotCustomConfigServices.save(bot, chatbotCustomConfig);
+    }
+
     public static final class ConfluenceSettingIhmNotEmptyValidator extends AbstractChatbotDtObjectValidator<ConfluenceSettingIhm> {
 
         /**

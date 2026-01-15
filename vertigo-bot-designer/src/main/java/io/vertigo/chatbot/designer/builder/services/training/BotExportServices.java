@@ -94,7 +94,8 @@ public class BotExportServices implements Component {
 	}
 
 	public Optional<JiraSettingExport> exportJiraSetting(final long botId, final long nodId) {
-		return jiraSettingServices.exportJiraSetting(botId, nodId);
+		final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
+		return jiraSettingServices.exportJiraSetting(botId, nodId, chatbotCustomConfig.getJsmMode());
 	}
 
 	public ChatbotCustomConfigExport exportChatbotCustomSettings(final long botId) {

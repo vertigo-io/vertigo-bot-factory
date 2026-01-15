@@ -463,6 +463,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		maxSavedTraining,
 		/** Propriété 'Check Jira fields before ticket creation'. */
 		jiraCheckBeforeCreate,
+		/** Propriété 'JSM Cloud mode'. */
+		jsmMode,
 		/** Propriété 'Display chatbot'. */
 		chatbotDisplay,
 		/** Propriété 'Display Q&A'. */
@@ -1066,6 +1068,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		password,
 		/** Propriété 'Project'. */
 		project,
+		/** Propriété 'Use JSM Cloud'. */
+		jsmMode,
 		/** Propriété 'Number max of results'. */
 		numberOfResults	}
 

@@ -51,10 +51,7 @@ public class BotJiraNodeProvider implements Component, Activeable {
         return () -> {
             jiraFields.forEach(field -> field.setValue(bb.getString(BBKey.of(field.getKey()))));
             final String result = jiraService.createIssueJiraCommand(bb, jiraFields, fieldServices);
-            String createdIssueMsg = urlSentence;
-            if (jiraService.getJiraCheckFields(executorConfigManager.getConfig())) {
-                createdIssueMsg += " " + result;
-            }
+            final String createdIssueMsg = urlSentence + " " + result;
             bb.listPush(BotEngine.BOT_RESPONSE_KEY, createdIssueMsg);
             return BTStatus.Succeeded;
         };

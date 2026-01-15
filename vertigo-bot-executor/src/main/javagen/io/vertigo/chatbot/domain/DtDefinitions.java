@@ -372,6 +372,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		password,
 		/** Propriété 'Project'. */
 		project,
+		/** Propriété 'Use JSM Cloud'. */
+		jsmMode,
 		/** Propriété 'Number max of results'. */
 		numberOfResults	}
 

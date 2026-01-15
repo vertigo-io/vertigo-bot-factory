@@ -442,6 +442,7 @@ create table CHATBOT_CUSTOM_CONFIG
     DISABLE_NLU 	 bool        	,
     MAX_SAVED_TRAINING	 NUMERIC     	,
     JIRA_CHECK_BEFORE_CREATE	 bool        	not null,
+    JSM_MODE    	 bool        	not null,
     CHATBOT_DISPLAY	 bool        	,
     QANDA_DISPLAY	 bool        	,
     DOCUMENTARY_RESOURCE_DISPLAY	 bool        	,
@@ -497,6 +498,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.MAX_SAVED_TRAINING is
 
 comment on column CHATBOT_CUSTOM_CONFIG.JIRA_CHECK_BEFORE_CREATE is
 'Check Jira fields before ticket creation';
+
+comment on column CHATBOT_CUSTOM_CONFIG.JSM_MODE is
+'JSM Cloud mode';
 
 comment on column CHATBOT_CUSTOM_CONFIG.CHATBOT_DISPLAY is
 'Display chatbot';

@@ -113,6 +113,12 @@
                 VUiPage.httpPostAjax("_saveChatbotCustomConfig", {
                     'vContext[chatbotCustomConfig][jiraCheckBeforeCreate]': VertigoUi.vueData.chatbotCustomConfig.jiraCheckBeforeCreate
                 });
+            },
+
+            applyJsmModeToAll: function() {
+                VUiPage.httpPostAjax("_saveJsmMode", {
+                    'vContext[chatbotCustomConfig][jsmMode]': VertigoUi.vueData.chatbotCustomConfig.jsmMode
+                });
             }
         };
 
@@ -330,6 +336,15 @@
         </q-card>
     </q-dialog>
     <vu:block id="JIRA" th:title="#{extensions.jira}">
+        <vu:include-data object="chatbotCustomConfig" field="jsmMode" modifiable="true"/>
+        <div class="q-mb-md q-pa-md" style="border: 1px solid #ccc; border-radius: 8px;">
+            <q-toggle
+                v-model="vueData.chatbotCustomConfig.jsmMode"
+                th:label="#{extensions.jira.jsmMode.global}"
+                left-label
+                @update:model-value="applyJsmModeToAll()"/>
+            <q-tooltip>[[#{extensions.jira.jsmMode.global.tooltip}]]</q-tooltip>
+        </div>
         <vu:block id="JIRA_SYNTAX" th:title="#{extensions.jira.syntax}" style="margin-bottom:20px">
             <c-codemirror ref="jiraCodeMirror" th:v-model="vueData.scriptIntention.script" :mode-edit="false"
                           :locale="vueData.locale"></c-codemirror>
@@ -351,7 +366,7 @@
             </vu:column>
             <vu:column name="enabled" th:label="#{extension.jira.field.setting.enabled}">
                 <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
-                          :disable="props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"
+                          :disable="['SUMMARY', 'DESCRIPTION', 'TYPE'].includes(props.row.jirFieldCd) || (vueData.chatbotCustomConfig.jsmMode && !['SUMMARY', 'DESCRIPTION', 'TYPE'].includes(props.row.jirFieldCd))"
                           @update:model-value="enabledDisabledJiraField(props.row.jirFieldCd, props.row.enabled)"></q-toggle>
                 <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
                           disable></q-toggle>
@@ -359,7 +374,7 @@
             <vu:column name="mandatory" th:label="#{extension.jira.field.setting.mandatory}">
                 <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
                           v-model="props.row.mandatory"
-                          :disable="!props.row.enabled || props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"
+                          :disable="!props.row.enabled || ['SUMMARY', 'DESCRIPTION', 'TYPE'].includes(props.row.jirFieldCd) || (vueData.chatbotCustomConfig.jsmMode && !['SUMMARY', 'DESCRIPTION', 'TYPE'].includes(props.row.jirFieldCd))"
                           @update:model-value="mandatoryJiraField(props.row.jirFieldCd, props.row.mandatory)"></q-toggle>
                 <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.mandatory"
                           disable></q-toggle>
@@ -436,6 +451,11 @@
             </vu:column>
             <vu:column field="url"/>
             <vu:column field="login"/>
+            <vu:column name="mode" th:label="#{extensions.jira.jsmMode}">
+                <vu:content>
+                    <span>{{ vueData.chatbotCustomConfig.jsmMode ? 'JSM Cloud' : 'Jira' }}</span>
+                </vu:content>
+            </vu:column>
             <vu:column field="project"/>
             <vu:column field="numberOfResults"/>
         </vu:table>

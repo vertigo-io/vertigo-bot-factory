@@ -65,7 +65,7 @@ public class JiraSettingServices implements Component {
 				.stream().peek(jiraSetting -> jiraSetting.setPassword("")).collect(VCollectors.toDtList(JiraSetting.class));
 	}
 
-	public Optional<JiraSettingExport> exportJiraSetting(final long botId, final long nodId) {
+	public Optional<JiraSettingExport> exportJiraSetting(final long botId, final long nodId, final Boolean globalJsmMode) {
 		return jiraSettingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.JiraSettingFields.botId, botId)
 				.and(Criterions.isEqualTo(DtDefinitions.JiraSettingFields.nodId, nodId))).map(jiraSetting -> {
 			final JiraSettingExport jiraSettingExport = new JiraSettingExport();
@@ -73,6 +73,7 @@ public class JiraSettingServices implements Component {
 			jiraSettingExport.setLogin(jiraSetting.getLogin());
 			jiraSettingExport.setPassword(jiraSetting.getPassword());
 			jiraSettingExport.setProject(jiraSetting.getProject());
+			jiraSettingExport.setJsmMode(Boolean.TRUE.equals(globalJsmMode));
 			jiraSettingExport.setNumberOfResults(jiraSetting.getNumberOfResults());
 			return Optional.of(jiraSettingExport);
 		}).orElseGet(Optional::empty);

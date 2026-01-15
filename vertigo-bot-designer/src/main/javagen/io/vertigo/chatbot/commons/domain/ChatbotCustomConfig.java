@@ -32,6 +32,7 @@ public final class ChatbotCustomConfig implements Entity {
 	private Boolean disableNlu;
 	private Long maxSavedTraining;
 	private Boolean jiraCheckBeforeCreate;
+	private Boolean jsmMode;
 	private Boolean chatbotDisplay;
 	private Boolean qandaDisplay;
 	private Boolean documentaryResourceDisplay;
@@ -374,6 +375,25 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setJiraCheckBeforeCreate(final Boolean jiraCheckBeforeCreate) {
 		this.jiraCheckBeforeCreate = jiraCheckBeforeCreate;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'JSM Cloud mode'.
+	 * @return Boolean jsmMode <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "JSM Cloud mode")
+	public Boolean getJsmMode() {
+		return jsmMode;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'JSM Cloud mode'.
+	 * @param jsmMode Boolean <b>Obligatoire</b>
+	 */
+	public void setJsmMode(final Boolean jsmMode) {
+		this.jsmMode = jsmMode;
 	}
 	
 	/**
