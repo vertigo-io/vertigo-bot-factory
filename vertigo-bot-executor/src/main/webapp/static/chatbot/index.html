@@ -272,14 +272,16 @@
                     <a v-if="documentaryResource.dreTypeCd === 'URL'"
                        :href="documentaryResource.url"
                        target="_blank"
-                       class="docres-a">
+                       class="docres-a"
+                       @click="trackDocumentaryResourceClick(documentaryResource.dreId, documentaryResource.title, documentaryResource.dreTypeCd)">
                       <q-icon name="public" class="docres-type-icon"></q-icon>
                       <span class="docres-text">{{documentaryResource.title}}</span>
                       <q-icon name="launch"></q-icon>
                     </a>
                     <a v-else-if="documentaryResource.dreTypeCd === 'FILE'"
                        :href="documentaryResourceConfig.documentaryResourceFileBaseUrl + documentaryResource.attId"
-                       class="docres-a">
+                       class="docres-a"
+                       @click="trackDocumentaryResourceClick(documentaryResource.dreId, documentaryResource.title, documentaryResource.dreTypeCd)">
                       <q-icon name="article" class="docres-type-icon"></q-icon>
                       <span class="docres-text">{{documentaryResource.title}}</span>
                       <q-icon name="download" style="font-size: 16px"></q-icon>

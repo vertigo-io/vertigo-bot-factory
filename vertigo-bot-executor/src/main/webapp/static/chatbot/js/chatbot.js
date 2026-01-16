@@ -348,6 +348,10 @@ const chatbotComponent = {
 
         selectQuestion(selected){
             chatbot.qAndAConfig.selectedQuestion = selected;
+        },
+
+        trackDocumentaryResourceClick(dreId, title, dreTypeCd) {
+            trackDocumentaryResourceClick(dreId, title, dreTypeCd);
         }
     }
 };
