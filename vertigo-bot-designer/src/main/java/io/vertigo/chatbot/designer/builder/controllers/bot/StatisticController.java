@@ -5,10 +5,8 @@ import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -247,6 +245,16 @@ public class StatisticController extends AbstractBotController {
 		return viewContext;
 	}
 
+	/**
+	 * Export statistics to file(s) based on selected types
+	 *
+	 * @param viewContext view context
+	 * @param criteria statistics criteria
+	 * @param conversationCriteria conversation criteria
+	 * @param bot chatbot
+	 * @param typeExportAnalyticList list of export types to include
+	 * @return exported file (CSV or ZIP)
+	 */
 	@PostMapping("/_exportStatisticFile")
 	public VFile doExportStatisticFile(final ViewContext viewContext,
 			@ViewAttribute("criteria") final StatCriteria criteria,
@@ -281,6 +289,13 @@ public class StatisticController extends AbstractBotController {
 					final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
 					fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_TOPIC_USAGE).getDisplay(), analyticsExportServices.exportTopIntents(topIntents));
 					break;
+				case "DOCUMENTARY_RESOURCES":
+					final DtList<io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat> docResStats = analyticsServices.getDocumentaryResourceStats(
+							criteria,
+							viewContext.readDto(documentaryResourceCriteriaKey, AbstractVSpringMvcController.getUiMessageStack()));
+					fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_DOCUMENTARY_RESOURCES).getDisplay(),
+							analyticsExportServices.exportDocumentaryResources(docResStats));
+					break;
 				default:
 					throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
 			}
@@ -289,9 +304,9 @@ public class StatisticController extends AbstractBotController {
 			return fileMap.values().iterator().next();
 
 		} else {
-			final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			return designerFileServices.zipMultipleFiles(fileMap,
-					LocaleMessageText.of(AnalyticsMultilingualResources.ZIP_EXPORT_FILENAME).getDisplay() + dateFormat.format(new Date()));
+			final String zipFileName = LocaleMessageText.of(AnalyticsMultilingualResources.ZIP_EXPORT_FILENAME).getDisplay() 
+					+ LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			return designerFileServices.zipMultipleFiles(fileMap, zipFileName);
 		}
 	}
 }

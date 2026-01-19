@@ -230,4 +230,23 @@ public class AnalyticsExportServices implements Component {
 				.build();
 		return exportManager.createExportFile(export);
 	}
+
+	/**
+	 * Export documentary resource statistics to CSV
+	 *
+	 * @param documentaryResourceStats list of stats to export
+	 * @return CSV file
+	 */
+	public VFile exportDocumentaryResources(final DtList<io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat> documentaryResourceStats) {
+		final String fileName = LocaleMessageText.of(AnalyticsMultilingualResources.DOCUMENTARY_RESOURCES_FILENAME).getDisplay() 
+				+ LocalDate.now().format(DATE_FORMATTER);
+		final Export export = new ExportBuilder(ExportFormat.CSV, fileName)
+				.beginSheet(documentaryResourceStats, null)
+				.addField(DtDefinitions.DocumentaryResourceStatFields.title)
+				.addField(DtDefinitions.DocumentaryResourceStatFields.dreTypeCd)
+				.addField(DtDefinitions.DocumentaryResourceStatFields.count)
+				.endSheet()
+				.build();
+		return exportManager.createExportFile(export);
+	}
 }
