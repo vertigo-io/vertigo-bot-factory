@@ -48,4 +48,8 @@
         </customChange>
     </changeSet>
 
+    <changeSet author="xsupiot" id="Add DOCUMENTARY_RESOURCES export type">
+        <sqlFile encoding="utf8" path="/sql/v_3_0/alter_chatbot-822_26_01_15.sql"/>
+    </changeSet>
+
 </databaseChangeLog>
