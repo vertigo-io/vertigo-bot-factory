@@ -72,6 +72,10 @@
                         topIntent.labels != null && labels.some(label => topIntent.labels.includes(label)));
                 }
             }, { deep: true });
+
+            VUiPage.$watch('vueData.documentaryResourceCriteria', () => {
+                VUiPage.httpPostAjax('_filterDocumentaryResource', VUiPage.vueDataParams(['criteria', 'documentaryResourceCriteria']));
+            }, { deep: true });
         });
 
         VUiExtensions.dataX.loadingGraphs = false;
@@ -394,12 +398,13 @@
 
     <vu:include-data-primitive key="ratingStats" />
     <vu:include-data-primitive key="requestsStats" />
-    <vu:include-data-primitive key="totalOfUserActions" />
-    <vu:include-data-primitive key="totalOfUnrecognizedMessage" />
-    <vu:include-data-primitive key="totalOfRecognizedMessage" />
-    <vu:include-data-primitive key="totalOfConversations" />
+	<vu:include-data-primitive key="totalOfUserActions" />
+	<vu:include-data-primitive key="totalOfUnrecognizedMessage" />
+	<vu:include-data-primitive key="totalOfRecognizedMessage" />
+	<vu:include-data-primitive key="totalOfConversations" />
+	<vu:include-data-primitive key="totalOfDocumentaryResourceClicks" />
 
-    <vu:include-data-primitive key="locale" />
+	<vu:include-data-primitive key="locale" />
 
     <vu:include-data object="chatbotCustomConfig" field="backgroundColor" />
     <vu:include-data object="chatbotCustomConfig" field="fontColor" />
@@ -503,6 +508,20 @@
                                     </div>
                                     <div>
                                         <span>[[#{analytics.interactions.means}]]</span>
+                                    </div>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                    <div class="col-xl-4 col-md-6 col-xs-12">
+                        <q-card>
+                            <q-card-section class="row justify-center">
+                                <div>
+                                    <div style="font-weight: bold; font-size: x-large">
+                                        <span>{{vueData.totalOfDocumentaryResourceClicks}}</span>
+                                    </div>
+                                    <div>
+                                        <span>[[#{analytics.docres.total}]]</span>
                                     </div>
                                 </div>
                             </q-card-section>
@@ -720,6 +739,51 @@
                 <vu:column field="date"/>
                 <vu:column field="text"/>
                 <vu:column field="modelName"/>
+            </vu:table>
+        </div>
+
+        <div class="col-12">
+            <vu:include-data object="documentaryResourceStat" field="dreId" />
+            <vu:include-data object="documentaryResourceStat" field="title" />
+            <vu:include-data object="documentaryResourceStat" field="dreTypeCd" />
+            <vu:include-data object="documentaryResourceStat" field="count" />
+            
+            <vu:include-data object="documentaryResourceTypes" field="dreTypeCd" />
+            <vu:include-data object="documentaryResourceTypes" field="label" />
+            <vu:include-data object="documentaryResourceTypes" field="labelFr" />
+            
+            <vu:table componentId="documentaryResourceStat" list="documentaryResourceStat"
+                      th:title="#{analytics.docres.title}"
+                      sortBy="count" descending="true"
+                      rowsPerPage="10" autoColClass >
+                <vu:slot name="top_right_slot">
+                    <vu:select-edit object="documentaryResourceCriteria" field="dreTypeCd"
+                                    list="documentaryResourceTypes" 
+                                    labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"
+                                    label="#{analytics.docres.filter.type}" 
+                                    clearable 
+                                    style="width: 250px; margin-right: 10px"
+                                    rowIndex="${null}"/>
+
+                    <vu:text-field-edit object="documentaryResourceCriteria" field="searchText" 
+                                        label="#{analytics.docres.filter.resource}" 
+                                        clearable 
+                                        debounce="300" 
+                                        style="width:210px"
+                                        rowIndex="${null}"/>
+                    <q-icon name="search" class="q-field__marginal" ></q-icon>
+                </vu:slot>
+
+                <vu:column field="title" th:label="#{analytics.docres.resource}"/>
+                <vu:column field="dreTypeCd" th:label="#{analytics.docres.type}">
+                    <span v-if="vueData.locale == 'fr_FR'">
+                        {{vueData.documentaryResourceTypes.find(t => t.dreTypeCd === props.row.dreTypeCd)?.labelFr}}
+                    </span>
+                    <span v-else>
+                        {{vueData.documentaryResourceTypes.find(t => t.dreTypeCd === props.row.dreTypeCd)?.label}}
+                    </span>
+                </vu:column>
+                <vu:column field="count" th:label="#{analytics.docres.usage}"/>
             </vu:table>
         </div>
 
