@@ -233,7 +233,7 @@ public class AnalyticsServices implements Component {
 			newSentenseDetail.setText((String) values.get("text"));
 			newSentenseDetail.setIntentRasa(intentRasa);
 			newSentenseDetail.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
-			newSentenseDetail.setTopId(topic.isPresent() ? topic.get().getTopId() : null);
+			newSentenseDetail.setTopId(topic.map(Topic::getTopId).orElse(null));
 
 			retour.add(newSentenseDetail);
 		}
@@ -280,17 +280,19 @@ public class AnalyticsServices implements Component {
 		return result;
 	}
 
-	/**
-	 * Get total documentary resource clicks for the period
-	 *
-	 * @param criteria stat criteria
-	 * @return total clicks count
-	 */
-	public Double getTotalDocumentaryResourceClicks(final StatCriteria criteria) {
-		final TimedDatas timedData = timeSerieServices.getTotalDocumentaryResourceClicks(criteria);
-		return timedData.timedDataSeries().stream()
-				.mapToDouble(it -> AnalyticsServicesUtils.getLongValue(it, "clicks:count", 0L).doubleValue())
-				.sum();
-	}
+/**
+ * Get total documentary resource clicks for the period
+ *
+ * @param criteria stat criteria
+ * @return total clicks count
+ */
+public Double getTotalDocumentaryResourceClicks(final StatCriteria criteria) {
+	final TimedDatas timedData = timeSerieServices.getTotalDocumentaryResourceClicks(criteria);
+	return timedData.timedDataSeries().stream()
+			.mapToDouble(it -> Optional.ofNullable(AnalyticsServicesUtils.getLongValue(it, "clicks:count", 0L))
+					.orElse(0L)
+					.doubleValue())
+			.sum();
+}
 
 }

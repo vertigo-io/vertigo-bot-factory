@@ -4,16 +4,27 @@ import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 
-import java.util.Map;
-
+/**
+ * Utility class for HTML input sanitization.
+ * Provides methods to clean and secure HTML content using OWASP HTML Sanitizer.
+ *
+ * @author Chatbot Team
+ */
 public class HtmlInputUtils {
 
 	private HtmlInputUtils() {
 		//utils class
 	}
 
+	/**
+	 * Sanitize HTML content using OWASP HTML Sanitizer
+	 *
+	 * @param in HTML content to sanitize
+	 * @param targetBlankLinks if true, adds target="_blank" to all links
+	 * @return sanitized HTML content
+	 */
 	public static String sanitizeHtml(final String in, final Boolean targetBlankLinks) {
-		final PolicyFactory sanitizer = Sanitizers.FORMATTING
+		PolicyFactory sanitizer = Sanitizers.FORMATTING
 				.and(Sanitizers.BLOCKS)
 				.and(Sanitizers.LINKS)
 				.and(Sanitizers.STYLES)
@@ -25,7 +36,7 @@ public class HtmlInputUtils {
 						.allowAttributes("target").onElements("a").allowElements("a")
 						.toFactory());
 		if (targetBlankLinks) {
-			sanitizer.and(new HtmlPolicyBuilder()
+			sanitizer = sanitizer.and(new HtmlPolicyBuilder()
 					.allowElements(
 							(elementName, attrs) -> {
 								if ("a".equals(elementName)) {
