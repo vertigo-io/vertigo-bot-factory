@@ -81,8 +81,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		DocumentaryResourceContext(io.vertigo.chatbot.designer.domain.DocumentaryResourceContext.class),
 		/** Objet de données DocumentaryResourceContextIhm. */
 		DocumentaryResourceContextIhm(io.vertigo.chatbot.designer.domain.DocumentaryResourceContextIhm.class),
+		/** Objet de données DocumentaryResourceCriteria. */
+		DocumentaryResourceCriteria(io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceCriteria.class),
 		/** Objet de données DocumentaryResourceExport. */
 		DocumentaryResourceExport(io.vertigo.chatbot.commons.domain.DocumentaryResourceExport.class),
+		/** Objet de données DocumentaryResourceStat. */
+		DocumentaryResourceStat(io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat.class),
 		/** Objet de données DocumentaryResourceType. */
 		DocumentaryResourceType(io.vertigo.chatbot.designer.domain.DocumentaryResourceType.class),
 		/** Objet de données ExecutorConfiguration. */
@@ -834,6 +838,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cpvValue	}
 
 	/**
+	 * Enumération des champs de DocumentaryResourceCriteria.
+	 */
+	public enum DocumentaryResourceCriteriaFields implements DataFieldName<io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceCriteria> {
+		/** Propriété 'Resource Type Filter'. */
+		dreTypeCd,
+		/** Propriété 'Search Text'. */
+		searchText	}
+
+	/**
 	 * Enumération des champs de DocumentaryResourceExport.
 	 */
 	public enum DocumentaryResourceExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.DocumentaryResourceExport> {
@@ -849,6 +862,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		fileName,
 		/** Propriété 'Context values'. */
 		contextValues	}
+
+	/**
+	 * Enumération des champs de DocumentaryResourceStat.
+	 */
+	public enum DocumentaryResourceStatFields implements DataFieldName<io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat> {
+		/** Propriété 'Documentary Resource Id'. */
+		dreId,
+		/** Propriété 'Title'. */
+		title,
+		/** Propriété 'Resource Type'. */
+		dreTypeCd,
+		/** Propriété 'Usage Count'. */
+		count	}
 
 	/**
 	 * Enumération des champs de DocumentaryResourceType.
