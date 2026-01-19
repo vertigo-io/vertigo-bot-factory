@@ -73,9 +73,9 @@ footer {
     margin-bottom: 14px;
 }
 
-.q-message-text{
+.q-message-text {
     padding: 10px 15px;
-    max-width: 230px;
+    max-width: 80%;
 }
 .q-message-received .q-message-text-content {
     font-family: var(--font-family);
