@@ -76,6 +76,10 @@
             VUiPage.$watch('vueData.documentaryResourceCriteria', () => {
                 VUiPage.httpPostAjax('_filterDocumentaryResource', VUiPage.vueDataParams(['criteria', 'documentaryResourceCriteria']));
             }, { deep: true });
+
+            VUiPage.$watch('vueData.questionAnswerCriteria', () => {
+                VUiPage.httpPostAjax('_filterQuestionAnswer', VUiPage.vueDataParams(['criteria', 'questionAnswerCriteria']));
+            }, { deep: true });
         });
 
         VUiExtensions.dataX.loadingGraphs = false;
@@ -403,6 +407,7 @@
 	<vu:include-data-primitive key="totalOfRecognizedMessage" />
 	<vu:include-data-primitive key="totalOfConversations" />
 	<vu:include-data-primitive key="totalOfDocumentaryResourceClicks" />
+	<vu:include-data-primitive key="totalOfQuestionAnswerClicks" />
 
 	<vu:include-data-primitive key="locale" />
 
@@ -522,6 +527,20 @@
                                     </div>
                                     <div>
                                         <span>[[#{analytics.docres.total}]]</span>
+                                    </div>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                    <div class="col-xl-4 col-md-6 col-xs-12">
+                        <q-card>
+                            <q-card-section class="row justify-center">
+                                <div>
+                                    <div style="font-weight: bold; font-size: x-large">
+                                        <span>{{vueData.totalOfQuestionAnswerClicks}}</span>
+                                    </div>
+                                    <div>
+                                        <span>[[#{analytics.qa.total}]]</span>
                                     </div>
                                 </div>
                             </q-card-section>
@@ -780,7 +799,37 @@
                         {{vueData.documentaryResourceTypes.find(t => t.dreTypeCd === props.row.dreTypeCd)?.label}}
                     </span>
                 </vu:column>
-                <vu:column field="count" th:label="#{analytics.docres.usage}"/>
+                <vu:column field="count"/>
+            </vu:table>
+        </div>
+
+        <div class="col-12">
+            <vu:include-data object="questionAnswerStat" field="qaId" />
+            <vu:include-data object="questionAnswerStat" field="question" />
+            <vu:include-data object="questionAnswerStat" field="catLabel" />
+            <vu:include-data object="questionAnswerStat" field="count" />
+            
+            <vu:table componentId="questionAnswerStat" list="questionAnswerStat"
+                      title="#{analytics.qa.title}"
+                      sortBy="count" descending="true"
+                      rowsPerPage="10" autoColClass >
+                <vu:slot name="top_right_slot">
+                    <vu:text-field-edit object="questionAnswerCriteria" field="catLabel" 
+                                        clearable
+                                        debounce="300" 
+                                        style="width: 250px; margin-right: 10px"
+                                        rowIndex="${null}"/>
+
+                    <vu:text-field-edit object="questionAnswerCriteria" field="searchText" 
+                                        clearable
+                                        debounce="300" 
+                                        style="width:210px"
+                                        rowIndex="${null}"/>
+                    <q-icon name="search" class="q-field__marginal" ></q-icon>
+                </vu:slot>
+
+                <vu:column field="question"/>
+                <vu:column field="catLabel"/>
                 <vu:column field="count"/>
             </vu:table>
         </div>
@@ -804,7 +853,7 @@
                             multiple
                             v-model="vueData.selectTypeExportAnalyticList.teaCd"
                             :options="vueData.locale == 'fr_FR' ? transformListForSelection('typeExportAnalyticsList', 'teaCd', 'labelFr') : transformListForSelection('typeExportAnalyticsList', 'teaCd', 'label')"
-                            th:label="Type"
+                            th:label="#{popup.export.type}"
                             stack-label>
                         <template #before-options>
                             <q-item clickable>
