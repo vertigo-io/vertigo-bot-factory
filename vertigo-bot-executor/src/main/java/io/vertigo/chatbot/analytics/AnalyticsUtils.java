@@ -52,6 +52,12 @@ public final class AnalyticsUtils {
 	public static final String TITLE_KEY = "title";
 	public static final String DRE_TYPE_CD_KEY = "dreTypeCd";
 
+	//Question/Answer keys
+	public static final String QUESTION_ANSWER_KEY = "questionanswer";
+	public static final String QA_ID_KEY = "qaId";
+	public static final String QUESTION_KEY = "question";
+	public static final String CAT_LABEL_KEY = "catLabel";
+
 	public static final String TRUE = "1";
 	public static final String FALSE = "0";
 	public static final Double TRUE_BIGDECIMAL = 1D;
@@ -142,6 +148,26 @@ public final class AnalyticsUtils {
 				.withTag(DRE_ID_KEY, String.valueOf(dreId))
 				.withTag(TITLE_KEY, title)
 				.withTag(DRE_TYPE_CD_KEY, dreTypeCd)
+				.withMeasure("name", TRUE_BIGDECIMAL);
+	}
+
+	/**
+	 * Prepare a question/answer click process trace span
+	 *
+	 * @param qaId question/answer ID
+	 * @param question question text (truncated to 250 chars if needed)
+	 * @param catLabel category label
+	 * @return trace span builder
+	 */
+	public static TraceSpanBuilder prepareQuestionAnswerClickProcess(final Long qaId, final String question, final String catLabel) {
+		// Truncate question to 250 characters to avoid InfluxDB issues
+		final String truncatedQuestion = question != null && question.length() > 250 
+				? question.substring(0, 250) 
+				: question;
+		return TraceSpan.builder(QUESTION_ANSWER_KEY, QUESTION_ANSWER_KEY, Instant.now(), Instant.now())
+				.withTag(QA_ID_KEY, String.valueOf(qaId))
+				.withTag(QUESTION_KEY, truncatedQuestion)
+				.withTag(CAT_LABEL_KEY, catLabel)
 				.withMeasure("name", TRUE_BIGDECIMAL);
 	}
 

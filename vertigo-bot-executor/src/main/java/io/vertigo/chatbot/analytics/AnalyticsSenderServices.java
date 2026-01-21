@@ -20,7 +20,7 @@ import io.vertigo.core.node.component.Component;
 /**
  * Service for sending analytics events to the analytics database.
  * This service handles the creation and sending of various analytics events
- * including messages, ratings, conversations, and documentary resource clicks.
+ * including messages, ratings, conversations, documentary resource clicks, and question/answer clicks.
  *
  * @author Chatbot Team
  */
@@ -199,6 +199,19 @@ public class AnalyticsSenderServices implements Component {
 	 */
 	public void sendDocumentaryResourceClickEvent(final UUID sessionId, final Long dreId, final String title, final String dreTypeCd, final ExecutorConfiguration executorConfiguration) {
 		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareDocumentaryResourceClickProcess(dreId, title, dreTypeCd), executorConfiguration);
+	}
+
+	/**
+	 * Send a question/answer click event to the analytics database
+	 *
+	 * @param sessionId session identifier
+	 * @param qaId question/answer ID
+	 * @param question question text
+	 * @param catLabel category label
+	 * @param executorConfiguration executor configuration with bot and node info
+	 */
+	public void sendQuestionAnswerClickEvent(final UUID sessionId, final Long qaId, final String question, final String catLabel, final ExecutorConfiguration executorConfiguration) {
+		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareQuestionAnswerClickProcess(qaId, question, catLabel), executorConfiguration);
 	}
 
 }
