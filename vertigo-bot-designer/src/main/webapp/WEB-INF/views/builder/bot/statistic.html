@@ -753,29 +753,26 @@
             <vu:include-data object="documentaryResourceTypes" field="labelFr" />
             
             <vu:table componentId="documentaryResourceStat" list="documentaryResourceStat"
-                      th:title="#{analytics.docres.title}"
+                      title="#{analytics.docres.title}"
                       sortBy="count" descending="true"
                       rowsPerPage="10" autoColClass >
                 <vu:slot name="top_right_slot">
                     <vu:select-edit object="documentaryResourceCriteria" field="dreTypeCd"
                                     list="documentaryResourceTypes" 
-                                    labelField="${model.locale == 'fr_FR' ? 'labelFr' : 'label'}"
-                                    label="#{analytics.docres.filter.type}" 
-                                    clearable 
+                                    clearable
                                     style="width: 250px; margin-right: 10px"
                                     rowIndex="${null}"/>
 
                     <vu:text-field-edit object="documentaryResourceCriteria" field="searchText" 
-                                        label="#{analytics.docres.filter.resource}" 
-                                        clearable 
+                                        clearable
                                         debounce="300" 
                                         style="width:210px"
                                         rowIndex="${null}"/>
                     <q-icon name="search" class="q-field__marginal" ></q-icon>
                 </vu:slot>
 
-                <vu:column field="title" th:label="#{analytics.docres.resource}"/>
-                <vu:column field="dreTypeCd" th:label="#{analytics.docres.type}">
+                <vu:column field="title"/>
+                <vu:column field="dreTypeCd">
                     <span v-if="vueData.locale == 'fr_FR'">
                         {{vueData.documentaryResourceTypes.find(t => t.dreTypeCd === props.row.dreTypeCd)?.labelFr}}
                     </span>
@@ -784,6 +781,7 @@
                     </span>
                 </vu:column>
                 <vu:column field="count" th:label="#{analytics.docres.usage}"/>
+                <vu:column field="count"/>
             </vu:table>
         </div>
 
