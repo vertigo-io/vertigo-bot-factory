@@ -7,3 +7,4 @@ insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR) values ('CONVERSATION
 insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR) values ('CATEGORIES', 'Categories', 'Catégories');
 insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR) values ('TOPIC_USAGE', 'Topic usage', 'Utilisation des intentions');
 insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR) values ('DOCUMENTARY_RESOURCES', 'Documentary resources', 'Ressources documentaires');
+insert into TYPE_EXPORT_ANALYTICS(TEA_CD, LABEL, LABEL_FR) values ('QUESTION_ANSWERS', 'Questions & Answers', 'Questions / Réponses');

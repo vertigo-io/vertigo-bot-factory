@@ -35,6 +35,11 @@ stereotype : "StaticMasterData"
             "teaCd" 	    : "DOCUMENTARY_RESOURCES",
             "label" 	    : "Documentary resources",
             "labelFr" 	    : "Ressources documentaires"
+        },
+        "QUESTION_ANSWERS" : {
+            "teaCd" 	    : "QUESTION_ANSWERS",
+            "label" 	    : "Questions & Answers",
+            "labelFr" 	    : "Questions / Réponses"
         }
      }`
     sortField : "teaCd"
@@ -174,4 +179,16 @@ create DtDefinition DtDocumentaryResourceStat {
 create DtDefinition DtDocumentaryResourceCriteria {
 	field dreTypeCd 	{domain: DoCode 				label: "Resource Type Filter" 		}
 	field searchText 	{domain: DoLabel 				label: "Search Text" 				}
+}
+
+create DtDefinition DtQuestionAnswerStat {
+	field qaId 		{domain: DoId 					label: "Q&A Id" 			cardinality: "1"}
+	field question 		{domain: DoLabel 				label: "Question" 			cardinality: "1"}
+	field catLabel 	{domain: DoLabel 				label: "Category" 			cardinality: "1"}
+	field count 		{domain: DoNumber 				label: "Usage Count" 		cardinality: "1"}
+}
+
+create DtDefinition DtQuestionAnswerCriteria {
+	field catLabel 	{domain: DoLabel 				label: "Category Filter" 		}
+	field searchText 	{domain: DoLabel 				label: "Search Text" 			}
 }
