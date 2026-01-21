@@ -163,7 +163,7 @@ public class TimeSerieServices implements Component, Activeable {
 	 * Get all top intent with no restrictions
 	 * Add additional where clause if we want to get a specific top number
 	 *
-	 * @param criteria
+	 * @param criteria stat criteria for filtering
 	 * @return all topIntents
 	 */
 	public TabularDatas getAllTopIntents(final StatCriteria criteria) {
@@ -321,6 +321,69 @@ public class TimeSerieServices implements Component, Activeable {
 		final var q = new InfluxRequestBuilder(influxDbName)
 				.range(timeFilter)
 				.filterFields(AnalyticsServicesUtils.DOCUMENTARY_RESOURCE_STAT_MSRMT, List.of("clicks:count"))
+				.filterByColumn(columnCriteria);
+
+		if (criteria.getNodId() == null) {
+			q.append("|> drop(columns: [\"nodId\"])");
+		}
+
+		q.append("|> window(every: " + timeFilter.dim() + ", createEmpty:true)")
+				.append("|> sum()")
+				.append("|> rename(columns: {_start: \"_time\"})")
+				.append("|> drop(columns: [\"_stop\"])")
+				.pivot();
+
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q.build(true));
+	}
+
+	/**
+	 * Get question/answer click statistics
+	 *
+	 * @param criteria filter criteria
+	 * @param catLabel optional category filter
+	 * @param searchText optional search filter
+	 * @return tabular data with question/answer stats
+	 */
+	public TabularDatas getQuestionAnswerStats(final StatCriteria criteria, final String catLabel, final String searchText) {
+		final var timeFilter = AnalyticsServicesUtils.getTimeFilter(criteria);
+		final var columnCriteria = AnalyticsServicesUtils.getBotNodFilter(criteria);
+
+		// Add catLabel to column criteria for filterByColumn (with exists check)
+		if (catLabel != null && !catLabel.isEmpty()) {
+			columnCriteria.put("catLabel", "\"" + catLabel + "\"");
+		}
+
+		final var q = new InfluxRequestBuilder(influxDbName)
+				.range(timeFilter)
+				.filterFields(AnalyticsServicesUtils.QUESTION_ANSWER_STAT_MSRMT, List.of("qaId:count"))
+				.filterByColumn(columnCriteria);
+
+		// Filter by search text if specified (case-insensitive regex)
+		if (searchText != null && !searchText.isEmpty()) {
+			q.append("|> filter(fn: (r) => r.question =~ /(?i)" + searchText + "/)");
+		}
+
+		q.append("|> group(columns: [\"qaId\", \"question\", \"catLabel\"])")
+				.append("|> sum()")
+				.append("|> rename(columns: {_value: \"qaId:count\"})")
+				.keep(List.of("qaId", "question", "catLabel", "qaId:count"));
+
+		return InfluxRequestUtil.executeTabularQuery(influxDBClient, q.build(false));
+	}
+
+	/**
+	 * Get total question/answer clicks
+	 *
+	 * @param criteria filter criteria
+	 * @return timed data with total clicks
+	 */
+	public TimedDatas getTotalQuestionAnswerClicks(final StatCriteria criteria) {
+		final var timeFilter = AnalyticsServicesUtils.getTimeFilter(criteria);
+		final var columnCriteria = AnalyticsServicesUtils.getBotNodFilter(criteria);
+
+		final var q = new InfluxRequestBuilder(influxDbName)
+				.range(timeFilter)
+				.filterFields(AnalyticsServicesUtils.QUESTION_ANSWER_STAT_MSRMT, List.of("clicks:count"))
 				.filterByColumn(columnCriteria);
 
 		if (criteria.getNodId() == null) {

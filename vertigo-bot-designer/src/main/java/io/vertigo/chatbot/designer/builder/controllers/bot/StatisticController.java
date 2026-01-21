@@ -114,6 +114,9 @@ public class StatisticController extends AbstractBotController {
 	private static final ViewContextKey<io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceCriteria> documentaryResourceCriteriaKey = ViewContextKey.of("documentaryResourceCriteria");
 	private static final ViewContextKey<io.vertigo.chatbot.designer.domain.DocumentaryResourceType> documentaryResourceTypesKey = ViewContextKey.of("documentaryResourceTypes");
 	private static final ViewContextKey<Double> totalOfDocumentaryResourceClicksKey = ViewContextKey.of("totalOfDocumentaryResourceClicks");
+	private static final ViewContextKey<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat> questionAnswerStatKey = ViewContextKey.of("questionAnswerStat");
+	private static final ViewContextKey<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerCriteria> questionAnswerCriteriaKey = ViewContextKey.of("questionAnswerCriteria");
+	private static final ViewContextKey<Double> totalOfQuestionAnswerClicksKey = ViewContextKey.of("totalOfQuestionAnswerClicks");
 
 	@Inject
 	private NodeServices nodeServices;
@@ -189,6 +192,7 @@ public class StatisticController extends AbstractBotController {
 		viewContext.publishDto(topIntentCriteriaKey, new TopIntentCriteria());
 		viewContext.publishDto(documentaryResourceCriteriaKey, new io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceCriteria());
 		viewContext.publishDtList(documentaryResourceTypesKey, documentaryResourceTypeServices.getAllDocResTypes());
+		viewContext.publishDto(questionAnswerCriteriaKey, new io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerCriteria());
 
 		viewContext.publishDto(selectTypeExportAnalyticListKey, new TypeExportAnalyticList());
 
@@ -232,6 +236,15 @@ public class StatisticController extends AbstractBotController {
 				viewContext.readDto(documentaryResourceCriteriaKey, AbstractVSpringMvcController.getUiMessageStack()));
 		viewContext.publishDtList(documentaryResourceStatKey, DtDefinitions.DocumentaryResourceStatFields.dreId,
 				documentaryResourceStats);
+
+		// Question/Answer statistics
+		viewContext.publishRef(totalOfQuestionAnswerClicksKey,
+				analyticsServices.getTotalQuestionAnswerClicks(criteria));
+		final var questionAnswerStats = analyticsServices.getQuestionAnswerStats(
+				criteria,
+				viewContext.readDto(questionAnswerCriteriaKey, AbstractVSpringMvcController.getUiMessageStack()));
+		viewContext.publishDtList(questionAnswerStatKey, DtDefinitions.QuestionAnswerStatFields.qaId,
+				questionAnswerStats);
 	}
 
 	/**
@@ -293,6 +306,17 @@ public class StatisticController extends AbstractBotController {
 
 		final var documentaryResourceStats = analyticsServices.getDocumentaryResourceStats(criteria, documentaryResourceCriteria);
 		viewContext.publishDtList(documentaryResourceStatKey, documentaryResourceStats);
+		listLimitReached(viewContext, uiMessageStack);
+		return viewContext;
+	}
+
+	@PostMapping("/_filterQuestionAnswer")
+	public ViewContext filterQuestionAnswer(final ViewContext viewContext, final UiMessageStack uiMessageStack,
+			@ViewAttribute("criteria") final StatCriteria criteria,
+			@ViewAttribute("questionAnswerCriteria") final io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerCriteria questionAnswerCriteria) {
+
+		final var questionAnswerStats = analyticsServices.getQuestionAnswerStats(criteria, questionAnswerCriteria);
+		viewContext.publishDtList(questionAnswerStatKey, questionAnswerStats);
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}

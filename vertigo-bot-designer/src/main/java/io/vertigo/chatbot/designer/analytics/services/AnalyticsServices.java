@@ -1,14 +1,14 @@
 /**
  * vertigo - simple java starter
- *
+ * <p>
  * Copyright (C) 2020, Vertigo.io, team@vertigo.io
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,8 @@
  * limitations under the License.
  */
 package io.vertigo.chatbot.designer.analytics.services;
+
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -265,14 +267,10 @@ public class AnalyticsServices implements Component {
 			final var stat = new io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat();
 			final Map<String, Object> values = serie.getValues();
 
-			stat.setDreId(Long.parseLong((String) values.get("dreId")));
+			stat.setDreId(NumberUtils.toLong((String) values.get("dreId")));
 			stat.setTitle((String) values.get("title"));
 			stat.setDreTypeCd((String) values.get("dreTypeCd"));
-
-			final Object countValue = values.get("dreId:count");
-			final Long count = countValue instanceof Long longValue ? longValue :
-					countValue instanceof Double doubleValue ? doubleValue.longValue() : 0L;
-			stat.setCount(count);
+			stat.setCount(toLongSafe(values.get("dreId:count")));
 
 			result.add(stat);
 		});
@@ -294,5 +292,66 @@ public Double getTotalDocumentaryResourceClicks(final StatCriteria criteria) {
 					.doubleValue())
 			.sum();
 }
+
+	/**
+	 * Get question/answer statistics with filters
+	 *
+	 * @param criteria stat criteria
+	 * @param questionAnswerCriteria filter criteria for Q&A
+	 * @return list of question/answer stats
+	 */
+	public DtList<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat> getQuestionAnswerStats(
+			final StatCriteria criteria,
+			final io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerCriteria questionAnswerCriteria) {
+		// Get data from InfluxDB with filters
+		final TabularDatas tabularData = timeSerieServices.getQuestionAnswerStats(
+				criteria,
+				questionAnswerCriteria.getCatLabel(),
+				questionAnswerCriteria.getSearchText());
+
+		// Build DtList from InfluxDB data
+		final DtList<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat> result =
+				new DtList<>(io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat.class);
+
+		tabularData.tabularDataSeries().forEach(serie -> {
+			final var stat = new io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat();
+			final Map<String, Object> values = serie.getValues();
+
+			stat.setQaId(NumberUtils.toLong((String) values.get("qaId")));
+			stat.setQuestion((String) values.get("question"));
+			stat.setCatLabel((String) values.get("catLabel"));
+			stat.setCount(toLongSafe(values.get("qaId:count")));
+
+			result.add(stat);
+		});
+
+		return result;
+	}
+
+	/**
+	 * Get total question/answer clicks for the period
+	 *
+	 * @param criteria stat criteria
+	 * @return total clicks count
+	 */
+	public Double getTotalQuestionAnswerClicks(final StatCriteria criteria) {
+		final TimedDatas timedData = timeSerieServices.getTotalQuestionAnswerClicks(criteria);
+		return timedData.timedDataSeries().stream()
+				.mapToDouble(it -> Optional.ofNullable(AnalyticsServicesUtils.getLongValue(it, "clicks:count", 0L))
+						.orElse(0L)
+						.doubleValue())
+				.sum();
+	}
+
+	/**
+	 * Safely converts an Object value to Long.
+	 * Supports Number types (Long, Double, Integer, etc.)
+	 *
+	 * @param value the value to convert
+	 * @return the value converted to Long, or 0L if null or unsupported type
+	 */
+	private static Long toLongSafe(final Object value) {
+		return value instanceof final Number number ? number.longValue() : 0L;
+	}
 
 }
