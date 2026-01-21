@@ -249,4 +249,23 @@ public class AnalyticsExportServices implements Component {
 				.build();
 		return exportManager.createExportFile(export);
 	}
+
+	/**
+	 * Export question/answer statistics to CSV
+	 *
+	 * @param questionAnswerStats list of stats to export
+	 * @return CSV file
+	 */
+	public VFile exportQuestionAnswers(final DtList<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat> questionAnswerStats) {
+		final String fileName = LocaleMessageText.of(AnalyticsMultilingualResources.QUESTION_ANSWERS_FILENAME).getDisplay() 
+				+ LocalDate.now().format(DATE_FORMATTER);
+		final Export export = new ExportBuilder(ExportFormat.CSV, fileName)
+				.beginSheet(questionAnswerStats, null)
+				.addField(DtDefinitions.QuestionAnswerStatFields.question)
+				.addField(DtDefinitions.QuestionAnswerStatFields.catLabel)
+				.addField(DtDefinitions.QuestionAnswerStatFields.count)
+				.endSheet()
+				.build();
+		return exportManager.createExportFile(export);
+	}
 }

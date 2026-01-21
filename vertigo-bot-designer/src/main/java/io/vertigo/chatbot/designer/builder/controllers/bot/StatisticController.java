@@ -348,6 +348,13 @@ public class StatisticController extends AbstractBotController {
 					fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_DOCUMENTARY_RESOURCES).getDisplay(),
 							analyticsExportServices.exportDocumentaryResources(docResStats));
 					break;
+				case "QUESTION_ANSWERS":
+					final DtList<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat> qaStats = analyticsServices.getQuestionAnswerStats(
+							criteria,
+							viewContext.readDto(questionAnswerCriteriaKey, AbstractVSpringMvcController.getUiMessageStack()));
+					fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_QUESTION_ANSWERS).getDisplay(),
+							analyticsExportServices.exportQuestionAnswers(qaStats));
+					break;
 				default:
 					throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
 			}
