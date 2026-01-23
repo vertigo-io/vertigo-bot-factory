@@ -3,8 +3,10 @@ package io.vertigo.chatbot.engine.plugins.bt.jira.command.bot;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.impl.command.BtCommand;
 import io.vertigo.ai.impl.command.BtCommandParserDefinition;
+import io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport;
 import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
 import io.vertigo.chatbot.engine.plugins.bt.jira.impl.JiraServerService;
+import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.core.node.component.Component;
@@ -44,17 +46,30 @@ public class BotBtJiraCommandParserDefinitionProvider implements SimpleDefinitio
 				.isTrue(childs.stream().allMatch(x -> x instanceof JiraField), "Only 'jira field' is allowed inside 'jira create issue'");
 
 		final List<JiraFieldSettingExport> jiraFieldSettingExports = jiraServerService.getJiraFieldSettingExports();
+		final DtList<JiraCustomFieldSettingExport> jiraCustomFieldSettingExports = jiraServerService.getJiraCustomFieldSettingExports();
 		final var jiraFields = childs.stream().map(n -> (JiraField) n).collect(Collectors.toList());
 
-		jiraFields.forEach(jiraField -> Assertion.check().isTrue(
-				jiraFieldSettingExports.stream()
-						.anyMatch(it -> it.getFieldKey().equals(jiraField.getFieldType()) && it.getEnabled()), jiraField.getFieldType() + " is not allowed here."));
+		// Validate that each field used is either a predefined enabled field or a custom enabled field
+		jiraFields.forEach(jiraField -> {
+			final boolean isPredefinedField = jiraFieldSettingExports.stream()
+					.anyMatch(it -> it.getFieldKey().equals(jiraField.getFieldType()) && it.getEnabled());
+			final boolean isCustomField = jiraCustomFieldSettingExports != null && jiraCustomFieldSettingExports.stream()
+					.anyMatch(it -> it.getFieldKey().equals(jiraField.getFieldType()) && it.getEnabled());
+			Assertion.check().isTrue(isPredefinedField || isCustomField, jiraField.getFieldType() + " is not allowed here.");
+		});
 
 		jiraFieldSettingExports.stream().filter(JiraFieldSettingExport::getMandatory).forEach(jiraFieldSettingExport ->
 				Assertion.check().isTrue(jiraFields.stream()
 						.anyMatch(jiraField -> jiraField.getFieldType().equals(jiraFieldSettingExport.getFieldKey())), jiraFieldSettingExport.getFieldKey() + " is missing."));
-		return botJiraNodeProvider.buildJiraCreateIssue(getBB(params), jiraFields, command.getStringParam(0));
 
+		// Validate mandatory custom fields are present (only in JSM mode)
+		if (jiraCustomFieldSettingExports != null && jiraServerService.isJsmMode()) {
+			jiraCustomFieldSettingExports.stream().filter(JiraCustomFieldSettingExport::getMandatory).forEach(customFieldExport ->
+					Assertion.check().isTrue(jiraFields.stream()
+							.anyMatch(jiraField -> jiraField.getFieldType().equals(customFieldExport.getFieldKey())), customFieldExport.getFieldKey() + " is missing."));
+		}
+
+		return botJiraNodeProvider.buildJiraCreateIssue(getBB(params), jiraFields, command.getStringParam(0));
 	}
 
 }

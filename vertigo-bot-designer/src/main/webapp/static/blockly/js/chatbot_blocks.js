@@ -1601,9 +1601,9 @@ Blockly.Blocks['cb_jirafield'] = {
                         "type": "input_dummy"
                     },
                     {
-                        "type": "field_dropdown",
+                        "type": "field_input",
                         "name": "fieldType",
-                        "options": varTypeDropdownJiraFieldTypeOptions
+                        "text": "%{BKY_COMMONS_SAMPLE_JIRA_TYPE_FIELD}"
                     }
                 ],
                 "style": "jirafield_block",

@@ -314,3 +314,92 @@ create Association AJiraFieldSettingJiraField {
 
 	labelB : "Field"
 }
+
+create DtDefinition DtJiraCustomFieldSetting {
+	id jirCusFieldSetId 		    {domain: DoId		    label: "Jira custom field setting id"                                           }
+	field label    		            {domain: DoLabel 	    label: "Custom field label" 			                    cardinality : "1"	}
+	field fieldKey 		            {domain: DoLabel 	    label: "Jira field key" 			                        cardinality : "1"	}
+	field enabled    		        {domain: DoYesNo 	    label: "Jira field enabled" 			                    cardinality : "1"	}
+	field mandatory 		        {domain: DoYesNo 	    label: "Jira field mandatory" 			                    cardinality : "1"	}
+}
+
+create Association AJiraCustomFieldSettingChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtJiraCustomFieldSetting
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create DtDefinition DtJiraCustomFieldType {
+	stereotype : "StaticMasterData"
+	id    jcfTypeCd 		{domain: DoCode 	label: "Code"}
+	field label 		    {domain: DoLabel 	label: "Label" 			cardinality : "1"	}
+	field labelFr 		    {domain: DoLabel 	label: "LabelFr" 		cardinality : "1"	}
+	values : `{
+        "STRING" : {
+            "jcfTypeCd" : "STRING",
+            "label" : "String",
+            "labelFr" : "Texte"
+        },
+        "NUMBER" : {
+            "jcfTypeCd" : "NUMBER",
+            "label" : "Number",
+            "labelFr" : "Nombre"
+        },
+        "ARRAY_LABELS" : {
+            "jcfTypeCd" : "ARRAY_LABELS",
+            "label" : "Array of labels",
+            "labelFr" : "Liste de labels"
+        },
+        "DATE" : {
+            "jcfTypeCd" : "DATE",
+            "label" : "Date",
+            "labelFr" : "Date"
+        },
+        "DATETIME" : {
+            "jcfTypeCd" : "DATETIME",
+            "label" : "Date and time",
+            "labelFr" : "Date et heure"
+        },
+        "SINGLE_OPTION" : {
+            "jcfTypeCd" : "SINGLE_OPTION",
+            "label" : "Single option",
+            "labelFr" : "Option unique"
+        },
+        "MULTIPLE_OPTION" : {
+            "jcfTypeCd" : "MULTIPLE_OPTION",
+            "label" : "Multiple options",
+            "labelFr" : "Options multiples"
+        },
+        "TREE_OPTION" : {
+            "jcfTypeCd" : "TREE_OPTION",
+            "label" : "Tree option",
+            "labelFr" : "Option arborescente"
+        },
+        "SINGLE_USER" : {
+            "jcfTypeCd" : "SINGLE_USER",
+            "label" : "Single user",
+            "labelFr" : "Utilisateur unique"
+        },
+        "MULTIPLE_USER" : {
+            "jcfTypeCd" : "MULTIPLE_USER",
+            "label" : "Multiple users",
+            "labelFr" : "Utilisateurs multiples"
+        }
+    }`
+    sortField : "jcfTypeCd"
+ 	displayField : "label"
+}
+
+create Association AJiraCustomFieldSettingType {
+	fkFieldName : "jcfTypeCd"
+
+ 	dtDefinitionA : DtJiraCustomFieldSetting
+	type : "*>1"
+	dtDefinitionB : DtJiraCustomFieldType
+
+	labelB : "Field type"
+}

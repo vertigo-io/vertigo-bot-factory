@@ -11,11 +11,13 @@ import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
+import static com.atlassian.jira.rest.client.api.domain.IssueFieldId.*;
 
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.PasswordEncryptionServices;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
+import io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport;
 import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
 import io.vertigo.chatbot.engine.plugins.bt.jira.helper.CustomAsynchronousJiraRestClient;
@@ -45,13 +47,22 @@ import java.util.stream.StreamSupport;
 import java.nio.charset.StandardCharsets;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider.formatLink;
 import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.noPayload;
 
 public class JiraServerService implements Component, IJiraService {
+
+	// Standard fields to exclude from JSM requestFieldValues (not supported by JSM API or handled separately)
+	private static final List<String> JSM_EXCLUDED_STANDARD_FIELDS = List.of(
+			REPORTER_FIELD.id,      // reporter - excluded per requirement
+			ATTACHMENT_FIELD.id,    // attachment - excluded per requirement  
+			ISSUE_TYPE_FIELD.id     // issuetype - handled separately as requestTypeId (not in requestFieldValues)
+	);
 
     private String baseJira;
     private String user;
@@ -66,6 +77,7 @@ public class JiraServerService implements Component, IJiraService {
 	private static final String SERVICE_DESK_API_PREFIX = "/rest/servicedeskapi";
     private JiraRestClient jiraRestClient;
     private DtList<JiraFieldSettingExport> jiraFieldSettingExports;
+    private DtList<JiraCustomFieldSettingExport> jiraCustomFieldSettingExports;
     private CustomAsynchronousJiraRestClient customAsynchronousUserRestClient;
     @Inject
     private PasswordEncryptionServices passwordEncryptionServices;
@@ -75,7 +87,7 @@ public class JiraServerService implements Component, IJiraService {
     private JsonEngine jsonEngine;
 
 
-    public void refreshConfig(final ExecutorGlobalConfig config, StringBuilder logs) {
+    public void refreshConfig(final ExecutorGlobalConfig config, final StringBuilder logs) {
         LogsUtils.addLogs(logs, "Refreshing Jira settings ... ");
         final JiraSettingExport jiraSettingExport = config.getBot().getJiraSetting();
         final DtList<JiraFieldSettingExport> jiraFieldSettingExport = config.getBot().getJiraFieldSetting();
@@ -100,6 +112,7 @@ public class JiraServerService implements Component, IJiraService {
 				serviceDeskId = null;
 			}
             jiraFieldSettingExports = jiraFieldSettingExport;
+            jiraCustomFieldSettingExports = config.getBot().getJiraCustomFieldSetting();
             numberOfResults = jiraSettingExport.getNumberOfResults();
             LogsUtils.logOK(logs);
         }
@@ -113,13 +126,17 @@ public class JiraServerService implements Component, IJiraService {
         return jiraFieldSettingExports;
     }
 
+    public DtList<JiraCustomFieldSettingExport> getJiraCustomFieldSettingExports() {
+        return jiraCustomFieldSettingExports;
+    }
+
     private JiraRestClient createJiraRestClient() {
         return new AsynchronousJiraRestClientFactory()
                 .createWithBasicHttpAuthentication(URI.create(baseJira), user, password);
     }
 
     private CustomAsynchronousJiraRestClient createCustomUserRestClient() {
-        DisposableHttpClient httpClient = new AsynchronousHttpClientFactory()
+        final DisposableHttpClient httpClient = new AsynchronousHttpClientFactory()
                 .createClient(URI.create(baseJira), new BasicHttpAuthenticationHandler(user, password));
         return new CustomAsynchronousJiraRestClient(URI.create(baseJira), httpClient);
     }
@@ -138,15 +155,15 @@ public class JiraServerService implements Component, IJiraService {
             }
         });
         final IssueInput issue = iib.build();
-        BasicIssue newBasicIssue = issueClient.createIssue(issue).claim();
+        final BasicIssue newBasicIssue = issueClient.createIssue(issue).claim();
 
-        JiraField attachmentField = jfFields.stream()
+        final JiraField attachmentField = jfFields.stream()
                 .filter(field -> attachmentFieldService.supports(field.getFieldType()))
                 .findFirst()
                 .orElse(null);
 
         if (attachmentField != null && !noPayload.equals(attachmentField.getValue())) {
-            URI attachmentsUri = URI.create(newBasicIssue.getSelf().toString() + "/attachments");
+            final URI attachmentsUri = URI.create(newBasicIssue.getSelf().toString() + "/attachments");
             attachmentFieldService.addingAttachmentToIssue(bb, attachmentField, attachmentsUri, issueClient);
         }
         return newBasicIssue;
@@ -154,13 +171,13 @@ public class JiraServerService implements Component, IJiraService {
 
     private boolean checkIfIsCloud() {
         try {
-            CustomServerInfo customServerInfo = customAsynchronousUserRestClient.getServerInfo().claim();
+            final CustomServerInfo customServerInfo = customAsynchronousUserRestClient.getServerInfo().claim();
             if (customServerInfo != null && customServerInfo.getDeploymentType() != null) {
                 return customServerInfo.getDeploymentType().equalsIgnoreCase("cloud");
             } else {
                 return false;
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
     }
@@ -185,9 +202,10 @@ public class JiraServerService implements Component, IJiraService {
 
 	private String createJsmRequest(final List<JiraField> jiraFields) {
 		final Long currentServiceDeskId = ensureServiceDeskId();
-		final String requestTypeId = getFieldValue(jiraFields, IssueFieldId.ISSUE_TYPE_FIELD.id);
-		final String summary = getFieldValue(jiraFields, IssueFieldId.SUMMARY_FIELD.id);
-		final String description = getFieldValue(jiraFields, IssueFieldId.DESCRIPTION_FIELD.id);
+		
+		// Validate mandatory fields
+		final String requestTypeId = getFieldValue(jiraFields, ISSUE_TYPE_FIELD.id);
+		final String summary = getFieldValue(jiraFields, SUMMARY_FIELD.id);
 
 		if (requestTypeId == null || requestTypeId.isBlank()) {
 			throw new VSystemException("Request type id is mandatory to create JSM request.");
@@ -198,9 +216,36 @@ public class JiraServerService implements Component, IJiraService {
 
 		final Map<String, Object> payload = new java.util.HashMap<>();
 		final Map<String, Object> requestFieldValues = new java.util.HashMap<>();
-		requestFieldValues.put("summary", summary);
-		if (description != null) {
-			requestFieldValues.put("description", description);
+
+		// Add enabled standard fields (except excluded ones: reporter, attachment, and issueType, handled separately)
+		if (jiraFieldSettingExports != null) {
+			jiraFieldSettingExports.stream()
+					.filter(JiraFieldSettingExport::getEnabled)
+					.filter(fieldSetting -> !JSM_EXCLUDED_STANDARD_FIELDS.contains(fieldSetting.getFieldKey()))
+					.forEach(fieldSetting -> {
+						final String value = getFieldValue(jiraFields, fieldSetting.getFieldKey());
+						if (value != null && !value.isBlank()) {
+							final Object formattedValue = formatStandardFieldValue(fieldSetting.getFieldKey(), value);
+							if (formattedValue != null) {
+								requestFieldValues.put(fieldSetting.getFieldKey(), formattedValue);
+							}
+						}
+					});
+		}
+
+		// Add custom fields if any
+		if (jiraCustomFieldSettingExports != null) {
+			jiraCustomFieldSettingExports.stream()
+					.filter(JiraCustomFieldSettingExport::getEnabled)
+					.forEach(customField -> {
+						final String value = getFieldValue(jiraFields, customField.getFieldKey());
+						if (value != null && !value.isBlank()) {
+							final Object formattedValue = formatCustomFieldValue(value, customField.getFieldType());
+							if (formattedValue != null) {
+								requestFieldValues.put(customField.getFieldKey(), formattedValue);
+							}
+						}
+					});
 		}
 		payload.put("requestFieldValues", requestFieldValues);
 		payload.put("requestTypeId", requestTypeId);
@@ -231,13 +276,133 @@ public class JiraServerService implements Component, IJiraService {
 	}
 
 	private String extractWebLink(final Map<?, ?> responseMap) {
-		if (responseMap != null && responseMap.get("_links") instanceof Map<?, ?> links) {
+		if (responseMap != null && responseMap.get("_links") instanceof final Map<?, ?> links) {
 			final Object web = links.get("web");
 			if (web instanceof String) {
 				return formatLink((String) web, true);
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Formats a standard Jira field value based on its field key for the JSM Cloud API.
+	 * Based on JSM Cloud API format:
+	 * - summary/description: simple string value
+	 * - issuetype: simple string value (used for requestTypeId)
+	 * - priority: { "id": "10002" }
+	 * - fixVersions/versions: [{ "id": "24848" }]
+	 * - assignee: { "accountId": "..." }
+	 * - components: [{ "id": "..." }]
+	 * - labels: ["label1", "label2"]
+	 * - duedate: "YYYY-MM-DD"
+	 *
+	 * @param fieldKey The Jira field key (e.g., "priority", "fixVersions")
+	 * @param value    The raw string value from user input (comma-separated for lists)
+	 * @return The formatted value suitable for the JSM Cloud API, or null if not applicable
+	 */
+	private Object formatStandardFieldValue(final String fieldKey, final String value) {
+		if (value == null || value.isBlank()) {
+			return null;
+		}
+		return switch (fieldKey) {
+			// Simple string values (no transformation needed)
+			case "summary", "description", "issuetype" -> value;
+
+			// Single object with "id" key
+			case "priority" -> Map.of("id", value.trim());
+
+			// Array of objects with "id" key (comma-separated values)
+			case "fixVersions", "versions" -> Arrays.stream(value.split(","))
+					.map(String::trim)
+					.filter(s -> !s.isEmpty())
+					.map(id -> Map.of("id", (Object) id))
+					.toList();
+
+			// Single object with "accountId" key (for Cloud)
+			case "assignee" -> Map.of("accountId", value.trim());
+
+			// Array of objects with "id" key (comma-separated values)
+			case "components" -> Arrays.stream(value.split(","))
+					.map(String::trim)
+					.filter(s -> !s.isEmpty())
+					.map(id -> Map.of("id", (Object) id))
+					.toList();
+
+			// Array of strings (comma-separated values)
+			case "labels" -> Arrays.stream(value.split(","))
+					.map(String::trim)
+					.filter(s -> !s.isEmpty())
+					.toList();
+
+			// Date string (format: YYYY-MM-DD)
+			case "duedate" -> value.trim();
+
+			// Unknown standard field - return raw value
+			default -> value;
+		};
+	}
+
+	/**
+	 * Formats a custom field value based on its declared type for the Jira/JSM API.
+	 *
+	 * @param value The raw string value from user input
+	 * @param type  The field type code (STRING, NUMBER, ARRAY_LABELS, DATE, DATETIME, SINGLE_OPTION, MULTIPLE_OPTION, TREE_OPTION, SINGLE_USER, MULTIPLE_USER)
+	 * @return The formatted value suitable for the JSM API, or null if formatting fails
+	 */
+	private Object formatCustomFieldValue(final String value, final String type) {
+		if (value == null || value.isBlank() || type == null) {
+			return null;
+		}
+		return switch (type) {
+			case "STRING" -> value;
+			case "NUMBER" -> {
+				try {
+					yield Long.parseLong(value.trim());
+				} catch (final NumberFormatException e) {
+					yield value; // Fallback to string if parsing fails
+				}
+			}
+			case "ARRAY_LABELS" -> Arrays.stream(value.split(","))
+					.map(String::trim)
+					.filter(s -> !s.isEmpty())
+					.toList();
+			case "DATE" -> value.trim(); // Format expected: "YYYY-MM-DD"
+			case "DATETIME" -> value.trim(); // Format expected: ISO 8601 "YYYY-MM-DDTHH:mm:ss.SSS+ZZZZ"
+			case "SINGLE_OPTION" -> Map.of("id", value.trim());
+			case "MULTIPLE_OPTION" -> Arrays.stream(value.split(","))
+					.map(String::trim)
+					.filter(s -> !s.isEmpty())
+					.map(id -> Map.of("id", (Object) id))
+					.toList();
+			case "TREE_OPTION" -> parseTreeOption(value);
+			case "SINGLE_USER" -> Map.of("name", value.trim());
+			case "MULTIPLE_USER" -> Arrays.stream(value.split(","))
+					.map(String::trim)
+					.filter(s -> !s.isEmpty())
+					.map(name -> Map.of("name", name))
+					.toList();
+			default -> value; // Fallback to raw string for unknown types
+		};
+	}
+
+	/**
+	 * Parses a tree option value. Expected format: "parentId,childId" or just "parentId".
+	 * Returns a nested structure: { "id": "parentId", "child": { "id": "childId" } }
+	 */
+	private Object parseTreeOption(final String value) {
+		final String[] parts = value.split(",");
+		if (parts.length == 0) {
+			return null;
+		}
+		final Map<String, Object> result = new HashMap<>();
+		result.put("id", parts[0].trim());
+		if (parts.length > 1) {
+			final Map<String, Object> child = new HashMap<>();
+			child.put("id", parts[1].trim());
+			result.put("child", child);
+		}
+		return result;
 	}
 
 	private String getFieldValue(final List<JiraField> jiraFields, final String fieldType) {

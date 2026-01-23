@@ -5,6 +5,7 @@ import io.vertigo.chatbot.commons.domain.*;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
 import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.*;
+import io.vertigo.chatbot.designer.builder.services.JiraCustomFieldTypeService;
 import io.vertigo.chatbot.designer.builder.services.bot.ChatbotCustomConfigServices;
 import io.vertigo.chatbot.designer.builder.services.topic.ScriptIntentionServices;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
@@ -39,6 +40,9 @@ public class ExtensionsController extends AbstractBotController {
     private static final ViewContextKey<JiraField> jiraFieldsKey = ViewContextKey.of("jiraFields");
     private static final ViewContextKey<ScriptIntention> scriptIntentionKey = ViewContextKey.of("scriptIntention");
     private static final ViewContextKey<ChatbotCustomConfig> chatbotCustomConfigKey = ViewContextKey.of("chatbotCustomConfig");
+    private static final ViewContextKey<JiraCustomFieldSetting> jiraCustomFieldSettingsKey = ViewContextKey.of("jiraCustomFieldSettings");
+    private static final ViewContextKey<JiraCustomFieldSetting> newJiraCustomFieldSettingKey = ViewContextKey.of("newJiraCustomFieldSetting");
+    private static final ViewContextKey<JiraCustomFieldType> jiraCustomFieldTypesKey = ViewContextKey.of("jiraCustomFieldTypes");
 
     @Inject
     private ConfluenceSettingServices confluenceSettingServices;
@@ -54,6 +58,10 @@ public class ExtensionsController extends AbstractBotController {
     private ScriptIntentionServices scriptIntentionServices;
     @Inject
     private ChatbotCustomConfigServices chatbotCustomConfigServices;
+    @Inject
+    private JiraCustomFieldSettingServices jiraCustomFieldSettingServices;
+    @Inject
+    private JiraCustomFieldTypeService jiraCustomFieldTypeService;
 
 
     @GetMapping("/")
@@ -72,6 +80,9 @@ public class ExtensionsController extends AbstractBotController {
         viewContext.publishDtList(nodeListKey, nodeServices.getNodesByBot(bot));
         viewContext.publishDto(scriptIntentionKey, scriptIntentionServices.getNewScriptIntention(bot));
         viewContext.publishDto(chatbotCustomConfigKey, chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId));
+        viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
+        viewContext.publishDto(newJiraCustomFieldSettingKey, new JiraCustomFieldSetting());
+        viewContext.publishDtList(jiraCustomFieldTypesKey, jiraCustomFieldTypeService.findAll());
 
         super.initBreadCrums(viewContext, "EXTENSION");
     }
@@ -181,6 +192,79 @@ public class ExtensionsController extends AbstractBotController {
                             @ViewAttribute("bot") final Chatbot bot,
                             @ViewAttribute("chatbotCustomConfig") final ChatbotCustomConfig chatbotCustomConfig) {
         chatbotCustomConfigServices.save(bot, chatbotCustomConfig);
+    }
+
+    @PostMapping("/_saveJiraCustomField")
+    public ViewContext saveJiraCustomField(final ViewContext viewContext,
+                                           final UiMessageStack uiMessageStack,
+                                           @ViewAttribute("bot") final Chatbot bot,
+                                           @ViewAttribute("newJiraCustomFieldSetting") @Validate(JiraCustomFieldSettingValidator.class) final JiraCustomFieldSetting jiraCustomFieldSetting) {
+        jiraCustomFieldSetting.setBotId(bot.getBotId());
+        jiraCustomFieldSettingServices.save(bot, jiraCustomFieldSetting);
+
+        viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
+        viewContext.publishDto(newJiraCustomFieldSettingKey, new JiraCustomFieldSetting());
+        return viewContext;
+    }
+
+    @PostMapping("/_deleteJiraCustomField")
+    public ViewContext deleteJiraCustomField(final ViewContext viewContext,
+                                             final UiMessageStack uiMessageStack,
+                                             @ViewAttribute("bot") final Chatbot bot,
+                                             @RequestParam("jirCusFieldSetId") final Long jirCusFieldSetId) {
+        jiraCustomFieldSettingServices.delete(bot, jirCusFieldSetId);
+        viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
+        return viewContext;
+    }
+
+    @PostMapping("_enableDisableJiraCustomField")
+    public ViewContext enableDisableJiraCustomField(final ViewContext viewContext,
+                                                    final UiMessageStack uiMessageStack,
+                                                    @ViewAttribute("bot") final Chatbot bot,
+                                                    @RequestParam("fieldId") final Long fieldId,
+                                                    @RequestParam("enabled") final String enabled) {
+        jiraCustomFieldSettingServices.findOptionalById(fieldId).ifPresent(setting -> {
+            final boolean isEnabled = "true".equals(enabled);
+            setting.setEnabled(isEnabled);
+            if (!isEnabled) {
+                setting.setMandatory(false);
+            }
+            jiraCustomFieldSettingServices.save(bot, setting);
+        });
+
+        viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
+        return viewContext;
+    }
+
+    @PostMapping("_mandatoryJiraCustomField")
+    public ViewContext mandatoryJiraCustomField(final ViewContext viewContext,
+                                                final UiMessageStack uiMessageStack,
+                                                @ViewAttribute("bot") final Chatbot bot,
+                                                @RequestParam("fieldId") final Long fieldId,
+                                                @RequestParam("mandatory") final String mandatory) {
+        jiraCustomFieldSettingServices.findOptionalById(fieldId).ifPresent(setting -> {
+            setting.setMandatory("true".equals(mandatory));
+            jiraCustomFieldSettingServices.save(bot, setting);
+        });
+
+        viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
+        return viewContext;
+    }
+
+    public static final class JiraCustomFieldSettingValidator extends AbstractChatbotDtObjectValidator<JiraCustomFieldSetting> {
+
+        @Override
+        protected void checkMonoFieldConstraints(final JiraCustomFieldSetting setting, final DataField dtField, final DtObjectErrors dtObjectErrors) {
+            super.checkMonoFieldConstraints(setting, dtField, dtObjectErrors);
+            if (DtDefinitions.JiraCustomFieldSettingFields.label.name().equals(dtField.name())
+                    || DtDefinitions.JiraCustomFieldSettingFields.fieldKey.name().equals(dtField.name())
+                    || DtDefinitions.JiraCustomFieldSettingFields.jcfTypeCd.name().equals(dtField.name())) {
+                final String value = (String) dtField.getDataAccessor().getValue(setting);
+                if (value == null || value.trim().isEmpty()) {
+                    dtObjectErrors.addError(dtField.name(), LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                }
+            }
+        }
     }
 
     public static final class ConfluenceSettingIhmNotEmptyValidator extends AbstractChatbotDtObjectValidator<ConfluenceSettingIhm> {

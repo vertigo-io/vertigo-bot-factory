@@ -164,6 +164,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldBotExport$jiraFieldSetting,
 	/**
+	 * Jira custom fields setting.
+	 */
+	fldBotExport$jiraCustomFieldSetting,
+	/**
 	 * Questions answers List.
 	 */
 	fldBotExport$questionAnswerList,
@@ -691,6 +695,78 @@ public enum DtResources implements LocaleMessageKey {
 	 * Global variable value.
 	 */
 	fldGlobalVariableExport$value,
+
+	/***********************************************************
+	 * JiraCustomFieldSetting.
+	 **********************************************************/
+	/**
+	 * Jira custom field setting id.
+	 */
+	fldJiraCustomFieldSetting$jirCusFieldSetId,
+	/**
+	 * Custom field label.
+	 */
+	fldJiraCustomFieldSetting$label,
+	/**
+	 * Jira field key.
+	 */
+	fldJiraCustomFieldSetting$fieldKey,
+	/**
+	 * Jira field enabled.
+	 */
+	fldJiraCustomFieldSetting$enabled,
+	/**
+	 * Jira field mandatory.
+	 */
+	fldJiraCustomFieldSetting$mandatory,
+	/**
+	 * Chatbot.
+	 */
+	fldJiraCustomFieldSetting$botId,
+	/**
+	 * Field type.
+	 */
+	fldJiraCustomFieldSetting$jcfTypeCd,
+
+	/***********************************************************
+	 * JiraCustomFieldSettingExport.
+	 **********************************************************/
+	/**
+	 * Custom field label.
+	 */
+	fldJiraCustomFieldSettingExport$label,
+	/**
+	 * Jira field key.
+	 */
+	fldJiraCustomFieldSettingExport$fieldKey,
+	/**
+	 * Field type.
+	 */
+	fldJiraCustomFieldSettingExport$fieldType,
+	/**
+	 * Enabled.
+	 */
+	fldJiraCustomFieldSettingExport$enabled,
+	/**
+	 * Mandatory.
+	 */
+	fldJiraCustomFieldSettingExport$mandatory,
+
+	/***********************************************************
+	 * JiraCustomFieldType.
+	 **********************************************************/
+	/**
+	 * Code.
+	 */
+	fldJiraCustomFieldType$jcfTypeCd,
+	/**
+	 * Label.
+	 */
+	fldJiraCustomFieldType$label,
+	/**
+	 * LabelFr.
+	 */
+	fldJiraCustomFieldType$labelFr,
 
 	/***********************************************************
 	 * JiraField.

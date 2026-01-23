@@ -103,6 +103,12 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		HistoryAction(io.vertigo.chatbot.designer.domain.HistoryAction.class),
 		/** Objet de données HistoryCriteria. */
 		HistoryCriteria(io.vertigo.chatbot.designer.domain.HistoryCriteria.class),
+		/** Objet de données JiraCustomFieldSetting. */
+		JiraCustomFieldSetting(io.vertigo.chatbot.commons.domain.JiraCustomFieldSetting.class),
+		/** Objet de données JiraCustomFieldSettingExport. */
+		JiraCustomFieldSettingExport(io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport.class),
+		/** Objet de données JiraCustomFieldType. */
+		JiraCustomFieldType(io.vertigo.chatbot.commons.domain.JiraCustomFieldType.class),
 		/** Objet de données JiraField. */
 		JiraField(io.vertigo.chatbot.commons.domain.JiraField.class),
 		/** Objet de données JiraFieldSetting. */
@@ -388,6 +394,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jiraSetting,
 		/** Propriété 'Jira fields setting'. */
 		jiraFieldSetting,
+		/** Propriété 'Jira custom fields setting'. */
+		jiraCustomFieldSetting,
 		/** Propriété 'Questions answers List'. */
 		questionAnswerList,
 		/** Propriété 'Documentary resources'. */
@@ -995,6 +1003,51 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		hacCd,
 		/** Propriété 'Search'. */
 		text	}
+
+	/**
+	 * Enumération des champs de JiraCustomFieldSetting.
+	 */
+	public enum JiraCustomFieldSettingFields implements DataFieldName<io.vertigo.chatbot.commons.domain.JiraCustomFieldSetting> {
+		/** Propriété 'Jira custom field setting id'. */
+		jirCusFieldSetId,
+		/** Propriété 'Custom field label'. */
+		label,
+		/** Propriété 'Jira field key'. */
+		fieldKey,
+		/** Propriété 'Jira field enabled'. */
+		enabled,
+		/** Propriété 'Jira field mandatory'. */
+		mandatory,
+		/** Propriété 'Chatbot'. */
+		botId,
+		/** Propriété 'Field type'. */
+		jcfTypeCd	}
+
+	/**
+	 * Enumération des champs de JiraCustomFieldSettingExport.
+	 */
+	public enum JiraCustomFieldSettingExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport> {
+		/** Propriété 'Custom field label'. */
+		label,
+		/** Propriété 'Jira field key'. */
+		fieldKey,
+		/** Propriété 'Field type'. */
+		fieldType,
+		/** Propriété 'Enabled'. */
+		enabled,
+		/** Propriété 'Mandatory'. */
+		mandatory	}
+
+	/**
+	 * Enumération des champs de JiraCustomFieldType.
+	 */
+	public enum JiraCustomFieldTypeFields implements DataFieldName<io.vertigo.chatbot.commons.domain.JiraCustomFieldType> {
+		/** Propriété 'Code'. */
+		jcfTypeCd,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'LabelFr'. */
+		labelFr	}
 
 	/**
 	 * Enumération des champs de JiraField.
