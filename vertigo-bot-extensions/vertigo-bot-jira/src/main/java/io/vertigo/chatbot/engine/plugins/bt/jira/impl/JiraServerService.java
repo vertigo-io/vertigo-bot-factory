@@ -59,8 +59,8 @@ public class JiraServerService implements Component, IJiraService {
 
 	// Standard fields to exclude from JSM requestFieldValues (not supported by JSM API or handled separately)
 	private static final List<String> JSM_EXCLUDED_STANDARD_FIELDS = List.of(
-			REPORTER_FIELD.id,      // reporter - excluded per requirement
-			ATTACHMENT_FIELD.id,    // attachment - excluded per requirement  
+			REPORTER_FIELD.id,      // reporter - handled separately as raiseOnBehalfOf in JSM (not in requestFieldValues)
+			ATTACHMENT_FIELD.id,    // attachment - excluded per requirement
 			ISSUE_TYPE_FIELD.id     // issuetype - handled separately as requestTypeId (not in requestFieldValues)
 	);
 
@@ -250,6 +250,12 @@ public class JiraServerService implements Component, IJiraService {
 		payload.put("requestFieldValues", requestFieldValues);
 		payload.put("requestTypeId", requestTypeId);
 		payload.put("serviceDeskId", currentServiceDeskId.toString());
+
+		// Handle raiseOnBehalfOf (reporter email for JSM)
+		final String reporterValue = getFieldValue(jiraFields, "raiseOnBehalfOf");
+		if (reporterValue != null && !reporterValue.isBlank()) {
+			payload.put("raiseOnBehalfOf", reporterValue);
+		}
 
 		final HttpRequest request = HttpRequest.newBuilder()
 				.uri(buildJsmUri(SERVICE_DESK_API_PREFIX + "/request"))

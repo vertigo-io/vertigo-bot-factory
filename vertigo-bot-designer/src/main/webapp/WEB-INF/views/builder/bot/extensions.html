@@ -54,6 +54,10 @@
             },
 
             getJiraFieldId: function(jirFieldCd) {
+                // En mode JSM, REPORTER devient raiseOnBehalfOf
+                if (VertigoUi.vueData.chatbotCustomConfig.jsmMode && jirFieldCd === 'REPORTER') {
+                    return 'raiseOnBehalfOf';
+                }
                 let jiraField = VertigoUi.vueData.jiraFields.find(currentField => currentField.jirFieldCd === jirFieldCd);
                 if (jiraField !== undefined) {
                     return jiraField.jiraId;
@@ -179,7 +183,7 @@
             // Retourne les valeurs enabled et mandatory selon le mode JSM
             getJiraFieldValues: function(row) {
                 if (this.vueData.chatbotCustomConfig.jsmMode) {
-                    if (['REPORTER', 'ATTACHMENT'].includes(row.jirFieldCd)) {
+                    if (['ATTACHMENT'].includes(row.jirFieldCd)) {
                         return { enabled: false, mandatory: false };
                     }
                     if (['TYPE', 'SUMMARY'].includes(row.jirFieldCd)) {
@@ -488,7 +492,8 @@
             <vu:include-data object="jiraFieldSettings" field="'*'"/>
             <vu:column field="jirFieldCd">
                 <vu:content>
-                    <span v-html="getJiraFieldLabel(props.row.jirFieldCd)"></span>
+                    <span v-if="vueData.chatbotCustomConfig.jsmMode && props.row.jirFieldCd === 'REPORTER'" th:text="#{extensions.jira.raiseOnBehalfOf}"></span>
+                    <span v-else v-html="getJiraFieldLabel(props.row.jirFieldCd)"></span>
                 </vu:content>
             </vu:column>
             <vu:column name="jiraId" th:label="#{fldJiraField$jiraId}">
@@ -499,7 +504,7 @@
             <vu:column name="enabled" th:label="#{fldJiraFieldSetting$enabled}">
                 <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" 
                           :model-value="getJiraFieldValues(props.row).enabled"
-                          :disable="vueData.chatbotCustomConfig.jsmMode && ['REPORTER', 'ATTACHMENT', 'TYPE', 'SUMMARY'].includes(props.row.jirFieldCd)"
+                          :disable="vueData.chatbotCustomConfig.jsmMode && ['ATTACHMENT', 'TYPE', 'SUMMARY'].includes(props.row.jirFieldCd)"
                           @update:model-value="val => { props.row.enabled = val; enabledDisabledJiraField(props.row.jirFieldCd, val); }"></q-toggle>
                 <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" 
                           :model-value="getJiraFieldValues(props.row).enabled"
@@ -508,7 +513,7 @@
             <vu:column name="mandatory" th:label="#{fldJiraFieldSetting$mandatory}">
                 <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
                           :model-value="getJiraFieldValues(props.row).mandatory"
-                          :disable="!getJiraFieldValues(props.row).enabled || (vueData.chatbotCustomConfig.jsmMode && ['REPORTER', 'ATTACHMENT', 'TYPE', 'SUMMARY'].includes(props.row.jirFieldCd))"
+                          :disable="!getJiraFieldValues(props.row).enabled || (vueData.chatbotCustomConfig.jsmMode && ['ATTACHMENT', 'TYPE', 'SUMMARY'].includes(props.row.jirFieldCd))"
                           @update:model-value="val => { props.row.mandatory = val; mandatoryJiraField(props.row.jirFieldCd, val); }"></q-toggle>
                 <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" 
                           :model-value="getJiraFieldValues(props.row).mandatory"
