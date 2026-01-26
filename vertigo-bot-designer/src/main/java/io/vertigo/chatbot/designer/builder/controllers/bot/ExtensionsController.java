@@ -223,7 +223,8 @@ public class ExtensionsController extends AbstractBotController {
                                                     @ViewAttribute("bot") final Chatbot bot,
                                                     @RequestParam("fieldId") final Long fieldId,
                                                     @RequestParam("enabled") final String enabled) {
-        jiraCustomFieldSettingServices.findOptionalById(fieldId).ifPresent(setting -> {
+        // Utiliser findOptionalByIdAndBot pour valider l'appartenance au bot (protection IDOR)
+        jiraCustomFieldSettingServices.findOptionalByIdAndBot(fieldId, bot).ifPresent(setting -> {
             final boolean isEnabled = "true".equals(enabled);
             setting.setEnabled(isEnabled);
             if (!isEnabled) {
@@ -242,7 +243,8 @@ public class ExtensionsController extends AbstractBotController {
                                                 @ViewAttribute("bot") final Chatbot bot,
                                                 @RequestParam("fieldId") final Long fieldId,
                                                 @RequestParam("mandatory") final String mandatory) {
-        jiraCustomFieldSettingServices.findOptionalById(fieldId).ifPresent(setting -> {
+        // Utiliser findOptionalByIdAndBot pour valider l'appartenance au bot (protection IDOR)
+        jiraCustomFieldSettingServices.findOptionalByIdAndBot(fieldId, bot).ifPresent(setting -> {
             setting.setMandatory("true".equals(mandatory));
             jiraCustomFieldSettingServices.save(bot, setting);
         });

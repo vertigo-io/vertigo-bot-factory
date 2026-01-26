@@ -11,6 +11,9 @@ import com.atlassian.jira.rest.client.auth.BasicHttpAuthenticationHandler;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFactory;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
+
+import org.apache.commons.lang3.math.NumberUtils;
+
 import static com.atlassian.jira.rest.client.api.domain.IssueFieldId.*;
 
 import io.vertigo.ai.bb.BlackBoard;
@@ -39,6 +42,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -56,6 +60,10 @@ import static io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider.f
 import static io.vertigo.chatbot.engine.plugins.bt.jira.helper.JiraUtils.noPayload;
 
 public class JiraServerService implements Component, IJiraService {
+
+	// HTTP client timeouts for JSM API calls
+	private static final Duration HTTP_CONNECT_TIMEOUT = Duration.ofSeconds(10);
+	private static final Duration HTTP_REQUEST_TIMEOUT = Duration.ofSeconds(30);
 
 	// Standard fields to exclude from JSM requestFieldValues (not supported by JSM API or handled separately)
 	private static final List<String> JSM_EXCLUDED_STANDARD_FIELDS = List.of(
@@ -101,7 +109,9 @@ public class JiraServerService implements Component, IJiraService {
             password = passwordEncryptionServices.decryptPassword(jiraSettingExport.getPassword());
             project = jiraSettingExport.getProject();
 			jsmMode = Boolean.TRUE.equals(jiraSettingExport.getJsmMode());
-			httpClient = HttpClient.newHttpClient();
+			httpClient = HttpClient.newBuilder()
+					.connectTimeout(HTTP_CONNECT_TIMEOUT)
+					.build();
 			jsmAuthHeader = buildAuthHeader();
             jiraRestClient = createJiraRestClient();
             customAsynchronousUserRestClient = createCustomUserRestClient();
@@ -259,6 +269,7 @@ public class JiraServerService implements Component, IJiraService {
 
 		final HttpRequest request = HttpRequest.newBuilder()
 				.uri(buildJsmUri(SERVICE_DESK_API_PREFIX + "/request"))
+				.timeout(HTTP_REQUEST_TIMEOUT)
 				.header("Authorization", jsmAuthHeader)
 				.header("Accept", "application/json")
 				.header("Content-Type", "application/json")
@@ -429,6 +440,7 @@ public class JiraServerService implements Component, IJiraService {
 		final Long currentServiceDeskId = ensureServiceDeskId();
 		final HttpRequest request = HttpRequest.newBuilder()
 				.uri(buildJsmUri(SERVICE_DESK_API_PREFIX + "/servicedesk/" + currentServiceDeskId + "/requesttype"))
+				.timeout(HTTP_REQUEST_TIMEOUT)
 				.header("Authorization", jsmAuthHeader)
 				.header("Accept", "application/json")
 				.GET()
@@ -530,6 +542,7 @@ public class JiraServerService implements Component, IJiraService {
 	private Long resolveServiceDeskId(final StringBuilder logs) {
 		final HttpRequest request = HttpRequest.newBuilder()
 				.uri(buildJsmUri(SERVICE_DESK_API_PREFIX + "/servicedesk"))
+				.timeout(HTTP_REQUEST_TIMEOUT)
 				.header("Authorization", jsmAuthHeader)
 				.header("Accept", "application/json")
 				.GET()
@@ -542,6 +555,7 @@ public class JiraServerService implements Component, IJiraService {
 						.filter(serviceDesk -> project.equalsIgnoreCase(serviceDesk.getProjectKey()))
 						.findFirst()
 						.map(JsmServiceDesk::getId)
+						.filter(NumberUtils::isCreatable)
 						.map(Long::valueOf)
 						.orElseThrow(() -> new VSystemException("No service desk found for projectKey " + project));
 			}

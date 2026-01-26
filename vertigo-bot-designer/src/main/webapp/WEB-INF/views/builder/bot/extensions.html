@@ -109,6 +109,10 @@
                 VUiPage.httpPostAjax("_enableDisableJiraField", {
                     'fieldKey': fieldKey,
                     'enabled': enabled
+                }, {
+                    onSuccess: function () {
+                        refreshCodeMirrorJiraField()
+                    }
                 });
             },
 
@@ -152,12 +156,12 @@
             },
 
             applyJsmModeToAll: function() {
+                // Utiliser $nextTick pour attendre que Vue ait mis à jour la valeur jsmMode
+                this.$nextTick(() => {
+                    refreshCodeMirrorJiraField();
+                });
                 VUiPage.httpPostAjax("_saveJsmMode", {
                     'vContext[chatbotCustomConfig][jsmMode]': VertigoUi.vueData.chatbotCustomConfig.jsmMode
-                }, {
-                    onSuccess: function () {
-                        refreshCodeMirrorJiraField()
-                    }
                 });
             },
 
@@ -166,6 +170,10 @@
                 VUiPage.httpPostAjax("_enableDisableJiraCustomField", {
                     'fieldId': id,
                     'enabled': enabled
+                }, {
+                    onSuccess: function () {
+                        refreshCodeMirrorJiraField()
+                    }
                 });
             },
 
@@ -245,12 +253,31 @@
             return str.toLowerCase().replace(/[^a-z0-9]/g, '');
         }
 
+        // Helper function to get effective field values considering JSM mode
+        function getEffectiveJiraFieldValues(fieldSetting) {
+            const jsmMode = VertigoUi.vueData.chatbotCustomConfig.jsmMode;
+            if (jsmMode) {
+                if (['ATTACHMENT'].includes(fieldSetting.jirFieldCd)) {
+                    return { enabled: false, mandatory: false };
+                }
+                if (['TYPE', 'SUMMARY'].includes(fieldSetting.jirFieldCd)) {
+                    return { enabled: true, mandatory: true };
+                }
+            }
+            return { enabled: fieldSetting.enabled, mandatory: fieldSetting.mandatory };
+        }
+
         function refreshCodeMirrorJiraField() {
-            const fieldIds = VertigoUi.vueData.jiraFieldSettings.filter(jiraFieldSetting => jiraFieldSetting.mandatory)
+            // Filter fields that are both enabled AND mandatory, using effective values (considering JSM mode)
+            const fieldIds = VertigoUi.vueData.jiraFieldSettings
+                .filter(jiraFieldSetting => {
+                    const values = getEffectiveJiraFieldValues(jiraFieldSetting);
+                    return values.enabled && values.mandatory;
+                })
                 .map(jiraFieldSetting => VUiExtensions.methods.getJiraFieldId(jiraFieldSetting.jirFieldCd));
-            // Add custom fields if in JSM mode
-            const customFields = VertigoUi.vueData.jiraCustomFieldSettings
-                ? VertigoUi.vueData.jiraCustomFieldSettings.filter(customField => customField.mandatory)
+            // Add custom fields ONLY if in JSM mode, and only if enabled AND mandatory
+            const customFields = (VertigoUi.vueData.chatbotCustomConfig.jsmMode && VertigoUi.vueData.jiraCustomFieldSettings)
+                ? VertigoUi.vueData.jiraCustomFieldSettings.filter(customField => customField.enabled && customField.mandatory)
                 : [];
             let jiraSequence = 'begin sequence \n    begin jira:issue:create "Message du bot lorsque le ticket a été crée" \n';
             fieldIds.forEach(fieldId => {

@@ -27,17 +27,32 @@ public class JiraCustomFieldSettingServices implements Component {
 	@Inject
 	private JiraCustomFieldSettingDAO jiraCustomFieldSettingDAO;
 
-
-	public Optional<JiraCustomFieldSetting> findOptionalById(final long id) {
-		return jiraCustomFieldSettingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.JiraCustomFieldSettingFields.jirCusFieldSetId, id));
+	/**
+	 * Recherche un setting par ID et vérifie qu'il appartient au bot spécifié.
+	 * Cette méthode prévient les attaques IDOR en validant l'appartenance.
+	 * @param id l'ID du setting
+	 * @param bot le bot propriétaire attendu
+	 * @return le setting si trouvé ET appartenant au bot
+	 */
+	public Optional<JiraCustomFieldSetting> findOptionalByIdAndBot(final long id, final Chatbot bot) {
+		return jiraCustomFieldSettingDAO.findOptional(
+				Criterions.isEqualTo(DtDefinitions.JiraCustomFieldSettingFields.jirCusFieldSetId, id)
+						.and(Criterions.isEqualTo(DtDefinitions.JiraCustomFieldSettingFields.botId, bot.getBotId())));
 	}
 
 	public JiraCustomFieldSetting save(@SecuredOperation("botAdm") final Chatbot bot, final JiraCustomFieldSetting jiraCustomFieldSetting) {
+		// En cas d'update, vérifier que l'entité appartient bien au bot
+		if (jiraCustomFieldSetting.getJirCusFieldSetId() != null) {
+			findOptionalByIdAndBot(jiraCustomFieldSetting.getJirCusFieldSetId(), bot)
+					.orElseThrow(() -> new SecurityException("Access denied: setting does not belong to this bot"));
+		}
 		return jiraCustomFieldSettingDAO.save(jiraCustomFieldSetting);
 	}
 
 	public void delete(@SecuredOperation("botAdm") final Chatbot bot, final long id) {
-		jiraCustomFieldSettingDAO.delete(id);
+		// Vérifier que le setting appartient bien au bot avant suppression
+		findOptionalByIdAndBot(id, bot)
+				.ifPresent(setting -> jiraCustomFieldSettingDAO.delete(id));
 	}
 
 	public DtList<JiraCustomFieldSetting> findAllByBotId(final Chatbot bot) {
