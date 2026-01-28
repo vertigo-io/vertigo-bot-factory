@@ -303,20 +303,20 @@ public class JiraServerService implements Component, IJiraService {
 	}
 
 	/**
-	 * Formats a standard Jira field value based on its field key for the JSM Cloud API.
-	 * Based on JSM Cloud API format:
+	 * Formats a standard Jira field value based on its field key for the JSM API (Cloud and Data Center).
+	 * Based on JSM API format:
 	 * - summary/description: simple string value
 	 * - issuetype: simple string value (used for requestTypeId)
 	 * - priority: { "id": "10002" }
 	 * - fixVersions/versions: [{ "id": "24848" }]
-	 * - assignee: { "accountId": "..." }
+	 * - assignee: { "accountId": "..." } for Cloud, { "name": "..." } for Data Center
 	 * - components: [{ "id": "..." }]
 	 * - labels: ["label1", "label2"]
 	 * - duedate: "YYYY-MM-DD"
 	 *
 	 * @param fieldKey The Jira field key (e.g., "priority", "fixVersions")
 	 * @param value    The raw string value from user input (comma-separated for lists)
-	 * @return The formatted value suitable for the JSM Cloud API, or null if not applicable
+	 * @return The formatted value suitable for the JSM API, or null if not applicable
 	 */
 	private Object formatStandardFieldValue(final String fieldKey, final String value) {
 		if (value == null || value.isBlank()) {
@@ -336,14 +336,14 @@ public class JiraServerService implements Component, IJiraService {
 					.map(id -> Map.of("id", (Object) id))
 					.toList();
 
-			// Single object with "accountId" key (for Cloud)
-			case "assignee" -> Map.of("accountId", value.trim());
+			// Single object with user identifier key: "accountId" for Cloud, "name" for Data Center
+			case "assignee" -> isCloud ? Map.of("accountId", value.trim()) : Map.of("name", value.trim());
 
-			// Array of objects with "id" key (comma-separated values)
+			// Array of objects with "name" key (comma-separated values)
 			case "components" -> Arrays.stream(value.split(","))
 					.map(String::trim)
 					.filter(s -> !s.isEmpty())
-					.map(id -> Map.of("id", (Object) id))
+					.map(id -> Map.of("name", (Object) id))
 					.toList();
 
 			// Array of strings (comma-separated values)
