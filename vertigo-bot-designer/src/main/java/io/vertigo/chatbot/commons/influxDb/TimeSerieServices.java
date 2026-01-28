@@ -297,7 +297,8 @@ public class TimeSerieServices implements Component, Activeable {
 
 		// Filter by search text if specified (case-insensitive regex)
 		if (searchText != null && !searchText.isEmpty()) {
-			q.append("|> filter(fn: (r) => r.title =~ /(?i)" + searchText + "/)");
+			final String escapedText = AnalyticsServicesUtils.escapeFluxRegex(searchText);
+			q.append("|> filter(fn: (r) => r.title =~ /(?i)" + escapedText + "/)");
 		}
 
 		q.append("|> group(columns: [\"dreId\", \"title\", \"dreTypeCd\"])")
@@ -360,7 +361,8 @@ public class TimeSerieServices implements Component, Activeable {
 
 		// Filter by search text if specified (case-insensitive regex)
 		if (searchText != null && !searchText.isEmpty()) {
-			q.append("|> filter(fn: (r) => r.question =~ /(?i)" + searchText + "/)");
+			final String escapedText = AnalyticsServicesUtils.escapeFluxRegex(searchText);
+			q.append("|> filter(fn: (r) => r.question =~ /(?i)" + escapedText + "/)");
 		}
 
 		q.append("|> group(columns: [\"qaId\", \"question\", \"catLabel\"])")

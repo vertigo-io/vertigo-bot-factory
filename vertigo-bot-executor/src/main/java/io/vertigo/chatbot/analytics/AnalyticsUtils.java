@@ -58,6 +58,9 @@ public final class AnalyticsUtils {
 	public static final String QUESTION_KEY = "question";
 	public static final String CAT_LABEL_KEY = "catLabel";
 
+	//Click tracking key
+	public static final String CLICKS_KEY = "clicks";
+
 	public static final String TRUE = "1";
 	public static final String FALSE = "0";
 	public static final Double TRUE_BIGDECIMAL = 1D;
@@ -148,7 +151,7 @@ public final class AnalyticsUtils {
 				.withTag(DRE_ID_KEY, String.valueOf(dreId))
 				.withTag(TITLE_KEY, title)
 				.withTag(DRE_TYPE_CD_KEY, dreTypeCd)
-				.withMeasure("name", TRUE_BIGDECIMAL);
+				.withMeasure(CLICKS_KEY, TRUE_BIGDECIMAL);
 	}
 
 	/**
@@ -168,7 +171,7 @@ public final class AnalyticsUtils {
 				.withTag(QA_ID_KEY, String.valueOf(qaId))
 				.withTag(QUESTION_KEY, truncatedQuestion)
 				.withTag(CAT_LABEL_KEY, catLabel)
-				.withMeasure("name", TRUE_BIGDECIMAL);
+				.withMeasure(CLICKS_KEY, TRUE_BIGDECIMAL);
 	}
 
 	/**
