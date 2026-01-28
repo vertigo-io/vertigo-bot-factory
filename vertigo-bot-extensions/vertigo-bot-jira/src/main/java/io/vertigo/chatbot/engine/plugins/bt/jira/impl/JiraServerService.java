@@ -362,6 +362,8 @@ public class JiraServerService implements Component, IJiraService {
 
 	/**
 	 * Formats a custom field value based on its declared type for the Jira/JSM API.
+	 * Note: SINGLE_USER and MULTIPLE_USER use "accountId" for Cloud and "name" for Data Center,
+	 * following the same logic as the assignee field.
 	 *
 	 * @param value The raw string value from user input
 	 * @param type  The field type code (STRING, NUMBER, ARRAY_LABELS, DATE, DATETIME, SINGLE_OPTION, MULTIPLE_OPTION, TREE_OPTION, SINGLE_USER, MULTIPLE_USER)
@@ -393,12 +395,12 @@ public class JiraServerService implements Component, IJiraService {
 					.map(id -> Map.of("id", (Object) id))
 					.toList();
 			case "TREE_OPTION" -> parseTreeOption(value);
-			case "SINGLE_USER" -> Map.of("name", value.trim());
-			case "MULTIPLE_USER" -> Arrays.stream(value.split(","))
-					.map(String::trim)
-					.filter(s -> !s.isEmpty())
-					.map(name -> Map.of("name", name))
-					.toList();
+		case "SINGLE_USER" -> isCloud ? Map.of("accountId", value.trim()) : Map.of("name", value.trim());
+		case "MULTIPLE_USER" -> Arrays.stream(value.split(","))
+				.map(String::trim)
+				.filter(s -> !s.isEmpty())
+				.map(userValue -> isCloud ? Map.of("accountId", userValue) : Map.of("name", userValue))
+				.toList();
 			default -> value; // Fallback to raw string for unknown types
 		};
 	}
