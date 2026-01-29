@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 
+import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
+
 @Controller
 @RequestMapping("/bot/{botId}/extensions")
 @Secured("BotUser")
@@ -204,6 +206,7 @@ public class ExtensionsController extends AbstractBotController {
 
         viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
         viewContext.publishDto(newJiraCustomFieldSettingKey, new JiraCustomFieldSetting());
+        listLimitReached(viewContext, uiMessageStack);
         return viewContext;
     }
 
@@ -214,6 +217,7 @@ public class ExtensionsController extends AbstractBotController {
                                              @RequestParam("jirCusFieldSetId") final Long jirCusFieldSetId) {
         jiraCustomFieldSettingServices.delete(bot, jirCusFieldSetId);
         viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
+        listLimitReached(viewContext, uiMessageStack);
         return viewContext;
     }
 
@@ -222,18 +226,18 @@ public class ExtensionsController extends AbstractBotController {
                                                     final UiMessageStack uiMessageStack,
                                                     @ViewAttribute("bot") final Chatbot bot,
                                                     @RequestParam("fieldId") final Long fieldId,
-                                                    @RequestParam("enabled") final String enabled) {
+                                                    @RequestParam("enabled") final boolean enabled) {
         // Utiliser findOptionalByIdAndBot pour valider l'appartenance au bot (protection IDOR)
         jiraCustomFieldSettingServices.findOptionalByIdAndBot(fieldId, bot).ifPresent(setting -> {
-            final boolean isEnabled = "true".equals(enabled);
-            setting.setEnabled(isEnabled);
-            if (!isEnabled) {
+            setting.setEnabled(enabled);
+            if (!enabled) {
                 setting.setMandatory(false);
             }
             jiraCustomFieldSettingServices.save(bot, setting);
         });
 
         viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
+        listLimitReached(viewContext, uiMessageStack);
         return viewContext;
     }
 
@@ -242,14 +246,15 @@ public class ExtensionsController extends AbstractBotController {
                                                 final UiMessageStack uiMessageStack,
                                                 @ViewAttribute("bot") final Chatbot bot,
                                                 @RequestParam("fieldId") final Long fieldId,
-                                                @RequestParam("mandatory") final String mandatory) {
+                                                @RequestParam("mandatory") final boolean mandatory) {
         // Utiliser findOptionalByIdAndBot pour valider l'appartenance au bot (protection IDOR)
         jiraCustomFieldSettingServices.findOptionalByIdAndBot(fieldId, bot).ifPresent(setting -> {
-            setting.setMandatory("true".equals(mandatory));
+            setting.setMandatory(mandatory);
             jiraCustomFieldSettingServices.save(bot, setting);
         });
 
         viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
+        listLimitReached(viewContext, uiMessageStack);
         return viewContext;
     }
 
@@ -258,12 +263,13 @@ public class ExtensionsController extends AbstractBotController {
         @Override
         protected void checkMonoFieldConstraints(final JiraCustomFieldSetting setting, final DataField dtField, final DtObjectErrors dtObjectErrors) {
             super.checkMonoFieldConstraints(setting, dtField, dtObjectErrors);
-            if (DtDefinitions.JiraCustomFieldSettingFields.label.name().equals(dtField.name())
-                    || DtDefinitions.JiraCustomFieldSettingFields.fieldKey.name().equals(dtField.name())
-                    || DtDefinitions.JiraCustomFieldSettingFields.jcfTypeCd.name().equals(dtField.name())) {
+            final String fieldName = dtField.name();
+            if (DtDefinitions.JiraCustomFieldSettingFields.label.name().equals(fieldName)
+                    || DtDefinitions.JiraCustomFieldSettingFields.fieldKey.name().equals(fieldName)
+                    || DtDefinitions.JiraCustomFieldSettingFields.jcfTypeCd.name().equals(fieldName)) {
                 final String value = (String) dtField.getDataAccessor().getValue(setting);
                 if (value == null || value.trim().isEmpty()) {
-                    dtObjectErrors.addError(dtField.name(), LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                    dtObjectErrors.addError(fieldName, LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
                 }
             }
         }

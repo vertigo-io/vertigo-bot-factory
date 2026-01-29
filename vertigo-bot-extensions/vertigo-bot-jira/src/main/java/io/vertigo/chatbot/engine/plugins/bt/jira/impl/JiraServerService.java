@@ -12,11 +12,13 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousHttpClientFacto
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.jira.rest.client.internal.async.DisposableHttpClient;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import static com.atlassian.jira.rest.client.api.domain.IssueFieldId.*;
 
 import io.vertigo.ai.bb.BlackBoard;
+import io.vertigo.core.lang.Assertion;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.PasswordEncryptionServices;
 import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
@@ -217,12 +219,9 @@ public class JiraServerService implements Component, IJiraService {
 		final String requestTypeId = getFieldValue(jiraFields, ISSUE_TYPE_FIELD.id);
 		final String summary = getFieldValue(jiraFields, SUMMARY_FIELD.id);
 
-		if (requestTypeId == null || requestTypeId.isBlank()) {
-			throw new VSystemException("Request type id is mandatory to create JSM request.");
-		}
-		if (summary == null || summary.isBlank()) {
-			throw new VSystemException("Summary is mandatory to create JSM request.");
-		}
+		Assertion.check()
+				.isNotBlank(requestTypeId, "Request type id is mandatory to create JSM request.")
+				.isNotBlank(summary, "Summary is mandatory to create JSM request.");
 
 		final Map<String, Object> payload = new java.util.HashMap<>();
 		final Map<String, Object> requestFieldValues = new java.util.HashMap<>();
@@ -234,7 +233,7 @@ public class JiraServerService implements Component, IJiraService {
 					.filter(fieldSetting -> !JSM_EXCLUDED_STANDARD_FIELDS.contains(fieldSetting.getFieldKey()))
 					.forEach(fieldSetting -> {
 						final String value = getFieldValue(jiraFields, fieldSetting.getFieldKey());
-						if (value != null && !value.isBlank()) {
+						if (StringUtils.isNotBlank(value)) {
 							final Object formattedValue = formatStandardFieldValue(fieldSetting.getFieldKey(), value);
 							if (formattedValue != null) {
 								requestFieldValues.put(fieldSetting.getFieldKey(), formattedValue);
@@ -249,7 +248,7 @@ public class JiraServerService implements Component, IJiraService {
 					.filter(JiraCustomFieldSettingExport::getEnabled)
 					.forEach(customField -> {
 						final String value = getFieldValue(jiraFields, customField.getFieldKey());
-						if (value != null && !value.isBlank()) {
+						if (StringUtils.isNotBlank(value)) {
 							final Object formattedValue = formatCustomFieldValue(value, customField.getFieldType());
 							if (formattedValue != null) {
 								requestFieldValues.put(customField.getFieldKey(), formattedValue);

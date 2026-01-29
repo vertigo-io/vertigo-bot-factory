@@ -1,6 +1,5 @@
-CREATE SEQUENCE seq_jira_custom_field_setting
-    START WITH 1
-    INCREMENT BY 1;
+create sequence SEQ_JIRA_CUSTOM_FIELD_SETTING
+    start with 1000 cache 1;
 
 CREATE TABLE jira_custom_field_setting (
                                            jir_cus_field_set_id BIGINT       PRIMARY KEY DEFAULT nextval('seq_jira_custom_field_setting'),
