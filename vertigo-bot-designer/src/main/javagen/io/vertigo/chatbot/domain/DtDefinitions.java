@@ -151,12 +151,16 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		QuestionAnswerContext(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContext.class),
 		/** Objet de données QuestionAnswerContextIhm. */
 		QuestionAnswerContextIhm(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerContextIhm.class),
+		/** Objet de données QuestionAnswerCriteria. */
+		QuestionAnswerCriteria(io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerCriteria.class),
 		/** Objet de données QuestionAnswerExport. */
 		QuestionAnswerExport(io.vertigo.chatbot.commons.domain.QuestionAnswerExport.class),
 		/** Objet de données QuestionAnswerFileExport. */
 		QuestionAnswerFileExport(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerFileExport.class),
 		/** Objet de données QuestionAnswerIhm. */
 		QuestionAnswerIhm(io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm.class),
+		/** Objet de données QuestionAnswerStat. */
+		QuestionAnswerStat(io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat.class),
 		/** Objet de données RatingOption. */
 		RatingOption(io.vertigo.chatbot.designer.domain.analytics.RatingOption.class),
 		/** Objet de données ResponseButton. */
@@ -1327,6 +1331,15 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		cpvValue	}
 
 	/**
+	 * Enumération des champs de QuestionAnswerCriteria.
+	 */
+	public enum QuestionAnswerCriteriaFields implements DataFieldName<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerCriteria> {
+		/** Propriété 'Category Filter'. */
+		catLabel,
+		/** Propriété 'Search Text'. */
+		searchText	}
+
+	/**
 	 * Enumération des champs de QuestionAnswerExport.
 	 */
 	public enum QuestionAnswerExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.QuestionAnswerExport> {
@@ -1374,6 +1387,19 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		catLabel,
 		/** Propriété 'Code'. */
 		code	}
+
+	/**
+	 * Enumération des champs de QuestionAnswerStat.
+	 */
+	public enum QuestionAnswerStatFields implements DataFieldName<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat> {
+		/** Propriété 'Q&A Id'. */
+		qaId,
+		/** Propriété 'Question'. */
+		question,
+		/** Propriété 'Category'. */
+		catLabel,
+		/** Propriété 'Usage Count'. */
+		count	}
 
 	/**
 	 * Enumération des champs de RatingOption.

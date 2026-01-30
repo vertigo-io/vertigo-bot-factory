@@ -67,4 +67,8 @@
         </customChange>
     </changeSet>
 
+    <changeSet author="xsupiot" id="Add QUESTION_ANSWERS export type">
+        <sqlFile encoding="utf8" path="/sql/v_3_0/alter_chatbot-qa-export-type.sql"/>
+    </changeSet>
+
 </databaseChangeLog>

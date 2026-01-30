@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import io.vertigo.chatbot.designer.analytics.services.TimeOption;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
@@ -25,6 +26,9 @@ import io.vertigo.database.timeseries.TimedDataSerie;
  * @author Chatbot Team
  */
 public final class AnalyticsServicesUtils {
+
+	private static final Pattern FLUX_REGEX_SPECIAL_CHARS =
+			Pattern.compile("([.\\\\*+?^${}\\[\\]()|/])");
 
 	public static final String MESSAGES_MSRMT = "chatbotmessages";
 	public static final String MESSAGES_STAT_MSRMT = "chatbotmessages_stat";
@@ -142,6 +146,21 @@ public final class AnalyticsServicesUtils {
 			return Long.parseLong((String) val);
 		}
 		return (Long) val;
+	}
+
+	/**
+	 * Escape special regex characters for safe use in Flux regex patterns.
+	 * This prevents regex injection attacks when user input is used in InfluxDB queries.
+	 * Escaped characters: * + ? ^ $ { } [ ] ( ) | \ / .
+	 *
+	 * @param input the string to escape
+	 * @return the escaped string safe for use in Flux regex patterns, or empty string if input is null
+	 */
+	public static String escapeFluxRegex(final String input) {
+		if (input == null) {
+			return "";
+		}
+		return FLUX_REGEX_SPECIAL_CHARS.matcher(input).replaceAll("\\\\$1");
 	}
 
 }
