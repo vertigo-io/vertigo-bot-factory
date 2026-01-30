@@ -293,8 +293,8 @@
           </q-page-container>
 
           <q-footer v-if="customConfig.chatbotDisplay && customConfig.qandaDisplay" style="display: flex">
-            <q-btn icon="smart_toy" class="q-btn-footer" :class="{'q-btn-footer-selected': footerMenu === 'bot'}" @Click="footerMenuChange('bot')"></q-btn>
-            <q-btn icon="question_answer" class="q-btn-footer" :class="{'q-btn-footer-selected': footerMenu === 'qAndA'}" @Click="footerMenuChange('qAndA')"></q-btn>
+            <q-btn icon="forum" label="Chatbot" class="q-btn-footer" :class="{'q-btn-footer-selected': footerMenu === 'bot'}" @Click="footerMenuChange('bot')"></q-btn>
+            <q-btn icon="help" label="FAQ" class="q-btn-footer" :class="{'q-btn-footer-selected': footerMenu === 'qAndA'}" @Click="footerMenuChange('qAndA')"></q-btn>
           </q-footer>
         </q-layout>
       </div>
