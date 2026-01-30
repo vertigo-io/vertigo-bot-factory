@@ -33,6 +33,8 @@ public final class AnalyticsServicesUtils {
 	public static final String RATING_MSRMT = "rating";
 	public static final String DOCUMENTARY_RESOURCE_MSRMT = "documentaryresource";
 	public static final String DOCUMENTARY_RESOURCE_STAT_MSRMT = "documentaryresource_stat";
+	public static final String QUESTION_ANSWER_MSRMT = "questionanswer";
+	public static final String QUESTION_ANSWER_STAT_MSRMT = "questionanswer_stat";
 
 	private AnalyticsServicesUtils() {
 		//utils class
