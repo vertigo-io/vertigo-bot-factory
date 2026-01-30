@@ -18,6 +18,12 @@ import io.vertigo.database.timeseries.TimeFilter;
 import io.vertigo.database.timeseries.TimeFilterBuilder;
 import io.vertigo.database.timeseries.TimedDataSerie;
 
+/**
+ * Utility class for analytics services.
+ * Provides helper methods for building filters and extracting data from time series.
+ *
+ * @author Chatbot Team
+ */
 public final class AnalyticsServicesUtils {
 
 	public static final String MESSAGES_MSRMT = "chatbotmessages";
@@ -25,11 +31,20 @@ public final class AnalyticsServicesUtils {
 	public static final String CONVERSATION_MSRMT = "conversation";
 	public static final String CONVERSATION_STAT_MSRMT = "conversation_stat";
 	public static final String RATING_MSRMT = "rating";
+	public static final String DOCUMENTARY_RESOURCE_MSRMT = "documentaryresource";
+	public static final String DOCUMENTARY_RESOURCE_STAT_MSRMT = "documentaryresource_stat";
 
 	private AnalyticsServicesUtils() {
 		//utils class
 	}
 
+	/**
+	 * Build a data filter from criteria and measurement name
+	 *
+	 * @param criteria stat criteria containing bot and node filters
+	 * @param measurement measurement name
+	 * @return data filter builder
+	 */
 	public static DataFilterBuilder getDataFilter(final StatCriteria criteria, final String measurement) {
 		final DataFilterBuilder dataFilterBuilder = DataFilter.builder(measurement);
 		if (criteria.getBotId() != null) {
@@ -41,6 +56,12 @@ public final class AnalyticsServicesUtils {
 		return dataFilterBuilder;
 	}
 
+	/**
+	 * Build a bot and node filter map from criteria
+	 *
+	 * @param criteria stat criteria containing bot and node IDs
+	 * @return map of column filters
+	 */
 	public static Map<String, String> getBotNodFilter(final StatCriteria criteria) {
 		final Map<String, String> ret = new HashMap<>();
 		if (criteria.getBotId() != null) {
@@ -53,6 +74,12 @@ public final class AnalyticsServicesUtils {
 		return ret;
 	}
 
+	/**
+	 * Build a time filter from criteria
+	 *
+	 * @param criteria stat criteria containing time range and options
+	 * @return time filter for InfluxDB queries
+	 */
 	public static TimeFilter getTimeFilter(final StatCriteria criteria) {
 		Assertion.check()
 				.isFalse(criteria.getFromDate() != null && criteria.getFromInstant() != null, "Time criteria must not be from date AND instant")
@@ -93,6 +120,14 @@ public final class AnalyticsServicesUtils {
 		return date.plus(1, ChronoUnit.DAYS).atStartOfDay();
 	}
 
+	/**
+	 * Extract a long value from a timed data serie
+	 *
+	 * @param it timed data serie
+	 * @param name field name
+	 * @param orElse default value if field is null or empty
+	 * @return extracted long value or default
+	 */
 	public static Long getLongValue(final TimedDataSerie it, final String name, final Long orElse) {
 		final var val = it.getValues().get(name);
 		if (val == null) {
