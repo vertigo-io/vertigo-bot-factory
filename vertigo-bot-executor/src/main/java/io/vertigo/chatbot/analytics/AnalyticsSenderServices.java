@@ -3,9 +3,9 @@ package io.vertigo.chatbot.analytics;
 import java.util.List;
 import java.util.UUID;
 
-import io.vertigo.core.analytics.trace.TraceSpan;
-import io.vertigo.core.analytics.trace.TraceSpanBuilder;
 import javax.inject.Inject;
+
+import io.vertigo.core.analytics.trace.TraceSpanBuilder;
 
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.engine.BotEngine;

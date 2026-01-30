@@ -273,4 +273,67 @@ public class TimeSerieServices implements Component, Activeable {
 		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q);
 	}
 
+	/**
+	 * Get documentary resource click statistics
+	 *
+	 * @param criteria filter criteria
+	 * @param dreTypeCd optional type filter
+	 * @param searchText optional search filter
+	 * @return tabular data with documentary resource stats
+	 */
+	public TabularDatas getDocumentaryResourceStats(final StatCriteria criteria, final String dreTypeCd, final String searchText) {
+		final var timeFilter = AnalyticsServicesUtils.getTimeFilter(criteria);
+		final var columnCriteria = AnalyticsServicesUtils.getBotNodFilter(criteria);
+
+		// Add dreTypeCd to column criteria for filterByColumn (with exists check)
+		if (dreTypeCd != null && !dreTypeCd.isEmpty()) {
+			columnCriteria.put("dreTypeCd", "\"" + dreTypeCd + "\"");
+		}
+
+		final var q = new InfluxRequestBuilder(influxDbName)
+				.range(timeFilter)
+				.filterFields(AnalyticsServicesUtils.DOCUMENTARY_RESOURCE_STAT_MSRMT, List.of("dreId:count"))
+				.filterByColumn(columnCriteria);
+
+		// Filter by search text if specified (case-insensitive regex)
+		if (searchText != null && !searchText.isEmpty()) {
+			q.append("|> filter(fn: (r) => r.title =~ /(?i)" + searchText + "/)");
+		}
+
+		q.append("|> group(columns: [\"dreId\", \"title\", \"dreTypeCd\"])")
+				.append("|> sum()")
+				.append("|> rename(columns: {_value: \"dreId:count\"})")
+				.keep(List.of("dreId", "title", "dreTypeCd", "dreId:count"));
+
+		return InfluxRequestUtil.executeTabularQuery(influxDBClient, q.build(false));
+	}
+
+	/**
+	 * Get total documentary resource clicks
+	 *
+	 * @param criteria filter criteria
+	 * @return timed data with total clicks
+	 */
+	public TimedDatas getTotalDocumentaryResourceClicks(final StatCriteria criteria) {
+		final var timeFilter = AnalyticsServicesUtils.getTimeFilter(criteria);
+		final var columnCriteria = AnalyticsServicesUtils.getBotNodFilter(criteria);
+
+		final var q = new InfluxRequestBuilder(influxDbName)
+				.range(timeFilter)
+				.filterFields(AnalyticsServicesUtils.DOCUMENTARY_RESOURCE_STAT_MSRMT, List.of("clicks:count"))
+				.filterByColumn(columnCriteria);
+
+		if (criteria.getNodId() == null) {
+			q.append("|> drop(columns: [\"nodId\"])");
+		}
+
+		q.append("|> window(every: " + timeFilter.dim() + ", createEmpty:true)")
+				.append("|> sum()")
+				.append("|> rename(columns: {_start: \"_time\"})")
+				.append("|> drop(columns: [\"_stop\"])")
+				.pivot();
+
+		return InfluxRequestUtil.executeTimedQuery(influxDBClient, q.build(true));
+	}
+
 }

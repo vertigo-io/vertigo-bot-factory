@@ -47,6 +47,13 @@ import io.vertigo.database.timeseries.TimedDatas;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.util.VCollectors;
 
+/**
+ * Service for analytics operations on chatbot data.
+ * This service provides methods to retrieve and process analytics data including
+ * sentence details, conversations, top intents, category statistics, and documentary resources.
+ *
+ * @author Chatbot Team
+ */
 @Transactional
 public class AnalyticsServices implements Component {
 
@@ -87,6 +94,13 @@ public class AnalyticsServices implements Component {
 		return retour;
 	}
 
+	/**
+	 * Get conversation details for a specific session
+	 *
+	 * @param criteria stat criteria for filtering
+	 * @param sessionId session identifier
+	 * @return list of conversation details
+	 */
 	public DtList<ConversationDetail> getConversationDetails(final StatCriteria criteria, final String sessionId) {
 		// get data from influxdb
 		final TimedDatas tabularTimedData = timeSerieServices.getConversationDetails(criteria, sessionId);
@@ -112,6 +126,13 @@ public class AnalyticsServices implements Component {
 		return retour;
 	}
 
+	/**
+	 * Get conversation statistics based on criteria
+	 *
+	 * @param criteria stat criteria for filtering
+	 * @param conversationCriteria additional conversation-specific criteria
+	 * @return list of conversation statistics
+	 */
 	public DtList<ConversationStat> getConversationsStats(final StatCriteria criteria, final ConversationCriteria conversationCriteria) {
 
 		final TimedDatas timedDatas = timeSerieServices.getConversationStats(criteria, conversationCriteria);
@@ -135,6 +156,13 @@ public class AnalyticsServices implements Component {
 		return retour;
 	}
 
+	/**
+	 * Build category statistics from topic categories and intents
+	 *
+	 * @param categories list of topic categories
+	 * @param intents list of top intents
+	 * @return list of category statistics with usage and percentage
+	 */
 	public DtList<CategoryStat> buildCategoryStats(final DtList<TopicCategory> categories, final DtList<TopIntent> intents) {
 		final DtList<CategoryStat> categoryStats = new DtList<>(CategoryStat.class);
 		final long totalCount = intents.stream().mapToLong(TopIntent::getCount).sum();
@@ -157,6 +185,14 @@ public class AnalyticsServices implements Component {
 		return categoryStats;
 	}
 
+	/**
+	 * Get top intents for a bot based on criteria
+	 *
+	 * @param bot chatbot
+	 * @param locale locale for internationalization
+	 * @param criteria stat criteria for filtering
+	 * @return list of top intents with usage count
+	 */
 	public DtList<TopIntent> getTopIntents(final Chatbot bot, final String locale, final StatCriteria criteria) {
 		// get data from influxdb
 		final TabularDatas tabularDatas = timeSerieServices.getAllTopIntents(criteria);
@@ -197,12 +233,66 @@ public class AnalyticsServices implements Component {
 			newSentenseDetail.setText((String) values.get("text"));
 			newSentenseDetail.setIntentRasa(intentRasa);
 			newSentenseDetail.setConfidence(BigDecimal.valueOf((Double) values.get("confidence")));
-			newSentenseDetail.setTopId(topic.isPresent() ? topic.get().getTopId() : null);
+			newSentenseDetail.setTopId(topic.map(Topic::getTopId).orElse(null));
 
 			retour.add(newSentenseDetail);
 		}
 
 		return retour;
 	}
+
+	/**
+	 * Get documentary resource statistics with filters
+	 *
+	 * @param criteria stat criteria
+	 * @param resourceCriteria filter criteria for resources
+	 * @return list of documentary resource stats
+	 */
+	public DtList<io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat> getDocumentaryResourceStats(
+			final StatCriteria criteria,
+			final io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceCriteria resourceCriteria) {
+		// Get data from InfluxDB with filters
+		final TabularDatas tabularData = timeSerieServices.getDocumentaryResourceStats(
+				criteria,
+				resourceCriteria.getDreTypeCd(),
+				resourceCriteria.getSearchText());
+
+		// Build DtList from InfluxDB data
+		final DtList<io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat> result =
+				new DtList<>(io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat.class);
+
+		tabularData.tabularDataSeries().forEach(serie -> {
+			final var stat = new io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat();
+			final Map<String, Object> values = serie.getValues();
+
+			stat.setDreId(Long.parseLong((String) values.get("dreId")));
+			stat.setTitle((String) values.get("title"));
+			stat.setDreTypeCd((String) values.get("dreTypeCd"));
+
+			final Object countValue = values.get("dreId:count");
+			final Long count = countValue instanceof Long longValue ? longValue :
+					countValue instanceof Double doubleValue ? doubleValue.longValue() : 0L;
+			stat.setCount(count);
+
+			result.add(stat);
+		});
+
+		return result;
+	}
+
+/**
+ * Get total documentary resource clicks for the period
+ *
+ * @param criteria stat criteria
+ * @return total clicks count
+ */
+public Double getTotalDocumentaryResourceClicks(final StatCriteria criteria) {
+	final TimedDatas timedData = timeSerieServices.getTotalDocumentaryResourceClicks(criteria);
+	return timedData.timedDataSeries().stream()
+			.mapToDouble(it -> Optional.ofNullable(AnalyticsServicesUtils.getLongValue(it, "clicks:count", 0L))
+					.orElse(0L)
+					.doubleValue())
+			.sum();
+}
 
 }
