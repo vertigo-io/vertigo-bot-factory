@@ -1,10 +1,9 @@
 package io.vertigo.chatbot.designer.analytics.services;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,7 +35,16 @@ import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
 
+/**
+ * Service for exporting analytics data to various formats (CSV, etc.).
+ * This service provides methods to export statistics including sessions,
+ * unknown messages, conversations, categories, top intents, and documentary resources.
+ *
+ * @author Chatbot Team
+ */
 public class AnalyticsExportServices implements Component {
+
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	@Inject
 	private ChatbotServices chatbotServices;
@@ -73,23 +81,23 @@ public class AnalyticsExportServices implements Component {
 		return retour;
 	}
 
-	/*
-	 * Return a File from a list of SessionsExport
+	/**
+	 * Export sessions to CSV file
+	 *
+	 * @param dtc list of session exports to export
+	 * @return CSV file containing session data
 	 */
 	public VFile exportSessions(final DtList<SessionExport> dtc) {
-		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		final Date date = new Date();
-		final Export export = new ExportBuilder(ExportFormat.CSV, LocaleMessageText.of(AnalyticsMultilingualResources.SESSIONS_FILENAME).getDisplay() + dateFormat.format(date))
+		final String fileName = LocaleMessageText.of(AnalyticsMultilingualResources.SESSIONS_FILENAME).getDisplay() 
+				+ LocalDate.now().format(DATE_FORMATTER);
+		final Export export = new ExportBuilder(ExportFormat.CSV, fileName)
 				.beginSheet(dtc, null)
 				.addField(SessionExportFields.date)
 				.addField(SessionExportFields.conversationCount)
 				.addField(SessionExportFields.userActionsCount)
 				.endSheet()
 				.build();
-		final VFile result = exportManager.createExportFile(export);
-
-		return result;
-
+		return exportManager.createExportFile(export);
 	}
 
 	/**
@@ -135,13 +143,16 @@ public class AnalyticsExportServices implements Component {
 		return retour;
 	}
 
-	/*
-	 * Return a file from a list of unknown messages
+	/**
+	 * Export unknown messages to CSV file
+	 *
+	 * @param dtc list of unknown messages to export
+	 * @return CSV file containing unknown messages data
 	 */
 	public VFile exportUnknownMessages(final DtList<UnknownSentenseExport> dtc) {
-		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		final Date date = new Date();
-		final Export export = new ExportBuilder(ExportFormat.CSV, LocaleMessageText.of(AnalyticsMultilingualResources.UNKNOWN_MESSAGES_FILENAME).getDisplay() + dateFormat.format(date))
+		final String fileName = LocaleMessageText.of(AnalyticsMultilingualResources.UNKNOWN_MESSAGES_FILENAME).getDisplay() 
+				+ LocalDate.now().format(DATE_FORMATTER);
+		final Export export = new ExportBuilder(ExportFormat.CSV, fileName)
 				.beginSheet(dtc, null)
 				.addField(UnknownSentenseExportFields.date)
 				.addField(UnknownSentenseExportFields.text)
@@ -156,13 +167,16 @@ public class AnalyticsExportServices implements Component {
 		return exportManager.createExportFile(export);
 	}
 
-	/*
-	 * Return a file from a list of unknown messages
+	/**
+	 * Export conversation statistics to CSV file
+	 *
+	 * @param dtc list of conversation statistics to export
+	 * @return CSV file containing conversation statistics
 	 */
 	public VFile exportConversations(final DtList<ConversationStat> dtc) {
-		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		final Date date = new Date();
-		final Export export = new ExportBuilder(ExportFormat.CSV, LocaleMessageText.of(AnalyticsMultilingualResources.CONVERSATION_FILENAME).getDisplay() + dateFormat.format(date))
+		final String fileName = LocaleMessageText.of(AnalyticsMultilingualResources.CONVERSATION_FILENAME).getDisplay() 
+				+ LocalDate.now().format(DATE_FORMATTER);
+		final Export export = new ExportBuilder(ExportFormat.CSV, fileName)
 				.beginSheet(dtc, null)
 				.addField(DtDefinitions.ConversationStatFields.date)
 				.addField(DtDefinitions.ConversationStatFields.modelName)
@@ -176,10 +190,16 @@ public class AnalyticsExportServices implements Component {
 		return exportManager.createExportFile(export);
 	}
 
+	/**
+	 * Export category statistics to CSV file
+	 *
+	 * @param categoryStats list of category statistics to export
+	 * @return CSV file containing category statistics
+	 */
 	public VFile exportCategories(final DtList<CategoryStat> categoryStats) {
-		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		final Date date = new Date();
-		final Export export = new ExportBuilder(ExportFormat.CSV, LocaleMessageText.of(AnalyticsMultilingualResources.CATEGORIES_FILENAME).getDisplay() + dateFormat.format(date))
+		final String fileName = LocaleMessageText.of(AnalyticsMultilingualResources.CATEGORIES_FILENAME).getDisplay() 
+				+ LocalDate.now().format(DATE_FORMATTER);
+		final Export export = new ExportBuilder(ExportFormat.CSV, fileName)
 				.beginSheet(categoryStats, null)
 				.addField(DtDefinitions.CategoryStatFields.label)
 				.addField(DtDefinitions.CategoryStatFields.code)
@@ -190,16 +210,60 @@ public class AnalyticsExportServices implements Component {
 		return exportManager.createExportFile(export);
 	}
 
+	/**
+	 * Export top intents to CSV file
+	 *
+	 * @param topIntents list of top intents to export
+	 * @return CSV file containing top intents
+	 */
 	public VFile exportTopIntents(final DtList<TopIntent> topIntents) {
-		final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		final Date date = new Date();
-		final Export export = new ExportBuilder(ExportFormat.CSV, LocaleMessageText.of(AnalyticsMultilingualResources.TOP_INTENTS_FILENAME).getDisplay() + dateFormat.format(date))
+		final String fileName = LocaleMessageText.of(AnalyticsMultilingualResources.TOP_INTENTS_FILENAME).getDisplay() 
+				+ LocalDate.now().format(DATE_FORMATTER);
+		final Export export = new ExportBuilder(ExportFormat.CSV, fileName)
 				.beginSheet(topIntents, null)
 				.addField(DtDefinitions.TopIntentFields.intentRasa)
 				.addField(DtDefinitions.TopIntentFields.code)
 				.addField(DtDefinitions.TopIntentFields.catLabel)
 				.addField(DtDefinitions.TopIntentFields.labels)
 				.addField(DtDefinitions.TopIntentFields.count)
+				.endSheet()
+				.build();
+		return exportManager.createExportFile(export);
+	}
+
+	/**
+	 * Export documentary resource statistics to CSV
+	 *
+	 * @param documentaryResourceStats list of stats to export
+	 * @return CSV file
+	 */
+	public VFile exportDocumentaryResources(final DtList<io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat> documentaryResourceStats) {
+		final String fileName = LocaleMessageText.of(AnalyticsMultilingualResources.DOCUMENTARY_RESOURCES_FILENAME).getDisplay() 
+				+ LocalDate.now().format(DATE_FORMATTER);
+		final Export export = new ExportBuilder(ExportFormat.CSV, fileName)
+				.beginSheet(documentaryResourceStats, null)
+				.addField(DtDefinitions.DocumentaryResourceStatFields.title)
+				.addField(DtDefinitions.DocumentaryResourceStatFields.dreTypeCd)
+				.addField(DtDefinitions.DocumentaryResourceStatFields.count)
+				.endSheet()
+				.build();
+		return exportManager.createExportFile(export);
+	}
+
+	/**
+	 * Export question/answer statistics to CSV
+	 *
+	 * @param questionAnswerStats list of stats to export
+	 * @return CSV file
+	 */
+	public VFile exportQuestionAnswers(final DtList<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat> questionAnswerStats) {
+		final String fileName = LocaleMessageText.of(AnalyticsMultilingualResources.QUESTION_ANSWERS_FILENAME).getDisplay() 
+				+ LocalDate.now().format(DATE_FORMATTER);
+		final Export export = new ExportBuilder(ExportFormat.CSV, fileName)
+				.beginSheet(questionAnswerStats, null)
+				.addField(DtDefinitions.QuestionAnswerStatFields.question)
+				.addField(DtDefinitions.QuestionAnswerStatFields.catLabel)
+				.addField(DtDefinitions.QuestionAnswerStatFields.count)
 				.endSheet()
 				.build();
 		return exportManager.createExportFile(export);

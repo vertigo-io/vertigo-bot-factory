@@ -216,6 +216,22 @@ public class ExecutorManager implements Manager, Activeable {
         analyticsSenderServices.rate(sessionId, rating, executorConfigManager.getConfig().getExecutorConfiguration());
     }
 
+	public void trackDocumentaryResourceClick(final UUID sessionId, final Long dreId, final String title, final String dreTypeCd) {
+		analyticsSenderServices.sendDocumentaryResourceClickEvent(sessionId, dreId, title, dreTypeCd, executorConfigManager.getConfig().getExecutorConfiguration());
+	}
+
+	/**
+	 * Track a question/answer click for analytics
+	 *
+	 * @param sessionId session identifier
+	 * @param qaId question/answer ID
+	 * @param question question text
+	 * @param catLabel category label
+	 */
+	public void trackQuestionAnswerClick(final UUID sessionId, final Long qaId, final String question, final String catLabel) {
+		analyticsSenderServices.sendQuestionAnswerClickEvent(sessionId, qaId, question, catLabel, executorConfigManager.getConfig().getExecutorConfiguration());
+	}
+
     public Map<String, String> getContext() {
         return executorConfigManager.getContextMap();
     }

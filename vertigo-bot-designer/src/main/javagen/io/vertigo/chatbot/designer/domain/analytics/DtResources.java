@@ -101,6 +101,70 @@ public enum DtResources implements LocaleMessageKey {
 	fldConversationStat$lastTopic,
 
 	/***********************************************************
+	 * DocumentaryResourceCriteria.
+	 **********************************************************/
+	/**
+	 * Resource Type Filter.
+	 */
+	fldDocumentaryResourceCriteria$dreTypeCd,
+	/**
+	 * Search Text.
+	 */
+	fldDocumentaryResourceCriteria$searchText,
+
+	/***********************************************************
+	 * DocumentaryResourceStat.
+	 **********************************************************/
+	/**
+	 * Documentary Resource Id.
+	 */
+	fldDocumentaryResourceStat$dreId,
+	/**
+	 * Title.
+	 */
+	fldDocumentaryResourceStat$title,
+	/**
+	 * Resource Type.
+	 */
+	fldDocumentaryResourceStat$dreTypeCd,
+	/**
+	 * Usage Count.
+	 */
+	fldDocumentaryResourceStat$count,
+
+	/***********************************************************
+	 * QuestionAnswerCriteria.
+	 **********************************************************/
+	/**
+	 * Category Filter.
+	 */
+	fldQuestionAnswerCriteria$catLabel,
+	/**
+	 * Search Text.
+	 */
+	fldQuestionAnswerCriteria$searchText,
+
+	/***********************************************************
+	 * QuestionAnswerStat.
+	 **********************************************************/
+	/**
+	 * Q&A Id.
+	 */
+	fldQuestionAnswerStat$qaId,
+	/**
+	 * Question.
+	 */
+	fldQuestionAnswerStat$question,
+	/**
+	 * Category.
+	 */
+	fldQuestionAnswerStat$catLabel,
+	/**
+	 * Usage Count.
+	 */
+	fldQuestionAnswerStat$count,
+
+	/***********************************************************
 	 * RatingOption.
 	 **********************************************************/
 	/**

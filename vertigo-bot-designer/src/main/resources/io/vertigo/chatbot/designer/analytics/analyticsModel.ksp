@@ -30,6 +30,16 @@ stereotype : "StaticMasterData"
             "teaCd" 	    : "TOPIC_USAGE",
             "label" 	    : "Topic usage",
             "labelFr" 	    : "Utilisation des intentions"
+        },
+        "DOCUMENTARY_RESOURCES" : {
+            "teaCd" 	    : "DOCUMENTARY_RESOURCES",
+            "label" 	    : "Documentary resources",
+            "labelFr" 	    : "Ressources documentaires"
+        },
+        "QUESTION_ANSWERS" : {
+            "teaCd" 	    : "QUESTION_ANSWERS",
+            "label" 	    : "Questions & Answers",
+            "labelFr" 	    : "Questions / Réponses"
         }
      }`
     sortField : "teaCd"
@@ -157,4 +167,28 @@ create DtDefinition DtSessionExport {
 
 create DtDefinition DtTypeExportAnalyticList {
     field teaCd 		{domain: DoCode		label: "Type export analytic code"	 		cardinality:"*"}
+}
+
+create DtDefinition DtDocumentaryResourceStat {
+	field dreId 		{domain: DoId 					label: "Documentary Resource Id" 	cardinality: "1"}
+	field title 		{domain: DoLabel 				label: "Title" 						cardinality: "1"}
+	field dreTypeCd 	{domain: DoCode 				label: "Resource Type" 				cardinality: "1"}
+	field count 		{domain: DoNumber 				label: "Usage Count" 				cardinality: "1"}
+}
+
+create DtDefinition DtDocumentaryResourceCriteria {
+	field dreTypeCd 	{domain: DoCode 				label: "Resource Type Filter" 		}
+	field searchText 	{domain: DoLabel 				label: "Search Text" 				}
+}
+
+create DtDefinition DtQuestionAnswerStat {
+	field qaId 		{domain: DoId 					label: "Q&A Id" 			cardinality: "1"}
+	field question 		{domain: DoLabel 				label: "Question" 			cardinality: "1"}
+	field catLabel 	{domain: DoLabel 				label: "Category" 			cardinality: "1"}
+	field count 		{domain: DoNumber 				label: "Usage Count" 		cardinality: "1"}
+}
+
+create DtDefinition DtQuestionAnswerCriteria {
+	field catLabel 	{domain: DoLabel 				label: "Category Filter" 		}
+	field searchText 	{domain: DoLabel 				label: "Search Text" 			}
 }

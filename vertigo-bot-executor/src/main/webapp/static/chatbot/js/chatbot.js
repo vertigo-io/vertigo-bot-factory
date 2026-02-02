@@ -348,6 +348,23 @@ const chatbotComponent = {
 
         selectQuestion(selected){
             chatbot.qAndAConfig.selectedQuestion = selected;
+            // Track Q&A click for analytics
+            this.trackQuestionAnswerClick(selected.qaId, selected.question, selected.catLabel);
+        },
+
+        trackDocumentaryResourceClick(dreId, title, dreTypeCd) {
+            trackDocumentaryResourceClick(dreId, title, dreTypeCd);
+        },
+
+        /**
+         * Track a question/answer click for analytics purposes
+         * 
+         * @param {number} qaId - Question/Answer ID
+         * @param {string} question - Question text
+         * @param {string} catLabel - Category label
+         */
+        trackQuestionAnswerClick(qaId, question, catLabel) {
+            trackQuestionAnswerClick(qaId, question, catLabel);
         }
     }
 };

@@ -2,13 +2,9 @@ package io.vertigo.chatbot.designer.builder.controllers.bot;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -75,6 +71,13 @@ import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.ui.impl.springmvc.controller.AbstractVSpringMvcController;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
 
+/**
+ * Controller for chatbot statistics and analytics.
+ * This controller handles the statistics page, providing access to various analytics
+ * including conversations, intents, ratings, categories, and documentary resources.
+ *
+ * @author Chatbot Team
+ */
 @Controller
 @RequestMapping("/bot/{botId}/statistic")
 public class StatisticController extends AbstractBotController {
@@ -107,6 +110,13 @@ public class StatisticController extends AbstractBotController {
 	private static final ViewContextKey<Double> totalOfRecognizedLocaleMessageKey = ViewContextKey.of("totalOfRecognizedMessage");
 	private static final ViewContextKey<Double> totalOfConversationsKey = ViewContextKey.of("totalOfConversations");
 	private static final ViewContextKey<FontFamily> fontFamiliesKey = ViewContextKey.of("fontFamilies");
+	private static final ViewContextKey<io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat> documentaryResourceStatKey = ViewContextKey.of("documentaryResourceStat");
+	private static final ViewContextKey<io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceCriteria> documentaryResourceCriteriaKey = ViewContextKey.of("documentaryResourceCriteria");
+	private static final ViewContextKey<io.vertigo.chatbot.designer.domain.DocumentaryResourceType> documentaryResourceTypesKey = ViewContextKey.of("documentaryResourceTypes");
+	private static final ViewContextKey<Double> totalOfDocumentaryResourceClicksKey = ViewContextKey.of("totalOfDocumentaryResourceClicks");
+	private static final ViewContextKey<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat> questionAnswerStatKey = ViewContextKey.of("questionAnswerStat");
+	private static final ViewContextKey<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerCriteria> questionAnswerCriteriaKey = ViewContextKey.of("questionAnswerCriteria");
+	private static final ViewContextKey<Double> totalOfQuestionAnswerClicksKey = ViewContextKey.of("totalOfQuestionAnswerClicks");
 
 	@Inject
 	private NodeServices nodeServices;
@@ -144,6 +154,18 @@ public class StatisticController extends AbstractBotController {
 	@Inject
 	private DesignerFileServices designerFileServices;
 
+	@Inject
+	private io.vertigo.chatbot.designer.builder.services.DocumentaryResourceTypeServices documentaryResourceTypeServices;
+
+	/**
+	 * Initialize the statistics page context with default values and initial data
+	 *
+	 * @param viewContext view context
+	 * @param uiMessageStack message stack
+	 * @param botId bot identifier
+	 * @param nodId optional node identifier for filtering
+	 * @param timeOption optional time range option
+	 */
 	@GetMapping("/")
 	public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId,
 			@RequestParam("nodId") final Optional<Long> nodId,
@@ -168,6 +190,9 @@ public class StatisticController extends AbstractBotController {
 		viewContext.publishDto(criteriaKey, statCriteria);
 		viewContext.publishDto(conversationCriteriaKey, new ConversationCriteria());
 		viewContext.publishDto(topIntentCriteriaKey, new TopIntentCriteria());
+		viewContext.publishDto(documentaryResourceCriteriaKey, new io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceCriteria());
+		viewContext.publishDtList(documentaryResourceTypesKey, documentaryResourceTypeServices.getAllDocResTypes());
+		viewContext.publishDto(questionAnswerCriteriaKey, new io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerCriteria());
 
 		viewContext.publishDto(selectTypeExportAnalyticListKey, new TypeExportAnalyticList());
 
@@ -202,8 +227,35 @@ public class StatisticController extends AbstractBotController {
 
 		final var conversationsStats = analyticsServices.getConversationsStats(criteria, viewContext.readDto(conversationCriteriaKey, AbstractVSpringMvcController.getUiMessageStack()));
 		viewContext.publishDtList(conversationStatKey, DtDefinitions.ConversationStatFields.sessionId, conversationsStats);
+
+		// Documentary resource statistics
+		viewContext.publishRef(totalOfDocumentaryResourceClicksKey,
+				analyticsServices.getTotalDocumentaryResourceClicks(criteria));
+		final var documentaryResourceStats = analyticsServices.getDocumentaryResourceStats(
+				criteria,
+				viewContext.readDto(documentaryResourceCriteriaKey, AbstractVSpringMvcController.getUiMessageStack()));
+		viewContext.publishDtList(documentaryResourceStatKey, DtDefinitions.DocumentaryResourceStatFields.dreId,
+				documentaryResourceStats);
+
+		// Question/Answer statistics
+		viewContext.publishRef(totalOfQuestionAnswerClicksKey,
+				analyticsServices.getTotalQuestionAnswerClicks(criteria));
+		final var questionAnswerStats = analyticsServices.getQuestionAnswerStats(
+				criteria,
+				viewContext.readDto(questionAnswerCriteriaKey, AbstractVSpringMvcController.getUiMessageStack()));
+		viewContext.publishDtList(questionAnswerStatKey, DtDefinitions.QuestionAnswerStatFields.qaId,
+				questionAnswerStats);
 	}
 
+	/**
+	 * Update statistics graphs based on current criteria
+	 *
+	 * @param viewContext view context
+	 * @param bot chatbot
+	 * @param criteria statistics criteria
+	 * @param uiMessageStack message stack
+	 * @return updated view context
+	 */
 	@PostMapping("/_updateStats")
 	public ViewContext doUpdateStats(final ViewContext viewContext,
 			@ViewAttribute("bot") final Chatbot bot,
@@ -247,6 +299,38 @@ public class StatisticController extends AbstractBotController {
 		return viewContext;
 	}
 
+	@PostMapping("/_filterDocumentaryResource")
+	public ViewContext filterDocumentaryResource(final ViewContext viewContext, final UiMessageStack uiMessageStack,
+			@ViewAttribute("criteria") final StatCriteria criteria,
+			@ViewAttribute("documentaryResourceCriteria") final io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceCriteria documentaryResourceCriteria) {
+
+		final var documentaryResourceStats = analyticsServices.getDocumentaryResourceStats(criteria, documentaryResourceCriteria);
+		viewContext.publishDtList(documentaryResourceStatKey, documentaryResourceStats);
+		listLimitReached(viewContext, uiMessageStack);
+		return viewContext;
+	}
+
+	@PostMapping("/_filterQuestionAnswer")
+	public ViewContext filterQuestionAnswer(final ViewContext viewContext, final UiMessageStack uiMessageStack,
+			@ViewAttribute("criteria") final StatCriteria criteria,
+			@ViewAttribute("questionAnswerCriteria") final io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerCriteria questionAnswerCriteria) {
+
+		final var questionAnswerStats = analyticsServices.getQuestionAnswerStats(criteria, questionAnswerCriteria);
+		viewContext.publishDtList(questionAnswerStatKey, questionAnswerStats);
+		listLimitReached(viewContext, uiMessageStack);
+		return viewContext;
+	}
+
+	/**
+	 * Export statistics to file(s) based on selected types
+	 *
+	 * @param viewContext view context
+	 * @param criteria statistics criteria
+	 * @param conversationCriteria conversation criteria
+	 * @param bot chatbot
+	 * @param typeExportAnalyticList list of export types to include
+	 * @return exported file (CSV or ZIP)
+	 */
 	@PostMapping("/_exportStatisticFile")
 	public VFile doExportStatisticFile(final ViewContext viewContext,
 			@ViewAttribute("criteria") final StatCriteria criteria,
@@ -281,6 +365,20 @@ public class StatisticController extends AbstractBotController {
 					final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
 					fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_TOPIC_USAGE).getDisplay(), analyticsExportServices.exportTopIntents(topIntents));
 					break;
+				case "DOCUMENTARY_RESOURCES":
+					final DtList<io.vertigo.chatbot.designer.domain.analytics.DocumentaryResourceStat> docResStats = analyticsServices.getDocumentaryResourceStats(
+							criteria,
+							viewContext.readDto(documentaryResourceCriteriaKey, AbstractVSpringMvcController.getUiMessageStack()));
+					fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_DOCUMENTARY_RESOURCES).getDisplay(),
+							analyticsExportServices.exportDocumentaryResources(docResStats));
+					break;
+				case "QUESTION_ANSWERS":
+					final DtList<io.vertigo.chatbot.designer.domain.analytics.QuestionAnswerStat> qaStats = analyticsServices.getQuestionAnswerStats(
+							criteria,
+							viewContext.readDto(questionAnswerCriteriaKey, AbstractVSpringMvcController.getUiMessageStack()));
+					fileMap.put(LocaleMessageText.of(ExportMultilingualResources.FILE_TYPE_QUESTION_ANSWERS).getDisplay(),
+							analyticsExportServices.exportQuestionAnswers(qaStats));
+					break;
 				default:
 					throw new VUserException(AnalyticsMultilingualResources.MANDATORY_TYPE_EXPORT_ANALYTICS);
 			}
@@ -289,9 +387,9 @@ public class StatisticController extends AbstractBotController {
 			return fileMap.values().iterator().next();
 
 		} else {
-			final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			return designerFileServices.zipMultipleFiles(fileMap,
-					LocaleMessageText.of(AnalyticsMultilingualResources.ZIP_EXPORT_FILENAME).getDisplay() + dateFormat.format(new Date()));
+			final String zipFileName = LocaleMessageText.of(AnalyticsMultilingualResources.ZIP_EXPORT_FILENAME).getDisplay() 
+					+ LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			return designerFileServices.zipMultipleFiles(fileMap, zipFileName);
 		}
 	}
 }

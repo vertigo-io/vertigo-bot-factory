@@ -3,9 +3,9 @@ package io.vertigo.chatbot.analytics;
 import java.util.List;
 import java.util.UUID;
 
-import io.vertigo.core.analytics.trace.TraceSpan;
-import io.vertigo.core.analytics.trace.TraceSpanBuilder;
 import javax.inject.Inject;
+
+import io.vertigo.core.analytics.trace.TraceSpanBuilder;
 
 import io.vertigo.chatbot.commons.domain.ExecutorConfiguration;
 import io.vertigo.chatbot.engine.BotEngine;
@@ -17,6 +17,13 @@ import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.analytics.AnalyticsManager;
 import io.vertigo.core.node.component.Component;
 
+/**
+ * Service for sending analytics events to the analytics database.
+ * This service handles the creation and sending of various analytics events
+ * including messages, ratings, conversations, documentary resource clicks, and question/answer clicks.
+ *
+ * @author Chatbot Team
+ */
 @Transactional
 public class AnalyticsSenderServices implements Component {
 
@@ -147,16 +154,64 @@ public class AnalyticsSenderServices implements Component {
 		analyticsManager.addSpan(builder.build());
 	}
 
+	/**
+	 * Send a rating event to the analytics database
+	 *
+	 * @param sessionId session identifier
+	 * @param rating rating information
+	 * @param executorConfiguration executor configuration with bot and node info
+	 */
 	public void rate(final UUID sessionId, final IncomeRating rating, final ExecutorConfiguration executorConfiguration) {
 		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareRatingProcess(rating), executorConfiguration);
 	}
 
+	/**
+	 * Send a rating comment event to the analytics database
+	 *
+	 * @param sessionId session identifier
+	 * @param rating rating information with comment
+	 * @param executorConfiguration executor configuration with bot and node info
+	 */
 	public void rateComment(final UUID sessionId, final IncomeRating rating, final ExecutorConfiguration executorConfiguration) {
 		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareRatingCommentProcess(rating), executorConfiguration);
 	}
 
+	/**
+	 * Send a conversation event to the analytics database
+	 *
+	 * @param sessionId session identifier
+	 * @param text message text
+	 * @param userMessage true if message is from user, false if from bot
+	 * @param executorConfiguration executor configuration with bot and node info
+	 */
 	public void sendConversationEvent(final UUID sessionId, final String text, final boolean userMessage, final ExecutorConfiguration executorConfiguration) {
 		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareConversationProcess(text, userMessage), executorConfiguration);
+	}
+
+	/**
+	 * Send a documentary resource click event to the analytics database
+	 *
+	 * @param sessionId session identifier
+	 * @param dreId documentary resource ID
+	 * @param title documentary resource title
+	 * @param dreTypeCd documentary resource type code
+	 * @param executorConfiguration executor configuration with bot and node info
+	 */
+	public void sendDocumentaryResourceClickEvent(final UUID sessionId, final Long dreId, final String title, final String dreTypeCd, final ExecutorConfiguration executorConfiguration) {
+		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareDocumentaryResourceClickProcess(dreId, title, dreTypeCd), executorConfiguration);
+	}
+
+	/**
+	 * Send a question/answer click event to the analytics database
+	 *
+	 * @param sessionId session identifier
+	 * @param qaId question/answer ID
+	 * @param question question text
+	 * @param catLabel category label
+	 * @param executorConfiguration executor configuration with bot and node info
+	 */
+	public void sendQuestionAnswerClickEvent(final UUID sessionId, final Long qaId, final String question, final String catLabel, final ExecutorConfiguration executorConfiguration) {
+		sendProcessWithConfiguration(sessionId, AnalyticsUtils.prepareQuestionAnswerClickProcess(qaId, question, catLabel), executorConfiguration);
 	}
 
 }
