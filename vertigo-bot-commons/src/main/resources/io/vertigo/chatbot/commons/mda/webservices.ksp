@@ -13,6 +13,7 @@ create DtDefinition DtBotExport {
 	field confluenceSetting			{domain: DoDtConfluenceSettingExport 	label: "Confluence setting" 	    cardinality : "?"}
 	field jiraSetting			    {domain: DoDtJiraSettingExport 	        label: "Jira setting" 	            cardinality : "?"}
 	field jiraFieldSetting			{domain: DoDtJiraFieldSettingExport 	label: "Jira fields setting" 	    cardinality : "*"}
+	field jiraCustomFieldSetting	{domain: DoDtJiraCustomFieldSettingExport 	label: "Jira custom fields setting" cardinality : "*"}
 	field questionAnswerList 		{domain: DoText                       	label: "Questions answers List" 	cardinality : "1"}
 	field documentaryResources      {domain: DoText                         label: "Documentary resources"      cardinality : "1"}
 	field globalVariables           {domain: DoText                         label: "Global variables"           cardinality : "1"}
@@ -45,11 +46,20 @@ create DtDefinition DtJiraSettingExport {
 	field login 		            {domain: DoLabel 						label: "Login" 		                cardinality : "1"}
 	field password			 		{domain: DoText	 					    label: "Password" 					cardinality : "1"}
     field project			        {domain: DoLabel	 					label: "Project" 	                cardinality : "1"}
+    field jsmMode                   {domain: DoYesNo                        label: "Use JSM Cloud"              cardinality : "1"}
     field numberOfResults			{domain: DoNumber	 					label: "Number max of results" 	    cardinality : "1"}
 }
 
 create DtDefinition DtJiraFieldSettingExport {
 	field fieldKey 					{domain: DoLabel 						label: "Jira field key" 		    cardinality : "1"}
+	field enabled 		            {domain: DoYesNo 						label: "Enabled" 		            cardinality : "1"}
+	field mandatory			 		{domain: DoYesNo	 					label: "Mandatory" 					cardinality : "1"}
+}
+
+create DtDefinition DtJiraCustomFieldSettingExport {
+	field label 					{domain: DoLabel 						label: "Custom field label" 	    cardinality : "1"}
+	field fieldKey 					{domain: DoLabel 						label: "Jira field key" 		    cardinality : "1"}
+	field fieldType 				{domain: DoCode 						label: "Field type" 			    cardinality : "1"}
 	field enabled 		            {domain: DoYesNo 						label: "Enabled" 		            cardinality : "1"}
 	field mandatory			 		{domain: DoYesNo	 					label: "Mandatory" 					cardinality : "1"}
 }

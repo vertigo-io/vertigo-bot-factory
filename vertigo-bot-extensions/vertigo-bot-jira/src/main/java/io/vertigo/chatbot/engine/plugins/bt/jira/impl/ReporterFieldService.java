@@ -38,9 +38,11 @@ public class ReporterFieldService implements IJiraFieldService, Component {
     private JiraServerService jiraServerService;
     private boolean isEmailAddressInvalid = false;
 
+    private static final String RAISE_ON_BEHALF_OF = "raiseOnBehalfOf";
+
     @Override
     public boolean supports(String fieldKey) {
-        return IssueFieldId.REPORTER_FIELD.id.equals(fieldKey);
+        return IssueFieldId.REPORTER_FIELD.id.equals(fieldKey) || RAISE_ON_BEHALF_OF.equals(fieldKey);
     }
 
     public void processConversation(BlackBoard bb, JiraField jiraField, List<BTNode> sequence, final boolean checkJiraFields) {

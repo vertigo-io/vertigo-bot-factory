@@ -24,6 +24,7 @@ public final class BotExport implements DataObject {
 	private io.vertigo.chatbot.commons.domain.ConfluenceSettingExport confluenceSetting;
 	private io.vertigo.chatbot.commons.domain.JiraSettingExport jiraSetting;
 	private io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> jiraFieldSetting =  new io.vertigo.datamodel.data.model.DtList<>(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class);
+	private io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport> jiraCustomFieldSetting =  new io.vertigo.datamodel.data.model.DtList<>(io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport.class);
 	private String questionAnswerList;
 	private String documentaryResources;
 	private String globalVariables;
@@ -242,6 +243,27 @@ public final class BotExport implements DataObject {
 		io.vertigo.core.lang.Assertion.check().isNotNull(jiraFieldSetting);
 		//---
 		this.jiraFieldSetting = jiraFieldSetting;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Jira custom fields setting'.
+	 * @return DtList de JiraCustomFieldSettingExport jiraCustomFieldSetting
+	 */
+	@Field(smartType = "STyDtJiraCustomFieldSettingExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Jira custom fields setting")
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport> getJiraCustomFieldSetting() {
+		return jiraCustomFieldSetting;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Jira custom fields setting'.
+	 * @param jiraCustomFieldSetting DtList de JiraCustomFieldSettingExport
+	 */
+	public void setJiraCustomFieldSetting(final io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport> jiraCustomFieldSetting) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(jiraCustomFieldSetting);
+		//---
+		this.jiraCustomFieldSetting = jiraCustomFieldSetting;
 	}
 	
 	/**

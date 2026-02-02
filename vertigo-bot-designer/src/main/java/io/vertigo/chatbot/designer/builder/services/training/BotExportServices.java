@@ -47,6 +47,9 @@ public class BotExportServices implements Component {
 	private JiraFieldSettingServices jiraFieldSettingServices;
 
 	@Inject
+	private JiraCustomFieldSettingServices jiraCustomFieldSettingServices;
+
+	@Inject
 	private AttachmentServices attachmentServices;
 
 	@Inject
@@ -79,6 +82,7 @@ public class BotExportServices implements Component {
 		export.setRatingBT(topicExportServices.getBasicBt(bot, KindTopicEnum.RATING.name(), logs));
 		export.setMapContext(contextValueServices.exportContextValuesToMapByBot(bot, logs));
 		export.setJiraFieldSetting(jiraFieldSettingServices.exportJiraSetting(bot));
+		export.setJiraCustomFieldSetting(jiraCustomFieldSettingServices.exportCustomFields(bot));
 		export.setQuestionAnswerList(questionAnswerServices.exportActiveQuestionsAnswers(bot, logs));
 		export.setDocumentaryResources(documentaryResourceServices.exportDocumentaryResourceByBot(bot, logs));
 		export.setGlobalVariables(globalVariableExportService.exportGlobalVariables(bot, logs));
@@ -94,7 +98,8 @@ public class BotExportServices implements Component {
 	}
 
 	public Optional<JiraSettingExport> exportJiraSetting(final long botId, final long nodId) {
-		return jiraSettingServices.exportJiraSetting(botId, nodId);
+		final ChatbotCustomConfig chatbotCustomConfig = chatbotCustomConfigServices.getChatbotCustomConfigByBotId(botId);
+		return jiraSettingServices.exportJiraSetting(botId, nodId, chatbotCustomConfig.getJsmMode());
 	}
 
 	public ChatbotCustomConfigExport exportChatbotCustomSettings(final long botId) {

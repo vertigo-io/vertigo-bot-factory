@@ -5,3 +5,4 @@
 vertigo-bot-executor/src/main/webapp/META-INF/context.xml
 **/.idea
 *.iml
+.cursor

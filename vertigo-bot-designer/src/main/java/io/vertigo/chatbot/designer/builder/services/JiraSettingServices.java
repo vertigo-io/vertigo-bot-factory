@@ -52,12 +52,12 @@ public class JiraSettingServices implements Component {
 	@Secured("BotUser")
 	public void deleteAllByNodeId(@SecuredOperation("botAdm") final Chatbot bot, final long nodeId) {
 		jiraSettingDAO.findAll(Criterions.isEqualTo(DtDefinitions.JiraSettingFields.nodId, nodeId),
-				DtListState.of(MAX_ELEMENTS_PLUS_ONE)).forEach(jiraSetting -> this.delete(bot, jiraSetting.getJirSetId()));
+				DtListState.of(MAX_ELEMENTS_PLUS_ONE)).forEach(jiraSetting -> delete(bot, jiraSetting.getJirSetId()));
 	}
 
 	@Secured("BotUser")
 	public void deleteAllByBotId(@SecuredOperation("botAdm") final Chatbot bot) {
-		findAllByBotId(bot).forEach(jiraSetting -> this.delete(bot, jiraSetting.getJirSetId()));
+		findAllByBotId(bot).forEach(jiraSetting -> delete(bot, jiraSetting.getJirSetId()));
 	}
 
 	public DtList<JiraSetting> findAllByBotId(@SecuredOperation("botContributor") final Chatbot bot) {
@@ -65,7 +65,7 @@ public class JiraSettingServices implements Component {
 				.stream().peek(jiraSetting -> jiraSetting.setPassword("")).collect(VCollectors.toDtList(JiraSetting.class));
 	}
 
-	public Optional<JiraSettingExport> exportJiraSetting(final long botId, final long nodId) {
+	public Optional<JiraSettingExport> exportJiraSetting(final long botId, final long nodId, final Boolean globalJsmMode) {
 		return jiraSettingDAO.findOptional(Criterions.isEqualTo(DtDefinitions.JiraSettingFields.botId, botId)
 				.and(Criterions.isEqualTo(DtDefinitions.JiraSettingFields.nodId, nodId))).map(jiraSetting -> {
 			final JiraSettingExport jiraSettingExport = new JiraSettingExport();
@@ -73,6 +73,7 @@ public class JiraSettingServices implements Component {
 			jiraSettingExport.setLogin(jiraSetting.getLogin());
 			jiraSettingExport.setPassword(jiraSetting.getPassword());
 			jiraSettingExport.setProject(jiraSetting.getProject());
+			jiraSettingExport.setJsmMode(globalJsmMode);
 			jiraSettingExport.setNumberOfResults(jiraSetting.getNumberOfResults());
 			return Optional.of(jiraSettingExport);
 		}).orElseGet(Optional::empty);

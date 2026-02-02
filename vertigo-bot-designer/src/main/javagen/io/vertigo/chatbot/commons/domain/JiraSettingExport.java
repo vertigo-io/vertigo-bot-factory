@@ -17,6 +17,7 @@ public final class JiraSettingExport implements DataObject {
 	private String login;
 	private String password;
 	private String project;
+	private Boolean jsmMode;
 	private Long numberOfResults;
 	
 	/**
@@ -93,6 +94,25 @@ public final class JiraSettingExport implements DataObject {
 	 */
 	public void setProject(final String project) {
 		this.project = project;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Use JSM Cloud'.
+	 * @return Boolean jsmMode <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Use JSM Cloud")
+	public Boolean getJsmMode() {
+		return jsmMode;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Use JSM Cloud'.
+	 * @param jsmMode Boolean <b>Obligatoire</b>
+	 */
+	public void setJsmMode(final Boolean jsmMode) {
+		this.jsmMode = jsmMode;
 	}
 	
 	/**

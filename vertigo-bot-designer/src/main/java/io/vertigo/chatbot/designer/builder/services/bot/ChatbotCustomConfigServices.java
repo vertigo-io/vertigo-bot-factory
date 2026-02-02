@@ -84,6 +84,7 @@ public class ChatbotCustomConfigServices implements Component {
         chatbotCustomConfig.setDisplayAvatar(true);
         chatbotCustomConfig.setDisableNlu(false);
         chatbotCustomConfig.setJiraCheckBeforeCreate(true);
+        chatbotCustomConfig.setJsmMode(false);
         chatbotCustomConfig.setBackgroundColor("#000091");
         chatbotCustomConfig.setFontColor("#ffffff");
         chatbotCustomConfig.setBotMessageBackgroundColor("#ffffff");

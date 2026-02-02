@@ -5,7 +5,20 @@ import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.ai.bt.BTStatus;
 import io.vertigo.chatbot.engine.BotEngine;
-import io.vertigo.chatbot.engine.plugins.bt.jira.impl.*;
+import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.AffectedVersionFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.AssigneeFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.AttachmentFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.ComponentFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.CustomFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.DescriptionFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.FixVersionFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.IJiraFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.IssueTypeFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.JiraServerService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.PrioritiesFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.ReporterFieldService;
+import io.vertigo.chatbot.engine.plugins.bt.jira.impl.SummaryFieldService;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.chatbot.executor.manager.ExecutorConfigManager;
 import io.vertigo.core.node.Node;
@@ -43,8 +56,10 @@ public class BotJiraNodeProvider implements Component, Activeable {
     private ReporterFieldService reporterFieldService;
     @Inject
     private AttachmentFieldService attachmentFieldService;
+    @Inject
+    private CustomFieldService customFieldService;
 
-    private List<IJiraFieldService> fieldServices = new ArrayList<>();
+    private final List<IJiraFieldService> fieldServices = new ArrayList<>();
     private ExecutorConfigManager executorConfigManager;
 
     public BTNode jiraIssueCreation(final BlackBoard bb, final List<JiraField> jiraFields, final String urlSentence) {
@@ -75,16 +90,18 @@ public class BotJiraNodeProvider implements Component, Activeable {
 
     @Override
     public void start() {
-        this.fieldServices.add(summaryFieldService);
-        this.fieldServices.add(descriptionFieldService);
-        this.fieldServices.add(issueTypeFieldService);
-        this.fieldServices.add(componentFieldService);
-        this.fieldServices.add(fixVersionFieldService);
-        this.fieldServices.add(affectedVersionFieldService);
-        this.fieldServices.add(prioritiesFieldService);
-        this.fieldServices.add(assigneeFieldService);
-        this.fieldServices.add(reporterFieldService);
-        this.fieldServices.add(attachmentFieldService);
+        fieldServices.add(summaryFieldService);
+        fieldServices.add(descriptionFieldService);
+        fieldServices.add(issueTypeFieldService);
+        fieldServices.add(componentFieldService);
+        fieldServices.add(fixVersionFieldService);
+        fieldServices.add(affectedVersionFieldService);
+        fieldServices.add(prioritiesFieldService);
+        fieldServices.add(assigneeFieldService);
+        fieldServices.add(reporterFieldService);
+        fieldServices.add(attachmentFieldService);
+        fieldServices.add(customFieldService);
+
 
         executorConfigManager = Node.getNode().getComponentSpace().resolve(ExecutorConfigManager.class);
     }

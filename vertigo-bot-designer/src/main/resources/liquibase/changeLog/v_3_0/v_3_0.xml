@@ -33,6 +33,21 @@
         <sqlFile encoding="utf-8" path="/sql/v_3_0/alter_chatbot-welcome-tour.sql" />
     </changeSet>
 
+    <changeSet author="vsavalle"
+        id="manage jira/jsm">
+        <sqlFile encoding="utf-8" path="/sql/v_3_0/alter_chatbot-jsm.sql" />
+    </changeSet>
+
+    <changeSet author="vsavalle"
+               id="add custom field">
+        <sqlFile encoding="utf-8" path="/sql/v_3_0/create_chatbot-customjira-field.sql" />
+    </changeSet>
+
+    <changeSet author="vsavalle"
+        id="add type to custom field">
+        <sqlFile encoding="utf-8" path="/sql/v_3_0/alter_jira_custom_field_type.sql" />
+    </changeSet>
+
     <changeSet author="xsupiot" id="Compute aggregated stats for documentary resource clicks">
         <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileMigration">
             <param name="file" value="/liquibase/changeLog/v_3_0/computeInfluxTaskStatsDocRes.flux"/>

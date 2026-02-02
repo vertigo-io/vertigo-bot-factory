@@ -50,6 +50,9 @@ drop sequence IF EXISTS SEQ_GROUPS;
 drop table IF EXISTS HISTORY cascade;
 drop sequence IF EXISTS SEQ_HISTORY;
 drop table IF EXISTS HISTORY_ACTION cascade;
+drop table IF EXISTS JIRA_CUSTOM_FIELD_SETTING cascade;
+drop sequence IF EXISTS SEQ_JIRA_CUSTOM_FIELD_SETTING;
+drop table IF EXISTS JIRA_CUSTOM_FIELD_TYPE cascade;
 drop table IF EXISTS JIRA_FIELD cascade;
 drop table IF EXISTS JIRA_FIELD_SETTING cascade;
 drop sequence IF EXISTS SEQ_JIRA_FIELD_SETTING;
@@ -178,6 +181,10 @@ create sequence SEQ_GROUPS
 	start with 1000 cache 1; 
 
 create sequence SEQ_HISTORY
+	start with 1000 cache 1; 
+
+
+create sequence SEQ_JIRA_CUSTOM_FIELD_SETTING
 	start with 1000 cache 1; 
 
 
@@ -442,6 +449,7 @@ create table CHATBOT_CUSTOM_CONFIG
     DISABLE_NLU 	 bool        	,
     MAX_SAVED_TRAINING	 NUMERIC     	,
     JIRA_CHECK_BEFORE_CREATE	 bool        	not null,
+    JSM_MODE    	 bool        	not null,
     CHATBOT_DISPLAY	 bool        	,
     QANDA_DISPLAY	 bool        	,
     DOCUMENTARY_RESOURCE_DISPLAY	 bool        	,
@@ -497,6 +505,9 @@ comment on column CHATBOT_CUSTOM_CONFIG.MAX_SAVED_TRAINING is
 
 comment on column CHATBOT_CUSTOM_CONFIG.JIRA_CHECK_BEFORE_CREATE is
 'Check Jira fields before ticket creation';
+
+comment on column CHATBOT_CUSTOM_CONFIG.JSM_MODE is
+'JSM Cloud mode';
 
 comment on column CHATBOT_CUSTOM_CONFIG.CHATBOT_DISPLAY is
 'Display chatbot';
@@ -980,6 +991,62 @@ comment on column HISTORY_ACTION.LABEL is
 
 comment on column HISTORY_ACTION.LABEL_FR is
 'TitleFr';
+
+-- ============================================================
+--   Table : JIRA_CUSTOM_FIELD_SETTING                                        
+-- ============================================================
+create table JIRA_CUSTOM_FIELD_SETTING
+(
+    JIR_CUS_FIELD_SET_ID	 NUMERIC     	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    FIELD_KEY   	 VARCHAR(100)	not null,
+    ENABLED     	 bool        	not null,
+    MANDATORY   	 bool        	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    JCF_TYPE_CD 	 VARCHAR(100)	not null,
+    constraint PK_JIRA_CUSTOM_FIELD_SETTING primary key (JIR_CUS_FIELD_SET_ID)
+);
+
+comment on column JIRA_CUSTOM_FIELD_SETTING.JIR_CUS_FIELD_SET_ID is
+'Jira custom field setting id';
+
+comment on column JIRA_CUSTOM_FIELD_SETTING.LABEL is
+'Custom field label';
+
+comment on column JIRA_CUSTOM_FIELD_SETTING.FIELD_KEY is
+'Jira field key';
+
+comment on column JIRA_CUSTOM_FIELD_SETTING.ENABLED is
+'Jira field enabled';
+
+comment on column JIRA_CUSTOM_FIELD_SETTING.MANDATORY is
+'Jira field mandatory';
+
+comment on column JIRA_CUSTOM_FIELD_SETTING.BOT_ID is
+'Chatbot';
+
+comment on column JIRA_CUSTOM_FIELD_SETTING.JCF_TYPE_CD is
+'Field type';
+
+-- ============================================================
+--   Table : JIRA_CUSTOM_FIELD_TYPE                                        
+-- ============================================================
+create table JIRA_CUSTOM_FIELD_TYPE
+(
+    JCF_TYPE_CD 	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    LABEL_FR    	 VARCHAR(100)	not null,
+    constraint PK_JIRA_CUSTOM_FIELD_TYPE primary key (JCF_TYPE_CD)
+);
+
+comment on column JIRA_CUSTOM_FIELD_TYPE.JCF_TYPE_CD is
+'Code';
+
+comment on column JIRA_CUSTOM_FIELD_TYPE.LABEL is
+'Label';
+
+comment on column JIRA_CUSTOM_FIELD_TYPE.LABEL_FR is
+'LabelFr';
 
 -- ============================================================
 --   Table : JIRA_FIELD                                        
@@ -2203,6 +2270,18 @@ alter table HISTORY
 	references HISTORY_ACTION (HAC_CD);
 
 create index A_HISTORY_HISTORY_ACTION_HISTORY_ACTION_FK on HISTORY (HAC_CD asc);
+
+alter table JIRA_CUSTOM_FIELD_SETTING
+	add constraint FK_A_JIRA_CUSTOM_FIELD_SETTING_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_JIRA_CUSTOM_FIELD_SETTING_CHATBOT_CHATBOT_FK on JIRA_CUSTOM_FIELD_SETTING (BOT_ID asc);
+
+alter table JIRA_CUSTOM_FIELD_SETTING
+	add constraint FK_A_JIRA_CUSTOM_FIELD_SETTING_TYPE_JIRA_CUSTOM_FIELD_TYPE foreign key (JCF_TYPE_CD)
+	references JIRA_CUSTOM_FIELD_TYPE (JCF_TYPE_CD);
+
+create index A_JIRA_CUSTOM_FIELD_SETTING_TYPE_JIRA_CUSTOM_FIELD_TYPE_FK on JIRA_CUSTOM_FIELD_SETTING (JCF_TYPE_CD asc);
 
 alter table JIRA_FIELD_SETTING
 	add constraint FK_A_JIRA_FIELD_SETTING_CHATBOT_CHATBOT foreign key (BOT_ID)

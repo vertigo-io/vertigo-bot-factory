@@ -45,6 +45,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		ExecutorConfiguration(io.vertigo.chatbot.commons.domain.ExecutorConfiguration.class),
 		/** Objet de données GlobalVariableExport. */
 		GlobalVariableExport(io.vertigo.chatbot.commons.domain.GlobalVariableExport.class),
+		/** Objet de données JiraCustomFieldSettingExport. */
+		JiraCustomFieldSettingExport(io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport.class),
 		/** Objet de données JiraFieldSettingExport. */
 		JiraFieldSettingExport(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class),
 		/** Objet de données JiraSettingExport. */
@@ -175,6 +177,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jiraSetting,
 		/** Propriété 'Jira fields setting'. */
 		jiraFieldSetting,
+		/** Propriété 'Jira custom fields setting'. */
+		jiraCustomFieldSetting,
 		/** Propriété 'Questions answers List'. */
 		questionAnswerList,
 		/** Propriété 'Documentary resources'. */
@@ -350,6 +354,21 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		value	}
 
 	/**
+	 * Enumération des champs de JiraCustomFieldSettingExport.
+	 */
+	public enum JiraCustomFieldSettingExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport> {
+		/** Propriété 'Custom field label'. */
+		label,
+		/** Propriété 'Jira field key'. */
+		fieldKey,
+		/** Propriété 'Field type'. */
+		fieldType,
+		/** Propriété 'Enabled'. */
+		enabled,
+		/** Propriété 'Mandatory'. */
+		mandatory	}
+
+	/**
 	 * Enumération des champs de JiraFieldSettingExport.
 	 */
 	public enum JiraFieldSettingExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> {
@@ -372,6 +391,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		password,
 		/** Propriété 'Project'. */
 		project,
+		/** Propriété 'Use JSM Cloud'. */
+		jsmMode,
 		/** Propriété 'Number max of results'. */
 		numberOfResults	}
 

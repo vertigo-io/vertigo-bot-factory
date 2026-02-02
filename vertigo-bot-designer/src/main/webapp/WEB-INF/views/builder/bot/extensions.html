@@ -10,6 +10,29 @@
     <title th:text="#{extensions.title}"></title>
     <!-- Component c-component is built with the project vertigo-bot-ui/vertigo-bot-ui-codemirror -->
     <script th:src="@{/static/js/c-codemirror.umd.js}"></script>
+    <style>
+        /* Toggle Jira/JSM custom styling */
+        .jira-jsm-toggle.jira-mode .q-toggle__inner {
+            color: #1976D2 !important;
+        }
+        .jira-jsm-toggle.jira-mode .q-toggle__inner--falsy .q-toggle__thumb:after {
+            background-color: #1976D2 !important;
+        }
+        .jira-jsm-toggle.jira-mode .q-toggle__inner--falsy .q-toggle__track {
+            opacity: 0.5;
+            background-color: #1976D2 !important;
+        }
+        .jira-jsm-toggle.jsm-mode .q-toggle__inner {
+            color: #4527A0 !important;
+        }
+        .jira-jsm-toggle.jsm-mode .q-toggle__inner--truthy .q-toggle__thumb:after {
+            background-color: #4527A0 !important;
+        }
+        .jira-jsm-toggle.jsm-mode .q-toggle__inner--truthy .q-toggle__track {
+            opacity: 0.5;
+            background-color: #4527A0 !important;
+        }
+    </style>
     <script th:inline="javascript">
         window.addEventListener('vui-before-plugins', function() {
             VUiApp.use(chatbotCodemirror);
@@ -31,11 +54,24 @@
             },
 
             getJiraFieldId: function(jirFieldCd) {
+                // En mode JSM, REPORTER devient raiseOnBehalfOf
+                if (VertigoUi.vueData.chatbotCustomConfig.jsmMode && jirFieldCd === 'REPORTER') {
+                    return 'raiseOnBehalfOf';
+                }
                 let jiraField = VertigoUi.vueData.jiraFields.find(currentField => currentField.jirFieldCd === jirFieldCd);
                 if (jiraField !== undefined) {
                     return jiraField.jiraId;
                 } else {
                     return jirFieldCd;
+                }
+            },
+
+            getJiraCustomFieldTypeLabel: function(jcfTypeCd) {
+                let fieldType = VertigoUi.vueData.jiraCustomFieldTypes.find(type => type.jcfTypeCd === jcfTypeCd);
+                if (fieldType !== undefined) {
+                    return VertigoUi.vueData.locale === 'fr_FR' ? fieldType.labelFr : fieldType.label;
+                } else {
+                    return jcfTypeCd;
                 }
             },
 
@@ -73,6 +109,10 @@
                 VUiPage.httpPostAjax("_enableDisableJiraField", {
                     'fieldKey': fieldKey,
                     'enabled': enabled
+                }, {
+                    onSuccess: function () {
+                        refreshCodeMirrorJiraField()
+                    }
                 });
             },
 
@@ -113,15 +153,140 @@
                 VUiPage.httpPostAjax("_saveChatbotCustomConfig", {
                     'vContext[chatbotCustomConfig][jiraCheckBeforeCreate]': VertigoUi.vueData.chatbotCustomConfig.jiraCheckBeforeCreate
                 });
+            },
+
+            applyJsmModeToAll: function() {
+                // Utiliser $nextTick pour attendre que Vue ait mis à jour la valeur jsmMode
+                this.$nextTick(() => {
+                    refreshCodeMirrorJiraField();
+                });
+                VUiPage.httpPostAjax("_saveJsmMode", {
+                    'vContext[chatbotCustomConfig][jsmMode]': VertigoUi.vueData.chatbotCustomConfig.jsmMode
+                });
+            },
+
+            // Bloc "Jira Custom Fields"
+            enabledDisabledJiraCustomField: function(id, enabled) {
+                VUiPage.httpPostAjax("_enableDisableJiraCustomField", {
+                    'fieldId': id,
+                    'enabled': enabled
+                }, {
+                    onSuccess: function () {
+                        refreshCodeMirrorJiraField()
+                    }
+                });
+            },
+
+            mandatoryJiraCustomField: function(id, mandatory) {
+                VUiPage.httpPostAjax("_mandatoryJiraCustomField", {
+                    'fieldId': id,
+                    'mandatory': mandatory
+                }, {
+                    onSuccess: function () {
+                        refreshCodeMirrorJiraField()
+                    }
+                });
+            },
+
+            // Retourne les valeurs enabled et mandatory selon le mode JSM
+            getJiraFieldValues: function(row) {
+                if (this.vueData.chatbotCustomConfig.jsmMode) {
+                    if (['ATTACHMENT'].includes(row.jirFieldCd)) {
+                        return { enabled: false, mandatory: false };
+                    }
+                    if (['TYPE', 'SUMMARY'].includes(row.jirFieldCd)) {
+                        return { enabled: true, mandatory: true };
+                    }
+                }
+                return { enabled: row.enabled, mandatory: row.mandatory };
+            },
+
+            // Méthodes pour ouvrir les dialogues Confluence
+            openAddConfluenceDialog: function() {
+                VUiExtensions.dataX.isPwd = false;
+                Object.assign(this.vueData.newConfluenceSettingIhm, {
+                    conSetId: null, botId: this.vueData.bot.botId, nodId: null,
+                    url: null, login: null, password: null, numberOfResults: null, spaces: null
+                });
+                this.$refs.confluenceSettingDialog.show();
+            },
+
+            openEditConfluenceDialog: function(row) {
+                VUiExtensions.dataX.isPwd = true;
+                Object.assign(this.vueData.newConfluenceSettingIhm, row);
+                this.$refs.confluenceSettingDialog.show();
+            },
+
+            // Méthodes pour ouvrir les dialogues Jira
+            openAddJiraDialog: function() {
+                VUiExtensions.dataX.isJiraPwd = false;
+                Object.assign(this.vueData.newJiraSetting, {
+                    jirSetId: null, botId: this.vueData.bot.botId, nodId: null,
+                    url: null, login: null, password: null, project: null, numberOfResults: null
+                });
+                this.$refs.jiraSettingDialog.show();
+            },
+
+            openEditJiraDialog: function(row) {
+                VUiExtensions.dataX.isJiraPwd = true;
+                Object.assign(this.vueData.newJiraSetting, row);
+                this.$refs.jiraSettingDialog.show();
+            },
+
+            // Méthodes pour ouvrir les dialogues Jira Custom Fields
+            openAddJiraCustomFieldDialog: function() {
+                Object.assign(this.vueData.newJiraCustomFieldSetting, {
+                    jirCusFieldSetId: null, botId: this.vueData.bot.botId,
+                    label: null, fieldKey: null, jcfTypeCd: null, enabled: true, mandatory: false
+                });
+                this.$refs.jiraCustomFieldDialog.show();
+            },
+
+            openEditJiraCustomFieldDialog: function(row) {
+                Object.assign(this.vueData.newJiraCustomFieldSetting, row);
+                this.$refs.jiraCustomFieldDialog.show();
             }
         };
 
+        // Sanitize a string to be used as BBKey path (only a-z, 0-9 allowed)
+        function sanitizeBBKeyPath(str) {
+            return str.toLowerCase().replace(/[^a-z0-9]/g, '');
+        }
+
+        // Helper function to get effective field values considering JSM mode
+        function getEffectiveJiraFieldValues(fieldSetting) {
+            const jsmMode = VertigoUi.vueData.chatbotCustomConfig.jsmMode;
+            if (jsmMode) {
+                if (['ATTACHMENT'].includes(fieldSetting.jirFieldCd)) {
+                    return { enabled: false, mandatory: false };
+                }
+                if (['TYPE', 'SUMMARY'].includes(fieldSetting.jirFieldCd)) {
+                    return { enabled: true, mandatory: true };
+                }
+            }
+            return { enabled: fieldSetting.enabled, mandatory: fieldSetting.mandatory };
+        }
+
         function refreshCodeMirrorJiraField() {
-            const fieldIds = VertigoUi.vueData.jiraFieldSettings.filter(jiraFieldSetting => jiraFieldSetting.mandatory)
+            // Filter fields that are both enabled AND mandatory, using effective values (considering JSM mode)
+            const fieldIds = VertigoUi.vueData.jiraFieldSettings
+                .filter(jiraFieldSetting => {
+                    const values = getEffectiveJiraFieldValues(jiraFieldSetting);
+                    return values.enabled && values.mandatory;
+                })
                 .map(jiraFieldSetting => VUiExtensions.methods.getJiraFieldId(jiraFieldSetting.jirFieldCd));
+            // Add custom fields ONLY if in JSM mode, and only if enabled AND mandatory
+            const customFields = (VertigoUi.vueData.chatbotCustomConfig.jsmMode && VertigoUi.vueData.jiraCustomFieldSettings)
+                ? VertigoUi.vueData.jiraCustomFieldSettings.filter(customField => customField.enabled && customField.mandatory)
+                : [];
             let jiraSequence = 'begin sequence \n    begin jira:issue:create "Message du bot lorsque le ticket a été crée" \n';
             fieldIds.forEach(fieldId => {
                 jiraSequence += '        jira:field /user/local/jira/' + fieldId.toLowerCase() + ' "Question posée par le bot" "' + fieldId + '"\n';
+            });
+            customFields.forEach(customField => {
+                // Use sanitized fieldKey for BBKey path (remove underscores), and original fieldKey for Jira field ID
+                const bbKeyPath = sanitizeBBKeyPath(customField.fieldKey);
+                jiraSequence += '        jira:field /user/local/jira/' + bbKeyPath + ' "Question posée par le bot" "' + customField.fieldKey + '"\n';
             });
             jiraSequence += '    end jira:issue:create\nend sequence';
             VUiPage.$refs.jiraCodeMirror.replaceContent(jiraSequence);
@@ -177,30 +342,13 @@
             </q-select>
             <q-btn color="primary" round icon="add" th:aria-label="#{action.add}"
                    th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" th:title="#{action.add}"
-                   @click="VUiExtensions.dataX.isPwd = false; vueData.newConfluenceSettingIhm.conSetId = null;
-                       vueData.newConfluenceSettingIhm.botId = vueData.bot.botId;
-                       vueData.newConfluenceSettingIhm.nodId = null;
-                       vueData.newConfluenceSettingIhm.url = null;
-                       vueData.newConfluenceSettingIhm.login = null ;
-                       vueData.newConfluenceSettingIhm.password = null ;
-                       vueData.newConfluenceSettingIhm.numberOfResults = null ;
-                       vueData.newConfluenceSettingIhm.spaces = null ;
-                       $refs.confluenceSettingDialog.show()"></q-btn>
+                   @click="openAddConfluenceDialog()"></q-btn>
         </vu:slot>
         <vu:slot name="actions_slot">
             <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}"
                    th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
                    th:title="#{action.update}"
-                   @click="VUiExtensions.dataX.isPwd = true;
-                       vueData.newConfluenceSettingIhm.botId = props.row.botId;
-                       vueData.newConfluenceSettingIhm.conSetId = props.row.conSetId;
-                       vueData.newConfluenceSettingIhm.nodId = props.row.nodId;
-                       vueData.newConfluenceSettingIhm.url = props.row.url;
-                       vueData.newConfluenceSettingIhm.login = props.row.login;
-                       vueData.newConfluenceSettingIhm.password = props.row.password;
-                       vueData.newConfluenceSettingIhm.numberOfResults = props.row.numberOfResults;
-                       vueData.newConfluenceSettingIhm.spaces = props.row.spaces;
-                       $refs.confluenceSettingDialog.show()"></q-btn>
+                   @click="openEditConfluenceDialog(props.row)"></q-btn>
             <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}"
                    th:title="#{action.delete}"
                    th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
@@ -253,25 +401,25 @@
                        name="vContext[newConfluenceSettingIhm][conSetId]">
                 <input type="hidden" v-model="vueData.newConfluenceSettingIhm.botId"
                        name="vContext[newConfluenceSettingIhm][botId]">
-                <q-input v-model="vueData.newConfluenceSettingIhm.url" th:label="#{extensions.confluence.url}"
+                <q-input v-model="vueData.newConfluenceSettingIhm.url" th:label="#{fldConfluenceSettingIhm$url}"
                          name="vContext[newConfluenceSettingIhm][url]"
                          :error="hasFieldsError('newConfluenceSettingIhm', 'url')"
                          :error-message="getErrorMessage('newConfluenceSettingIhm', 'url')"/>
             </q-card-section>
             <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
-                <q-input v-model="vueData.newConfluenceSettingIhm.login" th:label="#{extensions.confluence.login}"
+                <q-input v-model="vueData.newConfluenceSettingIhm.login" th:label="#{fldConfluenceSettingIhm$login}"
                          name="vContext[newConfluenceSettingIhm][login]"
                          :error="hasFieldsError('newConfluenceSettingIhm', 'login')"
                          :error-message="getErrorMessage('newConfluenceSettingIhm', 'login')"/>
             </q-card-section>
             <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
                 <div style="display: flex; align-items: center">
-                    <q-input style="flex-grow: 1;" v-if="dataX.isPwd" th:label="#{extensions.confluence.password}"
+                    <q-input style="flex-grow: 1;" v-if="dataX.isPwd" th:label="#{fldConfluenceSettingIhm$password}"
                              disable type="password" name="notYourPasswordConfluence"
                              model-value="notYourPasswordConfluence"></q-input>
                     <q-input style="flex-grow: 1;" v-if="!dataX.isPwd"
                              v-model="vueData.newConfluenceSettingIhm.password"
-                             th:label="#{extensions.confluence.password}"
+                             th:label="#{fldConfluenceSettingIhm$password}"
                              name="vContext[newConfluenceSettingIhm][password]"
                              :error="hasFieldsError('newConfluenceSettingIhm', 'password')"
                              :error-message="getErrorMessage('newConfluenceSettingIhm', 'password')" type="text">
@@ -287,7 +435,7 @@
             </q-card-section>
             <q-card-section>
                 <q-input v-model="vueData.newConfluenceSettingIhm.numberOfResults"
-                         th:label="#{extensions.confluence.numberOfResults}"
+                         th:label="#{fldConfluenceSettingIhm$numberOfResults}"
                          name="vContext[newConfluenceSettingIhm][numberOfResults]"
                          :error="hasFieldsError('newConfluenceSettingIhm', 'numberOfResults')"
                          :error-message="getErrorMessage('newConfluenceSettingIhm', 'numberOfResults')"/>
@@ -295,7 +443,7 @@
 
             <q-card-section>
                 <q-select
-                        th:label="#{extensions.confluence.spaces}"
+                        th:label="#{fldConfluenceSettingIhm$spaces}"
                         v-model="vueData.newConfluenceSettingIhm.spaces"
                         name="vContext[newConfluenceSettingIhm][spaces]"
                         multiple
@@ -330,6 +478,36 @@
         </q-card>
     </q-dialog>
     <vu:block id="JIRA" th:title="#{extensions.jira}">
+        <vu:include-data object="chatbotCustomConfig" field="jsmMode" modifiable="true"/>
+        <div class="q-mb-md q-pa-md" style="border: 1px solid #ccc; border-radius: 8px;">
+            <div class="row items-center no-wrap">
+                <span 
+                    :style="{ 
+                        fontWeight: !vueData.chatbotCustomConfig.jsmMode ? 'bold' : 'normal',
+                        color: !vueData.chatbotCustomConfig.jsmMode ? '#1976D2' : '#9E9E9E',
+                        marginRight: '12px',
+                        fontSize: '14px',
+                        transition: 'all 0.3s ease'
+                    }">
+                    Jira
+                </span>
+                <q-toggle
+                    v-model="vueData.chatbotCustomConfig.jsmMode"
+                    :class="['jira-jsm-toggle', vueData.chatbotCustomConfig.jsmMode ? 'jsm-mode' : 'jira-mode']"
+                    @update:model-value="applyJsmModeToAll()"/>
+                <span 
+                    :style="{ 
+                        fontWeight: vueData.chatbotCustomConfig.jsmMode ? 'bold' : 'normal',
+                        color: vueData.chatbotCustomConfig.jsmMode ? '#4527A0' : '#9E9E9E',
+                        marginLeft: '12px',
+                        fontSize: '14px',
+                        transition: 'all 0.3s ease'
+                    }">
+                    JSM
+                </span>
+                <q-tooltip>[[#{extensions.jira.jsmMode.global.tooltip}]]</q-tooltip>
+            </div>
+        </div>
         <vu:block id="JIRA_SYNTAX" th:title="#{extensions.jira.syntax}" style="margin-bottom:20px">
             <c-codemirror ref="jiraCodeMirror" th:v-model="vueData.scriptIntention.script" :mode-edit="false"
                           :locale="vueData.locale"></c-codemirror>
@@ -341,30 +519,80 @@
             <vu:include-data object="jiraFieldSettings" field="'*'"/>
             <vu:column field="jirFieldCd">
                 <vu:content>
-                    <span v-html="getJiraFieldLabel(props.row.jirFieldCd)"></span>
+                    <span v-if="vueData.chatbotCustomConfig.jsmMode && props.row.jirFieldCd === 'REPORTER'" th:text="#{extensions.jira.raiseOnBehalfOf}"></span>
+                    <span v-else v-html="getJiraFieldLabel(props.row.jirFieldCd)"></span>
                 </vu:content>
             </vu:column>
-            <vu:column name="jiraId" th:label="#{extension.jira.field.setting.jiraId}">
+            <vu:column name="jiraId" th:label="#{fldJiraField$jiraId}">
                 <vu:content>
                     <span v-html="getJiraFieldId(props.row.jirFieldCd)"></span>
                 </vu:content>
             </vu:column>
-            <vu:column name="enabled" th:label="#{extension.jira.field.setting.enabled}">
-                <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
-                          :disable="props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"
-                          @update:model-value="enabledDisabledJiraField(props.row.jirFieldCd, props.row.enabled)"></q-toggle>
-                <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
+            <vu:column name="enabled" th:label="#{fldJiraFieldSetting$enabled}">
+                <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" 
+                          :model-value="getJiraFieldValues(props.row).enabled"
+                          :disable="vueData.chatbotCustomConfig.jsmMode && ['ATTACHMENT', 'TYPE', 'SUMMARY'].includes(props.row.jirFieldCd)"
+                          @update:model-value="val => { props.row.enabled = val; enabledDisabledJiraField(props.row.jirFieldCd, val); }"></q-toggle>
+                <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" 
+                          :model-value="getJiraFieldValues(props.row).enabled"
                           disable></q-toggle>
             </vu:column>
-            <vu:column name="mandatory" th:label="#{extension.jira.field.setting.mandatory}">
+            <vu:column name="mandatory" th:label="#{fldJiraFieldSetting$mandatory}">
                 <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
-                          v-model="props.row.mandatory"
-                          :disable="!props.row.enabled || props.row.jirFieldCd === 'SUMMARY' || props.row.jirFieldCd === 'DESCRIPTION' || props.row.jirFieldCd === 'TYPE'"
-                          @update:model-value="mandatoryJiraField(props.row.jirFieldCd, props.row.mandatory)"></q-toggle>
-                <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.mandatory"
+                          :model-value="getJiraFieldValues(props.row).mandatory"
+                          :disable="!getJiraFieldValues(props.row).enabled || (vueData.chatbotCustomConfig.jsmMode && ['ATTACHMENT', 'TYPE', 'SUMMARY'].includes(props.row.jirFieldCd))"
+                          @update:model-value="val => { props.row.mandatory = val; mandatoryJiraField(props.row.jirFieldCd, val); }"></q-toggle>
+                <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" 
+                          :model-value="getJiraFieldValues(props.row).mandatory"
                           disable></q-toggle>
             </vu:column>
         </vu:table>
+        <vu:popup-ajax action="_deleteJiraCustomField" vModel="showDeleteJiraCustomFieldPopup"
+                       th:message="#{extension.jira.customField.delete.popup.message}"
+                       th:confirm="#{action.delete}" dataName="jirCusFieldSetId"></vu:popup-ajax>
+        <div v-if="vueData.chatbotCustomConfig.jsmMode" style="margin-bottom:20px;">
+            <vu:table id="JIRA_CUSTOM_FIELDS" th:title="#{extensions.jira.customFields}" list="jiraCustomFieldSettings"
+                      componentId="jiraCustomFieldSettings" sortBy="label" :binary-state-sort="true">
+                <vu:slot name="top_right_slot">
+                    <q-btn color="primary" round icon="add" th:aria-label="#{action.add}"
+                           th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" th:title="#{action.add}"
+                           @click="openAddJiraCustomFieldDialog()"></q-btn>
+                </vu:slot>
+                <vu:slot name="actions_slot">
+                    <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}"
+                           th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                           th:title="#{action.update}"
+                           @click="openEditJiraCustomFieldDialog(props.row)"></q-btn>
+                    <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}"
+                           th:title="#{action.delete}"
+                           th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                           @click="componentStates.jirCusFieldSetId = props.row.jirCusFieldSetId; componentStates.showDeleteJiraCustomFieldPopup.shown = true"></q-btn>
+                </vu:slot>
+                <vu:include-data object="jiraCustomFieldSettings" field="'*'"/>
+                <vu:include-data object="jiraCustomFieldTypes" field="'*'"/>
+                <vu:column field="label"/>
+                <vu:column field="fieldKey"/>
+                <vu:column name="jcfTypeCd" th:label="#{fldJiraCustomFieldSetting$jcfTypeCd}">
+                    <vu:content>
+                        <span v-html="getJiraCustomFieldTypeLabel(props.row.jcfTypeCd)"></span>
+                    </vu:content>
+                </vu:column>
+                <vu:column name="enabled" th:label="#{fldJiraCustomFieldSetting$enabled}">
+                    <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
+                              @update:model-value="enabledDisabledJiraCustomField(props.row.jirCusFieldSetId, props.row.enabled)"></q-toggle>
+                    <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.enabled"
+                              disable></q-toggle>
+                </vu:column>
+                <vu:column name="mandatory" th:label="#{fldJiraCustomFieldSetting$mandatory}">
+                    <q-toggle th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                              v-model="props.row.mandatory"
+                              :disable="!props.row.enabled"
+                              @update:model-value="mandatoryJiraCustomField(props.row.jirCusFieldSetId, props.row.mandatory)"></q-toggle>
+                    <q-toggle th:if="${!model.userAuthorizations[AtzChatbot$botAdm]}" v-model="props.row.mandatory"
+                              disable></q-toggle>
+                </vu:column>
+            </vu:table>
+        </div>
         <vu:include-data object="chatbotCustomConfig" field="jiraCheckBeforeCreate" modifiable="true"/>
         <vu:label-edit object="chatbotCustomConfig" field="jiraCheckBeforeCreate">
             <q-toggle left-label v-model="vueData.chatbotCustomConfig.jiraCheckBeforeCreate"
@@ -389,29 +617,13 @@
                 </q-select>
                 <q-btn color="primary" round icon="add" th:aria-label="#{action.add}"
                        th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}" th:title="#{action.add}"
-                       @click="VUiExtensions.dataX.isJiraPwd = false; vueData.newJiraSetting.jirSetId = null;
-                       vueData.newJiraSetting.botId = vueData.bot.botId;
-                       vueData.newJiraSetting.nodId = null;
-                       vueData.newJiraSetting.url = null;
-                       vueData.newJiraSetting.login = null ;
-                       vueData.newJiraSetting.password = null ;
-                       vueData.newJiraSetting.project = null ;
-                       vueData.newJiraSetting.numberOfResults = null ;
-                       $refs.jiraSettingDialog.show()"></q-btn>
+                       @click="openAddJiraDialog()"></q-btn>
             </vu:slot>
             <vu:slot name="actions_slot">
                 <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}"
                        th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
                        th:title="#{action.update}"
-                       @click="VUiExtensions.dataX.isJiraPwd = true;
-                       vueData.newJiraSetting.botId = props.row.botId;
-                       vueData.newJiraSetting.jirSetId = props.row.jirSetId;
-                       vueData.newJiraSetting.nodId = props.row.nodId;
-                       vueData.newJiraSetting.url = props.row.url;
-                       vueData.newJiraSetting.login = props.row.login;
-                       vueData.newJiraSetting.password = props.row.password;
-                       vueData.newJiraSetting.numberOfResults = props.row.numberOfResults;
-                       vueData.newJiraSetting.project = props.row.project; $refs.jiraSettingDialog.show()"></q-btn>
+                       @click="openEditJiraDialog(props.row)"></q-btn>
                 <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}"
                        th:title="#{action.delete}"
                        th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}"
@@ -436,6 +648,11 @@
             </vu:column>
             <vu:column field="url"/>
             <vu:column field="login"/>
+            <vu:column name="mode" th:label="#{fldChatbotCustomConfig$jsmMode}">
+                <vu:content>
+                    <span>{{ vueData.chatbotCustomConfig.jsmMode ? 'JSM Cloud' : 'Jira' }}</span>
+                </vu:content>
+            </vu:column>
             <vu:column field="project"/>
             <vu:column field="numberOfResults"/>
         </vu:table>
@@ -463,21 +680,21 @@
                 <input type="hidden" v-model="vueData.newJiraSetting.jirSetId"
                        name="vContext[newJiraSetting][jirSetId]">
                 <input type="hidden" v-model="vueData.newJiraSetting.botId" name="vContext[newJiraSetting][botId]">
-                <q-input v-model="vueData.newJiraSetting.url" th:label="#{extensions.jira.url}"
+                <q-input v-model="vueData.newJiraSetting.url" th:label="#{fldJiraSetting$url}"
                          name="vContext[newJiraSetting][url]" :error="hasFieldsError('newJiraSetting', 'url')"
                          :error-message="getErrorMessage('newJiraSetting', 'url')"/>
             </q-card-section>
             <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
-                <q-input v-model="vueData.newJiraSetting.login" th:label="#{extensions.jira.login}"
+                <q-input v-model="vueData.newJiraSetting.login" th:label="#{fldJiraSetting$login}"
                          name="vContext[newJiraSetting][login]" :error="hasFieldsError('newJiraSetting', 'login')"
                          :error-message="getErrorMessage('newJiraSetting', 'login')"/>
             </q-card-section>
             <q-card-section th:if="${model.userAuthorizations[AtzChatbot$botSuperAdmin]}">
                 <div style="display: flex; align-items: center">
-                    <q-input style="flex-grow: 1;" v-if="dataX.isJiraPwd" th:label="#{extensions.confluence.password}"
+                    <q-input style="flex-grow: 1;" v-if="dataX.isJiraPwd" th:label="#{fldJiraSetting$password}"
                              disable type="password" name="notYourPasswordJira" model-value="notYourPasswordJira"></q-input>
                     <q-input style="flex-grow: 1;" v-if="!dataX.isJiraPwd" v-model="vueData.newJiraSetting.password"
-                             th:label="#{extensions.jira.password}"
+                             th:label="#{fldJiraSetting$password}"
                              name="vContext[newJiraSetting][password]"
                              :error="hasFieldsError('newJiraSetting', 'password')"
                              :error-message="getErrorMessage('newJiraSetting', 'password')" type="text">
@@ -492,13 +709,13 @@
                 </div>
             </q-card-section>
             <q-card-section>
-                <q-input v-model="vueData.newJiraSetting.project" th:label="#{extensions.jira.project}"
+                <q-input v-model="vueData.newJiraSetting.project" th:label="#{fldJiraSetting$project}"
                          name="vContext[newJiraSetting][project]" :error="hasFieldsError('newJiraSetting', 'project')"
                          :error-message="getErrorMessage('newJiraSetting', 'project')"/>
             </q-card-section>
 
             <q-card-section>
-                <q-input v-model="vueData.newJiraSetting.numberOfResults" th:label="#{extensions.jira.numberOfResults}"
+                <q-input v-model="vueData.newJiraSetting.numberOfResults" th:label="#{fldJiraSetting$numberOfResults}"
                          name="vContext[newJiraSetting][numberOfResults]"
                          :error="hasFieldsError('newJiraSetting', 'numberOfResults')"
                          :error-message="getErrorMessage('newJiraSetting', 'numberOfResults')"/>
@@ -520,6 +737,71 @@
                 <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
                 <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
                        @click="httpPostAjax('_saveJiraSetting', vueDataParams(['newJiraSetting'])); VUiExtensions.dataX.isJiraPwd = true"
+                       color="primary" v-close-popup></q-btn>
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
+    <q-dialog ref="jiraCustomFieldDialog">
+        <vu:include-data object="newJiraCustomFieldSetting" field="jirCusFieldSetId" modifiable="true"/>
+        <vu:include-data object="newJiraCustomFieldSetting" field="botId" modifiable="true"/>
+        <vu:include-data object="newJiraCustomFieldSetting" field="label" modifiable="true"/>
+        <vu:include-data object="newJiraCustomFieldSetting" field="fieldKey" modifiable="true"/>
+        <vu:include-data object="newJiraCustomFieldSetting" field="jcfTypeCd" modifiable="true"/>
+        <vu:include-data object="newJiraCustomFieldSetting" field="enabled" modifiable="true"/>
+        <vu:include-data object="newJiraCustomFieldSetting" field="mandatory" modifiable="true"/>
+        <q-card style="min-width: 400px;">
+            <q-card-section>
+                <div class="text-h6">
+                    <span v-if="vueData.newJiraCustomFieldSetting.jirCusFieldSetId !== null"
+                          th:text="#{extensions.jira.customField.update.popup.title}"></span>
+                    <span v-else th:text="#{extensions.jira.customField.add.popup.title}"></span>
+                </div>
+            </q-card-section>
+            <q-card-section>
+                <input type="hidden" v-model="vueData.newJiraCustomFieldSetting.jirCusFieldSetId"
+                       name="vContext[newJiraCustomFieldSetting][jirCusFieldSetId]">
+                <input type="hidden" v-model="vueData.newJiraCustomFieldSetting.botId"
+                       name="vContext[newJiraCustomFieldSetting][botId]">
+                <q-input v-model="vueData.newJiraCustomFieldSetting.label" th:label="#{fldJiraCustomFieldSetting$label}"
+                         name="vContext[newJiraCustomFieldSetting][label]"
+                         :error="hasFieldsError('newJiraCustomFieldSetting', 'label')"
+                         :error-message="getErrorMessage('newJiraCustomFieldSetting', 'label')"/>
+            </q-card-section>
+            <q-card-section>
+                <q-input v-model="vueData.newJiraCustomFieldSetting.fieldKey" th:label="#{fldJiraCustomFieldSetting$fieldKey}"
+                         name="vContext[newJiraCustomFieldSetting][fieldKey]"
+                         :error="hasFieldsError('newJiraCustomFieldSetting', 'fieldKey')"
+                         :error-message="getErrorMessage('newJiraCustomFieldSetting', 'fieldKey')"/>
+            </q-card-section>
+            <q-card-section>
+                <q-select
+                        th:label="#{fldJiraCustomFieldSetting$jcfTypeCd}"
+                        v-model="vueData.newJiraCustomFieldSetting.jcfTypeCd"
+                        name="vContext[newJiraCustomFieldSetting][jcfTypeCd]"
+                        :options="vueData.jiraCustomFieldTypes.map(type => ({label: vueData.locale === 'fr_FR' ? type.labelFr : type.label, value: type.jcfTypeCd}))"
+                        map-options
+                        emit-value
+                        :error="hasFieldsError('newJiraCustomFieldSetting', 'jcfTypeCd')"
+                        :error-message="getErrorMessage('newJiraCustomFieldSetting', 'jcfTypeCd')"
+                        stack-label/>
+            </q-card-section>
+            <q-card-section>
+                <q-toggle v-model="vueData.newJiraCustomFieldSetting.enabled"
+                          th:label="#{fldJiraCustomFieldSetting$enabled}"
+                          name="vContext[newJiraCustomFieldSetting][enabled]"/>
+            </q-card-section>
+            <q-card-section>
+                <q-toggle v-model="vueData.newJiraCustomFieldSetting.mandatory"
+                          th:label="#{fldJiraCustomFieldSetting$mandatory}"
+                          :disable="!vueData.newJiraCustomFieldSetting.enabled"
+                          name="vContext[newJiraCustomFieldSetting][mandatory]"/>
+            </q-card-section>
+            <q-card-actions align="around">
+                <input type="hidden" name="CTX" :value="vueData['CTX']">
+                <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                       @click="httpPostAjax('_saveJiraCustomField', vueDataParams(['newJiraCustomFieldSetting']), {onSuccess: function() { refreshCodeMirrorJiraField(); }})"
                        color="primary" v-close-popup></q-btn>
             </q-card-actions>
         </q-card>
