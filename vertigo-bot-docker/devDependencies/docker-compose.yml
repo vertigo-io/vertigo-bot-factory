@@ -51,7 +51,7 @@ services:
       - cb_factory
 
   keycloak:
-    image: bitnamilegacy/keycloak:24
+    image: bitnami/keycloak:24
     environment:
       KEYCLOAK_ADMIN_USER: admin
       KEYCLOAK_ADMIN_PASSWORD: changeme
@@ -61,8 +61,6 @@ services:
       KEYCLOAK_DATABASE_USER: keycloak
       KEYCLOAK_DATABASE_SCHEMA: public
       KEYCLOAK_DATABASE_PASSWORD: keycloak
-      KC_HOSTNAME_STRICT: "false"
-      KC_HTTP_ENABLED: "true"
     ports:
       - 8200:8080
     depends_on:

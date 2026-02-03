@@ -39,4 +39,5 @@
 	<include file="changeLog/v_1_1_0/alter_v_1_1_0.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_2_0/v_2_0.xml" relativeToChangelogFile="true"/>
 	<include file="changeLog/v_3_0/v_3_0.xml" relativeToChangelogFile="true"/>
+	<include file="changeLog/v_3_2/v_3_2.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="vsavalle"
+        id="manage jira/jsm">
+        <sqlFile encoding="utf-8" path="/sql/v_3_2/alter_chatbot-jsm.sql" />
+    </changeSet>
+
+    <changeSet author="vsavalle"
+        id="add custom field">
+        <sqlFile encoding="utf-8" path="/sql/v_3_2/create_chatbot-customjira-field.sql" />
+    </changeSet>
+
+    <changeSet author="vsavalle"
+        id="add type to custom field">
+        <sqlFile encoding="utf-8" path="/sql/v_3_2/alter_jira_custom_field_type.sql" />
+    </changeSet>
+
+    <changeSet author="xsupiot" id="Compute aggregated stats for documentary resource clicks">
+        <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileMigration">
+            <param name="file" value="/liquibase/changeLog/v_3_2/computeInfluxTaskStatsDocRes.flux"/>
+        </customChange>
+    </changeSet>
+
+    <changeSet author="xsupiot" id="Add task to aggregate documentary resource click stats">
+        <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileTask">
+            <param name="file" value="/liquibase/changeLog/v_3_2/addInfluxTaskStatsDocRes.flux"/>
+            <param name="name" value="aggregStatsDocRes"/>
+            <param name="every" value="30s"/>
+            <param name="offset" value="-20s"/>
+        </customChange>
+    </changeSet>
+
+    <changeSet author="xsupiot" id="Add DOCUMENTARY_RESOURCES export type">
+        <sqlFile encoding="utf8" path="/sql/v_3_2/alter_chatbot-822_26_01_15.sql"/>
+    </changeSet>
+
+    <changeSet author="xsupiot" id="Compute aggregated stats for Q&amp;A clicks">
+        <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileMigration">
+            <param name="file" value="/liquibase/changeLog/v_3_2/computeInfluxTaskStatsQA.flux"/>
+        </customChange>
+    </changeSet>
+
+    <changeSet author="xsupiot" id="Add task to aggregate Q&amp;A click stats">
+        <customChange class="io.vertigo.chatbot.liquibase.InfluxDbFileTask">
+            <param name="file" value="/liquibase/changeLog/v_3_2/addInfluxTaskStatsQA.flux"/>
+            <param name="name" value="aggregStatsQA"/>
+            <param name="every" value="30s"/>
+            <param name="offset" value="-20s"/>
+        </customChange>
+    </changeSet>
+
+    <changeSet author="xsupiot" id="Add QUESTION_ANSWERS export type">
+        <sqlFile encoding="utf8" path="/sql/v_3_2/alter_chatbot-qa-export-type.sql"/>
+    </changeSet>
+
+</databaseChangeLog>
