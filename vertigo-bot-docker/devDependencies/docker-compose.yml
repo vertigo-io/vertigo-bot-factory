@@ -1,5 +1,3 @@
-version: '3.5'
-
 # docker-compose example file
 #
 # Passwords / API key can be, for example, generated locally with :
@@ -25,7 +23,7 @@ services:
       - ./initSql/:/docker-entrypoint-initdb.d/
       - ./restore/:/restore/
     ports:
-      - "127.0.0.1:5433:5432" 
+      - "127.0.0.1:5433:5432"
     networks:
       - cb_factory
 
@@ -46,12 +44,12 @@ services:
     volumes:
       - cf_postgresKC_16_data:/var/lib/postgresql/data/pgdata
     ports:
-      - "127.0.0.1:5434:5432" 
+      - "127.0.0.1:5434:5432"
     networks:
       - cb_factory
 
   keycloak:
-    image: bitnami/keycloak:24
+    image: bitnamilegacy/keycloak:24
     environment:
       KEYCLOAK_ADMIN_USER: admin
       KEYCLOAK_ADMIN_PASSWORD: changeme
@@ -61,13 +59,15 @@ services:
       KEYCLOAK_DATABASE_USER: keycloak
       KEYCLOAK_DATABASE_SCHEMA: public
       KEYCLOAK_DATABASE_PASSWORD: keycloak
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
     ports:
       - 8200:8080
     depends_on:
       - postgresKC
-    networks: 
+    networks:
       - cb_factory
-  
+
   influxdb:
     image: influxdb:2.7.1
     volumes:
@@ -82,16 +82,17 @@ services:
       DOCKER_INFLUXDB_INIT_ORG: chatbot
       DOCKER_INFLUXDB_INIT_BUCKET: admin
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: influxDevToken
-    ports: 
+    ports:
       - "127.0.0.1:8086:8086"
     networks:
       - cb_factory
 
-  chronograph: # IHM de consultation influxDB
+  chronograph:
+    # IHM de consultation influxDB
     image: chronograf:1.10-alpine
     volumes:
       - cf_chronograph_data:/var/lib/chronograf
-    ports: 
+    ports:
       - "127.0.0.1:8888:8888"
     networks:
       - cb_factory
@@ -108,7 +109,7 @@ services:
       - "4562:4562"
     networks:
       - cb_factory
-  
+
   rasa:
     image: rasa/rasa:3.6.20-full
     ports:
@@ -118,8 +119,7 @@ services:
       - --enable-api
       - --cors
       - "*"
-      
-  
+
 volumes:
   cf_postgres_16_data:
   cf_postgresKC_16_data:
@@ -128,6 +128,6 @@ volumes:
   cf_influxdb2_config:
   cf_rabbitmq_data:
   cf_chronograph_data:
-    
+
 networks:
   cb_factory:
