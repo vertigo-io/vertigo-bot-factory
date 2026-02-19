@@ -22,7 +22,7 @@ import io.vertigo.vega.webservice.validation.UiMessageStack;
  */
 public final class ListUtils {
 
-	public static final int MAX_ELEMENTS = 2000;
+	public static final int MAX_ELEMENTS = 1000;
 	public static final int MAX_ELEMENTS_PLUS_ONE = MAX_ELEMENTS + 1;
 
 	private ListUtils () {
