@@ -346,10 +346,10 @@ public class JiraServerService implements Component, IJiraService {
 			if (response.statusCode() >= 200 && response.statusCode() < 300) {
 				final JsmTemporaryAttachmentResult attachmentResult = jsonEngine.fromJson(response.body(), JsmTemporaryAttachmentResult.class);
 				if (attachmentResult != null
-						&& attachmentResult.getTemporaryAttachments() != null
-						&& !attachmentResult.getTemporaryAttachments().isEmpty()
-						&& StringUtils.isNotBlank(attachmentResult.getTemporaryAttachments().get(0).getTemporaryAttachmentId())) {
-					return attachmentResult.getTemporaryAttachments().get(0).getTemporaryAttachmentId();
+						&& attachmentResult.temporaryAttachments() != null
+						&& !attachmentResult.temporaryAttachments().isEmpty()
+						&& StringUtils.isNotBlank(attachmentResult.temporaryAttachments().get(0).temporaryAttachmentId())) {
+					return attachmentResult.temporaryAttachments().get(0).temporaryAttachmentId();
 				}
 				throw new VSystemException("JSM temporary attachment upload succeeded but no temporaryAttachmentId was returned.");
 			}
