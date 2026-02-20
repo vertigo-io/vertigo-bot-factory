@@ -75,8 +75,9 @@ footer {
 
 .q-message-text {
     padding: 10px 15px;
-    max-width: 80%;
+    max-width: clamp(230px, 60%, 500px);
 }
+
 .q-message-received .q-message-text-content {
     font-family: var(--font-family);
     color: var(--bot-message-font-color) !important;
@@ -114,7 +115,7 @@ footer {
     margin-top: 5px;
     min-height: unset;
     padding: 8px 14px 8px 12px;
-    inline-size: -webkit-fill-available;
+    inline-size: fit-content;
 }
 
 .q-message-sent .q-message-text-content {
@@ -143,6 +144,7 @@ footer {
 
 .q-message-sent .q-message-text {
     background-color: var(--user-message-bg-color) !important;
+    margin-left: auto;
 }
 
 .custom-header {

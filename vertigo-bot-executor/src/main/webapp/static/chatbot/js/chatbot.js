@@ -331,11 +331,14 @@ const chatbotComponent = {
 
         fileUpload(btn, index) {
             const file = document.getElementById('file_' + index).files[0];
+            if (!file) {
+                return;
+            }
             const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function (evt) {
+            reader.onload = (evt) => {
                 this.askBot(btn.payload, null, false, evt.target.result, file.name, false);
             };
+            reader.readAsDataURL(file);
         },
 
         filterQuestionsAnswers(){

@@ -17,7 +17,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import static com.atlassian.jira.rest.client.api.domain.IssueFieldId.*;
 
+import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;
+import io.vertigo.chatbot.commons.FileUtils;
 import io.vertigo.core.lang.Assertion;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.PasswordEncryptionServices;
@@ -32,6 +34,7 @@ import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmRequestType;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmRequestTypeSearchResult;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmServiceDesk;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmServiceDeskSearchResult;
+import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmTemporaryAttachmentResult;
 import io.vertigo.chatbot.executor.model.ExecutorGlobalConfig;
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.component.Component;
@@ -44,10 +47,13 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import java.nio.charset.StandardCharsets;
@@ -70,7 +76,7 @@ public class JiraServerService implements Component, IJiraService {
 	// Standard fields to exclude from JSM requestFieldValues (not supported by JSM API or handled separately)
 	private static final List<String> JSM_EXCLUDED_STANDARD_FIELDS = List.of(
 			REPORTER_FIELD.id,      // reporter - handled separately as raiseOnBehalfOf in JSM (not in requestFieldValues)
-			ATTACHMENT_FIELD.id,    // attachment - excluded per requirement
+			ATTACHMENT_FIELD.id,    // attachment - handled separately with addJsmAttachmentIfPresent
 			ISSUE_TYPE_FIELD.id     // issuetype - handled separately as requestTypeId (not in requestFieldValues)
 	);
 
@@ -205,14 +211,14 @@ public class JiraServerService implements Component, IJiraService {
     @Override
     public String createIssueJiraCommand(final BlackBoard bb, final List<JiraField> jiraFields, final List<IJiraFieldService> fieldServices) {
 		if (jsmMode) {
-			return createJsmRequest(jiraFields);
+			return createJsmRequest(bb, jiraFields);
 		}
 		final var createdIssue = createIssue(bb, jiraFields, fieldServices);
 		return createLinkUrl(createdIssue.getKey());
 
     }
 
-	private String createJsmRequest(final List<JiraField> jiraFields) {
+	private String createJsmRequest(final BlackBoard bb, final List<JiraField> jiraFields) {
 		final Long currentServiceDeskId = ensureServiceDeskId();
 		
 		// Validate mandatory fields
@@ -279,6 +285,13 @@ public class JiraServerService implements Component, IJiraService {
 			if (response.statusCode() >= 200 && response.statusCode() < 300) {
 				final Map<?, ?> responseMap = jsonEngine.fromJson(response.body(), Map.class);
 				final String issueKey = responseMap != null ? (String) responseMap.get("issueKey") : null;
+				String issueIdOrKey = null;
+				if (StringUtils.isNotBlank(issueKey)) {
+					issueIdOrKey = issueKey;
+				} else if (responseMap != null && responseMap.get("issueId") != null) {
+					issueIdOrKey = responseMap.get("issueId").toString();
+				}
+				addJsmAttachmentIfPresent(bb, jiraFields, currentServiceDeskId, issueIdOrKey);
 				final String issueUrl = issueKey != null ? createLinkUrl(issueKey) : extractWebLink(responseMap);
 				if (issueUrl != null) {
 					return issueUrl;
@@ -286,8 +299,109 @@ public class JiraServerService implements Component, IJiraService {
 				throw new VSystemException("JSM request created but response had no issue link.");
 			}
 			throw new VSystemException("Failed to create JSM request. Status code " + response.statusCode() + " : " + response.body());
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new VSystemException("Failed to attach file to JSM request : " + e.getMessage(), e);
 		} catch (final Exception e) {
 			throw new VSystemException("Failed to create JSM request : " + e.getMessage(), e);
+		}
+	}
+
+	private void addJsmAttachmentIfPresent(final BlackBoard bb, final List<JiraField> jiraFields, final Long currentServiceDeskId, final String issueIdOrKey) {
+		final JiraField attachmentField = jiraFields.stream()
+				.filter(field -> attachmentFieldService.supports(field.getFieldType()))
+				.findFirst()
+				.orElse(null);
+		if (attachmentField == null || noPayload.equals(attachmentField.getValue())) {
+			return;
+		}
+		if (StringUtils.isBlank(issueIdOrKey)) {
+			throw new VSystemException("JSM request created but no issue identifier available to attach files.");
+		}
+
+		final String filename = bb.getString(BBKey.of(BBKey.of(attachmentField.getKey()), "/filename"));
+		final String fileContent = bb.getString(BBKey.of(BBKey.of(attachmentField.getKey()), "/filecontent"));
+		Assertion.check()
+				.isNotBlank(filename, "Attachment filename is missing for JSM request.")
+				.isNotBlank(fileContent, "Attachment content is missing for JSM request.");
+		final byte[] fileBytes = Base64.getDecoder().decode(FileUtils.fileContentFromBase64String(fileContent, filename));
+		final String temporaryAttachmentId = uploadJsmTemporaryAttachment(currentServiceDeskId, fileBytes, filename);
+		attachToJsmRequest(issueIdOrKey, temporaryAttachmentId);
+	}
+
+	private String uploadJsmTemporaryAttachment(final Long currentServiceDeskId, final byte[] fileBytes, final String filename) {
+		final String boundary = "----VertigoBoundary" + UUID.randomUUID();
+		final HttpRequest request = HttpRequest.newBuilder()
+				.uri(buildJsmUri(SERVICE_DESK_API_PREFIX + "/servicedesk/" + currentServiceDeskId + "/attachTemporaryFile"))
+				.timeout(HTTP_REQUEST_TIMEOUT)
+				.header("Authorization", jsmAuthHeader)
+				.header("Accept", "application/json")
+				.header("X-Atlassian-Token", "nocheck")
+				.header("X-ExperimentalApi", "true")
+				.header("Content-Type", "multipart/form-data; boundary=" + boundary)
+				.POST(BodyPublishers.ofByteArray(buildMultipartBody(boundary, fileBytes, filename)))
+				.build();
+		try {
+			final HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
+			if (response.statusCode() >= 200 && response.statusCode() < 300) {
+				final JsmTemporaryAttachmentResult attachmentResult = jsonEngine.fromJson(response.body(), JsmTemporaryAttachmentResult.class);
+				if (attachmentResult != null
+						&& attachmentResult.temporaryAttachments() != null
+						&& !attachmentResult.temporaryAttachments().isEmpty()
+						&& StringUtils.isNotBlank(attachmentResult.temporaryAttachments().get(0).temporaryAttachmentId())) {
+					return attachmentResult.temporaryAttachments().get(0).temporaryAttachmentId();
+				}
+				throw new VSystemException("JSM temporary attachment upload succeeded but no temporaryAttachmentId was returned.");
+			}
+			throw new VSystemException("Failed to upload JSM temporary attachment. Status code " + response.statusCode() + " : " + response.body());
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new VSystemException("Failed to attach file to JSM request : " + e.getMessage(), e);
+		} catch (final Exception e) {
+			throw new VSystemException("Failed to attach file to JSM request : " + e.getMessage(), e);
+		}
+	}
+
+	private void attachToJsmRequest(final String issueIdOrKey, final String temporaryAttachmentId) {
+		final Map<String, Object> attachmentPayload = new HashMap<>();
+		attachmentPayload.put("temporaryAttachmentIds", List.of(temporaryAttachmentId));
+		attachmentPayload.put("public", Boolean.TRUE);
+
+		final HttpRequest request = HttpRequest.newBuilder()
+				.uri(buildJsmUri(SERVICE_DESK_API_PREFIX + "/request/" + issueIdOrKey + "/attachment"))
+				.timeout(HTTP_REQUEST_TIMEOUT)
+				.header("Authorization", jsmAuthHeader)
+				.header("Accept", "application/json")
+				.header("Content-Type", "application/json")
+				.header("X-ExperimentalApi", "opt-in")
+				.POST(BodyPublishers.ofString(jsonEngine.toJson(attachmentPayload)))
+				.build();
+		try {
+			final HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
+			if (response.statusCode() < 200 || response.statusCode() >= 300) {
+				throw new VSystemException("Failed to attach file to JSM request. Status code " + response.statusCode() + " : " + response.body());
+			}
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new VSystemException("Failed to attach file to JSM request : " + e.getMessage(), e);
+		} catch (final Exception e) {
+			throw new VSystemException("Failed to attach file to JSM request : " + e.getMessage(), e);
+		}
+
+	}
+
+	private byte[] buildMultipartBody(final String boundary, final byte[] fileBytes, final String filename) {
+		final String safeFileName = filename.replace("\"", "");
+		try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+			outputStream.write(("--" + boundary + "\r\n").getBytes(StandardCharsets.UTF_8));
+			outputStream.write(("Content-Disposition: form-data; name=\"file\"; filename=\"" + safeFileName + "\"\r\n")
+					.getBytes(StandardCharsets.UTF_8));
+			outputStream.write("Content-Type: application/octet-stream\r\n\r\n".getBytes(StandardCharsets.UTF_8));
+			outputStream.write(fileBytes);
+			outputStream.write(("\r\n--" + boundary + "--\r\n").getBytes(StandardCharsets.UTF_8));
+			return outputStream.toByteArray();
+		} catch (final IOException e) {
+			throw new VSystemException("Failed to build multipart body for JSM attachment upload.", e);
 		}
 	}
 
@@ -453,6 +567,9 @@ public class JiraServerService implements Component, IJiraService {
 				return new ArrayList<>(requestTypeSearchResult.getValues());
 			}
 			throw new VSystemException("Failed to retrieve JSM request types. Status code " + response.statusCode() + " : " + response.body());
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new VSystemException("Failed to attach file to JSM request : " + e.getMessage(), e);
 		} catch (final Exception e) {
 			throw new VSystemException("Failed to retrieve JSM request types : " + e.getMessage(), e);
 		}
