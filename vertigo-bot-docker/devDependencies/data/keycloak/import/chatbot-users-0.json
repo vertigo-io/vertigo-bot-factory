@@ -1,0 +1,199 @@
+{
+  "realm" : "chatbot",
+  "users" : [ {
+    "id" : "5825cf51-9ba2-421c-b8f4-84fd560522e3",
+    "username" : "admin",
+    "firstName" : "Admin",
+    "lastName" : "Admin",
+    "emailVerified" : false,
+    "createdTimestamp" : 1623226879094,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "005530e9-15d0-4b04-9cf0-0e71dc02090c",
+      "type" : "password",
+      "createdDate" : 1623227165927,
+      "secretData" : "{\"value\":\"7075G26egWuKtFCfqAmvgj2ZmLjpeUJh3b3RBugP+2nkVidtRP8o/J4QNVOWdrZgvo3rW5hZkfc1h6XH6nwtaA==\",\"salt\":\"K1YSj7ZBkiMFOQjbB0uCXw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "uma_authorization", "offline_access" ],
+    "clientRoles" : {
+      "account" : [ "view-profile", "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "09a7b8fe-da96-415b-9c99-9a80bc0807de",
+    "username" : "cedric.marechal@kleegroup.com",
+    "firstName" : "Cedric",
+    "lastName" : "Marechal",
+    "email" : "cedric.marechal@kleegroup.com",
+    "emailVerified" : false,
+    "createdTimestamp" : 1635866882862,
+    "enabled" : false,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "c4cded1f-1757-43b7-982b-8f18d9ad4b81",
+      "type" : "password",
+      "createdDate" : 1635866946412,
+      "secretData" : "{\"value\":\"lWAbMLCfHkx4t8BXhEwZ/7+bBjoxwPzEgrs/Ukua9nHnepHai7neoI6tJHzZJl7IvGu/TQQQf2FE3TKKWtwhcA==\",\"salt\":\"qAsQ4BTpcEWYHvxGfhDt2A==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "uma_authorization", "offline_access" ],
+    "clientRoles" : {
+      "account" : [ "view-profile", "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "bca42b17-03e5-4bc1-a44f-d2f8c5423293",
+    "username" : "contributeur",
+    "firstName" : "Contri",
+    "lastName" : "Buteur",
+    "email" : "contributeur@yopmail.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1698996443022,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "e7bf926d-a7d9-4b2c-aa39-8cf832728a11",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1742217860445,
+      "secretData" : "{\"value\":\"RLxUn6e+1zxWJFJKzhX+q5MrkxjefPt8YF8ShetdlD+5101eAyPbS40uv+gM1D4+iuyLF6uJNMkmLW5S8mdZzQ==\",\"salt\":\"IzKvDQVPLBpe6me+CpJf2w==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "uma_authorization", "offline_access" ],
+    "clientRoles" : {
+      "account" : [ "view-profile", "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "b0db8e73-2896-4a2c-bd60-6a710f234b21",
+    "username" : "rgaa-audit",
+    "firstName" : "RGAA",
+    "lastName" : "Audit",
+    "emailVerified" : false,
+    "createdTimestamp" : 1740062996219,
+    "enabled" : false,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "8692b7fc-a51f-48fe-9854-d83ffd2a92c9",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1740063245914,
+      "secretData" : "{\"value\":\"lGaFpdaXmURK2ZH4UAy2ryP5HVFVf/r7/pCM0JezmeJXEjXlkHNEKuDnjRqEgt96/vvakRLY0b63J5ruWZuwFA==\",\"salt\":\"rzLm1Ri1DhleEaSKl68IUw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-chatbot" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "613a3ada-7005-4023-9054-62319fcf74e9",
+    "username" : "skerdudou",
+    "firstName" : "Steven",
+    "lastName" : "Kerdudou",
+    "email" : "sk@sk.dd",
+    "emailVerified" : false,
+    "createdTimestamp" : 1623233598707,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "fe020c67-4d80-4b75-9cbf-e7f792ae5616",
+      "type" : "password",
+      "createdDate" : 1623233790862,
+      "secretData" : "{\"value\":\"PST8hRqGWuPYQE0TuSAu8lGGjen6EKmVKe8YnZFZRhen6AgBXtsM74dkCgZecDrrJX7cj0RixqTG1yCPr/myOg==\",\"salt\":\"Um+X4Mgxip/fTx6+sfmxVQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "uma_authorization", "offline_access" ],
+    "clientRoles" : {
+      "account" : [ "view-profile", "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "d0fd4efa-75b9-4047-84ec-92237b14c0f8",
+    "username" : "sylvain.pichon",
+    "firstName" : "Sylvain",
+    "lastName" : "PICHON",
+    "email" : "sylvain.pichon@kleegroup.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1698758865916,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "ac90c24f-7c19-4dc1-960a-80bd7ee3b425",
+      "type" : "password",
+      "createdDate" : 1698759084666,
+      "secretData" : "{\"value\":\"Rv9BFq0Nj3Pf3HAQKdqNly9uK5+jYs97S2+T8skRhk5cPR7TsKZENDa0Pi4xAcSo882IxDdWH8N+WXnYTL66Wg==\",\"salt\":\"fBZp654pUVUGEhjlaI8tBg==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "uma_authorization", "offline_access" ],
+    "clientRoles" : {
+      "account" : [ "view-profile", "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "9df887e5-8e1e-4f51-ba19-789a4bd0108f",
+    "username" : "victor.savalle@kleegroup.com",
+    "firstName" : "Victor",
+    "lastName" : "SAVALLE",
+    "email" : "victor.savalle@kleegroup.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1767690876667,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "9f7d8de5-498c-4a18-a55e-02f20c57f080",
+      "type" : "password",
+      "createdDate" : 1767714381413,
+      "secretData" : "{\"value\":\"h781D4ib9Fxbnsxlx58zwKqXuF3S+a/Q1Zzd6QmBIO9gh8Zv8NuKUOIUEOolC61Vw9ZKZa5TYIV7o/nrxo3n/Q==\",\"salt\":\"eco5EvlbmpZgCh5MNx3Hxw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-chatbot" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "ea27a8ac-35ef-40ec-a310-d7c1356017ed",
+    "username" : "visiteur",
+    "firstName" : "Visi",
+    "lastName" : "Teur",
+    "email" : "visiteur@yopmail.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1698996697316,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "6e090914-f743-4f01-9a3d-0ef9f61b14cf",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1742217803250,
+      "secretData" : "{\"value\":\"Hdqi6IIDXQKiRA0sTwhzzEZDIcDeFmx9UA91ePxezxDh9C+rx6YA0rn5pttgdg0xnTcj05I/6KZfl/TuqXJ+qw==\",\"salt\":\"x4cEgsFdgNStSeEvlOj0aQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "uma_authorization", "offline_access" ],
+    "clientRoles" : {
+      "account" : [ "view-profile", "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}

@@ -27,7 +27,7 @@ public class GlobalVariableService implements Component {
 
     public DtList<GlobalVariable> findAllGlobalVariablesByBotId(final Long botId) {
         return globalVariableDAO.findAll(Criterions.isEqualTo(DtDefinitions.GlobalVariableFields.botId, botId),
-                        DtListState.of(MAX_ELEMENTS_PLUS_ONE)).stream()
+                        DtListState.of(null)).stream()
                 .sorted(Comparator.comparing(globalVariable -> {
                     globalVariable.globalVariableType().load();
                     return globalVariable.globalVariableType().get().getLabel();

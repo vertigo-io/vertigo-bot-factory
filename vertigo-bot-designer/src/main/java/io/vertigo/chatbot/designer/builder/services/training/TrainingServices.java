@@ -90,6 +90,8 @@ import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.util.DataModelUtil;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
+
+import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
@@ -147,7 +149,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 	public void start() {
 		final boolean useSSL = paramManager.getOptionalParam("USE_SSL")
 				.orElse(Param.of("USE_SSL", "true")).getValueAsBoolean();
-		Optional<Param> runnerRequestTimeoutParam = paramManager.getOptionalParam(
+		final Optional<Param> runnerRequestTimeoutParam = paramManager.getOptionalParam(
 				"RUNNER_REQUEST_TIMEOUT");
 		if (runnerRequestTimeoutParam.isEmpty()) {
 			LOGGER.info("No param RUNNER_REQUEST_TIMEOUT specified, value of 120s will be used.");
@@ -164,7 +166,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 
 	}
 
-	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot, final Long nodId) {
+	public Training trainAgent(@SecuredOperation("botContributor") final Chatbot bot, final ChatbotNode devNode) {
 		final StringBuilder trainingDataLogs = new StringBuilder();
 		final StringBuilder logs = new StringBuilder("new Training");
 		LogsUtils.breakLine(logs);
@@ -172,9 +174,6 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		final Long botId = bot.getBotId();
 
 		trainingPAO.cleanOldTrainings(botId);
-
-		final ChatbotNode devNode = nodeServices.getDevNodeByBotId(botId)
-				.orElseThrow(() -> new VUserException(ModelMultilingualResources.MISSING_NODE_ERROR));
 
 		//Set training
 
@@ -206,7 +205,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 			LogsUtils.logOK(logs);
 
 			LogsUtils.breakLine(logs);
-			final Map<String, Object> requestData = new HashMap<String, Object>();
+			final Map<String, Object> requestData = new HashMap<>();
 			requestData.put("botExport", botExport);
 			requestData.put("attachmentsExport", attachmentExports);
 			requestData.put("executorConfig", execConfig);
@@ -222,10 +221,9 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 			LOGGER.info("Sending PUT request to url {}, with {}s timeout...", request.uri(),
 					runnerRequestTimeOut);
 			HttpRequestUtils.sendAsyncRequest(httpClient, request, BodyHandlers.ofString())
-					.thenApply(response -> {
-						return handleResponse(response, training, node, bot, logs,
-								trainingDataLogs);
-					}).exceptionally(ex -> {
+					.thenApply(response ->
+						handleResponse(response, training, node, bot, logs,	trainingDataLogs)
+					).exceptionally(ex -> {
 						handleError(training, logs,
 								"Error while handling PUT request (" + request.uri() + ")", ex);
 						training.setLog(logs.toString());
@@ -243,8 +241,8 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		record(bot, training, HistoryActionEnum.ADDED);
 	}
 
-	private static void handleError(Training training, StringBuilder logs, String errorMessage,
-									Throwable e) {
+	private static void handleError(final Training training, final StringBuilder logs, final String errorMessage,
+                                    final Throwable e) {
 		LogsUtils.logKO(logs);
 		LogsUtils.addLogs(logs, e.getMessage());
 		LogsUtils.breakLine(logs);
@@ -311,15 +309,16 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 									 final StringBuilder trainingDataLogs) {
 		LOGGER.info("Response from url {} received, with HTTP code {}", response.uri(),
 				response.statusCode());
+		Assertion.check().isTrue(node.getBotId().equals(bot.getBotId()), "Node and Bot are not coherent");
 		training.setEndTime(Instant.now());
 		if (HttpRequestUtils.isResponseOk(response, 200)) {
 			training.setStrCd(TrainingStatusEnum.OK.name());
 			node.setTraId(training.getTraId());
 			node.setIsUpToDate(true);
 			asynchronousServices.saveNodeWithoutAuthorizations(node);
-			Gson gson = new Gson();
-			String responseBody = (String) response.body();
-			List<String> logsList = gson.fromJson(responseBody, new TypeToken<List<String>>() {
+			final Gson gson = new Gson();
+			final String responseBody = (String) response.body();
+			final List<String> logsList = gson.fromJson(responseBody, new TypeToken<List<String>>() {
 			}.getType());
 			LogsUtils.logOK(logs);
 			LogsUtils.addLogs(logs, logsList.get(0));
@@ -337,7 +336,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		return "response handled";
 	}
 
-	private <T> void errorTreatment(final HttpResponse<T> response, final StringBuilder logs, Training training) {
+	private <T> void errorTreatment(final HttpResponse<T> response, final StringBuilder logs, final Training training) {
 		if (!HttpRequestUtils.isResponseKo(response, 404, 405)) {
 			errorJsonTreatment(response, logs, training);
 		} else {
@@ -345,9 +344,9 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		}
 	}
 
-	private <T> void errorJsonTreatment(final HttpResponse<T> response, final StringBuilder logs, Training training) {
+	private <T> void errorJsonTreatment(final HttpResponse<T> response, final StringBuilder logs, final Training training) {
 		final ObjectMapper mapper = new ObjectMapper();
-		JsonNode root = null;
+		final JsonNode root;
 		try {
 			root = mapper.readTree(response.body().toString());
 			final String responseString = root.get("globalErrors").get(0).toString();
@@ -358,7 +357,6 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		} catch (final JsonProcessingException e) {
 			LOGGER.info("error on deserialization");
 			LogsUtils.addLogs(logs, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -374,10 +372,9 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		return training;
 	}
 
-	private Training updateTraining(final Training training) {
+	private void updateTraining(final Training training) {
 		training.setStartTime(Instant.now());
 		training.setStrCd(TrainingStatusEnum.TRAINING.name());
-		return training;
 	}
 
 	private ExecutorConfiguration getExecutorConfig(final Chatbot bot, final Training training, final ChatbotNode node) {
@@ -437,30 +434,29 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		config.setModelName(training.getVersionNumber().toString());
 		config.setNluThreshold(training.getNluThreshold());
 
-		final Response response;
-		try (final FormDataMultiPart fdmp = new FormDataMultiPart()) {
+		try (final Client client = ClientBuilder.newClient();
+			final FormDataMultiPart fdmp = new FormDataMultiPart()) {
 			final StreamDataBodyPart modelBodyPart = new StreamDataBodyPart("model", model.createInputStream(), model.getFileName());
 			fdmp.bodyPart(modelBodyPart);
-
 			addObjectToMultipart(fdmp, "config", config);
 
-			response = ClientBuilder.newClient()
+			try (final Response response = client
 					.target(node.getUrl())
 					.register(GsonProvider.class)
 					.register(MultiPartReaderServerSide.class)
 					.register(MultiPartWriter.class).path(URL_MODEL)
 					.request(MediaType.APPLICATION_JSON)
 					.header(API_KEY, node.getApiKey())
-					.put(Entity.entity(fdmp, fdmp.getMediaType()));
+					.put(Entity.entity(fdmp, fdmp.getMediaType()))) {
 
+				if (response.getStatus() != 204) {
+					LOGGER.info("Impossible to load the model. {}", response.getStatusInfo());
+					throw new VUserException(ModelMultilingualResources.LOAD_MODEL_ERROR);
+				}
+			}
 		} catch (final IOException e) {
 			LOGGER.info("error during loading model");
 			throw new VSystemException(e, "error during loading model");
-		}
-
-		if (response.getStatus() != 204) {
-			LOGGER.info("Impossible to load the model. {}", response.getStatusInfo());
-			throw new VUserException(ModelMultilingualResources.LOAD_MODEL_ERROR);
 		}
 	}
 

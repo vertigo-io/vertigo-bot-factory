@@ -162,7 +162,7 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 
 	@PostMapping("/train")
 	public ViewContext doTrain(final ViewContext viewContext, @ViewAttribute("bot") final Chatbot bot) {
-		final Training newTraining = trainingServices.trainAgent(bot, nodeServices.getDevNodeByBotId(bot.getBotId()).orElseThrow().getNodId());
+		final Training newTraining = trainingServices.trainAgent(bot, nodeServices.getDevNodeByBotId(bot.getBotId()).orElseThrow());
 		viewContext.publishDto(trainingKey, newTraining);
 		viewContext.publishDto(trainerStateKey, trainerInfoServices.createTrainingState(newTraining));
 		return viewContext;
@@ -239,16 +239,19 @@ public abstract class AbstractBotController extends AbstractDesignerController {
 
 	@PostMapping("/_changeLocale")
 	public ViewContext changeLocal(final ViewContext viewContext,
-										   @RequestParam("locale") final String locale) {
+								   @RequestParam("locale") final String locale) {
 
-        if(localeManager.getCurrentLocale().toString().equals(locale)) throw new VUserException(BotMultilingualResources.MULTILINGUAL_RESSOURCES_KO);
-		else{
-			if(locale.equals(Locale.FRANCE.toString()))
+		if (localeManager.getCurrentLocale().toString().equals(locale)) {
+			throw new VUserException(BotMultilingualResources.MULTILINGUAL_RESSOURCES_KO);
+		} else {
+			if (locale.equals(Locale.FRANCE.toString())) {
 				getUserSession().setLocale(Locale.FRANCE);
-			else getUserSession().setLocale(Locale.US);
-            viewContext.publishRef(localeKey, locale);
-            return viewContext;
-        }
+			} else {
+				getUserSession().setLocale(Locale.US);
+			}
+			viewContext.publishRef(localeKey, locale);
+			return viewContext;
+		}
 	}
 
 }
