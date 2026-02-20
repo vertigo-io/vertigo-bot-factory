@@ -11,10 +11,10 @@ services:
     # volumes:
       # - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
     # ports:
-      # - "127.0.0.1:8000:80"     
+      # - "8000:80"
       
   postgres:
-    image: postgres:16
+    image: postgres:16-alpine
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_PASSWORD: postgres
@@ -23,19 +23,19 @@ services:
       - ./initSql/:/docker-entrypoint-initdb.d/
       - ./restore/:/restore/
     ports:
-      - "127.0.0.1:5433:5432"
+      - "5433:5432"
     networks:
       - cb_factory
 
   clamav:
     image: clamav/clamav
     ports:
-      - "127.0.0.1:3310:3310"
+      - "3310:3310"
     networks:
       - cb_factory
 
   postgresKC:
-    image: postgres:16
+    image: postgres:16-alpine
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_PASSWORD: keycloak
@@ -44,32 +44,46 @@ services:
     volumes:
       - cf_postgresKC_16_data:/var/lib/postgresql/data/pgdata
     ports:
-      - "127.0.0.1:5434:5432"
+      - "5434:5432"
     networks:
       - cb_factory
 
   keycloak:
-    image: bitnamilegacy/keycloak:24
+    image: keycloak/keycloak:26.5.3
     environment:
-      KEYCLOAK_ADMIN_USER: admin
-      KEYCLOAK_ADMIN_PASSWORD: changeme
-      KEYCLOAK_DATABASE_HOST: postgresKC
-      KEYCLOAK_DATABASE_PORT: 5432
-      KEYCLOAK_DATABASE_NAME: keycloak
-      KEYCLOAK_DATABASE_USER: keycloak
-      KEYCLOAK_DATABASE_SCHEMA: public
-      KEYCLOAK_DATABASE_PASSWORD: keycloak
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: changeme
+      KC_DB_URL_HOST: postgresKC
+      KC_DB_URL_PORT: 5432
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_SCHEMA: public
+      KC_DB_PASSWORD: keycloak
+      KC_DB: postgres
       KC_HOSTNAME_STRICT: "false"
       KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+      KC_LOG_LEVEL: INFO
+      ##,org.keycloak.connections:DEBUG,org.keycloak.transaction:DEBUG,org.keycloak.services:DEBUG,org.keycloak.authentication:DEBUG
     ports:
-      - 8200:8080
+      - "8200:8080"
+    entrypoint:
+      - /opt/keycloak/bin/kc.sh
+      - start
+      - --verbose
+      - --import-realm
+      - --features-disabled=impersonation
+#      - --optimized
+    volumes:
+      - ./data/keycloak/import:/opt/keycloak/data/import
     depends_on:
       - postgresKC
     networks:
       - cb_factory
 
   influxdb:
-    image: influxdb:2.7.1
+    image: influxdb:2.8.0-alpine
     volumes:
       #- cf_influxdb_data:/var/lib/influxdb
       - cf_influxdb2_data:/var/lib/influxdb2
@@ -83,22 +97,22 @@ services:
       DOCKER_INFLUXDB_INIT_BUCKET: admin
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: influxDevToken
     ports:
-      - "127.0.0.1:8086:8086"
+      - "8086:8086"
     networks:
       - cb_factory
 
   chronograph:
     # IHM de consultation influxDB
-    image: chronograf:1.10-alpine
+    image: chronograf:1.10.9-alpine
     volumes:
       - cf_chronograph_data:/var/lib/chronograf
     ports:
-      - "127.0.0.1:8888:8888"
+      - "8888:8888"
     networks:
       - cb_factory
 
   analytica:
-    image: vertigoio/vertigo-analytics-server:0.12.0
+    image: vertigoio/vertigo-analytics-server:0.14.0
     environment:
       INFLUXDB_URL: http://influxdb:8086
       INFLUXDB_ORG: chatbot
@@ -111,9 +125,11 @@ services:
       - cb_factory
 
   rasa:
-    image: rasa/rasa:3.6.20-full
+    image: rasa/rasa:main-full
+    environment:
+      - LOG_LEVEL=DEBUG
     ports:
-      - 5005:5005
+      - "5005:5005"
     command:
       - run
       - --enable-api
