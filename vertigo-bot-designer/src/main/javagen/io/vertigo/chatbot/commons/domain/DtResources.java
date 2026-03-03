@@ -280,7 +280,7 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldChatbotCustomConfig$jiraCheckBeforeCreate,
 	/**
-	 * JSM Cloud mode.
+	 * JSM mode.
 	 */
 	fldChatbotCustomConfig$jsmMode,
 	/**
@@ -884,7 +884,7 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldJiraSettingExport$project,
 	/**
-	 * Use JSM Cloud.
+	 * Use JSM.
 	 */
 	fldJiraSettingExport$jsmMode,
 	/**

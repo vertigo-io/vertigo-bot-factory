@@ -379,17 +379,17 @@ public final class ChatbotCustomConfig implements Entity {
 	
 	/**
 	 * Champ : DATA.
-	 * Récupère la valeur de la propriété 'JSM Cloud mode'.
+	 * Récupère la valeur de la propriété 'JSM mode'.
 	 * @return Boolean jsmMode <b>Obligatoire</b>
 	 */
-	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "JSM Cloud mode")
+	@Field(smartType = "STyYesNo", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "JSM mode")
 	public Boolean getJsmMode() {
 		return jsmMode;
 	}
 
 	/**
 	 * Champ : DATA.
-	 * Définit la valeur de la propriété 'JSM Cloud mode'.
+	 * Définit la valeur de la propriété 'JSM mode'.
 	 * @param jsmMode Boolean <b>Obligatoire</b>
 	 */
 	public void setJsmMode(final Boolean jsmMode) {

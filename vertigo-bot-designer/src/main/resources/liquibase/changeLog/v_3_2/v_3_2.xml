@@ -57,4 +57,9 @@
         <sqlFile encoding="utf8" path="/sql/v_3_2/alter_chatbot-qa-export-type.sql"/>
     </changeSet>
 
+    <changeSet author="vsavalle"
+        id="edit comment">
+        <sqlFile encoding="utf-8" path="/sql/v_3_2/Fix_on_column_comment.sql" />
+    </changeSet>
+
 </databaseChangeLog>

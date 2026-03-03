@@ -17,7 +17,7 @@ create DtDefinition DtChatbotCustomConfig {
 	field disableNlu                        {domain: DoYesNo        label: "Disable NlU"                        cardinality:"?"}
 	field maxSavedTraining                  {domain: DoNumber       label: "Maximum of saved trainings"         cardinality:"?"}
 	field jiraCheckBeforeCreate             {domain: DoYesNo        label: "Check Jira fields before ticket creation"   cardinality:"1"}
-	field jsmMode                           {domain: DoYesNo        label: "JSM Cloud mode"                     cardinality:"1"}
+	field jsmMode                           {domain: DoYesNo        label: "JSM mode"                     cardinality:"1"}
 	field chatbotDisplay                    {domain: DoYesNo        label: "Display chatbot"                    cardinality:"?"}
 	field qandaDisplay                      {domain: DoYesNo        label: "Display Q&A"                        cardinality:"?"}
 	field documentaryResourceDisplay        {domain: DoYesNo        label: "Display documentary resources"      cardinality:"?"}

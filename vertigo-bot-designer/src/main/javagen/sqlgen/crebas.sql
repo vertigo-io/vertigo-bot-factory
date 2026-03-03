@@ -507,7 +507,7 @@ comment on column CHATBOT_CUSTOM_CONFIG.JIRA_CHECK_BEFORE_CREATE is
 'Check Jira fields before ticket creation';
 
 comment on column CHATBOT_CUSTOM_CONFIG.JSM_MODE is
-'JSM Cloud mode';
+'JSM mode';
 
 comment on column CHATBOT_CUSTOM_CONFIG.CHATBOT_DISPLAY is
 'Display chatbot';
