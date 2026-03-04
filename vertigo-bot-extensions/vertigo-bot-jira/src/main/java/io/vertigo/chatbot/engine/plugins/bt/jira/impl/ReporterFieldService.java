@@ -61,6 +61,9 @@ public class ReporterFieldService implements IJiraFieldService, Component {
     }
 
     private BTNode getUserFromInput(final BlackBoard bb, JiraField jiraField, final boolean checkJiraFields) {
+        if (RAISE_ON_BEHALF_OF.equals(jiraField.getFieldType())) {
+            return () -> BTStatus.Succeeded;
+        }
         return selector(
                 BotNodeProvider.fulfilled(bb, reporterWsBBPath.key()),
                 getUser(bb, jiraField, checkJiraFields));
