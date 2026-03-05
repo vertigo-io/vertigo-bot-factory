@@ -75,7 +75,7 @@ footer {
 
 .q-message-text {
     padding: 10px 15px;
-    max-width: clamp(230px, 60%, 500px);
+    max-width: max(230px, 85%);
 }
 
 .q-message-received .q-message-text-content {
