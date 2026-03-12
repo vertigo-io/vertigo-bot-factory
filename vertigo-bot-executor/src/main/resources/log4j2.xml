@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Configuration monitorInterval="30" status="WARN">
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout pattern="%d{yyyyMMdd} %d{HH:mm:ss} [%t] %-5p %-11c{1} - %m %x %n" />
+			<PatternLayout charset="UTF-8" pattern="%d{yyyyMMdd} %d{HH:mm:ss} [%t] %-5p %-11c{1} - %m %x %n" />
 		</Console>
 	</Appenders>
 	<Loggers>
