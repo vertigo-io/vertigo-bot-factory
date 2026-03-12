@@ -19,9 +19,9 @@
 	      <AppenderRef ref="Console"/>
 	    </Logger>
 		<Logger name="tasks" level="info" additivity="false">
-		  <ContextMapFilter onMatch="DENY" onMismatch="ACCEPT" >
-		  	<KeyValuePair key="module" value="orchestra"/>
-		  </ContextMapFilter>
+			<DynamicThresholdFilter key="module">
+				<KeyValuePair key="orchestra" value="WARN"/>
+			</DynamicThresholdFilter>
 	      <AppenderRef ref="Console"/>
 	    </Logger>
 	    <Logger name="job" level="info" additivity="false">
