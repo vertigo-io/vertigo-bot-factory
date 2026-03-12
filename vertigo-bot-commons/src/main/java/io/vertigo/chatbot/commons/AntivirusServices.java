@@ -35,7 +35,7 @@ public class AntivirusServices implements Component, Activeable {
 	public boolean healthCheck() {
 		try {
 			clamavClient.ping();
-			return true;
+            return clamavClient.isReachable(30);
 		} catch (final ClamavException clamavException) {
 			return false;
 		}
