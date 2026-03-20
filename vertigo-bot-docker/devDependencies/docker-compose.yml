@@ -12,7 +12,58 @@ services:
       # - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
     # ports:
       # - "8000:80"
-      
+
+  clamav:
+    image: clamav/clamav
+    ports:
+      - "3310:3310"
+    networks:
+      - cb_factory
+    volumes:
+      - ./data/clamav/clamd-1.5.2.conf:/etc/clamav/clamd.conf:ro
+    healthcheck:
+      test: ["CMD", "clamdscan", "--ping", "1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    stop_grace_period: 30s
+
+#  runnerDev:
+#    image: registry.kleegroup.com/chatbot-factory/bot-runner-all-included:3.2.1
+#    environment:
+#      - DESIGNER_URL=http://localhost:8080/vertigo-bot-designer/
+#      - ANALYTICA_HOST=analytica
+#      - ANALYTICA_PORT=4562
+#      - ANALYTICA_DBNAME=chatbot/autogen
+#      - API_KEY=runnerDev
+#      - RASA_URL=http://rasa:5005
+#      - FRAME_ANCESTORS=*
+#      - MAIL_NAME=KleeMail
+#      - MAIL_PROTOCOL=smtp
+#      - MAIL_HOST=localdelivery.klee.lan.net
+#      - MAIL_PORT=25
+#      - JAVA_OPTS=-Xmx512m -Xms512m
+#      - ENCRYPTION_PASSWORD=ChatbotKlee2022!
+#      - CONFIG_DATA_FILE=/opt/data/runnerConfig
+#      - CLAMAV_HOST=clamav
+#    ports:
+#      - '8081:8080'
+#    volumes:
+#      - cf_runner_dev_data:/opt/data
+#    depends_on:
+#      rasa:
+#        condition: service_healthy
+#      analytica:
+#        condition: service_started
+#      clamav:
+#        condition: service_healthy
+#      keycloak:
+#        condition: service_healthy
+#    networks:
+#      - cb_factory
+
+
   postgres:
     image: postgres:16-alpine
     environment:
@@ -26,13 +77,7 @@ services:
       - "5433:5432"
     networks:
       - cb_factory
-
-  clamav:
-    image: clamav/clamav
-    ports:
-      - "3310:3310"
-    networks:
-      - cb_factory
+    stop_grace_period: 30s
 
   postgresKC:
     image: postgres:16-alpine
@@ -47,9 +92,10 @@ services:
       - "5434:5432"
     networks:
       - cb_factory
+    stop_grace_period: 30s
 
   keycloak:
-    image: keycloak/keycloak:26.5.3
+    image: keycloak/keycloak:26.5.6
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: changeme
@@ -79,8 +125,15 @@ services:
       - ./data/keycloak/import:/opt/keycloak/data/import
     depends_on:
       - postgresKC
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/9000 && echo -e \"GET /health/ready HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n\" >&3 && cat <&3 | grep -q UP'"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
     networks:
       - cb_factory
+    stop_grace_period: 30s
 
   influxdb:
     image: influxdb:2.8.0-alpine
@@ -100,6 +153,7 @@ services:
       - "8086:8086"
     networks:
       - cb_factory
+    stop_grace_period: 30s
 
   chronograph:
     # IHM de consultation influxDB
@@ -123,6 +177,7 @@ services:
       - "4562:4562"
     networks:
       - cb_factory
+    stop_grace_period: 30s
 
   rasa:
     image: rasa/rasa:main-full
@@ -135,15 +190,25 @@ services:
       - --enable-api
       - --cors
       - "*"
+    networks:
+      - cb_factory
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5005/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    stop_grace_period: 30s
 
 volumes:
   cf_postgres_16_data:
   cf_postgresKC_16_data:
-  cf_influxdb_data:
+#  cf_influxdb_data:
   cf_influxdb2_data:
   cf_influxdb2_config:
-  cf_rabbitmq_data:
+#  cf_rabbitmq_data:
   cf_chronograph_data:
+#  cf_runner_dev_data:
 
 networks:
   cb_factory:
