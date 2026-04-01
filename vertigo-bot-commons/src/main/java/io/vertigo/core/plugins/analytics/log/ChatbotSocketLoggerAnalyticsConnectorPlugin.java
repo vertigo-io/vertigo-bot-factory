@@ -19,6 +19,7 @@ package io.vertigo.core.plugins.analytics.log;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +30,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.SocketAppender;
-import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.SerializedLayout;
@@ -37,6 +37,8 @@ import org.apache.logging.log4j.core.layout.SerializedLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 
 import javax.inject.Inject;
 
@@ -58,7 +60,11 @@ import io.vertigo.core.plugins.analytics.log.log4j.AnalyticaSocketAppender.Build
  * @author mlaroche, pchretien, npiedeloup
  */
 public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements AnalyticsConnectorPlugin, Activeable {
-	private static final Gson GSON = new GsonBuilder().create();
+	private static final Gson GSON = new GsonBuilder()
+    .registerTypeAdapter(Instant.class,
+        (JsonSerializer<Instant>) (src, typeOfSrc, context) ->
+            new JsonPrimitive(src.toEpochMilli()))
+    .create();
 	private static final int DEFAULT_CONNECT_TIMEOUT = 250;// 250ms for connection to log4j server
 	private static final int DEFAULT_DISCONNECT_TIMEOUT = 5000;// 5s for disconnection to log4j server
 	private static final int DEFAULT_SERVER_PORT = 4562;// DefaultPort of SocketAppender 4650 for log4j and 4562 for log4j2
@@ -117,22 +123,15 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 	/** {@inheritDoc} */
 	@Override
 	public void add(final Metric metric) {
-		if (socketMetricLogger == null) {
-			socketMetricLogger = createLogger("vertigo-analytics-metric");
-		}
 		sendObject(metric, socketMetricLogger);
-
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void add(final HealthCheck healthCheck) {
-		if (socketHealthLogger == null) {
-			socketHealthLogger = createLogger("vertigo-analytics-health");
-		}
 		sendObject(healthCheck, socketHealthLogger);
-
 	}
+
 
 	private static String retrieveHostName() {
 		try {
@@ -145,6 +144,7 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 
 	@Override
 	public void start() {
+		@SuppressWarnings("deprecation")
 		final Builder appenderBuilder = AnalyticaSocketAppender.newAnalyticaBuilder()
 				.setName("socketAnalytics")
 				.setLayout(SerializedLayout.createLayout())
@@ -171,6 +171,11 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 		final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
 		final Configuration config = ctx.getConfiguration();
 		config.addAppender(appender);
+
+		// Loggers' eager initialization (thread-safe because in start())
+		socketProcessLogger = createLogger("vertigo-analytics-process");
+		socketHealthLogger  = createLogger("vertigo-analytics-health");
+		socketMetricLogger  = createLogger("vertigo-analytics-metric");
 	}
 
 	@Override
@@ -186,7 +191,13 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 
 		final LoggerContext context = (LoggerContext) LogManager.getContext(false); //on ne close pas : car ca stop le context
 		final Configuration config = context.getConfiguration();
-		final LoggerConfig loggerConfig = LoggerConfig.createLogger(false, Level.INFO, loggerName, "true", new AppenderRef[] {}, null, config, null);
+		final LoggerConfig loggerConfig = LoggerConfig.newBuilder()
+				.withAdditivity(false)
+				.withLevel(Level.INFO)
+				.withLoggerName(loggerName)
+				.withIncludeLocation("true")
+				.withConfig(config)
+				.build();
 
 		loggerConfig.addAppender(appender, null, null);
 		config.addLogger(loggerName, loggerConfig);
@@ -209,9 +220,6 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 	}
 
 	private void sendProcess(final TraceSpan process) {
-		if (socketProcessLogger == null) {
-			socketProcessLogger = createLogger("vertigo-analytics-process");
-		}
 		sendObject(process, socketProcessLogger);
 	}
 
@@ -221,7 +229,7 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 			final JsonObject log = new JsonObject();
 			log.addProperty("appName", appName);
 			log.addProperty("host", localHostName);
-			log.add("event", GSON.	toJsonTree(object));
+			log.add("event", GSON.toJsonTree(object));
 			logger.info(GSON.toJson(log));
 		}
 	}
