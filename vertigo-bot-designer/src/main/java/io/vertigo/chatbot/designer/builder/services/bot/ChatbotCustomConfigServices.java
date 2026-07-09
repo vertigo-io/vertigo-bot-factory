@@ -52,6 +52,8 @@ public class ChatbotCustomConfigServices implements Component {
                 (oldChatbotCustomConfig.getBotRatingColor() != null && !oldChatbotCustomConfig.getBotRatingColor().equals(chatbotCustomConfig.getBotRatingColor())) ||
                 (oldChatbotCustomConfig.getFofCd() != null && !oldChatbotCustomConfig.getFofCd().equals(chatbotCustomConfig.getFofCd())) ||
                 (oldChatbotCustomConfig.getFontColor() != null && !oldChatbotCustomConfig.getFontColor().equals(chatbotCustomConfig.getFontColor())) ||
+                (oldChatbotCustomConfig.getSecondaryBackgroundColor() != null && !oldChatbotCustomConfig.getSecondaryBackgroundColor().equals(chatbotCustomConfig.getSecondaryBackgroundColor())) ||
+                (oldChatbotCustomConfig.getSecondaryFontColor() != null && !oldChatbotCustomConfig.getSecondaryFontColor().equals(chatbotCustomConfig.getSecondaryFontColor())) ||
                 (oldChatbotCustomConfig.getUserMessageBackgroundColor() != null && !oldChatbotCustomConfig.getUserMessageBackgroundColor().equals(chatbotCustomConfig.getUserMessageBackgroundColor())) ||
                 (oldChatbotCustomConfig.getChatbotDisplay() != null && !oldChatbotCustomConfig.getChatbotDisplay().equals(chatbotCustomConfig.getChatbotDisplay())) ||
                 (oldChatbotCustomConfig.getQandaDisplay() != null && !oldChatbotCustomConfig.getQandaDisplay().equals(chatbotCustomConfig.getQandaDisplay())) ||
@@ -87,6 +89,8 @@ public class ChatbotCustomConfigServices implements Component {
         chatbotCustomConfig.setJsmMode(false);
         chatbotCustomConfig.setBackgroundColor("#000091");
         chatbotCustomConfig.setFontColor("#ffffff");
+        chatbotCustomConfig.setSecondaryBackgroundColor("#ffffff");
+        chatbotCustomConfig.setSecondaryFontColor("#000000");
         chatbotCustomConfig.setBotMessageBackgroundColor("#ffffff");
         chatbotCustomConfig.setBotMessageFontColor("#000000");
         chatbotCustomConfig.setBotMessageLinkColor("-webkit-link");

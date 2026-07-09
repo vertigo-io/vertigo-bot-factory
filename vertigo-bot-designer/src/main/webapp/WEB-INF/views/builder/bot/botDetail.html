@@ -21,6 +21,8 @@
 					colorList: [
 						{name: 'backgroundColor', default: '#000091', label: /*[[${model.util.label('chatbotCustomConfig.backgroundColor')}]]*/ '', icon: 'format_color_fill', alert: false},
 						{name: 'fontColor', default: '#ffffff', label: /*[[${model.util.label('chatbotCustomConfig.fontColor')}]]*/ '', icon: 'format_color_text', alert: false, backgroundName: "backgroundColor"},
+						{name: 'secondaryBackgroundColor', default: '#ffffff', label: /*[[${model.util.label('chatbotCustomConfig.secondaryBackgroundColor')}]]*/ '', icon: 'format_color_fill', alert: false},
+						{name: 'secondaryFontColor', default: '#000000', label: /*[[${model.util.label('chatbotCustomConfig.secondaryFontColor')}]]*/ '', icon: 'format_color_text', alert: false, backgroundName: "secondaryBackgroundColor"},
 						{name: 'botMessageBackgroundColor', default: '#ffffff', label: /*[[${model.util.label('chatbotCustomConfig.botMessageBackgroundColor')}]]*/ '', icon: 'format_color_fill', alert: false},
 						{name: 'botMessageFontColor', default: '#000000', label: /*[[${model.util.label('chatbotCustomConfig.botMessageFontColor')}]]*/ '', icon: 'format_color_text', alert: false, backgroundName: "botMessageBackgroundColor"},
 						{name: 'botMessageLinkColor', default: '-webkit-link', label: /*[[${model.util.label('chatbotCustomConfig.botMessageLinkColor')}]]*/ '', icon: 'link', alert: false, backgroundName: "botMessageBackgroundColor"},
@@ -53,6 +55,12 @@
 								break;
 							case "fontColor" :
 								this.changeFontColor();
+								break;
+							case "secondaryBackgroundColor" :
+								this.changeSecondaryBgColor();
+								break;
+							case "secondaryFontColor" :
+								this.changeSecondaryFontColor();
 								break;
 							case "botMessageBackgroundColor" :
 								this.changeBotMessageBgColor();
@@ -91,6 +99,18 @@
 							element.style.setProperty('--bot-font-color', VertigoUi.vueData.chatbotCustomConfig.fontColor);
 						});
 						checkContrast("backgroundColor", "fontColor");
+					},
+					changeSecondaryBgColor: function () {
+						if (VertigoUi.vueData.chatbotCustomConfig.secondaryBackgroundColor == null) {
+							VertigoUi.vueData.chatbotCustomConfig.secondaryBackgroundColor = '#ffffff';
+						}
+						checkContrast("secondaryBackgroundColor", "secondaryFontColor");
+					},
+					changeSecondaryFontColor: function () {
+						if (VertigoUi.vueData.chatbotCustomConfig.secondaryFontColor == null) {
+							VertigoUi.vueData.chatbotCustomConfig.secondaryFontColor = '#000000';
+						}
+						checkContrast("secondaryBackgroundColor", "secondaryFontColor");
 					},
 					changeBotMessageBgColor: function () {
 						if (VertigoUi.vueData.chatbotCustomConfig.botMessageBackgroundColor == null) {
@@ -241,6 +261,8 @@
 			document.addEventListener('DOMContentLoaded', function () {
 				VUiExtensions.methods.changeBgColor();
 				VUiExtensions.methods.changeFontColor();
+				VUiExtensions.methods.changeSecondaryBgColor();
+				VUiExtensions.methods.changeSecondaryFontColor();
 				VUiExtensions.methods.changeBotMessageBgColor();
 				VUiExtensions.methods.changeUserMessageBgColor();
 				VUiExtensions.methods.changeUserMessageFontColor();
@@ -288,6 +310,8 @@
 		<vu:include-data object="chatbotCustomConfig" field="disableNlu" modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="backgroundColor" modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="fontColor" modifiable="true" />
+		<vu:include-data object="chatbotCustomConfig" field="secondaryBackgroundColor" modifiable="true" />
+		<vu:include-data object="chatbotCustomConfig" field="secondaryFontColor" modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="botMessageBackgroundColor" modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="botMessageFontColor"  modifiable="true" />
 		<vu:include-data object="chatbotCustomConfig" field="botMessageLinkColor"  modifiable="true" />

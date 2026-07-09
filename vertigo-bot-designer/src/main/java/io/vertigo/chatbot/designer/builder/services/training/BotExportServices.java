@@ -111,6 +111,8 @@ public class BotExportServices implements Component {
 		chatbotCustomConfigExport.setTotalMaxAttachmentSize(chatbotCustomConfig.getTotalMaxAttachmentSize());
 		chatbotCustomConfigExport.setBackgroundColor(chatbotCustomConfig.getBackgroundColor());
 		chatbotCustomConfigExport.setFontColor(chatbotCustomConfig.getFontColor());
+		chatbotCustomConfigExport.setSecondaryBackgroundColor(chatbotCustomConfig.getSecondaryBackgroundColor());
+		chatbotCustomConfigExport.setSecondaryFontColor(chatbotCustomConfig.getSecondaryFontColor());
 		chatbotCustomConfigExport.setBotMessageLinkColor(chatbotCustomConfig.getBotMessageLinkColor());
 		chatbotCustomConfigExport.setBotMessageBackgroundColor(chatbotCustomConfig.getBotMessageBackgroundColor());
 		chatbotCustomConfigExport.setDisableNlu(chatbotCustomConfig.getDisableNlu());

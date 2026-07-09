@@ -21,6 +21,8 @@ public final class ChatbotCustomConfig implements Entity {
 	private Boolean reinitializationButton;
 	private String backgroundColor;
 	private String fontColor;
+	private String secondaryBackgroundColor;
+	private String secondaryFontColor;
 	private String botMessageBackgroundColor;
 	private String botMessageFontColor;
 	private String botMessageLinkColor;
@@ -166,6 +168,44 @@ public final class ChatbotCustomConfig implements Entity {
 	 */
 	public void setFontColor(final String fontColor) {
 		this.fontColor = fontColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot secondary background color'.
+	 * @return String secondaryBackgroundColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot secondary background color")
+	public String getSecondaryBackgroundColor() {
+		return secondaryBackgroundColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot secondary background color'.
+	 * @param secondaryBackgroundColor String
+	 */
+	public void setSecondaryBackgroundColor(final String secondaryBackgroundColor) {
+		this.secondaryBackgroundColor = secondaryBackgroundColor;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Bot secondary font color'.
+	 * @return String secondaryFontColor
+	 */
+	@Field(smartType = "STyLabel", label = "Bot secondary font color")
+	public String getSecondaryFontColor() {
+		return secondaryFontColor;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Bot secondary font color'.
+	 * @param secondaryFontColor String
+	 */
+	public void setSecondaryFontColor(final String secondaryFontColor) {
+		this.secondaryFontColor = secondaryFontColor;
 	}
 	
 	/**

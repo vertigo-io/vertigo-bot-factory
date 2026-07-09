@@ -1,6 +1,8 @@
 :root {
     --background-color: #000091;
     --font-color: #ffffff;
+    --secondary-background-color: #ffffff;
+    --secondary-font-color: #000000;
     --bot-message-bg-color: #ebebeb;
     --bot-message-font-color: #000000;
     --bot-message-link-color: -webkit-link;
@@ -309,8 +311,8 @@ img {
     height: 48px;
     border-radius: 1px;
     font-size: 14px;
-    background-color: #ffffff !important;
-    color: var(--font-color) !important;
+    background-color: var(--secondary-background-color) !important;
+    color: var(--secondary-font-color) !important;
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
     border-top: solid 1px rgba(0, 0, 0, 0.2);
     position: relative;
@@ -318,12 +320,14 @@ img {
 
 .q-btn-footer:hover {
     background-color: var(--background-color) !important;
+    color: var(--font-color) !important;
     filter: brightness(70%);
     border: solid 2px rgba(0, 0, 0, 0.2) !important;
 }
 
 .q-btn-footer-selected {
     background-color: var(--background-color) !important;
+    color: var(--font-color) !important;
     box-shadow: 
         inset 0 -4px 8px rgba(0, 0, 0, 0.25),
         inset 0 3px 6px rgba(0, 0, 0, 0.2),
@@ -339,7 +343,7 @@ img {
     transform: translateX(-50%);
     width: calc(100% - 10px);
     height: 3px;
-    background-color: var(--bot-message-font-color);
+    background-color: var(--font-color);
     border-radius: 3px;
 }
 

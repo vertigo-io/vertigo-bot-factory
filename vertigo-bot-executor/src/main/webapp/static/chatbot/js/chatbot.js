@@ -74,6 +74,8 @@ const chatbotComponent = {
                 reinitializationButton: false,
                 backgroundColor: 'grey',
                 fontColor: 'black',
+                secondaryBackgroundColor: '#ffffff',
+                secondaryFontColor: '#000000',
                 botMessageBackgroundColor: 'grey',
                 botMessageFontColor: 'black',
                 botMessageLinkColor: '-webkit-link',
@@ -153,6 +155,8 @@ const chatbotComponent = {
                     this.customConfig.reinitializationButton = httpResponse.data.reinitializationButton;
                     this.customConfig.backgroundColor = httpResponse.data.backgroundColor;
                     this.customConfig.fontColor = httpResponse.data.fontColor;
+                    this.customConfig.secondaryBackgroundColor = httpResponse.data.secondaryBackgroundColor;
+                    this.customConfig.secondaryFontColor = httpResponse.data.secondaryFontColor;
                     this.customConfig.botMessageBackgroundColor = httpResponse.data.botMessageBackgroundColor;
                     this.customConfig.botMessageFontColor = httpResponse.data.botMessageFontColor;
                     this.customConfig.botMessageLinkColor = httpResponse.data.botMessageLinkColor,

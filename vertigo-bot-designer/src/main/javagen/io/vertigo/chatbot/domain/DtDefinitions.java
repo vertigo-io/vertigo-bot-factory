@@ -457,6 +457,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		backgroundColor,
 		/** Propriété 'Bot font color'. */
 		fontColor,
+		/** Propriété 'Bot secondary background color'. */
+		secondaryBackgroundColor,
+		/** Propriété 'Bot secondary font color'. */
+		secondaryFontColor,
 		/** Propriété 'Bot message background color'. */
 		botMessageBackgroundColor,
 		/** Propriété 'Bot message font color'. */
@@ -504,6 +508,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		backgroundColor,
 		/** Propriété 'Bot font color'. */
 		fontColor,
+		/** Propriété 'Bot secondary background color'. */
+		secondaryBackgroundColor,
+		/** Propriété 'Bot secondary font color'. */
+		secondaryFontColor,
 		/** Propriété 'Bot message background color'. */
 		botMessageBackgroundColor,
 		/** Propriété 'Bot message font color'. */
@@ -1330,6 +1338,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		isEnabled,
 		/** Propriété 'Code'. */
 		code,
+		/** Propriété 'Order'. */
+		sequence,
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Category'. */
@@ -1345,6 +1355,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		label,
 		/** Propriété 'Enabled'. */
 		isEnabled,
+		/** Propriété 'Order'. */
+		sequence,
 		/** Propriété 'Chatbot'. */
 		botId	}
 
@@ -1443,7 +1455,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Category label'. */
 		catLabel,
 		/** Propriété 'Code'. */
-		code	}
+		code,
+		/** Propriété 'Order'. */
+		sequence	}
 
 	/**
 	 * Enumération des champs de QuestionAnswerStat.

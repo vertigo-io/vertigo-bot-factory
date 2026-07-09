@@ -438,6 +438,8 @@ create table CHATBOT_CUSTOM_CONFIG
     REINITIALIZATION_BUTTON	 bool        	,
     BACKGROUND_COLOR	 VARCHAR(100)	,
     FONT_COLOR  	 VARCHAR(100)	,
+    SECONDARY_BACKGROUND_COLOR	 VARCHAR(100)	,
+    SECONDARY_FONT_COLOR	 VARCHAR(100)	,
     BOT_MESSAGE_BACKGROUND_COLOR	 VARCHAR(100)	,
     BOT_MESSAGE_FONT_COLOR	 VARCHAR(100)	,
     BOT_MESSAGE_LINK_COLOR	 VARCHAR(100)	,
@@ -472,6 +474,12 @@ comment on column CHATBOT_CUSTOM_CONFIG.BACKGROUND_COLOR is
 
 comment on column CHATBOT_CUSTOM_CONFIG.FONT_COLOR is
 'Bot font color';
+
+comment on column CHATBOT_CUSTOM_CONFIG.SECONDARY_BACKGROUND_COLOR is
+'Bot secondary background color';
+
+comment on column CHATBOT_CUSTOM_CONFIG.SECONDARY_FONT_COLOR is
+'Bot secondary font color';
 
 comment on column CHATBOT_CUSTOM_CONFIG.BOT_MESSAGE_BACKGROUND_COLOR is
 'Bot message background color';
@@ -1334,6 +1342,7 @@ create table QUESTION_ANSWER
     ANSWER      	 TEXT        	not null,
     IS_ENABLED  	 bool        	not null,
     CODE        	 TEXT        	not null,
+    SEQUENCE    	 NUMERIC     	not null,
     BOT_ID      	 NUMERIC     	not null,
     QA_CAT_ID   	 NUMERIC     	not null,
     constraint PK_QUESTION_ANSWER primary key (QA_ID)
