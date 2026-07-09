@@ -6,6 +6,26 @@
 >
 <head>
     <title th:text="#{questionAnswer.category.title}"></title>
+
+    <script th:inline="javascript">
+
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
+
+            /**
+             * Deplace une categorie vers le haut ou le bas dans l'ordre d'affichage.
+             * @param {number} catId - Identifiant de la categorie a deplacer
+             * @param {boolean} moveUp - true pour monter la categorie, false pour la descendre
+             * @returns {void}
+             */
+            moveCat: function(catId, moveUp) {
+                VUiPage.httpPostAjax("_moveCat", {
+                    'catId': catId,
+                    'moveUp': moveUp
+                });
+            },
+        }
+    </script>
 </head>
 
 <body>
@@ -29,7 +49,15 @@
         <q-tooltip content-style="font-size: 14px">[[#{questionAnswer.category.tooltip}]]</q-tooltip>
     </div>
     <vu:table list="queAnsCategoryList" componentId="queAnsCategoryList" th:tr_@click.native="|goTo('@{/bot/{id}/qacategory/(id=${model.bot.botId})}'+props.row.qaCatId)|" tr_style="cursor : pointer;"
-              sortBy="label" :binary-state-sort="true">
+              sortBy="sequence" :binary-state-sort="true">
+        <vu:slot th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" name="actions_slot">
+            <q-btn color="primary" v-if="props.row.sequence !== 1" round icon="arrow_upward" th:aria-label="#{action.move.up}" th:title="#{action.move.up}"
+                   @click.stop="moveCat(props.row.qaCatId, true)">
+            </q-btn>
+            <q-btn color="primary" v-if="props.row.sequence < vueData.queAnsCategoryList.length" round icon="arrow_downward" th:aria-label="#{action.move.down}" th:title="#{action.move.down}"
+                   @click.stop="moveCat(props.row.qaCatId, false)">
+            </q-btn>
+        </vu:slot>
         <vu:include-data object="queAnsCategoryList" field="qaCatId" />
         <vu:column field="label">
             <a th::href="|'@{/bot/{id}/qacategory/(id=${model.bot.botId})}'+props.row.qaCatId|"
@@ -38,6 +66,7 @@
                 <span style="height:100%" class="row items-center">{{props.row.label}}</span>
             </a>
         </vu:column>
+        <vu:column field="sequence"/>
         <vu:column field="isEnabled">
             <q-icon name="check" color="green" size="2rem" v-if="props.row.isEnabled"></q-icon>
             <q-icon name="block" color="red" size="2rem" v-if="!props.row.isEnabled"></q-icon>

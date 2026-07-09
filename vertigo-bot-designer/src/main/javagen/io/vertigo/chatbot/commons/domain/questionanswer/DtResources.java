@@ -32,6 +32,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldQuestionAnswer$code,
 	/**
+	 * Order.
+	 */
+	fldQuestionAnswer$sequence,
+	/**
 	 * Chatbot.
 	 */
 	fldQuestionAnswer$botId,
@@ -55,6 +59,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Enabled.
 	 */
 	fldQuestionAnswerCategory$isEnabled,
+	/**
+	 * Order.
+	 */
+	fldQuestionAnswerCategory$sequence,
 	/**
 	 * Chatbot.
 	 */
@@ -175,6 +183,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Code.
 	 */
 	fldQuestionAnswerIhm$code,
+	/**
+	 * Order.
+	 */
+	fldQuestionAnswerIhm$sequence,
 
 	/***********************************************************
 	 * SelectQueAnsCategory.

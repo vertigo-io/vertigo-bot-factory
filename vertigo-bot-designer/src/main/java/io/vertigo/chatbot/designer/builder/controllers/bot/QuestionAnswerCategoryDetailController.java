@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
 
@@ -128,6 +129,30 @@ public class QuestionAnswerCategoryDetailController extends AbstractBotCreationC
         viewContext.publishDtList(queAnsIhmFromCategoryListKey, questionAnswerIhmFromCategoryList);
         viewContext.publishDtList(queAnsIhmExceptCategoryListKey, questionAnswerIhmExceptCatList);
 
+        return viewContext;
+    }
+
+    /**
+     * Deplace une question/reponse vers le haut ou le bas dans la categorie courante puis republie la liste.
+     *
+     * @param viewContext le contexte de vue a republier
+     * @param uiMessageStack la pile de messages UI
+     * @param bot le chatbot courant
+     * @param category la categorie courante contenant les questions/reponses
+     * @param qaId l'identifiant de la question/reponse a deplacer
+     * @param moveUp true pour remonter l'element, false pour le descendre
+     * @return le contexte de vue mis a jour avec la liste des questions/reponses reordonnee
+     */
+    @PostMapping("/_moveQa")
+    public ViewContext moveQa(final ViewContext viewContext,
+                              final UiMessageStack uiMessageStack,
+                              @ViewAttribute("bot") final Chatbot bot,
+                              @ViewAttribute("category") final QuestionAnswerCategory category,
+                              @RequestParam("qaId") final Long qaId,
+                              @RequestParam("moveUp") final boolean moveUp) {
+        questionAnswerServices.moveQuestionAnswer(bot, qaId, moveUp);
+        final DtList<QuestionAnswerIhm> questionAnswerIhmFromCategoryList = questionAnswerServices.getQueAnsIhmByCatId(bot, category.getQaCatId());
+        viewContext.publishDtList(queAnsIhmFromCategoryListKey, questionAnswerIhmFromCategoryList);
         return viewContext;
     }
 

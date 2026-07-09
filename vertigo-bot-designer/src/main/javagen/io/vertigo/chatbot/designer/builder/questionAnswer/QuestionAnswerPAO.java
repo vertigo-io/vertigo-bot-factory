@@ -53,18 +53,63 @@ public final class QuestionAnswerPAO implements StoreServices {
 					qa.answer,
 					qa.is_enabled,
 					qa.code,
+					qa.sequence,
 					qac.qa_cat_id as cat_id,
 					qac.label as cat_label
 			from question_answer qa
 			join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)
 			where qa.bot_id = #botId#
-			order by qac.label,
-                    qa.question""",
+			order by qac.sequence,
+                    qa.sequence""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtQuestionAnswerIhm", name = "questionanswerIHM")
 	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm> getAllQuestionAnswerIhmFromBot(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
 		final Task task = createTaskBuilder("TkGetAllQuestionAnswerIhmFromBot")
 				.addValue("botId", botId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
+	 * Execute la tache TkGetNextQueAnsCatSequence.
+	 * @param botId Long
+	 * @return Long nextQueAnsCatSequence
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetNextQueAnsCatSequence",
+			request = """
+			select coalesce(max(sequence) + 1, 1)
+			from question_answer_category qac
+			where qac.bot_id = #botId#""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber", name = "nextQueAnsCatSequence")
+	public Long getNextQueAnsCatSequence(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {
+		final Task task = createTaskBuilder("TkGetNextQueAnsCatSequence")
+				.addValue("botId", botId)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
+	 * Execute la tache TkGetNextQueAnsSequence.
+	 * @param qaCatId Long
+	 * @return Long nextQueAnsSequence
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkGetNextQueAnsSequence",
+			request = """
+			select coalesce(max(sequence) + 1, 1)
+			from question_answer qa
+			where qa.qa_cat_id = #qaCatId#""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyNumber", name = "nextQueAnsSequence")
+	public Long getNextQueAnsSequence(@io.vertigo.datamodel.task.proxy.TaskInput(name = "qaCatId", smartType = "STyId") final Long qaCatId) {
+		final Task task = createTaskBuilder("TkGetNextQueAnsSequence")
+				.addValue("qaCatId", qaCatId)
 				.build();
 		return getTaskManager()
 				.execute(task)
@@ -84,6 +129,7 @@ public final class QuestionAnswerPAO implements StoreServices {
                     qa.answer,
                     qa.is_enabled,
                     qa.code,
+                    qa.sequence,
                     qac.qa_cat_id as cat_id,
                     qac.label as cat_label
 			from question_answer qa
@@ -100,6 +146,46 @@ public final class QuestionAnswerPAO implements StoreServices {
 		return getTaskManager()
 				.execute(task)
 				.getResult();
+	}
+
+	/**
+	 * Execute la tache TkReorderQueAnsAfterDelete.
+	 * @param qaCatId Long
+	 * @param deletedSequence Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkReorderQueAnsAfterDelete",
+			request = """
+			update question_answer
+			set sequence = (sequence - 1)
+			where qa_cat_id = #qaCatId# and sequence > #deletedSequence#""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void reorderQueAnsAfterDelete(@io.vertigo.datamodel.task.proxy.TaskInput(name = "qaCatId", smartType = "STyId") final Long qaCatId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "deletedSequence", smartType = "STyNumber") final Long deletedSequence) {
+		final Task task = createTaskBuilder("TkReorderQueAnsAfterDelete")
+				.addValue("qaCatId", qaCatId)
+				.addValue("deletedSequence", deletedSequence)
+				.build();
+		getTaskManager().execute(task);
+	}
+
+	/**
+	 * Execute la tache TkReorderQueAnsCatAfterDelete.
+	 * @param botId Long
+	 * @param deletedSequence Long
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkReorderQueAnsCatAfterDelete",
+			request = """
+			update question_answer_category
+			set sequence = (sequence - 1)
+			where bot_id = #botId# and sequence > #deletedSequence#""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineProc.class)
+	public void reorderQueAnsCatAfterDelete(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "deletedSequence", smartType = "STyNumber") final Long deletedSequence) {
+		final Task task = createTaskBuilder("TkReorderQueAnsCatAfterDelete")
+				.addValue("botId", botId)
+				.addValue("deletedSequence", deletedSequence)
+				.build();
+		getTaskManager().execute(task);
 	}
 
 	private TaskManager getTaskManager() {

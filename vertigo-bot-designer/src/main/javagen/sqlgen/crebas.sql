@@ -1363,6 +1363,9 @@ comment on column QUESTION_ANSWER.IS_ENABLED is
 comment on column QUESTION_ANSWER.CODE is
 'Code';
 
+comment on column QUESTION_ANSWER.SEQUENCE is
+'Order';
+
 comment on column QUESTION_ANSWER.BOT_ID is
 'Chatbot';
 
@@ -1377,6 +1380,7 @@ create table QUESTION_ANSWER_CATEGORY
     QA_CAT_ID   	 NUMERIC     	not null,
     LABEL       	 VARCHAR(100)	not null,
     IS_ENABLED  	 bool        	not null,
+    SEQUENCE    	 NUMERIC     	not null,
     BOT_ID      	 NUMERIC     	not null,
     constraint PK_QUESTION_ANSWER_CATEGORY primary key (QA_CAT_ID)
 );
@@ -1389,6 +1393,9 @@ comment on column QUESTION_ANSWER_CATEGORY.LABEL is
 
 comment on column QUESTION_ANSWER_CATEGORY.IS_ENABLED is
 'Enabled';
+
+comment on column QUESTION_ANSWER_CATEGORY.SEQUENCE is
+'Order';
 
 comment on column QUESTION_ANSWER_CATEGORY.BOT_ID is
 'Chatbot';

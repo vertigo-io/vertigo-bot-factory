@@ -3,6 +3,10 @@ package io.vertigo.chatbot.commons.dao.questionanswer;
 import javax.inject.Inject;
 
 import io.vertigo.core.lang.Generated;
+import io.vertigo.core.node.Node;
+import io.vertigo.datamodel.task.definitions.TaskDefinition;
+import io.vertigo.datamodel.task.model.Task;
+import io.vertigo.datamodel.task.model.TaskBuilder;
 import io.vertigo.datastore.entitystore.EntityStoreManager;
 import io.vertigo.datastore.impl.dao.DAO;
 import io.vertigo.datastore.impl.dao.StoreServices;
@@ -26,6 +30,69 @@ public final class QuestionAnswerDAO extends DAO<QuestionAnswer, java.lang.Long>
 	@Inject
 	public QuestionAnswerDAO(final EntityStoreManager entityStoreManager, final TaskManager taskManager, final SmartTypeManager smartTypeManager) {
 		super(QuestionAnswer.class, entityStoreManager, taskManager, smartTypeManager);
+	}
+
+
+	/**
+	 * Creates a taskBuilder.
+	 * @param name  the name of the task
+	 * @return the builder 
+	 */
+	private static TaskBuilder createTaskBuilder(final String name) {
+		final TaskDefinition taskDefinition = Node.getNode().getDefinitionSpace().resolve(name, TaskDefinition.class);
+		return Task.builder(taskDefinition);
+	}
+
+	/**
+	 * Execute la tache TkFindQueAnsNextNeighbor.
+	 * @param qaCatId Long
+	 * @param sequence Long
+	 * @return QuestionAnswer questionAnswer
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkFindQueAnsNextNeighbor",
+			request = """
+			SELECT 	qa.*
+			from question_answer qa
+			where qa.qa_cat_id = #qaCatId# and qa.sequence > #sequence#
+			order by qa.sequence asc
+			limit 1""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtQuestionAnswer", name = "questionAnswer")
+	public io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer findQueAnsNextNeighbor(@io.vertigo.datamodel.task.proxy.TaskInput(name = "qaCatId", smartType = "STyId") final Long qaCatId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "sequence", smartType = "STyNumber") final Long sequence) {
+		final Task task = createTaskBuilder("TkFindQueAnsNextNeighbor")
+				.addValue("qaCatId", qaCatId)
+				.addValue("sequence", sequence)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
+	}
+
+	/**
+	 * Execute la tache TkFindQueAnsPreviousNeighbor.
+	 * @param qaCatId Long
+	 * @param sequence Long
+	 * @return QuestionAnswer questionAnswer
+	*/
+	@io.vertigo.datamodel.task.proxy.TaskAnnotation(
+			name = "TkFindQueAnsPreviousNeighbor",
+			request = """
+			SELECT 	qa.*
+			from question_answer qa
+			where qa.qa_cat_id = #qaCatId# and qa.sequence < #sequence#
+			order by qa.sequence desc
+			limit 1""",
+			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
+	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtQuestionAnswer", name = "questionAnswer")
+	public io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer findQueAnsPreviousNeighbor(@io.vertigo.datamodel.task.proxy.TaskInput(name = "qaCatId", smartType = "STyId") final Long qaCatId, @io.vertigo.datamodel.task.proxy.TaskInput(name = "sequence", smartType = "STyNumber") final Long sequence) {
+		final Task task = createTaskBuilder("TkFindQueAnsPreviousNeighbor")
+				.addValue("qaCatId", qaCatId)
+				.addValue("sequence", sequence)
+				.build();
+		return getTaskManager()
+				.execute(task)
+				.getResult();
 	}
 
 }

@@ -6,6 +6,7 @@ create DtDefinition DtQuestionAnswer {
     field  answer           {domain: DoText    label: "Answer"                       cardinality : "1"  }
     field  isEnabled        {domain: DoYesNo   label: "Enabled"                      cardinality : "1"  }
     field  code             {domain: DoText    label: "Code"                         cardinality : "1"  }
+    field  sequence         {domain: DoNumber  label: "Order"                        cardinality : "1"  }
 }
 
 create DtDefinition DtQuestionAnswerFileExport {
@@ -32,6 +33,7 @@ create DtDefinition DtQuestionAnswerCategory {
     id    qaCatId         {domain: DoId      label: "Question-Answer category id"                        }
     field label           {domain: DoLabel   label: "Question-Answer category label"    cardinality:"1"  }
     field isEnabled       {domain: DoYesNo   label: "Enabled"                           cardinality:"1"  }
+    field sequence        {domain: DoNumber  label: "Order"                             cardinality:"1"  }
 }
 
 create DtDefinition DtQuestionAnswerCategoryExport {
@@ -105,6 +107,7 @@ create DtDefinition DtQuestionAnswerIhm {
     field  catId            {domain: DoId      label: "Category id"                  cardinality : "1"  }
     field  catLabel         {domain: DoLabel   label: "Category label"               cardinality : "1"  }
     field  code             {domain: DoText    label: "Code"                         cardinality : "1"  }
+    field  sequence         {domain: DoNumber  label: "Order"                        cardinality : "1"  }
 }
 
 create DtDefinition DtQuestionAnswerContextIhm{

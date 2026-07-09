@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
 
@@ -48,6 +49,27 @@ public class QuestionAnswerCategoryListController extends AbstractBotListEntityC
     @PostMapping("/_exportCategories")
     public VFile exportCategories(final ViewContext viewContext, final UiMessageStack uiMessageStack, @ViewAttribute("bot") final Chatbot bot) {
         return questionAnswerCategoryServices.exportQueAnsCategories(bot, questionAnswerCategoryServices.getAllQueAnsCatByBot(bot));
+    }
+
+    /**
+     * Deplace une categorie vers le haut ou le bas puis republie la liste des categories triee.
+     *
+     * @param viewContext le contexte de vue a republier
+     * @param uiMessageStack la pile de messages UI
+     * @param bot le chatbot courant
+     * @param catId l'identifiant de la categorie a deplacer
+     * @param moveUp true pour remonter la categorie, false pour la descendre
+     * @return le contexte de vue mis a jour avec la liste des categories reordonnee
+     */
+    @PostMapping("/_moveCat")
+    public ViewContext moveCat(final ViewContext viewContext,
+                               final UiMessageStack uiMessageStack,
+                               @ViewAttribute("bot") final Chatbot bot,
+                               @RequestParam("catId") final Long catId,
+                               @RequestParam("moveUp") final boolean moveUp) {
+        questionAnswerCategoryServices.moveCategory(bot, catId, moveUp);
+        viewContext.publishDtList(queAnsCategoryListKey, questionAnswerCategoryServices.getAllQueAnsCatByBot(bot));
+        return viewContext;
     }
 
     @PostMapping("/_importCategories")

@@ -18,6 +18,7 @@ public final class QuestionAnswerCategory implements Entity {
 	private Long qaCatId;
 	private String label;
 	private Boolean isEnabled;
+	private Long sequence;
 
 	@io.vertigo.datamodel.data.stereotype.Association(
 			name = "AQuestionAnswerCategoryChatbot",
@@ -95,6 +96,25 @@ public final class QuestionAnswerCategory implements Entity {
 	 */
 	public void setIsEnabled(final Boolean isEnabled) {
 		this.isEnabled = isEnabled;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Order'.
+	 * @return Long sequence <b>Obligatoire</b>
+	 */
+	@Field(smartType = "STyNumber", cardinality = io.vertigo.core.lang.Cardinality.ONE, label = "Order")
+	public Long getSequence() {
+		return sequence;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Order'.
+	 * @param sequence Long <b>Obligatoire</b>
+	 */
+	public void setSequence(final Long sequence) {
+		this.sequence = sequence;
 	}
 	
 	/**

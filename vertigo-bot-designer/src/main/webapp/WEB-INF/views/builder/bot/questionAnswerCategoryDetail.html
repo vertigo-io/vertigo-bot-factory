@@ -36,6 +36,19 @@
             filteredOptions: function() {
                 return VertigoUi.vueData.categoryList.filter(cat =>
                     cat.qaCatId !== VertigoUi.vueData.category.qaCatId);
+            },
+
+            /**
+             * Deplace une question/reponse vers le haut ou le bas dans l'ordre de la categorie.
+             * @param {number} qaId - Identifiant de la question/reponse a deplacer
+             * @param {boolean} moveUp - true pour monter l'element, false pour le descendre
+             * @returns {void}
+             */
+            moveQa: function(qaId, moveUp) {
+                VUiPage.httpPostAjax("_moveQa", {
+                    'qaId': qaId,
+                    'moveUp': moveUp
+                });
             }
         };
 
@@ -87,9 +100,17 @@
             ></q-btn>
         </div>
 
-        <vu:table list="queAnsIhmFromCategoryList" componentId="questionAnswerList" sortBy="question" :binary-state-sort="true"
+        <vu:table list="queAnsIhmFromCategoryList" componentId="questionAnswerList" sortBy="sequence" :binary-state-sort="true"
                   th:tr_@click.native="|goTo('@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})}'+props.row.qaId)|" tr_style="cursor : pointer;">
             <vu:slot name="actions_slot">
+                <q-btn color="primary" v-if="props.row.sequence !== 1" round icon="arrow_upward" th:aria-label="#{action.move.up}" th:title="#{action.move.up}"
+                       th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                       @click.stop="moveQa(props.row.qaId, true)">
+                </q-btn>
+                <q-btn color="primary" v-if="props.row.sequence < vueData.queAnsIhmFromCategoryList.length" round icon="arrow_downward" th:aria-label="#{action.move.down}" th:title="#{action.move.down}"
+                       th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                       @click.stop="moveQa(props.row.qaId, false)">
+                </q-btn>
                 <q-btn class="on-right" round color="red" icon="playlist_remove"
                        th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
                        @click.stop="$refs.queAnsCategoriesDialog.show();
@@ -98,6 +119,7 @@
                 </q-btn>
             </vu:slot>
             <vu:include-data object="queAnsIhmFromCategoryList" field="qaId" />
+            <vu:include-data object="queAnsIhmFromCategoryList" field="sequence" />
             <vu:column field="question">
                 <a th::href="|'@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})}'+props.row.qaId|"
                    style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
@@ -105,6 +127,7 @@
                     <span style="height:100%" class="row items-center">{{props.row.question}}</span>
                 </a>
             </vu:column>
+            <vu:column field="sequence"/>
             <vu:column field="answer"/>
         </vu:table>
 

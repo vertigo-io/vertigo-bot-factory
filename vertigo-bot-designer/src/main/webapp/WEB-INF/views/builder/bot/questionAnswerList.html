@@ -34,6 +34,16 @@
                 }
 
                 return filteredQuestionAnswers
+            },
+
+            /**
+             * Navigue vers la page de detail de la categorie afin de gerer l'ordre des questions/reponses.
+             * @param {number} qaCatId - Identifiant de la categorie a ouvrir
+             * @returns {void}
+             */
+            goToCategory: function(qaCatId) {
+                var categoryBaseUrl = /*[[@{/bot/{id}/qacategory/(id=${model.bot.botId})}]]*/ '';
+                window.location.href = categoryBaseUrl + qaCatId;
             }
         }
 
@@ -104,6 +114,11 @@
                 sortBy='catLabel'
                 th:tr_@click.native="|goTo('@{/bot/{id}/questionsanswers/detail/(id=${model.bot.botId})}'+props.row.qaId)|"
                 tr_style="cursor : pointer;">
+            <vu:slot name="actions_slot">
+                <q-btn th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" class="on-right" round color="primary" icon="format_list_numbered" th:aria-label="#{questionAnswer.order.manage}" th:title="#{questionAnswer.order.manage}"
+                       @click.stop="goToCategory(props.row.catId)">
+                </q-btn>
+            </vu:slot>
             <vu:column-sample list=questionAnswerIhmList field=question />
             <vu:column-sample list=questionAnswerIhmList field=answer  />
             <vu:column-sample list=questionAnswerIhmList field=catLabel  />

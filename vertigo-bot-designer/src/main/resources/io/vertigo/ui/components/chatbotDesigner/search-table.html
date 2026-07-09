@@ -1,4 +1,4 @@
-<th:block th:fragment="search-table(data, componentId, rowKey, sortBy, rowsPerPage, tableClass, autoColClass, tr_attrs)"
+<th:block th:fragment="search-table(data, componentId, rowKey, sortBy, rowsPerPage, tableClass, autoColClass, tr_attrs, actions_slot)"
 	th:assert="${componentId} != null" 
 	th:with="myRowKey=${rowKey?:model.util.getIdField('__${list}__')}, myRowsPerPage=${rowsPerPage?:10}, myAutoColClass=${autoColClass?:false}"
 	th:attr="objectKey=${model.vContext['componentStates'].addComponentState(componentId).addList('columns')}, objectKey=${model.vContext['componentStates'][__${componentId}__][loading] = false }, objectKey=${model.vContext['componentStates'][__${componentId}__].addObject('pagination', {page: 1 , rowsPerPage : __${myRowsPerPage}__, componentId : '__${componentId}__', search : ''})}">
@@ -19,6 +19,11 @@
 				<q-tr :props="props" th:attr="__${tr_attrs}__">
 
 					<vu:content></vu:content>
+					<vu:column name="action" label="Actions" sortable="false" align="right" auto-width th:if="${actions_slot != null}">
+						<div class="row self-center justify-end col showButtonOnHover no-wrap" role="toolbar">
+							<vu:content-slot name="actions_slot" th:with="label=null, title=null, vTitle=null"/>
+						</div>
+					</vu:column>
 				</q-tr>
 			</template>
 		</q-table>

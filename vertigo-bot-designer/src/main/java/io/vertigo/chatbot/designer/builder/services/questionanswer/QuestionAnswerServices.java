@@ -24,6 +24,7 @@ import io.vertigo.chatbot.designer.builder.questionAnswer.QuestionAnswerPAO;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.datamodel.criteria.Criteria;
 import io.vertigo.datamodel.criteria.Criterions;
@@ -61,7 +62,8 @@ public class QuestionAnswerServices implements Component {
     }
 
     public DtList<QuestionAnswer> getAllQueAnsByCatId(@SecuredOperation("botVisitor") final Chatbot bot, final Long categoryId) {
-        return getAllQueAnsByBot(bot).stream().filter(queAns -> queAns.getQaCatId().equals(categoryId)).collect(VCollectors.toDtList(QuestionAnswer.class));
+        return getAllQueAnsByBot(bot).stream().filter(queAns -> queAns.getQaCatId().equals(categoryId))
+                .sorted(Comparator.comparing(QuestionAnswer::getSequence)).collect(VCollectors.toDtList(QuestionAnswer.class));
     }
 
     public Optional<QuestionAnswer> getQueAnsByCode(final String code, final Chatbot bot) {
@@ -115,8 +117,40 @@ public class QuestionAnswerServices implements Component {
     }
 
     public void deleteQueAnsById(@SecuredOperation("botContributor") final Chatbot bot, final Long questionAnswerId) {
+        final QuestionAnswer questionAnswer = questionAnswerDAO.get(questionAnswerId);
+        final Long qaCatId = questionAnswer.getQaCatId();
+        final Long deletedSequence = questionAnswer.getSequence();
         questionAnswerContextServices.deleteAllQuestionAnswerContextByQaId(bot, questionAnswerId);
         questionAnswerDAO.delete(questionAnswerId);
+        questionAnswerPAO.reorderQueAnsAfterDelete(qaCatId, deletedSequence);
+    }
+
+    /**
+     * Deplace une question/reponse vers le haut ou le bas dans sa categorie en echangeant sa sequence avec celle de son voisin.
+     *
+     * @param bot le chatbot proprietaire de la question/reponse (controle d'autorisation)
+     * @param qaId l'identifiant de la question/reponse a deplacer
+     * @param moveUp true pour remonter l'element, false pour le descendre
+     * @throws VUserException si la question/reponse n'a pas de voisin dans la direction demandee
+     */
+    public void moveQuestionAnswer(@SecuredOperation("botContributor") final Chatbot bot, final Long qaId, final boolean moveUp) {
+        final QuestionAnswer questionAnswer = questionAnswerDAO.get(qaId);
+        final QuestionAnswer neighbor;
+        if (moveUp) {
+            neighbor = questionAnswerDAO.findQueAnsPreviousNeighbor(questionAnswer.getQaCatId(), questionAnswer.getSequence());
+        } else {
+            neighbor = questionAnswerDAO.findQueAnsNextNeighbor(questionAnswer.getQaCatId(), questionAnswer.getSequence());
+        }
+
+        if (neighbor != null) {
+            final Long tempSequence = questionAnswer.getSequence();
+            questionAnswer.setSequence(neighbor.getSequence());
+            neighbor.setSequence(tempSequence);
+            questionAnswerDAO.save(questionAnswer);
+            questionAnswerDAO.save(neighbor);
+        } else {
+            throw new VUserException("Can't move question/answer " + qaId + " because it is out of sequence");
+        }
     }
 
     public void deleteAllQueAnsByBot(@SecuredOperation("botContributor") final Chatbot bot) {
@@ -125,13 +159,20 @@ public class QuestionAnswerServices implements Component {
 
 
     public void saveQuestionAnswer(@SecuredOperation("botContributor") final Chatbot bot, final QuestionAnswer questionAnswer) {
+        if (questionAnswer.getQaId() == null) {
+            questionAnswer.setSequence(questionAnswerPAO.getNextQueAnsSequence(questionAnswer.getQaCatId()));
+        }
         questionAnswerDAO.save(questionAnswer);
     }
 
     public void saveCategoryChange(@SecuredOperation("botContributor") final Chatbot bot, Long queAnsId, final Long queAnsCategoryId) {
         QuestionAnswer questionAnswer = questionAnswerDAO.get(queAnsId);
+        final Long previousCatId = questionAnswer.getQaCatId();
+        final Long previousSequence = questionAnswer.getSequence();
         questionAnswer.setQaCatId(queAnsCategoryId);
+        questionAnswer.setSequence(questionAnswerPAO.getNextQueAnsSequence(queAnsCategoryId));
         questionAnswerDAO.update(questionAnswer);
+        questionAnswerPAO.reorderQueAnsAfterDelete(previousCatId, previousSequence);
     }
 
     public void saveQueAnsCategoryChangesFromTopIdsString(@SecuredOperation("botContributor") final Chatbot bot, String queAnsIdsString, final Long queAnsCategoryId) {
@@ -157,6 +198,11 @@ public class QuestionAnswerServices implements Component {
         questionAnswer.setQaCatId(questionAnswerIhm.getCatId());
         questionAnswer.setBotId(bot.getBotId());
         questionAnswer.setCode(questionAnswerIhm.getCode());
+        if (questionAnswerIhm.getQaId() == null) {
+            questionAnswer.setSequence(questionAnswerPAO.getNextQueAnsSequence(questionAnswerIhm.getCatId()));
+        } else {
+            questionAnswer.setSequence(questionAnswerDAO.get(questionAnswerIhm.getQaId()).getSequence());
+        }
         return questionAnswerDAO.save(questionAnswer);
     }
 

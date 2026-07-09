@@ -9,4 +9,9 @@
         <sqlFile encoding="utf-8" path="/sql/v_3_3/alter_chatbot-tabs-secondary-colors.sql" />
     </changeSet>
 
+    <changeSet author="xsupiot"
+        id="Add sequence column for FAQ category and question-answer ordering">
+        <sqlFile encoding="utf-8" path="/sql/v_3_3/alter_chatbot-faq-sequence.sql" />
+    </changeSet>
+
 </databaseChangeLog>
