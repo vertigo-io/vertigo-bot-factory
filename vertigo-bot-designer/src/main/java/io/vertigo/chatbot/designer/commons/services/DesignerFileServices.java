@@ -42,11 +42,15 @@ import java.util.zip.ZipOutputStream;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.AttachmentInfo;
 import io.vertigo.chatbot.commons.FileInfoStd;
 import io.vertigo.chatbot.commons.FileInfoTmp;
 import io.vertigo.chatbot.commons.FileServices;
+import io.vertigo.chatbot.commons.dao.AttachmentFileInfoDAO;
 import io.vertigo.chatbot.commons.dao.MediaFileInfoDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.MediaFileInfo;
@@ -70,6 +74,15 @@ import static io.vertigo.chatbot.designer.utils.StringUtils.lineError;
 @Transactional
 public class DesignerFileServices implements Component {
 
+	private static final Logger LOGGER = LogManager.getLogger(DesignerFileServices.class);
+
+	/**
+	 * Fragment du message porté par {@link VSystemException} levé par
+	 * {@code FsFileStorePlugin} lorsqu'un fichier physique référencé en base
+	 * est introuvable sur le système de fichiers.
+	 */
+	private static final String FILE_NOT_FOUND_MESSAGE_FRAGMENT = "Impossible de trouver le fichier";
+
 	@Inject
 	private FileServices fileServices;
 
@@ -78,6 +91,9 @@ public class DesignerFileServices implements Component {
 
 	@Inject
 	private MediaFileInfoDAO mediaFileInfoDAO;
+
+	@Inject
+	private AttachmentFileInfoDAO attachmentFileInfoDAO;
 
 	@Inject
 	protected LocaleManager localeManager;
@@ -104,8 +120,42 @@ public class DesignerFileServices implements Component {
 		return fileStoreManager.read(toAttachmentFileInfoUri(attFiId)).getVFile();
 	}
 
+	/**
+	 * Supprime une pièce jointe (fichier physique + métadonnées en base) de manière
+	 * défensive.
+	 * <p>
+	 * Le plugin {@code FsFileStorePlugin} de Vertigo lève {@link VSystemException}
+	 * si le fichier physique référencé en base est absent du système de fichiers
+	 * (cf. {@code FileActionDelete.<init>}). Dans ce cas, la suppression de l'entité
+	 * en base n'a pas lieu, ce qui ferait remonter l'exception jusqu'à l'appelant
+	 * (par exemple {@code AttachmentServices.save}) et provoquerait l'annulation de
+	 * la transaction métier.
+	 * </p>
+	 * <p>
+	 * On capture donc cette exception spécifique pour :
+	 * <ul>
+	 *   <li>tracer un avertissement sur le fichier orphelin,</li>
+	 *   <li>nettoyer manuellement la ligne {@code ATTACHMENT_FILE_INFO} restée
+	 *       orpheline en base, afin que les opérations métier ultérieures
+	 *       (sauvegarde, suppression d'attachement, …) puissent se poursuivre.</li>
+	 * </ul>
+	 * Toute autre {@link VSystemException} (par exemple un fichier non supprimable
+	 * pour cause de droits) est relancée pour ne pas masquer un vrai problème.
+	 *
+	 * @param attFiId identifiant du {@code AttachmentFileInfo} à supprimer
+	 */
 	public void deleteAttachment(final Long attFiId) {
-		fileStoreManager.delete(toAttachmentFileInfoUri(attFiId));
+		try {
+			fileStoreManager.delete(toAttachmentFileInfoUri(attFiId));
+		} catch (final VSystemException e) {
+			if (isFileNotFoundDeletionException(e)) {
+				LOGGER.warn("Le fichier physique de l'attachement (attFiId={}) est introuvable. "
+						+ "Suppression des métadonnées orphelines en base.", attFiId, e);
+				attachmentFileInfoDAO.delete(attFiId);
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	public VFile getFileTmp(final FileInfoURI fileTmpUri) {
@@ -120,14 +170,49 @@ public class DesignerFileServices implements Component {
 		return fileStoreManager.read(fileTmpUri);
 	}
 
+	/**
+	 * Supprime un fichier temporaire de manière défensive.
+	 * <p>
+	 * Les fichiers temporaires sont stockés sur le système de fichiers via
+	 * {@code FsFullFileStorePlugin} et peuvent avoir été purgés automatiquement
+	 * (cf. paramètre {@code purgeDelayMinutes} dans la configuration du store).
+	 * On absorbe donc l'exception levée lorsque le fichier est introuvable pour
+	 * éviter de faire échouer l'opération métier appelante.
+	 *
+	 * @param fileTmpUri URI du {@code FileInfoTmp} à supprimer
+	 */
 	public void deleteFileTmp(final FileInfoURI fileTmpUri) {
 		final FileInfoDefinition tmpFileInfoDefinition = FileInfoDefinition.findFileInfoDefinition(FileInfoTmp.class);
 		Assertion.check().isTrue(tmpFileInfoDefinition.equals(fileTmpUri.getDefinition()), "Can't access this file storage."); //not too much infos for security purpose
-		fileStoreManager.delete(fileTmpUri);
+		try {
+			fileStoreManager.delete(fileTmpUri);
+		} catch (final VSystemException e) {
+			if (isFileNotFoundDeletionException(e)) {
+				LOGGER.warn("Le fichier temporaire {} est introuvable, il a probablement déjà été purgé.", fileTmpUri, e);
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	private static FileInfoURI toAttachmentFileInfoUri(final Long attFiId) {
 		return new FileInfoURI(FileInfoDefinition.findFileInfoDefinition(AttachmentInfo.class), attFiId);
+	}
+
+	/**
+	 * Détermine si la {@link VSystemException} fournie correspond au cas d'un
+	 * fichier physique manquant lors d'une suppression via
+	 * {@code FsFileStorePlugin} / {@code FsFullFileStorePlugin}.
+	 * <p>
+	 * Le contrôle est basé sur le message de l'exception (Vertigo n'expose pas
+	 * de type d'exception dédié pour ce cas).
+	 *
+	 * @param exception exception levée par {@code FileStoreManager#delete}
+	 * @return {@code true} si l'exception correspond à un fichier introuvable
+	 */
+	private static boolean isFileNotFoundDeletionException(final VSystemException exception) {
+		final String message = exception.getMessage();
+		return message != null && message.contains(FILE_NOT_FOUND_MESSAGE_FRAGMENT);
 	}
 
 	public FileInfoURI toStdFileInfoUri(final Long fileId) {
@@ -238,36 +323,36 @@ public class DesignerFileServices implements Component {
 		}
 	}
 
-	public Map<String, VFile> unzipMultipleFiles(VFile zipFile) {
-		try (InputStream is = zipFile.createInputStream();
-			 ZipInputStream zis = new ZipInputStream(is)) {
+	public Map<String, VFile> unzipMultipleFiles(final VFile zipFile) {
+		try (final InputStream is = zipFile.createInputStream();
+             final ZipInputStream zis = new ZipInputStream(is)) {
 
-			Map<String, VFile> fileMap = new HashMap<>();
+			final Map<String, VFile> fileMap = new HashMap<>();
 			ZipEntry zipEntry;
 			while ((zipEntry = zis.getNextEntry()) != null) {
 
-				String [] fileTypeAndName = zipEntry.getName().split("/");
-				String fileType = fileTypeAndName[0];
-				String fileName = fileTypeAndName[1];
-				long size = zipEntry.getSize();
-				Instant lastModified = Instant.ofEpochMilli(zipEntry.getTime());
-				String mimeType = "application/octet-stream"; // You may need to adjust this based on your use case
+				final String [] fileTypeAndName = zipEntry.getName().split("/");
+				final String fileType = fileTypeAndName[0];
+				final String fileName = fileTypeAndName[1];
+				final long size = zipEntry.getSize();
+				final Instant lastModified = Instant.ofEpochMilli(zipEntry.getTime());
+				final String mimeType = "application/octet-stream"; // You may need to adjust this based on your use case
 
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				byte[] buffer = new byte[1024];
+				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				final byte[] buffer = new byte[1024];
 				int len;
 				while ((len = zis.read(buffer)) > 0) {
 					baos.write(buffer, 0, len);
 				}
-				byte[] content = baos.toByteArray();
+				final byte[] content = baos.toByteArray();
 
-				VFile vFile = new StreamFile(fileName, mimeType, lastModified, size, () -> new ByteArrayInputStream(content));
+				final VFile vFile = new StreamFile(fileName, mimeType, lastModified, size, () -> new ByteArrayInputStream(content));
 				fileMap.put(fileType, vFile);
 
 				zis.closeEntry();
 			}
 			return fileMap;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new VSystemException(e, "Couldn't unzip files");
 		}
 	}
