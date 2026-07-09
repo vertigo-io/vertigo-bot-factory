@@ -44,7 +44,7 @@
 		<liquibase.version>4.24.0</liquibase.version>
 		<clamav-client.version>2.1.2</clamav-client.version>
 		<h2.version>2.2.224</h2.version>
-		<postgresql.version>42.6.0</postgresql.version>
+		<postgresql.version>42.7.10</postgresql.version>
 		<jsoup.version>1.16.1</jsoup.version>
 		<jackson-databind.version>2.15.2</jackson-databind.version>
 		<commons-io.version>2.13.0</commons-io.version>

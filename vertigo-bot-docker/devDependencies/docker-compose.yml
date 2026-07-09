@@ -3,7 +3,7 @@
 # Passwords / API key can be, for example, generated locally with :
 #   < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;
 
-
+name: chatbotfactory
 
 services:
   # apache:
@@ -65,37 +65,49 @@ services:
 
 
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_PASSWORD: postgres
     volumes:
-      - cf_postgres_16_data:/var/lib/postgresql/data/pgdata
+      - cf_postgres_18_data:/var/lib/postgresql/data/pgdata
       - ./initSql/:/docker-entrypoint-initdb.d/
       - ./restore/:/restore/
     ports:
       - "5433:5432"
     networks:
       - cb_factory
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     stop_grace_period: 30s
 
   postgresKC:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_PASSWORD: keycloak
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
     volumes:
-      - cf_postgresKC_16_data:/var/lib/postgresql/data/pgdata
+      - cf_postgresKC_18_data:/var/lib/postgresql/data/pgdata
     ports:
       - "5434:5432"
     networks:
       - cb_factory
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     stop_grace_period: 30s
 
   keycloak:
-    image: keycloak/keycloak:26.5.6
+    image: keycloak/keycloak:latest
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: changeme
@@ -124,7 +136,8 @@ services:
     volumes:
       - ./data/keycloak/import:/opt/keycloak/data/import
     depends_on:
-      - postgresKC
+      postgresKC:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/9000 && echo -e \"GET /health/ready HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n\" >&3 && cat <&3 | grep -q UP'"]
       interval: 15s
@@ -136,7 +149,7 @@ services:
     stop_grace_period: 30s
 
   influxdb:
-    image: influxdb:2.8.0-alpine
+    image: influxdb:alpine
     volumes:
       #- cf_influxdb_data:/var/lib/influxdb
       - cf_influxdb2_data:/var/lib/influxdb2
@@ -157,7 +170,11 @@ services:
 
   chronograph:
     # IHM de consultation influxDB
-    image: chronograf:1.10.9-alpine
+    # Note: la variante "1.11.1-alpine" est cassee chez InfluxData (binaire
+    # /usr/bin/chronograf place par erreur dans /usr/bin/usr/bin/chronograf).
+    # On reste sur l'image Debian "1.11.1" tant que la 1.11.x-alpine n'est
+    # pas corrigee. Voir https://hub.docker.com/_/chronograf
+    image: chronograf:alpine
     volumes:
       - cf_chronograph_data:/var/lib/chronograf
     ports:
@@ -183,6 +200,15 @@ services:
     image: rasa/rasa:main-full
     environment:
       - LOG_LEVEL=DEBUG
+      # Force UTF-8 everywhere (locale + Python UTF-8 mode) so that
+      # randomly-generated model file names containing non-ASCII characters
+      # (e.g. nlu-...-sticky-rosé.tar.gz) are encoded/decoded consistently
+      # between the train step and the agent reload step. Without this the
+      # reload fails with HTTP 400 because the file name comes back mojibaked
+      # (rosé -> rosÃ©).
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
+      - PYTHONUTF8=1
     ports:
       - "5005:5005"
     command:
@@ -201,8 +227,8 @@ services:
     stop_grace_period: 30s
 
 volumes:
-  cf_postgres_16_data:
-  cf_postgresKC_16_data:
+  cf_postgres_18_data:
+  cf_postgresKC_18_data:
 #  cf_influxdb_data:
   cf_influxdb2_data:
   cf_influxdb2_config:

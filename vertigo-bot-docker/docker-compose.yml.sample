@@ -5,9 +5,11 @@ version: '3.5'
 # Passwords / API key can be, for example, generated locally with :
 #   < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;
 
+name: chatbotfactory
+
 services:
   postgres:
-    image: postgres:16
+    image: postgres:18-alpine
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_PASSWORD: changeit
@@ -19,10 +21,16 @@ services:
       - "5432:5432" 
     networks:
       - cb_factory
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     restart: unless-stopped
 
   postgresKC:
-      image: postgres:16
+      image: postgres:18-alpine
       environment:
         PGDATA: /var/lib/postgresql/data/pgdata
         POSTGRES_PASSWORD: changeit
@@ -34,6 +42,12 @@ services:
         - "5434:5432"
       networks:
         - cb_factory
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U keycloak"]
+        interval: 10s
+        timeout: 5s
+        retries: 10
+        start_period: 30s
 
     clamav:
       image: clamav/clamav
@@ -41,9 +55,15 @@ services:
         - "3310:3310"
       networks:
         - cb_factory
+      healthcheck:
+        test: ["CMD", "clamdscan", "--ping", "1"]
+        interval: 15s
+        timeout: 10s
+        retries: 5
+        start_period: 120s
 
     keycloak:
-      image: bitnami/keycloak:24
+      image: keycloak/keycloak:latest
       environment:
         KEYCLOAK_ADMIN_USER: admin
         KEYCLOAK_ADMIN_PASSWORD: changeme
@@ -63,11 +83,17 @@ services:
         - 8200:8080
       depends_on:
         - postgresKC
+      healthcheck:
+        test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/9000 && echo -e \"GET /health/ready HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n\" >&3 && cat <&3 | grep -q UP'"]
+        interval: 15s
+        timeout: 10s
+        retries: 10
+        start_period: 120s
       networks:
         - cb_factory
 
   influxdb:
-    image: influxdb:2.7.1
+    image: influxdb:alpine
     volumes:
       - cf_influxdb2_data:/var/lib/influxdb2
       - cf_influxdb2_config:/etc/influxdb2
@@ -87,7 +113,7 @@ services:
 
 
   analytica:
-    image: vertigoio/vertigo-analytics-server:0.12.0
+    image: vertigoio/vertigo-analytics-server:0.14.0
     environment:
       INFLUXDB_URL: http://influxdb:8086
       INFLUXDB_ORG: chatbot
@@ -133,7 +159,7 @@ services:
     restart: unless-stopped
 
   runner_1:
-    image: registry.kleegroup.com/chatbot-factory/bot-runner-all-included:2.4
+    image: registry.kleegroup.com/chatbot-factory/bot-runner-all-included:3.2.2
     environment:
       - DESIGNER_URL=http://designer:8080/designer/
       - ANALYTICA_HOST=analytica
@@ -163,7 +189,7 @@ services:
     restart: unless-stopped
 
   rasa_1:
-    image: rasa/rasa:3.6.20-full
+    image: rasa/rasa:main-full
     ports:
       - 5007:5005
     command:
@@ -173,9 +199,15 @@ services:
       - "*"
     networks:
       - cb_factory
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5005/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   runner_2:
-    image: registry.kleegroup.com/chatbot-factory/bot-runner-all-included
+    image: registry.kleegroup.com/chatbot-factory/bot-runner-all-included:3.2.2
     environment:
       - DESIGNER_URL=http://designer:8080/designer/
       - ANALYTICA_HOST=analytica
@@ -205,7 +237,7 @@ services:
     restart: unless-stopped
 
   rasa_2:
-    image: rasa/rasa:3.6.20-full
+    image: rasa/rasa:main-full
     ports:
       - 5007:5005
     command:
@@ -215,6 +247,12 @@ services:
       - "*"
     networks:
       - cb_factory
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5005/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
 volumes:
   cf_postgres_data:
@@ -226,4 +264,3 @@ volumes:
     
 networks:
   cb_factory:
-  
