@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"
           rel="stylesheet"
           type="text/css">
-    <link href="https://cdn.jsdelivr.net/npm/quasar@2.16.5/dist/quasar.prod.min.css"
+    <link href="https://cdn.jsdelivr.net/npm/quasar@2.21.1/dist/quasar.prod.min.css"
           rel="stylesheet"
           type="text/css">
     <link href="style/style.css" rel="stylesheet" type="text/css">
@@ -24,6 +24,8 @@
     <div id="q-app">
       <div :style="'--background-color: ' + customConfig.backgroundColor
                       + '; --font-color: ' + customConfig.fontColor
+                      + '; --secondary-background-color: ' + customConfig.secondaryBackgroundColor
+                      + '; --secondary-font-color: ' + customConfig.secondaryFontColor
                       + '; --bot-message-bg-color: ' + customConfig.botMessageBackgroundColor
                       + '; --font-family: ' + customConfig.fontFamily
                       + '; --bot-message-font-color: ' + customConfig.botMessageFontColor
@@ -299,10 +301,10 @@
         </q-layout>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.4.31/dist/vue.global.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/quasar@2.16.5/dist/quasar.umd.prod.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios@1.7.9/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.11/dist/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.39/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.21.1/dist/quasar.umd.prod.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.18.1/dist/axios.min.js"></script>
     <script src="js/chatbot.js"></script>
     <script src="js/botService.js"></script>
     <script src="js/documentaryResourceService.js"></script>
