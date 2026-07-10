@@ -88,8 +88,7 @@ create Task TkGetScriptIntentionExportByBotId{
  			join script_intention sci on (sci.top_id = top.top_id)  
  			where top.bot_id = #botId# 
  			and top.is_enabled = true
- 			"profil_per_chatbot
-	in botId				{domain : DoId,								cardinality:"1"} 
+	in botId				{domain : DoId,								cardinality:"1"}
 	out rbes 				{domain : DoDtScriptIntentionExport			cardinality:"*"}
 }
 
