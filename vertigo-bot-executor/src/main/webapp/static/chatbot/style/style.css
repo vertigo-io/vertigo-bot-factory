@@ -280,6 +280,37 @@ img {
 
 /* Q&A */
 
+.qanda-category {
+    margin-top: 10px;
+}
+
+.qanda-category-header {
+    align-items: center;
+    background-color: var(--secondary-background-color);
+    border-radius: 10px;
+    color: var(--secondary-font-color);
+    cursor: pointer;
+    display: flex;
+    font-size: 15px;
+    font-weight: bold;
+    justify-content: space-between;
+    padding: 10px 12px;
+}
+
+.qanda-category-label {
+    overflow-wrap: anywhere;
+}
+
+.qanda-category-icon {
+    flex-shrink: 0;
+    font-size: 20px;
+    margin-left: 8px;
+}
+
+.qanda-category-questions {
+    padding-left: 10px;
+}
+
 .q-btn-question {
     text-transform: none;
     text-align: start;

@@ -236,12 +236,24 @@
                   </div>
                   <q-scroll-area class="row q-px-sm col-grow">
                     <div class="q-mx-md">
-                      <q-btn v-for="(questionAnswer, index) in qAndAConfig.filteredQuestionAnswerList"
-                             class="q-btn-question"
-                             v-html="questionAnswer.question"
-                             @click="selectQuestion(questionAnswer)"
-                      >
-                      </q-btn>
+                      <div v-for="questionCategory in questionCategories"
+                           class="qanda-category">
+                        <div class="qanda-category-header"
+                             @click="toggleCategory(questionCategory.label)">
+                          <span class="qanda-category-label">{{questionCategory.label}}</span>
+                          <q-icon :name="qAndAConfig.expandedCategories[questionCategory.label] ? 'expand_less' : 'expand_more'"
+                                  class="qanda-category-icon"></q-icon>
+                        </div>
+                        <div v-if="qAndAConfig.expandedCategories[questionCategory.label]"
+                             class="qanda-category-questions">
+                          <q-btn v-for="questionAnswer in questionCategory.questions"
+                                 class="q-btn-question"
+                                 v-html="questionAnswer.question"
+                                 @click="selectQuestion(questionAnswer)"
+                          >
+                          </q-btn>
+                        </div>
+                      </div>
                     </div>
                     <div style="height: 30px"></div>
                   </q-scroll-area>

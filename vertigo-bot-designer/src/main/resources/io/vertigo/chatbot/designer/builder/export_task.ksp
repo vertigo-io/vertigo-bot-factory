@@ -88,7 +88,7 @@ create Task TkGetScriptIntentionExportByBotId{
  			join script_intention sci on (sci.top_id = top.top_id)  
  			where top.bot_id = #botId# 
  			and top.is_enabled = true
- 			"
+ 			"profil_per_chatbot
 	in botId				{domain : DoId,								cardinality:"1"} 
 	out rbes 				{domain : DoDtScriptIntentionExport			cardinality:"*"}
 }
@@ -103,6 +103,8 @@ create Task TkGetAllActiveQuestionAnswerExportByBotId {
 			from question_answer qa
             join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)
 			where qa.bot_id = #botId# and qa.is_enabled = true
+			order by qac.sequence,
+                    qa.sequence
              "
 	in botId  				  {domain : DoId         		        cardinality : "1"  }
 	out questionAnswerExport  {domain : DoDtQuestionAnswerExport    cardinality : "*"  }
