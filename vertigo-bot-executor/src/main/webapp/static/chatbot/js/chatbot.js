@@ -153,6 +153,13 @@ const chatbotComponent = {
                 questionCategories[categoryIndex[categoryLabel]].questions.push(questionAnswer);
             });
             return questionCategories;
+        },
+        qAndAStatusMessage(){
+            if (this.qAndAConfig.filterInput === '') {
+                return '';
+            }
+            const resultCount = this.qAndAConfig.filteredQuestionAnswerList.length;
+            return resultCount + (resultCount === 1 ? ' résultat trouvé dans la FAQ.' : ' résultats trouvés dans la FAQ.');
         }
     },
     methods: {
@@ -380,8 +387,8 @@ const chatbotComponent = {
             }
         },
 
-        toggleCategory(categoryLabel){
-            chatbot.qAndAConfig.expandedCategories[categoryLabel] = !chatbot.qAndAConfig.expandedCategories[categoryLabel];
+        setCategoryExpanded(categoryLabel, value){
+            chatbot.qAndAConfig.expandedCategories[categoryLabel] = value;
         },
 
         selectQuestion(selected){
