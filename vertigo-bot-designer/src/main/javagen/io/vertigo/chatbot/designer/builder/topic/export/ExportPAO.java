@@ -175,7 +175,9 @@ public final class ExportPAO implements StoreServices {
                     qac.label as cat_label
 			from question_answer qa
             join question_answer_category qac on (qac.qa_cat_id = qa.qa_cat_id)
-			where qa.bot_id = #botId# and qa.is_enabled = true""",
+			where qa.bot_id = #botId# and qa.is_enabled = true
+			order by qac.sequence,
+                    qa.sequence""",
 			taskEngineClass = io.vertigo.basics.task.TaskEngineSelect.class)
 	@io.vertigo.datamodel.task.proxy.TaskOutput(smartType = "STyDtQuestionAnswerExport", name = "questionAnswerExport")
 	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.QuestionAnswerExport> getAllActiveQuestionAnswerExportByBotId(@io.vertigo.datamodel.task.proxy.TaskInput(name = "botId", smartType = "STyId") final Long botId) {

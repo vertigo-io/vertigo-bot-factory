@@ -7,7 +7,9 @@ function initQAndA(){
         axios.post(chatbot.qAndAConfig.qAndAUrl + '/getQuestionsAnswers', chatbot.context).then(questionAnswerResponse => {
             chatbot.qAndAConfig.questionAnswerList = questionAnswerResponse.data;
             chatbot.qAndAConfig.filteredQuestionAnswerList = questionAnswerResponse.data;
+            chatbot.qAndAConfig.expandedCategories = {};
             chatbot.qAndAConfig.filterInput = '';
+            chatbot.qAndAConfig.selectedQuestion = null;
         });
     });
 }

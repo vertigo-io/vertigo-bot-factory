@@ -126,6 +126,7 @@ const chatbotComponent = {
                 qAndAUrl: _qAndABaseUrl,
                 questionAnswerList: [],
                 filteredQuestionAnswerList: [],
+                expandedCategories: {},
                 filterInput: '',
                 selectedQuestion: null
             },
@@ -134,6 +135,31 @@ const chatbotComponent = {
                 documentaryResourceList: [],
                 documentaryResourceFileBaseUrl: _documentaryResourceBaseUrl + '/getDocumentaryResourceFile?attId='
             }
+        }
+    },
+    computed: {
+        questionCategories(){
+            const categoryIndex = {};
+            const questionCategories = [];
+            this.qAndAConfig.filteredQuestionAnswerList.forEach(questionAnswer => {
+                const categoryLabel = questionAnswer.catLabel || 'Sans catégorie';
+                if (categoryIndex[categoryLabel] === undefined) {
+                    categoryIndex[categoryLabel] = questionCategories.length;
+                    questionCategories.push({
+                        label: categoryLabel,
+                        questions: []
+                    });
+                }
+                questionCategories[categoryIndex[categoryLabel]].questions.push(questionAnswer);
+            });
+            return questionCategories;
+        },
+        qAndAStatusMessage(){
+            if (this.qAndAConfig.filterInput === '') {
+                return '';
+            }
+            const resultCount = this.qAndAConfig.filteredQuestionAnswerList.length;
+            return resultCount + (resultCount === 1 ? ' résultat trouvé dans la FAQ.' : ' résultats trouvés dans la FAQ.');
         }
     },
     methods: {
@@ -346,11 +372,23 @@ const chatbotComponent = {
         },
 
         filterQuestionsAnswers(){
-            if (chatbot.qAndAConfig.filterInput !== ''){
-                chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList.filter(questionAnswer => questionAnswer.question.toLowerCase().includes(chatbot.qAndAConfig.filterInput.toLowerCase()) || questionAnswer.answer.toLowerCase().includes(chatbot.qAndAConfig.filterInput.toLowerCase()))
+            const filterInput = chatbot.qAndAConfig.filterInput.toLowerCase();
+            if (filterInput !== ''){
+                chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList.filter(questionAnswer =>
+                    (questionAnswer.question || '').toLowerCase().includes(filterInput)
+                    || (questionAnswer.answer || '').toLowerCase().includes(filterInput));
+                chatbot.qAndAConfig.expandedCategories = {};
+                this.questionCategories.forEach(questionCategory => {
+                    chatbot.qAndAConfig.expandedCategories[questionCategory.label] = true;
+                });
             }else{
-                chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList
+                chatbot.qAndAConfig.filteredQuestionAnswerList = chatbot.qAndAConfig.questionAnswerList;
+                chatbot.qAndAConfig.expandedCategories = {};
             }
+        },
+
+        setCategoryExpanded(categoryLabel, value){
+            chatbot.qAndAConfig.expandedCategories[categoryLabel] = value;
         },
 
         selectQuestion(selected){
