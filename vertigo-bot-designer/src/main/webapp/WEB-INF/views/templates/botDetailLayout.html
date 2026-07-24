@@ -272,7 +272,7 @@
 		<vu:include-data object="contextEnvironments" field="'*'"/>
 		<q-page-sticky position="bottom-right" :offset="[0,36]">
 			<q-btn round size="lg" id="botDrawerButton" @click="toggleBotDrawer()">
-				<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" class="bot-img" alt="avatar chatbot"/>
+				<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" class="bot-img" alt="avatar Plateforme d'accompagnement"/>
 			</q-btn>
 		</q-page-sticky>
 		<q-drawer :model-value="componentStates.botDrawer.open" id="botDrawer" ref="botDrawer" :width="400" elevated side="right" >
