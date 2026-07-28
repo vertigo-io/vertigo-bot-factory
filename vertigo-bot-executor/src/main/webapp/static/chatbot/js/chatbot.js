@@ -418,6 +418,7 @@ const { createApp } = Vue;
 const chatbotApp = createApp(chatbotComponent);
 
 chatbotApp.use(Quasar);
+document.documentElement.lang = 'fr';
 
 const chatbot = chatbotApp.mount("#q-app");
 
