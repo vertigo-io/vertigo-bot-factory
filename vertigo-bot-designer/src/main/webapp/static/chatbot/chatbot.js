@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         _iframe.className = 'iframe';
         _iframe.id = 'chatbotIframe'
+        _iframe.title = 'Plateforme d’accompagnement';
         _iframe.src = `${_initParam.botIHMBaseUrl}?runnerUrl=${_initParam.runnerUrl}&botName=${_initParam.botName}&useRating=${_initParam.useRating}`;
 
         if (_initParam.optionalParameters) {
