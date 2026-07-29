@@ -271,7 +271,7 @@
 	<section layout:fragment="content-bot-drawer"  th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}">
 		<vu:include-data object="contextEnvironments" field="'*'"/>
 		<q-page-sticky position="bottom-right" :offset="[0,36]">
-			<q-btn round size="lg" id="botDrawerButton" @click="toggleBotDrawer()">
+			<q-btn round size="lg" id="botDrawerButton" aria-label="Ouvrir le chatbot" @click="toggleBotDrawer()">
 				<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" class="bot-img" alt="avatar Plateforme d'accompagnement"/>
 			</q-btn>
 		</q-page-sticky>

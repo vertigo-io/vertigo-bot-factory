@@ -14,13 +14,17 @@ document.addEventListener('DOMContentLoaded', function () {
       let _iframe = null;
 
       function _createFlottingButton() {
-        _button = document.createElement('div');
+        _button = document.createElement('button');
 
         _button.className = 'floating-button';
+        _button.type = 'button';
+        _button.setAttribute('aria-label', 'Ouvrir le chatbot');
 
         _button.addEventListener('click', Chatbot.show);
         _button.addEventListener('mouseover', _buttonOver);
         _button.addEventListener('mouseout', _buttonOut);
+        _button.addEventListener('focus', _buttonOver);
+        _button.addEventListener('blur', _buttonOut);
 
         const img = document.createElement('img');
         img.className = 'avatar-img';
