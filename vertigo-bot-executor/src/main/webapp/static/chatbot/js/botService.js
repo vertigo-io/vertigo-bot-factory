@@ -33,6 +33,7 @@ function startConversation() {
         if (sessionStorage.convId) {
             restoreFromSessionStorage();
             _scrollToBottom();
+            focusInputIfActive();
         } else {
             axios.post(chatbot.botConfig.botUrl + '/start', {message: null, metadatas: {'context': chatbot.context}})
                 .then(setParametersFromHttpResponse)
@@ -114,6 +115,7 @@ function _displayMessages() {
             chatbot.botConfig.keepAction = false;
             updateSessionStorage();
         }
+        focusInputIfActive();
     }
 }
 
@@ -222,7 +224,20 @@ function addPopins() {
             html.hasPopin = true;
         }
     }
-    if (chatbot.$refs.input && !chatbot.$refs.input.disable) {
-        chatbot.focusInput();
+    focusInputIfActive();
+}
+
+function focusInputIfActive() {
+    const inputDisabled = chatbot.botConfig.processing
+        || chatbot.botConfig.error
+        || (!chatbot.botConfig.acceptNlu && !chatbot.botConfig.isEnded)
+        || chatbot.customConfig.disableNlu;
+
+    if (chatbot.footerMenu === 'bot' && !inputDisabled) {
+        Vue.nextTick(() => {
+            if (chatbot.$refs.input) {
+                chatbot.focusInput();
+            }
+        });
     }
 }
