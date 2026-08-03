@@ -42,6 +42,7 @@ window.addEventListener(
     async function (event) {
         if (event.data === 'start') {
             await chatbot.initPlatform();
+            chatbot.focusDialog();
         }
         if (event.data.sendTopic) {
             const button = chatbot.inputConfig.buttons.find((button) => button.payload === event.data.sendTopic.topic)
@@ -163,6 +164,44 @@ const chatbotComponent = {
         }
     },
     methods: {
+        focusDialog() {
+            this.$nextTick(() => {
+                this.$refs.dialog.focus();
+            });
+        },
+
+        handleDialogKeydown(event) {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                this.minimize();
+                return;
+            }
+            if (event.key !== 'Tab') {
+                return;
+            }
+
+            const focusableElements = Array.from(this.$refs.dialog.querySelectorAll(
+                'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), ' +
+                'select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            )).filter(element => element.offsetParent !== null);
+
+            if (focusableElements.length === 0) {
+                event.preventDefault();
+                this.$refs.dialog.focus();
+                return;
+            }
+
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            if (event.shiftKey && document.activeElement === firstElement) {
+                event.preventDefault();
+                lastElement.focus();
+            } else if (!event.shiftKey && document.activeElement === lastElement) {
+                event.preventDefault();
+                firstElement.focus();
+            }
+        },
+
         async initPlatform(){
             // waiting for the custom config to set the display params
             await this.initPlatformConfig()

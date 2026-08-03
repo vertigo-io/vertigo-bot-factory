@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
         _button.className = 'floating-button';
         _button.type = 'button';
         _button.setAttribute('aria-label', 'Ouvrir le chatbot');
+        _button.setAttribute('aria-controls', 'chatbotIframe');
+        _button.setAttribute('aria-expanded', 'false');
 
         _button.addEventListener('click', Chatbot.show);
         _button.addEventListener('mouseover', _buttonOver);
@@ -102,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
         _iframe.className = 'iframe';
         _iframe.id = 'chatbotIframe'
         _iframe.title = 'Plateforme d’accompagnement';
+        _iframe.setAttribute('aria-hidden', 'true');
         _iframe.src = `${_initParam.botIHMBaseUrl}?runnerUrl=${_initParam.runnerUrl}&botName=${_initParam.botName}&useRating=${_initParam.useRating}`;
 
         if (_initParam.optionalParameters) {
@@ -188,6 +191,9 @@ document.addEventListener('DOMContentLoaded', function () {
           sessionStorage.showChatbot = true;
           _iframe.contentWindow.postMessage('start', '*');
           _iframe.style.visibility = 'visible';
+          _iframe.setAttribute('aria-hidden', 'false');
+          _button.setAttribute('aria-expanded', 'true');
+          _iframe.focus();
         },
 
         showPictureModal(src) {
@@ -207,6 +213,9 @@ document.addEventListener('DOMContentLoaded', function () {
         minimize() {
           sessionStorage.showChatbot = false;
           _iframe.style.visibility = 'hidden';
+          _iframe.setAttribute('aria-hidden', 'true');
+          _button.setAttribute('aria-expanded', 'false');
+          _button.focus();
         },
 
         clearSessionStorage() {

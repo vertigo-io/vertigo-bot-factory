@@ -22,7 +22,13 @@
   </head>
   <body style="color:black">
     <div id="q-app">
-      <div :style="'--background-color: ' + customConfig.backgroundColor
+      <div ref="dialog"
+           role="dialog"
+           aria-modal="true"
+           aria-labelledby="chatbot-dialog-title"
+           tabindex="-1"
+           @keydown="handleDialogKeydown"
+           :style="'--background-color: ' + customConfig.backgroundColor
                       + '; --font-color: ' + customConfig.fontColor
                       + '; --secondary-background-color: ' + customConfig.secondaryBackgroundColor
                       + '; --secondary-font-color: ' + customConfig.secondaryFontColor
@@ -36,7 +42,7 @@
         <q-layout view="hHh lpr fFf" class="row col">
           <q-header class="bg-white">
             <div class="custom-header row items-center non-selectable" >
-              <div class="title col-grow q-ml-sm">
+              <div id="chatbot-dialog-title" class="title col-grow q-ml-sm">
                 {{ platformName }}
               </div>
               <!--<q-btn-dropdown color="primary" icon="language">
@@ -53,6 +59,7 @@
                      text-color="white"
                      size="md"
                      @click="refreshPlatform()"
+                     aria-label="Réinitialiser la conversation"
                      icon="refresh"></q-btn>
               <q-btn round
                      class="btn-rotate"
@@ -61,6 +68,7 @@
                      text-color="white"
                      size="md"
                      @click="minimize()"
+                     aria-label="Fermer le chatbot"
                      icon="close"></q-btn>
             </div>
           </q-header>

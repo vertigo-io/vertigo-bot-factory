@@ -54,33 +54,54 @@
 							selectedContexEnvironment.contextEnvironmentValues.forEach(contextEnvironmentValue => {
 								map[contextEnvironmentValue.label] = contextEnvironmentValue.value
 							})
-							Chatbot.updateContextMap(map)
+							VUiExtensions.dataX.selectedContextMap = map;
 						}
 					} else {
-						Chatbot.updateContextMap(undefined)
+						VUiExtensions.dataX.selectedContextMap = undefined;
 					}
-				},
 
-				toggleBotDrawer: function() {
-					this.componentStates.botDrawer.open = !this.componentStates.botDrawer.open;
-					if (this.componentStates.botDrawer.open) {
-						Chatbot.show();
-					}
-					else {
-						Chatbot.hideDrawer();
+					const chatbotIframe = document.getElementById('chatbotIframe');
+					if (chatbotIframe && sessionStorage.showChatbot === 'true') {
+						chatbotIframe.contentWindow.postMessage('refresh', '*');
 					}
 				}
 			}
 
 			document.addEventListener('DOMContentLoaded', function () {
 				if (VUiExtensions.methods.canTalkToBot()) {
+					const positionChatbotBelowHeader = function () {
+						const chatbotIframe = document.getElementById('chatbotIframe');
+						const pageHeader = document.querySelector('#page .q-header');
+						if (chatbotIframe && pageHeader) {
+							const headerBottom = Math.max(0, pageHeader.getBoundingClientRect().bottom);
+							chatbotIframe.style.top = headerBottom + 'px';
+							chatbotIframe.style.height = Math.max(0, window.innerHeight - headerBottom) + 'px';
+							chatbotIframe.style.boxShadow = 'none';
+						}
+					};
+					window.addEventListener('message', function (event) {
+						const chatbotIframe = document.getElementById('chatbotIframe');
+						if (!chatbotIframe || event.source !== chatbotIframe.contentWindow) {
+							return;
+						}
+						if (event.data && event.data.context && VUiExtensions.dataX.selectedContextMap) {
+							event.stopImmediatePropagation();
+							event.ports[0].postMessage({result: VUiExtensions.dataX.selectedContextMap});
+						}
+					}, true);
 					Chatbot.init({
 						runnerUrl: VertigoUi.vueData.devNode.url,
 						botIHMBaseUrl: VertigoUi.vueData.devNode.url + '/static/chatbot/index.html',
 						botName: VertigoUi.vueData.bot.name,
 						useRating: false,
-						avatarUrl: VertigoUi.vueData.bot.botId + '/avatar'
+						avatarUrl: document.querySelector('#baseImg img').src
 					})
+					window.addEventListener('resize', positionChatbotBelowHeader);
+					const pageHeader = document.querySelector('#page .q-header');
+					if (pageHeader && window.ResizeObserver) {
+						new ResizeObserver(positionChatbotBelowHeader).observe(pageHeader);
+					}
+					requestAnimationFrame(positionChatbotBelowHeader);
 				}
 				const script = document.createElement('script');
 				script.type = 'text/javascript';
@@ -100,10 +121,26 @@
 		<vu:include-data object="bot" field="botId" />
 		<vu:include-data object="bot" field="name" />
 		<vu:include-data object="bot" field="description" />
+		<vu:include-data object="contextEnvironments" field="'*'"/>
 		<vu:include-data-primitive key="breadCrums" />
 		<span class="text-bigger text-primary text-weight-bold text-uppercase">{{vueData.bot.name}}</span> <br />
 		<span class="text-primary">{{vueData.bot.description}}</span> <br />
-		
+		<q-select
+				v-if="vueData.contextEnvironments.length > 0"
+				th:attr="dataObject=${model.vContext['componentStates'].addComponentState('contextEnvironments').addObject('selectedEnvironment', {cenvId: null})}"
+				class="q-mt-sm"
+				style="min-width: 250px"
+				dense
+				filled
+				clearable
+				map-options
+				emit-value
+				stack-label
+				v-model="componentStates.contextEnvironments.selectedEnvironment.cenvId"
+				:options='transformListForSelection("contextEnvironments", "cenvId", "label")'
+				@update:model-value="selectEnvironment();"
+				th:label="#{context.environment.dropdown.label}"
+		></q-select>
 	</div>
 	<div layout:fragment="content-header-infos" id="headerInfos" class="row items-center justify-center">
 		<vu:include-data-primitive key="enabledTopics" />
@@ -268,31 +305,6 @@
 		</q-item>
 	</section>
 	<section layout:fragment="informations"></section>
-	<section layout:fragment="content-bot-drawer"  th:with="botDrawer=${model.vContext['componentStates'].addComponentState('botDrawer').addPrimitive('open', false)}">
-		<vu:include-data object="contextEnvironments" field="'*'"/>
-		<q-page-sticky position="bottom-right" :offset="[0,36]">
-			<q-btn round size="lg" id="botDrawerButton" aria-label="Ouvrir le chatbot" @click="toggleBotDrawer()">
-				<img th:src="@{/botHeader/{id}/avatar(id=${model.bot.botId})}" class="bot-img" alt="avatar Plateforme d'accompagnement"/>
-			</q-btn>
-		</q-page-sticky>
-		<q-drawer :model-value="componentStates.botDrawer.open" id="botDrawer" ref="botDrawer" :width="$q.screen.lt.sm ? $q.screen.width : 400" elevated side="right" >
-			<q-select
-					v-if="vueData.contextEnvironments.length > 0"
-					th:attr="dataObject=${model.vContext['componentStates'].addComponentState('contextEnvironments').addObject('selectedEnvironment', {cenvId: null})}"
-					dense
-					filled
-					clearable
-					map-options
-					emit-value
-					stack-label
-					v-model="componentStates.contextEnvironments.selectedEnvironment.cenvId"
-					:options='transformListForSelection("contextEnvironments", "cenvId", "label")'
-					@update:model-value="selectEnvironment();"
-					th:label="#{context.environment.dropdown.label}"
-			></q-select>
-			<div id="botDrawerContent"></div>
-		</q-drawer>
-	</section>
 	<section layout:fragment="javascript-footer">
 		<vu:include-data object="trainerState" field="'*'"/>
 		<vu:include-data-primitive key="locale" />
