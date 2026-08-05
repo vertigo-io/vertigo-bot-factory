@@ -73,9 +73,14 @@
 						const chatbotIframe = document.getElementById('chatbotIframe');
 						const pageHeader = document.querySelector('#page .q-header');
 						if (chatbotIframe && pageHeader) {
-							const headerBottom = Math.max(0, pageHeader.getBoundingClientRect().bottom);
-							chatbotIframe.style.top = headerBottom + 'px';
-							chatbotIframe.style.height = Math.max(0, window.innerHeight - headerBottom) + 'px';
+							if (window.innerWidth <= 600) {
+								chatbotIframe.style.removeProperty('top');
+								chatbotIframe.style.removeProperty('height');
+							} else {
+								const headerBottom = Math.max(0, pageHeader.getBoundingClientRect().bottom);
+								chatbotIframe.style.top = headerBottom + 'px';
+								chatbotIframe.style.height = Math.max(0, window.innerHeight - headerBottom) + 'px';
+							}
 							chatbotIframe.style.boxShadow = 'none';
 						}
 					};

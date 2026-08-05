@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const img = document.createElement('img');
         img.className = 'avatar-img';
         img.src = _initParam.avatarUrl;
-        img.alt = _initParam.botName;
+        img.alt = `avatar plateforme d'accompagnement ${_initParam.botName}`;
         _button.appendChild(img);
 
         const text = document.createElement('div');
