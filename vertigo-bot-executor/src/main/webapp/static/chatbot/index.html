@@ -68,7 +68,7 @@
                      text-color="white"
                      size="md"
                      @click="minimize()"
-                     aria-label="Fermer le chatbot"
+                     aria-label="Fermer la Plateforme d'accompagnement"
                      icon="close"></q-btn>
             </div>
           </q-header>
@@ -85,7 +85,9 @@
               >
                 <q-scroll-area class="col row no-wrap q-px-sm"
                                ref="scroller">
-                  <div class="q-pr-md q-pt-md">
+                  <div class="q-pr-md q-pt-md"
+                       aria-live="polite"
+                       aria-atomic="true">
                     <div v-for="(msg, index) in botConfig.messages">
                       <q-chat-message
                               v-if="msg.text"

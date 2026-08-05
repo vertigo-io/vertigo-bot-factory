@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         _button.className = 'floating-button';
         _button.type = 'button';
-        _button.setAttribute('aria-label', 'Ouvrir le chatbot');
+        _button.setAttribute('aria-label', 'Ouvrir la Plateforme d\'accompagnement');
         _button.setAttribute('aria-controls', 'chatbotIframe');
         _button.setAttribute('aria-expanded', 'false');
 
