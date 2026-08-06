@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.className = 'modalChatbot';
 
         const spanClose = document.createElement('span');
-        spanClose.id = 'close';
+        spanClose.id = 'imageViewerClose';
         spanClose.className = 'close';
         spanClose.innerHTML = '&times;';
         spanClose.addEventListener('click', hidePictureModal);
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.className = 'modalChatbot';
 
         const spanClose = document.createElement('span');
-        spanClose.id = 'close';
+        spanClose.id = 'htmlViewerClose';
         spanClose.className = 'close';
         spanClose.innerHTML = '&times;';
         spanClose.addEventListener('click', hideHtmlModal);
@@ -105,13 +105,17 @@ document.addEventListener('DOMContentLoaded', function () {
         _iframe.id = 'chatbotIframe'
         _iframe.title = 'Plateforme d’accompagnement';
         _iframe.setAttribute('aria-hidden', 'true');
-        _iframe.src = `${_initParam.botIHMBaseUrl}?runnerUrl=${_initParam.runnerUrl}&botName=${_initParam.botName}&useRating=${_initParam.useRating}`;
+        const iframeUrl = new URL(_initParam.botIHMBaseUrl, document.baseURI);
+        iframeUrl.searchParams.set('runnerUrl', _initParam.runnerUrl);
+        iframeUrl.searchParams.set('botName', _initParam.botName);
+        iframeUrl.searchParams.set('useRating', _initParam.useRating);
 
         if (_initParam.optionalParameters) {
           _initParam.optionalParameters.forEach(function (optionalParam) {
-            _iframe.src += '&' + optionalParam.key + '=' + optionalParam.value;
+            iframeUrl.searchParams.append(optionalParam.key, optionalParam.value);
           });
         }
+        _iframe.src = iframeUrl.toString();
         _iframe.style.visibility = 'hidden';
 
         document.body.appendChild(_iframe);

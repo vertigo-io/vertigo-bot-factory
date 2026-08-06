@@ -6,7 +6,7 @@ const sleep = function (milliseconds) {
 
 const getUrlVars = function () {
     const vars = {};
-    window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+    new URLSearchParams(window.location.search).forEach(function (value, key) {
         vars[key] = value;
     });
     return vars;
@@ -15,7 +15,7 @@ const getUrlVars = function () {
 
 const urlVars = getUrlVars();
 const _platformRunnerUrl = urlVars['runnerUrl'];
-const _platformName = decodeURI(urlVars['botName']);
+const _platformName = urlVars['botName'];
 const _avatar = _platformRunnerUrl + '/static/chatbot/images/avatar/avatar.png';
 
 const _platformBaseUrl = _platformRunnerUrl + '/api/platform-config';
