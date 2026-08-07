@@ -14,13 +14,17 @@ document.addEventListener('DOMContentLoaded', function () {
       let _iframe = null;
 
       function _createFlottingButton() {
-        _button = document.createElement('div');
+        _button = document.createElement('button');
 
         _button.className = 'floating-button';
+        _button.type = 'button';
+        _button.setAttribute('aria-label', 'Ouvrir le chatbot');
 
         _button.addEventListener('click', Chatbot.show);
         _button.addEventListener('mouseover', _buttonOver);
         _button.addEventListener('mouseout', _buttonOut);
+        _button.addEventListener('focus', _buttonOver);
+        _button.addEventListener('blur', _buttonOut);
 
         const img = document.createElement('img');
         img.className = 'avatar-img';
@@ -97,6 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         _iframe.className = 'iframe';
         _iframe.id = 'chatbotIframe'
+        _iframe.title = 'Plateforme d’accompagnement';
         _iframe.src = `${_initParam.botIHMBaseUrl}?runnerUrl=${_initParam.runnerUrl}&botName=${_initParam.botName}&useRating=${_initParam.useRating}`;
 
         if (_initParam.optionalParameters) {
