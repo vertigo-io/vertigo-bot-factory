@@ -3,6 +3,11 @@
 }
 
 .floating-button {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    bottom: 140px;
+    right: -90px;
     width: 160px;
     height: 63px;
     transition: right 0.3s ease 0s;
@@ -34,21 +39,28 @@
 }
 
 .iframe {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
     z-index: 10000;
-    width: 100%;
+    width: 400px;
+    max-width: 100%;
     height: 100%;
-    color: white;
+    box-shadow: -2px 0px 15px 5px rgba(0, 0, 0, 0.25);
+    background-color: white;
     border: none;
+    border-left: solid 1px #ccc;
 }
 
-.q-drawer__content {
-    display: flex;
-    flex-direction: column;
-}
-
-#botDrawerContent {
-    display: flex;
-    flex-grow: 1;
+/* Mobile */
+@media only screen and (max-width: 600px) {
+    .iframe {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        border-left: none;
+    }
 }
 
 /* The Modal (background) */
