@@ -22,7 +22,13 @@
   </head>
   <body style="color:black">
     <div id="q-app">
-      <div :style="'--background-color: ' + customConfig.backgroundColor
+      <div ref="dialog"
+           role="dialog"
+           aria-modal="true"
+           aria-labelledby="chatbot-dialog-title"
+           tabindex="-1"
+           @keydown="handleDialogKeydown"
+           :style="'--background-color: ' + customConfig.backgroundColor
                       + '; --font-color: ' + customConfig.fontColor
                       + '; --secondary-background-color: ' + customConfig.secondaryBackgroundColor
                       + '; --secondary-font-color: ' + customConfig.secondaryFontColor
@@ -36,7 +42,7 @@
         <q-layout view="hHh lpr fFf" class="row col">
           <q-header class="bg-white">
             <div class="custom-header row items-center non-selectable" >
-              <div class="title col-grow q-ml-sm">
+              <div id="chatbot-dialog-title" class="title col-grow q-ml-sm">
                 {{ platformName }}
               </div>
               <!--<q-btn-dropdown color="primary" icon="language">
@@ -53,6 +59,7 @@
                      text-color="white"
                      size="md"
                      @click="refreshPlatform()"
+                     aria-label="Réinitialiser la conversation"
                      icon="refresh"></q-btn>
               <q-btn round
                      class="btn-rotate"
@@ -61,6 +68,7 @@
                      text-color="white"
                      size="md"
                      @click="minimize()"
+                     aria-label="Fermer la Plateforme d'accompagnement"
                      icon="close"></q-btn>
             </div>
           </q-header>
@@ -77,7 +85,9 @@
               >
                 <q-scroll-area class="col row no-wrap q-px-sm"
                                ref="scroller">
-                  <div class="q-pr-md q-pt-md">
+                  <div class="q-pr-md q-pt-md"
+                       aria-live="polite"
+                       aria-atomic="true">
                     <div v-for="(msg, index) in botConfig.messages">
                       <q-chat-message
                               v-if="msg.text"
@@ -89,10 +99,17 @@
                               :text-color="msg.textColor"
                               :bg-color="msg.bgColor"
                               :name="msg.name"
-                              :avatar="msg.avatar"
                               :text="msg.text"
                               :stamp="msg.stamp"
-                      ></q-chat-message>
+                      >
+                        <template v-if="msg.avatar" v-slot:avatar>
+                          <img :src="msg.avatar"
+                               alt=""
+                               aria-hidden="true"
+                               class="q-message-avatar"
+                               :class="msg.sent ? 'q-message-avatar--sent' : 'q-message-avatar--received'">
+                        </template>
+                      </q-chat-message>
                       <q-chat-message  v-if="msg.rating" class="animate-fade" bg-color="primary" sent >
                         <q-rating v-model="inputConfig.rating" style="font-size: 2rem;"
                                   icon="star_border"
@@ -199,14 +216,28 @@
                 </q-scroll-area>
                 <div class="row non-selectable custom-input-chatbot">
                   <div class="col-grow">
-                    <q-input :type="inputConfig.modeTextarea ? 'textarea' : 'text'"
+                    <div v-if="inputConfig.modeTextarea">
+                      <label class="sr-only" for="chatbot-message-textarea">Écrire un message</label>
+                      <textarea id="chatbot-message-textarea"
+                              ref="input"
+                              class="chatbot-text-input chatbot-textarea"
+                              v-model="inputConfig.responseText"
+                              placeholder="Écrire un message..."
+                              :disabled="botConfig.processing || botConfig.error || (!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu"></textarea>
+                    </div>
+                    <div v-else>
+                      <label class="sr-only" for="chatbot-message-input">Écrire un message</label>
+                      <input id="chatbot-message-input"
                              ref="input"
-                             @keyup.enter="inputConfig.modeTextarea || inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
+                             class="chatbot-text-input"
+                             type="text"
+                             @keyup.enter="inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
                              v-model="inputConfig.responseText"
-                             placeholder="Ecrire un message..."
-                             :disable="botConfig.processing || botConfig.error || (!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu"
-                             :loading="botConfig.processing"></q-input>
+                             placeholder="Écrire un message..."
+                             :disabled="botConfig.processing || botConfig.error || (!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu">
+                    </div>
                   </div>
+                  <q-spinner v-if="botConfig.processing" class="chatbot-input-spinner"></q-spinner>
                   <q-btn
                           :style="'margin-top: 0px;'"
                           style="margin-top: 0px;"
@@ -225,12 +256,14 @@
               <div v-if="footerMenu === 'qAndA'" class="column col-grow no-wrap chatbot-qanda-container">
                 <div class="column col-grow" v-if="!qAndAConfig.selectedQuestion">
                   <div v-if="qAndAConfig.questionAnswerList.length > 0" class="custom-input-qanda">
-                    <q-input v-model="qAndAConfig.filterInput"
-                             ref="input"
-                             label="Rechercher"
-                             aria-label="Rechercher dans la FAQ"
-                             placeholder="Rechercher..."
-                             @update:model-value="filterQuestionsAnswers()"></q-input>
+                    <label class="sr-only" for="faq-search-input">Rechercher dans la FAQ</label>
+                    <input id="faq-search-input"
+                           ref="input"
+                           class="chatbot-text-input"
+                           type="search"
+                           v-model="qAndAConfig.filterInput"
+                           placeholder="Rechercher..."
+                           @input="filterQuestionsAnswers()">
                   </div>
                   <div class="sr-only" role="status" aria-live="polite">{{ qAndAStatusMessage }}</div>
                   <div v-if="qAndAConfig.questionAnswerList.length === 0"

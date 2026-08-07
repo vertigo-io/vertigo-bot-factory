@@ -247,6 +247,7 @@ img {
 }
 
 .custom-input-chatbot {
+    align-items: center;
     margin-top: 8px;
     margin-bottom: 8px;
 }
@@ -255,9 +256,40 @@ img {
     margin-top: 14px;
     margin-bottom: 8px;
 }
-/* quasar style for q-input without bottom border*/
-.q-if:after, .q-if:before{
-    border-bottom: 0px solid !important;
+
+.custom-input-chatbot:focus-within,
+.custom-input-qanda:focus-within {
+    outline: 1px solid #000;
+    outline-offset: 1px;
+}
+
+.chatbot-text-input {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 0;
+    color: #000;
+    font: inherit;
+    background: transparent;
+    border: 0;
+}
+
+.chatbot-text-input:focus {
+    outline: none;
+}
+
+.chatbot-text-input:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.chatbot-textarea {
+    display: block;
+    min-height: 64px;
+    resize: vertical;
+}
+
+.chatbot-input-spinner {
+    margin: 0 8px;
 }
 
 /* carousel customization */

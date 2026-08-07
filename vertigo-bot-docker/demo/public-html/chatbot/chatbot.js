@@ -18,7 +18,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         _button.className = 'floating-button';
         _button.type = 'button';
-        _button.setAttribute('aria-label', 'Ouvrir le chatbot');
+        _button.setAttribute('aria-label', 'Ouvrir la Plateforme d\'accompagnement');
+        _button.setAttribute('aria-controls', 'chatbotIframe');
+        _button.setAttribute('aria-expanded', 'false');
 
         _button.addEventListener('click', Chatbot.show);
         _button.addEventListener('mouseover', _buttonOver);
@@ -29,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const img = document.createElement('img');
         img.className = 'avatar-img';
         img.src = _initParam.avatarUrl;
-        img.alt = _initParam.botName;
+        img.alt = `avatar plateforme d'accompagnement ${_initParam.botName}`;
         _button.appendChild(img);
 
         const text = document.createElement('div');
@@ -46,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.className = 'modalChatbot';
 
         const spanClose = document.createElement('span');
-        spanClose.id = 'close';
+        spanClose.id = 'imageViewerClose';
         spanClose.className = 'close';
         spanClose.innerHTML = '&times;';
         spanClose.addEventListener('click', hidePictureModal);
@@ -66,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.className = 'modalChatbot';
 
         const spanClose = document.createElement('span');
-        spanClose.id = 'close';
+        spanClose.id = 'htmlViewerClose';
         spanClose.className = 'close';
         spanClose.innerHTML = '&times;';
         spanClose.addEventListener('click', hideHtmlModal);
@@ -102,13 +104,18 @@ document.addEventListener('DOMContentLoaded', function () {
         _iframe.className = 'iframe';
         _iframe.id = 'chatbotIframe'
         _iframe.title = 'Plateforme d’accompagnement';
-        _iframe.src = `${_initParam.botIHMBaseUrl}?runnerUrl=${_initParam.runnerUrl}&botName=${_initParam.botName}&useRating=${_initParam.useRating}`;
+        _iframe.setAttribute('aria-hidden', 'true');
+        const iframeUrl = new URL(_initParam.botIHMBaseUrl, document.baseURI);
+        iframeUrl.searchParams.set('runnerUrl', _initParam.runnerUrl);
+        iframeUrl.searchParams.set('botName', _initParam.botName);
+        iframeUrl.searchParams.set('useRating', _initParam.useRating);
 
         if (_initParam.optionalParameters) {
           _initParam.optionalParameters.forEach(function (optionalParam) {
-            _iframe.src += '&' + optionalParam.key + '=' + optionalParam.value;
+            iframeUrl.searchParams.append(optionalParam.key, optionalParam.value);
           });
         }
+        _iframe.src = iframeUrl.toString();
         _iframe.style.visibility = 'hidden';
 
         document.body.appendChild(_iframe);
@@ -188,6 +195,9 @@ document.addEventListener('DOMContentLoaded', function () {
           sessionStorage.showChatbot = true;
           _iframe.contentWindow.postMessage('start', '*');
           _iframe.style.visibility = 'visible';
+          _iframe.setAttribute('aria-hidden', 'false');
+          _button.setAttribute('aria-expanded', 'true');
+          _iframe.focus();
         },
 
         showPictureModal(src) {
@@ -207,6 +217,9 @@ document.addEventListener('DOMContentLoaded', function () {
         minimize() {
           sessionStorage.showChatbot = false;
           _iframe.style.visibility = 'hidden';
+          _iframe.setAttribute('aria-hidden', 'true');
+          _button.setAttribute('aria-expanded', 'false');
+          _button.focus();
         },
 
         clearSessionStorage() {
