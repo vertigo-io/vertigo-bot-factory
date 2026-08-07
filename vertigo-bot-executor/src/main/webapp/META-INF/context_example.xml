@@ -11,7 +11,7 @@
     <Parameter name="MAIL_DEV_MODE" value="true" override="false" />
     <Parameter name="MAIL_DEV_REPLACE_EMAIL_TO" value="example.test@kleegroup.com"
         override="false" />
-    <Parameter name="FILE_STORE_PATH" value="C:\executor/attachments/" override="false" />
+    <Parameter name="FILE_STORE_PATH" value="D:/tmp/chatbot/runner/attachments/" override="false" />
 
     <Parameter name="ENCRYPTION_SALT" value="ChatbotKlee2022!" override="false" />
     <Parameter name="ENCRYPTION_PASSWORD" value="ChatbotKlee2022!" override="false" />
@@ -34,13 +34,13 @@
     <Resources className="org.apache.catalina.webresources.StandardRoot">
         <!--  Use for confluence plugin -->
         <PostResources
-            base="C:\Users\cmarechal\projects\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-confluence\target\vertigo-bot-confluence-3.3.0-jar-with-dependencies.jar"
+            base="C:\Work\Workspaces\chatbot\vertigo-bot-extensions\vertigo-bot-confluence\target\vertigo-bot-confluence-3.3.1-jar-with-dependencies.jar"
             className="org.apache.catalina.webresources.FileResourceSet"
-            webAppMount="/WEB-INF/lib/vertigo-bot-confluence-3.3.0-jar-with-dependencies.jar" />
+            webAppMount="/WEB-INF/lib/vertigo-bot-confluence-3.3.1-jar-with-dependencies.jar" />
         <!--  Use for jira plugin -->
         <PostResources
-            base="C:\Users\cmarechal\projects\vertigo-bot-factory\vertigo-bot-extensions\vertigo-bot-jira\target\vertigo-bot-jira-3.3.0-jar-with-dependencies.jar"
+            base="C:\Work\Workspaces\chatbot\vertigo-bot-extensions\vertigo-bot-jira\target\vertigo-bot-jira-3.3.1-jar-with-dependencies.jar"
             className="org.apache.catalina.webresources.FileResourceSet"
-            webAppMount="/WEB-INF/lib/vertigo-bot-jira-3.3.0-jar-with-dependencies.jar" />
+            webAppMount="/WEB-INF/lib/vertigo-bot-jira-3.3.1-jar-with-dependencies.jar" />
     </Resources>
 </Context>
