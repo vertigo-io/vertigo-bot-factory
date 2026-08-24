@@ -256,11 +256,12 @@
               <div v-if="footerMenu === 'qAndA'" class="column col-grow no-wrap chatbot-qanda-container">
                 <div class="column col-grow" v-if="!qAndAConfig.selectedQuestion">
                   <div v-if="qAndAConfig.questionAnswerList.length > 0" class="custom-input-qanda">
-                    <label class="sr-only" for="faq-search-input">Rechercher dans la FAQ</label>
                     <input id="faq-search-input"
                            ref="input"
                            class="chatbot-text-input"
                            type="search"
+                           title="Rechercher dans la FAQ"
+                           aria-label="Rechercher dans la FAQ"
                            v-model="qAndAConfig.filterInput"
                            placeholder="Rechercher..."
                            @input="filterQuestionsAnswers()">
