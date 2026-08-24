@@ -95,6 +95,16 @@ footer {
     color: var(--font-color) !important;
     background-color: var(--background-color) !important;
 }
+
+.q-btn:focus,
+.qanda-category-header:focus {
+    outline: auto !important;
+}
+
+.q-btn:focus .q-focus-helper {
+    opacity: 0 !important;
+}
+
 .btn-rotate{
     transition: transform .4s ease-in-out !important;
 }
@@ -335,13 +345,6 @@ img {
     font-size: 15px;
     font-weight: bold;
     padding: 10px 12px;
-}
-
-.qanda-category-header:focus-visible,
-.q-btn-question:focus-visible {
-    outline: 2px solid #000;
-    outline-offset: 2px;
-    box-shadow: 0 0 0 4px #fff;
 }
 
 .qanda-category-label {
