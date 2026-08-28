@@ -40,6 +40,12 @@ footer {
 
 .title {
     color: var(--font-color) !important;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    margin: 8px;
+    padding: 0;
 }
 
 .q-loading-bar {
@@ -146,6 +152,14 @@ footer {
     color: var(--bot-message-font-color) !important;
     line-height: 1.4;
     font-size: 14px;
+}
+
+.q-message-text-content p {
+    margin: 0;
+}
+
+.q-message-text-content p + p {
+    margin-top: 0.5em;
 }
 
 .q-message-received .q-message-text {
@@ -377,10 +391,16 @@ img {
     color: black;
     font-size: 22px;
     font-weight: bold;
+    line-height: normal;
+    margin: 0;
 }
 
 .answer-text {
     font-size: 14px;
+}
+
+.answer-text > p:last-child {
+    margin-bottom: 0;
 }
 
 .q-footer {

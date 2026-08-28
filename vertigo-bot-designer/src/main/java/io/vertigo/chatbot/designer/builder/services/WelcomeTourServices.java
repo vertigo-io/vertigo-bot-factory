@@ -89,7 +89,7 @@ public class WelcomeTourServices implements Component {
 			String stepConfig =  "{\n" +
 					"  	id: \"" + stepId + "\",\n" +
 					"	title: \"" + StringEscapeUtils.escapeEcmaScript(step.getTitle()) + "\" ,\n" +
-					"	text: \"" + StringEscapeUtils.escapeEcmaScript(step.getText()) + "\",\n" +
+					"	text: \"<p>" + StringEscapeUtils.escapeEcmaScript(step.getText()) + "</p>\",\n" +
 					"	attachTo: {\n" +
 					"		element: document.evaluate('//body//*[text()=\"" + StringEscapeUtils.escapeEcmaScript(step.getElementAttachTo()) + "\"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue,\n" +
 					"		on: \"" + step.getElementAttachToPlacement().toLowerCase() + "\"\n" +
