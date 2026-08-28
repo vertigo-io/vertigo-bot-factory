@@ -339,9 +339,9 @@ img {
 }
 
 .qanda-category-header {
-    background-color: var(--secondary-background-color);
+    background-color: var(--background-color);
     border-radius: 10px;
-    color: var(--secondary-font-color);
+    color: var(--font-color);
     font-size: 15px;
     font-weight: bold;
     padding: 10px 12px;
