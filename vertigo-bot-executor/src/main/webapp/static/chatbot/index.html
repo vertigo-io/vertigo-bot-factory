@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"
           rel="stylesheet"
           type="text/css">
-    <link href="https://cdn.jsdelivr.net/npm/quasar@2.21.1/dist/quasar.prod.min.css"
+    <link href="https://cdn.jsdelivr.net/npm/quasar@2.27.0/dist/quasar.prod.min.css"
           rel="stylesheet"
           type="text/css">
     <link href="style/style.css" rel="stylesheet" type="text/css">
@@ -42,9 +42,9 @@
         <q-layout view="hHh lpr fFf" class="row col">
           <q-header class="bg-white">
             <div class="custom-header row items-center non-selectable" >
-              <div id="chatbot-dialog-title" class="title col-grow q-ml-sm">
+              <h1 id="chatbot-dialog-title" class="title col-grow q-ml-sm">
                 {{ platformName }}
-              </div>
+              </h1>
               <!--<q-btn-dropdown color="primary" icon="language">
                 <q-list style="text-align: center; padding: 0">
                   <q-btn class="btn-custom-localize" @click="changeLocal('fr_FR')" v-text="'FR'"></q-btn>
@@ -89,27 +89,47 @@
                        aria-live="polite"
                        aria-atomic="true">
                     <div v-for="(msg, index) in botConfig.messages">
-                      <q-chat-message
-                              v-if="msg.text"
-                              class="animate-fade"
-                              :key="'msg-'+index"
-                              :label="msg.label"
-                              :text-html="!msg.sent"
-                              :sent="msg.sent"
-                              :text-color="msg.textColor"
-                              :bg-color="msg.bgColor"
-                              :name="msg.name"
-                              :text="msg.text"
-                              :stamp="msg.stamp"
-                      >
-                        <template v-if="msg.avatar" v-slot:avatar>
-                          <img :src="msg.avatar"
+                      <div v-if="msg.text"
+                           class="q-message animate-fade"
+                           :class="msg.sent ? 'q-message-sent' : 'q-message-received'"
+                           :key="'msg-'+index">
+                        <div v-if="msg.label"
+                             class="q-message-label"
+                             v-text="msg.label"></div>
+                        <div class="q-message-container row items-end no-wrap"
+                             :class="{ reverse: msg.sent }">
+                          <img v-if="msg.avatar"
+                               :src="msg.avatar"
                                alt=""
                                aria-hidden="true"
                                class="q-message-avatar"
                                :class="msg.sent ? 'q-message-avatar--sent' : 'q-message-avatar--received'">
-                        </template>
-                      </q-chat-message>
+                          <div>
+                            <div v-if="msg.name"
+                                 class="q-message-name"
+                                 :class="msg.sent ? 'q-message-name--sent' : 'q-message-name--received'"
+                                 v-text="msg.name"></div>
+                            <div v-for="(text, textIndex) in formatMessageTexts(msg.text)"
+                                 :key="textIndex"
+                                 class="q-message-text"
+                                 :class="[
+                                   msg.sent ? 'q-message-text--sent' : 'q-message-text--received',
+                                   msg.bgColor ? 'text-' + msg.bgColor : ''
+                                 ]">
+                              <div class="q-message-text-content"
+                                   :class="[
+                                     msg.sent ? 'q-message-text-content--sent' : 'q-message-text-content--received',
+                                     msg.textColor ? 'text-' + msg.textColor : ''
+                                   ]"
+                                   v-html="text"></div>
+                              <div v-if="msg.stamp"
+                                   class="q-message-stamp"
+                                   :class="msg.textColor ? 'text-' + msg.textColor : ''"
+                                   v-text="msg.stamp"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       <q-chat-message  v-if="msg.rating" class="animate-fade" bg-color="primary" sent >
                         <q-rating v-model="inputConfig.rating" style="font-size: 2rem;"
                                   icon="star_border"
@@ -126,9 +146,9 @@
                               text-color="black"
                               size="12"
                       >
-                        <div class="q-pb-sm">
+                        <p class="q-pb-sm">
                           Une erreur est survenue lors de l'envoi du message
-                        </div>
+                        </p>
                         <q-btn
                                 class="full-width"
                                 @click="askBot(botConfig.lastPayload)"
@@ -310,8 +330,8 @@
                     <span style="padding-left: 2px; font-size: 13px">Retour</span>
                   </q-btn>
                   <div class="q-px-sm  q-mt-md">
-                    <div class="question-title" v-html="qAndAConfig.selectedQuestion.question"></div>
-                    <div class="answer-text q-mt-md" v-html="qAndAConfig.selectedQuestion.answer"></div>
+                    <h2 class="question-title" v-html="qAndAConfig.selectedQuestion.question"></h2>
+                    <div class="answer-text q-mt-md" v-html="formatQuestionAnswerText(qAndAConfig.selectedQuestion.answer)"></div>
                   </div>
                   <div style="height: 20px"></div>
                 </q-scroll-area>

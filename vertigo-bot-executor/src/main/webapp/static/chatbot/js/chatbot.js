@@ -410,6 +410,101 @@ const chatbotComponent = {
             reader.readAsDataURL(file);
         },
 
+        formatMessageTexts(texts) {
+            return (texts || []).map(text => this.formatQuestionAnswerText(text));
+        },
+
+        formatQuestionAnswerText(answer) {
+            const container = document.createElement('div');
+            container.innerHTML = answer || '';
+            const blockTags = new Set([
+                'ADDRESS', 'ARTICLE', 'ASIDE', 'BLOCKQUOTE', 'DIV', 'DL', 'FIELDSET',
+                'FIGCAPTION', 'FIGURE', 'FOOTER', 'FORM', 'H1', 'H2', 'H3', 'H4',
+                'H5', 'H6', 'HEADER', 'HR', 'MAIN', 'NAV', 'OL', 'P', 'PRE',
+                'SECTION', 'TABLE', 'UL'
+            ]);
+            const meaningfulTags = new Set([
+                'IMG', 'SVG', 'VIDEO', 'AUDIO', 'IFRAME', 'HR', 'TABLE', 'UL', 'OL', 'A'
+            ]);
+
+            const isVisuallyEmpty = node => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    return node.textContent.replace(/\u00a0/g, ' ').trim() === '';
+                }
+                if (node.nodeType !== Node.ELEMENT_NODE) {
+                    return true;
+                }
+                if (node.tagName === 'BR') {
+                    return true;
+                }
+                if (meaningfulTags.has(node.tagName)) {
+                    return false;
+                }
+                return Array.from(node.childNodes).every(isVisuallyEmpty);
+            };
+
+            const wrapInlineContent = element => {
+                let paragraph = null;
+                Array.from(element.childNodes).forEach(child => {
+                    const isText = child.nodeType === Node.TEXT_NODE;
+                    const isInlineElement = child.nodeType === Node.ELEMENT_NODE
+                        && !blockTags.has(child.tagName);
+
+                    if (!isText && !isInlineElement) {
+                        paragraph = null;
+                        return;
+                    }
+                    if (isVisuallyEmpty(child) && paragraph === null) {
+                        child.remove();
+                        return;
+                    }
+                    if (paragraph === null) {
+                        paragraph = document.createElement('p');
+                        element.insertBefore(paragraph, child);
+                    }
+                    paragraph.appendChild(child);
+                });
+            };
+
+            const normalizeDiv = div => {
+                Array.from(div.children)
+                    .filter(child => child.tagName === 'DIV')
+                    .forEach(normalizeDiv);
+
+                if (!div.parentNode) {
+                    return;
+                }
+                if (isVisuallyEmpty(div)) {
+                    div.remove();
+                    return;
+                }
+
+                const hasBlockChild = Array.from(div.children)
+                    .some(child => blockTags.has(child.tagName));
+                if (!hasBlockChild) {
+                    const paragraph = document.createElement('p');
+                    Array.from(div.attributes).forEach(attribute =>
+                        paragraph.setAttribute(attribute.name, attribute.value));
+                    while (div.firstChild) {
+                        paragraph.appendChild(div.firstChild);
+                    }
+                    div.replaceWith(paragraph);
+                } else {
+                    wrapInlineContent(div);
+                    div.replaceWith(...div.childNodes);
+                }
+            };
+
+            Array.from(container.children)
+                .filter(child => child.tagName === 'DIV')
+                .forEach(normalizeDiv);
+            wrapInlineContent(container);
+            Array.from(container.querySelectorAll('p'))
+                .filter(isVisuallyEmpty)
+                .forEach(paragraph => paragraph.remove());
+            return container.innerHTML;
+        },
+
         filterQuestionsAnswers(){
             const filterInput = chatbot.qAndAConfig.filterInput.toLowerCase();
             if (filterInput !== ''){
