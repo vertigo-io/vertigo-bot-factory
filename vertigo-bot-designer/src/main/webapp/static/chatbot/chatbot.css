@@ -25,11 +25,8 @@
     font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
-.floating-button:focus,
-#botDrawerButton:focus {
-    outline: 3px solid #005fcc !important;
-    outline-offset: 2px;
-    box-shadow: 0 0 0 5px #fff !important;
+.floating-button:focus {
+    outline: auto !important;
 }
 
 .avatar-img {
