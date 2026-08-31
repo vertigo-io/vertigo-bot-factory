@@ -19,7 +19,7 @@
     </parent>
 
     <artifactId>vertigo-bot-factory</artifactId>
-    <version>3.3.1</version>
+    <version>3.3.2</version>
     <name>vertigo-bot-factory</name>
     <packaging>pom</packaging>
 	

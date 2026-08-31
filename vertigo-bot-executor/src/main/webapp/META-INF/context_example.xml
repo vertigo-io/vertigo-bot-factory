@@ -34,13 +34,13 @@
     <Resources className="org.apache.catalina.webresources.StandardRoot">
         <!--  Use for confluence plugin -->
         <PostResources
-            base="C:\Work\Workspaces\chatbot\vertigo-bot-extensions\vertigo-bot-confluence\target\vertigo-bot-confluence-3.3.1-jar-with-dependencies.jar"
+            base="C:\Work\Workspaces\chatbot\vertigo-bot-extensions\vertigo-bot-confluence\target\vertigo-bot-confluence-3.3.2-jar-with-dependencies.jar"
             className="org.apache.catalina.webresources.FileResourceSet"
-            webAppMount="/WEB-INF/lib/vertigo-bot-confluence-3.3.1-jar-with-dependencies.jar" />
+            webAppMount="/WEB-INF/lib/vertigo-bot-confluence-3.3.2-jar-with-dependencies.jar" />
         <!--  Use for jira plugin -->
         <PostResources
-            base="C:\Work\Workspaces\chatbot\vertigo-bot-extensions\vertigo-bot-jira\target\vertigo-bot-jira-3.3.1-jar-with-dependencies.jar"
+            base="C:\Work\Workspaces\chatbot\vertigo-bot-extensions\vertigo-bot-jira\target\vertigo-bot-jira-3.3.2-jar-with-dependencies.jar"
             className="org.apache.catalina.webresources.FileResourceSet"
-            webAppMount="/WEB-INF/lib/vertigo-bot-jira-3.3.1-jar-with-dependencies.jar" />
+            webAppMount="/WEB-INF/lib/vertigo-bot-jira-3.3.2-jar-with-dependencies.jar" />
     </Resources>
 </Context>

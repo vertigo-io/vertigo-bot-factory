@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.vertigo</groupId>
         <artifactId>vertigo-bot-extensions</artifactId>
-        <version>3.3.1</version>
+        <version>3.3.2</version>
     </parent>
     <artifactId>vertigo-bot-confluence</artifactId>
     <name>vertigo-bot-confluence</name>
