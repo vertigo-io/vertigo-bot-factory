@@ -1,27 +1,27 @@
 package io.vertigo.chatbot.designer.builder.services.questionanswer;
 
-import io.vertigo.chatbot.commons.domain.ContextValueExport;
-import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
 import org.jsoup.Jsoup;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-
-import javax.inject.Inject;
 
 import io.vertigo.account.authorization.annotations.SecuredOperation;
 import io.vertigo.chatbot.commons.LogsUtils;
 import io.vertigo.chatbot.commons.dao.questionanswer.QuestionAnswerDAO;
 import io.vertigo.chatbot.commons.domain.Chatbot;
+import io.vertigo.chatbot.commons.domain.ContextValueExport;
 import io.vertigo.chatbot.commons.domain.QuestionAnswerExport;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswer;
 import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerIhm;
 import io.vertigo.chatbot.designer.builder.questionAnswer.QuestionAnswerPAO;
 import io.vertigo.chatbot.designer.builder.topic.export.ExportPAO;
+import io.vertigo.chatbot.designer.utils.SequenceNormalizer;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
@@ -32,10 +32,16 @@ import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.util.VCollectors;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
+import javax.inject.Inject;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 import static java.lang.Long.parseLong;
 
+/**
+ * Services de gestion des questions/reponses FAQ, y compris leur ordre d'affichage dans une categorie.
+ *
+ * @author Chatbot Team
+ */
 @Transactional
 public class QuestionAnswerServices implements Component {
 
@@ -72,8 +78,8 @@ public class QuestionAnswerServices implements Component {
     }
 
     public DtList<QuestionAnswerIhm> getAllQueAnsIhmByCatIdList(@SecuredOperation("botVisitor") final Chatbot bot, final List<Long> categoryIds) {
-        DtList<QuestionAnswerIhm> questionAnswerIhmList = getAllQueAnsIhmByBot(bot);
-        DtList<QuestionAnswerIhm> queAnsFromCategoryList = new DtList<>(QuestionAnswerIhm.class);
+        final DtList<QuestionAnswerIhm> questionAnswerIhmList = getAllQueAnsIhmByBot(bot);
+        final DtList<QuestionAnswerIhm> queAnsFromCategoryList = new DtList<>(QuestionAnswerIhm.class);
         categoryIds.forEach(catId -> queAnsFromCategoryList.addAll(questionAnswerIhmList.stream().filter(queAns -> queAns.getCatId().equals(catId)).collect(VCollectors.toDtList(QuestionAnswerIhm.class))));
         return queAnsFromCategoryList;
     }
@@ -84,13 +90,13 @@ public class QuestionAnswerServices implements Component {
 
 
     public DtList<QuestionAnswerIhm> getAllParsedQueAnsIhmByBot(@SecuredOperation("botVisitor") final Chatbot bot) {
-        DtList<QuestionAnswerIhm> questionAnswerIhmList = questionAnswerPAO.getAllQuestionAnswerIhmFromBot(bot.getBotId());
+        final DtList<QuestionAnswerIhm> questionAnswerIhmList = questionAnswerPAO.getAllQuestionAnswerIhmFromBot(bot.getBotId());
         return parseQuestionAnswer(bot, questionAnswerIhmList);
     }
 
     public DtList<QuestionAnswerIhm> getAllQueAnsIhmByBotIdExceptACategory(final Chatbot bot, final Long categoryId) {
-        DtList<QuestionAnswerIhm> allQueAnsIhm = getAllQueAnsIhmByBot(bot);
-        DtList<QuestionAnswerIhm> filteredQueAnsIhmList = allQueAnsIhm.stream().filter(queAnsIhm -> !queAnsIhm.getCatId().equals(categoryId)).collect(VCollectors.toDtList(QuestionAnswerIhm.class));
+        final DtList<QuestionAnswerIhm> allQueAnsIhm = getAllQueAnsIhmByBot(bot);
+        final DtList<QuestionAnswerIhm> filteredQueAnsIhmList = allQueAnsIhm.stream().filter(queAnsIhm -> !queAnsIhm.getCatId().equals(categoryId)).collect(VCollectors.toDtList(QuestionAnswerIhm.class));
         return parseQuestionAnswer(bot, filteredQueAnsIhmList);
     }
 
@@ -116,13 +122,18 @@ public class QuestionAnswerServices implements Component {
         return questionAnswerIhmList;
     }
 
+    /**
+     * Supprime une question/reponse puis normalise les sequences restantes de sa categorie.
+     *
+     * @param bot le chatbot proprietaire (controle d'autorisation)
+     * @param questionAnswerId l'identifiant de la question/reponse a supprimer
+     */
     public void deleteQueAnsById(@SecuredOperation("botContributor") final Chatbot bot, final Long questionAnswerId) {
         final QuestionAnswer questionAnswer = questionAnswerDAO.get(questionAnswerId);
         final Long qaCatId = questionAnswer.getQaCatId();
-        final Long deletedSequence = questionAnswer.getSequence();
         questionAnswerContextServices.deleteAllQuestionAnswerContextByQaId(bot, questionAnswerId);
         questionAnswerDAO.delete(questionAnswerId);
-        questionAnswerPAO.reorderQueAnsAfterDelete(qaCatId, deletedSequence);
+        normalizeQuestionAnswerSequences(bot, qaCatId);
     }
 
     /**
@@ -148,8 +159,31 @@ public class QuestionAnswerServices implements Component {
             neighbor.setSequence(tempSequence);
             questionAnswerDAO.save(questionAnswer);
             questionAnswerDAO.save(neighbor);
+            normalizeQuestionAnswerSequences(bot, questionAnswer.getQaCatId());
         } else {
             throw new VUserException("Can't move question/answer " + qaId + " because it is out of sequence");
+        }
+    }
+
+    /**
+     * Reecrit les sequences des Q/R d'une categorie en 1..N uniques, en conservant l'ordre relatif
+     * (sequence croissante, puis identifiant).
+     *
+     * @param bot le chatbot proprietaire (controle d'autorisation)
+     * @param qaCatId l'identifiant de la categorie a normaliser
+     */
+    public void normalizeQuestionAnswerSequences(@SecuredOperation("botContributor") final Chatbot bot, final Long qaCatId) {
+        if (qaCatId == null) {
+            return;
+        }
+        final DtList<QuestionAnswer> questionAnswers = getAllQueAnsByCatId(bot, qaCatId);
+        final boolean changed = SequenceNormalizer.applyDenseSequences(
+                questionAnswers,
+                QuestionAnswer::getSequence,
+                QuestionAnswer::getQaId,
+                QuestionAnswer::setSequence);
+        if (changed) {
+            questionAnswers.forEach(questionAnswerDAO::save);
         }
     }
 
@@ -158,26 +192,68 @@ public class QuestionAnswerServices implements Component {
     }
 
 
+    /**
+     * Enregistre une question/reponse. Une creation recoit la prochaine sequence puis la categorie est normalisee.
+     * Une mise a jour sans sequence conserve la valeur existante.
+     *
+     * @param bot le chatbot proprietaire (controle d'autorisation)
+     * @param questionAnswer la question/reponse a persister
+     */
     public void saveQuestionAnswer(@SecuredOperation("botContributor") final Chatbot bot, final QuestionAnswer questionAnswer) {
-        if (questionAnswer.getQaId() == null) {
+        final boolean isNew = questionAnswer.getQaId() == null;
+        if (isNew) {
             questionAnswer.setSequence(questionAnswerPAO.getNextQueAnsSequence(questionAnswer.getQaCatId()));
+        } else if (questionAnswer.getSequence() == null) {
+            questionAnswer.setSequence(questionAnswerDAO.get(questionAnswer.getQaId()).getSequence());
         }
         questionAnswerDAO.save(questionAnswer);
+        if (isNew) {
+            normalizeQuestionAnswerSequences(bot, questionAnswer.getQaCatId());
+        }
     }
 
-    public void saveCategoryChange(@SecuredOperation("botContributor") final Chatbot bot, Long queAnsId, final Long queAnsCategoryId) {
-        QuestionAnswer questionAnswer = questionAnswerDAO.get(queAnsId);
+    /**
+     * Deplace une question/reponse vers une autre categorie et normalise les deux perimetres.
+     *
+     * @param bot le chatbot proprietaire (controle d'autorisation)
+     * @param queAnsId l'identifiant de la question/reponse
+     * @param queAnsCategoryId l'identifiant de la categorie cible
+     */
+    public void saveCategoryChange(@SecuredOperation("botContributor") final Chatbot bot, final Long queAnsId, final Long queAnsCategoryId) {
+        final Long previousCatId = applyCategoryChange(queAnsId, queAnsCategoryId);
+        normalizeQuestionAnswerSequences(bot, previousCatId);
+        normalizeQuestionAnswerSequences(bot, queAnsCategoryId);
+    }
+
+    /**
+     * Deplace plusieurs questions/reponses vers une categorie puis normalise chaque categorie impactee une seule fois.
+     *
+     * @param bot le chatbot proprietaire (controle d'autorisation)
+     * @param queAnsIdsString identifiants separes par des virgules
+     * @param queAnsCategoryId l'identifiant de la categorie cible
+     */
+    public void saveQueAnsCategoryChangesFromTopIdsString(@SecuredOperation("botContributor") final Chatbot bot, final String queAnsIdsString, final Long queAnsCategoryId) {
+        final List<String> queAnsIdList = Arrays.asList(queAnsIdsString.split(","));
+        final Set<Long> categoryIds = new LinkedHashSet<>();
+        categoryIds.add(queAnsCategoryId);
+        queAnsIdList.forEach(queAnsId -> categoryIds.add(applyCategoryChange(parseLong(queAnsId), queAnsCategoryId)));
+        categoryIds.forEach(categoryId -> normalizeQuestionAnswerSequences(bot, categoryId));
+    }
+
+    /**
+     * Change la categorie d'une question/reponse et lui attribue la prochaine sequence de la cible, sans normaliser.
+     *
+     * @param queAnsId l'identifiant de la question/reponse
+     * @param queAnsCategoryId l'identifiant de la categorie cible
+     * @return l'identifiant de l'ancienne categorie
+     */
+    private Long applyCategoryChange(final Long queAnsId, final Long queAnsCategoryId) {
+        final QuestionAnswer questionAnswer = questionAnswerDAO.get(queAnsId);
         final Long previousCatId = questionAnswer.getQaCatId();
-        final Long previousSequence = questionAnswer.getSequence();
         questionAnswer.setQaCatId(queAnsCategoryId);
         questionAnswer.setSequence(questionAnswerPAO.getNextQueAnsSequence(queAnsCategoryId));
         questionAnswerDAO.update(questionAnswer);
-        questionAnswerPAO.reorderQueAnsAfterDelete(previousCatId, previousSequence);
-    }
-
-    public void saveQueAnsCategoryChangesFromTopIdsString(@SecuredOperation("botContributor") final Chatbot bot, String queAnsIdsString, final Long queAnsCategoryId) {
-        List<String> queAnsIdList = Arrays.asList(queAnsIdsString.split(","));
-        queAnsIdList.forEach(queAnsId -> saveCategoryChange(bot, parseLong(queAnsId), queAnsCategoryId));
+        return previousCatId;
     }
 
     public QuestionAnswerIhm getNewQueAns(@SecuredOperation("botContributor") final Chatbot bot) {
@@ -189,8 +265,15 @@ public class QuestionAnswerServices implements Component {
         return questionAnswerIhm;
     }
 
+    /**
+     * Persiste une question/reponse depuis l'IHM. Une creation normalise ensuite les sequences de la categorie.
+     *
+     * @param bot le chatbot proprietaire (controle d'autorisation)
+     * @param questionAnswerIhm donnee IHM a convertir
+     * @return l'entite persistee
+     */
     public QuestionAnswer saveQueAnsFromIhm(@SecuredOperation("botContributor") final Chatbot bot, final QuestionAnswerIhm questionAnswerIhm) {
-        QuestionAnswer questionAnswer = new  QuestionAnswer();
+        final QuestionAnswer questionAnswer = new  QuestionAnswer();
         questionAnswer.setQaId(questionAnswerIhm.getQaId());
         questionAnswer.setQuestion(questionAnswerIhm.getQuestion());
         questionAnswer.setAnswer(questionAnswerIhm.getAnswer());
@@ -198,22 +281,27 @@ public class QuestionAnswerServices implements Component {
         questionAnswer.setQaCatId(questionAnswerIhm.getCatId());
         questionAnswer.setBotId(bot.getBotId());
         questionAnswer.setCode(questionAnswerIhm.getCode());
-        if (questionAnswerIhm.getQaId() == null) {
+        final boolean isNew = questionAnswerIhm.getQaId() == null;
+        if (isNew) {
             questionAnswer.setSequence(questionAnswerPAO.getNextQueAnsSequence(questionAnswerIhm.getCatId()));
         } else {
             questionAnswer.setSequence(questionAnswerDAO.get(questionAnswerIhm.getQaId()).getSequence());
         }
-        return questionAnswerDAO.save(questionAnswer);
+        final QuestionAnswer saved = questionAnswerDAO.save(questionAnswer);
+        if (isNew) {
+            normalizeQuestionAnswerSequences(bot, saved.getQaCatId());
+        }
+        return saved;
     }
 
     public String exportActiveQuestionsAnswers( final Chatbot bot, final StringBuilder logs) {
         LogsUtils.addLogs(logs, "Questions/Answers export...");
-        DtList<QuestionAnswerExport> questionAnswerExports = exportPAO.getAllActiveQuestionAnswerExportByBotId(bot.getBotId());
+        final DtList<QuestionAnswerExport> questionAnswerExports = exportPAO.getAllActiveQuestionAnswerExportByBotId(bot.getBotId());
         questionAnswerExports.forEach(questionAnswer -> questionAnswer.setContextValues(
         questionAnswerContextServices.getAllQuestionAnswerContextByQaId(bot, questionAnswer.getQaId()).stream().map(questionAnswerContext -> {
             questionAnswerContext.contextValue().load();
             questionAnswerContext.contextPossibleValue().load();
-            ContextValueExport contextValueExport = new ContextValueExport();
+            final ContextValueExport contextValueExport = new ContextValueExport();
             contextValueExport.setLabel(questionAnswerContext.contextValue().get().getLabel());
             contextValueExport.setValue(questionAnswerContext.contextPossibleValue().get().getValue());
             contextValueExport.setTyopCd(questionAnswerContext.contextPossibleValue().get().getTyopCd());

@@ -61,12 +61,12 @@
     <vu:include-data object="bot" field="botId" />
     <vu:popup-ajax action="_deleteWelcomeTourStep" vModel="showDeleteWelcomeTourStepPopup" th:message="#{welcometour.step.delete.popup.message}"
                    th:confirm="#{action.delete}" dataName="welStepId" ></vu:popup-ajax>
-    <vu:table th:title="#{welcometour.steps.title}" list="steps" componentId="steps" sortBy="id" :binary-state-sort="true">
+    <vu:table th:title="#{welcometour.steps.title}" list="steps" componentId="steps" sortBy="sequence">
         <vu:slot th:if="${model.userAuthorizations[AtzChatbot$botContributor]}" name="actions_slot">
-            <q-btn color="primary" v-if="props.row.sequence !== 1" round icon="arrow_upward" th:aria-label="#{action.move.up}" th:title="#{action.move.up}"
+            <q-btn color="primary" v-if="canMoveUp(props.row, vueData.steps)" round icon="arrow_upward" th:aria-label="#{action.move.up}" th:title="#{action.move.up}"
                    @click="moveStep(props.row.welStepId, true)">
             </q-btn>
-            <q-btn color="primary"  v-if="props.row.sequence < vueData.steps.length" round icon="arrow_downward" th:aria-label="#{action.move.down}" th:title="#{action.move.down}"
+            <q-btn color="primary"  v-if="canMoveDown(props.row, vueData.steps)" round icon="arrow_downward" th:aria-label="#{action.move.down}" th:title="#{action.move.down}"
                    @click="moveStep(props.row.welStepId, false)">
             </q-btn>
             <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}" th:title="#{action.update}"
@@ -89,10 +89,10 @@
             </q-btn>
         </vu:slot>
         <vu:include-data object="steps" field="*" />
-        <vu:column field="title"/>
-        <vu:column field="text"/>
-        <vu:column field="sequence"/>
-        <vu:column field="enabled" style="width:100px;">
+        <vu:column field="title" sortable="false"/>
+        <vu:column field="text" sortable="false"/>
+        <vu:column field="sequence" sortable="false"/>
+        <vu:column field="enabled" sortable="false" style="width:100px;">
             <q-icon name="check" color="green" size="2rem" v-if="props.row.enabled"></q-icon>
             <q-icon name="block" color="red" size="2rem" v-if="!props.row.enabled"></q-icon>
         </vu:column>

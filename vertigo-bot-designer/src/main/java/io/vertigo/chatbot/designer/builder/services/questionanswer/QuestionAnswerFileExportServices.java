@@ -1,9 +1,11 @@
 package io.vertigo.chatbot.designer.builder.services.questionanswer;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -28,6 +30,12 @@ import io.vertigo.quarto.exporter.model.Export;
 import io.vertigo.quarto.exporter.model.ExportBuilder;
 import io.vertigo.quarto.exporter.model.ExportFormat;
 
+/**
+ * Import et export CSV des questions/reponses FAQ.
+ * L'export n'inclut pas la sequence : l'ordre est reconstruit a l'import par normalisation 1..N par categorie.
+ *
+ * @author Chatbot Team
+ */
 @Transactional
 public class QuestionAnswerFileExportServices implements Component {
 
@@ -67,9 +75,22 @@ public class QuestionAnswerFileExportServices implements Component {
         return exportManager.createExportFile(export);
     }
 
+    /**
+     * Importe des questions/reponses depuis un CSV puis normalise les sequences de chaque categorie impactee.
+     *
+     * @param bot le chatbot cible
+     * @param importQuestionAnswerFile URI du fichier temporaire a importer
+     */
     public void importQueAnsFromCSVFile(final Chatbot bot, final FileInfoURI importQuestionAnswerFile) {
         final Map<String, Long> queAnsLabelIdMap = mapCategoryInitialization(bot);
-        transformFileToList(designerFileServices.getFileTmp(importQuestionAnswerFile)).forEach(questionAnswerCategory -> generateQueAnsFromQueAnsExport(bot, questionAnswerCategory, queAnsLabelIdMap));
+        final Set<Long> impactedCategoryIds = new HashSet<>();
+        transformFileToList(designerFileServices.getFileTmp(importQuestionAnswerFile)).forEach(questionAnswerExport -> {
+            final Long categoryId = generateQueAnsFromQueAnsExport(bot, questionAnswerExport, queAnsLabelIdMap);
+            if (categoryId != null) {
+                impactedCategoryIds.add(categoryId);
+            }
+        });
+        impactedCategoryIds.forEach(categoryId -> questionAnswerServices.normalizeQuestionAnswerSequences(bot, categoryId));
     }
 
     public List<QuestionAnswerFileExport> transformFileToList(@SecuredOperation("SuperAdm") final VFile file) {
@@ -92,21 +113,32 @@ public class QuestionAnswerFileExportServices implements Component {
         return mapCategory;
     }
 
-    public void generateQueAnsFromQueAnsExport(final Chatbot bot, final QuestionAnswerFileExport QuestionAnswerFileExport, Map<String, Long> queAnsLabelIdMap) {
+    /**
+     * Cree ou met a jour une question/reponse a partir d'une ligne d'export.
+     * La sequence n'est jamais lue depuis le CSV : une creation recoit la prochaine valeur, une mise a jour conserve la sienne.
+     *
+     * @param bot le chatbot cible
+     * @param questionAnswerFileExport ligne importee
+     * @param queAnsLabelIdMap correspondance label de categorie vers identifiant
+     * @return l'identifiant de la categorie impactee, ou {@code null} si la categorie est inconnue
+     */
+    public Long generateQueAnsFromQueAnsExport(final Chatbot bot, final QuestionAnswerFileExport questionAnswerFileExport, Map<String, Long> queAnsLabelIdMap) {
         final QuestionAnswer questionAnswer = new QuestionAnswer();
-        final Optional<QuestionAnswer> questionAnswerBase = questionAnswerServices.getQueAnsByCode(QuestionAnswerFileExport.getCode(), bot);
+        final Optional<QuestionAnswer> questionAnswerBase = questionAnswerServices.getQueAnsByCode(questionAnswerFileExport.getCode(), bot);
 
-        if (queAnsLabelIdMap.containsKey(QuestionAnswerFileExport.getCategory())) {
+        if (queAnsLabelIdMap.containsKey(questionAnswerFileExport.getCategory())) {
             //if questionAnswer already exists, we use its id to update it
             questionAnswerBase.ifPresent(queAnsBase -> questionAnswer.setQaId(queAnsBase.getQaId()));
 
             questionAnswer.setBotId(bot.getBotId());
-            questionAnswer.setQuestion(QuestionAnswerFileExport.getQuestion());
-            questionAnswer.setAnswer(QuestionAnswerFileExport.getAnswer());
-            questionAnswer.setIsEnabled("TRUE".equals(QuestionAnswerFileExport.getIsEnabled()));
-            questionAnswer.setQaCatId(queAnsLabelIdMap.get(QuestionAnswerFileExport.getCategory()));
-            questionAnswer.setCode(QuestionAnswerFileExport.getCode());
+            questionAnswer.setQuestion(questionAnswerFileExport.getQuestion());
+            questionAnswer.setAnswer(questionAnswerFileExport.getAnswer());
+            questionAnswer.setIsEnabled("TRUE".equals(questionAnswerFileExport.getIsEnabled()));
+            questionAnswer.setQaCatId(queAnsLabelIdMap.get(questionAnswerFileExport.getCategory()));
+            questionAnswer.setCode(questionAnswerFileExport.getCode());
             questionAnswerServices.saveQuestionAnswer(bot, questionAnswer);
+            return questionAnswer.getQaCatId();
         }
+        return null;
     }
 }

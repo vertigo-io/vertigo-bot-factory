@@ -15,6 +15,7 @@ import io.vertigo.chatbot.commons.domain.questionanswer.QuestionAnswerCategoryEx
 import io.vertigo.chatbot.commons.multilingual.queAnsCategory.QueAnsCategoryMultilingualResources;
 import io.vertigo.chatbot.designer.builder.questionAnswer.QuestionAnswerPAO;
 import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
+import io.vertigo.chatbot.designer.utils.SequenceNormalizer;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
@@ -33,6 +34,11 @@ import io.vertigo.quarto.exporter.model.ExportFormat;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
+/**
+ * Services de gestion des categories FAQ et de leur ordre d'affichage.
+ *
+ * @author Chatbot Team
+ */
 @Transactional
 public class QuestionAnswerCategoryServices implements Component {
 
@@ -65,22 +71,36 @@ public class QuestionAnswerCategoryServices implements Component {
                 .and(Criterions.isEqualTo(DtDefinitions.QuestionAnswerCategoryFields.label, label)));
     }
 
+    /**
+     * Enregistre une categorie. Une creation recoit la prochaine sequence puis toutes les categories du bot sont normalisees.
+     *
+     * @param bot le chatbot proprietaire
+     * @param questionAnswerCategory la categorie a persister
+     */
     public void saveCategory(@SecuredOperation("botVisitor") final Chatbot bot, final QuestionAnswerCategory questionAnswerCategory) {
-        if (questionAnswerCategory.getQaCatId() == null) {
+        final boolean isNew = questionAnswerCategory.getQaCatId() == null;
+        if (isNew) {
             questionAnswerCategory.setSequence(questionAnswerPAO.getNextQueAnsCatSequence(bot.getBotId()));
         }
         questionAnswerCategoryDAO.save(questionAnswerCategory);
+        if (isNew) {
+            normalizeQuestionAnswerCategorySequences(bot);
+        }
     }
 
 
+    /**
+     * Supprime une categorie et ses Q/R, puis normalise les sequences des categories restantes du bot.
+     *
+     * @param bot le chatbot proprietaire
+     * @param categoryId l'identifiant de la categorie a supprimer
+     */
     public void deleteCategory(@SecuredOperation("botVisitor") final Chatbot bot, final Long categoryId) {
-        final QuestionAnswerCategory category = questionAnswerCategoryDAO.get(categoryId);
-        final Long deletedSequence = category.getSequence();
         for (final QuestionAnswer questionAnswer : questionAnswerServices.getAllQueAnsByCatId(bot, categoryId)) {
             questionAnswerServices.deleteQueAnsById(bot,questionAnswer.getQaId());
         }
         questionAnswerCategoryDAO.delete(categoryId);
-        questionAnswerPAO.reorderQueAnsCatAfterDelete(bot.getBotId(), deletedSequence);
+        normalizeQuestionAnswerCategorySequences(bot);
     }
 
     /**
@@ -106,8 +126,27 @@ public class QuestionAnswerCategoryServices implements Component {
             neighbor.setSequence(tempSequence);
             questionAnswerCategoryDAO.save(category);
             questionAnswerCategoryDAO.save(neighbor);
+            normalizeQuestionAnswerCategorySequences(bot);
         } else {
             throw new VUserException("Can't move category " + qaCatId + " because it is out of sequence");
+        }
+    }
+
+    /**
+     * Reecrit les sequences des categories d'un chatbot en 1..N uniques, en conservant l'ordre relatif
+     * (sequence croissante, puis identifiant).
+     *
+     * @param bot le chatbot dont les categories doivent etre normalisees
+     */
+    public void normalizeQuestionAnswerCategorySequences(@SecuredOperation("botVisitor") final Chatbot bot) {
+        final DtList<QuestionAnswerCategory> categories = getAllQueAnsCatByBot(bot);
+        final boolean changed = SequenceNormalizer.applyDenseSequences(
+                categories,
+                QuestionAnswerCategory::getSequence,
+                QuestionAnswerCategory::getQaCatId,
+                QuestionAnswerCategory::setSequence);
+        if (changed) {
+            categories.forEach(questionAnswerCategoryDAO::save);
         }
     }
 
@@ -138,8 +177,15 @@ public class QuestionAnswerCategoryServices implements Component {
                 .build();
         return exportManager.createExportFile(export);
     }
+    /**
+     * Importe des categories depuis un CSV puis normalise leurs sequences a 1..N.
+     *
+     * @param chatbot le chatbot cible
+     * @param importCategoriesFileUri URI du fichier temporaire a importer
+     */
     public void importQueAnsCategoriesFromCSVFile(@SecuredOperation("botAdm") final Chatbot chatbot, final FileInfoURI importCategoriesFileUri) {
         transformFileToList(designerFileServices.getFileTmp(importCategoriesFileUri)).forEach(questionAnswerCategory -> generateQueAnsCategoryFromCategoryExport(questionAnswerCategory, chatbot));
+        normalizeQuestionAnswerCategorySequences(chatbot);
     }
 
     public List<QuestionAnswerCategoryExport> transformFileToList(final VFile file) {
