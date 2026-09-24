@@ -12,7 +12,6 @@ import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.core.lang.VUserException;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
-import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.datastore.filestore.model.VFile;
 import io.vertigo.ui.core.ViewContext;
@@ -29,13 +28,17 @@ import java.util.List;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
+/**
+ * Manages global variables and their types for a chatbot.
+ *
+ * @author Chatbot Team
+ */
 @Controller
 @RequestMapping("/bot/{botId}/globalVariable")
 @Secured("Chatbot$botAdm")
 public class GlobalVariableListController extends AbstractBotListEntityController<GlobalVariable> {
 
     private static final ViewContextKey<GlobalVariable> globalVariablesKey = ViewContextKey.of("globalVariables");
-    private static final ViewContextKey<GlobalVariable> filteredGlobalVariablesKey = ViewContextKey.of("filteredGlobalVariables");
     private static final ViewContextKey<GlobalVariable> newGlobalVariableKey = ViewContextKey.of("newGlobalVariable");
     private static final ViewContextKey<GlobalVariableType> globalVariableTypesKey = ViewContextKey.of("globalVariableTypes");
     private static final ViewContextKey<GlobalVariableType> newGlobalVariableTypeKey = ViewContextKey.of("newGlobalVariableType");
@@ -50,13 +53,18 @@ public class GlobalVariableListController extends AbstractBotListEntityControlle
     @Inject
     private GlobalVariableExportService globalVariableExportService;
 
+    /**
+     * Initializes the bounded global-variable view.
+     *
+     * @param viewContext current view context
+     * @param uiMessageStack UI message stack
+     * @param botId bot identifier
+     */
     @GetMapping("/")
     @Secured("BotUser")
     public void initContext(final ViewContext viewContext, final UiMessageStack uiMessageStack, @PathVariable("botId") final Long botId) {
-        final Chatbot bot = initCommonContext(viewContext, uiMessageStack, botId);
-        DtList<GlobalVariable> globalVariableDtList = globalVariableService.findAllGlobalVariablesByBotId(botId);
-        viewContext.publishDtList(globalVariablesKey, globalVariableDtList);
-        viewContext.publishDtList(filteredGlobalVariablesKey, globalVariableDtList);
+        initCommonContext(viewContext, uiMessageStack, botId);
+        viewContext.publishDtList(globalVariablesKey, globalVariableService.findGlobalVariablesForUi(botId, null));
         viewContext.publishDtList(globalVariableTypesKey, globalVariablesTypeService.finAllGlobalVariableTypesByBot(botId));
         viewContext.publishDto(newGlobalVariableKey, new GlobalVariable());
         viewContext.publishDto(newGlobalVariableTypeKey, new GlobalVariableType());
@@ -66,6 +74,15 @@ public class GlobalVariableListController extends AbstractBotListEntityControlle
         toModeReadOnly();
     }
 
+    /**
+     * Saves a global variable. The displayed list is refreshed separately with
+     * the active server-side filter.
+     *
+     * @param viewContext current view context
+     * @param bot secured bot
+     * @param globalVariable variable to save
+     * @return updated view context
+     */
     @PostMapping("/_saveGlobalVariable")
     public ViewContext saveGlobalVariable(final ViewContext viewContext,
                                              @ViewAttribute("bot") final Chatbot bot,
@@ -73,30 +90,63 @@ public class GlobalVariableListController extends AbstractBotListEntityControlle
 
         globalVariableService.saveGlobalVariable(bot, globalVariable);
         viewContext.publishDto(newGlobalVariableKey, new GlobalVariable());
-        DtList<GlobalVariable> globalVariableDtList = globalVariableService.findAllGlobalVariablesByBotId(bot.getBotId());
-        viewContext.publishDtList(globalVariablesKey, globalVariableDtList);
-        viewContext.publishDtList(filteredGlobalVariablesKey, globalVariableDtList);
         return viewContext;
     }
 
+    /**
+     * Deletes a global variable.
+     *
+     * @param viewContext current view context
+     * @param bot secured bot
+     * @param glvId variable identifier
+     * @return updated view context
+     */
     @PostMapping("/_deleteGlobalVariable")
     public ViewContext deleteGlobalVariable(final ViewContext viewContext,
                                             @ViewAttribute("bot") final Chatbot bot,
                                             @RequestParam("glvId") final Long glvId) {
 
         globalVariableService.deleteGlobalVariableById(bot, glvId);
-        DtList<GlobalVariable> globalVariableDtList = globalVariableService.findAllGlobalVariablesByBotId(bot.getBotId());
-        viewContext.publishDtList(globalVariablesKey, globalVariableDtList);
-        viewContext.publishDtList(filteredGlobalVariablesKey, globalVariableDtList);
         return viewContext;
     }
 
+    /**
+     * Refreshes the bounded variable list with an optional type filter.
+     *
+     * @param viewContext current view context
+     * @param bot secured bot
+     * @param gvtId optional type identifier
+     * @return updated view context
+     */
+    @PostMapping("/_filterGlobalVariables")
+    public ViewContext filterGlobalVariables(final ViewContext viewContext,
+                                             @ViewAttribute("bot") final Chatbot bot,
+                                             @RequestParam(value = "gvtId", required = false) final Long gvtId) {
+        viewContext.publishDtList(globalVariablesKey, globalVariableService.findGlobalVariablesForUi(bot.getBotId(), gvtId));
+        return viewContext;
+    }
+
+    /**
+     * Exports all global variables without applying the UI limit.
+     *
+     * @param viewContext current view context
+     * @param bot secured bot
+     * @return generated export file
+     */
     @PostMapping("/_exportGlobalVariables")
     public VFile doExportGlobalVariables(final ViewContext viewContext,
                                    @ViewAttribute("bot") final Chatbot bot) {
-        return globalVariableExportService.exportGlobalVariables(bot, globalVariableService.findAllGlobalVariablesByBotId(bot.getBotId()));
+        return globalVariableExportService.exportGlobalVariables(bot, globalVariableService.findAllByTypeBotId(bot));
     }
 
+    /**
+     * Imports global variables from a CSV file.
+     *
+     * @param viewContext current view context
+     * @param bot secured bot
+     * @param importGlobalVariablesFile uploaded file
+     * @return redirect to the variables page
+     */
     @PostMapping("/_importGlobalVariables")
     public String doImportGlobalVariables(final ViewContext viewContext,
                                          @ViewAttribute("bot") final Chatbot bot,
@@ -110,6 +160,14 @@ public class GlobalVariableListController extends AbstractBotListEntityControlle
         return "redirect:/bot/" + bot.getBotId() + "/globalVariable/";
     }
 
+    /**
+     * Saves a global-variable type.
+     *
+     * @param viewContext current view context
+     * @param bot secured bot
+     * @param globalVariableType type to save
+     * @return updated view context
+     */
     @PostMapping("/_saveGlobalVariableType")
     public ViewContext saveGlobalVariableType(final ViewContext viewContext,
                                           @ViewAttribute("bot") final Chatbot bot,
@@ -121,19 +179,27 @@ public class GlobalVariableListController extends AbstractBotListEntityControlle
         return viewContext;
     }
 
+    /**
+     * Deletes a global-variable type and its variables.
+     *
+     * @param viewContext current view context
+     * @param bot secured bot
+     * @param gvtId type identifier
+     * @return updated view context
+     */
     @PostMapping("/_deleteGlobalVariableType")
     public ViewContext deleteGlobalVariableType(final ViewContext viewContext,
                                             @ViewAttribute("bot") final Chatbot bot,
                                             @RequestParam("gvtId") final Long gvtId) {
 
         globalVariablesTypeService.deleteGlobalVariableTypeById(bot, gvtId);
-        DtList<GlobalVariable> globalVariableDtList = globalVariableService.findAllGlobalVariablesByBotId(bot.getBotId());
-        viewContext.publishDtList(globalVariablesKey, globalVariableDtList);
-        viewContext.publishDtList(filteredGlobalVariablesKey, globalVariableDtList);
         viewContext.publishDtList(globalVariableTypesKey, globalVariablesTypeService.finAllGlobalVariableTypesByBot(bot.getBotId()));
         return viewContext;
     }
 
+    /**
+     * Validates required global-variable fields.
+     */
     public static final class GlobalVariableNotEmptyValidator extends AbstractChatbotDtObjectValidator<GlobalVariable> {
         /**
          * {@inheritDoc}
@@ -147,6 +213,9 @@ public class GlobalVariableListController extends AbstractBotListEntityControlle
         }
     }
 
+    /**
+     * Validates required global-variable-type fields.
+     */
     public static final class GlobalVariableTypeNotEmptyValidator extends AbstractChatbotDtObjectValidator<GlobalVariableType> {
         /**
          * {@inheritDoc}

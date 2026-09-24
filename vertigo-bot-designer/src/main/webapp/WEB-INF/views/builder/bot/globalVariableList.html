@@ -35,17 +35,14 @@
                     {
                         onSuccess: function() {
                             this.$refs.newGlobalVariableDialog.hide();
+                            this.filter();
                         }
                     });
             },
             filter: function () {
-                VUiPage.vueData.filteredGlobalVariables = VUiPage.vueData.globalVariables
-                if (VUiPage.dataX.gvtId !== null) {
-                    VUiPage.vueData.filteredGlobalVariables = VUiPage.vueData.filteredGlobalVariables
-                        .filter(globalVariable => {
-                            return globalVariable.gvtId === VUiPage.dataX.gvtId
-                        })
-                }
+                this.httpPostAjax('_filterGlobalVariables', {
+                    gvtId: this.dataX.gvtId === null ? '' : this.dataX.gvtId
+                });
             }
         }
     </script>
@@ -56,7 +53,6 @@
 
 <section layout:fragment="content">
     <vu:include-data object="globalVariables" field="*" />
-    <vu:include-data object="filteredGlobalVariables" field="*" />
     <vu:include-data object="globalVariableTypes" field="*" />
     <vu:include-data object="bot" field="botId" />
     <vu:include-data object="newGlobalVariableType" field="gvtId" modifiable="true"/>
@@ -72,10 +68,12 @@
     <vu:include-data object="newGlobalVariable" field="value" modifiable="true"/>
     <vu:popup-ajax action="_deleteGlobalVariableType" vModel="showDeleteGlobalVariableTypePopup"
                    th:message="#{globalVariableType.delete.popup.message}"
-                   th:confirm="#{action.delete}" dataName="gvtId"></vu:popup-ajax>
+                   th:confirm="#{action.delete}" dataName="gvtId"
+                   successAction="'function() { if (this.dataX.gvtId === this.componentStates.gvtId) { this.dataX.gvtId = null; } this.filter(); }'"></vu:popup-ajax>
     <vu:popup-ajax action="_deleteGlobalVariable" vModel="showDeleteGlobalVariablePopup"
                    th:message="#{globalVariable.delete.popup.message}"
-                   th:confirm="#{action.delete}" dataName="glvId"></vu:popup-ajax>
+                   th:confirm="#{action.delete}" dataName="glvId"
+                   successAction="'function() { this.filter(); }'"></vu:popup-ajax>
     <div class="text-h6 text-weight-bold" style="display: flex; align-items: center" >
         <span class="text-primary" style="flex-grow: 2">[[#{globalVariable.title}]]</span>
         <q-icon name="help_outlined" size="2rem"/>
@@ -104,7 +102,7 @@
         </vu:slot>
         <vu:column field="label"/>
     </vu:table>
-    <vu:table th:title="#{globalVariable.table.title}" list="filteredGlobalVariables" componentId="globalVariables">
+    <vu:table th:title="#{globalVariable.table.title}" list="globalVariables" componentId="globalVariables">
         <vu:slot name="top_right_slot">
             <q-select style="width: 13rem; margin-right: 2rem;"
                       clearable
