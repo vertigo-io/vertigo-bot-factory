@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Set;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
@@ -70,7 +71,7 @@ public class UnknownSentenceListController extends AbstractBotListEntityControll
 			@RequestParam("topId") final Long topId) {
 
 		topicServices.addTrainingSentence(bot, jsonEngine.fromJson(unknownSentencesToUpdate, new TypeToken<List<UnknownSentenceToUpdateIhm>>() {
-		}.getType()), topId);
+		}.getType(), Set.of(), Set.of()), topId);
 		viewContext.publishDtList(unknownSentenceListKey, unknownSentencesServices.findUnknownSentences(bot.getBotId()));
 		listLimitReached(viewContext, uiMessageStack);
 		nodeMessageDisplay(bot, uiMessageStack);

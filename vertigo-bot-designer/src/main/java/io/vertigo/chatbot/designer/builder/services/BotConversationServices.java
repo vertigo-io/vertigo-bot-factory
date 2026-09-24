@@ -6,6 +6,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -35,7 +36,7 @@ public class BotConversationServices implements Component {
 	}
 
 	public <D> D jsonToObject(final String json, final Type type) {
-		return jsonEngine.fromJson(json, type);
+		return jsonEngine.fromJson(json, type, Set.of(), Set.of());
 	}
 
 	public <D> D objectFromByteArray(final byte[] object) {

@@ -20,7 +20,6 @@
 		</repository>
 	</repositories>
   <properties>
-	  <jersey.version>3.1.7</jersey.version>
 	  <atlassian.httpclient.version>4.1.0</atlassian.httpclient.version>
 	  <atlassian.fugue.version>5.0.1</atlassian.fugue.version>
 	  <atlassian.concurrent.version>4.0.1</atlassian.concurrent.version>

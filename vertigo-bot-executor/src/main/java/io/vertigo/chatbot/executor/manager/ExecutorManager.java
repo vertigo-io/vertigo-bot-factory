@@ -206,7 +206,7 @@ public class ExecutorManager implements Manager, Activeable {
         if (executorConfiguration.getAvatar() != null) {
             botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
         }
-        botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class));
+        botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class, Set.of(), Set.of()));
         analyticsSenderServices.sendEventToDb(sessionId, botResponse, executorConfigManager.getConfig().getExecutorConfiguration(), input);
 
         return botResponse;
@@ -270,7 +270,7 @@ public class ExecutorManager implements Manager, Activeable {
 
     public String getBotEmailAddress() {
         final ChatbotCustomConfigExport chatbotCustomConfig = jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(),
-                ChatbotCustomConfigExport.class);
+                ChatbotCustomConfigExport.class, Set.of(), Set.of());
         return chatbotCustomConfig.getBotEmailAddress();
     }
 

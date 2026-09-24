@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -265,7 +266,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		LogsUtils.breakLine(logs);
 		final StringBuilder trainingDataLogs = new StringBuilder();
 		try {
-			final BotExport botExport = jsonEngine.fromJson(savedTraining.getBotExport(), BotExport.class);
+			final BotExport botExport = jsonEngine.fromJson(savedTraining.getBotExport(), BotExport.class, Set.of(), Set.of());
 			botExportServices.exportConfluenceSetting(bot.getBotId(), nodeId).ifPresent(botExport::setConfluenceSetting);
 			botExportServices.exportJiraSetting(bot.getBotId(), nodeId).ifPresent(botExport::setJiraSetting);
 			final DtList<AttachmentExport> attachmentExports = botExportServices.exportBotAttachments(bot, logs);
@@ -293,7 +294,7 @@ public class TrainingServices implements Component, IRecordable<Training>, Activ
 		final HttpRequest requestPing = HttpRequestUtils.createGetRequest(node.getUrl() + URL_PING, headers);
 		try {
 			final HttpResponse<String> responsePing = HttpRequestUtils.sendRequest(httpClient, requestPing, BodyHandlers.ofString(), 200);
-			return jsonEngine.fromJson(responsePing.body(), RunnerHealthCheck.class);
+			return jsonEngine.fromJson(responsePing.body(), RunnerHealthCheck.class, Set.of(), Set.of());
 		}
 		catch (final Exception e) {
 			final RunnerHealthCheck runnerHealthCheck = new RunnerHealthCheck();

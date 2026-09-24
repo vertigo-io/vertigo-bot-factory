@@ -99,7 +99,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		if (configDataFile.exists() && configDataFile.canRead()) {
 			try {
 				final String json = FileUtils.readFileToString(configDataFile, StandardCharsets.UTF_8);
-				executorGlobalConfig = jsonEngine.fromJson(json, ExecutorGlobalConfig.class);
+				executorGlobalConfig = jsonEngine.fromJson(json, ExecutorGlobalConfig.class, Set.of(), Set.of());
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", configDataFilePath);
 			}
@@ -117,7 +117,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		if (contextDataFile.exists() && contextDataFile.canRead()) {
 			try {
 				final String json = FileUtils.readFileToString(contextDataFile, StandardCharsets.UTF_8);
-				contextMap = jsonEngine.fromJson(json, HashMap.class);
+				contextMap = jsonEngine.fromJson(json, HashMap.class, Set.of(), Set.of());
 			} catch (final IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -132,7 +132,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		if (questionAnswerListDataFile.exists() && questionAnswerListDataFile.canRead()) {
 			try {
 				final String json = FileUtils.readFileToString(questionAnswerListDataFile, StandardCharsets.UTF_8);
-				questionAnswerList = jsonEngine.fromJson(json, new TypeToken<DtList<QuestionAnswerExport>>(){}.getType());
+				questionAnswerList = jsonEngine.fromJson(json, new TypeToken<DtList<QuestionAnswerExport>>(){}.getType(), Set.of(), Set.of());
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", questionAnswerListDataFilePath);
 			}
@@ -147,7 +147,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		if (attachmentDataFile.exists() && attachmentDataFile.canRead()) {
 			try {
 				final String json = FileUtils.readFileToString(attachmentDataFile, StandardCharsets.UTF_8);
-				mapAttachments = jsonEngine.fromJson(json, HashMap.class);
+				mapAttachments = jsonEngine.fromJson(json, HashMap.class, Set.of(), Set.of());
 			} catch (final IOException e) {
 				throw new VSystemException("Could not retrieve attachments map at startup...", e);
 			}
@@ -162,7 +162,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		if (documentaryResourceDataFile.exists() && documentaryResourceDataFile.canRead()) {
 			try {
 				final String json = FileUtils.readFileToString(documentaryResourceDataFile, StandardCharsets.UTF_8);
-				documentaryResources = jsonEngine.fromJson(json, new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType());
+				documentaryResources = jsonEngine.fromJson(json, new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType(), Set.of(), Set.of());
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", documentaryResourceDataFilePath);			}
 		} else {
@@ -175,7 +175,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		if (documentaryResourceFileDataFile.exists() && documentaryResourceFileDataFile.canRead()) {
 			try {
 				final String json = FileUtils.readFileToString(documentaryResourceFileDataFile, StandardCharsets.UTF_8);
-				mapDocumentaryResourceFiles = jsonEngine.fromJson(json, HashMap.class);
+				mapDocumentaryResourceFiles = jsonEngine.fromJson(json, HashMap.class, Set.of(), Set.of());
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", documentaryResourceFileDataFilePath);
 			}
@@ -190,7 +190,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 		if (globalVariableDataFile.exists() && globalVariableDataFile.canRead()) {
 			try {
 				final String json = FileUtils.readFileToString(globalVariableDataFile, StandardCharsets.UTF_8);
-				globalVariables = mapGlobalVariable(jsonEngine.fromJson(json, new TypeToken<DtList<GlobalVariableExport>>(){}.getType()));
+				globalVariables = mapGlobalVariable(jsonEngine.fromJson(json, new TypeToken<DtList<GlobalVariableExport>>(){}.getType(), Set.of(), Set.of()));
 			} catch (final Exception e) {
 				throw new VSystemException(e, "Error reading parameter file {0}", documentaryResourceFileDataFilePath);
 			}
@@ -305,7 +305,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 		try {
 			FileUtils.writeStringToFile(contextDataFile, botExport.getMapContext(), StandardCharsets.UTF_8);
-			contextMap = jsonEngine.fromJson(botExport.getMapContext(), HashMap.class);
+			contextMap = jsonEngine.fromJson(botExport.getMapContext(), HashMap.class, Set.of(), Set.of());
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", contextDataFile.getPath());
 		}
@@ -315,7 +315,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 
 		try {
 			FileUtils.writeStringToFile(questionAnswerListDataFile, botExport.getQuestionAnswerList(), StandardCharsets.UTF_8);
-			questionAnswerList = jsonEngine.fromJson(botExport.getQuestionAnswerList(), new TypeToken<DtList<QuestionAnswerExport>>(){}.getType());
+			questionAnswerList = jsonEngine.fromJson(botExport.getQuestionAnswerList(), new TypeToken<DtList<QuestionAnswerExport>>(){}.getType(), Set.of(), Set.of());
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", questionAnswerListDataFile.getPath());
 		}
@@ -352,7 +352,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	public void updateDocumentaryResourceList(final BotExport botExport) {
 		try {
 			FileUtils.writeStringToFile(documentaryResourceDataFile, botExport.getDocumentaryResources(), StandardCharsets.UTF_8);
-			documentaryResources = jsonEngine.fromJson(botExport.getDocumentaryResources(), new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType());
+			documentaryResources = jsonEngine.fromJson(botExport.getDocumentaryResources(), new TypeToken<DtList<DocumentaryResourceExport>>(){}.getType(), Set.of(), Set.of());
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", attachmentDataFile.getPath());
 		}
@@ -361,7 +361,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	public void updateGlobalVariables(final BotExport botExport) {
 		try {
 			FileUtils.writeStringToFile(globalVariableDataFile, botExport.getGlobalVariables(), StandardCharsets.UTF_8);
-			globalVariables = mapGlobalVariable(jsonEngine.fromJson(botExport.getGlobalVariables(), new TypeToken<DtList<GlobalVariableExport>>(){}.getType()));
+			globalVariables = mapGlobalVariable(jsonEngine.fromJson(botExport.getGlobalVariables(), new TypeToken<DtList<GlobalVariableExport>>(){}.getType(), Set.of(), Set.of()));
 		} catch (final IOException e) {
 			throw new VSystemException(e, "Error writing parameter file {0}", attachmentDataFile.getPath());
 		}
@@ -406,7 +406,7 @@ public class ExecutorConfigManager implements Manager, Activeable {
 	}
 
 	public JsonElement getCustomConfig(){
-		return jsonEngine.fromJson(getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class);
+		return jsonEngine.fromJson(getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class, Set.of(), Set.of());
 	}
 
 	public void addPlugin(final ExecutorPlugin executorPlugin) {

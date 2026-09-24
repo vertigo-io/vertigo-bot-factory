@@ -53,6 +53,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -283,7 +284,7 @@ public class JiraServerService implements Component, IJiraService {
 		try {
 			final HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
 			if (response.statusCode() >= 200 && response.statusCode() < 300) {
-				final Map<?, ?> responseMap = jsonEngine.fromJson(response.body(), Map.class);
+				final Map<?, ?> responseMap = jsonEngine.fromJson(response.body(), Map.class, Set.of(), Set.of());
 				final String issueKey = responseMap != null ? (String) responseMap.get("issueKey") : null;
 				String issueIdOrKey = null;
 				if (StringUtils.isNotBlank(issueKey)) {
@@ -344,7 +345,7 @@ public class JiraServerService implements Component, IJiraService {
 		try {
 			final HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
 			if (response.statusCode() >= 200 && response.statusCode() < 300) {
-				final JsmTemporaryAttachmentResult attachmentResult = jsonEngine.fromJson(response.body(), JsmTemporaryAttachmentResult.class);
+				final JsmTemporaryAttachmentResult attachmentResult = jsonEngine.fromJson(response.body(), JsmTemporaryAttachmentResult.class, Set.of(), Set.of());
 				if (attachmentResult != null
 						&& attachmentResult.temporaryAttachments() != null
 						&& !attachmentResult.temporaryAttachments().isEmpty()
@@ -563,7 +564,7 @@ public class JiraServerService implements Component, IJiraService {
 		try {
 			final HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
 			if (response.statusCode() >= 200 && response.statusCode() < 300) {
-				final JsmRequestTypeSearchResult requestTypeSearchResult = jsonEngine.fromJson(response.body(), JsmRequestTypeSearchResult.class);
+				final JsmRequestTypeSearchResult requestTypeSearchResult = jsonEngine.fromJson(response.body(), JsmRequestTypeSearchResult.class, Set.of(), Set.of());
 				return new ArrayList<>(requestTypeSearchResult.getValues());
 			}
 			throw new VSystemException("Failed to retrieve JSM request types. Status code " + response.statusCode() + " : " + response.body());
@@ -627,7 +628,7 @@ public class JiraServerService implements Component, IJiraService {
     public boolean getJiraCheckFields(final ExecutorGlobalConfig config) {
         final ChatbotCustomConfigExport chatbotCustomConfig =
                 jsonEngine.fromJson(config.getExecutorConfiguration().getCustomConfig(),
-                        ChatbotCustomConfigExport.class);
+                        ChatbotCustomConfigExport.class, Set.of(), Set.of());
         return chatbotCustomConfig.getJiraCheckBeforeCreate();
     }
 
@@ -668,7 +669,7 @@ public class JiraServerService implements Component, IJiraService {
 		try {
 			final HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
 			if (response.statusCode() >= 200 && response.statusCode() < 300) {
-				final JsmServiceDeskSearchResult result = jsonEngine.fromJson(response.body(), JsmServiceDeskSearchResult.class);
+				final JsmServiceDeskSearchResult result = jsonEngine.fromJson(response.body(), JsmServiceDeskSearchResult.class, Set.of(), Set.of());
 				return result.getValues().stream()
 						.filter(serviceDesk -> project.equalsIgnoreCase(serviceDesk.getProjectKey()))
 						.findFirst()

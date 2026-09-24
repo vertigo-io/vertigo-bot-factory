@@ -12,11 +12,6 @@
     <artifactId>vertigo-bot-commons</artifactId>
     <packaging>jar</packaging>
 
-
-	<properties>
-		<jersey.version>3.1.7</jersey.version>
-	</properties>
-	
 	<dependencies>
 		<dependency>
 			<groupId>jakarta.servlet</groupId>

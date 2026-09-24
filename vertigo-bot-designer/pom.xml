@@ -78,13 +78,13 @@
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-studio</artifactId>
-			<version>${vertigo.version}a</version>
+			<version>${vertigo.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>io.vertigo</groupId>
 			<artifactId>vertigo-ai</artifactId>
-			<version>${vertigo.version}</version>
+			<version>4.4.1-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>

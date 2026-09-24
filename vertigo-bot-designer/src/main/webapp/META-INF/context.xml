@@ -16,7 +16,9 @@
     <Parameter name="MAIL_DEV_MODE" value="true" override="false" />
     <Parameter name="MAIL_DEV_REPLACE_EMAIL_TO" value="cedric.marechal@kleegroup.com"
         override="false" />
-    <Parameter name="KEYCLOAK_URL" value="http://localhost:8200/realms/chatbot" override="false" />
+    <!-- 127.0.0.1 et non localhost : le conteneur Keycloak n'écoute que sur IPv4,
+         alors que localhost résout aussi ::1 (tentative IPv6 inutile puis repli). -->
+    <Parameter name="KEYCLOAK_URL" value="http://127.0.0.1:8200/realms/chatbot" override="false" />
     <Parameter name="KEYCLOAK_CLIENT_NAME" value="chatbot" override="false" />
     <Parameter name="VERSION" value="3.3.2" override="false" />
     <Parameter name="FILE_STORE_PATH" value="D:/tmp/chatbot/designer/attachments/" override="false" />

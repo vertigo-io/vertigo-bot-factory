@@ -19,6 +19,7 @@ package io.vertigo.chatbot.commons;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -32,11 +33,15 @@ import jakarta.ws.rs.ext.MessageBodyReader;
 import jakarta.ws.rs.ext.MessageBodyWriter;
 import jakarta.ws.rs.ext.Provider;
 
-import org.apache.commons.io.IOUtils;
-
 import io.vertigo.core.node.Node;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
 
+/**
+ * Bridges JAX-RS message bodies with Vertigo's JSON engine.
+ *
+ * @param <T> message body type
+ * @author Chatbot Team
+ */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -44,30 +49,37 @@ public class GsonProvider<T> implements MessageBodyReader<T>, MessageBodyWriter<
 
 	private final JsonEngine jsonEngine;
 
+	/**
+	 * Creates a provider backed by the application JSON engine.
+	 */
 	public GsonProvider() {
 		jsonEngine = Node.getNode().getComponentSpace().resolve(JsonEngine.class);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isReadable(final Class<?> type, final Type genericType,
 			final Annotation[] annotations, final MediaType mediaType) {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public T readFrom(final Class<T> type, final Type genericType, final Annotation[] annotations,
 			final MediaType mediaType, final MultivaluedMap<String, String> httpHeaders,
 			final InputStream entityStream) throws IOException {
 
-		return jsonEngine.fromJson(IOUtils.toString(entityStream, StandardCharsets.UTF_8), type);
+		return jsonEngine.fromJson(new InputStreamReader(entityStream, StandardCharsets.UTF_8), genericType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isWriteable(final Class<?> type, final Type genericType,
 			final Annotation[] annotations, final MediaType mediaType) {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void writeTo(final T t, final Class<?> type, final Type genericType, final Annotation[] annotations,
 			final MediaType mediaType, final MultivaluedMap<String, Object> httpHeaders,

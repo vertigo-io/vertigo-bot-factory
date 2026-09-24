@@ -79,10 +79,13 @@ services:
         KC_HOSTNAME_URL: https://keycloak:8200/sso
         KC_HOSTNAME_ADMIN_URL: https://keycloak:8200/sso
         KC_HOSTNAME_STRICT_BACKCHANNEL: "true"
+        # Requis pour que le healthcheck /health/ready sur le port 9000 fonctionne.
+        KC_HEALTH_ENABLED: "true"
       ports:
         - 8200:8080
       depends_on:
-        - postgresKC
+        postgresKC:
+          condition: service_healthy
       healthcheck:
         test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/9000 && echo -e \"GET /health/ready HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n\" >&3 && cat <&3 | grep -q UP'"]
         interval: 15s
@@ -119,7 +122,8 @@ services:
       INFLUXDB_ORG: chatbot
       INFLUXDB_TOKEN: influxDevToken
     depends_on:
-      - influxdb
+      influxdb:
+        condition: service_started
 #    ports:
 #      - "4562:4562"
     networks:
@@ -147,11 +151,16 @@ services:
       - MAIL_PORT=25
       - KEYCLOAK_URL=https://keycloak:8200/sso/realms/chatbot
     depends_on:
-      - postgres
-      - keycloak
-      - influxdb
-      - analytica
-      - clamav
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      clamav:
+        condition: service_healthy
+      influxdb:
+        condition: service_started
+      analytica:
+        condition: service_started
     ports:
       - '127.0.0.1:8080:8080'
     networks:
@@ -178,8 +187,14 @@ services:
       - JAVA_OPTS=-Xmx512m -Xms512m
       - CLAMAV_HOST=clamav
     depends_on:
-      - influxdb
-      - analytica
+      rasa_1:
+        condition: service_healthy
+      clamav:
+        condition: service_healthy
+      influxdb:
+        condition: service_started
+      analytica:
+        condition: service_started
     ports:
       - '127.0.0.1:8181:8080'
     volumes:
@@ -226,8 +241,14 @@ services:
       - JAVA_OPTS=-Xmx512m -Xms512m
       - CLAMAV_HOST=clamav
     depends_on:
-      - influxdb
-      - analytica
+      rasa_2:
+        condition: service_healthy
+      clamav:
+        condition: service_healthy
+      influxdb:
+        condition: service_started
+      analytica:
+        condition: service_started
     ports:
       - '127.0.0.1:8182:8080'
     volumes:

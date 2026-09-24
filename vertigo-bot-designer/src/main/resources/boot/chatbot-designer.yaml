@@ -95,9 +95,14 @@ modules:
       - oidc:
           clientName: ${KEYCLOAK_CLIENT_NAME}
           url: ${KEYCLOAK_URL}
-          scopes: openid
-          httpConnectTimeout: 3000
-          httpReadTimeout: 3000
+          # Les métadonnées OIDC sont lues dans le constructeur du connecteur : sans ce flag,
+          # un SSO lent ou indisponible au démarrage fait échouer tout le noeud Vertigo.
+          # A true, le noeud démarre et le chargement est retenté au premier login.
+          dontFailAtStartup: true
+          # Un provider à froid (premier appel après démarrage du conteneur) dépasse
+          # facilement quelques secondes ; ces timeouts ne servent qu'à lire les métadonnées.
+          httpConnectTimeout: 5000
+          httpReadTimeout: 10000
   io.vertigo.account.AccountFeatures:
     features:
       - security:

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
+import java.util.Set;
 
 import io.vertigo.core.lang.VSystemException;
 import io.vertigo.core.node.Node;
@@ -23,7 +24,7 @@ public final class ObjectConvertionUtils {
 	}
 
 	public static <D> D jsonToObject(final String json, final Type type) {
-		return jsonEngine.fromJson(json, type);
+		return jsonEngine.fromJson(json, type, Set.of(), Set.of());
 	}
 
 	public static <D> D objectFromByteArray(final byte[] object) {

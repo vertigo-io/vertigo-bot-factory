@@ -17,13 +17,11 @@
  */
 package io.vertigo.core.plugins.analytics.log;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.time.Instant;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -32,15 +30,14 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.SocketAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.apache.logging.log4j.core.layout.SerializedLayout;
+import org.apache.logging.log4j.core.layout.JsonLayout;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializer;
-
-import javax.inject.Inject;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.time.Instant;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 
 import io.vertigo.core.analytics.health.HealthCheck;
 import io.vertigo.core.analytics.metric.Metric;
@@ -53,6 +50,7 @@ import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.param.ParamValue;
 import io.vertigo.core.plugins.analytics.log.log4j.AnalyticaSocketAppender;
 import io.vertigo.core.plugins.analytics.log.log4j.AnalyticaSocketAppender.Builder;
+import javax.inject.Inject;
 
 /**
  * Processes connector which use the log4j SocketAppender.
@@ -113,7 +111,7 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 
 
 	@Override
-	public void add(TraceSpan span) {
+	public void add(final TraceSpan span) {
 		Assertion.check()
 				.isNotNull(span);
 		//---
@@ -144,10 +142,9 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 
 	@Override
 	public void start() {
-		@SuppressWarnings("deprecation")
 		final Builder appenderBuilder = AnalyticaSocketAppender.newAnalyticaBuilder()
 				.setName("socketAnalytics")
-				.setLayout(SerializedLayout.createLayout())
+				.setLayout(JsonLayout.createDefaultLayout())
 				.setHost(hostName)
 				.setPort(port)
 				.setConnectTimeoutMillis(DEFAULT_CONNECT_TIMEOUT);
