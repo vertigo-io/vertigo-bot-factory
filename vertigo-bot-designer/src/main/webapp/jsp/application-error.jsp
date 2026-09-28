@@ -1,4 +1,4 @@
-<%@ page session="false" import="java.util.*, jakarta.servlet.*" %>
+<%@ page session="false" import="java.util.*, jakarta.servlet.*, org.unbescape.html.HtmlEscape" %>
 <%!
 	
 private String printException(Throwable t) throws Exception {
@@ -154,7 +154,7 @@ communiquer l'heure &agrave; laquelle s'est produite l'erreur ainsi que les info
 			<a href="#" onclick="handleClick();return false;" id="showerrorlink"><button class="denied__link">Voir le message d'erreur</button></a>	
 			</div>
 			<div id="errordetail" style="display:none;">
-			<h2><%="HTTP (" + errorCode + ") : " + errorMessage %></h2>
+			<h2><%="HTTP (" + errorCode + ") : " + HtmlEscape.escapeHtml4Xml(errorMessage) %></h2>
 			<% for (int i = 0; i < list.size(); i++) { %>
 				<% t = (Throwable)list.get(i); %>
 				<h4><%= i > 0 ? "Cons&eacute;quence (" + i + ")" : "Cause racine" %></h4>
