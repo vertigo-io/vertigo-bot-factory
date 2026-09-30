@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -31,6 +33,7 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.topic.Topic;
 import io.vertigo.chatbot.commons.domain.topic.TopicCategory;
 import io.vertigo.chatbot.commons.domain.topic.TopicIhm;
+import io.vertigo.chatbot.commons.domain.topic.TopicLabel;
 import io.vertigo.chatbot.commons.influxDb.TimeSerieServices;
 import io.vertigo.chatbot.designer.analytics.utils.AnalyticsServicesUtils;
 import io.vertigo.chatbot.designer.builder.services.topic.TopicServices;
@@ -41,6 +44,7 @@ import io.vertigo.chatbot.designer.domain.analytics.ConversationStat;
 import io.vertigo.chatbot.designer.domain.analytics.SentenseDetail;
 import io.vertigo.chatbot.designer.domain.analytics.StatCriteria;
 import io.vertigo.chatbot.designer.domain.analytics.TopIntent;
+import io.vertigo.chatbot.designer.domain.analytics.TopIntentCriteria;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.node.component.Component;
 import io.vertigo.database.timeseries.TabularDatas;
@@ -216,6 +220,37 @@ public class AnalyticsServices implements Component {
 	}
 
 	/**
+	 * Keeps the intents that match the selected categories and labels.
+	 * An empty selection leaves that dimension unfiltered.
+	 *
+	 * @param intents full intent list for the period
+	 * @param intentCriteria selected category and label ids
+	 * @param categories bot categories, used to resolve ids to labels
+	 * @param topicLabels bot labels, used to resolve ids to names
+	 * @return filtered intent list
+	 */
+	public DtList<TopIntent> filterTopIntents(final DtList<TopIntent> intents, final TopIntentCriteria intentCriteria,
+			final DtList<TopicCategory> categories, final DtList<TopicLabel> topicLabels) {
+		final boolean filterCategories = !intentCriteria.getCatIds().isEmpty();
+		final boolean filterLabels = !intentCriteria.getLabels().isEmpty();
+		if (!filterCategories && !filterLabels) {
+			return intents;
+		}
+		final Set<String> catLabels = categories.stream()
+				.filter(category -> intentCriteria.getCatIds().contains(category.getTopCatId()))
+				.map(TopicCategory::getLabel)
+				.collect(Collectors.toSet());
+		final Set<String> labelNames = topicLabels.stream()
+				.filter(topicLabel -> intentCriteria.getLabels().contains(topicLabel.getLabelId()))
+				.map(TopicLabel::getLabel)
+				.collect(Collectors.toSet());
+		return intents.stream()
+				.filter(intent -> !filterCategories || catLabels.contains(intent.getCatLabel()))
+				.filter(intent -> !filterLabels || containsLabel(intent.getLabels(), labelNames))
+				.collect(VCollectors.toDtList(TopIntent.class));
+	}
+
+	/**
 	 * Get the known sentence for a specific intentRasa
 	 *
 	 * @param criteria statCriteria
@@ -352,6 +387,17 @@ public Double getTotalDocumentaryResourceClicks(final StatCriteria criteria) {
 	 */
 	private static Long toLongSafe(final Object value) {
 		return value instanceof final Number number ? number.longValue() : 0L;
+	}
+
+	/**
+	 * Checks whether a comma-separated label string contains one of the selected names.
+	 *
+	 * @param labels intent labels
+	 * @param labelNames selected label names
+	 * @return true when one selected name is present
+	 */
+	private static boolean containsLabel(final String labels, final Set<String> labelNames) {
+		return labels != null && labelNames.stream().anyMatch(labels::contains);
 	}
 
 }

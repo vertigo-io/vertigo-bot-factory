@@ -86,20 +86,8 @@
                 VUiPage.httpPostAjax('_filterConversation', VUiPage.vueDataParams(['conversationCriteria']));
             }, { deep: true });
 
-            VUiPage.$watch('vueData.topIntentCriteria', (newValue, oldValue) => {
-                VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntents;
-                if (VertigoUi.vueData.topIntentCriteria.catIds !== null && VertigoUi.vueData.topIntentCriteria.catIds.length > 0) {
-                    const catLabels = VertigoUi.vueData.topicCategories.filter(topicCategory => VertigoUi.vueData.topIntentCriteria.catIds.includes(topicCategory.topCatId))
-                        .map(topicCategory => topicCategory.label);
-                    VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntentsFiltered.filter(topIntent => catLabels.includes(topIntent.catLabel));
-                }
-                if (VertigoUi.vueData.topIntentCriteria.labels !== null && VertigoUi.vueData.topIntentCriteria.labels.length > 0) {
-                    const labels = VertigoUi.vueData.topicLabels.filter(topicLabel => VertigoUi.vueData.topIntentCriteria.labels.includes(topicLabel.labelId))
-                        .map(topicLabel => topicLabel.label);
-
-                    VertigoUi.vueData.topIntentsFiltered = VertigoUi.vueData.topIntentsFiltered.filter(topIntent =>
-                        topIntent.labels != null && labels.some(label => topIntent.labels.includes(label)));
-                }
+            VUiPage.$watch('vueData.topIntentCriteria', () => {
+                VUiPage.httpPostAjax('_filterTopIntents', VUiPage.vueDataParams(['topIntentCriteria']));
             }, { deep: true });
 
             VUiPage.$watch('vueData.documentaryResourceCriteria', () => {

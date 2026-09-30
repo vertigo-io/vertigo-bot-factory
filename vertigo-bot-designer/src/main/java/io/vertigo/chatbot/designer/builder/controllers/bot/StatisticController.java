@@ -219,11 +219,15 @@ public class StatisticController extends AbstractBotController {
 		viewContext.publishDtList(unknownSentensesKey, DtDefinitions.SentenseDetailFields.topId, analyticsServices.getSentenseDetails(criteria));
 		final DtList<TopIntent> topIntents = analyticsServices.getTopIntents(bot, localeManager.getCurrentLocale().toString(), criteria);
 		viewContext.publishDtList(topIntentsKey, DtDefinitions.TopIntentFields.topId, topIntents);
-		viewContext.publishDtList(topIntentsFilteredKey, DtDefinitions.TopIntentFields.topId, topIntents);
+		viewContext.publishDtList(topIntentsFilteredKey, DtDefinitions.TopIntentFields.topId, analyticsServices.filterTopIntents(
+				topIntents,
+				viewContext.readDto(topIntentCriteriaKey, uiMessageStack),
+				viewContext.readDtList(topicCategoriesKey, uiMessageStack),
+				viewContext.readDtList(topicLabelsKey, uiMessageStack)));
 		viewContext.publishDtList(categoryStatKey, analyticsServices.buildCategoryStats(viewContext.readDtList(topicCategoriesKey, AbstractVSpringMvcController.getUiMessageStack()), topIntents));
 		viewContext.publishRef(ratingStatsKey, timeSerieServices.getRatingStats(criteria));
-		viewContext.publishDtList(intentDetailsKey, DtDefinitions.SentenseDetailFields.topId, new DtList<SentenseDetail>(SentenseDetail.class));
-		viewContext.publishDtList(conversationDetailsKey, DtDefinitions.ConversationDetailFields.sessionId, new DtList<ConversationDetail>(ConversationDetail.class));
+		viewContext.publishDtList(intentDetailsKey, DtDefinitions.SentenseDetailFields.topId, new DtList<>(SentenseDetail.class));
+		viewContext.publishDtList(conversationDetailsKey, DtDefinitions.ConversationDetailFields.sessionId, new DtList<>(ConversationDetail.class));
 
 		final var conversationsStats = analyticsServices.getConversationsStats(criteria, viewContext.readDto(conversationCriteriaKey, AbstractVSpringMvcController.getUiMessageStack()));
 		viewContext.publishDtList(conversationStatKey, DtDefinitions.ConversationStatFields.sessionId, conversationsStats);
@@ -285,6 +289,27 @@ public class StatisticController extends AbstractBotController {
 			@RequestParam("sessionId") final String sessionId, final UiMessageStack uiMessageStack) {
 
 		viewContext.publishDtList(conversationDetailsKey, DtDefinitions.ConversationDetailFields.sessionId, analyticsServices.getConversationDetails(criteria, sessionId));
+		listLimitReached(viewContext, uiMessageStack);
+		return viewContext;
+	}
+
+	/**
+	 * Filters the intent table from the criteria stored in the view context.
+	 *
+	 * @param viewContext view context
+	 * @param uiMessageStack message stack
+	 * @param topIntentCriteria selected categories and labels
+	 * @return updated view context
+	 */
+	@PostMapping("/_filterTopIntents")
+	public ViewContext filterTopIntents(final ViewContext viewContext, final UiMessageStack uiMessageStack,
+			@ViewAttribute("topIntentCriteria") final TopIntentCriteria topIntentCriteria) {
+		final DtList<TopIntent> topIntents = viewContext.readDtList(topIntentsKey, uiMessageStack);
+		viewContext.publishDtList(topIntentsFilteredKey, analyticsServices.filterTopIntents(
+				topIntents,
+				topIntentCriteria,
+				viewContext.readDtList(topicCategoriesKey, uiMessageStack),
+				viewContext.readDtList(topicLabelsKey, uiMessageStack)));
 		listLimitReached(viewContext, uiMessageStack);
 		return viewContext;
 	}
