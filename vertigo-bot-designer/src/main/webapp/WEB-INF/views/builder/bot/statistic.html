@@ -13,6 +13,39 @@
     <script th:src="@{/static/utils/moment.min.js}"></script>
 
     <script th:inline="javascript">
+        /**
+         * Parses a date from Vertigo UI vueData or from Quasar QDate.
+         * LocalDate values in vueData are ISO (yyyy-MM-dd): EncoderDate
+         * and the q-date mask are ISO. The input only displays DD/MM/YYYY via
+         * decodeDate/encodeDate. QDate options still receive YYYY/MM/DD.
+         *
+         * @param {string|null|undefined} value raw date
+         * @returns {object|null} moment instance, or null when missing or invalid
+         */
+        function parseUiDate(value) {
+            if (value == null || value === '') {
+                return null;
+            }
+            const parsed = moment(value, ['YYYY-MM-DD', 'YYYY-MM-DDTHH:mm', 'YYYY/MM/DD', 'DD/MM/YYYY'], true);
+            return parsed.isValid() ? parsed : null;
+        }
+
+        /**
+         * Inclusive day count between two UI dates.
+         *
+         * @param {string|null|undefined} fromValue range start
+         * @param {string|null|undefined} toValue range end
+         * @returns {number|null} day count, or null when either date cannot be parsed
+         */
+        function inclusiveDayCount(fromValue, toValue) {
+            const from = parseUiDate(fromValue);
+            const to = parseUiDate(toValue);
+            if (from == null || to == null) {
+                return null;
+            }
+            return to.diff(from, 'days') + 1;
+        }
+
         window.addEventListener('vui-after-page-mounted', function () {
             loadChatMessageStyle();
             updateStats();
@@ -28,21 +61,17 @@
                     && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
                     VUiExtensions.dataX.disableTimeOption = true;
 
-                    const from = moment(VertigoUi.vueData.criteria.fromDate ,'DD/MM/YYYY');
-                    const to = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
-
-                    let days = to.diff(from, 'days') + 1;
-
-                    if (days < 1) {
+                    let windowDays = days;
+                    if (windowDays < 1) {
                         VertigoUi.vueData.criteria.fromDate = VertigoUi.vueData.criteria.toDate;
-                        days = 1;
+                        windowDays = 1;
                     }
 
-                    if (isNaN(days) || days > 70) {
+                    if (windowDays > 70) {
                         VertigoUi.vueData.criteria.timeOption = 'YEAR';
-                    } else if (days > 30) {
+                    } else if (windowDays > 30) {
                         VertigoUi.vueData.criteria.timeOption = 'MONTH';
-                    } else if (days > 3) {
+                    } else if (windowDays > 3) {
                         VertigoUi.vueData.criteria.timeOption = 'WEEK';
                     } else {
                         VertigoUi.vueData.criteria.timeOption = 'DAY';
@@ -882,23 +911,26 @@
             ...VUiExtensions.methods,
 
             conversationsMean: function() {
-                let days;
-                if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
-                    && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
-                    const a = moment(VertigoUi.vueData.criteria.fromDate ,'DD/MM/YYYY');
-                    const b = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
-                    days = b.diff(a, 'days') + 1;
+                const rangedDays = inclusiveDayCount(VertigoUi.vueData.criteria.fromDate, VertigoUi.vueData.criteria.toDate);
+                let days = rangedDays;
+                if (days == null) {
+                    if (VertigoUi.vueData.criteria.timeOption === 'WEEK') {
+                        days = 7;
+                    } else if (VertigoUi.vueData.criteria.timeOption === 'MONTH') {
+                        days = 30;
+                    } else if (VertigoUi.vueData.criteria.timeOption === 'YEAR') {
+                        days = 365;
+                    } else {
+                        days = 1;
+                    }
+                } else if (days < 1) {
+                    days = 1;
                 }
-                else if (VertigoUi.vueData.criteria.timeOption === 'WEEK') {
-                    days = 7;
-                } else if (VertigoUi.vueData.criteria.timeOption === 'MONTH') {
-                    days = 30;
-                } else if (VertigoUi.vueData.criteria.timeOption === 'YEAR') {
-                    days = 365;
-                } else { // === 'DAY'
-                    days = 1
+                const total = Number(VertigoUi.vueData.totalOfConversations);
+                if (!Number.isFinite(days) || days < 1 || !Number.isFinite(total)) {
+                    return '-';
                 }
-                return Math.round(VertigoUi.vueData.totalOfConversations / days);
+                return Math.round(total / days);
             },
 
             recognizedMessageRatio: function() {
@@ -957,13 +989,23 @@
                     VertigoUi.vueData.typeExportAnalyticsList.map(typeExport => typeExport.teaCd);
             },
 
+            /**
+             * Enables QDate days up to the "Au" date.
+             * An unreadable bound must not disable the whole calendar.
+             *
+             * @param {string} date day proposed by QDate (YYYY/MM/DD)
+             * @returns {boolean} true when the day can be selected
+             */
             limitFromInput: function(date) {
-                if (VertigoUi.vueData.criteria.toDate == null || VertigoUi.vueData.criteria.toDate == '') return true;
-
-                const from = moment(date,'YYYY/MM/DD');
-                const to = moment(VertigoUi.vueData.criteria.toDate,'DD/MM/YYYY');
-
-                return from <= to;
+                const to = parseUiDate(VertigoUi.vueData.criteria.toDate);
+                if (to == null) {
+                    return true;
+                }
+                const from = parseUiDate(date);
+                if (from == null) {
+                    return true;
+                }
+                return from.isSameOrBefore(to, 'day');
             }
         }
 

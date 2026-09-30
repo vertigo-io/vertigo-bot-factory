@@ -30,7 +30,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.SocketAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.apache.logging.log4j.core.layout.JsonLayout;
+import org.apache.logging.log4j.core.layout.SerializedLayout;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -53,7 +53,11 @@ import io.vertigo.core.plugins.analytics.log.log4j.AnalyticaSocketAppender.Build
 import javax.inject.Inject;
 
 /**
- * Processes connector which use the log4j SocketAppender.
+ * Sends analytics to vertigo-analytics-server over its log4j socket.
+ * The server (0.14) deserializes Java {@code LogEvent}s. The layout must stay
+ * {@link SerializedLayout}: a JSON layout is rejected
+ * ({@code StreamCorruptedException}, header {@code 7B0D0A20}) and every
+ * conversation, page and metric event is dropped before InfluxDB.
  *
  * @author mlaroche, pchretien, npiedeloup
  */
@@ -142,9 +146,11 @@ public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements Analyt
 
 	@Override
 	public void start() {
+		@SuppressWarnings("deprecation") // required by analytics-server 0.14, which reads serialized LogEvents
+		final SerializedLayout serializedLayout = SerializedLayout.createLayout();
 		final Builder appenderBuilder = AnalyticaSocketAppender.newAnalyticaBuilder()
 				.setName("socketAnalytics")
-				.setLayout(JsonLayout.createDefaultLayout())
+				.setLayout(serializedLayout)
 				.setHost(hostName)
 				.setPort(port)
 				.setConnectTimeoutMillis(DEFAULT_CONNECT_TIMEOUT);
