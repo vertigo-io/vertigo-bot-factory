@@ -56,9 +56,9 @@
                 labels: getCategoryLabels()
             };
 
-            VUiPage.$watch('vueData.criteria', (newValue, oldValue) => {
-                if (VertigoUi.vueData.criteria.fromDate !== '' && VertigoUi.vueData.criteria.fromDate !== null
-                    && VertigoUi.vueData.criteria.toDate !== '' && VertigoUi.vueData.criteria.toDate !== null) {
+            VUiPage.$watch('vueData.criteria', () => {
+                const days = inclusiveDayCount(VertigoUi.vueData.criteria.fromDate, VertigoUi.vueData.criteria.toDate);
+                if (days != null) {
                     VUiExtensions.dataX.disableTimeOption = true;
 
                     let windowDays = days;
@@ -79,7 +79,7 @@
                 } else {
                     VUiExtensions.dataX.disableTimeOption = false;
                 }
-                updateStats()
+                updateStats();
             }, { deep: true })
 
             VUiPage.$watch('vueData.conversationCriteria', (newValue, oldValue) => {
@@ -741,7 +741,9 @@
             <vu:include-data object="topIntents" field="'*'"/>
             <vu:include-data object="topIntentsFiltered" field="'*'"/>
 
-            <vu:table componentId="intentList"  list="topIntentsFiltered"  rowsPerPage="5" sortBy="count" descending>
+            <vu:table componentId="intentList" list="topIntentsFiltered"
+                      th:title="#{analytics.intents.usage}"
+                      rowsPerPage="5" sortBy="count" descending>
 
                 <vu:slot name="top_right_slot">
                     <vu:select-edit object="topIntentCriteria" field="catIds"
