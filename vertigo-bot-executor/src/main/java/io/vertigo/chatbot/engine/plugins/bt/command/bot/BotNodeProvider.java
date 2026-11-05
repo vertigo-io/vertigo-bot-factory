@@ -388,6 +388,14 @@ public final class BotNodeProvider {
 						running()));
 	}
 
+	public static BTNode chooseSelect(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<? extends IBotChoice> buttons) {
+		return selector(
+				fulfilled(bb, keyTemplate),
+				sequence(
+						set(bb, BotEngine.BOT_OUT_METADATA_PATH.key() + "/choicedisplay", "select"),
+						chooseButton(bb, keyTemplate, question, buttons)));
+	}
+
 	public static BTNode chooseFileButton(final BlackBoard bb, final String keyTemplate, final String question, final Iterable<? extends IBotChoice > buttons) {
 		return selector(
 				fulfilled(bb, keyTemplate),

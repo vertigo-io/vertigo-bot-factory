@@ -75,6 +75,14 @@
                 }
             },
 
+            getJiraValueListLabel: function(jirValListId) {
+                if (!jirValListId || !VertigoUi.vueData.jiraValueLists) {
+                    return '';
+                }
+                let valueList = VertigoUi.vueData.jiraValueLists.find(current => current.jirValListId === jirValListId);
+                return valueList !== undefined ? valueList.label : '';
+            },
+
             createValue: function(val, done) {
                 if (val.length > 0 && !val.includes(',')) {
                     done(val, 'add-unique')
@@ -234,7 +242,7 @@
             openAddJiraCustomFieldDialog: function() {
                 Object.assign(this.vueData.newJiraCustomFieldSetting, {
                     jirCusFieldSetId: null, botId: this.vueData.bot.botId,
-                    label: null, fieldKey: null, jcfTypeCd: null, enabled: true, mandatory: false
+                    label: null, fieldKey: null, jcfTypeCd: null, jirValListId: null, enabled: true, mandatory: false
                 });
                 this.$refs.jiraCustomFieldDialog.show();
             },
@@ -242,6 +250,49 @@
             openEditJiraCustomFieldDialog: function(row) {
                 Object.assign(this.vueData.newJiraCustomFieldSetting, row);
                 this.$refs.jiraCustomFieldDialog.show();
+            },
+
+            openAddJiraValueListDialog: function() {
+                Object.assign(this.vueData.newJiraValueList, {
+                    jirValListId: null, botId: this.vueData.bot.botId, code: null, label: null
+                });
+                if (!this.vueData.newJiraValueListItems) {
+                    this.vueData.newJiraValueListItems = [];
+                }
+                this.vueData.newJiraValueListItems.splice(0, this.vueData.newJiraValueListItems.length);
+                this.$refs.jiraValueListDialog.show();
+            },
+
+            openEditJiraValueListDialog: function(row) {
+                Object.assign(this.vueData.newJiraValueList, row);
+                const dialog = this.$refs.jiraValueListDialog;
+                VUiPage.httpPostAjax("_loadJiraValueListItems", {jirValListId: row.jirValListId}, {
+                    onSuccess: function() {
+                        dialog.show();
+                    }
+                });
+            },
+
+            addJiraValueListItem: function() {
+                this.vueData.newJiraValueListItems.push({code: '', label: ''});
+            },
+
+            removeJiraValueListItem: function(index) {
+                this.vueData.newJiraValueListItems.splice(index, 1);
+            },
+
+            saveJiraValueList: function() {
+                const params = this.vueDataParams(['newJiraValueList']);
+                const items = (this.vueData.newJiraValueListItems || [])
+                    .map(item => ({code: item.code, label: item.label}));
+                params.append('items', JSON.stringify(items));
+                const dialog = this.$refs.jiraValueListDialog;
+                VUiPage.httpPostAjax('_saveJiraValueList', params, {
+                    onSuccess: function() {
+                        dialog.hide();
+                        refreshCodeMirrorJiraField();
+                    }
+                });
             }
         };
 
@@ -259,6 +310,14 @@
                 }
             }
             return { enabled: fieldSetting.enabled, mandatory: fieldSetting.mandatory };
+        }
+
+        function jiraValueListCode(customField) {
+            if (!customField.jirValListId || !VertigoUi.vueData.jiraValueLists) {
+                return '';
+            }
+            const valueList = VertigoUi.vueData.jiraValueLists.find(current => current.jirValListId === customField.jirValListId);
+            return valueList ? valueList.code : '';
         }
 
         function refreshCodeMirrorJiraField() {
@@ -280,7 +339,12 @@
             customFields.forEach(customField => {
                 // Use sanitized fieldKey for BBKey path (remove underscores), and original fieldKey for Jira field ID
                 const bbKeyPath = sanitizeBBKeyPath(customField.fieldKey);
-                jiraSequence += '        jira:field /user/local/jira/' + bbKeyPath + ' "Question posée par le bot" "' + customField.fieldKey + '"\n';
+                let fieldLine = '        jira:field /user/local/jira/' + bbKeyPath + ' "Question posée par le bot" "' + customField.fieldKey + '"';
+                const listCode = jiraValueListCode(customField);
+                if (listCode) {
+                    fieldLine += ' "' + listCode.replace(/"/g, "'") + '"';
+                }
+                jiraSequence += fieldLine + '\n';
             });
             jiraSequence += '    end jira:issue:create\nend sequence';
             VUiPage.$refs.jiraCodeMirror.replaceContent(jiraSequence);
@@ -541,10 +605,41 @@
                           disable></q-toggle>
             </vu:column>
         </vu:table>
+        <vu:popup-ajax action="_deleteJiraValueList" vModel="showDeleteJiraValueListPopup"
+                       th:message="#{extension.jira.valueList.delete.popup.message}"
+                       th:confirm="#{action.delete}" dataName="jirValListId"
+                       successAction="'function() { refreshCodeMirrorJiraField(); }'"></vu:popup-ajax>
         <vu:popup-ajax action="_deleteJiraCustomField" vModel="showDeleteJiraCustomFieldPopup"
                        th:message="#{extension.jira.customField.delete.popup.message}"
                        th:confirm="#{action.delete}" dataName="jirCusFieldSetId"></vu:popup-ajax>
         <div v-if="vueData.chatbotCustomConfig.jsmMode" style="margin-bottom:20px;">
+            <vu:table id="JIRA_VALUE_LISTS" th:title="#{extensions.jira.valueLists}" list="jiraValueLists"
+                      componentId="jiraValueLists" sortBy="code" :binary-state-sort="true" style="margin-bottom:20px;">
+                <vu:slot name="top_right_slot">
+                    <q-btn color="primary" round icon="add" th:aria-label="#{action.add}"
+                           th:if="${model.userAuthorizations[AtzChatbot$botAdm]}" th:title="#{action.add}"
+                           @click="openAddJiraValueListDialog()"></q-btn>
+                </vu:slot>
+                <vu:slot name="actions_slot">
+                    <q-btn class="on-right" round color="primary" icon="edit" th:aria-label="#{action.update}"
+                           th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                           th:title="#{action.update}"
+                           @click="openEditJiraValueListDialog(props.row)"></q-btn>
+                    <q-btn class="on-right" round color="red" icon="delete" th:aria-label="#{action.delete}"
+                           th:title="#{action.delete}"
+                           th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                           @click="componentStates.jirValListId = props.row.jirValListId; componentStates.showDeleteJiraValueListPopup.shown = true"></q-btn>
+                </vu:slot>
+                <vu:include-data object="jiraValueLists" field="'*'"/>
+                <vu:include-data object="jiraValueListItems" field="'*'"/>
+                <vu:column field="code"/>
+                <vu:column field="label"/>
+                <vu:column name="itemCount" th:label="#{extensions.jira.valueList.itemCount}">
+                    <vu:content>
+                        <span>{{ (vueData.jiraValueListItems || []).filter(item => item.jirValListId === props.row.jirValListId).length }}</span>
+                    </vu:content>
+                </vu:column>
+            </vu:table>
             <vu:table id="JIRA_CUSTOM_FIELDS" th:title="#{extensions.jira.customFields}" list="jiraCustomFieldSettings"
                       componentId="jiraCustomFieldSettings" sortBy="label" :binary-state-sort="true">
                 <vu:slot name="top_right_slot">
@@ -569,6 +664,11 @@
                 <vu:column name="jcfTypeCd" th:label="#{fldJiraCustomFieldSetting$jcfTypeCd}">
                     <vu:content>
                         <span v-html="getJiraCustomFieldTypeLabel(props.row.jcfTypeCd)"></span>
+                    </vu:content>
+                </vu:column>
+                <vu:column name="jirValListId" th:label="#{fldJiraCustomFieldSetting$jirValListId}">
+                    <vu:content>
+                        <span>{{ getJiraValueListLabel(props.row.jirValListId) }}</span>
                     </vu:content>
                 </vu:column>
                 <vu:column name="enabled" th:label="#{fldJiraCustomFieldSetting$enabled}">
@@ -742,6 +842,7 @@
         <vu:include-data object="newJiraCustomFieldSetting" field="label" modifiable="true"/>
         <vu:include-data object="newJiraCustomFieldSetting" field="fieldKey" modifiable="true"/>
         <vu:include-data object="newJiraCustomFieldSetting" field="jcfTypeCd" modifiable="true"/>
+        <vu:include-data object="newJiraCustomFieldSetting" field="jirValListId" modifiable="true"/>
         <vu:include-data object="newJiraCustomFieldSetting" field="enabled" modifiable="true"/>
         <vu:include-data object="newJiraCustomFieldSetting" field="mandatory" modifiable="true"/>
         <q-card style="min-width: 400px;">
@@ -781,6 +882,17 @@
                         stack-label/>
             </q-card-section>
             <q-card-section>
+                <q-select
+                        th:label="#{fldJiraCustomFieldSetting$jirValListId}"
+                        v-model="vueData.newJiraCustomFieldSetting.jirValListId"
+                        name="vContext[newJiraCustomFieldSetting][jirValListId]"
+                        :options="(vueData.jiraValueLists || []).map(list => ({label: list.label + ' (' + list.code + ')', value: list.jirValListId}))"
+                        map-options
+                        emit-value
+                        clearable
+                        stack-label/>
+            </q-card-section>
+            <q-card-section>
                 <q-toggle v-model="vueData.newJiraCustomFieldSetting.enabled"
                           th:label="#{fldJiraCustomFieldSetting$enabled}"
                           name="vContext[newJiraCustomFieldSetting][enabled]"/>
@@ -797,6 +909,70 @@
                 <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
                        @click="httpPostAjax('_saveJiraCustomField', vueDataParams(['newJiraCustomFieldSetting']), {onSuccess: function() { refreshCodeMirrorJiraField(); }})"
                        color="primary" v-close-popup></q-btn>
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
+    <q-dialog ref="jiraValueListDialog">
+        <vu:include-data object="newJiraValueList" field="jirValListId" modifiable="true"/>
+        <vu:include-data object="newJiraValueList" field="botId" modifiable="true"/>
+        <vu:include-data object="newJiraValueList" field="code" modifiable="true"/>
+        <vu:include-data object="newJiraValueList" field="label" modifiable="true"/>
+        <vu:include-data object="newJiraValueListItems" field="jirValItemId" modifiableAllLines="true"/>
+        <vu:include-data object="newJiraValueListItems" field="jirValListId" modifiableAllLines="true"/>
+        <vu:include-data object="newJiraValueListItems" field="code" modifiableAllLines="true"/>
+        <vu:include-data object="newJiraValueListItems" field="label" modifiableAllLines="true"/>
+        <vu:include-data object="newJiraValueListItems" field="sequence" modifiableAllLines="true"/>
+        <q-card style="width: 40rem; max-width: 92vw;">
+            <q-card-section>
+                <div class="text-h6">
+                    <span v-if="vueData.newJiraValueList.jirValListId !== null"
+                          th:text="#{extensions.jira.valueList.update.popup.title}"></span>
+                    <span v-else th:text="#{extensions.jira.valueList.add.popup.title}"></span>
+                </div>
+            </q-card-section>
+            <q-card-section>
+                <input type="hidden" v-model="vueData.newJiraValueList.jirValListId"
+                       name="vContext[newJiraValueList][jirValListId]">
+                <input type="hidden" v-model="vueData.newJiraValueList.botId"
+                       name="vContext[newJiraValueList][botId]">
+                <q-input v-model="vueData.newJiraValueList.code" th:label="#{fldJiraValueList$code}"
+                         name="vContext[newJiraValueList][code]"
+                         :error="hasFieldsError('newJiraValueList', 'code')"
+                         :error-message="getErrorMessage('newJiraValueList', 'code')"/>
+            </q-card-section>
+            <q-card-section>
+                <q-input v-model="vueData.newJiraValueList.label" th:label="#{fldJiraValueList$label}"
+                         name="vContext[newJiraValueList][label]"
+                         :error="hasFieldsError('newJiraValueList', 'label')"
+                         :error-message="getErrorMessage('newJiraValueList', 'label')"/>
+            </q-card-section>
+            <q-card-section>
+                <div class="text-subtitle1 q-mb-sm" th:text="#{extensions.jira.valueList.values}"></div>
+                <div class="row items-end q-mb-sm" v-for="(item, index) in (vueData.newJiraValueListItems || [])" :key="index">
+                    <div class="col q-pr-sm">
+                        <q-input style="min-width: 0;" v-model="item.code" th:label="#{fldJiraValueListItem$code}"
+                                 :name="'vContext[newJiraValueListItems][' + index + '][code]'"/>
+                    </div>
+                    <div class="col q-pr-sm">
+                        <q-input style="min-width: 0;" v-model="item.label" th:label="#{fldJiraValueListItem$label}"
+                                 :name="'vContext[newJiraValueListItems][' + index + '][label]'"/>
+                    </div>
+                    <div class="col-auto">
+                        <q-btn flat round dense color="red" icon="delete" class="q-mb-sm"
+                               th:aria-label="#{action.delete}" th:title="#{action.delete}"
+                               @click="removeJiraValueListItem(index)"></q-btn>
+                    </div>
+                </div>
+                <q-btn flat color="primary" icon="add" th:label="#{extensions.jira.valueList.addValue}"
+                       @click="addJiraValueListItem()"></q-btn>
+            </q-card-section>
+            <q-card-actions align="around">
+                <input type="hidden" name="CTX" :value="vueData['CTX']">
+                <q-btn th:label="#{action.cancel}" color="red" v-close-popup></q-btn>
+                <q-btn th:title="#{action.save}" th:label="#{action.save}" th:aria-label="#{action.save}"
+                       @click="saveJiraValueList()"
+                       color="primary"></q-btn>
             </q-card-actions>
         </q-card>
     </q-dialog>

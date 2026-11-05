@@ -27,6 +27,7 @@ import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
 import io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport;
 import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
+import io.vertigo.chatbot.commons.domain.JiraValueListExport;
 import io.vertigo.chatbot.engine.plugins.bt.jira.helper.CustomAsynchronousJiraRestClient;
 import io.vertigo.chatbot.engine.plugins.bt.jira.helper.CustomServerInfo;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
@@ -54,6 +55,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -96,6 +98,7 @@ public class JiraServerService implements Component, IJiraService {
     private JiraRestClient jiraRestClient;
     private DtList<JiraFieldSettingExport> jiraFieldSettingExports;
     private DtList<JiraCustomFieldSettingExport> jiraCustomFieldSettingExports;
+    private DtList<JiraValueListExport> jiraValueLists;
     private CustomAsynchronousJiraRestClient customAsynchronousUserRestClient;
     @Inject
     private PasswordEncryptionServices passwordEncryptionServices;
@@ -133,6 +136,7 @@ public class JiraServerService implements Component, IJiraService {
 			}
             jiraFieldSettingExports = jiraFieldSettingExport;
             jiraCustomFieldSettingExports = config.getBot().getJiraCustomFieldSetting();
+            jiraValueLists = config.getBot().getJiraValueLists();
             numberOfResults = jiraSettingExport.getNumberOfResults();
             LogsUtils.logOK(logs);
         }
@@ -148,6 +152,15 @@ public class JiraServerService implements Component, IJiraService {
 
     public DtList<JiraCustomFieldSettingExport> getJiraCustomFieldSettingExports() {
         return jiraCustomFieldSettingExports;
+    }
+
+    public Optional<JiraValueListExport> findValueList(final String code) {
+        if (jiraValueLists == null || code == null || code.isBlank()) {
+            return Optional.empty();
+        }
+        return jiraValueLists.stream()
+                .filter(valueList -> code.equals(valueList.getCode()))
+                .findFirst();
     }
 
     private JiraRestClient createJiraRestClient() {

@@ -485,3 +485,35 @@ img {
 .q-rating.disabled {
     opacity: 1 !important;
 }
+
+.choice-list {
+    max-height: 10rem;
+    margin: 0 16px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.choice-list-item {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    color: #000;
+    text-align: left;
+    background: #fff;
+    border: 0;
+    cursor: pointer;
+}
+
+.choice-list-item:hover,
+.choice-list-item:focus {
+    background: #f0f0f0;
+    outline: none;
+}
+
+.choice-list-empty {
+    padding: 8px 12px;
+    color: #666;
+    font-style: italic;
+}

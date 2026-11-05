@@ -120,7 +120,8 @@ const chatbotComponent = {
                 buttons: [],
                 cards: [],
                 cardIndex: 0,
-                files: []
+                files: [],
+                choiceDisplay: ''
             },
 
             qAndAConfig: {
@@ -161,6 +162,34 @@ const chatbotComponent = {
             }
             const resultCount = this.qAndAConfig.filteredQuestionAnswerList.length;
             return resultCount + (resultCount === 1 ? ' résultat trouvé dans la FAQ.' : ' résultats trouvés dans la FAQ.');
+        },
+        filteredChoices() {
+            if (this.inputConfig.choiceDisplay !== 'select') {
+                return [];
+            }
+            const query = this.normalizeChoiceText(this.inputConfig.responseText);
+            if (query === '') {
+                return this.inputConfig.buttons;
+            }
+            return this.inputConfig.buttons.filter(btn =>
+                this.normalizeChoiceText(btn.label).includes(query)
+                || this.normalizeChoiceText(btn.payload).includes(query));
+        },
+        resolvedChoice() {
+            if (this.inputConfig.choiceDisplay !== 'select') {
+                return null;
+            }
+            const query = this.normalizeChoiceText(this.inputConfig.responseText);
+            if (query === '') {
+                return null;
+            }
+            const exact = this.inputConfig.buttons.find(btn =>
+                this.normalizeChoiceText(btn.label) === query
+                || this.normalizeChoiceText(btn.payload) === query);
+            if (exact) {
+                return exact;
+            }
+            return this.filteredChoices.length === 1 ? this.filteredChoices[0] : null;
         }
     },
     methods: {
@@ -298,6 +327,34 @@ const chatbotComponent = {
         
         focusInput() {
             this.$refs.input.focus();
+        },
+
+        normalizeChoiceText(value) {
+            return (value || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        },
+
+        onMessageEnter() {
+            if (this.inputConfig.choiceDisplay === 'select') {
+                this.submitFilteredChoice();
+                return;
+            }
+            if (this.inputConfig.responseText.trim() !== '') {
+                this.postAnswerText(false);
+            }
+        },
+
+        onMessageSend() {
+            if (this.inputConfig.choiceDisplay === 'select') {
+                this.submitFilteredChoice();
+                return;
+            }
+            this.postAnswerText(false);
+        },
+
+        submitFilteredChoice() {
+            if (this.resolvedChoice) {
+                this.postAnswerBtn(this.resolvedChoice);
+            }
         },
 
         askBot(value, label, isButton, fileContent, fileName, rating) {

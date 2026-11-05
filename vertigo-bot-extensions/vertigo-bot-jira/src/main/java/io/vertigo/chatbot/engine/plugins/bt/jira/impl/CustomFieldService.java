@@ -10,6 +10,7 @@ import io.vertigo.ai.bb.BBKey;
 import io.vertigo.ai.bb.BlackBoard;
 import io.vertigo.ai.bt.BTNode;
 import io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport;
+import io.vertigo.chatbot.commons.domain.JiraValueListExport;
 import io.vertigo.chatbot.engine.model.choice.BotButton;
 import io.vertigo.chatbot.engine.plugins.bt.command.bot.BotNodeProvider;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
@@ -38,17 +39,21 @@ public class CustomFieldService implements IJiraFieldService, Component {
 
 	@Override
 	public void processConversation(final BlackBoard bb, final JiraField jiraField, final List<BTNode> sequence, final boolean checkJiraFields) {
-		// Simply ask the user for input - similar to summary field
-		sequence.add(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()));
+		processConversation(bb, jiraField, List.of(), sequence, checkJiraFields);
 	}
 
 	@Override
 	public void processConversation(final BlackBoard bb, final JiraField jiraField, final List<JiraField> jiraFields, final List<BTNode> sequence, final boolean checkJiraFields) {
+		final Optional<JiraValueListExport> valueList = resolveValueList(jiraField);
+		if (valueList.isPresent()) {
+			sequence.add(buildValueListQuestion(bb, jiraField, valueList.get()));
+			return;
+		}
 		final Optional<JiraField> requestTypeField = jiraFields.stream()
 				.filter(field -> IssueFieldId.ISSUE_TYPE_FIELD.id.equals(field.getFieldType()))
 				.findFirst();
 		if (!jiraServerService.isJsmMode() || requestTypeField.isEmpty() || !isSingleOptionField(jiraField.getFieldType())) {
-			processConversation(bb, jiraField, sequence, checkJiraFields);
+			sequence.add(BotNodeProvider.inputString(bb, jiraField.getKey(), jiraField.getQuestion()));
 			return;
 		}
 		// Valid values depend on the request type chosen during the conversation, so they are fetched when the node is reached
@@ -64,6 +69,17 @@ public class CustomFieldService implements IJiraFieldService, Component {
 		if (jiraField.getValue() != null && !jiraField.getValue().isBlank()) {
 			iib.setFieldValue(jiraField.getFieldType(), jiraField.getValue());
 		}
+	}
+
+	private Optional<JiraValueListExport> resolveValueList(final JiraField jiraField) {
+		return jiraServerService.findValueList(jiraField.getValueListCode());
+	}
+
+	private static BTNode buildValueListQuestion(final BlackBoard bb, final JiraField jiraField, final JiraValueListExport valueList) {
+		final List<BotButton> buttons = valueList.getItems().stream()
+				.map(item -> new BotButton(item.getLabel(), item.getCode()))
+				.toList();
+		return BotNodeProvider.chooseSelect(bb, jiraField.getKey(), jiraField.getQuestion(), buttons);
 	}
 
 	private BTNode buildCustomFieldQuestion(final BlackBoard bb, final JiraField jiraField, final JiraField requestTypeField) {

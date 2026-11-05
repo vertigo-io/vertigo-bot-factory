@@ -178,7 +178,7 @@
                                   @update:model-value="postAnswerText(true)"></q-rating>
                       </q-chat-message>
                     </div>
-                    <div v-if="inputConfig.cards.length > 0 || inputConfig.buttons.length > 0 || inputConfig.files.length > 0"
+                    <div v-if="inputConfig.choiceDisplay !== 'select' && (inputConfig.cards.length > 0 || inputConfig.buttons.length > 0 || inputConfig.files.length > 0)"
                          class="non-selectable animate-fade row reverse no-wrap">
                       <div class="col-10">
                         <div class="q-caption text-light text-right">
@@ -234,6 +234,20 @@
                   </div>
                   <div style="height: 30px"></div>
                 </q-scroll-area>
+                <div v-if="inputConfig.choiceDisplay === 'select'"
+                     class="choice-list"
+                     role="listbox"
+                     aria-label="Liste de valeurs">
+                  <button type="button"
+                          class="choice-list-item"
+                          role="option"
+                          v-for="(btn, index) in filteredChoices"
+                          :key="'choice-'+index"
+                          @click="postAnswerBtn(btn)">
+                    {{ btn.label }}
+                  </button>
+                  <div v-if="filteredChoices.length === 0" class="choice-list-empty">Aucune valeur</div>
+                </div>
                 <div class="row non-selectable custom-input-chatbot">
                   <div class="col-grow">
                     <div v-if="inputConfig.modeTextarea">
@@ -246,15 +260,15 @@
                               :disabled="botConfig.processing || botConfig.error || (!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu"></textarea>
                     </div>
                     <div v-else>
-                      <label class="sr-only" for="chatbot-message-input">Écrire un message</label>
+                      <label class="sr-only" for="chatbot-message-input">{{ inputConfig.choiceDisplay === 'select' ? 'Filtrer les valeurs' : 'Écrire un message' }}</label>
                       <input id="chatbot-message-input"
                              ref="input"
                              class="chatbot-text-input"
                              type="text"
-                             @keyup.enter="inputConfig.responseText.trim() === '' ? false : postAnswerText(false)"
+                             @keyup.enter="onMessageEnter()"
                              v-model="inputConfig.responseText"
-                             placeholder="Écrire un message..."
-                             :disabled="botConfig.processing || botConfig.error || (!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu">
+                             :placeholder="inputConfig.choiceDisplay === 'select' ? 'Filtrer les valeurs...' : 'Écrire un message...'"
+                             :disabled="botConfig.processing || botConfig.error || (inputConfig.choiceDisplay !== 'select' && ((!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu))">
                     </div>
                   </div>
                   <q-spinner v-if="botConfig.processing" class="chatbot-input-spinner"></q-spinner>
@@ -263,8 +277,8 @@
                           style="margin-top: 0px;"
                           class="btn-send"
                           icon="send"
-                          @click="postAnswerText(false)"
-                          :disable="botConfig.processing || inputConfig.responseText.trim() === ''"></q-btn>
+                          @click="onMessageSend()"
+                          :disable="botConfig.processing || (inputConfig.choiceDisplay === 'select' ? !resolvedChoice : inputConfig.responseText.trim() === '')"></q-btn>
                   <q-btn round
                          color="red"
                          @click="restart"

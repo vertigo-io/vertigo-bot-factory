@@ -1,5 +1,6 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
+import com.google.gson.reflect.TypeToken;
 import io.vertigo.account.authorization.annotations.Secured;
 import io.vertigo.chatbot.commons.domain.*;
 import io.vertigo.chatbot.commons.domain.topic.ScriptIntention;
@@ -16,6 +17,7 @@ import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
+import io.vertigo.vega.engines.webservice.json.JsonEngine;
 import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
@@ -23,6 +25,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.listLimitReached;
 
@@ -45,6 +49,10 @@ public class ExtensionsController extends AbstractBotController {
     private static final ViewContextKey<JiraCustomFieldSetting> jiraCustomFieldSettingsKey = ViewContextKey.of("jiraCustomFieldSettings");
     private static final ViewContextKey<JiraCustomFieldSetting> newJiraCustomFieldSettingKey = ViewContextKey.of("newJiraCustomFieldSetting");
     private static final ViewContextKey<JiraCustomFieldType> jiraCustomFieldTypesKey = ViewContextKey.of("jiraCustomFieldTypes");
+    private static final ViewContextKey<JiraValueList> jiraValueListsKey = ViewContextKey.of("jiraValueLists");
+    private static final ViewContextKey<JiraValueList> newJiraValueListKey = ViewContextKey.of("newJiraValueList");
+    private static final ViewContextKey<JiraValueListItem> jiraValueListItemsKey = ViewContextKey.of("jiraValueListItems");
+    private static final ViewContextKey<JiraValueListItem> newJiraValueListItemsKey = ViewContextKey.of("newJiraValueListItems");
 
     @Inject
     private ConfluenceSettingServices confluenceSettingServices;
@@ -64,6 +72,10 @@ public class ExtensionsController extends AbstractBotController {
     private JiraCustomFieldSettingServices jiraCustomFieldSettingServices;
     @Inject
     private JiraCustomFieldTypeService jiraCustomFieldTypeService;
+    @Inject
+    private JiraValueListServices jiraValueListServices;
+    @Inject
+    private JsonEngine jsonEngine;
 
 
     @GetMapping("/")
@@ -85,6 +97,9 @@ public class ExtensionsController extends AbstractBotController {
         viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
         viewContext.publishDto(newJiraCustomFieldSettingKey, new JiraCustomFieldSetting());
         viewContext.publishDtList(jiraCustomFieldTypesKey, jiraCustomFieldTypeService.findAll());
+        publishJiraValueLists(viewContext, bot);
+        viewContext.publishDto(newJiraValueListKey, new JiraValueList());
+        viewContext.publishDtListModifiable(newJiraValueListItemsKey, new DtList<>(JiraValueListItem.class));
 
         super.initBreadCrums(viewContext, "EXTENSION");
     }
@@ -201,7 +216,6 @@ public class ExtensionsController extends AbstractBotController {
                                            final UiMessageStack uiMessageStack,
                                            @ViewAttribute("bot") final Chatbot bot,
                                            @ViewAttribute("newJiraCustomFieldSetting") @Validate(JiraCustomFieldSettingValidator.class) final JiraCustomFieldSetting jiraCustomFieldSetting) {
-        jiraCustomFieldSetting.setBotId(bot.getBotId());
         jiraCustomFieldSettingServices.save(bot, jiraCustomFieldSetting);
 
         viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
@@ -256,6 +270,63 @@ public class ExtensionsController extends AbstractBotController {
         viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
         listLimitReached(viewContext, uiMessageStack);
         return viewContext;
+    }
+
+    @PostMapping("/_saveJiraValueList")
+    public ViewContext saveJiraValueList(final ViewContext viewContext,
+                                         final UiMessageStack uiMessageStack,
+                                         @ViewAttribute("bot") final Chatbot bot,
+                                         @ViewAttribute("newJiraValueList") @Validate(JiraValueListValidator.class) final JiraValueList jiraValueList,
+                                         @RequestParam("items") final String itemsJson) {
+        final List<JiraValueListItem> items = jsonEngine.fromJson(itemsJson, new TypeToken<List<JiraValueListItem>>() {
+        }.getType(), Set.of(), Set.of());
+        jiraValueListServices.save(bot, jiraValueList, items);
+        publishJiraValueLists(viewContext, bot);
+        listLimitReached(viewContext, uiMessageStack);
+        return viewContext;
+    }
+
+    @PostMapping("/_deleteJiraValueList")
+    public ViewContext deleteJiraValueList(final ViewContext viewContext,
+                                           final UiMessageStack uiMessageStack,
+                                           @ViewAttribute("bot") final Chatbot bot,
+                                           @RequestParam("jirValListId") final Long jirValListId) {
+        jiraValueListServices.delete(bot, jirValListId);
+        publishJiraValueLists(viewContext, bot);
+        listLimitReached(viewContext, uiMessageStack);
+        return viewContext;
+    }
+
+    @PostMapping("/_loadJiraValueListItems")
+    public ViewContext loadJiraValueListItems(final ViewContext viewContext,
+                                              @ViewAttribute("bot") final Chatbot bot,
+                                              @RequestParam("jirValListId") final Long jirValListId) {
+        final DtList<JiraValueListItem> items = jiraValueListServices.findOptionalByIdAndBot(jirValListId, bot)
+                .map(jiraValueListServices::findItems)
+                .orElseGet(() -> new DtList<>(JiraValueListItem.class));
+        viewContext.publishDtListModifiable(newJiraValueListItemsKey, items);
+        return viewContext;
+    }
+
+    private void publishJiraValueLists(final ViewContext viewContext, final Chatbot bot) {
+        viewContext.publishDtList(jiraValueListsKey, jiraValueListServices.findAllByBotId(bot));
+        viewContext.publishDtList(jiraValueListItemsKey, jiraValueListServices.findAllItemsByBot(bot));
+    }
+
+    public static final class JiraValueListValidator extends AbstractChatbotDtObjectValidator<JiraValueList> {
+
+        @Override
+        protected void checkMonoFieldConstraints(final JiraValueList valueList, final DataField dtField, final DtObjectErrors dtObjectErrors) {
+            super.checkMonoFieldConstraints(valueList, dtField, dtObjectErrors);
+            final String fieldName = dtField.name();
+            if (DtDefinitions.JiraValueListFields.code.name().equals(fieldName)
+                    || DtDefinitions.JiraValueListFields.label.name().equals(fieldName)) {
+                final String value = (String) dtField.getDataAccessor().getValue(valueList);
+                if (value == null || value.trim().isEmpty()) {
+                    dtObjectErrors.addError(fieldName, LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+                }
+            }
+        }
     }
 
     public static final class JiraCustomFieldSettingValidator extends AbstractChatbotDtObjectValidator<JiraCustomFieldSetting> {
