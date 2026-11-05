@@ -44,6 +44,7 @@ public class CustomFieldService implements IJiraFieldService, Component {
 
 	@Override
 	public void processConversation(final BlackBoard bb, final JiraField jiraField, final List<JiraField> jiraFields, final List<BTNode> sequence, final boolean checkJiraFields) {
+		// A configured value list closes the input. Its codes come from the model, so JSM is not queried for this field.
 		final Optional<JiraValueListExport> valueList = resolveValueList(jiraField);
 		if (valueList.isPresent()) {
 			sequence.add(buildValueListQuestion(bb, jiraField, valueList.get()));
@@ -71,6 +72,7 @@ public class CustomFieldService implements IJiraFieldService, Component {
 		}
 	}
 
+	/** Value list declared on the field in the script, resolved against the loaded model. */
 	private Optional<JiraValueListExport> resolveValueList(final JiraField jiraField) {
 		return jiraServerService.findValueList(jiraField.getValueListCode());
 	}

@@ -154,6 +154,7 @@ public class JiraServerService implements Component, IJiraService {
         return jiraCustomFieldSettingExports;
     }
 
+    /** Value list of the loaded model, looked up by the code declared on the field. */
     public Optional<JiraValueListExport> findValueList(final String code) {
         if (jiraValueLists == null || code == null || code.isBlank()) {
             return Optional.empty();

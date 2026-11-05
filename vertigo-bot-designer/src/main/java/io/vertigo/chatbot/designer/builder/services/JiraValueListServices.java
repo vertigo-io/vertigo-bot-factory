@@ -32,6 +32,10 @@ import io.vertigo.datamodel.data.util.VCollectors;
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS;
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
 
+/**
+ * Listes de valeurs d'un chatbot, utilisées pour fermer la saisie d'un champ Jira.
+ * Le code de la liste est repris dans le script. Le libellé est proposé à l'utilisateur, le code de l'entrée est envoyé à JSM.
+ */
 @Transactional
 @Secured("BotUser")
 public class JiraValueListServices implements Component {
@@ -48,36 +52,39 @@ public class JiraValueListServices implements Component {
 	@Inject
 	private JiraCustomFieldSettingDAO jiraCustomFieldSettingDAO;
 
-	/**
-	 * Recherche une liste par ID et vérifie qu'elle appartient au bot spécifié.
-	 * @param id l'ID de la liste
-	 * @param bot le bot propriétaire attendu
-	 * @return la liste si elle appartient au bot
-	 */
+
+	 /** Recherche une liste par ID et par bot **/
 	public Optional<JiraValueList> findOptionalByIdAndBot(final long id, final Chatbot bot) {
 		return jiraValueListDAO.findOptional(
 				Criterions.isEqualTo(DtDefinitions.JiraValueListFields.jirValListId, id)
 						.and(Criterions.isEqualTo(DtDefinitions.JiraValueListFields.botId, bot.getBotId())));
 	}
 
+	/** Listes définies pour ce chatbot. */
 	public DtList<JiraValueList> findAllByBotId(final Chatbot bot) {
 		return jiraValueListDAO.findAll(
 				Criterions.isEqualTo(DtDefinitions.JiraValueListFields.botId, bot.getBotId()),
 				DtListState.of(MAX_ELEMENTS_PLUS_ONE));
 	}
 
+	/** Entrées d'une liste, triées dans l'ordre d'affichage. */
 	public DtList<JiraValueListItem> findItems(final JiraValueList valueList) {
 		return jiraValueListItemDAO.findAll(
 				Criterions.isEqualTo(DtDefinitions.JiraValueListItemFields.jirValListId, valueList.getJirValListId()),
 				DtListState.of(MAX_ELEMENTS_PLUS_ONE, 0, DtDefinitions.JiraValueListItemFields.sequence.name(), false));
 	}
 
+	/** Toutes les entrées du chatbot. Sert à compter les valeurs de chaque liste. */
 	public DtList<JiraValueListItem> findAllItemsByBot(final Chatbot bot) {
 		final DtList<JiraValueListItem> items = new DtList<>(JiraValueListItem.class);
 		findAllByBotId(bot).forEach(valueList -> items.addAll(findItems(valueList)));
 		return items;
 	}
 
+	/**
+	 * Enregistre la liste .
+	 * Le code de liste est unique pour le chatbot, le code de chaque entrée est unique dans la liste.
+	 */
 	public JiraValueList save(@SecuredOperation("botAdm") final Chatbot bot, final JiraValueList valueList, final List<JiraValueListItem> items) {
 		if (valueList.getJirValListId() != null) {
 			findOptionalByIdAndBot(valueList.getJirValListId(), bot)
@@ -115,6 +122,7 @@ public class JiraValueListServices implements Component {
 		return saved;
 	}
 
+	/** Supprime la liste et ses entrées, sauf si un champ personnalisé la référence encore. */
 	public void delete(@SecuredOperation("botAdm") final Chatbot bot, final long id) {
 		findOptionalByIdAndBot(id, bot).ifPresent(valueList -> {
 			final boolean used = !jiraCustomFieldSettingDAO.findAll(
@@ -128,6 +136,7 @@ public class JiraValueListServices implements Component {
 		});
 	}
 
+	/** Supprime les listes du chatbot. Les champs personnalisés, qui portent la clé étrangère, doivent déjà être supprimés. */
 	public void deleteAllByBotId(@SecuredOperation("botAdm") final Chatbot bot) {
 		findAllByBotId(bot).forEach(valueList -> {
 			deleteItems(valueList);
@@ -139,6 +148,7 @@ public class JiraValueListServices implements Component {
 		findItems(valueList).forEach(item -> jiraValueListItemDAO.delete(item.getJirValItemId()));
 	}
 
+	/** Modèle embarqué à l'entraînement : code, libellé et entrées, sans les identifiants techniques. */
 	public DtList<JiraValueListExport> exportValueLists(final Chatbot bot) {
 		return findAllByBotId(bot).stream().map(valueList -> {
 			final JiraValueListExport export = new JiraValueListExport();
@@ -155,6 +165,7 @@ public class JiraValueListServices implements Component {
 		}).collect(VCollectors.toDtList(JiraValueListExport.class));
 	}
 
+	/** Écarte les lignes vides, refuse une saisie incomplète et les codes en double. */
 	private List<JiraValueListItem> sanitizeItems(final List<JiraValueListItem> items) {
 		final List<JiraValueListItem> sanitized = new ArrayList<>();
 		final Set<String> codes = new HashSet<>();

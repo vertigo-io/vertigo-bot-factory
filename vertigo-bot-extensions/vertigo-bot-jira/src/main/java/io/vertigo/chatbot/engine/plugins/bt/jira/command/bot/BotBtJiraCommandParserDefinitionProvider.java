@@ -83,7 +83,7 @@ public class BotBtJiraCommandParserDefinitionProvider implements SimpleDefinitio
 		return botJiraNodeProvider.buildJiraCreateIssue(getBB(params), jiraFields, command.getStringParam(0));
 	}
 
-	/** The value list declared in the script must match the one set on the custom field in the connector. */
+	/** The list code written in the script must be the one set on the custom field, or absent on both sides. */
 	private static void checkValueList(final JiraField jiraField, final DtList<JiraCustomFieldSettingExport> customFields) {
 		final String expectedCode = customFields == null ? null : customFields.stream()
 				.filter(it -> it.getFieldKey().equals(jiraField.getFieldType()))
