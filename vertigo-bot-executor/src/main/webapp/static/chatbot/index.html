@@ -243,7 +243,7 @@
                           role="option"
                           v-for="(btn, index) in filteredChoices"
                           :key="'choice-'+index"
-                          @click="postAnswerBtn(btn)">
+                          @click="selectChoice(btn)">
                     {{ btn.label }}
                   </button>
                   <div v-if="filteredChoices.length === 0" class="choice-list-empty">Aucune valeur</div>

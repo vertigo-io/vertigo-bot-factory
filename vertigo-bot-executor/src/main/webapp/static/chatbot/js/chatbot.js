@@ -351,6 +351,11 @@ const chatbotComponent = {
             this.postAnswerText(false);
         },
 
+        selectChoice(btn) {
+            this.inputConfig.responseText = btn.label;
+            this.focusInput();
+        },
+
         submitFilteredChoice() {
             if (this.resolvedChoice) {
                 this.postAnswerBtn(this.resolvedChoice);
