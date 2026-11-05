@@ -104,9 +104,6 @@ public class JiraValueListServices implements Component {
 			throw new VUserException(LocaleMessageText.of(ExtensionsMultilingualResources.VALUE_LIST_CODE_ALREADY_EXISTS));
 		}
 		final List<JiraValueListItem> sanitizedItems = sanitizeItems(items);
-		if (sanitizedItems.isEmpty()) {
-			throw new VUserException(LocaleMessageText.of(ExtensionsMultilingualResources.VALUE_LIST_ITEMS_REQUIRED));
-		}
 		if (sanitizedItems.size() > MAX_ELEMENTS) {
 			throw new VUserException(LocaleMessageText.of(ExtensionsMultilingualResources.VALUE_LIST_TOO_MANY_ITEMS, MAX_ELEMENTS));
 		}
@@ -120,6 +117,55 @@ public class JiraValueListServices implements Component {
 			jiraValueListItemDAO.save(item);
 		}
 		return saved;
+	}
+
+	/** Ajoute ou modifie une entrée d'une liste existante. Le code de l'entrée reste unique dans la liste. */
+	public JiraValueListItem saveItem(@SecuredOperation("botAdm") final Chatbot bot, final long jirValListId, final JiraValueListItem item) {
+		final JiraValueList valueList = findOptionalByIdAndBot(jirValListId, bot)
+				.orElseThrow(() -> new SecurityException("Access denied: value list does not belong to this bot"));
+		final String code = item.getCode() == null ? "" : item.getCode().trim();
+		final String label = item.getLabel() == null ? "" : item.getLabel().trim();
+		if (code.isEmpty() || label.isEmpty()) {
+			throw new VUserException(LocaleMessageText.of(ExtensionsMultilingualResources.MISSING_FIELD));
+		}
+		checkLength(code);
+		checkLength(label);
+		final DtList<JiraValueListItem> existingItems = findItems(valueList);
+		final boolean isNew = item.getJirValItemId() == null;
+		if (!isNew && existingItems.stream().noneMatch(existing -> existing.getJirValItemId().equals(item.getJirValItemId()))) {
+			throw new SecurityException("Access denied: value list item does not belong to this value list");
+		}
+		final boolean duplicateCode = existingItems.stream()
+				.anyMatch(existing -> existing.getCode().equals(code) && !existing.getJirValItemId().equals(item.getJirValItemId()));
+		if (duplicateCode) {
+			throw new VUserException(LocaleMessageText.of(ExtensionsMultilingualResources.VALUE_LIST_ITEM_CODE_DUPLICATE));
+		}
+		if (isNew && existingItems.size() >= MAX_ELEMENTS) {
+			throw new VUserException(LocaleMessageText.of(ExtensionsMultilingualResources.VALUE_LIST_TOO_MANY_ITEMS, MAX_ELEMENTS));
+		}
+		item.setJirValListId(valueList.getJirValListId());
+		item.setCode(code);
+		item.setLabel(label);
+		if (isNew) {
+			item.setSequence(existingItems.stream().mapToLong(JiraValueListItem::getSequence).max().orElse(0L) + 1);
+		} else {
+			existingItems.stream()
+					.filter(existing -> existing.getJirValItemId().equals(item.getJirValItemId()))
+					.findFirst()
+					.ifPresent(existing -> item.setSequence(existing.getSequence()));
+		}
+		return jiraValueListItemDAO.save(item);
+	}
+
+	/** Supprime une entrée d'une liste. */
+	public void deleteItem(@SecuredOperation("botAdm") final Chatbot bot, final long jirValListId, final long jirValItemId) {
+		final JiraValueList valueList = findOptionalByIdAndBot(jirValListId, bot)
+				.orElseThrow(() -> new SecurityException("Access denied: value list does not belong to this bot"));
+		final DtList<JiraValueListItem> existingItems = findItems(valueList);
+		if (existingItems.stream().noneMatch(existing -> existing.getJirValItemId().equals(jirValItemId))) {
+			throw new SecurityException("Access denied: value list item does not belong to this value list");
+		}
+		jiraValueListItemDAO.delete(jirValItemId);
 	}
 
 	/** Supprime la liste et ses entrées, sauf si un champ personnalisé la référence encore. */
