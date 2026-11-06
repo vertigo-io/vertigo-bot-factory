@@ -1,6 +1,7 @@
 package io.vertigo.chatbot.designer.builder.controllers.bot;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -19,17 +20,21 @@ import io.vertigo.chatbot.commons.domain.Chatbot;
 import io.vertigo.chatbot.commons.domain.JiraValueList;
 import io.vertigo.chatbot.commons.domain.JiraValueListItem;
 import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
+import io.vertigo.chatbot.commons.multilingual.utils.UtilsMultilingualResources;
 import io.vertigo.chatbot.designer.builder.services.JiraValueListServices;
 import io.vertigo.chatbot.designer.utils.AbstractChatbotDtObjectValidator;
 import io.vertigo.chatbot.domain.DtDefinitions;
+import io.vertigo.core.lang.VUserException;
 import io.vertigo.core.locale.LocaleMessageText;
 import io.vertigo.datamodel.data.definitions.DataField;
 import io.vertigo.datamodel.data.definitions.DataFieldName;
 import io.vertigo.datamodel.data.model.DtList;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
 import io.vertigo.ui.core.ViewContext;
 import io.vertigo.ui.core.ViewContextKey;
 import io.vertigo.ui.impl.springmvc.argumentresolvers.ViewAttribute;
 import io.vertigo.vega.engines.webservice.json.JsonEngine;
+import io.vertigo.vega.webservice.stereotype.QueryParam;
 import io.vertigo.vega.webservice.stereotype.Validate;
 import io.vertigo.vega.webservice.validation.DtObjectErrors;
 import io.vertigo.vega.webservice.validation.UiMessageStack;
@@ -42,6 +47,7 @@ public class ValueListDetailController extends AbstractBotCreationController<Jir
 	private static final ViewContextKey<JiraValueList> jiraValueListKey = ViewContextKey.of("jiraValueList");
 	private static final ViewContextKey<JiraValueListItem> jiraValueListItemsKey = ViewContextKey.of("jiraValueListItems");
 	private static final ViewContextKey<JiraValueListItem> newJiraValueListItemKey = ViewContextKey.of("newJiraValueListItem");
+	private static final ViewContextKey<FileInfoURI> importValueListFileUriKey = ViewContextKey.of("importValueListFileUri");
 
 	@Inject
 	private JiraValueListServices jiraValueListServices;
@@ -59,6 +65,7 @@ public class ValueListDetailController extends AbstractBotCreationController<Jir
 		viewContext.publishDto(jiraValueListKey, valueList);
 		viewContext.publishDtList(jiraValueListItemsKey, jiraValueListServices.findItems(valueList));
 		viewContext.publishDto(newJiraValueListItemKey, new JiraValueListItem());
+		viewContext.publishFileInfoURI(importValueListFileUriKey, null);
 
 		super.initBreadCrums(viewContext, valueList);
 		toModeReadOnly();
@@ -73,6 +80,7 @@ public class ValueListDetailController extends AbstractBotCreationController<Jir
 		viewContext.publishDto(jiraValueListKey, valueList);
 		viewContext.publishDtList(jiraValueListItemsKey, new DtList<>(JiraValueListItem.class));
 		viewContext.publishDto(newJiraValueListItemKey, new JiraValueListItem());
+		viewContext.publishFileInfoURI(importValueListFileUriKey, null);
 
 		super.initEmptyBreadcrums(viewContext);
 		toModeCreate();
@@ -101,6 +109,19 @@ public class ValueListDetailController extends AbstractBotCreationController<Jir
 			@ViewAttribute("jiraValueList") final JiraValueList jiraValueList,
 			@ViewAttribute("newJiraValueListItem") @Validate(JiraValueListItemValidator.class) final JiraValueListItem jiraValueListItem) {
 		jiraValueListServices.saveItem(bot, jiraValueList.getJirValListId(), jiraValueListItem);
+		viewContext.publishDtList(jiraValueListItemsKey, jiraValueListServices.findItems(jiraValueList));
+		return viewContext;
+	}
+
+	@PostMapping("/_importValueListItems")
+	public ViewContext importValueListItems(final ViewContext viewContext,
+			@ViewAttribute("bot") final Chatbot bot,
+			@ViewAttribute("jiraValueList") final JiraValueList jiraValueList,
+			@QueryParam("importValueListFileUri") final Optional<FileInfoURI> importFile) {
+		if (importFile.isEmpty()) {
+			throw new VUserException(UtilsMultilingualResources.IMPORT_FILE_MUST_NOT_BE_EMPTY);
+		}
+		jiraValueListServices.importItems(bot, jiraValueList.getJirValListId(), importFile.get());
 		viewContext.publishDtList(jiraValueListItemsKey, jiraValueListServices.findItems(jiraValueList));
 		return viewContext;
 	}

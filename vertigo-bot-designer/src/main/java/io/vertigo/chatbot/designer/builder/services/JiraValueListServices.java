@@ -19,6 +19,7 @@ import io.vertigo.chatbot.commons.domain.JiraValueListExport;
 import io.vertigo.chatbot.commons.domain.JiraValueListItem;
 import io.vertigo.chatbot.commons.domain.JiraValueListItemExport;
 import io.vertigo.chatbot.commons.multilingual.extensions.ExtensionsMultilingualResources;
+import io.vertigo.chatbot.designer.commons.services.DesignerFileServices;
 import io.vertigo.chatbot.domain.DtDefinitions;
 import io.vertigo.commons.transaction.Transactional;
 import io.vertigo.core.lang.VUserException;
@@ -28,6 +29,7 @@ import io.vertigo.datamodel.criteria.Criterions;
 import io.vertigo.datamodel.data.model.DtList;
 import io.vertigo.datamodel.data.model.DtListState;
 import io.vertigo.datamodel.data.util.VCollectors;
+import io.vertigo.datastore.filestore.model.FileInfoURI;
 
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS;
 import static io.vertigo.chatbot.designer.utils.ListUtils.MAX_ELEMENTS_PLUS_ONE;
@@ -51,6 +53,9 @@ public class JiraValueListServices implements Component {
 
 	@Inject
 	private JiraCustomFieldSettingDAO jiraCustomFieldSettingDAO;
+
+	@Inject
+	private DesignerFileServices designerFileServices;
 
 
 	 /** Recherche une liste par ID et par bot **/
@@ -155,6 +160,17 @@ public class JiraValueListServices implements Component {
 					.ifPresent(existing -> item.setSequence(existing.getSequence()));
 		}
 		return jiraValueListItemDAO.save(item);
+	}
+
+	/** Remplace les entrées d'une liste existante par celles d'un CSV et l'enregistre. */
+	public void importItems(@SecuredOperation("botAdm") final Chatbot bot, final long jirValListId, final FileInfoURI importFileUri) {
+		final JiraValueList valueList = findOptionalByIdAndBot(jirValListId, bot)
+				.orElseThrow(() -> new SecurityException("Access denied: value list does not belong to this bot"));
+		final String[] columns = new String[] {
+				DtDefinitions.JiraValueListItemFields.code.name(),
+				DtDefinitions.JiraValueListItemFields.label.name(),
+		};
+		save(bot, valueList, designerFileServices.readCsvFile(JiraValueListItem.class, designerFileServices.getFileTmp(importFileUri), columns));
 	}
 
 	/** Supprime une entrée d'une liste. */

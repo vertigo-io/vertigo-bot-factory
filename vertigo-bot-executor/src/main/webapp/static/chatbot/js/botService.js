@@ -147,11 +147,11 @@ function _processResponse(response) {
     }
 
     if (response.buttons) {
+        chatbot.inputConfig.choiceDisplay = response.choiceDisplay || '';
         response.buttons.forEach(function (value, key) {
             chatbot.inputConfig.buttons.push(value);
-            updateSessionStorage();
         }, chatbot);
-        chatbot.inputConfig.choiceDisplay = response.choiceDisplay || '';
+        updateSessionStorage();
     }
 
     if (response.cards) {
