@@ -182,7 +182,8 @@ function refreshBot(isAnotherConversation) {
         files: [],
         cards: [],
         cardIndex: 0,
-        choiceDisplay: ''
+        choiceDisplay: '',
+        choiceActiveIndex: -1
     };
     chatbot.botConfig.error = false;
     chatbot.botConfig.convId = null;
@@ -204,6 +205,7 @@ function reinitInput() {
     chatbot.inputConfig.cards = [];
     chatbot.inputConfig.files = [];
     chatbot.inputConfig.choiceDisplay = '';
+    chatbot.inputConfig.choiceActiveIndex = -1;
     chatbot.botConfig.error = false;
     updateSessionStorage();
 }

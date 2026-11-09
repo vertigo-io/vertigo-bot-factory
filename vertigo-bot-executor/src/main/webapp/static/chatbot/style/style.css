@@ -287,6 +287,14 @@ img {
     outline-offset: 1px;
 }
 
+.choice-filter-label {
+    display: block;
+    padding-top: 8px;
+    color: #000;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
 .chatbot-text-input {
     width: 100%;
     min-height: 40px;
@@ -506,10 +514,18 @@ img {
     cursor: pointer;
 }
 
-.choice-list-item:hover,
-.choice-list-item:focus {
+.choice-list-options {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.choice-list-item:hover {
     background: #f0f0f0;
-    outline: none;
+}
+
+.choice-list-item[aria-selected="true"] {
+    font-weight: bold;
 }
 
 .choice-list-empty {

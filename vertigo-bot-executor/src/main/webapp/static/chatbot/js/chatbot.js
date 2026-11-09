@@ -121,7 +121,8 @@ const chatbotComponent = {
                 cards: [],
                 cardIndex: 0,
                 files: [],
-                choiceDisplay: ''
+                choiceDisplay: '',
+                choiceActiveIndex: -1
             },
 
             qAndAConfig: {
@@ -190,6 +191,39 @@ const chatbotComponent = {
                 return exact;
             }
             return this.filteredChoices.length === 1 ? this.filteredChoices[0] : null;
+        },
+        activeChoiceIndex() {
+            const lastIndex = this.filteredChoices.length - 1;
+            if (lastIndex < 0 || this.inputConfig.choiceActiveIndex < 0) {
+                return -1;
+            }
+            return Math.min(this.inputConfig.choiceActiveIndex, lastIndex);
+        },
+        activeChoiceId() {
+            if (this.inputConfig.choiceDisplay !== 'select' || this.activeChoiceIndex < 0) {
+                return null;
+            }
+            return 'chatbot-choice-' + this.activeChoiceIndex;
+        },
+        choiceStatusMessage() {
+            if (this.inputConfig.choiceDisplay !== 'select') {
+                return '';
+            }
+            const selected = this.inputConfig.buttons.find(btn => this.isChoiceSelected(btn));
+            if (selected) {
+                return 'Valeur sélectionnée : ' + selected.label + '.';
+            }
+            const resultCount = this.filteredChoices.length;
+            if (resultCount === 0) {
+                return 'Aucune valeur ne correspond à la saisie.';
+            }
+            if (resultCount === 1) {
+                if (this.normalizeChoiceText(this.inputConfig.responseText) !== '') {
+                    return 'Une seule valeur correspond : ' + this.filteredChoices[0].label + '.';
+                }
+                return '1 valeur disponible. Utilisez les flèches haut et bas pour parcourir la liste.';
+            }
+            return resultCount + ' valeurs disponibles. Utilisez les flèches haut et bas pour parcourir la liste.';
         }
     },
     methods: {
@@ -353,7 +387,111 @@ const chatbotComponent = {
 
         selectChoice(btn) {
             this.inputConfig.responseText = btn.label;
+            const index = this.filteredChoices.findIndex(choice =>
+                choice === btn || (choice.label === btn.label && choice.payload === btn.payload));
+            this.inputConfig.choiceActiveIndex = index;
             this.focusInput();
+            this.$nextTick(() => {
+                this.inputConfig.responseText = btn.label;
+            });
+        },
+
+        onChoiceFilterInput() {
+            if (this.inputConfig.choiceDisplay !== 'select') {
+                return;
+            }
+            this.$nextTick(() => {
+                this.inputConfig.choiceActiveIndex = this.filteredChoices.length > 0 ? 0 : -1;
+            });
+        },
+
+        isChoiceSelected(btn) {
+            const query = this.normalizeChoiceText(this.inputConfig.responseText);
+            return query !== '' && this.normalizeChoiceText(btn.label) === query;
+        },
+
+        focusChoice(index) {
+            const lastIndex = this.filteredChoices.length - 1;
+            if (lastIndex < 0) {
+                return;
+            }
+            this.inputConfig.choiceActiveIndex = Math.max(0, Math.min(index, lastIndex));
+            this.$nextTick(() => {
+                const option = document.getElementById('chatbot-choice-' + this.inputConfig.choiceActiveIndex);
+                if (option) {
+                    option.focus();
+                }
+            });
+        },
+
+        onChoiceInputKeydown(event) {
+            if (this.inputConfig.choiceDisplay !== 'select' || this.filteredChoices.length === 0) {
+                return;
+            }
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                this.focusChoice(this.activeChoiceIndex >= 0 ? this.activeChoiceIndex : 0);
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                this.focusChoice(this.filteredChoices.length - 1);
+            }
+        },
+
+        onChoiceKeydown(event, index, btn) {
+            switch (event.key) {
+                case 'ArrowDown':
+                    event.preventDefault();
+                    this.focusChoice(index + 1);
+                    break;
+                case 'ArrowUp':
+                    event.preventDefault();
+                    if (index === 0) {
+                        this.focusInput();
+                    } else {
+                        this.focusChoice(index - 1);
+                    }
+                    break;
+                case 'Home':
+                    event.preventDefault();
+                    this.focusChoice(0);
+                    break;
+                case 'End':
+                    event.preventDefault();
+                    this.focusChoice(this.filteredChoices.length - 1);
+                    break;
+                case 'Enter':
+                case ' ':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.selectChoice(btn);
+                    break;
+                case 'Escape':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.focusInput();
+                    break;
+                default:
+                    this.onChoiceCharacter(event);
+            }
+        },
+
+        onChoiceCharacter(event) {
+            if (event.ctrlKey || event.metaKey || event.altKey) {
+                return;
+            }
+            if (event.key === 'Backspace') {
+                event.preventDefault();
+                this.inputConfig.responseText = this.inputConfig.responseText.slice(0, -1);
+                this.inputConfig.choiceActiveIndex = this.filteredChoices.length > 0 ? 0 : -1;
+                this.focusInput();
+                return;
+            }
+            if (event.key.length === 1) {
+                event.preventDefault();
+                this.inputConfig.responseText += event.key;
+                this.inputConfig.choiceActiveIndex = this.filteredChoices.length > 0 ? 0 : -1;
+                this.focusInput();
+            }
         },
 
         submitFilteredChoice() {

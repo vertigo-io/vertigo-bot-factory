@@ -234,19 +234,27 @@
                   </div>
                   <div style="height: 30px"></div>
                 </q-scroll-area>
-                <div v-if="inputConfig.choiceDisplay === 'select'"
-                     class="choice-list"
-                     role="listbox"
-                     aria-label="Liste de valeurs">
-                  <button type="button"
-                          class="choice-list-item"
-                          role="option"
-                          v-for="(btn, index) in filteredChoices"
-                          :key="'choice-'+index"
-                          @click="selectChoice(btn)">
-                    {{ btn.label }}
-                  </button>
-                  <div v-if="filteredChoices.length === 0" class="choice-list-empty">Aucune valeur</div>
+                <div class="sr-only" role="status" aria-live="polite">{{ choiceStatusMessage }}</div>
+                <div v-if="inputConfig.choiceDisplay === 'select'" class="choice-list">
+                  <ul id="chatbot-choice-list"
+                      class="choice-list-options"
+                      role="listbox"
+                      aria-label="Liste de valeurs"
+                      v-show="filteredChoices.length > 0">
+                    <li class="choice-list-item"
+                        role="option"
+                        v-for="(btn, index) in filteredChoices"
+                        :key="'choice-'+index"
+                        :id="'chatbot-choice-'+index"
+                        tabindex="-1"
+                        :aria-selected="isChoiceSelected(btn) ? 'true' : 'false'"
+                        @focus="inputConfig.choiceActiveIndex = index"
+                        @keydown="onChoiceKeydown($event, index, btn)"
+                        @click="selectChoice(btn)">
+                      {{ btn.label }}
+                    </li>
+                  </ul>
+                  <div v-if="filteredChoices.length === 0" class="choice-list-empty" aria-hidden="true">Aucune valeur</div>
                 </div>
                 <div class="row non-selectable custom-input-chatbot">
                   <div class="col-grow">
@@ -260,12 +268,19 @@
                               :disabled="botConfig.processing || botConfig.error || (!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu"></textarea>
                     </div>
                     <div v-else>
-                      <label class="sr-only" for="chatbot-message-input">{{ inputConfig.choiceDisplay === 'select' ? 'Filtrer les valeurs' : 'Écrire un message' }}</label>
+                      <label :class="inputConfig.choiceDisplay === 'select' ? 'choice-filter-label' : 'sr-only'" for="chatbot-message-input">{{ inputConfig.choiceDisplay === 'select' ? 'Filtrer les valeurs' : 'Écrire un message' }}</label>
                       <input id="chatbot-message-input"
                              ref="input"
                              class="chatbot-text-input"
                              type="text"
-                             @keyup.enter="onMessageEnter()"
+                             :role="inputConfig.choiceDisplay === 'select' ? 'combobox' : null"
+                             :aria-autocomplete="inputConfig.choiceDisplay === 'select' ? 'list' : null"
+                             :aria-controls="inputConfig.choiceDisplay === 'select' ? 'chatbot-choice-list' : null"
+                             :aria-expanded="inputConfig.choiceDisplay === 'select' ? (filteredChoices.length > 0 ? 'true' : 'false') : null"
+                             :aria-activedescendant="activeChoiceId"
+                             @keydown="onChoiceInputKeydown($event)"
+                             @keydown.enter.prevent="onMessageEnter()"
+                             @input="onChoiceFilterInput"
                              v-model="inputConfig.responseText"
                              :placeholder="inputConfig.choiceDisplay === 'select' ? 'Filtrer les valeurs...' : 'Écrire un message...'"
                              :disabled="botConfig.processing || botConfig.error || (inputConfig.choiceDisplay !== 'select' && ((!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu))">
