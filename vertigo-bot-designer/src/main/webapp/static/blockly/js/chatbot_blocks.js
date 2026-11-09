@@ -1573,7 +1573,7 @@ Blockly.Blocks['cb_jirafield'] = {
         this.jsonInit(
             {
                 "type": "jirafield",
-                "message0": "%{BKY_JIRA_FIELD_TITLE}  %1 %{BKY_JIRA_VARIABLE_TITLE} %2 %3 %4 %{BKY_COMMONS_QUEST_ASSOCIATED} %5 %6 %{BKY_JIRA_TYPE_FIELD} %7",
+                "message0": "%{BKY_JIRA_FIELD_TITLE}  %1 %{BKY_JIRA_VARIABLE_TITLE} %2 %3 %4 %{BKY_COMMONS_QUEST_ASSOCIATED} %5 %6 %{BKY_JIRA_TYPE_FIELD} %7 %{BKY_JIRA_VALUE_LIST} %8",
                 "args0": [
                     {
                         "type": "input_dummy",
@@ -1604,6 +1604,11 @@ Blockly.Blocks['cb_jirafield'] = {
                         "type": "field_input",
                         "name": "fieldType",
                         "text": "%{BKY_COMMONS_SAMPLE_JIRA_TYPE_FIELD}"
+                    },
+                    {
+                        "type": "field_input",
+                        "name": "valueList",
+                        "text": ""
                     }
                 ],
                 "style": "jirafield_block",

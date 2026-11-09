@@ -120,7 +120,9 @@ const chatbotComponent = {
                 buttons: [],
                 cards: [],
                 cardIndex: 0,
-                files: []
+                files: [],
+                choiceDisplay: '',
+                choiceActiveIndex: -1
             },
 
             qAndAConfig: {
@@ -161,6 +163,73 @@ const chatbotComponent = {
             }
             const resultCount = this.qAndAConfig.filteredQuestionAnswerList.length;
             return resultCount + (resultCount === 1 ? ' résultat trouvé dans la FAQ.' : ' résultats trouvés dans la FAQ.');
+        },
+        filteredChoices() {
+            if (this.inputConfig.choiceDisplay !== 'select') {
+                return [];
+            }
+            const query = this.choiceQuery();
+            if (query === '') {
+                return this.inputConfig.buttons;
+            }
+            return this.inputConfig.buttons.filter(btn => this.choiceMatchesQuery(btn, query));
+        },
+        resolvedChoice() {
+            if (this.inputConfig.choiceDisplay !== 'select') {
+                return null;
+            }
+            const query = this.choiceQuery();
+            if (query === '') {
+                return null;
+            }
+            const exact = this.inputConfig.buttons.find(btn => this.choiceEqualsQuery(btn, query));
+            if (exact) {
+                return exact;
+            }
+            return this.filteredChoices.length === 1 ? this.filteredChoices[0] : null;
+        },
+        activeChoiceIndex() {
+            const lastIndex = this.filteredChoices.length - 1;
+            if (lastIndex < 0 || this.inputConfig.choiceActiveIndex < 0) {
+                return -1;
+            }
+            return Math.min(this.inputConfig.choiceActiveIndex, lastIndex);
+        },
+        activeChoiceId() {
+            if (this.activeChoiceIndex < 0) {
+                return null;
+            }
+            return this.choiceOptionId(this.activeChoiceIndex);
+        },
+        isSendDisabled() {
+            if (this.botConfig.processing) {
+                return true;
+            }
+            if (this.inputConfig.choiceDisplay === 'select') {
+                return !this.resolvedChoice;
+            }
+            return this.inputConfig.responseText.trim() === '';
+        },
+        choiceStatusMessage() {
+            if (this.inputConfig.choiceDisplay !== 'select') {
+                return '';
+            }
+            const selected = this.inputConfig.buttons.find(btn => this.isChoiceSelected(btn));
+            if (selected) {
+                return 'Valeur sélectionnée : ' + selected.label + '.';
+            }
+            const resultCount = this.filteredChoices.length;
+            if (resultCount === 0) {
+                return 'Aucune valeur ne correspond à la saisie.';
+            }
+            const browseHint = ' Utilisez les flèches haut et bas pour parcourir la liste.';
+            if (resultCount === 1 && this.choiceQuery() !== '') {
+                return 'Une seule valeur correspond : ' + this.filteredChoices[0].label + '.';
+            }
+            if (resultCount === 1) {
+                return '1 valeur disponible.' + browseHint;
+            }
+            return resultCount + ' valeurs disponibles.' + browseHint;
         }
     },
     methods: {
@@ -298,6 +367,162 @@ const chatbotComponent = {
         
         focusInput() {
             this.$refs.input.focus();
+        },
+
+        normalizeChoiceText(value) {
+            return (value || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        },
+
+        choiceQuery() {
+            return this.normalizeChoiceText(this.inputConfig.responseText);
+        },
+
+        choiceOptionId(index) {
+            return 'chatbot-choice-' + index;
+        },
+
+        choiceMatchesQuery(btn, query) {
+            return this.normalizeChoiceText(btn.label).includes(query)
+                || this.normalizeChoiceText(btn.payload).includes(query);
+        },
+
+        choiceEqualsQuery(btn, query) {
+            return this.normalizeChoiceText(btn.label) === query
+                || this.normalizeChoiceText(btn.payload) === query;
+        },
+
+        isSameChoice(choice, btn) {
+            return choice === btn || (choice.label === btn.label && choice.payload === btn.payload);
+        },
+
+        resetActiveChoiceIndex() {
+            this.inputConfig.choiceActiveIndex = this.filteredChoices.length > 0 ? 0 : -1;
+        },
+
+        updateChoiceFilterText(nextText) {
+            this.inputConfig.responseText = nextText;
+            this.resetActiveChoiceIndex();
+            this.focusInput();
+        },
+
+        onMessageEnter() {
+            if (this.inputConfig.responseText.trim() !== '') {
+                this.postAnswerText(false);
+            }
+        },
+
+        onMessageSend() {
+            if (this.inputConfig.choiceDisplay === 'select') {
+                this.submitFilteredChoice();
+                return;
+            }
+            this.postAnswerText(false);
+        },
+
+        selectChoice(btn) {
+            this.inputConfig.responseText = btn.label;
+            this.inputConfig.choiceActiveIndex = this.filteredChoices.findIndex(choice => this.isSameChoice(choice, btn));
+            this.focusInput();
+            this.$nextTick(() => {
+                this.inputConfig.responseText = btn.label;
+            });
+        },
+
+        onChoiceFilterInput() {
+            this.$nextTick(() => {
+                this.resetActiveChoiceIndex();
+            });
+        },
+
+        isChoiceSelected(btn) {
+            const query = this.choiceQuery();
+            return query !== '' && this.normalizeChoiceText(btn.label) === query;
+        },
+
+        focusChoice(index) {
+            const lastIndex = this.filteredChoices.length - 1;
+            if (lastIndex < 0) {
+                return;
+            }
+            this.inputConfig.choiceActiveIndex = Math.max(0, Math.min(index, lastIndex));
+            this.$nextTick(() => {
+                const option = document.getElementById(this.choiceOptionId(this.inputConfig.choiceActiveIndex));
+                if (option) {
+                    option.focus();
+                }
+            });
+        },
+
+        onChoiceInputKeydown(event) {
+            if (this.filteredChoices.length === 0) {
+                return;
+            }
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                this.focusChoice(this.activeChoiceIndex);
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                this.focusChoice(this.filteredChoices.length - 1);
+            }
+        },
+
+        onChoiceKeydown(event, index, btn) {
+            switch (event.key) {
+                case 'ArrowDown':
+                    event.preventDefault();
+                    this.focusChoice(index + 1);
+                    break;
+                case 'ArrowUp':
+                    event.preventDefault();
+                    if (index === 0) {
+                        this.focusInput();
+                    } else {
+                        this.focusChoice(index - 1);
+                    }
+                    break;
+                case 'Home':
+                    event.preventDefault();
+                    this.focusChoice(0);
+                    break;
+                case 'End':
+                    event.preventDefault();
+                    this.focusChoice(this.filteredChoices.length - 1);
+                    break;
+                case 'Enter':
+                case ' ':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.selectChoice(btn);
+                    break;
+                case 'Escape':
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.focusInput();
+                    break;
+                default:
+                    this.onChoiceCharacter(event);
+            }
+        },
+
+        onChoiceCharacter(event) {
+            if (event.ctrlKey || event.metaKey || event.altKey) {
+                return;
+            }
+            if (event.key === 'Backspace') {
+                event.preventDefault();
+                this.updateChoiceFilterText(this.inputConfig.responseText.slice(0, -1));
+                return;
+            }
+            if (event.key.length === 1) {
+                event.preventDefault();
+                this.updateChoiceFilterText(this.inputConfig.responseText + event.key);
+            }
+        },
+
+        submitFilteredChoice() {
+            if (this.resolvedChoice) {
+                this.postAnswerBtn(this.resolvedChoice);
+            }
         },
 
         askBot(value, label, isButton, fileContent, fileName, rating) {

@@ -58,6 +58,10 @@ drop table IF EXISTS JIRA_FIELD_SETTING cascade;
 drop sequence IF EXISTS SEQ_JIRA_FIELD_SETTING;
 drop table IF EXISTS JIRA_SETTING cascade;
 drop sequence IF EXISTS SEQ_JIRA_SETTING;
+drop table IF EXISTS JIRA_VALUE_LIST cascade;
+drop sequence IF EXISTS SEQ_JIRA_VALUE_LIST;
+drop table IF EXISTS JIRA_VALUE_LIST_ITEM cascade;
+drop sequence IF EXISTS SEQ_JIRA_VALUE_LIST_ITEM;
 drop table IF EXISTS KIND_TOPIC cascade;
 drop table IF EXISTS MEDIA_FILE_INFO cascade;
 drop sequence IF EXISTS SEQ_MEDIA_FILE_INFO;
@@ -193,6 +197,12 @@ create sequence SEQ_JIRA_FIELD_SETTING
 	start with 1000 cache 1; 
 
 create sequence SEQ_JIRA_SETTING
+	start with 1000 cache 1; 
+
+create sequence SEQ_JIRA_VALUE_LIST
+	start with 1000 cache 1; 
+
+create sequence SEQ_JIRA_VALUE_LIST_ITEM
 	start with 1000 cache 1; 
 
 
@@ -1012,6 +1022,7 @@ create table JIRA_CUSTOM_FIELD_SETTING
     MANDATORY   	 bool        	not null,
     BOT_ID      	 NUMERIC     	not null,
     JCF_TYPE_CD 	 VARCHAR(100)	not null,
+    JIR_VAL_LIST_ID	 NUMERIC     	,
     constraint PK_JIRA_CUSTOM_FIELD_SETTING primary key (JIR_CUS_FIELD_SET_ID)
 );
 
@@ -1035,6 +1046,9 @@ comment on column JIRA_CUSTOM_FIELD_SETTING.BOT_ID is
 
 comment on column JIRA_CUSTOM_FIELD_SETTING.JCF_TYPE_CD is
 'Field type';
+
+comment on column JIRA_CUSTOM_FIELD_SETTING.JIR_VAL_LIST_ID is
+'Value list';
 
 -- ============================================================
 --   Table : JIRA_CUSTOM_FIELD_TYPE                                        
@@ -1147,6 +1161,58 @@ comment on column JIRA_SETTING.BOT_ID is
 
 comment on column JIRA_SETTING.NOD_ID is
 'Node';
+
+-- ============================================================
+--   Table : JIRA_VALUE_LIST                                        
+-- ============================================================
+create table JIRA_VALUE_LIST
+(
+    JIR_VAL_LIST_ID	 NUMERIC     	not null,
+    CODE        	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    BOT_ID      	 NUMERIC     	not null,
+    constraint PK_JIRA_VALUE_LIST primary key (JIR_VAL_LIST_ID)
+);
+
+comment on column JIRA_VALUE_LIST.JIR_VAL_LIST_ID is
+'Jira value list id';
+
+comment on column JIRA_VALUE_LIST.CODE is
+'Code';
+
+comment on column JIRA_VALUE_LIST.LABEL is
+'Label';
+
+comment on column JIRA_VALUE_LIST.BOT_ID is
+'Chatbot';
+
+-- ============================================================
+--   Table : JIRA_VALUE_LIST_ITEM                                        
+-- ============================================================
+create table JIRA_VALUE_LIST_ITEM
+(
+    JIR_VAL_ITEM_ID	 NUMERIC     	not null,
+    CODE        	 VARCHAR(100)	not null,
+    LABEL       	 VARCHAR(100)	not null,
+    SEQUENCE    	 NUMERIC     	not null,
+    JIR_VAL_LIST_ID	 NUMERIC     	not null,
+    constraint PK_JIRA_VALUE_LIST_ITEM primary key (JIR_VAL_ITEM_ID)
+);
+
+comment on column JIRA_VALUE_LIST_ITEM.JIR_VAL_ITEM_ID is
+'Jira value list item id';
+
+comment on column JIRA_VALUE_LIST_ITEM.CODE is
+'Code';
+
+comment on column JIRA_VALUE_LIST_ITEM.LABEL is
+'Label';
+
+comment on column JIRA_VALUE_LIST_ITEM.SEQUENCE is
+'Sequence';
+
+comment on column JIRA_VALUE_LIST_ITEM.JIR_VAL_LIST_ID is
+'Value list';
 
 -- ============================================================
 --   Table : KIND_TOPIC                                        
@@ -2299,6 +2365,12 @@ alter table JIRA_CUSTOM_FIELD_SETTING
 
 create index A_JIRA_CUSTOM_FIELD_SETTING_TYPE_JIRA_CUSTOM_FIELD_TYPE_FK on JIRA_CUSTOM_FIELD_SETTING (JCF_TYPE_CD asc);
 
+alter table JIRA_CUSTOM_FIELD_SETTING
+	add constraint FK_A_JIRA_CUSTOM_FIELD_SETTING_VALUE_LIST_JIRA_VALUE_LIST foreign key (JIR_VAL_LIST_ID)
+	references JIRA_VALUE_LIST (JIR_VAL_LIST_ID);
+
+create index A_JIRA_CUSTOM_FIELD_SETTING_VALUE_LIST_JIRA_VALUE_LIST_FK on JIRA_CUSTOM_FIELD_SETTING (JIR_VAL_LIST_ID asc);
+
 alter table JIRA_FIELD_SETTING
 	add constraint FK_A_JIRA_FIELD_SETTING_CHATBOT_CHATBOT foreign key (BOT_ID)
 	references CHATBOT (BOT_ID);
@@ -2322,6 +2394,18 @@ alter table JIRA_SETTING
 	references CHATBOT_NODE (NOD_ID);
 
 create index A_JIRA_SETTING_NODE_CHATBOT_NODE_FK on JIRA_SETTING (NOD_ID asc);
+
+alter table JIRA_VALUE_LIST
+	add constraint FK_A_JIRA_VALUE_LIST_CHATBOT_CHATBOT foreign key (BOT_ID)
+	references CHATBOT (BOT_ID);
+
+create index A_JIRA_VALUE_LIST_CHATBOT_CHATBOT_FK on JIRA_VALUE_LIST (BOT_ID asc);
+
+alter table JIRA_VALUE_LIST_ITEM
+	add constraint FK_A_JIRA_VALUE_LIST_ITEM_JIRA_VALUE_LIST_JIRA_VALUE_LIST foreign key (JIR_VAL_LIST_ID)
+	references JIRA_VALUE_LIST (JIR_VAL_LIST_ID);
+
+create index A_JIRA_VALUE_LIST_ITEM_JIRA_VALUE_LIST_JIRA_VALUE_LIST_FK on JIRA_VALUE_LIST_ITEM (JIR_VAL_LIST_ID asc);
 
 alter table MONITORING_ALERTING_SUBSCRIPTION
 	add constraint FK_A_MONITORING_ALERTING_SUBSCRIPTION_PERSON_PERSON foreign key (PER_ID)

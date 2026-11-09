@@ -10,6 +10,7 @@ public class JiraField implements BTNode {
 	private String question;
 	private String fieldType;
 	private String value;
+	private String valueListCode;
 
 	public JiraField(final String key, final String question, final String fieldType) {
 		this.key = key;
@@ -47,6 +48,14 @@ public class JiraField implements BTNode {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public String getValueListCode() {
+		return valueListCode;
+	}
+
+	public void setValueListCode(final String valueListCode) {
+		this.valueListCode = valueListCode;
 	}
 
 	@Override
