@@ -245,7 +245,7 @@
                         role="option"
                         v-for="(btn, index) in filteredChoices"
                         :key="'choice-'+index"
-                        :id="'chatbot-choice-'+index"
+                        :id="choiceOptionId(index)"
                         tabindex="-1"
                         :aria-selected="isChoiceSelected(btn) ? 'true' : 'false'"
                         @focus="inputConfig.choiceActiveIndex = index"
@@ -267,23 +267,34 @@
                               placeholder="Écrire un message..."
                               :disabled="botConfig.processing || botConfig.error || (!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu"></textarea>
                     </div>
+                    <div v-else-if="inputConfig.choiceDisplay === 'select'">
+                      <label class="choice-filter-label" for="chatbot-choice-input">Filtrer les valeurs</label>
+                      <input id="chatbot-choice-input"
+                             ref="input"
+                             class="chatbot-text-input"
+                             type="text"
+                             role="combobox"
+                             aria-autocomplete="list"
+                             aria-controls="chatbot-choice-list"
+                             :aria-expanded="filteredChoices.length > 0 ? 'true' : 'false'"
+                             :aria-activedescendant="activeChoiceId"
+                             @keydown="onChoiceInputKeydown($event)"
+                             @keydown.enter.prevent="submitFilteredChoice()"
+                             @input="onChoiceFilterInput"
+                             v-model="inputConfig.responseText"
+                             placeholder="Filtrer les valeurs..."
+                             :disabled="botConfig.processing || botConfig.error">
+                    </div>
                     <div v-else>
-                      <label :class="inputConfig.choiceDisplay === 'select' ? 'choice-filter-label' : 'sr-only'" for="chatbot-message-input">{{ inputConfig.choiceDisplay === 'select' ? 'Filtrer les valeurs' : 'Écrire un message' }}</label>
+                      <label class="sr-only" for="chatbot-message-input">Écrire un message</label>
                       <input id="chatbot-message-input"
                              ref="input"
                              class="chatbot-text-input"
                              type="text"
-                             :role="inputConfig.choiceDisplay === 'select' ? 'combobox' : null"
-                             :aria-autocomplete="inputConfig.choiceDisplay === 'select' ? 'list' : null"
-                             :aria-controls="inputConfig.choiceDisplay === 'select' ? 'chatbot-choice-list' : null"
-                             :aria-expanded="inputConfig.choiceDisplay === 'select' ? (filteredChoices.length > 0 ? 'true' : 'false') : null"
-                             :aria-activedescendant="activeChoiceId"
-                             @keydown="onChoiceInputKeydown($event)"
                              @keydown.enter.prevent="onMessageEnter()"
-                             @input="onChoiceFilterInput"
                              v-model="inputConfig.responseText"
-                             :placeholder="inputConfig.choiceDisplay === 'select' ? 'Filtrer les valeurs...' : 'Écrire un message...'"
-                             :disabled="botConfig.processing || botConfig.error || (inputConfig.choiceDisplay !== 'select' && ((!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu))">
+                             placeholder="Écrire un message..."
+                             :disabled="botConfig.processing || botConfig.error || ((!botConfig.acceptNlu && !botConfig.isEnded) || customConfig.disableNlu)">
                     </div>
                   </div>
                   <q-spinner v-if="botConfig.processing" class="chatbot-input-spinner"></q-spinner>
@@ -293,7 +304,7 @@
                           class="btn-send"
                           icon="send"
                           @click="onMessageSend()"
-                          :disable="botConfig.processing || (inputConfig.choiceDisplay === 'select' ? !resolvedChoice : inputConfig.responseText.trim() === '')"></q-btn>
+                          :disable="isSendDisabled"></q-btn>
                   <q-btn round
                          color="red"
                          @click="restart"

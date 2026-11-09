@@ -168,25 +168,21 @@ const chatbotComponent = {
             if (this.inputConfig.choiceDisplay !== 'select') {
                 return [];
             }
-            const query = this.normalizeChoiceText(this.inputConfig.responseText);
+            const query = this.choiceQuery();
             if (query === '') {
                 return this.inputConfig.buttons;
             }
-            return this.inputConfig.buttons.filter(btn =>
-                this.normalizeChoiceText(btn.label).includes(query)
-                || this.normalizeChoiceText(btn.payload).includes(query));
+            return this.inputConfig.buttons.filter(btn => this.choiceMatchesQuery(btn, query));
         },
         resolvedChoice() {
             if (this.inputConfig.choiceDisplay !== 'select') {
                 return null;
             }
-            const query = this.normalizeChoiceText(this.inputConfig.responseText);
+            const query = this.choiceQuery();
             if (query === '') {
                 return null;
             }
-            const exact = this.inputConfig.buttons.find(btn =>
-                this.normalizeChoiceText(btn.label) === query
-                || this.normalizeChoiceText(btn.payload) === query);
+            const exact = this.inputConfig.buttons.find(btn => this.choiceEqualsQuery(btn, query));
             if (exact) {
                 return exact;
             }
@@ -200,10 +196,19 @@ const chatbotComponent = {
             return Math.min(this.inputConfig.choiceActiveIndex, lastIndex);
         },
         activeChoiceId() {
-            if (this.inputConfig.choiceDisplay !== 'select' || this.activeChoiceIndex < 0) {
+            if (this.activeChoiceIndex < 0) {
                 return null;
             }
-            return 'chatbot-choice-' + this.activeChoiceIndex;
+            return this.choiceOptionId(this.activeChoiceIndex);
+        },
+        isSendDisabled() {
+            if (this.botConfig.processing) {
+                return true;
+            }
+            if (this.inputConfig.choiceDisplay === 'select') {
+                return !this.resolvedChoice;
+            }
+            return this.inputConfig.responseText.trim() === '';
         },
         choiceStatusMessage() {
             if (this.inputConfig.choiceDisplay !== 'select') {
@@ -217,13 +222,14 @@ const chatbotComponent = {
             if (resultCount === 0) {
                 return 'Aucune valeur ne correspond à la saisie.';
             }
-            if (resultCount === 1) {
-                if (this.normalizeChoiceText(this.inputConfig.responseText) !== '') {
-                    return 'Une seule valeur correspond : ' + this.filteredChoices[0].label + '.';
-                }
-                return '1 valeur disponible. Utilisez les flèches haut et bas pour parcourir la liste.';
+            const browseHint = ' Utilisez les flèches haut et bas pour parcourir la liste.';
+            if (resultCount === 1 && this.choiceQuery() !== '') {
+                return 'Une seule valeur correspond : ' + this.filteredChoices[0].label + '.';
             }
-            return resultCount + ' valeurs disponibles. Utilisez les flèches haut et bas pour parcourir la liste.';
+            if (resultCount === 1) {
+                return '1 valeur disponible.' + browseHint;
+            }
+            return resultCount + ' valeurs disponibles.' + browseHint;
         }
     },
     methods: {
@@ -367,11 +373,39 @@ const chatbotComponent = {
             return (value || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
         },
 
+        choiceQuery() {
+            return this.normalizeChoiceText(this.inputConfig.responseText);
+        },
+
+        choiceOptionId(index) {
+            return 'chatbot-choice-' + index;
+        },
+
+        choiceMatchesQuery(btn, query) {
+            return this.normalizeChoiceText(btn.label).includes(query)
+                || this.normalizeChoiceText(btn.payload).includes(query);
+        },
+
+        choiceEqualsQuery(btn, query) {
+            return this.normalizeChoiceText(btn.label) === query
+                || this.normalizeChoiceText(btn.payload) === query;
+        },
+
+        isSameChoice(choice, btn) {
+            return choice === btn || (choice.label === btn.label && choice.payload === btn.payload);
+        },
+
+        resetActiveChoiceIndex() {
+            this.inputConfig.choiceActiveIndex = this.filteredChoices.length > 0 ? 0 : -1;
+        },
+
+        updateChoiceFilterText(nextText) {
+            this.inputConfig.responseText = nextText;
+            this.resetActiveChoiceIndex();
+            this.focusInput();
+        },
+
         onMessageEnter() {
-            if (this.inputConfig.choiceDisplay === 'select') {
-                this.submitFilteredChoice();
-                return;
-            }
             if (this.inputConfig.responseText.trim() !== '') {
                 this.postAnswerText(false);
             }
@@ -387,9 +421,7 @@ const chatbotComponent = {
 
         selectChoice(btn) {
             this.inputConfig.responseText = btn.label;
-            const index = this.filteredChoices.findIndex(choice =>
-                choice === btn || (choice.label === btn.label && choice.payload === btn.payload));
-            this.inputConfig.choiceActiveIndex = index;
+            this.inputConfig.choiceActiveIndex = this.filteredChoices.findIndex(choice => this.isSameChoice(choice, btn));
             this.focusInput();
             this.$nextTick(() => {
                 this.inputConfig.responseText = btn.label;
@@ -397,16 +429,13 @@ const chatbotComponent = {
         },
 
         onChoiceFilterInput() {
-            if (this.inputConfig.choiceDisplay !== 'select') {
-                return;
-            }
             this.$nextTick(() => {
-                this.inputConfig.choiceActiveIndex = this.filteredChoices.length > 0 ? 0 : -1;
+                this.resetActiveChoiceIndex();
             });
         },
 
         isChoiceSelected(btn) {
-            const query = this.normalizeChoiceText(this.inputConfig.responseText);
+            const query = this.choiceQuery();
             return query !== '' && this.normalizeChoiceText(btn.label) === query;
         },
 
@@ -417,7 +446,7 @@ const chatbotComponent = {
             }
             this.inputConfig.choiceActiveIndex = Math.max(0, Math.min(index, lastIndex));
             this.$nextTick(() => {
-                const option = document.getElementById('chatbot-choice-' + this.inputConfig.choiceActiveIndex);
+                const option = document.getElementById(this.choiceOptionId(this.inputConfig.choiceActiveIndex));
                 if (option) {
                     option.focus();
                 }
@@ -425,12 +454,12 @@ const chatbotComponent = {
         },
 
         onChoiceInputKeydown(event) {
-            if (this.inputConfig.choiceDisplay !== 'select' || this.filteredChoices.length === 0) {
+            if (this.filteredChoices.length === 0) {
                 return;
             }
             if (event.key === 'ArrowDown') {
                 event.preventDefault();
-                this.focusChoice(this.activeChoiceIndex >= 0 ? this.activeChoiceIndex : 0);
+                this.focusChoice(this.activeChoiceIndex);
             } else if (event.key === 'ArrowUp') {
                 event.preventDefault();
                 this.focusChoice(this.filteredChoices.length - 1);
@@ -481,16 +510,12 @@ const chatbotComponent = {
             }
             if (event.key === 'Backspace') {
                 event.preventDefault();
-                this.inputConfig.responseText = this.inputConfig.responseText.slice(0, -1);
-                this.inputConfig.choiceActiveIndex = this.filteredChoices.length > 0 ? 0 : -1;
-                this.focusInput();
+                this.updateChoiceFilterText(this.inputConfig.responseText.slice(0, -1));
                 return;
             }
             if (event.key.length === 1) {
                 event.preventDefault();
-                this.inputConfig.responseText += event.key;
-                this.inputConfig.choiceActiveIndex = this.filteredChoices.length > 0 ? 0 : -1;
-                this.focusInput();
+                this.updateChoiceFilterText(this.inputConfig.responseText + event.key);
             }
         },
 
