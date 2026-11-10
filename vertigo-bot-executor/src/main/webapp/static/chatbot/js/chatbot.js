@@ -137,7 +137,8 @@ const chatbotComponent = {
                 documentaryResourceUrl: _documentaryResourceBaseUrl,
                 documentaryResourceList: [],
                 documentaryResourceFileBaseUrl: _documentaryResourceBaseUrl + '/getDocumentaryResourceFile?attId='
-            }
+            },
+            conversationResetMessage: ''
         }
     },
     computed: {
@@ -321,9 +322,12 @@ const chatbotComponent = {
             parent.postMessage('Chatbot.minimize', '*');
         },
 
-        refreshPlatform(){
+        refreshPlatform(fromUserAction = false){
             this.initPlatformConfig()
             if (this.footerMenu === 'bot') {
+                if (fromUserAction) {
+                    this.announceConversationReset()
+                }
                 refreshBot()
             } else if (this.footerMenu === 'qAndA') {
                 initQAndA();
@@ -331,6 +335,21 @@ const chatbotComponent = {
             if (this.customConfig.documentaryResourceDisplay) {
                 initDocumentaryResources();
             }
+        },
+
+        announceConversationReset() {
+            this.conversationResetMessage = 'Conversation réinitialisée';
+            if (this._resetAnnouncementTimer) {
+                clearTimeout(this._resetAnnouncementTimer);
+            }
+            this._resetAnnouncementTimer = setTimeout(() => {
+                this.conversationResetMessage = '';
+            }, 4000);
+            this.$nextTick(() => {
+                if (this.$refs.input) {
+                    this.focusInput();
+                }
+            });
         },
         // Function to complete to switch to another bot
         changeLocal(locale) {

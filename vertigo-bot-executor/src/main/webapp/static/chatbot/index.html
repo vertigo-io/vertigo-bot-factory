@@ -58,18 +58,20 @@
                      color="white"
                      text-color="white"
                      size="md"
-                     @click="refreshPlatform()"
-                     aria-label="Réinitialiser la conversation"
-                     icon="refresh"></q-btn>
+                     @click="refreshPlatform(true)">
+                <span class="q-icon notranslate material-icons" aria-hidden="true">refresh</span>
+                <span class="sr-only">Réinitialiser la conversation</span>
+              </q-btn>
               <q-btn round
                      class="btn-rotate"
                      flat
                      color="white"
                      text-color="white"
                      size="md"
-                     @click="minimize()"
-                     aria-label="Fermer la Plateforme d'accompagnement"
-                     icon="close"></q-btn>
+                     @click="minimize()">
+                <span class="q-icon notranslate material-icons" aria-hidden="true">close</span>
+                <span class="sr-only">Fermer la Plateforme d'accompagnement</span>
+              </q-btn>
             </div>
           </q-header>
 
@@ -234,6 +236,7 @@
                   </div>
                   <div style="height: 30px"></div>
                 </q-scroll-area>
+                <div class="sr-only" role="status" aria-live="polite">{{ conversationResetMessage }}</div>
                 <div class="sr-only" role="status" aria-live="polite">{{ choiceStatusMessage }}</div>
                 <div v-if="inputConfig.choiceDisplay === 'select'" class="choice-list">
                   <ul id="chatbot-choice-list"
@@ -302,9 +305,11 @@
                           :style="'margin-top: 0px;'"
                           style="margin-top: 0px;"
                           class="btn-send"
-                          icon="send"
                           @click="onMessageSend()"
-                          :disable="isSendDisabled"></q-btn>
+                          :disable="isSendDisabled">
+                    <span class="q-icon notranslate material-icons" aria-hidden="true">send</span>
+                    <span class="sr-only">Envoyer</span>
+                  </q-btn>
                   <q-btn round
                          color="red"
                          @click="restart"
