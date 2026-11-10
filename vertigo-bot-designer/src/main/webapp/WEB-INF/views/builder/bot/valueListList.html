@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:vu="http://www.morphbit.com/thymeleaf/component"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{templates/botDetailLayout}" th:with="tab=valueLists"
+>
+
+<head>
+    <title th:text="#{valueList.list.title}"></title>
+    <script th:inline="javascript">
+        VUiExtensions.methods = {
+            ...VUiExtensions.methods,
+
+            countValueListItems: function(jirValListId) {
+                return (VertigoUi.vueData.jiraValueListItems || []).filter(item => item.jirValListId === jirValListId).length;
+            }
+        };
+    </script>
+</head>
+
+<body>
+<section layout:fragment="content-actions">
+    <vu:button-link th:if="${model.userAuthorizations[AtzChatbot$botAdm]}"
+                    th:title="#{valueList.add}"
+                    url="@{/bot/{id}/valueList/new(id=${model.bot.botId})}" icon="add"
+                    class="on-left" round size="md" color="primary"/>
+</section>
+
+<section layout:fragment="content">
+    <div class="text-h6 text-weight-bold" style="display: flex; align-items: center">
+        <span class="text-primary" style="flex-grow: 2">[[#{valueList.list.title}]]</span>
+        <q-icon name="help_outlined" size="2rem"/>
+        <q-tooltip content-class="q-tooltip-text">[[#{valueList.tooltip}]]</q-tooltip>
+    </div>
+
+    <vu:table list="jiraValueLists" componentId="jiraValueLists"
+              th:tr_@click.native="|goTo('@{/bot/{id}/valueList/(id=${model.bot.botId})}'+props.row.jirValListId)|"
+              tr_style="cursor : pointer;"
+              sortBy="code" :binary-state-sort="true">
+        <vu:include-data object="jiraValueLists" field="jirValListId"/>
+        <vu:include-data object="jiraValueLists" field="code"/>
+        <vu:include-data object="jiraValueLists" field="label"/>
+        <vu:include-data object="jiraValueListItems" field="jirValListId"/>
+        <vu:column field="code">
+            <a th::href="|'@{/bot/{id}/valueList/(id=${model.bot.botId})}'+props.row.jirValListId|"
+               style="display:block; height:100%; width:100%; text-decoration:none; color:black;"
+            >
+                <span style="height:100%" class="row items-center">{{props.row.code}}</span>
+            </a>
+        </vu:column>
+        <vu:column field="label"/>
+        <vu:column name="itemCount" th:label="#{valueList.itemCount}">
+            <vu:content>
+                <span>{{ countValueListItems(props.row.jirValListId) }}</span>
+            </vu:content>
+        </vu:column>
+    </vu:table>
+</section>
+</body>
+</html>

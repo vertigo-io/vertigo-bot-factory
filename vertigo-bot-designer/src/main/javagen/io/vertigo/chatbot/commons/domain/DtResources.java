@@ -168,6 +168,10 @@ public enum DtResources implements LocaleMessageKey {
 	 */
 	fldBotExport$jiraCustomFieldSetting,
 	/**
+	 * Jira value lists.
+	 */
+	fldBotExport$jiraValueLists,
+	/**
 	 * Questions answers List.
 	 */
 	fldBotExport$questionAnswerList,
@@ -743,6 +747,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Field type.
 	 */
 	fldJiraCustomFieldSetting$jcfTypeCd,
+	/**
+	 * Value list.
+	 */
+	fldJiraCustomFieldSetting$jirValListId,
 
 	/***********************************************************
 	 * JiraCustomFieldSettingExport.
@@ -767,6 +775,10 @@ public enum DtResources implements LocaleMessageKey {
 	 * Mandatory.
 	 */
 	fldJiraCustomFieldSettingExport$mandatory,
+	/**
+	 * Value list code.
+	 */
+	fldJiraCustomFieldSettingExport$valueListCode,
 
 	/***********************************************************
 	 * JiraCustomFieldType.
@@ -907,6 +919,78 @@ public enum DtResources implements LocaleMessageKey {
 	 * Number max of results.
 	 */
 	fldJiraSettingExport$numberOfResults,
+
+	/***********************************************************
+	 * JiraValueList.
+	 **********************************************************/
+	/**
+	 * Jira value list id.
+	 */
+	fldJiraValueList$jirValListId,
+	/**
+	 * Code.
+	 */
+	fldJiraValueList$code,
+	/**
+	 * Label.
+	 */
+	fldJiraValueList$label,
+	/**
+	 * Chatbot.
+	 */
+	fldJiraValueList$botId,
+
+	/***********************************************************
+	 * JiraValueListExport.
+	 **********************************************************/
+	/**
+	 * Code.
+	 */
+	fldJiraValueListExport$code,
+	/**
+	 * Label.
+	 */
+	fldJiraValueListExport$label,
+	/**
+	 * Items.
+	 */
+	fldJiraValueListExport$items,
+
+	/***********************************************************
+	 * JiraValueListItem.
+	 **********************************************************/
+	/**
+	 * Jira value list item id.
+	 */
+	fldJiraValueListItem$jirValItemId,
+	/**
+	 * Code.
+	 */
+	fldJiraValueListItem$code,
+	/**
+	 * Label.
+	 */
+	fldJiraValueListItem$label,
+	/**
+	 * Sequence.
+	 */
+	fldJiraValueListItem$sequence,
+	/**
+	 * Value list.
+	 */
+	fldJiraValueListItem$jirValListId,
+
+	/***********************************************************
+	 * JiraValueListItemExport.
+	 **********************************************************/
+	/**
+	 * Code.
+	 */
+	fldJiraValueListItemExport$code,
+	/**
+	 * Label.
+	 */
+	fldJiraValueListItemExport$label,
 
 	/***********************************************************
 	 * MediaFileInfo.

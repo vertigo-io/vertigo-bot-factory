@@ -403,3 +403,46 @@ create Association AJiraCustomFieldSettingType {
 
 	labelB : "Field type"
 }
+
+create DtDefinition DtJiraValueList {
+	id jirValListId 		        {domain: DoId		    label: "Jira value list id"                                                         }
+	field code    		            {domain: DoCode 	    label: "Code" 			                                    cardinality : "1"	}
+	field label 		            {domain: DoLabel 	    label: "Label" 			                                    cardinality : "1"	}
+}
+
+create Association AJiraValueListChatbot {
+	fkFieldName : "botId"
+
+ 	dtDefinitionA : DtJiraValueList
+	type : "*>1"
+	dtDefinitionB : DtChatbot
+
+	labelB : "Chatbot"
+}
+
+create DtDefinition DtJiraValueListItem {
+	id jirValItemId 		        {domain: DoId		    label: "Jira value list item id"                                                    }
+	field code    		            {domain: DoCode 	    label: "Code" 			                                    cardinality : "1"	}
+	field label 		            {domain: DoLabel 	    label: "Label" 			                                    cardinality : "1"	}
+	field sequence 		            {domain: DoNumber 	    label: "Sequence" 			                                cardinality : "1"	}
+}
+
+create Association AJiraValueListItemJiraValueList {
+	fkFieldName : "jirValListId"
+
+ 	dtDefinitionA : DtJiraValueListItem
+	type : "*>1"
+	dtDefinitionB : DtJiraValueList
+
+	labelB : "Value list"
+}
+
+create Association AJiraCustomFieldSettingValueList {
+	fkFieldName : "jirValListId"
+
+ 	dtDefinitionA : DtJiraCustomFieldSetting
+	type : "*>?"
+	dtDefinitionB : DtJiraValueList
+
+	labelB : "Value list"
+}

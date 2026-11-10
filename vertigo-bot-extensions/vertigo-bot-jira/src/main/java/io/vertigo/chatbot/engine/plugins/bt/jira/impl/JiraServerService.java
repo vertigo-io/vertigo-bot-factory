@@ -27,10 +27,12 @@ import io.vertigo.chatbot.commons.domain.ChatbotCustomConfigExport;
 import io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport;
 import io.vertigo.chatbot.commons.domain.JiraFieldSettingExport;
 import io.vertigo.chatbot.commons.domain.JiraSettingExport;
+import io.vertigo.chatbot.commons.domain.JiraValueListExport;
 import io.vertigo.chatbot.engine.plugins.bt.jira.helper.CustomAsynchronousJiraRestClient;
 import io.vertigo.chatbot.engine.plugins.bt.jira.helper.CustomServerInfo;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JiraField;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmRequestType;
+import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmRequestTypeFieldsResult;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmRequestTypeSearchResult;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmServiceDesk;
 import io.vertigo.chatbot.engine.plugins.bt.jira.model.JsmServiceDeskSearchResult;
@@ -53,6 +55,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -95,6 +98,7 @@ public class JiraServerService implements Component, IJiraService {
     private JiraRestClient jiraRestClient;
     private DtList<JiraFieldSettingExport> jiraFieldSettingExports;
     private DtList<JiraCustomFieldSettingExport> jiraCustomFieldSettingExports;
+    private DtList<JiraValueListExport> jiraValueLists;
     private CustomAsynchronousJiraRestClient customAsynchronousUserRestClient;
     @Inject
     private PasswordEncryptionServices passwordEncryptionServices;
@@ -132,6 +136,7 @@ public class JiraServerService implements Component, IJiraService {
 			}
             jiraFieldSettingExports = jiraFieldSettingExport;
             jiraCustomFieldSettingExports = config.getBot().getJiraCustomFieldSetting();
+            jiraValueLists = config.getBot().getJiraValueLists();
             numberOfResults = jiraSettingExport.getNumberOfResults();
             LogsUtils.logOK(logs);
         }
@@ -147,6 +152,16 @@ public class JiraServerService implements Component, IJiraService {
 
     public DtList<JiraCustomFieldSettingExport> getJiraCustomFieldSettingExports() {
         return jiraCustomFieldSettingExports;
+    }
+
+    /** Value list of the loaded model, looked up by the code declared on the field. */
+    public Optional<JiraValueListExport> findValueList(final String code) {
+        if (jiraValueLists == null || code == null || code.isBlank()) {
+            return Optional.empty();
+        }
+        return jiraValueLists.stream()
+                .filter(valueList -> code.equals(valueList.getCode()))
+                .findFirst();
     }
 
     private JiraRestClient createJiraRestClient() {
@@ -573,6 +588,45 @@ public class JiraServerService implements Component, IJiraService {
 			throw new VSystemException("Failed to attach file to JSM request : " + e.getMessage(), e);
 		} catch (final Exception e) {
 			throw new VSystemException("Failed to retrieve JSM request types : " + e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Retrieves the valid values of a field for a given JSM request type.
+	 *
+	 * @param requestTypeId The JSM request type id
+	 * @param fieldId       The Jira field id (e.g. "customfield_10115")
+	 * @return The valid values of the field, empty if the field is not a list of values or is not part of the request type
+	 */
+	public List<JsmRequestTypeFieldsResult.ValidValue> getRequestTypeFieldValidValues(final String requestTypeId, final String fieldId) {
+		final Long currentServiceDeskId = ensureServiceDeskId();
+		final HttpRequest request = HttpRequest.newBuilder()
+				.uri(buildJsmUri(SERVICE_DESK_API_PREFIX + "/servicedesk/" + currentServiceDeskId + "/requesttype/" + requestTypeId + "/field"))
+				.timeout(HTTP_REQUEST_TIMEOUT)
+				.header("Authorization", jsmAuthHeader)
+				.header("Accept", "application/json")
+				.GET()
+				.build();
+		try {
+			final HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
+			if (response.statusCode() >= 200 && response.statusCode() < 300) {
+				final JsmRequestTypeFieldsResult result = jsonEngine.fromJson(response.body(), JsmRequestTypeFieldsResult.class, Set.of(), Set.of());
+				if (result == null || result.requestTypeFields() == null) {
+					return List.of();
+				}
+				return result.requestTypeFields().stream()
+						.filter(field -> fieldId.equals(field.fieldId()))
+						.findFirst()
+						.map(JsmRequestTypeFieldsResult.Field::validValues)
+						.filter(Objects::nonNull)
+						.orElse(List.of());
+			}
+			throw new VSystemException("Failed to retrieve JSM request type fields. Status code " + response.statusCode() + " : " + response.body());
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new VSystemException("Failed to retrieve JSM request type fields : " + e.getMessage(), e);
+		} catch (final Exception e) {
+			throw new VSystemException("Failed to retrieve JSM request type fields : " + e.getMessage(), e);
 		}
 	}
 

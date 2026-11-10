@@ -14,6 +14,7 @@ create DtDefinition DtBotExport {
 	field jiraSetting			    {domain: DoDtJiraSettingExport 	        label: "Jira setting" 	            cardinality : "?"}
 	field jiraFieldSetting			{domain: DoDtJiraFieldSettingExport 	label: "Jira fields setting" 	    cardinality : "*"}
 	field jiraCustomFieldSetting	{domain: DoDtJiraCustomFieldSettingExport 	label: "Jira custom fields setting" cardinality : "*"}
+	field jiraValueLists			{domain: DoDtJiraValueListExport 		label: "Jira value lists" 			cardinality : "*"}
 	field questionAnswerList 		{domain: DoText                       	label: "Questions answers List" 	cardinality : "1"}
 	field documentaryResources      {domain: DoText                         label: "Documentary resources"      cardinality : "1"}
 	field globalVariables           {domain: DoText                         label: "Global variables"           cardinality : "1"}
@@ -62,6 +63,18 @@ create DtDefinition DtJiraCustomFieldSettingExport {
 	field fieldType 				{domain: DoCode 						label: "Field type" 			    cardinality : "1"}
 	field enabled 		            {domain: DoYesNo 						label: "Enabled" 		            cardinality : "1"}
 	field mandatory			 		{domain: DoYesNo	 					label: "Mandatory" 					cardinality : "1"}
+	field valueListCode				{domain: DoCode 						label: "Value list code" 			cardinality : "?"}
+}
+
+create DtDefinition DtJiraValueListExport {
+	field code 						{domain: DoCode 						label: "Code" 						cardinality : "1"}
+	field label 					{domain: DoLabel 						label: "Label" 						cardinality : "1"}
+	field items 					{domain: DoDtJiraValueListItemExport 	label: "Items" 						cardinality : "*"}
+}
+
+create DtDefinition DtJiraValueListItemExport {
+	field code 						{domain: DoCode 						label: "Code" 						cardinality : "1"}
+	field label 					{domain: DoLabel 						label: "Label" 						cardinality : "1"}
 }
 
 create DtDefinition DtAttachmentExport {

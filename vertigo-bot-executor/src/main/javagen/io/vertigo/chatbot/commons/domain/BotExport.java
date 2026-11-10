@@ -25,6 +25,7 @@ public final class BotExport implements DataObject {
 	private io.vertigo.chatbot.commons.domain.JiraSettingExport jiraSetting;
 	private io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.JiraFieldSettingExport> jiraFieldSetting =  new io.vertigo.datamodel.data.model.DtList<>(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class);
 	private io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport> jiraCustomFieldSetting =  new io.vertigo.datamodel.data.model.DtList<>(io.vertigo.chatbot.commons.domain.JiraCustomFieldSettingExport.class);
+	private io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.JiraValueListExport> jiraValueLists =  new io.vertigo.datamodel.data.model.DtList<>(io.vertigo.chatbot.commons.domain.JiraValueListExport.class);
 	private String questionAnswerList;
 	private String documentaryResources;
 	private String globalVariables;
@@ -264,6 +265,27 @@ public final class BotExport implements DataObject {
 		io.vertigo.core.lang.Assertion.check().isNotNull(jiraCustomFieldSetting);
 		//---
 		this.jiraCustomFieldSetting = jiraCustomFieldSetting;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Jira value lists'.
+	 * @return DtList de JiraValueListExport jiraValueLists
+	 */
+	@Field(smartType = "STyDtJiraValueListExport", cardinality = io.vertigo.core.lang.Cardinality.MANY, label = "Jira value lists")
+	public io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.JiraValueListExport> getJiraValueLists() {
+		return jiraValueLists;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Jira value lists'.
+	 * @param jiraValueLists DtList de JiraValueListExport
+	 */
+	public void setJiraValueLists(final io.vertigo.datamodel.data.model.DtList<io.vertigo.chatbot.commons.domain.JiraValueListExport> jiraValueLists) {
+		io.vertigo.core.lang.Assertion.check().isNotNull(jiraValueLists);
+		//---
+		this.jiraValueLists = jiraValueLists;
 	}
 	
 	/**

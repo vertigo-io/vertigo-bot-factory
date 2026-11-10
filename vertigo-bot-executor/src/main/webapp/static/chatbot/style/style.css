@@ -287,6 +287,14 @@ img {
     outline-offset: 1px;
 }
 
+.choice-filter-label {
+    display: block;
+    padding-top: 8px;
+    color: #000;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
 .chatbot-text-input {
     width: 100%;
     min-height: 40px;
@@ -484,4 +492,44 @@ img {
 
 .q-rating.disabled {
     opacity: 1 !important;
+}
+
+.choice-list {
+    max-height: 10rem;
+    margin: 0 16px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.choice-list-item {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    color: #000;
+    text-align: left;
+    background: #fff;
+    border: 0;
+    cursor: pointer;
+}
+
+.choice-list-options {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.choice-list-item:hover {
+    background: #f0f0f0;
+}
+
+.choice-list-item[aria-selected="true"] {
+    font-weight: bold;
+}
+
+.choice-list-empty {
+    padding: 8px 12px;
+    color: #666;
+    font-style: italic;
 }
