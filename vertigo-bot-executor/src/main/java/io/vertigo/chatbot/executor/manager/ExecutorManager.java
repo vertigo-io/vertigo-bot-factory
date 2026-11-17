@@ -199,15 +199,15 @@ public class ExecutorManager implements Manager, Activeable {
 
         if (analytics.getTopic().getCode().equals(START_TOPIC_NAME)) {
             input.setMessage(null);
-            return this.startNewConversation(input);
+            return startNewConversation(input);
         }
 
         final ExecutorConfiguration executorConfiguration = executorConfigManager.getConfig().getExecutorConfiguration();
         if (executorConfiguration.getAvatar() != null) {
             botResponse.getMetadatas().put("avatar", executorConfiguration.getAvatar());
         }
-        botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfigManager.getConfig().getExecutorConfiguration().getCustomConfig(), JsonElement.class, Set.of(), Set.of()));
-        analyticsSenderServices.sendEventToDb(sessionId, botResponse, executorConfigManager.getConfig().getExecutorConfiguration(), input);
+        botResponse.getMetadatas().put("customConfig", jsonEngine.fromJson(executorConfiguration.getCustomConfig(), JsonElement.class, Set.of(), Set.of()));
+        analyticsSenderServices.sendEventToDb(sessionId, botResponse, executorConfiguration, input);
 
         return botResponse;
     }
@@ -249,9 +249,9 @@ public class ExecutorManager implements Manager, Activeable {
         return welcomeTourExport.getTechnicalCode();
     }
 
-    public String getGlobalVariableValue(final String type, String param1, String param2, String param3, String param4) {
+    public String getGlobalVariableValue(final String type, final String param1, final String param2, final String param3, final String param4) {
         if (executorConfigManager.getGlobalVariableMap().containsKey(type)) {
-            List<GlobalVariableExport> matchingRules = executorConfigManager.getGlobalVariableMap().get(type).stream()
+            final List<GlobalVariableExport> matchingRules = executorConfigManager.getGlobalVariableMap().get(type).stream()
                     .filter(globalVariableExport ->
                             param1 == null || globalVariableExport.getParam1() == null || globalVariableExport.getParam1().equals(param1))
                     .filter(globalVariableExport ->
