@@ -1,5 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Context debug="0" reloadable="false" allowCasualMultipartParsing="true" docBase="/usr/local/tomcat/war/runner.war">
+	<!-- SameSite not in Servlet 3.1 web.xml. Lax OK: chat convId is sessionStorage + URL path, not JSESSIONID. -->
+	<CookieProcessor sameSiteCookies="Lax" />
+
 	<Parameter name="boot.ANALYTICA_HOST" value="${ANALYTICA_HOST}" override="false"/>
 	<Parameter name="boot.ANALYTICA_PORT" value="${ANALYTICA_PORT}" override="false"/>
 	<Parameter name="boot.ANALYTICA_DBNAME" value="${ANALYTICA_DBNAME}" override="false"/>

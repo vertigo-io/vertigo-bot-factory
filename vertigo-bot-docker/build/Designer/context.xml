@@ -1,5 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Context debug="0" reloadable="false" allowCasualMultipartParsing="true" docBase="/usr/local/tomcat/war/designer.war">
+	<!-- SameSite not expressible in Servlet 3.1 web.xml ; Lax suitable for first-party Designer. -->
+	<CookieProcessor sameSiteCookies="Lax" />
+
 	<Resource name="jdbc/DataSource"
 		auth="SERVLET"
 		type="javax.sql.DataSource"
