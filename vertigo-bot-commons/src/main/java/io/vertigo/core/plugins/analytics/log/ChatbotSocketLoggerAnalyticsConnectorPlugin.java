@@ -18,10 +18,7 @@
 package io.vertigo.core.plugins.analytics.log;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializer;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +31,6 @@ import org.apache.logging.log4j.core.layout.SerializedLayout;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +41,7 @@ import io.vertigo.core.analytics.trace.TraceSpan;
 import io.vertigo.core.daemon.DaemonScheduled;
 import io.vertigo.core.impl.analytics.AnalyticsConnectorPlugin;
 import io.vertigo.core.lang.Assertion;
+import io.vertigo.core.lang.json.CoreJsonAdapters;
 import io.vertigo.core.node.Node;
 import io.vertigo.core.node.component.Activeable;
 import io.vertigo.core.param.ParamValue;
@@ -58,15 +55,18 @@ import javax.inject.Inject;
  * {@link SerializedLayout}: a JSON layout is rejected
  * ({@code StreamCorruptedException}, header {@code 7B0D0A20}) and every
  * conversation, page and metric event is dropped before InfluxDB.
+ * <p>
+ * Instant fields ({@link Metric}, {@link HealthCheck}) must be serialized as
+ * ISO-8601 via {@link CoreJsonAdapters#V_CORE_GSON}. Epoch millis are rejected
+ * by the server ({@code Unsupported Instant format}).
  *
  * @author mlaroche, pchretien, npiedeloup
  */
 public final class ChatbotSocketLoggerAnalyticsConnectorPlugin implements AnalyticsConnectorPlugin, Activeable {
-	private static final Gson GSON = new GsonBuilder()
-    .registerTypeAdapter(Instant.class,
-        (JsonSerializer<Instant>) (src, typeOfSrc, context) ->
-            new JsonPrimitive(src.toEpochMilli()))
-    .create();
+	/**
+	 * Gson aligned with vertigo-analytics-server Instant parsing (ISO-8601 UTC).
+	 */
+	private static final Gson GSON = CoreJsonAdapters.V_CORE_GSON;
 	private static final int DEFAULT_CONNECT_TIMEOUT = 250;// 250ms for connection to log4j server
 	private static final int DEFAULT_DISCONNECT_TIMEOUT = 5000;// 5s for disconnection to log4j server
 	private static final int DEFAULT_SERVER_PORT = 4562;// DefaultPort of SocketAppender 4650 for log4j and 4562 for log4j2
