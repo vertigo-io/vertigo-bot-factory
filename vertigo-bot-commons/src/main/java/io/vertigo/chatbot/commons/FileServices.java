@@ -73,12 +73,14 @@ public class FileServices implements Component, Activeable {
 			// Use of Spring exception rather than a Vertigo one, in order to return a 413 error
 			throw new MaxUploadSizeExceededException(MAX_UPLOAD_SIZE);
 		}
-        final ScanResult result = antivirusServices.checkForViruses(inputStream);
-        if (result instanceof ScanResult.VirusFound) {
-            final Map<String, Collection<String>> virusesMap = ((ScanResult.VirusFound) result).getFoundViruses();
-            final String viruses = virusesMap.values().stream()
-                    .flatMap(Collection::stream).collect(Collectors.joining(","));
-            throw new VUserException(AttachmentMultilingualResources.VIRUSES_FOUND, viruses, fileName);
-        }
+		if (antivirusServices.healthCheck()) {
+			final ScanResult result = antivirusServices.checkForViruses(inputStream);
+			if (result instanceof ScanResult.VirusFound) {
+				final Map<String, Collection<String>> virusesMap = ((ScanResult.VirusFound) result).getFoundViruses();
+				final String viruses = virusesMap.values().stream()
+						.flatMap(Collection::stream).collect(Collectors.joining(","));
+				throw new VUserException(AttachmentMultilingualResources.VIRUSES_FOUND, viruses, fileName);
+			}
+		}
     }
 }
