@@ -50,5 +50,7 @@ public enum BotMultilingualResources implements LocaleMessageKey {
 
 	DOCUMENTARYRESOURCE_LIST,
 
-	GLOBALVARIABLE_LIST
+	GLOBALVARIABLE_LIST,
+
+	JIRAVALUELIST_LIST
 }

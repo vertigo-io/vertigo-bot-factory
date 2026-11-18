@@ -14,5 +14,9 @@ public interface IJiraFieldService {
 
     void processConversation(BlackBoard bb, JiraField jiraField, List<BTNode> sequence, final boolean checkJiraFields);
 
+    default void processConversation(final BlackBoard bb, final JiraField jiraField, final List<JiraField> jiraFields, final List<BTNode> sequence, final boolean checkJiraFields) {
+        processConversation(bb, jiraField, sequence, checkJiraFields);
+    }
+
     void processTicket(BlackBoard bb, IssueInputBuilder iib, JiraField jiraField);
 }

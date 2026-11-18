@@ -75,6 +75,14 @@
                 }
             },
 
+            getJiraValueListLabel: function(jirValListId) {
+                if (!jirValListId || !VertigoUi.vueData.jiraValueLists) {
+                    return '';
+                }
+                let valueList = VertigoUi.vueData.jiraValueLists.find(current => current.jirValListId === jirValListId);
+                return valueList !== undefined ? valueList.label : '';
+            },
+
             createValue: function(val, done) {
                 if (val.length > 0 && !val.includes(',')) {
                     done(val, 'add-unique')
@@ -234,7 +242,7 @@
             openAddJiraCustomFieldDialog: function() {
                 Object.assign(this.vueData.newJiraCustomFieldSetting, {
                     jirCusFieldSetId: null, botId: this.vueData.bot.botId,
-                    label: null, fieldKey: null, jcfTypeCd: null, enabled: true, mandatory: false
+                    label: null, fieldKey: null, jcfTypeCd: null, jirValListId: null, enabled: true, mandatory: false
                 });
                 this.$refs.jiraCustomFieldDialog.show();
             },
@@ -261,6 +269,14 @@
             return { enabled: fieldSetting.enabled, mandatory: fieldSetting.mandatory };
         }
 
+        function jiraValueListCode(customField) {
+            if (!customField.jirValListId || !VertigoUi.vueData.jiraValueLists) {
+                return '';
+            }
+            const valueList = VertigoUi.vueData.jiraValueLists.find(current => current.jirValListId === customField.jirValListId);
+            return valueList ? valueList.code : '';
+        }
+
         function refreshCodeMirrorJiraField() {
             // Filter fields that are both enabled AND mandatory, using effective values (considering JSM mode)
             const fieldIds = VertigoUi.vueData.jiraFieldSettings
@@ -280,7 +296,12 @@
             customFields.forEach(customField => {
                 // Use sanitized fieldKey for BBKey path (remove underscores), and original fieldKey for Jira field ID
                 const bbKeyPath = sanitizeBBKeyPath(customField.fieldKey);
-                jiraSequence += '        jira:field /user/local/jira/' + bbKeyPath + ' "Question posée par le bot" "' + customField.fieldKey + '"\n';
+                let fieldLine = '        jira:field /user/local/jira/' + bbKeyPath + ' "Question posée par le bot" "' + customField.fieldKey + '"';
+                const listCode = jiraValueListCode(customField);
+                if (listCode) {
+                    fieldLine += ' "' + listCode.replace(/"/g, "'") + '"';
+                }
+                jiraSequence += fieldLine + '\n';
             });
             jiraSequence += '    end jira:issue:create\nend sequence';
             VUiPage.$refs.jiraCodeMirror.replaceContent(jiraSequence);
@@ -544,6 +565,7 @@
         <vu:popup-ajax action="_deleteJiraCustomField" vModel="showDeleteJiraCustomFieldPopup"
                        th:message="#{extension.jira.customField.delete.popup.message}"
                        th:confirm="#{action.delete}" dataName="jirCusFieldSetId"></vu:popup-ajax>
+        <vu:include-data object="jiraValueLists" field="'*'"/>
         <div v-if="vueData.chatbotCustomConfig.jsmMode" style="margin-bottom:20px;">
             <vu:table id="JIRA_CUSTOM_FIELDS" th:title="#{extensions.jira.customFields}" list="jiraCustomFieldSettings"
                       componentId="jiraCustomFieldSettings" sortBy="label" :binary-state-sort="true">
@@ -569,6 +591,11 @@
                 <vu:column name="jcfTypeCd" th:label="#{fldJiraCustomFieldSetting$jcfTypeCd}">
                     <vu:content>
                         <span v-html="getJiraCustomFieldTypeLabel(props.row.jcfTypeCd)"></span>
+                    </vu:content>
+                </vu:column>
+                <vu:column name="jirValListId" th:label="#{fldJiraCustomFieldSetting$jirValListId}">
+                    <vu:content>
+                        <span>{{ getJiraValueListLabel(props.row.jirValListId) }}</span>
                     </vu:content>
                 </vu:column>
                 <vu:column name="enabled" th:label="#{fldJiraCustomFieldSetting$enabled}">
@@ -742,6 +769,7 @@
         <vu:include-data object="newJiraCustomFieldSetting" field="label" modifiable="true"/>
         <vu:include-data object="newJiraCustomFieldSetting" field="fieldKey" modifiable="true"/>
         <vu:include-data object="newJiraCustomFieldSetting" field="jcfTypeCd" modifiable="true"/>
+        <vu:include-data object="newJiraCustomFieldSetting" field="jirValListId" modifiable="true"/>
         <vu:include-data object="newJiraCustomFieldSetting" field="enabled" modifiable="true"/>
         <vu:include-data object="newJiraCustomFieldSetting" field="mandatory" modifiable="true"/>
         <q-card style="min-width: 400px;">
@@ -778,6 +806,17 @@
                         emit-value
                         :error="hasFieldsError('newJiraCustomFieldSetting', 'jcfTypeCd')"
                         :error-message="getErrorMessage('newJiraCustomFieldSetting', 'jcfTypeCd')"
+                        stack-label/>
+            </q-card-section>
+            <q-card-section>
+                <q-select
+                        th:label="#{fldJiraCustomFieldSetting$jirValListId}"
+                        v-model="vueData.newJiraCustomFieldSetting.jirValListId"
+                        name="vContext[newJiraCustomFieldSetting][jirValListId]"
+                        :options="(vueData.jiraValueLists || []).map(list => ({label: list.label + ' (' + list.code + ')', value: list.jirValListId}))"
+                        map-options
+                        emit-value
+                        clearable
                         stack-label/>
             </q-card-section>
             <q-card-section>

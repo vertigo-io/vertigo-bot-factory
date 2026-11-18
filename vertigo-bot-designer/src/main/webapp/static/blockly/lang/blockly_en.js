@@ -221,6 +221,7 @@ Blockly.Msg["JIRA_FIELD_TITLE"] = "Label Jira ticket";
 Blockly.Msg["JIRA_VARIABLE_TITLE"] = "Save variable:";
 Blockly.Msg["JIRA_ISSUE_TITLE"] = "Create Jira ticket";
 Blockly.Msg["JIRA_TYPE_FIELD"] = "Field type:";
+Blockly.Msg["JIRA_VALUE_LIST"] = "Value list:";
 Blockly.Msg["JIRA_FIELD_TYPE_ASSIGNEE"] = "Assignee";
 Blockly.Msg["JIRA_FIELD_TYPE_COMPONENT"] = "Component";
 Blockly.Msg["JIRA_FIELD_TYPE_DESCRIPTION"] = "Description";

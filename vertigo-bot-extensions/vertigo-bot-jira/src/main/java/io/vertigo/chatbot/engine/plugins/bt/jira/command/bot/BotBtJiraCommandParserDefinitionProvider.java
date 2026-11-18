@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static io.vertigo.chatbot.engine.util.BlackBoardUtils.getBB;
@@ -40,7 +41,11 @@ public class BotBtJiraCommandParserDefinitionProvider implements SimpleDefinitio
 		return List.of(
 				BtCommandParserDefinition.compositeCommand("jira:issue:create",
 						this::buildJiraCreation),
-				BtCommandParserDefinition.basicCommand("jira:field", (c, p) -> new JiraField(c.getStringParam(0), c.getStringParam(1), c.getStringParam(2))));
+				BtCommandParserDefinition.basicCommand("jira:field", (c, p) -> {
+					final JiraField jiraField = new JiraField(c.getStringParam(0), c.getStringParam(1), c.getStringParam(2));
+					c.getOptStringParam(3).filter(valueListCode -> !valueListCode.isBlank()).ifPresent(jiraField::setValueListCode);
+					return jiraField;
+				}));
 	}
 
 	private BTNode buildJiraCreation(final BtCommand command, final List<Object> params, final List<BTNode> childs) {
@@ -59,6 +64,7 @@ public class BotBtJiraCommandParserDefinitionProvider implements SimpleDefinitio
 			final boolean isCustomField = jiraCustomFieldSettingExports != null && jiraCustomFieldSettingExports.stream()
 					.anyMatch(it -> it.getFieldKey().equals(jiraField.getFieldType()) && it.getEnabled());
 			Assertion.check().isTrue(isPredefinedField || isCustomField, jiraField.getFieldType() + " is not allowed here.");
+			checkValueList(jiraField, jiraCustomFieldSettingExports);
 		});
 
 		jiraFieldSettingExports.stream().filter(JiraFieldSettingExport::getMandatory).forEach(jiraFieldSettingExport -> {
@@ -75,6 +81,19 @@ public class BotBtJiraCommandParserDefinitionProvider implements SimpleDefinitio
 		}
 
 		return botJiraNodeProvider.buildJiraCreateIssue(getBB(params), jiraFields, command.getStringParam(0));
+	}
+
+	/** The list code written in the script must be the one set on the custom field, or absent on both sides. */
+	private static void checkValueList(final JiraField jiraField, final DtList<JiraCustomFieldSettingExport> customFields) {
+		final String expectedCode = customFields == null ? null : customFields.stream()
+				.filter(it -> it.getFieldKey().equals(jiraField.getFieldType()))
+				.map(JiraCustomFieldSettingExport::getValueListCode)
+				.filter(Objects::nonNull)
+				.findFirst()
+				.orElse(null);
+		Assertion.check().isTrue(Objects.equals(expectedCode, jiraField.getValueListCode()),
+				"Jira field " + jiraField.getFieldType() + " : value list in script (" + jiraField.getValueListCode()
+						+ ") does not match connector setting (" + expectedCode + ")");
 	}
 
 	/** In JSM mode, raiseOnBehalfOf is an alias for reporter. */

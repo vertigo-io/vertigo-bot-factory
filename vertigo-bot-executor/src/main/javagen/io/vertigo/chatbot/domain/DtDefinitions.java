@@ -51,6 +51,10 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		JiraFieldSettingExport(io.vertigo.chatbot.commons.domain.JiraFieldSettingExport.class),
 		/** Objet de données JiraSettingExport. */
 		JiraSettingExport(io.vertigo.chatbot.commons.domain.JiraSettingExport.class),
+		/** Objet de données JiraValueListExport. */
+		JiraValueListExport(io.vertigo.chatbot.commons.domain.JiraValueListExport.class),
+		/** Objet de données JiraValueListItemExport. */
+		JiraValueListItemExport(io.vertigo.chatbot.commons.domain.JiraValueListItemExport.class),
 		/** Objet de données MediaFileInfo. */
 		MediaFileInfo(io.vertigo.chatbot.commons.domain.MediaFileInfo.class),
 		/** Objet de données QuestionAnswerExport. */
@@ -179,6 +183,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jiraFieldSetting,
 		/** Propriété 'Jira custom fields setting'. */
 		jiraCustomFieldSetting,
+		/** Propriété 'Jira value lists'. */
+		jiraValueLists,
 		/** Propriété 'Questions answers List'. */
 		questionAnswerList,
 		/** Propriété 'Documentary resources'. */
@@ -370,7 +376,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Enabled'. */
 		enabled,
 		/** Propriété 'Mandatory'. */
-		mandatory	}
+		mandatory,
+		/** Propriété 'Value list code'. */
+		valueListCode	}
 
 	/**
 	 * Enumération des champs de JiraFieldSettingExport.
@@ -399,6 +407,26 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jsmMode,
 		/** Propriété 'Number max of results'. */
 		numberOfResults	}
+
+	/**
+	 * Enumération des champs de JiraValueListExport.
+	 */
+	public enum JiraValueListExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.JiraValueListExport> {
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Items'. */
+		items	}
+
+	/**
+	 * Enumération des champs de JiraValueListItemExport.
+	 */
+	public enum JiraValueListItemExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.JiraValueListItemExport> {
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Label'. */
+		label	}
 
 	/**
 	 * Enumération des champs de MediaFileInfo.
