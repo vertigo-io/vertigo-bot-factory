@@ -418,10 +418,12 @@ window.addEventListener('vui-after-page-mounted', function () {
 			let lienParams = paramsFormatVariable(params[0])
 			let question = params[1]
 			let fieldType = params[2]
+			let valueList = params[3] || ''
 			params[0] = lienParams[0]
 			params[1] = lienParams[1]
 			params[2] = question
 			params[3] = fieldType
+			params[4] = valueList
 		}
 		else if (resolvedType.type === 'cb_globalvar') {
 			let lienParams = paramsFormatVariable(params[0])

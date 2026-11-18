@@ -123,6 +123,14 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		JiraSetting(io.vertigo.chatbot.commons.domain.JiraSetting.class),
 		/** Objet de données JiraSettingExport. */
 		JiraSettingExport(io.vertigo.chatbot.commons.domain.JiraSettingExport.class),
+		/** Objet de données JiraValueList. */
+		JiraValueList(io.vertigo.chatbot.commons.domain.JiraValueList.class),
+		/** Objet de données JiraValueListExport. */
+		JiraValueListExport(io.vertigo.chatbot.commons.domain.JiraValueListExport.class),
+		/** Objet de données JiraValueListItem. */
+		JiraValueListItem(io.vertigo.chatbot.commons.domain.JiraValueListItem.class),
+		/** Objet de données JiraValueListItemExport. */
+		JiraValueListItemExport(io.vertigo.chatbot.commons.domain.JiraValueListItemExport.class),
 		/** Objet de données KindTopic. */
 		KindTopic(io.vertigo.chatbot.commons.domain.topic.KindTopic.class),
 		/** Objet de données MediaFileInfo. */
@@ -404,6 +412,8 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jiraFieldSetting,
 		/** Propriété 'Jira custom fields setting'. */
 		jiraCustomFieldSetting,
+		/** Propriété 'Jira value lists'. */
+		jiraValueLists,
 		/** Propriété 'Questions answers List'. */
 		questionAnswerList,
 		/** Propriété 'Documentary resources'. */
@@ -1059,7 +1069,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Chatbot'. */
 		botId,
 		/** Propriété 'Field type'. */
-		jcfTypeCd	}
+		jcfTypeCd,
+		/** Propriété 'Value list'. */
+		jirValListId	}
 
 	/**
 	 * Enumération des champs de JiraCustomFieldSettingExport.
@@ -1074,7 +1086,9 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		/** Propriété 'Enabled'. */
 		enabled,
 		/** Propriété 'Mandatory'. */
-		mandatory	}
+		mandatory,
+		/** Propriété 'Value list code'. */
+		valueListCode	}
 
 	/**
 	 * Enumération des champs de JiraCustomFieldType.
@@ -1163,6 +1177,54 @@ public final class DtDefinitions implements Iterable<Class<?>> {
 		jsmMode,
 		/** Propriété 'Number max of results'. */
 		numberOfResults	}
+
+	/**
+	 * Enumération des champs de JiraValueList.
+	 */
+	public enum JiraValueListFields implements DataFieldName<io.vertigo.chatbot.commons.domain.JiraValueList> {
+		/** Propriété 'Jira value list id'. */
+		jirValListId,
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Chatbot'. */
+		botId	}
+
+	/**
+	 * Enumération des champs de JiraValueListExport.
+	 */
+	public enum JiraValueListExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.JiraValueListExport> {
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Items'. */
+		items	}
+
+	/**
+	 * Enumération des champs de JiraValueListItem.
+	 */
+	public enum JiraValueListItemFields implements DataFieldName<io.vertigo.chatbot.commons.domain.JiraValueListItem> {
+		/** Propriété 'Jira value list item id'. */
+		jirValItemId,
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Label'. */
+		label,
+		/** Propriété 'Sequence'. */
+		sequence,
+		/** Propriété 'Value list'. */
+		jirValListId	}
+
+	/**
+	 * Enumération des champs de JiraValueListItemExport.
+	 */
+	public enum JiraValueListItemExportFields implements DataFieldName<io.vertigo.chatbot.commons.domain.JiraValueListItemExport> {
+		/** Propriété 'Code'. */
+		code,
+		/** Propriété 'Label'. */
+		label	}
 
 	/**
 	 * Enumération des champs de KindTopic.

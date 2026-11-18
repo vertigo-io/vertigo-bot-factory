@@ -120,6 +120,12 @@ public class ChatbotServices implements Component {
 	private JiraSettingServices jiraSettingServices;
 
 	@Inject
+	private JiraCustomFieldSettingServices jiraCustomFieldSettingServices;
+
+	@Inject
+	private JiraValueListServices jiraValueListServices;
+
+	@Inject
 	private DocumentaryResourceServices documentaryResourceServices;
 
 	@Inject
@@ -187,6 +193,8 @@ public class ChatbotServices implements Component {
 		// Delete node
 		deleteMonitoringSubscriptions(bot);
 		confluenceSettingServices.deleteAllByBotId(bot);
+		jiraCustomFieldSettingServices.deleteAllByBotId(bot);
+		jiraValueListServices.deleteAllByBotId(bot);
 		jiraSettingServices.deleteAllByBotId(bot);
 		jiraFieldSettingServices.deleteAllByBotId(bot);
 		nodeServices.deleteChatbotNodeByBot(bot);

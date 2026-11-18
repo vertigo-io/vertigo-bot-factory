@@ -50,6 +50,9 @@ public class BotExportServices implements Component {
 	private JiraCustomFieldSettingServices jiraCustomFieldSettingServices;
 
 	@Inject
+	private JiraValueListServices jiraValueListServices;
+
+	@Inject
 	private AttachmentServices attachmentServices;
 
 	@Inject
@@ -83,6 +86,7 @@ public class BotExportServices implements Component {
 		export.setMapContext(contextValueServices.exportContextValuesToMapByBot(bot, logs));
 		export.setJiraFieldSetting(jiraFieldSettingServices.exportJiraSetting(bot));
 		export.setJiraCustomFieldSetting(jiraCustomFieldSettingServices.exportCustomFields(bot));
+		export.setJiraValueLists(jiraValueListServices.exportValueLists(bot));
 		export.setQuestionAnswerList(questionAnswerServices.exportActiveQuestionsAnswers(bot, logs));
 		export.setDocumentaryResources(documentaryResourceServices.exportDocumentaryResourceByBot(bot, logs));
 		export.setGlobalVariables(globalVariableExportService.exportGlobalVariables(bot, logs));

@@ -58,6 +58,7 @@ function _handleResponse(httpResponse, isRating) {
         const buttons = httpResponse.data.choices;
         const cards = httpResponse.data.cards;
         const files = httpResponse.data.files;
+        const choiceDisplay = httpResponse.data.metadatas && httpResponse.data.metadatas.choicedisplay;
         chatbot.botConfig.acceptNlu = httpResponse.data.acceptNlu !== undefined ? httpResponse.data.acceptNlu : true;
         chatbot.botConfig.rating = httpResponse.data.rating.enabled;
         chatbot.botConfig.ratingType = httpResponse.data.rating.type;
@@ -81,7 +82,8 @@ function _handleResponse(httpResponse, isRating) {
             text: responses[responses.length - 1],
             buttons: buttons,
             cards: cards,
-            files: files
+            files: files,
+            choiceDisplay: choiceDisplay
         });
 
         _displayMessages();
@@ -145,10 +147,11 @@ function _processResponse(response) {
     }
 
     if (response.buttons) {
+        chatbot.inputConfig.choiceDisplay = response.choiceDisplay || '';
         response.buttons.forEach(function (value, key) {
             chatbot.inputConfig.buttons.push(value);
-            updateSessionStorage();
         }, chatbot);
+        updateSessionStorage();
     }
 
     if (response.cards) {
@@ -178,7 +181,9 @@ function refreshBot(isAnotherConversation) {
         buttons: [],
         files: [],
         cards: [],
-        cardIndex: 0
+        cardIndex: 0,
+        choiceDisplay: '',
+        choiceActiveIndex: -1
     };
     chatbot.botConfig.error = false;
     chatbot.botConfig.convId = null;
@@ -199,6 +204,8 @@ function reinitInput() {
     chatbot.inputConfig.buttons = [];
     chatbot.inputConfig.cards = [];
     chatbot.inputConfig.files = [];
+    chatbot.inputConfig.choiceDisplay = '';
+    chatbot.inputConfig.choiceActiveIndex = -1;
     chatbot.botConfig.error = false;
     updateSessionStorage();
 }
@@ -230,8 +237,8 @@ function addPopins() {
 function focusInputIfActive() {
     const inputDisabled = chatbot.botConfig.processing
         || chatbot.botConfig.error
-        || (!chatbot.botConfig.acceptNlu && !chatbot.botConfig.isEnded)
-        || chatbot.customConfig.disableNlu;
+        || (chatbot.inputConfig.choiceDisplay !== 'select'
+            && ((!chatbot.botConfig.acceptNlu && !chatbot.botConfig.isEnded) || chatbot.customConfig.disableNlu));
 
     if (chatbot.footerMenu === 'bot' && !inputDisabled) {
         Vue.nextTick(() => {

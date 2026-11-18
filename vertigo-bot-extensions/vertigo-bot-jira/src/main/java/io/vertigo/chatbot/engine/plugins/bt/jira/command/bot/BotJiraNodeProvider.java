@@ -80,7 +80,7 @@ public class BotJiraNodeProvider implements Component, Activeable {
         final boolean checkJiraFields = jiraService.getJiraCheckFields(executorConfigManager.getConfig());
         jiraFields.forEach(jiraField -> fieldServices.forEach(fieldService -> {
             if (fieldService.supports(jiraField.getFieldType())) {
-                fieldService.processConversation(bb, jiraField, sequence, checkJiraFields);
+                fieldService.processConversation(bb, jiraField, jiraFields, sequence, checkJiraFields);
             }
         }));
 

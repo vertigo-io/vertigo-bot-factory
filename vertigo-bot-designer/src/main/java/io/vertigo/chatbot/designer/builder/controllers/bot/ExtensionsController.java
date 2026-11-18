@@ -45,6 +45,7 @@ public class ExtensionsController extends AbstractBotController {
     private static final ViewContextKey<JiraCustomFieldSetting> jiraCustomFieldSettingsKey = ViewContextKey.of("jiraCustomFieldSettings");
     private static final ViewContextKey<JiraCustomFieldSetting> newJiraCustomFieldSettingKey = ViewContextKey.of("newJiraCustomFieldSetting");
     private static final ViewContextKey<JiraCustomFieldType> jiraCustomFieldTypesKey = ViewContextKey.of("jiraCustomFieldTypes");
+    private static final ViewContextKey<JiraValueList> jiraValueListsKey = ViewContextKey.of("jiraValueLists");
 
     @Inject
     private ConfluenceSettingServices confluenceSettingServices;
@@ -64,6 +65,8 @@ public class ExtensionsController extends AbstractBotController {
     private JiraCustomFieldSettingServices jiraCustomFieldSettingServices;
     @Inject
     private JiraCustomFieldTypeService jiraCustomFieldTypeService;
+    @Inject
+    private JiraValueListServices jiraValueListServices;
 
 
     @GetMapping("/")
@@ -85,6 +88,7 @@ public class ExtensionsController extends AbstractBotController {
         viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));
         viewContext.publishDto(newJiraCustomFieldSettingKey, new JiraCustomFieldSetting());
         viewContext.publishDtList(jiraCustomFieldTypesKey, jiraCustomFieldTypeService.findAll());
+        viewContext.publishDtList(jiraValueListsKey, jiraValueListServices.findAllByBotId(bot));
 
         super.initBreadCrums(viewContext, "EXTENSION");
     }
@@ -201,7 +205,6 @@ public class ExtensionsController extends AbstractBotController {
                                            final UiMessageStack uiMessageStack,
                                            @ViewAttribute("bot") final Chatbot bot,
                                            @ViewAttribute("newJiraCustomFieldSetting") @Validate(JiraCustomFieldSettingValidator.class) final JiraCustomFieldSetting jiraCustomFieldSetting) {
-        jiraCustomFieldSetting.setBotId(bot.getBotId());
         jiraCustomFieldSettingServices.save(bot, jiraCustomFieldSetting);
 
         viewContext.publishDtList(jiraCustomFieldSettingsKey, jiraCustomFieldSettingServices.findAllByBotId(bot));

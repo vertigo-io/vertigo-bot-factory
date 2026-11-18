@@ -52,6 +52,21 @@ public final class JiraCustomFieldSetting implements Entity {
 			foreignMultiplicity = "0..*")
 	private final EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.JiraCustomFieldType, io.vertigo.chatbot.commons.domain.JiraCustomFieldTypeEnum> jcfTypeCdAccessor = new EnumStoreVAccessor<>(io.vertigo.chatbot.commons.domain.JiraCustomFieldType.class, "JiraCustomFieldType", io.vertigo.chatbot.commons.domain.JiraCustomFieldTypeEnum.class);
 
+	@io.vertigo.datamodel.data.stereotype.Association(
+			name = "AJiraCustomFieldSettingValueList",
+			fkFieldName = "jirValListId",
+			primaryDtDefinitionName = "DtJiraValueList",
+			primaryIsNavigable = true,
+			primaryRole = "JiraValueList",
+			primaryLabel = "Value list",
+			primaryMultiplicity = "0..1",
+			foreignDtDefinitionName = "DtJiraCustomFieldSetting",
+			foreignIsNavigable = false,
+			foreignRole = "JiraCustomFieldSetting",
+			foreignLabel = "JiraCustomFieldSetting",
+			foreignMultiplicity = "0..*")
+	private final StoreVAccessor<io.vertigo.chatbot.commons.domain.JiraValueList> jirValListIdAccessor = new StoreVAccessor<>(io.vertigo.chatbot.commons.domain.JiraValueList.class, "JiraValueList");
+
 	/** {@inheritDoc} */
 	@Override
 	public UID<JiraCustomFieldSetting> getUID() {
@@ -190,6 +205,25 @@ public final class JiraCustomFieldSetting implements Entity {
 	public void setJcfTypeCd(final String jcfTypeCd) {
 		jcfTypeCdAccessor.setId(jcfTypeCd);
 	}
+	
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Récupère la valeur de la propriété 'Value list'.
+	 * @return Long jirValListId
+	 */
+	@io.vertigo.datamodel.data.stereotype.ForeignKey(smartType = "STyId", label = "Value list", fkDefinition = "DtJiraValueList" )
+	public Long getJirValListId() {
+		return (Long) jirValListIdAccessor.getId();
+	}
+
+	/**
+	 * Champ : FOREIGN_KEY.
+	 * Définit la valeur de la propriété 'Value list'.
+	 * @param jirValListId Long
+	 */
+	public void setJirValListId(final Long jirValListId) {
+		jirValListIdAccessor.setId(jirValListId);
+	}
 
  	/**
 	 * Association : Chatbot.
@@ -205,6 +239,14 @@ public final class JiraCustomFieldSetting implements Entity {
 	 */
 	public EnumStoreVAccessor<io.vertigo.chatbot.commons.domain.JiraCustomFieldType, io.vertigo.chatbot.commons.domain.JiraCustomFieldTypeEnum> jiraCustomFieldType() {
 		return jcfTypeCdAccessor;
+	}
+
+ 	/**
+	 * Association : Value list.
+	 * @return l'accesseur vers la propriété 'Value list'
+	 */
+	public StoreVAccessor<io.vertigo.chatbot.commons.domain.JiraValueList> jiraValueList() {
+		return jirValListIdAccessor;
 	}
 	
 	/** {@inheritDoc} */

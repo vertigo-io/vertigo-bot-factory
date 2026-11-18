@@ -18,6 +18,7 @@ public final class JiraCustomFieldSettingExport implements DataObject {
 	private String fieldType;
 	private Boolean enabled;
 	private Boolean mandatory;
+	private String valueListCode;
 	
 	/**
 	 * Champ : DATA.
@@ -112,6 +113,25 @@ public final class JiraCustomFieldSettingExport implements DataObject {
 	 */
 	public void setMandatory(final Boolean mandatory) {
 		this.mandatory = mandatory;
+	}
+	
+	/**
+	 * Champ : DATA.
+	 * Récupère la valeur de la propriété 'Value list code'.
+	 * @return String valueListCode
+	 */
+	@Field(smartType = "STyCode", label = "Value list code")
+	public String getValueListCode() {
+		return valueListCode;
+	}
+
+	/**
+	 * Champ : DATA.
+	 * Définit la valeur de la propriété 'Value list code'.
+	 * @param valueListCode String
+	 */
+	public void setValueListCode(final String valueListCode) {
+		this.valueListCode = valueListCode;
 	}
 	
 	/** {@inheritDoc} */
